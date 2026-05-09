@@ -1,0 +1,30 @@
+@import "./tokens/styles.css";
+
+@import "tailwindcss";
+
+@keyframes b-button-ripple-expand {
+  from {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@theme inline {
+  --font-sans: var(--b-font-sans);
+  --font-mono: var(--b-font-mono);
+  --color-b-bg: var(--b-color-bg);
+  --color-b-surface: var(--b-color-surface);
+  --color-b-border: var(--b-color-border);
+  --color-b-text: var(--b-color-text);
+  --color-b-muted: var(--b-color-text-muted);
+  --color-b-accent: var(--b-color-accent);
+  --color-b-accent-fg: var(--b-color-accent-foreground);
+  --color-b-destructive: var(--b-color-destructive);
+  --color-b-destructive-fg: var(--b-color-destructive-foreground);
+  --radius-b-sm: var(--b-radius-sm);
+  --radius-b-md: var(--b-radius-md);
+}

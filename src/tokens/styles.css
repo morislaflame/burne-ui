@@ -1,0 +1,62 @@
+/** Burne UI — дизайн-токены (CSS variables), префикс `--b-` */
+:root {
+  /* Цвета: без хромы — нейтральная палитра. Акцент = основная заполненная кнопка (светлая заливка в тёмной теме). */
+  --b-color-bg: #0c0d10;
+  --b-color-surface: #15171c;
+  --b-color-border: #2a2d36;
+  --b-color-text: #f4f5f7;
+  --b-color-text-muted: #8b90a0;
+  --b-color-accent: #ebebef;
+  --b-color-accent-foreground: #0c0c0e;
+  --b-color-destructive: #dc2626;
+  --b-color-destructive-foreground: #fafafa;
+
+  /* Типографика */
+  --b-font-sans: ui-sans-serif, system-ui, sans-serif;
+  --b-font-mono: ui-monospace, monospace;
+  --b-text-sm: 0.875rem;
+  --b-text-base: 1rem;
+  --b-leading-normal: 1.5;
+
+  /* Отступы и радиусы */
+  --b-space-1: 0.25rem;
+  --b-space-2: 0.5rem;
+  --b-space-3: 0.75rem;
+  --b-space-4: 1rem;
+  --b-radius-sm: 0.375rem;
+  --b-radius-md: 0.5rem;
+
+  /* Движение (для анимаций / anime.js) */
+  --b-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --b-duration-fast: 150ms;
+  --b-duration-normal: 250ms;
+
+  /* Glass — линза (backdrop) и кольцо по краю */
+  --b-glass-blur: 22px;
+  --b-glass-blur-edge: 52px;
+  --b-glass-saturate: 1.45;
+  --b-glass-tint: rgb(255 255 255 / 0.06);
+  --b-glass-tint-veil: rgb(12 13 16 / 0.42);
+  --b-glass-border: rgb(255 255 255 / 0.14);
+  --b-glass-highlight: rgb(255 255 255 / 0.09);
+  --b-glass-edge-falloff: 68%;
+}
+
+/**
+ * Светлая тема: повесьте на корень или обёртку, например `<html data-b-theme="light">`.
+ */
+[data-b-theme="light"] {
+  --b-color-bg: #fafafa;
+  --b-color-surface: #ffffff;
+  --b-color-border: #e4e4e7;
+  --b-color-text: #18181b;
+  --b-color-text-muted: #71717a;
+  --b-color-accent: #18181b;
+  --b-color-accent-foreground: #fafafa;
+  --b-color-destructive: #dc2626;
+  --b-color-destructive-foreground: #ffffff;
+  --b-glass-tint: rgb(0 0 0 / 0.04);
+  --b-glass-tint-veil: rgb(250 250 250 / 0.72);
+  --b-glass-border: rgb(0 0 0 / 0.1);
+  --b-glass-highlight: rgb(0 0 0 / 0.05);
+}
