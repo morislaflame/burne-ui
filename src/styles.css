@@ -2,6 +2,16 @@
 
 @import "tailwindcss";
 
+p,
+ul,
+ol {
+  margin: 0;
+}
+
+p {
+  line-height: 1.2;
+}
+
 @keyframes b-button-ripple-expand {
   from {
     transform: scale(0);

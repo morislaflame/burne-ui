@@ -52,30 +52,6 @@ const meta = {
   title: "Core Components/Expandable",
   component: Expandable,
   tags: ["autodocs"],
-  argTypes: {
-    children: {
-      control: false,
-      table: {
-        type: { summary: "ReactNode" },
-      },
-    },
-    icon: {
-      control: false,
-      table: {
-        type: { summary: "ReactNode" },
-      },
-    },
-    title: {
-      table: {
-        type: { summary: "ReactNode" },
-      },
-    },
-    description: {
-      table: {
-        type: { summary: "ReactNode" },
-      },
-    },
-  },
   parameters: {
     layout: "fullscreen",
   },
@@ -86,94 +62,145 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/** Составление: корень → Trigger (иконка, текст, Chevron при необходимости) → Panel. */
 export const Default: Story = {
-  args: {
-    title: "Заголовок",
-    children: (
-      <p className="text-sm leading-relaxed text-b-muted">
-        Любой контент: текст, списки, вложенные блоки. Высота панели подстраивается
-        под содержимое.
-      </p>
-    ),
-  },
+  render: () => (
+    <Expandable>
+      <Expandable.Trigger>
+        <Expandable.Content>
+          <Expandable.Title>Заголовок</Expandable.Title>
+        </Expandable.Content>
+      </Expandable.Trigger>
+      <Expandable.Panel>
+        <p className="text-sm leading-relaxed text-b-muted">
+          Любой контент: текст, списки, вложенные блоки. Высота панели подстраивается под
+          содержимое.
+        </p>
+      </Expandable.Panel>
+    </Expandable>
+  ),
 };
 
 export const WithIcon: Story = {
   name: "С иконкой",
-  args: {
-    icon: infoIcon,
-    title: "Уведомления",
-    children: (
-      <p className="text-sm text-b-muted">
-        Иконка выровнена по верху вместе с заголовком.
-      </p>
-    ),
-  },
+  render: () => (
+    <Expandable>
+      <Expandable.Trigger>
+        <Expandable.Icon>{infoIcon}</Expandable.Icon>
+        <Expandable.Content>
+          <Expandable.Title>Уведомления</Expandable.Title>
+        </Expandable.Content>
+      </Expandable.Trigger>
+      <Expandable.Panel>
+        <p className="text-sm text-b-muted">
+          Иконка выровнена по верху вместе с заголовком.
+        </p>
+      </Expandable.Panel>
+    </Expandable>
+  ),
 };
 
 export const WithImage: Story = {
   name: "С изображением",
-  args: {
-    title: "Progress is a mindset",
-    description: "Редакционный кадр в раскрывающемся блоке.",
-    defaultOpen: true,
-    children: (
-      <img
-        src={PIN_IMAGE}
-        alt="Портрет в глянцевом красном шлеме, текст на визоре"
-        className="w-full max-h-[min(420px,55vh)] rounded-b-md object-cover"
-        loading="lazy"
-      />
-    ),
-  },
+  render: () => (
+    <Expandable defaultOpen>
+      <Expandable.Trigger>
+        <Expandable.Content>
+          <Expandable.Title>Progress is a mindset</Expandable.Title>
+          <Expandable.Description>Редакционный кадр в раскрывающемся блоке.</Expandable.Description>
+        </Expandable.Content>
+      </Expandable.Trigger>
+      <Expandable.Panel>
+        <img
+          src={PIN_IMAGE}
+          alt="Портрет в глянцевом красном шлеме, текст на визоре"
+          className="w-full max-h-[min(420px,55vh)] rounded-b-md object-cover"
+          loading="lazy"
+        />
+      </Expandable.Panel>
+    </Expandable>
+  ),
 };
 
 export const PressRipple: Story = {
   name: "Риппл по нажатию",
-  args: {
-    title: "Нажми на заголовок",
-    description: "Converge-ripple включается опционально через pressRipple.",
-    pressRipple: true,
-    children: (
-      <p className="text-sm text-b-muted">
-        Отдельный режим для компонентов с акцентом на click-feedback.
-      </p>
-    ),
-  },
+  render: () => (
+    <Expandable pressRipple>
+      <Expandable.Trigger>
+        <Expandable.Content>
+          <Expandable.Title>Нажми на строку заголовка</Expandable.Title>
+          <Expandable.Description>
+            Converge-ripple включается опционально через pressRipple.
+          </Expandable.Description>
+        </Expandable.Content>
+      </Expandable.Trigger>
+      <Expandable.Panel>
+        <p className="text-sm text-b-muted">
+          Отдельный режим для компонентов с акцентом на click-feedback.
+        </p>
+      </Expandable.Panel>
+    </Expandable>
+  ),
 };
 
 export const AllVariationsLight: Story = {
   name: "Все варианты — светлая тема",
-  args: { title: "—" },
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex flex-col gap-4">
-      <Expandable
-        title="Только заголовок"
-        children={<p className="text-sm text-b-muted">Контент без описания в триггере.</p>}
-      />
-      <Expandable
-        title="С описанием"
-        description="Дополнительная строка под заголовком."
-        children={<p className="text-sm text-b-muted">Текст внутри панели.</p>}
-      />
-      <Expandable
-        icon={infoIcon}
-        title="С иконкой"
-        description="Иконка слева."
-        children={<p className="text-sm text-b-muted">Контент.</p>}
-      />
-      <Expandable
-        title="С изображением"
-        description="По умолчанию развёрнуто."
-        defaultOpen
-      >
-        <img
-          src={PIN_IMAGE}
-          alt=""
-          className="w-full max-h-[min(320px,40vh)] rounded-b-md object-cover"
-          loading="lazy"
-        />
+      <Expandable>
+        <Expandable.Trigger>
+          <Expandable.Content>
+            <Expandable.Title>Только заголовок</Expandable.Title>
+          </Expandable.Content>
+        </Expandable.Trigger>
+        <Expandable.Panel>
+          <p className="text-sm text-b-muted">Контент без описания в триггере.</p>
+        </Expandable.Panel>
+      </Expandable>
+
+      <Expandable>
+        <Expandable.Trigger>
+          <Expandable.Content>
+            <Expandable.Title>С описанием</Expandable.Title>
+            <Expandable.Description>
+              Дополнительная строка под заголовком.
+            </Expandable.Description>
+          </Expandable.Content>
+        </Expandable.Trigger>
+        <Expandable.Panel>
+          <p className="text-sm text-b-muted">Текст внутри панели.</p>
+        </Expandable.Panel>
+      </Expandable>
+
+      <Expandable>
+        <Expandable.Trigger>
+          <Expandable.Icon>{infoIcon}</Expandable.Icon>
+          <Expandable.Content>
+            <Expandable.Title>С иконкой</Expandable.Title>
+            <Expandable.Description>Иконка слева.</Expandable.Description>
+          </Expandable.Content>
+        </Expandable.Trigger>
+        <Expandable.Panel>
+          <p className="text-sm text-b-muted">Контент.</p>
+        </Expandable.Panel>
+      </Expandable>
+
+      <Expandable defaultOpen>
+        <Expandable.Trigger>
+          <Expandable.Content>
+            <Expandable.Title>С изображением</Expandable.Title>
+            <Expandable.Description>По умолчанию развёрнуто.</Expandable.Description>
+          </Expandable.Content>
+        </Expandable.Trigger>
+        <Expandable.Panel>
+          <img
+            src={PIN_IMAGE}
+            alt=""
+            className="w-full max-h-[min(320px,40vh)] rounded-b-md object-cover"
+            loading="lazy"
+          />
+        </Expandable.Panel>
       </Expandable>
     </div>
   ),

@@ -17,8 +17,6 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
   /** Управляемое открытое состояние. */
   openId?: string | null;
   onOpenIdChange?: (id: string | null) => void;
-  /** Пробрасывает hover-анимации в Expandable items. */
-  hoverAnimated?: boolean;
   /** Пробрасывает press-ripple в Expandable items. */
   pressRipple?: boolean;
 };
@@ -28,7 +26,6 @@ export function Accordion({
   defaultOpenId = null,
   openId: openIdProp,
   onOpenIdChange,
-  hoverAnimated = false,
   pressRipple = false,
   className = "",
   ...rest
@@ -46,11 +43,7 @@ export function Accordion({
         return (
           <Expandable
             key={item.id}
-            title={item.title}
-            description={item.description}
-            icon={item.icon}
             disabled={item.disabled}
-            hoverAnimated={hoverAnimated}
             pressRipple={pressRipple}
             open={isOpen}
             onOpenChange={(next) => {
@@ -64,7 +57,16 @@ export function Accordion({
               index === items.length - 1 ? "!rounded-b-md" : "",
             ].join(" ")}
           >
-            {item.content}
+            <Expandable.Trigger>
+              {item.icon ? <Expandable.Icon>{item.icon}</Expandable.Icon> : null}
+              <Expandable.Content>
+                <Expandable.Title>{item.title}</Expandable.Title>
+                {item.description != null ? (
+                  <Expandable.Description>{item.description}</Expandable.Description>
+                ) : null}
+              </Expandable.Content>
+            </Expandable.Trigger>
+            <Expandable.Panel>{item.content}</Expandable.Panel>
           </Expandable>
         );
       })}

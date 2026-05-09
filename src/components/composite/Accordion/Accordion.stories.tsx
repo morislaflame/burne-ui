@@ -48,7 +48,7 @@ type Story = StoryObj<typeof meta>;
 const DEMO_ITEMS = [
   {
     id: "delivery",
-    title: "Доставка",
+    title: "Как оформить заказ?",
     icon: infoIcon,
     content: (
       <p className="text-sm text-b-muted">
@@ -58,7 +58,7 @@ const DEMO_ITEMS = [
   },
   {
     id: "returns",
-    title: "Возврат",
+    title: "При каких условиях можно вернуть товар?",
     content: (
       <p className="text-sm text-b-muted">
         Возврат возможен в течение 14 дней при сохранении товарного вида.
@@ -67,7 +67,7 @@ const DEMO_ITEMS = [
   },
   {
     id: "care",
-    title: "Уход",
+    title: "Как ухаживать за товаром?",
     content: (
       <p className="text-sm text-b-muted">
         Избегайте абразивов и агрессивной химии. Хранить в сухом месте.
@@ -80,14 +80,6 @@ export const Default: Story = {
   args: {
     items: DEMO_ITEMS,
     defaultOpenId: "delivery",
-  },
-};
-
-export const HoverAnimated: Story = {
-  name: "Hover-анимации в items",
-  args: {
-    items: DEMO_ITEMS,
-    hoverAnimated: true,
   },
 };
 

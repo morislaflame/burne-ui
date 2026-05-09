@@ -39,7 +39,7 @@ const meta = {
   args: {
     children: "Кнопка",
     variant: "default",
-    size: "m",
+    size: "s",
     animated: true,
     disabled: false,
   },

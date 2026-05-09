@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { remove } from "animejs";
 import type {
   ButtonHTMLAttributes,
   MouseEvent,
@@ -16,6 +16,11 @@ import {
   createConvergeRippleFromPointer,
   type ConvergeRipple,
 } from "../utils/pressRipple";
+import {
+  animateInteractiveHoverLift,
+  animateInteractivePressSqueeze,
+  prefersReducedInteractiveHoverLift,
+} from "../utils/hoverInteractiveLift";
 
 /** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
@@ -41,7 +46,7 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
     convergeBg:
       "color-mix(in oklab, var(--b-color-accent-foreground) 38%, transparent)",
     loaderText: "text-b-accent-fg",
-    hoverIdle: "transition-opacity hover:opacity-90",
+    hoverIdle: "hover:opacity-90",
   },
   outline: {
     root: "bg-transparent text-b-accent border border-b-border shadow-none",
@@ -50,7 +55,7 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
       "color-mix(in oklab, var(--b-color-accent) 42%, transparent)",
     loaderText: "text-b-accent",
     hoverIdle:
-      "transition-[background-color] hover:bg-[color-mix(in_oklab,var(--b-color-accent)_12%,transparent)]",
+      "hover:bg-[color-mix(in_oklab,var(--b-color-accent)_12%,transparent)]",
   },
   ghost: {
     root: "bg-transparent text-b-accent border border-transparent shadow-none",
@@ -59,7 +64,7 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
       "color-mix(in oklab, var(--b-color-accent) 42%, transparent)",
     loaderText: "text-b-accent",
     hoverIdle:
-      "transition-[background-color] hover:bg-[color-mix(in_oklab,var(--b-color-accent)_18%,transparent)]",
+      "hover:bg-[color-mix(in_oklab,var(--b-color-accent)_18%,transparent)]",
   },
   destructive: {
     root: "bg-b-destructive text-b-destructive-fg border border-transparent shadow-sm",
@@ -67,7 +72,7 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
     convergeBg:
       "color-mix(in oklab, var(--b-color-destructive-foreground) 38%, transparent)",
     loaderText: "text-b-destructive-fg",
-    hoverIdle: "transition-opacity hover:opacity-90",
+    hoverIdle: "hover:opacity-90",
   },
 };
 
@@ -100,7 +105,7 @@ const BUTTON_SIZE_CLASSES: Record<
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Стиль заливки и акцента. По умолчанию `default`. */
   variant?: ButtonVariant;
-  /** Габариты и типографика. По умолчанию `m` (как раньше без пропа). */
+  /** Габариты и типографика. По умолчанию `s`. */
   size?: ButtonSize;
   /** Включить лёгкий scale-пульс при нажатии (anime.js), только в idle. */
   animated?: boolean;
@@ -189,7 +194,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className = "",
       variant = "default",
-      size = "m",
+      size = "s",
       type = "button",
       animated = true,
       asyncState: asyncStateProp,
@@ -197,6 +202,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       onAsyncClick,
       asyncFeedbackMs = 2000,
       onPointerDown,
+      onPointerEnter,
+      onPointerLeave,
       onMouseDown,
       onClick,
       disabled: disabledProp,
@@ -207,6 +214,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) {
     const userDisabled = Boolean(disabledProp);
     const btnRef = useRef<HTMLButtonElement>(null);
+    const hoverPointerInsideRef = useRef(false);
+    const asyncStateRef = useRef<ButtonAsyncState>("idle");
     const rippleId = useRef(0);
     const expandId = useRef(0);
     const prevAsyncRef = useRef<ButtonAsyncState>("idle");
@@ -218,6 +227,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const asyncState: ButtonAsyncState = isControlled
       ? asyncStateProp!
       : internalAsync;
+    asyncStateRef.current = asyncState;
 
     const [convergeRipples, setConvergeRipples] = useState<ConvergeRipple[]>(
       [],
@@ -272,14 +282,62 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       return () => window.clearTimeout(t);
     }, [asyncState, isControlled, asyncFeedbackMs]);
 
+    const busy =
+      asyncState === "loading" ||
+      asyncState === "success" ||
+      asyncState === "error";
+    const blocked = userDisabled || busy;
+
+    useEffect(() => {
+      const el = btnRef.current;
+      if (!blocked || !el) return;
+      hoverPointerInsideRef.current = false;
+      remove(el);
+    }, [blocked]);
+
+    const handlePointerEnter = useCallback(
+      (e: PointerEvent<HTMLButtonElement>) => {
+        onPointerEnter?.(e);
+        if (e.defaultPrevented) return;
+        if (blocked) return;
+        if (prefersReducedInteractiveHoverLift()) return;
+        const el = btnRef.current;
+        if (!el) return;
+        hoverPointerInsideRef.current = true;
+        animateInteractiveHoverLift(el, true);
+      },
+      [blocked, onPointerEnter],
+    );
+
+    const handlePointerLeave = useCallback(
+      (e: PointerEvent<HTMLButtonElement>) => {
+        onPointerLeave?.(e);
+        hoverPointerInsideRef.current = false;
+        if (prefersReducedInteractiveHoverLift()) return;
+        const el = btnRef.current;
+        if (!el || blocked) return;
+        animateInteractiveHoverLift(el, false);
+      },
+      [blocked, onPointerLeave],
+    );
+
     function onAnimeDown() {
       if (!animated || !btnRef.current || asyncState !== "idle") return;
+      if (prefersReducedInteractiveHoverLift()) return;
       const el = btnRef.current;
-      remove(el);
-      animate(el, {
-        scale: [1, 0.97, 1],
-        duration: 280,
-        ease: "out(2)",
+      void animateInteractivePressSqueeze(el).then(() => {
+        const btn = btnRef.current;
+        if (
+          !btn ||
+          btn.disabled ||
+          asyncStateRef.current !== "idle" ||
+          prefersReducedInteractiveHoverLift()
+        ) {
+          return;
+        }
+        if (hoverPointerInsideRef.current) {
+          animateInteractiveHoverLift(btn, true);
+        }
       });
     }
 
@@ -330,7 +388,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     const baseInteractive =
-      "relative overflow-hidden inline-flex items-center justify-center rounded-b-md font-medium outline-none " +
+      "relative overflow-hidden inline-flex items-center justify-center rounded-lg font-medium outline-none " +
       "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " +
       "disabled:pointer-events-none";
 
@@ -355,14 +413,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const crossFade =
       "flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
 
-    const busy =
-      asyncState === "loading" ||
-      asyncState === "success" ||
-      asyncState === "error";
-    const blocked = userDisabled || busy;
     const sz = BUTTON_SIZE_CLASSES[size];
 
-    const hoverWhenIdle = blocked ? "" : vn.hoverIdle;
+    const idleSurfaceMotion = blocked
+      ? ""
+      : [
+          "transition-[opacity,background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+          vn.hoverIdle,
+        ].join(" ");
 
     return (
       <button
@@ -377,7 +435,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           sz.root,
           vn.root,
           userDisabled ? "opacity-50" : "",
-          hoverWhenIdle,
+          idleSurfaceMotion,
           className,
         ].join(" ")}
         onPointerDown={(e) => {
@@ -385,11 +443,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           onAnimeDown();
           onPointerDown?.(e);
         }}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
         onMouseDown={onMouseDown}
         onClick={handleClick}
       >
         <span
-          className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-b-md"
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-lg"
           aria-hidden
         >
           <ConvergeRippleLayer
