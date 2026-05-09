@@ -45,6 +45,23 @@ export {
   type AccordionItem,
 } from "./components/composite/Accordion";
 export {
+  Dialog,
+  type DialogProps,
+  type DialogHeaderProps,
+  type DialogTitleProps,
+  type DialogDescriptionProps,
+  type DialogBodyProps,
+  type DialogFooterProps,
+  type DialogCloseProps,
+} from "./components/core/Dialog";
+export {
+  Input,
+  type InputProps,
+  type InputVariant,
+  type InputStatus,
+} from "./components/core/Input";
+export { Form, type FormProps } from "./components/core/Form";
+export {
   MOTION_INTERACTIVE_MS,
   MOTION_INTERACTIVE_EASE,
   MOTION_HOVER_LIFT_SCALE,
