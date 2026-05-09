@@ -1,5 +1,5 @@
 /**
- * Hover-подъём и squeeze при нажатии — только через anime.js (общие timing / ease).
+ * Hover-подъём и squeeze при нажатии — anime.js; константы см. `motionTokens.ts`.
  */
 
 import { animate, remove } from "animejs";
@@ -9,13 +9,19 @@ import {
   type RefObject,
 } from "react";
 
-export const INTERACTIVE_HOVER_LIFT_MS = 280;
-export const INTERACTIVE_HOVER_LIFT_EASE = "out(2)" as const;
+import {
+  MOTION_HOVER_LIFT_SCALE,
+  MOTION_INTERACTIVE_EASE,
+  MOTION_INTERACTIVE_MS,
+  MOTION_PRESS_SQUEEZE_SCALE,
+} from "./motionTokens";
 
-export const INTERACTIVE_HOVER_LIFT_SCALE = 1.015;
-
-/** Squeeze как у Button: ключевые кадры шкалы по оси центра. */
-const PRESS_SQUEEZE_KEYS = [1, 0.99, 1] as const;
+/** @deprecated Используйте `MOTION_INTERACTIVE_MS` из `motionTokens` */
+export const INTERACTIVE_HOVER_LIFT_MS = MOTION_INTERACTIVE_MS;
+/** @deprecated Используйте `MOTION_INTERACTIVE_EASE` */
+export const INTERACTIVE_HOVER_LIFT_EASE = MOTION_INTERACTIVE_EASE;
+/** @deprecated Используйте `MOTION_HOVER_LIFT_SCALE` */
+export const INTERACTIVE_HOVER_LIFT_SCALE = MOTION_HOVER_LIFT_SCALE;
 
 export function prefersReducedInteractiveHoverLift(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -29,22 +35,22 @@ export function animateInteractiveHoverLift(
 ): void {
   remove(element);
   animate(element, {
-    scale: lifted ? INTERACTIVE_HOVER_LIFT_SCALE : 1,
-    duration: INTERACTIVE_HOVER_LIFT_MS,
-    ease: INTERACTIVE_HOVER_LIFT_EASE,
+    scale: lifted ? MOTION_HOVER_LIFT_SCALE : 1,
+    duration: MOTION_INTERACTIVE_MS,
+    ease: MOTION_INTERACTIVE_EASE,
   });
 }
 
 /**
- * Короткий «сжимающий» импульс при pointer down (`scale`: 1 → 0.97 → 1), как у `Button`.
+ * Короткий «сжимающий» импульс при pointer down (`MOTION_PRESS_SQUEEZE_SCALE`).
  * Возвращает промис окончания анимации.
  */
 export function animateInteractivePressSqueeze(element: HTMLElement) {
   remove(element);
   return animate(element, {
-    scale: [...PRESS_SQUEEZE_KEYS],
-    duration: INTERACTIVE_HOVER_LIFT_MS,
-    ease: INTERACTIVE_HOVER_LIFT_EASE,
+    scale: [...MOTION_PRESS_SQUEEZE_SCALE],
+    duration: MOTION_INTERACTIVE_MS,
+    ease: MOTION_INTERACTIVE_EASE,
   });
 }
 
@@ -92,3 +98,4 @@ export function useInteractiveHoverLiftOnContainer(
     };
   }, [enabled, containerRef, liftedRef, pointerInsideRef]);
 }
+

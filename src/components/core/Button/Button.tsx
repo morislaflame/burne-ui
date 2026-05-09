@@ -13,14 +13,17 @@ import {
 } from "react";
 import {
   ConvergeRippleLayer,
-  createConvergeRippleFromPointer,
-  type ConvergeRipple,
 } from "../utils/pressRipple";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "../utils/hoverInteractiveLift";
+import {
+  MOTION_FEEDBACK_EXPAND_MS,
+  MOTION_RIPPLE_EASE_CSS,
+} from "../utils/motionTokens";
+import { useConvergeRipples } from "../utils/useConvergeRipples";
 
 /** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
@@ -216,7 +219,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const btnRef = useRef<HTMLButtonElement>(null);
     const hoverPointerInsideRef = useRef(false);
     const asyncStateRef = useRef<ButtonAsyncState>("idle");
-    const rippleId = useRef(0);
     const expandId = useRef(0);
     const prevAsyncRef = useRef<ButtonAsyncState>("idle");
     const asyncInFlight = useRef(false);
@@ -229,9 +231,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       : internalAsync;
     asyncStateRef.current = asyncState;
 
-    const [convergeRipples, setConvergeRipples] = useState<ConvergeRipple[]>(
-      [],
-    );
+    const {
+      ripples: convergeRipples,
+      pushFromPointer: pushConvergeRippleBase,
+      dismiss: dismissConverge,
+    } = useConvergeRipples();
     const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
 
     const setRefs = useCallback(
@@ -346,16 +350,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         if (asyncState !== "idle") return;
         const el = e.currentTarget;
         if (el.disabled) return;
-        const id = ++rippleId.current;
-        const ripple = createConvergeRippleFromPointer(e, id);
-        setConvergeRipples((prev) => [...prev, ripple]);
+        pushConvergeRippleBase(e);
       },
-      [asyncState],
+      [asyncState, pushConvergeRippleBase],
     );
-
-    const dismissConverge = useCallback((id: number) => {
-      setConvergeRipples((prev) => prev.filter((rp) => rp.id !== id));
-    }, []);
 
     const dismissExpand = useCallback((id: number) => {
       setExpandRipples((prev) => prev.filter((rp) => rp.id !== id));
@@ -468,10 +466,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 marginTop: -rp.size / 2,
                 background:
                   rp.tone === "success"
-                    ? "color-mix(in oklab, #22c55e 55%, transparent)"
+                    ? "color-mix(in oklab, #22c55e 55%, transparent)" 
                     : "color-mix(in oklab, #ef4444 55%, transparent)",
                 animation:
-                  "b-button-ripple-expand 720ms cubic-bezier(0.25, 0.55, 0.35, 0.95) forwards",
+                  `b-button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
               }}
               onAnimationEnd={() => dismissExpand(rp.id)}
             />

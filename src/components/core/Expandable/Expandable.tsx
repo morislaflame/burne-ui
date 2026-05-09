@@ -14,13 +14,17 @@ import {
 } from "react";
 import {
   ConvergeRippleLayer,
-  createConvergeRippleFromPointer,
   type ConvergeRipple,
 } from "../utils/pressRipple";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "../utils/hoverInteractiveLift";
+import {
+  MOTION_RIPPLE_EXPANDABLE_DURATION_MS,
+  MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM,
+} from "../utils/motionTokens";
+import { useConvergeRipples } from "../utils/useConvergeRipples";
 
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
@@ -160,8 +164,8 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
               ripples={ripples}
               tone="color-mix(in oklab, var(--b-color-accent) 28%, transparent)"
               onDone={dismissConverge}
-              durationMs={640}
-              opacityFrom={0.34}
+              durationMs={MOTION_RIPPLE_EXPANDABLE_DURATION_MS}
+              opacityFrom={MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM}
             />
           </span>
         ) : null}
@@ -278,7 +282,7 @@ const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             aria-labelledby={headerId}
             aria-hidden={!open}
             inert={!open}
-            className={["px-3 pb-3 leading-normal", className].join(" ")}
+            className={["px-4 pb-3 leading-normal", className].join(" ")}
             {...props}
           >
             {children}
@@ -307,10 +311,13 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
   ) {
     const panelId = useId();
     const headerId = useId();
-    const rippleId = useRef(0);
     const controlled = openProp !== undefined;
     const [internalOpen, setInternalOpen] = useState(defaultOpen);
-    const [ripples, setRipples] = useState<ConvergeRipple[]>([]);
+    const {
+      ripples,
+      pushFromPointer: pushConvergeRippleBase,
+      dismiss: dismissConverge,
+    } = useConvergeRipples();
     const [hasPanel, setHasPanelState] = useState(false);
 
     const setHasPanel = useCallback((v: boolean) => {
@@ -326,20 +333,12 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       onOpenChange?.(next);
     }, [controlled, disabled, hasPanel, open, onOpenChange]);
 
-    const dismissConverge = useCallback((id: number) => {
-      setRipples((prev) => prev.filter((rp) => rp.id !== id));
-    }, []);
-
     const pushConvergeRipple = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
         if (disabled) return;
-        const el = e.currentTarget;
-        if (!el) return;
-        const id = ++rippleId.current;
-        const ripple = createConvergeRippleFromPointer(e, id);
-        setRipples((prev) => [...prev, ripple]);
+        pushConvergeRippleBase(e);
       },
-      [disabled],
+      [disabled, pushConvergeRippleBase],
     );
 
     const ctxValue: ExpandableContextValue = {

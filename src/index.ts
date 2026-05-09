@@ -45,6 +45,31 @@ export {
   type AccordionItem,
 } from "./components/composite/Accordion";
 export {
+  MOTION_INTERACTIVE_MS,
+  MOTION_INTERACTIVE_EASE,
+  MOTION_HOVER_LIFT_SCALE,
+  MOTION_PRESS_SQUEEZE_SCALE,
+  MOTION_RIPPLE_DEFAULT_DURATION_MS,
+  MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
+  MOTION_RIPPLE_EXPANDABLE_DURATION_MS,
+  MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM,
+  MOTION_RIPPLE_EASE_CSS,
+  MOTION_FEEDBACK_EXPAND_MS,
+} from "./components/core/utils/motionTokens";
+export { useConvergeRipples } from "./components/core/utils/useConvergeRipples";
+export {
+  ConvergeRippleLayer,
+  createConvergeRippleAtPointer,
+  createConvergeRippleFromPointer,
+  type ConvergeRipple,
+} from "./components/core/utils/pressRipple";
+export {
+  animateInteractiveHoverLift,
+  animateInteractivePressSqueeze,
+  prefersReducedInteractiveHoverLift,
+  useInteractiveHoverLiftOnContainer,
+} from "./components/core/utils/hoverInteractiveLift";
+export {
   tokensConfig,
   bTokenNames,
   type TokensConfig,
