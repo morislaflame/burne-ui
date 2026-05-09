@@ -435,6 +435,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           userDisabled ? "opacity-50" : "",
           idleSurfaceMotion,
           className,
+          'cursor-pointer',
         ].join(" ")}
         onPointerDown={(e) => {
           if (!blocked) pushConvergeRipple(e);

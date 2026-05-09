@@ -180,7 +180,7 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setRootRef}
         role="status"
         className={[
-          "flex w-fit max-w-[42rem] items-start gap-3 rounded-b-md border py-3 px-4",
+          "flex w-fit max-w-[42rem] items-start gap-3 rounded-xl border py-3 px-4",
           ALERT_VARIANT[tone],
           className,
         ].join(" ")}

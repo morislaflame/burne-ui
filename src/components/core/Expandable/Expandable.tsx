@@ -360,7 +360,7 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
         <div
           ref={ref}
           className={[
-            "rounded-b-md border border-b-border bg-b-surface text-b-text shadow-sm",
+            "rounded-xl border border-b-border bg-b-surface text-b-text shadow-sm",
             className,
           ].join(" ")}
           {...rest}
