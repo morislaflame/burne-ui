@@ -1,0 +1,356 @@
+import type { AlertStatus } from "@/components/core/Alert";
+
+import {
+  createContext,
+  forwardRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
+
+import {
+  SEMANTIC_STATUS_ICONS,
+  SEMANTIC_STATUS_ICON_TEXT_CLASS,
+  type SemanticStatus,
+} from "@/components/core/utils/semanticStatusIcons";
+import { cn } from "@/utils/cn";
+
+/** Варианты заливки — те же паттерны, что у `Alert` (`ALERT_INLINE_SURFACE_CLASSES`). */
+export type TooltipVariant = AlertStatus;
+
+export type TooltipSize = "s" | "m" | "l";
+
+/** Сторона триггера, с которой показывается подсказка. */
+export type TooltipSide = "top" | "bottom";
+
+export type TooltipRootProps = {
+  children?: ReactNode;
+  /** Размер отступов и типографики. По умолчанию `m`. */
+  size?: TooltipSize;
+  /** Семантика фона как у Alert. По умолчанию `default`. */
+  variant?: TooltipVariant;
+  /** Задержка перед показом, мс. */
+  delayShowMs?: number;
+  /** Позиция относительно триггера. По умолчанию `bottom`. */
+  side?: TooltipSide;
+  /**
+   * Иконка слева от текста. Для вариантов `warning`, `danger`, `success`, `info` при отсутствии
+   * `icon` используется иконка статуса из `semanticStatusIcons`.
+   */
+  icon?: ReactNode;
+  /**
+   * Показать иконку слева. Для semantic-вариантов по умолчанию `true`, для `default` / `outline` — `false`.
+   * Явный `false` скрывает и кастомную `icon`, и семантическую.
+   */
+  showIcon?: boolean;
+};
+
+export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement>;
+
+export type TooltipContentProps = HTMLAttributes<HTMLDivElement>;
+
+const TOOLTIP_INLINE_OUTLINE =
+  "border border-brn-border shadow-none bg-brn-surface/65 backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-brn-surface motion-reduce:backdrop-blur-none";
+
+const TOOLTIP_SURFACE: Record<TooltipVariant, string> = {
+  default:
+    "border border-brn-border bg-brn-surface text-brn-text shadow-md",
+  outline: `${TOOLTIP_INLINE_OUTLINE} text-brn-text shadow-md`,
+  danger: "bg-brn-surface-tint-danger text-brn-text shadow-md",
+  success: "bg-brn-surface-tint-success text-brn-text shadow-md",
+  info: "bg-brn-surface-tint-info text-brn-text shadow-md",
+  warning: "bg-brn-surface-tint-warning text-brn-text shadow-md",
+};
+
+const TOOLTIP_TEXT_SIZE: Record<TooltipSize, string> = {
+  s: "max-w-[12rem] px-2 py-1 text-xs font-medium leading-snug",
+  m: "max-w-[16rem] px-2.5 py-1.5 text-sm font-medium leading-snug",
+  l: "max-w-xs px-3 py-2 text-sm font-medium leading-snug",
+};
+
+const TOOLTIP_ICON_SIZE: Record<TooltipSize, string> = {
+  s: "size-3.5",
+  m: "size-4",
+  l: "size-[1.125rem]",
+};
+
+/** Для кастомной `icon` без собственных классов на `<svg>`. */
+const TOOLTIP_ICON_SLOT_SVG: Record<TooltipSize, string> = {
+  s: "[&_svg]:size-3.5",
+  m: "[&_svg]:size-4",
+  l: "[&_svg]:size-[1.125rem]",
+};
+
+function isSemanticTooltipVariant(v: TooltipVariant): v is SemanticStatus {
+  return (
+    v === "danger" ||
+    v === "success" ||
+    v === "info" ||
+    v === "warning"
+  );
+}
+
+function resolveTooltipLeadingIcon({
+  variant,
+  size,
+  showIcon: showIconProp,
+  icon: iconProp,
+}: {
+  variant: TooltipVariant;
+  size: TooltipSize;
+  showIcon?: boolean;
+  icon?: ReactNode;
+}): ReactNode | null {
+  if (showIconProp === false) return null;
+
+  if (iconProp !== undefined && iconProp !== null) {
+    return (
+      <span
+        className={cn(
+          "inline-flex shrink-0 text-brn-text [&_svg]:shrink-0",
+          TOOLTIP_ICON_SLOT_SVG[size],
+        )}
+      >
+        {iconProp}
+      </span>
+    );
+  }
+
+  const semantic = isSemanticTooltipVariant(variant);
+  if (!semantic) return null;
+
+  const Icon = SEMANTIC_STATUS_ICONS[variant];
+  return (
+    <Icon
+      aria-hidden
+      className={cn(
+        "shrink-0",
+        TOOLTIP_ICON_SIZE[size],
+        SEMANTIC_STATUS_ICON_TEXT_CLASS[variant],
+      )}
+    />
+  );
+}
+
+type TooltipContextValue = {
+  open: boolean;
+  tooltipId: string;
+  variant: TooltipVariant;
+  size: TooltipSize;
+  side: TooltipSide;
+  icon?: ReactNode;
+  showIcon?: boolean;
+  triggerRef: React.RefObject<HTMLSpanElement | null>;
+  scheduleShow: () => void;
+  hide: () => void;
+};
+
+const TooltipContext = createContext<TooltipContextValue | null>(null);
+
+function useTooltipContext(who: string): TooltipContextValue {
+  const ctx = useContext(TooltipContext);
+  if (!ctx) {
+    throw new Error(`${who} должен быть внутри <Tooltip>`);
+  }
+  return ctx;
+}
+
+function TooltipRoot({
+  children,
+  size = "m",
+  variant = "default",
+  delayShowMs = 240,
+  side = "top",
+  icon,
+  showIcon,
+}: TooltipRootProps) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLSpanElement | null>(null);
+  const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tooltipId = useId();
+
+  const clearTimer = useCallback(() => {
+    if (showTimerRef.current !== null) {
+      clearTimeout(showTimerRef.current);
+      showTimerRef.current = null;
+    }
+  }, []);
+
+  const scheduleShow = useCallback(() => {
+    clearTimer();
+    showTimerRef.current = globalThis.setTimeout(() => {
+      showTimerRef.current = null;
+      setOpen(true);
+    }, delayShowMs);
+  }, [clearTimer, delayShowMs]);
+
+  const hide = useCallback(() => {
+    clearTimer();
+    setOpen(false);
+  }, [clearTimer]);
+
+  useEffect(() => () => clearTimer(), [clearTimer]);
+
+  const ctx = useMemo<TooltipContextValue>(
+    () => ({
+      open,
+      tooltipId,
+      variant,
+      size,
+      side,
+      icon,
+      showIcon,
+      triggerRef,
+      scheduleShow,
+      hide,
+    }),
+    [hide, icon, open, scheduleShow, showIcon, side, size, tooltipId, variant],
+  );
+
+  return (
+    <TooltipContext.Provider value={ctx}>{children}</TooltipContext.Provider>
+  );
+}
+
+const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
+  function TooltipTrigger({ className = "", children, onPointerEnter, onPointerLeave, ...rest }, ref) {
+    const { scheduleShow, hide, tooltipId, open, triggerRef } =
+      useTooltipContext("Tooltip.Trigger");
+
+    const mergedRef = useCallback(
+      (node: HTMLSpanElement | null) => {
+        triggerRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref, triggerRef],
+    );
+
+    return (
+      <span
+        ref={mergedRef}
+        className={cn("inline-flex shrink-0", className)}
+        aria-describedby={open ? tooltipId : undefined}
+        onPointerEnter={(e) => {
+          scheduleShow();
+          onPointerEnter?.(e);
+        }}
+        onPointerLeave={(e) => {
+          hide();
+          onPointerLeave?.(e);
+        }}
+        {...rest}
+      >
+        {children}
+      </span>
+    );
+  },
+);
+
+function TooltipFloater({
+  className = "",
+  children,
+  ...rest
+}: TooltipContentProps) {
+  const { open, tooltipId, variant, size, side, icon, showIcon, triggerRef } =
+    useTooltipContext("Tooltip.Content");
+
+  const tipRef = useRef<HTMLDivElement>(null);
+
+  const reposition = useCallback(() => {
+    const trigger = triggerRef.current;
+    const tip = tipRef.current;
+    if (!trigger || !tip) return;
+
+    const pad = 8;
+    const gap = 8;
+    const tr = trigger.getBoundingClientRect();
+    const fr = tip.getBoundingClientRect();
+
+    let left = tr.left + tr.width / 2 - fr.width / 2;
+    let top: number;
+
+    if (side === "top") {
+      top = tr.top - gap - fr.height;
+      if (top < pad) {
+        top = tr.bottom + gap;
+      }
+    } else {
+      top = tr.bottom + gap;
+      if (top + fr.height > window.innerHeight - pad) {
+        top = Math.max(pad, tr.top - gap - fr.height);
+      }
+    }
+
+    left = Math.max(pad, Math.min(left, window.innerWidth - fr.width - pad));
+
+    tip.style.position = "fixed";
+    tip.style.left = `${left}px`;
+    tip.style.top = `${top}px`;
+    tip.style.transform = "";
+  }, [side, triggerRef]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    reposition();
+    const raf = window.requestAnimationFrame(() => reposition());
+    const onReflow = () => reposition();
+    window.addEventListener("scroll", onReflow, true);
+    window.addEventListener("resize", onReflow);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onReflow, true);
+      window.removeEventListener("resize", onReflow);
+    };
+  }, [open, reposition, children]);
+
+  if (!open) return null;
+  if (typeof document === "undefined") return null;
+
+  const leading = resolveTooltipLeadingIcon({
+    variant,
+    size,
+    showIcon,
+    icon,
+  });
+
+  const node = (
+    <div
+      ref={tipRef}
+      role="tooltip"
+      id={tooltipId}
+      className={cn(
+        "pointer-events-none z-[10000] w-max min-w-0 rounded-lg outline-none motion-reduce:transition-none transition-opacity duration-150",
+        TOOLTIP_SURFACE[variant],
+        TOOLTIP_TEXT_SIZE[size],
+        className,
+      )}
+      {...rest}
+    >
+      {leading ? (
+        <span className="flex min-w-0 items-center gap-1.5">
+          {leading}
+          <span className="min-w-0 flex-1">{children}</span>
+        </span>
+      ) : (
+        children
+      )}
+    </div>
+  );
+
+  return createPortal(node, document.body);
+}
+
+/** Всплывающая подсказка по hover; паттерны фона совпадают с `Alert`. */
+export const Tooltip = Object.assign(TooltipRoot, {
+  Trigger: TooltipTrigger,
+  Content: TooltipFloater,
+});

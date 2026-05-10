@@ -90,6 +90,24 @@ export {
   type CardFooterProps,
 } from "@/components/core/Card";
 export {
+  Avatar,
+  AvatarGroup,
+  type AvatarProps,
+  type AvatarSize,
+  type AvatarImageProps,
+  type AvatarFallbackProps,
+  type AvatarGroupProps,
+} from "@/components/core/Avatar";
+export {
+  Tooltip,
+  type TooltipVariant,
+  type TooltipSize,
+  type TooltipSide,
+  type TooltipRootProps,
+  type TooltipTriggerProps,
+  type TooltipContentProps,
+} from "@/components/core/Tooltip";
+export {
   MOTION_INTERACTIVE_MS,
   MOTION_INTERACTIVE_EASE,
   MOTION_HOVER_LIFT_SCALE,

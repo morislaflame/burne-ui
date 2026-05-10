@@ -6,9 +6,7 @@ import { Form } from "@/components/composite/Form/Form";
 import { Button } from "@/components/core/Button/Button";
 import { Input } from "@/components/core/Input/Input";
 import { Card } from "./Card";
-
-const PIN_IMAGE =
-  "https://i.pinimg.com/736x/89/e2/85/89e285ca1fc973db199bf395f7c89669.jpg";
+import { PIN_IMAGE1 } from "@/utils/mockImages";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -94,7 +92,7 @@ export const WithImageBody: Story = {
       </Card.Content>
       <Card.Body className="px-0 pb-0 pt-2">
         <img
-          src={PIN_IMAGE}
+          src={PIN_IMAGE1}
           alt="Портрет в глянцевом красном шлеме, текст на визоре"
           className="max-h-[min(380px,48vh)] w-full object-cover"
           loading="lazy"
