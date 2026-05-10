@@ -42,7 +42,6 @@ const meta = {
     variant: "default" as const,
     status: "default" as const,
     inputType: "text" as const,
-    label: "Название поля",
     placeholder: "Введите значение",
   },
 } satisfies Meta<typeof Input>;
@@ -70,9 +69,9 @@ export const WithAffixes: Story = {
   },
 };
 
-export const Destructive: Story = {
+export const danger: Story = {
   args: {
-    status: "destructive",
+    status: "danger",
     defaultValue: "некорректно",
     hint: "Исправьте значение перед отправкой формы.",
   },
@@ -121,7 +120,7 @@ export const FileUpload: Story = {
     accept: "image/*,.pdf",
     multiple: true,
     placeholder: "Выберите изображение или PDF",
-    hint: "Несколько файлов — списком в столбик; для изображений — превью у каждой строки.",
+    hint: "Несколько файлов — списком в столбик",
   },
 };
 

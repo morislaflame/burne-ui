@@ -44,6 +44,17 @@ export {
   type AccordionProps,
   type AccordionItem,
 } from "./components/composite/Accordion";
+export { Form, type FormProps } from "./components/composite/Form";
+export {
+  AlertDialog,
+  type AlertDialogProps,
+  type AlertDialogSize,
+  type AlertDialogHeaderProps,
+  type AlertDialogTitleProps,
+  type AlertDialogDescriptionProps,
+  type AlertDialogBodyProps,
+  type AlertDialogFooterProps,
+} from "./components/composite/AlertDialog";
 export {
   Dialog,
   type DialogProps,
@@ -60,7 +71,6 @@ export {
   type InputVariant,
   type InputStatus,
 } from "./components/core/Input";
-export { Form, type FormProps } from "./components/core/Form";
 export {
   MOTION_INTERACTIVE_MS,
   MOTION_INTERACTIVE_EASE,
@@ -93,3 +103,4 @@ export {
   type BCssVar,
 } from "./tokens";
 export { animate, remove } from "animejs";
+export { primaryButtonVariantForAlertTone } from "./components/core/utils/alertTone";

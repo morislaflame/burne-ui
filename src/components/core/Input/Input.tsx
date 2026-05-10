@@ -25,11 +25,12 @@ import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
 } from "../utils/motionTokens";
+import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
 
 export type InputVariant = "default" | "outline";
 
 /** Валидация / обратная связь: бордер оболочки и цвет примечания. */
-export type InputStatus = "default" | "destructive" | "success" | "warning";
+export type InputStatus = "default" | "danger" | "success" | "warning";
 
 export type InputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -66,12 +67,18 @@ const STATUS_TINT_SHELL: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  destructive:
-    "bg-[color-mix(in_oklab,var(--b-color-destructive)_16%,var(--b-color-surface))]",
-  success:
-    "bg-[color-mix(in_oklab,#22c55e_16%,var(--b-color-surface))]",
-  warning:
-    "bg-[color-mix(in_oklab,#f59e0b_16%,var(--b-color-surface))]",
+  danger: "bg-b-surface-tint-danger",
+  success: "bg-b-surface-tint-success",
+  warning: "bg-b-surface-tint-warning",
+};
+
+const STATUS_TINT_FOCUS_BORDER: Record<
+  Exclude<InputStatus, "default">,
+  string
+> = {
+  danger: "focus-within:border-b-danger",
+  success: "focus-within:border-b-success",
+  warning: "focus-within:border-b-warning",
 };
 
 /** Слегка насыщеннее оболочки, чтобы префикс/суффикс читался на тоне. */
@@ -79,19 +86,16 @@ const STATUS_TINT_AFFIX: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  destructive:
-    "bg-[color-mix(in_oklab,var(--b-color-destructive)_22%,var(--b-color-surface))]",
-  success:
-    "bg-[color-mix(in_oklab,#22c55e_22%,var(--b-color-surface))]",
-  warning:
-    "bg-[color-mix(in_oklab,#f59e0b_22%,var(--b-color-surface))]",
+  danger: "bg-b-surface-tint-danger-strong",
+  success: "bg-b-surface-tint-success-strong",
+  warning: "bg-b-surface-tint-warning-strong",
 };
 
 const STATUS_HINT: Record<InputStatus, string> = {
   default: "text-b-muted",
-  destructive: "text-b-destructive",
-  success: "text-[#22c55e]",
-  warning: "text-[#f59e0b]",
+  danger: "text-b-danger",
+  success: "text-b-success",
+  warning: "text-b-warning",
 };
 
 const AFFIX_SURFACE: Record<InputVariant, string> = {
@@ -135,6 +139,59 @@ function AffixSlot({
 
 type PickedFileEntry = { file: File; previewUrl: string | null };
 
+function PasswordVisibilityAffix({
+  variant,
+  status,
+  visible,
+  disabled,
+  onToggle,
+}: {
+  variant: InputVariant;
+  status: InputStatus;
+  visible: boolean;
+  disabled?: boolean;
+  onToggle: () => void;
+}) {
+  const surface =
+    status === "default"
+      ? AFFIX_SURFACE[variant]
+      : STATUS_TINT_AFFIX[status];
+
+  return (
+    <span
+      className={[
+        "flex shrink-0 items-stretch border-l border-b-border",
+        surface,
+      ].join(" ")}
+    >
+      <button
+        type="button"
+        disabled={disabled}
+        aria-label={visible ? "Скрыть пароль" : "Показать пароль"}
+        aria-pressed={visible}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onToggle();
+        }}
+        onPointerDown={(e) => e.stopPropagation()}
+        className={[
+          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-2.5 text-b-muted outline-none transition-colors",
+          "hover:text-b-text",
+          "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-b-accent",
+          disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
+        ].join(" ")}
+      >
+        {visible ? (
+          <IoEyeOff className="size-5 shrink-0" aria-hidden />
+        ) : (
+          <IoEye className="size-5 shrink-0" aria-hidden />
+        )}
+      </button>
+    </span>
+  );
+}
+
 function FileGlyph({ className = "" }: { className?: string }) {
   return (
     <span
@@ -144,18 +201,7 @@ function FileGlyph({ className = "" }: { className?: string }) {
       ].join(" ")}
       aria-hidden
     >
-      <svg
-        className="size-[1.125rem]"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-        <polyline points="14 2 14 8 20 8" />
-      </svg>
+      <IoFolderOpen className="size-[1.125rem] shrink-0" aria-hidden />
     </span>
   );
 }
@@ -169,7 +215,8 @@ function assignInputFiles(input: HTMLInputElement, files: File[]) {
 function animateFileRowExit(rowEl: HTMLElement): Promise<void> {
   removeAnime(rowEl);
   const anim = animate(rowEl, {
-    translateX: [0, "100%"],
+    scale: [1, 0.94],
+    translateY: [0, "-0.5rem"],
     opacity: [1, 0],
     duration: MOTION_INTERACTIVE_MS,
     ease: MOTION_INTERACTIVE_EASE,
@@ -201,23 +248,13 @@ function FileRemoveButton({
       }}
       onPointerDown={(e) => e.stopPropagation()}
       className={[
-        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-md text-b-destructive outline-none transition-colors",
-        "hover:bg-[color-mix(in_oklab,var(--b-color-destructive)_14%,transparent)]",
+        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-md text-b-danger outline-none transition-colors",
+        "hover:bg-[color-mix(in_oklab,var(--b-color-danger)_14%,transparent)]",
         "focus-visible:ring-2 focus-visible:ring-b-accent focus-visible:ring-offset-2 focus-visible:ring-offset-b-surface",
         disabled ? "pointer-events-none opacity-40" : "",
       ].join(" ")}
     >
-      <svg
-        className="size-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        aria-hidden
-      >
-        <path d="M18 6L6 18M6 6l12 12" />
-      </svg>
+      <IoClose className="size-4 shrink-0" aria-hidden />
     </button>
   );
 }
@@ -260,14 +297,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const blocked = Boolean(disabled || readOnly);
 
     const statusTinted =
-      status === "destructive" ||
+      status === "danger" ||
       status === "success" ||
       status === "warning";
 
     const shellSurface = statusTinted
       ? [
           STATUS_TINT_SHELL[status],
-          "border-transparent focus-within:border-b-accent",
+          "border-transparent",
+          STATUS_TINT_FOCUS_BORDER[status],
           variant === "default" ? "shadow-sm" : "shadow-none",
         ].join(" ")
       : [
@@ -287,7 +325,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     );
 
     const isFile = inputType === "file";
+    const isPassword = inputType === "password";
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const [pickedFiles, setPickedFiles] = useState<File[]>([]);
+
+    useEffect(() => {
+      if (!isPassword) setPasswordVisible(false);
+    }, [isPassword]);
 
     const fileEntries: PickedFileEntry[] = useMemo(
       () =>
@@ -364,6 +408,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       };
 
     const multipleFiles = pickedFiles.length > 1;
+    const fileListEmpty = isFile && pickedFiles.length === 0;
+
+    const shellFileEmptySurface = fileListEmpty
+      ? [
+          statusTinted ? STATUS_TINT_SHELL[status] : VARIANT_SHELL[variant],
+          variant === "default" ? "shadow-sm" : "shadow-none",
+          "border-2 border-dashed",
+          statusTinted
+            ? status === "danger"
+              ? "border-b-danger/50 focus-within:border-b-danger"
+              : status === "success"
+                ? "border-b-success/50 focus-within:border-b-success"
+                : "border-b-warning/50 focus-within:border-b-warning"
+            : "border-b-border focus-within:border-b-accent",
+        ].join(" ")
+      : null;
 
     const showAffixes = !isFile;
 
@@ -382,8 +442,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           role="presentation"
           onPointerDown={handleShellPointerDown}
           className={[
-            "flex min-h-10 items-stretch overflow-hidden rounded-lg border-2 transition-[border-color,background-color] duration-200 ease-out",
-            shellSurface,
+            "flex items-stretch overflow-hidden rounded-lg transition-[border-color,background-color] duration-200 ease-out",
+            fileListEmpty ? "min-h-[7.25rem]" : "min-h-10 border-1",
+            shellFileEmptySurface ?? shellSurface,
             blocked ? "cursor-not-allowed opacity-55" : "",
           ].join(" ")}
         >
@@ -394,17 +455,27 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ) : null}
           {isFile ? (
             <div
-              className={[
-                "relative min-w-0 flex-1 px-3 py-2",
-                multipleFiles
-                  ? "flex flex-col gap-2"
-                  : "flex min-h-10 items-center gap-3",
-              ].join(" ")}
+              className={
+                fileListEmpty
+                  ? "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-2.5 px-4 py-7"
+                  : [
+                      "relative min-w-0 flex-1 px-3 py-2",
+                      multipleFiles
+                        ? "flex flex-col gap-2"
+                        : "flex min-h-10 items-center gap-3",
+                    ].join(" ")
+              }
             >
-              {pickedFiles.length === 0 ? (
-                <span className="text-sm text-b-muted">
-                  {placeholder ?? "Выберите файл"}
-                </span>
+              {fileListEmpty ? (
+                <>
+                  <IoFolderOpen
+                    className="pointer-events-none size-12 shrink-0 text-b-muted"
+                    aria-hidden
+                  />
+                  <span className="pointer-events-none max-w-[18rem] text-center text-sm leading-snug text-b-muted">
+                    {placeholder ?? "Выберите файл"}
+                  </span>
+                </>
               ) : multipleFiles ? (
                 fileEntries.map(({ file, previewUrl }) => (
                   <div
@@ -472,7 +543,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <input
               ref={setInputRef}
               id={id}
-              type={inputType}
+              type={isPassword ? (passwordVisible ? "text" : "password") : inputType}
               disabled={disabled}
               readOnly={readOnly}
               placeholder={placeholder}
@@ -486,10 +557,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               {suffix}
             </AffixSlot>
           ) : null}
+          {showAffixes && isPassword ? (
+            <PasswordVisibilityAffix
+              variant={variant}
+              status={status}
+              visible={passwordVisible}
+              disabled={disabled}
+              onToggle={() => setPasswordVisible((v) => !v)}
+            />
+          ) : null}
         </div>
         {hint ? (
           <p
-            className={["text-xs leading-normal", STATUS_HINT[status]].join(
+            className={["text-sm leading-snug", STATUS_HINT[status]].join(
               " ",
             )}
           >
@@ -498,5 +578,5 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ) : null}
       </div>
     );
-  },
+  }
 );

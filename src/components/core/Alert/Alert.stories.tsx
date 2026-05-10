@@ -31,21 +31,6 @@ const lightThemeDecorator = [
   ),
 ] as const;
 
-const infoIcon = (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 16v-4M12 8h.01" />
-  </svg>
-);
-
 const meta = {
   title: "Core Components/Alert",
   component: Alert,
@@ -61,17 +46,15 @@ const meta = {
       options: [
         "default",
         "outline",
-        "destructive",
+        "danger",
         "success",
         "info",
-        "accent",
-        "danger",
         "warning",
       ],
     },
     variant: {
       control: "select",
-      options: ["default", "outline", "destructive", "success", "info"],
+      options: ["default", "outline", "danger", "success", "info"],
     },
     children: {
       control: false,
@@ -83,6 +66,82 @@ const meta = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+
+function AlertAllVariantsDemo() {
+  return (
+    <div className="flex flex-col gap-3">
+      <Alert status="default">
+        <Alert.Message>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Default</Alert.Title>
+            <Alert.Description>Нейтральное сообщение.</Alert.Description>
+          </Alert.Content>
+        </Alert.Message>
+      </Alert>
+
+      <Alert status="outline">
+        <Alert.Message>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Outline</Alert.Title>
+            <Alert.Description>Полупрозрачный фон с размытием.</Alert.Description>
+          </Alert.Content>
+        </Alert.Message>
+      </Alert>
+
+      <Alert status="danger">
+        <Alert.Message>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Unable to connect to server</Alert.Title>
+            <Alert.Description>
+              We&apos;re experiencing connection issues.
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Message>
+        <Alert.Action>
+          <Button size="s" variant="danger">
+            Retry
+          </Button>
+        </Alert.Action>
+      </Alert>
+
+      <Alert status="success">
+        <Alert.Message>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Profile updated successfully</Alert.Title>
+          </Alert.Content>
+        </Alert.Message>
+      </Alert>
+
+      <Alert status="info">
+        <Alert.Message>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Справка</Alert.Title>
+            <Alert.Description>
+              Дополнительная информация в нейтрально-информационном тоне.
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Message>
+      </Alert>
+
+      <Alert status="warning">
+        <Alert.Message>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Scheduled maintenance</Alert.Title>
+            <Alert.Description>
+              Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Message>
+      </Alert>
+    </div>
+  );
+}
 
 export const Default: Story = {
   render: (args) => (
@@ -102,7 +161,7 @@ export const Default: Story = {
 
 export const WithAction: Story = {
   render: () => (
-    <Alert status="accent">
+    <Alert status="info">
       <Alert.Message>
         <Alert.Indicator />
         <Alert.Content>
@@ -114,7 +173,7 @@ export const WithAction: Story = {
         </Alert.Content>
       </Alert.Message>
       <Alert.Action>
-        <Button size="s" variant="outline">
+        <Button size="s" variant="info">
           Refresh
         </Button>
       </Alert.Action>
@@ -123,95 +182,12 @@ export const WithAction: Story = {
 };
 
 export const Variants: Story = {
-  render: () => (
-    <div className="flex flex-col gap-3">
-      <Alert status="default">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Default</Alert.Title>
-            <Alert.Description>Нейтральное сообщение.</Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="outline">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Outline</Alert.Title>
-            <Alert.Description>Контурный стиль без заливки.</Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="danger">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Unable to connect to server</Alert.Title>
-            <Alert.Description>
-              We&apos;re experiencing connection issues.
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-        <Alert.Action>
-          <Button size="s" variant="destructive">
-            Retry
-          </Button>
-        </Alert.Action>
-      </Alert>
-
-      <Alert status="success">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Profile updated successfully</Alert.Title>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="warning">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Scheduled maintenance</Alert.Title>
-            <Alert.Description>
-              Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="accent">
-        <Alert.Message>
-          <Alert.Indicator>{infoIcon}</Alert.Indicator>
-          <Alert.Content>
-            <Alert.Title>Processing your request</Alert.Title>
-            <Alert.Description>
-              Please wait while we sync your data. This may take a few moments.
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-    </div>
-  ),
+  name: "Варианты (тёмная тема)",
+  render: () => <AlertAllVariantsDemo />,
 };
 
-export const OnLightTheme: Story = {
-  name: "Светлая тема",
+export const VariantsOnLightTheme: Story = {
+  name: "Варианты (светлая тема)",
   decorators: [...lightThemeDecorator],
-  render: () => (
-    <Alert status="info">
-      <Alert.Message>
-        <Alert.Indicator />
-        <Alert.Content>
-          <Alert.Title>Light theme alert</Alert.Title>
-          <Alert.Description>
-            This example uses the same compound API on `data-b-theme=&quot;light&quot;`.
-          </Alert.Description>
-        </Alert.Content>
-      </Alert.Message>
-    </Alert>
-  ),
+  render: () => <AlertAllVariantsDemo />,
 };

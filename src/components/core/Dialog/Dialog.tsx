@@ -21,11 +21,10 @@ import {
 } from "../utils/motionTokens";
 import { prefersReducedInteractiveHoverLift } from "../utils/hoverInteractiveLift";
 
-/** Светлая тема UI: на `<html>` или на любой обёртке (портал читает страницу). */
+/** Светлая тема UI: только `document.documentElement` (портал в `body`). */
 function readBurneLightTheme(): boolean {
   if (typeof document === "undefined") return false;
-  if (document.documentElement.dataset.bTheme === "light") return true;
-  return document.querySelector("[data-b-theme=\"light\"]") != null;
+  return document.documentElement.dataset.bTheme === "light";
 }
 
 function IconClose({ className = "" }: { className?: string }) {
@@ -50,10 +49,14 @@ function IconClose({ className = "" }: { className?: string }) {
 export type DialogProps = {
   /** Управляемое открытие. */
   open: boolean;
+  /** Изменение открытия. */
   onOpenChange: (open: boolean) => void;
+  /** Контент модалки. */
   children?: ReactNode;
   /** Доп. класс на панель (контент модалки). */
   className?: string;
+  /** Закрытие по клику на подложку (вне панели). Для `AlertDialog` обычно `false`. */
+  dismissOnBackdrop?: boolean;
 };
 
 type DialogContextValue = {
@@ -86,7 +89,7 @@ function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
     <div
       className={[
-        "flex items-start gap-3 px-4 pt-4 pb-3",
+        "flex shrink-0 items-start gap-3 px-4 pt-4 pb-3",
         className,
       ].join(" ")}
       {...rest}
@@ -176,6 +179,7 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
   },
 );
 
+/** Область контента между шапкой и футером: вертикальный скролл здесь; хедер и футер остаются на месте (`shrink-0` + `min-h-0` у панели). */
 function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
@@ -192,7 +196,7 @@ function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
       className={[
-        "flex flex-wrap items-center justify-end gap-2 border-t border-b-border px-4 py-3",
+        "flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-b-border px-4 py-3",
         className,
       ].join(" ")}
       {...rest}
@@ -205,6 +209,7 @@ const DialogRoot = function Dialog({
   onOpenChange,
   children,
   className = "",
+  dismissOnBackdrop = true,
 }: DialogProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -328,9 +333,10 @@ const DialogRoot = function Dialog({
 
   const handleBackdropPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
+      if (!dismissOnBackdrop) return;
       if (e.target === e.currentTarget) onOpenChange(false);
     },
-    [onOpenChange],
+    [onOpenChange, dismissOnBackdrop],
   );
 
   if (typeof document === "undefined") return null;
@@ -366,7 +372,7 @@ const DialogRoot = function Dialog({
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={[
-            "relative z-10 flex max-h-[min(90dvh,36rem)] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-b-border bg-b-surface text-b-text shadow-lg outline-none",
+            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-b-border bg-b-surface text-b-text shadow-lg outline-none",
             className,
           ].join(" ")}
           style={

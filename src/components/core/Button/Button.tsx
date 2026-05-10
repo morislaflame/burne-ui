@@ -3,6 +3,7 @@ import type {
   ButtonHTMLAttributes,
   MouseEvent,
   PointerEvent,
+  ReactNode,
 } from "react";
 import {
   forwardRef,
@@ -32,7 +33,14 @@ export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
 export type ButtonSize = "s" | "m" | "l" | "xl";
 
 /** Визуальный вариант заливки и обводки. */
-export type ButtonVariant = "default" | "outline" | "ghost" | "destructive";
+export type ButtonVariant =
+  | "default"
+  | "outline"
+  | "ghost"
+  | "danger"
+  | "success"
+  | "info"
+  | "warning";
 
 type VariantVisual = {
   root: string;
@@ -69,12 +77,36 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
     hoverIdle:
       "hover:bg-[color-mix(in_oklab,var(--b-color-accent)_18%,transparent)]",
   },
-  destructive: {
-    root: "bg-b-destructive text-b-destructive-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-b-destructive",
+  danger: {
+    root: "bg-b-danger text-b-danger-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-b-danger",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-destructive-foreground) 38%, transparent)",
-    loaderText: "text-b-destructive-fg",
+      "color-mix(in oklab, var(--b-color-danger-foreground) 38%, transparent)",
+    loaderText: "text-b-danger-fg",
+    hoverIdle: "hover:opacity-90",
+  },
+  success: {
+    root: "bg-b-success text-b-success-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-b-success",
+    convergeBg:
+      "color-mix(in oklab, var(--b-color-success-foreground) 38%, transparent)",
+    loaderText: "text-b-success-fg",
+    hoverIdle: "hover:opacity-90",
+  },
+  info: {
+    root: "bg-b-info text-b-info-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-b-info",
+    convergeBg:
+      "color-mix(in oklab, var(--b-color-info-foreground) 38%, transparent)",
+    loaderText: "text-b-info-fg",
+    hoverIdle: "hover:opacity-90",
+  },
+  warning: {
+    root: "bg-b-warning text-b-warning-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-b-warning",
+    convergeBg:
+      "color-mix(in oklab, var(--b-color-warning-foreground) 38%, transparent)",
+    loaderText: "text-b-warning-fg",
     hoverIdle: "hover:opacity-90",
   },
 };
@@ -126,6 +158,8 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onAsyncClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<boolean>;
   /** Через сколько вернуться в idle после success/error (неконтролируемый режим). */
   asyncFeedbackMs?: number;
+  /** Иконка слева от подписи (только в состоянии idle). */
+  leftIcon?: ReactNode;
 };
 
 type ExpandRipple = {
@@ -210,6 +244,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       onMouseDown,
       onClick,
       disabled: disabledProp,
+      leftIcon,
       children,
       ...props
     },
@@ -467,8 +502,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 marginTop: -rp.size / 2,
                 background:
                   rp.tone === "success"
-                    ? "color-mix(in oklab, #22c55e 55%, transparent)" 
-                    : "color-mix(in oklab, #ef4444 55%, transparent)",
+                    ? "color-mix(in oklab, var(--b-color-success) 55%, transparent)"
+                    : "color-mix(in oklab, var(--b-color-danger) 55%, transparent)",
                 animation:
                   `b-button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
               }}
@@ -479,8 +514,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         <span className="relative z-[1] grid place-items-center">
           <span
-            className={`${crossFade} col-start-1 row-start-1 ${labelHidden}`}
+            className={`${crossFade} col-start-1 row-start-1 ${labelHidden} inline-flex min-w-0 items-center justify-center gap-1.5`}
           >
+            {leftIcon != null ? (
+              <span
+                className={`inline-flex shrink-0 items-center justify-center ${sz.icon} [&_svg]:size-full`}
+                aria-hidden
+              >
+                {leftIcon}
+              </span>
+            ) : null}
             {children}
           </span>
           <span
@@ -492,13 +535,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </span>
           <span
-            className={`${crossFade} col-start-1 row-start-1 text-[#22c55e] ${successVisible}`}
+            className={`${crossFade} col-start-1 row-start-1 text-b-success ${successVisible}`}
             aria-hidden={asyncState !== "success"}
           >
             <IconCheck className={sz.icon} />
           </span>
           <span
-            className={`${crossFade} col-start-1 row-start-1 text-[#ef4444] ${errorVisible}`}
+            className={`${crossFade} col-start-1 row-start-1 text-b-danger ${errorVisible}`}
             aria-hidden={asyncState !== "error"}
           >
             <IconCross className={sz.icon} />

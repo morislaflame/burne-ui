@@ -8,8 +8,59 @@
   --b-color-text-muted: #8b90a0;
   --b-color-accent: #ebebef;
   --b-color-accent-foreground: #0c0c0e;
-  --b-color-destructive: #dc2626;
-  --b-color-destructive-foreground: #fafafa;
+  --b-color-danger: #dc2626;
+  --b-color-danger-foreground: #fafafa;
+  --b-color-success: #22c55e;
+  --b-color-success-foreground: #fafafa;
+  --b-color-info: #0ea5e9;
+  --b-color-info-foreground: #fafafa;
+  --b-color-warning: #f59e0b;
+  --b-color-warning-foreground: #0c0c0e;
+
+  /**
+   * Семантика на surface: готовый color-mix для алертов, полей и т.п.
+   * Меняйте доли здесь — во всех компонентах останется согласовано.
+   */
+  --b-surface-tint-danger: color-mix(
+    in oklab,
+    var(--b-color-danger) 16%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-success: color-mix(
+    in oklab,
+    var(--b-color-success) 16%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-info: color-mix(
+    in oklab,
+    var(--b-color-info) 16%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-warning: color-mix(
+    in oklab,
+    var(--b-color-warning) 16%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-accent: color-mix(
+    in oklab,
+    var(--b-color-accent) 18%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-danger-strong: color-mix(
+    in oklab,
+    var(--b-color-danger) 22%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-success-strong: color-mix(
+    in oklab,
+    var(--b-color-success) 22%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-warning-strong: color-mix(
+    in oklab,
+    var(--b-color-warning) 22%,
+    var(--b-color-surface)
+  );
 
   /* Типографика */
   --b-font-sans: ui-sans-serif, system-ui, sans-serif;
@@ -53,10 +104,57 @@
   --b-color-text-muted: #71717a;
   --b-color-accent: #18181b;
   --b-color-accent-foreground: #fafafa;
-  --b-color-destructive: #dc2626;
-  --b-color-destructive-foreground: #ffffff;
+  --b-color-danger: #dc2626;
+  --b-color-danger-foreground: #ffffff;
+  --b-color-success: #22c55e;
+  --b-color-success-foreground: #ffffff;
+  --b-color-info: #0ea5e9;
+  --b-color-info-foreground: #ffffff;
+  --b-color-warning: #f59e0b;
+  --b-color-warning-foreground: #0c0c0e;
   --b-glass-tint: rgb(0 0 0 / 0.04);
   --b-glass-tint-veil: rgb(250 250 250 / 0.72);
   --b-glass-border: rgb(0 0 0 / 0.1);
   --b-glass-highlight: rgb(0 0 0 / 0.05);
+
+  --b-surface-tint-danger: color-mix(
+    in oklab,
+    var(--b-color-danger) 20%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-success: color-mix(
+    in oklab,
+    var(--b-color-success) 27%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-info: color-mix(
+    in oklab,
+    var(--b-color-info) 27%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-warning: color-mix(
+    in oklab,
+    var(--b-color-warning) 27%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-accent: color-mix(
+    in oklab,
+    var(--b-color-border) 80%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-danger-strong: color-mix(
+    in oklab,
+    var(--b-color-danger) 27%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-success-strong: color-mix(
+    in oklab,
+    var(--b-color-success) 27%,
+    var(--b-color-surface)
+  );
+  --b-surface-tint-warning-strong: color-mix(
+    in oklab,
+    var(--b-color-warning) 27%,
+    var(--b-color-surface)
+  );
 }

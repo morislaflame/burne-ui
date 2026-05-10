@@ -8,24 +8,20 @@ import {
 } from "react";
 
 import { useInteractiveHoverLiftOnContainer } from "../utils/hoverInteractiveLift";
+import {
+  ALERT_INLINE_SURFACE_CLASSES,
+  ALERT_TONE_ICONS,
+  alertToneIconTextClass,
+  alertToneShowsDefaultIcon,
+  resolveAlertStatus,
+  type AlertStatus,
+  type AlertVariant,
+} from "../utils/alertTone";
 
-export type AlertVariant =
-  | "default"
-  | "outline"
-  | "destructive"
-  | "success"
-  | "info";
-
-export type AlertStatus =
-  | AlertVariant
-  | "accent"
-  | "danger"
-  | "warning";
+export type { AlertStatus, AlertVariant };
 
 export type AlertProps = HTMLAttributes<HTMLDivElement> & {
-  /** Визуальный вариант алерта. */
   variant?: AlertVariant;
-  /** Алиас для variant: accent/danger/warning + базовые варианты. */
   status?: AlertStatus;
 };
 
@@ -40,27 +36,6 @@ type AlertActionProps = HTMLAttributes<HTMLDivElement>;
 
 const AlertStatusContext = createContext<AlertStatus>("default");
 
-function resolveStatus(status?: AlertStatus, variant?: AlertVariant): AlertStatus {
-  return status ?? variant ?? "default";
-}
-
-const ALERT_VARIANT: Record<AlertStatus, string> = {
-  default: "border-b-border bg-b-surface text-b-text shadow-sm",
-  outline: "border-b-border bg-transparent text-b-text",
-  destructive:
-    "border-transparent bg-[color-mix(in_oklab,var(--b-color-destructive)_16%,var(--b-color-surface))] text-b-text",
-  danger:
-    "border-transparent bg-[color-mix(in_oklab,var(--b-color-destructive)_16%,var(--b-color-surface))] text-b-text",
-  success:
-    "border-transparent bg-[color-mix(in_oklab,#22c55e_16%,var(--b-color-surface))] text-b-text",
-  info:
-    "border-transparent bg-[color-mix(in_oklab,#0ea5e9_16%,var(--b-color-surface))] text-b-text",
-  accent:
-    "border-transparent bg-[color-mix(in_oklab,var(--b-color-accent)_18%,var(--b-color-surface))] text-b-text",
-  warning:
-    "border-transparent bg-[color-mix(in_oklab,#f59e0b_16%,var(--b-color-surface))] text-b-text",
-};
-
 function AlertIndicator({
   status,
   className = "",
@@ -69,14 +44,19 @@ function AlertIndicator({
 }: AlertIndicatorProps) {
   const statusFromContext = useContext(AlertStatusContext);
   const tone = status ?? statusFromContext;
-  const toneClass =
-    tone === "danger" || tone === "destructive"
-      ? "text-b-destructive"
-      : tone === "success"
-        ? "text-[#22c55e]"
-        : tone === "warning"
-          ? "text-[#f59e0b]"
-          : "text-b-accent";
+  const Icon = ALERT_TONE_ICONS[tone];
+  const toneClass = alertToneIconTextClass(tone);
+
+  if (children === null) return null;
+
+  const inner =
+    children !== undefined
+      ? children
+      : alertToneShowsDefaultIcon(tone)
+        ? <Icon aria-hidden className="size-4" />
+        : null;
+
+  if (inner === null) return null;
 
   return (
     <span
@@ -87,20 +67,7 @@ function AlertIndicator({
       ].join(" ")}
       {...rest}
     >
-      {children ?? (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 16v-4M12 8h.01" />
-        </svg>
-      )}
+      {inner}
     </span>
   );
 }
@@ -109,7 +76,6 @@ function AlertContent({ className = "", ...rest }: AlertContentProps) {
   return <div className={["min-w-0 flex-1", className].join(" ")} {...rest} />;
 }
 
-/** Оборачивает `Indicator` + `Content` — разметочный блок (hover scale на всём корне алерта). */
 const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(
   function AlertMessage({ className = "", ...rest }, ref) {
     return (
@@ -138,7 +104,7 @@ function AlertDescription({ className = "", ...rest }: AlertDescriptionProps) {
   return (
     <div
       className={[
-        "mt-1 text-sm leading-normal text-b-muted",
+        "text-sm leading-normal text-b-muted",
         className,
       ].join(" ")}
       {...rest}
@@ -160,7 +126,7 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   },
   ref,
 ) {
-  const tone = resolveStatus(status, variant);
+  const tone = resolveAlertStatus(status, variant);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   const setRootRef = useCallback(
@@ -180,8 +146,8 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setRootRef}
         role="status"
         className={[
-          "flex w-fit max-w-[42rem] items-start gap-3 rounded-xl border py-3 px-4",
-          ALERT_VARIANT[tone],
+          "flex w-fit max-w-[42rem] items-start gap-3 rounded-xl py-3 px-4",
+          ALERT_INLINE_SURFACE_CLASSES[tone],
           className,
         ].join(" ")}
         {...rest}

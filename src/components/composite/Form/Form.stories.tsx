@@ -2,8 +2,8 @@ import type { ComponentType, FormEvent } from "react";
 import { useCallback } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Button } from "../Button/Button";
-import { Input } from "../Input/Input";
+import { Button } from "../../core/Button/Button";
+import { Input } from "../../core/Input/Input";
 import { Form } from "./Form";
 
 const darkThemeDecorator = [
@@ -20,7 +20,7 @@ const darkThemeDecorator = [
 ] as const;
 
 const meta = {
-  title: "Core Components/Form",
+  title: "Composite Components/Form",
   component: Form,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

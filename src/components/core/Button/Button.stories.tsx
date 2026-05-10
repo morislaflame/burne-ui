@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { IoAdd } from "react-icons/io5";
 
 import { Button, type ButtonAsyncState } from "./Button";
 
@@ -46,7 +47,15 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "outline", "ghost", "destructive"],
+      options: [
+        "default",
+        "outline",
+        "ghost",
+        "danger",
+        "success",
+        "info",
+        "warning",
+      ],
     },
     size: { control: "select", options: ["s", "m", "l", "xl"] },
     animated: { control: "boolean" },
@@ -72,13 +81,16 @@ export const Sizes: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты (default — destructive)",
+  name: "Варианты",
   render: () => (
-    <div className="flex items-start gap-3">
+    <div className="flex flex-wrap items-start gap-3">
       <Button variant="default">Default</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
-      <Button variant="destructive">Удалить</Button>
+      <Button variant="danger">Удалить</Button>
+      <Button variant="success">Готово</Button>
+      <Button variant="info">Сведения</Button>
+      <Button variant="warning">Внимание</Button>
     </div>
   ),
 };
@@ -91,7 +103,27 @@ export const VariantsOnLightTheme: Story = {
       <Button variant="default">Default</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
-      <Button variant="destructive">Удалить</Button>
+      <Button variant="danger">Удалить</Button>
+      <Button variant="success">Готово</Button>
+      <Button variant="info">Сведения</Button>
+      <Button variant="warning">Внимание</Button>
+    </div>
+  ),
+};
+
+export const WithLeftIcon: Story = {
+  name: "С иконкой слева",
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button size="s" leftIcon={<IoAdd aria-hidden />}>
+        Добавить
+      </Button>
+      <Button size="m" variant="outline" leftIcon={<IoAdd aria-hidden />}>
+        Создать
+      </Button>
+      <Button size="l" variant="ghost" leftIcon={<IoAdd aria-hidden />}>
+        Ещё
+      </Button>
     </div>
   ),
 };
