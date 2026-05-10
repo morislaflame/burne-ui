@@ -13,20 +13,20 @@ import {
   type ReactNode,
 } from "react";
 
-import { cn } from "../../../utils/cn";
-import {
-  ConvergeRippleLayer,
-  type ConvergeRipple,
-} from "../utils/pressRipple";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-} from "../utils/hoverInteractiveLift";
+} from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_RIPPLE_EXPANDABLE_DURATION_MS,
   MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM,
-} from "../utils/motionTokens";
-import { useConvergeRipples } from "../utils/useConvergeRipples";
+} from "@/components/core/utils/motionTokens";
+import {
+  ConvergeRippleLayer,
+  type ConvergeRipple,
+} from "@/components/core/utils/pressRipple";
+import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { cn } from "@/utils/cn";
 
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;

@@ -9,13 +9,13 @@ import {
 import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
-import { cn } from "../../../utils/cn";
+import { useInteractiveHoverLiftOnContainer } from "@/components/core/utils/hoverInteractiveLift";
 import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
   type SemanticStatus,
-} from "../utils/semanticStatusIcons";
-import { useInteractiveHoverLiftOnContainer } from "../utils/hoverInteractiveLift";
+} from "@/components/core/utils/semanticStatusIcons";
+import { cn } from "@/utils/cn";
 
 /** Визуальный вариант заливки (без отдельного статуса). */
 export type AlertVariant =

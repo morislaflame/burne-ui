@@ -18,16 +18,16 @@ import {
 } from "react";
 import { IoClose, IoSearch } from "react-icons/io5";
 
-import { cn } from "../../../utils/cn";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-} from "../utils/hoverInteractiveLift";
+} from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
-} from "../utils/motionTokens";
+} from "@/components/core/utils/motionTokens";
+import { cn } from "@/utils/cn";
 
 export type SearchInputSize = "s" | "m" | "l";
 

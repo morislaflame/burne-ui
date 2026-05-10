@@ -2,8 +2,8 @@ import type { ComponentType, FormEvent } from "react";
 import { useCallback } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Button } from "../../core/Button/Button";
-import { Input } from "../../core/Input/Input";
+import { Button } from "@/components/core/Button/Button";
+import { Input } from "@/components/core/Input/Input";
 import { Form } from "./Form";
 
 const darkThemeDecorator = [

@@ -1,7 +1,7 @@
 import type { FormHTMLAttributes } from "react";
 import { forwardRef } from "react";
 
-import { cn } from "../../../utils/cn";
+import { cn } from "@/utils/cn";
 
 export type FormProps = FormHTMLAttributes<HTMLFormElement>;
 

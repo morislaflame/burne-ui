@@ -17,15 +17,15 @@ import {
   useState,
 } from "react";
 
-import { cn } from "../../../utils/cn";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-} from "../utils/hoverInteractiveLift";
+} from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
-} from "../utils/motionTokens";
+} from "@/components/core/utils/motionTokens";
+import { cn } from "@/utils/cn";
 import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
 
 export type InputVariant = "default" | "outline";

@@ -2,10 +2,10 @@ import type { ComponentType, FormEvent } from "react";
 import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Button } from "../Button";
+import { Form } from "@/components/composite/Form";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/Input/Input";
 import { Dialog } from "./Dialog";
-import { Form } from "../../composite/Form";
-import { Input } from "../Input/Input";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (

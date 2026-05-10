@@ -1,6 +1,6 @@
 import { useRef, type CSSProperties, type HTMLAttributes } from "react";
 
-import { cn } from "../../../utils/cn";
+import { cn } from "@/utils/cn";
 import { GlassBackdrop } from "./GlassBackdrop";
 
 export type GlassSurfaceProps = HTMLAttributes<HTMLDivElement> & {

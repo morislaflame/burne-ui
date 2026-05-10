@@ -13,19 +13,19 @@ import {
   useState,
 } from "react";
 import {
-  ConvergeRippleLayer,
-} from "../utils/pressRipple";
-import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-} from "../utils/hoverInteractiveLift";
+} from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_FEEDBACK_EXPAND_MS,
   MOTION_RIPPLE_EASE_CSS,
-} from "../utils/motionTokens";
-import { useConvergeRipples } from "../utils/useConvergeRipples";
-import { cn } from "../../../utils/cn";
+} from "@/components/core/utils/motionTokens";
+import {
+  ConvergeRippleLayer,
+} from "@/components/core/utils/pressRipple";
+import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { cn } from "@/utils/cn";
 
 /** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";

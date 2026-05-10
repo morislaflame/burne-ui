@@ -5,8 +5,8 @@ import {
   type HTMLAttributes,
 } from "react";
 
-import { cn } from "../../../utils/cn";
-import { useInteractiveHoverLiftOnContainer } from "../utils/hoverInteractiveLift";
+import { useInteractiveHoverLiftOnContainer } from "@/components/core/utils/hoverInteractiveLift";
+import { cn } from "@/utils/cn";
 
 export type CardVariant = "default" | "outline";
 

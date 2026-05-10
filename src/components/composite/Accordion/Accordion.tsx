@@ -1,7 +1,7 @@
 import { useState, type HTMLAttributes, type ReactNode } from "react";
 
-import { cn } from "../../../utils/cn";
-import { Expandable } from "../../core/Expandable";
+import { Expandable } from "@/components/core/Expandable";
+import { cn } from "@/utils/cn";
 
 export type AccordionItem = {
   id: string;

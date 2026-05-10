@@ -2,10 +2,10 @@ import type { ComponentType, FormEvent } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useCallback } from "react";
 
-import { Button } from "../Button/Button";
-import { Input } from "../Input/Input";
+import { Form } from "@/components/composite/Form/Form";
+import { Button } from "@/components/core/Button/Button";
+import { Input } from "@/components/core/Input/Input";
 import { Card } from "./Card";
-import { Form } from "../../composite/Form/Form";
 
 const PIN_IMAGE =
   "https://i.pinimg.com/736x/89/e2/85/89e285ca1fc973db199bf395f7c89669.jpg";

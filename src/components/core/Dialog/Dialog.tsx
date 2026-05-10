@@ -15,12 +15,12 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { cn } from "../../../utils/cn";
+import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
-} from "../utils/motionTokens";
-import { prefersReducedInteractiveHoverLift } from "../utils/hoverInteractiveLift";
+} from "@/components/core/utils/motionTokens";
+import { cn } from "@/utils/cn";
 
 /** Светлая тема UI: только `document.documentElement` (портал в `body`). */
 function readBurneLightTheme(): boolean {

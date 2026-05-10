@@ -2,8 +2,8 @@ import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { resolveAlertStatus } from "../../core/Alert";
-import { Button } from "../../core/Button";
+import { resolveAlertStatus } from "@/components/core/Alert";
+import { Button } from "@/components/core/Button";
 import {
   AlertDialog,
   primaryButtonVariantForAlertTone,

@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Alert } from "./Alert";
-import { Button } from "../Button";
+import { Button } from "@/components/core/Button";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (

@@ -16,23 +16,23 @@ import { createPortal } from "react-dom";
 import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
-import type { ButtonVariant } from "../../core/Button";
 import {
   resolveAlertStatus,
   type AlertStatus,
   type AlertVariant,
-} from "../../core/Alert/Alert";
-import { prefersReducedInteractiveHoverLift } from "../../core/utils/hoverInteractiveLift";
+} from "@/components/core/Alert/Alert";
+import type { ButtonVariant } from "@/components/core/Button";
+import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
-} from "../../core/utils/motionTokens";
+} from "@/components/core/utils/motionTokens";
 import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
   type SemanticStatus,
-} from "../../core/utils/semanticStatusIcons";
-import { cn } from "../../../utils/cn";
+} from "@/components/core/utils/semanticStatusIcons";
+import { cn } from "@/utils/cn";
 
 /** Ширина и типографика панели. */
 export type AlertDialogSize = "s" | "m" | "l" | "xl";
