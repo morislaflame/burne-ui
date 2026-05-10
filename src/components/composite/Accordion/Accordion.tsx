@@ -1,4 +1,6 @@
 import { useState, type HTMLAttributes, type ReactNode } from "react";
+
+import { cn } from "../../../utils/cn";
 import { Expandable } from "../../core/Expandable";
 
 export type AccordionItem = {
@@ -37,7 +39,7 @@ export function Accordion({
   const openId = controlled ? openIdProp : internalOpenId;
 
   return (
-    <div className={["flex w-full flex-col", className].join(" ")} {...rest}>
+    <div className={cn("flex w-full flex-col", className)} {...rest}>
       {items.map((item, index) => {
         const isOpen = openId === item.id;
         return (
@@ -51,11 +53,11 @@ export function Accordion({
               if (!controlled) setInternalOpenId(nextId);
               onOpenIdChange?.(nextId);
             }}
-            className={[
+            className={cn(
               "!rounded-none",
-              index === 0 ? "!rounded-t-md" : "-mt-px",
-              index === items.length - 1 ? "!rounded-b-md" : "",
-            ].join(" ")}
+              index === 0 ? "!rounded-t-xl" : "-mt-px",
+              index === items.length - 1 ? "!rounded-b-xl" : "",
+            )}
           >
             <Expandable.Trigger>
               {item.icon ? <Expandable.Icon>{item.icon}</Expandable.Icon> : null}

@@ -12,7 +12,7 @@ p {
   line-height: 1.2;
 }
 
-@keyframes b-button-ripple-expand {
+@keyframes brn-button-ripple-expand {
   from {
     transform: scale(0);
     opacity: 0.5;
@@ -24,31 +24,31 @@ p {
 }
 
 @theme inline {
-  --font-sans: var(--b-font-sans);
-  --font-mono: var(--b-font-mono);
-  --color-b-bg: var(--b-color-bg);
-  --color-b-surface: var(--b-color-surface);
-  --color-b-border: var(--b-color-border);
-  --color-b-text: var(--b-color-text);
-  --color-b-muted: var(--b-color-text-muted);
-  --color-b-accent: var(--b-color-accent);
-  --color-b-accent-fg: var(--b-color-accent-foreground);
-  --color-b-danger: var(--b-color-danger);
-  --color-b-danger-fg: var(--b-color-danger-foreground);
-  --color-b-success: var(--b-color-success);
-  --color-b-success-fg: var(--b-color-success-foreground);
-  --color-b-info: var(--b-color-info);
-  --color-b-info-fg: var(--b-color-info-foreground);
-  --color-b-warning: var(--b-color-warning);
-  --color-b-warning-fg: var(--b-color-warning-foreground);
-  --color-b-surface-tint-danger: var(--b-surface-tint-danger);
-  --color-b-surface-tint-success: var(--b-surface-tint-success);
-  --color-b-surface-tint-info: var(--b-surface-tint-info);
-  --color-b-surface-tint-warning: var(--b-surface-tint-warning);
-  --color-b-surface-tint-accent: var(--b-surface-tint-accent);
-  --color-b-surface-tint-danger-strong: var(--b-surface-tint-danger-strong);
-  --color-b-surface-tint-success-strong: var(--b-surface-tint-success-strong);
-  --color-b-surface-tint-warning-strong: var(--b-surface-tint-warning-strong);
-  --radius-b-sm: var(--b-radius-sm);
-  --radius-b-md: var(--b-radius-md);
+  --font-sans: var(--brn-font-sans);
+  --font-mono: var(--brn-font-mono);
+  --color-brn-bg: var(--brn-color-bg);
+  --color-brn-surface: var(--brn-color-surface);
+  --color-brn-border: var(--brn-color-border);
+  --color-brn-text: var(--brn-color-text);
+  --color-brn-muted: var(--brn-color-text-muted);
+  --color-brn-accent: var(--brn-color-accent);
+  --color-brn-accent-fg: var(--brn-color-accent-foreground);
+  --color-brn-danger: var(--brn-color-danger);
+  --color-brn-danger-fg: var(--brn-color-danger-foreground);
+  --color-brn-success: var(--brn-color-success);
+  --color-brn-success-fg: var(--brn-color-success-foreground);
+  --color-brn-info: var(--brn-color-info);
+  --color-brn-info-fg: var(--brn-color-info-foreground);
+  --color-brn-warning: var(--brn-color-warning);
+  --color-brn-warning-fg: var(--brn-color-warning-foreground);
+  --color-brn-surface-tint-danger: var(--brn-surface-tint-danger);
+  --color-brn-surface-tint-success: var(--brn-surface-tint-success);
+  --color-brn-surface-tint-info: var(--brn-surface-tint-info);
+  --color-brn-surface-tint-warning: var(--brn-surface-tint-warning);
+  --color-brn-surface-tint-accent: var(--brn-surface-tint-accent);
+  --color-brn-surface-tint-danger-strong: var(--brn-surface-tint-danger-strong);
+  --color-brn-surface-tint-success-strong: var(--brn-surface-tint-success-strong);
+  --color-brn-surface-tint-warning-strong: var(--brn-surface-tint-warning-strong);
+  --radius-brn-sm: var(--brn-radius-sm);
+  --radius-brn-md: var(--brn-radius-md);
 }

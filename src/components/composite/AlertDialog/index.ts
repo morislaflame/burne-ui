@@ -1,5 +1,6 @@
 export {
   AlertDialog,
+  primaryButtonVariantForAlertTone,
   type AlertDialogProps,
   type AlertDialogSize,
   type AlertDialogBodyProps,

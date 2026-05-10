@@ -9,8 +9,8 @@ const PIN_IMAGE =
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      className="box-border w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <div className="mx-auto w-full max-w-lg">
         <Story />
@@ -22,9 +22,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-b-theme="light"
-      className="box-border w-full p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      data-brn-theme="light"
+      className="box-border w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <div className="mx-auto w-full max-w-lg">
         <Story />
@@ -72,7 +72,7 @@ export const Default: Story = {
         </Expandable.Content>
       </Expandable.Trigger>
       <Expandable.Panel>
-        <p className="text-sm leading-relaxed text-b-muted">
+        <p className="text-sm leading-relaxed">
           Любой контент: текст, списки, вложенные блоки. Высота панели подстраивается под
           содержимое.
         </p>
@@ -92,7 +92,7 @@ export const WithIcon: Story = {
         </Expandable.Content>
       </Expandable.Trigger>
       <Expandable.Panel>
-        <p className="text-sm text-b-muted">
+        <p className="text-sm">
           Иконка выровнена по верху вместе с заголовком.
         </p>
       </Expandable.Panel>
@@ -135,7 +135,7 @@ export const PressRipple: Story = {
         </Expandable.Content>
       </Expandable.Trigger>
       <Expandable.Panel>
-        <p className="text-sm text-b-muted">
+        <p className="text-sm">
           Отдельный режим для компонентов с акцентом на click-feedback.
         </p>
       </Expandable.Panel>
@@ -155,7 +155,7 @@ export const AllVariationsLight: Story = {
           </Expandable.Content>
         </Expandable.Trigger>
         <Expandable.Panel>
-          <p className="text-sm text-b-muted">Контент без описания в триггере.</p>
+          <p className="text-sm">Контент без описания в триггере.</p>
         </Expandable.Panel>
       </Expandable>
 
@@ -169,7 +169,7 @@ export const AllVariationsLight: Story = {
           </Expandable.Content>
         </Expandable.Trigger>
         <Expandable.Panel>
-          <p className="text-sm text-b-muted">Текст внутри панели.</p>
+          <p className="text-sm">Текст внутри панели.</p>
         </Expandable.Panel>
       </Expandable>
 
@@ -182,7 +182,7 @@ export const AllVariationsLight: Story = {
           </Expandable.Content>
         </Expandable.Trigger>
         <Expandable.Panel>
-          <p className="text-sm text-b-muted">Контент.</p>
+          <p className="text-sm">Контент.</p>
         </Expandable.Panel>
       </Expandable>
 

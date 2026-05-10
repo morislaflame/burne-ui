@@ -15,6 +15,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+import { cn } from "../../../utils/cn";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
@@ -24,7 +25,7 @@ import { prefersReducedInteractiveHoverLift } from "../utils/hoverInteractiveLif
 /** Светлая тема UI: только `document.documentElement` (портал в `body`). */
 function readBurneLightTheme(): boolean {
   if (typeof document === "undefined") return false;
-  return document.documentElement.dataset.bTheme === "light";
+  return document.documentElement.dataset.brnTheme === "light";
 }
 
 function IconClose({ className = "" }: { className?: string }) {
@@ -88,10 +89,7 @@ type DialogCloseProps = Omit<
 function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
     <div
-      className={[
-        "flex shrink-0 items-start gap-3 px-4 pt-4 pb-3",
-        className,
-      ].join(" ")}
+      className={cn("flex shrink-0 items-start gap-3 px-4 pt-4 pb-3", className)}
       {...rest}
     />
   );
@@ -104,10 +102,10 @@ const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
       <h2
         ref={ref}
         id={id ?? titleId}
-        className={[
-          "min-w-0 text-b-text font-medium text-sm leading-snug",
+        className={cn(
+          "min-w-0 text-brn-text font-medium text-md leading-snug",
           className,
-        ].join(" ")}
+        )}
         {...rest}
       />
     );
@@ -128,23 +126,20 @@ function DialogDescription({
   return (
     <p
       id={id ?? descriptionId}
-      className={[
-        "text-sm leading-normal text-b-muted",
-        className,
-      ].join(" ")}
+      className={cn("text-sm leading-normal text-brn-muted", className)}
       {...rest}
     />
   );
 }
 
-/** Заголовок и подзаголовок: колонка с `gap`, как отступ между Title и Description в Expandable. */
+/** Заголовок и подзаголовок: колонка с токенным зазором (см. `.brn-title-subtitle-stack*` в токенах). */
 function DialogHeadingBlock({
   className = "",
   ...rest
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={["flex min-w-0 flex-1 flex-col gap-2", className].join(" ")}
+      className={cn("brn-title-subtitle-stack-lg min-w-0 flex-1", className)}
       {...rest}
     />
   );
@@ -161,12 +156,12 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
         ref={ref}
         type="button"
         aria-label={ariaLabel}
-        className={[
-          "-m-1 shrink-0 rounded-md p-1.5 text-b-muted outline-none",
-          "transition-colors duration-200 ease-out hover:bg-b-surface hover:text-b-text",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-b-accent focus-visible:outline-offset-2",
+        className={cn(
+          "-m-1 shrink-0 rounded-md p-1.5 text-brn-muted outline-none",
+          "transition-colors duration-200 ease-out hover:bg-brn-surface hover:text-brn-text",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-brn-accent focus-visible:outline-offset-2",
           className,
-        ].join(" ")}
+        )}
         onClick={(e) => {
           onClick?.(e);
           if (!e.defaultPrevented) onOpenChange(false);
@@ -183,10 +178,7 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
-      className={[
-        "min-h-0 flex-1 overflow-y-auto px-4 py-3",
-        className,
-      ].join(" ")}
+      className={cn("min-h-0 flex-1 overflow-y-auto brn-inset-md", className)}
       {...rest}
     />
   );
@@ -195,10 +187,10 @@ function DialogBody({ className = "", ...rest }: DialogBodyProps) {
 function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
-      className={[
-        "flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-b-border px-4 py-3",
+      className={cn(
+        "flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-brn-border brn-inset-md",
         className,
-      ].join(" ")}
+      )}
       {...rest}
     />
   );
@@ -349,16 +341,16 @@ const DialogRoot = function Dialog({
       <div
         className="fixed inset-0 z-[100] flex items-center justify-center p-4"
         role="presentation"
-        {...(lightUi ? { "data-b-theme": "light" as const } : {})}
+        {...(lightUi ? { "data-brn-theme": "light" as const } : {})}
       >
         <div
           ref={overlayRef}
-          className={[
+          className={cn(
             "absolute inset-0",
             lightUi
-              ? "bg-[color-mix(in_oklab,var(--b-color-text)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
+              ? "bg-[color-mix(in_oklab,var(--brn-color-text)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
               : "bg-[color-mix(in_oklab,black_58%,transparent)]",
-          ].join(" ")}
+          )}
           style={{ opacity: prefersReducedInteractiveHoverLift() ? 1 : 0 }}
           aria-hidden
           onMouseDown={handleBackdropPointerDown}
@@ -371,10 +363,10 @@ const DialogRoot = function Dialog({
           aria-labelledby={titleId}
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
-          className={[
-            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-b-border bg-b-surface text-b-text shadow-lg outline-none",
+          className={cn(
+            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-brn-border bg-brn-surface text-brn-text shadow-lg outline-none",
             className,
-          ].join(" ")}
+          )}
           style={
             prefersReducedInteractiveHoverLift()
               ? undefined

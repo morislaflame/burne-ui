@@ -3,6 +3,8 @@ import {
   useRef,
   type RefObject,
 } from "react";
+
+import { cn } from "../../../utils/cn";
 import {
   createGlassLensRuntime,
   type GlassLensRuntime,
@@ -81,10 +83,10 @@ export function GlassShaderLayer({
   return (
     <canvas
       ref={canvasRef}
-      className={[
+      className={cn(
         "pointer-events-none absolute inset-0 z-[1] h-full w-full mix-blend-soft-light",
         className,
-      ].join(" ")}
+      )}
       aria-hidden
     />
   );

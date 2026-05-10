@@ -9,8 +9,8 @@ import { Button, type ButtonAsyncState } from "./Button";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <Story />
     </div>
@@ -20,9 +20,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-b-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      data-brn-theme="light"
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <Story />
     </div>
@@ -137,7 +137,7 @@ export const WithoutAnimation: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема (data-b-theme)",
+  name: "Светлая тема (data-brn-theme)",
   decorators: [...lightThemeDecorator],
 };
 
@@ -181,7 +181,7 @@ function ControlledAsyncDemo() {
       </Button>
       <button
         type="button"
-        className="text-b-muted text-sm underline"
+        className="text-brn-muted text-sm underline"
         onClick={() => setState("idle")}
       >
         Сбросить в idle

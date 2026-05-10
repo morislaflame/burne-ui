@@ -25,6 +25,7 @@ import {
   MOTION_RIPPLE_EASE_CSS,
 } from "../utils/motionTokens";
 import { useConvergeRipples } from "../utils/useConvergeRipples";
+import { cn } from "../../../utils/cn";
 
 /** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
@@ -52,61 +53,61 @@ type VariantVisual = {
 
 const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   default: {
-    root: "bg-b-accent text-b-accent-fg border border-b-border shadow-sm",
-    focusOutline: "focus-visible:outline-b-accent",
+    root: "bg-brn-accent text-brn-accent-fg border border-brn-border shadow-sm",
+    focusOutline: "focus-visible:outline-brn-accent",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-accent-foreground) 38%, transparent)",
-    loaderText: "text-b-accent-fg",
+      "color-mix(in oklab, var(--brn-color-accent-foreground) 38%, transparent)",
+    loaderText: "text-brn-accent-fg",
     hoverIdle: "hover:opacity-90",
   },
   outline: {
-    root: "bg-transparent text-b-accent border border-b-border shadow-none",
-    focusOutline: "focus-visible:outline-b-accent",
+    root: "bg-transparent text-brn-accent border border-brn-border shadow-none",
+    focusOutline: "focus-visible:outline-brn-accent",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-accent) 42%, transparent)",
-    loaderText: "text-b-accent",
+      "color-mix(in oklab, var(--brn-color-accent) 42%, transparent)",
+    loaderText: "text-brn-accent",
     hoverIdle:
-      "hover:bg-[color-mix(in_oklab,var(--b-color-accent)_12%,transparent)]",
+      "hover:bg-[color-mix(in_oklab,var(--brn-color-accent)_12%,transparent)]",
   },
   ghost: {
-    root: "bg-transparent text-b-accent border border-transparent shadow-none",
-    focusOutline: "focus-visible:outline-b-accent",
+    root: "bg-transparent text-brn-accent border border-transparent shadow-none",
+    focusOutline: "focus-visible:outline-brn-accent",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-accent) 42%, transparent)",
-    loaderText: "text-b-accent",
+      "color-mix(in oklab, var(--brn-color-accent) 42%, transparent)",
+    loaderText: "text-brn-accent",
     hoverIdle:
-      "hover:bg-[color-mix(in_oklab,var(--b-color-accent)_18%,transparent)]",
+      "hover:bg-[color-mix(in_oklab,var(--brn-color-accent)_18%,transparent)]",
   },
   danger: {
-    root: "bg-b-danger text-b-danger-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-b-danger",
+    root: "bg-brn-danger text-brn-danger-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-brn-danger",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-danger-foreground) 38%, transparent)",
-    loaderText: "text-b-danger-fg",
+      "color-mix(in oklab, var(--brn-color-danger-foreground) 38%, transparent)",
+    loaderText: "text-brn-danger-fg",
     hoverIdle: "hover:opacity-90",
   },
   success: {
-    root: "bg-b-success text-b-success-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-b-success",
+    root: "bg-brn-success text-brn-success-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-brn-success",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-success-foreground) 38%, transparent)",
-    loaderText: "text-b-success-fg",
+      "color-mix(in oklab, var(--brn-color-success-foreground) 38%, transparent)",
+    loaderText: "text-brn-success-fg",
     hoverIdle: "hover:opacity-90",
   },
   info: {
-    root: "bg-b-info text-b-info-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-b-info",
+    root: "bg-brn-info text-brn-info-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-brn-info",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-info-foreground) 38%, transparent)",
-    loaderText: "text-b-info-fg",
+      "color-mix(in oklab, var(--brn-color-info-foreground) 38%, transparent)",
+    loaderText: "text-brn-info-fg",
     hoverIdle: "hover:opacity-90",
   },
   warning: {
-    root: "bg-b-warning text-b-warning-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-b-warning",
+    root: "bg-brn-warning text-brn-warning-fg border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-brn-warning",
     convergeBg:
-      "color-mix(in oklab, var(--b-color-warning-foreground) 38%, transparent)",
-    loaderText: "text-b-warning-fg",
+      "color-mix(in oklab, var(--brn-color-warning-foreground) 38%, transparent)",
+    loaderText: "text-brn-warning-fg",
     hoverIdle: "hover:opacity-90",
   },
 };
@@ -450,10 +451,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const idleSurfaceMotion = blocked
       ? ""
-      : [
+      : cn(
           "transition-[opacity,background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
           vn.hoverIdle,
-        ].join(" ");
+        );
 
     return (
       <button
@@ -462,7 +463,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         disabled={blocked}
         aria-busy={asyncState === "loading"}
-        className={[
+        className={cn(
           baseInteractive,
           vn.focusOutline,
           sz.root,
@@ -471,7 +472,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           idleSurfaceMotion,
           className,
           'cursor-pointer',
-        ].join(" ")}
+        )}
         onPointerDown={(e) => {
           if (!blocked) pushConvergeRipple(e);
           onAnimeDown();
@@ -502,10 +503,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 marginTop: -rp.size / 2,
                 background:
                   rp.tone === "success"
-                    ? "color-mix(in oklab, var(--b-color-success) 55%, transparent)"
-                    : "color-mix(in oklab, var(--b-color-danger) 55%, transparent)",
+                    ? "color-mix(in oklab, var(--brn-color-success) 55%, transparent)"
+                    : "color-mix(in oklab, var(--brn-color-danger) 55%, transparent)",
                 animation:
-                  `b-button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
+                  `brn-button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
               }}
               onAnimationEnd={() => dismissExpand(rp.id)}
             />
@@ -535,13 +536,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </span>
           <span
-            className={`${crossFade} col-start-1 row-start-1 text-b-success ${successVisible}`}
+            className={`${crossFade} col-start-1 row-start-1 text-brn-success ${successVisible}`}
             aria-hidden={asyncState !== "success"}
           >
             <IconCheck className={sz.icon} />
           </span>
           <span
-            className={`${crossFade} col-start-1 row-start-1 text-b-danger ${errorVisible}`}
+            className={`${crossFade} col-start-1 row-start-1 text-brn-danger ${errorVisible}`}
             aria-hidden={asyncState !== "error"}
           >
             <IconCross className={sz.icon} />

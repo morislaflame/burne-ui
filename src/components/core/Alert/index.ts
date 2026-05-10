@@ -1,5 +1,6 @@
 export {
   Alert,
+  resolveAlertStatus,
   type AlertProps,
   type AlertVariant,
   type AlertStatus,

@@ -13,21 +13,26 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import type { IconType } from "react-icons";
+import { IoHelpCircleOutline } from "react-icons/io5";
 
+import type { ButtonVariant } from "../../core/Button";
 import {
-  ALERT_TONE_ICONS,
-  alertDialogPanelToneClass,
-  alertToneIconTextClass,
-  alertToneShowsDefaultIcon,
   resolveAlertStatus,
   type AlertStatus,
   type AlertVariant,
-} from "../../core/utils/alertTone";
+} from "../../core/Alert/Alert";
+import { prefersReducedInteractiveHoverLift } from "../../core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
 } from "../../core/utils/motionTokens";
-import { prefersReducedInteractiveHoverLift } from "../../core/utils/hoverInteractiveLift";
+import {
+  SEMANTIC_STATUS_ICON_TEXT_CLASS,
+  SEMANTIC_STATUS_ICONS,
+  type SemanticStatus,
+} from "../../core/utils/semanticStatusIcons";
+import { cn } from "../../../utils/cn";
 
 /** Ширина и типографика панели. */
 export type AlertDialogSize = "s" | "m" | "l" | "xl";
@@ -53,12 +58,12 @@ const ALERT_DIALOG_SIZE: Record<
     maxHeight: "max-h-[min(85dvh,26rem)]",
     headerGap: "gap-2",
     headerPad: "px-3 pt-3 pb-2",
-    bodyPad: "px-3 py-2",
-    bodyText: "text-xs text-b-text leading-normal",
-    footerPad: "px-3 py-2 gap-1.5",
-    headingBlockGap: "gap-1",
-    title: "text-xs font-medium leading-snug text-b-text",
-    desc: "text-xs leading-normal text-b-muted",
+    bodyPad: "brn-inset-s",
+    bodyText: "text-xs text-brn-text leading-normal",
+    footerPad: "brn-inset-s gap-1.5",
+    headingBlockGap: "brn-title-subtitle-stack",
+    title: "text-xs font-medium leading-snug text-brn-text",
+    desc: "text-xs leading-normal text-brn-muted",
     iconClass: "size-4",
   },
   m: {
@@ -66,12 +71,12 @@ const ALERT_DIALOG_SIZE: Record<
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-3",
     headerPad: "px-4 pt-4 pb-3",
-    bodyPad: "px-4 py-3",
-    bodyText: "text-sm text-b-text leading-normal",
-    footerPad: "px-4 py-3 gap-2",
-    headingBlockGap: "gap-2",
-    title: "text-md font-medium leading-snug text-b-text",
-    desc: "text-sm leading-normal text-b-muted",
+    bodyPad: "brn-inset-md",
+    bodyText: "text-sm text-brn-text leading-normal",
+    footerPad: "brn-inset-md gap-2",
+    headingBlockGap: "brn-title-subtitle-stack-lg",
+    title: "text-md font-medium leading-snug text-brn-text",
+    desc: "text-sm leading-normal text-brn-muted",
     iconClass: "size-6",
   },
   l: {
@@ -79,12 +84,12 @@ const ALERT_DIALOG_SIZE: Record<
     maxHeight: "max-h-[min(90dvh,44rem)]",
     headerGap: "gap-3.5",
     headerPad: "px-5 pt-5 pb-4",
-    bodyPad: "px-5 py-4",
-    bodyText: "text-base text-b-text leading-normal",
-    footerPad: "px-5 py-4 gap-2",
-    headingBlockGap: "gap-2",
-    title: "text-base font-medium leading-snug text-b-text",
-    desc: "text-base leading-normal text-b-muted",
+    bodyPad: "brn-inset-lg",
+    bodyText: "text-base text-brn-text leading-normal",
+    footerPad: "brn-inset-lg gap-2",
+    headingBlockGap: "brn-title-subtitle-stack-lg",
+    title: "text-base font-medium leading-snug text-brn-text",
+    desc: "text-base leading-normal text-brn-muted",
     iconClass: "size-6",
   },
   xl: {
@@ -92,19 +97,76 @@ const ALERT_DIALOG_SIZE: Record<
     maxHeight: "max-h-[min(92dvh,52rem)]",
     headerGap: "gap-4",
     headerPad: "px-6 pt-6 pb-5",
-    bodyPad: "px-6 py-5",
-    bodyText: "text-lg text-b-text leading-normal",
-    footerPad: "px-6 py-5 gap-2.5",
-    headingBlockGap: "gap-2.5",
-    title: "text-lg font-medium leading-snug text-b-text",
-    desc: "text-lg leading-normal text-b-muted",
+    bodyPad: "brn-inset-xl",
+    bodyText: "text-lg text-brn-text leading-normal",
+    footerPad: "brn-inset-xl gap-2.5",
+    headingBlockGap: "brn-title-subtitle-stack-xl",
+    title: "text-lg font-medium leading-snug text-brn-text",
+    desc: "text-lg leading-normal text-brn-muted",
     iconClass: "size-7",
   },
 };
 
+/** Панель: один нейтральный фон для заполненных тонов; outline — размытие. */
+const ALERT_DIALOG_INLINE_OUTLINE =
+  "border border-brn-border shadow-none bg-brn-surface/65 text-brn-text backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-brn-surface motion-reduce:backdrop-blur-none";
+
+const ALERT_DIALOG_SHELL_FILLED =
+  "bg-brn-surface text-brn-text border border-brn-border shadow-sm";
+
+function alertDialogPanelClass(tone: AlertStatus): string {
+  if (tone === "outline") {
+    return ALERT_DIALOG_INLINE_OUTLINE;
+  }
+  return ALERT_DIALOG_SHELL_FILLED.replace("shadow-sm", "shadow-lg");
+}
+
+function alertDialogShowsDefaultHeaderIcon(tone: AlertStatus): boolean {
+  return tone !== "default";
+}
+
+function alertDialogHeaderIconWrapperClass(tone: AlertStatus): string {
+  switch (tone) {
+    case "danger":
+      return SEMANTIC_STATUS_ICON_TEXT_CLASS.danger;
+    case "success":
+      return SEMANTIC_STATUS_ICON_TEXT_CLASS.success;
+    case "info":
+      return SEMANTIC_STATUS_ICON_TEXT_CLASS.info;
+    case "warning":
+      return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
+    default:
+      return "text-brn-accent";
+  }
+}
+
+function alertDialogDefaultHeaderIcon(tone: AlertStatus): IconType | null {
+  if (tone === "default") return null;
+  if (tone === "outline") return IoHelpCircleOutline;
+  return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
+}
+
+/** Основная кнопка действия в футере модалки в тон окна. */
+export function primaryButtonVariantForAlertTone(
+  tone: AlertStatus,
+): ButtonVariant {
+  switch (tone) {
+    case "danger":
+      return "danger";
+    case "success":
+      return "success";
+    case "info":
+      return "info";
+    case "warning":
+      return "warning";
+    default:
+      return "default";
+  }
+}
+
 function readBurneLightTheme(): boolean {
   if (typeof document === "undefined") return false;
-  return document.documentElement.dataset.bTheme === "light";
+  return document.documentElement.dataset.brnTheme === "light";
 }
 
 export type AlertDialogProps = {
@@ -159,32 +221,37 @@ function AlertDialogHeader({
   ...rest
 }: AlertDialogHeaderProps) {
   const { tone, sizePreset } = useAlertDialog();
-  const DefaultIcon = ALERT_TONE_ICONS[tone];
-  const iconColor = alertToneIconTextClass(tone);
+  const iconColor = alertDialogHeaderIconWrapperClass(tone);
+  const HeaderDefaultIcon = alertDialogDefaultHeaderIcon(tone);
 
   let iconSlot: ReactNode | null;
   if (icon === null) iconSlot = null;
   else if (icon !== undefined) iconSlot = icon;
-  else if (alertToneShowsDefaultIcon(tone))
-    iconSlot = <DefaultIcon aria-hidden className={sizePreset.iconClass} />;
+  else if (
+    alertDialogShowsDefaultHeaderIcon(tone) &&
+    HeaderDefaultIcon !== null
+  )
+    iconSlot = (
+      <HeaderDefaultIcon aria-hidden className={sizePreset.iconClass} />
+    );
   else iconSlot = null;
 
   return (
     <div
-      className={[
+      className={cn(
         "flex shrink-0 items-start",
         sizePreset.headerGap,
         sizePreset.headerPad,
         className,
-      ].join(" ")}
+      )}
       {...rest}
     >
       {iconSlot !== null ? (
         <span
-          className={[
+          className={cn(
             "shrink-0 leading-none [&_svg]:block",
             iconColor,
-          ].join(" ")}
+          )}
         >
           {iconSlot}
         </span>
@@ -201,7 +268,7 @@ const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
       <h2
         ref={ref}
         id={id ?? titleId}
-        className={["min-w-0", sizePreset.title, className].join(" ")}
+        className={cn("min-w-0", sizePreset.title, className)}
         {...rest}
       />
     );
@@ -222,7 +289,7 @@ function AlertDialogDescription({
   return (
     <p
       id={id ?? descriptionId}
-      className={[sizePreset.desc, className].join(" ")}
+      className={cn(sizePreset.desc, className)}
       {...rest}
     />
   );
@@ -235,11 +302,11 @@ function AlertDialogHeadingBlock({
   const { sizePreset } = useAlertDialog();
   return (
     <div
-      className={[
-        "flex min-w-0 flex-1 flex-col",
+      className={cn(
         sizePreset.headingBlockGap,
+        "min-w-0 flex-1",
         className,
-      ].join(" ")}
+      )}
       {...rest}
     />
   );
@@ -249,12 +316,12 @@ function AlertDialogBody({ className = "", ...rest }: AlertDialogBodyProps) {
   const { sizePreset } = useAlertDialog();
   return (
     <div
-      className={[
+      className={cn(
         "min-h-0 flex-1 overflow-y-auto",
         sizePreset.bodyPad,
         sizePreset.bodyText,
         className,
-      ].join(" ")}
+      )}
       {...rest}
     />
   );
@@ -264,11 +331,11 @@ function AlertDialogFooter({ className = "", ...rest }: AlertDialogFooterProps) 
   const { sizePreset } = useAlertDialog();
   return (
     <div
-      className={[
-        "flex shrink-0 flex-wrap items-center justify-end border-t border-b-border",
+      className={cn(
+        "flex shrink-0 flex-wrap items-center justify-end border-t border-brn-border",
         sizePreset.footerPad,
         className,
-      ].join(" ")}
+      )}
       {...rest}
     />
   );
@@ -419,16 +486,16 @@ const AlertDialogRoot = function AlertDialog({
       <div
         className="fixed inset-0 z-[100] flex items-center justify-center p-4"
         role="presentation"
-        {...(lightUi ? { "data-b-theme": "light" as const } : {})}
+        {...(lightUi ? { "data-brn-theme": "light" as const } : {})}
       >
         <div
           ref={overlayRef}
-          className={[
+          className={cn(
             "absolute inset-0",
             lightUi
-              ? "bg-[color-mix(in_oklab,var(--b-color-text)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
+              ? "bg-[color-mix(in_oklab,var(--brn-color-text)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
               : "bg-[color-mix(in_oklab,black_58%,transparent)]",
-          ].join(" ")}
+          )}
           style={{ opacity: prefersReducedInteractiveHoverLift() ? 1 : 0 }}
           aria-hidden
         />
@@ -440,13 +507,13 @@ const AlertDialogRoot = function AlertDialog({
           aria-labelledby={titleId}
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
-          className={[
+          className={cn(
             "relative z-10 flex min-h-0 w-full flex-col overflow-hidden rounded-xl outline-none",
             sizePreset.panelMax,
             sizePreset.maxHeight,
-            alertDialogPanelToneClass(tone),
+            alertDialogPanelClass(tone),
             className,
-          ].join(" ")}
+          )}
           style={
             prefersReducedInteractiveHoverLift()
               ? undefined

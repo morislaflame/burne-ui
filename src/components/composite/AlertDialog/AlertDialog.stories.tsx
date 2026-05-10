@@ -2,19 +2,20 @@ import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import type { AlertDialogSize, AlertDialogProps } from "./AlertDialog";
-import { AlertDialog } from "./AlertDialog";
+import { resolveAlertStatus } from "../../core/Alert";
 import { Button } from "../../core/Button";
 import {
+  AlertDialog,
   primaryButtonVariantForAlertTone,
-  resolveAlertStatus,
-} from "../../core/utils/alertTone";
+  type AlertDialogProps,
+  type AlertDialogSize,
+} from "./AlertDialog";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[24rem] flex-col items-center justify-center p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      className="box-border flex min-h-[24rem] flex-col items-center justify-center p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <Story />
     </div>
@@ -126,7 +127,7 @@ export const Sizes: Story = {
       <div className="flex max-w-2xl flex-col flex-wrap gap-8 sm:flex-row sm:items-start">
         {(["s", "m", "l", "xl"] as const).map((size) => (
           <div key={size} className="flex flex-col items-start gap-2">
-            <span className="text-xs font-medium uppercase tracking-wide text-b-muted">
+            <span className="text-xs font-medium uppercase tracking-wide text-brn-muted">
               {size}
             </span>
             <ConfirmTemplate

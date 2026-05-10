@@ -7,8 +7,8 @@ import { Button } from "../Button";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      className="box-border w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <div className="mx-auto w-full max-w-xl">
         <Story />
@@ -20,9 +20,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-b-theme="light"
-      className="box-border w-full p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      data-brn-theme="light"
+      className="box-border w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <div className="mx-auto w-full max-w-xl">
         <Story />

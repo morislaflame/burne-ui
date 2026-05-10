@@ -17,6 +17,7 @@ import {
   useState,
 } from "react";
 
+import { cn } from "../../../utils/cn";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
@@ -58,7 +59,7 @@ export type InputProps = Omit<
 };
 
 const VARIANT_SHELL: Record<InputVariant, string> = {
-  default: "bg-b-surface shadow-sm",
+  default: "bg-brn-surface shadow-sm",
   outline: "bg-transparent shadow-none",
 };
 
@@ -67,18 +68,18 @@ const STATUS_TINT_SHELL: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "bg-b-surface-tint-danger",
-  success: "bg-b-surface-tint-success",
-  warning: "bg-b-surface-tint-warning",
+  danger: "bg-brn-surface-tint-danger",
+  success: "bg-brn-surface-tint-success",
+  warning: "bg-brn-surface-tint-warning",
 };
 
 const STATUS_TINT_FOCUS_BORDER: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "focus-within:border-b-danger",
-  success: "focus-within:border-b-success",
-  warning: "focus-within:border-b-warning",
+  danger: "focus-within:border-brn-danger",
+  success: "focus-within:border-brn-success",
+  warning: "focus-within:border-brn-warning",
 };
 
 /** Слегка насыщеннее оболочки, чтобы префикс/суффикс читался на тоне. */
@@ -86,23 +87,23 @@ const STATUS_TINT_AFFIX: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "bg-b-surface-tint-danger-strong",
-  success: "bg-b-surface-tint-success-strong",
-  warning: "bg-b-surface-tint-warning-strong",
+  danger: "bg-brn-surface-tint-danger-strong",
+  success: "bg-brn-surface-tint-success-strong",
+  warning: "bg-brn-surface-tint-warning-strong",
 };
 
 const STATUS_HINT: Record<InputStatus, string> = {
-  default: "text-b-muted",
-  danger: "text-b-danger",
-  success: "text-b-success",
-  warning: "text-b-warning",
+  default: "text-brn-muted",
+  danger: "text-brn-danger",
+  success: "text-brn-success",
+  warning: "text-brn-warning",
 };
 
 const AFFIX_SURFACE: Record<InputVariant, string> = {
   default:
-    "bg-[color-mix(in_oklab,var(--b-color-border)_32%,var(--b-color-surface))]",
+    "bg-[color-mix(in_oklab,var(--brn-color-border)_32%,var(--brn-color-surface))]",
   outline:
-    "bg-[color-mix(in_oklab,var(--b-color-border)_22%,transparent)]",
+    "bg-[color-mix(in_oklab,var(--brn-color-border)_22%,transparent)]",
 };
 
 function AffixSlot({
@@ -118,19 +119,19 @@ function AffixSlot({
 }) {
   const edge =
     side === "prefix"
-      ? "border-r border-b-border"
-      : "border-l border-b-border";
+      ? "border-r border-brn-border"
+      : "border-l border-brn-border";
   const surface =
     status === "default"
       ? AFFIX_SURFACE[variant]
       : STATUS_TINT_AFFIX[status];
   return (
     <span
-      className={[
-        "flex shrink-0 items-center px-3 text-sm text-b-muted",
+      className={cn(
+        "flex shrink-0 items-center px-3 text-sm text-brn-muted",
         surface,
         edge,
-      ].join(" ")}
+      )}
     >
       {children}
     </span>
@@ -159,10 +160,10 @@ function PasswordVisibilityAffix({
 
   return (
     <span
-      className={[
-        "flex shrink-0 items-stretch border-l border-b-border",
+      className={cn(
+        "flex shrink-0 items-stretch border-l border-brn-border",
         surface,
-      ].join(" ")}
+      )}
     >
       <button
         type="button"
@@ -175,12 +176,12 @@ function PasswordVisibilityAffix({
           onToggle();
         }}
         onPointerDown={(e) => e.stopPropagation()}
-        className={[
-          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-2.5 text-b-muted outline-none transition-colors",
-          "hover:text-b-text",
-          "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-b-accent",
+        className={cn(
+          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-2.5 text-brn-muted outline-none transition-colors",
+          "hover:text-brn-text",
+          "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brn-accent",
           disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
-        ].join(" ")}
+        )}
       >
         {visible ? (
           <IoEyeOff className="size-5 shrink-0" aria-hidden />
@@ -195,10 +196,10 @@ function PasswordVisibilityAffix({
 function FileGlyph({ className = "" }: { className?: string }) {
   return (
     <span
-      className={[
-        "flex size-9 shrink-0 items-center justify-center rounded-md bg-b-surface text-b-muted border border-b-border",
+      className={cn(
+        "flex size-9 shrink-0 items-center justify-center rounded-md bg-brn-surface text-brn-muted border border-brn-border",
         className,
-      ].join(" ")}
+      )}
       aria-hidden
     >
       <IoFolderOpen className="size-[1.125rem] shrink-0" aria-hidden />
@@ -247,12 +248,12 @@ function FileRemoveButton({
         onRemove(e);
       }}
       onPointerDown={(e) => e.stopPropagation()}
-      className={[
-        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-md text-b-danger outline-none transition-colors",
-        "hover:bg-[color-mix(in_oklab,var(--b-color-danger)_14%,transparent)]",
-        "focus-visible:ring-2 focus-visible:ring-b-accent focus-visible:ring-offset-2 focus-visible:ring-offset-b-surface",
+      className={cn(
+        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-md text-brn-danger outline-none transition-colors",
+        "hover:bg-[color-mix(in_oklab,var(--brn-color-danger)_14%,transparent)]",
+        "focus-visible:ring-2 focus-visible:ring-brn-accent focus-visible:ring-offset-2 focus-visible:ring-offset-brn-surface",
         disabled ? "pointer-events-none opacity-40" : "",
-      ].join(" ")}
+      )}
     >
       <IoClose className="size-4 shrink-0" aria-hidden />
     </button>
@@ -302,16 +303,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       status === "warning";
 
     const shellSurface = statusTinted
-      ? [
+      ? cn(
           STATUS_TINT_SHELL[status],
           "border-transparent",
           STATUS_TINT_FOCUS_BORDER[status],
           variant === "default" ? "shadow-sm" : "shadow-none",
-        ].join(" ")
-      : [
+        )
+      : cn(
           VARIANT_SHELL[variant],
-          "border-b-border focus-within:border-b-accent",
-        ].join(" ");
+          "border-brn-border focus-within:border-brn-accent",
+        );
 
     const handleShellPointerDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
@@ -411,28 +412,28 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const fileListEmpty = isFile && pickedFiles.length === 0;
 
     const shellFileEmptySurface = fileListEmpty
-      ? [
+      ? cn(
           statusTinted ? STATUS_TINT_SHELL[status] : VARIANT_SHELL[variant],
           variant === "default" ? "shadow-sm" : "shadow-none",
           "border-2 border-dashed",
           statusTinted
             ? status === "danger"
-              ? "border-b-danger/50 focus-within:border-b-danger"
+              ? "border-brn-danger/50 focus-within:border-brn-danger"
               : status === "success"
-                ? "border-b-success/50 focus-within:border-b-success"
-                : "border-b-warning/50 focus-within:border-b-warning"
-            : "border-b-border focus-within:border-b-accent",
-        ].join(" ")
+                ? "border-brn-success/50 focus-within:border-brn-success"
+                : "border-brn-warning/50 focus-within:border-brn-warning"
+            : "border-brn-border focus-within:border-brn-accent",
+        )
       : null;
 
     const showAffixes = !isFile;
 
     return (
-      <div className={["flex w-full flex-col gap-1.5", className].join(" ")}>
+      <div className={cn("flex w-full flex-col gap-1.5", className)}>
         {label ? (
           <label
             htmlFor={id}
-            className="text-sm font-medium leading-snug text-b-text"
+            className="text-sm font-medium leading-snug text-brn-text"
           >
             {label}
           </label>
@@ -441,12 +442,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={shellRef}
           role="presentation"
           onPointerDown={handleShellPointerDown}
-          className={[
+          className={cn(
             "flex items-stretch overflow-hidden rounded-lg transition-[border-color,background-color] duration-200 ease-out",
             fileListEmpty ? "min-h-[7.25rem]" : "min-h-10 border-1",
             shellFileEmptySurface ?? shellSurface,
             blocked ? "cursor-not-allowed opacity-55" : "",
-          ].join(" ")}
+          )}
         >
           {showAffixes && prefix != null ? (
             <AffixSlot side="prefix" variant={variant} status={status}>
@@ -458,21 +459,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               className={
                 fileListEmpty
                   ? "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-2.5 px-4 py-7"
-                  : [
+                  : cn(
                       "relative min-w-0 flex-1 px-3 py-2",
                       multipleFiles
                         ? "flex flex-col gap-2"
                         : "flex min-h-10 items-center gap-3",
-                    ].join(" ")
+                    )
               }
             >
               {fileListEmpty ? (
                 <>
                   <IoFolderOpen
-                    className="pointer-events-none size-12 shrink-0 text-b-muted"
+                    className="pointer-events-none size-12 shrink-0 text-brn-muted"
                     aria-hidden
                   />
-                  <span className="pointer-events-none max-w-[18rem] text-center text-sm leading-snug text-b-muted">
+                  <span className="pointer-events-none max-w-[18rem] text-center text-sm leading-snug text-brn-muted">
                     {placeholder ?? "Выберите файл"}
                   </span>
                 </>
@@ -487,12 +488,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                       <img
                         src={previewUrl}
                         alt=""
-                        className="size-9 shrink-0 rounded-md object-cover ring-1 ring-b-border"
+                        className="size-9 shrink-0 rounded-md object-cover ring-1 ring-brn-border"
                       />
                     ) : (
                       <FileGlyph />
                     )}
-                    <span className="min-w-0 flex-1 truncate text-sm text-b-text">
+                    <span className="min-w-0 flex-1 truncate text-sm text-brn-text">
                       {file.name}
                     </span>
                     {!blocked ? (
@@ -512,12 +513,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                     <img
                       src={fileEntries[0]!.previewUrl}
                       alt=""
-                      className="size-9 shrink-0 rounded-md object-cover ring-1 ring-b-border"
+                      className="size-9 shrink-0 rounded-md object-cover ring-1 ring-brn-border"
                     />
                   ) : (
                     <FileGlyph />
                   )}
-                  <span className="min-w-0 flex-1 truncate text-sm text-b-text">
+                  <span className="min-w-0 flex-1 truncate text-sm text-brn-text">
                     {fileEntries[0]!.file.name}
                   </span>
                   {!blocked ? (
@@ -548,7 +549,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               readOnly={readOnly}
               placeholder={placeholder}
               onChange={onChange}
-              className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-b-text outline-none placeholder:text-b-muted"
+              className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-brn-text outline-none placeholder:text-brn-muted"
               {...rest}
             />
           )}
@@ -569,9 +570,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
         {hint ? (
           <p
-            className={["text-sm leading-snug", STATUS_HINT[status]].join(
-              " ",
-            )}
+            className={cn("text-sm leading-snug", STATUS_HINT[status])}
           >
             {hint}
           </p>

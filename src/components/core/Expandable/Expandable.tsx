@@ -12,6 +12,8 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
+
+import { cn } from "../../../utils/cn";
 import {
   ConvergeRippleLayer,
   type ConvergeRipple,
@@ -142,12 +144,12 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         ref={setTriggerRef}
         type={type}
         id={headerId}
-        className={[
-          "relative flex w-full items-center gap-2 overflow-hidden px-4 py-3 text-left outline-none",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-b-accent focus-visible:outline-offset-2",
+        className={cn(
+          "relative flex w-full items-center gap-2 overflow-hidden brn-inset-md text-left outline-none",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-brn-accent focus-visible:outline-offset-2",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           className,
-        ].join(" ")}
+        )}
         aria-expanded={hasPanel ? open : undefined}
         aria-controls={hasPanel ? panelId : undefined}
         disabled={disabled}
@@ -162,7 +164,7 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
           >
             <ConvergeRippleLayer
               ripples={ripples}
-              tone="color-mix(in oklab, var(--b-color-accent) 28%, transparent)"
+              tone="color-mix(in oklab, var(--brn-color-accent) 28%, transparent)"
               onDone={dismissConverge}
               durationMs={MOTION_RIPPLE_EXPANDABLE_DURATION_MS}
               opacityFrom={MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM}
@@ -177,10 +179,10 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         </span>
         {!hideChevron && hasPanel ? (
           <span
-            className={[
+            className={cn(
               "relative z-[1] ml-auto flex shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
               open ? "rotate-180" : "rotate-0",
-            ].join(" ")}
+            )}
           >
             <ChevronSvg />
           </span>
@@ -193,10 +195,10 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
 function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
   return (
     <span
-      className={[
-        "flex shrink-0 items-center self-start pt-0.5 text-b-accent [&_svg]:size-4",
+      className={cn(
+        "flex shrink-0 items-center self-start pt-0.5 text-brn-accent [&_svg]:size-4",
         className,
-      ].join(" ")}
+      )}
       {...props}
     />
   );
@@ -204,17 +206,17 @@ function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
 
 function ExpandableContent({ className = "", ...props }: ExpandableContentProps) {
   return (
-    <div className={["min-w-0 flex-1", className].join(" ")} {...props} />
+    <div
+      className={cn("brn-title-subtitle-stack flex-1", className)}
+      {...props}
+    />
   );
 }
 
 function ExpandableTitle({ className = "", ...props }: ExpandableTitleProps) {
   return (
     <span
-      className={[
-        "block font-medium text-sm leading-snug",
-        className,
-      ].join(" ")}
+      className={cn("block font-medium text-sm leading-snug", className)}
       {...props}
     />
   );
@@ -226,10 +228,7 @@ function ExpandableDescription({
 }: ExpandableDescriptionProps) {
   return (
     <span
-      className={[
-        "mt-1 block text-sm leading-normal text-b-muted",
-        className,
-      ].join(" ")}
+      className={cn("block text-sm leading-normal text-brn-muted", className)}
       {...props}
     />
   );
@@ -240,11 +239,11 @@ function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps)
   if (!hasPanel) return null;
   return (
     <span
-      className={[
+      className={cn(
         "relative z-[1] flex shrink-0 self-center transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
         open ? "rotate-180" : "rotate-0",
         className,
-      ].join(" ")}
+      )}
       aria-hidden
       {...props}
     >
@@ -269,10 +268,10 @@ const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
 
     return (
       <div
-        className={[
+        className={cn(
           "grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
           open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-        ].join(" ")}
+        )}
       >
         <div className="min-h-0 overflow-hidden">
           <div
@@ -282,7 +281,7 @@ const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             aria-labelledby={headerId}
             aria-hidden={!open}
             inert={!open}
-            className={["px-4 pb-3 leading-normal", className].join(" ")}
+            className={cn("px-4 pb-3 leading-normal", className)}
             {...props}
           >
             {children}
@@ -359,10 +358,10 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       <ExpandableContext.Provider value={ctxValue}>
         <div
           ref={ref}
-          className={[
-            "rounded-xl border border-b-border bg-b-surface text-b-text shadow-sm",
+          className={cn(
+            "rounded-xl border border-brn-border bg-brn-surface text-brn-text shadow-sm",
             className,
-          ].join(" ")}
+          )}
           {...rest}
         >
           {children}

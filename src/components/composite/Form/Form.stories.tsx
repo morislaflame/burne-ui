@@ -9,8 +9,8 @@ import { Form } from "./Form";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-b-text"
-      style={{ backgroundColor: "var(--b-color-bg)" }}
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
       <div className="mx-auto w-full max-w-xl">
         <Story />

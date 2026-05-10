@@ -1,4 +1,6 @@
 import { useRef, type CSSProperties, type HTMLAttributes } from "react";
+
+import { cn } from "../../../utils/cn";
 import { GlassBackdrop } from "./GlassBackdrop";
 
 export type GlassSurfaceProps = HTMLAttributes<HTMLDivElement> & {
@@ -30,14 +32,14 @@ export function GlassSurface({
   return (
     <div
       ref={rootRef}
-      className={[
-        "relative isolate overflow-hidden rounded-b-md border shadow-sm",
-        "border-b-border/50 bg-transparent",
+      className={cn(
+        "relative isolate overflow-hidden rounded-brn-md border shadow-sm",
+        "border-brn-border/50 bg-transparent",
         className,
-      ].join(" ")}
+      )}
       style={
         {
-          borderColor: "var(--b-glass-border)",
+          borderColor: "var(--brn-glass-border)",
           boxShadow: "0 4px 28px rgb(0 0 0 / 0.18)",
           ...style,
         } as CSSProperties
@@ -50,7 +52,7 @@ export function GlassSurface({
       />
 
       <div
-        className={["relative z-[2] text-b-text", contentClassName].join(" ")}
+        className={cn("relative z-[2] text-brn-text", contentClassName)}
       >
         {children}
       </div>

@@ -8,7 +8,7 @@ export type GlassBackdropProps = {
 
 /** Лёгкий шум → смещение пикселей под стеклом (настоящее искажение фона, не WebGL). */
 function makeLensBackdropFilter(displaceUrl: string): CSSProperties {
-  const chain = `blur(var(--b-glass-blur)) saturate(var(--b-glass-saturate)) ${displaceUrl}`;
+  const chain = `blur(var(--brn-glass-blur)) saturate(var(--brn-glass-saturate)) ${displaceUrl}`;
   return {
     backdropFilter: chain,
     WebkitBackdropFilter: chain,
@@ -17,13 +17,13 @@ function makeLensBackdropFilter(displaceUrl: string): CSSProperties {
 
 const edgeStyle = {
   backdropFilter:
-    "blur(var(--b-glass-blur-edge)) saturate(var(--b-glass-saturate))",
+    "blur(var(--brn-glass-blur-edge)) saturate(var(--brn-glass-saturate))",
   WebkitBackdropFilter:
-    "blur(var(--b-glass-blur-edge)) saturate(var(--b-glass-saturate))",
+    "blur(var(--brn-glass-blur-edge)) saturate(var(--brn-glass-saturate))",
   maskImage:
-    "radial-gradient(ellipse var(--b-glass-edge-falloff) var(--b-glass-edge-falloff) at 50% 50%, transparent 0%, black 100%)",
+    "radial-gradient(ellipse var(--brn-glass-edge-falloff) var(--brn-glass-edge-falloff) at 50% 50%, transparent 0%, black 100%)",
   WebkitMaskImage:
-    "radial-gradient(ellipse var(--b-glass-edge-falloff) var(--b-glass-edge-falloff) at 50% 50%, transparent 0%, black 100%)",
+    "radial-gradient(ellipse var(--brn-glass-edge-falloff) var(--brn-glass-edge-falloff) at 50% 50%, transparent 0%, black 100%)",
 } as const;
 
 /** Слои 1–2 стекла: линза + WebGL (контент добавляет обёртка). */
@@ -72,10 +72,10 @@ export function GlassBackdrop({
           style={{
             ...makeLensBackdropFilter(displaceUrl),
             background: [
-              "linear-gradient(145deg, var(--b-glass-highlight) 0%, transparent 44%)",
-              "linear-gradient(210deg, transparent 52%, color-mix(in srgb, var(--b-glass-tint-veil) 58%, transparent))",
-              "linear-gradient(to bottom, var(--b-glass-tint), transparent 65%)",
-              "var(--b-glass-tint)",
+              "linear-gradient(145deg, var(--brn-glass-highlight) 0%, transparent 44%)",
+              "linear-gradient(210deg, transparent 52%, color-mix(in srgb, var(--brn-glass-tint-veil) 58%, transparent))",
+              "linear-gradient(to bottom, var(--brn-glass-tint), transparent 65%)",
+              "var(--brn-glass-tint)",
             ].join(", "),
           }}
         />
@@ -85,7 +85,7 @@ export function GlassBackdrop({
           style={
             {
               background:
-                "linear-gradient(125deg, var(--b-glass-highlight) 0%, transparent 38%, transparent 62%, color-mix(in srgb, var(--b-glass-border) 40%, transparent) 100%)",
+                "linear-gradient(125deg, var(--brn-glass-highlight) 0%, transparent 38%, transparent 62%, color-mix(in srgb, var(--brn-glass-border) 40%, transparent) 100%)",
               opacity: 0.85,
             } as CSSProperties
           }
