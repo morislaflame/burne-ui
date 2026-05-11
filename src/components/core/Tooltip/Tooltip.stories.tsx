@@ -62,7 +62,7 @@ export const OnButtonSizes: Story = {
     <div className="flex flex-wrap items-center justify-center gap-4">
       <Tooltip size="s" variant="default">
         <Tooltip.Trigger>
-          <Button size="s" variant="outline" type="button">
+          <Button size="m" variant="outline" type="button">
             Hover (s)
           </Button>
         </Tooltip.Trigger>
@@ -70,7 +70,7 @@ export const OnButtonSizes: Story = {
       </Tooltip>
       <Tooltip size="m" variant="default">
         <Tooltip.Trigger>
-          <Button size="m" variant="outline" type="button">
+          <Button size="l" variant="outline" type="button">
             Hover (m)
           </Button>
         </Tooltip.Trigger>
@@ -78,7 +78,7 @@ export const OnButtonSizes: Story = {
       </Tooltip>
       <Tooltip size="l" variant="default">
         <Tooltip.Trigger>
-          <Button size="l" variant="outline" type="button">
+          <Button size="xl" variant="outline" type="button">
             Hover (l)
           </Button>
         </Tooltip.Trigger>
@@ -124,7 +124,7 @@ export const DefaultWithOptionalIcon: Story = {
       icon={<IoHelpCircleOutline aria-hidden className="text-brn-accent" />}
     >
       <Tooltip.Trigger>
-        <Button size="m" variant="outline" type="button">
+        <Button size="l" variant="outline" type="button">
           Hover
         </Button>
       </Tooltip.Trigger>
@@ -138,7 +138,7 @@ export const SemanticIconHidden: Story = {
   render: () => (
     <Tooltip variant="danger" showIcon={false}>
       <Tooltip.Trigger>
-        <Button size="m" variant="outline" type="button">
+        <Button size="l" variant="outline" type="button">
           Hover
         </Button>
       </Tooltip.Trigger>

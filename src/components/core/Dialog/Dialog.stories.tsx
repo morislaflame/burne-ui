@@ -83,10 +83,10 @@ export const Default: Story = {
             </p>
           </Dialog.Body>
           <Dialog.Footer>
-            <Button type="button" size="s" variant="ghost" onClick={() => setOpen(false)}>
+            <Button type="button" size="m" variant="ghost" onClick={() => setOpen(false)}>
               Отмена
             </Button>
-            <Button type="button" size="s" variant="default" onClick={() => setOpen(false)}>
+            <Button type="button" size="m" variant="default" onClick={() => setOpen(false)}>
               Сохранить
             </Button>
           </Dialog.Footer>
@@ -143,13 +143,13 @@ export const WithForm: Story = {
             <Dialog.Footer>
               <Button
                 type="button"
-                size="s"
+                size="m"
                 variant="ghost"
                 onClick={() => setOpen(false)}
               >
                 Отмена
               </Button>
-              <Button type="submit" size="s" variant="default">
+              <Button type="submit" size="m" variant="default">
                 Сохранить
               </Button>
             </Dialog.Footer>
@@ -166,7 +166,7 @@ export const ScrollableContent: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button type="button" size="s" variant="outline" onClick={() => setOpen(true)}>
+        <Button type="button" size="m" variant="outline" onClick={() => setOpen(true)}>
           Длинный контент
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -192,10 +192,10 @@ export const ScrollableContent: Story = {
             ))}
           </Dialog.Body>
           <Dialog.Footer>
-            <Button type="button" size="s" variant="ghost" onClick={() => setOpen(false)}>
+            <Button type="button" size="m" variant="ghost" onClick={() => setOpen(false)}>
               Закрыть
             </Button>
-            <Button type="button" size="s" variant="default" onClick={() => setOpen(false)}>
+            <Button type="button" size="m" variant="default" onClick={() => setOpen(false)}>
               Готово
             </Button>
           </Dialog.Footer>

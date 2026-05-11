@@ -101,7 +101,7 @@ function AlertAllVariantsDemo() {
           </Alert.Content>
         </Alert.Message>
         <Alert.Action>
-          <Button size="s" variant="danger">
+          <Button size="m" variant="danger">
             Retry
           </Button>
         </Alert.Action>
@@ -173,7 +173,7 @@ export const WithAction: Story = {
         </Alert.Content>
       </Alert.Message>
       <Alert.Action>
-        <Button size="s" variant="info">
+        <Button size="m" variant="info">
           Refresh
         </Button>
       </Alert.Action>

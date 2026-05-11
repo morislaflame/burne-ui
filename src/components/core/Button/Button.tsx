@@ -117,31 +117,31 @@ const BUTTON_SIZE_CLASSES: Record<
   { root: string; spinner: string; icon: string }
 > = {
   s: {
+    root: "min-h-7 min-w-[4.5rem] px-2 py-1 text-xs",
+    spinner: "size-3 border-2",
+    icon: "size-[0.9375rem]",
+  },
+  m: {
     root: "min-h-8 min-w-[5.5rem] px-3 py-1.5 text-sm",
     spinner: "size-4 border-2",
     icon: "size-[1.125rem]",
   },
-  m: {
+  l: {
     root: "min-h-10 min-w-[7rem] px-4 py-2",
     spinner: "size-5 border-2",
     icon: "size-[1.375rem]",
   },
-  l: {
+  xl: {
     root: "min-h-12 min-w-[8rem] px-5 py-2.5 text-base",
     spinner: "size-6 border-[2.5px]",
     icon: "size-6",
-  },
-  xl: {
-    root: "min-h-14 min-w-[9.5rem] px-6 py-3 text-lg",
-    spinner: "size-7 border-[3px]",
-    icon: "size-7",
   },
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Стиль заливки и акцента. По умолчанию `default`. */
   variant?: ButtonVariant;
-  /** Габариты и типографика. По умолчанию `s`. */
+  /** Габариты и типографика. По умолчанию `m`. */
   size?: ButtonSize;
   /** Включить лёгкий scale-пульс при нажатии (anime.js), только в idle. */
   animated?: boolean;
@@ -232,7 +232,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className = "",
       variant = "default",
-      size = "s",
+      size = "m",
       type = "button",
       animated = true,
       asyncState: asyncStateProp,

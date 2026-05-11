@@ -67,10 +67,10 @@ function ProfileForm() {
         hint="Необязательно. Показывается превью для изображений."
       />
       <div className="flex justify-end gap-3 pt-2">
-        <Button type="button" variant="outline" size="s">
+        <Button type="button" variant="outline" size="m">
           Отмена
         </Button>
-        <Button type="submit" variant="default" size="s">
+        <Button type="submit" variant="default" size="m">
           Сохранить
         </Button>
       </div>

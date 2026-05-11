@@ -57,10 +57,10 @@ export const WithFooter: Story = {
         <Card.Description>Обновлён 10 мая 2026</Card.Description>
       </Card.Content>
       <Card.Footer className="flex items-center justify-end gap-2">
-        <Button variant="ghost" size="s">
+        <Button variant="ghost" size="m">
           Отмена
         </Button>
-        <Button variant="default" size="s">
+        <Button variant="default" size="m">
           Открыть
         </Button>
       </Card.Footer>
@@ -124,7 +124,7 @@ function QuickSubscribeCard() {
             placeholder="you@example.com"
             autoComplete="email"
           />
-          <Button type="submit" variant="default" size="m" className="w-full">
+          <Button type="submit" variant="default" size="l" className="w-full">
             Подписаться
           </Button>
         </Form>

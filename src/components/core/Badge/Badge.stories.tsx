@@ -260,7 +260,7 @@ export const WithCard: Story = {
             <Badge color="warning" size="sm" iconPosition="end" icon={<IoRocketOutline aria-hidden />}>
               Beta
             </Badge>
-            <Button type="button" size="s" variant="outline">
+            <Button type="button" size="m" variant="outline">
               Детали
             </Button>
           </Card.Footer>

@@ -69,7 +69,7 @@ function ConfirmTemplate({
   const primaryVariant = primaryButtonVariantForAlertTone(tone);
   return (
     <>
-      <Button type="button" size="s" variant="outline" onClick={() => setOpen(true)}>
+      <Button type="button" size="m" variant="outline" onClick={() => setOpen(true)}>
         {label}
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen} size={size} {...toneProps}>
@@ -82,10 +82,10 @@ function ConfirmTemplate({
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-          <Button type="button" size="s" variant="outline" onClick={() => setOpen(false)}>
+          <Button type="button" size="m" variant="outline" onClick={() => setOpen(false)}>
             Отмена
           </Button>
-          <Button type="button" size="s" variant={primaryVariant} onClick={() => setOpen(false)}>
+          <Button type="button" size="m" variant={primaryVariant} onClick={() => setOpen(false)}>
             Продолжить
           </Button>
         </AlertDialog.Footer>
