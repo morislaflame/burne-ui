@@ -27,6 +27,21 @@ const framedDecorator = [
   ),
 ] as const;
 
+/** Фон страницы и `data-brn-theme="light"`, как у `Alert.stories` («Варианты (светлая тема)»). */
+const lightThemeDecorator = [
+  (Story: ComponentType) => (
+    <div
+      data-brn-theme="light"
+      className="box-border w-full p-8 text-brn-text"
+      style={{ backgroundColor: "var(--brn-color-bg)" }}
+    >
+      <div className="mx-auto w-full max-w-xl">
+        <Story />
+      </div>
+    </div>
+  ),
+] as const;
+
 const meta = {
   title: "Core Components/Tooltip",
   component: Tooltip,
@@ -73,14 +88,13 @@ export const OnButtonSizes: Story = {
   ),
 };
 
-export const SemanticVariants: Story = {
-  name: "Варианты как у Alert (иконки на semantic)",
-  render: () => (
-    <div className="flex max-w-xl flex-row flex-wrap items-center justify-center gap-4">
+function SemanticVariantsDemo() {
+  return (
+    <div className="flex min-h-[14rem] max-w-xl flex-row flex-wrap items-center justify-center gap-4 py-10">
       {VARIANTS.map((variant) => (
-        <Tooltip key={variant} size="m" variant={variant}>
+        <Tooltip key={variant} variant={variant}>
           <Tooltip.Trigger>
-            <Button size="m" variant="ghost" type="button" className="capitalize">
+            <Button variant="ghost" type="button" className="capitalize">
               {variant}
             </Button>
           </Tooltip.Trigger>
@@ -88,14 +102,24 @@ export const SemanticVariants: Story = {
         </Tooltip>
       ))}
     </div>
-  ),
+  );
+}
+
+export const SemanticVariants: Story = {
+  name: "Варианты как у Alert — semantic (тёмная тема)",
+  render: () => <SemanticVariantsDemo />,
+};
+
+export const SemanticVariantsOnLightTheme: Story = {
+  name: "Варианты как у Alert — semantic (светлая тема)",
+  decorators: [...lightThemeDecorator],
+  render: () => <SemanticVariantsDemo />,
 };
 
 export const DefaultWithOptionalIcon: Story = {
   name: "Опциональная иконка на default",
   render: () => (
     <Tooltip
-      size="m"
       variant="default"
       icon={<IoHelpCircleOutline aria-hidden className="text-brn-accent" />}
     >
@@ -112,7 +136,7 @@ export const DefaultWithOptionalIcon: Story = {
 export const SemanticIconHidden: Story = {
   name: "Semantic без иконки",
   render: () => (
-    <Tooltip size="m" variant="danger" showIcon={false}>
+    <Tooltip variant="danger" showIcon={false}>
       <Tooltip.Trigger>
         <Button size="m" variant="outline" type="button">
           Hover

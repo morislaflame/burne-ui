@@ -10,7 +10,7 @@ const darkThemeDecorator = [
       className="box-border w-full p-8 text-brn-text"
       style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
-      <div className="mx-auto w-full max-w-xl">
+      <div className="mx-auto w-full max-w-md">
         <Story />
       </div>
     </div>
@@ -24,7 +24,7 @@ const lightThemeDecorator = [
       className="box-border w-full p-8 text-brn-text"
       style={{ backgroundColor: "var(--brn-color-bg)" }}
     >
-      <div className="mx-auto w-full max-w-xl">
+      <div className="mx-auto w-full max-w-md">
         <Story />
       </div>
     </div>

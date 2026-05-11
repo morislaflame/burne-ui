@@ -1,13 +1,11 @@
 /**
  * Hover-подъём и squeeze при нажатии — anime.js; константы см. `motionTokens.ts`.
+ * Регистры подъёма по hover совпадают с `Button` (`animateInteractiveHoverLift`, порядок проверок).
  */
 
 import { animate, remove } from "animejs";
-import {
-  useEffect,
-  type MutableRefObject,
-  type RefObject,
-} from "react";
+import { useEffect, useMemo, type MutableRefObject, type RefObject } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 import {
   MOTION_HOVER_LIFT_SCALE,
@@ -28,14 +26,18 @@ export function prefersReducedInteractiveHoverLift(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** `remove(target)` затем плавное масштабирование только по scale (без смещения). */
+/**
+ * `remove(target)` затем плавное масштабирование только по scale (без смещения).
+ * Для более крупного подъёма (напр. бейдж на якоре) передайте `liftScale` без изменения дефолта кнопок.
+ */
 export function animateInteractiveHoverLift(
   element: HTMLElement,
   lifted: boolean,
+  liftScale = MOTION_HOVER_LIFT_SCALE,
 ): void {
   remove(element);
   animate(element, {
-    scale: lifted ? MOTION_HOVER_LIFT_SCALE : 1,
+    scale: lifted ? liftScale : 1,
     duration: MOTION_INTERACTIVE_MS,
     ease: MOTION_INTERACTIVE_EASE,
   });
@@ -54,48 +56,82 @@ export function animateInteractivePressSqueeze(element: HTMLElement) {
   });
 }
 
+function cameFromOutsideContainer(root: HTMLElement, related: EventTarget | null): boolean {
+  if (related == null) return true;
+  if (!(related instanceof Node)) return true;
+  return !root.contains(related);
+}
+
+/** Возвращённые обработчики вешайте на тот же корень, где был бы `pointer` у Button (`currentTarget`). */
+export function useInteractiveHoverLiftContainerHandlers<
+  Element extends HTMLElement = HTMLElement,
+>(
+  liftedRef: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  pointerInsideRef?: MutableRefObject<boolean>,
+  /** По умолчанию `MOTION_HOVER_LIFT_SCALE` из `motionTokens`. */
+  liftScale = MOTION_HOVER_LIFT_SCALE,
+): {
+  onPointerOver: (e: ReactPointerEvent<Element>) => void;
+  onPointerOut: (e: ReactPointerEvent<Element>) => void;
+} {
+  useEffect(() => {
+    return () => {
+      const t = liftedRef.current;
+      if (t) remove(t);
+    };
+  }, [liftedRef]);
+
+  return useMemo(() => {
+    const onPointerOver = (e: ReactPointerEvent<Element>) => {
+      if (!enabled) return;
+      if (e.defaultPrevented) return;
+      const c = e.currentTarget;
+      if (!(e.target instanceof Node) || !c.contains(e.target)) return;
+      if (!cameFromOutsideContainer(c, e.relatedTarget)) return;
+      if (prefersReducedInteractiveHoverLift()) return;
+      const t = liftedRef.current;
+      if (!t) return;
+      if (pointerInsideRef) pointerInsideRef.current = true;
+      animateInteractiveHoverLift(t, true, liftScale);
+    };
+
+    const onPointerOut = (e: ReactPointerEvent<Element>) => {
+      const c = e.currentTarget;
+      const rt = e.relatedTarget;
+      if (rt instanceof Node && c.contains(rt)) return;
+
+      if (pointerInsideRef) pointerInsideRef.current = false;
+      if (!enabled) return;
+      if (prefersReducedInteractiveHoverLift()) return;
+      const t = liftedRef.current;
+      if (!t) return;
+      animateInteractiveHoverLift(t, false, liftScale);
+    };
+
+    return { onPointerOver, onPointerOut };
+  }, [liftedRef, enabled, pointerInsideRef, liftScale]);
+}
+
 /**
- * Подъём при наведении: `pointerenter`/`pointerleave` на контейнере, scale на узле `liftedRef`.
- * Для масштабирования **всего** блока (алерт): передайте один и тот же ref в `containerRef` и `liftedRef`.
- *
- * `pointerInsideRef`: опционально для кнопки — после squeeze восстановить hover, если палец всё ещё над блоком.
+ * @deprecated Первый аргумент не используйте — оставлен для совместимости. Спредьте результат на корень: `{...handlers}`.
+ * Раньше слушатель вешался в `useEffect`; теперь те же правила что у `Button` (`onPointerOver` / `onPointerOut` на элементе).
  */
 export function useInteractiveHoverLiftOnContainer(
   containerRef: RefObject<HTMLElement | null>,
   liftedRef: RefObject<HTMLElement | null>,
   enabled: boolean,
   pointerInsideRef?: MutableRefObject<boolean>,
-): void {
-  useEffect(() => {
-    if (!enabled) return;
-    const c = containerRef.current;
-    if (!c) return;
-
-    const onEnter = () => {
-      if (pointerInsideRef) pointerInsideRef.current = true;
-      if (prefersReducedInteractiveHoverLift()) return;
-      const t = liftedRef.current;
-      if (!t) return;
-      animateInteractiveHoverLift(t, true);
-    };
-
-    const onLeave = () => {
-      if (pointerInsideRef) pointerInsideRef.current = false;
-      if (prefersReducedInteractiveHoverLift()) return;
-      const t = liftedRef.current;
-      if (!t) return;
-      animateInteractiveHoverLift(t, false);
-    };
-
-    c.addEventListener("pointerenter", onEnter);
-    c.addEventListener("pointerleave", onLeave);
-    return () => {
-      c.removeEventListener("pointerenter", onEnter);
-      c.removeEventListener("pointerleave", onLeave);
-      if (pointerInsideRef) pointerInsideRef.current = false;
-      const t = liftedRef.current;
-      if (t) remove(t);
-    };
-  }, [enabled, containerRef, liftedRef, pointerInsideRef]);
+  liftScale?: number,
+): {
+  onPointerOver: (e: ReactPointerEvent<HTMLElement>) => void;
+  onPointerOut: (e: ReactPointerEvent<HTMLElement>) => void;
+} {
+  void containerRef;
+  return useInteractiveHoverLiftContainerHandlers(
+    liftedRef,
+    enabled,
+    pointerInsideRef,
+    liftScale,
+  );
 }
-

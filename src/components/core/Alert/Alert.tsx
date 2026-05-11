@@ -9,7 +9,7 @@ import {
 import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
-import { useInteractiveHoverLiftOnContainer } from "@/components/core/utils/hoverInteractiveLift";
+import { useInteractiveHoverLiftContainerHandlers } from "@/components/core/utils/hoverInteractiveLift";
 import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
@@ -171,7 +171,15 @@ function AlertAction({ className = "", ...rest }: AlertActionProps) {
 }
 
 const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  { variant, status, className = "", children, ...rest },
+  {
+    variant,
+    status,
+    className = "",
+    children,
+    onPointerOver: onPointerOverProp,
+    onPointerOut: onPointerOutProp,
+    ...rest
+  },
   ref,
 ) {
   const tone = resolveAlertStatus(status, variant);
@@ -186,7 +194,7 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     [ref],
   );
 
-  useInteractiveHoverLiftOnContainer(rootRef, rootRef, true);
+  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(rootRef, true);
 
   return (
     <AlertStatusContext.Provider value={tone}>
@@ -194,10 +202,18 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setRootRef}
         role="status"
         className={cn(
-          "flex w-fit max-w-[42rem] items-start gap-3 rounded-xl brn-inset-md",
+          "flex w-fit max-w-md items-start gap-3 rounded-xl brn-inset-md",
           ALERT_INLINE_SURFACE_CLASSES[tone],
           className,
         )}
+        onPointerOver={(e) => {
+          onPointerOverProp?.(e);
+          if (!e.defaultPrevented) liftPointerHandlers.onPointerOver(e);
+        }}
+        onPointerOut={(e) => {
+          onPointerOutProp?.(e);
+          liftPointerHandlers.onPointerOut(e);
+        }}
         {...rest}
       >
         {children}

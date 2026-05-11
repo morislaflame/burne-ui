@@ -5,7 +5,7 @@ import {
   type HTMLAttributes,
 } from "react";
 
-import { useInteractiveHoverLiftOnContainer } from "@/components/core/utils/hoverInteractiveLift";
+import { useInteractiveHoverLiftContainerHandlers } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
 
 export type CardVariant = "default" | "outline";
@@ -86,7 +86,13 @@ function CardFooter({ className = "", ...rest }: CardFooterProps) {
 }
 
 const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
-  { className = "", variant = "default", ...rest },
+  {
+    className = "",
+    variant = "default",
+    onPointerOver: onPointerOverProp,
+    onPointerOut: onPointerOutProp,
+    ...rest
+  },
   ref,
 ) {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -100,7 +106,7 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     [ref],
   );
 
-  useInteractiveHoverLiftOnContainer(rootRef, rootRef, true);
+  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(rootRef, true);
 
   return (
     <div
@@ -110,6 +116,14 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
         CARD_SURFACE[variant],
         className,
       )}
+      onPointerOver={(e) => {
+        onPointerOverProp?.(e);
+        if (!e.defaultPrevented) liftPointerHandlers.onPointerOver(e);
+      }}
+      onPointerOut={(e) => {
+        onPointerOutProp?.(e);
+        liftPointerHandlers.onPointerOut(e);
+      }}
       {...rest}
     />
   );

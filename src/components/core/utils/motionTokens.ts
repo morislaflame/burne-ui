@@ -9,7 +9,13 @@ import { cubicBezier } from "animejs";
 export const MOTION_INTERACTIVE_MS = 280;
 export const MOTION_INTERACTIVE_EASE = "out(2)" as const;
 
+/** Fade появление / скрытие Tooltip (portal). */
+export const MOTION_TOOLTIP_MS = 200;
+
 export const MOTION_HOVER_LIFT_SCALE = 1.015;
+
+/** Hover-lift прямого `Badge` внутри `Badge.Anchor` — чуть сильнее, чем у кнопок/карт. */
+export const MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE = 1.052;
 
 /** Ключевые кадры squeeze: покой → сжатие → покой */
 export const MOTION_PRESS_SQUEEZE_SCALE = [1, 0.98, 1] as const;

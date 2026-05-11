@@ -108,9 +108,24 @@ export {
   type TooltipContentProps,
 } from "@/components/core/Tooltip";
 export {
+  Badge,
+  BadgeAnchor,
+  type BadgeProps,
+  type BadgeTone,
+  type BadgeColor,
+  type BadgeVariant,
+  type BadgeSize,
+  type BadgeSizeInput,
+  type BadgePlacement,
+  type BadgeIconPosition,
+  type BadgeAnchorProps,
+} from "@/components/core/Badge";
+export {
   MOTION_INTERACTIVE_MS,
   MOTION_INTERACTIVE_EASE,
+  MOTION_TOOLTIP_MS,
   MOTION_HOVER_LIFT_SCALE,
+  MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE,
   MOTION_PRESS_SQUEEZE_SCALE,
   MOTION_RIPPLE_DEFAULT_DURATION_MS,
   MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
@@ -130,6 +145,7 @@ export {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
+  useInteractiveHoverLiftContainerHandlers,
   useInteractiveHoverLiftOnContainer,
 } from "@/components/core/utils/hoverInteractiveLift";
 export {

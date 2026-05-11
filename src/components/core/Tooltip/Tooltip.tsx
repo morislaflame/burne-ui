@@ -14,6 +14,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
+import { animate, remove } from "animejs";
 import { createPortal } from "react-dom";
 
 import {
@@ -21,6 +22,11 @@ import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
+import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  MOTION_INTERACTIVE_EASE,
+  MOTION_TOOLTIP_MS,
+} from "@/components/core/utils/motionTokens";
 import { cn } from "@/utils/cn";
 
 /** Варианты заливки — те же паттерны, что у `Alert` (`ALERT_INLINE_SURFACE_CLASSES`). */
@@ -165,7 +171,7 @@ function useTooltipContext(who: string): TooltipContextValue {
 
 function TooltipRoot({
   children,
-  size = "m",
+  size = "s",
   variant = "default",
   delayShowMs = 240,
   side = "top",
@@ -255,6 +261,17 @@ const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
   },
 );
 
+/** Контент в `createPortal(…, body)` не наследует `data-brn-theme` от обёртки сторибука — копируем с триггера. */
+function brnThemePortalProps(triggerEl: HTMLElement | null): {
+  "data-brn-theme"?: "light";
+} {
+  if (!triggerEl) return {};
+  const inherited = triggerEl
+    .closest("[data-brn-theme]")
+    ?.getAttribute("data-brn-theme");
+  return inherited === "light" ? { "data-brn-theme": "light" } : {};
+}
+
 function TooltipFloater({
   className = "",
   children,
@@ -263,7 +280,13 @@ function TooltipFloater({
   const { open, tooltipId, variant, size, side, icon, showIcon, triggerRef } =
     useTooltipContext("Tooltip.Content");
 
-  const tipRef = useRef<HTMLDivElement>(null);
+  const tipRef = useRef<HTMLDivElement | null>(null);
+  /** Портал живёт после `open=false`, пока играет fade-out. */
+  const [portalMounted, setPortalMounted] = useState(false);
+
+  useLayoutEffect(() => {
+    if (open) setPortalMounted(true);
+  }, [open]);
 
   const reposition = useCallback(() => {
     const trigger = triggerRef.current;
@@ -312,7 +335,59 @@ function TooltipFloater({
     };
   }, [open, reposition, children]);
 
-  if (!open) return null;
+  useLayoutEffect(() => {
+    if (!portalMounted) return undefined;
+    const el = tipRef.current;
+    if (!el) return undefined;
+
+    const reduced = prefersReducedInteractiveHoverLift();
+    let cancelled = false;
+
+    if (reduced) {
+      remove(el);
+      if (open) {
+        el.style.opacity = "";
+      } else {
+        setPortalMounted(false);
+      }
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    remove(el);
+
+    if (open) {
+      el.style.opacity = "0";
+      animate(el, {
+        opacity: [0, 1],
+        duration: MOTION_TOOLTIP_MS,
+        ease: MOTION_INTERACTIVE_EASE,
+      });
+      return () => {
+        cancelled = true;
+        remove(el);
+      };
+    }
+
+    const startOpacity = Number.parseFloat(getComputedStyle(el).opacity);
+    const from =
+      Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
+    const anim = animate(el, {
+      opacity: [from, 0],
+      duration: MOTION_TOOLTIP_MS,
+      ease: MOTION_INTERACTIVE_EASE,
+    });
+    void Promise.resolve(anim).then(() => {
+      if (!cancelled) setPortalMounted(false);
+    });
+    return () => {
+      cancelled = true;
+      remove(el);
+    };
+  }, [open, portalMounted]);
+
+  if (!portalMounted) return null;
   if (typeof document === "undefined") return null;
 
   const leading = resolveTooltipLeadingIcon({
@@ -322,13 +397,16 @@ function TooltipFloater({
     icon,
   });
 
+  const portalBrnTheme = brnThemePortalProps(triggerRef.current);
+
   const node = (
     <div
       ref={tipRef}
+      {...portalBrnTheme}
       role="tooltip"
       id={tooltipId}
       className={cn(
-        "pointer-events-none z-[10000] w-max min-w-0 rounded-lg outline-none motion-reduce:transition-none transition-opacity duration-150",
+        "pointer-events-none z-[10000] w-max min-w-0 rounded-lg outline-none will-change-[opacity]",
         TOOLTIP_SURFACE[variant],
         TOOLTIP_TEXT_SIZE[size],
         className,
