@@ -18,8 +18,8 @@ export const SEMANTIC_STATUS_ICONS: Record<SemanticStatus, IconType> = {
 
 export const SEMANTIC_STATUS_ICON_TEXT_CLASS: Record<SemanticStatus, string> =
   {
-    danger: "text-brn-danger",
-    success: "text-brn-success",
-    info: "text-brn-info",
-    warning: "text-brn-warning",
+    danger: "text-danger",
+    success: "text-success",
+    info: "text-info",
+    warning: "text-warning",
   };

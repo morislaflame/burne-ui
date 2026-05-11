@@ -6,10 +6,10 @@ const preview: Preview = {
   parameters: {
     layout: "centered",
     backgrounds: {
-      default: "brn",
+      default: "background",
       values: [
-        { name: "brn", value: "var(--brn-color-bg)" },
-        { name: "surface", value: "var(--brn-color-surface)" },
+        { name: "background", value: "var(--color-background)" },
+        { name: "surface", value: "var(--color-surface)" },
         { name: "light (gray)", value: "#e4e4e7" },
       ],
     },

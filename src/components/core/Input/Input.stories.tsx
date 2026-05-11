@@ -6,8 +6,8 @@ import { Input } from "./Input";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl min-w-md">
         <Story />
@@ -19,9 +19,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-brn-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      data-theme="light"
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl min-w-md">
         <Story />

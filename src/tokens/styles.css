@@ -1,236 +1,299 @@
-/** Burne UI — дизайн-токены (CSS variables), префикс `--brn-` */
+/** Burne UI — дизайн-токены (CSS variables) */
 :root {
-  /* Цвета: без хромы — нейтральная палитра. Акцент = основная заполненная кнопка (светлая заливка в тёмной теме). */
-  --brn-color-bg: #0c0d10;
-  --brn-color-surface: #15171c;
-  --brn-color-border: #2a2d36;
-  --brn-color-text: #f4f5f7;
-  --brn-color-text-muted: #8b90a0;
-  --brn-color-accent: #ebebef;
-  --brn-color-accent-foreground: #0c0c0e;
-  --brn-color-danger: #dc2626;
-  --brn-color-danger-foreground: #fafafa;
-  --brn-color-success: #22c55e;
-  --brn-color-success-foreground: #fafafa;
-  --brn-color-info: #0ea5e9;
-  --brn-color-info-foreground: #fafafa;
-  --brn-color-warning: #f59e0b;
-  --brn-color-warning-foreground: #0c0c0e;
+  --color-background: #0c0d10;
+  --color-surface: #15171c;
+  --color-border: #2a2d36;
+  --color-foreground: #f4f5f7;
+  --color-muted: #8b90a0;
+  --color-accent: #ebebef;
+  --color-accent-foreground: #0c0c0e;
+  --color-danger: #dc2626;
+  --color-danger-foreground: #fafafa;
+  --color-success: #22c55e;
+  --color-success-foreground: #fafafa;
+  --color-info: #0ea5e9;
+  --color-info-foreground: #fafafa;
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #0c0c0e;
 
   /**
-   * Семантика на surface: готовый color-mix для алертов, полей и т.п.
+   * Прозрачные ховеры (outline / ghost / SearchInput): в тёмной теме — лёгкий цветной wash.
+   * В светлой переопределяется: смесь с --color-surface даёт заметное «затемнение» на белом.
    */
-  --brn-surface-tint-danger: color-mix(
+  --color-accent-fill-hover: color-mix(
     in oklab,
-    var(--brn-color-danger) 16%,
-    var(--brn-color-surface)
-  );
-  --brn-surface-tint-success: color-mix(
-    in oklab,
-    var(--brn-color-success) 16%,
-    var(--brn-color-surface)
-  );
-  --brn-surface-tint-info: color-mix(
-    in oklab,
-    var(--brn-color-info) 16%,
-    var(--brn-color-surface)
-  );
-  --brn-surface-tint-warning: color-mix(
-    in oklab,
-    var(--brn-color-warning) 16%,
-    var(--brn-color-surface)
-  );
-  --brn-surface-tint-accent: color-mix(
-    in oklab,
-    var(--brn-color-accent) 18%,
-    var(--brn-color-surface)
-  );
-  --brn-surface-tint-danger-strong: color-mix(
-    in oklab,
-    var(--brn-color-danger) 22%,
-    var(--brn-color-surface)
-  );
-  --brn-surface-tint-success-strong: color-mix(
-    in oklab,
-    var(--brn-color-success) 22%,
-    var(--brn-color-surface)
-  );
-  --brn-surface-tint-warning-strong: color-mix(
-    in oklab,
-    var(--brn-color-warning) 22%,
-    var(--brn-color-surface)
+    var(--color-accent) 12%,
+    transparent
   );
 
-  /* Типографика */
-  --brn-font-sans: ui-sans-serif, system-ui, sans-serif;
-  --brn-font-mono: ui-monospace, monospace;
-  --brn-text-sm: 0.875rem;
-  --brn-text-base: 1rem;
-  --brn-leading-normal: 1.5;
+  /** Залитый default (Button): непрозрачное затемнение от базового --color-accent */
+  --color-accent-solid-hover: color-mix(
+    in oklab,
+    var(--color-accent) 90%,
+    black
+  );
 
-  /* Отступы и радиусы */
-  --brn-space-1: 0.25rem;
-  --brn-space-2: 0.5rem;
-  --brn-space-3: 0.75rem;
-  --brn-space-4: 1rem;
-  /** Между 3 и 4 — для плотных заголовочных стеков */
-  --brn-space-0-5: 0.125rem;
-  /** Для крупных инсетов (модалки L/XL) */
-  --brn-space-5: 1.25rem;
-  --brn-space-6: 1.5rem;
-  /** Между 2 и 3 (Tailwind `gap-2.5`) */
-  --brn-space-2-5: 0.625rem;
-  --brn-radius-sm: 0.375rem;
-  --brn-radius-md: 0.5rem;
+  /** Залитые семантические кнопки: hover без глобального opacity — тёмнее фон через mix с black */
+  --color-danger-fill-hover: color-mix(
+    in oklab,
+    var(--color-danger) 90%,
+    black
+  );
+  --color-success-fill-hover: color-mix(
+    in oklab,
+    var(--color-success) 90%,
+    black
+  );
+  --color-info-fill-hover: color-mix(
+    in oklab,
+    var(--color-info) 90%,
+    black
+  );
+  --color-warning-fill-hover: color-mix(
+    in oklab,
+    var(--color-warning) 90%,
+    black
+  );
+
+  /** Точка сходимости ripple у Button (`ConvergeRippleLayer` → inline background) */
+  --color-converge-ripple-accent-fill: color-mix(
+    in oklab,
+    var(--color-accent-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-accent-soft: color-mix(
+    in oklab,
+    var(--color-accent) 42%,
+    transparent
+  );
+  --color-converge-ripple-danger: color-mix(
+    in oklab,
+    var(--color-danger-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-success: color-mix(
+    in oklab,
+    var(--color-success-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-info: color-mix(
+    in oklab,
+    var(--color-info-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-warning: color-mix(
+    in oklab,
+    var(--color-warning-foreground) 38%,
+    transparent
+  );
+
+  --color-surface-tint-danger: color-mix(
+    in oklab,
+    var(--color-danger) 16%,
+    var(--color-surface)
+  );
+  --color-surface-tint-success: color-mix(
+    in oklab,
+    var(--color-success) 16%,
+    var(--color-surface)
+  );
+  --color-surface-tint-info: color-mix(
+    in oklab,
+    var(--color-info) 16%,
+    var(--color-surface)
+  );
+  --color-surface-tint-warning: color-mix(
+    in oklab,
+    var(--color-warning) 16%,
+    var(--color-surface)
+  );
+  --color-surface-tint-accent: color-mix(
+    in oklab,
+    var(--color-accent) 18%,
+    var(--color-surface)
+  );
+  --color-surface-tint-danger-strong: color-mix(
+    in oklab,
+    var(--color-danger) 22%,
+    var(--color-surface)
+  );
+  --color-surface-tint-success-strong: color-mix(
+    in oklab,
+    var(--color-success) 22%,
+    var(--color-surface)
+  );
+  --color-surface-tint-warning-strong: color-mix(
+    in oklab,
+    var(--color-warning) 22%,
+    var(--color-surface)
+  );
+
+  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-family-mono: ui-monospace, monospace;
 
   /**
-   * Внутренние отступы блоков (экв. px/py из Tailwind для s–xl).
-   * Утилиты: `.brn-inset-s` … `.brn-inset-xl`
+   * Ступени отступов (rem), согласованы с плотностью Button / Dialog / Expandable.
+   * Утилиты: gap-mid, p-xsmall, m-plus, …
    */
-  --brn-inset-y-sm: var(--brn-space-2);
-  --brn-inset-x-sm: var(--brn-space-3);
-  --brn-inset-y-md: var(--brn-space-3);
-  --brn-inset-x-md: var(--brn-space-4);
-  --brn-inset-y-lg: var(--brn-space-4);
-  --brn-inset-x-lg: var(--brn-space-5);
-  --brn-inset-y-xl: var(--brn-space-5);
-  --brn-inset-x-xl: var(--brn-space-6);
+  --space-xsmall: 0.25rem;
+  --space-small: 0.375rem;
+  --space-base: 0.5rem;
+  --space-plus: 0.75rem;
+  --space-mid: 1rem;
+  --space-large: 1.25rem;
+  --space-xlarge: 1.5rem;
 
-  /**
-   * Зазор между заголовком и подзаголовком (flex `gap`, без margin).
-   * Утилиты: `.brn-title-subtitle-stack-s` | `-md` / `.brn-title-subtitle-stack` | `-lg` | `-xl`
-   */
-  --brn-heading-stack-gap-sm: var(--brn-space-0-5);
-  --brn-heading-stack-gap-md: var(--brn-space-1);
-  --brn-heading-stack-gap-lg: var(--brn-space-2);
-  --brn-heading-stack-gap-xl: var(--brn-space-2-5);
+  /** Сырьё для @theme — радиусы (утилиты rounded-xsmall … rounded-base) */
+  --radius-value-xsmall: 0.25rem;
+  --radius-value-small: 0.375rem;
+  --radius-value-base: 0.5rem;
 
-  /* Движение (для анимаций / anime.js) */
-  --brn-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --brn-duration-fast: 150ms;
-  --brn-duration-normal: 250ms;
+  /** Типографика — размер / межстрочный интервал / насыщенность */
+  --text-accent-header-size: 2.25rem;
+  --text-accent-header-line-height: 1.1;
+  --text-accent-header-weight: 600;
+  /** text-header-1: как text-xl + font-medium + line-height 1.2 */
+  --text-header-1-size: 1.875rem;
+  --text-header-1-line-height: 1.2;
+  --text-header-1-weight: 600;
+  /** text-header-2: как text-lg + font-medium + line-height 1.25 */
+  --text-header-2-size: 1.5rem;
+  --text-header-2-line-height: 1.25;
+  --text-header-2-weight: 600;
+  /** text-base: как text-sm + font-medium + line-height 1.2 */
+  --text-base-size: 0.875rem;
+  --text-base-line-height: 1.2;
+  --text-base-weight: 500;
+  /** text-small: как text-xs + font-medium + line-height 1 */
+  --text-small-size: 0.75rem;
+  --text-small-line-height: 1;
+  --text-small-weight: 500;
+  /** text-mid: как text-md + font-medium + line-height 1.2 (text-md = 1rem в шкале Tailwind) */
+  --text-mid-size: 1rem;
+  --text-mid-line-height: 1.2;
+  --text-mid-weight: 500;
+  /** text-tools: как text-xs + font-normal + line-height 1.4 */
+  --text-tools-size: 0.75rem;
+  --text-tools-line-height: 1.4;
+  --text-tools-weight: 400; /** 400 → 500 для полноценного @utility text-tools */
 
-  /* Glass — линза (backdrop) и кольцо по краю */
-  --brn-glass-blur: 22px;
-  --brn-glass-blur-edge: 52px;
-  --brn-glass-saturate: 1.45;
-  --brn-glass-tint: rgb(255 255 255 / 0.06);
-  --brn-glass-tint-veil: rgb(12 13 16 / 0.42);
-  --brn-glass-border: rgb(255 255 255 / 0.14);
-  --brn-glass-highlight: rgb(255 255 255 / 0.09);
-  --brn-glass-edge-falloff: 68%;
+  /** Крупность контейнеров (модалки, панели, лэйауты) — max-w-component-* */
+  --max-component-small: 20rem;
+  --max-component-base: 28rem;
+  --max-component-mid: 32rem;
+  --max-component-large: 36rem;
+
+  /** Кнопки — минимальная ширина по размеру */
+  --button-min-width-s: 4.5rem;
+  --button-min-width-m: 5.5rem;
+  --button-min-width-l: 7rem;
+  --button-min-width-xl: 8rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+
+  --glass-blur: 22px;
+  --glass-blur-edge: 52px;
+  --glass-saturate: 1.45;
+  --glass-tint: rgb(255 255 255 / 0.06);
+  --glass-tint-veil: rgb(12 13 16 / 0.42);
+  --glass-border: rgb(255 255 255 / 0.14);
+  --glass-highlight: rgb(255 255 255 / 0.09);
+  --glass-edge-falloff: 68%;
 }
 
-/**
- * Светлая тема: повесьте на корень или обёртку, например `<html data-brn-theme="light">`.
- */
+[data-theme="light"],
 [data-brn-theme="light"] {
-  --brn-color-bg: #fafafa;
-  --brn-color-surface: #ffffff;
-  --brn-color-border: #e4e4e7;
-  --brn-color-text: #18181b;
-  --brn-color-text-muted: #71717a;
-  --brn-color-accent: #18181b;
-  --brn-color-accent-foreground: #fafafa;
-  --brn-color-danger: #dc2626;
-  --brn-color-danger-foreground: #ffffff;
-  --brn-color-success: #22c55e;
-  --brn-color-success-foreground: #ffffff;
-  --brn-color-info: #0ea5e9;
-  --brn-color-info-foreground: #ffffff;
-  --brn-color-warning: #f59e0b;
-  --brn-color-warning-foreground: #0c0c0e;
-  --brn-glass-tint: rgb(0 0 0 / 0.04);
-  --brn-glass-tint-veil: rgb(250 250 250 / 0.72);
-  --brn-glass-border: rgb(0 0 0 / 0.1);
-  --brn-glass-highlight: rgb(0 0 0 / 0.05);
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  --color-border: #e4e4e7;
+  --color-foreground: #18181b;
+  --color-muted: #71717a;
+  --color-accent: #18181b;
+  --color-accent-foreground: #fafafa;
+  --color-danger: #dc2626;
+  --color-danger-foreground: #ffffff;
+  --color-success: #22c55e;
+  --color-success-foreground: #ffffff;
+  --color-info: #0ea5e9;
+  --color-info-foreground: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #0c0c0e;
 
-  --brn-surface-tint-danger: color-mix(
+  /**
+   * Светлая тема: акцент почти чёрный — wash с transparent почти не виден;
+   * залитый default: 90% + black почти не отличается от bg-accent — усиливаем долю black.
+   */
+  --color-accent-fill-hover: color-mix(
     in oklab,
-    var(--brn-color-danger) 20%,
-    var(--brn-color-surface)
+    var(--color-foreground) 12%,
+    var(--color-surface)
   );
-  --brn-surface-tint-success: color-mix(
+  --color-accent-solid-hover: color-mix(
     in oklab,
-    var(--brn-color-success) 27%,
-    var(--brn-color-surface)
+    var(--color-accent) 72%,
+    black
   );
-  --brn-surface-tint-info: color-mix(
+
+  /**
+   * Converge ripple: как с hover — на белом transparent-wash не читается;
+   * на залитом default смесь foreground+transparent даёт слабый контраст к чёрному accent.
+   */
+  --color-converge-ripple-accent-soft: color-mix(
     in oklab,
-    var(--brn-color-info) 27%,
-    var(--brn-color-surface)
+    var(--color-foreground) 22%,
+    var(--color-surface)
   );
-  --brn-surface-tint-warning: color-mix(
+  --color-converge-ripple-accent-fill: color-mix(
     in oklab,
-    var(--brn-color-warning) 27%,
-    var(--brn-color-surface)
+    var(--color-accent-foreground) 52%,
+    var(--color-accent)
   );
-  --brn-surface-tint-accent: color-mix(
+
+  --glass-tint: rgb(0 0 0 / 0.04);
+  --glass-tint-veil: rgb(250 250 250 / 0.72);
+  --glass-border: rgb(0 0 0 / 0.1);
+  --glass-highlight: rgb(0 0 0 / 0.05);
+
+  --color-surface-tint-danger: color-mix(
     in oklab,
-    var(--brn-color-border) 80%,
-    var(--brn-color-surface)
+    var(--color-danger) 20%,
+    var(--color-surface)
   );
-  --brn-surface-tint-danger-strong: color-mix(
+  --color-surface-tint-success: color-mix(
     in oklab,
-    var(--brn-color-danger) 27%,
-    var(--brn-color-surface)
+    var(--color-success) 27%,
+    var(--color-surface)
   );
-  --brn-surface-tint-success-strong: color-mix(
+  --color-surface-tint-info: color-mix(
     in oklab,
-    var(--brn-color-success) 27%,
-    var(--brn-color-surface)
+    var(--color-info) 27%,
+    var(--color-surface)
   );
-  --brn-surface-tint-warning-strong: color-mix(
+  --color-surface-tint-warning: color-mix(
     in oklab,
-    var(--brn-color-warning) 27%,
-    var(--brn-color-surface)
+    var(--color-warning) 27%,
+    var(--color-surface)
   );
-}
-
-/**
- * Утилиты раскладки Burne (опираются на токены выше).
- */
-.brn-inset-s {
-  padding: var(--brn-inset-y-sm) var(--brn-inset-x-sm);
-}
-
-.brn-inset-md {
-  padding: var(--brn-inset-y-md) var(--brn-inset-x-md);
-}
-
-.brn-inset-lg {
-  padding: var(--brn-inset-y-lg) var(--brn-inset-x-lg);
-}
-
-.brn-inset-xl {
-  padding: var(--brn-inset-y-xl) var(--brn-inset-x-xl);
-}
-
-.brn-title-subtitle-stack-s {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: var(--brn-heading-stack-gap-sm);
-}
-
-.brn-title-subtitle-stack-md,
-.brn-title-subtitle-stack {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: var(--brn-heading-stack-gap-md);
-}
-
-.brn-title-subtitle-stack-lg {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: var(--brn-heading-stack-gap-lg);
-}
-
-.brn-title-subtitle-stack-xl {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: var(--brn-heading-stack-gap-xl);
+  --color-surface-tint-accent: color-mix(
+    in oklab,
+    var(--color-border) 80%,
+    var(--color-surface)
+  );
+  --color-surface-tint-danger-strong: color-mix(
+    in oklab,
+    var(--color-danger) 27%,
+    var(--color-surface)
+  );
+  --color-surface-tint-success-strong: color-mix(
+    in oklab,
+    var(--color-success) 27%,
+    var(--color-surface)
+  );
+  --color-surface-tint-warning-strong: color-mix(
+    in oklab,
+    var(--color-warning) 27%,
+    var(--color-surface)
+  );
 }

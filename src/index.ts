@@ -115,7 +115,6 @@ export {
   type BadgeColor,
   type BadgeVariant,
   type BadgeSize,
-  type BadgeSizeInput,
   type BadgePlacement,
   type BadgeIconPosition,
   type BadgeAnchorProps,
@@ -149,9 +148,11 @@ export {
   useInteractiveHoverLiftOnContainer,
 } from "@/components/core/utils/hoverInteractiveLift";
 export {
+  colorToken,
   tokensConfig,
-  brnTokenNames,
+  designTokenNames,
+  type ColorTokenSuffix,
   type TokensConfig,
-  type BrnCssVar,
+  type DesignCssVar,
 } from "@/tokens";
 export { animate, remove } from "animejs";

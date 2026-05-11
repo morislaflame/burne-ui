@@ -103,7 +103,7 @@ const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
         ref={ref}
         id={id ?? titleId}
         className={cn(
-          "min-w-0 text-brn-text font-medium text-md leading-snug",
+          "min-w-0 text-foreground text-mid",
           className,
         )}
         {...rest}
@@ -126,20 +126,23 @@ function DialogDescription({
   return (
     <p
       id={id ?? descriptionId}
-      className={cn("text-sm leading-normal text-brn-muted", className)}
+      className={cn("text-sm leading-normal text-muted", className)}
       {...rest}
     />
   );
 }
 
-/** Заголовок и подзаголовок: колонка с токенным зазором (см. `.brn-title-subtitle-stack*` в токенах). */
+/** Заголовок и подзаголовок: колонка с токенным зазором (`gap-base`). */
 function DialogHeadingBlock({
   className = "",
   ...rest
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("brn-title-subtitle-stack-lg min-w-0 flex-1", className)}
+      className={cn(
+        "flex min-w-0 flex-1 flex-col gap-base",
+        className,
+      )}
       {...rest}
     />
   );
@@ -157,9 +160,9 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
         type="button"
         aria-label={ariaLabel}
         className={cn(
-          "-m-1 shrink-0 rounded-md p-1.5 text-brn-muted outline-none",
-          "transition-colors duration-200 ease-out hover:bg-brn-surface hover:text-brn-text",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-brn-accent focus-visible:outline-offset-2",
+          "-m-1 shrink-0 rounded-md p-1.5 text-muted outline-none",
+          "transition-colors duration-200 ease-out hover:bg-surface hover:text-foreground",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2",
           className,
         )}
         onClick={(e) => {
@@ -178,7 +181,10 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
-      className={cn("min-h-0 flex-1 overflow-y-auto brn-inset-md", className)}
+      className={cn(
+        "min-h-0 flex-1 overflow-y-auto py-plus px-mid",
+        className,
+      )}
       {...rest}
     />
   );
@@ -188,7 +194,7 @@ function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-brn-border brn-inset-md",
+        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t border-border py-plus px-mid",
         className,
       )}
       {...rest}
@@ -341,14 +347,14 @@ const DialogRoot = function Dialog({
       <div
         className="fixed inset-0 z-[100] flex items-center justify-center p-4"
         role="presentation"
-        {...(lightUi ? { "data-brn-theme": "light" as const } : {})}
+        {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
         <div
           ref={overlayRef}
           className={cn(
             "absolute inset-0",
             lightUi
-              ? "bg-[color-mix(in_oklab,var(--brn-color-text)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
+              ? "bg-[color-mix(in_oklab,var(--color-foreground)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
               : "bg-[color-mix(in_oklab,black_58%,transparent)]",
           )}
           style={{ opacity: prefersReducedInteractiveHoverLift() ? 1 : 0 }}
@@ -364,7 +370,7 @@ const DialogRoot = function Dialog({
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-brn-border bg-brn-surface text-brn-text shadow-lg outline-none",
+            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-xl border border-border bg-surface text-foreground shadow-lg outline-none",
             className,
           )}
           style={

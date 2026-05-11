@@ -7,8 +7,8 @@ import { Button } from "@/components/core/Button";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
         <Story />
@@ -20,9 +20,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-brn-theme="light"
-      className="box-border w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      data-theme="light"
+      className="box-border w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
         <Story />
@@ -101,7 +101,7 @@ function AlertAllVariantsDemo() {
           </Alert.Content>
         </Alert.Message>
         <Alert.Action>
-          <Button size="m" variant="danger">
+          <Button size="base" variant="danger">
             Retry
           </Button>
         </Alert.Action>
@@ -173,7 +173,7 @@ export const WithAction: Story = {
         </Alert.Content>
       </Alert.Message>
       <Alert.Action>
-        <Button size="m" variant="info">
+        <Button size="base" variant="info">
           Refresh
         </Button>
       </Alert.Action>

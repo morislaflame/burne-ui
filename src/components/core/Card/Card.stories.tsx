@@ -11,8 +11,8 @@ import { PIN_IMAGE1 } from "@/utils/mockImages";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-md">
         <Story />
@@ -57,10 +57,10 @@ export const WithFooter: Story = {
         <Card.Description>Обновлён 10 мая 2026</Card.Description>
       </Card.Content>
       <Card.Footer className="flex items-center justify-end gap-2">
-        <Button variant="ghost" size="m">
+        <Button variant="ghost" size="base">
           Отмена
         </Button>
-        <Button variant="default" size="m">
+        <Button variant="default" size="base">
           Открыть
         </Button>
       </Card.Footer>
@@ -115,7 +115,7 @@ function QuickSubscribeCard() {
           Короткая форма внутри Card.Body с компонентом Form.
         </Card.Description>
       </Card.Content>
-      <Card.Body className="border-t border-brn-border pt-4">
+      <Card.Body className="border-t border-border pt-4">
         <Form onSubmit={onSubmit} aria-label="Подписка на рассылку">
           <Input
             label="Email"
@@ -124,7 +124,7 @@ function QuickSubscribeCard() {
             placeholder="you@example.com"
             autoComplete="email"
           />
-          <Button type="submit" variant="default" size="l" className="w-full">
+          <Button type="submit" variant="default" size="large" className="w-full">
             Подписаться
           </Button>
         </Form>

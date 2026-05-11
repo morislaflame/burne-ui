@@ -29,10 +29,10 @@ import {
 } from "@/components/core/utils/motionTokens";
 import { cn } from "@/utils/cn";
 
-export type SearchInputSize = "s" | "m" | "l";
+export type SearchInputSize = "small" | "base" | "large";
 
 const GHOST_CLEAR_HOVER =
-  "hover:bg-[color-mix(in_oklab,var(--brn-color-accent)_18%,transparent)]";
+  "hover:bg-accent-fill-hover";
 
 const SIZE_LAYOUT: Record<
   SearchInputSize,
@@ -49,7 +49,7 @@ const SIZE_LAYOUT: Record<
     textGapClear: number;
   }
 > = {
-  s: {
+  small: {
     dim: 36,
     defaultExpandedW: 220,
     iconBox: 18,
@@ -61,7 +61,7 @@ const SIZE_LAYOUT: Record<
     clearIconClass: "size-3.5",
     textGapClear: 6,
   },
-  m: {
+  base: {
     dim: 44,
     defaultExpandedW: 280,
     iconBox: 22,
@@ -73,14 +73,14 @@ const SIZE_LAYOUT: Record<
     clearIconClass: "size-4",
     textGapClear: 8,
   },
-  l: {
+  large: {
     dim: 52,
     defaultExpandedW: 340,
     iconBox: 26,
     padX: 14,
     radiusExpanded: 12,
     iconClass: "size-6",
-    inputClass: "text-base",
+    inputClass: "text-[1rem] leading-normal",
     clearTap: 36,
     clearIconClass: "size-[1.125rem]",
     textGapClear: 8,
@@ -91,7 +91,7 @@ export type SearchInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type"
 > & {
-  /** Высота круга и габариты иконки / поля. По умолчанию `m`. */
+  /** Высота круга и габариты иконки / поля. По умолчанию `base`. */
   size?: SearchInputSize;
   /** Ширина в развёрнутом виде (px). */
   expandedWidth?: number;
@@ -115,7 +115,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SearchInput(
     {
       className = "",
-      size: sizeProp = "m",
+      size: sizeProp = "base",
       expandedWidth,
       defaultExpanded = false,
       expanded: expandedProp,
@@ -412,10 +412,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
         className={cn(
-          "relative inline-block overflow-hidden border border-brn-border bg-brn-surface shadow-sm outline-none",
+          "relative inline-block overflow-hidden border border-border bg-surface shadow-sm outline-none",
           "transition-[border-color,background-color] duration-200 ease-out",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brn-accent",
-          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brn-accent",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
           expanded ? "cursor-text" : "",
           !expanded && !blocked ? "cursor-pointer" : "",
           blocked ? "pointer-events-none opacity-50" : "",
@@ -435,7 +435,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         <span
           ref={iconRef}
           className={cn(
-            "pointer-events-none absolute top-1/2 z-[1] flex -translate-y-1/2 items-center justify-center text-brn-muted",
+            "pointer-events-none absolute top-1/2 z-[1] flex -translate-y-1/2 items-center justify-center text-muted",
             layout.iconClass,
           )}
           style={{
@@ -462,7 +462,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           aria-hidden={!expanded}
           aria-label={inputAriaLabel}
           className={cn(
-            "box-border min-h-0 w-full border-0 bg-transparent text-brn-text outline-none placeholder:text-brn-muted",
+            "box-border min-h-0 w-full border-0 bg-transparent text-foreground outline-none placeholder:text-muted",
             "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",
             "disabled:cursor-not-allowed disabled:opacity-100",
             layout.inputClass,
@@ -491,9 +491,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             onPointerDown={(e) => e.stopPropagation()}
             className={cn(
               "absolute top-1/2 z-[3] flex -translate-y-1/2 items-center justify-center rounded-full border-0 bg-transparent p-0",
-              "text-brn-text outline-none transition-colors",
+              "text-foreground outline-none transition-colors",
               GHOST_CLEAR_HOVER,
-              "focus-visible:ring-2 focus-visible:ring-brn-accent focus-visible:ring-inset",
+              "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
               "cursor-pointer",
             )}
             style={{

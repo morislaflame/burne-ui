@@ -10,8 +10,8 @@ import { Dialog } from "./Dialog";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
         <Story />
@@ -23,9 +23,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-brn-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      data-theme="light"
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
         <Story />
@@ -73,20 +73,20 @@ export const Default: Story = {
             <Dialog.Close />
           </Dialog.Header>
           <Dialog.Body>
-            <p className="text-sm leading-relaxed text-brn-muted">
+            <p className="text-sm leading-relaxed text-muted">
               Произвольный контент: поля формы, списки, предпросмотр. Здесь только
               иллюстрация скролла при большом объёме текста.
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-brn-muted">
+            <p className="mt-3 text-sm leading-relaxed text-muted">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
           </Dialog.Body>
           <Dialog.Footer>
-            <Button type="button" size="m" variant="ghost" onClick={() => setOpen(false)}>
+            <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
               Отмена
             </Button>
-            <Button type="button" size="m" variant="default" onClick={() => setOpen(false)}>
+            <Button type="button" size="base" variant="default" onClick={() => setOpen(false)}>
               Сохранить
             </Button>
           </Dialog.Footer>
@@ -143,13 +143,13 @@ export const WithForm: Story = {
             <Dialog.Footer>
               <Button
                 type="button"
-                size="m"
+                size="base"
                 variant="ghost"
                 onClick={() => setOpen(false)}
               >
                 Отмена
               </Button>
-              <Button type="submit" size="m" variant="default">
+              <Button type="submit" size="base" variant="default">
                 Сохранить
               </Button>
             </Dialog.Footer>
@@ -166,7 +166,7 @@ export const ScrollableContent: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button type="button" size="m" variant="outline" onClick={() => setOpen(true)}>
+        <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
           Длинный контент
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -181,7 +181,7 @@ export const ScrollableContent: Story = {
           </Dialog.Header>
           <Dialog.Body>
             {Array.from({ length: 10 }).map((_, index) => (
-              <p key={index} className="mb-4 text-sm leading-normal text-brn-muted last:mb-0">
+              <p key={index} className="mb-4 text-sm leading-normal text-muted last:mb-0">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
                 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
                 nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -192,10 +192,10 @@ export const ScrollableContent: Story = {
             ))}
           </Dialog.Body>
           <Dialog.Footer>
-            <Button type="button" size="m" variant="ghost" onClick={() => setOpen(false)}>
+            <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
               Закрыть
             </Button>
-            <Button type="button" size="m" variant="default" onClick={() => setOpen(false)}>
+            <Button type="button" size="base" variant="default" onClick={() => setOpen(false)}>
               Готово
             </Button>
           </Dialog.Footer>

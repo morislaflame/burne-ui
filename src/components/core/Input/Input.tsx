@@ -59,7 +59,7 @@ export type InputProps = Omit<
 };
 
 const VARIANT_SHELL: Record<InputVariant, string> = {
-  default: "bg-brn-surface shadow-sm",
+  default: "bg-surface shadow-sm",
   outline: "bg-transparent shadow-none",
 };
 
@@ -68,18 +68,18 @@ const STATUS_TINT_SHELL: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "bg-brn-surface-tint-danger",
-  success: "bg-brn-surface-tint-success",
-  warning: "bg-brn-surface-tint-warning",
+  danger: "bg-surface-tint-danger",
+  success: "bg-surface-tint-success",
+  warning: "bg-surface-tint-warning",
 };
 
 const STATUS_TINT_FOCUS_BORDER: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "focus-within:border-brn-danger",
-  success: "focus-within:border-brn-success",
-  warning: "focus-within:border-brn-warning",
+  danger: "focus-within:border-danger",
+  success: "focus-within:border-success",
+  warning: "focus-within:border-warning",
 };
 
 /** Слегка насыщеннее оболочки, чтобы префикс/суффикс читался на тоне. */
@@ -87,23 +87,23 @@ const STATUS_TINT_AFFIX: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "bg-brn-surface-tint-danger-strong",
-  success: "bg-brn-surface-tint-success-strong",
-  warning: "bg-brn-surface-tint-warning-strong",
+  danger: "bg-surface-tint-danger-strong",
+  success: "bg-surface-tint-success-strong",
+  warning: "bg-surface-tint-warning-strong",
 };
 
 const STATUS_HINT: Record<InputStatus, string> = {
-  default: "text-brn-muted",
-  danger: "text-brn-danger",
-  success: "text-brn-success",
-  warning: "text-brn-warning",
+  default: "text-muted",
+  danger: "text-danger",
+  success: "text-success",
+  warning: "text-warning",
 };
 
 const AFFIX_SURFACE: Record<InputVariant, string> = {
   default:
-    "bg-[color-mix(in_oklab,var(--brn-color-border)_32%,var(--brn-color-surface))]",
+    "bg-[color-mix(in_oklab,var(--color-border)_32%,var(--color-surface))]",
   outline:
-    "bg-[color-mix(in_oklab,var(--brn-color-border)_22%,transparent)]",
+    "bg-[color-mix(in_oklab,var(--color-border)_22%,transparent)]",
 };
 
 function AffixSlot({
@@ -119,8 +119,8 @@ function AffixSlot({
 }) {
   const edge =
     side === "prefix"
-      ? "border-r border-brn-border"
-      : "border-l border-brn-border";
+      ? "border-r border-border"
+      : "border-l border-border";
   const surface =
     status === "default"
       ? AFFIX_SURFACE[variant]
@@ -128,7 +128,7 @@ function AffixSlot({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center px-3 text-sm text-brn-muted",
+        "flex shrink-0 items-center px-3 text-sm text-muted",
         surface,
         edge,
       )}
@@ -161,7 +161,7 @@ function PasswordVisibilityAffix({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-stretch border-l border-brn-border",
+        "flex shrink-0 items-stretch border-l border-border",
         surface,
       )}
     >
@@ -177,9 +177,9 @@ function PasswordVisibilityAffix({
         }}
         onPointerDown={(e) => e.stopPropagation()}
         className={cn(
-          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-2.5 text-brn-muted outline-none transition-colors",
-          "hover:text-brn-text",
-          "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brn-accent",
+          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-2.5 text-muted outline-none transition-colors",
+          "hover:text-foreground",
+          "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
           disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
         )}
       >
@@ -197,7 +197,7 @@ function FileGlyph({ className = "" }: { className?: string }) {
   return (
     <span
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-md bg-brn-surface text-brn-muted border border-brn-border",
+        "flex size-9 shrink-0 items-center justify-center rounded-md bg-surface text-muted border border-border",
         className,
       )}
       aria-hidden
@@ -249,9 +249,9 @@ function FileRemoveButton({
       }}
       onPointerDown={(e) => e.stopPropagation()}
       className={cn(
-        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-md text-brn-danger outline-none transition-colors",
-        "hover:bg-[color-mix(in_oklab,var(--brn-color-danger)_14%,transparent)]",
-        "focus-visible:ring-2 focus-visible:ring-brn-accent focus-visible:ring-offset-2 focus-visible:ring-offset-brn-surface",
+        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-md text-danger outline-none transition-colors",
+        "hover:bg-[color-mix(in_oklab,var(--color-danger)_14%,transparent)]",
+        "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
         disabled ? "pointer-events-none opacity-40" : "",
       )}
     >
@@ -311,7 +311,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )
       : cn(
           VARIANT_SHELL[variant],
-          "border-brn-border focus-within:border-brn-accent",
+          "border-border focus-within:border-accent",
         );
 
     const handleShellPointerDown = useCallback(
@@ -418,11 +418,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           "border-2 border-dashed",
           statusTinted
             ? status === "danger"
-              ? "border-brn-danger/50 focus-within:border-brn-danger"
+              ? "border-danger/50 focus-within:border-danger"
               : status === "success"
-                ? "border-brn-success/50 focus-within:border-brn-success"
-                : "border-brn-warning/50 focus-within:border-brn-warning"
-            : "border-brn-border focus-within:border-brn-accent",
+                ? "border-success/50 focus-within:border-success"
+                : "border-warning/50 focus-within:border-warning"
+            : "border-border focus-within:border-accent",
         )
       : null;
 
@@ -433,7 +433,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label ? (
           <label
             htmlFor={id}
-            className="text-sm font-medium leading-snug text-brn-text"
+            className="text-sm font-medium leading-snug text-foreground"
           >
             {label}
           </label>
@@ -470,10 +470,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               {fileListEmpty ? (
                 <>
                   <IoFolderOpen
-                    className="pointer-events-none size-12 shrink-0 text-brn-muted"
+                    className="pointer-events-none size-12 shrink-0 text-muted"
                     aria-hidden
                   />
-                  <span className="pointer-events-none max-w-[18rem] text-center text-sm leading-snug text-brn-muted">
+                  <span className="pointer-events-none max-w-[18rem] text-center text-sm leading-snug text-muted">
                     {placeholder ?? "Выберите файл"}
                   </span>
                 </>
@@ -488,12 +488,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                       <img
                         src={previewUrl}
                         alt=""
-                        className="size-9 shrink-0 rounded-md object-cover ring-1 ring-brn-border"
+                        className="size-9 shrink-0 rounded-md object-cover ring-1 ring-border"
                       />
                     ) : (
                       <FileGlyph />
                     )}
-                    <span className="min-w-0 flex-1 truncate text-sm text-brn-text">
+                    <span className="min-w-0 flex-1 truncate text-sm text-foreground">
                       {file.name}
                     </span>
                     {!blocked ? (
@@ -513,12 +513,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                     <img
                       src={fileEntries[0]!.previewUrl}
                       alt=""
-                      className="size-9 shrink-0 rounded-md object-cover ring-1 ring-brn-border"
+                      className="size-9 shrink-0 rounded-md object-cover ring-1 ring-border"
                     />
                   ) : (
                     <FileGlyph />
                   )}
-                  <span className="min-w-0 flex-1 truncate text-sm text-brn-text">
+                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
                     {fileEntries[0]!.file.name}
                   </span>
                   {!blocked ? (
@@ -549,7 +549,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               readOnly={readOnly}
               placeholder={placeholder}
               onChange={onChange}
-              className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-brn-text outline-none placeholder:text-brn-muted"
+              className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted"
               {...rest}
             />
           )}

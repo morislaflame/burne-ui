@@ -16,8 +16,8 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const CARD_SURFACE: Record<CardVariant, string> = {
-  default: "bg-brn-surface border border-brn-border shadow-sm",
-  outline: "bg-transparent border border-brn-border shadow-none",
+  default: "bg-surface border border-border shadow-sm",
+  outline: "bg-transparent border border-border shadow-none",
 };
 
 export type CardContentProps = HTMLAttributes<HTMLDivElement>;
@@ -29,7 +29,10 @@ export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
 function CardContent({ className = "", ...rest }: CardContentProps) {
   return (
     <div
-      className={cn("brn-title-subtitle-stack brn-inset-md", className)}
+      className={cn(
+        "flex min-w-0 flex-col gap-xsmall py-plus px-mid",
+        className,
+      )}
       {...rest}
     />
   );
@@ -40,7 +43,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
     return (
       <h3
         ref={ref}
-        className={cn("min-w-0 text-md font-semibold leading-snug", className)}
+        className={cn("min-w-0 text-mid font-semibold", className)}
         {...rest}
       />
     );
@@ -54,7 +57,7 @@ const CardDescription = forwardRef<
   return (
     <p
       ref={ref}
-      className={cn("min-w-0 text-sm leading-normal text-brn-muted", className)}
+      className={cn("min-w-0 text-sm leading-normal text-muted", className)}
       {...rest}
     />
   );
@@ -64,7 +67,7 @@ function CardBody({ className = "", ...rest }: CardBodyProps) {
   return (
     <div
       className={cn(
-        "min-w-0 px-4 pb-4 text-sm leading-relaxed text-brn-text",
+        "min-w-0 px-4 pb-4 text-sm leading-relaxed text-foreground",
         className,
       )}
       {...rest}
@@ -77,7 +80,7 @@ function CardFooter({ className = "", ...rest }: CardFooterProps) {
   return (
     <div
       className={cn(
-        "mt-auto border-t border-brn-border brn-inset-md text-sm text-brn-muted",
+        "mt-auto border-t border-border py-plus px-mid text-sm text-muted",
         className,
       )}
       {...rest}
@@ -112,7 +115,7 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     <div
       ref={setRootRef}
       className={cn(
-        "flex min-w-0 flex-col overflow-hidden rounded-xl text-brn-text outline-none",
+        "flex min-w-0 flex-col overflow-hidden rounded-xl text-foreground outline-none",
         CARD_SURFACE[variant],
         className,
       )}

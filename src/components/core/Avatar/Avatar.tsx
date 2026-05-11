@@ -30,16 +30,16 @@ import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hove
 import { cn } from "@/utils/cn";
 
 /** Размер круга аватара. */
-export type AvatarSize = "s" | "m" | "l";
+export type AvatarSize = "small" | "base" | "large";
 
 export type AvatarProps = Omit<HTMLAttributes<HTMLDivElement>, "aria-label"> & {
-  /** Круг диаметром s / m / l. По умолчанию `m`. */
+  /** Круг диаметром small / base / large. По умолчанию `base`. */
   size?: AvatarSize;
   /** Подпись пользователя — первая буква во `Avatar.Fallback`, если там нет текста; также `aria-label` корня. */
   label?: string;
   /** Никнейм во всплывающем `Tooltip` при наведении. Без текста тултип не показывается. */
   nickname?: string;
-  /** Размер тултипа при заданном `nickname`. По умолчанию `m`. */
+  /** Размер тултипа при заданном `nickname`. По умолчанию `base`. */
   tooltipSize?: TooltipSize;
   /** Вариант тултипа (как у `Alert`). По умолчанию `default`. */
   tooltipVariant?: TooltipVariant;
@@ -74,15 +74,15 @@ function useAvatarContext(component: string): AvatarContextValue {
 }
 
 const SIZE_CLASS: Record<AvatarSize, { root: string; fallbackText: string }> = {
-  s: {
+  small: {
     root: "size-8",
     fallbackText: "text-xs font-semibold uppercase leading-none tracking-tight",
   },
-  m: {
+  base: {
     root: "size-10",
     fallbackText: "text-sm font-semibold uppercase leading-none tracking-tight",
   },
-  l: {
+  large: {
     root: "size-14",
     fallbackText: "text-lg font-semibold uppercase leading-none tracking-tight",
   },
@@ -97,10 +97,10 @@ function letterFromLabel(label: string | undefined): string {
 
 const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
   {
-    size = "m",
+    size = "base",
     label,
     nickname,
-    tooltipSize = "m",
+    tooltipSize = "base",
     tooltipVariant = "default",
     tooltipSide = "top",
     className = "",
@@ -139,7 +139,7 @@ const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
       ref={ref}
       role={role ?? "group"}
       className={cn(
-        "relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-brn-surface ring-2 ring-brn-bg",
+        "relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-surface ring-2 ring-background",
         SIZE_CLASS[size].root,
         className,
       )}
@@ -220,7 +220,7 @@ const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
       <span
         ref={ref}
         className={cn(
-          "absolute inset-0 z-0 flex items-center justify-center bg-[color-mix(in_oklab,var(--brn-color-accent)_18%,var(--brn-color-surface))] text-brn-accent",
+          "absolute inset-0 z-0 flex items-center justify-center bg-[color-mix(in_oklab,var(--color-accent)_18%,var(--color-surface))] text-accent",
           SIZE_CLASS[size].fallbackText,
           show ? "opacity-100" : "pointer-events-none opacity-0",
           className,

@@ -19,21 +19,21 @@ const VARIANTS: TooltipVariant[] = [
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-8 p-10 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-8 p-10 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
     </div>
   ),
 ] as const;
 
-/** Фон страницы и `data-brn-theme="light"`, как у `Alert.stories` («Варианты (светлая тема)»). */
+/** Фон страницы и `data-theme="light"`, как у `Alert.stories` («Варианты (светлая тема)»). */
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-brn-theme="light"
-      className="box-border w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      data-theme="light"
+      className="box-border w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
         <Story />
@@ -60,26 +60,26 @@ export const OnButtonSizes: Story = {
   name: "Размеры на кнопке",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-4">
-      <Tooltip size="s" variant="default">
+      <Tooltip size="small" variant="default">
         <Tooltip.Trigger>
-          <Button size="m" variant="outline" type="button">
-            Hover (s)
+          <Button size="base" variant="outline" type="button">
+            Hover (small)
           </Button>
         </Tooltip.Trigger>
         <Tooltip.Content>Компактный тултип</Tooltip.Content>
       </Tooltip>
-      <Tooltip size="m" variant="default">
+      <Tooltip size="base" variant="default">
         <Tooltip.Trigger>
-          <Button size="l" variant="outline" type="button">
-            Hover (m)
+          <Button size="large" variant="outline" type="button">
+            Hover (base)
           </Button>
         </Tooltip.Trigger>
         <Tooltip.Content>Стандартный размер подсказки</Tooltip.Content>
       </Tooltip>
-      <Tooltip size="l" variant="default">
+      <Tooltip size="large" variant="default">
         <Tooltip.Trigger>
-          <Button size="xl" variant="outline" type="button">
-            Hover (l)
+          <Button size="xlarge" variant="outline" type="button">
+            Hover (large)
           </Button>
         </Tooltip.Trigger>
         <Tooltip.Content>Более широкий отступ для длинной подсказки</Tooltip.Content>
@@ -121,10 +121,10 @@ export const DefaultWithOptionalIcon: Story = {
   render: () => (
     <Tooltip
       variant="default"
-      icon={<IoHelpCircleOutline aria-hidden className="text-brn-accent" />}
+      icon={<IoHelpCircleOutline aria-hidden className="text-accent" />}
     >
       <Tooltip.Trigger>
-        <Button size="l" variant="outline" type="button">
+        <Button size="large" variant="outline" type="button">
           Hover
         </Button>
       </Tooltip.Trigger>
@@ -138,7 +138,7 @@ export const SemanticIconHidden: Story = {
   render: () => (
     <Tooltip variant="danger" showIcon={false}>
       <Tooltip.Trigger>
-        <Button size="l" variant="outline" type="button">
+        <Button size="large" variant="outline" type="button">
           Hover
         </Button>
       </Tooltip.Trigger>

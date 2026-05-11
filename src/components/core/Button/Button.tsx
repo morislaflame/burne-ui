@@ -25,13 +25,14 @@ import {
   ConvergeRippleLayer,
 } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
 /** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
 
 /** Размер кнопки: высота, отступы, типографика, спиннер и иконки результата. */
-export type ButtonSize = "s" | "m" | "l" | "xl";
+export type ButtonSize = "small" | "base" | "large" | "xlarge";
 
 /** Визуальный вариант заливки и обводки. */
 export type ButtonVariant =
@@ -53,62 +54,53 @@ type VariantVisual = {
 
 const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   default: {
-    root: "bg-brn-accent text-brn-accent-fg border border-brn-border shadow-sm",
-    focusOutline: "focus-visible:outline-brn-accent",
-    convergeBg:
-      "color-mix(in oklab, var(--brn-color-accent-foreground) 38%, transparent)",
-    loaderText: "text-brn-accent-fg",
-    hoverIdle: "hover:opacity-90",
+    root: "bg-accent text-accent-foreground border border-border shadow-sm",
+    focusOutline: "focus-visible:outline-accent",
+    convergeBg: colorToken("converge-ripple-accent-fill"),
+    loaderText: "text-accent-foreground",
+    hoverIdle: "hover:bg-accent-solid-hover",
   },
   outline: {
-    root: "bg-transparent text-brn-accent border border-brn-border shadow-none",
-    focusOutline: "focus-visible:outline-brn-accent",
-    convergeBg:
-      "color-mix(in oklab, var(--brn-color-accent) 42%, transparent)",
-    loaderText: "text-brn-accent",
-    hoverIdle:
-      "hover:bg-[color-mix(in_oklab,var(--brn-color-accent)_12%,transparent)]",
+    root: "bg-transparent text-accent border border-border shadow-none",
+    focusOutline: "focus-visible:outline-accent",
+    convergeBg: colorToken("converge-ripple-accent-soft"),
+    loaderText: "text-accent",
+    hoverIdle: "hover:bg-accent-fill-hover",
   },
   ghost: {
-    root: "bg-transparent text-brn-accent border border-transparent shadow-none",
-    focusOutline: "focus-visible:outline-brn-accent",
-    convergeBg:
-      "color-mix(in oklab, var(--brn-color-accent) 42%, transparent)",
-    loaderText: "text-brn-accent",
-    hoverIdle:
-      "hover:bg-[color-mix(in_oklab,var(--brn-color-accent)_18%,transparent)]",
+    root: "bg-transparent text-accent border border-transparent shadow-none",
+    focusOutline: "focus-visible:outline-accent",
+    convergeBg: colorToken("converge-ripple-accent-soft"),
+    loaderText: "text-accent",
+    hoverIdle: "hover:bg-accent-fill-hover",
   },
   danger: {
-    root: "bg-brn-danger text-brn-danger-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-brn-danger",
-    convergeBg:
-      "color-mix(in oklab, var(--brn-color-danger-foreground) 38%, transparent)",
-    loaderText: "text-brn-danger-fg",
-    hoverIdle: "hover:opacity-90",
+    root: "bg-danger text-danger-foreground border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-danger",
+    convergeBg: colorToken("converge-ripple-danger"),
+    loaderText: "text-danger-foreground",
+    hoverIdle: "hover:bg-danger-fill-hover",
   },
   success: {
-    root: "bg-brn-success text-brn-success-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-brn-success",
-    convergeBg:
-      "color-mix(in oklab, var(--brn-color-success-foreground) 38%, transparent)",
-    loaderText: "text-brn-success-fg",
-    hoverIdle: "hover:opacity-90",
+    root: "bg-success text-success-foreground border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-success",
+    convergeBg: colorToken("converge-ripple-success"),
+    loaderText: "text-success-foreground",
+    hoverIdle: "hover:bg-success-fill-hover",
   },
   info: {
-    root: "bg-brn-info text-brn-info-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-brn-info",
-    convergeBg:
-      "color-mix(in oklab, var(--brn-color-info-foreground) 38%, transparent)",
-    loaderText: "text-brn-info-fg",
-    hoverIdle: "hover:opacity-90",
+    root: "bg-info text-info-foreground border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-info",
+    convergeBg: colorToken("converge-ripple-info"),
+    loaderText: "text-info-foreground",
+    hoverIdle: "hover:bg-info-fill-hover",
   },
   warning: {
-    root: "bg-brn-warning text-brn-warning-fg border border-transparent shadow-sm",
-    focusOutline: "focus-visible:outline-brn-warning",
-    convergeBg:
-      "color-mix(in oklab, var(--brn-color-warning-foreground) 38%, transparent)",
-    loaderText: "text-brn-warning-fg",
-    hoverIdle: "hover:opacity-90",
+    root: "bg-warning text-warning-foreground border border-transparent shadow-sm",
+    focusOutline: "focus-visible:outline-warning",
+    convergeBg: colorToken("converge-ripple-warning"),
+    loaderText: "text-warning-foreground",
+    hoverIdle: "hover:bg-warning-fill-hover",
   },
 };
 
@@ -116,23 +108,27 @@ const BUTTON_SIZE_CLASSES: Record<
   ButtonSize,
   { root: string; spinner: string; icon: string }
 > = {
-  s: {
-    root: "min-h-7 min-w-[4.5rem] px-2 py-1 text-xs",
+  small: {
+    root:
+      "min-h-7 min-w-button-small px-base py-xsmall text-small rounded-base",
     spinner: "size-3 border-2",
     icon: "size-[0.9375rem]",
   },
-  m: {
-    root: "min-h-8 min-w-[5.5rem] px-3 py-1.5 text-sm",
+  base: {
+    root:
+      "min-h-8 min-w-button-base px-plus py-small text-base rounded-base",
     spinner: "size-4 border-2",
     icon: "size-[1.125rem]",
   },
-  l: {
-    root: "min-h-10 min-w-[7rem] px-4 py-2",
+  large: {
+    root:
+      "min-h-10 min-w-button-large px-mid py-base text-base rounded-base",
     spinner: "size-5 border-2",
     icon: "size-[1.375rem]",
   },
-  xl: {
-    root: "min-h-12 min-w-[8rem] px-5 py-2.5 text-base",
+  xlarge: {
+    root:
+      "min-h-12 min-w-button-xlarge px-large py-[0.625rem] text-base rounded-base",
     spinner: "size-6 border-[2.5px]",
     icon: "size-6",
   },
@@ -141,7 +137,7 @@ const BUTTON_SIZE_CLASSES: Record<
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Стиль заливки и акцента. По умолчанию `default`. */
   variant?: ButtonVariant;
-  /** Габариты и типографика. По умолчанию `m`. */
+  /** Габариты и типографика. По умолчанию `base`. */
   size?: ButtonSize;
   /** Включить лёгкий scale-пульс при нажатии (anime.js), только в idle. */
   animated?: boolean;
@@ -232,7 +228,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className = "",
       variant = "default",
-      size = "m",
+      size = "base",
       type = "button",
       animated = true,
       asyncState: asyncStateProp,
@@ -422,7 +418,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     const baseInteractive =
-      "relative overflow-hidden inline-flex items-center justify-center rounded-lg font-medium outline-none " +
+      "relative overflow-hidden inline-flex items-center justify-center rounded-base font-medium outline-none " +
       "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " +
       "disabled:pointer-events-none";
 
@@ -431,10 +427,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       asyncState !== "idle"
         ? "opacity-0 scale-[0.92]"
         : "opacity-100 scale-100";
-    const loaderVisible =
-      asyncState === "loading"
-        ? "opacity-100 scale-100"
-        : "pointer-events-none opacity-0 scale-[0.85]";
     const successVisible =
       asyncState === "success"
         ? "opacity-100 scale-100"
@@ -484,7 +476,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={handleClick}
       >
         <span
-          className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-lg"
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-base"
           aria-hidden
         >
           <ConvergeRippleLayer
@@ -503,10 +495,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 marginTop: -rp.size / 2,
                 background:
                   rp.tone === "success"
-                    ? "color-mix(in oklab, var(--brn-color-success) 55%, transparent)"
-                    : "color-mix(in oklab, var(--brn-color-danger) 55%, transparent)",
+                    ? "color-mix(in oklab, var(--color-success) 55%, transparent)"
+                    : "color-mix(in oklab, var(--color-danger) 55%, transparent)",
                 animation:
-                  `brn-button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
+                  `button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
               }}
               onAnimationEnd={() => dismissExpand(rp.id)}
             />
@@ -515,7 +507,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         <span className="relative z-[1] grid place-items-center">
           <span
-            className={`${crossFade} col-start-1 row-start-1 ${labelHidden} inline-flex min-w-0 items-center justify-center gap-1.5`}
+            className={`${crossFade} col-start-1 row-start-1 ${labelHidden} inline-flex min-w-0 items-center justify-center gap-small`}
           >
             {leftIcon != null ? (
               <span
@@ -527,22 +519,24 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             ) : null}
             {children}
           </span>
+          {asyncState === "loading" ? (
+            <span
+              className={`${crossFade} col-start-1 row-start-1 ${vn.loaderText} opacity-100 scale-100`}
+              aria-hidden
+            >
+              <Spinner
+                className={`${sz.spinner} animate-spin motion-reduce:animate-none`}
+              />
+            </span>
+          ) : null}
           <span
-            className={`${crossFade} col-start-1 row-start-1 ${vn.loaderText} ${loaderVisible}`}
-            aria-hidden={asyncState !== "loading"}
-          >
-            <Spinner
-              className={`${sz.spinner} animate-spin motion-reduce:animate-none`}
-            />
-          </span>
-          <span
-            className={`${crossFade} col-start-1 row-start-1 text-brn-success ${successVisible}`}
+            className={`${crossFade} col-start-1 row-start-1 text-success ${successVisible}`}
             aria-hidden={asyncState !== "success"}
           >
             <IconCheck className={sz.icon} />
           </span>
           <span
-            className={`${crossFade} col-start-1 row-start-1 text-brn-danger ${errorVisible}`}
+            className={`${crossFade} col-start-1 row-start-1 text-danger ${errorVisible}`}
             aria-hidden={asyncState !== "error"}
           >
             <IconCross className={sz.icon} />

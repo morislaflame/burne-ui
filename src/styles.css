@@ -12,7 +12,7 @@ p {
   line-height: 1.2;
 }
 
-@keyframes brn-button-ripple-expand {
+@keyframes button-ripple-expand {
   from {
     transform: scale(0);
     opacity: 0.5;
@@ -24,31 +24,126 @@ p {
 }
 
 @theme inline {
-  --font-sans: var(--brn-font-sans);
-  --font-mono: var(--brn-font-mono);
-  --color-brn-bg: var(--brn-color-bg);
-  --color-brn-surface: var(--brn-color-surface);
-  --color-brn-border: var(--brn-color-border);
-  --color-brn-text: var(--brn-color-text);
-  --color-brn-muted: var(--brn-color-text-muted);
-  --color-brn-accent: var(--brn-color-accent);
-  --color-brn-accent-fg: var(--brn-color-accent-foreground);
-  --color-brn-danger: var(--brn-color-danger);
-  --color-brn-danger-fg: var(--brn-color-danger-foreground);
-  --color-brn-success: var(--brn-color-success);
-  --color-brn-success-fg: var(--brn-color-success-foreground);
-  --color-brn-info: var(--brn-color-info);
-  --color-brn-info-fg: var(--brn-color-info-foreground);
-  --color-brn-warning: var(--brn-color-warning);
-  --color-brn-warning-fg: var(--brn-color-warning-foreground);
-  --color-brn-surface-tint-danger: var(--brn-surface-tint-danger);
-  --color-brn-surface-tint-success: var(--brn-surface-tint-success);
-  --color-brn-surface-tint-info: var(--brn-surface-tint-info);
-  --color-brn-surface-tint-warning: var(--brn-surface-tint-warning);
-  --color-brn-surface-tint-accent: var(--brn-surface-tint-accent);
-  --color-brn-surface-tint-danger-strong: var(--brn-surface-tint-danger-strong);
-  --color-brn-surface-tint-success-strong: var(--brn-surface-tint-success-strong);
-  --color-brn-surface-tint-warning-strong: var(--brn-surface-tint-warning-strong);
-  --radius-brn-sm: var(--brn-radius-sm);
-  --radius-brn-md: var(--brn-radius-md);
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-muted: var(--color-muted);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-accent-fill-hover: var(--color-accent-fill-hover);
+  --color-accent-solid-hover: var(--color-accent-solid-hover);
+  --color-danger: var(--color-danger);
+  --color-danger-fill-hover: var(--color-danger-fill-hover);
+  --color-danger-foreground: var(--color-danger-foreground);
+  --color-success: var(--color-success);
+  --color-success-foreground: var(--color-success-foreground);
+  --color-success-fill-hover: var(--color-success-fill-hover);
+  --color-info: var(--color-info);
+  --color-info-foreground: var(--color-info-foreground);
+  --color-info-fill-hover: var(--color-info-fill-hover);
+  --color-warning: var(--color-warning);
+  --color-warning-foreground: var(--color-warning-foreground);
+  --color-warning-fill-hover: var(--color-warning-fill-hover);
+  --color-surface-tint-danger: var(--color-surface-tint-danger);
+  --color-surface-tint-success: var(--color-surface-tint-success);
+  --color-surface-tint-info: var(--color-surface-tint-info);
+  --color-surface-tint-warning: var(--color-surface-tint-warning);
+  --color-surface-tint-accent: var(--color-surface-tint-accent);
+  --color-surface-tint-danger-strong: var(--color-surface-tint-danger-strong);
+  --color-surface-tint-success-strong: var(--color-surface-tint-success-strong);
+  --color-surface-tint-warning-strong: var(--color-surface-tint-warning-strong);
+
+  --spacing-xsmall: var(--space-xsmall);
+  --spacing-small: var(--space-small);
+  --spacing-base: var(--space-base);
+  --spacing-plus: var(--space-plus);
+  --spacing-mid: var(--space-mid);
+  --spacing-large: var(--space-large);
+  --spacing-xlarge: var(--space-xlarge);
+
+  --radius-xsmall: var(--radius-value-xsmall);
+  --radius-small: var(--radius-value-small);
+  --radius-base: var(--radius-value-base);
+
+  /**
+   * Единственный источник правды для утилиты `text-base` (без дубля с @utility).
+   * Переопределяет дефолт Tailwind (1rem) на дизайн-токен: sm-размер + medium + leading 1.2.
+   */
+  --text-base: var(--text-base-size);
+  --text-base--line-height: var(--text-base-line-height);
+  --text-base--font-weight: var(--text-base-weight);
+}
+
+@utility text-accent-header {
+  font-size: var(--text-accent-header-size);
+  line-height: var(--text-accent-header-line-height);
+  font-weight: var(--text-accent-header-weight);
+}
+
+@utility text-header-1 {
+  font-size: var(--text-header-1-size);
+  line-height: var(--text-header-1-line-height);
+  font-weight: var(--text-header-1-weight);
+}
+
+@utility text-header-2 {
+  font-size: var(--text-header-2-size);
+  line-height: var(--text-header-2-line-height);
+  font-weight: var(--text-header-2-weight);
+}
+
+/** Мелкий UI-текст: размер как text-xs, medium, межстрочный 1 */
+@utility text-small {
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-line-height);
+  font-weight: var(--text-small-weight);
+}
+
+/** Средний UI-текст: размер как text-md, medium, межстрочный 1.2 */
+@utility text-mid {
+  font-size: var(--text-mid-size);
+  line-height: var(--text-mid-line-height);
+  font-weight: var(--text-mid-weight);
+}
+
+@utility text-tools {
+  font-size: var(--text-tools-size);
+  line-height: var(--text-tools-line-height);
+  font-weight: var(--text-tools-weight);
+}
+
+@utility max-w-component-small {
+  max-width: var(--max-component-small);
+}
+
+@utility max-w-component-base {
+  max-width: var(--max-component-base);
+}
+
+@utility max-w-component-mid {
+  max-width: var(--max-component-mid);
+}
+
+@utility max-w-component-large {
+  max-width: var(--max-component-large);
+}
+
+@utility min-w-button-small {
+  min-width: var(--button-min-width-s);
+}
+
+@utility min-w-button-base {
+  min-width: var(--button-min-width-m);
+}
+
+@utility min-w-button-large {
+  min-width: var(--button-min-width-l);
+}
+
+@utility min-w-button-xlarge {
+  min-width: var(--button-min-width-xl);
 }

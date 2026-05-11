@@ -6,8 +6,8 @@ import { Accordion } from "./Accordion";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-2xl">
         <Story />
@@ -51,7 +51,7 @@ const DEMO_ITEMS = [
     title: "Как оформить заказ?",
     icon: infoIcon,
     content: (
-      <p className="text-sm text-brn-muted">
+      <p className="text-sm text-muted">
         Доставка по РФ 2-5 дней. Международная доставка рассчитывается отдельно.
       </p>
     ),
@@ -60,7 +60,7 @@ const DEMO_ITEMS = [
     id: "returns",
     title: "При каких условиях можно вернуть товар?",
     content: (
-      <p className="text-sm text-brn-muted">
+      <p className="text-sm text-muted">
         Возврат возможен в течение 14 дней при сохранении товарного вида.
       </p>
     ),
@@ -69,7 +69,7 @@ const DEMO_ITEMS = [
     id: "care",
     title: "Как ухаживать за товаром?",
     content: (
-      <p className="text-sm text-brn-muted">
+      <p className="text-sm text-muted">
         Избегайте абразивов и агрессивной химии. Хранить в сухом месте.
       </p>
     ),

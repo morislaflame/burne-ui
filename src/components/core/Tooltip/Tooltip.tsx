@@ -32,14 +32,14 @@ import { cn } from "@/utils/cn";
 /** Варианты заливки — те же паттерны, что у `Alert` (`ALERT_INLINE_SURFACE_CLASSES`). */
 export type TooltipVariant = AlertStatus;
 
-export type TooltipSize = "s" | "m" | "l";
+export type TooltipSize = "small" | "base" | "large";
 
 /** Сторона триггера, с которой показывается подсказка. */
 export type TooltipSide = "top" | "bottom";
 
 export type TooltipRootProps = {
   children?: ReactNode;
-  /** Размер отступов и типографики. По умолчанию `m`. */
+  /** Размер отступов и типографики. По умолчанию `small`. */
   size?: TooltipSize;
   /** Семантика фона как у Alert. По умолчанию `default`. */
   variant?: TooltipVariant;
@@ -64,35 +64,36 @@ export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement>;
 export type TooltipContentProps = HTMLAttributes<HTMLDivElement>;
 
 const TOOLTIP_INLINE_OUTLINE =
-  "border border-brn-border shadow-none bg-brn-surface/65 backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-brn-surface motion-reduce:backdrop-blur-none";
+  "border border-border shadow-none bg-surface/65 backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-surface motion-reduce:backdrop-blur-none";
 
 const TOOLTIP_SURFACE: Record<TooltipVariant, string> = {
   default:
-    "border border-brn-border bg-brn-surface text-brn-text shadow-md",
-  outline: `${TOOLTIP_INLINE_OUTLINE} text-brn-text shadow-md`,
-  danger: "bg-brn-surface-tint-danger text-brn-text shadow-md",
-  success: "bg-brn-surface-tint-success text-brn-text shadow-md",
-  info: "bg-brn-surface-tint-info text-brn-text shadow-md",
-  warning: "bg-brn-surface-tint-warning text-brn-text shadow-md",
+    "border border-border bg-surface text-foreground shadow-md",
+  outline: `${TOOLTIP_INLINE_OUTLINE} text-foreground shadow-md`,
+  danger: "bg-surface-tint-danger text-foreground shadow-md",
+  success: "bg-surface-tint-success text-foreground shadow-md",
+  info: "bg-surface-tint-info text-foreground shadow-md",
+  warning: "bg-surface-tint-warning text-foreground shadow-md",
 };
 
 const TOOLTIP_TEXT_SIZE: Record<TooltipSize, string> = {
-  s: "max-w-[12rem] px-2 py-1 text-xs font-medium leading-snug",
-  m: "max-w-[16rem] px-2.5 py-1.5 text-sm font-medium leading-snug",
-  l: "max-w-xs px-3 py-2 text-sm font-medium leading-snug",
+  small:
+    "max-w-[12rem] px-2 py-1 text-xs font-medium leading-snug",
+  base: "max-w-[16rem] px-2.5 py-1.5 text-sm font-medium leading-snug",
+  large: "max-w-xs px-3 py-2 text-sm font-medium leading-snug",
 };
 
 const TOOLTIP_ICON_SIZE: Record<TooltipSize, string> = {
-  s: "size-3.5",
-  m: "size-4",
-  l: "size-[1.125rem]",
+  small: "size-3.5",
+  base: "size-4",
+  large: "size-[1.125rem]",
 };
 
 /** Для кастомной `icon` без собственных классов на `<svg>`. */
 const TOOLTIP_ICON_SLOT_SVG: Record<TooltipSize, string> = {
-  s: "[&_svg]:size-3.5",
-  m: "[&_svg]:size-4",
-  l: "[&_svg]:size-[1.125rem]",
+  small: "[&_svg]:size-3.5",
+  base: "[&_svg]:size-4",
+  large: "[&_svg]:size-[1.125rem]",
 };
 
 function isSemanticTooltipVariant(v: TooltipVariant): v is SemanticStatus {
@@ -121,7 +122,7 @@ function resolveTooltipLeadingIcon({
     return (
       <span
         className={cn(
-          "inline-flex shrink-0 text-brn-text [&_svg]:shrink-0",
+          "inline-flex shrink-0 text-foreground [&_svg]:shrink-0",
           TOOLTIP_ICON_SLOT_SVG[size],
         )}
       >
@@ -171,7 +172,7 @@ function useTooltipContext(who: string): TooltipContextValue {
 
 function TooltipRoot({
   children,
-  size = "s",
+  size = "small",
   variant = "default",
   delayShowMs = 240,
   side = "top",
@@ -261,15 +262,15 @@ const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
   },
 );
 
-/** Контент в `createPortal(…, body)` не наследует `data-brn-theme` от обёртки сторибука — копируем с триггера. */
-function brnThemePortalProps(triggerEl: HTMLElement | null): {
-  "data-brn-theme"?: "light";
+/** Контент в `createPortal(…, body)` не наследует `data-theme` от обёртки сторибука — копируем с триггера. */
+function inheritThemePortalProps(triggerEl: HTMLElement | null): {
+  "data-theme"?: "light";
 } {
   if (!triggerEl) return {};
   const inherited = triggerEl
-    .closest("[data-brn-theme]")
-    ?.getAttribute("data-brn-theme");
-  return inherited === "light" ? { "data-brn-theme": "light" } : {};
+    .closest("[data-theme]")
+    ?.getAttribute("data-theme");
+  return inherited === "light" ? { "data-theme": "light" } : {};
 }
 
 function TooltipFloater({
@@ -397,12 +398,12 @@ function TooltipFloater({
     icon,
   });
 
-  const portalBrnTheme = brnThemePortalProps(triggerRef.current);
+  const portalTheme = inheritThemePortalProps(triggerRef.current);
 
   const node = (
     <div
       ref={tipRef}
-      {...portalBrnTheme}
+      {...portalTheme}
       role="tooltip"
       id={tooltipId}
       className={cn(

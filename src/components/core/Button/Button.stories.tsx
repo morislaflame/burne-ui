@@ -9,8 +9,8 @@ import { Button, type ButtonAsyncState } from "./Button";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
     </div>
@@ -20,9 +20,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-brn-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      data-theme="light"
+      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
     </div>
@@ -40,7 +40,7 @@ const meta = {
   args: {
     children: "Кнопка",
     variant: "default",
-    size: "m",
+    size: "base",
     animated: true,
     disabled: false,
   },
@@ -57,7 +57,10 @@ const meta = {
         "warning",
       ],
     },
-    size: { control: "select", options: ["s", "m", "l", "xl"] },
+    size: {
+      control: "select",
+      options: ["small", "base", "large", "xlarge"],
+    },
     animated: { control: "boolean" },
   },
 } satisfies Meta<typeof Button>;
@@ -69,13 +72,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const Sizes: Story = {
-  name: "Размеры (s — xl)",
+  name: "Размеры (small — xlarge)",
   render: () => (
-    <div className="flex items-start gap-3">
-      <Button size="s">Small</Button>
-      <Button size="m">Medium</Button>
-      <Button size="l">Large</Button>
-      <Button size="xl">Extra large</Button>
+    <div className="flex items-start gap-plus">
+      <Button size="small">Small</Button>
+      <Button size="base">Medium</Button>
+      <Button size="large">Large</Button>
+      <Button size="xlarge">Extra large</Button>
     </div>
   ),
 };
@@ -83,7 +86,7 @@ export const Sizes: Story = {
 export const Variants: Story = {
   name: "Варианты",
   render: () => (
-    <div className="flex flex-wrap items-start gap-3">
+    <div className="flex flex-wrap items-start gap-plus">
       <Button variant="default">Default</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
@@ -99,7 +102,7 @@ export const VariantsOnLightTheme: Story = {
   name: "Варианты — светлая тема",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex flex-wrap items-start gap-3">
+    <div className="flex flex-wrap items-start gap-plus">
       <Button variant="default">Default</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
@@ -114,14 +117,14 @@ export const VariantsOnLightTheme: Story = {
 export const WithLeftIcon: Story = {
   name: "С иконкой слева",
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button size="s" leftIcon={<IoAdd aria-hidden />}>
+    <div className="flex flex-wrap items-center gap-plus">
+      <Button size="small" leftIcon={<IoAdd aria-hidden />}>
         Добавить
       </Button>
-      <Button size="m" variant="outline" leftIcon={<IoAdd aria-hidden />}>
+      <Button size="base" variant="outline" leftIcon={<IoAdd aria-hidden />}>
         Создать
       </Button>
-      <Button size="l" variant="ghost" leftIcon={<IoAdd aria-hidden />}>
+      <Button size="large" variant="ghost" leftIcon={<IoAdd aria-hidden />}>
         Ещё
       </Button>
     </div>
@@ -137,7 +140,7 @@ export const WithoutAnimation: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема (data-brn-theme)",
+  name: "Светлая тема (data-theme)",
   decorators: [...lightThemeDecorator],
 };
 
@@ -181,7 +184,7 @@ function ControlledAsyncDemo() {
       </Button>
       <button
         type="button"
-        className="text-brn-muted text-sm underline"
+        className="text-muted text-sm underline"
         onClick={() => setState("idle")}
       >
         Сбросить в idle

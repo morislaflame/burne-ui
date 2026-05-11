@@ -9,8 +9,8 @@ const PIN_IMAGE =
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
         <Story />
@@ -22,9 +22,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-brn-theme="light"
-      className="box-border w-full p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      data-theme="light"
+      className="box-border w-full p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
         <Story />

@@ -14,8 +14,8 @@ import {
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[24rem] flex-col items-center justify-center p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border flex min-h-[24rem] flex-col items-center justify-center p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
     </div>
@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модалка подтверждения (`alertdialog`): те же семантические варианты и иконки, что у `Alert`; размеры `s`–`xl`. Подложка и Escape не закрывают окно.",
+          "Модалка подтверждения (`alertdialog`): те же семантические варианты и иконки, что у `Alert`; размеры `small`–`xlarge`. Подложка и Escape не закрывают окно.",
       },
     },
   },
@@ -38,7 +38,7 @@ const meta = {
   argTypes: {
     size: {
       control: "select",
-      options: ["s", "m", "l", "xl"],
+      options: ["small", "base", "large", "xlarge"],
     },
     variant: {
       control: "select",
@@ -57,7 +57,7 @@ type Story = StoryObj<typeof meta>;
 
 function ConfirmTemplate({
   toneProps,
-  size = "m",
+  size = "base",
   label = "Открыть",
 }: {
   toneProps: Pick<AlertDialogProps, "variant" | "status">;
@@ -69,7 +69,7 @@ function ConfirmTemplate({
   const primaryVariant = primaryButtonVariantForAlertTone(tone);
   return (
     <>
-      <Button type="button" size="m" variant="outline" onClick={() => setOpen(true)}>
+      <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
         {label}
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen} size={size} {...toneProps}>
@@ -82,10 +82,10 @@ function ConfirmTemplate({
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-          <Button type="button" size="m" variant="outline" onClick={() => setOpen(false)}>
+          <Button type="button" size="base" variant="outline" onClick={() => setOpen(false)}>
             Отмена
           </Button>
-          <Button type="button" size="m" variant={primaryVariant} onClick={() => setOpen(false)}>
+          <Button type="button" size="base" variant={primaryVariant} onClick={() => setOpen(false)}>
             Продолжить
           </Button>
         </AlertDialog.Footer>
@@ -121,13 +121,13 @@ export const StatusWarning: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры s · m · l · xl",
+  name: "Размеры small · base · large · xlarge",
   render: function SizesDemo() {
     return (
       <div className="flex max-w-2xl flex-col flex-wrap gap-8 sm:flex-row sm:items-start">
-        {(["s", "m", "l", "xl"] as const).map((size) => (
+        {(["small", "base", "large", "xlarge"] as const).map((size) => (
           <div key={size} className="flex flex-col items-start gap-2">
-            <span className="text-xs font-medium uppercase tracking-wide text-brn-muted">
+            <span className="text-xs font-medium uppercase tracking-wide text-muted">
               {size}
             </span>
             <ConfirmTemplate

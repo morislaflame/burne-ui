@@ -6,7 +6,6 @@ export {
   type BadgeColor,
   type BadgeVariant,
   type BadgeSize,
-  type BadgeSizeInput,
   type BadgePlacement,
   type BadgeIconPosition,
   type BadgeAnchorProps,

@@ -145,8 +145,8 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         type={type}
         id={headerId}
         className={cn(
-          "relative flex w-full items-center gap-2 overflow-hidden brn-inset-md text-left outline-none",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-brn-accent focus-visible:outline-offset-2",
+          "relative flex w-full items-center gap-base overflow-hidden py-plus px-mid text-left outline-none",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           className,
         )}
@@ -164,7 +164,7 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
           >
             <ConvergeRippleLayer
               ripples={ripples}
-              tone="color-mix(in oklab, var(--brn-color-accent) 28%, transparent)"
+              tone="color-mix(in oklab, var(--color-accent) 28%, transparent)"
               onDone={dismissConverge}
               durationMs={MOTION_RIPPLE_EXPANDABLE_DURATION_MS}
               opacityFrom={MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM}
@@ -196,7 +196,7 @@ function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center self-start pt-0.5 text-brn-accent [&_svg]:size-4",
+        "flex shrink-0 items-center self-start pt-0.5 text-accent [&_svg]:size-4",
         className,
       )}
       {...props}
@@ -207,7 +207,10 @@ function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
 function ExpandableContent({ className = "", ...props }: ExpandableContentProps) {
   return (
     <div
-      className={cn("brn-title-subtitle-stack flex-1", className)}
+      className={cn(
+        "flex min-w-0 flex-1 flex-col gap-xsmall",
+        className,
+      )}
       {...props}
     />
   );
@@ -228,7 +231,7 @@ function ExpandableDescription({
 }: ExpandableDescriptionProps) {
   return (
     <span
-      className={cn("block text-sm leading-normal text-brn-muted", className)}
+      className={cn("block text-sm leading-normal text-muted", className)}
       {...props}
     />
   );
@@ -359,7 +362,7 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
         <div
           ref={ref}
           className={cn(
-            "rounded-xl border border-brn-border bg-brn-surface text-brn-text shadow-sm",
+            "rounded-xl border border-border bg-surface text-foreground shadow-sm",
             className,
           )}
           {...rest}

@@ -35,7 +35,11 @@ import {
 import { cn } from "@/utils/cn";
 
 /** Ширина и типографика панели. */
-export type AlertDialogSize = "s" | "m" | "l" | "xl";
+export type AlertDialogSize =
+  | "small"
+  | "base"
+  | "large"
+  | "xlarge";
 
 const ALERT_DIALOG_SIZE: Record<
   AlertDialogSize,
@@ -53,66 +57,66 @@ const ALERT_DIALOG_SIZE: Record<
     iconClass: string;
   }
 > = {
-  s: {
+  small: {
     panelMax: "max-w-sm",
     maxHeight: "max-h-[min(85dvh,26rem)]",
     headerGap: "gap-2",
     headerPad: "px-3 pt-3 pb-2",
-    bodyPad: "brn-inset-s",
-    bodyText: "text-xs text-brn-text leading-normal",
-    footerPad: "brn-inset-s gap-1.5",
-    headingBlockGap: "brn-title-subtitle-stack",
-    title: "text-xs font-medium leading-snug text-brn-text",
-    desc: "text-xs leading-normal text-brn-muted",
+    bodyPad: "py-base px-plus",
+    bodyText: "text-xs text-foreground leading-normal",
+    footerPad: "py-base px-plus gap-small",
+    headingBlockGap: "flex min-w-0 flex-col gap-xsmall",
+    title: "text-xs font-medium leading-snug text-foreground",
+    desc: "text-xs leading-normal text-muted",
     iconClass: "size-4",
   },
-  m: {
+  base: {
     panelMax: "max-w-lg",
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-3",
     headerPad: "px-4 pt-4 pb-3",
-    bodyPad: "brn-inset-md",
-    bodyText: "text-sm text-brn-text leading-normal",
-    footerPad: "brn-inset-md gap-2",
-    headingBlockGap: "brn-title-subtitle-stack-lg",
-    title: "text-md font-medium leading-snug text-brn-text",
-    desc: "text-sm leading-normal text-brn-muted",
+    bodyPad: "py-plus px-mid",
+    bodyText: "text-sm text-foreground leading-normal",
+    footerPad: "py-plus px-mid gap-base",
+    headingBlockGap: "flex min-w-0 flex-col gap-base",
+    title: "text-mid text-foreground",
+    desc: "text-sm leading-normal text-muted",
     iconClass: "size-6",
   },
-  l: {
+  large: {
     panelMax: "max-w-2xl",
     maxHeight: "max-h-[min(90dvh,44rem)]",
     headerGap: "gap-3.5",
     headerPad: "px-5 pt-5 pb-4",
-    bodyPad: "brn-inset-lg",
-    bodyText: "text-base text-brn-text leading-normal",
-    footerPad: "brn-inset-lg gap-2",
-    headingBlockGap: "brn-title-subtitle-stack-lg",
-    title: "text-base font-medium leading-snug text-brn-text",
-    desc: "text-base leading-normal text-brn-muted",
+    bodyPad: "py-mid px-large",
+    bodyText: "text-base text-foreground",
+    footerPad: "py-mid px-large gap-base",
+    headingBlockGap: "flex min-w-0 flex-col gap-base",
+    title: "text-base text-foreground",
+    desc: "text-base text-muted",
     iconClass: "size-6",
   },
-  xl: {
+  xlarge: {
     panelMax: "max-w-4xl",
     maxHeight: "max-h-[min(92dvh,52rem)]",
     headerGap: "gap-4",
     headerPad: "px-6 pt-6 pb-5",
-    bodyPad: "brn-inset-xl",
-    bodyText: "text-lg text-brn-text leading-normal",
-    footerPad: "brn-inset-xl gap-2.5",
-    headingBlockGap: "brn-title-subtitle-stack-xl",
-    title: "text-lg font-medium leading-snug text-brn-text",
-    desc: "text-lg leading-normal text-brn-muted",
+    bodyPad: "py-large px-xlarge",
+    bodyText: "text-lg text-foreground leading-normal",
+    footerPad: "py-large px-xlarge gap-[0.625rem]",
+    headingBlockGap: "flex min-w-0 flex-col gap-[0.625rem]",
+    title: "text-lg font-medium leading-snug text-foreground",
+    desc: "text-lg leading-normal text-muted",
     iconClass: "size-7",
   },
 };
 
 /** Панель: один нейтральный фон для заполненных тонов; outline — размытие. */
 const ALERT_DIALOG_INLINE_OUTLINE =
-  "border border-brn-border shadow-none bg-brn-surface/65 text-brn-text backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-brn-surface motion-reduce:backdrop-blur-none";
+  "border border-border shadow-none bg-surface/65 text-foreground backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-surface motion-reduce:backdrop-blur-none";
 
 const ALERT_DIALOG_SHELL_FILLED =
-  "bg-brn-surface text-brn-text border border-brn-border shadow-sm";
+  "bg-surface text-foreground border border-border shadow-sm";
 
 function alertDialogPanelClass(tone: AlertStatus): string {
   if (tone === "outline") {
@@ -136,7 +140,7 @@ function alertDialogHeaderIconWrapperClass(tone: AlertStatus): string {
     case "warning":
       return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
     default:
-      return "text-brn-accent";
+      return "text-accent";
   }
 }
 
@@ -189,7 +193,7 @@ type AlertDialogContextValue = {
   onOpenChange: (open: boolean) => void;
   tone: AlertStatus;
   size: AlertDialogSize;
-  sizePreset: (typeof ALERT_DIALOG_SIZE)["m"];
+  sizePreset: (typeof ALERT_DIALOG_SIZE)["base"];
 };
 
 const AlertDialogContext = createContext<AlertDialogContextValue | null>(null);
@@ -332,7 +336,7 @@ function AlertDialogFooter({ className = "", ...rest }: AlertDialogFooterProps) 
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end border-t border-brn-border",
+        "flex shrink-0 flex-wrap items-center justify-end border-t border-border",
         sizePreset.footerPad,
         className,
       )}
@@ -348,7 +352,7 @@ const AlertDialogRoot = function AlertDialog({
   className = "",
   variant,
   status,
-  size = "m",
+  size = "base",
 }: AlertDialogProps) {
   const tone = resolveAlertStatus(status, variant);
   const sizePreset = ALERT_DIALOG_SIZE[size];
@@ -486,14 +490,14 @@ const AlertDialogRoot = function AlertDialog({
       <div
         className="fixed inset-0 z-[100] flex items-center justify-center p-4"
         role="presentation"
-        {...(lightUi ? { "data-brn-theme": "light" as const } : {})}
+        {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
         <div
           ref={overlayRef}
           className={cn(
             "absolute inset-0",
             lightUi
-              ? "bg-[color-mix(in_oklab,var(--brn-color-text)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
+              ? "bg-[color-mix(in_oklab,var(--color-foreground)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
               : "bg-[color-mix(in_oklab,black_58%,transparent)]",
           )}
           style={{ opacity: prefersReducedInteractiveHoverLift() ? 1 : 0 }}

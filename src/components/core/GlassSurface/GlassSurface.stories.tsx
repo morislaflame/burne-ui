@@ -33,8 +33,8 @@ export const Default: Story = {
     contentClassName: "px-8 py-7",
     children: (
       <div className="space-y-3">
-        <p className="text-lg font-medium text-brn-text">Стеклянная панель</p>
-        <p className="text-sm leading-relaxed text-brn-muted">
+        <p className="text-lg font-medium text-foreground">Стеклянная панель</p>
+        <p className="text-sm leading-relaxed text-muted">
           Линза с backdrop blur, нейтральный блик по периметру (OGL) и контент.
           За панелью — градиент.
         </p>
@@ -49,8 +49,8 @@ export const NoShader: Story = {
     refractionIntensity: 0,
     contentClassName: "px-8 py-7",
     children: (
-      <p className="text-sm text-brn-muted">
-        <code className="font-mono text-brn-text">refractionIntensity: 0</code> —
+      <p className="text-sm text-muted">
+        <code className="font-mono text-foreground">refractionIntensity: 0</code> —
         одна линза без шейдерного слоя.
       </p>
     ),

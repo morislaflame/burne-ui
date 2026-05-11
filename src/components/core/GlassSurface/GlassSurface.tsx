@@ -33,13 +33,13 @@ export function GlassSurface({
     <div
       ref={rootRef}
       className={cn(
-        "relative isolate overflow-hidden rounded-brn-md border shadow-sm",
-        "border-brn-border/50 bg-transparent",
+        "relative isolate overflow-hidden rounded-base border shadow-sm",
+        "border-border/50 bg-transparent",
         className,
       )}
       style={
         {
-          borderColor: "var(--brn-glass-border)",
+          borderColor: "var(--glass-border)",
           boxShadow: "0 4px 28px rgb(0 0 0 / 0.18)",
           ...style,
         } as CSSProperties
@@ -52,7 +52,7 @@ export function GlassSurface({
       />
 
       <div
-        className={cn("relative z-[2] text-brn-text", contentClassName)}
+        className={cn("relative z-[2] text-foreground", contentClassName)}
       >
         {children}
       </div>

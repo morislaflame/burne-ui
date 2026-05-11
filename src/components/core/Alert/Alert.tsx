@@ -43,16 +43,16 @@ function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
  * default — плотный surface; outline — матовое стекло с размытием.
  */
 const ALERT_INLINE_OUTLINE =
-  "border border-brn-border shadow-none bg-brn-surface/65 text-brn-text backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-brn-surface motion-reduce:backdrop-blur-none";
+  "border border-border shadow-none bg-surface/65 text-foreground backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-surface motion-reduce:backdrop-blur-none";
 
 const ALERT_INLINE_SURFACE_CLASSES: Record<AlertStatus, string> = {
   default:
-    "border border-brn-border bg-brn-surface text-brn-text shadow-sm",
+    "border border-border bg-surface text-foreground shadow-sm",
   outline: ALERT_INLINE_OUTLINE,
-  danger: "bg-brn-surface-tint-danger text-brn-text",
-  success: "bg-brn-surface-tint-success text-brn-text",
-  info: "bg-brn-surface-tint-info text-brn-text",
-  warning: "bg-brn-surface-tint-warning text-brn-text",
+  danger: "bg-surface-tint-danger text-foreground",
+  success: "bg-surface-tint-success text-foreground",
+  info: "bg-surface-tint-info text-foreground",
+  warning: "bg-surface-tint-warning text-foreground",
 };
 
 function alertIndicatorWrapperTextClass(tone: AlertStatus): string {
@@ -66,7 +66,7 @@ function alertIndicatorWrapperTextClass(tone: AlertStatus): string {
     case "warning":
       return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
     default:
-      return "text-brn-accent";
+      return "text-accent";
   }
 }
 
@@ -130,7 +130,10 @@ function AlertIndicator({
 function AlertContent({ className = "", ...rest }: AlertContentProps) {
   return (
     <div
-      className={cn("brn-title-subtitle-stack flex-1", className)}
+      className={cn(
+        "flex min-w-0 flex-1 flex-col gap-xsmall",
+        className,
+      )}
       {...rest}
     />
   );
@@ -160,7 +163,7 @@ function AlertDescription({
 }: AlertDescriptionProps) {
   return (
     <div
-      className={cn("text-sm leading-normal text-brn-muted", className)}
+      className={cn("text-sm leading-normal text-muted", className)}
       {...rest}
     />
   );
@@ -202,7 +205,7 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setRootRef}
         role="status"
         className={cn(
-          "flex w-fit max-w-md items-start gap-3 rounded-xl brn-inset-md",
+          "flex w-fit max-w-component-base items-start gap-plus rounded-xl py-plus px-mid",
           ALERT_INLINE_SURFACE_CLASSES[tone],
           className,
         )}

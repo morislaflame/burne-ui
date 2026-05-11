@@ -8,8 +8,8 @@ import { SearchInput } from "./SearchInput";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
     </div>
@@ -19,9 +19,9 @@ const darkThemeDecorator = [
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      data-brn-theme="light"
-      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-8 text-brn-text"
-      style={{ backgroundColor: "var(--brn-color-bg)" }}
+      data-theme="light"
+      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-8 text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
     </div>
@@ -38,7 +38,7 @@ const meta = {
   decorators: [...darkThemeDecorator],
   args: {
     placeholder: "Найти…",
-    size: "m" as const,
+    size: "base" as const,
   },
 } satisfies Meta<typeof SearchInput>;
 
@@ -52,9 +52,9 @@ export const Sizes: Story = {
   name: "Размеры",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-6">
-      <SearchInput size="s" placeholder="Поиск" />
-      <SearchInput size="m" placeholder="Поиск" />
-      <SearchInput size="l" placeholder="Поиск" />
+      <SearchInput size="small" placeholder="Поиск" />
+      <SearchInput size="base" placeholder="Поиск" />
+      <SearchInput size="large" placeholder="Поиск" />
     </div>
   ),
 };
@@ -77,7 +77,7 @@ export const Controlled: Story = {
         />
         <button
           type="button"
-          className="text-sm text-brn-muted underline"
+          className="text-sm text-muted underline"
           onClick={() => setOpen((o) => !o)}
         >
           {open ? "Свернуть" : "Развернуть"} снаружи
@@ -167,12 +167,12 @@ export const FilterList: Story = {
             aria-label="Фильтр списка карточек"
           />
         </div>
-        <p className="text-center text-xs text-brn-muted">
+        <p className="text-center text-xs text-muted">
           Найдено: {filtered.length} из {DEMO_EVENTS.length}
         </p>
         <ul className="flex list-none flex-col gap-3 p-0">
           {filtered.length === 0 ? (
-            <li className="rounded-xl border border-dashed border-brn-border px-4 py-8 text-center text-sm text-brn-muted">
+            <li className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted">
               Ничего не подошло под «{query.trim() || "…"}». Попробуйте другой
               запрос.
             </li>
