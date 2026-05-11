@@ -12,6 +12,7 @@ import {
   type HTMLAttributes,
   type MouseEvent,
   type ReactNode,
+  type Ref,
 } from "react";
 import { createPortal } from "react-dom";
 
@@ -20,6 +21,7 @@ import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
 } from "@/components/core/utils/motionTokens";
+import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 /** Светлая тема UI: только `document.documentElement` (портал в `body`). */
@@ -89,7 +91,10 @@ type DialogCloseProps = Omit<
 function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
     <div
-      className={cn("flex shrink-0 items-start gap-3 px-4 pt-4 pb-3", className)}
+      className={cn(
+        "flex shrink-0 items-start gap-plus px-mid pt-mid pb-plus",
+        className,
+      )}
       {...rest}
     />
   );
@@ -99,13 +104,12 @@ const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
   function DialogTitle({ className = "", id, ...rest }, ref) {
     const { titleId } = useDialog();
     return (
-      <h2
-        ref={ref}
+      <Text
+        ref={ref as Ref<HTMLElement>}
+        as="h2"
+        variant="mid"
         id={id ?? titleId}
-        className={cn(
-          "min-w-0 text-foreground text-mid",
-          className,
-        )}
+        className={cn("min-w-0", className)}
         {...rest}
       />
     );
@@ -124,9 +128,11 @@ function DialogDescription({
   }, [setHasDescription]);
 
   return (
-    <p
+    <Text
+      as="p"
+      variant="base"
       id={id ?? descriptionId}
-      className={cn("text-sm leading-normal text-muted", className)}
+      className={cn("leading-normal text-muted", className)}
       {...rest}
     />
   );
@@ -160,7 +166,7 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
         type="button"
         aria-label={ariaLabel}
         className={cn(
-          "-m-1 shrink-0 rounded-md p-1.5 text-muted outline-none",
+          "-m-xsmall shrink-0 rounded-base p-small text-muted outline-none",
           "transition-colors duration-200 ease-out hover:bg-surface hover:text-foreground",
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2",
           className,
@@ -194,7 +200,7 @@ function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t border-border py-plus px-mid",
+        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t border-base py-plus px-mid",
         className,
       )}
       {...rest}
@@ -345,7 +351,7 @@ const DialogRoot = function Dialog({
   return createPortal(
     <DialogContext.Provider value={ctxValue}>
       <div
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-mid"
         role="presentation"
         {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
@@ -370,7 +376,7 @@ const DialogRoot = function Dialog({
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-xl border border-border bg-surface text-foreground shadow-lg outline-none",
+            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground shadow-lg outline-none",
             className,
           )}
           style={

@@ -7,7 +7,7 @@ import { Button } from "@/components/core/Button";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-foreground"
+      className="box-border w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -21,7 +21,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border w-full p-8 text-foreground"
+      className="box-border w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -46,6 +46,7 @@ const meta = {
       options: [
         "default",
         "outline",
+        "secondary",
         "danger",
         "success",
         "info",
@@ -54,7 +55,7 @@ const meta = {
     },
     variant: {
       control: "select",
-      options: ["default", "outline", "danger", "success", "info"],
+      options: ["default", "outline", "secondary", "danger", "success", "info"],
     },
     children: {
       control: false,
@@ -69,7 +70,7 @@ type Story = StoryObj<typeof meta>;
 
 function AlertAllVariantsDemo() {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-plus">
       <Alert status="default">
         <Alert.Message>
           <Alert.Indicator />
@@ -86,6 +87,16 @@ function AlertAllVariantsDemo() {
           <Alert.Content>
             <Alert.Title>Outline</Alert.Title>
             <Alert.Description>Полупрозрачный фон с размытием.</Alert.Description>
+          </Alert.Content>
+        </Alert.Message>
+      </Alert>
+
+      <Alert status="secondary">
+        <Alert.Message>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Secondary</Alert.Title>
+            <Alert.Description>Тот же фон, что у бейджа/кнопки secondary.</Alert.Description>
           </Alert.Content>
         </Alert.Message>
       </Alert>

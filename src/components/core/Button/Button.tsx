@@ -39,6 +39,7 @@ export type ButtonSize = "small" | "base" | "large" | "xlarge";
 export type ButtonVariant =
   | "default"
   | "outline"
+  | "secondary"
   | "ghost"
   | "danger"
   | "success"
@@ -55,18 +56,25 @@ type VariantVisual = {
 
 const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   default: {
-    root: "bg-accent text-accent-foreground border border-border shadow-sm",
+    root: "bg-accent text-accent-foreground border border-base shadow-sm",
     focusOutline: "focus-visible:outline-accent",
     convergeBg: colorToken("converge-ripple-accent-fill"),
     loaderText: "text-accent-foreground",
     hoverIdle: "hover:bg-accent-solid-hover",
   },
   outline: {
-    root: "bg-transparent text-accent border border-border shadow-none",
+    root: "surface-outline text-accent",
     focusOutline: "focus-visible:outline-accent",
     convergeBg: colorToken("converge-ripple-accent-soft"),
     loaderText: "text-accent",
     hoverIdle: "hover:bg-accent-fill-hover",
+  },
+  secondary: {
+    root: "surface-secondary text-accent",
+    focusOutline: "focus-visible:outline-accent",
+    convergeBg: colorToken("converge-ripple-secondary"),
+    loaderText: "text-accent",
+    hoverIdle: "hover:bg-secondary-fill-hover",
   },
   ghost: {
     root: "bg-transparent text-accent border border-transparent shadow-none",

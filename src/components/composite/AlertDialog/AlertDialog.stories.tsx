@@ -14,7 +14,7 @@ import {
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[24rem] flex-col items-center justify-center p-8 text-foreground"
+      className="box-border flex min-h-[24rem] flex-col items-center justify-center p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модалка подтверждения (`alertdialog`): те же семантические варианты и иконки, что у `Alert`; размеры `small`–`xlarge`. Подложка и Escape не закрывают окно.",
+          "Модалка подтверждения (`alertdialog`): те же семантические варианты и иконки, что у `Alert`; размеры `small`–`large`. В `AlertDialog.Footer` для прямых потомков `Button` без `size` подставляется размер кнопки по размеру модалки (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Подложка и Escape не закрывают окно.",
       },
     },
   },
@@ -38,11 +38,11 @@ const meta = {
   argTypes: {
     size: {
       control: "select",
-      options: ["small", "base", "large", "xlarge"],
+      options: ["small", "base", "large"],
     },
     variant: {
       control: "select",
-      options: ["default", "danger", "success", "info"],
+      options: ["default", "outline", "secondary", "danger", "success", "info"],
     },
     status: {
       control: "select",
@@ -82,10 +82,10 @@ function ConfirmTemplate({
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-          <Button type="button" size="base" variant="outline" onClick={() => setOpen(false)}>
+          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
             Отмена
           </Button>
-          <Button type="button" size="base" variant={primaryVariant} onClick={() => setOpen(false)}>
+          <Button type="button" variant={primaryVariant} onClick={() => setOpen(false)}>
             Продолжить
           </Button>
         </AlertDialog.Footer>
@@ -121,12 +121,12 @@ export const StatusWarning: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры small · base · large · xlarge",
+  name: "Размеры small · base · large",
   render: function SizesDemo() {
     return (
-      <div className="flex max-w-2xl flex-col flex-wrap gap-8 sm:flex-row sm:items-start">
-        {(["small", "base", "large", "xlarge"] as const).map((size) => (
-          <div key={size} className="flex flex-col items-start gap-2">
+      <div className="flex max-w-2xl flex-col flex-wrap gap-xlarge sm:flex-row sm:items-start">
+        {(["small", "base", "large"] as const).map((size) => (
+          <div key={size} className="flex flex-col items-start gap-base">
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
               {size}
             </span>

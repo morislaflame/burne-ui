@@ -9,7 +9,7 @@ import { Form } from "./Form";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -66,7 +66,7 @@ function ProfileForm() {
         placeholder="PNG или JPEG"
         hint="Необязательно. Показывается превью для изображений."
       />
-      <div className="flex justify-end gap-3 pt-2">
+      <div className="flex justify-end gap-plus pt-base">
         <Button type="button" variant="outline" size="base">
           Отмена
         </Button>

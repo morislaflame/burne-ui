@@ -9,7 +9,7 @@ const meta = {
   decorators: [
     (Story) => (
       <div
-        className="box-border flex min-h-[420px] items-center justify-center p-10 font-sans"
+        className="box-border flex min-h-[420px] items-center justify-center p-xlarge font-sans"
         style={{
           background:
             "radial-gradient(ellipse 120% 80% at 20% 30%, rgb(110 231 183 / 0.35), transparent), radial-gradient(circle at 80% 70%, rgb(99 102 241 / 0.45), transparent), linear-gradient(160deg, #0c0d10, #1a1530 55%, #0f172a)",
@@ -30,9 +30,9 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     refractionIntensity: 1,
-    contentClassName: "px-8 py-7",
+    contentClassName: "px-xlarge py-xlarge",
     children: (
-      <div className="space-y-3">
+      <div className="space-y-plus">
         <p className="text-lg font-medium text-foreground">Стеклянная панель</p>
         <p className="text-sm leading-relaxed text-muted">
           Линза с backdrop blur, нейтральный блик по периметру (OGL) и контент.
@@ -47,7 +47,7 @@ export const NoShader: Story = {
   name: "Только CSS (без OGL)",
   args: {
     refractionIntensity: 0,
-    contentClassName: "px-8 py-7",
+    contentClassName: "px-xlarge py-xlarge",
     children: (
       <p className="text-sm text-muted">
         <code className="font-mono text-foreground">refractionIntensity: 0</code> —

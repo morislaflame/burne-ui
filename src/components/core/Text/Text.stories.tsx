@@ -7,7 +7,7 @@ import { Text } from "./Text";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -19,7 +19,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -46,6 +46,7 @@ const meta = {
         "accent-header",
         "header-1",
         "header-2",
+        "large",
         "mid",
         "base",
         "small",
@@ -82,13 +83,14 @@ export const OnSurface: Story = {
   name: "На панели surface",
   render: () => (
     <div
-      className="box-border w-full max-w-xl rounded-base border border-border p-mid text-foreground"
+      className="box-border w-full max-w-xl rounded-base border border-base p-mid text-foreground"
       style={{ backgroundColor: "var(--color-surface)" }}
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-plus">
         <Text variant="accent-header">accent-header</Text>
         <Text variant="header-1">header-1</Text>
         <Text variant="header-2">header-2</Text>
+        <Text variant="large">text-large</Text>
         <Text variant="mid">text-mid</Text>
         <Text variant="base">text-base</Text>
         <Text variant="small" className="text-muted">

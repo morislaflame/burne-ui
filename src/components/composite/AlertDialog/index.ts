@@ -1,6 +1,8 @@
 export {
   AlertDialog,
+  footerButtonSizeForAlertDialog,
   primaryButtonVariantForAlertTone,
+  useAlertDialog,
   type AlertDialogProps,
   type AlertDialogSize,
   type AlertDialogBodyProps,

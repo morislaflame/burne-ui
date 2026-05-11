@@ -10,6 +10,7 @@ import { Tooltip, type TooltipVariant } from "./Tooltip";
 const VARIANTS: TooltipVariant[] = [
   "default",
   "outline",
+  "secondary",
   "danger",
   "info",
   "warning",
@@ -19,7 +20,7 @@ const VARIANTS: TooltipVariant[] = [
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-8 p-10 text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -32,7 +33,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border w-full p-8 text-foreground"
+      className="box-border w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -59,7 +60,7 @@ type Story = StoryObj<typeof meta>;
 export const OnButtonSizes: Story = {
   name: "Размеры на кнопке",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-4">
+    <div className="flex flex-wrap items-center justify-center gap-mid">
       <Tooltip size="small" variant="default">
         <Tooltip.Trigger>
           <Button size="base" variant="outline" type="button">
@@ -90,7 +91,7 @@ export const OnButtonSizes: Story = {
 
 function SemanticVariantsDemo() {
   return (
-    <div className="flex min-h-[14rem] max-w-xl flex-row flex-wrap items-center justify-center gap-4 py-10">
+    <div className="flex min-h-[14rem] max-w-xl flex-row flex-wrap items-center justify-center gap-mid py-xlarge">
       {VARIANTS.map((variant) => (
         <Tooltip key={variant} variant={variant}>
           <Tooltip.Trigger>

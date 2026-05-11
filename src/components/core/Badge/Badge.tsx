@@ -14,13 +14,14 @@ import {
   type ReactNode,
 } from "react";
 
+import { Text, type TextVariant } from "@/components/core/Text";
 import { MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE } from "@/components/core/utils/motionTokens";
 import { useInteractiveHoverLiftContainerHandlers } from "@/components/core/utils/hoverInteractiveLift";
 import { SEMANTIC_STATUS_ICON_TEXT_CLASS } from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
 
-/** Семантика заливки: как у Alert + `secondary` (вторичная плашка на surface; ранее `accent`). */
-export type BadgeTone = AlertStatus | "secondary";
+/** Семантика заливки — как у `Alert` / `AlertStatus` (включая `secondary`). */
+export type BadgeTone = AlertStatus;
 
 /** Публичный prop `color` (синоним тона бейджа). */
 export type BadgeColor = BadgeTone;
@@ -28,31 +29,24 @@ export type BadgeColor = BadgeTone;
 /** @deprecated Используйте `BadgeColor`; оставлено для совместимости. */
 export type BadgeVariant = BadgeTone;
 
-const BADGE_INLINE_OUTLINE =
-  "border border-border bg-surface/65 text-foreground shadow-none backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-surface motion-reduce:backdrop-blur-none";
-
 const BADGE_SURFACE: Record<BadgeTone, string> = {
-  default:
-    "bg-accent text-accent-foreground border border-border shadow-sm",
-  outline: BADGE_INLINE_OUTLINE,
-  secondary: cn(
-    "border border-border shadow-none bg-[color-mix(in_oklab,var(--color-accent)_18%,var(--color-surface))]",
-    "text-accent",
-  ),
+  default: "bg-accent text-accent-foreground",
+  outline: "surface-outline text-foreground",
+  secondary: "surface-secondary text-accent",
   danger: cn(
-    "border border-transparent bg-surface-tint-danger shadow-none",
+    "bg-surface-tint-danger",
     SEMANTIC_STATUS_ICON_TEXT_CLASS.danger,
   ),
   success: cn(
-    "border border-transparent bg-surface-tint-success shadow-none",
+    "bg-surface-tint-success",
     SEMANTIC_STATUS_ICON_TEXT_CLASS.success,
   ),
   info: cn(
-    "border border-transparent bg-surface-tint-info shadow-none",
+    "bg-surface-tint-info",
     SEMANTIC_STATUS_ICON_TEXT_CLASS.info,
   ),
   warning: cn(
-    "border border-transparent bg-surface-tint-warning shadow-none",
+    "bg-surface-tint-warning",
     SEMANTIC_STATUS_ICON_TEXT_CLASS.warning,
   ),
 };
@@ -88,18 +82,30 @@ const BADGE_ANCHOR_PLACEMENT: Record<BadgePlacement, string> = {
 };
 
 const BADGE_TEXT_ROW: Record<BadgeSize, string> = {
-  small:
-    "min-h-[1.25rem] gap-1 px-2 py-0.5 text-[0.6875rem] leading-none",
-  base: "min-h-[1.375rem] gap-1 px-2.5 py-0.5 text-xs leading-none",
-  large: "min-h-[1.5rem] gap-1.5 px-3 py-1 text-sm leading-snug",
+  small: "gap-xsmall px-small py-xsmall",
+  base: "gap-xsmall px-base py-xsmall",
+  large: "gap-small px-plus py-xsmall",
+};
+
+/** Мин. ширина с подписью = сторона квадрата `icon-only` того же размера (не «вертикальная капсула»). */
+const BADGE_TEXT_MIN_WIDTH: Record<BadgeSize, string> = {
+  small: "min-w-[1.625rem]",
+  base: "min-w-[1.755rem]",
+  large: "min-w-[1.875rem]",
+};
+
+const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
+  small: "tools",
+  base: "small",
+  large: "base",
 };
 
 const BADGE_ICON_ONLY: Record<BadgeSize, string> = {
   small:
-    "size-[1.625rem] shrink-0 p-0.5 [&_svg]:icon-small",
-  base: "size-[1.755rem] shrink-0 p-1 [&_svg]:icon-base",
+    "shrink-0 p-xsmall [&_svg]:icon-small",
+  base: "shrink-0 p-small [&_svg]:icon-base",
   large:
-    "size-[1.875rem] shrink-0 p-1 [&_svg]:icon-large",
+    "shrink-0 p-plus [&_svg]:icon-large",
 };
 
 const BADGE_DOT_DIM: Record<BadgeSize, string> = {
@@ -401,7 +407,20 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   ) : null;
 
   const textSlot = meaningChild ? (
-    <span className="min-w-0 truncate">{children}</span>
+    <Text
+      as="span"
+      variant={BADGE_TEXT_VARIANT[rk]}
+      inheritColor
+      className={cn(
+        "min-w-0 truncate",
+        /** `leading-none` обрезает выносные (g, y, p); компактность сохраняем через `leading-tight`. */
+        rk === "small" && "text-[0.6875rem] leading-tight",
+        rk === "base" && "leading-tight",
+        rk === "large" && "leading-snug",
+      )}
+    >
+      {children}
+    </Text>
   ) : null;
 
   if (onlyIconLayout) {
@@ -453,6 +472,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   const textInnerCls = cn(
     "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
+    BADGE_TEXT_MIN_WIDTH[rk],
     BADGE_SURFACE[tone],
     BADGE_TEXT_ROW[rk],
     splitLift && "will-change-transform origin-center",
@@ -489,6 +509,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       data-badge-root
       className={cn(
         "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
+        BADGE_TEXT_MIN_WIDTH[rk],
         isDirectAnchorChild && "pointer-events-none",
         BADGE_SURFACE[tone],
         BADGE_TEXT_ROW[rk],

@@ -8,7 +8,7 @@ import { SearchInput } from "./SearchInput";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-8 text-foreground"
+      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -20,7 +20,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-8 text-foreground"
+      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -51,7 +51,7 @@ export const Default: Story = {};
 export const Sizes: Story = {
   name: "Размеры",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-6">
+    <div className="flex flex-wrap items-center justify-center gap-xlarge">
       <SearchInput size="small" placeholder="Поиск" />
       <SearchInput size="base" placeholder="Поиск" />
       <SearchInput size="large" placeholder="Поиск" />
@@ -69,7 +69,7 @@ export const Controlled: Story = {
   render: function ControlledDemo() {
     const [open, setOpen] = useState(false);
     return (
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-mid">
         <SearchInput
           expanded={open}
           onExpandedChange={setOpen}
@@ -156,7 +156,7 @@ export const FilterList: Story = {
     );
 
     return (
-      <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-mid">
         <div className="flex w-full justify-end">
           <SearchInput
             placeholder="Заголовок или описание…"
@@ -170,9 +170,9 @@ export const FilterList: Story = {
         <p className="text-center text-xs text-muted">
           Найдено: {filtered.length} из {DEMO_EVENTS.length}
         </p>
-        <ul className="flex list-none flex-col gap-3 p-0">
+        <ul className="flex list-none flex-col gap-plus p-0">
           {filtered.length === 0 ? (
-            <li className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted">
+            <li className="rounded-mid border border-dashed border-base px-mid py-xlarge text-center text-sm text-muted">
               Ничего не подошло под «{query.trim() || "…"}». Попробуйте другой
               запрос.
             </li>

@@ -9,7 +9,7 @@ import { Button, type ButtonAsyncState } from "./Button";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -21,7 +21,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -50,6 +50,7 @@ const meta = {
       options: [
         "default",
         "outline",
+        "secondary",
         "ghost",
         "danger",
         "success",
@@ -89,6 +90,7 @@ export const Variants: Story = {
     <div className="flex flex-wrap items-start gap-plus">
       <Button variant="default">Default</Button>
       <Button variant="outline">Outline</Button>
+      <Button variant="secondary">Secondary</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="danger">Удалить</Button>
       <Button variant="success">Готово</Button>
@@ -105,6 +107,7 @@ export const VariantsOnLightTheme: Story = {
     <div className="flex flex-wrap items-start gap-plus">
       <Button variant="default">Default</Button>
       <Button variant="outline">Outline</Button>
+      <Button variant="secondary">Secondary</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="danger">Удалить</Button>
       <Button variant="success">Готово</Button>
@@ -178,7 +181,7 @@ function ControlledAsyncDemo() {
   }, [state]);
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-plus">
       <Button asyncState={state} onClick={run} disabled={state !== "idle"}>
         Контролируемая
       </Button>

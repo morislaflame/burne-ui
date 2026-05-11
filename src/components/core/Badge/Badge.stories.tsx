@@ -22,7 +22,7 @@ const BLUE_AVATAR_URL = PIN_IMAGE3;
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-12 p-10 text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -35,7 +35,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border w-full p-8 text-foreground"
+      className="box-border w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -78,9 +78,9 @@ type Story = StoryObj<typeof meta>;
 
 function SizesAndVariantsDemo() {
   return (
-    <div className="flex flex-col gap-6 py-4">
+    <div className="flex flex-col gap-xlarge py-mid">
       {(["small", "base", "large"] as const).map((size) => (
-        <div key={size} className="flex flex-wrap items-center gap-2">
+        <div key={size} className="flex flex-wrap items-center gap-base">
           {VARIANT_GRID.map((tone) => (
             <Badge key={tone} size={size} color={tone} className="capitalize">
               {tone}
@@ -106,12 +106,12 @@ export const SizesAndVariantsOnLightTheme: Story = {
 export const BadgeAnchorComposition: Story = {
   name: "Badge.Anchor + Avatar (как в API)",
   render: () => (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-xlarge">
       <p className="max-w-xl text-center text-sm text-muted">
         Наведите на аватар: бейдж слегка увеличивается (scale как у&nbsp;
         <code className="text-accent">Button</code>).
       </p>
-      <div className="flex flex-wrap items-start justify-center gap-14">
+      <div className="flex flex-wrap items-start justify-center gap-xlarge">
         <Badge.Anchor>
           <Avatar size="large" label="Jordan Doe">
             <Avatar.Image src={GREEN_AVATAR_URL} alt="" loading="lazy" />
@@ -153,12 +153,12 @@ export const BadgeAnchorComposition: Story = {
 export const IconStartEnd: Story = {
   name: "data-icon через iconPosition",
   render: () => (
-    <div className="flex flex-col items-start gap-4">
+    <div className="flex flex-col items-start gap-mid">
       <p className="text-sm text-muted">
         При тексте на корне — <code className="text-accent">data-icon=&quot;start&quot;</code> /
         <code className="text-accent">end</code>.
       </p>
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-plus">
         <Badge
           color="info"
           size="base"
@@ -183,7 +183,7 @@ export const IconStartEnd: Story = {
 export const IconOnly: Story = {
   name: "Только иконка",
   render: () => (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="flex flex-wrap items-center gap-mid">
       <Badge color="danger" icon={<IoHeartOutline aria-hidden />} aria-label="Избранное" />
       <Badge color="secondary" iconOnly icon={<IoMoonOutline aria-hidden />} aria-label="Secondary" />
       <Badge color="warning" size="small" icon={<IoNotificationsOutline aria-hidden />} aria-label="Уведомления" />
@@ -193,9 +193,9 @@ export const IconOnly: Story = {
 
 function DotsVariantsDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-6 py-4">
+    <div className="flex flex-wrap items-center gap-xlarge py-mid">
       {VARIANT_GRID.map((tone) => (
-        <div key={tone} className="flex flex-col items-center gap-1">
+        <div key={tone} className="flex flex-col items-center gap-xsmall">
           <Badge color={tone} dot size="base" aria-label={`${tone}`} />
           <span className="max-w-[4.5rem] text-center text-xs capitalize text-muted">
             {tone}
@@ -220,15 +220,15 @@ export const DotsVariantsOnLightTheme: Story = {
 export const CornersViaAnchorPlacement: Story = {
   name: "Углы через placement у Badge.Anchor",
   render: () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-mid">
       <p className="max-w-lg text-sm text-muted">
         Внутри якоря бейдж по умолчанию <code>top-right</code>; угол задаётся prop{" "}
         <code>placement</code>.
       </p>
-      <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-xlarge sm:grid-cols-4">
         {CORNER_LABELS.map(([placement, label]) => (
-          <div key={placement} className="flex flex-col items-center gap-2">
-            <Badge.Anchor className="box-border h-24 w-24 rounded-2xl border border-dashed border-border bg-surface/40 shadow-none">
+          <div key={placement} className="flex flex-col items-center gap-base">
+            <Badge.Anchor className="box-border h-24 w-24 rounded-2xl border border-dashed border-base bg-surface/40 shadow-none">
               <Badge color="danger" size="base" placement={placement}>
                 3
               </Badge>
@@ -253,7 +253,7 @@ export const WithCard: Story = {
               Поддержка Badge, уведомления и счётчиков на интерфейсах продукта.
             </Card.Description>
           </Card.Content>
-          <Card.Footer className="flex flex-wrap items-center gap-3">
+          <Card.Footer className="flex flex-wrap items-center gap-plus">
             <Badge color="success" size="small" icon={<IoCheckmarkCircleOutline aria-hidden />}>
               Готово
             </Badge>
@@ -274,9 +274,9 @@ export const WithCard: Story = {
 export const CustomColors: Story = {
   name: "Кастомные бейджи",
   render: () => (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-col gap-xlarge">
+      <div className="flex flex-col gap-base">
+        <div className="flex flex-wrap items-center gap-plus">
           <Badge
             color="default"
             size="base"
@@ -310,8 +310,8 @@ export const CustomColors: Story = {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-6">
+      <div className="flex flex-col gap-base">
+        <div className="flex flex-wrap items-center gap-xlarge">
           <Badge
             dot
             size="base"

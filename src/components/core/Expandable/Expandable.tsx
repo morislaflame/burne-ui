@@ -26,6 +26,7 @@ import {
   type ConvergeRipple,
 } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -173,7 +174,7 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         ) : null}
         <span
           ref={liftSpanRef}
-          className="relative z-[1] flex min-w-0 flex-1 items-start gap-2"
+          className="relative z-[1] flex min-w-0 flex-1 items-start gap-base"
         >
           {children}
         </span>
@@ -218,8 +219,10 @@ function ExpandableContent({ className = "", ...props }: ExpandableContentProps)
 
 function ExpandableTitle({ className = "", ...props }: ExpandableTitleProps) {
   return (
-    <span
-      className={cn("block font-medium text-sm leading-snug", className)}
+    <Text
+      as="span"
+      variant="base"
+      className={cn("block font-medium leading-snug", className)}
       {...props}
     />
   );
@@ -230,8 +233,10 @@ function ExpandableDescription({
   ...props
 }: ExpandableDescriptionProps) {
   return (
-    <span
-      className={cn("block text-sm leading-normal text-muted", className)}
+    <Text
+      as="span"
+      variant="base"
+      className={cn("block leading-normal text-muted", className)}
       {...props}
     />
   );
@@ -284,7 +289,7 @@ const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             aria-labelledby={headerId}
             aria-hidden={!open}
             inert={!open}
-            className={cn("px-4 pb-3 leading-normal", className)}
+            className={cn("px-mid pb-plus leading-normal", className)}
             {...props}
           >
             {children}
@@ -362,7 +367,7 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
         <div
           ref={ref}
           className={cn(
-            "rounded-xl border border-border bg-surface text-foreground shadow-sm",
+            "rounded-mid border border-base bg-surface text-foreground shadow-sm",
             className,
           )}
           {...rest}

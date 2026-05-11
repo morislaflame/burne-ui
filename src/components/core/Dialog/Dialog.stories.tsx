@@ -10,7 +10,7 @@ import { Dialog } from "./Dialog";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
@@ -24,7 +24,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-8 text-foreground"
+      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
@@ -77,7 +77,7 @@ export const Default: Story = {
               Произвольный контент: поля формы, списки, предпросмотр. Здесь только
               иллюстрация скролла при большом объёме текста.
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-muted">
+            <p className="mt-plus text-sm leading-relaxed text-muted">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
@@ -125,7 +125,7 @@ export const WithForm: Story = {
             aria-label="Форма в диалоге"
             className="min-w-0"
           >
-            <Dialog.Body className="flex flex-col gap-4">
+            <Dialog.Body className="flex flex-col gap-mid">
               <Input
                 label="Имя"
                 name="name"
@@ -181,7 +181,7 @@ export const ScrollableContent: Story = {
           </Dialog.Header>
           <Dialog.Body>
             {Array.from({ length: 10 }).map((_, index) => (
-              <p key={index} className="mb-4 text-sm leading-normal text-muted last:mb-0">
+              <p key={index} className="mb-mid text-sm leading-normal text-muted last:mb-0">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
                 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
                 nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.

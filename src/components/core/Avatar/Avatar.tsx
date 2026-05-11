@@ -27,6 +27,7 @@ import {
   MOTION_INTERACTIVE_MS,
 } from "@/components/core/utils/motionTokens";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { Text, type TextVariant } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 /** Размер круга аватара. */
@@ -73,18 +74,27 @@ function useAvatarContext(component: string): AvatarContextValue {
   return ctx;
 }
 
-const SIZE_CLASS: Record<AvatarSize, { root: string; fallbackText: string }> = {
+const SIZE_CLASS: Record<AvatarSize, { root: string }> = {
+  small: { root: "size-8" },
+  base: { root: "size-10" },
+  large: { root: "size-14" },
+};
+
+const AVATAR_FALLBACK_TEXT: Record<
+  AvatarSize,
+  { variant: TextVariant; className: string }
+> = {
   small: {
-    root: "size-8",
-    fallbackText: "text-xs font-semibold uppercase leading-none tracking-tight",
+    variant: "small",
+    className: "font-semibold uppercase leading-none tracking-tight",
   },
   base: {
-    root: "size-10",
-    fallbackText: "text-sm font-semibold uppercase leading-none tracking-tight",
+    variant: "base",
+    className: "font-semibold uppercase leading-none tracking-tight",
   },
   large: {
-    root: "size-14",
-    fallbackText: "text-lg font-semibold uppercase leading-none tracking-tight",
+    variant: "header-2",
+    className: "font-semibold uppercase leading-none tracking-tight",
   },
 };
 
@@ -216,19 +226,22 @@ const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
 
     const text = hasCustomChild ? children : letterFromLabel(label);
 
+    const fb = AVATAR_FALLBACK_TEXT[size];
+
     return (
       <span
         ref={ref}
         className={cn(
           "absolute inset-0 z-0 flex items-center justify-center bg-[color-mix(in_oklab,var(--color-accent)_18%,var(--color-surface))] text-accent",
-          SIZE_CLASS[size].fallbackText,
           show ? "opacity-100" : "pointer-events-none opacity-0",
           className,
         )}
         aria-hidden
         {...rest}
       >
-        {text}
+        <Text as="span" variant={fb.variant} inheritColor className={fb.className}>
+          {text}
+        </Text>
       </span>
     );
   },
@@ -319,7 +332,7 @@ function AvatarGroupItem({
       style={{ transformOrigin: "center bottom" }}
       className={cn(
         "relative inline-flex will-change-transform",
-        stackIndex > 0 && "-ml-3",
+        stackIndex > 0 && "-ml-plus",
       )}
       onPointerEnter={applyLift}
       onPointerLeave={applyRest}

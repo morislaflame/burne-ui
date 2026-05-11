@@ -87,6 +87,18 @@
     transparent
   );
 
+  /** Button `secondary`: hover и ripple (чуть насыщеннее `surface-secondary`). */
+  --color-secondary-fill-hover: color-mix(
+    in oklab,
+    var(--color-accent) 26%,
+    var(--color-surface)
+  );
+  --color-converge-ripple-secondary: color-mix(
+    in oklab,
+    var(--color-accent) 34%,
+    transparent
+  );
+
   --color-surface-tint-danger: color-mix(
     in oklab,
     var(--color-danger) 16%,
@@ -143,10 +155,12 @@
   --space-large: 1.25rem;
   --space-xlarge: 1.5rem;
 
-  /** Сырьё для @theme — радиусы (утилиты rounded-xsmall … rounded-base) */
+  /** Сырьё для @theme — радиусы (утилиты `rounded-xsmall` … `rounded-large`) */
   --radius-value-xsmall: 0.25rem;
   --radius-value-small: 0.375rem;
   --radius-value-base: 0.5rem;
+  --radius-value-mid: 0.625rem;
+  --radius-value-large: 0.75rem;
 
   /** Типографика — размер / межстрочный интервал / насыщенность */
   --text-accent-header-size: 2.25rem;
@@ -160,21 +174,25 @@
   --text-header-2-size: 1.5rem;
   --text-header-2-line-height: 1.25;
   --text-header-2-weight: 600;
-  /** text-base: как text-sm + font-medium + line-height 1.2 */
-  --text-base-size: 0.875rem;
-  --text-base-line-height: 1.2;
-  --text-base-weight: 500;
-  /** text-small: как text-xs + font-medium + line-height 1 */
-  --text-small-size: 0.75rem;
-  --text-small-line-height: 1;
-  --text-small-weight: 500;
+  /** text-large: 1.25rem, semibold, line-height 1.2 */
+  --text-large-size: 1.25rem;
+  --text-large-line-height: 1.2;
+  --text-large-weight: 500;
   /** text-mid: как text-md + font-medium + line-height 1.2 (text-md = 1rem в шкале Tailwind) */
   --text-mid-size: 1rem;
   --text-mid-line-height: 1.2;
-  --text-mid-weight: 500;
+  --text-mid-weight: 400;
+  /** text-base: как text-sm + font-medium + line-height 1.2 */
+  --text-base-size: 0.875rem;
+  --text-base-line-height: 1.2;
+  --text-base-weight: 400;
+  /** text-small: как text-xs + font-medium + line-height 1 */
+  --text-small-size: 0.75rem;
+  --text-small-line-height: 1;
+  --text-small-weight: 400;
   /** text-tools: как text-xs + font-normal + line-height 1.4 */
-  --text-tools-size: 0.75rem;
-  --text-tools-line-height: 1.4;
+  --text-tools-size: 0.6875rem;
+  --text-tools-line-height: 1;
   --text-tools-weight: 400; /** 400 → 500 для полноценного @utility text-tools */
 
   /** Крупность контейнеров (модалки, панели, лэйауты) — max-w-component-* */
@@ -261,6 +279,17 @@
     in oklab,
     var(--color-accent-foreground) 52%,
     var(--color-accent)
+  );
+
+  --color-secondary-fill-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 14%,
+    var(--color-surface)
+  );
+  --color-converge-ripple-secondary: color-mix(
+    in oklab,
+    var(--color-foreground) 22%,
+    var(--color-surface)
   );
 
   --glass-tint: rgb(0 0 0 / 0.04);

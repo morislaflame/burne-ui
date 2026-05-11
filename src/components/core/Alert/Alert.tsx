@@ -9,6 +9,7 @@ import {
 import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
+import { Text } from "@/components/core/Text";
 import { useInteractiveHoverLiftContainerHandlers } from "@/components/core/utils/hoverInteractiveLift";
 import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
@@ -21,6 +22,7 @@ import { cn } from "@/utils/cn";
 export type AlertVariant =
   | "default"
   | "outline"
+  | "secondary"
   | "danger"
   | "success"
   | "info";
@@ -35,20 +37,17 @@ export function resolveAlertStatus(
 }
 
 function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
-  return tone !== "default";
+  return tone !== "default" && tone !== "secondary";
 }
 
 /**
  * Компактный Alert: фон по семантике типа (тинты surface).
- * default — плотный surface; outline — матовое стекло с размытием.
+ * default — плотный surface; outline — `surface-outline`; secondary — `surface-secondary`.
  */
-const ALERT_INLINE_OUTLINE =
-  "border border-border shadow-none bg-surface/65 text-foreground backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-surface motion-reduce:backdrop-blur-none";
-
 const ALERT_INLINE_SURFACE_CLASSES: Record<AlertStatus, string> = {
-  default:
-    "border border-border bg-surface text-foreground shadow-sm",
-  outline: ALERT_INLINE_OUTLINE,
+  default: "border border-base bg-surface text-foreground",
+  outline: "surface-outline text-foreground",
+  secondary: "surface-secondary text-foreground",
   danger: "bg-surface-tint-danger text-foreground",
   success: "bg-surface-tint-success text-foreground",
   info: "bg-surface-tint-info text-foreground",
@@ -71,7 +70,7 @@ function alertIndicatorWrapperTextClass(tone: AlertStatus): string {
 }
 
 function alertDefaultIndicatorIcon(tone: AlertStatus): IconType | null {
-  if (tone === "default") return null;
+  if (tone === "default" || tone === "secondary") return null;
   if (tone === "outline") return IoHelpCircleOutline;
   return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
 }
@@ -144,7 +143,7 @@ const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(
     return (
       <div
         ref={ref}
-        className={cn("flex min-w-0 flex-1 items-start gap-3", className)}
+        className={cn("flex min-w-0 flex-1 items-start gap-base", className)}
         {...rest}
       />
     );
@@ -153,7 +152,12 @@ const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(
 
 function AlertTitle({ className = "", ...rest }: AlertTitleProps) {
   return (
-    <div className={cn("font-medium text-sm leading-snug", className)} {...rest} />
+    <Text
+      as="div"
+      variant="base"
+      className={cn("font-medium leading-snug", className)}
+      {...rest}
+    />
   );
 }
 
@@ -162,8 +166,10 @@ function AlertDescription({
   ...rest
 }: AlertDescriptionProps) {
   return (
-    <div
-      className={cn("text-sm leading-normal text-muted", className)}
+    <Text
+      as="div"
+      variant="base"
+      className={cn("leading-normal text-muted", className)}
       {...rest}
     />
   );
@@ -205,7 +211,7 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setRootRef}
         role="status"
         className={cn(
-          "flex w-fit max-w-component-base items-start gap-plus rounded-xl py-plus px-mid",
+          "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid shadow-sm",
           ALERT_INLINE_SURFACE_CLASSES[tone],
           className,
         )}

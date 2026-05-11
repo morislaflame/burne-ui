@@ -25,6 +25,7 @@ import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
 } from "@/components/core/utils/motionTokens";
+import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
 
@@ -119,8 +120,8 @@ function AffixSlot({
 }) {
   const edge =
     side === "prefix"
-      ? "border-r border-border"
-      : "border-l border-border";
+      ? "border-r border-base"
+      : "border-l border-base";
   const surface =
     status === "default"
       ? AFFIX_SURFACE[variant]
@@ -128,7 +129,7 @@ function AffixSlot({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center px-3 text-sm text-muted",
+        "flex shrink-0 items-center px-plus text-sm text-muted",
         surface,
         edge,
       )}
@@ -161,7 +162,7 @@ function PasswordVisibilityAffix({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-stretch border-l border-border",
+        "flex shrink-0 items-stretch border-l border-base",
         surface,
       )}
     >
@@ -177,7 +178,7 @@ function PasswordVisibilityAffix({
         }}
         onPointerDown={(e) => e.stopPropagation()}
         className={cn(
-          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-2.5 text-muted outline-none transition-colors",
+          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-small text-muted outline-none transition-colors",
           "hover:text-foreground",
           "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
           disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
@@ -197,7 +198,7 @@ function FileGlyph({ className = "" }: { className?: string }) {
   return (
     <span
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-md bg-surface text-muted border border-border",
+        "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border border-base",
         className,
       )}
       aria-hidden
@@ -249,7 +250,7 @@ function FileRemoveButton({
       }}
       onPointerDown={(e) => e.stopPropagation()}
       className={cn(
-        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-md text-danger outline-none transition-colors",
+        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-base text-danger outline-none transition-colors",
         "hover:bg-[color-mix(in_oklab,var(--color-danger)_14%,transparent)]",
         "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
         disabled ? "pointer-events-none opacity-40" : "",
@@ -310,8 +311,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           variant === "default" ? "shadow-sm" : "shadow-none",
         )
       : cn(
-          VARIANT_SHELL[variant],
-          "border-border focus-within:border-accent",
+          variant === "outline" ? "surface-outline" : VARIANT_SHELL[variant],
+          variant === "outline"
+            ? "focus-within:border-accent"
+            : "border-base focus-within:border-accent",
         );
 
     const handleShellPointerDown = useCallback(
@@ -422,20 +425,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               : status === "success"
                 ? "border-success/50 focus-within:border-success"
                 : "border-warning/50 focus-within:border-warning"
-            : "border-border focus-within:border-accent",
+            : "border-base focus-within:border-accent",
         )
       : null;
 
     const showAffixes = !isFile;
 
     return (
-      <div className={cn("flex w-full flex-col gap-1.5", className)}>
+      <div className={cn("flex w-full flex-col gap-small", className)}>
         {label ? (
-          <label
-            htmlFor={id}
-            className="text-sm font-medium leading-snug text-foreground"
-          >
-            {label}
+          <label htmlFor={id} className="inline-flex">
+            <Text as="span" variant="base" className="font-medium leading-snug">
+              {label}
+            </Text>
           </label>
         ) : null}
         <div
@@ -458,12 +460,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <div
               className={
                 fileListEmpty
-                  ? "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-2.5 px-4 py-7"
+                  ? "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-plus px-mid py-xlarge"
                   : cn(
-                      "relative min-w-0 flex-1 px-3 py-2",
+                      "relative min-w-0 flex-1 px-plus py-base",
                       multipleFiles
-                        ? "flex flex-col gap-2"
-                        : "flex min-h-10 items-center gap-3",
+                        ? "flex flex-col gap-base"
+                        : "flex min-h-10 items-center gap-plus",
                     )
               }
             >
@@ -473,29 +475,37 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                     className="pointer-events-none size-12 shrink-0 text-muted"
                     aria-hidden
                   />
-                  <span className="pointer-events-none max-w-[18rem] text-center text-sm leading-snug text-muted">
+                  <Text
+                    as="span"
+                    variant="base"
+                    className="pointer-events-none max-w-[18rem] text-center leading-snug text-muted"
+                  >
                     {placeholder ?? "Выберите файл"}
-                  </span>
+                  </Text>
                 </>
               ) : multipleFiles ? (
                 fileEntries.map(({ file, previewUrl }) => (
                   <div
                     key={`${file.name}-${file.size}-${file.lastModified}`}
                     data-file-row=""
-                    className="flex min-w-0 items-center gap-2"
+                    className="flex min-w-0 items-center gap-base"
                   >
                     {previewUrl ? (
                       <img
                         src={previewUrl}
                         alt=""
-                        className="size-9 shrink-0 rounded-md object-cover ring-1 ring-border"
+                        className="size-9 shrink-0 rounded-base border border-base object-cover"
                       />
                     ) : (
                       <FileGlyph />
                     )}
-                    <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                    <Text
+                      as="span"
+                      variant="base"
+                      className="min-w-0 flex-1 truncate"
+                    >
                       {file.name}
-                    </span>
+                    </Text>
                     {!blocked ? (
                       <FileRemoveButton
                         title="Удалить файл"
@@ -507,20 +517,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               ) : (
                 <div
                   data-file-row=""
-                  className="flex min-h-10 min-w-0 flex-1 items-center gap-2"
+                  className="flex min-h-10 min-w-0 flex-1 items-center gap-base"
                 >
                   {fileEntries[0]!.previewUrl ? (
                     <img
                       src={fileEntries[0]!.previewUrl}
                       alt=""
-                      className="size-9 shrink-0 rounded-md object-cover ring-1 ring-border"
+                      className="size-9 shrink-0 rounded-base border border-base object-cover"
                     />
                   ) : (
                     <FileGlyph />
                   )}
-                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                  <Text
+                    as="span"
+                    variant="base"
+                    className="min-w-0 flex-1 truncate"
+                  >
                     {fileEntries[0]!.file.name}
-                  </span>
+                  </Text>
                   {!blocked ? (
                     <FileRemoveButton
                       title="Удалить файл"
@@ -549,7 +563,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               readOnly={readOnly}
               placeholder={placeholder}
               onChange={onChange}
-              className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted"
+              className="min-w-0 flex-1 bg-transparent px-plus py-base text-sm text-foreground outline-none placeholder:text-muted"
               {...rest}
             />
           )}
@@ -569,11 +583,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ) : null}
         </div>
         {hint ? (
-          <p
-            className={cn("text-sm leading-snug", STATUS_HINT[status])}
+          <Text
+            as="p"
+            variant="base"
+            className={cn("leading-snug", STATUS_HINT[status])}
           >
             {hint}
-          </p>
+          </Text>
         ) : null}
       </div>
     );

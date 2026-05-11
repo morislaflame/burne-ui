@@ -49,7 +49,9 @@ export {
 export { Form, type FormProps } from "@/components/composite/Form";
 export {
   AlertDialog,
+  footerButtonSizeForAlertDialog,
   primaryButtonVariantForAlertTone,
+  useAlertDialog,
   type AlertDialogProps,
   type AlertDialogSize,
   type AlertDialogHeaderProps,

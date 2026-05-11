@@ -7,6 +7,7 @@ export type TextVariant =
   | "accent-header"
   | "header-1"
   | "header-2"
+  | "large"
   | "mid"
   | "base"
   | "small"
@@ -16,6 +17,7 @@ const VARIANT_CLASS: Record<TextVariant, string> = {
   "accent-header": "text-accent-header",
   "header-1": "text-header-1",
   "header-2": "text-header-2",
+  large: "text-large",
   mid: "text-mid",
   base: "text-base",
   small: "text-small",
@@ -30,6 +32,7 @@ const VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
   "accent-header": "h1",
   "header-1": "h2",
   "header-2": "h3",
+  large: "p",
   mid: "p",
   base: "p",
   small: "p",

@@ -8,7 +8,7 @@ import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/utils/mockImag
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-8 p-10 text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -33,7 +33,7 @@ type Story = StoryObj<typeof meta>;
 export const Sizes: Story = {
   name: "Размеры",
   render: () => (
-    <div className="flex flex-row flex-wrap items-center gap-6">
+    <div className="flex flex-row flex-wrap items-center gap-xlarge">
       <Avatar size="small" label="Ada Lovelace">
         <Avatar.Image src={PIN_IMAGE1} alt="" loading="lazy" />
         <Avatar.Fallback />
@@ -53,7 +53,7 @@ export const Sizes: Story = {
 export const FallbackOnly: Story = {
   name: "Только буква из label",
   render: () => (
-    <div className="flex flex-row flex-wrap items-center gap-5">
+    <div className="flex flex-row flex-wrap items-center gap-large">
       <Avatar size="small" label="Burne Team">
         <Avatar.Fallback />
       </Avatar>

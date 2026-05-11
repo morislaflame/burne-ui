@@ -6,7 +6,7 @@ import { Accordion } from "./Accordion";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-foreground"
+      className="box-border w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-2xl">

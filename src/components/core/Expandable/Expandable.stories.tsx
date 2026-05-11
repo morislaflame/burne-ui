@@ -9,7 +9,7 @@ const PIN_IMAGE =
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-8 text-foreground"
+      className="box-border w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
@@ -23,7 +23,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border w-full p-8 text-foreground"
+      className="box-border w-full p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
@@ -147,7 +147,7 @@ export const AllVariationsLight: Story = {
   name: "Все варианты — светлая тема",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-mid">
       <Expandable>
         <Expandable.Trigger>
           <Expandable.Content>

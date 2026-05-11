@@ -22,6 +22,7 @@ import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
+import { Text, type TextVariant } from "@/components/core/Text";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
@@ -29,7 +30,7 @@ import {
 } from "@/components/core/utils/motionTokens";
 import { cn } from "@/utils/cn";
 
-/** Варианты заливки — те же паттерны, что у `Alert` (`ALERT_INLINE_SURFACE_CLASSES`). */
+/** Варианты заливки — как у `Alert`; `outline` → утилита `surface-outline`. */
 export type TooltipVariant = AlertStatus;
 
 export type TooltipSize = "small" | "base" | "large";
@@ -63,24 +64,27 @@ export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement>;
 
 export type TooltipContentProps = HTMLAttributes<HTMLDivElement>;
 
-const TOOLTIP_INLINE_OUTLINE =
-  "border border-border shadow-none bg-surface/65 backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:bg-surface motion-reduce:backdrop-blur-none";
-
 const TOOLTIP_SURFACE: Record<TooltipVariant, string> = {
-  default:
-    "border border-border bg-surface text-foreground shadow-md",
-  outline: `${TOOLTIP_INLINE_OUTLINE} text-foreground shadow-md`,
-  danger: "bg-surface-tint-danger text-foreground shadow-md",
-  success: "bg-surface-tint-success text-foreground shadow-md",
-  info: "bg-surface-tint-info text-foreground shadow-md",
-  warning: "bg-surface-tint-warning text-foreground shadow-md",
+  default: "border border-base bg-surface",
+  outline: "surface-outline",
+  secondary: "surface-secondary",
+  danger: "bg-surface-tint-danger",
+  success: "bg-surface-tint-success",
+  info: "bg-surface-tint-info",
+  warning: "bg-surface-tint-warning",
 };
 
-const TOOLTIP_TEXT_SIZE: Record<TooltipSize, string> = {
-  small:
-    "max-w-[12rem] px-2 py-1 text-xs font-medium leading-snug",
-  base: "max-w-[16rem] px-2.5 py-1.5 text-sm font-medium leading-snug",
-  large: "max-w-xs px-3 py-2 text-sm font-medium leading-snug",
+/** Отступы и ширина тултипа; типографика — `Text` внутри контента. */
+const TOOLTIP_TEXT_LAYOUT: Record<TooltipSize, string> = {
+  small: "max-w-[12rem] px-base py-xsmall",
+  base: "max-w-[16rem] px-base py-small",
+  large: "max-w-xs px-plus py-base",
+};
+
+const TOOLTIP_CONTENT_VARIANT: Record<TooltipSize, TextVariant> = {
+  small: "tools",
+  base: "small",
+  large: "base",
 };
 
 const TOOLTIP_ICON_SIZE: Record<TooltipSize, string> = {
@@ -172,7 +176,7 @@ function useTooltipContext(who: string): TooltipContextValue {
 
 function TooltipRoot({
   children,
-  size = "small",
+  size = "base",
   variant = "default",
   delayShowMs = 240,
   side = "top",
@@ -409,19 +413,25 @@ function TooltipFloater({
       className={cn(
         "pointer-events-none z-[10000] w-max min-w-0 rounded-lg outline-none will-change-[opacity]",
         TOOLTIP_SURFACE[variant],
-        TOOLTIP_TEXT_SIZE[size],
+        TOOLTIP_TEXT_LAYOUT[size],
         className,
       )}
       {...rest}
     >
-      {leading ? (
-        <span className="flex min-w-0 items-center gap-1.5">
-          {leading}
-          <span className="min-w-0 flex-1">{children}</span>
-        </span>
-      ) : (
-        children
-      )}
+      {/** Один и тот же flex-ряд и без иконки — иначе `span` inline в блочном div даёт перекос по baseline/line-box. */}
+      <span className="flex min-w-0 items-center gap-small">
+        {leading}
+        <Text
+          as="span"
+          variant={TOOLTIP_CONTENT_VARIANT[size]}
+          className={cn(
+            "min-w-0 leading-tight",
+            leading && "flex-1",
+          )}
+        >
+          {children}
+        </Text>
+      </span>
     </div>
   );
 

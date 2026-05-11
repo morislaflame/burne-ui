@@ -11,7 +11,7 @@ import { PIN_IMAGE1 } from "@/utils/mockImages";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center p-8 text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-md">
@@ -56,7 +56,7 @@ export const WithFooter: Story = {
         <Card.Title>Документ</Card.Title>
         <Card.Description>Обновлён 10 мая 2026</Card.Description>
       </Card.Content>
-      <Card.Footer className="flex items-center justify-end gap-2">
+      <Card.Footer className="flex items-center justify-end gap-base">
         <Button variant="ghost" size="base">
           Отмена
         </Button>
@@ -80,6 +80,18 @@ export const Outline: Story = {
   ),
 };
 
+export const Secondary: Story = {
+  name: "Secondary",
+  render: () => (
+    <Card variant="secondary">
+      <Card.Content>
+        <Card.Title>Вторичная поверхность</Card.Title>
+        <Card.Description>Тот же стиль, что у Alert/Badge secondary.</Card.Description>
+      </Card.Content>
+    </Card>
+  ),
+};
+
 export const WithImageBody: Story = {
   name: "С изображением в теле",
   render: () => (
@@ -90,7 +102,7 @@ export const WithImageBody: Story = {
           Редакционный кадр в теле карточки (как в примере Expandable).
         </Card.Description>
       </Card.Content>
-      <Card.Body className="px-0 pb-0 pt-2">
+      <Card.Body className="px-0 pb-0 pt-base">
         <img
           src={PIN_IMAGE1}
           alt="Портрет в глянцевом красном шлеме, текст на визоре"
@@ -115,7 +127,7 @@ function QuickSubscribeCard() {
           Короткая форма внутри Card.Body с компонентом Form.
         </Card.Description>
       </Card.Content>
-      <Card.Body className="border-t border-border pt-4">
+      <Card.Body className="border-t border-base pt-mid">
         <Form onSubmit={onSubmit} aria-label="Подписка на рассылку">
           <Input
             label="Email"
