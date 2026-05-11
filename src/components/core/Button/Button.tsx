@@ -16,6 +16,7 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
+  SHADOW_SM,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_FEEDBACK_EXPAND_MS,
@@ -54,9 +55,14 @@ type VariantVisual = {
   hoverIdle: string;
 };
 
+/** Варианты, у которых тень появляется при hover (анимируем shadow-sm). */
+const BUTTON_VARIANT_HAS_HOVER_SHADOW = new Set<ButtonVariant>([
+  "default", "outline", "secondary", "ghost", "danger", "success", "info", "warning",
+]);
+
 const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   default: {
-    root: "bg-accent text-accent-foreground border border-base shadow-sm",
+    root: "bg-accent text-accent-foreground border border-base",
     focusOutline: "focus-visible:outline-accent",
     convergeBg: colorToken("converge-ripple-accent-fill"),
     loaderText: "text-accent-foreground",
@@ -77,35 +83,35 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
     hoverIdle: "hover:bg-secondary-fill-hover",
   },
   ghost: {
-    root: "bg-transparent text-accent border border-transparent shadow-none",
+    root: "bg-transparent text-accent border border-transparent",
     focusOutline: "focus-visible:outline-accent",
     convergeBg: colorToken("converge-ripple-accent-soft"),
     loaderText: "text-accent",
     hoverIdle: "hover:bg-accent-fill-hover",
   },
   danger: {
-    root: "bg-danger text-danger-foreground border border-transparent shadow-sm",
+    root: "bg-danger text-danger-foreground border border-transparent",
     focusOutline: "focus-visible:outline-danger",
     convergeBg: colorToken("converge-ripple-danger"),
     loaderText: "text-danger-foreground",
     hoverIdle: "hover:bg-danger-fill-hover",
   },
   success: {
-    root: "bg-success text-success-foreground border border-transparent shadow-sm",
+    root: "bg-success text-success-foreground border border-transparent",
     focusOutline: "focus-visible:outline-success",
     convergeBg: colorToken("converge-ripple-success"),
     loaderText: "text-success-foreground",
     hoverIdle: "hover:bg-success-fill-hover",
   },
   info: {
-    root: "bg-info text-info-foreground border border-transparent shadow-sm",
+    root: "bg-info text-info-foreground border border-transparent",
     focusOutline: "focus-visible:outline-info",
     convergeBg: colorToken("converge-ripple-info"),
     loaderText: "text-info-foreground",
     hoverIdle: "hover:bg-info-fill-hover",
   },
   warning: {
-    root: "bg-warning text-warning-foreground border border-transparent shadow-sm",
+    root: "bg-warning text-warning-foreground border border-transparent",
     focusOutline: "focus-visible:outline-warning",
     convergeBg: colorToken("converge-ripple-warning"),
     loaderText: "text-warning-foreground",
@@ -345,6 +351,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       remove(el);
     }, [blocked]);
 
+    const btnShadow = BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant)
+      ? { hover: SHADOW_SM() }
+      : undefined;
+
     const handlePointerEnter = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerEnter?.(e);
@@ -354,9 +364,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const el = btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
-        animateInteractiveHoverLift(el, true);
+        animateInteractiveHoverLift(el, true, undefined, btnShadow);
       },
-      [blocked, onPointerEnter],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [blocked, onPointerEnter, btnShadow],
     );
 
     const handlePointerLeave = useCallback(
@@ -366,9 +377,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         if (prefersReducedInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el || blocked) return;
-        animateInteractiveHoverLift(el, false);
+        animateInteractiveHoverLift(el, false, undefined, btnShadow);
       },
-      [blocked, onPointerLeave],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [blocked, onPointerLeave, btnShadow],
     );
 
     function onAnimeDown() {
@@ -386,7 +398,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           return;
         }
         if (hoverPointerInsideRef.current) {
-          animateInteractiveHoverLift(btn, true);
+          animateInteractiveHoverLift(btn, true, undefined, btnShadow);
         }
       });
     }
@@ -457,10 +469,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const idleSurfaceMotion = blocked
       ? ""
-      : cn(
-          "transition-[opacity,background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          vn.hoverIdle,
-        );
+      : cn("button-idle-surface-transition motion-reduce:transition-none", vn.hoverIdle);
 
     return (
       <button
@@ -474,6 +483,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           vn.focusOutline,
           sz.root,
           vn.root,
+          "animate-shadow",
           userDisabled ? "opacity-50" : "",
           idleSurfaceMotion,
           className,

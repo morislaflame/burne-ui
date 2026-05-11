@@ -16,7 +16,7 @@ import {
 
 import { Text, type TextVariant } from "@/components/core/Text";
 import { MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE } from "@/components/core/utils/motionTokens";
-import { useInteractiveHoverLiftContainerHandlers } from "@/components/core/utils/hoverInteractiveLift";
+import { useInteractiveHoverLiftContainerHandlers, SHADOW_SM, SHADOW_MD, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
 import { SEMANTIC_STATUS_ICON_TEXT_CLASS } from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
 
@@ -33,22 +33,10 @@ const BADGE_SURFACE: Record<BadgeTone, string> = {
   default: "bg-accent text-accent-foreground",
   outline: "surface-outline text-foreground",
   secondary: "surface-secondary text-accent",
-  danger: cn(
-    "bg-surface-tint-danger",
-    SEMANTIC_STATUS_ICON_TEXT_CLASS.danger,
-  ),
-  success: cn(
-    "bg-surface-tint-success",
-    SEMANTIC_STATUS_ICON_TEXT_CLASS.success,
-  ),
-  info: cn(
-    "bg-surface-tint-info",
-    SEMANTIC_STATUS_ICON_TEXT_CLASS.info,
-  ),
-  warning: cn(
-    "bg-surface-tint-warning",
-    SEMANTIC_STATUS_ICON_TEXT_CLASS.warning,
-  ),
+  danger: cn("bg-surface-tint-danger", SEMANTIC_STATUS_ICON_TEXT_CLASS.danger),
+  success: cn("bg-surface-tint-success", SEMANTIC_STATUS_ICON_TEXT_CLASS.success),
+  info: cn("bg-surface-tint-info", SEMANTIC_STATUS_ICON_TEXT_CLASS.info),
+  warning: cn("bg-surface-tint-warning", SEMANTIC_STATUS_ICON_TEXT_CLASS.warning),
 };
 
 const BADGE_DOT_FILL: Record<BadgeTone, string> = {
@@ -203,6 +191,7 @@ const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function BadgeA
     hoverLift,
     undefined,
     MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE,
+    { idle: SHADOW_SM(), hover: SHADOW_MD() },
   );
 
   return (
@@ -341,6 +330,12 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     children,
   ]);
 
+  // Инициализируем начальную тень на том элементе, который будет анимироваться.
+  useLayoutEffect(() => {
+    const target = splitLift ? innerLiftRef.current : rootRef.current;
+    initElementShadow(target, SHADOW_SM());
+  });
+
   if (dot) {
     const hasLabel =
       typeof rest["aria-label"] === "string" ||
@@ -425,7 +420,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   if (onlyIconLayout) {
     const iconInnerCls = cn(
-      "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap",
+      "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap animate-shadow",
       BADGE_SURFACE[tone],
       BADGE_ICON_ONLY[rk],
       splitLift && "will-change-transform origin-center",
@@ -453,7 +448,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         ref={setMergedRef}
         data-badge-root
         className={cn(
-          "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap",
+          "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap animate-shadow",
           isDirectAnchorChild && "pointer-events-none",
           BADGE_SURFACE[tone],
           BADGE_ICON_ONLY[rk],
@@ -471,7 +466,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   const dataIcon = showIconWithText ? iconPosition : undefined;
 
   const textInnerCls = cn(
-    "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
+    "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
     BADGE_TEXT_MIN_WIDTH[rk],
     BADGE_SURFACE[tone],
     BADGE_TEXT_ROW[rk],
@@ -508,7 +503,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       data-icon={dataIcon}
       data-badge-root
       className={cn(
-        "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
+        "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
         BADGE_TEXT_MIN_WIDTH[rk],
         isDirectAnchorChild && "pointer-events-none",
         BADGE_SURFACE[tone],

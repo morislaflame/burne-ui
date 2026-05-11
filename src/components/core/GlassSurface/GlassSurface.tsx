@@ -33,7 +33,7 @@ export function GlassSurface({
     <div
       ref={rootRef}
       className={cn(
-        "relative isolate overflow-hidden rounded-base border shadow-sm",
+        "relative isolate overflow-hidden rounded-base border shadow-token-sm",
         "border-base/50 bg-transparent",
         className,
       )}

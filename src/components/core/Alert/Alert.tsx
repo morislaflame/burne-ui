@@ -3,6 +3,7 @@ import {
   forwardRef,
   useCallback,
   useContext,
+  useEffect,
   useRef,
   type HTMLAttributes,
 } from "react";
@@ -10,7 +11,7 @@ import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
-import { useInteractiveHoverLiftContainerHandlers } from "@/components/core/utils/hoverInteractiveLift";
+import { useInteractiveHoverLiftContainerHandlers, SHADOW_SM, SHADOW_MD, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
 import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
@@ -203,7 +204,15 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     [ref],
   );
 
-  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(rootRef, true);
+  useEffect(() => { initElementShadow(rootRef.current, SHADOW_SM()); }, []);
+
+  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
+    rootRef,
+    true,
+    undefined,
+    undefined,
+    { idle: SHADOW_SM(), hover: SHADOW_MD() },
+  );
 
   return (
     <AlertStatusContext.Provider value={tone}>
@@ -211,7 +220,7 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setRootRef}
         role="status"
         className={cn(
-          "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid shadow-sm",
+          "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid animate-shadow",
           ALERT_INLINE_SURFACE_CLASSES[tone],
           className,
         )}

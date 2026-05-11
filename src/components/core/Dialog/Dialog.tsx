@@ -376,7 +376,7 @@ const DialogRoot = function Dialog({
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground shadow-lg outline-none",
+            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground shadow-token-lg outline-none",
             className,
           )}
           style={

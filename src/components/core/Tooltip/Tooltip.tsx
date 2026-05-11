@@ -23,7 +23,7 @@ import {
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
 import { Text, type TextVariant } from "@/components/core/Text";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedInteractiveHoverLift, SHADOW_SM } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_TOOLTIP_MS,
@@ -293,6 +293,11 @@ function TooltipFloater({
     if (open) setPortalMounted(true);
   }, [open]);
 
+  useEffect(() => {
+    const el = tipRef.current;
+    if (el) el.style.setProperty("--el-shadow", SHADOW_SM());
+  });
+
   const reposition = useCallback(() => {
     const trigger = triggerRef.current;
     const tip = tipRef.current;
@@ -411,7 +416,7 @@ function TooltipFloater({
       role="tooltip"
       id={tooltipId}
       className={cn(
-        "pointer-events-none z-[10000] w-max min-w-0 rounded-lg outline-none will-change-[opacity]",
+        "pointer-events-none z-[10000] w-max min-w-0 rounded-lg outline-none will-change-[opacity] animate-shadow",
         TOOLTIP_SURFACE[variant],
         TOOLTIP_TEXT_LAYOUT[size],
         className,

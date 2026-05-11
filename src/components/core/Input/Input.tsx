@@ -60,8 +60,8 @@ export type InputProps = Omit<
 };
 
 const VARIANT_SHELL: Record<InputVariant, string> = {
-  default: "bg-surface shadow-sm",
-  outline: "bg-transparent shadow-none",
+  default: "bg-surface",
+  outline: "bg-transparent",
 };
 
 /** Как `Alert`: тонированный фон, бордер не цвет статуса. */
@@ -308,7 +308,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           STATUS_TINT_SHELL[status],
           "border-transparent",
           STATUS_TINT_FOCUS_BORDER[status],
-          variant === "default" ? "shadow-sm" : "shadow-none",
         )
       : cn(
           variant === "outline" ? "surface-outline" : VARIANT_SHELL[variant],
@@ -417,7 +416,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const shellFileEmptySurface = fileListEmpty
       ? cn(
           statusTinted ? STATUS_TINT_SHELL[status] : VARIANT_SHELL[variant],
-          variant === "default" ? "shadow-sm" : "shadow-none",
           "border-2 border-dashed",
           statusTinted
             ? status === "danger"

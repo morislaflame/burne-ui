@@ -22,6 +22,7 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
+  SHADOW_SM,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
@@ -291,6 +292,8 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       runExpandMotion(expanded);
     }, [applyShellMetrics, expanded, runExpandMotion]);
 
+    const searchShadow = { hover: SHADOW_SM() };
+
     const focusInput = useCallback(() => {
       requestAnimationFrame(() => inputRef.current?.focus());
     }, []);
@@ -303,7 +306,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       const shell = rootRef.current;
       if (shell && !prefersReducedInteractiveHoverLift()) {
         removeAnime(shell);
-        animateInteractiveHoverLift(shell, false);
+        animateInteractiveHoverLift(shell, false, undefined, searchShadow);
       }
       focusInput();
     }, [blocked, expanded, focusInput, setExpanded]);
@@ -338,14 +341,16 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       if (blocked || expanded) return;
       const el = rootRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, true);
+      animateInteractiveHoverLift(el, true, undefined, searchShadow);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [blocked, expanded]);
 
     const handlePointerLeave = useCallback(() => {
       const el = rootRef.current;
       if (!el || blocked || expanded) return;
       if (prefersReducedInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, false);
+      animateInteractiveHoverLift(el, false, undefined, searchShadow);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [blocked, expanded]);
 
     const handleInputBlur = useCallback(
@@ -412,8 +417,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
         className={cn(
-          "relative inline-block overflow-hidden border border-base bg-surface shadow-sm outline-none",
-          "transition-[border-color,background-color] duration-200 ease-out",
+          "relative inline-block overflow-hidden border border-base bg-surface outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
           "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
           expanded ? "cursor-text" : "",

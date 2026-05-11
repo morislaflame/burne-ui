@@ -158,16 +158,16 @@ const ALERT_DIALOG_SIZE: Record<
 };
 
 const ALERT_DIALOG_SHELL_FILLED =
-  "bg-surface text-foreground border border-base shadow-sm";
+  "bg-surface text-foreground border border-base shadow-token-lg";
 
 function alertDialogPanelClass(tone: AlertStatus): string {
   if (tone === "outline") {
-    return "surface-outline text-foreground";
+    return "surface-outline text-foreground shadow-token-lg";
   }
   if (tone === "secondary") {
-    return "surface-secondary text-foreground shadow-lg";
+    return "surface-secondary text-foreground shadow-token-lg";
   }
-  return ALERT_DIALOG_SHELL_FILLED.replace("shadow-sm", "shadow-lg");
+  return ALERT_DIALOG_SHELL_FILLED;
 }
 
 function alertDialogShowsDefaultHeaderIcon(tone: AlertStatus): boolean {

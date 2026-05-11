@@ -367,7 +367,7 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
         <div
           ref={ref}
           className={cn(
-            "rounded-mid border border-base bg-surface text-foreground shadow-sm",
+            "rounded-mid border border-base bg-surface text-foreground",
             className,
           )}
           {...rest}

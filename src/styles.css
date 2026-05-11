@@ -71,6 +71,10 @@ p {
   --radius-mid: var(--radius-value-mid);
   --radius-large: var(--radius-value-large);
 
+  --shadow-token-sm: var(--shadow-sm);
+  --shadow-token-md: var(--shadow-md);
+  --shadow-token-lg: var(--shadow-lg);
+
   /**
    * Единственный источник правды для утилиты `text-base` (без дубля с @utility).
    * Переопределяет дефолт Tailwind (1rem) на дизайн-токен: sm-размер + medium + leading 1.2.
@@ -78,6 +82,57 @@ p {
   --text-base: var(--text-base-size);
   --text-base--line-height: var(--text-base-line-height);
   --text-base--font-weight: var(--text-base-weight);
+}
+
+/** Тени на токенах — не зависят от Tailwind-дефолтов. */
+@utility shadow-token-sm {
+  box-shadow: var(--shadow-sm);
+}
+@utility shadow-token-md {
+  box-shadow: var(--shadow-md);
+}
+@utility shadow-token-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/**
+ * Тень через `--el-shadow` (переключается из JS) + плавная смена `box-shadow`.
+ * Fallback `--shadow-none` — чтобы transition не «ломался» с/на `none`.
+ * На элементах с `button-idle-surface-transition` тень тоже в том же shorthand — правило ниже по файлу перекрывает.
+ */
+@utility animate-shadow {
+  box-shadow: var(--el-shadow, var(--shadow-none));
+  transition-property: box-shadow;
+  transition-duration: var(--shadow-transition-duration, 280ms);
+  transition-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shadow {
+    transition: none;
+  }
+}
+
+/**
+ * Поверхности с hover (кнопка, оболочка SearchInput): один shorthand `transition`.
+ * Разрозненные `transition-[…]` + `duration-*` + `ease-*` в Tailwind дают
+ * несколько правил на одно свойство — в каскаде теряется `background-color` и ховер «рвётся».
+ */
+@utility button-idle-surface-transition {
+  transition:
+    opacity 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    fill 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    stroke 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button-idle-surface-transition {
+    transition: none;
+  }
 }
 
 /** Обводка по умолчанию — `var(--color-border)`; утилита `border-base` (не `--color-base`, чтобы не конфликтовать с `text-base`). */

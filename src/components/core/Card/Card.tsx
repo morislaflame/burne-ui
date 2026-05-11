@@ -7,7 +7,7 @@ import {
 } from "react";
 
 import { Text } from "@/components/core/Text";
-import { useInteractiveHoverLiftContainerHandlers } from "@/components/core/utils/hoverInteractiveLift";
+import { useInteractiveHoverLiftContainerHandlers, SHADOW_SM } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
 
 export type CardVariant = "default" | "outline" | "secondary";
@@ -18,7 +18,7 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const CARD_SURFACE: Record<CardVariant, string> = {
-  default: "bg-surface border border-base shadow-sm",
+  default: "bg-surface border border-base",
   outline: "surface-outline",
   secondary: "surface-secondary",
 };
@@ -117,13 +117,19 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     [ref],
   );
 
-  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(rootRef, true);
+  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
+    rootRef,
+    true,
+    undefined,
+    undefined,
+    { hover: SHADOW_SM() },
+  );
 
   return (
     <div
       ref={setRootRef}
       className={cn(
-        "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",
+        "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none animate-shadow",
         CARD_SURFACE[variant],
         className,
       )}

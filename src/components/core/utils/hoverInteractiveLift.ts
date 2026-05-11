@@ -14,6 +14,45 @@ import {
   MOTION_PRESS_SQUEEZE_SCALE,
 } from "./motionTokens";
 
+/**
+ * Значения `box-shadow` для анимации при hover.
+ * `null` означает «не анимировать тень» (для outline / ghost вариантов).
+ * Берём из CSS-переменных (поддерживают тему), но anime.js требует конкретную строку —
+ * поэтому передаём их явно через `getComputedStyle` при вызове.
+ */
+export interface HoverShadowConfig {
+  /**
+   * box-shadow в покое (второй уровень — sm; hover-only — см. `SHADOW_NONE`).
+   * Если undefined — используется `SHADOW_NONE()` (не `none`: иначе transition не работает).
+   */
+  idle?: string;
+  /** box-shadow при hover. */
+  hover: string;
+}
+
+/** Считывает CSS-переменную тени с корня документа. */
+function readShadowVar(varName: string): string {
+  if (typeof window === "undefined") return "none";
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "none";
+}
+
+/** «Пустая» тень: визуально как без тени, но интерполируется с `--shadow-sm`. */
+export const SHADOW_NONE = () => readShadowVar("--shadow-none");
+
+export const SHADOW_SM = () => readShadowVar("--shadow-sm");
+export const SHADOW_MD = () => readShadowVar("--shadow-md");
+export const SHADOW_LG = () => readShadowVar("--shadow-lg");
+
+/**
+ * Выставляет начальное значение `--el-shadow` на элементе.
+ * Вызывайте после маунта для компонентов с постоянной тенью (Alert, Badge, Tooltip).
+ * Класс `animate-shadow` (или свой `transition` с `box-shadow`, см. `button-idle-surface-transition`) — плавная смена тени.
+ */
+export function initElementShadow(element: HTMLElement | null, shadow: string): void {
+  if (!element) return;
+  element.style.setProperty("--el-shadow", shadow);
+}
+
 /** @deprecated Используйте `MOTION_INTERACTIVE_MS` из `motionTokens` */
 export const INTERACTIVE_HOVER_LIFT_MS = MOTION_INTERACTIVE_MS;
 /** @deprecated Используйте `MOTION_INTERACTIVE_EASE` */
@@ -29,11 +68,13 @@ export function prefersReducedInteractiveHoverLift(): boolean {
 /**
  * `remove(target)` затем плавное масштабирование только по scale (без смещения).
  * Для более крупного подъёма (напр. бейдж на якоре) передайте `liftScale` без изменения дефолта кнопок.
+ * Опционально: `shadow` — конфиг для плавного изменения `box-shadow` вместе со scale.
  */
 export function animateInteractiveHoverLift(
   element: HTMLElement,
   lifted: boolean,
   liftScale = MOTION_HOVER_LIFT_SCALE,
+  shadow?: HoverShadowConfig,
 ): void {
   remove(element);
   animate(element, {
@@ -41,6 +82,11 @@ export function animateInteractiveHoverLift(
     duration: MOTION_INTERACTIVE_MS,
     ease: MOTION_INTERACTIVE_EASE,
   });
+  if (shadow) {
+    // Переключаем CSS-переменную — браузер плавно интерполирует box-shadow через CSS transition.
+    const idle = shadow.idle ?? SHADOW_NONE();
+    element.style.setProperty("--el-shadow", lifted ? shadow.hover : idle);
+  }
 }
 
 /**
@@ -71,6 +117,7 @@ export function useInteractiveHoverLiftContainerHandlers<
   pointerInsideRef?: MutableRefObject<boolean>,
   /** По умолчанию `MOTION_HOVER_LIFT_SCALE` из `motionTokens`. */
   liftScale = MOTION_HOVER_LIFT_SCALE,
+  shadow?: HoverShadowConfig,
 ): {
   onPointerOver: (e: ReactPointerEvent<Element>) => void;
   onPointerOut: (e: ReactPointerEvent<Element>) => void;
@@ -93,7 +140,7 @@ export function useInteractiveHoverLiftContainerHandlers<
       const t = liftedRef.current;
       if (!t) return;
       if (pointerInsideRef) pointerInsideRef.current = true;
-      animateInteractiveHoverLift(t, true, liftScale);
+      animateInteractiveHoverLift(t, true, liftScale, shadow);
     };
 
     const onPointerOut = (e: ReactPointerEvent<Element>) => {
@@ -106,11 +153,11 @@ export function useInteractiveHoverLiftContainerHandlers<
       if (prefersReducedInteractiveHoverLift()) return;
       const t = liftedRef.current;
       if (!t) return;
-      animateInteractiveHoverLift(t, false, liftScale);
+      animateInteractiveHoverLift(t, false, liftScale, shadow);
     };
 
     return { onPointerOver, onPointerOut };
-  }, [liftedRef, enabled, pointerInsideRef, liftScale]);
+  }, [liftedRef, enabled, pointerInsideRef, liftScale, shadow]);
 }
 
 /**

@@ -21,6 +21,20 @@ const darkThemeDecorator = [
   ),
 ] as const;
 
+const lightThemeDecorator = [
+  (Story: ComponentType) => (
+    <div
+      data-brn-theme="light"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <div className="w-full max-w-md">
+        <Story />
+      </div>
+    </div>
+  ),
+] as const;
+
 const meta = {
   title: "Core Components/Card",
   component: Card,
@@ -148,4 +162,50 @@ function QuickSubscribeCard() {
 export const WithFormBody: Story = {
   name: "С формой в теле",
   render: () => <QuickSubscribeCard />,
+};
+
+export const LightTheme: Story = {
+  name: "Светлая тема (Default)",
+  decorators: [...lightThemeDecorator],
+  render: () => (
+    <Card>
+      <Card.Content>
+        <Card.Title>Заголовок карточки</Card.Title>
+        <Card.Description>
+          В светлой теме тень должна быть заметна при наведении.
+        </Card.Description>
+      </Card.Content>
+      <Card.Footer className="flex items-center justify-end gap-base">
+        <Button variant="ghost" size="base">Отмена</Button>
+        <Button variant="default" size="base">Открыть</Button>
+      </Card.Footer>
+    </Card>
+  ),
+};
+
+export const LightThemeVariants: Story = {
+  name: "Светлая тема (все варианты)",
+  decorators: [...lightThemeDecorator],
+  render: () => (
+    <div className="flex flex-col gap-mid">
+      <Card variant="default">
+        <Card.Content>
+          <Card.Title>Default</Card.Title>
+          <Card.Description>Тень появляется при hover.</Card.Description>
+        </Card.Content>
+      </Card>
+      <Card variant="outline">
+        <Card.Content>
+          <Card.Title>Outline</Card.Title>
+          <Card.Description>Прозрачный фон, тень при hover.</Card.Description>
+        </Card.Content>
+      </Card>
+      <Card variant="secondary">
+        <Card.Content>
+          <Card.Title>Secondary</Card.Title>
+          <Card.Description>Accent-wash, тень при hover.</Card.Description>
+        </Card.Content>
+      </Card>
+    </div>
+  ),
 };
