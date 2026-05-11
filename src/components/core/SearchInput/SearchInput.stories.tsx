@@ -40,6 +40,12 @@ const meta = {
     placeholder: "Найти…",
     size: "base" as const,
   },
+  argTypes: {
+    pressRipple: {
+      control: "boolean",
+      description: "Риппл от точки нажатия на оболочке (как у Button)",
+    },
+  },
 } satisfies Meta<typeof SearchInput>;
 
 export default meta;
@@ -47,6 +53,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const WithPressRipple: Story = {
+  name: "С рипплом",
+  args: {
+    pressRipple: true,
+  },
+};
 
 export const Sizes: Story = {
   name: "Размеры",

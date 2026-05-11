@@ -28,9 +28,14 @@ import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
 } from "@/components/core/utils/motionTokens";
+import { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
+import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
 export type SearchInputSize = "small" | "base" | "large";
+
+const SEARCH_INPUT_RIPPLE_TONE = colorToken("converge-ripple-accent-soft");
 
 const GHOST_CLEAR_HOVER =
   "hover:bg-accent-fill-hover";
@@ -110,6 +115,11 @@ export type SearchInputProps = Omit<
    * Текущая строка после ввода (удобно для поиска; дублирует `onChange`).
    */
   onValueChange?: (value: string) => void;
+  /**
+   * Сходящийся риппл от точки нажатия на оболочке (как у `Button`).
+   * @default false
+   */
+  pressRipple?: boolean;
 };
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -133,6 +143,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       id: idProp,
       "aria-label": ariaLabelProp,
       onValueChange,
+      pressRipple = false,
       ...rest
     },
     ref,
@@ -180,6 +191,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     );
 
     const blocked = Boolean(disabled || readOnly);
+
+    const {
+      ripples: convergeRipples,
+      pushFromPointer: pushConvergeRipple,
+      dismiss: dismissConverge,
+    } = useConvergeRipples();
 
     const handleInputChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
@@ -312,7 +329,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     }, [blocked, expanded, focusInput, setExpanded]);
 
     const handleRootPointerDown = useCallback(
-      (_e: PointerEvent<HTMLDivElement>) => {
+      (e: PointerEvent<HTMLDivElement>) => {
+        if (pressRipple && !blocked && !e.defaultPrevented) {
+          pushConvergeRipple(e);
+        }
         if (blocked || expanded) return;
         const shell = rootRef.current;
         if (!shell || prefersReducedInteractiveHoverLift()) {
@@ -323,7 +343,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           shell,
         ).then(() => {});
       },
-      [blocked, expanded],
+      [blocked, expanded, pressRipple, pushConvergeRipple],
     );
 
     const handleRootClick = useCallback(
@@ -436,6 +456,18 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         onClick={handleRootClick}
         onKeyDown={handleRootKeyDown}
       >
+        {pressRipple ? (
+          <span
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]"
+            aria-hidden
+          >
+            <ConvergeRippleLayer
+              ripples={convergeRipples}
+              tone={SEARCH_INPUT_RIPPLE_TONE}
+              onDone={dismissConverge}
+            />
+          </span>
+        ) : null}
         <span
           ref={iconRef}
           className={cn(
