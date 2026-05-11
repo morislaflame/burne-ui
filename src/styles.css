@@ -147,3 +147,33 @@ p {
 @utility min-w-button-xlarge {
   min-width: var(--button-min-width-xl);
 }
+
+/** Иконки: ширина и высота из `--icon-size-*` (см. `tokens/styles.css`). */
+@utility icon-xsmall {
+  width: var(--icon-size-xsmall);
+  height: var(--icon-size-xsmall);
+}
+@utility icon-small {
+  width: var(--icon-size-small);
+  height: var(--icon-size-small);
+}
+@utility icon-base {
+  width: var(--icon-size-base);
+  height: var(--icon-size-base);
+}
+@utility icon-mid {
+  width: var(--icon-size-mid);
+  height: var(--icon-size-mid);
+}
+@utility icon-large {
+  width: var(--icon-size-large);
+  height: var(--icon-size-large);
+}
+@utility icon-xlarge {
+  width: var(--icon-size-xlarge);
+  height: var(--icon-size-xlarge);
+}
+@utility icon-2xlarge {
+  width: var(--icon-size-2xlarge);
+  height: var(--icon-size-2xlarge);
+}

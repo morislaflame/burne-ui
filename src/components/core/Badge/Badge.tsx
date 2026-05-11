@@ -96,22 +96,22 @@ const BADGE_TEXT_ROW: Record<BadgeSize, string> = {
 
 const BADGE_ICON_ONLY: Record<BadgeSize, string> = {
   small:
-    "size-[1.625rem] shrink-0 p-0.5 [&_svg]:size-[0.6875rem]",
-  base: "size-7 shrink-0 p-1 [&_svg]:size-3",
+    "size-[1.625rem] shrink-0 p-0.5 [&_svg]:icon-small",
+  base: "size-[1.755rem] shrink-0 p-1 [&_svg]:icon-base",
   large:
-    "size-[1.875rem] shrink-0 p-1 [&_svg]:size-3.5",
+    "size-[1.875rem] shrink-0 p-1 [&_svg]:icon-large",
 };
 
 const BADGE_DOT_DIM: Record<BadgeSize, string> = {
-  small: "size-3 min-h-3 min-w-3 shrink-0 p-0",
-  base: "size-4 min-h-4 min-w-4 shrink-0 p-0",
-  large: "size-5 min-h-5 min-w-5 shrink-0 p-0",
+  small: "icon-small min-h-3 min-w-3 shrink-0 p-0",
+  base: "icon-base min-h-4 min-w-4 shrink-0 p-0",
+  large: "icon-large min-h-5 min-w-5 shrink-0 p-0",
 };
 
 const BADGE_INLINE_SVG_SIZE: Record<BadgeSize, string> = {
-  small: "[&_svg]:size-[0.6875rem]",
-  base: "[&_svg]:size-3",
-  large: "[&_svg]:size-3.5",
+  small: "[&_svg]:icon-small",
+  base: "[&_svg]:icon-base",
+  large: "[&_svg]:icon-large",
 };
 
 export type BadgeIconPosition = "start" | "end";

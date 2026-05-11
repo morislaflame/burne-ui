@@ -108,7 +108,7 @@ function AlertIndicator({
     children !== undefined
       ? children
       : alertShowsDefaultIndicatorIcon(tone) && DefaultIcon !== null
-        ? <DefaultIcon aria-hidden className="size-6" />
+        ? <DefaultIcon aria-hidden />
         : null;
 
   if (inner === null) return null;
@@ -116,7 +116,7 @@ function AlertIndicator({
   return (
     <span
       className={cn(
-        "mt-0.5 shrink-0 [&_svg]:size-4",
+        "shrink-0 [&_svg]:icon-mid",
         alertIndicatorWrapperTextClass(tone),
         className,
       )}

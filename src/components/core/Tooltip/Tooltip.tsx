@@ -84,16 +84,16 @@ const TOOLTIP_TEXT_SIZE: Record<TooltipSize, string> = {
 };
 
 const TOOLTIP_ICON_SIZE: Record<TooltipSize, string> = {
-  small: "size-3.5",
-  base: "size-4",
-  large: "size-[1.125rem]",
+  small: "icon-small",
+  base: "icon-base",
+  large: "icon-mid",
 };
 
 /** Для кастомной `icon` без собственных классов на `<svg>`. */
 const TOOLTIP_ICON_SLOT_SVG: Record<TooltipSize, string> = {
-  small: "[&_svg]:size-3.5",
-  base: "[&_svg]:size-4",
-  large: "[&_svg]:size-[1.125rem]",
+  small: "[&_svg]:icon-small",
+  base: "[&_svg]:icon-base",
+  large: "[&_svg]:icon-mid",
 };
 
 function isSemanticTooltipVariant(v: TooltipVariant): v is SemanticStatus {

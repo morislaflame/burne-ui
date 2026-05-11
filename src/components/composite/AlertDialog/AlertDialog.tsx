@@ -68,7 +68,7 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: "flex min-w-0 flex-col gap-xsmall",
     title: "text-xs font-medium leading-snug text-foreground",
     desc: "text-xs leading-normal text-muted",
-    iconClass: "size-4",
+    iconClass: "icon-base",
   },
   base: {
     panelMax: "max-w-lg",
@@ -81,7 +81,7 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: "flex min-w-0 flex-col gap-base",
     title: "text-mid text-foreground",
     desc: "text-sm leading-normal text-muted",
-    iconClass: "size-6",
+    iconClass: "icon-mid",
   },
   large: {
     panelMax: "max-w-2xl",
@@ -94,7 +94,7 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: "flex min-w-0 flex-col gap-base",
     title: "text-base text-foreground",
     desc: "text-base text-muted",
-    iconClass: "size-6",
+    iconClass: "icon-large",
   },
   xlarge: {
     panelMax: "max-w-4xl",
@@ -107,7 +107,7 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: "flex min-w-0 flex-col gap-[0.625rem]",
     title: "text-lg font-medium leading-snug text-foreground",
     desc: "text-lg leading-normal text-muted",
-    iconClass: "size-7",
+    iconClass: "icon-xlarge",
   },
 };
 

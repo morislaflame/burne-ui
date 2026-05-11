@@ -109,8 +109,8 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
 const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",
   base: "base",
-  large: "base",
-  xlarge: "base",
+  large: "mid",
+  xlarge: "mid",
 };
 
 const BUTTON_SIZE_CLASSES: Record<
@@ -119,24 +119,24 @@ const BUTTON_SIZE_CLASSES: Record<
 > = {
   small: {
     root: "min-h-7 min-w-button-small px-base py-xsmall rounded-base",
-    spinner: "size-3 border-2",
-    icon: "size-[0.9375rem]",
+    spinner: "icon-small border-2",
+    icon: "icon-small",
   },
   base: {
     root: "min-h-8 min-w-button-base px-plus py-small rounded-base",
-    spinner: "size-4 border-2",
-    icon: "size-[1.125rem]",
+    spinner: "icon-base border-2",
+    icon: "icon-base",
   },
   large: {
     root: "min-h-10 min-w-button-large px-mid py-base rounded-base",
-    spinner: "size-5 border-2",
-    icon: "size-[1.375rem]",
+    spinner: "icon-large border-2",
+    icon: "icon-large",
   },
   xlarge: {
     root:
-      "min-h-12 min-w-button-xlarge px-large py-[0.625rem] rounded-base",
-    spinner: "size-6 border-[2.5px]",
-    icon: "size-6",
+      "min-h-12 min-w-button-xlarge px-large py-base rounded-base",
+    spinner: "icon-large border-[2.5px]",
+    icon: "icon-large",
   },
 };
 

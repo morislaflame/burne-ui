@@ -53,6 +53,13 @@ export const tokensConfig = {
     "color-surface-tint-danger-strong": "color-surface-tint-danger-strong",
     "color-surface-tint-success-strong": "color-surface-tint-success-strong",
     "color-surface-tint-warning-strong": "color-surface-tint-warning-strong",
+    "icon-xsmall": "icon-size-xsmall",
+    "icon-small": "icon-size-small",
+    "icon-base": "icon-size-base",
+    "icon-mid": "icon-size-mid",
+    "icon-large": "icon-size-large",
+    "icon-xlarge": "icon-size-xlarge",
+    "icon-2xlarge": "icon-size-2xlarge",
   },
 } as const;
 

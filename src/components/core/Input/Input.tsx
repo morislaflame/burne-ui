@@ -184,9 +184,9 @@ function PasswordVisibilityAffix({
         )}
       >
         {visible ? (
-          <IoEyeOff className="size-5 shrink-0" aria-hidden />
+          <IoEyeOff className="icon-mid shrink-0" aria-hidden />
         ) : (
-          <IoEye className="size-5 shrink-0" aria-hidden />
+          <IoEye className="icon-mid shrink-0" aria-hidden />
         )}
       </button>
     </span>
@@ -202,7 +202,7 @@ function FileGlyph({ className = "" }: { className?: string }) {
       )}
       aria-hidden
     >
-      <IoFolderOpen className="size-[1.125rem] shrink-0" aria-hidden />
+      <IoFolderOpen className="icon-mid shrink-0" aria-hidden />
     </span>
   );
 }
@@ -255,7 +255,7 @@ function FileRemoveButton({
         disabled ? "pointer-events-none opacity-40" : "",
       )}
     >
-      <IoClose className="size-4 shrink-0" aria-hidden />
+      <IoClose className="icon-mid shrink-0" aria-hidden />
     </button>
   );
 }
