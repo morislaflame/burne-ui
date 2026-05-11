@@ -79,6 +79,7 @@ export {
   type SearchInputProps,
   type SearchInputSize,
 } from "@/components/core/SearchInput";
+export { Text, type TextProps, type TextVariant } from "@/components/core/Text";
 export {
   Card,
   type CardProps,

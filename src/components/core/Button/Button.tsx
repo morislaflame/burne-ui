@@ -25,6 +25,7 @@ import {
   ConvergeRippleLayer,
 } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
@@ -104,31 +105,36 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   },
 };
 
+/** Типографика подписи — через `Text`, без `text-*` на корне кнопки. */
+const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
+  small: "small",
+  base: "base",
+  large: "base",
+  xlarge: "base",
+};
+
 const BUTTON_SIZE_CLASSES: Record<
   ButtonSize,
   { root: string; spinner: string; icon: string }
 > = {
   small: {
-    root:
-      "min-h-7 min-w-button-small px-base py-xsmall text-small rounded-base",
+    root: "min-h-7 min-w-button-small px-base py-xsmall rounded-base",
     spinner: "size-3 border-2",
     icon: "size-[0.9375rem]",
   },
   base: {
-    root:
-      "min-h-8 min-w-button-base px-plus py-small text-base rounded-base",
+    root: "min-h-8 min-w-button-base px-plus py-small rounded-base",
     spinner: "size-4 border-2",
     icon: "size-[1.125rem]",
   },
   large: {
-    root:
-      "min-h-10 min-w-button-large px-mid py-base text-base rounded-base",
+    root: "min-h-10 min-w-button-large px-mid py-base rounded-base",
     spinner: "size-5 border-2",
     icon: "size-[1.375rem]",
   },
   xlarge: {
     root:
-      "min-h-12 min-w-button-xlarge px-large py-[0.625rem] text-base rounded-base",
+      "min-h-12 min-w-button-xlarge px-large py-[0.625rem] rounded-base",
     spinner: "size-6 border-[2.5px]",
     icon: "size-6",
   },
@@ -517,7 +523,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 {leftIcon}
               </span>
             ) : null}
-            {children}
+            <Text
+              variant={BUTTON_SIZE_TEXT_VARIANT[size]}
+              as="span"
+              inheritColor
+              className="min-w-0 shrink"
+            >
+              {children}
+            </Text>
           </span>
           {asyncState === "loading" ? (
             <span

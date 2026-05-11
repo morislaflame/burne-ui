@@ -24,20 +24,62 @@ npm install burne-ui
 import "burne-ui/styles.css";
 ```
 
-В нём уже есть токены (`--brn-*`), утилиты раскладки (`brn-inset-*`, `brn-title-subtitle-stack*`) и мост Tailwind (`text-brn-text`, `bg-brn-surface` и т.д.).
+В нём:
+
+- **Дизайн-токены** как CSS-переменные: `--color-*`, `--space-*`, `--font-family-*`, `--text-*-size` / `line-height` / `weight`, `--radius-value-*`, и др. Полный перечень имён — экспорт **`designTokenNames`** из `burne-ui`; исходные значения по умолчанию смотрите в репозитории в `src/tokens/styles.css`.
+- **Мост Tailwind** (`@theme inline`): цвета в утилитах вида `bg-background`, `text-foreground`, `border-border`, `bg-accent`, отступы `gap-mid`, `p-plus`, радиусы `rounded-base` и т.д.
+- **Кастомные утилиты** (`@utility`): например `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
+
+Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-mid` и т.п.
+
+## Кастомизация темы
+
+Чтобы поменять палитру, отступы, шрифты, шкалу типографики и прочее, переопределите те же переменные **после** импорта `burne-ui/styles.css`:
+
+```ts
+import "burne-ui/styles.css";
+import "./burne-theme-overrides.css";
+```
+
+Пример `burne-theme-overrides.css`:
+
+```css
+:root {
+  --color-accent: #6366f1;
+  --space-mid: 1.125rem;
+  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --text-base-size: 0.9375rem;
+}
+
+/* Светлая тема: те же ветки, что и в пакете */
+[data-brn-theme="light"],
+[data-theme="light"] {
+  --color-accent: #4f46e5;
+}
+```
+
+Переменные наследуются по дереву DOM — при необходимости задайте их на обёртке виджета вместо `html`.
+
+Из JS удобно сверять имена с массивом **`designTokenNames`**, а для цветов в `style` есть хелпер **`colorToken`** (оба экспортируются из `burne-ui`):
+
+```ts
+import { designTokenNames, colorToken } from "burne-ui";
+
+const ripple = colorToken("converge-ripple-accent-soft"); // var(--color-converge-ripple-accent-soft)
+```
 
 ## Tailwind в приложении-потребителе
 
-Компоненты используют утилиты вида `text-brn-*`, `border-brn-*` и классы из вашего `@theme`. Чтобы **свои** классы в `className` (и классы из библиотеки в JS-бандле) попадали в сборку Tailwind, добавьте пакет в `content` (пример для Tailwind v4 / Vite):
+Компоненты используют классы Tailwind, сопоставленные с токенами пакета (`bg-surface`, `text-muted`, `gap-plus`, …). Чтобы **ваши** классы в `className` и классы из prebuilt-бандла библиотеки попали в итоговый CSS, Tailwind должен сканировать артефакты пакета. Добавьте путь к сборке (пример для Tailwind v4 / Vite):
 
 ```ts
-// tailwind config или @source в CSS — см. документацию Tailwind v4 для вашего стека
+// @source в глобальном CSS приложения или content — см. документацию Tailwind v4
 // Нужно сканировать как минимум:
-// - ваши `**/*.{tsx,jsx}`,
-// - `node_modules/burne-ui/dist/**/*.{js,mjs}`
+// - ваши **/*.{tsx,jsx},
+// - node_modules/burne-ui/dist/**/*.{js,mjs,cjs}
 ```
 
-Если не добавить путь к библиотеке, стили из переданных вами утилит могут не попасть в итоговый CSS.
+Без этого часть утилит из переданных вами классов может не попасть в CSS.
 
 ## Светлая тема
 
@@ -47,7 +89,7 @@ import "burne-ui/styles.css";
 <html data-brn-theme="light">
 ```
 
-В коде проверка: `document.documentElement.dataset.brnTheme === "light"`.
+Поддерживается также `data-theme="light"` (как в Storybook). В коде проверка: `document.documentElement.dataset.brnTheme === "light"`.
 
 ## Экспорт `cn`
 
@@ -65,7 +107,7 @@ import { cn } from "burne-ui";
 
 ```bash
 bun install
-bun run build    # dist: JS/CJS + ui.css + типы
+bun run build    # dist: JS/CJS + ui.css (как burne-ui/styles.css) + типы
 bun run lint
 bun run storybook
 ```
