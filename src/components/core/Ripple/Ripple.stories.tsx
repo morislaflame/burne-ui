@@ -17,7 +17,7 @@ const RIPPLE_COLOR_KEYS = Object.keys(RIPPLE_COLOR).join(", ");
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border w-full p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto flex w-full max-w-lg flex-col gap-xlarge">
@@ -31,7 +31,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border w-full p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto flex w-full max-w-lg flex-col gap-xlarge">

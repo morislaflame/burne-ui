@@ -24,6 +24,11 @@ import {
   MOTION_RIPPLE_EASE_CSS,
 } from "@/components/core/utils/motionTokens";
 import { Ripple } from "@/components/core/Ripple";
+import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+import {
+  buttonGroupOverlapBorderClasses,
+  buttonGroupRoundingClasses,
+} from "@/components/core/utils/buttonGroupSegment";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
@@ -158,6 +163,11 @@ const BUTTON_SIZE_CLASSES: Record<
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  /**
+   * Склейка с соседями в `ButtonGroup`: без зазора, общий контур скругления только по краям группы.
+   * Задаётся автоматически при использовании внутри `<ButtonGroup>`.
+   */
+  groupSegment?: ButtonGroupSegment;
   /** Стиль заливки и акцента. По умолчанию `default`. */
   variant?: ButtonVariant;
   /** Габариты и типографика. По умолчанию `base`. */
@@ -271,6 +281,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       disabled: disabledProp,
       leftIcon,
       ripple = false,
+      groupSegment,
       children,
       ...props
     },
@@ -438,7 +449,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     const baseInteractive =
-      "relative overflow-hidden inline-flex items-center justify-center rounded-base font-medium outline-none " +
+      "relative overflow-hidden inline-flex items-center justify-center font-medium outline-none " +
       "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " +
       "disabled:pointer-events-none";
 
@@ -465,6 +476,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ? ""
       : cn("button-idle-surface-transition motion-reduce:transition-none", vn.hoverIdle);
 
+    const roundingClass = groupSegment
+      ? buttonGroupRoundingClasses(groupSegment)
+      : "rounded-base";
+
+    const groupGlue = groupSegment
+      ? cn(
+          buttonGroupOverlapBorderClasses(groupSegment),
+          "z-0 hover:z-[2] focus-visible:z-[2] active:z-[2]",
+        )
+      : "";
+
+    const clipClass = groupSegment
+      ? buttonGroupRoundingClasses(groupSegment)
+      : "rounded-base";
+
     return (
       <button
         ref={setRefs}
@@ -474,14 +500,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={asyncState === "loading"}
         className={cn(
           baseInteractive,
+          groupGlue,
           vn.focusOutline,
           sz.root,
           vn.root,
           "animate-shadow",
           userDisabled ? "opacity-50" : "",
           idleSurfaceMotion,
+          roundingClass,
           className,
-          'cursor-pointer',
+          "cursor-pointer",
         )}
         onPointerDown={(e) => {
           onAnimeDown();
@@ -497,11 +525,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             color={vn.convergeBg}
             disabled={blocked || asyncState !== "idle"}
             duration={MOTION_RIPPLE_DEFAULT_DURATION_MS}
-            className="rounded-base"
+            className={clipClass}
           />
         ) : null}
         <span
-          className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-base"
+          className={cn(
+            "pointer-events-none absolute inset-0 z-0 overflow-hidden",
+            clipClass,
+          )}
           aria-hidden
         >
           {expandRipples.map((rp) => (

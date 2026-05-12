@@ -1,0 +1,43 @@
+import { cn } from "@/utils/cn";
+
+/** Положение сегмента в склеенной группе (`Button`, `ButtonGroup.Text`, смежные элементы формы в тулбарах). */
+export type ButtonGroupSegment = Readonly<{
+  orientation: "horizontal" | "vertical";
+  position: "first" | "middle" | "last" | "only";
+}>;
+
+/** Радиус обрезки Ripple / overflow — совпадает с краем кнопки. */
+export function buttonGroupRoundingClasses(seg: ButtonGroupSegment | undefined): string {
+  if (seg == null) return "";
+  const { orientation, position } = seg;
+  if (position === "only") return "rounded-base";
+  if (orientation === "horizontal") {
+    if (position === "first") return "rounded-l-base rounded-r-none";
+    if (position === "middle") return "rounded-none";
+    return "rounded-r-base rounded-l-none";
+  }
+  if (position === "first") return "rounded-t-base rounded-b-none";
+  if (position === "middle") return "rounded-none";
+  return "rounded-b-base rounded-t-none";
+}
+
+/** Убираем сдвоенную линию у внутренних стыков. */
+export function buttonGroupOverlapBorderClasses(
+  seg: ButtonGroupSegment | undefined,
+): string {
+  if (seg == null || seg.position === "only") return "";
+  const { orientation, position } = seg;
+  if (orientation === "horizontal") {
+    return position === "first" ? "" : "border-l-0";
+  }
+  return position === "first" ? "" : "border-t-0";
+}
+
+export function buttonGroupTextSurfaceClasses(seg: ButtonGroupSegment | undefined): string {
+  return cn(
+    "inline-flex shrink-0 select-none items-center justify-center border border-base bg-surface text-muted",
+    buttonGroupRoundingClasses(seg),
+    buttonGroupOverlapBorderClasses(seg),
+    "z-0",
+  );
+}

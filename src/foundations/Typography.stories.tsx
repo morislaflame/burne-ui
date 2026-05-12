@@ -45,7 +45,7 @@ export const OnDarkCanvas: Story = {
   decorators: [
     (Story) => (
       <div
-        className="box-border min-h-[18rem] w-full p-mid"
+        className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
         style={{ backgroundColor: "var(--color-background)" }}
       >
         <Story />

@@ -26,6 +26,11 @@ import {
   MOTION_INTERACTIVE_MS,
 } from "@/components/core/utils/motionTokens";
 import { Text } from "@/components/core/Text";
+import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+import {
+  buttonGroupOverlapBorderClasses,
+  buttonGroupRoundingClasses,
+} from "@/components/core/utils/buttonGroupSegment";
 import { cn } from "@/utils/cn";
 import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
 
@@ -34,12 +39,24 @@ export type InputVariant = "default" | "outline";
 /** Валидация / обратная связь: бордер оболочки и цвет примечания. */
 export type InputStatus = "default" | "danger" | "success" | "warning";
 
+/** Совпадает с размерами `Button` по высоте (`base`, `large`, `xlarge`). Без `small`. */
+export type InputSize = "base" | "large" | "xlarge";
+
 export type InputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type" | "prefix" | "onPointerDown"
 > & {
   /** Визуал заливки. */
   variant?: InputVariant;
+  /**
+   * Высота и отступы поля — как у `Button` того же размера. По умолчанию `base` (`min-h-8`, `px-plus py-small`).
+   */
+  size?: InputSize;
+  /**
+   * Склейка в `ButtonGroup`: без скруглений на общей стороне с соседом.
+   * Задаётся из `<ButtonGroup>`.
+   */
+  groupSegment?: ButtonGroupSegment;
   /** Состояние поля */
   status?: InputStatus;
   /** Подпись над полем. */
@@ -107,15 +124,56 @@ const AFFIX_SURFACE: Record<InputVariant, string> = {
     "bg-[color-mix(in_oklab,var(--color-border)_22%,transparent)]",
 };
 
+const AFFIX_PADDING: Record<InputSize, string> = {
+  base: "px-plus text-base leading-[1.2]",
+  large: "px-mid text-mid leading-[1.2]",
+  xlarge: "px-large text-mid leading-[1.2]",
+};
+
+const INPUT_CONTROL: Record<InputSize, string> = {
+  base: "px-plus py-small text-base leading-[1.2]",
+  large: "px-mid py-base text-mid leading-[1.2]",
+  xlarge: "px-large py-base text-mid leading-[1.2]",
+};
+
+const INPUT_SHELL_MIN: Record<InputSize, string> = {
+  base: "min-h-8",
+  large: "min-h-10",
+  xlarge: "min-h-12",
+};
+
+const PASSWORD_TOGGLE_CONTROL: Record<
+  InputSize,
+  { box: string; icon: string; pad: string }
+> = {
+  base: {
+    box: "min-h-8 min-w-8",
+    icon: "icon-base",
+    pad: "px-small",
+  },
+  large: {
+    box: "min-h-10 min-w-10",
+    icon: "icon-large",
+    pad: "px-base",
+  },
+  xlarge: {
+    box: "min-h-12 min-w-12",
+    icon: "icon-large",
+    pad: "px-plus",
+  },
+};
+
 function AffixSlot({
   side,
   variant,
   status,
+  controlSize,
   children,
 }: {
   side: "prefix" | "suffix";
   variant: InputVariant;
   status: InputStatus;
+  controlSize: InputSize;
   children: ReactNode;
 }) {
   const edge =
@@ -129,7 +187,8 @@ function AffixSlot({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center px-plus text-sm text-muted",
+        "flex shrink-0 items-center text-muted",
+        AFFIX_PADDING[controlSize],
         surface,
         edge,
       )}
@@ -144,12 +203,14 @@ type PickedFileEntry = { file: File; previewUrl: string | null };
 function PasswordVisibilityAffix({
   variant,
   status,
+  controlSize,
   visible,
   disabled,
   onToggle,
 }: {
   variant: InputVariant;
   status: InputStatus;
+  controlSize: InputSize;
   visible: boolean;
   disabled?: boolean;
   onToggle: () => void;
@@ -158,6 +219,7 @@ function PasswordVisibilityAffix({
     status === "default"
       ? AFFIX_SURFACE[variant]
       : STATUS_TINT_AFFIX[status];
+  const pwd = PASSWORD_TOGGLE_CONTROL[controlSize];
 
   return (
     <span
@@ -178,16 +240,18 @@ function PasswordVisibilityAffix({
         }}
         onPointerDown={(e) => e.stopPropagation()}
         className={cn(
-          "relative z-10 flex min-h-10 min-w-10 items-center justify-center px-small text-muted outline-none transition-colors",
+          "relative z-10 flex items-center justify-center text-muted outline-none transition-colors",
+          pwd.box,
+          pwd.pad,
           "hover:text-foreground",
           "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
           disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
         )}
       >
         {visible ? (
-          <IoEyeOff className="icon-mid shrink-0" aria-hidden />
+          <IoEyeOff className={cn("shrink-0", pwd.icon)} aria-hidden />
         ) : (
-          <IoEye className="icon-mid shrink-0" aria-hidden />
+          <IoEye className={cn("shrink-0", pwd.icon)} aria-hidden />
         )}
       </button>
     </span>
@@ -266,6 +330,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     {
       variant = "default",
       status = "default",
+      size = "base",
       label,
       hint,
       inputType = "text",
@@ -276,6 +341,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       disabled,
       readOnly,
       className = "",
+      groupSegment,
       onPointerDown,
       onChange,
       ...rest
@@ -429,8 +495,25 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const showAffixes = !isFile;
 
+    const roundingShell =
+      groupSegment != null
+        ? cn(
+            buttonGroupRoundingClasses(groupSegment),
+            buttonGroupOverlapBorderClasses(groupSegment),
+            "relative z-0 focus-within:z-[2]",
+          )
+        : "rounded-base";
+
+    const shellMinClass = fileListEmpty ? "" : INPUT_SHELL_MIN[size];
+
     return (
-      <div className={cn("flex w-full flex-col gap-small", className)}>
+      <div
+        className={cn(
+          "flex w-full flex-col gap-small",
+          groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "",
+          className,
+        )}
+      >
         {label ? (
           <label htmlFor={id} className="inline-flex">
             <Text as="span" variant="base" className="font-medium leading-snug">
@@ -440,17 +523,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ) : null}
         <div
           ref={shellRef}
+          data-slot="input-shell"
           role="presentation"
           onPointerDown={handleShellPointerDown}
           className={cn(
-            "flex items-stretch overflow-hidden rounded-lg transition-[border-color,background-color] duration-200 ease-out",
-            fileListEmpty ? "min-h-[7.25rem]" : "min-h-10 border-1",
+            "flex items-stretch overflow-hidden transition-[border-color,background-color] duration-200 ease-out",
+            fileListEmpty ? "min-h-[7.25rem]" : cn("border-1", shellMinClass),
+            roundingShell,
             shellFileEmptySurface ?? shellSurface,
             blocked ? "cursor-not-allowed opacity-55" : "",
           )}
         >
           {showAffixes && prefix != null ? (
-            <AffixSlot side="prefix" variant={variant} status={status}>
+            <AffixSlot
+              side="prefix"
+              variant={variant}
+              status={status}
+              controlSize={size}
+            >
               {prefix}
             </AffixSlot>
           ) : null}
@@ -463,7 +553,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                       "relative min-w-0 flex-1 px-plus py-base",
                       multipleFiles
                         ? "flex flex-col gap-base"
-                        : "flex min-h-10 items-center gap-plus",
+                        : cn("flex items-center gap-plus", INPUT_SHELL_MIN[size]),
                     )
               }
             >
@@ -515,7 +605,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               ) : (
                 <div
                   data-file-row=""
-                  className="flex min-h-10 min-w-0 flex-1 items-center gap-base"
+                  className={cn(
+                    "flex min-w-0 flex-1 items-center gap-base",
+                    INPUT_SHELL_MIN[size],
+                  )}
                 >
                   {fileEntries[0]!.previewUrl ? (
                     <img
@@ -561,12 +654,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               readOnly={readOnly}
               placeholder={placeholder}
               onChange={onChange}
-              className="min-w-0 flex-1 bg-transparent px-plus py-base text-sm text-foreground outline-none placeholder:text-muted"
+              className={cn(
+                "min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted",
+                INPUT_CONTROL[size],
+              )}
               {...rest}
             />
           )}
           {showAffixes && suffix != null ? (
-            <AffixSlot side="suffix" variant={variant} status={status}>
+            <AffixSlot
+              side="suffix"
+              variant={variant}
+              status={status}
+              controlSize={size}
+            >
               {suffix}
             </AffixSlot>
           ) : null}
@@ -574,6 +675,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <PasswordVisibilityAffix
               variant={variant}
               status={status}
+              controlSize={size}
               visible={passwordVisible}
               disabled={disabled}
               onToggle={() => setPasswordVisible((v) => !v)}

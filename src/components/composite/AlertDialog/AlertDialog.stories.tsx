@@ -14,7 +14,7 @@ import {
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[24rem] flex-col items-center justify-center p-xlarge text-foreground"
+      className="box-border flex min-h-[24rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />

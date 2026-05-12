@@ -9,7 +9,7 @@ import { SearchInput } from "./SearchInput";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -21,7 +21,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[12rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -42,6 +42,10 @@ const meta = {
     size: "base" as const,
   },
   argTypes: {
+    size: {
+      control: "select",
+      options: ["base", "large"],
+    },
     ripple: {
       control: "boolean",
       description: "Встроенный `<Ripple color=\"accentSoft\" />` на корне оболочки.",
@@ -66,7 +70,6 @@ export const Sizes: Story = {
   name: "Размеры",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-xlarge">
-      <SearchInput size="small" placeholder="Поиск" />
       <SearchInput size="base" placeholder="Поиск" />
       <SearchInput size="large" placeholder="Поиск" />
     </div>

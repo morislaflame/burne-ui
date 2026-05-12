@@ -6,10 +6,10 @@ import { Input } from "./Input";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
-      <div className="mx-auto max-w-xl min-w-md">
+      <div className="mx-auto min-w-sm">
         <Story />
       </div>
     </div>
@@ -20,10 +20,10 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex flex-col items-center justify-center w-full p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
-      <div className="mx-auto max-w-xl min-w-md">
+      <div className="mx-auto min-w-sm">
         <Story />
       </div>
     </div>
@@ -41,8 +41,15 @@ const meta = {
   args: {
     variant: "default" as const,
     status: "default" as const,
+    size: "base" as const,
     inputType: "text" as const,
     placeholder: "Введите значение",
+  },
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["base", "large", "xlarge"],
+    },
   },
 } satisfies Meta<typeof Input>;
 

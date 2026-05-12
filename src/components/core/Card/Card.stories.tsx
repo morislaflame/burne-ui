@@ -18,7 +18,7 @@ const CARD_RIPPLE_COLOR: Record<CardVariant, "accentSoft" | "secondary"> = {
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-md">
@@ -32,7 +32,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-brn-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-md">

@@ -31,7 +31,7 @@ import {
 import { Ripple } from "@/components/core/Ripple";
 import { cn } from "@/utils/cn";
 
-export type SearchInputSize = "small" | "base" | "large";
+export type SearchInputSize = "base" | "large";
 
 const GHOST_CLEAR_HOVER =
   "hover:bg-accent-fill-hover";
@@ -51,29 +51,18 @@ const SIZE_LAYOUT: Record<
     textGapClear: number;
   }
 > = {
-  small: {
-    dim: 36,
-    defaultExpandedW: 220,
-    iconBox: 18,
-    padX: 10,
-    radiusExpanded: 10,
-    iconClass: "icon-base",
-    inputClass: "text-sm",
-    clearTap: 28,
+  /** Как `Button size="base"`: высота 32px (`min-h-8`), иконка `icon-base`. */
+  base: {
+    dim: 32,
+    defaultExpandedW: 280,
+    iconBox: 16,
+    padX: 12,
+    radiusExpanded: 8,
+    iconClass: "icon-small",
+    inputClass: "text-base",
+    clearTap: 24,
     clearIconClass: "icon-base",
     textGapClear: 6,
-  },
-  base: {
-    dim: 44,
-    defaultExpandedW: 280,
-    iconBox: 22,
-    padX: 12,
-    radiusExpanded: 12,
-    iconClass: "icon-mid",
-    inputClass: "text-sm",
-    clearTap: 32,
-    clearIconClass: "icon-mid",
-    textGapClear: 8,
   },
   large: {
     dim: 52,
@@ -82,7 +71,7 @@ const SIZE_LAYOUT: Record<
     padX: 14,
     radiusExpanded: 12,
     iconClass: "icon-large",
-    inputClass: "text-[1rem] leading-normal",
+    inputClass: "text-[1rem]",
     clearTap: 36,
     clearIconClass: "icon-large",
     textGapClear: 8,
@@ -93,7 +82,11 @@ export type SearchInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type"
 > & {
-  /** Высота круга и габариты иконки / поля. По умолчанию `base`. */
+  /**
+   * Высота в свёрнутом виде и габариты иконки / поля.
+   * Только `base` и `large`: `base` = как `Button size="base"` (32px).
+   * По умолчанию `base`.
+   */
   size?: SearchInputSize;
   /** Ширина в развёрнутом виде (px). */
   expandedWidth?: number;
@@ -473,7 +466,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           aria-hidden={!expanded}
           aria-label={inputAriaLabel}
           className={cn(
-            "box-border min-h-0 w-full border-0 bg-transparent text-foreground outline-none placeholder:text-muted",
+            "box-border min-h-0 w-full border-0 bg-transparent py-0 text-foreground outline-none placeholder:text-muted",
             "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",
             "disabled:cursor-not-allowed disabled:opacity-100",
             layout.inputClass,
@@ -485,12 +478,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             expanded
               ? {
                   height: dim,
+                  lineHeight: `${dim}px`,
                   paddingLeft: paddingInputLeft,
                   paddingRight: paddingInputRight,
                   paddingTop: 0,
                   paddingBottom: 0,
                 }
-              : { paddingLeft: paddingInputLeft }
+              : {
+                  paddingLeft: paddingInputLeft,
+                  lineHeight: `${dim}px`,
+                  height: "100%",
+                }
           }
           {...rest}
         />

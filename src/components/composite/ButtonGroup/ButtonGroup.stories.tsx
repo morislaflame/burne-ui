@@ -1,0 +1,132 @@
+import type { ComponentType } from "react";
+
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { IoSearch, IoTrashOutline } from "react-icons/io5";
+
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/Input";
+import { SearchInput } from "@/components/core/SearchInput";
+import { ButtonGroup, ButtonGroupText } from "./ButtonGroup";
+
+const framedDecorator = [
+  (Story: ComponentType) => (
+    <div
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <Story />
+    </div>
+  ),
+] as const;
+
+const meta = {
+  title: "Composite Components/ButtonGroup",
+  component: ButtonGroup,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+  },
+  decorators: [...framedDecorator],
+} satisfies Meta<typeof ButtonGroup>;
+
+export default meta;
+
+type Story = StoryObj<typeof ButtonGroup>;
+
+/** Базово: текст + кнопки, без промежутков. */
+export const Horizontal: Story = {
+  render() {
+    return (
+      <ButtonGroup aria-label="Действия с документом">
+        <ButtonGroupText>Вид</ButtonGroupText>
+        <Button variant="outline">Список</Button>
+        <Button variant="outline">Сетка</Button>
+        <Button variant="default">Применить</Button>
+      </ButtonGroup>
+    );
+  },
+};
+
+export const Vertical: Story = {
+  render() {
+    return (
+      <ButtonGroup orientation="vertical" buttonSize="base" aria-label="Вертикальная группа">
+        <ButtonGroupText>Сортировка</ButtonGroupText>
+        <Button variant="outline">По дате</Button>
+        <Button variant="outline">По имени</Button>
+        <Button variant="danger" leftIcon={<IoTrashOutline />}>
+          Удалить
+        </Button>
+      </ButtonGroup>
+    );
+  },
+};
+
+/** Поле поиска + иконка: общий край между `Input` и `Button` без скругления. */
+export const ToolbarFusedInput: Story = {
+  render() {
+    return (
+      <div className="max-w-lg">
+        <ButtonGroup aria-label="Поиск">
+          <Input placeholder="Search..." aria-label="Search query" variant="outline" />
+          <Button variant="outline" aria-label="Search" className="min-w-fit min-h-fit">
+            <IoSearch aria-hidden className="icon-base" />
+          </Button>
+        </ButtonGroup>
+      </div>
+    );
+  },
+};
+
+/** Строка: SearchInput и отдельная группа (`SearchInput` с инлайновым радиусом не клеится в группу без доработки). */
+export const ToolbarWithSearchInputRow: Story = {
+  render() {
+    return (
+      <div className="flex min-w-[min(100%,40rem)] max-w-[min(100%,48rem)] flex-wrap items-center justify-center gap-small">
+        <SearchInput defaultExpanded expandedWidth={280} placeholder="Везде искать…" aria-label="Поиск по разделам" />
+        <ButtonGroup aria-label="Представление" buttonSize="base">
+          <ButtonGroupText>Таблица</ButtonGroupText>
+          <Button variant="outline">Карты</Button>
+          <Button variant="outline">Список</Button>
+          <Button variant="default">Сохранить</Button>
+        </ButtonGroup>
+      </div>
+    );
+  },
+};
+
+/** Несколько независимых групп в одном ряду с отступами между блоками. */
+export const MultipleGroupsInRow: Story = {
+  render() {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-large">
+        <ButtonGroup aria-label="Формат" buttonSize="small">
+          <ButtonGroupText>Формат</ButtonGroupText>
+          <Button size="small" variant="outline">
+            JSON
+          </Button>
+          <Button size="small" variant="outline">
+            YAML
+          </Button>
+          <Button size="small" variant="default">
+            Экспорт
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup aria-label="Вид" buttonSize="small">
+          <ButtonGroupText>Вид</ButtonGroupText>
+          <Button size="small" variant="outline">
+            A
+          </Button>
+          <Button size="small" variant="outline">
+            B
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup aria-label="Статус" buttonSize="small">
+          <Button size="small" variant="danger" leftIcon={<IoTrashOutline />}>
+            Сброс
+          </Button>
+        </ButtonGroup>
+      </div>
+    );
+  },
+};
