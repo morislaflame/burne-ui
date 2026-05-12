@@ -62,7 +62,7 @@ function CardContent({ className = "", ...rest }: CardContentProps) {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col gap-xsmall py-plus px-mid",
+        "flex min-w-0 flex-col gap-small py-plus px-mid",
         className,
       )}
       {...rest}
@@ -76,8 +76,8 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
       <Text
         ref={ref as Ref<HTMLElement>}
         as="h3"
-        variant="mid"
-        className={cn("min-w-0 font-semibold", className)}
+        variant="base"
+        className={cn("min-w-0 leading-snug", className)}
         {...rest}
       />
     );
