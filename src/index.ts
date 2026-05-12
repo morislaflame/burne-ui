@@ -134,6 +134,34 @@ export {
   type BreadcrumbItem,
 } from "@/components/core/Breadcrumbs";
 export {
+  Separator,
+  type SeparatorProps,
+  type SeparatorOrientation,
+} from "@/components/core/Separator";
+export {
+  Dropdown,
+  DropdownTrigger,
+  DropdownContent,
+  DropdownGroup,
+  DropdownLabel,
+  DropdownSeparator,
+  DropdownItem,
+  DropdownSub,
+  DropdownSubTrigger,
+  DropdownSubContent,
+  type DropdownProps,
+  type DropdownTriggerProps,
+  type DropdownContentProps,
+  type DropdownGroupProps,
+  type DropdownLabelProps,
+  type DropdownSeparatorProps,
+  type DropdownItemProps,
+  type DropdownItemVariant,
+  type DropdownSubProps,
+  type DropdownSubTriggerProps,
+  type DropdownSubContentProps,
+} from "@/components/core/Dropdown";
+export {
   Badge,
   BadgeAnchor,
   type BadgeProps,

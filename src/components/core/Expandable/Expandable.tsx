@@ -196,7 +196,7 @@ function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center self-start text-accent [&_svg]:icon-mid",
+        "flex shrink-0 items-center self-start text-accent [&_svg]:icon-base mt-[0.0575rem]",
         className,
       )}
       {...props}
