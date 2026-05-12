@@ -3,6 +3,7 @@ import "@/styles.css";
 export { cn } from "@/utils/cn";
 export {
   Button,
+  buttonRippleTone,
   type ButtonProps,
   type ButtonAsyncState,
   type ButtonSize,
@@ -16,6 +17,13 @@ export {
   type GlassShaderLayerProps,
   type GlassBackdropProps,
 } from "@/components/core/GlassSurface";
+export {
+  Ripple,
+  RIPPLE_COLOR,
+  type RippleProps,
+  type RippleColor,
+  type RippleDirection,
+} from "@/components/core/Ripple";
 export {
   Expandable,
   type ExpandableProps,
@@ -84,6 +92,7 @@ export {
 export { Text, type TextProps, type TextVariant } from "@/components/core/Text";
 export {
   Card,
+  type CardPressEvent,
   type CardProps,
   type CardVariant,
   type CardContentProps,

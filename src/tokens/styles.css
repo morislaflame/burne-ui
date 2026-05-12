@@ -66,6 +66,12 @@
     var(--color-accent) 42%,
     transparent
   );
+  /** Широкие триггеры (Expandable и т.п.): мягкий акцент без плотной заливки */
+  --color-converge-ripple-accent-muted: color-mix(
+    in oklab,
+    var(--color-accent) 28%,
+    transparent
+  );
   --color-converge-ripple-danger: color-mix(
     in oklab,
     var(--color-danger-foreground) 38%,
@@ -290,6 +296,11 @@
     in oklab,
     var(--color-accent-foreground) 52%,
     var(--color-accent)
+  );
+  --color-converge-ripple-accent-muted: color-mix(
+    in oklab,
+    var(--color-accent) 26%,
+    var(--color-surface)
   );
 
   --color-secondary-fill-hover: color-mix(

@@ -1,5 +1,6 @@
 export {
   Button,
+  buttonRippleTone,
   type ButtonProps,
   type ButtonAsyncState,
   type ButtonSize,

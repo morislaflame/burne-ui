@@ -1,5 +1,6 @@
 export {
   Card,
+  type CardPressEvent,
   type CardProps,
   type CardVariant,
   type CardContentProps,

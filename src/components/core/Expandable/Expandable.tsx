@@ -1,6 +1,8 @@
 import {
+  Children,
   createContext,
   forwardRef,
+  isValidElement,
   useCallback,
   useContext,
   useId,
@@ -17,15 +19,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_RIPPLE_EXPANDABLE_DURATION_MS,
-  MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM,
-} from "@/components/core/utils/motionTokens";
-import {
-  ConvergeRippleLayer,
-  type ConvergeRipple,
-} from "@/components/core/utils/pressRipple";
-import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { Ripple } from "@/components/core/Ripple";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -35,7 +29,6 @@ export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> 
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
-  pressRipple?: boolean;
 };
 
 export type ExpandableTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -53,14 +46,10 @@ export type ExpandablePanelProps = HTMLAttributes<HTMLDivElement>;
 type ExpandableContextValue = {
   open: boolean;
   disabled: boolean;
-  pressRipple: boolean;
   hasPanel: boolean;
   toggle: () => void;
   headerId: string;
   panelId: string;
-  pushConvergeRipple: (e: PointerEvent<HTMLButtonElement>) => void;
-  ripples: ConvergeRipple[];
-  dismissConverge: (id: number) => void;
   setHasPanel: (v: boolean) => void;
 };
 
@@ -70,6 +59,32 @@ function useExpandable() {
   const ctx = useContext(ExpandableContext);
   if (!ctx) throw new Error("Компоненты Expandable должны быть внутри <Expandable>.");
   return ctx;
+}
+
+/** Выносит `<Ripple />` на полный `<button>`, а не в узкий flex-ряд с текстом. */
+function partitionTriggerRipple(children: ReactNode): {
+  rippleOverlay: ReactNode;
+  rest: ReactNode;
+} {
+  const ripples: ReactNode[] = [];
+  const rest: ReactNode[] = [];
+  Children.forEach(children, (child) => {
+    if (isValidElement(child) && child.type === Ripple) {
+      ripples.push(child);
+    } else {
+      rest.push(child);
+    }
+  });
+  const rippleOverlay =
+    ripples.length > 0 ? (
+      <span
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]"
+        aria-hidden
+      >
+        {ripples}
+      </span>
+    ) : null;
+  return { rippleOverlay, rest: <>{rest}</> };
 }
 
 function ChevronSvg({ className = "" }: { className?: string }) {
@@ -106,17 +121,15 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
     const {
       open,
       disabled,
-      pressRipple,
       hasPanel,
       toggle,
       headerId,
       panelId,
-      pushConvergeRipple,
-      ripples,
-      dismissConverge,
     } = useExpandable();
 
     const liftSpanRef = useRef<HTMLSpanElement | null>(null);
+    const { rippleOverlay, rest: mainChildren } =
+      partitionTriggerRipple(children);
 
     const setTriggerRef = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -128,7 +141,6 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
 
     const handlePointerDown = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
-        if (!disabled && pressRipple) pushConvergeRipple(e);
         if (!disabled) {
           const span = liftSpanRef.current;
           if (span && !prefersReducedInteractiveHoverLift()) {
@@ -137,7 +149,7 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         }
         onPointerDownProp?.(e);
       },
-      [disabled, pressRipple, pushConvergeRipple, onPointerDownProp],
+      [disabled, onPointerDownProp],
     );
 
     return (
@@ -158,25 +170,12 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         onClick={toggle}
         {...props}
       >
-        {pressRipple ? (
-          <span
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-            aria-hidden
-          >
-            <ConvergeRippleLayer
-              ripples={ripples}
-              tone="color-mix(in oklab, var(--color-accent) 28%, transparent)"
-              onDone={dismissConverge}
-              durationMs={MOTION_RIPPLE_EXPANDABLE_DURATION_MS}
-              opacityFrom={MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM}
-            />
-          </span>
-        ) : null}
+        {rippleOverlay}
         <span
           ref={liftSpanRef}
           className="relative z-[1] flex min-w-0 flex-1 items-start gap-base"
         >
-          {children}
+          {mainChildren}
         </span>
         {!hideChevron && hasPanel ? (
           <span
@@ -310,7 +309,6 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       open: openProp,
       onOpenChange,
       disabled = false,
-      pressRipple = false,
       className = "",
       ...rest
     },
@@ -320,11 +318,6 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
     const headerId = useId();
     const controlled = openProp !== undefined;
     const [internalOpen, setInternalOpen] = useState(defaultOpen);
-    const {
-      ripples,
-      pushFromPointer: pushConvergeRippleBase,
-      dismiss: dismissConverge,
-    } = useConvergeRipples();
     const [hasPanel, setHasPanelState] = useState(false);
 
     const setHasPanel = useCallback((v: boolean) => {
@@ -340,25 +333,13 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       onOpenChange?.(next);
     }, [controlled, disabled, hasPanel, open, onOpenChange]);
 
-    const pushConvergeRipple = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        if (disabled) return;
-        pushConvergeRippleBase(e);
-      },
-      [disabled, pushConvergeRippleBase],
-    );
-
     const ctxValue: ExpandableContextValue = {
       open,
       disabled,
-      pressRipple,
       hasPanel,
       toggle,
       headerId,
       panelId,
-      pushConvergeRipple,
-      ripples,
-      dismissConverge,
       setHasPanel,
     };
 

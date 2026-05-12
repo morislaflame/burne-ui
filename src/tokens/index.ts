@@ -14,6 +14,7 @@ export const designTokenNames = [
   "--color-secondary-fill-hover",
   "--color-converge-ripple-accent-fill",
   "--color-converge-ripple-accent-soft",
+  "--color-converge-ripple-accent-muted",
   "--color-converge-ripple-danger",
   "--color-converge-ripple-info",
   "--color-converge-ripple-success",

@@ -1,6 +1,8 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+import { Ripple } from "@/components/core/Ripple";
+
 import { Expandable } from "./Expandable";
 
 const PIN_IMAGE =
@@ -125,12 +127,16 @@ export const WithImage: Story = {
 export const PressRipple: Story = {
   name: "Риппл по нажатию",
   render: () => (
-    <Expandable pressRipple>
+    <Expandable>
       <Expandable.Trigger>
+        <Ripple color="accentMuted" />
         <Expandable.Content>
           <Expandable.Title>Нажми на строку заголовка</Expandable.Title>
           <Expandable.Description>
-            Converge-ripple включается опционально через pressRipple.
+            Ripple среди детей триггера — слой на всю кнопку (включая шеврон):{" "}
+            <code className="text-xs">
+              {`<Ripple color="accentMuted" />`}
+            </code>
           </Expandable.Description>
         </Expandable.Content>
       </Expandable.Trigger>

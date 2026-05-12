@@ -8,6 +8,8 @@ export type AccordionItem = {
   title: ReactNode;
   description?: ReactNode;
   icon?: ReactNode;
+  /** Узел перед иконкой/контентом триггера (например `<Ripple color="accentMuted" />`). */
+  triggerBefore?: ReactNode;
   content: ReactNode;
   disabled?: boolean;
 };
@@ -19,8 +21,6 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
   /** Управляемое открытое состояние. */
   openId?: string | null;
   onOpenIdChange?: (id: string | null) => void;
-  /** Пробрасывает press-ripple в Expandable items. */
-  pressRipple?: boolean;
 };
 
 export function Accordion({
@@ -28,7 +28,6 @@ export function Accordion({
   defaultOpenId = null,
   openId: openIdProp,
   onOpenIdChange,
-  pressRipple = false,
   className = "",
   ...rest
 }: AccordionProps) {
@@ -46,7 +45,6 @@ export function Accordion({
           <Expandable
             key={item.id}
             disabled={item.disabled}
-            pressRipple={pressRipple}
             open={isOpen}
             onOpenChange={(next) => {
               const nextId = next ? item.id : null;
@@ -54,12 +52,13 @@ export function Accordion({
               onOpenIdChange?.(nextId);
             }}
             className={cn(
-              "!rounded-none",
+              "!rounded-none relative",
               index === 0 ? "!rounded-t-xl" : "-mt-px",
               index === items.length - 1 ? "!rounded-b-xl" : "",
             )}
           >
             <Expandable.Trigger>
+              {item.triggerBefore}
               {item.icon ? <Expandable.Icon>{item.icon}</Expandable.Icon> : null}
               <Expandable.Content>
                 <Expandable.Title>{item.title}</Expandable.Title>

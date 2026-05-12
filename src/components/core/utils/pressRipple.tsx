@@ -8,6 +8,8 @@ import {
   MOTION_RIPPLE_EASE,
 } from "./motionTokens";
 
+export type RippleDirection = "in" | "out";
+
 export type ConvergeRipple = { id: number; x: number; y: number; size: number };
 
 function maxDistanceToCorners(px: number, py: number, w: number, h: number) {
@@ -51,11 +53,13 @@ function ConvergeRippleDot({
   durationMs,
   opacityFrom,
   background,
+  direction,
   onDone,
 }: ConvergeRipple & {
   durationMs: number;
   opacityFrom: number;
   background: string;
+  direction: RippleDirection;
   onDone: (id: number) => void;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -68,7 +72,7 @@ function ConvergeRippleDot({
     let finished = false;
     remove(el);
     const anim = animate(el, {
-      scale: [1, 0],
+      scale: direction === "out" ? [0, 1] : [1, 0],
       opacity: [opacityFrom, 0],
       duration: durationMs,
       ease: MOTION_RIPPLE_EASE,
@@ -81,7 +85,7 @@ function ConvergeRippleDot({
       remove(el);
       anim.revert();
     };
-  }, [id, x, y, size, durationMs, opacityFrom, background]);
+  }, [id, x, y, size, durationMs, opacityFrom, background, direction]);
 
   return (
     <span
@@ -106,12 +110,14 @@ export function ConvergeRippleLayer({
   onDone,
   durationMs = MOTION_RIPPLE_DEFAULT_DURATION_MS,
   opacityFrom = MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
+  direction = "in",
 }: {
   ripples: ConvergeRipple[];
   tone: string;
   onDone: (id: number) => void;
   durationMs?: number;
   opacityFrom?: number;
+  direction?: RippleDirection;
 }) {
   return (
     <>
@@ -122,6 +128,7 @@ export function ConvergeRippleLayer({
           background={tone}
           durationMs={durationMs}
           opacityFrom={opacityFrom}
+          direction={direction}
           onDone={onDone}
         />
       ))}

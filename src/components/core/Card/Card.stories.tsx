@@ -1,12 +1,19 @@
 import type { ComponentType, FormEvent } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { Form } from "@/components/composite/Form/Form";
 import { Button } from "@/components/core/Button/Button";
 import { Input } from "@/components/core/Input/Input";
-import { Card } from "./Card";
+import { Ripple } from "@/components/core/Ripple";
+import { Card, type CardVariant } from "./Card";
 import { PIN_IMAGE1 } from "@/utils/mockImages";
+
+const CARD_RIPPLE_COLOR: Record<CardVariant, "accentSoft" | "secondary"> = {
+  default: "accentSoft",
+  outline: "accentSoft",
+  secondary: "secondary",
+};
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -43,6 +50,14 @@ const meta = {
     layout: "fullscreen",
   },
   decorators: [...darkThemeDecorator],
+  argTypes: {
+    pressable: {
+      control: "boolean",
+      description:
+        "Hover-lift + тень и squeeze при нажатии; role=\"button\", активация Enter/Space. Риппл — отдельно (`<Ripple />` первым ребёнком внутри карточки + контент в `z-[1]`).",
+    },
+    onPress: { action: "press" },
+  },
 } satisfies Meta<typeof Card>;
 
 export default meta;
@@ -71,10 +86,10 @@ export const WithFooter: Story = {
         <Card.Description>Обновлён 10 мая 2026</Card.Description>
       </Card.Content>
       <Card.Footer className="flex items-center justify-end gap-base">
-        <Button variant="ghost" size="base">
+        <Button variant="ghost" size="base" ripple>
           Отмена
         </Button>
-        <Button variant="default" size="base">
+        <Button variant="default" size="base" ripple>
           Открыть
         </Button>
       </Card.Footer>
@@ -104,6 +119,82 @@ export const Secondary: Story = {
       </Card.Content>
     </Card>
   ),
+};
+
+export const Pressable: Story = {
+  name: "Нажимаемая (pressable)",
+  render: function PressableDemo() {
+    const [n, setN] = useState(0);
+    return (
+      <div className="flex flex-col gap-mid">
+        <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
+          Нажатий (любая из карточек ниже): {n}
+        </p>
+        <Card pressable onPress={() => setN((c) => c + 1)}>
+          <Ripple color={CARD_RIPPLE_COLOR.default} />
+          <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
+            <Card.Content>
+              <Card.Title>Карточка-кнопка</Card.Title>
+              <Card.Description>
+                Наведение — lift и тень; клик — squeeze и onPress; риппл задаётся{" "}
+                <code className="text-xs">&lt;Ripple /&gt;</code> снаружи.
+              </Card.Description>
+            </Card.Content>
+          </div>
+        </Card>
+        <Card variant="outline" pressable onPress={() => setN((c) => c + 1)}>
+          <Ripple color={CARD_RIPPLE_COLOR.outline} />
+          <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
+            <Card.Content>
+              <Card.Title>Outline + pressable</Card.Title>
+              <Card.Description>Тот же паттерн, стеклянная обводка.</Card.Description>
+            </Card.Content>
+          </div>
+        </Card>
+        <Card variant="secondary" pressable onPress={() => setN((c) => c + 1)}>
+          <Ripple color={CARD_RIPPLE_COLOR.secondary} />
+          <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
+            <Card.Content>
+              <Card.Title>Secondary + pressable</Card.Title>
+              <Card.Description>Тон риппла под вторичную поверхность.</Card.Description>
+            </Card.Content>
+          </div>
+        </Card>
+      </div>
+    );
+  },
+};
+
+export const PressableWithNestedCard: Story = {
+  name: "Нажимаемая с карточкой внутри",
+  render: function PressableNestedDemo() {
+    const [n, setN] = useState(0);
+    return (
+      <div className="flex flex-col gap-mid">
+        <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
+          Нажатий по внешней карточке: {n}
+        </p>
+        <Card pressable onPress={() => setN((c) => c + 1)}>
+          <Ripple color={CARD_RIPPLE_COLOR.default}/>
+          <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
+            <Card.Content>
+              <Card.Title>Внешняя pressable</Card.Title>
+              <Card.Description>
+                Клик по области вне внутренней карточки увеличивает счётчик сверху. Внутренняя карточка
+                статическая — только текст.
+              </Card.Description>
+              <Card className="mt-plus">
+                <p className="px-mid py-plus text-base leading-normal text-foreground">
+                  Вложенная обычная карточка без заголовка и описания — только этот абзац текста для
+                  проверки вложенной поверхности и отступов.
+                </p>
+              </Card>
+            </Card.Content>
+          </div>
+        </Card>
+      </div>
+    );
+  },
 };
 
 export const WithImageBody: Story = {
@@ -150,7 +241,7 @@ function QuickSubscribeCard() {
             placeholder="you@example.com"
             autoComplete="email"
           />
-          <Button type="submit" variant="default" size="large" className="w-full">
+          <Button type="submit" variant="default" size="large" className="w-full" ripple>
             Подписаться
           </Button>
         </Form>
@@ -172,12 +263,12 @@ export const LightTheme: Story = {
       <Card.Content>
         <Card.Title>Заголовок карточки</Card.Title>
         <Card.Description>
-          В светлой теме тень должна быть заметна при наведении.
+          Обычная карточка без эффекта при наведении.
         </Card.Description>
       </Card.Content>
       <Card.Footer className="flex items-center justify-end gap-base">
-        <Button variant="ghost" size="base">Отмена</Button>
-        <Button variant="default" size="base">Открыть</Button>
+        <Button variant="ghost" size="base" ripple>Отмена</Button>
+        <Button variant="default" size="base" ripple>Открыть</Button>
       </Card.Footer>
     </Card>
   ),
@@ -191,19 +282,19 @@ export const LightThemeVariants: Story = {
       <Card variant="default">
         <Card.Content>
           <Card.Title>Default</Card.Title>
-          <Card.Description>Тень появляется при hover.</Card.Description>
+          <Card.Description>Статическая карточка, без подъёма при наведении.</Card.Description>
         </Card.Content>
       </Card>
       <Card variant="outline">
         <Card.Content>
           <Card.Title>Outline</Card.Title>
-          <Card.Description>Прозрачный фон, тень при hover.</Card.Description>
+          <Card.Description>Прозрачный фон и обводка.</Card.Description>
         </Card.Content>
       </Card>
       <Card variant="secondary">
         <Card.Content>
           <Card.Title>Secondary</Card.Title>
-          <Card.Description>Accent-wash, тень при hover.</Card.Description>
+          <Card.Description>Accent-wash на surface.</Card.Description>
         </Card.Content>
       </Card>
     </div>

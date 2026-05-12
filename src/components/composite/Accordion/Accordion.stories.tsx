@@ -1,6 +1,8 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+import { Ripple } from "@/components/core/Ripple";
+
 import { Accordion } from "./Accordion";
 
 const darkThemeDecorator = [
@@ -84,9 +86,18 @@ export const Default: Story = {
 };
 
 export const PressRipple: Story = {
-  name: "Риппл по нажатию в items",
+  name: "Риппл по нажатию в триггере",
   args: {
     items: DEMO_ITEMS,
-    pressRipple: true,
+    defaultOpenId: "delivery",
   },
+  render: ({ items: _items, ...args }) => (
+    <Accordion
+      {...args}
+      items={DEMO_ITEMS.map((item) => ({
+        ...item,
+        triggerBefore: <Ripple color="accentMuted" />,
+      }))}
+    />
+  ),
 };

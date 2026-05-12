@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Card } from "@/components/core/Card/Card";
+
 import { SearchInput } from "./SearchInput";
 
 const darkThemeDecorator = [
@@ -41,9 +42,9 @@ const meta = {
     size: "base" as const,
   },
   argTypes: {
-    pressRipple: {
+    ripple: {
       control: "boolean",
-      description: "Риппл от точки нажатия на оболочке (как у Button)",
+      description: "Встроенный `<Ripple color=\"accentSoft\" />` на корне оболочки.",
     },
   },
 } satisfies Meta<typeof SearchInput>;
@@ -54,10 +55,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const WithPressRipple: Story = {
+export const WithRipple: Story = {
   name: "С рипплом",
   args: {
-    pressRipple: true,
+    ripple: true,
   },
 };
 

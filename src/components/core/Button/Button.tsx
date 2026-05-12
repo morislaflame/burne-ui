@@ -20,12 +20,10 @@ import {
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_FEEDBACK_EXPAND_MS,
+  MOTION_RIPPLE_DEFAULT_DURATION_MS,
   MOTION_RIPPLE_EASE_CSS,
 } from "@/components/core/utils/motionTokens";
-import {
-  ConvergeRippleLayer,
-} from "@/components/core/utils/pressRipple";
-import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+import { Ripple } from "@/components/core/Ripple";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
@@ -119,6 +117,11 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   },
 };
 
+/** CSS-цвет converge-ripple под вариант кнопки — для собственного `<Ripple color={…} />` без `Button`. */
+export function buttonRippleTone(variant: ButtonVariant): string {
+  return BUTTON_VARIANT[variant].convergeBg;
+}
+
 /** Типографика подписи — через `Text`, без `text-*` на корне кнопки. */
 const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",
@@ -177,6 +180,11 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   asyncFeedbackMs?: number;
   /** Иконка слева от подписи (только в состоянии idle). */
   leftIcon?: ReactNode;
+  /**
+   * Включить converge-ripple от точки нажатия (`<Ripple />` внутри кнопки, тон под `variant`).
+   * @default false
+   */
+  ripple?: boolean;
 };
 
 type ExpandRipple = {
@@ -262,6 +270,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       onClick,
       disabled: disabledProp,
       leftIcon,
+      ripple = false,
       children,
       ...props
     },
@@ -283,11 +292,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       : internalAsync;
     asyncStateRef.current = asyncState;
 
-    const {
-      ripples: convergeRipples,
-      pushFromPointer: pushConvergeRippleBase,
-      dismiss: dismissConverge,
-    } = useConvergeRipples();
     const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
 
     const setRefs = useCallback(
@@ -403,16 +407,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       });
     }
 
-    const pushConvergeRipple = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        if (asyncState !== "idle") return;
-        const el = e.currentTarget;
-        if (el.disabled) return;
-        pushConvergeRippleBase(e);
-      },
-      [asyncState, pushConvergeRippleBase],
-    );
-
     const dismissExpand = useCallback((id: number) => {
       setExpandRipples((prev) => prev.filter((rp) => rp.id !== id));
     }, []);
@@ -490,7 +484,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'cursor-pointer',
         )}
         onPointerDown={(e) => {
-          if (!blocked) pushConvergeRipple(e);
           onAnimeDown();
           onPointerDown?.(e);
         }}
@@ -499,15 +492,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         onMouseDown={onMouseDown}
         onClick={handleClick}
       >
+        {ripple ? (
+          <Ripple
+            color={vn.convergeBg}
+            disabled={blocked || asyncState !== "idle"}
+            duration={MOTION_RIPPLE_DEFAULT_DURATION_MS}
+            className="rounded-base"
+          />
+        ) : null}
         <span
           className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-base"
           aria-hidden
         >
-          <ConvergeRippleLayer
-            ripples={convergeRipples}
-            tone={vn.convergeBg}
-            onDone={dismissConverge}
-          />
           {expandRipples.map((rp) => (
             <span
               key={rp.id}

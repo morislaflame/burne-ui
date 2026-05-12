@@ -10,6 +10,12 @@ import { createConvergeRippleAtPointer, type ConvergeRipple } from "./pressRippl
 export function useConvergeRipples(): {
   ripples: ConvergeRipple[];
   pushFromPointer: (e: PointerEvent<HTMLElement>) => void;
+  /** Геометрия относительно `target` (обычно корень интерактива: кнопка, карточка). */
+  pushAtClientCoords: (
+    target: HTMLElement,
+    clientX: number,
+    clientY: number,
+  ) => void;
   dismiss: (id: number) => void;
 } {
   const idRef = useRef(0);
@@ -19,18 +25,25 @@ export function useConvergeRipples(): {
     setRipples((prev) => prev.filter((rp) => rp.id !== id));
   }, []);
 
+  const pushAtClientCoords = useCallback(
+    (target: HTMLElement, clientX: number, clientY: number) => {
+      const id = ++idRef.current;
+      const ripple = createConvergeRippleAtPointer(
+        target,
+        clientX,
+        clientY,
+        id,
+      );
+      setRipples((prev) => [...prev, ripple]);
+    },
+    [],
+  );
+
   const pushFromPointer = useCallback((e: PointerEvent<HTMLElement>) => {
     const target = e.currentTarget;
     if (!target) return;
-    const id = ++idRef.current;
-    const ripple = createConvergeRippleAtPointer(
-      target,
-      e.clientX,
-      e.clientY,
-      id,
-    );
-    setRipples((prev) => [...prev, ripple]);
-  }, []);
+    pushAtClientCoords(target, e.clientX, e.clientY);
+  }, [pushAtClientCoords]);
 
-  return { ripples, pushFromPointer, dismiss };
+  return { ripples, pushFromPointer, pushAtClientCoords, dismiss };
 }
