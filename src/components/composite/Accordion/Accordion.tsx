@@ -53,8 +53,8 @@ export function Accordion({
             }}
             className={cn(
               "!rounded-none relative",
-              index === 0 ? "!rounded-t-xl" : "-mt-px",
-              index === items.length - 1 ? "!rounded-b-xl" : "",
+              index === 0 ? "!rounded-t-mid" : "-mt-px",
+              index === items.length - 1 ? "!rounded-b-mid" : "",
             )}
           >
             <Expandable.Trigger>

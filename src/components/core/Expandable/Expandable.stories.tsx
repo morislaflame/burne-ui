@@ -116,7 +116,7 @@ export const WithImage: Story = {
         <img
           src={PIN_IMAGE}
           alt="Портрет в глянцевом красном шлеме, текст на визоре"
-          className="w-full max-h-[min(420px,55vh)] rounded-b-md object-cover"
+          className="w-full max-h-[min(420px,55vh)] rounded-mid object-cover"
           loading="lazy"
         />
       </Expandable.Panel>
@@ -203,7 +203,7 @@ export const AllVariationsLight: Story = {
           <img
             src={PIN_IMAGE}
             alt=""
-            className="w-full max-h-[min(320px,40vh)] rounded-b-md object-cover"
+            className="w-full max-h-[min(320px,40vh)] rounded-mid object-cover"
             loading="lazy"
           />
         </Expandable.Panel>
