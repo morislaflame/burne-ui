@@ -120,6 +120,11 @@ export {
   type TooltipContentProps,
 } from "@/components/core/Tooltip";
 export {
+  Breadcrumbs,
+  type BreadcrumbsProps,
+  type BreadcrumbItem,
+} from "@/components/core/Breadcrumbs";
+export {
   Badge,
   BadgeAnchor,
   type BadgeProps,
