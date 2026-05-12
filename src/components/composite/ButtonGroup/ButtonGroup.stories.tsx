@@ -1,9 +1,10 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { IoSearch, IoTrashOutline } from "react-icons/io5";
+import { IoEllipsisHorizontal, IoSearch, IoTrashOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button";
+import { Dropdown } from "@/components/core/Dropdown";
 import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
 import { ButtonGroup, ButtonGroupText } from "./ButtonGroup";
@@ -33,15 +34,38 @@ export default meta;
 
 type Story = StoryObj<typeof ButtonGroup>;
 
-/** Базово: текст + кнопки, без промежутков. */
+/** Базово: текст + кнопки + меню «⋯» (`Dropdown` в конце группы). */
 export const Horizontal: Story = {
   render() {
     return (
       <ButtonGroup aria-label="Действия с документом">
         <ButtonGroupText>Вид</ButtonGroupText>
         <Button variant="outline">Список</Button>
-        <Button variant="outline">Сетка</Button>
-        <Button variant="default">Применить</Button>
+        <Button variant="outline" groupSegment={{ orientation: "horizontal", position: "middle" }}>Сетка</Button>
+        <Dropdown>
+          <Dropdown.Trigger asChild>
+            <Button
+              variant="outline"
+              aria-label="Дополнительные действия"
+              iconOnly
+              groupSegment={{ orientation: "horizontal", position: "last" }}
+            >
+              <IoEllipsisHorizontal aria-hidden className="icon-base" />
+            </Button>
+          </Dropdown.Trigger>
+          <Dropdown.Content>
+            <Dropdown.Item value="dup" selection={false}>
+              Дублировать
+            </Dropdown.Item>
+            <Dropdown.Item value="share" selection={false}>
+              Поделиться
+            </Dropdown.Item>
+            <Dropdown.Separator />
+            <Dropdown.Item value="del" variant="danger" selection={false}>
+              Удалить
+            </Dropdown.Item>
+          </Dropdown.Content>
+        </Dropdown>
       </ButtonGroup>
     );
   },

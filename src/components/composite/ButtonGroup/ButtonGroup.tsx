@@ -174,7 +174,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           if (child.type === Button) {
             const btn = child as ReactElement<ButtonProps>;
             const next = cloneElement(btn, {
-              groupSegment: seg,
+              groupSegment: btn.props.groupSegment ?? seg,
               size: btn.props.size ?? buttonSize,
             });
             return <Fragment key={child.key ?? `bg-btn-${i}`}>{next}</Fragment>;
@@ -183,7 +183,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           if (child.type === Input) {
             const inp = child as ReactElement<InputProps>;
             const nextInp = cloneElement(inp, {
-              groupSegment: seg,
+              groupSegment: inp.props.groupSegment ?? seg,
               size: inp.props.size ?? inputSizeFromButtonSize(buttonSize),
             });
             return <Fragment key={child.key ?? `bg-inp-${i}`}>{nextInp}</Fragment>;
@@ -191,7 +191,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
 
           const textEl = child as ReactElement<ButtonGroupTextProps>;
           const nextText = cloneElement(textEl, {
-            groupSegment: seg,
+            groupSegment: textEl.props.groupSegment ?? seg,
             buttonSize: textEl.props.buttonSize ?? buttonSize,
           });
           return <Fragment key={child.key ?? `bg-t-${i}`}>{nextText}</Fragment>;

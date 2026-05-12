@@ -43,6 +43,7 @@ const meta = {
     size: "base",
     animated: true,
     disabled: false,
+    iconOnly: false,
   },
   argTypes: {
     variant: {
@@ -63,6 +64,10 @@ const meta = {
       options: ["small", "base", "large", "xlarge"],
     },
     animated: { control: "boolean" },
+    iconOnly: {
+      control: "boolean",
+      description: "Только иконка: `min-w-fit` вместо `min-w-button-*`. Задайте `aria-label`.",
+    },
     ripple: {
       control: "boolean",
       description:
@@ -93,6 +98,26 @@ export const Sizes: Story = {
       </Button>
       <Button size="xlarge">
         Extra large
+      </Button>
+    </div>
+  ),
+};
+
+export const IconOnlySizes: Story = {
+  name: "Только иконка (iconOnly)",
+  render: () => (
+    <div className="flex flex-wrap items-center gap-plus">
+      <Button size="small" variant="outline" iconOnly aria-label="Добавить">
+        <IoAdd aria-hidden className="icon-small" />
+      </Button>
+      <Button size="base" variant="outline" iconOnly aria-label="Добавить">
+        <IoAdd aria-hidden className="icon-base" />
+      </Button>
+      <Button size="large" variant="outline" iconOnly aria-label="Добавить">
+        <IoAdd aria-hidden className="icon-large" />
+      </Button>
+      <Button size="xlarge" variant="outline" iconOnly aria-label="Добавить">
+        <IoAdd aria-hidden className="icon-large" />
       </Button>
     </div>
   ),

@@ -137,26 +137,29 @@ const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
 
 const BUTTON_SIZE_CLASSES: Record<
   ButtonSize,
-  { root: string; spinner: string; icon: string }
+  { root: string; rootIconOnly: string; spinner: string; icon: string }
 > = {
   small: {
-    root: "min-h-7 min-w-button-small px-base py-xsmall rounded-base",
+    root: "min-h-7 min-w-button-small px-base py-xsmall",
+    rootIconOnly: "min-h-7 min-w-fit px-base py-xsmall",
     spinner: "icon-small border-2",
     icon: "icon-small",
   },
   base: {
-    root: "min-h-8 min-w-button-base px-plus py-small rounded-base",
+    root: "min-h-8 min-w-button-base px-plus py-small",
+    rootIconOnly: "min-h-8 min-w-fit px-plus py-small",
     spinner: "icon-base border-2",
     icon: "icon-base",
   },
   large: {
-    root: "min-h-10 min-w-button-large px-mid py-base rounded-base",
+    root: "min-h-10 min-w-button-large px-mid py-base",
+    rootIconOnly: "min-h-10 min-w-fit px-mid py-base",
     spinner: "icon-large border-2",
     icon: "icon-large",
   },
   xlarge: {
-    root:
-      "min-h-12 min-w-button-xlarge px-large py-base rounded-base",
+    root: "min-h-12 min-w-button-xlarge px-large py-base",
+    rootIconOnly: "min-h-12 min-w-fit px-large py-base",
     spinner: "icon-large border-[2.5px]",
     icon: "icon-large",
   },
@@ -172,6 +175,10 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   /** Габариты и типографика. По умолчанию `base`. */
   size?: ButtonSize;
+  /**
+   * Кнопка только с иконкой: вместо `min-w-button-*` используется `min-w-fit` (узкая обводка по контенту).
+   */
+  iconOnly?: boolean;
   /** Включить лёгкий scale-пульс при нажатии (anime.js), только в idle. */
   animated?: boolean;
   /**
@@ -281,6 +288,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       disabled: disabledProp,
       leftIcon,
       ripple = false,
+      iconOnly = false,
       groupSegment,
       children,
       ...props
@@ -471,6 +479,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       "flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
 
     const sz = BUTTON_SIZE_CLASSES[size];
+    const sizeRoot = iconOnly ? sz.rootIconOnly : sz.root;
 
     const idleSurfaceMotion = blocked
       ? ""
@@ -502,14 +511,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           baseInteractive,
           groupGlue,
           vn.focusOutline,
-          sz.root,
+          sizeRoot,
           vn.root,
           "animate-shadow",
           userDisabled ? "opacity-50" : "",
           idleSurfaceMotion,
           roundingClass,
           className,
-          "cursor-pointer",
+          "cursor-pointer rounded-base",
         )}
         onPointerDown={(e) => {
           onAnimeDown();
