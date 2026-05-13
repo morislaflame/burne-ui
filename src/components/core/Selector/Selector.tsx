@@ -1,5 +1,6 @@
 import { animate, remove } from "animejs";
 import type {
+  ChangeEvent,
   KeyboardEvent as ReactKeyboardEvent,
   MutableRefObject,
   PointerEvent as ReactPointerEvent,
@@ -49,6 +50,36 @@ function inheritThemePortalProps(triggerEl: HTMLElement | null): {
   return inherited === "light" ? { "data-theme": "light" as const } : {};
 }
 
+export type SelectorOption = {
+  value: string;
+  /** В триггере после выбора и первая строка в списке. */
+  label: ReactNode;
+  /** Только в списке под подписью. */
+  description?: ReactNode;
+  /** Справа в строке списка. */
+  icon?: ReactNode;
+  disabled?: boolean;
+  /**
+   * Строка для поиска при `label` не из plain text.
+   * Если не задано — в фильтр попадают `value` и текстовые части `label` / `description`.
+   */
+  filterText?: string;
+};
+
+function selectorOptionSearchHaystack(opt: SelectorOption): string {
+  const parts: string[] = [opt.value];
+  if (opt.filterText) parts.push(opt.filterText);
+  if (typeof opt.label === "string") parts.push(opt.label);
+  if (typeof opt.description === "string") parts.push(opt.description);
+  return parts.join(" ").toLowerCase();
+}
+
+function selectorOptionMatchesFilter(opt: SelectorOption, query: string): boolean {
+  const t = query.trim().toLowerCase();
+  if (!t) return true;
+  return selectorOptionSearchHaystack(opt).includes(t);
+}
+
 const VARIANT_SHELL: Record<InputVariant, string> = {
   default: "bg-surface",
   outline: "bg-transparent",
@@ -67,9 +98,9 @@ const STATUS_TINT_FOCUS_BORDER: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "focus:border-danger",
-  success: "focus:border-success",
-  warning: "focus:border-warning",
+  danger: "focus-within:border-danger",
+  success: "focus-within:border-success",
+  warning: "focus-within:border-warning",
 };
 
 const STATUS_HINT: Record<InputStatus, string> = {
@@ -97,17 +128,6 @@ const CHEVRON_ICON: Record<InputSize, string> = {
   xlarge: "icon-large",
 };
 
-export type SelectorOption = {
-  value: string;
-  /** В триггере после выбора и первая строка в списке. */
-  label: ReactNode;
-  /** Только в списке под подписью. */
-  description?: ReactNode;
-  /** Справа в строке списка. */
-  icon?: ReactNode;
-  disabled?: boolean;
-};
-
 export type SelectorProps = {
   /** Варианты списка. */
   options: SelectorOption[];
@@ -124,7 +144,7 @@ export type SelectorProps = {
   /** Подпись над полем. */
   label?: string;
   isRequired?: boolean;
-  /** Текст при отсутствии выбора. */
+  /** Текст при отсутствии выбора и подсказка в поле при открытом списке. */
   placeholder?: string;
   /** Примечание под полем. */
   hint?: string;
@@ -139,7 +159,7 @@ export type SelectorProps = {
   listId?: string;
 };
 
-export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
+export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
   function Selector(
     {
       options,
@@ -180,17 +200,24 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
     const [open, setOpen] = useState(false);
     const [portalMounted, setPortalMounted] = useState(false);
     const [pos, setPos] = useState({ top: 0, left: 0, minW: 0 });
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [filterQuery, setFilterQuery] = useState("");
+    const [activeFilteredIndex, setActiveFilteredIndex] = useState(0);
 
-    const triggerRef = useRef<HTMLButtonElement | null>(null);
-    const shellRef = useRef<HTMLButtonElement | null>(null);
+    const triggerRef = useRef<HTMLDivElement | null>(null);
+    const shellRef = useRef<HTMLDivElement | null>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const listRef = useRef<HTMLDivElement | null>(null);
     const openingRef = useRef(false);
+    const queuedFilterCharRef = useRef<string | null>(null);
 
-    const setTriggerRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        shellRef.current = node;
-        triggerRef.current = node;
+    const setWrapperRef = useCallback((node: HTMLDivElement | null) => {
+      shellRef.current = node;
+      triggerRef.current = node;
+    }, []);
+
+    const setInputRef = useCallback(
+      (node: HTMLInputElement | null) => {
+        inputRef.current = node;
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
@@ -205,6 +232,23 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
     const selectedOption =
       selectedIndex >= 0 ? options[selectedIndex] : undefined;
 
+    const selectedDisplayString = useMemo(() => {
+      if (!selectedOption) return "";
+      if (typeof selectedOption.label === "string") return selectedOption.label;
+      if (selectedOption.filterText) return selectedOption.filterText;
+      return selectedOption.value;
+    }, [selectedOption]);
+
+    const filteredOriginalIndices = useMemo(() => {
+      return options
+        .map((o, i) => ({ o, i }))
+        .filter(({ o }) => selectorOptionMatchesFilter(o, filterQuery))
+        .map(({ i }) => i);
+    }, [options, filterQuery]);
+
+    const activeOriginalIndex =
+      filteredOriginalIndices[activeFilteredIndex] ?? filteredOriginalIndices[0] ?? -1;
+
     const statusTinted =
       status === "danger" || status === "success" || status === "warning";
 
@@ -217,8 +261,8 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
       : cn(
           variant === "outline" ? "surface-outline" : VARIANT_SHELL[variant],
           variant === "outline"
-            ? "focus:border-accent"
-            : "border-base focus:border-accent",
+            ? "focus-within:border-accent"
+            : "border-base focus-within:border-accent",
         );
 
     const updatePosition = useCallback(() => {
@@ -239,10 +283,16 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
     useLayoutEffect(() => {
       if (!open) return;
       updatePosition();
-      const idx = selectedIndex >= 0 ? selectedIndex : 0;
-      const firstEnabled = options.findIndex((o) => !o.disabled);
-      setActiveIndex(firstEnabled >= 0 ? (selectedIndex >= 0 ? selectedIndex : firstEnabled) : idx);
-    }, [open, options, selectedIndex]);
+    }, [open, updatePosition, filterQuery]);
+
+    useLayoutEffect(() => {
+      if (!open) return;
+      setActiveFilteredIndex((j) => {
+        const fi = filteredOriginalIndices;
+        if (fi.length === 0) return 0;
+        return Math.min(j, fi.length - 1);
+      });
+    }, [filteredOriginalIndices, open]);
 
     useEffect(() => {
       if (!open) return;
@@ -271,10 +321,11 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
     useEffect(() => {
       if (!open) return;
       const onKey = (e: Event) => {
-        if ((e as globalThis.KeyboardEvent).key === "Escape") {
-          e.preventDefault();
+        const ke = e as globalThis.KeyboardEvent;
+        if (ke.key === "Escape") {
+          ke.preventDefault();
           setOpen(false);
-          triggerRef.current?.focus();
+          inputRef.current?.focus();
         }
       };
       document.addEventListener("keydown", onKey);
@@ -331,36 +382,66 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
     }, [open, portalMounted]);
 
     useLayoutEffect(() => {
-      if (!open || !portalMounted) return;
-      const id = `${listId}-opt-${activeIndex}`;
+      if (!open || !portalMounted || activeOriginalIndex < 0) return;
+      const id = `${listId}-opt-${activeOriginalIndex}`;
       document.getElementById(id)?.scrollIntoView({ block: "nearest" });
-    }, [open, portalMounted, activeIndex, listId]);
+    }, [open, portalMounted, activeOriginalIndex, listId]);
 
-    const bumpActive = useCallback(
+    const bumpActiveFiltered = useCallback(
       (delta: number) => {
-        if (options.length === 0) return;
-        let i = activeIndex;
-        for (let step = 0; step < options.length; step += 1) {
-          i = (i + delta + options.length) % options.length;
-          if (!options[i]?.disabled) {
-            setActiveIndex(i);
+        const fi = filteredOriginalIndices;
+        if (fi.length === 0) return;
+        let j = activeFilteredIndex;
+        for (let step = 0; step < fi.length; step += 1) {
+          j = (j + delta + fi.length) % fi.length;
+          const orig = fi[j];
+          if (orig !== undefined && !options[orig]?.disabled) {
+            setActiveFilteredIndex(j);
             return;
           }
         }
       },
-      [activeIndex, options],
+      [activeFilteredIndex, filteredOriginalIndices, options],
     );
 
-    const selectIndex = useCallback(
-      (index: number) => {
-        const opt = options[index];
+    const selectOriginalIndex = useCallback(
+      (origIndex: number) => {
+        const opt = options[origIndex];
         if (!opt || opt.disabled) return;
         setValue(opt.value);
         setOpen(false);
-        triggerRef.current?.focus();
+        setFilterQuery("");
+        inputRef.current?.focus();
       },
       [options, setValue],
     );
+
+    const finishOpen = useCallback(() => {
+      const append = queuedFilterCharRef.current;
+      queuedFilterCharRef.current = null;
+      const nextQ = append ?? "";
+      setFilterQuery(nextQ);
+
+      const fi = options
+        .map((o, i) => ({ o, i }))
+        .filter(({ o }) => selectorOptionMatchesFilter(o, nextQ))
+        .map(({ i }) => i);
+
+      let nextActive = 0;
+      if (fi.length > 0 && selectedIndex >= 0) {
+        const p = fi.indexOf(selectedIndex);
+        if (p >= 0) nextActive = p;
+      }
+      setActiveFilteredIndex(nextActive);
+
+      requestAnimationFrame(() => {
+        const el = inputRef.current;
+        if (!el) return;
+        el.focus();
+        const len = nextQ.length;
+        el.setSelectionRange(len, len);
+      });
+    }, [options, selectedIndex]);
 
     const openAfterSqueeze = useCallback(() => {
       if (disabled || openingRef.current) return;
@@ -373,20 +454,34 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
       if (prefersReducedInteractiveHoverLift()) {
         openingRef.current = false;
         setOpen(true);
+        finishOpen();
         return;
       }
       void animateInteractivePressSqueeze(el).then(() => {
         openingRef.current = false;
         if (disabled) return;
         setOpen(true);
+        finishOpen();
       });
-    }, [disabled]);
+    }, [disabled, finishOpen]);
 
-    const handleTriggerPointerDown = useCallback(
+    const handleShellPointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLDivElement>) => {
+        if (disabled) return;
+        if (open) return;
+        if (e.button !== 0) return;
+        openAfterSqueeze();
+      },
+      [disabled, open, openAfterSqueeze],
+    );
+
+    const handleChevronPointerDown = useCallback(
       (e: ReactPointerEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
         if (disabled) return;
         if (open) {
           setOpen(false);
+          setFilterQuery("");
           return;
         }
         if (e.button !== 0) return;
@@ -395,41 +490,105 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
       [disabled, open, openAfterSqueeze],
     );
 
-    const handleTriggerKeyDown = useCallback(
-      (e: ReactKeyboardEvent<HTMLButtonElement>) => {
+    const handleInputChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        if (!open) return;
+        setFilterQuery(e.target.value);
+      },
+      [open],
+    );
+
+    const handleInputKeyDown = useCallback(
+      (e: ReactKeyboardEvent<HTMLInputElement>) => {
         if (disabled) return;
-        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-          e.preventDefault();
-          if (!open) openAfterSqueeze();
-          else bumpActive(e.key === "ArrowDown" ? 1 : -1);
+
+        if (e.nativeEvent.isComposing) return;
+
+        if (!open) {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            openAfterSqueeze();
+            return;
+          }
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openAfterSqueeze();
+            return;
+          }
+          if (
+            e.key.length === 1 &&
+            !e.ctrlKey &&
+            !e.metaKey &&
+            !e.altKey &&
+            e.key !== "Tab"
+          ) {
+            e.preventDefault();
+            queuedFilterCharRef.current = e.key;
+            openAfterSqueeze();
+            return;
+          }
           return;
         }
-        if (e.key === "Enter" || e.key === " ") {
+
+        if (e.key === "ArrowDown") {
           e.preventDefault();
-          if (open) selectIndex(activeIndex);
-          else openAfterSqueeze();
+          bumpActiveFiltered(1);
           return;
         }
-        if (open && e.key === "Home") {
+        if (e.key === "ArrowUp") {
           e.preventDefault();
-          const i = options.findIndex((o) => !o.disabled);
-          if (i >= 0) setActiveIndex(i);
+          bumpActiveFiltered(-1);
           return;
         }
-        if (open && e.key === "End") {
+        if (e.key === "Enter") {
           e.preventDefault();
-          for (let i = options.length - 1; i >= 0; i -= 1) {
-            if (!options[i]?.disabled) {
-              setActiveIndex(i);
+          if (activeOriginalIndex >= 0) selectOriginalIndex(activeOriginalIndex);
+          return;
+        }
+        if (e.key === "Home") {
+          e.preventDefault();
+          const fi = filteredOriginalIndices;
+          for (let j = 0; j < fi.length; j += 1) {
+            const o = fi[j];
+            if (o !== undefined && !options[o]?.disabled) {
+              setActiveFilteredIndex(j);
+              break;
+            }
+          }
+          return;
+        }
+        if (e.key === "End") {
+          e.preventDefault();
+          const fi = filteredOriginalIndices;
+          for (let j = fi.length - 1; j >= 0; j -= 1) {
+            const o = fi[j];
+            if (o !== undefined && !options[o]?.disabled) {
+              setActiveFilteredIndex(j);
               break;
             }
           }
         }
       },
-      [disabled, open, openAfterSqueeze, bumpActive, activeIndex, selectIndex, options],
+      [
+        disabled,
+        open,
+        openAfterSqueeze,
+        bumpActiveFiltered,
+        activeOriginalIndex,
+        selectOriginalIndex,
+        filteredOriginalIndices,
+        options,
+      ],
     );
 
+    useEffect(() => {
+      if (open) return;
+      setFilterQuery("");
+    }, [open]);
+
     const portalTheme = inheritThemePortalProps(triggerRef.current);
+
+    const inputValue = open ? filterQuery : selectedDisplayString;
 
     const listbox =
       portalMounted && typeof document !== "undefined"
@@ -454,65 +613,78 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
                 className="flex min-h-0 flex-col gap-xsmall overflow-y-auto overflow-x-hidden p-base"
                 style={{ maxHeight: menuMaxHeight }}
               >
-                {options.map((opt, index) => {
-                  const selected = opt.value === value;
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      id={`${listId}-opt-${index}`}
-                      role="option"
-                      aria-selected={selected}
-                      disabled={opt.disabled}
-                      tabIndex={-1}
-                      className={cn(
-                        "flex w-full min-w-0 items-center gap-base rounded-mid px-base py-small text-left outline-none",
-                        "button-idle-surface-transition motion-reduce:transition-none",
-                        !opt.disabled &&
-                          "cursor-pointer text-foreground hover:bg-accent-fill-hover focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                        opt.disabled &&
-                          "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent",
-                        activeIndex === index &&
+                {filteredOriginalIndices.length === 0 ? (
+                  <Text
+                    as="p"
+                    variant="base"
+                    className="px-base py-small text-center text-muted"
+                  >
+                    Нет совпадений
+                  </Text>
+                ) : (
+                  filteredOriginalIndices.map((origIndex) => {
+                    const opt = options[origIndex]!;
+                    const selected = opt.value === value;
+                    const isActive = origIndex === activeOriginalIndex;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        id={`${listId}-opt-${origIndex}`}
+                        role="option"
+                        aria-selected={selected}
+                        disabled={opt.disabled}
+                        tabIndex={-1}
+                        className={cn(
+                          "flex w-full min-w-0 items-center gap-base rounded-mid px-base py-small text-left outline-none",
+                          "button-idle-surface-transition motion-reduce:transition-none",
                           !opt.disabled &&
-                          "bg-accent-fill-hover",
-                      )}
-                      onClick={() => selectIndex(index)}
-                      onPointerEnter={() => {
-                        if (!opt.disabled) setActiveIndex(index);
-                      }}
-                    >
-                      <span className="min-w-0 flex-1 text-left">
-                        <Text
-                          as="span"
-                          variant="base"
-                          inheritColor
-                          className="block font-medium leading-snug"
-                        >
-                          {opt.label}
-                        </Text>
-                        {opt.description != null ? (
+                            "cursor-pointer text-foreground hover:bg-accent-fill-hover focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                          opt.disabled &&
+                            "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent",
+                          isActive && !opt.disabled && "bg-accent-fill-hover",
+                        )}
+                        onClick={() => selectOriginalIndex(origIndex)}
+                        onPointerEnter={() => {
+                          if (!opt.disabled) {
+                            const j = filteredOriginalIndices.indexOf(origIndex);
+                            if (j >= 0) setActiveFilteredIndex(j);
+                          }
+                        }}
+                      >
+                        <span className="min-w-0 flex-1 text-left">
                           <Text
                             as="span"
-                            variant="tools"
-                            className="mt-xsmall block text-muted"
+                            variant="base"
+                            inheritColor
+                            className="block font-medium leading-snug"
                           >
-                            {opt.description}
+                            {opt.label}
                           </Text>
-                        ) : null}
-                      </span>
-                      {opt.icon != null ? (
-                        <span
-                          className={cn(
-                            "flex shrink-0 items-center text-muted [&_svg]:shrink-0",
-                            CHEVRON_ICON[size],
-                          )}
-                        >
-                          {opt.icon}
+                          {opt.description != null ? (
+                            <Text
+                              as="span"
+                              variant="tools"
+                              className="mt-xsmall block text-muted"
+                            >
+                              {opt.description}
+                            </Text>
+                          ) : null}
                         </span>
-                      ) : null}
-                    </button>
-                  );
-                })}
+                        {opt.icon != null ? (
+                          <span
+                            className={cn(
+                              "flex shrink-0 items-center text-muted [&_svg]:shrink-0",
+                              CHEVRON_ICON[size],
+                            )}
+                          >
+                            {opt.icon}
+                          </span>
+                        ) : null}
+                      </button>
+                    );
+                  })
+                )}
               </div>
             </div>,
             document.body,
@@ -536,64 +708,67 @@ export const Selector = forwardRef<HTMLButtonElement, SelectorProps>(
             ) : null}
           </label>
         ) : null}
-        <button
-          ref={mergeRefs(setTriggerRefs)}
-          id={triggerId}
-          type="button"
-          role="combobox"
-          aria-expanded={open}
-          aria-controls={listId}
-          aria-haspopup="listbox"
-          aria-activedescendant={
-            open &&
-            options[activeIndex] &&
-            !options[activeIndex]?.disabled
-              ? `${listId}-opt-${activeIndex}`
-              : undefined
-          }
-          aria-required={isRequired || undefined}
-          disabled={disabled}
+        <div
+          ref={setWrapperRef}
+          role="presentation"
+          onPointerDown={handleShellPointerDown}
           className={cn(
-            "relative z-0 flex w-full min-w-0 items-center border-1 text-left outline-none",
+            "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
             "overflow-hidden rounded-base transition-[border-color,background-color] duration-200 ease-out motion-reduce:transition-none",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
             INPUT_SHELL_MIN[size],
             shellSurface,
-            INPUT_CONTROL[size],
             disabled ? "cursor-not-allowed opacity-55" : "cursor-pointer",
           )}
-          onPointerDown={handleTriggerPointerDown}
-          onKeyDown={handleTriggerKeyDown}
         >
-          <span className="min-w-0 flex-1 truncate">
-            {selectedOption ? (
-              <Text
-                as="span"
-                variant="base"
-                className="block truncate font-medium leading-snug text-foreground"
-              >
-                {selectedOption.label}
-              </Text>
-            ) : (
-              <Text
-                as="span"
-                variant="base"
-                className="block truncate leading-snug text-muted"
-              >
-                {placeholder}
-              </Text>
-            )}
-          </span>
-          <span
+          <input
+            ref={mergeRefs(setInputRef)}
+            id={triggerId}
+            type="text"
+            role="combobox"
+            aria-expanded={open}
+            aria-controls={listId}
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            aria-activedescendant={
+              open &&
+              activeOriginalIndex >= 0 &&
+              options[activeOriginalIndex] &&
+              !options[activeOriginalIndex]?.disabled
+                ? `${listId}-opt-${activeOriginalIndex}`
+                : undefined
+            }
+            aria-required={isRequired || undefined}
+            disabled={disabled}
+            readOnly={!open}
+            autoComplete="off"
+            placeholder={placeholder}
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleInputKeyDown}
             className={cn(
-              "ml-base flex shrink-0 items-center text-muted transition-transform duration-200 ease-out motion-reduce:transition-none",
-              open && "rotate-180",
+              "min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted",
+              INPUT_CONTROL[size],
+              !open && !selectedOption && "text-muted",
             )}
-            aria-hidden
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            disabled={disabled}
+            aria-label={open ? "Закрыть список" : "Открыть список"}
+            className={cn(
+              "flex shrink-0 items-center justify-center self-stretch border-l border-base px-small outline-none",
+              "text-muted transition-transform duration-200 ease-out motion-reduce:transition-none",
+              "hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+              open && "rotate-180",
+              disabled && "pointer-events-none",
+            )}
+            onPointerDown={handleChevronPointerDown}
           >
-            <IoChevronDown className={CHEVRON_ICON[size]} />
-          </span>
-        </button>
+            <IoChevronDown className={CHEVRON_ICON[size]} aria-hidden />
+          </button>
+        </div>
         {hint ? (
           <Text
             as="p"

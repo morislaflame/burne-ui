@@ -63,7 +63,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Выпадающий выбор значения: размеры и оболочка как у `Input`, анимация панели как у `Dropdown`, открытие после squeeze на триггере.",
+          "Выпадающий выбор с полем поиска: набор текста фильтрует список по `value`, `filterText` и текстовым `label`/`description`. Размеры как у `Input`, панель — fade как у `Dropdown`.",
       },
     },
   },

@@ -1,12 +1,32 @@
 import type { ComponentType, FormEvent } from "react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Checkbox } from "@/components/core/Checkbox";
 import { Button } from "@/components/core/Button/Button";
 import { Input } from "@/components/core/Input/Input";
+import type { SelectorOption } from "@/components/core/Selector";
+import { Selector } from "@/components/core/Selector";
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Form } from "./Form";
+
+const localeOptions: SelectorOption[] = [
+  {
+    value: "ru",
+    label: "Русский",
+    description: "Интерфейс и письма на русском",
+  },
+  {
+    value: "en",
+    label: "English",
+    description: "UI and emails in English",
+  },
+  {
+    value: "de",
+    label: "Deutsch",
+    description: "Oberfläche und E-Mails auf Deutsch",
+  },
+];
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -38,8 +58,18 @@ function ProfileForm() {
     e.preventDefault();
   }, []);
 
+  const [locale, setLocale] = useState("ru");
+
   return (
     <Form onSubmit={onSubmit} aria-label="Пример формы">
+      <Selector
+        label="Язык интерфейса"
+        hint="В списке видно описание; в поле — только название."
+        placeholder="Выберите язык"
+        options={localeOptions}
+        value={locale}
+        onValueChange={setLocale}
+      />
       <Input
         label="Имя"
         name="name"
