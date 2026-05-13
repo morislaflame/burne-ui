@@ -22,11 +22,14 @@ export const MOTION_PRESS_SQUEEZE_SCALE = [1, 0.98, 1] as const;
 
 // --- converge ripple (точка от пальца) ---
 
-export const MOTION_RIPPLE_DEFAULT_DURATION_MS = 480;
+/** Нижняя граница масштаба: круг не сходится в математическую точку, остаётся мягкое «ядро». */
+export const MOTION_RIPPLE_MIN_SCALE = 0.12;
+
+export const MOTION_RIPPLE_DEFAULT_DURATION_MS = 540;
 export const MOTION_RIPPLE_DEFAULT_OPACITY_FROM = 0.42;
 
 /** Слегка длиннее/мягче для широкого тригера (Expandable) */
-export const MOTION_RIPPLE_EXPANDABLE_DURATION_MS = 640;
+export const MOTION_RIPPLE_EXPANDABLE_DURATION_MS = 700;
 export const MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM = 0.34;
 
 /** Easing точки сходимости — тот же профиль, что в CSS keyframes async-ripple у Button */

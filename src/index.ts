@@ -10,6 +10,11 @@ export {
   type ButtonVariant,
 } from "@/components/core/Button";
 export {
+  CloseButton,
+  type CloseButtonProps,
+  type CloseButtonVariant,
+} from "@/components/core/CloseButton";
+export {
   GlassSurface,
   GlassShaderLayer,
   GlassBackdrop,
@@ -80,6 +85,7 @@ export {
   type AlertDialogDescriptionProps,
   type AlertDialogBodyProps,
   type AlertDialogFooterProps,
+  type AlertDialogCloseProps,
 } from "@/components/composite/AlertDialog";
 export {
   Dialog,
@@ -196,6 +202,7 @@ export {
   MOTION_RIPPLE_EXPANDABLE_DURATION_MS,
   MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM,
   MOTION_RIPPLE_EASE_CSS,
+  MOTION_RIPPLE_MIN_SCALE,
   MOTION_FEEDBACK_EXPAND_MS,
 } from "@/components/core/utils/motionTokens";
 export { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";

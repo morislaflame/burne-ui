@@ -6,6 +6,7 @@ export {
   type AlertDialogProps,
   type AlertDialogSize,
   type AlertDialogBodyProps,
+  type AlertDialogCloseProps,
   type AlertDialogDescriptionProps,
   type AlertDialogFooterProps,
   type AlertDialogHeaderProps,

@@ -16,6 +16,10 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+import {
+  CloseButton,
+  type CloseButtonProps,
+} from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
@@ -28,25 +32,6 @@ import { cn } from "@/utils/cn";
 function readBurneLightTheme(): boolean {
   if (typeof document === "undefined") return false;
   return document.documentElement.dataset.brnTheme === "light";
-}
-
-function IconClose({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={`shrink-0 ${className}`}
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M18 6L6 18M6 6l12 12" />
-    </svg>
-  );
 }
 
 export type DialogProps = {
@@ -83,10 +68,7 @@ type DialogTitleProps = HTMLAttributes<HTMLHeadingElement>;
 type DialogDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
 type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
-type DialogCloseProps = Omit<
-  HTMLAttributes<HTMLButtonElement>,
-  "type" | "children"
->;
+type DialogCloseProps = CloseButtonProps;
 
 function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
@@ -161,24 +143,16 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
   ) {
     const { onOpenChange } = useDialog();
     return (
-      <button
+      <CloseButton
         ref={ref}
-        type="button"
         aria-label={ariaLabel}
-        className={cn(
-          "-m-xsmall shrink-0 rounded-base p-small text-muted outline-none",
-          "transition-colors duration-200 ease-out hover:bg-surface hover:text-foreground",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2",
-          className,
-        )}
+        className={cn("-m-xsmall", className)}
         onClick={(e) => {
           onClick?.(e);
           if (!e.defaultPrevented) onOpenChange(false);
         }}
         {...rest}
-      >
-        <IconClose />
-      </button>
+      />
     );
   },
 );

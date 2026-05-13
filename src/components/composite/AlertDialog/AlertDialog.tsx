@@ -34,6 +34,10 @@ import {
   type ButtonSize,
   type ButtonVariant,
 } from "@/components/core/Button";
+import {
+  CloseButton,
+  type CloseButtonProps,
+} from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
@@ -259,6 +263,8 @@ export type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
    * Для остальных тонов по умолчанию показывается иконка тона; `null` — скрыть.
    */
   icon?: ReactNode | null;
+  /** Кнопка закрытия справа в шапке. По умолчанию `true`. */
+  showClose?: boolean;
 };
 
 export type AlertDialogTitleProps = HTMLAttributes<HTMLHeadingElement>;
@@ -266,8 +272,34 @@ export type AlertDialogDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement>;
 export type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement>;
 
+export type AlertDialogCloseProps = CloseButtonProps;
+
+const AlertDialogClose = forwardRef<
+  HTMLButtonElement,
+  AlertDialogCloseProps
+>(function AlertDialogClose(
+  { className = "", onClick, ...rest },
+  ref,
+) {
+  const { onOpenChange } = useAlertDialog();
+  return (
+    <CloseButton
+      ref={ref}
+      className={cn("shrink-0 self-start", className)}
+      onClick={(e) => {
+        onClick?.(e);
+        if (!e.defaultPrevented) onOpenChange(false);
+      }}
+      {...rest}
+    />
+  );
+});
+
+AlertDialogClose.displayName = "AlertDialog.Close";
+
 function AlertDialogHeader({
   icon,
+  showClose = true,
   className = "",
   children,
   ...rest
@@ -309,6 +341,7 @@ function AlertDialogHeader({
         </span>
       ) : null}
       <div className="min-w-0 flex-1">{children}</div>
+      {showClose ? <AlertDialogClose /> : null}
     </div>
   );
 }
@@ -613,4 +646,5 @@ export const AlertDialog = Object.assign(AlertDialogRoot, {
   Description: AlertDialogDescription,
   Body: AlertDialogBody,
   Footer: AlertDialogFooter,
+  Close: AlertDialogClose,
 });

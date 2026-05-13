@@ -6,6 +6,7 @@ import {
   MOTION_RIPPLE_DEFAULT_DURATION_MS,
   MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
   MOTION_RIPPLE_EASE,
+  MOTION_RIPPLE_MIN_SCALE,
 } from "./motionTokens";
 
 export type RippleDirection = "in" | "out";
@@ -71,8 +72,10 @@ function ConvergeRippleDot({
     if (!el) return;
     let finished = false;
     remove(el);
+    const scaleFrom = direction === "out" ? MOTION_RIPPLE_MIN_SCALE : 1;
+    const scaleTo = direction === "out" ? 1 : MOTION_RIPPLE_MIN_SCALE;
     const anim = animate(el, {
-      scale: direction === "out" ? [0, 1] : [1, 0],
+      scale: [scaleFrom, scaleTo],
       opacity: [opacityFrom, 0],
       duration: durationMs,
       ease: MOTION_RIPPLE_EASE,
@@ -98,6 +101,7 @@ function ConvergeRippleDot({
         height: size,
         background,
         transformOrigin: "center center",
+        transform: `scale(${direction === "out" ? MOTION_RIPPLE_MIN_SCALE : 1})`,
       }}
       aria-hidden
     />
