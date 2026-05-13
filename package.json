@@ -1,10 +1,14 @@
 {
   "name": "burne-ui",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "React UI kit (Burne UI)",
   "type": "module",
-  "sideEffects": ["**/*.css"],
-  "files": ["dist"],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
