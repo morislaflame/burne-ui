@@ -2,8 +2,10 @@ import type { ComponentType, FormEvent } from "react";
 import { useCallback } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+import { Checkbox } from "@/components/core/Checkbox";
 import { Button } from "@/components/core/Button/Button";
 import { Input } from "@/components/core/Input/Input";
+import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Form } from "./Form";
 
 const darkThemeDecorator = [
@@ -43,6 +45,7 @@ function ProfileForm() {
         name="name"
         placeholder="Иван"
         autoComplete="name"
+        isRequired
       />
       <Input
         label="Email"
@@ -50,13 +53,16 @@ function ProfileForm() {
         inputType="text"
         placeholder="you@example.com"
         autoComplete="email"
+        isRequired
       />
+      
       <Input
         label="Пароль"
         name="password"
         inputType="password"
         hint="Не менее 8 символов."
         autoComplete="new-password"
+        isRequired
       />
       <Input
         label="Аватар"
@@ -64,8 +70,16 @@ function ProfileForm() {
         inputType="file"
         accept="image/*"
         placeholder="PNG или JPEG"
-        hint="Необязательно. Показывается превью для изображений."
       />
+      <CheckboxGroup
+        title="Уведомления"
+        description="Один канал: при выборе другого предыдущий снимается."
+        selection="single"
+        isRequired
+      >
+        <Checkbox name="channels" value="email" label="Email" />
+        <Checkbox name="channels" value="push" label="Push в приложении" />
+      </CheckboxGroup>
       <div className="flex justify-end gap-plus pt-base">
         <Button type="button" variant="outline" size="base">
           Отмена

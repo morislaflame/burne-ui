@@ -173,7 +173,10 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         {rippleOverlay}
         <span
           ref={liftSpanRef}
-          className="relative z-[1] flex min-w-0 flex-1 items-start gap-base"
+          className={cn(
+            "relative z-[1] flex w-fit max-w-full min-w-0 origin-center will-change-transform",
+            "items-start gap-base",
+          )}
         >
           {mainChildren}
         </span>
@@ -208,7 +211,7 @@ function ExpandableContent({ className = "", ...props }: ExpandableContentProps)
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col gap-xsmall",
+        "flex min-w-0 max-w-full flex-col gap-xsmall",
         className,
       )}
       {...props}

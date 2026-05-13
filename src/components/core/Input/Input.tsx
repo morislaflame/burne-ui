@@ -61,6 +61,8 @@ export type InputProps = Omit<
   status?: InputStatus;
   /** Подпись над полем. */
   label?: string;
+  /** Красная звездочка справа от подписи. */
+  isRequired?: boolean;
   /** Примечание под полем (опционально). */
   hint?: string;
   /** Тип значения: текст, число, пароль или файл (с превью для изображений). */
@@ -332,6 +334,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       status = "default",
       size = "base",
       label,
+      isRequired = false,
       hint,
       inputType = "text",
       placeholder,
@@ -515,10 +518,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
       >
         {label ? (
-          <label htmlFor={id} className="inline-flex">
+          <label htmlFor={id} className="inline-flex flex-wrap items-baseline gap-x-xsmall gap-y-0">
             <Text as="span" variant="base" className="font-medium leading-snug">
               {label}
             </Text>
+            {isRequired ? (
+              <span className="text-danger leading-none" aria-hidden>
+                *
+              </span>
+            ) : null}
           </label>
         ) : null}
         <div
@@ -641,6 +649,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 disabled={disabled}
                 readOnly={readOnly}
                 onChange={handleFileChange}
+                aria-required={isRequired || undefined}
                 className="absolute inset-0 cursor-pointer opacity-0 disabled:cursor-not-allowed"
                 {...rest}
               />
@@ -654,6 +663,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               readOnly={readOnly}
               placeholder={placeholder}
               onChange={onChange}
+              aria-required={isRequired || undefined}
               className={cn(
                 "min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted",
                 INPUT_CONTROL[size],

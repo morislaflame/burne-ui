@@ -56,6 +56,11 @@ export {
 } from "@/components/composite/Accordion";
 export { Form, type FormProps } from "@/components/composite/Form";
 export {
+  CheckboxGroup,
+  type CheckboxGroupProps,
+  type CheckboxGroupSelection,
+} from "@/components/composite/CheckboxGroup";
+export {
   ButtonGroup,
   ButtonGroupText,
   type ButtonGroupProps,
@@ -93,6 +98,12 @@ export {
   type InputVariant,
   type InputStatus,
 } from "@/components/core/Input";
+export {
+  Checkbox,
+  type CheckboxProps,
+  type CheckboxVariant,
+  type CheckboxSize,
+} from "@/components/core/Checkbox";
 export {
   SearchInput,
   type SearchInputProps,

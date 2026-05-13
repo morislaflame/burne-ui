@@ -900,7 +900,7 @@ function MultiCircleIndicator({ selected }: { selected: boolean }) {
       <span className="absolute inset-0 rounded-full border border-muted bg-transparent" />
       <span
         ref={fillRef}
-        className="absolute inset-[4px] rounded-full bg-foreground opacity-0"
+        className="absolute inset-[2px] rounded-full bg-foreground opacity-0"
         style={{ transform: "scale(0)" }}
       />
     </span>
