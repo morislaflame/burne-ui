@@ -74,7 +74,7 @@ function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 items-start gap-plus px-mid pt-mid pb-plus",
+        "flex shrink-0 items-start gap-plus px-mid pt-mid pb-plus text-left",
         className,
       )}
       {...rest}
@@ -128,7 +128,7 @@ function DialogHeadingBlock({
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col gap-base",
+        "flex min-w-0 flex-1 flex-col gap-base text-left",
         className,
       )}
       {...rest}
@@ -162,7 +162,7 @@ function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
       className={cn(
-        "min-h-0 flex-1 overflow-y-auto py-plus px-mid",
+        "min-h-0 flex-1 overflow-y-auto py-plus px-mid text-left",
         className,
       )}
       {...rest}
@@ -350,7 +350,7 @@ const DialogRoot = function Dialog({
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground shadow-token-lg outline-none",
+            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border border-base bg-surface text-left text-foreground shadow-token-lg outline-none",
             className,
           )}
           style={

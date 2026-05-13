@@ -303,7 +303,7 @@ export const Checkbox = forwardRef<HTMLLabelElement, CheckboxProps>(function Che
     <label
       ref={ref}
       className={cn(
-        "relative grid cursor-pointer select-none rounded-small",
+        "relative grid cursor-pointer select-none rounded-small text-left",
         "grid-cols-[auto_minmax(0,1fr)]",
         hasDescription ? "grid-rows-[auto_auto] gap-y-xsmall" : "grid-rows-[auto]",
         sz.gridGapX,

@@ -38,7 +38,7 @@ export function Accordion({
   const openId = controlled ? openIdProp : internalOpenId;
 
   return (
-    <div className={cn("flex w-full flex-col", className)} {...rest}>
+    <div className={cn("flex w-full flex-col text-left", className)} {...rest}>
       {items.map((item, index) => {
         const isOpen = openId === item.id;
         return (

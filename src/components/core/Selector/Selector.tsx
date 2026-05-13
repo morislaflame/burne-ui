@@ -692,7 +692,7 @@ export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
         : null;
 
     return (
-      <div className={cn("flex w-full flex-col gap-small", className)}>
+      <div className={cn("flex w-full flex-col gap-small text-left", className)}>
         {label ? (
           <label
             htmlFor={triggerId}

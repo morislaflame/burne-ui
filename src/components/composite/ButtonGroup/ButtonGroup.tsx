@@ -146,7 +146,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
         ref={ref}
         role="group"
         className={cn(
-          "inline-flex",
+          "inline-flex text-left",
           orientation === "horizontal"
             ? "flex-row flex-nowrap items-stretch"
             : "flex-col flex-nowrap items-stretch",

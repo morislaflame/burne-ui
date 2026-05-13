@@ -340,7 +340,7 @@ function AlertDialogHeader({
           {iconSlot}
         </span>
       ) : null}
-      <div className="min-w-0 flex-1">{children}</div>
+      <div className="min-w-0 flex-1 text-left">{children}</div>
       {showClose ? <AlertDialogClose /> : null}
     </div>
   );
@@ -393,7 +393,7 @@ function AlertDialogHeadingBlock({
     <div
       className={cn(
         sizePreset.headingBlockGap,
-        "min-w-0 flex-1",
+        "min-w-0 flex-1 text-left",
         className,
       )}
       {...rest}
@@ -410,7 +410,7 @@ function AlertDialogBody({
   return (
     <div
       className={cn(
-        "min-h-0 flex-1 overflow-y-auto",
+        "min-h-0 flex-1 overflow-y-auto text-left",
         sizePreset.bodyPad,
         className,
       )}
@@ -619,7 +619,7 @@ const AlertDialogRoot = function AlertDialog({
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 w-full flex-col overflow-hidden rounded-mid outline-none",
+            "relative z-10 flex min-h-0 w-full flex-col overflow-hidden rounded-mid text-left outline-none",
             sizePreset.panelMax,
             sizePreset.maxHeight,
             alertDialogPanelClass(tone),

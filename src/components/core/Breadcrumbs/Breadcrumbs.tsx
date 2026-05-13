@@ -175,7 +175,7 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
       <nav ref={ref} aria-label={ariaLabel} {...rest}>
         <ol
           className={cn(
-            "m-0 flex list-none flex-wrap items-center gap-xsmall gap-y-xsmall p-0",
+            "m-0 flex list-none flex-wrap items-center gap-xsmall gap-y-xsmall p-0 text-left",
             className,
           )}
         >

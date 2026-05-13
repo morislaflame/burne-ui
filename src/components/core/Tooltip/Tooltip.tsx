@@ -416,7 +416,7 @@ function TooltipFloater({
       role="tooltip"
       id={tooltipId}
       className={cn(
-        "pointer-events-none z-[10000] w-max min-w-0 rounded-lg outline-none will-change-[opacity] animate-shadow",
+        "pointer-events-none z-[10000] w-max min-w-0 rounded-lg text-left outline-none will-change-[opacity] animate-shadow",
         TOOLTIP_SURFACE[variant],
         TOOLTIP_TEXT_LAYOUT[size],
         className,
@@ -424,7 +424,7 @@ function TooltipFloater({
       {...rest}
     >
       {/** Один и тот же flex-ряд и без иконки — иначе `span` inline в блочном div даёт перекос по baseline/line-box. */}
-      <span className="flex min-w-0 items-center gap-small">
+      <span className="flex min-w-0 items-center gap-small text-left">
         {leading}
         <Text
           as="span"

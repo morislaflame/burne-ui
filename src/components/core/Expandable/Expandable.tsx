@@ -211,7 +211,7 @@ function ExpandableContent({ className = "", ...props }: ExpandableContentProps)
   return (
     <div
       className={cn(
-        "flex min-w-0 max-w-full flex-col gap-xsmall",
+        "flex min-w-0 max-w-full flex-col gap-xsmall text-left",
         className,
       )}
       {...props}
@@ -291,7 +291,7 @@ const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             aria-labelledby={headerId}
             aria-hidden={!open}
             inert={!open}
-            className={cn("px-mid pb-plus leading-normal", className)}
+            className={cn("px-mid pb-plus text-left leading-normal", className)}
             {...props}
           >
             {children}
@@ -351,7 +351,7 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
         <div
           ref={ref}
           className={cn(
-            "rounded-mid border border-base bg-surface text-foreground",
+            "rounded-mid border border-base bg-surface text-left text-foreground",
             className,
           )}
           {...rest}

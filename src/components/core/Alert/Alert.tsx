@@ -131,7 +131,7 @@ function AlertContent({ className = "", ...rest }: AlertContentProps) {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col gap-xsmall",
+        "flex min-w-0 flex-1 flex-col gap-xsmall text-left",
         className,
       )}
       {...rest}
@@ -220,7 +220,7 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setRootRef}
         role="status"
         className={cn(
-          "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid animate-shadow",
+          "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid text-left animate-shadow",
           ALERT_INLINE_SURFACE_CLASSES[tone],
           className,
         )}

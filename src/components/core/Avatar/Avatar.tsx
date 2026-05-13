@@ -149,7 +149,7 @@ const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
       ref={ref}
       role={role ?? "group"}
       className={cn(
-        "relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-surface ring-2 ring-background",
+        "relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-surface text-left ring-2 ring-background",
         SIZE_CLASS[size].root,
         className,
       )}
@@ -264,7 +264,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
       <div
         ref={ref}
         role="group"
-        className={cn("flex flex-row flex-nowrap items-center", className)}
+        className={cn("flex flex-row flex-nowrap items-center text-left", className)}
         {...rest}
       >
         {mapped.map((child, index) => (

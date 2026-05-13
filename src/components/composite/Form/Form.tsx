@@ -13,7 +13,7 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
   return (
     <form
       ref={ref}
-      className={cn("flex w-full max-w-full flex-col gap-mid", className)}
+      className={cn("flex w-full max-w-full flex-col gap-mid text-left", className)}
       {...rest}
     />
   );

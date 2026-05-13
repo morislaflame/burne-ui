@@ -512,7 +512,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div
         className={cn(
-          "flex w-full flex-col gap-small",
+          "flex w-full flex-col gap-small text-left",
           groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "",
           className,
         )}

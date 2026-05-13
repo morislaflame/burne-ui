@@ -140,7 +140,7 @@ export const CheckboxGroup = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>
         aria-required={isRequired || undefined}
         aria-describedby={hasDescription ? descriptionId : undefined}
         className={cn(
-          "m-0 min-w-0 border-0 p-0 disabled:pointer-events-none disabled:opacity-55",
+          "m-0 min-w-0 border-0 p-0 text-left disabled:pointer-events-none disabled:opacity-55",
           className,
         )}
         {...fieldsetProps}
@@ -169,7 +169,7 @@ export const CheckboxGroup = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>
             ) : null}
           </span>
         </legend>
-        <div className="flex flex-col gap-mid">{body}</div>
+        <div className="flex flex-col gap-mid text-left">{body}</div>
       </fieldset>
     );
   },

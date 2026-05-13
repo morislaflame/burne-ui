@@ -422,7 +422,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
         role="menu"
         aria-multiselectable={multiple ? true : undefined}
         className={cn(
-          "fixed z-[100] flex max-h-[min(24rem,70vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border border-base bg-surface p-base shadow-token-md outline-none",
+          "fixed z-[100] flex max-h-[min(24rem,70vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border border-base bg-surface p-base text-left shadow-token-md outline-none",
           "will-change-[opacity] motion-reduce:transition-none",
           !open && portalMounted && "pointer-events-none",
           className,
@@ -470,7 +470,7 @@ export function DropdownGroup({
     <DropdownIndicatorPreferenceContext.Provider value={resolvedPreference}>
       <div
         role="group"
-        className={cn("flex min-w-0 flex-col gap-xsmall", className)}
+        className={cn("flex min-w-0 flex-col gap-xsmall text-left", className)}
         {...rest}
       >
         {children}
@@ -484,7 +484,7 @@ export type DropdownLabelProps = HTMLAttributes<HTMLDivElement>;
 export function DropdownLabel({ className = "", children, ...rest }: DropdownLabelProps) {
   return (
     <div
-      className={cn("px-base", className)}
+      className={cn("px-base text-left", className)}
       {...rest}
     >
       <Text as="span" variant="small" className="font-medium text-muted leading-none">
@@ -813,7 +813,7 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
         {...portalTheme}
         role="menu"
         className={cn(
-          "fixed z-[110] flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border border-base bg-surface p-base shadow-token-md outline-none",
+          "fixed z-[110] flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border border-base bg-surface p-base text-left shadow-token-md outline-none",
           "will-change-[opacity] motion-reduce:transition-none",
           !subOpen && portalMounted && "pointer-events-none",
           className,

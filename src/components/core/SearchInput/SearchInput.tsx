@@ -414,7 +414,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
         className={cn(
-          "relative inline-block overflow-hidden border border-base bg-surface outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
+          "relative inline-block overflow-hidden border border-base bg-surface text-left outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
           "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
           expanded ? "cursor-text" : "",
