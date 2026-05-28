@@ -116,6 +116,16 @@ export {
   type CheckboxSize,
 } from "@/components/core/Checkbox";
 export {
+  Slider,
+  sliderThicknessToCss,
+  type SliderProps,
+  type SliderSingleProps,
+  type SliderRangeProps,
+  type SliderOrientation,
+  type SliderSize,
+  type SliderThickness,
+} from "@/components/core/Slider";
+export {
   SearchInput,
   type SearchInputProps,
   type SearchInputSize,
