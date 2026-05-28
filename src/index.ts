@@ -138,6 +138,12 @@ export {
   type MeterOrientation,
 } from "@/components/core/Meter";
 export {
+  ProgressBar,
+  type ProgressBarProps,
+  type ProgressBarSize,
+  type ProgressBarOrientation,
+} from "@/components/core/ProgressBar";
+export {
   SearchInput,
   type SearchInputProps,
   type SearchInputSize,

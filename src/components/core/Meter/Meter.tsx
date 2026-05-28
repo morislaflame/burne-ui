@@ -23,17 +23,17 @@ export type MeterSize = "small" | "base" | "medium" | "large";
 export type MeterOrientation = "horizontal" | "vertical";
 
 const RAIL_HEIGHT: Record<MeterSize, string> = {
-  small: "h-3.5",
-  base: "h-4.5",
-  medium: "h-6",
-  large: "h-7",
+  small: "h-small",
+  base: "h-base",
+  medium: "h-plus",
+  large: "h-mid",
 };
 
 const RAIL_WIDTH: Record<MeterSize, string> = {
-  small: "w-3.5",
-  base: "w-4.5",
-  medium: "w-6",
-  large: "w-7",
+  small: "w-small",
+  base: "w-base",
+  medium: "w-plus",
+  large: "w-mid",
 };
 
 function clamp(n: number, lo: number, hi: number) {
