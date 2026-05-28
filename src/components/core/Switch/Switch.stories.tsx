@@ -41,7 +41,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Переключатель с кружком как у `Slider`: кружок ездит внутри трека с отступами, при включении — accent-заливка или свои иконки.",
+          "Переключатель с кружком как у `Slider`: кружок ездит внутри трека с отступами. Без иконок — accent-заливка при включении; с иконками — accent-иконка в выключенном состоянии и accent-foreground на заливке кружка при включении.",
       },
     },
   },
@@ -177,7 +177,7 @@ export const CustomColor: Story = {
       />
       <Switch
         label="С иконками + градиент"
-        description="Кружок с accent-иконкой, трек с градиентом"
+        description="Accent-иконка / accent-foreground на заливке, трек с градиентом"
         color="linear-gradient(90deg, var(--color-success) 0%, var(--color-accent) 100%)"
         defaultChecked
         iconOff={<IoMoon aria-hidden className="size-full" />}

@@ -155,9 +155,9 @@ export type SwitchProps = Omit<
      * Число — px; строка — любая CSS-длина (`"0.75rem"`, `"12px"`).
      */
     thickness?: number | string;
-    /** Иконка в кружке, когда выключен. Если задана хотя бы одна — вместо accent-заливки. */
+    /** Иконка в кружке, когда выключен (цвет accent). Если задана хотя бы одна — accent-заливка кружка при включении. */
     iconOff?: ReactNode;
-    /** Иконка в кружке, когда включен. */
+    /** Иконка в кружке, когда включен (цвет accent-foreground на заливке). */
     iconOn?: ReactNode;
     /** Фон трека во включённом состоянии: CSS-цвет или `linear-gradient(...)`. Заливка кружка всегда accent. */
     color?: string;
@@ -224,7 +224,6 @@ function SwitchControl({
   const reduceMotion = prefersReducedInteractiveHoverLift();
 
   const hasIcons = iconOff != null || iconOn != null;
-  const showFill = !hasIcons;
 
   useEffect(() => {
     setTravelPx(fallbackTravelPx);
@@ -289,7 +288,6 @@ function SwitchControl({
   }, [checked, reduceMotion, travelPx]);
 
   useLayoutEffect(() => {
-    if (!showFill) return;
     const fill = fillRef.current;
     if (!fill) return;
 
@@ -315,7 +313,7 @@ function SwitchControl({
       duration: MOTION_INTERACTIVE_MS,
       ease: MOTION_INTERACTIVE_EASE,
     });
-  }, [checked, reduceMotion, showFill]);
+  }, [checked, reduceMotion]);
 
   useLayoutEffect(() => {
     const trackFill = trackFillRef.current;
@@ -447,24 +445,20 @@ function SwitchControl({
           ref={thumbShellRef}
           className={cn(
             "relative box-border block origin-center rounded-full border border-accent bg-surface",
-            checked && !hasIcons && "border-accent",
+            checked && "border-accent",
             thickness == null && sz.thumb,
           )}
           style={customThumbStyle}
         >
-          {showFill ? (
-            <span
-              ref={fillRef}
-              aria-hidden
-              className={cn(
-                "pointer-events-none absolute inset-[1px] z-[0] origin-center rounded-full bg-accent text-accent-foreground",
-              )}
-              style={{
-                transform: "scale(0)",
-                opacity: 0,
-              }}
-            />
-          ) : null}
+          <span
+            ref={fillRef}
+            aria-hidden
+            className="pointer-events-none absolute inset-[1px] z-[0] origin-center rounded-full bg-accent text-accent-foreground"
+            style={{
+              transform: "scale(0)",
+              opacity: 0,
+            }}
+          />
 
           {hasIcons ? (
             <>
@@ -472,7 +466,7 @@ function SwitchControl({
                 <span
                   ref={iconOffRef}
                   aria-hidden
-                  className="pointer-events-none absolute inset-[1px] z-[1] flex items-center justify-center text-muted"
+                  className="pointer-events-none absolute inset-[1px] z-[1] flex items-center justify-center text-accent"
                   style={{ opacity: checked ? 0 : 1 }}
                 >
                   <span
@@ -489,7 +483,7 @@ function SwitchControl({
                 <span
                   ref={iconOnRef}
                   aria-hidden
-                  className="pointer-events-none absolute inset-[1px] z-[1] flex items-center justify-center text-accent"
+                  className="pointer-events-none absolute inset-[1px] z-[1] flex items-center justify-center text-accent-foreground"
                   style={{ opacity: checked ? 1 : 0 }}
                 >
                   <span

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { IoVolumeHigh } from "react-icons/io5";
 
 import { Slider } from "./Slider";
 
@@ -40,7 +41,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Слайдер с кружком в стиле `Checkbox`: при захвате — заливка accent и squeeze, при отпускании заливка исчезает. Поддерживает range, деления (`marks`), disabled и вертикальную ориентацию.",
+          "Слайдер с кружком в стиле `Checkbox`: при захвате — заливка accent и squeeze, при отпускании заливка исчезает. Опциональная иконка в кружке: accent в покое, accent-foreground при захвате. Поддерживает range, деления (`marks`), disabled и вертикальную ориентацию.",
       },
     },
   },
@@ -112,6 +113,27 @@ export const WithMarks: Story = {
       marks={[0, 25, 50, 75, 100]}
       defaultValue={50}
     />
+  ),
+};
+
+export const WithIcon: Story = {
+  name: "С иконкой",
+  render: () => (
+    <div className="flex w-full max-w-md flex-col gap-xlarge">
+      <Slider
+        label="Громкость"
+        showValue
+        defaultValue={45}
+        icon={<IoVolumeHigh aria-hidden className="size-full" />}
+      />
+      <Slider
+        range
+        label="Диапазон"
+        showValue
+        defaultValue={[25, 70]}
+        icon={<IoVolumeHigh aria-hidden className="size-full" />}
+      />
+    </div>
   ),
 };
 

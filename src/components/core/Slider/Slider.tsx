@@ -61,6 +61,13 @@ const THUMB_PX: Record<SliderSize, number> = {
   large: 28,
 };
 
+const THUMB_ICON: Record<SliderSize, string> = {
+  small: "icon-xsmall",
+  base: "icon-xsmall",
+  medium: "icon-base",
+  large: "icon-mid",
+};
+
 function readTrackMetrics(
   rect: DOMRect,
   orientation: SliderOrientation,
@@ -115,6 +122,8 @@ type SliderCommonProps = {
   /** Текущее значение справа от подписи. */
   showValue?: boolean;
   formatValue?: (value: number) => string;
+  /** Иконка внутри кружка: accent в покое, accent-foreground при захвате. */
+  icon?: ReactNode;
   disabled?: boolean;
   className?: string;
   id?: string;
@@ -341,6 +350,7 @@ type SliderThumbProps = {
   size: SliderSize;
   /** Явная толщина кружка; иначе пресет из `size`. */
   crossSizeStyle?: CSSProperties;
+  icon?: ReactNode;
   percent: number;
   orientation: SliderOrientation;
   disabled?: boolean;
@@ -357,6 +367,7 @@ type SliderThumbProps = {
 function SliderThumb({
   size,
   crossSizeStyle,
+  icon,
   percent,
   orientation,
   disabled,
@@ -469,15 +480,27 @@ function SliderThumb({
       <span
         ref={trackRef}
         className={cn(
-          "relative box-border block h-full w-full rounded-full border border-accent bg-surface",
+          "relative box-border flex h-full w-full items-center justify-center rounded-full border border-accent bg-surface",
         )}
       >
         <span
           ref={fillRef}
           aria-hidden
-          className="pointer-events-none absolute inset-[1px] z-[0] origin-center rounded-full bg-accent"
+          className="pointer-events-none absolute inset-[1px] z-[0] origin-center rounded-full bg-accent text-accent-foreground"
           style={{ transform: "scale(0)", opacity: 0 }}
         />
+        {icon != null ? (
+          <span
+            aria-hidden
+            className={cn(
+              "pointer-events-none relative z-[1] inline-flex items-center justify-center transition-colors duration-[280ms] ease-out motion-reduce:transition-none [&_svg]:size-full",
+              THUMB_ICON[size],
+              active ? "text-accent-foreground" : "text-accent",
+            )}
+          >
+            {icon}
+          </span>
+        ) : null}
       </span>
     </button>
   );
@@ -535,6 +558,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
     label,
     showValue = false,
     formatValue = defaultFormatValue,
+    icon,
     disabled = false,
     className,
     id: idProp,
@@ -979,6 +1003,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
             <SliderThumb
               size={size}
               crossSizeStyle={crossSizeStyle}
+              icon={icon}
               percent={thumbCenterPercent(
                 rangeValue[0],
                 min,
@@ -1000,6 +1025,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
             <SliderThumb
               size={size}
               crossSizeStyle={crossSizeStyle}
+              icon={icon}
               percent={thumbCenterPercent(
                 rangeValue[1],
                 min,
@@ -1023,6 +1049,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
           <SliderThumb
             size={size}
             crossSizeStyle={crossSizeStyle}
+            icon={icon}
             percent={thumbCenterPercent(
               singleValue,
               min,
