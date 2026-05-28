@@ -116,6 +116,12 @@ export {
   type CheckboxSize,
 } from "@/components/core/Checkbox";
 export {
+  Switch,
+  type SwitchProps,
+  type SwitchSize,
+  type SwitchLabelPosition,
+} from "@/components/core/Switch";
+export {
   Slider,
   sliderThicknessToCss,
   type SliderProps,

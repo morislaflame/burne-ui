@@ -38,7 +38,7 @@ const CHECKBOX_LABEL_HOVER_SCALE = 1.02;
 
 const VARIANT_TRACK: Record<CheckboxVariant, string> = {
   /** Как `Button` default: `border border-base` + фон оболочки (пустой кружок). */
-  default: "border border-base bg-surface",
+  default: "border border-accent bg-surface",
   /** Как `Button` secondary: `surface-secondary` (бордер 1px из утилиты). */
   secondary: "surface-secondary",
   /** Как `Button` outline: `surface-outline` (бордер `border-base`, не акцентный). */
@@ -65,7 +65,7 @@ const SIZE_LAYOUT: Record<
   },
   base: {
     track: "h-4.5 w-4.5 min-h-4.5 min-w-4.5",
-    checkWrap: "icon-small",
+    checkWrap: "icon-xsmall",
     title: "base",
     desc: "small",
     gridGapX: "gap-x-base",

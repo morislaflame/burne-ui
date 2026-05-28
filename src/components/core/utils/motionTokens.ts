@@ -2,12 +2,22 @@
  * Общие параметры анимаций (anime.js + согласованные CSS-где нужно).
  */
 
-import { cubicBezier } from "animejs";
+import { cubicBezier, spring } from "animejs";
 
 // --- hover lift + press squeeze (интерактивные поверхности) ---
 
 export const MOTION_INTERACTIVE_MS = 280;
 export const MOTION_INTERACTIVE_EASE = "out(2)" as const;
+export const MOTION_COLOR_CHANGE_MS = 200;
+
+/** Лёгкий overshoot кружка Switch при переключении. */
+export const MOTION_SWITCH_THUMB_MS = 340;
+export const MOTION_SWITCH_THUMB_EASE = spring({
+  stiffness: MOTION_COLOR_CHANGE_MS,
+  damping: 27,
+  mass: 0.55,
+  duration: MOTION_SWITCH_THUMB_MS,
+});
 
 /** Fade появление / скрытие Tooltip (portal). */
 export const MOTION_TOOLTIP_MS = 200;
