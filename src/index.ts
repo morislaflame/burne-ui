@@ -132,6 +132,12 @@ export {
   type SliderThickness,
 } from "@/components/core/Slider";
 export {
+  Meter,
+  type MeterProps,
+  type MeterSize,
+  type MeterOrientation,
+} from "@/components/core/Meter";
+export {
   SearchInput,
   type SearchInputProps,
   type SearchInputSize,
