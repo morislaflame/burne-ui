@@ -184,6 +184,17 @@ export {
   type BreadcrumbItem,
 } from "@/components/core/Breadcrumbs";
 export {
+  Pagination,
+  type PaginationProps,
+  type PaginationSummaryProps,
+  type PaginationContentProps,
+  type PaginationItemProps,
+  type PaginationNavButtonProps,
+  type PaginationPageProps,
+  type PaginationEllipsisProps,
+  type PaginationPagesProps,
+} from "@/components/core/Pagination";
+export {
   Separator,
   type SeparatorProps,
   type SeparatorOrientation,
