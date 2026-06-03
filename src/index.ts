@@ -294,6 +294,20 @@ export {
   type TooltipArrowProps,
 } from "@/components/core/Tooltip";
 export {
+  Popover,
+  type PopoverRootProps,
+  type PopoverTriggerProps,
+  type PopoverContentProps,
+  type PopoverHeaderProps,
+  type PopoverLabelProps,
+  type PopoverHintProps,
+  type PopoverBodyProps,
+  type PopoverArrowProps,
+  type PopoverSide,
+  type PopoverSize,
+  type PopoverContentGap,
+} from "@/components/core/Popover";
+export {
   Breadcrumbs,
   type BreadcrumbsProps,
   type BreadcrumbsListProps,
