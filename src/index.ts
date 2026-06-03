@@ -340,6 +340,14 @@ export {
   type SeparatorOrientation,
 } from "@/components/core/Separator";
 export {
+  Surface,
+  type SurfaceProps,
+  type SurfaceVariant,
+  type SurfaceShadow,
+  type SurfacePadding,
+  type SurfaceRadius,
+} from "@/components/core/Surface";
+export {
   Dropdown,
   DropdownTrigger,
   DropdownPopover,
