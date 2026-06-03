@@ -8,5 +8,6 @@ export {
   type BadgeSize,
   type BadgePlacement,
   type BadgeIconPosition,
+  type BadgeInlineIconPosition,
   type BadgeAnchorProps,
 } from "./Badge";

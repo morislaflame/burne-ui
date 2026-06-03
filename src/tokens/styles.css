@@ -150,80 +150,151 @@
   --font-family-mono: ui-monospace, monospace;
 
   /**
-   * Ступени отступов (rem), согласованы с плотностью Button / Dialog / Expandable.
-   * Утилиты: gap-mid, p-xsmall, m-plus, …
+   * Базовый шаг отступов (gap, padding, margin).
+   * Ступени — множители; утилиты: `gap-mid`, `p-xsmall`, `m-plus`, …
    */
-  --space-xsmall: 0.25rem;
-  --space-small: 0.375rem;
-  --space-base: 0.5rem;
-  --space-plus: 0.75rem;
-  --space-mid: 1rem;
-  --space-large: 1.25rem;
-  --space-xlarge: 1.5rem;
+  --space: 0.5rem;
+  --space-xsmall: calc(var(--space) * 0.5);
+  --space-small: calc(var(--space) * 0.75);
+  --space-base: calc(var(--space) * 1);
+  --space-plus: calc(var(--space) * 1.5);
+  --space-mid: calc(var(--space) * 2);
+  --space-large: calc(var(--space) * 2.5);
+  --space-xlarge: calc(var(--space) * 3);
 
-  /** Сырьё для @theme — радиусы (утилиты `rounded-xsmall` … `rounded-large`) */
-  --radius-value-xsmall: 0.25rem;
-  --radius-value-small: 0.375rem;
-  --radius-value-base: 0.5rem;
-  --radius-value-mid: 0.625rem;
-  --radius-value-large: 0.75rem;
+  /**
+   * Базовый радиус скругления. Ступени — множители (одна «ручка» для white-label).
+   * Утилиты: `rounded-xsmall` … `rounded-large`.
+   */
+  --radius: 0.5rem;
+  --radius-value-xsmall: calc(var(--radius) * 0.5);
+  --radius-value-small: calc(var(--radius) * 0.75);
+  --radius-value-base: calc(var(--radius) * 1);
+  --radius-value-mid: calc(var(--radius) * 1.25);
+  --radius-value-large: calc(var(--radius) * 1.5);
 
-  /** Типографика — размер / межстрочный интервал / насыщенность */
-  --text-accent-header-size: 2.25rem;
-  --text-accent-header-line-height: 1.1;
+  /**
+   * Примитивная типографическая шкала (`--text-scale-*`).
+   * line-height = calc(высота_строки / font-size) — unitless, как Tailwind v4.
+   */
+  --text-scale-tools: 0.6875rem;
+  --text-scale-tools--line-height: calc(0.875rem / 0.6875rem);
+
+  --text-scale-xs: 0.75rem;
+  --text-scale-xs--line-height: calc(1rem / 0.75rem);
+
+  --text-scale-sm: 0.875rem;
+  --text-scale-sm--line-height: calc(1.25rem / 0.875rem);
+
+  --text-scale-md: 1rem;
+  --text-scale-md--line-height: calc(1.5rem / 1rem);
+
+  --text-scale-lg: 1.125rem;
+  --text-scale-lg--line-height: calc(1.75rem / 1.125rem);
+
+  --text-scale-xl: 1.25rem;
+  --text-scale-xl--line-height: calc(1.75rem / 1.25rem);
+
+  --text-scale-2xl: 1.5rem;
+  --text-scale-2xl--line-height: calc(2rem / 1.5rem);
+
+  --text-scale-3xl: 1.875rem;
+  --text-scale-3xl--line-height: calc(2.25rem / 1.875rem);
+
+  --text-scale-4xl: 2.25rem;
+  --text-scale-4xl--line-height: calc(2.5rem / 2.25rem);
+
+  /** Семантические роли UI-текста (алиасы шкалы + weight). */
+  --text-accent-header-size: var(--text-scale-4xl);
+  --text-accent-header-line-height: var(--text-scale-4xl--line-height);
   --text-accent-header-weight: 600;
-  /** text-header-1: как text-xl + font-medium + line-height 1.2 */
-  --text-header-1-size: 1.875rem;
-  --text-header-1-line-height: 1.2;
+
+  --text-header-1-size: var(--text-scale-3xl);
+  --text-header-1-line-height: var(--text-scale-3xl--line-height);
   --text-header-1-weight: 600;
-  /** text-header-2: как text-lg + font-medium + line-height 1.25 */
-  --text-header-2-size: 1.5rem;
-  --text-header-2-line-height: 1.25;
+
+  --text-header-2-size: var(--text-scale-2xl);
+  --text-header-2-line-height: var(--text-scale-2xl--line-height);
   --text-header-2-weight: 600;
-  /** text-large: 1.25rem, semibold, line-height 1.2 */
-  --text-large-size: 1.25rem;
-  --text-large-line-height: 1.2;
+
+  --text-large-size: var(--text-scale-xl);
+  --text-large-line-height: var(--text-scale-xl--line-height);
   --text-large-weight: 500;
-  /** text-mid: как text-md + font-medium + line-height 1.2 (text-md = 1rem в шкале Tailwind) */
-  --text-mid-size: 1rem;
-  --text-mid-line-height: 1.2;
+
+  --text-mid-size: var(--text-scale-md);
+  --text-mid-line-height: var(--text-scale-md--line-height);
   --text-mid-weight: 400;
-  /** text-base: как text-sm + font-medium + line-height 1.2 */
-  --text-base-size: 0.875rem;
-  --text-base-line-height: 1.2;
+
+  --text-base-size: var(--text-scale-sm);
+  --text-base-line-height: var(--text-scale-sm--line-height);
   --text-base-weight: 400;
-  /** text-small: как text-xs + font-medium + line-height 1 */
-  --text-small-size: 0.75rem;
-  --text-small-line-height: 1;
+
+  --text-small-size: var(--text-scale-xs);
+  --text-small-line-height: var(--text-scale-xs--line-height);
   --text-small-weight: 400;
-  /** text-tools: как text-xs + font-normal + line-height 1.4 */
-  --text-tools-size: 0.6875rem;
-  --text-tools-line-height: 1;
-  --text-tools-weight: 400; /** 400 → 500 для полноценного @utility text-tools */
+
+  --text-tools-size: var(--text-scale-tools);
+  --text-tools-line-height: var(--text-scale-tools--line-height);
+  --text-tools-weight: 400;
+
+  /**
+   * Базовый размер контролов (иконки, индикаторы, min-width кнопок, ширина модалок).
+   * Отдельно от `--space` (отступы) и `--text-scale-*` (типографика).
+   */
+  --size: 1rem;
+
+  /** Примитивная шкала размеров контролов (`--size-scale-*`). */
+  --size-scale-925: calc(var(--size) * 0.925);
+  --size-scale-xs: calc(var(--size) * 0.65);
+  --size-scale-sm: calc(var(--size) * 0.875);
+  --size-scale-md: calc(var(--size) * 1);
+  --size-scale-lg: calc(var(--size) * 1.125);
+  --size-scale-xl: calc(var(--size) * 1.375);
+  --size-scale-2xl: calc(var(--size) * 1.5);
+  --size-scale-3xl: calc(var(--size) * 1.75);
 
   /** Крупность контейнеров (модалки, панели, лэйауты) — max-w-component-* */
-  --max-component-small: 20rem;
-  --max-component-base: 28rem;
-  --max-component-mid: 32rem;
-  --max-component-large: 36rem;
+  --max-component-small: calc(var(--size) * 20);
+  --max-component-base: calc(var(--size) * 28);
+  --max-component-mid: calc(var(--size) * 32);
+  --max-component-large: calc(var(--size) * 36);
 
-  /** Кнопки — минимальная ширина по размеру */
-  --button-min-width-s: 4.5rem;
-  --button-min-width-m: 5.5rem;
-  --button-min-width-l: 7rem;
-  --button-min-width-xl: 8rem;
+  --button-min-width-small: calc(var(--size) * 4.5);
+  --button-min-width-base: calc(var(--size) * 5.5);
+  --button-min-width-mid: calc(var(--size) * 7);
+  --button-min-width-large: calc(var(--size) * 8);
+
+  /** Минимальная высота интерактивных контролов (Button, Input, Selector, SearchInput). */
+  --control-height-small: calc(var(--size) * 1.75);
+  --control-height-base: calc(var(--size) * 2);
+  --control-height-mid: calc(var(--size) * 2.5);
+  --control-height-large: calc(var(--size) * 3);
+
+  /** Диаметр аватара по ступени размера. */
+  --avatar-size-small: calc(var(--size) * 2);
+  --avatar-size-base: calc(var(--size) * 2.5);
+  --avatar-size-mid: calc(var(--size) * 3);
+  --avatar-size-large: calc(var(--size) * 3.5);
 
   /**
    * Иконки (react-icons и др.) — единая шкала; утилиты `icon-xsmall` … `icon-2xlarge`.
-   * Переопределяйте переменные в продукте для согласованного масштаба UI.
    */
-  --icon-size-xsmall: 0.75rem;
-  --icon-size-small: 0.875rem;
-  --icon-size-base: 1rem;
-  --icon-size-mid: 1.125rem;
-  --icon-size-large: 1.375rem;
-  --icon-size-xlarge: 1.5rem;
-  --icon-size-2xlarge: 1.75rem;
+  --icon-size-xsmall: var(--size-scale-xs);
+  --icon-size-small: var(--size-scale-sm);
+  --icon-size-base: var(--size-scale-md);
+  --icon-size-mid: var(--size-scale-lg);
+  --icon-size-large: var(--size-scale-xl);
+  --icon-size-xlarge: var(--size-scale-2xl);
+  --icon-size-2xlarge: var(--size-scale-3xl);
+
+  /**
+   * Круглые индикаторы выбора (Radio, Checkbox, Slider thumb, Dropdown).
+   * Диаметр внешнего кольца; заливка — inset 1px.
+   */
+  --selection-indicator-small: var(--size-scale-925);
+  --selection-indicator-base: var(--size-scale-lg);
+  --selection-indicator-mid: var(--size-scale-2xl);
+  --selection-indicator-large: var(--size-scale-3xl);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast: 150ms;

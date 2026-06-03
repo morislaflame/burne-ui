@@ -26,8 +26,6 @@ const meta = {
   parameters: { layout: "fullscreen" },
   decorators: [...darkThemeDecorator],
   args: {
-    title: "Способ доставки",
-    description: "Можно выбрать несколько вариантов.",
     isRequired: false,
     selection: "multiple" as const,
   },
@@ -46,9 +44,15 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   render: (args) => (
     <CheckboxGroup {...args}>
-      <Checkbox name="ship" value="courier" label="Курьер" />
-      <Checkbox name="ship" value="pickup" label="Самовывоз" />
-      <Checkbox name="ship" value="post" label="Почта" />
+      <CheckboxGroup.Legend>
+        <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+        <CheckboxGroup.Hint>Можно выбрать несколько вариантов.</CheckboxGroup.Hint>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="ship" value="courier" label="Курьер" />
+        <Checkbox name="ship" value="pickup" label="Самовывоз" />
+        <Checkbox name="ship" value="post" label="Почта" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
 };
@@ -56,26 +60,36 @@ export const Playground: Story = {
 export const SingleSelection: Story = {
   name: "Один вариант",
   args: {
-    ...meta.args,
-    description: "Отмечен только один пункт; при смене выбора остальные снимаются.",
     selection: "single" as const,
   },
   render: (args) => (
     <CheckboxGroup {...args}>
-      <Checkbox name="ship" value="courier" label="Курьер" />
-      <Checkbox name="ship" value="pickup" label="Самовывоз" />
-      <Checkbox name="ship" value="post" label="Почта" />
+      <CheckboxGroup.Legend>
+        <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+        <CheckboxGroup.Hint>
+          Отмечен только один пункт; при смене выбора остальные снимаются.
+        </CheckboxGroup.Hint>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="ship" value="courier" label="Курьер" />
+        <Checkbox name="ship" value="pickup" label="Самовывоз" />
+        <Checkbox name="ship" value="post" label="Почта" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
 };
 
 export const Required: Story = {
   name: "Обязательное поле",
-  args: { isRequired: true },
-  render: (args) => (
-    <CheckboxGroup {...args} title="Согласия">
-      <Checkbox name="terms" label="Пользовательское соглашение" />
-      <Checkbox name="marketing" label="Рассылка (необязательно)" />
+  render: () => (
+    <CheckboxGroup isRequired>
+      <CheckboxGroup.Legend>
+        <CheckboxGroup.Label>Согласия</CheckboxGroup.Label>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="terms" label="Пользовательское соглашение" />
+        <Checkbox name="marketing" label="Рассылка (необязательно)" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
 };
@@ -83,9 +97,31 @@ export const Required: Story = {
 export const WithoutDescription: Story = {
   name: "Без подзаголовка",
   render: () => (
-    <CheckboxGroup title="Теги">
-      <Checkbox name="t1" label="Дизайн" />
-      <Checkbox name="t2" label="Разработка" />
+    <CheckboxGroup>
+      <CheckboxGroup.Legend>
+        <CheckboxGroup.Label>Теги</CheckboxGroup.Label>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List>
+        <Checkbox name="t1" label="Дизайн" />
+        <Checkbox name="t2" label="Разработка" />
+      </CheckboxGroup.List>
+    </CheckboxGroup>
+  ),
+};
+
+export const Horizontal: Story = {
+  name: "Горизонтально",
+  render: () => (
+    <CheckboxGroup>
+      <CheckboxGroup.Legend>
+        <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+        <CheckboxGroup.Hint>Пункты в ряд с переносом при нехватке места.</CheckboxGroup.Hint>
+      </CheckboxGroup.Legend>
+      <CheckboxGroup.List orientation="horizontal">
+        <Checkbox name="ship" value="courier" label="Курьер" />
+        <Checkbox name="ship" value="pickup" label="Самовывоз" />
+        <Checkbox name="ship" value="post" label="Почта" />
+      </CheckboxGroup.List>
     </CheckboxGroup>
   ),
 };

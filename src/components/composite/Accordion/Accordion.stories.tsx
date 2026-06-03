@@ -33,12 +33,62 @@ const infoIcon = (
   </svg>
 );
 
+const items = [
+  {
+    content:
+      "Доставка по РФ 2–5 дней. Международная доставка рассчитывается отдельно.",
+    icon: infoIcon,
+    title: "Как оформить заказ?",
+  },
+  {
+    content: "Возврат возможен в течение 14 дней при сохранении товарного вида.",
+    title: "При каких условиях можно вернуть товар?",
+  },
+  {
+    content: "Избегайте абразивов и агрессивной химии. Хранить в сухом месте.",
+    title: "Как ухаживать за товаром?",
+  },
+] as const;
+
+function AccordionItemDemo({
+  item,
+}: {
+  item: (typeof items)[number];
+}) {
+  return (
+    <>
+      <Accordion.Heading>
+        <Accordion.Trigger>
+          <Accordion.Message>
+            {"icon" in item && item.icon ? (
+              <Accordion.Icon>{item.icon}</Accordion.Icon>
+            ) : null}
+            <Accordion.Content>
+              <Accordion.Title>{item.title}</Accordion.Title>
+            </Accordion.Content>
+            <Accordion.Indicator />
+          </Accordion.Message>
+        </Accordion.Trigger>
+      </Accordion.Heading>
+      <Accordion.Panel>
+        <Accordion.Body>{item.content}</Accordion.Body>
+      </Accordion.Panel>
+    </>
+  );
+}
+
 const meta = {
   title: "Composite Components/Accordion",
   component: Accordion,
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Группа раскрывающихся пунктов на базе `Expandable`. Слоты `Message`, `Icon`, `Content`, `Title`, `Indicator` — те же стили, что у Expandable.",
+      },
+    },
   },
   decorators: [...darkThemeDecorator],
 } satisfies Meta<typeof Accordion>;
@@ -47,57 +97,43 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const DEMO_ITEMS = [
-  {
-    id: "delivery",
-    title: "Как оформить заказ?",
-    icon: infoIcon,
-    content: (
-      <p className="text-sm text-muted">
-        Доставка по РФ 2-5 дней. Международная доставка рассчитывается отдельно.
-      </p>
-    ),
-  },
-  {
-    id: "returns",
-    title: "При каких условиях можно вернуть товар?",
-    content: (
-      <p className="text-sm text-muted">
-        Возврат возможен в течение 14 дней при сохранении товарного вида.
-      </p>
-    ),
-  },
-  {
-    id: "care",
-    title: "Как ухаживать за товаром?",
-    content: (
-      <p className="text-sm text-muted">
-        Избегайте абразивов и агрессивной химии. Хранить в сухом месте.
-      </p>
-    ),
-  },
-] as const;
-
 export const Default: Story = {
-  args: {
-    items: DEMO_ITEMS,
-    defaultOpenId: "delivery",
-  },
+  render: () => (
+    <Accordion className="max-w-2xl" defaultOpenIndex={0}>
+      {items.map((item, index) => (
+        <Accordion.Item key={index}>
+          <AccordionItemDemo item={item} />
+        </Accordion.Item>
+      ))}
+    </Accordion>
+  ),
 };
 
 export const PressRipple: Story = {
   name: "Риппл по нажатию в триггере",
-  args: {
-    items: DEMO_ITEMS,
-    defaultOpenId: "delivery",
-  },
-  render: ({ items: _items, ...args }) => (
-    <Accordion
-      {...args}
-      items={DEMO_ITEMS.map((item) => ({
-        ...item,
-        triggerBefore: <Ripple color="accentMuted" />,
-      }))}
-    />
+  render: () => (
+    <Accordion className="max-w-md" defaultOpenIndex={0}>
+      {items.map((item, index) => (
+        <Accordion.Item key={index}>
+          <Accordion.Heading>
+            <Accordion.Trigger>
+              <Ripple color="accentMuted" />
+              <Accordion.Message>
+                {"icon" in item && item.icon ? (
+                  <Accordion.Icon>{item.icon}</Accordion.Icon>
+                ) : null}
+                <Accordion.Content>
+                  <Accordion.Title>{item.title}</Accordion.Title>
+                </Accordion.Content>
+                <Accordion.Indicator />
+              </Accordion.Message>
+            </Accordion.Trigger>
+          </Accordion.Heading>
+          <Accordion.Panel>
+            <Accordion.Body>{item.content}</Accordion.Body>
+          </Accordion.Panel>
+        </Accordion.Item>
+      ))}
+    </Accordion>
   ),
 };

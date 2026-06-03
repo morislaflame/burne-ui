@@ -32,6 +32,10 @@ import {
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
+import { useOptionalSelectorFieldContext } from "./selectorFieldContext";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+
 function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {
     for (const r of refs) {
@@ -103,32 +107,28 @@ const STATUS_TINT_FOCUS_BORDER: Record<
   warning: "focus-within:border-warning",
 };
 
-const STATUS_HINT: Record<InputStatus, string> = {
-  default: "text-muted",
-  danger: "text-danger",
-  success: "text-success",
-  warning: "text-warning",
-};
-
-const INPUT_SHELL_MIN: Record<InputSize, string> = {
-  base: "min-h-8",
-  large: "min-h-10",
-  xlarge: "min-h-12",
+const INPUT_SHELL_H: Record<InputSize, string> = {
+  small: CONTROL_SIZE_LAYOUT.small.h,
+  base: CONTROL_SIZE_LAYOUT.base.h,
+  mid: CONTROL_SIZE_LAYOUT.mid.h,
+  large: CONTROL_SIZE_LAYOUT.large.h,
 };
 
 const INPUT_CONTROL: Record<InputSize, string> = {
-  base: "px-plus py-small text-base leading-[1.2]",
-  large: "px-mid py-base text-mid leading-[1.2]",
-  xlarge: "px-large py-base text-mid leading-[1.2]",
+  small: CONTROL_SIZE_LAYOUT.small.controlPad,
+  base: CONTROL_SIZE_LAYOUT.base.controlPad,
+  mid: CONTROL_SIZE_LAYOUT.mid.controlPad,
+  large: CONTROL_SIZE_LAYOUT.large.controlPad,
 };
 
 const CHEVRON_ICON: Record<InputSize, string> = {
-  base: "icon-base",
-  large: "icon-large",
-  xlarge: "icon-large",
+  small: CONTROL_SIZE_LAYOUT.small.chevronIcon,
+  base: CONTROL_SIZE_LAYOUT.base.chevronIcon,
+  mid: CONTROL_SIZE_LAYOUT.mid.chevronIcon,
+  large: CONTROL_SIZE_LAYOUT.large.chevronIcon,
 };
 
-export type SelectorProps = {
+export type SelectorControlProps = {
   /** Варианты списка. */
   options: SelectorOption[];
   /** Управляемое значение (`value` пункта). */
@@ -141,13 +141,8 @@ export type SelectorProps = {
   size?: InputSize;
   status?: InputStatus;
   disabled?: boolean;
-  /** Подпись над полем. */
-  label?: string;
-  isRequired?: boolean;
   /** Текст при отсутствии выбора и подсказка в поле при открытом списке. */
   placeholder?: string;
-  /** Примечание под полем. */
-  hint?: string;
   /**
    * Максимальная высота области прокрутки списка (CSS `max-height`).
    * По умолчанию как у `Dropdown.Content`: `min(24rem, 70vh)`.
@@ -159,21 +154,18 @@ export type SelectorProps = {
   listId?: string;
 };
 
-export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
-  function Selector(
+export const SelectorControl = forwardRef<HTMLInputElement, SelectorControlProps>(
+  function SelectorControl(
     {
       options,
       value: valueProp,
       defaultValue,
       onValueChange,
       variant = "default",
-      size = "base",
-      status = "default",
+      size: sizeProp,
+      status: statusProp,
       disabled = false,
-      label,
-      isRequired = false,
       placeholder = "Выберите значение",
-      hint,
       menuMaxHeight = "min(24rem, 70vh)",
       className = "",
       id: idProp,
@@ -181,9 +173,22 @@ export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
     },
     ref,
   ) {
+    const fieldCtx = useOptionalSelectorFieldContext();
     const genId = useId();
-    const triggerId = idProp ?? genId;
+    const triggerId = idProp ?? fieldCtx?.selectorId ?? genId;
     const listId = listIdProp ?? `${triggerId}-listbox`;
+    const size = sizeProp ?? fieldCtx?.size ?? "base";
+    const status = statusProp ?? fieldCtx?.status ?? "default";
+    const isRequired = fieldCtx?.isRequired ?? false;
+    const hintConnected = fieldCtx?.hintConnected ?? false;
+    const errorConnected = fieldCtx?.errorConnected ?? false;
+    const hintId = fieldCtx?.hintId;
+    const errorId = fieldCtx?.errorId;
+    const ariaDescribedBy =
+      joinFieldDescribedBy(
+        hintConnected ? hintId : undefined,
+        errorConnected ? errorId : undefined,
+      );
 
     const isControlled = valueProp !== undefined;
     const [internalValue, setInternalValue] = useState(defaultValue ?? "");
@@ -657,7 +662,7 @@ export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
                             as="span"
                             variant="base"
                             inheritColor
-                            className="block font-medium leading-snug"
+                            className="block font-medium"
                           >
                             {opt.label}
                           </Text>
@@ -692,22 +697,7 @@ export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
         : null;
 
     return (
-      <div className={cn("flex w-full flex-col gap-small text-left", className)}>
-        {label ? (
-          <label
-            htmlFor={triggerId}
-            className="inline-flex flex-wrap items-baseline gap-x-xsmall gap-y-0"
-          >
-            <Text as="span" variant="base" className="font-medium leading-snug">
-              {label}
-            </Text>
-            {isRequired ? (
-              <span className="text-danger leading-none" aria-hidden>
-                *
-              </span>
-            ) : null}
-          </label>
-        ) : null}
+      <>
         <div
           ref={setWrapperRef}
           role="presentation"
@@ -716,9 +706,10 @@ export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
             "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
             "overflow-hidden rounded-base transition-[border-color,background-color] duration-200 ease-out motion-reduce:transition-none",
             "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
-            INPUT_SHELL_MIN[size],
+            INPUT_SHELL_H[size],
             shellSurface,
             disabled ? "cursor-not-allowed opacity-55" : "cursor-pointer",
+            className,
           )}
         >
           <input
@@ -739,6 +730,8 @@ export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
                 : undefined
             }
             aria-required={isRequired || undefined}
+            aria-invalid={status === "danger" ? true : undefined}
+            aria-describedby={ariaDescribedBy}
             disabled={disabled}
             readOnly={!open}
             autoComplete="off"
@@ -769,19 +762,10 @@ export const Selector = forwardRef<HTMLInputElement, SelectorProps>(
             <IoChevronDown className={CHEVRON_ICON[size]} aria-hidden />
           </button>
         </div>
-        {hint ? (
-          <Text
-            as="p"
-            variant="base"
-            className={cn("leading-snug", STATUS_HINT[status])}
-          >
-            {hint}
-          </Text>
-        ) : null}
         {listbox}
-      </div>
+      </>
     );
   },
 );
 
-Selector.displayName = "Selector";
+SelectorControl.displayName = "SelectorControl";

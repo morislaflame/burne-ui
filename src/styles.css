@@ -77,7 +77,7 @@ p {
 
   /**
    * Единственный источник правды для утилиты `text-base` (без дубля с @utility).
-   * Переопределяет дефолт Tailwind (1rem) на дизайн-токен: sm-размер + medium + leading 1.2.
+   * Переопределяет дефолт Tailwind (1rem) на семантический `text-base` (= scale sm).
    */
   --text-base: var(--text-base-size);
   --text-base--line-height: var(--text-base-line-height);
@@ -195,14 +195,14 @@ p {
   font-weight: var(--text-large-weight);
 }
 
-/** Мелкий UI-текст: размер как text-xs, medium, межстрочный 1 */
+/** Мелкий UI-текст: scale xs */
 @utility text-small {
   font-size: var(--text-small-size);
   line-height: var(--text-small-line-height);
   font-weight: var(--text-small-weight);
 }
 
-/** Средний UI-текст: размер как text-md, medium, межстрочный 1.2 */
+/** Средний UI-текст: scale md */
 @utility text-mid {
   font-size: var(--text-mid-size);
   line-height: var(--text-mid-line-height);
@@ -232,19 +232,129 @@ p {
 }
 
 @utility min-w-button-small {
-  min-width: var(--button-min-width-s);
+  min-width: var(--button-min-width-small);
 }
 
 @utility min-w-button-base {
-  min-width: var(--button-min-width-m);
+  min-width: var(--button-min-width-base);
+}
+
+@utility min-w-button-mid {
+  min-width: var(--button-min-width-mid);
 }
 
 @utility min-w-button-large {
-  min-width: var(--button-min-width-l);
+  min-width: var(--button-min-width-large);
 }
 
-@utility min-w-button-xlarge {
-  min-width: var(--button-min-width-xl);
+@utility min-h-control-small {
+  min-height: var(--control-height-small);
+}
+
+@utility min-h-control-base {
+  min-height: var(--control-height-base);
+}
+
+@utility min-h-control-mid {
+  min-height: var(--control-height-mid);
+}
+
+@utility min-h-control-large {
+  min-height: var(--control-height-large);
+}
+
+@utility h-control-small {
+  height: var(--control-height-small);
+}
+
+@utility h-control-base {
+  height: var(--control-height-base);
+}
+
+@utility h-control-mid {
+  height: var(--control-height-mid);
+}
+
+@utility h-control-large {
+  height: var(--control-height-large);
+}
+
+@utility w-control-small {
+  width: var(--control-height-small);
+}
+
+@utility w-control-base {
+  width: var(--control-height-base);
+}
+
+@utility w-control-mid {
+  width: var(--control-height-mid);
+}
+
+@utility w-control-large {
+  width: var(--control-height-large);
+}
+
+@utility min-w-control-small {
+  min-width: var(--control-height-small);
+}
+
+@utility min-w-control-base {
+  min-width: var(--control-height-base);
+}
+
+@utility min-w-control-mid {
+  min-width: var(--control-height-mid);
+}
+
+@utility min-w-control-large {
+  min-width: var(--control-height-large);
+}
+
+@utility avatar-size-small {
+  width: var(--avatar-size-small);
+  height: var(--avatar-size-small);
+}
+
+@utility avatar-size-base {
+  width: var(--avatar-size-base);
+  height: var(--avatar-size-base);
+}
+
+@utility avatar-size-mid {
+  width: var(--avatar-size-mid);
+  height: var(--avatar-size-mid);
+}
+
+@utility avatar-size-large {
+  width: var(--avatar-size-large);
+  height: var(--avatar-size-large);
+}
+
+/** Круглые индикаторы выбора — диаметр из `--selection-indicator-*` (→ space-токены). */
+@utility selection-indicator-small {
+  width: var(--selection-indicator-small);
+  height: var(--selection-indicator-small);
+  min-width: var(--selection-indicator-small);
+  min-height: var(--selection-indicator-small);
+}
+@utility selection-indicator-base {
+  width: var(--selection-indicator-base);
+  height: var(--selection-indicator-base);
+  min-width: var(--selection-indicator-base);
+  min-height: var(--selection-indicator-base);
+}
+@utility selection-indicator-mid {
+  width: var(--selection-indicator-mid);
+  height: var(--selection-indicator-mid);
+  min-width: var(--selection-indicator-mid);
+  min-height: var(--selection-indicator-mid);
+}
+@utility selection-indicator-large {
+  width: var(--selection-indicator-large);
+  height: var(--selection-indicator-large);
+  min-width: var(--selection-indicator-large);
+  min-height: var(--selection-indicator-large);
 }
 
 /** Иконки: ширина и высота из `--icon-size-*` (см. `tokens/styles.css`). */

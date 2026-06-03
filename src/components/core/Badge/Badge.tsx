@@ -1,8 +1,11 @@
 import type { AlertStatus } from "@/components/core/Alert";
 
 import {
+  Children,
+  cloneElement,
   createContext,
   forwardRef,
+  Fragment,
   isValidElement,
   useCallback,
   useContext,
@@ -11,6 +14,7 @@ import {
   useRef,
   useState,
   type HTMLAttributes,
+  type ReactElement,
   type ReactNode,
 } from "react";
 
@@ -49,7 +53,7 @@ const BADGE_DOT_FILL: Record<BadgeTone, string> = {
   warning: "bg-warning",
 };
 
-export type BadgeSize = "small" | "base" | "large";
+export type BadgeSize = "small" | "base" | "mid" | "large";
 
 /** Угол привязки внутри `Badge.Anchor`. */
 export type BadgePlacement =
@@ -72,19 +76,15 @@ const BADGE_ANCHOR_PLACEMENT: Record<BadgePlacement, string> = {
 const BADGE_TEXT_ROW: Record<BadgeSize, string> = {
   small: "gap-xsmall px-small py-xsmall",
   base: "gap-xsmall px-base py-xsmall",
+  mid: "gap-xsmall px-plus py-xsmall",
   large: "gap-small px-plus py-xsmall",
 };
 
-/** Мин. ширина с подписью = сторона квадрата `icon-only` того же размера (не «вертикальная капсула»). */
-const BADGE_TEXT_MIN_WIDTH: Record<BadgeSize, string> = {
-  small: "min-w-[1.625rem]",
-  base: "min-w-[1.755rem]",
-  large: "min-w-[1.875rem]",
-};
 
 const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
   small: "tools",
   base: "small",
+  mid: "small",
   large: "base",
 };
 
@@ -92,24 +92,120 @@ const BADGE_ICON_ONLY: Record<BadgeSize, string> = {
   small:
     "shrink-0 p-xsmall [&_svg]:icon-small",
   base: "shrink-0 p-small [&_svg]:icon-base",
+  mid: "shrink-0 p-base [&_svg]:icon-base",
   large:
     "shrink-0 p-plus [&_svg]:icon-large",
 };
 
 const BADGE_DOT_DIM: Record<BadgeSize, string> = {
   small: "icon-small min-h-3 min-w-3 shrink-0 p-0",
-  base: "icon-base min-h-4 min-w-4 shrink-0 p-0",
+  base: "icon-small min-h-4 min-w-4 shrink-0 p-0",
+  mid: "icon-base min-h-4 min-w-4 shrink-0 p-0",
   large: "icon-large min-h-5 min-w-5 shrink-0 p-0",
 };
 
 const BADGE_INLINE_SVG_SIZE: Record<BadgeSize, string> = {
   small: "[&_svg]:icon-small",
-  base: "[&_svg]:icon-base",
+  base: "[&_svg]:icon-small",
+  mid: "[&_svg]:icon-base",
   large: "[&_svg]:icon-large",
 };
 
 export type BadgeIconPosition = "start" | "end";
 
+/** Значение `data-icon` на inline-иконке в children. */
+export type BadgeInlineIconPosition = "inline-start" | "inline-end";
+
+
+function readBadgeInlineIconPosition(el: ReactElement): BadgeInlineIconPosition | null {
+  const raw = (el.props as { "data-icon"?: string })["data-icon"];
+  if (raw === "inline-start" || raw === "start") return "inline-start";
+  if (raw === "inline-end" || raw === "end") return "inline-end";
+  return null;
+}
+
+function isInlineIconChild(node: ReactNode): node is ReactElement {
+  return isValidElement(node) && readBadgeInlineIconPosition(node) != null;
+}
+
+function hasInlineIconChildren(children: ReactNode): boolean {
+  return Children.toArray(children).some(isInlineIconChild);
+}
+
+function isBadgeTextContent(node: ReactNode): boolean {
+  if (typeof node === "string") return node.trim().length > 0;
+  if (typeof node === "number") return true;
+  if (isValidElement(node)) return readBadgeInlineIconPosition(node) == null;
+  return false;
+}
+
+function hasBadgeTextContent(children: ReactNode): boolean {
+  return Children.toArray(children).some(isBadgeTextContent);
+}
+
+function ensureDecorativeIcon(el: ReactElement): ReactElement {
+  const props = el.props as { "aria-hidden"?: boolean; "aria-label"?: string };
+  if (props["aria-hidden"] === true || props["aria-label"]) return el;
+  return cloneElement(el, { "aria-hidden": true } as Record<string, unknown>);
+}
+
+function renderBadgeInlineChild(node: ReactNode, size: BadgeSize): ReactNode {
+  if (node == null || node === false) return null;
+
+  if (typeof node === "string") {
+    const trimmed = node.trim();
+    if (!trimmed) return null;
+    return (
+      <Text
+        as="span"
+        variant={BADGE_TEXT_VARIANT[size]}
+        inheritColor
+      >
+        {node}
+      </Text>
+    );
+  }
+
+  if (typeof node === "number") {
+    return (
+      <Text
+        as="span"
+        variant={BADGE_TEXT_VARIANT[size]}
+        inheritColor
+      >
+        {node}
+      </Text>
+    );
+  }
+
+  if (isValidElement(node)) {
+    if (readBadgeInlineIconPosition(node)) {
+      return (
+        <span
+          className={cn("inline-flex shrink-0 [&_svg]:shrink-0", BADGE_INLINE_SVG_SIZE[size])}
+        >
+          {ensureDecorativeIcon(node)}
+        </span>
+      );
+    }
+    return node;
+  }
+
+  return null;
+}
+
+function renderBadgeInlineChildren(children: ReactNode, size: BadgeSize): ReactNode {
+  return Children.map(Children.toArray(children), (child, index) => (
+    <Fragment key={index}>{renderBadgeInlineChild(child, size)}</Fragment>
+  ));
+}
+
+function badgeHasAccessibleName(props: HTMLAttributes<HTMLSpanElement>): boolean {
+  return (
+    typeof props["aria-label"] === "string" ||
+    typeof props["aria-labelledby"] === "string"
+  );
+}
 
 /** Устаревший литерал из API; сводим к `secondary`. */
 type BadgeToneProp = BadgeTone | "accent";
@@ -224,8 +320,9 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   color?: BadgeToneProp;
   /** Совместимость с прежним API; если задан только он — работает как `color`. */
   variant?: BadgeToneProp;
-  /** `small` · `base` · `large`. По умолчанию `base`. */
+  /** `small` · `base` · `mid` · `large`. По умолчанию `base`. */
   size?: BadgeSize;
+  /** Simple API: иконка через prop. Игнорируется, если в `children` есть элемент с `data-icon`. */
   icon?: ReactNode;
   iconPosition?: BadgeIconPosition;
   iconOnly?: boolean;
@@ -235,6 +332,10 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
    * По умолчанию `top-right`. Внутри вложенных контейнеров не действует.
    */
   placement?: BadgePlacement;
+  /**
+   * Текст или compound-иконки: `data-icon="inline-start" | "inline-end"` (также `start` / `end`).
+   * Декоративные иконки получают `aria-hidden`, если нет `aria-label`.
+   */
   children?: ReactNode;
 };
 
@@ -270,7 +371,10 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   const tone = resolveBadgeTone(color ?? undefined, variant);
   const rk = size;
 
-  const meaningChild = hasMeaningfulContent(children);
+  const inlineIconMode = hasInlineIconChildren(children);
+  const meaningChild = inlineIconMode
+    ? hasBadgeTextContent(children)
+    : hasMeaningfulContent(children);
 
   const dot = dotProp;
 
@@ -337,9 +441,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   });
 
   if (dot) {
-    const hasLabel =
-      typeof rest["aria-label"] === "string" ||
-      typeof rest["aria-labelledby"] === "string";
+    const hasLabel = badgeHasAccessibleName(rest);
 
     const dotInnerCls = cn(
       "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
@@ -390,33 +492,53 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     );
   }
 
-  const implicitIconOnly = Boolean(icon) && !meaningChild;
+  const resolvedIcon = inlineIconMode ? null : icon;
+
+  const implicitIconOnly = Boolean(resolvedIcon) && !meaningChild;
+  const inlineIconOnly =
+    inlineIconMode && !meaningChild && Children.toArray(children).length > 0;
   const onlyIconLayout =
     !meaningChild &&
-    (implicitIconOnly || Boolean(iconOnly && icon));
+    (implicitIconOnly || Boolean(iconOnly && resolvedIcon) || inlineIconOnly);
 
-  const iconSlot = icon ? (
+  const iconSlot = resolvedIcon ? (
     <span className={cn("inline-flex shrink-0 [&_svg]:shrink-0", BADGE_INLINE_SVG_SIZE[rk])}>
-      {icon}
+      {isValidElement(resolvedIcon)
+        ? ensureDecorativeIcon(resolvedIcon)
+        : resolvedIcon}
     </span>
   ) : null;
 
-  const textSlot = meaningChild ? (
-    <Text
-      as="span"
-      variant={BADGE_TEXT_VARIANT[rk]}
-      inheritColor
-      className={cn(
-        "min-w-0 truncate",
-        /** `leading-none` обрезает выносные (g, y, p); компактность сохраняем через `leading-tight`. */
-        rk === "small" && "text-[0.6875rem] leading-tight",
-        rk === "base" && "leading-tight",
-        rk === "large" && "leading-snug",
-      )}
-    >
-      {children}
-    </Text>
-  ) : null;
+  const textSlot =
+    meaningChild && !inlineIconMode ? (
+      <Text
+        as="span"
+        variant={BADGE_TEXT_VARIANT[rk]}
+        inheritColor
+      >
+        {children}
+      </Text>
+    ) : null;
+
+  const inlineBody = inlineIconMode ? renderBadgeInlineChildren(children, rk) : null;
+
+  const bodyContent = inlineIconMode ? (
+    inlineBody
+  ) : (
+    <>
+      {iconPosition === "start" && iconSlot}
+      {textSlot}
+      {iconPosition === "end" && iconSlot}
+    </>
+  );
+
+  const iconOnlyBody = inlineIconOnly
+    ? inlineBody
+    : resolvedIcon
+      ? isValidElement(resolvedIcon)
+        ? ensureDecorativeIcon(resolvedIcon)
+        : resolvedIcon
+      : children;
 
   if (onlyIconLayout) {
     const iconInnerCls = cn(
@@ -428,16 +550,19 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       className,
     );
 
+    const iconOnlyA11y =
+      badgeHasAccessibleName(rest) ? rest : { ...rest, "aria-hidden": true as const, role: "presentation" as const };
+
     if (splitLift) {
       return (
         <span
           ref={setMergedRef}
           data-badge-root
           className={cn("pointer-events-none", placementClass)}
-          {...rest}
+          {...iconOnlyA11y}
         >
           <span ref={innerLiftRef} data-badge-lift-target className={iconInnerCls}>
-            {icon ?? children}
+            {iconOnlyBody}
           </span>
         </span>
       );
@@ -455,19 +580,18 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           placementClass,
           className,
         )}
-        {...rest}
+        {...iconOnlyA11y}
       >
-        {icon ?? children}
+        {iconOnlyBody}
       </span>
     );
   }
 
-  const showIconWithText = Boolean(iconSlot && textSlot);
+  const showIconWithText = Boolean(!inlineIconMode && iconSlot && textSlot);
   const dataIcon = showIconWithText ? iconPosition : undefined;
 
   const textInnerCls = cn(
     "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
-    BADGE_TEXT_MIN_WIDTH[rk],
     BADGE_SURFACE[tone],
     BADGE_TEXT_ROW[rk],
     splitLift && "will-change-transform origin-center",
@@ -489,9 +613,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           data-icon={dataIcon}
           className={textInnerCls}
         >
-          {iconPosition === "start" && iconSlot}
-          {textSlot}
-          {iconPosition === "end" && iconSlot}
+          {bodyContent}
         </span>
       </span>
     );
@@ -504,7 +626,6 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       data-badge-root
       className={cn(
         "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
-        BADGE_TEXT_MIN_WIDTH[rk],
         isDirectAnchorChild && "pointer-events-none",
         BADGE_SURFACE[tone],
         BADGE_TEXT_ROW[rk],
@@ -513,9 +634,7 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       )}
       {...rest}
     >
-      {iconPosition === "start" && iconSlot}
-      {textSlot}
-      {iconPosition === "end" && iconSlot}
+      {bodyContent}
     </span>
   );
 });

@@ -62,7 +62,7 @@ function CardContent({ className = "", ...rest }: CardContentProps) {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col gap-small py-plus px-mid text-left",
+        "flex min-w-0 flex-col gap-small py-plus px-mid",
         className,
       )}
       {...rest}
@@ -77,7 +77,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
         ref={ref as Ref<HTMLElement>}
         as="h3"
         variant="base"
-        className={cn("min-w-0 leading-snug", className)}
+        className={cn("min-w-0", className)}
         {...rest}
       />
     );
@@ -93,7 +93,7 @@ const CardDescription = forwardRef<
       ref={ref as Ref<HTMLElement>}
       as="p"
       variant="base"
-      className={cn("min-w-0 leading-normal text-muted", className)}
+      className={cn("min-w-0 text-muted", className)}
       {...rest}
     />
   );
@@ -102,10 +102,10 @@ const CardDescription = forwardRef<
 function CardBody({ className = "", children, ...rest }: CardBodyProps) {
   return (
     <div
-      className={cn("min-w-0 px-mid pb-mid text-left", className)}
+      className={cn("min-w-0 px-mid pb-mid", className)}
       {...rest}
     >
-      <Text variant="base" as="div" className="leading-relaxed">
+      <Text variant="base" as="div">
         {children}
       </Text>
     </div>
@@ -117,7 +117,7 @@ function CardFooter({ className = "", ...rest }: CardFooterProps) {
   return (
     <div
       className={cn(
-        "mt-auto border-t border-base py-plus px-mid text-left text-sm text-muted",
+        "mt-auto border-t border-base py-plus px-mid text-muted",
         className,
       )}
       {...rest}
@@ -224,7 +224,7 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
         tabIndexProp ?? (pressable ? 0 : undefined)
       }
       className={cn(
-        "flex min-w-0 flex-col overflow-hidden rounded-mid text-left text-foreground outline-none",
+        "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",
         pressable &&
           "relative cursor-pointer animate-shadow button-idle-surface-transition motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
         CARD_SURFACE[variant],
@@ -247,7 +247,7 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
       {...rest}
     >
       {pressable ? (
-        <div className="relative flex min-w-0 flex-1 flex-col text-left">
+        <div className="relative flex min-w-0 flex-1 flex-col">
           {children}
         </div>
       ) : (

@@ -1,5 +1,15 @@
 export {
   Accordion,
   type AccordionProps,
-  type AccordionItem,
+  type AccordionItemProps,
+  type AccordionHeadingProps,
+  type AccordionTriggerProps,
+  type AccordionMessageProps,
+  type AccordionIconProps,
+  type AccordionContentProps,
+  type AccordionTitleProps,
+  type AccordionDescriptionProps,
+  type AccordionIndicatorProps,
+  type AccordionPanelProps,
+  type AccordionBodyProps,
 } from "./Accordion";

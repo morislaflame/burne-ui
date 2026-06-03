@@ -193,8 +193,8 @@ export type PaginationSummaryProps = HTMLAttributes<HTMLDivElement>;
 const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryProps>(
   function PaginationSummary({ className, children, ...rest }, ref) {
     return (
-      <div ref={ref} className={cn("min-w-0 flex-1", className)} {...rest}>
-        <Text as="span" variant="small" className="leading-none text-muted">
+      <div ref={ref} className={cn("min-w-0 flex", className)} {...rest}>
+        <Text as="span" variant="small" className="text-muted">
           {children}
         </Text>
       </div>
@@ -328,7 +328,7 @@ export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
 const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationPrevious(
-    { disabled, onClick, children, "aria-label": ariaLabel = "Предыдущая страница", ...rest },
+    { disabled, onClick, children, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
     const ctx = useOptionalPagination();
@@ -350,14 +350,14 @@ const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProp
       <PaginationInteractive
         ref={ref}
         disabled={resolvedDisabled}
-        aria-label={ariaLabel}
+        {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
         onClick={handleClick}
         {...rest}
       >
         {children ?? (
           <>
             <PaginationPreviousIcon />
-            <Text variant="small" inheritColor as="span" className="leading-none">
+            <Text variant="small" inheritColor as="span">
               Назад
             </Text>
           </>
@@ -369,7 +369,7 @@ const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProp
 
 const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationNext(
-    { disabled, onClick, children, "aria-label": ariaLabel = "Следующая страница", ...rest },
+    { disabled, onClick, children, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
     const ctx = useOptionalPagination();
@@ -394,13 +394,13 @@ const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
       <PaginationInteractive
         ref={ref}
         disabled={resolvedDisabled}
-        aria-label={ariaLabel}
+        {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
         onClick={handleClick}
         {...rest}
       >
         {children ?? (
           <>
-            <Text variant="small" inheritColor as="span" className="leading-none">
+            <Text variant="small" inheritColor as="span">
               Вперёд
             </Text>
             <PaginationNextIcon />
@@ -437,7 +437,15 @@ export type PaginationPageProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
 
 const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>(
   function PaginationPage(
-    { page: pageNumber, isActive, children, onClick, className, ...rest },
+    {
+      page: pageNumber,
+      isActive,
+      children,
+      onClick,
+      className,
+      "aria-label": ariaLabel,
+      ...rest
+    },
     ref,
   ) {
     const ctx = useOptionalPagination();
@@ -461,7 +469,7 @@ const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>(
           variant="small"
           aria-current="page"
           className={cn(
-            "inline-flex min-w-[1.75rem] items-center justify-center px-xsmall py-xsmall font-medium leading-none text-foreground tabular-nums",
+            "inline-flex min-w-[1.75rem] items-center justify-center px-xsmall py-xsmall font-medium text-foreground tabular-nums",
             className,
           )}
         >
@@ -470,15 +478,18 @@ const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>(
       );
     }
 
+    const pageAriaLabel =
+      ariaLabel ?? (children != null ? `Страница ${pageNumber}` : undefined);
+
     return (
       <PaginationInteractive
         ref={ref}
-        aria-label={`Страница ${pageNumber}`}
+        {...(pageAriaLabel != null ? { "aria-label": pageAriaLabel } : {})}
         onClick={handleClick}
         className={className}
         {...rest}
       >
-        <Text variant="small" inheritColor as="span" className="min-w-[1.75rem] leading-none tabular-nums">
+        <Text variant="small" inheritColor as="span" className="min-w-[1.75rem] tabular-nums">
           {label}
         </Text>
       </PaginationInteractive>
@@ -497,7 +508,7 @@ const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsisProps>(
         variant="small"
         aria-hidden
         className={cn(
-          "inline-flex min-w-[1.75rem] items-center justify-center px-xsmall py-xsmall leading-none text-muted tabular-nums",
+          "inline-flex min-w-[1.75rem] items-center justify-center px-xsmall py-xsmall text-muted tabular-nums",
           className,
         )}
         {...rest}
@@ -536,10 +547,10 @@ function getPaginationRange(
   return items;
 }
 
-export type PaginationPagesProps = HTMLAttributes<HTMLSpanElement>;
+/** Без props: диапазон берётся из `page` / `totalPages` / `siblingCount` на корневом `<Pagination>`. */
+export type PaginationPagesProps = Record<string, never>;
 
-const PaginationPages = forwardRef<HTMLSpanElement, PaginationPagesProps>(
-  function PaginationPages(_props, _ref) {
+function PaginationPages() {
     const { page, totalPages, siblingCount } = usePagination();
 
     if (page == null || totalPages == null) {
@@ -576,8 +587,7 @@ const PaginationPages = forwardRef<HTMLSpanElement, PaginationPagesProps>(
         })}
       </>
     );
-  },
-);
+}
 
 /** Пагинация: составной API в стиле `Breadcrumbs` — summary, prev/next, номера страниц. */
 export const Pagination = Object.assign(PaginationRoot, {
@@ -592,3 +602,15 @@ export const Pagination = Object.assign(PaginationRoot, {
   Pages: PaginationPages,
   Ellipsis: PaginationEllipsis,
 });
+
+PaginationRoot.displayName = "Pagination";
+PaginationSummary.displayName = "Pagination.Summary";
+PaginationContent.displayName = "Pagination.Content";
+PaginationItem.displayName = "Pagination.Item";
+PaginationPrevious.displayName = "Pagination.Previous";
+PaginationNext.displayName = "Pagination.Next";
+PaginationPreviousIcon.displayName = "Pagination.PreviousIcon";
+PaginationNextIcon.displayName = "Pagination.NextIcon";
+PaginationPage.displayName = "Pagination.Page";
+PaginationPages.displayName = "Pagination.Pages";
+PaginationEllipsis.displayName = "Pagination.Ellipsis";

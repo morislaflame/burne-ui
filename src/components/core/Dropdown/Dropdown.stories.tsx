@@ -33,7 +33,15 @@ const lightDecorator = [
 const meta = {
   title: "Core Components/Dropdown",
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Составной API: `Dropdown.Trigger`, `Dropdown.Content`, `Dropdown.Item`. Пункты-ссылки — `href` + `selection={false}`. Клавиатура: ↑↓, Home/End, Escape.",
+      },
+    },
+  },
   decorators: [...framedDecorator],
 } satisfies Meta;
 
@@ -119,7 +127,7 @@ export const GroupsWithDifferentIndicators: Story = {
           <Button variant="outline">Смешанное меню</Button>
         </Dropdown.Trigger>
         <Dropdown.Content className="max-w-xs">
-          <Dropdown.Group selectionIndicator>
+          <Dropdown.Group selectionIndicator >
             <Dropdown.Label>С индикатором</Dropdown.Label>
             <Dropdown.Item value="a">Вариант A</Dropdown.Item>
             <Dropdown.Item value="b">Вариант B</Dropdown.Item>
@@ -227,6 +235,32 @@ export const WithSelectionIndicator: Story = {
   },
 };
 
+export const CustomItemIndicator: Story = {
+  name: "ItemIndicator (compound)",
+  render() {
+    return (
+      <Dropdown multiple defaultValue={["ru"]}>
+        <Dropdown.Trigger asChild>
+          <Button variant="outline">Языки</Button>
+        </Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Group>
+            <Dropdown.Label>С variant secondary</Dropdown.Label>
+            <Dropdown.Item value="ru">
+              <Dropdown.ItemIndicator variant="secondary" />
+              Русский
+            </Dropdown.Item>
+            <Dropdown.Item value="en">
+              <Dropdown.ItemIndicator variant="outline" />
+              English
+            </Dropdown.Item>
+          </Dropdown.Group>
+        </Dropdown.Content>
+      </Dropdown>
+    );
+  },
+};
+
 export const OnLightTheme: Story = {
   name: "Светлая тема",
   decorators: [...lightDecorator],
@@ -244,6 +278,58 @@ export const OnLightTheme: Story = {
           </Dropdown.Group>
         </Dropdown.Content>
       </Dropdown>
+    );
+  },
+};
+
+export const LinkItems: Story = {
+  name: "Link-пункты (href)",
+  render() {
+    return (
+      <Dropdown>
+        <Dropdown.Trigger asChild>
+          <Button variant="outline">Навигация</Button>
+        </Dropdown.Trigger>
+        <Dropdown.Content aria-label="Разделы">
+          <Dropdown.Item href="/catalog" selection={false}>
+            Каталог
+          </Dropdown.Item>
+          <Dropdown.Item href="/docs" selection={false}>
+            Документация
+          </Dropdown.Item>
+          <Dropdown.Item value="settings" selection={false}>
+            Настройки (кнопка)
+          </Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>
+    );
+  },
+};
+
+export const Accessibility: Story = {
+  name: "Доступность",
+  render() {
+    return (
+      <div className="flex max-w-md flex-col gap-mid text-left">
+        <p className="text-sm text-muted">
+          Триггер: <code className="text-accent">aria-expanded</code>,{" "}
+          <code className="text-accent">aria-controls</code>. Меню: стрелки, Home/End, Escape
+          возвращает фокус на триггер. Группа с <code className="text-accent">Dropdown.Label</code>{" "}
+          — <code className="text-accent">aria-labelledby</code>.
+        </p>
+        <Dropdown selectionIndicator defaultValue="ru">
+          <Dropdown.Trigger asChild>
+            <Button variant="secondary">Язык</Button>
+          </Dropdown.Trigger>
+          <Dropdown.Content>
+            <Dropdown.Group>
+              <Dropdown.Label>Выберите язык</Dropdown.Label>
+              <Dropdown.Item value="ru">Русский</Dropdown.Item>
+              <Dropdown.Item value="en">English</Dropdown.Item>
+            </Dropdown.Group>
+          </Dropdown.Content>
+        </Dropdown>
+      </div>
     );
   },
 };

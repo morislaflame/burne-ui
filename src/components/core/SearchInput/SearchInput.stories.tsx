@@ -35,6 +35,12 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Atomic-поиск с раскрытием. Для форм — `Input`. **a11y:** задавайте `aria-label`; свёрнутый триггер — `role=\"button\"`, развёрнутое поле — `role=\"search\"` на оболочке.",
+      },
+    },
   },
   decorators: [...darkThemeDecorator],
   args: {
@@ -44,7 +50,7 @@ const meta = {
   argTypes: {
     size: {
       control: "select",
-      options: ["base", "large"],
+      options: ["small", "base", "mid", "large"],
     },
     ripple: {
       control: "boolean",
@@ -70,7 +76,9 @@ export const Sizes: Story = {
   name: "Размеры",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-xlarge">
+      <SearchInput size="small" placeholder="Поиск" />
       <SearchInput size="base" placeholder="Поиск" />
+      <SearchInput size="mid" placeholder="Поиск" />
       <SearchInput size="large" placeholder="Поиск" />
     </div>
   ),
@@ -83,7 +91,7 @@ export const OnLight: Story = {
 
 export const Controlled: Story = {
   name: "Контроль expanded",
-  render: function ControlledDemo() {
+  render: function Controlled() {
     const [open, setOpen] = useState(false);
     return (
       <div className="flex flex-col items-center gap-mid">
@@ -91,6 +99,7 @@ export const Controlled: Story = {
           expanded={open}
           onExpandedChange={setOpen}
           placeholder="Контролируемое поле"
+          aria-label="Контролируемый поиск"
         />
         <button
           type="button"
@@ -102,6 +111,23 @@ export const Controlled: Story = {
       </div>
     );
   },
+};
+
+export const Accessibility: Story = {
+  name: "Доступность",
+  render: () => (
+    <div className="flex max-w-md flex-col gap-mid text-left">
+      <p className="text-sm text-muted">
+        Свёрнуто — <code className="text-accent">role=&quot;button&quot;</code>,{" "}
+        <code className="text-accent">aria-expanded</code>, Enter/Space открывает. Развёрнуто —{" "}
+        <code className="text-accent">role=&quot;search&quot;</code>, фокус на{" "}
+        <code className="text-accent">input</code>. Задайте{" "}
+        <code className="text-accent">aria-label</code> вместо одного placeholder. Clear —{" "}
+        <code className="text-accent">aria-label=&quot;Очистить поле&quot;</code>.
+      </p>
+      <SearchInput aria-label="Поиск по документации" placeholder="Найти…" />
+    </div>
+  ),
 };
 
 const DEMO_EVENTS = [

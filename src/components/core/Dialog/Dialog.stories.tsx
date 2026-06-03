@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Form } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
-import { Input } from "@/components/core/Input/Input";
+import { Input } from "@/components/core/Input";
 import { Dialog } from "./Dialog";
 
 const darkThemeDecorator = [
@@ -126,19 +126,19 @@ export const WithForm: Story = {
             className="min-w-0"
           >
             <Dialog.Body className="flex flex-col gap-mid">
-              <Input
-                label="Имя"
-                name="name"
-                placeholder="Иван"
-                autoComplete="name"
-              />
-              <Input
-                label="Email"
-                name="email"
-                inputType="text"
-                placeholder="you@example.com"
-                autoComplete="email"
-              />
+              <Input>
+                <Input.Label>Имя</Input.Label>
+                <Input.Control name="name" placeholder="Иван" autoComplete="name" />
+              </Input>
+              <Input>
+                <Input.Label>Email</Input.Label>
+                <Input.Control
+                  name="email"
+                  inputType="text"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                />
+              </Input>
             </Dialog.Body>
             <Dialog.Footer>
               <Button

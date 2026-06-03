@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Checkbox } from "@/components/core/Checkbox";
 import { Button } from "@/components/core/Button/Button";
-import { Input } from "@/components/core/Input/Input";
+import { Input } from "@/components/core/Input";
 import type { SelectorOption } from "@/components/core/Selector";
 import { Selector } from "@/components/core/Selector";
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
@@ -62,53 +62,53 @@ function ProfileForm() {
 
   return (
     <Form onSubmit={onSubmit} aria-label="Пример формы">
-      <Selector
-        label="Язык интерфейса"
-        hint="В списке видно описание; в поле — только название."
-        placeholder="Выберите язык"
-        options={localeOptions}
-        value={locale}
-        onValueChange={setLocale}
-      />
-      <Input
-        label="Имя"
-        name="name"
-        placeholder="Иван"
-        autoComplete="name"
-        isRequired
-      />
-      <Input
-        label="Email"
-        name="email"
-        inputType="text"
-        placeholder="you@example.com"
-        autoComplete="email"
-        isRequired
-      />
-      
-      <Input
-        label="Пароль"
-        name="password"
-        inputType="password"
-        hint="Не менее 8 символов."
-        autoComplete="new-password"
-        isRequired
-      />
-      <Input
-        label="Аватар"
-        name="avatar"
-        inputType="file"
-        accept="image/*"
-        placeholder="PNG или JPEG"
-      />
-      <CheckboxGroup
-        title="Уведомления"
-        description="Один канал: при выборе другого предыдущий снимается."
-        selection="single"
-        isRequired
-      >
-        <Checkbox name="channels" value="email" label="Email" />
-        <Checkbox name="channels" value="push" label="Push в приложении" />
+      <Selector>
+        <Selector.Label>Язык интерфейса</Selector.Label>
+        <Selector.Control
+          placeholder="Выберите язык"
+          options={localeOptions}
+          value={locale}
+          onValueChange={setLocale}
+        />
+        <Selector.Hint>В списке видно описание; в поле — только название.</Selector.Hint>
+      </Selector>
+      <Input isRequired>
+        <Input.Label>Имя</Input.Label>
+        <Input.Control name="name" placeholder="Иван" autoComplete="name" />
+      </Input>
+      <Input isRequired>
+        <Input.Label>Email</Input.Label>
+        <Input.Control
+          name="email"
+          inputType="text"
+          placeholder="you@example.com"
+          autoComplete="email"
+        />
+      </Input>
+      <Input isRequired>
+        <Input.Label>Пароль</Input.Label>
+        <Input.Control
+          name="password"
+          inputType="password"
+          autoComplete="new-password"
+        />
+        <Input.Hint>Не менее 8 символов.</Input.Hint>
+      </Input>
+      <Input>
+        <Input.Label>Аватар</Input.Label>
+        <Input.Control name="avatar" inputType="file" accept="image/*" placeholder="PNG или JPEG" />
+      </Input>
+      <CheckboxGroup selection="single" isRequired>
+        <CheckboxGroup.Legend>
+          <CheckboxGroup.Label>Уведомления</CheckboxGroup.Label>
+          <CheckboxGroup.Hint>
+            Один канал: при выборе другого предыдущий снимается.
+          </CheckboxGroup.Hint>
+        </CheckboxGroup.Legend>
+        <CheckboxGroup.List>
+          <Checkbox name="channels" value="email" label="Email" />
+          <Checkbox name="channels" value="push" label="Push в приложении" />
+        </CheckboxGroup.List>
       </CheckboxGroup>
       <div className="flex justify-end gap-plus pt-base">
         <Button type="button" variant="outline" size="base">
@@ -124,4 +124,50 @@ function ProfileForm() {
 
 export const Default: Story = {
   render: () => <ProfileForm />,
+};
+
+function ValidationForm() {
+  const [email, setEmail] = useState("bad@");
+  const emailInvalid = email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  }, []);
+
+  return (
+    <Form onSubmit={onSubmit} aria-label="Форма с ошибками валидации">
+      <Input status={emailInvalid ? "danger" : "default"} isRequired>
+        <Input.Label>Email</Input.Label>
+        <Input.Control
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+          placeholder="you@example.com"
+        />
+        <Input.Hint>Формат: name@domain.tld</Input.Hint>
+        {emailInvalid ? <Input.Error>Укажите корректный адрес.</Input.Error> : null}
+      </Input>
+      <Selector status="danger" isRequired>
+        <Selector.Label>Язык интерфейса</Selector.Label>
+        <Selector.Control placeholder="Выберите язык" options={localeOptions} />
+        <Selector.Error>Выберите язык из списка.</Selector.Error>
+      </Selector>
+      <Checkbox
+        danger
+        label="Согласие на обработку данных"
+        error="Необходимо принять условия."
+      />
+      <div className="flex justify-end gap-plus pt-base">
+        <Button type="submit" variant="default" size="base">
+          Отправить
+        </Button>
+      </div>
+    </Form>
+  );
+}
+
+export const Validation: Story = {
+  name: "Валидация полей",
+  render: () => <ValidationForm />,
 };

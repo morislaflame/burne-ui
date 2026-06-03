@@ -114,7 +114,7 @@ function DialogDescription({
       as="p"
       variant="base"
       id={id ?? descriptionId}
-      className={cn("leading-normal text-muted", className)}
+      className={cn("text-muted", className)}
       {...rest}
     />
   );
@@ -162,7 +162,7 @@ function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
       className={cn(
-        "min-h-0 flex-1 overflow-y-auto py-plus px-mid text-left",
+        "min-h-0 flex-1 overflow-y-auto py-plus px-mid",
         className,
       )}
       {...rest}

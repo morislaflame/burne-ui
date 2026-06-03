@@ -92,7 +92,7 @@ export const ToolbarFusedInput: Story = {
     return (
       <div className="max-w-lg">
         <ButtonGroup aria-label="Поиск">
-          <Input placeholder="Search..." aria-label="Search query" variant="outline" />
+          <Input.Control placeholder="Search..." aria-label="Search query" variant="outline" />
           <Button variant="outline" aria-label="Search" className="min-w-fit min-h-fit">
             <IoSearch aria-hidden className="icon-base" />
           </Button>

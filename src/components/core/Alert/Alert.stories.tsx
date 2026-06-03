@@ -1,8 +1,14 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Alert } from "./Alert";
+import {
+  DualApiStoryPanel,
+  DualApiStoryPanels,
+  dualApiStorySource,
+} from "@/components/core/utils/dualApiStoryChrome";
 import { Button } from "@/components/core/Button";
+
+import { Alert } from "./Alert";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -35,11 +41,16 @@ const meta = {
   title: "Core Components/Alert",
   component: Alert,
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
-  decorators: [...darkThemeDecorator],
-  args: {
-    variant: "default",
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Сообщение пользователю. **Simple** — `title`, `description`, `icon`, `action` на root. **Compound** — `Message`, `Indicator`, `Content`, `Title`, `Description`, `Action`. **a11y:** auto-`id`, `aria-labelledby` / `aria-describedby`; для `danger`/`warning` — `role=\"alert\"`.",
+      },
+    },
   },
+  decorators: [...darkThemeDecorator],
   argTypes: {
     status: {
       control: "select",
@@ -53,13 +64,17 @@ const meta = {
         "warning",
       ],
     },
-    variant: {
-      control: "select",
-      options: ["default", "outline", "secondary", "danger", "success", "info"],
-    },
     children: {
       control: false,
       table: { type: { summary: "ReactNode" } },
+    },
+    action: {
+      control: false,
+      table: { type: { summary: "ReactNode" } },
+    },
+    icon: {
+      control: false,
+      table: { type: { summary: "ReactNode | null" } },
     },
   },
 } satisfies Meta<typeof Alert>;
@@ -68,127 +83,134 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-function AlertAllVariantsDemo() {
+function AlertAllVariantsDemo({ simple = false }: { simple?: boolean }) {
+  const items = [
+    {
+      status: "default" as const,
+      title: "Default",
+      description: "Нейтральное сообщение.",
+    },
+    {
+      status: "outline" as const,
+      title: "Outline",
+      description: "Полупрозрачный фон с размытием.",
+    },
+    {
+      status: "secondary" as const,
+      title: "Secondary",
+      description: "Тот же фон, что у бейджа/кнопки secondary.",
+    },
+    {
+      status: "danger" as const,
+      title: "Unable to connect to server",
+      description: "We're experiencing connection issues.",
+      action: (
+        <Button size="base" variant="danger">
+          Retry
+        </Button>
+      ),
+    },
+    {
+      status: "success" as const,
+      title: "Profile updated successfully",
+    },
+    {
+      status: "info" as const,
+      title: "Справка",
+      description: "Дополнительная информация в нейтрально-информационном тоне.",
+    },
+    {
+      status: "warning" as const,
+      title: "Scheduled maintenance",
+      description: "Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.",
+    },
+  ];
+
+  if (simple) {
+    return (
+      <div className="flex flex-col gap-plus">
+        {items.map((item) => (
+          <Alert
+            key={item.status}
+            status={item.status}
+            title={item.title}
+            description={item.description}
+            action={item.action}
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-plus">
-      <Alert status="default">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Default</Alert.Title>
-            <Alert.Description>Нейтральное сообщение.</Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="outline">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Outline</Alert.Title>
-            <Alert.Description>Полупрозрачный фон с размытием.</Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="secondary">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Secondary</Alert.Title>
-            <Alert.Description>Тот же фон, что у бейджа/кнопки secondary.</Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="danger">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Unable to connect to server</Alert.Title>
-            <Alert.Description>
-              We&apos;re experiencing connection issues.
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-        <Alert.Action>
-          <Button size="base" variant="danger">
-            Retry
-          </Button>
-        </Alert.Action>
-      </Alert>
-
-      <Alert status="success">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Profile updated successfully</Alert.Title>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="info">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Справка</Alert.Title>
-            <Alert.Description>
-              Дополнительная информация в нейтрально-информационном тоне.
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
-
-      <Alert status="warning">
-        <Alert.Message>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>Scheduled maintenance</Alert.Title>
-            <Alert.Description>
-              Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Message>
-      </Alert>
+      {items.map((item) => (
+        <Alert key={item.status} status={item.status}>
+          <Alert.Message>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{item.title}</Alert.Title>
+              {item.description ? (
+                <Alert.Description>{item.description}</Alert.Description>
+              ) : null}
+            </Alert.Content>
+          </Alert.Message>
+          {item.action ? <Alert.Action>{item.action}</Alert.Action> : null}
+        </Alert>
+      ))}
     </div>
   );
 }
 
 export const Default: Story = {
-  render: (args) => (
-    <Alert {...args}>
-      <Alert.Message>
-        <Alert.Indicator />
-        <Alert.Content>
-          <Alert.Title>Heads up!</Alert.Title>
-          <Alert.Description>
-            You can add components and dependencies to your app using the cli.
-          </Alert.Description>
-        </Alert.Content>
-      </Alert.Message>
-    </Alert>
+  name: "Simple и Compound",
+  ...dualApiStorySource,
+  render: () => (
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — props на &lt;Alert&gt;">
+        <Alert
+          status="info"
+          title="Heads up!"
+          description="You can add components and dependencies to your app using the cli."
+        />
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — Message / Indicator">
+        <Alert status="info">
+          <Alert.Message>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>Heads up!</Alert.Title>
+              <Alert.Description>
+                You can add components and dependencies to your app using the cli.
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Message>
+        </Alert>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
   ),
+};
+
+export const Playground: Story = {
+  args: {
+    status: "info",
+    title: "Heads up!",
+    description: "You can add components and dependencies to your app using the cli.",
+  },
 };
 
 export const WithAction: Story = {
   render: () => (
-    <Alert status="info">
-      <Alert.Message>
-        <Alert.Indicator />
-        <Alert.Content>
-          <Alert.Title>Update available</Alert.Title>
-          <Alert.Description>
-            A new version of the application is available. Please refresh to get the
-            latest features and bug fixes.
-          </Alert.Description>
-        </Alert.Content>
-      </Alert.Message>
-      <Alert.Action>
+    <Alert
+      status="info"
+      title="Update available"
+      description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
+      action={
         <Button size="base" variant="info">
           Refresh
         </Button>
-      </Alert.Action>
-    </Alert>
+      }
+    />
   ),
 };
 
@@ -197,8 +219,31 @@ export const Variants: Story = {
   render: () => <AlertAllVariantsDemo />,
 };
 
+export const VariantsSimple: Story = {
+  name: "Варианты — simple API",
+  render: () => <AlertAllVariantsDemo simple />,
+};
+
 export const VariantsOnLightTheme: Story = {
   name: "Варианты (светлая тема)",
   decorators: [...lightThemeDecorator],
   render: () => <AlertAllVariantsDemo />,
+};
+
+export const Accessibility: Story = {
+  name: "Доступность (auto id + role)",
+  render: () => (
+    <div className="flex flex-col gap-plus">
+      <Alert
+        status="danger"
+        title="Не удалось сохранить"
+        description="Проверьте соединение и повторите попытку."
+      />
+      <Alert
+        status="info"
+        title="Черновик сохранён"
+        description="Синхронизация выполняется в фоне."
+      />
+    </div>
+  ),
 };

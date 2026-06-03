@@ -2,6 +2,11 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Ripple } from "@/components/core/Ripple";
+import {
+  DualApiStoryPanel,
+  DualApiStoryPanels,
+  dualApiStorySource,
+} from "@/components/core/utils/dualApiStoryChrome";
 
 import { Expandable } from "./Expandable";
 
@@ -56,29 +61,68 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Раскрывающийся блок. **Simple** — `title`, `description`, `icon` на root, контент в `children`. **Compound** — `Trigger`, `Panel`, опционально `Message`, `Icon`, `Content`, `Title`, `Description`.",
+      },
+    },
   },
   decorators: [...darkThemeDecorator],
+  args: {
+    title: "Заголовок",
+  },
 } satisfies Meta<typeof Expandable>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** Составление: корень → Trigger (иконка, текст, Chevron при необходимости) → Panel. */
 export const Default: Story = {
+  name: "Simple и Compound",
+  ...dualApiStorySource,
   render: () => (
-    <Expandable>
-      <Expandable.Trigger>
-        <Expandable.Content>
-          <Expandable.Title>Заголовок</Expandable.Title>
-        </Expandable.Content>
-      </Expandable.Trigger>
-      <Expandable.Panel>
-        <p className="text-sm leading-relaxed">
-          Любой контент: текст, списки, вложенные блоки. Высота панели подстраивается под
-          содержимое.
-        </p>
-      </Expandable.Panel>
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — props на &lt;Expandable&gt;">
+        <Expandable
+          title="Уведомления"
+          icon={infoIcon}
+          description="Краткое описание в триггере"
+        >
+          <p className="text-sm leading-relaxed">
+            Контент панели — любые дети root, без отдельного Panel.
+          </p>
+        </Expandable>
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — Trigger / Message">
+        <Expandable>
+          <Expandable.Trigger>
+            <Expandable.Message>
+              <Expandable.Icon>{infoIcon}</Expandable.Icon>
+              <Expandable.Content>
+                <Expandable.Title>Уведомления</Expandable.Title>
+                <Expandable.Description>Краткое описание в триггере</Expandable.Description>
+              </Expandable.Content>
+            </Expandable.Message>
+          </Expandable.Trigger>
+          <Expandable.Panel>
+            <p className="text-sm leading-relaxed">
+              Любой контент: текст, списки, вложенные блоки.
+            </p>
+          </Expandable.Panel>
+        </Expandable>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
+  ),
+};
+
+export const Playground: Story = {
+  render: (args) => (
+    <Expandable {...args}>
+      <p className="text-sm leading-relaxed">
+        Любой контент внутри панели. В simple API достаточно обернуть его в{" "}
+        <code className="text-xs">&lt;Expandable&gt;</code>.
+      </p>
     </Expandable>
   ),
 };
@@ -86,18 +130,8 @@ export const Default: Story = {
 export const WithIcon: Story = {
   name: "С иконкой",
   render: () => (
-    <Expandable>
-      <Expandable.Trigger>
-        <Expandable.Icon>{infoIcon}</Expandable.Icon>
-        <Expandable.Content>
-          <Expandable.Title>Уведомления</Expandable.Title>
-        </Expandable.Content>
-      </Expandable.Trigger>
-      <Expandable.Panel>
-        <p className="text-sm">
-          Иконка выровнена по верху вместе с заголовком.
-        </p>
-      </Expandable.Panel>
+    <Expandable title="Уведомления" icon={infoIcon}>
+      <p className="text-sm">Иконка на одной линии с заголовком.</p>
     </Expandable>
   ),
 };
@@ -105,21 +139,17 @@ export const WithIcon: Story = {
 export const WithImage: Story = {
   name: "С изображением",
   render: () => (
-    <Expandable defaultOpen>
-      <Expandable.Trigger>
-        <Expandable.Content>
-          <Expandable.Title>Progress is a mindset</Expandable.Title>
-          <Expandable.Description>Редакционный кадр в раскрывающемся блоке.</Expandable.Description>
-        </Expandable.Content>
-      </Expandable.Trigger>
-      <Expandable.Panel>
-        <img
-          src={PIN_IMAGE}
-          alt="Портрет в глянцевом красном шлеме, текст на визоре"
-          className="w-full max-h-[min(420px,55vh)] rounded-mid object-cover"
-          loading="lazy"
-        />
-      </Expandable.Panel>
+    <Expandable
+      defaultOpen
+      title="Progress is a mindset"
+      description="Редакционный кадр в раскрывающемся блоке."
+    >
+      <img
+        src={PIN_IMAGE}
+        alt="Портрет в глянцевом красном шлеме, текст на визоре"
+        className="w-full max-h-[min(420px,55vh)] rounded-mid object-cover"
+        loading="lazy"
+      />
     </Expandable>
   ),
 };
@@ -149,64 +179,57 @@ export const PressRipple: Story = {
   ),
 };
 
+export const Accessibility: Story = {
+  name: "Доступность",
+  render: () => (
+    <div className="flex flex-col gap-mid text-left">
+      <p className="text-sm text-muted">
+        Триггер — native <code className="text-accent">&lt;button type=&quot;button&quot;&gt;</code> с{" "}
+        <code className="text-accent">aria-expanded</code> и{" "}
+        <code className="text-accent">aria-controls</code>. Панель —{" "}
+        <code className="text-accent">role=&quot;region&quot;</code>,{" "}
+        <code className="text-accent">aria-labelledby</code>; при закрытии —{" "}
+        <code className="text-accent">aria-hidden</code> и <code className="text-accent">inert</code>.
+      </p>
+      <Expandable title="Настройки уведомлений" description="Email и push">
+        <p className="text-sm">Содержимое недоступно с клавиатуры, пока блок свёрнут.</p>
+      </Expandable>
+    </div>
+  ),
+};
+
 export const AllVariationsLight: Story = {
   name: "Все варианты — светлая тема",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex flex-col gap-mid">
-      <Expandable>
-        <Expandable.Trigger>
-          <Expandable.Content>
-            <Expandable.Title>Только заголовок</Expandable.Title>
-          </Expandable.Content>
-        </Expandable.Trigger>
-        <Expandable.Panel>
-          <p className="text-sm">Контент без описания в триггере.</p>
-        </Expandable.Panel>
+      <Expandable title="Только заголовок">
+        <p className="text-sm">Контент без описания в триггере.</p>
       </Expandable>
 
-      <Expandable>
-        <Expandable.Trigger>
-          <Expandable.Content>
-            <Expandable.Title>С описанием</Expandable.Title>
-            <Expandable.Description>
-              Дополнительная строка под заголовком.
-            </Expandable.Description>
-          </Expandable.Content>
-        </Expandable.Trigger>
-        <Expandable.Panel>
-          <p className="text-sm">Текст внутри панели.</p>
-        </Expandable.Panel>
+      <Expandable title="С описанием" description="Дополнительная строка под заголовком.">
+        <p className="text-sm">Текст внутри панели.</p>
       </Expandable>
 
-      <Expandable>
-        <Expandable.Trigger>
-          <Expandable.Icon>{infoIcon}</Expandable.Icon>
-          <Expandable.Content>
-            <Expandable.Title>С иконкой</Expandable.Title>
-            <Expandable.Description>Иконка слева.</Expandable.Description>
-          </Expandable.Content>
-        </Expandable.Trigger>
-        <Expandable.Panel>
-          <p className="text-sm">Контент.</p>
-        </Expandable.Panel>
+      <Expandable
+        title="С иконкой"
+        icon={infoIcon}
+        description="Иконка слева."
+      >
+        <p className="text-sm">Контент.</p>
       </Expandable>
 
-      <Expandable defaultOpen>
-        <Expandable.Trigger>
-          <Expandable.Content>
-            <Expandable.Title>С изображением</Expandable.Title>
-            <Expandable.Description>По умолчанию развёрнуто.</Expandable.Description>
-          </Expandable.Content>
-        </Expandable.Trigger>
-        <Expandable.Panel>
-          <img
-            src={PIN_IMAGE}
-            alt=""
-            className="w-full max-h-[min(320px,40vh)] rounded-mid object-cover"
-            loading="lazy"
-          />
-        </Expandable.Panel>
+      <Expandable
+        defaultOpen
+        title="С изображением"
+        description="По умолчанию развёрнуто."
+      >
+        <img
+          src={PIN_IMAGE}
+          alt=""
+          className="w-full max-h-[min(320px,40vh)] rounded-mid object-cover"
+          loading="lazy"
+        />
       </Expandable>
     </div>
   ),

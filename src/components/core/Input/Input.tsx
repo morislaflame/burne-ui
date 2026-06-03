@@ -31,16 +31,27 @@ import {
   buttonGroupOverlapBorderClasses,
   buttonGroupRoundingClasses,
 } from "@/components/core/utils/buttonGroupSegment";
+import { useOptionalButtonGroupSegment } from "@/components/core/utils/buttonGroupContext";
 import { cn } from "@/utils/cn";
 import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
+
+import { useOptionalInputFieldContext } from "./inputFieldContext";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import type { ButtonSize } from "@/components/core/Button";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+
+function inputSizeFromButtonSize(bs: ButtonSize): InputSize {
+  return bs;
+}
 
 export type InputVariant = "default" | "outline";
 
 /** Валидация / обратная связь: бордер оболочки и цвет примечания. */
 export type InputStatus = "default" | "danger" | "success" | "warning";
 
-/** Совпадает с размерами `Button` по высоте (`base`, `large`, `xlarge`). Без `small`. */
-export type InputSize = "base" | "large" | "xlarge";
+/** Совпадает с размерами `Button`: `small` · `base` · `mid` · `large`. */
+export type InputSize = ComponentSize;
 
 export type InputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -49,7 +60,8 @@ export type InputProps = Omit<
   /** Визуал заливки. */
   variant?: InputVariant;
   /**
-   * Высота и отступы поля — как у `Button` того же размера. По умолчанию `base` (`min-h-8`, `px-plus py-small`).
+   * Высота и отступы поля — как у `Button` того же размера. По умолчанию `base`.
+   * `className` применяется к оболочке поля (`data-slot="input-shell"`).
    */
   size?: InputSize;
   /**
@@ -59,12 +71,6 @@ export type InputProps = Omit<
   groupSegment?: ButtonGroupSegment;
   /** Состояние поля */
   status?: InputStatus;
-  /** Подпись над полем. */
-  label?: string;
-  /** Красная звездочка справа от подписи. */
-  isRequired?: boolean;
-  /** Примечание под полем (опционально). */
-  hint?: string;
   /** Тип значения: текст, число, пароль или файл (с превью для изображений). */
   inputType?: "text" | "number" | "password" | "file";
   /** Слот слева внутри оболочки, отделён вертикальной чертой. */
@@ -112,12 +118,6 @@ const STATUS_TINT_AFFIX: Record<
   warning: "bg-surface-tint-warning-strong",
 };
 
-const STATUS_HINT: Record<InputStatus, string> = {
-  default: "text-muted",
-  danger: "text-danger",
-  success: "text-success",
-  warning: "text-warning",
-};
 
 const AFFIX_SURFACE: Record<InputVariant, string> = {
   default:
@@ -127,41 +127,49 @@ const AFFIX_SURFACE: Record<InputVariant, string> = {
 };
 
 const AFFIX_PADDING: Record<InputSize, string> = {
-  base: "px-plus text-base leading-[1.2]",
-  large: "px-mid text-mid leading-[1.2]",
-  xlarge: "px-large text-mid leading-[1.2]",
+  small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
+  base: `${CONTROL_SIZE_LAYOUT.base.affixPadX} ${CONTROL_SIZE_LAYOUT.base.affixText}`,
+  mid: `${CONTROL_SIZE_LAYOUT.mid.affixPadX} ${CONTROL_SIZE_LAYOUT.mid.affixText}`,
+  large: `${CONTROL_SIZE_LAYOUT.large.affixPadX} ${CONTROL_SIZE_LAYOUT.large.affixText}`,
 };
 
 const INPUT_CONTROL: Record<InputSize, string> = {
-  base: "px-plus py-small text-base leading-[1.2]",
-  large: "px-mid py-base text-mid leading-[1.2]",
-  xlarge: "px-large py-base text-mid leading-[1.2]",
+  small: CONTROL_SIZE_LAYOUT.small.controlPad,
+  base: CONTROL_SIZE_LAYOUT.base.controlPad,
+  mid: CONTROL_SIZE_LAYOUT.mid.controlPad,
+  large: CONTROL_SIZE_LAYOUT.large.controlPad,
 };
 
-const INPUT_SHELL_MIN: Record<InputSize, string> = {
-  base: "min-h-8",
-  large: "min-h-10",
-  xlarge: "min-h-12",
+const INPUT_SHELL_H: Record<InputSize, string> = {
+  small: CONTROL_SIZE_LAYOUT.small.h,
+  base: CONTROL_SIZE_LAYOUT.base.h,
+  mid: CONTROL_SIZE_LAYOUT.mid.h,
+  large: CONTROL_SIZE_LAYOUT.large.h,
 };
 
 const PASSWORD_TOGGLE_CONTROL: Record<
   InputSize,
   { box: string; icon: string; pad: string }
 > = {
+  small: {
+    box: CONTROL_SIZE_LAYOUT.small.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.small.toggleIcon,
+    pad: CONTROL_SIZE_LAYOUT.small.togglePad,
+  },
   base: {
-    box: "min-h-8 min-w-8",
-    icon: "icon-base",
-    pad: "px-small",
+    box: CONTROL_SIZE_LAYOUT.base.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.base.toggleIcon,
+    pad: CONTROL_SIZE_LAYOUT.base.togglePad,
+  },
+  mid: {
+    box: CONTROL_SIZE_LAYOUT.mid.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.mid.toggleIcon,
+    pad: CONTROL_SIZE_LAYOUT.mid.togglePad,
   },
   large: {
-    box: "min-h-10 min-w-10",
-    icon: "icon-large",
-    pad: "px-base",
-  },
-  xlarge: {
-    box: "min-h-12 min-w-12",
-    icon: "icon-large",
-    pad: "px-plus",
+    box: CONTROL_SIZE_LAYOUT.large.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.large.toggleIcon,
+    pad: CONTROL_SIZE_LAYOUT.large.togglePad,
   },
 };
 
@@ -189,7 +197,7 @@ function AffixSlot({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center text-muted",
+        "flex h-full shrink-0 items-center text-muted",
         AFFIX_PADDING[controlSize],
         surface,
         edge,
@@ -327,15 +335,12 @@ function FileRemoveButton({
   );
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  function Input(
+export const InputControl = forwardRef<HTMLInputElement, InputProps>(
+  function InputControl(
     {
       variant = "default",
-      status = "default",
-      size = "base",
-      label,
-      isRequired = false,
-      hint,
+      status: statusProp,
+      size: sizeProp,
       inputType = "text",
       placeholder,
       prefix,
@@ -344,15 +349,32 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       disabled,
       readOnly,
       className = "",
-      groupSegment,
+      groupSegment: groupSegmentProp,
       onPointerDown,
       onChange,
+      "aria-describedby": ariaDescribedByProp,
       ...rest
     },
     ref,
   ) {
+    const fieldCtx = useOptionalInputFieldContext();
+    const groupCtx = useOptionalButtonGroupSegment();
     const genId = useId();
-    const id = idProp ?? genId;
+    const id = idProp ?? fieldCtx?.inputId ?? genId;
+    const status = statusProp ?? fieldCtx?.status ?? "default";
+    const size = sizeProp ?? fieldCtx?.size ?? inputSizeFromButtonSize(groupCtx?.buttonSize ?? "base");
+    const isRequired = fieldCtx?.isRequired ?? false;
+    const hintConnected = fieldCtx?.hintConnected ?? false;
+    const errorConnected = fieldCtx?.errorConnected ?? false;
+    const hintId = fieldCtx?.hintId;
+    const errorId = fieldCtx?.errorId;
+    const ariaDescribedBy =
+      ariaDescribedByProp ??
+      joinFieldDescribedBy(
+        hintConnected ? hintId : undefined,
+        errorConnected ? errorId : undefined,
+      );
+    const groupSegment = groupSegmentProp ?? groupCtx?.segment;
     const shellRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -507,41 +529,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )
         : "rounded-base";
 
-    const shellMinClass = fileListEmpty ? "" : INPUT_SHELL_MIN[size];
+    const shellHClass = fileListEmpty ? "" : INPUT_SHELL_H[size];
 
     return (
       <div
+        ref={shellRef}
+        data-slot="input-shell"
+        role="presentation"
+        onPointerDown={handleShellPointerDown}
         className={cn(
-          "flex w-full flex-col gap-small text-left",
-          groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "",
+          "flex items-stretch overflow-hidden transition-[border-color,background-color] duration-200 ease-out",
+          groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "w-full",
+          fileListEmpty ? "min-h-[7.25rem]" : cn("border-1", shellHClass),
+          roundingShell,
+          shellFileEmptySurface ?? shellSurface,
+          blocked ? "cursor-not-allowed opacity-55" : "",
           className,
         )}
       >
-        {label ? (
-          <label htmlFor={id} className="inline-flex flex-wrap items-baseline gap-x-xsmall gap-y-0">
-            <Text as="span" variant="base" className="font-medium leading-snug">
-              {label}
-            </Text>
-            {isRequired ? (
-              <span className="text-danger leading-none" aria-hidden>
-                *
-              </span>
-            ) : null}
-          </label>
-        ) : null}
-        <div
-          ref={shellRef}
-          data-slot="input-shell"
-          role="presentation"
-          onPointerDown={handleShellPointerDown}
-          className={cn(
-            "flex items-stretch overflow-hidden transition-[border-color,background-color] duration-200 ease-out",
-            fileListEmpty ? "min-h-[7.25rem]" : cn("border-1", shellMinClass),
-            roundingShell,
-            shellFileEmptySurface ?? shellSurface,
-            blocked ? "cursor-not-allowed opacity-55" : "",
-          )}
-        >
           {showAffixes && prefix != null ? (
             <AffixSlot
               side="prefix"
@@ -561,7 +566,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                       "relative min-w-0 flex-1 px-plus py-base",
                       multipleFiles
                         ? "flex flex-col gap-base"
-                        : cn("flex items-center gap-plus", INPUT_SHELL_MIN[size]),
+                        : cn("flex h-full items-center gap-plus"),
                     )
               }
             >
@@ -574,7 +579,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                   <Text
                     as="span"
                     variant="base"
-                    className="pointer-events-none max-w-[18rem] text-center leading-snug text-muted"
+                    className="pointer-events-none max-w-[18rem] text-center text-muted"
                   >
                     {placeholder ?? "Выберите файл"}
                   </Text>
@@ -614,8 +619,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 <div
                   data-file-row=""
                   className={cn(
-                    "flex min-w-0 flex-1 items-center gap-base",
-                    INPUT_SHELL_MIN[size],
+                    "flex h-full min-w-0 flex-1 items-center gap-base",
                   )}
                 >
                   {fileEntries[0]!.previewUrl ? (
@@ -650,6 +654,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 readOnly={readOnly}
                 onChange={handleFileChange}
                 aria-required={isRequired || undefined}
+                aria-invalid={status === "danger" ? true : undefined}
+                aria-describedby={ariaDescribedBy}
                 className="absolute inset-0 cursor-pointer opacity-0 disabled:cursor-not-allowed"
                 {...rest}
               />
@@ -664,6 +670,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               placeholder={placeholder}
               onChange={onChange}
               aria-required={isRequired || undefined}
+              aria-invalid={status === "danger" ? true : undefined}
+              aria-describedby={ariaDescribedBy}
               className={cn(
                 "min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted",
                 INPUT_CONTROL[size],
@@ -691,17 +699,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               onToggle={() => setPasswordVisible((v) => !v)}
             />
           ) : null}
-        </div>
-        {hint ? (
-          <Text
-            as="p"
-            variant="base"
-            className={cn("leading-snug", STATUS_HINT[status])}
-          >
-            {hint}
-          </Text>
-        ) : null}
       </div>
     );
-  }
+  },
 );

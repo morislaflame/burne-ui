@@ -61,7 +61,7 @@ const meta = {
     },
     size: {
       control: "select",
-      options: ["small", "base", "large", "xlarge"],
+      options: ["small", "base", "mid", "large"],
     },
     animated: { control: "boolean" },
     iconOnly: {
@@ -84,7 +84,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const Sizes: Story = {
-  name: "Размеры (small — xlarge)",
+  name: "Размеры (small — large)",
   render: () => (
     <div className="flex items-start gap-plus">
       <Button size="small">
@@ -93,11 +93,11 @@ export const Sizes: Story = {
       <Button size="base">
         Base
       </Button>
+      <Button size="mid">
+        Mid
+      </Button>
       <Button size="large">
         Large
-      </Button>
-      <Button size="xlarge">
-        Extra large
       </Button>
     </div>
   ),
@@ -113,10 +113,10 @@ export const IconOnlySizes: Story = {
       <Button size="base" variant="outline" iconOnly aria-label="Добавить">
         <IoAdd aria-hidden className="icon-base" />
       </Button>
-      <Button size="large" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="mid" variant="outline" iconOnly aria-label="Добавить">
         <IoAdd aria-hidden className="icon-large" />
       </Button>
-      <Button size="xlarge" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="large" variant="outline" iconOnly aria-label="Добавить">
         <IoAdd aria-hidden className="icon-large" />
       </Button>
     </div>

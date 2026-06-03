@@ -1,14 +1,20 @@
 import { IoChevronForward } from "react-icons/io5";
 import {
+  Children,
+  createContext,
   forwardRef,
+  isValidElement,
   useCallback,
+  useContext,
   useMemo,
   useRef,
   type HTMLAttributes,
   type MouseEvent,
+  type OlHTMLAttributes,
   type ReactNode,
 } from "react";
 
+import { Dropdown } from "@/components/core/Dropdown/Dropdown";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -18,51 +24,65 @@ import { MOTION_HOVER_LIFT_SCALE } from "@/components/core/utils/motionTokens";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-export type BreadcrumbItem = {
-  /** Подпись сегмента. */
+type BreadcrumbItemData = {
   label: ReactNode;
-  /** Внешняя ссылка (все сегменты кроме последнего с ховером должны иметь `href` и/или `onClick`). */
   href?: string;
-  /** Клик без навигации (кнопка). */
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
+  current?: boolean;
 };
 
 type DisplayPiece =
-  | { kind: "segment"; item: BreadcrumbItem; isLast: boolean }
-  | { kind: "ellipsis" };
+  | { kind: "segment"; item: BreadcrumbItemData; isLast: boolean }
+  | { kind: "ellipsis"; hiddenItems: BreadcrumbItemData[] };
 
-function toDisplayPieces(items: readonly BreadcrumbItem[]): DisplayPiece[] {
+function collapsedHiddenItems(items: BreadcrumbItemData[]): BreadcrumbItemData[] {
+  if (items.length <= 3) return [];
+  return items.slice(1, -2);
+}
+
+function toCollapsedPieces(items: BreadcrumbItemData[]): DisplayPiece[] {
   const n = items.length;
   if (n === 0) return [];
   if (n <= 3) {
     return items.map((item, i) => ({
       kind: "segment" as const,
       item,
-      isLast: i === n - 1,
+      isLast: item.current ?? i === n - 1,
     }));
   }
   return [
     { kind: "segment", item: items[0]!, isLast: false },
-    { kind: "ellipsis" },
+    { kind: "ellipsis", hiddenItems: collapsedHiddenItems(items) },
     { kind: "segment", item: items[n - 2]!, isLast: false },
     { kind: "segment", item: items[n - 1]!, isLast: true },
   ];
 }
+
+function toExpandedPieces(items: BreadcrumbItemData[]): DisplayPiece[] {
+  return items.map((item, i) => ({
+    kind: "segment" as const,
+    item,
+    isLast: item.current ?? i === items.length - 1,
+  }));
+}
+
+const CRUMB_INTERACTIVE_INNER =
+  "inline-flex max-w-[min(12rem,46vw)] min-w-0 cursor-pointer truncate rounded-mid px-xsmall py-xsmall text-muted no-underline outline-none transition-colors hover:text-foreground motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 type InteractiveCrumbProps = {
   href?: string;
   onClick?: (e: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
   children: ReactNode;
   className?: string;
+  "aria-current"?: "page" | undefined;
 };
 
 const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProps>(
   function InteractiveCrumb(
-    { href, onClick, children, className = "" },
+    { href, onClick, children, className = "", "aria-current": ariaCurrent },
     forwardedRef,
   ) {
     const innerRef = useRef<HTMLSpanElement | null>(null);
-    const hoverInsideRef = useRef(false);
 
     const setRefs = useCallback(
       (node: HTMLSpanElement | null) => {
@@ -76,56 +96,37 @@ const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProps>(
     const handlePointerEnter = useCallback(() => {
       const el = innerRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      hoverInsideRef.current = true;
       animateInteractiveHoverLift(el, true, MOTION_HOVER_LIFT_SCALE);
     }, []);
 
     const handlePointerLeave = useCallback(() => {
-      hoverInsideRef.current = false;
       const el = innerRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el) return;
       animateInteractiveHoverLift(el, false, MOTION_HOVER_LIFT_SCALE);
     }, []);
 
     const handlePointerDown = useCallback(() => {
       const el = innerRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      void animateInteractivePressSqueeze(el).then(() => {
-        const shell = innerRef.current;
-        if (
-          !shell ||
-          prefersReducedInteractiveHoverLift() ||
-          !hoverInsideRef.current
-        ) {
-          return;
-        }
-        animateInteractiveHoverLift(shell, true, MOTION_HOVER_LIFT_SCALE);
-      });
+      void animateInteractivePressSqueeze(el);
     }, []);
-
-    const commonInner =
-      "inline-flex max-w-[min(12rem,46vw)] min-w-0 cursor-pointer items-center justify-start rounded-mid px-xsmall py-xsmall text-left text-muted no-underline outline-none " +
-      "transition-colors hover:text-muted motion-reduce:transition-none " +
-      "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
     return (
       <span
         ref={setRefs}
-        className={cn(
-          "inline-flex origin-center items-center rounded-mid motion-reduce:animate-none",
-          className,
-        )}
+        className={cn("inline-flex min-w-0", className)}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
       >
-        {href != null && href !== "" ? (
+        {href ? (
           <a
             href={href}
             onClick={onClick}
-            className={cn(commonInner, "border-0 bg-transparent font-[inherit]")}
+            aria-current={ariaCurrent}
+            className={CRUMB_INTERACTIVE_INNER}
           >
-            <Text variant="small" inheritColor as="span" className="min-w-0 truncate leading-none">
+            <Text variant="small" inheritColor as="span" className="min-w-0 truncate">
               {children}
             </Text>
           </a>
@@ -133,12 +134,10 @@ const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProps>(
           <button
             type="button"
             onClick={onClick}
-            className={cn(
-              commonInner,
-              "inline-flex border-0 bg-transparent font-[inherit]",
-            )}
+            aria-current={ariaCurrent}
+            className={cn(CRUMB_INTERACTIVE_INNER, "border-0 bg-transparent font-[inherit]")}
           >
-            <Text variant="small" inheritColor as="span" className="min-w-0 truncate leading-none">
+            <Text variant="small" inheritColor as="span" className="min-w-0 truncate">
               {children}
             </Text>
           </button>
@@ -148,85 +147,232 @@ const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProps>(
   },
 );
 
-export type BreadcrumbsProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  "children" | "role"
-> & {
-  items: readonly BreadcrumbItem[];
+InteractiveCrumb.displayName = "BreadcrumbsInteractiveCrumb";
+
+const ELLIPSIS_TRIGGER_CLASS =
+  "inline-flex min-w-0 cursor-pointer rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted outline-none transition-colors hover:text-foreground aria-expanded:text-foreground motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
+type BreadcrumbsEllipsisMenuProps = {
+  hiddenItems: BreadcrumbItemData[];
 };
 
-/**
- * Навигационная цепочка: последний пункт — текст; остальные — `muted` с hover-scale и squeeze при нажатии (без тени и без рамки при клике мышью).
- * Если сегментов больше трёх: первый, затем «…», затем два последних.
- */
-export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
-  function Breadcrumbs(
-    {
-      items,
-      className = "",
-      "aria-label": ariaLabel = "Хлебные крошки",
-      ...rest
-    },
-    ref,
-  ) {
-    const pieces = useMemo(() => toDisplayPieces(items), [items]);
+function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
+  const count = hiddenItems.length;
+  const liftRef = useRef<HTMLSpanElement>(null);
+
+  const handlePointerEnter = useCallback(() => {
+    const el = liftRef.current;
+    if (!el || prefersReducedInteractiveHoverLift()) return;
+    animateInteractiveHoverLift(el, true, MOTION_HOVER_LIFT_SCALE);
+  }, []);
+
+  const handlePointerLeave = useCallback(() => {
+    const el = liftRef.current;
+    if (!el) return;
+    animateInteractiveHoverLift(el, false, MOTION_HOVER_LIFT_SCALE);
+  }, []);
+
+  const handlePointerDown = useCallback(() => {
+    const el = liftRef.current;
+    if (!el || prefersReducedInteractiveHoverLift()) return;
+    void animateInteractivePressSqueeze(el);
+  }, []);
+
+  if (count === 0) return null;
+
+  return (
+    <Dropdown>
+      <Dropdown.Trigger
+        aria-label={`Показать ${count} скрытых разделов`}
+        className={ELLIPSIS_TRIGGER_CLASS}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onPointerDown={handlePointerDown}
+      >
+        <span ref={liftRef} className="inline-flex will-change-transform">
+          <Text as="span" variant="small" className="tabular-nums">
+            …
+          </Text>
+        </span>
+      </Dropdown.Trigger>
+      <Dropdown.Content aria-label="Скрытые разделы">
+        {hiddenItems.map((item, index) =>
+          item.href ? (
+            <Dropdown.Item
+              key={`hidden-${index}`}
+              href={item.href}
+              selection={false}
+              onClick={item.onClick}
+            >
+              {item.label}
+            </Dropdown.Item>
+          ) : (
+            <Dropdown.Item
+              key={`hidden-${index}`}
+              value={`breadcrumb-hidden-${index}`}
+              selection={false}
+              onClick={item.onClick}
+            >
+              {item.label}
+            </Dropdown.Item>
+          ),
+        )}
+      </Dropdown.Content>
+    </Dropdown>
+  );
+}
+
+const BreadcrumbsCollapseContext = createContext(true);
+
+export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
+  /** Сжимать длинные цепочки: первый · … · два последних. По умолчанию `true`. */
+  collapse?: boolean;
+  children?: ReactNode;
+};
+
+const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(function BreadcrumbsRoot(
+  { collapse = true, className, children, "aria-label": ariaLabel = "Хлебные крошки", ...rest },
+  ref,
+) {
+  return (
+    <BreadcrumbsCollapseContext.Provider value={collapse}>
+      <nav ref={ref} aria-label={ariaLabel} className={className} {...rest}>
+        {children}
+      </nav>
+    </BreadcrumbsCollapseContext.Provider>
+  );
+});
+
+BreadcrumbsRoot.displayName = "Breadcrumbs";
+
+export type BreadcrumbsListProps = OlHTMLAttributes<HTMLOListElement> & {
+  children?: ReactNode;
+};
+
+function collectItems(children: ReactNode): BreadcrumbItemData[] {
+  const out: BreadcrumbItemData[] = [];
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+    if (child.type !== BreadcrumbsItem) return;
+    const props = child.props as BreadcrumbsItemProps;
+    out.push({
+      label: props.children,
+      href: props.href,
+      onClick: props.onClick,
+      current: props.current,
+    });
+  });
+  return out;
+}
+
+function renderSegment(piece: Extract<DisplayPiece, { kind: "segment" }>) {
+  const { item, isLast } = piece;
+
+  if (isLast) {
+    return (
+      <Text
+        as="span"
+        variant="small"
+        aria-current="page"
+        className="min-w-0 max-w-[min(14rem,50vw)] truncate px-xsmall py-xsmall font-medium  text-foreground"
+      >
+        {item.label}
+      </Text>
+    );
+  }
+
+  if (item.href || item.onClick) {
+    return (
+      <InteractiveCrumb href={item.href} onClick={item.onClick}>
+        {item.label}
+      </InteractiveCrumb>
+    );
+  }
+
+  return (
+    <Text
+      as="span"
+      variant="small"
+      className="max-w-[min(12rem,46vw)] truncate px-xsmall py-xsmall text-muted"
+    >
+      {item.label}
+    </Text>
+  );
+}
+
+const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps>(
+  function BreadcrumbsList({ className, children, ...rest }, ref) {
+    const collapse = useContext(BreadcrumbsCollapseContext);
+    const items = useMemo(() => collectItems(children), [children]);
+    const pieces = useMemo(
+      () => (collapse ? toCollapsedPieces(items) : toExpandedPieces(items)),
+      [collapse, items],
+    );
 
     return (
-      <nav ref={ref} aria-label={ariaLabel} {...rest}>
-        <ol
-          className={cn(
-            "m-0 flex list-none flex-wrap items-center gap-xsmall gap-y-xsmall p-0 text-left",
-            className,
-          )}
-        >
-          {pieces.map((piece, idx) => (
-            <li
-              key={piece.kind === "ellipsis" ? "ellipsis" : `segment-${idx}`}
-              className="flex items-center gap-xsmall"
-              {...(piece.kind === "segment" && piece.isLast
-                ? ({ "aria-current": "page" } as const)
-                : {})}
-            >
-              {idx > 0 ? (
-                <IoChevronForward className="shrink-0 text-muted opacity-75 icon-small" aria-hidden />
-              ) : null}
-              {piece.kind === "ellipsis" ? (
-                <Text
-                  as="span"
-                  variant="small"
-                  className="leading-none px-xsmall py-xsmall text-muted tabular-nums"
-                  aria-hidden
-                >
-                  …
-                </Text>
-              ) : piece.isLast ? (
-                <Text
-                  as="span"
-                  variant="small"
-                  className="min-w-0 max-w-[min(14rem,50vw)] truncate px-xsmall py-xsmall font-medium leading-none text-foreground"
-                >
-                  {piece.item.label}
-                </Text>
-              ) : piece.item.href || piece.item.onClick ? (
-                <InteractiveCrumb
-                  href={piece.item.href}
-                  onClick={piece.item.onClick}
-                >
-                  {piece.item.label}
-                </InteractiveCrumb>
-              ) : (
-                <Text
-                  as="span"
-                  variant="small"
-                  className="max-w-[min(12rem,46vw)] truncate px-xsmall py-xsmall leading-none text-muted"
-                >
-                  {piece.item.label}
-                </Text>
-              )}
-            </li>
-          ))}
-        </ol>
-      </nav>
+      <ol
+        ref={ref}
+        className={cn(
+          "m-0 flex list-none flex-wrap items-center gap-xsmall gap-y-xsmall p-0 text-left",
+          className,
+        )}
+        {...rest}
+      >
+        {pieces.map((piece, idx) => (
+          <li
+            key={
+              piece.kind === "ellipsis"
+                ? "ellipsis"
+                : `segment-${idx}-${typeof piece.item.label === "string" ? piece.item.label : idx}`
+            }
+            className="flex items-center gap-xsmall"
+          >
+            {idx > 0 ? (
+              <IoChevronForward
+                className="shrink-0 text-muted opacity-75 icon-small"
+                aria-hidden
+              />
+            ) : null}
+            {piece.kind === "ellipsis" ? (
+              <BreadcrumbsEllipsisMenu hiddenItems={piece.hiddenItems} />
+            ) : (
+              renderSegment(piece)
+            )}
+          </li>
+        ))}
+      </ol>
     );
   },
 );
+
+export type BreadcrumbsItemProps = {
+  href?: string;
+  onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
+  /** Текущая страница; по умолчанию последний пункт. */
+  current?: boolean;
+  children?: ReactNode;
+};
+
+/** Маркер данных для `Breadcrumbs.List` — в DOM не рендерится. */
+function BreadcrumbsItem(_props: BreadcrumbsItemProps) {
+  return null;
+}
+
+/** Разделитель для кастомной разметки; в `Breadcrumbs.List` chevron добавляется автоматически. */
+function BreadcrumbsSeparator({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span className={cn("inline-flex", className)} {...rest}>
+      <IoChevronForward className="shrink-0 text-muted opacity-75 icon-small" aria-hidden />
+    </span>
+  );
+}
+
+export const Breadcrumbs = Object.assign(BreadcrumbsRoot, {
+  List: BreadcrumbsList,
+  Item: BreadcrumbsItem,
+  Separator: BreadcrumbsSeparator,
+});
+
+BreadcrumbsList.displayName = "Breadcrumbs.List";
+BreadcrumbsItem.displayName = "Breadcrumbs.Item";
+BreadcrumbsSeparator.displayName = "Breadcrumbs.Separator";

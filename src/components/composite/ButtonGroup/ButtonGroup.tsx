@@ -1,7 +1,6 @@
 import {
   Children,
   Fragment,
-  cloneElement,
   forwardRef,
   isValidElement,
   type ComponentPropsWithoutRef,
@@ -10,30 +9,30 @@ import {
   type ReactNode,
 } from "react";
 
-import { Button, type ButtonProps, type ButtonSize } from "@/components/core/Button";
-import { Input, type InputProps, type InputSize } from "@/components/core/Input";
-
-/** `Input` не имеет `small`; при `buttonSize="small"` используем поле как `base`. */
-function inputSizeFromButtonSize(bs: ButtonSize): InputSize {
-  return bs === "small" ? "base" : bs;
-}
+import { Button, type ButtonSize } from "@/components/core/Button";
+import { InputControl } from "@/components/core/Input/Input";
 import { Text, type TextVariant } from "@/components/core/Text";
+import {
+  ButtonGroupSegmentContext,
+  useOptionalButtonGroupSegment,
+} from "@/components/core/utils/buttonGroupContext";
 import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
 import { buttonGroupTextSurfaceClasses } from "@/components/core/utils/buttonGroupSegment";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
 
 const BUTTON_GROUP_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",
   base: "base",
+  mid: "mid",
   large: "mid",
-  xlarge: "mid",
 };
 
 const BUTTON_GROUP_TEXT_FRAME: Record<ButtonSize, string> = {
-  small: "min-h-7 px-base py-xsmall",
-  base: "min-h-8 px-plus py-small",
-  large: "min-h-10 px-mid py-base",
-  xlarge: "min-h-12 px-large py-base",
+  small: `${CONTROL_SIZE_LAYOUT.small.h} ${CONTROL_SIZE_LAYOUT.small.padX}`,
+  base: `${CONTROL_SIZE_LAYOUT.base.h} ${CONTROL_SIZE_LAYOUT.base.padX}`,
+  mid: `${CONTROL_SIZE_LAYOUT.mid.h} ${CONTROL_SIZE_LAYOUT.mid.padX}`,
+  large: `${CONTROL_SIZE_LAYOUT.large.h} ${CONTROL_SIZE_LAYOUT.large.padX}`,
 };
 
 function flattenFragmentChildren(children: ReactNode): React.ReactElement[] {
@@ -41,9 +40,7 @@ function flattenFragmentChildren(children: ReactNode): React.ReactElement[] {
   Children.forEach(children, (node) => {
     if (!isValidElement(node)) return;
     if (node.type === Fragment) {
-      const { children: fragKids } = node.props as {
-        children?: ReactNode;
-      };
+      const { children: fragKids } = node.props as { children?: ReactNode };
       out.push(...flattenFragmentChildren(fragKids));
       return;
     }
@@ -53,34 +50,26 @@ function flattenFragmentChildren(children: ReactNode): React.ReactElement[] {
 }
 
 export type ButtonGroupTextProps = ComponentPropsWithoutRef<"span"> & {
-  /**
-   * @internal Позиция в группе; выставляется из `<ButtonGroup>`.
-   */
   groupSegment?: ButtonGroupSegment;
-  /** Высота/отступы в духу `Button` того же размера. По умолчанию `base`. */
   buttonSize?: ButtonSize;
 };
 
-/**
- * Неактивная подпись внутри склеенной группы (`Button`, `SearchInput`-рядом и т.д.).
- */
 export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>(
   function ButtonGroupText(
-    {
-      children,
-      className = "",
-      buttonSize = "base",
-      groupSegment,
-      ...rest
-    },
+    { children, className = "", buttonSize: buttonSizeProp, groupSegment: groupSegmentProp, ...rest },
     ref,
   ) {
+    const groupCtx = useOptionalButtonGroupSegment();
+    const buttonSize = buttonSizeProp ?? groupCtx?.buttonSize ?? "base";
+    const groupSegment = groupSegmentProp ?? groupCtx?.segment;
+
     return (
       <span
         ref={ref}
         {...rest}
         className={cn(
           buttonGroupTextSurfaceClasses(groupSegment),
+          "inline-flex items-center",
           BUTTON_GROUP_TEXT_FRAME[buttonSize],
           className,
         )}
@@ -101,104 +90,67 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
 ButtonGroupText.displayName = "ButtonGroupText";
 
 function isGroupSegmentSlot(child: ReactElement): boolean {
-  return child.type === Button || child.type === ButtonGroupText || child.type === Input;
+  return child.type === Button || child.type === ButtonGroupText || child.type === InputControl;
 }
 
 export type ButtonGroupOrientation = "horizontal" | "vertical";
 
-export type ButtonGroupProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "role" | "children"
-> & {
-  /** Ряд или колонка. По умолчанию `horizontal`. */
+export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "children"> & {
   orientation?: ButtonGroupOrientation;
-  /** Совпадает с `size` вложенных `Button`; влияет на `ButtonGroupText`. По умолчанию `base`. */
   buttonSize?: ButtonSize;
   children: ReactNode;
 };
 
-/**
- * Группа сегментов без зазоров: общий контур скругления только по внешним краям (`Button`, `Input`, `ButtonGroup.Text`).
- *
- * Скругления у `SearchInput` по-прежнему задаются инлайново — для тулбара используйте `Input` в группе или отдельный ряд.
- */
-export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
-  function ButtonGroup(
-    {
-      children,
-      className = "",
-      orientation = "horizontal",
-      buttonSize = "base",
-      ...rest
-    },
-    ref,
-  ) {
-    const flat = flattenFragmentChildren(children);
-    const segmentCount = flat.reduce(
-      (n, el) => n + (isGroupSegmentSlot(el) ? 1 : 0),
-      0,
-    );
+export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function ButtonGroup(
+  { children, className = "", orientation = "horizontal", buttonSize = "base", ...rest },
+  ref,
+) {
+  const flat = flattenFragmentChildren(children);
+  const segmentCount = flat.reduce((n, el) => n + (isGroupSegmentSlot(el) ? 1 : 0), 0);
 
-    let segmentIndex = -1;
+  let segmentIndex = -1;
 
-    return (
-      <div
-        ref={ref}
-        role="group"
-        className={cn(
-          "inline-flex text-left",
-          orientation === "horizontal"
-            ? "flex-row flex-nowrap items-stretch"
-            : "flex-col flex-nowrap items-stretch",
-          className,
-        )}
-        {...rest}
-      >
-        {flat.map((child, i) => {
-          if (!isGroupSegmentSlot(child)) {
-            return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
-          }
+  return (
+    <div
+      ref={ref}
+      role="group"
+      className={cn(
+        "inline-flex text-left",
+        orientation === "horizontal"
+          ? "flex-row flex-nowrap items-stretch"
+          : "flex-col flex-nowrap items-stretch",
+        className,
+      )}
+      {...rest}
+    >
+      {flat.map((child, i) => {
+        if (!isGroupSegmentSlot(child)) {
+          return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
+        }
 
-          segmentIndex += 1;
-          const position =
-            segmentCount <= 1
-              ? ("only" as const)
-              : segmentIndex === 0
-                ? ("first" as const)
-                : segmentIndex === segmentCount - 1
-                  ? ("last" as const)
-                  : ("middle" as const);
+        segmentIndex += 1;
+        const position =
+          segmentCount <= 1
+            ? ("only" as const)
+            : segmentIndex === 0
+              ? ("first" as const)
+              : segmentIndex === segmentCount - 1
+                ? ("last" as const)
+                : ("middle" as const);
 
-          const seg: ButtonGroupSegment = { orientation, position };
+        const seg: ButtonGroupSegment = { orientation, position };
 
-          if (child.type === Button) {
-            const btn = child as ReactElement<ButtonProps>;
-            const next = cloneElement(btn, {
-              groupSegment: btn.props.groupSegment ?? seg,
-              size: btn.props.size ?? buttonSize,
-            });
-            return <Fragment key={child.key ?? `bg-btn-${i}`}>{next}</Fragment>;
-          }
-
-          if (child.type === Input) {
-            const inp = child as ReactElement<InputProps>;
-            const nextInp = cloneElement(inp, {
-              groupSegment: inp.props.groupSegment ?? seg,
-              size: inp.props.size ?? inputSizeFromButtonSize(buttonSize),
-            });
-            return <Fragment key={child.key ?? `bg-inp-${i}`}>{nextInp}</Fragment>;
-          }
-
-          const textEl = child as ReactElement<ButtonGroupTextProps>;
-          const nextText = cloneElement(textEl, {
-            groupSegment: textEl.props.groupSegment ?? seg,
-            buttonSize: textEl.props.buttonSize ?? buttonSize,
-          });
-          return <Fragment key={child.key ?? `bg-t-${i}`}>{nextText}</Fragment>;
-        })}
-      </div>
-    );
-  },
-);
+        return (
+          <ButtonGroupSegmentContext.Provider
+            key={child.key ?? `bg-seg-${i}`}
+            value={{ segment: seg, buttonSize }}
+          >
+            {child}
+          </ButtonGroupSegmentContext.Provider>
+        );
+      })}
+    </div>
+  );
+});
 
 ButtonGroup.displayName = "ButtonGroup";

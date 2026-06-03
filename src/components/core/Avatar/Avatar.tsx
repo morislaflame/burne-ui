@@ -28,16 +28,23 @@ import {
 } from "@/components/core/utils/motionTokens";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { Text, type TextVariant } from "@/components/core/Text";
+import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { cn } from "@/utils/cn";
 
 /** Размер круга аватара. */
-export type AvatarSize = "small" | "base" | "large";
+export type AvatarSize = "small" | "base" | "mid" | "large";
 
 export type AvatarProps = Omit<HTMLAttributes<HTMLDivElement>, "aria-label"> & {
-  /** Круг диаметром small / base / large. По умолчанию `base`. */
+  /** Круг диаметром small / base / mid / large. По умолчанию `base`. */
   size?: AvatarSize;
   /** Подпись пользователя — первая буква во `Avatar.Fallback`, если там нет текста; также `aria-label` корня. */
   label?: string;
+  /** URL фото — только **simple API** (без `children`). В compound игнорируется. */
+  src?: string;
+  /** `alt` для `<img>` в simple API. По умолчанию пустая строка. */
+  alt?: string;
+  /** `loading` для `<img>` в simple API. */
+  loading?: ImgHTMLAttributes<HTMLImageElement>["loading"];
   /** Никнейм во всплывающем `Tooltip` при наведении. Без текста тултип не показывается. */
   nickname?: string;
   /** Размер тултипа при заданном `nickname`. По умолчанию `base`. */
@@ -75,9 +82,10 @@ function useAvatarContext(component: string): AvatarContextValue {
 }
 
 const SIZE_CLASS: Record<AvatarSize, { root: string }> = {
-  small: { root: "size-8" },
-  base: { root: "size-10" },
-  large: { root: "size-14" },
+  small: { root: "avatar-size-small" },
+  base: { root: "avatar-size-base" },
+  mid: { root: "avatar-size-mid" },
+  large: { root: "avatar-size-large" },
 };
 
 const AVATAR_FALLBACK_TEXT: Record<
@@ -86,15 +94,19 @@ const AVATAR_FALLBACK_TEXT: Record<
 > = {
   small: {
     variant: "small",
-    className: "font-semibold uppercase leading-none tracking-tight",
+    className: "font-semibold uppercase",
   },
   base: {
     variant: "base",
-    className: "font-semibold uppercase leading-none tracking-tight",
+    className: "font-semibold uppercase",
+  },
+  mid: {
+    variant: "mid",
+    className: "font-semibold uppercase",
   },
   large: {
     variant: "header-2",
-    className: "font-semibold uppercase leading-none tracking-tight",
+    className: "font-semibold uppercase",
   },
 };
 
@@ -104,75 +116,6 @@ function letterFromLabel(label: string | undefined): string {
   const first = [...t][0];
   return first ? first.toLocaleUpperCase() : "?";
 }
-
-const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
-  {
-    size = "base",
-    label,
-    nickname,
-    tooltipSize = "base",
-    tooltipVariant = "default",
-    tooltipSide = "top",
-    className = "",
-    children,
-    role,
-    ...rest
-  },
-  ref,
-) {
-  const [imageStatus, setImageStatus] = useState<ImageStatus>("idle");
-
-  const onImageLoad = useCallback(() => {
-    setImageStatus("loaded");
-  }, []);
-
-  const onImageError = useCallback(() => {
-    setImageStatus("error");
-  }, []);
-
-  const ctx = useMemo<AvatarContextValue>(
-    () => ({
-      size,
-      label,
-      imageStatus,
-      onImageLoad,
-      onImageError,
-    }),
-    [size, label, imageStatus, onImageLoad, onImageError],
-  );
-
-  const hasLabel = Boolean(label?.trim());
-  const nick = nickname?.trim();
-
-  const shell = (
-    <div
-      ref={ref}
-      role={role ?? "group"}
-      className={cn(
-        "relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-surface text-left ring-2 ring-background",
-        SIZE_CLASS[size].root,
-        className,
-      )}
-      aria-label={hasLabel ? label!.trim() : undefined}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-
-  return (
-    <AvatarContext.Provider value={ctx}>
-      {nick ? (
-        <Tooltip size={tooltipSize} variant={tooltipVariant} side={tooltipSide}>
-          <Tooltip.Trigger>{shell}</Tooltip.Trigger>
-          <Tooltip.Content>{nick}</Tooltip.Content>
-        </Tooltip>
-      ) : (
-        shell
-      )}
-    </AvatarContext.Provider>
-  );
-});
 
 const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
   function AvatarImage({ className = "", onLoad, onError, ...rest }, ref) {
@@ -247,7 +190,91 @@ const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
   },
 );
 
-/** Аватар: изображение + буква-фоллбек по полю `label` или тексту во `Fallback`. */
+const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
+  {
+    size = "base",
+    label,
+    src,
+    alt = "",
+    loading,
+    nickname,
+    tooltipSize = "base",
+    tooltipVariant = "default",
+    tooltipSide = "top",
+    className = "",
+    children,
+    role,
+    ...rest
+  },
+  ref,
+) {
+  const [imageStatus, setImageStatus] = useState<ImageStatus>("idle");
+
+  const onImageLoad = useCallback(() => {
+    setImageStatus("loaded");
+  }, []);
+
+  const onImageError = useCallback(() => {
+    setImageStatus("error");
+  }, []);
+
+  const ctx = useMemo<AvatarContextValue>(
+    () => ({
+      size,
+      label,
+      imageStatus,
+      onImageLoad,
+      onImageError,
+    }),
+    [size, label, imageStatus, onImageLoad, onImageError],
+  );
+
+  const isCompound = hasCompoundChildren(children);
+  const hasLabel = Boolean(label?.trim());
+  const nick = nickname?.trim();
+
+  const avatarContent = isCompound ? (
+    children
+  ) : (
+    <>
+      {src ? (
+        <AvatarImage src={src} alt={alt} loading={loading} />
+      ) : null}
+      <AvatarFallback />
+    </>
+  );
+
+  const shell = (
+    <div
+      ref={ref}
+      role={role ?? "group"}
+      className={cn(
+        "relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-surface text-left ring-2 ring-background",
+        SIZE_CLASS[size].root,
+        className,
+      )}
+      aria-label={hasLabel ? label!.trim() : undefined}
+      {...rest}
+    >
+      {avatarContent}
+    </div>
+  );
+
+  return (
+    <AvatarContext.Provider value={ctx}>
+      {nick ? (
+        <Tooltip size={tooltipSize} variant={tooltipVariant} side={tooltipSide}>
+          <Tooltip.Trigger>{shell}</Tooltip.Trigger>
+          <Tooltip.Content>{nick}</Tooltip.Content>
+        </Tooltip>
+      ) : (
+        shell
+      )}
+    </AvatarContext.Provider>
+  );
+});
+
+/** Аватар: simple (`src` + `label`) или compound (`Avatar.Image` / `Avatar.Fallback`). */
 export const Avatar = Object.assign(AvatarRoot, {
   Image: AvatarImage,
   Fallback: AvatarFallback,

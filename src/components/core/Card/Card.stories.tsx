@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import { Form } from "@/components/composite/Form/Form";
 import { Badge } from "@/components/core/Badge";
 import { Button } from "@/components/core/Button/Button";
-import { Input } from "@/components/core/Input/Input";
+import { Input } from "@/components/core/Input";
 import { Ripple } from "@/components/core/Ripple";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
@@ -252,14 +252,16 @@ function QuickSubscribeCard() {
       </Card.Content>
       <Card.Body className="border-t border-base pt-mid">
         <Form onSubmit={onSubmit} aria-label="Подписка на рассылку">
-          <Input
-            label="Email"
-            name="email"
-            inputType="text"
-            placeholder="you@example.com"
-            autoComplete="email"
-          />
-          <Button type="submit" variant="default" size="large" className="w-full" ripple>
+          <Input>
+            <Input.Label>Email</Input.Label>
+            <Input.Control
+              name="email"
+              inputType="text"
+              placeholder="you@example.com"
+              autoComplete="email"
+            />
+          </Input>
+          <Button type="submit" variant="default" size="mid" className="w-full" ripple>
             Подписаться
           </Button>
         </Form>

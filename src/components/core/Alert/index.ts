@@ -2,7 +2,6 @@ export {
   Alert,
   resolveAlertStatus,
   type AlertProps,
-  type AlertVariant,
   type AlertStatus,
   type AlertIndicatorProps,
   type AlertContentProps,
@@ -11,3 +10,4 @@ export {
   type AlertDescriptionProps,
   type AlertActionProps,
 } from "./Alert";
+export { resolveAlertLiveRole, type AlertLiveRole } from "./alertUtils";

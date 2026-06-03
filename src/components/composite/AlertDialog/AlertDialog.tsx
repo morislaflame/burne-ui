@@ -26,7 +26,6 @@ import { IoHelpCircleOutline } from "react-icons/io5";
 import {
   resolveAlertStatus,
   type AlertStatus,
-  type AlertVariant,
 } from "@/components/core/Alert/Alert";
 import {
   Button,
@@ -52,12 +51,13 @@ import {
 import { cn } from "@/utils/cn";
 
 /** Ширина и типографика панели. */
-export type AlertDialogSize = "small" | "base" | "large";
+export type AlertDialogSize = "small" | "base" | "mid" | "large";
 
 /** Размер `Button` в `AlertDialog.Footer` по размеру модалки (имена ступеней совпадают). */
 const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
   small: "small",
   base: "base",
+  mid: "mid",
   large: "large",
 };
 
@@ -104,11 +104,9 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: string;
     iconClass: string;
     titleVariant: TextVariant;
-    titleClassName: string;
     descVariant: TextVariant;
     descClassName: string;
     bodyVariant: TextVariant;
-    bodyClassName: string;
   }
 > = {
   small: {
@@ -121,11 +119,9 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: "flex min-w-0 flex-col gap-xsmall",
     iconClass: "icon-base",
     titleVariant: "small",
-    titleClassName: "font-medium leading-snug",
     descVariant: "small",
-    descClassName: "leading-normal text-muted",
+    descClassName: "text-muted",
     bodyVariant: "small",
-    bodyClassName: "leading-normal",
   },
   base: {
     panelMax: "max-w-component-mid",
@@ -137,11 +133,23 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: "flex min-w-0 flex-col gap-base",
     iconClass: "icon-large",
     titleVariant: "mid",
-    titleClassName: "",
     descVariant: "base",
-    descClassName: "leading-normal text-muted",
+    descClassName: "text-muted",
     bodyVariant: "base",
-    bodyClassName: "leading-normal",
+  },
+  mid: {
+    panelMax: "max-w-component-mid",
+    maxHeight: "max-h-[min(90dvh,40rem)]",
+    headerGap: "gap-plus",
+    headerPad: "px-mid pt-mid pb-mid",
+    bodyPad: "py-mid px-mid",
+    footerPad: "py-mid px-mid gap-base",
+    headingBlockGap: "flex min-w-0 flex-col gap-base",
+    iconClass: "icon-xlarge",
+    titleVariant: "mid",
+    descVariant: "base",
+    descClassName: "text-muted",
+    bodyVariant: "base",
   },
   large: {
     panelMax: "max-w-component-large",
@@ -153,11 +161,9 @@ const ALERT_DIALOG_SIZE: Record<
     headingBlockGap: "flex min-w-0 flex-col gap-base",
     iconClass: "icon-2xlarge",
     titleVariant: "large",
-    titleClassName: "",
     descVariant: "mid",
     descClassName: "text-muted",
     bodyVariant: "mid",
-    bodyClassName: "",
   },
 };
 
@@ -227,8 +233,7 @@ export type AlertDialogProps = {
   onOpenChange: (open: boolean) => void;
   children?: ReactNode;
   className?: string;
-  /** Как у `Alert`: default, outline, secondary, danger, success, info и `warning` через `status`. */
-  variant?: AlertVariant;
+  /** Как у `Alert`: default, outline, secondary, danger, success, info, warning. */
   status?: AlertStatus;
   /** По умолчанию `m`. */
   size?: AlertDialogSize;
@@ -333,7 +338,7 @@ function AlertDialogHeader({
       {iconSlot !== null ? (
         <span
           className={cn(
-            "shrink-0 leading-none [&_svg]:block",
+            "shrink-0 [&_svg]:block",
             iconColor,
           )}
         >
@@ -355,7 +360,6 @@ const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
         as="h2"
         variant={sizePreset.titleVariant}
         id={id ?? titleId}
-        className={cn("min-w-0", sizePreset.titleClassName, className)}
         {...rest}
       />
     );
@@ -419,7 +423,6 @@ function AlertDialogBody({
       <Text
         variant={sizePreset.bodyVariant}
         as="div"
-        className={cn("min-h-0", sizePreset.bodyClassName)}
       >
         {children}
       </Text>
@@ -456,11 +459,10 @@ const AlertDialogRoot = function AlertDialog({
   onOpenChange,
   children,
   className = "",
-  variant,
   status,
   size = "base",
 }: AlertDialogProps) {
-  const tone = resolveAlertStatus(status, variant);
+  const tone = resolveAlertStatus(status);
   const sizePreset = ALERT_DIALOG_SIZE[size];
 
   const titleId = useId();

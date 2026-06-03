@@ -2,7 +2,6 @@ import { animate, remove } from "animejs";
 import {
   forwardRef,
   useEffect,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -11,7 +10,6 @@ import {
 } from "react";
 
 import { sliderThicknessToCss } from "@/components/core/Slider/Slider";
-import { Text } from "@/components/core/Text";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
@@ -19,20 +17,23 @@ import {
 } from "@/components/core/utils/motionTokens";
 import { cn } from "@/utils/cn";
 
-export type ProgressBarSize = "small" | "base" | "medium" | "large";
+import { useOptionalProgressBarFieldContext } from "./progressBarFieldContext";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+
+export type ProgressBarSize = "small" | "base" | "mid" | "large";
 export type ProgressBarOrientation = "horizontal" | "vertical";
 
 const RAIL_HEIGHT: Record<ProgressBarSize, string> = {
   small: "h-small",
   base: "h-base",
-  medium: "h-plus",
+  mid: "h-plus",
   large: "h-mid",
 };
 
 const RAIL_WIDTH: Record<ProgressBarSize, string> = {
   small: "w-small",
   base: "w-base",
-  medium: "w-plus",
+  mid: "w-plus",
   large: "w-mid",
 };
 
@@ -52,7 +53,7 @@ function defaultFormatValue(value: number) {
 const PROGRESS_INDETERMINATE_MS = 1500;
 const PROGRESS_INDETERMINATE_EASE = "inOutExpo" as const;
 
-export type ProgressBarProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /** Текущий прогресс. Не используется при `indeterminate`. */
   value?: number;
   /** Неопределённый прогресс (анимация без конкретного значения). */
@@ -67,20 +68,13 @@ export type ProgressBarProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
   thickness?: number | string;
   /** Цвет заливки: CSS-цвет или `linear-gradient(...)`. По умолчанию accent. */
   color?: string;
-  /** Подпись слева над полосой. */
-  label?: string;
-  /** Показывать значение или `valueText` справа над полосой. */
-  showValue?: boolean;
-  /** Произвольный текст справа; перекрывает `formatValue`. При `indeterminate` — «Загрузка…». */
-  valueText?: string;
   formatValue?: (value: number) => string;
   orientation?: ProgressBarOrientation;
   className?: string;
-  id?: string;
 };
 
-export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
-  function ProgressBar(
+export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps>(
+  function ProgressBarTrack(
     {
       value = 0,
       indeterminate = false,
@@ -89,20 +83,28 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
       size = "base",
       thickness,
       color,
-      label,
-      showValue = false,
-      valueText,
       formatValue = defaultFormatValue,
-      orientation = "horizontal",
+      orientation: orientationProp,
       className,
-      id: idProp,
+      "aria-describedby": ariaDescribedByProp,
       ...rest
     },
     ref,
   ) {
-    const autoId = useId();
-    const id = idProp ?? `progress-${autoId}`;
-    const labelId = `${id}-label`;
+    const fieldCtx = useOptionalProgressBarFieldContext();
+    const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
+    const progressId = fieldCtx?.progressId;
+    const labelId = progressId != null ? `${progressId}-label` : undefined;
+    const hintConnected = fieldCtx?.hintConnected ?? false;
+    const errorConnected = fieldCtx?.errorConnected ?? false;
+    const hintId = fieldCtx?.hintId;
+    const errorId = fieldCtx?.errorId;
+    const ariaDescribedBy =
+      ariaDescribedByProp ??
+      joinFieldDescribedBy(
+        hintConnected ? hintId : undefined,
+        errorConnected ? errorId : undefined,
+      );
     const fillRef = useRef<HTMLSpanElement>(null);
     const firstLayoutRef = useRef(true);
     const reduceMotion = prefersReducedInteractiveHoverLift();
@@ -137,12 +139,21 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
     }, [isHorizontal, percent]);
 
     const statusText = useMemo(() => {
-      if (valueText != null) return valueText;
       if (indeterminate) return "Загрузка…";
       return formatValue(clampedValue);
-    }, [clampedValue, formatValue, indeterminate, valueText]);
+    }, [clampedValue, formatValue, indeterminate]);
 
-    const showHeader = label != null || showValue || valueText != null || indeterminate;
+    const setDisplay = fieldCtx?.setDisplay;
+
+    useLayoutEffect(() => {
+      setDisplay?.({
+        clampedValue,
+        statusText,
+        min,
+        max,
+        indeterminate,
+      });
+    }, [clampedValue, indeterminate, max, min, setDisplay, statusText]);
 
     useLayoutEffect(() => {
       if (indeterminate) return;
@@ -224,54 +235,20 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
     return (
       <div
         ref={ref}
-        id={id}
-        className={cn(
-          "flex flex-col gap-small text-left",
-          isHorizontal ? "w-full" : "w-auto items-center",
-          className,
-        )}
+        role="progressbar"
+        aria-valuenow={indeterminate ? undefined : clampedValue}
+        aria-valuemin={indeterminate ? undefined : min}
+        aria-valuemax={indeterminate ? undefined : max}
+        aria-valuetext={statusText}
+        aria-busy={indeterminate || undefined}
+        aria-labelledby={labelId}
+        aria-describedby={ariaDescribedBy}
+        aria-label={labelId == null ? statusText : undefined}
+        aria-orientation={orientation}
+        className={cn(trackHitAreaClass, className)}
+        style={trackCrossStyle}
         {...rest}
       >
-        {showHeader ? (
-          <div
-            className={cn(
-              "flex items-baseline justify-between gap-xsmall",
-              isHorizontal ? "w-full" : "min-w-[8rem]",
-            )}
-          >
-            {label != null ? (
-              <Text
-                as="span"
-                id={labelId}
-                variant="base"
-                className="font-medium leading-snug"
-              >
-                {label}
-              </Text>
-            ) : (
-              <span />
-            )}
-            {showValue || valueText != null || indeterminate ? (
-              <Text as="span" variant="base" className="tabular-nums text-muted">
-                {statusText}
-              </Text>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div
-          role="progressbar"
-          aria-valuenow={indeterminate ? undefined : clampedValue}
-          aria-valuemin={indeterminate ? undefined : min}
-          aria-valuemax={indeterminate ? undefined : max}
-          aria-valuetext={statusText}
-          aria-busy={indeterminate || undefined}
-          aria-labelledby={label != null ? labelId : undefined}
-          aria-label={label == null ? statusText : undefined}
-          aria-orientation={orientation}
-          className={trackHitAreaClass}
-          style={trackCrossStyle}
-        >
           {indeterminate ? (
             <span
               ref={fillRef}
@@ -295,8 +272,9 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
               }}
             />
           )}
-        </div>
       </div>
     );
   },
 );
+
+ProgressBarTrack.displayName = "ProgressBar.Track";

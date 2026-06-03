@@ -2,7 +2,6 @@ import { animate, remove } from "animejs";
 import {
   forwardRef,
   useEffect,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -11,7 +10,6 @@ import {
 } from "react";
 
 import { sliderThicknessToCss } from "@/components/core/Slider/Slider";
-import { Text } from "@/components/core/Text";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
@@ -19,20 +17,23 @@ import {
 } from "@/components/core/utils/motionTokens";
 import { cn } from "@/utils/cn";
 
-export type MeterSize = "small" | "base" | "medium" | "large";
+import { useOptionalMeterFieldContext } from "./meterFieldContext";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+
+export type MeterSize = "small" | "base" | "mid" | "large";
 export type MeterOrientation = "horizontal" | "vertical";
 
 const RAIL_HEIGHT: Record<MeterSize, string> = {
   small: "h-small",
   base: "h-base",
-  medium: "h-plus",
+  mid: "h-plus",
   large: "h-mid",
 };
 
 const RAIL_WIDTH: Record<MeterSize, string> = {
   small: "w-small",
   base: "w-base",
-  medium: "w-plus",
+  mid: "w-plus",
   large: "w-mid",
 };
 
@@ -49,7 +50,7 @@ function defaultFormatValue(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }
 
-export type MeterProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /** Текущее значение шкалы. */
   value: number;
   min?: number;
@@ -62,19 +63,12 @@ export type MeterProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   thickness?: number | string;
   /** Цвет заливки: CSS-цвет или `linear-gradient(...)`. По умолчанию accent. */
   color?: string;
-  /** Подпись слева над шкалой. */
-  label?: string;
-  /** Показывать значение или `valueText` справа над шкалой. */
-  showValue?: boolean;
-  /** Произвольный текст состояния справа; перекрывает `formatValue`. */
-  valueText?: string;
   formatValue?: (value: number) => string;
   orientation?: MeterOrientation;
   className?: string;
-  id?: string;
 };
 
-export const Meter = forwardRef<HTMLDivElement, MeterProps>(function Meter(
+export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function MeterTrack(
   {
     value,
     min = 0,
@@ -82,20 +76,28 @@ export const Meter = forwardRef<HTMLDivElement, MeterProps>(function Meter(
     size = "base",
     thickness,
     color,
-    label,
-    showValue = false,
-    valueText,
     formatValue = defaultFormatValue,
-    orientation = "horizontal",
+    orientation: orientationProp,
     className,
-    id: idProp,
+    "aria-describedby": ariaDescribedByProp,
     ...rest
   },
   ref,
 ) {
-  const autoId = useId();
-  const id = idProp ?? `meter-${autoId}`;
-  const labelId = `${id}-label`;
+  const fieldCtx = useOptionalMeterFieldContext();
+  const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
+  const meterId = fieldCtx?.meterId;
+  const labelId = meterId != null ? `${meterId}-label` : undefined;
+  const hintConnected = fieldCtx?.hintConnected ?? false;
+  const errorConnected = fieldCtx?.errorConnected ?? false;
+  const hintId = fieldCtx?.hintId;
+  const errorId = fieldCtx?.errorId;
+  const ariaDescribedBy =
+    ariaDescribedByProp ??
+    joinFieldDescribedBy(
+      hintConnected ? hintId : undefined,
+      errorConnected ? errorId : undefined,
+    );
   const fillRef = useRef<HTMLSpanElement>(null);
   const firstLayoutRef = useRef(true);
   const reduceMotion = prefersReducedInteractiveHoverLift();
@@ -129,12 +131,13 @@ export const Meter = forwardRef<HTMLDivElement, MeterProps>(function Meter(
     return { width: "100%", height: `${percent}%` };
   }, [isHorizontal, percent]);
 
-  const statusText = useMemo(() => {
-    if (valueText != null) return valueText;
-    return formatValue(clampedValue);
-  }, [clampedValue, formatValue, valueText]);
+  const statusText = useMemo(() => formatValue(clampedValue), [clampedValue, formatValue]);
 
-  const showHeader = label != null || showValue || valueText != null;
+  const setDisplay = fieldCtx?.setDisplay;
+
+  useLayoutEffect(() => {
+    setDisplay?.({ clampedValue, statusText, min, max });
+  }, [clampedValue, max, min, setDisplay, statusText]);
 
   useLayoutEffect(() => {
     const fill = fillRef.current;
@@ -175,53 +178,19 @@ export const Meter = forwardRef<HTMLDivElement, MeterProps>(function Meter(
   return (
     <div
       ref={ref}
-      id={id}
-      className={cn(
-        "flex flex-col gap-small text-left",
-        isHorizontal ? "w-full" : "w-auto items-center",
-        className,
-      )}
+      role="meter"
+      aria-valuenow={clampedValue}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuetext={statusText}
+      aria-labelledby={labelId}
+      aria-describedby={ariaDescribedBy}
+      aria-label={labelId == null ? statusText : undefined}
+      aria-orientation={orientation}
+      className={cn(trackHitAreaClass, className)}
+      style={trackCrossStyle}
       {...rest}
     >
-      {showHeader ? (
-        <div
-          className={cn(
-            "flex items-baseline justify-between gap-xsmall",
-            isHorizontal ? "w-full" : "min-w-[8rem]",
-          )}
-        >
-          {label != null ? (
-            <Text
-              as="span"
-              id={labelId}
-              variant="base"
-              className="font-medium leading-snug"
-            >
-              {label}
-            </Text>
-          ) : (
-            <span />
-          )}
-          {showValue || valueText != null ? (
-            <Text as="span" variant="base" className="tabular-nums text-muted">
-              {statusText}
-            </Text>
-          ) : null}
-        </div>
-      ) : null}
-
-      <div
-        role="meter"
-        aria-valuenow={clampedValue}
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-valuetext={statusText}
-        aria-labelledby={label != null ? labelId : undefined}
-        aria-label={label == null ? statusText : undefined}
-        aria-orientation={orientation}
-        className={trackHitAreaClass}
-        style={trackCrossStyle}
-      >
         <span
           ref={fillRef}
           aria-hidden
@@ -236,7 +205,6 @@ export const Meter = forwardRef<HTMLDivElement, MeterProps>(function Meter(
             ...fillColorStyle,
           }}
         />
-      </div>
     </div>
   );
 });

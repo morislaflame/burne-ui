@@ -25,6 +25,17 @@ import { cn } from "@/utils/cn";
 
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
+  /**
+   * Составная разметка (`Trigger` / `Panel` и слоты).
+   * `Accordion.Item` включает автоматически.
+   */
+  compound?: boolean;
+  /** Simple API: заголовок триггера. В compound игнорируется. */
+  title?: ReactNode;
+  /** Simple API: подзаголовок под заголовком. В compound — `<Expandable.Description>`. */
+  description?: ReactNode;
+  /** Simple API: иконка слева от текста. В compound — `<Expandable.Icon>`. */
+  icon?: ReactNode;
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -37,9 +48,10 @@ export type ExpandableTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export type ExpandableIconProps = HTMLAttributes<HTMLSpanElement>;
+export type ExpandableMessageProps = HTMLAttributes<HTMLDivElement>;
 export type ExpandableContentProps = HTMLAttributes<HTMLDivElement>;
-export type ExpandableTitleProps = HTMLAttributes<HTMLSpanElement>;
-export type ExpandableDescriptionProps = HTMLAttributes<HTMLSpanElement>;
+export type ExpandableTitleProps = HTMLAttributes<HTMLDivElement>;
+export type ExpandableDescriptionProps = HTMLAttributes<HTMLDivElement>;
 export type ExpandableChevronProps = HTMLAttributes<HTMLSpanElement>;
 export type ExpandablePanelProps = HTMLAttributes<HTMLDivElement>;
 
@@ -60,6 +72,8 @@ function useExpandable() {
   if (!ctx) throw new Error("Компоненты Expandable должны быть внутри <Expandable>.");
   return ctx;
 }
+
+export { useExpandable as useExpandableContext };
 
 /** Выносит `<Ripple />` на полный `<button>`, а не в узкий flex-ряд с текстом. */
 function partitionTriggerRipple(children: ReactNode): {
@@ -85,6 +99,42 @@ function partitionTriggerRipple(children: ReactNode): {
       </span>
     ) : null;
   return { rippleOverlay, rest: <>{rest}</> };
+}
+
+const ExpandableMessage = forwardRef<HTMLDivElement, ExpandableMessageProps>(
+  function ExpandableMessage({ className = "", ...rest }, ref) {
+    return (
+      <div
+        ref={ref}
+        className={cn("flex min-w-0 flex-1 items-start gap-base", className)}
+        {...rest}
+      />
+    );
+  },
+);
+
+ExpandableMessage.displayName = "ExpandableMessage";
+
+const EXPANDABLE_MESSAGE_DISPLAY_NAMES = new Set([
+  "ExpandableMessage",
+  "Accordion.Message",
+]);
+
+function hasExpandableMessage(children: ReactNode): boolean {
+  let found = false;
+
+  Children.forEach(children, (child) => {
+    if (found || !isValidElement(child)) return;
+    const type = child.type as { displayName?: string };
+    if (
+      child.type === ExpandableMessage ||
+      (type.displayName != null && EXPANDABLE_MESSAGE_DISPLAY_NAMES.has(type.displayName))
+    ) {
+      found = true;
+    }
+  });
+
+  return found;
 }
 
 function ChevronSvg({ className = "" }: { className?: string }) {
@@ -128,8 +178,13 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
     } = useExpandable();
 
     const liftSpanRef = useRef<HTMLSpanElement | null>(null);
-    const { rippleOverlay, rest: mainChildren } =
+    const { rippleOverlay, rest: triggerChildren } =
       partitionTriggerRipple(children);
+    const mainChildren = hasExpandableMessage(triggerChildren) ? (
+      triggerChildren
+    ) : (
+      <ExpandableMessage>{triggerChildren}</ExpandableMessage>
+    );
 
     const setTriggerRef = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -174,8 +229,8 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
         <span
           ref={liftSpanRef}
           className={cn(
-            "relative z-[1] flex w-fit max-w-full min-w-0 origin-center will-change-transform",
-            "items-start gap-base",
+            "relative z-[1] flex min-w-0 flex-1 origin-center will-change-transform",
+            hideChevron && "w-full",
           )}
         >
           {mainChildren}
@@ -195,17 +250,19 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
   },
 );
 
+ExpandableTrigger.displayName = "ExpandableTrigger";
+
 function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
   return (
     <span
-      className={cn(
-        "flex shrink-0 items-center self-start text-accent [&_svg]:icon-base mt-[0.0575rem]",
-        className,
-      )}
+      aria-hidden
+      className={cn("shrink-0 text-accent [&_svg]:icon-mid", className)}
       {...props}
     />
   );
 }
+
+ExpandableIcon.displayName = "ExpandableIcon";
 
 function ExpandableContent({ className = "", ...props }: ExpandableContentProps) {
   return (
@@ -219,16 +276,20 @@ function ExpandableContent({ className = "", ...props }: ExpandableContentProps)
   );
 }
 
+ExpandableContent.displayName = "ExpandableContent";
+
 function ExpandableTitle({ className = "", ...props }: ExpandableTitleProps) {
   return (
     <Text
-      as="span"
+      as="div"
       variant="base"
-      className={cn("block font-medium leading-snug", className)}
+      className={cn("", className)}
       {...props}
     />
   );
 }
+
+ExpandableTitle.displayName = "ExpandableTitle";
 
 function ExpandableDescription({
   className = "",
@@ -236,13 +297,15 @@ function ExpandableDescription({
 }: ExpandableDescriptionProps) {
   return (
     <Text
-      as="span"
-      variant="base"
-      className={cn("block leading-normal text-muted", className)}
+      as="div"
+      variant="small"
+      className={cn("text-muted", className)}
       {...props}
     />
   );
 }
+
+ExpandableDescription.displayName = "ExpandableDescription";
 
 function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps) {
   const { open, hasPanel } = useExpandable();
@@ -261,6 +324,8 @@ function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps)
     </span>
   );
 }
+
+ExpandableChevron.displayName = "ExpandableChevron";
 
 const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
   function ExpandablePanel({ className = "", children, ...props }, ref) {
@@ -291,7 +356,7 @@ const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             aria-labelledby={headerId}
             aria-hidden={!open}
             inert={!open}
-            className={cn("px-mid pb-plus text-left leading-normal", className)}
+            className={cn("px-mid pb-plus text-left", className)}
             {...props}
           >
             {children}
@@ -302,12 +367,53 @@ const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
   },
 );
 
+ExpandablePanel.displayName = "ExpandablePanel";
+
+const COMPOUND_SLOT_DISPLAY_NAMES = new Set([
+  "ExpandableTrigger",
+  "ExpandablePanel",
+  "ExpandableMessage",
+  "Accordion.Trigger",
+  "Accordion.Panel",
+  "Accordion.Message",
+  "Accordion.Heading",
+]);
+
+function hasExpandableCompoundChildren(children: ReactNode): boolean {
+  let found = false;
+
+  const walk = (node: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(node)) {
+      if (!isValidElement(child)) continue;
+      const type = child.type as { displayName?: string };
+      if (
+        child.type === ExpandableTrigger ||
+        child.type === ExpandablePanel ||
+        child.type === ExpandableMessage ||
+        (type.displayName != null && COMPOUND_SLOT_DISPLAY_NAMES.has(type.displayName))
+      ) {
+        found = true;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+
+  walk(children);
+  return found;
+}
+
 export type ExpandableProps = ExpandableRootProps;
 
 const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
   function ExpandableRoot(
     {
       children,
+      compound: compoundProp,
+      title,
+      description,
+      icon,
       defaultOpen = false,
       open: openProp,
       onOpenChange,
@@ -346,6 +452,26 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       setHasPanel,
     };
 
+    const isCompound =
+      compoundProp === true || hasExpandableCompoundChildren(children);
+
+    const simpleBody = (
+      <>
+        <ExpandableTrigger>
+          <ExpandableMessage>
+            {icon != null ? <ExpandableIcon>{icon}</ExpandableIcon> : null}
+            <ExpandableContent>
+              {title != null ? <ExpandableTitle>{title}</ExpandableTitle> : null}
+              {description != null ? (
+                <ExpandableDescription>{description}</ExpandableDescription>
+              ) : null}
+            </ExpandableContent>
+          </ExpandableMessage>
+        </ExpandableTrigger>
+        {children != null ? <ExpandablePanel>{children}</ExpandablePanel> : null}
+      </>
+    );
+
     return (
       <ExpandableContext.Provider value={ctxValue}>
         <div
@@ -356,16 +482,19 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
           )}
           {...rest}
         >
-          {children}
+          {isCompound ? children : simpleBody}
         </div>
       </ExpandableContext.Provider>
     );
   },
 );
 
-/** Раскрывающийся блок: составной API — `Expandable` (корень), `Trigger`, `Panel`, опционально `Icon`, `Content`, `Title`, `Description`, `Chevron`. Лёгкое сжатие строки тригера при нажатии (anime.js). */
+ExpandableRoot.displayName = "ExpandableRoot";
+
+/** Раскрывающийся блок. **Simple** — `title`, `description`, `icon` на root, контент в `children`. **Compound** — `Trigger`, `Panel`, опционально `Message`, `Icon`, `Content`, `Title`, `Description`, `Chevron`. */
 export const Expandable = Object.assign(ExpandableRoot, {
   Trigger: ExpandableTrigger,
+  Message: ExpandableMessage,
   Icon: ExpandableIcon,
   Content: ExpandableContent,
   Title: ExpandableTitle,

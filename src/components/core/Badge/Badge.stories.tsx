@@ -2,12 +2,19 @@ import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
+  IoBookmarkOutline,
   IoCheckmarkCircleOutline,
   IoHeartOutline,
   IoMoonOutline,
   IoNotificationsOutline,
   IoRocketOutline,
 } from "react-icons/io5";
+
+import {
+  DualApiStoryPanel,
+  DualApiStoryPanels,
+  dualApiStorySource,
+} from "@/components/core/utils/dualApiStoryChrome";
 
 import { Avatar } from "@/components/core/Avatar/Avatar";
 import { Button } from "@/components/core/Button/Button";
@@ -68,8 +75,20 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Компактный статус-бейдж. **Simple** — `icon` + текст в `children`; **inline-иконки** — `data-icon=\"inline-start\" | \"inline-end\"` на child. Для наложения — `Badge.Anchor`.",
+      },
+    },
   },
   decorators: [...framedDecorator],
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+    },
+  },
 } satisfies Meta<typeof Badge>;
 
 export default meta;
@@ -79,13 +98,18 @@ type Story = StoryObj<typeof meta>;
 function SizesAndVariantsDemo() {
   return (
     <div className="flex flex-col gap-xlarge py-mid">
-      {(["small", "base", "large"] as const).map((size) => (
-        <div key={size} className="flex flex-wrap items-center gap-base">
-          {VARIANT_GRID.map((tone) => (
-            <Badge key={tone} size={size} color={tone} className="capitalize">
-              {tone}
-            </Badge>
-          ))}
+      {(["small", "base", "mid", "large"] as const).map((size) => (
+        <div key={size} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">
+            {size}
+          </span>
+          <div className="flex flex-wrap items-center gap-base">
+            {VARIANT_GRID.map((tone) => (
+              <Badge key={tone} size={size} color={tone} className="capitalize">
+                {tone}
+              </Badge>
+            ))}
+          </div>
         </div>
       ))}
     </div>
@@ -113,30 +137,21 @@ export const BadgeAnchorComposition: Story = {
       </p>
       <div className="flex flex-wrap items-start justify-center gap-xlarge">
         <Badge.Anchor>
-          <Avatar size="large" label="Jordan Doe">
-            <Avatar.Image src={GREEN_AVATAR_URL} alt="" loading="lazy" />
-            <Avatar.Fallback>JD</Avatar.Fallback>
-          </Avatar>
+          <Avatar size="large" label="Jordan Doe" src={GREEN_AVATAR_URL} alt="" loading="lazy" />
           <Badge color="danger" size="small">
             5
           </Badge>
         </Badge.Anchor>
 
         <Badge.Anchor>
-          <Avatar size="large" label="Alex Brown">
-            <Avatar.Image src={ORANGE_AVATAR_URL} alt="" loading="lazy" />
-            <Avatar.Fallback>AB</Avatar.Fallback>
-          </Avatar>
+          <Avatar size="large" label="Alex Brown" src={ORANGE_AVATAR_URL} alt="" loading="lazy" />
           <Badge color="secondary" size="small">
             New
           </Badge>
         </Badge.Anchor>
 
         <Badge.Anchor>
-          <Avatar size="large" label="Casey Davis">
-            <Avatar.Image src={BLUE_AVATAR_URL} alt="" loading="lazy" />
-            <Avatar.Fallback>CD</Avatar.Fallback>
-          </Avatar>
+          <Avatar size="large" label="Casey Davis" src={BLUE_AVATAR_URL} alt="" loading="lazy" />
           <Badge
             color="success"
             dot
@@ -150,12 +165,55 @@ export const BadgeAnchorComposition: Story = {
   ),
 };
 
+export const IconInlineChildren: Story = {
+  name: "Inline-иконки (data-icon)",
+  ...dualApiStorySource,
+  render: () => (
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Compound — data-icon на child">
+        <div className="flex flex-wrap gap-small">
+          <Badge variant="secondary">
+            <IoCheckmarkCircleOutline data-icon="inline-start" />
+            Verified
+          </Badge>
+          <Badge variant="outline">
+            Bookmark
+            <IoBookmarkOutline data-icon="inline-end" />
+          </Badge>
+        </div>
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Simple — prop icon + iconPosition">
+        <div className="flex flex-wrap gap-small">
+          <Badge
+            color="info"
+            size="base"
+            icon={<IoRocketOutline aria-hidden />}
+            iconPosition="start"
+          >
+            Старт
+          </Badge>
+          <Badge
+            color="success"
+            size="base"
+            icon={<IoRocketOutline aria-hidden />}
+            iconPosition="end"
+          >
+            Конец
+          </Badge>
+        </div>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
+  ),
+};
+
 export const IconStartEnd: Story = {
-  name: "data-icon через iconPosition",
+  name: "Simple: icon + iconPosition",
   render: () => (
     <div className="flex flex-col items-start gap-mid">
       <p className="text-sm text-muted">
-        При тексте на корне — <code className="text-accent">data-icon=&quot;start&quot;</code> /
+        Prop <code className="text-accent">icon</code> +{" "}
+        <code className="text-accent">iconPosition</code> — root получает{" "}
+        <code className="text-accent">data-icon=&quot;start&quot;</code> /{" "}
         <code className="text-accent">end</code>.
       </p>
       <div className="flex flex-wrap items-center gap-plus">
@@ -193,13 +251,17 @@ export const IconOnly: Story = {
 
 function DotsVariantsDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-xlarge py-mid">
-      {VARIANT_GRID.map((tone) => (
-        <div key={tone} className="flex flex-col items-center gap-xsmall">
-          <Badge color={tone} dot size="base" aria-label={`${tone}`} />
-          <span className="max-w-[4.5rem] text-center text-xs capitalize text-muted">
-            {tone}
-          </span>
+    <div className="flex flex-col gap-mid py-mid">
+      {(["small", "base", "mid", "large"] as const).map((size) => (
+        <div key={size} className="flex flex-wrap items-center gap-xlarge">
+          {VARIANT_GRID.map((tone) => (
+            <div key={tone} className="flex flex-col items-center gap-xsmall">
+              <Badge color={tone} dot size={size} aria-label={`${tone}`} />
+              <span className="max-w-[4.5rem] text-center text-xs capitalize text-muted">
+                {tone}
+              </span>
+            </div>
+          ))}
         </div>
       ))}
     </div>
@@ -271,6 +333,31 @@ export const WithCard: Story = {
   ),
 };
 
+export const Accessibility: Story = {
+  name: "Доступность",
+  render: () => (
+    <div className="flex max-w-lg flex-col gap-mid text-left">
+      <p className="text-sm text-muted">
+        Текстовый бейдж читается как подпись; inline-иконки декоративные (
+        <code className="text-accent">aria-hidden</code>). Icon-only и dot без подписи требуют{" "}
+        <code className="text-accent">aria-label</code>.
+      </p>
+      <div className="flex flex-wrap items-center gap-plus">
+        <Badge variant="success">
+          <IoCheckmarkCircleOutline data-icon="inline-start" />
+          Опубликовано
+        </Badge>
+        <Badge
+          color="danger"
+          icon={<IoHeartOutline aria-hidden />}
+          aria-label="Избранное"
+        />
+        <Badge dot color="info" aria-label="Есть обновления" />
+      </div>
+    </div>
+  ),
+};
+
 export const CustomColors: Story = {
   name: "Кастомные бейджи",
   render: () => (
@@ -327,9 +414,7 @@ export const CustomColors: Story = {
             className="border-0 bg-lime-500 ring-2 ring-background motion-reduce:ring-1 dark:bg-lime-400"
           />
           <Badge.Anchor className="rounded-full">
-            <Avatar size="base" label="Demo">
-              <Avatar.Fallback>D</Avatar.Fallback>
-            </Avatar>
+            <Avatar size="base" label="Demo" />
             <Badge
               color="default"
               size="small"

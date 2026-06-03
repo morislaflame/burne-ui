@@ -260,7 +260,9 @@ export const WithInputShell: Story = {
           <Text variant="small" className="font-medium text-muted">
             Контакт
           </Text>
-          <Input placeholder="you@example.com" />
+          <Input>
+            <Input.Control placeholder="you@example.com" />
+          </Input>
         </div>
       </div>
     </div>

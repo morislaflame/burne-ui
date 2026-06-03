@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useOptionalButtonGroupSegment } from "@/components/core/utils/buttonGroupContext";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -32,12 +33,14 @@ import {
 import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 
 /** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
 
 /** Размер кнопки: высота, отступы, типографика, спиннер и иконки результата. */
-export type ButtonSize = "small" | "base" | "large" | "xlarge";
+export type ButtonSize = ComponentSize;
 
 /** Визуальный вариант заливки и обводки. */
 export type ButtonVariant =
@@ -131,8 +134,8 @@ export function buttonRippleTone(variant: ButtonVariant): string {
 const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",
   base: "base",
+  mid: "mid",
   large: "mid",
-  xlarge: "mid",
 };
 
 const BUTTON_SIZE_CLASSES: Record<
@@ -140,28 +143,28 @@ const BUTTON_SIZE_CLASSES: Record<
   { root: string; rootIconOnly: string; spinner: string; icon: string }
 > = {
   small: {
-    root: "min-h-7 min-w-button-small px-base py-xsmall",
-    rootIconOnly: "min-h-7 min-w-fit px-base py-xsmall",
-    spinner: "icon-small border-2",
-    icon: "icon-small",
+    root: `${CONTROL_SIZE_LAYOUT.small.h} ${CONTROL_SIZE_LAYOUT.small.minWButton} ${CONTROL_SIZE_LAYOUT.small.padX}`,
+    rootIconOnly: `${CONTROL_SIZE_LAYOUT.small.h} min-w-fit ${CONTROL_SIZE_LAYOUT.small.padX}`,
+    spinner: `${CONTROL_SIZE_LAYOUT.small.spinnerIcon} ${CONTROL_SIZE_LAYOUT.small.spinnerBorder}`,
+    icon: CONTROL_SIZE_LAYOUT.small.icon,
   },
   base: {
-    root: "min-h-8 min-w-button-base px-plus py-small",
-    rootIconOnly: "min-h-8 min-w-fit px-plus py-small",
-    spinner: "icon-base border-2",
-    icon: "icon-base",
+    root: `${CONTROL_SIZE_LAYOUT.base.h} ${CONTROL_SIZE_LAYOUT.base.minWButton} ${CONTROL_SIZE_LAYOUT.base.padX}`,
+    rootIconOnly: `${CONTROL_SIZE_LAYOUT.base.h} min-w-fit ${CONTROL_SIZE_LAYOUT.base.padX}`,
+    spinner: `${CONTROL_SIZE_LAYOUT.base.spinnerIcon} ${CONTROL_SIZE_LAYOUT.base.spinnerBorder}`,
+    icon: CONTROL_SIZE_LAYOUT.base.icon,
+  },
+  mid: {
+    root: `${CONTROL_SIZE_LAYOUT.mid.h} ${CONTROL_SIZE_LAYOUT.mid.minWButton} ${CONTROL_SIZE_LAYOUT.mid.padX}`,
+    rootIconOnly: `${CONTROL_SIZE_LAYOUT.mid.h} min-w-fit ${CONTROL_SIZE_LAYOUT.mid.padX}`,
+    spinner: `${CONTROL_SIZE_LAYOUT.mid.spinnerIcon} ${CONTROL_SIZE_LAYOUT.mid.spinnerBorder}`,
+    icon: CONTROL_SIZE_LAYOUT.mid.icon,
   },
   large: {
-    root: "min-h-10 min-w-button-large px-mid py-base",
-    rootIconOnly: "min-h-10 min-w-fit px-mid py-base",
-    spinner: "icon-large border-2",
-    icon: "icon-large",
-  },
-  xlarge: {
-    root: "min-h-12 min-w-button-xlarge px-large py-base",
-    rootIconOnly: "min-h-12 min-w-fit px-large py-base",
-    spinner: "icon-large border-[2.5px]",
-    icon: "icon-large",
+    root: `${CONTROL_SIZE_LAYOUT.large.h} ${CONTROL_SIZE_LAYOUT.large.minWButton} ${CONTROL_SIZE_LAYOUT.large.padX}`,
+    rootIconOnly: `${CONTROL_SIZE_LAYOUT.large.h} min-w-fit ${CONTROL_SIZE_LAYOUT.large.padX}`,
+    spinner: `${CONTROL_SIZE_LAYOUT.large.spinnerIcon} ${CONTROL_SIZE_LAYOUT.large.spinnerBorder}`,
+    icon: CONTROL_SIZE_LAYOUT.large.icon,
   },
 };
 
@@ -273,7 +276,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className = "",
       variant = "default",
-      size = "base",
+      size: sizeProp = "base",
       type = "button",
       animated = true,
       asyncState: asyncStateProp,
@@ -289,12 +292,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       leftIcon,
       ripple = false,
       iconOnly = false,
-      groupSegment,
+      groupSegment: groupSegmentProp,
       children,
       ...props
     },
     ref,
   ) {
+    const groupCtx = useOptionalButtonGroupSegment();
+    const groupSegment = groupSegmentProp ?? groupCtx?.segment;
+    const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
     const userDisabled = Boolean(disabledProp);
     const btnRef = useRef<HTMLButtonElement>(null);
     const hoverPointerInsideRef = useRef(false);
@@ -567,7 +573,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         <span className="relative z-[1] grid place-items-center">
           <span
-            className={`${crossFade} col-start-1 row-start-1 ${labelHidden} inline-flex min-w-0 items-center justify-center gap-small`}
+            className={`${crossFade} col-start-1 row-start-1 ${labelHidden} inline-flex min-w-0 items-center justify-center gap-xsmall`}
           >
             {leftIcon != null ? (
               <span

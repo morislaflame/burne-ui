@@ -1,9 +1,8 @@
-import { animate, remove } from "animejs";
+import { remove } from "animejs";
 import {
   forwardRef,
   useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -20,52 +19,51 @@ import {
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
-import { Text } from "@/components/core/Text";
+  SelectionThumb,
+  SelectionThumbIcon,
+} from "@/components/core/SelectionThumb";
 import { cn } from "@/utils/cn";
 
+import {
+  selectionIndicatorFallbackPx,
+} from "@/components/core/SelectionIndicator";
+import { useOptionalSliderFieldContext } from "./sliderFieldContext";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import {
+  SliderCompoundThumb,
+  SliderIcon,
+  SliderRail,
+  SliderTrackProvider,
+  partitionSliderTrackChildren,
+  type SliderThumbKind,
+} from "./sliderCompound";
+
 export type SliderOrientation = "horizontal" | "vertical";
-export type SliderSize = "small" | "base" | "medium" | "large";
+export type SliderSize = "small" | "base" | "mid" | "large";
 /** Толщина дорожки / диаметр кружка: число (px) или CSS-длина. */
 export type SliderThickness = number | string;
 
-const THUMB_SIZE: Record<SliderSize, string> = {
-  small: "size-3.5 min-size-3.5",
-  base: "size-4.5 min-size-4.5",
-  medium: "size-6 min-size-6",
-  large: "size-7 min-size-7",
+/** Fallback, если трек ещё не измерен; в runtime берём cross-axis из `getBoundingClientRect`. */
+const THUMB_PX: Record<SliderSize, number> = {
+  small: selectionIndicatorFallbackPx("small"),
+  base: selectionIndicatorFallbackPx("base"),
+  mid: selectionIndicatorFallbackPx("mid"),
+  large: selectionIndicatorFallbackPx("large"),
 };
 
-/** Толщина дорожки = диаметру кружка, чтобы thumb полностью «сидел» в линии. */
+/** Толщина дорожки = диаметру кружка (только cross-axis). */
 const RAIL_HEIGHT: Record<SliderSize, string> = {
-  small: "h-3.5",
-  base: "h-4.5",
-  medium: "h-6",
-  large: "h-7",
+  small: "h-[var(--selection-indicator-small)] min-h-[var(--selection-indicator-small)]",
+  base: "h-[var(--selection-indicator-base)] min-h-[var(--selection-indicator-base)]",
+  mid: "h-[var(--selection-indicator-mid)] min-h-[var(--selection-indicator-mid)]",
+  large: "h-[var(--selection-indicator-large)] min-h-[var(--selection-indicator-large)]",
 };
 
 const RAIL_WIDTH: Record<SliderSize, string> = {
-  small: "w-3.5",
-  base: "w-4.5",
-  medium: "w-6",
-  large: "w-7",
-};
-
-/** Fallback, если трек ещё не измерен; в runtime берём cross-axis из `getBoundingClientRect`. */
-const THUMB_PX: Record<SliderSize, number> = {
-  small: 14,
-  base: 18,
-  medium: 24,
-  large: 28,
-};
-
-const THUMB_ICON: Record<SliderSize, string> = {
-  small: "icon-xsmall",
-  base: "icon-xsmall",
-  medium: "icon-base",
-  large: "icon-mid",
+  small: "w-[var(--selection-indicator-small)] min-w-[var(--selection-indicator-small)]",
+  base: "w-[var(--selection-indicator-base)] min-w-[var(--selection-indicator-base)]",
+  mid: "w-[var(--selection-indicator-mid)] min-w-[var(--selection-indicator-mid)]",
+  large: "w-[var(--selection-indicator-large)] min-w-[var(--selection-indicator-large)]",
 };
 
 function readTrackMetrics(
@@ -117,16 +115,14 @@ type SliderCommonProps = {
   step?: number;
   /** Дискретные значения: ползунок «прилипает» только к этим точкам; на треке — метки. */
   marks?: number[];
-  /** Подпись над слайдером (как у `Input`). */
-  label?: string;
-  /** Текущее значение справа от подписи. */
-  showValue?: boolean;
   formatValue?: (value: number) => string;
   /** Иконка внутри кружка: accent в покое, accent-foreground при захвате. */
   icon?: ReactNode;
   disabled?: boolean;
   className?: string;
-  id?: string;
+  /** Явная подпись ползунков (`aria-label`); перекрывает связь с `<Slider.Label>` через `aria-labelledby`. */
+  ariaLabel?: string;
+  children?: ReactNode;
 };
 
 export type SliderSingleProps = SliderCommonProps & {
@@ -143,7 +139,7 @@ export type SliderRangeProps = SliderCommonProps & {
   onValueChange?: (value: [number, number]) => void;
 };
 
-export type SliderProps = SliderSingleProps | SliderRangeProps;
+export type SliderTrackProps = SliderSingleProps | SliderRangeProps;
 
 function clamp(n: number, lo: number, hi: number) {
   return Math.min(hi, Math.max(lo, n));
@@ -346,10 +342,8 @@ function defaultFormatValue(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }
 
-type SliderThumbProps = {
+type SliderThumbButtonProps = {
   size: SliderSize;
-  /** Явная толщина кружка; иначе пресет из `size`. */
-  crossSizeStyle?: CSSProperties;
   icon?: ReactNode;
   percent: number;
   orientation: SliderOrientation;
@@ -360,13 +354,14 @@ type SliderThumbProps = {
   ariaValueMax: number;
   ariaValueText?: string;
   ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
   onPointerDown: (e: PointerEvent<HTMLButtonElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
 };
 
-function SliderThumb({
+function SliderThumbButton({
   size,
-  crossSizeStyle,
   icon,
   percent,
   orientation,
@@ -377,57 +372,28 @@ function SliderThumb({
   ariaValueMax,
   ariaValueText,
   ariaLabel,
+  ariaLabelledBy,
+  ariaDescribedBy,
   onPointerDown,
   onKeyDown,
-}: SliderThumbProps) {
-  const fillRef = useRef<HTMLSpanElement>(null);
-  const trackRef = useRef<HTMLSpanElement>(null);
+}: SliderThumbButtonProps) {
+  const shellRef = useRef<HTMLSpanElement>(null);
   const squeezeRef = useRef<HTMLButtonElement>(null);
-  const firstLayoutRef = useRef(true);
   const reduceMotion = prefersReducedInteractiveHoverLift();
 
   useEffect(() => {
     return () => {
-      const nodes = [fillRef.current, trackRef.current, squeezeRef.current];
-      for (const el of nodes) {
+      for (const el of [shellRef.current, squeezeRef.current]) {
         if (el) remove(el);
       }
     };
   }, []);
 
   useLayoutEffect(() => {
-    const fill = fillRef.current;
-    if (!fill) return;
-
-    if (reduceMotion) {
-      remove(fill);
-      fill.style.transform = `scale(${active ? 1 : 0})`;
-      fill.style.opacity = active ? "1" : "0";
-      return;
-    }
-
-    if (firstLayoutRef.current) {
-      firstLayoutRef.current = false;
-      remove(fill);
-      fill.style.transform = `scale(${active ? 1 : 0})`;
-      fill.style.opacity = active ? "1" : "0";
-      return;
-    }
-
-    remove(fill);
-    void animate(fill, {
-      scale: active ? [0, 1] : [1, 0],
-      opacity: active ? [0, 1] : [1, 0],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
-    });
-  }, [active, reduceMotion]);
-
-  useLayoutEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    remove(track);
-    track.style.opacity = disabled ? "0.48" : "1";
+    const shell = shellRef.current;
+    if (!shell) return;
+    remove(shell);
+    shell.style.opacity = disabled ? "0.48" : "1";
   }, [disabled]);
 
   const handlePointerDown = useCallback(
@@ -444,20 +410,25 @@ function SliderThumb({
 
   const positionStyle: CSSProperties =
     orientation === "horizontal"
-      ? { left: `${percent}%`, ...crossSizeStyle }
-      : { bottom: `${percent}%`, ...crossSizeStyle };
+      ? { left: `${percent}%` }
+      : { top: `${100 - percent}%` };
 
   const positionClass =
     orientation === "horizontal"
-      ? "top-1/2 -translate-x-1/2 -translate-y-1/2"
-      : "left-1/2 -translate-x-1/2 translate-y-1/2";
+      ? "top-0 h-full w-auto -translate-x-1/2 aspect-square"
+      : "left-0 w-full h-auto -translate-y-1/2 aspect-square";
 
   return (
     <button
       ref={squeezeRef}
       type="button"
       role="slider"
-      aria-label={ariaLabel}
+      {...(ariaLabelledBy != null
+        ? { "aria-labelledby": ariaLabelledBy }
+        : ariaLabel != null
+          ? { "aria-label": ariaLabel }
+          : {})}
+      {...(ariaDescribedBy != null ? { "aria-describedby": ariaDescribedBy } : {})}
       aria-valuemin={ariaValueMin}
       aria-valuemax={ariaValueMax}
       aria-valuenow={ariaValueNow}
@@ -467,8 +438,7 @@ function SliderThumb({
       tabIndex={disabled ? -1 : 0}
       className={cn(
         "absolute z-[2] box-border flex shrink-0 origin-center items-center justify-center",
-        "m-0 appearance-none border-0 bg-transparent p-0 leading-none",
-        crossSizeStyle == null && THUMB_SIZE[size],
+        "m-0 appearance-none border-0 bg-transparent p-0",
         positionClass,
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
         disabled ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
@@ -477,31 +447,13 @@ function SliderThumb({
       onPointerDown={handlePointerDown}
       onKeyDown={onKeyDown}
     >
-      <span
-        ref={trackRef}
-        className={cn(
-          "relative box-border flex h-full w-full items-center justify-center rounded-full border border-accent bg-surface",
-        )}
-      >
-        <span
-          ref={fillRef}
-          aria-hidden
-          className="pointer-events-none absolute inset-[1px] z-[0] origin-center rounded-full bg-accent text-accent-foreground"
-          style={{ transform: "scale(0)", opacity: 0 }}
-        />
+      <SelectionThumb active={active} size={size} shellRef={shellRef}>
         {icon != null ? (
-          <span
-            aria-hidden
-            className={cn(
-              "pointer-events-none relative z-[1] inline-flex items-center justify-center transition-colors duration-[280ms] ease-out motion-reduce:transition-none [&_svg]:size-full",
-              THUMB_ICON[size],
-              active ? "text-accent-foreground" : "text-accent",
-            )}
-          >
+          <SelectionThumbIcon size={size} highlighted={active}>
             {icon}
-          </span>
+          </SelectionThumbIcon>
         ) : null}
-      </span>
+      </SelectionThumb>
     </button>
   );
 }
@@ -543,30 +495,88 @@ function useMergedRange(
   return [merged, setMerged, isControlled];
 }
 
-export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
+export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function SliderTrack(
   props,
   ref,
 ) {
   const {
-    orientation = "horizontal",
+    orientation: orientationProp,
     size = "base",
     thickness,
     min = 0,
     max = 100,
     step = 1,
     marks: marksProp,
-    label,
-    showValue = false,
     formatValue = defaultFormatValue,
     icon,
     disabled = false,
     className,
-    id: idProp,
+    ariaLabel: ariaLabelProp,
     range = false,
+    children,
   } = props;
 
-  const autoId = useId();
-  const id = idProp ?? `slider-${autoId}`;
+  const fieldCtx = useOptionalSliderFieldContext();
+  const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
+  const labelId = fieldCtx?.labelId;
+  const ariaDescribedBy = joinFieldDescribedBy(
+    fieldCtx?.hintConnected ? fieldCtx.hintId : undefined,
+    fieldCtx?.errorConnected ? fieldCtx.errorId : undefined,
+  );
+  const explicitLabel = ariaLabelProp;
+
+  const thumbA11y = useCallback(
+    (kind: "single" | "start" | "end") => {
+      if (explicitLabel) {
+        if (kind === "start") {
+          return {
+            ariaLabel: `${explicitLabel}, минимум`,
+            ariaLabelledBy: undefined as string | undefined,
+            ariaDescribedBy,
+          };
+        }
+        if (kind === "end") {
+          return {
+            ariaLabel: `${explicitLabel}, максимум`,
+            ariaLabelledBy: undefined as string | undefined,
+            ariaDescribedBy,
+          };
+        }
+        return {
+          ariaLabel: explicitLabel,
+          ariaLabelledBy: undefined as string | undefined,
+          ariaDescribedBy,
+        };
+      }
+      if (kind === "start") {
+        return {
+          ariaLabel: "Минимум диапазона",
+          ariaLabelledBy: undefined as string | undefined,
+          ariaDescribedBy,
+        };
+      }
+      if (kind === "end") {
+        return {
+          ariaLabel: "Максимум диапазона",
+          ariaLabelledBy: undefined as string | undefined,
+          ariaDescribedBy,
+        };
+      }
+      if (labelId) {
+        return {
+          ariaLabel: undefined as string | undefined,
+          ariaLabelledBy: labelId,
+          ariaDescribedBy,
+        };
+      }
+      return {
+        ariaLabel: "Значение",
+        ariaLabelledBy: undefined as string | undefined,
+        ariaDescribedBy,
+      };
+    },
+    [ariaDescribedBy, explicitLabel, labelId],
+  );
   const trackRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLSpanElement>(null);
   const [trackSpanPx, setTrackSpanPx] = useState(0);
@@ -581,16 +591,12 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
   );
 
   const crossSizeCss = thickness != null ? sliderThicknessToCss(thickness) : undefined;
-  const crossSizeStyle = useMemo((): CSSProperties | undefined => {
-    if (crossSizeCss == null) return undefined;
-    return { width: crossSizeCss, height: crossSizeCss, minWidth: crossSizeCss, minHeight: crossSizeCss };
-  }, [crossSizeCss]);
 
   const trackCrossStyle = useMemo((): CSSProperties | undefined => {
     if (crossSizeCss == null) return undefined;
     return orientation === "horizontal"
-      ? { height: crossSizeCss }
-      : { width: crossSizeCss };
+      ? { height: crossSizeCss, minHeight: crossSizeCss }
+      : { width: crossSizeCss, minWidth: crossSizeCss };
   }, [crossSizeCss, orientation]);
 
   useEffect(() => {
@@ -911,14 +917,110 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
     ],
   );
 
-  const valueLabel = useMemo((): ReactNode => {
-    if (!showValue) return null;
+  const renderThumb = useCallback(
+    (kind: SliderThumbKind, iconOverride?: ReactNode) => {
+      const iconNode = iconOverride ?? icon;
+      const percentFor = (value: number) =>
+        thumbCenterPercent(value, min, max, trackSpanPx, thumbSpanPx);
+
+      if (kind === "start") {
+        return (
+          <SliderThumbButton
+            size={size}
+            icon={iconNode}
+            percent={percentFor(rangeValue[0])}
+            orientation={orientation}
+            disabled={disabled}
+            active={activeThumb === "start"}
+            ariaValueNow={rangeValue[0]}
+            ariaValueMin={min}
+            ariaValueMax={rangeValue[1]}
+            ariaValueText={formatValue(rangeValue[0])}
+            {...thumbA11y("start")}
+            onPointerDown={handleThumbPointerDown("start")}
+            onKeyDown={handleThumbKeyDown("start")}
+          />
+        );
+      }
+
+      if (kind === "end") {
+        return (
+          <SliderThumbButton
+            size={size}
+            icon={iconNode}
+            percent={percentFor(rangeValue[1])}
+            orientation={orientation}
+            disabled={disabled}
+            active={activeThumb === "end"}
+            ariaValueNow={rangeValue[1]}
+            ariaValueMin={rangeValue[0]}
+            ariaValueMax={max}
+            ariaValueText={formatValue(rangeValue[1])}
+            {...thumbA11y("end")}
+            onPointerDown={handleThumbPointerDown("end")}
+            onKeyDown={handleThumbKeyDown("end")}
+          />
+        );
+      }
+
+      return (
+        <SliderThumbButton
+          size={size}
+          icon={iconNode}
+          percent={percentFor(singleValue)}
+          orientation={orientation}
+          disabled={disabled}
+          active={activeThumb === "single"}
+          ariaValueNow={singleValue}
+          ariaValueMin={min}
+          ariaValueMax={max}
+          ariaValueText={formatValue(singleValue)}
+          {...thumbA11y("single")}
+          onPointerDown={handleThumbPointerDown("single")}
+          onKeyDown={handleThumbKeyDown("single")}
+        />
+      );
+    },
+    [
+      activeThumb,
+      disabled,
+      formatValue,
+      handleThumbKeyDown,
+      handleThumbPointerDown,
+      icon,
+      max,
+      min,
+      orientation,
+      rangeValue,
+      singleValue,
+      size,
+      thumbA11y,
+      thumbSpanPx,
+      trackSpanPx,
+    ],
+  );
+
+  const valueLabel = useMemo((): string => {
     if (range) {
       const [lo, hi] = rangeValue;
       return `${formatValue(lo)} — ${formatValue(hi)}`;
     }
     return formatValue(singleValue);
-  }, [formatValue, range, rangeValue, showValue, singleValue]);
+  }, [formatValue, range, rangeValue, singleValue]);
+
+  const setDisplay = fieldCtx?.setDisplay;
+
+  useLayoutEffect(() => {
+    setDisplay?.({
+      valueLabel,
+      min,
+      max,
+      range,
+      singleValue,
+      rangeValue,
+      label: explicitLabel,
+    });
+  }, [explicitLabel, max, min, range, rangeValue, setDisplay, singleValue, valueLabel]);
 
   const isHorizontal = orientation === "horizontal";
 
@@ -949,129 +1051,95 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
   });
 
   const trackHitAreaClass = cn(
-    "relative touch-none select-none leading-none",
+    "relative touch-none select-none",
     isHorizontal ? "w-full" : "h-48",
     thickness == null && (isHorizontal ? RAIL_HEIGHT[size] : RAIL_WIDTH[size]),
   );
 
+  const setTrackRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      trackRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [ref],
+  );
+
+  const trackContextValue = useMemo(
+    () => ({
+      fillRef,
+      fillClassResolved,
+      railClass,
+      markNodes,
+      size,
+      orientation,
+      disabled,
+      icon,
+      range,
+      renderThumb,
+    }),
+    [
+      disabled,
+      fillClassResolved,
+      icon,
+      markNodes,
+      orientation,
+      railClass,
+      range,
+      renderThumb,
+      size,
+    ],
+  );
+
+  const { body: compoundBody, hasCompoundParts } = partitionSliderTrackChildren(children);
+
+  const defaultBody = (
+    <>
+      <SliderRail />
+      {range ? (
+        <>
+          <SliderCompoundThumb thumb="start">
+            {icon != null ? <SliderIcon>{icon}</SliderIcon> : null}
+          </SliderCompoundThumb>
+          <SliderCompoundThumb thumb="end">
+            {icon != null ? <SliderIcon>{icon}</SliderIcon> : null}
+          </SliderCompoundThumb>
+        </>
+      ) : (
+        <SliderCompoundThumb thumb="single">
+          {icon != null ? <SliderIcon>{icon}</SliderIcon> : null}
+        </SliderCompoundThumb>
+      )}
+    </>
+  );
+
   return (
     <div
-      ref={ref}
-      id={id}
-      className={cn(
-        "flex flex-col gap-small text-left",
-        isHorizontal ? "w-full" : "w-auto items-center",
-        className,
-      )}
+      ref={setTrackRef}
+      role="presentation"
+      className={cn(trackHitAreaClass, className)}
+      style={trackCrossStyle}
+      onPointerDown={handleTrackPointerDown}
     >
-      {label || showValue ? (
-        <div
-          className={cn(
-            "flex items-baseline justify-between gap-xsmall",
-            isHorizontal ? "w-full" : "min-w-[8rem]",
-          )}
-        >
-          {label ? (
-            <Text as="span" variant="base" className="font-medium leading-snug">
-              {label}
-            </Text>
-          ) : (
-            <span />
-          )}
-          {showValue && valueLabel != null ? (
-            <Text as="span" variant="base" className="tabular-nums text-muted">
-              {valueLabel}
-            </Text>
-          ) : null}
-        </div>
-      ) : null}
-
-      <div
-        ref={trackRef}
-        role="presentation"
-        className={trackHitAreaClass}
-        style={trackCrossStyle}
-        onPointerDown={handleTrackPointerDown}
-      >
-        <div className={railClass} aria-hidden>
-          <span ref={fillRef} className={fillClassResolved} />
-          {markNodes}
-        </div>
-
-        {range ? (
-          <>
-            <SliderThumb
-              size={size}
-              crossSizeStyle={crossSizeStyle}
-              icon={icon}
-              percent={thumbCenterPercent(
-                rangeValue[0],
-                min,
-                max,
-                trackSpanPx,
-                thumbSpanPx,
-              )}
-              orientation={orientation}
-              disabled={disabled}
-              active={activeThumb === "start"}
-              ariaValueNow={rangeValue[0]}
-              ariaValueMin={min}
-              ariaValueMax={rangeValue[1]}
-              ariaValueText={formatValue(rangeValue[0])}
-              ariaLabel={label ? `${label}, минимум` : "Минимум диапазона"}
-              onPointerDown={handleThumbPointerDown("start")}
-              onKeyDown={handleThumbKeyDown("start")}
-            />
-            <SliderThumb
-              size={size}
-              crossSizeStyle={crossSizeStyle}
-              icon={icon}
-              percent={thumbCenterPercent(
-                rangeValue[1],
-                min,
-                max,
-                trackSpanPx,
-                thumbSpanPx,
-              )}
-              orientation={orientation}
-              disabled={disabled}
-              active={activeThumb === "end"}
-              ariaValueNow={rangeValue[1]}
-              ariaValueMin={rangeValue[0]}
-              ariaValueMax={max}
-              ariaValueText={formatValue(rangeValue[1])}
-              ariaLabel={label ? `${label}, максимум` : "Максимум диапазона"}
-              onPointerDown={handleThumbPointerDown("end")}
-              onKeyDown={handleThumbKeyDown("end")}
-            />
-          </>
-        ) : (
-          <SliderThumb
-            size={size}
-            crossSizeStyle={crossSizeStyle}
-            icon={icon}
-            percent={thumbCenterPercent(
-              singleValue,
-              min,
-              max,
-              trackSpanPx,
-              thumbSpanPx,
-            )}
-            orientation={orientation}
-            disabled={disabled}
-            active={activeThumb === "single"}
-            ariaValueNow={singleValue}
-            ariaValueMin={min}
-            ariaValueMax={max}
-            ariaValueText={formatValue(singleValue)}
-            ariaLabel={label}
-            onPointerDown={handleThumbPointerDown("single")}
-            onKeyDown={handleThumbKeyDown("single")}
-          />
-        )}
-      </div>
+      <SliderTrackProvider value={trackContextValue}>
+        {hasCompoundParts ? compoundBody : defaultBody}
+      </SliderTrackProvider>
     </div>
   );
 });
 
-Slider.displayName = "Slider";
+SliderTrack.displayName = "SliderTrack";
+
+export {
+  SliderFill,
+  SliderIcon,
+  SliderRail,
+  SliderCompoundThumb as SliderThumb,
+} from "./sliderCompound";
+export type {
+  SliderFillProps,
+  SliderIconProps,
+  SliderRailProps,
+  SliderCompoundThumbProps as SliderThumbProps,
+  SliderThumbKind,
+} from "./sliderCompound";

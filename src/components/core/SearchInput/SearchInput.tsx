@@ -30,62 +30,97 @@ import {
 } from "@/components/core/utils/motionTokens";
 import { Ripple } from "@/components/core/Ripple";
 import { cn } from "@/utils/cn";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+import {
+  CONTROL_SIZE_LAYOUT,
+  readControlHeightPx,
+} from "@/components/core/utils/controlSizeLayout";
 
-export type SearchInputSize = "base" | "large";
+export type SearchInputSize = ComponentSize;
 
 const GHOST_CLEAR_HOVER =
   "hover:bg-accent-fill-hover";
 
-const SIZE_LAYOUT: Record<
-  SearchInputSize,
-  {
-    dim: number;
-    defaultExpandedW: number;
-    iconBox: number;
-    padX: number;
-    radiusExpanded: number;
-    iconClass: string;
-    inputClass: string;
-    clearTap: number;
-    clearIconClass: string;
-    textGapClear: number;
-  }
-> = {
-  /** Как `Button size="base"`: высота 32px (`min-h-8`), иконка `icon-base`. */
-  base: {
-    dim: 32,
-    defaultExpandedW: 280,
-    iconBox: 16,
-    padX: 12,
-    radiusExpanded: 8,
-    iconClass: "icon-small",
-    inputClass: "text-base",
-    clearTap: 24,
-    clearIconClass: "icon-base",
-    textGapClear: 6,
-  },
-  large: {
-    dim: 52,
-    defaultExpandedW: 340,
-    iconBox: 26,
-    padX: 14,
-    radiusExpanded: 12,
-    iconClass: "icon-large",
-    inputClass: "text-[1rem]",
-    clearTap: 36,
-    clearIconClass: "icon-large",
-    textGapClear: 8,
-  },
+/** Горизонтальный padding (px) — совпадает с `px-base` / `px-plus` / … */
+const SEARCH_PAD_X_PX: Record<ComponentSize, number> = {
+  small: 8,
+  base: 12,
+  mid: 16,
+  large: 20,
 };
+
+/** Размер иконки (px) — совпадает с `--icon-size-*`. */
+const SEARCH_ICON_BOX_PX: Record<ComponentSize, number> = {
+  small: 14,
+  base: 16,
+  mid: 20,
+  large: 20,
+};
+
+const SEARCH_RADIUS_EXPANDED_PX: Record<ComponentSize, number> = {
+  small: 6,
+  base: 8,
+  mid: 10,
+  large: 12,
+};
+
+const SEARCH_CLEAR_TAP_PX: Record<ComponentSize, number> = {
+  small: 20,
+  base: 24,
+  mid: 28,
+  large: 32,
+};
+
+type SearchSizeLayout = {
+  dim: number;
+  defaultExpandedW: number;
+  iconBox: number;
+  padX: number;
+  radiusExpanded: number;
+  iconClass: string;
+  inputClass: string;
+  clearTap: number;
+  clearIconClass: string;
+  textGapClear: number;
+};
+
+function buildSearchLayout(size: ComponentSize): SearchSizeLayout {
+  const control = CONTROL_SIZE_LAYOUT[size];
+  return {
+    dim: readControlHeightPx(size),
+    defaultExpandedW: control.defaultExpandedSearchWidth,
+    iconBox: SEARCH_ICON_BOX_PX[size],
+    padX: SEARCH_PAD_X_PX[size],
+    radiusExpanded: SEARCH_RADIUS_EXPANDED_PX[size],
+    iconClass: control.icon,
+    inputClass: size === "large" || size === "mid" ? "text-mid" : "text-base",
+    clearTap: SEARCH_CLEAR_TAP_PX[size],
+    clearIconClass: control.chevronIcon,
+    textGapClear: size === "small" ? 4 : 6,
+  };
+}
+
+const SIZE_LAYOUT: Record<SearchInputSize, SearchSizeLayout> = {
+  small: buildSearchLayout("small"),
+  base: buildSearchLayout("base"),
+  mid: buildSearchLayout("mid"),
+  large: buildSearchLayout("large"),
+};
+
+function resolveSearchLayout(size: ComponentSize): SearchSizeLayout {
+  return {
+    ...SIZE_LAYOUT[size],
+    dim: readControlHeightPx(size),
+  };
+}
 
 export type SearchInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type"
 > & {
   /**
-   * Высота в свёрнутом виде и габариты иконки / поля.
-   * Только `base` и `large`: `base` = как `Button size="base"` (32px).
-   * По умолчанию `base`.
+   * Высота в свёрнутом виде и габариты иконки / поля — как у `Input` / `Button`.
+   * `small` · `base` · `mid` · `large`. По умолчанию `base`.
    */
   size?: SearchInputSize;
   /** Ширина в развёрнутом виде (px). */
@@ -106,6 +141,11 @@ export type SearchInputProps = Omit<
   onValueChange?: (value: string) => void;
   /** Converge-ripple на оболочке (реализация — `<Ripple />` внутри). @default false */
   ripple?: boolean;
+  /**
+   * Доступное имя поля и триггера свёрнутого состояния.
+   * Рекомендуется задавать явно; без prop свёрнутый триггер — «Открыть поиск», развёрнутый input — placeholder.
+   */
+  "aria-label"?: string;
 };
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -215,11 +255,28 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       [blocked, isValueControlled, onChange, onValueChange],
     );
 
-    const layout = SIZE_LAYOUT[sizeProp];
+    const layout = resolveSearchLayout(sizeProp);
     const targetW = expandedWidth ?? layout.defaultExpandedW;
     const dim = layout.dim;
-    const iconTxCollapsed = (dim - layout.iconBox) / 2;
-    const iconTxExpanded = layout.padX;
+
+    const shellHorizontalBorderPx = useCallback(
+      (shellEl: HTMLElement) => shellEl.offsetWidth - shellEl.clientWidth,
+      [],
+    );
+
+    const iconLeftCollapsedPx = useCallback(
+      (shellEl: HTMLElement) =>
+        (shellEl.clientWidth - layout.iconBox) / 2,
+      [layout.iconBox],
+    );
+
+    const iconLeftCollapsedAtBorderBoxWidth = useCallback(
+      (borderBoxWidth: number, borderPx: number) =>
+        (borderBoxWidth - borderPx - layout.iconBox) / 2,
+      [layout.iconBox],
+    );
+
+    const iconLeftCollapsedCss = `calc(50% - ${layout.iconBox / 2}px)`;
 
     const applyShellMetrics = useCallback(
       (open: boolean) => {
@@ -231,15 +288,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         el.style.width = `${w}px`;
         el.style.height = `${dim}px`;
         el.style.borderRadius = `${r}px`;
-        iconEl.style.left = `${open ? iconTxExpanded : iconTxCollapsed}px`;
+        iconEl.style.left = open
+          ? `${layout.padX}px`
+          : iconLeftCollapsedCss;
       },
-      [
-        dim,
-        iconTxCollapsed,
-        iconTxExpanded,
-        layout.radiusExpanded,
-        targetW,
-      ],
+      [dim, iconLeftCollapsedCss, layout.padX, layout.radiusExpanded, targetW],
     );
 
     const runExpandMotion = useCallback(
@@ -256,26 +309,56 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         removeAnime(el);
         removeAnime(iconEl);
 
+        if (open) {
+          const iconLeftFrom = iconLeftCollapsedPx(el);
+          iconEl.style.left = `${iconLeftFrom}px`;
+
+          animate(el, {
+            width: targetW,
+            height: dim,
+            borderRadius: layout.radiusExpanded,
+            duration: MOTION_INTERACTIVE_MS,
+            ease: MOTION_INTERACTIVE_EASE,
+          });
+          animate(iconEl, {
+            left: layout.padX,
+            duration: MOTION_INTERACTIVE_MS,
+            ease: MOTION_INTERACTIVE_EASE,
+          });
+          return;
+        }
+
+        iconEl.style.left = `${layout.padX}px`;
+
         animate(el, {
-          width: open ? targetW : dim,
+          width: dim,
           height: dim,
-          borderRadius: open ? layout.radiusExpanded : dim / 2,
+          borderRadius: dim / 2,
           duration: MOTION_INTERACTIVE_MS,
           ease: MOTION_INTERACTIVE_EASE,
         });
 
+        const borderPx = shellHorizontalBorderPx(el);
+        const iconLeftTo = iconLeftCollapsedAtBorderBoxWidth(dim, borderPx);
+
         animate(iconEl, {
-          left: open ? iconTxExpanded : iconTxCollapsed,
+          left: iconLeftTo,
           duration: MOTION_INTERACTIVE_MS,
           ease: MOTION_INTERACTIVE_EASE,
+          onComplete: () => {
+            iconEl.style.left = iconLeftCollapsedCss;
+          },
         });
       },
       [
         applyShellMetrics,
         dim,
-        iconTxCollapsed,
-        iconTxExpanded,
+        iconLeftCollapsedAtBorderBoxWidth,
+        iconLeftCollapsedCss,
+        iconLeftCollapsedPx,
+        layout.padX,
         layout.radiusExpanded,
+        shellHorizontalBorderPx,
         targetW,
       ],
     );
@@ -407,14 +490,14 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <div
         ref={rootRef}
-        role={expanded ? "search" : undefined}
+        role={expanded ? "search" : "button"}
         tabIndex={expanded ? -1 : blocked ? -1 : 0}
         aria-expanded={expanded}
         aria-disabled={blocked || undefined}
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
         className={cn(
-          "relative inline-block overflow-hidden border border-base bg-surface text-left outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
+          "relative box-border inline-block overflow-hidden border border-base bg-surface text-left outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
           "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
           expanded ? "cursor-text" : "",
@@ -438,16 +521,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         ) : null}
         <span
           ref={iconRef}
-          className={cn(
-            "pointer-events-none absolute top-1/2 z-[1] flex -translate-y-1/2 items-center justify-center text-muted",
-            layout.iconClass,
-          )}
-          style={{
-            left: iconTxCollapsed,
-          }}
+          className="pointer-events-none absolute inset-y-0 z-[1] flex items-center justify-center text-muted"
+          style={{ width: layout.iconBox }}
           aria-hidden
         >
-          <IoSearch className="size-full" aria-hidden />
+          <IoSearch className={cn("shrink-0", layout.iconClass)} aria-hidden />
         </span>
 
         <input

@@ -1,17 +1,24 @@
 import {
-  createContext,
   forwardRef,
   useCallback,
   useContext,
   useEffect,
+  useId,
+  useMemo,
   useRef,
   type HTMLAttributes,
+  type ReactNode,
 } from "react";
 import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
-import { useInteractiveHoverLiftContainerHandlers, SHADOW_SM, SHADOW_MD, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  useInteractiveHoverLiftContainerHandlers,
+  SHADOW_SM,
+  SHADOW_MD,
+  initElementShadow,
+} from "@/components/core/utils/hoverInteractiveLift";
 import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
@@ -19,23 +26,18 @@ import {
 } from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
 
-/** Визуальный вариант заливки (без отдельного статуса). */
-export type AlertVariant =
-  | "default"
-  | "outline"
-  | "secondary"
-  | "danger"
-  | "success"
-  | "info";
-
-export type AlertStatus = AlertVariant | "warning";
-
-export function resolveAlertStatus(
-  status?: AlertStatus,
-  variant?: AlertVariant,
-): AlertStatus {
-  return status ?? variant ?? "default";
-}
+import { AlertContext } from "./alertContext";
+import {
+  alertHasDescription,
+  alertHasTitle,
+  hasAlertCompoundChildren,
+  resolveAlertAriaDescribedBy,
+  resolveAlertAriaLabelledBy,
+  resolveAlertLiveRole,
+  resolveAlertStatus,
+  type AlertLiveRole,
+  type AlertStatus,
+} from "./alertUtils";
 
 function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
   return tone !== "default" && tone !== "secondary";
@@ -76,9 +78,21 @@ function alertDefaultIndicatorIcon(tone: AlertStatus): IconType | null {
   return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
 }
 
-export type AlertProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: AlertVariant;
+export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   status?: AlertStatus;
+  /** Live region: `alert` (срочно) или `status` (информативно). По умолчанию — из `status`. */
+  role?: AlertLiveRole;
+  /** Simple API: заголовок. В compound игнорируется. */
+  title?: ReactNode;
+  /** Simple API: описание. В compound — `<Alert.Description>`. */
+  description?: ReactNode;
+  /**
+   * Simple API: иконка в `Indicator`.
+   * Не задано — дефолт по `status`; `null` — без иконки.
+   */
+  icon?: ReactNode | null;
+  /** Simple API: слот действия справа. В compound — `<Alert.Action>`. */
+  action?: ReactNode;
 };
 
 type AlertIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
@@ -90,16 +104,14 @@ type AlertTitleProps = HTMLAttributes<HTMLDivElement>;
 type AlertDescriptionProps = HTMLAttributes<HTMLDivElement>;
 type AlertActionProps = HTMLAttributes<HTMLDivElement>;
 
-const AlertStatusContext = createContext<AlertStatus>("default");
-
 function AlertIndicator({
   status,
   className = "",
   children,
   ...rest
 }: AlertIndicatorProps) {
-  const statusFromContext = useContext(AlertStatusContext);
-  const tone = status ?? statusFromContext;
+  const ctx = useContext(AlertContext);
+  const tone = status ?? ctx?.status ?? "default";
 
   if (children === null) return null;
 
@@ -127,6 +139,8 @@ function AlertIndicator({
   );
 }
 
+AlertIndicator.displayName = "AlertIndicator";
+
 function AlertContent({ className = "", ...rest }: AlertContentProps) {
   return (
     <div
@@ -139,61 +153,109 @@ function AlertContent({ className = "", ...rest }: AlertContentProps) {
   );
 }
 
-const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(
-  function AlertMessage({ className = "", ...rest }, ref) {
-    return (
-      <div
-        ref={ref}
-        className={cn("flex min-w-0 flex-1 items-start gap-base", className)}
-        {...rest}
-      />
-    );
-  },
-);
+AlertContent.displayName = "AlertContent";
 
-function AlertTitle({ className = "", ...rest }: AlertTitleProps) {
+const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(function AlertMessage(
+  { className = "", ...rest },
+  ref,
+) {
+  return (
+    <div
+      ref={ref}
+      className={cn("flex min-w-0 flex-1 items-start gap-base", className)}
+      {...rest}
+    />
+  );
+});
+
+AlertMessage.displayName = "AlertMessage";
+
+function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitleProps) {
+  const ctx = useContext(AlertContext);
   return (
     <Text
       as="div"
+      id={idProp ?? ctx?.titleId}
       variant="base"
-      className={cn("font-medium leading-snug", className)}
+      className={cn("font-medium", className)}
       {...rest}
     />
   );
 }
+
+AlertTitle.displayName = "AlertTitle";
 
 function AlertDescription({
   className = "",
+  id: idProp,
   ...rest
 }: AlertDescriptionProps) {
+  const ctx = useContext(AlertContext);
   return (
     <Text
       as="div"
-      variant="base"
-      className={cn("leading-normal text-muted", className)}
+      id={idProp ?? ctx?.descriptionId}
+      variant="small"
+      className={cn("text-muted", className)}
       {...rest}
     />
   );
 }
+
+AlertDescription.displayName = "AlertDescription";
 
 function AlertAction({ className = "", ...rest }: AlertActionProps) {
   return <div className={cn("shrink-0 self-start", className)} {...rest} />;
 }
 
+AlertAction.displayName = "AlertAction";
+
 const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   {
-    variant,
     status,
+    role: roleProp,
+    title,
+    description,
+    icon,
+    action,
     className = "",
     children,
     onPointerOver: onPointerOverProp,
     onPointerOut: onPointerOutProp,
+    "aria-labelledby": ariaLabelledByProp,
+    "aria-describedby": ariaDescribedByProp,
     ...rest
   },
   ref,
 ) {
-  const tone = resolveAlertStatus(status, variant);
+  const tone = resolveAlertStatus(status);
+  const autoId = useId();
+  const titleId = `${autoId}-title`;
+  const descriptionId = `${autoId}-description`;
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const isCompound = hasAlertCompoundChildren(children);
+  const hasTitle = useMemo(
+    () => title != null || alertHasTitle(children),
+    [children, title],
+  );
+  const hasDescription = useMemo(
+    () => description != null || alertHasDescription(children),
+    [children, description],
+  );
+
+  const liveRole = resolveAlertLiveRole(tone, roleProp);
+  const ariaLabelledBy =
+    ariaLabelledByProp ??
+    resolveAlertAriaLabelledBy(titleId, descriptionId, hasTitle, hasDescription);
+  const ariaDescribedBy =
+    ariaDescribedByProp ??
+    resolveAlertAriaDescribedBy(descriptionId, hasTitle, hasDescription);
+
+  const contextValue = useMemo(
+    () => ({ status: tone, titleId, descriptionId }),
+    [descriptionId, titleId, tone],
+  );
 
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -204,7 +266,9 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     [ref],
   );
 
-  useEffect(() => { initElementShadow(rootRef.current, SHADOW_SM()); }, []);
+  useEffect(() => {
+    initElementShadow(rootRef.current, SHADOW_SM());
+  }, []);
 
   const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
     rootRef,
@@ -215,10 +279,12 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   );
 
   return (
-    <AlertStatusContext.Provider value={tone}>
+    <AlertContext.Provider value={contextValue}>
       <div
         ref={setRootRef}
-        role="status"
+        role={liveRole}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
         className={cn(
           "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid text-left animate-shadow",
           ALERT_INLINE_SURFACE_CLASSES[tone],
@@ -234,11 +300,29 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         }}
         {...rest}
       >
-        {children}
+        {isCompound ? (
+          children
+        ) : (
+          <>
+            <AlertMessage>
+              {icon !== null ? <AlertIndicator>{icon}</AlertIndicator> : null}
+              <AlertContent>
+                {title != null ? <AlertTitle>{title}</AlertTitle> : null}
+                {description != null ? (
+                  <AlertDescription>{description}</AlertDescription>
+                ) : null}
+                {children}
+              </AlertContent>
+            </AlertMessage>
+            {action != null ? <AlertAction>{action}</AlertAction> : null}
+          </>
+        )}
       </div>
-    </AlertStatusContext.Provider>
+    </AlertContext.Provider>
   );
 });
+
+AlertRoot.displayName = "AlertRoot";
 
 export const Alert = Object.assign(AlertRoot, {
   Indicator: AlertIndicator,
@@ -257,3 +341,6 @@ export type {
   AlertDescriptionProps,
   AlertActionProps,
 };
+
+export type { AlertStatus, AlertLiveRole } from "./alertUtils";
+export { resolveAlertStatus } from "./alertUtils";

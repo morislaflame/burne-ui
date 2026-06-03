@@ -11,6 +11,7 @@ import {
   useMemo,
   useRef,
   useState,
+  Children,
   cloneElement,
   isValidElement,
   type HTMLAttributes,
@@ -27,8 +28,15 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_INTERACTIVE_EASE, MOTION_INTERACTIVE_MS, MOTION_TOOLTIP_MS } from "@/components/core/utils/motionTokens";
+import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+import type {
+  SelectionIndicatorSize,
+  SelectionIndicatorVariant,
+} from "@/components/core/SelectionIndicator";
+import { MOTION_INTERACTIVE_EASE, MOTION_TOOLTIP_MS } from "@/components/core/utils/motionTokens";
 import { cn } from "@/utils/cn";
+
+import { DropdownItemContextProvider, useDropdownItemContext } from "./dropdownItemContext";
 
 function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {
@@ -86,6 +94,24 @@ function inheritThemePortalProps(triggerEl: HTMLElement | null): {
   const inherited = triggerEl.closest("[data-theme]")?.getAttribute("data-theme");
   return inherited === "light" ? { "data-theme": "light" as const } : {};
 }
+
+const MENU_ITEM_SELECTOR =
+  '[role="menuitem"]:not([aria-disabled="true"]), [role="menuitemcheckbox"]:not([disabled]), [role="menuitemradio"]:not([disabled])';
+
+function getFocusableMenuItems(root: HTMLElement): HTMLElement[] {
+  return Array.from(root.querySelectorAll<HTMLElement>(MENU_ITEM_SELECTOR)).filter(
+    (el) => !el.hasAttribute("disabled"),
+  );
+}
+
+function focusMenuItem(items: HTMLElement[], index: number) {
+  const item = items[index];
+  if (item) item.focus();
+}
+
+const DropdownGroupLabelRegisterContext = createContext<
+  ((id: string | undefined) => void) | null
+>(null);
 
 export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
@@ -348,15 +374,57 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
       return () => document.removeEventListener("pointerdown", onPointerDown, true);
     }, [open, setOpen, triggerRef, contentRef, subPanelRootsRef]);
 
+    useLayoutEffect(() => {
+      if (!open) return;
+      const panel = contentRef.current;
+      if (!panel) return;
+      const items = getFocusableMenuItems(panel);
+      items[0]?.focus();
+    }, [open]);
+
     useEffect(() => {
       if (!open) return;
-      const onKey = (e: KeyboardEvent) => {
-        if (e.key === "Escape") setOpen(false);
+      const panel = contentRef.current;
+      if (!panel) return;
+
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setOpen(false);
+          triggerRef.current?.focus();
+          return;
+        }
+
+        const items = getFocusableMenuItems(panel);
+        if (items.length === 0) return;
+
+        const active = document.activeElement as HTMLElement | null;
+        const idx = active ? items.indexOf(active) : -1;
+
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          focusMenuItem(items, idx < items.length - 1 ? idx + 1 : 0);
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          focusMenuItem(items, idx > 0 ? idx - 1 : items.length - 1);
+          return;
+        }
+        if (e.key === "Home") {
+          e.preventDefault();
+          focusMenuItem(items, 0);
+          return;
+        }
+        if (e.key === "End") {
+          e.preventDefault();
+          focusMenuItem(items, items.length - 1);
+        }
       };
-      document.addEventListener("keydown", onKey as unknown as EventListener);
-      return () =>
-        document.removeEventListener("keydown", onKey as unknown as EventListener);
-    }, [open, setOpen]);
+
+      panel.addEventListener("keydown", onKeyDown);
+      return () => panel.removeEventListener("keydown", onKeyDown);
+    }, [open, setOpen, triggerRef]);
 
     useLayoutEffect(() => {
       if (!portalMounted) return undefined;
@@ -465,29 +533,48 @@ export function DropdownGroup({
   const parentPreference = useDropdownIndicatorPreference();
   const resolvedPreference =
     selectionIndicator !== undefined ? selectionIndicator : parentPreference;
+  const [labelId, setLabelId] = useState<string | undefined>();
+
+  const registerLabel = useCallback((id: string | undefined) => {
+    setLabelId(id);
+  }, []);
 
   return (
     <DropdownIndicatorPreferenceContext.Provider value={resolvedPreference}>
-      <div
-        role="group"
-        className={cn("flex min-w-0 flex-col gap-xsmall text-left", className)}
-        {...rest}
-      >
-        {children}
-      </div>
+      <DropdownGroupLabelRegisterContext.Provider value={registerLabel}>
+        <div
+          role="group"
+          aria-labelledby={labelId}
+          className={cn("flex min-w-0 flex-col gap-xsmall text-left", className)}
+          {...rest}
+        >
+          {children}
+        </div>
+      </DropdownGroupLabelRegisterContext.Provider>
     </DropdownIndicatorPreferenceContext.Provider>
   );
 }
 
 export type DropdownLabelProps = HTMLAttributes<HTMLDivElement>;
 
-export function DropdownLabel({ className = "", children, ...rest }: DropdownLabelProps) {
+export function DropdownLabel({
+  className = "",
+  children,
+  id: idProp,
+  ...rest
+}: DropdownLabelProps) {
+  const autoId = useId();
+  const id = idProp ?? autoId;
+  const registerLabel = useContext(DropdownGroupLabelRegisterContext);
+
+  useLayoutEffect(() => {
+    registerLabel?.(id);
+    return () => registerLabel?.(undefined);
+  }, [id, registerLabel]);
+
   return (
-    <div
-      className={cn("px-base text-left", className)}
-      {...rest}
-    >
-      <Text as="span" variant="small" className="font-medium text-muted leading-none">
+    <div id={id} className={cn("px-base text-left", className)} {...rest}>
+      <Text as="span" variant="small" className="font-medium text-muted">
         {children}
       </Text>
     </div>
@@ -612,7 +699,7 @@ export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerP
     const rowClass = cn(
       "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none",
       /* как у подписи в `Dropdown.Item`: токен `text-base`, не наследованный `1rem` у `html` */
-      "text-base font-medium leading-snug text-foreground button-idle-surface-transition motion-reduce:transition-none hover:bg-accent-fill-hover",
+      "text-base font-medium text-foreground button-idle-surface-transition motion-reduce:transition-none hover:bg-accent-fill-hover",
       "focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
       className,
     );
@@ -838,74 +925,67 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
   },
 );
 
-function RadioIndicator({ selected }: { selected: boolean }) {
+function partitionDropdownItemChildren(children: ReactNode): {
+  indicator: ReactNode | null;
+  content: ReactNode;
+} {
+  let indicator: ReactNode | null = null;
+  const rest: ReactNode[] = [];
+
+  for (const child of Children.toArray(children)) {
+    if (
+      isValidElement(child) &&
+      (child.type as { displayName?: string }).displayName === "DropdownItemIndicator"
+    ) {
+      if (indicator == null) indicator = child;
+      continue;
+    }
+    rest.push(child);
+  }
+
+  if (rest.length === 0) return { indicator, content: null };
+  if (rest.length === 1) return { indicator, content: rest[0]! };
+  return { indicator, content: rest };
+}
+
+export type DropdownItemIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
+  variant?: SelectionIndicatorVariant;
+  size?: SelectionIndicatorSize;
+  /** Галочка при выборе; по умолчанию — в режиме `multiple`. */
+  check?: boolean;
+  /** Своя иконка поверх заливки вместо галочки. */
+  children?: ReactNode;
+};
+
+export function DropdownItemIndicator({
+  variant = "base",
+  size = "small",
+  check,
+  children,
+  className,
+  ...rest
+}: DropdownItemIndicatorProps) {
+  const ctx = useDropdownItemContext();
+
+  if (!ctx.showIndicatorSlot) return null;
+
+  const showCheck = check ?? ctx.indicatorMode === "multi";
+  const hasCustomIcon = children != null;
+
   return (
-    <span className="flex shrink-0 items-center justify-center" aria-hidden>
-      <span
-        className={cn(
-          "box-border size-2.5 rounded-full border border-muted",
-          selected && "border-accent bg-accent",
-        )}
-      />
-    </span>
+    <SelectionIndicator
+      variant={variant}
+      size={size}
+      selected={ctx.selected}
+      check={showCheck && !hasCustomIcon}
+      icon={children ?? undefined}
+      className={className}
+      {...rest}
+    />
   );
 }
 
-function MultiCircleIndicator({ selected }: { selected: boolean }) {
-  const fillRef = useRef<HTMLSpanElement | null>(null);
-  const prev = useRef<boolean | null>(null);
-
-  useEffect(() => {
-    const el = fillRef.current;
-    if (!el) return;
-    if (prefersReducedInteractiveHoverLift()) {
-      el.style.transform = selected ? "scale(1)" : "scale(0)";
-      el.style.opacity = selected ? "1" : "0";
-      prev.current = selected;
-      return;
-    }
-    if (prev.current === null) {
-      prev.current = selected;
-      el.style.opacity = selected ? "1" : "0";
-      el.style.transform = selected ? "scale(1)" : "scale(0)";
-      return;
-    }
-    if (prev.current === selected) return;
-    prev.current = selected;
-    remove(el);
-    if (selected) {
-      el.style.opacity = "0";
-      el.style.transform = "scale(0)";
-      animate(el, {
-        opacity: [0, 1],
-        scale: [0, 1],
-        duration: MOTION_INTERACTIVE_MS,
-        ease: MOTION_INTERACTIVE_EASE,
-      });
-    } else {
-      animate(el, {
-        opacity: [1, 0],
-        scale: [1, 0],
-        duration: MOTION_INTERACTIVE_MS,
-        ease: MOTION_INTERACTIVE_EASE,
-      });
-    }
-  }, [selected]);
-
-  return (
-    <span
-      className="relative flex size-3.5 shrink-0 items-center justify-center"
-      aria-hidden
-    >
-      <span className="absolute inset-0 rounded-full border border-muted bg-transparent" />
-      <span
-        ref={fillRef}
-        className="absolute inset-[2px] rounded-full bg-foreground opacity-0"
-        style={{ transform: "scale(0)" }}
-      />
-    </span>
-  );
-}
+DropdownItemIndicator.displayName = "DropdownItemIndicator";
 
 export type DropdownItemVariant = "default" | "danger" | "warning" | "info" | "success";
 
@@ -932,12 +1012,13 @@ const DROPDOWN_ITEM_VARIANT_CLASS: Record<DropdownItemVariant, string> = {
   ),
 };
 
-export type DropdownItemProps = Omit<
-  HTMLAttributes<HTMLButtonElement>,
-  "type" | "value"
-> & {
-  /** Уникальный ключ пункта; для режима выбора участвует в `value` / `onValueChange`. */
-  value: string;
+export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
+  /**
+   * Ключ для режима выбора. Не нужен при `selection={false}` или при `href`.
+   */
+  value?: string;
+  /** Навигационная ссылка — рендер `<a role="menuitem">`; выбор значения отключён. */
+  href?: string;
   disabled?: boolean;
   /**
    * Пункт участвует в выборе значения; при `multiple` или при включённом `selectionIndicator` у `Dropdown` / `Dropdown.Group` слева показывается индикатор.
@@ -952,14 +1033,106 @@ export type DropdownItemProps = Omit<
   hint?: ReactNode;
 };
 
-export const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
+function DropdownItemBody({
+  content,
+  description,
+  hint,
+  disabled,
+  variant,
+  showIndicatorSlot,
+  indicator,
+}: {
+  content: ReactNode;
+  description?: ReactNode;
+  hint?: ReactNode;
+  disabled: boolean;
+  variant: DropdownItemVariant;
+  showIndicatorSlot: boolean;
+  indicator: ReactNode | null;
+}) {
+  return (
+    <>
+      <span
+        className={cn(
+          "min-w-0 flex-1",
+          showIndicatorSlot
+            ? "grid grid-cols-[auto_1fr] items-center gap-x-base gap-y-xsmall"
+            : "flex flex-col",
+        )}
+      >
+        {showIndicatorSlot && indicator != null ? (
+          <>
+            {indicator}
+            <span className="min-w-0">
+              <Text as="span" variant="base" inheritColor className="block font-medium">
+                {content}
+              </Text>
+            </span>
+            {description != null ? (
+              <span className="col-start-2 row-start-2 min-w-0">
+                <Text
+                  as="span"
+                  variant="tools"
+                  inheritColor
+                  className={cn(
+                    "block",
+                    disabled || variant === "default" ? "text-muted" : "opacity-80",
+                  )}
+                >
+                  {description}
+                </Text>
+              </span>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <Text as="span" variant="base" inheritColor className="block font-medium">
+              {content}
+            </Text>
+            {description != null ? (
+              <Text
+                as="span"
+                variant="tools"
+                className={cn(
+                  "mt-xsmall block text-muted",
+                  disabled || variant === "default" ? "text-muted" : "opacity-80",
+                )}
+              >
+                {description}
+              </Text>
+            ) : null}
+          </>
+        )}
+      </span>
+      {hint != null ? (
+        <span
+          className={cn(
+            "flex shrink-0 items-center gap-xsmall [&_svg]:icon-base",
+            disabled || variant === "default" ? "text-muted" : "opacity-80",
+          )}
+        >
+          {typeof hint === "string" ? (
+            <Text as="span" variant="base" inheritColor className="opacity-90">
+              {hint}
+            </Text>
+          ) : (
+            hint
+          )}
+        </span>
+      ) : null}
+    </>
+  );
+}
+
+export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
   function DropdownItem(
     {
       children,
       className = "",
       value,
+      href,
       disabled = false,
-      selection = true,
+      selection: selectionProp,
       variant = "default",
       description,
       hint,
@@ -978,9 +1151,14 @@ export const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
     } = useDropdown();
     const indicatorPreference = useDropdownIndicatorPreference();
 
-    const isSelectionItem = selection !== false;
+    const { indicator: compoundIndicator, content: compoundContent } =
+      partitionDropdownItemChildren(children);
+    const hasItemIndicator = compoundIndicator != null;
+
+    const isLink = Boolean(href);
+    const isSelectionItem = !isLink && selectionProp !== false;
     const showIndicatorSlot =
-      (multiple || indicatorPreference) && isSelectionItem;
+      isSelectionItem && (multiple || indicatorPreference || hasItemIndicator);
 
     const itemRole =
       !showIndicatorSlot
@@ -989,11 +1167,11 @@ export const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
           ? "menuitemcheckbox"
           : "menuitemradio";
 
-    const isSelected = isSelectionItem && selected.has(value);
-    const rowRef = useRef<HTMLButtonElement | null>(null);
+    const isSelected = isSelectionItem && value != null && selected.has(value);
+    const rowRef = useRef<HTMLElement | null>(null);
 
     const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
+      (node: HTMLElement | null) => {
         rowRef.current = node;
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
@@ -1001,8 +1179,17 @@ export const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
       [ref],
     );
 
+    const rowClass = cn(
+      "flex w-full min-w-0 origin-center items-center rounded-mid px-base py-small text-left no-underline outline-none",
+      "button-idle-surface-transition motion-reduce:transition-none",
+      !disabled && cn("cursor-pointer", DROPDOWN_ITEM_VARIANT_CLASS[variant]),
+      disabled &&
+        "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent",
+      className,
+    );
+
     const handlePointerDown = useCallback(
-      (e: React.PointerEvent<HTMLButtonElement>) => {
+      (e: React.PointerEvent<HTMLElement>) => {
         onPointerDown?.(e);
         if (e.defaultPrevented || disabled) return;
         const el = rowRef.current;
@@ -1013,115 +1200,79 @@ export const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
     );
 
     const handleClick = useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
+      (e: React.MouseEvent<HTMLElement>) => {
         onClick?.(e);
         if (e.defaultPrevented || disabled) return;
         if (!isSelectionItem) {
           setOpen(false);
           return;
         }
+        if (value == null) return;
         selectItem(value);
       },
       [disabled, isSelectionItem, onClick, selectItem, setOpen, value],
     );
 
-    let indicator: ReactNode = null;
-    if (showIndicatorSlot) {
-      indicator =
-        indicatorMode === "multi" ? (
-          <MultiCircleIndicator selected={isSelected} />
-        ) : (
-          <RadioIndicator selected={isSelected} />
-        );
+    const itemContent = hasItemIndicator ? compoundContent : children;
+    const indicator = showIndicatorSlot
+      ? hasItemIndicator
+        ? compoundIndicator
+        : <DropdownItemIndicator />
+      : null;
+
+    const body = (
+      <DropdownItemContextProvider
+        value={{
+          showIndicatorSlot,
+          selected: isSelected,
+          indicatorMode,
+          disabled,
+        }}
+      >
+        <DropdownItemBody
+          content={itemContent}
+          description={description}
+          hint={hint}
+          disabled={disabled}
+          variant={variant}
+          showIndicatorSlot={showIndicatorSlot}
+          indicator={indicator}
+        />
+      </DropdownItemContextProvider>
+    );
+
+    if (isLink) {
+      return (
+        <a
+          ref={setRefs as Ref<HTMLAnchorElement>}
+          role={itemRole}
+          href={disabled ? undefined : href}
+          tabIndex={-1}
+          aria-disabled={disabled || undefined}
+          className={rowClass}
+          onClick={handleClick}
+          onPointerDown={handlePointerDown}
+          {...(rest as HTMLAttributes<HTMLAnchorElement>)}
+        >
+          {body}
+        </a>
+      );
     }
 
     return (
       <button
-        ref={setRefs}
+        ref={setRefs as Ref<HTMLButtonElement>}
         type="button"
         role={itemRole}
         disabled={disabled}
+        tabIndex={-1}
         aria-checked={showIndicatorSlot ? isSelected : undefined}
-        className={cn(
-          "flex w-full min-w-0 origin-center items-center rounded-mid px-base py-small text-left outline-none",
-          "button-idle-surface-transition motion-reduce:transition-none",
-          !disabled && cn("cursor-pointer", DROPDOWN_ITEM_VARIANT_CLASS[variant]),
-          disabled &&
-            "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent",
-          className,
-        )}
+        className={rowClass}
         onClick={handleClick}
         onPointerDown={handlePointerDown}
-        {...rest}
+        {...(rest as HTMLAttributes<HTMLButtonElement>)}
       >
-        <span
-          className={cn(
-            "min-w-0 flex-1",
-            showIndicatorSlot
-              ? "grid grid-cols-[auto_1fr] items-center gap-x-base gap-y-xsmall"
-              : "flex flex-col",
-          )}
-        >
-          {showIndicatorSlot ? (
-            <>
-              <span className="flex items-center justify-center">{indicator}</span>
-              <span className="min-w-0">
-                <Text as="span" variant="base" inheritColor className="block font-medium leading-snug">
-                  {children}
-                </Text>
-              </span>
-              {description != null ? (
-                <span className="col-start-2 row-start-2 min-w-0">
-                  <Text
-                    as="span"
-                    variant="tools"
-                    inheritColor
-                    className={cn(
-                      "block",
-                      disabled || variant === "default" ? "text-muted" : "opacity-80",
-                    )}
-                  >
-                    {description}
-                  </Text>
-                </span>
-              ) : null}
-            </>
-          ) : (
-            <>
-              <Text as="span" variant="base" inheritColor className="block font-medium leading-snug">
-                {children}
-              </Text>
-              {description != null ? (
-                <Text
-                  as="span"
-                  variant="tools"
-                  className={cn(
-                    "mt-xsmall block text-muted",
-                    disabled || variant === "default" ? "text-muted" : "opacity-80",
-                  )}
-                >
-                  {description}
-                </Text>
-              ) : null}
-            </>
-          )}
-        </span>
-        {hint != null ? (
-          <span
-            className={cn(
-              "flex shrink-0 items-center gap-xsmall [&_svg]:icon-base",
-              disabled || variant === "default" ? "text-muted" : "opacity-80",
-            )}
-          >
-            {typeof hint === "string" ? (
-              <Text as="span" variant="base" inheritColor className="opacity-90">
-                {hint}
-              </Text>
-            ) : (
-              hint
-            )}
-          </span>
-        ) : null}
+        {body}
       </button>
     );
   },
@@ -1146,6 +1297,7 @@ export const Dropdown = Object.assign(DropdownRoot, {
   Label: DropdownLabel,
   Separator: DropdownSeparator,
   Item: DropdownItem,
+  ItemIndicator: DropdownItemIndicator,
   Sub: DropdownSub,
   SubTrigger: DropdownSubTrigger,
   SubContent: DropdownSubContent,
