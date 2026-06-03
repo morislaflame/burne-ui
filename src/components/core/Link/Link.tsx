@@ -1,0 +1,215 @@
+import {
+  forwardRef,
+  useCallback,
+  useRef,
+  type AnchorHTMLAttributes,
+  type ReactNode,
+  type Ref,
+} from "react";
+import { IoArrowForward } from "react-icons/io5";
+
+import { Text, type TextVariant } from "@/components/core/Text";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+import {
+  animateInteractiveHoverLift,
+  animateInteractivePressSqueeze,
+  prefersReducedInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
+import { MOTION_HOVER_LIFT_SCALE } from "@/components/core/utils/motionTokens";
+import { cn } from "@/utils/cn";
+
+export type LinkSize = ComponentSize;
+
+export type LinkIconPosition = "start" | "end";
+
+export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"> & {
+  href: string;
+  children: ReactNode;
+  size?: LinkSize;
+  /** Подчёркивание текста ссылки. */
+  underline?: boolean;
+  /** Иконка слева от текста. */
+  leftIcon?: ReactNode;
+  /** Иконка справа от текста. */
+  rightIcon?: ReactNode;
+  /**
+   * Показать стандартную стрелку ↗, если не переданы `leftIcon` / `rightIcon`.
+   * По умолчанию `false`.
+   */
+  showDefaultIcon?: boolean;
+  /** Сторона для стандартной стрелки. По умолчанию `end`. */
+  defaultIconPosition?: LinkIconPosition;
+};
+
+const LINK_TEXT_VARIANT: Record<LinkSize, TextVariant> = {
+  small: "small",
+  base: "base",
+  mid: "mid",
+  large: "large",
+};
+
+const LINK_ICON_CLASS: Record<LinkSize, string> = {
+  small: "icon-small",
+  base: "icon-base",
+  mid: "icon-mid",
+  large: "icon-large",
+};
+
+function DefaultLinkIcon({ size }: { size: LinkSize }) {
+  return (
+    <IoArrowForward
+      aria-hidden
+      className={cn(LINK_ICON_CLASS[size], "rotate-[-45deg]")}
+    />
+  );
+}
+
+function LinkIconSlot({
+  children,
+  size,
+  muted = false,
+}: {
+  children: ReactNode;
+  size: LinkSize;
+  /** Стандартная иконка: muted в покое, accent при hover на ссылке. */
+  muted?: boolean;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center transition-colors duration-200 ease-out motion-reduce:transition-none",
+        LINK_ICON_CLASS[size],
+        "[&_svg]:size-full",
+        muted
+          ? "text-muted group-hover/link:text-accent group-focus-visible/link:text-accent"
+          : "text-accent",
+      )}
+      aria-hidden
+    >
+      {children}
+    </span>
+  );
+}
+
+export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
+  {
+    href,
+    children,
+    className = "",
+    size = "base",
+    underline = false,
+    leftIcon,
+    rightIcon,
+    showDefaultIcon = false,
+    defaultIconPosition = "end",
+    onPointerEnter,
+    onPointerLeave,
+    onPointerDown,
+    ...rest
+  },
+  forwardedRef,
+) {
+  const motionRef = useRef<HTMLSpanElement>(null);
+
+  const setRefs = useCallback(
+    (node: HTMLAnchorElement | null) => {
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
+    },
+    [forwardedRef],
+  );
+
+  const handlePointerEnter = useCallback(
+    (e: React.PointerEvent<HTMLAnchorElement>) => {
+      onPointerEnter?.(e);
+      if (e.defaultPrevented) return;
+      const el = motionRef.current;
+      if (!el || prefersReducedInteractiveHoverLift()) return;
+      animateInteractiveHoverLift(el, true, MOTION_HOVER_LIFT_SCALE);
+    },
+    [onPointerEnter],
+  );
+
+  const handlePointerLeave = useCallback(
+    (e: React.PointerEvent<HTMLAnchorElement>) => {
+      onPointerLeave?.(e);
+      if (e.defaultPrevented) return;
+      const el = motionRef.current;
+      if (!el) return;
+      animateInteractiveHoverLift(el, false, MOTION_HOVER_LIFT_SCALE);
+    },
+    [onPointerLeave],
+  );
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLAnchorElement>) => {
+      onPointerDown?.(e);
+      if (e.defaultPrevented) return;
+      const el = motionRef.current;
+      if (!el || prefersReducedInteractiveHoverLift()) return;
+      void animateInteractivePressSqueeze(el);
+    },
+    [onPointerDown],
+  );
+
+  const usesDefaultIcon = showDefaultIcon && !leftIcon && !rightIcon;
+  const defaultIconNode = usesDefaultIcon ? <DefaultLinkIcon size={size} /> : null;
+
+  let resolvedStart = leftIcon ?? null;
+  let resolvedEnd = rightIcon ?? null;
+  let defaultIconAtStart = false;
+  let defaultIconAtEnd = false;
+
+  if (defaultIconNode) {
+    if (defaultIconPosition === "start") {
+      resolvedStart = defaultIconNode;
+      defaultIconAtStart = true;
+    } else {
+      resolvedEnd = defaultIconNode;
+      defaultIconAtEnd = true;
+    }
+  }
+
+  return (
+    <span ref={motionRef} className="inline-flex origin-center will-change-transform">
+      <a
+        ref={setRefs as Ref<HTMLAnchorElement>}
+        href={href}
+        className={cn(
+          "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid px-xsmall py-xsmall no-underline outline-none",
+          "text-accent",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+          className,
+        )}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onPointerDown={handlePointerDown}
+        {...rest}
+      >
+        {resolvedStart ? (
+          <LinkIconSlot size={size} muted={defaultIconAtStart}>
+            {resolvedStart}
+          </LinkIconSlot>
+        ) : null}
+        <Text
+          as="span"
+          variant={LINK_TEXT_VARIANT[size]}
+          inheritColor
+          className={cn(
+            "min-w-0 truncate font-medium text-accent",
+            underline && "underline decoration-accent/70 underline-offset-[0.2em]",
+          )}
+        >
+          {children}
+        </Text>
+        {resolvedEnd ? (
+          <LinkIconSlot size={size} muted={defaultIconAtEnd}>
+            {resolvedEnd}
+          </LinkIconSlot>
+        ) : null}
+      </a>
+    </span>
+  );
+});
+
+Link.displayName = "Link";

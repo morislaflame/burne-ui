@@ -163,6 +163,12 @@ export {
   type FieldLabelContextValue,
 } from "@/components/core/Label";
 export {
+  Link,
+  type LinkProps,
+  type LinkSize,
+  type LinkIconPosition,
+} from "@/components/core/Link";
+export {
   Input,
   type InputProps,
   type InputSimpleProps,
