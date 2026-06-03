@@ -236,6 +236,17 @@ export {
   type SwitchHintProps,
 } from "@/components/core/Switch";
 export {
+  Tabs,
+  useTabsContext,
+  type TabsRootProps,
+  type TabsListProps,
+  type TabsTabProps,
+  type TabsPanelProps,
+  type TabsSize,
+  type TabsOrientation,
+  type TabsVariant,
+} from "@/components/core/Tabs";
+export {
   Slider,
   sliderThicknessToCss,
   type SliderTrackProps,
