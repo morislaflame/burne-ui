@@ -524,7 +524,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           idleSurfaceMotion,
           roundingClass,
           className,
-          "cursor-pointer rounded-base",
+          "cursor-pointer",
         )}
         onPointerDown={(e) => {
           onAnimeDown();

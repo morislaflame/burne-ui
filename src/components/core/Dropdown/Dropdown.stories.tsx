@@ -1,9 +1,19 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { IoChevronForward, IoGlobeOutline } from "react-icons/io5";
+import {
+  IoChevronForward,
+  IoGlobeOutline,
+  IoLogOutOutline,
+  IoPeopleOutline,
+  IoSettingsOutline,
+} from "react-icons/io5";
 
+import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button";
+import { Text } from "@/components/core/Text";
+import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
+import { PIN_IMAGE2 } from "@/utils/mockImages";
 
 import { Dropdown } from "./Dropdown";
 
@@ -38,7 +48,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Составной API: `Dropdown.Trigger`, `Dropdown.Content`, `Dropdown.Item`. Пункты-ссылки — `href` + `selection={false}`. Клавиатура: ↑↓, Home/End, Escape.",
+          "Составной API: `Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Item` с `<Dropdown.ItemIndicator />`, `<Dropdown.ItemLabel>`, `<Dropdown.ItemHint>`, `<Dropdown.ItemIcon>`. Layout пункта — grid как у Radio/Checkbox: индикатор | label+hint | icon. Панель — через `Popover`.",
       },
     },
   },
@@ -57,27 +67,37 @@ export const SingleSelect: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="outline">Язык интерфейса</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content>
+        <Dropdown.Popover>
           <Dropdown.Group>
             <Dropdown.Label>Выберите язык</Dropdown.Label>
-            <Dropdown.Item value="ru" description="Кириллица, локаль по умолчанию">
-              Русский
+            <Dropdown.Item value="ru">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Кириллица, локаль по умолчанию</Dropdown.ItemHint>
             </Dropdown.Item>
-            <Dropdown.Item value="en" description="Latin script" hint={<IoGlobeOutline aria-hidden />}>
-              English
+            <Dropdown.Item value="en">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Latin script</Dropdown.ItemHint>
+              <Dropdown.ItemIcon>
+                <IoGlobeOutline aria-hidden />
+              </Dropdown.ItemIcon>
             </Dropdown.Item>
-            <Dropdown.Item value="de" disabled description="Скоро">
-              Deutsch
+            <Dropdown.Item value="de" disabled>
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Deutsch</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Скоро</Dropdown.ItemHint>
             </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group>
             <Dropdown.Label>Система</Dropdown.Label>
-            <Dropdown.Item value="sys" hint="⌘" selection={false}>
-              Настройки
+            <Dropdown.Item value="sys" selection={false}>
+              <Dropdown.ItemLabel>Настройки</Dropdown.ItemLabel>
+              <Dropdown.ItemIcon>⌘</Dropdown.ItemIcon>
             </Dropdown.Item>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -91,28 +111,34 @@ export const MultiSelect: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="ghost">Колонки таблицы</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content className="max-w-xs">
+        <Dropdown.Popover className="max-w-xs">
           <Dropdown.Group>
             <Dropdown.Label>Видимость</Dropdown.Label>
-            <Dropdown.Item value="a" description="Имя и аватар">
-              Пользователь
+            <Dropdown.Item value="a">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Пользователь</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Имя и аватар</Dropdown.ItemHint>
             </Dropdown.Item>
-            <Dropdown.Item value="b" description="ISO-код">
-              Страна
+            <Dropdown.Item value="b">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Страна</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>ISO-код</Dropdown.ItemHint>
             </Dropdown.Item>
-            <Dropdown.Item value="c">Статус</Dropdown.Item>
+            <Dropdown.Item value="c">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Статус</Dropdown.ItemLabel>
+            </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group>
-            <Dropdown.Item
-              value="d"
-              hint={<IoChevronForward aria-hidden />}
-              selection={false}
-            >
-              Действия
+            <Dropdown.Item value="d" selection={false}>
+              <Dropdown.ItemLabel>Действия</Dropdown.ItemLabel>
+              <Dropdown.ItemIcon>
+                <IoChevronForward aria-hidden />
+              </Dropdown.ItemIcon>
             </Dropdown.Item>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -126,19 +152,29 @@ export const GroupsWithDifferentIndicators: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="outline">Смешанное меню</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content className="max-w-xs">
-          <Dropdown.Group selectionIndicator >
+        <Dropdown.Popover className="max-w-xs">
+          <Dropdown.Group selectionIndicator>
             <Dropdown.Label>С индикатором</Dropdown.Label>
-            <Dropdown.Item value="a">Вариант A</Dropdown.Item>
-            <Dropdown.Item value="b">Вариант B</Dropdown.Item>
+            <Dropdown.Item value="a">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Вариант A</Dropdown.ItemLabel>
+            </Dropdown.Item>
+            <Dropdown.Item value="b">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Вариант B</Dropdown.ItemLabel>
+            </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group selectionIndicator={false}>
             <Dropdown.Label>Без индикатора (тот же одиночный выбор)</Dropdown.Label>
-            <Dropdown.Item value="c">Вариант C</Dropdown.Item>
-            <Dropdown.Item value="d">Вариант D</Dropdown.Item>
+            <Dropdown.Item value="c">
+              <Dropdown.ItemLabel>Вариант C</Dropdown.ItemLabel>
+            </Dropdown.Item>
+            <Dropdown.Item value="d">
+              <Dropdown.ItemLabel>Вариант D</Dropdown.ItemLabel>
+            </Dropdown.Item>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -152,23 +188,26 @@ export const ItemVariants: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="outline">Статусные действия</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content>
+        <Dropdown.Popover>
           <Dropdown.Group>
             <Dropdown.Label>Сообщения</Dropdown.Label>
-            <Dropdown.Item value="ok" variant="success" selection={false} description="Операция прошла успешно">
-              Успех
+            <Dropdown.Item value="ok" variant="success" selection={false}>
+              <Dropdown.ItemLabel>Успех</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Операция прошла успешно</Dropdown.ItemHint>
             </Dropdown.Item>
-            <Dropdown.Item value="warn" variant="warning" selection={false} description="Проверьте данные">
-              Предупреждение
+            <Dropdown.Item value="warn" variant="warning" selection={false}>
+              <Dropdown.ItemLabel>Предупреждение</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Проверьте данные</Dropdown.ItemHint>
             </Dropdown.Item>
             <Dropdown.Item value="inf" variant="info" selection={false}>
-              Справка
+              <Dropdown.ItemLabel>Справка</Dropdown.ItemLabel>
             </Dropdown.Item>
-            <Dropdown.Item value="bad" variant="danger" selection={false} description="Без отмены">
-              Удалить навсегда
+            <Dropdown.Item value="bad" variant="danger" selection={false}>
+              <Dropdown.ItemLabel>Удалить навсегда</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Без отмены</Dropdown.ItemHint>
             </Dropdown.Item>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -182,29 +221,29 @@ export const WithSubmenu: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="outline">Меню</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content>
+        <Dropdown.Popover>
           <Dropdown.Group>
             <Dropdown.Label>Действия</Dropdown.Label>
             <Dropdown.Item value="new" selection={false}>
-              Новый документ
+              <Dropdown.ItemLabel>Новый документ</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Sub>
               <Dropdown.SubTrigger>Пригласить пользователей</Dropdown.SubTrigger>
               <Dropdown.SubContent>
                 <Dropdown.Item value="email" selection={false}>
-                  Email
+                  <Dropdown.ItemLabel>Email</Dropdown.ItemLabel>
                 </Dropdown.Item>
                 <Dropdown.Item value="msg" selection={false}>
-                  Сообщение
+                  <Dropdown.ItemLabel>Сообщение</Dropdown.ItemLabel>
                 </Dropdown.Item>
                 <Dropdown.Separator />
                 <Dropdown.Item value="more" selection={false}>
-                  Ещё…
+                  <Dropdown.ItemLabel>Ещё…</Dropdown.ItemLabel>
                 </Dropdown.Item>
               </Dropdown.SubContent>
             </Dropdown.Sub>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -218,18 +257,24 @@ export const WithSelectionIndicator: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="secondary">Действие</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content>
+        <Dropdown.Popover>
           <Dropdown.Group>
-            <Dropdown.Item value="copy">Копировать</Dropdown.Item>
-            <Dropdown.Item value="move">Перенести</Dropdown.Item>
+            <Dropdown.Item value="copy">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Копировать</Dropdown.ItemLabel>
+            </Dropdown.Item>
+            <Dropdown.Item value="move">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Перенести</Dropdown.ItemLabel>
+            </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group>
             <Dropdown.Item value="del" variant="danger" selection={false}>
-              Удалить
+              <Dropdown.ItemLabel>Удалить</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -243,19 +288,111 @@ export const CustomItemIndicator: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="outline">Языки</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content>
+        <Dropdown.Popover>
           <Dropdown.Group>
             <Dropdown.Label>С variant secondary</Dropdown.Label>
             <Dropdown.Item value="ru">
               <Dropdown.ItemIndicator variant="secondary" />
-              Русский
+              <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Item value="en">
               <Dropdown.ItemIndicator variant="outline" />
-              English
+              <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
+      </Dropdown>
+    );
+  },
+};
+
+export const CustomItemParts: Story = {
+  name: "Compound — layout слотов",
+  render() {
+    return (
+      <Dropdown selectionIndicator={false} defaultValue="full-grid">
+        <Dropdown.Trigger asChild>
+          <Button variant="outline">Layout слотов</Button>
+        </Dropdown.Trigger>
+        <Dropdown.Popover className="max-w-md">
+          <Dropdown.Group>
+            <Dropdown.Label>Как меняется grid</Dropdown.Label>
+            <OptionListItemLayoutShowcase
+              Item={Dropdown.Item}
+              ItemLabel={Dropdown.ItemLabel}
+              ItemHint={Dropdown.ItemHint}
+              ItemIcon={Dropdown.ItemIcon}
+              ItemIndicator={Dropdown.ItemIndicator}
+            />
+          </Dropdown.Group>
+        </Dropdown.Popover>
+      </Dropdown>
+    );
+  },
+};
+
+export const CustomAvatarTrigger: Story = {
+  name: "Кастомный триггер (Avatar)",
+  render() {
+    return (
+      <Dropdown>
+        <Dropdown.Trigger asChild>
+          <button
+            type="button"
+            className="rounded-full outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            aria-label="Меню пользователя Jane Doe"
+          >
+            <Avatar size="base" label="Jane Doe">
+              <Avatar.Image src={PIN_IMAGE2} alt="" loading="lazy" />
+              <Avatar.Fallback>JD</Avatar.Fallback>
+            </Avatar>
+          </button>
+        </Dropdown.Trigger>
+        <Dropdown.Popover className="min-w-[14rem]">
+          <div role="presentation" className="pb-plus">
+            <div className="flex items-center gap-small">
+              <Avatar size="small" label="Jane Doe">
+                <Avatar.Image src={PIN_IMAGE2} alt="" loading="lazy" />
+                <Avatar.Fallback>JD</Avatar.Fallback>
+              </Avatar>
+              <div className="flex min-w-0 flex-col gap-px">
+                <Text as="p" variant="base" className="font-medium leading-tight">
+                  Jane Doe
+                </Text>
+                <Text as="p" variant="tools" className="text-muted leading-tight">
+                  jane@example.com
+                </Text>
+              </div>
+            </div>
+          </div>
+          <Dropdown.Separator />
+          <Dropdown.Group>
+            <Dropdown.Item value="dashboard" selection={false}>
+              <Dropdown.ItemLabel>Dashboard</Dropdown.ItemLabel>
+            </Dropdown.Item>
+            <Dropdown.Item value="profile" selection={false}>
+              <Dropdown.ItemLabel>Profile</Dropdown.ItemLabel>
+            </Dropdown.Item>
+            <Dropdown.Item value="settings" selection={false}>
+              <Dropdown.ItemLabel>Settings</Dropdown.ItemLabel>
+              <Dropdown.ItemIcon>
+                <IoSettingsOutline aria-hidden className="opacity-70" />
+              </Dropdown.ItemIcon>
+            </Dropdown.Item>
+            <Dropdown.Item value="team" selection={false}>
+              <Dropdown.ItemLabel>Create Team</Dropdown.ItemLabel>
+              <Dropdown.ItemIcon>
+                <IoPeopleOutline aria-hidden className="opacity-70" />
+              </Dropdown.ItemIcon>
+            </Dropdown.Item>
+            <Dropdown.Item value="logout" variant="danger" selection={false}>
+              <Dropdown.ItemLabel>Log Out</Dropdown.ItemLabel>
+              <Dropdown.ItemIcon>
+                <IoLogOutOutline aria-hidden />
+              </Dropdown.ItemIcon>
+            </Dropdown.Item>
+          </Dropdown.Group>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -270,13 +407,19 @@ export const OnLightTheme: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="outline">Мультивыбор</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content>
+        <Dropdown.Popover>
           <Dropdown.Group>
             <Dropdown.Label>Теги</Dropdown.Label>
-            <Dropdown.Item value="x">Alpha</Dropdown.Item>
-            <Dropdown.Item value="y">Beta</Dropdown.Item>
+            <Dropdown.Item value="x">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Alpha</Dropdown.ItemLabel>
+            </Dropdown.Item>
+            <Dropdown.Item value="y">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Beta</Dropdown.ItemLabel>
+            </Dropdown.Item>
           </Dropdown.Group>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -290,17 +433,17 @@ export const LinkItems: Story = {
         <Dropdown.Trigger asChild>
           <Button variant="outline">Навигация</Button>
         </Dropdown.Trigger>
-        <Dropdown.Content aria-label="Разделы">
+        <Dropdown.Popover aria-label="Разделы">
           <Dropdown.Item href="/catalog" selection={false}>
-            Каталог
+            <Dropdown.ItemLabel>Каталог</Dropdown.ItemLabel>
           </Dropdown.Item>
           <Dropdown.Item href="/docs" selection={false}>
-            Документация
+            <Dropdown.ItemLabel>Документация</Dropdown.ItemLabel>
           </Dropdown.Item>
           <Dropdown.Item value="settings" selection={false}>
-            Настройки (кнопка)
+            <Dropdown.ItemLabel>Настройки (кнопка)</Dropdown.ItemLabel>
           </Dropdown.Item>
-        </Dropdown.Content>
+        </Dropdown.Popover>
       </Dropdown>
     );
   },
@@ -321,13 +464,19 @@ export const Accessibility: Story = {
           <Dropdown.Trigger asChild>
             <Button variant="secondary">Язык</Button>
           </Dropdown.Trigger>
-          <Dropdown.Content>
+          <Dropdown.Popover>
             <Dropdown.Group>
               <Dropdown.Label>Выберите язык</Dropdown.Label>
-              <Dropdown.Item value="ru">Русский</Dropdown.Item>
-              <Dropdown.Item value="en">English</Dropdown.Item>
+              <Dropdown.Item value="ru">
+                <Dropdown.ItemIndicator />
+                <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+              </Dropdown.Item>
+              <Dropdown.Item value="en">
+                <Dropdown.ItemIndicator />
+                <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
+              </Dropdown.Item>
             </Dropdown.Group>
-          </Dropdown.Content>
+          </Dropdown.Popover>
         </Dropdown>
       </div>
     );

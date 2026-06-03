@@ -74,4 +74,38 @@ export const tokensConfig = {
   },
 } as const;
 
+/** Ступени `--spacing-*` → утилиты `gap-*`, `p-*`, `m-*`, `space-*`, … */
+export const burneSpacingScale = [
+  "xsmall",
+  "small",
+  "base",
+  "plus",
+  "mid",
+  "large",
+  "xlarge",
+] as const;
+
+/** Ступени `--radius-*` → утилиты `rounded-*`. */
+export const burneRadiusScale = [
+  "xsmall",
+  "small",
+  "base",
+  "mid",
+  "large",
+] as const;
+
+/**
+ * Роли `@utility text-*` (размер/начертание), не путать с `text-foreground` и другими цветами.
+ * `text-base` — переопределение дефолта Tailwind, в merge не нужен отдельно.
+ */
+export const burneTextScale = [
+  "small",
+  "mid",
+  "tools",
+  "accent-header",
+  "header-1",
+  "header-2",
+  "large",
+] as const;
+
 export type TokensConfig = typeof tokensConfig;

@@ -53,7 +53,7 @@ export const Horizontal: Story = {
               <IoEllipsisHorizontal aria-hidden className="icon-base" />
             </Button>
           </Dropdown.Trigger>
-          <Dropdown.Content>
+          <Dropdown.Popover>
             <Dropdown.Item value="dup" selection={false}>
               Дублировать
             </Dropdown.Item>
@@ -64,7 +64,7 @@ export const Horizontal: Story = {
             <Dropdown.Item value="del" variant="danger" selection={false}>
               Удалить
             </Dropdown.Item>
-          </Dropdown.Content>
+          </Dropdown.Popover>
         </Dropdown>
       </ButtonGroup>
     );

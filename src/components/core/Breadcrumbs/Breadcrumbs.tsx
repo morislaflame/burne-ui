@@ -195,7 +195,7 @@ function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) 
           </Text>
         </span>
       </Dropdown.Trigger>
-      <Dropdown.Content aria-label="Скрытые разделы">
+      <Dropdown.Popover aria-label="Скрытые разделы" bodyClassName="p-small">
         {hiddenItems.map((item, index) =>
           item.href ? (
             <Dropdown.Item
@@ -203,6 +203,7 @@ function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) 
               href={item.href}
               selection={false}
               onClick={item.onClick}
+              className="text-small"
             >
               {item.label}
             </Dropdown.Item>
@@ -212,12 +213,13 @@ function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) 
               value={`breadcrumb-hidden-${index}`}
               selection={false}
               onClick={item.onClick}
+              className="text-small"
             >
               {item.label}
             </Dropdown.Item>
           ),
         )}
-      </Dropdown.Content>
+      </Dropdown.Popover>
     </Dropdown>
   );
 }

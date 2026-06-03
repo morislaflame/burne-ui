@@ -13,7 +13,7 @@ const FieldLabelContext = createContext<FieldLabelContextValue | null>(null);
 export function useFieldLabelContext() {
   const ctx = useContext(FieldLabelContext);
   if (!ctx) {
-    throw new Error("Label должен быть внутри поля с FieldLabelContext (Input, Selector, Meter, …).");
+    throw new Error("Label должен быть внутри поля с FieldLabelContext (Input, ComboBox, Meter, …).");
   }
   return ctx;
 }

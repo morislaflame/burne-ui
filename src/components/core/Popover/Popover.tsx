@@ -38,6 +38,7 @@ import {
   computeTooltipPlacement,
   TOOLTIP_ARROW_CLASS,
   TOOLTIP_ARROW_SHELL_PAD,
+  type FloatingAlign,
   type TooltipSide,
 } from "@/components/core/Tooltip/tooltipPosition";
 
@@ -149,6 +150,7 @@ type PopoverContextValue = {
   labelConnected: boolean;
   hintConnected: boolean;
   triggerRef: React.RefObject<HTMLElement | null>;
+  anchorRef?: React.RefObject<HTMLElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
 };
 
@@ -170,6 +172,10 @@ export type PopoverRootProps = {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Внешний якорь позиционирования (если нет `<Popover.Trigger>`). */
+  anchorRef?: React.RefObject<HTMLElement | null>;
+  /** Дополнительная проверка перед закрытием по клику снаружи. */
+  shouldDismiss?: (target: Node) => boolean;
 };
 
 function PopoverRoot({
@@ -179,6 +185,8 @@ function PopoverRoot({
   open: openProp,
   defaultOpen = false,
   onOpenChange,
+  anchorRef,
+  shouldDismiss,
 }: PopoverRootProps) {
   const [open, setOpen] = useControllableOpen(openProp, defaultOpen, onOpenChange);
   const [resolvedSide, setResolvedSide] = useState<PopoverSide>(side);
@@ -209,13 +217,15 @@ function PopoverRoot({
     if (!open) return;
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Node;
-      if (triggerRef.current?.contains(target)) return;
+      const anchor = anchorRef?.current ?? triggerRef.current;
+      if (anchor?.contains(target)) return;
       if (contentRef.current?.contains(target)) return;
+      if (shouldDismiss && !shouldDismiss(target)) return;
       setOpen(false);
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [open, setOpen]);
+  }, [anchorRef, open, setOpen, shouldDismiss]);
 
   const ctx = useMemo<PopoverContextValue>(
     () => ({
@@ -231,9 +241,11 @@ function PopoverRoot({
       labelConnected,
       hintConnected,
       triggerRef,
+      anchorRef,
       contentRef,
     }),
     [
+      anchorRef,
       hintConnected,
       hintId,
       labelConnected,
@@ -407,6 +419,17 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   offset?: number;
   /** Зазор между `<Popover.Header>` и `<Popover.Body>`. По умолчанию зависит от `size`. */
   gap?: PopoverContentGap;
+  /** Минимальная ширина панели = ширина якоря. */
+  matchAnchorWidth?: boolean;
+  /**
+   * Выравнивание вдоль якоря: `start` — левый край под левым краем якоря (дефолт при `matchAnchorWidth`).
+   * `center` — по центру (дефолт для обычных popover).
+   */
+  align?: FloatingAlign;
+  /** Без дефолтных min/max-width и padding — для меню и listbox. */
+  unstyled?: boolean;
+  /** ARIA role оболочки. По умолчанию `dialog`; `undefined` — без role. */
+  contentRole?: "dialog" | undefined;
 };
 
 const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function PopoverContent(
@@ -416,6 +439,10 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
     showArrow = false,
     offset = DEFAULT_OFFSET,
     gap: gapProp,
+    matchAnchorWidth = false,
+    align: alignProp,
+    unstyled = false,
+    contentRole = "dialog",
     ...rest
   },
   forwardedRef,
@@ -432,6 +459,7 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
     labelId,
     hintId,
     triggerRef,
+    anchorRef,
     contentRef,
   } = usePopoverContext("Popover.Content");
 
@@ -456,16 +484,20 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
     (child) => !(isValidElement(child) && isPopoverArrowElement(child)),
   );
 
-  const reposition = useCallback(() => {
-    const trigger = triggerRef.current;
-    const panel = panelRef.current;
-    if (!trigger || !panel) return;
+  const align: FloatingAlign = alignProp ?? (matchAnchorWidth ? "start" : "center");
 
+  const reposition = useCallback(() => {
+    const anchor = anchorRef?.current ?? triggerRef.current;
+    const panel = panelRef.current;
+    if (!anchor || !panel) return;
+
+    const anchorRect = anchor.getBoundingClientRect();
     const placement = computeTooltipPlacement(
-      trigger.getBoundingClientRect(),
+      anchorRect,
       panel.getBoundingClientRect(),
       side,
       offset,
+      { align },
     );
 
     setResolvedSide(placement.resolvedSide);
@@ -473,7 +505,12 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
     panel.style.left = `${placement.left}px`;
     panel.style.top = `${placement.top}px`;
     panel.style.transform = "";
-  }, [offset, setResolvedSide, side, triggerRef]);
+    if (matchAnchorWidth) {
+      panel.style.minWidth = `${Math.max(anchorRect.width, 12 * 16)}px`;
+    } else {
+      panel.style.minWidth = "";
+    }
+  }, [align, anchorRef, matchAnchorWidth, offset, setResolvedSide, side, triggerRef]);
 
   useLayoutEffect(() => {
     if (open) setPortalMounted(true);
@@ -491,12 +528,21 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
     const onReflow = () => reposition();
     window.addEventListener("scroll", onReflow, true);
     window.addEventListener("resize", onReflow);
+
+    const panel = panelRef.current;
+    const ro =
+      panel && typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => reposition())
+        : null;
+    if (panel && ro) ro.observe(panel);
+
     return () => {
       window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onReflow, true);
       window.removeEventListener("resize", onReflow);
+      ro?.disconnect();
     };
-  }, [open, reposition, children, showArrow, offset]);
+  }, [open, reposition, showArrow, offset, align, matchAnchorWidth]);
 
   useLayoutEffect(() => {
     if (!portalMounted) return undefined;
@@ -552,7 +598,7 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
   if (!portalMounted) return null;
   if (typeof document === "undefined") return null;
 
-  const portalTheme = inheritThemePortalProps(triggerRef.current);
+  const portalTheme = inheritThemePortalProps(anchorRef?.current ?? triggerRef.current);
 
   const describedBy =
     labelConnected && hintConnected
@@ -568,10 +614,10 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
       ref={setPanelRef}
       {...portalTheme}
       id={popoverId}
-      role="dialog"
-      aria-modal="false"
-      aria-labelledby={labelConnected ? labelId : undefined}
-      aria-describedby={describedBy}
+      role={contentRole}
+      aria-modal={contentRole === "dialog" ? "false" : undefined}
+      aria-labelledby={contentRole === "dialog" && labelConnected ? labelId : undefined}
+      aria-describedby={contentRole === "dialog" ? describedBy : undefined}
       data-side={resolvedSide}
       className={cn(
         "pointer-events-auto z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-[opacity]",
@@ -585,10 +631,10 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
         <div
           className={cn(
             "relative z-[1] flex min-w-0 flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground animate-shadow",
-            POPOVER_MIN_WIDTH[size],
-            POPOVER_MAX_WIDTH[size],
-            POPOVER_PADDING[size],
-            POPOVER_GAP_CLASS[contentGap],
+            !unstyled && POPOVER_MIN_WIDTH[size],
+            !unstyled && POPOVER_MAX_WIDTH[size],
+            !unstyled && POPOVER_PADDING[size],
+            !unstyled && POPOVER_GAP_CLASS[contentGap],
           )}
         >
           {panelChildren}

@@ -1,19 +1,18 @@
 import { type ClassValue, clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
+import {
+  burneRadiusScale,
+  burneSpacingScale,
+  burneTextScale,
+} from "@/tokens/config";
+
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      /** Иначе `text-large` попадает в группу цвета и схлопывается с `text-foreground`. */
-      text: [
-        "small",
-        "mid",
-        "tools",
-        "accent-header",
-        "header-1",
-        "header-2",
-        "large",
-      ],
+      spacing: [...burneSpacingScale],
+      radius: [...burneRadiusScale],
+      text: [...burneTextScale],
     },
   },
 });

@@ -12,3 +12,5 @@ export {
   type PopoverSize,
   type PopoverContentGap,
 } from "./Popover";
+
+export type { FloatingAlign, FloatingAlign as PopoverAlign } from "@/components/core/Tooltip/tooltipPosition";

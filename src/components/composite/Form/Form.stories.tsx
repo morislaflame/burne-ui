@@ -5,26 +5,26 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Checkbox } from "@/components/core/Checkbox";
 import { Button } from "@/components/core/Button/Button";
 import { Input } from "@/components/core/Input";
-import type { SelectorOption } from "@/components/core/Selector";
-import { Selector } from "@/components/core/Selector";
+import type { ComboBoxOption } from "@/components/core/ComboBox";
+import { ComboBox } from "@/components/core/ComboBox";
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
 import { Form } from "./Form";
 
-const localeOptions: SelectorOption[] = [
+const localeOptions: ComboBoxOption[] = [
   {
     value: "ru",
     label: "Русский",
-    description: "Интерфейс и письма на русском",
+    hint: "Интерфейс и письма на русском",
   },
   {
     value: "en",
     label: "English",
-    description: "UI and emails in English",
+    hint: "UI and emails in English",
   },
   {
     value: "de",
     label: "Deutsch",
-    description: "Oberfläche und E-Mails auf Deutsch",
+    hint: "Oberfläche und E-Mails auf Deutsch",
   },
 ];
 
@@ -62,16 +62,15 @@ function ProfileForm() {
 
   return (
     <Form onSubmit={onSubmit} aria-label="Пример формы">
-      <Selector>
-        <Selector.Label>Язык интерфейса</Selector.Label>
-        <Selector.Control
-          placeholder="Выберите язык"
-          options={localeOptions}
-          value={locale}
-          onValueChange={setLocale}
-        />
-        <Selector.Hint>В списке видно описание; в поле — только название.</Selector.Hint>
-      </Selector>
+      <ComboBox options={localeOptions} value={locale} onValueChange={setLocale}>
+        <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+        <ComboBox.InputGroup>
+          <ComboBox.Input placeholder="Выберите язык" />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover />
+        <ComboBox.Hint>В списке видно описание; в поле — только название.</ComboBox.Hint>
+      </ComboBox>
       <Input isRequired>
         <Input.Label>Имя</Input.Label>
         <Input.Control name="name" placeholder="Иван" autoComplete="name" />
@@ -148,11 +147,15 @@ function ValidationForm() {
         <Input.Hint>Формат: name@domain.tld</Input.Hint>
         {emailInvalid ? <Input.Error>Укажите корректный адрес.</Input.Error> : null}
       </Input>
-      <Selector status="danger" isRequired>
-        <Selector.Label>Язык интерфейса</Selector.Label>
-        <Selector.Control placeholder="Выберите язык" options={localeOptions} />
-        <Selector.Error>Выберите язык из списка.</Selector.Error>
-      </Selector>
+      <ComboBox status="danger" isRequired options={localeOptions}>
+        <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+        <ComboBox.InputGroup>
+          <ComboBox.Input placeholder="Выберите язык" />
+          <ComboBox.Trigger />
+        </ComboBox.InputGroup>
+        <ComboBox.Popover />
+        <ComboBox.Error>Выберите язык из списка.</ComboBox.Error>
+      </ComboBox>
       <Checkbox
         danger
         label="Согласие на обработку данных"

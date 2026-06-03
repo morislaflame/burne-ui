@@ -1,0 +1,584 @@
+import type {
+  ChangeEvent,
+  InputHTMLAttributes,
+  KeyboardEvent as ReactKeyboardEvent,
+  MutableRefObject,
+  PointerEvent as ReactPointerEvent,
+  ReactNode,
+  Ref,
+} from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  type HTMLAttributes,
+} from "react";
+import { IoChevronDown } from "react-icons/io5";
+
+import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import { Popover } from "@/components/core/Popover";
+import { ListBox } from "@/components/core/ListBox";
+import {
+  animateInteractivePressSqueeze,
+  prefersReducedInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
+import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { cn } from "@/utils/cn";
+
+import {
+  type ComboBoxOption,
+  useComboBoxContext,
+} from "./comboBoxContext";
+
+function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
+  return (node: T | null) => {
+    for (const r of refs) {
+      if (r == null) continue;
+      if (typeof r === "function") r(node);
+      else (r as MutableRefObject<T | null>).current = node;
+    }
+  };
+}
+
+function optionSearchHaystack(opt: ComboBoxOption): string {
+  const parts: string[] = [opt.value];
+  if (opt.filterText) parts.push(opt.filterText);
+  if (typeof opt.label === "string") parts.push(opt.label);
+  if (typeof opt.hint === "string") parts.push(opt.hint);
+  return parts.join(" ").toLowerCase();
+}
+
+function optionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
+  const t = query.trim().toLowerCase();
+  if (!t) return true;
+  return optionSearchHaystack(opt).includes(t);
+}
+
+const VARIANT_SHELL: Record<InputVariant, string> = {
+  default: "bg-surface",
+  outline: "bg-transparent",
+};
+
+const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
+  danger: "bg-surface-tint-danger",
+  success: "bg-surface-tint-success",
+  warning: "bg-surface-tint-warning",
+};
+
+const STATUS_TINT_FOCUS_BORDER: Record<Exclude<InputStatus, "default">, string> = {
+  danger: "focus-within:border-danger",
+  success: "focus-within:border-success",
+  warning: "focus-within:border-warning",
+};
+
+const INPUT_SHELL_H: Record<InputSize, string> = {
+  small: CONTROL_SIZE_LAYOUT.small.h,
+  base: CONTROL_SIZE_LAYOUT.base.h,
+  mid: CONTROL_SIZE_LAYOUT.mid.h,
+  large: CONTROL_SIZE_LAYOUT.large.h,
+};
+
+const INPUT_CONTROL: Record<InputSize, string> = {
+  small: CONTROL_SIZE_LAYOUT.small.controlPad,
+  base: CONTROL_SIZE_LAYOUT.base.controlPad,
+  mid: CONTROL_SIZE_LAYOUT.mid.controlPad,
+  large: CONTROL_SIZE_LAYOUT.large.controlPad,
+};
+
+const CHEVRON_ICON: Record<InputSize, string> = {
+  small: CONTROL_SIZE_LAYOUT.small.chevronIcon,
+  base: CONTROL_SIZE_LAYOUT.base.chevronIcon,
+  mid: CONTROL_SIZE_LAYOUT.mid.chevronIcon,
+  large: CONTROL_SIZE_LAYOUT.large.chevronIcon,
+};
+
+export type ComboBoxInputGroupProps = HTMLAttributes<HTMLDivElement>;
+
+export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupProps>(
+  function ComboBoxInputGroup({ className, children, ...rest }, ref) {
+    const ctx = useComboBoxContext();
+    const {
+      open,
+      setOpen,
+      disabled,
+      variant,
+      status,
+      size,
+      anchorRef,
+    } = ctx;
+
+    const openingRef = useRef(false);
+
+    const statusTinted =
+      status === "danger" || status === "success" || status === "warning";
+
+    const shellSurface = statusTinted
+      ? cn(
+          STATUS_TINT_SHELL[status],
+          "border-transparent",
+          STATUS_TINT_FOCUS_BORDER[status],
+        )
+      : cn(
+          variant === "outline" ? "surface-outline" : VARIANT_SHELL[variant],
+          variant === "outline"
+            ? "focus-within:border-accent"
+            : "border-base focus-within:border-accent",
+        );
+
+    const openAfterSqueeze = useCallback(() => {
+      if (disabled || openingRef.current) return;
+      openingRef.current = true;
+      const el = anchorRef.current;
+      if (!el) {
+        openingRef.current = false;
+        return;
+      }
+      if (prefersReducedInteractiveHoverLift()) {
+        openingRef.current = false;
+        setOpen(true);
+        return;
+      }
+      void animateInteractivePressSqueeze(el).then(() => {
+        openingRef.current = false;
+        if (disabled) return;
+        setOpen(true);
+      });
+    }, [anchorRef, disabled, setOpen]);
+
+    const handlePointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLDivElement>) => {
+        if (disabled) return;
+        if (open) return;
+        if (e.button !== 0) return;
+        openAfterSqueeze();
+      },
+      [disabled, open, openAfterSqueeze],
+    );
+
+    return (
+      <div
+        ref={mergeRefs(ref, anchorRef)}
+        role="presentation"
+        onPointerDown={handlePointerDown}
+        className={cn(
+          "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
+          "overflow-hidden rounded-base transition-[border-color,background-color] duration-200 ease-out motion-reduce:transition-none",
+          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
+          INPUT_SHELL_H[size],
+          shellSurface,
+          disabled ? "cursor-not-allowed opacity-55" : "cursor-pointer",
+          className,
+        )}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  },
+);
+
+ComboBoxInputGroup.displayName = "ComboBoxInputGroup";
+
+export type ComboBoxInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "value" | "defaultValue" | "size"
+>;
+
+export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
+  function ComboBoxInput({ className, onKeyDown, onChange, ...rest }, ref) {
+    const ctx = useComboBoxContext();
+    const {
+      comboBoxId,
+      open,
+      setOpen,
+      value,
+      setValue,
+      filterQuery,
+      setFilterQuery,
+      listId,
+      activeValue,
+      setActiveValue,
+      inputRef,
+      options,
+      filteredValues,
+      disabled,
+      placeholder,
+      size,
+      status,
+      isRequired,
+      hintConnected,
+      errorConnected,
+      hintId,
+      errorId,
+    } = ctx;
+
+    const openingRef = useRef(false);
+    const queuedFilterCharRef = useRef<string | null>(null);
+
+    const selectedOption = useMemo(
+      () => options.find((o) => o.value === value),
+      [options, value],
+    );
+
+    const selectedDisplayString = useMemo(() => {
+      if (!selectedOption) return "";
+      if (typeof selectedOption.label === "string") return selectedOption.label;
+      if (selectedOption.filterText) return selectedOption.filterText;
+      return selectedOption.value;
+    }, [selectedOption]);
+
+    const activeOptionId =
+      open && activeValue ? `${listId}-opt-${activeValue}` : undefined;
+
+    const ariaDescribedBy = joinFieldDescribedBy(
+      hintConnected ? hintId : undefined,
+      errorConnected ? errorId : undefined,
+    );
+
+    const finishOpen = useCallback(() => {
+      const append = queuedFilterCharRef.current;
+      queuedFilterCharRef.current = null;
+      const nextQ = append ?? "";
+      setFilterQuery(nextQ);
+
+      const fi = options.filter((o) => optionMatchesFilter(o, nextQ)).map((o) => o.value);
+      const selectedIdx = fi.indexOf(value);
+      setActiveValue(selectedIdx >= 0 ? value : fi[0] ?? null);
+
+      requestAnimationFrame(() => {
+        const el = inputRef.current;
+        if (!el) return;
+        el.focus();
+        const len = nextQ.length;
+        el.setSelectionRange(len, len);
+      });
+    }, [inputRef, options, setActiveValue, setFilterQuery, value]);
+
+    const openAfterSqueeze = useCallback(() => {
+      if (disabled || openingRef.current) return;
+      openingRef.current = true;
+      const el = ctx.anchorRef.current;
+      if (!el) {
+        openingRef.current = false;
+        return;
+      }
+      if (prefersReducedInteractiveHoverLift()) {
+        openingRef.current = false;
+        setOpen(true);
+        finishOpen();
+        return;
+      }
+      void animateInteractivePressSqueeze(el).then(() => {
+        openingRef.current = false;
+        if (disabled) return;
+        setOpen(true);
+        finishOpen();
+      });
+    }, [ctx.anchorRef, disabled, finishOpen, setOpen]);
+
+    const bumpActive = useCallback(
+      (delta: number) => {
+        if (filteredValues.length === 0) return;
+        const idx = activeValue ? filteredValues.indexOf(activeValue) : -1;
+        let j = idx < 0 ? 0 : idx;
+        for (let step = 0; step < filteredValues.length; step += 1) {
+          j = (j + delta + filteredValues.length) % filteredValues.length;
+          const v = filteredValues[j];
+          const opt = options.find((o) => o.value === v);
+          if (v && opt && !opt.disabled) {
+            setActiveValue(v);
+            return;
+          }
+        }
+      },
+      [activeValue, filteredValues, options, setActiveValue],
+    );
+
+    const selectValue = useCallback(
+      (next: string) => {
+        const opt = options.find((o) => o.value === next);
+        if (!opt || opt.disabled) return;
+        setValue(next);
+        setOpen(false);
+        setFilterQuery("");
+        inputRef.current?.focus();
+      },
+      [inputRef, options, setFilterQuery, setOpen, setValue],
+    );
+
+    const handleChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        onChange?.(e);
+        if (!open) return;
+        setFilterQuery(e.target.value);
+      },
+      [onChange, open, setFilterQuery],
+    );
+
+    const handleKeyDown = useCallback(
+      (e: ReactKeyboardEvent<HTMLInputElement>) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented || disabled) return;
+        if (e.nativeEvent.isComposing) return;
+
+        if (!open) {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            openAfterSqueeze();
+            return;
+          }
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openAfterSqueeze();
+            return;
+          }
+          if (
+            e.key.length === 1 &&
+            !e.ctrlKey &&
+            !e.metaKey &&
+            !e.altKey &&
+            e.key !== "Tab"
+          ) {
+            e.preventDefault();
+            queuedFilterCharRef.current = e.key;
+            openAfterSqueeze();
+          }
+          return;
+        }
+
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          bumpActive(1);
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          bumpActive(-1);
+          return;
+        }
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (activeValue) selectValue(activeValue);
+          return;
+        }
+        if (e.key === "Home") {
+          e.preventDefault();
+          for (const v of filteredValues) {
+            const opt = options.find((o) => o.value === v);
+            if (opt && !opt.disabled) {
+              setActiveValue(v);
+              break;
+            }
+          }
+          return;
+        }
+        if (e.key === "End") {
+          e.preventDefault();
+          for (let i = filteredValues.length - 1; i >= 0; i -= 1) {
+            const v = filteredValues[i]!;
+            const opt = options.find((o) => o.value === v);
+            if (opt && !opt.disabled) {
+              setActiveValue(v);
+              break;
+            }
+          }
+        }
+      },
+      [
+        activeValue,
+        bumpActive,
+        disabled,
+        filteredValues,
+        onKeyDown,
+        open,
+        openAfterSqueeze,
+        options,
+        selectValue,
+        setActiveValue,
+      ],
+    );
+
+    useEffect(() => {
+      if (open) return;
+      setFilterQuery("");
+    }, [open, setFilterQuery]);
+
+    const inputValue = open ? filterQuery : selectedDisplayString;
+
+    return (
+      <input
+        ref={mergeRefs(ref, inputRef)}
+        id={comboBoxId}
+        type="text"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-haspopup="listbox"
+        aria-autocomplete="list"
+        aria-activedescendant={activeOptionId}
+        aria-required={isRequired || undefined}
+        aria-invalid={status === "danger" ? true : undefined}
+        aria-describedby={ariaDescribedBy}
+        disabled={disabled}
+        readOnly={!open}
+        autoComplete="off"
+        placeholder={placeholder}
+        value={inputValue}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted",
+          INPUT_CONTROL[size],
+          !open && !selectedOption && "text-muted",
+          className,
+        )}
+        {...rest}
+      />
+    );
+  },
+);
+
+ComboBoxInput.displayName = "ComboBoxInput";
+
+export type ComboBoxTriggerProps = HTMLAttributes<HTMLButtonElement>;
+
+export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProps>(
+  function ComboBoxTrigger({ className, onPointerDown, ...rest }, ref) {
+    const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
+
+    const handlePointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLButtonElement>) => {
+        onPointerDown?.(e);
+        e.stopPropagation();
+        if (disabled) return;
+        if (open) {
+          setOpen(false);
+          setFilterQuery("");
+          return;
+        }
+        if (e.button !== 0) return;
+        setOpen(true);
+        requestAnimationFrame(() => inputRef.current?.focus());
+      },
+      [disabled, inputRef, onPointerDown, open, setFilterQuery, setOpen],
+    );
+
+    return (
+      <button
+        type="button"
+        ref={ref}
+        tabIndex={-1}
+        disabled={disabled}
+        aria-label={open ? "Закрыть список" : "Открыть список"}
+        className={cn(
+          "flex shrink-0 items-center justify-center self-stretch border-l border-base px-small outline-none",
+          "text-muted transition-transform duration-200 ease-out motion-reduce:transition-none",
+          "hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+          open && "rotate-180",
+          disabled && "pointer-events-none",
+          className,
+        )}
+        onPointerDown={handlePointerDown}
+        {...rest}
+      >
+        <IoChevronDown className={CHEVRON_ICON[size]} aria-hidden />
+      </button>
+    );
+  },
+);
+
+ComboBoxTrigger.displayName = "ComboBoxTrigger";
+
+export type ComboBoxPopoverProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+  offset?: number;
+};
+
+export function ComboBoxPopover({ children, className, offset = 6, ...rest }: ComboBoxPopoverProps) {
+  const {
+    open,
+    setOpen,
+    anchorRef,
+    listId,
+    menuMaxHeight,
+    options,
+    filteredValues,
+    value,
+    setValue,
+    activeValue,
+    setActiveValue,
+    setFilterQuery,
+    setOpen: closeOnSelect,
+  } = useComboBoxContext();
+
+  const handleValueChange = useCallback(
+    (next: string | string[]) => {
+      const v = Array.isArray(next) ? next[0] ?? "" : next;
+      setValue(v);
+      setFilterQuery("");
+      closeOnSelect(false);
+    },
+    [closeOnSelect, setFilterQuery, setValue],
+  );
+
+  const listContent =
+    children ??
+    (filteredValues.length === 0 ? (
+      <ListBox.Empty />
+    ) : (
+      filteredValues.map((v) => {
+        const opt = options.find((o) => o.value === v)!;
+        return (
+          <ListBox.Item key={v} value={v} disabled={opt.disabled} label={opt.label} hint={opt.hint} icon={opt.icon} />
+        );
+      })
+    ));
+
+  return (
+    <Popover open={open} onOpenChange={setOpen} side="bottom" anchorRef={anchorRef}>
+      <Popover.Content
+        matchAnchorWidth
+        unstyled
+        contentRole={undefined}
+        offset={offset}
+        className={cn("z-[100]", className)}
+        {...rest}
+      >
+        <Popover.Body className="gap-0 p-plus">
+          <ListBox
+            listId={listId}
+            value={value}
+            onValueChange={handleValueChange}
+            activeValue={activeValue}
+            onActiveValueChange={setActiveValue}
+            selectionIndicator
+            className="overflow-y-auto overflow-x-hidden"
+            style={{ maxHeight: menuMaxHeight }}
+          >
+            {listContent}
+          </ListBox>
+        </Popover.Body>
+      </Popover.Content>
+    </Popover>
+  );
+}
+
+ComboBoxPopover.displayName = "ComboBoxPopover";
+
+export type ComboBoxOptionsProps = {
+  options: ComboBoxOption[];
+};
+
+/** Внутренний хелпер: прокидывает options в контекст через ComboBoxRoot. */
+export function comboBoxOptionSearchHaystack(opt: ComboBoxOption): string {
+  return optionSearchHaystack(opt);
+}
+
+export function comboBoxOptionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
+  return optionMatchesFilter(opt, query);
+}
+
+export type { ComboBoxOption };

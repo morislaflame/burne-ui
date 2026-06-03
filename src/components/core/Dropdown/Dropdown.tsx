@@ -11,7 +11,6 @@ import {
   useMemo,
   useRef,
   useState,
-  Children,
   cloneElement,
   isValidElement,
   type HTMLAttributes,
@@ -24,6 +23,7 @@ import { createPortal } from "react-dom";
 
 import { Text } from "@/components/core/Text";
 import { Separator } from "@/components/core/Separator";
+import { Popover } from "@/components/core/Popover";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
@@ -36,7 +36,20 @@ import type {
 import { MOTION_INTERACTIVE_EASE, MOTION_TOOLTIP_MS } from "@/components/core/utils/motionTokens";
 import { cn } from "@/utils/cn";
 
-import { DropdownItemContextProvider, useDropdownItemContext } from "./dropdownItemContext";
+import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
+import {
+  optionListItemGridClass,
+} from "@/components/core/utils/optionControlGridLayout";
+import {
+  OptionListItemContextProvider,
+  useOptionListItemContext,
+} from "@/components/core/utils/optionListItemContext";
+import {
+  OptionListItemHint,
+  OptionListItemIcon,
+  OptionListItemIndicatorShell,
+  OptionListItemLabel,
+} from "@/components/core/utils/optionListItemParts";
 
 function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {
@@ -310,10 +323,18 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
   },
 );
 
-export type DropdownContentProps = HTMLAttributes<HTMLDivElement>;
+export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
+  /** Классы для внутренней панели меню (`Popover.Body`): padding, gap, max-height, … */
+  bodyClassName?: string;
+};
 
-export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
-  function DropdownContent({ children, className = "", style, ...rest }, forwardedRef) {
+export type DropdownContentProps = DropdownPopoverProps;
+
+export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
+  function DropdownPopover(
+    { children, className = "", bodyClassName, ...rest },
+    forwardedRef,
+  ) {
     const {
       open,
       setOpen,
@@ -324,55 +345,15 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
       subPanelRootsRef,
     } = useDropdown();
 
-    const [pos, setPos] = useState({ top: 0, left: 0, minW: 0 });
-    /** Портал остаётся смонтированным на время fade-out (как у `Tooltip.Content`). */
-    const [portalMounted, setPortalMounted] = useState(open);
-
-    const updatePosition = useCallback(() => {
-      const t = triggerRef.current;
-      if (!t) return;
-      const r = t.getBoundingClientRect();
-      setPos({
-        top: r.bottom + 6,
-        left: r.left,
-        minW: r.width,
-      });
-    }, [triggerRef]);
-
-    useLayoutEffect(() => {
-      if (open) setPortalMounted(true);
-    }, [open]);
-
-    useLayoutEffect(() => {
-      if (!open) return;
-      updatePosition();
-    }, [open, updatePosition]);
-
-    useEffect(() => {
-      if (!open) return;
-      const onScroll = () => updatePosition();
-      window.addEventListener("scroll", onScroll, true);
-      window.addEventListener("resize", onScroll);
-      return () => {
-        window.removeEventListener("scroll", onScroll, true);
-        window.removeEventListener("resize", onScroll);
-      };
-    }, [open, updatePosition]);
-
-    useEffect(() => {
-      if (!open) return;
-      const onPointerDown = (e: PointerEvent) => {
-        const target = e.target as Node;
-        if (triggerRef.current?.contains(target)) return;
-        if (contentRef.current?.contains(target)) return;
+    const shouldDismiss = useCallback(
+      (target: Node) => {
         for (const root of subPanelRootsRef.current) {
-          if (root.contains(target)) return;
+          if (root.contains(target)) return false;
         }
-        setOpen(false);
-      };
-      document.addEventListener("pointerdown", onPointerDown, true);
-      return () => document.removeEventListener("pointerdown", onPointerDown, true);
-    }, [open, setOpen, triggerRef, contentRef, subPanelRootsRef]);
+        return true;
+      },
+      [subPanelRootsRef],
+    );
 
     useLayoutEffect(() => {
       if (!open) return;
@@ -380,7 +361,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
       if (!panel) return;
       const items = getFocusableMenuItems(panel);
       items[0]?.focus();
-    }, [open]);
+    }, [contentRef, open]);
 
     useEffect(() => {
       if (!open) return;
@@ -424,94 +405,44 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
 
       panel.addEventListener("keydown", onKeyDown);
       return () => panel.removeEventListener("keydown", onKeyDown);
-    }, [open, setOpen, triggerRef]);
+    }, [contentRef, open, setOpen, triggerRef]);
 
-    useLayoutEffect(() => {
-      if (!portalMounted) return undefined;
-      const el = contentRef.current;
-      if (!el) return undefined;
-
-      const reduced = prefersReducedInteractiveHoverLift();
-      let cancelled = false;
-
-      if (reduced) {
-        remove(el);
-        if (open) {
-          el.style.opacity = "";
-        } else {
-          setPortalMounted(false);
-        }
-        return () => {
-          cancelled = true;
-        };
-      }
-
-      remove(el);
-
-      if (open) {
-        el.style.opacity = "0";
-        animate(el, {
-          opacity: [0, 1],
-          duration: MOTION_TOOLTIP_MS,
-          ease: MOTION_INTERACTIVE_EASE,
-        });
-        return () => {
-          cancelled = true;
-          remove(el);
-        };
-      }
-
-      const startOpacity = Number.parseFloat(getComputedStyle(el).opacity);
-      const from =
-        Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
-      const anim = animate(el, {
-        opacity: [from, 0],
-        duration: MOTION_TOOLTIP_MS,
-        ease: MOTION_INTERACTIVE_EASE,
-      });
-      void Promise.resolve(anim).then(() => {
-        if (!cancelled) setPortalMounted(false);
-      });
-      return () => {
-        cancelled = true;
-        remove(el);
-      };
-    }, [open, portalMounted]);
-
-    if (!portalMounted) return null;
-
-    const portalTheme = inheritThemePortalProps(triggerRef.current);
-
-    const panel = (
-      <div
-        ref={mergeRefs(forwardedRef, contentRef)}
-        {...portalTheme}
-        id={contentId}
-        role="menu"
-        aria-multiselectable={multiple ? true : undefined}
-        className={cn(
-          "fixed z-[100] flex max-h-[min(24rem,70vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border border-base bg-surface p-base text-left shadow-token-md outline-none",
-          "will-change-[opacity] motion-reduce:transition-none",
-          !open && portalMounted && "pointer-events-none",
-          className,
-        )}
-        style={{
-          top: pos.top,
-          left: pos.left,
-          minWidth: Math.max(pos.minW, 12 * 16),
-          ...style,
-        }}
-        {...rest}
+    return (
+      <Popover
+        open={open}
+        onOpenChange={setOpen}
+        side="bottom"
+        anchorRef={triggerRef}
+        shouldDismiss={shouldDismiss}
       >
-        {children}
-      </div>
+        <Popover.Content
+          ref={mergeRefs(forwardedRef, contentRef)}
+          matchAnchorWidth
+          unstyled
+          contentRole={undefined}
+          offset={6}
+          id={contentId}
+          className={cn("z-[100]", className)}
+          {...rest}
+        >
+          <Popover.Body
+            role="menu"
+            aria-multiselectable={multiple ? true : undefined}
+            className={cn(
+              "max-h-[min(24rem,70vh)] gap-xsmall overflow-y-auto overflow-x-hidden p-plus text-left outline-none",
+              bodyClassName,
+            )}
+          >
+            {children}
+          </Popover.Body>
+        </Popover.Content>
+      </Popover>
     );
-
-    return typeof document !== "undefined"
-      ? createPortal(panel, document.body)
-      : null;
   },
 );
+
+/** @deprecated Используйте `Dropdown.Popover`. */
+export const DropdownContent = DropdownPopover;
 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
   /**
@@ -925,28 +856,33 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
   },
 );
 
-function partitionDropdownItemChildren(children: ReactNode): {
-  indicator: ReactNode | null;
-  content: ReactNode;
-} {
-  let indicator: ReactNode | null = null;
-  const rest: ReactNode[] = [];
-
-  for (const child of Children.toArray(children)) {
-    if (
-      isValidElement(child) &&
-      (child.type as { displayName?: string }).displayName === "DropdownItemIndicator"
-    ) {
-      if (indicator == null) indicator = child;
-      continue;
-    }
-    rest.push(child);
-  }
-
-  if (rest.length === 0) return { indicator, content: null };
-  if (rest.length === 1) return { indicator, content: rest[0]! };
-  return { indicator, content: rest };
+function partitionDropdownItemChildren(children: ReactNode) {
+  return partitionOptionListItemChildren(children);
 }
+
+export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement>;
+
+export function DropdownItemLabel(props: DropdownItemLabelProps) {
+  return <OptionListItemLabel {...props} />;
+}
+
+DropdownItemLabel.displayName = "DropdownItemLabel";
+
+export type DropdownItemHintProps = HTMLAttributes<HTMLSpanElement>;
+
+export function DropdownItemHint(props: DropdownItemHintProps) {
+  return <OptionListItemHint {...props} />;
+}
+
+DropdownItemHint.displayName = "DropdownItemHint";
+
+export type DropdownItemIconProps = HTMLAttributes<HTMLSpanElement>;
+
+export function DropdownItemIcon(props: DropdownItemIconProps) {
+  return <OptionListItemIcon {...props} />;
+}
+
+DropdownItemIcon.displayName = "DropdownItemIcon";
 
 export type DropdownItemIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   variant?: SelectionIndicatorVariant;
@@ -965,7 +901,7 @@ export function DropdownItemIndicator({
   className,
   ...rest
 }: DropdownItemIndicatorProps) {
-  const ctx = useDropdownItemContext();
+  const ctx = useOptionListItemContext("Dropdown.ItemIndicator");
 
   if (!ctx.showIndicatorSlot) return null;
 
@@ -973,15 +909,15 @@ export function DropdownItemIndicator({
   const hasCustomIcon = children != null;
 
   return (
-    <SelectionIndicator
-      variant={variant}
-      size={size}
-      selected={ctx.selected}
-      check={showCheck && !hasCustomIcon}
-      icon={children ?? undefined}
-      className={className}
-      {...rest}
-    />
+    <OptionListItemIndicatorShell className={className} {...rest}>
+      <SelectionIndicator
+        variant={variant}
+        size={size}
+        selected={ctx.selected}
+        check={showCheck && !hasCustomIcon}
+        icon={children ?? undefined}
+      />
+    </OptionListItemIndicatorShell>
   );
 }
 
@@ -1025,104 +961,9 @@ export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
    * `false` — действие: без выбора значения; клик закрывает меню.
    */
   selection?: boolean;
-  /** Семантический цвет подписи и строки (описание и подсказка наследуют тон с прозрачностью). */
+  /** Семантический цвет подписи и строки (hint наследует тон с прозрачностью). */
   variant?: DropdownItemVariant;
-  /** Второстепенная строка под заголовком. */
-  description?: ReactNode;
-  /** Справа: подсказка или иконка (`text-muted` у варианта `default`). */
-  hint?: ReactNode;
 };
-
-function DropdownItemBody({
-  content,
-  description,
-  hint,
-  disabled,
-  variant,
-  showIndicatorSlot,
-  indicator,
-}: {
-  content: ReactNode;
-  description?: ReactNode;
-  hint?: ReactNode;
-  disabled: boolean;
-  variant: DropdownItemVariant;
-  showIndicatorSlot: boolean;
-  indicator: ReactNode | null;
-}) {
-  return (
-    <>
-      <span
-        className={cn(
-          "min-w-0 flex-1",
-          showIndicatorSlot
-            ? "grid grid-cols-[auto_1fr] items-center gap-x-base gap-y-xsmall"
-            : "flex flex-col",
-        )}
-      >
-        {showIndicatorSlot && indicator != null ? (
-          <>
-            {indicator}
-            <span className="min-w-0">
-              <Text as="span" variant="base" inheritColor className="block font-medium">
-                {content}
-              </Text>
-            </span>
-            {description != null ? (
-              <span className="col-start-2 row-start-2 min-w-0">
-                <Text
-                  as="span"
-                  variant="tools"
-                  inheritColor
-                  className={cn(
-                    "block",
-                    disabled || variant === "default" ? "text-muted" : "opacity-80",
-                  )}
-                >
-                  {description}
-                </Text>
-              </span>
-            ) : null}
-          </>
-        ) : (
-          <>
-            <Text as="span" variant="base" inheritColor className="block font-medium">
-              {content}
-            </Text>
-            {description != null ? (
-              <Text
-                as="span"
-                variant="tools"
-                className={cn(
-                  "mt-xsmall block text-muted",
-                  disabled || variant === "default" ? "text-muted" : "opacity-80",
-                )}
-              >
-                {description}
-              </Text>
-            ) : null}
-          </>
-        )}
-      </span>
-      {hint != null ? (
-        <span
-          className={cn(
-            "flex shrink-0 items-center gap-xsmall [&_svg]:icon-base",
-            disabled || variant === "default" ? "text-muted" : "opacity-80",
-          )}
-        >
-          {typeof hint === "string" ? (
-            <Text as="span" variant="base" inheritColor className="opacity-90">
-              {hint}
-            </Text>
-          ) : (
-            hint
-          )}
-        </span>
-      ) : null}
-    </>
-  );
-}
 
 export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
   function DropdownItem(
@@ -1134,8 +975,6 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
       disabled = false,
       selection: selectionProp,
       variant = "default",
-      description,
-      hint,
       onClick,
       onPointerDown,
       ...rest
@@ -1151,9 +990,10 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
     } = useDropdown();
     const indicatorPreference = useDropdownIndicatorPreference();
 
-    const { indicator: compoundIndicator, content: compoundContent } =
-      partitionDropdownItemChildren(children);
-    const hasItemIndicator = compoundIndicator != null;
+    const parts = partitionDropdownItemChildren(children);
+    const hasItemIndicator = parts.indicator != null;
+    const hasHint = parts.hint != null;
+    const hasIcon = parts.icon != null;
 
     const isLink = Boolean(href);
     const isSelectionItem = !isLink && selectionProp !== false;
@@ -1180,7 +1020,8 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
     );
 
     const rowClass = cn(
-      "flex w-full min-w-0 origin-center items-center rounded-mid px-base py-small text-left no-underline outline-none",
+      "w-full min-w-0 origin-center rounded-mid px-base py-small text-left no-underline outline-none text-base",
+      optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
       "button-idle-surface-transition motion-reduce:transition-none",
       !disabled && cn("cursor-pointer", DROPDOWN_ITEM_VARIANT_CLASS[variant]),
       disabled &&
@@ -1213,72 +1054,70 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
       [disabled, isSelectionItem, onClick, selectItem, setOpen, value],
     );
 
-    const itemContent = hasItemIndicator ? compoundContent : children;
-    const indicator = showIndicatorSlot
-      ? hasItemIndicator
-        ? compoundIndicator
-        : <DropdownItemIndicator />
-      : null;
-
-    const body = (
-      <DropdownItemContextProvider
-        value={{
-          showIndicatorSlot,
-          selected: isSelected,
-          indicatorMode,
-          disabled,
-        }}
-      >
-        <DropdownItemBody
-          content={itemContent}
-          description={description}
-          hint={hint}
-          disabled={disabled}
-          variant={variant}
-          showIndicatorSlot={showIndicatorSlot}
-          indicator={indicator}
-        />
-      </DropdownItemContextProvider>
+    const itemBody = (
+      <>
+        {showIndicatorSlot && !hasItemIndicator ? <DropdownItemIndicator /> : null}
+        {parts.indicator}
+        {parts.label}
+        {parts.hint}
+        {parts.icon}
+        {parts.rest}
+      </>
     );
+
+    const itemCtx = {
+      showIndicatorSlot,
+      hasHint,
+      hasIcon,
+      selected: isSelected,
+      indicatorMode,
+      disabled,
+      mutedHint: disabled || variant === "default",
+    };
 
     if (isLink) {
       return (
-        <a
-          ref={setRefs as Ref<HTMLAnchorElement>}
-          role={itemRole}
-          href={disabled ? undefined : href}
-          tabIndex={-1}
-          aria-disabled={disabled || undefined}
-          className={rowClass}
-          onClick={handleClick}
-          onPointerDown={handlePointerDown}
-          {...(rest as HTMLAttributes<HTMLAnchorElement>)}
-        >
-          {body}
-        </a>
+        <OptionListItemContextProvider value={itemCtx}>
+          <a
+            ref={setRefs as Ref<HTMLAnchorElement>}
+            role={itemRole}
+            href={disabled ? undefined : href}
+            tabIndex={-1}
+            aria-disabled={disabled || undefined}
+            className={rowClass}
+            onClick={handleClick}
+            onPointerDown={handlePointerDown}
+            {...(rest as HTMLAttributes<HTMLAnchorElement>)}
+          >
+            {itemBody}
+          </a>
+        </OptionListItemContextProvider>
       );
     }
 
     return (
-      <button
-        ref={setRefs as Ref<HTMLButtonElement>}
-        type="button"
-        role={itemRole}
-        disabled={disabled}
-        tabIndex={-1}
-        aria-checked={showIndicatorSlot ? isSelected : undefined}
-        className={rowClass}
-        onClick={handleClick}
-        onPointerDown={handlePointerDown}
-        {...(rest as HTMLAttributes<HTMLButtonElement>)}
-      >
-        {body}
-      </button>
+      <OptionListItemContextProvider value={itemCtx}>
+        <button
+          ref={setRefs as Ref<HTMLButtonElement>}
+          type="button"
+          role={itemRole}
+          disabled={disabled}
+          tabIndex={-1}
+          aria-checked={showIndicatorSlot ? isSelected : undefined}
+          className={rowClass}
+          onClick={handleClick}
+          onPointerDown={handlePointerDown}
+          {...(rest as HTMLAttributes<HTMLButtonElement>)}
+        >
+          {itemBody}
+        </button>
+      </OptionListItemContextProvider>
     );
   },
 );
 
 DropdownTrigger.displayName = "Dropdown.Trigger";
+DropdownPopover.displayName = "Dropdown.Popover";
 DropdownContent.displayName = "Dropdown.Content";
 DropdownItem.displayName = "Dropdown.Item";
 DropdownGroup.displayName = "Dropdown.Group";
@@ -1289,14 +1128,18 @@ DropdownSubTrigger.displayName = "Dropdown.SubTrigger";
 DropdownSubContent.displayName = "Dropdown.SubContent";
 DropdownRoot.displayName = "Dropdown";
 
-/** Составной API: `Dropdown.Trigger`, `Dropdown.Content`, `Dropdown.Item`, … — как у `Expandable.Panel`. */
+/** Составной API: `Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Item`, … */
 export const Dropdown = Object.assign(DropdownRoot, {
   Trigger: DropdownTrigger,
+  Popover: DropdownPopover,
   Content: DropdownContent,
   Group: DropdownGroup,
   Label: DropdownLabel,
   Separator: DropdownSeparator,
   Item: DropdownItem,
+  ItemLabel: DropdownItemLabel,
+  ItemHint: DropdownItemHint,
+  ItemIcon: DropdownItemIcon,
   ItemIndicator: DropdownItemIndicator,
   Sub: DropdownSub,
   SubTrigger: DropdownSubTrigger,

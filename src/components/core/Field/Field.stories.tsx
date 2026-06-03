@@ -27,7 +27,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Примитивы поля формы: **Field.Root**, **Field.Label**, **Field.Hint**, **Field.Error**, **Field.Set** (+ **Field.Group**, **Field.Actions**). Используются внутри Input, Selector, Meter и др.; можно собирать поля вручную.",
+          "Примитивы поля формы: **Field.Root**, **Field.Label**, **Field.Hint**, **Field.Error**, **Field.Set** (+ **Field.Group**, **Field.Actions**). Используются внутри Input, ComboBox, Meter и др.; можно собирать поля вручную.",
       },
     },
   },
