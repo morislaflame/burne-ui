@@ -1,0 +1,287 @@
+import type { ComponentType } from "react";
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+
+import { Text } from "@/components/core/Text";
+
+import { ColorPicker } from "./ColorPicker";
+import { ColorSlider } from "./ColorSlider";
+import { ColorSwatch } from "./ColorSwatch";
+import { hsvaToColorString, hsvaToHex, type HSVA } from "./colorUtils";
+
+const framedDecorator = [
+  (Story: ComponentType) => (
+    <div
+      className="box-border flex min-h-[26rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <Story />
+    </div>
+  ),
+];
+
+const meta = {
+  title: "Core Components/ColorPicker",
+  component: ColorPicker,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Color picker, использующий Popover. `<ColorPicker>` + `<ColorPicker.Trigger>` + `<ColorPicker.Content>`. Включает 2D saturation×value canvas, hue slider, alpha slider (опционально), hex-ввод, preset-свотчи. Standalone: `<ColorSlider>` для отдельных каналов, `<ColorSwatch>` для отображения цвета.",
+      },
+    },
+  },
+  decorators: [...framedDecorator],
+} satisfies Meta<typeof ColorPicker>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// ─── ColorPicker stories ──────────────────────────────────────────────────────
+
+export const Basic: Story = {
+  name: "Базовый",
+  render: () => {
+    const [color, setColor] = useState("#3b82f6");
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <ColorPicker value={color} onValueChange={setColor}>
+          <ColorPicker.Trigger />
+          <ColorPicker.Content />
+        </ColorPicker>
+        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+      </div>
+    );
+  },
+};
+
+export const WithAlpha: Story = {
+  name: "С прозрачностью",
+  render: () => {
+    const [color, setColor] = useState("#3b82f6");
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <ColorPicker value={color} onValueChange={setColor}>
+          <ColorPicker.Trigger />
+          <ColorPicker.Content showAlpha />
+        </ColorPicker>
+        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+      </div>
+    );
+  },
+};
+
+export const WithPresets: Story = {
+  name: "С пресетами",
+  render: () => {
+    const [color, setColor] = useState("#3b82f6");
+    const presets = [
+      "#ef4444", "#f97316", "#eab308", "#22c55e",
+      "#3b82f6", "#8b5cf6", "#ec4899", "#ffffff",
+      "#6b7280", "#000000",
+    ];
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <ColorPicker value={color} onValueChange={setColor}>
+          <ColorPicker.Trigger swatchSize="large" />
+          <ColorPicker.Content presets={presets} />
+        </ColorPicker>
+        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+      </div>
+    );
+  },
+};
+
+export const FullFeatured: Story = {
+  name: "Все функции",
+  render: () => {
+    const [color, setColor] = useState("#8b5cf6cc");
+    const presets = [
+      "#ef4444", "#f97316", "#eab308", "#22c55e",
+      "#3b82f6", "#8b5cf6", "#ec4899",
+    ];
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <ColorPicker value={color} onValueChange={setColor} size="mid">
+          <ColorPicker.Trigger swatchSize="xlarge" />
+          <ColorPicker.Content showAlpha presets={presets} />
+        </ColorPicker>
+        <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
+      </div>
+    );
+  },
+};
+
+export const Sizes: Story = {
+  name: "Размеры",
+  render: () => {
+    const [c1, setC1] = useState("#3b82f6");
+    const [c2, setC2] = useState("#22c55e");
+    const [c3, setC3] = useState("#ec4899");
+    return (
+      <div className="flex items-end gap-xlarge">
+        <div className="flex flex-col items-center gap-small">
+          <Text as="span" variant="small" className="text-muted">small</Text>
+          <ColorPicker value={c1} onValueChange={setC1} size="small">
+            <ColorPicker.Trigger />
+            <ColorPicker.Content />
+          </ColorPicker>
+        </div>
+        <div className="flex flex-col items-center gap-small">
+          <Text as="span" variant="small" className="text-muted">base</Text>
+          <ColorPicker value={c2} onValueChange={setC2} size="base">
+            <ColorPicker.Trigger />
+            <ColorPicker.Content />
+          </ColorPicker>
+        </div>
+        <div className="flex flex-col items-center gap-small">
+          <Text as="span" variant="small" className="text-muted">mid</Text>
+          <ColorPicker value={c3} onValueChange={setC3} size="mid">
+            <ColorPicker.Trigger />
+            <ColorPicker.Content />
+          </ColorPicker>
+        </div>
+      </div>
+    );
+  },
+};
+
+export const Uncontrolled: Story = {
+  name: "Неконтролируемый",
+  render: () => (
+    <ColorPicker defaultValue="#ef4444" defaultOpen>
+      <ColorPicker.Trigger />
+      <ColorPicker.Content />
+    </ColorPicker>
+  ),
+};
+
+// ─── ColorSlider stories ──────────────────────────────────────────────────────
+
+export const SliderChannels: Story = {
+  name: "ColorSlider — каналы",
+  render: () => {
+    const [hsva, setHsva] = useState<HSVA>({ h: 217, s: 90, v: 96, a: 80 });
+
+    return (
+      <div className="flex w-64 flex-col gap-mid">
+        <ColorSlider
+          channel="hue"
+          color={hsva}
+          label="Оттенок (H)"
+          value={hsva.h}
+          onValueChange={(h) => setHsva({ ...hsva, h })}
+        />
+        <ColorSlider
+          channel="saturation"
+          color={hsva}
+          label="Насыщенность (S)"
+          value={hsva.s}
+          onValueChange={(s) => setHsva({ ...hsva, s })}
+        />
+        <ColorSlider
+          channel="value"
+          color={hsva}
+          label="Яркость (V)"
+          value={hsva.v}
+          onValueChange={(v) => setHsva({ ...hsva, v })}
+        />
+        <ColorSlider
+          channel="alpha"
+          color={hsva}
+          label="Прозрачность (A)"
+          value={hsva.a}
+          onValueChange={(a) => setHsva({ ...hsva, a })}
+        />
+        <div className="mt-small flex items-center gap-small">
+          <div
+            className="h-8 w-8 rounded-small border border-base"
+            style={{ backgroundColor: hsvaToColorString(hsva) }}
+          />
+          <Text as="span" variant="small" className="font-mono text-muted">
+            {hsvaToHex(hsva)}
+          </Text>
+        </div>
+      </div>
+    );
+  },
+};
+
+export const SliderSizes: Story = {
+  name: "ColorSlider — размеры",
+  render: () => {
+    const hsva: HSVA = { h: 290, s: 75, v: 90, a: 100 };
+    const sizes = ["small", "base", "mid", "large"] as Array<"small" | "base" | "mid" | "large">;
+    return (
+      <div className="flex w-72 flex-col gap-mid">
+        {sizes.map((size) => (
+          <div key={size} className="flex items-center gap-mid">
+            <Text as="span" variant="small" className="w-12 text-right text-muted">{size}</Text>
+            <div className="flex-1">
+              <ColorSlider.Track channel="hue" color={hsva} defaultValue={hsva.h} size={size} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  },
+};
+
+// ─── ColorSwatch stories ──────────────────────────────────────────────────────
+
+export const Swatches: Story = {
+  name: "ColorSwatch — размеры и формы",
+  render: () => {
+    const [selected, setSelected] = useState("#3b82f6");
+    const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899"];
+
+    return (
+      <div className="flex flex-col gap-large">
+        {/* Sizes */}
+        {(["xsmall", "small", "base", "mid", "large", "xlarge"] as const).map((size) => (
+          <div key={size} className="flex items-center gap-mid">
+            <Text as="span" variant="small" className="w-16 text-right text-muted">{size}</Text>
+            <div className="flex gap-small">
+              {colors.map((c) => (
+                <ColorSwatch key={c} color={c} size={size} shape="rounded" onClick={() => setSelected(c)} selected={selected === c} />
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* Shapes */}
+        <div className="flex flex-wrap gap-mid">
+          {(["square", "rounded", "circle"] as const).map((shape) => (
+            <div key={shape} className="flex flex-col items-center gap-xsmall">
+              <Text as="span" variant="small" className="text-muted">{shape}</Text>
+              <div className="flex gap-small">
+                {colors.slice(0, 4).map((c) => (
+                  <ColorSwatch key={c} color={c} size="mid" shape={shape} onClick={() => setSelected(c)} selected={selected === c} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  },
+};
+
+export const SwatchesWithTransparency: Story = {
+  name: "ColorSwatch — с прозрачностью",
+  render: () => {
+    const transparent = [
+      "rgba(239,68,68,0.2)", "rgba(239,68,68,0.5)", "rgba(239,68,68,0.8)", "rgba(239,68,68,1)",
+      "rgba(59,130,246,0.2)", "rgba(59,130,246,0.5)", "rgba(59,130,246,0.8)", "rgba(59,130,246,1)",
+    ];
+    return (
+      <div className="flex gap-small">
+        {transparent.map((c, i) => (
+          <ColorSwatch key={i} color={c} size="large" shape="rounded" showChecker />
+        ))}
+      </div>
+    );
+  },
+};
