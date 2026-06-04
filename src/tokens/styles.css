@@ -266,7 +266,7 @@
 
   /** Минимальная высота интерактивных контролов (Button, Input, Selector, SearchInput). */
   --control-height-small: calc(var(--size) * 1.75);
-  --control-height-base: calc(var(--size) * 2);
+  --control-height-base: calc(var(--size) * 2.2);
   --control-height-mid: calc(var(--size) * 2.5);
   --control-height-large: calc(var(--size) * 3);
 

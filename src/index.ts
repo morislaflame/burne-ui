@@ -33,6 +33,13 @@ export {
   type GlassBackdropProps,
 } from "@/components/core/GlassSurface";
 export {
+  LiquidGlass,
+  resetLiquidGlassSnapshot,
+  type LiquidGlassProps,
+  type LiquidGlassShape,
+  type LiquidGlassControls,
+} from "@/components/core/LiquidGlass";
+export {
   Ripple,
   RIPPLE_COLOR,
   type RippleProps,
@@ -140,6 +147,25 @@ export {
   type DialogFooterProps,
   type DialogCloseProps,
 } from "@/components/core/Dialog";
+export {
+  Toast,
+  ToastContext,
+  useToastContext,
+  useToast,
+  type ToastStatus,
+  type ToastPlacement,
+  type ToastProviderProps,
+  type ToastRootProps,
+  type ToastIndicatorProps,
+  type ToastContentProps,
+  type ToastTitleProps,
+  type ToastDescriptionProps,
+  type ToastActionButtonProps,
+  type ToastCloseButtonProps,
+  type AddToastOpts,
+  type PromiseToastOpts,
+  type ToastContextValue,
+} from "@/components/core/Toast";
 export {
   Drawer,
   type DrawerProps,
@@ -491,3 +517,23 @@ export {
   type DesignCssVar,
 } from "@/tokens";
 export { animate, remove } from "animejs";
+export {
+  Table,
+  TABLE_ROW_TONE_SURFACE,
+  type TableProps,
+  type TableVariant,
+  type TableRowTone,
+  type TableScrollContainerProps,
+  type TableContentProps,
+  type TableHeaderProps,
+  type TableColumnProps,
+  type TableColumnRenderProps,
+  type TableBodyProps,
+  type TableRowProps,
+  type TableCellProps,
+  type TableFooterProps,
+  type SortDescriptor,
+  type SortDirection,
+  type SelectionMode,
+  type Selection,
+} from "@/components/core/Table";
