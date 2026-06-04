@@ -65,20 +65,79 @@ export function prefersReducedInteractiveHoverLift(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+// ─── Adaptive scale helpers ────────────────────────────────────────────────────
+//
+// Вместо фиксированного процента сжатия/подъёма используем фиксированное
+// абсолютное смещение в пикселях. Это даёт правильное ощущение на любом размере:
+//
+//   scale_delta = TARGET_PX / max(width, height)
+//
+// Маленькая кнопка  (120 × 36): delta = 2.4 / 120 = 0.020 → squeeze 0.980
+// Широкий инпут    (280 × 40): delta = 2.4 / 280 = 0.009 → squeeze 0.991
+// Disclosure       (500 × 48): delta = 2.4 / 500 = 0.005 → squeeze 0.995
+// Полноэкранный    (1200 × 60): delta = 2.4 / 1200 = 0.002 → squeeze 0.998
+//
+// Верхняя граница = исходный фиксированный дефолт (сохраняет поведение малых кнопок).
+// Нижняя граница = всегда заметное, но не нулевое движение.
+
+/** Абсолютное пиксельное смещение — «ощущение» сжатия в px с каждой стороны. */
+const ADAPTIVE_SQUEEZE_TARGET_PX = 2.4;
+/** Минимально заметное сжатие (очень большие элементы). */
+const ADAPTIVE_SQUEEZE_MIN_DELTA = 0.003;
+
+/** Абсолютное пиксельное смещение для hover-подъёма. */
+const ADAPTIVE_LIFT_TARGET_PX = 1.8;
+/** Минимально заметный подъём. */
+const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
+
+/**
+ * Возвращает scale < 1 для squeeze, адаптированный под фактический размер элемента.
+ * Все компоненты автоматически используют его через `animateInteractivePressSqueeze`.
+ */
+export function adaptiveSqueezeScale(element: HTMLElement): number {
+  const { width, height } = element.getBoundingClientRect();
+  const maxDim = Math.max(width, height, 1);
+  const baseDelta = 1 - (MOTION_PRESS_SQUEEZE_SCALE[1] as number);
+  const delta = Math.min(
+    Math.max(ADAPTIVE_SQUEEZE_TARGET_PX / maxDim, ADAPTIVE_SQUEEZE_MIN_DELTA),
+    baseDelta,
+  );
+  return 1 - delta;
+}
+
+/**
+ * Возвращает scale > 1 для hover-lift, адаптированный под фактический размер элемента.
+ * Передайте явный `liftScale`, чтобы переопределить (напр. Badge.Anchor).
+ */
+export function adaptiveHoverLiftScale(element: HTMLElement): number {
+  const { width, height } = element.getBoundingClientRect();
+  const maxDim = Math.max(width, height, 1);
+  const delta = Math.min(
+    Math.max(ADAPTIVE_LIFT_TARGET_PX / maxDim, ADAPTIVE_LIFT_MIN_DELTA),
+    MOTION_HOVER_LIFT_SCALE - 1,
+  );
+  return 1 + delta;
+}
+
+// ─── Animation functions ───────────────────────────────────────────────────────
+
 /**
  * `remove(target)` затем плавное масштабирование только по scale (без смещения).
- * Для более крупного подъёма (напр. бейдж на якоре) передайте `liftScale` без изменения дефолта кнопок.
+ * Если `liftScale` не передан — вычисляется адаптивно по размеру элемента.
  * Опционально: `shadow` — конфиг для плавного изменения `box-shadow` вместе со scale.
  */
 export function animateInteractiveHoverLift(
   element: HTMLElement,
   lifted: boolean,
-  liftScale = MOTION_HOVER_LIFT_SCALE,
+  liftScale?: number,
   shadow?: HoverShadowConfig,
 ): void {
   remove(element);
+  const resolvedScale = lifted
+    ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element))
+    : 1;
   animate(element, {
-    scale: lifted ? liftScale : 1,
+    scale: resolvedScale,
     duration: MOTION_INTERACTIVE_MS,
     ease: MOTION_INTERACTIVE_EASE,
   });
@@ -90,13 +149,17 @@ export function animateInteractiveHoverLift(
 }
 
 /**
- * Короткий «сжимающий» импульс при pointer down (`MOTION_PRESS_SQUEEZE_SCALE`).
+ * Короткий «сжимающий» импульс при pointer down.
+ * Степень сжатия автоматически адаптируется к размеру элемента:
+ * маленькие элементы сжимаются на ~2%, большие — меньше,
+ * сохраняя одинаковое абсолютное ощущение во всех компонентах.
  * Возвращает промис окончания анимации.
  */
 export function animateInteractivePressSqueeze(element: HTMLElement) {
   remove(element);
+  const s = adaptiveSqueezeScale(element);
   return animate(element, {
-    scale: [...MOTION_PRESS_SQUEEZE_SCALE],
+    scale: [1, s, 1],
     duration: MOTION_INTERACTIVE_MS,
     ease: MOTION_INTERACTIVE_EASE,
   });
@@ -115,8 +178,8 @@ export function useInteractiveHoverLiftContainerHandlers<
   liftedRef: RefObject<HTMLElement | null>,
   enabled: boolean,
   pointerInsideRef?: MutableRefObject<boolean>,
-  /** По умолчанию `MOTION_HOVER_LIFT_SCALE` из `motionTokens`. */
-  liftScale = MOTION_HOVER_LIFT_SCALE,
+  /** Явный scale подъёма; `undefined` (дефолт) — адаптивный по размеру элемента. */
+  liftScale?: number,
   shadow?: HoverShadowConfig,
 ): {
   onPointerOver: (e: ReactPointerEvent<Element>) => void;
