@@ -111,6 +111,12 @@ export {
   type ButtonGroupSegment,
 } from "@/components/composite/ButtonGroup";
 export {
+  ToggleButtonGroup,
+  type ToggleButtonGroupProps,
+  type ToggleButtonGroupType,
+  type ToggleButtonGroupOrientation,
+} from "@/components/composite/ToggleButtonGroup";
+export {
   AlertDialog,
   footerButtonSizeForAlertDialog,
   primaryButtonVariantForAlertTone,
@@ -180,6 +186,17 @@ export {
   type InputErrorProps,
 } from "@/components/core/Input";
 export {
+  TextArea,
+  type TextAreaProps,
+  type TextAreaSimpleProps,
+  type TextAreaSize,
+  type TextAreaVariant,
+  type TextAreaStatus,
+  type TextAreaRootProps,
+  type TextAreaHintProps,
+  type TextAreaErrorProps,
+} from "@/components/core/TextArea";
+export {
   ComboBox,
   type ComboBoxOption,
   type ComboBoxRootProps,
@@ -246,6 +263,12 @@ export {
   type TabsOrientation,
   type TabsVariant,
 } from "@/components/core/Tabs";
+export {
+  ToggleButton,
+  type ToggleButtonProps,
+  type ToggleButtonSize,
+  type ToggleButtonVariant,
+} from "@/components/core/ToggleButton";
 export {
   Slider,
   sliderThicknessToCss,
