@@ -141,6 +141,21 @@ export {
   type DialogCloseProps,
 } from "@/components/core/Dialog";
 export {
+  Drawer,
+  type DrawerProps,
+  type DrawerPlacement,
+  type DrawerSize,
+  type DrawerBackdropProps,
+  type DrawerHandleProps,
+  type DrawerHeaderProps,
+  type DrawerHeadingBlockProps,
+  type DrawerTitleProps,
+  type DrawerDescriptionProps,
+  type DrawerBodyProps,
+  type DrawerFooterProps,
+  type DrawerCloseProps,
+} from "@/components/core/Drawer";
+export {
   Field,
   FieldSet,
   FieldSetGroup,
@@ -174,6 +189,12 @@ export {
   type LinkSize,
   type LinkIconPosition,
 } from "@/components/core/Link";
+export {
+  Loading,
+  type LoadingProps,
+  type LoadingSize,
+  type LoadingColor,
+} from "@/components/core/Loading";
 export {
   Input,
   type InputProps,
