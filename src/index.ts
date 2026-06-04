@@ -537,3 +537,18 @@ export {
   type SelectionMode,
   type Selection,
 } from "@/components/core/Table";
+export {
+  Calendar,
+  RU_LOCALE,
+  useCalendar,
+  type CalendarProps,
+  type CalendarHeaderProps,
+  type CalendarGridProps,
+  type CalendarFooterProps,
+  type CalendarMode,
+  type CalendarView,
+  type CalendarVariant,
+  type CalendarSize,
+  type CalendarRangeValue,
+  type CalendarLocale,
+} from "@/components/core/Calendar";
