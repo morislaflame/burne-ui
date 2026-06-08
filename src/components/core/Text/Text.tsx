@@ -54,14 +54,17 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
 ) {
   const Comp = as ?? VARIANT_DEFAULT_AS[variant];
 
-  return createElement(Comp, {
-    ...rest,
-    ref,
-    className: cn(
-      VARIANT_CLASS[variant],
-      !inheritColor && "text-foreground",
-      className,
-    ),
+  return createElement(
+    Comp,
+    {
+      ...rest,
+      ref,
+      className: cn(
+        VARIANT_CLASS[variant],
+        !inheritColor && "text-foreground",
+        className,
+      ),
+    },
     children,
-  });
+  );
 });

@@ -1,4 +1,12 @@
-import { createContext, useContext, type ChangeEvent, type InputHTMLAttributes, type RefObject } from "react";
+import {
+  createContext,
+  useContext,
+  type ChangeEvent,
+  type InputHTMLAttributes,
+  type MouseEvent,
+  type PointerEvent,
+  type RefObject,
+} from "react";
 
 import type { RadioSize } from "./Radio";
 
@@ -20,6 +28,8 @@ export type RadioFieldContextValue = {
   danger: boolean;
   inputName?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onActivate?: (e: MouseEvent<HTMLInputElement>) => void;
+  onFieldPointerDown?: (e: PointerEvent<HTMLInputElement>) => void;
   inputProps: {
     value?: InputHTMLAttributes<HTMLInputElement>["value"];
     defaultChecked?: boolean;

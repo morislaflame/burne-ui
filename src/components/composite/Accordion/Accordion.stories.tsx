@@ -100,8 +100,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => (
     <Accordion className="max-w-2xl" defaultOpenIndex={0}>
-      {items.map((item, index) => (
-        <Accordion.Item key={index}>
+      {items.map((item) => (
+        <Accordion.Item key={item.title}>
           <AccordionItemDemo item={item} />
         </Accordion.Item>
       ))}
@@ -113,8 +113,8 @@ export const PressRipple: Story = {
   name: "Риппл по нажатию в триггере",
   render: () => (
     <Accordion className="max-w-md" defaultOpenIndex={0}>
-      {items.map((item, index) => (
-        <Accordion.Item key={index}>
+      {items.map((item) => (
+        <Accordion.Item key={item.title}>
           <Accordion.Heading>
             <Accordion.Trigger>
               <Ripple color="accentMuted" />

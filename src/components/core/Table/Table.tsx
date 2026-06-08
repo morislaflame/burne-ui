@@ -355,10 +355,11 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 
     if (items !== undefined) {
       if (items.length === 0 && renderEmptyState) {
+        const emptyState = renderEmptyState();
         content = (
           <tr>
             <td colSpan={9999} className="px-mid py-xlarge text-center">
-              {renderEmptyState()}
+              {emptyState}
             </td>
           </tr>
         );

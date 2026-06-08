@@ -282,8 +282,8 @@ export const SwatchesWithTransparency: Story = {
     ];
     return (
       <div className="flex gap-small">
-        {transparent.map((c, i) => (
-          <ColorSwatch key={i} color={c} size="large" shape="rounded" showChecker />
+        {transparent.map((c) => (
+          <ColorSwatch key={c} color={c} size="large" shape="rounded" showChecker />
         ))}
       </div>
     );

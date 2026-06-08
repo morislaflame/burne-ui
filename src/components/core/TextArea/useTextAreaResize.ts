@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
+import { useCallback, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { readControlHeightPx } from "@/components/core/utils/controlSizeLayout";
@@ -22,10 +22,6 @@ export function useTextAreaResize(
     },
     [shellRef],
   );
-
-  useEffect(() => {
-    if (!enabled) setHeight(null);
-  }, [enabled, setHeight]);
 
   const onResizePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLDivElement>) => {

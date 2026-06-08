@@ -183,6 +183,8 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(funct
         )}
         aria-label={ctx.inputProps.value != null ? String(ctx.inputProps.value) : "Вариант"}
         onChange={ctx.onChange}
+        onClick={ctx.onActivate}
+        onPointerDown={ctx.onFieldPointerDown}
       />
       <span
         ref={trackRef}
@@ -431,7 +433,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
   const canClearSelection = !isDisabled && !readOnly && !required && !(inGroup && group.isRequired);
 
   const handleClick = useCallback(
-    (e: MouseEvent<HTMLLabelElement>) => {
+    (e: MouseEvent<HTMLInputElement>) => {
       onClick?.(e);
       if (e.defaultPrevented || !canClearSelection || !mergedChecked) return;
 
@@ -458,7 +460,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
   );
 
   const handlePointerDown = useCallback(
-    (e: PointerEvent<HTMLLabelElement>) => {
+    (e: PointerEvent<HTMLInputElement>) => {
       onPointerDown?.(e);
       if (e.defaultPrevented || isDisabled || !enableTextMotion) return;
       if (reduceMotion) return;
@@ -488,6 +490,8 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       danger,
       inputName,
       onChange: handleChange,
+      onActivate: handleClick,
+      onFieldPointerDown: handlePointerDown,
       inputProps: {
         value,
         defaultChecked: !isControlled ? defaultChecked : undefined,
@@ -507,6 +511,8 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       autoFocus,
       errorId,
       handleChange,
+      handleClick,
+      handlePointerDown,
       hasCompoundError,
       hasCompoundHint,
       hasError,
@@ -591,19 +597,6 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
           className,
         )}
         {...labelRest}
-        onClick={handleClick}
-        onKeyDown={(e) => {
-          if (
-            (e.key === "Enter" || e.key === " ") &&
-            canClearSelection &&
-            mergedChecked &&
-            e.target === e.currentTarget
-          ) {
-            e.preventDefault();
-            handleClick(e as unknown as MouseEvent<HTMLLabelElement>);
-          }
-        }}
-        onPointerDown={handlePointerDown}
       >
         {isCompound ? children : simpleBody}
       </label>

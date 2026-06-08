@@ -182,7 +182,7 @@ function AffixSlot({
 // ─── TimeFieldControl ─────────────────────────────────────────────────────────
 
 export type TimeFieldControlProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLFieldSetElement>,
   "onChange" | "prefix" | "suffix"
 > & {
   value?: string;
@@ -199,10 +199,10 @@ export type TimeFieldControlProps = Omit<
   prefix?: ReactNode;
   /** Слот справа внутри оболочки, отделён вертикальной чертой. */
   suffix?: ReactNode;
-  onPointerDown?: PointerEventHandler<HTMLDivElement>;
+  onPointerDown?: PointerEventHandler<HTMLFieldSetElement>;
 };
 
-export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps>(
+export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControlProps>(
   function TimeFieldControl(
     {
       value: valueProp,
@@ -246,7 +246,7 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
 
     const pendingRef = useRef<{ seg: SegId; digit: number } | null>(null);
     const [focusedSeg, setFocusedSeg] = useState<SegId | null>(null);
-    const shellRef = useRef<HTMLDivElement>(null);
+    const shellRef = useRef<HTMLFieldSetElement>(null);
 
     const hSegRef = useRef<HTMLSpanElement>(null);
     const mSegRef = useRef<HTMLSpanElement>(null);
@@ -267,7 +267,7 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
     );
 
     const setShellRef = useCallback(
-      (node: HTMLDivElement | null) => {
+      (node: HTMLFieldSetElement | null) => {
         shellRef.current = node;
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
@@ -378,7 +378,7 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
     );
 
     const handleShellPointerDown = useCallback(
-      (e: PointerEvent<HTMLDivElement>) => {
+      (e: PointerEvent<HTMLFieldSetElement>) => {
         onPointerDown?.(e);
         if (e.defaultPrevented || disabled) return;
         const shell = shellRef.current;
@@ -440,17 +440,16 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
     );
 
     return (
-      <div
+      <fieldset
         ref={setShellRef}
         id={id ?? fieldId}
-        role="group"
         aria-label={labelId ? undefined : "Время"}
         aria-labelledby={labelId}
         aria-describedby={ariaDescribedBy}
         data-slot="timefield-shell"
         onPointerDown={handleShellPointerDown}
         className={cn(
-          "flex items-stretch overflow-hidden rounded-base border-1 transition-[border-color,background-color] duration-200 ease-out",
+          "m-0 flex min-w-0 items-stretch overflow-hidden rounded-base border-1 p-0 transition-[border-color,background-color] duration-200 ease-out",
           SHELL_H[size],
           compact ? "inline-flex w-fit shrink-0" : "w-full min-w-0",
           shellSurface,
@@ -514,7 +513,7 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
             {suffix}
           </AffixSlot>
         ) : null}
-      </div>
+      </fieldset>
     );
   },
 );

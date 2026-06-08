@@ -63,7 +63,7 @@ function waveChild(): React.ReactNode {
       aria-hidden
       className="pointer-events-none absolute inset-0 -translate-x-full"
       style={{
-        animation: "skeleton-wave-slide 1.5s linear 0.2s infinite",
+        animation: "skeleton-wave-slide 2s linear 0.2s infinite",
         background:
           "linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--color-foreground) 10%, transparent) 50%, transparent 100%)",
       }}

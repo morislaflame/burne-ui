@@ -9,6 +9,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -333,17 +334,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       setExpandRipples((prev) => [...prev, { id, size, tone }]);
     }, []);
 
-    const skipAsyncNotify = useRef(true);
-    useEffect(() => {
-      if (isControlled) return;
-      if (skipAsyncNotify.current) {
-        skipAsyncNotify.current = false;
-        return;
-      }
-      onAsyncStateChange?.(internalAsync);
-    }, [internalAsync, isControlled, onAsyncStateChange]);
+    const setUncontrolledAsync = useCallback(
+      (next: ButtonAsyncState) => {
+        setInternalAsync(next);
+        onAsyncStateChange?.(next);
+      },
+      [onAsyncStateChange],
+    );
 
-    useEffect(() => {
+    const scheduleAsyncIdleReset = useCallback(() => {
+      window.setTimeout(() => {
+        setUncontrolledAsync("idle");
+      }, asyncFeedbackMs);
+    }, [asyncFeedbackMs, setUncontrolledAsync]);
+
+    useLayoutEffect(() => {
       if (!isControlled) return;
       const prev = prevAsyncRef.current;
       if (
@@ -354,15 +359,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       }
       prevAsyncRef.current = asyncState;
     }, [asyncState, isControlled, pushExpandRipple]);
-
-    useEffect(() => {
-      if (isControlled) return;
-      if (asyncState !== "success" && asyncState !== "error") return;
-      const t = window.setTimeout(() => {
-        setInternalAsync("idle");
-      }, asyncFeedbackMs);
-      return () => window.clearTimeout(t);
-    }, [asyncState, isControlled, asyncFeedbackMs]);
 
     const busy =
       asyncState === "loading" ||
@@ -441,22 +437,32 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         if (isControlled || !onAsyncClick || e.defaultPrevented) return;
         if (asyncInFlight.current || internalAsync !== "idle") return;
         asyncInFlight.current = true;
-        setInternalAsync("loading");
+        setUncontrolledAsync("loading");
         Promise.resolve(onAsyncClick(e))
           .then((ok) => {
             const next = ok ? "success" : "error";
-            setInternalAsync(next);
+            setUncontrolledAsync(next);
             pushExpandRipple(next);
+            scheduleAsyncIdleReset();
           })
           .catch(() => {
-            setInternalAsync("error");
+            setUncontrolledAsync("error");
             pushExpandRipple("error");
+            scheduleAsyncIdleReset();
           })
           .finally(() => {
             asyncInFlight.current = false;
           });
       },
-      [onClick, onAsyncClick, isControlled, internalAsync, pushExpandRipple],
+      [
+        onClick,
+        onAsyncClick,
+        isControlled,
+        internalAsync,
+        pushExpandRipple,
+        scheduleAsyncIdleReset,
+        setUncontrolledAsync,
+      ],
     );
 
     const baseInteractive =

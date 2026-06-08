@@ -101,8 +101,6 @@ function TextAreaResizeHandle({
   return (
     <div
       data-textarea-resize-handle
-      role="separator"
-      aria-orientation="horizontal"
       aria-label="Изменить высоту"
       aria-disabled={disabled || undefined}
       onPointerDown={onPointerDown}
@@ -155,6 +153,14 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const shellRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+    const setShellRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        shellRef.current = node;
+        if (node && !resizable) node.style.removeProperty("height");
+      },
+      [resizable],
+    );
+
     const setTextareaRef = useCallback(
       (node: HTMLTextAreaElement | null) => {
         textareaRef.current = node;
@@ -204,9 +210,8 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
     return (
       <div
-        ref={shellRef}
+        ref={setShellRef}
         data-slot="textarea-shell"
-        role="presentation"
         onPointerDown={handleShellPointerDown}
         className={cn(
           "relative w-full overflow-hidden rounded-base border-1 transition-[border-color,background-color] duration-200 ease-out",

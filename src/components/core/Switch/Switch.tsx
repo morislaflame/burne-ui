@@ -174,8 +174,6 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
           role="switch"
           aria-checked={mergedChecked}
           className={INPUT_VISUALLY_HIDDEN}
-          checked={isControlled ? mergedChecked : undefined}
-          defaultChecked={!isControlled ? defaultChecked : undefined}
           disabled={disabled}
           name={name}
           value={value}
@@ -183,7 +181,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
           form={form}
           autoFocus={autoFocus}
           tabIndex={tabIndex}
-          readOnly={readOnly}
+          readOnly={readOnly ?? (isControlled && onChange === undefined)}
           onBlur={onBlur}
           onFocus={onFocus}
           aria-describedby={joinFieldDescribedBy(
@@ -191,8 +189,10 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
             fieldCtx?.errorConnected ? errorId : undefined,
           )}
           aria-label={ariaLabelProp ?? (!fieldCtx?.hasTextColumn ? "Переключатель" : undefined)}
-          onChange={handleChange}
           onPointerDown={handlePointerDown}
+          {...(isControlled
+            ? { checked: mergedChecked, onChange: handleChange }
+            : { defaultChecked, onChange: handleChange })}
           {...inputRest}
         />
         {trackVisual}

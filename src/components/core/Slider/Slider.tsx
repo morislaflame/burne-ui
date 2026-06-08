@@ -12,8 +12,6 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
-import { flushSync } from "react-dom";
-
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
@@ -30,13 +28,9 @@ import {
 import { useOptionalSliderFieldContext } from "./sliderFieldContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { partitionSliderTrackChildren } from "./partitionSliderTrackChildren";
-import {
-  SliderCompoundThumb,
-  SliderIcon,
-  SliderRail,
-  SliderTrackProvider,
-  type SliderThumbKind,
-} from "./sliderCompound";
+import { SliderCompoundThumb, SliderIcon } from "./sliderCompound";
+import { SliderRail } from "./sliderRail";
+import { SliderTrackProvider, type SliderThumbKind } from "./sliderTrackContext";
 import { sliderThicknessToCss } from "./sliderThickness";
 
 export type SliderOrientation = "horizontal" | "vertical";
@@ -738,16 +732,16 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
         const [lo, hi] = rangeValue;
         if (thumb === "start") {
           const nextLo = snap(Math.min(raw, hi));
-          flushSync(() => emitRange([nextLo, hi]));
+          emitRange([nextLo, hi]);
           syncFill(singleValue, [nextLo, hi]);
         } else if (thumb === "end") {
           const nextHi = snap(Math.max(raw, lo));
-          flushSync(() => emitRange([lo, nextHi]));
+          emitRange([lo, nextHi]);
           syncFill(singleValue, [lo, nextHi]);
         }
       } else {
         const next = snap(raw);
-        flushSync(() => emitSingle(raw));
+        emitSingle(raw);
         syncFill(next, rangeValue);
       }
     },
@@ -1125,16 +1119,11 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
 
 SliderTrack.displayName = "SliderTrack";
 
-export {
-  SliderFill,
-  SliderIcon,
-  SliderRail,
-  SliderCompoundThumb as SliderThumb,
-} from "./sliderCompound";
+export { SliderFill, type SliderFillProps } from "./sliderFill";
+export { SliderRail, type SliderRailProps } from "./sliderRail";
+export { SliderIcon, SliderCompoundThumb as SliderThumb } from "./sliderCompound";
 export type {
-  SliderFillProps,
   SliderIconProps,
-  SliderRailProps,
   SliderCompoundThumbProps as SliderThumbProps,
-  SliderThumbKind,
 } from "./sliderCompound";
+export type { SliderThumbKind } from "./sliderTrackContext";

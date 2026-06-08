@@ -601,13 +601,14 @@ function CalendarDaysView() {
           if (day === null) {
             return (
               <div
-                key={idx}
+                key={`empty-${year}-${month}-${idx}`}
                 className={DAY_BTN[size]}
               />
             );
           }
 
           const date = new Date(year, month, day);
+          const dayKey = `${year}-${month}-${day}`;
           const isToday = isSameDay(date, today);
           const isSel = mode !== "range" && selectedDates.some((s) => isSameDay(s, date));
 
@@ -630,7 +631,7 @@ function CalendarDaysView() {
           const circleActive = isSel || isRangeStart || isRangeEnd;
 
           return (
-            <div key={idx} className="relative flex items-center justify-center">
+            <div key={dayKey} className="relative flex items-center justify-center">
               {showLeftBg && (
                 <div
                   aria-hidden

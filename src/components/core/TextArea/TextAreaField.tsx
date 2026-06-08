@@ -1,6 +1,6 @@
 import { useId, useMemo, type HTMLAttributes, type ReactNode } from "react";
 
-import { FieldError, FieldHint, FieldRoot } from "@/components/core/Field";
+import { FieldRoot } from "@/components/core/Field";
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import { Label } from "@/components/core/Label";
@@ -9,8 +9,15 @@ import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren
 import { cn } from "@/utils/cn";
 
 import { TextAreaControl, type TextAreaProps } from "./TextArea";
-import { TextAreaFieldContext, useTextAreaFieldContext } from "./textareaFieldContext";
+import { TextAreaError } from "./textAreaError";
+import { TextAreaFieldContext } from "./textareaFieldContext";
+import { TextAreaHint } from "./textAreaHint";
 import type { TextAreaSize, TextAreaStatus } from "./TextArea";
+
+export type { TextAreaErrorProps } from "./textAreaError";
+export type { TextAreaHintProps } from "./textAreaHint";
+export { TextAreaError } from "./textAreaError";
+export { TextAreaHint } from "./textAreaHint";
 
 export type TextAreaRootProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
@@ -84,42 +91,3 @@ export function TextAreaRoot({
     </TextAreaFieldContext.Provider>
   );
 }
-
-export type TextAreaHintProps = HTMLAttributes<HTMLParagraphElement> & {
-  children?: ReactNode;
-  status?: Exclude<TextAreaStatus, "danger"> | "default";
-};
-
-export function TextAreaHint({ children, status, className, id: idProp, ...rest }: TextAreaHintProps) {
-  const field = useTextAreaFieldContext();
-  const hintStatus =
-    status ??
-    (field.status === "danger"
-      ? "default"
-      : field.status === "default"
-        ? "default"
-        : field.status);
-
-  return (
-    <FieldHint id={idProp ?? field.hintId} status={hintStatus} className={className} {...rest}>
-      {children}
-    </FieldHint>
-  );
-}
-
-TextAreaHint.displayName = "TextAreaHint";
-
-export type TextAreaErrorProps = HTMLAttributes<HTMLParagraphElement> & {
-  children?: ReactNode;
-};
-
-export function TextAreaError({ children, className, id: idProp, ...rest }: TextAreaErrorProps) {
-  const field = useTextAreaFieldContext();
-  return (
-    <FieldError id={idProp ?? field.errorId} className={className} {...rest}>
-      {children}
-    </FieldError>
-  );
-}
-
-TextAreaError.displayName = "TextAreaError";

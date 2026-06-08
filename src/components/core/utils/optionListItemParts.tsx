@@ -58,7 +58,23 @@ export function OptionListItemHint({ className, children, ...rest }: OptionListI
   );
 }
 
+function OptionListItemStringLabel({ children }: { children: string }) {
+  return (
+    <Text as="span" variant="base" inheritColor className="opacity-90">
+      {children}
+    </Text>
+  );
+}
+
 export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement>;
+
+export type OptionListItemIconTextProps = {
+  children: string;
+};
+
+export function OptionListItemIconText({ children }: OptionListItemIconTextProps) {
+  return <OptionListItemStringLabel>{children}</OptionListItemStringLabel>;
+}
 
 export function OptionListItemIcon({ className, children, ...rest }: OptionListItemIconProps) {
   const ctx = useOptionListItemContext("ItemIcon");
@@ -72,13 +88,7 @@ export function OptionListItemIcon({ className, children, ...rest }: OptionListI
       )}
       {...rest}
     >
-      {typeof children === "string" ? (
-        <Text as="span" variant="base" inheritColor className="opacity-90">
-          {children}
-        </Text>
-      ) : (
-        children
-      )}
+      {children}
     </span>
   );
 }

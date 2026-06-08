@@ -205,8 +205,6 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
             id={ctx.inputId}
             type="checkbox"
             className={ctx.isCompound ? INPUT_TRACK_OVERLAY : INPUT_VISUALLY_HIDDEN}
-            checked={ctx.isControlled ? ctx.mergedChecked : undefined}
-            defaultChecked={!ctx.isControlled ? ctx.inputProps.defaultChecked : undefined}
             disabled={ctx.isDisabled}
             name={ctx.inputProps.name}
             value={ctx.inputProps.value}
@@ -222,7 +220,12 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
               ctx.errorConnected ? ctx.errorId : undefined,
             )}
             aria-labelledby={ctx.isCompound ? ctx.labelId : undefined}
-            onChange={ctx.onChange}
+            {...(ctx.isControlled
+              ? { checked: ctx.mergedChecked, onChange: ctx.onChange }
+              : {
+                  defaultChecked: ctx.inputProps.defaultChecked,
+                  onChange: ctx.onChange,
+                })}
           />
           {children ?? <CheckboxIndicator />}
         </span>
@@ -635,17 +638,16 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
     return (
       <CheckboxFieldContext.Provider value={contextValue}>
         <FieldLabelContext.Provider value={fieldLabelContext}>
-          <div
-            ref={ref as Ref<HTMLDivElement>}
-            role="group"
+          <fieldset
+            ref={ref as Ref<HTMLFieldSetElement>}
             aria-labelledby={labelId}
             data-checked={mergedChecked ? true : undefined}
-            className={gridClass}
+            className={cn(gridClass, "m-0 min-w-0 border-0 p-0")}
             onPointerDown={handlePointerDown}
-            {...(labelRest as HTMLAttributes<HTMLDivElement>)}
+            {...(labelRest as HTMLAttributes<HTMLFieldSetElement>)}
           >
             {children}
-          </div>
+          </fieldset>
         </FieldLabelContext.Provider>
       </CheckboxFieldContext.Provider>
     );

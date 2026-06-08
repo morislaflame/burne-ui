@@ -165,7 +165,6 @@ export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: Dr
 
   return (
     <div
-      role="separator"
       aria-label={label}
       className={cn(
         "flex touch-none select-none shrink-0 items-center justify-center cursor-grab active:cursor-grabbing",

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
 
-import { FieldError, FieldHint, FieldRoot } from "@/components/core/Field";
+import { FieldRoot } from "@/components/core/Field";
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import { Label } from "@/components/core/Label";
@@ -22,9 +22,15 @@ import { comboBoxFilteredValues } from "./comboBoxOptionFilter";
 import {
   ComboBoxContext,
   ComboBoxFieldContext,
-  useComboBoxFieldContext,
   type ComboBoxContextValue,
 } from "./comboBoxContext";
+import { ComboBoxError } from "./comboBoxError";
+import { ComboBoxHint } from "./comboBoxHint";
+
+export type { ComboBoxErrorProps } from "./comboBoxError";
+export type { ComboBoxHintProps } from "./comboBoxHint";
+export { ComboBoxError } from "./comboBoxError";
+export { ComboBoxHint } from "./comboBoxHint";
 
 export type ComboBoxRootProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
@@ -199,53 +205,3 @@ export function ComboBoxRoot({
 }
 
 ComboBoxRoot.displayName = "ComboBox";
-
-export type ComboBoxHintProps = HTMLAttributes<HTMLParagraphElement> & {
-  children?: ReactNode;
-  status?: Exclude<InputStatus, "danger"> | "default";
-};
-
-export function ComboBoxHint({
-  children,
-  status,
-  className,
-  id: idProp,
-  ...rest
-}: ComboBoxHintProps) {
-  const field = useComboBoxFieldContext();
-  const hintStatus =
-    status ??
-    (field.status === "danger"
-      ? "default"
-      : field.status === "default"
-        ? "default"
-        : field.status);
-
-  return (
-    <FieldHint
-      id={idProp ?? field.hintId}
-      status={hintStatus}
-      className={className}
-      {...rest}
-    >
-      {children}
-    </FieldHint>
-  );
-}
-
-ComboBoxHint.displayName = "ComboBoxHint";
-
-export type ComboBoxErrorProps = HTMLAttributes<HTMLParagraphElement> & {
-  children?: ReactNode;
-};
-
-export function ComboBoxError({ children, className, id: idProp, ...rest }: ComboBoxErrorProps) {
-  const field = useComboBoxFieldContext();
-  return (
-    <FieldError id={idProp ?? field.errorId} className={className} {...rest}>
-      {children}
-    </FieldError>
-  );
-}
-
-ComboBoxError.displayName = "ComboBox.Error";

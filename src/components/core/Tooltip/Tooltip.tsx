@@ -177,15 +177,26 @@ function isTooltipArrowElement(el: ReactElement): boolean {
   return (el.type as { displayName?: string }).displayName === "TooltipArrow";
 }
 
-function wrapPlainTooltipText(children: ReactNode, size: TooltipSize) {
-  if (typeof children === "string" || typeof children === "number") {
-    return (
-      <Text as="span" variant={TOOLTIP_CONTENT_VARIANT[size]} className="min-w-0">
-        {children}
-      </Text>
-    );
+function TooltipPlainText({
+  children,
+  size,
+}: {
+  children: string | number;
+  size: TooltipSize;
+}) {
+  return (
+    <Text as="span" variant={TOOLTIP_CONTENT_VARIANT[size]} className="min-w-0">
+      {children}
+    </Text>
+  );
+}
+
+function renderTooltipBodyChild(child: ReactNode, size: TooltipSize) {
+  if (isValidElement(child)) return child;
+  if (typeof child === "string" || typeof child === "number") {
+    return <TooltipPlainText size={size}>{child}</TooltipPlainText>;
   }
-  return children;
+  return child;
 }
 
 type TooltipContextValue = {
@@ -455,7 +466,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
 
   const body =
     bodyChildren.length === 1 ? (
-      wrapPlainTooltipText(bodyChildren[0], size)
+      renderTooltipBodyChild(bodyChildren[0], size)
     ) : (
       bodyChildren
     );

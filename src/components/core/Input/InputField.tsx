@@ -1,6 +1,6 @@
 import { useId, useMemo, type HTMLAttributes, type ReactNode } from "react";
 
-import { FieldError, FieldHint, FieldRoot } from "@/components/core/Field";
+import { FieldRoot } from "@/components/core/Field";
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import { Label } from "@/components/core/Label";
@@ -9,8 +9,15 @@ import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren
 import { cn } from "@/utils/cn";
 
 import { InputControl, type InputProps } from "./Input";
-import { InputFieldContext, useInputFieldContext } from "./inputFieldContext";
+import { InputError } from "./inputError";
+import { InputFieldContext } from "./inputFieldContext";
+import { InputHint } from "./inputHint";
 import type { InputSize, InputStatus } from "./Input";
+
+export type { InputErrorProps } from "./inputError";
+export type { InputHintProps } from "./inputHint";
+export { InputError } from "./inputError";
+export { InputHint } from "./inputHint";
 
 export type InputRootProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
@@ -86,47 +93,3 @@ export function InputRoot({
     </InputFieldContext.Provider>
   );
 }
-
-export type InputHintProps = HTMLAttributes<HTMLParagraphElement> & {
-  children?: ReactNode;
-  status?: Exclude<InputStatus, "danger"> | "default";
-};
-
-export function InputHint({ children, status, className, id: idProp, ...rest }: InputHintProps) {
-  const field = useInputFieldContext();
-  const hintStatus =
-    status ??
-    (field.status === "danger"
-      ? "default"
-      : field.status === "default"
-        ? "default"
-        : field.status);
-
-  return (
-    <FieldHint
-      id={idProp ?? field.hintId}
-      status={hintStatus}
-      className={className}
-      {...rest}
-    >
-      {children}
-    </FieldHint>
-  );
-}
-
-InputHint.displayName = "InputHint";
-
-export type InputErrorProps = HTMLAttributes<HTMLParagraphElement> & {
-  children?: ReactNode;
-};
-
-export function InputError({ children, className, id: idProp, ...rest }: InputErrorProps) {
-  const field = useInputFieldContext();
-  return (
-    <FieldError id={idProp ?? field.errorId} className={className} {...rest}>
-      {children}
-    </FieldError>
-  );
-}
-
-InputError.displayName = "InputError";

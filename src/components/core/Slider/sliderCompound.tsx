@@ -1,84 +1,8 @@
-import {
-  Children,
-  createContext,
-  isValidElement,
-  useContext,
-  type HTMLAttributes,
-  type ReactNode,
-  type RefObject,
-} from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 
-import { cn } from "@/utils/cn";
-
-import type { SliderOrientation, SliderSize } from "./Slider";
+import { useSliderTrackContext } from "./sliderTrackContext";
 
 export type SliderThumbKind = "single" | "start" | "end";
-
-export type SliderTrackContextValue = {
-  fillRef: RefObject<HTMLSpanElement | null>;
-  fillClassResolved: string;
-  railClass: string;
-  markNodes: ReactNode;
-  size: SliderSize;
-  orientation: SliderOrientation;
-  disabled?: boolean;
-  icon?: ReactNode;
-  range: boolean;
-  renderThumb: (kind: SliderThumbKind, iconOverride?: ReactNode) => ReactNode;
-};
-
-const SliderTrackContext = createContext<SliderTrackContextValue | null>(null);
-
-function useSliderTrackContext() {
-  const ctx = useContext(SliderTrackContext);
-  if (!ctx) {
-    throw new Error("Slider.Rail, Slider.Fill, Slider.Thumb, Slider.Icon — внутри Slider.Track");
-  }
-  return ctx;
-}
-
-export function SliderTrackProvider({
-  value,
-  children,
-}: {
-  value: SliderTrackContextValue;
-  children: ReactNode;
-}) {
-  return (
-    <SliderTrackContext.Provider value={value}>{children}</SliderTrackContext.Provider>
-  );
-}
-
-export type SliderRailProps = HTMLAttributes<HTMLDivElement>;
-
-export function SliderRail({ className, children, ...rest }: SliderRailProps) {
-  const ctx = useSliderTrackContext();
-
-  return (
-    <div className={cn(ctx.railClass, className)} aria-hidden {...rest}>
-      {children ?? (
-        <>
-          <SliderFill />
-          {ctx.markNodes}
-        </>
-      )}
-    </div>
-  );
-}
-
-SliderRail.displayName = "SliderRail";
-
-export type SliderFillProps = HTMLAttributes<HTMLSpanElement>;
-
-export function SliderFill({ className, ...rest }: SliderFillProps) {
-  const ctx = useSliderTrackContext();
-
-  return (
-    <span ref={ctx.fillRef} className={cn(ctx.fillClassResolved, className)} {...rest} />
-  );
-}
-
-SliderFill.displayName = "SliderFill";
 
 export type SliderCompoundThumbProps = {
   thumb?: SliderThumbKind;
@@ -115,4 +39,3 @@ export function SliderIcon({ children }: SliderIconProps) {
 }
 
 SliderIcon.displayName = "SliderIcon";
-

@@ -149,7 +149,7 @@ function ensureDecorativeIcon(el: ReactElement): ReactElement {
   return cloneElement(el, { "aria-hidden": true } as Record<string, unknown>);
 }
 
-function renderBadgeInlineChild(node: ReactNode, size: BadgeSize): ReactNode {
+function BadgeInlineChild({ node, size }: { node: ReactNode; size: BadgeSize }) {
   if (node == null || node === false) return null;
 
   if (typeof node === "string") {
@@ -196,7 +196,9 @@ function renderBadgeInlineChild(node: ReactNode, size: BadgeSize): ReactNode {
 
 function renderBadgeInlineChildren(children: ReactNode, size: BadgeSize): ReactNode {
   return Children.map(Children.toArray(children), (child, index) => (
-    <Fragment key={index}>{renderBadgeInlineChild(child, size)}</Fragment>
+    <Fragment key={index}>
+      <BadgeInlineChild node={child} size={size} />
+    </Fragment>
   ));
 }
 
