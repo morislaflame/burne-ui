@@ -770,10 +770,11 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
 
     useLayoutEffect(() => {
       const el = panelRef.current;
+      const subPanelRoots = subPanelRootsRef.current;
       if (!portalMounted || !el) return;
-      subPanelRootsRef.current.add(el);
+      subPanelRoots.add(el);
       return () => {
-        subPanelRootsRef.current.delete(el);
+        subPanelRoots.delete(el);
       };
     }, [portalMounted, subPanelRootsRef]);
 

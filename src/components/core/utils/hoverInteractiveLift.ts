@@ -186,8 +186,8 @@ export function useInteractiveHoverLiftContainerHandlers<
   onPointerOut: (e: ReactPointerEvent<Element>) => void;
 } {
   useEffect(() => {
+    const t = liftedRef.current;
     return () => {
-      const t = liftedRef.current;
       if (t) remove(t);
     };
   }, [liftedRef]);

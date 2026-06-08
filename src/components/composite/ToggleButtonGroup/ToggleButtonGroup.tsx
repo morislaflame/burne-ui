@@ -35,7 +35,7 @@ function ToggleButtonGroupSegmentProvider({
 }) {
   const value = useMemo(
     () => ({ segment, buttonSize }),
-    [buttonSize, segment.orientation, segment.position],
+    [buttonSize, segment],
   );
   return (
     <ButtonGroupSegmentContext.Provider value={value}>{children}</ButtonGroupSegmentContext.Provider>
@@ -127,11 +127,15 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
         : internalSingle
       : undefined;
 
-    const multipleValues = !isSingle
-      ? isControlled
-        ? normalizeMultipleDefault(valueProp)
-        : internalMultiple
-      : [];
+    const multipleValues = useMemo(
+      () =>
+        !isSingle
+          ? isControlled
+            ? normalizeMultipleDefault(valueProp)
+            : internalMultiple
+          : [],
+      [internalMultiple, isControlled, isSingle, valueProp],
+    );
 
     const isSelected = useCallback(
       (itemValue: string) => {

@@ -123,12 +123,12 @@ export function ColorPickerRoot({
     () => hexToHsva(value ?? defaultValue) ?? { h: 217, s: 90, v: 96, a: 100 },
   );
 
-  // Sync controlled value → HSVA
-  useEffect(() => {
-    if (!isControlled || value == null) return;
-    const next = hexToHsva(value);
-    if (next) setInternalHsva(next);
-  }, [isControlled, value]);
+  const hsva = useMemo(() => {
+    if (isControlled && value != null) {
+      return hexToHsva(value) ?? internalHsva;
+    }
+    return internalHsva;
+  }, [internalHsva, isControlled, value]);
 
   const setHsva = useCallback(
     (next: HSVA) => {
@@ -138,11 +138,11 @@ export function ColorPickerRoot({
     [isControlled, onValueChange],
   );
 
-  const hex = hsvaToHex(internalHsva);
+  const hex = hsvaToHex(hsva);
 
   const ctx: ColorPickerCtx = useMemo(
-    () => ({ hsva: internalHsva, setHsva, hex, disabled, size }),
-    [internalHsva, setHsva, hex, disabled, size],
+    () => ({ hsva, setHsva, hex, disabled, size }),
+    [hsva, setHsva, hex, disabled, size],
   );
 
   return (
@@ -251,31 +251,47 @@ export function ColorPickerArea({ size }: { size: ColorPickerSize }) {
 
 export function ColorPickerHexInput() {
   const { hex, setHsva } = useColorPickerContext();
-  const [draft, setDraft] = useState(() => hex.slice(1));
+  const [isEditing, setIsEditing] = useState(false);
+  const [editDraft, setEditDraft] = useState("");
 
-  // Sync from external
-  useEffect(() => { setDraft(hex.slice(1)); }, [hex]);
+  const commit = useCallback(
+    (draft: string) => {
+      const candidate = `#${draft}`;
+      const parsed = hexToHsva(candidate);
+      if (parsed) setHsva(parsed);
+    },
+    [setHsva],
+  );
 
-  const commit = useCallback(() => {
-    const candidate = `#${draft}`;
-    const parsed = hexToHsva(candidate);
-    if (parsed) setHsva(parsed);
-    else setDraft(hex.slice(1)); // revert
-  }, [draft, hex, setHsva]);
+  const displayValue = isEditing ? editDraft : hex.slice(1);
 
   return (
     <div className="flex items-center gap-xsmall rounded-small border border-base bg-surface-secondary px-small py-xsmall">
       <span className="text-small text-muted select-none">#</span>
       <input
         type="text"
-        value={draft}
+        value={displayValue}
         maxLength={8}
         spellCheck={false}
         aria-label="Hex-код цвета"
         className="min-w-0 flex-1 bg-transparent text-small font-mono uppercase text-foreground outline-none"
-        onChange={(e) => setDraft(e.target.value.replace(/[^0-9a-fA-F]/g, "").toUpperCase())}
-        onBlur={commit}
-        onKeyDown={(e) => { if (e.key === "Enter") commit(); }}
+        onFocus={() => {
+          setIsEditing(true);
+          setEditDraft(hex.slice(1));
+        }}
+        onChange={(e) =>
+          setEditDraft(e.target.value.replace(/[^0-9a-fA-F]/g, "").toUpperCase())
+        }
+        onBlur={() => {
+          commit(editDraft);
+          setIsEditing(false);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            commit(editDraft);
+            setIsEditing(false);
+          }
+        }}
       />
     </div>
   );

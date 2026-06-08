@@ -376,25 +376,27 @@ export function useLiquidGlass(
       }
     });
 
-    if (containerRef.current) ro.observe(containerRef.current);
+    const container = containerRef.current;
+    if (container) ro.observe(container);
 
     captureSnapshot(ignoreSelector, initWebGL);
 
     return () => {
       destroyedRef.current = true;
       ro.disconnect();
-      if (scrollHandlerRef.current) {
-        window.removeEventListener("scroll", scrollHandlerRef.current);
+      const scrollHandler = scrollHandlerRef.current;
+      if (scrollHandler) {
+        window.removeEventListener("scroll", scrollHandler);
         scrollHandlerRef.current = null;
       }
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
+      const raf = rafRef.current;
+      if (raf !== null) {
+        cancelAnimationFrame(raf);
         rafRef.current = null;
       }
       glRefsRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [canvasRef, containerRef, getCanvasBorderRadius, ignoreSelector, initWebGL]);
 
   return { glRefsRef };
 }

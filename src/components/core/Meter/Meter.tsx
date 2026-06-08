@@ -164,8 +164,9 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
   }, [fillTargetStyle.height, fillTargetStyle.width, isHorizontal, reduceMotion]);
 
   useEffect(() => {
+    const fill = fillRef.current;
     return () => {
-      if (fillRef.current) remove(fillRef.current);
+      if (fill) remove(fill);
     };
   }, []);
 

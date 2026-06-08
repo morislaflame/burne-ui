@@ -463,8 +463,9 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
   const reduceMotion = prefersReducedInteractiveHoverLift();
 
   useEffect(() => {
+    const el = textColRef.current;
     return () => {
-      if (textColRef.current) remove(textColRef.current);
+      if (el) remove(el);
     };
   }, []);
 
@@ -540,6 +541,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
       autoFocus,
       errorId,
       handleChange,
+      hintId,
       hasCompoundError,
       hasCompoundHint,
       hasError,

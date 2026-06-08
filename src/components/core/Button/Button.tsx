@@ -9,6 +9,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -343,6 +344,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     }, [internalAsync, isControlled, onAsyncStateChange]);
 
     useEffect(() => {
+      if (!isControlled) return;
       const prev = prevAsyncRef.current;
       if (
         (asyncState === "success" || asyncState === "error") &&
@@ -351,7 +353,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         pushExpandRipple(asyncState === "success" ? "success" : "error");
       }
       prevAsyncRef.current = asyncState;
-    }, [asyncState, pushExpandRipple]);
+    }, [asyncState, isControlled, pushExpandRipple]);
 
     useEffect(() => {
       if (isControlled) return;
@@ -375,9 +377,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       remove(el);
     }, [blocked]);
 
-    const btnShadow = BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant)
-      ? { hover: SHADOW_SM() }
-      : undefined;
+    const btnShadow = useMemo(
+      () =>
+        BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant)
+          ? { hover: SHADOW_SM() }
+          : undefined,
+      [variant],
+    );
 
     const handlePointerEnter = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
@@ -390,8 +396,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         hoverPointerInsideRef.current = true;
         animateInteractiveHoverLift(el, true, undefined, btnShadow);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [blocked, onPointerEnter, btnShadow],
+      [blocked, btnShadow, onPointerEnter],
     );
 
     const handlePointerLeave = useCallback(
@@ -403,8 +408,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         if (!el || blocked) return;
         animateInteractiveHoverLift(el, false, undefined, btnShadow);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [blocked, onPointerLeave, btnShadow],
+      [blocked, btnShadow, onPointerLeave],
     );
 
     function onAnimeDown() {
@@ -440,21 +444,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         setInternalAsync("loading");
         Promise.resolve(onAsyncClick(e))
           .then((ok) => {
-            setInternalAsync(ok ? "success" : "error");
+            const next = ok ? "success" : "error";
+            setInternalAsync(next);
+            pushExpandRipple(next);
           })
           .catch(() => {
             setInternalAsync("error");
+            pushExpandRipple("error");
           })
           .finally(() => {
             asyncInFlight.current = false;
           });
       },
-      [
-        onClick,
-        onAsyncClick,
-        isControlled,
-        internalAsync,
-      ],
+      [onClick, onAsyncClick, isControlled, internalAsync, pushExpandRipple],
     );
 
     const baseInteractive =

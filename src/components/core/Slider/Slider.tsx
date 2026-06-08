@@ -378,8 +378,10 @@ function SliderThumbButton({
   const reduceMotion = prefersReducedInteractiveHoverLift();
 
   useEffect(() => {
+    const shell = shellRef.current;
+    const squeeze = squeezeRef.current;
     return () => {
-      for (const el of [shellRef.current, squeezeRef.current]) {
+      for (const el of [shell, squeeze]) {
         if (el) remove(el);
       }
     };
@@ -595,10 +597,6 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       : { width: crossSizeCss, minWidth: crossSizeCss };
   }, [crossSizeCss, orientation]);
 
-  useEffect(() => {
-    setThumbSpanPx(fallbackThumbPx);
-  }, [fallbackThumbPx]);
-
   const marks = useMemo(
     () => normalizeMarks(marksProp, min, max),
     [marksProp, min, max],
@@ -714,8 +712,9 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
   }, [orientation, syncFill]);
 
   useEffect(() => {
+    const fill = fillRef.current;
     return () => {
-      if (fillRef.current) remove(fillRef.current);
+      if (fill) remove(fill);
     };
   }, []);
 

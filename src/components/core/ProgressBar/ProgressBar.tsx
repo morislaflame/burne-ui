@@ -213,8 +213,9 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
     }, [indeterminate, isHorizontal, reduceMotion]);
 
     useEffect(() => {
+      const fill = fillRef.current;
       return () => {
-        if (fillRef.current) remove(fillRef.current);
+        if (fill) remove(fill);
       };
     }, []);
 

@@ -283,8 +283,8 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     useChevronAnimation(chevronRef, open);
 
     useEffect(() => {
+      const el = btnRef.current;
       return () => {
-        const el = btnRef.current;
         if (el) remove(el);
       };
     }, []);

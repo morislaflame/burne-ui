@@ -322,17 +322,13 @@ export const AlertDialogRoot = function AlertDialog({
   const titleId = useId();
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
-  const [mounted, setMounted] = useState(open);
+  const [mounted, setMounted] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const setHasDescriptionStable = useCallback((v: boolean) => {
     setHasDescription(v);
   }, []);
-
-  useEffect(() => {
-    if (open) setMounted(true);
-  }, [open]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -400,7 +396,12 @@ export const AlertDialogRoot = function AlertDialog({
   }, [open]);
 
   useLayoutEffect(() => {
-    if (!open || !mounted) return;
+    if (!open) return;
+    if (!mounted) {
+      setMounted(true);
+      return;
+    }
+
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     if (!overlay || !panel) return;
@@ -408,6 +409,7 @@ export const AlertDialogRoot = function AlertDialog({
     if (prefersReducedInteractiveHoverLift()) {
       overlay.style.opacity = "1";
       panel.style.opacity = "1";
+      panel.focus();
       return;
     }
 
@@ -424,11 +426,7 @@ export const AlertDialogRoot = function AlertDialog({
       duration: MOTION_INTERACTIVE_MS,
       ease: MOTION_INTERACTIVE_EASE,
     });
-  }, [open, mounted]);
-
-  useLayoutEffect(() => {
-    if (!open || !mounted || !panelRef.current) return;
-    panelRef.current.focus();
+    panel.focus();
   }, [open, mounted]);
 
   const ctxValue: AlertDialogContextValue = {

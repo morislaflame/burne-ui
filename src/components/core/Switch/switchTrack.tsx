@@ -148,16 +148,15 @@ export function SwitchTrack({
   }, [checked, size, syncThumbPosition, thickness, fallbackTravelPx]);
 
   useEffect(() => {
+    const trackFill = trackFillRef.current;
+    const thumb = thumbRef.current;
+    const thumbShell = thumbShellRef.current;
+    const thumbFill = thumbFillRef.current;
+    const iconOff = iconOffRef.current;
+    const iconOn = iconOnRef.current;
+    const track = trackRef.current;
     return () => {
-      for (const el of [
-        trackFillRef.current,
-        thumbRef.current,
-        thumbShellRef.current,
-        thumbFillRef.current,
-        iconOffRef.current,
-        iconOnRef.current,
-        trackRef.current,
-      ]) {
+      for (const el of [trackFill, thumb, thumbShell, thumbFill, iconOff, iconOn, track]) {
         if (el) remove(el);
       }
     };

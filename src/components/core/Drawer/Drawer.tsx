@@ -305,7 +305,7 @@ export const DrawerRoot = function Drawer({
   const titleId = useId();
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
-  const [mounted, setMounted] = useState(open);
+  const [mounted, setMounted] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   /** true = Handle уже выполнил анимацию выхода, повторная не нужна */
@@ -328,7 +328,7 @@ export const DrawerRoot = function Drawer({
     }
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (open) {
       skipCloseAnimRef.current = false;
       setMounted(true);

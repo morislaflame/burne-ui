@@ -193,17 +193,13 @@ export const DialogRoot = function Dialog({
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
   /** Пока true — портал остаётся в DOM (включая анимацию закрытия). */
-  const [mounted, setMounted] = useState(open);
+  const [mounted, setMounted] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const setHasDescriptionStable = useCallback((v: boolean) => {
     setHasDescription(v);
   }, []);
-
-  useEffect(() => {
-    if (open) setMounted(true);
-  }, [open]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -270,7 +266,12 @@ export const DialogRoot = function Dialog({
   }, [open, onOpenChange]);
 
   useLayoutEffect(() => {
-    if (!open || !mounted) return;
+    if (!open) return;
+    if (!mounted) {
+      setMounted(true);
+      return;
+    }
+
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     if (!overlay || !panel) return;
@@ -278,6 +279,7 @@ export const DialogRoot = function Dialog({
     if (prefersReducedInteractiveHoverLift()) {
       overlay.style.opacity = "1";
       panel.style.opacity = "1";
+      panel.focus();
       return;
     }
 
@@ -294,11 +296,7 @@ export const DialogRoot = function Dialog({
       duration: MOTION_INTERACTIVE_MS,
       ease: MOTION_INTERACTIVE_EASE,
     });
-  }, [open, mounted]);
-
-  useLayoutEffect(() => {
-    if (!open || !mounted || !panelRef.current) return;
-    panelRef.current.focus();
+    panel.focus();
   }, [open, mounted]);
 
   const ctxValue: DialogContextValue = {

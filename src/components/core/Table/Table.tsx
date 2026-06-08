@@ -25,6 +25,8 @@ export type { TableRowTone };
 export type SelectionMode = "none" | "single" | "multiple";
 export type Selection = Set<string | number> | "all";
 
+const EMPTY_TABLE_SELECTION = new Set<string | number>();
+
 export type TableColumnRenderProps = {
   sortDirection?: SortDirection;
 };
@@ -200,7 +202,7 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(func
 ) {
   const variant = useTableVariant();
 
-  const selectedKeys: Selection = selectedKeysProp ?? new Set();
+  const selectedKeys: Selection = selectedKeysProp ?? EMPTY_TABLE_SELECTION;
 
   const isRowSelected = useCallback(
     (key: string | number): boolean => {

@@ -243,8 +243,9 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchRootProps & Partial
     const sz = SWITCH_LAYOUT[size];
 
     useEffect(() => {
+      const el = textColRef.current;
       return () => {
-        if (textColRef.current) remove(textColRef.current);
+        if (el) remove(el);
       };
     }, []);
 

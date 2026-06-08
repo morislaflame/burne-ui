@@ -376,8 +376,7 @@ export function ToastItemWrapper({
       duration: MOTION_INTERACTIVE_MS,
       ease: MOTION_INTERACTIVE_EASE,
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // mount only
+  }, [isTop]);
 
   // Exit animation
   useEffect(() => {

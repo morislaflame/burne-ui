@@ -194,8 +194,6 @@ type TooltipContextValue = {
   variant: TooltipVariant;
   size: TooltipSize;
   side: TooltipSide;
-  resolvedSide: TooltipSide;
-  setResolvedSide: (side: TooltipSide) => void;
   icon?: ReactNode;
   showIcon?: boolean;
   triggerRef: React.RefObject<HTMLElement | null>;
@@ -204,6 +202,7 @@ type TooltipContextValue = {
 };
 
 const TooltipContext = createContext<TooltipContextValue | null>(null);
+const TooltipResolvedSideContext = createContext<TooltipSide>("top");
 
 function useTooltipContext(who: string): TooltipContextValue {
   const ctx = useContext(TooltipContext);
@@ -223,7 +222,6 @@ export function TooltipRoot({
   showIcon,
 }: TooltipRootProps) {
   const [open, setOpen] = useState(false);
-  const [resolvedSide, setResolvedSide] = useState<TooltipSide>(side);
   const triggerRef = useRef<HTMLElement | null>(null);
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
@@ -251,10 +249,6 @@ export function TooltipRoot({
   useEffect(() => () => clearTimer(), [clearTimer]);
 
   useEffect(() => {
-    setResolvedSide(side);
-  }, [side]);
-
-  useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") hide();
@@ -270,15 +264,13 @@ export function TooltipRoot({
       variant,
       size,
       side,
-      resolvedSide,
-      setResolvedSide,
       icon,
       showIcon,
       triggerRef,
       scheduleShow,
       hide,
     }),
-    [hide, icon, open, resolvedSide, scheduleShow, showIcon, side, size, tooltipId, variant],
+    [hide, icon, open, scheduleShow, showIcon, side, size, tooltipId, variant],
   );
 
   return <TooltipContext.Provider value={ctx}>{children}</TooltipContext.Provider>;
@@ -399,7 +391,8 @@ function inheritThemePortalProps(triggerEl: HTMLElement | null): {
 }
 
 export function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
-  const { resolvedSide, variant } = useTooltipContext("Tooltip.Arrow");
+  const resolvedSide = useContext(TooltipResolvedSideContext);
+  const { variant } = useTooltipContext("Tooltip.Arrow");
   return (
     <span
       aria-hidden
@@ -432,8 +425,6 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
     variant,
     size,
     side,
-    resolvedSide,
-    setResolvedSide,
     icon,
     showIcon,
     triggerRef,
@@ -441,6 +432,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
 
   const tipRef = useRef<HTMLDivElement | null>(null);
   const [portalMounted, setPortalMounted] = useState(false);
+  const [resolvedSide, setResolvedSide] = useState<TooltipSide>(side);
 
   const setTipRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -586,24 +578,26 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
   );
 
   const node = (
-    <div
-      ref={setTipRef}
-      {...portalTheme}
-      role="tooltip"
-      id={tooltipId}
-      data-side={resolvedSide}
-      className={cn(
-        "pointer-events-none z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-[opacity]",
-        showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
-        className,
-      )}
-      {...rest}
-    >
-      <div className="relative overflow-visible">
-        {showArrow ? (customArrow ?? <TooltipArrow />) : null}
-        {bubble}
+    <TooltipResolvedSideContext.Provider value={resolvedSide}>
+      <div
+        ref={setTipRef}
+        {...portalTheme}
+        role="tooltip"
+        id={tooltipId}
+        data-side={resolvedSide}
+        className={cn(
+          "pointer-events-none z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-[opacity]",
+          showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
+          className,
+        )}
+        {...rest}
+      >
+        <div className="relative overflow-visible">
+          {showArrow ? (customArrow ?? <TooltipArrow />) : null}
+          {bubble}
+        </div>
       </div>
-    </div>
+    </TooltipResolvedSideContext.Provider>
   );
 
   return createPortal(node, document.body);

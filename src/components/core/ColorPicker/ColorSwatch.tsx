@@ -92,8 +92,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         if (!el) return;
         animateInteractiveHoverLift(el, true, undefined, shadow);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [disabled, onPointerEnter],
+      [disabled, onPointerEnter, shadow],
     );
 
     const handlePointerLeave = useCallback(
@@ -104,8 +103,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         if (!el || prefersReducedInteractiveHoverLift()) return;
         animateInteractiveHoverLift(el, false, undefined, shadow);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [onPointerLeave],
+      [onPointerLeave, shadow],
     );
 
     const handlePointerDown = useCallback(
@@ -120,8 +118,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
           }
         });
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [disabled, onPointerDown],
+      [disabled, onPointerDown, shadow],
     );
 
     const checkerStyle: CSSProperties = showChecker ? CHECKER_STYLE : {};

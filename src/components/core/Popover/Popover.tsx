@@ -146,8 +146,6 @@ type PopoverContextValue = {
   hintId: string;
   size: PopoverSize;
   side: PopoverSide;
-  resolvedSide: PopoverSide;
-  setResolvedSide: (side: PopoverSide) => void;
   labelConnected: boolean;
   hintConnected: boolean;
   triggerRef: React.RefObject<HTMLElement | null>;
@@ -156,6 +154,7 @@ type PopoverContextValue = {
 };
 
 const PopoverContext = createContext<PopoverContextValue | null>(null);
+const PopoverResolvedSideContext = createContext<PopoverSide>("bottom");
 
 function usePopoverContext(who: string): PopoverContextValue {
   const ctx = useContext(PopoverContext);
@@ -190,7 +189,6 @@ export function PopoverRoot({
   shouldDismiss,
 }: PopoverRootProps) {
   const [open, setOpen] = useControllableOpen(openProp, defaultOpen, onOpenChange);
-  const [resolvedSide, setResolvedSide] = useState<PopoverSide>(side);
   const triggerRef = useRef<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const autoId = useId();
@@ -200,10 +198,6 @@ export function PopoverRoot({
 
   const labelConnected = hasCompoundChild(children, "PopoverLabel");
   const hintConnected = hasCompoundChild(children, "PopoverHint");
-
-  useEffect(() => {
-    setResolvedSide(side);
-  }, [side]);
 
   useEffect(() => {
     if (!open) return;
@@ -237,8 +231,6 @@ export function PopoverRoot({
       hintId,
       size,
       side,
-      resolvedSide,
-      setResolvedSide,
       labelConnected,
       hintConnected,
       triggerRef,
@@ -253,7 +245,6 @@ export function PopoverRoot({
       labelId,
       open,
       popoverId,
-      resolvedSide,
       setOpen,
       side,
       size,
@@ -344,7 +335,7 @@ PopoverTrigger.displayName = "PopoverTrigger";
 export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement>;
 
 export function PopoverArrow({ className, ...rest }: PopoverArrowProps) {
-  const { resolvedSide } = usePopoverContext("Popover.Arrow");
+  const resolvedSide = useContext(PopoverResolvedSideContext);
   return (
     <span
       aria-hidden
@@ -466,8 +457,6 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
     popoverId,
     size,
     side,
-    resolvedSide,
-    setResolvedSide,
     labelConnected,
     hintConnected,
     labelId,
@@ -479,6 +468,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [portalMounted, setPortalMounted] = useState(false);
+  const [resolvedSide, setResolvedSide] = useState<PopoverSide>(side);
 
   const setPanelRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -624,37 +614,39 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
   const contentGap = gapProp ?? POPOVER_DEFAULT_GAP[size];
 
   const node = (
-    <div
-      ref={setPanelRef}
-      {...portalTheme}
-      id={popoverId}
-      role={contentRole}
-      aria-modal={contentRole === "dialog" ? "false" : undefined}
-      aria-labelledby={contentRole === "dialog" && labelConnected ? labelId : undefined}
-      aria-describedby={contentRole === "dialog" ? describedBy : undefined}
-      data-side={resolvedSide}
-      className={cn(
-        "pointer-events-auto z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-[opacity]",
-        showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
-        className,
-      )}
-      {...rest}
-    >
-      <div className="relative overflow-visible">
-        {showArrow ? (customArrow ?? <PopoverArrow />) : null}
-        <div
-          className={cn(
-            "relative z-[1] flex min-w-0 flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground animate-shadow",
-            !unstyled && POPOVER_MIN_WIDTH[size],
-            !unstyled && POPOVER_MAX_WIDTH[size],
-            !unstyled && POPOVER_PADDING[size],
-            !unstyled && POPOVER_GAP_CLASS[contentGap],
-          )}
-        >
-          {panelChildren}
+    <PopoverResolvedSideContext.Provider value={resolvedSide}>
+      <div
+        ref={setPanelRef}
+        {...portalTheme}
+        id={popoverId}
+        role={contentRole}
+        aria-modal={contentRole === "dialog" ? "false" : undefined}
+        aria-labelledby={contentRole === "dialog" && labelConnected ? labelId : undefined}
+        aria-describedby={contentRole === "dialog" ? describedBy : undefined}
+        data-side={resolvedSide}
+        className={cn(
+          "pointer-events-auto z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-[opacity]",
+          showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
+          className,
+        )}
+        {...rest}
+      >
+        <div className="relative overflow-visible">
+          {showArrow ? (customArrow ?? <PopoverArrow />) : null}
+          <div
+            className={cn(
+              "relative z-[1] flex min-w-0 flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground animate-shadow",
+              !unstyled && POPOVER_MIN_WIDTH[size],
+              !unstyled && POPOVER_MAX_WIDTH[size],
+              !unstyled && POPOVER_PADDING[size],
+              !unstyled && POPOVER_GAP_CLASS[contentGap],
+            )}
+          >
+            {panelChildren}
+          </div>
         </div>
       </div>
-    </div>
+    </PopoverResolvedSideContext.Provider>
   );
 
   return createPortal(node, document.body);

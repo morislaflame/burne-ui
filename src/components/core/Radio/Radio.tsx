@@ -405,8 +405,9 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
   const reduceMotion = prefersReducedInteractiveHoverLift();
 
   useEffect(() => {
+    const el = textColRef.current;
     return () => {
-      if (textColRef.current) remove(textColRef.current);
+      if (el) remove(el);
     };
   }, []);
 

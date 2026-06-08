@@ -342,8 +342,8 @@ function AvatarGroupItem({
   }, [reduced]);
 
   useEffect(() => {
+    const el = wrapRef.current;
     return () => {
-      const el = wrapRef.current;
       if (el) remove(el);
     };
   }, []);

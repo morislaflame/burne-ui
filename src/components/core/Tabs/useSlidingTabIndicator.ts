@@ -103,7 +103,6 @@ export function useSlidingTabIndicator(
   }, [
     activeValue,
     indicatorRef,
-    layoutEpoch,
     listRef,
     orientation,
     tabElementsRef,

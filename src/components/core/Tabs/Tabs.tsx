@@ -319,8 +319,9 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
   );
 
   useLayoutEffect(() => {
+    const tabElements = tabElementsRef.current;
     return () => {
-      tabElementsRef.current.delete(tabValue);
+      tabElements.delete(tabValue);
       notifyTabLayout();
     };
   }, [notifyTabLayout, tabElementsRef, tabValue]);

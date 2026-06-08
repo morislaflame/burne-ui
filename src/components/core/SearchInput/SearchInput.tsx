@@ -390,7 +390,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         animateInteractiveHoverLift(shell, false, undefined, searchShadow);
       }
       focusInput();
-    }, [blocked, expanded, focusInput, setExpanded]);
+    }, [blocked, expanded, focusInput, searchShadow, setExpanded]);
 
     const handleRootPointerDown = useCallback(
       (_e: PointerEvent<HTMLDivElement>) => {
@@ -423,16 +423,14 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       const el = rootRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
       animateInteractiveHoverLift(el, true, undefined, searchShadow);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [blocked, expanded]);
+    }, [blocked, expanded, searchShadow]);
 
     const handlePointerLeave = useCallback(() => {
       const el = rootRef.current;
       if (!el || blocked || expanded) return;
       if (prefersReducedInteractiveHoverLift()) return;
       animateInteractiveHoverLift(el, false, undefined, searchShadow);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [blocked, expanded]);
+    }, [blocked, expanded, searchShadow]);
 
     const handleInputBlur = useCallback(
       (e: FocusEvent<HTMLInputElement>) => {

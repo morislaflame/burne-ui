@@ -261,7 +261,10 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
       [],
     );
 
-    const segments: SegId[] = format === "HH:mm:ss" ? ["h", "m", "s"] : ["h", "m"];
+    const segments = useMemo(
+      (): SegId[] => (format === "HH:mm:ss" ? ["h", "m", "s"] : ["h", "m"]),
+      [format],
+    );
 
     const setShellRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -276,8 +279,7 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
       (seg: SegId) => {
         segRefById[seg].current?.focus();
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [],
+      [segRefById],
     );
 
     const navigate = useCallback(

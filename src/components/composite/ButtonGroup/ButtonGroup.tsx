@@ -33,7 +33,7 @@ function ButtonGroupSegmentProvider({
 }) {
   const value = useMemo(
     () => ({ segment, buttonSize }),
-    [buttonSize, segment.orientation, segment.position],
+    [buttonSize, segment],
   );
   return (
     <ButtonGroupSegmentContext.Provider value={value}>{children}</ButtonGroupSegmentContext.Provider>
