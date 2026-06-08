@@ -1,4 +1,4 @@
-import { useId, type HTMLAttributes, type ReactNode } from "react";
+import { useId, useMemo, type HTMLAttributes, type ReactNode } from "react";
 
 import { FieldError, FieldHint, FieldRoot } from "@/components/core/Field";
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
@@ -57,21 +57,28 @@ export function TextAreaRoot({
     </>
   );
 
+  const fieldCtx = useMemo(
+    () => ({
+      textareaId,
+      hintId,
+      errorId,
+      labelId,
+      hintConnected: hasHint,
+      errorConnected: hasError,
+      isRequired,
+      status,
+      size,
+    }),
+    [errorId, hasError, hasHint, hintId, isRequired, labelId, size, status, textareaId],
+  );
+  const fieldLabelCtx = useMemo(
+    () => ({ controlId: textareaId, labelId, isRequired }),
+    [isRequired, labelId, textareaId],
+  );
+
   return (
-    <TextAreaFieldContext.Provider
-      value={{
-        textareaId,
-        hintId,
-        errorId,
-        labelId,
-        hintConnected: hasHint,
-        errorConnected: hasError,
-        isRequired,
-        status,
-        size,
-      }}
-    >
-      <FieldLabelContext.Provider value={{ controlId: textareaId, labelId, isRequired }}>
+    <TextAreaFieldContext.Provider value={fieldCtx}>
+      <FieldLabelContext.Provider value={fieldLabelCtx}>
         <FieldRoot className={cn(className)}>{body}</FieldRoot>
       </FieldLabelContext.Provider>
     </TextAreaFieldContext.Provider>

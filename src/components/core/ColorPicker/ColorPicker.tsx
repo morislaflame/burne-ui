@@ -251,7 +251,7 @@ export function ColorPickerArea({ size }: { size: ColorPickerSize }) {
 
 export function ColorPickerHexInput() {
   const { hex, setHsva } = useColorPickerContext();
-  const [draft, setDraft] = useState(hex.slice(1));
+  const [draft, setDraft] = useState(() => hex.slice(1));
 
   // Sync from external
   useEffect(() => { setDraft(hex.slice(1)); }, [hex]);

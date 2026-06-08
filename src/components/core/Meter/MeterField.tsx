@@ -108,9 +108,11 @@ export function MeterRoot({
           value != null ? <MeterTrack {...trackProps} value={value} /> : null,
       });
 
+  const fieldLabelCtx = useMemo(() => ({ labelId }), [labelId]);
+
   return (
     <MeterFieldContext.Provider value={contextValue}>
-      <FieldLabelContext.Provider value={{ labelId }}>
+      <FieldLabelContext.Provider value={fieldLabelCtx}>
         <FieldRoot
           id={meterId}
           className={scaleFieldRootClassName(orientation, className)}

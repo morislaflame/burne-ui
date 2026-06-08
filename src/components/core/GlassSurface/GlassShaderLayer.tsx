@@ -87,7 +87,6 @@ export function GlassShaderLayer({
         "pointer-events-none absolute inset-0 z-[1] h-full w-full mix-blend-soft-light",
         className,
       )}
-      aria-hidden
     />
   );
 }

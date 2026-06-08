@@ -208,7 +208,8 @@ export const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryPro
  * проявляются (opacity + scale), существующие — едут из старой позиции в новую.
  */
 function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
-  const prevRectsRef = useRef<Map<string, { x: number; y: number }>>(new Map());
+  const prevRectsRef = useRef<Map<string, { x: number; y: number }>>(null!);
+  if (!prevRectsRef.current) prevRectsRef.current = new Map();
   const firstRunRef = useRef(true);
 
   useLayoutEffect(() => {

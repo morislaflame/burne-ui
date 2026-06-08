@@ -244,7 +244,6 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
         aria-labelledby={labelId}
         aria-describedby={ariaDescribedBy}
         aria-label={labelId == null ? statusText : undefined}
-        aria-orientation={orientation}
         className={cn(trackHitAreaClass, className)}
         style={trackCrossStyle}
         {...rest}

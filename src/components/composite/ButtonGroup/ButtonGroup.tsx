@@ -3,6 +3,7 @@ import {
   Fragment,
   forwardRef,
   isValidElement,
+  useMemo,
   type ComponentPropsWithoutRef,
   type HTMLAttributes,
   type ReactElement,
@@ -20,6 +21,24 @@ import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegm
 import { buttonGroupTextSurfaceClasses } from "@/components/core/utils/buttonGroupSegment";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
+
+function ButtonGroupSegmentProvider({
+  segment,
+  buttonSize,
+  children,
+}: {
+  segment: ButtonGroupSegment;
+  buttonSize: ButtonSize;
+  children: ReactNode;
+}) {
+  const value = useMemo(
+    () => ({ segment, buttonSize }),
+    [buttonSize, segment.orientation, segment.position],
+  );
+  return (
+    <ButtonGroupSegmentContext.Provider value={value}>{children}</ButtonGroupSegmentContext.Provider>
+  );
+}
 
 const BUTTON_GROUP_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",
@@ -141,12 +160,13 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function
         const seg: ButtonGroupSegment = { orientation, position };
 
         return (
-          <ButtonGroupSegmentContext.Provider
+          <ButtonGroupSegmentProvider
             key={child.key ?? `bg-seg-${i}`}
-            value={{ segment: seg, buttonSize }}
+            segment={seg}
+            buttonSize={buttonSize}
           >
             {child}
-          </ButtonGroupSegmentContext.Provider>
+          </ButtonGroupSegmentProvider>
         );
       })}
     </div>

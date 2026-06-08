@@ -101,9 +101,11 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
       [disabled, errorId, hintId, isRequired, selectSingleValue, selectedValue, selection],
     );
 
+    const fieldLabelCtx = useMemo(() => ({ isRequired }), [isRequired]);
+
     return (
       <CheckboxGroupContext.Provider value={contextValue}>
-        <FieldLabelContext.Provider value={{ isRequired }}>
+        <FieldLabelContext.Provider value={fieldLabelCtx}>
           <OptionGroupFieldset
             ref={ref}
             disabled={disabled}

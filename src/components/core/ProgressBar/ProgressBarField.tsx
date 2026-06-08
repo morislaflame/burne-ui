@@ -121,9 +121,11 @@ export function ProgressBarRoot({
         track: <ProgressBarTrack {...trackProps} />,
       });
 
+  const fieldLabelCtx = useMemo(() => ({ labelId }), [labelId]);
+
   return (
     <ProgressBarFieldContext.Provider value={contextValue}>
-      <FieldLabelContext.Provider value={{ labelId }}>
+      <FieldLabelContext.Provider value={fieldLabelCtx}>
         <FieldRoot
           id={progressId}
           className={scaleFieldRootClassName(orientation, className)}

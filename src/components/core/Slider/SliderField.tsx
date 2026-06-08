@@ -141,9 +141,11 @@ export function SliderRoot({
         track: <SliderTrack {...trackProps} />,
       });
 
+  const fieldLabelCtx = useMemo(() => ({ labelId, isRequired: false as const }), [labelId]);
+
   return (
     <SliderFieldContext.Provider value={contextValue}>
-      <FieldLabelContext.Provider value={{ labelId, isRequired: false }}>
+      <FieldLabelContext.Provider value={fieldLabelCtx}>
         <FieldRoot
           id={sliderId}
           className={scaleFieldRootClassName(orientation, className)}

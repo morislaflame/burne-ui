@@ -169,8 +169,6 @@ export function ListBoxRoot({
       <div
         id={listId}
         role="listbox"
-        aria-multiselectable={multiple ? true : undefined}
-        aria-disabled={disabled || undefined}
         className={cn("flex min-h-0 flex-col gap-xsmall text-left outline-none", className)}
         {...rest}
       >

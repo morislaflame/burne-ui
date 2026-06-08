@@ -579,9 +579,9 @@ export function ToastProviderRoot({
             <ToastViewport
               key={placement}
               placement={placement}
-              sorted={[...toasts.filter((t) => t.placement === placement)].sort(
-                (a, b) => b.createdAt - a.createdAt,
-              )}
+              sorted={toasts
+                .filter((t) => t.placement === placement)
+                .toSorted((a: ToastEntry, b: ToastEntry) => b.createdAt - a.createdAt)}
               dismissingIds={dismissingIds}
               onDismiss={dismiss}
               onRemoveFinal={removeFinal}

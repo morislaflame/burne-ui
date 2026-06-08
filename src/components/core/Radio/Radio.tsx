@@ -181,6 +181,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(funct
           ctx.hintConnected ? ctx.hintId : undefined,
           ctx.errorConnected ? ctx.errorId : undefined,
         )}
+        aria-label={ctx.inputProps.value != null ? String(ctx.inputProps.value) : "Вариант"}
         onChange={ctx.onChange}
       />
       <span
@@ -590,6 +591,17 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
         )}
         {...labelRest}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (
+            (e.key === "Enter" || e.key === " ") &&
+            canClearSelection &&
+            mergedChecked &&
+            e.target === e.currentTarget
+          ) {
+            e.preventDefault();
+            handleClick(e as unknown as MouseEvent<HTMLLabelElement>);
+          }
+        }}
         onPointerDown={handlePointerDown}
       >
         {isCompound ? children : simpleBody}

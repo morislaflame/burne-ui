@@ -220,7 +220,8 @@ export function DropdownRoot({
 
   const triggerRef = useRef<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const subPanelRootsRef = useRef(new Set<HTMLElement>());
+  const subPanelRootsRef = useRef<Set<HTMLElement>>(null!);
+  if (!subPanelRootsRef.current) subPanelRootsRef.current = new Set();
   const contentId = useId();
 
   const indicatorMode: "radio" | "multi" = multiple ? "multi" : "radio";
@@ -341,7 +342,6 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       triggerRef,
       contentRef,
       contentId,
-      multiple,
       subPanelRootsRef,
     } = useDropdown();
 
@@ -427,7 +427,6 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         >
           <Popover.Body
             role="menu"
-            aria-multiselectable={multiple ? true : undefined}
             className={cn(
               "max-h-[min(24rem,70vh)] gap-xsmall overflow-y-auto overflow-x-hidden p-plus text-left outline-none",
               bodyClassName,
@@ -593,7 +592,16 @@ export type DropdownSubTriggerProps = HTMLAttributes<HTMLDivElement> & {
 
 export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerProps>(
   function DropdownSubTrigger(
-    { className = "", children, asChild, onPointerEnter, onPointerLeave, onClick, ...rest },
+    {
+      className = "",
+      children,
+      asChild,
+      onPointerEnter,
+      onPointerLeave,
+      onClick,
+      onKeyDown,
+      ...rest
+    },
     forwardedRef,
   ) {
     const { open, setOpen, triggerRef, scheduleClose, cancelClose } = useDropdownSub();
@@ -627,6 +635,19 @@ export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerP
       [cancelClose, onClick, setOpen],
     );
 
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLDivElement>) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          cancelClose();
+          setOpen(true);
+        }
+      },
+      [cancelClose, onKeyDown, setOpen],
+    );
+
     const rowClass = cn(
       "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none",
       /* как у подписи в `Dropdown.Item`: токен `text-base`, не наследованный `1rem` у `html` */
@@ -655,6 +676,10 @@ export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerP
           (child.props as HTMLAttributes<HTMLElement>).onClick?.(e);
           handleClick(e as unknown as React.MouseEvent<HTMLDivElement>);
         },
+        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
+          (child.props as HTMLAttributes<HTMLElement>).onKeyDown?.(e);
+          handleKeyDown(e as unknown as React.KeyboardEvent<HTMLDivElement>);
+        },
         role: "menuitem",
         "aria-expanded": open,
         "aria-haspopup": "menu",
@@ -672,6 +697,7 @@ export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerP
         onPointerEnter={handleEnter}
         onPointerLeave={handleLeave}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         {...rest}
       >
         <span className="min-w-0 flex-1">{children}</span>

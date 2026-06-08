@@ -1,6 +1,7 @@
 import {
   forwardRef,
   useCallback,
+  useMemo,
   useRef,
   type ButtonHTMLAttributes,
   type CSSProperties,
@@ -71,7 +72,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
   ) {
     const btnRef = useRef<HTMLButtonElement>(null);
     const hoverInsideRef = useRef(false);
-    const shadow = { hover: SHADOW_SM() };
+    const shadow = useMemo(() => ({ hover: SHADOW_SM() }), []);
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {

@@ -186,7 +186,6 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
       aria-labelledby={labelId}
       aria-describedby={ariaDescribedBy}
       aria-label={labelId == null ? statusText : undefined}
-      aria-orientation={orientation}
       className={cn(trackHitAreaClass, className)}
       style={trackCrossStyle}
       {...rest}

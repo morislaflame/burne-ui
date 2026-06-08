@@ -13,6 +13,7 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -372,7 +373,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       runExpandMotion(expanded);
     }, [applyShellMetrics, expanded, runExpandMotion]);
 
-    const searchShadow = { hover: SHADOW_SM() };
+    const searchShadow = useMemo(() => ({ hover: SHADOW_SM() }), []);
 
     const focusInput = useCallback(() => {
       requestAnimationFrame(() => inputRef.current?.focus());
@@ -490,8 +491,14 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <div
         ref={rootRef}
-        role={expanded ? "search" : "button"}
-        tabIndex={expanded ? -1 : blocked ? -1 : 0}
+        {...(expanded
+          ? { role: "search" as const, tabIndex: -1 as const }
+          : {
+              role: "button" as const,
+              tabIndex: (blocked ? -1 : 0) as 0 | -1,
+              onClick: handleRootClick,
+              onKeyDown: handleRootKeyDown,
+            })}
         aria-expanded={expanded}
         aria-disabled={blocked || undefined}
         aria-label={expanded ? undefined : collapseA11yLabel}
@@ -513,8 +520,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         onPointerDown={handleRootPointerDown}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
-        onClick={handleRootClick}
-        onKeyDown={handleRootKeyDown}
       >
         {ripple ? (
           <Ripple color="accentSoft" disabled={blocked} />
@@ -541,7 +546,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           onBlur={handleInputBlur}
           onKeyDown={handleInputKeyDown}
           tabIndex={expanded ? 0 : -1}
-          aria-hidden={!expanded}
           aria-label={inputAriaLabel}
           className={cn(
             "box-border min-h-0 w-full border-0 bg-transparent py-0 text-foreground outline-none placeholder:text-muted",

@@ -243,7 +243,7 @@ function snapToMarks(value: number, marks: number[]) {
 
 function normalizeMarks(marks: number[] | undefined, min: number, max: number) {
   if (!marks?.length) return undefined;
-  return [...new Set(marks.map((m) => clamp(m, min, max)))].sort((a, b) => a - b);
+  return [...new Set(marks.map((m) => clamp(m, min, max)))].toSorted((a: number, b: number) => a - b);
 }
 
 function pointerToValue(

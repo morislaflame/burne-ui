@@ -98,9 +98,11 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(f
     [disabled, errorId, hintId, groupName, isRequired, selectValue, selectedValue],
   );
 
+  const fieldLabelCtx = useMemo(() => ({ isRequired }), [isRequired]);
+
   return (
     <RadioGroupContext.Provider value={contextValue}>
-      <FieldLabelContext.Provider value={{ isRequired }}>
+      <FieldLabelContext.Provider value={fieldLabelCtx}>
         <OptionGroupFieldset
           ref={ref}
           disabled={disabled}

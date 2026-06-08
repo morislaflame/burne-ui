@@ -95,6 +95,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
       status,
       size,
       anchorRef,
+      listId,
     } = ctx;
 
     const openingRef = useRef(false);
@@ -148,7 +149,11 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
     return (
       <div
         ref={mergeRefs(ref, anchorRef)}
-        role="presentation"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-haspopup="listbox"
+        aria-disabled={disabled || undefined}
         onPointerDown={handlePointerDown}
         className={cn(
           "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
@@ -405,10 +410,6 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         ref={mergeRefs(ref, inputRef)}
         id={comboBoxId}
         type="text"
-        role="combobox"
-        aria-expanded={open}
-        aria-controls={listId}
-        aria-haspopup="listbox"
         aria-autocomplete="list"
         aria-activedescendant={activeOptionId}
         aria-required={isRequired || undefined}

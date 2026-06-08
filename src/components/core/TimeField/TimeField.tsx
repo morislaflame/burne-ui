@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useId,
+  useMemo,
   useRef,
   useState,
   type HTMLAttributes,
@@ -247,11 +248,18 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
     const [focusedSeg, setFocusedSeg] = useState<SegId | null>(null);
     const shellRef = useRef<HTMLDivElement>(null);
 
-    const segRefs: Record<SegId, React.RefObject<HTMLSpanElement | null>> = {
-      h: useRef<HTMLSpanElement>(null),
-      m: useRef<HTMLSpanElement>(null),
-      s: useRef<HTMLSpanElement>(null),
-    };
+    const hSegRef = useRef<HTMLSpanElement>(null);
+    const mSegRef = useRef<HTMLSpanElement>(null);
+    const sSegRef = useRef<HTMLSpanElement>(null);
+    const segRefById = useMemo(
+      () =>
+        ({
+          h: hSegRef,
+          m: mSegRef,
+          s: sSegRef,
+        }) satisfies Record<SegId, React.RefObject<HTMLSpanElement | null>>,
+      [],
+    );
 
     const segments: SegId[] = format === "HH:mm:ss" ? ["h", "m", "s"] : ["h", "m"];
 
@@ -266,7 +274,7 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
 
     const focusSeg = useCallback(
       (seg: SegId) => {
-        segRefs[seg].current?.focus();
+        segRefById[seg].current?.focus();
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [],
@@ -437,8 +445,6 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
         aria-label={labelId ? undefined : "Время"}
         aria-labelledby={labelId}
         aria-describedby={ariaDescribedBy}
-        aria-required={isRequired || undefined}
-        aria-invalid={status === "danger" ? true : undefined}
         data-slot="timefield-shell"
         onPointerDown={handleShellPointerDown}
         className={cn(
@@ -479,13 +485,15 @@ export const TimeFieldControl = forwardRef<HTMLDivElement, TimeFieldControlProps
                 </span>
               )}
               <span
-                ref={segRefs[seg]}
+                ref={segRefById[seg]}
                 role="spinbutton"
                 aria-label={SEG_LABEL[seg]}
                 aria-valuemin={0}
                 aria-valuemax={SEG_MAX[seg]}
                 aria-valuenow={hms[seg]}
                 aria-valuetext={String(hms[seg]).padStart(2, "0")}
+                aria-required={seg === segments[0] && isRequired ? true : undefined}
+                aria-invalid={seg === segments[0] && status === "danger" ? true : undefined}
                 tabIndex={disabled ? -1 : 0}
                 className={segCls}
                 onKeyDown={(e) => handleSegKeyDown(e, seg)}
@@ -587,23 +595,42 @@ export function TimeFieldRoot({
     </>
   );
 
+  const timeFieldCtx = useMemo(
+    () => ({
+      fieldId,
+      labelId,
+      hintId,
+      errorId,
+      hintConnected: hasHint,
+      errorConnected: hasError,
+      isRequired,
+      status,
+      size,
+      variant,
+      compact,
+    }),
+    [
+      compact,
+      errorId,
+      fieldId,
+      hasError,
+      hasHint,
+      hintId,
+      isRequired,
+      labelId,
+      size,
+      status,
+      variant,
+    ],
+  );
+  const fieldLabelCtx = useMemo(
+    () => ({ controlId: fieldId, labelId, isRequired }),
+    [fieldId, isRequired, labelId],
+  );
+
   return (
-    <TimeFieldContext.Provider
-      value={{
-        fieldId,
-        labelId,
-        hintId,
-        errorId,
-        hintConnected: hasHint,
-        errorConnected: hasError,
-        isRequired,
-        status,
-        size,
-        variant,
-        compact,
-      }}
-    >
-      <FieldLabelContext.Provider value={{ controlId: fieldId, labelId, isRequired }}>
+    <TimeFieldContext.Provider value={timeFieldCtx}>
+      <FieldLabelContext.Provider value={fieldLabelCtx}>
         <FieldRoot className={cn(compact && "w-fit", className)} {...rest}>
           {body}
         </FieldRoot>

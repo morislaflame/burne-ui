@@ -24,6 +24,24 @@ import {
 } from "@/components/core/ToggleButton/toggleButtonGroupContext";
 import type { ToggleButtonSize, ToggleButtonVariant } from "@/components/core/ToggleButton/ToggleButton";
 
+function ToggleButtonGroupSegmentProvider({
+  segment,
+  buttonSize,
+  children,
+}: {
+  segment: ButtonGroupSegment;
+  buttonSize: ToggleButtonSize;
+  children: ReactNode;
+}) {
+  const value = useMemo(
+    () => ({ segment, buttonSize }),
+    [buttonSize, segment.orientation, segment.position],
+  );
+  return (
+    <ButtonGroupSegmentContext.Provider value={value}>{children}</ButtonGroupSegmentContext.Provider>
+  );
+}
+
 function flattenFragmentChildren(children: ReactNode): ReactElement[] {
   const out: ReactElement[] = [];
   Children.forEach(children, (node) => {
@@ -230,7 +248,8 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
       <ToggleButtonGroupContext.Provider value={ctx}>
         <div
           ref={ref}
-          role={isSingle ? "radiogroup" : "group"}
+          role="toolbar"
+          tabIndex={disabled ? -1 : 0}
           aria-orientation={orientation}
           aria-disabled={disabled || undefined}
           className={cn(
@@ -240,7 +259,7 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
               : cn("flex-col flex-nowrap items-stretch", separated && "gap-xsmall"),
             className,
           )}
-          onKeyDown={handleKeyDown}
+          {...(isSingle ? { onKeyDown: handleKeyDown } : {})}
           {...rest}
         >
           {flat.map((child, i) => {
@@ -265,12 +284,13 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
             const seg: ButtonGroupSegment = { orientation, position };
 
             return (
-              <ButtonGroupSegmentContext.Provider
+              <ToggleButtonGroupSegmentProvider
                 key={child.key ?? `tbg-seg-${i}`}
-                value={{ segment: seg, buttonSize: size }}
+                segment={seg}
+                buttonSize={size}
               >
                 {child}
-              </ButtonGroupSegmentContext.Provider>
+              </ToggleButtonGroupSegmentProvider>
             );
           })}
         </div>

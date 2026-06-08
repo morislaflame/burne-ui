@@ -138,8 +138,6 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     onPointerDown: onPointerDownProp,
     onClick: onClickProp,
     onKeyDown: onKeyDownProp,
-    role: roleProp,
-    tabIndex: tabIndexProp,
     children,
     ...rest
   },
@@ -216,45 +214,70 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
     [onKeyDownProp, pressable],
   );
 
+  const rootClassName = cn(
+    "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",
+    pressable &&
+      "relative cursor-pointer animate-shadow button-idle-surface-transition motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+    CARD_SURFACE[variant],
+    pressable && "will-change-transform origin-center",
+    className,
+  );
+
+  if (pressable) {
+    return (
+      <div
+        {...rest}
+        ref={setRootRef}
+        role="button"
+        tabIndex={0}
+        className={rootClassName}
+        onPointerOver={(e) => {
+          onPointerOverProp?.(e);
+          if (!e.defaultPrevented) {
+            liftPointerHandlers.onPointerOver(e);
+          }
+        }}
+        onPointerOut={(e) => {
+          onPointerOutProp?.(e);
+          liftPointerHandlers.onPointerOut(e);
+        }}
+        onPointerDown={handlePointerDown}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+      >
+        <div className="relative flex min-w-0 flex-1 flex-col">{children}</div>
+      </div>
+    );
+  }
+
+  if (onClickProp || onKeyDownProp || onPointerDownProp) {
+    return (
+      <div
+        {...rest}
+        ref={setRootRef}
+        role="button"
+        tabIndex={0}
+        className={rootClassName}
+        onPointerOver={onPointerOverProp}
+        onPointerOut={onPointerOutProp}
+        onPointerDown={onPointerDownProp}
+        onClick={onClickProp}
+        onKeyDown={onKeyDownProp}
+      >
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div
-      ref={setRootRef}
-      role={roleProp ?? (pressable ? "button" : undefined)}
-      tabIndex={
-        tabIndexProp ?? (pressable ? 0 : undefined)
-      }
-      className={cn(
-        "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",
-        pressable &&
-          "relative cursor-pointer animate-shadow button-idle-surface-transition motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-        CARD_SURFACE[variant],
-        pressable && "will-change-transform origin-center",
-        className,
-      )}
-      onPointerOver={(e) => {
-        onPointerOverProp?.(e);
-        if (!e.defaultPrevented && pressable) {
-          liftPointerHandlers.onPointerOver(e);
-        }
-      }}
-      onPointerOut={(e) => {
-        onPointerOutProp?.(e);
-        if (pressable) liftPointerHandlers.onPointerOut(e);
-      }}
-      onPointerDown={handlePointerDown}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
       {...rest}
+      ref={setRootRef}
+      className={rootClassName}
+      onPointerOver={onPointerOverProp}
+      onPointerOut={onPointerOutProp}
     >
-      {pressable ? (
-        <div className="relative flex min-w-0 flex-1 flex-col">
-          {children}
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </div>
   );
 });
-
-/** Карточка: корневой блок с токенами темы; при `pressable` — hover-lift, тень и squeeze (риппл — снаружи через `<Ripple />`). */

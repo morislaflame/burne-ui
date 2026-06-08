@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
   type HTMLAttributes,
+  type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
   type ReactNode,
@@ -281,6 +282,16 @@ export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(f
     [onClick, open, setOpen],
   );
 
+  const handleKeyDown = useCallback(
+    (e: ReactKeyboardEvent<HTMLSpanElement>) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle(e as unknown as ReactMouseEvent<HTMLElement>);
+      }
+    },
+    [toggle],
+  );
+
   const mergedRef = useCallback(
     (node: HTMLSpanElement | null) => {
       triggerRef.current = node;
@@ -314,10 +325,13 @@ export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(f
   return (
     <span
       ref={mergedRef}
+      role="button"
+      tabIndex={0}
       className={cn("inline-flex shrink-0", className)}
       aria-expanded={open}
       aria-controls={open ? popoverId : undefined}
       onClick={toggle}
+      onKeyDown={handleKeyDown}
       {...rest}
     >
       {children}

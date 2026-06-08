@@ -16,6 +16,8 @@ import {
   ComboBoxTrigger,
 } from "./ComboBox";
 import type { ComboBoxOption } from "./comboBoxContext";
+
+const EMPTY_COMBOBOX_OPTIONS: ComboBoxOption[] = [];
 import { comboBoxFilteredValues } from "./comboBoxOptionFilter";
 import {
   ComboBoxContext,
@@ -58,7 +60,7 @@ export function ComboBoxRoot({
   isRequired = false,
   status = "default",
   size = "base",
-  options = [],
+  options = EMPTY_COMBOBOX_OPTIONS,
   value: valueProp,
   defaultValue,
   onValueChange,
@@ -178,10 +180,15 @@ export function ComboBoxRoot({
     </>
   );
 
+  const fieldLabelCtx = useMemo(
+    () => ({ controlId: comboBoxId, labelId, isRequired }),
+    [comboBoxId, isRequired, labelId],
+  );
+
   return (
     <ComboBoxFieldContext.Provider value={fieldCtx}>
       <ComboBoxContext.Provider value={comboCtx}>
-        <FieldLabelContext.Provider value={{ controlId: comboBoxId, labelId, isRequired }}>
+        <FieldLabelContext.Provider value={fieldLabelCtx}>
           <FieldRoot className={cn(className)} {...rest}>
             {body}
           </FieldRoot>

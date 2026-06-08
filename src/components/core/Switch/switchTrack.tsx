@@ -1,12 +1,12 @@
 import { animate, remove } from "animejs";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
   type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
@@ -88,7 +88,7 @@ export function SwitchTrack({
     () => resolveFallbackThumbPx(thickness, size),
     [size, thickness],
   );
-  const [travelPx, setTravelPx] = useState(fallbackTravelPx);
+  const travelPxRef = useRef(fallbackTravelPx);
 
   const trackRef = useRef<HTMLSpanElement>(null);
   const trackFillRef = useRef<HTMLSpanElement>(null);
@@ -101,9 +101,34 @@ export function SwitchTrack({
   const thumbFirstLayoutRef = useRef(true);
   const reduceMotion = prefersReducedInteractiveHoverLift();
 
-  useEffect(() => {
-    setTravelPx(fallbackTravelPx);
-  }, [fallbackTravelPx]);
+  const syncThumbPosition = useCallback(
+    (nextChecked: boolean, travelPx: number) => {
+      const thumb = thumbRef.current;
+      if (!thumb) return;
+
+      const targetX = nextChecked ? travelPx : 0;
+
+      if (reduceMotion || thumbFirstLayoutRef.current) {
+        thumbFirstLayoutRef.current = false;
+        remove(thumb);
+        thumb.style.transform = `translate(${targetX}px, 0)`;
+        return;
+      }
+
+      remove(thumb);
+      void animate(thumb, {
+        translateX: targetX,
+        duration: MOTION_SWITCH_THUMB_MS,
+        ease: MOTION_SWITCH_THUMB_EASE,
+      });
+    },
+    [reduceMotion],
+  );
+
+  useLayoutEffect(() => {
+    travelPxRef.current = fallbackTravelPx;
+    syncThumbPosition(checked, travelPxRef.current);
+  }, [checked, fallbackTravelPx, syncThumbPosition]);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -111,7 +136,8 @@ export function SwitchTrack({
     if (!track || !thumb) return;
 
     const update = () => {
-      setTravelPx(measureSwitchTravel(track, thumb));
+      travelPxRef.current = measureSwitchTravel(track, thumb);
+      syncThumbPosition(checked, travelPxRef.current);
     };
 
     update();
@@ -119,7 +145,7 @@ export function SwitchTrack({
     ro.observe(track);
     ro.observe(thumb);
     return () => ro.disconnect();
-  }, [size, thickness, fallbackTravelPx]);
+  }, [checked, size, syncThumbPosition, thickness, fallbackTravelPx]);
 
   useEffect(() => {
     return () => {
@@ -136,27 +162,6 @@ export function SwitchTrack({
       }
     };
   }, []);
-
-  useLayoutEffect(() => {
-    const thumb = thumbRef.current;
-    if (!thumb) return;
-
-    const targetX = checked ? travelPx : 0;
-
-    if (reduceMotion || thumbFirstLayoutRef.current) {
-      thumbFirstLayoutRef.current = false;
-      remove(thumb);
-      thumb.style.transform = `translate(${targetX}px, 0)`;
-      return;
-    }
-
-    remove(thumb);
-    void animate(thumb, {
-      translateX: targetX,
-      duration: MOTION_SWITCH_THUMB_MS,
-      ease: MOTION_SWITCH_THUMB_EASE,
-    });
-  }, [checked, reduceMotion, travelPx]);
 
   useLayoutEffect(() => {
     const trackFill = trackFillRef.current;
@@ -331,7 +336,7 @@ export function SwitchThumb({ className, children, ...rest }: SwitchThumbProps) 
     <span
       ref={ctx.thumbRef}
       className={cn(
-        "absolute inset-y-0 left-0 aspect-square h-full w-auto will-change-transform",
+        "absolute inset-y-0 left-0 aspect-square h-full w-auto will-change-transform flex",
         className,
       )}
       {...rest}

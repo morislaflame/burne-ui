@@ -258,7 +258,7 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
 ) {
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const liftedRef = useRef<HTMLElement | null>(null);
-  const [anchorCommitGen, setAnchorCommitGen] = useState(0);
+  const [anchorCommitGen] = useState(1);
 
   const setMergedRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -271,10 +271,6 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
 
   const registerLiftTarget = useCallback((el: HTMLElement | null) => {
     liftedRef.current = el;
-  }, []);
-
-  useLayoutEffect(() => {
-    setAnchorCommitGen((g) => g + 1);
   }, []);
 
   const ctx = useMemo(

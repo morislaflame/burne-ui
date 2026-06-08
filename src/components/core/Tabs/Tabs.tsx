@@ -122,7 +122,8 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>(function TabsR
 ) {
   const baseId = useId();
   const [value, setInternalValue] = useMergedTabsValue(valueProp, defaultValue);
-  const tabElementsRef = useRef(new Map<string, HTMLButtonElement>());
+  const tabElementsRef = useRef<Map<string, HTMLButtonElement>>(null!);
+  if (!tabElementsRef.current) tabElementsRef.current = new Map();
   const [layoutEpoch, setLayoutEpoch] = useState(0);
 
   const setValue = useCallback(
@@ -254,6 +255,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     <div
       ref={setRefs}
       role="tablist"
+      tabIndex={disabled ? -1 : 0}
       aria-orientation={orientation}
       aria-disabled={disabled || undefined}
       className={cn(
