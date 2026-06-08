@@ -43,7 +43,7 @@ function useAccordionContext() {
   return ctx;
 }
 
-export function ChevronSvg({ className = "" }: { className?: string }) {
+function ChevronSvg({ className = "" }: { className?: string }) {
   return (
     <svg
       className={`shrink-0 ${className}`}

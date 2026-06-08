@@ -395,7 +395,7 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
 
 // ─── CalendarHeader ───────────────────────────────────────────────────────────
 
-export function CalendarNavButton({
+function CalendarNavButton({
   label,
   size,
   onClick,
@@ -531,7 +531,7 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
 
 // ─── CalendarDaysView (internal) ──────────────────────────────────────────────
 
-export function CalendarDaysView() {
+function CalendarDaysView() {
   const {
     viewDate,
     selectedDates,
@@ -668,7 +668,7 @@ export function CalendarDaysView() {
 
 // ─── CalendarMonthsView (internal) ────────────────────────────────────────────
 
-export function CalendarMonthsView() {
+function CalendarMonthsView() {
   const { viewDate, onMonthPress, selectedDates, size, locale } = useCalendar();
   const year = viewDate.getFullYear();
   const today = new Date();
@@ -700,7 +700,7 @@ export function CalendarMonthsView() {
 
 // ─── CalendarYearsView (internal) ─────────────────────────────────────────────
 
-export function CalendarYearsView() {
+function CalendarYearsView() {
   const { viewDate, onYearPress, selectedDates, size } = useCalendar();
   const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
   // Show decade - 1 to decade + 10 (12 items total, with prev/next year for context)

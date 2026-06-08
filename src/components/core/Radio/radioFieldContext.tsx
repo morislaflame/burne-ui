@@ -43,8 +43,10 @@ export function useRadioFieldContext() {
   return ctx;
 }
 
-export function useOptionalRadioFieldContext() {
+function useOptionalRadioFieldContext() {
   return useContext(RadioFieldContext);
 }
 
 export { RadioFieldContext };
+
+void useOptionalRadioFieldContext;

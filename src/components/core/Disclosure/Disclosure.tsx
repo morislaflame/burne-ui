@@ -168,7 +168,7 @@ const EASE = MOTION_INTERACTIVE_EASE;
 
 function useContentAnimation(
   shellRef: React.RefObject<HTMLDivElement | null>,
-  innerRef: React.RefObject<HTMLDivElement | null>,
+  innerRef: React.RefObject<HTMLElement | null>,
   open: boolean,
 ) {
   const isFirstRender = useRef(true);
@@ -425,7 +425,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
     const { open, panelId, triggerId, size, variant } = useDisclosureCtx();
 
     const shellRef = useRef<HTMLDivElement>(null);
-    const innerRef = useRef<HTMLDivElement>(null);
+    const innerRef = useRef<HTMLElement>(null);
     useContentAnimation(shellRef, innerRef, open);
 
     const setShellRef = useCallback(
@@ -455,16 +455,15 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
         aria-hidden={!open}
         className="overflow-hidden"
       >
-        <div
+        <section
           ref={innerRef}
           id={panelId}
-          role="region"
           aria-labelledby={triggerId}
           className={innerCls}
           {...rest}
         >
           {children}
-        </div>
+        </section>
       </div>
     );
   },

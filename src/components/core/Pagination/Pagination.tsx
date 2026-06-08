@@ -61,7 +61,7 @@ type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
 };
 
-export const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiveProps>(
+const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiveProps>(
   function PaginationInteractive(
     { children, className, disabled, onPointerDown, onPointerEnter, onPointerLeave, ...rest },
     ref,

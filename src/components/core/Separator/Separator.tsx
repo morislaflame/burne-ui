@@ -1,11 +1,11 @@
-import { forwardRef, type HTMLAttributes } from "react";
+import { forwardRef, type HTMLAttributes, type Ref } from "react";
 
 import { cn } from "@/utils/cn";
 
 export type SeparatorOrientation = "horizontal" | "vertical";
 
 export type SeparatorProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   "role"
 > & {
   /** Линия или столбец. По умолчанию горизонтальная линия во всю ширину. */
@@ -15,7 +15,7 @@ export type SeparatorProps = Omit<
 /**
  * Разделитель списков и блоков — по теме (`border-base`).
  */
-export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
+export const Separator = forwardRef<HTMLElement, SeparatorProps>(
   function Separator(
     {
       orientation = "horizontal",
@@ -24,18 +24,24 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
     },
     ref,
   ) {
+    const sharedClassName = cn(
+      "box-border shrink-0 border-solid border-base",
+      orientation === "horizontal"
+        ? "my-xsmall h-0 w-full min-w-0 max-w-full border-t"
+        : "mx-xsmall min-h-[1.5rem] w-0 self-stretch border-l",
+      className,
+    );
+
+    if (orientation === "horizontal") {
+      return <hr ref={ref as Ref<HTMLHRElement>} className={sharedClassName} {...rest} />;
+    }
+
     return (
       <div
-        ref={ref}
+        ref={ref as Ref<HTMLDivElement>}
         role="separator"
-        aria-orientation={orientation === "vertical" ? "vertical" : undefined}
-        className={cn(
-          "box-border shrink-0 border-solid border-base",
-          orientation === "horizontal"
-            ? "my-xsmall h-0 w-full min-w-0 max-w-full border-t"
-            : "mx-xsmall min-h-[1.5rem] w-0 self-stretch border-l",
-          className,
-        )}
+        aria-orientation="vertical"
+        className={sharedClassName}
         {...rest}
       />
     );

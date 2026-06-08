@@ -144,7 +144,7 @@ export const Circle: Story = {
     shape: "circle",
     style: { width: 120, height: 120 },
     children: (
-      <span style={{ fontSize: 32 }} role="img" aria-label="star">
+      <span style={{ fontSize: 32 }} aria-label="star">
         ★
       </span>
     ),

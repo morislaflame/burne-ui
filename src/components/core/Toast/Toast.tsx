@@ -331,7 +331,7 @@ type ToastItemWrapperProps = {
   onHeightChange: (id: string, h: number) => void;
 };
 
-export function ToastItemWrapper({
+function ToastItemWrapper({
   entry,
   reverseIdx,
   total,
@@ -460,7 +460,7 @@ type ToastViewportProps = {
   onRemoveFinal: (id: string) => void;
 };
 
-export function ToastViewport({
+function ToastViewport({
   placement,
   sorted,
   dismissingIds,

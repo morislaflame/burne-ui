@@ -156,7 +156,7 @@ type BreadcrumbsEllipsisMenuProps = {
   hiddenItems: BreadcrumbItemData[];
 };
 
-export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
+function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
   const count = hiddenItems.length;
   const liftRef = useRef<HTMLSpanElement>(null);
 

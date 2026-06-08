@@ -32,7 +32,6 @@ export const Field = Object.assign(FieldRoot, {
 export {
   FieldRoot,
   FieldHint,
-  FieldLabel,
   FieldError,
   FieldSet,
   FieldSetGroup,

@@ -23,7 +23,7 @@ export function useOptionalToggleButtonGroupContext() {
   return useContext(ToggleButtonGroupContext);
 }
 
-export function useToggleButtonGroupContext(): ToggleButtonGroupContextValue {
+function useToggleButtonGroupContext(): ToggleButtonGroupContextValue {
   const ctx = useContext(ToggleButtonGroupContext);
   if (!ctx) {
     throw new Error("ToggleButton с `value` должен быть внутри <ToggleButtonGroup>.");
@@ -32,3 +32,5 @@ export function useToggleButtonGroupContext(): ToggleButtonGroupContextValue {
 }
 
 export { ToggleButtonGroupContext };
+
+void useToggleButtonGroupContext;

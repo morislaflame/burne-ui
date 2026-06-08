@@ -137,7 +137,7 @@ function hasExpandableMessage(children: ReactNode): boolean {
   return found;
 }
 
-export function ChevronSvg({ className = "" }: { className?: string }) {
+function ChevronSvg({ className = "" }: { className?: string }) {
   return (
     <svg
       className={`shrink-0 ${className}`}
@@ -349,10 +349,9 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
         )}
       >
         <div className="min-h-0 overflow-hidden">
-          <div
+          <section
             ref={ref}
             id={panelId}
-            role="region"
             aria-labelledby={headerId}
             aria-hidden={!open}
             inert={!open}
@@ -360,7 +359,7 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             {...props}
           >
             {children}
-          </div>
+          </section>
         </div>
       </div>
     );

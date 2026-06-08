@@ -1,6 +1,6 @@
 import { Skeleton, SkeletonBlock, SkeletonCircle, SkeletonText } from "./Skeleton";
 
-export const SkeletonCompound = Object.assign(Skeleton, {
+const SkeletonCompound = Object.assign(Skeleton, {
   Circle: SkeletonCircle,
   Text: SkeletonText,
   Block: SkeletonBlock,

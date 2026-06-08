@@ -3,7 +3,7 @@ import { cn } from "@/utils/cn";
 export type OptionControlLabelSide = "left" | "right";
 
 /** Строки grid: label в row 1, hint/error — row 2 (+ row 3 при hint и error). */
-export function optionControlSecondaryLineCount(hasHint: boolean, hasError: boolean): number {
+function optionControlSecondaryLineCount(hasHint: boolean, hasError: boolean): number {
   return (hasHint ? 1 : 0) + (hasError ? 1 : 0);
 }
 
@@ -103,3 +103,5 @@ export function optionListItemIconCellClass(hasIndicator: boolean) {
     hasIndicator ? "col-start-3" : "col-start-2",
   );
 }
+
+void optionControlSecondaryLineCount;

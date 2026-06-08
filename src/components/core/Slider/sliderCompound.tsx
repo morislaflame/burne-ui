@@ -29,7 +29,7 @@ export type SliderTrackContextValue = {
 
 const SliderTrackContext = createContext<SliderTrackContextValue | null>(null);
 
-export function useSliderTrackContext() {
+function useSliderTrackContext() {
   const ctx = useContext(SliderTrackContext);
   if (!ctx) {
     throw new Error("Slider.Rail, Slider.Fill, Slider.Thumb, Slider.Icon — внутри Slider.Track");

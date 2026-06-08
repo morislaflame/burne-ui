@@ -10,7 +10,7 @@ export type FieldLabelContextValue = {
 
 const FieldLabelContext = createContext<FieldLabelContextValue | null>(null);
 
-export function useFieldLabelContext() {
+function useFieldLabelContext() {
   const ctx = useContext(FieldLabelContext);
   if (!ctx) {
     throw new Error("Label должен быть внутри поля с FieldLabelContext (Input, ComboBox, Meter, …).");
@@ -23,3 +23,5 @@ export function useOptionalFieldLabelContext() {
 }
 
 export { FieldLabelContext };
+
+void useFieldLabelContext;

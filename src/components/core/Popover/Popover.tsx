@@ -256,9 +256,9 @@ export function PopoverRoot({
 
 PopoverRoot.displayName = "PopoverRoot";
 
-export type PopoverTriggerProps = HTMLAttributes<HTMLSpanElement>;
+export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement>;
 
-export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(function PopoverTrigger(
+export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(function PopoverTrigger(
   { className = "", children, onClick, ...rest },
   ref,
 ) {
@@ -266,7 +266,7 @@ export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(f
 
   const toggle = useCallback(
     (e: ReactMouseEvent<HTMLElement>) => {
-      onClick?.(e as ReactMouseEvent<HTMLSpanElement>);
+      onClick?.(e as ReactMouseEvent<HTMLButtonElement>);
       if (e.defaultPrevented) return;
       setOpen(!open);
     },
@@ -274,7 +274,7 @@ export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(f
   );
 
   const handleKeyDown = useCallback(
-    (e: ReactKeyboardEvent<HTMLSpanElement>) => {
+    (e: ReactKeyboardEvent<HTMLButtonElement>) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         toggle(e as unknown as ReactMouseEvent<HTMLElement>);
@@ -284,7 +284,7 @@ export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(f
   );
 
   const mergedRef = useCallback(
-    (node: HTMLSpanElement | null) => {
+    (node: HTMLButtonElement | null) => {
       triggerRef.current = node;
       if (typeof ref === "function") ref(node);
       else if (ref) ref.current = node;
@@ -314,11 +314,10 @@ export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(f
   }
 
   return (
-    <span
-      ref={mergedRef}
-      role="button"
-      tabIndex={0}
-      className={cn("inline-flex shrink-0", className)}
+    <button
+      type="button"
+      ref={mergedRef as Ref<HTMLButtonElement>}
+      className={cn("inline-flex shrink-0 border-0 bg-transparent p-0", className)}
       aria-expanded={open}
       aria-controls={open ? popoverId : undefined}
       onClick={toggle}
@@ -326,7 +325,7 @@ export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(f
       {...rest}
     >
       {children}
-    </span>
+    </button>
   );
 });
 

@@ -194,6 +194,7 @@ export const DialogRoot = function Dialog({
   const [hasDescription, setHasDescription] = useState(false);
   /** Пока true — портал остаётся в DOM (включая анимацию закрытия). */
   const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -218,7 +219,10 @@ export const DialogRoot = function Dialog({
     let cancelled = false;
 
     const finishClose = () => {
-      if (!cancelled) setMounted(false);
+      if (!cancelled) {
+        dialogRef.current?.close();
+        setMounted(false);
+      }
     };
 
     if (!overlay || !panel) {
@@ -256,21 +260,15 @@ export const DialogRoot = function Dialog({
     };
   }, [open, mounted]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange]);
-
   useLayoutEffect(() => {
     if (!open) return;
     if (!mounted) {
       setMounted(true);
       return;
     }
+
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
 
     const overlay = overlayRef.current;
     const panel = panelRef.current;
@@ -322,9 +320,14 @@ export const DialogRoot = function Dialog({
 
   return createPortal(
     <DialogContext.Provider value={ctxValue}>
-      <div
-        className="fixed inset-0 z-[100] flex items-center justify-center p-mid"
-        role="presentation"
+      <dialog
+        ref={dialogRef}
+        onClose={() => onOpenChange(false)}
+        aria-labelledby={titleId}
+        aria-describedby={hasDescription ? descriptionId : undefined}
+        className={cn(
+          "fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex",
+        )}
         {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
         <div
@@ -341,11 +344,6 @@ export const DialogRoot = function Dialog({
         />
         <div
           ref={panelRef}
-          role="dialog"
-          aria-modal={open}
-          aria-hidden={!open}
-          aria-labelledby={titleId}
-          aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
             "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border border-base bg-surface text-left text-foreground shadow-token-lg outline-none",
@@ -359,7 +357,7 @@ export const DialogRoot = function Dialog({
         >
           {children}
         </div>
-      </div>
+      </dialog>
     </DialogContext.Provider>,
     document.body,
   );

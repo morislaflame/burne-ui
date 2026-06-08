@@ -37,11 +37,11 @@ function readShadowVar(varName: string): string {
 }
 
 /** «Пустая» тень: визуально как без тени, но интерполируется с `--shadow-sm`. */
-export const SHADOW_NONE = () => readShadowVar("--shadow-none");
+const SHADOW_NONE = () => readShadowVar("--shadow-none");
 
 export const SHADOW_SM = () => readShadowVar("--shadow-sm");
 export const SHADOW_MD = () => readShadowVar("--shadow-md");
-export const SHADOW_LG = () => readShadowVar("--shadow-lg");
+const SHADOW_LG = () => readShadowVar("--shadow-lg");
 
 /**
  * Выставляет начальное значение `--el-shadow` на элементе.
@@ -54,11 +54,11 @@ export function initElementShadow(element: HTMLElement | null, shadow: string): 
 }
 
 /** @deprecated Используйте `MOTION_INTERACTIVE_MS` из `motionTokens` */
-export const INTERACTIVE_HOVER_LIFT_MS = MOTION_INTERACTIVE_MS;
+const INTERACTIVE_HOVER_LIFT_MS = MOTION_INTERACTIVE_MS;
 /** @deprecated Используйте `MOTION_INTERACTIVE_EASE` */
-export const INTERACTIVE_HOVER_LIFT_EASE = MOTION_INTERACTIVE_EASE;
+const INTERACTIVE_HOVER_LIFT_EASE = MOTION_INTERACTIVE_EASE;
 /** @deprecated Используйте `MOTION_HOVER_LIFT_SCALE` */
-export const INTERACTIVE_HOVER_LIFT_SCALE = MOTION_HOVER_LIFT_SCALE;
+const INTERACTIVE_HOVER_LIFT_SCALE = MOTION_HOVER_LIFT_SCALE;
 
 export function prefersReducedInteractiveHoverLift(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -94,7 +94,7 @@ const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
  * Возвращает scale < 1 для squeeze, адаптированный под фактический размер элемента.
  * Все компоненты автоматически используют его через `animateInteractivePressSqueeze`.
  */
-export function adaptiveSqueezeScale(element: HTMLElement): number {
+function adaptiveSqueezeScale(element: HTMLElement): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
   const baseDelta = 1 - (MOTION_PRESS_SQUEEZE_SCALE[1] as number);
@@ -109,7 +109,7 @@ export function adaptiveSqueezeScale(element: HTMLElement): number {
  * Возвращает scale > 1 для hover-lift, адаптированный под фактический размер элемента.
  * Передайте явный `liftScale`, чтобы переопределить (напр. Badge.Anchor).
  */
-export function adaptiveHoverLiftScale(element: HTMLElement): number {
+function adaptiveHoverLiftScale(element: HTMLElement): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
   const delta = Math.min(
@@ -245,3 +245,10 @@ export function useInteractiveHoverLiftOnContainer(
     liftScale,
   );
 }
+
+void [
+  SHADOW_LG,
+  INTERACTIVE_HOVER_LIFT_MS,
+  INTERACTIVE_HOVER_LIFT_EASE,
+  INTERACTIVE_HOVER_LIFT_SCALE,
+];

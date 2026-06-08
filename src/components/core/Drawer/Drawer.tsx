@@ -306,6 +306,7 @@ export const DrawerRoot = function Drawer({
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   /** true = Handle уже выполнил анимацию выхода, повторная не нужна */
@@ -348,7 +349,12 @@ export const DrawerRoot = function Drawer({
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     let cancelled = false;
-    const finish = () => { if (!cancelled) setMounted(false); };
+    const finish = () => {
+      if (!cancelled) {
+        dialogRef.current?.close();
+        setMounted(false);
+      }
+    };
 
     // Handle уже анимировал выход — просто убираем из DOM
     if (skipCloseAnimRef.current) {
@@ -383,6 +389,10 @@ export const DrawerRoot = function Drawer({
   // open animation
   useLayoutEffect(() => {
     if (!open || !mounted) return;
+
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     if (!overlay || !panel) return;
@@ -405,16 +415,6 @@ export const DrawerRoot = function Drawer({
     panelRef.current.focus();
   }, [open, mounted]);
 
-  // escape key
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [open, onOpenChange]);
-
   if (typeof document === "undefined" || !mounted) return null;
 
   const lightUi = readBurneLightTheme();
@@ -434,12 +434,14 @@ export const DrawerRoot = function Drawer({
 
   return createPortal(
     <DrawerContext.Provider value={ctxValue}>
-      <div
-        className="fixed inset-0 z-[100]"
-        role="presentation"
+      <dialog
+        ref={dialogRef}
+        onClose={() => onOpenChange(false)}
+        aria-labelledby={titleId}
+        aria-describedby={hasDescription ? descriptionId : undefined}
+        className="fixed inset-0 z-[100] m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block"
         {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
-        {/* backdrop */}
         <div
           ref={overlayRef}
           className={cn(
@@ -456,14 +458,8 @@ export const DrawerRoot = function Drawer({
           }}
         />
 
-        {/* panel */}
         <div
           ref={panelRef}
-          role="dialog"
-          aria-modal={open}
-          aria-hidden={!open}
-          aria-labelledby={titleId}
-          aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
             "absolute z-10 flex flex-col",
@@ -476,7 +472,7 @@ export const DrawerRoot = function Drawer({
         >
           {panelChildren}
         </div>
-      </div>
+      </dialog>
     </DrawerContext.Provider>,
     document.body,
   );

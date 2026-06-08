@@ -8,14 +8,14 @@ function optionSearchHaystack(opt: ComboBoxOption): string {
   return parts.join(" ").toLowerCase();
 }
 
-export function comboBoxOptionSearchHaystack(opt: ComboBoxOption): string {
+function comboBoxOptionSearchHaystack(opt: ComboBoxOption): string {
   return optionSearchHaystack(opt);
 }
 
-export function comboBoxOptionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
+function comboBoxOptionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
   const t = query.trim().toLowerCase();
   if (!t) return true;
-  return optionSearchHaystack(opt).includes(t);
+  return comboBoxOptionSearchHaystack(opt).includes(t);
 }
 
 export function comboBoxFilteredValues(options: ComboBoxOption[], query: string): string[] {

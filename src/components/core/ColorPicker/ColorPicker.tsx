@@ -43,7 +43,7 @@ export type ColorPickerProps = {
   disabled?: boolean;
 };
 
-export type ColorPickerTriggerProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
+export type ColorPickerTriggerProps = Omit<HTMLAttributes<HTMLButtonElement>, "children"> & {
   swatchSize?: ColorSwatchSize;
 };
 
@@ -163,7 +163,7 @@ ColorPickerRoot.displayName = "ColorPickerRoot";
 
 // ─── Trigger ─────────────────────────────────────────────────────────────────
 
-export const ColorPickerTrigger = forwardRef<HTMLSpanElement, ColorPickerTriggerProps>(
+export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTriggerProps>(
   function ColorPickerTrigger({ swatchSize, className = "", ...rest }, ref) {
     const { hex, disabled, size } = useColorPickerContext();
     return (
@@ -184,7 +184,7 @@ ColorPickerTrigger.displayName = "ColorPickerTrigger";
 
 // ─── 2D Saturation × Value area ──────────────────────────────────────────────
 
-export function ColorPickerArea({ size }: { size: ColorPickerSize }) {
+function ColorPickerArea({ size }: { size: ColorPickerSize }) {
   const { hsva, setHsva } = useColorPickerContext();
   const areaRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
@@ -249,7 +249,7 @@ export function ColorPickerArea({ size }: { size: ColorPickerSize }) {
 
 // ─── Hex input ────────────────────────────────────────────────────────────────
 
-export function ColorPickerHexInput() {
+function ColorPickerHexInput() {
   const { hex, setHsva } = useColorPickerContext();
   const [isEditing, setIsEditing] = useState(false);
   const [editDraft, setEditDraft] = useState("");

@@ -10,7 +10,7 @@ export type AlertContextValue = {
 
 const AlertContext = createContext<AlertContextValue | null>(null);
 
-export function useAlertContext() {
+function useAlertContext() {
   const ctx = useContext(AlertContext);
   if (!ctx) {
     throw new Error("Alert.* должны быть внутри <Alert>.");
@@ -18,8 +18,11 @@ export function useAlertContext() {
   return ctx;
 }
 
-export function useOptionalAlertContext() {
+function useOptionalAlertContext() {
   return useContext(AlertContext);
 }
 
 export { AlertContext };
+
+void useAlertContext;
+void useOptionalAlertContext;

@@ -52,7 +52,7 @@ export function useComboBoxFieldContext() {
   return ctx;
 }
 
-export function useOptionalComboBoxFieldContext() {
+function useOptionalComboBoxFieldContext() {
   return useContext(ComboBoxFieldContext);
 }
 
@@ -62,8 +62,11 @@ export function useComboBoxContext() {
   return ctx;
 }
 
-export function useOptionalComboBoxContext() {
+function useOptionalComboBoxContext() {
   return useContext(ComboBoxContext);
 }
 
 export { ComboBoxFieldContext, ComboBoxContext };
+
+void useOptionalComboBoxFieldContext;
+void useOptionalComboBoxContext;

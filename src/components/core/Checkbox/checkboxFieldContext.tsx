@@ -56,8 +56,10 @@ export function useCheckboxFieldContext() {
   return ctx;
 }
 
-export function useOptionalCheckboxFieldContext() {
+function useOptionalCheckboxFieldContext() {
   return useContext(CheckboxFieldContext);
 }
 
 export { CheckboxFieldContext };
+
+void useOptionalCheckboxFieldContext;

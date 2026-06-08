@@ -4,7 +4,6 @@ export {
 } from "./ToggleButtonGroup";
 
 export {
-  useToggleButtonGroupContext,
   useOptionalToggleButtonGroupContext,
   type ToggleButtonGroupType,
   type ToggleButtonGroupOrientation,

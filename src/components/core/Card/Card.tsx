@@ -25,11 +25,11 @@ export type CardVariant = "default" | "outline" | "secondary";
 
 /** Событие активации нажимаемой карточки (`pressable`): клик или клавиши Enter / Space. */
 export type CardPressEvent =
-  | MouseEvent<HTMLDivElement>
-  | KeyboardEvent<HTMLDivElement>;
+  | MouseEvent<HTMLElement>
+  | KeyboardEvent<HTMLElement>;
 
 export type CardProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   "onClick" | "onKeyDown"
 > & {
   /** Поверхность и обводка. По умолчанию `default`. */
@@ -42,8 +42,8 @@ export type CardProps = Omit<
   pressable?: boolean;
   /** Вызывается при активации (`click` или Enter / Space на корне). Имеет смысл только при `pressable`. */
   onPress?: (event: CardPressEvent) => void;
-  onClick?: HTMLAttributes<HTMLDivElement>["onClick"];
-  onKeyDown?: HTMLAttributes<HTMLDivElement>["onKeyDown"];
+  onClick?: HTMLAttributes<HTMLElement>["onClick"];
+  onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
 };
 
 const CARD_SURFACE: Record<CardVariant, string> = {
@@ -127,7 +127,7 @@ export function CardFooter({ className = "", ...rest }: CardFooterProps) {
 
 const CARD_PRESS_SHADOW = { hover: SHADOW_SM() };
 
-export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
+export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   {
     className = "",
     variant = "default",
@@ -143,11 +143,11 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
   },
   ref,
 ) {
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLElement | null>(null);
   const pointerInsideRef = useRef(false);
 
   const setRootRef = useCallback(
-    (node: HTMLDivElement | null) => {
+    (node: HTMLElement | null) => {
       rootRef.current = node;
       if (typeof ref === "function") ref(node);
       else if (ref) ref.current = node;
@@ -171,7 +171,7 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
   }, [pressable]);
 
   const handlePointerDown = useCallback(
-    (e: PointerEvent<HTMLDivElement>) => {
+    (e: PointerEvent<HTMLElement>) => {
       onPointerDownProp?.(e);
       if (
         !pressable ||
@@ -194,7 +194,7 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
   );
 
   const handleClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
+    (e: MouseEvent<HTMLElement>) => {
       onClickProp?.(e);
       if (!pressable || e.defaultPrevented) return;
       onPress?.(e);
@@ -203,15 +203,10 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
   );
 
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
+    (e: KeyboardEvent<HTMLElement>) => {
       onKeyDownProp?.(e);
-      if (!pressable || e.defaultPrevented) return;
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        (e.currentTarget as HTMLDivElement).click();
-      }
     },
-    [onKeyDownProp, pressable],
+    [onKeyDownProp],
   );
 
   const rootClassName = cn(
@@ -225,12 +220,11 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
 
   if (pressable) {
     return (
-      <div
+      <button
+        type="button"
         {...rest}
         ref={setRootRef}
-        role="button"
-        tabIndex={0}
-        className={rootClassName}
+        className={cn(rootClassName, "w-full border-0 p-0 text-left")}
         onPointerOver={(e) => {
           onPointerOverProp?.(e);
           if (!e.defaultPrevented) {
@@ -246,18 +240,17 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
         onKeyDown={handleKeyDown}
       >
         <div className="relative flex min-w-0 flex-1 flex-col">{children}</div>
-      </div>
+      </button>
     );
   }
 
   if (onClickProp || onKeyDownProp || onPointerDownProp) {
     return (
-      <div
+      <button
+        type="button"
         {...rest}
         ref={setRootRef}
-        role="button"
-        tabIndex={0}
-        className={rootClassName}
+        className={cn(rootClassName, "w-full border-0 p-0 text-left")}
         onPointerOver={onPointerOverProp}
         onPointerOut={onPointerOutProp}
         onPointerDown={onPointerDownProp}
@@ -265,7 +258,7 @@ export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
         onKeyDown={onKeyDownProp}
       >
         {children}
-      </div>
+      </button>
     );
   }
 

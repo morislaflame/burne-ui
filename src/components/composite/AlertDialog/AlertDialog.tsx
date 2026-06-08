@@ -323,6 +323,7 @@ export const AlertDialogRoot = function AlertDialog({
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -347,7 +348,10 @@ export const AlertDialogRoot = function AlertDialog({
     let cancelled = false;
 
     const finishClose = () => {
-      if (!cancelled) setMounted(false);
+      if (!cancelled) {
+        dialogRef.current?.close();
+        setMounted(false);
+      }
     };
 
     if (!overlay || !panel) {
@@ -386,21 +390,15 @@ export const AlertDialogRoot = function AlertDialog({
     };
   }, [open, mounted]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") e.preventDefault();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
-
   useLayoutEffect(() => {
     if (!open) return;
     if (!mounted) {
       setMounted(true);
       return;
     }
+
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
 
     const overlay = overlayRef.current;
     const panel = panelRef.current;
@@ -448,9 +446,13 @@ export const AlertDialogRoot = function AlertDialog({
 
   return createPortal(
     <AlertDialogContext.Provider value={ctxValue}>
-      <div
-        className="fixed inset-0 z-[100] flex items-center justify-center p-mid"
-        role="presentation"
+      <dialog
+        ref={dialogRef}
+        role="alertdialog"
+        onCancel={(e) => e.preventDefault()}
+        aria-labelledby={titleId}
+        aria-describedby={hasDescription ? descriptionId : undefined}
+        className="fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex"
         {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
         <div
@@ -466,11 +468,6 @@ export const AlertDialogRoot = function AlertDialog({
         />
         <div
           ref={panelRef}
-          role="alertdialog"
-          aria-modal={open ? true : undefined}
-          aria-hidden={!open}
-          aria-labelledby={titleId}
-          aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
             "relative z-10 flex min-h-0 w-full flex-col overflow-hidden rounded-mid text-left outline-none",
@@ -487,7 +484,7 @@ export const AlertDialogRoot = function AlertDialog({
         >
           {children}
         </div>
-      </div>
+      </dialog>
     </AlertDialogContext.Provider>,
     document.body,
   );

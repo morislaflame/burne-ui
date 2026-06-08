@@ -49,7 +49,7 @@ type SwitchTrackContextValue = {
 
 const SwitchTrackContext = createContext<SwitchTrackContextValue | null>(null);
 
-export function useSwitchTrackContext() {
+function useSwitchTrackContext() {
   const ctx = useContext(SwitchTrackContext);
   if (!ctx) {
     throw new Error("Switch.Track, Switch.Fill, Switch.Thumb, Switch.Icon — внутри Switch.Track");
