@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { SkeletonCompound as Skeleton } from "./Skeleton";
+import { Skeleton } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

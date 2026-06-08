@@ -32,6 +32,7 @@ import {
   type ComboBoxOption,
   useComboBoxContext,
 } from "./comboBoxContext";
+import { comboBoxFilteredValues } from "./comboBoxOptionFilter";
 
 function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {
@@ -41,20 +42,6 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
       else (r as MutableRefObject<T | null>).current = node;
     }
   };
-}
-
-function optionSearchHaystack(opt: ComboBoxOption): string {
-  const parts: string[] = [opt.value];
-  if (opt.filterText) parts.push(opt.filterText);
-  if (typeof opt.label === "string") parts.push(opt.label);
-  if (typeof opt.hint === "string") parts.push(opt.hint);
-  return parts.join(" ").toLowerCase();
-}
-
-function optionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
-  const t = query.trim().toLowerCase();
-  if (!t) return true;
-  return optionSearchHaystack(opt).includes(t);
 }
 
 const VARIANT_SHELL: Record<InputVariant, string> = {
@@ -218,9 +205,14 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
     const openingRef = useRef(false);
     const queuedFilterCharRef = useRef<string | null>(null);
 
+    const optionsByValue = useMemo(
+      () => new Map(options.map((o) => [o.value, o])),
+      [options],
+    );
+
     const selectedOption = useMemo(
-      () => options.find((o) => o.value === value),
-      [options, value],
+      () => optionsByValue.get(value),
+      [optionsByValue, value],
     );
 
     const selectedDisplayString = useMemo(() => {
@@ -244,7 +236,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       const nextQ = append ?? "";
       setFilterQuery(nextQ);
 
-      const fi = options.filter((o) => optionMatchesFilter(o, nextQ)).map((o) => o.value);
+      const fi = comboBoxFilteredValues(options, nextQ);
       const selectedIdx = fi.indexOf(value);
       setActiveValue(selectedIdx >= 0 ? value : fi[0] ?? null);
 
@@ -287,26 +279,26 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         for (let step = 0; step < filteredValues.length; step += 1) {
           j = (j + delta + filteredValues.length) % filteredValues.length;
           const v = filteredValues[j];
-          const opt = options.find((o) => o.value === v);
+          const opt = optionsByValue.get(v);
           if (v && opt && !opt.disabled) {
             setActiveValue(v);
             return;
           }
         }
       },
-      [activeValue, filteredValues, options, setActiveValue],
+      [activeValue, filteredValues, optionsByValue, setActiveValue],
     );
 
     const selectValue = useCallback(
       (next: string) => {
-        const opt = options.find((o) => o.value === next);
+        const opt = optionsByValue.get(next);
         if (!opt || opt.disabled) return;
         setValue(next);
         setOpen(false);
         setFilterQuery("");
         inputRef.current?.focus();
       },
-      [inputRef, options, setFilterQuery, setOpen, setValue],
+      [inputRef, optionsByValue, setFilterQuery, setOpen, setValue],
     );
 
     const handleChange = useCallback(
@@ -367,7 +359,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         if (e.key === "Home") {
           e.preventDefault();
           for (const v of filteredValues) {
-            const opt = options.find((o) => o.value === v);
+            const opt = optionsByValue.get(v);
             if (opt && !opt.disabled) {
               setActiveValue(v);
               break;
@@ -379,7 +371,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
           e.preventDefault();
           for (let i = filteredValues.length - 1; i >= 0; i -= 1) {
             const v = filteredValues[i]!;
-            const opt = options.find((o) => o.value === v);
+            const opt = optionsByValue.get(v);
             if (opt && !opt.disabled) {
               setActiveValue(v);
               break;
@@ -395,7 +387,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         onKeyDown,
         open,
         openAfterSqueeze,
-        options,
+        optionsByValue,
         selectValue,
         setActiveValue,
       ],
@@ -571,14 +563,3 @@ ComboBoxPopover.displayName = "ComboBoxPopover";
 export type ComboBoxOptionsProps = {
   options: ComboBoxOption[];
 };
-
-/** Внутренний хелпер: прокидывает options в контекст через ComboBoxRoot. */
-export function comboBoxOptionSearchHaystack(opt: ComboBoxOption): string {
-  return optionSearchHaystack(opt);
-}
-
-export function comboBoxOptionMatchesFilter(opt: ComboBoxOption, query: string): boolean {
-  return optionMatchesFilter(opt, query);
-}
-
-export type { ComboBoxOption };

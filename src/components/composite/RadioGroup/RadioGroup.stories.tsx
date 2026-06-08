@@ -7,7 +7,7 @@ import { Radio } from "@/components/core/Radio";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import { RadioGroup } from "./RadioGroup";
+import { RadioGroup } from ".";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (

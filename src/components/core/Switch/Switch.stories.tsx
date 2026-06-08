@@ -6,8 +6,8 @@ import { IoMoon, IoSunny } from "react-icons/io5";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-  dualApiStorySource,
 } from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 
 import { Switch } from ".";
 

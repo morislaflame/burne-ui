@@ -1,15 +1,33 @@
+import { Label } from "@/components/core/Label";
+
+import {
+  TimeFieldControl,
+  TimeFieldError,
+  TimeFieldHint,
+  TimeFieldRoot,
+} from "./TimeField";
+
+export const TimeField = Object.assign(TimeFieldRoot, {
+  Label,
+  Control: TimeFieldControl,
+  Hint: TimeFieldHint,
+  Error: TimeFieldError,
+});
+
 export {
-  TimeField,
   TimeFieldControl,
   TimeFieldHint,
   TimeFieldError,
   TimeFieldRoot,
-  type TimeFieldRootProps,
-  type TimeFieldControlProps,
-  type TimeFieldHintProps,
-  type TimeFieldErrorProps,
-  type TimeFieldSize,
-  type TimeFieldStatus,
-  type TimeFieldVariant,
-  type TimeFieldFormat,
+} from "./TimeField";
+
+export type {
+  TimeFieldRootProps,
+  TimeFieldControlProps,
+  TimeFieldHintProps,
+  TimeFieldErrorProps,
+  TimeFieldSize,
+  TimeFieldStatus,
+  TimeFieldVariant,
+  TimeFieldFormat,
 } from "./TimeField";

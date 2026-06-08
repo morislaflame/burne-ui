@@ -15,7 +15,7 @@ import { Text } from "@/components/core/Text";
 import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
 import { PIN_IMAGE2 } from "@/utils/mockImages";
 
-import { Dropdown } from "./Dropdown";
+import { Dropdown } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

@@ -1,10 +1,17 @@
-export {
-  Tooltip,
-  type TooltipVariant,
-  type TooltipSize,
-  type TooltipSide,
-  type TooltipRootProps,
-  type TooltipTriggerProps,
-  type TooltipContentProps,
-  type TooltipArrowProps,
+import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from "./Tooltip";
+
+export const Tooltip = Object.assign(TooltipRoot, {
+  Trigger: TooltipTrigger,
+  Content: TooltipContent,
+  Arrow: TooltipArrow,
+});
+
+export type {
+  TooltipVariant,
+  TooltipSize,
+  TooltipSide,
+  TooltipRootProps,
+  TooltipTriggerProps,
+  TooltipContentProps,
+  TooltipArrowProps,
 } from "./Tooltip";

@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 
-import { Drawer, type DrawerPlacement, type DrawerSize } from "./Drawer";
+import { Drawer, type DrawerPlacement, type DrawerSize } from ".";
 
 const decorator = [
   (Story: ComponentType) => (

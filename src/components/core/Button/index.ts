@@ -1,8 +1,2 @@
-export {
-  Button,
-  buttonRippleTone,
-  type ButtonProps,
-  type ButtonAsyncState,
-  type ButtonSize,
-  type ButtonVariant,
-} from "./Button";
+export { Button, type ButtonProps, type ButtonAsyncState, type ButtonSize, type ButtonVariant } from "./Button";
+export { buttonRippleTone } from "./buttonRippleTone";

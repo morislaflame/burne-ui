@@ -3,7 +3,7 @@ import { forwardRef, type FieldsetHTMLAttributes, type HTMLAttributes, type Reac
 import {
   FieldLegend,
   FieldLegendHeader,
-  FieldSet,
+  FieldSetRoot,
   FieldSetActions,
   FieldSetGroup,
   useFieldSetErrorId,
@@ -12,14 +12,12 @@ import {
 import { FieldHint } from "@/components/core/Field";
 import { cn } from "@/utils/cn";
 
-export type OptionGroupOrientation = "vertical" | "horizontal";
+import {
+  OPTION_GROUP_ORIENTATION_LAYOUT,
+  type OptionGroupOrientation,
+} from "./optionGroupLayout";
 
-export const OPTION_GROUP_ORIENTATION_LAYOUT: Record<OptionGroupOrientation, string> = {
-  vertical: "flex flex-col gap-mid",
-  horizontal: "flex flex-row flex-wrap items-start gap-x-large gap-y-mid",
-};
-
-export { joinFieldDescribedBy as joinAriaDescribedBy } from "@/components/core/Field/fieldA11y";
+export type { OptionGroupOrientation };
 
 export type OptionGroupFieldsetProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
@@ -34,7 +32,7 @@ export type OptionGroupFieldsetProps = Omit<
 
 export const OptionGroupFieldset = forwardRef<HTMLFieldSetElement, OptionGroupFieldsetProps>(
   function OptionGroupFieldset(props, ref) {
-    return <FieldSet ref={ref} {...props} />;
+    return <FieldSetRoot ref={ref} {...props} />;
   },
 );
 

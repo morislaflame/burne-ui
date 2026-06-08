@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Button } from "@/components/core/Button";
 
-import { Toast, type ToastPlacement, type ToastStatus } from "./Toast";
+import { Toast, type ToastPlacement, type ToastStatus } from ".";
 import { useToast } from "./useToast";
 
 const decorator = [

@@ -641,11 +641,3 @@ export function TimeFieldError({ children, id: idProp, ...rest }: TimeFieldError
 
 TimeFieldError.displayName = "TimeFieldError";
 
-// ─── compound export ──────────────────────────────────────────────────────────
-
-export const TimeField = Object.assign(TimeFieldRoot, {
-  Label: Label,
-  Control: TimeFieldControl,
-  Hint: TimeFieldHint,
-  Error: TimeFieldError,
-});

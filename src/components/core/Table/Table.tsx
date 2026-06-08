@@ -11,31 +11,22 @@ import {
 } from "react";
 import { IoChevronUp } from "react-icons/io5";
 
-import type { AlertStatus } from "@/components/core/Alert/alertUtils";
 import { cn } from "@/utils/cn";
+
+import { TABLE_ROW_TONE_SURFACE, type TableRowTone } from "./tableRowToneSurface";
 
 // ─── types ─────────────────────────────────────────────────────────────────
 
 export type SortDirection = "ascending" | "descending";
 export type SortDescriptor = { column: string; direction: SortDirection };
 export type TableVariant = "default" | "secondary" | "toned";
-export type TableRowTone = AlertStatus;
+
+export type { TableRowTone };
 export type SelectionMode = "none" | "single" | "multiple";
 export type Selection = Set<string | number> | "all";
 
 export type TableColumnRenderProps = {
   sortDirection?: SortDirection;
-};
-
-/** Фон строки — те же семантические тоны, что у `Alert`. */
-export const TABLE_ROW_TONE_SURFACE: Record<TableRowTone, string> = {
-  default: "bg-surface text-foreground",
-  outline: "surface-outline text-foreground",
-  secondary: "surface-secondary text-foreground",
-  danger: "bg-surface-tint-danger text-foreground",
-  success: "bg-surface-tint-success text-foreground",
-  info: "bg-surface-tint-info text-foreground",
-  warning: "bg-surface-tint-warning text-foreground",
 };
 
 const TONED_ROW_DEFAULT_TONE: TableRowTone = "secondary";
@@ -165,7 +156,7 @@ export type TableFooterProps = HTMLAttributes<HTMLDivElement>;
 
 // ─── Root ────────────────────────────────────────────────────────────────────
 
-const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
+export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
   { variant = "default", className = "", children, ...rest },
   ref,
 ) {
@@ -180,7 +171,7 @@ const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
 
 // ─── ScrollContainer ─────────────────────────────────────────────────────────
 
-const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
+export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
   function TableScrollContainer({ className = "", ...rest }, ref) {
     return (
       <div
@@ -194,7 +185,7 @@ const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProp
 
 // ─── Content (<table>) ───────────────────────────────────────────────────────
 
-const TableContent = forwardRef<HTMLTableElement, TableContentProps>(function TableContent(
+export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(function TableContent(
   {
     selectionMode = "none",
     selectedKeys: selectedKeysProp,
@@ -259,7 +250,7 @@ const TableContent = forwardRef<HTMLTableElement, TableContentProps>(function Ta
 
 // ─── Header (<thead>) ────────────────────────────────────────────────────────
 
-const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
+export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
   function TableHeader({ columns, children, className = "", ...rest }, ref) {
     const variant = useTableVariant();
 
@@ -278,7 +269,7 @@ const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
 
 // ─── Column (<th>) ───────────────────────────────────────────────────────────
 
-const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
+export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
   function TableColumn(
     { id, allowsSorting = false, isRowHeader = false, children, className = "", onClick, ...rest },
     ref,
@@ -356,7 +347,7 @@ const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
 
 // ─── Body (<tbody>) ──────────────────────────────────────────────────────────
 
-const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
+export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
   function TableBody({ items, children, renderEmptyState, className = "", ...rest }, ref) {
     let content: ReactNode;
 
@@ -386,7 +377,7 @@ const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 
 // ─── Row (<tr>) ──────────────────────────────────────────────────────────────
 
-const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
+export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
   function TableRow({ id, tone, children, className = "", onClick, ...rest }, ref) {
     const variant = useTableVariant();
     const { selectionMode, isRowSelected, onRowSelect } = useTableContent();
@@ -458,7 +449,7 @@ const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
 
 // ─── Cell (<td>) ─────────────────────────────────────────────────────────────
 
-const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
+export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
   function TableCell({ className = "", ...rest }, ref) {
     const variant = useTableVariant();
     const row = useTableRow();
@@ -489,7 +480,7 @@ const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
 
 // ─── Footer ──────────────────────────────────────────────────────────────────
 
-const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(
+export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(
   function TableFooter({ className = "", ...rest }, ref) {
     return (
       <div
@@ -506,13 +497,3 @@ const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(
 
 // ─── compound export ──────────────────────────────────────────────────────────
 
-export const Table = Object.assign(TableRoot, {
-  ScrollContainer: TableScrollContainer,
-  Content: TableContent,
-  Header: TableHeader,
-  Column: TableColumn,
-  Body: TableBody,
-  Row: TableRow,
-  Cell: TableCell,
-  Footer: TableFooter,
-});

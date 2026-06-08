@@ -1,20 +1,43 @@
-export {
-  Table,
-  TABLE_ROW_TONE_SURFACE,
-  type TableProps,
-  type TableVariant,
-  type TableRowTone,
-  type TableScrollContainerProps,
-  type TableContentProps,
-  type TableHeaderProps,
-  type TableColumnProps,
-  type TableColumnRenderProps,
-  type TableBodyProps,
-  type TableRowProps,
-  type TableCellProps,
-  type TableFooterProps,
-  type SortDescriptor,
-  type SortDirection,
-  type SelectionMode,
-  type Selection,
+import {
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableContent,
+  TableFooter,
+  TableHeader,
+  TableRoot,
+  TableRow,
+  TableScrollContainer,
+} from "./Table";
+
+export const Table = Object.assign(TableRoot, {
+  ScrollContainer: TableScrollContainer,
+  Content: TableContent,
+  Header: TableHeader,
+  Column: TableColumn,
+  Body: TableBody,
+  Row: TableRow,
+  Cell: TableCell,
+  Footer: TableFooter,
+});
+
+export { TABLE_ROW_TONE_SURFACE } from "./tableRowToneSurface";
+
+export type {
+  TableProps,
+  TableVariant,
+  TableRowTone,
+  TableScrollContainerProps,
+  TableContentProps,
+  TableHeaderProps,
+  TableColumnProps,
+  TableColumnRenderProps,
+  TableBodyProps,
+  TableRowProps,
+  TableCellProps,
+  TableFooterProps,
+  SortDescriptor,
+  SortDirection,
+  SelectionMode,
+  Selection,
 } from "./Table";

@@ -1,12 +1,35 @@
-export {
-  CheckboxGroup,
-  type CheckboxGroupProps,
-  type CheckboxGroupSelection,
-  type CheckboxGroupOrientation,
-  type CheckboxGroupHintProps,
-  type CheckboxGroupLabelProps,
-  type CheckboxGroupLegendProps,
-  type CheckboxGroupListProps,
+import { Label } from "@/components/core/Label";
+import {
+  OptionGroupActions,
+  OptionGroupGroup,
+} from "@/components/composite/utils/optionGroupFieldset";
+
+import {
+  CheckboxGroupError,
+  CheckboxGroupHint,
+  CheckboxGroupLegend,
+  CheckboxGroupList,
+  CheckboxGroupRoot,
+} from "./CheckboxGroup";
+
+export const CheckboxGroup = Object.assign(CheckboxGroupRoot, {
+  Legend: CheckboxGroupLegend,
+  Label,
+  Hint: CheckboxGroupHint,
+  Error: CheckboxGroupError,
+  List: CheckboxGroupList,
+  Group: OptionGroupGroup,
+  Actions: OptionGroupActions,
+});
+
+export type {
+  CheckboxGroupProps,
+  CheckboxGroupSelection,
+  CheckboxGroupOrientation,
+  CheckboxGroupHintProps,
+  CheckboxGroupLabelProps,
+  CheckboxGroupLegendProps,
+  CheckboxGroupListProps,
 } from "./CheckboxGroup";
 export {
   useCheckboxGroupContext,

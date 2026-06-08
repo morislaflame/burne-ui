@@ -9,7 +9,7 @@ import {
   type HTMLAttributes,
 } from "react";
 
-import { sliderThicknessToCss } from "@/components/core/Slider/Slider";
+import { sliderThicknessToCss } from "@/components/core/Slider/sliderThickness";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,

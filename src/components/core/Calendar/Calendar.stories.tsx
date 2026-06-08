@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Calendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from "./Calendar";
+import { Calendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from ".";
 
 // ─── decorator ───────────────────────────────────────────────────────────────
 

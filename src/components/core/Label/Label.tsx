@@ -71,5 +71,3 @@ export function LabelSlot(_props: LabelProps) {
 LabelSlot.displayName = "Label";
 
 export type LabelComponent = typeof Label & { Slot: typeof LabelSlot };
-
-export const LabelWithSlot = Object.assign(Label, { Slot: LabelSlot }) as LabelComponent;

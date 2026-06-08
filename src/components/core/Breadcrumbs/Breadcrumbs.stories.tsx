@@ -2,7 +2,7 @@ import type { ComponentType, MouseEvent } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Breadcrumbs } from "./Breadcrumbs";
+import { Breadcrumbs } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

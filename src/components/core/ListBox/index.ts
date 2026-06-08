@@ -1,15 +1,40 @@
-export {
-  ListBox,
-  useListBox,
-  type ListBoxRootProps,
-  type ListBoxSectionProps,
-  type ListBoxHeaderProps,
-  type ListBoxSeparatorProps,
-  type ListBoxEmptyProps,
-  type ListBoxItemProps,
-  type ListBoxLabelProps,
-  type ListBoxHintProps,
-  type ListBoxIconProps,
-  type ListBoxItemIndicatorProps,
-  type ListBoxSize,
+import {
+  ListBoxEmpty,
+  ListBoxHeader,
+  ListBoxHint,
+  ListBoxIcon,
+  ListBoxItem,
+  ListBoxItemIndicator,
+  ListBoxLabel,
+  ListBoxRoot,
+  ListBoxSection,
+  ListBoxSeparator,
+} from "./ListBox";
+
+export const ListBox = Object.assign(ListBoxRoot, {
+  Section: ListBoxSection,
+  Header: ListBoxHeader,
+  Separator: ListBoxSeparator,
+  Empty: ListBoxEmpty,
+  Item: ListBoxItem,
+  Label: ListBoxLabel,
+  Hint: ListBoxHint,
+  Icon: ListBoxIcon,
+  ItemIndicator: ListBoxItemIndicator,
+});
+
+export { useListBox } from "./ListBox";
+
+export type {
+  ListBoxRootProps,
+  ListBoxSectionProps,
+  ListBoxHeaderProps,
+  ListBoxSeparatorProps,
+  ListBoxEmptyProps,
+  ListBoxItemProps,
+  ListBoxLabelProps,
+  ListBoxHintProps,
+  ListBoxIconProps,
+  ListBoxItemIndicatorProps,
+  ListBoxSize,
 } from "./ListBox";

@@ -114,7 +114,7 @@ Skeleton.displayName = "Skeleton";
 
 // ─── Skeleton.Circle ─────────────────────────────────────────────────────────
 
-const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
+export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
   function SkeletonCircle(
     { variant = "wave", size = "h-control-base w-control-base", className = "", style, ...rest },
     ref,
@@ -138,7 +138,7 @@ SkeletonCircle.displayName = "SkeletonCircle";
 
 // ─── Skeleton.Text ────────────────────────────────────────────────────────────
 
-const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(
+export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(
   function SkeletonText(
     {
       variant = "wave",
@@ -186,7 +186,7 @@ SkeletonText.displayName = "SkeletonText";
 // ─── Skeleton.Block ───────────────────────────────────────────────────────────
 
 /** Card-shaped skeleton with optional header/content lines layout. */
-const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonProps>(
+export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonProps>(
   function SkeletonBlock(
     { variant = "wave", className = "", style, children, ...rest },
     ref,
@@ -215,8 +215,3 @@ SkeletonBlock.displayName = "SkeletonBlock";
 
 // ─── compound export ──────────────────────────────────────────────────────────
 
-export const SkeletonCompound = Object.assign(Skeleton, {
-  Circle: SkeletonCircle,
-  Text:   SkeletonText,
-  Block:  SkeletonBlock,
-});

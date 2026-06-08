@@ -5,7 +5,7 @@ import { IoInformationCircleOutline, IoLockClosedOutline, IoNotificationsOutline
 
 import { Text } from "@/components/core/Text";
 
-import { Disclosure, DisclosureGroup } from "./Disclosure";
+import { Disclosure, DisclosureGroup } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

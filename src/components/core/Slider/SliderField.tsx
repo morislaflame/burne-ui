@@ -6,11 +6,11 @@ import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import {
-  renderScaleSimpleLayout,
   ScaleFieldHeader,
   ScaleFieldValue,
-  scaleFieldRootClassName,
 } from "@/components/core/utils/scaleFieldParts";
+import { renderScaleSimpleLayout } from "@/components/core/utils/scaleFieldLayout";
+import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
 
 import { SliderTrack, type SliderRangeProps, type SliderSingleProps, type SliderTrackProps } from "./Slider";
 import type { SliderOrientation } from "./Slider";

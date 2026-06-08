@@ -5,10 +5,10 @@ import { Ripple } from "@/components/core/Ripple";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-  dualApiStorySource,
 } from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 
-import { Expandable } from "./Expandable";
+import { Expandable } from ".";
 
 const PIN_IMAGE =
   "https://i.pinimg.com/736x/89/e2/85/89e285ca1fc973db199bf395f7c89669.jpg";

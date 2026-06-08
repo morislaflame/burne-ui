@@ -26,6 +26,8 @@ import {
 } from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
 
+import { ToastContext, type ToastContextValue } from "./toastContext";
+
 // ─── types ─────────────────────────────────────────────────────────────────
 
 export type ToastStatus = "default" | "success" | "danger" | "info" | "warning";
@@ -79,22 +81,6 @@ const MAX_VISIBLE = 3;
 const DEFAULT_TIMEOUT_MS = 4000;
 const TOAST_WIDTH_PX = 360;
 const ENTRY_OFFSET_PX = 24;
-
-// ─── global context ─────────────────────────────────────────────────────────
-
-export type ToastContextValue = {
-  add: (opts: AddToastOpts) => string;
-  update: (id: string, patch: Partial<Omit<ToastEntry, "id" | "createdAt">>) => void;
-  dismiss: (id: string) => void;
-};
-
-export const ToastContext = createContext<ToastContextValue | null>(null);
-
-export function useToastContext(): ToastContextValue {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error("useToast must be used inside <Toast.Provider>.");
-  return ctx;
-}
 
 // ─── per-item context ────────────────────────────────────────────────────────
 
@@ -160,7 +146,7 @@ export type ToastCloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 // ─── Indicator ───────────────────────────────────────────────────────────────
 
-function ToastIndicator({ className = "", children, ...rest }: ToastIndicatorProps) {
+export function ToastIndicator({ className = "", children, ...rest }: ToastIndicatorProps) {
   const { status, isLoading } = useToastItem();
 
   if (children !== undefined) {
@@ -195,7 +181,7 @@ ToastIndicator.displayName = "ToastIndicator";
 
 // ─── Content ─────────────────────────────────────────────────────────────────
 
-function ToastContent({ className = "", ...rest }: ToastContentProps) {
+export function ToastContent({ className = "", ...rest }: ToastContentProps) {
   return (
     <div className={cn("flex min-w-0 flex-1 flex-col gap-xsmall text-left", className)} {...rest} />
   );
@@ -205,7 +191,7 @@ ToastContent.displayName = "ToastContent";
 
 // ─── Title ───────────────────────────────────────────────────────────────────
 
-function ToastTitle({ className = "", id: idProp, ...rest }: ToastTitleProps) {
+export function ToastTitle({ className = "", id: idProp, ...rest }: ToastTitleProps) {
   const { titleId } = useToastItem();
   return (
     <Text
@@ -222,7 +208,7 @@ ToastTitle.displayName = "ToastTitle";
 
 // ─── Description ─────────────────────────────────────────────────────────────
 
-function ToastDescription({ className = "", id: idProp, ...rest }: ToastDescriptionProps) {
+export function ToastDescription({ className = "", id: idProp, ...rest }: ToastDescriptionProps) {
   const { descriptionId } = useToastItem();
   return (
     <Text
@@ -239,7 +225,7 @@ ToastDescription.displayName = "ToastDescription";
 
 // ─── ActionButton ─────────────────────────────────────────────────────────────
 
-function ToastActionButton({ className = "", ...rest }: ToastActionButtonProps) {
+export function ToastActionButton({ className = "", ...rest }: ToastActionButtonProps) {
   return <div className={cn("shrink-0 self-start", className)} {...rest} />;
 }
 
@@ -247,7 +233,7 @@ ToastActionButton.displayName = "ToastActionButton";
 
 // ─── CloseButton ─────────────────────────────────────────────────────────────
 
-const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonProps>(
+export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonProps>(
   function ToastCloseButton(
     { className = "", onClick, "aria-label": ariaLabel = "Закрыть", ...rest },
     ref,
@@ -272,7 +258,7 @@ ToastCloseButton.displayName = "ToastCloseButton";
 
 // ─── Toast (visual root) ──────────────────────────────────────────────────────
 
-const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
+export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
   {
     status = "default",
     title,
@@ -345,7 +331,7 @@ type ToastItemWrapperProps = {
   onHeightChange: (id: string, h: number) => void;
 };
 
-function ToastItemWrapper({
+export function ToastItemWrapper({
   entry,
   reverseIdx,
   total,
@@ -475,7 +461,7 @@ type ToastViewportProps = {
   onRemoveFinal: (id: string) => void;
 };
 
-function ToastViewport({
+export function ToastViewport({
   placement,
   sorted,
   dismissingIds,
@@ -531,7 +517,7 @@ function ToastViewport({
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
-function ToastProviderRoot({
+export function ToastProviderRoot({
   children,
   defaultPlacement = "bottom-right",
 }: ToastProviderProps) {
@@ -609,12 +595,3 @@ function ToastProviderRoot({
 
 // ─── compound export ──────────────────────────────────────────────────────────
 
-export const Toast = Object.assign(ToastRoot, {
-  Provider: ToastProviderRoot,
-  Indicator: ToastIndicator,
-  Content: ToastContent,
-  Title: ToastTitle,
-  Description: ToastDescription,
-  ActionButton: ToastActionButton,
-  CloseButton: ToastCloseButton,
-});

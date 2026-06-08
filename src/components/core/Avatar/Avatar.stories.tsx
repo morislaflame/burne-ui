@@ -5,11 +5,11 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-  dualApiStorySource,
 } from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/utils/mockImages";
 
-import { Avatar, AvatarGroup } from "./Avatar";
+import { Avatar, AvatarGroup } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

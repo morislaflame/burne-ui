@@ -5,8 +5,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-  dualApiStorySource,
 } from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 
 import { TextArea } from "./index";
 

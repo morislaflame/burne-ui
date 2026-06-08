@@ -173,7 +173,7 @@ export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "c
   isRequired?: boolean;
 };
 
-const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(function FieldSetRoot(
+export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(function FieldSetRoot(
   { children, className, hintId, errorId, isRequired, disabled, ...rest },
   ref,
 ) {
@@ -197,14 +197,7 @@ const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(function Fie
   );
 });
 
-export const FieldSet = Object.assign(FieldSetRoot, {
-  Legend: FieldLegend,
-  LegendHeader: FieldLegendHeader,
-  Group: FieldSetGroup,
-  Actions: FieldSetActions,
-});
-
-FieldSet.displayName = "FieldSet";
+FieldSetRoot.displayName = "FieldSet";
 
 /** Стабильный id подсказки для fieldset (или переданный явно). */
 export function useFieldSetHintId(providedId?: string) {

@@ -9,7 +9,7 @@ import { Input } from "@/components/core/Input";
 import { Ripple } from "@/components/core/Ripple";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
-import { Card, type CardVariant } from "./Card";
+import { Card, type CardVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/utils/mockImages";
 import { IoArrowForward, IoTimeOutline } from "react-icons/io5";
 

@@ -10,8 +10,6 @@ import {
 
 import {
   OptionGroupFieldset,
-  OptionGroupActions,
-  OptionGroupGroup,
   OptionGroupHeader,
   OptionGroupHint,
   OptionGroupLegend,
@@ -25,7 +23,6 @@ import {
 } from "@/components/composite/utils/optionGroupFieldset";
 import { FieldError, type FieldErrorProps } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
-import { Label } from "@/components/core/Label";
 import {
   RadioGroupContext,
   useRadioGroupContext,
@@ -49,7 +46,7 @@ export type RadioGroupProps = Omit<
   children?: ReactNode;
 };
 
-const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(function RadioGroupRoot(
+export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(function RadioGroupRoot(
   {
     isRequired = false,
     value: valueProp,
@@ -120,7 +117,7 @@ const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(function
   );
 });
 
-function RadioGroupLegend({ children, ...rest }: OptionGroupLegendProps) {
+export function RadioGroupLegend({ children, ...rest }: OptionGroupLegendProps) {
   return (
     <OptionGroupLegend {...rest}>
       <OptionGroupHeader>{children}</OptionGroupHeader>
@@ -128,34 +125,24 @@ function RadioGroupLegend({ children, ...rest }: OptionGroupLegendProps) {
   );
 }
 
-function RadioGroupHint({ id, ...rest }: OptionGroupHintProps) {
+export function RadioGroupHint({ id, ...rest }: OptionGroupHintProps) {
   const { hintId } = useRadioGroupContext();
   return <OptionGroupHint id={id ?? hintId} {...rest} />;
 }
 
-function RadioGroupError({ id, ...rest }: FieldErrorProps) {
+export function RadioGroupError({ id, ...rest }: FieldErrorProps) {
   const { errorId } = useRadioGroupContext();
   return <FieldError id={id ?? errorId} {...rest} />;
 }
 
-const RadioGroupList = forwardRef<HTMLDivElement, OptionGroupListProps>(function RadioGroupList(
+export const RadioGroupList = forwardRef<HTMLDivElement, OptionGroupListProps>(function RadioGroupList(
   props,
   ref,
 ) {
   return <OptionGroupList ref={ref} {...props} />;
 });
 
-export const RadioGroup = Object.assign(RadioGroupRoot, {
-  Legend: RadioGroupLegend,
-  Label,
-  Hint: RadioGroupHint,
-  Error: RadioGroupError,
-  List: RadioGroupList,
-  Group: OptionGroupGroup,
-  Actions: OptionGroupActions,
-});
-
-RadioGroup.displayName = "RadioGroup";
+RadioGroupRoot.displayName = "RadioGroup";
 RadioGroupLegend.displayName = "RadioGroup.Legend";
 RadioGroupHint.displayName = "RadioGroup.Hint";
 RadioGroupError.displayName = "RadioGroup.Error";

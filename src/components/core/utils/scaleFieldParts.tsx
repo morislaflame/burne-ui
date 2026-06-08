@@ -1,7 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
-import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -63,46 +61,3 @@ export type ScaleSimpleLayoutProps = ScaleSimpleLayoutParts & {
   track: ReactNode;
 };
 
-/** Разметка simple mode для Meter / ProgressBar / Slider. */
-export function renderScaleSimpleLayout({
-  label,
-  showValue,
-  valueText,
-  hint,
-  hintId,
-  error,
-  errorId,
-  Header,
-  Value,
-  track,
-}: ScaleSimpleLayoutProps) {
-  const showHeader = label != null || showValue || valueText != null;
-
-  return (
-    <>
-      {showHeader ? (
-        <Header>
-          {label != null ? <Label>{label}</Label> : null}
-          {valueText != null ? (
-            <Value>{valueText}</Value>
-          ) : showValue ? (
-            <Value />
-          ) : null}
-        </Header>
-      ) : null}
-      {track}
-      {hint != null ? <FieldHint id={hintId}>{hint}</FieldHint> : null}
-      {error != null ? <FieldError id={errorId}>{error}</FieldError> : null}
-    </>
-  );
-}
-
-export function scaleFieldRootClassName(
-  orientation: ScaleOrientation,
-  className?: string,
-) {
-  return cn(
-    orientation === "horizontal" ? "w-full" : "w-auto items-center",
-    className,
-  );
-}

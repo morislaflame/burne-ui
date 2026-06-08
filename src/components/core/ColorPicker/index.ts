@@ -1,14 +1,25 @@
-export {
-  ColorPicker,
-  useColorPicker,
-  type ColorPickerProps,
-  type ColorPickerTriggerProps,
-  type ColorPickerContentProps,
-  type ColorPickerSize,
+import { ColorPickerContent, ColorPickerRoot, ColorPickerTrigger } from "./ColorPicker";
+import { ColorSliderRoot, ColorSliderTrack } from "./ColorSlider";
+
+export const ColorPicker = Object.assign(ColorPickerRoot, {
+  Trigger: ColorPickerTrigger,
+  Content: ColorPickerContent,
+});
+
+export const ColorSlider = Object.assign(ColorSliderRoot, {
+  Track: ColorSliderTrack,
+});
+
+export { useColorPicker } from "./ColorPicker";
+
+export type {
+  ColorPickerProps,
+  ColorPickerTriggerProps,
+  ColorPickerContentProps,
+  ColorPickerSize,
 } from "./ColorPicker";
 
 export {
-  ColorSlider,
   ColorSliderTrack,
   type ColorSliderTrackProps,
   type ColorSliderRootProps,

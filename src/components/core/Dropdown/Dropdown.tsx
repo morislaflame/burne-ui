@@ -150,7 +150,7 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   closeOnSelect?: boolean;
 };
 
-function DropdownRoot({
+export function DropdownRoot({
   children,
   className = "",
   open: openProp,
@@ -1129,19 +1129,3 @@ DropdownSubContent.displayName = "Dropdown.SubContent";
 DropdownRoot.displayName = "Dropdown";
 
 /** Составной API: `Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Item`, … */
-export const Dropdown = Object.assign(DropdownRoot, {
-  Trigger: DropdownTrigger,
-  Popover: DropdownPopover,
-  Content: DropdownContent,
-  Group: DropdownGroup,
-  Label: DropdownLabel,
-  Separator: DropdownSeparator,
-  Item: DropdownItem,
-  ItemLabel: DropdownItemLabel,
-  ItemHint: DropdownItemHint,
-  ItemIcon: DropdownItemIcon,
-  ItemIndicator: DropdownItemIndicator,
-  Sub: DropdownSub,
-  SubTrigger: DropdownSubTrigger,
-  SubContent: DropdownSubContent,
-});

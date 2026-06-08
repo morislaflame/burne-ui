@@ -14,9 +14,9 @@ import {
   ComboBoxInputGroup,
   ComboBoxPopover,
   ComboBoxTrigger,
-  comboBoxOptionMatchesFilter,
-  type ComboBoxOption,
 } from "./ComboBox";
+import type { ComboBoxOption } from "./comboBoxContext";
+import { comboBoxFilteredValues } from "./comboBoxOptionFilter";
 import {
   ComboBoxContext,
   ComboBoxFieldContext,
@@ -104,7 +104,7 @@ export function ComboBoxRoot({
   }, [activeValue, listId, open]);
 
   const filteredValues = useMemo(
-    () => options.filter((o) => comboBoxOptionMatchesFilter(o, filterQuery)).map((o) => o.value),
+    () => comboBoxFilteredValues(options, filterQuery),
     [filterQuery, options],
   );
 

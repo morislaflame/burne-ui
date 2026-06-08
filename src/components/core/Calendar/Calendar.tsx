@@ -19,6 +19,7 @@ import {
 import { cn } from "@/utils/cn";
 
 import { CalendarInteractiveCell, DAY_BTN } from "./CalendarInteractiveCell";
+import { RU_LOCALE, type CalendarLocale } from "./calendarLocale";
 
 // ─── date utils ──────────────────────────────────────────────────────────────
 
@@ -51,30 +52,7 @@ export type CalendarVariant = "default" | "secondary" | "outline";
 export type CalendarSize = "small" | "base" | "mid" | "large";
 export type CalendarRangeValue = { start: Date | null; end: Date | null };
 
-export type CalendarLocale = {
-  /** 7 items: Mon → Sun */
-  weekDays: string[];
-  /** 12 full month names */
-  months: string[];
-  /** 12 abbreviated month names */
-  monthsShort: string[];
-  today: string;
-  clear: string;
-};
-
-export const RU_LOCALE: CalendarLocale = {
-  weekDays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-  months: [
-    "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-    "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
-  ],
-  monthsShort: [
-    "Янв", "Фев", "Мар", "Апр", "Май", "Июн",
-    "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек",
-  ],
-  today: "Сегодня",
-  clear: "Очистить",
-};
+export type { CalendarLocale };
 
 // ─── size / variant maps ──────────────────────────────────────────────────────
 
@@ -203,7 +181,7 @@ export type CalendarFooterProps = HTMLAttributes<HTMLDivElement>;
 
 // ─── root ─────────────────────────────────────────────────────────────────────
 
-const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
+export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
   function CalendarRoot(rawProps, ref) {
     // Cast to a unified internal type for easier handling
     const props = rawProps as CalendarCommonProps & {
@@ -417,7 +395,7 @@ const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
 
 // ─── CalendarHeader ───────────────────────────────────────────────────────────
 
-function CalendarNavButton({
+export function CalendarNavButton({
   label,
   size,
   onClick,
@@ -490,7 +468,7 @@ function CalendarNavButton({
   );
 }
 
-const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
+export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
   function CalendarHeader({ className = "", ...rest }, ref) {
     const { view, setView, viewDate, navigate, size, locale } = useCalendar();
 
@@ -538,7 +516,7 @@ const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
 
 // ─── CalendarGrid ─────────────────────────────────────────────────────────────
 
-const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
+export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
   function CalendarGrid({ className = "", ...rest }, ref) {
     const { view } = useCalendar();
     return (
@@ -553,7 +531,7 @@ const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
 
 // ─── CalendarDaysView (internal) ──────────────────────────────────────────────
 
-function CalendarDaysView() {
+export function CalendarDaysView() {
   const {
     viewDate,
     selectedDates,
@@ -690,7 +668,7 @@ function CalendarDaysView() {
 
 // ─── CalendarMonthsView (internal) ────────────────────────────────────────────
 
-function CalendarMonthsView() {
+export function CalendarMonthsView() {
   const { viewDate, onMonthPress, selectedDates, size, locale } = useCalendar();
   const year = viewDate.getFullYear();
   const today = new Date();
@@ -722,7 +700,7 @@ function CalendarMonthsView() {
 
 // ─── CalendarYearsView (internal) ─────────────────────────────────────────────
 
-function CalendarYearsView() {
+export function CalendarYearsView() {
   const { viewDate, onYearPress, selectedDates, size } = useCalendar();
   const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
   // Show decade - 1 to decade + 10 (12 items total, with prev/next year for context)
@@ -756,7 +734,7 @@ function CalendarYearsView() {
 
 // ─── CalendarFooter ───────────────────────────────────────────────────────────
 
-const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
+export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
   function CalendarFooter({ className = "", ...rest }, ref) {
     const { onClear, onToday, locale } = useCalendar();
 
@@ -792,12 +770,6 @@ const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
 );
 
 // ─── compound export ──────────────────────────────────────────────────────────
-
-export const Calendar = Object.assign(CalendarRoot, {
-  Header: CalendarHeader,
-  Grid: CalendarGrid,
-  Footer: CalendarFooter,
-});
 
 CalendarRoot.displayName = "Calendar";
 CalendarHeader.displayName = "Calendar.Header";

@@ -7,7 +7,7 @@ import {
   AlertDialog,
   primaryButtonVariantForAlertTone,
   type AlertDialogSize,
-} from "./AlertDialog";
+} from "./index";
 import type { AlertStatus } from "@/components/core/Alert";
 
 const darkThemeDecorator = [

@@ -4,10 +4,14 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Text } from "@/components/core/Text";
 
-import { ColorPicker } from "./ColorPicker";
-import { ColorSlider } from "./ColorSlider";
-import { ColorSwatch } from "./ColorSwatch";
-import { hsvaToColorString, hsvaToHex, type HSVA } from "./colorUtils";
+import {
+  ColorPicker,
+  ColorSlider,
+  ColorSwatch,
+  hsvaToColorString,
+  hsvaToHex,
+  type HSVA,
+} from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

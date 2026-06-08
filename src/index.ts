@@ -495,12 +495,12 @@ export {
   MOTION_FEEDBACK_EXPAND_MS,
 } from "@/components/core/utils/motionTokens";
 export { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
+export { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 export {
-  ConvergeRippleLayer,
   createConvergeRippleAtPointer,
   createConvergeRippleFromPointer,
   type ConvergeRipple,
-} from "@/components/core/utils/pressRipple";
+} from "@/components/core/utils/convergeRippleGeometry";
 export {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,

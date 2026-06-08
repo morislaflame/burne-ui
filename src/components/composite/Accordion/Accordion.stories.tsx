@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Ripple } from "@/components/core/Ripple";
 
-import { Accordion } from "./Accordion";
+import { Accordion } from ".";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (

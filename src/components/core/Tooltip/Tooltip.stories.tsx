@@ -5,7 +5,7 @@ import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button/Button";
 
-import { Tooltip, type TooltipVariant } from "./Tooltip";
+import { Tooltip, type TooltipVariant } from ".";
 
 const VARIANTS: TooltipVariant[] = [
   "default",

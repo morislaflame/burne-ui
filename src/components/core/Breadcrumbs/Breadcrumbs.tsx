@@ -14,7 +14,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { Dropdown } from "@/components/core/Dropdown/Dropdown";
+import { Dropdown } from "@/components/core/Dropdown";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -77,7 +77,7 @@ type InteractiveCrumbProps = {
   "aria-current"?: "page" | undefined;
 };
 
-const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProps>(
+export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProps>(
   function InteractiveCrumb(
     { href, onClick, children, className = "", "aria-current": ariaCurrent },
     forwardedRef,
@@ -156,7 +156,7 @@ type BreadcrumbsEllipsisMenuProps = {
   hiddenItems: BreadcrumbItemData[];
 };
 
-function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
+export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
   const count = hiddenItems.length;
   const liftRef = useRef<HTMLSpanElement>(null);
 
@@ -232,7 +232,7 @@ export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children?: ReactNode;
 };
 
-const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(function BreadcrumbsRoot(
+export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(function BreadcrumbsRoot(
   { collapse = true, className, children, "aria-label": ariaLabel = "Хлебные крошки", ...rest },
   ref,
 ) {
@@ -302,7 +302,7 @@ function renderSegment(piece: Extract<DisplayPiece, { kind: "segment" }>) {
   );
 }
 
-const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps>(
+export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps>(
   function BreadcrumbsList({ className, children, ...rest }, ref) {
     const collapse = useContext(BreadcrumbsCollapseContext);
     const items = useMemo(() => collectItems(children), [children]);
@@ -356,24 +356,18 @@ export type BreadcrumbsItemProps = {
 };
 
 /** Маркер данных для `Breadcrumbs.List` — в DOM не рендерится. */
-function BreadcrumbsItem(_props: BreadcrumbsItemProps) {
+export function BreadcrumbsItem(_props: BreadcrumbsItemProps) {
   return null;
 }
 
 /** Разделитель для кастомной разметки; в `Breadcrumbs.List` chevron добавляется автоматически. */
-function BreadcrumbsSeparator({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) {
+export function BreadcrumbsSeparator({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) {
   return (
     <span className={cn("inline-flex", className)} {...rest}>
       <IoChevronForward className="shrink-0 text-muted opacity-75 icon-small" aria-hidden />
     </span>
   );
 }
-
-export const Breadcrumbs = Object.assign(BreadcrumbsRoot, {
-  List: BreadcrumbsList,
-  Item: BreadcrumbsItem,
-  Separator: BreadcrumbsSeparator,
-});
 
 BreadcrumbsList.displayName = "Breadcrumbs.List";
 BreadcrumbsItem.displayName = "Breadcrumbs.Item";

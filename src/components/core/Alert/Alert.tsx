@@ -104,7 +104,7 @@ type AlertTitleProps = HTMLAttributes<HTMLDivElement>;
 type AlertDescriptionProps = HTMLAttributes<HTMLDivElement>;
 type AlertActionProps = HTMLAttributes<HTMLDivElement>;
 
-function AlertIndicator({
+export function AlertIndicator({
   status,
   className = "",
   children,
@@ -141,7 +141,7 @@ function AlertIndicator({
 
 AlertIndicator.displayName = "AlertIndicator";
 
-function AlertContent({ className = "", ...rest }: AlertContentProps) {
+export function AlertContent({ className = "", ...rest }: AlertContentProps) {
   return (
     <div
       className={cn(
@@ -155,7 +155,7 @@ function AlertContent({ className = "", ...rest }: AlertContentProps) {
 
 AlertContent.displayName = "AlertContent";
 
-const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(function AlertMessage(
+export const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(function AlertMessage(
   { className = "", ...rest },
   ref,
 ) {
@@ -170,7 +170,7 @@ const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(function Aler
 
 AlertMessage.displayName = "AlertMessage";
 
-function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitleProps) {
+export function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitleProps) {
   const ctx = useContext(AlertContext);
   return (
     <Text
@@ -185,7 +185,7 @@ function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitleProps) {
 
 AlertTitle.displayName = "AlertTitle";
 
-function AlertDescription({
+export function AlertDescription({
   className = "",
   id: idProp,
   ...rest
@@ -204,13 +204,13 @@ function AlertDescription({
 
 AlertDescription.displayName = "AlertDescription";
 
-function AlertAction({ className = "", ...rest }: AlertActionProps) {
+export function AlertAction({ className = "", ...rest }: AlertActionProps) {
   return <div className={cn("shrink-0 self-start", className)} {...rest} />;
 }
 
 AlertAction.displayName = "AlertAction";
 
-const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   {
     status,
     role: roleProp,
@@ -324,15 +324,6 @@ const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 AlertRoot.displayName = "AlertRoot";
 
-export const Alert = Object.assign(AlertRoot, {
-  Indicator: AlertIndicator,
-  Message: AlertMessage,
-  Content: AlertContent,
-  Title: AlertTitle,
-  Description: AlertDescription,
-  Action: AlertAction,
-});
-
 export type {
   AlertIndicatorProps,
   AlertContentProps,
@@ -343,4 +334,3 @@ export type {
 };
 
 export type { AlertStatus, AlertLiveRole } from "./alertUtils";
-export { resolveAlertStatus } from "./alertUtils";

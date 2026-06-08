@@ -3,6 +3,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ButtonHTMLAttributes,
@@ -200,7 +201,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       remove(el);
     }, [disabled]);
 
-    const btnShadow = { hover: SHADOW_SM() };
+    const btnShadow = useMemo(() => ({ hover: SHADOW_SM() }), []);
 
     const handlePointerEnter = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {

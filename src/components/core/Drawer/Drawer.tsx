@@ -140,14 +140,14 @@ function getSlideOut(placement: DrawerPlacement): Record<string, string[]> {
 // ─── Backdrop (sentinel) ─────────────────────────────────────────────────────
 // Renders null — root reads isDismissable via React.Children.
 
-function DrawerBackdropInner(_props: DrawerBackdropProps) {
+export function DrawerBackdropInner(_props: DrawerBackdropProps) {
   return null;
 }
 (DrawerBackdropInner as { _drawerBackdrop?: boolean })._drawerBackdrop = true;
 
 // ─── Handle ───────────────────────────────────────────────────────────────────
 
-function DrawerHandleInner({ className = "", onPointerDown, ...rest }: DrawerHandleProps) {
+export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: DrawerHandleProps) {
   const { onOpenChange, placement, panelRef, skipCloseAnimRef } = useDrawer();
   const { onPointerDown: dragPD } = useDrawerHandleDrag(
     panelRef,
@@ -191,7 +191,7 @@ function DrawerHandleInner({ className = "", onPointerDown, ...rest }: DrawerHan
 
 // ─── Structural parts ─────────────────────────────────────────────────────────
 
-function DrawerHeader({ className = "", ...rest }: DrawerHeaderProps) {
+export function DrawerHeader({ className = "", ...rest }: DrawerHeaderProps) {
   return (
     <div
       className={cn(
@@ -203,7 +203,7 @@ function DrawerHeader({ className = "", ...rest }: DrawerHeaderProps) {
   );
 }
 
-function DrawerHeadingBlock({ className = "", ...rest }: DrawerHeadingBlockProps) {
+export function DrawerHeadingBlock({ className = "", ...rest }: DrawerHeadingBlockProps) {
   return (
     <div
       className={cn("flex min-w-0 flex-1 flex-col gap-base text-left", className)}
@@ -212,7 +212,7 @@ function DrawerHeadingBlock({ className = "", ...rest }: DrawerHeadingBlockProps
   );
 }
 
-const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
+export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
   function DrawerTitle({ className = "", id, ...rest }, ref) {
     const { titleId } = useDrawer();
     return (
@@ -228,7 +228,7 @@ const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
   },
 );
 
-function DrawerDescription({ className = "", id, ...rest }: DrawerDescriptionProps) {
+export function DrawerDescription({ className = "", id, ...rest }: DrawerDescriptionProps) {
   const { descriptionId, setHasDescription } = useDrawer();
   useLayoutEffect(() => {
     setHasDescription(true);
@@ -245,7 +245,7 @@ function DrawerDescription({ className = "", id, ...rest }: DrawerDescriptionPro
   );
 }
 
-const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
+export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
   function DrawerClose(
     { className = "", onClick, "aria-label": ariaLabel = "Закрыть", ...rest },
     ref,
@@ -266,7 +266,7 @@ const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
   },
 );
 
-function DrawerBody({ className = "", ...rest }: DrawerBodyProps) {
+export function DrawerBody({ className = "", ...rest }: DrawerBodyProps) {
   return (
     <div
       className={cn("min-h-0 flex-1 overflow-y-auto py-plus px-mid", className)}
@@ -275,7 +275,7 @@ function DrawerBody({ className = "", ...rest }: DrawerBodyProps) {
   );
 }
 
-function DrawerFooter({ className = "", ...rest }: DrawerFooterProps) {
+export function DrawerFooter({ className = "", ...rest }: DrawerFooterProps) {
   return (
     <div
       className={cn(
@@ -294,7 +294,7 @@ function readBurneLightTheme(): boolean {
   return document.documentElement.dataset.brnTheme === "light";
 }
 
-const DrawerRoot = function Drawer({
+export const DrawerRoot = function Drawer({
   open,
   onOpenChange,
   children,
@@ -484,16 +484,3 @@ const DrawerRoot = function Drawer({
 
 // ─── compound export ──────────────────────────────────────────────────────────
 
-export const Drawer = Object.assign(DrawerRoot, {
-  /** Конфигурирует подложку (`isDismissable`). Сам ничего не рендерит. */
-  Backdrop: DrawerBackdropInner,
-  /** Полоска перетягивания для свайп-закрытия. */
-  Handle: DrawerHandleInner,
-  Header: DrawerHeader,
-  HeadingBlock: DrawerHeadingBlock,
-  Title: DrawerTitle,
-  Description: DrawerDescription,
-  Close: DrawerClose,
-  Body: DrawerBody,
-  Footer: DrawerFooter,
-});

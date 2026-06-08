@@ -13,13 +13,13 @@ import {
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-  dualApiStorySource,
 } from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 
-import { Avatar } from "@/components/core/Avatar/Avatar";
+import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button/Button";
 import { Card } from "@/components/core/Card";
-import { Badge, type BadgeTone, type BadgePlacement } from "./Badge";
+import { Badge, type BadgeTone, type BadgePlacement } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/utils/mockImages";
 
 const GREEN_AVATAR_URL = PIN_IMAGE1;

@@ -10,25 +10,9 @@ import {
   type RippleDirection,
 } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
-import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
-/**
- * Именованные заливки converge-ripple (токены темы; `accentMuted` — широкие триггеры).
- * В сторибуке и приложении можно передать ключ в `color` или любую произвольную CSS-строку.
- */
-export const RIPPLE_COLOR = {
-  accentSolid: colorToken("converge-ripple-accent-fill"),
-  accentSoft: colorToken("converge-ripple-accent-soft"),
-  secondary: colorToken("converge-ripple-secondary"),
-  danger: colorToken("converge-ripple-danger"),
-  success: colorToken("converge-ripple-success"),
-  info: colorToken("converge-ripple-info"),
-  warning: colorToken("converge-ripple-warning"),
-  accentMuted: colorToken("converge-ripple-accent-muted"),
-} as const;
-
-export type RippleColor = keyof typeof RIPPLE_COLOR;
+import { RIPPLE_COLOR, type RippleColor } from "./rippleTokens";
 
 function resolveRipplePaint(input?: string): string {
   if (input == null || input === "") return RIPPLE_COLOR.accentSoft;

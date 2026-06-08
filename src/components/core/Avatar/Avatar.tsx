@@ -117,7 +117,7 @@ function letterFromLabel(label: string | undefined): string {
   return first ? first.toLocaleUpperCase() : "?";
 }
 
-const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
+export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
   function AvatarImage({ className = "", onLoad, onError, ...rest }, ref) {
     const { imageStatus, onImageLoad, onImageError } = useAvatarContext("Avatar.Image");
 
@@ -158,7 +158,7 @@ const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
   },
 );
 
-const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
+export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
   function AvatarFallback({ className = "", children, ...rest }, ref) {
     const { label, imageStatus, size } = useAvatarContext("Avatar.Fallback");
 
@@ -190,7 +190,7 @@ const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
   },
 );
 
-const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
+export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
   {
     size = "base",
     label,
@@ -275,11 +275,6 @@ const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
 });
 
 /** Аватар: simple (`src` + `label`) или compound (`Avatar.Image` / `Avatar.Fallback`). */
-export const Avatar = Object.assign(AvatarRoot, {
-  Image: AvatarImage,
-  Fallback: AvatarFallback,
-});
-
 const AVATAR_GROUP_HOVER_TRANSLATE_Y = -10;
 const AVATAR_GROUP_HOVER_SCALE = 1.08;
 

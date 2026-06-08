@@ -6,8 +6,8 @@ import { IoStar } from "react-icons/io5";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-  dualApiStorySource,
 } from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { Label } from "@/components/core/Label";
 
 import { Checkbox } from "./index";

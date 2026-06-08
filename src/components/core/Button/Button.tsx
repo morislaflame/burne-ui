@@ -125,11 +125,6 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   },
 };
 
-/** CSS-цвет converge-ripple под вариант кнопки — для собственного `<Ripple color={…} />` без `Button`. */
-export function buttonRippleTone(variant: ButtonVariant): string {
-  return BUTTON_VARIANT[variant].convergeBg;
-}
-
 /** Типографика подписи — через `Text`, без `text-*` на корне кнопки. */
 const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",

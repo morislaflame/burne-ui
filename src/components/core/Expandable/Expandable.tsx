@@ -101,7 +101,7 @@ function partitionTriggerRipple(children: ReactNode): {
   return { rippleOverlay, rest: <>{rest}</> };
 }
 
-const ExpandableMessage = forwardRef<HTMLDivElement, ExpandableMessageProps>(
+export const ExpandableMessage = forwardRef<HTMLDivElement, ExpandableMessageProps>(
   function ExpandableMessage({ className = "", ...rest }, ref) {
     return (
       <div
@@ -137,7 +137,7 @@ function hasExpandableMessage(children: ReactNode): boolean {
   return found;
 }
 
-function ChevronSvg({ className = "" }: { className?: string }) {
+export function ChevronSvg({ className = "" }: { className?: string }) {
   return (
     <svg
       className={`shrink-0 ${className}`}
@@ -156,7 +156,7 @@ function ChevronSvg({ className = "" }: { className?: string }) {
   );
 }
 
-const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
+export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
   function ExpandableTrigger(
     {
       hideChevron = false,
@@ -252,7 +252,7 @@ const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTriggerProps>(
 
 ExpandableTrigger.displayName = "ExpandableTrigger";
 
-function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
+export function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
   return (
     <span
       aria-hidden
@@ -264,7 +264,7 @@ function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
 
 ExpandableIcon.displayName = "ExpandableIcon";
 
-function ExpandableContent({ className = "", ...props }: ExpandableContentProps) {
+export function ExpandableContent({ className = "", ...props }: ExpandableContentProps) {
   return (
     <div
       className={cn(
@@ -278,7 +278,7 @@ function ExpandableContent({ className = "", ...props }: ExpandableContentProps)
 
 ExpandableContent.displayName = "ExpandableContent";
 
-function ExpandableTitle({ className = "", ...props }: ExpandableTitleProps) {
+export function ExpandableTitle({ className = "", ...props }: ExpandableTitleProps) {
   return (
     <Text
       as="div"
@@ -291,7 +291,7 @@ function ExpandableTitle({ className = "", ...props }: ExpandableTitleProps) {
 
 ExpandableTitle.displayName = "ExpandableTitle";
 
-function ExpandableDescription({
+export function ExpandableDescription({
   className = "",
   ...props
 }: ExpandableDescriptionProps) {
@@ -307,7 +307,7 @@ function ExpandableDescription({
 
 ExpandableDescription.displayName = "ExpandableDescription";
 
-function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps) {
+export function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps) {
   const { open, hasPanel } = useExpandable();
   if (!hasPanel) return null;
   return (
@@ -327,7 +327,7 @@ function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps)
 
 ExpandableChevron.displayName = "ExpandableChevron";
 
-const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
+export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
   function ExpandablePanel({ className = "", children, ...props }, ref) {
     const {
       open,
@@ -406,7 +406,7 @@ function hasExpandableCompoundChildren(children: ReactNode): boolean {
 
 export type ExpandableProps = ExpandableRootProps;
 
-const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
+export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
   function ExpandableRoot(
     {
       children,
@@ -492,13 +492,3 @@ const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
 ExpandableRoot.displayName = "ExpandableRoot";
 
 /** Раскрывающийся блок. **Simple** — `title`, `description`, `icon` на root, контент в `children`. **Compound** — `Trigger`, `Panel`, опционально `Message`, `Icon`, `Content`, `Title`, `Description`, `Chevron`. */
-export const Expandable = Object.assign(ExpandableRoot, {
-  Trigger: ExpandableTrigger,
-  Message: ExpandableMessage,
-  Icon: ExpandableIcon,
-  Content: ExpandableContent,
-  Title: ExpandableTitle,
-  Description: ExpandableDescription,
-  Chevron: ExpandableChevron,
-  Panel: ExpandablePanel,
-});

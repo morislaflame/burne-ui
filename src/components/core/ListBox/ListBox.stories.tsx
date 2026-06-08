@@ -5,7 +5,7 @@ import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
 import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
 
-import { ListBox } from "./ListBox";
+import { ListBox } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

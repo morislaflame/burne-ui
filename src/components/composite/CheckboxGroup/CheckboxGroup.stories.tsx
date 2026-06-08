@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Checkbox } from "@/components/core/Checkbox";
 
-import { CheckboxGroup } from "./CheckboxGroup";
+import { CheckboxGroup } from ".";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (

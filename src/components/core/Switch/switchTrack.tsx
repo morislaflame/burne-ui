@@ -1,8 +1,6 @@
 import { animate, remove } from "animejs";
 import {
-  Children,
   createContext,
-  isValidElement,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -25,7 +23,7 @@ import {
   MOTION_SWITCH_THUMB_EASE,
   MOTION_SWITCH_THUMB_MS,
 } from "@/components/core/utils/motionTokens";
-import { sliderThicknessToCss } from "@/components/core/Slider/Slider";
+import { sliderThicknessToCss } from "@/components/core/Slider/sliderThickness";
 import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
 import { cn } from "@/utils/cn";
 
@@ -380,44 +378,3 @@ export function SwitchIcon({ when, children, className, ...rest }: SwitchIconPro
 }
 
 SwitchIcon.displayName = "SwitchIcon";
-
-export function partitionSwitchControlChildren(children: ReactNode): {
-  track: ReactNode | null;
-  content: ReactNode;
-} {
-  let track: ReactNode | null = null;
-  const rest: ReactNode[] = [];
-
-  for (const child of Children.toArray(children)) {
-    if (
-      isValidElement(child) &&
-      (child.type as { displayName?: string }).displayName === "SwitchTrack"
-    ) {
-      if (track == null) track = child;
-      continue;
-    }
-    rest.push(child);
-  }
-
-  if (rest.length === 0) return { track, content: null };
-  if (rest.length === 1) return { track, content: rest[0]! };
-  return { track, content: rest };
-}
-
-export function hasSwitchThumbChild(children: ReactNode): boolean {
-  let found = false;
-  const walk = (node: ReactNode) => {
-    if (found) return;
-    for (const child of Children.toArray(node)) {
-      if (!isValidElement(child)) continue;
-      const name = (child.type as { displayName?: string }).displayName;
-      if (name === "SwitchThumb") {
-        found = true;
-        return;
-      }
-      walk((child.props as { children?: ReactNode }).children);
-    }
-  };
-  walk(children);
-  return found;
-}

@@ -105,7 +105,7 @@ function focusTabAt(list: HTMLElement, index: number) {
   return next;
 }
 
-const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>(function TabsRoot(
+export const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>(function TabsRoot(
   {
     children,
     className = "",
@@ -168,7 +168,7 @@ const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>(function TabsRoot(
   );
 });
 
-const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
+export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
   { className = "", children, onKeyDown, ...rest },
   ref,
 ) {
@@ -282,7 +282,7 @@ const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
   );
 });
 
-const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
+export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
   { value: tabValue, children, className = "", disabled: tabDisabled, onClick, onPointerDown, onPointerEnter, onPointerLeave, ...rest },
   ref,
 ) {
@@ -404,7 +404,7 @@ const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
   );
 });
 
-const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function TabsPanel(
+export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function TabsPanel(
   { value: panelValue, children, className = "", ...rest },
   ref,
 ) {
@@ -433,14 +433,5 @@ TabsRoot.displayName = "Tabs";
 TabsList.displayName = "TabsList";
 TabsTab.displayName = "TabsTab";
 TabsPanel.displayName = "TabsPanel";
-
-export const Tabs = Object.assign(TabsRoot, {
-  Root: TabsRoot,
-  List: TabsList,
-  Tab: TabsTab,
-  Panel: TabsPanel,
-});
-
-export { TabsRoot, TabsList, TabsTab, TabsPanel, useTabsContext };
 
 export type { TabsOrientation, TabsVariant };

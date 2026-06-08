@@ -6,22 +6,26 @@ import {
   useMemo,
   useRef,
   useState,
-  type HTMLAttributes,
-  type ReactNode,
 } from "react";
 
-import {
-  Expandable,
-  useExpandableContext,
-  type ExpandableContentProps,
-  type ExpandableDescriptionProps,
-  type ExpandableIconProps,
-  type ExpandableMessageProps,
-  type ExpandableTitleProps,
-  type ExpandableTriggerProps,
-} from "@/components/core/Expandable";
+import { Expandable, useExpandableContext } from "@/components/core/Expandable";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
+
+import type {
+  AccordionBodyProps,
+  AccordionContentProps,
+  AccordionDescriptionProps,
+  AccordionHeadingProps,
+  AccordionIconProps,
+  AccordionIndicatorProps,
+  AccordionItemProps,
+  AccordionMessageProps,
+  AccordionPanelProps,
+  AccordionProps,
+  AccordionTitleProps,
+  AccordionTriggerProps,
+} from "./Accordion.types";
 
 type AccordionContextValue = {
   openId: string | null;
@@ -39,7 +43,7 @@ function useAccordionContext() {
   return ctx;
 }
 
-function ChevronSvg({ className = "" }: { className?: string }) {
+export function ChevronSvg({ className = "" }: { className?: string }) {
   return (
     <svg
       className={`shrink-0 ${className}`}
@@ -58,17 +62,7 @@ function ChevronSvg({ className = "" }: { className?: string }) {
   );
 }
 
-export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  /** Начально открытый пункт по id (`Accordion.Item value`) или индексу. */
-  defaultOpenId?: string | null;
-  /** Начально открытый пункт по порядковому номеру (0-based), если `value` не задан. */
-  defaultOpenIndex?: number | null;
-  openId?: string | null;
-  onOpenIdChange?: (id: string | null) => void;
-  children?: ReactNode;
-};
-
-function AccordionRoot({
+export function AccordionRoot({
   defaultOpenId: defaultOpenIdProp = null,
   defaultOpenIndex = null,
   openId: openIdProp,
@@ -128,14 +122,7 @@ function AccordionRoot({
   );
 }
 
-export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  /** Явный id пункта; без него используется порядковый номер среди siblings. */
-  value?: string;
-  disabled?: boolean;
-  children?: ReactNode;
-};
-
-const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(function AccordionItem(
+export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(function AccordionItem(
   { value, disabled, className, children, ...rest },
   ref,
 ) {
@@ -159,9 +146,7 @@ const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(function Ac
   );
 });
 
-export type AccordionHeadingProps = HTMLAttributes<HTMLHeadingElement>;
-
-function AccordionHeading({ className, children, ...rest }: AccordionHeadingProps) {
+export function AccordionHeading({ className, children, ...rest }: AccordionHeadingProps) {
   return (
     <h3 className={cn("m-0 font-[inherit] text-[inherit]", className)} {...rest}>
       {children}
@@ -171,9 +156,7 @@ function AccordionHeading({ className, children, ...rest }: AccordionHeadingProp
 
 AccordionHeading.displayName = "Accordion.Heading";
 
-export type AccordionTriggerProps = ExpandableTriggerProps;
-
-const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerProps>(
+export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerProps>(
   function AccordionTrigger({ hideChevron = true, className, ...rest }, ref) {
     return (
       <Expandable.Trigger ref={ref} hideChevron={hideChevron} className={className} {...rest} />
@@ -181,51 +164,37 @@ const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerProps>(
   },
 );
 
-export type AccordionMessageProps = ExpandableMessageProps;
-
-function AccordionMessage(props: AccordionMessageProps) {
+export function AccordionMessage(props: AccordionMessageProps) {
   return <Expandable.Message {...props} />;
 }
 
 AccordionMessage.displayName = "Accordion.Message";
 
-export type AccordionIconProps = ExpandableIconProps;
-
-function AccordionIcon(props: AccordionIconProps) {
+export function AccordionIcon(props: AccordionIconProps) {
   return <Expandable.Icon {...props} />;
 }
 
 AccordionIcon.displayName = "Accordion.Icon";
 
-export type AccordionContentProps = ExpandableContentProps;
-
-function AccordionContent(props: AccordionContentProps) {
+export function AccordionContent(props: AccordionContentProps) {
   return <Expandable.Content {...props} />;
 }
 
 AccordionContent.displayName = "Accordion.Content";
 
-export type AccordionTitleProps = ExpandableTitleProps;
-
-function AccordionTitle(props: AccordionTitleProps) {
+export function AccordionTitle(props: AccordionTitleProps) {
   return <Expandable.Title {...props} />;
 }
 
 AccordionTitle.displayName = "Accordion.Title";
 
-export type AccordionDescriptionProps = ExpandableDescriptionProps;
-
-function AccordionDescription(props: AccordionDescriptionProps) {
+export function AccordionDescription(props: AccordionDescriptionProps) {
   return <Expandable.Description {...props} />;
 }
 
 AccordionDescription.displayName = "Accordion.Description";
 
-export type AccordionIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
-  children?: ReactNode;
-};
-
-function AccordionIndicator({ className, children, ...rest }: AccordionIndicatorProps) {
+export function AccordionIndicator({ className, children, ...rest }: AccordionIndicatorProps) {
   const { open, hasPanel } = useExpandableContext();
   if (!hasPanel) return null;
 
@@ -246,17 +215,13 @@ function AccordionIndicator({ className, children, ...rest }: AccordionIndicator
 
 AccordionIndicator.displayName = "Accordion.Indicator";
 
-export type AccordionPanelProps = HTMLAttributes<HTMLDivElement>;
-
-const AccordionPanel = forwardRef<HTMLDivElement, AccordionPanelProps>(
+export const AccordionPanel = forwardRef<HTMLDivElement, AccordionPanelProps>(
   function AccordionPanel(props, ref) {
     return <Expandable.Panel ref={ref} {...props} />;
   },
 );
 
-export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
-
-function AccordionBody({ className, ...rest }: AccordionBodyProps) {
+export function AccordionBody({ className, ...rest }: AccordionBodyProps) {
   return (
     <Text
       as="div"
@@ -268,20 +233,6 @@ function AccordionBody({ className, ...rest }: AccordionBodyProps) {
 }
 
 AccordionBody.displayName = "Accordion.Body";
-
-export const Accordion = Object.assign(AccordionRoot, {
-  Item: AccordionItem,
-  Heading: AccordionHeading,
-  Trigger: AccordionTrigger,
-  Message: AccordionMessage,
-  Icon: AccordionIcon,
-  Content: AccordionContent,
-  Title: AccordionTitle,
-  Description: AccordionDescription,
-  Indicator: AccordionIndicator,
-  Panel: AccordionPanel,
-  Body: AccordionBody,
-});
 
 AccordionItem.displayName = "Accordion.Item";
 AccordionTrigger.displayName = "Accordion.Trigger";

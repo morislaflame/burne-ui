@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Form } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
-import { Dialog } from "./Dialog";
+import { Dialog } from ".";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (

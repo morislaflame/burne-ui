@@ -5,8 +5,8 @@ import {
   ComboBoxInputGroup,
   ComboBoxPopover,
   ComboBoxTrigger,
-  type ComboBoxOption,
 } from "./ComboBox";
+import type { ComboBoxOption } from "./comboBoxContext";
 import { ComboBoxError, ComboBoxHint, ComboBoxRoot } from "./ComboBoxField";
 
 export const ComboBox = Object.assign(ComboBoxRoot, {

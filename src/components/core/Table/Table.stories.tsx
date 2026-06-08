@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/core/Checkbox";
 import { Pagination } from "@/components/core/Pagination";
 import { cn } from "@/utils/cn";
 
-import { Table, type Selection, type SortDescriptor, type TableRowTone } from "./Table";
+import { Table, type Selection, type SortDescriptor, type TableRowTone } from ".";
 
 // ─── shared data ─────────────────────────────────────────────────────────────
 

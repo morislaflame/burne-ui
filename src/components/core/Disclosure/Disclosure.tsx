@@ -249,7 +249,7 @@ export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   icon?: ReactNode | null;
 };
 
-const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTriggerProps>(
+export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTriggerProps>(
   function DisclosureTrigger(
     {
       children,
@@ -420,7 +420,7 @@ export type DisclosureContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentProps>(
+export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentProps>(
   function DisclosureContent({ children, className = "", ...rest }, ref) {
     const { open, panelId, triggerId, size, variant } = useDisclosureCtx();
 
@@ -486,8 +486,7 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   iconPos?: DisclosureIconPos;
 };
 
-export const Disclosure = Object.assign(
-  forwardRef<HTMLDivElement, DisclosureProps>(function Disclosure(
+export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(function Disclosure(
     {
       children,
       open: openProp,
@@ -552,14 +551,10 @@ export const Disclosure = Object.assign(
         </div>
       </DisclosureCtx.Provider>
     );
-  }),
-  {
-    Trigger: DisclosureTrigger,
-    Content: DisclosureContent,
   },
 );
 
-Disclosure.displayName = "Disclosure";
+DisclosureRoot.displayName = "Disclosure";
 
 // ─── DisclosureGroup ──────────────────────────────────────────────────────────
 

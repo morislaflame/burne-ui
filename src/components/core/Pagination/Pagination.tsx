@@ -61,7 +61,7 @@ type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
 };
 
-const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiveProps>(
+export const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiveProps>(
   function PaginationInteractive(
     { children, className, disabled, onPointerDown, onPointerEnter, onPointerLeave, ...rest },
     ref,
@@ -148,7 +148,7 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   siblingCount?: number;
 };
 
-const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(function PaginationRoot(
+export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(function PaginationRoot(
   {
     children,
     className,
@@ -190,7 +190,7 @@ const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(function Paginat
 
 export type PaginationSummaryProps = HTMLAttributes<HTMLDivElement>;
 
-const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryProps>(
+export const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryProps>(
   function PaginationSummary({ className, children, ...rest }, ref) {
     return (
       <div ref={ref} className={cn("min-w-0 flex", className)} {...rest}>
@@ -282,7 +282,7 @@ function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
 
 export type PaginationContentProps = OlHTMLAttributes<HTMLOListElement>;
 
-const PaginationContent = forwardRef<HTMLOListElement, PaginationContentProps>(
+export const PaginationContent = forwardRef<HTMLOListElement, PaginationContentProps>(
   function PaginationContent({ className, children, ...rest }, ref) {
     const olRef = useRef<HTMLOListElement>(null);
 
@@ -314,7 +314,7 @@ const PaginationContent = forwardRef<HTMLOListElement, PaginationContentProps>(
 
 export type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
 
-const PaginationItem = forwardRef<HTMLLIElement, PaginationItemProps>(
+export const PaginationItem = forwardRef<HTMLLIElement, PaginationItemProps>(
   function PaginationItem({ className, children, ...rest }, ref) {
     return (
       <li ref={ref} className={cn("flex items-center", className)} {...rest}>
@@ -326,7 +326,7 @@ const PaginationItem = forwardRef<HTMLLIElement, PaginationItemProps>(
 
 export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
-const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
+export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationPrevious(
     { disabled, onClick, children, "aria-label": ariaLabel, ...rest },
     ref,
@@ -367,7 +367,7 @@ const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProp
   },
 );
 
-const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
+export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationNext(
     { disabled, onClick, children, "aria-label": ariaLabel, ...rest },
     ref,
@@ -411,7 +411,7 @@ const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   },
 );
 
-function PaginationPreviousIcon({ className }: { className?: string }) {
+export function PaginationPreviousIcon({ className }: { className?: string }) {
   return (
     <IoChevronBack
       aria-hidden
@@ -420,7 +420,7 @@ function PaginationPreviousIcon({ className }: { className?: string }) {
   );
 }
 
-function PaginationNextIcon({ className }: { className?: string }) {
+export function PaginationNextIcon({ className }: { className?: string }) {
   return (
     <IoChevronForward
       aria-hidden
@@ -435,7 +435,7 @@ export type PaginationPageProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
   children?: ReactNode;
 };
 
-const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>(
+export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>(
   function PaginationPage(
     {
       page: pageNumber,
@@ -499,7 +499,7 @@ const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>(
 
 export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement>;
 
-const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsisProps>(
+export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsisProps>(
   function PaginationEllipsis({ className, ...rest }, ref) {
     return (
       <Text
@@ -550,7 +550,7 @@ function getPaginationRange(
 /** Без props: диапазон берётся из `page` / `totalPages` / `siblingCount` на корневом `<Pagination>`. */
 export type PaginationPagesProps = Record<string, never>;
 
-function PaginationPages() {
+export function PaginationPages() {
     const { page, totalPages, siblingCount } = usePagination();
 
     if (page == null || totalPages == null) {
@@ -590,19 +590,6 @@ function PaginationPages() {
 }
 
 /** Пагинация: составной API в стиле `Breadcrumbs` — summary, prev/next, номера страниц. */
-export const Pagination = Object.assign(PaginationRoot, {
-  Summary: PaginationSummary,
-  Content: PaginationContent,
-  Item: PaginationItem,
-  Previous: PaginationPrevious,
-  Next: PaginationNext,
-  PreviousIcon: PaginationPreviousIcon,
-  NextIcon: PaginationNextIcon,
-  Page: PaginationPage,
-  Pages: PaginationPages,
-  Ellipsis: PaginationEllipsis,
-});
-
 PaginationRoot.displayName = "Pagination";
 PaginationSummary.displayName = "Pagination.Summary";
 PaginationContent.displayName = "Pagination.Content";

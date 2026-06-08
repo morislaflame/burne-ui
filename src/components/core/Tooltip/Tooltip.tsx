@@ -213,7 +213,7 @@ function useTooltipContext(who: string): TooltipContextValue {
   return ctx;
 }
 
-function TooltipRoot({
+export function TooltipRoot({
   children,
   size = "base",
   variant = "default",
@@ -320,7 +320,7 @@ function bindTriggerEvents<T extends HTMLElement>(
   };
 }
 
-const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(function TooltipTrigger(
+export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(function TooltipTrigger(
   { className = "", children, onPointerEnter, onPointerLeave, onFocus, onBlur, ...rest },
   ref,
 ) {
@@ -334,6 +334,15 @@ const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(function
       onBlur: () => hide(),
     }),
     [hide, scheduleShow],
+  );
+
+  const mergedRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      triggerRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [ref, triggerRef],
   );
 
   const onlyChild = Children.count(children) === 1 && isValidElement(children) ? children : null;
@@ -356,18 +365,9 @@ const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(function
         onBlur,
       }),
       "aria-describedby": mergeDescribedBy(child.props["aria-describedby"], tooltipId, open),
-      ref: mergeRefs(child.props.ref, triggerRef, ref as Ref<HTMLElement>),
+      ref: mergeRefs(child.props.ref, mergedRef),
     });
   }
-
-  const mergedRef = useCallback(
-    (node: HTMLSpanElement | null) => {
-      triggerRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    },
-    [ref, triggerRef],
-  );
 
   return (
     <span
@@ -398,7 +398,7 @@ function inheritThemePortalProps(triggerEl: HTMLElement | null): {
   return inherited === "light" ? { "data-theme": "light" } : {};
 }
 
-function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
+export function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
   const { resolvedSide, variant } = useTooltipContext("Tooltip.Arrow");
   return (
     <span
@@ -416,7 +416,7 @@ function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
 
 TooltipArrow.displayName = "TooltipArrow";
 
-const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(function TooltipContent(
+export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(function TooltipContent(
   {
     className = "",
     children,
@@ -611,8 +611,3 @@ const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(function 
 
 TooltipContent.displayName = "TooltipContent";
 
-export const Tooltip = Object.assign(TooltipRoot, {
-  Trigger: TooltipTrigger,
-  Content: TooltipContent,
-  Arrow: TooltipArrow,
-});

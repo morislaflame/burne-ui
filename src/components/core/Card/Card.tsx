@@ -58,7 +58,7 @@ export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type CardBodyProps = HTMLAttributes<HTMLDivElement>;
 export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
 
-function CardContent({ className = "", ...rest }: CardContentProps) {
+export function CardContent({ className = "", ...rest }: CardContentProps) {
   return (
     <div
       className={cn(
@@ -70,7 +70,7 @@ function CardContent({ className = "", ...rest }: CardContentProps) {
   );
 }
 
-const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
+export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   function CardTitle({ className = "", ...rest }, ref) {
     return (
       <Text
@@ -84,7 +84,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   },
 );
 
-const CardDescription = forwardRef<
+export const CardDescription = forwardRef<
   HTMLParagraphElement,
   CardDescriptionProps
 >(function CardDescription({ className = "", ...rest }, ref) {
@@ -99,7 +99,7 @@ const CardDescription = forwardRef<
   );
 });
 
-function CardBody({ className = "", children, ...rest }: CardBodyProps) {
+export function CardBody({ className = "", children, ...rest }: CardBodyProps) {
   return (
     <div
       className={cn("min-w-0 px-mid pb-mid", className)}
@@ -113,7 +113,7 @@ function CardBody({ className = "", children, ...rest }: CardBodyProps) {
 }
 
 /** Нижняя зона действий / мета с разделителем. */
-function CardFooter({ className = "", ...rest }: CardFooterProps) {
+export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   return (
     <div
       className={cn(
@@ -127,7 +127,7 @@ function CardFooter({ className = "", ...rest }: CardFooterProps) {
 
 const CARD_PRESS_SHADOW = { hover: SHADOW_SM() };
 
-const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
+export const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
   {
     className = "",
     variant = "default",
@@ -258,10 +258,3 @@ const CardRoot = forwardRef<HTMLDivElement, CardProps>(function Card(
 });
 
 /** Карточка: корневой блок с токенами темы; при `pressable` — hover-lift, тень и squeeze (риппл — снаружи через `<Ripple />`). */
-export const Card = Object.assign(CardRoot, {
-  Content: CardContent,
-  Title: CardTitle,
-  Description: CardDescription,
-  Body: CardBody,
-  Footer: CardFooter,
-});

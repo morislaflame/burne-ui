@@ -353,6 +353,3 @@ ColorSliderRoot.displayName = "ColorSliderRoot";
 
 // ─── compound export ──────────────────────────────────────────────────────────
 
-export const ColorSlider = Object.assign(ColorSliderRoot, {
-  Track: ColorSliderTrack,
-});

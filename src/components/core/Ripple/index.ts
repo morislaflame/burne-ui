@@ -1,7 +1,2 @@
-export {
-  Ripple,
-  RIPPLE_COLOR,
-  type RippleProps,
-  type RippleColor,
-  type RippleDirection,
-} from "./Ripple";
+export { Ripple, type RippleProps, type RippleDirection } from "./Ripple";
+export { RIPPLE_COLOR, type RippleColor } from "./rippleTokens";

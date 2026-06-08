@@ -7,11 +7,11 @@ import { ListBox } from "@/components/core/ListBox";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-  dualApiStorySource,
 } from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
 
-import type { ComboBoxOption } from "./ComboBox";
+import type { ComboBoxOption } from "./comboBoxContext";
 import { ComboBox } from ".";
 
 const darkThemeDecorator = [

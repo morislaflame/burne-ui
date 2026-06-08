@@ -178,7 +178,7 @@ export type PopoverRootProps = {
   shouldDismiss?: (target: Node) => boolean;
 };
 
-function PopoverRoot({
+export function PopoverRoot({
   children,
   size = "base",
   side = "bottom",
@@ -266,7 +266,7 @@ PopoverRoot.displayName = "PopoverRoot";
 
 export type PopoverTriggerProps = HTMLAttributes<HTMLSpanElement>;
 
-const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(function PopoverTrigger(
+export const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(function PopoverTrigger(
   { className = "", children, onClick, ...rest },
   ref,
 ) {
@@ -279,6 +279,15 @@ const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(function
       setOpen(!open);
     },
     [onClick, open, setOpen],
+  );
+
+  const mergedRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      triggerRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [ref, triggerRef],
   );
 
   const onlyChild = Children.count(children) === 1 && isValidElement(children) ? children : null;
@@ -298,18 +307,9 @@ const PopoverTrigger = forwardRef<HTMLSpanElement, PopoverTriggerProps>(function
       },
       "aria-expanded": open,
       "aria-controls": open ? popoverId : undefined,
-      ref: mergeRefs(child.props.ref, triggerRef, ref as Ref<HTMLElement>),
+      ref: mergeRefs(child.props.ref, mergedRef),
     });
   }
-
-  const mergedRef = useCallback(
-    (node: HTMLSpanElement | null) => {
-      triggerRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    },
-    [ref, triggerRef],
-  );
 
   return (
     <span
@@ -329,7 +329,7 @@ PopoverTrigger.displayName = "PopoverTrigger";
 
 export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement>;
 
-function PopoverArrow({ className, ...rest }: PopoverArrowProps) {
+export function PopoverArrow({ className, ...rest }: PopoverArrowProps) {
   const { resolvedSide } = usePopoverContext("Popover.Arrow");
   return (
     <span
@@ -348,7 +348,7 @@ PopoverArrow.displayName = "PopoverArrow";
 
 export type PopoverHeaderProps = HTMLAttributes<HTMLDivElement>;
 
-function PopoverHeader({ className, children, ...rest }: PopoverHeaderProps) {
+export function PopoverHeader({ className, children, ...rest }: PopoverHeaderProps) {
   return (
     <div className={cn("flex shrink-0 flex-col gap-xsmall text-left", className)} {...rest}>
       {children}
@@ -360,7 +360,7 @@ PopoverHeader.displayName = "PopoverHeader";
 
 export type PopoverLabelProps = HTMLAttributes<HTMLHeadingElement>;
 
-const PopoverLabel = forwardRef<HTMLHeadingElement, PopoverLabelProps>(function PopoverLabel(
+export const PopoverLabel = forwardRef<HTMLHeadingElement, PopoverLabelProps>(function PopoverLabel(
   { className, children, id: idProp, ...rest },
   ref,
 ) {
@@ -383,7 +383,7 @@ PopoverLabel.displayName = "PopoverLabel";
 
 export type PopoverHintProps = Omit<FieldHintProps, "id" | "as">;
 
-function PopoverHint({ className, children, variant, ...rest }: PopoverHintProps) {
+export function PopoverHint({ className, children, variant, ...rest }: PopoverHintProps) {
   const { hintId, size } = usePopoverContext("Popover.Hint");
   return (
     <FieldHint
@@ -402,7 +402,7 @@ PopoverHint.displayName = "PopoverHint";
 
 export type PopoverBodyProps = HTMLAttributes<HTMLDivElement>;
 
-function PopoverBody({ className, children, ...rest }: PopoverBodyProps) {
+export function PopoverBody({ className, children, ...rest }: PopoverBodyProps) {
   return (
     <div className={cn("min-h-0 min-w-0 text-left", className)} {...rest}>
       {children}
@@ -432,7 +432,7 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   contentRole?: "dialog" | undefined;
 };
 
-const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function PopoverContent(
+export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function PopoverContent(
   {
     className = "",
     children,
@@ -648,12 +648,3 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
 
 PopoverContent.displayName = "PopoverContent";
 
-export const Popover = Object.assign(PopoverRoot, {
-  Trigger: PopoverTrigger,
-  Content: PopoverContent,
-  Header: PopoverHeader,
-  Label: PopoverLabel,
-  Hint: PopoverHint,
-  Body: PopoverBody,
-  Arrow: PopoverArrow,
-});

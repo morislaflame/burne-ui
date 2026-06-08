@@ -1,15 +1,41 @@
-export {
-  Drawer,
-  type DrawerProps,
-  type DrawerPlacement,
-  type DrawerSize,
-  type DrawerBackdropProps,
-  type DrawerHandleProps,
-  type DrawerHeaderProps,
-  type DrawerHeadingBlockProps,
-  type DrawerTitleProps,
-  type DrawerDescriptionProps,
-  type DrawerBodyProps,
-  type DrawerFooterProps,
-  type DrawerCloseProps,
+import {
+  DrawerBackdropInner,
+  DrawerBody,
+  DrawerClose,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHandleInner,
+  DrawerHeader,
+  DrawerHeadingBlock,
+  DrawerRoot,
+  DrawerTitle,
+} from "./Drawer";
+
+export const Drawer = Object.assign(DrawerRoot, {
+  /** Конфигурирует подложку (`isDismissable`). Сам ничего не рендерит. */
+  Backdrop: DrawerBackdropInner,
+  /** Полоска перетягивания для свайп-закрытия. */
+  Handle: DrawerHandleInner,
+  Header: DrawerHeader,
+  HeadingBlock: DrawerHeadingBlock,
+  Title: DrawerTitle,
+  Description: DrawerDescription,
+  Close: DrawerClose,
+  Body: DrawerBody,
+  Footer: DrawerFooter,
+});
+
+export type {
+  DrawerProps,
+  DrawerPlacement,
+  DrawerSize,
+  DrawerBackdropProps,
+  DrawerHandleProps,
+  DrawerHeaderProps,
+  DrawerHeadingBlockProps,
+  DrawerTitleProps,
+  DrawerDescriptionProps,
+  DrawerBodyProps,
+  DrawerFooterProps,
+  DrawerCloseProps,
 } from "./Drawer";

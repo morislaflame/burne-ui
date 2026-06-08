@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Pagination } from "./Pagination";
+import { Pagination } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

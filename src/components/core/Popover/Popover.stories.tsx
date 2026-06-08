@@ -8,7 +8,7 @@ import { Input } from "@/components/core/Input";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import { Popover } from "./Popover";
+import { Popover } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

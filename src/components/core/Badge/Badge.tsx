@@ -245,7 +245,7 @@ export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
   hoverLift?: boolean;
 };
 
-const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function BadgeAnchor(
+export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function BadgeAnchor(
   {
     className = "",
     children,
@@ -347,7 +347,7 @@ function hasMeaningfulContent(node: ReactNode): boolean {
   return isValidElement(node);
 }
 
-const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
+export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   {
     color,
     variant = "default",
@@ -640,8 +640,3 @@ const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 });
 
 /** Компактный статус-бейдж; с `Badge.Anchor` — наложение и hover-scale как у `Button`. */
-export const Badge = Object.assign(BadgeRoot, {
-  Anchor: BadgeAnchor,
-});
-
-export { BadgeAnchor };

@@ -6,7 +6,7 @@ import { IoDocumentTextOutline, IoSettingsOutline, IoPersonOutline } from "react
 import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
 
-import { Tabs, type TabsOrientation, type TabsVariant } from "./Tabs";
+import { Tabs, type TabsOrientation, type TabsVariant } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

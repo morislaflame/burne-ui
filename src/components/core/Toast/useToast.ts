@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
-import { useToastContext, type AddToastOpts, type PromiseToastOpts, type ToastStatus } from "./Toast";
+import type { AddToastOpts, PromiseToastOpts, ToastStatus } from "./Toast";
+import { useToastContext } from "./toastContext";
 
 type ToastAPI = {
   /** Показать тост с произвольными параметрами. Возвращает ID. */

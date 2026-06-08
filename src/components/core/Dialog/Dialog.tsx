@@ -70,7 +70,7 @@ type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
 type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
 type DialogCloseProps = CloseButtonProps;
 
-function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
+export function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
     <div
       className={cn(
@@ -82,7 +82,7 @@ function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   );
 }
 
-const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
+export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
   function DialogTitle({ className = "", id, ...rest }, ref) {
     const { titleId } = useDialog();
     return (
@@ -98,7 +98,7 @@ const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
   },
 );
 
-function DialogDescription({
+export function DialogDescription({
   className = "",
   id,
   ...rest
@@ -121,7 +121,7 @@ function DialogDescription({
 }
 
 /** Заголовок и подзаголовок: колонка с токенным зазором (`gap-base`). */
-function DialogHeadingBlock({
+export function DialogHeadingBlock({
   className = "",
   ...rest
 }: HTMLAttributes<HTMLDivElement>) {
@@ -136,7 +136,7 @@ function DialogHeadingBlock({
   );
 }
 
-const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
+export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
   function DialogClose(
     { className = "", onClick, "aria-label": ariaLabel = "Закрыть", ...rest },
     ref,
@@ -158,7 +158,7 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 );
 
 /** Область контента между шапкой и футером: вертикальный скролл здесь; хедер и футер остаются на месте (`shrink-0` + `min-h-0` у панели). */
-function DialogBody({ className = "", ...rest }: DialogBodyProps) {
+export function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
       className={cn(
@@ -170,7 +170,7 @@ function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   );
 }
 
-function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
+export function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
       className={cn(
@@ -182,7 +182,7 @@ function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   );
 }
 
-const DialogRoot = function Dialog({
+export const DialogRoot = function Dialog({
   open,
   onOpenChange,
   children,
@@ -366,16 +366,6 @@ const DialogRoot = function Dialog({
     document.body,
   );
 };
-
-export const Dialog = Object.assign(DialogRoot, {
-  Header: DialogHeader,
-  HeadingBlock: DialogHeadingBlock,
-  Title: DialogTitle,
-  Description: DialogDescription,
-  Close: DialogClose,
-  Body: DialogBody,
-  Footer: DialogFooter,
-});
 
 export type {
   DialogHeaderProps,

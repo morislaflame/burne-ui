@@ -148,10 +148,12 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
     const segmentCount = flat.reduce((n, el) => n + (isToggleButtonChild(el) ? 1 : 0), 0);
     let segmentIndex = -1;
 
-    const toggleItemValues = flat
-      .filter(isToggleButtonChild)
-      .map((el) => (el.props as { value?: string }).value)
-      .filter((v): v is string => typeof v === "string");
+    const toggleItemValues = flat.reduce<string[]>((acc, el) => {
+      if (!isToggleButtonChild(el)) return acc;
+      const value = (el.props as { value?: string }).value;
+      if (typeof value === "string") acc.push(value);
+      return acc;
+    }, []);
 
     const firstToggleValue = toggleItemValues[0];
 

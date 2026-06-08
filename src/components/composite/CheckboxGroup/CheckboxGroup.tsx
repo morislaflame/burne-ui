@@ -11,8 +11,6 @@ import { FieldError, type FieldErrorProps } from "@/components/core/Field";
 import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field/FieldSet";
 import {
   OptionGroupFieldset,
-  OptionGroupActions,
-  OptionGroupGroup,
   OptionGroupHeader,
   OptionGroupHint,
   OptionGroupLegend,
@@ -23,7 +21,6 @@ import {
   type OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
-import { Label } from "@/components/core/Label";
 import {
   CheckboxGroupContext,
   useCheckboxGroupContext,
@@ -49,7 +46,7 @@ export type CheckboxGroupProps = Omit<
   children?: ReactNode;
 };
 
-const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>(
+export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>(
   function CheckboxGroupRoot(
     {
       isRequired = false,
@@ -124,7 +121,7 @@ const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>(
   },
 );
 
-function CheckboxGroupLegend({ children, ...rest }: OptionGroupLegendProps) {
+export function CheckboxGroupLegend({ children, ...rest }: OptionGroupLegendProps) {
   return (
     <OptionGroupLegend {...rest}>
       <OptionGroupHeader>{children}</OptionGroupHeader>
@@ -132,33 +129,23 @@ function CheckboxGroupLegend({ children, ...rest }: OptionGroupLegendProps) {
   );
 }
 
-function CheckboxGroupHint({ id, ...rest }: OptionGroupHintProps) {
+export function CheckboxGroupHint({ id, ...rest }: OptionGroupHintProps) {
   const { hintId } = useCheckboxGroupContext();
   return <OptionGroupHint id={id ?? hintId} {...rest} />;
 }
 
-function CheckboxGroupError({ id, ...rest }: FieldErrorProps) {
+export function CheckboxGroupError({ id, ...rest }: FieldErrorProps) {
   const { errorId } = useCheckboxGroupContext();
   return <FieldError id={id ?? errorId} {...rest} />;
 }
 
-const CheckboxGroupList = forwardRef<HTMLDivElement, OptionGroupListProps>(
+export const CheckboxGroupList = forwardRef<HTMLDivElement, OptionGroupListProps>(
   function CheckboxGroupList(props, ref) {
     return <OptionGroupList ref={ref} {...props} />;
   },
 );
 
-export const CheckboxGroup = Object.assign(CheckboxGroupRoot, {
-  Legend: CheckboxGroupLegend,
-  Label,
-  Hint: CheckboxGroupHint,
-  Error: CheckboxGroupError,
-  List: CheckboxGroupList,
-  Group: OptionGroupGroup,
-  Actions: OptionGroupActions,
-});
-
-CheckboxGroup.displayName = "CheckboxGroup";
+CheckboxGroupRoot.displayName = "CheckboxGroup";
 CheckboxGroupLegend.displayName = "CheckboxGroup.Legend";
 CheckboxGroupHint.displayName = "CheckboxGroup.Hint";
 CheckboxGroupError.displayName = "CheckboxGroup.Error";

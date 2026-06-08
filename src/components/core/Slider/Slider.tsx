@@ -29,14 +29,15 @@ import {
 } from "@/components/core/SelectionIndicator";
 import { useOptionalSliderFieldContext } from "./sliderFieldContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { partitionSliderTrackChildren } from "./partitionSliderTrackChildren";
 import {
   SliderCompoundThumb,
   SliderIcon,
   SliderRail,
   SliderTrackProvider,
-  partitionSliderTrackChildren,
   type SliderThumbKind,
 } from "./sliderCompound";
+import { sliderThicknessToCss } from "./sliderThickness";
 
 export type SliderOrientation = "horizontal" | "vertical";
 export type SliderSize = "small" | "base" | "mid" | "large";
@@ -75,11 +76,6 @@ function readTrackMetrics(
   const thumbSpanPx =
     orientation === "horizontal" ? rect.height : rect.width;
   return { trackSpanPx, thumbSpanPx };
-}
-
-/** CSS-значение толщины: число → px, строка — как есть (`"1rem"`, `"12px"`). */
-export function sliderThicknessToCss(thickness: number | string): string {
-  return typeof thickness === "number" ? `${thickness}px` : thickness;
 }
 
 /** Fallback для геометрии до первого измерения DOM. */

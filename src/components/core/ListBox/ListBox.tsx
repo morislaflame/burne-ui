@@ -77,7 +77,7 @@ export type ListBoxRootProps = Omit<HTMLAttributes<HTMLDivElement>, "children" |
   listId?: string;
 };
 
-function ListBoxRoot({
+export function ListBoxRoot({
   children,
   className,
   size = "base",
@@ -186,7 +186,7 @@ const ListBoxSectionLabelContext = createContext<((id: string | undefined) => vo
 
 export type ListBoxSectionProps = HTMLAttributes<HTMLDivElement>;
 
-function ListBoxSection({ className, children, ...rest }: ListBoxSectionProps) {
+export function ListBoxSection({ className, children, ...rest }: ListBoxSectionProps) {
   const [labelId, setLabelId] = useState<string | undefined>();
 
   const registerLabel = useCallback((id: string | undefined) => {
@@ -211,7 +211,7 @@ ListBoxSection.displayName = "ListBoxSection";
 
 export type ListBoxHeaderProps = HTMLAttributes<HTMLDivElement>;
 
-function ListBoxHeader({ className, children, id: idProp, ...rest }: ListBoxHeaderProps) {
+export function ListBoxHeader({ className, children, id: idProp, ...rest }: ListBoxHeaderProps) {
   const autoId = useId();
   const id = idProp ?? autoId;
   const registerLabel = useContext(ListBoxSectionLabelContext);
@@ -234,7 +234,7 @@ ListBoxHeader.displayName = "ListBoxHeader";
 
 export type ListBoxSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
-function ListBoxSeparator({ className, ...rest }: ListBoxSeparatorProps) {
+export function ListBoxSeparator({ className, ...rest }: ListBoxSeparatorProps) {
   return <Separator className={className} {...rest} />;
 }
 
@@ -242,7 +242,7 @@ ListBoxSeparator.displayName = "ListBoxSeparator";
 
 export type ListBoxEmptyProps = HTMLAttributes<HTMLParagraphElement>;
 
-function ListBoxEmpty({ className, children, ...rest }: ListBoxEmptyProps) {
+export function ListBoxEmpty({ className, children, ...rest }: ListBoxEmptyProps) {
   return (
     <Text
       as="p"
@@ -268,7 +268,7 @@ export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> 
   icon?: ReactNode;
 };
 
-const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(function ListBoxItem(
+export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(function ListBoxItem(
   {
     children,
     className,
@@ -383,7 +383,7 @@ ListBoxItem.displayName = "ListBoxItem";
 
 export type ListBoxLabelProps = HTMLAttributes<HTMLSpanElement>;
 
-function ListBoxLabel(props: ListBoxLabelProps) {
+export function ListBoxLabel(props: ListBoxLabelProps) {
   return <OptionListItemLabel {...props} />;
 }
 
@@ -391,7 +391,7 @@ ListBoxLabel.displayName = "ListBoxLabel";
 
 export type ListBoxHintProps = HTMLAttributes<HTMLSpanElement>;
 
-function ListBoxHint(props: ListBoxHintProps) {
+export function ListBoxHint(props: ListBoxHintProps) {
   return <OptionListItemHint {...props} />;
 }
 
@@ -399,7 +399,7 @@ ListBoxHint.displayName = "ListBoxHint";
 
 export type ListBoxIconProps = HTMLAttributes<HTMLSpanElement>;
 
-function ListBoxIcon(props: ListBoxIconProps) {
+export function ListBoxIcon(props: ListBoxIconProps) {
   return <OptionListItemIcon {...props} />;
 }
 
@@ -412,7 +412,7 @@ export type ListBoxItemIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "c
   children?: ReactNode;
 };
 
-function ListBoxItemIndicator({
+export function ListBoxItemIndicator({
   variant = "base",
   size = "small",
   check,
@@ -441,17 +441,5 @@ function ListBoxItemIndicator({
 }
 
 ListBoxItemIndicator.displayName = "ListBoxItemIndicator";
-
-export const ListBox = Object.assign(ListBoxRoot, {
-  Section: ListBoxSection,
-  Header: ListBoxHeader,
-  Separator: ListBoxSeparator,
-  Empty: ListBoxEmpty,
-  Item: ListBoxItem,
-  Label: ListBoxLabel,
-  Hint: ListBoxHint,
-  Icon: ListBoxIcon,
-  ItemIndicator: ListBoxItemIndicator,
-});
 
 export { useListBox };

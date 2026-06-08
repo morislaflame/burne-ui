@@ -1,7 +1,10 @@
 import { useCallback, useRef, useState } from "react";
 import type { PointerEvent } from "react";
 
-import { createConvergeRippleAtPointer, type ConvergeRipple } from "./pressRipple";
+import {
+  createConvergeRippleAtPointer,
+  type ConvergeRipple,
+} from "./convergeRippleGeometry";
 
 /**
  * Состояние и пуш новых рипплов от pointer; геометрию читаем **синхронно** в обработчике —

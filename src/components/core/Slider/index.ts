@@ -15,8 +15,8 @@ import {
   type SliderRailProps,
   type SliderThumbProps,
   type SliderThumbKind,
-  sliderThicknessToCss,
 } from "./Slider";
+import { sliderThicknessToCss } from "./sliderThickness";
 import { Label } from "@/components/core/Label";
 import { SliderError, SliderHeader, SliderHint, SliderRoot, SliderValue } from "./SliderField";
 

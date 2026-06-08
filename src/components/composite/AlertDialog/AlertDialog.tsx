@@ -2,12 +2,10 @@ import { animate, remove } from "animejs";
 import {
   Children,
   cloneElement,
-  createContext,
   forwardRef,
   Fragment,
   isValidElement,
   useCallback,
-  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -23,26 +21,19 @@ import { createPortal } from "react-dom";
 import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
-import {
-  resolveAlertStatus,
-  type AlertStatus,
-} from "@/components/core/Alert/Alert";
+import { resolveAlertStatus, type AlertStatus } from "@/components/core/Alert/alertUtils";
 import {
   Button,
   type ButtonProps,
   type ButtonSize,
-  type ButtonVariant,
 } from "@/components/core/Button";
-import {
-  CloseButton,
-  type CloseButtonProps,
-} from "@/components/core/CloseButton";
+import { CloseButton } from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import {
   MOTION_INTERACTIVE_EASE,
   MOTION_INTERACTIVE_MS,
 } from "@/components/core/utils/motionTokens";
-import { Text, type TextVariant } from "@/components/core/Text";
+import { Text } from "@/components/core/Text";
 import {
   SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
@@ -50,23 +41,30 @@ import {
 } from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
 
-/** Ширина и типографика панели. */
-export type AlertDialogSize = "small" | "base" | "mid" | "large";
+import { footerButtonSizeForAlertDialog } from "./alertDialogFooterUtils";
+import { ALERT_DIALOG_SIZE } from "./alertDialogSizePresets";
+import type {
+  AlertDialogBodyProps,
+  AlertDialogCloseProps,
+  AlertDialogContextValue,
+  AlertDialogDescriptionProps,
+  AlertDialogFooterProps,
+  AlertDialogHeaderProps,
+  AlertDialogProps,
+  AlertDialogTitleProps,
+} from "./alertDialogTypes";
+import { AlertDialogContext, useAlertDialog } from "./useAlertDialog";
 
-/** Размер `Button` в `AlertDialog.Footer` по размеру модалки (имена ступеней совпадают). */
-const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
-  small: "small",
-  base: "base",
-  mid: "mid",
-  large: "large",
-};
-
-/** Размер кнопок футера для заданного `size` модалки (если не используете `AlertDialog.Footer` с авто-подстановкой). */
-export function footerButtonSizeForAlertDialog(
-  dialogSize: AlertDialogSize,
-): ButtonSize {
-  return FOOTER_BUTTON_SIZE[dialogSize];
-}
+export type {
+  AlertDialogBodyProps,
+  AlertDialogCloseProps,
+  AlertDialogDescriptionProps,
+  AlertDialogFooterProps,
+  AlertDialogHeaderProps,
+  AlertDialogProps,
+  AlertDialogSize,
+  AlertDialogTitleProps,
+} from "./alertDialogTypes";
 
 function injectFooterButtonSize(
   children: ReactNode,
@@ -91,81 +89,6 @@ function injectFooterButtonSize(
     return child;
   });
 }
-
-const ALERT_DIALOG_SIZE: Record<
-  AlertDialogSize,
-  {
-    panelMax: string;
-    maxHeight: string;
-    headerGap: string;
-    headerPad: string;
-    bodyPad: string;
-    footerPad: string;
-    headingBlockGap: string;
-    iconClass: string;
-    titleVariant: TextVariant;
-    descVariant: TextVariant;
-    descClassName: string;
-    bodyVariant: TextVariant;
-  }
-> = {
-  small: {
-    panelMax: "max-w-component-small",
-    maxHeight: "max-h-[min(85dvh,26rem)]",
-    headerGap: "gap-base",
-    headerPad: "px-plus pt-plus pb-base",
-    bodyPad: "py-base px-plus",
-    footerPad: "py-base px-plus gap-small",
-    headingBlockGap: "flex min-w-0 flex-col gap-xsmall",
-    iconClass: "icon-base",
-    titleVariant: "small",
-    descVariant: "small",
-    descClassName: "text-muted",
-    bodyVariant: "small",
-  },
-  base: {
-    panelMax: "max-w-component-mid",
-    maxHeight: "max-h-[min(90dvh,36rem)]",
-    headerGap: "gap-plus",
-    headerPad: "px-mid pt-mid pb-plus",
-    bodyPad: "py-plus px-mid",
-    footerPad: "py-plus px-mid gap-base",
-    headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-large",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "base",
-  },
-  mid: {
-    panelMax: "max-w-component-mid",
-    maxHeight: "max-h-[min(90dvh,40rem)]",
-    headerGap: "gap-plus",
-    headerPad: "px-mid pt-mid pb-mid",
-    bodyPad: "py-mid px-mid",
-    footerPad: "py-mid px-mid gap-base",
-    headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-xlarge",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "base",
-  },
-  large: {
-    panelMax: "max-w-component-large",
-    maxHeight: "max-h-[min(90dvh,44rem)]",
-    headerGap: "gap-plus",
-    headerPad: "px-large pt-large pb-mid",
-    bodyPad: "py-mid px-large",
-    footerPad: "py-mid px-mid gap-plus",
-    headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-2xlarge",
-    titleVariant: "large",
-    descVariant: "mid",
-    descClassName: "text-muted",
-    bodyVariant: "mid",
-  },
-};
 
 const ALERT_DIALOG_SHELL_FILLED =
   "bg-surface text-foreground border border-base shadow-token-lg";
@@ -205,81 +128,12 @@ function alertDialogDefaultHeaderIcon(tone: AlertStatus): IconType | null {
   return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
 }
 
-/** Основная кнопка действия в футере модалки в тон окна. */
-export function primaryButtonVariantForAlertTone(
-  tone: AlertStatus,
-): ButtonVariant {
-  switch (tone) {
-    case "danger":
-      return "danger";
-    case "success":
-      return "success";
-    case "info":
-      return "info";
-    case "warning":
-      return "warning";
-    default:
-      return "default";
-  }
-}
-
 function readBurneLightTheme(): boolean {
   if (typeof document === "undefined") return false;
   return document.documentElement.dataset.brnTheme === "light";
 }
 
-export type AlertDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  children?: ReactNode;
-  className?: string;
-  /** Как у `Alert`: default, outline, secondary, danger, success, info, warning. */
-  status?: AlertStatus;
-  /** По умолчанию `m`. */
-  size?: AlertDialogSize;
-};
-
-type AlertDialogContextValue = {
-  titleId: string;
-  descriptionId: string;
-  hasDescription: boolean;
-  setHasDescription: (v: boolean) => void;
-  onOpenChange: (open: boolean) => void;
-  tone: AlertStatus;
-  size: AlertDialogSize;
-  sizePreset: (typeof ALERT_DIALOG_SIZE)["base"];
-  /** Размер кнопок по умолчанию в `AlertDialog.Footer` (см. `footerButtonSizeForAlertDialog`). */
-  footerButtonSize: ButtonSize;
-};
-
-const AlertDialogContext = createContext<AlertDialogContextValue | null>(null);
-
-/** Контекст открытого `AlertDialog`: тон, размер, `footerButtonSize` для кнопок футера. */
-export function useAlertDialog(): AlertDialogContextValue {
-  const ctx = useContext(AlertDialogContext);
-  if (!ctx)
-    throw new Error("Компоненты AlertDialog.* должны быть внутри <AlertDialog>.");
-  return ctx;
-}
-
-export type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
-  /**
-   * Для тона `default` иконки нет по умолчанию — передайте узел, если нужна.
-   * Для остальных тонов по умолчанию показывается иконка тона; `null` — скрыть.
-   */
-  icon?: ReactNode | null;
-  /** Кнопка закрытия справа в шапке. По умолчанию `true`. */
-  showClose?: boolean;
-};
-
-export type AlertDialogTitleProps = HTMLAttributes<HTMLHeadingElement>;
-export type AlertDialogDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
-export type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement>;
-export type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement>;
-
-export type AlertDialogCloseProps = CloseButtonProps;
-
-const AlertDialogClose = forwardRef<
+export const AlertDialogClose = forwardRef<
   HTMLButtonElement,
   AlertDialogCloseProps
 >(function AlertDialogClose(
@@ -302,7 +156,7 @@ const AlertDialogClose = forwardRef<
 
 AlertDialogClose.displayName = "AlertDialog.Close";
 
-function AlertDialogHeader({
+export function AlertDialogHeader({
   icon,
   showClose = true,
   className = "",
@@ -351,7 +205,7 @@ function AlertDialogHeader({
   );
 }
 
-const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
+export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
   function AlertDialogTitle({ className = "", id, ...rest }, ref) {
     const { titleId, sizePreset } = useAlertDialog();
     return (
@@ -366,7 +220,7 @@ const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
   },
 );
 
-function AlertDialogDescription({
+export function AlertDialogDescription({
   className = "",
   id,
   ...rest
@@ -388,7 +242,7 @@ function AlertDialogDescription({
   );
 }
 
-function AlertDialogHeadingBlock({
+export function AlertDialogHeadingBlock({
   className = "",
   ...rest
 }: HTMLAttributes<HTMLDivElement>) {
@@ -405,7 +259,7 @@ function AlertDialogHeadingBlock({
   );
 }
 
-function AlertDialogBody({
+export function AlertDialogBody({
   className = "",
   children,
   ...rest
@@ -430,7 +284,7 @@ function AlertDialogBody({
   );
 }
 
-function AlertDialogFooter({
+export function AlertDialogFooter({
   className = "",
   children,
   ...rest
@@ -454,7 +308,7 @@ function AlertDialogFooter({
   );
 }
 
-const AlertDialogRoot = function AlertDialog({
+export const AlertDialogRoot = function AlertDialog({
   open,
   onOpenChange,
   children,
@@ -586,7 +440,7 @@ const AlertDialogRoot = function AlertDialog({
     tone,
     size,
     sizePreset,
-    footerButtonSize: FOOTER_BUTTON_SIZE[size],
+    footerButtonSize: footerButtonSizeForAlertDialog(size),
   };
 
   if (typeof document === "undefined") return null;
@@ -641,12 +495,3 @@ const AlertDialogRoot = function AlertDialog({
   );
 };
 
-export const AlertDialog = Object.assign(AlertDialogRoot, {
-  Header: AlertDialogHeader,
-  HeadingBlock: AlertDialogHeadingBlock,
-  Title: AlertDialogTitle,
-  Description: AlertDialogDescription,
-  Body: AlertDialogBody,
-  Footer: AlertDialogFooter,
-  Close: AlertDialogClose,
-});

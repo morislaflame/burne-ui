@@ -21,7 +21,7 @@ import {
   hueToRgbString,
   type HSVA,
 } from "./colorUtils";
-import { ColorSlider } from "./ColorSlider";
+import { ColorSliderTrack } from "./ColorSlider";
 import { ColorSwatch, type ColorSwatchSize } from "./ColorSwatch";
 
 // ─── types ───────────────────────────────────────────────────────────────────
@@ -106,7 +106,7 @@ const SLIDER_SIZE_MAP: Record<ColorPickerSize, "small" | "base" | "mid"> = {
 
 // ─── Root ────────────────────────────────────────────────────────────────────
 
-function ColorPickerRoot({
+export function ColorPickerRoot({
   children,
   value,
   defaultValue = "#3b82f6",
@@ -163,7 +163,7 @@ ColorPickerRoot.displayName = "ColorPickerRoot";
 
 // ─── Trigger ─────────────────────────────────────────────────────────────────
 
-const ColorPickerTrigger = forwardRef<HTMLSpanElement, ColorPickerTriggerProps>(
+export const ColorPickerTrigger = forwardRef<HTMLSpanElement, ColorPickerTriggerProps>(
   function ColorPickerTrigger({ swatchSize, className = "", ...rest }, ref) {
     const { hex, disabled, size } = useColorPickerContext();
     return (
@@ -184,7 +184,7 @@ ColorPickerTrigger.displayName = "ColorPickerTrigger";
 
 // ─── 2D Saturation × Value area ──────────────────────────────────────────────
 
-function ColorPickerArea({ size }: { size: ColorPickerSize }) {
+export function ColorPickerArea({ size }: { size: ColorPickerSize }) {
   const { hsva, setHsva } = useColorPickerContext();
   const areaRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
@@ -249,7 +249,7 @@ function ColorPickerArea({ size }: { size: ColorPickerSize }) {
 
 // ─── Hex input ────────────────────────────────────────────────────────────────
 
-function ColorPickerHexInput() {
+export function ColorPickerHexInput() {
   const { hex, setHsva } = useColorPickerContext();
   const [draft, setDraft] = useState(hex.slice(1));
 
@@ -283,7 +283,7 @@ function ColorPickerHexInput() {
 
 // ─── Content ─────────────────────────────────────────────────────────────────
 
-const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
+export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
   function ColorPickerContent(
     { showAlpha = false, presets, className = "", ...rest },
     ref,
@@ -323,7 +323,7 @@ const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
 
             <div className="flex min-w-0 flex-1 flex-col gap-xsmall">
               {/* Hue slider */}
-              <ColorSlider.Track
+              <ColorSliderTrack
                 channel="hue"
                 color={hsva}
                 value={hsva.h}
@@ -333,7 +333,7 @@ const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
 
               {/* Alpha slider */}
               {showAlpha && (
-                <ColorSlider.Track
+                <ColorSliderTrack
                   channel="alpha"
                   color={hsva}
                   value={hsva.a}
@@ -392,10 +392,5 @@ const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
 ColorPickerContent.displayName = "ColorPickerContent";
 
 // ─── compound export ──────────────────────────────────────────────────────────
-
-export const ColorPicker = Object.assign(ColorPickerRoot, {
-  Trigger:  ColorPickerTrigger,
-  Content:  ColorPickerContent,
-});
 
 export { useColorPickerContext as useColorPicker };

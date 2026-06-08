@@ -10,7 +10,8 @@ import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
 import { Text } from "@/components/core/Text";
 
-import { RIPPLE_COLOR, Ripple } from "./Ripple";
+import { Ripple } from "./Ripple";
+import { RIPPLE_COLOR } from "./rippleTokens";
 
 const RIPPLE_COLOR_KEYS = Object.keys(RIPPLE_COLOR).join(", ");
 

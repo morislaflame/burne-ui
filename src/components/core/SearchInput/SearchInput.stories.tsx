@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Card } from "@/components/core/Card/Card";
+import { Card } from "@/components/core/Card";
 
 import { SearchInput } from "./SearchInput";
 
