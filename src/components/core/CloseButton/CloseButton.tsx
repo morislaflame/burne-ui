@@ -3,79 +3,131 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   type ButtonHTMLAttributes,
   type PointerEvent,
 } from "react";
 import { IoClose } from "react-icons/io5";
 
-import { Ripple, type RippleColor } from "@/components/core/Ripple";
+import { Ripple } from "@/components/core/Ripple";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
-  initElementShadow,
   prefersReducedInteractiveHoverLift,
-  SHADOW_MD,
   SHADOW_SM,
-  useInteractiveHoverLiftContainerHandlers,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
-export type CloseButtonVariant = "default" | "outline";
+export type CloseButtonSize = ComponentSize;
 
-const VARIANT: Record<
-  CloseButtonVariant,
-  {
-    root: string;
-    focusOutline: string;
-    hoverIdle: string;
-    ripple: RippleColor;
-  }
-> = {
-  /** Серый фон (не акцентная «default»-кнопка). */
+/** Визуальный вариант — как у `Button`, без статусных тонов. */
+export type CloseButtonVariant = "default" | "outline" | "secondary" | "ghost";
+
+type VariantVisual = {
+  root: string;
+  focusOutline: string;
+  convergeBg: string;
+  hoverIdle: string;
+};
+
+const CLOSE_BUTTON_HAS_HOVER_SHADOW = new Set<CloseButtonVariant>([
+  "default",
+  "outline",
+  "secondary",
+  "ghost",
+]);
+
+const CLOSE_BUTTON_VARIANT: Record<CloseButtonVariant, VariantVisual> = {
   default: {
-    root: "border-token bg-primary-tint text-foreground",
-    focusOutline: "focus-ring",
-    hoverIdle: "hover:bg-primary-tint-strong",
-    ripple: "neutral",
+    root: "bg-primary text-primary-foreground border border-transparent",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-primary-fill"),
+    hoverIdle: "hover:bg-primary-hover",
   },
-  /** Как `Button` outline: `bg-transparent border-token` + нейтральный крест. */
   outline: {
     root: "bg-transparent border-token text-foreground",
-    focusOutline: "focus-ring",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
     hoverIdle: "hover:bg-primary-tint",
-    ripple: "neutral",
+  },
+  secondary: {
+    root: "bg-secondary text-secondary-foreground border border-transparent",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
+    hoverIdle: "hover:bg-secondary-hover",
+  },
+  ghost: {
+    root: "bg-transparent text-foreground border border-transparent",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
+    hoverIdle: "hover:bg-primary-tint",
   },
 };
 
-const CLOSE_SHADOW = { idle: SHADOW_SM(), hover: SHADOW_MD() };
+const CLOSE_BUTTON_SIZE: Record<
+  CloseButtonSize,
+  { root: string; icon: string }
+> = {
+  small: {
+    root: CONTROL_SIZE_LAYOUT.small.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.small.toggleIcon,
+  },
+  base: {
+    root: CONTROL_SIZE_LAYOUT.base.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.base.toggleIcon,
+  },
+  mid: {
+    root: CONTROL_SIZE_LAYOUT.mid.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.mid.toggleIcon,
+  },
+  large: {
+    root: CONTROL_SIZE_LAYOUT.large.toggleBox,
+    icon: CONTROL_SIZE_LAYOUT.large.toggleIcon,
+  },
+};
 
 export type CloseButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children"
 > & {
-  /** Поверхность: серая заливка или outline как у `Button`. По умолчанию `default`. */
+  /** Стиль заливки. По умолчанию `default`. */
   variant?: CloseButtonVariant;
+  /** Диаметр кнопки и иконки. По умолчанию `base`. */
+  size?: CloseButtonSize;
+  /** Лёгкий scale при нажатии. По умолчанию `true`. */
+  animated?: boolean;
+  /**
+   * Converge-ripple от точки нажатия (`<Ripple />` внутри кнопки, тон под `variant`).
+   * @default false
+   */
+  ripple?: boolean;
 };
 
 export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
   function CloseButton(
     {
       variant = "default",
+      size = "base",
+      animated = true,
+      ripple = false,
       className,
       disabled,
       type = "button",
       "aria-label": ariaLabel = "Закрыть",
       onPointerDown,
-      onPointerOver,
-      onPointerOut,
+      onPointerEnter,
+      onPointerLeave,
       ...rest
     },
     ref,
   ) {
     const btnRef = useRef<HTMLButtonElement | null>(null);
-    const pointerInsideRef = useRef(false);
+    const hoverPointerInsideRef = useRef(false);
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -86,48 +138,74 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       [ref],
     );
 
-    const vn = VARIANT[variant];
+    const vn = CLOSE_BUTTON_VARIANT[variant];
+    const sizeClasses = CLOSE_BUTTON_SIZE[size];
 
-    const liftHandlers = useInteractiveHoverLiftContainerHandlers(
-      btnRef,
-      !disabled,
-      pointerInsideRef,
-      undefined,
-      CLOSE_SHADOW,
+    const btnShadow = useMemo(
+      () =>
+        CLOSE_BUTTON_HAS_HOVER_SHADOW.has(variant)
+          ? { hover: SHADOW_SM() }
+          : undefined,
+      [variant],
     );
-
-    useEffect(() => {
-      const el = btnRef.current;
-      if (!el || disabled) return;
-      initElementShadow(el, SHADOW_SM());
-    }, [disabled]);
 
     useEffect(() => {
       const el = btnRef.current;
       if (!el) return;
       if (disabled) {
         remove(el);
-        pointerInsideRef.current = false;
+        hoverPointerInsideRef.current = false;
         el.style.removeProperty("--el-shadow");
       }
     }, [disabled]);
 
+    const handlePointerEnter = useCallback(
+      (e: PointerEvent<HTMLButtonElement>) => {
+        onPointerEnter?.(e);
+        if (e.defaultPrevented || disabled) return;
+        if (prefersReducedInteractiveHoverLift()) return;
+        const el = btnRef.current;
+        if (!el) return;
+        hoverPointerInsideRef.current = true;
+        animateInteractiveHoverLift(el, true, undefined, btnShadow);
+      },
+      [btnShadow, disabled, onPointerEnter],
+    );
+
+    const handlePointerLeave = useCallback(
+      (e: PointerEvent<HTMLButtonElement>) => {
+        onPointerLeave?.(e);
+        hoverPointerInsideRef.current = false;
+        if (prefersReducedInteractiveHoverLift()) return;
+        const el = btnRef.current;
+        if (!el || disabled) return;
+        animateInteractiveHoverLift(el, false, undefined, btnShadow);
+      },
+      [disabled, btnShadow, onPointerLeave],
+    );
+
     const handlePointerDown = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerDown?.(e);
-        if (e.defaultPrevented || disabled) return;
+        if (e.defaultPrevented || disabled || !animated) return;
         if (prefersReducedInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el) return;
         void animateInteractivePressSqueeze(el).then(() => {
           const b = btnRef.current;
-          if (!b || disabled || prefersReducedInteractiveHoverLift()) return;
-          if (pointerInsideRef.current) {
-            animateInteractiveHoverLift(b, true, undefined, CLOSE_SHADOW);
+          if (
+            !b ||
+            disabled ||
+            !animated ||
+            prefersReducedInteractiveHoverLift()
+          )
+            return;
+          if (hoverPointerInsideRef.current) {
+            animateInteractiveHoverLift(b, true, undefined, btnShadow);
           }
         });
       },
-      [disabled, onPointerDown],
+      [animated, btnShadow, disabled, onPointerDown],
     );
 
     return (
@@ -137,34 +215,35 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         disabled={disabled}
         aria-label={ariaLabel}
         className={cn(
-          "relative z-0 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
+          "relative z-0 flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
           "animate-shadow button-idle-surface-transition motion-reduce:transition-none",
           "overflow-hidden will-change-transform origin-center",
+          sizeClasses.root,
           vn.root,
           vn.hoverIdle,
           vn.focusOutline,
           disabled && "cursor-not-allowed opacity-50",
           className,
         )}
-        onPointerOver={(e) => {
-          onPointerOver?.(e);
-          if (!e.defaultPrevented && !disabled) liftHandlers.onPointerOver(e);
-        }}
-        onPointerOut={(e) => {
-          onPointerOut?.(e);
-          if (!disabled) liftHandlers.onPointerOut(e);
-        }}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
         {...rest}
       >
-        <Ripple
-          color={vn.ripple}
-          disabled={Boolean(disabled)}
-          duration={getMotionConfig().rippleDefaultDuration}
-        />
+        {ripple ? (
+          <Ripple
+            color={vn.convergeBg}
+            disabled={Boolean(disabled)}
+            duration={getMotionConfig().rippleDefaultDuration}
+            className="rounded-full"
+          />
+        ) : null}
         <IoClose
           aria-hidden
-          className="relative z-[1] icon-base shrink-0 text-current"
+          className={cn(
+            "relative z-[1] shrink-0 text-current",
+            sizeClasses.icon,
+          )}
         />
       </button>
     );

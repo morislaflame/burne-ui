@@ -71,6 +71,58 @@ export const Default: Story = {
 
 const PLACEMENTS: DrawerPlacement[] = ["right", "left", "bottom", "top"];
 
+const HANDLE_HINT: Record<DrawerPlacement, string> = {
+  bottom: "Потяните полоску вниз, чтобы закрыть.",
+  top: "Потяните полоску вверх, чтобы закрыть.",
+  left: "Потяните полоску влево, чтобы закрыть.",
+  right: "Потяните полоску вправо, чтобы закрыть.",
+};
+
+function DrawerHandleDemoContent({ placement }: { placement: DrawerPlacement }) {
+  const isHorizontal = placement === "left" || placement === "right";
+
+  const main = (
+    <>
+      <Drawer.Header>
+        <Drawer.HeadingBlock>
+          <Drawer.Title>Handle · {placement}</Drawer.Title>
+          <Drawer.Description>{HANDLE_HINT[placement]}</Drawer.Description>
+        </Drawer.HeadingBlock>
+        <Drawer.Close />
+      </Drawer.Header>
+      <Drawer.Body>
+        <p className="text-base text-muted">{HANDLE_HINT[placement]}</p>
+      </Drawer.Body>
+    </>
+  );
+
+  if (isHorizontal) {
+    return (
+      <div className="flex min-h-0 min-w-0 flex-1 self-stretch">
+        {placement === "right" ? <Drawer.Handle /> : null}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">{main}</div>
+        {placement === "left" ? <Drawer.Handle /> : null}
+      </div>
+    );
+  }
+
+  if (placement === "top") {
+    return (
+      <>
+        {main}
+        <Drawer.Handle />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Drawer.Handle />
+      {main}
+    </>
+  );
+}
+
 export const AllPlacements: Story = {
   name: "Все плейсменты",
   render: function AllPlacementsDemo() {
@@ -154,31 +206,30 @@ export const Sizes: Story = {
   },
 };
 
-// ─── With Handle (bottom) ─────────────────────────────────────────────────────
+// ─── Handle (all placements) ──────────────────────────────────────────────────
 
 export const WithHandle: Story = {
-  name: "С Handle (свайп)",
+  name: "Handle (все плейсменты)",
   render: function WithHandleDemo() {
     const [open, setOpen] = useState(false);
+    const [placement, setPlacement] = useState<DrawerPlacement>("bottom");
+
+    const openWith = (p: DrawerPlacement) => {
+      setPlacement(p);
+      setOpen(true);
+    };
+
     return (
-      <>
-        <Button onClick={() => setOpen(true)}>Открыть с Handle</Button>
-        <Drawer open={open} onOpenChange={setOpen} placement="bottom">
-          <Drawer.Handle />
-          <Drawer.Header>
-            <Drawer.HeadingBlock>
-              <Drawer.Title>Потяни вниз</Drawer.Title>
-              <Drawer.Description>Свайп вниз или кнопка закрывают ящик.</Drawer.Description>
-            </Drawer.HeadingBlock>
-            <Drawer.Close />
-          </Drawer.Header>
-          <Drawer.Body>
-            <p className="text-base text-muted">
-              Перетащите полоску вниз, чтобы закрыть ящик.
-            </p>
-          </Drawer.Body>
+      <div className="flex flex-wrap gap-base">
+        {PLACEMENTS.map((p) => (
+          <Button key={p} variant="outline" onClick={() => openWith(p)}>
+            {p}
+          </Button>
+        ))}
+        <Drawer open={open} onOpenChange={setOpen} placement={placement}>
+          <DrawerHandleDemoContent placement={placement} />
         </Drawer>
-      </>
+      </div>
     );
   },
 };

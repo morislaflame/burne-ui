@@ -142,6 +142,8 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
     return (
       <CloseButton
         ref={ref}
+        size="small"
+        variant="secondary"
         aria-label={ariaLabel}
         className={cn("-m-xsmall", className)}
         onClick={(e) => {

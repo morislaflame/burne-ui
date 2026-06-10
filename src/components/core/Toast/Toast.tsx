@@ -241,6 +241,8 @@ export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonPr
     return (
       <CloseButton
         ref={ref}
+        size="small"
+        variant="ghost"
         aria-label={ariaLabel}
         className={cn("-m-xsmall shrink-0 self-start", className)}
         onClick={(e) => {

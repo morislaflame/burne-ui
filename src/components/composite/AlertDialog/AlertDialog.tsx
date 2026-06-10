@@ -140,6 +140,8 @@ export const AlertDialogClose = forwardRef<
   return (
     <CloseButton
       ref={ref}
+      size="small"
+      variant="secondary"
       className={cn("shrink-0 self-start", className)}
       onClick={(e) => {
         onClick?.(e);

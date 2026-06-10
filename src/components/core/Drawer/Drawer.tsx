@@ -114,6 +114,14 @@ const PANEL_ROUNDING_CLASS: Record<DrawerPlacement, string> = {
   top: "rounded-b-mid",
 };
 
+/** Отступ полоски Handle от внешнего края панели (сторона выезда). */
+const HANDLE_EDGE_PADDING_CLASS: Record<DrawerPlacement, string> = {
+  bottom: "pt-plus",
+  top: "pb-plus",
+  left: "pr-plus",
+  right: "pl-plus",
+};
+
 function panelSizeClass(placement: DrawerPlacement, size: DrawerSize): string {
   const entry = PANEL_SIZE_CLASS[size];
   return placement === "left" || placement === "right" ? entry.horizontal : entry.vertical;
@@ -167,8 +175,9 @@ export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: Dr
     <div
       aria-label={label}
       className={cn(
-        "flex touch-none select-none shrink-0 items-center justify-center cursor-grab active:cursor-grabbing",
-        isHorizontal ? "h-full w-xsmall py-mid" : "h-xsmall w-full px-mid",
+        "flex touch-none select-none shrink-0 items-center justify-center cursor-grab active:cursor-grabbing box-content",
+        isHorizontal ? "self-stretch w-xsmall" : "h-xsmall w-full",
+        HANDLE_EDGE_PADDING_CLASS[placement],
         className,
       )}
       onPointerDown={(e) => {
@@ -180,7 +189,7 @@ export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: Dr
       <span
         aria-hidden
         className={cn(
-          "rounded-full bg-primary-tint-strong",
+          "rounded-full bg-tertiary",
           isHorizontal ? "h-10 w-1" : "h-1 w-10",
         )}
       />
@@ -253,6 +262,8 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
     return (
       <CloseButton
         ref={ref}
+        size="small"
+        variant="secondary"
         aria-label={ariaLabel}
         className={cn("-m-xsmall", className)}
         onClick={(e) => {

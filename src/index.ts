@@ -22,6 +22,7 @@ export {
 export {
   CloseButton,
   type CloseButtonProps,
+  type CloseButtonSize,
   type CloseButtonVariant,
 } from "@/components/core/CloseButton";
 export {
