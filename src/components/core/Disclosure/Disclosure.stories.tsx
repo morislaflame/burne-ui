@@ -142,7 +142,7 @@ export const Controlled: Story = {
         <div className="flex gap-small">
           <button
             type="button"
-            className="text-small text-accent underline"
+            className="text-small text-primary underline"
             onClick={() => setOpen((v) => !v)}
           >
             {open ? "Свернуть" : "Развернуть"} извне
@@ -334,7 +334,7 @@ export const GroupControlled: Story = {
             <button
               key={v}
               type="button"
-              className={`text-small underline ${value === v ? "text-accent font-medium" : "text-muted"}`}
+              className={`text-small underline ${value === v ? "text-primary font-medium" : "text-muted"}`}
               onClick={() => setValue(value === v ? null : v)}
             >
               {v.toUpperCase()}

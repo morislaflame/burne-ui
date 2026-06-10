@@ -147,10 +147,10 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-lg flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        <code className="text-accent">&lt;nav aria-label&gt;</code>, текущая страница —{" "}
-        <code className="text-accent">aria-current=&quot;page&quot;</code> на последнем пункте,
-        меню «…» — <code className="text-accent">aria-expanded</code> /{" "}
-        <code className="text-accent">role=&quot;menu&quot;</code>, Escape закрывает.
+        <code className="text-primary">&lt;nav aria-label&gt;</code>, текущая страница —{" "}
+        <code className="text-primary">aria-current=&quot;page&quot;</code> на последнем пункте,
+        меню «…» — <code className="text-primary">aria-expanded</code> /{" "}
+        <code className="text-primary">role=&quot;menu&quot;</code>, Escape закрывает.
       </p>
       <Breadcrumbs aria-label="Путь к странице">
         <Breadcrumbs.List>

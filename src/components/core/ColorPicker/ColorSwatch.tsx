@@ -134,11 +134,11 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         onPointerDown={handlePointerDown}
         className={cn(
           "relative shrink-0 origin-center overflow-hidden will-change-transform",
-          "outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1",
+          "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
           "animate-shadow",
           SIZE_CLASS[size],
           SHAPE_CLASS[shape],
-          selected && "ring-2 ring-accent ring-offset-2 ring-offset-background",
+          selected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
           disabled ? "cursor-not-allowed opacity-40" : onClick ? "cursor-pointer" : "cursor-default",
           className,
         )}

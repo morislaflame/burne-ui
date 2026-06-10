@@ -71,7 +71,7 @@ function LinkIconSlot({
 }: {
   children: ReactNode;
   size: LinkSize;
-  /** Стандартная иконка: muted в покое, accent при hover на ссылке. */
+  /** Стандартная иконка: muted в покое, primary при hover на ссылке. */
   muted?: boolean;
 }) {
   return (

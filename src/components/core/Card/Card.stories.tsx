@@ -13,10 +13,10 @@ import { Card, type CardVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/utils/mockImages";
 import { IoArrowForward, IoTimeOutline } from "react-icons/io5";
 
-const CARD_RIPPLE_COLOR: Record<CardVariant, "accentSoft" | "secondary"> = {
-  default: "accentSoft",
-  outline: "accentSoft",
-  secondary: "secondary",
+const CARD_RIPPLE_COLOR: Record<CardVariant, "neutral"> = {
+  default: "neutral",
+  outline: "neutral",
+  secondary: "neutral",
 };
 
 const darkThemeDecorator = [

@@ -513,7 +513,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         onPointerLeave={handlePointerLeave}
       >
         {ripple ? (
-          <Ripple color="accentSoft" disabled={blocked} />
+          <Ripple color="neutral" disabled={blocked} />
         ) : null}
         <span
           ref={iconRef}

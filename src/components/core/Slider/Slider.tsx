@@ -106,7 +106,7 @@ type SliderCommonProps = {
   /** Дискретные значения: ползунок «прилипает» только к этим точкам; на треке — метки. */
   marks?: number[];
   formatValue?: (value: number) => string;
-  /** Иконка внутри кружка: accent в покое, accent-foreground при захвате. */
+  /** Иконка внутри кружка: primary в покое, primary-foreground при захвате. */
   icon?: ReactNode;
   disabled?: boolean;
   className?: string;

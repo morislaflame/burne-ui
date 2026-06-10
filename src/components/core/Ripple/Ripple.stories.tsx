@@ -87,7 +87,7 @@ export const Playground: Story = {
   name: "Песочница",
   args: {
     disabled: false,
-    color: "accentSoft",
+    color: "neutral",
     direction: "in",
   },
   render: (args) => (
@@ -116,7 +116,7 @@ export const WithCardManual: Story = {
       className="relative cursor-pointer"
       onClick={() => {}}
     >
-      <Ripple color="accentSoft" />
+      <Ripple color="neutral" />
       <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
         <Card.Content>
           <Card.Title>Вариант без pressable</Card.Title>
@@ -156,7 +156,7 @@ export const DirectionCompare: Story = {
         className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
         role="presentation"
       >
-        <Ripple color="accentSoft" direction="in" />
+        <Ripple color="neutral" direction="in" />
         <div className="relative z-[1] flex h-full items-center justify-center px-plus">
           <Text variant="small">direction=&quot;in&quot;</Text>
         </div>
@@ -165,7 +165,7 @@ export const DirectionCompare: Story = {
         className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
         role="presentation"
       >
-        <Ripple color="accentSoft" direction="out" />
+        <Ripple color="neutral" direction="out" />
         <div className="relative z-[1] flex h-full items-center justify-center px-plus">
           <Text variant="small">direction=&quot;out&quot;</Text>
         </div>
@@ -179,7 +179,7 @@ export const WithExpandable: Story = {
   render: () => (
     <Expandable defaultOpen>
       <Expandable.Trigger>
-        <Ripple color="accentMuted" />
+        <Ripple color="neutralMuted" />
         <Expandable.Content>
           <Expandable.Title>Риппл на весь триггер</Expandable.Title>
           <Expandable.Description className="text-muted">
@@ -235,7 +235,7 @@ export const WithGlassSurface: Story = {
         Внешняя обёртка <code className="text-xs">relative overflow-hidden rounded-base</code>
       </Text>
       <div className="relative overflow-hidden rounded-base">
-        <Ripple color="accentSoft" className="rounded-[inherit]" />
+        <Ripple color="neutral" className="rounded-[inherit]" />
         <div className="relative z-[1]">
           <GlassSurface contentClassName="p-plus">
             <Text variant="base">
@@ -256,7 +256,7 @@ export const WithInputShell: Story = {
         Общая интерактивная карточка вокруг поля
       </Text>
       <div className="relative overflow-hidden rounded-base border-token bg-surface p-mid shadow-token-sm">
-        <Ripple color="accentSoft" />
+        <Ripple color="neutral" />
         <div className="relative z-[1] flex flex-col gap-small">
           <Text variant="small" className="font-medium text-muted">
             Контакт
@@ -293,7 +293,7 @@ export const OnLightTheme: Story = {
       className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
       role="presentation"
     >
-      <Ripple color="accentSoft" />
+      <Ripple color="neutral" />
       <div className="relative z-[1] flex min-h-[6rem] items-center justify-center px-plus">
         <Text variant="base">Ripple на светлом фоне</Text>
       </div>

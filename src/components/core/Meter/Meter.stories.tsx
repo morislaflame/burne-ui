@@ -104,7 +104,7 @@ export const CustomColor: Story = {
   name: "Свой цвет",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-mid">
-      <Meter label="Accent (по умолчанию)" showValue value={65} />
+      <Meter label="Primary (по умолчанию)" showValue value={65} />
       <Meter label="Success" showValue value={80} color="var(--color-success)" />
       <Meter label="Danger" showValue value={35} color="var(--color-danger)" />
       <Meter label="Warning" showValue value={55} color="var(--color-warning)" />
@@ -113,7 +113,7 @@ export const CustomColor: Story = {
         label="Градиент"
         showValue
         value={85}
-        color="linear-gradient(90deg, var(--color-accent) 0%, var(--color-info) 100%)"
+        color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-info) 100%)"
       />
     </div>
   ),
@@ -179,7 +179,7 @@ export const Animated: Story = {
         label="Анимация значения"
         showValue
         value={value}
-        color="linear-gradient(90deg, var(--color-accent) 0%, var(--color-success) 100%)"
+        color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-success) 100%)"
       />
     );
   },
@@ -196,12 +196,12 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        Шкала — <code className="text-accent">role=&quot;meter&quot;</code> с{" "}
-        <code className="text-accent">aria-valuenow</code> /{" "}
-        <code className="text-accent">aria-valuemin</code> /{" "}
-        <code className="text-accent">aria-valuemax</code>, подпись —{" "}
-        <code className="text-accent">aria-labelledby</code>, hint и error —{" "}
-        <code className="text-accent">aria-describedby</code>.
+        Шкала — <code className="text-primary">role=&quot;meter&quot;</code> с{" "}
+        <code className="text-primary">aria-valuenow</code> /{" "}
+        <code className="text-primary">aria-valuemin</code> /{" "}
+        <code className="text-primary">aria-valuemax</code>, подпись —{" "}
+        <code className="text-primary">aria-labelledby</code>, hint и error —{" "}
+        <code className="text-primary">aria-describedby</code>.
       </p>
       <Meter label="Загрузка CPU" hint="Read-only; значение обновляется автоматически" showValue value={67} />
       <Meter label="Квота API" hint="Лимит обновляется раз в сутки" showValue value={92} error="Превышен лимит запросов." />

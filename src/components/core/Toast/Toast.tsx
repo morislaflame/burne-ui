@@ -159,7 +159,7 @@ export function ToastIndicator({ className = "", children, ...rest }: ToastIndic
   if (isLoading) {
     return (
       <span className={cn("shrink-0", className)} {...rest}>
-        <Loading size="base" color="accent" />
+        <Loading size="base" color="primary" />
       </span>
     );
   }

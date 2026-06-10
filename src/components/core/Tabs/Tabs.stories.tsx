@@ -74,7 +74,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Compound Tabs: горизонтальная или вертикальная ориентация, шкала `small | base | mid | large`, три варианта поверхности (`default`, `outline`, `secondary`). Неактивные табы — `text-muted`; при hover текст приподнимается и становится accent; при нажатии — squeeze. Индикатор активного таба плавно переезжает.",
+          "Compound Tabs: горизонтальная или вертикальная ориентация, шкала `small | base | mid | large`, три варианта поверхности (`default`, `outline`, `secondary`). Неактивные табы — `text-muted`; при hover текст приподнимается и становится primary; при нажатии — squeeze. Индикатор активного таба плавно переезжает.",
       },
     },
   },

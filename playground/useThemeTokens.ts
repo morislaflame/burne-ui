@@ -5,6 +5,7 @@ import {
   clearThemeInlineTokens,
   createDefaultThemeState,
   exportThemeCss,
+  isBorderColorCustomized,
   LAYOUT_PRESETS,
   SCALE_DEFAULTS,
   type ColorPresetKey,
@@ -61,6 +62,7 @@ export function useThemeTokens() {
     setState((prev) => ({
       ...prev,
       colors: { ...prev.colors, [key]: value },
+      ...(key === "border" ? { borderCustomized: true } : {}),
     }));
   }, []);
 
@@ -73,7 +75,11 @@ export function useThemeTokens() {
 
   /** Полный пресет — заменяет всё состояние (для базовых dark/light). */
   const applyPreset = useCallback((preset: keyof typeof THEME_PRESETS) => {
-    setState({ ...THEME_PRESETS[preset] });
+    const p = THEME_PRESETS[preset];
+    setState({
+      ...p,
+      borderCustomized: isBorderColorCustomized(p.colors, p.theme),
+    });
   }, []);
 
   /**
@@ -87,6 +93,7 @@ export function useThemeTokens() {
       theme: p.theme,
       colors: { ...p.colors },
       statusForegrounds: { ...p.statusForegrounds },
+      borderCustomized: isBorderColorCustomized(p.colors, p.theme),
     }));
   }, []);
 

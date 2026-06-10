@@ -47,6 +47,8 @@ export type ThemeTokenState = {
   glassSaturate: number;
   colors: ThemeColors;
   statusForegrounds: ThemeStatusForegrounds;
+  /** true — `--color-border` задаётся inline; false — формула из tokens/styles.css (как в Storybook). */
+  borderCustomized: boolean;
 };
 
 export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
@@ -148,6 +150,22 @@ const LIGHT_COLORS: ThemeColors = {
   primaryTint: PRIMARY_TINT,
   primaryTintStrong: PRIMARY_TINT_STRONG,
 };
+
+/** Hex в `colors.border` для UI; по умолчанию не пишется inline — только при `borderCustomized`. */
+export const DEFAULT_BORDER_HEX: Record<ThemeMode, string> = {
+  dark: DARK_COLORS.border,
+  light: LIGHT_COLORS.border,
+};
+
+/** Как в `src/tokens/styles.css` — когда `borderCustomized === false`. */
+export const BORDER_COLOR_CSS_FORMULA: Record<ThemeMode, string> = {
+  dark: "color-mix(in oklab, var(--color-foreground) 12%, transparent)",
+  light: "color-mix(in oklab, var(--color-foreground) 12%, var(--color-surface))",
+};
+
+export function isBorderColorCustomized(colors: ThemeColors, theme: ThemeMode): boolean {
+  return colors.border !== DEFAULT_BORDER_HEX[theme];
+}
 
 const DARK_STATUS_FOREGROUNDS: ThemeStatusForegrounds = {
   dangerForeground: "#fafafa",
@@ -315,6 +333,7 @@ export function createDefaultThemeState(theme: ThemeMode = "dark"): ThemeTokenSt
     colors: theme === "light" ? { ...LIGHT_COLORS } : { ...DARK_COLORS },
     statusForegrounds:
       theme === "light" ? { ...LIGHT_STATUS_FOREGROUNDS } : { ...DARK_STATUS_FOREGROUNDS },
+    borderCustomized: false,
   };
 }
 
@@ -334,7 +353,7 @@ const OCEAN_DARK_COLORS: ThemeColors = {
   primaryForeground: "#000000",
   focusRing: "#38bdf8",
   indicator: "#06b6d4",
-  indicatorForeground: "#03111f",
+  indicatorForeground: "#000000",
   danger: "#dc2626",
   success: "#22c55e",
   info: "#0ea5e9",
@@ -357,7 +376,7 @@ const VIOLET_DARK_COLORS: ThemeColors = {
   primaryForeground: "#f4f5f7",
   focusRing: "#5a189a",
   indicator: "#8b5cf6",
-  indicatorForeground: "#ffffff",
+  indicatorForeground: "#f4f5f7",
   danger: "#dc2626",
   success: "#22c55e",
   info: "#0ea5e9",
@@ -380,7 +399,7 @@ const EMERALD_DARK_COLORS: ThemeColors = {
   primaryForeground: "#f4f5f7",
   focusRing: "#34d399",
   indicator: "#10b981",
-  indicatorForeground: "#061410",
+  indicatorForeground: "#f4f5f7",
   danger: "#dc2626",
   success: "#22c55e",
   info: "#0ea5e9",
@@ -615,7 +634,7 @@ const EARTHY_LIGHT_COLORS: ThemeColors = {
   primaryForeground: "#0d0d0d",
   focusRing: "#adc178",
   indicator: "#6c584c",
-  indicatorForeground: "#f8f4e8",
+  indicatorForeground: "#adc178",
   danger: "#dc2626",
   success: "#adc178",      // Muted Olive
   info: "#0ea5e9",
@@ -723,7 +742,7 @@ const AUTUMN_DARK_COLORS: ThemeColors = {
   primaryForeground: "#f4f8fb",
   focusRing: "#d62828",
   indicator: "#d62828",
-  indicatorForeground: "#003049",
+  indicatorForeground: "#f4f8fb",
   danger: "#d62828",       // Flag Red
   success: "#22c55e",
   info: "#4cc9f0",
@@ -750,7 +769,6 @@ export const THEME_PRESETS = {
       primaryForeground: "#0c0c0e",
       focusRing: "#ffffff",
       indicator: "#ffffff",
-      indicatorForeground: "#0c0c0e",
       border: "#3d4250",
     },
     shadowStrength: 1.25,
@@ -888,7 +906,14 @@ export function applyThemeTokens(state: ThemeTokenState, root: HTMLElement = doc
   applyTextScale(root, state.textScale);
   applyShadows(root, state.theme, state.shadowStrength);
 
+  if (state.borderCustomized) {
+    root.style.setProperty("--color-border", state.colors.border);
+  } else {
+    root.style.removeProperty("--color-border");
+  }
+
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
+    if (key === "border") continue;
     root.style.setProperty(cssVar, state.colors[key]);
   }
 
@@ -918,6 +943,12 @@ export function exportThemeCss(state: ThemeTokenState): string {
   ];
 
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
+    if (key === "border" && !state.borderCustomized) {
+      lines.push(
+        `  /* ${cssVar}: ${BORDER_COLOR_CSS_FORMULA[state.theme]} — из tokens/styles.css */`,
+      );
+      continue;
+    }
     lines.push(`  ${cssVar}: ${state.colors[key]};`);
   }
 

@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Кнопка-переключатель (лайк, закладка): варианты `default`, `outline`, `ghost`. При нажатии плавно заливается accent, `aria-pressed`. Hover-lift и squeeze как у `Button`. Без `min-w-button-*` — только паддинги; высота как у кнопки.",
+          "Кнопка-переключатель (лайк, закладка): варианты `default`, `outline`, `ghost`. При нажатии плавно заливается primary, `aria-pressed`. Hover-lift и squeeze как у `Button`. Без `min-w-button-*` — только паддинги; высота как у кнопки.",
       },
     },
   },

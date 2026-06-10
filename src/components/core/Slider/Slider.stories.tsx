@@ -237,12 +237,12 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        Ползунок — <code className="text-accent">role=&quot;slider&quot;</code> на{" "}
-        <code className="text-accent">&lt;button&gt;</code> с{" "}
-        <code className="text-accent">aria-valuenow</code> / min / max. Подпись —{" "}
-        <code className="text-accent">aria-labelledby</code> от <code className="text-accent">Slider.Label</code>
-        , hint — <code className="text-accent">aria-describedby</code>. Без label — fallback{" "}
-        <code className="text-accent">aria-label=&quot;Значение&quot;</code>.
+        Ползунок — <code className="text-primary">role=&quot;slider&quot;</code> на{" "}
+        <code className="text-primary">&lt;button&gt;</code> с{" "}
+        <code className="text-primary">aria-valuenow</code> / min / max. Подпись —{" "}
+        <code className="text-primary">aria-labelledby</code> от <code className="text-primary">Slider.Label</code>
+        , hint — <code className="text-primary">aria-describedby</code>. Без label — fallback{" "}
+        <code className="text-primary">aria-label=&quot;Значение&quot;</code>.
       </p>
       <Slider label="Громкость" hint="Подсказка связана через aria-describedby" showValue defaultValue={48} />
     </div>

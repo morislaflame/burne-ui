@@ -339,7 +339,7 @@ export const CustomAvatarTrigger: Story = {
         <Dropdown.Trigger asChild>
           <button
             type="button"
-            className="rounded-full outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="rounded-full outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             aria-label="Меню пользователя Jane Doe"
           >
             <Avatar size="base" label="Jane Doe">
@@ -455,10 +455,10 @@ export const Accessibility: Story = {
     return (
       <div className="flex max-w-md flex-col gap-mid text-left">
         <p className="text-sm text-muted">
-          Триггер: <code className="text-accent">aria-expanded</code>,{" "}
-          <code className="text-accent">aria-controls</code>. Меню: стрелки, Home/End, Escape
-          возвращает фокус на триггер. Группа с <code className="text-accent">Dropdown.Label</code>{" "}
-          — <code className="text-accent">aria-labelledby</code>.
+          Триггер: <code className="text-primary">aria-expanded</code>,{" "}
+          <code className="text-primary">aria-controls</code>. Меню: стрелки, Home/End, Escape
+          возвращает фокус на триггер. Группа с <code className="text-primary">Dropdown.Label</code>{" "}
+          — <code className="text-primary">aria-labelledby</code>.
         </p>
         <Dropdown selectionIndicator defaultValue="ru">
           <Dropdown.Trigger asChild>

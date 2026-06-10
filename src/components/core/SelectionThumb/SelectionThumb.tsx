@@ -20,7 +20,7 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
   children?: ReactNode;
 };
 
-/** Кружок-ручка для Slider / Switch: shell + accent-fill; размер от родителя (`size-full`). */
+/** Кружок-ручка для Slider / Switch: shell + primary-fill; размер от родителя (`size-full`). */
 export function SelectionThumb({
   active,
   size = "base",
@@ -61,7 +61,7 @@ SelectionThumb.displayName = "SelectionThumb";
 
 export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   size?: SelectionIndicatorSize;
-  /** `true` — accent-foreground на заливке; `false` — accent в покое (Slider). */
+  /** `true` — indicator-foreground на заливке; `false` — primary в покое (Slider/Switch off). */
   highlighted?: boolean;
   iconRef?: RefObject<HTMLSpanElement | null>;
   children?: ReactNode;
@@ -82,7 +82,7 @@ export function SelectionThumbIcon({
       aria-hidden
       className={cn(
         "pointer-events-none z-[1] flex items-center justify-center",
-        highlighted ? "text-primary-foreground" : "text-primary",
+        highlighted ? "text-indicator-foreground" : "text-primary",
         className,
       )}
       style={style}

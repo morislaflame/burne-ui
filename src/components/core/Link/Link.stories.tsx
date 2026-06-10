@@ -39,7 +39,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Текстовая ссылка: текст всегда `text-accent`, стандартная иконка ↗ — `text-muted` до hover. Hover-lift и squeeze при нажатии. Опционально `underline`, иконки слева/справа или `showDefaultIcon`.",
+          "Текстовая ссылка: текст всегда `text-primary`, стандартная иконка ↗ — `text-muted` до hover. Hover-lift и squeeze при нажатии. Опционально `underline`, иконки слева/справа или `showDefaultIcon`.",
       },
     },
   },

@@ -169,13 +169,13 @@ export const Accessibility: Story = {
     return (
       <div className="flex flex-col gap-mid text-left">
         <p className="text-sm text-muted">
-          Корень — <code className="text-accent">&lt;nav aria-label&gt;</code>. Список —{" "}
-          <code className="text-accent">&lt;ol&gt;</code> /{" "}
-          <code className="text-accent">&lt;li&gt;</code>. Текущая страница —{" "}
-          <code className="text-accent">aria-current=&quot;page&quot;</code> (не кнопка). У
+          Корень — <code className="text-primary">&lt;nav aria-label&gt;</code>. Список —{" "}
+          <code className="text-primary">&lt;ol&gt;</code> /{" "}
+          <code className="text-primary">&lt;li&gt;</code>. Текущая страница —{" "}
+          <code className="text-primary">aria-current=&quot;page&quot;</code> (не кнопка). У
           prev/next с видимым текстом имя берётся из подписи (WCAG Label in Name); для icon-only —
-          передайте <code className="text-accent">aria-label</code>. Ellipsis —{" "}
-          <code className="text-accent">aria-hidden</code>.
+          передайте <code className="text-primary">aria-label</code>. Ellipsis —{" "}
+          <code className="text-primary">aria-hidden</code>.
         </p>
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
           <Pagination.Summary>

@@ -568,7 +568,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
     "relative cursor-pointer select-none rounded-small text-left",
     optionControlGridClass(secondaryLines, sz.gridGapX),
     isDisabled && "cursor-not-allowed",
-    "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
+    "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
     className,
   );
 

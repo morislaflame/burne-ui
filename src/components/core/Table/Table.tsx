@@ -433,7 +433,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
             isToned && isSelectable && "cursor-pointer",
             !isToned &&
               (isSelected
-                ? "bg-[color-mix(in_oklab,var(--color-accent)_8%,var(--color-surface))]"
+                ? "bg-[color-mix(in_oklab,var(--color-primary)_8%,var(--color-surface))]"
                 : "hover:bg-[color-mix(in_oklab,var(--color-foreground)_4%,transparent)]"),
             isSelectable &&
               "focus-ring-inset",

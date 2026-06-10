@@ -133,7 +133,7 @@ export const BadgeAnchorComposition: Story = {
     <div className="flex flex-col gap-xlarge">
       <p className="max-w-xl text-center text-sm text-muted">
         Наведите на аватар: бейдж слегка увеличивается (scale как у&nbsp;
-        <code className="text-accent">Button</code>).
+        <code className="text-primary">Button</code>).
       </p>
       <div className="flex flex-wrap items-start justify-center gap-xlarge">
         <Badge.Anchor>
@@ -211,10 +211,10 @@ export const IconStartEnd: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-mid">
       <p className="text-sm text-muted">
-        Prop <code className="text-accent">icon</code> +{" "}
-        <code className="text-accent">iconPosition</code> — root получает{" "}
-        <code className="text-accent">data-icon=&quot;start&quot;</code> /{" "}
-        <code className="text-accent">end</code>.
+        Prop <code className="text-primary">icon</code> +{" "}
+        <code className="text-primary">iconPosition</code> — root получает{" "}
+        <code className="text-primary">data-icon=&quot;start&quot;</code> /{" "}
+        <code className="text-primary">end</code>.
       </p>
       <div className="flex flex-wrap items-center gap-plus">
         <Badge
@@ -339,8 +339,8 @@ export const Accessibility: Story = {
     <div className="flex max-w-lg flex-col gap-mid text-left">
       <p className="text-sm text-muted">
         Текстовый бейдж читается как подпись; inline-иконки декоративные (
-        <code className="text-accent">aria-hidden</code>). Icon-only и dot без подписи требуют{" "}
-        <code className="text-accent">aria-label</code>.
+        <code className="text-primary">aria-hidden</code>). Icon-only и dot без подписи требуют{" "}
+        <code className="text-primary">aria-label</code>.
       </p>
       <div className="flex flex-wrap items-center gap-plus">
         <Badge variant="success">

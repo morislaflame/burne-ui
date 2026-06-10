@@ -45,7 +45,7 @@ import "./burne-theme-overrides.css";
 
 ```css
 :root {
-  --color-accent: #6366f1;
+  --color-primary: #6366f1;
   --space: 0.5625rem;   /* плотнее/просторнее отступы */
   --size: 1.0625rem;    /* крупнее иконки, индикаторы, кнопки */
   --radius: 0.625rem;   /* мягче скругления */
@@ -56,7 +56,7 @@ import "./burne-theme-overrides.css";
 /* Светлая тема: те же ветки, что и в пакете */
 [data-brn-theme="light"],
 [data-theme="light"] {
-  --color-accent: #4f46e5;
+  --color-primary: #4f46e5;
 }
 ```
 
@@ -67,7 +67,7 @@ import "./burne-theme-overrides.css";
 ```ts
 import { designTokenNames, colorToken } from "burne-ui";
 
-const ripple = colorToken("converge-ripple-accent-soft"); // var(--color-converge-ripple-accent-soft)
+const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ripple-neutral)
 ```
 
 ## Tailwind в приложении-потребителе

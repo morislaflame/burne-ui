@@ -106,7 +106,7 @@ export const Colors: Story = {
         label="Градиент"
         showValue
         value={60}
-        color="linear-gradient(90deg, var(--color-accent) 0%, var(--color-info) 100%)"
+        color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-info) 100%)"
       />
     </div>
   ),
@@ -163,7 +163,7 @@ export const Animated: Story = {
     }, []);
 
     return (
-      <ProgressBar label="Скачивание" min={0} max={100} value={value} showValue color="var(--color-accent)" />
+      <ProgressBar label="Скачивание" min={0} max={100} value={value} showValue color="var(--color-primary)" />
     );
   },
 };
@@ -179,13 +179,13 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        Шкала — <code className="text-accent">role=&quot;progressbar&quot;</code> с{" "}
-        <code className="text-accent">aria-valuenow</code> /{" "}
-        <code className="text-accent">aria-valuemin</code> /{" "}
-        <code className="text-accent">aria-valuemax</code> (или{" "}
-        <code className="text-accent">aria-busy</code> при indeterminate). Подпись —{" "}
-        <code className="text-accent">aria-labelledby</code>, hint —{" "}
-        <code className="text-accent">aria-describedby</code>.
+        Шкала — <code className="text-primary">role=&quot;progressbar&quot;</code> с{" "}
+        <code className="text-primary">aria-valuenow</code> /{" "}
+        <code className="text-primary">aria-valuemin</code> /{" "}
+        <code className="text-primary">aria-valuemax</code> (или{" "}
+        <code className="text-primary">aria-busy</code> при indeterminate). Подпись —{" "}
+        <code className="text-primary">aria-labelledby</code>, hint —{" "}
+        <code className="text-primary">aria-describedby</code>.
       </p>
       <ProgressBar
         label="Скачивание"

@@ -19,7 +19,7 @@ const framedDecorator = [
 ] as const;
 
 const COLORS: LoadingColor[] = [
-  "accent",
+  "primary",
   "foreground",
   "muted",
   "secondary",
@@ -38,14 +38,14 @@ const meta = {
     docs: {
       description: {
         component:
-          "Круговой индикатор загрузки. Размеры `small | base | mid | large` — как спиннер у `Button`. Цвета — accent, foreground, muted и семантические токены.",
+          "Круговой индикатор загрузки. Размеры `small | base | mid | large` — как спиннер у `Button`. Цвета — primary, foreground, muted и семантические токены.",
       },
     },
   },
   decorators: [...framedDecorator],
   args: {
     size: "base",
-    color: "accent",
+    color: "primary",
   },
   argTypes: {
     size: { control: "select", options: COMPONENT_SIZES },
@@ -107,7 +107,7 @@ export const Centered: Story = {
   name: "По центру блока",
   render: () => (
     <div className="flex h-40 w-72 items-center justify-center rounded-mid border-token bg-surface">
-      <Loading size="large" color="accent" label="Загрузка содержимого" />
+      <Loading size="large" color="primary" label="Загрузка содержимого" />
     </div>
   ),
 };

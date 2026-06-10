@@ -506,7 +506,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             </Dropdown>
           </ButtonGroup>
           <div className="relative inline-flex w-fit overflow-hidden rounded-mid">
-            <Ripple color="accent" />
+            <Ripple color="neutral" />
             <Button variant="secondary" className="relative z-[1]">
               Кастомный Ripple
             </Button>
@@ -1080,7 +1080,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             </Card.Footer>
           </Card>
           <Card pressable onPress={() => setDialogOpen(true)}>
-            <Ripple color="accentSoft" />
+            <Ripple color="neutral" />
             <div className="relative z-[1]">
               <Card.Content className="gap-small">
                 <div
@@ -1355,7 +1355,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
       <ShowcaseSection title="Загрузка">
         <div className="flex flex-wrap items-center gap-mid">
           <Loading size="small" />
-          <Loading size="base" color="accent" />
+          <Loading size="base" color="primary" />
           <Loading size="mid" color="success" />
           <Loading size="large" color="muted" />
         </div>

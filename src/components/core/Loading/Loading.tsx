@@ -7,7 +7,7 @@ import { cn } from "@/utils/cn";
 export type LoadingSize = ComponentSize;
 
 export type LoadingColor =
-  | "accent"
+  | "primary"
   | "foreground"
   | "muted"
   | "secondary"
@@ -19,7 +19,7 @@ export type LoadingColor =
 export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
   /** Габариты индикатора. По умолчанию `base`. */
   size?: LoadingSize;
-  /** Цвет кольца. По умолчанию `accent`. */
+  /** Цвет кольца. По умолчанию `primary`. */
   color?: LoadingColor;
   /** Текст для screen readers. По умолчанию «Загрузка». */
   label?: string;
@@ -45,7 +45,7 @@ const LOADING_RING: Record<LoadingSize, { icon: string; border: string }> = {
 };
 
 const LOADING_COLOR: Record<LoadingColor, string> = {
-  accent: "text-primary",
+  primary: "text-primary",
   foreground: "text-foreground",
   muted: "text-muted",
   secondary: "text-primary",
@@ -61,7 +61,7 @@ const LOADING_COLOR: Record<LoadingColor, string> = {
 export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loading(
   {
     size = "base",
-    color = "accent",
+    color = "primary",
     label = "Загрузка",
     className = "",
     ...rest

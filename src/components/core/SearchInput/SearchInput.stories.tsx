@@ -54,7 +54,7 @@ const meta = {
     },
     ripple: {
       control: "boolean",
-      description: "Встроенный `<Ripple color=\"accentSoft\" />` на корне оболочки.",
+      description: "Встроенный `<Ripple color=\"neutral\" />` на корне оболочки.",
     },
   },
 } satisfies Meta<typeof SearchInput>;
@@ -118,12 +118,12 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Свёрнуто — <code className="text-accent">role=&quot;button&quot;</code>,{" "}
-        <code className="text-accent">aria-expanded</code>, Enter/Space открывает. Развёрнуто —{" "}
-        <code className="text-accent">role=&quot;search&quot;</code>, фокус на{" "}
-        <code className="text-accent">input</code>. Задайте{" "}
-        <code className="text-accent">aria-label</code> вместо одного placeholder. Clear —{" "}
-        <code className="text-accent">aria-label=&quot;Очистить поле&quot;</code>.
+        Свёрнуто — <code className="text-primary">role=&quot;button&quot;</code>,{" "}
+        <code className="text-primary">aria-expanded</code>, Enter/Space открывает. Развёрнуто —{" "}
+        <code className="text-primary">role=&quot;search&quot;</code>, фокус на{" "}
+        <code className="text-primary">input</code>. Задайте{" "}
+        <code className="text-primary">aria-label</code> вместо одного placeholder. Clear —{" "}
+        <code className="text-primary">aria-label=&quot;Очистить поле&quot;</code>.
       </p>
       <SearchInput aria-label="Поиск по документации" placeholder="Найти…" />
     </div>

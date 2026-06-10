@@ -136,7 +136,7 @@ export const DefaultWithOptionalIcon: Story = {
   render: () => (
     <Tooltip
       variant="default"
-      icon={<IoHelpCircleOutline aria-hidden className="text-accent" />}
+      icon={<IoHelpCircleOutline aria-hidden className="text-primary" />}
     >
       <Tooltip.Trigger>
         <Button size="large" variant="outline" type="button">
@@ -251,10 +251,10 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Контент: <code className="text-accent">role=&quot;tooltip&quot;</code>. Связь с триггером —{" "}
-        <code className="text-accent">aria-describedby</code> только пока подсказка открыта. Hover и
+        Контент: <code className="text-primary">role=&quot;tooltip&quot;</code>. Связь с триггером —{" "}
+        <code className="text-primary">aria-describedby</code> только пока подсказка открыта. Hover и
         focus; <kbd className="rounded-small border-token px-xsmall py-0.5 text-tools">Escape</kbd>{" "}
-        закрывает. Единственный child <code className="text-accent">Trigger</code> получает handlers без
+        закрывает. Единственный child <code className="text-primary">Trigger</code> получает handlers без
         лишнего tab-stop.
       </p>
       <Tooltip delayShowMs={0}>

@@ -60,7 +60,7 @@ export function SelectionIndicator({
           ref={iconRef}
           aria-hidden
           className={cn(
-            "pointer-events-none relative z-[1] inline-flex items-center justify-center text-accent-foreground [&_svg]:size-full",
+            "pointer-events-none relative z-[1] inline-flex items-center justify-center text-indicator-foreground [&_svg]:size-full",
             SELECTION_INDICATOR_ICON_CLASS[size],
           )}
           style={{ opacity: 0 }}

@@ -208,21 +208,11 @@ function badgeHasAccessibleName(props: HTMLAttributes<HTMLSpanElement>): boolean
   );
 }
 
-/** Устаревший литерал из API; сводим к `secondary`. */
-type BadgeToneProp = BadgeTone | "accent";
-
-function normalizeBadgeToneProp(t: BadgeToneProp | undefined): BadgeTone | undefined {
-  if (t === "accent") return "secondary";
-  return t;
-}
-
 function resolveBadgeTone(
-  color: BadgeToneProp | undefined,
-  variant: BadgeToneProp | undefined,
+  color: BadgeTone | undefined,
+  variant: BadgeTone | undefined,
 ): BadgeTone {
-  return normalizeBadgeToneProp(color ?? undefined) ??
-    normalizeBadgeToneProp(variant ?? undefined) ??
-    "default";
+  return color ?? variant ?? "default";
 }
 
 type BadgeLiftContextValue = {
@@ -314,9 +304,9 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
 
 export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   /** Семантика / цвет поверхности. Приоритет над `variant`. */
-  color?: BadgeToneProp;
+  color?: BadgeTone;
   /** Совместимость с прежним API; если задан только он — работает как `color`. */
-  variant?: BadgeToneProp;
+  variant?: BadgeTone;
   /** `small` · `base` · `mid` · `large`. По умолчанию `base`. */
   size?: BadgeSize;
   /** Simple API: иконка через prop. Игнорируется, если в `children` есть элемент с `data-icon`. */

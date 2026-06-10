@@ -157,9 +157,9 @@ export const Validation: Story = {
   render: () => (
     <div className="flex w-full flex-col gap-plus">
       <p className="text-sm text-muted">
-        Подсказка — <code className="text-accent">Input.Hint</code> (muted); сообщение об ошибке —{" "}
-        <code className="text-accent">Input.Error</code> (danger, <code className="text-accent">role=&quot;alert&quot;</code>
-        ). Оба id попадают в <code className="text-accent">aria-describedby</code> контрола. Ошибка
+        Подсказка — <code className="text-primary">Input.Hint</code> (muted); сообщение об ошибке —{" "}
+        <code className="text-primary">Input.Error</code> (danger, <code className="text-primary">role=&quot;alert&quot;</code>
+        ). Оба id попадают в <code className="text-primary">aria-describedby</code> контрола. Ошибка
         снимается при вводе корректного email.
       </p>
       <ValidatedEmailCompoundDemo />
@@ -254,12 +254,12 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        <code className="text-accent">&lt;Label htmlFor&gt;</code> через{" "}
-        <code className="text-accent">FieldLabelContext</code>. Hint и error — через{" "}
-        <code className="text-accent">aria-describedby</code> (оба id, если заданы). При{" "}
-        <code className="text-accent">status=&quot;danger&quot;</code> —{" "}
-        <code className="text-accent">aria-invalid</code> на контроле; ошибка —{" "}
-        <code className="text-accent">Input.Error</code>, не tinted hint.
+        <code className="text-primary">&lt;Label htmlFor&gt;</code> через{" "}
+        <code className="text-primary">FieldLabelContext</code>. Hint и error — через{" "}
+        <code className="text-primary">aria-describedby</code> (оба id, если заданы). При{" "}
+        <code className="text-primary">status=&quot;danger&quot;</code> —{" "}
+        <code className="text-primary">aria-invalid</code> на контроле; ошибка —{" "}
+        <code className="text-primary">Input.Error</code>, не tinted hint.
       </p>
       <ValidatedEmailCompoundDemo />
     </div>

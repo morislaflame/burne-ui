@@ -53,11 +53,11 @@ export type SwitchControlProps = Omit<
      * Число — px; строка — любая CSS-длина (`"0.75rem"`, `"12px"`).
      */
     thickness?: number | string;
-    /** Иконка в кружке, когда выключен (цвет accent). Если задана хотя бы одна — accent-заливка кружка при включении. */
+    /** Иконка в кружке, когда выключен (цвет primary). Если задана хотя бы одна — primary-заливка кружка при включении. */
     iconOff?: ReactNode;
-    /** Иконка в кружке, когда включен (цвет accent-foreground на заливке). */
+    /** Иконка в кружке, когда включен (цвет primary-foreground на заливке). */
     iconOn?: ReactNode;
-    /** Фон трека во включённом состоянии: CSS-цвет или `linear-gradient(...)`. Заливка кружка всегда accent. */
+    /** Фон трека во включённом состоянии: CSS-цвет или `linear-gradient(...)`. Заливка кружка всегда primary. */
     color?: string;
     className?: string;
     children?: ReactNode;

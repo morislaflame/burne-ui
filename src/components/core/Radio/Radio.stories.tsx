@@ -120,7 +120,7 @@ export const CustomIndicator: Story = {
       <Radio name="custom-indicator" value="star" defaultChecked>
         <Radio.Control>
           <Radio.Indicator>
-            <IoStar aria-hidden className="size-full text-accent-foreground" />
+            <IoStar aria-hidden className="size-full text-primary-foreground" />
           </Radio.Indicator>
         </Radio.Control>
         <Radio.Content>
@@ -137,9 +137,9 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Simple и compound — native <code className="text-accent">&lt;label&gt;</code> вокруг input и
+        Simple и compound — native <code className="text-primary">&lt;label&gt;</code> вокруг input и
         текста. Hint и error — через{" "}
-        <code className="text-accent">aria-describedby</code> (оба id, если заданы).
+        <code className="text-primary">aria-describedby</code> (оба id, если заданы).
       </p>
       <Radio
         id="a11y-radio-simple"

@@ -164,7 +164,7 @@ export const CustomIndicator: Story = {
     <Checkbox defaultChecked>
       <Checkbox.Control>
         <Checkbox.Indicator>
-          <IoStar aria-hidden className="size-full text-accent-foreground" />
+          <IoStar aria-hidden className="size-full text-primary-foreground" />
         </Checkbox.Indicator>
       </Checkbox.Control>
       <Checkbox.Content>
@@ -180,10 +180,10 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Simple: native <code className="text-accent">&lt;label&gt;</code> + скрытый input. Compound:{" "}
-        <code className="text-accent">role=&quot;group&quot;</code>,{" "}
-        <code className="text-accent">aria-labelledby</code>, hint и error —{" "}
-        <code className="text-accent">aria-describedby</code>.
+        Simple: native <code className="text-primary">&lt;label&gt;</code> + скрытый input. Compound:{" "}
+        <code className="text-primary">role=&quot;group&quot;</code>,{" "}
+        <code className="text-primary">aria-labelledby</code>, hint и error —{" "}
+        <code className="text-primary">aria-describedby</code>.
       </p>
       <Checkbox
         id="a11y-checkbox"
@@ -225,7 +225,7 @@ export const OnLightTheme: Story = {
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex max-w-md flex-col gap-mid">
-      <Checkbox defaultChecked label="Светлая тема" hint="accent / accent-foreground" />
+      <Checkbox defaultChecked label="Светлая тема" hint="primary / primary-foreground" />
       <Checkbox variant="outline" label="Outline" />
     </div>
   ),

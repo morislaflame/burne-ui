@@ -31,6 +31,8 @@
    * По умолчанию === primary, но может быть переопределён независимо.
    */
   --color-indicator: var(--color-primary);
+
+  /** Текст и иконки на заливке `--color-indicator` (галочка Checkbox, Switch/Slider в on). */
   --color-indicator-foreground: var(--color-primary-foreground);
 
   --color-danger: #dc2626;
@@ -409,7 +411,7 @@
   --color-background: #fafafa;
   --color-surface: #ffffff;
   --color-foreground: #18181b;
-  --color-border: color-mix(in oklab, var(--color-foreground) 12%, var(--color-surface));
+  --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
   --color-muted: #71717a;
   --color-primary: #18181b;
   --color-primary-foreground: #fafafa;

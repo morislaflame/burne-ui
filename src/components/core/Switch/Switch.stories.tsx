@@ -159,7 +159,7 @@ export const CustomColor: Story = {
   name: "Свой цвет",
   render: () => (
     <div className="flex flex-col gap-mid">
-      <Switch label="Accent (по умолчанию)" hint="Трек accent" defaultChecked />
+      <Switch label="Primary (по умолчанию)" hint="Трек primary" defaultChecked />
       <Switch
         label="Success"
         hint="var(--color-success)"
@@ -182,8 +182,8 @@ export const CustomColor: Story = {
       <Switch label="Hex" hint="#7c3aed" color="#7c3aed" defaultChecked />
       <Switch
         label="Градиент"
-        hint="linear-gradient accent → info"
-        color="linear-gradient(90deg, var(--color-accent) 0%, var(--color-info) 100%)"
+        hint="linear-gradient primary → info"
+        color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-info) 100%)"
         defaultChecked
       />
       <Switch
@@ -195,7 +195,7 @@ export const CustomColor: Story = {
       <Switch
         label="С иконками + градиент"
         hint="Accent-иконка на заливке"
-        color="linear-gradient(90deg, var(--color-success) 0%, var(--color-accent) 100%)"
+        color="linear-gradient(90deg, var(--color-success) 0%, var(--color-primary) 100%)"
         defaultChecked
         iconOff={<IoMoon aria-hidden className="size-full" />}
         iconOn={<IoSunny aria-hidden className="size-full" />}
@@ -247,10 +247,10 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Simple и compound — native <code className="text-accent">&lt;label&gt;</code> вокруг input и
+        Simple и compound — native <code className="text-primary">&lt;label&gt;</code> вокруг input и
         текста. Hint и error связываются через{" "}
-        <code className="text-accent">aria-describedby</code> (оба id, если заданы). Без подписи
-        — fallback <code className="text-accent">aria-label=&quot;Переключатель&quot;</code> или свой
+        <code className="text-primary">aria-describedby</code> (оба id, если заданы). Без подписи
+        — fallback <code className="text-primary">aria-label=&quot;Переключатель&quot;</code> или свой
         label.
       </p>
       <Switch

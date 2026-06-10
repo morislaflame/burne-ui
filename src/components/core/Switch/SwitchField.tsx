@@ -367,7 +367,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchRootProps & Partial
               ? optionControlGridClass(secondaryLines, sz.gapX, labelSide, "inline-grid")
               : "inline-grid grid-cols-[auto] grid-rows-[auto]",
             disabled && "cursor-not-allowed",
-            "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
+            "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
             className,
           )}
           onPointerDown={handlePointerDown}

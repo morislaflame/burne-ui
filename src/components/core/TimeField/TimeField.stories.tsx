@@ -218,10 +218,10 @@ export const Validation: Story = {
   render: () => (
     <div className="flex w-full flex-col gap-plus">
       <p className="text-sm text-muted">
-        Подсказка — <code className="text-accent">TimeField.Hint</code>; ошибка —{" "}
-        <code className="text-accent">TimeField.Error</code> (
-        <code className="text-accent">role=&quot;alert&quot;</code>). Оба id попадают в{" "}
-        <code className="text-accent">aria-describedby</code> контрола.
+        Подсказка — <code className="text-primary">TimeField.Hint</code>; ошибка —{" "}
+        <code className="text-primary">TimeField.Error</code> (
+        <code className="text-primary">role=&quot;alert&quot;</code>). Оба id попадают в{" "}
+        <code className="text-primary">aria-describedby</code> контрола.
       </p>
       <ValidatedTimeCompoundDemo />
       <ValidatedTimeSimpleDemo />

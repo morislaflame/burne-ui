@@ -303,7 +303,7 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
               ? "top-0 h-full w-auto -translate-x-1/2"
               : "left-0 w-full h-auto translate-y-1/2",
             "aspect-square origin-center",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
             disabled ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
           )}
           style={thumbStyle}

@@ -173,7 +173,7 @@ export type ColorTokenSuffix = ColorCssVarName extends `--color-${infer S}`
 
 /**
  * Ссылка на цветовой токен для `style` / ripple: без литерала `var(--...)`.
- * @example colorToken("converge-ripple-accent-soft") // → var(--color-converge-ripple-accent-soft)
+ * @example colorToken("converge-ripple-neutral") // → var(--color-converge-ripple-neutral)
  */
 export function colorToken<S extends ColorTokenSuffix>(suffix: S): `var(--color-${S})` {
   return `var(--color-${suffix})` as `var(--color-${S})`;

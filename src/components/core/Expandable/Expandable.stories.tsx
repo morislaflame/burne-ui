@@ -159,13 +159,13 @@ export const PressRipple: Story = {
   render: () => (
     <Expandable>
       <Expandable.Trigger>
-        <Ripple color="accentMuted" />
+        <Ripple color="neutralMuted" />
         <Expandable.Content>
           <Expandable.Title>Нажми на строку заголовка</Expandable.Title>
           <Expandable.Description>
             Ripple среди детей триггера — слой на всю кнопку (включая шеврон):{" "}
             <code className="text-xs">
-              {`<Ripple color="accentMuted" />`}
+              {`<Ripple color="neutralMuted" />`}
             </code>
           </Expandable.Description>
         </Expandable.Content>
@@ -184,12 +184,12 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Триггер — native <code className="text-accent">&lt;button type=&quot;button&quot;&gt;</code> с{" "}
-        <code className="text-accent">aria-expanded</code> и{" "}
-        <code className="text-accent">aria-controls</code>. Панель —{" "}
-        <code className="text-accent">role=&quot;region&quot;</code>,{" "}
-        <code className="text-accent">aria-labelledby</code>; при закрытии —{" "}
-        <code className="text-accent">aria-hidden</code> и <code className="text-accent">inert</code>.
+        Триггер — native <code className="text-primary">&lt;button type=&quot;button&quot;&gt;</code> с{" "}
+        <code className="text-primary">aria-expanded</code> и{" "}
+        <code className="text-primary">aria-controls</code>. Панель —{" "}
+        <code className="text-primary">role=&quot;region&quot;</code>,{" "}
+        <code className="text-primary">aria-labelledby</code>; при закрытии —{" "}
+        <code className="text-primary">aria-hidden</code> и <code className="text-primary">inert</code>.
       </p>
       <Expandable title="Настройки уведомлений" description="Email и push">
         <p className="text-sm">Содержимое недоступно с клавиатуры, пока блок свёрнут.</p>

@@ -12,7 +12,7 @@ import { cn } from "@/utils/cn";
 import { RIPPLE_COLOR, type RippleColor } from "./rippleTokens";
 
 function resolveRipplePaint(input?: string): string {
-  if (input == null || input === "") return RIPPLE_COLOR.accentSoft;
+  if (input == null || input === "") return RIPPLE_COLOR.neutral;
   if (Object.hasOwn(RIPPLE_COLOR, input))
     return RIPPLE_COLOR[input as RippleColor];
   return input;

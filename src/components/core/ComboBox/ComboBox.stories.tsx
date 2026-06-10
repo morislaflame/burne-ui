@@ -285,9 +285,9 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        Combobox — <code className="text-accent">aria-expanded</code>,{" "}
-        <code className="text-accent">aria-controls</code>,{" "}
-        <code className="text-accent">aria-activedescendant</code>. Listbox внутри Popover.
+        Combobox — <code className="text-primary">aria-expanded</code>,{" "}
+        <code className="text-primary">aria-controls</code>,{" "}
+        <code className="text-primary">aria-activedescendant</code>. Listbox внутри Popover.
       </p>
       <ComboBox status="danger" isRequired options={sampleOptions}>
         <ComboBox.Label>Язык интерфейса</ComboBox.Label>

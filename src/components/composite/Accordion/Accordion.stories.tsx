@@ -117,7 +117,7 @@ export const PressRipple: Story = {
         <Accordion.Item key={item.title}>
           <Accordion.Heading>
             <Accordion.Trigger>
-              <Ripple color="accentMuted" />
+              <Ripple color="neutralMuted" />
               <Accordion.Message>
                 {"icon" in item && item.icon ? (
                   <Accordion.Icon>{item.icon}</Accordion.Icon>

@@ -8,6 +8,7 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 import {
+  BORDER_COLOR_CSS_FORMULA,
   COLOR_LABELS,
   FONT_PRESETS,
   MONO_FONT_PRESETS,
@@ -49,7 +50,7 @@ const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
     keys: ["foreground", "muted", "border"],
   },
   {
-    label: "accent tokens",
+    label: "primary tokens",
     keys: [
       "primary",
       "primaryForeground",
@@ -111,7 +112,7 @@ function ScaleControl({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-2 w-full cursor-pointer accent-accent"
+        className="h-2 w-full cursor-pointer accent-primary"
       />
     </div>
   );
@@ -121,13 +122,17 @@ function ColorControl({
   label,
   value,
   onChange,
+  previewBackground,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  /** Когда `value` — формула, превью через CSS var (например `var(--color-border)`). */
+  previewBackground?: string;
 }) {
   const isHex = /^#[0-9a-f]{6}$/i.test(value.trim());
   const pickerValue = isHex ? value.trim() : "#000000";
+  const preview = previewBackground ?? value;
 
   return (
     <div className="flex flex-col gap-xsmall">
@@ -135,7 +140,7 @@ function ColorControl({
       <div className="flex items-center gap-small">
         <div
           className="size-8 shrink-0 rounded-small border-token"
-          style={{ background: value }}
+          style={{ background: preview }}
           title="preview"
         />
         {isHex ? (
@@ -229,7 +234,7 @@ function TintColorControl({
               value={parsed.percent}
               onChange={(e) => apply({ percent: Number(e.target.value) })}
               aria-label={`${label} — mix percent`}
-              className="h-2 w-full cursor-pointer accent-accent"
+              className="h-2 w-full cursor-pointer accent-primary"
             />
           </div>
 
@@ -631,6 +636,14 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
                     label={COLOR_LABELS[key]}
                     value={state.colors[key]}
                     defaultPercent={TINT_DEFAULT_PERCENT[key as "primaryTint" | "primaryTintStrong"]}
+                    onChange={(value) => setColor(key, value)}
+                  />
+                ) : key === "border" && !state.borderCustomized ? (
+                  <ColorControl
+                    key={key}
+                    label={COLOR_LABELS[key]}
+                    value={BORDER_COLOR_CSS_FORMULA[state.theme]}
+                    previewBackground="var(--color-border)"
                     onChange={(value) => setColor(key, value)}
                   />
                 ) : (
