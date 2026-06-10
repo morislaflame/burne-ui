@@ -29,7 +29,7 @@ const lightDecorator = [
   ),
 ] as const;
 
-const VARIANTS: SurfaceVariant[] = ["default", "outline", "secondary"];
+const VARIANTS: SurfaceVariant[] = ["default", "secondary", "tertiary"];
 
 const meta = {
   title: "Core Components/Surface",
@@ -40,7 +40,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Базовая панель с токенами темы (`bg-surface`, `surface-outline`, `surface-secondary`). Примитив для меню, popover-подобных блоков и секций — без compound-API Card и без blur у GlassSurface.",
+          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary-bg`, `bg-tertiary-bg`) — только заливка, без рамки. Примитив для меню и секций — без compound-API Card и без blur у GlassSurface.",
       },
     },
   },
@@ -106,7 +106,7 @@ export const MenuPanel: Story = {
           <li key={label}>
             <button
               type="button"
-              className="w-full rounded-mid px-base py-small text-left text-base hover:bg-accent-fill-hover"
+              className="w-full rounded-mid px-base py-small text-left text-base hover:bg-primary-tint"
             >
               {label}
             </button>
@@ -122,17 +122,17 @@ export const NestedSections: Story = {
   render: () => (
     <Surface padding="plus" shadow="sm" className="flex w-full max-w-sm flex-col gap-plus">
       <Text as="p" variant="base" className="font-medium">
-        Внешняя панель
+        Внешняя панель (default)
       </Text>
       <Surface variant="secondary" padding="base" radius="base">
         <Text as="p" variant="small" className="text-muted">
           Внутренний блок secondary
         </Text>
-      </Surface>
-      <Surface variant="outline" padding="base" radius="base">
-        <Text as="p" variant="small" className="text-muted">
-          Внутренний блок outline
-        </Text>
+        <Surface variant="tertiary" padding="small" radius="base" className="mt-small">
+          <Text as="p" variant="small" className="text-muted">
+            Внутренний блок tertiary
+          </Text>
+        </Surface>
       </Surface>
     </Surface>
   ),

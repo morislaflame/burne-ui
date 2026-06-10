@@ -228,7 +228,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
     const indeterminateFillClass = cn(
       "absolute rounded-full will-change-transform",
       isHorizontal ? "inset-y-0 left-0 w-1/4" : "inset-x-0 bottom-0 h-1/4",
-      !color && "bg-accent",
+      !color && "bg-primary",
       reduceMotion &&
         (isHorizontal ? "left-1/4 w-1/2" : "bottom-1/4 h-1/2"),
     );
@@ -263,7 +263,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
               className={cn(
                 "absolute rounded-full",
                 isHorizontal ? "inset-y-0 left-0" : "inset-x-0 bottom-0",
-                !color && "bg-accent",
+                !color && "bg-primary",
               )}
               style={{
                 width: isHorizontal ? `${percent}%` : "100%",

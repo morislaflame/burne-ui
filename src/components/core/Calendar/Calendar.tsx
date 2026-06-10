@@ -93,9 +93,9 @@ const HEADER_TEXT: Record<CalendarSize, string> = {
 };
 
 const ROOT_SURFACE: Record<CalendarVariant, string> = {
-  default:   "rounded-large border border-base bg-surface shadow-token-sm",
+  default:   "rounded-large border-token bg-surface shadow-token-sm",
   secondary: "rounded-large surface-secondary",
-  outline:   "rounded-large surface-outline",
+  outline:   "rounded-large bordered-transparent",
 };
 
 const MONTH_GRID_GAP: Record<CalendarSize, string> = {
@@ -454,7 +454,7 @@ function CalendarNavButton({
       className={cn(
         "flex shrink-0 origin-center items-center justify-center rounded-base will-change-transform",
         "text-muted transition-colors hover:bg-surface-secondary hover:text-foreground",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent",
+        "focus-ring",
         "disabled:cursor-not-allowed disabled:opacity-40",
         NAV_BTN[size],
       )}
@@ -501,7 +501,7 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
             "flex-1 rounded-base py-xsmall text-center font-medium transition-colors",
             HEADER_TEXT[size],
             view !== "years"
-              ? "cursor-pointer hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+              ? "cursor-pointer hover:text-primary focus-ring"
               : "cursor-default",
           )}
         >
@@ -635,13 +635,13 @@ function CalendarDaysView() {
               {showLeftBg && (
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-y-0 left-0 right-1/2 bg-accent/10"
+                  className="pointer-events-none absolute inset-y-0 left-0 right-1/2 bg-primary-tint"
                 />
               )}
               {showRightBg && (
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-y-0 left-1/2 right-0 bg-accent/10"
+                  className="pointer-events-none absolute inset-y-0 left-1/2 right-0 bg-primary-tint"
                 />
               )}
 
@@ -740,13 +740,13 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
     const { onClear, onToday, locale } = useCalendar();
 
     const btnCls =
-      "rounded-base px-small py-xsmall text-small transition-colors duration-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent";
+      "rounded-base px-small py-xsmall text-small transition-colors duration-fast focus-ring";
 
     return (
       <div
         ref={ref}
         className={cn(
-          "flex items-center justify-between border-t border-base pt-small",
+          "flex items-center justify-between border-t-token pt-small",
           className,
         )}
         {...rest}

@@ -47,8 +47,8 @@ export type CardProps = Omit<
 };
 
 const CARD_SURFACE: Record<CardVariant, string> = {
-  default: "bg-surface border border-base",
-  outline: "surface-outline",
+  default: "bg-surface border-token",
+  outline: "bordered-transparent",
   secondary: "surface-secondary",
 };
 
@@ -117,7 +117,7 @@ export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   return (
     <div
       className={cn(
-        "mt-auto border-t border-base py-plus px-mid text-muted",
+        "mt-auto border-t-token py-plus px-mid text-muted",
         className,
       )}
       {...rest}
@@ -212,7 +212,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const rootClassName = cn(
     "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",
     pressable &&
-      "relative cursor-pointer animate-shadow button-idle-surface-transition motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+      "relative cursor-pointer animate-shadow button-idle-surface-transition motion-reduce:transition-none focus-ring",
     CARD_SURFACE[variant],
     pressable && "will-change-transform origin-center",
     className,

@@ -197,7 +197,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
           className={cn(
             "absolute rounded-full",
             isHorizontal ? "inset-y-0 left-0" : "inset-x-0 bottom-0",
-            !color && "bg-accent",
+            !color && "bg-primary",
           )}
           style={{
             width: isHorizontal ? `${percent}%` : "100%",

@@ -1,0 +1,659 @@
+import { useState } from "react";
+
+import { Button } from "@/components/core/Button";
+import { Label } from "@/components/core/Label";
+import { Separator } from "@/components/core/Separator";
+import { Switch } from "@/components/core/Switch";
+import { Text } from "@/components/core/Text";
+import { cn } from "@/utils/cn";
+
+import {
+  COLOR_LABELS,
+  FONT_PRESETS,
+  MONO_FONT_PRESETS,
+  SCALE_DEFAULTS,
+  STATUS_FOREGROUND_LABELS,
+  type ThemeColorKey,
+  type ThemeStatusForegroundKey,
+} from "./themeDefaults";
+import {
+  buildTintValue,
+  parseTintValue,
+  TINT_MIX_MODE_LABELS,
+  type ParsedTint,
+  type TintMixMode,
+} from "./tintMix";
+import type { ThemeTokensApi } from "./useThemeTokens";
+
+const TINT_COLOR_KEYS = new Set<ThemeColorKey>(["primaryTint", "primaryTintStrong"]);
+
+const TINT_DEFAULT_PERCENT: Record<"primaryTint" | "primaryTintStrong", number> = {
+  primaryTint: 10,
+  primaryTintStrong: 20,
+};
+
+const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
+  {
+    label: "surface tokens",
+    keys: ["background", "surface", "secondary", "tertiary"],
+  },
+  {
+    label: "content tokens",
+    keys: ["foreground", "muted", "border"],
+  },
+  {
+    label: "accent tokens",
+    keys: [
+      "primary",
+      "primaryForeground",
+      "primaryTint",
+      "primaryTintStrong",
+      "indicator",
+      "indicatorForeground",
+    ],
+  },
+  {
+    label: "status tokens",
+    keys: ["danger", "success", "info", "warning"],
+  },
+];
+
+const STATUS_FOREGROUND_KEYS = Object.keys(
+  STATUS_FOREGROUND_LABELS,
+) as ThemeStatusForegroundKey[];
+
+function SectionTitle({ children }: { children: string }) {
+  return (
+    <Text as="span" variant="base" className="font-medium">
+      {children}
+    </Text>
+  );
+}
+
+function ScaleControl({
+  label,
+  value,
+  min,
+  max,
+  step,
+  unit,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-xsmall">
+      <div className="flex items-center justify-between gap-small">
+        <Label className="text-small text-muted">{label}</Label>
+        <Text as="span" variant="tools" className="tabular-nums text-muted">
+          {value.toFixed(step < 0.05 ? 2 : step < 1 ? 1 : 0)}
+          {unit}
+        </Text>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="h-2 w-full cursor-pointer accent-accent"
+      />
+    </div>
+  );
+}
+
+function ColorControl({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const isHex = /^#[0-9a-f]{6}$/i.test(value.trim());
+  const pickerValue = isHex ? value.trim() : "#000000";
+
+  return (
+    <div className="flex flex-col gap-xsmall">
+      <Label className="text-small text-muted">{label}</Label>
+      <div className="flex items-center gap-small">
+        <div
+          className="size-8 shrink-0 rounded-small border-token"
+          style={{ background: value }}
+          title="preview"
+        />
+        {isHex ? (
+          <input
+            type="color"
+            value={pickerValue}
+            onChange={(e) => onChange(e.target.value)}
+            aria-label={`${label} — picker`}
+            className="size-8 shrink-0 cursor-pointer rounded-small bg-transparent p-0.5"
+          />
+        ) : null}
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          aria-label={`${label} — CSS`}
+          className={cn(
+            "min-w-0 flex-1 rounded-base border-token bg-surface px-small py-xsmall font-mono text-tools text-foreground outline-none",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+          )}
+        />
+      </div>
+    </div>
+  );
+}
+
+function TintColorControl({
+  label,
+  value,
+  defaultPercent,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  defaultPercent: number;
+  onChange: (value: string) => void;
+}) {
+  const parsed = parseTintValue(value);
+
+  const apply = (patch: Partial<ParsedTint>) => {
+    const next: ParsedTint = { ...parsed, ...patch };
+    if (patch.mode != null && patch.mode !== "custom" && parsed.mode === "custom") {
+      next.percent = defaultPercent;
+    }
+    onChange(buildTintValue(next));
+  };
+
+  const mixColorHex = /^#[0-9a-f]{6}$/i.test(parsed.mixColor) ? parsed.mixColor : "#4361ee";
+
+  return (
+    <div className="flex flex-col gap-xsmall rounded-base border-token bg-surface-secondary p-small">
+      <div className="flex items-center gap-small">
+        <div
+          className="size-8 shrink-0 rounded-small border-token"
+          style={{ background: value }}
+          title="tint preview"
+        />
+        <Label className="text-small text-muted">{label}</Label>
+      </div>
+
+      <select
+        value={parsed.mode}
+        onChange={(e) => apply({ mode: e.target.value as TintMixMode })}
+        aria-label={`${label} — mix mode`}
+        className={cn(
+          "w-full rounded-base border-token bg-surface px-small py-xsmall text-small text-foreground outline-none",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        )}
+      >
+        {(Object.keys(TINT_MIX_MODE_LABELS) as TintMixMode[]).map((mode) => (
+          <option key={mode} value={mode}>
+            {TINT_MIX_MODE_LABELS[mode]}
+          </option>
+        ))}
+      </select>
+
+      {parsed.mode !== "custom" ? (
+        <>
+          <div className="flex flex-col gap-xsmall">
+            <div className="flex items-center justify-between gap-small">
+              <Text as="span" variant="tools" className="text-muted">mix %</Text>
+              <Text as="span" variant="tools" className="tabular-nums text-muted">
+                {parsed.percent}%
+              </Text>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={40}
+              step={1}
+              value={parsed.percent}
+              onChange={(e) => apply({ percent: Number(e.target.value) })}
+              aria-label={`${label} — mix percent`}
+              className="h-2 w-full cursor-pointer accent-accent"
+            />
+          </div>
+
+          {parsed.mode === "color-surface" ? (
+            <div className="flex items-center gap-small">
+              <input
+                type="color"
+                value={mixColorHex}
+                onChange={(e) => apply({ mixColor: e.target.value })}
+                aria-label={`${label} — mix color`}
+                className="size-8 shrink-0 cursor-pointer rounded-small bg-transparent p-0.5"
+              />
+              <Text as="span" variant="tools" className="font-mono text-muted">
+                {parsed.mixColor}
+              </Text>
+            </div>
+          ) : null}
+        </>
+      ) : (
+        <input
+          type="text"
+          value={parsed.custom}
+          onChange={(e) => apply({ custom: e.target.value })}
+          aria-label={`${label} — custom CSS`}
+          className={cn(
+            "w-full rounded-base border-token bg-surface px-small py-xsmall font-mono text-tools text-foreground outline-none",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+          )}
+        />
+      )}
+
+      <Text as="span" variant="tools" className="truncate font-mono text-muted" title={value}>
+        {value}
+      </Text>
+    </div>
+  );
+}
+
+function FontSelect({
+  id,
+  label,
+  value,
+  presets,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  presets: readonly { id: string; label: string; value: string }[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-xsmall">
+      <Label htmlFor={id}>{label}</Label>
+      <select
+        id={id}
+        value={presets.find((p) => p.value === value)?.id ?? "custom"}
+        onChange={(e) => {
+          const preset = presets.find((p) => p.id === e.target.value);
+          if (preset) onChange(preset.value);
+        }}
+        className={cn(
+          "w-full rounded-base border-token bg-surface px-small py-xsmall text-small text-foreground outline-none",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        )}
+      >
+        {presets.map((preset) => (
+          <option key={preset.id} value={preset.id}>
+            {preset.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function SpacingPreview({ space }: { space: number }) {
+  const steps = [
+    { name: "xsmall", mult: 0.5 },
+    { name: "small", mult: 0.75 },
+    { name: "base", mult: 1 },
+    { name: "mid", mult: 2 },
+    { name: "large", mult: 2.5 },
+  ] as const;
+
+  return (
+    <div className="flex items-end gap-xsmall rounded-small border-token bg-background p-small">
+      {steps.map(({ name, mult }) => (
+        <div key={name} className="flex flex-1 flex-col items-center gap-xsmall">
+          <div
+            className="w-full rounded-xsmall bg-primary/30"
+            style={{ height: `${space * mult * 16}px` }}
+            title={`--space-${name}`}
+          />
+          <Text as="span" variant="tools" className="text-muted">
+            {name}
+          </Text>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
+  const {
+    state,
+    setTheme,
+    setScale,
+    setFontFamily,
+    setFontFamilyMono,
+    setShadowStrength,
+    setDuration,
+    setGlass,
+    setColor,
+    setStatusForeground,
+    applyColorPreset,
+    applyLayoutPreset,
+    reset,
+    copyCss,
+  } = tokens;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await copyCss();
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="flex flex-col gap-mid">
+      <div>
+        <Text as="h2" variant="header-2">
+          Токены темы
+        </Text>
+        <Text as="p" variant="small" className="mt-xsmall text-muted">
+          Меняют CSS-переменные на <code className="text-primary">:root</code> — превью справа
+          обновляется сразу.
+        </Text>
+      </div>
+
+      <div className="flex flex-col gap-small">
+        <Text as="span" variant="small" className="text-muted">
+          Цветовые пресеты
+        </Text>
+        <div className="flex flex-wrap gap-xsmall">
+          {(
+            [
+              { id: "dark", label: "Dark" },
+              { id: "light", label: "Light" },
+              { id: "contrast", label: "Контраст" },
+              { id: "ocean", label: "Ocean" },
+              { id: "violet", label: "Violet" },
+              { id: "emerald", label: "Emerald" },
+              { id: "rose", label: "Rose" },
+              { id: "amber", label: "Amber" },
+              { id: "slate", label: "Slate" },
+              { id: "toffee", label: "Toffee" },
+              { id: "berry", label: "Berry" },
+              { id: "paprika", label: "Paprika" },
+              { id: "cherry", label: "Cherry" },
+              { id: "rustic", label: "Rustic" },
+              { id: "earthy", label: "Earthy" },
+              { id: "peach", label: "Peach" },
+              { id: "sand", label: "Sand" },
+              { id: "bold", label: "Bold" },
+              { id: "autumn", label: "Autumn" },
+            ] as const
+          ).map(({ id, label }) => (
+            <Button
+              key={id}
+              type="button"
+              size="small"
+              variant="outline"
+              onClick={() => applyColorPreset(id)}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-small">
+        <Text as="span" variant="small" className="text-muted">
+          Компоновка
+        </Text>
+        <div className="flex flex-wrap gap-xsmall">
+          <Button type="button" size="small" variant="outline" onClick={() => applyLayoutPreset("compact")}>
+            Компакт
+          </Button>
+          <Button type="button" size="small" variant="outline" onClick={() => applyLayoutPreset("spacious")}>
+            Простор
+          </Button>
+          <Button type="button" size="small" variant="outline" onClick={() => applyLayoutPreset("flat")}>
+            Flat
+          </Button>
+          <Button type="button" size="small" variant="ghost" onClick={reset}>
+            Сброс
+          </Button>
+          <Button type="button" size="small" variant="secondary" onClick={handleCopy}>
+            {copied ? "Скопировано" : "Copy CSS"}
+          </Button>
+        </div>
+      </div>
+
+      <Separator />
+
+      <Switch
+        checked={state.theme === "light"}
+        onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
+        label="Светлая тема"
+      />
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Масштаб</SectionTitle>
+        <ScaleControl
+          label="--space"
+          value={state.space}
+          min={0.3}
+          max={0.8}
+          step={0.025}
+          unit="rem"
+          onChange={(v) => setScale("space", v)}
+        />
+        <SpacingPreview space={state.space} />
+        <ScaleControl
+          label="--size"
+          value={state.size}
+          min={0.8}
+          max={1.25}
+          step={0.025}
+          unit="rem"
+          onChange={(v) => setScale("size", v)}
+        />
+        <ScaleControl
+          label="--radius"
+          value={state.radius}
+          min={0}
+          max={100}
+          step={1}
+          unit="px"
+          onChange={(v) => setScale("radius", v)}
+        />
+        <ScaleControl
+          label="--border-width"
+          value={state.borderWidth}
+          min={0}
+          max={3}
+          step={0.5}
+          unit="px"
+          onChange={(v) => setScale("borderWidth", v)}
+        />
+        <ScaleControl
+          label="--text-scale (multiplier)"
+          value={state.textScale}
+          min={0.85}
+          max={1.2}
+          step={0.025}
+          unit="×"
+          onChange={(v) => setScale("textScale", v)}
+        />
+        <Button
+          type="button"
+          size="small"
+          variant="ghost"
+          className="self-start text-muted"
+          onClick={() => {
+            setScale("space", SCALE_DEFAULTS.space);
+            setScale("size", SCALE_DEFAULTS.size);
+            setScale("radius", SCALE_DEFAULTS.radius);
+            setScale("borderWidth", SCALE_DEFAULTS.borderWidth);
+            setScale("textScale", SCALE_DEFAULTS.textScale);
+          }}
+        >
+          Масштаб по умолчанию
+        </Button>
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Шрифты</SectionTitle>
+        <FontSelect
+          id="theme-font-sans"
+          label="Sans (--font-family-sans)"
+          value={state.fontFamily}
+          presets={FONT_PRESETS}
+          onChange={setFontFamily}
+        />
+        <FontSelect
+          id="theme-font-mono"
+          label="Mono (--font-family-mono)"
+          value={state.fontFamilyMono}
+          presets={MONO_FONT_PRESETS}
+          onChange={setFontFamilyMono}
+        />
+        <Text as="p" variant="tools" className="rounded-small border-token bg-background p-small font-mono text-muted">
+          Aa Bb 123 — sans
+          <br />
+          <span style={{ fontFamily: "var(--font-family-mono)" }}>{`{ code: true }`}</span>
+        </Text>
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Motion</SectionTitle>
+        <ScaleControl
+          label="--duration-fast"
+          value={state.durationFast}
+          min={80}
+          max={400}
+          step={10}
+          unit="ms"
+          onChange={(v) => setDuration("durationFast", v)}
+        />
+        <ScaleControl
+          label="--duration-normal"
+          value={state.durationNormal}
+          min={120}
+          max={600}
+          step={10}
+          unit="ms"
+          onChange={(v) => setDuration("durationNormal", v)}
+        />
+        <Button
+          type="button"
+          size="small"
+          variant="ghost"
+          className="self-start text-muted"
+          onClick={() => {
+            setDuration("durationFast", SCALE_DEFAULTS.durationFast);
+            setDuration("durationNormal", SCALE_DEFAULTS.durationNormal);
+          }}
+        >
+          Motion по умолчанию
+        </Button>
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Тени и стекло</SectionTitle>
+        <ScaleControl
+          label="Интенсивность теней"
+          value={state.shadowStrength}
+          min={0.5}
+          max={1.75}
+          step={0.05}
+          unit="×"
+          onChange={setShadowStrength}
+        />
+        <div className="flex gap-small">
+          {(["sm", "md", "lg"] as const).map((level) => (
+            <div
+              key={level}
+              className="flex flex-1 flex-col items-center gap-xsmall rounded-small border-token bg-surface p-small"
+              style={{ boxShadow: `var(--shadow-${level})` }}
+            >
+              <Text as="span" variant="tools" className="text-muted">
+                {level}
+              </Text>
+            </div>
+          ))}
+        </div>
+        <ScaleControl
+          label="--glass-blur"
+          value={state.glassBlur}
+          min={8}
+          max={40}
+          step={1}
+          unit="px"
+          onChange={(v) => setGlass("glassBlur", v)}
+        />
+        <ScaleControl
+          label="--glass-saturate"
+          value={state.glassSaturate}
+          min={1}
+          max={2}
+          step={0.05}
+          unit="×"
+          onChange={(v) => setGlass("glassSaturate", v)}
+        />
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Colors</SectionTitle>
+        <div className="flex flex-col gap-small">
+          {COLOR_GROUPS.map((group) => (
+            <div key={group.label} className="flex flex-col gap-x-small">
+              <Text as="span" variant="small" className="text-muted">
+                {group.label}
+              </Text>
+              {group.keys.map((key) =>
+                TINT_COLOR_KEYS.has(key) ? (
+                  <TintColorControl
+                    key={key}
+                    label={COLOR_LABELS[key]}
+                    value={state.colors[key]}
+                    defaultPercent={TINT_DEFAULT_PERCENT[key as "primaryTint" | "primaryTintStrong"]}
+                    onChange={(value) => setColor(key, value)}
+                  />
+                ) : (
+                  <ColorControl
+                    key={key}
+                    label={COLOR_LABELS[key]}
+                    value={state.colors[key]}
+                    onChange={(value) => setColor(key, value)}
+                  />
+                ),
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Status foreground</SectionTitle>
+        <div className="flex flex-col gap-small">
+          {STATUS_FOREGROUND_KEYS.map((key) => (
+            <ColorControl
+              key={key}
+              label={STATUS_FOREGROUND_LABELS[key]}
+              value={state.statusForegrounds[key]}
+              onChange={(value) => setStatusForeground(key, value)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

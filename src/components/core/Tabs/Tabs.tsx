@@ -61,14 +61,16 @@ export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
 
 const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "",
-  outline: "surface-outline rounded-mid p-xsmall",
+  outline: "bordered-transparent rounded-mid p-xsmall",
   secondary: "surface-secondary rounded-mid p-xsmall",
 };
 
+const INDICATOR_PILL_TINT = "bg-primary-tint-strong";
+
 const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
-  default: "bg-accent",
-  outline: "bg-accent-fill",
-  secondary: "bg-accent-fill-hover",
+  default: "bg-primary",
+  outline: INDICATOR_PILL_TINT,
+  secondary: INDICATOR_PILL_TINT,
 };
 
 function useMergedTabsValue(
@@ -261,8 +263,8 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
       className={cn(
         "relative box-border min-w-0",
         orientation === "horizontal"
-          ? cn("flex flex-row flex-wrap items-stretch gap-xsmall", variant === "default" && "border-b border-base")
-          : cn("flex flex-col items-stretch gap-xsmall", variant === "default" && "border-l border-base"),
+          ? cn("flex flex-row flex-wrap items-stretch gap-xsmall", variant === "default" && "border-b-token")
+          : cn("flex flex-col items-stretch gap-xsmall", variant === "default" && "border-l-token"),
         LIST_VARIANT_CLASS[variant],
         className,
       )}
@@ -383,9 +385,9 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
         "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
         layout.h,
         layout.padX,
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+        "focus-ring",
         isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
-        isSelected ? "text-accent" : "text-muted hover:text-accent",
+        isSelected ? "text-primary" : "text-muted hover:text-primary",
         !isSelected && !isDisabled && "transition-colors duration-200 ease-out motion-reduce:transition-none",
         className,
       )}
@@ -424,7 +426,7 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(function Tab
       aria-labelledby={tabId}
       hidden={!isSelected}
       tabIndex={isSelected ? 0 : -1}
-      className={cn("min-w-0 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent", className)}
+      className={cn("min-w-0 outline-none focus-ring", className)}
       {...rest}
     >
       {children}

@@ -45,10 +45,10 @@ const LOADING_RING: Record<LoadingSize, { icon: string; border: string }> = {
 };
 
 const LOADING_COLOR: Record<LoadingColor, string> = {
-  accent: "text-accent",
+  accent: "text-primary",
   foreground: "text-foreground",
   muted: "text-muted",
-  secondary: "text-accent",
+  secondary: "text-primary",
   danger: "text-danger",
   success: "text-success",
   info: "text-info",

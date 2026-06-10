@@ -214,7 +214,7 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         id={headerId}
         className={cn(
           "relative flex w-full items-center gap-base overflow-hidden py-plus px-mid text-left outline-none",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           className,
         )}
@@ -256,7 +256,7 @@ export function ExpandableIcon({ className = "", ...props }: ExpandableIconProps
   return (
     <span
       aria-hidden
-      className={cn("shrink-0 text-accent [&_svg]:icon-mid", className)}
+      className={cn("shrink-0 text-primary [&_svg]:icon-mid", className)}
       {...props}
     />
   );
@@ -476,7 +476,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
         <div
           ref={ref}
           className={cn(
-            "rounded-mid border border-base bg-surface text-left text-foreground",
+            "rounded-mid border-token bg-surface text-left text-foreground",
             className,
           )}
           {...rest}

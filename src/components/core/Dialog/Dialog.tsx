@@ -174,7 +174,7 @@ export function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t border-base py-plus px-mid",
+        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t-token py-plus px-mid",
         className,
       )}
       {...rest}
@@ -328,7 +328,6 @@ export const DialogRoot = function Dialog({
         className={cn(
           "fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex",
         )}
-        {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
         <div
           ref={overlayRef}
@@ -346,7 +345,7 @@ export const DialogRoot = function Dialog({
           ref={panelRef}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border border-base bg-surface text-left text-foreground shadow-token-lg outline-none",
+            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-lg outline-none",
             className,
           )}
           style={

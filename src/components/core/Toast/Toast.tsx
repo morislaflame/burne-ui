@@ -103,7 +103,7 @@ function useToastItem() {
 // ─── surface styles (same tokens as Alert) ──────────────────────────────────
 
 const TOAST_SURFACE: Record<ToastStatus, string> = {
-  default: "border border-base bg-surface text-foreground",
+  default: "border-token bg-surface text-foreground",
   success: "bg-surface-tint-success text-foreground",
   danger: "bg-surface-tint-danger text-foreground",
   info: "bg-surface-tint-info text-foreground",
@@ -111,7 +111,7 @@ const TOAST_SURFACE: Record<ToastStatus, string> = {
 };
 
 const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
-  default: "text-accent",
+  default: "text-primary",
   success: SEMANTIC_STATUS_ICON_TEXT_CLASS.success,
   danger: SEMANTIC_STATUS_ICON_TEXT_CLASS.danger,
   info: SEMANTIC_STATUS_ICON_TEXT_CLASS.info,
@@ -411,7 +411,7 @@ function ToastItemWrapper({
   return (
     <div
       aria-hidden={!isVisible || undefined}
-      className="transition-[transform,opacity] duration-300 ease-out"
+      className="transition-[transform,opacity] duration-normal ease-out"
       style={{
         gridColumn: 1,
         gridRow: 1,
@@ -490,7 +490,7 @@ function ToastViewport({
       style={{ width: TOAST_WIDTH_PX }}
     >
       <div
-        className="relative grid transition-[height] duration-300"
+        className="relative grid transition-[height] duration-normal"
         style={{
           height: containerH || undefined,
           alignItems: isTop ? "start" : "end",

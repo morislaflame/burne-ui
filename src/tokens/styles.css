@@ -1,12 +1,32 @@
 /** Burne UI — дизайн-токены (CSS variables) */
 :root {
+  /**
+   * BORDER WIDTH — толщина рамок во всех поверхностях (surface-secondary, surface-tertiary,
+   * border-base, inputs, cards). Установите 0 для полностью «flat» вида.
+   */
+  --border-width: 1px;
+
   --color-background: #0c0d10;
-  --color-surface: #15171c;
-  --color-border: #2a2d36;
+  --color-surface: #171717;
+  --color-border: #ffffff1a;
   --color-foreground: #f4f5f7;
   --color-muted: #8b90a0;
-  --color-accent: #ebebef;
-  --color-accent-foreground: #0c0c0e;
+
+  /**
+   * PRIMARY (brand) — заливка default-кнопки, ссылки, focus-ring, активные текстовые состояния.
+   * Текстовый цвет на этой заливке: `--color-primary-foreground`.
+   */
+  --color-primary: #ebebef;
+  --color-primary-foreground: #0c0c0e;
+
+  /**
+   * INDICATOR — заливка внутри индикаторов выбора (Radio, Checkbox, Switch, Slider track,
+   * Calendar selected, ProgressBar/Meter fill).
+   * По умолчанию === primary, но может быть переопределён независимо.
+   */
+  --color-indicator: var(--color-primary);
+  --color-indicator-foreground: var(--color-primary-foreground);
+
   --color-danger: #dc2626;
   --color-danger-foreground: #fafafa;
   --color-success: #22c55e;
@@ -17,20 +37,54 @@
   --color-warning-foreground: #0c0c0e;
 
   /**
-   * Прозрачные ховеры (outline / ghost / SearchInput): в тёмной теме — лёгкий цветной wash.
-   * В светлой переопределяется: смесь с --color-surface даёт заметное «затемнение» на белом.
+   * PRIMARY TINT — бренд-тинт primary/10.
+   * Единый цвет для hover, активных табов (outline/secondary), Calendar range, Skeleton, affix и т.д.
    */
-  --color-accent-fill-hover: color-mix(
+  --color-primary-tint: color-mix(
     in oklab,
-    var(--color-accent) 12%,
+    var(--color-primary) 10%,
     transparent
   );
 
-  /** Залитый default (Button): непрозрачное затемнение от базового --color-accent */
-  --color-accent-solid-hover: color-mix(
+  /** PRIMARY TINT STRONG — бренд-тинт primary/20 (hover усиленный, ripple, skeleton wave). */
+  --color-primary-tint-strong: color-mix(
     in oklab,
-    var(--color-accent) 90%,
-    black
+    var(--color-primary) 20%,
+    transparent
+  );
+
+  /** PRIMARY HOVER — залитый default (Button): непрозрачное затемнение от --color-primary */
+  --color-primary-hover: color-mix(
+    in oklab,
+    var(--color-primary) 90%,
+    #070707
+  );
+
+  /**
+   * SECONDARY surface — фон для secondary-кнопки, tertiary-контролов.
+   * Нейтральный mix foreground+surface, НЕ primary.
+   */
+  --color-secondary-bg: color-mix(
+    in oklab,
+    var(--color-foreground) 8%,
+    var(--color-surface)
+  );
+
+  /** SECONDARY HOVER — нейтральная поверхность при hover secondary-кнопки */
+  --color-secondary-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 14%,
+    var(--color-surface)
+  );
+
+  /**
+   * TERTIARY surface — третий уровень вложенных панелей (`Surface variant="tertiary"`).
+   * Насыщеннее secondary (12% foreground wash).
+   */
+  --color-tertiary-bg: color-mix(
+    in oklab,
+    var(--color-foreground) 12%,
+    var(--color-surface)
   );
 
   /** Залитые семантические кнопки: hover без глобального opacity — тёмнее фон через mix с black */
@@ -55,21 +109,21 @@
     black
   );
 
-  /** Точка сходимости ripple у Button (`ConvergeRippleLayer` → inline background) */
-  --color-converge-ripple-accent-fill: color-mix(
+  /**
+   * RIPPLE TOKENS
+   * primary-fill — точка сходимости на залитой primary-кнопке (default).
+   * neutral — ripple для outline / ghost / secondary / Disclosure / Dropdown.
+   * neutral-muted — широкие триггеры (Expandable и т.п.).
+   */
+  --color-converge-ripple-primary-fill: color-mix(
     in oklab,
-    var(--color-accent-foreground) 38%,
+    var(--color-primary-foreground) 38%,
     transparent
   );
-  --color-converge-ripple-accent-soft: color-mix(
+  --color-converge-ripple-neutral: var(--color-primary-tint-strong);
+  --color-converge-ripple-neutral-muted: color-mix(
     in oklab,
-    var(--color-accent) 42%,
-    transparent
-  );
-  /** Широкие триггеры (Expandable и т.п.): мягкий акцент без плотной заливки */
-  --color-converge-ripple-accent-muted: color-mix(
-    in oklab,
-    var(--color-accent) 28%,
+    var(--color-primary) 14%,
     transparent
   );
   --color-converge-ripple-danger: color-mix(
@@ -93,57 +147,56 @@
     transparent
   );
 
-  /** Button `secondary`: hover и ripple (чуть насыщеннее `surface-secondary`). */
-  --color-secondary-fill-hover: color-mix(
-    in oklab,
-    var(--color-accent) 26%,
-    var(--color-surface)
-  );
-  --color-converge-ripple-secondary: color-mix(
-    in oklab,
-    var(--color-accent) 34%,
-    transparent
-  );
-
+  /**
+   * SURFACE TINTS (тёмная тема) — смешиваем статусный цвет с чёрным.
+   * Не зависит от --color-surface.
+   * Процент выше, чем кажется нужным, т.к. чёрный (L=0 в OKLab)
+   * сильно гасит яркость — ~30% даёт читаемый, но тёмный фон.
+   */
   --color-surface-tint-danger: color-mix(
     in oklab,
-    var(--color-danger) 16%,
-    var(--color-surface)
+    var(--color-danger) 35%,
+    black
   );
   --color-surface-tint-success: color-mix(
     in oklab,
-    var(--color-success) 16%,
-    var(--color-surface)
+    var(--color-success) 35%,
+    black
   );
   --color-surface-tint-info: color-mix(
     in oklab,
-    var(--color-info) 16%,
-    var(--color-surface)
+    var(--color-info) 35%,
+    black
   );
   --color-surface-tint-warning: color-mix(
     in oklab,
-    var(--color-warning) 16%,
-    var(--color-surface)
+    var(--color-warning) 35%,
+    black
   );
-  --color-surface-tint-accent: color-mix(
+  --color-surface-tint-primary: color-mix(
     in oklab,
-    var(--color-accent) 18%,
-    var(--color-surface)
+    var(--color-primary) 28%,
+    black
   );
   --color-surface-tint-danger-strong: color-mix(
     in oklab,
-    var(--color-danger) 22%,
-    var(--color-surface)
+    var(--color-danger) 40%,
+    black
   );
   --color-surface-tint-success-strong: color-mix(
     in oklab,
-    var(--color-success) 22%,
-    var(--color-surface)
+    var(--color-success) 40%,
+    black
   );
   --color-surface-tint-warning-strong: color-mix(
     in oklab,
-    var(--color-warning) 22%,
-    var(--color-surface)
+    var(--color-warning) 40%,
+    black
+  );
+  --color-surface-tint-info-strong: color-mix(
+    in oklab,
+    var(--color-info) 40%,
+    black
   );
 
   --font-family-sans: ui-sans-serif, system-ui, sans-serif;
@@ -328,8 +381,10 @@
   --color-border: #e4e4e7;
   --color-foreground: #18181b;
   --color-muted: #71717a;
-  --color-accent: #18181b;
-  --color-accent-foreground: #fafafa;
+  --color-primary: #18181b;
+  --color-primary-foreground: #fafafa;
+  --color-indicator: var(--color-primary);
+  --color-indicator-foreground: var(--color-primary-foreground);
   --color-danger: #dc2626;
   --color-danger-foreground: #ffffff;
   --color-success: #22c55e;
@@ -339,50 +394,40 @@
   --color-warning: #f59e0b;
   --color-warning-foreground: #0c0c0e;
 
-  /**
-   * Светлая тема: акцент почти чёрный — wash с transparent почти не виден;
-   * залитый default: 90% + black почти не отличается от bg-accent — усиливаем долю black.
-   */
-  --color-accent-fill-hover: color-mix(
+  --color-primary-hover: color-mix(
     in oklab,
-    var(--color-foreground) 12%,
-    var(--color-surface)
-  );
-  --color-accent-solid-hover: color-mix(
-    in oklab,
-    var(--color-accent) 72%,
-    black
+    var(--color-primary) 72%,
+    #070707
   );
 
-  /**
-   * Converge ripple: как с hover — на белом transparent-wash не читается;
-   * на залитом default смесь foreground+transparent даёт слабый контраст к чёрному accent.
-   */
-  --color-converge-ripple-accent-soft: color-mix(
+  --color-secondary-bg: color-mix(
     in oklab,
-    var(--color-foreground) 22%,
-    var(--color-surface)
-  );
-  --color-converge-ripple-accent-fill: color-mix(
-    in oklab,
-    var(--color-accent-foreground) 52%,
-    var(--color-accent)
-  );
-  --color-converge-ripple-accent-muted: color-mix(
-    in oklab,
-    var(--color-accent) 26%,
+    var(--color-foreground) 8%,
     var(--color-surface)
   );
 
-  --color-secondary-fill-hover: color-mix(
+  --color-secondary-hover: color-mix(
     in oklab,
     var(--color-foreground) 14%,
     var(--color-surface)
   );
-  --color-converge-ripple-secondary: color-mix(
+
+  --color-tertiary-bg: color-mix(
     in oklab,
-    var(--color-foreground) 22%,
+    var(--color-foreground) 12%,
     var(--color-surface)
+  );
+
+  --color-converge-ripple-primary-fill: color-mix(
+    in oklab,
+    var(--color-primary-foreground) 52%,
+    var(--color-primary)
+  );
+  --color-converge-ripple-neutral: var(--color-primary-tint-strong);
+  --color-converge-ripple-neutral-muted: color-mix(
+    in oklab,
+    var(--color-primary) 14%,
+    transparent
   );
 
   --glass-tint: rgb(0 0 0 / 0.04);
@@ -390,45 +435,54 @@
   --glass-border: rgb(0 0 0 / 0.1);
   --glass-highlight: rgb(0 0 0 / 0.05);
 
+  /**
+   * SURFACE TINTS (светлая тема) — смешиваем статусный цвет с белым.
+   * Не зависит от --color-surface.
+   */
   --color-surface-tint-danger: color-mix(
     in oklab,
-    var(--color-danger) 20%,
-    var(--color-surface)
+    var(--color-danger) 18%,
+    white
   );
   --color-surface-tint-success: color-mix(
     in oklab,
-    var(--color-success) 27%,
-    var(--color-surface)
+    var(--color-success) 18%,
+    white
   );
   --color-surface-tint-info: color-mix(
     in oklab,
-    var(--color-info) 27%,
-    var(--color-surface)
+    var(--color-info) 18%,
+    white
   );
   --color-surface-tint-warning: color-mix(
     in oklab,
-    var(--color-warning) 27%,
-    var(--color-surface)
+    var(--color-warning) 18%,
+    white
   );
-  --color-surface-tint-accent: color-mix(
+  --color-surface-tint-primary: color-mix(
     in oklab,
-    var(--color-border) 80%,
-    var(--color-surface)
+    var(--color-primary) 14%,
+    white
   );
   --color-surface-tint-danger-strong: color-mix(
     in oklab,
-    var(--color-danger) 27%,
-    var(--color-surface)
+    var(--color-danger) 26%,
+    white
   );
   --color-surface-tint-success-strong: color-mix(
     in oklab,
-    var(--color-success) 27%,
-    var(--color-surface)
+    var(--color-success) 26%,
+    white
   );
   --color-surface-tint-warning-strong: color-mix(
     in oklab,
-    var(--color-warning) 27%,
-    var(--color-surface)
+    var(--color-warning) 26%,
+    white
+  );
+  --color-surface-tint-info-strong: color-mix(
+    in oklab,
+    var(--color-info) 26%,
+    white
   );
 
   /* В светлой теме тени чуть заметнее (меньше контраста фон/компонент) */

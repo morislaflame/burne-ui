@@ -91,11 +91,11 @@ function injectFooterButtonSize(
 }
 
 const ALERT_DIALOG_SHELL_FILLED =
-  "bg-surface text-foreground border border-base shadow-token-lg";
+  "bg-surface text-foreground border-token shadow-token-lg";
 
 function alertDialogPanelClass(tone: AlertStatus): string {
   if (tone === "outline") {
-    return "surface-outline text-foreground shadow-token-lg";
+    return "bordered-transparent text-foreground shadow-token-lg";
   }
   if (tone === "secondary") {
     return "surface-secondary text-foreground shadow-token-lg";
@@ -118,7 +118,7 @@ function alertDialogHeaderIconWrapperClass(tone: AlertStatus): string {
     case "warning":
       return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
     default:
-      return "text-accent";
+      return "text-primary";
   }
 }
 
@@ -297,7 +297,7 @@ export function AlertDialogFooter({
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end border-t border-base",
+        "flex shrink-0 flex-wrap items-center justify-end border-t-token",
         sizePreset.footerPad,
         className,
       )}
@@ -453,7 +453,6 @@ export const AlertDialogRoot = function AlertDialog({
         aria-labelledby={titleId}
         aria-describedby={hasDescription ? descriptionId : undefined}
         className="fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex"
-        {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
         <div
           ref={overlayRef}

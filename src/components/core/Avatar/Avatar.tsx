@@ -143,7 +143,7 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       <img
         ref={ref}
         className={cn(
-          "absolute inset-0 z-[1] size-full object-cover transition-opacity duration-200",
+          "absolute inset-0 z-[1] size-full object-cover transition-opacity duration-fast",
           visible
             ? "opacity-100"
             : "pointer-events-none opacity-0",
@@ -175,7 +175,7 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
       <span
         ref={ref}
         className={cn(
-          "absolute inset-0 z-0 flex items-center justify-center bg-[color-mix(in_oklab,var(--color-accent)_18%,var(--color-surface))] text-accent",
+          "absolute inset-0 z-0 flex items-center justify-center bg-[color-mix(in_oklab,var(--color-primary)_18%,var(--color-surface))] text-primary",
           show ? "opacity-100" : "pointer-events-none opacity-0",
           className,
         )}

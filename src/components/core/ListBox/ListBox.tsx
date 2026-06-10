@@ -361,10 +361,10 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
           optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
           "button-idle-surface-transition motion-reduce:transition-none",
           !disabled &&
-            "cursor-pointer text-foreground hover:bg-accent-fill-hover focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            "cursor-pointer text-foreground hover:bg-primary-tint focus-visible:bg-primary-tint focus-ring",
           disabled &&
             "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent",
-          isActive && !disabled && "bg-accent-fill-hover",
+          isActive && !disabled && "bg-primary-tint",
           className,
         )}
         onClick={handleClick}

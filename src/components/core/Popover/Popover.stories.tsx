@@ -117,7 +117,7 @@ export const Placements: Story = {
 };
 
 const TAG_COLORS = [
-  { id: "accent", label: "Accent", className: "bg-accent" },
+  { id: "primary", label: "Primary", className: "bg-primary" },
   { id: "danger", label: "Danger", className: "bg-danger" },
   { id: "success", label: "Success", className: "bg-success" },
   { id: "warning", label: "Warning", className: "bg-warning" },
@@ -126,7 +126,7 @@ const TAG_COLORS = [
 
 /** Кастомная панель: выбор цвета тега + превью — пример для dropdown-подобных сценариев. */
 function TagColorPopoverDemo() {
-  const [colorId, setColorId] = useState<(typeof TAG_COLORS)[number]["id"]>("accent");
+  const [colorId, setColorId] = useState<(typeof TAG_COLORS)[number]["id"]>("primary");
   const active = TAG_COLORS.find((c) => c.id === colorId)!;
 
   return (
@@ -154,8 +154,8 @@ function TagColorPopoverDemo() {
                   aria-pressed={colorId === color.id}
                   className={cn(
                     "inline-flex size-8 items-center justify-center rounded-base border-2 outline-none transition-colors",
-                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                    colorId === color.id ? "border-accent" : "border-transparent",
+                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                    colorId === color.id ? "border-primary" : "border-transparent",
                   )}
                   onClick={() => setColorId(color.id)}
                 >
@@ -277,11 +277,11 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Панель: <code className="text-accent">role=&quot;dialog&quot;</code>,{" "}
-        <code className="text-accent">aria-labelledby</code> /{" "}
-        <code className="text-accent">aria-describedby</code> от Header. Триггер —{" "}
-        <code className="text-accent">aria-expanded</code> и{" "}
-        <code className="text-accent">aria-controls</code>. Закрытие: клик вне панели,{" "}
+        Панель: <code className="text-primary">role=&quot;dialog&quot;</code>,{" "}
+        <code className="text-primary">aria-labelledby</code> /{" "}
+        <code className="text-primary">aria-describedby</code> от Header. Триггер —{" "}
+        <code className="text-primary">aria-expanded</code> и{" "}
+        <code className="text-primary">aria-controls</code>. Закрытие: клик вне панели,{" "}
         <kbd className="rounded-small border border-base px-xsmall py-0.5 text-tools">Escape</kbd>.
       </p>
       <Popover>

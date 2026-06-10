@@ -40,7 +40,7 @@ import {
 export type SearchInputSize = ComponentSize;
 
 const GHOST_CLEAR_HOVER =
-  "hover:bg-accent-fill-hover";
+  "hover:bg-primary-tint";
 
 /** Горизонтальный padding (px) — совпадает с `px-base` / `px-plus` / … */
 const SEARCH_PAD_X_PX: Record<ComponentSize, number> = {
@@ -502,9 +502,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
         className={cn(
-          "relative box-border inline-block overflow-hidden border border-base bg-surface text-left outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
+          "relative box-border inline-block overflow-hidden border-token bg-surface text-left outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
+          "focus-ring",
+          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
           expanded ? "cursor-text" : "",
           !expanded && !blocked ? "cursor-pointer" : "",
           blocked ? "pointer-events-none opacity-50" : "",
@@ -582,7 +582,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               "absolute top-1/2 z-[3] flex -translate-y-1/2 items-center justify-center rounded-full border-0 bg-transparent p-0",
               "text-foreground outline-none transition-colors",
               GHOST_CLEAR_HOVER,
-              "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
+              "focus-ring-inset",
               "cursor-pointer",
             )}
             style={{

@@ -35,18 +35,17 @@ const VARIANT: Record<
 > = {
   /** Серый фон (не акцентная «default»-кнопка). */
   default: {
-    root: "border border-base bg-[color-mix(in_oklab,var(--color-border)_30%,var(--color-surface))] text-foreground",
-    focusOutline: "focus-visible:outline-accent",
-    hoverIdle:
-      "hover:bg-[color-mix(in_oklab,var(--color-border)_48%,var(--color-surface))]",
-    ripple: "secondary",
+    root: "border-token bg-primary-tint text-foreground",
+    focusOutline: "focus-ring",
+    hoverIdle: "hover:bg-primary-tint-strong",
+    ripple: "neutral",
   },
-  /** Как `Button` outline: `surface-outline` + акцентный крест. */
+  /** Как `Button` outline: `bordered-transparent` + нейтральный крест. */
   outline: {
-    root: "surface-outline text-accent",
-    focusOutline: "focus-visible:outline-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
-    ripple: "accentSoft",
+    root: "bordered-transparent text-foreground",
+    focusOutline: "focus-ring",
+    hoverIdle: "hover:bg-primary-tint",
+    ripple: "neutral",
   },
 };
 

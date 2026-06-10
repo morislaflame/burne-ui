@@ -60,11 +60,27 @@ p {
   --color-foreground: var(--color-foreground);
   --color-muted: var(--color-muted);
   --color-surface: var(--color-surface);
-  --color-accent: var(--color-accent);
-  --color-accent-foreground: var(--color-accent-foreground);
-  --color-accent-fill-hover: var(--color-accent-fill-hover);
-  --color-accent-solid-hover: var(--color-accent-solid-hover);
-  --color-secondary-fill-hover: var(--color-secondary-fill-hover);
+
+  /* OVERLAY — фон модалов, поповеров, дропдаунов (обычно = surface или чуть светлее) */
+  /* PRIMARY (brand): bg-primary, text-primary, border-primary … */
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-primary-hover: var(--color-primary-hover);
+
+  /* INDICATOR (selection fill): Radio, Checkbox, Switch, Slider, Calendar, Progress */
+  --color-indicator: var(--color-indicator);
+  --color-indicator-foreground: var(--color-indicator-foreground);
+
+  /* PRIMARY TINT: bg-primary-tint (10%), bg-primary-tint-strong (20%) */
+  --color-primary-tint: var(--color-primary-tint);
+  --color-primary-tint-strong: var(--color-primary-tint-strong);
+
+  /* SECONDARY surface: bg-secondary-bg, hover: bg-secondary-hover */
+  --color-secondary-bg: var(--color-secondary-bg);
+  --color-secondary-hover: var(--color-secondary-hover);
+  /* TERTIARY surface: bg-tertiary-bg */
+  --color-tertiary-bg: var(--color-tertiary-bg);
+
   --color-danger: var(--color-danger);
   --color-danger-fill-hover: var(--color-danger-fill-hover);
   --color-danger-foreground: var(--color-danger-foreground);
@@ -81,10 +97,11 @@ p {
   --color-surface-tint-success: var(--color-surface-tint-success);
   --color-surface-tint-info: var(--color-surface-tint-info);
   --color-surface-tint-warning: var(--color-surface-tint-warning);
-  --color-surface-tint-accent: var(--color-surface-tint-accent);
+  --color-surface-tint-primary: var(--color-surface-tint-primary);
   --color-surface-tint-danger-strong: var(--color-surface-tint-danger-strong);
   --color-surface-tint-success-strong: var(--color-surface-tint-success-strong);
   --color-surface-tint-warning-strong: var(--color-surface-tint-warning-strong);
+  --color-surface-tint-info-strong: var(--color-surface-tint-info-strong);
 
   --spacing-xsmall: var(--space-xsmall);
   --spacing-small: var(--space-small);
@@ -111,6 +128,17 @@ p {
   --text-base: var(--text-base-size);
   --text-base--line-height: var(--text-base-line-height);
   --text-base--font-weight: var(--text-base-weight);
+
+  /**
+   * Border width — make Tailwind's `border` and `border-1` utilities use our token.
+   * Setting --border-width to 0 gives a fully flat/borderless appearance.
+   */
+  --border-width-DEFAULT: var(--border-width, 1px);
+  --border-width-1: var(--border-width, 1px);
+
+  /* Длительности анимации из токенов */
+  --duration-fast: var(--duration-fast);
+  --duration-normal: var(--duration-normal);
 }
 
 /** Тени на токенах — не зависят от Tailwind-дефолтов. */
@@ -164,40 +192,110 @@ p {
   }
 }
 
-/** Обводка по умолчанию — `var(--color-border)`; утилита `border-base` (не `--color-base`, чтобы не конфликтовать с `text-base`). */
+/**
+ * focus-ring — стандартный outline-фокус-кольцо для интерактивных элементов.
+ * focus-ring-inset — то же, но внутрь (для Input, SearchInput, Table-ячеек).
+ * focus-ring-offset — с ring-offset (для ColorSwatch, иконок с отдельным фоном).
+ */
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@utility focus-ring-inset {
+  outline: none;
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+  }
+}
+
+/**
+ * border-base — только цвет обводки. Ширину задавайте через border-token / border-t-token и т.д.
+ * НЕ задаём border-width-shorthand здесь, чтобы не перекрывать направленные (border-t и т.д.).
+ */
 @utility border-base {
   border-color: var(--color-border);
 }
 
 /**
- * Общий вид «outline / glass»: прозрачный фон, размытие подложки, `border-base`.
- * Цвет текста задавайте отдельно (`text-accent`, `text-foreground`, тон статуса).
+ * border-token-* — направленные и полные обводки с шириной из токена --border-width.
+ * Preflight уже ставит border-style:solid на все элементы — style не нужен.
+ * Используйте вместо `border border-base`, `border-t border-base` и т.д.
  */
-@utility surface-outline {
-  border-style: solid;
-  border-width: 1px;
+@utility border-token {
+  border-width: var(--border-width, 1px);
   border-color: var(--color-border);
-  box-shadow: none;
-  background-color: transparent;
-  backdrop-filter: blur(14px) saturate(1.5);
-  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+}
+@utility border-t-token {
+  border-top-width: var(--border-width, 1px);
+  border-top-color: var(--color-border);
+}
+@utility border-b-token {
+  border-bottom-width: var(--border-width, 1px);
+  border-bottom-color: var(--color-border);
+}
+@utility border-l-token {
+  border-left-width: var(--border-width, 1px);
+  border-left-color: var(--color-border);
+}
+@utility border-r-token {
+  border-right-width: var(--border-width, 1px);
+  border-right-color: var(--color-border);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .surface-outline {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background-color: var(--color-surface);
+/**
+ * divide-token — divider между дочерними элементами с шириной из --border-width.
+ * Использовать вместо `divide-y divide-base` / `divide-x divide-base`.
+ */
+@utility divide-x-token {
+  & > * + * {
+    border-left-width: var(--border-width, 1px);
+    border-left-color: var(--color-border);
+  }
+}
+@utility divide-y-token {
+  & > * + * {
+    border-top-width: var(--border-width, 1px);
+    border-top-color: var(--color-border);
   }
 }
 
-/** Вторичная заливка: лёгкий accent-wash на surface + `border-base` (кнопки, алерты, бейджи, карточки, тултипы). */
-@utility surface-secondary {
+/**
+ * Обводка без заливки — для outline-кнопок, карточек, полей и т.д.
+ * Не surface-level: только border-token + прозрачный фон.
+ */
+@utility bordered-transparent {
   border-style: solid;
-  border-width: 1px;
+  border-width: var(--border-width, 1px);
   border-color: var(--color-border);
   box-shadow: none;
-  background-color: color-mix(in oklab, var(--color-accent) 18%, var(--color-surface));
+  background-color: transparent;
+}
+
+/**
+ * Вторичная заливка: нейтральный foreground-wash на surface + `border-base`.
+ * НЕ зависит от primary-цвета — hover/background от structural токенов.
+ */
+@utility surface-secondary {
+  border-style: solid;
+  border-width: var(--border-width, 1px);
+  border-color: var(--color-border);
+  box-shadow: none;
+  background-color: var(--color-secondary-bg);
+}
+
+/**
+ * Третичная заливка: следующий уровень вложенности панелей (`Surface variant="tertiary"`).
+ */
+@utility surface-tertiary {
+  border-style: solid;
+  border-width: var(--border-width, 1px);
+  border-color: var(--color-border);
+  box-shadow: none;
+  background-color: var(--color-tertiary-bg);
 }
 
 @utility text-accent-header {

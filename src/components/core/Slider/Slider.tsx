@@ -432,7 +432,7 @@ function SliderThumbButton({
         "absolute z-[2] box-border flex shrink-0 origin-center items-center justify-center",
         "m-0 appearance-none border-0 bg-transparent p-0",
         positionClass,
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+        "focus-ring",
         disabled ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
       )}
       style={positionStyle}
@@ -1014,12 +1014,12 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
   const isHorizontal = orientation === "horizontal";
 
   const railClass = cn(
-    "pointer-events-none absolute inset-0 overflow-hidden rounded-full bg-[color-mix(in_oklab,var(--color-border)_40%,var(--color-surface))]",
+    "pointer-events-none absolute inset-0 overflow-hidden rounded-full bg-primary-tint",
     disabled && "opacity-48",
   );
 
   const fillClassResolved = cn(
-    "absolute rounded-full bg-accent",
+    "absolute rounded-full bg-primary",
     isHorizontal ? "inset-y-0" : "inset-x-0",
   );
 
@@ -1033,7 +1033,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       <span
         key={mark}
         aria-hidden
-        className="pointer-events-none absolute z-[1] size-1 rounded-full bg-border"
+        className="pointer-events-none absolute z-[1] size-1 rounded-full bg-primary/30"
         style={style}
       />
     );

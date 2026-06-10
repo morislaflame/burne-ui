@@ -39,8 +39,8 @@ type Story = StoryObj<typeof meta>;
 
 const CARD_RADIO_CLASS = cn(
   "group relative flex flex-col gap-plus rounded-mid border border-base bg-surface px-plus py-mid transition-colors",
-  "data-[selected=true]:border-accent data-[selected=true]:bg-accent/10",
-  "has-[:focus-visible]:border-accent has-[:focus-visible]:bg-accent/10",
+  "data-[selected=true]:border-primary data-[selected=true]:bg-primary-tint",
+  "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-primary-tint",
 );
 
 export const Playground: Story = {
@@ -97,7 +97,7 @@ export const CardLayout: Story = {
             <Radio key={option.value} value={option.value} className={CARD_RADIO_CLASS}>
               <Radio.Control className="absolute top-plus right-plus size-5" />
               <Radio.Content className="flex flex-col gap-plus pr-xlarge">
-                <span className="inline-flex size-10 items-center justify-center rounded-base border border-base bg-surface-secondary text-accent">
+                <span className="inline-flex size-10 items-center justify-center rounded-base border border-base bg-surface-secondary text-primary">
                   <option.icon className="size-5" aria-hidden />
                 </span>
                 <div className="flex flex-col gap-xsmall">
@@ -225,10 +225,10 @@ export const Accessibility: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Группа — native <code className="text-accent">&lt;fieldset&gt;</code> +{" "}
-        <code className="text-accent">&lt;legend&gt;</code>. Подсказка и ошибка —{" "}
-        <code className="text-accent">aria-describedby</code> на fieldset; у опции hint — на input
-        через <code className="text-accent">Radio.Hint</code>.
+        Группа — native <code className="text-primary">&lt;fieldset&gt;</code> +{" "}
+        <code className="text-primary">&lt;legend&gt;</code>. Подсказка и ошибка —{" "}
+        <code className="text-primary">aria-describedby</code> на fieldset; у опции hint — на input
+        через <code className="text-primary">Radio.Hint</code>.
       </p>
       <RadioGroup isRequired>
         <RadioGroup.Legend>

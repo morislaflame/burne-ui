@@ -46,8 +46,8 @@ const RADIUS_CLASS: Record<SkeletonRadius, string> = {
   full:  "rounded-full",
 };
 
-/** Base skeleton surface color via design tokens. */
-const BASE_CLS = "relative overflow-hidden bg-[color-mix(in_oklab,var(--color-border)_55%,var(--color-surface))]";
+/** Base skeleton surface — bg-primary-tint (токен --color-primary-tint). */
+const BASE_CLS = "relative overflow-hidden bg-primary-tint";
 
 // ─── animation helpers ────────────────────────────────────────────────────────
 
@@ -65,7 +65,7 @@ function waveChild(): React.ReactNode {
       style={{
         animation: "skeleton-wave-slide 2s linear 0.2s infinite",
         background:
-          "linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--color-foreground) 10%, transparent) 50%, transparent 100%)",
+          "linear-gradient(90deg, transparent 0%, var(--color-primary-tint-strong) 50%, transparent 100%)",
       }}
     />
   );
@@ -74,7 +74,7 @@ function waveChild(): React.ReactNode {
 function shimmerStyle(): CSSProperties {
   return {
     backgroundImage:
-      "linear-gradient(90deg, color-mix(in oklab, var(--color-border) 55%, var(--color-surface)) 0%, color-mix(in oklab, var(--color-foreground) 10%, var(--color-surface)) 50%, color-mix(in oklab, var(--color-border) 55%, var(--color-surface)) 100%)",
+      "linear-gradient(90deg, var(--color-primary-tint) 0%, var(--color-primary-tint-strong) 50%, var(--color-primary-tint) 100%)",
     backgroundSize: "400% 100%",
     animation: "skeleton-shimmer 2s linear infinite",
   };

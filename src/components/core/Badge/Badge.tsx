@@ -34,9 +34,9 @@ export type BadgeColor = BadgeTone;
 export type BadgeVariant = BadgeTone;
 
 const BADGE_SURFACE: Record<BadgeTone, string> = {
-  default: "bg-accent text-accent-foreground",
-  outline: "surface-outline text-foreground",
-  secondary: "surface-secondary text-accent",
+  default: "bg-primary text-primary-foreground",
+  outline: "bordered-transparent text-foreground",
+  secondary: "surface-secondary text-foreground",
   danger: cn("bg-surface-tint-danger", SEMANTIC_STATUS_ICON_TEXT_CLASS.danger),
   success: cn("bg-surface-tint-success", SEMANTIC_STATUS_ICON_TEXT_CLASS.success),
   info: cn("bg-surface-tint-info", SEMANTIC_STATUS_ICON_TEXT_CLASS.info),
@@ -44,9 +44,9 @@ const BADGE_SURFACE: Record<BadgeTone, string> = {
 };
 
 const BADGE_DOT_FILL: Record<BadgeTone, string> = {
-  default: "bg-accent",
-  outline: "bg-accent",
-  secondary: "bg-accent",
+  default: "bg-primary-foreground",
+  outline: "bg-primary",
+  secondary: "bg-primary",
   danger: "bg-danger",
   success: "bg-success",
   info: "bg-info",

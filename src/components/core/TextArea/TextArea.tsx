@@ -182,10 +182,10 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           STATUS_TINT_FOCUS_BORDER[status],
         )
       : cn(
-          variant === "outline" ? "surface-outline" : VARIANT_SHELL[variant],
+          variant === "outline" ? "bordered-transparent" : VARIANT_SHELL[variant],
           variant === "outline"
-            ? "focus-within:border-accent"
-            : "border-base focus-within:border-accent",
+            ? "focus-within:border-primary"
+            : "border-base focus-within:border-primary",
         );
 
     const { onResizePointerDown } = useTextAreaResize(shellRef, resizable, blocked, size);
@@ -214,7 +214,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         data-slot="textarea-shell"
         onPointerDown={handleShellPointerDown}
         className={cn(
-          "relative w-full overflow-hidden rounded-base border-1 transition-[border-color,background-color] duration-200 ease-out",
+          "relative w-full overflow-hidden rounded-base border-1 transition-[border-color,background-color] duration-fast ease-out",
           TEXTAREA_MIN_H[size],
           shellSurface,
           blocked ? "cursor-not-allowed opacity-55" : "",

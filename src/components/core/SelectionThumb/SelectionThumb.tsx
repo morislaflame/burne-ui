@@ -40,7 +40,7 @@ export function SelectionThumb({
       ref={shellRef}
       className={cn(
         SELECTION_INDICATOR_SHELL_CLASS,
-        "size-full min-h-0 min-w-0 origin-center border border-accent bg-surface",
+        "size-full min-h-0 min-w-0 origin-center border border-primary bg-surface",
         className,
       )}
       aria-hidden
@@ -82,7 +82,7 @@ export function SelectionThumbIcon({
       aria-hidden
       className={cn(
         "pointer-events-none z-[1] flex items-center justify-center",
-        highlighted ? "text-accent-foreground" : "text-accent",
+        highlighted ? "text-primary-foreground" : "text-primary",
         className,
       )}
       style={style}

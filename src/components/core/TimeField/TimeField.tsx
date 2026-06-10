@@ -125,14 +125,7 @@ const STATUS_TINT_AFFIX: Record<Exclude<TimeFieldStatus, "default">, string> = {
   warning: "bg-surface-tint-warning-strong",
 };
 
-const AFFIX_SURFACE: Record<TimeFieldVariant, string> = {
-  default:
-    "bg-[color-mix(in_oklab,var(--color-border)_32%,var(--color-surface))]",
-  outline:
-    "bg-[color-mix(in_oklab,var(--color-border)_22%,transparent)]",
-  segmented:
-    "bg-[color-mix(in_oklab,var(--color-border)_32%,var(--color-surface))]",
-};
+const AFFIX_SURFACE = "bg-primary-tint";
 
 const AFFIX_PADDING: Record<TimeFieldSize, string> = {
   small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
@@ -150,20 +143,18 @@ const SHELL_H: Record<TimeFieldSize, string> = {
 
 function AffixSlot({
   side,
-  variant,
   status,
   controlSize,
   children,
 }: {
   side: "prefix" | "suffix";
-  variant: TimeFieldVariant;
   status: TimeFieldStatus;
   controlSize: TimeFieldSize;
   children: ReactNode;
 }) {
-  const edge = side === "prefix" ? "border-r border-base" : "border-l border-base";
+  const edge = side === "prefix" ? "border-r-token" : "border-l-token";
   const surface =
-    status === "default" ? AFFIX_SURFACE[variant] : STATUS_TINT_AFFIX[status];
+    status === "default" ? AFFIX_SURFACE : STATUS_TINT_AFFIX[status];
 
   return (
     <span
@@ -407,8 +398,8 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         )
       : cn(
           variant === "outline"
-            ? "surface-outline focus-within:border-accent"
-            : cn(VARIANT_SHELL[variant], "border-base focus-within:border-accent"),
+            ? "bordered-transparent focus-within:border-primary"
+            : cn(VARIANT_SHELL[variant], "border-base focus-within:border-primary"),
         );
 
     const isPending = (seg: SegId) =>
@@ -429,12 +420,12 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       variant === "segmented"
         ? cn(
             "h-[1.65em] min-w-[2.25ch] rounded-small px-[3px]",
-            "bg-[color-mix(in_oklab,var(--color-border)_28%,var(--color-surface))]",
-            "focus:bg-accent focus:text-accent-foreground",
+            "bg-primary-tint",
+            "focus:bg-primary focus:text-primary-foreground",
           )
         : cn(
             "rounded-[3px] px-[2px]",
-            "focus:bg-accent focus:text-accent-foreground",
+            "focus:bg-primary focus:text-primary-foreground",
           ),
       disabled ? "cursor-not-allowed" : "cursor-default",
     );
@@ -449,7 +440,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         data-slot="timefield-shell"
         onPointerDown={handleShellPointerDown}
         className={cn(
-          "m-0 flex min-w-0 items-stretch overflow-hidden rounded-base border-1 p-0 transition-[border-color,background-color] duration-200 ease-out",
+          "m-0 flex min-w-0 items-stretch overflow-hidden rounded-base border-1 p-0 transition-[border-color,background-color] duration-fast ease-out",
           SHELL_H[size],
           compact ? "inline-flex w-fit shrink-0" : "w-full min-w-0",
           shellSurface,
@@ -459,7 +450,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         {...rest}
       >
         {prefix != null ? (
-          <AffixSlot side="prefix" variant={variant} status={status} controlSize={size}>
+          <AffixSlot side="prefix" status={status} controlSize={size}>
             {prefix}
           </AffixSlot>
         ) : null}
@@ -509,7 +500,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         </div>
 
         {suffix != null ? (
-          <AffixSlot side="suffix" variant={variant} status={status} controlSize={size}>
+          <AffixSlot side="suffix" status={status} controlSize={size}>
             {suffix}
           </AffixSlot>
         ) : null}

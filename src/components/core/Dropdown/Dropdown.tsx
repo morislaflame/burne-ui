@@ -651,8 +651,8 @@ export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerP
     const rowClass = cn(
       "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none",
       /* как у подписи в `Dropdown.Item`: токен `text-base`, не наследованный `1rem` у `html` */
-      "text-base font-medium text-foreground button-idle-surface-transition motion-reduce:transition-none hover:bg-accent-fill-hover",
-      "focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+      "text-base font-medium text-foreground button-idle-surface-transition motion-reduce:transition-none hover:bg-primary-tint",
+      "focus-visible:bg-primary-tint focus-ring",
       className,
     );
 
@@ -858,7 +858,7 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
         {...portalTheme}
         role="menu"
         className={cn(
-          "fixed z-[110] flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border border-base bg-surface p-base text-left shadow-token-md outline-none",
+          "fixed z-[110] flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border-token bg-surface p-base text-left shadow-token-md outline-none",
           "will-change-[opacity] motion-reduce:transition-none",
           !subOpen && portalMounted && "pointer-events-none",
           className,
@@ -954,24 +954,24 @@ export type DropdownItemVariant = "default" | "danger" | "warning" | "info" | "s
 
 const DROPDOWN_ITEM_VARIANT_CLASS: Record<DropdownItemVariant, string> = {
   default: cn(
-    "text-foreground hover:bg-accent-fill-hover",
-    "focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+    "text-foreground hover:bg-primary-tint",
+    "focus-visible:bg-primary-tint focus-ring",
   ),
   danger: cn(
-    "text-danger hover:bg-accent-fill-hover",
-    "focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger",
+    "text-danger hover:bg-primary-tint",
+    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger",
   ),
   warning: cn(
-    "text-warning hover:bg-accent-fill-hover",
-    "focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning",
+    "text-warning hover:bg-primary-tint",
+    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning",
   ),
   info: cn(
-    "text-info hover:bg-accent-fill-hover",
-    "focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info",
+    "text-info hover:bg-primary-tint",
+    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info",
   ),
   success: cn(
-    "text-success hover:bg-accent-fill-hover",
-    "focus-visible:bg-accent-fill-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success",
+    "text-success hover:bg-primary-tint",
+    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success",
   ),
 };
 

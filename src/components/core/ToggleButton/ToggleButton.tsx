@@ -97,18 +97,18 @@ type ToggleButtonVariantVisual = {
 
 const TOGGLE_BUTTON_VARIANT: Record<ToggleButtonVariant, ToggleButtonVariantVisual> = {
   default: {
-    idle: "border border-base bg-surface text-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
-    pressedBorder: "border-accent",
+    idle: "border-token bg-surface text-foreground",
+    hoverIdle: "hover:bg-primary-tint",
+    pressedBorder: "border-primary",
   },
   outline: {
-    idle: "surface-outline text-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
-    pressedBorder: "border-accent",
+    idle: "bordered-transparent text-foreground",
+    hoverIdle: "hover:bg-primary-tint",
+    pressedBorder: "border-primary",
   },
   ghost: {
-    idle: "border border-transparent bg-transparent text-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
+    idle: "border border-transparent bg-transparent text-foreground",
+    hoverIdle: "hover:bg-primary-tint",
     pressedBorder: "border-transparent",
   },
 };
@@ -285,14 +285,14 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         tabIndex={inGroup && isSingleGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined}
         className={cn(
           "relative inline-flex origin-center items-center justify-center overflow-hidden outline-none",
-          "font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+          "font-medium focus-ring",
           "animate-shadow will-change-transform",
           "button-idle-surface-transition motion-reduce:transition-none",
           groupGlue,
           vn.idle,
           !pressed && !disabled && vn.hoverIdle,
           pressed && cn(vn.pressedBorder, "bg-transparent"),
-          pressed ? "text-accent-foreground" : "text-accent",
+          pressed ? "text-primary-foreground" : "text-foreground",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           sz.root,
           roundingClass,
@@ -308,7 +308,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
           ref={fillRef}
           aria-hidden
           className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center bg-accent",
+            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
             roundingClass,
           )}
           style={{ transform: "scale(0)", opacity: 0 }}

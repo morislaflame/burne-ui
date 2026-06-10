@@ -81,8 +81,8 @@ function LinkIconSlot({
         LINK_ICON_CLASS[size],
         "[&_svg]:size-full",
         muted
-          ? "text-muted group-hover/link:text-accent group-focus-visible/link:text-accent"
-          : "text-accent",
+          ? "text-muted group-hover/link:text-primary group-focus-visible/link:text-primary"
+          : "text-primary",
       )}
       aria-hidden
     >
@@ -177,8 +177,8 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
         href={href}
         className={cn(
           "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid px-xsmall py-xsmall no-underline outline-none",
-          "text-accent",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+          "text-primary",
+          "focus-ring",
           className,
         )}
         onPointerEnter={handlePointerEnter}
@@ -196,8 +196,8 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
           variant={LINK_TEXT_VARIANT[size]}
           inheritColor
           className={cn(
-            "min-w-0 truncate font-medium text-accent",
-            underline && "underline decoration-accent/70 underline-offset-[0.2em]",
+            "min-w-0 truncate font-medium text-primary",
+            underline && "underline decoration-primary/70 underline-offset-[0.2em]",
           )}
         >
           {children}

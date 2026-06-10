@@ -71,7 +71,7 @@ const useTableRow = () => useContext(TableRowContext);
 // ─── variant styles ─────────────────────────────────────────────────────────
 
 const ROOT_CLS: Record<TableVariant, string> = {
-  default: "rounded-mid border border-base bg-surface overflow-clip",
+  default: "rounded-mid border-token bg-surface overflow-clip",
   secondary: "",
   toned: "overflow-visible bg-transparent",
 };
@@ -83,8 +83,8 @@ const TABLE_CLS: Record<TableVariant, string> = {
 };
 
 const THEAD_ROW_CLS: Record<TableVariant, string> = {
-  default: "border-b border-base",
-  secondary: "border-b border-base",
+  default: "border-b-token",
+  secondary: "border-b-token",
   toned: "",
 };
 
@@ -96,8 +96,8 @@ const TH_CLS: Record<TableVariant, string> = {
 };
 
 const TBODY_ROW_CLS: Record<TableVariant, string> = {
-  default: "border-b border-base last:border-b-0",
-  secondary: "border-b border-base last:border-b-0",
+  default: "border-b-token last:border-b-0",
+  secondary: "border-b-token last:border-b-0",
   toned: "",
 };
 
@@ -333,7 +333,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
               className={cn(
                 "shrink-0 transition-all duration-150",
                 sortDirection
-                  ? "text-accent opacity-100"
+                  ? "text-primary opacity-100"
                   : "opacity-0 group-hover/col:opacity-40 text-muted",
                 sortDirection === "descending" && "rotate-180",
               )}
@@ -436,7 +436,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
                 ? "bg-[color-mix(in_oklab,var(--color-accent)_8%,var(--color-surface))]"
                 : "hover:bg-[color-mix(in_oklab,var(--color-foreground)_4%,transparent)]"),
             isSelectable &&
-              "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
+              "focus-ring-inset",
             className,
           )}
           onClick={handleClick}
@@ -469,7 +469,7 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
           isToned && toneSurface,
           isToned &&
             row?.isSelected &&
-            "ring-2 ring-inset ring-accent",
+            "ring-2 ring-inset ring-primary",
           isToned &&
             !row?.isSelected &&
             "hover:brightness-[0.97] motion-reduce:hover:brightness-100",
@@ -489,7 +489,7 @@ export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(
       <div
         ref={ref}
         className={cn(
-          "flex flex-wrap items-center justify-between gap-base border-t border-base px-mid py-plus",
+          "flex flex-wrap items-center justify-between gap-base border-t-token px-mid py-plus",
           className,
         )}
         {...rest}

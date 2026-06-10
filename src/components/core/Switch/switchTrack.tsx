@@ -313,7 +313,7 @@ export function SwitchFill({ className, style, ...rest }: SwitchFillProps) {
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-0 rounded-full",
-        !ctx.color && "bg-accent",
+        !ctx.color && "bg-primary",
         className,
       )}
       style={{ opacity: 0, ...trackFillStyle, ...style }}

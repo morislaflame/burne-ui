@@ -25,10 +25,10 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(
     ref,
   ) {
     const sharedClassName = cn(
-      "box-border shrink-0 border-solid border-base",
+      "box-border shrink-0",
       orientation === "horizontal"
-        ? "my-xsmall h-0 w-full min-w-0 max-w-full border-t"
-        : "mx-xsmall min-h-[1.5rem] w-0 self-stretch border-l",
+        ? "my-xsmall h-0 w-full min-w-0 max-w-full border-t-token"
+        : "mx-xsmall min-h-[1.5rem] w-0 self-stretch border-l-token",
       className,
     );
 

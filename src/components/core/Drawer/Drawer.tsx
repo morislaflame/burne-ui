@@ -180,7 +180,7 @@ export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: Dr
       <span
         aria-hidden
         className={cn(
-          "rounded-full bg-[color-mix(in_oklab,var(--color-border)_90%,var(--color-foreground))]",
+          "rounded-full bg-primary-tint-strong",
           isHorizontal ? "h-10 w-1" : "h-1 w-10",
         )}
       />
@@ -278,7 +278,7 @@ export function DrawerFooter({ className = "", ...rest }: DrawerFooterProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t border-base py-plus px-mid",
+        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t-token py-plus px-mid",
         className,
       )}
       {...rest}
@@ -439,7 +439,6 @@ export const DrawerRoot = function Drawer({
         aria-labelledby={titleId}
         aria-describedby={hasDescription ? descriptionId : undefined}
         className="fixed inset-0 z-[100] m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block"
-        {...(lightUi ? { "data-theme": "light" as const } : {})}
       >
         <div
           ref={overlayRef}
@@ -462,7 +461,7 @@ export const DrawerRoot = function Drawer({
           tabIndex={-1}
           className={cn(
             "absolute z-10 flex flex-col",
-            "border border-base bg-surface text-foreground shadow-token-lg outline-none overflow-hidden",
+            "border-token bg-surface text-foreground shadow-token-lg outline-none overflow-hidden",
             PANEL_PLACEMENT_CLASS[placement],
             panelSizeClass(placement, size),
             size !== "full" && (isHorizontal ? PANEL_ROUNDING_CLASS[placement] : PANEL_ROUNDING_CLASS[placement]),

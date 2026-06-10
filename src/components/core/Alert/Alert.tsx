@@ -45,11 +45,11 @@ function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
 
 /**
  * Компактный Alert: фон по семантике типа (тинты surface).
- * default — плотный surface; outline — `surface-outline`; secondary — `surface-secondary`.
+ * default — плотный surface; outline — `bordered-transparent`; secondary — `surface-secondary`.
  */
 const ALERT_INLINE_SURFACE_CLASSES: Record<AlertStatus, string> = {
-  default: "border border-base bg-surface text-foreground",
-  outline: "surface-outline text-foreground",
+  default: "border-token bg-surface text-foreground",
+  outline: "bordered-transparent text-foreground",
   secondary: "surface-secondary text-foreground",
   danger: "bg-surface-tint-danger text-foreground",
   success: "bg-surface-tint-success text-foreground",
@@ -68,7 +68,7 @@ function alertIndicatorWrapperTextClass(tone: AlertStatus): string {
     case "warning":
       return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
     default:
-      return "text-accent";
+      return "text-primary";
   }
 }
 

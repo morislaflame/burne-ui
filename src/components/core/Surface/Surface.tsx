@@ -2,7 +2,7 @@ import { forwardRef, type HTMLAttributes } from "react";
 
 import { cn } from "@/utils/cn";
 
-export type SurfaceVariant = "default" | "outline" | "secondary";
+export type SurfaceVariant = "default" | "secondary" | "tertiary";
 
 export type SurfaceShadow = "none" | "sm" | "md" | "lg";
 
@@ -11,7 +11,7 @@ export type SurfacePadding = "none" | "small" | "base" | "plus" | "mid";
 export type SurfaceRadius = "base" | "mid" | "large";
 
 export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
-  /** Заливка и обводка. По умолчанию `default`. */
+  /** Заливка поверхности. По умолчанию `default` — только фон, без рамки. */
   variant?: SurfaceVariant;
   /** Тень панели. По умолчанию `none`. */
   shadow?: SurfaceShadow;
@@ -21,10 +21,11 @@ export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
   radius?: SurfaceRadius;
 };
 
+/** Только заливка — без рамки (`surface-*` утилиты с border для кнопок и контролов). */
 const SURFACE_VARIANT: Record<SurfaceVariant, string> = {
-  default: "border border-base bg-surface",
-  outline: "surface-outline",
-  secondary: "surface-secondary",
+  default: "bg-surface",
+  secondary: "bg-secondary-bg",
+  tertiary: "bg-tertiary-bg",
 };
 
 const SURFACE_SHADOW: Record<SurfaceShadow, string> = {
@@ -49,7 +50,7 @@ const SURFACE_RADIUS: Record<SurfaceRadius, string> = {
 };
 
 /**
- * Базовая панель: фон, обводка, скругление и опциональная тень.
+ * Базовая панель: только фон, скругление и опциональная тень — без рамки.
  * Примитив для меню, секций, обёрток списков — без семантики Card и без blur у GlassSurface.
  */
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(

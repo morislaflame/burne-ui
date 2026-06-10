@@ -113,51 +113,37 @@ const ICON_CLASS: Record<DisclosureSize, string> = {
 // ─── variant maps ─────────────────────────────────────────────────────────────
 
 const VARIANT_ROOT: Record<DisclosureVariant, string> = {
-  default: "border-b border-base last:border-b-0",
+  default: "",
   outline: "flex flex-col",
   secondary: "flex flex-col",
-  card: "overflow-hidden rounded-mid border border-base bg-surface animate-shadow",
+  card: "overflow-hidden rounded-mid border-token bg-surface animate-shadow",
   ghost: "flex flex-col",
 };
 
 const FRAMED_PANEL: Record<"outline" | "secondary", string> = {
-  outline: "surface-outline rounded-mid text-foreground",
+  outline: "bordered-transparent rounded-mid text-foreground",
   secondary: "surface-secondary rounded-mid text-foreground",
 };
 
+const TRIGGER_INTERACTIVE = cn(
+  "bg-transparent text-foreground",
+  "button-idle-surface-transition motion-reduce:transition-none",
+  "hover:bg-primary-tint",
+);
+
 const VARIANT_TRIGGER: Record<DisclosureVariant, string> = {
-  default: cn(
-    "rounded-mid bg-transparent text-foreground",
-    "button-idle-surface-transition motion-reduce:transition-none",
-    "hover:bg-accent-fill-hover",
-  ),
-  outline: cn(
-    "rounded-mid bg-transparent text-foreground",
-    "button-idle-surface-transition motion-reduce:transition-none",
-    "hover:bg-accent-fill-hover",
-  ),
-  secondary: cn(
-    "rounded-mid bg-transparent text-foreground",
-    "button-idle-surface-transition motion-reduce:transition-none",
-    "hover:bg-accent-fill-hover",
-  ),
-  card: cn(
-    "bg-transparent text-foreground",
-    "button-idle-surface-transition motion-reduce:transition-none",
-    "hover:bg-accent-fill-hover",
-  ),
-  ghost: cn(
-    "rounded-mid bg-transparent text-foreground",
-    "button-idle-surface-transition motion-reduce:transition-none",
-    "hover:bg-accent-fill-hover",
-  ),
+  default: cn("rounded-mid", TRIGGER_INTERACTIVE),
+  outline: cn("rounded-mid", TRIGGER_INTERACTIVE),
+  secondary: cn("rounded-mid", TRIGGER_INTERACTIVE),
+  card: TRIGGER_INTERACTIVE,
+  ghost: cn("rounded-mid", TRIGGER_INTERACTIVE),
 };
 
 const VARIANT_OPEN_TRIGGER: Record<DisclosureVariant, string> = {
   default: "",
   outline: "",
   secondary: "",
-  card: "border-b border-base",
+  card: "border-b-token",
   ghost: "",
 };
 
@@ -360,8 +346,8 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
           ref={chevronRef}
           aria-hidden
           className={cn(
-            "inline-flex shrink-0 origin-center items-center justify-center text-muted transition-colors duration-200",
-            open && "text-accent",
+            "inline-flex shrink-0 origin-center items-center justify-center text-muted transition-colors duration-fast",
+            open && "text-primary",
             ICON_CLASS[size],
           )}
         >
@@ -379,7 +365,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         disabled={disabled}
         className={cn(
           "flex w-full origin-center select-none items-center gap-small text-left outline-none will-change-transform",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+          "focus-ring",
           TRIGGER_H[size],
           TRIGGER_PAD[size],
           VARIANT_TRIGGER[variant],
@@ -401,7 +387,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
           variant={TRIGGER_TEXT[size] as "small" | "base" | "mid"}
           className={cn(
             "min-w-0 flex-1 font-medium",
-            open ? "text-accent" : "text-foreground",
+            open ? "text-primary" : "text-foreground",
           )}
         >
           {children}
@@ -535,7 +521,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
 
     const rootCls =
       variant === "card" && groupedCardShell
-        ? "border-b border-base last:border-b-0"
+        ? ""
         : VARIANT_ROOT[variant];
 
     const ctx: DisclosureCtx = useMemo(
@@ -605,9 +591,9 @@ export const DisclosureGroup = forwardRef<HTMLDivElement, DisclosureGroupProps>(
     const groupCls = cn(
       "flex w-full flex-col",
       separated && "gap-mid",
-      !separated && variant === "default" && "divide-y divide-base border-y border-base",
+      !separated && variant === "default" && "divide-y-token border-t-token border-b-token",
       !separated && variant === "card" &&
-        "overflow-hidden rounded-mid border border-base bg-surface animate-shadow divide-y divide-base",
+        "overflow-hidden rounded-mid border-token bg-surface animate-shadow divide-y-token",
       !separated && (variant === "outline" || variant === "secondary" || variant === "ghost") &&
         "gap-small",
       className,

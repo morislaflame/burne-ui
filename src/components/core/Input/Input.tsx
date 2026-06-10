@@ -119,12 +119,7 @@ const STATUS_TINT_AFFIX: Record<
 };
 
 
-const AFFIX_SURFACE: Record<InputVariant, string> = {
-  default:
-    "bg-[color-mix(in_oklab,var(--color-border)_32%,var(--color-surface))]",
-  outline:
-    "bg-[color-mix(in_oklab,var(--color-border)_22%,transparent)]",
-};
+const AFFIX_SURFACE = "bg-primary-tint";
 
 const AFFIX_PADDING: Record<InputSize, string> = {
   small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
@@ -175,24 +170,22 @@ const PASSWORD_TOGGLE_CONTROL: Record<
 
 function AffixSlot({
   side,
-  variant,
   status,
   controlSize,
   children,
 }: {
   side: "prefix" | "suffix";
-  variant: InputVariant;
   status: InputStatus;
   controlSize: InputSize;
   children: ReactNode;
 }) {
   const edge =
     side === "prefix"
-      ? "border-r border-base"
-      : "border-l border-base";
+      ? "border-r-token"
+      : "border-l-token";
   const surface =
     status === "default"
-      ? AFFIX_SURFACE[variant]
+      ? AFFIX_SURFACE
       : STATUS_TINT_AFFIX[status];
   return (
     <span
@@ -211,14 +204,12 @@ function AffixSlot({
 type PickedFileEntry = { file: File; previewUrl: string | null };
 
 function PasswordVisibilityAffix({
-  variant,
   status,
   controlSize,
   visible,
   disabled,
   onToggle,
 }: {
-  variant: InputVariant;
   status: InputStatus;
   controlSize: InputSize;
   visible: boolean;
@@ -227,14 +218,14 @@ function PasswordVisibilityAffix({
 }) {
   const surface =
     status === "default"
-      ? AFFIX_SURFACE[variant]
+      ? AFFIX_SURFACE
       : STATUS_TINT_AFFIX[status];
   const pwd = PASSWORD_TOGGLE_CONTROL[controlSize];
 
   return (
     <span
       className={cn(
-        "flex shrink-0 items-stretch border-l border-base",
+        "flex shrink-0 items-stretch border-l-token",
         surface,
       )}
     >
@@ -254,7 +245,7 @@ function PasswordVisibilityAffix({
           pwd.box,
           pwd.pad,
           "hover:text-foreground",
-          "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent",
+          "focus-ring-inset",
           disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
         )}
       >
@@ -272,7 +263,7 @@ function FileGlyph({ className = "" }: { className?: string }) {
   return (
     <span
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border border-base",
+        "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token",
         className,
       )}
       aria-hidden
@@ -326,7 +317,7 @@ function FileRemoveButton({
       className={cn(
         "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-base text-danger outline-none transition-colors",
         "hover:bg-[color-mix(in_oklab,var(--color-danger)_14%,transparent)]",
-        "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+        "focus-ring",
         disabled ? "pointer-events-none opacity-40" : "",
       )}
     >
@@ -401,10 +392,10 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
           STATUS_TINT_FOCUS_BORDER[status],
         )
       : cn(
-          variant === "outline" ? "surface-outline" : VARIANT_SHELL[variant],
+          variant === "outline" ? "bordered-transparent" : VARIANT_SHELL[variant],
           variant === "outline"
-            ? "focus-within:border-accent"
-            : "border-base focus-within:border-accent",
+            ? "focus-within:border-primary"
+            : "border-base focus-within:border-primary",
         );
 
     const handleShellPointerDown = useCallback(
@@ -514,7 +505,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
               : status === "success"
                 ? "border-success/50 focus-within:border-success"
                 : "border-warning/50 focus-within:border-warning"
-            : "border-base focus-within:border-accent",
+            : "border-base focus-within:border-primary",
         )
       : null;
 
@@ -538,7 +529,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
         role="presentation"
         onPointerDown={handleShellPointerDown}
         className={cn(
-          "flex items-stretch overflow-hidden transition-[border-color,background-color] duration-200 ease-out",
+          "flex items-stretch overflow-hidden transition-[border-color,background-color] duration-fast ease-out",
           groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "w-full",
           fileListEmpty ? "min-h-[7.25rem]" : cn("border-1", shellHClass),
           roundingShell,
@@ -548,12 +539,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
         )}
       >
           {showAffixes && prefix != null ? (
-            <AffixSlot
-              side="prefix"
-              variant={variant}
-              status={status}
-              controlSize={size}
-            >
+            <AffixSlot side="prefix" status={status} controlSize={size}>
               {prefix}
             </AffixSlot>
           ) : null}
@@ -595,7 +581,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
                       <img
                         src={previewUrl}
                         alt=""
-                        className="size-9 shrink-0 rounded-base border border-base object-cover"
+                        className="size-9 shrink-0 rounded-base border-token object-cover"
                       />
                     ) : (
                       <FileGlyph />
@@ -626,7 +612,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
                     <img
                       src={fileEntries[0]!.previewUrl}
                       alt=""
-                      className="size-9 shrink-0 rounded-base border border-base object-cover"
+                      className="size-9 shrink-0 rounded-base border-token object-cover"
                     />
                   ) : (
                     <FileGlyph />
@@ -680,18 +666,12 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             />
           )}
           {showAffixes && suffix != null ? (
-            <AffixSlot
-              side="suffix"
-              variant={variant}
-              status={status}
-              controlSize={size}
-            >
+            <AffixSlot side="suffix" status={status} controlSize={size}>
               {suffix}
             </AffixSlot>
           ) : null}
           {showAffixes && isPassword ? (
             <PasswordVisibilityAffix
-              variant={variant}
               status={status}
               controlSize={size}
               visible={passwordVisible}

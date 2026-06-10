@@ -149,13 +149,13 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
         onPointerDown={handlePointerDown}
         className={cn(
           "relative inline-flex origin-center items-center justify-center overflow-hidden outline-none will-change-transform",
-          "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1",
+          "focus-ring",
           rounding,
           sizeClass,
           selected
-            ? "bg-transparent font-medium text-accent-foreground"
+            ? "bg-transparent font-medium text-primary-foreground"
             : isToday || isCurrent
-              ? "font-semibold text-accent"
+              ? "font-semibold text-primary"
               : "text-foreground",
           !selected && !disabled && "hover:bg-surface-secondary/60",
           disabled ? "cursor-not-allowed opacity-35" : "cursor-pointer",
@@ -166,7 +166,7 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
           ref={fillRef}
           aria-hidden
           className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center bg-accent",
+            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
             rounding,
           )}
           style={{ transform: "scale(0)", opacity: 0 }}
@@ -182,7 +182,7 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
         {isToday && !selected && (
           <span
             aria-hidden
-            className="absolute bottom-[3px] left-1/2 z-[1] h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-accent"
+            className="absolute bottom-[3px] left-1/2 z-[1] h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-primary"
           />
         )}
       </button>

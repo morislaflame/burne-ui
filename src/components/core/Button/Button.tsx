@@ -70,32 +70,32 @@ const BUTTON_VARIANT_HAS_HOVER_SHADOW = new Set<ButtonVariant>([
 
 const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   default: {
-    root: "bg-accent text-accent-foreground border border-base",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-accent-fill"),
-    loaderText: "text-accent-foreground",
-    hoverIdle: "hover:bg-accent-solid-hover",
+    root: "bg-primary text-primary-foreground border border-transparent",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-primary-fill"),
+    loaderText: "text-primary-foreground",
+    hoverIdle: "hover:bg-primary-hover",
   },
   outline: {
-    root: "surface-outline text-accent",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-accent-soft"),
-    loaderText: "text-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
+    root: "bordered-transparent text-foreground",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
+    loaderText: "text-foreground",
+    hoverIdle: "hover:bg-primary-tint",
   },
   secondary: {
-    root: "surface-secondary text-accent",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-secondary"),
-    loaderText: "text-accent",
-    hoverIdle: "hover:bg-secondary-fill-hover",
+    root: "surface-secondary text-foreground",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
+    loaderText: "text-foreground",
+    hoverIdle: "hover:bg-secondary-hover",
   },
   ghost: {
-    root: "bg-transparent text-accent border border-transparent",
-    focusOutline: "focus-visible:outline-accent",
-    convergeBg: colorToken("converge-ripple-accent-soft"),
-    loaderText: "text-accent",
-    hoverIdle: "hover:bg-accent-fill-hover",
+    root: "bg-transparent text-foreground border border-transparent",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
+    loaderText: "text-foreground",
+    hoverIdle: "hover:bg-primary-tint",
   },
   danger: {
     root: "bg-danger text-danger-foreground border border-transparent",
@@ -467,7 +467,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const baseInteractive =
       "relative overflow-hidden inline-flex items-center justify-center font-medium outline-none " +
-      "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " +
+      "focus-ring " +
       "disabled:pointer-events-none";
 
     const vn = BUTTON_VARIANT[variant];

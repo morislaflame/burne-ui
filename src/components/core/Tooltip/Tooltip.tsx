@@ -49,7 +49,7 @@ import {
 
 export type { TooltipSide };
 
-/** Варианты заливки — как у `Alert`; `outline` → утилита `surface-outline`. */
+/** Варианты заливки — как у `Alert`; `outline` → `bordered-transparent`. */
 export type TooltipVariant = AlertStatus;
 
 export type TooltipSize = "small" | "base" | "mid" | "large";
@@ -79,8 +79,8 @@ export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
 export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement>;
 
 const TOOLTIP_SURFACE: Record<TooltipVariant, string> = {
-  default: "border border-base bg-surface",
-  outline: "surface-outline",
+  default: "border-token bg-surface",
+  outline: "bordered-transparent",
   secondary: "surface-secondary",
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",

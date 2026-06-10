@@ -54,7 +54,7 @@ function useOptionalPagination() {
 const INTERACTIVE_INNER =
   "inline-flex min-w-0 cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none " +
   "transition-colors hover:text-foreground motion-reduce:transition-none " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent " +
+  "focus-ring " +
   "disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted";
 
 type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {

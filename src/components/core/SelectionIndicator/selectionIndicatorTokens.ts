@@ -23,7 +23,7 @@ export const SELECTION_INDICATOR_SHELL_CLASS =
   "relative box-border inline-flex shrink-0 items-center justify-center rounded-full";
 
 export const SELECTION_INDICATOR_FILL_CLASS =
-  "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-full bg-accent text-accent-foreground";
+  "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-full bg-indicator text-indicator-foreground";
 
 const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
   small: "--selection-indicator-small",
@@ -73,10 +73,10 @@ export function selectionIndicatorVariantClass(
 ): string {
   switch (variant) {
     case "base":
-      return "border border-accent bg-surface";
+      return "border border-primary bg-surface";
     case "secondary":
-      return cn("surface-secondary", selected && "border-accent");
+      return cn("surface-secondary", selected && "border-primary");
     case "outline":
-      return cn("surface-outline", selected && "border-accent");
+      return cn("bordered-transparent", selected && "border-primary");
   }
 }

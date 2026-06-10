@@ -110,10 +110,10 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
           STATUS_TINT_FOCUS_BORDER[status],
         )
       : cn(
-          variant === "outline" ? "surface-outline" : VARIANT_SHELL[variant],
+          variant === "outline" ? "bordered-transparent" : VARIANT_SHELL[variant],
           variant === "outline"
-            ? "focus-within:border-accent"
-            : "border-base focus-within:border-accent",
+            ? "focus-within:border-primary"
+            : "border-base focus-within:border-primary",
         );
 
     const openAfterSqueeze = useCallback(() => {
@@ -158,7 +158,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         className={cn(
           "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
           "overflow-hidden rounded-base transition-[border-color,background-color] duration-200 ease-out motion-reduce:transition-none",
-          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
+          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
           INPUT_SHELL_H[size],
           shellSurface,
           disabled ? "cursor-not-allowed opacity-55" : "cursor-pointer",
@@ -467,9 +467,9 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         disabled={disabled}
         aria-label={open ? "Закрыть список" : "Открыть список"}
         className={cn(
-          "flex shrink-0 items-center justify-center self-stretch border-l border-base px-small outline-none",
+          "flex shrink-0 items-center justify-center self-stretch border-l-token px-small outline-none",
           "text-muted transition-transform duration-200 ease-out motion-reduce:transition-none",
-          "hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+          "hover:text-foreground focus-ring",
           open && "rotate-180",
           disabled && "pointer-events-none",
           className,
