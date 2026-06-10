@@ -29,10 +29,7 @@ import {
   prefersReducedInteractiveHoverLift,
   SHADOW_SM,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_TOOLTIP_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import {
@@ -339,7 +336,7 @@ export function PopoverArrow({ className, ...rest }: PopoverArrowProps) {
     <span
       aria-hidden
       className={cn(
-        "pointer-events-none absolute z-0 size-2 rotate-45 border border-base bg-surface",
+        "pointer-events-none absolute z-0 size-2 rotate-45 border-token bg-surface",
         TOOLTIP_ARROW_CLASS[resolvedSide],
         className,
       )}
@@ -573,8 +570,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
       el.style.opacity = "0";
       void animate(el, {
         opacity: [0, 1],
-        duration: MOTION_TOOLTIP_MS,
-        ease: MOTION_INTERACTIVE_EASE,
+        ...motionTooltip(),
       });
       return () => {
         cancelled = true;
@@ -586,8 +582,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
     const from = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
     const anim = animate(el, {
       opacity: [from, 0],
-      duration: MOTION_TOOLTIP_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionTooltip(),
     });
     void Promise.resolve(anim).then(() => {
       if (!cancelled) setPortalMounted(false);
@@ -634,7 +629,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
           {showArrow ? (customArrow ?? <PopoverArrow />) : null}
           <div
             className={cn(
-              "relative z-[1] flex min-w-0 flex-col overflow-hidden rounded-mid border border-base bg-surface text-foreground animate-shadow",
+              "relative z-[1] flex min-w-0 flex-col overflow-hidden rounded-mid border-token bg-surface text-foreground animate-shadow",
               !unstyled && POPOVER_MIN_WIDTH[size],
               !unstyled && POPOVER_MAX_WIDTH[size],
               !unstyled && POPOVER_PADDING[size],

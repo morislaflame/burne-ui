@@ -36,7 +36,7 @@ export function OptionListItemLayoutShowcase({
       <Item value="label-icon">
         <ItemLabel>Label + Icon</ItemLabel>
         <ItemIcon>
-          <kbd className="rounded-sm border border-base px-xsmall font-mono text-xs opacity-70">⌘C</kbd>
+          <kbd className="rounded-sm border-token px-xsmall font-mono text-xs opacity-70">⌘C</kbd>
         </ItemIcon>
       </Item>
 

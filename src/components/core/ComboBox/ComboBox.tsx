@@ -106,14 +106,14 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
     const shellSurface = statusTinted
       ? cn(
           STATUS_TINT_SHELL[status],
-          "border-transparent",
+          "border-token",
           STATUS_TINT_FOCUS_BORDER[status],
         )
       : cn(
-          variant === "outline" ? "bordered-transparent" : VARIANT_SHELL[variant],
+          variant === "outline" ? "bg-transparent border-token" : VARIANT_SHELL[variant],
           variant === "outline"
             ? "focus-within:border-primary"
-            : "border-base focus-within:border-primary",
+            : "border-token focus-within:border-primary",
         );
 
     const openAfterSqueeze = useCallback(() => {

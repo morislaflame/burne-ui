@@ -23,9 +23,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-} from "@/components/core/utils/motionTokens";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 // ─── types ────────────────────────────────────────────────────────────────────
@@ -36,7 +34,7 @@ export type DisclosureIconPos = "left" | "right";
 
 /** Контент в отдельной рамке под триггером (outline / secondary). */
 function isFramedVariant(variant: DisclosureVariant): boolean {
-  return variant === "outline" || variant === "secondary";
+  return variant === "outline" || variant === "secondary" || variant === "default";
 }
 
 // ─── DisclosureGroup context ──────────────────────────────────────────────────
@@ -113,16 +111,19 @@ const ICON_CLASS: Record<DisclosureSize, string> = {
 // ─── variant maps ─────────────────────────────────────────────────────────────
 
 const VARIANT_ROOT: Record<DisclosureVariant, string> = {
-  default: "",
+  default: "flex flex-col",
   outline: "flex flex-col",
   secondary: "flex flex-col",
   card: "overflow-hidden rounded-mid border-token bg-surface animate-shadow",
   ghost: "flex flex-col",
 };
 
-const FRAMED_PANEL: Record<"outline" | "secondary", string> = {
-  outline: "bordered-transparent rounded-mid text-foreground",
-  secondary: "surface-secondary rounded-mid text-foreground",
+const FRAMED_PANEL: Record<DisclosureVariant, string> = {
+  default: "bg-surface border-token rounded-mid text-foreground",
+  outline: "bg-transparent border-token rounded-mid text-foreground",
+  secondary: "bg-secondary border-token rounded-mid text-secondary-foreground",
+  card: "bg-surface border-token rounded-mid text-foreground",
+  ghost: "bg-transparent border-token rounded-mid text-foreground",
 };
 
 const TRIGGER_INTERACTIVE = cn(
@@ -149,9 +150,6 @@ const VARIANT_OPEN_TRIGGER: Record<DisclosureVariant, string> = {
 
 // ─── animation ────────────────────────────────────────────────────────────────
 
-const EXPAND_MS = 280;
-const EASE = MOTION_INTERACTIVE_EASE;
-
 function useContentAnimation(
   shellRef: React.RefObject<HTMLDivElement | null>,
   innerRef: React.RefObject<HTMLElement | null>,
@@ -175,13 +173,14 @@ function useContentAnimation(
 
     remove(shell);
 
+    const { interactiveDuration: expandMs, interactiveEase: ease } = getMotionConfig();
     if (open) {
       shell.style.overflow = "hidden";
       const target = inner.scrollHeight;
       animate(shell, {
         height: [0, target],
-        duration: EXPAND_MS,
-        ease: EASE,
+        duration: expandMs,
+        ease,
         onComplete: () => {
           shell.style.height = "auto";
           shell.style.overflow = "hidden";
@@ -193,8 +192,8 @@ function useContentAnimation(
       shell.style.overflow = "hidden";
       animate(shell, {
         height: [current, 0],
-        duration: Math.round(EXPAND_MS * 0.85),
-        ease: EASE,
+        duration: Math.round(expandMs * 0.85),
+        ease,
         onComplete: () => {
           shell.style.height = "0px";
         },
@@ -219,11 +218,12 @@ function useChevronAnimation(
       return;
     }
 
+    const { interactiveDuration, interactiveEase } = getMotionConfig();
     remove(el);
     animate(el, {
       rotate: open ? 180 : 0,
-      duration: EXPAND_MS,
-      ease: EASE,
+      duration: interactiveDuration,
+      ease: interactiveEase,
     });
   }, [open, chevronRef]);
 }
@@ -427,6 +427,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
 
     const innerCls = cn(
       CONTENT_PAD[size],
+      framed && variant === "outline" && FRAMED_PANEL.default,
       framed && variant === "outline" && FRAMED_PANEL.outline,
       framed && variant === "secondary" && FRAMED_PANEL.secondary,
       framed && "mt-xsmall",

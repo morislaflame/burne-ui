@@ -21,10 +21,7 @@ import {
   type CloseButtonProps,
 } from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -239,14 +236,12 @@ export const DialogRoot = function Dialog({
     remove(panel);
     const animOverlay = animate(overlay, {
       opacity: [1, 0],
-      duration: 200,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
     const animPanel = animate(panel, {
       opacity: [1, 0],
       scale: [1, 0.97],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
 
     const pOverlay = Promise.resolve(animOverlay).then(() => undefined);
@@ -285,14 +280,12 @@ export const DialogRoot = function Dialog({
     remove(panel);
     animate(overlay, {
       opacity: [0, 1],
-      duration: 200,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
     animate(panel, {
       opacity: [0, 1],
       scale: [0.97, 1],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
     panel.focus();
   }, [open, mounted]);

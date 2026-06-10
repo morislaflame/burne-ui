@@ -4,7 +4,9 @@ export type ThemeColorKey =
   | "background"
   | "surface"
   | "secondary"
+  | "secondaryForeground"
   | "tertiary"
+  | "tertiaryForeground"
   | "border"
   | "foreground"
   | "muted"
@@ -12,6 +14,7 @@ export type ThemeColorKey =
   | "primaryForeground"
   | "primaryTint"
   | "primaryTintStrong"
+  | "focusRing"
   | "indicator"
   | "indicatorForeground"
   | "danger"
@@ -49,8 +52,10 @@ export type ThemeTokenState = {
 export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   background: "--color-background",
   surface: "--color-surface",
-  secondary: "--color-secondary-bg",
-  tertiary: "--color-tertiary-bg",
+  secondary: "--color-secondary",
+  secondaryForeground: "--color-secondary-foreground",
+  tertiary: "--color-tertiary",
+  tertiaryForeground: "--color-tertiary-foreground",
   border: "--color-border",
   foreground: "--color-foreground",
   muted: "--color-muted",
@@ -58,6 +63,7 @@ export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   primaryForeground: "--color-primary-foreground",
   primaryTint: "--color-primary-tint",
   primaryTintStrong: "--color-primary-tint-strong",
+  focusRing: "--color-focus-ring",
   indicator: "--color-indicator",
   indicatorForeground: "--color-indicator-foreground",
   danger: "--color-danger",
@@ -100,13 +106,16 @@ export const STATUS_FOREGROUND_LABELS: Record<ThemeStatusForegroundKey, string> 
 const DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
   surface: "#15171c",
-  secondary: "#25282d",  // mix(foreground 8%, surface)
-  tertiary: "#2e3239",   // mix(foreground 12%, surface)
+  secondary: "#25282d",
+  secondaryForeground: "#f4f5f7",
+  tertiary: "#2e3239",
+  tertiaryForeground: "#f4f5f7",
   border: "#2a2d36",
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#ebebef",
   primaryForeground: "#0c0c0e",
+  focusRing: "#ebebef",
   indicator: "#ebebef",
   indicatorForeground: "#0c0c0e",
   danger: "#dc2626",
@@ -120,13 +129,16 @@ const DARK_COLORS: ThemeColors = {
 const LIGHT_COLORS: ThemeColors = {
   background: "#fafafa",
   surface: "#ffffff",
-  secondary: "#ebebec",  // mix(foreground 8%, surface)
-  tertiary: "#e2e2e4",   // mix(foreground 12%, surface)
+  secondary: "#ebebec",
+  secondaryForeground: "#18181b",
+  tertiary: "#e2e2e4",
+  tertiaryForeground: "#18181b",
   border: "#e4e4e7",
   foreground: "#18181b",
   muted: "#71717a",
   primary: "#18181b",
   primaryForeground: "#fafafa",
+  focusRing: "#18181b",
   indicator: "#18181b",
   indicatorForeground: "#fafafa",
   danger: "#dc2626",
@@ -311,13 +323,16 @@ export function createDefaultThemeState(theme: ThemeMode = "dark"): ThemeTokenSt
 const OCEAN_DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
   surface: "#0d1826",
-  secondary: "#202a37",  // mix(fg8%+surface)
-  tertiary: "#283442",   // mix(fg12%+surface)
+  secondary: "#202a37",
+  secondaryForeground: "#f4f5f7",
+  tertiary: "#283442",
+  tertiaryForeground: "#f4f5f7",
   border: "#2a2d36",
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#38bdf8",
   primaryForeground: "#000000",
+  focusRing: "#38bdf8",
   indicator: "#06b6d4",
   indicatorForeground: "#03111f",
   danger: "#dc2626",
@@ -331,13 +346,16 @@ const OCEAN_DARK_COLORS: ThemeColors = {
 const VIOLET_DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
   surface: "#16122a",
-  secondary: "#28243a",  // mix(fg8%+surface)
-  tertiary: "#312d45",   // mix(fg12%+surface)
+  secondary: "#28243a",
+  secondaryForeground: "#f4f5f7",
+  tertiary: "#312d45",
+  tertiaryForeground: "#f4f5f7",
   border: "#2a2d36",
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#5a189a",
   primaryForeground: "#f4f5f7",
+  focusRing: "#5a189a",
   indicator: "#8b5cf6",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
@@ -351,13 +369,16 @@ const VIOLET_DARK_COLORS: ThemeColors = {
 const EMERALD_DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
   surface: "#0c221c",
-  secondary: "#1f332e",  // mix(fg8%+surface)
-  tertiary: "#273d38",   // mix(fg12%+surface)
+  secondary: "#1f332e",
+  secondaryForeground: "#f4f5f7",
+  tertiary: "#273d38",
+  tertiaryForeground: "#f4f5f7",
   border: "#2a2d36",
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#34d399",
   primaryForeground: "#f4f5f7",
+  focusRing: "#34d399",
   indicator: "#10b981",
   indicatorForeground: "#061410",
   danger: "#dc2626",
@@ -371,13 +392,16 @@ const EMERALD_DARK_COLORS: ThemeColors = {
 const ROSE_LIGHT_COLORS: ThemeColors = {
   background: "#fafafa",
   surface: "#ffffff",
-  secondary: "#ebebec",  // mix(fg8%+surface)
-  tertiary: "#e2e2e4",   // mix(fg12%+surface)
+  secondary: "#ebebec",
+  secondaryForeground: "#18181b",
+  tertiary: "#e2e2e4",
+  tertiaryForeground: "#18181b",
   border: "#fecdd3",
   foreground: "#18181b",
   muted: "#71717a",
   primary: "#f43f5e",
   primaryForeground: "#ffffff",
+  focusRing: "#f43f5e",
   indicator: "#e11d48",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
@@ -391,13 +415,16 @@ const ROSE_LIGHT_COLORS: ThemeColors = {
 const AMBER_LIGHT_COLORS: ThemeColors = {
   background: "#fafafa",
   surface: "#ffffff",
-  secondary: "#ebebec",  // mix(fg8%+surface)
-  tertiary: "#e2e2e4",   // mix(fg12%+surface)
+  secondary: "#ebebec",
+  secondaryForeground: "#18181b",
+  tertiary: "#e2e2e4",
+  tertiaryForeground: "#18181b",
   border: "#fde68a",
   foreground: "#18181b",
   muted: "#71717a",
   primary: "#d97706",
   primaryForeground: "#ffffff",
+  focusRing: "#d97706",
   indicator: "#b45309",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
@@ -411,13 +438,16 @@ const AMBER_LIGHT_COLORS: ThemeColors = {
 const SLATE_LIGHT_COLORS: ThemeColors = {
   background: "#fafafa",
   surface: "#ffffff",
-  secondary: "#ebebec",  // mix(fg8%+surface)
-  tertiary: "#e2e2e4",   // mix(fg12%+surface)
+  secondary: "#ebebec",
+  secondaryForeground: "#18181b",
+  tertiary: "#e2e2e4",
+  tertiaryForeground: "#18181b",
   border: "#e2e8f0",
   foreground: "#18181b",
   muted: "#71717a",
   primary: "#6366f1",
   primaryForeground: "#ffffff",
+  focusRing: "#6366f1",
   indicator: "#6366f1",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
@@ -435,16 +465,19 @@ const SLATE_LIGHT_COLORS: ThemeColors = {
  * Palette: Almond Cream → Desert Sand → Tan → Faded Copper → Coffee Bean → Toffee Brown
  */
 const TOFFEE_LIGHT_COLORS: ThemeColors = {
-  background: "#ede0d4",   // Almond Cream — страница / панели
-  surface: "#f8f3ee",      // светлее Almond Cream — фон контролов
-  secondary: "#e8e1dc",    // mix(fg8%+surface) тёплый кремовый
-  tertiary: "#e0d9d4",     // mix(fg12%+surface)
-  border: "#b08968",       // Faded Copper — хороший контраст на cream
-  foreground: "#2d1208",   // очень тёмный тёплый коричневый
-  muted: "#9c6644",        // Toffee Brown
-  primary: "#7f5539",      // Coffee Bean
+  background: "#ede0d4",
+  surface: "#f8f3ee",
+  secondary: "#e8e1dc",
+  secondaryForeground: "#2d1208",
+  tertiary: "#e0d9d4",
+  tertiaryForeground: "#2d1208",
+  border: "#b08968",
+  foreground: "#2d1208",
+  muted: "#9c6644",
+  primary: "#7f5539",
   primaryForeground: "#f8f3ee",
-  indicator: "#9c6644",    // Toffee Brown
+  focusRing: "#7f5539",
+  indicator: "#9c6644",
   indicatorForeground: "#f8f3ee",
   danger: "#dc2626",
   success: "#22c55e",
@@ -460,16 +493,19 @@ const TOFFEE_LIGHT_COLORS: ThemeColors = {
  * Palette: Almond Silk → Rosy Taupe → Berry Crush → Burgundy → Rich Mahogany
  */
 const BERRY_LIGHT_COLORS: ThemeColors = {
-  background: "#f1e4df",   // Almond Silk — страница / панели
-  surface: "#f5ece6",      // светлее Almond Silk — фон контролов
-  secondary: "#e5dad4",    // mix(fg8%+surface)
-  tertiary: "#ddd2cc",     // mix(fg12%+surface)
-  border: "#da9f93",       // Rosy Taupe
-  foreground: "#2c0703",   // Rich Mahogany — насыщенный тёмный текст
-  muted: "#7a3040",        // производный между Rosy Taupe и Berry Crush
-  primary: "#b6465f",      // Berry Crush
+  background: "#f1e4df",
+  surface: "#f5ece6",
+  secondary: "#e5dad4",
+  secondaryForeground: "#2c0703",
+  tertiary: "#ddd2cc",
+  tertiaryForeground: "#2c0703",
+  border: "#da9f93",
+  foreground: "#2c0703",
+  muted: "#7a3040",
+  primary: "#b6465f",
   primaryForeground: "#ffffff",
-  indicator: "#890620",    // Burgundy — глубже для индикаторов выбора
+  focusRing: "#b6465f",
+  indicator: "#890620",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
   success: "#22c55e",
@@ -484,16 +520,19 @@ const BERRY_LIGHT_COLORS: ThemeColors = {
  * Palette: Dust Grey ≈ Bone → Powder Blush → Spicy Paprika → Burnt Tangerine
  */
 const PAPRIKA_LIGHT_COLORS: ThemeColors = {
-  background: "#d6cbc1",   // Bone — страница
-  surface: "#ede8e2",      // светлее Bone — фон контролов
-  secondary: "#ddd6d0",    // mix(fg8%+surface)
-  tertiary: "#d5cec8",     // mix(fg12%+surface)
-  border: "#dcb5a7",       // Dust Grey — прохладный контраст к тёплому фону
-  foreground: "#200d06",   // очень тёмный тёплый
-  muted: "#9a6a5e",        // производный из Powder Blush
-  primary: "#e16036",      // Spicy Paprika
+  background: "#d6cbc1",
+  surface: "#ede8e2",
+  secondary: "#ddd6d0",
+  secondaryForeground: "#200d06",
+  tertiary: "#d5cec8",
+  tertiaryForeground: "#200d06",
+  border: "#dcb5a7",
+  foreground: "#200d06",
+  muted: "#9a6a5e",
+  primary: "#e16036",
   primaryForeground: "#ffffff",
-  indicator: "#e3170a",    // Burnt Tangerine — более насыщенный для индикаторов
+  focusRing: "#e16036",
+  indicator: "#e3170a",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
   success: "#22c55e",
@@ -509,16 +548,19 @@ const PAPRIKA_LIGHT_COLORS: ThemeColors = {
  * Palette: Brown Red → Dark Wine → Black Cherry → Rich Mahogany (#38040e / #250902)
  */
 const CHERRY_LIGHT_COLORS: ThemeColors = {
-  background: "#f5e8e8",   // производный very light rose (из духа палитры)
-  surface: "#fff0ee",      // near-white с тёплым розовым оттенком
-  secondary: "#eededd",    // mix(fg8%+surface)
-  tertiary: "#e6d6d5",     // mix(fg12%+surface)
-  border: "#e8bfb8",       // производный светло-красный
-  foreground: "#250902",   // Rich Mahogany — самый тёмный, читаемый текст
-  muted: "#8a4540",        // производный приглушённый тёмно-красный
-  primary: "#ad2831",      // Brown Red — самый яркий в палитре, хороший контраст 6:1
+  background: "#f5e8e8",
+  surface: "#fff0ee",
+  secondary: "#eededd",
+  secondaryForeground: "#250902",
+  tertiary: "#e6d6d5",
+  tertiaryForeground: "#250902",
+  border: "#e8bfb8",
+  foreground: "#250902",
+  muted: "#8a4540",
+  primary: "#ad2831",
   primaryForeground: "#ffffff",
-  indicator: "#800e13",    // Dark Wine — глубже для индикаторов
+  focusRing: "#ad2831",
+  indicator: "#800e13",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
   success: "#22c55e",
@@ -533,16 +575,19 @@ const CHERRY_LIGHT_COLORS: ThemeColors = {
  * Palette: Floral White → Silver → Charcoal Brown → Carbon Black → Spicy Paprika
  */
 const RUSTIC_LIGHT_COLORS: ThemeColors = {
-  background: "#f6f3ef",   // Silver — страница
-  surface: "#fffcf2",      // Floral White — контролы
-  secondary: "#f5f0e8",    // mix(fg8%+surface)
-  tertiary: "#ede8df",     // mix(fg12%+surface)
-  border: "#8a837a",       // производный Silver/Charcoal
-  foreground: "#252422",   // Carbon Black
-  muted: "#403d39",        // Charcoal Brown
-  primary: "#eb5e28",      // Spicy Paprika
+  background: "#f6f3ef",
+  surface: "#fffcf2",
+  secondary: "#f5f0e8",
+  secondaryForeground: "#252422",
+  tertiary: "#ede8df",
+  tertiaryForeground: "#252422",
+  border: "#8a837a",
+  foreground: "#252422",
+  muted: "#403d39",
+  primary: "#eb5e28",
   primaryForeground: "#fffcf2",
-  indicator: "#c94a1e",    // глубже Paprika
+  focusRing: "#eb5e28",
+  indicator: "#c94a1e",
   indicatorForeground: "#fffcf2",
   danger: "#dc2626",
   success: "#22c55e",
@@ -557,16 +602,19 @@ const RUSTIC_LIGHT_COLORS: ThemeColors = {
  * Palette: Vanilla Cream → Cream → Muted Olive → Faded Copper → Ash Brown
  */
 const EARTHY_LIGHT_COLORS: ThemeColors = {
-  background: "#faf9f5",   // Vanilla Cream
-  surface: "#f8f4e8",      // светлее Vanilla Cream
-  secondary: "#ece6d4",    // mix(fg8%+surface)
-  tertiary: "#e4ddd0",     // mix(fg12%+surface)
-  border: "#a98467",       // Faded Copper
-  foreground: "#3d3228",   // производный Ash Brown
-  muted: "#6c584c",        // Ash Brown
-  primary: "#adc178",      // Faded Copper
+  background: "#faf9f5",
+  surface: "#f8f4e8",
+  secondary: "#ece6d4",
+  secondaryForeground: "#3d3228",
+  tertiary: "#e4ddd0",
+  tertiaryForeground: "#3d3228",
+  border: "#a98467",
+  foreground: "#3d3228",
+  muted: "#6c584c",
+  primary: "#adc178",
   primaryForeground: "#0d0d0d",
-  indicator: "#6c584c",     // Ash Brown
+  focusRing: "#adc178",
+  indicator: "#6c584c",
   indicatorForeground: "#f8f4e8",
   danger: "#dc2626",
   success: "#adc178",      // Muted Olive
@@ -581,16 +629,19 @@ const EARTHY_LIGHT_COLORS: ThemeColors = {
  * Palette: Light Coral → Sweet Salmon → Powder Blush → Peach Fuzz → Soft Apricot
  */
 const PEACH_LIGHT_COLORS: ThemeColors = {
-  background: "#ffffff",   // Soft Apricot
-  surface: "#fff5ee",      // светлее Apricot
-  secondary: "#fce8dc",    // mix(fg8%+surface)
-  tertiary: "#f8e0d4",     // mix(fg12%+surface)
-  border: "#f8ad9d",       // Powder Blush
-  foreground: "#5c2d2d",   // тёплый тёмный
-  muted: "#c97a7a",        // производный Coral
-  primary: "#f08080",      // Light Coral
+  background: "#ffffff",
+  surface: "#fff5ee",
+  secondary: "#fce8dc",
+  secondaryForeground: "#5c2d2d",
+  tertiary: "#f8e0d4",
+  tertiaryForeground: "#5c2d2d",
+  border: "#f8ad9d",
+  foreground: "#5c2d2d",
+  muted: "#c97a7a",
+  primary: "#f08080",
   primaryForeground: "#ffffff",
-  indicator: "#e06b6b",    // глубже Coral
+  focusRing: "#f08080",
+  indicator: "#e06b6b",
   indicatorForeground: "#ffffff",
   danger: "#dc2626",
   success: "#22c55e",
@@ -605,16 +656,19 @@ const PEACH_LIGHT_COLORS: ThemeColors = {
  * Palette: Parchment → Bone → Linen → Almond Cream → Almond Silk
  */
 const SAND_LIGHT_COLORS: ThemeColors = {
-  background: "#edede9",   // Bone
-  surface: "#f5ebe0",      // Linen
-  secondary: "#ebe3d8",    // mix(fg8%+surface)
-  tertiary: "#e3d9ce",     // mix(fg12%+surface)
-  border: "#d5bdaf",       // Almond Silk
-  foreground: "#3a342f",   // тёплый тёмный
-  muted: "#8a7f76",        // производный Bone
-  primary: "#9a846f",      // производный Almond Silk
+  background: "#edede9",
+  surface: "#f5ebe0",
+  secondary: "#ebe3d8",
+  secondaryForeground: "#3a342f",
+  tertiary: "#e3d9ce",
+  tertiaryForeground: "#3a342f",
+  border: "#d5bdaf",
+  foreground: "#3a342f",
+  muted: "#8a7f76",
+  primary: "#9a846f",
   primaryForeground: "#f5ebe0",
-  indicator: "#7a6a58",    // глубже для индикаторов
+  focusRing: "#9a846f",
+  indicator: "#7a6a58",
   indicatorForeground: "#f5ebe0",
   danger: "#dc2626",
   success: "#22c55e",
@@ -631,14 +685,17 @@ const SAND_LIGHT_COLORS: ThemeColors = {
 const BOLD_DARK_COLORS: ThemeColors = {
   background: "#0c0a14",
   surface: "#14122a",
-  secondary: "#1c1a38",    // mix(fg8%+surface)
-  tertiary: "#242042",     // mix(fg12%+surface)
-  border: "#2c1b55",       // Vivid Royal (тонированный)
+  secondary: "#1c1a38",
+  secondaryForeground: "#f0f4ff",
+  tertiary: "#242042",
+  tertiaryForeground: "#f0f4ff",
+  border: "#2c1b55",
   foreground: "#f0f4ff",
   muted: "#8899cc",
-  primary: "#f72585",      // Neon Pink
+  primary: "#f72585",
   primaryForeground: "#ffffff",
-  indicator: "#f72585",    // Electric Sapphire
+  focusRing: "#f72585",
+  indicator: "#f72585",
   indicatorForeground: "#ffffff",
   danger: "#f72585",
   success: "#4cc9f0",      // Sky Aqua
@@ -653,16 +710,19 @@ const BOLD_DARK_COLORS: ThemeColors = {
  * Palette: Deep Space Blue → Flag Red → Princeton Orange → Sunflower Gold → Vanilla Custard
  */
 const AUTUMN_DARK_COLORS: ThemeColors = {
-  background: "#01141e",   // Deep Space Blue
-  surface: "#0a2840",      // светлее космический синий
-  secondary: "#123350",    // mix(fg8%+surface)
-  tertiary: "#1a3d5c",     // mix(fg12%+surface)
-  border: "#1a4a6e",       // производный Deep Space
-  foreground: "#f9f6e7",   // Vanilla Custard
-  muted: "#a8c4d4",        // приглушённый голубой
-  primary: "#d62828",      // Princeton Orange
+  background: "#01141e",
+  surface: "#0a2840",
+  secondary: "#123350",
+  secondaryForeground: "#f9f6e7",
+  tertiary: "#1a3d5c",
+  tertiaryForeground: "#f9f6e7",
+  border: "#1a4a6e",
+  foreground: "#f9f6e7",
+  muted: "#a8c4d4",
+  primary: "#d62828",
   primaryForeground: "#f4f8fb",
-  indicator: "#d62828",    // Sunflower Gold
+  focusRing: "#d62828",
+  indicator: "#d62828",
   indicatorForeground: "#003049",
   danger: "#d62828",       // Flag Red
   success: "#22c55e",
@@ -681,11 +741,14 @@ export const THEME_PRESETS = {
     colors: {
       ...DARK_COLORS,
       foreground: "#ffffff",
-      secondary: "#282a2e",  // mix(white8%+surface)
-      tertiary: "#313438",   // mix(white12%+surface)
+      secondary: "#282a2e",
+      secondaryForeground: "#ffffff",
+      tertiary: "#313438",
+      tertiaryForeground: "#ffffff",
       muted: "#a8adb8",
       primary: "#ffffff",
       primaryForeground: "#0c0c0e",
+      focusRing: "#ffffff",
       indicator: "#ffffff",
       indicatorForeground: "#0c0c0e",
       border: "#3d4250",

@@ -24,8 +24,8 @@ export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
 /** Только заливка — без рамки (`surface-*` утилиты с border для кнопок и контролов). */
 const SURFACE_VARIANT: Record<SurfaceVariant, string> = {
   default: "bg-surface",
-  secondary: "bg-secondary-bg",
-  tertiary: "bg-tertiary-bg",
+  secondary: "bg-secondary",
+  tertiary: "bg-tertiary",
 };
 
 const SURFACE_SHADOW: Record<SurfaceShadow, string> = {

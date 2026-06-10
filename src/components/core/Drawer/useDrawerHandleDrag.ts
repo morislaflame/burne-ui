@@ -2,7 +2,7 @@ import { animate, remove } from "animejs";
 import { useCallback, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_INTERACTIVE_EASE, MOTION_INTERACTIVE_MS } from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 import type { DrawerPlacement } from "./drawerTypes";
 
@@ -90,8 +90,7 @@ export function useDrawerHandleDrag(
           remove(panel);
           void animate(panel, {
             [`translate${axis}`]: [delta, dismissDelta],
-            duration: MOTION_INTERACTIVE_MS,
-            ease: MOTION_INTERACTIVE_EASE,
+            ...motionInteractive(),
           }).then(() => {
             panel.style.willChange = "";
             panel.style.transform = "";
@@ -103,8 +102,7 @@ export function useDrawerHandleDrag(
           remove(panel);
           void animate(panel, {
             [`translate${axis}`]: [delta, 0],
-            duration: MOTION_INTERACTIVE_MS,
-            ease: MOTION_INTERACTIVE_EASE,
+            ...motionInteractive(),
           }).then(() => {
             panel.style.willChange = "";
             panel.style.transform = "";

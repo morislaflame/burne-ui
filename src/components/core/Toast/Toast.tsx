@@ -19,9 +19,8 @@ import { CloseButton } from "@/components/core/CloseButton";
 import { Loading } from "@/components/core/Loading";
 import { Text } from "@/components/core/Text";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_INTERACTIVE_EASE, MOTION_INTERACTIVE_MS } from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import {
-  SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
 } from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
@@ -112,10 +111,10 @@ const TOAST_SURFACE: Record<ToastStatus, string> = {
 
 const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
   default: "text-primary",
-  success: SEMANTIC_STATUS_ICON_TEXT_CLASS.success,
-  danger: SEMANTIC_STATUS_ICON_TEXT_CLASS.danger,
-  info: SEMANTIC_STATUS_ICON_TEXT_CLASS.info,
-  warning: SEMANTIC_STATUS_ICON_TEXT_CLASS.warning,
+  success: "text-success",
+  danger: "text-danger",
+  info: "text-info",
+  warning: "text-warning",
 };
 
 // ─── compound part types ─────────────────────────────────────────────────────
@@ -373,8 +372,7 @@ function ToastItemWrapper({
     animate(el, {
       translateY: [slideDir, 0],
       opacity: [0, 1],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
   }, [isTop]);
 

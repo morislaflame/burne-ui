@@ -106,7 +106,7 @@ export const WithLabel: Story = {
 export const Centered: Story = {
   name: "По центру блока",
   render: () => (
-    <div className="flex h-40 w-72 items-center justify-center rounded-mid border border-base bg-surface">
+    <div className="flex h-40 w-72 items-center justify-center rounded-mid border-token bg-surface">
       <Loading size="large" color="accent" label="Загрузка содержимого" />
     </div>
   ),

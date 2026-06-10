@@ -92,7 +92,7 @@ export const CardLayout: Story = {
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <p className="text-small text-muted">{variant}</p>
-          <div className="flex flex-col gap-plus rounded-mid border border-base p-plus">
+          <div className="flex flex-col gap-plus rounded-mid border-token p-plus">
             {/* avatar + name row */}
             <div className="flex items-center gap-plus">
               <Skeleton.Circle variant={variant} size="h-10 w-10" />

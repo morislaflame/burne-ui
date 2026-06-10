@@ -21,10 +21,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
 import {
@@ -119,7 +116,7 @@ const STATUS_TINT_AFFIX: Record<
 };
 
 
-const AFFIX_SURFACE = "bg-primary-tint";
+const AFFIX_SURFACE = "bg-secondary";
 
 const AFFIX_PADDING: Record<InputSize, string> = {
   small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
@@ -285,8 +282,7 @@ function animateFileRowExit(rowEl: HTMLElement): Promise<void> {
     scale: [1, 0.94],
     translateY: [0, "-0.5rem"],
     opacity: [1, 0],
-    duration: MOTION_INTERACTIVE_MS,
-    ease: MOTION_INTERACTIVE_EASE,
+    ...motionInteractive(),
   });
   return Promise.resolve(anim).then(() => {
     removeAnime(rowEl);
@@ -388,14 +384,14 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     const shellSurface = statusTinted
       ? cn(
           STATUS_TINT_SHELL[status],
-          "border-transparent",
+          "border-token",
           STATUS_TINT_FOCUS_BORDER[status],
         )
       : cn(
-          variant === "outline" ? "bordered-transparent" : VARIANT_SHELL[variant],
+          variant === "outline" ? "bg-transparent border-token" : VARIANT_SHELL[variant],
           variant === "outline"
             ? "focus-within:border-primary"
-            : "border-base focus-within:border-primary",
+            : "border-token focus-within:border-primary",
         );
 
     const handleShellPointerDown = useCallback(
@@ -500,12 +496,8 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
           statusTinted ? STATUS_TINT_SHELL[status] : VARIANT_SHELL[variant],
           "border-2 border-dashed",
           statusTinted
-            ? status === "danger"
-              ? "border-danger/50 focus-within:border-danger"
-              : status === "success"
-                ? "border-success/50 focus-within:border-success"
-                : "border-warning/50 focus-within:border-warning"
-            : "border-base focus-within:border-primary",
+            ? cn("border-token", STATUS_TINT_FOCUS_BORDER[status])
+            : "border-token focus-within:border-primary",
         )
       : null;
 

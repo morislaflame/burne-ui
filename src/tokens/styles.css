@@ -1,23 +1,29 @@
 /** Burne UI — дизайн-токены (CSS variables) */
 :root {
   /**
-   * BORDER WIDTH — толщина рамок во всех поверхностях (surface-secondary, surface-tertiary,
-   * border-base, inputs, cards). Установите 0 для полностью «flat» вида.
+   * BORDER WIDTH — толщина рамок (border-token, inputs, cards).
+   * Установите 0 для полностью «flat» вида.
    */
   --border-width: 1px;
 
   --color-background: #0c0d10;
   --color-surface: #171717;
-  --color-border: #ffffff1a;
   --color-foreground: #f4f5f7;
+  --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
   --color-muted: #8b90a0;
 
   /**
-   * PRIMARY (brand) — заливка default-кнопки, ссылки, focus-ring, активные текстовые состояния.
+   * PRIMARY (brand) — заливка default-кнопки, ссылки, активные текстовые состояния.
    * Текстовый цвет на этой заливке: `--color-primary-foreground`.
    */
   --color-primary: #ebebef;
   --color-primary-foreground: #0c0c0e;
+
+  /**
+   * FOCUS RING — цвет outline при фокусе (focus-ring, focus-ring-inset utilities).
+   * По умолчанию === primary, может быть переопределён независимо.
+   */
+  --color-focus-ring: var(--color-primary);
 
   /**
    * INDICATOR — заливка внутри индикаторов выбора (Radio, Checkbox, Switch, Slider track,
@@ -64,27 +70,40 @@
    * SECONDARY surface — фон для secondary-кнопки, tertiary-контролов.
    * Нейтральный mix foreground+surface, НЕ primary.
    */
-  --color-secondary-bg: color-mix(
+  --color-secondary: color-mix(
     in oklab,
-    var(--color-foreground) 8%,
+    var(--color-foreground) 12%,
     var(--color-surface)
   );
 
-  /** SECONDARY HOVER — нейтральная поверхность при hover secondary-кнопки */
+  /** Текстовый цвет поверх --color-secondary. По умолчанию = foreground, переопределите при нестандартном фоне. */
+  --color-secondary-foreground: var(--color-foreground);
+
+  /** SECONDARY HOVER — нейтральная поверхность при hover secondary-кнопки (6% foreground поверх secondary) */
   --color-secondary-hover: color-mix(
     in oklab,
-    var(--color-foreground) 14%,
-    var(--color-surface)
+    var(--color-foreground) 6%,
+    var(--color-secondary)
   );
 
   /**
    * TERTIARY surface — третий уровень вложенных панелей (`Surface variant="tertiary"`).
-   * Насыщеннее secondary (12% foreground wash).
+   * Насыщеннее secondary (24% foreground wash).
    */
-  --color-tertiary-bg: color-mix(
+  --color-tertiary: color-mix(
     in oklab,
-    var(--color-foreground) 12%,
+    var(--color-foreground) 24%,
     var(--color-surface)
+  );
+
+  /** Текстовый цвет поверх --color-tertiary. По умолчанию = foreground, переопределите при нестандартном фоне. */
+  --color-tertiary-foreground: var(--color-foreground);
+
+  /** TERTIARY HOVER — нейтральная поверхность при hover tertiary-элементов (6% foreground поверх tertiary) */
+  --color-tertiary-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-tertiary)
   );
 
   /** Залитые семантические кнопки: hover без глобального opacity — тёмнее фон через mix с black */
@@ -198,6 +217,17 @@
     var(--color-info) 40%,
     black
   );
+
+  /**
+   * SURFACE TINT FOREGROUND — текстовый цвет поверх каждого тинта.
+   * По умолчанию = foreground (контрастен и в тёмной, и в светлой теме).
+   * Переопределите для нестандартных тинтов.
+   */
+  --color-surface-tint-danger-foreground: var(--color-foreground);
+  --color-surface-tint-success-foreground: var(--color-foreground);
+  --color-surface-tint-info-foreground: var(--color-foreground);
+  --color-surface-tint-warning-foreground: var(--color-foreground);
+  --color-surface-tint-primary-foreground: var(--color-foreground);
 
   --font-family-sans: ui-sans-serif, system-ui, sans-serif;
   --font-family-mono: ui-monospace, monospace;
@@ -378,8 +408,8 @@
 [data-brn-theme="light"] {
   --color-background: #fafafa;
   --color-surface: #ffffff;
-  --color-border: #e4e4e7;
   --color-foreground: #18181b;
+  --color-border: color-mix(in oklab, var(--color-foreground) 12%, var(--color-surface));
   --color-muted: #71717a;
   --color-primary: #18181b;
   --color-primary-foreground: #fafafa;
@@ -400,7 +430,7 @@
     #070707
   );
 
-  --color-secondary-bg: color-mix(
+  --color-secondary: color-mix(
     in oklab,
     var(--color-foreground) 8%,
     var(--color-surface)
@@ -408,15 +438,25 @@
 
   --color-secondary-hover: color-mix(
     in oklab,
-    var(--color-foreground) 14%,
-    var(--color-surface)
+    var(--color-foreground) 6%,
+    var(--color-secondary)
   );
 
-  --color-tertiary-bg: color-mix(
+  --color-tertiary: color-mix(
     in oklab,
     var(--color-foreground) 12%,
     var(--color-surface)
   );
+
+  --color-tertiary-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-tertiary)
+  );
+
+  /** В светлой теме foreground тёмный (#18181b) — явно дублируем для чёткости каскада */
+  --color-secondary-foreground: var(--color-foreground);
+  --color-tertiary-foreground: var(--color-foreground);
 
   --color-converge-ripple-primary-fill: color-mix(
     in oklab,

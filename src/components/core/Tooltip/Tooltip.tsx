@@ -26,7 +26,6 @@ import { createPortal } from "react-dom";
 
 import {
   SEMANTIC_STATUS_ICONS,
-  SEMANTIC_STATUS_ICON_TEXT_CLASS,
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
 import { Text, type TextVariant } from "@/components/core/Text";
@@ -34,10 +33,7 @@ import {
   prefersReducedInteractiveHoverLift,
   SHADOW_SM,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_TOOLTIP_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import {
@@ -49,7 +45,7 @@ import {
 
 export type { TooltipSide };
 
-/** Варианты заливки — как у `Alert`; `outline` → `bordered-transparent`. */
+/** Варианты заливки — как у `Alert`. */
 export type TooltipVariant = AlertStatus;
 
 export type TooltipSize = "small" | "base" | "mid" | "large";
@@ -80,8 +76,8 @@ export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement>;
 
 const TOOLTIP_SURFACE: Record<TooltipVariant, string> = {
   default: "border-token bg-surface",
-  outline: "bordered-transparent",
-  secondary: "surface-secondary",
+  outline: "bg-transparent border-token",
+  secondary: "bg-secondary border-token",
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
   info: "bg-surface-tint-info",
@@ -114,6 +110,16 @@ const TOOLTIP_ICON_SLOT_SVG: Record<TooltipSize, string> = {
   base: "[&_svg]:icon-base",
   mid: "[&_svg]:icon-base",
   large: "[&_svg]:icon-mid",
+};
+
+const TOOLTIP_ICON_TEXT_CLASS: Record<TooltipVariant, string> = {
+  default: "text-foreground",
+  outline: "text-foreground",
+  secondary: "text-secondary-foreground",
+  danger: "text-danger",
+  success: "text-success",
+  info: "text-info",
+  warning: "text-warning",
 };
 
 function isSemanticTooltipVariant(v: TooltipVariant): v is SemanticStatus {
@@ -152,7 +158,7 @@ function resolveTooltipLeadingIcon({
   return (
     <Icon
       aria-hidden
-      className={cn("shrink-0", TOOLTIP_ICON_SIZE[size], SEMANTIC_STATUS_ICON_TEXT_CLASS[variant])}
+      className={cn("shrink-0", TOOLTIP_ICON_SIZE[size], TOOLTIP_ICON_TEXT_CLASS[variant])}
     />
   );
 }
@@ -539,8 +545,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
       el.style.opacity = "0";
       void animate(el, {
         opacity: [0, 1],
-        duration: MOTION_TOOLTIP_MS,
-        ease: MOTION_INTERACTIVE_EASE,
+        ...motionTooltip(),
       });
       return () => {
         cancelled = true;
@@ -552,8 +557,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
     const from = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
     const anim = animate(el, {
       opacity: [from, 0],
-      duration: MOTION_TOOLTIP_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionTooltip(),
     });
     void Promise.resolve(anim).then(() => {
       if (!cancelled) setPortalMounted(false);

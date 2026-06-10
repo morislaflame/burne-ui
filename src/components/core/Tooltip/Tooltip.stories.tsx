@@ -253,7 +253,7 @@ export const Accessibility: Story = {
       <p className="text-sm text-muted">
         Контент: <code className="text-accent">role=&quot;tooltip&quot;</code>. Связь с триггером —{" "}
         <code className="text-accent">aria-describedby</code> только пока подсказка открыта. Hover и
-        focus; <kbd className="rounded-small border border-base px-xsmall py-0.5 text-tools">Escape</kbd>{" "}
+        focus; <kbd className="rounded-small border-token px-xsmall py-0.5 text-tools">Escape</kbd>{" "}
         закрывает. Единственный child <code className="text-accent">Trigger</code> получает handlers без
         лишнего tab-stop.
       </p>

@@ -75,8 +75,8 @@ export function selectionIndicatorVariantClass(
     case "base":
       return "border border-primary bg-surface";
     case "secondary":
-      return cn("surface-secondary", selected && "border-primary");
+      return cn("bg-secondary", selected && "border-primary");
     case "outline":
-      return cn("bordered-transparent", selected && "border-primary");
+      return cn("bg-transparent border-token", selected && "border-primary");
   }
 }

@@ -266,7 +266,7 @@ function ColorPickerHexInput() {
   const displayValue = isEditing ? editDraft : hex.slice(1);
 
   return (
-    <div className="flex items-center gap-xsmall rounded-small border border-base bg-surface-secondary px-small py-xsmall">
+    <div className="flex items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall">
       <span className="text-small text-muted select-none">#</span>
       <input
         type="text"
@@ -317,7 +317,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
       >
         <div
           className={cn(
-            "flex flex-col rounded-mid border border-base bg-surface text-foreground animate-shadow",
+            "flex flex-col rounded-mid text-foreground",
             PICKER_WIDTH[size],
             PICKER_PAD[size],
           )}
@@ -364,7 +364,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
           <div className="flex items-center gap-small">
             <ColorPickerHexInput />
             {showAlpha && (
-              <div className="flex items-center gap-xsmall rounded-small border border-base bg-surface-secondary px-small py-xsmall">
+              <div className="flex items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall">
                 <input
                   type="text"
                   value={Math.round(hsva.a)}
@@ -382,7 +382,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
 
           {/* Preset swatches */}
           {presets && presets.length > 0 && (
-            <div className="flex flex-wrap gap-xsmall border-t border-base pt-small">
+            <div className="flex flex-wrap gap-xsmall border-t-token pt-small">
               {presets.map((preset) => (
                 <ColorSwatch
                   key={preset}

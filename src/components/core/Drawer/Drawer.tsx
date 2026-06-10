@@ -19,7 +19,7 @@ import { createPortal } from "react-dom";
 
 import { CloseButton, type CloseButtonProps } from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_INTERACTIVE_EASE, MOTION_INTERACTIVE_MS } from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -371,10 +371,10 @@ export const DrawerRoot = function Drawer({
     remove(panel);
     const slideOut = getSlideOut(placement);
     const p1 = Promise.resolve(
-      animate(overlay, { opacity: [1, 0], duration: 200, ease: MOTION_INTERACTIVE_EASE }),
+      animate(overlay, { opacity: [1, 0], ...motionInteractive() }),
     ).then(() => undefined);
     const p2 = Promise.resolve(
-      animate(panel, { ...slideOut, duration: MOTION_INTERACTIVE_MS, ease: MOTION_INTERACTIVE_EASE }),
+      animate(panel, { ...slideOut, ...motionInteractive() }),
     ).then(() => undefined);
     void Promise.all([p1, p2]).then(finish);
 
@@ -404,8 +404,8 @@ export const DrawerRoot = function Drawer({
 
     remove(overlay);
     remove(panel);
-    animate(overlay, { opacity: [0, 1], duration: 200, ease: MOTION_INTERACTIVE_EASE });
-    animate(panel, { ...getSlideIn(placement), duration: MOTION_INTERACTIVE_MS, ease: MOTION_INTERACTIVE_EASE });
+    animate(overlay, { opacity: [0, 1], ...motionInteractive() });
+    animate(panel, { ...getSlideIn(placement), ...motionInteractive() });
   }, [open, mounted, placement]);
 
   // focus trap

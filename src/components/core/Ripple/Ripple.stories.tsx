@@ -92,7 +92,7 @@ export const Playground: Story = {
   },
   render: (args) => (
     <div
-      className="relative cursor-pointer overflow-hidden rounded-mid border border-base bg-surface shadow-token-sm"
+      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-sm"
       role="presentation"
     >
       <Ripple {...args} className="rounded-[inherit]" />
@@ -153,7 +153,7 @@ export const DirectionCompare: Story = {
   render: () => (
     <div className="flex flex-wrap gap-mid">
       <div
-        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border border-base bg-surface"
+        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
         role="presentation"
       >
         <Ripple color="accentSoft" direction="in" />
@@ -162,7 +162,7 @@ export const DirectionCompare: Story = {
         </div>
       </div>
       <div
-        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border border-base bg-surface"
+        className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
         role="presentation"
       >
         <Ripple color="accentSoft" direction="out" />
@@ -255,7 +255,7 @@ export const WithInputShell: Story = {
       <Text variant="base" className="text-muted">
         Общая интерактивная карточка вокруг поля
       </Text>
-      <div className="relative overflow-hidden rounded-base border border-base bg-surface p-mid shadow-token-sm">
+      <div className="relative overflow-hidden rounded-base border-token bg-surface p-mid shadow-token-sm">
         <Ripple color="accentSoft" />
         <div className="relative z-[1] flex flex-col gap-small">
           <Text variant="small" className="font-medium text-muted">
@@ -274,7 +274,7 @@ export const ArbitraryCssColor: Story = {
   name: "Произвольный CSS-цвет",
   render: () => (
     <div
-      className="relative max-w-xs cursor-pointer overflow-hidden rounded-mid border border-base bg-surface p-plus"
+      className="relative max-w-xs cursor-pointer overflow-hidden rounded-mid border-token bg-surface p-plus"
       role="presentation"
     >
       <Ripple color="oklch(0.72 0.14 250 / 0.35)" duration={550} />
@@ -290,7 +290,7 @@ export const OnLightTheme: Story = {
   decorators: [...lightThemeDecorator],
   render: () => (
     <div
-      className="relative cursor-pointer overflow-hidden rounded-mid border border-base bg-surface"
+      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
       role="presentation"
     >
       <Ripple color="accentSoft" />

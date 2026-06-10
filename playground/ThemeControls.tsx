@@ -35,7 +35,14 @@ const TINT_DEFAULT_PERCENT: Record<"primaryTint" | "primaryTintStrong", number> 
 const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
   {
     label: "surface tokens",
-    keys: ["background", "surface", "secondary", "tertiary"],
+    keys: [
+      "background",
+      "surface",
+      "secondary",
+      "secondaryForeground",
+      "tertiary",
+      "tertiaryForeground",
+    ],
   },
   {
     label: "content tokens",
@@ -48,6 +55,7 @@ const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
       "primaryForeground",
       "primaryTint",
       "primaryTintStrong",
+      "focusRing",
       "indicator",
       "indicatorForeground",
     ],
@@ -178,7 +186,7 @@ function TintColorControl({
   const mixColorHex = /^#[0-9a-f]{6}$/i.test(parsed.mixColor) ? parsed.mixColor : "#4361ee";
 
   return (
-    <div className="flex flex-col gap-xsmall rounded-base border-token bg-surface-secondary p-small">
+    <div className="flex flex-col gap-xsmall rounded-base border-token bg-secondary p-small">
       <div className="flex items-center gap-small">
         <div
           className="size-8 shrink-0 rounded-small border-token"

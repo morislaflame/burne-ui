@@ -27,8 +27,8 @@ import "burne-ui/styles.css";
 В нём:
 
 - **Дизайн-токены** как CSS-переменные: `--color-*`, `--space` / `--space-*`, `--size` / `--size-*`, `--radius`, `--text-scale-*`, и др. Полный перечень имён — экспорт **`designTokenNames`** из `burne-ui`; исходные значения по умолчанию смотрите в репозитории в `src/tokens/styles.css`.
-- **Мост Tailwind** (`@theme inline`): цвета в утилитах вида `bg-background`, `text-foreground`, `border-base`, `bg-accent`, отступы `gap-mid`, `p-plus`, радиусы `rounded-base` и т.д.
-- **Кастомные утилиты** (`@utility`): например `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
+- **Мост Tailwind** (`@theme inline`): цвета в утилитах вида `bg-background`, `text-foreground`, `border-border`, отступы `gap-mid`, `p-plus`, радиусы `rounded-base` и т.д.
+- **Кастомные утилиты** (`@utility`): например `border-token`, `border-t-token`, `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
 
 Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-mid` и т.п.
 

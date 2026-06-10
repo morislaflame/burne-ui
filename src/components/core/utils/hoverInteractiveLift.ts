@@ -7,12 +7,7 @@ import { animate, remove } from "animejs";
 import { useEffect, useMemo, type MutableRefObject, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import {
-  MOTION_HOVER_LIFT_SCALE,
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-  MOTION_PRESS_SQUEEZE_SCALE,
-} from "./motionTokens";
+import { getMotionConfig } from "./motionConfig";
 
 /**
  * Значения `box-shadow` для анимации при hover.
@@ -53,12 +48,6 @@ export function initElementShadow(element: HTMLElement | null, shadow: string): 
   element.style.setProperty("--el-shadow", shadow);
 }
 
-/** @deprecated Используйте `MOTION_INTERACTIVE_MS` из `motionTokens` */
-const INTERACTIVE_HOVER_LIFT_MS = MOTION_INTERACTIVE_MS;
-/** @deprecated Используйте `MOTION_INTERACTIVE_EASE` */
-const INTERACTIVE_HOVER_LIFT_EASE = MOTION_INTERACTIVE_EASE;
-/** @deprecated Используйте `MOTION_HOVER_LIFT_SCALE` */
-const INTERACTIVE_HOVER_LIFT_SCALE = MOTION_HOVER_LIFT_SCALE;
 
 export function prefersReducedInteractiveHoverLift(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -97,7 +86,7 @@ const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
 function adaptiveSqueezeScale(element: HTMLElement): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
-  const baseDelta = 1 - (MOTION_PRESS_SQUEEZE_SCALE[1] as number);
+  const baseDelta = 1 - (getMotionConfig().pressSqueezeScale[1] as number);
   const delta = Math.min(
     Math.max(ADAPTIVE_SQUEEZE_TARGET_PX / maxDim, ADAPTIVE_SQUEEZE_MIN_DELTA),
     baseDelta,
@@ -114,7 +103,7 @@ function adaptiveHoverLiftScale(element: HTMLElement): number {
   const maxDim = Math.max(width, height, 1);
   const delta = Math.min(
     Math.max(ADAPTIVE_LIFT_TARGET_PX / maxDim, ADAPTIVE_LIFT_MIN_DELTA),
-    MOTION_HOVER_LIFT_SCALE - 1,
+    getMotionConfig().hoverLiftScale - 1,
   );
   return 1 + delta;
 }
@@ -136,10 +125,11 @@ export function animateInteractiveHoverLift(
   const resolvedScale = lifted
     ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element))
     : 1;
+  const cfg = getMotionConfig();
   animate(element, {
     scale: resolvedScale,
-    duration: MOTION_INTERACTIVE_MS,
-    ease: MOTION_INTERACTIVE_EASE,
+    duration: cfg.interactiveDuration,
+    ease: cfg.interactiveEase,
   });
   if (shadow) {
     // Переключаем CSS-переменную — браузер плавно интерполирует box-shadow через CSS transition.
@@ -158,10 +148,11 @@ export function animateInteractiveHoverLift(
 export function animateInteractivePressSqueeze(element: HTMLElement) {
   remove(element);
   const s = adaptiveSqueezeScale(element);
+  const cfg = getMotionConfig();
   return animate(element, {
     scale: [1, s, 1],
-    duration: MOTION_INTERACTIVE_MS,
-    ease: MOTION_INTERACTIVE_EASE,
+    duration: cfg.interactiveDuration,
+    ease: cfg.interactiveEase,
   });
 }
 
@@ -246,9 +237,4 @@ export function useInteractiveHoverLiftOnContainer(
   );
 }
 
-void [
-  SHADOW_LG,
-  INTERACTIVE_HOVER_LIFT_MS,
-  INTERACTIVE_HOVER_LIFT_EASE,
-  INTERACTIVE_HOVER_LIFT_SCALE,
-];
+void SHADOW_LG;

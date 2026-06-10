@@ -125,7 +125,7 @@ const STATUS_TINT_AFFIX: Record<Exclude<TimeFieldStatus, "default">, string> = {
   warning: "bg-surface-tint-warning-strong",
 };
 
-const AFFIX_SURFACE = "bg-primary-tint";
+const AFFIX_SURFACE = "bg-secondary";
 
 const AFFIX_PADDING: Record<TimeFieldSize, string> = {
   small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
@@ -393,13 +393,13 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
     const shellSurface = statusTinted
       ? cn(
           STATUS_TINT_SHELL[status],
-          "border-transparent",
+          "border-token",
           STATUS_TINT_FOCUS_BORDER[status],
         )
       : cn(
           variant === "outline"
-            ? "bordered-transparent focus-within:border-primary"
-            : cn(VARIANT_SHELL[variant], "border-base focus-within:border-primary"),
+            ? "bg-transparent border-token focus-within:border-primary"
+            : cn(VARIANT_SHELL[variant], "border-token focus-within:border-primary"),
         );
 
     const isPending = (seg: SegId) =>

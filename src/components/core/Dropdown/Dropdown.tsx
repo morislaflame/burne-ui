@@ -33,7 +33,7 @@ import type {
   SelectionIndicatorSize,
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
-import { MOTION_INTERACTIVE_EASE, MOTION_TOOLTIP_MS } from "@/components/core/utils/motionTokens";
+import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
@@ -545,9 +545,7 @@ export function DropdownSub({ className = "", children, ...rest }: DropdownSubPr
   const { open: menuOpen } = useDropdown();
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement | null>(null);
-  const closeTimerRef = useRef<ReturnType<typeof window.setTimeout> | undefined>(
-    undefined,
-  );
+  const closeTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!menuOpen) setOpen(false);
@@ -804,8 +802,7 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
         el.style.opacity = "0";
         animate(el, {
           opacity: [0, 1],
-          duration: MOTION_TOOLTIP_MS,
-          ease: MOTION_INTERACTIVE_EASE,
+          ...motionTooltip(),
         });
         return () => {
           cancelled = true;
@@ -818,8 +815,7 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
         Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
       const anim = animate(el, {
         opacity: [from, 0],
-        duration: MOTION_TOOLTIP_MS,
-        ease: MOTION_INTERACTIVE_EASE,
+        ...motionTooltip(),
       });
       void Promise.resolve(anim).then(() => {
         if (!cancelled) setPortalMounted(false);

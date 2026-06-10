@@ -48,8 +48,8 @@ export type CardProps = Omit<
 
 const CARD_SURFACE: Record<CardVariant, string> = {
   default: "bg-surface border-token",
-  outline: "bordered-transparent",
-  secondary: "surface-secondary",
+  outline: "bg-transparent border-token",
+  secondary: "bg-secondary border-token",
 };
 
 export type CardContentProps = HTMLAttributes<HTMLDivElement>;

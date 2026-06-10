@@ -42,10 +42,7 @@ import {
   SelectionIndicator,
   type SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import { CheckboxFieldContext, useCheckboxFieldContext } from "./checkboxFieldContext";
@@ -184,10 +181,9 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
       const from = Number.parseFloat(getComputedStyle(track).opacity);
       const start = Number.isFinite(from) ? from : 1;
       void animate(track, {
-        opacity: ctx.isDisabled ? [start, 0.48] : [start, 1],
-        duration: MOTION_INTERACTIVE_MS,
-        ease: MOTION_INTERACTIVE_EASE,
-      });
+      opacity: ctx.isDisabled ? [start, 0.48] : [start, 1],
+      ...motionInteractive(),
+    });
     }, [ctx.isDisabled, reduceMotion]);
 
     return (

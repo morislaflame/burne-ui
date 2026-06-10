@@ -18,11 +18,9 @@ import {
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-  MOTION_SWITCH_THUMB_EASE,
-  MOTION_SWITCH_THUMB_MS,
-} from "@/components/core/utils/motionTokens";
+  motionInteractive,
+  motionSwitchThumb,
+} from "@/components/core/utils/motionConfig";
 import { sliderThicknessToCss } from "@/components/core/Slider/sliderThickness";
 import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
 import { cn } from "@/utils/cn";
@@ -118,8 +116,7 @@ export function SwitchTrack({
       remove(thumb);
       void animate(thumb, {
         translateX: targetX,
-        duration: MOTION_SWITCH_THUMB_MS,
-        ease: MOTION_SWITCH_THUMB_EASE,
+        ...motionSwitchThumb(),
       });
     },
     [reduceMotion],
@@ -182,8 +179,7 @@ export function SwitchTrack({
     remove(trackFill);
     void animate(trackFill, {
       opacity: checked ? [0, 1] : [1, 0],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
   }, [checked, reduceMotion]);
 
@@ -207,8 +203,7 @@ export function SwitchTrack({
       void animate(iconOffRef.current, {
         opacity: checked ? [1, 0] : [0, 1],
         scale: checked ? [1, 0.88] : [0.88, 1],
-        duration: MOTION_INTERACTIVE_MS,
-        ease: MOTION_INTERACTIVE_EASE,
+        ...motionInteractive(),
       });
     }
     if (iconOnRef.current) {
@@ -216,8 +211,7 @@ export function SwitchTrack({
       void animate(iconOnRef.current, {
         opacity: checked ? [0, 1] : [1, 0],
         scale: checked ? [0.88, 1] : [1, 0.88],
-        duration: MOTION_INTERACTIVE_MS,
-        ease: MOTION_INTERACTIVE_EASE,
+        ...motionInteractive(),
       });
     }
   }, [checked, reduceMotion]);

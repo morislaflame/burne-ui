@@ -480,6 +480,12 @@ export {
   type BadgeAnchorProps,
 } from "@/components/core/Badge";
 export {
+  configureMotion,
+  getMotionConfig,
+  type MotionConfig,
+  type SpringParams,
+} from "@/components/core/utils/motionConfig";
+export {
   MOTION_INTERACTIVE_MS,
   MOTION_INTERACTIVE_EASE,
   MOTION_TOOLTIP_MS,

@@ -90,8 +90,8 @@ const THEAD_ROW_CLS: Record<TableVariant, string> = {
 
 const TH_CLS: Record<TableVariant, string> = {
   default:
-    "bg-surface-secondary px-mid py-plus text-left font-medium text-muted whitespace-nowrap",
-  secondary: "px-mid py-plus text-left font-medium text-foreground whitespace-nowrap",
+    "bg-secondary px-mid py-plus text-left font-medium text-muted whitespace-nowrap",
+  secondary: "px-mid py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
   toned: "px-mid py-plus text-left font-medium text-muted whitespace-nowrap bg-transparent",
 };
 

@@ -37,10 +37,7 @@ import {
   optionSecondaryCellClass,
 } from "@/components/core/utils/optionControlGridLayout";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import { RadioFieldContext, useRadioFieldContext } from "./radioFieldContext";
@@ -147,8 +144,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(funct
     const start = Number.isFinite(from) ? from : 1;
     void animate(track, {
       opacity: ctx.isDisabled ? [start, 0.48] : [start, 1],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
   }, [ctx.isDisabled, reduceMotion]);
 

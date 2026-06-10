@@ -19,7 +19,7 @@ import {
   SHADOW_SM,
   useInteractiveHoverLiftContainerHandlers,
 } from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_RIPPLE_DEFAULT_DURATION_MS } from "@/components/core/utils/motionTokens";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 export type CloseButtonVariant = "default" | "outline";
@@ -40,9 +40,9 @@ const VARIANT: Record<
     hoverIdle: "hover:bg-primary-tint-strong",
     ripple: "neutral",
   },
-  /** Как `Button` outline: `bordered-transparent` + нейтральный крест. */
+  /** Как `Button` outline: `bg-transparent border-token` + нейтральный крест. */
   outline: {
-    root: "bordered-transparent text-foreground",
+    root: "bg-transparent border-token text-foreground",
     focusOutline: "focus-ring",
     hoverIdle: "hover:bg-primary-tint",
     ripple: "neutral",
@@ -160,7 +160,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         <Ripple
           color={vn.ripple}
           disabled={Boolean(disabled)}
-          duration={MOTION_RIPPLE_DEFAULT_DURATION_MS}
+          duration={getMotionConfig().rippleDefaultDuration}
         />
         <IoClose
           aria-hidden

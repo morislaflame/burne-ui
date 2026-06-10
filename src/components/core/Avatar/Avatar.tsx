@@ -22,10 +22,7 @@ import {
   type TooltipSize,
   type TooltipVariant,
 } from "@/components/core/Tooltip";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
@@ -320,8 +317,7 @@ function AvatarGroupItem({
     animate(el, {
       translateY: 0,
       scale: 1,
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
   }, [reduced]);
 
@@ -336,8 +332,7 @@ function AvatarGroupItem({
     animate(el, {
       translateY: AVATAR_GROUP_HOVER_TRANSLATE_Y,
       scale: AVATAR_GROUP_HOVER_SCALE,
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
   }, [reduced]);
 

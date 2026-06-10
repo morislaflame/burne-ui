@@ -20,7 +20,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_HOVER_LIFT_SCALE } from "@/components/core/utils/motionTokens";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -96,13 +96,13 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
     const handlePointerEnter = useCallback(() => {
       const el = innerRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, true, MOTION_HOVER_LIFT_SCALE);
+      animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
     }, []);
 
     const handlePointerLeave = useCallback(() => {
       const el = innerRef.current;
       if (!el) return;
-      animateInteractiveHoverLift(el, false, MOTION_HOVER_LIFT_SCALE);
+      animateInteractiveHoverLift(el, false, getMotionConfig().hoverLiftScale);
     }, []);
 
     const handlePointerDown = useCallback(() => {
@@ -163,13 +163,13 @@ function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) 
   const handlePointerEnter = useCallback(() => {
     const el = liftRef.current;
     if (!el || prefersReducedInteractiveHoverLift()) return;
-    animateInteractiveHoverLift(el, true, MOTION_HOVER_LIFT_SCALE);
+    animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
   }, []);
 
   const handlePointerLeave = useCallback(() => {
     const el = liftRef.current;
     if (!el) return;
-    animateInteractiveHoverLift(el, false, MOTION_HOVER_LIFT_SCALE);
+    animateInteractiveHoverLift(el, false, getMotionConfig().hoverLiftScale);
   }, []);
 
   const handlePointerDown = useCallback(() => {

@@ -35,7 +35,7 @@ export function buttonGroupOverlapBorderClasses(
 
 export function buttonGroupTextSurfaceClasses(seg: ButtonGroupSegment | undefined): string {
   return cn(
-    "inline-flex shrink-0 select-none items-center justify-center border border-base bg-surface text-muted",
+    "inline-flex shrink-0 select-none items-center justify-center border-token bg-surface text-muted",
     buttonGroupRoundingClasses(seg),
     buttonGroupOverlapBorderClasses(seg),
     "z-0",

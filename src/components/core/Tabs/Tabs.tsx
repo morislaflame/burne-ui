@@ -21,7 +21,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import { MOTION_HOVER_LIFT_SCALE } from "@/components/core/utils/motionTokens";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import {
@@ -61,16 +61,14 @@ export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
 
 const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "",
-  outline: "bordered-transparent rounded-mid p-xsmall",
-  secondary: "surface-secondary rounded-mid p-xsmall",
+  outline: "bg-transparent border-token rounded-mid p-xsmall",
+  secondary: "bg-secondary border-token rounded-mid p-xsmall",
 };
-
-const INDICATOR_PILL_TINT = "bg-primary-tint-strong";
 
 const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "bg-primary",
-  outline: INDICATOR_PILL_TINT,
-  secondary: INDICATOR_PILL_TINT,
+  outline: "bg-secondary",
+  secondary: "bg-tertiary",
 };
 
 function useMergedTabsValue(
@@ -343,7 +341,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       if (e.defaultPrevented || isDisabled || isSelected) return;
       const el = motionRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, true, MOTION_HOVER_LIFT_SCALE);
+      animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
     },
     [isDisabled, isSelected, onPointerEnter],
   );
@@ -354,7 +352,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       if (e.defaultPrevented || isSelected) return;
       const el = motionRef.current;
       if (!el) return;
-      animateInteractiveHoverLift(el, false, MOTION_HOVER_LIFT_SCALE);
+      animateInteractiveHoverLift(el, false, getMotionConfig().hoverLiftScale);
     },
     [isSelected, onPointerLeave],
   );

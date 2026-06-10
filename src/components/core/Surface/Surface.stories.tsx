@@ -40,7 +40,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary-bg`, `bg-tertiary-bg`) — только заливка, без рамки. Примитив для меню и секций — без compound-API Card и без blur у GlassSurface.",
+          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary`, `bg-tertiary`) — только заливка, без рамки. Примитив для меню и секций — без compound-API Card и без blur у GlassSurface.",
       },
     },
   },

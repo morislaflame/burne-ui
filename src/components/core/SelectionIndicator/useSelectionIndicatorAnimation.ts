@@ -2,10 +2,7 @@ import { animate, remove } from "animejs";
 import { useLayoutEffect, useRef, type RefObject } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 export function useSelectionIndicatorAnimation(
   active: boolean,
@@ -52,8 +49,7 @@ export function useSelectionIndicatorAnimation(
       void animate(fill, {
         scale: active ? [0, 1] : [1, 0],
         opacity: active ? [0, 1] : [1, 0],
-        duration: MOTION_INTERACTIVE_MS,
-        ease: MOTION_INTERACTIVE_EASE,
+        ...motionInteractive(),
       });
     }
 
@@ -62,8 +58,7 @@ export function useSelectionIndicatorAnimation(
       void animate(icon, {
         opacity: active ? [0, 1] : [1, 0],
         scale: active ? [0.88, 1] : [1, 0.92],
-        duration: MOTION_INTERACTIVE_MS,
-        ease: MOTION_INTERACTIVE_EASE,
+        ...motionInteractive(),
       });
     }
   }, [active, fillRef, iconRef, reduceMotion]);

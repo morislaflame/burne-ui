@@ -20,7 +20,6 @@ import {
   initElementShadow,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
-  SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
@@ -44,29 +43,28 @@ function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
 }
 
 /**
- * Компактный Alert: фон по семантике типа (тинты surface).
- * default — плотный surface; outline — `bordered-transparent`; secondary — `surface-secondary`.
+ * Компактный Alert.
  */
 const ALERT_INLINE_SURFACE_CLASSES: Record<AlertStatus, string> = {
-  default: "border-token bg-surface text-foreground",
-  outline: "bordered-transparent text-foreground",
-  secondary: "surface-secondary text-foreground",
-  danger: "bg-surface-tint-danger text-foreground",
-  success: "bg-surface-tint-success text-foreground",
-  info: "bg-surface-tint-info text-foreground",
-  warning: "bg-surface-tint-warning text-foreground",
+  default: "bg-surface border-token text-foreground",
+  outline: "bg-transparent border-token text-foreground",
+  secondary: "bg-secondary border-token text-secondary-foreground",
+  danger: "bg-surface-tint-danger border-token text-foreground ",
+  success: "bg-surface-tint-success border-token text-foreground",
+  info: "bg-surface-tint-info border-token text-foreground",
+  warning: "bg-surface-tint-warning border-token text-foreground",
 };
 
 function alertIndicatorWrapperTextClass(tone: AlertStatus): string {
   switch (tone) {
     case "danger":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.danger;
+      return "text-danger";
     case "success":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.success;
+      return "text-success";
     case "info":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.info;
+      return "text-info";
     case "warning":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
+      return "text-warning";
     default:
       return "text-primary";
   }

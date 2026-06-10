@@ -2,10 +2,7 @@ import { animate, remove } from "animejs";
 import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 import type { TabsOrientation, TabsVariant } from "./tabsContext";
 
@@ -97,8 +94,7 @@ export function useSlidingTabIndicator(
       top: [fromTop, metrics.top],
       width: [fromWidth, metrics.width],
       height: [fromHeight, metrics.height],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
   }, [
     activeValue,

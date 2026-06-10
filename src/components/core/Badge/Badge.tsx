@@ -19,9 +19,8 @@ import {
 } from "react";
 
 import { Text, type TextVariant } from "@/components/core/Text";
-import { MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE } from "@/components/core/utils/motionTokens";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useInteractiveHoverLiftContainerHandlers, SHADOW_SM, SHADOW_MD, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
-import { SEMANTIC_STATUS_ICON_TEXT_CLASS } from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
 
 /** Семантика заливки — как у `Alert` / `AlertStatus` (включая `secondary`). */
@@ -34,19 +33,19 @@ export type BadgeColor = BadgeTone;
 export type BadgeVariant = BadgeTone;
 
 const BADGE_SURFACE: Record<BadgeTone, string> = {
-  default: "bg-primary text-primary-foreground",
-  outline: "bordered-transparent text-foreground",
-  secondary: "surface-secondary text-foreground",
-  danger: cn("bg-surface-tint-danger", SEMANTIC_STATUS_ICON_TEXT_CLASS.danger),
-  success: cn("bg-surface-tint-success", SEMANTIC_STATUS_ICON_TEXT_CLASS.success),
-  info: cn("bg-surface-tint-info", SEMANTIC_STATUS_ICON_TEXT_CLASS.info),
-  warning: cn("bg-surface-tint-warning", SEMANTIC_STATUS_ICON_TEXT_CLASS.warning),
+  default: "bg-primary border-token text-primary-foreground",
+  outline: "bg-transparent border-token text-foreground",
+  secondary: "bg-secondary border-token text-secondary-foreground",
+  danger: "bg-surface-tint-danger border-token text-danger",
+  success: "bg-surface-tint-success border-token text-success",
+  info: "bg-surface-tint-info border-token text-info",
+  warning: "bg-surface-tint-warning border-token text-warning",
 };
 
 const BADGE_DOT_FILL: Record<BadgeTone, string> = {
-  default: "bg-primary-foreground",
-  outline: "bg-primary",
-  secondary: "bg-primary",
+  default: "bg-primary",
+  outline: "bg-transparent border-token",
+  secondary: "bg-secondary",
   danger: "bg-danger",
   success: "bg-success",
   info: "bg-info",
@@ -284,7 +283,7 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     liftedRef,
     hoverLift,
     undefined,
-    MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE,
+    getMotionConfig().badgeAnchorHoverLiftScale,
     { idle: SHADOW_SM(), hover: SHADOW_MD() },
   );
 

@@ -83,7 +83,7 @@ export const OnSurface: Story = {
   name: "На панели surface",
   render: () => (
     <div
-      className="box-border w-full max-w-xl rounded-base border border-base p-mid text-foreground"
+      className="box-border w-full max-w-xl rounded-base border-token p-mid text-foreground"
       style={{ backgroundColor: "var(--color-surface)" }}
     >
       <div className="flex flex-col gap-plus">

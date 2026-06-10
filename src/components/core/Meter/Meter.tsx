@@ -11,10 +11,7 @@ import {
 
 import { sliderThicknessToCss } from "@/components/core/Slider/sliderThickness";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import { useOptionalMeterFieldContext } from "./meterFieldContext";
@@ -158,8 +155,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
       ...(isHorizontal
         ? { width: fillTargetStyle.width }
         : { height: fillTargetStyle.height }),
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
   }, [fillTargetStyle.height, fillTargetStyle.width, isHorizontal, reduceMotion]);
 

@@ -250,7 +250,7 @@ function QuickSubscribeCard() {
           Короткая форма внутри Card.Body с компонентом Form.
         </Card.Description>
       </Card.Content>
-      <Card.Body className="border-t border-base pt-mid">
+      <Card.Body className="border-t-token pt-mid">
         <Form onSubmit={onSubmit} aria-label="Подписка на рассылку">
           <Input>
             <Input.Label>Email</Input.Label>
@@ -343,7 +343,7 @@ export const HorizontalMediaSplit: Story = {
               <li>Футер с кнопками прижат внизу колонки</li>
             </ul>
           </Card.Content>
-          <Card.Footer className="mt-0 flex justify-end gap-base border-t border-base">
+          <Card.Footer className="mt-0 flex justify-end gap-base border-t-token">
             <Button variant="default" size="base" ripple>
               Записаться
             </Button>
@@ -367,9 +367,9 @@ export const BodyImageGrid: Story = {
           <code className="text-xs">mockImages</code>.
         </Card.Description>
       </Card.Content>
-      <Card.Body className="border-t border-base px-mid pb-mid pt-mid">
+      <Card.Body className="border-t-token px-mid pb-mid pt-mid">
         <div className="grid grid-cols-1 gap-small min-[480px]:grid-cols-2">
-          <figure className="min-w-0 overflow-hidden rounded-base border border-base flex flex-col gap-xsmall">
+          <figure className="min-w-0 overflow-hidden rounded-base border-token flex flex-col gap-xsmall">
             <img
               src={PIN_IMAGE1}
               alt="Портрет в красном шлеме"
@@ -378,7 +378,7 @@ export const BodyImageGrid: Story = {
             />
             <figcaption className="px-base py-xsmall text-tools text-muted">Кадр A</figcaption>
           </figure>
-          <figure className="min-w-0 overflow-hidden rounded-base border border-base flex flex-col gap-xsmall">
+          <figure className="min-w-0 overflow-hidden rounded-base border-token flex flex-col gap-xsmall">
             <img
               src={PIN_IMAGE4}
               alt="Минималистичная сцена"
@@ -469,17 +469,17 @@ export const StepsWithSeparators: Story = {
         <Card.Description>Три шага и <code className="text-xs">Separator</code> между блоками.</Card.Description>
       </Card.Content>
       <div className="px-mid pb-mid flex flex-col gap-small">
-        <div className="rounded-base border border-base px-base py-small flex flex-col gap-xsmall">
+        <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
           <p className="text-small font-medium text-foreground">1. Черновик</p>
           <p className="mt-xsmall text-tools text-muted">Текст и медиа собраны.</p>
         </div>
         <Separator className="my-small" />
-        <div className="rounded-base border border-base px-base py-small flex flex-col gap-xsmall">
+        <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
           <p className="text-small font-medium text-foreground">2. Редакция</p>
           <p className="mt-xsmall text-tools text-muted">Правки и согласование.</p>
         </div>
         <Separator className="my-small" />
-        <div className="rounded-base border border-base px-base py-small flex flex-col gap-xsmall">
+        <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
           <p className="text-small font-medium text-foreground">3. Выход</p>
           <p className="mt-xsmall text-tools text-muted">Публикация и рассылка.</p>
         </div>

@@ -201,7 +201,7 @@ export const SliderChannels: Story = {
         />
         <div className="mt-small flex items-center gap-small">
           <div
-            className="h-8 w-8 rounded-small border border-base"
+            className="h-8 w-8 rounded-small border-token"
             style={{ backgroundColor: hsvaToColorString(hsva) }}
           />
           <Text as="span" variant="small" className="font-mono text-muted">

@@ -29,13 +29,9 @@ import {
 } from "@/components/core/Button";
 import { CloseButton } from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import {
-  SEMANTIC_STATUS_ICON_TEXT_CLASS,
   SEMANTIC_STATUS_ICONS,
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
@@ -95,10 +91,10 @@ const ALERT_DIALOG_SHELL_FILLED =
 
 function alertDialogPanelClass(tone: AlertStatus): string {
   if (tone === "outline") {
-    return "bordered-transparent text-foreground shadow-token-lg";
+    return "bg-transparent border-token text-foreground shadow-token-lg";
   }
   if (tone === "secondary") {
-    return "surface-secondary text-foreground shadow-token-lg";
+    return "bg-secondary border-token text-secondary-foreground shadow-token-lg";
   }
   return ALERT_DIALOG_SHELL_FILLED;
 }
@@ -110,13 +106,13 @@ function alertDialogShowsDefaultHeaderIcon(tone: AlertStatus): boolean {
 function alertDialogHeaderIconWrapperClass(tone: AlertStatus): string {
   switch (tone) {
     case "danger":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.danger;
+      return "text-danger";
     case "success":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.success;
+      return "text-success";
     case "info":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.info;
+      return "text-info";
     case "warning":
-      return SEMANTIC_STATUS_ICON_TEXT_CLASS.warning;
+      return "text-warning";
     default:
       return "text-primary";
   }
@@ -368,14 +364,12 @@ export const AlertDialogRoot = function AlertDialog({
     remove(panel);
     const animOverlay = animate(overlay, {
       opacity: [1, 0],
-      duration: 200,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
     const animPanel = animate(panel, {
       opacity: [1, 0],
       scale: [1, 0.97],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
 
     void Promise.all([
@@ -415,14 +409,12 @@ export const AlertDialogRoot = function AlertDialog({
     remove(panel);
     animate(overlay, {
       opacity: [0, 1],
-      duration: 200,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
     animate(panel, {
       opacity: [0, 1],
       scale: [0.97, 1],
-      duration: MOTION_INTERACTIVE_MS,
-      ease: MOTION_INTERACTIVE_EASE,
+      ...motionInteractive(),
     });
     panel.focus();
   }, [open, mounted]);

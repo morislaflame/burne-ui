@@ -215,7 +215,7 @@ export const FilterList: Story = {
         </p>
         <ul className="flex list-none flex-col gap-plus p-0">
           {filtered.length === 0 ? (
-            <li className="rounded-mid border border-dashed border-base px-mid py-xlarge text-center text-sm text-muted">
+            <li className="rounded-mid border-token border-dashed px-mid py-xlarge text-center text-sm text-muted">
               Ничего не подошло под «{query.trim() || "…"}». Попробуйте другой
               запрос.
             </li>

@@ -38,7 +38,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const CARD_RADIO_CLASS = cn(
-  "group relative flex flex-col gap-plus rounded-mid border border-base bg-surface px-plus py-mid transition-colors",
+  "group relative flex flex-col gap-plus rounded-mid border-token bg-surface px-plus py-mid transition-colors",
   "data-[selected=true]:border-primary data-[selected=true]:bg-primary-tint",
   "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-primary-tint",
 );
@@ -97,7 +97,7 @@ export const CardLayout: Story = {
             <Radio key={option.value} value={option.value} className={CARD_RADIO_CLASS}>
               <Radio.Control className="absolute top-plus right-plus size-5" />
               <Radio.Content className="flex flex-col gap-plus pr-xlarge">
-                <span className="inline-flex size-10 items-center justify-center rounded-base border border-base bg-surface-secondary text-primary">
+                <span className="inline-flex size-10 items-center justify-center rounded-base border-token bg-secondary text-foreground">
                   <option.icon className="size-5" aria-hidden />
                 </span>
                 <div className="flex flex-col gap-xsmall">

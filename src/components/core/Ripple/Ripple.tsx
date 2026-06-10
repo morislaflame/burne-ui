@@ -1,10 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
-} from "@/components/core/utils/motionTokens";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import {
   ConvergeRippleLayer,
   type RippleDirection,
@@ -61,7 +58,7 @@ export function Ripple({
   color,
   tone,
   disabled = false,
-  duration = MOTION_RIPPLE_DEFAULT_DURATION_MS,
+  duration = getMotionConfig().rippleDefaultDuration,
   direction = "in",
   className = "",
 }: RippleProps) {
@@ -101,7 +98,7 @@ export function Ripple({
         tone={paint}
         onDone={dismiss}
         durationMs={duration}
-        opacityFrom={MOTION_RIPPLE_DEFAULT_OPACITY_FROM}
+        opacityFrom={getMotionConfig().rippleDefaultOpacityFrom}
         direction={direction}
       />
     </span>

@@ -290,7 +290,7 @@ export const CornersViaAnchorPlacement: Story = {
       <div className="grid grid-cols-2 gap-xlarge sm:grid-cols-4">
         {CORNER_LABELS.map(([placement, label]) => (
           <div key={placement} className="flex flex-col items-center gap-base">
-            <Badge.Anchor className="box-border h-24 w-24 rounded-2xl border border-dashed border-base bg-surface/40 shadow-none">
+            <Badge.Anchor className="box-border h-24 w-24 rounded-2xl border-token border-dashed bg-surface/40 shadow-none">
               <Badge color="danger" size="base" placement={placement}>
                 3
               </Badge>

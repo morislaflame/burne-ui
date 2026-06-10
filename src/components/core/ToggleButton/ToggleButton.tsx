@@ -102,7 +102,7 @@ const TOGGLE_BUTTON_VARIANT: Record<ToggleButtonVariant, ToggleButtonVariantVisu
     pressedBorder: "border-primary",
   },
   outline: {
-    idle: "bordered-transparent text-foreground",
+    idle: "bg-transparent border-token text-foreground",
     hoverIdle: "hover:bg-primary-tint",
     pressedBorder: "border-primary",
   },

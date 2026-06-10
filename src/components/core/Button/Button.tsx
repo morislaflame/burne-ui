@@ -21,11 +21,7 @@ import {
   prefersReducedInteractiveHoverLift,
   SHADOW_SM,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_FEEDBACK_EXPAND_MS,
-  MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  MOTION_RIPPLE_EASE_CSS,
-} from "@/components/core/utils/motionTokens";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
 import {
@@ -77,17 +73,17 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
     hoverIdle: "hover:bg-primary-hover",
   },
   outline: {
-    root: "bordered-transparent text-foreground",
+    root: "bg-transparent border-token text-foreground",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
     loaderText: "text-foreground",
     hoverIdle: "hover:bg-primary-tint",
   },
   secondary: {
-    root: "surface-secondary text-foreground",
+    root: "bg-secondary text-secondary-foreground border border-transparent",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
-    loaderText: "text-foreground",
+    loaderText: "text-secondary-foreground",
     hoverIdle: "hover:bg-secondary-hover",
   },
   ghost: {
@@ -542,7 +538,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           <Ripple
             color={vn.convergeBg}
             disabled={blocked || asyncState !== "idle"}
-            duration={MOTION_RIPPLE_DEFAULT_DURATION_MS}
+            duration={getMotionConfig().rippleDefaultDuration}
             className={clipClass}
           />
         ) : null}
@@ -567,7 +563,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     ? "color-mix(in oklab, var(--color-success) 55%, transparent)"
                     : "color-mix(in oklab, var(--color-danger) 55%, transparent)",
                 animation:
-                  `button-ripple-expand ${MOTION_FEEDBACK_EXPAND_MS}ms ${MOTION_RIPPLE_EASE_CSS} forwards`,
+                  `button-ripple-expand ${getMotionConfig().feedbackExpandDuration}ms ${getMotionConfig().rippleEaseCss} forwards`,
               }}
               onAnimationEnd={() => dismissExpand(rp.id)}
             />

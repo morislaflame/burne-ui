@@ -157,7 +157,7 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
             : isToday || isCurrent
               ? "font-semibold text-primary"
               : "text-foreground",
-          !selected && !disabled && "hover:bg-surface-secondary/60",
+          !selected && !disabled && "hover:bg-secondary/60",
           disabled ? "cursor-not-allowed opacity-35" : "cursor-pointer",
           className,
         )}

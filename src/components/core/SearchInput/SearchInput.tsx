@@ -25,10 +25,7 @@ import {
   prefersReducedInteractiveHoverLift,
   SHADOW_SM,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
@@ -318,13 +315,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             width: targetW,
             height: dim,
             borderRadius: layout.radiusExpanded,
-            duration: MOTION_INTERACTIVE_MS,
-            ease: MOTION_INTERACTIVE_EASE,
+            ...motionInteractive(),
           });
           animate(iconEl, {
             left: layout.padX,
-            duration: MOTION_INTERACTIVE_MS,
-            ease: MOTION_INTERACTIVE_EASE,
+            ...motionInteractive(),
           });
           return;
         }
@@ -335,8 +330,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           width: dim,
           height: dim,
           borderRadius: dim / 2,
-          duration: MOTION_INTERACTIVE_MS,
-          ease: MOTION_INTERACTIVE_EASE,
+          ...motionInteractive(),
         });
 
         const borderPx = shellHorizontalBorderPx(el);
@@ -344,8 +338,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
         animate(iconEl, {
           left: iconLeftTo,
-          duration: MOTION_INTERACTIVE_MS,
-          ease: MOTION_INTERACTIVE_EASE,
+          ...motionInteractive(),
           onComplete: () => {
             iconEl.style.left = iconLeftCollapsedCss;
           },

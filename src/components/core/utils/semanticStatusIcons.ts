@@ -15,11 +15,3 @@ export const SEMANTIC_STATUS_ICONS: Record<SemanticStatus, IconType> = {
   info: IoInformationCircleOutline,
   warning: IoWarning,
 };
-
-export const SEMANTIC_STATUS_ICON_TEXT_CLASS: Record<SemanticStatus, string> =
-  {
-    danger: "text-danger",
-    success: "text-success",
-    info: "text-info",
-    warning: "text-warning",
-  };

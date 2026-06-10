@@ -163,7 +163,7 @@ function TagColorPopoverDemo() {
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-base rounded-base border border-base bg-surface-secondary px-base py-small">
+            <div className="flex items-center gap-base rounded-base border-token bg-secondary px-base py-small">
               <span className={cn("size-4 shrink-0 rounded-full", active.className)} aria-hidden />
               <Text as="span" variant="small">
                 {active.label}
@@ -282,7 +282,7 @@ export const Accessibility: Story = {
         <code className="text-primary">aria-describedby</code> от Header. Триггер —{" "}
         <code className="text-primary">aria-expanded</code> и{" "}
         <code className="text-primary">aria-controls</code>. Закрытие: клик вне панели,{" "}
-        <kbd className="rounded-small border border-base px-xsmall py-0.5 text-tools">Escape</kbd>.
+        <kbd className="rounded-small border-token px-xsmall py-0.5 text-tools">Escape</kbd>.
       </p>
       <Popover>
         <Popover.Trigger>

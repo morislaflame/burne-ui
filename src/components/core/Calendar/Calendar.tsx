@@ -94,8 +94,8 @@ const HEADER_TEXT: Record<CalendarSize, string> = {
 
 const ROOT_SURFACE: Record<CalendarVariant, string> = {
   default:   "rounded-large border-token bg-surface shadow-token-sm",
-  secondary: "rounded-large surface-secondary",
-  outline:   "rounded-large bordered-transparent",
+  secondary: "rounded-large border-token bg-secondary shadow-token-sm",
+  outline:   "rounded-large bg-transparent border-token shadow-token-sm",
 };
 
 const MONTH_GRID_GAP: Record<CalendarSize, string> = {
@@ -453,7 +453,7 @@ function CalendarNavButton({
       onPointerDown={handlePointerDown}
       className={cn(
         "flex shrink-0 origin-center items-center justify-center rounded-base will-change-transform",
-        "text-muted transition-colors hover:bg-surface-secondary hover:text-foreground",
+        "text-muted transition-colors hover:bg-secondary hover:text-secondary-foreground",
         "focus-ring",
         "disabled:cursor-not-allowed disabled:opacity-40",
         NAV_BTN[size],

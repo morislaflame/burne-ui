@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 function TypographySamples() {
   return (
     <div
-      className="box-border w-full max-w-3xl rounded-base border border-base p-mid text-foreground shadow-sm"
+      className="box-border w-full max-w-3xl rounded-base border-token p-mid text-foreground shadow-sm"
       style={{ backgroundColor: "var(--color-surface)" }}
     >
       <div className="flex flex-col gap-mid">

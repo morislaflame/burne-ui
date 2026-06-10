@@ -13,7 +13,7 @@ export type SeparatorProps = Omit<
 };
 
 /**
- * Разделитель списков и блоков — по теме (`border-base`).
+ * Разделитель списков и блоков — по теме (`border-token`).
  */
 export const Separator = forwardRef<HTMLElement, SeparatorProps>(
   function Separator(

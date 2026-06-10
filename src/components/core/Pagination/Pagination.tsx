@@ -22,11 +22,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  MOTION_HOVER_LIFT_SCALE,
-  MOTION_INTERACTIVE_EASE,
-  MOTION_INTERACTIVE_MS,
-} from "@/components/core/utils/motionTokens";
+import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -76,7 +72,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
         const el = liftRef.current;
         if (!el || prefersReducedInteractiveHoverLift()) return;
         hoverInsideRef.current = true;
-        animateInteractiveHoverLift(el, true, MOTION_HOVER_LIFT_SCALE);
+        animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
       },
       [disabled, onPointerEnter],
     );
@@ -87,7 +83,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
         hoverInsideRef.current = false;
         const el = liftRef.current;
         if (!el || prefersReducedInteractiveHoverLift()) return;
-        animateInteractiveHoverLift(el, false, MOTION_HOVER_LIFT_SCALE);
+        animateInteractiveHoverLift(el, false, getMotionConfig().hoverLiftScale);
       },
       [onPointerLeave],
     );
@@ -107,7 +103,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
           ) {
             return;
           }
-          animateInteractiveHoverLift(shell, true, MOTION_HOVER_LIFT_SCALE);
+          animateInteractiveHoverLift(shell, true, getMotionConfig().hoverLiftScale);
         });
       },
       [disabled, onPointerDown],
@@ -248,8 +244,7 @@ function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
           el.style.willChange = "transform";
           void animate(el, {
             translateX: [dx, 0],
-            duration: MOTION_INTERACTIVE_MS,
-            ease: MOTION_INTERACTIVE_EASE,
+            ...motionInteractive(),
             onComplete: () => {
               el.style.willChange = "";
             },
@@ -260,8 +255,7 @@ function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
         void animate(el, {
           opacity: [0, 1],
           scale: [0.82, 1],
-          duration: MOTION_INTERACTIVE_MS,
-          ease: MOTION_INTERACTIVE_EASE,
+          ...motionInteractive(),
         });
       }
     }

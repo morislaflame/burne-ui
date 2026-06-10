@@ -1,12 +1,21 @@
-import { animate, remove } from "animejs";
+import { animate, cubicBezier, remove } from "animejs";
 import { useLayoutEffect, useRef } from "react";
 import type { ConvergeRipple } from "./convergeRippleGeometry";
-import {
-  MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
-  MOTION_RIPPLE_EASE,
-  MOTION_RIPPLE_MIN_SCALE,
-} from "./motionTokens";
+import { getMotionConfig } from "./motionConfig";
+
+/** Минимальный масштаб «ядра» ripple — визуальная константа, не конфигурируется. */
+const RIPPLE_MIN_SCALE = 0.12;
+
+/**
+ * Строит animejs-easing из rippleEaseCss.
+ * Если строка содержит `cubic-bezier(...)` — парсим числа, иначе передаём как есть.
+ */
+function getRippleEase() {
+  const css = getMotionConfig().rippleEaseCss;
+  const m = /cubic-bezier\(\s*([\d.]+),\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\s*\)/.exec(css);
+  if (m) return cubicBezier(+m[1]!, +m[2]!, +m[3]!, +m[4]!);
+  return css;
+}
 
 export type RippleDirection = "in" | "out";
 
@@ -36,13 +45,13 @@ function ConvergeRippleDot({
     if (!el) return;
     let finished = false;
     remove(el);
-    const scaleFrom = direction === "out" ? MOTION_RIPPLE_MIN_SCALE : 1;
-    const scaleTo = direction === "out" ? 1 : MOTION_RIPPLE_MIN_SCALE;
+    const scaleFrom = direction === "out" ? RIPPLE_MIN_SCALE : 1;
+    const scaleTo = direction === "out" ? 1 : RIPPLE_MIN_SCALE;
     const anim = animate(el, {
       scale: [scaleFrom, scaleTo],
       opacity: [opacityFrom, 0],
       duration: durationMs,
-      ease: MOTION_RIPPLE_EASE,
+      ease: getRippleEase(),
     });
     void anim.then(() => {
       if (!finished) onDoneRef.current(id);
@@ -65,7 +74,7 @@ function ConvergeRippleDot({
         height: size,
         background,
         transformOrigin: "center center",
-        transform: `scale(${direction === "out" ? MOTION_RIPPLE_MIN_SCALE : 1})`,
+        transform: `scale(${direction === "out" ? RIPPLE_MIN_SCALE : 1})`,
       }}
       aria-hidden
     />
@@ -76,8 +85,8 @@ export function ConvergeRippleLayer({
   ripples,
   tone,
   onDone,
-  durationMs = MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  opacityFrom = MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
+  durationMs = getMotionConfig().rippleDefaultDuration,
+  opacityFrom = getMotionConfig().rippleDefaultOpacityFrom,
   direction = "in",
 }: {
   ripples: ConvergeRipple[];
