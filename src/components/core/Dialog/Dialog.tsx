@@ -71,7 +71,7 @@ export function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 items-start gap-plus px-mid pt-mid pb-plus text-left",
+        "flex shrink-0 items-start gap-plus px-large pt-mid pb-plus text-left",
         className,
       )}
       {...rest}
@@ -161,7 +161,7 @@ export function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
       className={cn(
-        "min-h-0 flex-1 overflow-y-auto py-plus px-mid",
+        "min-h-0 flex-1 overflow-y-auto py-plus px-large",
         className,
       )}
       {...rest}
@@ -173,7 +173,7 @@ export function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t-token py-plus px-mid",
+        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t-token py-plus px-large",
         className,
       )}
       {...rest}

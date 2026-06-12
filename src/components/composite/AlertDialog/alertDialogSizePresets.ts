@@ -36,7 +36,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     panelMax: "max-w-component-mid",
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-x-plus gap-y-xsmall",
-    headerPad: "px-mid pt-mid pb-plus",
+    headerPad: "px-large pt-mid pb-plus",
     bodyPad: "py-plus px-mid",
     footerPad: "py-plus px-mid gap-base",
     headingBlockGap: "flex min-w-0 flex-col gap-base",
