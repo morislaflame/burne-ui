@@ -6,6 +6,8 @@
  * - `--space` — отступы (gap, padding); ступени `gap-*`, `p-*` через множители.
  * - `--size` — размеры контролов (иконки, индикаторы, min-width кнопок, max-w модалок).
  * - `--radius` — базовый радиус; ступени `rounded-*` через множители.
+ * - `--shadow-size` — множитель blur/offset для `--shadow-sm|md|lg`.
+ * - `--calendar-cell-gap` — зазор между ячейками календаря (0 при дефолтном `--space`).
  * - `--text-scale-*` — примитивная типографика; роли `text-base`, `text-large` — алиасы.
  */
 export const tokensConfig = {
@@ -121,5 +123,13 @@ export const burneTextScale = [
   "header-2",
   "large",
 ] as const;
+
+export {
+  burneShadowScale,
+  type ShadowSize,
+  type ShadowLevel,
+  SHADOW_CSS_VAR,
+  shadowToken,
+} from "./shadows";
 
 export type TokensConfig = typeof tokensConfig;

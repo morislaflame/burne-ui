@@ -1,4 +1,4 @@
-import { remove } from "animejs";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import {
   forwardRef,
   useCallback,
@@ -27,7 +27,8 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
+  shouldSkipInteractiveHoverLift,
+  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
 
@@ -183,7 +184,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
     const fillRef = useRef<HTMLSpanElement>(null);
     const hoverPointerInsideRef = useRef(false);
 
-    useToggleButtonFillAnimation(pressed, fillRef);
+    const { animateTo } = useToggleButtonFillAnimation(pressed, fillRef);
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -198,16 +199,16 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       const el = btnRef.current;
       if (!el || !disabled) return;
       hoverPointerInsideRef.current = false;
-      remove(el);
+      killMotion(el);
     }, [disabled]);
 
-    const btnShadow = useMemo(() => ({ hover: SHADOW_SM() }), []);
+    const btnShadow = useMemo(() => ({ hover: shadowSm() }), []);
 
     const handlePointerEnter = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerEnter?.(e);
         if (e.defaultPrevented || disabled || !animated) return;
-        if (prefersReducedInteractiveHoverLift()) return;
+        if (shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
@@ -220,7 +221,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerLeave?.(e);
         hoverPointerInsideRef.current = false;
-        if (!animated || prefersReducedInteractiveHoverLift()) return;
+        if (!animated || shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el || disabled) return;
         animateInteractiveHoverLift(el, false, undefined, btnShadow);
@@ -237,7 +238,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         if (!el) return;
         void animateInteractivePressSqueeze(el).then(() => {
           const btn = btnRef.current;
-          if (!btn || disabled || prefersReducedInteractiveHoverLift()) return;
+          if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
           if (hoverPointerInsideRef.current) {
             animateInteractiveHoverLift(btn, true, undefined, btnShadow);
           }
@@ -251,16 +252,28 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         onClick?.(e);
         if (e.defaultPrevented || disabled) return;
 
+        const next = !pressed;
+        animateTo(next);
+
         if (inGroup && itemValue != null) {
           groupCtx!.select(itemValue);
           return;
         }
 
-        const next = !pressed;
         setLocalPressed(next);
         onPressedChange?.(next);
       },
-      [disabled, groupCtx, inGroup, itemValue, onClick, onPressedChange, pressed, setLocalPressed],
+      [
+        animateTo,
+        disabled,
+        groupCtx,
+        inGroup,
+        itemValue,
+        onClick,
+        onPressedChange,
+        pressed,
+        setLocalPressed,
+      ],
     );
 
     const sz = TOGGLE_BUTTON_SIZE[size];
@@ -284,7 +297,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         aria-checked={inGroup && isSingleGroup ? pressed : undefined}
         tabIndex={inGroup && isSingleGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined}
         className={cn(
-          "relative inline-flex origin-center items-center justify-center overflow-hidden outline-none",
+          "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none",
           "font-medium focus-ring",
           "animate-shadow will-change-transform",
           "button-idle-surface-transition motion-reduce:transition-none",
@@ -308,10 +321,9 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
           ref={fillRef}
           aria-hidden
           className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
+            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary transition-colors duration-normal ease-out motion-reduce:transition-none group-hover/toggle:bg-primary-hover",
             roundingClass,
           )}
-          style={{ transform: "scale(0)", opacity: 0 }}
         />
         <span className="relative z-[1] inline-flex min-w-0 items-center justify-center gap-xsmall">
           {leftIcon != null ? (

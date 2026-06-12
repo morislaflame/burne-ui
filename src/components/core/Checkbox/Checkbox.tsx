@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   Children,
   forwardRef,
@@ -166,7 +166,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
       const track = trackRef.current;
       if (!track) return;
       if (reduceMotion) {
-        remove(track);
+        killMotion(track);
         track.style.opacity = ctx.isDisabled ? "0.48" : "1";
         return;
       }
@@ -177,13 +177,18 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
         return;
       }
 
-      remove(track);
+      killMotion(track);
       const from = Number.parseFloat(getComputedStyle(track).opacity);
       const start = Number.isFinite(from) ? from : 1;
-      void animate(track, {
-      opacity: ctx.isDisabled ? [start, 0.48] : [start, 1],
-      ...motionInteractive(),
-    });
+      void gsap.fromTo(
+        track,
+        { autoAlpha: start },
+        {
+          autoAlpha: ctx.isDisabled ? 0.48 : 1,
+          ...motionInteractive(),
+          overwrite: "auto",
+        },
+      );
     }, [ctx.isDisabled, reduceMotion]);
 
     return (
@@ -464,14 +469,14 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
   useEffect(() => {
     const el = textColRef.current;
     return () => {
-      if (el) remove(el);
+      if (el) killMotion(el);
     };
   }, []);
 
   useEffect(() => {
     const el = textColRef.current;
     if (!el || !isDisabled) return;
-    remove(el);
+    killMotion(el);
     el.style.transform = "";
   }, [isDisabled]);
 

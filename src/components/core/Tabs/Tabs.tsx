@@ -19,7 +19,7 @@ import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
+  shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
@@ -340,7 +340,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       onPointerEnter?.(e);
       if (e.defaultPrevented || isDisabled || isSelected) return;
       const el = motionRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || shouldSkipInteractiveHoverLift()) return;
       animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
     },
     [isDisabled, isSelected, onPointerEnter],
@@ -362,7 +362,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       onPointerDown?.(e);
       if (e.defaultPrevented || isDisabled) return;
       const el = motionRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || shouldSkipInteractiveHoverLift()) return;
       void animateInteractivePressSqueeze(el);
     },
     [isDisabled, onPointerDown],

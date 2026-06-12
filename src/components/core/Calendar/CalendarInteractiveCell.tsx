@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  memo,
   useCallback,
   useRef,
   type PointerEvent,
@@ -13,6 +14,7 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
+  shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
 
@@ -62,7 +64,7 @@ type CalendarInteractiveCellProps = {
   children: ReactNode;
 };
 
-export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInteractiveCellProps>(
+const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInteractiveCellProps>(
   function CalendarInteractiveCell(
     {
       selected,
@@ -84,8 +86,15 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
     const btnRef = useRef<HTMLButtonElement>(null);
     const fillRef = useRef<HTMLSpanElement>(null);
     const hoverInsideRef = useRef(false);
+    const onPressRef = useRef(onPress);
+    const onMouseEnterRef = useRef(onMouseEnter);
+    const onMouseLeaveRef = useRef(onMouseLeave);
 
-    useToggleButtonFillAnimation(selected, fillRef);
+    onPressRef.current = onPress;
+    onMouseEnterRef.current = onMouseEnter;
+    onMouseLeaveRef.current = onMouseLeave;
+
+    const { animateTo } = useToggleButtonFillAnimation(selected, fillRef);
 
     const rounding = rounded === "full" ? "rounded-full" : "rounded-mid";
     const isDay = rounded === "full";
@@ -101,25 +110,31 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
       [ref],
     );
 
+    const handleClick = useCallback(() => {
+      if (disabled) return;
+      animateTo(!selected);
+      onPressRef.current();
+    }, [animateTo, disabled, selected]);
+
     const handlePointerEnter = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
-        onMouseEnter?.();
+        onMouseEnterRef.current?.();
         if (disabled || e.defaultPrevented) return;
         hoverInsideRef.current = true;
         const el = btnRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        if (!el || shouldSkipInteractiveHoverLift()) return;
         animateInteractiveHoverLift(el, true);
       },
-      [disabled, onMouseEnter],
+      [disabled],
     );
 
     const handlePointerLeave = useCallback(() => {
-        onMouseLeave?.();
-        hoverInsideRef.current = false;
-        const el = btnRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
-        animateInteractiveHoverLift(el, false);
-    }, [onMouseLeave]);
+      onMouseLeaveRef.current?.();
+      hoverInsideRef.current = false;
+      const el = btnRef.current;
+      if (!el || shouldSkipInteractiveHoverLift()) return;
+      animateInteractiveHoverLift(el, false);
+    }, []);
 
     const handlePointerDown = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
@@ -128,7 +143,7 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
         if (!el || prefersReducedInteractiveHoverLift()) return;
         void animateInteractivePressSqueeze(el).then(() => {
           const btn = btnRef.current;
-          if (!btn || disabled || prefersReducedInteractiveHoverLift()) return;
+          if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
           if (hoverInsideRef.current) animateInteractiveHoverLift(btn, true);
         });
       },
@@ -143,12 +158,12 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
         aria-pressed={ariaSelected}
         aria-disabled={disabled}
         disabled={disabled}
-        onClick={onPress}
+        onClick={handleClick}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
         className={cn(
-          "relative inline-flex origin-center items-center justify-center overflow-hidden outline-none will-change-transform",
+          "group/calendar-cell relative inline-flex origin-center items-center justify-center overflow-hidden outline-none will-change-transform",
           "focus-ring",
           rounding,
           sizeClass,
@@ -166,16 +181,17 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
           ref={fillRef}
           aria-hidden
           className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
+            "pointer-events-none absolute -inset-px z-0 origin-center will-change-transform bg-primary transition-colors duration-normal ease-out motion-reduce:transition-none group-hover/calendar-cell:bg-primary-hover",
             rounding,
           )}
-          style={{ transform: "scale(0)", opacity: 0 }}
         />
         <Text
           variant={textVariant}
           as="span"
           inheritColor
-          className="relative z-[1] min-w-0 shrink-0 leading-none"
+          className={cn(
+            "relative z-[1] min-w-0 shrink-0 leading-none transition-colors duration-normal ease-out motion-reduce:transition-none",
+          )}
         >
           {children}
         </Text>
@@ -189,6 +205,26 @@ export const CalendarInteractiveCell = forwardRef<HTMLButtonElement, CalendarInt
     );
   },
 );
+
+function calendarCellPropsEqual(
+  prev: CalendarInteractiveCellProps,
+  next: CalendarInteractiveCellProps,
+): boolean {
+  return (
+    prev.selected === next.selected &&
+    prev.disabled === next.disabled &&
+    prev.size === next.size &&
+    prev.rounded === next.rounded &&
+    prev.isToday === next.isToday &&
+    prev.isCurrent === next.isCurrent &&
+    prev.ariaLabel === next.ariaLabel &&
+    prev.ariaSelected === next.ariaSelected &&
+    prev.className === next.className &&
+    prev.children === next.children
+  );
+}
+
+export const CalendarInteractiveCell = memo(CalendarInteractiveCellInner, calendarCellPropsEqual);
 
 CalendarInteractiveCell.displayName = "CalendarInteractiveCell";
 

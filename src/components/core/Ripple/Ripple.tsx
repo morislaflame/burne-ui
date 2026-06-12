@@ -50,7 +50,7 @@ export type RippleProps = {
 /** Начальная непрозрачность точки задаётся в motion-токенах (не часть публичного API). */
 
 /**
- * Сходящийся или расходящийся риппл от точки нажатия (anime.js). Слушатель вешается на ближайший
+ * Сходящийся или расходящийся риппл от точки нажатия (GSAP). Слушатель вешается на ближайший
  * интерактивный корень (`button`, ссылка, `[role='button']`) или на родителя слоя. У
  * `Expandable.Trigger` узлы `<Ripple />` выносятся на полный размер кнопки.
  */
@@ -74,7 +74,7 @@ export function Ripple({
     if (!target) return;
 
     const handler = (ev: PointerEvent) => {
-      if (disabled || prefersReducedInteractiveHoverLift()) return;
+      if (disabled || prefersReducedInteractiveHoverLift() || !getMotionConfig().enableRipple) return;
       if (ev.defaultPrevented) return;
       if (ev.pointerType === "mouse" && ev.button !== 0) return;
       pushAtClientCoords(target, ev.clientX, ev.clientY);

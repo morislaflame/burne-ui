@@ -1,10 +1,12 @@
 import { forwardRef, type HTMLAttributes } from "react";
 
 import { cn } from "@/utils/cn";
+import type { ShadowSize } from "@/tokens/shadows";
 
 export type SurfaceVariant = "default" | "secondary" | "tertiary";
 
-export type SurfaceShadow = "none" | "sm" | "md" | "lg";
+/** @alias ShadowSize */
+export type SurfaceShadow = ShadowSize;
 
 export type SurfacePadding = "none" | "small" | "base" | "plus" | "mid";
 

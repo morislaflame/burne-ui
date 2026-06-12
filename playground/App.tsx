@@ -1,11 +1,13 @@
 import { useState } from "react";
 
 import { Button } from "@/components/core/Button";
+import { Switch } from "@/components/core/Switch";
 import { cn } from "@/utils/cn";
 
 import { ComponentsShowcase } from "./ComponentsShowcase";
 import { FresnelTorusDemo } from "./FresnelTorusDemo";
 import { ThemePlayground } from "./ThemePlayground";
+import { ThemeTokensProvider, useThemeTokens } from "./useThemeTokens";
 
 type PlaygroundPage = "components" | "theme" | "fresnel";
 
@@ -15,14 +17,27 @@ const NAV: { id: PlaygroundPage; label: string }[] = [
   { id: "fresnel", label: "Fresnel 3D" },
 ];
 
-export function App() {
-  const [page, setPage] = useState<PlaygroundPage>("components");
+function AppHeader({
+  page,
+  onPageChange,
+}: {
+  page: PlaygroundPage;
+  onPageChange: (page: PlaygroundPage) => void;
+}) {
+  const { state, setTheme } = useThemeTokens();
 
   return (
-    <div className="min-h-[100dvh] bg-background text-foreground">
-      <header className="sticky top-0 z-20 border-b-token bg-surface/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-4xl items-center justify-between gap-mid px-mid py-small">
-          <span className="text-sm font-medium">Burne UI Playground</span>
+    <header className="sticky top-0 z-20 border-b-token bg-surface/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-4xl items-center justify-between gap-mid px-mid py-small">
+        <span className="text-sm font-medium">Burne UI Playground</span>
+        <div className="flex items-center gap-plus">
+          <Switch
+            size="small"
+            checked={state.theme === "light"}
+            onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
+            label="Светлая тема"
+            className="shrink-0"
+          />
           <nav className="flex gap-xsmall" aria-label="Разделы playground">
             {NAV.map((item) => (
               <Button
@@ -31,14 +46,24 @@ export function App() {
                 size="small"
                 variant={page === item.id ? "default" : "ghost"}
                 className={cn(page !== item.id && "text-muted")}
-                onClick={() => setPage(item.id)}
+                onClick={() => onPageChange(item.id)}
               >
                 {item.label}
               </Button>
             ))}
           </nav>
         </div>
-      </header>
+      </div>
+    </header>
+  );
+}
+
+function AppBody() {
+  const [page, setPage] = useState<PlaygroundPage>("components");
+
+  return (
+    <div className="min-h-[100dvh] bg-background text-foreground">
+      <AppHeader page={page} onPageChange={setPage} />
 
       {page === "components" ? (
         <ComponentsShowcase />
@@ -60,5 +85,13 @@ export function App() {
         </div>
       )}
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <ThemeTokensProvider>
+      <AppBody />
+    </ThemeTokensProvider>
   );
 }

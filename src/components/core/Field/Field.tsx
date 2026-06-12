@@ -19,7 +19,7 @@ export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
 
 export function FieldRoot({ className, children, ...rest }: FieldRootProps) {
   return (
-    <div className={cn("flex w-full flex-col gap-xsmall", className)} {...rest}>
+    <div className={cn("flex w-full flex-col gap-small", className)} {...rest}>
       {children}
     </div>
   );

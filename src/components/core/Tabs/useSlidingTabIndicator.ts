@@ -1,7 +1,7 @@
-import { animate, remove } from "animejs";
 import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 import type { TabsOrientation, TabsVariant } from "./tabsContext";
@@ -78,7 +78,7 @@ export function useSlidingTabIndicator(
     indicator.style.opacity = "1";
 
     if (reduceMotion || firstLayoutRef.current) {
-      remove(indicator);
+      killMotion(indicator);
       applyIndicatorStyle(indicator, metrics);
       return;
     }
@@ -88,14 +88,12 @@ export function useSlidingTabIndicator(
     const fromWidth = indicator.offsetWidth;
     const fromHeight = indicator.offsetHeight;
 
-    remove(indicator);
-    void animate(indicator, {
-      left: [fromLeft, metrics.left],
-      top: [fromTop, metrics.top],
-      width: [fromWidth, metrics.width],
-      height: [fromHeight, metrics.height],
-      ...motionInteractive(),
-    });
+    killMotion(indicator);
+    gsap.fromTo(
+      indicator,
+      { left: fromLeft, top: fromTop, width: fromWidth, height: fromHeight },
+      { ...metrics, ...motionInteractive(), overwrite: "auto" },
+    );
   }, [
     activeValue,
     indicatorRef,

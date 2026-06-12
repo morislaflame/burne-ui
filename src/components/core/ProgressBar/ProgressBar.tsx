@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   forwardRef,
   useEffect,
@@ -48,7 +48,7 @@ function defaultFormatValue(value: number) {
 }
 
 const PROGRESS_INDETERMINATE_MS = 1500;
-const PROGRESS_INDETERMINATE_EASE = "inOutExpo" as const;
+const PROGRESS_INDETERMINATE_EASE = "expo.inOut" as const;
 
 export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /** Текущий прогресс. Не используется при `indeterminate`. */
@@ -159,7 +159,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
 
       if (reduceMotion || firstLayoutRef.current) {
         firstLayoutRef.current = false;
-        remove(fill);
+        killMotion(fill);
         fill.style.transform = "";
         fill.style.width =
           fillTargetStyle.width != null ? String(fillTargetStyle.width) : "";
@@ -168,13 +168,14 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
         return;
       }
 
-      remove(fill);
+      killMotion(fill);
       fill.style.transform = "";
-      void animate(fill, {
+      void gsap.to(fill, {
         ...(isHorizontal
           ? { width: fillTargetStyle.width }
           : { height: fillTargetStyle.height }),
         ...motionInteractive(),
+        overwrite: "auto",
       });
     }, [
       fillTargetStyle.height,
@@ -189,7 +190,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       const fill = fillRef.current;
       if (!fill) return;
 
-      remove(fill);
+      killMotion(fill);
 
       if (reduceMotion) {
         fill.style.transform = "";
@@ -198,20 +199,23 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
 
       fill.style.transform = isHorizontal ? "translateX(-100%)" : "translateY(100%)";
 
-      void animate(fill, {
-        ...(isHorizontal
-          ? { translateX: ["-100%", "400%"] }
-          : { translateY: ["100%", "-400%"] }),
-        duration: PROGRESS_INDETERMINATE_MS,
-        ease: PROGRESS_INDETERMINATE_EASE,
-        loop: true,
-      });
+      void gsap.fromTo(
+        fill,
+        isHorizontal ? { xPercent: -100 } : { yPercent: 100 },
+        {
+          ...(isHorizontal ? { xPercent: 400 } : { yPercent: -400 }),
+          duration: PROGRESS_INDETERMINATE_MS / 1000,
+          ease: PROGRESS_INDETERMINATE_EASE,
+          repeat: -1,
+          overwrite: "auto",
+        },
+      );
     }, [indeterminate, isHorizontal, reduceMotion]);
 
     useEffect(() => {
       const fill = fillRef.current;
       return () => {
-        if (fill) remove(fill);
+        if (fill) killMotion(fill);
       };
     }, []);
 

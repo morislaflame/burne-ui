@@ -159,7 +159,7 @@ const DEMO_EVENTS = [
   {
     id: "6",
     title: "Анимации",
-    subtitle: "anime.js и hover-lift на карточках",
+    subtitle: "GSAP и hover-lift на карточках",
   },
   {
     id: "7",

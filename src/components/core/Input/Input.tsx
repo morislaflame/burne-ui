@@ -1,4 +1,4 @@
-import { animate, remove as removeAnime } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import type {
   ChangeEvent,
   InputHTMLAttributes,
@@ -21,6 +21,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS } from "@/components/core/utils/useFieldShellHoverLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
@@ -94,15 +95,6 @@ const STATUS_TINT_SHELL: Record<
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
   warning: "bg-surface-tint-warning",
-};
-
-const STATUS_TINT_FOCUS_BORDER: Record<
-  Exclude<InputStatus, "default">,
-  string
-> = {
-  danger: "focus-within:border-danger",
-  success: "focus-within:border-success",
-  warning: "focus-within:border-warning",
 };
 
 /** Слегка насыщеннее оболочки, чтобы префикс/суффикс читался на тоне. */
@@ -277,15 +269,19 @@ function assignInputFiles(input: HTMLInputElement, files: File[]) {
 }
 
 function animateFileRowExit(rowEl: HTMLElement): Promise<void> {
-  removeAnime(rowEl);
-  const anim = animate(rowEl, {
-    scale: [1, 0.94],
-    translateY: [0, "-0.5rem"],
-    opacity: [1, 0],
-    ...motionInteractive(),
-  });
-  return Promise.resolve(anim).then(() => {
-    removeAnime(rowEl);
+  killMotion(rowEl);
+  return new Promise((resolve) => {
+    gsap.to(rowEl, {
+      scale: 0.94,
+      y: "-0.5rem",
+      autoAlpha: 0,
+      ...motionInteractive(),
+      overwrite: "auto",
+      onComplete: () => {
+        killMotion(rowEl);
+        resolve();
+      },
+    });
   });
 }
 
@@ -382,17 +378,12 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
       status === "warning";
 
     const shellSurface = statusTinted
-      ? cn(
-          STATUS_TINT_SHELL[status],
-          "border-token",
-          STATUS_TINT_FOCUS_BORDER[status],
-        )
+      ? cn(STATUS_TINT_SHELL[status], "border-token")
       : cn(
-          variant === "outline" ? "bg-transparent border-token" : VARIANT_SHELL[variant],
-          variant === "outline"
-            ? "focus-within:border-primary"
-            : "border-token focus-within:border-primary",
+          variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
         );
+
+    const shellHoverLift = useFieldShellHoverLift(shellRef, !blocked);
 
     const handleShellPointerDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
@@ -494,10 +485,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     const shellFileEmptySurface = fileListEmpty
       ? cn(
           statusTinted ? STATUS_TINT_SHELL[status] : VARIANT_SHELL[variant],
-          "border-2 border-dashed",
-          statusTinted
-            ? cn("border-token", STATUS_TINT_FOCUS_BORDER[status])
-            : "border-token focus-within:border-primary",
+          "border-2 border-dashed border-token",
         )
       : null;
 
@@ -520,13 +508,18 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
         data-slot="input-shell"
         role="presentation"
         onPointerDown={handleShellPointerDown}
+        onPointerEnter={shellHoverLift.onShellPointerEnter}
+        onPointerLeave={shellHoverLift.onShellPointerLeave}
         className={cn(
-          "flex items-stretch overflow-hidden transition-[border-color,background-color] duration-fast ease-out",
+          "flex items-stretch overflow-hidden",
           groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "w-full",
           fileListEmpty ? "min-h-[7.25rem]" : cn("border-1", shellHClass),
           roundingShell,
           shellFileEmptySurface ?? shellSurface,
-          blocked ? "cursor-not-allowed opacity-55" : "",
+          FIELD_SHELL_TRANSITION_CLASS,
+          FIELD_SHELL_FOCUS_CLASS,
+          shellHoverLift.shellHoverMotionClass,
+          blocked ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,
         )}
       >

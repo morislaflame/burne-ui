@@ -1,4 +1,4 @@
-import { remove } from "animejs";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import {
   forwardRef,
   useCallback,
@@ -16,7 +16,8 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
+  shouldSkipInteractiveHoverLift,
+  shadowSm,
   useInteractiveHoverLiftContainerHandlers,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
@@ -125,7 +126,7 @@ export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   );
 }
 
-const CARD_PRESS_SHADOW = { hover: SHADOW_SM() };
+const CARD_PRESS_SHADOW = { hover: shadowSm() };
 
 export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   {
@@ -166,7 +167,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   useEffect(() => {
     if (pressable) return;
     const el = rootRef.current;
-    if (el) remove(el);
+    if (el) killMotion(el);
     pointerInsideRef.current = false;
   }, [pressable]);
 
@@ -184,7 +185,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
       if (!shell) return;
       void animateInteractivePressSqueeze(shell).then(() => {
         const el = rootRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        if (!el || shouldSkipInteractiveHoverLift()) return;
         if (pointerInsideRef.current) {
           animateInteractiveHoverLift(el, true, undefined, CARD_PRESS_SHADOW);
         }

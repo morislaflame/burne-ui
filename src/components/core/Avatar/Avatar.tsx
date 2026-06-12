@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   Children,
   createContext,
@@ -309,37 +309,34 @@ function AvatarGroupItem({
   const applyRest = useCallback(() => {
     const el = wrapRef.current;
     if (!el) return;
-    remove(el);
+    killMotion(el);
     if (reduced) {
       el.style.transform = "";
       return;
     }
-    animate(el, {
-      translateY: 0,
-      scale: 1,
-      ...motionInteractive(),
-    });
+    gsap.to(el, { y: 0, scale: 1, ...motionInteractive(), overwrite: "auto" });
   }, [reduced]);
 
   const applyLift = useCallback(() => {
     const el = wrapRef.current;
     if (!el) return;
-    remove(el);
+    killMotion(el);
     if (reduced) {
       el.style.transform = `translateY(${AVATAR_GROUP_HOVER_TRANSLATE_Y}px) scale(${AVATAR_GROUP_HOVER_SCALE})`;
       return;
     }
-    animate(el, {
-      translateY: AVATAR_GROUP_HOVER_TRANSLATE_Y,
+    gsap.to(el, {
+      y: AVATAR_GROUP_HOVER_TRANSLATE_Y,
       scale: AVATAR_GROUP_HOVER_SCALE,
       ...motionInteractive(),
+      overwrite: "auto",
     });
   }, [reduced]);
 
   useEffect(() => {
     const el = wrapRef.current;
     return () => {
-      if (el) remove(el);
+      if (el) killMotion(el);
     };
   }, []);
 

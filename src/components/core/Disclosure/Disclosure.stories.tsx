@@ -40,7 +40,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const bodyText =
-  "Это контент, который появляется при раскрытии блока. Анимация высоты реализована через anime.js с плавным эзингом. Содержимое может быть любым — текст, компоненты, списки.";
+  "Это контент, который появляется при раскрытии блока. Анимация высоты реализована через GSAP с плавным эзингом. Содержимое может быть любым — текст, компоненты, списки.";
 
 // ─── Basic ───────────────────────────────────────────────────────────────────
 
@@ -286,6 +286,21 @@ export const GroupSeparated: Story = {
 };
 
 // ─── DisclosureGroup: Separated Card ─────────────────────────────────────────
+
+export const CardDragHandle: Story = {
+  name: "Card — drag-хэндл",
+  render: () => (
+    <Disclosure variant="card" dragHandle defaultOpen>
+      <Disclosure.Trigger>Потяните полоску вниз или вверх</Disclosure.Trigger>
+      <Disclosure.Content>
+        <Text as="p" variant="small" className="text-muted">
+          {bodyText} Раскрытие и сворачивание работает перетаскиванием хэндла или кликом по заголовку.
+        </Text>
+      </Disclosure.Content>
+      <Disclosure.Handle />
+    </Disclosure>
+  ),
+};
 
 export const GroupSeparatedCard: Story = {
   name: "DisclosureGroup — separated cards",

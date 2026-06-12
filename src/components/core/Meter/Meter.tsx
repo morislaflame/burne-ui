@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   forwardRef,
   useEffect,
@@ -142,7 +142,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
 
     if (reduceMotion || firstLayoutRef.current) {
       firstLayoutRef.current = false;
-      remove(fill);
+      killMotion(fill);
       fill.style.width =
         fillTargetStyle.width != null ? String(fillTargetStyle.width) : "";
       fill.style.height =
@@ -150,19 +150,20 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
       return;
     }
 
-    remove(fill);
-    void animate(fill, {
+    killMotion(fill);
+    void gsap.to(fill, {
       ...(isHorizontal
         ? { width: fillTargetStyle.width }
         : { height: fillTargetStyle.height }),
       ...motionInteractive(),
+      overwrite: "auto",
     });
   }, [fillTargetStyle.height, fillTargetStyle.width, isHorizontal, reduceMotion]);
 
   useEffect(() => {
     const fill = fillRef.current;
     return () => {
-      if (fill) remove(fill);
+      if (fill) killMotion(fill);
     };
   }, []);
 

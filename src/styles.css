@@ -151,6 +151,13 @@ p {
   /* Длительности анимации из токенов */
   --duration-fast: var(--duration-fast);
   --duration-normal: var(--duration-normal);
+
+  --calendar-cell-gap: var(--calendar-cell-gap);
+}
+
+/** Зазор между ячейками календаря — привязан к `--space`, 0 в дефолтной теме. */
+@utility gap-calendar-cell {
+  gap: var(--calendar-cell-gap);
 }
 
 /** Тени на токенах — не зависят от Tailwind-дефолтов. */
@@ -195,7 +202,9 @@ p {
     color 300ms cubic-bezier(0.22, 1, 0.36, 1),
     fill 300ms cubic-bezier(0.22, 1, 0.36, 1),
     stroke 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 280ms ease-out;
+    box-shadow 280ms ease-out,
+    outline-width var(--focus-ring-transition-duration, 220ms) ease-out,
+    outline-color var(--focus-ring-transition-duration, 220ms) ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -204,16 +213,48 @@ p {
   }
 }
 
+/** Оболочки полей: фон, бордер, тень и focus-ring — один shorthand без конфликтов. */
+@utility field-shell-transition {
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    box-shadow 280ms ease-out,
+    outline-width var(--focus-ring-transition-duration, 150ms) ease-out,
+    outline-color var(--focus-ring-transition-duration, 150ms) ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field-shell-transition {
+    transition: none;
+  }
+}
+
 /**
  * focus-ring — стандартный outline-фокус-кольцо для интерактивных элементов.
- * focus-ring-inset — то же, но внутрь (для Input, SearchInput, Table-ячеек).
- * focus-ring-offset — с ring-offset (для ColorSwatch, иконок с отдельным фоном).
+ * focus-within-ring — то же, срабатывает при фокусе внутри (оболочки Input, TextArea, ComboBox).
+ * focus-ring-inset — кольцо внутрь (кнопки внутри поля, Table-ячеек).
+ *
+ * Внешние кольца: прозрачный outline в покое → цвет + ширина при фокусе (не конфликтует с box-shadow тени).
  */
 @utility focus-ring {
-  outline: none;
+  outline-style: solid;
+  outline-width: 0;
+  outline-color: transparent;
+  outline-offset: 2px;
   &:focus-visible {
-    outline: 2px solid var(--color-focus-ring);
-    outline-offset: 2px;
+    outline-width: 2px;
+    outline-color: var(--color-focus-ring);
+  }
+}
+
+@utility focus-within-ring {
+  outline-style: solid;
+  outline-width: 0;
+  outline-color: transparent;
+  outline-offset: 2px;
+  &:focus-within {
+    outline-width: 2px;
+    outline-color: var(--color-focus-ring);
   }
 }
 

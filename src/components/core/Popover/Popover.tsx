@@ -19,7 +19,7 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { createPortal } from "react-dom";
 
 import { FieldHint, type FieldHintProps } from "@/components/core/Field";
@@ -27,7 +27,7 @@ import { Text, type TextVariant } from "@/components/core/Text";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import {
   prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
+  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
@@ -518,7 +518,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
 
   useEffect(() => {
     const el = panelRef.current;
-    if (el) el.style.setProperty("--el-shadow", SHADOW_SM());
+    if (el) el.style.setProperty("--el-shadow", shadowSm());
   });
 
   useLayoutEffect(() => {
@@ -553,7 +553,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
     let cancelled = false;
 
     if (reduced) {
-      remove(el);
+      killMotion(el);
       if (open) {
         el.style.opacity = "";
       } else {
@@ -564,32 +564,30 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
       };
     }
 
-    remove(el);
+    killMotion(el);
 
     if (open) {
       el.style.opacity = "0";
-      void animate(el, {
-        opacity: [0, 1],
-        ...motionTooltip(),
-      });
+      void gsap.fromTo(el, { autoAlpha: 0 }, { autoAlpha: 1, ...motionTooltip(), overwrite: "auto" });
       return () => {
         cancelled = true;
-        remove(el);
+        killMotion(el);
       };
     }
 
     const startOpacity = Number.parseFloat(getComputedStyle(el).opacity);
-    const from = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
-    const anim = animate(el, {
-      opacity: [from, 0],
-      ...motionTooltip(),
-    });
-    void Promise.resolve(anim).then(() => {
+    const fromAlpha = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
+    const anim = gsap.fromTo(
+      el,
+      { autoAlpha: fromAlpha },
+      { autoAlpha: 0, ...motionTooltip(), overwrite: "auto" },
+    );
+    void anim.then(() => {
       if (!cancelled) setPortalMounted(false);
     });
     return () => {
       cancelled = true;
-      remove(el);
+      killMotion(el);
     };
   }, [open, portalMounted]);
 

@@ -1,24 +1,25 @@
 /**
- * Hover-подъём и squeeze при нажатии — anime.js; константы см. `motionTokens.ts`.
- * Регистры подъёма по hover совпадают с `Button` (`animateInteractiveHoverLift`, порядок проверок).
+ * Hover-подъём и squeeze при нажатии — GSAP; константы см. `motionTokens.ts`.
+ * Регистры подъёма по hover совпадают с `Button` (`animateInteractiveHoverLift`, `shouldSkipInteractiveHoverLift`).
  */
 
-import { animate, remove } from "animejs";
 import { useEffect, useMemo, type MutableRefObject, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
+import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
+import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
 
 /**
  * Значения `box-shadow` для анимации при hover.
  * `null` означает «не анимировать тень» (для outline / ghost вариантов).
- * Берём из CSS-переменных (поддерживают тему), но anime.js требует конкретную строку —
+ * Берём из CSS-переменных (поддерживают тему), но GSAP требует конкретную строку —
  * поэтому передаём их явно через `getComputedStyle` при вызове.
  */
 export interface HoverShadowConfig {
   /**
-   * box-shadow в покое (второй уровень — sm; hover-only — см. `SHADOW_NONE`).
-   * Если undefined — используется `SHADOW_NONE()` (не `none`: иначе transition не работает).
+   * box-shadow в покое (второй уровень — sm; hover-only — см. `shadowNone`).
+   * Если undefined — используется `shadowNone()` (не `none`: иначе transition не работает).
    */
   idle?: string;
   /** box-shadow при hover. */
@@ -32,11 +33,17 @@ function readShadowVar(varName: string): string {
 }
 
 /** «Пустая» тень: визуально как без тени, но интерполируется с `--shadow-sm`. */
-const SHADOW_NONE = () => readShadowVar("--shadow-none");
+export const shadowNone = () => readShadowVar("--shadow-none");
 
-export const SHADOW_SM = () => readShadowVar("--shadow-sm");
-export const SHADOW_MD = () => readShadowVar("--shadow-md");
-const SHADOW_LG = () => readShadowVar("--shadow-lg");
+export const shadowSm = () => readShadowVar(SHADOW_CSS_VAR.sm);
+export const shadowMd = () => readShadowVar(SHADOW_CSS_VAR.md);
+export const shadowLg = () => readShadowVar(SHADOW_CSS_VAR.lg);
+
+/** Значение `box-shadow` для ступени тени из текущей темы. */
+export function readShadowSize(size: ShadowSize): string {
+  if (size === "none") return shadowNone();
+  return readShadowVar(SHADOW_CSS_VAR[size]);
+}
 
 /**
  * Выставляет начальное значение `--el-shadow` на элементе.
@@ -52,6 +59,20 @@ export function initElementShadow(element: HTMLElement | null, shadow: string): 
 export function prefersReducedInteractiveHoverLift(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/** Viewport ≤ tablet (Tailwind `lg`), touch без hover или coarse pointer — без hover-lift. */
+const HOVER_LIFT_TOUCH_VIEWPORT_MQL =
+  "(max-width: 1024px), (hover: none), (pointer: coarse)";
+
+function isTouchOrNarrowViewport(): boolean {
+  if (typeof window === "undefined" || !window.matchMedia) return false;
+  return window.matchMedia(HOVER_LIFT_TOUCH_VIEWPORT_MQL).matches;
+}
+
+/** Hover-подъём и смена тени: off при reduced-motion, touch и viewport ≤ tablet. */
+export function shouldSkipInteractiveHoverLift(): boolean {
+  return prefersReducedInteractiveHoverLift() || isTouchOrNarrowViewport() || !getMotionConfig().enableHoverLift;
 }
 
 // ─── Adaptive scale helpers ────────────────────────────────────────────────────
@@ -111,7 +132,7 @@ function adaptiveHoverLiftScale(element: HTMLElement): number {
 // ─── Animation functions ───────────────────────────────────────────────────────
 
 /**
- * `remove(target)` затем плавное масштабирование только по scale (без смещения).
+ * Останавливает активные tweens, затем плавно масштабирует только по scale (без смещения).
  * Если `liftScale` не передан — вычисляется адаптивно по размеру элемента.
  * Опционально: `shadow` — конфиг для плавного изменения `box-shadow` вместе со scale.
  */
@@ -121,38 +142,63 @@ export function animateInteractiveHoverLift(
   liftScale?: number,
   shadow?: HoverShadowConfig,
 ): void {
-  remove(element);
+  if (shouldSkipInteractiveHoverLift()) {
+    if (!lifted) {
+      killMotion(element);
+      gsap.set(element, { scale: 1 });
+      if (shadow) {
+        element.style.setProperty("--el-shadow", shadow.idle ?? shadowNone());
+      }
+    }
+    return;
+  }
+
+  killMotion(element);
   const resolvedScale = lifted
     ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element))
     : 1;
   const cfg = getMotionConfig();
-  animate(element, {
+  gsap.to(element, {
     scale: resolvedScale,
-    duration: cfg.interactiveDuration,
-    ease: cfg.interactiveEase,
+    duration: cfg.interactiveDuration / 1000,
+    ease: cfg.hoverLiftEase,
+    overwrite: "auto",
   });
   if (shadow) {
-    // Переключаем CSS-переменную — браузер плавно интерполирует box-shadow через CSS transition.
-    const idle = shadow.idle ?? SHADOW_NONE();
+    const idle = shadow.idle ?? shadowNone();
     element.style.setProperty("--el-shadow", lifted ? shadow.hover : idle);
   }
 }
 
 /**
  * Короткий «сжимающий» импульс при pointer down.
- * Степень сжатия автоматически адаптируется к размеру элемента:
- * маленькие элементы сжимаются на ~2%, большие — меньше,
- * сохраняя одинаковое абсолютное ощущение во всех компонентах.
+ * Степень сжатия автоматически адаптируется к размеру элемента.
  * Возвращает промис окончания анимации.
  */
-export function animateInteractivePressSqueeze(element: HTMLElement) {
-  remove(element);
+export function animateInteractivePressSqueeze(element: HTMLElement): Promise<void> {
+  if (!getMotionConfig().enablePressSqueeze) {
+    return Promise.resolve();
+  }
+  killMotion(element);
   const s = adaptiveSqueezeScale(element);
   const cfg = getMotionConfig();
-  return animate(element, {
-    scale: [1, s, 1],
-    duration: cfg.interactiveDuration,
-    ease: cfg.interactiveEase,
+  // Чуть длиннее interactive: в anime.js [1, s, 1] шёл одной кривой,
+  // а GSAP-keyframes делят время поровну — пик сжатия ощущается резче.
+  const total = (cfg.interactiveDuration * 1.15) / 1000;
+  return new Promise((resolve) => {
+    gsap
+      .timeline({ onComplete: () => resolve() })
+      .to(element, {
+        scale: s,
+        duration: total * 0.3,
+        ease: "power1.out",
+        overwrite: "auto",
+      })
+      .to(element, {
+        scale: 1,
+        duration: total * 0.5,
+        ease: "sine.inOut",
+      });
   });
 }
 
@@ -179,7 +225,7 @@ export function useInteractiveHoverLiftContainerHandlers<
   useEffect(() => {
     const t = liftedRef.current;
     return () => {
-      if (t) remove(t);
+      if (t) killMotion(t);
     };
   }, [liftedRef]);
 
@@ -190,7 +236,7 @@ export function useInteractiveHoverLiftContainerHandlers<
       const c = e.currentTarget;
       if (!(e.target instanceof Node) || !c.contains(e.target)) return;
       if (!cameFromOutsideContainer(c, e.relatedTarget)) return;
-      if (prefersReducedInteractiveHoverLift()) return;
+      if (shouldSkipInteractiveHoverLift()) return;
       const t = liftedRef.current;
       if (!t) return;
       if (pointerInsideRef) pointerInsideRef.current = true;
@@ -204,7 +250,7 @@ export function useInteractiveHoverLiftContainerHandlers<
 
       if (pointerInsideRef) pointerInsideRef.current = false;
       if (!enabled) return;
-      if (prefersReducedInteractiveHoverLift()) return;
+      if (shouldSkipInteractiveHoverLift()) return;
       const t = liftedRef.current;
       if (!t) return;
       animateInteractiveHoverLift(t, false, liftScale, shadow);
@@ -237,4 +283,3 @@ export function useInteractiveHoverLiftOnContainer(
   );
 }
 
-void SHADOW_LG;

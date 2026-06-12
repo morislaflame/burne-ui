@@ -346,8 +346,10 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
     setFontFamily,
     setFontFamilyMono,
     setShadowStrength,
+    setShadowSize,
     setDuration,
     setGlass,
+    setAnimationFlag,
     setColor,
     setStatusForeground,
     applyColorPreset,
@@ -445,6 +447,11 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
         checked={state.theme === "light"}
         onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
         label="Светлая тема"
+        hint={
+          state.colorPreset
+            ? `Пресет «${state.colorPreset}» — ${state.theme}`
+            : "Кастомные цвета"
+        }
       />
 
       <div className="flex flex-col gap-small">
@@ -578,13 +585,22 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
       <div className="flex flex-col gap-small">
         <SectionTitle>Тени и стекло</SectionTitle>
         <ScaleControl
-          label="Интенсивность теней"
+          label="Интенсивность теней (opacity)"
           value={state.shadowStrength}
           min={0.5}
           max={1.75}
           step={0.05}
           unit="×"
           onChange={setShadowStrength}
+        />
+        <ScaleControl
+          label="--shadow-size (blur / offset)"
+          value={state.shadowSize}
+          min={0.5}
+          max={2}
+          step={0.05}
+          unit="×"
+          onChange={setShadowSize}
         />
         <div className="flex gap-small">
           {(["sm", "md", "lg"] as const).map((level) => (
@@ -599,6 +615,18 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             </div>
           ))}
         </div>
+        <Button
+          type="button"
+          size="small"
+          variant="ghost"
+          className="self-start text-muted"
+          onClick={() => {
+            setShadowStrength(SCALE_DEFAULTS.shadowStrength);
+            setShadowSize(SCALE_DEFAULTS.shadowSize);
+          }}
+        >
+          Тени по умолчанию
+        </Button>
         <ScaleControl
           label="--glass-blur"
           value={state.glassBlur}
@@ -617,6 +645,46 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           unit="×"
           onChange={(v) => setGlass("glassSaturate", v)}
         />
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Анимации</SectionTitle>
+        <div className="flex flex-col gap-small rounded-base border-token bg-secondary p-small">
+          <Switch
+            checked={state.enableHoverLift && state.enablePressSqueeze && state.enableToggleButtonFill && state.enableRipple}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setAnimationFlag("enableHoverLift", checked);
+              setAnimationFlag("enablePressSqueeze", checked);
+              setAnimationFlag("enableToggleButtonFill", checked);
+              setAnimationFlag("enableRipple", checked);
+            }}
+            label="Все анимации включены"
+          />
+          <Separator className="my-xsmall opacity-50" />
+          <Switch
+            checked={state.enableHoverLift}
+            onChange={(e) => setAnimationFlag("enableHoverLift", e.target.checked)}
+            label="Hover Lift (подъём при наведении)"
+          />
+          <Switch
+            checked={state.enablePressSqueeze}
+            onChange={(e) => setAnimationFlag("enablePressSqueeze", e.target.checked)}
+            label="Press Squeeze (сжатие при клике)"
+          />
+          <Switch
+            checked={state.enableToggleButtonFill}
+            onChange={(e) => setAnimationFlag("enableToggleButtonFill", e.target.checked)}
+            label="Toggle & Calendar Fill (заливка)"
+          />
+          <Switch
+            checked={state.enableRipple}
+            onChange={(e) => setAnimationFlag("enableRipple", e.target.checked)}
+            label="Press Ripple (волны пульсации)"
+          />
+        </div>
       </div>
 
       <Separator />

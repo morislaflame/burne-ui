@@ -1,21 +1,10 @@
-import { animate, cubicBezier, remove } from "animejs";
 import { useLayoutEffect, useRef } from "react";
 import type { ConvergeRipple } from "./convergeRippleGeometry";
+import { ensureRippleEase, gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
 
 /** Минимальный масштаб «ядра» ripple — визуальная константа, не конфигурируется. */
 const RIPPLE_MIN_SCALE = 0.12;
-
-/**
- * Строит animejs-easing из rippleEaseCss.
- * Если строка содержит `cubic-bezier(...)` — парсим числа, иначе передаём как есть.
- */
-function getRippleEase() {
-  const css = getMotionConfig().rippleEaseCss;
-  const m = /cubic-bezier\(\s*([\d.]+),\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\s*\)/.exec(css);
-  if (m) return cubicBezier(+m[1]!, +m[2]!, +m[3]!, +m[4]!);
-  return css;
-}
 
 export type RippleDirection = "in" | "out";
 
@@ -44,22 +33,26 @@ function ConvergeRippleDot({
     const el = ref.current;
     if (!el) return;
     let finished = false;
-    remove(el);
+    killMotion(el);
     const scaleFrom = direction === "out" ? RIPPLE_MIN_SCALE : 1;
     const scaleTo = direction === "out" ? 1 : RIPPLE_MIN_SCALE;
-    const anim = animate(el, {
-      scale: [scaleFrom, scaleTo],
-      opacity: [opacityFrom, 0],
-      duration: durationMs,
-      ease: getRippleEase(),
-    });
-    void anim.then(() => {
-      if (!finished) onDoneRef.current(id);
-    });
+    const tween = gsap.fromTo(
+      el,
+      { scale: scaleFrom, autoAlpha: opacityFrom },
+      {
+        scale: scaleTo,
+        autoAlpha: 0,
+        duration: durationMs / 1000,
+        ease: ensureRippleEase(),
+        onComplete: () => {
+          if (!finished) onDoneRef.current(id);
+        },
+      },
+    );
     return () => {
       finished = true;
-      remove(el);
-      anim.revert();
+      tween.kill();
+      killMotion(el);
     };
   }, [id, x, y, size, durationMs, opacityFrom, background, direction]);
 

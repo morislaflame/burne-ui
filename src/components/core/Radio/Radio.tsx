@@ -15,7 +15,7 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 
 import { useOptionalRadioGroupContext } from "@/components/composite/RadioGroup/radioGroupContext";
 import { FieldError, FieldHint, type FieldErrorProps, type FieldHintProps } from "@/components/core/Field";
@@ -128,7 +128,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(funct
     const track = trackRef.current;
     if (!track) return;
     if (reduceMotion) {
-      remove(track);
+      killMotion(track);
       track.style.opacity = ctx.isDisabled ? "0.48" : "1";
       return;
     }
@@ -139,13 +139,18 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(funct
       return;
     }
 
-    remove(track);
+    killMotion(track);
     const from = Number.parseFloat(getComputedStyle(track).opacity);
     const start = Number.isFinite(from) ? from : 1;
-    void animate(track, {
-      opacity: ctx.isDisabled ? [start, 0.48] : [start, 1],
-      ...motionInteractive(),
-    });
+    void gsap.fromTo(
+      track,
+      { autoAlpha: start },
+      {
+        autoAlpha: ctx.isDisabled ? 0.48 : 1,
+        ...motionInteractive(),
+        overwrite: "auto",
+      },
+    );
   }, [ctx.isDisabled, reduceMotion]);
 
   return (
@@ -180,7 +185,6 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(funct
         aria-label={ctx.inputProps.value != null ? String(ctx.inputProps.value) : "Вариант"}
         onChange={ctx.onChange}
         onClick={ctx.onActivate}
-        onPointerDown={ctx.onFieldPointerDown}
       />
       <span
         ref={trackRef}
@@ -405,14 +409,14 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
   useEffect(() => {
     const el = textColRef.current;
     return () => {
-      if (el) remove(el);
+      if (el) killMotion(el);
     };
   }, []);
 
   useEffect(() => {
     const el = textColRef.current;
     if (!el || !isDisabled) return;
-    remove(el);
+    killMotion(el);
     el.style.transform = "";
   }, [isDisabled]);
 
@@ -456,7 +460,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
   );
 
   const handlePointerDown = useCallback(
-    (e: PointerEvent<HTMLInputElement>) => {
+    (e: PointerEvent<HTMLLabelElement>) => {
       onPointerDown?.(e);
       if (e.defaultPrevented || isDisabled || !enableTextMotion) return;
       if (reduceMotion) return;
@@ -487,7 +491,6 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       inputName,
       onChange: handleChange,
       onActivate: handleClick,
-      onFieldPointerDown: handlePointerDown,
       inputProps: {
         value,
         defaultChecked: !isControlled ? defaultChecked : undefined,
@@ -508,7 +511,6 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       errorId,
       handleChange,
       handleClick,
-      handlePointerDown,
       hasCompoundError,
       hasCompoundHint,
       hasError,
@@ -593,6 +595,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
           className,
         )}
         {...labelRest}
+        onPointerDown={handlePointerDown}
       >
         {isCompound ? children : simpleBody}
       </label>

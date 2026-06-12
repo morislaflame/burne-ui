@@ -13,4 +13,11 @@ export default defineConfig({
       "burne-ui": path.resolve(__dirname, "src/index.ts"),
     },
   },
+  server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+    // tuna.am и другие туннели шлют Host != localhost
+    allowedHosts: [".tuna.am", "localhost"],
+  },
 });

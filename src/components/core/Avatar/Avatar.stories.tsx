@@ -103,7 +103,7 @@ export const BrokenImageUsesFallback: Story = {
 };
 
 export const AvatarGroupStory: Story = {
-  name: "Группа (наслоение + подъём anime.js)",
+  name: "Группа (наслоение + подъём GSAP)",
   render: () => (
     <AvatarGroup>
       <Avatar size="base" label="Один" nickname="echo_north" src={PIN_IMAGE1} alt="" loading="lazy" />

@@ -14,13 +14,14 @@ import {
   useRef,
   useState,
   type HTMLAttributes,
+  type PointerEvent as ReactPointerEvent,
   type ReactElement,
   type ReactNode,
 } from "react";
 
 import { Text, type TextVariant } from "@/components/core/Text";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
-import { useInteractiveHoverLiftContainerHandlers, SHADOW_SM, SHADOW_MD, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
+import { useInteractiveHoverLiftContainerHandlers, shadowSm, shadowMd, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
 
 /** Семантика заливки — как у `Alert` / `AlertStatus` (включая `secondary`). */
@@ -230,7 +231,7 @@ const BadgeLiftTargetContext = createContext<BadgeLiftContextValue | null>(null)
 export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children?: ReactNode;
   /**
-   * При наведении на якорь слегка увеличивать (anime.js) прямой дочерний `Badge`, как hover у `Button`.
+   * При наведении на якорь слегка увеличивать (GSAP) прямой дочерний `Badge`, как hover у `Button`.
    * @default true
    */
   hoverLift?: boolean;
@@ -274,7 +275,7 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     hoverLift,
     undefined,
     getMotionConfig().badgeAnchorHoverLiftScale,
-    { idle: SHADOW_SM(), hover: SHADOW_MD() },
+    { idle: shadowSm(), hover: shadowMd() },
   );
 
   return (
@@ -324,6 +325,12 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
    * Декоративные иконки получают `aria-hidden`, если нет `aria-label`.
    */
   children?: ReactNode;
+  /**
+   * Подъём и усиление тени при hover (как у `Alert`).
+   * Не дублируется, если бейдж — прямой ребёнок `Badge.Anchor` с `hoverLift`: там подъём на якоре.
+   * @default true
+   */
+  hoverLift?: boolean;
 };
 
 function hasMeaningfulContent(node: ReactNode): boolean {
@@ -346,6 +353,9 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     placement,
     className = "",
     children,
+    hoverLift = true,
+    onPointerOver: onPointerOverProp,
+    onPointerOut: onPointerOutProp,
     ...rest
   },
   forwardedRef,
@@ -373,6 +383,39 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     : "";
 
   const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift);
+  const selfLiftEnabled = hoverLift && !splitLift;
+
+  const selfLiftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
+    rootRef,
+    selfLiftEnabled,
+    undefined,
+    undefined,
+    { idle: shadowSm(), hover: shadowMd() },
+  );
+
+  const bindSelfLiftPointer = useMemo(
+    () => ({
+      onPointerOver: (e: ReactPointerEvent<HTMLSpanElement>) => {
+        onPointerOverProp?.(e);
+        if (!e.defaultPrevented && selfLiftEnabled) {
+          selfLiftPointerHandlers.onPointerOver(e);
+        }
+      },
+      onPointerOut: (e: ReactPointerEvent<HTMLSpanElement>) => {
+        onPointerOutProp?.(e);
+        if (selfLiftEnabled) selfLiftPointerHandlers.onPointerOut(e);
+      },
+    }),
+    [
+      onPointerOutProp,
+      onPointerOverProp,
+      selfLiftEnabled,
+      selfLiftPointerHandlers.onPointerOut,
+      selfLiftPointerHandlers.onPointerOver,
+    ],
+  );
+
+  const selfLiftMotionCls = selfLiftEnabled ? "will-change-transform origin-center" : "";
 
   const syncDirectChild = useCallback(() => {
     const outer = rootRef.current;
@@ -424,7 +467,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   // Инициализируем начальную тень на том элементе, который будет анимироваться.
   useLayoutEffect(() => {
     const target = splitLift ? innerLiftRef.current : rootRef.current;
-    initElementShadow(target, SHADOW_SM());
+    initElementShadow(target, shadowSm());
   });
 
   if (dot) {
@@ -467,6 +510,8 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
           BADGE_DOT_DIM[rk],
           BADGE_DOT_FILL[tone],
+          selfLiftEnabled && "animate-shadow",
+          selfLiftMotionCls,
           isDirectAnchorChild && "pointer-events-none",
           placementClass,
           className,
@@ -474,6 +519,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         {...(hasLabel
           ? {}
           : { "aria-hidden": true, role: "presentation" as const })}
+        {...bindSelfLiftPointer}
         {...rest}
       />
     );
@@ -564,10 +610,12 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           isDirectAnchorChild && "pointer-events-none",
           BADGE_SURFACE[tone],
           BADGE_ICON_ONLY[rk],
+          selfLiftMotionCls,
           placementClass,
           className,
         )}
         {...iconOnlyA11y}
+        {...bindSelfLiftPointer}
       >
         {iconOnlyBody}
       </span>
@@ -616,9 +664,11 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         isDirectAnchorChild && "pointer-events-none",
         BADGE_SURFACE[tone],
         BADGE_TEXT_ROW[rk],
+        selfLiftMotionCls,
         placementClass,
         className,
       )}
+      {...bindSelfLiftPointer}
       {...rest}
     >
       {bodyContent}
@@ -626,4 +676,4 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   );
 });
 
-/** Компактный статус-бейдж; с `Badge.Anchor` — наложение и hover-scale как у `Button`. */
+/** Компактный статус-бейдж; hover-lift как у `Alert`. С `Badge.Anchor` — наложение и подъём на якоре. */

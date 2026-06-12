@@ -1,4 +1,4 @@
-import { remove } from "animejs";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import {
   forwardRef,
   useCallback,
@@ -376,7 +376,7 @@ function SliderThumbButton({
     const squeeze = squeezeRef.current;
     return () => {
       for (const el of [shell, squeeze]) {
-        if (el) remove(el);
+        if (el) killMotion(el);
       }
     };
   }, []);
@@ -384,7 +384,7 @@ function SliderThumbButton({
   useLayoutEffect(() => {
     const shell = shellRef.current;
     if (!shell) return;
-    remove(shell);
+    killMotion(shell);
     shell.style.opacity = disabled ? "0.48" : "1";
   }, [disabled]);
 
@@ -674,7 +674,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       );
       const style = fillStyleFromSpan(span, orientation);
 
-      remove(fill);
+      killMotion(fill);
       fill.style.left = style.left ?? "";
       fill.style.width = style.width ?? "";
       fill.style.bottom = style.bottom ?? "";
@@ -708,7 +708,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
   useEffect(() => {
     const fill = fillRef.current;
     return () => {
-      if (fill) remove(fill);
+      if (fill) killMotion(fill);
     };
   }, []);
 

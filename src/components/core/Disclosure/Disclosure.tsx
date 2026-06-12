@@ -1,7 +1,9 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
+  Children,
   createContext,
   forwardRef,
+  isValidElement,
   useCallback,
   useContext,
   useEffect,
@@ -22,9 +24,12 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
+  shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
+
+import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -61,6 +66,11 @@ type DisclosureCtx = {
   size: DisclosureSize;
   disabled: boolean;
   iconPos: DisclosureIconPos;
+  dragHandle: boolean;
+  shellRef: React.RefObject<HTMLDivElement | null>;
+  innerRef: React.RefObject<HTMLElement | null>;
+  chevronRef: React.RefObject<HTMLSpanElement | null>;
+  skipContentAnimRef: React.RefObject<boolean>;
 };
 
 const DisclosureCtx = createContext<DisclosureCtx | null>(null);
@@ -140,20 +150,50 @@ const VARIANT_TRIGGER: Record<DisclosureVariant, string> = {
   ghost: cn("rounded-mid", TRIGGER_INTERACTIVE),
 };
 
-const VARIANT_OPEN_TRIGGER: Record<DisclosureVariant, string> = {
-  default: "",
-  outline: "",
-  secondary: "",
-  card: "border-b-token",
-  ghost: "",
-};
+function readDisclosurePartDisplayName(type: unknown): string | undefined {
+  return (type as { displayName?: string }).displayName;
+}
+
+/** Заголовок → контент → хэндл: раскрываемая часть между триггером и полоской. */
+function orderDragHandleChildren(children: ReactNode): ReactNode[] {
+  const trigger: ReactNode[] = [];
+  const content: ReactNode[] = [];
+  const handle: ReactNode[] = [];
+  const other: ReactNode[] = [];
+
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) {
+      other.push(child);
+      return;
+    }
+    const name = readDisclosurePartDisplayName(child.type);
+    if (name === "DisclosureTrigger") trigger.push(child);
+    else if (name === "DisclosureContent") content.push(child);
+    else if (name === "DisclosureHandle") handle.push(child);
+    else other.push(child);
+  });
+
+  return [...trigger, ...content, ...handle, ...other];
+}
 
 // ─── animation ────────────────────────────────────────────────────────────────
+
+const EXPAND_EASE = "power1.inOut";
+
+function releaseExpandedShellHeight(shell: HTMLElement, inner: HTMLElement) {
+  const measured = inner.scrollHeight;
+  shell.style.height = `${measured}px`;
+  requestAnimationFrame(() => {
+    shell.style.height = "auto";
+    shell.style.overflow = "";
+  });
+}
 
 function useContentAnimation(
   shellRef: React.RefObject<HTMLDivElement | null>,
   innerRef: React.RefObject<HTMLElement | null>,
   open: boolean,
+  skipContentAnimRef: React.RefObject<boolean>,
 ) {
   const isFirstRender = useRef(true);
 
@@ -171,46 +211,64 @@ function useContentAnimation(
       return;
     }
 
-    remove(shell);
+    if (skipContentAnimRef.current) {
+      skipContentAnimRef.current = false;
+      if (open) {
+        shell.style.height = "auto";
+        shell.style.overflow = "";
+      } else {
+        shell.style.height = "0px";
+        shell.style.overflow = "hidden";
+      }
+      return;
+    }
 
-    const { interactiveDuration: expandMs, interactiveEase: ease } = getMotionConfig();
+    killMotion(shell);
+
+    const { interactiveDuration: expandMs, interactiveEase: collapseEase } = getMotionConfig();
     if (open) {
       shell.style.overflow = "hidden";
-      const target = inner.scrollHeight;
-      animate(shell, {
-        height: [0, target],
-        duration: expandMs,
-        ease,
+      gsap.fromTo(
+        shell,
+        { height: 0 },
+        {
+          height: () => inner.scrollHeight,
+          duration: expandMs / 1000,
+          ease: EXPAND_EASE,
+          overwrite: "auto",
+          onComplete: () => releaseExpandedShellHeight(shell, inner),
+        },
+      );
+    } else {
+      const current = shell.scrollHeight || shell.getBoundingClientRect().height;
+      shell.style.height = `${current}px`;
+      shell.style.overflow = "hidden";
+      gsap.to(shell, {
+        height: 0,
+        duration: Math.round(expandMs * 0.85) / 1000,
+        ease: collapseEase,
+        overwrite: "auto",
         onComplete: () => {
-          shell.style.height = "auto";
+          shell.style.height = "0px";
           shell.style.overflow = "hidden";
         },
       });
-    } else {
-      const current = shell.getBoundingClientRect().height;
-      shell.style.height = `${current}px`;
-      shell.style.overflow = "hidden";
-      animate(shell, {
-        height: [current, 0],
-        duration: Math.round(expandMs * 0.85),
-        ease,
-        onComplete: () => {
-          shell.style.height = "0px";
-        },
-      });
     }
-  }, [open, shellRef, innerRef]);
+  }, [open, shellRef, innerRef, skipContentAnimRef]);
 }
 
 function useChevronAnimation(
   chevronRef: React.RefObject<HTMLSpanElement | null>,
   open: boolean,
+  skipContentAnimRef: React.RefObject<boolean>,
 ) {
   const isFirstRender = useRef(true);
 
   useLayoutEffect(() => {
     const el = chevronRef.current;
     if (!el) return;
+
+    if (skipContentAnimRef.current) return;
 
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -219,13 +277,14 @@ function useChevronAnimation(
     }
 
     const { interactiveDuration, interactiveEase } = getMotionConfig();
-    remove(el);
-    animate(el, {
-      rotate: open ? 180 : 0,
-      duration: interactiveDuration,
+    killMotion(el);
+    gsap.to(el, {
+      rotation: open ? 180 : 0,
+      duration: interactiveDuration / 1000,
       ease: interactiveEase,
+      overwrite: "auto",
     });
-  }, [open, chevronRef]);
+  }, [open, chevronRef, skipContentAnimRef]);
 }
 
 // ─── Disclosure.Trigger ───────────────────────────────────────────────────────
@@ -250,11 +309,12 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     },
     ref,
   ) {
-    const { open, setOpen, triggerId, panelId, variant, size, disabled, iconPos } =
+    const { open, setOpen, triggerId, panelId, variant, size, disabled, iconPos, skipContentAnimRef } =
       useDisclosureCtx();
 
-    const chevronRef = useRef<HTMLSpanElement>(null);
+    const { chevronRef } = useDisclosureCtx();
     const btnRef = useRef<HTMLButtonElement>(null);
+    const titleLiftRef = useRef<HTMLSpanElement>(null);
     const hoverInsideRef = useRef(false);
 
     const setRefs = useCallback(
@@ -266,20 +326,20 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       [ref],
     );
 
-    useChevronAnimation(chevronRef, open);
+    useChevronAnimation(chevronRef, open, skipContentAnimRef);
 
     useEffect(() => {
-      const el = btnRef.current;
+      const el = titleLiftRef.current;
       return () => {
-        if (el) remove(el);
+        if (el) killMotion(el);
       };
     }, []);
 
     useEffect(() => {
       if (!disabled) return;
       hoverInsideRef.current = false;
-      const el = btnRef.current;
-      if (el) remove(el);
+      const el = titleLiftRef.current;
+      if (el) killMotion(el);
     }, [disabled]);
 
     const handleClick = useCallback(
@@ -307,8 +367,8 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         onPointerEnter?.(e);
         if (e.defaultPrevented || disabled) return;
         hoverInsideRef.current = true;
-        const el = btnRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        const el = titleLiftRef.current;
+        if (!el || shouldSkipInteractiveHoverLift()) return;
         animateInteractiveHoverLift(el, true);
       },
       [disabled, onPointerEnter],
@@ -318,8 +378,8 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerLeave?.(e);
         hoverInsideRef.current = false;
-        const el = btnRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        const el = titleLiftRef.current;
+        if (!el || shouldSkipInteractiveHoverLift()) return;
         animateInteractiveHoverLift(el, false);
       },
       [onPointerLeave],
@@ -329,11 +389,11 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerDown?.(e);
         if (e.defaultPrevented || disabled) return;
-        const el = btnRef.current;
+        const el = titleLiftRef.current;
         if (!el || prefersReducedInteractiveHoverLift()) return;
         void animateInteractivePressSqueeze(el).then(() => {
-          if (hoverInsideRef.current && btnRef.current && !prefersReducedInteractiveHoverLift()) {
-            animateInteractiveHoverLift(btnRef.current, true);
+          if (hoverInsideRef.current && titleLiftRef.current && !shouldSkipInteractiveHoverLift()) {
+            animateInteractiveHoverLift(titleLiftRef.current, true);
           }
         });
       },
@@ -364,12 +424,11 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         aria-controls={panelId}
         disabled={disabled}
         className={cn(
-          "flex w-full origin-center select-none items-center gap-small text-left outline-none will-change-transform",
+          "flex w-full select-none items-center gap-small text-left outline-none",
           "focus-ring",
           TRIGGER_H[size],
           TRIGGER_PAD[size],
           VARIANT_TRIGGER[variant],
-          open && VARIANT_OPEN_TRIGGER[variant],
           disabled && "cursor-not-allowed opacity-48",
           !disabled && "cursor-pointer",
           className,
@@ -382,16 +441,21 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         {...rest}
       >
         {iconPos === "left" && chevronNode}
-        <Text
-          as="span"
-          variant={TRIGGER_TEXT[size] as "small" | "base" | "mid"}
-          className={cn(
-            "min-w-0 flex-1 font-medium",
-            open ? "text-primary" : "text-foreground",
-          )}
+        <span
+          ref={titleLiftRef}
+          className="min-w-0 flex-1 origin-center will-change-transform"
         >
-          {children}
-        </Text>
+          <Text
+            as="span"
+            variant={TRIGGER_TEXT[size] as "small" | "base" | "mid"}
+            className={cn(
+              "block font-medium",
+              open ? "text-primary" : "text-foreground",
+            )}
+          >
+            {children}
+          </Text>
+        </span>
         {iconPos === "right" && chevronNode}
       </button>
     );
@@ -399,6 +463,60 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
 );
 
 DisclosureTrigger.displayName = "DisclosureTrigger";
+
+// ─── Disclosure.Handle (card + dragHandle) ────────────────────────────────────
+
+export type DisclosureHandleProps = HTMLAttributes<HTMLDivElement>;
+
+export function DisclosureHandleInner({
+  className = "",
+  onPointerDown,
+  ...rest
+}: DisclosureHandleProps) {
+  const {
+    variant,
+    disabled,
+    dragHandle,
+    shellRef,
+    innerRef,
+    chevronRef,
+    open,
+    setOpen,
+    skipContentAnimRef,
+  } = useDisclosureCtx();
+
+  const { onPointerDown: dragPD } = useDisclosureContentDrag(
+    shellRef,
+    innerRef,
+    chevronRef,
+    open,
+    setOpen,
+    disabled,
+    skipContentAnimRef,
+  );
+
+  if (!dragHandle || variant !== "card") return null;
+
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "flex touch-none select-none shrink-0 cursor-grab items-center justify-center border-t-token py-xsmall active:cursor-grabbing",
+        disabled && "pointer-events-none opacity-48",
+        className,
+      )}
+      onPointerDown={(e) => {
+        onPointerDown?.(e);
+        dragPD(e);
+      }}
+      {...rest}
+    >
+      <span className="h-1 w-10 rounded-full bg-tertiary" />
+    </div>
+  );
+}
+
+DisclosureHandleInner.displayName = "DisclosureHandle";
 
 // ─── Disclosure.Content ───────────────────────────────────────────────────────
 
@@ -408,11 +526,10 @@ export type DisclosureContentProps = HTMLAttributes<HTMLDivElement> & {
 
 export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentProps>(
   function DisclosureContent({ children, className = "", ...rest }, ref) {
-    const { open, panelId, triggerId, size, variant } = useDisclosureCtx();
+    const { open, panelId, triggerId, size, variant, shellRef, innerRef, skipContentAnimRef } =
+      useDisclosureCtx();
 
-    const shellRef = useRef<HTMLDivElement>(null);
-    const innerRef = useRef<HTMLElement>(null);
-    useContentAnimation(shellRef, innerRef, open);
+    useContentAnimation(shellRef, innerRef, open, skipContentAnimRef);
 
     const setShellRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -431,6 +548,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
       framed && variant === "outline" && FRAMED_PANEL.outline,
       framed && variant === "secondary" && FRAMED_PANEL.secondary,
       framed && "mt-xsmall",
+      variant === "card" && "border-t-token",
       variant === "ghost" && "text-muted",
       variant === "default" && "text-muted",
       className,
@@ -470,6 +588,8 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   size?: DisclosureSize;
   disabled?: boolean;
   iconPos?: DisclosureIconPos;
+  /** Полоска-хэндл для drag-раскрытия; работает только с `variant="card"`. */
+  dragHandle?: boolean;
 };
 
 export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(function Disclosure(
@@ -483,6 +603,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
       size: sizeProp,
       disabled = false,
       iconPos = "right",
+      dragHandle = false,
       className = "",
       ...rest
     },
@@ -513,6 +634,10 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
     const autoId = useId();
     const triggerId = `disclosure-trigger-${autoId}`;
     const panelId = `disclosure-panel-${autoId}`;
+    const shellRef = useRef<HTMLDivElement>(null);
+    const innerRef = useRef<HTMLElement>(null);
+    const chevronRef = useRef<HTMLSpanElement>(null);
+    const skipContentAnimRef = useRef(false);
 
     const variant = variantProp ?? groupCtx?.variant ?? "default";
     const size = sizeProp ?? groupCtx?.size ?? "base";
@@ -526,14 +651,31 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
         : VARIANT_ROOT[variant];
 
     const ctx: DisclosureCtx = useMemo(
-      () => ({ open, setOpen, triggerId, panelId, variant, size, disabled, iconPos }),
-      [disabled, iconPos, open, panelId, setOpen, size, triggerId, variant],
+      () => ({
+        open,
+        setOpen,
+        triggerId,
+        panelId,
+        variant,
+        size,
+        disabled,
+        iconPos,
+        dragHandle,
+        shellRef,
+        innerRef,
+        chevronRef,
+        skipContentAnimRef,
+      }),
+      [disabled, dragHandle, iconPos, open, panelId, setOpen, size, triggerId, variant],
     );
+
+    const orderedChildren =
+      dragHandle && variant === "card" ? orderDragHandleChildren(children) : children;
 
     return (
       <DisclosureCtx.Provider value={ctx}>
         <div ref={ref} className={cn(rootCls, className)} {...rest}>
-          {children}
+          {orderedChildren}
         </div>
       </DisclosureCtx.Provider>
     );
@@ -594,7 +736,7 @@ export const DisclosureGroup = forwardRef<HTMLDivElement, DisclosureGroupProps>(
       separated && "gap-mid",
       !separated && variant === "default" && "divide-y-token border-t-token border-b-token",
       !separated && variant === "card" &&
-        "overflow-hidden rounded-mid border-token bg-surface animate-shadow divide-y-token",
+        "overflow-hidden rounded-mid border-token bg-surface shadow-token-sm divide-y-token",
       !separated && (variant === "outline" || variant === "secondary" || variant === "ghost") &&
         "gap-small",
       className,

@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   createContext,
   forwardRef,
@@ -370,12 +370,12 @@ function ToastItemWrapper({
       return;
     }
     const slideDir = isTop ? -ENTRY_OFFSET_PX : ENTRY_OFFSET_PX;
-    remove(el);
-    animate(el, {
-      translateY: [slideDir, 0],
-      opacity: [0, 1],
-      ...motionInteractive(),
-    });
+    killMotion(el);
+    gsap.fromTo(
+      el,
+      { y: slideDir, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, ...motionInteractive(), overwrite: "auto" },
+    );
   }, [isTop]);
 
   // Exit animation
@@ -388,13 +388,10 @@ function ToastItemWrapper({
       return;
     }
     const slideDir = isTop ? -ENTRY_OFFSET_PX : ENTRY_OFFSET_PX;
-    remove(el);
-    void animate(el, {
-      translateY: [0, slideDir],
-      opacity: [1, 0],
-      duration: 220,
-      ease: "in(2)",
-    }).then(() => onRemoveFinal(entry.id));
+    killMotion(el);
+    void gsap
+      .to(el, { y: slideDir, autoAlpha: 0, duration: 0.22, ease: "power2.in", overwrite: "auto" })
+      .then(() => onRemoveFinal(entry.id));
   }, [isDismissing, isTop, entry.id, onRemoveFinal]);
 
   // Auto-dismiss timer

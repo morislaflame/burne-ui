@@ -1,4 +1,11 @@
 export { tokensConfig, type TokensConfig } from "./config";
+export {
+  burneShadowScale,
+  type ShadowSize,
+  type ShadowLevel,
+  SHADOW_CSS_VAR,
+  shadowToken,
+} from "./shadows";
 
 /** Имена CSS-переменных для типобезопасного доступа и генераторов */
 export const designTokenNames = [
@@ -65,6 +72,7 @@ export const designTokenNames = [
   "--space-mid",
   "--space-large",
   "--space-xlarge",
+  "--calendar-cell-gap",
   "--size",
   "--size-scale-925",
   "--size-scale-xs",
@@ -160,6 +168,11 @@ export const designTokenNames = [
   "--glass-border",
   "--glass-highlight",
   "--glass-edge-falloff",
+  "--shadow-size",
+  "--shadow-none",
+  "--shadow-sm",
+  "--shadow-md",
+  "--shadow-lg",
 ] as const;
 
 export type DesignCssVar = (typeof designTokenNames)[number];

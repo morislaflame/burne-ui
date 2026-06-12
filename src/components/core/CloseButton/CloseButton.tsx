@@ -1,4 +1,4 @@
-import { remove } from "animejs";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import {
   forwardRef,
   useCallback,
@@ -15,7 +15,8 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
+  shouldSkipInteractiveHoverLift,
+  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
@@ -144,7 +145,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
     const btnShadow = useMemo(
       () =>
         CLOSE_BUTTON_HAS_HOVER_SHADOW.has(variant)
-          ? { hover: SHADOW_SM() }
+          ? { hover: shadowSm() }
           : undefined,
       [variant],
     );
@@ -153,7 +154,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       const el = btnRef.current;
       if (!el) return;
       if (disabled) {
-        remove(el);
+        killMotion(el);
         hoverPointerInsideRef.current = false;
         el.style.removeProperty("--el-shadow");
       }
@@ -163,7 +164,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerEnter?.(e);
         if (e.defaultPrevented || disabled) return;
-        if (prefersReducedInteractiveHoverLift()) return;
+        if (shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
@@ -176,7 +177,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerLeave?.(e);
         hoverPointerInsideRef.current = false;
-        if (prefersReducedInteractiveHoverLift()) return;
+        if (shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el || disabled) return;
         animateInteractiveHoverLift(el, false, undefined, btnShadow);
@@ -197,7 +198,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
             !b ||
             disabled ||
             !animated ||
-            prefersReducedInteractiveHoverLift()
+            shouldSkipInteractiveHoverLift()
           )
             return;
           if (hoverPointerInsideRef.current) {

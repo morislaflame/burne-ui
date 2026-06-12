@@ -1,11 +1,22 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  createElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
+import {
+  applyColorPresetToState,
+  applyThemeModeToState,
+} from "./colorPresets";
 import {
   applyThemeTokens,
   clearThemeInlineTokens,
   createDefaultThemeState,
   exportThemeCss,
-  isBorderColorCustomized,
   LAYOUT_PRESETS,
   SCALE_DEFAULTS,
   type ColorPresetKey,
@@ -14,14 +25,28 @@ import {
   type ThemeMode,
   type ThemeStatusForegroundKey,
   type ThemeTokenState,
-  THEME_PRESETS,
 } from "./themeDefaults";
 
-export function useThemeTokens() {
+const ThemeTokensContext = createContext<ThemeTokensApi | null>(null);
+
+export function ThemeTokensProvider({ children }: { children: ReactNode }) {
+  const api = useThemeTokensState();
+  return createElement(ThemeTokensContext.Provider, { value: api }, children);
+}
+
+export function useThemeTokens(): ThemeTokensApi {
+  const ctx = useContext(ThemeTokensContext);
+  if (!ctx) {
+    throw new Error("useThemeTokens должен быть внутри ThemeTokensProvider.");
+  }
+  return ctx;
+}
+
+function useThemeTokensState() {
   const [state, setState] = useState<ThemeTokenState>(() => createDefaultThemeState("dark"));
 
   useEffect(() => {
-    applyThemeTokens(state);
+    void applyThemeTokens(state);
   }, [state]);
 
   useEffect(() => {
@@ -31,7 +56,7 @@ export function useThemeTokens() {
   }, []);
 
   const setTheme = useCallback((theme: ThemeMode) => {
-    setState(createDefaultThemeState(theme));
+    setState((prev) => applyThemeModeToState(prev, theme));
   }, []);
 
   const setScale = useCallback((key: "space" | "size" | "radius" | "textScale" | "borderWidth", value: number) => {
@@ -50,6 +75,10 @@ export function useThemeTokens() {
     setState((prev) => ({ ...prev, shadowStrength }));
   }, []);
 
+  const setShadowSize = useCallback((shadowSize: number) => {
+    setState((prev) => ({ ...prev, shadowSize }));
+  }, []);
+
   const setDuration = useCallback((key: "durationFast" | "durationNormal", value: number) => {
     setState((prev) => ({ ...prev, [key]: value }));
   }, []);
@@ -58,9 +87,14 @@ export function useThemeTokens() {
     setState((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  const setAnimationFlag = useCallback((key: "enableHoverLift" | "enablePressSqueeze" | "enableToggleButtonFill" | "enableRipple", value: boolean) => {
+    setState((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
   const setColor = useCallback((key: ThemeColorKey, value: string) => {
     setState((prev) => ({
       ...prev,
+      colorPreset: null,
       colors: { ...prev.colors, [key]: value },
       ...(key === "border" ? { borderCustomized: true } : {}),
     }));
@@ -69,38 +103,21 @@ export function useThemeTokens() {
   const setStatusForeground = useCallback((key: ThemeStatusForegroundKey, value: string) => {
     setState((prev) => ({
       ...prev,
+      colorPreset: null,
       statusForegrounds: { ...prev.statusForegrounds, [key]: value },
     }));
   }, []);
 
-  /** Полный пресет — заменяет всё состояние (для базовых dark/light). */
-  const applyPreset = useCallback((preset: keyof typeof THEME_PRESETS) => {
-    const p = THEME_PRESETS[preset];
-    setState({
-      ...p,
-      borderCustomized: isBorderColorCustomized(p.colors, p.theme),
-    });
+  /** Полный пресет — сбрасывает scale и применяет палитру для текущего режима темы. */
+  const applyPreset = useCallback((preset: ColorPresetKey) => {
+    setState((prev) => applyColorPresetToState(prev, preset, { resetScale: true }));
   }, []);
 
-  /**
-   * Цветовой пресет — обновляет только `theme`, `colors`, `statusForegrounds`.
-   * Scale-значения (radius, space, size, borderWidth, textScale) не трогает.
-   */
+  /** Цветовой пресет — только colors / statusForegrounds, режим темы не меняется. */
   const applyColorPreset = useCallback((preset: ColorPresetKey) => {
-    const p = THEME_PRESETS[preset];
-    setState((prev) => ({
-      ...prev,
-      theme: p.theme,
-      colors: { ...p.colors },
-      statusForegrounds: { ...p.statusForegrounds },
-      borderCustomized: isBorderColorCustomized(p.colors, p.theme),
-    }));
+    setState((prev) => applyColorPresetToState(prev, preset));
   }, []);
 
-  /**
-   * Лейаут-пресет — обновляет только scale-значения.
-   * Цвета и тема не меняются.
-   */
   const applyLayoutPreset = useCallback((preset: LayoutPresetKey) => {
     const p = LAYOUT_PRESETS[preset];
     setState((prev) => ({ ...prev, ...p }));
@@ -124,8 +141,10 @@ export function useThemeTokens() {
     setFontFamily,
     setFontFamilyMono,
     setShadowStrength,
+    setShadowSize,
     setDuration,
     setGlass,
+    setAnimationFlag,
     setColor,
     setStatusForeground,
     applyPreset,
@@ -137,4 +156,4 @@ export function useThemeTokens() {
   };
 }
 
-export type ThemeTokensApi = ReturnType<typeof useThemeTokens>;
+export type ThemeTokensApi = ReturnType<typeof useThemeTokensState>;

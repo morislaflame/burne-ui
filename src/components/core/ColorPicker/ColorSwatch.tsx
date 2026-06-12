@@ -10,8 +10,8 @@ import {
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
+  shouldSkipInteractiveHoverLift,
+  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
 
@@ -72,7 +72,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
   ) {
     const btnRef = useRef<HTMLButtonElement>(null);
     const hoverInsideRef = useRef(false);
-    const shadow = useMemo(() => ({ hover: SHADOW_SM() }), []);
+    const shadow = useMemo(() => ({ hover: shadowSm() }), []);
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -86,7 +86,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
     const handlePointerEnter = useCallback(
       (e: React.PointerEvent<HTMLButtonElement>) => {
         onPointerEnter?.(e);
-        if (disabled || e.defaultPrevented || prefersReducedInteractiveHoverLift()) return;
+        if (disabled || e.defaultPrevented || shouldSkipInteractiveHoverLift()) return;
         hoverInsideRef.current = true;
         const el = btnRef.current;
         if (!el) return;
@@ -100,7 +100,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         onPointerLeave?.(e);
         hoverInsideRef.current = false;
         const el = btnRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        if (!el || shouldSkipInteractiveHoverLift()) return;
         animateInteractiveHoverLift(el, false, undefined, shadow);
       },
       [onPointerLeave, shadow],
@@ -109,11 +109,11 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
     const handlePointerDown = useCallback(
       (e: React.PointerEvent<HTMLButtonElement>) => {
         onPointerDown?.(e);
-        if (disabled || e.defaultPrevented || prefersReducedInteractiveHoverLift()) return;
+        if (disabled || e.defaultPrevented || shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el) return;
         void animateInteractivePressSqueeze(el).then(() => {
-          if (btnRef.current && hoverInsideRef.current && !prefersReducedInteractiveHoverLift()) {
+          if (btnRef.current && hoverInsideRef.current && !shouldSkipInteractiveHoverLift()) {
             animateInteractiveHoverLift(btnRef.current, true, undefined, shadow);
           }
         });

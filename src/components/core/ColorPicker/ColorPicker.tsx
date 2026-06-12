@@ -233,14 +233,14 @@ function ColorPickerArea({ size }: { size: ColorPickerSize }) {
       {/* Thumb */}
       <div
         aria-hidden
-        className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md"
+        className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-token-md"
         style={{
           left:            `${hsva.s}%`,
           top:             `${100 - hsva.v}%`,
           width:           "14px",
           height:          "14px",
           backgroundColor: thumbColor,
-          boxShadow:       "0 0 0 1px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.35)",
+          // boxShadow:       "0 0 0 1px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.35)",
         }}
       />
     </div>

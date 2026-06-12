@@ -57,7 +57,7 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     toggleBox: "h-control-base w-control-base",
     toggleIcon: "icon-base",
     togglePad: "px-small",
-    heightScale: 2,
+    heightScale: 2.2,
     defaultExpandedSearchWidth: 280,
   },
   mid: {

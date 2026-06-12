@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   createContext,
   forwardRef,
@@ -234,26 +234,16 @@ export const DialogRoot = function Dialog({
       return undefined;
     }
 
-    remove(overlay);
-    remove(panel);
-    const animOverlay = animate(overlay, {
-      opacity: [1, 0],
-      ...motionInteractive(),
-    });
-    const animPanel = animate(panel, {
-      opacity: [1, 0],
-      scale: [1, 0.97],
-      ...motionInteractive(),
-    });
+    killMotion(overlay, panel);
+    const vars = { ...motionInteractive(), overwrite: "auto" as const };
+    const animOverlay = gsap.to(overlay, { autoAlpha: 0, ...vars });
+    const animPanel = gsap.to(panel, { autoAlpha: 0, scale: 0.97, ...vars });
 
-    const pOverlay = Promise.resolve(animOverlay).then(() => undefined);
-    const pPanel = Promise.resolve(animPanel).then(() => undefined);
-    void Promise.all([pOverlay, pPanel]).then(finishClose);
+    void Promise.all([animOverlay, animPanel]).then(finishClose);
 
     return () => {
       cancelled = true;
-      remove(overlay);
-      remove(panel);
+      killMotion(overlay, panel);
     };
   }, [open, mounted]);
 
@@ -278,17 +268,10 @@ export const DialogRoot = function Dialog({
       return;
     }
 
-    remove(overlay);
-    remove(panel);
-    animate(overlay, {
-      opacity: [0, 1],
-      ...motionInteractive(),
-    });
-    animate(panel, {
-      opacity: [0, 1],
-      scale: [0.97, 1],
-      ...motionInteractive(),
-    });
+    killMotion(overlay, panel);
+    const vars = { ...motionInteractive(), overwrite: "auto" as const };
+    gsap.fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ...vars });
+    gsap.fromTo(panel, { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, ...vars });
     panel.focus();
   }, [open, mounted]);
 

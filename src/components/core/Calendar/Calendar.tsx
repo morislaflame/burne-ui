@@ -3,6 +3,7 @@ import {
   forwardRef,
   useCallback,
   useContext,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -15,7 +16,10 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
+  shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import { CalendarInteractiveCell, DAY_BTN } from "./CalendarInteractiveCell";
@@ -104,6 +108,69 @@ const MONTH_GRID_GAP: Record<CalendarSize, string> = {
   mid:   "gap-small",
   large: "gap-small",
 };
+
+const DAY_GRID_GAP = "gap-calendar-cell";
+
+function readDurationFastSec(): number {
+  if (typeof window === "undefined") return 0.15;
+  const raw = getComputedStyle(document.documentElement).getPropertyValue("--duration-fast").trim();
+  const ms = Number.parseFloat(raw);
+  return Number.isFinite(ms) ? ms / 1000 : 0.15;
+}
+
+/** Половина полосы диапазона — плавное появление/исчезновение. */
+function CalendarRangeHalfFill({
+  visible,
+  side,
+}: {
+  visible: boolean;
+  side: "left" | "right";
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const firstLayoutRef = useRef(true);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const applyInstant = (on: boolean) => {
+      el.style.opacity = on ? "1" : "0";
+    };
+
+    if (prefersReducedInteractiveHoverLift()) {
+      killMotion(el);
+      applyInstant(visible);
+      return;
+    }
+
+    if (firstLayoutRef.current) {
+      firstLayoutRef.current = false;
+      killMotion(el);
+      applyInstant(visible);
+      return;
+    }
+
+    killMotion(el);
+    gsap.to(el, {
+      autoAlpha: visible ? 1 : 0,
+      duration: readDurationFastSec(),
+      ease: getMotionConfig().interactiveEase,
+      overwrite: "auto",
+    });
+  }, [visible]);
+
+  return (
+    <div
+      ref={ref}
+      aria-hidden
+      className={cn(
+        "pointer-events-none absolute inset-y-0 bg-primary-tint",
+        side === "left" ? "left-0 right-1/2" : "left-1/2 right-0",
+      )}
+      style={{ opacity: 0 }}
+    />
+  );
+}
 
 // ─── context ──────────────────────────────────────────────────────────────────
 
@@ -414,7 +481,7 @@ function CalendarNavButton({
       if (disabled || e.defaultPrevented) return;
       hoverInsideRef.current = true;
       const el = ref.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || shouldSkipInteractiveHoverLift()) return;
       animateInteractiveHoverLift(el, true);
     },
     [disabled],
@@ -423,7 +490,7 @@ function CalendarNavButton({
   const handlePointerLeave = useCallback(() => {
     hoverInsideRef.current = false;
     const el = ref.current;
-    if (!el || prefersReducedInteractiveHoverLift()) return;
+    if (!el || shouldSkipInteractiveHoverLift()) return;
     animateInteractiveHoverLift(el, false);
   }, []);
 
@@ -434,7 +501,7 @@ function CalendarNavButton({
       if (!el || prefersReducedInteractiveHoverLift()) return;
       void animateInteractivePressSqueeze(el).then(() => {
         const btn = ref.current;
-        if (!btn || disabled || prefersReducedInteractiveHoverLift()) return;
+        if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
         if (hoverInsideRef.current) animateInteractiveHoverLift(btn, true);
       });
     },
@@ -581,7 +648,7 @@ function CalendarDaysView() {
   return (
     <div>
       {/* Weekday header row */}
-      <div className="grid grid-cols-7">
+      <div className={cn("grid grid-cols-7", DAY_GRID_GAP)}>
         {locale.weekDays.map((wd) => (
           <div
             key={wd}
@@ -596,7 +663,7 @@ function CalendarDaysView() {
       </div>
 
       {/* Day cells */}
-      <div className="grid grid-cols-7">
+      <div className={cn("grid grid-cols-7", DAY_GRID_GAP)}>
         {cells.map((day, idx) => {
           if (day === null) {
             return (
@@ -632,18 +699,8 @@ function CalendarDaysView() {
 
           return (
             <div key={dayKey} className="relative flex items-center justify-center">
-              {showLeftBg && (
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-y-0 left-0 right-1/2 bg-primary-tint"
-                />
-              )}
-              {showRightBg && (
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-y-0 left-1/2 right-0 bg-primary-tint"
-                />
-              )}
+              {showLeftBg ? <CalendarRangeHalfFill visible side="left" /> : null}
+              {showRightBg ? <CalendarRangeHalfFill visible side="right" /> : null}
 
               <CalendarInteractiveCell
                 selected={circleActive}

@@ -9,6 +9,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS } from "@/components/core/utils/useFieldShellHoverLift";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
@@ -49,15 +50,6 @@ const STATUS_TINT_SHELL: Record<Exclude<TextAreaStatus, "default">, string> = {
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
   warning: "bg-surface-tint-warning",
-};
-
-const STATUS_TINT_FOCUS_BORDER: Record<
-  Exclude<TextAreaStatus, "default">,
-  string
-> = {
-  danger: "focus-within:border-danger",
-  success: "focus-within:border-success",
-  warning: "focus-within:border-warning",
 };
 
 const TEXTAREA_MIN_H: Record<TextAreaSize, string> = {
@@ -176,17 +168,12 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       status === "danger" || status === "success" || status === "warning";
 
     const shellSurface = statusTinted
-      ? cn(
-          STATUS_TINT_SHELL[status],
-          "border-token",
-          STATUS_TINT_FOCUS_BORDER[status],
-        )
+      ? cn(STATUS_TINT_SHELL[status], "border-token")
       : cn(
-          variant === "outline" ? "bg-transparent border-token" : VARIANT_SHELL[variant],
-          variant === "outline"
-            ? "focus-within:border-primary"
-            : "border-token focus-within:border-primary",
+          variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
         );
+
+    const shellHoverLift = useFieldShellHoverLift(shellRef, !blocked);
 
     const { onResizePointerDown } = useTextAreaResize(shellRef, resizable, blocked, size);
 
@@ -213,11 +200,16 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         ref={setShellRef}
         data-slot="textarea-shell"
         onPointerDown={handleShellPointerDown}
+        onPointerEnter={shellHoverLift.onShellPointerEnter}
+        onPointerLeave={shellHoverLift.onShellPointerLeave}
         className={cn(
-          "relative w-full overflow-hidden rounded-base border-1 transition-[border-color,background-color] duration-fast ease-out",
+          "relative w-full overflow-hidden rounded-base border-1",
           TEXTAREA_MIN_H[size],
           shellSurface,
-          blocked ? "cursor-not-allowed opacity-55" : "",
+          FIELD_SHELL_TRANSITION_CLASS,
+          FIELD_SHELL_FOCUS_CLASS,
+          shellHoverLift.shellHoverMotionClass,
+          blocked ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,
         )}
       >

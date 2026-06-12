@@ -25,6 +25,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS } from "@/components/core/utils/useFieldShellHoverLift";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { cn } from "@/utils/cn";
@@ -111,12 +112,6 @@ const STATUS_TINT_SHELL: Record<Exclude<TimeFieldStatus, "default">, string> = {
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
   warning: "bg-surface-tint-warning",
-};
-
-const STATUS_TINT_FOCUS_BORDER: Record<Exclude<TimeFieldStatus, "default">, string> = {
-  danger: "focus-within:border-danger",
-  success: "focus-within:border-success",
-  warning: "focus-within:border-warning",
 };
 
 const STATUS_TINT_AFFIX: Record<Exclude<TimeFieldStatus, "default">, string> = {
@@ -210,6 +205,8 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       className = "",
       id,
       onPointerDown,
+      onPointerEnter: onPointerEnterProp,
+      onPointerLeave: onPointerLeaveProp,
       ...rest
     },
     ref,
@@ -391,16 +388,14 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       status === "danger" || status === "success" || status === "warning";
 
     const shellSurface = statusTinted
-      ? cn(
-          STATUS_TINT_SHELL[status],
-          "border-token",
-          STATUS_TINT_FOCUS_BORDER[status],
-        )
+      ? cn(STATUS_TINT_SHELL[status], "border-token")
       : cn(
           variant === "outline"
-            ? "bg-transparent border-token focus-within:border-primary"
-            : cn(VARIANT_SHELL[variant], "border-token focus-within:border-primary"),
+            ? "bg-transparent border-token"
+            : cn(VARIANT_SHELL[variant], "border-token"),
         );
+
+    const shellHoverLift = useFieldShellHoverLift(shellRef, !disabled);
 
     const isPending = (seg: SegId) =>
       pendingRef.current?.seg === seg && focusedSeg === seg;
@@ -439,12 +434,23 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         aria-describedby={ariaDescribedBy}
         data-slot="timefield-shell"
         onPointerDown={handleShellPointerDown}
+        onPointerEnter={(e) => {
+          onPointerEnterProp?.(e);
+          if (!e.defaultPrevented) shellHoverLift.onShellPointerEnter(e);
+        }}
+        onPointerLeave={(e) => {
+          onPointerLeaveProp?.(e);
+          shellHoverLift.onShellPointerLeave(e);
+        }}
         className={cn(
-          "m-0 flex min-w-0 items-stretch overflow-hidden rounded-base border-1 p-0 transition-[border-color,background-color] duration-fast ease-out",
+          "m-0 flex min-w-0 items-stretch overflow-hidden rounded-base border-1 p-0",
           SHELL_H[size],
           compact ? "inline-flex w-fit shrink-0" : "w-full min-w-0",
           shellSurface,
-          disabled ? "cursor-not-allowed opacity-55" : "",
+          FIELD_SHELL_TRANSITION_CLASS,
+          FIELD_SHELL_FOCUS_CLASS,
+          shellHoverLift.shellHoverMotionClass,
+          disabled ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,
         )}
         {...rest}

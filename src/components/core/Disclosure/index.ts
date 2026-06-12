@@ -1,7 +1,13 @@
-import { DisclosureContent, DisclosureRoot, DisclosureTrigger } from "./Disclosure";
+import {
+  DisclosureContent,
+  DisclosureHandleInner,
+  DisclosureRoot,
+  DisclosureTrigger,
+} from "./Disclosure";
 
 export const Disclosure = Object.assign(DisclosureRoot, {
   Trigger: DisclosureTrigger,
+  Handle: DisclosureHandleInner,
   Content: DisclosureContent,
 });
 
@@ -11,6 +17,7 @@ export type {
   DisclosureProps,
   DisclosureGroupProps,
   DisclosureTriggerProps,
+  DisclosureHandleProps,
   DisclosureContentProps,
   DisclosureVariant,
   DisclosureSize,

@@ -484,7 +484,6 @@ export {
   configureMotion,
   getMotionConfig,
   type MotionConfig,
-  type SpringParams,
 } from "@/components/core/utils/motionConfig";
 export {
   MOTION_INTERACTIVE_MS,
@@ -511,19 +510,32 @@ export {
 export {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
+  initElementShadow,
   prefersReducedInteractiveHoverLift,
+  readShadowSize,
+  shadowLg,
+  shadowMd,
+  shadowNone,
+  shadowSm,
+  shouldSkipInteractiveHoverLift,
   useInteractiveHoverLiftContainerHandlers,
   useInteractiveHoverLiftOnContainer,
+  type HoverShadowConfig,
 } from "@/components/core/utils/hoverInteractiveLift";
 export {
   colorToken,
   tokensConfig,
   designTokenNames,
+  burneShadowScale,
+  shadowToken,
+  SHADOW_CSS_VAR,
   type ColorTokenSuffix,
   type TokensConfig,
   type DesignCssVar,
+  type ShadowSize,
+  type ShadowLevel,
 } from "@/tokens";
-export { animate, remove } from "animejs";
+export { gsap, useGSAP, killMotion, ensureRippleEase } from "@/components/core/utils/gsapMotion";
 export {
   Table,
   TABLE_ROW_TONE_SURFACE,

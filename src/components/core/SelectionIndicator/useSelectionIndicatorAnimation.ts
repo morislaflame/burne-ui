@@ -1,7 +1,7 @@
-import { animate, remove } from "animejs";
 import { useLayoutEffect, useRef, type RefObject } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 export function useSelectionIndicatorAnimation(
@@ -30,36 +30,38 @@ export function useSelectionIndicatorAnimation(
     if (!fill && !icon) return;
 
     if (reduceMotion) {
-      if (fill) remove(fill);
-      if (icon) remove(icon);
+      if (fill) killMotion(fill);
+      if (icon) killMotion(icon);
       applyInstant(active);
       return;
     }
 
     if (firstLayoutRef.current) {
       firstLayoutRef.current = false;
-      if (fill) remove(fill);
-      if (icon) remove(icon);
+      if (fill) killMotion(fill);
+      if (icon) killMotion(icon);
       applyInstant(active);
       return;
     }
 
+    const vars = { ...motionInteractive(), overwrite: "auto" as const };
+
     if (fill) {
-      remove(fill);
-      void animate(fill, {
-        scale: active ? [0, 1] : [1, 0],
-        opacity: active ? [0, 1] : [1, 0],
-        ...motionInteractive(),
-      });
+      killMotion(fill);
+      if (active) {
+        gsap.fromTo(fill, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ...vars });
+      } else {
+        gsap.to(fill, { scale: 0, autoAlpha: 0, ...vars });
+      }
     }
 
     if (icon) {
-      remove(icon);
-      void animate(icon, {
-        opacity: active ? [0, 1] : [1, 0],
-        scale: active ? [0.88, 1] : [1, 0.92],
-        ...motionInteractive(),
-      });
+      killMotion(icon);
+      if (active) {
+        gsap.fromTo(icon, { scale: 0.88, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ...vars });
+      } else {
+        gsap.to(icon, { scale: 0.92, autoAlpha: 0, ...vars });
+      }
     }
   }, [active, fillRef, iconRef, reduceMotion]);
 }

@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   Children,
   createContext,
@@ -67,6 +67,7 @@ type DrawerContextValue = {
   setHasDescription: (v: boolean) => void;
   onOpenChange: (open: boolean) => void;
   placement: DrawerPlacement;
+  overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
   /** Поставить в true перед вызовом onOpenChange(false) из Handle, чтобы
    *  корень пропустил повторную анимацию выхода. */
@@ -127,21 +128,32 @@ function panelSizeClass(placement: DrawerPlacement, size: DrawerSize): string {
   return placement === "left" || placement === "right" ? entry.horizontal : entry.vertical;
 }
 
-function getSlideIn(placement: DrawerPlacement): Record<string, string[]> {
+function getSlideInFrom(placement: DrawerPlacement): gsap.TweenVars {
   switch (placement) {
-    case "left":   return { translateX: ["-100%", "0%"] };
-    case "right":  return { translateX: ["100%", "0%"] };
-    case "top":    return { translateY: ["-100%", "0%"] };
-    case "bottom": return { translateY: ["100%", "0%"] };
+    case "left": return { xPercent: -100 };
+    case "right": return { xPercent: 100 };
+    case "top": return { yPercent: -100 };
+    case "bottom": return { yPercent: 100 };
   }
 }
 
-function getSlideOut(placement: DrawerPlacement): Record<string, string[]> {
+function getSlideInTo(placement: DrawerPlacement): gsap.TweenVars {
   switch (placement) {
-    case "left":   return { translateX: ["0%", "-100%"] };
-    case "right":  return { translateX: ["0%", "100%"] };
-    case "top":    return { translateY: ["0%", "-100%"] };
-    case "bottom": return { translateY: ["0%", "100%"] };
+    case "left":
+    case "right":
+      return { xPercent: 0 };
+    case "top":
+    case "bottom":
+      return { yPercent: 0 };
+  }
+}
+
+function getSlideOutTo(placement: DrawerPlacement): gsap.TweenVars {
+  switch (placement) {
+    case "left": return { xPercent: -100 };
+    case "right": return { xPercent: 100 };
+    case "top": return { yPercent: -100 };
+    case "bottom": return { yPercent: 100 };
   }
 }
 
@@ -156,9 +168,10 @@ export function DrawerBackdropInner(_props: DrawerBackdropProps) {
 // ─── Handle ───────────────────────────────────────────────────────────────────
 
 export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: DrawerHandleProps) {
-  const { onOpenChange, placement, panelRef, skipCloseAnimRef } = useDrawer();
+  const { onOpenChange, placement, overlayRef, panelRef, skipCloseAnimRef } = useDrawer();
   const { onPointerDown: dragPD } = useDrawerHandleDrag(
     panelRef,
+    overlayRef,
     placement,
     () => onOpenChange(false),
     false,
@@ -354,14 +367,16 @@ export const DrawerRoot = function Drawer({
   }, [mounted]);
 
   // close animation
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (open || !mounted) return;
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     let cancelled = false;
     const finish = () => {
       if (!cancelled) {
-        dialogRef.current?.close();
+        // Размонтируем без dialog.close(): close() снимает open раньше unmount
+        // и на кадр вспыхивает нативный ::backdrop. clearProps тоже не нужен —
+        // сброс inline opacity перед unmount давал обратное мигание.
         setMounted(false);
       }
     };
@@ -378,21 +393,17 @@ export const DrawerRoot = function Drawer({
       return undefined;
     }
 
-    remove(overlay);
-    remove(panel);
-    const slideOut = getSlideOut(placement);
-    const p1 = Promise.resolve(
-      animate(overlay, { opacity: [1, 0], ...motionInteractive() }),
-    ).then(() => undefined);
-    const p2 = Promise.resolve(
-      animate(panel, { ...slideOut, ...motionInteractive() }),
-    ).then(() => undefined);
-    void Promise.all([p1, p2]).then(finish);
+    killMotion(overlay, panel);
+    const vars = { ...motionInteractive(), overwrite: "auto" as const };
+    const tl = gsap.timeline({ onComplete: finish });
+    // opacity, не autoAlpha — visibility:hidden на blur-подложке даёт мигание в конце
+    tl.to(overlay, { opacity: 0, ...vars }, 0);
+    tl.to(panel, { ...getSlideOutTo(placement), ...vars }, 0);
 
     return () => {
       cancelled = true;
-      remove(overlay);
-      remove(panel);
+      tl.kill();
+      killMotion(overlay, panel);
     };
   }, [open, mounted, placement]);
 
@@ -413,10 +424,10 @@ export const DrawerRoot = function Drawer({
       return;
     }
 
-    remove(overlay);
-    remove(panel);
-    animate(overlay, { opacity: [0, 1], ...motionInteractive() });
-    animate(panel, { ...getSlideIn(placement), ...motionInteractive() });
+    killMotion(overlay, panel);
+    const vars = { ...motionInteractive(), overwrite: "auto" as const };
+    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, ...vars });
+    gsap.fromTo(panel, getSlideInFrom(placement), { ...getSlideInTo(placement), ...vars });
   }, [open, mounted, placement]);
 
   // focus trap
@@ -428,7 +439,6 @@ export const DrawerRoot = function Drawer({
   if (typeof document === "undefined" || !mounted) return null;
 
   const lightUi = readBurneLightTheme();
-  const reduced = prefersReducedInteractiveHoverLift();
   const isHorizontal = placement === "left" || placement === "right";
 
   const ctxValue: DrawerContextValue = {
@@ -438,6 +448,7 @@ export const DrawerRoot = function Drawer({
     setHasDescription: setHasDescriptionStable,
     onOpenChange,
     placement,
+    overlayRef,
     panelRef,
     skipCloseAnimRef,
   };
@@ -449,7 +460,7 @@ export const DrawerRoot = function Drawer({
         onClose={() => onOpenChange(false)}
         aria-labelledby={titleId}
         aria-describedby={hasDescription ? descriptionId : undefined}
-        className="fixed inset-0 z-[100] m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block"
+        className="fixed inset-0 z-[100] m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent"
       >
         <div
           ref={overlayRef}
@@ -460,7 +471,6 @@ export const DrawerRoot = function Drawer({
               : "bg-[color-mix(in_oklab,black_55%,transparent)]",
             backdropIsDismissable ? "cursor-pointer" : "cursor-default",
           )}
-          style={{ opacity: reduced ? 1 : 0 }}
           aria-hidden
           onMouseDown={(e) => {
             if (backdropIsDismissable && e.target === e.currentTarget) onOpenChange(false);

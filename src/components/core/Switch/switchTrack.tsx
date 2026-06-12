@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   createContext,
   useCallback,
@@ -108,16 +108,13 @@ export function SwitchTrack({
 
       if (reduceMotion || thumbFirstLayoutRef.current) {
         thumbFirstLayoutRef.current = false;
-        remove(thumb);
+        killMotion(thumb);
         thumb.style.transform = `translate(${targetX}px, 0)`;
         return;
       }
 
-      remove(thumb);
-      void animate(thumb, {
-        translateX: targetX,
-        ...motionSwitchThumb(),
-      });
+      killMotion(thumb);
+      void gsap.to(thumb, { x: targetX, ...motionSwitchThumb(), overwrite: "auto" });
     },
     [reduceMotion],
   );
@@ -154,7 +151,7 @@ export function SwitchTrack({
     const track = trackRef.current;
     return () => {
       for (const el of [trackFill, thumb, thumbShell, thumbFill, iconOff, iconOn, track]) {
-        if (el) remove(el);
+        if (el) killMotion(el);
       }
     };
   }, []);
@@ -164,23 +161,24 @@ export function SwitchTrack({
     if (!trackFill) return;
 
     if (reduceMotion) {
-      remove(trackFill);
+      killMotion(trackFill);
       trackFill.style.opacity = checked ? "1" : "0";
       return;
     }
 
     if (trackFillFirstLayoutRef.current) {
       trackFillFirstLayoutRef.current = false;
-      remove(trackFill);
+      killMotion(trackFill);
       trackFill.style.opacity = checked ? "1" : "0";
       return;
     }
 
-    remove(trackFill);
-    void animate(trackFill, {
-      opacity: checked ? [0, 1] : [1, 0],
-      ...motionInteractive(),
-    });
+    killMotion(trackFill);
+    if (checked) {
+      void gsap.fromTo(trackFill, { autoAlpha: 0 }, { autoAlpha: 1, ...motionInteractive(), overwrite: "auto" });
+    } else {
+      void gsap.to(trackFill, { autoAlpha: 0, ...motionInteractive(), overwrite: "auto" });
+    }
   }, [checked, reduceMotion]);
 
   useLayoutEffect(() => {
@@ -188,38 +186,38 @@ export function SwitchTrack({
 
     if (reduceMotion) {
       if (iconOffRef.current) {
-        remove(iconOffRef.current);
+        killMotion(iconOffRef.current);
         iconOffRef.current.style.opacity = checked ? "0" : "1";
       }
       if (iconOnRef.current) {
-        remove(iconOnRef.current);
+        killMotion(iconOnRef.current);
         iconOnRef.current.style.opacity = checked ? "1" : "0";
       }
       return;
     }
 
     if (iconOffRef.current) {
-      remove(iconOffRef.current);
-      void animate(iconOffRef.current, {
-        opacity: checked ? [1, 0] : [0, 1],
-        scale: checked ? [1, 0.88] : [0.88, 1],
-        ...motionInteractive(),
-      });
+      killMotion(iconOffRef.current);
+      if (checked) {
+        void gsap.to(iconOffRef.current, { autoAlpha: 0, scale: 0.88, ...motionInteractive(), overwrite: "auto" });
+      } else {
+        void gsap.fromTo(iconOffRef.current, { autoAlpha: 0, scale: 0.88 }, { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto" });
+      }
     }
     if (iconOnRef.current) {
-      remove(iconOnRef.current);
-      void animate(iconOnRef.current, {
-        opacity: checked ? [0, 1] : [1, 0],
-        scale: checked ? [0.88, 1] : [1, 0.88],
-        ...motionInteractive(),
-      });
+      killMotion(iconOnRef.current);
+      if (checked) {
+        void gsap.fromTo(iconOnRef.current, { autoAlpha: 0, scale: 0.88 }, { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto" });
+      } else {
+        void gsap.to(iconOnRef.current, { autoAlpha: 0, scale: 0.88, ...motionInteractive(), overwrite: "auto" });
+      }
     }
   }, [checked, reduceMotion]);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    remove(track);
+    killMotion(track);
     track.style.opacity = disabled ? "0.48" : "1";
   }, [disabled]);
 

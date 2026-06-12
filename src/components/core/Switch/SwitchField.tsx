@@ -13,7 +13,7 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
-import { remove } from "animejs";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 
 import { FieldError, FieldHint, type FieldErrorProps, type FieldHintProps } from "@/components/core/Field";
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
@@ -245,14 +245,14 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchRootProps & Partial
     useEffect(() => {
       const el = textColRef.current;
       return () => {
-        if (el) remove(el);
+        if (el) killMotion(el);
       };
     }, []);
 
     useEffect(() => {
       const el = textColRef.current;
       if (!el || !disabled) return;
-      remove(el);
+      killMotion(el);
       el.style.transform = "";
     }, [disabled]);
 

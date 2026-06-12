@@ -13,7 +13,7 @@ import type { ComponentSize } from "@/components/core/utils/componentSize";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
+  shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
@@ -124,7 +124,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       onPointerEnter?.(e);
       if (e.defaultPrevented) return;
       const el = motionRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || shouldSkipInteractiveHoverLift()) return;
       animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
     },
     [onPointerEnter],
@@ -146,7 +146,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       onPointerDown?.(e);
       if (e.defaultPrevented) return;
       const el = motionRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || shouldSkipInteractiveHoverLift()) return;
       void animateInteractivePressSqueeze(el);
     },
     [onPointerDown],

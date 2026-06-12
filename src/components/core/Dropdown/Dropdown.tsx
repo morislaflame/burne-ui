@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { IoChevronForward } from "react-icons/io5";
 import {
   createContext,
@@ -785,7 +785,7 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
       let cancelled = false;
 
       if (reduced) {
-        remove(el);
+        killMotion(el);
         if (subOpen) {
           el.style.opacity = "";
         } else {
@@ -796,33 +796,31 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
         };
       }
 
-      remove(el);
+      killMotion(el);
 
       if (subOpen) {
         el.style.opacity = "0";
-        animate(el, {
-          opacity: [0, 1],
-          ...motionTooltip(),
-        });
+        gsap.fromTo(el, { autoAlpha: 0 }, { autoAlpha: 1, ...motionTooltip(), overwrite: "auto" });
         return () => {
           cancelled = true;
-          remove(el);
+          killMotion(el);
         };
       }
 
       const startOpacity = Number.parseFloat(getComputedStyle(el).opacity);
-      const from =
+      const fromAlpha =
         Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
-      const anim = animate(el, {
-        opacity: [from, 0],
-        ...motionTooltip(),
-      });
-      void Promise.resolve(anim).then(() => {
+      const anim = gsap.fromTo(
+        el,
+        { autoAlpha: fromAlpha },
+        { autoAlpha: 0, ...motionTooltip(), overwrite: "auto" },
+      );
+      void anim.then(() => {
         if (!cancelled) setPortalMounted(false);
       });
       return () => {
         cancelled = true;
-        remove(el);
+        killMotion(el);
       };
     }, [subOpen, portalMounted]);
 

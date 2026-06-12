@@ -1,5 +1,5 @@
 /**
- * Centralized animation configuration for Burne UI.
+ * Centralized animation configuration for Burne UI (GSAP).
  *
  * Call `configureMotion()` once before your app renders to override defaults.
  *
@@ -8,20 +8,9 @@
  *
  * configureMotion({
  *   interactiveDuration: 350,
- *   switchThumb: { ease: { stiffness: 180, damping: 22, mass: 0.6 } },
+ *   switchThumbEase: "back.out(1.6)",
  * });
  */
-
-import { spring } from "animejs";
-
-// ─── Spring params ────────────────────────────────────────────────────────────
-
-/** Parameters passed to animejs `spring()`. */
-export interface SpringParams {
-  stiffness: number;
-  damping: number;
-  mass: number;
-}
 
 // ─── Config shape ─────────────────────────────────────────────────────────────
 
@@ -35,10 +24,17 @@ export interface MotionConfig {
   interactiveDuration: number;
 
   /**
-   * Easing for interactive animations (animejs syntax).
-   * @default "out(2)"
+   * GSAP easing for interactive animations.
+   * @default "power2.out"
    */
   interactiveEase: string;
+
+  /**
+   * GSAP easing для hover-подъёма (scale lift).
+   * Мягче `interactiveEase`: та же длительность, плавнее разгон/замедление.
+   * @default "sine.inOut"
+   */
+  hoverLiftEase: string;
 
   /**
    * Duration (ms) for tooltip / popover / dropdown enter/leave.
@@ -50,12 +46,10 @@ export interface MotionConfig {
   switchThumbDuration: number;
 
   /**
-   * Switch thumb easing.
-   * Pass a `SpringParams` object for a spring animation,
-   * or an animejs easing string (e.g. `"out(3)"`) for a regular ease.
-   * @default { stiffness: 200, damping: 27, mass: 0.55 }
+   * GSAP easing for Switch thumb travel (slight overshoot recommended).
+   * @default "back.out(1.4)"
    */
-  switchThumbEase: SpringParams | string;
+  switchThumbEase: string;
 
   /** Scale applied when a hoverable element lifts. @default 1.015 */
   hoverLiftScale: number;
@@ -83,22 +77,36 @@ export interface MotionConfig {
 
   /**
    * CSS easing string used in keyframe animations (button async-ripple).
+   * Also used to build GSAP CustomEase for converge-ripple.
    * @default "cubic-bezier(0.25, 0.55, 0.35, 0.95)"
    */
   rippleEaseCss: string;
 
   /** Duration (ms) of the feedback-expand ring after async button. @default 720 */
   feedbackExpandDuration: number;
+
+  /** Whether to enable hover-lift animations globally. @default true */
+  enableHoverLift: boolean;
+
+  /** Whether to enable press-squeeze animations globally. @default true */
+  enablePressSqueeze: boolean;
+
+  /** Whether to enable toggle button and calendar cell fill animations globally. @default true */
+  enableToggleButtonFill: boolean;
+
+  /** Whether to enable ripple animations globally. @default true */
+  enableRipple: boolean;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 
 const DEFAULTS: MotionConfig = {
   interactiveDuration: 280,
-  interactiveEase: "out(2)",
+  interactiveEase: "power2.out",
+  hoverLiftEase: "sine.inOut",
   tooltipDuration: 200,
   switchThumbDuration: 340,
-  switchThumbEase: { stiffness: 200, damping: 27, mass: 0.55 },
+  switchThumbEase: "back.out(1.4)",
   hoverLiftScale: 1.015,
   badgeAnchorHoverLiftScale: 1.052,
   pressSqueezeScale: [1, 0.98, 1],
@@ -108,6 +116,10 @@ const DEFAULTS: MotionConfig = {
   rippleExpandableOpacityFrom: 0.34,
   rippleEaseCss: "cubic-bezier(0.25, 0.55, 0.35, 0.95)",
   feedbackExpandDuration: 720,
+  enableHoverLift: true,
+  enablePressSqueeze: true,
+  enableToggleButtonFill: true,
+  enableRipple: true,
 };
 
 // ─── Mutable config state ─────────────────────────────────────────────────────
@@ -131,30 +143,50 @@ export function getMotionConfig(): Readonly<MotionConfig> {
 
 // ─── Derived helpers (called at animation time, not module-load time) ─────────
 
-/** Returns `{ duration, ease }` for standard interactive animations. */
+/** Returns `{ duration, ease }` for standard interactive GSAP tweens (duration in seconds). */
 export function motionInteractive() {
   return {
-    duration: _config.interactiveDuration,
+    duration: _config.interactiveDuration / 1000,
     ease: _config.interactiveEase,
   } as const;
 }
 
-/** Returns `{ duration, ease }` for tooltip / popover animations. */
+/** Returns `{ duration, ease }` for hover-lift GSAP tweens (duration in seconds). */
+export function motionHoverLift() {
+  return {
+    duration: _config.interactiveDuration / 1000,
+    ease: _config.hoverLiftEase,
+  } as const;
+}
+
+/** Появление заливки selection (ToggleButton, календарь). */
+export function motionSelectionFillIn() {
+  return {
+    duration: (_config.interactiveDuration * 1.15) / 1000,
+    ease: "back.out(1.25)",
+  } as const;
+}
+
+/** Скрытие заливки — чуть короче и с быстрым стартом, чтобы совпадало с появлением по ощущению. */
+export function motionSelectionFillOut() {
+  return {
+    duration: (_config.interactiveDuration * 0.85) / 1000,
+    ease: _config.interactiveEase,
+  } as const;
+}
+
+/** Returns `{ duration, ease }` for tooltip / popover GSAP tweens (duration in seconds). */
 export function motionTooltip() {
   return {
-    duration: _config.tooltipDuration,
+    duration: _config.tooltipDuration / 1000,
     ease: _config.interactiveEase,
   } as const;
 }
 
-/**
- * Returns `{ duration, ease }` for the Switch thumb animation.
- * The ease is either a built `spring()` object or the raw string from config.
- */
+/** Returns `{ duration, ease }` for the Switch thumb GSAP tween (duration in seconds). */
 export function motionSwitchThumb() {
-  const ease =
-    typeof _config.switchThumbEase === "string"
-      ? _config.switchThumbEase
-      : spring({ ..._config.switchThumbEase, duration: _config.switchThumbDuration });
-  return { duration: _config.switchThumbDuration, ease } as const;
+  return {
+    duration: _config.switchThumbDuration / 1000,
+    ease: _config.switchThumbEase,
+  } as const;
 }

@@ -1,4 +1,4 @@
-import { animate, remove as removeAnime } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import type {
   ChangeEvent,
   FocusEvent,
@@ -13,18 +13,24 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { IoClose, IoSearch } from "react-icons/io5";
 
 import {
-  animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
+  initElementShadow,
   prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
+  shadowNone,
+  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  FIELD_SHELL_FOCUS_CLASS,
+  FIELD_SHELL_HOVER_MOTION_CLASS,
+  FIELD_SHELL_TRANSITION_CLASS,
+  useFieldShellHoverLift,
+} from "@/components/core/utils/useFieldShellHoverLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import { cn } from "@/utils/cn";
@@ -33,11 +39,22 @@ import {
   CONTROL_SIZE_LAYOUT,
   readControlHeightPx,
 } from "@/components/core/utils/controlSizeLayout";
+import {
+  readSearchExpandedRadiusPx,
+  SEARCH_EXPANDED_ROUNDED_CLASS,
+} from "@/components/core/utils/radiusTokens";
 
 export type SearchInputSize = ComponentSize;
 
 const GHOST_CLEAR_HOVER =
   "hover:bg-primary-tint";
+
+const SHELL_W_COLLAPSED: Record<ComponentSize, string> = {
+  small: "w-control-small",
+  base: "w-control-base",
+  mid: "w-control-mid",
+  large: "w-control-large",
+};
 
 /** Горизонтальный padding (px) — совпадает с `px-base` / `px-plus` / … */
 const SEARCH_PAD_X_PX: Record<ComponentSize, number> = {
@@ -55,13 +72,6 @@ const SEARCH_ICON_BOX_PX: Record<ComponentSize, number> = {
   large: 20,
 };
 
-const SEARCH_RADIUS_EXPANDED_PX: Record<ComponentSize, number> = {
-  small: 6,
-  base: 8,
-  mid: 10,
-  large: 12,
-};
-
 const SEARCH_CLEAR_TAP_PX: Record<ComponentSize, number> = {
   small: 20,
   base: 24,
@@ -70,13 +80,13 @@ const SEARCH_CLEAR_TAP_PX: Record<ComponentSize, number> = {
 };
 
 type SearchSizeLayout = {
-  dim: number;
   defaultExpandedW: number;
   iconBox: number;
   padX: number;
-  radiusExpanded: number;
   iconClass: string;
-  inputClass: string;
+  controlPad: string;
+  shellH: string;
+  shellWCollapsed: string;
   clearTap: number;
   clearIconClass: string;
   textGapClear: number;
@@ -85,13 +95,13 @@ type SearchSizeLayout = {
 function buildSearchLayout(size: ComponentSize): SearchSizeLayout {
   const control = CONTROL_SIZE_LAYOUT[size];
   return {
-    dim: readControlHeightPx(size),
     defaultExpandedW: control.defaultExpandedSearchWidth,
     iconBox: SEARCH_ICON_BOX_PX[size],
     padX: SEARCH_PAD_X_PX[size],
-    radiusExpanded: SEARCH_RADIUS_EXPANDED_PX[size],
     iconClass: control.icon,
-    inputClass: size === "large" || size === "mid" ? "text-mid" : "text-base",
+    controlPad: control.controlPad,
+    shellH: control.h,
+    shellWCollapsed: SHELL_W_COLLAPSED[size],
     clearTap: SEARCH_CLEAR_TAP_PX[size],
     clearIconClass: control.chevronIcon,
     textGapClear: size === "small" ? 4 : 6,
@@ -106,10 +116,7 @@ const SIZE_LAYOUT: Record<SearchInputSize, SearchSizeLayout> = {
 };
 
 function resolveSearchLayout(size: ComponentSize): SearchSizeLayout {
-  return {
-    ...SIZE_LAYOUT[size],
-    dim: readControlHeightPx(size),
-  };
+  return SIZE_LAYOUT[size];
 }
 
 export type SearchInputProps = Omit<
@@ -191,6 +198,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const inputRef = useRef<HTMLInputElement | null>(null);
     const squeezePromiseRef = useRef<Promise<void> | null>(null);
     const layoutReadyRef = useRef(false);
+    const prevExpandedRef = useRef(expanded);
 
     const isValueControlled = valueProp !== undefined;
     const [hasQuery, setHasQuery] = useState(
@@ -255,17 +263,19 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     const layout = resolveSearchLayout(sizeProp);
     const targetW = expandedWidth ?? layout.defaultExpandedW;
-    const dim = layout.dim;
+    const collapsedDim = readControlHeightPx(sizeProp);
+
+    const shellHoverLift = useFieldShellHoverLift(rootRef, !blocked && expanded);
+
+    useLayoutEffect(() => {
+      const el = rootRef.current;
+      if (!el) return;
+      initElementShadow(el, expanded ? shadowSm() : shadowNone());
+    }, [expanded]);
 
     const shellHorizontalBorderPx = useCallback(
       (shellEl: HTMLElement) => shellEl.offsetWidth - shellEl.clientWidth,
       [],
-    );
-
-    const iconLeftCollapsedPx = useCallback(
-      (shellEl: HTMLElement) =>
-        (shellEl.clientWidth - layout.iconBox) / 2,
-      [layout.iconBox],
     );
 
     const iconLeftCollapsedAtBorderBoxWidth = useCallback(
@@ -281,16 +291,18 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         const el = rootRef.current;
         const iconEl = iconRef.current;
         if (!el || !iconEl) return;
-        const w = open ? targetW : dim;
-        const r = open ? layout.radiusExpanded : dim / 2;
-        el.style.width = `${w}px`;
-        el.style.height = `${dim}px`;
-        el.style.borderRadius = `${r}px`;
+        if (open) {
+          el.style.width = `${targetW}px`;
+        } else {
+          el.style.removeProperty("width");
+        }
+        el.style.removeProperty("height");
+        el.style.removeProperty("borderRadius");
         iconEl.style.left = open
           ? `${layout.padX}px`
           : iconLeftCollapsedCss;
       },
-      [dim, iconLeftCollapsedCss, layout.padX, layout.radiusExpanded, targetW],
+      [iconLeftCollapsedCss, layout.padX, targetW],
     );
 
     const runExpandMotion = useCallback(
@@ -304,55 +316,89 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           return;
         }
 
-        removeAnime(el);
-        removeAnime(iconEl);
+        killMotion(el);
+        killMotion(iconEl);
+        el.style.removeProperty("borderRadius");
+
+        const expandedRadius = readSearchExpandedRadiusPx(sizeProp);
 
         if (open) {
-          const iconLeftFrom = iconLeftCollapsedPx(el);
+          el.style.width = `${collapsedDim}px`;
+          el.style.borderRadius = `${collapsedDim / 2}px`;
+          const iconLeftFrom = (el.clientWidth - layout.iconBox) / 2;
           iconEl.style.left = `${iconLeftFrom}px`;
 
-          animate(el, {
-            width: targetW,
-            height: dim,
-            borderRadius: layout.radiusExpanded,
-            ...motionInteractive(),
-          });
-          animate(iconEl, {
-            left: layout.padX,
-            ...motionInteractive(),
-          });
+          const vars = motionInteractive();
+          gsap
+            .timeline({
+              onComplete: () => {
+                el.style.removeProperty("borderRadius");
+              },
+            })
+            .to(
+              el,
+              {
+                width: targetW,
+                borderRadius: expandedRadius,
+                ...vars,
+                overwrite: "auto",
+              },
+              0,
+            )
+            .to(
+              iconEl,
+              {
+                left: layout.padX,
+                ...vars,
+                overwrite: "auto",
+              },
+              0,
+            );
           return;
         }
 
-        iconEl.style.left = `${layout.padX}px`;
-
-        animate(el, {
-          width: dim,
-          height: dim,
-          borderRadius: dim / 2,
-          ...motionInteractive(),
-        });
-
         const borderPx = shellHorizontalBorderPx(el);
-        const iconLeftTo = iconLeftCollapsedAtBorderBoxWidth(dim, borderPx);
+        const iconLeftTo = iconLeftCollapsedAtBorderBoxWidth(collapsedDim, borderPx);
 
-        animate(iconEl, {
-          left: iconLeftTo,
-          ...motionInteractive(),
-          onComplete: () => {
-            iconEl.style.left = iconLeftCollapsedCss;
-          },
-        });
+        iconEl.style.left = `${layout.padX}px`;
+        const vars = motionInteractive();
+        gsap
+          .timeline({
+            onComplete: () => {
+              el.style.removeProperty("width");
+              el.style.removeProperty("borderRadius");
+              iconEl.style.left = iconLeftCollapsedCss;
+            },
+          })
+          .to(
+            el,
+            {
+              width: collapsedDim,
+              borderRadius: collapsedDim / 2,
+              ...vars,
+              overwrite: "auto",
+            },
+            0,
+          )
+          .to(
+            iconEl,
+            {
+              left: iconLeftTo,
+              ...vars,
+              overwrite: "auto",
+            },
+            0,
+          );
       },
       [
         applyShellMetrics,
-        dim,
+        collapsedDim,
         iconLeftCollapsedAtBorderBoxWidth,
         iconLeftCollapsedCss,
-        iconLeftCollapsedPx,
+        layout.iconBox,
         layout.padX,
-        layout.radiusExpanded,
         shellHorizontalBorderPx,
+        sizeProp,
         targetW,
       ],
     );
@@ -361,12 +407,13 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       if (!layoutReadyRef.current) {
         layoutReadyRef.current = true;
         applyShellMetrics(expanded);
+        prevExpandedRef.current = expanded;
         return;
       }
+      if (prevExpandedRef.current === expanded) return;
+      prevExpandedRef.current = expanded;
       runExpandMotion(expanded);
     }, [applyShellMetrics, expanded, runExpandMotion]);
-
-    const searchShadow = useMemo(() => ({ hover: SHADOW_SM() }), []);
 
     const focusInput = useCallback(() => {
       requestAnimationFrame(() => inputRef.current?.focus());
@@ -377,13 +424,8 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       await (squeezePromiseRef.current ?? Promise.resolve());
       squeezePromiseRef.current = null;
       setExpanded(true);
-      const shell = rootRef.current;
-      if (shell && !prefersReducedInteractiveHoverLift()) {
-        removeAnime(shell);
-        animateInteractiveHoverLift(shell, false, undefined, searchShadow);
-      }
       focusInput();
-    }, [blocked, expanded, focusInput, searchShadow, setExpanded]);
+    }, [blocked, expanded, focusInput, setExpanded]);
 
     const handleRootPointerDown = useCallback(
       (_e: PointerEvent<HTMLDivElement>) => {
@@ -411,19 +453,8 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       [blocked, expanded, openFromInteraction],
     );
 
-    const handlePointerEnter = useCallback(() => {
-      if (blocked || expanded) return;
-      const el = rootRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, true, undefined, searchShadow);
-    }, [blocked, expanded, searchShadow]);
-
-    const handlePointerLeave = useCallback(() => {
-      const el = rootRef.current;
-      if (!el || blocked || expanded) return;
-      if (prefersReducedInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, false, undefined, searchShadow);
-    }, [blocked, expanded, searchShadow]);
+    const handlePointerEnter = shellHoverLift.onShellPointerEnter;
+    const handlePointerLeave = shellHoverLift.onShellPointerLeave;
 
     const handleInputBlur = useCallback(
       (e: FocusEvent<HTMLInputElement>) => {
@@ -495,19 +526,20 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
         className={cn(
-          "relative box-border inline-block overflow-hidden border-token bg-surface text-left outline-none animate-shadow button-idle-surface-transition motion-reduce:transition-none",
+          layout.shellH,
+          expanded
+            ? SEARCH_EXPANDED_ROUNDED_CLASS[sizeProp]
+            : cn("rounded-full", layout.shellWCollapsed),
+          "relative box-border inline-block overflow-hidden border-1 border-token bg-surface text-left outline-none",
+          FIELD_SHELL_TRANSITION_CLASS,
+          FIELD_SHELL_FOCUS_CLASS,
           "focus-ring",
-          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
+          !blocked && FIELD_SHELL_HOVER_MOTION_CLASS,
           expanded ? "cursor-text" : "",
           !expanded && !blocked ? "cursor-pointer" : "",
-          blocked ? "pointer-events-none opacity-50" : "",
+          blocked ? "pointer-events-none opacity-55" : "",
           className,
         )}
-        style={{
-          width: dim,
-          height: dim,
-          borderRadius: dim / 2,
-        }}
         onPointerDown={handleRootPointerDown}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
@@ -539,10 +571,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           tabIndex={expanded ? 0 : -1}
           aria-label={inputAriaLabel}
           className={cn(
-            "box-border min-h-0 w-full border-0 bg-transparent py-0 text-foreground outline-none placeholder:text-muted",
+            "box-border min-h-0 w-full border-0 bg-transparent text-foreground outline-none placeholder:text-muted",
             "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",
             "disabled:cursor-not-allowed disabled:opacity-100",
-            layout.inputClass,
+            layout.controlPad,
             expanded
               ? "relative z-[2] opacity-100"
               : "pointer-events-none absolute inset-0 opacity-0",
@@ -550,18 +582,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           style={
             expanded
               ? {
-                  height: dim,
-                  lineHeight: `${dim}px`,
                   paddingLeft: paddingInputLeft,
                   paddingRight: paddingInputRight,
-                  paddingTop: 0,
-                  paddingBottom: 0,
                 }
-              : {
-                  paddingLeft: paddingInputLeft,
-                  lineHeight: `${dim}px`,
-                  height: "100%",
-                }
+              : undefined
           }
           {...rest}
         />

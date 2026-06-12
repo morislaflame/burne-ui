@@ -24,6 +24,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS } from "@/components/core/utils/useFieldShellHoverLift";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
@@ -55,12 +56,6 @@ const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
   warning: "bg-surface-tint-warning",
 };
 
-const STATUS_TINT_FOCUS_BORDER: Record<Exclude<InputStatus, "default">, string> = {
-  danger: "focus-within:border-danger",
-  success: "focus-within:border-success",
-  warning: "focus-within:border-warning",
-};
-
 const INPUT_SHELL_H: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.h,
   base: CONTROL_SIZE_LAYOUT.base.h,
@@ -85,7 +80,7 @@ const CHEVRON_ICON: Record<InputSize, string> = {
 export type ComboBoxInputGroupProps = HTMLAttributes<HTMLDivElement>;
 
 export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupProps>(
-  function ComboBoxInputGroup({ className, children, ...rest }, ref) {
+  function ComboBoxInputGroup({ className, children, onPointerEnter, onPointerLeave, ...rest }, ref) {
     const ctx = useComboBoxContext();
     const {
       open,
@@ -104,17 +99,12 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
       status === "danger" || status === "success" || status === "warning";
 
     const shellSurface = statusTinted
-      ? cn(
-          STATUS_TINT_SHELL[status],
-          "border-token",
-          STATUS_TINT_FOCUS_BORDER[status],
-        )
+      ? cn(STATUS_TINT_SHELL[status], "border-token")
       : cn(
-          variant === "outline" ? "bg-transparent border-token" : VARIANT_SHELL[variant],
-          variant === "outline"
-            ? "focus-within:border-primary"
-            : "border-token focus-within:border-primary",
+          variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
         );
+
+    const shellHoverLift = useFieldShellHoverLift(anchorRef, !disabled);
 
     const openAfterSqueeze = useCallback(() => {
       if (disabled || openingRef.current) return;
@@ -155,13 +145,23 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         aria-haspopup="listbox"
         aria-disabled={disabled || undefined}
         onPointerDown={handlePointerDown}
+        onPointerEnter={(e) => {
+          onPointerEnter?.(e);
+          if (!e.defaultPrevented) shellHoverLift.onShellPointerEnter(e);
+        }}
+        onPointerLeave={(e) => {
+          onPointerLeave?.(e);
+          shellHoverLift.onShellPointerLeave(e);
+        }}
         className={cn(
           "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
-          "overflow-hidden rounded-base transition-[border-color,background-color] duration-200 ease-out motion-reduce:transition-none",
-          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
+          "overflow-hidden rounded-base motion-reduce:transition-none",
           INPUT_SHELL_H[size],
           shellSurface,
-          disabled ? "cursor-not-allowed opacity-55" : "cursor-pointer",
+          FIELD_SHELL_TRANSITION_CLASS,
+          FIELD_SHELL_FOCUS_CLASS,
+          shellHoverLift.shellHoverMotionClass,
+          disabled ? "cursor-not-allowed opacity-55 shadow-token-sm" : "cursor-pointer",
           className,
         )}
         {...rest}

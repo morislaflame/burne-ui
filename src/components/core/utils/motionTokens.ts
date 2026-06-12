@@ -1,48 +1,37 @@
 /**
- * Общие параметры анимаций (anime.js + согласованные CSS-где нужно).
+ * Общие параметры анимаций (GSAP + согласованные CSS где нужно).
  *
- * @deprecated Константы здесь — значения по умолчанию (backward compat).
+ * Константы здесь — значения по умолчанию.
  * Для live-значений используйте `getMotionConfig()` / `configureMotion()`.
  */
-
-import { cubicBezier, spring } from "animejs";
 
 export {
   configureMotion,
   getMotionConfig,
   motionInteractive,
+  motionHoverLift,
   motionTooltip,
   motionSwitchThumb,
   type MotionConfig,
-  type SpringParams,
 } from "./motionConfig";
 
-// --- backward-compat constants (equal to defaults in motionConfig) ---
+export { ensureRippleEase, gsap, killMotion, useGSAP } from "./gsapMotion";
+
+// --- defaults (equal to motionConfig) ---
 
 export const MOTION_INTERACTIVE_MS = 280;
-export const MOTION_INTERACTIVE_EASE = "out(2)" as const;
+export const MOTION_INTERACTIVE_EASE = "power2.out" as const;
 
-/** @deprecated Use `configureMotion` + `getMotionConfig().tooltipDuration`. */
 export const MOTION_TOOLTIP_MS = 200;
 
-/** @deprecated Only used internally by the legacy spring constant below. */
 export const MOTION_COLOR_CHANGE_MS = 200;
 
 /** Лёгкий overshoot кружка Switch при переключении. */
 export const MOTION_SWITCH_THUMB_MS = 340;
-
-/**
- * @deprecated Module-level spring — built once at load time.
- * Use `motionSwitchThumb()` to get a dynamically configured spring.
- */
-export const MOTION_SWITCH_THUMB_EASE = spring({
-  stiffness: 200,
-  damping: 27,
-  mass: 0.55,
-  duration: MOTION_SWITCH_THUMB_MS,
-});
+export const MOTION_SWITCH_THUMB_EASE = "back.out(1.4)" as const;
 
 export const MOTION_HOVER_LIFT_SCALE = 1.015;
+export const MOTION_HOVER_LIFT_EASE = "sine.inOut" as const;
 
 /** Hover-lift прямого `Badge` внутри `Badge.Anchor` — чуть сильнее, чем у кнопок/карт. */
 export const MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE = 1.052;
@@ -64,7 +53,6 @@ export const MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM = 0.34;
 
 /** Easing точки сходимости — тот же профиль, что в CSS keyframes async-ripple у Button */
 export const MOTION_RIPPLE_EASE_CSS = "cubic-bezier(0.25, 0.55, 0.35, 0.95)";
-export const MOTION_RIPPLE_EASE = cubicBezier(0.25, 0.55, 0.35, 0.95);
 
 /** Круг разлёта success/error после async (чистый CSS в Button) */
 export const MOTION_FEEDBACK_EXPAND_MS = 720;

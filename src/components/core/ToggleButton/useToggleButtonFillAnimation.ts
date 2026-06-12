@@ -1,44 +1,68 @@
-import { animate, remove } from "animejs";
-import { useLayoutEffect, useRef, type RefObject } from "react";
+import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { motionSelectionFillIn, motionSelectionFillOut, getMotionConfig } from "@/components/core/utils/motionConfig";
 
-/** Заливка ToggleButton: чуть выходит под `border`, с overshoot по scale — без щелей в углах. */
+/**
+ * Заливка ToggleButton / CalendarInteractiveCell.
+ * Не задавайте `style={{ transform, opacity }}` на fill — React перезапишет GSAP при ререндере родителя.
+ */
+export function animateToggleButtonFill(
+  fill: HTMLElement,
+  pressed: boolean,
+  reduceMotion = prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToggleButtonFill,
+): void {
+  killMotion(fill);
+  if (reduceMotion) {
+    gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
+    return;
+  }
+
+  if (pressed) {
+    gsap.fromTo(
+      fill,
+      { scale: 0, autoAlpha: 0 },
+      { scale: 1, autoAlpha: 1, ...motionSelectionFillIn(), overwrite: "auto" },
+    );
+  } else {
+    gsap.to(fill, { scale: 0, autoAlpha: 0, ...motionSelectionFillOut(), overwrite: "auto" });
+  }
+}
+
 export function useToggleButtonFillAnimation(
   pressed: boolean,
   fillRef: RefObject<HTMLElement | null>,
 ) {
-  const firstLayoutRef = useRef(true);
+  const prevPressedRef = useRef<boolean | undefined>(undefined);
   const reduceMotion = prefersReducedInteractiveHoverLift();
+
+  const animateTo = useCallback(
+    (next: boolean) => {
+      const fill = fillRef.current;
+      if (!fill) return;
+      if (prevPressedRef.current === next) return;
+      prevPressedRef.current = next;
+      animateToggleButtonFill(fill, next, reduceMotion);
+    },
+    [fillRef, reduceMotion],
+  );
 
   useLayoutEffect(() => {
     const fill = fillRef.current;
     if (!fill) return;
 
-    const applyInstant = (on: boolean) => {
-      fill.style.transform = `scale(${on ? 1 : 0})`;
-      fill.style.opacity = on ? "1" : "0";
-    };
-
-    if (reduceMotion) {
-      remove(fill);
-      applyInstant(pressed);
+    if (prevPressedRef.current === undefined) {
+      prevPressedRef.current = pressed;
+      killMotion(fill);
+      gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
       return;
     }
 
-    if (firstLayoutRef.current) {
-      firstLayoutRef.current = false;
-      remove(fill);
-      applyInstant(pressed);
-      return;
-    }
-
-    remove(fill);
-    void animate(fill, {
-      scale: pressed ? [0, 1.06, 1] : [1, 0],
-      opacity: pressed ? [0, 1, 1] : [1, 0],
-      ...motionInteractive(),
-    });
+    if (prevPressedRef.current === pressed) return;
+    prevPressedRef.current = pressed;
+    animateToggleButtonFill(fill, pressed, reduceMotion);
   }, [pressed, fillRef, reduceMotion]);
+
+  return { animateTo };
 }

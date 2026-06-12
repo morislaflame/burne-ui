@@ -1,4 +1,6 @@
 import { useCallback, useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
+
+import { CalendarShowcaseSection } from "./CalendarShowcaseSection";
 import {
   IoAdd,
   IoArrowForward,
@@ -32,7 +34,6 @@ import { Avatar, AvatarGroup } from "@/components/core/Avatar";
 import { Badge } from "@/components/core/Badge";
 import { Breadcrumbs } from "@/components/core/Breadcrumbs";
 import { Button } from "@/components/core/Button";
-import { Calendar, type CalendarRangeValue } from "@/components/core/Calendar";
 import { Card } from "@/components/core/Card";
 import { Checkbox } from "@/components/core/Checkbox";
 import { CloseButton } from "@/components/core/CloseButton";
@@ -128,11 +129,6 @@ const STATUS_BADGE: Record<TableRow["status"], "success" | "warning"> = {
 const preventNav = (e: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
   e.preventDefault();
 };
-
-function formatDate(d: Date | null | undefined) {
-  if (!d) return "—";
-  return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
-}
 
 function AsyncSaveButton() {
   return (
@@ -385,15 +381,12 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
   const [search, setSearch] = useState("");
   const [sliderValue, setSliderValue] = useState(40);
   const [timeValue, setTimeValue] = useState("09:30");
-  const [calendarDate, setCalendarDate] = useState<Date | null>(null);
   const [color, setColor] = useState("#3b82f6");
   const [viewMode, setViewMode] = useState("list");
   const [page, setPage] = useState(1);
-  const [calendarRange, setCalendarRange] = useState<CalendarRangeValue>({ start: null, end: null });
   const [listBoxValue, setListBoxValue] = useState("ru");
   const [listBoxMulti, setListBoxMulti] = useState<string[]>(["ru"]);
   const [liked, setLiked] = useState(false);
-  const [calendarDates, setCalendarDates] = useState<Date[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([200, 750]);
   const [formats, setFormats] = useState<string[]>(["bold"]);
   const [pageNumbers, setPageNumbers] = useState(5);
@@ -474,7 +467,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             >
               {liked ? "Нравится" : "Лайк"}
             </ToggleButton>
-            <ToggleButton variant="ghost" defaultPressed leftIcon={<IoBookmarkOutline aria-hidden />}>
+            <ToggleButton variant="default" defaultPressed leftIcon={<IoBookmarkOutline aria-hidden />}>
               Закладка
             </ToggleButton>
           </div>
@@ -487,7 +480,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             <Dropdown>
               <Dropdown.Trigger asChild>
                 <Button
-                  variant="outline"
+                  variant="default"
                   aria-label="Дополнительные действия"
                   iconOnly
                   groupSegment={{ orientation: "horizontal", position: "last" }}
@@ -729,7 +722,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             value={viewMode}
             onValueChange={(v) => setViewMode(v as string)}
           >
-            <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
+            <ToggleButton variant="default" value="list" leftIcon={<IoListOutline aria-hidden />}>
               Список
             </ToggleButton>
             <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
@@ -974,49 +967,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
       </ShowcaseSection>
 
       <ShowcaseSection title="Календарь">
-        <div className="flex flex-col gap-xlarge">
-          <div className="flex flex-col items-start gap-mid">
-            <Text as="span" variant="small" className="font-medium">
-              Одна дата
-            </Text>
-            <Calendar mode="single" value={calendarDate} onValueChange={setCalendarDate} />
-            <Text as="p" variant="small" className="text-muted">
-              Выбрано: <span className="font-medium text-foreground">{formatDate(calendarDate)}</span>
-            </Text>
-          </div>
-          <div className="flex flex-col items-start gap-mid">
-            <Text as="span" variant="small" className="font-medium">
-              Диапазон
-            </Text>
-            <Calendar mode="range" value={calendarRange} onValueChange={setCalendarRange} />
-            <Text as="p" variant="small" className="text-muted">
-              От <span className="font-medium text-foreground">{formatDate(calendarRange.start)}</span> до{" "}
-              <span className="font-medium text-foreground">{formatDate(calendarRange.end)}</span>
-            </Text>
-          </div>
-          <div className="flex flex-col items-start gap-mid">
-            <Text as="span" variant="small" className="font-medium">
-              Несколько дат
-            </Text>
-            <Calendar mode="multiple" value={calendarDates} onValueChange={setCalendarDates} />
-            <Text as="p" variant="small" className="text-muted">
-              Выбрано:{" "}
-              <span className="font-medium text-foreground">
-                {calendarDates.length > 0 ? calendarDates.map((d) => formatDate(d)).join(", ") : "—"}
-              </span>
-            </Text>
-          </div>
-          <div className="flex flex-col items-start gap-mid">
-            <Text as="span" variant="small" className="font-medium">
-              С футером
-            </Text>
-            <Calendar mode="single" value={calendarDate} onValueChange={setCalendarDate}>
-              <Calendar.Header />
-              <Calendar.Grid />
-              <Calendar.Footer />
-            </Calendar>
-          </div>
-        </div>
+        <CalendarShowcaseSection />
       </ShowcaseSection>
 
       <ShowcaseSection title="ListBox">

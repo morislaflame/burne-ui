@@ -1,4 +1,4 @@
-import { remove } from "animejs";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import type {
   ButtonHTMLAttributes,
   MouseEvent,
@@ -19,7 +19,8 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-  SHADOW_SM,
+  shouldSkipInteractiveHoverLift,
+  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
@@ -175,7 +176,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
    * Кнопка только с иконкой: вместо `min-w-button-*` используется `min-w-fit` (узкая обводка по контенту).
    */
   iconOnly?: boolean;
-  /** Включить лёгкий scale-пульс при нажатии (anime.js), только в idle. */
+  /** Включить лёгкий scale-пульс при нажатии (GSAP), только в idle. */
   animated?: boolean;
   /**
    * Управляемое состояние: loading → success | error с рябью и иконками.
@@ -366,13 +367,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       const el = btnRef.current;
       if (!blocked || !el) return;
       hoverPointerInsideRef.current = false;
-      remove(el);
+      killMotion(el);
     }, [blocked]);
 
     const btnShadow = useMemo(
       () =>
         BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant)
-          ? { hover: SHADOW_SM() }
+          ? { hover: shadowSm() }
           : undefined,
       [variant],
     );
@@ -382,7 +383,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         onPointerEnter?.(e);
         if (e.defaultPrevented) return;
         if (blocked) return;
-        if (prefersReducedInteractiveHoverLift()) return;
+        if (shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
@@ -395,7 +396,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerLeave?.(e);
         hoverPointerInsideRef.current = false;
-        if (prefersReducedInteractiveHoverLift()) return;
+        if (shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el || blocked) return;
         animateInteractiveHoverLift(el, false, undefined, btnShadow);
@@ -413,7 +414,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           !btn ||
           btn.disabled ||
           asyncStateRef.current !== "idle" ||
-          prefersReducedInteractiveHoverLift()
+          shouldSkipInteractiveHoverLift()
         ) {
           return;
         }

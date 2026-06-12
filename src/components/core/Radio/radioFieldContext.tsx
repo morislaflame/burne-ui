@@ -4,7 +4,6 @@ import {
   type ChangeEvent,
   type InputHTMLAttributes,
   type MouseEvent,
-  type PointerEvent,
   type RefObject,
 } from "react";
 
@@ -29,7 +28,6 @@ export type RadioFieldContextValue = {
   inputName?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onActivate?: (e: MouseEvent<HTMLInputElement>) => void;
-  onFieldPointerDown?: (e: PointerEvent<HTMLInputElement>) => void;
   inputProps: {
     value?: InputHTMLAttributes<HTMLInputElement>["value"];
     defaultChecked?: boolean;

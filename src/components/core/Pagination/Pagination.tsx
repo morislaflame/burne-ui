@@ -1,4 +1,4 @@
-import { animate, remove } from "animejs";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import {
   createContext,
@@ -21,6 +21,7 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
+  shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
@@ -70,7 +71,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
         onPointerEnter?.(e);
         if (disabled) return;
         const el = liftRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        if (!el || shouldSkipInteractiveHoverLift()) return;
         hoverInsideRef.current = true;
         animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
       },
@@ -82,7 +83,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
         onPointerLeave?.(e);
         hoverInsideRef.current = false;
         const el = liftRef.current;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        if (!el || shouldSkipInteractiveHoverLift()) return;
         animateInteractiveHoverLift(el, false, getMotionConfig().hoverLiftScale);
       },
       [onPointerLeave],
@@ -98,7 +99,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
           const shell = liftRef.current;
           if (
             !shell ||
-            prefersReducedInteractiveHoverLift() ||
+            shouldSkipInteractiveHoverLift() ||
             !hoverInsideRef.current
           ) {
             return;
@@ -240,23 +241,20 @@ function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
         // «выезжали снизу» при первом переключении.
         const dx = prev.x - pos.x;
         if (Math.abs(dx) > 0.5) {
-          remove(el);
+          killMotion(el);
           el.style.willChange = "transform";
-          void animate(el, {
-            translateX: [dx, 0],
+          void gsap.fromTo(el, { x: dx }, {
+            x: 0,
             ...motionInteractive(),
+            overwrite: "auto",
             onComplete: () => {
               el.style.willChange = "";
             },
           });
         }
       } else {
-        remove(el);
-        void animate(el, {
-          opacity: [0, 1],
-          scale: [0.82, 1],
-          ...motionInteractive(),
-        });
+        killMotion(el);
+        void gsap.fromTo(el, { autoAlpha: 0, scale: 0.82 }, { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto" });
       }
     }
 
@@ -269,7 +267,7 @@ function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
     return () => {
       if (!ol) return;
       for (const el of Array.from(ol.children)) {
-        if (el instanceof HTMLElement) remove(el);
+        if (el instanceof HTMLElement) killMotion(el);
       }
     };
   }, [olRef]);

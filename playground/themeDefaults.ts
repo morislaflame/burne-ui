@@ -31,6 +31,28 @@ export type ThemeStatusForegroundKey =
 export type ThemeColors = Record<ThemeColorKey, string>;
 export type ThemeStatusForegrounds = Record<ThemeStatusForegroundKey, string>;
 
+/** Ключи цветовых пресетов — каждый имеет dark и light вариант. */
+export type ColorPresetKey =
+  | "dark"
+  | "light"
+  | "contrast"
+  | "ocean"
+  | "violet"
+  | "emerald"
+  | "rose"
+  | "amber"
+  | "slate"
+  | "toffee"
+  | "berry"
+  | "paprika"
+  | "cherry"
+  | "rustic"
+  | "earthy"
+  | "peach"
+  | "sand"
+  | "bold"
+  | "autumn";
+
 export type ThemeTokenState = {
   theme: ThemeMode;
   space: number;
@@ -41,14 +63,22 @@ export type ThemeTokenState = {
   fontFamily: string;
   fontFamilyMono: string;
   shadowStrength: number;
+  /** Множитель blur/offset теней (`--shadow-size`). */
+  shadowSize: number;
   durationFast: number;
   durationNormal: number;
   glassBlur: number;
   glassSaturate: number;
+  enableHoverLift: boolean;
+  enablePressSqueeze: boolean;
+  enableToggleButtonFill: boolean;
+  enableRipple: boolean;
   colors: ThemeColors;
   statusForegrounds: ThemeStatusForegrounds;
   /** true — `--color-border` задаётся inline; false — формула из tokens/styles.css (как в Storybook). */
   borderCustomized: boolean;
+  /** Активный цветовой пресет; `null` — ручная правка цветов. */
+  colorPreset: ColorPresetKey | null;
 };
 
 export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
@@ -189,10 +219,15 @@ export const SCALE_DEFAULTS = {
   borderWidth: 1,
   textScale: 1,
   shadowStrength: 1,
+  shadowSize: 1,
   durationFast: 150,
   durationNormal: 250,
   glassBlur: 22,
   glassSaturate: 1.45,
+  enableHoverLift: true,
+  enablePressSqueeze: true,
+  enableToggleButtonFill: true,
+  enableRipple: true,
 } as const;
 
 /** Наборы только scale-значений для лейаут-пресетов. Не трогают цвета. */
@@ -203,28 +238,6 @@ export const LAYOUT_PRESETS = {
 } as const;
 
 export type LayoutPresetKey = keyof typeof LAYOUT_PRESETS;
-
-/** Ключи цветовых пресетов — при применении не затрагивают scale-значения. */
-export type ColorPresetKey =
-  | "dark"
-  | "light"
-  | "contrast"
-  | "ocean"
-  | "violet"
-  | "emerald"
-  | "rose"
-  | "amber"
-  | "slate"
-  | "toffee"
-  | "berry"
-  | "paprika"
-  | "cherry"
-  | "rustic"
-  | "earthy"
-  | "peach"
-  | "sand"
-  | "bold"
-  | "autumn";
 
 export const DEFAULT_FONT =
   'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
@@ -292,6 +305,62 @@ const SHADOW_BASE = {
   },
 } as const;
 
+const SHADOW_LAYER_GEOM = {
+  sm: [
+    [0, 1, 3, 0],
+    [0, 1, 2, -1],
+  ],
+  md: [
+    [0, 3, 8, -1],
+    [0, 2, 4, -2],
+  ],
+  lg: [
+    [0, 8, 20, -4],
+    [0, 4, 8, -4],
+  ],
+} as const;
+
+type ShadowLevelKey = keyof typeof SHADOW_LAYER_GEOM;
+
+function shadowLayerPx(
+  offsetX: number,
+  offsetY: number,
+  blur: number,
+  spread: number,
+  opacity: number,
+  size: number,
+): string {
+  const dim = (value: number) => (value === 0 ? "0" : `${value * size}px`);
+  return `${dim(offsetX)} ${dim(offsetY)} ${dim(blur)} ${dim(spread)} rgb(0 0 0 / ${opacity})`;
+}
+
+function buildShadowLevel(
+  level: ShadowLevelKey,
+  theme: ThemeMode,
+  strength: number,
+  size: number,
+): string {
+  const opacities = SHADOW_BASE[theme][level];
+  return SHADOW_LAYER_GEOM[level]
+    .map((geom, index) =>
+      shadowLayerPx(geom[0], geom[1], geom[2], geom[3], opacities[index] * strength, size),
+    )
+    .join(", ");
+}
+
+function applyShadows(
+  root: HTMLElement,
+  theme: ThemeMode,
+  strength: number,
+  size: number,
+) {
+  root.style.setProperty("--shadow-size", String(size));
+  root.style.setProperty("--shadow-none", buildShadowLevel("sm", theme, 0, size));
+  root.style.setProperty("--shadow-sm", buildShadowLevel("sm", theme, strength, size));
+  root.style.setProperty("--shadow-md", buildShadowLevel("md", theme, strength, size));
+  root.style.setProperty("--shadow-lg", buildShadowLevel("lg", theme, strength, size));
+}
+
 function applyTextScale(root: HTMLElement, textScale: number) {
   for (const key of Object.keys(TEXT_SCALE_BASES) as TextScaleToken[]) {
     const { size, line } = TEXT_SCALE_BASES[key];
@@ -305,25 +374,6 @@ function applyTextScale(root: HTMLElement, textScale: number) {
   }
 }
 
-function applyShadows(root: HTMLElement, theme: ThemeMode, strength: number) {
-  const base = SHADOW_BASE[theme];
-  const [smA, smB] = base.sm;
-  const [mdA, mdB] = base.md;
-  const [lgA, lgB] = base.lg;
-  root.style.setProperty(
-    "--shadow-sm",
-    `0 1px 3px 0 rgb(0 0 0 / ${smA * strength}), 0 1px 2px -1px rgb(0 0 0 / ${smB * strength})`,
-  );
-  root.style.setProperty(
-    "--shadow-md",
-    `0 3px 8px -1px rgb(0 0 0 / ${mdA * strength}), 0 2px 4px -2px rgb(0 0 0 / ${mdB * strength})`,
-  );
-  root.style.setProperty(
-    "--shadow-lg",
-    `0 8px 20px -4px rgb(0 0 0 / ${lgA * strength}), 0 4px 8px -4px rgb(0 0 0 / ${lgB * strength})`,
-  );
-}
-
 export function createDefaultThemeState(theme: ThemeMode = "dark"): ThemeTokenState {
   return {
     theme,
@@ -334,6 +384,7 @@ export function createDefaultThemeState(theme: ThemeMode = "dark"): ThemeTokenSt
     statusForegrounds:
       theme === "light" ? { ...LIGHT_STATUS_FOREGROUNDS } : { ...DARK_STATUS_FOREGROUNDS },
     borderCustomized: false,
+    colorPreset: theme === "light" ? "light" : "dark",
   };
 }
 
@@ -341,7 +392,7 @@ export function createDefaultThemeState(theme: ThemeMode = "dark"): ThemeTokenSt
 
 const OCEAN_DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
-  surface: "#0d1826",
+  surface: "#16191d",
   secondary: "#202a37",
   secondaryForeground: "#f4f5f7",
   tertiary: "#283442",
@@ -364,7 +415,7 @@ const OCEAN_DARK_COLORS: ThemeColors = {
 
 const VIOLET_DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
-  surface: "#16122a",
+  surface: "#17161d",
   secondary: "#28243a",
   secondaryForeground: "#f4f5f7",
   tertiary: "#312d45",
@@ -387,7 +438,7 @@ const VIOLET_DARK_COLORS: ThemeColors = {
 
 const EMERALD_DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
-  surface: "#0c221c",
+  surface: "#121716",
   secondary: "#1f332e",
   secondaryForeground: "#f4f5f7",
   tertiary: "#273d38",
@@ -751,110 +802,55 @@ const AUTUMN_DARK_COLORS: ThemeColors = {
   primaryTintStrong: AUTUMN_PRIMARY_TINT_STRONG,
 };
 
-/** Полные цветовые пресеты (без scale-значений — scale берётся из текущего состояния при применении) */
-export const THEME_PRESETS = {
-  dark: createDefaultThemeState("dark"),
-  light: createDefaultThemeState("light"),
-  contrast: {
-    ...createDefaultThemeState("dark"),
-    colors: {
-      ...DARK_COLORS,
-      foreground: "#ffffff",
-      secondary: "#282a2e",
-      secondaryForeground: "#ffffff",
-      tertiary: "#313438",
-      tertiaryForeground: "#ffffff",
-      muted: "#a8adb8",
-      primary: "#ffffff",
-      primaryForeground: "#0c0c0e",
-      focusRing: "#ffffff",
-      indicator: "#ffffff",
-      border: "#3d4250",
-    },
-    shadowStrength: 1.25,
-  },
-  ocean: {
-    ...createDefaultThemeState("dark"),
-    colors: OCEAN_DARK_COLORS,
-    statusForegrounds: { ...DARK_STATUS_FOREGROUNDS },
-  },
-  violet: {
-    ...createDefaultThemeState("dark"),
-    colors: VIOLET_DARK_COLORS,
-    statusForegrounds: { ...DARK_STATUS_FOREGROUNDS },
-  },
-  emerald: {
-    ...createDefaultThemeState("dark"),
-    colors: EMERALD_DARK_COLORS,
-    statusForegrounds: { ...DARK_STATUS_FOREGROUNDS },
-  },
-  rose: {
-    ...createDefaultThemeState("light"),
-    colors: ROSE_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  amber: {
-    ...createDefaultThemeState("light"),
-    colors: AMBER_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  slate: {
-    ...createDefaultThemeState("light"),
-    colors: SLATE_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  // ─── Новые палитры ──────────────────────────────────────────────────────────
-  toffee: {
-    ...createDefaultThemeState("light"),
-    colors: TOFFEE_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  berry: {
-    ...createDefaultThemeState("light"),
-    colors: BERRY_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  paprika: {
-    ...createDefaultThemeState("light"),
-    colors: PAPRIKA_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  cherry: {
-    ...createDefaultThemeState("light"),
-    colors: CHERRY_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  rustic: {
-    ...createDefaultThemeState("light"),
-    colors: RUSTIC_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  earthy: {
-    ...createDefaultThemeState("light"),
-    colors: EARTHY_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  peach: {
-    ...createDefaultThemeState("light"),
-    colors: PEACH_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  sand: {
-    ...createDefaultThemeState("light"),
-    colors: SAND_LIGHT_COLORS,
-    statusForegrounds: { ...LIGHT_STATUS_FOREGROUNDS },
-  },
-  bold: {
-    ...createDefaultThemeState("dark"),
-    colors: BOLD_DARK_COLORS,
-    statusForegrounds: { ...DARK_STATUS_FOREGROUNDS },
-  },
-  autumn: {
-    ...createDefaultThemeState("dark"),
-    colors: AUTUMN_DARK_COLORS,
-    statusForegrounds: { ...DARK_STATUS_FOREGROUNDS },
-  },
-} as const satisfies Record<string, ThemeTokenState>;
+const CONTRAST_DARK_COLORS: ThemeColors = {
+  ...DARK_COLORS,
+  foreground: "#ffffff",
+  secondary: "#282a2e",
+  secondaryForeground: "#ffffff",
+  tertiary: "#313438",
+  tertiaryForeground: "#ffffff",
+  muted: "#a8adb8",
+  primary: "#ffffff",
+  primaryForeground: "#0c0c0e",
+  focusRing: "#ffffff",
+  indicator: "#ffffff",
+  indicatorForeground: "#0c0c0e",
+  border: "#3d4250",
+};
+
+/** Палитры для `colorPresets.ts` (пары dark/light). */
+export const paletteColors = {
+  PRIMARY_TINT,
+  PRIMARY_TINT_STRONG,
+  BOLD_PRIMARY_TINT,
+  BOLD_PRIMARY_TINT_STRONG,
+  AUTUMN_PRIMARY_TINT,
+  AUTUMN_PRIMARY_TINT_STRONG,
+  DARK_COLORS,
+  LIGHT_COLORS,
+  DARK_STATUS_FOREGROUNDS,
+  LIGHT_STATUS_FOREGROUNDS,
+  CONTRAST_DARK_COLORS,
+  OCEAN_DARK_COLORS,
+  VIOLET_DARK_COLORS,
+  EMERALD_DARK_COLORS,
+  ROSE_LIGHT_COLORS,
+  AMBER_LIGHT_COLORS,
+  SLATE_LIGHT_COLORS,
+  TOFFEE_LIGHT_COLORS,
+  BERRY_LIGHT_COLORS,
+  PAPRIKA_LIGHT_COLORS,
+  CHERRY_LIGHT_COLORS,
+  RUSTIC_LIGHT_COLORS,
+  EARTHY_LIGHT_COLORS,
+  PEACH_LIGHT_COLORS,
+  SAND_LIGHT_COLORS,
+  BOLD_DARK_COLORS,
+  AUTUMN_DARK_COLORS,
+  SCALE_DEFAULTS,
+  DEFAULT_FONT,
+  DEFAULT_FONT_MONO,
+};
 
 const INLINE_TOKEN_VARS = [
   "--space",
@@ -867,6 +863,8 @@ const INLINE_TOKEN_VARS = [
   "--duration-normal",
   "--glass-blur",
   "--glass-saturate",
+  "--shadow-size",
+  "--shadow-none",
   "--shadow-sm",
   "--shadow-md",
   "--shadow-lg",
@@ -885,7 +883,7 @@ export function clearThemeInlineTokens(root: HTMLElement = document.documentElem
   delete root.dataset.brnTheme;
 }
 
-export function applyThemeTokens(state: ThemeTokenState, root: HTMLElement = document.documentElement) {
+export async function applyThemeTokens(state: ThemeTokenState, root: HTMLElement = document.documentElement) {
   if (state.theme === "light") {
     root.dataset.brnTheme = "light";
   } else {
@@ -903,8 +901,17 @@ export function applyThemeTokens(state: ThemeTokenState, root: HTMLElement = doc
   root.style.setProperty("--glass-blur", `${state.glassBlur}px`);
   root.style.setProperty("--glass-saturate", String(state.glassSaturate));
 
+  // Применяем глобальные флаги анимации в наш MotionConfig
+  const { configureMotion } = await import("@/components/core/utils/motionConfig");
+  configureMotion({
+    enableHoverLift: state.enableHoverLift,
+    enablePressSqueeze: state.enablePressSqueeze,
+    enableToggleButtonFill: state.enableToggleButtonFill,
+    enableRipple: state.enableRipple,
+  });
+
   applyTextScale(root, state.textScale);
-  applyShadows(root, state.theme, state.shadowStrength);
+  applyShadows(root, state.theme, state.shadowStrength, state.shadowSize);
 
   if (state.borderCustomized) {
     root.style.setProperty("--color-border", state.colors.border);
@@ -938,8 +945,9 @@ export function exportThemeCss(state: ThemeTokenState): string {
     `  --duration-normal: ${state.durationNormal}ms;`,
     `  --glass-blur: ${state.glassBlur}px;`,
     `  --glass-saturate: ${state.glassSaturate};`,
+    `  --shadow-size: ${state.shadowSize};`,
     `  /* textScale: ${state.textScale} — задайте --text-scale-* вручную или через applyThemeTokens */`,
-    `  /* shadowStrength: ${state.shadowStrength} */`,
+    `  /* shadowStrength: ${state.shadowStrength}, shadowSize: ${state.shadowSize} */`,
   ];
 
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {

@@ -15,8 +15,8 @@ import { IoHelpCircleOutline } from "react-icons/io5";
 import { Text } from "@/components/core/Text";
 import {
   useInteractiveHoverLiftContainerHandlers,
-  SHADOW_SM,
-  SHADOW_MD,
+  shadowSm,
+  shadowMd,
   initElementShadow,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
@@ -265,7 +265,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   );
 
   useEffect(() => {
-    initElementShadow(rootRef.current, SHADOW_SM());
+    initElementShadow(rootRef.current, shadowSm());
   }, []);
 
   const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
@@ -273,7 +273,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     true,
     undefined,
     undefined,
-    { idle: SHADOW_SM(), hover: SHADOW_MD() },
+    { idle: shadowSm(), hover: shadowMd() },
   );
 
   return (
