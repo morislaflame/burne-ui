@@ -388,6 +388,10 @@ export const AlertDialogRoot = function AlertDialog({
     setHasDescription(v);
   }, []);
 
+  useLayoutEffect(() => {
+    if (open) setMounted(true);
+  }, [open]);
+
   useEffect(() => {
     if (!mounted) return;
     const prev = document.body.style.overflow;
@@ -397,7 +401,7 @@ export const AlertDialogRoot = function AlertDialog({
     };
   }, [mounted]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (open || !mounted) return;
 
     const overlay = overlayRef.current;
@@ -405,41 +409,30 @@ export const AlertDialogRoot = function AlertDialog({
     let cancelled = false;
 
     const finishClose = () => {
-      if (!cancelled) {
-        dialogRef.current?.close();
-        setMounted(false);
-      }
+      if (!cancelled) setMounted(false);
     };
 
-    if (!overlay || !panel) {
-      finishClose();
-      return undefined;
-    }
-
-    if (prefersReducedInteractiveHoverLift()) {
+    if (!overlay || !panel || prefersReducedInteractiveHoverLift()) {
       finishClose();
       return undefined;
     }
 
     killMotion(overlay, panel);
     const vars = { ...motionInteractive(), overwrite: "auto" as const };
-    const animOverlay = gsap.to(overlay, { autoAlpha: 0, ...vars });
-    const animPanel = gsap.to(panel, { autoAlpha: 0, scale: 0.97, ...vars });
-
-    void Promise.all([animOverlay, animPanel]).then(finishClose);
+    const tl = gsap.timeline({ onComplete: finishClose });
+    // opacity, не autoAlpha — visibility:hidden на blur-подложке даёт мигание в конце
+    tl.to(overlay, { opacity: 0, ...vars }, 0);
+    tl.to(panel, { autoAlpha: 0, scale: 0.97, ...vars }, 0);
 
     return () => {
       cancelled = true;
+      tl.kill();
       killMotion(overlay, panel);
     };
   }, [open, mounted]);
 
   useLayoutEffect(() => {
-    if (!open) return;
-    if (!mounted) {
-      setMounted(true);
-      return;
-    }
+    if (!open || !mounted) return;
 
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) dialog.showModal();
@@ -457,7 +450,7 @@ export const AlertDialogRoot = function AlertDialog({
 
     killMotion(overlay, panel);
     const vars = { ...motionInteractive(), overwrite: "auto" as const };
-    gsap.fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, ...vars });
+    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, ...vars });
     gsap.fromTo(panel, { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, ...vars });
     panel.focus();
   }, [open, mounted]);
@@ -487,7 +480,7 @@ export const AlertDialogRoot = function AlertDialog({
         onCancel={(e) => e.preventDefault()}
         aria-labelledby={titleId}
         aria-describedby={hasDescription ? descriptionId : undefined}
-        className="fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex"
+        className="fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent"
       >
         <div
           ref={overlayRef}
