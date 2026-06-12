@@ -335,7 +335,6 @@
   --size: 1rem;
 
   /** Примитивная шкала размеров контролов (`--size-scale-*`). */
-  --size-scale-925: calc(var(--size) * 0.925);
   --size-scale-xs: calc(var(--size) * 0.65);
   --size-scale-sm: calc(var(--size) * 0.875);
   --size-scale-md: calc(var(--size) * 1);
@@ -382,7 +381,7 @@
    * Круглые индикаторы выбора (Radio, Checkbox, Slider thumb, Dropdown).
    * Диаметр внешнего кольца; заливка — inset 1px.
    */
-  --selection-indicator-small: var(--size-scale-925);
+  --selection-indicator-small: var(--size-scale-sm);
   --selection-indicator-base: var(--size-scale-lg);
   --selection-indicator-mid: var(--size-scale-2xl);
   --selection-indicator-large: var(--size-scale-3xl);
@@ -430,7 +429,7 @@
 
 [data-theme="light"],
 [data-brn-theme="light"] {
-  --color-background: #fafafa;
+  --color-background: #f5f5f5;
   --color-surface: #ffffff;
   --color-foreground: #18181b;
   --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);

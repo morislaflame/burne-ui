@@ -4,12 +4,14 @@ import {
   ToastContent,
   ToastDescription,
   ToastIndicator,
+  ToastMessage,
   ToastProviderRoot,
   ToastRoot,
   ToastTitle,
 } from "./Toast";
 export const Toast = Object.assign(ToastRoot, {
   Provider: ToastProviderRoot,
+  Message: ToastMessage,
   Indicator: ToastIndicator,
   Content: ToastContent,
   Title: ToastTitle,
@@ -27,6 +29,7 @@ export type {
   ToastProviderProps,
   ToastRootProps,
   ToastIndicatorProps,
+  ToastMessageProps,
   ToastContentProps,
   ToastTitleProps,
   ToastDescriptionProps,

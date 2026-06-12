@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Checkbox } from "@/components/core/Checkbox";
+import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
 
 import { CheckboxGroup } from ".";
 
@@ -33,6 +34,11 @@ const meta = {
     selection: {
       control: "radio",
       options: ["multiple", "single"],
+    },
+    size: {
+      control: "select",
+      options: COMPONENT_SIZES,
+      table: { defaultValue: { summary: "small" } },
     },
   },
 } satisfies Meta<typeof CheckboxGroup>;
@@ -123,5 +129,29 @@ export const Horizontal: Story = {
         <Checkbox name="ship" value="post" label="Почта" />
       </CheckboxGroup.List>
     </CheckboxGroup>
+  ),
+};
+
+export const Sizes: Story = {
+  name: "Размеры small · base · mid · large",
+  render: () => (
+    <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
+      {COMPONENT_SIZES.map((size) => (
+        <div key={size} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
+          <CheckboxGroup size={size}>
+            <CheckboxGroup.Legend>
+              <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+              <CheckboxGroup.Hint>size={size}</CheckboxGroup.Hint>
+            </CheckboxGroup.Legend>
+            <CheckboxGroup.List>
+              <Checkbox name={`ship-${size}`} value="courier" label="Курьер" />
+              <Checkbox name={`ship-${size}`} value="pickup" label="Самовывоз" />
+              <Checkbox name={`ship-${size}`} value="post" label="Почта" />
+            </CheckboxGroup.List>
+          </CheckboxGroup>
+        </div>
+      ))}
+    </div>
   ),
 };

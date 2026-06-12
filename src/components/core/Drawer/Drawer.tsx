@@ -227,7 +227,7 @@ export function DrawerHeader({ className = "", ...rest }: DrawerHeaderProps) {
 export function DrawerHeadingBlock({ className = "", ...rest }: DrawerHeadingBlockProps) {
   return (
     <div
-      className={cn("flex min-w-0 flex-1 flex-col gap-base text-left", className)}
+      className={cn("flex min-w-0 flex-1 flex-col gap-xsmall text-left", className)}
       {...rest}
     />
   );

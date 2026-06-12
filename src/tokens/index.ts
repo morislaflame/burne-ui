@@ -74,7 +74,6 @@ export const designTokenNames = [
   "--space-xlarge",
   "--calendar-cell-gap",
   "--size",
-  "--size-scale-925",
   "--size-scale-xs",
   "--size-scale-sm",
   "--size-scale-md",

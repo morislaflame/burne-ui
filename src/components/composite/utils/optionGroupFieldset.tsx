@@ -8,6 +8,7 @@ import {
   FieldSetGroup,
   useFieldSetErrorId,
   useFieldSetHintId,
+  type FieldSetProps,
 } from "@/components/core/Field/FieldSet";
 import { FieldHint } from "@/components/core/Field";
 import { cn } from "@/utils/cn";
@@ -22,17 +23,14 @@ export type { OptionGroupOrientation };
 export type OptionGroupFieldsetProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children"
-> & {
-  children?: ReactNode;
-  /** id для `aria-describedby` у поля; задаётся корнем группы. */
-  hintId?: string;
-  errorId?: string;
-  isRequired?: boolean;
-};
+> &
+  Pick<FieldSetProps, "hintId" | "errorId" | "isRequired" | "size"> & {
+    children?: ReactNode;
+  };
 
 export const OptionGroupFieldset = forwardRef<HTMLFieldSetElement, OptionGroupFieldsetProps>(
-  function OptionGroupFieldset(props, ref) {
-    return <FieldSetRoot ref={ref} {...props} />;
+  function OptionGroupFieldset({ size = "small", ...props }, ref) {
+    return <FieldSetRoot ref={ref} size={size} {...props} />;
   },
 );
 

@@ -532,9 +532,9 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             <div
               className={
                 fileListEmpty
-                  ? "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-plus px-mid py-xlarge"
+                  ? "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-plus px-large py-xlarge"
                   : cn(
-                      "relative min-w-0 flex-1 px-plus py-base",
+                      "relative min-w-0 flex-1 px-large py-base",
                       multipleFiles
                         ? "flex flex-col gap-base"
                         : cn("flex h-full items-center gap-plus"),

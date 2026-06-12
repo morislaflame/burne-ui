@@ -132,6 +132,7 @@ export {
   type AlertDialogProps,
   type AlertDialogSize,
   type AlertDialogHeaderProps,
+  type AlertDialogIndicatorProps,
   type AlertDialogTitleProps,
   type AlertDialogDescriptionProps,
   type AlertDialogBodyProps,
@@ -158,6 +159,7 @@ export {
   type ToastProviderProps,
   type ToastRootProps,
   type ToastIndicatorProps,
+  type ToastMessageProps,
   type ToastContentProps,
   type ToastTitleProps,
   type ToastDescriptionProps,
@@ -204,6 +206,7 @@ export {
   type FieldSetActionsProps,
   type FieldLegendProps,
   type FieldLegendHeaderProps,
+  type FieldSetSize,
 } from "@/components/core/Field";
 export {
   Label,
@@ -390,6 +393,10 @@ export {
   type TooltipTriggerProps,
   type TooltipContentProps,
   type TooltipArrowProps,
+  type TooltipPanelProps,
+  type TooltipIndicatorProps,
+  type TooltipTitleProps,
+  type TooltipDescriptionProps,
 } from "@/components/core/Tooltip";
 export {
   Popover,

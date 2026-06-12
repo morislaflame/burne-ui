@@ -22,6 +22,7 @@ import {
   type OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
 import { FieldError, type FieldErrorProps } from "@/components/core/Field";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import {
   RadioGroupContext,
@@ -43,6 +44,8 @@ export type RadioGroupProps = Omit<
   hintId?: string;
   /** id ошибки для `aria-describedby`; по умолчанию генерируется автоматически. */
   errorId?: string;
+  /** Шкала отступов fieldset. По умолчанию `small`. */
+  size?: ComponentSize;
   children?: ReactNode;
 };
 
@@ -58,6 +61,7 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(f
     name: nameProp,
     hintId: hintIdProp,
     errorId: errorIdProp,
+    size,
     ...fieldsetProps
   },
   ref,
@@ -109,6 +113,7 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(f
           isRequired={isRequired}
           hintId={hintId}
           errorId={errorId}
+          size={size}
           className={className}
           {...fieldsetProps}
         >

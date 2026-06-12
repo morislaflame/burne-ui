@@ -198,7 +198,7 @@ export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonProps>(
         role="presentation"
         className={cn(
           BASE_CLS,
-          "rounded-mid p-plus",
+          "rounded-mid px-mid py-plus",
           className,
         )}
         style={{ ...variantStyle(variant), ...style }}

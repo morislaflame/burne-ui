@@ -1,12 +1,15 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
+  Children,
   createContext,
   forwardRef,
+  isValidElement,
   useCallback,
   useContext,
   useEffect,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ButtonHTMLAttributes,
@@ -23,6 +26,15 @@ import { motionInteractive } from "@/components/core/utils/motionConfig";
 import {
   SEMANTIC_STATUS_ICONS,
 } from "@/components/core/utils/semanticStatusIcons";
+import {
+  messageBannerActionCellClass,
+  messageBannerCloseCellClass,
+  messageBannerDescriptionCellClass,
+  messageBannerGridClass,
+  messageBannerIndicatorCellClass,
+  messageBannerTitleCellClass,
+  type MessageBannerGridSlots,
+} from "@/components/core/utils/messageBannerGridLayout";
 import { cn } from "@/utils/cn";
 
 import { ToastContext, type ToastContextValue } from "./toastContext";
@@ -89,9 +101,91 @@ type ToastItemContextValue = {
   descriptionId: string;
   isLoading: boolean;
   dismiss: () => void;
+  gridSlots: MessageBannerGridSlots;
 };
 
 const ToastItemContext = createContext<ToastItemContextValue | null>(null);
+
+function walkToastChildren(
+  node: ReactNode,
+  match: (displayName: string | undefined) => boolean,
+): boolean {
+  let found = false;
+
+  const walk = (current: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(current)) {
+      if (!isValidElement(child)) continue;
+      const displayName = (child.type as { displayName?: string }).displayName;
+      if (match(displayName)) {
+        found = true;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+
+  walk(node);
+  return found;
+}
+
+function toastHasTitle(children: ReactNode): boolean {
+  return walkToastChildren(children, (name) => name === "ToastTitle");
+}
+
+function toastHasDescription(children: ReactNode): boolean {
+  return walkToastChildren(children, (name) => name === "ToastDescription");
+}
+
+function toastHasIndicator(children: ReactNode): boolean {
+  return walkToastChildren(children, (name) => name === "ToastIndicator");
+}
+
+function toastHasAction(children: ReactNode): boolean {
+  return walkToastChildren(children, (name) => name === "ToastActionButton");
+}
+
+function toastHasClose(children: ReactNode): boolean {
+  return walkToastChildren(children, (name) => name === "ToastCloseButton");
+}
+
+function toastShowsIndicator(
+  status: ToastStatus,
+  isLoading: boolean,
+  isCompound: boolean,
+  compoundHasIndicator: boolean,
+): boolean {
+  if (isCompound) return compoundHasIndicator;
+  if (isLoading) return true;
+  return status !== "default";
+}
+
+function resolveToastGridSlots(
+  status: ToastStatus,
+  title: ReactNode | undefined,
+  description: ReactNode | undefined,
+  action: ReactNode | undefined,
+  onClose: (() => void) | undefined,
+  isLoading: boolean,
+  isCompound: boolean,
+  children: ReactNode,
+): MessageBannerGridSlots {
+  const hasTitle = title != null || toastHasTitle(children);
+  const hasDescription = description != null || toastHasDescription(children);
+
+  return {
+    hasIndicator: toastShowsIndicator(
+      status,
+      isLoading,
+      isCompound,
+      toastHasIndicator(children),
+    ),
+    hasTitle,
+    hasDescription,
+    hasAction: isCompound ? toastHasAction(children) : action != null,
+    hasClose: isCompound ? toastHasClose(children) : onClose != null,
+  };
+}
 
 function useToastItem() {
   const ctx = useContext(ToastItemContext);
@@ -102,11 +196,11 @@ function useToastItem() {
 // ─── surface styles (same tokens as Alert) ──────────────────────────────────
 
 const TOAST_SURFACE: Record<ToastStatus, string> = {
-  default: "border-token bg-surface text-foreground",
-  success: "bg-surface-tint-success text-foreground",
-  danger: "bg-surface-tint-danger text-foreground",
-  info: "bg-surface-tint-info text-foreground",
-  warning: "bg-surface-tint-warning text-foreground",
+  default: "bg-surface border-token text-foreground",
+  success: "bg-surface-tint-success border-token text-foreground",
+  danger: "bg-surface-tint-danger border-token text-foreground",
+  info: "bg-surface-tint-info border-token text-foreground",
+  warning: "bg-surface-tint-warning border-token text-foreground",
 };
 
 const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
@@ -135,6 +229,7 @@ export type ToastRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
 };
 
 export type ToastIndicatorProps = HTMLAttributes<HTMLSpanElement>;
+export type ToastMessageProps = HTMLAttributes<HTMLDivElement>;
 export type ToastContentProps = HTMLAttributes<HTMLDivElement>;
 export type ToastTitleProps = HTMLAttributes<HTMLDivElement>;
 export type ToastDescriptionProps = HTMLAttributes<HTMLDivElement>;
@@ -146,11 +241,19 @@ export type ToastCloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 // ─── Indicator ───────────────────────────────────────────────────────────────
 
 export function ToastIndicator({ className = "", children, ...rest }: ToastIndicatorProps) {
-  const { status, isLoading } = useToastItem();
+  const { status, isLoading, gridSlots } = useToastItem();
 
   if (children !== undefined) {
     return (
-      <span className={cn("shrink-0 [&_svg]:icon-mid", TOAST_ICON_CLASS[status], className)} {...rest}>
+      <span
+        className={cn(
+          "[&_svg]:icon-large",
+          TOAST_ICON_CLASS[status],
+          messageBannerIndicatorCellClass(gridSlots),
+          className,
+        )}
+        {...rest}
+      >
         {children}
       </span>
     );
@@ -158,7 +261,10 @@ export function ToastIndicator({ className = "", children, ...rest }: ToastIndic
 
   if (isLoading) {
     return (
-      <span className={cn("shrink-0", className)} {...rest}>
+      <span
+        className={cn(messageBannerIndicatorCellClass(gridSlots), className)}
+        {...rest}
+      >
         <Loading size="base" color="primary" />
       </span>
     );
@@ -170,7 +276,15 @@ export function ToastIndicator({ className = "", children, ...rest }: ToastIndic
   if (!Icon) return null;
 
   return (
-    <span className={cn("shrink-0 [&_svg]:icon-mid", TOAST_ICON_CLASS[status], className)} {...rest}>
+    <span
+      className={cn(
+        "[&_svg]:icon-large",
+        TOAST_ICON_CLASS[status],
+        messageBannerIndicatorCellClass(gridSlots),
+        className,
+      )}
+      {...rest}
+    >
       <Icon aria-hidden />
     </span>
   );
@@ -178,12 +292,18 @@ export function ToastIndicator({ className = "", children, ...rest }: ToastIndic
 
 ToastIndicator.displayName = "ToastIndicator";
 
+// ─── Message ─────────────────────────────────────────────────────────────────
+
+export function ToastMessage({ className = "", ...rest }: ToastMessageProps) {
+  return <div className={cn("contents", className)} {...rest} />;
+}
+
+ToastMessage.displayName = "ToastMessage";
+
 // ─── Content ─────────────────────────────────────────────────────────────────
 
 export function ToastContent({ className = "", ...rest }: ToastContentProps) {
-  return (
-    <div className={cn("flex min-w-0 flex-1 flex-col gap-xsmall text-left", className)} {...rest} />
-  );
+  return <div className={cn("contents", className)} {...rest} />;
 }
 
 ToastContent.displayName = "ToastContent";
@@ -191,13 +311,17 @@ ToastContent.displayName = "ToastContent";
 // ─── Title ───────────────────────────────────────────────────────────────────
 
 export function ToastTitle({ className = "", id: idProp, ...rest }: ToastTitleProps) {
-  const { titleId } = useToastItem();
+  const { titleId, gridSlots } = useToastItem();
   return (
     <Text
       as="div"
       variant="base"
       id={idProp ?? titleId}
-      className={cn("font-medium", className)}
+      className={cn(
+        "font-medium",
+        messageBannerTitleCellClass(gridSlots),
+        className,
+      )}
       {...rest}
     />
   );
@@ -208,13 +332,17 @@ ToastTitle.displayName = "ToastTitle";
 // ─── Description ─────────────────────────────────────────────────────────────
 
 export function ToastDescription({ className = "", id: idProp, ...rest }: ToastDescriptionProps) {
-  const { descriptionId } = useToastItem();
+  const { descriptionId, gridSlots } = useToastItem();
   return (
     <Text
       as="div"
       variant="small"
       id={idProp ?? descriptionId}
-      className={cn("text-muted", className)}
+      className={cn(
+        "text-muted",
+        messageBannerDescriptionCellClass(gridSlots),
+        className,
+      )}
       {...rest}
     />
   );
@@ -225,7 +353,13 @@ ToastDescription.displayName = "ToastDescription";
 // ─── ActionButton ─────────────────────────────────────────────────────────────
 
 export function ToastActionButton({ className = "", ...rest }: ToastActionButtonProps) {
-  return <div className={cn("shrink-0 self-start", className)} {...rest} />;
+  const { gridSlots } = useToastItem();
+  return (
+    <div
+      className={cn(messageBannerActionCellClass(gridSlots), className)}
+      {...rest}
+    />
+  );
 }
 
 ToastActionButton.displayName = "ToastActionButton";
@@ -237,14 +371,18 @@ export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonPr
     { className = "", onClick, "aria-label": ariaLabel = "Закрыть", ...rest },
     ref,
   ) {
-    const { dismiss } = useToastItem();
+    const { dismiss, gridSlots } = useToastItem();
     return (
       <CloseButton
         ref={ref}
         size="small"
         variant="ghost"
         aria-label={ariaLabel}
-        className={cn("-m-xsmall shrink-0 self-start", className)}
+        className={cn(
+          "-mx-xsmall",
+          messageBannerCloseCellClass(gridSlots),
+          className,
+        )}
         onClick={(e) => {
           onClick?.(e);
           if (!e.defaultPrevented) dismiss();
@@ -279,12 +417,28 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
   const isCompound = !!children;
   const liveRole = status === "danger" || status === "warning" ? "alert" : "status";
 
+  const gridSlots = useMemo(
+    () =>
+      resolveToastGridSlots(
+        status,
+        title,
+        description,
+        action,
+        onClose,
+        isLoading,
+        isCompound,
+        children,
+      ),
+    [action, children, description, isCompound, isLoading, onClose, status, title],
+  );
+
   const itemCtx: ToastItemContextValue = {
     status,
     titleId,
     descriptionId,
     isLoading,
     dismiss: onClose ?? (() => {}),
+    gridSlots,
   };
 
   return (
@@ -295,7 +449,8 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
         aria-labelledby={titleId}
         aria-live={liveRole === "alert" ? "assertive" : "polite"}
         className={cn(
-          "flex w-full items-start gap-base rounded-mid py-plus px-mid text-left shadow-token-md",
+          messageBannerGridClass(gridSlots),
+          "w-full rounded-mid py-plus px-large shadow-token-md",
           TOAST_SURFACE[status],
           className,
         )}
@@ -305,13 +460,13 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
           children
         ) : (
           <>
-            <ToastIndicator />
-            <ToastContent>
-              {title != null && <ToastTitle>{title}</ToastTitle>}
-              {description != null && <ToastDescription>{description}</ToastDescription>}
-            </ToastContent>
-            {action != null && <ToastActionButton>{action}</ToastActionButton>}
-            {onClose != null && <ToastCloseButton />}
+            {gridSlots.hasIndicator ? <ToastIndicator /> : null}
+            {title != null ? <ToastTitle>{title}</ToastTitle> : null}
+            {description != null ? (
+              <ToastDescription>{description}</ToastDescription>
+            ) : null}
+            {action != null ? <ToastActionButton>{action}</ToastActionButton> : null}
+            {onClose != null ? <ToastCloseButton /> : null}
           </>
         )}
       </div>

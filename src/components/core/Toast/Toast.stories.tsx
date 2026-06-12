@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
@@ -42,6 +42,78 @@ type Story = StoryObj<typeof meta>;
 // ─── Statuses ─────────────────────────────────────────────────────────────────
 
 const STATUSES: ToastStatus[] = ["default", "success", "danger", "info", "warning"];
+
+const TOAST_VARIANT_ITEMS: Array<{
+  status: ToastStatus;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  isLoading?: boolean;
+}> = [
+  {
+    status: "default",
+    title: "default",
+    description: "Нейтральное уведомление без иконки статуса.",
+  },
+  {
+    status: "success",
+    title: "profile updated successfully",
+  },
+  {
+    status: "danger",
+    title: "unable to connect to server",
+    description: "We're experiencing connection issues.",
+  },
+  {
+    status: "info",
+    title: "Справка",
+    description: "Дополнительная информация в нейтрально-информационном тоне.",
+  },
+  {
+    status: "warning",
+    title: "Scheduled maintenance",
+    description: "Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.",
+  },
+  {
+    status: "info",
+    title: "Доступно обновление",
+    description: "Версия 2.4.0 готова к установке.",
+    action: (
+      <Button size="small" variant="info">
+        Обновить
+      </Button>
+    ),
+  },
+  {
+    status: "default",
+    title: "Сохранение…",
+    description: "Дождитесь завершения операции.",
+    isLoading: true,
+  },
+];
+
+function ToastVariantsDemo() {
+  return (
+    <div className="mx-auto flex w-full max-w-[360px] flex-col gap-plus">
+      {TOAST_VARIANT_ITEMS.map((item) => (
+        <Toast
+          key={`${item.status}-${item.title}`}
+          status={item.status}
+          title={item.title}
+          description={item.description}
+          action={item.action}
+          isLoading={item.isLoading}
+          onClose={() => {}}
+        />
+      ))}
+    </div>
+  );
+}
+
+export const Variants: Story = {
+  name: "Варианты",
+  render: () => <ToastVariantsDemo />,
+};
 
 export const Statuses: Story = {
   name: "Статусы",
@@ -236,10 +308,8 @@ export const CompoundApi: Story = {
           <div className="fixed bottom-4 right-4 z-[300] w-[360px]">
             <Toast status="success" onClose={() => setShow(false)}>
               <Toast.Indicator />
-              <Toast.Content>
-                <Toast.Title>Готово!</Toast.Title>
-                <Toast.Description>Данные успешно сохранены</Toast.Description>
-              </Toast.Content>
+              <Toast.Title>Готово!</Toast.Title>
+              <Toast.Description>Данные успешно сохранены</Toast.Description>
               <Toast.CloseButton />
             </Toast>
           </div>

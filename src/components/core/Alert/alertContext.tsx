@@ -1,11 +1,14 @@
 import { createContext, useContext } from "react";
 
+import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+
 import type { AlertStatus } from "./alertUtils";
 
 export type AlertContextValue = {
   status: AlertStatus;
   titleId: string;
   descriptionId: string;
+  gridSlots: MessageBannerGridSlots;
 };
 
 const AlertContext = createContext<AlertContextValue | null>(null);

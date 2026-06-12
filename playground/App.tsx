@@ -28,14 +28,15 @@ function AppHeader({
 
   return (
     <header className="sticky top-0 z-20 border-b-token bg-surface/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-4xl items-center justify-between gap-mid px-mid py-small">
-        <span className="text-sm font-medium">Burne UI Playground</span>
-        <div className="flex items-center gap-plus">
+      <div className="mx-auto flex max-w-4xl items-center justify-between gap-small sm:gap-mid px-small sm:px-mid py-small">
+        <span className="text-sm font-medium max-sm:hidden">Burne UI Playground</span>
+        <span className="text-sm font-medium sm:hidden">Burne UI</span>
+        <div className="flex items-center gap-small sm:gap-plus">
           <Switch
             size="small"
             checked={state.theme === "light"}
             onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
-            label="Светлая тема"
+            label={<span className="hidden sm:inline">Светлая тема</span>}
             className="shrink-0"
           />
           <nav className="flex gap-xsmall" aria-label="Разделы playground">
@@ -45,7 +46,7 @@ function AppHeader({
                 type="button"
                 size="small"
                 variant={page === item.id ? "default" : "ghost"}
-                className={cn(page !== item.id && "text-muted")}
+                className={cn(page !== item.id && "text-muted", "max-sm:px-2")}
                 onClick={() => onPageChange(item.id)}
               >
                 {item.label}

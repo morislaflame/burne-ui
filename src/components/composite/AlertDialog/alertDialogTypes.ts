@@ -43,6 +43,7 @@ export type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
   showClose?: boolean;
 };
 
+export type AlertDialogIndicatorProps = HTMLAttributes<HTMLSpanElement>;
 export type AlertDialogTitleProps = HTMLAttributes<HTMLHeadingElement>;
 export type AlertDialogDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement>;

@@ -1,11 +1,13 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   Children,
+  createContext,
   cloneElement,
   forwardRef,
   Fragment,
   isValidElement,
   useCallback,
+  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -18,10 +20,24 @@ import {
   type Ref,
 } from "react";
 import { createPortal } from "react-dom";
-import type { IconType } from "react-icons";
-import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { resolveAlertStatus, type AlertStatus } from "@/components/core/Alert/alertUtils";
+import {
+  messageBannerCloseCellClass,
+  messageBannerDescriptionCellClass,
+  messageBannerGridClass,
+  messageBannerIndicatorCellClass,
+  messageBannerTitleCellClass,
+  type MessageBannerGridSlots,
+} from "@/components/core/utils/messageBannerGridLayout";
+import {
+  alertDialogDefaultHeaderIcon,
+  alertDialogHasClose,
+  alertDialogHasIndicator,
+  alertDialogHeaderIconWrapperClass,
+  alertDialogShowsDefaultHeaderIcon,
+  resolveAlertDialogHeaderGridSlots,
+} from "./alertDialogHeaderUtils";
 import {
   Button,
   type ButtonProps,
@@ -31,10 +47,6 @@ import { CloseButton } from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
-import {
-  SEMANTIC_STATUS_ICONS,
-  type SemanticStatus,
-} from "@/components/core/utils/semanticStatusIcons";
 import { cn } from "@/utils/cn";
 
 import { footerButtonSizeForAlertDialog } from "./alertDialogFooterUtils";
@@ -46,10 +58,12 @@ import type {
   AlertDialogDescriptionProps,
   AlertDialogFooterProps,
   AlertDialogHeaderProps,
+  AlertDialogIndicatorProps,
   AlertDialogProps,
   AlertDialogTitleProps,
 } from "./alertDialogTypes";
 import { AlertDialogContext, useAlertDialog } from "./useAlertDialog";
+import type { AlertDialogSizePreset } from "./alertDialogSizePresets";
 
 export type {
   AlertDialogBodyProps,
@@ -57,6 +71,7 @@ export type {
   AlertDialogDescriptionProps,
   AlertDialogFooterProps,
   AlertDialogHeaderProps,
+  AlertDialogIndicatorProps,
   AlertDialogProps,
   AlertDialogSize,
   AlertDialogTitleProps,
@@ -99,34 +114,32 @@ function alertDialogPanelClass(tone: AlertStatus): string {
   return ALERT_DIALOG_SHELL_FILLED;
 }
 
-function alertDialogShowsDefaultHeaderIcon(tone: AlertStatus): boolean {
-  return tone !== "default" && tone !== "secondary";
-}
-
-function alertDialogHeaderIconWrapperClass(tone: AlertStatus): string {
-  switch (tone) {
-    case "danger":
-      return "text-danger";
-    case "success":
-      return "text-success";
-    case "info":
-      return "text-info";
-    case "warning":
-      return "text-warning";
-    default:
-      return "text-primary";
-  }
-}
-
-function alertDialogDefaultHeaderIcon(tone: AlertStatus): IconType | null {
-  if (tone === "default" || tone === "secondary") return null;
-  if (tone === "outline") return IoHelpCircleOutline;
-  return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
-}
-
 function readBurneLightTheme(): boolean {
   if (typeof document === "undefined") return false;
   return document.documentElement.dataset.brnTheme === "light";
+}
+
+type AlertDialogHeaderContextValue = {
+  tone: AlertStatus;
+  sizePreset: AlertDialogSizePreset;
+  gridSlots: MessageBannerGridSlots;
+  headerIcon?: ReactNode | null;
+};
+
+const AlertDialogHeaderContext = createContext<AlertDialogHeaderContextValue | null>(
+  null,
+);
+
+function useAlertDialogHeaderContext(who: string): AlertDialogHeaderContextValue {
+  const ctx = useContext(AlertDialogHeaderContext);
+  if (!ctx) {
+    throw new Error(`${who} должен быть внутри <AlertDialog.Header>.`);
+  }
+  return ctx;
+}
+
+function useOptionalAlertDialogHeaderContext() {
+  return useContext(AlertDialogHeaderContext);
 }
 
 export const AlertDialogClose = forwardRef<
@@ -137,12 +150,17 @@ export const AlertDialogClose = forwardRef<
   ref,
 ) {
   const { onOpenChange } = useAlertDialog();
+  const headerCtx = useOptionalAlertDialogHeaderContext();
   return (
     <CloseButton
       ref={ref}
       size="small"
       variant="secondary"
-      className={cn("shrink-0 self-start", className)}
+      className={cn(
+        "-mx-xsmall",
+        headerCtx && messageBannerCloseCellClass(headerCtx.gridSlots),
+        className,
+      )}
       onClick={(e) => {
         onClick?.(e);
         if (!e.defaultPrevented) onOpenChange(false);
@@ -152,7 +170,46 @@ export const AlertDialogClose = forwardRef<
   );
 });
 
-AlertDialogClose.displayName = "AlertDialog.Close";
+AlertDialogClose.displayName = "AlertDialogClose";
+
+export function AlertDialogIndicator({
+  className = "",
+  children,
+  ...rest
+}: AlertDialogIndicatorProps) {
+  const { tone, sizePreset, gridSlots, headerIcon } =
+    useAlertDialogHeaderContext("AlertDialog.Indicator");
+
+  if (children === null) return null;
+
+  const DefaultIcon = alertDialogDefaultHeaderIcon(tone);
+  const inner =
+    children !== undefined
+      ? children
+      : headerIcon !== undefined
+        ? headerIcon
+        : alertDialogShowsDefaultHeaderIcon(tone) && DefaultIcon !== null
+          ? <DefaultIcon aria-hidden className={sizePreset.iconClass} />
+          : null;
+
+  if (inner === null) return null;
+
+  return (
+    <span
+      className={cn(
+        "shrink-0 [&_svg]:block",
+        alertDialogHeaderIconWrapperClass(tone),
+        messageBannerIndicatorCellClass(gridSlots),
+        className,
+      )}
+      {...rest}
+    >
+      {inner}
+    </span>
+  );
+}
+
+AlertDialogIndicator.displayName = "AlertDialogIndicator";
 
 export function AlertDialogHeader({
   icon,
@@ -162,61 +219,64 @@ export function AlertDialogHeader({
   ...rest
 }: AlertDialogHeaderProps) {
   const { tone, sizePreset } = useAlertDialog();
-  const iconColor = alertDialogHeaderIconWrapperClass(tone);
-  const HeaderDefaultIcon = alertDialogDefaultHeaderIcon(tone);
+  const compoundHasIndicator = alertDialogHasIndicator(children);
+  const compoundHasClose = alertDialogHasClose(children);
 
-  let iconSlot: ReactNode | null;
-  if (icon === null) iconSlot = null;
-  else if (icon !== undefined) iconSlot = icon;
-  else if (
-    alertDialogShowsDefaultHeaderIcon(tone) &&
-    HeaderDefaultIcon !== null
-  )
-    iconSlot = (
-      <HeaderDefaultIcon aria-hidden className={sizePreset.iconClass} />
-    );
-  else iconSlot = null;
+  const gridSlots = useMemo(
+    () => resolveAlertDialogHeaderGridSlots(tone, icon, showClose, children),
+    [children, icon, showClose, tone],
+  );
+
+  const headerCtx = useMemo<AlertDialogHeaderContextValue>(
+    () => ({ tone, sizePreset, gridSlots, headerIcon: icon }),
+    [gridSlots, icon, sizePreset, tone],
+  );
+
+  const showAutoIndicator = gridSlots.hasIndicator && !compoundHasIndicator;
+  const showAutoClose = showClose && !compoundHasClose;
 
   return (
-    <div
-      className={cn(
-        "flex shrink-0 items-start",
-        sizePreset.headerGap,
-        sizePreset.headerPad,
-        className,
-      )}
-      {...rest}
-    >
-      {iconSlot !== null ? (
-        <span
-          className={cn(
-            "shrink-0 [&_svg]:block",
-            iconColor,
-          )}
-        >
-          {iconSlot}
-        </span>
-      ) : null}
-      <div className="min-w-0 flex-1 text-left">{children}</div>
-      {showClose ? <AlertDialogClose /> : null}
-    </div>
+    <AlertDialogHeaderContext.Provider value={headerCtx}>
+      <div
+        className={cn(
+          "shrink-0",
+          messageBannerGridClass(gridSlots, sizePreset.headerGap),
+          sizePreset.headerPad,
+          className,
+        )}
+        {...rest}
+      >
+        {showAutoIndicator ? <AlertDialogIndicator /> : null}
+        {children}
+        {showAutoClose ? <AlertDialogClose /> : null}
+      </div>
+    </AlertDialogHeaderContext.Provider>
   );
 }
+
+AlertDialogHeader.displayName = "AlertDialogHeader";
 
 export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
   function AlertDialogTitle({ className = "", id, ...rest }, ref) {
     const { titleId, sizePreset } = useAlertDialog();
+    const headerCtx = useOptionalAlertDialogHeaderContext();
     return (
       <Text
         ref={ref as Ref<HTMLElement>}
         as="h2"
         variant={sizePreset.titleVariant}
         id={id ?? titleId}
+        className={cn(
+          headerCtx && messageBannerTitleCellClass(headerCtx.gridSlots),
+          className,
+        )}
         {...rest}
       />
     );
   },
 );
+
+AlertDialogTitle.displayName = "AlertDialogTitle";
 
 export function AlertDialogDescription({
   className = "",
@@ -224,6 +284,7 @@ export function AlertDialogDescription({
   ...rest
 }: AlertDialogDescriptionProps) {
   const { descriptionId, setHasDescription, sizePreset } = useAlertDialog();
+  const headerCtx = useOptionalAlertDialogHeaderContext();
   useLayoutEffect(() => {
     setHasDescription(true);
     return () => setHasDescription(false);
@@ -234,28 +295,26 @@ export function AlertDialogDescription({
       as="p"
       variant={sizePreset.descVariant}
       id={id ?? descriptionId}
-      className={cn(sizePreset.descClassName, className)}
-      {...rest}
-    />
-  );
-}
-
-export function AlertDialogHeadingBlock({
-  className = "",
-  ...rest
-}: HTMLAttributes<HTMLDivElement>) {
-  const { sizePreset } = useAlertDialog();
-  return (
-    <div
       className={cn(
-        sizePreset.headingBlockGap,
-        "min-w-0 flex-1 text-left",
+        sizePreset.descClassName,
+        headerCtx && messageBannerDescriptionCellClass(headerCtx.gridSlots),
         className,
       )}
       {...rest}
     />
   );
 }
+
+AlertDialogDescription.displayName = "AlertDialogDescription";
+
+export function AlertDialogHeadingBlock({
+  className = "",
+  ...rest
+}: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("contents", className)} {...rest} />;
+}
+
+AlertDialogHeadingBlock.displayName = "AlertDialogHeadingBlock";
 
 export function AlertDialogBody({
   className = "",

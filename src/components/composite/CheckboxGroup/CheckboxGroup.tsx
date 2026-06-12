@@ -9,6 +9,7 @@ import {
 
 import { FieldError, type FieldErrorProps } from "@/components/core/Field";
 import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field/FieldSet";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
 import {
   OptionGroupFieldset,
   OptionGroupHeader,
@@ -43,6 +44,8 @@ export type CheckboxGroupProps = Omit<
   hintId?: string;
   /** id ошибки для `aria-describedby`; по умолчанию генерируется автоматически. */
   errorId?: string;
+  /** Шкала отступов fieldset. По умолчанию `small`. */
+  size?: ComponentSize;
   children?: ReactNode;
 };
 
@@ -59,6 +62,7 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
       disabled = false,
       hintId: hintIdProp,
       errorId: errorIdProp,
+      size,
       ...fieldsetProps
     },
     ref,
@@ -112,6 +116,7 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
             isRequired={isRequired}
             hintId={hintId}
             errorId={errorId}
+            size={size}
             className={className}
             {...fieldsetProps}
           >

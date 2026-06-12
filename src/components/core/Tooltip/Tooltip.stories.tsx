@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { IoHelpCircleOutline } from "react-icons/io5";
@@ -62,6 +62,89 @@ const meta = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+
+const TOOLTIP_VARIANT_ITEMS: Array<{
+  variant: TooltipVariant;
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+  showIcon?: boolean;
+}> = [
+  {
+    variant: "default",
+    title: "Default",
+    description: "Нейтральная подсказка без иконки статуса.",
+  },
+  {
+    variant: "outline",
+    title: "Outline",
+    description: "Полупрозрачный фон с рамкой.",
+  },
+  {
+    variant: "secondary",
+    title: "Secondary",
+    description: "Тот же фон, что у secondary-компонентов.",
+  },
+  {
+    variant: "success",
+    title: "Profile updated successfully",
+    description: "Изменения сохранены и синхронизированы.",
+  },
+  {
+    variant: "danger",
+    title: "Unable to connect to server",
+    description: "We're experiencing connection issues.",
+  },
+  {
+    variant: "info",
+    title: "Справка",
+    description: "Дополнительная информация в нейтрально-информационном тоне.",
+  },
+  {
+    variant: "warning",
+    title: "Scheduled maintenance",
+    description: "Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.",
+  },
+  {
+    variant: "default",
+    title: "Своя иконка",
+    description: "Иконка через prop `icon` на Panel.",
+    icon: <IoHelpCircleOutline aria-hidden className="text-primary" />,
+  },
+  {
+    variant: "danger",
+    title: "Semantic без иконки",
+    description: "showIcon={false} отключает стандартную иконку.",
+    showIcon: false,
+  },
+  {
+    variant: "success",
+    title: "Только заголовок",
+  },
+];
+
+function TooltipVariantsDemo() {
+  return (
+    <div className="mx-auto flex w-full max-w-md flex-col gap-plus">
+      {TOOLTIP_VARIANT_ITEMS.map((item) => (
+        <Tooltip.Panel
+          key={`${item.variant}-${item.title}`}
+          variant={item.variant}
+          size="base"
+          title={item.title}
+          description={item.description}
+          icon={item.icon}
+          showIcon={item.showIcon}
+        />
+      ))}
+    </div>
+  );
+}
+
+export const Variants: Story = {
+  name: "Варианты",
+  render: () => <TooltipVariantsDemo />,
+};
 
 export const OnButtonSizes: Story = {
   name: "Размеры на кнопке",

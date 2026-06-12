@@ -23,11 +23,21 @@ import {
   SEMANTIC_STATUS_ICONS,
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
+import {
+  messageBannerActionCellClass,
+  messageBannerDescriptionCellClass,
+  messageBannerGridClass,
+  messageBannerIndicatorCellClass,
+  messageBannerTitleCellClass,
+  type MessageBannerGridSlots,
+} from "@/components/core/utils/messageBannerGridLayout";
 import { cn } from "@/utils/cn";
 
 import { AlertContext } from "./alertContext";
 import {
+  alertHasAction,
   alertHasDescription,
+  alertHasIndicator,
   alertHasTitle,
   hasAlertCompoundChildren,
   resolveAlertAriaDescribedBy,
@@ -76,6 +86,41 @@ function alertDefaultIndicatorIcon(tone: AlertStatus): IconType | null {
   return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
 }
 
+function alertShowsIndicator(
+  tone: AlertStatus,
+  icon: ReactNode | null | undefined,
+  isCompound: boolean,
+  compoundHasIndicator: boolean,
+): boolean {
+  if (isCompound) return compoundHasIndicator;
+  if (icon === null) return false;
+  if (icon !== undefined) return true;
+  return alertShowsDefaultIndicatorIcon(tone) && alertDefaultIndicatorIcon(tone) !== null;
+}
+
+function resolveAlertGridSlots(
+  tone: AlertStatus,
+  icon: ReactNode | null | undefined,
+  action: ReactNode | undefined,
+  isCompound: boolean,
+  children: ReactNode,
+  hasTitle: boolean,
+  hasDescription: boolean,
+): MessageBannerGridSlots {
+  return {
+    hasIndicator: alertShowsIndicator(
+      tone,
+      icon,
+      isCompound,
+      alertHasIndicator(children),
+    ),
+    hasTitle,
+    hasDescription,
+    hasAction: isCompound ? alertHasAction(children) : action != null,
+    hasClose: false,
+  };
+}
+
 export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   status?: AlertStatus;
   /** Live region: `alert` (срочно) или `status` (информативно). По умолчанию — из `status`. */
@@ -110,6 +155,7 @@ export function AlertIndicator({
 }: AlertIndicatorProps) {
   const ctx = useContext(AlertContext);
   const tone = status ?? ctx?.status ?? "default";
+  const gridSlots = ctx?.gridSlots;
 
   if (children === null) return null;
 
@@ -126,8 +172,9 @@ export function AlertIndicator({
   return (
     <span
       className={cn(
-        "shrink-0 [&_svg]:icon-mid",
+        "[&_svg]:icon-large",
         alertIndicatorWrapperTextClass(tone),
+        gridSlots && messageBannerIndicatorCellClass(gridSlots),
         className,
       )}
       {...rest}
@@ -140,15 +187,7 @@ export function AlertIndicator({
 AlertIndicator.displayName = "AlertIndicator";
 
 export function AlertContent({ className = "", ...rest }: AlertContentProps) {
-  return (
-    <div
-      className={cn(
-        "flex min-w-0 flex-1 flex-col gap-xsmall text-left",
-        className,
-      )}
-      {...rest}
-    />
-  );
+  return <div className={cn("contents", className)} {...rest} />;
 }
 
 AlertContent.displayName = "AlertContent";
@@ -157,13 +196,7 @@ export const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(functi
   { className = "", ...rest },
   ref,
 ) {
-  return (
-    <div
-      ref={ref}
-      className={cn("flex min-w-0 flex-1 items-start gap-base", className)}
-      {...rest}
-    />
-  );
+  return <div ref={ref} className={cn("contents", className)} {...rest} />;
 });
 
 AlertMessage.displayName = "AlertMessage";
@@ -175,7 +208,11 @@ export function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitlePr
       as="div"
       id={idProp ?? ctx?.titleId}
       variant="base"
-      className={cn("font-medium", className)}
+      className={cn(
+        "font-medium",
+        ctx?.gridSlots && messageBannerTitleCellClass(ctx.gridSlots),
+        className,
+      )}
       {...rest}
     />
   );
@@ -194,7 +231,11 @@ export function AlertDescription({
       as="div"
       id={idProp ?? ctx?.descriptionId}
       variant="small"
-      className={cn("text-muted", className)}
+      className={cn(
+        "text-muted",
+        ctx?.gridSlots && messageBannerDescriptionCellClass(ctx.gridSlots),
+        className,
+      )}
       {...rest}
     />
   );
@@ -203,7 +244,16 @@ export function AlertDescription({
 AlertDescription.displayName = "AlertDescription";
 
 export function AlertAction({ className = "", ...rest }: AlertActionProps) {
-  return <div className={cn("shrink-0 self-start", className)} {...rest} />;
+  const ctx = useContext(AlertContext);
+  return (
+    <div
+      className={cn(
+        ctx?.gridSlots && messageBannerActionCellClass(ctx.gridSlots),
+        className,
+      )}
+      {...rest}
+    />
+  );
 }
 
 AlertAction.displayName = "AlertAction";
@@ -242,6 +292,28 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     [children, description],
   );
 
+  const gridSlots = useMemo(
+    () =>
+      resolveAlertGridSlots(
+        tone,
+        icon,
+        action,
+        isCompound,
+        children,
+        hasTitle,
+        hasDescription,
+      ),
+    [
+      action,
+      children,
+      hasDescription,
+      hasTitle,
+      icon,
+      isCompound,
+      tone,
+    ],
+  );
+
   const liveRole = resolveAlertLiveRole(tone, roleProp);
   const ariaLabelledBy =
     ariaLabelledByProp ??
@@ -251,8 +323,8 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     resolveAlertAriaDescribedBy(descriptionId, hasTitle, hasDescription);
 
   const contextValue = useMemo(
-    () => ({ status: tone, titleId, descriptionId }),
-    [descriptionId, titleId, tone],
+    () => ({ status: tone, titleId, descriptionId, gridSlots }),
+    [descriptionId, gridSlots, titleId, tone],
   );
 
   const setRootRef = useCallback(
@@ -284,7 +356,8 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
         className={cn(
-          "flex w-fit max-w-component-base items-start gap-base rounded-mid py-plus px-mid text-left animate-shadow",
+          messageBannerGridClass(gridSlots),
+          "w-fit max-w-component-base rounded-mid py-plus px-large animate-shadow",
           ALERT_INLINE_SURFACE_CLASSES[tone],
           className,
         )}
@@ -302,16 +375,14 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           children
         ) : (
           <>
-            <AlertMessage>
-              {icon !== null ? <AlertIndicator>{icon}</AlertIndicator> : null}
-              <AlertContent>
-                {title != null ? <AlertTitle>{title}</AlertTitle> : null}
-                {description != null ? (
-                  <AlertDescription>{description}</AlertDescription>
-                ) : null}
-                {children}
-              </AlertContent>
-            </AlertMessage>
+            {gridSlots.hasIndicator ? (
+              <AlertIndicator>{icon}</AlertIndicator>
+            ) : null}
+            {title != null ? <AlertTitle>{title}</AlertTitle> : null}
+            {description != null ? (
+              <AlertDescription>{description}</AlertDescription>
+            ) : null}
+            {children}
             {action != null ? <AlertAction>{action}</AlertAction> : null}
           </>
         )}

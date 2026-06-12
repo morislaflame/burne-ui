@@ -30,6 +30,13 @@ import {
 } from "@/components/core/utils/semanticStatusIcons";
 import { Text, type TextVariant } from "@/components/core/Text";
 import {
+  messageBannerDescriptionCellClass,
+  messageBannerGridClass,
+  messageBannerIndicatorCellClass,
+  messageBannerTitleCellClass,
+  type MessageBannerGridSlots,
+} from "@/components/core/utils/messageBannerGridLayout";
+import {
   prefersReducedInteractiveHoverLift,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
@@ -78,10 +85,10 @@ const TOOLTIP_SURFACE: Record<TooltipVariant, string> = {
   default: "border-token bg-surface",
   outline: "bg-transparent border-token",
   secondary: "bg-secondary border-token",
-  danger: "bg-surface-tint-danger",
-  success: "bg-surface-tint-success",
-  info: "bg-surface-tint-info",
-  warning: "bg-surface-tint-warning",
+  danger: "bg-surface-tint-danger border-token",
+  success: "bg-surface-tint-success border-token",
+  info: "bg-surface-tint-info border-token",
+  warning: "bg-surface-tint-warning border-token",
 };
 
 const TOOLTIP_TEXT_LAYOUT: Record<TooltipSize, string> = {
@@ -126,30 +133,142 @@ function isSemanticTooltipVariant(v: TooltipVariant): v is SemanticStatus {
   return v === "danger" || v === "success" || v === "info" || v === "warning";
 }
 
-function resolveTooltipLeadingIcon({
+const TOOLTIP_GRID_GAP: Record<TooltipSize, string> = {
+  small: "gap-x-small",
+  base: "gap-x-base",
+  mid: "gap-x-base",
+  large: "gap-x-base",
+};
+
+const TOOLTIP_DESC_VARIANT: Record<TooltipSize, TextVariant> = {
+  small: "tools",
+  base: "tools",
+  mid: "tools",
+  large: "small",
+};
+
+const TOOLTIP_COMPOUND_SLOT_NAMES = new Set([
+  "TooltipIndicator",
+  "TooltipTitle",
+  "TooltipDescription",
+]);
+
+function walkTooltipChildren(
+  node: ReactNode,
+  match: (displayName: string | undefined) => boolean,
+): boolean {
+  let found = false;
+
+  const walk = (current: ReactNode) => {
+    if (found) return;
+    for (const child of Children.toArray(current)) {
+      if (!isValidElement(child)) continue;
+      const displayName = (child.type as { displayName?: string }).displayName;
+      if (match(displayName)) {
+        found = true;
+        return;
+      }
+      walk((child.props as { children?: ReactNode }).children);
+    }
+  };
+
+  walk(node);
+  return found;
+}
+
+function hasTooltipCompoundChildren(children: ReactNode): boolean {
+  return walkTooltipChildren(
+    children,
+    (name) => name != null && TOOLTIP_COMPOUND_SLOT_NAMES.has(name),
+  );
+}
+
+function tooltipHasTitle(children: ReactNode): boolean {
+  return walkTooltipChildren(children, (name) => name === "TooltipTitle");
+}
+
+function tooltipHasDescription(children: ReactNode): boolean {
+  return walkTooltipChildren(children, (name) => name === "TooltipDescription");
+}
+
+function tooltipHasIndicator(children: ReactNode): boolean {
+  return walkTooltipChildren(children, (name) => name === "TooltipIndicator");
+}
+
+function tooltipShowsIndicator(
+  variant: TooltipVariant,
+  icon: ReactNode | undefined,
+  showIcon: boolean | undefined,
+  isCompound: boolean,
+  compoundHasIndicator: boolean,
+): boolean {
+  if (showIcon === false) return false;
+  if (isCompound) return compoundHasIndicator;
+  if (icon != null) return true;
+  return isSemanticTooltipVariant(variant);
+}
+
+function resolveTooltipGridSlots({
+  variant,
+  icon,
+  showIcon,
+  title,
+  description,
+  isCompound,
+  children,
+}: {
+  variant: TooltipVariant;
+  icon?: ReactNode;
+  showIcon?: boolean;
+  title?: ReactNode;
+  description?: ReactNode;
+  isCompound: boolean;
+  children?: ReactNode;
+}): MessageBannerGridSlots {
+  const hasTitle =
+    title != null ||
+    (isCompound
+      ? tooltipHasTitle(children)
+      : children != null && description == null);
+  const hasDescription =
+    description != null || (isCompound && tooltipHasDescription(children));
+
+  return {
+    hasIndicator: tooltipShowsIndicator(
+      variant,
+      icon,
+      showIcon,
+      isCompound,
+      tooltipHasIndicator(children),
+    ),
+    hasTitle,
+    hasDescription,
+    hasAction: false,
+    hasClose: false,
+  };
+}
+
+function resolveTooltipIndicatorInner({
   variant,
   size,
-  showIcon: showIconProp,
-  icon: iconProp,
+  showIcon,
+  icon,
+  children,
 }: {
   variant: TooltipVariant;
   size: TooltipSize;
   showIcon?: boolean;
   icon?: ReactNode;
+  children?: ReactNode;
 }): ReactNode | null {
-  if (showIconProp === false) return null;
+  if (children === null) return null;
 
-  if (iconProp != null) {
-    return (
-      <span
-        className={cn(
-          "inline-flex shrink-0 text-foreground [&_svg]:shrink-0",
-          TOOLTIP_ICON_SLOT_SVG[size],
-        )}
-      >
-        {iconProp}
-      </span>
-    );
+  if (children !== undefined) return children;
+
+  if (showIcon === false) return null;
+
+  if (icon != null) {
+    return icon;
   }
 
   if (!isSemanticTooltipVariant(variant)) return null;
@@ -162,6 +281,197 @@ function resolveTooltipLeadingIcon({
     />
   );
 }
+
+type TooltipBodyContextValue = {
+  variant: TooltipVariant;
+  size: TooltipSize;
+  icon?: ReactNode;
+  showIcon?: boolean;
+  gridSlots: MessageBannerGridSlots;
+};
+
+const TooltipBodyContext = createContext<TooltipBodyContextValue | null>(null);
+
+function useTooltipBodyContext(who: string): TooltipBodyContextValue {
+  const ctx = useContext(TooltipBodyContext);
+  if (!ctx) {
+    throw new Error(`${who} должен быть внутри <Tooltip.Panel> или <Tooltip.Content>.`);
+  }
+  return ctx;
+}
+
+export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
+  variant?: TooltipVariant;
+  size?: TooltipSize;
+  icon?: ReactNode;
+  showIcon?: boolean;
+  title?: ReactNode;
+  description?: ReactNode;
+};
+
+export type TooltipIndicatorProps = HTMLAttributes<HTMLSpanElement>;
+export type TooltipTitleProps = HTMLAttributes<HTMLDivElement>;
+export type TooltipDescriptionProps = HTMLAttributes<HTMLDivElement>;
+
+export function TooltipIndicator({
+  className = "",
+  children,
+  ...rest
+}: TooltipIndicatorProps) {
+  const { variant, size, icon, showIcon, gridSlots } = useTooltipBodyContext("Tooltip.Indicator");
+  const inner = resolveTooltipIndicatorInner({
+    variant,
+    size,
+    showIcon,
+    icon,
+    children,
+  });
+
+  if (inner == null) return null;
+
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 [&_svg]:shrink-0",
+        TOOLTIP_ICON_SLOT_SVG[size],
+        TOOLTIP_ICON_TEXT_CLASS[variant],
+        messageBannerIndicatorCellClass(gridSlots),
+        className,
+      )}
+      {...rest}
+    >
+      {inner}
+    </span>
+  );
+}
+
+TooltipIndicator.displayName = "TooltipIndicator";
+
+export function TooltipTitle({ className = "", ...rest }: TooltipTitleProps) {
+  const { size, gridSlots } = useTooltipBodyContext("Tooltip.Title");
+  return (
+    <Text
+      as="div"
+      variant={TOOLTIP_CONTENT_VARIANT[size]}
+      className={cn(messageBannerTitleCellClass(gridSlots), className)}
+      {...rest}
+    />
+  );
+}
+
+TooltipTitle.displayName = "TooltipTitle";
+
+export function TooltipDescription({ className = "", ...rest }: TooltipDescriptionProps) {
+  const { size, gridSlots } = useTooltipBodyContext("Tooltip.Description");
+  return (
+    <Text
+      as="div"
+      variant={TOOLTIP_DESC_VARIANT[size]}
+      className={cn(
+        "text-muted",
+        messageBannerDescriptionCellClass(gridSlots),
+        className,
+      )}
+      {...rest}
+    />
+  );
+}
+
+TooltipDescription.displayName = "TooltipDescription";
+
+function renderTooltipSimpleBody(
+  children: ReactNode | undefined,
+  title: ReactNode | undefined,
+  description: ReactNode | undefined,
+  gridSlots: MessageBannerGridSlots,
+) {
+  if (title != null || description != null) {
+    return (
+      <>
+        {gridSlots.hasIndicator ? <TooltipIndicator /> : null}
+        {title != null ? <TooltipTitle>{title}</TooltipTitle> : null}
+        {description != null ? (
+          <TooltipDescription>{description}</TooltipDescription>
+        ) : null}
+      </>
+    );
+  }
+
+  if (children == null) return null;
+
+  if (typeof children === "string" || typeof children === "number") {
+    return (
+      <>
+        {gridSlots.hasIndicator ? <TooltipIndicator /> : null}
+        <TooltipTitle>{children}</TooltipTitle>
+      </>
+    );
+  }
+
+  if (isValidElement(children)) {
+    return (
+      <>
+        {gridSlots.hasIndicator ? <TooltipIndicator /> : null}
+        <div className={messageBannerTitleCellClass(gridSlots)}>{children}</div>
+      </>
+    );
+  }
+
+  return children;
+}
+
+export function TooltipPanel({
+  variant = "default",
+  size = "base",
+  icon,
+  showIcon,
+  title,
+  description,
+  className = "",
+  children,
+  ...rest
+}: TooltipPanelProps) {
+  const isCompound = children != null && hasTooltipCompoundChildren(children);
+  const gridSlots = useMemo(
+    () =>
+      resolveTooltipGridSlots({
+        variant,
+        icon,
+        showIcon,
+        title,
+        description,
+        isCompound,
+        children,
+      }),
+    [children, description, icon, isCompound, showIcon, title, variant],
+  );
+
+  const bodyCtx = useMemo<TooltipBodyContextValue>(
+    () => ({ variant, size, icon, showIcon, gridSlots }),
+    [gridSlots, icon, showIcon, size, variant],
+  );
+
+  return (
+    <TooltipBodyContext.Provider value={bodyCtx}>
+      <div
+        className={cn(
+          messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
+          "relative z-[1] w-max min-w-0 rounded-mid text-left animate-shadow",
+          TOOLTIP_SURFACE[variant],
+          TOOLTIP_TEXT_LAYOUT[size],
+          className,
+        )}
+        {...rest}
+      >
+        {isCompound
+          ? children
+          : renderTooltipSimpleBody(children, title, description, gridSlots)}
+      </div>
+    </TooltipBodyContext.Provider>
+  );
+}
+
+TooltipPanel.displayName = "TooltipPanel";
 
 function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {
@@ -181,28 +491,6 @@ function mergeDescribedBy(existing: string | undefined, tooltipId: string, open:
 
 function isTooltipArrowElement(el: ReactElement): boolean {
   return (el.type as { displayName?: string }).displayName === "TooltipArrow";
-}
-
-function TooltipPlainText({
-  children,
-  size,
-}: {
-  children: string | number;
-  size: TooltipSize;
-}) {
-  return (
-    <Text as="span" variant={TOOLTIP_CONTENT_VARIANT[size]} className="min-w-0">
-      {children}
-    </Text>
-  );
-}
-
-function renderTooltipBodyChild(child: ReactNode, size: TooltipSize) {
-  if (isValidElement(child)) return child;
-  if (typeof child === "string" || typeof child === "number") {
-    return <TooltipPlainText size={size}>{child}</TooltipPlainText>;
-  }
-  return child;
 }
 
 type TooltipContextValue = {
@@ -468,15 +756,6 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
     (child) => !(isValidElement(child) && isTooltipArrowElement(child)),
   );
 
-  const leading = resolveTooltipLeadingIcon({ variant, size, showIcon, icon });
-
-  const body =
-    bodyChildren.length === 1 ? (
-      renderTooltipBodyChild(bodyChildren[0], size)
-    ) : (
-      bodyChildren
-    );
-
   const reposition = useCallback(() => {
     const trigger = triggerRef.current;
     const tip = tipRef.current;
@@ -572,22 +851,9 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
   const portalTheme = inheritThemePortalProps(triggerRef.current);
 
   const bubble = (
-    <div
-      className={cn(
-        "relative z-[1] inline-flex items-center rounded-lg text-left animate-shadow",
-        TOOLTIP_SURFACE[variant],
-        TOOLTIP_TEXT_LAYOUT[size],
-      )}
-    >
-      {leading ? (
-        <span className="flex min-w-0 items-center gap-small text-left">
-          {leading}
-          <span className={cn("min-w-0", leading && "flex-1")}>{body}</span>
-        </span>
-      ) : (
-        body
-      )}
-    </div>
+    <TooltipPanel variant={variant} size={size} icon={icon} showIcon={showIcon}>
+      {bodyChildren.length === 1 ? bodyChildren[0] : bodyChildren}
+    </TooltipPanel>
   );
 
   const node = (

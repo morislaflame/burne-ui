@@ -13,6 +13,29 @@ type IndicatorMetrics = {
   height: number;
 };
 
+function readListBoxPadding(list: HTMLElement) {
+  const cs = getComputedStyle(list);
+  return {
+    borderTop: Number.parseFloat(cs.borderTopWidth) || 0,
+    borderLeft: Number.parseFloat(cs.borderLeftWidth) || 0,
+  };
+}
+
+function readSurfaceIndicatorMetrics(list: HTMLElement, tab: HTMLElement): IndicatorMetrics {
+  const listRect = list.getBoundingClientRect();
+  const tabRect = tab.getBoundingClientRect();
+  const { borderTop, borderLeft } = readListBoxPadding(list);
+  const originLeft = listRect.left + borderLeft;
+  const originTop = listRect.top + borderTop;
+
+  return {
+    left: tabRect.left - originLeft + list.scrollLeft,
+    top: tabRect.top - originTop + list.scrollTop,
+    width: tabRect.width,
+    height: tabRect.height,
+  };
+}
+
 function readIndicatorMetrics(
   list: HTMLElement,
   tab: HTMLElement,
@@ -34,14 +57,7 @@ function readIndicatorMetrics(
     return { left, top, width: 2, height };
   }
 
-  const insetY = variant === "outline" ? 4 : 4;
-  const insetX = 4;
-  return {
-    left: left + insetX,
-    top: top + insetY,
-    width: Math.max(0, width - insetX * 2),
-    height: Math.max(0, height - insetY * 2),
-  };
+  return readSurfaceIndicatorMetrics(list, tab);
 }
 
 function applyIndicatorStyle(indicator: HTMLElement, metrics: IndicatorMetrics) {

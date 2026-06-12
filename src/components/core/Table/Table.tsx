@@ -90,9 +90,9 @@ const THEAD_ROW_CLS: Record<TableVariant, string> = {
 
 const TH_CLS: Record<TableVariant, string> = {
   default:
-    "bg-secondary px-mid py-plus text-left font-medium text-muted whitespace-nowrap",
-  secondary: "px-mid py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
-  toned: "px-mid py-plus text-left font-medium text-muted whitespace-nowrap bg-transparent",
+    "bg-tertiary px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
+  secondary: "px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
+  toned: "px-large py-plus text-left font-medium text-muted whitespace-nowrap bg-transparent",
 };
 
 const TBODY_ROW_CLS: Record<TableVariant, string> = {
@@ -102,9 +102,9 @@ const TBODY_ROW_CLS: Record<TableVariant, string> = {
 };
 
 const TD_CLS: Record<TableVariant, string> = {
-  default: "px-mid py-plus",
-  secondary: "px-mid py-plus",
-  toned: "px-mid py-plus first:rounded-l-mid last:rounded-r-mid",
+    default: "px-large py-plus",
+  secondary: "px-large py-plus",
+  toned: "px-large py-plus first:rounded-l-mid last:rounded-r-mid",
 };
 
 // ─── prop types ─────────────────────────────────────────────────────────────
@@ -358,7 +358,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
         const emptyState = renderEmptyState();
         content = (
           <tr>
-            <td colSpan={9999} className="px-mid py-xlarge text-center">
+            <td colSpan={9999} className="px-large py-xlarge text-center">
               {emptyState}
             </td>
           </tr>

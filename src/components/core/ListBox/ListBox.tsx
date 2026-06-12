@@ -220,7 +220,7 @@ export function ListBoxHeader({ className, children, id: idProp, ...rest }: List
   }, [id, registerLabel]);
 
   return (
-    <div id={id} className={cn("px-base text-left", className)} {...rest}>
+    <div id={id} className={cn("px-mid text-left", className)} {...rest}>
       <Text as="span" variant="small" className="font-medium text-muted">
         {children}
       </Text>
@@ -245,7 +245,7 @@ export function ListBoxEmpty({ className, children, ...rest }: ListBoxEmptyProps
     <Text
       as="p"
       variant="base"
-      className={cn("px-base py-small text-center text-muted", className)}
+      className={cn("px-mid py-small text-center text-muted", className)}
       {...rest}
     >
       {children ?? "Нет совпадений"}
@@ -357,7 +357,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
         disabled={disabled}
         tabIndex={-1}
         className={cn(
-          "w-full min-w-0 rounded-mid px-base py-small text-left outline-none",
+          "w-full min-w-0 rounded-mid px-mid py-base text-left outline-none",
           optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
           "button-idle-surface-transition motion-reduce:transition-none",
           !disabled &&

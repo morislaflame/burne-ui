@@ -59,4 +59,5 @@ export type {
   FieldSetActionsProps,
   FieldLegendProps,
   FieldLegendHeaderProps,
+  FieldSetSize,
 } from "./FieldSet";

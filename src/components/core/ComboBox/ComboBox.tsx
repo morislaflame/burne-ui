@@ -540,7 +540,7 @@ export function ComboBoxPopover({ children, className, offset = 6, ...rest }: Co
         className={cn("z-[100]", className)}
         {...rest}
       >
-        <Popover.Body className="gap-0 p-plus">
+        <Popover.Body className="gap-0 p-base">
           <ListBox
             listId={listId}
             value={value}

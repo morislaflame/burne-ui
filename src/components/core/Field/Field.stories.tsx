@@ -6,6 +6,7 @@ import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
+import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -81,6 +82,52 @@ export const FieldSetGroup: Story = {
         </Button>
       </Field.Actions>
     </Field.Set>
+  ),
+};
+
+function FieldSetSizeDemo({ size }: { size: (typeof COMPONENT_SIZES)[number] }) {
+  return (
+    <Field.Set size={size} className="max-w-md">
+      <Field.Legend>
+        <Field.LegendHeader>
+          <Label>Контактные данные</Label>
+          <Field.Hint as="span">size={size}</Field.Hint>
+        </Field.LegendHeader>
+      </Field.Legend>
+      <Field.Group>
+        <Input>
+          <Input.Label>Телефон</Input.Label>
+          <Input.Control placeholder="+7 …" />
+        </Input>
+        <Input>
+          <Input.Label>Email</Input.Label>
+          <Input.Control placeholder="you@example.com" />
+        </Input>
+        <Field.Error>Пример групповой ошибки.</Field.Error>
+      </Field.Group>
+      <Field.Actions>
+        <Button type="button" size="base">
+          Сохранить
+        </Button>
+        <Button type="button" variant="ghost" size="base">
+          Отмена
+        </Button>
+      </Field.Actions>
+    </Field.Set>
+  );
+}
+
+export const FieldSetSizes: Story = {
+  name: "FieldSet — размеры",
+  render: () => (
+    <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
+      {COMPONENT_SIZES.map((size) => (
+        <div key={size} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
+          <FieldSetSizeDemo size={size} />
+        </div>
+      ))}
+    </div>
   ),
 };
 

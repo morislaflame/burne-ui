@@ -91,15 +91,15 @@ const TRIGGER_H: Record<DisclosureSize, string> = {
 };
 
 const TRIGGER_PAD: Record<DisclosureSize, string> = {
-  small: "px-base",
-  base: "px-plus",
-  mid: "px-mid",
-  large: "px-large",
+  small: "px-base py-base",
+  base: "px-large py-base",
+  mid: "px-mid py-base",
+  large: "px-large py-base",
 };
 
 const CONTENT_PAD: Record<DisclosureSize, string> = {
   small: "p-base",
-  base: "p-plus",
+  base: "p-mid",
   mid: "p-mid",
   large: "p-large",
 };
@@ -124,7 +124,7 @@ const VARIANT_ROOT: Record<DisclosureVariant, string> = {
   default: "flex flex-col",
   outline: "flex flex-col",
   secondary: "flex flex-col",
-  card: "overflow-hidden rounded-mid border-token bg-surface animate-shadow",
+  card: "overflow-hidden rounded-base border-token bg-surface animate-shadow",
   ghost: "flex flex-col",
 };
 

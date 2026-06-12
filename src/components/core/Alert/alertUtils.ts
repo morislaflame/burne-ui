@@ -43,6 +43,14 @@ export function alertHasDescription(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) => name === "AlertDescription");
 }
 
+export function alertHasIndicator(children: ReactNode): boolean {
+  return walkAlertChildren(children, (name) => name === "AlertIndicator");
+}
+
+export function alertHasAction(children: ReactNode): boolean {
+  return walkAlertChildren(children, (name) => name === "AlertAction");
+}
+
 const ALERT_COMPOUND_SLOT_NAMES = new Set([
   "AlertMessage",
   "AlertIndicator",

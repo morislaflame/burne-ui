@@ -76,7 +76,7 @@ const NAV_BTN: Record<CalendarSize, string> = {
 
 const ROOT_PAD: Record<CalendarSize, string> = {
   small: "p-small gap-xsmall",
-  base:  "p-plus gap-small",
+  base:  "p-mid gap-small",
   mid:   "p-mid gap-small",
   large: "p-large gap-base",
 };

@@ -48,9 +48,9 @@ export type CardProps = Omit<
 };
 
 const CARD_SURFACE: Record<CardVariant, string> = {
-  default: "bg-surface border-token",
-  outline: "bg-transparent border-token",
-  secondary: "bg-secondary border-token",
+  default: "bg-surface border-token shadow-token-sm",
+  outline: "bg-transparent border-token shadow-token-sm",
+  secondary: "bg-secondary border-token shadow-token-sm",
 };
 
 export type CardContentProps = HTMLAttributes<HTMLDivElement>;
@@ -63,7 +63,7 @@ export function CardContent({ className = "", ...rest }: CardContentProps) {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col gap-small py-plus px-mid",
+        "flex min-w-0 flex-col gap-small py-plus px-large",
         className,
       )}
       {...rest}
@@ -103,7 +103,7 @@ export const CardDescription = forwardRef<
 export function CardBody({ className = "", children, ...rest }: CardBodyProps) {
   return (
     <div
-      className={cn("min-w-0 px-mid pb-mid", className)}
+      className={cn("min-w-0 px-large pb-mid", className)}
       {...rest}
     >
       <Text variant="base" as="div">
@@ -118,7 +118,7 @@ export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   return (
     <div
       className={cn(
-        "mt-auto border-t-token py-plus px-mid text-muted",
+        "mt-auto border-t-token py-plus px-large text-muted",
         className,
       )}
       {...rest}

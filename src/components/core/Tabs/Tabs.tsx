@@ -65,6 +65,10 @@ const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   secondary: "bg-secondary border-token rounded-mid p-xsmall",
 };
 
+function isSurfaceTabsVariant(variant: TabsVariant): boolean {
+  return variant === "outline" || variant === "secondary";
+}
+
 const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "bg-primary",
   outline: "bg-secondary",
@@ -261,8 +265,14 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
       className={cn(
         "relative box-border min-w-0",
         orientation === "horizontal"
-          ? cn("flex flex-row flex-wrap items-stretch gap-xsmall", variant === "default" && "border-b-token")
-          : cn("flex flex-col items-stretch gap-xsmall", variant === "default" && "border-l-token"),
+          ? cn(
+              "flex flex-row flex-wrap gap-xsmall",
+              isSurfaceTabsVariant(variant) ? "items-center" : "items-stretch border-b-token",
+            )
+          : cn(
+              "flex flex-col gap-xsmall",
+              isSurfaceTabsVariant(variant) ? "items-start" : "items-stretch border-l-token",
+            ),
         LIST_VARIANT_CLASS[variant],
         className,
       )}
@@ -292,6 +302,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     value,
     setValue,
     size,
+    variant,
     baseId,
     disabled: rootDisabled,
     tabElementsRef,
@@ -302,6 +313,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
 
   const isSelected = value === tabValue;
   const isDisabled = rootDisabled || tabDisabled;
+  const isSurface = isSurfaceTabsVariant(variant);
   const layout = CONTROL_SIZE_LAYOUT[size];
   const tabId = `${baseId}-tab-${tabValue}`;
   const panelId = `${baseId}-panel-${tabValue}`;
@@ -382,7 +394,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       className={cn(
         "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
         layout.h,
-        layout.padX,
+        isSurface ? "rounded-mid px-mid" : layout.padX,
         "focus-ring",
         isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
         isSelected ? "text-primary" : "text-muted hover:text-primary",

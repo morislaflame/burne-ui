@@ -8,18 +8,17 @@ import {
   type ReactNode,
 } from "react";
 
+import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { cn } from "@/utils/cn";
 
+import { FieldSetSizeProvider, useFieldSetSize } from "./fieldSetContext";
+import { FIELD_SET_SIZE_LAYOUT } from "./fieldSetSizeLayout";
 import { joinFieldDescribedBy } from "./fieldA11y";
 
 const FIELDSET_CLASS =
   "m-0 min-w-0 border-0 p-0 disabled:pointer-events-none disabled:opacity-55";
 
-const FIELDSET_STACK_CLASS = "flex min-w-0 w-full flex-col gap-large";
-
-const FIELDSET_GROUP_CLASS = "flex min-w-0 w-full flex-col gap-mid";
-
-const FIELDSET_ACTIONS_CLASS = "flex min-w-0 w-full flex-wrap items-center gap-mid";
+const FIELDSET_STACK_BASE_CLASS = "flex min-w-0 w-full flex-col";
 
 const LEGEND_CLASS = "m-0 block w-full max-w-full border-0 p-0";
 
@@ -123,7 +122,7 @@ export type FieldLegendHeaderProps = HTMLAttributes<HTMLSpanElement> & {
 /** Обёртка для подписи и подсказки внутри `FieldLegend`. */
 export function FieldLegendHeader({ children, className, ...rest }: FieldLegendHeaderProps) {
   return (
-    <span className={cn("flex flex-col gap-xsmall", className)} {...rest}>
+    <span className={cn("flex flex-col w-fit", className)} {...rest}>
       {children}
     </span>
   );
@@ -138,8 +137,11 @@ export const FieldSetGroup = forwardRef<HTMLDivElement, FieldSetGroupProps>(func
   { className, children, ...rest },
   ref,
 ) {
+  const size = useFieldSetSize();
+  const layout = FIELD_SET_SIZE_LAYOUT[size];
+
   return (
-    <div ref={ref} className={cn(FIELDSET_GROUP_CLASS, className)} {...rest}>
+    <div ref={ref} className={cn("flex min-w-0 w-full flex-col", layout.groupGap, className)} {...rest}>
       {children}
     </div>
   );
@@ -154,8 +156,15 @@ export type FieldSetActionsProps = HTMLAttributes<HTMLDivElement> & {
 /** Кнопки и действия fieldset (submit, reset и т.д.). */
 export const FieldSetActions = forwardRef<HTMLDivElement, FieldSetActionsProps>(
   function FieldSetActions({ className, children, ...rest }, ref) {
+    const size = useFieldSetSize();
+    const layout = FIELD_SET_SIZE_LAYOUT[size];
+
     return (
-      <div ref={ref} className={cn(FIELDSET_ACTIONS_CLASS, className)} {...rest}>
+      <div
+        ref={ref}
+        className={cn("flex flex-wrap w-fit items-center", layout.actionsGap, className)}
+        {...rest}
+      >
         {children}
       </div>
     );
@@ -171,29 +180,42 @@ export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "c
   /** id ошибки для `aria-describedby`. */
   errorId?: string;
   isRequired?: boolean;
+  /** Шкала отступов fieldset: legend, stack, group и actions. */
+  size?: ComponentSize;
 };
 
 export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(function FieldSetRoot(
-  { children, className, hintId, errorId, isRequired, disabled, ...rest },
+  { children, className, hintId, errorId, isRequired, disabled, size = "base", ...rest },
   ref,
 ) {
   const { legend, body } = splitFieldSetChildren(children);
   const stack = buildFieldSetStack(body);
+  const layout = FIELD_SET_SIZE_LAYOUT[size];
 
   return (
-    <fieldset
-      ref={ref}
-      disabled={disabled}
-      aria-required={isRequired || undefined}
-      aria-describedby={joinFieldDescribedBy(hintId, errorId)}
-      className={cn(FIELDSET_CLASS, className)}
-      {...rest}
-    >
-      {legend}
-      {stack.length > 0 ? (
-        <div className={cn(FIELDSET_STACK_CLASS, legend != null && "mt-large")}>{stack}</div>
-      ) : null}
-    </fieldset>
+    <FieldSetSizeProvider size={size}>
+      <fieldset
+        ref={ref}
+        disabled={disabled}
+        aria-required={isRequired || undefined}
+        aria-describedby={joinFieldDescribedBy(hintId, errorId)}
+        className={cn(FIELDSET_CLASS, className)}
+        {...rest}
+      >
+        {legend}
+        {stack.length > 0 ? (
+          <div
+            className={cn(
+              FIELDSET_STACK_BASE_CLASS,
+              layout.stackGap,
+              legend != null && layout.legendGap,
+            )}
+          >
+            {stack}
+          </div>
+        ) : null}
+      </fieldset>
+    </FieldSetSizeProvider>
   );
 });
 
@@ -210,3 +232,5 @@ export function useFieldSetErrorId(providedId?: string) {
   const autoId = useId();
   return providedId ?? `${autoId}-error`;
 }
+
+export type { ComponentSize as FieldSetSize } from "@/components/core/utils/componentSize";

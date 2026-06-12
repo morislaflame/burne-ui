@@ -125,7 +125,7 @@ export function DialogHeadingBlock({
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col gap-base text-left",
+        "flex min-w-0 flex-1 flex-col gap-xsmall text-left",
         className,
       )}
       {...rest}

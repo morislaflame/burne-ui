@@ -476,7 +476,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
         <div
           ref={ref}
           className={cn(
-            "rounded-mid border-token bg-surface text-left text-foreground",
+            "rounded-mid border-token bg-surface text-left text-foreground shadow-token-sm",
             className,
           )}
           {...rest}

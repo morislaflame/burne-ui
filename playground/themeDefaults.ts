@@ -159,7 +159,7 @@ const DARK_COLORS: ThemeColors = {
 };
 
 const LIGHT_COLORS: ThemeColors = {
-  background: "#fafafa",
+  background: "#f5f5f5",
   surface: "#ffffff",
   secondary: "#ebebec",
   secondaryForeground: "#18181b",

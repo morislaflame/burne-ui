@@ -5,6 +5,7 @@ import { IoGlobeOutline, IoPeopleOutline, IoVideocamOutline } from "react-icons/
 
 import { Radio } from "@/components/core/Radio";
 import { Text } from "@/components/core/Text";
+import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
 import { cn } from "@/utils/cn";
 
 import { RadioGroup } from ".";
@@ -30,6 +31,13 @@ const meta = {
   decorators: [...darkThemeDecorator],
   args: {
     isRequired: false,
+  },
+  argTypes: {
+    size: {
+      control: "select",
+      options: COMPONENT_SIZES,
+      table: { defaultValue: { summary: "small" } },
+    },
   },
 } satisfies Meta<typeof RadioGroup>;
 
@@ -217,6 +225,30 @@ export const WithoutDescription: Story = {
         <Radio value="l" label="L" />
       </RadioGroup.List>
     </RadioGroup>
+  ),
+};
+
+export const Sizes: Story = {
+  name: "Размеры small · base · mid · large",
+  render: () => (
+    <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
+      {COMPONENT_SIZES.map((size) => (
+        <div key={size} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
+          <RadioGroup size={size} defaultValue="card">
+            <RadioGroup.Legend>
+              <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
+              <RadioGroup.Hint>size={size}</RadioGroup.Hint>
+            </RadioGroup.Legend>
+            <RadioGroup.List>
+              <Radio value="card" label="Банковская карта" />
+              <Radio value="cash" label="Наличные" />
+              <Radio value="invoice" label="Счёт для юрлица" />
+            </RadioGroup.List>
+          </RadioGroup>
+        </div>
+      ))}
+    </div>
   ),
 };
 
