@@ -47,8 +47,8 @@ type Story = StoryObj<typeof meta>;
 
 const CARD_RADIO_CLASS = cn(
   "group relative flex flex-col gap-plus rounded-mid border-token bg-surface px-plus py-mid transition-colors",
-  "data-[selected=true]:border-primary data-[selected=true]:bg-primary-tint",
-  "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-primary-tint",
+  "data-[selected=true]:border-primary data-[selected=true]:bg-default-hover",
+  "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-default-hover",
 );
 
 export const Playground: Story = {

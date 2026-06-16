@@ -13,7 +13,7 @@
   --color-muted: #8b90a0;
 
   /**
-   * PRIMARY (brand) — заливка default-кнопки, ссылки, активные текстовые состояния.
+   * PRIMARY (brand) — заливка primary-кнопки, ссылки, активные текстовые состояния.
    * Текстовый цвет на этой заливке: `--color-primary-foreground`.
    */
   --color-primary: #ebebef;
@@ -35,22 +35,113 @@
   /** Текст и иконки на заливке `--color-indicator` (галочка Checkbox, Switch/Slider в on). */
   --color-indicator-foreground: var(--color-primary-foreground);
 
+  /*
+   * STATUS: DANGER
+   * 1) --color-danger                     (base / text / primary fill)
+   * 2) --color-surface-tint-danger        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-danger-hover  (hover поверх surface-tint-danger)
+   * 4) --color-danger-fill-hover          (hover поверх bg-danger)
+   */
   --color-danger: #dc2626;
   --color-danger-foreground: #fafafa;
+  --color-surface-tint-danger: color-mix(
+    in oklab,
+    var(--color-danger) 14%,
+    transparent
+  );
+  --color-surface-tint-danger-hover: color-mix(
+    in oklab,
+    var(--color-danger) 22%,
+    transparent
+  );
+  --color-danger-fill-hover: color-mix(
+    in oklab,
+    var(--color-danger) 90%,
+    black
+  );
+
+  /*
+   * STATUS: SUCCESS
+   * 1) --color-success                     (base / text / primary fill)
+   * 2) --color-surface-tint-success        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-success-hover  (hover поверх surface-tint-success)
+   * 4) --color-success-fill-hover          (hover поверх bg-success)
+   */
   --color-success: #22c55e;
   --color-success-foreground: #fafafa;
+  --color-surface-tint-success: color-mix(
+    in oklab,
+    var(--color-success) 14%,
+    transparent
+  );
+  --color-surface-tint-success-hover: color-mix(
+    in oklab,
+    var(--color-success) 22%,
+    transparent
+  );
+  --color-success-fill-hover: color-mix(
+    in oklab,
+    var(--color-success) 90%,
+    black
+  );
+
+  /*
+   * STATUS: INFO
+   * 1) --color-info                     (base / text / primary fill)
+   * 2) --color-surface-tint-info        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-info-hover  (hover поверх surface-tint-info)
+   * 4) --color-info-fill-hover          (hover поверх bg-info)
+   */
   --color-info: #0ea5e9;
   --color-info-foreground: #fafafa;
+  --color-surface-tint-info: color-mix(
+    in oklab,
+    var(--color-info) 14%,
+    transparent
+  );
+  --color-surface-tint-info-hover: color-mix(
+    in oklab,
+    var(--color-info) 22%,
+    transparent
+  );
+  --color-info-fill-hover: color-mix(
+    in oklab,
+    var(--color-info) 90%,
+    black
+  );
+
+  /*
+   * STATUS: WARNING
+   * 1) --color-warning                     (base / text / primary fill)
+   * 2) --color-surface-tint-warning        (default-status surface + outline/ghost hover)
+   * 3) --color-surface-tint-warning-hover  (hover поверх surface-tint-warning)
+   * 4) --color-warning-fill-hover          (hover поверх bg-warning)
+   */
   --color-warning: #f59e0b;
   --color-warning-foreground: #0c0c0e;
+  --color-surface-tint-warning: color-mix(
+    in oklab,
+    var(--color-warning) 14%,
+    transparent
+  );
+  --color-surface-tint-warning-hover: color-mix(
+    in oklab,
+    var(--color-warning) 22%,
+    transparent
+  );
+  --color-warning-fill-hover: color-mix(
+    in oklab,
+    var(--color-warning) 90%,
+    black
+  );
 
   /**
-   * PRIMARY TINT — бренд-тинт primary/10.
-   * Единый цвет для hover, активных табов (outline/secondary), Calendar range, Skeleton, affix и т.д.
+   * PRIMARY TINT — бренд-тинт primary (выделение, range календаря, Skeleton и т.д.).
+   * Для hover строк меню используйте `--color-default-hover`.
    */
   --color-primary-tint: color-mix(
     in oklab,
-    var(--color-primary) 5%,
+    var(--color-primary) 3%,
     transparent
   );
 
@@ -61,11 +152,21 @@
     transparent
   );
 
-  /** PRIMARY HOVER — залитый default (Button): непрозрачное затемнение от --color-primary */
+  /** PRIMARY HOVER — залитая primary-кнопка: лёгкое осветление/приглушение заливки */
   --color-primary-hover: color-mix(
     in oklab,
-    var(--color-primary) 90%,
-    #070707
+    var(--color-primary) 80%,
+    transparent
+  );
+
+  /**
+   * DEFAULT HOVER — нейтральный hover для outline/ghost, строк меню и пр. (без заливки).
+   * Единый foreground-wash на прозрачном фоне.
+   */
+  --color-default-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 8%,
+    transparent
   );
 
   /**
@@ -108,32 +209,10 @@
     var(--color-tertiary)
   );
 
-  /** Залитые семантические кнопки: hover без глобального opacity — тёмнее фон через mix с black */
-  --color-danger-fill-hover: color-mix(
-    in oklab,
-    var(--color-danger) 90%,
-    black
-  );
-  --color-success-fill-hover: color-mix(
-    in oklab,
-    var(--color-success) 90%,
-    black
-  );
-  --color-info-fill-hover: color-mix(
-    in oklab,
-    var(--color-info) 90%,
-    black
-  );
-  --color-warning-fill-hover: color-mix(
-    in oklab,
-    var(--color-warning) 90%,
-    black
-  );
-
   /**
    * RIPPLE TOKENS
-   * primary-fill — точка сходимости на залитой primary-кнопке (default).
-   * neutral — ripple для outline / ghost / secondary / Disclosure / Dropdown.
+   * primary-fill — точка сходимости на залитой primary-кнопке (`Button variant="primary"`).
+   * neutral — ripple для default / outline / ghost / secondary / Disclosure / Dropdown.
    * neutral-muted — широкие триггеры (Expandable и т.п.).
    */
   --color-converge-ripple-primary-fill: color-mix(
@@ -168,68 +247,12 @@
     transparent
   );
 
-  /**
-   * SURFACE TINTS (тёмная тема) — смешиваем статусный цвет с чёрным.
-   * Не зависит от --color-surface.
-   * Процент выше, чем кажется нужным, т.к. чёрный (L=0 в OKLab)
-   * сильно гасит яркость — ~30% даёт читаемый, но тёмный фон.
-   */
-  --color-surface-tint-danger: color-mix(
-    in oklab,
-    var(--color-danger) 35%,
-    black
-  );
-  --color-surface-tint-success: color-mix(
-    in oklab,
-    var(--color-success) 35%,
-    black
-  );
-  --color-surface-tint-info: color-mix(
-    in oklab,
-    var(--color-info) 35%,
-    black
-  );
-  --color-surface-tint-warning: color-mix(
-    in oklab,
-    var(--color-warning) 35%,
-    black
-  );
   --color-surface-tint-primary: color-mix(
     in oklab,
     var(--color-primary) 28%,
     black
   );
-  --color-surface-tint-danger-strong: color-mix(
-    in oklab,
-    var(--color-danger) 40%,
-    black
-  );
-  --color-surface-tint-success-strong: color-mix(
-    in oklab,
-    var(--color-success) 40%,
-    black
-  );
-  --color-surface-tint-warning-strong: color-mix(
-    in oklab,
-    var(--color-warning) 40%,
-    black
-  );
-  --color-surface-tint-info-strong: color-mix(
-    in oklab,
-    var(--color-info) 40%,
-    black
-  );
 
-  /**
-   * SURFACE TINT FOREGROUND — текстовый цвет поверх каждого тинта.
-   * По умолчанию = foreground (контрастен и в тёмной, и в светлой теме).
-   * Переопределите для нестандартных тинтов.
-   */
-  --color-surface-tint-danger-foreground: var(--color-foreground);
-  --color-surface-tint-success-foreground: var(--color-foreground);
-  --color-surface-tint-info-foreground: var(--color-foreground);
-  --color-surface-tint-warning-foreground: var(--color-foreground);
-  --color-surface-tint-primary-foreground: var(--color-foreground);
 
   --font-family-sans: ui-sans-serif, system-ui, sans-serif;
   --font-family-mono: ui-monospace, monospace;
@@ -449,8 +472,14 @@
 
   --color-primary-hover: color-mix(
     in oklab,
-    var(--color-primary) 72%,
-    #070707
+    var(--color-primary) 90%,
+    transparent
+  );
+
+  --color-default-hover: color-mix(
+    in oklab,
+    var(--color-foreground) 8%,
+    transparent
   );
 
   --color-secondary: color-mix(
@@ -500,53 +529,10 @@
   --glass-border: rgb(0 0 0 / 0.1);
   --glass-highlight: rgb(0 0 0 / 0.05);
 
-  /**
-   * SURFACE TINTS (светлая тема) — смешиваем статусный цвет с белым.
-   * Не зависит от --color-surface.
-   */
-  --color-surface-tint-danger: color-mix(
-    in oklab,
-    var(--color-danger) 18%,
-    white
-  );
-  --color-surface-tint-success: color-mix(
-    in oklab,
-    var(--color-success) 18%,
-    white
-  );
-  --color-surface-tint-info: color-mix(
-    in oklab,
-    var(--color-info) 18%,
-    white
-  );
-  --color-surface-tint-warning: color-mix(
-    in oklab,
-    var(--color-warning) 18%,
-    white
-  );
+  /** Primary-тинт в светлой теме — mix с white вместо black. */
   --color-surface-tint-primary: color-mix(
     in oklab,
     var(--color-primary) 14%,
-    white
-  );
-  --color-surface-tint-danger-strong: color-mix(
-    in oklab,
-    var(--color-danger) 26%,
-    white
-  );
-  --color-surface-tint-success-strong: color-mix(
-    in oklab,
-    var(--color-success) 26%,
-    white
-  );
-  --color-surface-tint-warning-strong: color-mix(
-    in oklab,
-    var(--color-warning) 26%,
-    white
-  );
-  --color-surface-tint-info-strong: color-mix(
-    in oklab,
-    var(--color-info) 26%,
     white
   );
 

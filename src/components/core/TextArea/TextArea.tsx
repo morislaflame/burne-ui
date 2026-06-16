@@ -9,7 +9,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS } from "@/components/core/utils/useFieldShellHoverLift";
+import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
@@ -208,6 +208,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
+          fieldShellHoverClass(!blocked, status),
           shellHoverLift.shellHoverMotionClass,
           blocked ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,

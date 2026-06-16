@@ -27,6 +27,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
@@ -138,8 +139,7 @@ const FRAMED_PANEL: Record<DisclosureVariant, string> = {
 
 const TRIGGER_INTERACTIVE = cn(
   "bg-transparent text-foreground",
-  "button-idle-surface-transition motion-reduce:transition-none",
-  "hover:bg-primary-tint",
+  hoverVariant(),
 );
 
 const VARIANT_TRIGGER: Record<DisclosureVariant, string> = {

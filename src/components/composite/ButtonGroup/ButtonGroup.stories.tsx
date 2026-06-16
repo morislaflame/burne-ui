@@ -78,7 +78,7 @@ export const Vertical: Story = {
         <ButtonGroupText>Сортировка</ButtonGroupText>
         <Button variant="outline">По дате</Button>
         <Button variant="outline">По имени</Button>
-        <Button variant="danger" leftIcon={<IoTrashOutline />}>
+        <Button variant="primary" status="danger" leftIcon={<IoTrashOutline />}>
           Удалить
         </Button>
       </ButtonGroup>
@@ -112,7 +112,7 @@ export const ToolbarWithSearchInputRow: Story = {
           <ButtonGroupText>Таблица</ButtonGroupText>
           <Button variant="outline">Карты</Button>
           <Button variant="outline">Список</Button>
-          <Button variant="default">Сохранить</Button>
+          <Button variant="primary">Сохранить</Button>
         </ButtonGroup>
       </div>
     );
@@ -132,7 +132,7 @@ export const MultipleGroupsInRow: Story = {
           <Button size="small" variant="outline">
             YAML
           </Button>
-          <Button size="small" variant="default">
+          <Button size="small" variant="primary">
             Экспорт
           </Button>
         </ButtonGroup>
@@ -146,7 +146,7 @@ export const MultipleGroupsInRow: Story = {
           </Button>
         </ButtonGroup>
         <ButtonGroup aria-label="Статус" buttonSize="small">
-          <Button size="small" variant="danger" leftIcon={<IoTrashOutline />}>
+          <Button size="small" variant="primary" status="danger" leftIcon={<IoTrashOutline />}>
             Сброс
           </Button>
         </ButtonGroup>

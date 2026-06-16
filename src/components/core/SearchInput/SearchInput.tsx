@@ -29,6 +29,7 @@ import {
   FIELD_SHELL_FOCUS_CLASS,
   FIELD_SHELL_HOVER_MOTION_CLASS,
   FIELD_SHELL_TRANSITION_CLASS,
+  fieldShellHoverClass,
   useFieldShellHoverLift,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
@@ -46,8 +47,7 @@ import {
 
 export type SearchInputSize = ComponentSize;
 
-const GHOST_CLEAR_HOVER =
-  "hover:bg-primary-tint";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
 const SHELL_W_COLLAPSED: Record<ComponentSize, string> = {
   small: "w-control-small",
@@ -265,7 +265,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const targetW = expandedWidth ?? layout.defaultExpandedW;
     const collapsedDim = readControlHeightPx(sizeProp);
 
-    const shellHoverLift = useFieldShellHoverLift(rootRef, !blocked && expanded);
+    const shellHoverLift = useFieldShellHoverLift(rootRef, !blocked);
 
     useLayoutEffect(() => {
       const el = rootRef.current;
@@ -533,6 +533,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           "relative box-border inline-block overflow-hidden border-1 border-token bg-surface text-left outline-none",
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
+          fieldShellHoverClass(!blocked),
           "focus-ring",
           !blocked && FIELD_SHELL_HOVER_MOTION_CLASS,
           expanded ? "cursor-text" : "",
@@ -598,7 +599,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             className={cn(
               "absolute top-1/2 z-[3] flex -translate-y-1/2 items-center justify-center rounded-full border-0 bg-transparent p-0",
               "text-foreground outline-none transition-colors",
-              GHOST_CLEAR_HOVER,
+              hoverVariant(),
               "focus-ring-inset",
               "cursor-pointer",
             )}

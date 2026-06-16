@@ -36,7 +36,7 @@ const meta = {
   },
   decorators: [...framedDecorator],
   args: {
-    variant: "outline",
+    variant: "default",
     size: "base",
     animated: true,
     defaultPressed: false,

@@ -53,21 +53,39 @@ const CARD_SURFACE: Record<CardVariant, string> = {
   secondary: "bg-secondary border-token shadow-token-sm",
 };
 
-export type CardContentProps = HTMLAttributes<HTMLDivElement>;
+export type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
+export type CardBodyProps = HTMLAttributes<HTMLDivElement>;
 export type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
 export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
-export type CardBodyProps = HTMLAttributes<HTMLDivElement>;
 export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
 
-export function CardContent({ className = "", ...rest }: CardContentProps) {
+/** Шапка карточки: заголовок, описание, мета. */
+export function CardHeader({ className = "", ...rest }: CardHeaderProps) {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col gap-small py-plus px-large",
+        "flex shrink-0 flex-col gap-small py-plus px-large text-left",
         className,
       )}
       {...rest}
     />
+  );
+}
+
+/** Колонка заголовка и подзаголовка внутри `Card.Header`. */
+export function CardHeadingBlock({ className = "", ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn("flex min-w-0 flex-1 flex-col gap-xsmall text-left", className)}
+      {...rest}
+    />
+  );
+}
+
+/** Основной контент между шапкой и футером. */
+export function CardBody({ className = "", ...rest }: CardBodyProps) {
+  return (
+    <div className={cn("min-w-0 px-large pb-mid", className)} {...rest} />
   );
 }
 
@@ -99,19 +117,6 @@ export const CardDescription = forwardRef<
     />
   );
 });
-
-export function CardBody({ className = "", children, ...rest }: CardBodyProps) {
-  return (
-    <div
-      className={cn("min-w-0 px-large pb-mid", className)}
-      {...rest}
-    >
-      <Text variant="base" as="div">
-        {children}
-      </Text>
-    </div>
-  );
-}
 
 /** Нижняя зона действий / мета с разделителем. */
 export function CardFooter({ className = "", ...rest }: CardFooterProps) {

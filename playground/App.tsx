@@ -45,7 +45,7 @@ function AppHeader({
                 key={item.id}
                 type="button"
                 size="small"
-                variant={page === item.id ? "default" : "ghost"}
+                variant={page === item.id ? "primary" : "ghost"}
                 className={cn(page !== item.id && "text-muted", "max-sm:px-2")}
                 onClick={() => onPageChange(item.id)}
               >

@@ -105,7 +105,7 @@ function AlertAllVariantsDemo({ simple = false }: { simple?: boolean }) {
       title: "Unable to connect to server",
       description: "We're experiencing connection issues.",
       action: (
-        <Button size="base" variant="danger">
+        <Button size="small" variant="primary" status="danger">
           Retry
         </Button>
       ),
@@ -206,7 +206,7 @@ export const WithAction: Story = {
       title="Update available"
       description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
       action={
-        <Button size="base" variant="info">
+        <Button size="small" variant="primary" status="info">
           Refresh
         </Button>
       }

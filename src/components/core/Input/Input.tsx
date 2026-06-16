@@ -21,7 +21,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS } from "@/components/core/utils/useFieldShellHoverLift";
+import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
@@ -30,6 +30,7 @@ import {
   buttonGroupRoundingClasses,
 } from "@/components/core/utils/buttonGroupSegment";
 import { useOptionalButtonGroupSegment } from "@/components/core/utils/buttonGroupContext";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
 
@@ -97,14 +98,13 @@ const STATUS_TINT_SHELL: Record<
   warning: "bg-surface-tint-warning",
 };
 
-/** Слегка насыщеннее оболочки, чтобы префикс/суффикс читался на тоне. */
 const STATUS_TINT_AFFIX: Record<
   Exclude<InputStatus, "default">,
   string
 > = {
-  danger: "bg-surface-tint-danger-strong",
-  success: "bg-surface-tint-success-strong",
-  warning: "bg-surface-tint-warning-strong",
+  danger: "bg-surface-tint-danger",
+  success: "bg-surface-tint-success",
+  warning: "bg-surface-tint-warning",
 };
 
 
@@ -308,7 +308,7 @@ function FileRemoveButton({
       onPointerDown={(e) => e.stopPropagation()}
       className={cn(
         "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-base text-danger outline-none transition-colors",
-        "hover:bg-[color-mix(in_oklab,var(--color-danger)_14%,transparent)]",
+        hoverVariant("danger"),
         "focus-ring",
         disabled ? "pointer-events-none opacity-40" : "",
       )}
@@ -518,6 +518,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
           shellFileEmptySurface ?? shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
+          fieldShellHoverClass(!blocked, status),
           shellHoverLift.shellHoverMotionClass,
           blocked ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,

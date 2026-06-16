@@ -407,7 +407,7 @@ export const CustomCells: Story = {
                   <Table.Cell className="font-medium">{user.name}</Table.Cell>
                   <Table.Cell className="text-muted">{user.role}</Table.Cell>
                   <Table.Cell>
-                    <Badge color={statusBadgeColor[user.status]} size="small">
+                    <Badge status={statusBadgeColor[user.status]} size="small">
                       {user.status}
                     </Badge>
                   </Table.Cell>
@@ -417,7 +417,7 @@ export const CustomCells: Story = {
                       <Button iconOnly size="small" variant="ghost">
                         <span className="text-muted text-small">✎</span>
                       </Button>
-                      <Button iconOnly size="small" variant="danger">
+                      <Button iconOnly size="small" variant="primary" status="danger">
                         <span className="text-small">✕</span>
                       </Button>
                     </div>
@@ -580,7 +580,7 @@ export const TonedRows: Story = {
                 <Table.Cell className="font-medium">{user.name}</Table.Cell>
                 <Table.Cell className="text-muted">{user.role}</Table.Cell>
                 <Table.Cell>
-                  <Badge color={statusBadgeColor[user.status]} size="small">
+                  <Badge status={statusBadgeColor[user.status]} size="small">
                     {user.status}
                   </Badge>
                 </Table.Cell>

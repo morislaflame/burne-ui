@@ -22,6 +22,7 @@ import {
   buttonGroupRoundingClasses,
   type ButtonGroupSegment,
 } from "@/components/core/utils/buttonGroupSegment";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import {
   animateInteractiveHoverLift,
@@ -49,7 +50,7 @@ export type ToggleButtonProps = Omit<
   /** Начальное состояние (неконтролируемый режим). */
   defaultPressed?: boolean;
   onPressedChange?: (pressed: boolean) => void;
-  /** Поверхность в покое. По умолчанию `outline`. */
+  /** Поверхность в покое. По умолчанию `default`. */
   variant?: ToggleButtonVariant;
   /** Габариты по высоте как у `Button`, без `min-w-button-*`. */
   size?: ToggleButtonSize;
@@ -92,24 +93,20 @@ const TOGGLE_BUTTON_SIZE: Record<
 
 type ToggleButtonVariantVisual = {
   idle: string;
-  hoverIdle: string;
   pressedBorder: string;
 };
 
 const TOGGLE_BUTTON_VARIANT: Record<ToggleButtonVariant, ToggleButtonVariantVisual> = {
   default: {
     idle: "border-token bg-surface text-foreground",
-    hoverIdle: "hover:bg-primary-tint",
     pressedBorder: "border-primary",
   },
   outline: {
     idle: "bg-transparent border-token text-foreground",
-    hoverIdle: "hover:bg-primary-tint",
     pressedBorder: "border-primary",
   },
   ghost: {
     idle: "border border-transparent bg-transparent text-foreground",
-    hoverIdle: "hover:bg-primary-tint",
     pressedBorder: "border-transparent",
   },
 };
@@ -163,7 +160,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
     const isSingleGroup = groupCtx?.type === "single";
 
     const size = sizeProp ?? groupCtx?.size ?? segmentCtx?.buttonSize ?? "base";
-    const variant = variantProp ?? groupCtx?.variant ?? "outline";
+    const variant = variantProp ?? groupCtx?.variant ?? "default";
     const disabled = disabledProp || Boolean(groupCtx?.disabled);
 
     const [localPressed, setLocalPressed] = useMergedPressed(
@@ -252,13 +249,15 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         onClick?.(e);
         if (e.defaultPrevented || disabled) return;
 
-        const next = !pressed;
-        animateTo(next);
-
         if (inGroup && itemValue != null) {
+          // В группе состояние и заливку ведёт selection — не toggl'им локально:
+          // в single повторный клик не меняет value, optimistic animateTo(false) ломал контраст текста.
           groupCtx!.select(itemValue);
           return;
         }
+
+        const next = !pressed;
+        animateTo(next);
 
         setLocalPressed(next);
         onPressedChange?.(next);
@@ -300,10 +299,9 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
           "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none",
           "font-medium focus-ring",
           "animate-shadow will-change-transform",
-          "button-idle-surface-transition motion-reduce:transition-none",
+          !pressed && !disabled && hoverVariant(),
           groupGlue,
           vn.idle,
-          !pressed && !disabled && vn.hoverIdle,
           pressed && cn(vn.pressedBorder, "bg-transparent"),
           pressed ? "text-primary-foreground" : "text-foreground",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",

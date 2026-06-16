@@ -364,7 +364,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchRootProps & Partial
           className={cn(
             "relative cursor-pointer select-none rounded-small text-left",
             hasTextColumn
-              ? optionControlGridClass(secondaryLines, sz.gapX, labelSide, "inline-grid")
+                ? optionControlGridClass(secondaryLines, sz.gap, labelSide, "inline-grid")
               : "inline-grid grid-cols-[auto] grid-rows-[auto]",
             disabled && "cursor-not-allowed",
             "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",

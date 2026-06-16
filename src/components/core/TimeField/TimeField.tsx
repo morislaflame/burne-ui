@@ -25,7 +25,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
-import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS } from "@/components/core/utils/useFieldShellHoverLift";
+import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { cn } from "@/utils/cn";
@@ -115,9 +115,9 @@ const STATUS_TINT_SHELL: Record<Exclude<TimeFieldStatus, "default">, string> = {
 };
 
 const STATUS_TINT_AFFIX: Record<Exclude<TimeFieldStatus, "default">, string> = {
-  danger: "bg-surface-tint-danger-strong",
-  success: "bg-surface-tint-success-strong",
-  warning: "bg-surface-tint-warning-strong",
+  danger: "bg-surface-tint-danger",
+  success: "bg-surface-tint-success",
+  warning: "bg-surface-tint-warning",
 };
 
 const AFFIX_SURFACE = "bg-secondary";
@@ -415,7 +415,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       variant === "segmented"
         ? cn(
             "h-[1.65em] min-w-[2.25ch] rounded-small px-[3px]",
-            "bg-primary-tint",
+            "bg-default-hover",
             "focus:bg-primary focus:text-primary-foreground",
           )
         : cn(
@@ -449,6 +449,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
           shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
+          fieldShellHoverClass(!disabled, status),
           shellHoverLift.shellHoverMotionClass,
           disabled ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,

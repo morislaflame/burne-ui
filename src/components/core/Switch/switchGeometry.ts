@@ -55,7 +55,7 @@ export const SWITCH_LAYOUT: Record<
     travelPx: number;
     title: TextVariant;
     desc: TextVariant;
-    gapX: string;
+    gap: string;
   }
 > = {
   small: {
@@ -63,27 +63,27 @@ export const SWITCH_LAYOUT: Record<
     travelPx: selectionIndicatorFallbackPx("small"),
     title: "small",
     desc: "tools",
-    gapX: "gap-x-small",
+    gap: "gap-x-small gap-y-xsmall",
   },
   base: {
     track: SWITCH_TRACK.base,
     travelPx: selectionIndicatorFallbackPx("base"),
     title: "base",
     desc: "small",
-    gapX: "gap-x-base",
+    gap: "gap-x-base gap-y-xsmall",
   },
   mid: {
     track: SWITCH_TRACK.mid,
     travelPx: selectionIndicatorFallbackPx("mid"),
     title: "mid",
     desc: "small",
-    gapX: "gap-x-plus",
+    gap: "gap-x-plus gap-y-xsmall",
   },
   large: {
     track: SWITCH_TRACK.large,
     travelPx: selectionIndicatorFallbackPx("large"),
     title: "large",
     desc: "base",
-    gapX: "gap-x-plus",
+    gap: "gap-x-plus gap-y-xsmall",
   },
 };

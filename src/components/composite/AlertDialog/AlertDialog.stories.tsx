@@ -5,6 +5,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "@/components/core/Button";
 import {
   AlertDialog,
+  primaryButtonStatusForAlertTone,
   primaryButtonVariantForAlertTone,
   type AlertDialogSize,
 } from "./index";
@@ -62,6 +63,7 @@ function ConfirmTemplate({
   const [open, setOpen] = useState(false);
   const tone = status ?? "default";
   const primaryVariant = primaryButtonVariantForAlertTone(tone);
+  const primaryStatus = primaryButtonStatusForAlertTone(tone);
   return (
     <>
       <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
@@ -80,7 +82,7 @@ function ConfirmTemplate({
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
             Отмена
           </Button>
-          <Button type="button" variant={primaryVariant} onClick={() => setOpen(false)}>
+          <Button type="button" variant={primaryVariant} status={primaryStatus} onClick={() => setOpen(false)}>
             Продолжить
           </Button>
         </AlertDialog.Footer>

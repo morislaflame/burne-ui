@@ -1,19 +1,27 @@
 import { colorToken } from "@/tokens";
 
-import type { ButtonVariant } from "./Button";
+import type { ButtonStatus, ButtonVariant } from "./Button";
 
 const BUTTON_CONVERGE_BG: Record<ButtonVariant, string> = {
-  default: colorToken("converge-ripple-primary-fill"),
+  default: colorToken("converge-ripple-neutral"),
+  primary: colorToken("converge-ripple-primary-fill"),
   outline: colorToken("converge-ripple-neutral"),
   secondary: colorToken("converge-ripple-neutral"),
   ghost: colorToken("converge-ripple-neutral"),
+};
+
+const BUTTON_STATUS_CONVERGE_BG: Record<Exclude<ButtonStatus, "default">, string> = {
   danger: colorToken("converge-ripple-danger"),
   success: colorToken("converge-ripple-success"),
   info: colorToken("converge-ripple-info"),
   warning: colorToken("converge-ripple-warning"),
 };
 
-/** CSS-цвет converge-ripple под вариант кнопки — для собственного `<Ripple color={…} />` без `Button`. */
-export function buttonRippleTone(variant: ButtonVariant): string {
+/** CSS-цвет converge-ripple под комбинацию variant/status — для собственного `<Ripple color={…} />`. */
+export function buttonRippleTone(
+  variant: ButtonVariant,
+  status: ButtonStatus = "default",
+): string {
+  if (status !== "default") return BUTTON_STATUS_CONVERGE_BG[status];
   return BUTTON_CONVERGE_BG[variant];
 }

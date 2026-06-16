@@ -280,7 +280,7 @@ export const CustomOffset: Story = {
   render: () => (
     <Tooltip delayShowMs={0} side="top">
       <Tooltip.Trigger>
-        <Button variant="default" type="button">
+        <Button variant="primary" type="button">
           offset=12
         </Button>
       </Tooltip.Trigger>

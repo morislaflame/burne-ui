@@ -1,5 +1,3 @@
-import type { AlertStatus } from "@/components/core/Alert";
-
 import {
   Children,
   cloneElement,
@@ -24,27 +22,52 @@ import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useInteractiveHoverLiftContainerHandlers, shadowSm, shadowMd, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
 import { cn } from "@/utils/cn";
 
-/** Семантика заливки — как у `Alert` / `AlertStatus` (включая `secondary`). */
-export type BadgeTone = AlertStatus;
+/** Визуальный вариант бейджа (поверхность/рамка), как у Button. */
+export type BadgeVariant = "default" | "primary" | "outline" | "secondary";
 
-/** Публичный prop `color` (синоним тона бейджа). */
-export type BadgeColor = BadgeTone;
+/** Семантический статус бейджа, как у Button. */
+export type BadgeStatus = "default" | "danger" | "success" | "info" | "warning";
 
-/** @deprecated Используйте `BadgeColor`; оставлено для совместимости. */
-export type BadgeVariant = BadgeTone;
-
-const BADGE_SURFACE: Record<BadgeTone, string> = {
-  default: "bg-primary border-token text-primary-foreground",
+const BADGE_VARIANT_SURFACE: Record<BadgeVariant, string> = {
+  default: "bg-surface border-token text-foreground",
+  primary: "bg-primary border-token text-primary-foreground",
   outline: "bg-transparent border-token text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
-  danger: "bg-surface-tint-danger border-token text-danger",
-  success: "bg-surface-tint-success border-token text-success",
-  info: "bg-surface-tint-info border-token text-info",
-  warning: "bg-surface-tint-warning border-token text-warning",
 };
 
-const BADGE_DOT_FILL: Record<BadgeTone, string> = {
-  default: "bg-primary",
+const BADGE_STATUS_TEXT: Record<Exclude<BadgeStatus, "default">, string> = {
+  danger: "text-danger",
+  success: "text-success",
+  info: "text-info",
+  warning: "text-warning",
+};
+
+const BADGE_STATUS_SURFACE_TINT: Record<Exclude<BadgeStatus, "default">, string> = {
+  danger: "bg-surface-tint-danger border-token",
+  success: "bg-surface-tint-success border-token",
+  info: "bg-surface-tint-info border-token",
+  warning: "bg-surface-tint-warning border-token",
+};
+
+const BADGE_STATUS_FILL: Record<Exclude<BadgeStatus, "default">, string> = {
+  danger: "bg-danger border border-transparent text-danger-foreground",
+  success: "bg-success border border-transparent text-success-foreground",
+  info: "bg-info border border-transparent text-info-foreground",
+  warning: "bg-warning border border-transparent text-warning-foreground",
+};
+
+const BADGE_STATUS_OUTLINE_BORDER: Record<Exclude<BadgeStatus, "default">, string> = {
+  danger: "border-token-danger",
+  success: "border-token-success",
+  info: "border-token-info",
+  warning: "border-token-warning",
+};
+
+type BadgeDotKey = BadgeVariant | Exclude<BadgeStatus, "default">;
+
+const BADGE_DOT_FILL: Record<BadgeDotKey, string> = {
+  default: "bg-foreground",
+  primary: "bg-primary",
   outline: "bg-transparent border-token",
   secondary: "bg-secondary",
   danger: "bg-danger",
@@ -52,6 +75,11 @@ const BADGE_DOT_FILL: Record<BadgeTone, string> = {
   info: "bg-info",
   warning: "bg-warning",
 };
+
+function dotFillClass(variant: BadgeVariant, status: BadgeStatus): string {
+  if (status !== "default") return BADGE_DOT_FILL[status];
+  return BADGE_DOT_FILL[variant];
+}
 
 export type BadgeSize = "small" | "base" | "mid" | "large";
 
@@ -209,11 +237,19 @@ function badgeHasAccessibleName(props: HTMLAttributes<HTMLSpanElement>): boolean
   );
 }
 
-function resolveBadgeTone(
-  color: BadgeTone | undefined,
-  variant: BadgeTone | undefined,
-): BadgeTone {
-  return color ?? variant ?? "default";
+function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus): string {
+  if (status === "default") return BADGE_VARIANT_SURFACE[variant];
+
+  switch (variant) {
+    case "default":
+      return cn(BADGE_STATUS_SURFACE_TINT[status], BADGE_STATUS_TEXT[status]);
+    case "primary":
+      return BADGE_STATUS_FILL[status];
+    case "outline":
+      return cn("bg-transparent", BADGE_STATUS_OUTLINE_BORDER[status], BADGE_STATUS_TEXT[status]);
+    case "secondary":
+      return cn("bg-secondary border-token", BADGE_STATUS_TEXT[status]);
+  }
 }
 
 type BadgeLiftContextValue = {
@@ -304,10 +340,10 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
 });
 
 export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
-  /** Семантика / цвет поверхности. Приоритет над `variant`. */
-  color?: BadgeTone;
-  /** Совместимость с прежним API; если задан только он — работает как `color`. */
-  variant?: BadgeTone;
+  /** Визуальный вариант поверхности: `default` · `primary` · `outline` · `secondary`. */
+  variant?: BadgeVariant;
+  /** Семантический статус: `danger` · `success` · `info` · `warning`. */
+  status?: BadgeStatus;
   /** `small` · `base` · `mid` · `large`. По умолчанию `base`. */
   size?: BadgeSize;
   /** Simple API: иконка через prop. Игнорируется, если в `children` есть элемент с `data-icon`. */
@@ -343,8 +379,8 @@ function hasMeaningfulContent(node: ReactNode): boolean {
 
 export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   {
-    color,
     variant = "default",
+    status = "default",
     size = "base",
     icon,
     iconPosition = "start",
@@ -365,7 +401,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   const innerLiftRef = useRef<HTMLSpanElement | null>(null);
   const [isDirectAnchorChild, setIsDirectAnchorChild] = useState(false);
 
-  const tone = resolveBadgeTone(color ?? undefined, variant);
+  const surfaceClass = badgeSurfaceClass(variant, status);
   const rk = size;
 
   const inlineIconMode = hasInlineIconChildren(children);
@@ -476,7 +512,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     const dotInnerCls = cn(
       "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
       BADGE_DOT_DIM[rk],
-      BADGE_DOT_FILL[tone],
+      dotFillClass(variant, status),
       splitLift && "will-change-transform origin-center",
       !splitLift && placementClass,
       className,
@@ -509,7 +545,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         className={cn(
           "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
           BADGE_DOT_DIM[rk],
-          BADGE_DOT_FILL[tone],
+          dotFillClass(variant, status),
           selfLiftEnabled && "animate-shadow",
           selfLiftMotionCls,
           isDirectAnchorChild && "pointer-events-none",
@@ -576,7 +612,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   if (onlyIconLayout) {
     const iconInnerCls = cn(
       "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap animate-shadow",
-      BADGE_SURFACE[tone],
+      surfaceClass,
       BADGE_ICON_ONLY[rk],
       splitLift && "will-change-transform origin-center",
       !splitLift && placementClass,
@@ -608,7 +644,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         className={cn(
           "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap animate-shadow",
           isDirectAnchorChild && "pointer-events-none",
-          BADGE_SURFACE[tone],
+          surfaceClass,
           BADGE_ICON_ONLY[rk],
           selfLiftMotionCls,
           placementClass,
@@ -627,7 +663,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   const textInnerCls = cn(
     "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
-    BADGE_SURFACE[tone],
+    surfaceClass,
     BADGE_TEXT_ROW[rk],
     splitLift && "will-change-transform origin-center",
     !splitLift && placementClass,
@@ -662,7 +698,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       className={cn(
         "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
         isDirectAnchorChild && "pointer-events-none",
-        BADGE_SURFACE[tone],
+        surfaceClass,
         BADGE_TEXT_ROW[rk],
         selfLiftMotionCls,
         placementClass,

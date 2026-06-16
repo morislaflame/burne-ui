@@ -23,50 +23,65 @@ import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
+import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
 
 export type CloseButtonSize = ComponentSize;
 
 /** Визуальный вариант — как у `Button`, без статусных тонов. */
-export type CloseButtonVariant = "default" | "outline" | "secondary" | "ghost";
+export type CloseButtonVariant =
+  | "default"
+  | "primary"
+  | "outline"
+  | "secondary"
+  | "ghost";
 
 type VariantVisual = {
   root: string;
   focusOutline: string;
   convergeBg: string;
-  hoverIdle: string;
 };
 
 const CLOSE_BUTTON_HAS_HOVER_SHADOW = new Set<CloseButtonVariant>([
   "default",
+  "primary",
   "outline",
   "secondary",
   "ghost",
 ]);
 
+const CLOSE_BUTTON_HOVER_VARIANT: Record<CloseButtonVariant, HoverVariant> = {
+  default: "default",
+  primary: "primary",
+  outline: "default",
+  secondary: "secondary",
+  ghost: "default",
+};
+
 const CLOSE_BUTTON_VARIANT: Record<CloseButtonVariant, VariantVisual> = {
   default: {
+    root: "bg-surface text-foreground border-token",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
+  },
+  primary: {
     root: "bg-primary text-primary-foreground border border-transparent",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-primary-fill"),
-    hoverIdle: "hover:bg-primary-hover",
   },
   outline: {
     root: "bg-transparent border-token text-foreground",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
-    hoverIdle: "hover:bg-primary-tint",
   },
   secondary: {
     root: "bg-secondary text-secondary-foreground border border-transparent",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
-    hoverIdle: "hover:bg-secondary-hover",
   },
   ghost: {
     root: "bg-transparent text-foreground border border-transparent",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
-    hoverIdle: "hover:bg-primary-tint",
   },
 };
 
@@ -217,11 +232,11 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         aria-label={ariaLabel}
         className={cn(
           "relative z-0 flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
-          "animate-shadow button-idle-surface-transition motion-reduce:transition-none",
+          "animate-shadow",
+          !disabled && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant]),
           "overflow-hidden will-change-transform origin-center",
           sizeClasses.root,
           vn.root,
-          vn.hoverIdle,
           vn.focusOutline,
           disabled && "cursor-not-allowed opacity-50",
           className,

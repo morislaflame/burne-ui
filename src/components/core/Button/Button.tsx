@@ -22,6 +22,7 @@ import {
   shouldSkipInteractiveHoverLift,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
@@ -44,85 +45,158 @@ export type ButtonSize = ComponentSize;
 /** Визуальный вариант заливки и обводки. */
 export type ButtonVariant =
   | "default"
+  | "primary"
   | "outline"
   | "secondary"
-  | "ghost"
-  | "danger"
-  | "success"
-  | "info"
-  | "warning";
+  | "ghost";
+
+/** Семантический статус кнопки */
+export type ButtonStatus = "default" | "danger" | "success" | "info" | "warning";
 
 type VariantVisual = {
   root: string;
-  focusOutline: string;
-  convergeBg: string;
   loaderText: string;
-  hoverIdle: string;
 };
 
 /** Варианты, у которых тень появляется при hover (анимируем shadow-sm). */
 const BUTTON_VARIANT_HAS_HOVER_SHADOW = new Set<ButtonVariant>([
-  "default", "outline", "secondary", "ghost", "danger", "success", "info", "warning",
+  "default", "primary", "outline", "secondary", "ghost",
 ]);
 
 const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   default: {
+    root: "bg-surface text-foreground border-token",
+    loaderText: "text-foreground",
+  },
+  primary: {
     root: "bg-primary text-primary-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-primary",
-    convergeBg: colorToken("converge-ripple-primary-fill"),
     loaderText: "text-primary-foreground",
-    hoverIdle: "hover:bg-primary-hover",
   },
   outline: {
     root: "bg-transparent border-token text-foreground",
-    focusOutline: "focus-visible:outline-primary",
-    convergeBg: colorToken("converge-ripple-neutral"),
     loaderText: "text-foreground",
-    hoverIdle: "hover:bg-primary-tint",
   },
   secondary: {
     root: "bg-secondary text-secondary-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-primary",
-    convergeBg: colorToken("converge-ripple-neutral"),
     loaderText: "text-secondary-foreground",
-    hoverIdle: "hover:bg-secondary-hover",
   },
   ghost: {
     root: "bg-transparent text-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-primary",
-    convergeBg: colorToken("converge-ripple-neutral"),
     loaderText: "text-foreground",
-    hoverIdle: "hover:bg-primary-tint",
-  },
-  danger: {
-    root: "bg-danger text-danger-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-danger",
-    convergeBg: colorToken("converge-ripple-danger"),
-    loaderText: "text-danger-foreground",
-    hoverIdle: "hover:bg-danger-fill-hover",
-  },
-  success: {
-    root: "bg-success text-success-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-success",
-    convergeBg: colorToken("converge-ripple-success"),
-    loaderText: "text-success-foreground",
-    hoverIdle: "hover:bg-success-fill-hover",
-  },
-  info: {
-    root: "bg-info text-info-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-info",
-    convergeBg: colorToken("converge-ripple-info"),
-    loaderText: "text-info-foreground",
-    hoverIdle: "hover:bg-info-fill-hover",
-  },
-  warning: {
-    root: "bg-warning text-warning-foreground border border-transparent",
-    focusOutline: "focus-visible:outline-warning",
-    convergeBg: colorToken("converge-ripple-warning"),
-    loaderText: "text-warning-foreground",
-    hoverIdle: "hover:bg-warning-fill-hover",
   },
 };
+
+const BUTTON_STATUS_FOCUS_OUTLINE: Record<ButtonStatus, string> = {
+  default: "focus-visible:outline-primary",
+  danger: "focus-visible:outline-danger",
+  success: "focus-visible:outline-success",
+  info: "focus-visible:outline-info",
+  warning: "focus-visible:outline-warning",
+};
+
+const BUTTON_STATUS_RIPPLE: Record<ButtonStatus, string> = {
+  default: colorToken("converge-ripple-neutral"),
+  danger: colorToken("converge-ripple-danger"),
+  success: colorToken("converge-ripple-success"),
+  info: colorToken("converge-ripple-info"),
+  warning: colorToken("converge-ripple-warning"),
+};
+
+const BUTTON_PRIMARY_STATUS_RIPPLE: Record<Exclude<ButtonStatus, "default">, string> = {
+  danger: colorToken("converge-ripple-danger"),
+  success: colorToken("converge-ripple-success"),
+  info: colorToken("converge-ripple-info"),
+  warning: colorToken("converge-ripple-warning"),
+};
+
+const BUTTON_STATUS_TEXT: Record<Exclude<ButtonStatus, "default">, string> = {
+  danger: "text-danger",
+  success: "text-success",
+  info: "text-info",
+  warning: "text-warning",
+};
+
+const BUTTON_STATUS_SURFACE_TINT: Record<Exclude<ButtonStatus, "default">, string> = {
+  danger: "bg-surface-tint-danger border-token",
+  success: "bg-surface-tint-success border-token",
+  info: "bg-surface-tint-info border-token",
+  warning: "bg-surface-tint-warning border-token",
+};
+
+const BUTTON_STATUS_FILL: Record<Exclude<ButtonStatus, "default">, string> = {
+  danger: "bg-danger border border-transparent text-danger-foreground",
+  success: "bg-success border border-transparent text-success-foreground",
+  info: "bg-info border border-transparent text-info-foreground",
+  warning: "bg-warning border border-transparent text-warning-foreground",
+};
+
+const BUTTON_STATUS_FILL_TEXT: Record<Exclude<ButtonStatus, "default">, string> = {
+  danger: "text-danger-foreground",
+  success: "text-success-foreground",
+  info: "text-info-foreground",
+  warning: "text-warning-foreground",
+};
+
+const BUTTON_STATUS_OUTLINE_BORDER: Record<Exclude<ButtonStatus, "default">, string> = {
+  danger: "border-token-danger",
+  success: "border-token-success",
+  info: "border-token-info",
+  warning: "border-token-warning",
+};
+
+function buttonVariantRootClass(variant: ButtonVariant, status: ButtonStatus): string {
+  const { root } = BUTTON_VARIANT[variant];
+  if (variant === "outline" && status !== "default") {
+    return "bg-transparent text-foreground";
+  }
+  return root;
+}
+
+function buttonHoverVariant(variant: ButtonVariant, status: ButtonStatus): HoverVariant {
+  if (status === "default") {
+    switch (variant) {
+      case "default":
+        return "default";
+      case "primary":
+        return "primary";
+      case "outline":
+        return "default";
+      case "secondary":
+        return "secondary";
+      case "ghost":
+        return "default";
+    }
+  }
+
+  switch (variant) {
+    case "default":
+      return `${status}-tint-hover` as HoverVariant;
+    case "primary":
+      return `${status}-fill` as HoverVariant;
+    case "outline":
+    case "ghost":
+      return status as HoverVariant;
+    case "secondary":
+      return "secondary";
+  }
+}
+
+function buttonStatusClass(variant: ButtonVariant, status: ButtonStatus): string {
+  if (status === "default") return "";
+
+  switch (variant) {
+    case "default":
+      return cn(BUTTON_STATUS_SURFACE_TINT[status], BUTTON_STATUS_TEXT[status]);
+    case "primary":
+      return BUTTON_STATUS_FILL[status];
+    case "outline":
+      return cn(BUTTON_STATUS_OUTLINE_BORDER[status], BUTTON_STATUS_TEXT[status]);
+    case "secondary":
+      return BUTTON_STATUS_TEXT[status];
+    case "ghost":
+      return BUTTON_STATUS_TEXT[status];
+  }
+}
 
 /** Типографика подписи — через `Text`, без `text-*` на корне кнопки. */
 const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
@@ -170,6 +244,8 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   groupSegment?: ButtonGroupSegment;
   /** Стиль заливки и акцента. По умолчанию `default`. */
   variant?: ButtonVariant;
+  /** Семантический статус: меняет акцент, но не тип поверхности (`variant`). */
+  status?: ButtonStatus;
   /** Габариты и типографика. По умолчанию `base`. */
   size?: ButtonSize;
   /**
@@ -270,6 +346,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className = "",
       variant = "default",
+      status = "default",
       size: sizeProp = "base",
       type = "button",
       animated = true,
@@ -487,9 +564,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const sz = BUTTON_SIZE_CLASSES[size];
     const sizeRoot = iconOnly ? sz.rootIconOnly : sz.root;
 
-    const idleSurfaceMotion = blocked
-      ? ""
-      : cn("button-idle-surface-transition motion-reduce:transition-none", vn.hoverIdle);
+    const idleSurfaceMotion = blocked ? "" : hoverVariant(buttonHoverVariant(variant, status));
+    const statusClass = buttonStatusClass(variant, status);
+    const focusOutlineClass = BUTTON_STATUS_FOCUS_OUTLINE[status];
+    const convergeRippleColor =
+      variant === "primary"
+        ? (status === "default"
+            ? colorToken("converge-ripple-primary-fill")
+            : BUTTON_PRIMARY_STATUS_RIPPLE[status])
+        : BUTTON_STATUS_RIPPLE[status];
+    const loaderTextClass =
+      variant === "primary" && status !== "default"
+        ? BUTTON_STATUS_FILL_TEXT[status]
+        : vn.loaderText;
 
     const roundingClass = groupSegment
       ? buttonGroupRoundingClasses(groupSegment)
@@ -516,9 +603,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           baseInteractive,
           groupGlue,
-          vn.focusOutline,
+          focusOutlineClass,
           sizeRoot,
-          vn.root,
+          buttonVariantRootClass(variant, status),
+          statusClass,
           "animate-shadow",
           userDisabled ? "opacity-50" : "",
           idleSurfaceMotion,
@@ -537,7 +625,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {ripple ? (
           <Ripple
-            color={vn.convergeBg}
+            color={convergeRippleColor}
             disabled={blocked || asyncState !== "idle"}
             duration={getMotionConfig().rippleDefaultDuration}
             className={clipClass}
@@ -594,7 +682,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           </span>
           {asyncState === "loading" ? (
             <span
-              className={`${crossFade} col-start-1 row-start-1 ${vn.loaderText} opacity-100 scale-100`}
+              className={`${crossFade} col-start-1 row-start-1 ${loaderTextClass} opacity-100 scale-100`}
               aria-hidden
             >
               <Spinner

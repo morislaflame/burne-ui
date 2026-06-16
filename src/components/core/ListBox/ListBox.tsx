@@ -30,6 +30,7 @@ import {
   OptionListItemIndicatorShell,
   OptionListItemLabel,
 } from "@/components/core/utils/optionListItemParts";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 export type ListBoxSize = "small" | "base" | "mid" | "large";
@@ -359,12 +360,11 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
         className={cn(
           "w-full min-w-0 rounded-mid px-mid py-base text-left outline-none",
           optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
-          "button-idle-surface-transition motion-reduce:transition-none",
           !disabled &&
-            "cursor-pointer text-foreground hover:bg-primary-tint focus-visible:bg-primary-tint focus-ring",
+            cn("cursor-pointer text-foreground focus-ring", hoverVariant()),
           disabled &&
             "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent",
-          isActive && !disabled && "bg-primary-tint",
+          isActive && !disabled && "bg-default-hover",
           className,
         )}
         onClick={handleClick}

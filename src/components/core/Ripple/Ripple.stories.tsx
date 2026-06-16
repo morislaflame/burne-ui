@@ -118,12 +118,12 @@ export const WithCardManual: Story = {
     >
       <Ripple color="neutral" />
       <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
-        <Card.Content>
+        <Card.Header>
           <Card.Title>Вариант без pressable</Card.Title>
           <Card.Description>
             Первым ребёнком — Ripple, текст в слое <code className="text-xs">z-[1]</code>.
           </Card.Description>
-        </Card.Content>
+        </Card.Header>
       </div>
     </Card>
   ),
@@ -137,7 +137,7 @@ export const WithButton: Story = {
         В приложении включаете <code className="text-xs">ripple</code>
       </Text>
       <div className="flex flex-wrap gap-small">
-        <Button variant="default" ripple>
+        <Button variant="primary" ripple>
           По умолчанию
         </Button>
         <Button variant="ghost" ripple={false}>

@@ -8,9 +8,8 @@ export { BadgeAnchor } from "./Badge";
 
 export type {
   BadgeProps,
-  BadgeTone,
-  BadgeColor,
   BadgeVariant,
+  BadgeStatus,
   BadgeSize,
   BadgePlacement,
   BadgeIconPosition,

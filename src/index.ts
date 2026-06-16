@@ -18,6 +18,7 @@ export {
   type ButtonAsyncState,
   type ButtonSize,
   type ButtonVariant,
+  type ButtonStatus,
 } from "@/components/core/Button";
 export {
   CloseButton,
@@ -128,6 +129,7 @@ export {
   AlertDialog,
   footerButtonSizeForAlertDialog,
   primaryButtonVariantForAlertTone,
+  primaryButtonStatusForAlertTone,
   useAlertDialog,
   type AlertDialogProps,
   type AlertDialogSize,
@@ -369,10 +371,10 @@ export {
   type CardPressEvent,
   type CardProps,
   type CardVariant,
-  type CardContentProps,
+  type CardHeaderProps,
+  type CardBodyProps,
   type CardTitleProps,
   type CardDescriptionProps,
-  type CardBodyProps,
   type CardFooterProps,
 } from "@/components/core/Card";
 export {
@@ -479,9 +481,8 @@ export {
   Badge,
   BadgeAnchor,
   type BadgeProps,
-  type BadgeTone,
-  type BadgeColor,
   type BadgeVariant,
+  type BadgeStatus,
   type BadgeSize,
   type BadgePlacement,
   type BadgeIconPosition,

@@ -188,7 +188,7 @@ function ShareLinkPopoverDemo() {
   return (
     <Popover side="top">
       <Popover.Trigger>
-        <Button variant="default" type="button" leftIcon={<IoShareSocialOutline aria-hidden />}>
+        <Button variant="primary" type="button" leftIcon={<IoShareSocialOutline aria-hidden />}>
           Поделиться
         </Button>
       </Popover.Trigger>

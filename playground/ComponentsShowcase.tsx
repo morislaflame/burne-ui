@@ -204,7 +204,7 @@ function TableSelectionDemo() {
                   <Table.Cell>{row.name}</Table.Cell>
                   <Table.Cell>{row.role}</Table.Cell>
                   <Table.Cell>
-                    <Badge color={STATUS_BADGE[row.status]}>{row.status}</Badge>
+                    <Badge status={STATUS_BADGE[row.status]}>{row.status}</Badge>
                   </Table.Cell>
                 </Table.Row>
               )}
@@ -423,13 +423,14 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
           <div className="flex flex-col gap-mid">
             <div className="flex flex-wrap items-center gap-small">
               <Button>Default</Button>
+              <Button variant="primary">Primary</Button>
               <Button variant="secondary">Secondary</Button>
               <Button variant="outline">Outline</Button>
               <Button variant="ghost">Ghost</Button>
-              <Button variant="danger">Danger</Button>
-              <Button variant="success">Success</Button>
-              <Button variant="info">Info</Button>
-              <Button variant="warning">Warning</Button>
+              <Button variant="primary" status="danger">Danger</Button>
+              <Button variant="primary" status="success">Success</Button>
+              <Button variant="primary" status="info">Info</Button>
+              <Button variant="primary" status="warning">Warning</Button>
               <Button disabled>Disabled</Button>
               <Button leftIcon={<IoAdd aria-hidden />}>С иконкой</Button>
               <Button iconOnly aria-label="Добавить"><IoAdd aria-hidden /></Button>
@@ -459,7 +460,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               <Dropdown>
                 <Dropdown.Trigger asChild>
                   <Button
-                    variant="default"
+                    variant="primary"
                     aria-label="Дополнительные действия"
                     iconOnly
                     groupSegment={{ orientation: "horizontal", position: "last" }}
@@ -496,12 +497,13 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
           <div className="flex flex-col gap-mid">
             <div className="flex flex-wrap gap-small">
               <Badge>Default</Badge>
-              <Badge color="secondary">Secondary</Badge>
-              <Badge color="success" icon={<IoCheckmark aria-hidden />}>Success</Badge>
-              <Badge color="danger">Danger</Badge>
-              <Badge color="info">Info</Badge>
-              <Badge color="warning">Warning</Badge>
-              <Badge color="outline">Outline</Badge>
+              <Badge variant="primary">Primary</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge status="success" icon={<IoCheckmark aria-hidden />}>Success</Badge>
+              <Badge status="danger">Danger</Badge>
+              <Badge status="info">Info</Badge>
+              <Badge status="warning">Warning</Badge>
+              <Badge variant="outline">Outline</Badge>
             </div>
             <Alert title="Подсказка" description="Компоненты импортируются из библиотеки через alias @." />
             <Alert title="Внимание" description="Playground не входит в npm-пакет dist/." />
@@ -511,11 +513,11 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             <div className="flex flex-wrap items-center gap-mid">
               <Badge.Anchor>
                 <Avatar size="large" label="Jordan Doe" src={PIN_IMAGE1} alt="" loading="lazy" />
-                <Badge color="danger" size="small">5</Badge>
+                <Badge status="danger" size="small">5</Badge>
               </Badge.Anchor>
               <Badge.Anchor>
                 <Avatar size="large" label="Casey Davis" src={PIN_IMAGE3} alt="" loading="lazy" />
-                <Badge color="success" dot placement="bottom-right" size="small" aria-label="Онлайн" />
+                <Badge status="success" dot placement="bottom-right" size="small" aria-label="Онлайн" />
               </Badge.Anchor>
             </div>
           </div>
@@ -896,22 +898,22 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
         <ShowcaseSection title="Карточка">
           <div className="grid gap-mid sm:grid-cols-2">
             <Card>
-              <Card.Content>
+              <Card.Header>
                 <Card.Title>Default</Card.Title>
                 <Card.Description>Базовая карточка с заголовком и описанием.</Card.Description>
-              </Card.Content>
+              </Card.Header>
             </Card>
             <Card variant="outline">
-              <Card.Content>
+              <Card.Header>
                 <Card.Title>Outline</Card.Title>
                 <Card.Description>Только обводка, без заливки.</Card.Description>
-              </Card.Content>
+              </Card.Header>
             </Card>
             <Card variant="secondary">
-              <Card.Content>
+              <Card.Header>
                 <Card.Title>Secondary</Card.Title>
                 <Card.Description>Вторичная поверхность.</Card.Description>
-              </Card.Content>
+              </Card.Header>
               <Card.Footer className="flex justify-end gap-small">
                 <Button variant="ghost" size="small">Отмена</Button>
                 <Button size="small" leftIcon={<IoArrowForward aria-hidden />}>Далее</Button>
@@ -920,14 +922,16 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             <Card pressable onPress={() => setDialogOpen(true)}>
               <Ripple color="neutral" />
               <div className="relative z-[1]">
-                <Card.Content className="gap-small">
+                <Card.Body className="px-large pb-0 pt-plus">
                   <div
-                    className="mb-small h-24 w-full overflow-hidden rounded-small bg-cover bg-center"
+                    className="h-24 w-full overflow-hidden rounded-small bg-cover bg-center"
                     style={{ backgroundImage: `url(${PIN_IMAGE4})` }}
                   />
+                </Card.Body>
+                <Card.Header className="pt-small">
                   <Card.Title>Pressable</Card.Title>
                   <Card.Description>Нажми — откроется Dialog.</Card.Description>
-                </Card.Content>
+                </Card.Header>
               </div>
             </Card>
           </div>
@@ -1207,7 +1211,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
                         <Table.Cell>{row.name}</Table.Cell>
                         <Table.Cell>{row.role}</Table.Cell>
                         <Table.Cell>
-                          <Badge color={STATUS_BADGE[row.status]}>{row.status}</Badge>
+                          <Badge status={STATUS_BADGE[row.status]}>{row.status}</Badge>
                         </Table.Cell>
                       </Table.Row>
                     )}
@@ -1252,8 +1256,8 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             <Button onClick={() => setDialogOpen(true)}>Dialog</Button>
             <Button variant="outline" onClick={() => setDrawerOpen(true)}>Drawer (right)</Button>
             <Button variant="outline" onClick={() => setDrawerLeftOpen(true)}>Drawer (left)</Button>
-            <Button variant="danger" onClick={() => setAlertDialogOpen(true)}>AlertDialog danger</Button>
-            <Button variant="success" onClick={() => setAlertSuccessOpen(true)}>AlertDialog success</Button>
+            <Button variant="primary" status="danger" onClick={() => setAlertDialogOpen(true)}>AlertDialog danger</Button>
+            <Button variant="primary" status="success" onClick={() => setAlertSuccessOpen(true)}>AlertDialog success</Button>
           </div>
         </ShowcaseSection>
       ),

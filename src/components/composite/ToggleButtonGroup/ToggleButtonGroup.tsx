@@ -102,7 +102,7 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
       separated = false,
       disabled = false,
       size = "base",
-      variant = "outline",
+      variant = "default",
       value: valueProp,
       defaultValue,
       onValueChange,

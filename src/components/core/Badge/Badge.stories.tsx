@@ -19,7 +19,12 @@ import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button/Button";
 import { Card } from "@/components/core/Card";
-import { Badge, type BadgeTone, type BadgePlacement } from ".";
+import {
+  Badge,
+  type BadgePlacement,
+  type BadgeStatus,
+  type BadgeVariant,
+} from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/utils/mockImages";
 
 const GREEN_AVATAR_URL = PIN_IMAGE1;
@@ -52,10 +57,15 @@ const lightThemeDecorator = [
   ),
 ] as const;
 
-const VARIANT_GRID: BadgeTone[] = [
+const BADGE_VARIANTS: BadgeVariant[] = [
   "default",
+  "primary",
   "outline",
   "secondary",
+];
+
+const BADGE_STATUSES: BadgeStatus[] = [
+  "default",
   "danger",
   "success",
   "info",
@@ -84,6 +94,18 @@ const meta = {
   },
   decorators: [...framedDecorator],
   argTypes: {
+    color: {
+      control: "select",
+      options: [...BADGE_VARIANTS, ...BADGE_STATUSES.filter((s) => s !== "default")],
+    },
+    variant: {
+      control: "select",
+      options: BADGE_VARIANTS,
+    },
+    status: {
+      control: "select",
+      options: BADGE_STATUSES,
+    },
     size: {
       control: "select",
       options: ["small", "base", "mid", "large"],
@@ -104,9 +126,9 @@ function SizesAndVariantsDemo() {
             {size}
           </span>
           <div className="flex flex-wrap items-center gap-base">
-            {VARIANT_GRID.map((tone) => (
-              <Badge key={tone} size={size} color={tone} className="capitalize">
-                {tone}
+            {BADGE_VARIANTS.map((variant) => (
+              <Badge key={variant} size={size} variant={variant} className="capitalize">
+                {variant}
               </Badge>
             ))}
           </div>
@@ -127,6 +149,43 @@ export const SizesAndVariantsOnLightTheme: Story = {
   render: () => <SizesAndVariantsDemo />,
 };
 
+function StatusVariantsDemo() {
+  return (
+    <div className="flex w-full max-w-4xl flex-col gap-xlarge py-mid">
+      {BADGE_STATUSES.map((status) => (
+        <div key={status} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">
+            status: {status}
+          </span>
+          <div className="flex flex-wrap items-center gap-base">
+            {BADGE_VARIANTS.map((variant) => (
+              <Badge
+                key={`${status}-${variant}`}
+                variant={variant}
+                status={status}
+                className="capitalize"
+              >
+                {variant}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export const StatusVariants: Story = {
+  name: "Статусы × варианты (тёмная тема)",
+  render: () => <StatusVariantsDemo />,
+};
+
+export const StatusVariantsOnLightTheme: Story = {
+  name: "Статусы × варианты (светлая тема)",
+  decorators: [...lightThemeDecorator],
+  render: () => <StatusVariantsDemo />,
+};
+
 export const BadgeAnchorComposition: Story = {
   name: "Badge.Anchor + Avatar (как в API)",
   render: () => (
@@ -138,14 +197,14 @@ export const BadgeAnchorComposition: Story = {
       <div className="flex flex-wrap items-start justify-center gap-xlarge">
         <Badge.Anchor>
           <Avatar size="large" label="Jordan Doe" src={GREEN_AVATAR_URL} alt="" loading="lazy" />
-          <Badge color="danger" size="small">
+          <Badge status="danger" size="small">
             5
           </Badge>
         </Badge.Anchor>
 
         <Badge.Anchor>
           <Avatar size="large" label="Alex Brown" src={ORANGE_AVATAR_URL} alt="" loading="lazy" />
-          <Badge color="secondary" size="small">
+          <Badge variant="secondary" size="small">
             New
           </Badge>
         </Badge.Anchor>
@@ -153,7 +212,7 @@ export const BadgeAnchorComposition: Story = {
         <Badge.Anchor>
           <Avatar size="large" label="Casey Davis" src={BLUE_AVATAR_URL} alt="" loading="lazy" />
           <Badge
-            color="success"
+            status="success"
             dot
             placement="bottom-right"
             size="small"
@@ -185,7 +244,7 @@ export const IconInlineChildren: Story = {
       <DualApiStoryPanel title="Simple — prop icon + iconPosition">
         <div className="flex flex-wrap gap-small">
           <Badge
-            color="info"
+            status="info"
             size="base"
             icon={<IoRocketOutline aria-hidden />}
             iconPosition="start"
@@ -193,7 +252,7 @@ export const IconInlineChildren: Story = {
             Старт
           </Badge>
           <Badge
-            color="success"
+            status="success"
             size="base"
             icon={<IoRocketOutline aria-hidden />}
             iconPosition="end"
@@ -218,7 +277,7 @@ export const IconStartEnd: Story = {
       </p>
       <div className="flex flex-wrap items-center gap-plus">
         <Badge
-          color="info"
+          status="info"
           size="base"
           icon={<IoRocketOutline aria-hidden />}
           iconPosition="start"
@@ -226,7 +285,7 @@ export const IconStartEnd: Story = {
           Старт
         </Badge>
         <Badge
-          color="success"
+          status="success"
           size="base"
           icon={<IoRocketOutline aria-hidden />}
           iconPosition="end"
@@ -242,9 +301,9 @@ export const IconOnly: Story = {
   name: "Только иконка",
   render: () => (
     <div className="flex flex-wrap items-center gap-mid">
-      <Badge color="danger" icon={<IoHeartOutline aria-hidden />} aria-label="Избранное" />
-      <Badge color="secondary" iconOnly icon={<IoMoonOutline aria-hidden />} aria-label="Secondary" />
-      <Badge color="warning" size="small" icon={<IoNotificationsOutline aria-hidden />} aria-label="Уведомления" />
+      <Badge status="danger" icon={<IoHeartOutline aria-hidden />} aria-label="Избранное" />
+      <Badge variant="secondary" iconOnly icon={<IoMoonOutline aria-hidden />} aria-label="Secondary" />
+      <Badge status="warning" size="small" icon={<IoNotificationsOutline aria-hidden />} aria-label="Уведомления" />
     </div>
   ),
 };
@@ -254,11 +313,11 @@ function DotsVariantsDemo() {
     <div className="flex flex-col gap-mid py-mid">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <div key={size} className="flex flex-wrap items-center gap-xlarge">
-          {VARIANT_GRID.map((tone) => (
-            <div key={tone} className="flex flex-col items-center gap-xsmall">
-              <Badge color={tone} dot size={size} aria-label={`${tone}`} />
+          {BADGE_STATUSES.map((status) => (
+            <div key={status} className="flex flex-col items-center gap-xsmall">
+              <Badge status={status} dot size={size} aria-label={`${status}`} />
               <span className="max-w-[4.5rem] text-center text-xs capitalize text-muted">
-                {tone}
+                {status}
               </span>
             </div>
           ))}
@@ -291,7 +350,7 @@ export const CornersViaAnchorPlacement: Story = {
         {CORNER_LABELS.map(([placement, label]) => (
           <div key={placement} className="flex flex-col items-center gap-base">
             <Badge.Anchor className="box-border h-24 w-24 rounded-2xl border-token border-dashed bg-surface/40 shadow-none">
-              <Badge color="danger" size="base" placement={placement}>
+              <Badge variant="primary" status="danger" size="base" placement={placement}>
                 3
               </Badge>
             </Badge.Anchor>
@@ -309,17 +368,17 @@ export const WithCard: Story = {
     <div className="flex w-full max-w-md justify-center">
       <Badge.Anchor className="relative w-full max-w-none shrink-0">
         <Card className="w-full overflow-hidden">
-          <Card.Content>
+          <Card.Header>
             <Card.Title>Релиз 0.12</Card.Title>
             <Card.Description>
               Поддержка Badge, уведомления и счётчиков на интерфейсах продукта.
             </Card.Description>
-          </Card.Content>
+          </Card.Header>
           <Card.Footer className="flex flex-wrap items-center gap-plus">
-            <Badge color="success" size="small" icon={<IoCheckmarkCircleOutline aria-hidden />}>
+            <Badge status="success" size="small" icon={<IoCheckmarkCircleOutline aria-hidden />}>
               Готово
             </Badge>
-            <Badge color="warning" size="small" iconPosition="end" icon={<IoRocketOutline aria-hidden />}>
+            <Badge status="warning" size="small" iconPosition="end" icon={<IoRocketOutline aria-hidden />}>
               Beta
             </Badge>
             <Button type="button" size="base" variant="outline">
@@ -327,7 +386,7 @@ export const WithCard: Story = {
             </Button>
           </Card.Footer>
         </Card>
-        <Badge color="outline" size="small" aria-label="Новое на карте" dot />
+        <Badge variant="outline" size="small" aria-label="Новое на карте" dot />
       </Badge.Anchor>
     </div>
   ),
@@ -343,16 +402,16 @@ export const Accessibility: Story = {
         <code className="text-primary">aria-label</code>.
       </p>
       <div className="flex flex-wrap items-center gap-plus">
-        <Badge variant="success">
+        <Badge status="success">
           <IoCheckmarkCircleOutline data-icon="inline-start" />
           Опубликовано
         </Badge>
         <Badge
-          color="danger"
+          status="danger"
           icon={<IoHeartOutline aria-hidden />}
           aria-label="Избранное"
         />
-        <Badge dot color="info" aria-label="Есть обновления" />
+        <Badge dot status="info" aria-label="Есть обновления" />
       </div>
     </div>
   ),
@@ -365,28 +424,24 @@ export const CustomColors: Story = {
       <div className="flex flex-col gap-base">
         <div className="flex flex-wrap items-center gap-plus">
           <Badge
-            color="default"
             size="base"
             className="border-transparent bg-[oklch(58%_0.24_300)] text-white shadow-sm"
           >
             OKLCH фиолетовый
           </Badge>
           <Badge
-            color="default"
             size="base"
             className="border-0 bg-[linear-gradient(90deg,#0891b2_0%,#0891b2_12%,#1d4ed8_88%,#1d4ed8_100%)] bg-no-repeat text-white shadow-sm [background-size:100%_100%]"
           >
             Градиент
           </Badge>
           <Badge
-            color="default"
             size="base"
             className="border-amber-600/50 bg-amber-400 text-amber-950 shadow-none dark:border-amber-500/40 dark:bg-amber-300 dark:text-amber-950"
           >
             Amber · light/dark
           </Badge>
           <Badge
-            color="default"
             size="base"
             icon={<IoRocketOutline aria-hidden />}
             iconPosition="start"
@@ -402,21 +457,18 @@ export const CustomColors: Story = {
           <Badge
             dot
             size="base"
-            color="default"
             aria-label="Кастомная точка violet"
             className="border-0 bg-[oklch(55%_0.2_280)] ring-2 ring-background motion-reduce:ring-1"
           />
           <Badge
             dot
             size="base"
-            color="default"
             aria-label="Кастомная точка lime"
             className="border-0 bg-lime-500 ring-2 ring-background motion-reduce:ring-1 dark:bg-lime-400"
           />
           <Badge.Anchor className="rounded-full">
             <Avatar size="base" label="Demo" />
             <Badge
-              color="default"
               size="small"
               placement="top-right"
               className="border-transparent bg-fuchsia-600 text-white shadow-none"

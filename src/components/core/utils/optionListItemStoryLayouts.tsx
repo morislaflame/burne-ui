@@ -66,7 +66,7 @@ export function OptionListItemLayoutShowcase({
         </ItemLabel>
         <ItemHint>@anya · в команде с 2023</ItemHint>
         <ItemIcon>
-          <Badge color="success" size="small">
+          <Badge status="success" size="small">
             Pro
           </Badge>
         </ItemIcon>
@@ -76,13 +76,13 @@ export function OptionListItemLayoutShowcase({
             "min-w-0 max-w-full justify-self-start [width:fit-content]",
           )}
         >
-          <Badge color="secondary" size="small">
+          <Badge variant="secondary" size="small">
             Design
           </Badge>
-          <Badge color="outline" size="small">
+          <Badge variant="outline" size="small">
             Figma
           </Badge>
-          <Badge color="outline" size="small">
+          <Badge variant="outline" size="small">
             Research
           </Badge>
         </span>

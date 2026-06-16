@@ -4,6 +4,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Text } from "@/components/core/Text";
 
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import { cn } from "@/utils/cn";
+
 import { Surface, type SurfaceVariant } from "./Surface";
 
 const framedDecorator = [
@@ -106,7 +109,10 @@ export const MenuPanel: Story = {
           <li key={label}>
             <button
               type="button"
-              className="w-full rounded-mid px-base py-small text-left text-base hover:bg-primary-tint"
+              className={cn(
+                "w-full rounded-mid px-base py-small text-left text-base",
+                hoverVariant(),
+              )}
             >
               {label}
             </button>

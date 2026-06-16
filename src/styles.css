@@ -68,6 +68,9 @@ p {
   --color-primary-foreground: var(--color-primary-foreground);
   --color-primary-hover: var(--color-primary-hover);
 
+  /* DEFAULT HOVER: neutral interactive hovers */
+  --color-default-hover: var(--color-default-hover);
+
   /* INDICATOR (selection fill): Radio, Checkbox, Switch, Slider, Calendar, Progress */
   --color-indicator: var(--color-indicator);
   --color-indicator-foreground: var(--color-indicator-foreground);
@@ -104,16 +107,11 @@ p {
   --color-surface-tint-success: var(--color-surface-tint-success);
   --color-surface-tint-info: var(--color-surface-tint-info);
   --color-surface-tint-warning: var(--color-surface-tint-warning);
+  --color-surface-tint-danger-hover: var(--color-surface-tint-danger-hover);
+  --color-surface-tint-success-hover: var(--color-surface-tint-success-hover);
+  --color-surface-tint-info-hover: var(--color-surface-tint-info-hover);
+  --color-surface-tint-warning-hover: var(--color-surface-tint-warning-hover);
   --color-surface-tint-primary: var(--color-surface-tint-primary);
-  --color-surface-tint-danger-strong: var(--color-surface-tint-danger-strong);
-  --color-surface-tint-success-strong: var(--color-surface-tint-success-strong);
-  --color-surface-tint-warning-strong: var(--color-surface-tint-warning-strong);
-  --color-surface-tint-info-strong: var(--color-surface-tint-info-strong);
-  --color-surface-tint-danger-foreground: var(--color-surface-tint-danger-foreground);
-  --color-surface-tint-success-foreground: var(--color-surface-tint-success-foreground);
-  --color-surface-tint-info-foreground: var(--color-surface-tint-info-foreground);
-  --color-surface-tint-warning-foreground: var(--color-surface-tint-warning-foreground);
-  --color-surface-tint-primary-foreground: var(--color-surface-tint-primary-foreground);
 
   --spacing-xsmall: var(--space-xsmall);
   --spacing-small: var(--space-small);
@@ -172,12 +170,14 @@ p {
 }
 
 /**
- * Тень через `--el-shadow` (переключается из JS) + плавная смена `box-shadow`.
- * Fallback `--shadow-none` — чтобы transition не «ломался» с/на `none`.
- * На элементах с `button-idle-surface-transition` тень тоже в том же shorthand — правило ниже по файлу перекрывает.
+ * Тень через локальный `--el-shadow` (переключается из JS) + плавная смена `box-shadow`.
+ * Явный сброс на элементе — иначе `--el-shadow` наследуется от предка (Popover, Alert)
+ * и дочерние кнопки получают чужую тень до первого hover.
+ * Постоянная тень: `initElementShadow(el, shadowSm())` (inline перекрывает сброс).
  */
 @utility animate-shadow {
-  box-shadow: var(--el-shadow, var(--shadow-none));
+  --el-shadow: var(--shadow-none);
+  box-shadow: var(--el-shadow);
   transition-property: box-shadow;
   transition-duration: var(--shadow-transition-duration, 280ms);
   transition-timing-function: ease-out;
@@ -272,6 +272,26 @@ p {
 @utility border-token {
   border-width: var(--border-width, 1px);
   border-color: var(--color-border);
+}
+@utility border-token-primary {
+  border-width: var(--border-width, 1px);
+  border-color: var(--color-primary);
+}
+@utility border-token-danger {
+  border-width: var(--border-width, 1px);
+  border-color: var(--color-danger);
+}
+@utility border-token-success {
+  border-width: var(--border-width, 1px);
+  border-color: var(--color-success);
+}
+@utility border-token-info {
+  border-width: var(--border-width, 1px);
+  border-color: var(--color-info);
+}
+@utility border-token-warning {
+  border-width: var(--border-width, 1px);
+  border-color: var(--color-warning);
 }
 @utility border-t-token {
   border-top-width: var(--border-width, 1px);

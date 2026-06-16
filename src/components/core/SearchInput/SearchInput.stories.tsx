@@ -223,10 +223,10 @@ export const FilterList: Story = {
             filtered.map((item) => (
               <li key={item.id}>
                 <Card>
-                  <Card.Content>
+                  <Card.Header>
                     <Card.Title>{item.title}</Card.Title>
                     <Card.Description>{item.subtitle}</Card.Description>
-                  </Card.Content>
+                  </Card.Header>
                 </Card>
               </li>
             ))

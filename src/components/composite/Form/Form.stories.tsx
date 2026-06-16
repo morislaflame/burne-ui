@@ -113,7 +113,7 @@ function ProfileForm() {
         <Button type="button" variant="outline" size="base">
           Отмена
         </Button>
-        <Button type="submit" variant="default" size="base">
+        <Button type="submit" variant="primary" size="base">
           Сохранить
         </Button>
       </div>
@@ -162,7 +162,7 @@ function ValidationForm() {
         error="Необходимо принять условия."
       />
       <div className="flex justify-end gap-plus pt-base">
-        <Button type="submit" variant="default" size="base">
+        <Button type="submit" variant="primary" size="base">
           Отправить
         </Button>
       </div>

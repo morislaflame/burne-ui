@@ -79,7 +79,7 @@ const TOAST_VARIANT_ITEMS: Array<{
     title: "Доступно обновление",
     description: "Версия 2.4.0 готова к установке.",
     action: (
-      <Button size="small" variant="info">
+      <Button size="small" variant="primary" status="info">
         Обновить
       </Button>
     ),
@@ -142,7 +142,7 @@ export const QuickMethods: Story = {
         <Button onClick={() => toast.success("Файл сохранён", { description: "Синхронизация выполнена" })}>
           success
         </Button>
-        <Button variant="danger" onClick={() => toast.danger("Ошибка соединения", { description: "Проверьте сеть и повторите попытку" })}>
+        <Button variant="primary" status="danger" onClick={() => toast.danger("Ошибка соединения", { description: "Проверьте сеть и повторите попытку" })}>
           danger
         </Button>
         <Button variant="outline" onClick={() => toast.info("Доступна новая версия")}>
@@ -186,7 +186,7 @@ export const PromiseToast: Story = {
     return (
       <div className="flex gap-base">
         <Button onClick={handleSuccess}>Promise → success</Button>
-        <Button variant="danger" onClick={handleError}>Promise → error</Button>
+        <Button variant="primary" status="danger" onClick={handleError}>Promise → error</Button>
       </div>
     );
   },
@@ -260,7 +260,7 @@ export const WithAction: Story = {
         title: "Доступно обновление",
         description: "Версия 2.4.0 готова к установке",
         action: (
-          <Button size="small" variant="info">
+          <Button size="small" variant="primary" status="info">
             Обновить
           </Button>
         ),
@@ -337,7 +337,8 @@ export const DismissProgrammatically: Story = {
           Показать
         </Button>
         <Button
-          variant="danger"
+          variant="primary"
+          status="danger"
           disabled={!lastId}
           onClick={() => {
             if (lastId) toast.dismiss(lastId);

@@ -49,28 +49,28 @@ const SIZE_LAYOUT: Record<
   {
     title: TextVariant;
     desc: TextVariant;
-    gridGapX: string;
+    gridGap: string;
   }
 > = {
   small: {
     title: "small",
     desc: "tools",
-    gridGapX: "gap-x-small",
+    gridGap: "gap-x-small gap-y-xsmall",
   },
   base: {
     title: "base",
     desc: "small",
-    gridGapX: "gap-x-base",
+    gridGap: "gap-x-base gap-y-xsmall",
   },
   mid: {
     title: "mid",
     desc: "small",
-    gridGapX: "gap-x-plus",
+    gridGap: "gap-x-plus gap-y-xsmall",
   },
   large: {
     title: "large",
     desc: "base",
-    gridGapX: "gap-x-plus",
+    gridGap: "gap-x-plus gap-y-xsmall",
   },
 };
 
@@ -589,7 +589,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
         data-selected={mergedChecked ? true : undefined}
         className={cn(
           "relative cursor-pointer select-none rounded-small text-left",
-          optionControlGridClass(secondaryLines, sz.gridGapX),
+          optionControlGridClass(secondaryLines, sz.gridGap),
           isDisabled && "cursor-not-allowed",
           "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
           className,

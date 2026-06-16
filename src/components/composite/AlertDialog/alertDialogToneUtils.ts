@@ -1,19 +1,24 @@
 import type { AlertStatus } from "@/components/core/Alert/alertUtils";
-import type { ButtonVariant } from "@/components/core/Button";
+import type { ButtonStatus, ButtonVariant } from "@/components/core/Button";
 
 /** Основная кнопка действия в футере модалки в тон окна. */
 export function primaryButtonVariantForAlertTone(
   tone: AlertStatus,
 ): ButtonVariant {
+  void tone;
+  return "primary";
+}
+
+/** Статус primary-кнопки действия в футере модалки в тон окна. */
+export function primaryButtonStatusForAlertTone(
+  tone: AlertStatus,
+): ButtonStatus {
   switch (tone) {
     case "danger":
-      return "danger";
     case "success":
-      return "success";
     case "info":
-      return "info";
     case "warning":
-      return "warning";
+      return tone;
     default:
       return "default";
   }

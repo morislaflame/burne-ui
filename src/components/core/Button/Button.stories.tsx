@@ -3,7 +3,28 @@ import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { IoAdd } from "react-icons/io5";
 
-import { Button, type ButtonAsyncState } from "./Button";
+import {
+  Button,
+  type ButtonAsyncState,
+  type ButtonStatus,
+  type ButtonVariant,
+} from "./Button";
+
+const BUTTON_VARIANTS: ButtonVariant[] = [
+  "default",
+  "primary",
+  "outline",
+  "secondary",
+  "ghost",
+];
+
+const BUTTON_STATUSES: ButtonStatus[] = [
+  "default",
+  "danger",
+  "success",
+  "info",
+  "warning",
+];
 
 /** Тёмная тема — токены из `:root`, явный фон под сторисы. */
 const darkThemeDecorator = [
@@ -40,6 +61,7 @@ const meta = {
   args: {
     children: "Кнопка",
     variant: "default",
+    status: "default",
     size: "base",
     animated: true,
     disabled: false,
@@ -50,14 +72,15 @@ const meta = {
       control: "select",
       options: [
         "default",
+        "primary",
         "outline",
         "secondary",
         "ghost",
-        "danger",
-        "success",
-        "info",
-        "warning",
       ],
+    },
+    status: {
+      control: "select",
+      options: ["default", "danger", "success", "info", "warning"] satisfies ButtonStatus[],
     },
     size: {
       control: "select",
@@ -127,8 +150,11 @@ export const Variants: Story = {
   name: "Варианты",
   render: () => (
     <div className="flex flex-wrap items-start gap-plus">
-      <Button variant="default">
+      <Button>
         Default
+      </Button>
+      <Button variant="primary">
+        Primary
       </Button>
       <Button variant="outline">
         Outline
@@ -138,18 +164,6 @@ export const Variants: Story = {
       </Button>
       <Button variant="ghost" ripple>
         Ghost
-      </Button>
-      <Button variant="danger" ripple>
-        Удалить
-      </Button>
-      <Button variant="success" ripple>
-        Готово
-      </Button>
-      <Button variant="info" ripple>
-        Сведения
-      </Button>
-      <Button variant="warning" ripple>
-        Внимание
       </Button>
     </div>
   ),
@@ -160,8 +174,11 @@ export const VariantsOnLightTheme: Story = {
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex flex-wrap items-start gap-plus">
-      <Button variant="default">
+      <Button>
         Default
+      </Button>
+      <Button variant="primary">
+        Primary
       </Button>
       <Button variant="outline">
         Outline
@@ -172,20 +189,45 @@ export const VariantsOnLightTheme: Story = {
       <Button variant="ghost" ripple>
         Ghost
       </Button>
-      <Button variant="danger" ripple>
-        Удалить
-      </Button>
-      <Button variant="success" ripple>
-        Готово
-      </Button>
-      <Button variant="info" ripple>
-        Сведения
-      </Button>
-      <Button variant="warning" ripple>
-        Внимание
-      </Button>
     </div>
   ),
+};
+
+function StatusVariantsDemo() {
+  return (
+    <div className="flex w-full max-w-4xl flex-col gap-xlarge py-mid">
+      {BUTTON_STATUSES.map((status) => (
+        <div key={status} className="flex flex-col gap-base">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">
+            status: {status}
+          </span>
+          <div className="flex flex-wrap items-center gap-base">
+            {BUTTON_VARIANTS.map((variant) => (
+              <Button
+                key={`${status}-${variant}`}
+                variant={variant}
+                status={status}
+                className="min-w-[7.5rem] capitalize"
+              >
+                {variant}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export const StatusVariants: Story = {
+  name: "Статусы × варианты (тёмная тема)",
+  render: () => <StatusVariantsDemo />,
+};
+
+export const StatusVariantsOnLightTheme: Story = {
+  name: "Статусы × варианты (светлая тема)",
+  decorators: [...lightThemeDecorator],
+  render: () => <StatusVariantsDemo />,
 };
 
 export const WithLeftIcon: Story = {

@@ -45,7 +45,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "outline", "secondary", "ghost"],
+      options: ["default", "primary", "outline", "secondary", "ghost"],
     },
     size: {
       control: "select",
@@ -84,6 +84,8 @@ export const Variants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-plus">
       <CloseButton variant="default" aria-label="Закрыть default" />
+      <CloseButton aria-label="Закрыть (по умолчанию)" />
+      <CloseButton variant="primary" aria-label="Закрыть primary" />
       <CloseButton variant="outline" aria-label="Закрыть outline" />
       <CloseButton variant="secondary" aria-label="Закрыть secondary" />
       <CloseButton variant="ghost" aria-label="Закрыть ghost" />
@@ -97,6 +99,8 @@ export const VariantsOnLightTheme: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-plus">
       <CloseButton variant="default" aria-label="Закрыть default" />
+      <CloseButton aria-label="Закрыть (по умолчанию)" />
+      <CloseButton variant="primary" aria-label="Закрыть primary" />
       <CloseButton variant="outline" aria-label="Закрыть outline" />
       <CloseButton variant="secondary" aria-label="Закрыть secondary" />
       <CloseButton variant="ghost" aria-label="Закрыть ghost" />
@@ -108,7 +112,7 @@ export const VariantSizesMatrix: Story = {
   name: "Матрица variant × size",
   render: () => (
     <div className="flex flex-col gap-plus">
-      {(["default", "outline", "secondary", "ghost"] as const).map((variant) => (
+      {(["default", "primary", "outline", "secondary", "ghost"] as const).map((variant) => (
         <div key={variant} className="flex items-center gap-plus">
           <span className="text-muted text-small w-20 shrink-0">{variant}</span>
           <CloseButton variant={variant} size="small" aria-label={`${variant} small`} />

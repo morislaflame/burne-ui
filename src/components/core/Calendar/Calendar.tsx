@@ -164,7 +164,7 @@ function CalendarRangeHalfFill({
       ref={ref}
       aria-hidden
       className={cn(
-        "pointer-events-none absolute inset-y-0 bg-primary-tint",
+        "pointer-events-none absolute inset-y-0 bg-default-hover",
         side === "left" ? "left-0 right-1/2" : "left-1/2 right-0",
       )}
       style={{ opacity: 0 }}
@@ -520,7 +520,7 @@ function CalendarNavButton({
       onPointerDown={handlePointerDown}
       className={cn(
         "flex shrink-0 origin-center items-center justify-center rounded-base will-change-transform",
-        "text-muted transition-colors hover:bg-secondary hover:text-secondary-foreground",
+        "text-muted transition-colors hover:bg-default-hover hover:text-secondary-foreground",
         "focus-ring",
         "disabled:cursor-not-allowed disabled:opacity-40",
         NAV_BTN[size],

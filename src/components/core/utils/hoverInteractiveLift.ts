@@ -46,9 +46,9 @@ export function readShadowSize(size: ShadowSize): string {
 }
 
 /**
- * Выставляет начальное значение `--el-shadow` на элементе.
+ * Выставляет `--el-shadow` на элементе (inline, перекрывает локальный сброс `animate-shadow`).
  * Вызывайте после маунта для компонентов с постоянной тенью (Alert, Badge, Tooltip).
- * Класс `animate-shadow` (или свой `transition` с `box-shadow`, см. `button-idle-surface-transition`) — плавная смена тени.
+ * Для hover-only тени достаточно класса `animate-shadow` (idle = `--shadow-none`).
  */
 export function initElementShadow(element: HTMLElement | null, shadow: string): void {
   if (!element) return;

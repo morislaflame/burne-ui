@@ -12,6 +12,7 @@ import {
 import { IoChevronUp } from "react-icons/io5";
 
 import { cn } from "@/utils/cn";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
 import { TABLE_ROW_TONE_SURFACE, type TableRowTone } from "./tableRowToneSurface";
 
@@ -90,7 +91,7 @@ const THEAD_ROW_CLS: Record<TableVariant, string> = {
 
 const TH_CLS: Record<TableVariant, string> = {
   default:
-    "bg-tertiary px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
+    "bg-secondary px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
   secondary: "px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
   toned: "px-large py-plus text-left font-medium text-muted whitespace-nowrap bg-transparent",
 };
@@ -433,8 +434,8 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
             isToned && isSelectable && "cursor-pointer",
             !isToned &&
               (isSelected
-                ? "bg-[color-mix(in_oklab,var(--color-primary)_8%,var(--color-surface))]"
-                : "hover:bg-[color-mix(in_oklab,var(--color-foreground)_4%,transparent)]"),
+                ? "bg-default-hover"
+                : hoverVariant()),
             isSelectable &&
               "focus-ring-inset",
             className,

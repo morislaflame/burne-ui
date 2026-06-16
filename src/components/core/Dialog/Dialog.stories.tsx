@@ -86,7 +86,7 @@ export const Default: Story = {
             <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
               Отмена
             </Button>
-            <Button type="button" size="base" variant="default" onClick={() => setOpen(false)}>
+            <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
               Сохранить
             </Button>
           </Dialog.Footer>
@@ -149,7 +149,7 @@ export const WithForm: Story = {
               >
                 Отмена
               </Button>
-              <Button type="submit" size="base" variant="default">
+              <Button type="submit" size="base" variant="primary">
                 Сохранить
               </Button>
             </Dialog.Footer>
@@ -195,7 +195,7 @@ export const ScrollableContent: Story = {
             <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
               Закрыть
             </Button>
-            <Button type="button" size="base" variant="default" onClick={() => setOpen(false)}>
+            <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
               Готово
             </Button>
           </Dialog.Footer>

@@ -34,6 +34,7 @@ import type {
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
@@ -649,8 +650,8 @@ export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerP
     const rowClass = cn(
       "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none",
       /* как у подписи в `Dropdown.Item`: токен `text-base`, не наследованный `1rem` у `html` */
-      "text-base font-medium text-foreground button-idle-surface-transition motion-reduce:transition-none hover:bg-primary-tint",
-      "focus-visible:bg-primary-tint focus-ring",
+      "text-base font-medium text-foreground focus-ring",
+      hoverVariant(),
       className,
     );
 
@@ -947,25 +948,26 @@ DropdownItemIndicator.displayName = "DropdownItemIndicator";
 export type DropdownItemVariant = "default" | "danger" | "warning" | "info" | "success";
 
 const DROPDOWN_ITEM_VARIANT_CLASS: Record<DropdownItemVariant, string> = {
-  default: cn(
-    "text-foreground hover:bg-primary-tint",
-    "focus-visible:bg-primary-tint focus-ring",
-  ),
+  default: cn("text-foreground", hoverVariant(), "focus-ring"),
   danger: cn(
-    "text-danger hover:bg-primary-tint",
-    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger",
+    "text-danger",
+    hoverVariant("danger"),
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger",
   ),
   warning: cn(
-    "text-warning hover:bg-primary-tint",
-    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning",
+    "text-warning",
+    hoverVariant("warning"),
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning",
   ),
   info: cn(
-    "text-info hover:bg-primary-tint",
-    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info",
+    "text-info",
+    hoverVariant("info"),
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info",
   ),
   success: cn(
-    "text-success hover:bg-primary-tint",
-    "focus-visible:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success",
+    "text-success",
+    hoverVariant("success"),
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success",
   ),
 };
 
@@ -1043,7 +1045,6 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
     const rowClass = cn(
       "w-full min-w-0 origin-center rounded-mid px-base py-small text-left no-underline outline-none text-base",
       optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
-      "button-idle-surface-transition motion-reduce:transition-none",
       !disabled && cn("cursor-pointer", DROPDOWN_ITEM_VARIANT_CLASS[variant]),
       disabled &&
         "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent",
