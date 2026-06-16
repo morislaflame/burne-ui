@@ -79,17 +79,35 @@ function useThemeTokensState() {
     setState((prev) => ({ ...prev, shadowSize }));
   }, []);
 
-  const setDuration = useCallback((key: "durationFast" | "durationNormal", value: number) => {
-    setState((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const setMotionDuration = useCallback(
+    (key: "interactiveDuration" | "tooltipDuration" | "expandDuration", value: number) => {
+      setState((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
   const setGlass = useCallback((key: "glassBlur" | "glassSaturate", value: number) => {
     setState((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  const setAnimationFlag = useCallback((key: "enableHoverLift" | "enablePressSqueeze" | "enableToggleButtonFill" | "enableRipple", value: boolean) => {
-    setState((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const setAnimationFlag = useCallback(
+    (
+      key:
+        | "enableHoverLift"
+        | "enablePressSqueeze"
+        | "enableToggleButtonFill"
+        | "enableRipple"
+        | "enableExpandable"
+        | "enableToastStack"
+        | "enableAsyncButtonCrossfade"
+        | "enableContentFade"
+        | "enableFeedbackExpand",
+      value: boolean,
+    ) => {
+      setState((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
   const setColor = useCallback((key: ThemeColorKey, value: string) => {
     setState((prev) => ({
@@ -142,7 +160,7 @@ function useThemeTokensState() {
     setFontFamilyMono,
     setShadowStrength,
     setShadowSize,
-    setDuration,
+    setMotionDuration,
     setGlass,
     setAnimationFlag,
     setColor,

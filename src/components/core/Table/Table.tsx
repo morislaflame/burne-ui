@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   type HTMLAttributes,
   type ReactNode,
   type TdHTMLAttributes,
@@ -12,7 +13,8 @@ import {
 import { IoChevronUp } from "react-icons/io5";
 
 import { cn } from "@/utils/cn";
-import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { TABLE_ROW_TONE_SURFACE, type TableRowTone } from "./tableRowToneSurface";
 
@@ -272,6 +274,24 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
 
 // ─── Column (<th>) ───────────────────────────────────────────────────────────
 
+function TableSortChevron({ direction }: { direction: SortDirection | undefined }) {
+  const chevronRef = useRef<HTMLSpanElement>(null);
+  useChevronRotation(direction === "descending", chevronRef, () => true);
+
+  return (
+    <span
+      ref={chevronRef}
+      aria-hidden
+      className={cn(
+        "shrink-0 origin-center",
+        direction ? "text-primary opacity-100" : "opacity-0 group-hover/col:opacity-40 text-muted",
+      )}
+    >
+      <IoChevronUp className="icon-xsmall" />
+    </span>
+  );
+}
+
 export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
   function TableColumn(
     { id, allowsSorting = false, isRowHeader = false, children, className = "", onClick, ...rest },
@@ -320,7 +340,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
         className={cn(
           "group/col text-small",
           TH_CLS[variant],
-          allowsSorting && "cursor-pointer select-none hover:text-foreground transition-colors duration-150",
+          allowsSorting && cn("cursor-pointer select-none hover:text-foreground", TEXT_COLOR_TRANSITION),
           className,
         )}
         onClick={handleClick}
@@ -328,20 +348,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       >
         <span className="inline-flex items-center gap-xsmall">
           <span className="min-w-0">{content}</span>
-          {allowsSorting && (
-            <span
-              aria-hidden
-              className={cn(
-                "shrink-0 transition-all duration-150",
-                sortDirection
-                  ? "text-primary opacity-100"
-                  : "opacity-0 group-hover/col:opacity-40 text-muted",
-                sortDirection === "descending" && "rotate-180",
-              )}
-            >
-              <IoChevronUp className="icon-xsmall" />
-            </span>
-          )}
+          {allowsSorting && <TableSortChevron direction={sortDirection} />}
         </span>
       </th>
     );
@@ -426,7 +433,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
           aria-selected={selectionMode !== "none" ? isSelected : undefined}
           tabIndex={isSelectable ? 0 : undefined}
           className={cn(
-            "outline-none transition-colors duration-150",
+            "outline-none",
             TBODY_ROW_CLS[variant],
             !isToned &&
               isSelectable &&
@@ -465,7 +472,7 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
       <td
         ref={ref}
         className={cn(
-          "text-small transition-colors duration-150",
+          "text-small",
           TD_CLS[variant],
           isToned && toneSurface,
           isToned &&

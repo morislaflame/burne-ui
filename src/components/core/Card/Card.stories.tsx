@@ -149,7 +149,7 @@ export const Pressable: Story = {
           Нажатий (любая из карточек ниже): {n}
         </p>
         <Card pressable onPress={() => setN((c) => c + 1)}>
-          <Ripple color={CARD_RIPPLE_COLOR.default} />
+          <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
               <Card.Title>Карточка-кнопка</Card.Title>
@@ -161,7 +161,7 @@ export const Pressable: Story = {
           </div>
         </Card>
         <Card variant="outline" pressable onPress={() => setN((c) => c + 1)}>
-          <Ripple color={CARD_RIPPLE_COLOR.outline} />
+          <Ripple color={CARD_RIPPLE_COLOR.outline} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
               <Card.Title>Outline + pressable</Card.Title>
@@ -170,7 +170,7 @@ export const Pressable: Story = {
           </div>
         </Card>
         <Card variant="secondary" pressable onPress={() => setN((c) => c + 1)}>
-          <Ripple color={CARD_RIPPLE_COLOR.secondary} />
+          <Ripple color={CARD_RIPPLE_COLOR.secondary} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
               <Card.Title>Secondary + pressable</Card.Title>
@@ -193,7 +193,7 @@ export const PressableWithNestedCard: Story = {
           Нажатий по внешней карточке: {n}
         </p>
         <Card pressable onPress={() => setN((c) => c + 1)}>
-          <Ripple color={CARD_RIPPLE_COLOR.default}/>
+          <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
               <Card.Title>Внешняя pressable</Card.Title>
@@ -499,7 +499,7 @@ export const PressableWithCoverImage: Story = {
     const [n, setN] = useState(0);
     return (
       <Card pressable className="max-w-md" onPress={() => setN((c) => c + 1)}>
-        <Ripple color={CARD_RIPPLE_COLOR.default} />
+        <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
         <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
           <div className="relative aspect-[2/1] w-full shrink-0">
             <img

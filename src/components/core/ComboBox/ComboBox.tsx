@@ -24,6 +24,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
@@ -442,6 +443,17 @@ export type ComboBoxTriggerProps = HTMLAttributes<HTMLButtonElement>;
 export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProps>(
   function ComboBoxTrigger({ className, onPointerDown, ...rest }, ref) {
     const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+    useChevronRotation(open, triggerRef);
+
+    const setTriggerRef = useCallback(
+      (node: HTMLButtonElement | null) => {
+        triggerRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref],
+    );
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLButtonElement>) => {
@@ -463,15 +475,13 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
     return (
       <button
         type="button"
-        ref={ref}
+        ref={setTriggerRef}
         tabIndex={-1}
         disabled={disabled}
         aria-label={open ? "Закрыть список" : "Открыть список"}
         className={cn(
-          "flex shrink-0 items-center justify-center self-stretch border-l-token px-small outline-none",
-          "text-muted transition-transform duration-200 ease-out motion-reduce:transition-none",
-          "hover:text-foreground focus-ring",
-          open && "rotate-180",
+          "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none",
+          "text-muted hover:text-foreground focus-ring",
           disabled && "pointer-events-none",
           className,
         )}

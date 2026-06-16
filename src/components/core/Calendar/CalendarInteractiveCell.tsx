@@ -16,6 +16,11 @@ import {
   prefersReducedInteractiveHoverLift,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  hoverVariant,
+  SURFACE_COLOR_TRANSITION,
+  TEXT_COLOR_TRANSITION,
+} from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 type CalendarSize = ComponentSize;
@@ -28,10 +33,10 @@ const DAY_TEXT: Record<CalendarSize, TextVariant> = {
 };
 
 const DAY_BTN: Record<CalendarSize, string> = {
-  small: "h-control-small w-control-small",
-  base: "h-control-base w-control-base",
-  mid: "h-control-mid w-control-mid",
-  large: "h-control-large w-control-large",
+  small: "mx-auto aspect-square w-full max-w-control-small",
+  base: "mx-auto aspect-square w-full max-w-control-base",
+  mid: "mx-auto aspect-square w-full max-w-control-mid",
+  large: "mx-auto aspect-square w-full max-w-control-large",
 };
 
 const PICKER_TEXT: Record<CalendarSize, TextVariant> = {
@@ -54,7 +59,7 @@ type CalendarInteractiveCellProps = {
   size: CalendarSize;
   ariaLabel?: string;
   ariaSelected?: boolean;
-  rounded?: "full" | "mid";
+  rounded?: "day" | "picker";
   isToday?: boolean;
   isCurrent?: boolean;
   className?: string;
@@ -72,7 +77,7 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
       size,
       ariaLabel,
       ariaSelected,
-      rounded = "full",
+      rounded = "day",
       isToday = false,
       isCurrent = false,
       className = "",
@@ -94,10 +99,12 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
     onMouseEnterRef.current = onMouseEnter;
     onMouseLeaveRef.current = onMouseLeave;
 
-    const { animateTo } = useToggleButtonFillAnimation(selected, fillRef);
+    // Заливку ведёт только `selected` через layout-effect — без optimistic toggle на click
+    // (range preview уже поднимает selected до клика).
+    useToggleButtonFillAnimation(selected, fillRef);
 
-    const rounding = rounded === "full" ? "rounded-full" : "rounded-mid";
-    const isDay = rounded === "full";
+    const rounding = "rounded-mid";
+    const isDay = rounded === "day";
     const textVariant = isDay ? DAY_TEXT[size] : PICKER_TEXT[size];
     const sizeClass = isDay ? DAY_BTN[size] : PICKER_BTN[size];
 
@@ -112,9 +119,8 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
 
     const handleClick = useCallback(() => {
       if (disabled) return;
-      animateTo(!selected);
       onPressRef.current();
-    }, [animateTo, disabled, selected]);
+    }, [disabled]);
 
     const handlePointerEnter = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
@@ -172,7 +178,7 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
             : isToday || isCurrent
               ? "font-semibold text-primary"
               : "text-foreground",
-          !selected && !disabled && "hover:bg-secondary/60",
+          !selected && !disabled && hoverVariant(),
           disabled ? "cursor-not-allowed opacity-35" : "cursor-pointer",
           className,
         )}
@@ -181,7 +187,9 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
           ref={fillRef}
           aria-hidden
           className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center will-change-transform bg-primary transition-colors duration-normal ease-out motion-reduce:transition-none group-hover/calendar-cell:bg-primary-hover",
+            "pointer-events-none absolute -inset-px z-0 origin-center will-change-transform bg-primary",
+            SURFACE_COLOR_TRANSITION,
+            "motion-reduce:transition-none group-hover/calendar-cell:bg-primary-hover",
             rounding,
           )}
         />
@@ -190,7 +198,9 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
           as="span"
           inheritColor
           className={cn(
-            "relative z-[1] min-w-0 shrink-0 leading-none transition-colors duration-normal ease-out motion-reduce:transition-none",
+            "relative z-[1] min-w-0 shrink-0 leading-none",
+            TEXT_COLOR_TRANSITION,
+            "motion-reduce:transition-none",
           )}
         >
           {children}

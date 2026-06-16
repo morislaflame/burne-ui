@@ -21,6 +21,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -67,7 +68,9 @@ function toExpandedPieces(items: BreadcrumbItemData[]): DisplayPiece[] {
 }
 
 const CRUMB_INTERACTIVE_INNER =
-  "inline-flex max-w-[min(12rem,46vw)] min-w-0 cursor-pointer truncate rounded-mid px-xsmall py-xsmall text-muted no-underline outline-none transition-colors hover:text-foreground motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "inline-flex max-w-[min(12rem,46vw)] min-w-0 cursor-pointer truncate rounded-mid px-xsmall py-xsmall text-muted no-underline outline-none " +
+  TEXT_COLOR_TRANSITION +
+  " hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 type InteractiveCrumbProps = {
   href?: string;
@@ -150,7 +153,9 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
 InteractiveCrumb.displayName = "BreadcrumbsInteractiveCrumb";
 
 const ELLIPSIS_TRIGGER_CLASS =
-  "inline-flex min-w-0 cursor-pointer rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted outline-none transition-colors hover:text-foreground aria-expanded:text-foreground motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "inline-flex min-w-0 cursor-pointer rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted outline-none " +
+  TEXT_COLOR_TRANSITION +
+  " hover:text-foreground aria-expanded:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 type BreadcrumbsEllipsisMenuProps = {
   hiddenItems: BreadcrumbItemData[];

@@ -20,6 +20,7 @@ import {
   shadowSm,
   useInteractiveHoverLiftContainerHandlers,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 export type CardVariant = "default" | "outline" | "secondary";
@@ -218,7 +219,8 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const rootClassName = cn(
     "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",
     pressable &&
-      "relative cursor-pointer animate-shadow button-idle-surface-transition motion-reduce:transition-none focus-ring",
+      "relative cursor-pointer animate-shadow focus-ring",
+      SURFACE_COLOR_TRANSITION,
     CARD_SURFACE[variant],
     pressable && "will-change-transform origin-center",
     className,

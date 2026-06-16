@@ -60,7 +60,7 @@ function SortableHeader({
         <IoChevronUp
           aria-hidden
           className={cn(
-            "icon-xsmall shrink-0 transition-transform duration-100",
+            "icon-xsmall shrink-0",
             sortDirection === "descending" && "rotate-180",
           )}
         />

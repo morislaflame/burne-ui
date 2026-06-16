@@ -1,4 +1,4 @@
-import { killMotion } from "@/components/core/utils/gsapMotion";
+import { ensureRippleEase, gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import type {
   ButtonHTMLAttributes,
   MouseEvent,
@@ -23,7 +23,7 @@ import {
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { getMotionConfig, motionFeedbackExpand, motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
 import {
@@ -283,6 +283,76 @@ type ExpandRipple = {
   tone: "success" | "error";
 };
 
+function ButtonFeedbackExpandRipple({
+  size,
+  tone,
+  onDone,
+}: {
+  size: number;
+  tone: "success" | "error";
+  onDone: () => void;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let finished = false;
+    killMotion(el);
+
+    const reduceMotion =
+      prefersReducedInteractiveHoverLift() || !getMotionConfig().enableFeedbackExpand;
+
+    if (reduceMotion) {
+      onDoneRef.current();
+      return;
+    }
+
+    const tween = gsap.fromTo(
+      el,
+      { scale: 0, autoAlpha: 0.5 },
+      {
+        scale: 1,
+        autoAlpha: 0,
+        ...motionFeedbackExpand(),
+        ease: ensureRippleEase(),
+        overwrite: "auto",
+        onComplete: () => {
+          if (!finished) onDoneRef.current();
+        },
+      },
+    );
+
+    return () => {
+      finished = true;
+      tween.kill();
+      killMotion(el);
+    };
+  }, [size, tone]);
+
+  return (
+    <span
+      ref={ref}
+      className="pointer-events-none absolute left-1/2 top-1/2 z-0 rounded-full will-change-[transform,opacity]"
+      style={{
+        width: size,
+        height: size,
+        marginLeft: -size / 2,
+        marginTop: -size / 2,
+        background:
+          tone === "success"
+            ? "color-mix(in oklab, var(--color-success) 55%, transparent)"
+            : "color-mix(in oklab, var(--color-danger) 55%, transparent)",
+        transform: "scale(0)",
+      }}
+      aria-hidden
+    />
+  );
+}
+
 function maxDistanceToCorners(px: number, py: number, w: number, h: number) {
   const corners: [number, number][] = [
     [0, 0],
@@ -374,6 +444,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
     const userDisabled = Boolean(disabledProp);
     const btnRef = useRef<HTMLButtonElement>(null);
+    const labelRef = useRef<HTMLSpanElement>(null);
+    const loaderRef = useRef<HTMLSpanElement>(null);
+    const successRef = useRef<HTMLSpanElement>(null);
+    const errorRef = useRef<HTMLSpanElement>(null);
     const hoverPointerInsideRef = useRef(false);
     const asyncStateRef = useRef<ButtonAsyncState>("idle");
     const expandId = useRef(0);
@@ -433,6 +507,42 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       }
       prevAsyncRef.current = asyncState;
     }, [asyncState, isControlled, pushExpandRipple]);
+
+    useLayoutEffect(() => {
+      const label = labelRef.current;
+      const loader = loaderRef.current;
+      const success = successRef.current;
+      const error = errorRef.current;
+      if (!label || !loader || !success || !error) return;
+
+      const reduceMotion =
+        prefersReducedInteractiveHoverLift() || !getMotionConfig().enableAsyncButtonCrossfade;
+      const vars = motionInteractive();
+
+      const layers = [
+        { el: label, active: asyncState === "idle", scaleIn: 1, scaleOut: 0.92 },
+        { el: loader, active: asyncState === "loading", scaleIn: 1, scaleOut: 0.85 },
+        { el: success, active: asyncState === "success", scaleIn: 1, scaleOut: 0.85 },
+        { el: error, active: asyncState === "error", scaleIn: 1, scaleOut: 0.85 },
+      ] as const;
+
+      for (const { el, active, scaleIn, scaleOut } of layers) {
+        killMotion(el);
+        if (reduceMotion) {
+          gsap.set(el, {
+            autoAlpha: active ? 1 : 0,
+            scale: active ? scaleIn : scaleOut,
+          });
+          continue;
+        }
+        gsap.to(el, {
+          autoAlpha: active ? 1 : 0,
+          scale: active ? scaleIn : scaleOut,
+          ...vars,
+          overwrite: "auto",
+        });
+      }
+    }, [asyncState]);
 
     const busy =
       asyncState === "loading" ||
@@ -545,21 +655,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       "disabled:pointer-events-none";
 
     const vn = BUTTON_VARIANT[variant];
-    const labelHidden =
-      asyncState !== "idle"
-        ? "opacity-0 scale-[0.92]"
-        : "opacity-100 scale-100";
-    const successVisible =
-      asyncState === "success"
-        ? "opacity-100 scale-100"
-        : "pointer-events-none opacity-0 scale-[0.85]";
-    const errorVisible =
-      asyncState === "error"
-        ? "opacity-100 scale-100"
-        : "pointer-events-none opacity-0 scale-[0.85]";
-
-    const crossFade =
-      "flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
 
     const sz = BUTTON_SIZE_CLASSES[size];
     const sizeRoot = iconOnly ? sz.rootIconOnly : sz.root;
@@ -639,29 +734,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           aria-hidden
         >
           {expandRipples.map((rp) => (
-            <span
+            <ButtonFeedbackExpandRipple
               key={rp.id}
-              className="pointer-events-none absolute left-1/2 top-1/2 z-0 rounded-full will-change-[transform,opacity]"
-              style={{
-                width: rp.size,
-                height: rp.size,
-                marginLeft: -rp.size / 2,
-                marginTop: -rp.size / 2,
-                background:
-                  rp.tone === "success"
-                    ? "color-mix(in oklab, var(--color-success) 55%, transparent)"
-                    : "color-mix(in oklab, var(--color-danger) 55%, transparent)",
-                animation:
-                  `button-ripple-expand ${getMotionConfig().feedbackExpandDuration}ms ${getMotionConfig().rippleEaseCss} forwards`,
-              }}
-              onAnimationEnd={() => dismissExpand(rp.id)}
+              size={rp.size}
+              tone={rp.tone}
+              onDone={() => dismissExpand(rp.id)}
             />
           ))}
         </span>
 
         <span className="relative z-[1] grid place-items-center">
           <span
-            className={`${crossFade} col-start-1 row-start-1 ${labelHidden} inline-flex min-w-0 items-center justify-center gap-xsmall`}
+            ref={labelRef}
+            className="col-start-1 row-start-1 inline-flex min-w-0 items-center justify-center gap-xsmall"
           >
             {leftIcon != null ? (
               <span
@@ -680,24 +765,25 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               {children}
             </Text>
           </span>
-          {asyncState === "loading" ? (
-            <span
-              className={`${crossFade} col-start-1 row-start-1 ${loaderTextClass} opacity-100 scale-100`}
-              aria-hidden
-            >
-              <Spinner
-                className={`${sz.spinner} animate-spin motion-reduce:animate-none`}
-              />
-            </span>
-          ) : null}
           <span
-            className={`${crossFade} col-start-1 row-start-1 text-success ${successVisible}`}
+            ref={loaderRef}
+            className={`col-start-1 row-start-1 flex items-center justify-center ${loaderTextClass}`}
+            aria-hidden={asyncState !== "loading"}
+          >
+            <Spinner
+              className={`${sz.spinner} animate-spin motion-reduce:animate-none`}
+            />
+          </span>
+          <span
+            ref={successRef}
+            className="col-start-1 row-start-1 flex items-center justify-center text-success"
             aria-hidden={asyncState !== "success"}
           >
             <IconCheck className={sz.icon} />
           </span>
           <span
-            className={`${crossFade} col-start-1 row-start-1 text-danger ${errorVisible}`}
+            ref={errorRef}
+            className="col-start-1 row-start-1 flex items-center justify-center text-danger"
             aria-hidden={asyncState !== "error"}
           >
             <IconCross className={sz.icon} />

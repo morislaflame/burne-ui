@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -22,7 +23,7 @@ import {
   type TooltipSize,
   type TooltipVariant,
 } from "@/components/core/Tooltip";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { getMotionConfig, motionContentFade, motionInteractive } from "@/components/core/utils/motionConfig";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
@@ -117,6 +118,16 @@ function letterFromLabel(label: string | undefined): string {
 export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
   function AvatarImage({ className = "", onLoad, onError, ...rest }, ref) {
     const { imageStatus, onImageLoad, onImageError } = useAvatarContext("Avatar.Image");
+    const imgRef = useRef<HTMLImageElement | null>(null);
+
+    const setImgRef = useCallback(
+      (node: HTMLImageElement | null) => {
+        imgRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref],
+    );
 
     const mergedOnLoad = useCallback(
       (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -136,14 +147,33 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
 
     const visible = imageStatus === "loaded";
 
+    useLayoutEffect(() => {
+      const el = imgRef.current;
+      if (!el) return;
+
+      const reduceMotion =
+        prefersReducedInteractiveHoverLift() || !getMotionConfig().enableContentFade;
+
+      killMotion(el);
+
+      if (reduceMotion) {
+        gsap.set(el, { autoAlpha: visible ? 1 : 0 });
+        return;
+      }
+
+      gsap.to(el, {
+        autoAlpha: visible ? 1 : 0,
+        ...motionContentFade(),
+        overwrite: "auto",
+      });
+    }, [visible]);
+
     return (
       <img
-        ref={ref}
+        ref={setImgRef}
         className={cn(
-          "absolute inset-0 z-[1] size-full object-cover transition-opacity duration-fast",
-          visible
-            ? "opacity-100"
-            : "pointer-events-none opacity-0",
+          "absolute inset-0 z-[1] size-full object-cover",
+          !visible && "pointer-events-none",
           className,
         )}
         alt={rest.alt ?? ""}

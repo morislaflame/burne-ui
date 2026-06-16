@@ -347,7 +347,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
     setFontFamilyMono,
     setShadowStrength,
     setShadowSize,
-    setDuration,
+    setMotionDuration,
     setGlass,
     setAnimationFlag,
     setColor,
@@ -547,24 +547,33 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
       <Separator />
 
       <div className="flex flex-col gap-small">
-        <SectionTitle>Motion</SectionTitle>
+        <SectionTitle>Motion (GSAP)</SectionTitle>
         <ScaleControl
-          label="--duration-fast"
-          value={state.durationFast}
-          min={80}
-          max={400}
-          step={10}
-          unit="ms"
-          onChange={(v) => setDuration("durationFast", v)}
-        />
-        <ScaleControl
-          label="--duration-normal"
-          value={state.durationNormal}
+          label="interactiveDuration"
+          value={state.interactiveDuration}
           min={120}
           max={600}
           step={10}
           unit="ms"
-          onChange={(v) => setDuration("durationNormal", v)}
+          onChange={(v) => setMotionDuration("interactiveDuration", v)}
+        />
+        <ScaleControl
+          label="tooltipDuration"
+          value={state.tooltipDuration}
+          min={80}
+          max={400}
+          step={10}
+          unit="ms"
+          onChange={(v) => setMotionDuration("tooltipDuration", v)}
+        />
+        <ScaleControl
+          label="expandDuration"
+          value={state.expandDuration}
+          min={200}
+          max={800}
+          step={10}
+          unit="ms"
+          onChange={(v) => setMotionDuration("expandDuration", v)}
         />
         <Button
           type="button"
@@ -572,8 +581,9 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           variant="ghost"
           className="self-start text-muted"
           onClick={() => {
-            setDuration("durationFast", SCALE_DEFAULTS.durationFast);
-            setDuration("durationNormal", SCALE_DEFAULTS.durationNormal);
+            setMotionDuration("interactiveDuration", SCALE_DEFAULTS.interactiveDuration);
+            setMotionDuration("tooltipDuration", SCALE_DEFAULTS.tooltipDuration);
+            setMotionDuration("expandDuration", SCALE_DEFAULTS.expandDuration);
           }}
         >
           Motion по умолчанию
@@ -653,13 +663,28 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
         <SectionTitle>Анимации</SectionTitle>
         <div className="flex flex-col gap-small rounded-base border-token bg-secondary p-small">
           <Switch
-            checked={state.enableHoverLift && state.enablePressSqueeze && state.enableToggleButtonFill && state.enableRipple}
+            checked={
+              state.enableHoverLift &&
+              state.enablePressSqueeze &&
+              state.enableToggleButtonFill &&
+              state.enableRipple &&
+              state.enableExpandable &&
+              state.enableToastStack &&
+              state.enableAsyncButtonCrossfade &&
+              state.enableContentFade &&
+              state.enableFeedbackExpand
+            }
             onChange={(e) => {
               const checked = e.target.checked;
               setAnimationFlag("enableHoverLift", checked);
               setAnimationFlag("enablePressSqueeze", checked);
               setAnimationFlag("enableToggleButtonFill", checked);
               setAnimationFlag("enableRipple", checked);
+              setAnimationFlag("enableExpandable", checked);
+              setAnimationFlag("enableToastStack", checked);
+              setAnimationFlag("enableAsyncButtonCrossfade", checked);
+              setAnimationFlag("enableContentFade", checked);
+              setAnimationFlag("enableFeedbackExpand", checked);
             }}
             label="Все анимации включены"
           />
@@ -683,6 +708,31 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             checked={state.enableRipple}
             onChange={(e) => setAnimationFlag("enableRipple", e.target.checked)}
             label="Press Ripple (волны пульсации)"
+          />
+          <Switch
+            checked={state.enableExpandable}
+            onChange={(e) => setAnimationFlag("enableExpandable", e.target.checked)}
+            label="Expandable / Accordion"
+          />
+          <Switch
+            checked={state.enableToastStack}
+            onChange={(e) => setAnimationFlag("enableToastStack", e.target.checked)}
+            label="Toast stack"
+          />
+          <Switch
+            checked={state.enableAsyncButtonCrossfade}
+            onChange={(e) => setAnimationFlag("enableAsyncButtonCrossfade", e.target.checked)}
+            label="Button async crossfade"
+          />
+          <Switch
+            checked={state.enableContentFade}
+            onChange={(e) => setAnimationFlag("enableContentFade", e.target.checked)}
+            label="Content fade (Avatar и др.)"
+          />
+          <Switch
+            checked={state.enableFeedbackExpand}
+            onChange={(e) => setAnimationFlag("enableFeedbackExpand", e.target.checked)}
+            label="Button feedback ring"
           />
         </div>
       </div>

@@ -16,6 +16,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 export type LinkSize = ComponentSize;
@@ -77,7 +78,7 @@ function LinkIconSlot({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center transition-colors duration-200 ease-out motion-reduce:transition-none",
+        TEXT_COLOR_TRANSITION,
         LINK_ICON_CLASS[size],
         "[&_svg]:size-full",
         muted

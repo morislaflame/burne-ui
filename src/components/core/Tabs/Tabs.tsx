@@ -22,6 +22,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import {
@@ -398,7 +399,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
         "focus-ring",
         isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
         isSelected ? "text-primary" : "text-muted hover:text-primary",
-        !isSelected && !isDisabled && "transition-colors duration-200 ease-out motion-reduce:transition-none",
+        !isSelected && !isDisabled && TEXT_COLOR_TRANSITION,
         className,
       )}
       onClick={handleClick}

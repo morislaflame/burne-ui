@@ -1,5 +1,5 @@
 /**
- * Общие параметры анимаций (GSAP + согласованные CSS где нужно).
+ * Общие параметры анимаций (GSAP). CSS — `surface-color-transition`, `text-color-transition`, `field-shell-transition`.
  *
  * Константы здесь — значения по умолчанию.
  * Для live-значений используйте `getMotionConfig()` / `configureMotion()`.

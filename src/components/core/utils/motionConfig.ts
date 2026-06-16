@@ -85,6 +85,18 @@ export interface MotionConfig {
   /** Duration (ms) of the feedback-expand ring after async button. @default 720 */
   feedbackExpandDuration: number;
 
+  /**
+   * Duration (ms) for Expandable / Accordion panel height animation.
+   * @default 500
+   */
+  expandDuration: number;
+
+  /**
+   * GSAP easing for opening collapsible panels (Expandable, Accordion).
+   * @default "power1.inOut"
+   */
+  expandOpenEase: string;
+
   /** Whether to enable hover-lift animations globally. @default true */
   enableHoverLift: boolean;
 
@@ -96,6 +108,21 @@ export interface MotionConfig {
 
   /** Whether to enable ripple animations globally. @default true */
   enableRipple: boolean;
+
+  /** Expandable / Accordion panel height + chevron rotation. @default true */
+  enableExpandable: boolean;
+
+  /** Toast stack repositioning (transform / opacity / height). @default true */
+  enableToastStack: boolean;
+
+  /** Button async state crossfade (label ↔ loader ↔ success/error). @default true */
+  enableAsyncButtonCrossfade: boolean;
+
+  /** Content fade-in (e.g. Avatar image load). @default true */
+  enableContentFade: boolean;
+
+  /** Async button success/error expand ring. @default true */
+  enableFeedbackExpand: boolean;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -116,10 +143,17 @@ const DEFAULTS: MotionConfig = {
   rippleExpandableOpacityFrom: 0.34,
   rippleEaseCss: "cubic-bezier(0.25, 0.55, 0.35, 0.95)",
   feedbackExpandDuration: 720,
+  expandDuration: 280,
+  expandOpenEase: "power1.inOut",
   enableHoverLift: true,
   enablePressSqueeze: true,
   enableToggleButtonFill: true,
   enableRipple: true,
+  enableExpandable: true,
+  enableToastStack: true,
+  enableAsyncButtonCrossfade: true,
+  enableContentFade: true,
+  enableFeedbackExpand: true,
 };
 
 // ─── Mutable config state ─────────────────────────────────────────────────────
@@ -188,5 +222,36 @@ export function motionSwitchThumb() {
   return {
     duration: _config.switchThumbDuration / 1000,
     ease: _config.switchThumbEase,
+  } as const;
+}
+
+/** Открытие collapsible-панели (Expandable, Accordion). */
+export function motionExpandOpen() {
+  return {
+    duration: _config.expandDuration / 1000,
+    ease: _config.expandOpenEase,
+  } as const;
+}
+
+/** Закрытие collapsible-панели. */
+export function motionExpandClose() {
+  return {
+    duration: (_config.expandDuration * 0.85) / 1000,
+    ease: _config.interactiveEase,
+  } as const;
+}
+
+/** Быстрый fade (Avatar image, Calendar range tint). */
+export function motionContentFade() {
+  return {
+    duration: _config.tooltipDuration / 1000,
+    ease: _config.interactiveEase,
+  } as const;
+}
+
+/** Feedback-expand ring после async-кнопки. Easing — `ensureRippleEase()` в месте вызова. */
+export function motionFeedbackExpand() {
+  return {
+    duration: _config.feedbackExpandDuration / 1000,
   } as const;
 }

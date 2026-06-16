@@ -27,6 +27,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
@@ -406,7 +407,8 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
           ref={chevronRef}
           aria-hidden
           className={cn(
-            "inline-flex shrink-0 origin-center items-center justify-center text-muted transition-colors duration-fast",
+            "inline-flex shrink-0 origin-center items-center justify-center text-muted",
+            TEXT_COLOR_TRANSITION,
             open && "text-primary",
             ICON_CLASS[size],
           )}

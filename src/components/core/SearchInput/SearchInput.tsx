@@ -47,7 +47,7 @@ import {
 
 export type SearchInputSize = ComponentSize;
 
-import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 
 const SHELL_W_COLLAPSED: Record<ComponentSize, string> = {
   small: "w-control-small",
@@ -598,7 +598,8 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             onPointerDown={(e) => e.stopPropagation()}
             className={cn(
               "absolute top-1/2 z-[3] flex -translate-y-1/2 items-center justify-center rounded-full border-0 bg-transparent p-0",
-              "text-foreground outline-none transition-colors",
+              "text-foreground outline-none",
+              TEXT_COLOR_TRANSITION,
               hoverVariant(),
               "focus-ring-inset",
               "cursor-pointer",

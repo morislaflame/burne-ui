@@ -22,7 +22,7 @@ import {
   buttonGroupRoundingClasses,
   type ButtonGroupSegment,
 } from "@/components/core/utils/buttonGroupSegment";
-import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import { hoverVariant, SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import {
   animateInteractiveHoverLift,
@@ -93,21 +93,17 @@ const TOGGLE_BUTTON_SIZE: Record<
 
 type ToggleButtonVariantVisual = {
   idle: string;
-  pressedBorder: string;
 };
 
 const TOGGLE_BUTTON_VARIANT: Record<ToggleButtonVariant, ToggleButtonVariantVisual> = {
   default: {
-    idle: "border-token bg-surface text-foreground",
-    pressedBorder: "border-primary",
+    idle: "border-token bg-surface text-foreground"
   },
   outline: {
-    idle: "bg-transparent border-token text-foreground",
-    pressedBorder: "border-primary",
+    idle: "bg-transparent border-token text-foreground"
   },
   ghost: {
-    idle: "border border-transparent bg-transparent text-foreground",
-    pressedBorder: "border-transparent",
+    idle: "bg-transparent border-token border-transparent text-foreground",
   },
 };
 
@@ -302,7 +298,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
           !pressed && !disabled && hoverVariant(),
           groupGlue,
           vn.idle,
-          pressed && cn(vn.pressedBorder, "bg-transparent"),
+          pressed && "bg-transparent",
           pressed ? "text-primary-foreground" : "text-foreground",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           sz.root,
@@ -319,7 +315,9 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
           ref={fillRef}
           aria-hidden
           className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary transition-colors duration-normal ease-out motion-reduce:transition-none group-hover/toggle:bg-primary-hover",
+            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
+            SURFACE_COLOR_TRANSITION,
+            "motion-reduce:transition-none group-hover/toggle:bg-primary-hover",
             roundingClass,
           )}
         />

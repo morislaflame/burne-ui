@@ -21,6 +21,9 @@ import {
 } from "@/components/core/utils/hoverInteractiveLift";
 import { Ripple } from "@/components/core/Ripple";
 import { Text } from "@/components/core/Text";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
+import { useCollapsibleHeight } from "@/components/core/utils/useCollapsibleHeight";
 import { cn } from "@/utils/cn";
 
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -178,6 +181,8 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
     } = useExpandable();
 
     const liftSpanRef = useRef<HTMLSpanElement | null>(null);
+    const chevronRef = useRef<HTMLSpanElement | null>(null);
+    useChevronRotation(open, chevronRef, () => getMotionConfig().enableExpandable);
     const { rippleOverlay, rest: triggerChildren } =
       partitionTriggerRipple(children);
     const mainChildren = hasExpandableMessage(triggerChildren) ? (
@@ -237,10 +242,9 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         </span>
         {!hideChevron && hasPanel ? (
           <span
-            className={cn(
-              "relative z-[1] ml-auto flex shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-              open ? "rotate-180" : "rotate-0",
-            )}
+            ref={chevronRef}
+            className="relative z-[1] ml-auto flex shrink-0 origin-center"
+            aria-hidden
           >
             <ChevronSvg />
           </span>
@@ -309,14 +313,14 @@ ExpandableDescription.displayName = "ExpandableDescription";
 
 export function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps) {
   const { open, hasPanel } = useExpandable();
+  const chevronRef = useRef<HTMLSpanElement | null>(null);
+  useChevronRotation(open, chevronRef, () => getMotionConfig().enableExpandable);
+
   if (!hasPanel) return null;
   return (
     <span
-      className={cn(
-        "relative z-[1] flex shrink-0 self-center transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-        open ? "rotate-180" : "rotate-0",
-        className,
-      )}
+      ref={chevronRef}
+      className={cn("relative z-[1] flex shrink-0 self-center origin-center", className)}
       aria-hidden
       {...props}
     >
@@ -336,21 +340,29 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
       setHasPanel,
     } = useExpandable();
 
+    const shellRef = useRef<HTMLDivElement | null>(null);
+    const innerRef = useRef<HTMLDivElement | null>(null);
+
     useLayoutEffect(() => {
       setHasPanel(true);
       return () => setHasPanel(false);
     }, [setHasPanel]);
 
+    useCollapsibleHeight(open, shellRef, innerRef);
+
+    const setSectionRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref],
+    );
+
     return (
-      <div
-        className={cn(
-          "grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-        )}
-      >
-        <div className="min-h-0 overflow-hidden">
+      <div ref={shellRef} className="overflow-hidden">
+        <div ref={innerRef}>
           <section
-            ref={ref}
+            ref={setSectionRef}
             id={panelId}
             aria-labelledby={headerId}
             aria-hidden={!open}

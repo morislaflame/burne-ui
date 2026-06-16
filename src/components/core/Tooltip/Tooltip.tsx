@@ -134,8 +134,8 @@ function isSemanticTooltipVariant(v: TooltipVariant): v is SemanticStatus {
 }
 
 const TOOLTIP_GRID_GAP: Record<TooltipSize, string> = {
-  small: "gap-x-small",
-  base: "gap-x-base",
+  small: "gap-x-xsmall",
+  base: "gap-x-small",
   mid: "gap-x-base",
   large: "gap-x-base",
 };

@@ -19,7 +19,8 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { motionContentFade } from "@/components/core/utils/motionConfig";
+import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import { CalendarInteractiveCell, DAY_BTN } from "./CalendarInteractiveCell";
@@ -61,10 +62,10 @@ export type { CalendarLocale };
 // ─── size / variant maps ──────────────────────────────────────────────────────
 
 const WEEKDAY_CELL: Record<CalendarSize, string> = {
-  small: "h-control-small w-control-small text-xs",
-  base:  "h-control-base w-control-base text-small",
-  mid:   "h-control-mid w-control-mid text-small",
-  large: "h-control-large w-control-large text-base",
+  small: "mx-auto flex aspect-square w-full max-w-control-small items-center justify-center text-xs",
+  base:  "mx-auto flex aspect-square w-full max-w-control-base items-center justify-center text-small",
+  mid:   "mx-auto flex aspect-square w-full max-w-control-mid items-center justify-center text-small",
+  large: "mx-auto flex aspect-square w-full max-w-control-large items-center justify-center text-base",
 };
 
 const NAV_BTN: Record<CalendarSize, string> = {
@@ -109,15 +110,6 @@ const MONTH_GRID_GAP: Record<CalendarSize, string> = {
   large: "gap-small",
 };
 
-const DAY_GRID_GAP = "gap-calendar-cell";
-
-function readDurationFastSec(): number {
-  if (typeof window === "undefined") return 0.15;
-  const raw = getComputedStyle(document.documentElement).getPropertyValue("--duration-fast").trim();
-  const ms = Number.parseFloat(raw);
-  return Number.isFinite(ms) ? ms / 1000 : 0.15;
-}
-
 /** Половина полосы диапазона — плавное появление/исчезновение. */
 function CalendarRangeHalfFill({
   visible,
@@ -153,8 +145,7 @@ function CalendarRangeHalfFill({
     killMotion(el);
     gsap.to(el, {
       autoAlpha: visible ? 1 : 0,
-      duration: readDurationFastSec(),
-      ease: getMotionConfig().interactiveEase,
+      ...motionContentFade(),
       overwrite: "auto",
     });
   }, [visible]);
@@ -519,9 +510,9 @@ function CalendarNavButton({
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       className={cn(
+        hoverVariant(),
         "flex shrink-0 origin-center items-center justify-center rounded-base will-change-transform",
-        "text-muted transition-colors hover:bg-default-hover hover:text-secondary-foreground",
-        "focus-ring",
+        "text-muted focus-ring",
         "disabled:cursor-not-allowed disabled:opacity-40",
         NAV_BTN[size],
       )}
@@ -565,7 +556,8 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
             else if (view === "months") setView("years");
           }}
           className={cn(
-            "flex-1 rounded-base py-xsmall text-center font-medium transition-colors",
+            "flex-1 rounded-base py-xsmall text-center font-medium",
+            TEXT_COLOR_TRANSITION,
             HEADER_TEXT[size],
             view !== "years"
               ? "cursor-pointer hover:text-primary focus-ring"
@@ -648,7 +640,7 @@ function CalendarDaysView() {
   return (
     <div>
       {/* Weekday header row */}
-      <div className={cn("grid grid-cols-7", DAY_GRID_GAP)}>
+      <div className={cn("grid grid-cols-7 gap-xsmall")}>
         {locale.weekDays.map((wd) => (
           <div
             key={wd}
@@ -663,7 +655,7 @@ function CalendarDaysView() {
       </div>
 
       {/* Day cells */}
-      <div className={cn("grid grid-cols-7", DAY_GRID_GAP)}>
+      <div className={cn("grid grid-cols-7 gap-xsmall")}>
         {cells.map((day, idx) => {
           if (day === null) {
             return (
@@ -745,7 +737,7 @@ function CalendarMonthsView() {
             selected={isSelected}
             isCurrent={isCurrentMonth}
             size={size}
-            rounded="mid"
+            rounded="picker"
             onPress={() => onMonthPress(month)}
           >
             {name}
@@ -778,7 +770,7 @@ function CalendarYearsView() {
             selected={isSelected}
             isCurrent={isCurrentYear}
             size={size}
-            rounded="mid"
+            rounded="picker"
             onPress={() => onYearPress(year)}
             className={outOfDecade && !isSelected ? "text-muted" : undefined}
           >
@@ -796,8 +788,10 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
   function CalendarFooter({ className = "", ...rest }, ref) {
     const { onClear, onToday, locale } = useCalendar();
 
-    const btnCls =
-      "rounded-base px-small py-xsmall text-small transition-colors duration-fast focus-ring";
+    const btnCls = cn(
+      "rounded-base px-small py-xsmall text-small focus-ring",
+      TEXT_COLOR_TRANSITION,
+    );
 
     return (
       <div

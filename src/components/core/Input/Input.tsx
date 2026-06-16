@@ -30,7 +30,7 @@ import {
   buttonGroupRoundingClasses,
 } from "@/components/core/utils/buttonGroupSegment";
 import { useOptionalButtonGroupSegment } from "@/components/core/utils/buttonGroupContext";
-import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
 
@@ -230,7 +230,8 @@ function PasswordVisibilityAffix({
         }}
         onPointerDown={(e) => e.stopPropagation()}
         className={cn(
-          "relative z-10 flex items-center justify-center text-muted outline-none transition-colors",
+          "relative z-10 flex items-center justify-center text-muted outline-none",
+          TEXT_COLOR_TRANSITION,
           pwd.box,
           pwd.pad,
           "hover:text-foreground",
@@ -307,7 +308,8 @@ function FileRemoveButton({
       }}
       onPointerDown={(e) => e.stopPropagation()}
       className={cn(
-        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-base text-danger outline-none transition-colors",
+        "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-base text-danger outline-none",
+        TEXT_COLOR_TRANSITION,
         hoverVariant("danger"),
         "focus-ring",
         disabled ? "pointer-events-none opacity-40" : "",

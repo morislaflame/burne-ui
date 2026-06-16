@@ -24,6 +24,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
+import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -50,9 +51,8 @@ function useOptionalPagination() {
 
 const INTERACTIVE_INNER =
   "inline-flex min-w-0 cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none " +
-  "transition-colors hover:text-foreground motion-reduce:transition-none " +
-  "focus-ring " +
-  "disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted";
+  TEXT_COLOR_TRANSITION +
+  " hover:text-foreground focus-ring disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted";
 
 type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;

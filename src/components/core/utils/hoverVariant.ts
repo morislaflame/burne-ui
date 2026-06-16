@@ -1,7 +1,10 @@
 import { cn } from "@/utils/cn";
 
-const HOVER_TRANSITION =
-  "button-idle-surface-transition motion-reduce:transition-none";
+export const SURFACE_COLOR_TRANSITION =
+  "surface-color-transition motion-reduce:transition-none";
+
+export const TEXT_COLOR_TRANSITION =
+  "text-color-transition motion-reduce:transition-none";
 
 /**
  * Hover-фон интерактивных поверхностей.
@@ -135,5 +138,5 @@ export function hoverVariantBg(
 
 /** Hover-фон для интерактивных поверхностей. */
 export function hoverVariant(tone: HoverVariant = "default"): string {
-  return cn(HOVER_TRANSITION, hoverVariantBg(tone, "focus-visible"));
+  return cn(SURFACE_COLOR_TRANSITION, hoverVariantBg(tone, "focus-visible"));
 }

@@ -65,14 +65,20 @@ export type ThemeTokenState = {
   shadowStrength: number;
   /** Множитель blur/offset теней (`--shadow-size`). */
   shadowSize: number;
-  durationFast: number;
-  durationNormal: number;
+  interactiveDuration: number;
+  tooltipDuration: number;
+  expandDuration: number;
   glassBlur: number;
   glassSaturate: number;
   enableHoverLift: boolean;
   enablePressSqueeze: boolean;
   enableToggleButtonFill: boolean;
   enableRipple: boolean;
+  enableExpandable: boolean;
+  enableToastStack: boolean;
+  enableAsyncButtonCrossfade: boolean;
+  enableContentFade: boolean;
+  enableFeedbackExpand: boolean;
   colors: ThemeColors;
   statusForegrounds: ThemeStatusForegrounds;
   /** true — `--color-border` задаётся inline; false — формула из tokens/styles.css (как в Storybook). */
@@ -220,14 +226,20 @@ export const SCALE_DEFAULTS = {
   textScale: 1,
   shadowStrength: 1,
   shadowSize: 1,
-  durationFast: 150,
-  durationNormal: 250,
+  interactiveDuration: 280,
+  tooltipDuration: 200,
+  expandDuration: 500,
   glassBlur: 22,
   glassSaturate: 1.45,
   enableHoverLift: true,
   enablePressSqueeze: true,
   enableToggleButtonFill: true,
   enableRipple: true,
+  enableExpandable: true,
+  enableToastStack: true,
+  enableAsyncButtonCrossfade: true,
+  enableContentFade: true,
+  enableFeedbackExpand: true,
 } as const;
 
 /** Наборы только scale-значений для лейаут-пресетов. Не трогают цвета. */
@@ -859,8 +871,6 @@ const INLINE_TOKEN_VARS = [
   "--border-width",
   "--font-family-sans",
   "--font-family-mono",
-  "--duration-fast",
-  "--duration-normal",
   "--glass-blur",
   "--glass-saturate",
   "--shadow-size",
@@ -896,18 +906,24 @@ export async function applyThemeTokens(state: ThemeTokenState, root: HTMLElement
   root.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
   root.style.setProperty("--font-family-sans", state.fontFamily);
   root.style.setProperty("--font-family-mono", state.fontFamilyMono);
-  root.style.setProperty("--duration-fast", `${state.durationFast}ms`);
-  root.style.setProperty("--duration-normal", `${state.durationNormal}ms`);
   root.style.setProperty("--glass-blur", `${state.glassBlur}px`);
   root.style.setProperty("--glass-saturate", String(state.glassSaturate));
 
   // Применяем глобальные флаги анимации в наш MotionConfig
   const { configureMotion } = await import("@/components/core/utils/motionConfig");
   configureMotion({
+    interactiveDuration: state.interactiveDuration,
+    tooltipDuration: state.tooltipDuration,
+    expandDuration: state.expandDuration,
     enableHoverLift: state.enableHoverLift,
     enablePressSqueeze: state.enablePressSqueeze,
     enableToggleButtonFill: state.enableToggleButtonFill,
     enableRipple: state.enableRipple,
+    enableExpandable: state.enableExpandable,
+    enableToastStack: state.enableToastStack,
+    enableAsyncButtonCrossfade: state.enableAsyncButtonCrossfade,
+    enableContentFade: state.enableContentFade,
+    enableFeedbackExpand: state.enableFeedbackExpand,
   });
 
   applyTextScale(root, state.textScale);
@@ -941,8 +957,6 @@ export function exportThemeCss(state: ThemeTokenState): string {
     `  --border-width: ${state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`};`,
     `  --font-family-sans: ${state.fontFamily};`,
     `  --font-family-mono: ${state.fontFamilyMono};`,
-    `  --duration-fast: ${state.durationFast}ms;`,
-    `  --duration-normal: ${state.durationNormal}ms;`,
     `  --glass-blur: ${state.glassBlur}px;`,
     `  --glass-saturate: ${state.glassSaturate};`,
     `  --shadow-size: ${state.shadowSize};`,

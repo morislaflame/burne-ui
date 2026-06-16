@@ -22,7 +22,7 @@ import { CloseButton } from "@/components/core/CloseButton";
 import { Loading } from "@/components/core/Loading";
 import { Text } from "@/components/core/Text";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
 import {
   SEMANTIC_STATUS_ICONS,
 } from "@/components/core/utils/semanticStatusIcons";
@@ -499,11 +499,39 @@ function ToastItemWrapper({
 }: ToastItemWrapperProps) {
   const animRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const stackRef = useRef<HTMLDivElement>(null);
 
   const capped = Math.min(reverseIdx, MAX_VISIBLE - 1);
   const stackScale = 1 - capped * STACK_SCALE;
   const peekY = isTop ? capped * STACK_PEEK : -capped * STACK_PEEK;
   const stackOpacity = reverseIdx >= MAX_VISIBLE ? 0 : 1;
+
+  useLayoutEffect(() => {
+    const el = stackRef.current;
+    if (!el) return;
+
+    const reduceMotion =
+      prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToastStack;
+
+    killMotion(el);
+
+    if (reduceMotion) {
+      gsap.set(el, {
+        y: peekY,
+        scale: stackScale,
+        autoAlpha: stackOpacity,
+      });
+      return;
+    }
+
+    gsap.to(el, {
+      y: peekY,
+      scale: stackScale,
+      autoAlpha: stackOpacity,
+      ...motionInteractive(),
+      overwrite: "auto",
+    });
+  }, [peekY, stackScale, stackOpacity]);
 
   // Track height
   useLayoutEffect(() => {
@@ -562,14 +590,13 @@ function ToastItemWrapper({
 
   return (
     <div
+      ref={stackRef}
       aria-hidden={!isVisible || undefined}
-      className="transition-[transform,opacity] duration-normal ease-out"
+      className="will-change-transform"
       style={{
         gridColumn: 1,
         gridRow: 1,
-        transform: `translateY(${peekY}px) scale(${stackScale})`,
         transformOrigin: isTop ? "top center" : "bottom center",
-        opacity: stackOpacity,
         zIndex: MAX_VISIBLE + 1 - reverseIdx,
         pointerEvents: reverseIdx === 0 ? "auto" : "none",
       }}
@@ -621,6 +648,7 @@ function ToastViewport({
 }: ToastViewportProps) {
   const isTop = placement.startsWith("top");
   const [heights, setHeights] = useState<Map<string, number>>(new Map());
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const onHeightChange = useCallback((id: string, h: number) => {
     setHeights((prev) => {
@@ -635,6 +663,27 @@ function ToastViewport({
   const extraPeek = Math.min(sorted.length - 1, MAX_VISIBLE - 1) * STACK_PEEK;
   const containerH = frontHeight + extraPeek;
 
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el || containerH <= 0) return;
+
+    const reduceMotion =
+      prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToastStack;
+
+    killMotion(el);
+
+    if (reduceMotion) {
+      el.style.height = `${containerH}px`;
+      return;
+    }
+
+    gsap.to(el, {
+      height: containerH,
+      ...motionInteractive(),
+      overwrite: "auto",
+    });
+  }, [containerH]);
+
   return (
     <div
       aria-label={`Уведомления (${placement})`}
@@ -642,7 +691,8 @@ function ToastViewport({
       style={{ width: TOAST_WIDTH_PX }}
     >
       <div
-        className="relative grid transition-[height] duration-normal"
+        ref={containerRef}
+        className="relative grid"
         style={{
           height: containerH || undefined,
           alignItems: isTop ? "start" : "end",

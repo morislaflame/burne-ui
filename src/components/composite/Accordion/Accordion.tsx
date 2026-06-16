@@ -10,6 +10,8 @@ import {
 
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
 import { Text } from "@/components/core/Text";
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { cn } from "@/utils/cn";
 
 import type {
@@ -196,15 +198,15 @@ AccordionDescription.displayName = "Accordion.Description";
 
 export function AccordionIndicator({ className, children, ...rest }: AccordionIndicatorProps) {
   const { open, hasPanel } = useExpandableContext();
+  const chevronRef = useRef<HTMLSpanElement | null>(null);
+  useChevronRotation(open, chevronRef, () => getMotionConfig().enableExpandable);
+
   if (!hasPanel) return null;
 
   return (
     <span
-      className={cn(
-        "relative z-[1] ml-auto flex shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-        open ? "rotate-180" : "rotate-0",
-        className,
-      )}
+      ref={chevronRef}
+      className={cn("relative z-[1] ml-auto flex shrink-0 origin-center", className)}
       aria-hidden
       {...rest}
     >

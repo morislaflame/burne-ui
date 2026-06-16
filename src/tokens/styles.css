@@ -412,10 +412,6 @@
   --selection-indicator-mid: var(--size-scale-2xl);
   --selection-indicator-large: var(--size-scale-3xl);
 
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-fast: 150ms;
-  --duration-normal: 250ms;
-
   /**
    * Тени компонентов — три уровня.
    * sm: лёгкий рельеф (компоненты «первого уровня» при hover, default-состояние «второго уровня»).
