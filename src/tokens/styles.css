@@ -41,18 +41,21 @@
    * 2) --color-surface-tint-danger        (default-status surface + outline/ghost hover)
    * 3) --color-surface-tint-danger-hover  (hover поверх surface-tint-danger)
    * 4) --color-danger-fill-hover          (hover поверх bg-danger)
+   *
+   * surface-tint-* — непрозрачный mix статуса с black (тёмная) / white (светлая),
+   * чтобы панели не просвечивали при наложении.
    */
   --color-danger: #dc2626;
   --color-danger-foreground: #fafafa;
   --color-surface-tint-danger: color-mix(
     in oklab,
-    var(--color-danger) 14%,
-    transparent
+    var(--color-danger) 30%,
+    black
   );
   --color-surface-tint-danger-hover: color-mix(
     in oklab,
-    var(--color-danger) 22%,
-    transparent
+    var(--color-danger) 40%,
+    black
   );
   --color-danger-fill-hover: color-mix(
     in oklab,
@@ -71,13 +74,13 @@
   --color-success-foreground: #fafafa;
   --color-surface-tint-success: color-mix(
     in oklab,
-    var(--color-success) 14%,
-    transparent
+    var(--color-success) 30%,
+    black
   );
   --color-surface-tint-success-hover: color-mix(
     in oklab,
-    var(--color-success) 22%,
-    transparent
+    var(--color-success) 40%,
+    black
   );
   --color-success-fill-hover: color-mix(
     in oklab,
@@ -96,13 +99,13 @@
   --color-info-foreground: #fafafa;
   --color-surface-tint-info: color-mix(
     in oklab,
-    var(--color-info) 14%,
-    transparent
+    var(--color-info) 30%,
+    black
   );
   --color-surface-tint-info-hover: color-mix(
     in oklab,
-    var(--color-info) 22%,
-    transparent
+    var(--color-info) 40%,
+    black
   );
   --color-info-fill-hover: color-mix(
     in oklab,
@@ -121,13 +124,13 @@
   --color-warning-foreground: #0c0c0e;
   --color-surface-tint-warning: color-mix(
     in oklab,
-    var(--color-warning) 14%,
-    transparent
+    var(--color-warning) 30%,
+    black
   );
   --color-surface-tint-warning-hover: color-mix(
     in oklab,
-    var(--color-warning) 22%,
-    transparent
+    var(--color-warning) 40%,
+    black
   );
   --color-warning-fill-hover: color-mix(
     in oklab,
@@ -469,6 +472,47 @@
   --color-info-foreground: #ffffff;
   --color-warning: #f59e0b;
   --color-warning-foreground: #0c0c0e;
+
+  --color-surface-tint-danger: color-mix(
+    in oklab,
+    var(--color-danger) 14%,
+    white
+  );
+  --color-surface-tint-danger-hover: color-mix(
+    in oklab,
+    var(--color-danger) 22%,
+    white
+  );
+  --color-surface-tint-success: color-mix(
+    in oklab,
+    var(--color-success) 14%,
+    white
+  );
+  --color-surface-tint-success-hover: color-mix(
+    in oklab,
+    var(--color-success) 22%,
+    white
+  );
+  --color-surface-tint-info: color-mix(
+    in oklab,
+    var(--color-info) 15%,
+    white
+  );
+  --color-surface-tint-info-hover: color-mix(
+    in oklab,
+    var(--color-info) 22%,
+    white
+  );
+  --color-surface-tint-warning: color-mix(
+    in oklab,
+    var(--color-warning) 14%,
+    white
+  );
+  --color-surface-tint-warning-hover: color-mix(
+    in oklab,
+    var(--color-warning) 22%,
+    white
+  );
 
   --color-primary-hover: color-mix(
     in oklab,

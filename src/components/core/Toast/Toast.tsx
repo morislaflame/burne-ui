@@ -450,7 +450,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
         aria-live={liveRole === "alert" ? "assertive" : "polite"}
         className={cn(
           messageBannerGridClass(gridSlots),
-          "w-full rounded-mid py-plus px-large shadow-token-md",
+          "w-full rounded-mid py-base px-large shadow-token-md",
           TOAST_SURFACE[status],
           className,
         )}

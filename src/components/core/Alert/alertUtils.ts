@@ -47,6 +47,54 @@ export function alertHasIndicator(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) => name === "AlertIndicator");
 }
 
+function walkAlertIndicatorProps(
+  node: ReactNode,
+  visit: (props: { children?: ReactNode; status?: AlertStatus }) => void,
+): void {
+  for (const child of Children.toArray(node)) {
+    if (!isValidElement(child)) continue;
+    const displayName = (child.type as { displayName?: string }).displayName;
+    if (displayName === "AlertIndicator") {
+      visit(child.props as { children?: ReactNode; status?: AlertStatus });
+    }
+    walkAlertIndicatorProps((child.props as { children?: ReactNode }).children, visit);
+  }
+}
+
+/** Будет ли `<Alert.Indicator>` реально отрисован при данном tone и children. */
+export function alertIndicatorWouldRender(
+  tone: AlertStatus,
+  indicatorChildren: ReactNode | undefined,
+  indicatorStatus?: AlertStatus,
+): boolean {
+  const effectiveTone = indicatorStatus ?? tone;
+  if (indicatorChildren === null) return false;
+  if (indicatorChildren !== undefined) return true;
+  if (effectiveTone === "default" || effectiveTone === "secondary") return false;
+  if (effectiveTone === "outline") return true;
+  return (
+    effectiveTone === "danger" ||
+    effectiveTone === "success" ||
+    effectiveTone === "info" ||
+    effectiveTone === "warning"
+  );
+}
+
+/** Compound: колонка indicator только если хотя бы один Indicator действительно виден. */
+export function alertCompoundShowsIndicator(
+  children: ReactNode,
+  tone: AlertStatus,
+): boolean {
+  if (!alertHasIndicator(children)) return false;
+  let visible = false;
+  walkAlertIndicatorProps(children, (props) => {
+    if (alertIndicatorWouldRender(tone, props.children, props.status)) {
+      visible = true;
+    }
+  });
+  return visible;
+}
+
 export function alertHasAction(children: ReactNode): boolean {
   return walkAlertChildren(children, (name) => name === "AlertAction");
 }

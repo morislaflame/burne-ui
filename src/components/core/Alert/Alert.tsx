@@ -35,9 +35,9 @@ import { cn } from "@/utils/cn";
 
 import { AlertContext } from "./alertContext";
 import {
+  alertCompoundShowsIndicator,
   alertHasAction,
   alertHasDescription,
-  alertHasIndicator,
   alertHasTitle,
   hasAlertCompoundChildren,
   resolveAlertAriaDescribedBy,
@@ -90,9 +90,9 @@ function alertShowsIndicator(
   tone: AlertStatus,
   icon: ReactNode | null | undefined,
   isCompound: boolean,
-  compoundHasIndicator: boolean,
+  children: ReactNode,
 ): boolean {
-  if (isCompound) return compoundHasIndicator;
+  if (isCompound) return alertCompoundShowsIndicator(children, tone);
   if (icon === null) return false;
   if (icon !== undefined) return true;
   return alertShowsDefaultIndicatorIcon(tone) && alertDefaultIndicatorIcon(tone) !== null;
@@ -108,12 +108,7 @@ function resolveAlertGridSlots(
   hasDescription: boolean,
 ): MessageBannerGridSlots {
   return {
-    hasIndicator: alertShowsIndicator(
-      tone,
-      icon,
-      isCompound,
-      alertHasIndicator(children),
-    ),
+    hasIndicator: alertShowsIndicator(tone, icon, isCompound, children),
     hasTitle,
     hasDescription,
     hasAction: isCompound ? alertHasAction(children) : action != null,
