@@ -276,11 +276,11 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
 
 function TableSortChevron({ direction }: { direction: SortDirection | undefined }) {
   const chevronRef = useRef<HTMLSpanElement>(null);
-  useChevronRotation(direction === "descending", chevronRef, () => true);
+  const bindChevronRef = useChevronRotation(direction === "descending", chevronRef, () => true);
 
   return (
     <span
-      ref={chevronRef}
+      ref={bindChevronRef}
       aria-hidden
       className={cn(
         "shrink-0 origin-center",

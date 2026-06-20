@@ -34,6 +34,7 @@ import type {
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
+import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
@@ -98,15 +99,6 @@ function useDropdown() {
   const ctx = useContext(DropdownContext);
   if (!ctx) throw new Error("Компоненты Dropdown.* должны быть внутри <Dropdown>.");
   return ctx;
-}
-
-/** Портал в `body` не наследует `data-theme` — копируем с триггера (как у `Tooltip`). */
-function inheritThemePortalProps(triggerEl: HTMLElement | null): {
-  "data-theme"?: "light";
-} {
-  if (!triggerEl) return {};
-  const inherited = triggerEl.closest("[data-theme]")?.getAttribute("data-theme");
-  return inherited === "light" ? { "data-theme": "light" as const } : {};
 }
 
 const MENU_ITEM_SELECTOR =
@@ -845,7 +837,7 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
 
     if (!portalMounted) return null;
 
-    const portalTheme = inheritThemePortalProps(menuTriggerRef.current);
+    const portalTheme = burneLightThemePortalProps(menuTriggerRef.current);
 
     const panel = (
       <div

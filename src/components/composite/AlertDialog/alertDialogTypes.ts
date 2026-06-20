@@ -18,6 +18,11 @@ export type AlertDialogProps = {
   status?: AlertStatus;
   /** По умолчанию `m`. */
   size?: AlertDialogSize;
+  /**
+   * Якорь для наследования светлой темы с обёртки (`data-theme`).
+   * По умолчанию — `document.activeElement` в момент открытия.
+   */
+  themeAnchor?: HTMLElement | null;
 };
 
 export type AlertDialogContextValue = {

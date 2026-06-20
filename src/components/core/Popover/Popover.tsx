@@ -30,6 +30,7 @@ import {
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
+import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { cn } from "@/utils/cn";
 
 import {
@@ -103,14 +104,6 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
       else if (ref) ref.current = node;
     }
   };
-}
-
-function inheritThemePortalProps(triggerEl: HTMLElement | null): {
-  "data-theme"?: "light";
-} {
-  if (!triggerEl) return {};
-  const inherited = triggerEl.closest("[data-theme]")?.getAttribute("data-theme");
-  return inherited === "light" ? { "data-theme": "light" } : {};
 }
 
 function isPopoverArrowElement(el: ReactElement): boolean {
@@ -594,7 +587,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
   if (!portalMounted) return null;
   if (typeof document === "undefined") return null;
 
-  const portalTheme = inheritThemePortalProps(anchorRef?.current ?? triggerRef.current);
+  const portalTheme = burneLightThemePortalProps(anchorRef?.current ?? triggerRef.current);
 
   const describedBy =
     labelConnected && hintConnected

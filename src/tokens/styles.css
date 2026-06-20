@@ -407,10 +407,10 @@
    * Круглые индикаторы выбора (Radio, Checkbox, Slider thumb, Dropdown).
    * Диаметр внешнего кольца; заливка — inset 1px.
    */
-  --selection-indicator-small: var(--size-scale-sm);
+  --selection-indicator-small: var(--size-scale-md);
   --selection-indicator-base: var(--size-scale-lg);
-  --selection-indicator-mid: var(--size-scale-2xl);
-  --selection-indicator-large: var(--size-scale-3xl);
+  --selection-indicator-mid: var(--size-scale-xl);
+  --selection-indicator-large: var(--size-scale-2xl);
 
   /**
    * Тени компонентов — три уровня.
@@ -449,8 +449,7 @@
   --glass-highlight: rgb(255 255 255 / 0.09);
 }
 
-[data-theme="light"],
-[data-brn-theme="light"] {
+[data-theme="light"] {
   --color-background: #f5f5f5;
   --color-surface: #ffffff;
   --color-foreground: #18181b;

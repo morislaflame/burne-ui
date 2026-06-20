@@ -220,15 +220,15 @@ const LIGHT_STATUS_FOREGROUNDS: ThemeStatusForegrounds = {
 export const SCALE_DEFAULTS = {
   space: 0.5,
   size: 1,
-  /** Радиус в пикселях (0–100) */
-  radius: 8,
+  /** Базовый радиус в rem; ступени `rounded-*` — множители от `--radius`. */
+  radius: 0.5,
   borderWidth: 1,
   textScale: 1,
   shadowStrength: 1,
   shadowSize: 1,
   interactiveDuration: 280,
   tooltipDuration: 200,
-  expandDuration: 500,
+  expandDuration: 200,
   glassBlur: 22,
   glassSaturate: 1.45,
   enableHoverLift: true,
@@ -244,9 +244,9 @@ export const SCALE_DEFAULTS = {
 
 /** Наборы только scale-значений для лейаут-пресетов. Не трогают цвета. */
 export const LAYOUT_PRESETS = {
-  compact:  { space: 0.4,   size: 0.9,   radius: 6,  borderWidth: 1, textScale: 0.95 },
-  spacious: { space: 0.625, size: 1.125, radius: 10, borderWidth: 1, textScale: 1.05 },
-  flat:     { space: 0.5,   size: 1,     radius: 6,  borderWidth: 0, textScale: 1 },
+  compact:  { space: 0.4,   size: 0.9,   radius: 0.375, borderWidth: 1, textScale: 0.95 },
+  spacious: { space: 0.625, size: 1.125, radius: 0.625, borderWidth: 1, textScale: 1.05 },
+  flat:     { space: 0.5,   size: 1,     radius: 0.375, borderWidth: 0, textScale: 1 },
 } as const;
 
 export type LayoutPresetKey = keyof typeof LAYOUT_PRESETS;
@@ -890,19 +890,19 @@ export function clearThemeInlineTokens(root: HTMLElement = document.documentElem
   for (const name of INLINE_TOKEN_VARS) {
     root.style.removeProperty(name);
   }
-  delete root.dataset.brnTheme;
+  delete root.dataset.theme;
 }
 
 export async function applyThemeTokens(state: ThemeTokenState, root: HTMLElement = document.documentElement) {
   if (state.theme === "light") {
-    root.dataset.brnTheme = "light";
+    root.dataset.theme = "light";
   } else {
-    delete root.dataset.brnTheme;
+    delete root.dataset.theme;
   }
 
   root.style.setProperty("--space", `${state.space}rem`);
   root.style.setProperty("--size", `${state.size}rem`);
-  root.style.setProperty("--radius", `${state.radius}px`);
+  root.style.setProperty("--radius", `${state.radius}rem`);
   root.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
   root.style.setProperty("--font-family-sans", state.fontFamily);
   root.style.setProperty("--font-family-mono", state.fontFamilyMono);
@@ -953,7 +953,7 @@ export function exportThemeCss(state: ThemeTokenState): string {
     ":root {",
     `  --space: ${state.space}rem;`,
     `  --size: ${state.size}rem;`,
-    `  --radius: ${state.radius}px;`,
+    `  --radius: ${state.radius}rem;`,
     `  --border-width: ${state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`};`,
     `  --font-family-sans: ${state.fontFamily};`,
     `  --font-family-mono: ${state.fontFamilyMono};`,
@@ -985,7 +985,7 @@ export function exportThemeCss(state: ThemeTokenState): string {
 
   if (state.theme === "light") {
     lines.push("", '/* Опционально: светлая тема через data-атрибут */');
-    lines.push('/* <html data-brn-theme="light"> */');
+    lines.push('/* <html data-theme="light"> */');
   }
 
   return lines.join("\n");

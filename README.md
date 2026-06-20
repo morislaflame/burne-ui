@@ -54,7 +54,6 @@ import "./burne-theme-overrides.css";
 }
 
 /* Светлая тема: те же ветки, что и в пакете */
-[data-brn-theme="light"],
 [data-theme="light"] {
   --color-primary: #4f46e5;
 }
@@ -88,10 +87,10 @@ const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ri
 На корне (например `<html>`) или на обёртке портала:
 
 ```html
-<html data-brn-theme="light">
+<html data-theme="light">
 ```
 
-Поддерживается также `data-theme="light"` (как в Storybook). В коде проверка: `document.documentElement.dataset.brnTheme === "light"`.
+Атрибут `data-theme="light"` на `<html>` или на обёртке включает светлые токены. Портальные компоненты (`Dialog`, `AlertDialog`, `Drawer`, `Tooltip`, …) наследуют тему с триггера/якоря или с корня документа; overlay модалок обновляется при смене атрибута.
 
 ## Экспорт `cn`
 

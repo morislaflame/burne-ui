@@ -1,13 +1,39 @@
-import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
+import {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  type RefObject,
+} from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionSelectionFillIn, motionSelectionFillOut, getMotionConfig } from "@/components/core/utils/motionConfig";
 
+const TOGGLE_FILL_INIT_ATTR = "data-toggle-fill-init";
+
 /**
  * Заливка ToggleButton / CalendarInteractiveCell.
  * Не задавайте `style={{ transform, opacity }}` на fill — React перезапишет GSAP при ререндере родителя.
  */
+export function applyToggleButtonFillInstant(fill: HTMLElement, pressed: boolean) {
+  killMotion(fill);
+  gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
+}
+
+export function createToggleButtonFillRefCallback(
+  ref: RefObject<HTMLElement | null>,
+  initialPressed: boolean,
+) {
+  return (node: HTMLElement | null) => {
+    ref.current = node;
+    if (node && !node.hasAttribute(TOGGLE_FILL_INIT_ATTR)) {
+      node.setAttribute(TOGGLE_FILL_INIT_ATTR, "");
+      applyToggleButtonFillInstant(node, initialPressed);
+    }
+  };
+}
+
 export function animateToggleButtonFill(
   fill: HTMLElement,
   pressed: boolean,
@@ -15,7 +41,7 @@ export function animateToggleButtonFill(
 ): void {
   killMotion(fill);
   if (reduceMotion) {
-    gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
+    applyToggleButtonFillInstant(fill, pressed);
     return;
   }
 
@@ -34,8 +60,14 @@ export function useToggleButtonFillAnimation(
   pressed: boolean,
   fillRef: RefObject<HTMLElement | null>,
 ) {
+  const initialPressedRef = useRef(pressed);
   const prevPressedRef = useRef<boolean | undefined>(undefined);
   const reduceMotion = prefersReducedInteractiveHoverLift();
+
+  const bindFillRef = useMemo(
+    () => createToggleButtonFillRefCallback(fillRef, initialPressedRef.current),
+    [fillRef],
+  );
 
   const animateTo = useCallback(
     (next: boolean) => {
@@ -54,8 +86,7 @@ export function useToggleButtonFillAnimation(
 
     if (prevPressedRef.current === undefined) {
       prevPressedRef.current = pressed;
-      killMotion(fill);
-      gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
+      applyToggleButtonFillInstant(fill, pressed);
       return;
     }
 
@@ -64,5 +95,5 @@ export function useToggleButtonFillAnimation(
     animateToggleButtonFill(fill, pressed, reduceMotion);
   }, [pressed, fillRef, reduceMotion]);
 
-  return { animateTo };
+  return { animateTo, bindFillRef };
 }

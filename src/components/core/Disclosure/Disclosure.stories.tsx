@@ -24,6 +24,16 @@ const meta = {
   title: "Core Components/Disclosure",
   component: Disclosure,
   tags: ["autodocs"],
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+    },
+    variant: {
+      control: "select",
+      options: ["default", "outline", "secondary", "card", "ghost"],
+    },
+  },
   parameters: {
     layout: "fullscreen",
     docs: {

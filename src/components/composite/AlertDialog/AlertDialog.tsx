@@ -45,6 +45,11 @@ import {
 } from "@/components/core/Button";
 import { CloseButton } from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  burneLightThemePortalProps,
+  useBurneLightTheme,
+  usePortalThemeAnchor,
+} from "@/components/core/utils/burneLightTheme";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
@@ -112,11 +117,6 @@ function alertDialogPanelClass(tone: AlertStatus): string {
     return "bg-secondary border-token text-secondary-foreground shadow-token-lg";
   }
   return ALERT_DIALOG_SHELL_FILLED;
-}
-
-function readBurneLightTheme(): boolean {
-  if (typeof document === "undefined") return false;
-  return document.documentElement.dataset.brnTheme === "light";
 }
 
 type AlertDialogHeaderContextValue = {
@@ -372,6 +372,7 @@ export const AlertDialogRoot = function AlertDialog({
   className = "",
   status,
   size = "base",
+  themeAnchor,
 }: AlertDialogProps) {
   const tone = resolveAlertStatus(status);
   const sizePreset = ALERT_DIALOG_SIZE[size];
@@ -387,6 +388,9 @@ export const AlertDialogRoot = function AlertDialog({
   const setHasDescriptionStable = useCallback((v: boolean) => {
     setHasDescription(v);
   }, []);
+
+  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor);
+  const lightUi = useBurneLightTheme(portalThemeAnchor);
 
   useLayoutEffect(() => {
     if (open) setMounted(true);
@@ -470,11 +474,12 @@ export const AlertDialogRoot = function AlertDialog({
   if (typeof document === "undefined") return null;
   if (!mounted) return null;
 
-  const lightUi = readBurneLightTheme();
+  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
 
   return createPortal(
     <AlertDialogContext.Provider value={ctxValue}>
       <dialog
+        {...portalTheme}
         ref={dialogRef}
         role="alertdialog"
         onCancel={(e) => e.preventDefault()}

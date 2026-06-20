@@ -20,6 +20,8 @@ import {
 import { IoChevronDown } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -27,6 +29,8 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
+import { applyCollapsibleInstantState, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
@@ -36,7 +40,7 @@ import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
 // ─── types ────────────────────────────────────────────────────────────────────
 
 export type DisclosureVariant = "default" | "outline" | "secondary" | "card" | "ghost";
-export type DisclosureSize = "small" | "base" | "mid" | "large";
+export type DisclosureSize = ComponentSize;
 export type DisclosureIconPos = "left" | "right";
 
 /** Контент в отдельной рамке под триггером (outline / secondary). */
@@ -83,42 +87,24 @@ function useDisclosureCtx(): DisclosureCtx {
   return ctx;
 }
 
-// ─── size maps ────────────────────────────────────────────────────────────────
+// ─── size maps (CONTROL_SIZE_LAYOUT) ─────────────────────────────────────────
 
-const TRIGGER_H: Record<DisclosureSize, string> = {
-  small: "min-h-control-small",
-  base: "min-h-control-base",
-  mid: "min-h-control-mid",
-  large: "min-h-control-large",
-};
-
-const TRIGGER_PAD: Record<DisclosureSize, string> = {
-  small: "px-base py-base",
-  base: "px-large py-base",
-  mid: "px-mid py-base",
-  large: "px-large py-base",
-};
-
-const CONTENT_PAD: Record<DisclosureSize, string> = {
+const DISCLOSURE_CONTENT_PAD: Record<DisclosureSize, string> = {
   small: "p-base",
   base: "p-mid",
   mid: "p-mid",
   large: "p-large",
 };
 
-const TRIGGER_TEXT: Record<DisclosureSize, string> = {
-  small: "small",
-  base: "base",
-  mid: "mid",
-  large: "mid",
-};
-
-const ICON_CLASS: Record<DisclosureSize, string> = {
-  small: "icon-small",
-  base: "icon-base",
-  mid: "icon-large",
-  large: "icon-large",
-};
+function disclosureTriggerShell(size: DisclosureSize) {
+  const layout = CONTROL_SIZE_LAYOUT[size];
+  return {
+    minH: layout.h.replace(/^h-/, "min-h-"),
+    padX: layout.padX,
+    text: layout.controlText,
+    chevron: layout.chevronIcon,
+  };
+}
 
 // ─── variant maps ─────────────────────────────────────────────────────────────
 
@@ -196,33 +182,28 @@ function useContentAnimation(
   open: boolean,
   skipContentAnimRef: React.RefObject<boolean>,
 ) {
-  const isFirstRender = useRef(true);
+  const prevOpenRef = useRef<boolean | undefined>(undefined);
 
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const inner = innerRef.current;
     if (!shell || !inner) return;
 
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      if (!open) {
-        shell.style.height = "0px";
-        shell.style.overflow = "hidden";
-      }
+    if (prevOpenRef.current === undefined) {
+      prevOpenRef.current = open;
+      applyCollapsibleInstantState(shell, open);
       return;
     }
 
     if (skipContentAnimRef.current) {
       skipContentAnimRef.current = false;
-      if (open) {
-        shell.style.height = "auto";
-        shell.style.overflow = "";
-      } else {
-        shell.style.height = "0px";
-        shell.style.overflow = "hidden";
-      }
+      prevOpenRef.current = open;
+      applyCollapsibleInstantState(shell, open);
       return;
     }
+
+    if (prevOpenRef.current === open) return;
+    prevOpenRef.current = open;
 
     killMotion(shell);
 
@@ -258,36 +239,6 @@ function useContentAnimation(
   }, [open, shellRef, innerRef, skipContentAnimRef]);
 }
 
-function useChevronAnimation(
-  chevronRef: React.RefObject<HTMLSpanElement | null>,
-  open: boolean,
-  skipContentAnimRef: React.RefObject<boolean>,
-) {
-  const isFirstRender = useRef(true);
-
-  useLayoutEffect(() => {
-    const el = chevronRef.current;
-    if (!el) return;
-
-    if (skipContentAnimRef.current) return;
-
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      if (open) el.style.transform = "rotate(180deg)";
-      return;
-    }
-
-    const { interactiveDuration, interactiveEase } = getMotionConfig();
-    killMotion(el);
-    gsap.to(el, {
-      rotation: open ? 180 : 0,
-      duration: interactiveDuration / 1000,
-      ease: interactiveEase,
-      overwrite: "auto",
-    });
-  }, [open, chevronRef, skipContentAnimRef]);
-}
-
 // ─── Disclosure.Trigger ───────────────────────────────────────────────────────
 
 export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
@@ -313,6 +264,8 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     const { open, setOpen, triggerId, panelId, variant, size, disabled, iconPos, skipContentAnimRef } =
       useDisclosureCtx();
 
+    const triggerShell = disclosureTriggerShell(size);
+
     const { chevronRef } = useDisclosureCtx();
     const btnRef = useRef<HTMLButtonElement>(null);
     const titleLiftRef = useRef<HTMLSpanElement>(null);
@@ -327,7 +280,12 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       [ref],
     );
 
-    useChevronAnimation(chevronRef, open, skipContentAnimRef);
+    const bindChevronRef = useChevronRotation(
+      open,
+      chevronRef,
+      () => getMotionConfig().enableExpandable,
+      skipContentAnimRef,
+    );
 
     useEffect(() => {
       const el = titleLiftRef.current;
@@ -404,13 +362,13 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     const chevronNode =
       icon !== null ? (
         <span
-          ref={chevronRef}
+          ref={bindChevronRef}
           aria-hidden
           className={cn(
             "inline-flex shrink-0 origin-center items-center justify-center text-muted",
+            triggerShell.chevron,
             TEXT_COLOR_TRANSITION,
             open && "text-primary",
-            ICON_CLASS[size],
           )}
         >
           {icon ?? <IoChevronDown className="size-full" />}
@@ -428,8 +386,9 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         className={cn(
           "flex w-full select-none items-center gap-small text-left outline-none",
           "focus-ring",
-          TRIGGER_H[size],
-          TRIGGER_PAD[size],
+          triggerShell.minH,
+          triggerShell.padX,
+          "py-base",
           VARIANT_TRIGGER[variant],
           disabled && "cursor-not-allowed opacity-48",
           !disabled && "cursor-pointer",
@@ -449,7 +408,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         >
           <Text
             as="span"
-            variant={TRIGGER_TEXT[size] as "small" | "base" | "mid"}
+            variant={triggerShell.text}
             className={cn(
               "block font-medium",
               open ? "text-primary" : "text-foreground",
@@ -533,19 +492,21 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
 
     useContentAnimation(shellRef, innerRef, open, skipContentAnimRef);
 
+    const bindShellRef = useCollapsibleShellRef(shellRef, open);
+
     const setShellRef = useCallback(
       (node: HTMLDivElement | null) => {
-        shellRef.current = node;
+        bindShellRef(node);
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref],
+      [bindShellRef, ref],
     );
 
     const framed = isFramedVariant(variant);
 
     const innerCls = cn(
-      CONTENT_PAD[size],
+      DISCLOSURE_CONTENT_PAD[size],
       framed && variant === "outline" && FRAMED_PANEL.default,
       framed && variant === "outline" && FRAMED_PANEL.outline,
       framed && variant === "secondary" && FRAMED_PANEL.secondary,

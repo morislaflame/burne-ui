@@ -444,15 +444,15 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
   function ComboBoxTrigger({ className, onPointerDown, ...rest }, ref) {
     const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
-    useChevronRotation(open, triggerRef);
+    const bindChevronRef = useChevronRotation(open, triggerRef);
 
     const setTriggerRef = useCallback(
       (node: HTMLButtonElement | null) => {
-        triggerRef.current = node;
+        bindChevronRef(node);
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref],
+      [bindChevronRef, ref],
     );
 
     const handlePointerDown = useCallback(
@@ -480,7 +480,7 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         disabled={disabled}
         aria-label={open ? "Закрыть список" : "Открыть список"}
         className={cn(
-          "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none",
+          "flex shrink-0 origin-center items-center justify-center self-stretch border-l-token px-small outline-none",
           "text-muted hover:text-foreground focus-ring",
           disabled && "pointer-events-none",
           className,

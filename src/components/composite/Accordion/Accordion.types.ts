@@ -5,6 +5,7 @@ import type {
   ExpandableDescriptionProps,
   ExpandableIconProps,
   ExpandableMessageProps,
+  ExpandableSize,
   ExpandableTitleProps,
   ExpandableTriggerProps,
 } from "@/components/core/Expandable";
@@ -16,6 +17,7 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
   defaultOpenIndex?: number | null;
   openId?: string | null;
   onOpenIdChange?: (id: string | null) => void;
+  size?: ExpandableSize;
   children?: ReactNode;
 };
 

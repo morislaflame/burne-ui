@@ -19,6 +19,11 @@ import { createPortal } from "react-dom";
 
 import { CloseButton, type CloseButtonProps } from "@/components/core/CloseButton";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  burneLightThemePortalProps,
+  useBurneLightTheme,
+  usePortalThemeAnchor,
+} from "@/components/core/utils/burneLightTheme";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
@@ -42,6 +47,11 @@ export type DrawerProps = {
   size?: DrawerSize;
   /** Доп. класс на панель. */
   className?: string;
+  /**
+   * Якорь для наследования светлой темы с обёртки (`data-theme`).
+   * По умолчанию — `document.activeElement` в момент открытия.
+   */
+  themeAnchor?: HTMLElement | null;
 };
 
 export type DrawerBackdropProps = HTMLAttributes<HTMLDivElement> & {
@@ -312,11 +322,6 @@ export function DrawerFooter({ className = "", ...rest }: DrawerFooterProps) {
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
-function readBurneLightTheme(): boolean {
-  if (typeof document === "undefined") return false;
-  return document.documentElement.dataset.brnTheme === "light";
-}
-
 export const DrawerRoot = function Drawer({
   open,
   onOpenChange,
@@ -324,6 +329,7 @@ export const DrawerRoot = function Drawer({
   placement = "right",
   size = "default",
   className = "",
+  themeAnchor,
 }: DrawerProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -336,6 +342,9 @@ export const DrawerRoot = function Drawer({
   const skipCloseAnimRef = useRef(false);
 
   const setHasDescriptionStable = useCallback((v: boolean) => setHasDescription(v), []);
+
+  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor);
+  const lightUi = useBurneLightTheme(portalThemeAnchor);
 
   // Extract Drawer.Backdrop config
   let backdropIsDismissable = true;
@@ -438,7 +447,7 @@ export const DrawerRoot = function Drawer({
 
   if (typeof document === "undefined" || !mounted) return null;
 
-  const lightUi = readBurneLightTheme();
+  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
   const isHorizontal = placement === "left" || placement === "right";
 
   const ctxValue: DrawerContextValue = {
@@ -456,6 +465,7 @@ export const DrawerRoot = function Drawer({
   return createPortal(
     <DrawerContext.Provider value={ctxValue}>
       <dialog
+        {...portalTheme}
         ref={dialogRef}
         onClose={() => onOpenChange(false)}
         aria-labelledby={titleId}

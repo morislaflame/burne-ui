@@ -22,6 +22,7 @@ import {
   type Ref,
 } from "react";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { createPortal } from "react-dom";
 
 import {
@@ -687,14 +688,6 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(f
 
 TooltipTrigger.displayName = "TooltipTrigger";
 
-function inheritThemePortalProps(triggerEl: HTMLElement | null): {
-  "data-theme"?: "light";
-} {
-  if (!triggerEl) return {};
-  const inherited = triggerEl.closest("[data-theme]")?.getAttribute("data-theme");
-  return inherited === "light" ? { "data-theme": "light" } : {};
-}
-
 export function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
   const resolvedSide = useContext(TooltipResolvedSideContext);
   const { variant } = useTooltipContext("Tooltip.Arrow");
@@ -848,7 +841,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
   if (!portalMounted) return null;
   if (typeof document === "undefined") return null;
 
-  const portalTheme = inheritThemePortalProps(triggerRef.current);
+  const portalTheme = burneLightThemePortalProps(triggerRef.current);
 
   const bubble = (
     <TooltipPanel variant={variant} size={size} icon={icon} showIcon={showIcon}>

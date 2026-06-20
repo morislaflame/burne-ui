@@ -23,13 +23,12 @@ import {
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
+import {
+  burneLightThemePortalProps,
+  useBurneLightTheme,
+  usePortalThemeAnchor,
+} from "@/components/core/utils/burneLightTheme";
 import { cn } from "@/utils/cn";
-
-/** Светлая тема UI: только `document.documentElement` (портал в `body`). */
-function readBurneLightTheme(): boolean {
-  if (typeof document === "undefined") return false;
-  return document.documentElement.dataset.brnTheme === "light";
-}
 
 export type DialogProps = {
   /** Управляемое открытие. */
@@ -42,6 +41,11 @@ export type DialogProps = {
   className?: string;
   /** Закрытие по клику на подложку (вне панели). Для `AlertDialog` обычно `false`. */
   dismissOnBackdrop?: boolean;
+  /**
+   * Якорь для наследования светлой темы с обёртки (`data-theme`).
+   * По умолчанию — `document.activeElement` в момент открытия.
+   */
+  themeAnchor?: HTMLElement | null;
 };
 
 type DialogContextValue = {
@@ -187,6 +191,7 @@ export const DialogRoot = function Dialog({
   children,
   className = "",
   dismissOnBackdrop = true,
+  themeAnchor,
 }: DialogProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -200,6 +205,9 @@ export const DialogRoot = function Dialog({
   const setHasDescriptionStable = useCallback((v: boolean) => {
     setHasDescription(v);
   }, []);
+
+  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor);
+  const lightUi = useBurneLightTheme(portalThemeAnchor);
 
   useLayoutEffect(() => {
     if (open) setMounted(true);
@@ -287,11 +295,12 @@ export const DialogRoot = function Dialog({
   if (typeof document === "undefined") return null;
   if (!mounted) return null;
 
-  const lightUi = readBurneLightTheme();
+  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
 
   return createPortal(
     <DialogContext.Provider value={ctxValue}>
       <dialog
+        {...portalTheme}
         ref={dialogRef}
         onClose={() => onOpenChange(false)}
         aria-labelledby={titleId}

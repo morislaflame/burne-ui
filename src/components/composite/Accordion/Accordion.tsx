@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-import { Expandable, useExpandableContext } from "@/components/core/Expandable";
+import { Expandable, useExpandableContext, type ExpandableSize } from "@/components/core/Expandable";
 import { Text } from "@/components/core/Text";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
@@ -33,6 +33,7 @@ type AccordionContextValue = {
   openId: string | null;
   setOpenId: (id: string | null) => void;
   getItemId: (explicit?: string) => string;
+  size: ExpandableSize;
 };
 
 const AccordionContext = createContext<AccordionContextValue | null>(null);
@@ -69,6 +70,7 @@ export function AccordionRoot({
   defaultOpenIndex = null,
   openId: openIdProp,
   onOpenIdChange,
+  size = "base",
   className,
   children,
   ...rest
@@ -102,8 +104,9 @@ export function AccordionRoot({
       openId,
       setOpenId,
       getItemId,
+      size,
     }),
-    [getItemId, openId, setOpenId],
+    [getItemId, openId, setOpenId, size],
   );
 
   return (
@@ -128,7 +131,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
   { value, disabled, className, children, ...rest },
   ref,
 ) {
-  const { openId, setOpenId, getItemId } = useAccordionContext();
+  const { openId, setOpenId, getItemId, size } = useAccordionContext();
   const itemId = getItemId(value);
   const isOpen = openId === itemId;
 
@@ -136,6 +139,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
     <Expandable
       ref={ref}
       compound
+      size={size}
       data-accordion-item
       disabled={disabled}
       open={isOpen}
@@ -199,13 +203,17 @@ AccordionDescription.displayName = "Accordion.Description";
 export function AccordionIndicator({ className, children, ...rest }: AccordionIndicatorProps) {
   const { open, hasPanel } = useExpandableContext();
   const chevronRef = useRef<HTMLSpanElement | null>(null);
-  useChevronRotation(open, chevronRef, () => getMotionConfig().enableExpandable);
+  const bindChevronRef = useChevronRotation(
+    open,
+    chevronRef,
+    () => getMotionConfig().enableExpandable,
+  );
 
   if (!hasPanel) return null;
 
   return (
     <span
-      ref={chevronRef}
+      ref={bindChevronRef}
       className={cn("relative z-[1] ml-auto flex shrink-0 origin-center", className)}
       aria-hidden
       {...rest}

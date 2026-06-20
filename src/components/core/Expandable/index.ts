@@ -34,4 +34,5 @@ export type {
   ExpandableDescriptionProps,
   ExpandableChevronProps,
   ExpandablePanelProps,
+  ExpandableSize,
 } from "./Expandable";

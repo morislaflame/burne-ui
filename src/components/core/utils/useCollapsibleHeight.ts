@@ -1,4 +1,9 @@
-import { useLayoutEffect, useRef, type RefObject } from "react";
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  type RefObject,
+} from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig, motionExpandClose, motionExpandOpen } from "./motionConfig";
@@ -13,9 +18,42 @@ export function releaseExpandedShellHeight(shell: HTMLElement, inner: HTMLElemen
   });
 }
 
+export function applyCollapsibleInstantState(shell: HTMLElement, open: boolean) {
+  if (open) {
+    shell.style.height = "auto";
+    shell.style.overflow = "";
+  } else {
+    shell.style.height = "0px";
+    shell.style.overflow = "hidden";
+  }
+}
+
+const COLLAPSIBLE_INIT_ATTR = "data-collapsible-init";
+
+/**
+ * Ref-callback: синхронно до paint выставляет высоту по начальному `open`.
+ * Не через React `style` — иначе re-render (hasPanel и т.п.) сбросит inline-стили.
+ */
+export function useCollapsibleShellRef(
+  shellRef: RefObject<HTMLElement | null>,
+  open: boolean,
+) {
+  const initialOpenRef = useRef(open);
+
+  return useCallback(
+    (node: HTMLElement | null) => {
+      shellRef.current = node;
+      if (node && !node.hasAttribute(COLLAPSIBLE_INIT_ATTR)) {
+        node.setAttribute(COLLAPSIBLE_INIT_ATTR, "");
+        applyCollapsibleInstantState(node, initialOpenRef.current);
+      }
+    },
+    [shellRef],
+  );
+}
+
 /**
  * GSAP-анимация высоты collapsible-панели (Expandable, Accordion).
- * Не задавайте `style.height` на shell снаружи — React перезапишет tween.
  */
 export function useCollapsibleHeight(
   open: boolean,
@@ -23,7 +61,7 @@ export function useCollapsibleHeight(
   innerRef: RefObject<HTMLElement | null>,
   enabled = () => getMotionConfig().enableExpandable,
 ) {
-  const isFirstRender = useRef(true);
+  const prevOpenRef = useRef<boolean | undefined>(undefined);
 
   useLayoutEffect(() => {
     const shell = shellRef.current;
@@ -32,25 +70,19 @@ export function useCollapsibleHeight(
 
     const reduceMotion = prefersReducedInteractiveHoverLift() || !enabled();
 
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      if (!open) {
-        shell.style.height = "0px";
-        shell.style.overflow = "hidden";
-      }
+    if (prevOpenRef.current === undefined) {
+      prevOpenRef.current = open;
+      applyCollapsibleInstantState(shell, open);
       return;
     }
+
+    if (prevOpenRef.current === open) return;
+    prevOpenRef.current = open;
 
     killMotion(shell);
 
     if (reduceMotion) {
-      if (open) {
-        shell.style.height = "auto";
-        shell.style.overflow = "";
-      } else {
-        shell.style.height = "0px";
-        shell.style.overflow = "hidden";
-      }
+      applyCollapsibleInstantState(shell, open);
       return;
     }
 

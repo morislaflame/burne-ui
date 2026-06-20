@@ -479,9 +479,9 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           label="--radius"
           value={state.radius}
           min={0}
-          max={100}
-          step={1}
-          unit="px"
+          max={1}
+          step={0.025}
+          unit="rem"
           onChange={(v) => setScale("radius", v)}
         />
         <ScaleControl

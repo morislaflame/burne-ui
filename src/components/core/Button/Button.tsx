@@ -4,6 +4,7 @@ import type {
   MouseEvent,
   PointerEvent,
   ReactNode,
+  RefObject,
 } from "react";
 import {
   forwardRef,
@@ -378,6 +379,63 @@ function Spinner({ className }: { className?: string }) {
   );
 }
 
+type ButtonAsyncLayerKind = "label" | "loader" | "success" | "error";
+
+const BUTTON_ASYNC_LAYER_INIT_ATTR = "data-button-async-layer-init";
+
+const BUTTON_ASYNC_LAYER_SCALE: Record<
+  ButtonAsyncLayerKind,
+  { in: number; out: number }
+> = {
+  label: { in: 1, out: 0.92 },
+  loader: { in: 1, out: 0.85 },
+  success: { in: 1, out: 0.85 },
+  error: { in: 1, out: 0.85 },
+};
+
+function isButtonAsyncLayerActive(
+  state: ButtonAsyncState,
+  layer: ButtonAsyncLayerKind,
+): boolean {
+  switch (layer) {
+    case "label":
+      return state === "idle";
+    case "loader":
+      return state === "loading";
+    case "success":
+      return state === "success";
+    case "error":
+      return state === "error";
+  }
+}
+
+function applyButtonAsyncLayerInstant(
+  el: HTMLElement,
+  state: ButtonAsyncState,
+  layer: ButtonAsyncLayerKind,
+) {
+  const active = isButtonAsyncLayerActive(state, layer);
+  const { in: scaleIn, out: scaleOut } = BUTTON_ASYNC_LAYER_SCALE[layer];
+  gsap.set(el, {
+    autoAlpha: active ? 1 : 0,
+    scale: active ? scaleIn : scaleOut,
+  });
+}
+
+function createButtonAsyncLayerRefCallback(
+  ref: RefObject<HTMLElement | null>,
+  initialState: ButtonAsyncState,
+  layer: ButtonAsyncLayerKind,
+) {
+  return (node: HTMLElement | null) => {
+    ref.current = node;
+    if (node && !node.hasAttribute(BUTTON_ASYNC_LAYER_INIT_ATTR)) {
+      node.setAttribute(BUTTON_ASYNC_LAYER_INIT_ATTR, "");
+      applyButtonAsyncLayerInstant(node, initialState, layer);
+    }
+  };
+}
+
 function IconCheck({ className }: { className?: string }) {
   return (
     <svg
@@ -452,6 +510,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const asyncStateRef = useRef<ButtonAsyncState>("idle");
     const expandId = useRef(0);
     const prevAsyncRef = useRef<ButtonAsyncState>("idle");
+    const prevCrossfadeAsyncRef = useRef<ButtonAsyncState | undefined>(undefined);
     const asyncInFlight = useRef(false);
 
     const [internalAsync, setInternalAsync] =
@@ -461,6 +520,25 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ? asyncStateProp!
       : internalAsync;
     asyncStateRef.current = asyncState;
+
+    const initialAsyncRef = useRef(asyncState);
+
+    const bindLabelRef = useMemo(
+      () => createButtonAsyncLayerRefCallback(labelRef, initialAsyncRef.current, "label"),
+      [],
+    );
+    const bindLoaderRef = useMemo(
+      () => createButtonAsyncLayerRefCallback(loaderRef, initialAsyncRef.current, "loader"),
+      [],
+    );
+    const bindSuccessRef = useMemo(
+      () => createButtonAsyncLayerRefCallback(successRef, initialAsyncRef.current, "success"),
+      [],
+    );
+    const bindErrorRef = useMemo(
+      () => createButtonAsyncLayerRefCallback(errorRef, initialAsyncRef.current, "error"),
+      [],
+    );
 
     const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
 
@@ -525,6 +603,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         { el: success, active: asyncState === "success", scaleIn: 1, scaleOut: 0.85 },
         { el: error, active: asyncState === "error", scaleIn: 1, scaleOut: 0.85 },
       ] as const;
+
+      if (prevCrossfadeAsyncRef.current === undefined) {
+        prevCrossfadeAsyncRef.current = asyncState;
+        for (const { el, active, scaleIn, scaleOut } of layers) {
+          killMotion(el);
+          gsap.set(el, {
+            autoAlpha: active ? 1 : 0,
+            scale: active ? scaleIn : scaleOut,
+          });
+        }
+        return;
+      }
+
+      if (prevCrossfadeAsyncRef.current === asyncState) return;
+      prevCrossfadeAsyncRef.current = asyncState;
 
       for (const { el, active, scaleIn, scaleOut } of layers) {
         killMotion(el);
@@ -745,7 +838,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         <span className="relative z-[1] grid place-items-center">
           <span
-            ref={labelRef}
+            ref={bindLabelRef}
             className="col-start-1 row-start-1 inline-flex min-w-0 items-center justify-center gap-xsmall"
           >
             {leftIcon != null ? (
@@ -766,7 +859,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             </Text>
           </span>
           <span
-            ref={loaderRef}
+            ref={bindLoaderRef}
             className={`col-start-1 row-start-1 flex items-center justify-center ${loaderTextClass}`}
             aria-hidden={asyncState !== "loading"}
           >
@@ -775,14 +868,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </span>
           <span
-            ref={successRef}
+            ref={bindSuccessRef}
             className="col-start-1 row-start-1 flex items-center justify-center text-success"
             aria-hidden={asyncState !== "success"}
           >
             <IconCheck className={sz.icon} />
           </span>
           <span
-            ref={errorRef}
+            ref={bindErrorRef}
             className="col-start-1 row-start-1 flex items-center justify-center text-danger"
             aria-hidden={asyncState !== "error"}
           >

@@ -286,6 +286,19 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     const iconLeftCollapsedCss = `calc(50% - ${layout.iconBox / 2}px)`;
 
+    const initialExpandedRef = useRef(expanded);
+    const bindIconRef = useCallback(
+      (node: HTMLSpanElement | null) => {
+        iconRef.current = node;
+        if (node && !node.hasAttribute("data-search-icon-init")) {
+          node.setAttribute("data-search-icon-init", "");
+          const open = initialExpandedRef.current;
+          node.style.left = open ? `${layout.padX}px` : iconLeftCollapsedCss;
+        }
+      },
+      [iconLeftCollapsedCss, layout.padX],
+    );
+
     const applyShellMetrics = useCallback(
       (open: boolean) => {
         const el = rootRef.current;
@@ -549,7 +562,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           <Ripple color="neutral" disabled={blocked} />
         ) : null}
         <span
-          ref={iconRef}
+          ref={bindIconRef}
           className="pointer-events-none absolute inset-y-0 z-[1] flex items-center justify-center text-muted"
           style={{ width: layout.iconBox }}
           aria-hidden

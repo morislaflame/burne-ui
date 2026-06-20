@@ -21,10 +21,17 @@ import {
 } from "@/components/core/utils/hoverInteractiveLift";
 import { Ripple } from "@/components/core/Ripple";
 import { Text } from "@/components/core/Text";
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
-import { useCollapsibleHeight } from "@/components/core/utils/useCollapsibleHeight";
+import {
+  useCollapsibleHeight,
+  useCollapsibleShellRef,
+} from "@/components/core/utils/useCollapsibleHeight";
 import { cn } from "@/utils/cn";
+
+export type ExpandableSize = ComponentSize;
 
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
@@ -39,6 +46,7 @@ export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> 
   description?: ReactNode;
   /** Simple API: иконка слева от текста. В compound — `<Expandable.Icon>`. */
   icon?: ReactNode;
+  size?: ExpandableSize;
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -62,11 +70,30 @@ type ExpandableContextValue = {
   open: boolean;
   disabled: boolean;
   hasPanel: boolean;
+  size: ExpandableSize;
   toggle: () => void;
   headerId: string;
   panelId: string;
   setHasPanel: (v: boolean) => void;
 };
+
+const EXPANDABLE_PANEL_PAD: Record<ExpandableSize, string> = {
+  small: "px-base pb-plus",
+  base: "px-mid pb-plus",
+  mid: "px-mid pb-plus",
+  large: "px-large pb-plus",
+};
+
+const EXPANDABLE_DESCRIPTION_VARIANT = {
+  small: "small",
+  base: "small",
+  mid: "base",
+  large: "base",
+} as const satisfies Record<ExpandableSize, "small" | "base">;
+
+function controlMinHeightClass(size: ExpandableSize): string {
+  return CONTROL_SIZE_LAYOUT[size].h.replace(/^h-/, "min-h-");
+}
 
 const ExpandableContext = createContext<ExpandableContextValue | null>(null);
 
@@ -175,14 +202,21 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
       open,
       disabled,
       hasPanel,
+      size,
       toggle,
       headerId,
       panelId,
     } = useExpandable();
 
+    const layout = CONTROL_SIZE_LAYOUT[size];
+
     const liftSpanRef = useRef<HTMLSpanElement | null>(null);
     const chevronRef = useRef<HTMLSpanElement | null>(null);
-    useChevronRotation(open, chevronRef, () => getMotionConfig().enableExpandable);
+    const bindChevronRef = useChevronRotation(
+      open,
+      chevronRef,
+      () => getMotionConfig().enableExpandable,
+    );
     const { rippleOverlay, rest: triggerChildren } =
       partitionTriggerRipple(children);
     const mainChildren = hasExpandableMessage(triggerChildren) ? (
@@ -218,7 +252,9 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         type={type}
         id={headerId}
         className={cn(
-          "relative flex w-full items-center gap-base overflow-hidden py-plus px-mid text-left outline-none",
+          "relative flex w-full items-center gap-base overflow-hidden py-base text-left outline-none",
+          controlMinHeightClass(size),
+          layout.padX,
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           className,
@@ -242,11 +278,11 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         </span>
         {!hideChevron && hasPanel ? (
           <span
-            ref={chevronRef}
+            ref={bindChevronRef}
             className="relative z-[1] ml-auto flex shrink-0 origin-center"
             aria-hidden
           >
-            <ChevronSvg />
+            <ChevronSvg className={layout.chevronIcon} />
           </span>
         ) : null}
       </button>
@@ -257,10 +293,15 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
 ExpandableTrigger.displayName = "ExpandableTrigger";
 
 export function ExpandableIcon({ className = "", ...props }: ExpandableIconProps) {
+  const { size } = useExpandable();
   return (
     <span
       aria-hidden
-      className={cn("shrink-0 text-primary [&_svg]:icon-mid", className)}
+      className={cn(
+        "shrink-0 text-primary [&_svg]:size-full",
+        CONTROL_SIZE_LAYOUT[size].icon,
+        className,
+      )}
       {...props}
     />
   );
@@ -283,10 +324,11 @@ export function ExpandableContent({ className = "", ...props }: ExpandableConten
 ExpandableContent.displayName = "ExpandableContent";
 
 export function ExpandableTitle({ className = "", ...props }: ExpandableTitleProps) {
+  const { size } = useExpandable();
   return (
     <Text
       as="div"
-      variant="base"
+      variant={CONTROL_SIZE_LAYOUT[size].controlText}
       className={cn("", className)}
       {...props}
     />
@@ -299,10 +341,11 @@ export function ExpandableDescription({
   className = "",
   ...props
 }: ExpandableDescriptionProps) {
+  const { size } = useExpandable();
   return (
     <Text
       as="div"
-      variant="small"
+      variant={EXPANDABLE_DESCRIPTION_VARIANT[size]}
       className={cn("text-muted", className)}
       {...props}
     />
@@ -312,19 +355,23 @@ export function ExpandableDescription({
 ExpandableDescription.displayName = "ExpandableDescription";
 
 export function ExpandableChevron({ className = "", ...props }: ExpandableChevronProps) {
-  const { open, hasPanel } = useExpandable();
+  const { open, hasPanel, size } = useExpandable();
   const chevronRef = useRef<HTMLSpanElement | null>(null);
-  useChevronRotation(open, chevronRef, () => getMotionConfig().enableExpandable);
+  const bindChevronRef = useChevronRotation(
+    open,
+    chevronRef,
+    () => getMotionConfig().enableExpandable,
+  );
 
   if (!hasPanel) return null;
   return (
     <span
-      ref={chevronRef}
+      ref={bindChevronRef}
       className={cn("relative z-[1] flex shrink-0 self-center origin-center", className)}
       aria-hidden
       {...props}
     >
-      <ChevronSvg />
+      <ChevronSvg className={CONTROL_SIZE_LAYOUT[size].chevronIcon} />
     </span>
   );
 }
@@ -337,11 +384,13 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
       open,
       headerId,
       panelId,
+      size,
       setHasPanel,
     } = useExpandable();
 
     const shellRef = useRef<HTMLDivElement | null>(null);
     const innerRef = useRef<HTMLDivElement | null>(null);
+    const bindShellRef = useCollapsibleShellRef(shellRef, open);
 
     useLayoutEffect(() => {
       setHasPanel(true);
@@ -359,7 +408,7 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
     );
 
     return (
-      <div ref={shellRef} className="overflow-hidden">
+      <div ref={bindShellRef} className="overflow-hidden">
         <div ref={innerRef}>
           <section
             ref={setSectionRef}
@@ -367,7 +416,7 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
             aria-labelledby={headerId}
             aria-hidden={!open}
             inert={!open}
-            className={cn("px-mid pb-plus text-left", className)}
+            className={cn(EXPANDABLE_PANEL_PAD[size], "text-left", className)}
             {...props}
           >
             {children}
@@ -425,6 +474,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       title,
       description,
       icon,
+      size = "base",
       defaultOpen = false,
       open: openProp,
       onOpenChange,
@@ -457,6 +507,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       open,
       disabled,
       hasPanel,
+      size,
       toggle,
       headerId,
       panelId,

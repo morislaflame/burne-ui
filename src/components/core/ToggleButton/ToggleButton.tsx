@@ -177,7 +177,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
     const fillRef = useRef<HTMLSpanElement>(null);
     const hoverPointerInsideRef = useRef(false);
 
-    const { animateTo } = useToggleButtonFillAnimation(pressed, fillRef);
+    const { animateTo, bindFillRef } = useToggleButtonFillAnimation(pressed, fillRef);
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -312,7 +312,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         {...rest}
       >
         <span
-          ref={fillRef}
+          ref={bindFillRef}
           aria-hidden
           className={cn(
             "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",

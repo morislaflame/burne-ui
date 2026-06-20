@@ -101,7 +101,7 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
 
     // Заливку ведёт только `selected` через layout-effect — без optimistic toggle на click
     // (range preview уже поднимает selected до клика).
-    useToggleButtonFillAnimation(selected, fillRef);
+    const { bindFillRef } = useToggleButtonFillAnimation(selected, fillRef);
 
     const rounding = "rounded-mid";
     const isDay = rounded === "day";
@@ -184,7 +184,7 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
         )}
       >
         <span
-          ref={fillRef}
+          ref={bindFillRef}
           aria-hidden
           className={cn(
             "pointer-events-none absolute -inset-px z-0 origin-center will-change-transform bg-primary",
