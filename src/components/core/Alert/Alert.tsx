@@ -20,6 +20,11 @@ import {
   initElementShadow,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+  useGlossInteractiveHandlers,
+} from "@/components/core/utils/glossInteractiveMotion";
+import {
   SEMANTIC_STATUS_ICONS,
   type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
@@ -32,6 +37,9 @@ import {
   type MessageBannerGridSlots,
 } from "@/components/core/utils/messageBannerGridLayout";
 import { cn } from "@/utils/cn";
+
+import "../utils/glossInteractive.css";
+import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
 
 import { AlertContext } from "./alertContext";
 import {
@@ -116,7 +124,11 @@ function resolveAlertGridSlots(
   };
 }
 
+export type AlertVariant = "default" | "gloss";
+
 export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
+  /** Поверхность: `gloss` — стеклянная панель с hover как у gloss-кнопки. */
+  variant?: AlertVariant;
   status?: AlertStatus;
   /** Live region: `alert` (срочно) или `status` (информативно). По умолчанию — из `status`. */
   role?: AlertLiveRole;
@@ -255,6 +267,7 @@ AlertAction.displayName = "AlertAction";
 
 export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   {
+    variant = "default",
     status,
     role: roleProp,
     title,
@@ -272,6 +285,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   ref,
 ) {
   const tone = resolveAlertStatus(status);
+  const isGloss = variant === "gloss";
   const autoId = useId();
   const titleId = `${autoId}-title`;
   const descriptionId = `${autoId}-description`;
@@ -322,26 +336,44 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     [descriptionId, gridSlots, titleId, tone],
   );
 
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(rootRef, isGloss),
+    [isGloss],
+  );
+
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
+      bindGlossRef(node);
       rootRef.current = node;
       if (typeof ref === "function") ref(node);
       else if (ref) ref.current = node;
     },
-    [ref],
+    [bindGlossRef, ref],
   );
 
   useEffect(() => {
+    if (isGloss) return;
     initElementShadow(rootRef.current, shadowSm());
-  }, []);
+  }, [isGloss]);
+
+  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
 
   const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
     rootRef,
-    true,
+    !isGloss,
     undefined,
     undefined,
-    { idle: shadowSm(), hover: shadowMd() },
+    !isGloss ? { idle: shadowSm(), hover: shadowMd() } : undefined,
   );
+
+  const surfaceClass = isGloss
+    ? cn(
+        "gloss-panel",
+        GLOSS_INTERACTIVE_MOTION_CLASS,
+        "border-0",
+        glossStatusTintClass(tone),
+      )
+    : ALERT_INLINE_SURFACE_CLASSES[tone];
 
   return (
     <AlertContext.Provider value={contextValue}>
@@ -352,17 +384,21 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         aria-describedby={ariaDescribedBy}
         className={cn(
           messageBannerGridClass(gridSlots),
-          "w-fit max-w-component-base rounded-mid py-plus px-large animate-shadow",
-          ALERT_INLINE_SURFACE_CLASSES[tone],
+          "w-fit max-w-component-base rounded-mid py-plus px-large",
+          !isGloss && "animate-shadow",
+          surfaceClass,
           className,
         )}
         onPointerOver={(e) => {
           onPointerOverProp?.(e);
-          if (!e.defaultPrevented) liftPointerHandlers.onPointerOver(e);
+          if (e.defaultPrevented) return;
+          if (isGloss) glossPointerHandlers.onPointerOver(e);
+          else liftPointerHandlers.onPointerOver(e);
         }}
         onPointerOut={(e) => {
           onPointerOutProp?.(e);
-          liftPointerHandlers.onPointerOut(e);
+          if (isGloss) glossPointerHandlers.onPointerOut(e);
+          else liftPointerHandlers.onPointerOut(e);
         }}
         {...rest}
       >

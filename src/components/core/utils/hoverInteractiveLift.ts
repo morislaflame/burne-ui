@@ -100,10 +100,6 @@ const ADAPTIVE_LIFT_TARGET_PX = 1.8;
 /** Минимально заметный подъём. */
 const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
 
-/**
- * Возвращает scale < 1 для squeeze, адаптированный под фактический размер элемента.
- * Все компоненты автоматически используют его через `animateInteractivePressSqueeze`.
- */
 function adaptiveSqueezeScale(element: HTMLElement): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
@@ -113,6 +109,16 @@ function adaptiveSqueezeScale(element: HTMLElement): number {
     baseDelta,
   );
   return 1 - delta;
+}
+
+/** Адаптивный scale для hover-lift (для gloss-combined motion). */
+export function resolveAdaptiveHoverLiftScale(element: HTMLElement): number {
+  return adaptiveHoverLiftScale(element);
+}
+
+/** Адаптивный scale для press-squeeze (для gloss-combined motion). */
+export function resolveAdaptivePressSqueezeScale(element: HTMLElement): number {
+  return adaptiveSqueezeScale(element);
 }
 
 /**

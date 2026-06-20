@@ -3,7 +3,9 @@ import { forwardRef, type HTMLAttributes } from "react";
 import { cn } from "@/utils/cn";
 import type { ShadowSize } from "@/tokens/shadows";
 
-export type SurfaceVariant = "default" | "secondary" | "tertiary";
+import "../utils/glossPanel.css";
+
+export type SurfaceVariant = "default" | "secondary" | "tertiary" | "gloss";
 
 /** @alias ShadowSize */
 export type SurfaceShadow = ShadowSize;
@@ -24,7 +26,7 @@ export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 /** Только заливка — без рамки (`surface-*` утилиты с border для кнопок и контролов). */
-const SURFACE_VARIANT: Record<SurfaceVariant, string> = {
+const SURFACE_VARIANT: Record<Exclude<SurfaceVariant, "gloss">, string> = {
   default: "bg-surface",
   secondary: "bg-secondary",
   tertiary: "bg-tertiary",
@@ -54,6 +56,9 @@ const SURFACE_RADIUS: Record<SurfaceRadius, string> = {
 /**
  * Базовая панель: только фон, скругление и опциональная тень — без рамки.
  * Примитив для меню, секций, обёрток списков — без семантики Card и без blur у GlassSurface.
+ *
+ * `variant="gloss"` — стеклянная панель с conic-обводкой, бликом и мягкой drop-shadow
+ * (CSS-only, без OGL у GlassSurface).
  */
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
   {
@@ -67,6 +72,26 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
   },
   ref,
 ) {
+  if (variant === "gloss") {
+    return (
+      <div className={cn("gloss-wrap", SURFACE_RADIUS[radius])}>
+        <div className="gloss-shadow" aria-hidden />
+        <div
+          ref={ref}
+          className={cn(
+            "gloss-panel min-w-0 text-left text-foreground",
+            SURFACE_SHADOW[shadow],
+            SURFACE_PADDING[padding],
+            className,
+          )}
+          {...rest}
+        >
+          <div className="gloss-content">{children}</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={ref}

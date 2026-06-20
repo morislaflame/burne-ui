@@ -447,6 +447,38 @@
   --glass-tint-veil: rgb(12 13 16 / 0.42);
   --glass-border: rgb(255 255 255 / 0.14);
   --glass-highlight: rgb(255 255 255 / 0.09);
+
+  /**
+   * GLOSS — универсальная система токенов стекла (тёмная тема / dark).
+   * Базовый fill: --gloss-edge + color-mix(--gloss-tint-default) в glossPanel.css.
+   */
+
+  /* ── backdrop ─────────────────────────────────────────────────────────── */
+  --gloss-blur: clamp(1px, 0.125em, 4px);
+  --gloss-shadow-cutoff: 2em;
+
+  /* ── surface fill (edge + tint mix — см. :is(.gloss-panel, …) в glossPanel.css) */
+  --gloss-tint-default: rgba(135, 135, 140, 0.275);
+  --gloss-edge: rgb(255 255 255 / 0.05);
+  --gloss-inset-top: rgba(167, 166, 166, 0.1);
+  --gloss-inset-bottom: rgb(255 255 255 / 0.3);
+
+  /* ── тени / свечение ─────────────────────────────────────────────────── */
+  --gloss-elevation: rgba(0, 0, 0, 0.126);
+  --gloss-inner-glow: rgb(255 255 255 / 0.08);
+  --gloss-glow-hover: rgba(255, 255, 255, 0.074);
+  --gloss-drop-shadow: linear-gradient(180deg, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.1));
+
+  /* ── conic-обводка ───────────────────────────────────────────────────── */
+  --gloss-outline-fade: rgba(0, 0, 0, 0.337);
+  --gloss-outline-base: rgb(255 255 255 / 0.26);
+
+  /* ── блик (только интерактив) ────────────────────────────────────────── */
+  --gloss-shine: rgb(255 255 255 / 0.05);
+  --gloss-shine-blur: clamp(2px, 0.5em, 12px);
+
+  /* ── интерактив (press-inset для active) ─────────────────────────────── */
+  --gloss-press-inset: rgb(0 0 0 / 0.22);
 }
 
 [data-theme="light"] {
@@ -567,6 +599,24 @@
   --glass-tint-veil: rgb(250 250 250 / 0.72);
   --glass-border: rgb(0 0 0 / 0.1);
   --glass-highlight: rgb(0 0 0 / 0.05);
+
+  /* ── GLOSS светлая тема (light) ─────────────────────────────────────── */
+  /* Маппинг инвертирован относительно примера Uiverse:                   */
+  /*   rest  = hover  примера (узкое кольцо 0.1em, elevation 0.25em)     */
+  /*   hover = rest   примера (широкое кольцо 0.25em, elevation 0.28em)  */
+
+  --gloss-inset-top: rgb(0 0 0 / 0.05);
+  --gloss-inset-bottom: rgb(255 255 255 / 0.5);
+  --gloss-elevation: rgb(0 0 0 / 0.22);
+  --gloss-inner-glow: rgb(255 255 255 / 0.5);
+  --gloss-glow-hover: rgb(255 255 255 / 0.2);
+  --gloss-outline-fade: rgba(0, 0, 0, 0.2);
+  --gloss-outline-base: rgb(255 255 255 / 0.5);
+  --gloss-drop-shadow: linear-gradient(180deg, rgba(0, 0, 0, 0.162), rgba(0, 0, 0, 0.077));
+  --gloss-shine: rgb(255 255 255 / 0.5);
+  --gloss-tint-default: rgb(255 255 255);
+  --gloss-edge: rgb(255 255 255 / 0.05);
+  --gloss-press-inset: rgba(0, 0, 0, 0.026);
 
   /** Primary-тинт в светлой теме — mix с white вместо black. */
   --color-surface-tint-primary: color-mix(

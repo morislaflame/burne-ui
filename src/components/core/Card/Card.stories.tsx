@@ -17,6 +17,7 @@ const CARD_RIPPLE_COLOR: Record<CardVariant, "neutral"> = {
   default: "neutral",
   outline: "neutral",
   secondary: "neutral",
+  gloss: "neutral",
 };
 
 const darkThemeDecorator = [
@@ -663,6 +664,88 @@ export const LightThemeVariants: Story = {
           <Card.Description>Accent-wash на surface.</Card.Description>
         </Card.Header>
       </Card>
+      <Card variant="gloss">
+        <Card.Header>
+          <Card.Title>Gloss</Card.Title>
+          <Card.Description>Стеклянная панель с conic-обводкой и бликом.</Card.Description>
+        </Card.Header>
+      </Card>
     </div>
   ),
+};
+
+// ─── Gloss variant ───────────────────────────────────────────────────────────
+
+const dottedGridStyle = {
+  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
+  backgroundSize: "30px 30px",
+  backgroundPosition: "2px 2px",
+} as const;
+
+function glossDottedDecorator(light = false) {
+  return (Story: ComponentType) => (
+    <div
+      data-theme={light ? "light" : undefined}
+      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
+    >
+      <div className="w-full max-w-md">
+        <Story />
+      </div>
+    </div>
+  );
+}
+
+function GlossDemo() {
+  const [n, setN] = useState(0);
+  return (
+    <div className="flex flex-col gap-mid">
+      <Card variant="gloss">
+        <Card.Header>
+          <Card.Title>Стеклянная карточка</Card.Title>
+          <Card.Description>
+            variant=&quot;gloss&quot; — статическая стеклянная панель с conic-обводкой.
+          </Card.Description>
+        </Card.Header>
+        <Card.Body>
+          <Text as="p" variant="base" className="text-muted">
+            Контент внутри gloss-панели читается поверх блика и обводки.
+          </Text>
+        </Card.Body>
+        <Card.Footer className="flex items-center justify-end gap-base">
+          <Button variant="gloss" size="base">
+            Gloss
+          </Button>
+          <Button variant="primary" size="base" ripple>
+            Primary
+          </Button>
+        </Card.Footer>
+      </Card>
+      <Card variant="gloss" pressable onPress={() => setN((c) => c + 1)}>
+        <Ripple color={CARD_RIPPLE_COLOR.gloss} direction="out" />
+        <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
+          <Card.Header>
+            <Card.Title>Gloss + pressable</Card.Title>
+            <Card.Description>
+              Нажатий: {n}. Нажимаемая карточка с тем же стеклянным оформлением.
+            </Card.Description>
+          </Card.Header>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

@@ -2,6 +2,8 @@ import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+import { Badge } from "@/components/core/Badge";
+import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
 
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
@@ -32,7 +34,7 @@ const lightDecorator = [
   ),
 ] as const;
 
-const VARIANTS: SurfaceVariant[] = ["default", "secondary", "tertiary"];
+const VARIANTS: SurfaceVariant[] = ["default", "secondary", "tertiary", "gloss"];
 
 const meta = {
   title: "Core Components/Surface",
@@ -43,7 +45,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary`, `bg-tertiary`) — только заливка, без рамки. Примитив для меню и секций — без compound-API Card и без blur у GlassSurface.",
+          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary`, `bg-tertiary`, `gloss`) — только заливка, без рамки. `variant=\"gloss\"` — стеклянная CSS-панель с conic-обводкой и бликом. Примитив для меню и секций — без compound-API Card и без OGL у GlassSurface.",
       },
     },
   },
@@ -152,4 +154,94 @@ export const LightTheme: Story = {
     padding: "plus",
     children: "Surface на светлом фоне",
   },
+};
+
+const dottedGridStyle = {
+  backgroundImage: "radial-gradient(rgb(0 0 0 / 0.15) 1px, transparent 1px)",
+  backgroundSize: "30px 30px",
+  backgroundPosition: "2px 2px",
+} as const;
+
+function GlossPanels() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-xlarge">
+      <Surface variant="gloss" padding="plus" radius="large" className="w-56">
+        <Text as="p" variant="base" className="font-medium">
+          Gloss surface
+        </Text>
+        <Text as="p" variant="small" className="text-muted">
+          variant=&quot;gloss&quot;
+        </Text>
+      </Surface>
+      <Surface variant="gloss" padding="mid" radius="mid" className="w-40">
+        <Text as="p" variant="small" className="font-medium">
+          Компактная
+        </Text>
+      </Surface>
+    </div>
+  );
+}
+
+function GlossUnderlay() {
+  return (
+    <Surface variant="default" padding="plus" radius="mid" className="w-full max-w-md">
+      <div className="flex flex-wrap items-center gap-base">
+        <Button variant="primary" size="base">
+          Generate
+        </Button>
+        <Button variant="outline" size="base">
+          Cancel
+        </Button>
+        <Badge variant="secondary" status="success">
+          Ready
+        </Badge>
+      </div>
+    </Surface>
+  );
+}
+
+function GlossStoryLayout() {
+  return (
+    <div className="flex w-full max-w-lg flex-col items-center gap-xlarge">
+      <GlossPanels />
+      <GlossUnderlay />
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  decorators: [
+    (Story: ComponentType) => (
+      <div
+        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+        style={{
+          backgroundColor: "var(--color-background)",
+          ...dottedGridStyle,
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
+  render: () => <GlossStoryLayout />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  decorators: [
+    (Story: ComponentType) => (
+      <div
+        data-theme="light"
+        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+        style={{
+          backgroundColor: "var(--color-background)",
+          ...dottedGridStyle,
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
+  render: () => <GlossStoryLayout />,
 };

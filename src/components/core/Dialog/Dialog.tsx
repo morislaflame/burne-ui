@@ -1,4 +1,5 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import "../utils/glossPanel.css";
 import {
   createContext,
   forwardRef,
@@ -30,6 +31,8 @@ import {
 } from "@/components/core/utils/burneLightTheme";
 import { cn } from "@/utils/cn";
 
+export type DialogVariant = "default" | "gloss";
+
 export type DialogProps = {
   /** Управляемое открытие. */
   open: boolean;
@@ -39,6 +42,8 @@ export type DialogProps = {
   children?: ReactNode;
   /** Доп. класс на панель (контент модалки). */
   className?: string;
+  /** Стиль панели. `gloss` — стеклянная поверхность. */
+  variant?: DialogVariant;
   /** Закрытие по клику на подложку (вне панели). Для `AlertDialog` обычно `false`. */
   dismissOnBackdrop?: boolean;
   /**
@@ -190,6 +195,7 @@ export const DialogRoot = function Dialog({
   onOpenChange,
   children,
   className = "",
+  variant = "default",
   dismissOnBackdrop = true,
   themeAnchor,
 }: DialogProps) {
@@ -325,7 +331,9 @@ export const DialogRoot = function Dialog({
           ref={panelRef}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 max-h-[min(90dvh,36rem)] w-full max-w-component-mid flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-lg outline-none",
+            "relative z-10 w-full max-w-component-mid outline-none",
+            variant !== "gloss" &&
+              "flex min-h-0 max-h-[min(90dvh,36rem)] flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-lg",
             className,
           )}
           style={
@@ -334,7 +342,16 @@ export const DialogRoot = function Dialog({
               : { opacity: 0 }
           }
         >
-          {children}
+          {variant === "gloss" ? (
+            <div className="gloss-wrap rounded-mid">
+              <div className="gloss-shadow" aria-hidden />
+              <div className="gloss-panel flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col text-left text-foreground">
+                <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
+              </div>
+            </div>
+          ) : (
+            children
+          )}
         </div>
       </dialog>
     </DialogContext.Provider>,

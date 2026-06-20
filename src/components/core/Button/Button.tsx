@@ -23,6 +23,12 @@ import {
   shouldSkipInteractiveHoverLift,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  animateGlossInteractiveHoverLift,
+  animateGlossInteractivePressSqueeze,
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+} from "@/components/core/utils/glossInteractiveMotion";
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
 import { getMotionConfig, motionFeedbackExpand, motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
@@ -37,6 +43,8 @@ import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 
+import "../utils/glossInteractive.css";
+
 /** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
 
@@ -49,7 +57,8 @@ export type ButtonVariant =
   | "primary"
   | "outline"
   | "secondary"
-  | "ghost";
+  | "ghost"
+  | "gloss";
 
 /** Семантический статус кнопки */
 export type ButtonStatus = "default" | "danger" | "success" | "info" | "warning";
@@ -85,6 +94,19 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
     root: "bg-transparent text-foreground border border-transparent",
     loaderText: "text-foreground",
   },
+  gloss: {
+    root: "",
+    loaderText: "text-foreground",
+  },
+};
+
+/** Тинт стекла по статусу для `variant="gloss"` (нейтральные слои — в CSS). */
+const BUTTON_GLOSS_STATUS: Record<ButtonStatus, string> = {
+  default: "",
+  danger: "gloss-btn-danger",
+  success: "gloss-btn-success",
+  info: "gloss-btn-info",
+  warning: "gloss-btn-warning",
 };
 
 const BUTTON_STATUS_FOCUS_OUTLINE: Record<ButtonStatus, string> = {
@@ -166,6 +188,8 @@ function buttonHoverVariant(variant: ButtonVariant, status: ButtonStatus): Hover
         return "secondary";
       case "ghost":
         return "default";
+      case "gloss":
+        return "default";
     }
   }
 
@@ -179,6 +203,8 @@ function buttonHoverVariant(variant: ButtonVariant, status: ButtonStatus): Hover
       return status as HoverVariant;
     case "secondary":
       return "secondary";
+    case "gloss":
+      return "default";
   }
 }
 
@@ -196,6 +222,8 @@ function buttonStatusClass(variant: ButtonVariant, status: ButtonStatus): string
       return BUTTON_STATUS_TEXT[status];
     case "ghost":
       return BUTTON_STATUS_TEXT[status];
+    case "gloss":
+      return "";
   }
 }
 
@@ -501,6 +529,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const groupSegment = groupSegmentProp ?? groupCtx?.segment;
     const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
     const userDisabled = Boolean(disabledProp);
+    const isGloss = variant === "gloss";
     const btnRef = useRef<HTMLButtonElement>(null);
     const labelRef = useRef<HTMLSpanElement>(null);
     const loaderRef = useRef<HTMLSpanElement>(null);
@@ -542,13 +571,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
 
+    const bindGlossRef = useMemo(
+      () => createGlossInteractiveRefCallback(btnRef, isGloss),
+      [isGloss],
+    );
+
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
+        bindGlossRef(node);
         btnRef.current = node;
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref],
+      [bindGlossRef, ref],
     );
 
     const pushExpandRipple = useCallback((tone: "success" | "error") => {
@@ -667,41 +702,58 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const el = btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
-        animateInteractiveHoverLift(el, true, undefined, btnShadow);
+        if (isGloss) {
+          animateGlossInteractiveHoverLift(el, true);
+        } else {
+          animateInteractiveHoverLift(el, true, undefined, btnShadow);
+        }
       },
-      [blocked, btnShadow, onPointerEnter],
+      [blocked, btnShadow, isGloss, onPointerEnter],
     );
 
     const handlePointerLeave = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
         onPointerLeave?.(e);
         hoverPointerInsideRef.current = false;
+        if (blocked) return;
         if (shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
-        if (!el || blocked) return;
-        animateInteractiveHoverLift(el, false, undefined, btnShadow);
+        if (!el) return;
+        if (isGloss) {
+          animateGlossInteractiveHoverLift(el, false);
+        } else {
+          animateInteractiveHoverLift(el, false, undefined, btnShadow);
+        }
       },
-      [blocked, btnShadow, onPointerLeave],
+      [blocked, btnShadow, isGloss, onPointerLeave],
     );
 
     function onAnimeDown() {
       if (!animated || !btnRef.current || asyncState !== "idle") return;
       if (prefersReducedInteractiveHoverLift()) return;
       const el = btnRef.current;
-      void animateInteractivePressSqueeze(el).then(() => {
+      const afterPress = () => {
         const btn = btnRef.current;
-        if (
-          !btn ||
-          btn.disabled ||
-          asyncStateRef.current !== "idle" ||
-          shouldSkipInteractiveHoverLift()
-        ) {
-          return;
-        }
+        if (!btn || btn.disabled || asyncStateRef.current !== "idle") return;
+        if (shouldSkipInteractiveHoverLift()) return;
         if (hoverPointerInsideRef.current) {
-          animateInteractiveHoverLift(btn, true, undefined, btnShadow);
+          if (isGloss) {
+            animateGlossInteractiveHoverLift(btn, true);
+          } else {
+            animateInteractiveHoverLift(btn, true, undefined, btnShadow);
+          }
         }
-      });
+      };
+
+      if (isGloss) {
+        void animateGlossInteractivePressSqueeze(
+          el,
+          hoverPointerInsideRef.current,
+        );
+        return;
+      }
+
+      void animateInteractivePressSqueeze(el).then(afterPress);
     }
 
     const dismissExpand = useCallback((id: number) => {
@@ -793,11 +845,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           groupGlue,
           focusOutlineClass,
           sizeRoot,
-          buttonVariantRootClass(variant, status),
-          statusClass,
-          "animate-shadow",
+          isGloss
+            ? cn(
+                "gloss-btn",
+                GLOSS_INTERACTIVE_MOTION_CLASS,
+                BUTTON_GLOSS_STATUS[status],
+              )
+            : cn(
+                buttonVariantRootClass(variant, status),
+                statusClass,
+                "animate-shadow",
+                idleSurfaceMotion,
+              ),
           userDisabled ? "opacity-50" : "",
-          idleSurfaceMotion,
           roundingClass,
           className,
           "cursor-pointer",

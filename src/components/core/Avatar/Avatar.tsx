@@ -29,10 +29,17 @@ import { Text, type TextVariant } from "@/components/core/Text";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { cn } from "@/utils/cn";
 
+import "../utils/glossPanel.css";
+
 /** Размер круга аватара. */
 export type AvatarSize = "small" | "base" | "mid" | "large";
 
+/** Поверхность аватара. */
+export type AvatarVariant = "default" | "gloss";
+
 export type AvatarProps = Omit<HTMLAttributes<HTMLDivElement>, "aria-label"> & {
+  /** Поверхность: `gloss` — стеклянная обводка. */
+  variant?: AvatarVariant;
   /** Круг диаметром small / base / mid / large. По умолчанию `base`. */
   size?: AvatarSize;
   /** Подпись пользователя — первая буква во `Avatar.Fallback`, если там нет текста; также `aria-label` корня. */
@@ -219,6 +226,7 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
 
 export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
   {
+    variant = "default",
     size = "base",
     label,
     src,
@@ -271,20 +279,40 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     </>
   );
 
-  const shell = (
+  const isGloss = variant === "gloss";
+
+  const avatarInner = (
     <div
-      ref={ref}
+      ref={isGloss ? undefined : ref}
       role={role ?? "group"}
       className={cn(
-        "relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-surface text-left ring-2 ring-background",
-        SIZE_CLASS[size].root,
-        className,
+        "relative inline-flex shrink-0 select-none overflow-hidden text-left",
+        isGloss
+          ? cn("gloss-panel size-full rounded-full ring-2 ring-background", SIZE_CLASS[size].root)
+          : cn(
+              "rounded-full bg-surface ring-2 ring-background",
+              SIZE_CLASS[size].root,
+            ),
+        !isGloss && className,
       )}
       aria-label={hasLabel ? label!.trim() : undefined}
-      {...rest}
+      {...(isGloss ? {} : rest)}
     >
       {avatarContent}
     </div>
+  );
+
+  const shell = isGloss ? (
+    <div
+      ref={ref}
+      className={cn("gloss-wrap inline-flex shrink-0 rounded-full", SIZE_CLASS[size].root, className)}
+      {...rest}
+    >
+      <div className="gloss-shadow rounded-full" aria-hidden />
+      {avatarInner}
+    </div>
+  ) : (
+    avatarInner
   );
 
   return (

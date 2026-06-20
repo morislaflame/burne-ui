@@ -1,4 +1,7 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import "../utils/glossInteractive.css";
+import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
+import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import type {
   ChangeEvent,
   InputHTMLAttributes,
@@ -44,7 +47,7 @@ function inputSizeFromButtonSize(bs: ButtonSize): InputSize {
   return bs;
 }
 
-export type InputVariant = "default" | "outline";
+export type InputVariant = "default" | "outline" | "gloss";
 
 /** Валидация / обратная связь: бордер оболочки и цвет примечания. */
 export type InputStatus = "default" | "danger" | "success" | "warning";
@@ -83,7 +86,7 @@ export type InputProps = Omit<
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
 };
 
-const VARIANT_SHELL: Record<InputVariant, string> = {
+const VARIANT_SHELL: Record<Exclude<InputVariant, "gloss">, string> = {
   default: "bg-surface",
   outline: "bg-transparent",
 };
@@ -379,23 +382,36 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
       status === "success" ||
       status === "warning";
 
-    const shellSurface = statusTinted
-      ? cn(STATUS_TINT_SHELL[status], "border-token")
-      : cn(
-          variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
-        );
+    const isGloss = variant === "gloss";
 
-    const shellHoverLift = useFieldShellHoverLift(shellRef, !blocked);
+    const shellSurface = isGloss
+      ? cn("gloss-control", glossStatusTintClass(status))
+      : statusTinted
+        ? cn(STATUS_TINT_SHELL[status], "border-token")
+        : cn(
+            variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
+          );
+
+    const standardShellHover = useFieldShellHoverLift(shellRef, !blocked && !isGloss);
+    const glossShellMotion = useGlossFieldShellMotion(shellRef, !blocked && isGloss);
+
+    const setShellRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        shellRef.current = node;
+        if (!blocked && isGloss) glossShellMotion.bindShellRef(node);
+      },
+      [blocked, glossShellMotion, isGloss],
+    );
 
     const handleShellPointerDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
         onPointerDown?.(e);
-        if (e.defaultPrevented || blocked) return;
+        if (e.defaultPrevented || blocked || isGloss) return;
         const shell = shellRef.current;
         if (!shell || prefersReducedInteractiveHoverLift()) return;
         void animateInteractivePressSqueeze(shell);
       },
-      [blocked, onPointerDown],
+      [blocked, isGloss, onPointerDown],
     );
 
     const isFile = inputType === "file";
@@ -486,8 +502,12 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
 
     const shellFileEmptySurface = fileListEmpty
       ? cn(
-          statusTinted ? STATUS_TINT_SHELL[status] : VARIANT_SHELL[variant],
-          "border-2 border-dashed border-token",
+          isGloss
+            ? cn("gloss-control", glossStatusTintClass(status))
+            : statusTinted
+              ? STATUS_TINT_SHELL[status]
+              : VARIANT_SHELL[variant],
+          isGloss ? "" : "border-2 border-dashed border-token",
         )
       : null;
 
@@ -506,22 +526,44 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div
-        ref={shellRef}
+        ref={setShellRef}
         data-slot="input-shell"
         role="presentation"
-        onPointerDown={handleShellPointerDown}
-        onPointerEnter={shellHoverLift.onShellPointerEnter}
-        onPointerLeave={shellHoverLift.onShellPointerLeave}
+        onPointerDown={
+          isGloss && !blocked
+            ? glossShellMotion.onShellPointerDown
+            : handleShellPointerDown
+        }
+        onPointerEnter={
+          isGloss && !blocked
+            ? glossShellMotion.onShellPointerEnter
+            : standardShellHover.onShellPointerEnter
+        }
+        onPointerLeave={
+          isGloss && !blocked
+            ? glossShellMotion.onShellPointerLeave
+            : standardShellHover.onShellPointerLeave
+        }
+        onFocusCapture={
+          isGloss && !blocked ? glossShellMotion.onShellFocusIn : undefined
+        }
+        onBlurCapture={
+          isGloss && !blocked ? glossShellMotion.onShellFocusOut : undefined
+        }
+        {...(blocked && isGloss ? { "data-gloss-disabled": "" } : {})}
         className={cn(
           "flex items-stretch overflow-hidden",
+          isGloss && "relative",
           groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "w-full",
-          fileListEmpty ? "min-h-[7.25rem]" : cn("border-1", shellHClass),
+          fileListEmpty ? "min-h-[7.25rem]" : cn(isGloss ? "" : "border-1", shellHClass),
           roundingShell,
           shellFileEmptySurface ?? shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
-          fieldShellHoverClass(!blocked, status),
-          shellHoverLift.shellHoverMotionClass,
+          isGloss ? "" : fieldShellHoverClass(!blocked, status),
+          isGloss
+            ? glossShellMotion.shellHoverMotionClass
+            : standardShellHover.shellHoverMotionClass,
           blocked ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,
         )}

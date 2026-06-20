@@ -3,11 +3,13 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   type HTMLAttributes,
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
+  type ReactNode,
   type Ref,
 } from "react";
 
@@ -20,10 +22,18 @@ import {
   shadowSm,
   useInteractiveHoverLiftContainerHandlers,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  animateGlossInteractivePressSqueeze,
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+  useGlossInteractiveHandlers,
+} from "@/components/core/utils/glossInteractiveMotion";
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
-export type CardVariant = "default" | "outline" | "secondary";
+import "../utils/glossInteractive.css";
+
+export type CardVariant = "default" | "outline" | "secondary" | "gloss";
 
 /** Событие активации нажимаемой карточки (`pressable`): клик или клавиши Enter / Space. */
 export type CardPressEvent =
@@ -48,7 +58,7 @@ export type CardProps = Omit<
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
 };
 
-const CARD_SURFACE: Record<CardVariant, string> = {
+const CARD_SURFACE: Record<Exclude<CardVariant, "gloss">, string> = {
   default: "bg-surface border-token shadow-token-sm",
   outline: "bg-transparent border-token shadow-token-sm",
   secondary: "bg-secondary border-token shadow-token-sm",
@@ -153,21 +163,36 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const rootRef = useRef<HTMLElement | null>(null);
   const pointerInsideRef = useRef(false);
 
+  const isGloss = variant === "gloss";
+  const glossPressable = pressable && isGloss;
+
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(rootRef, glossPressable),
+    [glossPressable],
+  );
+
   const setRootRef = useCallback(
     (node: HTMLElement | null) => {
+      bindGlossRef(node);
       rootRef.current = node;
       if (typeof ref === "function") ref(node);
       else if (ref) ref.current = node;
     },
-    [ref],
+    [bindGlossRef, ref],
+  );
+
+  const glossPointerHandlers = useGlossInteractiveHandlers(
+    rootRef,
+    glossPressable,
+    { pointerInsideRef },
   );
 
   const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
     rootRef,
-    pressable,
+    pressable && !isGloss,
     pointerInsideRef,
     undefined,
-    pressable ? CARD_PRESS_SHADOW : undefined,
+    pressable && !isGloss ? CARD_PRESS_SHADOW : undefined,
   );
 
   useEffect(() => {
@@ -189,15 +214,25 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
       }
       const shell = rootRef.current;
       if (!shell) return;
+
+      if (isGloss) {
+        void animateGlossInteractivePressSqueeze(
+          shell,
+          pointerInsideRef.current,
+        );
+        return;
+      }
+
       void animateInteractivePressSqueeze(shell).then(() => {
         const el = rootRef.current;
-        if (!el || shouldSkipInteractiveHoverLift()) return;
+        if (!el) return;
+        if (shouldSkipInteractiveHoverLift()) return;
         if (pointerInsideRef.current) {
           animateInteractiveHoverLift(el, true, undefined, CARD_PRESS_SHADOW);
         }
       });
     },
-    [onPointerDownProp, pressable],
+    [isGloss, onPointerDownProp, pressable],
   );
 
   const handleClick = useCallback(
@@ -215,6 +250,72 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     },
     [onKeyDownProp],
   );
+
+  if (isGloss) {
+    const glossPanelClass = cn(
+      "gloss-panel flex min-w-0 flex-col text-foreground outline-none",
+      SURFACE_COLOR_TRANSITION,
+      className,
+    );
+    const glossChildren = (
+      <div className="gloss-content flex min-w-0 flex-1 flex-col">{children}</div>
+    );
+    const glossWrap = (inner: ReactNode) => (
+      <div className="gloss-wrap rounded-mid">
+        <div className="gloss-shadow" aria-hidden />
+        {inner}
+      </div>
+    );
+
+    if (pressable) {
+      return glossWrap(
+        <button
+          type="button"
+          {...rest}
+          ref={setRootRef}
+          className={cn(
+            glossPanelClass,
+            pressable &&
+              cn(GLOSS_INTERACTIVE_MOTION_CLASS, "cursor-pointer focus-ring w-full border-0 p-0 text-left"),
+          )}
+          onPointerOver={(e) => {
+            onPointerOverProp?.(e);
+            if (pressable && !e.defaultPrevented) {
+              if (isGloss) glossPointerHandlers.onPointerOver(e);
+              else liftPointerHandlers.onPointerOver(e);
+            }
+          }}
+          onPointerOut={(e) => {
+            onPointerOutProp?.(e);
+            if (pressable) {
+              if (isGloss) glossPointerHandlers.onPointerOut(e);
+              else liftPointerHandlers.onPointerOut(e);
+            }
+          }}
+          onPointerDown={handlePointerDown}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+        >
+          {glossChildren}
+        </button>,
+      );
+    }
+
+    return glossWrap(
+      <div
+        {...rest}
+        ref={setRootRef}
+        className={glossPanelClass}
+        onPointerOver={onPointerOverProp}
+        onPointerOut={onPointerOutProp}
+        onPointerDown={onPointerDownProp}
+        onClick={onClickProp}
+        onKeyDown={onKeyDownProp}
+      >
+        {glossChildren}
+      </div>,
+    );
+  }
 
   const rootClassName = cn(
     "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",

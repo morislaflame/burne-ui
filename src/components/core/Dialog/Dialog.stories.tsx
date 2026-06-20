@@ -42,7 +42,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модальное окно (портал в `document.body`). Длинный контент скроллится в `Dialog.Body`; шапка и футер фиксированы. Управление через `open` / `onOpenChange`.",
+          "Модальное окно (портал в `document.body`). Длинный контент скроллится в `Dialog.Body`; шапка и футер фиксированы. `variant=\"gloss\"` — стеклянная панель. Управление через `open` / `onOpenChange`.",
       },
     },
   },
@@ -209,4 +209,97 @@ export const OnLightTheme: Story = {
   name: "Светлая тема",
   decorators: [...lightThemeDecorator],
   render: Default.render,
+};
+
+// ─── Gloss variant ───────────────────────────────────────────────────────────
+
+const dottedGridStyle = {
+  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
+  backgroundSize: "30px 30px",
+  backgroundPosition: "2px 2px",
+} as const;
+
+function glossDottedDecorator(light = false) {
+  return (Story: ComponentType) => (
+    <div
+      data-theme={light ? "light" : undefined}
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
+    >
+      <div className="mx-auto max-w-xl">
+        <Story />
+      </div>
+    </div>
+  );
+}
+
+function GlossDialogContent({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange} variant="gloss">
+      <Dialog.Header>
+        <Dialog.HeadingBlock>
+          <Dialog.Title>Стеклянный диалог</Dialog.Title>
+          <Dialog.Description>
+            variant=&quot;gloss&quot; — модальная панель с conic-обводкой и бликом.
+          </Dialog.Description>
+        </Dialog.HeadingBlock>
+        <Dialog.Close />
+      </Dialog.Header>
+      <Dialog.Body className="flex flex-col gap-mid">
+        <Input>
+          <Input.Label>Имя</Input.Label>
+          <Input.Control variant="gloss" name="name" placeholder="Иван" autoComplete="name" />
+        </Input>
+        <Input>
+          <Input.Label>Email</Input.Label>
+          <Input.Control
+            variant="gloss"
+            name="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
+        </Input>
+      </Dialog.Body>
+      <Dialog.Footer>
+        <Button type="button" size="base" variant="ghost" onClick={() => onOpenChange(false)}>
+          Отмена
+        </Button>
+        <Button type="button" size="base" variant="gloss" onClick={() => onOpenChange(false)}>
+          Сохранить
+        </Button>
+      </Dialog.Footer>
+    </Dialog>
+  );
+}
+
+function GlossDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button type="button" variant="gloss" onClick={() => setOpen(true)}>
+        Открыть gloss-диалог
+      </Button>
+      <GlossDialogContent open={open} onOpenChange={setOpen} />
+    </>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

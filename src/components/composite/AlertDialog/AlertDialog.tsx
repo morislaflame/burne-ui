@@ -54,6 +54,9 @@ import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
+import "@/components/core/utils/glossPanel.css";
+import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
+
 import { footerButtonSizeForAlertDialog } from "./alertDialogFooterUtils";
 import { ALERT_DIALOG_SIZE } from "./alertDialogSizePresets";
 import type {
@@ -371,10 +374,12 @@ export const AlertDialogRoot = function AlertDialog({
   children,
   className = "",
   status,
+  variant = "default",
   size = "base",
   themeAnchor,
 }: AlertDialogProps) {
   const tone = resolveAlertStatus(status);
+  const isGloss = variant === "gloss";
   const sizePreset = ALERT_DIALOG_SIZE[size];
 
   const titleId = useId();
@@ -502,10 +507,14 @@ export const AlertDialogRoot = function AlertDialog({
           ref={panelRef}
           tabIndex={-1}
           className={cn(
-            "relative z-10 flex min-h-0 w-full flex-col overflow-hidden rounded-mid text-left outline-none",
-            sizePreset.panelMax,
-            sizePreset.maxHeight,
-            alertDialogPanelClass(tone),
+            "relative z-10 w-full outline-none",
+            !isGloss &&
+              cn(
+                "flex min-h-0 flex-col overflow-hidden rounded-mid text-left",
+                sizePreset.panelMax,
+                sizePreset.maxHeight,
+                alertDialogPanelClass(tone),
+              ),
             className,
           )}
           style={
@@ -514,7 +523,22 @@ export const AlertDialogRoot = function AlertDialog({
               : { opacity: 0 }
           }
         >
-          {children}
+          {isGloss ? (
+            <div className={cn("gloss-wrap rounded-mid", sizePreset.panelMax)}>
+              <div className="gloss-shadow" aria-hidden />
+              <div
+                className={cn(
+                  "gloss-panel flex min-h-0 w-full flex-col text-left text-foreground",
+                  sizePreset.maxHeight,
+                  glossStatusTintClass(tone),
+                )}
+              >
+                <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
+              </div>
+            </div>
+          ) : (
+            children
+          )}
         </div>
       </dialog>
     </AlertDialogContext.Provider>,

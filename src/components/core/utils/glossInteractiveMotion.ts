@@ -1,0 +1,329 @@
+/**
+ * GSAP-анимации для gloss-интерактивов: lift/squeeze как у UI-кита
+ * + gloss box-shadow (elevation, inner glow, press-inset) + декор (блик, conic).
+ */
+
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type MutableRefObject, type RefObject } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
+
+import { gsap, killMotion } from "./gsapMotion";
+import { getMotionConfig } from "./motionConfig";
+import {
+  resolveAdaptiveHoverLiftScale,
+  resolveAdaptivePressSqueezeScale,
+  shouldSkipInteractiveHoverLift,
+} from "./hoverInteractiveLift";
+
+const GLOSS_INIT_ATTR = "data-gloss-motion-init";
+
+/** Классы motion без `animate-shadow` — gloss тени анимируются GSAP, не `--el-shadow`. */
+export const GLOSS_INTERACTIVE_MOTION_CLASS = "will-change-transform origin-center";
+
+export type GlossDecorState = "rest" | "hover" | "press";
+
+const GLOSS_DECOR: Record<
+  GlossDecorState,
+  { angle1: number; angle2: number; shineX: number; shineY: number }
+> = {
+  rest: { angle1: -75, angle2: -45, shineX: 0, shineY: 50 },
+  hover: { angle1: -80, angle2: -45, shineX: 25, shineY: 50 },
+  press: { angle1: -75, angle2: -15, shineX: 50, shineY: 15 },
+};
+
+/** Easing gloss-поверхности (как в gloss-interactive CSS). */
+const GLOSS_SURFACE_EASE = "power2.inOut";
+
+function readGlossVar(element: HTMLElement, name: string): string {
+  const local = getComputedStyle(element).getPropertyValue(name).trim();
+  if (local) return local;
+  if (typeof document === "undefined") return "";
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function glossDecorVars(state: GlossDecorState) {
+  const d = GLOSS_DECOR[state];
+  return {
+    "--gloss-angle-1": `${d.angle1}deg`,
+    "--gloss-angle-2": `${d.angle2}deg`,
+    "--gloss-shine-x": d.shineX,
+    "--gloss-shine-y": d.shineY,
+  } as Record<string, string | number>;
+}
+
+/**
+ * Многослойный gloss box-shadow (rest / hover / press).
+ * Всегда 5 слоёв — GSAP может плавно интерполировать hover ↔ press.
+ */
+export function buildGlossBoxShadow(element: HTMLElement, state: GlossDecorState): string {
+  const insetTop = readGlossVar(element, "--gloss-inset-top");
+  const insetBottom = readGlossVar(element, "--gloss-inset-bottom");
+  const elevation = readGlossVar(element, "--gloss-elevation");
+  const innerGlow = readGlossVar(element, "--gloss-inner-glow");
+  const glowHover = readGlossVar(element, "--gloss-glow-hover");
+  const pressInset = readGlossVar(element, "--gloss-press-inset");
+
+  const base = `inset 0 0.425em 0.425em ${insetTop}, inset 0 -0.225em 0.225em ${insetBottom}`;
+
+  const elevationLayer =
+    state === "hover"
+      ? `0 0.28em 0.14em -0.125em ${elevation}`
+      : state === "press"
+        ? `0 0.08em 0.04em -0.1em ${elevation}`
+        : `0 0.12em 0.05em -0.1em ${elevation}`;
+
+  const innerRing =
+    state === "hover"
+      ? `inset 0 0 0.1em 0.25em ${glowHover}`
+      : `inset 0 0 0.05em 0.1em ${innerGlow}`;
+
+  const pressLayer =
+    state === "press"
+      ? `inset 0 0.25em 0.06em 0 ${pressInset}`
+      : "inset 0 0.25em 0.06em 0 rgb(0 0 0 / 0)";
+
+  return `${base}, ${elevationLayer}, ${innerRing}, ${pressLayer}`;
+}
+
+function glossSurfaceProps(element: HTMLElement, state: GlossDecorState) {
+  return {
+    ...glossDecorVars(state),
+    boxShadow: buildGlossBoxShadow(element, state),
+  };
+}
+
+/** Мгновенно выставляет rest: scale=1, декор и gloss box-shadow. */
+export function applyGlossInteractiveInstant(element: HTMLElement) {
+  killMotion(element);
+  gsap.set(element, {
+    scale: 1,
+    ...glossSurfaceProps(element, "rest"),
+  });
+}
+
+export function createGlossInteractiveRefCallback(
+  ref: RefObject<HTMLElement | null>,
+  enabled = true,
+) {
+  return (node: HTMLElement | null) => {
+    ref.current = node;
+    if (node && enabled && !node.hasAttribute(GLOSS_INIT_ATTR)) {
+      node.setAttribute(GLOSS_INIT_ATTR, "");
+      applyGlossInteractiveInstant(node);
+    }
+  };
+}
+
+/** Hover-lift + gloss box-shadow + декор (единый tween, без конфликта killMotion). */
+export function animateGlossInteractiveHoverLift(
+  element: HTMLElement,
+  lifted: boolean,
+  liftScale?: number,
+): void {
+  if (shouldSkipInteractiveHoverLift()) {
+    if (!lifted) {
+      killMotion(element);
+      gsap.set(element, { scale: 1, ...glossSurfaceProps(element, "rest") });
+    }
+    return;
+  }
+
+  killMotion(element);
+  const cfg = getMotionConfig();
+  const state = lifted ? "hover" : "rest";
+  const resolvedScale = lifted
+    ? (liftScale !== undefined ? liftScale : resolveAdaptiveHoverLiftScale(element))
+    : 1;
+
+  gsap.to(element, {
+    scale: resolvedScale,
+    ...glossSurfaceProps(element, state),
+    duration: cfg.interactiveDuration / 1000,
+    ease: lifted ? cfg.hoverLiftEase : GLOSS_SURFACE_EASE,
+    overwrite: "auto",
+  });
+}
+
+/** Press-squeeze + press gloss-shadow; сразу возврат в hover/rest одним timeline. */
+export function animateGlossInteractivePressSqueeze(
+  element: HTMLElement,
+  pointerInside = false,
+  liftScale?: number,
+): Promise<void> {
+  if (shouldSkipInteractiveHoverLift()) {
+    return Promise.resolve();
+  }
+
+  const cfg = getMotionConfig();
+  if (!cfg.enablePressSqueeze) {
+    animateGlossInteractiveHoverLift(element, pointerInside, liftScale);
+    return Promise.resolve();
+  }
+
+  killMotion(element);
+  const squeeze = resolveAdaptivePressSqueezeScale(element);
+  const total = (cfg.interactiveDuration * 1.15) / 1000;
+  const pressIn = total * 0.3;
+  const releaseOut = total * 1;
+
+  const releaseState = pointerInside ? "hover" : "rest";
+  const releaseScale = pointerInside
+    ? (liftScale !== undefined ? liftScale : resolveAdaptiveHoverLiftScale(element))
+    : 1;
+
+  return new Promise<void>((resolve) => {
+    gsap
+      .timeline({ onComplete: () => resolve() })
+      .to(element, {
+        ...glossSurfaceProps(element, "press"),
+        scale: squeeze,
+        duration: pressIn,
+        ease: "power1.out",
+        overwrite: "auto",
+      })
+      .to(element, {
+        ...glossSurfaceProps(element, releaseState),
+        scale: releaseScale,
+        duration: releaseOut,
+        ease: pointerInside ? cfg.hoverLiftEase : GLOSS_SURFACE_EASE,
+        overwrite: "auto",
+      });
+  });
+}
+
+function cameFromOutsideContainer(root: HTMLElement, related: EventTarget | null): boolean {
+  if (related == null) return true;
+  if (!(related instanceof Node)) return true;
+  return !root.contains(related);
+}
+
+export function useGlossInteractiveHandlers(
+  ref: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  options?: {
+    pointerInsideRef?: MutableRefObject<boolean>;
+    liftScale?: number;
+  },
+) {
+  const liftScale = options?.liftScale;
+  const pointerInsideRef = options?.pointerInsideRef;
+
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    const el = ref.current;
+    if (el) applyGlossInteractiveInstant(el);
+  }, [enabled, ref]);
+
+  useEffect(() => {
+    const el = ref.current;
+    return () => {
+      if (el) killMotion(el);
+    };
+  }, [ref]);
+
+  return useMemo(() => {
+    const onPointerOver = (e: ReactPointerEvent<HTMLElement>) => {
+      if (!enabled || e.defaultPrevented) return;
+      const c = e.currentTarget;
+      if (!(e.target instanceof Node) || !c.contains(e.target)) return;
+      if (!cameFromOutsideContainer(c, e.relatedTarget)) return;
+      if (shouldSkipInteractiveHoverLift()) return;
+      const el = ref.current;
+      if (!el) return;
+      if (pointerInsideRef) pointerInsideRef.current = true;
+      animateGlossInteractiveHoverLift(el, true, liftScale);
+    };
+
+    const onPointerOut = (e: ReactPointerEvent<HTMLElement>) => {
+      const c = e.currentTarget;
+      const rt = e.relatedTarget;
+      if (rt instanceof Node && c.contains(rt)) return;
+      if (pointerInsideRef) pointerInsideRef.current = false;
+      if (!enabled || shouldSkipInteractiveHoverLift()) return;
+      const el = ref.current;
+      if (!el) return;
+      animateGlossInteractiveHoverLift(el, false, liftScale);
+    };
+
+    return { onPointerOver, onPointerOut };
+  }, [enabled, liftScale, pointerInsideRef, ref]);
+}
+
+/** Gloss shell поля: hover + focus-within поднимают одинаково. */
+export function useGlossFieldShellMotion(
+  shellRef: RefObject<HTMLElement | null>,
+  enabled: boolean,
+) {
+  const pointerInsideRef = useRef(false);
+  const focusedRef = useRef(false);
+
+  const bindShellRef = useMemo(
+    () => createGlossInteractiveRefCallback(shellRef, enabled),
+    [shellRef, enabled],
+  );
+
+  const syncLift = useCallback(() => {
+    const el = shellRef.current;
+    if (!el || !enabled || shouldSkipInteractiveHoverLift()) return;
+    const lifted = pointerInsideRef.current || focusedRef.current;
+    animateGlossInteractiveHoverLift(el, lifted);
+  }, [enabled, shellRef]);
+
+  const pointerHandlers = useGlossInteractiveHandlers(shellRef, enabled, {
+    pointerInsideRef,
+  });
+
+  const onShellPointerEnter = useCallback(
+    (e: ReactPointerEvent<HTMLElement>) => {
+      pointerHandlers.onPointerOver(e);
+      if (focusedRef.current) syncLift();
+    },
+    [pointerHandlers, syncLift],
+  );
+
+  const onShellPointerLeave = useCallback(
+    (e: ReactPointerEvent<HTMLElement>) => {
+      pointerHandlers.onPointerOut(e);
+      if (focusedRef.current) syncLift();
+    },
+    [pointerHandlers, syncLift],
+  );
+
+  const onShellFocusIn = useCallback(() => {
+    if (!enabled) return;
+    focusedRef.current = true;
+    syncLift();
+  }, [enabled, syncLift]);
+
+  const onShellFocusOut = useCallback(
+    (e: React.FocusEvent<HTMLElement>) => {
+      if (!enabled) return;
+      const shell = shellRef.current;
+      if (shell && e.relatedTarget instanceof Node && shell.contains(e.relatedTarget)) {
+        return;
+      }
+      focusedRef.current = false;
+      syncLift();
+    },
+    [enabled, shellRef, syncLift],
+  );
+
+  const onShellPointerDown = useCallback(() => {
+    if (!enabled) return;
+    const el = shellRef.current;
+    if (!el || shouldSkipInteractiveHoverLift()) return;
+    void animateGlossInteractivePressSqueeze(
+      el,
+      pointerInsideRef.current || focusedRef.current,
+    );
+  }, [enabled, shellRef]);
+
+  return {
+    bindShellRef,
+    shellHoverMotionClass: enabled ? GLOSS_INTERACTIVE_MOTION_CLASS : "",
+    onShellPointerEnter,
+    onShellPointerLeave,
+    onShellFocusIn,
+    onShellFocusOut,
+    onShellPointerDown,
+  };
+}

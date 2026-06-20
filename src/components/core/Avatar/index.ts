@@ -9,6 +9,7 @@ export { AvatarGroup } from "./Avatar";
 
 export type {
   AvatarProps,
+  AvatarVariant,
   AvatarSize,
   AvatarImageProps,
   AvatarFallbackProps,

@@ -86,7 +86,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Текстовое поле. **Simple** — `label`, `hint`, `error` и props контрола на root; **Compound** — `<Input.Label>` / `<Input.Control>` / `<Input.Hint>` / `<Input.Error>`. **a11y:** `htmlFor`, `aria-describedby` (hint + error), `aria-invalid` при `status=\"danger\"`, `aria-required`.",
+          "Текстовое поле. **Simple** — `label`, `hint`, `error` и props контрола на root; **Compound** — `<Input.Label>` / `<Input.Control>` / `<Input.Hint>` / `<Input.Error>`. `variant=\"gloss\"` — стеклянная оболочка поля. **a11y:** `htmlFor`, `aria-describedby` (hint + error), `aria-invalid` при `status=\"danger\"`, `aria-required`.",
       },
     },
   },
@@ -264,4 +264,92 @@ export const Accessibility: Story = {
       <ValidatedEmailCompoundDemo />
     </div>
   ),
+};
+
+// ─── Gloss variant ───────────────────────────────────────────────────────────
+
+const dottedGridStyle = {
+  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
+  backgroundSize: "30px 30px",
+  backgroundPosition: "2px 2px",
+} as const;
+
+function glossDottedDecorator(light = false) {
+  return (Story: ComponentType) => (
+    <div
+      data-theme={light ? "light" : undefined}
+      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
+    >
+      <div className="mx-auto w-full max-w-md">
+        <Story />
+      </div>
+    </div>
+  );
+}
+
+function GlossDemo() {
+  return (
+    <div className="flex w-full flex-col gap-plus">
+      <Input>
+        <Input.Label>Email</Input.Label>
+        <Input.Control variant="gloss" placeholder="you@example.com" autoComplete="email" />
+        <Input.Hint>variant=&quot;gloss&quot; — стеклянная оболочка поля.</Input.Hint>
+      </Input>
+      <Input>
+        <Input.Label>Домен</Input.Label>
+        <Input.Control variant="gloss" prefix="https://" suffix=".com" placeholder="example" />
+      </Input>
+      <Input>
+        <Input.Label>Пароль</Input.Label>
+        <Input.Control
+          variant="gloss"
+          inputType="password"
+          placeholder="••••••••"
+          autoComplete="current-password"
+        />
+      </Input>
+      <div className="flex flex-col gap-base">
+        <Input size="small">
+          <Input.Label>Small</Input.Label>
+          <Input.Control variant="gloss" placeholder="small" />
+        </Input>
+        <Input size="base">
+          <Input.Label>Base</Input.Label>
+          <Input.Control variant="gloss" placeholder="base" />
+        </Input>
+        <Input size="mid">
+          <Input.Label>Mid</Input.Label>
+          <Input.Control variant="gloss" placeholder="mid" />
+        </Input>
+        <Input size="large">
+          <Input.Label>Large</Input.Label>
+          <Input.Control variant="gloss" placeholder="large" />
+        </Input>
+      </div>
+      <Input status="danger">
+        <Input.Label>Email</Input.Label>
+        <Input.Control variant="gloss" defaultValue="bad@" />
+        <Input.Error>Укажите корректный адрес.</Input.Error>
+      </Input>
+      <Input disabled>
+        <Input.Label>Disabled</Input.Label>
+        <Input.Control variant="gloss" defaultValue="readonly@example.com" />
+      </Input>
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

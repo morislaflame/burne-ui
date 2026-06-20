@@ -46,7 +46,7 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   };
 }
 
-const VARIANT_SHELL: Record<InputVariant, string> = {
+const VARIANT_SHELL: Record<Exclude<InputVariant, "gloss">, string> = {
   default: "bg-surface",
   outline: "bg-transparent",
 };
@@ -102,7 +102,11 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
     const shellSurface = statusTinted
       ? cn(STATUS_TINT_SHELL[status], "border-token")
       : cn(
-          variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
+          variant === "outline"
+            ? "bg-transparent border-token"
+            : variant === "gloss"
+              ? "gloss-control"
+              : cn(VARIANT_SHELL[variant], "border-token"),
         );
 
     const shellHoverLift = useFieldShellHoverLift(anchorRef, !disabled);

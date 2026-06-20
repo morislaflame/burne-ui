@@ -20,15 +20,23 @@ import {
 import { Text, type TextVariant } from "@/components/core/Text";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useInteractiveHoverLiftContainerHandlers, shadowSm, shadowMd, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+  useGlossInteractiveHandlers,
+} from "@/components/core/utils/glossInteractiveMotion";
 import { cn } from "@/utils/cn";
 
+import "../utils/glossInteractive.css";
+import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
+
 /** Визуальный вариант бейджа (поверхность/рамка), как у Button. */
-export type BadgeVariant = "default" | "primary" | "outline" | "secondary";
+export type BadgeVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
 
 /** Семантический статус бейджа, как у Button. */
 export type BadgeStatus = "default" | "danger" | "success" | "info" | "warning";
 
-const BADGE_VARIANT_SURFACE: Record<BadgeVariant, string> = {
+const BADGE_VARIANT_SURFACE: Record<Exclude<BadgeVariant, "gloss">, string> = {
   default: "bg-surface border-token text-foreground",
   primary: "bg-primary border-token text-primary-foreground",
   outline: "bg-transparent border-token text-foreground",
@@ -63,9 +71,7 @@ const BADGE_STATUS_OUTLINE_BORDER: Record<Exclude<BadgeStatus, "default">, strin
   warning: "border-token-warning",
 };
 
-type BadgeDotKey = BadgeVariant | Exclude<BadgeStatus, "default">;
-
-const BADGE_DOT_FILL: Record<BadgeDotKey, string> = {
+const BADGE_DOT_FILL: Record<Exclude<BadgeVariant, "gloss"> | Exclude<BadgeStatus, "default">, string> = {
   default: "bg-foreground",
   primary: "bg-primary",
   outline: "bg-transparent border-token",
@@ -77,6 +83,10 @@ const BADGE_DOT_FILL: Record<BadgeDotKey, string> = {
 };
 
 function dotFillClass(variant: BadgeVariant, status: BadgeStatus): string {
+  if (variant === "gloss") {
+    if (status !== "default") return BADGE_DOT_FILL[status];
+    return BADGE_DOT_FILL.default;
+  }
   if (status !== "default") return BADGE_DOT_FILL[status];
   return BADGE_DOT_FILL[variant];
 }
@@ -238,6 +248,13 @@ function badgeHasAccessibleName(props: HTMLAttributes<HTMLSpanElement>): boolean
 }
 
 function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus): string {
+  if (variant === "gloss") {
+    return cn(
+      "gloss-panel border-0 text-foreground",
+      glossStatusTintClass(status),
+    );
+  }
+
   if (status === "default") return BADGE_VARIANT_SURFACE[variant];
 
   switch (variant) {
@@ -401,6 +418,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   const innerLiftRef = useRef<HTMLSpanElement | null>(null);
   const [isDirectAnchorChild, setIsDirectAnchorChild] = useState(false);
 
+  const isGloss = variant === "gloss";
   const surfaceClass = badgeSurfaceClass(variant, status);
   const rk = size;
 
@@ -418,12 +436,22 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     ? BADGE_ANCHOR_PLACEMENT[placementResolved]
     : "";
 
-  const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift);
+  const splitLift = Boolean(isDirectAnchorChild && liftCtx?.hoverLift && !isGloss);
   const selfLiftEnabled = hoverLift && !splitLift;
+
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(rootRef, selfLiftEnabled && isGloss),
+    [isGloss, selfLiftEnabled],
+  );
+
+  const glossLiftPointerHandlers = useGlossInteractiveHandlers(
+    rootRef,
+    selfLiftEnabled && isGloss,
+  );
 
   const selfLiftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
     rootRef,
-    selfLiftEnabled,
+    selfLiftEnabled && !isGloss,
     undefined,
     undefined,
     { idle: shadowSm(), hover: shadowMd() },
@@ -434,15 +462,22 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       onPointerOver: (e: ReactPointerEvent<HTMLSpanElement>) => {
         onPointerOverProp?.(e);
         if (!e.defaultPrevented && selfLiftEnabled) {
-          selfLiftPointerHandlers.onPointerOver(e);
+          if (isGloss) glossLiftPointerHandlers.onPointerOver(e);
+          else selfLiftPointerHandlers.onPointerOver(e);
         }
       },
       onPointerOut: (e: ReactPointerEvent<HTMLSpanElement>) => {
         onPointerOutProp?.(e);
-        if (selfLiftEnabled) selfLiftPointerHandlers.onPointerOut(e);
+        if (selfLiftEnabled) {
+          if (isGloss) glossLiftPointerHandlers.onPointerOut(e);
+          else selfLiftPointerHandlers.onPointerOut(e);
+        }
       },
     }),
     [
+      glossLiftPointerHandlers.onPointerOut,
+      glossLiftPointerHandlers.onPointerOver,
+      isGloss,
       onPointerOutProp,
       onPointerOverProp,
       selfLiftEnabled,
@@ -451,7 +486,11 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     ],
   );
 
-  const selfLiftMotionCls = selfLiftEnabled ? "will-change-transform origin-center" : "";
+  const selfLiftMotionCls = selfLiftEnabled
+    ? isGloss
+      ? GLOSS_INTERACTIVE_MOTION_CLASS
+      : "animate-shadow will-change-transform origin-center"
+    : "";
 
   const syncDirectChild = useCallback(() => {
     const outer = rootRef.current;
@@ -471,6 +510,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   const setMergedRef = useCallback(
     (node: HTMLSpanElement | null) => {
+      bindGlossRef(node);
       rootRef.current = node;
       if (node === null) {
         liftCtx?.registerLiftTarget(null);
@@ -480,7 +520,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       if (typeof forwardedRef === "function") forwardedRef(node);
       else if (forwardedRef) forwardedRef.current = node;
     },
-    [forwardedRef, liftCtx],
+    [bindGlossRef, forwardedRef, liftCtx],
   );
 
   useLayoutEffect(() => {
@@ -502,6 +542,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   // Инициализируем начальную тень на том элементе, который будет анимироваться.
   useLayoutEffect(() => {
+    if (isGloss) return;
     const target = splitLift ? innerLiftRef.current : rootRef.current;
     initElementShadow(target, shadowSm());
   });
@@ -512,7 +553,9 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     const dotInnerCls = cn(
       "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
       BADGE_DOT_DIM[rk],
-      dotFillClass(variant, status),
+      isGloss
+        ? cn("gloss-panel border-0", glossStatusTintClass(status))
+        : dotFillClass(variant, status),
       splitLift && "will-change-transform origin-center",
       !splitLift && placementClass,
       className,
@@ -545,12 +588,10 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         className={cn(
           "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
           BADGE_DOT_DIM[rk],
-          dotFillClass(variant, status),
-          selfLiftEnabled && "animate-shadow",
+          dotInnerCls,
           selfLiftMotionCls,
-          isDirectAnchorChild && "pointer-events-none",
+          isDirectAnchorChild && !isGloss && "pointer-events-none",
           placementClass,
-          className,
         )}
         {...(hasLabel
           ? {}
@@ -611,7 +652,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   if (onlyIconLayout) {
     const iconInnerCls = cn(
-      "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap animate-shadow",
+      "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap",
       surfaceClass,
       BADGE_ICON_ONLY[rk],
       splitLift && "will-change-transform origin-center",
@@ -642,11 +683,11 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         ref={setMergedRef}
         data-badge-root
         className={cn(
-          "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap animate-shadow",
-          isDirectAnchorChild && "pointer-events-none",
+          "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap",
           surfaceClass,
           BADGE_ICON_ONLY[rk],
           selfLiftMotionCls,
+          isDirectAnchorChild && !isGloss && "pointer-events-none",
           placementClass,
           className,
         )}
@@ -662,7 +703,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   const dataIcon = showIconWithText ? iconPosition : undefined;
 
   const textInnerCls = cn(
-    "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
+    "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
     surfaceClass,
     BADGE_TEXT_ROW[rk],
     splitLift && "will-change-transform origin-center",
@@ -696,8 +737,8 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       data-icon={dataIcon}
       data-badge-root
       className={cn(
-        "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none animate-shadow",
-        isDirectAnchorChild && "pointer-events-none",
+        "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
+        isDirectAnchorChild && !isGloss && "pointer-events-none",
         surfaceClass,
         BADGE_TEXT_ROW[rk],
         selfLiftMotionCls,

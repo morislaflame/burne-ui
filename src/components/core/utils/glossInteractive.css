@@ -1,0 +1,28 @@
+/**
+ * Gloss interactive — статусные тинты и shell-утилиты.
+ * Motion (lift, squeeze, gloss box-shadow, блик, conic) — GSAP: glossInteractiveMotion.ts
+ */
+
+@import "./glossPanel.css";
+
+.gloss-btn {
+  color: var(--gloss-text, var(--color-foreground));
+}
+
+.gloss-tint-danger,
+.gloss-btn-danger  { --gloss-tint: var(--color-danger);  }
+.gloss-tint-success,
+.gloss-btn-success { --gloss-tint: var(--color-success); }
+.gloss-tint-info,
+.gloss-btn-info    { --gloss-tint: var(--color-info);    }
+.gloss-tint-warning,
+.gloss-btn-warning { --gloss-tint: var(--color-warning); }
+
+[data-theme="light"] .gloss-btn-danger  { --gloss-text: var(--color-danger);  }
+[data-theme="light"] .gloss-btn-success { --gloss-text: var(--color-success); }
+[data-theme="light"] .gloss-btn-info    { --gloss-text: var(--color-info);    }
+[data-theme="light"] .gloss-btn-warning { --gloss-text: var(--color-warning); }
+
+.gloss-control {
+  border-width: 0 !important;
+}

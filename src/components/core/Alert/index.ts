@@ -21,6 +21,7 @@ export { resolveAlertStatus } from "./alertUtils";
 
 export type {
   AlertProps,
+  AlertVariant,
   AlertStatus,
   AlertIndicatorProps,
   AlertContentProps,

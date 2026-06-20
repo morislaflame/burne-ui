@@ -16,6 +16,7 @@ const BUTTON_VARIANTS: ButtonVariant[] = [
   "outline",
   "secondary",
   "ghost",
+  "gloss",
 ];
 
 const BUTTON_STATUSES: ButtonStatus[] = [
@@ -76,6 +77,7 @@ const meta = {
         "outline",
         "secondary",
         "ghost",
+        "gloss",
       ],
     },
     status: {
@@ -319,4 +321,77 @@ function ControlledAsyncDemo() {
 export const ControlledAsync: Story = {
   name: "Контроль asyncState",
   render: () => <ControlledAsyncDemo />,
+};
+
+// ─── Gloss variant ───────────────────────────────────────────────────────────
+
+const dottedGridStyle = {
+  backgroundImage: "radial-gradient(rgb(128 128 128 / 0.22) 1px, transparent 1px)",
+  backgroundSize: "30px 30px",
+  backgroundPosition: "2px 2px",
+} as const;
+
+function glossDottedDecorator(light = false) {
+  return (Story: ComponentType) => (
+    <div
+      data-theme={light ? "light" : undefined}
+      className="box-border flex min-h-[20rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
+    >
+      <Story />
+    </div>
+  );
+}
+
+function GlossDemo() {
+  return (
+    <div className="flex flex-col items-center gap-xlarge">
+      <div className="flex flex-wrap items-center justify-center gap-plus">
+        {BUTTON_STATUSES.map((status) => (
+          <Button key={status} variant="gloss" status={status} className="capitalize">
+            {status}
+          </Button>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center justify-center gap-plus">
+        <Button variant="gloss" size="small">
+          Small
+        </Button>
+        <Button variant="gloss" size="base">
+          Base
+        </Button>
+        <Button variant="gloss" size="mid">
+          Mid
+        </Button>
+        <Button variant="gloss" size="large">
+          Generate
+        </Button>
+      </div>
+      <div className="flex flex-wrap items-center justify-center gap-plus">
+        <Button variant="gloss" leftIcon={<IoAdd aria-hidden />}>
+          С иконкой
+        </Button>
+        <Button variant="gloss" iconOnly aria-label="Добавить">
+          <IoAdd aria-hidden className="icon-base" />
+        </Button>
+        <Button variant="gloss" disabled>
+          Disabled
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

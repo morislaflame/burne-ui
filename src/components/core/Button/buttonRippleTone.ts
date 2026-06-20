@@ -8,6 +8,7 @@ const BUTTON_CONVERGE_BG: Record<ButtonVariant, string> = {
   outline: colorToken("converge-ripple-neutral"),
   secondary: colorToken("converge-ripple-neutral"),
   ghost: colorToken("converge-ripple-neutral"),
+  gloss: colorToken("converge-ripple-neutral"),
 };
 
 const BUTTON_STATUS_CONVERGE_BG: Record<Exclude<ButtonStatus, "default">, string> = {

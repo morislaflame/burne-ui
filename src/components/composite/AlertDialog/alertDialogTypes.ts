@@ -16,6 +16,8 @@ export type AlertDialogProps = {
   className?: string;
   /** Как у `Alert`: default, outline, secondary, danger, success, info, warning. */
   status?: AlertStatus;
+  /** Поверхность панели: `gloss` — стеклянная панель. */
+  variant?: "default" | "gloss";
   /** По умолчанию `m`. */
   size?: AlertDialogSize;
   /**
