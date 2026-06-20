@@ -1,5 +1,8 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import "../utils/glossPanel.css";
+import {
+  createGlossInteractiveRefCallback,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import {
   createContext,
   forwardRef,
@@ -8,6 +11,7 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type HTMLAttributes,
@@ -207,6 +211,11 @@ export const DialogRoot = function Dialog({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const glossPanelRef = useRef<HTMLDivElement>(null);
+  const bindGlossPanelRef = useMemo(
+    () => createGlossInteractiveRefCallback(glossPanelRef, variant === "gloss"),
+    [variant],
+  );
 
   const setHasDescriptionStable = useCallback((v: boolean) => {
     setHasDescription(v);
@@ -343,11 +352,11 @@ export const DialogRoot = function Dialog({
           }
         >
           {variant === "gloss" ? (
-            <div className="gloss-wrap rounded-mid">
-              <div className="gloss-shadow" aria-hidden />
-              <div className="gloss-panel flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col text-left text-foreground">
-                <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
-              </div>
+            <div
+              ref={bindGlossPanelRef}
+              className="gloss-panel flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col rounded-mid text-left text-foreground"
+            >
+              <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
             </div>
           ) : (
             children

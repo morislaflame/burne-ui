@@ -1,9 +1,10 @@
 import { forwardRef, type HTMLAttributes } from "react";
 
+import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import { cn } from "@/utils/cn";
 import type { ShadowSize } from "@/tokens/shadows";
 
-import "../utils/glossPanel.css";
+import "../utils/glossInteractive.css";
 
 export type SurfaceVariant = "default" | "secondary" | "tertiary" | "gloss";
 
@@ -55,10 +56,9 @@ const SURFACE_RADIUS: Record<SurfaceRadius, string> = {
 
 /**
  * Базовая панель: только фон, скругление и опциональная тень — без рамки.
- * Примитив для меню, секций, обёрток списков — без семантики Card и без blur у GlassSurface.
+ * Примитив для меню, секций, обёрток списков — без семантики Card.
  *
- * `variant="gloss"` — стеклянная панель с conic-обводкой, бликом и мягкой drop-shadow
- * (CSS-only, без OGL у GlassSurface).
+ * `variant="gloss"` — стеклянная CSS-панель с conic-обводкой, бликом и мягкой drop-shadow.
  */
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
   {
@@ -72,22 +72,22 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
   },
   ref,
 ) {
+  const setGlossRef = useMergedGlossPanelRef(ref, variant === "gloss");
+
   if (variant === "gloss") {
     return (
-      <div className={cn("gloss-wrap", SURFACE_RADIUS[radius])}>
-        <div className="gloss-shadow" aria-hidden />
-        <div
-          ref={ref}
-          className={cn(
-            "gloss-panel min-w-0 text-left text-foreground",
-            SURFACE_SHADOW[shadow],
-            SURFACE_PADDING[padding],
-            className,
-          )}
-          {...rest}
-        >
-          <div className="gloss-content">{children}</div>
-        </div>
+      <div
+        ref={setGlossRef}
+        className={cn(
+          "gloss-panel min-w-0 text-left text-foreground",
+          SURFACE_RADIUS[radius],
+          SURFACE_SHADOW[shadow],
+          SURFACE_PADDING[padding],
+          className,
+        )}
+        {...rest}
+      >
+        <div className="gloss-content">{children}</div>
       </div>
     );
   }

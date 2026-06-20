@@ -1,6 +1,5 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import "../utils/glossInteractive.css";
-import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import type {
   ChangeEvent,
@@ -385,7 +384,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     const isGloss = variant === "gloss";
 
     const shellSurface = isGloss
-      ? cn("gloss-control", glossStatusTintClass(status))
+      ? "gloss-control"
       : statusTinted
         ? cn(STATUS_TINT_SHELL[status], "border-token")
         : cn(
@@ -503,7 +502,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     const shellFileEmptySurface = fileListEmpty
       ? cn(
           isGloss
-            ? cn("gloss-control", glossStatusTintClass(status))
+            ? "gloss-control"
             : statusTinted
               ? STATUS_TINT_SHELL[status]
               : VARIANT_SHELL[variant],

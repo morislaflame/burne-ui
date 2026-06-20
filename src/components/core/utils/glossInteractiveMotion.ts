@@ -3,7 +3,16 @@
  * + gloss box-shadow (elevation, inner glow, press-inset) + декор (блик, conic).
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type MutableRefObject, type RefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  type MutableRefObject,
+  type Ref,
+  type RefObject,
+} from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
@@ -30,6 +39,29 @@ const GLOSS_DECOR: Record<
   press: { angle1: -75, angle2: -15, shineX: 50, shineY: 15 },
 };
 
+/** Эталонный размер (≈ gloss-кнопка base) для масштабирования блика. */
+const GLOSS_SHINE_REFERENCE_DIM = 120;
+/** Минимальная доля travel/spread на очень больших поверхностях. */
+const GLOSS_SHINE_MIN_SCALE = 0.35;
+
+function resolveAdaptiveGlossShineScale(element: HTMLElement): number {
+  const { width, height } = element.getBoundingClientRect();
+  const maxDim = Math.max(width, height, 1);
+  return Math.min(1, Math.max(GLOSS_SHINE_MIN_SCALE, GLOSS_SHINE_REFERENCE_DIM / maxDim));
+}
+
+function resolveGlossDecor(element: HTMLElement, state: GlossDecorState) {
+  const rest = GLOSS_DECOR.rest;
+  const target = GLOSS_DECOR[state];
+  const scale = resolveAdaptiveGlossShineScale(element);
+  return {
+    angle1: target.angle1,
+    angle2: target.angle2,
+    shineX: rest.shineX + (target.shineX - rest.shineX) * scale,
+    shineY: rest.shineY + (target.shineY - rest.shineY) * scale,
+  };
+}
+
 /** Easing gloss-поверхности (как в gloss-interactive CSS). */
 const GLOSS_SURFACE_EASE = "power2.inOut";
 
@@ -40,13 +72,14 @@ function readGlossVar(element: HTMLElement, name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-function glossDecorVars(state: GlossDecorState) {
-  const d = GLOSS_DECOR[state];
+function glossDecorVars(element: HTMLElement, state: GlossDecorState) {
+  const d = resolveGlossDecor(element, state);
   return {
     "--gloss-angle-1": `${d.angle1}deg`,
     "--gloss-angle-2": `${d.angle2}deg`,
     "--gloss-shine-x": d.shineX,
     "--gloss-shine-y": d.shineY,
+    "--gloss-shine-spread": resolveAdaptiveGlossShineScale(element),
   } as Record<string, string | number>;
 }
 
@@ -86,7 +119,7 @@ export function buildGlossBoxShadow(element: HTMLElement, state: GlossDecorState
 
 function glossSurfaceProps(element: HTMLElement, state: GlossDecorState) {
   return {
-    ...glossDecorVars(state),
+    ...glossDecorVars(element, state),
     boxShadow: buildGlossBoxShadow(element, state),
   };
 }
@@ -111,6 +144,28 @@ export function createGlossInteractiveRefCallback(
       applyGlossInteractiveInstant(node);
     }
   };
+}
+
+/** Rest-состояние gloss-панели как у `.gloss-btn` + merge с внешним ref. */
+export function useMergedGlossPanelRef<T extends HTMLElement>(
+  externalRef: Ref<T | null> | undefined,
+  enabled = true,
+) {
+  const localRef = useRef<T | null>(null);
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(localRef, enabled),
+    [enabled],
+  );
+
+  return useCallback(
+    (node: T | null) => {
+      bindGlossRef(node);
+      localRef.current = node;
+      if (typeof externalRef === "function") externalRef(node);
+      else if (externalRef) externalRef.current = node;
+    },
+    [bindGlossRef, externalRef],
+  );
 }
 
 /** Hover-lift + gloss box-shadow + декор (единый tween, без конфликта killMotion). */

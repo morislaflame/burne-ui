@@ -39,7 +39,6 @@ import {
 import { cn } from "@/utils/cn";
 
 import "../utils/glossInteractive.css";
-import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
 
 import { AlertContext } from "./alertContext";
 import {
@@ -370,8 +369,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     ? cn(
         "gloss-panel",
         GLOSS_INTERACTIVE_MOTION_CLASS,
-        "border-0",
-        glossStatusTintClass(tone),
+        "border-0 text-foreground",
       )
     : ALERT_INLINE_SURFACE_CLASSES[tone];
 

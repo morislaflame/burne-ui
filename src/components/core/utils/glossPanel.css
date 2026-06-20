@@ -27,6 +27,12 @@
   initial-value: 50;
 }
 
+@property --gloss-shine-spread {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
 /* ── Wrapper: stacking context ───────────────────────────────────────────── */
 .gloss-wrap {
   position: relative;
@@ -106,7 +112,9 @@
   );
   mix-blend-mode: screen;
   pointer-events: none;
-  background-size: 200% 200%;
+  background-size:
+    calc(200% * var(--gloss-shine-spread))
+    calc(200% * var(--gloss-shine-spread));
   background-position: calc(var(--gloss-shine-x) * 1%) calc(var(--gloss-shine-y) * 1%);
   background-repeat: no-repeat;
   filter: blur(var(--gloss-shine-blur));
@@ -142,7 +150,7 @@
 .gloss-panel {
   position: relative;
   z-index: 1;
-  border-radius: inherit;
+  isolation: isolate;
   overflow: clip;
 }
 

@@ -27,21 +27,6 @@ export {
   type CloseButtonVariant,
 } from "@/components/core/CloseButton";
 export {
-  GlassSurface,
-  GlassShaderLayer,
-  GlassBackdrop,
-  type GlassSurfaceProps,
-  type GlassShaderLayerProps,
-  type GlassBackdropProps,
-} from "@/components/core/GlassSurface";
-export {
-  LiquidGlass,
-  resetLiquidGlassSnapshot,
-  type LiquidGlassProps,
-  type LiquidGlassShape,
-  type LiquidGlassControls,
-} from "@/components/core/LiquidGlass";
-export {
   Ripple,
   RIPPLE_COLOR,
   type RippleProps,

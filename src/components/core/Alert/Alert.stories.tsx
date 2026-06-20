@@ -7,6 +7,7 @@ import {
 } from "@/components/core/utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { Button } from "@/components/core/Button";
+import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
 
 import { Alert } from ".";
 
@@ -46,7 +47,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Сообщение пользователю. **Simple** — `title`, `description`, `icon`, `action` на root. **Compound** — `Message`, `Indicator`, `Content`, `Title`, `Description`, `Action`. **a11y:** auto-`id`, `aria-labelledby` / `aria-describedby`; для `danger`/`warning` — `role=\"alert\"`.",
+          "Сообщение пользователю. **Simple** — `title`, `description`, `icon`, `action` на root. **Compound** — `Message`, `Indicator`, `Content`, `Title`, `Description`, `Action`. `variant=\"gloss\"` — стеклянная панель с hover-lift. **a11y:** auto-`id`, `aria-labelledby` / `aria-describedby`; для `danger`/`warning` — `role=\"alert\"`.",
       },
     },
   },
@@ -246,4 +247,41 @@ export const Accessibility: Story = {
       />
     </div>
   ),
+};
+
+const GLOSS_ALERT_STATUSES = ["danger", "success", "info", "warning"] as const;
+
+function GlossDemo() {
+  return (
+    <div className="flex w-full max-w-md flex-col gap-plus">
+      {GLOSS_ALERT_STATUSES.map((status) => (
+        <Alert key={status} variant="gloss" status={status}>
+          <Alert.Message>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title className="capitalize">{status}</Alert.Title>
+              <Alert.Description>
+                variant=&quot;gloss&quot; — статус только в тексте и иконке.
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Message>
+        </Alert>
+      ))}
+      <Alert variant="gloss" status="info" title="Simple API" description="Props title и description на корне." />
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

@@ -91,7 +91,7 @@ function useDisclosureCtx(): DisclosureCtx {
 
 const DISCLOSURE_CONTENT_PAD: Record<DisclosureSize, string> = {
   small: "p-base",
-  base: "p-mid",
+  base: "p-plus",
   mid: "p-mid",
   large: "p-large",
 };
@@ -510,7 +510,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
       framed && variant === "outline" && FRAMED_PANEL.default,
       framed && variant === "outline" && FRAMED_PANEL.outline,
       framed && variant === "secondary" && FRAMED_PANEL.secondary,
-      framed && "mt-xsmall",
+      framed && variant !== "default" && "mt-xsmall",
       variant === "card" && "border-t-token",
       variant === "ghost" && "text-muted",
       variant === "default" && "text-muted",

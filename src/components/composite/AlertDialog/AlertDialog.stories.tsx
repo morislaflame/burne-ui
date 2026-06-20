@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Button } from "@/components/core/Button";
+import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
 import {
   AlertDialog,
   primaryButtonStatusForAlertTone,
@@ -30,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модалка подтверждения (`alertdialog`): те же семантические статусы и иконки, что у `Alert`; размеры `small`–`large`. В `AlertDialog.Footer` для прямых потомков `Button` без `size` подставляется размер кнопки по размеру модалки (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Подложка и Escape не закрывают окно.",
+          "Модалка подтверждения (`alertdialog`): те же семантические статусы и иконки, что у `Alert`; размеры `small`–`large`. `variant=\"gloss\"` — стеклянная панель. В `AlertDialog.Footer` для прямых потомков `Button` без `size` подставляется размер кнопки по размеру модалки (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Подложка и Escape не закрывают окно.",
       },
     },
   },
@@ -55,10 +56,12 @@ function ConfirmTemplate({
   status,
   size = "base",
   label = "Открыть",
+  variant = "default",
 }: {
   status?: AlertStatus;
   size?: AlertDialogSize;
   label?: string;
+  variant?: "default" | "gloss";
 }) {
   const [open, setOpen] = useState(false);
   const tone = status ?? "default";
@@ -69,7 +72,7 @@ function ConfirmTemplate({
       <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
         {label}
       </Button>
-      <AlertDialog open={open} onOpenChange={setOpen} size={size} status={status}>
+      <AlertDialog open={open} onOpenChange={setOpen} size={size} status={status} variant={variant}>
         <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Подтверждение</AlertDialog.Title>
@@ -132,4 +135,29 @@ export const Sizes: Story = {
       </div>
     );
   },
+};
+
+function GlossDemo() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-plus">
+      <ConfirmTemplate variant="gloss" status="danger" label="Gloss danger" />
+      <ConfirmTemplate variant="gloss" status="success" label="Gloss success" />
+      <ConfirmTemplate variant="gloss" status="info" label="Gloss info" />
+      <ConfirmTemplate variant="gloss" status="warning" label="Gloss warning" />
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

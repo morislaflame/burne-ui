@@ -1,5 +1,6 @@
 import { useCallback, useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
 import { CalendarShowcaseSection } from "./CalendarShowcaseSection";
+import { GlossShowcaseSection } from "./GlossShowcaseSection";
 import {
   IoAdd,
   IoArrowForward,
@@ -51,10 +52,8 @@ import { Drawer } from "@/components/core/Drawer";
 import { Expandable } from "@/components/core/Expandable";
 import { Field } from "@/components/core/Field";
 import { Dropdown } from "@/components/core/Dropdown";
-import { GlassSurface } from "@/components/core/GlassSurface";
 import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
-import { LiquidGlass } from "@/components/core/LiquidGlass";
 import { ListBox } from "@/components/core/ListBox";
 import { Link } from "@/components/core/Link";
 import { Loading } from "@/components/core/Loading";
@@ -81,9 +80,6 @@ import { ToggleButton } from "@/components/core/ToggleButton";
 import { Tooltip } from "@/components/core/Tooltip";
 import { cn } from "@/utils/cn";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/utils/mockImages";
-
-const GLASS_GRADIENT =
-  "radial-gradient(ellipse 120% 80% at 20% 30%, rgb(110 231 183 / 0.35), transparent), radial-gradient(circle at 80% 70%, rgb(99 102 241 / 0.45), transparent), linear-gradient(160deg, #0c0d10, #1a1530 55%, #0f172a)";
 
 const EXPANDABLE_INFO_ICON = (
   <svg
@@ -376,6 +372,8 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
   const [drawerLeftOpen, setDrawerLeftOpen] = useState(false);
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const [alertSuccessOpen, setAlertSuccessOpen] = useState(false);
+  const [glossDialogOpen, setGlossDialogOpen] = useState(false);
+  const [glossAlertDialogOpen, setGlossAlertDialogOpen] = useState(false);
   const [comboValue, setComboValue] = useState("react");
   const [radioValue, setRadioValue] = useState("email");
   const [checked, setChecked] = useState(true);
@@ -484,6 +482,11 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               <Button size="mid">Mid</Button>
               <Button size="large">Large</Button>
             </div>
+            <div className="flex flex-wrap items-center gap-small">
+              <Button variant="gloss">Gloss</Button>
+              <Button variant="gloss">Click</Button>
+              <Button variant="gloss" leftIcon={<IoAdd aria-hidden />}>Icon</Button>
+            </div>
             <AsyncSaveButton />
           </div>
         </ShowcaseSection>
@@ -504,12 +507,16 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               <Badge status="info">Info</Badge>
               <Badge status="warning">Warning</Badge>
               <Badge variant="outline">Outline</Badge>
+              <Badge variant="gloss">Gloss</Badge>
+              <Badge variant="gloss" status="success">Gloss success</Badge>
             </div>
             <Alert title="Подсказка" description="Компоненты импортируются из библиотеки через alias @." />
             <Alert title="Внимание" description="Playground не входит в npm-пакет dist/." />
             <Alert title="Готово" description="Все статусы Alert доступны из коробки." />
             <Alert status="info" title="Информация" description="Нейтральное системное сообщение." />
             <Alert status="danger" title="Ошибка" description="Критическая проблема с подключением." />
+            <Alert variant="gloss" status="info" title="Gloss alert" description="Стеклянная панель с hover-lift." />
+            <Alert variant="gloss" status="danger" title="Gloss danger" description="Статус — цвет текста и иконки." />
             <div className="flex flex-wrap items-center gap-mid">
               <Badge.Anchor>
                 <Avatar size="large" label="Jordan Doe" src={PIN_IMAGE1} alt="" loading="lazy" />
@@ -570,6 +577,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
         <ShowcaseSection title="Поля ввода" description="Simple API — label, hint и error на корне.">
           <div className="flex flex-col gap-mid items-center w-full">
             <Input label="Email" placeholder="you@example.com" hint="Мы не рассылаем спам." className="w-64"/>
+            <Input label="Gloss" variant="gloss" placeholder="variant gloss" hint="Стеклянная оболочка поля." className="w-64"/>
             <Input label="Outline" variant="outline" placeholder="variant outline" hint="Прозрачный фон с обводкой." className="w-64"/>
             <Input label="Ошибка" status="danger" defaultValue="bad@" error="Некорректный email." className="w-64"/>
             <Input label="Успех" status="success" defaultValue="verified@mail.ru" className="w-64"/>
@@ -919,6 +927,16 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
                 <Button size="small" leftIcon={<IoArrowForward aria-hidden />}>Далее</Button>
               </Card.Footer>
             </Card>
+            <Card variant="gloss">
+              <Card.Header>
+                <Card.Title>Gloss</Card.Title>
+                <Card.Description>Стеклянная панель с conic-обводкой.</Card.Description>
+              </Card.Header>
+              <Card.Footer className="flex justify-end gap-small">
+                <Button variant="gloss" size="small">Gloss</Button>
+                <Button variant="primary" size="small">Primary</Button>
+              </Card.Footer>
+            </Card>
             <Card pressable onPress={() => setDialogOpen(true)}>
               <Ripple color="neutral" />
               <div className="relative z-[1]">
@@ -1040,6 +1058,11 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               <Avatar size="base" label="Три" src={PIN_IMAGE3} alt="" loading="lazy" />
               <Avatar size="base" label="Четыре" />
             </AvatarGroup>
+            <div className="flex flex-wrap items-center gap-mid">
+              <Avatar variant="gloss" size="base" label="Gloss" src={PIN_IMAGE1} alt="" loading="lazy" />
+              <Avatar variant="gloss" size="mid" label="Glass" src={PIN_IMAGE2} alt="" loading="lazy" />
+              <Avatar variant="gloss" size="large" label="Fallback" />
+            </div>
           </div>
         </ShowcaseSection>
       ),
@@ -1060,26 +1083,9 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               <Surface variant="tertiary" padding="mid" className="min-w-[8rem]">
                 <Text as="span" variant="small">tertiary</Text>
               </Surface>
-            </div>
-            <div className="overflow-hidden rounded-mid p-mid" style={{ background: GLASS_GRADIENT }}>
-              <GlassSurface refractionIntensity={0} contentClassName="px-mid py-mid">
-                <Text as="p" variant="small" className="text-muted">
-                  GlassSurface с CSS blur (<code className="text-foreground">refractionIntensity: 0</code>)
-                </Text>
-              </GlassSurface>
-            </div>
-            <div className="relative min-h-[12rem] overflow-hidden rounded-mid p-mid" style={{ background: GLASS_GRADIENT }}>
-              <div className="pointer-events-none absolute inset-0 p-mid opacity-30">
-                <Text as="p" variant="header-2" className="text-foreground/20">Liquid</Text>
-              </div>
-              <div className="relative z-10 flex justify-center py-mid">
-                <LiquidGlass shape="rounded" style={{ width: 260, minHeight: 90, padding: 20 }}>
-                  <div className="text-center text-foreground">
-                    <Text as="p" variant="base" className="font-medium">LiquidGlass</Text>
-                    <Text as="p" variant="small" className="text-muted">WebGL refraction + blur</Text>
-                  </div>
-                </LiquidGlass>
-              </div>
+              <Surface variant="gloss" padding="mid" className="min-w-[8rem]">
+                <Text as="span" variant="small">gloss</Text>
+              </Surface>
             </div>
           </div>
         </ShowcaseSection>
@@ -1248,6 +1254,18 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
       ),
     },
     {
+      id: "gloss",
+      label: "Gloss",
+      render: () => (
+        <ShowcaseSection
+          title="Gloss"
+          description="Стеклянные поверхности variant=&quot;gloss&quot; — кнопки, поля, карточки, модалки."
+        >
+          <GlossShowcaseSection />
+        </ShowcaseSection>
+      ),
+    },
+    {
       id: "modals",
       label: "Модальные окна",
       render: () => (
@@ -1258,6 +1276,8 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             <Button variant="outline" onClick={() => setDrawerLeftOpen(true)}>Drawer (left)</Button>
             <Button variant="primary" status="danger" onClick={() => setAlertDialogOpen(true)}>AlertDialog danger</Button>
             <Button variant="primary" status="success" onClick={() => setAlertSuccessOpen(true)}>AlertDialog success</Button>
+            <Button variant="gloss" onClick={() => setGlossDialogOpen(true)}>Gloss Dialog</Button>
+            <Button variant="gloss" status="danger" onClick={() => setGlossAlertDialogOpen(true)}>Gloss AlertDialog</Button>
           </div>
         </ShowcaseSection>
       ),
@@ -1427,6 +1447,43 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant={primaryButtonVariantForAlertTone("success")} onClick={() => setAlertSuccessOpen(false)}>Отлично</Button>
+        </AlertDialog.Footer>
+      </AlertDialog>
+
+      <Dialog open={glossDialogOpen} onOpenChange={setGlossDialogOpen} variant="gloss">
+        <Dialog.Header>
+          <Dialog.HeadingBlock>
+            <Dialog.Title>Gloss Dialog</Dialog.Title>
+            <Dialog.Description>Стеклянная модальная панель.</Dialog.Description>
+          </Dialog.HeadingBlock>
+          <Dialog.Close />
+        </Dialog.Header>
+        <Dialog.Body className="flex flex-col gap-plus">
+          <Input>
+            <Input.Label>Имя</Input.Label>
+            <Input.Control variant="gloss" name="gloss-name" placeholder="Иван" autoComplete="name" />
+          </Input>
+          <Input>
+            <Input.Label>Email</Input.Label>
+            <Input.Control variant="gloss" name="gloss-email" placeholder="you@example.com" autoComplete="email" />
+          </Input>
+        </Dialog.Body>
+        <Dialog.Footer>
+          <Button variant="gloss" onClick={() => setGlossDialogOpen(false)}>Отмена</Button>
+          <Button variant="primary" onClick={() => setGlossDialogOpen(false)}>Сохранить</Button>
+        </Dialog.Footer>
+      </Dialog>
+
+      <AlertDialog open={glossAlertDialogOpen} onOpenChange={setGlossAlertDialogOpen} variant="gloss" status="danger">
+        <AlertDialog.Header>
+          <AlertDialog.HeadingBlock>
+            <AlertDialog.Title>Удалить элемент?</AlertDialog.Title>
+            <AlertDialog.Description>Gloss AlertDialog — подтверждение на стеклянной панели.</AlertDialog.Description>
+          </AlertDialog.HeadingBlock>
+        </AlertDialog.Header>
+        <AlertDialog.Footer>
+          <Button type="button" variant="gloss" onClick={() => setGlossAlertDialogOpen(false)}>Отмена</Button>
+          <Button type="button" variant={primaryButtonVariantForAlertTone("danger")} status="danger" onClick={() => setGlossAlertDialogOpen(false)}>Удалить</Button>
         </AlertDialog.Footer>
       </AlertDialog>
     </div>

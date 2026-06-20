@@ -86,10 +86,6 @@ function useThemeTokensState() {
     [],
   );
 
-  const setGlass = useCallback((key: "glassBlur" | "glassSaturate", value: number) => {
-    setState((prev) => ({ ...prev, [key]: value }));
-  }, []);
-
   const setAnimationFlag = useCallback(
     (
       key:
@@ -161,7 +157,6 @@ function useThemeTokensState() {
     setShadowStrength,
     setShadowSize,
     setMotionDuration,
-    setGlass,
     setAnimationFlag,
     setColor,
     setStatusForeground,

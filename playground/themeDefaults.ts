@@ -68,8 +68,6 @@ export type ThemeTokenState = {
   interactiveDuration: number;
   tooltipDuration: number;
   expandDuration: number;
-  glassBlur: number;
-  glassSaturate: number;
   enableHoverLift: boolean;
   enablePressSqueeze: boolean;
   enableToggleButtonFill: boolean;
@@ -229,8 +227,6 @@ export const SCALE_DEFAULTS = {
   interactiveDuration: 280,
   tooltipDuration: 200,
   expandDuration: 200,
-  glassBlur: 22,
-  glassSaturate: 1.45,
   enableHoverLift: true,
   enablePressSqueeze: true,
   enableToggleButtonFill: true,
@@ -871,8 +867,6 @@ const INLINE_TOKEN_VARS = [
   "--border-width",
   "--font-family-sans",
   "--font-family-mono",
-  "--glass-blur",
-  "--glass-saturate",
   "--shadow-size",
   "--shadow-none",
   "--shadow-sm",
@@ -906,8 +900,6 @@ export async function applyThemeTokens(state: ThemeTokenState, root: HTMLElement
   root.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
   root.style.setProperty("--font-family-sans", state.fontFamily);
   root.style.setProperty("--font-family-mono", state.fontFamilyMono);
-  root.style.setProperty("--glass-blur", `${state.glassBlur}px`);
-  root.style.setProperty("--glass-saturate", String(state.glassSaturate));
 
   // Применяем глобальные флаги анимации в наш MotionConfig
   const { configureMotion } = await import("@/components/core/utils/motionConfig");
@@ -957,8 +949,6 @@ export function exportThemeCss(state: ThemeTokenState): string {
     `  --border-width: ${state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`};`,
     `  --font-family-sans: ${state.fontFamily};`,
     `  --font-family-mono: ${state.fontFamilyMono};`,
-    `  --glass-blur: ${state.glassBlur}px;`,
-    `  --glass-saturate: ${state.glassSaturate};`,
     `  --shadow-size: ${state.shadowSize};`,
     `  /* textScale: ${state.textScale} — задайте --text-scale-* вручную или через applyThemeTokens */`,
     `  /* shadowStrength: ${state.shadowStrength}, shadowSize: ${state.shadowSize} */`,

@@ -54,8 +54,8 @@ import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import "@/components/core/utils/glossPanel.css";
-import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
+import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
+import "@/components/core/utils/glossInteractive.css";
 
 import { footerButtonSizeForAlertDialog } from "./alertDialogFooterUtils";
 import { ALERT_DIALOG_SIZE } from "./alertDialogSizePresets";
@@ -389,6 +389,11 @@ export const AlertDialogRoot = function AlertDialog({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const glossPanelRef = useRef<HTMLDivElement>(null);
+  const bindGlossPanelRef = useMemo(
+    () => createGlossInteractiveRefCallback(glossPanelRef, isGloss),
+    [isGloss],
+  );
 
   const setHasDescriptionStable = useCallback((v: boolean) => {
     setHasDescription(v);
@@ -524,17 +529,15 @@ export const AlertDialogRoot = function AlertDialog({
           }
         >
           {isGloss ? (
-            <div className={cn("gloss-wrap rounded-mid", sizePreset.panelMax)}>
-              <div className="gloss-shadow" aria-hidden />
-              <div
-                className={cn(
-                  "gloss-panel flex min-h-0 w-full flex-col text-left text-foreground",
-                  sizePreset.maxHeight,
-                  glossStatusTintClass(tone),
-                )}
-              >
-                <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
-              </div>
+            <div
+              ref={bindGlossPanelRef}
+              className={cn(
+                "gloss-panel flex min-h-0 w-full flex-col rounded-mid text-left text-foreground",
+                sizePreset.panelMax,
+                sizePreset.maxHeight,
+              )}
+            >
+              <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
             </div>
           ) : (
             children

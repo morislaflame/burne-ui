@@ -28,7 +28,6 @@ import {
 import { cn } from "@/utils/cn";
 
 import "../utils/glossInteractive.css";
-import { glossStatusTintClass } from "@/components/core/utils/glossStatusTint";
 
 /** Визуальный вариант бейджа (поверхность/рамка), как у Button. */
 export type BadgeVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
@@ -251,7 +250,7 @@ function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus): string {
   if (variant === "gloss") {
     return cn(
       "gloss-panel border-0 text-foreground",
-      glossStatusTintClass(status),
+      status !== "default" ? BADGE_STATUS_TEXT[status] : "",
     );
   }
 
@@ -554,7 +553,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
       BADGE_DOT_DIM[rk],
       isGloss
-        ? cn("gloss-panel border-0", glossStatusTintClass(status))
+        ? cn("gloss-panel border-0", status !== "default" ? BADGE_STATUS_TEXT[status] : "")
         : dotFillClass(variant, status),
       splitLift && "will-change-transform origin-center",
       !splitLift && placementClass,

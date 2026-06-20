@@ -163,11 +163,6 @@ const DEMO_EVENTS = [
   },
   {
     id: "7",
-    title: "GlassSurface",
-    subtitle: "Стеклянные панели и шейдеры",
-  },
-  {
-    id: "8",
     title: "Accordion",
     subtitle: "Составной раскрывающийся список",
   },

@@ -9,7 +9,6 @@ import {
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
-  type ReactNode,
   type Ref,
 } from "react";
 
@@ -167,8 +166,8 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const glossPressable = pressable && isGloss;
 
   const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, glossPressable),
-    [glossPressable],
+    () => createGlossInteractiveRefCallback(rootRef, isGloss),
+    [isGloss],
   );
 
   const setRootRef = useCallback(
@@ -253,22 +252,16 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
 
   if (isGloss) {
     const glossPanelClass = cn(
-      "gloss-panel flex min-w-0 flex-col text-foreground outline-none",
+      "gloss-panel flex min-w-0 flex-col rounded-mid text-foreground outline-none",
       SURFACE_COLOR_TRANSITION,
       className,
     );
     const glossChildren = (
       <div className="gloss-content flex min-w-0 flex-1 flex-col">{children}</div>
     );
-    const glossWrap = (inner: ReactNode) => (
-      <div className="gloss-wrap rounded-mid">
-        <div className="gloss-shadow" aria-hidden />
-        {inner}
-      </div>
-    );
 
     if (pressable) {
-      return glossWrap(
+      return (
         <button
           type="button"
           {...rest}
@@ -297,11 +290,11 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
           onKeyDown={handleKeyDown}
         >
           {glossChildren}
-        </button>,
+        </button>
       );
     }
 
-    return glossWrap(
+    return (
       <div
         {...rest}
         ref={setRootRef}
@@ -313,7 +306,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         onKeyDown={onKeyDownProp}
       >
         {glossChildren}
-      </div>,
+      </div>
     );
   }
 

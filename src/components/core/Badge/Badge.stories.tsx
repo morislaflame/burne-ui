@@ -26,6 +26,7 @@ import {
   type BadgeVariant,
 } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/utils/mockImages";
+import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
 
 const GREEN_AVATAR_URL = PIN_IMAGE1;
 const ORANGE_AVATAR_URL = PIN_IMAGE2;
@@ -62,6 +63,7 @@ const BADGE_VARIANTS: BadgeVariant[] = [
   "primary",
   "outline",
   "secondary",
+  "gloss",
 ];
 
 const BADGE_STATUSES: BadgeStatus[] = [
@@ -88,7 +90,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Компактный статус-бейдж. **Simple** — `icon` + текст в `children`; **inline-иконки** — `data-icon=\"inline-start\" | \"inline-end\"` на child. Для наложения — `Badge.Anchor`.",
+          "Компактный статус-бейдж. **Simple** — `icon` + текст в `children`; **inline-иконки** — `data-icon=\"inline-start\" | \"inline-end\"` на child. `variant=\"gloss\"` — стеклянная поверхность. Для наложения — `Badge.Anchor`.",
       },
     },
   },
@@ -483,4 +485,48 @@ export const CustomColors: Story = {
       </div>
     </div>
   ),
+};
+
+function GlossDemo() {
+  return (
+    <div className="flex flex-col items-center gap-xlarge">
+      <div className="flex flex-wrap items-center justify-center gap-plus">
+        <Badge variant="gloss">Gloss</Badge>
+        {BADGE_STATUSES.filter((s) => s !== "default").map((status) => (
+          <Badge key={status} variant="gloss" status={status} className="capitalize">
+            {status}
+          </Badge>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center justify-center gap-plus">
+        <Badge variant="gloss" icon={<IoCheckmarkCircleOutline aria-hidden />}>
+          Verified
+        </Badge>
+        <Badge variant="gloss" status="info" icon={<IoRocketOutline aria-hidden />}>
+          Launch
+        </Badge>
+        <Badge variant="gloss" dot status="success" aria-label="Online" />
+      </div>
+      <Badge.Anchor>
+        <Avatar size="large" label="Jordan Doe" src={GREEN_AVATAR_URL} alt="" loading="lazy" />
+        <Badge variant="gloss" status="danger" size="small">
+          5
+        </Badge>
+      </Badge.Anchor>
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

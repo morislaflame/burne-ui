@@ -5,7 +5,6 @@ import { Alert } from "@/components/core/Alert";
 import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
 import { Expandable } from "@/components/core/Expandable";
-import { GlassSurface } from "@/components/core/GlassSurface";
 import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
 import { Text } from "@/components/core/Text";
@@ -224,27 +223,6 @@ export const WithAlert: Story = {
         </Alert.Content>
       </Alert.Message>
     </Alert>
-  ),
-};
-
-export const WithGlassSurface: Story = {
-  name: "С GlassSurface",
-  render: () => (
-    <div className="flex flex-col gap-small">
-      <Text variant="base" className="text-muted">
-        Внешняя обёртка <code className="text-xs">relative overflow-hidden rounded-base</code>
-      </Text>
-      <div className="relative overflow-hidden rounded-base">
-        <Ripple color="neutral" className="rounded-[inherit]" />
-        <div className="relative z-[1]">
-          <GlassSurface contentClassName="p-plus">
-            <Text variant="base">
-              Стеклянная панель — нажмите по тексту или по стеклу.
-            </Text>
-          </GlassSurface>
-        </div>
-      </div>
-    </div>
   ),
 };
 

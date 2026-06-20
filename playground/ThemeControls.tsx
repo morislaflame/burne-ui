@@ -348,7 +348,6 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
     setShadowStrength,
     setShadowSize,
     setMotionDuration,
-    setGlass,
     setAnimationFlag,
     setColor,
     setStatusForeground,
@@ -637,24 +636,6 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
         >
           Тени по умолчанию
         </Button>
-        <ScaleControl
-          label="--glass-blur"
-          value={state.glassBlur}
-          min={8}
-          max={40}
-          step={1}
-          unit="px"
-          onChange={(v) => setGlass("glassBlur", v)}
-        />
-        <ScaleControl
-          label="--glass-saturate"
-          value={state.glassSaturate}
-          min={1}
-          max={2}
-          step={0.05}
-          unit="×"
-          onChange={(v) => setGlass("glassSaturate", v)}
-        />
       </div>
 
       <Separator />

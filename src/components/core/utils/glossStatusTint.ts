@@ -1,19 +1,20 @@
-/** Статусный тинт стекла (как у gloss-кнопки). */
-export type GlossTintStatus = "danger" | "success" | "info" | "warning";
+/** Семантический статус для gloss-текста (без тинта заливки). */
+export type GlossTextStatus = "danger" | "success" | "info" | "warning";
 
-const GLOSS_TINT_CLASS: Record<GlossTintStatus, string> = {
-  danger: "gloss-tint-danger",
-  success: "gloss-tint-success",
-  info: "gloss-tint-info",
-  warning: "gloss-tint-warning",
+const GLOSS_TEXT_CLASS: Record<GlossTextStatus, string> = {
+  danger: "gloss-text-danger",
+  success: "gloss-text-success",
+  info: "gloss-text-info",
+  warning: "gloss-text-warning",
 };
 
-/** CSS-класс тинта для gloss-поверхности по семантическому статусу. */
-export function glossStatusTintClass(
-  status: string | undefined,
-): string {
+/** CSS-класс статусного текста для gloss-поверхности (без цветного фона стекла). */
+export function glossStatusTextClass(status: string | undefined): string {
   if (status === "danger" || status === "success" || status === "info" || status === "warning") {
-    return GLOSS_TINT_CLASS[status];
+    return GLOSS_TEXT_CLASS[status];
   }
   return "";
 }
+
+/** @deprecated Используйте {@link glossStatusTextClass} — tint заливки больше не применяется. */
+export const glossStatusTintClass = glossStatusTextClass;

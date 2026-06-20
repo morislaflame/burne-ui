@@ -8,6 +8,7 @@ import {
 } from "@/components/core/utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/utils/mockImages";
+import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
 
 import { Avatar, AvatarGroup } from ".";
 
@@ -31,7 +32,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Аватар пользователя. **Simple** — `label`, `src`, `nickname` на root; **Compound** — `<Avatar.Image>` / `<Avatar.Fallback>`.",
+          "Аватар пользователя. **Simple** — `label`, `src`, `nickname` на root; **Compound** — `<Avatar.Image>` / `<Avatar.Fallback>`. `variant=\"gloss\"` — стеклянная обводка.",
       },
     },
   },
@@ -162,4 +163,40 @@ export const CompoundCustomFallback: Story = {
       <Avatar.Fallback>DS</Avatar.Fallback>
     </Avatar>
   ),
+};
+
+function GlossDemo() {
+  return (
+    <div className="flex flex-col items-center gap-xlarge">
+      <div className="flex flex-row flex-wrap items-center justify-center gap-xlarge">
+        <Avatar variant="gloss" size="small" label="Ada Lovelace" src={PIN_IMAGE1} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="base" label="Grace Hopper" src={PIN_IMAGE2} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="mid" label="Alan Turing" src={PIN_IMAGE4} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="large" label="Katherine Johnson" src={PIN_IMAGE3} alt="" loading="lazy" />
+      </div>
+      <div className="flex flex-row flex-wrap items-center justify-center gap-large">
+        <Avatar variant="gloss" size="base" label="Burne Team" />
+        <Avatar variant="gloss" size="large" label="北京" />
+      </div>
+      <AvatarGroup>
+        <Avatar variant="gloss" size="base" label="Один" src={PIN_IMAGE1} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="base" label="Два" src={PIN_IMAGE2} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="base" label="Три" src={PIN_IMAGE3} alt="" loading="lazy" />
+      </AvatarGroup>
+    </div>
+  );
+}
+
+export const Gloss: Story = {
+  name: "Gloss",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(false)],
+  render: () => <GlossDemo />,
+};
+
+export const GlossLight: Story = {
+  name: "Gloss — светлая тема",
+  parameters: { controls: { disable: true } },
+  decorators: [glossDottedDecorator(true)],
+  render: () => <GlossDemo />,
 };

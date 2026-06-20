@@ -45,7 +45,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary`, `bg-tertiary`, `gloss`) — только заливка, без рамки. `variant=\"gloss\"` — стеклянная CSS-панель с conic-обводкой и бликом. Примитив для меню и секций — без compound-API Card и без OGL у GlassSurface.",
+          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary`, `bg-tertiary`, `gloss`) — только заливка, без рамки. `variant=\"gloss\"` — стеклянная CSS-панель с conic-обводкой и бликом. Примитив для меню и секций — без compound-API Card.",
       },
     },
   },
