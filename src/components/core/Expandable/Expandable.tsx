@@ -29,12 +29,18 @@ import {
   useCollapsibleHeight,
   useCollapsibleShellRef,
 } from "@/components/core/utils/useCollapsibleHeight";
+import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { cn } from "@/utils/cn";
 
 export type ExpandableSize = ComponentSize;
 
+export type ExpandableVariant = "default" | "gloss";
+
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
+  /** `gloss` — стеклянная панель на всём блоке (триггер + контент). */
+  variant?: ExpandableVariant;
   /**
    * Составная разметка (`Trigger` / `Panel` и слоты).
    * `Accordion.Item` включает автоматически.
@@ -71,6 +77,7 @@ type ExpandableContextValue = {
   disabled: boolean;
   hasPanel: boolean;
   size: ExpandableSize;
+  variant: ExpandableVariant;
   toggle: () => void;
   headerId: string;
   panelId: string;
@@ -474,6 +481,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       title,
       description,
       icon,
+      variant = "default",
       size = "base",
       defaultOpen = false,
       open: openProp,
@@ -486,6 +494,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
   ) {
     const panelId = useId();
     const headerId = useId();
+    const isGloss = variant === "gloss";
     const controlled = openProp !== undefined;
     const [internalOpen, setInternalOpen] = useState(defaultOpen);
     const [hasPanel, setHasPanelState] = useState(false);
@@ -508,6 +517,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
       disabled,
       hasPanel,
       size,
+      variant,
       toggle,
       headerId,
       panelId,
@@ -516,6 +526,8 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
 
     const isCompound =
       compoundProp === true || hasExpandableCompoundChildren(children);
+
+    const setRootRef = useMergedGlossPanelRef(ref, isGloss);
 
     const simpleBody = (
       <>
@@ -537,14 +549,25 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
     return (
       <ExpandableContext.Provider value={ctxValue}>
         <div
-          ref={ref}
+          ref={setRootRef}
           className={cn(
-            "rounded-mid border-token bg-surface text-left text-foreground shadow-token-sm",
+            "rounded-mid text-left text-foreground",
+            isGloss
+              ? "gloss-panel gloss-deep border-0"
+              : "border-token bg-surface shadow-token-sm",
             className,
           )}
           {...rest}
         >
-          {isCompound ? children : simpleBody}
+          {isGloss ? (
+            <div className="gloss-content flex min-w-0 flex-col">
+              {isCompound ? children : simpleBody}
+            </div>
+          ) : isCompound ? (
+            children
+          ) : (
+            simpleBody
+          )}
         </div>
       </ExpandableContext.Provider>
     );

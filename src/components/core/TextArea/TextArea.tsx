@@ -9,6 +9,8 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
@@ -19,7 +21,7 @@ import { useOptionalTextAreaFieldContext } from "./textareaFieldContext";
 import { useTextAreaResize } from "./useTextAreaResize";
 
 /** Совпадает с `InputVariant`. */
-export type TextAreaVariant = "default" | "outline";
+export type TextAreaVariant = "default" | "outline" | "gloss";
 
 export type TextAreaStatus = "default" | "danger" | "success" | "warning";
 
@@ -41,7 +43,7 @@ export type TextAreaProps = Omit<
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
 };
 
-const VARIANT_SHELL: Record<TextAreaVariant, string> = {
+const VARIANT_SHELL: Record<Exclude<TextAreaVariant, "gloss">, string> = {
   default: "bg-surface",
   outline: "bg-transparent",
 };
@@ -167,20 +169,33 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const statusTinted =
       status === "danger" || status === "success" || status === "warning";
 
-    const shellSurface = statusTinted
-      ? cn(STATUS_TINT_SHELL[status], "border-token")
-      : cn(
-          variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
-        );
+    const isGloss = variant === "gloss";
 
-    const shellHoverLift = useFieldShellHoverLift(shellRef, !blocked);
+    const shellSurface = isGloss
+      ? "gloss-control"
+      : statusTinted
+        ? cn(STATUS_TINT_SHELL[status], "border-token")
+        : cn(
+            variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
+          );
+
+    const standardShellHover = useFieldShellHoverLift(shellRef, !blocked && !isGloss);
+    const glossShellMotion = useGlossFieldShellMotion(shellRef, !blocked && isGloss);
+
+    const bindShellRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        setShellRef(node);
+        if (!blocked && isGloss) glossShellMotion.bindShellRef(node);
+      },
+      [blocked, glossShellMotion, isGloss, setShellRef],
+    );
 
     const { onResizePointerDown } = useTextAreaResize(shellRef, resizable, blocked, size);
 
     const handleShellPointerDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
         onPointerDown?.(e);
-        if (e.defaultPrevented || blocked) return;
+        if (e.defaultPrevented || blocked || isGloss) return;
         const target = e.target;
         if (
           target instanceof HTMLElement &&
@@ -192,24 +207,27 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         if (!shell || prefersReducedInteractiveHoverLift()) return;
         void animateInteractivePressSqueeze(shell);
       },
-      [blocked, onPointerDown],
+      [blocked, isGloss, onPointerDown],
     );
 
     return (
       <div
-        ref={setShellRef}
+        ref={bindShellRef}
         data-slot="textarea-shell"
         onPointerDown={handleShellPointerDown}
-        onPointerEnter={shellHoverLift.onShellPointerEnter}
-        onPointerLeave={shellHoverLift.onShellPointerLeave}
+        onPointerEnter={isGloss ? glossShellMotion.onShellPointerEnter : standardShellHover.onShellPointerEnter}
+        onPointerLeave={isGloss ? glossShellMotion.onShellPointerLeave : standardShellHover.onShellPointerLeave}
+        onFocusCapture={isGloss ? glossShellMotion.onShellFocusIn : undefined}
+        onBlurCapture={isGloss ? glossShellMotion.onShellFocusOut : undefined}
         className={cn(
           "relative w-full overflow-hidden rounded-base border-1",
+          isGloss && "relative",
           TEXTAREA_MIN_H[size],
           shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
-          fieldShellHoverClass(!blocked, status),
-          shellHoverLift.shellHoverMotionClass,
+          isGloss ? glossShellMotion.shellHoverMotionClass : fieldShellHoverClass(!blocked, status),
+          !isGloss && standardShellHover.shellHoverMotionClass,
           blocked ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,
         )}

@@ -39,7 +39,7 @@ import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
-export type DisclosureVariant = "default" | "outline" | "secondary" | "card" | "ghost";
+export type DisclosureVariant = "default" | "outline" | "secondary" | "card" | "ghost" | "gloss";
 export type DisclosureSize = ComponentSize;
 export type DisclosureIconPos = "left" | "right";
 
@@ -114,6 +114,7 @@ const VARIANT_ROOT: Record<DisclosureVariant, string> = {
   secondary: "flex flex-col",
   card: "overflow-hidden rounded-base border-token bg-surface animate-shadow",
   ghost: "flex flex-col",
+  gloss: "flex flex-col",
 };
 
 const FRAMED_PANEL: Record<DisclosureVariant, string> = {
@@ -122,6 +123,7 @@ const FRAMED_PANEL: Record<DisclosureVariant, string> = {
   secondary: "bg-secondary border-token rounded-mid text-secondary-foreground",
   card: "bg-surface border-token rounded-mid text-foreground",
   ghost: "bg-transparent border-token rounded-mid text-foreground",
+  gloss: "bg-transparent border-0 text-foreground",
 };
 
 const TRIGGER_INTERACTIVE = cn(
@@ -135,6 +137,7 @@ const VARIANT_TRIGGER: Record<DisclosureVariant, string> = {
   secondary: cn("rounded-mid", TRIGGER_INTERACTIVE),
   card: TRIGGER_INTERACTIVE,
   ghost: cn("rounded-mid", TRIGGER_INTERACTIVE),
+  gloss: cn("rounded-mid", TRIGGER_INTERACTIVE),
 };
 
 function readDisclosurePartDisplayName(type: unknown): string | undefined {
@@ -517,21 +520,39 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
       className,
     );
 
+    const isGloss = variant === "gloss";
+
     return (
       <div
         ref={setShellRef}
         aria-hidden={!open}
         className="overflow-hidden"
       >
-        <section
-          ref={innerRef}
-          id={panelId}
-          aria-labelledby={triggerId}
-          className={innerCls}
-          {...rest}
-        >
-          {children}
-        </section>
+        {isGloss ? (
+          <section
+            ref={innerRef}
+            id={panelId}
+            aria-labelledby={triggerId}
+            className={cn("mt-xsmall", className)}
+            {...rest}
+          >
+            <div className="gloss-panel gloss-deep rounded-mid text-foreground">
+              <div className={cn("gloss-content text-muted", DISCLOSURE_CONTENT_PAD[size])}>
+                {children}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section
+            ref={innerRef}
+            id={panelId}
+            aria-labelledby={triggerId}
+            className={innerCls}
+            {...rest}
+          >
+            {children}
+          </section>
+        )}
       </div>
     );
   },
@@ -637,7 +658,11 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
 
     return (
       <DisclosureCtx.Provider value={ctx}>
-        <div ref={ref} className={cn(rootCls, className)} {...rest}>
+        <div
+          ref={ref}
+          className={cn(rootCls, className)}
+          {...rest}
+        >
           {orderedChildren}
         </div>
       </DisclosureCtx.Provider>
@@ -700,7 +725,7 @@ export const DisclosureGroup = forwardRef<HTMLDivElement, DisclosureGroupProps>(
       !separated && variant === "default" && "divide-y-token border-t-token border-b-token",
       !separated && variant === "card" &&
         "overflow-hidden rounded-mid border-token bg-surface shadow-token-sm divide-y-token",
-      !separated && (variant === "outline" || variant === "secondary" || variant === "ghost") &&
+      !separated && (variant === "outline" || variant === "secondary" || variant === "ghost" || variant === "gloss") &&
         "gap-small",
       className,
     );

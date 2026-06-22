@@ -43,6 +43,7 @@ import { cn } from "@/utils/cn";
 import { RadioFieldContext, useRadioFieldContext } from "./radioFieldContext";
 
 export type RadioSize = "small" | "base" | "mid" | "large";
+export type RadioVariant = "default" | "gloss";
 
 const SIZE_LAYOUT: Record<
   RadioSize,
@@ -91,6 +92,7 @@ export type RadioRootProps = Omit<
     hint?: ReactNode;
     error?: ReactNode;
     size?: RadioSize;
+    variant?: RadioVariant;
     danger?: boolean;
     className?: string;
   };
@@ -204,10 +206,12 @@ export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
 
 export function RadioIndicator({ children, className, ...rest }: RadioIndicatorProps) {
   const ctx = useRadioFieldContext();
+  const indicatorVariant = ctx.variant === "gloss" ? "gloss" : "base";
 
   return (
     <SelectionIndicator
       size={ctx.size}
+      variant={indicatorVariant}
       selected={ctx.mergedChecked}
       icon={children ?? undefined}
       className={className}
@@ -345,6 +349,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
     hint,
     error,
     size = "base",
+    variant = "default",
     danger = false,
     className,
     disabled,
@@ -477,6 +482,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       hintId,
       errorId,
       size,
+      variant,
       mergedChecked,
       isDisabled,
       isControlled,
@@ -530,6 +536,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       size,
       tabIndex,
       value,
+      variant,
     ],
   );
 

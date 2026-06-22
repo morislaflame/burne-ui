@@ -45,7 +45,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "primary", "outline", "secondary", "ghost"],
+      options: ["default", "primary", "outline", "secondary", "ghost", "gloss"],
     },
     size: {
       control: "select",
@@ -89,6 +89,7 @@ export const Variants: Story = {
       <CloseButton variant="outline" aria-label="Закрыть outline" />
       <CloseButton variant="secondary" aria-label="Закрыть secondary" />
       <CloseButton variant="ghost" aria-label="Закрыть ghost" />
+      <CloseButton variant="gloss" aria-label="Закрыть gloss" />
     </div>
   ),
 };
@@ -104,6 +105,7 @@ export const VariantsOnLightTheme: Story = {
       <CloseButton variant="outline" aria-label="Закрыть outline" />
       <CloseButton variant="secondary" aria-label="Закрыть secondary" />
       <CloseButton variant="ghost" aria-label="Закрыть ghost" />
+      <CloseButton variant="gloss" aria-label="Закрыть gloss" />
     </div>
   ),
 };

@@ -21,6 +21,11 @@ import type { InputSize, InputStatus, InputVariant } from "@/components/core/Inp
 import { Popover } from "@/components/core/Popover";
 import { ListBox } from "@/components/core/ListBox";
 import {
+  animateGlossInteractivePressSqueeze,
+  useGlossFieldShellMotion,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
+import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
@@ -99,17 +104,28 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
     const statusTinted =
       status === "danger" || status === "success" || status === "warning";
 
-    const shellSurface = statusTinted
-      ? cn(STATUS_TINT_SHELL[status], "border-token")
-      : cn(
-          variant === "outline"
-            ? "bg-transparent border-token"
-            : variant === "gloss"
-              ? "gloss-control"
-              : cn(VARIANT_SHELL[variant], "border-token"),
-        );
+    const isGloss = variant === "gloss";
 
-    const shellHoverLift = useFieldShellHoverLift(anchorRef, !disabled);
+    const shellSurface = isGloss
+      ? "gloss-control"
+      : statusTinted
+        ? cn(STATUS_TINT_SHELL[status], "border-token")
+        : cn(
+            variant === "outline"
+              ? "bg-transparent border-token"
+              : cn(VARIANT_SHELL[variant], "border-token"),
+          );
+
+    const shellHoverLift = useFieldShellHoverLift(anchorRef, !disabled && !isGloss);
+    const glossShellMotion = useGlossFieldShellMotion(anchorRef, !disabled && isGloss);
+
+    const setAnchorRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        anchorRef.current = node;
+        if (!disabled && isGloss) glossShellMotion.bindShellRef(node);
+      },
+      [anchorRef, disabled, glossShellMotion, isGloss],
+    );
 
     const openAfterSqueeze = useCallback(() => {
       if (disabled || openingRef.current) return;
@@ -124,12 +140,15 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         setOpen(true);
         return;
       }
-      void animateInteractivePressSqueeze(el).then(() => {
+      const squeeze = isGloss
+        ? animateGlossInteractivePressSqueeze(el, true)
+        : animateInteractivePressSqueeze(el);
+      void squeeze.then(() => {
         openingRef.current = false;
         if (disabled) return;
         setOpen(true);
       });
-    }, [anchorRef, disabled, setOpen]);
+    }, [anchorRef, disabled, isGloss, setOpen]);
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -143,7 +162,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
 
     return (
       <div
-        ref={mergeRefs(ref, anchorRef)}
+        ref={mergeRefs(ref, setAnchorRef)}
         role="combobox"
         aria-expanded={open}
         aria-controls={listId}
@@ -152,12 +171,22 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         onPointerDown={handlePointerDown}
         onPointerEnter={(e) => {
           onPointerEnter?.(e);
-          if (!e.defaultPrevented) shellHoverLift.onShellPointerEnter(e);
+          if (e.defaultPrevented) return;
+          if (isGloss) glossShellMotion.onShellPointerEnter(e);
+          else shellHoverLift.onShellPointerEnter(e);
         }}
         onPointerLeave={(e) => {
           onPointerLeave?.(e);
-          shellHoverLift.onShellPointerLeave(e);
+          if (isGloss) glossShellMotion.onShellPointerLeave(e);
+          else shellHoverLift.onShellPointerLeave(e);
         }}
+        onFocusCapture={
+          isGloss && !disabled ? glossShellMotion.onShellFocusIn : undefined
+        }
+        onBlurCapture={
+          isGloss && !disabled ? glossShellMotion.onShellFocusOut : undefined
+        }
+        {...(disabled && isGloss ? { "data-gloss-disabled": "" } : {})}
         className={cn(
           "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
           "overflow-hidden rounded-base motion-reduce:transition-none",
@@ -165,8 +194,10 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
           shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
-          fieldShellHoverClass(!disabled, status),
-          shellHoverLift.shellHoverMotionClass,
+          isGloss ? "" : fieldShellHoverClass(!disabled, status),
+          isGloss
+            ? glossShellMotion.shellHoverMotionClass
+            : shellHoverLift.shellHoverMotionClass,
           disabled ? "cursor-not-allowed opacity-55 shadow-token-sm" : "cursor-pointer",
           className,
         )}
@@ -520,6 +551,7 @@ export function ComboBoxPopover({ children, className, offset = 6, ...rest }: Co
     setActiveValue,
     setFilterQuery,
     setOpen: closeOnSelect,
+    variant,
   } = useComboBoxContext();
 
   const handleValueChange = useCallback(
@@ -546,7 +578,13 @@ export function ComboBoxPopover({ children, className, offset = 6, ...rest }: Co
     ));
 
   return (
-    <Popover open={open} onOpenChange={setOpen} side="bottom" anchorRef={anchorRef}>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+      side="bottom"
+      anchorRef={anchorRef}
+      variant={variant === "gloss" ? "gloss" : "default"}
+    >
       <Popover.Content
         matchAnchorWidth
         unstyled

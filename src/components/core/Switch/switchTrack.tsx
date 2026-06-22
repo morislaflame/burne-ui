@@ -13,6 +13,7 @@ import {
   type RefObject,
 } from "react";
 
+import "../utils/glossPanel.css";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
@@ -37,6 +38,7 @@ type SwitchTrackContextValue = {
   disabled?: boolean;
   size: SwitchSize;
   color?: string;
+  gloss?: boolean;
   trackFillRef: RefObject<HTMLSpanElement | null>;
   thumbRef: RefObject<HTMLSpanElement | null>;
   thumbShellRef: RefObject<HTMLSpanElement | null>;
@@ -65,6 +67,8 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   squeezeToken?: number;
   iconOff?: ReactNode;
   iconOn?: ReactNode;
+  /** Gloss-вариант: стеклянный трек и кружок. */
+  gloss?: boolean;
 };
 
 export function SwitchTrack({
@@ -73,6 +77,7 @@ export function SwitchTrack({
   checked = false,
   disabled,
   color,
+  gloss = false,
   squeezeToken = 0,
   iconOff,
   iconOn,
@@ -244,6 +249,7 @@ export function SwitchTrack({
       disabled,
       size,
       color,
+      gloss,
       trackFillRef,
       thumbRef,
       thumbShellRef,
@@ -251,7 +257,7 @@ export function SwitchTrack({
       iconOffRef,
       iconOnRef,
     }),
-    [checked, color, disabled, size],
+    [checked, color, disabled, gloss, size],
   );
 
   const defaultBody = (
@@ -275,7 +281,9 @@ export function SwitchTrack({
         className={cn(
           "relative box-border inline-flex shrink-0 rounded-full",
           thickness == null && sz.track,
-          "bg-[color-mix(in_oklab,var(--color-border)_40%,var(--color-surface))]",
+          gloss
+            ? "gloss-indicator border-0"
+            : "bg-[color-mix(in_oklab,var(--color-border)_40%,var(--color-surface))]",
           className,
         )}
         style={customTrackStyle}
@@ -305,6 +313,7 @@ export function SwitchFill({ className, style, ...rest }: SwitchFillProps) {
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-0 rounded-full",
+        ctx.gloss ? "z-[1]" : undefined,
         !ctx.color && "bg-primary",
         className,
       )}
@@ -328,6 +337,7 @@ export function SwitchThumb({ className, children, ...rest }: SwitchThumbProps) 
       ref={ctx.thumbRef}
       className={cn(
         "absolute inset-y-0 left-0 aspect-square h-full w-auto will-change-transform flex",
+        ctx.gloss ? "z-[2]" : undefined,
         className,
       )}
       {...rest}
@@ -335,6 +345,7 @@ export function SwitchThumb({ className, children, ...rest }: SwitchThumbProps) 
       <SelectionThumb
         active={ctx.checked}
         size={ctx.size}
+        gloss={ctx.gloss}
         shellRef={ctx.thumbShellRef}
         fillRef={ctx.thumbFillRef}
       >
@@ -364,6 +375,7 @@ export function SwitchIcon({ when, children, className, ...rest }: SwitchIconPro
       iconRef={iconRef}
       size={ctx.size}
       highlighted={highlighted}
+      gloss={ctx.gloss}
       className={cn("absolute inset-0 flex items-center justify-center", className)}
       style={{ opacity: visible ? 1 : 0 }}
       {...rest}

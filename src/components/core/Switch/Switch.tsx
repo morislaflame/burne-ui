@@ -59,6 +59,8 @@ export type SwitchControlProps = Omit<
     iconOn?: ReactNode;
     /** Фон трека во включённом состоянии: CSS-цвет или `linear-gradient(...)`. Заливка кружка всегда primary. */
     color?: string;
+    /** Gloss-вариант: стеклянный трек и кружок. */
+    gloss?: boolean;
     className?: string;
     children?: ReactNode;
   };
@@ -70,6 +72,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       iconOff,
       iconOn,
       color,
+      gloss = false,
       thickness,
       className,
       disabled,
@@ -132,6 +135,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       checked: mergedChecked,
       disabled,
       color,
+      gloss,
       squeezeToken,
       iconOff,
       iconOn,

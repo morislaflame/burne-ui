@@ -19,18 +19,28 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { createPortal } from "react-dom";
 
 import { FieldHint, type FieldHintProps } from "@/components/core/Field";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import {
-  prefersReducedInteractiveHoverLift,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
+import {
+  animatePortalClose,
+  animatePortalOpen,
+  applyReducedPortalMotion,
+  isReducedModalMotion,
+} from "@/components/core/utils/modalSurfaceMotion";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
+import {
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { cn } from "@/utils/cn";
 
 import {
@@ -43,6 +53,7 @@ import {
 
 export type PopoverSide = TooltipSide;
 export type PopoverSize = "small" | "base" | "mid" | "large";
+export type PopoverVariant = "default" | "gloss";
 
 const DEFAULT_OFFSET = 8;
 
@@ -135,6 +146,7 @@ type PopoverContextValue = {
   labelId: string;
   hintId: string;
   size: PopoverSize;
+  variant: PopoverVariant;
   side: PopoverSide;
   labelConnected: boolean;
   hintConnected: boolean;
@@ -157,6 +169,7 @@ function usePopoverContext(who: string): PopoverContextValue {
 export type PopoverRootProps = {
   children?: ReactNode;
   size?: PopoverSize;
+  variant?: PopoverVariant;
   /** Предпочтительная сторона. При нехватке места — flip. По умолчанию `bottom`. */
   side?: PopoverSide;
   open?: boolean;
@@ -171,6 +184,7 @@ export type PopoverRootProps = {
 export function PopoverRoot({
   children,
   size = "base",
+  variant = "default",
   side = "bottom",
   open: openProp,
   defaultOpen = false,
@@ -220,6 +234,7 @@ export function PopoverRoot({
       labelId,
       hintId,
       size,
+      variant,
       side,
       labelConnected,
       hintConnected,
@@ -238,6 +253,7 @@ export function PopoverRoot({
       setOpen,
       side,
       size,
+      variant,
     ],
   );
 
@@ -325,11 +341,14 @@ export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement>;
 
 export function PopoverArrow({ className, ...rest }: PopoverArrowProps) {
   const resolvedSide = useContext(PopoverResolvedSideContext);
+  const { variant } = usePopoverContext("Popover.Arrow");
+  const isGloss = variant === "gloss";
   return (
     <span
       aria-hidden
       className={cn(
-        "pointer-events-none absolute z-0 size-2 rotate-45 border-token bg-surface",
+        "pointer-events-none absolute z-0 size-2 rotate-45",
+        isGloss ? "border-0 bg-[var(--color-surface)]" : "border-token bg-surface",
         TOOLTIP_ARROW_CLASS[resolvedSide],
         className,
       )}
@@ -445,6 +464,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
     open,
     popoverId,
     size,
+    variant,
     side,
     labelConnected,
     hintConnected,
@@ -456,6 +476,12 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
   } = usePopoverContext("Popover.Content");
 
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const glossPanelRef = useRef<HTMLDivElement | null>(null);
+  const isGloss = variant === "gloss";
+  const bindGlossPanelRef = useMemo(
+    () => createGlossInteractiveRefCallback(glossPanelRef, isGloss),
+    [isGloss],
+  );
   const [portalMounted, setPortalMounted] = useState(false);
   const [resolvedSide, setResolvedSide] = useState<PopoverSide>(side);
 
@@ -511,7 +537,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
 
   useEffect(() => {
     const el = panelRef.current;
-    if (el) el.style.setProperty("--el-shadow", shadowSm());
+    if (el && !isGloss) el.style.setProperty("--el-shadow", shadowSm());
   });
 
   useLayoutEffect(() => {
@@ -542,13 +568,13 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
     const el = panelRef.current;
     if (!el) return undefined;
 
-    const reduced = prefersReducedInteractiveHoverLift();
+    const reduced = isReducedModalMotion();
     let cancelled = false;
 
     if (reduced) {
       killMotion(el);
       if (open) {
-        el.style.opacity = "";
+        applyReducedPortalMotion(el);
       } else {
         setPortalMounted(false);
       }
@@ -560,27 +586,27 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
     killMotion(el);
 
     if (open) {
-      el.style.opacity = "0";
-      void gsap.fromTo(el, { autoAlpha: 0 }, { autoAlpha: 1, ...motionTooltip(), overwrite: "auto" });
+      animatePortalOpen({
+        surface: el,
+        vars: { ...motionTooltip(), overwrite: "auto" },
+      });
       return () => {
         cancelled = true;
         killMotion(el);
       };
     }
 
-    const startOpacity = Number.parseFloat(getComputedStyle(el).opacity);
-    const fromAlpha = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
-    const anim = gsap.fromTo(
-      el,
-      { autoAlpha: fromAlpha },
-      { autoAlpha: 0, ...motionTooltip(), overwrite: "auto" },
-    );
-    void anim.then(() => {
-      if (!cancelled) setPortalMounted(false);
+    const anim = animatePortalClose({
+      surface: el,
+      vars: { ...motionTooltip(), overwrite: "auto" },
+      onComplete: () => {
+        if (!cancelled) setPortalMounted(false);
+      },
     });
     return () => {
       cancelled = true;
       killMotion(el);
+      anim.kill();
     };
   }, [open, portalMounted]);
 
@@ -610,7 +636,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
         aria-describedby={contentRole === "dialog" ? describedBy : undefined}
         data-side={resolvedSide}
         className={cn(
-          "pointer-events-auto z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-[opacity]",
+          "pointer-events-auto z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-transform",
           showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
           className,
         )}
@@ -618,17 +644,33 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
       >
         <div className="relative overflow-visible">
           {showArrow ? (customArrow ?? <PopoverArrow />) : null}
-          <div
-            className={cn(
-              "relative z-[1] flex min-w-0 flex-col overflow-hidden rounded-mid border-token bg-surface text-foreground animate-shadow",
-              !unstyled && POPOVER_MIN_WIDTH[size],
-              !unstyled && POPOVER_MAX_WIDTH[size],
-              !unstyled && POPOVER_PADDING[size],
-              !unstyled && POPOVER_GAP_CLASS[contentGap],
-            )}
-          >
-            {panelChildren}
-          </div>
+          {isGloss ? (
+            <div
+              ref={bindGlossPanelRef}
+              className={cn(
+                "gloss-panel gloss-deep relative z-[1] flex min-w-0 origin-center flex-col overflow-hidden rounded-mid text-foreground",
+                GLOSS_INTERACTIVE_MOTION_CLASS,
+                !unstyled && POPOVER_MIN_WIDTH[size],
+                !unstyled && POPOVER_MAX_WIDTH[size],
+                !unstyled && POPOVER_PADDING[size],
+                !unstyled && POPOVER_GAP_CLASS[contentGap],
+              )}
+            >
+              <div className="gloss-content flex min-w-0 flex-col">{panelChildren}</div>
+            </div>
+          ) : (
+            <div
+              className={cn(
+                "relative z-[1] flex min-w-0 flex-col overflow-hidden rounded-mid border-token bg-surface text-foreground animate-shadow",
+                !unstyled && POPOVER_MIN_WIDTH[size],
+                !unstyled && POPOVER_MAX_WIDTH[size],
+                !unstyled && POPOVER_PADDING[size],
+                !unstyled && POPOVER_GAP_CLASS[contentGap],
+              )}
+            >
+              {panelChildren}
+            </div>
+          )}
         </div>
       </div>
     </PopoverResolvedSideContext.Provider>

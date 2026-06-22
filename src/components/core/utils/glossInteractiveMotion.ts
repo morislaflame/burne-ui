@@ -39,26 +39,28 @@ const GLOSS_DECOR: Record<
   press: { angle1: -75, angle2: -15, shineX: 50, shineY: 15 },
 };
 
-/** Эталонный размер (≈ gloss-кнопка base) для масштабирования блика. */
+/** Эталонный размер (≈ gloss-кнопка base) — масштабируем только travel hover/press. */
 const GLOSS_SHINE_REFERENCE_DIM = 120;
-/** Минимальная доля travel/spread на очень больших поверхностях. */
-const GLOSS_SHINE_MIN_SCALE = 0.35;
+/** Минимальная доля travel на очень больших поверхностях. */
+const GLOSS_SHINE_MIN_TRAVEL = 0.35;
 
-function resolveAdaptiveGlossShineScale(element: HTMLElement): number {
+function resolveAdaptiveGlossShineTravel(element: HTMLElement): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
-  return Math.min(1, Math.max(GLOSS_SHINE_MIN_SCALE, GLOSS_SHINE_REFERENCE_DIM / maxDim));
+  return Math.min(1, Math.max(GLOSS_SHINE_MIN_TRAVEL, GLOSS_SHINE_REFERENCE_DIM / maxDim));
 }
 
 function resolveGlossDecor(element: HTMLElement, state: GlossDecorState) {
   const rest = GLOSS_DECOR.rest;
   const target = GLOSS_DECOR[state];
-  const scale = resolveAdaptiveGlossShineScale(element);
+  if (state === "rest") return target;
+
+  const travel = resolveAdaptiveGlossShineTravel(element);
   return {
-    angle1: target.angle1,
-    angle2: target.angle2,
-    shineX: rest.shineX + (target.shineX - rest.shineX) * scale,
-    shineY: rest.shineY + (target.shineY - rest.shineY) * scale,
+    angle1: rest.angle1 + (target.angle1 - rest.angle1) * travel,
+    angle2: rest.angle2 + (target.angle2 - rest.angle2) * travel,
+    shineX: rest.shineX + (target.shineX - rest.shineX) * travel,
+    shineY: rest.shineY + (target.shineY - rest.shineY) * travel,
   };
 }
 
@@ -79,7 +81,6 @@ function glossDecorVars(element: HTMLElement, state: GlossDecorState) {
     "--gloss-angle-2": `${d.angle2}deg`,
     "--gloss-shine-x": d.shineX,
     "--gloss-shine-y": d.shineY,
-    "--gloss-shine-spread": resolveAdaptiveGlossShineScale(element),
   } as Record<string, string | number>;
 }
 
@@ -133,15 +134,65 @@ export function applyGlossInteractiveInstant(element: HTMLElement) {
   });
 }
 
+let glossThemeRefreshObserver: MutationObserver | null = null;
+
+/** Пересчитывает inline gloss-тени/декор с актуальными CSS-токенами темы. */
+function refreshGlossInteractiveState(element: HTMLElement) {
+  if (shouldSkipInteractiveHoverLift()) {
+    applyGlossInteractiveInstant(element);
+    return;
+  }
+
+  const lifted = element.matches(":hover") || element.matches(":focus-within");
+  killMotion(element);
+
+  if (lifted) {
+    gsap.set(element, {
+      scale: resolveAdaptiveHoverLiftScale(element),
+      ...glossSurfaceProps(element, "hover"),
+    });
+    return;
+  }
+
+  applyGlossInteractiveInstant(element);
+}
+
+/** Обновляет все gloss-интерактивы с `data-gloss-motion-init` (после смены темы). */
+export function refreshAllGlossInteractiveSurfaces(root: ParentNode = document) {
+  if (typeof document === "undefined") return;
+  root.querySelectorAll<HTMLElement>(`[${GLOSS_INIT_ATTR}]`).forEach(refreshGlossInteractiveState);
+}
+
+function ensureGlossThemeRefreshObserver() {
+  if (glossThemeRefreshObserver || typeof document === "undefined") return;
+
+  glossThemeRefreshObserver = new MutationObserver((records) => {
+    for (const record of records) {
+      if (record.type === "attributes" && record.attributeName === "data-theme") {
+        refreshAllGlossInteractiveSurfaces();
+        return;
+      }
+    }
+  });
+
+  glossThemeRefreshObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+}
+
 export function createGlossInteractiveRefCallback(
   ref: RefObject<HTMLElement | null>,
   enabled = true,
 ) {
   return (node: HTMLElement | null) => {
     ref.current = node;
-    if (node && enabled && !node.hasAttribute(GLOSS_INIT_ATTR)) {
-      node.setAttribute(GLOSS_INIT_ATTR, "");
-      applyGlossInteractiveInstant(node);
+    if (node && enabled) {
+      ensureGlossThemeRefreshObserver();
+      if (!node.hasAttribute(GLOSS_INIT_ATTR)) {
+        node.setAttribute(GLOSS_INIT_ATTR, "");
+        applyGlossInteractiveInstant(node);
+      }
     }
   };
 }

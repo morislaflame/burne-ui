@@ -25,6 +25,8 @@ import {
   shadowNone,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useGlossFieldShellMotion, animateGlossInteractivePressSqueeze } from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import {
   FIELD_SHELL_FOCUS_CLASS,
   FIELD_SHELL_HOVER_MOTION_CLASS,
@@ -46,6 +48,8 @@ import {
 } from "@/components/core/utils/radiusTokens";
 
 export type SearchInputSize = ComponentSize;
+
+export type SearchInputVariant = "default" | "gloss";
 
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 
@@ -128,6 +132,8 @@ export type SearchInputProps = Omit<
    * `small` · `base` · `mid` · `large`. По умолчанию `base`.
    */
   size?: SearchInputSize;
+  /** Стиль оболочки. `gloss` — стеклянная оболочка как у `Input`. */
+  variant?: SearchInputVariant;
   /** Ширина в развёрнутом виде (px). */
   expandedWidth?: number;
   /** Начать развёрнутым. */
@@ -158,6 +164,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     {
       className = "",
       size: sizeProp = "base",
+      variant = "default",
       expandedWidth,
       defaultExpanded = false,
       expanded: expandedProp,
@@ -264,14 +271,24 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const layout = resolveSearchLayout(sizeProp);
     const targetW = expandedWidth ?? layout.defaultExpandedW;
     const collapsedDim = readControlHeightPx(sizeProp);
+    const isGloss = variant === "gloss";
 
-    const shellHoverLift = useFieldShellHoverLift(rootRef, !blocked);
+    const standardShellHover = useFieldShellHoverLift(rootRef, !blocked && !isGloss);
+    const glossShellMotion = useGlossFieldShellMotion(rootRef, !blocked && isGloss);
+
+    const bindRootRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        rootRef.current = node;
+        if (!blocked && isGloss) glossShellMotion.bindShellRef(node);
+      },
+      [blocked, glossShellMotion, isGloss],
+    );
 
     useLayoutEffect(() => {
       const el = rootRef.current;
-      if (!el) return;
+      if (!el || isGloss) return;
       initElementShadow(el, expanded ? shadowSm() : shadowNone());
-    }, [expanded]);
+    }, [expanded, isGloss]);
 
     const shellHorizontalBorderPx = useCallback(
       (shellEl: HTMLElement) => shellEl.offsetWidth - shellEl.clientWidth,
@@ -448,11 +465,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           squeezePromiseRef.current = Promise.resolve();
           return;
         }
-        squeezePromiseRef.current = animateInteractivePressSqueeze(
-          shell,
-        ).then(() => {});
+        squeezePromiseRef.current = isGloss
+          ? animateGlossInteractivePressSqueeze(shell)
+          : animateInteractivePressSqueeze(shell).then(() => {});
       },
-      [blocked, expanded],
+      [blocked, expanded, isGloss],
     );
 
     const handleRootClick = useCallback(
@@ -466,8 +483,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       [blocked, expanded, openFromInteraction],
     );
 
-    const handlePointerEnter = shellHoverLift.onShellPointerEnter;
-    const handlePointerLeave = shellHoverLift.onShellPointerLeave;
+    const handlePointerEnter = isGloss
+      ? glossShellMotion.onShellPointerEnter
+      : standardShellHover.onShellPointerEnter;
+    const handlePointerLeave = isGloss
+      ? glossShellMotion.onShellPointerLeave
+      : standardShellHover.onShellPointerLeave;
 
     const handleInputBlur = useCallback(
       (e: FocusEvent<HTMLInputElement>) => {
@@ -525,7 +546,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <div
-        ref={rootRef}
+        ref={bindRootRef}
         {...(expanded
           ? { role: "search" as const, tabIndex: -1 as const }
           : {
@@ -538,17 +559,22 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         aria-disabled={blocked || undefined}
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
+        onFocusCapture={isGloss ? glossShellMotion.onShellFocusIn : undefined}
+        onBlurCapture={isGloss ? glossShellMotion.onShellFocusOut : undefined}
         className={cn(
           layout.shellH,
           expanded
             ? SEARCH_EXPANDED_ROUNDED_CLASS[sizeProp]
             : cn("rounded-full", layout.shellWCollapsed),
-          "relative box-border inline-block overflow-hidden border-1 border-token bg-surface text-left outline-none",
+          "relative box-border inline-block overflow-hidden text-left outline-none",
+          isGloss
+            ? "gloss-control border-0"
+            : "border-1 border-token bg-surface",
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
-          fieldShellHoverClass(!blocked),
+          isGloss ? glossShellMotion.shellHoverMotionClass : fieldShellHoverClass(!blocked),
+          !isGloss && !blocked && FIELD_SHELL_HOVER_MOTION_CLASS,
           "focus-ring",
-          !blocked && FIELD_SHELL_HOVER_MOTION_CLASS,
           expanded ? "cursor-text" : "",
           !expanded && !blocked ? "cursor-pointer" : "",
           blocked ? "pointer-events-none opacity-55" : "",

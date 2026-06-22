@@ -1,9 +1,11 @@
 import { useRef, type HTMLAttributes, type ReactNode, type RefObject } from "react";
 
+import "../utils/glossPanel.css";
 import { cn } from "@/utils/cn";
 
 import {
   SELECTION_INDICATOR_FILL_CLASS,
+  SELECTION_INDICATOR_FILL_GLOSS_CLASS,
   SELECTION_INDICATOR_ICON_CLASS,
   SELECTION_INDICATOR_SHELL_CLASS,
   type SelectionIndicatorSize,
@@ -17,6 +19,8 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
   size?: SelectionIndicatorSize;
   shellRef?: RefObject<HTMLSpanElement | null>;
   fillRef?: RefObject<HTMLSpanElement | null>;
+  /** Gloss-вариант: стеклянный кружок с gloss-заливкой и иконкой foreground цвета. */
+  gloss?: boolean;
   children?: ReactNode;
 };
 
@@ -24,6 +28,7 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
 export function SelectionThumb({
   active,
   size = "base",
+  gloss = false,
   shellRef,
   fillRef: fillRefProp,
   className,
@@ -35,21 +40,23 @@ export function SelectionThumb({
 
   useSelectionIndicatorAnimation(active, fillRef);
 
+  const shellClass = gloss
+    ? cn(SELECTION_INDICATOR_SHELL_CLASS, "gloss-indicator size-full min-h-0 min-w-0 origin-center border-0", className)
+    : cn(SELECTION_INDICATOR_SHELL_CLASS, "size-full min-h-0 min-w-0 origin-center border border-primary bg-surface", className);
+
+  const fillClass = gloss ? SELECTION_INDICATOR_FILL_GLOSS_CLASS : SELECTION_INDICATOR_FILL_CLASS;
+
   return (
     <span
       ref={shellRef}
-      className={cn(
-        SELECTION_INDICATOR_SHELL_CLASS,
-        "size-full min-h-0 min-w-0 origin-center border border-primary bg-surface",
-        className,
-      )}
+      className={shellClass}
       aria-hidden
       {...rest}
     >
       <span
         ref={fillRef}
         aria-hidden
-        className={SELECTION_INDICATOR_FILL_CLASS}
+        className={fillClass}
         style={{ transform: "scale(0)", opacity: 0 }}
       />
       {children}
@@ -63,6 +70,8 @@ export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
   size?: SelectionIndicatorSize;
   /** `true` — indicator-foreground на заливке; `false` — primary в покое (Slider/Switch off). */
   highlighted?: boolean;
+  /** `true` — всегда foreground (gloss-режим). */
+  gloss?: boolean;
   iconRef?: RefObject<HTMLSpanElement | null>;
   children?: ReactNode;
 };
@@ -70,19 +79,26 @@ export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
 export function SelectionThumbIcon({
   size = "base",
   highlighted = false,
+  gloss = false,
   iconRef,
   className,
   children,
   style,
   ...rest
 }: SelectionThumbIconProps) {
+  const colorClass = gloss
+    ? "text-foreground"
+    : highlighted
+      ? "text-indicator-foreground"
+      : "text-primary";
+
   return (
     <span
       ref={iconRef}
       aria-hidden
       className={cn(
-        "pointer-events-none z-[1] flex items-center justify-center",
-        highlighted ? "text-indicator-foreground" : "text-primary",
+        "pointer-events-none z-[2] flex items-center justify-center",
+        colorClass,
         className,
       )}
       style={style}

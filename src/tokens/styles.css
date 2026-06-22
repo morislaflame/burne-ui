@@ -447,6 +447,7 @@
 
   /* ── backdrop ─────────────────────────────────────────────────────────── */
   --gloss-blur: clamp(1px, 0.125em, 4px);
+  --gloss-blur-deep: clamp(16px, 1.5em, 32px);
   --gloss-shadow-cutoff: 2em;
 
   /* ── surface fill (edge + tint mix — см. :is(.gloss-panel, …) в glossPanel.css) */
@@ -595,7 +596,7 @@
   --gloss-inset-top: rgb(0 0 0 / 0.05);
   --gloss-inset-bottom: rgb(255 255 255 / 0.5);
   --gloss-elevation: rgb(0 0 0 / 0.22);
-  --gloss-inner-glow: rgb(255 255 255 / 0.5);
+  --gloss-inner-glow: rgba(185, 182, 182, 0.5);
   --gloss-glow-hover: rgb(255 255 255 / 0.2);
   --gloss-outline-fade: rgba(0, 0, 0, 0.2);
   --gloss-outline-base: rgb(255 255 255 / 0.5);

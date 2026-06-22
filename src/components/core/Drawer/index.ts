@@ -29,6 +29,7 @@ export type {
   DrawerProps,
   DrawerPlacement,
   DrawerSize,
+  DrawerVariant,
   DrawerBackdropProps,
   DrawerHandleProps,
   DrawerHeaderProps,

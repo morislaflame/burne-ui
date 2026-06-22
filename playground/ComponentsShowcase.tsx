@@ -435,6 +435,7 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               <Button ripple variant="outline">С ripple</Button>
               <CloseButton aria-label="Закрыть" />
               <CloseButton aria-label="Закрыть outline" variant="outline" />
+              <CloseButton aria-label="Закрыть gloss" variant="gloss" />
             </div>
             <div className="flex flex-wrap items-center gap-small">
               <ToggleButton
@@ -597,6 +598,15 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               hint={`Выбрано: ${comboValue}`}
               className="w-64"
             />
+            <ComboBox
+              label="Gloss ComboBox"
+              variant="gloss"
+              options={COMBO_OPTIONS}
+              value={comboValue}
+              onValueChange={setComboValue}
+              hint="Стеклянная оболочка"
+              className="w-64"
+            />
             <SearchInput aria-label="Поиск" placeholder="Найти компонент…" value={search} onValueChange={setSearch} className="w-64"/>
             <Slider
               label="Громкость"
@@ -629,6 +639,14 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
               hint="Формат: ЧЧ:ММ (24 часа)"
               value={timeValue}
               onValueChange={setTimeValue}
+              prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
+              className="w-64"
+            />
+            <TimeField
+              label="Gloss"
+              variant="gloss"
+              defaultValue="12:00"
+              hint="Стеклянная оболочка"
               prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
               className="w-64"
             />
@@ -1100,6 +1118,9 @@ function ComponentsShowcaseBody({ embedded = false }: { embedded?: boolean }) {
             <div className="flex max-w-lg flex-col gap-mid">
               <Expandable title="Уведомления" icon={EXPANDABLE_INFO_ICON} description="Simple API">
                 <Text as="p" variant="small" className="text-muted">Контент панели Expandable — props title и icon на корне.</Text>
+              </Expandable>
+              <Expandable variant="gloss" title="Gloss" icon={EXPANDABLE_INFO_ICON} description="Стеклянная панель с hover-lift">
+                <Text as="p" variant="small" className="text-muted">variant=&quot;gloss&quot; на корне Expandable.</Text>
               </Expandable>
               <Expandable>
                 <Expandable.Trigger>

@@ -31,9 +31,14 @@ import {
   OptionListItemLabel,
 } from "@/components/core/utils/optionListItemParts";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import {
+  useMergedGlossPanelRef,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { cn } from "@/utils/cn";
 
 export type ListBoxSize = "small" | "base" | "mid" | "large";
+export type ListBoxVariant = "default" | "gloss";
 
 type ListBoxContextValue = {
   listId: string;
@@ -64,6 +69,7 @@ function normalizeValues(v: string | string[] | undefined): string[] {
 export type ListBoxRootProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> & {
   children?: ReactNode;
   size?: ListBoxSize;
+  variant?: ListBoxVariant;
   multiple?: boolean;
   value?: string | string[];
   defaultValue?: string | string[];
@@ -82,6 +88,7 @@ export function ListBoxRoot({
   children,
   className,
   size = "base",
+  variant = "default",
   multiple = false,
   value: valueProp,
   defaultValue,
@@ -95,6 +102,8 @@ export function ListBoxRoot({
 }: ListBoxRootProps) {
   const autoId = useId();
   const listId = listIdProp ?? `listbox-${autoId}`;
+  const isGloss = variant === "gloss";
+  const setRootRef = useMergedGlossPanelRef(undefined, isGloss);
 
   const isControlledValue = valueProp !== undefined;
   const [internalSelected, setInternalSelected] = useState<string[]>(() =>
@@ -168,9 +177,15 @@ export function ListBoxRoot({
   return (
     <ListBoxContext.Provider value={ctx}>
       <div
+        ref={setRootRef}
         id={listId}
         role="listbox"
-        className={cn("flex min-h-0 flex-col gap-xsmall text-left outline-none", className)}
+        className={cn(
+          "flex min-h-0 flex-col gap-xsmall text-left outline-none",
+          isGloss &&
+            "gloss-panel gloss-deep rounded-mid p-plus text-foreground",
+          className,
+        )}
         {...rest}
       >
         {children}

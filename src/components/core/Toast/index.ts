@@ -37,5 +37,6 @@ export type {
   ToastCloseButtonProps,
   AddToastOpts,
   PromiseToastOpts,
+  ToastVariant,
 } from "./Toast";
 export type { ToastContextValue } from "./toastContext";

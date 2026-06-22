@@ -37,3 +37,5 @@ export type {
   RadioErrorProps,
   RadioSize,
 };
+
+export type { RadioVariant } from "./Radio";

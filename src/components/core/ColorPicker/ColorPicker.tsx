@@ -28,6 +28,8 @@ import { ColorSwatch, type ColorSwatchSize } from "./ColorSwatch";
 
 export type ColorPickerSize = "small" | "base" | "mid";
 
+export type ColorPickerVariant = "default" | "gloss";
+
 export type ColorPickerProps = {
   children?: React.ReactNode;
   /** Controlled value (hex string). */
@@ -39,6 +41,8 @@ export type ColorPickerProps = {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   size?: ColorPickerSize;
+  /** Стеклянная панель popover (`gloss-deep`). */
+  variant?: ColorPickerVariant;
   side?: "top" | "bottom" | "left" | "right";
   disabled?: boolean;
 };
@@ -115,6 +119,7 @@ export function ColorPickerRoot({
   defaultOpen = false,
   onOpenChange,
   size = "base",
+  variant = "default",
   side = "bottom",
   disabled = false,
 }: ColorPickerProps) {
@@ -152,6 +157,7 @@ export function ColorPickerRoot({
         defaultOpen={defaultOpen}
         onOpenChange={onOpenChange}
         side={side}
+        variant={variant === "gloss" ? "gloss" : "default"}
       >
         {children}
       </Popover>

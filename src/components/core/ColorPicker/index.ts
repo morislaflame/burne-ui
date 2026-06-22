@@ -17,6 +17,7 @@ export type {
   ColorPickerTriggerProps,
   ColorPickerContentProps,
   ColorPickerSize,
+  ColorPickerVariant,
 } from "./ColorPicker";
 
 export {

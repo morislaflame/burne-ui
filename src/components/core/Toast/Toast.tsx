@@ -22,7 +22,20 @@ import { CloseButton } from "@/components/core/CloseButton";
 import { Loading } from "@/components/core/Loading";
 import { Text } from "@/components/core/Text";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+  useGlossInteractiveHandlers,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
+import {
+  animatePortalClose,
+  animatePortalOpen,
+  applyReducedPortalMotion,
+  isReducedModalMotion,
+  MODAL_PANEL_SCALE_FROM,
+} from "@/components/core/utils/modalSurfaceMotion";
 import {
   SEMANTIC_STATUS_ICONS,
 } from "@/components/core/utils/semanticStatusIcons";
@@ -42,6 +55,7 @@ import { ToastContext, type ToastContextValue } from "./toastContext";
 // ─── types ─────────────────────────────────────────────────────────────────
 
 export type ToastStatus = "default" | "success" | "danger" | "info" | "warning";
+export type ToastVariant = "default" | "gloss";
 
 export type ToastPlacement =
   | "top-left"
@@ -53,6 +67,8 @@ export type ToastPlacement =
 
 export type AddToastOpts = {
   status?: ToastStatus;
+  /** Стеклянная поверхность. По умолчанию `default`. */
+  variant?: ToastVariant;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -75,6 +91,7 @@ export type PromiseToastOpts<T> = {
 type ToastEntry = {
   id: string;
   status: ToastStatus;
+  variant: ToastVariant;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -217,10 +234,13 @@ export type ToastProviderProps = {
   children: ReactNode;
   /** Плейсмент по умолчанию. */
   defaultPlacement?: ToastPlacement;
+  /** Вариант поверхности по умолчанию для `add()`. */
+  defaultVariant?: ToastVariant;
 };
 
 export type ToastRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   status?: ToastStatus;
+  variant?: ToastVariant;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -400,6 +420,7 @@ ToastCloseButton.displayName = "ToastCloseButton";
 export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
   {
     status = "default",
+    variant = "default",
     title,
     description,
     action,
@@ -407,6 +428,8 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
     onClose,
     className = "",
     children,
+    onPointerOver: onPointerOverProp,
+    onPointerOut: onPointerOutProp,
     ...rest
   },
   ref,
@@ -416,6 +439,25 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
   const descriptionId = `${autoId}-description`;
   const isCompound = !!children;
   const liveRole = status === "danger" || status === "warning" ? "alert" : "status";
+  const isGloss = variant === "gloss";
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(rootRef, isGloss),
+    [isGloss],
+  );
+
+  const setRootRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      bindGlossRef(node);
+      rootRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [bindGlossRef, ref],
+  );
+
+  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
 
   const gridSlots = useMemo(
     () =>
@@ -444,16 +486,27 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
   return (
     <ToastItemContext.Provider value={itemCtx}>
       <div
-        ref={ref}
+        ref={setRootRef}
         role={liveRole}
         aria-labelledby={titleId}
         aria-live={liveRole === "alert" ? "assertive" : "polite"}
         className={cn(
           messageBannerGridClass(gridSlots),
-          "w-full rounded-mid py-base px-large shadow-token-md",
-          TOAST_SURFACE[status],
+          "w-full rounded-mid py-base px-large",
+          isGloss
+            ? cn("gloss-panel gloss-deep border-0 text-foreground", GLOSS_INTERACTIVE_MOTION_CLASS)
+            : cn("shadow-token-md", TOAST_SURFACE[status]),
           className,
         )}
+        onPointerOver={(e) => {
+          onPointerOverProp?.(e);
+          if (e.defaultPrevented) return;
+          if (isGloss) glossPointerHandlers.onPointerOver(e);
+        }}
+        onPointerOut={(e) => {
+          onPointerOutProp?.(e);
+          if (isGloss) glossPointerHandlers.onPointerOut(e);
+        }}
         {...rest}
       >
         {isCompound ? (
@@ -548,17 +601,17 @@ function ToastItemWrapper({
   useLayoutEffect(() => {
     const el = animRef.current;
     if (!el) return;
-    if (prefersReducedInteractiveHoverLift()) {
-      el.style.opacity = "1";
+    if (isReducedModalMotion()) {
+      applyReducedPortalMotion(el);
       return;
     }
     const slideDir = isTop ? -ENTRY_OFFSET_PX : ENTRY_OFFSET_PX;
-    killMotion(el);
-    gsap.fromTo(
-      el,
-      { y: slideDir, autoAlpha: 0 },
-      { y: 0, autoAlpha: 1, ...motionInteractive(), overwrite: "auto" },
-    );
+    animatePortalOpen({
+      surface: el,
+      vars: { ...motionInteractive(), overwrite: "auto" },
+      from: { y: slideDir, scale: MODAL_PANEL_SCALE_FROM },
+      to: { y: 0, scale: 1 },
+    });
   }, [isTop]);
 
   // Exit animation
@@ -566,15 +619,18 @@ function ToastItemWrapper({
     if (!isDismissing) return;
     const el = animRef.current;
     if (!el) return;
-    if (prefersReducedInteractiveHoverLift()) {
+    if (isReducedModalMotion()) {
       onRemoveFinal(entry.id);
       return;
     }
     const slideDir = isTop ? -ENTRY_OFFSET_PX : ENTRY_OFFSET_PX;
     killMotion(el);
-    void gsap
-      .to(el, { y: slideDir, autoAlpha: 0, duration: 0.22, ease: "power2.in", overwrite: "auto" })
-      .then(() => onRemoveFinal(entry.id));
+    animatePortalClose({
+      surface: el,
+      vars: { duration: 0.22, ease: "power2.in", overwrite: "auto" },
+      exit: { y: slideDir },
+      onComplete: () => onRemoveFinal(entry.id),
+    });
   }, [isDismissing, isTop, entry.id, onRemoveFinal]);
 
   // Auto-dismiss timer
@@ -601,13 +657,11 @@ function ToastItemWrapper({
         pointerEvents: reverseIdx === 0 ? "auto" : "none",
       }}
     >
-      <div
-        ref={animRef}
-        style={{ opacity: prefersReducedInteractiveHoverLift() ? 1 : 0 }}
-      >
+      <div ref={animRef}>
         <ToastRoot
           ref={cardRef}
           status={entry.status}
+          variant={entry.variant}
           title={entry.title}
           description={entry.description}
           action={entry.action}
@@ -721,6 +775,7 @@ function ToastViewport({
 export function ToastProviderRoot({
   children,
   defaultPlacement = "bottom-right",
+  defaultVariant = "default",
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const [dismissingIds, setDismissingIds] = useState<Set<string>>(new Set());
@@ -731,6 +786,7 @@ export function ToastProviderRoot({
       const entry: ToastEntry = {
         id,
         status: opts.status ?? "default",
+        variant: opts.variant ?? defaultVariant,
         title: opts.title,
         description: opts.description,
         action: opts.action,
@@ -742,7 +798,7 @@ export function ToastProviderRoot({
       setToasts((prev) => [...prev, entry]);
       return id;
     },
-    [defaultPlacement],
+    [defaultPlacement, defaultVariant],
   );
 
   const update = useCallback(

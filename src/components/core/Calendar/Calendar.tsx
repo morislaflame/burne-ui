@@ -18,6 +18,10 @@ import {
   prefersReducedInteractiveHoverLift,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  useMergedGlossPanelRef,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionContentFade } from "@/components/core/utils/motionConfig";
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
@@ -53,7 +57,7 @@ function getMonthStartOffset(year: number, month: number): number {
 
 export type CalendarMode = "single" | "range" | "multiple";
 export type CalendarView = "days" | "months" | "years";
-export type CalendarVariant = "default" | "secondary" | "outline";
+export type CalendarVariant = "default" | "secondary" | "outline" | "gloss";
 export type CalendarSize = "small" | "base" | "mid" | "large";
 export type CalendarRangeValue = { start: Date | null; end: Date | null };
 
@@ -101,6 +105,7 @@ const ROOT_SURFACE: Record<CalendarVariant, string> = {
   default:   "rounded-large border-token bg-surface shadow-token-sm",
   secondary: "rounded-large border-token bg-secondary shadow-token-sm",
   outline:   "rounded-large bg-transparent border-token shadow-token-sm",
+  gloss:     "rounded-large border-0",
 };
 
 const MONTH_GRID_GAP: Record<CalendarSize, string> = {
@@ -266,6 +271,9 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       ...rest
     } = props;
 
+    const isGloss = variant === "gloss";
+    const setRootRef = useMergedGlossPanelRef(ref, isGloss);
+
     const today = useMemo(() => startOfDay(new Date()), []);
     const isControlled = value !== undefined;
 
@@ -429,21 +437,34 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
     return (
       <CalendarContext.Provider value={ctx}>
         <div
-          ref={ref}
+          ref={setRootRef}
           className={cn(
-            "inline-flex flex-col select-none",
-            ROOT_SURFACE[variant],
+            "inline-flex flex-col select-none text-left text-foreground",
+            isGloss
+              ? "gloss-panel gloss-deep rounded-large"
+              : ROOT_SURFACE[variant],
             ROOT_PAD[size],
             ROOT_MIN_W[size],
             className,
           )}
           {...rest}
         >
-          {children ?? (
-            <>
-              <CalendarHeader />
-              <CalendarGrid />
-            </>
+          {isGloss ? (
+            <div className="gloss-content flex flex-col">
+              {children ?? (
+                <>
+                  <CalendarHeader />
+                  <CalendarGrid />
+                </>
+              )}
+            </div>
+          ) : (
+            (children ?? (
+              <>
+                <CalendarHeader />
+                <CalendarGrid />
+              </>
+            ))
           )}
         </div>
       </CalendarContext.Provider>

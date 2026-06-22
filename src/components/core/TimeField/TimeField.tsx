@@ -21,6 +21,8 @@ import { Label } from "@/components/core/Label";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
+import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
@@ -35,7 +37,7 @@ import { cn } from "@/utils/cn";
 export type TimeFieldSize = ComponentSize;
 export type TimeFieldStatus = "default" | "danger" | "success" | "warning";
 /** `segmented` — сегменты в отдельных «ячейках» внутри оболочки. */
-export type TimeFieldVariant = "default" | "outline" | "segmented";
+export type TimeFieldVariant = "default" | "outline" | "segmented" | "gloss";
 export type TimeFieldFormat = "HH:mm" | "HH:mm:ss";
 
 // ─── context ──────────────────────────────────────────────────────────────────
@@ -103,7 +105,7 @@ function withSeg(hms: HMS, seg: SegId, val: number): HMS {
 
 // ─── shell styling (matches Input) ───────────────────────────────────────────
 
-const VARIANT_SHELL: Record<Exclude<TimeFieldVariant, "outline">, string> = {
+const VARIANT_SHELL: Record<Exclude<TimeFieldVariant, "outline" | "gloss">, string> = {
   default: "bg-surface",
   segmented: "bg-surface",
 };
@@ -216,6 +218,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
     const status = statusProp ?? ctx?.status ?? "default";
     const variant = variantProp ?? ctx?.variant ?? "default";
     const compact = compactProp ?? ctx?.compact ?? false;
+    const isGloss = variant === "gloss";
     const fieldId = ctx?.fieldId;
     const labelId = ctx?.labelId;
     const isRequired = ctx?.isRequired ?? false;
@@ -368,12 +371,12 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
     const handleShellPointerDown = useCallback(
       (e: PointerEvent<HTMLFieldSetElement>) => {
         onPointerDown?.(e);
-        if (e.defaultPrevented || disabled) return;
+        if (e.defaultPrevented || disabled || isGloss) return;
         const shell = shellRef.current;
         if (!shell || prefersReducedInteractiveHoverLift()) return;
         void animateInteractivePressSqueeze(shell);
       },
-      [disabled, onPointerDown],
+      [disabled, isGloss, onPointerDown],
     );
 
     const layout = CONTROL_SIZE_LAYOUT[size];
@@ -387,15 +390,26 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
     const statusTinted =
       status === "danger" || status === "success" || status === "warning";
 
-    const shellSurface = statusTinted
-      ? cn(STATUS_TINT_SHELL[status], "border-token")
-      : cn(
-          variant === "outline"
-            ? "bg-transparent border-token"
-            : cn(VARIANT_SHELL[variant], "border-token"),
-        );
+    const shellSurface = isGloss
+      ? "gloss-control"
+      : statusTinted
+        ? cn(STATUS_TINT_SHELL[status], "border-token")
+        : cn(
+            variant === "outline"
+              ? "bg-transparent border-token"
+              : cn(VARIANT_SHELL[variant], "border-token"),
+          );
 
-    const shellHoverLift = useFieldShellHoverLift(shellRef, !disabled);
+    const shellHoverLift = useFieldShellHoverLift(shellRef, !disabled && !isGloss);
+    const glossShellMotion = useGlossFieldShellMotion(shellRef, !disabled && isGloss);
+
+    const bindShellRef = useCallback(
+      (node: HTMLFieldSetElement | null) => {
+        setShellRef(node);
+        if (!disabled && isGloss) glossShellMotion.bindShellRef(node);
+      },
+      [disabled, glossShellMotion, isGloss, setShellRef],
+    );
 
     const isPending = (seg: SegId) =>
       pendingRef.current?.seg === seg && focusedSeg === seg;
@@ -427,30 +441,47 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
 
     return (
       <fieldset
-        ref={setShellRef}
+        ref={bindShellRef}
         id={id ?? fieldId}
         aria-label={labelId ? undefined : "Время"}
         aria-labelledby={labelId}
         aria-describedby={ariaDescribedBy}
         data-slot="timefield-shell"
-        onPointerDown={handleShellPointerDown}
+        onPointerDown={
+          isGloss && !disabled
+            ? glossShellMotion.onShellPointerDown
+            : handleShellPointerDown
+        }
         onPointerEnter={(e) => {
           onPointerEnterProp?.(e);
-          if (!e.defaultPrevented) shellHoverLift.onShellPointerEnter(e);
+          if (e.defaultPrevented) return;
+          if (isGloss) glossShellMotion.onShellPointerEnter(e);
+          else shellHoverLift.onShellPointerEnter(e);
         }}
         onPointerLeave={(e) => {
           onPointerLeaveProp?.(e);
-          shellHoverLift.onShellPointerLeave(e);
+          if (isGloss) glossShellMotion.onShellPointerLeave(e);
+          else shellHoverLift.onShellPointerLeave(e);
         }}
+        onFocusCapture={
+          isGloss && !disabled ? glossShellMotion.onShellFocusIn : undefined
+        }
+        onBlurCapture={
+          isGloss && !disabled ? glossShellMotion.onShellFocusOut : undefined
+        }
+        {...(disabled && isGloss ? { "data-gloss-disabled": "" } : {})}
         className={cn(
           "m-0 flex min-w-0 items-stretch overflow-hidden rounded-base border-1 p-0",
+          isGloss && "relative",
           SHELL_H[size],
           compact ? "inline-flex w-fit shrink-0" : "w-full min-w-0",
           shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
-          fieldShellHoverClass(!disabled, status),
-          shellHoverLift.shellHoverMotionClass,
+          isGloss ? "" : fieldShellHoverClass(!disabled, status),
+          isGloss
+            ? glossShellMotion.shellHoverMotionClass
+            : shellHoverLift.shellHoverMotionClass,
           disabled ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
           className,
         )}

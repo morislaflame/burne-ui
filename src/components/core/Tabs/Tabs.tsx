@@ -21,6 +21,10 @@ import {
   animateInteractivePressSqueeze,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  useMergedGlossPanelRef,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
@@ -64,16 +68,18 @@ const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "",
   outline: "bg-transparent border-token rounded-mid p-xsmall",
   secondary: "bg-secondary border-token rounded-mid p-xsmall",
+  gloss: "border-0 p-xsmall",
 };
 
 function isSurfaceTabsVariant(variant: TabsVariant): boolean {
-  return variant === "outline" || variant === "secondary";
+  return variant === "outline" || variant === "secondary" || variant === "gloss";
 }
 
 const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "bg-primary",
   outline: "bg-secondary",
   secondary: "bg-tertiary",
+  gloss: "bg-default-hover",
 };
 
 function useMergedTabsValue(
@@ -182,14 +188,16 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     useTabsContext();
   const listRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
+  const isGloss = variant === "gloss";
+
+  const bindGlossRef = useMergedGlossPanelRef(ref, isGloss);
 
   const setRefs = useCallback(
     (node: HTMLDivElement | null) => {
+      bindGlossRef(node);
       listRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
     },
-    [ref],
+    [bindGlossRef],
   );
 
   useSlidingTabIndicator(
@@ -274,6 +282,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
               "flex flex-col gap-xsmall",
               isSurfaceTabsVariant(variant) ? "items-start" : "items-stretch border-l-token",
             ),
+        isGloss && "gloss-panel gloss-deep rounded-mid text-foreground",
         LIST_VARIANT_CLASS[variant],
         className,
       )}

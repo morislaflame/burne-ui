@@ -108,6 +108,8 @@ type SliderCommonProps = {
   formatValue?: (value: number) => string;
   /** Иконка внутри кружка: primary в покое, primary-foreground при захвате. */
   icon?: ReactNode;
+  /** Gloss-вариант: стеклянный кружок. */
+  gloss?: boolean;
   disabled?: boolean;
   className?: string;
   /** Явная подпись ползунков (`aria-label`); перекрывает связь с `<Slider.Label>` через `aria-labelledby`. */
@@ -335,6 +337,7 @@ function defaultFormatValue(value: number) {
 type SliderThumbButtonProps = {
   size: SliderSize;
   icon?: ReactNode;
+  gloss?: boolean;
   percent: number;
   orientation: SliderOrientation;
   disabled?: boolean;
@@ -353,6 +356,7 @@ type SliderThumbButtonProps = {
 function SliderThumbButton({
   size,
   icon,
+  gloss = false,
   percent,
   orientation,
   disabled,
@@ -439,9 +443,9 @@ function SliderThumbButton({
       onPointerDown={handlePointerDown}
       onKeyDown={onKeyDown}
     >
-      <SelectionThumb active={active} size={size} shellRef={shellRef}>
+      <SelectionThumb active={active} size={size} gloss={gloss} shellRef={shellRef}>
         {icon != null ? (
-          <SelectionThumbIcon size={size} highlighted={active}>
+          <SelectionThumbIcon size={size} highlighted={active} gloss={gloss}>
             {icon}
           </SelectionThumbIcon>
         ) : null}
@@ -501,6 +505,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
     marks: marksProp,
     formatValue = defaultFormatValue,
     icon,
+    gloss = false,
     disabled = false,
     className,
     ariaLabel: ariaLabelProp,
@@ -917,6 +922,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
           <SliderThumbButton
             size={size}
             icon={iconNode}
+            gloss={gloss}
             percent={percentFor(rangeValue[0])}
             orientation={orientation}
             disabled={disabled}
@@ -937,6 +943,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
           <SliderThumbButton
             size={size}
             icon={iconNode}
+            gloss={gloss}
             percent={percentFor(rangeValue[1])}
             orientation={orientation}
             disabled={disabled}
@@ -956,6 +963,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
         <SliderThumbButton
           size={size}
           icon={iconNode}
+          gloss={gloss}
           percent={percentFor(singleValue)}
           orientation={orientation}
           disabled={disabled}
@@ -974,6 +982,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       activeThumb,
       disabled,
       formatValue,
+      gloss,
       handleThumbKeyDown,
       handleThumbPointerDown,
       icon,

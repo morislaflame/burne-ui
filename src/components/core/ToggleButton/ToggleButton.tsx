@@ -31,11 +31,18 @@ import {
   shouldSkipInteractiveHoverLift,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  animateGlossInteractiveHoverLift,
+  animateGlossInteractivePressSqueeze,
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { cn } from "@/utils/cn";
 
 export type ToggleButtonSize = ComponentSize;
 
-export type ToggleButtonVariant = "default" | "outline" | "ghost";
+export type ToggleButtonVariant = "default" | "outline" | "ghost" | "gloss";
 
 export type ToggleButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -105,6 +112,9 @@ const TOGGLE_BUTTON_VARIANT: Record<ToggleButtonVariant, ToggleButtonVariantVisu
   ghost: {
     idle: "bg-transparent border-token border-transparent text-foreground",
   },
+  gloss: {
+    idle: "border-0 bg-transparent text-foreground",
+  },
 };
 
 function useMergedPressed(
@@ -157,6 +167,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
 
     const size = sizeProp ?? groupCtx?.size ?? segmentCtx?.buttonSize ?? "base";
     const variant = variantProp ?? groupCtx?.variant ?? "default";
+    const isGloss = variant === "gloss";
     const disabled = disabledProp || Boolean(groupCtx?.disabled);
 
     const [localPressed, setLocalPressed] = useMergedPressed(
@@ -179,13 +190,19 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
 
     const { animateTo, bindFillRef } = useToggleButtonFillAnimation(pressed, fillRef);
 
+    const bindGlossRef = useMemo(
+      () => createGlossInteractiveRefCallback(btnRef, isGloss),
+      [isGloss],
+    );
+
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
+        bindGlossRef(node);
         btnRef.current = node;
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref],
+      [bindGlossRef, ref],
     );
 
     useEffect(() => {
@@ -195,7 +212,10 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       killMotion(el);
     }, [disabled]);
 
-    const btnShadow = useMemo(() => ({ hover: shadowSm() }), []);
+    const btnShadow = useMemo(
+      () => (isGloss ? undefined : { hover: shadowSm() }),
+      [isGloss],
+    );
 
     const handlePointerEnter = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
@@ -205,9 +225,13 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         const el = btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
-        animateInteractiveHoverLift(el, true, undefined, btnShadow);
+        if (isGloss) {
+          animateGlossInteractiveHoverLift(el, true);
+        } else {
+          animateInteractiveHoverLift(el, true, undefined, btnShadow);
+        }
       },
-      [animated, btnShadow, disabled, onPointerEnter],
+      [animated, btnShadow, disabled, isGloss, onPointerEnter],
     );
 
     const handlePointerLeave = useCallback(
@@ -217,9 +241,13 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         if (!animated || shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el || disabled) return;
-        animateInteractiveHoverLift(el, false, undefined, btnShadow);
+        if (isGloss) {
+          animateGlossInteractiveHoverLift(el, false);
+        } else {
+          animateInteractiveHoverLift(el, false, undefined, btnShadow);
+        }
       },
-      [animated, btnShadow, disabled, onPointerLeave],
+      [animated, btnShadow, disabled, isGloss, onPointerLeave],
     );
 
     const handlePointerDown = useCallback(
@@ -229,15 +257,22 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         if (prefersReducedInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el) return;
-        void animateInteractivePressSqueeze(el).then(() => {
+        const squeeze = isGloss
+          ? animateGlossInteractivePressSqueeze(el)
+          : animateInteractivePressSqueeze(el);
+        void squeeze.then(() => {
           const btn = btnRef.current;
           if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
           if (hoverPointerInsideRef.current) {
-            animateInteractiveHoverLift(btn, true, undefined, btnShadow);
+            if (isGloss) {
+              animateGlossInteractiveHoverLift(btn, true);
+            } else {
+              animateInteractiveHoverLift(btn, true, undefined, btnShadow);
+            }
           }
         });
       },
-      [animated, btnShadow, disabled, onPointerDown],
+      [animated, btnShadow, disabled, isGloss, onPointerDown],
     );
 
     const handleClick = useCallback(
@@ -294,10 +329,10 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         className={cn(
           "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none",
           "font-medium focus-ring",
-          "animate-shadow will-change-transform",
-          !pressed && !disabled && hoverVariant(),
+          isGloss ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS) : cn("animate-shadow will-change-transform"),
+          !isGloss && !pressed && !disabled && hoverVariant(),
           groupGlue,
-          vn.idle,
+          !isGloss && vn.idle,
           pressed && "bg-transparent",
           pressed ? "text-primary-foreground" : "text-foreground",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",

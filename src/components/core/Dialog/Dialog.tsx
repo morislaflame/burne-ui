@@ -1,8 +1,15 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import {
   createGlossInteractiveRefCallback,
 } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
+import {
+  animateModalClose,
+  animateModalOpen,
+  applyReducedModalMotion,
+  isReducedModalMotion,
+  modalOverlayEnterStyle,
+} from "@/components/core/utils/modalSurfaceMotion";
 import {
   createContext,
   forwardRef,
@@ -25,7 +32,6 @@ import {
   CloseButton,
   type CloseButtonProps,
 } from "@/components/core/CloseButton";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import {
@@ -248,17 +254,14 @@ export const DialogRoot = function Dialog({
       if (!cancelled) setMounted(false);
     };
 
-    if (!overlay || !panel || prefersReducedInteractiveHoverLift()) {
+    if (!overlay || !panel || isReducedModalMotion()) {
       finishClose();
       return undefined;
     }
 
     killMotion(overlay, panel);
     const vars = { ...motionInteractive(), overwrite: "auto" as const };
-    const tl = gsap.timeline({ onComplete: finishClose });
-    // opacity, не autoAlpha — visibility:hidden на blur-подложке даёт мигание в конце
-    tl.to(overlay, { opacity: 0, ...vars }, 0);
-    tl.to(panel, { autoAlpha: 0, scale: 0.97, ...vars }, 0);
+    const tl = animateModalClose({ overlay, panel, vars, onComplete: finishClose });
 
     return () => {
       cancelled = true;
@@ -277,17 +280,16 @@ export const DialogRoot = function Dialog({
     const panel = panelRef.current;
     if (!overlay || !panel) return;
 
-    if (prefersReducedInteractiveHoverLift()) {
-      overlay.style.opacity = "1";
-      panel.style.opacity = "1";
-      panel.focus();
+    if (isReducedModalMotion()) {
+      applyReducedModalMotion(overlay, panel, { focusPanel: true });
       return;
     }
 
-    killMotion(overlay, panel);
-    const vars = { ...motionInteractive(), overwrite: "auto" as const };
-    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, ...vars });
-    gsap.fromTo(panel, { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, ...vars });
+    animateModalOpen({
+      overlay,
+      panel,
+      vars: { ...motionInteractive(), overwrite: "auto" as const },
+    });
     panel.focus();
   }, [open, mounted]);
 
@@ -332,7 +334,7 @@ export const DialogRoot = function Dialog({
               ? "bg-[color-mix(in_oklab,var(--color-foreground)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none"
               : "bg-[color-mix(in_oklab,black_58%,transparent)]",
           )}
-          style={{ opacity: prefersReducedInteractiveHoverLift() ? 1 : 0 }}
+          style={modalOverlayEnterStyle()}
           aria-hidden
           onMouseDown={handleBackdropPointerDown}
         />
@@ -345,16 +347,11 @@ export const DialogRoot = function Dialog({
               "flex min-h-0 max-h-[min(90dvh,36rem)] flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-lg",
             className,
           )}
-          style={
-            prefersReducedInteractiveHoverLift()
-              ? undefined
-              : { opacity: 0 }
-          }
         >
           {variant === "gloss" ? (
             <div
               ref={bindGlossPanelRef}
-              className="gloss-panel flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col rounded-mid text-left text-foreground"
+              className="gloss-panel gloss-deep flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col rounded-mid text-left text-foreground"
             >
               <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
             </div>

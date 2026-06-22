@@ -12,12 +12,19 @@ import { IoClose } from "react-icons/io5";
 
 import { Ripple } from "@/components/core/Ripple";
 import {
+  animateGlossInteractiveHoverLift,
+  animateGlossInteractivePressSqueeze,
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+} from "@/components/core/utils/glossInteractiveMotion";
+import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
   shouldSkipInteractiveHoverLift,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import "../utils/glossInteractive.css";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
@@ -33,7 +40,8 @@ export type CloseButtonVariant =
   | "primary"
   | "outline"
   | "secondary"
-  | "ghost";
+  | "ghost"
+  | "gloss";
 
 type VariantVisual = {
   root: string;
@@ -55,6 +63,7 @@ const CLOSE_BUTTON_HOVER_VARIANT: Record<CloseButtonVariant, HoverVariant> = {
   outline: "default",
   secondary: "secondary",
   ghost: "default",
+  gloss: "default",
 };
 
 const CLOSE_BUTTON_VARIANT: Record<CloseButtonVariant, VariantVisual> = {
@@ -80,6 +89,11 @@ const CLOSE_BUTTON_VARIANT: Record<CloseButtonVariant, VariantVisual> = {
   },
   ghost: {
     root: "bg-transparent text-foreground border border-transparent",
+    focusOutline: "focus-visible:outline-primary",
+    convergeBg: colorToken("converge-ripple-neutral"),
+  },
+  gloss: {
+    root: "",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
@@ -144,14 +158,21 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
   ) {
     const btnRef = useRef<HTMLButtonElement | null>(null);
     const hoverPointerInsideRef = useRef(false);
+    const isGloss = variant === "gloss";
+
+    const bindGlossRef = useMemo(
+      () => createGlossInteractiveRefCallback(btnRef, isGloss),
+      [isGloss],
+    );
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
+        bindGlossRef(node);
         btnRef.current = node;
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref],
+      [bindGlossRef, ref],
     );
 
     const vn = CLOSE_BUTTON_VARIANT[variant];
@@ -183,9 +204,13 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         const el = btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
-        animateInteractiveHoverLift(el, true, undefined, btnShadow);
+        if (isGloss) {
+          animateGlossInteractiveHoverLift(el, true);
+        } else {
+          animateInteractiveHoverLift(el, true, undefined, btnShadow);
+        }
       },
-      [btnShadow, disabled, onPointerEnter],
+      [btnShadow, disabled, isGloss, onPointerEnter],
     );
 
     const handlePointerLeave = useCallback(
@@ -195,9 +220,13 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         if (shouldSkipInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el || disabled) return;
-        animateInteractiveHoverLift(el, false, undefined, btnShadow);
+        if (isGloss) {
+          animateGlossInteractiveHoverLift(el, false);
+        } else {
+          animateInteractiveHoverLift(el, false, undefined, btnShadow);
+        }
       },
-      [disabled, btnShadow, onPointerLeave],
+      [disabled, btnShadow, isGloss, onPointerLeave],
     );
 
     const handlePointerDown = useCallback(
@@ -207,6 +236,15 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         if (prefersReducedInteractiveHoverLift()) return;
         const el = btnRef.current;
         if (!el) return;
+
+        if (isGloss) {
+          void animateGlossInteractivePressSqueeze(
+            el,
+            hoverPointerInsideRef.current,
+          );
+          return;
+        }
+
         void animateInteractivePressSqueeze(el).then(() => {
           const b = btnRef.current;
           if (
@@ -221,7 +259,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
           }
         });
       },
-      [animated, btnShadow, disabled, onPointerDown],
+      [animated, btnShadow, disabled, isGloss, onPointerDown],
     );
 
     return (
@@ -232,11 +270,12 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         aria-label={ariaLabel}
         className={cn(
           "relative z-0 flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
-          "animate-shadow",
-          !disabled && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant]),
-          "overflow-hidden will-change-transform origin-center",
+          !isGloss && "animate-shadow",
+          !disabled && !isGloss && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant]),
+          "overflow-hidden",
+          isGloss ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS) : "will-change-transform origin-center",
           sizeClasses.root,
-          vn.root,
+          !isGloss && vn.root,
           vn.focusOutline,
           disabled && "cursor-not-allowed opacity-50",
           className,

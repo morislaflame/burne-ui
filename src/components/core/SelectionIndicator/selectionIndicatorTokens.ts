@@ -3,7 +3,7 @@ import { cn } from "@/utils/cn";
 /** Размер круглого индикатора — через `--selection-indicator-*` в теме. */
 export type SelectionIndicatorSize = "small" | "base" | "mid" | "large";
 
-export type SelectionIndicatorVariant = "base" | "secondary" | "outline";
+export type SelectionIndicatorVariant = "base" | "secondary" | "outline" | "gloss";
 
 export const SELECTION_INDICATOR_SIZE_CLASS: Record<SelectionIndicatorSize, string> = {
   small: "selection-indicator-small",
@@ -24,6 +24,9 @@ export const SELECTION_INDICATOR_SHELL_CLASS =
 
 export const SELECTION_INDICATOR_FILL_CLASS =
   "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-full bg-indicator text-indicator-foreground";
+
+export const SELECTION_INDICATOR_FILL_GLOSS_CLASS =
+  "pointer-events-none absolute inset-px z-[1] flex origin-center items-center justify-center rounded-full gloss-indicator-fill text-foreground";
 
 const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
   small: "--selection-indicator-small",
@@ -78,5 +81,7 @@ export function selectionIndicatorVariantClass(
       return cn("bg-secondary", selected && "border-primary");
     case "outline":
       return cn("bg-transparent border-token", selected && "border-primary");
+    case "gloss":
+      return "gloss-indicator border-0";
   }
 }

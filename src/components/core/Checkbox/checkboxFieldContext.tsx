@@ -8,7 +8,7 @@ import {
 } from "react";
 
 /** Внешний вид обода кружка в состоянии «не отмечено». */
-export type CheckboxVariant = "default" | "secondary" | "outline";
+export type CheckboxVariant = "default" | "secondary" | "outline" | "gloss";
 
 export type CheckboxSize = "small" | "base" | "mid" | "large";
 

@@ -1,4 +1,4 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { IoChevronForward } from "react-icons/io5";
 import {
   createContext,
@@ -23,7 +23,8 @@ import { createPortal } from "react-dom";
 
 import { Text } from "@/components/core/Text";
 import { Separator } from "@/components/core/Separator";
-import { Popover } from "@/components/core/Popover";
+import { Popover, type PopoverVariant } from "@/components/core/Popover";
+import "../utils/glossInteractive.css";
 import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
@@ -34,6 +35,12 @@ import type {
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
+import {
+  animatePortalClose,
+  animatePortalOpen,
+  applyReducedPortalMotion,
+  isReducedModalMotion,
+} from "@/components/core/utils/modalSurfaceMotion";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
@@ -76,6 +83,7 @@ type DropdownContextValue = {
   selectItem: (value: string) => void;
   indicatorMode: "radio" | "multi";
   closeOnSelect: boolean;
+  popoverVariant: PopoverVariant;
   triggerRef: MutableRefObject<HTMLElement | null>;
   contentRef: MutableRefObject<HTMLDivElement | null>;
   contentId: string;
@@ -141,6 +149,8 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
    * Закрыть после выбора пункта. По умолчанию `true` при `multiple === false`, иначе `false`.
    */
   closeOnSelect?: boolean;
+  /** Вариант панели меню (`Popover`). По умолчанию `default`. */
+  popoverVariant?: PopoverVariant;
 };
 
 export function DropdownRoot({
@@ -155,6 +165,7 @@ export function DropdownRoot({
   onValueChange,
   selectionIndicator = false,
   closeOnSelect: closeOnSelectProp,
+  popoverVariant = "default",
   ...rest
 }: DropdownProps) {
   const isControlledOpen = openProp !== undefined;
@@ -229,6 +240,7 @@ export function DropdownRoot({
         selectItem,
         indicatorMode,
         closeOnSelect: closeOnSelectProp ?? !multiple,
+        popoverVariant,
         triggerRef,
         contentRef,
         contentId,
@@ -242,6 +254,7 @@ export function DropdownRoot({
       selectItem,
       indicatorMode,
       closeOnSelectProp,
+      popoverVariant,
       contentId,
       subPanelRootsRef,
     ],
@@ -318,6 +331,8 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
 );
 
 export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
+  /** Вариант панели меню; переопределяет `popoverVariant` на `<Dropdown>`. */
+  variant?: PopoverVariant;
   /** Классы для внутренней панели меню (`Popover.Body`): padding, gap, max-height, … */
   bodyClassName?: string;
 };
@@ -326,7 +341,7 @@ export type DropdownContentProps = DropdownPopoverProps;
 
 export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
   function DropdownPopover(
-    { children, className = "", bodyClassName, ...rest },
+    { children, className = "", bodyClassName, variant: variantProp, ...rest },
     forwardedRef,
   ) {
     const {
@@ -336,7 +351,10 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       contentRef,
       contentId,
       subPanelRootsRef,
+      popoverVariant,
     } = useDropdown();
+
+    const panelVariant = variantProp ?? popoverVariant;
 
     const shouldDismiss = useCallback(
       (target: Node) => {
@@ -405,6 +423,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         open={open}
         onOpenChange={setOpen}
         side="bottom"
+        variant={panelVariant}
         anchorRef={triggerRef}
         shouldDismiss={shouldDismiss}
       >
@@ -713,9 +732,11 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
     forwardedRef,
   ) {
     const { open: subOpen, triggerRef, scheduleClose, cancelClose } = useDropdownSub();
-    const { subPanelRootsRef, triggerRef: menuTriggerRef } = useDropdown();
+    const { subPanelRootsRef, triggerRef: menuTriggerRef, popoverVariant } = useDropdown();
+    const isGlossPanel = popoverVariant === "gloss";
 
     const panelRef = useRef<HTMLDivElement | null>(null);
+    const glossPanelRef = useRef<HTMLDivElement | null>(null);
     const [pos, setPos] = useState({ top: 0, left: 0, minW: 0 });
     const [portalMounted, setPortalMounted] = useState(subOpen);
 
@@ -774,13 +795,13 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
       const el = panelRef.current;
       if (!el) return undefined;
 
-      const reduced = prefersReducedInteractiveHoverLift();
+      const reduced = isReducedModalMotion();
       let cancelled = false;
 
       if (reduced) {
         killMotion(el);
         if (subOpen) {
-          el.style.opacity = "";
+          applyReducedPortalMotion(el);
         } else {
           setPortalMounted(false);
         }
@@ -792,28 +813,27 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
       killMotion(el);
 
       if (subOpen) {
-        el.style.opacity = "0";
-        gsap.fromTo(el, { autoAlpha: 0 }, { autoAlpha: 1, ...motionTooltip(), overwrite: "auto" });
+        animatePortalOpen({
+          surface: el,
+          vars: { ...motionTooltip(), overwrite: "auto" },
+        });
         return () => {
           cancelled = true;
           killMotion(el);
         };
       }
 
-      const startOpacity = Number.parseFloat(getComputedStyle(el).opacity);
-      const fromAlpha =
-        Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
-      const anim = gsap.fromTo(
-        el,
-        { autoAlpha: fromAlpha },
-        { autoAlpha: 0, ...motionTooltip(), overwrite: "auto" },
-      );
-      void anim.then(() => {
-        if (!cancelled) setPortalMounted(false);
+      const anim = animatePortalClose({
+        surface: el,
+        vars: { ...motionTooltip(), overwrite: "auto" },
+        onComplete: () => {
+          if (!cancelled) setPortalMounted(false);
+        },
       });
       return () => {
         cancelled = true;
         killMotion(el);
+        anim.kill();
       };
     }, [subOpen, portalMounted]);
 
@@ -845,8 +865,9 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
         {...portalTheme}
         role="menu"
         className={cn(
-          "fixed z-[110] flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border-token bg-surface p-base text-left shadow-token-md outline-none",
-          "will-change-[opacity] motion-reduce:transition-none",
+          "fixed z-[110] outline-none will-change-transform",
+          !isGlossPanel &&
+            "flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border-token bg-surface p-base text-left shadow-token-md",
           !subOpen && portalMounted && "pointer-events-none",
           className,
         )}
@@ -860,7 +881,18 @@ export const DropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentP
         onPointerEnter={handleEnter}
         onPointerLeave={handleLeave}
       >
-        {children}
+        {isGlossPanel ? (
+          <div
+            ref={glossPanelRef}
+            className="gloss-panel gloss-deep flex max-h-[min(22rem,65vh)] min-w-0 origin-center flex-col overflow-hidden rounded-mid text-foreground"
+          >
+            <div className="gloss-content flex min-h-0 flex-col overflow-y-auto overflow-x-hidden p-base text-left">
+              {children}
+            </div>
+          </div>
+        ) : (
+          children
+        )}
       </div>
     );
 

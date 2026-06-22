@@ -14,6 +14,8 @@ import { IoChevronUp } from "react-icons/io5";
 
 import { cn } from "@/utils/cn";
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { TABLE_ROW_TONE_SURFACE, type TableRowTone } from "./tableRowToneSurface";
@@ -22,7 +24,7 @@ import { TABLE_ROW_TONE_SURFACE, type TableRowTone } from "./tableRowToneSurface
 
 export type SortDirection = "ascending" | "descending";
 export type SortDescriptor = { column: string; direction: SortDirection };
-export type TableVariant = "default" | "secondary" | "toned";
+export type TableVariant = "default" | "secondary" | "toned" | "gloss";
 
 export type { TableRowTone };
 export type SelectionMode = "none" | "single" | "multiple";
@@ -77,18 +79,22 @@ const ROOT_CLS: Record<TableVariant, string> = {
   default: "rounded-mid border-token bg-surface overflow-clip",
   secondary: "",
   toned: "overflow-visible bg-transparent",
+  /** Статичная gloss-оболочка: одна стеклянная «табличная» панель, строки — как у default. */
+  gloss: "gloss-panel gloss-deep rounded-mid overflow-clip border-0",
 };
 
 const TABLE_CLS: Record<TableVariant, string> = {
   default: "border-collapse",
   secondary: "border-collapse",
   toned: "border-separate border-spacing-y-xsmall",
+  gloss: "border-collapse",
 };
 
 const THEAD_ROW_CLS: Record<TableVariant, string> = {
   default: "border-b-token",
   secondary: "border-b-token",
   toned: "",
+  gloss: "border-b-token",
 };
 
 const TH_CLS: Record<TableVariant, string> = {
@@ -96,18 +102,22 @@ const TH_CLS: Record<TableVariant, string> = {
     "bg-secondary px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
   secondary: "px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
   toned: "px-large py-plus text-left font-medium text-muted whitespace-nowrap bg-transparent",
+  gloss:
+    "bg-transparent px-large py-plus text-left font-medium text-muted whitespace-nowrap",
 };
 
 const TBODY_ROW_CLS: Record<TableVariant, string> = {
   default: "border-b-token last:border-b-0",
   secondary: "border-b-token last:border-b-0",
   toned: "",
+  gloss: "border-b-token last:border-b-0",
 };
 
 const TD_CLS: Record<TableVariant, string> = {
-    default: "px-large py-plus",
+  default: "px-large py-plus",
   secondary: "px-large py-plus",
   toned: "px-large py-plus first:rounded-l-mid last:rounded-r-mid",
+  gloss: "px-large py-plus",
 };
 
 // ─── prop types ─────────────────────────────────────────────────────────────
@@ -165,10 +175,13 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
   { variant = "default", className = "", children, ...rest },
   ref,
 ) {
+  const isGloss = variant === "gloss";
+  const setRootRef = useMergedGlossPanelRef(ref, isGloss);
+
   return (
     <TableVariantContext.Provider value={variant}>
-      <div ref={ref} className={cn("w-full", ROOT_CLS[variant], className)} {...rest}>
-        {children}
+      <div ref={setRootRef} className={cn("w-full", ROOT_CLS[variant], className)} {...rest}>
+        {isGloss ? <div className="gloss-content w-full min-w-0">{children}</div> : children}
       </div>
     </TableVariantContext.Provider>
   );

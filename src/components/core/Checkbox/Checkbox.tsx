@@ -51,7 +51,8 @@ import type { CheckboxSize, CheckboxVariant } from "./checkboxFieldContext";
 export type { CheckboxSize, CheckboxVariant };
 
 function checkboxVariantToIndicator(variant: CheckboxVariant): SelectionIndicatorVariant {
-  return variant === "default" ? "base" : variant;
+  if (variant === "default") return "base";
+  return variant;
 }
 
 const SIZE_LAYOUT: Record<

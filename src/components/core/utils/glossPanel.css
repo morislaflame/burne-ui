@@ -27,12 +27,6 @@
   initial-value: 50;
 }
 
-@property --gloss-shine-spread {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
 /* ── Wrapper: stacking context ───────────────────────────────────────────── */
 .gloss-wrap {
   position: relative;
@@ -76,7 +70,7 @@
 }
 
 /* ── Shared surface base = default `.gloss-btn` rest ─────────────────────── */
-:is(.gloss-panel, .gloss-control, .gloss-btn) {
+:is(.gloss-panel, .gloss-control, .gloss-btn, .gloss-indicator) {
   --_bw: clamp(1px, 0.0625em, 4px);
   --gloss-tint: var(--gloss-tint-default);
   background: linear-gradient(
@@ -85,6 +79,9 @@
     color-mix(in oklab, var(--gloss-tint) 26%, var(--gloss-edge)),
     var(--gloss-edge)
   );
+  /* --gloss-fill задаётся модификатором (.gloss-filled) или конкретным классом;
+     background-color стоит ПОСЛЕ shorthand и выигрывает у implicit transparent */
+  background-color: var(--gloss-fill, transparent);
   box-shadow:
     inset 0 0.425em 0.425em var(--gloss-inset-top),
     inset 0 -0.225em 0.225em var(--gloss-inset-bottom),
@@ -94,7 +91,7 @@
   -webkit-backdrop-filter: blur(var(--gloss-blur));
 }
 
-:is(.gloss-panel, .gloss-control, .gloss-btn)::before {
+:is(.gloss-panel, .gloss-control, .gloss-btn, .gloss-indicator)::before {
   content: "";
   position: absolute;
   z-index: 0;
@@ -112,15 +109,13 @@
   );
   mix-blend-mode: screen;
   pointer-events: none;
-  background-size:
-    calc(200% * var(--gloss-shine-spread))
-    calc(200% * var(--gloss-shine-spread));
+  background-size: 200% 200%;
   background-position: calc(var(--gloss-shine-x) * 1%) calc(var(--gloss-shine-y) * 1%);
   background-repeat: no-repeat;
   filter: blur(var(--gloss-shine-blur));
 }
 
-:is(.gloss-panel, .gloss-control, .gloss-btn)::after {
+:is(.gloss-panel, .gloss-control, .gloss-btn, .gloss-indicator)::after {
   content: "";
   position: absolute;
   z-index: 0;
@@ -146,12 +141,46 @@
   pointer-events: none;
 }
 
+/* ── Elevated/layered gloss: strong blur for overlay panels ─────────────── */
+/* Добавь этот класс к компонентам «второго уровня» (Dialog, AlertDialog, etc.) */
+/* Вместо solid surface-подложки — усиленный backdrop-blur для читаемости.    */
+.gloss-deep {
+  --gloss-blur: var(--gloss-blur-deep);
+}
+
+/* ── Legacy: solid surface base (kept for compatibility) ─────────────────── */
+/* @deprecated Используй .gloss-deep вместо .gloss-filled */
+.gloss-filled {
+  --gloss-fill: var(--color-surface);
+}
+
 /* ── Static panel (Surface, Card, Dialog) ────────────────────────────────── */
 .gloss-panel {
   position: relative;
   z-index: 1;
   isolation: isolate;
   overflow: clip;
+}
+
+/* ── Small indicator circle (Checkbox, Radio, Slider/Switch thumb/track) ─── */
+/* Оболочка — прозрачное стекло; surface-подложка только у заливки (.gloss-indicator-fill). */
+.gloss-indicator {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Inner fill of gloss indicator — scales in when selected */
+.gloss-indicator-fill {
+  background: color-mix(
+    in oklab,
+    var(--gloss-tint-default) 70%,
+    color-mix(in oklab, var(--color-foreground) 8%, var(--color-surface))
+  );
+  box-shadow:
+    inset 0 0.3em 0.25em var(--gloss-inset-top),
+    inset 0 -0.15em 0.12em var(--gloss-inset-bottom),
+    inset 0 0 0.04em 0.08em var(--gloss-inner-glow);
 }
 
 /* ── Content layer ───────────────────────────────────────────────────────── */

@@ -178,7 +178,7 @@ export function AlertIndicator({
   return (
     <span
       className={cn(
-        "[&_svg]:icon-large",
+        "[&_svg]:icon-mid",
         alertIndicatorWrapperTextClass(tone),
         gridSlots && messageBannerIndicatorCellClass(gridSlots),
         className,

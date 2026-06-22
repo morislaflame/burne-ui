@@ -21,7 +21,7 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { createPortal } from "react-dom";
 
@@ -38,10 +38,20 @@ import {
   type MessageBannerGridSlots,
 } from "@/components/core/utils/messageBannerGridLayout";
 import {
-  prefersReducedInteractiveHoverLift,
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
+import {
+  animatePortalClose,
+  animatePortalOpen,
+  applyReducedPortalMotion,
+  isReducedModalMotion,
+} from "@/components/core/utils/modalSurfaceMotion";
+import {
+  createGlossInteractiveRefCallback,
+  GLOSS_INTERACTIVE_MOTION_CLASS,
+} from "@/components/core/utils/glossInteractiveMotion";
+import "../utils/glossInteractive.css";
 import { cn } from "@/utils/cn";
 
 import {
@@ -56,6 +66,9 @@ export type { TooltipSide };
 /** Варианты заливки — как у `Alert`. */
 export type TooltipVariant = AlertStatus;
 
+/** Стиль поверхности тултипа (отдельно от семантического `variant`). */
+export type TooltipSurface = "default" | "gloss";
+
 export type TooltipSize = "small" | "base" | "mid" | "large";
 
 const DEFAULT_OFFSET = 8;
@@ -64,6 +77,8 @@ export type TooltipRootProps = {
   children?: ReactNode;
   size?: TooltipSize;
   variant?: TooltipVariant;
+  /** Стеклянная панель (`gloss-deep`). Семантика — в `variant`. */
+  surface?: TooltipSurface;
   delayShowMs?: number;
   /** Предпочтительная сторона. При нехватке места — flip. По умолчанию `top`. */
   side?: TooltipSide;
@@ -303,11 +318,13 @@ function useTooltipBodyContext(who: string): TooltipBodyContextValue {
 
 export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TooltipVariant;
+  surface?: TooltipSurface;
   size?: TooltipSize;
   icon?: ReactNode;
   showIcon?: boolean;
   title?: ReactNode;
   description?: ReactNode;
+  glossPanelRef?: Ref<HTMLDivElement>;
 };
 
 export type TooltipIndicatorProps = HTMLAttributes<HTMLSpanElement>;
@@ -423,6 +440,7 @@ function renderTooltipSimpleBody(
 
 export function TooltipPanel({
   variant = "default",
+  surface = "default",
   size = "base",
   icon,
   showIcon,
@@ -430,8 +448,10 @@ export function TooltipPanel({
   description,
   className = "",
   children,
+  glossPanelRef,
   ...rest
 }: TooltipPanelProps) {
+  const isGloss = surface === "gloss";
   const isCompound = children != null && hasTooltipCompoundChildren(children);
   const gridSlots = useMemo(
     () =>
@@ -452,6 +472,30 @@ export function TooltipPanel({
     [gridSlots, icon, showIcon, size, variant],
   );
 
+  const body = isCompound
+    ? children
+    : renderTooltipSimpleBody(children, title, description, gridSlots);
+
+  if (isGloss) {
+    return (
+      <TooltipBodyContext.Provider value={bodyCtx}>
+        <div
+          ref={glossPanelRef}
+          className={cn(
+            messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
+            "gloss-panel gloss-deep relative z-[1] w-max min-w-0 origin-center overflow-hidden rounded-mid text-left text-foreground",
+            GLOSS_INTERACTIVE_MOTION_CLASS,
+            TOOLTIP_TEXT_LAYOUT[size],
+            className,
+          )}
+          {...rest}
+        >
+          <div className="gloss-content">{body}</div>
+        </div>
+      </TooltipBodyContext.Provider>
+    );
+  }
+
   return (
     <TooltipBodyContext.Provider value={bodyCtx}>
       <div
@@ -464,9 +508,7 @@ export function TooltipPanel({
         )}
         {...rest}
       >
-        {isCompound
-          ? children
-          : renderTooltipSimpleBody(children, title, description, gridSlots)}
+        {body}
       </div>
     </TooltipBodyContext.Provider>
   );
@@ -498,6 +540,7 @@ type TooltipContextValue = {
   open: boolean;
   tooltipId: string;
   variant: TooltipVariant;
+  surface: TooltipSurface;
   size: TooltipSize;
   side: TooltipSide;
   icon?: ReactNode;
@@ -522,6 +565,7 @@ export function TooltipRoot({
   children,
   size = "base",
   variant = "default",
+  surface = "default",
   delayShowMs = 240,
   side = "top",
   icon,
@@ -568,6 +612,7 @@ export function TooltipRoot({
       open,
       tooltipId,
       variant,
+      surface,
       size,
       side,
       icon,
@@ -576,7 +621,7 @@ export function TooltipRoot({
       scheduleShow,
       hide,
     }),
-    [hide, icon, open, scheduleShow, showIcon, side, size, tooltipId, variant],
+    [hide, icon, open, scheduleShow, showIcon, side, size, surface, tooltipId, variant],
   );
 
   return <TooltipContext.Provider value={ctx}>{children}</TooltipContext.Provider>;
@@ -690,13 +735,14 @@ TooltipTrigger.displayName = "TooltipTrigger";
 
 export function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
   const resolvedSide = useContext(TooltipResolvedSideContext);
-  const { variant } = useTooltipContext("Tooltip.Arrow");
+  const { variant, surface } = useTooltipContext("Tooltip.Arrow");
+  const isGloss = surface === "gloss";
   return (
     <span
       aria-hidden
       className={cn(
         "pointer-events-none absolute z-0 size-2 rotate-45",
-        TOOLTIP_SURFACE[variant],
+        isGloss ? "border-0 bg-[var(--color-surface)]" : TOOLTIP_SURFACE[variant],
         TOOLTIP_ARROW_CLASS[resolvedSide],
         className,
       )}
@@ -721,6 +767,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
     open,
     tooltipId,
     variant,
+    surface,
     size,
     side,
     icon,
@@ -729,6 +776,12 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
   } = useTooltipContext("Tooltip.Content");
 
   const tipRef = useRef<HTMLDivElement | null>(null);
+  const glossPanelRef = useRef<HTMLDivElement | null>(null);
+  const isGloss = surface === "gloss";
+  const bindGlossPanelRef = useMemo(
+    () => createGlossInteractiveRefCallback(glossPanelRef, isGloss),
+    [isGloss],
+  );
   const [portalMounted, setPortalMounted] = useState(false);
   const [resolvedSide, setResolvedSide] = useState<TooltipSide>(side);
 
@@ -774,7 +827,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
 
   useEffect(() => {
     const el = tipRef.current;
-    if (el) el.style.setProperty("--el-shadow", shadowSm());
+    if (el && !isGloss) el.style.setProperty("--el-shadow", shadowSm());
   });
 
   useLayoutEffect(() => {
@@ -796,13 +849,13 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
     const el = tipRef.current;
     if (!el) return undefined;
 
-    const reduced = prefersReducedInteractiveHoverLift();
+    const reduced = isReducedModalMotion();
     let cancelled = false;
 
     if (reduced) {
       killMotion(el);
       if (open) {
-        el.style.opacity = "";
+        applyReducedPortalMotion(el);
       } else {
         setPortalMounted(false);
       }
@@ -814,27 +867,27 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
     killMotion(el);
 
     if (open) {
-      el.style.opacity = "0";
-      void gsap.fromTo(el, { autoAlpha: 0 }, { autoAlpha: 1, ...motionTooltip(), overwrite: "auto" });
+      animatePortalOpen({
+        surface: el,
+        vars: { ...motionTooltip(), overwrite: "auto" },
+      });
       return () => {
         cancelled = true;
         killMotion(el);
       };
     }
 
-    const startOpacity = Number.parseFloat(getComputedStyle(el).opacity);
-    const fromAlpha = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
-    const anim = gsap.fromTo(
-      el,
-      { autoAlpha: fromAlpha },
-      { autoAlpha: 0, ...motionTooltip(), overwrite: "auto" },
-    );
-    void anim.then(() => {
-      if (!cancelled) setPortalMounted(false);
+    const anim = animatePortalClose({
+      surface: el,
+      vars: { ...motionTooltip(), overwrite: "auto" },
+      onComplete: () => {
+        if (!cancelled) setPortalMounted(false);
+      },
     });
     return () => {
       cancelled = true;
       killMotion(el);
+      anim.kill();
     };
   }, [open, portalMounted]);
 
@@ -844,7 +897,14 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
   const portalTheme = burneLightThemePortalProps(triggerRef.current);
 
   const bubble = (
-    <TooltipPanel variant={variant} size={size} icon={icon} showIcon={showIcon}>
+    <TooltipPanel
+      variant={variant}
+      surface={surface}
+      size={size}
+      icon={icon}
+      showIcon={showIcon}
+      glossPanelRef={bindGlossPanelRef}
+    >
       {bodyChildren.length === 1 ? bodyChildren[0] : bodyChildren}
     </TooltipPanel>
   );
@@ -858,7 +918,8 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
         id={tooltipId}
         data-side={resolvedSide}
         className={cn(
-          "pointer-events-none z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-[opacity]",
+          "pointer-events-none z-[10000] w-max min-w-0 overflow-visible text-left outline-none",
+          "will-change-transform",
           showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
           className,
         )}

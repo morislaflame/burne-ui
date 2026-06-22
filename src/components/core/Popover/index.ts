@@ -30,6 +30,7 @@ export type {
   PopoverArrowProps,
   PopoverSide,
   PopoverSize,
+  PopoverVariant,
   PopoverContentGap,
 } from "./Popover";
 

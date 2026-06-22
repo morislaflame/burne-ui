@@ -4,7 +4,7 @@ import type { ComponentSize } from "@/components/core/utils/componentSize";
 
 export type TabsOrientation = "horizontal" | "vertical";
 
-export type TabsVariant = "default" | "outline" | "secondary";
+export type TabsVariant = "default" | "outline" | "secondary" | "gloss";
 
 export type TabsContextValue = {
   value: string;

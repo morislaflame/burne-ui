@@ -7,13 +7,14 @@ import {
   type RefObject,
 } from "react";
 
-import type { RadioSize } from "./Radio";
+import type { RadioSize, RadioVariant } from "./Radio";
 
 export type RadioFieldContextValue = {
   inputId: string;
   hintId: string;
   errorId: string;
   size: RadioSize;
+  variant: RadioVariant;
   mergedChecked: boolean;
   isDisabled: boolean;
   isControlled: boolean;
