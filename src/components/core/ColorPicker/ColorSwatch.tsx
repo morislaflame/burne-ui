@@ -11,8 +11,8 @@ import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   shouldSkipInteractiveHoverLift,
-  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { firstLevelHoverShadow, SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 
 import { CHECKER_STYLE } from "./colorUtils";
@@ -72,7 +72,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
   ) {
     const btnRef = useRef<HTMLButtonElement>(null);
     const hoverInsideRef = useRef(false);
-    const shadow = useMemo(() => ({ hover: shadowSm() }), []);
+    const shadow = useMemo(() => firstLevelHoverShadow(), []);
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -135,7 +135,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         className={cn(
           "relative shrink-0 origin-center overflow-hidden will-change-transform",
           "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
-          "animate-shadow",
+          SHADOW_LIFT_MOTION_CLASS,
           SIZE_CLASS[size],
           SHAPE_CLASS[shape],
           selected && "ring-2 ring-primary ring-offset-2 ring-offset-background",

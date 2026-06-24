@@ -4,7 +4,7 @@ import { IoColorPaletteOutline } from "react-icons/io5";
 import { Button } from "@/components/core/Button";
 import { Drawer } from "@/components/core/Drawer";
 
-import { ComponentsShowcase } from "./ComponentsShowcase";
+import { ComponentsCatalog } from "./showcase/ComponentsCatalog";
 import { ThemeControls } from "./ThemeControls";
 import { useThemeTokens } from "./useThemeTokens";
 
@@ -14,17 +14,15 @@ export function ThemePlayground() {
 
   return (
     <div className="relative flex h-[calc(100dvh-3rem)] overflow-hidden">
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex h-full w-96 shrink-0 flex-col overflow-hidden border-r border-token">
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <ComponentsCatalog embedded />
+      </main>
+
+      <aside className="hidden md:flex h-full w-96 shrink-0 flex-col overflow-hidden border-l-token bg-surface">
         <div className="min-h-0 flex-1 overflow-y-auto p-mid">
           <ThemeControls tokens={tokens} />
         </div>
       </aside>
-
-      {/* Main Content */}
-      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
-        <ComponentsShowcase embedded />
-      </main>
 
       {/* Mobile Floating Button */}
       <div className="fixed bottom-6 right-6 z-30 md:hidden">

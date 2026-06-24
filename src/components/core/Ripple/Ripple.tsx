@@ -36,8 +36,6 @@ export type RippleProps = {
    * (`"#fff"`, `rgb()`, `color-mix`, `var(...)`).
    */
   color?: RippleColor | string;
-  /** @deprecated Используйте `color`. */
-  tone?: string;
   /** Не создавать волны и не вешать слушатель. */
   disabled?: boolean;
   /** Длительность анимации точки сходимости, мс. */
@@ -56,7 +54,6 @@ export type RippleProps = {
  */
 export function Ripple({
   color,
-  tone,
   disabled = false,
   duration = getMotionConfig().rippleDefaultDuration,
   direction = "in",
@@ -64,7 +61,7 @@ export function Ripple({
 }: RippleProps) {
   const layerRef = useRef<HTMLSpanElement>(null);
   const { ripples, pushAtClientCoords, dismiss } = useConvergeRipples();
-  const paint = resolveRipplePaint(color ?? tone);
+  const paint = resolveRipplePaint(color);
 
   useLayoutEffect(() => {
     const layer = layerRef.current;

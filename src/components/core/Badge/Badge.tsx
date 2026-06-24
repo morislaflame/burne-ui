@@ -19,7 +19,12 @@ import {
 
 import { Text, type TextVariant } from "@/components/core/Text";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
-import { useInteractiveHoverLiftContainerHandlers, shadowSm, shadowMd, initElementShadow } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  SHADOW_LIFT_MOTION_CLASS,
+  useSecondLevelShadow,
+  useSecondLevelShadowContainer,
+} from "@/components/core/utils/useShadowMotion";
+import { initElementShadow, shadowSm } from "@/components/core/utils/hoverInteractiveLift";
 import {
   createGlossInteractiveRefCallback,
   GLOSS_INTERACTIVE_MOTION_CLASS,
@@ -315,20 +320,17 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
 
   const registerLiftTarget = useCallback((el: HTMLElement | null) => {
     liftedRef.current = el;
-  }, []);
+    if (el && hoverLift) initElementShadow(el, shadowSm());
+  }, [hoverLift]);
 
   const ctx = useMemo(
     () => ({ registerLiftTarget, anchorRef, anchorCommitGen, hoverLift }),
     [registerLiftTarget, anchorCommitGen, hoverLift],
   );
 
-  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers<HTMLDivElement>(
-    liftedRef,
-    hoverLift,
-    undefined,
-    getMotionConfig().badgeAnchorHoverLiftScale,
-    { idle: shadowSm(), hover: shadowMd() },
-  );
+  const anchorLiftShadow = useSecondLevelShadowContainer(liftedRef, hoverLift, {
+    liftScale: getMotionConfig().badgeAnchorHoverLiftScale,
+  });
 
   return (
     <BadgeLiftTargetContext.Provider value={ctx}>
@@ -341,11 +343,11 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
         )}
         onPointerOver={(e) => {
           onPointerOverFromProps?.(e);
-          if (!e.defaultPrevented) liftPointerHandlers.onPointerOver(e);
+          if (!e.defaultPrevented) anchorLiftShadow.onPointerOver(e);
         }}
         onPointerOut={(e) => {
           onPointerOutFromProps?.(e);
-          liftPointerHandlers.onPointerOut(e);
+          anchorLiftShadow.onPointerOut(e);
         }}
         {...rest}
       >
@@ -378,7 +380,7 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
    */
   children?: ReactNode;
   /**
-   * Подъём и усиление тени при hover (как у `Alert`).
+   * Подъём и усиление тени при hover (как у `Alert`): покой `sm`, hover `md`.
    * Не дублируется, если бейдж — прямой ребёнок `Badge.Anchor` с `hoverLift`: там подъём на якоре.
    * @default true
    */
@@ -448,13 +450,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     selfLiftEnabled && isGloss,
   );
 
-  const selfLiftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
-    rootRef,
-    selfLiftEnabled && !isGloss,
-    undefined,
-    undefined,
-    { idle: shadowSm(), hover: shadowMd() },
-  );
+  const selfLiftShadow = useSecondLevelShadow(rootRef, selfLiftEnabled && !isGloss);
 
   const bindSelfLiftPointer = useMemo(
     () => ({
@@ -462,14 +458,14 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         onPointerOverProp?.(e);
         if (!e.defaultPrevented && selfLiftEnabled) {
           if (isGloss) glossLiftPointerHandlers.onPointerOver(e);
-          else selfLiftPointerHandlers.onPointerOver(e);
+          else selfLiftShadow.onPointerEnter(e);
         }
       },
       onPointerOut: (e: ReactPointerEvent<HTMLSpanElement>) => {
         onPointerOutProp?.(e);
         if (selfLiftEnabled) {
           if (isGloss) glossLiftPointerHandlers.onPointerOut(e);
-          else selfLiftPointerHandlers.onPointerOut(e);
+          else selfLiftShadow.onPointerLeave(e);
         }
       },
     }),
@@ -480,16 +476,18 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       onPointerOutProp,
       onPointerOverProp,
       selfLiftEnabled,
-      selfLiftPointerHandlers.onPointerOut,
-      selfLiftPointerHandlers.onPointerOver,
+      selfLiftShadow.onPointerEnter,
+      selfLiftShadow.onPointerLeave,
     ],
   );
 
   const selfLiftMotionCls = selfLiftEnabled
     ? isGloss
       ? GLOSS_INTERACTIVE_MOTION_CLASS
-      : "animate-shadow will-change-transform origin-center"
+      : selfLiftShadow.motionClass
     : "";
+
+  const splitLiftMotionCls = splitLift && !isGloss ? SHADOW_LIFT_MOTION_CLASS : "";
 
   const syncDirectChild = useCallback(() => {
     const outer = rootRef.current;
@@ -539,13 +537,6 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     children,
   ]);
 
-  // Инициализируем начальную тень на том элементе, который будет анимироваться.
-  useLayoutEffect(() => {
-    if (isGloss) return;
-    const target = splitLift ? innerLiftRef.current : rootRef.current;
-    initElementShadow(target, shadowSm());
-  });
-
   if (dot) {
     const hasLabel = badgeHasAccessibleName(rest);
 
@@ -555,7 +546,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       isGloss
         ? cn("gloss-panel border-0", status !== "default" ? BADGE_STATUS_TEXT[status] : "")
         : dotFillClass(variant, status),
-      splitLift && "will-change-transform origin-center",
+      splitLiftMotionCls,
       !splitLift && placementClass,
       className,
     );
@@ -654,7 +645,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap",
       surfaceClass,
       BADGE_ICON_ONLY[rk],
-      splitLift && "will-change-transform origin-center",
+      splitLiftMotionCls,
       !splitLift && placementClass,
       className,
     );
@@ -705,7 +696,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
     surfaceClass,
     BADGE_TEXT_ROW[rk],
-    splitLift && "will-change-transform origin-center",
+    splitLiftMotionCls,
     !splitLift && placementClass,
     className,
   );

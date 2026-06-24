@@ -267,7 +267,7 @@ export function ToastIndicator({ className = "", children, ...rest }: ToastIndic
     return (
       <span
         className={cn(
-          "[&_svg]:icon-large",
+          "[&_svg]:icon-mid",
           TOAST_ICON_CLASS[status],
           messageBannerIndicatorCellClass(gridSlots),
           className,

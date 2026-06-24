@@ -19,7 +19,6 @@ import {
 import {
   hoverVariant,
   SURFACE_COLOR_TRANSITION,
-  TEXT_COLOR_TRANSITION,
 } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
@@ -197,11 +196,7 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
           variant={textVariant}
           as="span"
           inheritColor
-          className={cn(
-            "relative z-[1] min-w-0 shrink-0 leading-none",
-            TEXT_COLOR_TRANSITION,
-            "motion-reduce:transition-none",
-          )}
+          className="relative z-[1] min-w-0 shrink-0 leading-none"
         >
           {children}
         </Text>

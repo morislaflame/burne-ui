@@ -6,8 +6,6 @@ import {
   FieldSetRoot,
   FieldSetActions,
   FieldSetGroup,
-  useFieldSetErrorId,
-  useFieldSetHintId,
   type FieldSetProps,
 } from "@/components/core/Field/FieldSet";
 import { FieldHint } from "@/components/core/Field";
@@ -49,9 +47,6 @@ export const OptionGroupLegend = forwardRef<HTMLLegendElement, OptionGroupLegend
 OptionGroupLegend.displayName = "OptionGroupLegend";
 
 export { FieldSetGroup as OptionGroupGroup, FieldSetActions as OptionGroupActions };
-
-/** @deprecated Используйте `Label` из `@/components/core/Label`. */
-export { Label as OptionGroupLabel, type LabelProps as OptionGroupLabelProps } from "@/components/core/Label";
 
 export type OptionGroupHintProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
@@ -96,13 +91,3 @@ export const OptionGroupList = forwardRef<HTMLDivElement, OptionGroupListProps>(
     );
   },
 );
-
-/** @deprecated Используйте `useFieldSetHintId` из `@/components/core/Field`. */
-export function useOptionGroupHintId(providedId?: string) {
-  return useFieldSetHintId(providedId);
-}
-
-/** @deprecated Используйте `useFieldSetErrorId` из `@/components/core/Field`. */
-export function useOptionGroupErrorId(providedId?: string) {
-  return useFieldSetErrorId(providedId);
-}

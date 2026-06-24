@@ -4,7 +4,7 @@ import { Button } from "@/components/core/Button";
 import { Switch } from "@/components/core/Switch";
 import { cn } from "@/utils/cn";
 
-import { ComponentsShowcase } from "./ComponentsShowcase";
+import { ComponentsCatalog } from "./showcase/ComponentsCatalog";
 import { FresnelTorusDemo } from "./FresnelTorusDemo";
 import { ThemePlayground } from "./ThemePlayground";
 import { ThemeTokensProvider, useThemeTokens } from "./useThemeTokens";
@@ -67,7 +67,7 @@ function AppBody() {
       <AppHeader page={page} onPageChange={setPage} />
 
       {page === "components" ? (
-        <ComponentsShowcase />
+        <ComponentsCatalog />
       ) : page === "theme" ? (
         <ThemePlayground />
       ) : (

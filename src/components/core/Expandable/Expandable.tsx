@@ -1,5 +1,6 @@
 import {
   Children,
+  cloneElement,
   createContext,
   forwardRef,
   isValidElement,
@@ -11,8 +12,12 @@ import {
   useState,
   type ButtonHTMLAttributes,
   type HTMLAttributes,
+  type KeyboardEvent,
+  type MouseEvent,
   type PointerEvent,
+  type ReactElement,
   type ReactNode,
+  type Ref,
 } from "react";
 
 import {
@@ -62,6 +67,8 @@ export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> 
 export type ExpandableTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Если `true`, автоматический шеврон справа не показывается — используйте `<Expandable.Chevron />` внутри. */
   hideChevron?: boolean;
+  /** Пробросить пропы на единственного ребёнка (например `<Button />`). */
+  asChild?: boolean;
 };
 
 export type ExpandableIconProps = HTMLAttributes<HTMLSpanElement>;
@@ -111,6 +118,15 @@ function useExpandable() {
 }
 
 export { useExpandable as useExpandableContext };
+
+function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
+  return (node: T | null) => {
+    for (const ref of refs) {
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    }
+  };
+}
 
 /** Выносит `<Ripple />` на полный `<button>`, а не в узкий flex-ряд с текстом. */
 function partitionTriggerRipple(children: ReactNode): {
@@ -197,7 +213,10 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
   function ExpandableTrigger(
     {
       hideChevron = false,
+      asChild,
       className = "",
+      onClick,
+      onKeyDown,
       onPointerDown: onPointerDownProp,
       children,
       type = "button",
@@ -214,6 +233,27 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
       headerId,
       panelId,
     } = useExpandable();
+
+    const handleClick = useCallback(
+      (e: MouseEvent<HTMLButtonElement>) => {
+        onClick?.(e);
+        if (e.defaultPrevented || disabled) return;
+        toggle();
+      },
+      [disabled, onClick, toggle],
+    );
+
+    const handleKeyDown = useCallback(
+      (e: KeyboardEvent<HTMLButtonElement>) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented || disabled) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle();
+        }
+      },
+      [disabled, onKeyDown, toggle],
+    );
 
     const layout = CONTROL_SIZE_LAYOUT[size];
 
@@ -253,6 +293,30 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
       [disabled, onPointerDownProp],
     );
 
+    if (asChild && isValidElement(children)) {
+      const child = children as ReactElement<
+        HTMLAttributes<HTMLElement> & { ref?: Ref<HTMLElement>; disabled?: boolean }
+      >;
+
+      return cloneElement(child, {
+        ...props,
+        id: headerId,
+        ref: mergeRefs(ref, child.props.ref),
+        className: cn(child.props.className, className),
+        disabled: disabled || child.props.disabled,
+        "aria-expanded": hasPanel ? open : undefined,
+        "aria-controls": hasPanel ? panelId : undefined,
+        onClick: (e: MouseEvent<HTMLElement>) => {
+          child.props.onClick?.(e);
+          handleClick(e as MouseEvent<HTMLButtonElement>);
+        },
+        onKeyDown: (e: KeyboardEvent<HTMLElement>) => {
+          child.props.onKeyDown?.(e);
+          handleKeyDown(e as KeyboardEvent<HTMLButtonElement>);
+        },
+      });
+    }
+
     return (
       <button
         ref={setTriggerRef}
@@ -270,7 +334,8 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         aria-controls={hasPanel ? panelId : undefined}
         disabled={disabled}
         onPointerDown={handlePointerDown}
-        onClick={toggle}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
         {...props}
       >
         {rippleOverlay}

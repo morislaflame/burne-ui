@@ -110,6 +110,8 @@ type SliderCommonProps = {
   icon?: ReactNode;
   /** Gloss-вариант: стеклянный кружок. */
   gloss?: boolean;
+  /** className на `SelectionThumb` (форма, цвет оболочки). */
+  thumbClassName?: string;
   disabled?: boolean;
   className?: string;
   /** Явная подпись ползунков (`aria-label`); перекрывает связь с `<Slider.Label>` через `aria-labelledby`. */
@@ -338,6 +340,7 @@ type SliderThumbButtonProps = {
   size: SliderSize;
   icon?: ReactNode;
   gloss?: boolean;
+  thumbClassName?: string;
   percent: number;
   orientation: SliderOrientation;
   disabled?: boolean;
@@ -357,6 +360,7 @@ function SliderThumbButton({
   size,
   icon,
   gloss = false,
+  thumbClassName,
   percent,
   orientation,
   disabled,
@@ -443,7 +447,7 @@ function SliderThumbButton({
       onPointerDown={handlePointerDown}
       onKeyDown={onKeyDown}
     >
-      <SelectionThumb active={active} size={size} gloss={gloss} shellRef={shellRef}>
+      <SelectionThumb active={active} size={size} gloss={gloss} shellRef={shellRef} className={thumbClassName}>
         {icon != null ? (
           <SelectionThumbIcon size={size} highlighted={active} gloss={gloss}>
             {icon}
@@ -506,6 +510,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
     formatValue = defaultFormatValue,
     icon,
     gloss = false,
+    thumbClassName,
     disabled = false,
     className,
     ariaLabel: ariaLabelProp,
@@ -923,6 +928,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
             size={size}
             icon={iconNode}
             gloss={gloss}
+            thumbClassName={thumbClassName}
             percent={percentFor(rangeValue[0])}
             orientation={orientation}
             disabled={disabled}
@@ -944,6 +950,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
             size={size}
             icon={iconNode}
             gloss={gloss}
+            thumbClassName={thumbClassName}
             percent={percentFor(rangeValue[1])}
             orientation={orientation}
             disabled={disabled}
@@ -964,6 +971,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
           size={size}
           icon={iconNode}
           gloss={gloss}
+          thumbClassName={thumbClassName}
           percent={percentFor(singleValue)}
           orientation={orientation}
           disabled={disabled}
@@ -983,6 +991,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       disabled,
       formatValue,
       gloss,
+      thumbClassName,
       handleThumbKeyDown,
       handleThumbPointerDown,
       icon,

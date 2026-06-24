@@ -266,26 +266,3 @@ export function useInteractiveHoverLiftContainerHandlers<
   }, [liftedRef, enabled, pointerInsideRef, liftScale, shadow]);
 }
 
-/**
- * @deprecated Первый аргумент не используйте — оставлен для совместимости. Спредьте результат на корень: `{...handlers}`.
- * Раньше слушатель вешался в `useEffect`; теперь те же правила что у `Button` (`onPointerOver` / `onPointerOut` на элементе).
- */
-export function useInteractiveHoverLiftOnContainer(
-  containerRef: RefObject<HTMLElement | null>,
-  liftedRef: RefObject<HTMLElement | null>,
-  enabled: boolean,
-  pointerInsideRef?: MutableRefObject<boolean>,
-  liftScale?: number,
-): {
-  onPointerOver: (e: ReactPointerEvent<HTMLElement>) => void;
-  onPointerOut: (e: ReactPointerEvent<HTMLElement>) => void;
-} {
-  void containerRef;
-  return useInteractiveHoverLiftContainerHandlers(
-    liftedRef,
-    enabled,
-    pointerInsideRef,
-    liftScale,
-  );
-}
-

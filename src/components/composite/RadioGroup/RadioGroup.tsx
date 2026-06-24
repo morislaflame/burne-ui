@@ -14,14 +14,12 @@ import {
   OptionGroupHint,
   OptionGroupLegend,
   OptionGroupList,
-  useOptionGroupErrorId,
-  useOptionGroupHintId,
   type OptionGroupHintProps,
   type OptionGroupLegendProps,
   type OptionGroupListProps,
   type OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
-import { FieldError, type FieldErrorProps } from "@/components/core/Field";
+import { FieldError, useFieldSetErrorId, useFieldSetHintId, type FieldErrorProps } from "@/components/core/Field";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import {
@@ -68,8 +66,8 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(f
 ) {
   const autoId = useId();
   const groupName = nameProp ?? `radio-group-${autoId}`;
-  const hintId = useOptionGroupHintId(hintIdProp);
-  const errorId = useOptionGroupErrorId(errorIdProp);
+  const hintId = useFieldSetHintId(hintIdProp);
+  const errorId = useFieldSetErrorId(errorIdProp);
 
   const controlled = valueProp !== undefined;
   const [internalValue, setInternalValue] = useState<string | undefined>(defaultValue);

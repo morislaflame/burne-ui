@@ -195,19 +195,20 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const handleShellPointerDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
         onPointerDown?.(e);
-        if (e.defaultPrevented || blocked || isGloss) return;
+        if (e.defaultPrevented || blocked) return;
         const target = e.target;
-        if (
-          target instanceof HTMLElement &&
-          (target.closest("[data-textarea-resize-handle]") || target.tagName === "TEXTAREA")
-        ) {
+        if (target instanceof HTMLElement && target.closest("[data-textarea-resize-handle]")) {
           return;
         }
         const shell = shellRef.current;
         if (!shell || prefersReducedInteractiveHoverLift()) return;
+        if (isGloss) {
+          glossShellMotion.onShellPointerDown();
+          return;
+        }
         void animateInteractivePressSqueeze(shell);
       },
-      [blocked, isGloss, onPointerDown],
+      [blocked, glossShellMotion, isGloss, onPointerDown],
     );
 
     return (

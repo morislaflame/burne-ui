@@ -433,7 +433,6 @@ export {
   Dropdown,
   DropdownTrigger,
   DropdownPopover,
-  DropdownContent,
   DropdownGroup,
   DropdownLabel,
   DropdownSeparator,
@@ -448,7 +447,6 @@ export {
   type DropdownProps,
   type DropdownTriggerProps,
   type DropdownPopoverProps,
-  type DropdownContentProps,
   type DropdownGroupProps,
   type DropdownLabelProps,
   type DropdownSeparatorProps,
@@ -512,9 +510,23 @@ export {
   shadowSm,
   shouldSkipInteractiveHoverLift,
   useInteractiveHoverLiftContainerHandlers,
-  useInteractiveHoverLiftOnContainer,
   type HoverShadowConfig,
 } from "@/components/core/utils/hoverInteractiveLift";
+export {
+  FIELD_SHELL_FOCUS_CLASS,
+  FIELD_SHELL_TRANSITION_CLASS,
+  fieldShellHoverClass,
+  useFieldShellHoverLift,
+  type FieldShellStatus,
+} from "@/components/core/utils/useFieldShellHoverLift";
+export {
+  SHADOW_LIFT_MOTION_CLASS,
+  firstLevelHoverShadow,
+  secondLevelShadow,
+  usePersistentElShadow,
+  useSecondLevelShadow,
+  useSecondLevelShadowContainer,
+} from "@/components/core/utils/useShadowMotion";
 export {
   colorToken,
   tokensConfig,

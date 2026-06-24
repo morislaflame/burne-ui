@@ -188,7 +188,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         }
         {...(disabled && isGloss ? { "data-gloss-disabled": "" } : {})}
         className={cn(
-          "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left outline-none",
+          "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left",
           "overflow-hidden rounded-base motion-reduce:transition-none",
           INPUT_SHELL_H[size],
           shellSurface,
@@ -515,7 +515,7 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         disabled={disabled}
         aria-label={open ? "Закрыть список" : "Открыть список"}
         className={cn(
-          "flex shrink-0 origin-center items-center justify-center self-stretch border-l-token px-small outline-none",
+          "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none",
           "text-muted hover:text-foreground focus-ring",
           disabled && "pointer-events-none",
           className,

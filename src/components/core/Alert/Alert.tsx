@@ -2,7 +2,6 @@ import {
   forwardRef,
   useCallback,
   useContext,
-  useEffect,
   useId,
   useMemo,
   useRef,
@@ -14,16 +13,11 @@ import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
 import {
-  useInteractiveHoverLiftContainerHandlers,
-  shadowSm,
-  shadowMd,
-  initElementShadow,
-} from "@/components/core/utils/hoverInteractiveLift";
-import {
   createGlossInteractiveRefCallback,
   GLOSS_INTERACTIVE_MOTION_CLASS,
   useGlossInteractiveHandlers,
 } from "@/components/core/utils/glossInteractiveMotion";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import {
   SEMANTIC_STATUS_ICONS,
   type SemanticStatus,
@@ -350,20 +344,9 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     [bindGlossRef, ref],
   );
 
-  useEffect(() => {
-    if (isGloss) return;
-    initElementShadow(rootRef.current, shadowSm());
-  }, [isGloss]);
-
   const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
 
-  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
-    rootRef,
-    !isGloss,
-    undefined,
-    undefined,
-    !isGloss ? { idle: shadowSm(), hover: shadowMd() } : undefined,
-  );
+  const secondLevelLift = useSecondLevelShadow(rootRef, !isGloss);
 
   const surfaceClass = isGloss
     ? cn(
@@ -382,8 +365,8 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         aria-describedby={ariaDescribedBy}
         className={cn(
           messageBannerGridClass(gridSlots),
-          "w-fit max-w-component-base rounded-mid py-plus px-large",
-          !isGloss && "animate-shadow",
+          "w-fit max-w-component-base rounded-mid py-base px-plus",
+          !isGloss && secondLevelLift.motionClass,
           surfaceClass,
           className,
         )}
@@ -391,12 +374,12 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           onPointerOverProp?.(e);
           if (e.defaultPrevented) return;
           if (isGloss) glossPointerHandlers.onPointerOver(e);
-          else liftPointerHandlers.onPointerOver(e);
+          else secondLevelLift.onPointerEnter(e);
         }}
         onPointerOut={(e) => {
           onPointerOutProp?.(e);
           if (isGloss) glossPointerHandlers.onPointerOut(e);
-          else liftPointerHandlers.onPointerOut(e);
+          else secondLevelLift.onPointerLeave(e);
         }}
         {...rest}
       >

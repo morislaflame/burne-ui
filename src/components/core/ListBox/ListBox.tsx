@@ -373,7 +373,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
         disabled={disabled}
         tabIndex={-1}
         className={cn(
-          "w-full min-w-0 rounded-mid px-mid py-base text-left outline-none",
+          "w-full min-w-0 rounded-mid px-plus py-base text-left outline-none",
           optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
           !disabled &&
             cn("cursor-pointer text-foreground focus-ring", hoverVariant()),

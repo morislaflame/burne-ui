@@ -1,5 +1,4 @@
 import {
-  DropdownContent,
   DropdownGroup,
   DropdownItem,
   DropdownItemHint,
@@ -19,7 +18,7 @@ import {
 export const Dropdown = Object.assign(DropdownRoot, {
   Trigger: DropdownTrigger,
   Popover: DropdownPopover,
-  Content: DropdownContent,
+  Content: DropdownPopover,
   Group: DropdownGroup,
   Label: DropdownLabel,
   Separator: DropdownSeparator,
@@ -36,7 +35,6 @@ export const Dropdown = Object.assign(DropdownRoot, {
 export {
   DropdownTrigger,
   DropdownPopover,
-  DropdownContent,
   DropdownGroup,
   DropdownLabel,
   DropdownSeparator,
@@ -54,7 +52,6 @@ export type {
   DropdownProps,
   DropdownTriggerProps,
   DropdownPopoverProps,
-  DropdownContentProps,
   DropdownGroupProps,
   DropdownLabelProps,
   DropdownSeparatorProps,

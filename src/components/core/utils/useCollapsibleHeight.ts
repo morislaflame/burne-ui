@@ -6,22 +6,53 @@ import {
 } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig, motionExpandClose, motionExpandOpen } from "./motionConfig";
+import { getMotionConfig, motionExpand } from "./motionConfig";
 import { prefersReducedInteractiveHoverLift } from "./hoverInteractiveLift";
 
+/** Высота контент-обёртки (padding + border детей; без margin collapse). */
+export function measureCollapsibleContentHeight(inner: HTMLElement): number {
+  return inner.scrollHeight;
+}
+
 export function releaseExpandedShellHeight(shell: HTMLElement, inner: HTMLElement) {
-  const measured = inner.scrollHeight;
+  const measured = measureCollapsibleContentHeight(inner);
+  const current = shell.getBoundingClientRect().height;
+
+  if (measured <= 0) {
+    gsap.set(shell, { clearProps: "height" });
+    shell.style.removeProperty("overflow");
+    return;
+  }
+
+  // Совпадает с GSAP — сразу auto без лишнего snap.
+  if (Math.abs(measured - current) <= 0.5) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        gsap.set(shell, { clearProps: "height" });
+        shell.style.removeProperty("height");
+        shell.style.removeProperty("overflow");
+      });
+    });
+    return;
+  }
+
   shell.style.height = `${measured}px`;
+  shell.style.overflow = "hidden";
+
   requestAnimationFrame(() => {
-    shell.style.height = "auto";
-    shell.style.overflow = "";
+    requestAnimationFrame(() => {
+      gsap.set(shell, { clearProps: "height" });
+      shell.style.removeProperty("height");
+      shell.style.removeProperty("overflow");
+    });
   });
 }
 
 export function applyCollapsibleInstantState(shell: HTMLElement, open: boolean) {
   if (open) {
-    shell.style.height = "auto";
-    shell.style.overflow = "";
+    gsap.set(shell, { clearProps: "height" });
+    shell.style.removeProperty("height");
+    shell.style.removeProperty("overflow");
   } else {
     shell.style.height = "0px";
     shell.style.overflow = "hidden";
@@ -52,15 +83,25 @@ export function useCollapsibleShellRef(
   );
 }
 
+export type UseCollapsibleHeightOptions = {
+  /** @default () => getMotionConfig().enableExpandable */
+  enabled?: () => boolean;
+  /** Пропустить GSAP (Disclosure drag-handle): мгновенно выставить высоту. */
+  skipAnimRef?: RefObject<boolean>;
+};
+
 /**
- * GSAP-анимация высоты collapsible-панели (Expandable, Accordion).
+ * GSAP-анимация высоты collapsible-панели (Expandable, Accordion, Disclosure).
  */
 export function useCollapsibleHeight(
   open: boolean,
   shellRef: RefObject<HTMLElement | null>,
   innerRef: RefObject<HTMLElement | null>,
-  enabled = () => getMotionConfig().enableExpandable,
+  options?: UseCollapsibleHeightOptions,
 ) {
+  const enabledRef = useRef(options?.enabled ?? (() => getMotionConfig().enableExpandable));
+  enabledRef.current = options?.enabled ?? (() => getMotionConfig().enableExpandable);
+  const skipAnimRef = options?.skipAnimRef;
   const prevOpenRef = useRef<boolean | undefined>(undefined);
 
   useLayoutEffect(() => {
@@ -68,9 +109,16 @@ export function useCollapsibleHeight(
     const inner = innerRef.current;
     if (!shell || !inner) return;
 
-    const reduceMotion = prefersReducedInteractiveHoverLift() || !enabled();
+    const reduceMotion = prefersReducedInteractiveHoverLift() || !enabledRef.current();
 
     if (prevOpenRef.current === undefined) {
+      prevOpenRef.current = open;
+      applyCollapsibleInstantState(shell, open);
+      return;
+    }
+
+    if (skipAnimRef?.current) {
+      skipAnimRef.current = false;
       prevOpenRef.current = open;
       applyCollapsibleInstantState(shell, open);
       return;
@@ -92,19 +140,19 @@ export function useCollapsibleHeight(
         shell,
         { height: 0 },
         {
-          height: () => inner.scrollHeight,
-          ...motionExpandOpen(),
+          height: () => measureCollapsibleContentHeight(inner),
+          ...motionExpand(),
           overwrite: "auto",
           onComplete: () => releaseExpandedShellHeight(shell, inner),
         },
       );
     } else {
-      const current = shell.scrollHeight || shell.getBoundingClientRect().height;
+      const current = shell.getBoundingClientRect().height || measureCollapsibleContentHeight(inner);
       shell.style.height = `${current}px`;
       shell.style.overflow = "hidden";
       gsap.to(shell, {
         height: 0,
-        ...motionExpandClose(),
+        ...motionExpand(),
         overwrite: "auto",
         onComplete: () => {
           shell.style.height = "0px";
@@ -112,5 +160,5 @@ export function useCollapsibleHeight(
         },
       });
     }
-  }, [open, shellRef, innerRef, enabled]);
+  }, [open, shellRef, innerRef, skipAnimRef]);
 }

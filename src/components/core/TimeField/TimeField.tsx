@@ -7,6 +7,8 @@ import {
   useMemo,
   useRef,
   useState,
+  type FocusEvent,
+  type FormEvent,
   type HTMLAttributes,
   type KeyboardEvent,
   type MouseEvent,
@@ -238,6 +240,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
     const pendingRef = useRef<{ seg: SegId; digit: number } | null>(null);
     const [focusedSeg, setFocusedSeg] = useState<SegId | null>(null);
     const shellRef = useRef<HTMLFieldSetElement>(null);
+    const keyboardInputRef = useRef<HTMLInputElement>(null);
 
     const hSegRef = useRef<HTMLSpanElement>(null);
     const mSegRef = useRef<HTMLSpanElement>(null);
@@ -266,12 +269,11 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       [ref],
     );
 
-    const focusSeg = useCallback(
-      (seg: SegId) => {
-        segRefById[seg].current?.focus();
-      },
-      [segRefById],
-    );
+    const focusSeg = useCallback((seg: SegId) => {
+      pendingRef.current = null;
+      setFocusedSeg(seg);
+      keyboardInputRef.current?.focus({ preventScroll: true });
+    }, []);
 
     const navigate = useCallback(
       (from: SegId, dir: "prev" | "next") => {
@@ -289,42 +291,48 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       pendingRef.current = null;
     }, [hms, setHms]);
 
-    const handleSegKeyDown = useCallback(
-      (e: KeyboardEvent<HTMLSpanElement>, seg: SegId) => {
-        if (disabled) return;
+    const applyDigit = useCallback(
+      (seg: SegId, digit: number) => {
         const max = SEG_MAX[seg];
-        const digit = parseInt(e.key, 10);
+        const pending = pendingRef.current;
 
-        if (!Number.isNaN(digit)) {
-          e.preventDefault();
-          const pending = pendingRef.current;
-
-          if (pending && pending.seg === seg) {
-            const combined = pending.digit * 10 + digit;
-            if (combined > max) {
-              setHms(withSeg(hms, seg, pending.digit));
-              if (digit * 10 > max) {
-                setHms(withSeg(hms, seg, Math.min(digit, max)));
-                pendingRef.current = null;
-                navigate(seg, "next");
-              } else {
-                pendingRef.current = { seg, digit };
-              }
-            } else {
-              setHms(withSeg(hms, seg, combined));
-              pendingRef.current = null;
-              navigate(seg, "next");
-            }
-          } else {
+        if (pending && pending.seg === seg) {
+          const combined = pending.digit * 10 + digit;
+          if (combined > max) {
+            setHms(withSeg(hms, seg, pending.digit));
             if (digit * 10 > max) {
               setHms(withSeg(hms, seg, Math.min(digit, max)));
               pendingRef.current = null;
               navigate(seg, "next");
             } else {
               pendingRef.current = { seg, digit };
-              setHms(withSeg(hms, seg, digit));
             }
+          } else {
+            setHms(withSeg(hms, seg, combined));
+            pendingRef.current = null;
+            navigate(seg, "next");
           }
+        } else if (digit * 10 > max) {
+          setHms(withSeg(hms, seg, Math.min(digit, max)));
+          pendingRef.current = null;
+          navigate(seg, "next");
+        } else {
+          pendingRef.current = { seg, digit };
+          setHms(withSeg(hms, seg, digit));
+        }
+      },
+      [hms, navigate, setHms],
+    );
+
+    const handleSegKeyDown = useCallback(
+      (e: KeyboardEvent<HTMLSpanElement | HTMLInputElement>, seg: SegId) => {
+        if (disabled) return;
+        const max = SEG_MAX[seg];
+        const digit = parseInt(e.key, 10);
+
+        if (!Number.isNaN(digit)) {
+          e.preventDefault();
+          applyDigit(seg, digit);
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
           pendingRef.current = null;
@@ -347,18 +355,45 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
           commitPending();
         }
       },
-      [disabled, hms, setHms, navigate, commitPending],
+      [applyDigit, commitPending, disabled, hms, navigate, setHms],
     );
 
-    const handleSegBlur = useCallback(() => {
-      commitPending();
-      setFocusedSeg(null);
-    }, [commitPending]);
+    const handleFieldBlur = useCallback(
+      (e: FocusEvent<HTMLSpanElement | HTMLInputElement>) => {
+        const related = e.relatedTarget as Node | null;
+        const shell = shellRef.current;
+        if (shell && related && shell.contains(related)) return;
+        commitPending();
+        setFocusedSeg(null);
+      },
+      [commitPending],
+    );
 
     const handleSegFocus = useCallback((seg: SegId) => {
       pendingRef.current = null;
       setFocusedSeg(seg);
     }, []);
+
+    const handleKeyboardInput = useCallback(
+      (e: FormEvent<HTMLInputElement>) => {
+        const raw = e.currentTarget.value;
+        e.currentTarget.value = "";
+        if (disabled || !focusedSeg) return;
+        for (const ch of raw) {
+          const digit = parseInt(ch, 10);
+          if (!Number.isNaN(digit)) applyDigit(focusedSeg, digit);
+        }
+      },
+      [applyDigit, disabled, focusedSeg],
+    );
+
+    const handleKeyboardInputKeyDown = useCallback(
+      (e: KeyboardEvent<HTMLInputElement>) => {
+        if (disabled || !focusedSeg) return;
+        handleSegKeyDown(e, focusedSeg);
+      },
+      [disabled, focusedSeg, handleSegKeyDown],
+    );
 
     const handleSegClick = useCallback(
       (e: MouseEvent, seg: SegId) => {
@@ -424,20 +459,15 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       ctx?.errorConnected ? ctx.errorId : undefined,
     );
 
-    const segCls = cn(
-      "inline-flex min-w-[2ch] select-none items-center justify-center outline-none",
-      variant === "segmented"
-        ? cn(
-            "h-[1.65em] min-w-[2.25ch] rounded-small px-[3px]",
-            "bg-default-hover",
-            "focus:bg-primary focus:text-primary-foreground",
-          )
-        : cn(
-            "rounded-[3px] px-[2px]",
-            "focus:bg-primary focus:text-primary-foreground",
-          ),
-      disabled ? "cursor-not-allowed" : "cursor-default",
-    );
+    const segCls = (seg: SegId) =>
+      cn(
+        "inline-flex min-w-[2ch] select-none items-center justify-center outline-none",
+        variant === "segmented"
+          ? cn("h-[1.65em] min-w-[2.25ch] rounded-small px-[3px]", "bg-default-hover")
+          : "rounded-[3px] px-[2px]",
+        focusedSeg === seg && "bg-primary text-primary-foreground",
+        disabled ? "cursor-not-allowed" : "cursor-default",
+      );
 
     return (
       <fieldset
@@ -495,12 +525,27 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
 
         <div
           className={cn(
-            "flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none",
+            "relative flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none",
             compact ? "justify-center px-small" : layout.padX,
             variant === "segmented" && "gap-xsmall py-xsmall",
             segTextCls,
           )}
         >
+          <input
+            ref={keyboardInputRef}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
+            aria-hidden
+            tabIndex={-1}
+            disabled={disabled}
+            className="pointer-events-none absolute h-px w-px opacity-0"
+            style={{ fontSize: 16 }}
+            onInput={handleKeyboardInput}
+            onKeyDown={handleKeyboardInputKeyDown}
+            onBlur={handleFieldBlur}
+          />
           {segments.map((seg, i) => (
             <span key={seg} className="inline-flex items-center">
               {i > 0 && (
@@ -525,10 +570,10 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
                 aria-required={seg === segments[0] && isRequired ? true : undefined}
                 aria-invalid={seg === segments[0] && status === "danger" ? true : undefined}
                 tabIndex={disabled ? -1 : 0}
-                className={segCls}
+                className={segCls(seg)}
                 onKeyDown={(e) => handleSegKeyDown(e, seg)}
                 onFocus={() => handleSegFocus(seg)}
-                onBlur={handleSegBlur}
+                onBlur={handleFieldBlur}
                 onClick={(e) => handleSegClick(e, seg)}
               >
                 {segDisplay(seg)}

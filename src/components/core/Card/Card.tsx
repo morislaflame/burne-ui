@@ -18,9 +18,10 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
   shouldSkipInteractiveHoverLift,
-  shadowSm,
-  useInteractiveHoverLiftContainerHandlers,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  useSecondLevelShadowContainer,
+} from "@/components/core/utils/useShadowMotion";
 import {
   animateGlossInteractivePressSqueeze,
   createGlossInteractiveRefCallback,
@@ -58,10 +59,13 @@ export type CardProps = Omit<
 };
 
 const CARD_SURFACE: Record<Exclude<CardVariant, "gloss">, string> = {
-  default: "bg-surface border-token shadow-token-sm",
-  outline: "bg-transparent border-token shadow-token-sm",
-  secondary: "bg-secondary border-token shadow-token-sm",
+  default: "bg-surface border-token",
+  outline: "bg-transparent border-token",
+  secondary: "bg-secondary border-token",
 };
+
+/** Пассивный 2-й уровень — статичная sm-тень без hover-lift. */
+const CARD_STATIC_SHADOW = "shadow-token-sm";
 
 export type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
 export type CardBodyProps = HTMLAttributes<HTMLDivElement>;
@@ -141,7 +145,6 @@ export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   );
 }
 
-const CARD_PRESS_SHADOW = { hover: shadowSm() };
 
 export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   {
@@ -186,12 +189,10 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     { pointerInsideRef },
   );
 
-  const liftPointerHandlers = useInteractiveHoverLiftContainerHandlers(
+  const pressableLift = useSecondLevelShadowContainer(
     rootRef,
     pressable && !isGloss,
-    pointerInsideRef,
-    undefined,
-    pressable && !isGloss ? CARD_PRESS_SHADOW : undefined,
+    { pointerInsideRef },
   );
 
   useEffect(() => {
@@ -227,7 +228,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         if (!el) return;
         if (shouldSkipInteractiveHoverLift()) return;
         if (pointerInsideRef.current) {
-          animateInteractiveHoverLift(el, true, undefined, CARD_PRESS_SHADOW);
+          animateInteractiveHoverLift(el, true, undefined, pressableLift.shadow);
         }
       });
     },
@@ -275,14 +276,14 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
             onPointerOverProp?.(e);
             if (pressable && !e.defaultPrevented) {
               if (isGloss) glossPointerHandlers.onPointerOver(e);
-              else liftPointerHandlers.onPointerOver(e);
+              else pressableLift.onPointerOver(e);
             }
           }}
           onPointerOut={(e) => {
             onPointerOutProp?.(e);
             if (pressable) {
               if (isGloss) glossPointerHandlers.onPointerOut(e);
-              else liftPointerHandlers.onPointerOut(e);
+              else pressableLift.onPointerOut(e);
             }
           }}
           onPointerDown={handlePointerDown}
@@ -312,11 +313,10 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
 
   const rootClassName = cn(
     "flex min-w-0 flex-col overflow-hidden rounded-mid text-foreground outline-none",
-    pressable &&
-      "relative cursor-pointer animate-shadow focus-ring",
-      SURFACE_COLOR_TRANSITION,
+    pressable && cn("relative cursor-pointer focus-ring", pressableLift.motionClass),
+    SURFACE_COLOR_TRANSITION,
     CARD_SURFACE[variant],
-    pressable && "will-change-transform origin-center",
+    !pressable && CARD_STATIC_SHADOW,
     className,
   );
 
@@ -330,12 +330,12 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         onPointerOver={(e) => {
           onPointerOverProp?.(e);
           if (!e.defaultPrevented) {
-            liftPointerHandlers.onPointerOver(e);
+            pressableLift.onPointerOver(e);
           }
         }}
         onPointerOut={(e) => {
           onPointerOutProp?.(e);
-          liftPointerHandlers.onPointerOut(e);
+          pressableLift.onPointerOut(e);
         }}
         onPointerDown={handlePointerDown}
         onClick={handleClick}

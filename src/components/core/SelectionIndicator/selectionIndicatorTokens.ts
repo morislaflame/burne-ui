@@ -20,13 +20,13 @@ export const SELECTION_INDICATOR_ICON_CLASS: Record<SelectionIndicatorSize, stri
 };
 
 export const SELECTION_INDICATOR_SHELL_CLASS =
-  "relative box-border inline-flex shrink-0 items-center justify-center rounded-full";
+  "relative box-border inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full";
 
 export const SELECTION_INDICATOR_FILL_CLASS =
-  "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-full bg-indicator text-indicator-foreground";
+  "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-[inherit] bg-indicator text-indicator-foreground";
 
 export const SELECTION_INDICATOR_FILL_GLOSS_CLASS =
-  "pointer-events-none absolute inset-px z-[1] flex origin-center items-center justify-center rounded-full gloss-indicator-fill text-foreground";
+  "pointer-events-none absolute inset-px z-[1] flex origin-center items-center justify-center rounded-[inherit] gloss-indicator-fill text-foreground";
 
 const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
   small: "--selection-indicator-small",

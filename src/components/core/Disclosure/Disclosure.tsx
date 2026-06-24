@@ -1,6 +1,7 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import {
   Children,
+  cloneElement,
   createContext,
   forwardRef,
   isValidElement,
@@ -8,14 +9,16 @@ import {
   useContext,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type HTMLAttributes,
   type KeyboardEvent,
+  type RefObject,
   type PointerEvent,
+  type ReactElement,
   type ReactNode,
+  type Ref,
 } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
@@ -30,12 +33,22 @@ import {
 } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
-import { applyCollapsibleInstantState, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
+import { useCollapsibleHeight, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
+
+function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
+  return (node: T | null) => {
+    for (const r of refs) {
+      if (r == null) continue;
+      if (typeof r === "function") r(node);
+      else (r as RefObject<T | null>).current = node;
+    }
+  };
+}
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -74,7 +87,7 @@ type DisclosureCtx = {
   iconPos: DisclosureIconPos;
   dragHandle: boolean;
   shellRef: React.RefObject<HTMLDivElement | null>;
-  innerRef: React.RefObject<HTMLElement | null>;
+  innerRef: React.RefObject<HTMLDivElement | null>;
   chevronRef: React.RefObject<HTMLSpanElement | null>;
   skipContentAnimRef: React.RefObject<boolean>;
 };
@@ -112,7 +125,7 @@ const VARIANT_ROOT: Record<DisclosureVariant, string> = {
   default: "flex flex-col",
   outline: "flex flex-col",
   secondary: "flex flex-col",
-  card: "overflow-hidden rounded-base border-token bg-surface animate-shadow",
+  card: "overflow-hidden rounded-base border-token bg-surface shadow-token-sm",
   ghost: "flex flex-col",
   gloss: "flex flex-col",
 };
@@ -166,87 +179,13 @@ function orderDragHandleChildren(children: ReactNode): ReactNode[] {
   return [...trigger, ...content, ...handle, ...other];
 }
 
-// ─── animation ────────────────────────────────────────────────────────────────
-
-const EXPAND_EASE = "power1.inOut";
-
-function releaseExpandedShellHeight(shell: HTMLElement, inner: HTMLElement) {
-  const measured = inner.scrollHeight;
-  shell.style.height = `${measured}px`;
-  requestAnimationFrame(() => {
-    shell.style.height = "auto";
-    shell.style.overflow = "";
-  });
-}
-
-function useContentAnimation(
-  shellRef: React.RefObject<HTMLDivElement | null>,
-  innerRef: React.RefObject<HTMLElement | null>,
-  open: boolean,
-  skipContentAnimRef: React.RefObject<boolean>,
-) {
-  const prevOpenRef = useRef<boolean | undefined>(undefined);
-
-  useLayoutEffect(() => {
-    const shell = shellRef.current;
-    const inner = innerRef.current;
-    if (!shell || !inner) return;
-
-    if (prevOpenRef.current === undefined) {
-      prevOpenRef.current = open;
-      applyCollapsibleInstantState(shell, open);
-      return;
-    }
-
-    if (skipContentAnimRef.current) {
-      skipContentAnimRef.current = false;
-      prevOpenRef.current = open;
-      applyCollapsibleInstantState(shell, open);
-      return;
-    }
-
-    if (prevOpenRef.current === open) return;
-    prevOpenRef.current = open;
-
-    killMotion(shell);
-
-    const { interactiveDuration: expandMs, interactiveEase: collapseEase } = getMotionConfig();
-    if (open) {
-      shell.style.overflow = "hidden";
-      gsap.fromTo(
-        shell,
-        { height: 0 },
-        {
-          height: () => inner.scrollHeight,
-          duration: expandMs / 1000,
-          ease: EXPAND_EASE,
-          overwrite: "auto",
-          onComplete: () => releaseExpandedShellHeight(shell, inner),
-        },
-      );
-    } else {
-      const current = shell.scrollHeight || shell.getBoundingClientRect().height;
-      shell.style.height = `${current}px`;
-      shell.style.overflow = "hidden";
-      gsap.to(shell, {
-        height: 0,
-        duration: Math.round(expandMs * 0.85) / 1000,
-        ease: collapseEase,
-        overwrite: "auto",
-        onComplete: () => {
-          shell.style.height = "0px";
-          shell.style.overflow = "hidden";
-        },
-      });
-    }
-  }, [open, shellRef, innerRef, skipContentAnimRef]);
-}
-
 // ─── Disclosure.Trigger ───────────────────────────────────────────────────────
 
 export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
   icon?: ReactNode | null;
+  /** Пробросить пропы на единственного ребёнка (например `<Button />`). */
+  asChild?: boolean;
 };
 
 export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTriggerProps>(
@@ -254,6 +193,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     {
       children,
       icon,
+      asChild,
       className = "",
       onKeyDown,
       onClick,
@@ -378,6 +318,30 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         </span>
       ) : null;
 
+    if (asChild && isValidElement(children)) {
+      const child = children as ReactElement<
+        HTMLAttributes<HTMLElement> & { ref?: Ref<HTMLElement>; disabled?: boolean }
+      >;
+
+      return cloneElement(child, {
+        ...rest,
+        id: triggerId,
+        ref: mergeRefs(ref, btnRef, child.props.ref),
+        className: cn(child.props.className, className),
+        disabled: disabled || child.props.disabled,
+        "aria-expanded": open,
+        "aria-controls": panelId,
+        onClick: (e: React.MouseEvent<HTMLElement>) => {
+          child.props.onClick?.(e);
+          handleClick(e as React.MouseEvent<HTMLButtonElement>);
+        },
+        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
+          child.props.onKeyDown?.(e);
+          handleKeyDown(e as KeyboardEvent<HTMLButtonElement>);
+        },
+      });
+    }
+
     return (
       <button
         ref={setRefs}
@@ -493,7 +457,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
     const { open, panelId, triggerId, size, variant, shellRef, innerRef, skipContentAnimRef } =
       useDisclosureCtx();
 
-    useContentAnimation(shellRef, innerRef, open, skipContentAnimRef);
+    useCollapsibleHeight(open, shellRef, innerRef, { skipAnimRef: skipContentAnimRef });
 
     const bindShellRef = useCollapsibleShellRef(shellRef, open);
 
@@ -508,12 +472,16 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
 
     const framed = isFramedVariant(variant);
 
+    /** Отступ триггер→контент через padding обёртки (margin на section ломает measure при height:auto). */
+    const contentWrapCls =
+      variant === "outline" || variant === "secondary" || variant === "gloss"
+        ? "pt-xsmall"
+        : undefined;
+
     const innerCls = cn(
       DISCLOSURE_CONTENT_PAD[size],
-      framed && variant === "outline" && FRAMED_PANEL.default,
       framed && variant === "outline" && FRAMED_PANEL.outline,
       framed && variant === "secondary" && FRAMED_PANEL.secondary,
-      framed && variant !== "default" && "mt-xsmall",
       variant === "card" && "border-t-token",
       variant === "ghost" && "text-muted",
       variant === "default" && "text-muted",
@@ -528,31 +496,31 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
         aria-hidden={!open}
         className="overflow-hidden"
       >
-        {isGloss ? (
-          <section
-            ref={innerRef}
-            id={panelId}
-            aria-labelledby={triggerId}
-            className={cn("mt-xsmall", className)}
-            {...rest}
-          >
-            <div className="gloss-panel gloss-deep rounded-mid text-foreground">
-              <div className={cn("gloss-content text-muted", DISCLOSURE_CONTENT_PAD[size])}>
-                {children}
+        <div ref={innerRef} className={contentWrapCls}>
+          {isGloss ? (
+            <section
+              id={panelId}
+              aria-labelledby={triggerId}
+              className={className}
+              {...rest}
+            >
+              <div className="gloss-panel gloss-deep rounded-mid text-foreground">
+                <div className={cn("gloss-content text-muted", DISCLOSURE_CONTENT_PAD[size])}>
+                  {children}
+                </div>
               </div>
-            </div>
-          </section>
-        ) : (
-          <section
-            ref={innerRef}
-            id={panelId}
-            aria-labelledby={triggerId}
-            className={innerCls}
-            {...rest}
-          >
-            {children}
-          </section>
-        )}
+            </section>
+          ) : (
+            <section
+              id={panelId}
+              aria-labelledby={triggerId}
+              className={innerCls}
+              {...rest}
+            >
+              {children}
+            </section>
+          )}
+        </div>
       </div>
     );
   },
@@ -619,7 +587,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
     const triggerId = `disclosure-trigger-${autoId}`;
     const panelId = `disclosure-panel-${autoId}`;
     const shellRef = useRef<HTMLDivElement>(null);
-    const innerRef = useRef<HTMLElement>(null);
+    const innerRef = useRef<HTMLDivElement>(null);
     const chevronRef = useRef<HTMLSpanElement>(null);
     const skipContentAnimRef = useRef(false);
 

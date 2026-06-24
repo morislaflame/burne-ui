@@ -21,8 +21,8 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
   shouldSkipInteractiveHoverLift,
-  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { firstLevelHoverShadow, SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import {
   animateGlossInteractiveHoverLift,
   animateGlossInteractivePressSqueeze,
@@ -688,7 +688,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const btnShadow = useMemo(
       () =>
         BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant)
-          ? { hover: shadowSm() }
+          ? firstLevelHoverShadow()
           : undefined,
       [variant],
     );
@@ -854,7 +854,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             : cn(
                 buttonVariantRootClass(variant, status),
                 statusClass,
-                "animate-shadow",
+                SHADOW_LIFT_MOTION_CLASS,
                 idleSurfaceMotion,
               ),
           userDisabled ? "opacity-50" : "",

@@ -27,6 +27,7 @@ import { motionContentFade } from "@/components/core/utils/motionConfig";
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
+import { Button } from "@/components/core/Button";
 import { CalendarInteractiveCell, DAY_BTN } from "./CalendarInteractiveCell";
 import { RU_LOCALE, type CalendarLocale } from "./calendarLocale";
 
@@ -286,9 +287,17 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
     });
 
     const resolvedValue = isControlled ? value : internalValue;
+    const resolvedValueRef = useRef(resolvedValue);
+    resolvedValueRef.current = resolvedValue;
 
     const setValue = useCallback(
-      (newVal: unknown) => {
+      (newValOrUpdater: unknown | ((prev: unknown) => unknown)) => {
+        const current = resolvedValueRef.current;
+        const newVal =
+          typeof newValOrUpdater === "function"
+            ? newValOrUpdater(current)
+            : newValOrUpdater;
+        resolvedValueRef.current = newVal;
         if (!isControlled) setInternalValue(newVal);
         onValueChange?.(newVal);
       },
@@ -317,7 +326,10 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
         const v = resolvedValue as Date | null;
         return v ? [v] : [];
       }
-      if (mode === "multiple") return (resolvedValue as Date[]) ?? [];
+      if (mode === "multiple") {
+        const v = resolvedValue;
+        return Array.isArray(v) ? v : [];
+      }
       return [];
     }, [mode, resolvedValue]);
 
@@ -350,12 +362,16 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       (d: Date) => {
         const day = startOfDay(d);
         if (mode === "single") {
-          const prev = resolvedValue as Date | null;
-          setValue(prev && isSameDay(prev, day) ? null : day);
+          setValue((current: unknown) => {
+            const prev = current instanceof Date ? current : null;
+            return prev && isSameDay(prev, day) ? null : day;
+          });
         } else if (mode === "multiple") {
-          const prev = (resolvedValue as Date[]) ?? [];
-          const i = prev.findIndex((x) => isSameDay(x, day));
-          setValue(i >= 0 ? prev.filter((_, j) => j !== i) : [...prev, day]);
+          setValue((current: unknown) => {
+            const prev = Array.isArray(current) ? current : [];
+            const i = prev.findIndex((x) => isSameDay(x, day));
+            return i >= 0 ? prev.filter((_, j) => j !== i) : [...prev, day];
+          });
         } else {
           if (!rangePending) {
             setRangePending(day);
@@ -371,7 +387,7 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
           }
         }
       },
-      [mode, resolvedValue, rangePending, setValue],
+      [mode, rangePending, setValue],
     );
 
     const onMonthPress = useCallback(
@@ -809,11 +825,6 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
   function CalendarFooter({ className = "", ...rest }, ref) {
     const { onClear, onToday, locale } = useCalendar();
 
-    const btnCls = cn(
-      "rounded-base px-small py-xsmall text-small focus-ring",
-      TEXT_COLOR_TRANSITION,
-    );
-
     return (
       <div
         ref={ref}
@@ -823,20 +834,12 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
         )}
         {...rest}
       >
-        <button
-          type="button"
-          onClick={onToday}
-          className={cn(btnCls, "text-muted hover:text-foreground")}
-        >
+        <Button variant="ghost" size="small" className="text-muted" onClick={onToday}>
           {locale.today}
-        </button>
-        <button
-          type="button"
-          onClick={onClear}
-          className={cn(btnCls, "text-danger/70 hover:text-danger")}
-        >
+        </Button>
+        <Button variant="ghost" size="small" status="danger" onClick={onClear}>
           {locale.clear}
-        </button>
+        </Button>
       </div>
     );
   },

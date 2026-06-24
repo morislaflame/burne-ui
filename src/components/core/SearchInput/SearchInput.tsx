@@ -20,7 +20,6 @@ import { IoClose, IoSearch } from "react-icons/io5";
 
 import {
   animateInteractivePressSqueeze,
-  initElementShadow,
   prefersReducedInteractiveHoverLift,
   shadowNone,
   shadowSm,
@@ -29,11 +28,10 @@ import { useGlossFieldShellMotion, animateGlossInteractivePressSqueeze } from "@
 import "../utils/glossInteractive.css";
 import {
   FIELD_SHELL_FOCUS_CLASS,
-  FIELD_SHELL_HOVER_MOTION_CLASS,
   FIELD_SHELL_TRANSITION_CLASS,
   fieldShellHoverClass,
-  useFieldShellHoverLift,
 } from "@/components/core/utils/useFieldShellHoverLift";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import { cn } from "@/utils/cn";
@@ -273,7 +271,15 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const collapsedDim = readControlHeightPx(sizeProp);
     const isGloss = variant === "gloss";
 
-    const standardShellHover = useFieldShellHoverLift(rootRef, !blocked && !isGloss);
+    const resolveSearchIdleShadow = useCallback(
+      () => (expanded ? shadowSm() : shadowNone()),
+      [expanded],
+    );
+
+    const standardShellHover = useSecondLevelShadow(rootRef, !blocked && !isGloss, {
+      resolveIdle: resolveSearchIdleShadow,
+      idleSyncKey: expanded,
+    });
     const glossShellMotion = useGlossFieldShellMotion(rootRef, !blocked && isGloss);
 
     const bindRootRef = useCallback(
@@ -283,12 +289,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       },
       [blocked, glossShellMotion, isGloss],
     );
-
-    useLayoutEffect(() => {
-      const el = rootRef.current;
-      if (!el || isGloss) return;
-      initElementShadow(el, expanded ? shadowSm() : shadowNone());
-    }, [expanded, isGloss]);
 
     const shellHorizontalBorderPx = useCallback(
       (shellEl: HTMLElement) => shellEl.offsetWidth - shellEl.clientWidth,
@@ -485,10 +485,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     const handlePointerEnter = isGloss
       ? glossShellMotion.onShellPointerEnter
-      : standardShellHover.onShellPointerEnter;
+      : standardShellHover.onPointerEnter;
     const handlePointerLeave = isGloss
       ? glossShellMotion.onShellPointerLeave
-      : standardShellHover.onShellPointerLeave;
+      : standardShellHover.onPointerLeave;
 
     const handleInputBlur = useCallback(
       (e: FocusEvent<HTMLInputElement>) => {
@@ -566,15 +566,14 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           expanded
             ? SEARCH_EXPANDED_ROUNDED_CLASS[sizeProp]
             : cn("rounded-full", layout.shellWCollapsed),
-          "relative box-border inline-block overflow-hidden text-left outline-none",
+          "relative box-border inline-block overflow-hidden text-left",
           isGloss
             ? "gloss-control border-0"
             : "border-1 border-token bg-surface",
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
           isGloss ? glossShellMotion.shellHoverMotionClass : fieldShellHoverClass(!blocked),
-          !isGloss && !blocked && FIELD_SHELL_HOVER_MOTION_CLASS,
-          "focus-ring",
+          !isGloss && !blocked && standardShellHover.motionClass,
           expanded ? "cursor-text" : "",
           !expanded && !blocked ? "cursor-pointer" : "",
           blocked ? "pointer-events-none opacity-55" : "",

@@ -97,7 +97,7 @@ function ScaleControl({
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="flex flex-col gap-xsmall">
+    <div className="flex flex-col gap-small">
       <div className="flex items-center justify-between gap-small">
         <Label className="text-small text-muted">{label}</Label>
         <Text as="span" variant="tools" className="tabular-nums text-muted">
@@ -135,7 +135,7 @@ function ColorControl({
   const preview = previewBackground ?? value;
 
   return (
-    <div className="flex flex-col gap-xsmall">
+    <div className="flex flex-col gap-small">
       <Label className="text-small text-muted">{label}</Label>
       <div className="flex items-center gap-small">
         <div
@@ -191,7 +191,7 @@ function TintColorControl({
   const mixColorHex = /^#[0-9a-f]{6}$/i.test(parsed.mixColor) ? parsed.mixColor : "#4361ee";
 
   return (
-    <div className="flex flex-col gap-xsmall rounded-base border-token bg-secondary p-small">
+    <div className="flex flex-col gap-small rounded-base border-token bg-secondary p-small">
       <div className="flex items-center gap-small">
         <div
           className="size-8 shrink-0 rounded-small border-token"
@@ -219,7 +219,7 @@ function TintColorControl({
 
       {parsed.mode !== "custom" ? (
         <>
-          <div className="flex flex-col gap-xsmall">
+          <div className="flex flex-col gap-small">
             <div className="flex items-center justify-between gap-small">
               <Text as="span" variant="tools" className="text-muted">mix %</Text>
               <Text as="span" variant="tools" className="tabular-nums text-muted">
@@ -287,7 +287,7 @@ function FontSelect({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-xsmall">
+    <div className="flex flex-col gap-small">
       <Label htmlFor={id}>{label}</Label>
       <select
         id={id}
@@ -724,7 +724,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
         <SectionTitle>Colors</SectionTitle>
         <div className="flex flex-col gap-small">
           {COLOR_GROUPS.map((group) => (
-            <div key={group.label} className="flex flex-col gap-x-small">
+            <div key={group.label} className="flex flex-col gap-small">
               <Text as="span" variant="small" className="text-muted">
                 {group.label}
               </Text>

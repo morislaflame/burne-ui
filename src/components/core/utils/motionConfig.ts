@@ -51,6 +51,12 @@ export interface MotionConfig {
    */
   switchThumbEase: string;
 
+  /**
+   * GSAP easing для заливки selection (ToggleButton, Calendar).
+   * @default "back.out(1.25)"
+   */
+  selectionFillEase: string;
+
   /** Scale applied when a hoverable element lifts. @default 1.015 */
   hoverLiftScale: number;
 
@@ -128,12 +134,13 @@ export interface MotionConfig {
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 
 const DEFAULTS: MotionConfig = {
-  interactiveDuration: 280,
+  interactiveDuration: 600,
   interactiveEase: "power2.out",
   hoverLiftEase: "sine.inOut",
   tooltipDuration: 200,
   switchThumbDuration: 340,
   switchThumbEase: "back.out(1.4)",
+  selectionFillEase: "back.out(1.25)",
   hoverLiftScale: 1.015,
   badgeAnchorHoverLiftScale: 1.052,
   pressSqueezeScale: [1, 0.98, 1],
@@ -193,19 +200,11 @@ export function motionHoverLift() {
   } as const;
 }
 
-/** Появление заливки selection (ToggleButton, календарь). */
-export function motionSelectionFillIn() {
+/** Заливка selection (ToggleButton, календарь) — in/out симметричны. */
+export function motionSelectionFill() {
   return {
     duration: (_config.interactiveDuration * 1.15) / 1000,
-    ease: "back.out(1.25)",
-  } as const;
-}
-
-/** Скрытие заливки — чуть короче и с быстрым стартом, чтобы совпадало с появлением по ощущению. */
-export function motionSelectionFillOut() {
-  return {
-    duration: (_config.interactiveDuration * 0.85) / 1000,
-    ease: _config.interactiveEase,
+    ease: _config.selectionFillEase,
   } as const;
 }
 
@@ -225,19 +224,11 @@ export function motionSwitchThumb() {
   } as const;
 }
 
-/** Открытие collapsible-панели (Expandable, Accordion). */
-export function motionExpandOpen() {
+/** Collapsible-панель (Expandable, Accordion) — in/out симметричны. */
+export function motionExpand() {
   return {
     duration: _config.expandDuration / 1000,
     ease: _config.expandOpenEase,
-  } as const;
-}
-
-/** Закрытие collapsible-панели. */
-export function motionExpandClose() {
-  return {
-    duration: (_config.expandDuration * 0.85) / 1000,
-    ease: _config.interactiveEase,
   } as const;
 }
 

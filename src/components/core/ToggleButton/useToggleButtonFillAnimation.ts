@@ -8,7 +8,7 @@ import {
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionSelectionFillIn, motionSelectionFillOut, getMotionConfig } from "@/components/core/utils/motionConfig";
+import { motionSelectionFill, getMotionConfig } from "@/components/core/utils/motionConfig";
 
 const TOGGLE_FILL_INIT_ATTR = "data-toggle-fill-init";
 
@@ -49,10 +49,10 @@ export function animateToggleButtonFill(
     gsap.fromTo(
       fill,
       { scale: 0, autoAlpha: 0 },
-      { scale: 1, autoAlpha: 1, ...motionSelectionFillIn(), overwrite: "auto" },
+      { scale: 1, autoAlpha: 1, ...motionSelectionFill(), overwrite: "auto" },
     );
   } else {
-    gsap.to(fill, { scale: 0, autoAlpha: 0, ...motionSelectionFillOut(), overwrite: "auto" });
+    gsap.to(fill, { scale: 0, autoAlpha: 0, ...motionSelectionFill(), overwrite: "auto" });
   }
 }
 

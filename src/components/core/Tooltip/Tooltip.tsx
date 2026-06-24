@@ -40,6 +40,7 @@ import {
 import {
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import {
   animatePortalClose,
@@ -825,10 +826,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
     if (open) setPortalMounted(true);
   }, [open]);
 
-  useEffect(() => {
-    const el = tipRef.current;
-    if (el && !isGloss) el.style.setProperty("--el-shadow", shadowSm());
-  });
+  usePersistentElShadow(tipRef, !isGloss, shadowSm);
 
   useLayoutEffect(() => {
     if (!open) return;

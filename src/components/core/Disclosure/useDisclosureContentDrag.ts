@@ -8,9 +8,7 @@ const OPEN_RATIO = 0.38;
 const OPEN_VELOCITY = 0.45;
 const CLOSE_VELOCITY = -0.45;
 
-function readMaxHeight(inner: HTMLElement): number {
-  return inner.scrollHeight;
-}
+import { measureCollapsibleContentHeight } from "@/components/core/utils/useCollapsibleHeight";
 
 function readShellHeight(shell: HTMLElement): number {
   return shell.getBoundingClientRect().height;
@@ -41,7 +39,7 @@ export function useDisclosureContentDrag(
 
       e.preventDefault();
 
-      const maxHeight = readMaxHeight(inner);
+      const maxHeight = measureCollapsibleContentHeight(inner);
       if (maxHeight <= 0) return;
 
       const handle = e.currentTarget;

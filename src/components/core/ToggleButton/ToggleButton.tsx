@@ -29,8 +29,8 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
   shouldSkipInteractiveHoverLift,
-  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { firstLevelHoverShadow, SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import {
   animateGlossInteractiveHoverLift,
   animateGlossInteractivePressSqueeze,
@@ -213,7 +213,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
     }, [disabled]);
 
     const btnShadow = useMemo(
-      () => (isGloss ? undefined : { hover: shadowSm() }),
+      () => (isGloss ? undefined : firstLevelHoverShadow()),
       [isGloss],
     );
 
@@ -329,7 +329,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         className={cn(
           "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none",
           "font-medium focus-ring",
-          isGloss ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS) : cn("animate-shadow will-change-transform"),
+          isGloss ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS) : cn(SHADOW_LIFT_MOTION_CLASS),
           !isGloss && !pressed && !disabled && hoverVariant(),
           groupGlue,
           !isGloss && vn.idle,

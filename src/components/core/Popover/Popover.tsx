@@ -28,6 +28,7 @@ import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import {
   shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import {
   animatePortalClose,
@@ -87,7 +88,7 @@ const POPOVER_MAX_WIDTH: Record<PopoverSize, string> = {
 
 const POPOVER_PADDING: Record<PopoverSize, string> = {
   small: "p-small",
-  base: "p-plus",
+  base: "p-base",
   mid: "p-plus",
   large: "p-mid",
 };
@@ -535,10 +536,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
     if (open) setPortalMounted(true);
   }, [open]);
 
-  useEffect(() => {
-    const el = panelRef.current;
-    if (el && !isGloss) el.style.setProperty("--el-shadow", shadowSm());
-  });
+  usePersistentElShadow(panelRef, !isGloss, shadowSm);
 
   useLayoutEffect(() => {
     if (!open) return;

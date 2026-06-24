@@ -302,30 +302,22 @@ type TextScaleToken = keyof typeof TEXT_SCALE_BASES;
 
 const SHADOW_BASE = {
   dark: {
-    sm: [0.18, 0.12] as const,
-    md: [0.24, 0.14] as const,
-    lg: [0.3, 0.18] as const,
+    sm: 0.15,
+    md: 0.2,
+    lg: 0.24,
   },
   light: {
-    sm: [0.1, 0.07] as const,
-    md: [0.13, 0.08] as const,
-    lg: [0.18, 0.1] as const,
+    sm: 0.08,
+    md: 0.12,
+    lg: 0.16,
   },
 } as const;
 
+/** Один слой, offset-x: 0, отрицательный spread — тень только снизу. [offsetX, offsetY, blur, spread] */
 const SHADOW_LAYER_GEOM = {
-  sm: [
-    [0, 1, 3, 0],
-    [0, 1, 2, -1],
-  ],
-  md: [
-    [0, 3, 8, -1],
-    [0, 2, 4, -2],
-  ],
-  lg: [
-    [0, 8, 20, -4],
-    [0, 4, 8, -4],
-  ],
+  sm: [[0, 2, 4, -2]],
+  md: [[0, 4, 10, -6]],
+  lg: [[0, 8, 20, -12]],
 } as const;
 
 type ShadowLevelKey = keyof typeof SHADOW_LAYER_GEOM;
@@ -338,7 +330,10 @@ function shadowLayerPx(
   opacity: number,
   size: number,
 ): string {
-  const dim = (value: number) => (value === 0 ? "0" : `${value * size}px`);
+  const dim = (value: number) => {
+    if (value === 0) return "0";
+    return `${value * size}px`;
+  };
   return `${dim(offsetX)} ${dim(offsetY)} ${dim(blur)} ${dim(spread)} rgb(0 0 0 / ${opacity})`;
 }
 
@@ -348,12 +343,9 @@ function buildShadowLevel(
   strength: number,
   size: number,
 ): string {
-  const opacities = SHADOW_BASE[theme][level];
-  return SHADOW_LAYER_GEOM[level]
-    .map((geom, index) =>
-      shadowLayerPx(geom[0], geom[1], geom[2], geom[3], opacities[index] * strength, size),
-    )
-    .join(", ");
+  const opacity = SHADOW_BASE[theme][level] * strength;
+  const [offsetX, offsetY, blur, spread] = SHADOW_LAYER_GEOM[level][0];
+  return shadowLayerPx(offsetX, offsetY, blur, spread, opacity, size);
 }
 
 function applyShadows(

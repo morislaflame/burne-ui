@@ -337,8 +337,6 @@ export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   bodyClassName?: string;
 };
 
-export type DropdownContentProps = DropdownPopoverProps;
-
 export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
   function DropdownPopover(
     { children, className = "", bodyClassName, variant: variantProp, ...rest },
@@ -440,7 +438,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
           <Popover.Body
             role="menu"
             className={cn(
-              "max-h-[min(24rem,70vh)] gap-xsmall overflow-y-auto overflow-x-hidden p-plus text-left outline-none",
+              "max-h-[min(24rem,70vh)] gap-xsmall overflow-y-auto overflow-x-hidden p-base text-left outline-none",
               bodyClassName,
             )}
           >
@@ -451,9 +449,6 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
     );
   },
 );
-
-/** @deprecated Используйте `Dropdown.Popover`. */
-export const DropdownContent = DropdownPopover;
 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
   /**
@@ -1164,7 +1159,6 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
 
 DropdownTrigger.displayName = "Dropdown.Trigger";
 DropdownPopover.displayName = "Dropdown.Popover";
-DropdownContent.displayName = "Dropdown.Content";
 DropdownItem.displayName = "Dropdown.Item";
 DropdownGroup.displayName = "Dropdown.Group";
 DropdownLabel.displayName = "Dropdown.Label";

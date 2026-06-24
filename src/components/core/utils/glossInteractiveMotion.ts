@@ -18,6 +18,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
 import {
+  prefersReducedInteractiveHoverLift,
   resolveAdaptiveHoverLiftScale,
   resolveAdaptivePressSqueezeScale,
   shouldSkipInteractiveHoverLift,
@@ -64,9 +65,6 @@ function resolveGlossDecor(element: HTMLElement, state: GlossDecorState) {
   };
 }
 
-/** Easing gloss-поверхности (как в gloss-interactive CSS). */
-const GLOSS_SURFACE_EASE = "power2.inOut";
-
 function readGlossVar(element: HTMLElement, name: string): string {
   const local = getComputedStyle(element).getPropertyValue(name).trim();
   if (local) return local;
@@ -92,18 +90,21 @@ export function buildGlossBoxShadow(element: HTMLElement, state: GlossDecorState
   const insetTop = readGlossVar(element, "--gloss-inset-top");
   const insetBottom = readGlossVar(element, "--gloss-inset-bottom");
   const elevation = readGlossVar(element, "--gloss-elevation");
+  const elevationHover =
+    readGlossVar(element, "--gloss-elevation-hover") || elevation;
   const innerGlow = readGlossVar(element, "--gloss-inner-glow");
   const glowHover = readGlossVar(element, "--gloss-glow-hover");
   const pressInset = readGlossVar(element, "--gloss-press-inset");
 
   const base = `inset 0 0.425em 0.425em ${insetTop}, inset 0 -0.225em 0.225em ${insetBottom}`;
 
+  /** Геометрия как --shadow-sm (rest) / --shadow-md (hover), em ≈ px при 16px. */
   const elevationLayer =
     state === "hover"
-      ? `0 0.28em 0.14em -0.125em ${elevation}`
+      ? `0 0.125em 0.3125em -0.1875em ${elevationHover}`
       : state === "press"
-        ? `0 0.08em 0.04em -0.1em ${elevation}`
-        : `0 0.12em 0.05em -0.1em ${elevation}`;
+        ? `0 0.04em 0.08em -0.0625em ${elevation}`
+        : `0 0.0625em 0.125em -0.0625em ${elevation}`;
 
   const innerRing =
     state === "hover"
@@ -244,7 +245,7 @@ export function animateGlossInteractiveHoverLift(
     scale: resolvedScale,
     ...glossSurfaceProps(element, state),
     duration: cfg.interactiveDuration / 1000,
-    ease: lifted ? cfg.hoverLiftEase : GLOSS_SURFACE_EASE,
+    ease: cfg.hoverLiftEase,
     overwrite: "auto",
   });
 }
@@ -255,13 +256,15 @@ export function animateGlossInteractivePressSqueeze(
   pointerInside = false,
   liftScale?: number,
 ): Promise<void> {
-  if (shouldSkipInteractiveHoverLift()) {
+  if (prefersReducedInteractiveHoverLift()) {
     return Promise.resolve();
   }
 
   const cfg = getMotionConfig();
   if (!cfg.enablePressSqueeze) {
-    animateGlossInteractiveHoverLift(element, pointerInside, liftScale);
+    if (!shouldSkipInteractiveHoverLift()) {
+      animateGlossInteractiveHoverLift(element, pointerInside, liftScale);
+    }
     return Promise.resolve();
   }
 
@@ -271,8 +274,10 @@ export function animateGlossInteractivePressSqueeze(
   const pressIn = total * 0.3;
   const releaseOut = total * 1;
 
-  const releaseState = pointerInside ? "hover" : "rest";
-  const releaseScale = pointerInside
+  const canHoverLift = !shouldSkipInteractiveHoverLift();
+  const releaseToHover = pointerInside && canHoverLift;
+  const releaseState = releaseToHover ? "hover" : "rest";
+  const releaseScale = releaseToHover
     ? (liftScale !== undefined ? liftScale : resolveAdaptiveHoverLiftScale(element))
     : 1;
 
@@ -290,7 +295,7 @@ export function animateGlossInteractivePressSqueeze(
         ...glossSurfaceProps(element, releaseState),
         scale: releaseScale,
         duration: releaseOut,
-        ease: pointerInside ? cfg.hoverLiftEase : GLOSS_SURFACE_EASE,
+        ease: cfg.hoverLiftEase,
         overwrite: "auto",
       });
   });
@@ -361,6 +366,7 @@ export function useGlossFieldShellMotion(
 ) {
   const pointerInsideRef = useRef(false);
   const focusedRef = useRef(false);
+  const pressingRef = useRef(false);
 
   const bindShellRef = useMemo(
     () => createGlossInteractiveRefCallback(shellRef, enabled),
@@ -397,6 +403,8 @@ export function useGlossFieldShellMotion(
   const onShellFocusIn = useCallback(() => {
     if (!enabled) return;
     focusedRef.current = true;
+    // focusin после pointerdown убивает squeeze через syncLift → killMotion
+    if (pressingRef.current || pointerInsideRef.current) return;
     syncLift();
   }, [enabled, syncLift]);
 
@@ -416,11 +424,12 @@ export function useGlossFieldShellMotion(
   const onShellPointerDown = useCallback(() => {
     if (!enabled) return;
     const el = shellRef.current;
-    if (!el || shouldSkipInteractiveHoverLift()) return;
-    void animateGlossInteractivePressSqueeze(
-      el,
-      pointerInsideRef.current || focusedRef.current,
-    );
+    if (!el || prefersReducedInteractiveHoverLift()) return;
+    pointerInsideRef.current = true;
+    pressingRef.current = true;
+    void animateGlossInteractivePressSqueeze(el, true).finally(() => {
+      pressingRef.current = false;
+    });
   }, [enabled, shellRef]);
 
   return {

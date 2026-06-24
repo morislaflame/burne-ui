@@ -15,6 +15,3 @@ export function glossStatusTextClass(status: string | undefined): string {
   }
   return "";
 }
-
-/** @deprecated Используйте {@link glossStatusTextClass} — tint заливки больше не применяется. */
-export const glossStatusTintClass = glossStatusTextClass;

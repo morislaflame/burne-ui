@@ -1,5 +1,7 @@
 import {
+  cloneElement,
   forwardRef,
+  isValidElement,
   useCallback,
   useId,
   useLayoutEffect,
@@ -10,7 +12,9 @@ import {
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
+  type ReactElement,
   type ReactNode,
+  type Ref,
 } from "react";
 
 import { Text, type TextVariant } from "@/components/core/Text";
@@ -57,6 +61,8 @@ export type TabsListProps = HTMLAttributes<HTMLDivElement>;
 export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
   children?: ReactNode;
+  /** Пробросить пропы на единственного ребёнка (например `<Button />`). */
+  asChild?: boolean;
 };
 
 export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -66,9 +72,9 @@ export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
 
 const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "",
-  outline: "bg-transparent border-token rounded-mid p-xsmall",
-  secondary: "bg-secondary border-token rounded-mid p-xsmall",
-  gloss: "border-0 p-xsmall",
+  outline: "bg-transparent border-token rounded-mid p-base",
+  secondary: "bg-secondary border-token rounded-mid p-base",
+  gloss: "border-0 p-base",
 };
 
 function isSurfaceTabsVariant(variant: TabsVariant): boolean {
@@ -114,6 +120,15 @@ function focusTabAt(list: HTMLElement, index: number) {
   const next = tabs[Math.max(0, Math.min(index, tabs.length - 1))]!;
   next.focus();
   return next;
+}
+
+function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
+  return (node: T | null) => {
+    for (const ref of refs) {
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    }
+  };
 }
 
 export const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>(function TabsRoot(
@@ -272,7 +287,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
       aria-orientation={orientation}
       aria-disabled={disabled || undefined}
       className={cn(
-        "relative box-border min-w-0",
+        "relative box-border min-w-0 w-fit",
         orientation === "horizontal"
           ? cn(
               "flex flex-row flex-wrap gap-xsmall",
@@ -282,7 +297,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
               "flex flex-col gap-xsmall",
               isSurfaceTabsVariant(variant) ? "items-start" : "items-stretch border-l-token",
             ),
-        isGloss && "gloss-panel gloss-deep rounded-mid text-foreground",
+        isGloss && "gloss-panel rounded-mid text-foreground",
         LIST_VARIANT_CLASS[variant],
         className,
       )}
@@ -305,7 +320,18 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
 });
 
 export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
-  { value: tabValue, children, className = "", disabled: tabDisabled, onClick, onPointerDown, onPointerEnter, onPointerLeave, ...rest },
+  {
+    value: tabValue,
+    children,
+    asChild,
+    className = "",
+    disabled: tabDisabled,
+    onClick,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    ...rest
+  },
   ref,
 ) {
   const {
@@ -390,6 +416,55 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     [isDisabled, onPointerDown],
   );
 
+  const tabButtonClassName = cn(
+    "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
+    layout.h,
+    isSurface ? "rounded-mid px-mid" : layout.padX,
+    "focus-ring",
+    isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
+    isSelected ? "text-primary" : "text-muted hover:text-primary",
+    !isSelected && !isDisabled && TEXT_COLOR_TRANSITION,
+    className,
+  );
+
+  if (asChild && isValidElement(children)) {
+    const child = children as ReactElement<
+      ButtonHTMLAttributes<HTMLButtonElement> & {
+        ref?: Ref<HTMLElement>;
+        "data-tab-value"?: string;
+      }
+    >;
+
+    return cloneElement(child, {
+      ...rest,
+      role: "tab",
+      id: tabId,
+      "data-tab-value": tabValue,
+      "aria-selected": isSelected,
+      "aria-controls": panelId,
+      tabIndex: isSelected ? 0 : -1,
+      disabled: isDisabled || child.props.disabled,
+      ref: mergeRefs(setRefs, child.props.ref),
+      className: cn(child.props.className, "relative z-[1] shrink-0", className),
+      onClick: (e: MouseEvent<HTMLButtonElement>) => {
+        child.props.onClick?.(e);
+        handleClick(e);
+      },
+      onPointerEnter: (e: PointerEvent<HTMLButtonElement>) => {
+        child.props.onPointerEnter?.(e);
+        onPointerEnter?.(e);
+      },
+      onPointerLeave: (e: PointerEvent<HTMLButtonElement>) => {
+        child.props.onPointerLeave?.(e);
+        onPointerLeave?.(e);
+      },
+      onPointerDown: (e: PointerEvent<HTMLButtonElement>) => {
+        child.props.onPointerDown?.(e);
+        onPointerDown?.(e);
+      },
+    });
+  }
+
   return (
     <button
       ref={setRefs}
@@ -401,16 +476,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       aria-controls={panelId}
       tabIndex={isSelected ? 0 : -1}
       disabled={isDisabled}
-      className={cn(
-        "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
-        layout.h,
-        isSurface ? "rounded-mid px-mid" : layout.padX,
-        "focus-ring",
-        isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
-        isSelected ? "text-primary" : "text-muted hover:text-primary",
-        !isSelected && !isDisabled && TEXT_COLOR_TRANSITION,
-        className,
-      )}
+      className={tabButtonClassName}
       onClick={handleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -419,6 +485,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     >
       <Text
         as="span"
+        inheritColor
         ref={motionRef}
         variant={tabTextVariant(size)}
         className="inline-flex origin-center items-center gap-xsmall will-change-transform"

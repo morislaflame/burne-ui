@@ -141,13 +141,13 @@ p {
  * Тень через локальный `--el-shadow` (переключается из JS) + плавная смена `box-shadow`.
  * Явный сброс на элементе — иначе `--el-shadow` наследуется от предка (Popover, Alert)
  * и дочерние кнопки получают чужую тень до первого hover.
- * Постоянная тень: `initElementShadow(el, shadowSm())` (inline перекрывает сброс).
+ * Постоянная тень: `usePersistentElShadow` / `useSecondLevelShadow` (см. useShadowMotion.ts).
  */
 @utility animate-shadow {
   --el-shadow: var(--shadow-none);
   box-shadow: var(--el-shadow);
   transition-property: box-shadow;
-  transition-duration: var(--shadow-transition-duration, 280ms);
+  transition-duration: var(--shadow-transition-duration, 600ms);
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -185,7 +185,6 @@ p {
     fill 600ms cubic-bezier(0.22, 1, 0.36, 1),
     stroke 600ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    outline-width var(--focus-ring-transition-duration, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
     outline-color var(--focus-ring-transition-duration, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -201,7 +200,6 @@ p {
     background-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
     border-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    outline-width var(--focus-ring-transition-duration, 600ms) cubic-bezier(0.16, 1, 0.3, 1),
     outline-color var(--focus-ring-transition-duration, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -216,26 +214,26 @@ p {
  * focus-within-ring — то же, срабатывает при фокусе внутри (оболочки Input, TextArea, ComboBox).
  * focus-ring-inset — кольцо внутрь (кнопки внутри поля, Table-ячеек).
  *
- * Внешние кольца: прозрачный outline в покое → цвет + ширина при фокусе (не конфликтует с box-shadow тени).
+ * Внешние кольца: фиксированная ширина 2px без offset; плавно только outline-color
+ * (анимация outline-width давала скачок в конце).
  */
 @utility focus-ring {
   outline-style: solid;
-  outline-width: 0;
+  outline-width: 2px;
   outline-color: transparent;
-  outline-offset: 2px;
+  outline-offset: 0;
   &:focus-visible {
-    outline-width: 2px;
     outline-color: var(--color-focus-ring);
   }
 }
 
 @utility focus-within-ring {
   outline-style: solid;
-  outline-width: 0;
+  outline-width: 2px;
   outline-color: transparent;
-  outline-offset: 2px;
+  outline-offset: 0;
+  &:focus-visible,
   &:focus-within {
-    outline-width: 2px;
     outline-color: var(--color-focus-ring);
   }
 }

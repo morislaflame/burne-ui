@@ -22,8 +22,8 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
   shouldSkipInteractiveHoverLift,
-  shadowSm,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { firstLevelHoverShadow, SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import "../utils/glossInteractive.css";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
@@ -181,7 +181,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
     const btnShadow = useMemo(
       () =>
         CLOSE_BUTTON_HAS_HOVER_SHADOW.has(variant)
-          ? { hover: shadowSm() }
+          ? firstLevelHoverShadow()
           : undefined,
       [variant],
     );
@@ -270,7 +270,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
         aria-label={ariaLabel}
         className={cn(
           "relative z-0 flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
-          !isGloss && "animate-shadow",
+          !isGloss && SHADOW_LIFT_MOTION_CLASS,
           !disabled && !isGloss && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant]),
           "overflow-hidden",
           isGloss ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS) : "will-change-transform origin-center",
