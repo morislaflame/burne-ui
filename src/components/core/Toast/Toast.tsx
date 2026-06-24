@@ -492,7 +492,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
         aria-live={liveRole === "alert" ? "assertive" : "polite"}
         className={cn(
           messageBannerGridClass(gridSlots),
-          "w-full rounded-mid py-base px-large",
+          "w-full rounded-mid py-base px-plus",
           isGloss
             ? cn("gloss-panel gloss-deep border-0 text-foreground", GLOSS_INTERACTIVE_MOTION_CLASS)
             : cn("shadow-token-md", TOAST_SURFACE[status]),
