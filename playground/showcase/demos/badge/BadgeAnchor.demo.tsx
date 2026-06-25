@@ -7,7 +7,7 @@ export function BadgeAnchorDemo() {
     <div className="flex flex-wrap items-center gap-mid">
       <Badge.Anchor>
         <Avatar size="large" label="Jordan Doe" src={PIN_IMAGE1} alt="" loading="lazy" />
-        <Badge status="danger" size="small">
+        <Badge status="danger" variant="primary" size="small">
           5
         </Badge>
       </Badge.Anchor>

@@ -122,6 +122,14 @@ const BADGE_TEXT_ROW: Record<BadgeSize, string> = {
   large: "gap-small px-plus py-xsmall",
 };
 
+/** Минимальный квадрат: ширина не уже высоты однострочного бейджа. */
+const BADGE_SQUARE_MIN: Record<BadgeSize, string> = {
+  small: "min-h-3 min-w-3",
+  base: "min-h-4 min-w-4",
+  mid: "min-h-4 min-w-4",
+  large: "min-h-5 min-w-5",
+};
+
 
 const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
   small: "tools",
@@ -131,19 +139,17 @@ const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
 };
 
 const BADGE_ICON_ONLY: Record<BadgeSize, string> = {
-  small:
-    "shrink-0 p-xsmall [&_svg]:icon-small",
+  small: "shrink-0 p-xsmall [&_svg]:icon-small",
   base: "shrink-0 p-small [&_svg]:icon-base",
   mid: "shrink-0 p-base [&_svg]:icon-base",
-  large:
-    "shrink-0 p-plus [&_svg]:icon-large",
+  large: "shrink-0 p-plus [&_svg]:icon-large",
 };
 
 const BADGE_DOT_DIM: Record<BadgeSize, string> = {
-  small: "icon-small min-h-3 min-w-3 shrink-0 p-0",
-  base: "icon-small min-h-4 min-w-4 shrink-0 p-0",
-  mid: "icon-base min-h-4 min-w-4 shrink-0 p-0",
-  large: "icon-large min-h-5 min-w-5 shrink-0 p-0",
+  small: "icon-small shrink-0 p-0",
+  base: "icon-small shrink-0 p-0",
+  mid: "icon-base shrink-0 p-0",
+  large: "icon-large shrink-0 p-0",
 };
 
 const BADGE_INLINE_SVG_SIZE: Record<BadgeSize, string> = {
@@ -285,6 +291,21 @@ type BadgeLiftContextValue = {
 
 const BadgeLiftTargetContext = createContext<BadgeLiftContextValue | null>(null);
 
+/** Прямой ребёнок `Badge.Anchor` — placement применяется синхронно, без проверки DOM. */
+const BadgeDirectAnchorChildContext = createContext(false);
+
+function isBadgeElement(child: ReactElement): boolean {
+  return child.type === BadgeRoot;
+}
+
+function BadgeDirectAnchorChildProvider({ children }: { children: ReactNode }) {
+  return (
+    <BadgeDirectAnchorChildContext.Provider value={true}>
+      {children}
+    </BadgeDirectAnchorChildContext.Provider>
+  );
+}
+
 export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children?: ReactNode;
   /**
@@ -338,7 +359,7 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
         ref={setMergedRef}
         data-badge-anchor
         className={cn(
-          "relative isolate block w-max shrink-0",
+          "relative isolate inline-grid w-fit shrink-0 [&>*]:col-start-1 [&>*]:row-start-1",
           className,
         )}
         onPointerOver={(e) => {
@@ -351,7 +372,17 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
         }}
         {...rest}
       >
-        {children}
+        {Children.map(children, (child, index) => {
+          if (!isValidElement(child)) return child;
+          if (isBadgeElement(child)) {
+            return (
+              <BadgeDirectAnchorChildProvider key={child.key ?? `badge-anchor-child-${index}`}>
+                {child}
+              </BadgeDirectAnchorChildProvider>
+            );
+          }
+          return child;
+        })}
       </div>
     </BadgeLiftTargetContext.Provider>
   );
@@ -415,9 +446,9 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   forwardedRef,
 ) {
   const liftCtx = useContext(BadgeLiftTargetContext);
+  const isDirectAnchorChild = useContext(BadgeDirectAnchorChildContext);
   const rootRef = useRef<HTMLSpanElement | null>(null);
   const innerLiftRef = useRef<HTMLSpanElement | null>(null);
-  const [isDirectAnchorChild, setIsDirectAnchorChild] = useState(false);
 
   const isGloss = variant === "gloss";
   const surfaceClass = badgeSurfaceClass(variant, status);
@@ -490,20 +521,12 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   const splitLiftMotionCls = splitLift && !isGloss ? SHADOW_LIFT_MOTION_CLASS : "";
 
   const syncDirectChild = useCallback(() => {
-    const outer = rootRef.current;
-    if (!liftCtx) {
-      setIsDirectAnchorChild(false);
-      return;
-    }
-    const anchor = liftCtx.anchorRef.current;
-    const direct = !!(outer && anchor && outer.parentElement === anchor);
-    setIsDirectAnchorChild(direct);
-    if (!direct || !liftCtx.hoverLift) {
-      liftCtx.registerLiftTarget(null);
+    if (!liftCtx || !isDirectAnchorChild || !liftCtx.hoverLift) {
+      liftCtx?.registerLiftTarget(null);
       return;
     }
     liftCtx.registerLiftTarget(innerLiftRef.current);
-  }, [liftCtx]);
+  }, [isDirectAnchorChild, liftCtx]);
 
   const setMergedRef = useCallback(
     (node: HTMLSpanElement | null) => {
@@ -511,7 +534,6 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       rootRef.current = node;
       if (node === null) {
         liftCtx?.registerLiftTarget(null);
-        setIsDirectAnchorChild(false);
       }
 
       if (typeof forwardedRef === "function") forwardedRef(node);
@@ -526,6 +548,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       syncDirectChild();
     });
   }, [
+    isDirectAnchorChild,
     liftCtx?.anchorCommitGen,
     liftCtx?.hoverLift,
     placement,
@@ -543,6 +566,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     const dotInnerCls = cn(
       "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
       BADGE_DOT_DIM[rk],
+      BADGE_SQUARE_MIN[rk],
       isGloss
         ? cn("gloss-panel border-0", status !== "default" ? BADGE_STATUS_TEXT[status] : "")
         : dotFillClass(variant, status),
@@ -576,8 +600,6 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         ref={setMergedRef}
         data-badge-root
         className={cn(
-          "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
-          BADGE_DOT_DIM[rk],
           dotInnerCls,
           selfLiftMotionCls,
           isDirectAnchorChild && !isGloss && "pointer-events-none",
@@ -645,6 +667,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap",
       surfaceClass,
       BADGE_ICON_ONLY[rk],
+      BADGE_SQUARE_MIN[rk],
       splitLiftMotionCls,
       !splitLift && placementClass,
       className,
@@ -676,6 +699,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap",
           surfaceClass,
           BADGE_ICON_ONLY[rk],
+          BADGE_SQUARE_MIN[rk],
           selfLiftMotionCls,
           isDirectAnchorChild && !isGloss && "pointer-events-none",
           placementClass,
@@ -696,6 +720,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     "box-border isolate inline-flex max-w-full shrink-0 select-none items-center justify-center truncate rounded-full whitespace-nowrap motion-reduce:transition-none",
     surfaceClass,
     BADGE_TEXT_ROW[rk],
+    BADGE_SQUARE_MIN[rk],
     splitLiftMotionCls,
     !splitLift && placementClass,
     className,
@@ -731,6 +756,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
         isDirectAnchorChild && !isGloss && "pointer-events-none",
         surfaceClass,
         BADGE_TEXT_ROW[rk],
+        BADGE_SQUARE_MIN[rk],
         selfLiftMotionCls,
         placementClass,
         className,

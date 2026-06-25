@@ -15,7 +15,7 @@ export function AlertCompoundBannerDemo() {
           </Alert.Description>
         </Alert.Content>
         <Alert.Action>
-          <Button variant="primary" size="small">
+          <Button variant="gloss" size="small">
             Enable
           </Button>
         </Alert.Action>
