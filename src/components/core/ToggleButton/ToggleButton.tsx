@@ -23,7 +23,10 @@ import {
   type ButtonGroupSegment,
 } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { hoverVariant, SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import {
+  buttonRootClass,
+  CONTROL_SIZE_LAYOUT,
+} from "@/components/core/utils/controlSizeLayout";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -76,28 +79,6 @@ const TOGGLE_BUTTON_TEXT_VARIANT: Record<ToggleButtonSize, TextVariant> = {
   base: "base",
   mid: "mid",
   large: "mid",
-};
-
-const TOGGLE_BUTTON_SIZE: Record<
-  ToggleButtonSize,
-  { root: string; icon: string }
-> = {
-  small: {
-    root: `${CONTROL_SIZE_LAYOUT.small.h} min-w-fit ${CONTROL_SIZE_LAYOUT.small.padX}`,
-    icon: CONTROL_SIZE_LAYOUT.small.icon,
-  },
-  base: {
-    root: `${CONTROL_SIZE_LAYOUT.base.h} min-w-fit ${CONTROL_SIZE_LAYOUT.base.padX}`,
-    icon: CONTROL_SIZE_LAYOUT.base.icon,
-  },
-  mid: {
-    root: `${CONTROL_SIZE_LAYOUT.mid.h} min-w-fit ${CONTROL_SIZE_LAYOUT.mid.padX}`,
-    icon: CONTROL_SIZE_LAYOUT.mid.icon,
-  },
-  large: {
-    root: `${CONTROL_SIZE_LAYOUT.large.h} min-w-fit ${CONTROL_SIZE_LAYOUT.large.padX}`,
-    icon: CONTROL_SIZE_LAYOUT.large.icon,
-  },
 };
 
 type ToggleButtonVariantVisual = {
@@ -309,7 +290,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       ],
     );
 
-    const sz = TOGGLE_BUTTON_SIZE[size];
+    const layout = CONTROL_SIZE_LAYOUT[size];
     const vn = TOGGLE_BUTTON_VARIANT[variant];
     const roundingClass = groupSegment ? buttonGroupRoundingClasses(groupSegment) : "rounded-base";
     const groupGlue = groupSegment
@@ -338,7 +319,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
           !isGloss && vn.idle,
           pressed && "bg-transparent",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
-          sz.root,
+          buttonRootClass(size, true),
           roundingClass,
           className,
         )}
@@ -365,7 +346,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
             <span
               className={cn(
                 "inline-flex shrink-0 items-center justify-center [&_svg]:size-full",
-                sz.icon,
+                layout.icon,
               )}
               aria-hidden
             >
@@ -381,7 +362,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
             <span
               className={cn(
                 "inline-flex shrink-0 items-center justify-center [&_svg]:size-full",
-                sz.icon,
+                layout.icon,
               )}
               aria-hidden
             >

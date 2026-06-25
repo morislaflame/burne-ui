@@ -375,16 +375,16 @@
   --max-component-mid: calc(var(--size) * 32);
   --max-component-large: calc(var(--size) * 36);
 
-  --button-min-width-small: calc(var(--size) * 4.5);
-  --button-min-width-base: calc(var(--size) * 5.5);
-  --button-min-width-mid: calc(var(--size) * 7);
-  --button-min-width-large: calc(var(--size) * 8);
+  --button-min-width-small: calc(var(--control-height-small) * 2.5);
+  --button-min-width-base: calc(var(--control-height-base) * 2.5);
+  --button-min-width-mid: calc(var(--control-height-mid) * 2.7);
+  --button-min-width-large: calc(var(--control-height-large) * 2.6);
 
   /** Минимальная высота интерактивных контролов (Button, Input, Selector, SearchInput). */
-  --control-height-small: calc(var(--size) * 1.75);
-  --control-height-base: calc(var(--size) * 2.2);
-  --control-height-mid: calc(var(--size) * 2.5);
-  --control-height-large: calc(var(--size) * 3);
+  --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + 2px);
+  --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + 2px);
+  --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + 2px);
+  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-plus) * 2 + 2px);
 
   /** Диаметр аватара по ступени размера. */
   --avatar-size-small: calc(var(--size) * 2);

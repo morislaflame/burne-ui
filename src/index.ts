@@ -7,7 +7,12 @@ export {
 } from "@/components/core/utils/componentSize";
 export {
   CONTROL_SIZE_LAYOUT,
+  affixSlotClass,
+  affixToggleMinWClass,
+  buttonRootClass,
+  buttonSpinnerClass,
   controlShellClass,
+  controlTextFrameClass,
   readControlHeightPx,
   type ControlSizeLayout,
 } from "@/components/core/utils/controlSizeLayout";

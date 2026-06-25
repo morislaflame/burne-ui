@@ -1,4 +1,5 @@
 import type { TextVariant } from "@/components/core/Text";
+import { cn } from "@/utils/cn";
 
 import type { ComponentSize } from "./componentSize";
 
@@ -7,6 +8,7 @@ export type ControlSizeLayout = {
   h: string;
   minWButton: string;
   padX: string;
+  padY: string;
   affixPadX: string;
   affixText: string;
   controlPad: string;
@@ -28,9 +30,10 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     h: "h-control-small",
     minWButton: "min-w-button-small",
     padX: "px-base",
+    padY: "py-xsmall",
     affixPadX: "px-base",
     affixText: "text-base",
-    controlPad: "h-full px-base py-0 text-base",
+    controlPad: "px-base py-xsmall text-base",
     controlText: "small",
     icon: "icon-small",
     chevronIcon: "icon-small",
@@ -46,9 +49,10 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     h: "h-control-base",
     minWButton: "min-w-button-base",
     padX: "px-plus",
+    padY: "py-small",
     affixPadX: "px-plus",
     affixText: "text-base",
-    controlPad: "h-full px-plus py-0 text-base",
+    controlPad: "px-plus py-small text-base",
     controlText: "base",
     icon: "icon-base",
     chevronIcon: "icon-base",
@@ -64,9 +68,10 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     h: "h-control-mid",
     minWButton: "min-w-button-mid",
     padX: "px-plus",
+    padY: "py-base",
     affixPadX: "px-mid",
     affixText: "text-mid",
-    controlPad: "h-full px-mid py-0 text-mid",
+    controlPad: "px-mid py-base text-mid",
     controlText: "mid",
     icon: "icon-large",
     chevronIcon: "icon-large",
@@ -82,9 +87,10 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     h: "h-control-large",
     minWButton: "min-w-button-large",
     padX: "px-large",
+    padY: "py-plus",
     affixPadX: "px-large",
     affixText: "text-mid",
-    controlPad: "h-full px-large py-0 text-mid",
+    controlPad: "px-large py-plus text-mid",
     controlText: "mid",
     icon: "icon-large",
     chevronIcon: "icon-large",
@@ -98,9 +104,57 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
   },
 };
 
-export function controlShellClass(size: ComponentSize, minWButton: string): string {
+/** Shell контрола: min-height, min-width, горизонтальные и вертикальные отступы. */
+export function controlShellClass(
+  size: ComponentSize,
+  minW = CONTROL_SIZE_LAYOUT[size].minWButton,
+): string {
   const layout = CONTROL_SIZE_LAYOUT[size];
-  return `${layout.h} ${minWButton} ${layout.padX}`;
+  return cn(layout.h, minW, layout.padX, layout.padY);
+}
+
+/** Корневые классы кнопки (Button, ToggleButton с `min-w-fit`). */
+export function buttonRootClass(size: ComponentSize, iconOnly = false): string {
+  const layout = CONTROL_SIZE_LAYOUT[size];
+  return cn(
+    layout.h,
+    iconOnly ? "min-w-fit" : layout.minWButton,
+    layout.padX,
+    layout.padY,
+  );
+}
+
+/** Рамка для статичного текста в ButtonGroup — выравнивание по высоте кнопок. */
+export function controlTextFrameClass(size: ComponentSize): string {
+  const layout = CONTROL_SIZE_LAYOUT[size];
+  return cn(layout.h, layout.padX, layout.padY);
+}
+
+export function buttonSpinnerClass(size: ComponentSize): string {
+  const layout = CONTROL_SIZE_LAYOUT[size];
+  return cn(layout.spinnerIcon, layout.spinnerBorder);
+}
+
+/** Корень prefix/suffix-слота — растягивается на всю высоту shell (flex + min-height). */
+export function affixSlotClass(size: ComponentSize): string {
+  const layout = CONTROL_SIZE_LAYOUT[size];
+  return cn(
+    "flex self-stretch shrink-0 items-center text-muted",
+    layout.affixPadX,
+    layout.affixText,
+  );
+}
+
+/** Минимальная ширина кнопки в affix (password toggle и т.п.). */
+const AFFIX_TOGGLE_MIN_W: Record<ComponentSize, string> = {
+  small: "min-w-control-small",
+  base: "min-w-control-base",
+  mid: "min-w-control-mid",
+  large: "min-w-control-large",
+};
+
+export function affixToggleMinWClass(size: ComponentSize): string {
+  return AFFIX_TOGGLE_MIN_W[size];
 }
 
 const CONTROL_HEIGHT_VAR: Record<ComponentSize, string> = {
@@ -110,16 +164,34 @@ const CONTROL_HEIGHT_VAR: Record<ComponentSize, string> = {
   large: "--control-height-large",
 };
 
+const controlHeightPxCache = new Map<ComponentSize, number>();
+
+function measureControlHeightPx(size: ComponentSize): number | null {
+  if (typeof document === "undefined") return null;
+
+  const cached = controlHeightPxCache.get(size);
+  if (cached != null) return cached;
+
+  try {
+    const dummy = document.createElement("div");
+    dummy.style.position = "absolute";
+    dummy.style.visibility = "hidden";
+    dummy.style.height = `var(${CONTROL_HEIGHT_VAR[size]})`;
+    document.body.appendChild(dummy);
+    const computedHeight = dummy.getBoundingClientRect().height;
+    document.body.removeChild(dummy);
+    if (computedHeight > 0) {
+      controlHeightPxCache.set(size, computedHeight);
+      return computedHeight;
+    }
+  } catch {
+    // fallback ниже
+  }
+
+  return null;
+}
+
 /** Высота контрола в px — читает `--control-height-*` с `:root`. */
 export function readControlHeightPx(size: ComponentSize, rootPx = 16): number {
-  if (typeof document !== "undefined") {
-    const raw = getComputedStyle(document.documentElement)
-      .getPropertyValue(CONTROL_HEIGHT_VAR[size])
-      .trim();
-    const remMatch = /^([\d.]+)rem$/i.exec(raw);
-    if (remMatch) return Number.parseFloat(remMatch[1]!) * rootPx;
-    const pxMatch = /^([\d.]+)px$/i.exec(raw);
-    if (pxMatch) return Number.parseFloat(pxMatch[1]!);
-  }
-  return rootPx * CONTROL_SIZE_LAYOUT[size].heightScale;
+  return measureControlHeightPx(size) ?? rootPx * CONTROL_SIZE_LAYOUT[size].heightScale;
 }

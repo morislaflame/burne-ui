@@ -40,7 +40,7 @@ import { useOptionalInputFieldContext } from "./inputFieldContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import type { ButtonSize } from "@/components/core/Button";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { affixSlotClass, affixToggleMinWClass, CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 
 function inputSizeFromButtonSize(bs: ButtonSize): InputSize {
   return bs;
@@ -113,10 +113,10 @@ const STATUS_TINT_AFFIX: Record<
 const AFFIX_SURFACE = "bg-primary-tint";
 
 const AFFIX_PADDING: Record<InputSize, string> = {
-  small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
-  base: `${CONTROL_SIZE_LAYOUT.base.affixPadX} ${CONTROL_SIZE_LAYOUT.base.affixText}`,
-  mid: `${CONTROL_SIZE_LAYOUT.mid.affixPadX} ${CONTROL_SIZE_LAYOUT.mid.affixText}`,
-  large: `${CONTROL_SIZE_LAYOUT.large.affixPadX} ${CONTROL_SIZE_LAYOUT.large.affixText}`,
+  small: affixSlotClass("small"),
+  base: affixSlotClass("base"),
+  mid: affixSlotClass("mid"),
+  large: affixSlotClass("large"),
 };
 
 const INPUT_CONTROL: Record<InputSize, string> = {
@@ -135,25 +135,21 @@ const INPUT_SHELL_H: Record<InputSize, string> = {
 
 const PASSWORD_TOGGLE_CONTROL: Record<
   InputSize,
-  { box: string; icon: string; pad: string }
+  { icon: string; pad: string }
 > = {
   small: {
-    box: CONTROL_SIZE_LAYOUT.small.toggleBox,
     icon: CONTROL_SIZE_LAYOUT.small.toggleIcon,
     pad: CONTROL_SIZE_LAYOUT.small.togglePad,
   },
   base: {
-    box: CONTROL_SIZE_LAYOUT.base.toggleBox,
     icon: CONTROL_SIZE_LAYOUT.base.toggleIcon,
     pad: CONTROL_SIZE_LAYOUT.base.togglePad,
   },
   mid: {
-    box: CONTROL_SIZE_LAYOUT.mid.toggleBox,
     icon: CONTROL_SIZE_LAYOUT.mid.toggleIcon,
     pad: CONTROL_SIZE_LAYOUT.mid.togglePad,
   },
   large: {
-    box: CONTROL_SIZE_LAYOUT.large.toggleBox,
     icon: CONTROL_SIZE_LAYOUT.large.toggleIcon,
     pad: CONTROL_SIZE_LAYOUT.large.togglePad,
   },
@@ -181,7 +177,6 @@ function AffixSlot({
   return (
     <span
       className={cn(
-        "flex h-full shrink-0 items-center text-muted",
         AFFIX_PADDING[controlSize],
         surface,
         edge,
@@ -216,7 +211,7 @@ function PasswordVisibilityAffix({
   return (
     <span
       className={cn(
-        "flex shrink-0 items-stretch border-l-token",
+        "flex self-stretch shrink-0 items-stretch border-l-token",
         surface,
       )}
     >
@@ -232,9 +227,9 @@ function PasswordVisibilityAffix({
         }}
         onPointerDown={(e) => e.stopPropagation()}
         className={cn(
-          "relative z-10 flex items-center justify-center text-muted outline-none",
+          "relative z-10 flex h-full items-center justify-center text-muted outline-none",
           TEXT_COLOR_TRANSITION,
-          pwd.box,
+          affixToggleMinWClass(controlSize),
           pwd.pad,
           "hover:text-foreground",
           "focus-ring-inset",

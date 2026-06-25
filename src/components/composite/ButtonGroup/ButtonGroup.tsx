@@ -21,7 +21,7 @@ import {
 } from "./buttonGroupContext";
 import type { ButtonGroupSegment } from "./buttonGroupSegment";
 import { buttonGroupTextSurfaceClasses } from "./buttonGroupSegment";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { controlTextFrameClass } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
 
 function ButtonGroupSegmentProvider({
@@ -47,13 +47,6 @@ const BUTTON_GROUP_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   base: "base",
   mid: "mid",
   large: "mid",
-};
-
-const BUTTON_GROUP_TEXT_FRAME: Record<ButtonSize, string> = {
-  small: `${CONTROL_SIZE_LAYOUT.small.h} ${CONTROL_SIZE_LAYOUT.small.padX}`,
-  base: `${CONTROL_SIZE_LAYOUT.base.h} ${CONTROL_SIZE_LAYOUT.base.padX}`,
-  mid: `${CONTROL_SIZE_LAYOUT.mid.h} ${CONTROL_SIZE_LAYOUT.mid.padX}`,
-  large: `${CONTROL_SIZE_LAYOUT.large.h} ${CONTROL_SIZE_LAYOUT.large.padX}`,
 };
 
 function flattenFragmentChildren(children: ReactNode): React.ReactElement[] {
@@ -94,7 +87,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
         className={cn(
           buttonGroupTextSurfaceClasses(groupSegment),
           "inline-flex items-center",
-          BUTTON_GROUP_TEXT_FRAME[buttonSize],
+          controlTextFrameClass(buttonSize),
           className,
         )}
       >

@@ -400,19 +400,19 @@ p {
 }
 
 @utility h-control-small {
-  height: var(--control-height-small);
+  min-height: var(--control-height-small);
 }
 
 @utility h-control-base {
-  height: var(--control-height-base);
+  min-height: var(--control-height-base);
 }
 
 @utility h-control-mid {
-  height: var(--control-height-mid);
+  min-height: var(--control-height-mid);
 }
 
 @utility h-control-large {
-  height: var(--control-height-large);
+  min-height: var(--control-height-large);
 }
 
 @utility w-control-small {

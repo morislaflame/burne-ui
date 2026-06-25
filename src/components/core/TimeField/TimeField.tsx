@@ -30,7 +30,7 @@ import {
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { affixSlotClass, CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { cn } from "@/utils/cn";
 
@@ -127,10 +127,10 @@ const STATUS_TINT_AFFIX: Record<Exclude<TimeFieldStatus, "default">, string> = {
 const AFFIX_SURFACE = "bg-primary-tint";
 
 const AFFIX_PADDING: Record<TimeFieldSize, string> = {
-  small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
-  base: `${CONTROL_SIZE_LAYOUT.base.affixPadX} ${CONTROL_SIZE_LAYOUT.base.affixText}`,
-  mid: `${CONTROL_SIZE_LAYOUT.mid.affixPadX} ${CONTROL_SIZE_LAYOUT.mid.affixText}`,
-  large: `${CONTROL_SIZE_LAYOUT.large.affixPadX} ${CONTROL_SIZE_LAYOUT.large.affixText}`,
+  small: affixSlotClass("small"),
+  base: affixSlotClass("base"),
+  mid: affixSlotClass("mid"),
+  large: affixSlotClass("large"),
 };
 
 const SHELL_H: Record<TimeFieldSize, string> = {
@@ -158,7 +158,6 @@ function AffixSlot({
   return (
     <span
       className={cn(
-        "flex h-full shrink-0 items-center text-muted",
         AFFIX_PADDING[controlSize],
         surface,
         edge,
@@ -527,7 +526,8 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
           className={cn(
             "relative flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none",
             compact ? "justify-center px-small" : layout.padX,
-            variant === "segmented" && "gap-xsmall py-xsmall",
+            layout.padY,
+            variant === "segmented" && "gap-xsmall",
             segTextCls,
           )}
         >

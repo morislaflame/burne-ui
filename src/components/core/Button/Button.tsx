@@ -41,7 +41,11 @@ import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import {
+  buttonRootClass,
+  buttonSpinnerClass,
+  CONTROL_SIZE_LAYOUT,
+} from "@/components/core/utils/controlSizeLayout";
 
 import "../utils/glossInteractive.css";
 
@@ -233,36 +237,6 @@ const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   base: "base",
   mid: "mid",
   large: "mid",
-};
-
-const BUTTON_SIZE_CLASSES: Record<
-  ButtonSize,
-  { root: string; rootIconOnly: string; spinner: string; icon: string }
-> = {
-  small: {
-    root: `${CONTROL_SIZE_LAYOUT.small.h} ${CONTROL_SIZE_LAYOUT.small.minWButton} ${CONTROL_SIZE_LAYOUT.small.padX}`,
-    rootIconOnly: `${CONTROL_SIZE_LAYOUT.small.h} min-w-fit ${CONTROL_SIZE_LAYOUT.small.padX}`,
-    spinner: `${CONTROL_SIZE_LAYOUT.small.spinnerIcon} ${CONTROL_SIZE_LAYOUT.small.spinnerBorder}`,
-    icon: CONTROL_SIZE_LAYOUT.small.icon,
-  },
-  base: {
-    root: `${CONTROL_SIZE_LAYOUT.base.h} ${CONTROL_SIZE_LAYOUT.base.minWButton} ${CONTROL_SIZE_LAYOUT.base.padX}`,
-    rootIconOnly: `${CONTROL_SIZE_LAYOUT.base.h} min-w-fit ${CONTROL_SIZE_LAYOUT.base.padX}`,
-    spinner: `${CONTROL_SIZE_LAYOUT.base.spinnerIcon} ${CONTROL_SIZE_LAYOUT.base.spinnerBorder}`,
-    icon: CONTROL_SIZE_LAYOUT.base.icon,
-  },
-  mid: {
-    root: `${CONTROL_SIZE_LAYOUT.mid.h} ${CONTROL_SIZE_LAYOUT.mid.minWButton} ${CONTROL_SIZE_LAYOUT.mid.padX}`,
-    rootIconOnly: `${CONTROL_SIZE_LAYOUT.mid.h} min-w-fit ${CONTROL_SIZE_LAYOUT.mid.padX}`,
-    spinner: `${CONTROL_SIZE_LAYOUT.mid.spinnerIcon} ${CONTROL_SIZE_LAYOUT.mid.spinnerBorder}`,
-    icon: CONTROL_SIZE_LAYOUT.mid.icon,
-  },
-  large: {
-    root: `${CONTROL_SIZE_LAYOUT.large.h} ${CONTROL_SIZE_LAYOUT.large.minWButton} ${CONTROL_SIZE_LAYOUT.large.padX}`,
-    rootIconOnly: `${CONTROL_SIZE_LAYOUT.large.h} min-w-fit ${CONTROL_SIZE_LAYOUT.large.padX}`,
-    spinner: `${CONTROL_SIZE_LAYOUT.large.spinnerIcon} ${CONTROL_SIZE_LAYOUT.large.spinnerBorder}`,
-    icon: CONTROL_SIZE_LAYOUT.large.icon,
-  },
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -503,7 +477,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className = "",
       variant = "default",
       status = "default",
-      size: sizeProp = "base",
+      size: sizeProp,
       type = "button",
       animated = true,
       asyncState: asyncStateProp,
@@ -804,8 +778,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const vn = BUTTON_VARIANT[variant];
 
-    const sz = BUTTON_SIZE_CLASSES[size];
-    const sizeRoot = iconOnly ? sz.rootIconOnly : sz.root;
+    const layout = CONTROL_SIZE_LAYOUT[size];
+    const sizeRoot = buttonRootClass(size, iconOnly);
 
     const idleSurfaceMotion = blocked ? "" : hoverVariant(buttonHoverVariant(variant, status));
     const statusClass = buttonStatusClass(variant, status);
@@ -906,7 +880,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           >
             {leftIcon != null ? (
               <span
-                className={`inline-flex shrink-0 items-center justify-center ${sz.icon} [&_svg]:size-full`}
+                className={cn(
+                  "inline-flex shrink-0 items-center justify-center [&_svg]:size-full",
+                  layout.icon,
+                )}
                 aria-hidden
               >
                 {leftIcon}
@@ -927,7 +904,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             aria-hidden={asyncState !== "loading"}
           >
             <Spinner
-              className={`${sz.spinner} animate-spin motion-reduce:animate-none`}
+              className={cn(
+                buttonSpinnerClass(size),
+                "animate-spin motion-reduce:animate-none",
+              )}
             />
           </span>
           <span
@@ -935,14 +915,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             className="col-start-1 row-start-1 flex items-center justify-center text-success"
             aria-hidden={asyncState !== "success"}
           >
-            <IconCheck className={sz.icon} />
+            <IconCheck className={layout.icon} />
           </span>
           <span
             ref={bindErrorRef}
             className="col-start-1 row-start-1 flex items-center justify-center text-danger"
             aria-hidden={asyncState !== "error"}
           >
-            <IconCross className={sz.icon} />
+            <IconCross className={layout.icon} />
           </span>
         </span>
       </button>
