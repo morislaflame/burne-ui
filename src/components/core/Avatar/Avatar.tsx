@@ -209,7 +209,7 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
       <span
         ref={ref}
         className={cn(
-          "absolute inset-0 z-0 flex items-center justify-center bg-[color-mix(in_oklab,var(--color-primary)_18%,var(--color-surface))] text-primary",
+          "absolute inset-0 z-0 flex items-center justify-center bg-primary-tint text-primary",
           show ? "opacity-100" : "pointer-events-none opacity-0",
           className,
         )}
@@ -288,9 +288,9 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
       className={cn(
         "relative inline-flex shrink-0 select-none overflow-hidden text-left",
         isGloss
-          ? cn("gloss-panel size-full rounded-full ring-2 ring-background", SIZE_CLASS[size].root)
+          ? cn("gloss-panel size-full rounded-full border-token", SIZE_CLASS[size].root)
           : cn(
-              "rounded-full bg-surface ring-2 ring-background",
+              "rounded-full bg-surface border-token",
               SIZE_CLASS[size].root,
             ),
         !isGloss && className,

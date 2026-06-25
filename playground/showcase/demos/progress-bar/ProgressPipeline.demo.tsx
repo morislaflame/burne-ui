@@ -2,9 +2,9 @@ import { ProgressBar } from "@/components/core/ProgressBar";
 import { Text } from "@/components/core/Text";
 
 const STEPS = [
-  { label: "Дизайн", value: 100, color: "var(--color-success)" },
-  { label: "Вёрстка", value: 72, color: "var(--color-primary)" },
-  { label: "Тесты", value: 34, color: "var(--color-warning)" },
+  { label: "Design", value: 100, color: "var(--color-success)" },
+  { label: "Development", value: 72, color: "var(--color-primary)" },
+  { label: "Testing", value: 34, color: "var(--color-warning)" },
 ] as const;
 
 export function ProgressPipelineDemo() {
@@ -21,7 +21,6 @@ export function ProgressPipelineDemo() {
             </Text>
           </div>
           <ProgressBar
-            label={step.label}
             value={step.value}
             color={step.color}
             className="w-full"

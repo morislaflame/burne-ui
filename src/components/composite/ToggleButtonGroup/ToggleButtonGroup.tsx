@@ -13,8 +13,8 @@ import {
 } from "react";
 
 import { ToggleButton } from "@/components/core/ToggleButton";
-import { ButtonGroupSegmentContext } from "@/components/core/utils/buttonGroupContext";
-import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+import { ButtonGroupSegmentContext } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { cn } from "@/utils/cn";
 
 import {

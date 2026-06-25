@@ -7,31 +7,28 @@ import { Surface } from "@/components/core/Surface";
 export function ButtonGroupVerticalMenuDemo() {
   return (
     <Surface variant="secondary" padding="small" className="w-full max-w-[10rem]">
-      <ButtonGroup aria-label="Действия с файлом" orientation="vertical" className="w-full">
+      <ButtonGroup aria-label="Actions with file" segmented buttonSize="small" orientation="vertical" className="w-full" >
         <Button
           variant="ghost"
           className="w-full justify-start"
           leftIcon={<IoFolderOutline aria-hidden />}
-          groupSegment={{ orientation: "vertical", position: "first" }}
         >
-          Открыть
+          Open
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start"
           leftIcon={<IoSettingsOutline aria-hidden />}
-          groupSegment={{ orientation: "vertical", position: "middle" }}
         >
-          Настройки
+          Settings
         </Button>
         <Button
           variant="ghost"
           status="danger"
           className="w-full justify-start"
           leftIcon={<IoTrashOutline aria-hidden />}
-          groupSegment={{ orientation: "vertical", position: "last" }}
         >
-          Удалить
+          Delete
         </Button>
       </ButtonGroup>
     </Surface>

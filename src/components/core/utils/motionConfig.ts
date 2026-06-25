@@ -134,7 +134,7 @@ export interface MotionConfig {
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 
 const DEFAULTS: MotionConfig = {
-  interactiveDuration: 600,
+  interactiveDuration: 280,
   interactiveEase: "power2.out",
   hoverLiftEase: "sine.inOut",
   tooltipDuration: 200,
@@ -144,14 +144,14 @@ const DEFAULTS: MotionConfig = {
   hoverLiftScale: 1.015,
   badgeAnchorHoverLiftScale: 1.052,
   pressSqueezeScale: [1, 0.98, 1],
-  rippleDefaultDuration: 540,
+  rippleDefaultDuration: 700,
   rippleDefaultOpacityFrom: 0.42,
   rippleExpandableDuration: 700,
   rippleExpandableOpacityFrom: 0.34,
   rippleEaseCss: "cubic-bezier(0.25, 0.55, 0.35, 0.95)",
   feedbackExpandDuration: 720,
-  expandDuration: 280,
-  expandOpenEase: "power1.inOut",
+  expandDuration: 200,
+  expandOpenEase: "sine.inOut",
   enableHoverLift: true,
   enablePressSqueeze: true,
   enableToggleButtonFill: true,

@@ -13,7 +13,7 @@ export function PopoverShareMenuDemo() {
       </Popover.Trigger>
       <Popover.Content showArrow>
         <Popover.Arrow />
-        <Popover.Header className="px-base">
+        <Popover.Header className="px-base pt-base">
           <Popover.Label>Поделиться</Popover.Label>
           <Popover.Hint>Выберите способ</Popover.Hint>
         </Popover.Header>

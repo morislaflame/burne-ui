@@ -16,12 +16,12 @@ import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { useOptionalToggleButtonGroupContext } from "./toggleButtonGroupContext";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { useOptionalButtonGroupSegment } from "@/components/core/utils/buttonGroupContext";
+import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import {
   buttonGroupOverlapBorderClasses,
   buttonGroupRoundingClasses,
   type ButtonGroupSegment,
-} from "@/components/core/utils/buttonGroupSegment";
+} from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { hoverVariant, SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import {
@@ -59,6 +59,8 @@ export type ToggleButtonProps = Omit<
   onPressedChange?: (pressed: boolean) => void;
   /** Поверхность в покое. По умолчанию `default`. */
   variant?: ToggleButtonVariant;
+  /** Заполняемый цвет заливки. */
+  fillColor?: string;
   /** Габариты по высоте как у `Button`, без `min-w-button-*`. */
   size?: ToggleButtonSize;
   /** Иконка слева от подписи. */
@@ -143,6 +145,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       defaultPressed = false,
       onPressedChange,
       variant: variantProp,
+      fillColor = "bg-primary-tint",
       size: sizeProp,
       type = "button",
       leftIcon,
@@ -327,14 +330,13 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         aria-checked={inGroup && isSingleGroup ? pressed : undefined}
         tabIndex={inGroup && isSingleGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined}
         className={cn(
-          "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none",
+          "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none text-foreground",
           "font-medium focus-ring",
           isGloss ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS) : cn(SHADOW_LIFT_MOTION_CLASS),
           !isGloss && !pressed && !disabled && hoverVariant(),
           groupGlue,
           !isGloss && vn.idle,
           pressed && "bg-transparent",
-          pressed ? "text-primary-foreground" : "text-foreground",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           sz.root,
           roundingClass,
@@ -350,9 +352,11 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
           ref={bindFillRef}
           aria-hidden
           className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
+            "pointer-events-none absolute -inset-px z-0 origin-center",
+            fillColor,
             SURFACE_COLOR_TRANSITION,
-            "motion-reduce:transition-none group-hover/toggle:bg-primary-hover",
+            "motion-reduce:transition-none",
+            pressed ? `group-hover/toggle:${fillColor}/80` : "group-hover/toggle:bg-default-hover",
             roundingClass,
           )}
         />

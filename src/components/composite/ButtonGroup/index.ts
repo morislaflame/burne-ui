@@ -6,4 +6,4 @@ export {
   type ButtonGroupOrientation,
 } from "./ButtonGroup";
 
-export type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+export type { ButtonGroupSegment } from "./buttonGroupSegment";

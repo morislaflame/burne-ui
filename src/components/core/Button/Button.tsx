@@ -15,7 +15,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useOptionalButtonGroupSegment } from "@/components/core/utils/buttonGroupContext";
+import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -32,11 +32,11 @@ import {
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
 import { getMotionConfig, motionFeedbackExpand, motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
-import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import {
   buttonGroupOverlapBorderClasses,
   buttonGroupRoundingClasses,
-} from "@/components/core/utils/buttonGroupSegment";
+} from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
@@ -525,8 +525,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) {
+    const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
-    const groupSegment = groupSegmentProp ?? groupCtx?.segment;
+    const groupSegment = layoutCtx?.segmented
+      ? undefined
+      : (groupSegmentProp ?? groupCtx?.segment);
     const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
     const userDisabled = Boolean(disabledProp);
     const isGloss = variant === "gloss";

@@ -71,6 +71,19 @@ export const Horizontal: Story = {
   },
 };
 
+/** Кнопки с зазором — каждая со своим скруглением, без общей границы. */
+export const Segmented: Story = {
+  render() {
+    return (
+      <ButtonGroup segmented aria-label="Действия" buttonSize="base">
+        <Button variant="outline">Отмена</Button>
+        <Button variant="outline">Черновик</Button>
+        <Button variant="primary">Сохранить</Button>
+      </ButtonGroup>
+    );
+  },
+};
+
 export const Vertical: Story = {
   render() {
     return (

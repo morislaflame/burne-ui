@@ -3,11 +3,10 @@ import { useState } from "react";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { Popover } from "@/components/core/Popover";
-import { Text } from "@/components/core/Text";
+import { CheckboxGroup, Label } from "@/index";
 
 export function PopoverFilterPanelDemo() {
   const [active, setActive] = useState(false);
-  const [draft, setDraft] = useState(false);
 
   return (
     <Popover open={active} onOpenChange={setActive}>
@@ -17,18 +16,31 @@ export function PopoverFilterPanelDemo() {
         </Button>
       </Popover.Trigger>
       <Popover.Content className="w-56">
-        <Popover.Header className="px-base pt-base">
-          <Popover.Label>Статус</Popover.Label>
-        </Popover.Header>
         <Popover.Body className="flex flex-col gap-mid p-base">
-          <Checkbox
-            checked={draft}
-            onChange={(e) => setDraft(e.target.checked)}
-            label="Только черновики"
-          />
-          <Text as="p" variant="tools" className="text-muted">
-            Popover с формой внутри Body.
-          </Text>
+          <CheckboxGroup 
+            selection="single"
+          >
+            <CheckboxGroup.Legend>
+              <Label>
+                Статус
+              </Label>
+              <CheckboxGroup.Hint>
+                Выберите отображение
+              </CheckboxGroup.Hint>
+            </CheckboxGroup.Legend>
+            <CheckboxGroup.List>
+              <Checkbox
+                label="Все"
+                name="visible"
+                value="all"
+              />
+              <Checkbox
+                label="Только черновики"
+                name="visible"
+                value="drafts"
+              />
+            </CheckboxGroup.List>
+          </CheckboxGroup>
           <Button size="small" type="button" onClick={() => setActive(false)}>
             Применить
           </Button>

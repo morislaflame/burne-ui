@@ -12,15 +12,9 @@ export function SwitchGlossDemo() {
         gloss
         checked={enabled}
         onChange={(e) => setEnabled(e.target.checked)}
-        label="Gloss switch"
-      />
-      <Switch.Control
-        gloss
-        checked={!enabled}
-        onChange={(e) => setEnabled(!e.target.checked)}
         iconOff={<IoMoon aria-hidden />}
         iconOn={<IoSunny aria-hidden />}
-        aria-label="Gloss switch с иконками"
+        label="Gloss switch"
       />
     </div>
   );

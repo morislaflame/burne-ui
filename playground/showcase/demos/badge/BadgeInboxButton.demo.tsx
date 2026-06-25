@@ -7,7 +7,7 @@ export function BadgeInboxButtonDemo() {
       <Button variant="outline" leftIcon={<span aria-hidden>📬</span>}>
         Входящие
       </Button>
-      <Badge status="danger" size="small" placement="top-right">
+      <Badge status="danger" variant="primary" size="small" placement="top-right">
         12
       </Badge>
     </Badge.Anchor>

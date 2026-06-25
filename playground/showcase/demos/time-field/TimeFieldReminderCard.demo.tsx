@@ -14,8 +14,8 @@ export function TimeFieldReminderCardDemo() {
         value={value}
         onValueChange={setValue}
         variant="outline"
-        prefix={<IoTimerOutline className="icon-base shrink-0 text-warning" aria-hidden />}
-        suffix={<span className="text-tools font-medium text-muted">ч:м:с</span>}
+        prefix={<IoTimerOutline className="icon-base shrink-0 text-foreground" aria-hidden />}
+        suffix={<span className="text-tools font-medium text-foreground">ч:м:с</span>}
       />
       <TimeField.Hint>Три spinbutton-сегмента с format=&quot;HH:mm:ss&quot;.</TimeField.Hint>
     </TimeField>

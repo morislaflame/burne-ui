@@ -3,21 +3,21 @@ import { Alert } from "@/components/core/Alert";
 const ITEMS = [
   {
     status: "success" as const,
-    title: "Деплой завершён",
-    description: "Preview на Vercel обновлён.",
+    title: "Deployment completed",
+    description: "Preview on Vercel updated.",
     className: "border-l-4 border-success bg-success/5",
   },
   {
     status: "info" as const,
-    title: "Новый комментарий",
-    description: "Алекс оставил ревью к PR #42.",
+    title: "New comment",
+    description: "Alex left a review to PR #42.",
     className: "border-l-4 border-info bg-info/5",
   },
 ] as const;
 
 export function AlertCompactStackDemo() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-small">
+    <div className="flex w-full max-w-md flex-col gap-base items-center justify-center">
       {ITEMS.map((item) => (
         <Alert
           key={item.title}

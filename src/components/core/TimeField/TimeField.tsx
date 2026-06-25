@@ -124,7 +124,7 @@ const STATUS_TINT_AFFIX: Record<Exclude<TimeFieldStatus, "default">, string> = {
   warning: "bg-surface-tint-warning",
 };
 
-const AFFIX_SURFACE = "bg-secondary";
+const AFFIX_SURFACE = "bg-primary-tint";
 
 const AFFIX_PADDING: Record<TimeFieldSize, string> = {
   small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,

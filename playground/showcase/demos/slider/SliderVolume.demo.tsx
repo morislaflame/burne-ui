@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Slider } from "@/components/core/Slider";
 
 export function SliderVolumeDemo() {
-  const [value, setValue] = useState(40);
+  const [value, setValue] = useState(0);
 
   return (
     <Slider

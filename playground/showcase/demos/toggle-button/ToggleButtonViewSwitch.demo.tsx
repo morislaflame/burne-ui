@@ -7,13 +7,13 @@ export function ToggleButtonViewSwitchDemo() {
   const [view, setView] = useState<"list" | "grid">("list");
 
   return (
-    <div className="inline-flex rounded-mid border-token bg-tertiary p-xsmall">
+    <div className="inline-flex rounded-mid border-token bg-tertiary p-xsmall gap-xsmall">
       <ToggleButton
         pressed={view === "list"}
         onPressedChange={(pressed) => pressed && setView("list")}
         variant="ghost"
         size="small"
-        aria-label="Список"
+        aria-label="List"
         className={view === "list" ? "bg-surface shadow-token-sm" : ""}
       >
         <IoListOutline aria-hidden />
@@ -23,7 +23,7 @@ export function ToggleButtonViewSwitchDemo() {
         onPressedChange={(pressed) => pressed && setView("grid")}
         variant="ghost"
         size="small"
-        aria-label="Сетка"
+        aria-label="Grid"
         className={view === "grid" ? "bg-surface shadow-token-sm" : ""}
       >
         <IoGridOutline aria-hidden />

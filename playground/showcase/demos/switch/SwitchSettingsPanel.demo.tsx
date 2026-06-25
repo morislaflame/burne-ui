@@ -10,8 +10,8 @@ export function SwitchSettingsPanelDemo() {
   const [digest, setDigest] = useState(true);
 
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-md">
-      <Text as="p" variant="small" className="mb-mid font-medium">
+    <Surface variant="secondary" padding="mid" className="w-full max-w-md flex flex-col gap-mid">
+      <Text as="p" variant="base" className="mb-mid font-medium text-muted">
         Уведомления
       </Text>
       <ul className="flex flex-col divide-y divide-border">
@@ -24,7 +24,7 @@ export function SwitchSettingsPanelDemo() {
               Мгновенные оповещения на устройстве
             </Text>
           </div>
-          <Switch.Control
+          <Switch
             checked={push}
             onChange={(e) => setPush(e.target.checked)}
             aria-label="Push-уведомления"
@@ -39,7 +39,8 @@ export function SwitchSettingsPanelDemo() {
               Дайджест раз в неделю
             </Text>
           </div>
-          <Switch.Control
+          <Switch
+
             checked={email}
             onChange={(e) => setEmail(e.target.checked)}
             aria-label="Email-уведомления"
@@ -54,7 +55,7 @@ export function SwitchSettingsPanelDemo() {
               Краткий отчёт по активности
             </Text>
           </div>
-          <Switch.Control
+          <Switch
             checked={digest}
             onChange={(e) => setDigest(e.target.checked)}
             aria-label="Сводка активности"

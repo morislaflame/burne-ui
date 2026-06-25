@@ -93,18 +93,18 @@ const POPOVER_PADDING: Record<PopoverSize, string> = {
   large: "p-mid",
 };
 
-export type PopoverContentGap = "xsmall" | "small" | "plus" | "mid";
+export type PopoverContentGap = "small" | "base" | "plus" | "mid";
 
 const POPOVER_GAP_CLASS: Record<PopoverContentGap, string> = {
-  xsmall: "gap-xsmall",
   small: "gap-small",
+  base: "gap-base",
   plus: "gap-plus",
   mid: "gap-mid",
 };
 
 const POPOVER_DEFAULT_GAP: Record<PopoverSize, PopoverContentGap> = {
   small: "small",
-  base: "plus",
+  base: "base",
   mid: "plus",
   large: "mid",
 };

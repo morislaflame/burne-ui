@@ -1,33 +1,40 @@
 import { useState } from "react";
 import {
   IoBookmarkOutline,
+  IoHeart,
   IoHeartOutline,
   IoShareSocialOutline,
 } from "react-icons/io5";
 
 import { ToggleButton } from "@/components/core/ToggleButton";
 import { Text } from "@/components/core/Text";
+import { Button } from "@/index";
 
 export function ToggleButtonReactionBarDemo() {
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
-  const [shared, setShared] = useState(false);
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-small rounded-mid border-token bg-secondary p-mid">
-      <Text as="p" variant="small" className="text-muted">
-        Статья · 4 мин
-      </Text>
+    <div className="flex max-w-sm flex-col gap-plus rounded-mid border-token bg-secondary p-mid">
+      <div className="flex flex-col gap-small">
+        <Text as="p" variant="base" className="font-medium">
+          How to create a new project
+        </Text>
+        <Text as="p" variant="small" className="text-muted">
+          Article · 4 min
+        </Text>
+      </div>
       <div className="flex flex-wrap gap-small">
         <ToggleButton
           pressed={liked}
           onPressedChange={setLiked}
           variant="outline"
           size="small"
-          leftIcon={<IoHeartOutline aria-hidden />}
-          className={liked ? "border-danger/40 bg-danger/10 text-danger" : ""}
+          leftIcon={liked ? <IoHeart aria-hidden /> : <IoHeartOutline aria-hidden />}
+          fillColor="bg-danger"
+          className={liked ? "text-danger-foreground" : ""}
         >
-          {liked ? "В избранном" : "Нравится"}
+          Like
         </ToggleButton>
         <ToggleButton
           pressed={bookmarked}
@@ -35,19 +42,16 @@ export function ToggleButtonReactionBarDemo() {
           variant="ghost"
           size="small"
           leftIcon={<IoBookmarkOutline aria-hidden />}
-          className={bookmarked ? "text-warning" : "text-muted"}
         >
-          Сохранить
+          Save
         </ToggleButton>
-        <ToggleButton
-          pressed={shared}
-          onPressedChange={setShared}
+        <Button
           variant="ghost"
           size="small"
           leftIcon={<IoShareSocialOutline aria-hidden />}
         >
-          Поделиться
-        </ToggleButton>
+          Share
+        </Button>
       </div>
     </div>
   );

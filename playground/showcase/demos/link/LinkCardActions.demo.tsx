@@ -10,7 +10,7 @@ export function LinkCardActionsDemo() {
   return (
     <Surface variant="secondary" padding="mid" className="flex w-full max-w-sm flex-col gap-mid">
       <div className="flex flex-col gap-xsmall">
-        <Text as="p" variant="small" className="font-medium">
+        <Text as="p" variant="base" className="font-medium">
           Релиз 1.2.0
         </Text>
         <Text as="p" variant="tools" className="text-muted">
@@ -18,10 +18,10 @@ export function LinkCardActionsDemo() {
         </Text>
       </div>
       <div className="flex flex-wrap gap-mid">
-        <Link href="#" onClick={preventNav} leftIcon={<IoOpenOutline aria-hidden />} underline>
+        <Link href="#" onClick={preventNav} leftIcon={<IoOpenOutline aria-hidden />} size="small" underline>
           Changelog
         </Link>
-        <Link href="#" onClick={preventNav} leftIcon={<IoShareSocialOutline aria-hidden />}>
+        <Link href="#" onClick={preventNav} leftIcon={<IoShareSocialOutline aria-hidden />} size="small">
           Поделиться
         </Link>
       </div>

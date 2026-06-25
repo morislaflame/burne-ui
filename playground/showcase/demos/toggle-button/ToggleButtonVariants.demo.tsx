@@ -3,13 +3,13 @@ import { ToggleButton } from "@/components/core/ToggleButton";
 export function ToggleButtonVariantsDemo() {
   return (
     <div className="flex flex-wrap items-center gap-small">
-      <ToggleButton variant="default" defaultPressed>
+      <ToggleButton variant="default">
         Default
       </ToggleButton>
-      <ToggleButton variant="outline" defaultPressed>
+      <ToggleButton variant="outline">
         Outline
       </ToggleButton>
-      <ToggleButton variant="ghost" defaultPressed>
+      <ToggleButton variant="ghost">
         Ghost
       </ToggleButton>
     </div>

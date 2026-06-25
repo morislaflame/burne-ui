@@ -1,5 +1,6 @@
 import { CloseButton } from "@/components/core/CloseButton";
 import { Surface } from "@/components/core/Surface";
+import { Text } from "@/components/core/Text";
 import { PIN_IMAGE2 } from "@/utils/mockImages";
 
 export function CloseButtonPreviewCardDemo() {
@@ -11,12 +12,13 @@ export function CloseButtonPreviewCardDemo() {
       />
       <CloseButton
         aria-label="Закрыть превью"
-        variant="gloss"
         size="small"
         className="absolute right-small top-small shadow-token-md"
       />
-      <Surface variant="secondary" padding="small" className="rounded-none rounded-b-mid">
-        Превью макета
+      <Surface variant="default" padding="base" className="rounded-none rounded-b-mid">
+        <Text as="p" variant="base">
+          Preview Card
+        </Text>
       </Surface>
     </div>
   );

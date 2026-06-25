@@ -283,7 +283,7 @@ export function SwitchTrack({
           thickness == null && sz.track,
           gloss
             ? "gloss-indicator border-0"
-            : "bg-[color-mix(in_oklab,var(--color-border)_40%,var(--color-surface))]",
+            : "bg-primary-tint",
           className,
         )}
         style={customTrackStyle}

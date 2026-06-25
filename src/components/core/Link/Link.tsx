@@ -172,12 +172,12 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   }
 
   return (
-    <span ref={motionRef} className="inline-flex origin-center will-change-transform">
+    <span ref={motionRef} className="inline-flex origin-center will-change-transform w-fit">
       <a
         ref={setRefs as Ref<HTMLAnchorElement>}
         href={href}
         className={cn(
-          "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid px-xsmall py-xsmall no-underline outline-none",
+          "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit",
           "text-primary",
           "focus-ring",
           className,

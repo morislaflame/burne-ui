@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 import type { ButtonSize } from "@/components/core/Button";
-import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+import type { ButtonGroupSegment } from "./buttonGroupSegment";
 
 export type ButtonGroupSegmentContextValue = {
   segment: ButtonGroupSegment;
@@ -12,8 +12,20 @@ const ButtonGroupSegmentContext = createContext<ButtonGroupSegmentContextValue |
   null,
 );
 
+export type ButtonGroupLayoutContextValue = {
+  segmented: boolean;
+};
+
+const ButtonGroupLayoutContext = createContext<ButtonGroupLayoutContextValue | null>(
+  null,
+);
+
 export function useOptionalButtonGroupSegment() {
   return useContext(ButtonGroupSegmentContext);
 }
 
-export { ButtonGroupSegmentContext };
+export function useOptionalButtonGroupLayout() {
+  return useContext(ButtonGroupLayoutContext);
+}
+
+export { ButtonGroupLayoutContext, ButtonGroupSegmentContext };

@@ -18,7 +18,7 @@ export function BadgeServiceStatusListDemo() {
           <Text as="span" variant="small" className="font-medium">
             {row.name}
           </Text>
-          <Badge status={row.status} size="small" className="uppercase tracking-wide">
+          <Badge status={row.status} size="small" className="tracking-wide">
             {row.label}
           </Badge>
         </li>

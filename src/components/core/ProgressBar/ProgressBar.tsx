@@ -237,7 +237,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
     }, []);
 
     const trackHitAreaClass = cn(
-      "relative overflow-hidden rounded-full bg-[color-mix(in_oklab,var(--color-border)_40%,var(--color-surface))]",
+      "relative overflow-hidden rounded-full bg-primary-tint",
       isHorizontal ? "w-full" : "h-48",
       thickness == null && (isHorizontal ? RAIL_HEIGHT[size] : RAIL_WIDTH[size]),
     );

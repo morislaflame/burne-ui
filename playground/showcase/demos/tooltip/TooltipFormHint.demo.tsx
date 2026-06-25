@@ -1,14 +1,16 @@
 import { IoInformationCircleOutline } from "react-icons/io5";
 
 import { Tooltip } from "@/components/core/Tooltip";
+import { Label } from "@/components/core/Label/Label";
+import { Input } from "@/index";
 
 export function TooltipFormHintDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-xsmall">
       <div className="flex items-center gap-xsmall">
-        <label htmlFor="api-key" className="text-sm font-medium">
+        <Label htmlFor="api-key" className="text-sm font-medium">
           API-ключ
-        </label>
+        </Label>
         <Tooltip variant="info" side="right">
           <Tooltip.Trigger>
             <button
@@ -24,11 +26,10 @@ export function TooltipFormHintDemo() {
           </Tooltip.Content>
         </Tooltip>
       </div>
-      <input
+      <Input
         id="api-key"
-        readOnly
+        variant="gloss"
         value="sk_live_••••••••"
-        className="rounded-base border-token bg-surface px-small py-xsmall font-mono text-sm"
       />
     </div>
   );

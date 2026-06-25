@@ -14,11 +14,13 @@ import { Button, type ButtonSize } from "@/components/core/Button";
 import { InputControl } from "@/components/core/Input/Input";
 import { Text, type TextVariant } from "@/components/core/Text";
 import {
+  ButtonGroupLayoutContext,
   ButtonGroupSegmentContext,
+  useOptionalButtonGroupLayout,
   useOptionalButtonGroupSegment,
-} from "@/components/core/utils/buttonGroupContext";
-import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
-import { buttonGroupTextSurfaceClasses } from "@/components/core/utils/buttonGroupSegment";
+} from "./buttonGroupContext";
+import type { ButtonGroupSegment } from "./buttonGroupSegment";
+import { buttonGroupTextSurfaceClasses } from "./buttonGroupSegment";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
 
@@ -78,9 +80,12 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
     { children, className = "", buttonSize: buttonSizeProp, groupSegment: groupSegmentProp, ...rest },
     ref,
   ) {
+    const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
     const buttonSize = buttonSizeProp ?? groupCtx?.buttonSize ?? "base";
-    const groupSegment = groupSegmentProp ?? groupCtx?.segment;
+    const groupSegment = layoutCtx?.segmented
+      ? undefined
+      : (groupSegmentProp ?? groupCtx?.segment);
 
     return (
       <span
@@ -116,60 +121,76 @@ export type ButtonGroupOrientation = "horizontal" | "vertical";
 
 export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "children"> & {
   orientation?: ButtonGroupOrientation;
+  /** Отдельные кнопки с зазором вместо склейки сегментов. */
+  segmented?: boolean;
   buttonSize?: ButtonSize;
   children: ReactNode;
 };
 
 export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function ButtonGroup(
-  { children, className = "", orientation = "horizontal", buttonSize = "base", ...rest },
+  {
+    children,
+    className = "",
+    orientation = "horizontal",
+    segmented = false,
+    buttonSize = "base",
+    ...rest
+  },
   ref,
 ) {
   const flat = flattenFragmentChildren(children);
   const segmentCount = flat.reduce((n, el) => n + (isGroupSegmentSlot(el) ? 1 : 0), 0);
+  const layoutValue = useMemo(() => ({ segmented }), [segmented]);
 
   let segmentIndex = -1;
 
   return (
-    <div
-      ref={ref}
-      role="group"
-      className={cn(
-        "inline-flex text-left",
-        orientation === "horizontal"
-          ? "flex-row flex-nowrap items-stretch"
-          : "flex-col flex-nowrap items-stretch",
-        className,
-      )}
-      {...rest}
-    >
-      {flat.map((child, i) => {
-        if (!isGroupSegmentSlot(child)) {
-          return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
-        }
+    <ButtonGroupLayoutContext.Provider value={layoutValue}>
+      <div
+        ref={ref}
+        role="group"
+        className={cn(
+          "inline-flex text-left",
+          orientation === "horizontal"
+            ? cn("flex-row flex-nowrap items-stretch", segmented && "gap-xsmall")
+            : cn("flex-col flex-nowrap items-stretch", segmented && "gap-xsmall"),
+          className,
+        )}
+        {...rest}
+      >
+        {flat.map((child, i) => {
+          if (!isGroupSegmentSlot(child)) {
+            return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
+          }
 
-        segmentIndex += 1;
-        const position =
-          segmentCount <= 1
-            ? ("only" as const)
-            : segmentIndex === 0
-              ? ("first" as const)
-              : segmentIndex === segmentCount - 1
-                ? ("last" as const)
-                : ("middle" as const);
+          if (segmented) {
+            return <Fragment key={child.key ?? `bg-item-${i}`}>{child}</Fragment>;
+          }
 
-        const seg: ButtonGroupSegment = { orientation, position };
+          segmentIndex += 1;
+          const position =
+            segmentCount <= 1
+              ? ("only" as const)
+              : segmentIndex === 0
+                ? ("first" as const)
+                : segmentIndex === segmentCount - 1
+                  ? ("last" as const)
+                  : ("middle" as const);
 
-        return (
-          <ButtonGroupSegmentProvider
-            key={child.key ?? `bg-seg-${i}`}
-            segment={seg}
-            buttonSize={buttonSize}
-          >
-            {child}
-          </ButtonGroupSegmentProvider>
-        );
-      })}
-    </div>
+          const seg: ButtonGroupSegment = { orientation, position };
+
+          return (
+            <ButtonGroupSegmentProvider
+              key={child.key ?? `bg-seg-${i}`}
+              segment={seg}
+              buttonSize={buttonSize}
+            >
+              {child}
+            </ButtonGroupSegmentProvider>
+          );
+        })}
+      </div>
+    </ButtonGroupLayoutContext.Provider>
   );
 });
 

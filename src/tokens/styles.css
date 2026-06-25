@@ -144,14 +144,14 @@
    */
   --color-primary-tint: color-mix(
     in oklab,
-    var(--color-primary) 3%,
+    var(--color-primary) 20%,
     transparent
   );
 
   /** PRIMARY TINT STRONG — бренд-тинт primary/20 (hover усиленный, ripple, skeleton wave). */
   --color-primary-tint-strong: color-mix(
     in oklab,
-    var(--color-primary) 20%,
+    var(--color-primary) 25%,
     transparent
   );
 

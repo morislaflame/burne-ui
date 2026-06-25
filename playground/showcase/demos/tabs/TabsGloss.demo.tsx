@@ -7,7 +7,7 @@ export function TabsGlossDemo() {
   const [glossTab, setGlossTab] = useState("overview");
 
   return (
-    <Tabs variant="gloss" value={glossTab} onValueChange={setGlossTab} className="max-w-md">
+    <Tabs variant="gloss" value={glossTab} onValueChange={setGlossTab} className="w-full justify-center items-center">
       <Tabs.List>
         <Tabs.Tab value="overview">Обзор</Tabs.Tab>
         <Tabs.Tab value="details">Детали</Tabs.Tab>

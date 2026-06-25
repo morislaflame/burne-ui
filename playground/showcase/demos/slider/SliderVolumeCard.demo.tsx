@@ -4,7 +4,7 @@ import { IoVolumeHigh } from "react-icons/io5";
 import { Slider } from "@/components/core/Slider";
 
 export function SliderVolumeCardDemo() {
-  const [value, setValue] = useState(55);
+  const [value, setValue] = useState(50);
 
   return (
     <Slider className="w-full max-w-sm">
@@ -18,7 +18,6 @@ export function SliderVolumeCardDemo() {
         min={0}
         max={100}
         step={1}
-        marks={[0, 50, 100]}
         thumbClassName="rounded-mid"
       >
         <Slider.Rail className="rounded-mid">

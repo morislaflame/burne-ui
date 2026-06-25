@@ -46,7 +46,6 @@ const RADIUS_CLASS: Record<SkeletonRadius, string> = {
   full:  "rounded-full",
 };
 
-/** Base skeleton surface — bg-primary-tint (токен --color-primary-tint). */
 const BASE_CLS = "relative overflow-hidden bg-primary-tint";
 
 // ─── animation helpers ────────────────────────────────────────────────────────

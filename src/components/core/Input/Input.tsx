@@ -26,12 +26,12 @@ import {
 import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
-import type { ButtonGroupSegment } from "@/components/core/utils/buttonGroupSegment";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import {
   buttonGroupOverlapBorderClasses,
   buttonGroupRoundingClasses,
-} from "@/components/core/utils/buttonGroupSegment";
-import { useOptionalButtonGroupSegment } from "@/components/core/utils/buttonGroupContext";
+} from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 import { IoClose, IoFolderOpen, IoEye, IoEyeOff } from "react-icons/io5";
@@ -110,7 +110,7 @@ const STATUS_TINT_AFFIX: Record<
 };
 
 
-const AFFIX_SURFACE = "bg-secondary";
+const AFFIX_SURFACE = "bg-primary-tint";
 
 const AFFIX_PADDING: Record<InputSize, string> = {
   small: `${CONTROL_SIZE_LAYOUT.small.affixPadX} ${CONTROL_SIZE_LAYOUT.small.affixText}`,
@@ -345,6 +345,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) {
     const fieldCtx = useOptionalInputFieldContext();
+    const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
     const genId = useId();
     const id = idProp ?? fieldCtx?.inputId ?? genId;
@@ -361,7 +362,9 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
         hintConnected ? hintId : undefined,
         errorConnected ? errorId : undefined,
       );
-    const groupSegment = groupSegmentProp ?? groupCtx?.segment;
+    const groupSegment = layoutCtx?.segmented
+      ? undefined
+      : (groupSegmentProp ?? groupCtx?.segment);
     const shellRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
 

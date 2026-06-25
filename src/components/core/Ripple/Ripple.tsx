@@ -56,7 +56,7 @@ export function Ripple({
   color,
   disabled = false,
   duration = getMotionConfig().rippleDefaultDuration,
-  direction = "in",
+  direction = "out",
   className = "",
 }: RippleProps) {
   const layerRef = useRef<HTMLSpanElement>(null);

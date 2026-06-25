@@ -14,13 +14,13 @@ export function PaginationCustomLabelsDemo() {
         <Pagination.Item>
           <Pagination.Previous>
             <Pagination.PreviousIcon />
-            <span>Назад</span>
+            <span className="text-base">Назад</span>
           </Pagination.Previous>
         </Pagination.Item>
         <Pagination.Pages />
         <Pagination.Item>
           <Pagination.Next>
-            <span>Вперёд</span>
+            <span className="text-base">Вперёд</span>
             <Pagination.NextIcon />
           </Pagination.Next>
         </Pagination.Item>

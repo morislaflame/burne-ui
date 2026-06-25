@@ -116,8 +116,8 @@ export const STATUS_FOREGROUND_CSS_VAR: Record<ThemeStatusForegroundKey, string>
 };
 
 /** Как в tokens/styles.css — следует при смене primary через var(). */
-const PRIMARY_TINT = "color-mix(in oklab, var(--color-primary) 10%, transparent)";
-const PRIMARY_TINT_STRONG = "color-mix(in oklab, var(--color-primary) 20%, transparent)";
+const PRIMARY_TINT = "color-mix(in oklab, var(--color-primary) 20%, transparent)";
+const PRIMARY_TINT_STRONG = "color-mix(in oklab, var(--color-primary) 25%, transparent)";
 
 /** Bold — mix с surface на тёмном фоне. */
 const BOLD_PRIMARY_TINT = "color-mix(in oklab, var(--color-primary) 16%, var(--color-surface))";

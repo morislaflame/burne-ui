@@ -5,14 +5,19 @@ export function AlertWithActionDemo() {
   return (
     <Alert
       status="warning"
-      title="Сессия скоро истечёт"
-      description="Сохраните черновик или продолжите работу — через 5 минут вы будете разлогинены."
-      className="max-w-lg border-warning/30"
-      action={
-        <Button variant="outline" size="small" className="shrink-0">
-          Продлить
-        </Button>
-      }
-    />
+    >
+      <Alert.Message>
+        <Alert.Indicator className="text-foreground"/>
+        <Alert.Content>
+          <Alert.Title className="text-small">Session expires soon</Alert.Title>
+          <Alert.Description className="text-base">Save your draft or continue working — you will be logged out in 5 minutes.</Alert.Description>
+        </Alert.Content>
+        <Alert.Action>
+          <Button variant="outline" size="small" className="shrink-0">
+            Extend
+          </Button>
+        </Alert.Action>
+      </Alert.Message>
+    </Alert>
   );
 }

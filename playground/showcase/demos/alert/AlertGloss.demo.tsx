@@ -7,13 +7,13 @@ export function AlertGlossDemo() {
         variant="gloss"
         status="info"
         title="Gloss alert"
-        description="Стеклянная панель с hover-lift."
+        description="Gloss panel with hover-lift."
       />
       <Alert
         variant="gloss"
         status="danger"
         title="Gloss danger"
-        description="Статус — цвет текста и иконки."
+        description="Status — color of text and icon."
       />
     </div>
   );

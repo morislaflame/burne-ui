@@ -9,7 +9,7 @@ export function TabsSettingsPanelDemo() {
 
   return (
     <Surface variant="secondary" padding="mid" className="w-full max-w-md">
-      <Tabs variant="secondary" value={tab} onValueChange={setTab}>
+      <Tabs value={tab} onValueChange={setTab}>
         <Tabs.List>
           <Tabs.Tab value="general">Общие</Tabs.Tab>
           <Tabs.Tab value="security">Безопасность</Tabs.Tab>

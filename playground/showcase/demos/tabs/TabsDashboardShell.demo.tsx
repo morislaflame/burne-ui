@@ -5,9 +5,9 @@ import { Text } from "@/components/core/Text";
 
 export function TabsDashboardShellDemo() {
   return (
-    <Surface variant="secondary" padding="mid" className="flex w-full max-w-lg flex-col gap-mid">
+    <Surface padding="mid" className="flex w-full max-w-lg flex-col gap-mid">
       <div className="flex items-center justify-between gap-mid">
-        <Text as="p" variant="small" className="font-medium">
+        <Text as="p" variant="base" className="font-medium">
           Аналитика
         </Text>
         <Badge variant="outline" size="small">
@@ -15,7 +15,7 @@ export function TabsDashboardShellDemo() {
         </Badge>
       </div>
       <Tabs defaultValue="traffic" variant="outline">
-        <Tabs.List>
+        <Tabs.List className="border-none p-0">
           <Tabs.Tab value="traffic">Трафик</Tabs.Tab>
           <Tabs.Tab value="conversion">Конверсия</Tabs.Tab>
           <Tabs.Tab value="retention">Удержание</Tabs.Tab>
