@@ -197,8 +197,8 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
           variant={LINK_TEXT_VARIANT[size]}
           inheritColor
           className={cn(
-            "min-w-0 truncate font-medium text-primary",
-            underline && "underline decoration-primary/70 underline-offset-[0.2em]",
+            "min-w-0 truncate font-medium",
+            underline && "underline decoration-current/70 underline-offset-[0.2em]",
           )}
         >
           {children}

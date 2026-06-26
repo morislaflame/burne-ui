@@ -21,7 +21,7 @@ export function CardPressableDemo() {
               style={{ backgroundImage: `url(${PIN_IMAGE4})` }}
             />
           </Card.Body>
-          <Card.Header className="pt-small">
+          <Card.Header className="pt-plus gap-xsmall">
             <Card.Title>Pressable</Card.Title>
             <Card.Description>Нажми — откроется Dialog.</Card.Description>
           </Card.Header>

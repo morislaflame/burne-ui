@@ -1,6 +1,7 @@
 import {
   DialogBody,
   DialogClose,
+  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -10,6 +11,7 @@ import {
 } from "./Dialog";
 
 export const Dialog = Object.assign(DialogRoot, {
+  Content: DialogContent,
   Header: DialogHeader,
   HeadingBlock: DialogHeadingBlock,
   Title: DialogTitle,
@@ -28,3 +30,5 @@ export type {
   DialogFooterProps,
   DialogCloseProps,
 } from "./Dialog";
+
+export { DialogContent };

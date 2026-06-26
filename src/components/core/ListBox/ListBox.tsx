@@ -236,7 +236,7 @@ export function ListBoxHeader({ className, children, id: idProp, ...rest }: List
   }, [id, registerLabel]);
 
   return (
-    <div id={id} className={cn("px-mid text-left", className)} {...rest}>
+    <div id={id} className={cn("px-plus text-left", className)} {...rest}>
       <Text as="span" variant="small" className="font-medium text-muted">
         {children}
       </Text>
@@ -315,10 +315,12 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
 
   const parts = partitionOptionListItemChildren(children);
   const hasCompoundIndicator = parts.indicator != null;
-  const showIndicatorSlot = showIndicator || hasCompoundIndicator;
   const hasHint = parts.hint != null || hint != null;
   const hasIcon = parts.icon != null || icon != null;
   const isCompound = parts.label != null || parts.hint != null || parts.icon != null;
+  const showIndicatorSlot = isCompound
+    ? showIndicator && hasCompoundIndicator
+    : showIndicator;
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -349,10 +351,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
   };
 
   const itemBody = isCompound ? (
-    <>
-      {showIndicatorSlot && !hasCompoundIndicator ? <ListBoxItemIndicator /> : null}
-      {children}
-    </>
+    <>{children}</>
   ) : (
     <>
       {showIndicatorSlot ? <ListBoxItemIndicator /> : null}

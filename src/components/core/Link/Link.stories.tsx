@@ -39,7 +39,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Текстовая ссылка: текст всегда `text-primary`, стандартная иконка ↗ — `text-muted` до hover. Hover-lift и squeeze при нажатии. Опционально `underline`, иконки слева/справа или `showDefaultIcon`.",
+          "Текстовая ссылка: по умолчанию `text-primary`; цвет можно переопределить через `className` (например `text-muted`). Стандартная иконка ↗ — `text-muted` до hover. Hover-lift и squeeze при нажатии. Опционально `underline`, иконки слева/справа или `showDefaultIcon`.",
       },
     },
   },

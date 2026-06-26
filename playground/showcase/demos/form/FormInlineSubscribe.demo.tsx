@@ -15,13 +15,14 @@ export function FormInlineSubscribeDemo() {
       aria-label="Подписка на рассылку"
       className="flex w-full max-w-lg flex-col gap-small sm:flex-row sm:items-end"
     >
-      <Input
-        label="Email"
-        name="email"
-        placeholder="you@example.com"
-        autoComplete="email"
-        className="min-w-0 flex-1"
-      />
+      <Form.Section className="min-w-0 flex-1">
+        <Input
+          label="Email"
+          name="email"
+          placeholder="you@example.com"
+          autoComplete="email"
+        />
+      </Form.Section>
       <Button type="submit" variant="primary" className="w-full shrink-0 sm:w-auto">
         Подписаться
       </Button>

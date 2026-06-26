@@ -40,6 +40,7 @@ import {
   usePortalThemeAnchor,
 } from "@/components/core/utils/burneLightTheme";
 import { cn } from "@/utils/cn";
+import { MODAL_BODY_SCROLL_CLASS, MODAL_CONTENT_CLASS } from "@/components/core/utils/modalPanelLayout";
 
 export type DialogVariant = "default" | "gloss";
 
@@ -86,11 +87,17 @@ type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
 type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
 type DialogCloseProps = CloseButtonProps;
 
+function DialogContent({ className = "", ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn(MODAL_CONTENT_CLASS, className)} {...rest} />;
+}
+
+export { DialogContent };
+
 export function DialogHeader({ className = "", ...rest }: DialogHeaderProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 items-start gap-plus px-large pt-mid pb-plus text-left",
+        "flex shrink-0 items-start gap-plus",
         className,
       )}
       {...rest}
@@ -164,7 +171,7 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
         size="small"
         variant="secondary"
         aria-label={ariaLabel}
-        className={cn("-m-xsmall", className)}
+        className={cn("shrink-0", className)}
         onClick={(e) => {
           onClick?.(e);
           if (!e.defaultPrevented) onOpenChange(false);
@@ -180,7 +187,7 @@ export function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
       className={cn(
-        "min-h-0 flex-1 overflow-y-auto py-plus px-large",
+        MODAL_BODY_SCROLL_CLASS,
         className,
       )}
       {...rest}
@@ -192,7 +199,7 @@ export function DialogFooter({ className = "", ...rest }: DialogFooterProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t-token py-plus px-large",
+        "flex shrink-0 flex-wrap items-center justify-end gap-base",
         className,
       )}
       {...rest}
@@ -351,12 +358,12 @@ export const DialogRoot = function Dialog({
           {variant === "gloss" ? (
             <div
               ref={bindGlossPanelRef}
-              className="gloss-panel gloss-deep flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col rounded-mid text-left text-foreground"
+              className="gloss-panel gloss-deep flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col rounded-mid text-foreground"
             >
-              <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
+              <DialogContent className="gloss-content">{children}</DialogContent>
             </div>
           ) : (
-            children
+            <DialogContent>{children}</DialogContent>
           )}
         </div>
       </dialog>

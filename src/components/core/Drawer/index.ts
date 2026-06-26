@@ -2,6 +2,7 @@ import {
   DrawerBackdropInner,
   DrawerBody,
   DrawerClose,
+  DrawerContent,
   DrawerDescription,
   DrawerFooter,
   DrawerHandleInner,
@@ -16,6 +17,7 @@ export const Drawer = Object.assign(DrawerRoot, {
   Backdrop: DrawerBackdropInner,
   /** Полоска перетягивания для свайп-закрытия. */
   Handle: DrawerHandleInner,
+  Content: DrawerContent,
   Header: DrawerHeader,
   HeadingBlock: DrawerHeadingBlock,
   Title: DrawerTitle,

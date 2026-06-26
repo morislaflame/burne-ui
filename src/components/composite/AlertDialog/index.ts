@@ -1,6 +1,7 @@
 import {
   AlertDialogBody,
   AlertDialogClose,
+  AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -11,6 +12,7 @@ import {
 } from "./AlertDialog";
 
 export const AlertDialog = Object.assign(AlertDialogRoot, {
+  Content: AlertDialogContent,
   Header: AlertDialogHeader,
   Indicator: AlertDialogIndicator,
   HeadingBlock: AlertDialogHeadingBlock,

@@ -8,12 +8,12 @@ export function ToastDeployPanelDemo() {
 
   return (
     <Surface variant="secondary" padding="mid" className="flex w-full max-w-sm flex-col gap-mid">
-      <div>
+      <div className="flex flex-col gap-small">
         <Text as="p" variant="base" className="font-medium">
           Production deploy
         </Text>
         <Text as="p" variant="small" className="text-muted">
-          burne-ui@1.2.0 → edge
+          Deploy your app to the cloud in 2 minutes
         </Text>
       </div>
       <Button
@@ -21,9 +21,8 @@ export function ToastDeployPanelDemo() {
         className="w-full"
         onClick={() =>
           toast.show({
-            title: "Деплой запущен",
-            description: "Сборка займёт около 2 минут.",
-            status: "info",
+            title: "Production deploy started",
+            description: "Your app will be available in 2 minutes",
           })
         }
       >

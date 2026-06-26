@@ -42,7 +42,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модальное окно (портал в `document.body`). Длинный контент скроллится в `Dialog.Body`; шапка и футер фиксированы. `variant=\"gloss\"` — стеклянная панель. Управление через `open` / `onOpenChange`.",
+          "Модальное окно (портал в `document.body`). Панель: общий `p-large` и `gap-mid` между `Header` / `Body` / `Footer`; скролл — в `Body`. `variant=\"gloss\"` — стеклянная панель.",
       },
     },
   },
@@ -125,20 +125,22 @@ export const WithForm: Story = {
             aria-label="Форма в диалоге"
             className="min-w-0"
           >
-            <Dialog.Body className="flex flex-col gap-mid">
-              <Input>
-                <Input.Label>Имя</Input.Label>
-                <Input.Control name="name" placeholder="Иван" autoComplete="name" />
-              </Input>
-              <Input>
-                <Input.Label>Email</Input.Label>
-                <Input.Control
-                  name="email"
-                  inputType="text"
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                />
-              </Input>
+            <Dialog.Body>
+              <Form.Section>
+                <Input>
+                  <Input.Label>Имя</Input.Label>
+                  <Input.Control name="name" placeholder="Иван" autoComplete="name" />
+                </Input>
+                <Input>
+                  <Input.Label>Email</Input.Label>
+                  <Input.Control
+                    name="email"
+                    inputType="text"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                  />
+                </Input>
+              </Form.Section>
             </Dialog.Body>
             <Dialog.Footer>
               <Button

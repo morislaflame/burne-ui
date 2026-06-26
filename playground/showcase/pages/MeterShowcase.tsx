@@ -44,6 +44,10 @@ export function MeterShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Header, Label, Value, Track, Hint и Error — кастомная разметка и стили слотов."
+          />
+          <ShowcaseDoc.ApiRow
             api="simple"
             description="label, value, min, max, showValue, orientation, color на корне."
           />

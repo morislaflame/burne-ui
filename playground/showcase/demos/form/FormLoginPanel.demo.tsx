@@ -21,15 +21,17 @@ export function FormLoginPanelDemo() {
           Демо-аккаунт для playground
         </Text>
       </div>
-      <Form onSubmit={onSubmit} aria-label="Вход в аккаунт" className="flex flex-col gap-mid">
-        <Input isRequired label="Email" name="login" autoComplete="email" />
-        <Input
-          isRequired
-          label="Пароль"
-          name="password"
-          inputType="password"
-          autoComplete="current-password"
-        />
+      <Form onSubmit={onSubmit} aria-label="Вход в аккаунт" className="gap-xlarge">
+        <Form.Section>
+          <Input isRequired label="Email" name="login" autoComplete="email" />
+          <Input
+            isRequired
+            label="Пароль"
+            name="password"
+            inputType="password"
+            autoComplete="current-password"
+          />
+        </Form.Section>
         <Button type="submit" variant="primary" className="w-full">
           Войти
         </Button>

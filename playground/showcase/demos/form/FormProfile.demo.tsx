@@ -13,23 +13,27 @@ export function FormProfileDemo() {
 
   return (
     <Form onSubmit={onSubmit} aria-label="Пример формы" className="max-w-md">
-      <Input isRequired label="Имя" name="name" placeholder="Иван" autoComplete="name" />
-      <Input
-        isRequired
-        label="Email"
-        name="email"
-        placeholder="you@example.com"
-        autoComplete="email"
-      />
-      <CheckboxGroup>
-        <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
-        </CheckboxGroup.Legend>
-        <CheckboxGroup.List>
-          <Checkbox name="ship" value="courier" label="Курьер" />
-          <Checkbox name="ship" value="pickup" label="Самовывоз" />
-        </CheckboxGroup.List>
-      </CheckboxGroup>
+      <Form.Section>
+        <Input isRequired label="Имя" name="name" placeholder="Иван" autoComplete="name" />
+        <Input
+          isRequired
+          label="Email"
+          name="email"
+          placeholder="you@example.com"
+          autoComplete="email"
+        />
+      </Form.Section>
+      <Form.Section>
+        <CheckboxGroup>
+          <CheckboxGroup.Legend>
+            <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+          </CheckboxGroup.Legend>
+          <CheckboxGroup.List>
+            <Checkbox name="ship" value="courier" label="Курьер" />
+            <Checkbox name="ship" value="pickup" label="Самовывоз" />
+          </CheckboxGroup.List>
+        </CheckboxGroup>
+      </Form.Section>
       <div className="flex justify-end gap-small pt-small">
         <Button type="button" variant="outline">
           Отмена

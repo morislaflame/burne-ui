@@ -28,11 +28,11 @@ export function CardPricingGridDemo() {
     <div className="grid w-full max-w-2xl gap-mid sm:grid-cols-2">
       {PLANS.map((plan) => (
         <Card key={plan.id} variant={plan.highlighted ? "secondary" : "outline"}>
-          <Card.Header>
-            <Card.Title>{plan.title}</Card.Title>
+          <Card.Header className="gap-0">
+            <Card.Title className="text-xl font-bold">{plan.title}</Card.Title>
             <Card.Description>{plan.description}</Card.Description>
           </Card.Header>
-          <Card.Body>
+          <Card.Body className="flex flex-col gap-mid">
             <Text as="p" variant="large" className="font-semibold">
               {plan.price}
               <Text as="span" variant="tools" className="font-normal text-muted">

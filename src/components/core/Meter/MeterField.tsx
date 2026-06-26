@@ -138,6 +138,8 @@ export function MeterHeader({ children, className, ...rest }: MeterHeaderProps) 
   );
 }
 
+MeterHeader.displayName = "Meter.Header";
+
 export type MeterValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
@@ -150,6 +152,8 @@ export function MeterValue({ children, className, ...rest }: MeterValueProps) {
     </ScaleFieldValue>
   );
 }
+
+MeterValue.displayName = "Meter.Value";
 
 export type MeterHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
@@ -164,7 +168,7 @@ export function MeterHint({ children, className, id: idProp, ...rest }: MeterHin
   );
 }
 
-MeterHint.displayName = "MeterHint";
+MeterHint.displayName = "Meter.Hint";
 
 export type MeterErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
@@ -179,4 +183,4 @@ export function MeterError({ children, className, id: idProp, ...rest }: MeterEr
   );
 }
 
-MeterError.displayName = "MeterError";
+MeterError.displayName = "Meter.Error";

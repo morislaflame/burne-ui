@@ -695,7 +695,7 @@
   --gloss-outline-fade: rgba(0, 0, 0, 0.2);
   --gloss-outline-base: rgb(255 255 255 / 0.5);
   --gloss-drop-shadow: linear-gradient(180deg, rgb(0 0 0 / 0.08), rgb(0 0 0 / 0));
-  --gloss-shine: rgb(255 255 255 / 0.5);
+  --gloss-shine: rgba(255, 255, 255, 0.078);
   --gloss-tint-default: rgb(255 255 255);
   --gloss-edge: rgb(255 255 255 / 0.05);
   --gloss-press-inset: rgba(0, 0, 0, 0.026);

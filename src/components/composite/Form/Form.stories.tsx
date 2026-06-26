@@ -62,53 +62,57 @@ function ProfileForm() {
 
   return (
     <Form onSubmit={onSubmit} aria-label="Пример формы">
-      <ComboBox options={localeOptions} value={locale} onValueChange={setLocale}>
-        <ComboBox.Label>Язык интерфейса</ComboBox.Label>
-        <ComboBox.InputGroup>
-          <ComboBox.Input placeholder="Выберите язык" />
-          <ComboBox.Trigger />
-        </ComboBox.InputGroup>
-        <ComboBox.Popover />
-        <ComboBox.Hint>В списке видно описание; в поле — только название.</ComboBox.Hint>
-      </ComboBox>
-      <Input isRequired>
-        <Input.Label>Имя</Input.Label>
-        <Input.Control name="name" placeholder="Иван" autoComplete="name" />
-      </Input>
-      <Input isRequired>
-        <Input.Label>Email</Input.Label>
-        <Input.Control
-          name="email"
-          inputType="text"
-          placeholder="you@example.com"
-          autoComplete="email"
-        />
-      </Input>
-      <Input isRequired>
-        <Input.Label>Пароль</Input.Label>
-        <Input.Control
-          name="password"
-          inputType="password"
-          autoComplete="new-password"
-        />
-        <Input.Hint>Не менее 8 символов.</Input.Hint>
-      </Input>
-      <Input>
-        <Input.Label>Аватар</Input.Label>
-        <Input.Control name="avatar" inputType="file" accept="image/*" placeholder="PNG или JPEG" />
-      </Input>
-      <CheckboxGroup selection="single" isRequired>
-        <CheckboxGroup.Legend>
-          <CheckboxGroup.Label>Уведомления</CheckboxGroup.Label>
-          <CheckboxGroup.Hint>
-            Один канал: при выборе другого предыдущий снимается.
-          </CheckboxGroup.Hint>
-        </CheckboxGroup.Legend>
-        <CheckboxGroup.List>
-          <Checkbox name="channels" value="email" label="Email" />
-          <Checkbox name="channels" value="push" label="Push в приложении" />
-        </CheckboxGroup.List>
-      </CheckboxGroup>
+      <Form.Section>
+        <ComboBox options={localeOptions} value={locale} onValueChange={setLocale}>
+          <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+          <ComboBox.InputGroup>
+            <ComboBox.Input placeholder="Выберите язык" />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover />
+          <ComboBox.Hint>В списке видно описание; в поле — только название.</ComboBox.Hint>
+        </ComboBox>
+        <Input isRequired>
+          <Input.Label>Имя</Input.Label>
+          <Input.Control name="name" placeholder="Иван" autoComplete="name" />
+        </Input>
+        <Input isRequired>
+          <Input.Label>Email</Input.Label>
+          <Input.Control
+            name="email"
+            inputType="text"
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
+        </Input>
+        <Input isRequired>
+          <Input.Label>Пароль</Input.Label>
+          <Input.Control
+            name="password"
+            inputType="password"
+            autoComplete="new-password"
+          />
+          <Input.Hint>Не менее 8 символов.</Input.Hint>
+        </Input>
+        <Input>
+          <Input.Label>Аватар</Input.Label>
+          <Input.Control name="avatar" inputType="file" accept="image/*" placeholder="PNG или JPEG" />
+        </Input>
+      </Form.Section>
+      <Form.Section>
+        <CheckboxGroup selection="single" isRequired>
+          <CheckboxGroup.Legend>
+            <CheckboxGroup.Label>Уведомления</CheckboxGroup.Label>
+            <CheckboxGroup.Hint>
+              Один канал: при выборе другого предыдущий снимается.
+            </CheckboxGroup.Hint>
+          </CheckboxGroup.Legend>
+          <CheckboxGroup.List>
+            <Checkbox name="channels" value="email" label="Email" />
+            <Checkbox name="channels" value="push" label="Push в приложении" />
+          </CheckboxGroup.List>
+        </CheckboxGroup>
+      </Form.Section>
       <div className="flex justify-end gap-plus pt-base">
         <Button type="button" variant="outline" size="base">
           Отмена
@@ -135,32 +139,36 @@ function ValidationForm() {
 
   return (
     <Form onSubmit={onSubmit} aria-label="Форма с ошибками валидации">
-      <Input status={emailInvalid ? "danger" : "default"} isRequired>
-        <Input.Label>Email</Input.Label>
-        <Input.Control
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-          placeholder="you@example.com"
+      <Form.Section>
+        <Input status={emailInvalid ? "danger" : "default"} isRequired>
+          <Input.Label>Email</Input.Label>
+          <Input.Control
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            placeholder="you@example.com"
+          />
+          <Input.Hint>Формат: name@domain.tld</Input.Hint>
+          {emailInvalid ? <Input.Error>Укажите корректный адрес.</Input.Error> : null}
+        </Input>
+        <ComboBox status="danger" isRequired options={localeOptions}>
+          <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+          <ComboBox.InputGroup>
+            <ComboBox.Input placeholder="Выберите язык" />
+            <ComboBox.Trigger />
+          </ComboBox.InputGroup>
+          <ComboBox.Popover />
+          <ComboBox.Error>Выберите язык из списка.</ComboBox.Error>
+        </ComboBox>
+      </Form.Section>
+      <Form.Section>
+        <Checkbox
+          danger
+          label="Согласие на обработку данных"
+          error="Необходимо принять условия."
         />
-        <Input.Hint>Формат: name@domain.tld</Input.Hint>
-        {emailInvalid ? <Input.Error>Укажите корректный адрес.</Input.Error> : null}
-      </Input>
-      <ComboBox status="danger" isRequired options={localeOptions}>
-        <ComboBox.Label>Язык интерфейса</ComboBox.Label>
-        <ComboBox.InputGroup>
-          <ComboBox.Input placeholder="Выберите язык" />
-          <ComboBox.Trigger />
-        </ComboBox.InputGroup>
-        <ComboBox.Popover />
-        <ComboBox.Error>Выберите язык из списка.</ComboBox.Error>
-      </ComboBox>
-      <Checkbox
-        danger
-        label="Согласие на обработку данных"
-        error="Необходимо принять условия."
-      />
+      </Form.Section>
       <div className="flex justify-end gap-plus pt-base">
         <Button type="submit" variant="primary" size="base">
           Отправить

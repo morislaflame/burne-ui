@@ -255,15 +255,17 @@ function QuickSubscribeCard() {
       </Card.Header>
       <Card.Body className="border-t-token pt-mid">
         <Form onSubmit={onSubmit} aria-label="Подписка на рассылку">
-          <Input>
-            <Input.Label>Email</Input.Label>
-            <Input.Control
-              name="email"
-              inputType="text"
-              placeholder="you@example.com"
-              autoComplete="email"
-            />
-          </Input>
+          <Form.Section>
+            <Input>
+              <Input.Label>Email</Input.Label>
+              <Input.Control
+                name="email"
+                inputType="text"
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
+            </Input>
+          </Form.Section>
           <Button type="submit" variant="primary" size="mid" className="w-full" ripple>
             Подписаться
           </Button>

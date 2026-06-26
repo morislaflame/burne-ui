@@ -14,14 +14,16 @@ export function FormSearchToolbarDemo() {
     <Form
       onSubmit={onSubmit}
       aria-label="Поиск по каталогу"
-      className="flex w-full max-w-xl items-center gap-small rounded-mid border-token bg-tertiary p-xsmall"
+      className="flex w-full max-w-xl items-center gap-small flex-row rounded-mid border-token bg-tertiary p-xsmall"
     >
-      <Input
-        name="q"
-        placeholder="Найти компонент…"
-        className="min-w-0 flex-1 [&_label]:sr-only"
-        label="Поиск"
-      />
+      <Form.Section className="min-w-0 flex-1">
+        <Input
+          name="q"
+          placeholder="Найти компонент…"
+          className="[&_label]:sr-only"
+          label="Поиск"
+        />
+      </Form.Section>
       <Button type="submit" variant="primary" iconOnly aria-label="Искать">
         <IoSearchOutline aria-hidden />
       </Button>

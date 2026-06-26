@@ -12,8 +12,8 @@ import { ThemeTokensProvider, useThemeTokens } from "./useThemeTokens";
 type PlaygroundPage = "components" | "theme" | "fresnel";
 
 const NAV: { id: PlaygroundPage; label: string }[] = [
-  { id: "components", label: "Компоненты" },
   { id: "theme", label: "Тема" },
+  { id: "components", label: "Компоненты" },
   { id: "fresnel", label: "Fresnel 3D" },
 ];
 
@@ -60,7 +60,7 @@ function AppHeader({
 }
 
 function AppBody() {
-  const [page, setPage] = useState<PlaygroundPage>("components");
+  const [page, setPage] = useState<PlaygroundPage>("theme");
 
   return (
     <div className="min-h-[100dvh] bg-background text-foreground">

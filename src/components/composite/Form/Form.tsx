@@ -1,12 +1,24 @@
-import type { FormHTMLAttributes } from "react";
+import type { FormHTMLAttributes, HTMLAttributes } from "react";
 import { forwardRef } from "react";
 
 import { cn } from "@/utils/cn";
 
 export type FormProps = FormHTMLAttributes<HTMLFormElement>;
 
-/** Вертикальная раскладка полей (герлей между дочерними `Input` и блоками). */
-export const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
+export type FormSectionProps = HTMLAttributes<HTMLDivElement>;
+
+/** Группа полей: плотный `gap-small` между дочерними элементами внутри секции. */
+export function FormSection({ className = "", ...rest }: FormSectionProps) {
+  return (
+    <div
+      className={cn("flex flex-col gap-small", className)}
+      {...rest}
+    />
+  );
+}
+
+/** Вертикальная раскладка: `gap-mid` между секциями и прочими дочерними блоками. */
+export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot(
   { className = "", ...rest },
   ref,
 ) {
@@ -17,4 +29,8 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
       {...rest}
     />
   );
+});
+
+export const Form = Object.assign(FormRoot, {
+  Section: FormSection,
 });

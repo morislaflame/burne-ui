@@ -37,6 +37,7 @@ import {
   usePortalThemeAnchor,
 } from "@/components/core/utils/burneLightTheme";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { MODAL_BODY_SCROLL_CLASS, MODAL_CONTENT_CLASS } from "@/components/core/utils/modalPanelLayout";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
@@ -190,6 +191,12 @@ export function DrawerBackdropInner(_props: DrawerBackdropProps) {
 }
 (DrawerBackdropInner as { _drawerBackdrop?: boolean })._drawerBackdrop = true;
 
+function DrawerContent({ className = "", ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn(MODAL_CONTENT_CLASS, className)} {...rest} />;
+}
+
+export { DrawerContent };
+
 // ─── Handle ───────────────────────────────────────────────────────────────────
 
 export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: DrawerHandleProps) {
@@ -234,6 +241,7 @@ export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: Dr
     </div>
   );
 }
+(DrawerHandleInner as { _drawerHandle?: boolean })._drawerHandle = true;
 
 // ─── Structural parts ─────────────────────────────────────────────────────────
 
@@ -241,7 +249,7 @@ export function DrawerHeader({ className = "", ...rest }: DrawerHeaderProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 items-start gap-plus px-mid pt-mid pb-plus text-left",
+        "flex shrink-0 items-start gap-plus text-left",
         className,
       )}
       {...rest}
@@ -303,7 +311,7 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
         size="small"
         variant="secondary"
         aria-label={ariaLabel}
-        className={cn("-m-xsmall", className)}
+        className={cn("shrink-0", className)}
         onClick={(e) => {
           onClick?.(e);
           if (!e.defaultPrevented) onOpenChange(false);
@@ -317,7 +325,7 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
 export function DrawerBody({ className = "", ...rest }: DrawerBodyProps) {
   return (
     <div
-      className={cn("min-h-0 flex-1 overflow-y-auto py-plus px-mid", className)}
+      className={cn(MODAL_BODY_SCROLL_CLASS, className)}
       {...rest}
     />
   );
@@ -327,7 +335,7 @@ export function DrawerFooter({ className = "", ...rest }: DrawerFooterProps) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end gap-base border-t-token py-plus px-mid",
+        "flex shrink-0 flex-wrap items-center justify-end gap-base",
         className,
       )}
       {...rest}
@@ -367,9 +375,29 @@ export const DrawerRoot = function Drawer({
   const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor);
   const lightUi = useBurneLightTheme(portalThemeAnchor);
 
-  // Extract Drawer.Backdrop config
+  // Extract Drawer.Backdrop config; partition Handle vs content (preserve order).
   let backdropIsDismissable = true;
-  const panelChildren: ReactNode[] = [];
+  const panelNodes: ReactNode[] = [];
+  let contentChunk: ReactNode[] = [];
+
+  const flushContent = () => {
+    if (contentChunk.length === 0) return;
+    const chunk = contentChunk;
+    contentChunk = [];
+    panelNodes.push(
+      variant === "gloss" ? (
+        <div
+          key={`drawer-content-${panelNodes.length}`}
+          className="gloss-content flex min-h-0 min-w-0 flex-1 flex-col"
+        >
+          <DrawerContent>{chunk}</DrawerContent>
+        </div>
+      ) : (
+        <DrawerContent key={`drawer-content-${panelNodes.length}`}>{chunk}</DrawerContent>
+      ),
+    );
+  };
+
   Children.forEach(children, (child) => {
     if (
       isValidElement(child) &&
@@ -377,10 +405,21 @@ export const DrawerRoot = function Drawer({
     ) {
       const props = child.props as DrawerBackdropProps;
       if (props.isDismissable === false) backdropIsDismissable = false;
-    } else {
-      panelChildren.push(child);
+      return;
     }
+
+    if (
+      isValidElement(child) &&
+      (child.type as { _drawerHandle?: boolean })._drawerHandle
+    ) {
+      flushContent();
+      panelNodes.push(child);
+      return;
+    }
+
+    contentChunk.push(child);
   });
+  flushContent();
 
   useLayoutEffect(() => {
     if (open) {
@@ -535,10 +574,10 @@ export const DrawerRoot = function Drawer({
                 size !== "full" && (isHorizontal ? PANEL_ROUNDING_CLASS[placement] : PANEL_ROUNDING_CLASS[placement]),
               )}
             >
-              <div className="gloss-content flex min-h-0 flex-1 flex-col">{panelChildren}</div>
+              {panelNodes}
             </div>
           ) : (
-            panelChildren
+            panelNodes
           )}
         </div>
       </dialog>

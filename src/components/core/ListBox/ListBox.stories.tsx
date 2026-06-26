@@ -29,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Список выбора (`role=\"listbox\"`) без собственного фона — оболочка (Popover, Card) задаётся снаружи. Compound: `<ListBox.Item>` с `<ListBox.Label>`, `<ListBox.Hint>`, `<ListBox.Icon>`, `<ListBox.ItemIndicator />`; секции — `<ListBox.Section>` + `<ListBox.Header>`.",
+          "Список выбора (`role=\"listbox\"`) без собственного фона — оболочка (Popover, Card) задаётся снаружи. Compound: `<ListBox.Item>` с `<ListBox.Label>`, `<ListBox.Hint>`, `<ListBox.Icon>`; `<ListBox.ItemIndicator />` — только при явном добавлении. Секции — `<ListBox.Section>` + `<ListBox.Header>`.",
       },
     },
   },

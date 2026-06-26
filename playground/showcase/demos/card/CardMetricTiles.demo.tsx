@@ -14,7 +14,7 @@ export function CardMetricTilesDemo() {
         <Card key={metric.label} variant="secondary">
           <Card.Header>
             <Card.Description>{metric.label}</Card.Description>
-            <Card.Title>{metric.value}</Card.Title>
+            <Card.Title className="text-xl font-bold">{metric.value}</Card.Title>
           </Card.Header>
           <Card.Body>
             <Text as="span" variant="tools" className="font-medium text-success">

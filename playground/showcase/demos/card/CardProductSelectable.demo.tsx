@@ -11,7 +11,7 @@ export function CardProductSelectableDemo() {
   return (
     <Card
       pressable
-      variant={selected ? "secondary" : "outline"}
+      variant={selected ? "secondary" : "default"}
       onPress={() => setSelected((v) => !v)}
       className="max-w-xs"
     >
@@ -29,7 +29,7 @@ export function CardProductSelectableDemo() {
             ) : null}
           </div>
         </Card.Body>
-        <Card.Header className="pt-small">
+        <Card.Header className="pt-plus gap-xsmall">
           <Card.Title>Парка Arctic</Card.Title>
           <Card.Description>Нажмите для выбора варианта.</Card.Description>
         </Card.Header>

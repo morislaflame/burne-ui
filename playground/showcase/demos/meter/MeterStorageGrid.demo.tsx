@@ -11,23 +11,28 @@ export function MeterStorageGridDemo() {
   return (
     <div className="grid w-full max-w-lg grid-cols-1 gap-mid sm:grid-cols-3">
       {METRICS.map((metric) => (
-        <div
+        <Meter
           key={metric.label}
           className="flex flex-col gap-small rounded-mid border-token bg-secondary p-mid"
         >
-          <Text as="p" variant="small" className="font-medium">
-            {metric.label}
-          </Text>
-          <Meter
-            label={metric.label}
+          <Meter.Header className="flex-col items-start gap-0">
+            <Meter.Label>
+              <Text as="span" variant="tools" className="uppercase tracking-wide text-muted">
+                {metric.label}
+              </Text>
+            </Meter.Label>
+            <Meter.Value className="text-header-2 font-semibold text-foreground">
+              {metric.value}%
+            </Meter.Value>
+          </Meter.Header>
+          <Meter.Track
             value={metric.value}
             min={0}
             max={100}
-            showValue
             color={metric.color}
             className="w-full"
           />
-        </div>
+        </Meter>
       ))}
     </div>
   );

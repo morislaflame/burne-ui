@@ -6,7 +6,7 @@ import { Text } from "@/components/core/Text";
 
 export function FieldSettingsPanelDemo() {
   return (
-    <Field.Set className="w-full max-w-md divide-y divide-token rounded-mid border-token">
+    <Field.Set className="w-full max-w-md">
       <div className="flex flex-col gap-mid p-mid">
         <Field.Legend>
           <Field.LegendHeader>
@@ -15,18 +15,14 @@ export function FieldSettingsPanelDemo() {
           </Field.LegendHeader>
         </Field.Legend>
         <div className="flex items-center justify-between gap-mid">
-          <Text as="span" variant="small">
-            Еженедельный дайджест
-          </Text>
-          <Switch defaultChecked aria-label="Еженедельный дайджест" />
+          <Switch defaultChecked aria-label="Еженедельный дайджест" >
+            <Switch.Control defaultChecked />
+            <Switch.Content>
+              <Switch.Label>Еженедельный дайджест</Switch.Label>
+            </Switch.Content>
+          </Switch>
         </div>
       </div>
-      <Field.Group className="p-mid">
-        <Input>
-          <Input.Label>Email для отчётов</Input.Label>
-          <Input.Control name="reportsEmail" placeholder="team@company.com" autoComplete="email" />
-        </Input>
-      </Field.Group>
     </Field.Set>
   );
 }

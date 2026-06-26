@@ -60,7 +60,6 @@ function MemberListItems() {
 
         return (
           <ListBox.Item key={value} value={value} className="gap-y-base">
-            <ListBox.ItemIndicator />
             <ListBox.Label>
               <span className="flex min-w-0 items-center gap-small">
                 <Avatar size="small" label={member.label} src={member.src} alt="" loading="lazy" />
@@ -70,7 +69,6 @@ function MemberListItems() {
                 </span>
               </span>
             </ListBox.Label>
-            <ListBox.Hint>{member.handle}</ListBox.Hint>
             <ListBox.Icon>
               <Badge status="info" size="small">
                 {member.badge}
@@ -101,7 +99,7 @@ export function ComboBoxWorkspacePickerDemo() {
       <ComboBox.Popover>
         <MemberListItems />
       </ComboBox.Popover>
-      <ComboBox.Hint>Compound ListBox.Item — аватар, hint и badge в слотах.</ComboBox.Hint>
+      <ComboBox.Hint>Compound ListBox.Item — аватар, роль и badge в слотах.</ComboBox.Hint>
     </ComboBox>
   );
 }

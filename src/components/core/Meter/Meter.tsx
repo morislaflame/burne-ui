@@ -205,3 +205,5 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
     </div>
   );
 });
+
+MeterTrack.displayName = "Meter.Track";

@@ -6,16 +6,13 @@ import { Text } from "@/components/core/Text";
 
 export function FieldBillingSetDemo() {
   return (
-    <Field.Set className="w-full max-w-md rounded-mid border-token bg-secondary p-mid">
+    <Field.Set className="w-full max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
           <Label>Оплата</Label>
           <Field.Hint as="span">Данные защищены</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
-      <Text as="p" variant="small" className="mb-mid text-muted">
-        Кастомная панель fieldset с цветной подсказкой и compound Input.
-      </Text>
       <Field.Group>
         <Input>
           <Input.Label>Имя на карте</Input.Label>

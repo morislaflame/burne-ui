@@ -58,6 +58,7 @@ import {
 } from "@/components/core/utils/burneLightTheme";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
+import { MODAL_BODY_SCROLL_CLASS } from "@/components/core/utils/modalPanelLayout";
 import { cn } from "@/utils/cn";
 
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
@@ -118,6 +119,16 @@ function injectFooterButtonSize(
 const ALERT_DIALOG_SHELL_FILLED =
   "bg-surface text-foreground border-token shadow-token-lg";
 
+function AlertDialogContent({
+  className = "",
+  ...rest
+}: HTMLAttributes<HTMLDivElement>) {
+  const { sizePreset } = useAlertDialog();
+  return <div className={cn(sizePreset.contentClass, className)} {...rest} />;
+}
+
+export { AlertDialogContent };
+
 function alertDialogPanelClass(tone: AlertStatus): string {
   if (tone === "outline") {
     return "bg-transparent border-token text-foreground shadow-token-lg";
@@ -166,7 +177,7 @@ export const AlertDialogClose = forwardRef<
       size="small"
       variant="secondary"
       className={cn(
-        "-mx-xsmall",
+        "shrink-0",
         headerCtx && messageBannerCloseCellClass(headerCtx.gridSlots),
         className,
       )}
@@ -250,7 +261,6 @@ export function AlertDialogHeader({
         className={cn(
           "shrink-0",
           messageBannerGridClass(gridSlots, sizePreset.headerGap),
-          sizePreset.headerPad,
           className,
         )}
         {...rest}
@@ -334,8 +344,8 @@ export function AlertDialogBody({
   return (
     <div
       className={cn(
-        "min-h-0 flex-1 overflow-y-auto text-left",
-        sizePreset.bodyPad,
+        MODAL_BODY_SCROLL_CLASS,
+        "text-left",
         className,
       )}
       {...rest}
@@ -355,7 +365,7 @@ export function AlertDialogFooter({
   children,
   ...rest
 }: AlertDialogFooterProps) {
-  const { sizePreset, footerButtonSize } = useAlertDialog();
+  const { footerButtonSize } = useAlertDialog();
   const footerChildren = useMemo(
     () => injectFooterButtonSize(children, footerButtonSize),
     [children, footerButtonSize],
@@ -363,8 +373,7 @@ export function AlertDialogFooter({
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center justify-end border-t-token",
-        sizePreset.footerPad,
+        "flex shrink-0 flex-wrap items-center justify-end gap-base",
         className,
       )}
       {...rest}
@@ -515,10 +524,10 @@ export const AlertDialogRoot = function AlertDialog({
           tabIndex={-1}
           className={cn(
             "relative z-10 w-full outline-none",
+            sizePreset.panelMax,
             !isGloss &&
               cn(
                 "flex min-h-0 flex-col overflow-hidden rounded-mid text-left",
-                sizePreset.panelMax,
                 sizePreset.maxHeight,
                 alertDialogPanelClass(tone),
               ),
@@ -530,14 +539,13 @@ export const AlertDialogRoot = function AlertDialog({
               ref={bindGlossPanelRef}
               className={cn(
                 "gloss-panel gloss-deep flex min-h-0 w-full flex-col rounded-mid text-left text-foreground",
-                sizePreset.panelMax,
                 sizePreset.maxHeight,
               )}
             >
-              <div className="gloss-content flex min-h-0 flex-1 flex-col">{children}</div>
+              <AlertDialogContent className="gloss-content">{children}</AlertDialogContent>
             </div>
           ) : (
-            children
+            <AlertDialogContent>{children}</AlertDialogContent>
           )}
         </div>
       </dialog>

@@ -7,9 +7,9 @@ import { useComboBoxContext } from "@/components/core/ComboBox/comboBoxContext";
 import { ListBox } from "@/components/core/ListBox";
 
 const ACTIONS = [
-  { value: "duplicate", label: "Дублировать", hint: "Создать копию компонента" },
-  { value: "export", label: "Экспорт в Figma", hint: "Code Connect" },
-  { value: "archive", label: "В архив", hint: "Скрыть из каталога" },
+  { value: "duplicate", label: "Дублировать", hint: "Создать копию компонента", shortcut: "⌘K" },
+  { value: "export", label: "Экспорт в Figma", hint: "Code Connect", shortcut: "⌘E" },
+  { value: "archive", label: "В архив", hint: "Скрыть из каталога", shortcut: "⌘A" },
 ] as const;
 
 const COMBO_OPTIONS = ACTIONS.map((a) => ({
@@ -35,17 +35,15 @@ function ActionListItems() {
         if (!action) return null;
 
         return (
-          <ListBox.Item key={value} value={value} className="gap-y-base">
+          <ListBox.Item key={value} value={value}>
             <ListBox.Label>{action.label}</ListBox.Label>
             <ListBox.Hint>{action.hint}</ListBox.Hint>
-            <ListBox.Icon>
+            <ListBox.Icon className="flex items-center gap-xsmall">
               <Badge variant="secondary" size="small">
-                ⌘K
+                {action.shortcut}
               </Badge>
+              <IoChevronForward aria-hidden className="text-muted" />
             </ListBox.Icon>
-            <span className="col-start-3 row-start-1 justify-self-end text-muted">
-              <IoChevronForward aria-hidden />
-            </span>
           </ListBox.Item>
         );
       })}
@@ -71,7 +69,9 @@ export function ComboBoxStackPickerDemo() {
       <ComboBox.Popover>
         <ActionListItems />
       </ComboBox.Popover>
-      <ComboBox.Hint>Кастомный grid пункта — hint, badge и chevron в разных слотах.</ComboBox.Hint>
+      <ComboBox.Hint>
+        Label, Hint и Icon — прямые дочерние слоты Item; badge и chevron внутри Icon.
+      </ComboBox.Hint>
     </ComboBox>
   );
 }

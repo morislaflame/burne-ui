@@ -11,9 +11,11 @@ export function FormMinimalSubscribeDemo() {
 
   return (
     <Form onSubmit={onSubmit} aria-label="Быстрая подписка" className="max-w-sm">
-      <Input label="Email" name="subscribe" placeholder="you@example.com" autoComplete="email" />
-      <div className="flex justify-end pt-small">
-        <Button type="submit" size="base">
+      <Form.Section>
+        <Input label="Email" name="subscribe" placeholder="you@example.com" autoComplete="email" />
+      </Form.Section>
+      <div className="flex justify-end">
+        <Button type="submit" variant="primary" className="w-full">
           Подписаться
         </Button>
       </div>

@@ -1,3 +1,5 @@
+import { CardAuthPanelDemo } from "../demos/card/CardAuthPanel.demo";
+import cardAuthPanelSource from "../demos/card/CardAuthPanel.demo.tsx?raw";
 import { CardGlossDemo } from "../demos/card/CardGloss.demo";
 import cardGlossSource from "../demos/card/CardGloss.demo.tsx?raw";
 import { CardMetricTilesDemo } from "../demos/card/CardMetricTiles.demo";
@@ -34,8 +36,9 @@ export function CardShowcase() {
 
       <ShowcaseSection
         title="Кастомные вариации"
-        description="Тарифы, метрики и выбираемый товар — `demos/card/`."
+        description="Тарифы, метрики, вход/регистрация и выбираемый товар — `demos/card/`."
       >
+        <ShowcaseDemoFromFile align="stretch" Demo={CardAuthPanelDemo} source={cardAuthPanelSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CardPricingGridDemo} source={cardPricingGridSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CardMetricTilesDemo} source={cardMetricTilesSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CardProductSelectableDemo} source={cardProductSelectableSource} />

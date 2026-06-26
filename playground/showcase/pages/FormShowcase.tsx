@@ -20,7 +20,7 @@ export function FormShowcase() {
     >
       <ShowcaseSection
         title="Профиль"
-        description="Form + CheckboxGroup + поля с Simple API — типичный сценарий регистрации."
+        description="Form.Section группирует поля; CheckboxGroup — в отдельной секции с большим отступом."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FormProfileDemo} source={formProfileSource} />
       </ShowcaseSection>
@@ -46,6 +46,10 @@ export function FormShowcase() {
           <ShowcaseDoc.Import path="@/components/composite/Form" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Section — группа полей с плотным gap-small внутри; Form задаёт gap-mid между секциями."
+          />
           <ShowcaseDoc.ApiRow
             api="simple"
             description="Корневой Form — нативный &lt;form&gt; с onSubmit. Поля (Input, CheckboxGroup) вкладываются как children."
