@@ -1,5 +1,7 @@
 import { ComboBoxDefaultDemo } from "../demos/combobox/ComboBoxDefault.demo";
 import comboBoxDefaultSource from "../demos/combobox/ComboBoxDefault.demo.tsx?raw";
+import { ComboBoxSizesDemo } from "../demos/combobox/ComboBoxSizes.demo";
+import comboBoxSizesSource from "../demos/combobox/ComboBoxSizes.demo.tsx?raw";
 import { ComboBoxGlossDemo } from "../demos/combobox/ComboBoxGloss.demo";
 import comboBoxGlossSource from "../demos/combobox/ComboBoxGloss.demo.tsx?raw";
 import { ComboBoxStackPickerDemo } from "../demos/combobox/ComboBoxStackPicker.demo";
@@ -20,6 +22,10 @@ export function ComboBoxShowcase() {
     >
       <ShowcaseSection title="Default" description="options, value и onValueChange — controlled режим.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxDefaultDemo} source={comboBoxDefaultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={ComboBoxSizesDemo} source={comboBoxSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка.">

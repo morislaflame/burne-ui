@@ -11,7 +11,7 @@ import {
 
 import { sliderThicknessToCss } from "@/components/core/Slider/sliderThickness";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { getMotionConfig, motionProgressFill } from "@/components/core/utils/motionConfig";
 import { cn } from "@/utils/cn";
 
 import { useOptionalProgressBarFieldContext } from "./progressBarFieldContext";
@@ -157,24 +157,39 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       const fill = fillRef.current;
       if (!fill) return;
 
-      if (reduceMotion || firstLayoutRef.current) {
-        firstLayoutRef.current = false;
+      const cfg = getMotionConfig();
+      const axisProp = isHorizontal ? "width" : "height";
+      const axisValue =
+        fillTargetStyle[axisProp] != null ? String(fillTargetStyle[axisProp]) : "";
+
+      const applyInstant = () => {
         killMotion(fill);
         fill.style.transform = "";
-        fill.style.width =
-          fillTargetStyle.width != null ? String(fillTargetStyle.width) : "";
-        fill.style.height =
-          fillTargetStyle.height != null ? String(fillTargetStyle.height) : "";
+        if (isHorizontal) {
+          fill.style.width = axisValue;
+          fill.style.height = "100%";
+        } else {
+          fill.style.width = "100%";
+          fill.style.height = axisValue;
+        }
+      };
+
+      if (
+        reduceMotion ||
+        !cfg.enableProgressFill ||
+        firstLayoutRef.current
+      ) {
+        firstLayoutRef.current = false;
+        applyInstant();
         return;
       }
 
+      firstLayoutRef.current = false;
       killMotion(fill);
       fill.style.transform = "";
       void gsap.to(fill, {
-        ...(isHorizontal
-          ? { width: fillTargetStyle.width }
-          : { height: fillTargetStyle.height }),
-        ...motionInteractive(),
+        [axisProp]: axisValue,
+        ...motionProgressFill(),
         overwrite: "auto",
       });
     }, [
@@ -283,8 +298,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
                 !color && "bg-primary",
               )}
               style={{
-                width: isHorizontal ? `${percent}%` : "100%",
-                height: isHorizontal ? "100%" : `${percent}%`,
+                ...(isHorizontal ? { height: "100%" } : { width: "100%" }),
                 ...fillColorStyle,
               }}
             />

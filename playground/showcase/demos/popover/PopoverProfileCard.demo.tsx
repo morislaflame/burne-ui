@@ -9,11 +9,11 @@ export function PopoverProfileCardDemo() {
   return (
     <Popover>
       <Popover.Trigger>
-        <Card pressable className="p-base w-fit">
-          <CardBody>
-          <Avatar size="small" label="АК" />
-          <span>Андрей К.</span>
-          </CardBody>
+          <Card pressable className="p-base w-fit flex items-center gap-base">
+              <div className="flex items-center justify-center gap-base">
+                <Avatar size="small" label="АК" />
+                <span>Андрей К.</span>
+              </div>
         </Card>
       </Popover.Trigger>
       <Popover.Content showArrow className="w-64">

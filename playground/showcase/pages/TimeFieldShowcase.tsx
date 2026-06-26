@@ -10,6 +10,8 @@ import { TimeFieldShiftWindowDemo } from "../demos/time-field/TimeFieldShiftWind
 import timeFieldShiftWindowSource from "../demos/time-field/TimeFieldShiftWindow.demo.tsx?raw";
 import { TimeFieldSimpleDemo } from "../demos/time-field/TimeFieldSimple.demo";
 import timeFieldSimpleSource from "../demos/time-field/TimeFieldSimple.demo.tsx?raw";
+import { TimeFieldSizesDemo } from "../demos/time-field/TimeFieldSizes.demo";
+import timeFieldSizesSource from "../demos/time-field/TimeFieldSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
 
 export function TimeFieldShowcase() {
@@ -22,6 +24,10 @@ export function TimeFieldShowcase() {
     >
       <ShowcaseSection title="Simple API" description="Controlled value в формате 24 часа.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldSimpleDemo} source={timeFieldSimpleSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={TimeFieldSizesDemo} source={timeFieldSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка.">

@@ -6,6 +6,8 @@ import { AlertDialogLogoutDemo } from "../demos/alertDialog/AlertDialogLogout.de
 import alertDialogLogoutSource from "../demos/alertDialog/AlertDialogLogout.demo.tsx?raw";
 import { AlertDialogStatusDemo } from "../demos/alertDialog/AlertDialogStatus.demo";
 import alertDialogStatusSource from "../demos/alertDialog/AlertDialogStatus.demo.tsx?raw";
+import { AlertDialogSizesDemo } from "../demos/alertDialog/AlertDialogSizes.demo";
+import alertDialogSizesSource from "../demos/alertDialog/AlertDialogSizes.demo.tsx?raw";
 import { AlertDialogUnsavedChangesDemo } from "../demos/alertDialog/AlertDialogUnsavedChanges.demo";
 import alertDialogUnsavedChangesSource from "../demos/alertDialog/AlertDialogUnsavedChanges.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -20,6 +22,10 @@ export function AlertDialogShowcase() {
     >
       <ShowcaseSection title="Статусы" description="status влияет на иконку и тон primary-кнопки.">
         <ShowcaseDemoFromFile Demo={AlertDialogStatusDemo} source={alertDialogStatusSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={AlertDialogSizesDemo} source={alertDialogSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная панель подтверждения.">

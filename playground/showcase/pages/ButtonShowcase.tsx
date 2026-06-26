@@ -30,7 +30,7 @@ export function ButtonShowcase() {
         <ShowcaseDemoFromFile Demo={ButtonSizesDemo} source={buttonSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность с motion.">
+      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность с motion и опциональным ripple.">
         <ShowcaseDemoFromFile Demo={ButtonGlossDemo} source={buttonGlossSource} />
       </ShowcaseSection>
 

@@ -8,6 +8,8 @@ import { CalendarInlineWidgetDemo } from "../demos/calendar/CalendarInlineWidget
 import calendarInlineWidgetSource from "../demos/calendar/CalendarInlineWidget.demo.tsx?raw";
 import { CalendarModesDemo } from "../demos/calendar/CalendarModes.demo";
 import calendarModesSource from "../demos/calendar/CalendarModes.demo.tsx?raw";
+import { CalendarSizesDemo } from "../demos/calendar/CalendarSizes.demo";
+import calendarSizesSource from "../demos/calendar/CalendarSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
 
 export function CalendarShowcase() {
@@ -20,6 +22,10 @@ export function CalendarShowcase() {
     >
       <ShowcaseSection title="Режимы выбора" description="mode: single, range, multiple и compound с Calendar.Footer.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarModesDemo} source={calendarModesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="start" Demo={CalendarSizesDemo} source={calendarSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная панель календаря.">

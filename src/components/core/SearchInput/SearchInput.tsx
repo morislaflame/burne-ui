@@ -36,10 +36,8 @@ import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import {
-  CONTROL_SIZE_LAYOUT,
-  readControlHeightPx,
-} from "@/components/core/utils/controlSizeLayout";
+import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import {
   readSearchExpandedRadiusPx,
   SEARCH_EXPANDED_ROUNDED_CLASS,
@@ -81,6 +79,13 @@ const SEARCH_CLEAR_TAP_PX: Record<ComponentSize, number> = {
   large: 32,
 };
 
+const SEARCH_DEFAULT_EXPANDED_WIDTH: Record<ComponentSize, number> = {
+  small: 240,
+  base: 280,
+  mid: 320,
+  large: 360,
+};
+
 type SearchSizeLayout = {
   defaultExpandedW: number;
   iconBox: number;
@@ -97,7 +102,7 @@ type SearchSizeLayout = {
 function buildSearchLayout(size: ComponentSize): SearchSizeLayout {
   const control = CONTROL_SIZE_LAYOUT[size];
   return {
-    defaultExpandedW: control.defaultExpandedSearchWidth,
+    defaultExpandedW: SEARCH_DEFAULT_EXPANDED_WIDTH[size],
     iconBox: SEARCH_ICON_BOX_PX[size],
     padX: SEARCH_PAD_X_PX[size],
     iconClass: control.icon,

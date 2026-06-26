@@ -40,7 +40,8 @@ import { useOptionalInputFieldContext } from "./inputFieldContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import type { ButtonSize } from "@/components/core/Button";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { affixSlotClass, affixToggleMinWClass, CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { affixSlotClass, affixToggleMinWClass } from "@/components/core/utils/inputAffixLayout";
 
 function inputSizeFromButtonSize(bs: ButtonSize): InputSize {
   return bs;

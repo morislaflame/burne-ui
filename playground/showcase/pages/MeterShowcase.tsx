@@ -1,5 +1,7 @@
 import { MeterHorizontalDemo } from "../demos/meter/MeterHorizontal.demo";
 import meterHorizontalSource from "../demos/meter/MeterHorizontal.demo.tsx?raw";
+import { MeterSizesDemo } from "../demos/meter/MeterSizes.demo";
+import meterSizesSource from "../demos/meter/MeterSizes.demo.tsx?raw";
 import { MeterQuotaBannerDemo } from "../demos/meter/MeterQuotaBanner.demo";
 import meterQuotaBannerSource from "../demos/meter/MeterQuotaBanner.demo.tsx?raw";
 import { MeterStorageGridDemo } from "../demos/meter/MeterStorageGrid.demo";
@@ -18,6 +20,10 @@ export function MeterShowcase() {
     >
       <ShowcaseSection title="Горизонтальный" description="label, value, showValue и color.">
         <ShowcaseDemoFromFile align="stretch" Demo={MeterHorizontalDemo} source={meterHorizontalSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={MeterSizesDemo} source={meterSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Вертикальный" description="orientation=&quot;vertical&quot;.">

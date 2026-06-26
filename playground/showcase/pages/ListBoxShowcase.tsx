@@ -8,6 +8,8 @@ import { ListBoxPermissionsDemo } from "../demos/listBox/ListBoxPermissions.demo
 import listBoxPermissionsSource from "../demos/listBox/ListBoxPermissions.demo.tsx?raw";
 import { ListBoxSimpleApiDemo } from "../demos/listBox/ListBoxSimpleApi.demo";
 import listBoxSimpleApiSource from "../demos/listBox/ListBoxSimpleApi.demo.tsx?raw";
+import { ListBoxSizesDemo } from "../demos/listBox/ListBoxSizes.demo";
+import listBoxSizesSource from "../demos/listBox/ListBoxSizes.demo.tsx?raw";
 import { ListBoxWorkspacePickerDemo } from "../demos/listBox/ListBoxWorkspacePicker.demo";
 import listBoxWorkspacePickerSource from "../demos/listBox/ListBoxWorkspacePicker.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -26,6 +28,10 @@ export function ListBoxShowcase() {
 
       <ShowcaseSection title="Simple API" description="label на Item и множественный выбор.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxSimpleApiDemo} source={listBoxSimpleApiSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxSizesDemo} source={listBoxSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная панель списка с hover-lift.">

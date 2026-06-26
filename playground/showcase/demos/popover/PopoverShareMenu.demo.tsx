@@ -18,13 +18,31 @@ export function PopoverShareMenuDemo() {
           <Popover.Hint>Выберите способ</Popover.Hint>
         </Popover.Header>
         <Popover.Body className="flex flex-col gap-xsmall p-base">
-          <Button variant="ghost" size="small" type="button" leftIcon={<IoLinkOutline aria-hidden />}>
+          <Button 
+          variant="ghost" 
+          size="small" 
+          type="button" 
+          leftIcon={<IoLinkOutline aria-hidden />}
+          className="justify-start"
+          >
             Скопировать ссылку
           </Button>
-          <Button variant="ghost" size="small" type="button" leftIcon={<IoMailOutline aria-hidden />}>
+          <Button 
+          variant="ghost" 
+          size="small" 
+          type="button" 
+          leftIcon={<IoMailOutline aria-hidden />}
+          className="justify-start"
+          >
             Отправить email
           </Button>
-          <Button variant="ghost" size="small" type="button" leftIcon={<IoLogoTwitter aria-hidden />}>
+          <Button 
+          variant="ghost" 
+          size="small" 
+          type="button" 
+          leftIcon={<IoLogoTwitter aria-hidden />}
+          className="justify-start"
+          >
             Twitter
           </Button>
         </Popover.Body>

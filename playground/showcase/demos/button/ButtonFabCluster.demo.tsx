@@ -9,9 +9,10 @@ export function ButtonFabClusterDemo() {
         variant="primary"
         iconOnly
         aria-label="Создать"
-        className="size-14 rounded-full shadow-token-lg"
+        size="small"
+        className="rounded-full shadow-token-lg"
       >
-        <IoAdd aria-hidden className="size-6" />
+        <IoAdd aria-hidden className="size-4" />
       </Button>
       <Button variant="outline" size="small" className="rounded-full border-dashed px-mid">
         Пригласить

@@ -1,7 +1,7 @@
 import { useCallback, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { readControlHeightPx } from "@/components/core/utils/controlSizeLayout";
+import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
 
 const MAX_HEIGHT_PX = 640;
 

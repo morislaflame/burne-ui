@@ -8,6 +8,10 @@ import { PopoverShareMenuDemo } from "../demos/popover/PopoverShareMenu.demo";
 import popoverShareMenuSource from "../demos/popover/PopoverShareMenu.demo.tsx?raw";
 import { PopoverSimpleDemo } from "../demos/popover/PopoverSimple.demo";
 import popoverSimpleSource from "../demos/popover/PopoverSimple.demo.tsx?raw";
+import { PopoverSidesDemo } from "../demos/popover/PopoverSides.demo";
+import popoverSidesSource from "../demos/popover/PopoverSides.demo.tsx?raw";
+import { PopoverSizesDemo } from "../demos/popover/PopoverSizes.demo";
+import popoverSizesSource from "../demos/popover/PopoverSizes.demo.tsx?raw";
 import { PopoverWithHeaderDemo } from "../demos/popover/PopoverWithHeader.demo";
 import popoverWithHeaderSource from "../demos/popover/PopoverWithHeader.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -24,12 +28,20 @@ export function PopoverShowcase() {
         <ShowcaseDemoFromFile Demo={PopoverSimpleDemo} source={popoverSimpleSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={PopoverSizesDemo} source={popoverSizesSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="С заголовком" description="Header, Label, Hint и стрелка showArrow.">
         <ShowcaseDemoFromFile Demo={PopoverWithHeaderDemo} source={popoverWithHeaderSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная всплывающая панель.">
         <ShowcaseDemoFromFile Demo={PopoverGlossDemo} source={popoverGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
+        <ShowcaseDemoFromFile Demo={PopoverSidesDemo} source={popoverSidesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

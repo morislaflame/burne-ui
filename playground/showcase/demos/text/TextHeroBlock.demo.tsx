@@ -9,7 +9,6 @@ export function TextHeroBlockDemo() {
       <Text
         as="h2"
         variant="accent-header"
-        className="bg-gradient-to-r from-primary via-info to-success bg-clip-text text-transparent"
       >
         Кастомный hero-блок
       </Text>

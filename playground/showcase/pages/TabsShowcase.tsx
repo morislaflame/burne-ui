@@ -2,6 +2,8 @@ import { TabsDashboardShellDemo } from "../demos/tabs/TabsDashboardShell.demo";
 import tabsDashboardShellSource from "../demos/tabs/TabsDashboardShell.demo.tsx?raw";
 import { TabsDefaultDemo } from "../demos/tabs/TabsDefault.demo";
 import tabsDefaultSource from "../demos/tabs/TabsDefault.demo.tsx?raw";
+import { TabsSizesDemo } from "../demos/tabs/TabsSizes.demo";
+import tabsSizesSource from "../demos/tabs/TabsSizes.demo.tsx?raw";
 import { TabsGlossDemo } from "../demos/tabs/TabsGloss.demo";
 import tabsGlossSource from "../demos/tabs/TabsGloss.demo.tsx?raw";
 import { TabsOutlineDemo } from "../demos/tabs/TabsOutline.demo";
@@ -24,6 +26,10 @@ export function TabsShowcase() {
     >
       <ShowcaseSection title="Default" description="Контролируемые вкладки с disabled-состоянием.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsDefaultDemo} source={tabsDefaultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TabsSizesDemo} source={tabsSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Outline" description="variant outline — индикатор с primary-tint.">

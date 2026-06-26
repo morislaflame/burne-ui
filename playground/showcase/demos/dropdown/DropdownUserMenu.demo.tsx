@@ -9,8 +9,11 @@ export function DropdownUserMenuDemo() {
   return (
     <Dropdown defaultValue="profile">
       <Dropdown.Trigger asChild>
-        <Button variant="outline" leftIcon={<Avatar size="small" label="МИ" />}>
-          Аккаунт
+        <Button variant="secondary">
+          <div className="flex items-center justify-center gap-base">
+            <Avatar size="small" label="МИ" />
+            <span>Аккаунт</span>
+          </div>
         </Button>
       </Dropdown.Trigger>
       <Dropdown.Popover className="min-w-52">

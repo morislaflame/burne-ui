@@ -4,6 +4,8 @@ import { LinkCardActionsDemo } from "../demos/link/LinkCardActions.demo";
 import linkCardActionsSource from "../demos/link/LinkCardActions.demo.tsx?raw";
 import { LinkFooterNavDemo } from "../demos/link/LinkFooterNav.demo";
 import linkFooterNavSource from "../demos/link/LinkFooterNav.demo.tsx?raw";
+import { LinkSizesDemo } from "../demos/link/LinkSizes.demo";
+import linkSizesSource from "../demos/link/LinkSizes.demo.tsx?raw";
 import { LinkVariantsDemo } from "../demos/link/LinkVariants.demo";
 import linkVariantsSource from "../demos/link/LinkVariants.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -18,6 +20,10 @@ export function LinkShowcase() {
     >
       <ShowcaseSection title="Варианты" description="Внутренние, внешние ссылки и кастомизация иконок.">
         <ShowcaseDemoFromFile Demo={LinkVariantsDemo} source={linkVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={LinkSizesDemo} source={linkSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

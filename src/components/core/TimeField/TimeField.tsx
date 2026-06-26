@@ -30,7 +30,8 @@ import {
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
-import { affixSlotClass, CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { cn } from "@/utils/cn";
 

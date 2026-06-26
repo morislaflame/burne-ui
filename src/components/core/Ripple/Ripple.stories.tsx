@@ -255,7 +255,7 @@ export const ArbitraryCssColor: Story = {
       className="relative max-w-xs cursor-pointer overflow-hidden rounded-mid border-token bg-surface p-plus"
       role="presentation"
     >
-      <Ripple color="oklch(0.72 0.14 250 / 0.35)" duration={550} />
+      <Ripple color="oklch(0.72 0.14 250 / 0.55)" duration={550} />
       <div className="relative z-[1]">
         <Text variant="base">Проп color — любая строка, не только пресеты.</Text>
       </div>

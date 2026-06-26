@@ -4,6 +4,8 @@ import { ToggleButtonGroupMultipleDemo } from "../demos/toggleButtonGroup/Toggle
 import toggleButtonGroupMultipleSource from "../demos/toggleButtonGroup/ToggleButtonGroupMultiple.demo.tsx?raw";
 import { ToggleButtonGroupSingleDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupSingle.demo";
 import toggleButtonGroupSingleSource from "../demos/toggleButtonGroup/ToggleButtonGroupSingle.demo.tsx?raw";
+import { ToggleButtonGroupSizesDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupSizes.demo";
+import toggleButtonGroupSizesSource from "../demos/toggleButtonGroup/ToggleButtonGroupSizes.demo.tsx?raw";
 import { ToggleButtonGroupVerticalDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupVertical.demo";
 import toggleButtonGroupVerticalSource from "../demos/toggleButtonGroup/ToggleButtonGroupVertical.demo.tsx?raw";
 import { ToggleButtonGroupViewToolbarDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupViewToolbar.demo";
@@ -20,6 +22,10 @@ export function ToggleButtonGroupShowcase() {
     >
       <ShowcaseSection title="Одиночный выбор" description="type=&quot;single&quot; — вид списка.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupSingleDemo} source={toggleButtonGroupSingleSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large — пробрасывается дочерним ToggleButton.">
+        <ShowcaseDemoFromFile Demo={ToggleButtonGroupSizesDemo} source={toggleButtonGroupSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Множественный выбор" description="type=&quot;multiple&quot; — форматирование текста.">

@@ -1,5 +1,7 @@
 import { TextAreaBasicDemo } from "../demos/textarea/TextAreaBasic.demo";
 import textAreaBasicSource from "../demos/textarea/TextAreaBasic.demo.tsx?raw";
+import { TextAreaSizesDemo } from "../demos/textarea/TextAreaSizes.demo";
+import textAreaSizesSource from "../demos/textarea/TextAreaSizes.demo.tsx?raw";
 import { TextAreaCommentThreadDemo } from "../demos/textarea/TextAreaCommentThread.demo";
 import textAreaCommentThreadSource from "../demos/textarea/TextAreaCommentThread.demo.tsx?raw";
 import { TextAreaGlossDemo } from "../demos/textarea/TextAreaGloss.demo";
@@ -22,6 +24,10 @@ export function TextAreaShowcase() {
     >
       <ShowcaseSection title="Базовый" description="label, hint и rows на корне компонента.">
         <ShowcaseDemoFromFile align="center" Demo={TextAreaBasicDemo} source={textAreaBasicSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaSizesDemo} source={textAreaSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="С ошибкой" description="status danger и prop error для сообщения валидации.">

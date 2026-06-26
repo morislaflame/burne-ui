@@ -268,9 +268,10 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
           {...rest}
           ref={setRootRef}
           className={cn(
+            "w-full border-0 p-0 text-left",
             glossPanelClass,
             pressable &&
-              cn(GLOSS_INTERACTIVE_MOTION_CLASS, "cursor-pointer focus-ring w-full border-0 p-0 text-left"),
+              cn(GLOSS_INTERACTIVE_MOTION_CLASS, "cursor-pointer focus-ring"),
           )}
           onPointerOver={(e) => {
             onPointerOverProp?.(e);
@@ -326,7 +327,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         type="button"
         {...rest}
         ref={setRootRef}
-        className={cn(rootClassName, "w-full border-0 p-0 text-left")}
+        className={cn("w-full border-0 p-0 text-left", rootClassName)}
         onPointerOver={(e) => {
           onPointerOverProp?.(e);
           if (!e.defaultPrevented) {
@@ -352,7 +353,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         type="button"
         {...rest}
         ref={setRootRef}
-        className={cn(rootClassName, "w-full border-0 p-0 text-left")}
+        className={cn("w-full border-0 p-0 text-left", rootClassName)}
         onPointerOver={onPointerOverProp}
         onPointerOut={onPointerOutProp}
         onPointerDown={onPointerDownProp}

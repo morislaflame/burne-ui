@@ -4,10 +4,14 @@ import { BadgeGlossDemo } from "../demos/badge/BadgeGloss.demo";
 import badgeGlossSource from "../demos/badge/BadgeGloss.demo.tsx?raw";
 import { BadgeInboxButtonDemo } from "../demos/badge/BadgeInboxButton.demo";
 import badgeInboxButtonSource from "../demos/badge/BadgeInboxButton.demo.tsx?raw";
+import { BadgePlacementsDemo } from "../demos/badge/BadgePlacements.demo";
+import badgePlacementsSource from "../demos/badge/BadgePlacements.demo.tsx?raw";
 import { BadgeServiceStatusListDemo } from "../demos/badge/BadgeServiceStatusList.demo";
 import badgeServiceStatusListSource from "../demos/badge/BadgeServiceStatusList.demo.tsx?raw";
 import { BadgeTagCloudDemo } from "../demos/badge/BadgeTagCloud.demo";
 import badgeTagCloudSource from "../demos/badge/BadgeTagCloud.demo.tsx?raw";
+import { BadgeSizesDemo } from "../demos/badge/BadgeSizes.demo";
+import badgeSizesSource from "../demos/badge/BadgeSizes.demo.tsx?raw";
 import { BadgeVariantsDemo } from "../demos/badge/BadgeVariants.demo";
 import badgeVariantsSource from "../demos/badge/BadgeVariants.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -24,12 +28,23 @@ export function BadgeShowcase() {
         <ShowcaseDemoFromFile Demo={BadgeVariantsDemo} source={badgeVariantsSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={BadgeSizesDemo} source={badgeSizesSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность с motion.">
         <ShowcaseDemoFromFile Demo={BadgeGlossDemo} source={badgeGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Badge.Anchor" description="Счётчик и dot-индикатор поверх аватара.">
         <ShowcaseDemoFromFile Demo={BadgeAnchorDemo} source={badgeAnchorSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Размещение"
+        description="placement у Badge внутри Badge.Anchor: top-right, top-left, bottom-right, bottom-left."
+      >
+        <ShowcaseDemoFromFile Demo={BadgePlacementsDemo} source={badgePlacementsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

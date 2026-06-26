@@ -23,10 +23,8 @@ import {
   type ButtonGroupSegment,
 } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { hoverVariant, SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
-import {
-  buttonRootClass,
-  CONTROL_SIZE_LAYOUT,
-} from "@/components/core/utils/controlSizeLayout";
+import { buttonRootClass } from "@/components/core/Button/buttonLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,

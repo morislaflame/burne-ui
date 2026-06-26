@@ -49,6 +49,7 @@ import {
   type MessageBannerGridSlots,
 } from "@/components/core/utils/messageBannerGridLayout";
 import { cn } from "@/utils/cn";
+import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
 
 import { ToastContext, type ToastContextValue } from "./toastContext";
 
@@ -553,6 +554,7 @@ function ToastItemWrapper({
   const animRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const stackRef = useRef<HTMLDivElement>(null);
+  const isMountedRef = useRef(false);
 
   const capped = Math.min(reverseIdx, MAX_VISIBLE - 1);
   const stackScale = 1 - capped * STACK_SCALE;
@@ -566,6 +568,9 @@ function ToastItemWrapper({
     const reduceMotion =
       prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToastStack;
 
+    const isFirstMount = !isMountedRef.current;
+    isMountedRef.current = true;
+
     killMotion(el);
 
     if (reduceMotion) {
@@ -577,13 +582,24 @@ function ToastItemWrapper({
       return;
     }
 
-    gsap.to(el, {
-      y: peekY,
-      scale: stackScale,
-      autoAlpha: stackOpacity,
-      ...motionInteractive(),
-      overwrite: "auto",
-    });
+    if (isFirstMount && entry.variant !== "gloss") {
+      // Non-gloss: fade in from opacity 0 to avoid abrupt appearance.
+      // We use `opacity` (not `autoAlpha`) so visibility stays intact and the
+      // stacking context is not disturbed for any sibling gloss surfaces.
+      gsap.fromTo(
+        el,
+        { opacity: 0 },
+        { opacity: stackOpacity, ...motionInteractive(), overwrite: "auto" },
+      );
+    } else {
+      gsap.to(el, {
+        y: peekY,
+        scale: stackScale,
+        autoAlpha: stackOpacity,
+        ...motionInteractive(),
+        overwrite: "auto",
+      });
+    }
   }, [peekY, stackScale, stackOpacity]);
 
   // Track height
@@ -703,6 +719,7 @@ function ToastViewport({
   const isTop = placement.startsWith("top");
   const [heights, setHeights] = useState<Map<string, number>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrimRef = useRef<HTMLDivElement>(null);
 
   const onHeightChange = useCallback((id: string, h: number) => {
     setHeights((prev) => {
@@ -738,12 +755,61 @@ function ToastViewport({
     });
   }, [containerH]);
 
+  // Initialise scrim to invisible before first paint
+  useLayoutEffect(() => {
+    const el = scrimRef.current;
+    if (el) gsap.set(el, { opacity: 0 });
+  }, []);
+
+  // Animate scrim in/out — appears with first toast, exits with last
+  useLayoutEffect(() => {
+    const el = scrimRef.current;
+    if (!el) return;
+
+    const reduceMotion = prefersReducedInteractiveHoverLift();
+
+    // Fade out when the single remaining toast has started its exit animation
+    const isLastDismissing =
+      sorted.length === 1 && dismissingIds.has(sorted[0]?.id ?? "");
+
+    killMotion(el);
+
+    if (reduceMotion) {
+      gsap.set(el, { opacity: isLastDismissing ? 0 : 1 });
+      return;
+    }
+
+    if (isLastDismissing) {
+      // Match the toast exit duration so both disappear together
+      gsap.to(el, { opacity: 0, duration: 0.22, ease: "power2.in", overwrite: "auto" });
+    } else {
+      gsap.to(el, { opacity: 1, ...motionInteractive(), overwrite: "auto" });
+    }
+  }, [sorted, dismissingIds]);
+
   return (
     <div
       aria-label={`Уведомления (${placement})`}
       className={cn("fixed z-[300] pointer-events-none", PLACEMENT_CLASS[placement])}
       style={{ width: TOAST_WIDTH_PX }}
     >
+      {/* Gradient scrim — softens content behind the toast stack, click-through */}
+      <div
+        ref={scrimRef}
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{
+          [isTop ? "top" : "bottom"]: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.offsetY)})`,
+          left: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.insetX)})`,
+          right: `calc(-1 * ${toastScrimToken(TOAST_SCRIM_CSS_VAR.insetX)})`,
+          height: toastScrimToken(TOAST_SCRIM_CSS_VAR.height),
+          background: isTop
+            ? toastScrimToken(TOAST_SCRIM_CSS_VAR.gradientTop)
+            : toastScrimToken(TOAST_SCRIM_CSS_VAR.gradientBottom),
+          maskImage: toastScrimToken(TOAST_SCRIM_CSS_VAR.mask),
+          WebkitMaskImage: toastScrimToken(TOAST_SCRIM_CSS_VAR.mask),
+        }}
+      />
       <div
         ref={containerRef}
         className="relative grid"
@@ -834,7 +900,6 @@ export function ToastProviderRoot({
         placements.map((placement) =>
           createPortal(
             <ToastViewport
-              key={placement}
               placement={placement}
               sorted={toasts
                 .filter((t) => t.placement === placement)
@@ -844,6 +909,7 @@ export function ToastProviderRoot({
               onRemoveFinal={removeFinal}
             />,
             document.body,
+            placement,
           ),
         )}
     </ToastContext.Provider>

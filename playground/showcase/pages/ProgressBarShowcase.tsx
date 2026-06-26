@@ -2,6 +2,8 @@ import { ProgressPipelineDemo } from "../demos/progress-bar/ProgressPipeline.dem
 import progressPipelineSource from "../demos/progress-bar/ProgressPipeline.demo.tsx?raw";
 import { ProgressHorizontalDemo } from "../demos/progress-bar/ProgressHorizontal.demo";
 import progressHorizontalSource from "../demos/progress-bar/ProgressHorizontal.demo.tsx?raw";
+import { ProgressBarSizesDemo } from "../demos/progress-bar/ProgressBarSizes.demo";
+import progressBarSizesSource from "../demos/progress-bar/ProgressBarSizes.demo.tsx?raw";
 import { ProgressUploadCardDemo } from "../demos/progress-bar/ProgressUploadCard.demo";
 import progressUploadCardSource from "../demos/progress-bar/ProgressUploadCard.demo.tsx?raw";
 import { ProgressVerticalDemo } from "../demos/progress-bar/ProgressVertical.demo";
@@ -20,6 +22,10 @@ export function ProgressBarShowcase() {
     >
       <ShowcaseSection title="Горизонтальный" description="label, value, indeterminate и color.">
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressHorizontalDemo} source={progressHorizontalSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarSizesDemo} source={progressBarSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Вертикальный" description="orientation=&quot;vertical&quot; с showValue.">

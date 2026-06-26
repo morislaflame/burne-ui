@@ -1,11 +1,13 @@
+import { ToastDefaultDemo } from "../demos/toast/ToastDefault.demo";
+import toastDefaultSource from "../demos/toast/ToastDefault.demo.tsx?raw";
 import { ToastDeployPanelDemo } from "../demos/toast/ToastDeployPanel.demo";
 import toastDeployPanelSource from "../demos/toast/ToastDeployPanel.demo.tsx?raw";
-import { ToastGlossDemo } from "../demos/toast/ToastGloss.demo";
-import toastGlossSource from "../demos/toast/ToastGloss.demo.tsx?raw";
+import { ToastModificationsDemo } from "../demos/toast/ToastModifications.demo";
+import toastModificationsSource from "../demos/toast/ToastModifications.demo.tsx?raw";
+import { ToastPlacementsDemo } from "../demos/toast/ToastPlacements.demo";
+import toastPlacementsSource from "../demos/toast/ToastPlacements.demo.tsx?raw";
 import { ToastPromiseFlowDemo } from "../demos/toast/ToastPromiseFlow.demo";
 import toastPromiseFlowSource from "../demos/toast/ToastPromiseFlow.demo.tsx?raw";
-import { ToastStatusesDemo } from "../demos/toast/ToastStatuses.demo";
-import toastStatusesSource from "../demos/toast/ToastStatuses.demo.tsx?raw";
 import { ToastUndoActionDemo } from "../demos/toast/ToastUndoAction.demo";
 import toastUndoActionSource from "../demos/toast/ToastUndoAction.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -18,12 +20,22 @@ export function ToastShowcase() {
       importPath='import { Toast, useToast } from "@/components/core/Toast";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Статусы" description="toast.show с title, description и status.">
-        <ShowcaseDemoFromFile Demo={ToastStatusesDemo} source={toastStatusesSource} />
+      <ShowcaseSection title="Базовый" description="toast.show с title и description — status и variant по умолчанию.">
+        <ShowcaseDemoFromFile Demo={ToastDefaultDemo} source={toastDefaultSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; в toast.show — стеклянное уведомление.">
-        <ShowcaseDemoFromFile Demo={ToastGlossDemo} source={toastGlossSource} />
+      <ShowcaseSection
+        title="Модификации"
+        description="status, variant gloss, action, isLoading и timeout: 0."
+      >
+        <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Размещение"
+        description="placement: top-left, top-center, top-right, bottom-left, bottom-center, bottom-right."
+      >
+        <ShowcaseDemoFromFile Demo={ToastPlacementsDemo} source={toastPlacementsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

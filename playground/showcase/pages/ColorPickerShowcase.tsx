@@ -2,12 +2,16 @@ import { ColorPickerAlphaChannelDemo } from "../demos/colorPicker/ColorPickerAlp
 import colorPickerAlphaChannelSource from "../demos/colorPicker/ColorPickerAlphaChannel.demo.tsx?raw";
 import { ColorPickerBasicDemo } from "../demos/colorPicker/ColorPickerBasic.demo";
 import colorPickerBasicSource from "../demos/colorPicker/ColorPickerBasic.demo.tsx?raw";
+import { ColorPickerSizesDemo } from "../demos/colorPicker/ColorPickerSizes.demo";
+import colorPickerSizesSource from "../demos/colorPicker/ColorPickerSizes.demo.tsx?raw";
 import { ColorPickerBrandPaletteDemo } from "../demos/colorPicker/ColorPickerBrandPalette.demo";
 import colorPickerBrandPaletteSource from "../demos/colorPicker/ColorPickerBrandPalette.demo.tsx?raw";
 import { ColorPickerGlossDemo } from "../demos/colorPicker/ColorPickerGloss.demo";
 import colorPickerGlossSource from "../demos/colorPicker/ColorPickerGloss.demo.tsx?raw";
 import { ColorPickerSettingsRowDemo } from "../demos/colorPicker/ColorPickerSettingsRow.demo";
 import colorPickerSettingsRowSource from "../demos/colorPicker/ColorPickerSettingsRow.demo.tsx?raw";
+import { ColorPickerSidesDemo } from "../demos/colorPicker/ColorPickerSides.demo";
+import colorPickerSidesSource from "../demos/colorPicker/ColorPickerSides.demo.tsx?raw";
 import { ColorSlidersDemo } from "../demos/colorPicker/ColorSliders.demo";
 import colorSlidersSource from "../demos/colorPicker/ColorSliders.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -24,12 +28,20 @@ export function ColorPickerShowcase() {
         <ShowcaseDemoFromFile Demo={ColorPickerBasicDemo} source={colorPickerBasicSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection title="Размеры" description="size: small, base, mid.">
+        <ShowcaseDemoFromFile Demo={ColorPickerSizesDemo} source={colorPickerSizesSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="ColorSlider" description="Отдельные слайдеры Hue и Saturation.">
         <ShowcaseDemoFromFile align="stretch" Demo={ColorSlidersDemo} source={colorSlidersSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянный trigger и панель.">
         <ShowcaseDemoFromFile Demo={ColorPickerGlossDemo} source={colorPickerGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
+        <ShowcaseDemoFromFile Demo={ColorPickerSidesDemo} source={colorPickerSidesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

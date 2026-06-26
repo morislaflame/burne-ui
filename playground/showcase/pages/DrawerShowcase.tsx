@@ -18,7 +18,7 @@ export function DrawerShowcase() {
       importPath='import { Drawer } from "@/components/core/Drawer";'
       tags={["core", "overlay"]}
     >
-      <ShowcaseSection title="Размещение" description="placement: right и left, size: default и mid.">
+      <ShowcaseSection title="Размещение" description="placement: left, right, top, bottom.">
         <ShowcaseDemoFromFile Demo={DrawerPlacementDemo} source={drawerPlacementSource} />
       </ShowcaseSection>
 

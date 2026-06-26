@@ -1,0 +1,23 @@
+import { IoGridOutline, IoListOutline } from "react-icons/io5";
+
+import { ToggleButtonGroup } from "@/components/composite/ToggleButtonGroup";
+import { ToggleButton } from "@/components/core/ToggleButton";
+
+const SIZES = ["small", "base", "mid", "large"] as const;
+
+export function ToggleButtonGroupSizesDemo() {
+  return (
+    <div className="flex flex-col gap-mid">
+      {SIZES.map((size) => (
+        <ToggleButtonGroup key={size} type="single" size={size} defaultValue="list" aria-label={`Size ${size}`}>
+          <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
+            List
+          </ToggleButton>
+          <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
+            Grid
+          </ToggleButton>
+        </ToggleButtonGroup>
+      ))}
+    </div>
+  );
+}

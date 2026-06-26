@@ -12,6 +12,8 @@ import { DisclosureSettingsGroupDemo } from "../demos/disclosure/DisclosureSetti
 import disclosureSettingsGroupSource from "../demos/disclosure/DisclosureSettingsGroup.demo.tsx?raw";
 import { DisclosureSingleDemo } from "../demos/disclosure/DisclosureSingle.demo";
 import disclosureSingleSource from "../demos/disclosure/DisclosureSingle.demo.tsx?raw";
+import { DisclosureSizesDemo } from "../demos/disclosure/DisclosureSizes.demo";
+import disclosureSizesSource from "../demos/disclosure/DisclosureSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
 
 export function DisclosureShowcase() {
@@ -24,6 +26,10 @@ export function DisclosureShowcase() {
     >
       <ShowcaseSection title="Одиночный" description="Один Disclosure без группы.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSingleDemo} source={disclosureSingleSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSizesDemo} source={disclosureSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Card group" description="DisclosureGroup variant card — общая карточка.">

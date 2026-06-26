@@ -433,6 +433,38 @@
       calc(-12px * var(--shadow-size)) rgb(0 0 0 / 0.24);
 
   /**
+   * Toast scrim — мягкая подложка за стеком уведомлений (градиент к прозрачности).
+   * --toast-scrim-size — множитель высоты и горизонтального выноса.
+   * --toast-scrim-density — множитель плотности color-mix (center / mid).
+   */
+  --toast-scrim-size: 1;
+  --toast-scrim-density: 1;
+  --toast-scrim-height: calc(300px * var(--toast-scrim-size));
+  --toast-scrim-inset-x: calc(80px * var(--toast-scrim-size));
+  --toast-scrim-offset-y: calc(24px * var(--toast-scrim-size));
+  --toast-scrim-center-mix: calc(55% * var(--toast-scrim-density));
+  --toast-scrim-mid-mix: calc(25% * var(--toast-scrim-density));
+  --toast-scrim-gradient-top: radial-gradient(
+    ellipse 90% 60% at 50% 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
+  );
+  --toast-scrim-gradient-bottom: radial-gradient(
+    ellipse 90% 60% at 50% 100%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
+  );
+  --toast-scrim-mask: linear-gradient(
+    to right,
+    transparent 0%,
+    black 18%,
+    black 82%,
+    transparent 100%
+  );
+
+  /**
    * GLOSS — универсальная система токенов стекла (тёмная тема / dark).
    * Базовый fill: --gloss-edge + color-mix(--gloss-tint-default) в glossPanel.css.
    */
@@ -460,8 +492,8 @@
   --gloss-outline-base: rgb(255 255 255 / 0.26);
 
   /* ── блик (только интерактив) ────────────────────────────────────────── */
-  --gloss-shine: rgb(255 255 255 / 0.05);
-  --gloss-shine-blur: clamp(2px, 0.5em, 12px);
+  --gloss-shine: rgba(255, 255, 255, 0.01);
+  /* --gloss-shine-blur: clamp(2px, 0.5em, 12px); */
 
   /* ── интерактив (press-inset для active) ─────────────────────────────── */
   --gloss-press-inset: rgb(0 0 0 / 0.22);
@@ -475,8 +507,26 @@
   --color-muted: #71717a;
   --color-primary: #18181b;
   --color-primary-foreground: #fafafa;
+
+  /**
+   * Переопределяем var()-зависимые токены на этом же элементе, иначе с :root
+   * унаследуется уже вычисленное значение тёмной темы (nested data-theme).
+   */
+  --color-focus-ring: var(--color-primary);
   --color-indicator: var(--color-primary);
   --color-indicator-foreground: var(--color-primary-foreground);
+
+  --color-primary-tint: color-mix(
+    in oklab,
+    var(--color-primary) 20%,
+    transparent
+  );
+  --color-primary-tint-strong: color-mix(
+    in oklab,
+    var(--color-primary) 25%,
+    transparent
+  );
+
   --color-danger: #dc2626;
   --color-danger-foreground: #ffffff;
   --color-success: #22c55e;
@@ -496,6 +546,11 @@
     var(--color-danger) 22%,
     white
   );
+  --color-danger-fill-hover: color-mix(
+    in oklab,
+    var(--color-danger) 90%,
+    black
+  );
   --color-surface-tint-success: color-mix(
     in oklab,
     var(--color-success) 14%,
@@ -505,6 +560,11 @@
     in oklab,
     var(--color-success) 22%,
     white
+  );
+  --color-success-fill-hover: color-mix(
+    in oklab,
+    var(--color-success) 90%,
+    black
   );
   --color-surface-tint-info: color-mix(
     in oklab,
@@ -516,6 +576,11 @@
     var(--color-info) 22%,
     white
   );
+  --color-info-fill-hover: color-mix(
+    in oklab,
+    var(--color-info) 90%,
+    black
+  );
   --color-surface-tint-warning: color-mix(
     in oklab,
     var(--color-warning) 14%,
@@ -525,6 +590,11 @@
     in oklab,
     var(--color-warning) 22%,
     white
+  );
+  --color-warning-fill-hover: color-mix(
+    in oklab,
+    var(--color-warning) 90%,
+    black
   );
 
   --color-primary-hover: color-mix(
@@ -579,6 +649,39 @@
     in oklab,
     var(--color-primary) 14%,
     transparent
+  );
+  --color-converge-ripple-danger: color-mix(
+    in oklab,
+    var(--color-danger-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-success: color-mix(
+    in oklab,
+    var(--color-success-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-info: color-mix(
+    in oklab,
+    var(--color-info-foreground) 38%,
+    transparent
+  );
+  --color-converge-ripple-warning: color-mix(
+    in oklab,
+    var(--color-warning-foreground) 38%,
+    transparent
+  );
+
+  --toast-scrim-gradient-top: radial-gradient(
+    ellipse 90% 60% at 50% 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
+  );
+  --toast-scrim-gradient-bottom: radial-gradient(
+    ellipse 90% 60% at 50% 100%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-center-mix), transparent) 0%,
+    color-mix(in srgb, var(--color-background) var(--toast-scrim-mid-mix), transparent) 50%,
+    transparent 100%
   );
 
   /* ── GLOSS светлая тема (light) ─────────────────────────────────────── */

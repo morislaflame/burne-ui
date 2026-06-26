@@ -1,5 +1,7 @@
 import { RadioGroupContactMethodDemo } from "../demos/radioGroup/RadioGroupContactMethod.demo";
 import radioGroupContactMethodSource from "../demos/radioGroup/RadioGroupContactMethod.demo.tsx?raw";
+import { RadioSizesDemo } from "../demos/radioGroup/RadioSizes.demo";
+import radioSizesSource from "../demos/radioGroup/RadioSizes.demo.tsx?raw";
 import { RadioGroupCustomIndicatorDemo } from "../demos/radioGroup/RadioGroupCustomIndicator.demo";
 import radioGroupCustomIndicatorSource from "../demos/radioGroup/RadioGroupCustomIndicator.demo.tsx?raw";
 import { RadioGroupGlossDemo } from "../demos/radioGroup/RadioGroupGloss.demo";
@@ -20,6 +22,10 @@ export function RadioGroupShowcase() {
     >
       <ShowcaseSection title="Способ связи" description="RadioGroup + Radio с Legend и List.">
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupContactMethodDemo} source={radioGroupContactMethodSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size на Radio: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={RadioSizesDemo} source={radioSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss на Radio — стеклянный индикатор.">

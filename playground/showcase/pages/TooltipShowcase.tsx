@@ -6,6 +6,10 @@ import { TooltipIconToolbarDemo } from "../demos/tooltip/TooltipIconToolbar.demo
 import tooltipIconToolbarSource from "../demos/tooltip/TooltipIconToolbar.demo.tsx?raw";
 import { TooltipShortcutGridDemo } from "../demos/tooltip/TooltipShortcutGrid.demo";
 import tooltipShortcutGridSource from "../demos/tooltip/TooltipShortcutGrid.demo.tsx?raw";
+import { TooltipSidesDemo } from "../demos/tooltip/TooltipSides.demo";
+import tooltipSidesSource from "../demos/tooltip/TooltipSides.demo.tsx?raw";
+import { TooltipSizesDemo } from "../demos/tooltip/TooltipSizes.demo";
+import tooltipSizesSource from "../demos/tooltip/TooltipSizes.demo.tsx?raw";
 import { TooltipVariantsDemo } from "../demos/tooltip/TooltipVariants.demo";
 import tooltipVariantsSource from "../demos/tooltip/TooltipVariants.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -18,12 +22,20 @@ export function TooltipShowcase() {
       importPath='import { Tooltip } from "@/components/core/Tooltip";'
       tags={["core", "overlay"]}
     >
-      <ShowcaseSection title="Варианты" description="Семантические variant и размеры для разных контекстов.">
+      <ShowcaseSection title="Варианты" description="Семантические variant для разных контекстов.">
         <ShowcaseDemoFromFile Demo={TooltipVariantsDemo} source={tooltipVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={TooltipSizesDemo} source={tooltipSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description='surface="gloss" — стеклянная подсказка с hover-lift.'>
         <ShowcaseDemoFromFile Demo={TooltipGlossDemo} source={tooltipGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
+        <ShowcaseDemoFromFile Demo={TooltipSidesDemo} source={tooltipSidesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

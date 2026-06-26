@@ -10,6 +10,8 @@ import { ExpandableShippingCompoundDemo } from "../demos/expandable/ExpandableSh
 import expandableShippingCompoundSource from "../demos/expandable/ExpandableShippingCompound.demo.tsx?raw";
 import { ExpandableSimpleApiDemo } from "../demos/expandable/ExpandableSimpleApi.demo";
 import expandableSimpleApiSource from "../demos/expandable/ExpandableSimpleApi.demo.tsx?raw";
+import { ExpandableSizesDemo } from "../demos/expandable/ExpandableSizes.demo";
+import expandableSizesSource from "../demos/expandable/ExpandableSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
 
 export function ExpandableShowcase() {
@@ -22,6 +24,10 @@ export function ExpandableShowcase() {
     >
       <ShowcaseSection title="Simple API" description="title, icon и description на корне.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableSimpleApiDemo} source={expandableSimpleApiSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableSizesDemo} source={expandableSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная панель с hover-lift.">

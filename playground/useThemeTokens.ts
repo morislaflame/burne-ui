@@ -79,8 +79,16 @@ function useThemeTokensState() {
     setState((prev) => ({ ...prev, shadowSize }));
   }, []);
 
+  const setToastScrimSize = useCallback((toastScrimSize: number) => {
+    setState((prev) => ({ ...prev, toastScrimSize }));
+  }, []);
+
+  const setToastScrimDensity = useCallback((toastScrimDensity: number) => {
+    setState((prev) => ({ ...prev, toastScrimDensity }));
+  }, []);
+
   const setMotionDuration = useCallback(
-    (key: "interactiveDuration" | "tooltipDuration" | "expandDuration", value: number) => {
+    (key: "interactiveDuration" | "tooltipDuration" | "expandDuration" | "progressFillDuration", value: number) => {
       setState((prev) => ({ ...prev, [key]: value }));
     },
     [],
@@ -97,7 +105,8 @@ function useThemeTokensState() {
         | "enableToastStack"
         | "enableAsyncButtonCrossfade"
         | "enableContentFade"
-        | "enableFeedbackExpand",
+        | "enableFeedbackExpand"
+        | "enableProgressFill",
       value: boolean,
     ) => {
       setState((prev) => ({ ...prev, [key]: value }));
@@ -156,6 +165,8 @@ function useThemeTokensState() {
     setFontFamilyMono,
     setShadowStrength,
     setShadowSize,
+    setToastScrimSize,
+    setToastScrimDensity,
     setMotionDuration,
     setAnimationFlag,
     setColor,

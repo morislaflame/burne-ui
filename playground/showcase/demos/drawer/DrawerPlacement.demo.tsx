@@ -1,64 +1,57 @@
 import { useState } from "react";
 
 import { Button } from "@/components/core/Button";
-import { Drawer } from "@/components/core/Drawer";
+import { Drawer, type DrawerPlacement } from "@/components/core/Drawer";
 import { Text } from "@/components/core/Text";
 
+const PLACEMENTS: DrawerPlacement[] = ["right", "left", "top", "bottom"];
+
 export function DrawerPlacementDemo() {
-  const [rightOpen, setRightOpen] = useState(false);
-  const [leftOpen, setLeftOpen] = useState(false);
+  const [open, setOpen] = useState<DrawerPlacement | null>(null);
 
   return (
     <>
       <div className="flex flex-wrap gap-small">
-        <Button variant="outline" onClick={() => setRightOpen(true)}>
-          Drawer (right)
-        </Button>
-        <Button variant="outline" onClick={() => setLeftOpen(true)}>
-          Drawer (left)
-        </Button>
+        {PLACEMENTS.map((placement) => (
+          <Button key={placement} variant="outline" onClick={() => setOpen(placement)}>
+            {placement}
+          </Button>
+        ))}
       </div>
 
-      <Drawer open={rightOpen} onOpenChange={setRightOpen} placement="right">
-        <Drawer.Header>
-          <Drawer.HeadingBlock>
-            <Drawer.Title>Настройки</Drawer.Title>
-            <Drawer.Description>Выдвижная панель справа.</Drawer.Description>
-          </Drawer.HeadingBlock>
-          <Drawer.Close />
-        </Drawer.Header>
-        <Drawer.Body>
-          <Text as="p" variant="small" className="text-muted">
-            Произвольный контент внутри drawer.
-          </Text>
-        </Drawer.Body>
-        <Drawer.Footer>
-          <Button variant="ghost" onClick={() => setRightOpen(false)}>
-            Отмена
-          </Button>
-          <Button onClick={() => setRightOpen(false)}>Сохранить</Button>
-        </Drawer.Footer>
-      </Drawer>
+      {PLACEMENTS.map((placement) => {
+        const isHorizontal = placement === "left" || placement === "right";
 
-      <Drawer open={leftOpen} onOpenChange={setLeftOpen} placement="left" size="mid">
-        <Drawer.Header>
-          <Drawer.HeadingBlock>
-            <Drawer.Title>Навигация</Drawer.Title>
-            <Drawer.Description>Drawer слева, size mid.</Drawer.Description>
-          </Drawer.HeadingBlock>
-          <Drawer.Close />
-        </Drawer.Header>
-        <Drawer.Body>
-          <div className="flex flex-col gap-small">
-            <Button variant="ghost" size="small">
-              Профиль
-            </Button>
-            <Button variant="ghost" size="small">
-              Настройки
-            </Button>
-          </div>
-        </Drawer.Body>
-      </Drawer>
+        return (
+          <Drawer
+            key={placement}
+            open={open === placement}
+            onOpenChange={(next) => !next && setOpen(null)}
+            placement={placement}
+            size={isHorizontal ? "mid" : "default"}
+          >
+            <Drawer.Header>
+              <Drawer.HeadingBlock>
+                <Drawer.Title>placement={placement}</Drawer.Title>
+                <Drawer.Description>
+                  {isHorizontal ? "Горизонтальная панель, size mid." : "Вертикальная панель, size default."}
+                </Drawer.Description>
+              </Drawer.HeadingBlock>
+              <Drawer.Close />
+            </Drawer.Header>
+            <Drawer.Body>
+              <Text as="p" variant="small" className="text-muted">
+                Контент drawer с placement &quot;{placement}&quot;.
+              </Text>
+            </Drawer.Body>
+            <Drawer.Footer>
+              <Button variant="ghost" onClick={() => setOpen(null)}>
+                Закрыть
+              </Button>
+            </Drawer.Footer>
+          </Drawer>
+        );
+      })}
     </>
   );
 }

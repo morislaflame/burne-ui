@@ -6,6 +6,8 @@ import { SliderOpacityStripDemo } from "../demos/slider/SliderOpacityStrip.demo"
 import sliderOpacityStripSource from "../demos/slider/SliderOpacityStrip.demo.tsx?raw";
 import { SliderPriceRangeDemo } from "../demos/slider/SliderPriceRange.demo";
 import sliderPriceRangeSource from "../demos/slider/SliderPriceRange.demo.tsx?raw";
+import { SliderSizesDemo } from "../demos/slider/SliderSizes.demo";
+import sliderSizesSource from "../demos/slider/SliderSizes.demo.tsx?raw";
 import { SliderThumbShapeDemo } from "../demos/slider/SliderThumbShape.demo";
 import sliderThumbShapeSource from "../demos/slider/SliderThumbShape.demo.tsx?raw";
 import { SliderVariantsDemo } from "../demos/slider/SliderVariants.demo";
@@ -26,6 +28,10 @@ export function SliderShowcase() {
     >
       <ShowcaseSection title="Одиночный" description="showValue и marks для шкалы с подписями.">
         <ShowcaseDemoFromFile align="center" Demo={SliderVolumeDemo} source={sliderVolumeSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={SliderSizesDemo} source={sliderSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Диапазон" description="range + formatValue для двух ползунков.">

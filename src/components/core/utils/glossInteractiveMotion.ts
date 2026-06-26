@@ -36,8 +36,8 @@ const GLOSS_DECOR: Record<
   { angle1: number; angle2: number; shineX: number; shineY: number }
 > = {
   rest: { angle1: -75, angle2: -45, shineX: 0, shineY: 50 },
-  hover: { angle1: -80, angle2: -45, shineX: 25, shineY: 50 },
-  press: { angle1: -75, angle2: -15, shineX: 50, shineY: 15 },
+  hover: { angle1: -80, angle2: -45, shineX: 10, shineY: 50 },
+  press: { angle1: -75, angle2: -15, shineX: 15, shineY: 15 },
 };
 
 /** Эталонный размер (≈ gloss-кнопка base) — масштабируем только travel hover/press. */

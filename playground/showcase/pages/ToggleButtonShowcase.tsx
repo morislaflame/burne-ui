@@ -4,6 +4,8 @@ import { ToggleButtonGlossDemo } from "../demos/toggle-button/ToggleButtonGloss.
 import toggleButtonGlossSource from "../demos/toggle-button/ToggleButtonGloss.demo.tsx?raw";
 import { ToggleButtonReactionBarDemo } from "../demos/toggle-button/ToggleButtonReactionBar.demo";
 import toggleButtonReactionBarSource from "../demos/toggle-button/ToggleButtonReactionBar.demo.tsx?raw";
+import { ToggleButtonSizesDemo } from "../demos/toggle-button/ToggleButtonSizes.demo";
+import toggleButtonSizesSource from "../demos/toggle-button/ToggleButtonSizes.demo.tsx?raw";
 import { ToggleButtonUncontrolledDemo } from "../demos/toggle-button/ToggleButtonUncontrolled.demo";
 import toggleButtonUncontrolledSource from "../demos/toggle-button/ToggleButtonUncontrolled.demo.tsx?raw";
 import { ToggleButtonVariantsDemo } from "../demos/toggle-button/ToggleButtonVariants.demo";
@@ -36,6 +38,10 @@ export function ToggleButtonShowcase() {
 
       <ShowcaseSection title="Варианты" description="variant: default, outline, ghost, gloss.">
         <ShowcaseDemoFromFile Demo={ToggleButtonVariantsDemo} source={toggleButtonVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={ToggleButtonSizesDemo} source={toggleButtonSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="Стеклянная поверхность в нажатом и покойном состоянии.">

@@ -21,7 +21,7 @@ import {
 } from "./buttonGroupContext";
 import type { ButtonGroupSegment } from "./buttonGroupSegment";
 import { buttonGroupTextSurfaceClasses } from "./buttonGroupSegment";
-import { controlTextFrameClass } from "@/components/core/utils/controlSizeLayout";
+import { buttonGroupTextFrameClass } from "./buttonGroupLayout";
 import { cn } from "@/utils/cn";
 
 function ButtonGroupSegmentProvider({
@@ -87,7 +87,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
         className={cn(
           buttonGroupTextSurfaceClasses(groupSegment),
           "inline-flex items-center",
-          controlTextFrameClass(buttonSize),
+          buttonGroupTextFrameClass(buttonSize),
           className,
         )}
       >

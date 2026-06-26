@@ -2,6 +2,8 @@ import { AccordionCheckoutFaqDemo } from "../demos/accordion/AccordionCheckoutFa
 import accordionCheckoutFaqSource from "../demos/accordion/AccordionCheckoutFaq.demo.tsx?raw";
 import { AccordionCompoundDemo } from "../demos/accordion/AccordionCompound.demo";
 import accordionCompoundSource from "../demos/accordion/AccordionCompound.demo.tsx?raw";
+import { AccordionSizesDemo } from "../demos/accordion/AccordionSizes.demo";
+import accordionSizesSource from "../demos/accordion/AccordionSizes.demo.tsx?raw";
 import { AccordionDocsSectionsDemo } from "../demos/accordion/AccordionDocsSections.demo";
 import accordionDocsSectionsSource from "../demos/accordion/AccordionDocsSections.demo.tsx?raw";
 import { AccordionReleaseNotesDemo } from "../demos/accordion/AccordionReleaseNotes.demo";
@@ -18,6 +20,10 @@ export function AccordionShowcase() {
     >
       <ShowcaseSection title="Compound" description="Item, Heading, Trigger, Message, Panel и Indicator.">
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionCompoundDemo} source={accordionCompoundSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={AccordionSizesDemo} source={accordionSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

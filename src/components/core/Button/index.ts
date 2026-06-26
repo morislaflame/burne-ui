@@ -7,3 +7,8 @@ export {
   type ButtonStatus,
 } from "./Button";
 export { buttonRippleTone } from "./buttonRippleTone";
+export {
+  buttonRootClass,
+  buttonSpinnerClass,
+  controlShellClass,
+} from "./buttonLayout";

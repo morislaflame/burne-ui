@@ -129,6 +129,18 @@ export interface MotionConfig {
 
   /** Async button success/error expand ring. @default true */
   enableFeedbackExpand: boolean;
+
+  /** Duration (ms) for ProgressBar fill when `value` changes. @default 600 */
+  progressFillDuration: number;
+
+  /**
+   * GSAP easing for ProgressBar fill animation.
+   * @default "power2.out"
+   */
+  progressFillEase: string;
+
+  /** Animate ProgressBar fill on value change. @default true */
+  enableProgressFill: boolean;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -161,6 +173,9 @@ const DEFAULTS: MotionConfig = {
   enableAsyncButtonCrossfade: true,
   enableContentFade: true,
   enableFeedbackExpand: true,
+  progressFillDuration: 600,
+  progressFillEase: "power2.out",
+  enableProgressFill: true,
 };
 
 // ─── Mutable config state ─────────────────────────────────────────────────────
@@ -244,5 +259,13 @@ export function motionContentFade() {
 export function motionFeedbackExpand() {
   return {
     duration: _config.feedbackExpandDuration / 1000,
+  } as const;
+}
+
+/** Плавное заполнение ProgressBar при изменении `value`. */
+export function motionProgressFill() {
+  return {
+    duration: _config.progressFillDuration / 1000,
+    ease: _config.progressFillEase,
   } as const;
 }

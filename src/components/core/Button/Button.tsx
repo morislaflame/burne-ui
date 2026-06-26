@@ -41,11 +41,8 @@ import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import {
-  buttonRootClass,
-  buttonSpinnerClass,
-  CONTROL_SIZE_LAYOUT,
-} from "@/components/core/utils/controlSizeLayout";
+import { buttonRootClass, buttonSpinnerClass } from "./buttonLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 
 import "../utils/glossInteractive.css";
 
@@ -162,6 +159,17 @@ const BUTTON_STATUS_FILL_TEXT: Record<Exclude<ButtonStatus, "default">, string> 
   success: "text-success-foreground",
   info: "text-info-foreground",
   warning: "text-warning-foreground",
+};
+
+/**
+ * Иконки в слоте должны масштабироваться по размеру кнопки,
+ * но произвольный контент (например Avatar) не должен ужиматься до icon-*.
+ */
+const BUTTON_ICON_SLOT_SVG_SIZE: Record<ButtonSize, string> = {
+  small: "[&_svg]:icon-small",
+  base: "[&_svg]:icon-base",
+  mid: "[&_svg]:icon-large",
+  large: "[&_svg]:icon-large",
 };
 
 const BUTTON_STATUS_OUTLINE_BORDER: Record<Exclude<ButtonStatus, "default">, string> = {
@@ -881,8 +889,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             {leftIcon != null ? (
               <span
                 className={cn(
-                  "inline-flex shrink-0 items-center justify-center [&_svg]:size-full",
-                  layout.icon,
+                  "inline-flex shrink-0 items-center justify-center",
+                  BUTTON_ICON_SLOT_SVG_SIZE[size],
                 )}
                 aria-hidden
               >

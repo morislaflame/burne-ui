@@ -29,7 +29,7 @@ export function ButtonGroupShowcase() {
         <ShowcaseDemoFromFile Demo={ButtonGroupButtonsOnlyDemo} source={buttonGroupButtonsOnlySource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="buttonSize на ButtonGroup задаёт высоту всех сегментов.">
+      <ShowcaseSection title="Размеры" description="buttonSize: small, base, mid, large — высота всех сегментов.">
         <ShowcaseDemoFromFile Demo={ButtonGroupSizesDemo} source={buttonGroupSizesSource} />
       </ShowcaseSection>
 

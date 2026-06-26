@@ -8,6 +8,8 @@ import { SwitchGlossDemo } from "../demos/switch/SwitchGloss.demo";
 import switchGlossSource from "../demos/switch/SwitchGloss.demo.tsx?raw";
 import { SwitchNotificationsDemo } from "../demos/switch/SwitchNotifications.demo";
 import switchNotificationsSource from "../demos/switch/SwitchNotifications.demo.tsx?raw";
+import { SwitchSizesDemo } from "../demos/switch/SwitchSizes.demo";
+import switchSizesSource from "../demos/switch/SwitchSizes.demo.tsx?raw";
 import { SwitchSettingsPanelDemo } from "../demos/switch/SwitchSettingsPanel.demo";
 import switchSettingsPanelSource from "../demos/switch/SwitchSettingsPanel.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -22,6 +24,10 @@ export function SwitchShowcase() {
     >
       <ShowcaseSection title="Базовый" description="Контролируемый переключатель с label.">
         <ShowcaseDemoFromFile Demo={SwitchNotificationsDemo} source={switchNotificationsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={SwitchSizesDemo} source={switchSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Disabled" description="Неактивный переключатель.">

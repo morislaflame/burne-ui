@@ -7,6 +7,7 @@
  * - `--size` — размеры контролов (иконки, индикаторы, min-width кнопок, max-w модалок).
  * - `--radius` — базовый радиус; ступени `rounded-*` через множители.
  * - `--shadow-size` — множитель blur/offset для `--shadow-sm|md|lg`.
+ * - `--toast-scrim-size` / `--toast-scrim-density` — размер и плотность подложки Toast.
  * - `--calendar-cell-gap` — зазор между ячейками календаря (0 при дефолтном `--space`).
  * - `--text-scale-*` — примитивная типографика; роли `text-base`, `text-large` — алиасы.
  */
@@ -128,5 +129,11 @@ export {
   SHADOW_CSS_VAR,
   shadowToken,
 } from "./shadows";
+export {
+  TOAST_SCRIM_CSS_VAR,
+  TOAST_SCRIM_DEFAULTS,
+  toastScrimToken,
+  type ToastScrimCssVar,
+} from "./toastScrim";
 
 export type TokensConfig = typeof tokensConfig;

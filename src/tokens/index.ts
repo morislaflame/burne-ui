@@ -6,6 +6,12 @@ export {
   SHADOW_CSS_VAR,
   shadowToken,
 } from "./shadows";
+export {
+  TOAST_SCRIM_CSS_VAR,
+  TOAST_SCRIM_DEFAULTS,
+  toastScrimToken,
+  type ToastScrimCssVar,
+} from "./toastScrim";
 
 /** Имена CSS-переменных для типобезопасного доступа и генераторов */
 export const designTokenNames = [
@@ -158,6 +164,8 @@ export const designTokenNames = [
   "--shadow-sm",
   "--shadow-md",
   "--shadow-lg",
+  "--toast-scrim-size",
+  "--toast-scrim-density",
 ] as const;
 
 export type DesignCssVar = (typeof designTokenNames)[number];

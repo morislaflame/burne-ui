@@ -1,5 +1,7 @@
 import { SearchInputBasicDemo } from "../demos/search-input/SearchInputBasic.demo";
 import searchInputBasicSource from "../demos/search-input/SearchInputBasic.demo.tsx?raw";
+import { SearchInputSizesDemo } from "../demos/search-input/SearchInputSizes.demo";
+import searchInputSizesSource from "../demos/search-input/SearchInputSizes.demo.tsx?raw";
 import { SearchInputCommandBarDemo } from "../demos/search-input/SearchInputCommandBar.demo";
 import searchInputCommandBarSource from "../demos/search-input/SearchInputCommandBar.demo.tsx?raw";
 import { SearchInputFilterResultsDemo } from "../demos/search-input/SearchInputFilterResults.demo";
@@ -22,6 +24,10 @@ export function SearchInputShowcase() {
     >
       <ShowcaseSection title="Поиск" description="Controlled через value и onValueChange.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputBasicDemo} source={searchInputBasicSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={SearchInputSizesDemo} source={searchInputSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Результат" description="Текущее значение поля поиска.">

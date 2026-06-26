@@ -347,6 +347,8 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
     setFontFamilyMono,
     setShadowStrength,
     setShadowSize,
+    setToastScrimSize,
+    setToastScrimDensity,
     setMotionDuration,
     setAnimationFlag,
     setColor,
@@ -574,6 +576,15 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           unit="ms"
           onChange={(v) => setMotionDuration("expandDuration", v)}
         />
+        <ScaleControl
+          label="progressFillDuration"
+          value={state.progressFillDuration}
+          min={120}
+          max={1200}
+          step={10}
+          unit="ms"
+          onChange={(v) => setMotionDuration("progressFillDuration", v)}
+        />
         <Button
           type="button"
           size="small"
@@ -583,6 +594,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             setMotionDuration("interactiveDuration", SCALE_DEFAULTS.interactiveDuration);
             setMotionDuration("tooltipDuration", SCALE_DEFAULTS.tooltipDuration);
             setMotionDuration("expandDuration", SCALE_DEFAULTS.expandDuration);
+            setMotionDuration("progressFillDuration", SCALE_DEFAULTS.progressFillDuration);
           }}
         >
           Motion по умолчанию
@@ -611,6 +623,24 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           unit="×"
           onChange={setShadowSize}
         />
+        <ScaleControl
+          label="--toast-scrim-size (размер подложки Toast)"
+          value={state.toastScrimSize}
+          min={0.5}
+          max={2}
+          step={0.05}
+          unit="×"
+          onChange={setToastScrimSize}
+        />
+        <ScaleControl
+          label="--toast-scrim-density (плотность подложки Toast)"
+          value={state.toastScrimDensity}
+          min={0}
+          max={2}
+          step={0.05}
+          unit="×"
+          onChange={setToastScrimDensity}
+        />
         <div className="flex gap-small">
           {(["sm", "md", "lg"] as const).map((level) => (
             <div
@@ -632,6 +662,8 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           onClick={() => {
             setShadowStrength(SCALE_DEFAULTS.shadowStrength);
             setShadowSize(SCALE_DEFAULTS.shadowSize);
+            setToastScrimSize(SCALE_DEFAULTS.toastScrimSize);
+            setToastScrimDensity(SCALE_DEFAULTS.toastScrimDensity);
           }}
         >
           Тени по умолчанию
@@ -653,7 +685,8 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
               state.enableToastStack &&
               state.enableAsyncButtonCrossfade &&
               state.enableContentFade &&
-              state.enableFeedbackExpand
+              state.enableFeedbackExpand &&
+              state.enableProgressFill
             }
             onChange={(e) => {
               const checked = e.target.checked;
@@ -666,6 +699,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
               setAnimationFlag("enableAsyncButtonCrossfade", checked);
               setAnimationFlag("enableContentFade", checked);
               setAnimationFlag("enableFeedbackExpand", checked);
+              setAnimationFlag("enableProgressFill", checked);
             }}
             label="Все анимации включены"
           />
@@ -714,6 +748,11 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             checked={state.enableFeedbackExpand}
             onChange={(e) => setAnimationFlag("enableFeedbackExpand", e.target.checked)}
             label="Button feedback ring"
+          />
+          <Switch
+            checked={state.enableProgressFill}
+            onChange={(e) => setAnimationFlag("enableProgressFill", e.target.checked)}
+            label="ProgressBar fill (плавное заполнение)"
           />
         </div>
       </div>

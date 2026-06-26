@@ -10,6 +10,8 @@ import { InputStatusesDemo } from "../demos/input/InputStatuses.demo";
 import inputStatusesSource from "../demos/input/InputStatuses.demo.tsx?raw";
 import { InputUrlAffixesDemo } from "../demos/input/InputUrlAffixes.demo";
 import inputUrlAffixesSource from "../demos/input/InputUrlAffixes.demo.tsx?raw";
+import { InputSizesDemo } from "../demos/input/InputSizes.demo";
+import inputSizesSource from "../demos/input/InputSizes.demo.tsx?raw";
 import { InputVariantsDemo } from "../demos/input/InputVariants.demo";
 import inputVariantsSource from "../demos/input/InputVariants.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -24,6 +26,10 @@ export function InputShowcase() {
     >
       <ShowcaseSection title="Варианты" description="default и variant outline — альтернативные оболочки поля.">
         <ShowcaseDemoFromFile align="center" Demo={InputVariantsDemo} source={inputVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="center" Demo={InputSizesDemo} source={inputSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Статусы" description="status меняет цвет обводки и текста ошибки.">
