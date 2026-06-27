@@ -17,10 +17,16 @@ export function OptionListItemLabel({ className, children, ...rest }: OptionList
   const ctx = useOptionListItemContext("ItemLabel");
   return (
     <span
+      ref={(node) => {
+        if (ctx.enableLabelMotion && ctx.labelMotionRef) {
+          ctx.labelMotionRef.current = node;
+        }
+      }}
       className={cn(
         "inline-flex min-w-0 items-center",
         optionListItemLabelCellClass(ctx.showIndicatorSlot),
         ctx.hasHint && "min-w-0",
+        ctx.enableLabelMotion && "origin-center will-change-transform",
         className,
       )}
       {...rest}

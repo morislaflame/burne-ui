@@ -1,5 +1,7 @@
 import { ButtonGroupButtonsOnlyDemo } from "../demos/button-group/ButtonGroupButtonsOnly.demo";
 import buttonGroupButtonsOnlySource from "../demos/button-group/ButtonGroupButtonsOnly.demo.tsx?raw";
+import { ButtonGroupGlossDemo } from "../demos/button-group/ButtonGroupGloss.demo";
+import buttonGroupGlossSource from "../demos/button-group/ButtonGroupGloss.demo.tsx?raw";
 import { ButtonGroupHorizontalDemo } from "../demos/button-group/ButtonGroupHorizontal.demo";
 import buttonGroupHorizontalSource from "../demos/button-group/ButtonGroupHorizontal.demo.tsx?raw";
 import { ButtonGroupPricingTierDemo } from "../demos/button-group/ButtonGroupPricingTier.demo";
@@ -31,6 +33,10 @@ export function ButtonGroupShowcase() {
 
       <ShowcaseSection title="Размеры" description="buttonSize: small, base, mid, large — высота всех сегментов.">
         <ShowcaseDemoFromFile Demo={ButtonGroupSizesDemo} source={buttonGroupSizesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — общая стеклянная поверхность группы.">
+        <ShowcaseDemoFromFile Demo={ButtonGroupGlossDemo} source={buttonGroupGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

@@ -1,5 +1,7 @@
 import { ToggleButtonGroupEditorBarDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupEditorBar.demo";
 import toggleButtonGroupEditorBarSource from "../demos/toggleButtonGroup/ToggleButtonGroupEditorBar.demo.tsx?raw";
+import { ToggleButtonGroupGlossDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupGloss.demo";
+import toggleButtonGroupGlossSource from "../demos/toggleButtonGroup/ToggleButtonGroupGloss.demo.tsx?raw";
 import { ToggleButtonGroupMultipleDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupMultiple.demo";
 import toggleButtonGroupMultipleSource from "../demos/toggleButtonGroup/ToggleButtonGroupMultiple.demo.tsx?raw";
 import { ToggleButtonGroupSingleDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupSingle.demo";
@@ -30,6 +32,10 @@ export function ToggleButtonGroupShowcase() {
 
       <ShowcaseSection title="Множественный выбор" description="type=&quot;multiple&quot; — форматирование текста.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupMultipleDemo} source={toggleButtonGroupMultipleSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная группа переключателей.">
+        <ShowcaseDemoFromFile Demo={ToggleButtonGroupGlossDemo} source={toggleButtonGroupGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

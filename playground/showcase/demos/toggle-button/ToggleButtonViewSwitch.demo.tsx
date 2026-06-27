@@ -14,7 +14,6 @@ export function ToggleButtonViewSwitchDemo() {
         variant="ghost"
         size="small"
         aria-label="List"
-        className={view === "list" ? "bg-surface shadow-token-sm" : ""}
       >
         <IoListOutline aria-hidden />
       </ToggleButton>
@@ -24,7 +23,6 @@ export function ToggleButtonViewSwitchDemo() {
         variant="ghost"
         size="small"
         aria-label="Grid"
-        className={view === "grid" ? "bg-surface shadow-token-sm" : ""}
       >
         <IoGridOutline aria-hidden />
       </ToggleButton>

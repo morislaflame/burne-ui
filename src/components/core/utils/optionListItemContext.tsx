@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, type ReactNode, type RefObject } from "react";
 
 export type OptionListItemContextValue = {
   showIndicatorSlot: boolean;
@@ -8,6 +8,8 @@ export type OptionListItemContextValue = {
   indicatorMode: "radio" | "multi";
   disabled: boolean;
   mutedHint: boolean;
+  enableLabelMotion?: boolean;
+  labelMotionRef?: RefObject<HTMLElement | null>;
 };
 
 const OptionListItemContext = createContext<OptionListItemContextValue | null>(null);

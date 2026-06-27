@@ -15,7 +15,7 @@ export function ListBoxPermissionsDemo() {
   const [selected, setSelected] = useState<string[]>(["read", "write"]);
 
   return (
-    <Surface variant="secondary" padding="plus" className="w-full max-w-sm">
+    <Surface variant="secondary" padding="plus" className="w-full max-w-sm flex flex-col gap-mid p-mid">
       <Text as="p" variant="small" className="mb-mid font-medium">
         Права доступа
       </Text>

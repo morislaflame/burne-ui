@@ -606,6 +606,9 @@ function ToastItemWrapper({
   useLayoutEffect(() => {
     const el = cardRef.current;
     if (!el) return;
+    // Сразу фиксируем начальную высоту, чтобы новый тост не обрезался
+    // до первого срабатывания ResizeObserver (особенно в стек-сценариях undo).
+    onHeightChange(entry.id, el.offsetHeight);
     const ro = new ResizeObserver(() => {
       onHeightChange(entry.id, el.offsetHeight);
     });
@@ -720,6 +723,9 @@ function ToastViewport({
   const [heights, setHeights] = useState<Map<string, number>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
+  // Keeps the last measured container height so we never collapse to 0 when a
+  // new front toast hasn't been measured yet (e.g. dismiss + show in one tick).
+  const prevContainerHRef = useRef(0);
 
   const onHeightChange = useCallback((id: string, h: number) => {
     setHeights((prev) => {
@@ -732,7 +738,11 @@ function ToastViewport({
   // Container height = front toast height + peek offsets for visible extras
   const frontHeight = (sorted[0] && heights.get(sorted[0].id)) ?? 0;
   const extraPeek = Math.min(sorted.length - 1, MAX_VISIBLE - 1) * STACK_PEEK;
-  const containerH = frontHeight + extraPeek;
+  const rawContainerH = frontHeight + extraPeek;
+  // When the new front toast hasn't been measured yet (frontHeight=0), fall back
+  // to the last known good height to avoid a momentary collapse of the container.
+  const containerH = rawContainerH > 0 ? rawContainerH : prevContainerHRef.current;
+  if (rawContainerH > 0) prevContainerHRef.current = rawContainerH;
 
   useLayoutEffect(() => {
     const el = containerRef.current;
@@ -840,11 +850,12 @@ function ToastViewport({
 
 export function ToastProviderRoot({
   children,
-  defaultPlacement = "bottom-right",
+  defaultPlacement = "bottom-center",
   defaultVariant = "default",
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const [dismissingIds, setDismissingIds] = useState<Set<string>>(new Set());
+  const orderRef = useRef(0);
 
   const add = useCallback(
     (opts: AddToastOpts): string => {
@@ -858,7 +869,9 @@ export function ToastProviderRoot({
         action: opts.action,
         timeout: opts.timeout ?? DEFAULT_TIMEOUT_MS,
         placement: opts.placement ?? defaultPlacement,
-        createdAt: Date.now(),
+        // Monotonic order key: avoids Date.now() collisions when a new toast
+        // is created in the same tick as dismiss (undo scenario).
+        createdAt: ++orderRef.current,
         isLoading: opts.isLoading ?? false,
       };
       setToasts((prev) => [...prev, entry]);

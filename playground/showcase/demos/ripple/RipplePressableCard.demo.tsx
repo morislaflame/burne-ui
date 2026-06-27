@@ -14,13 +14,13 @@ export function RipplePressableCardDemo() {
       <Card pressable onPress={() => setDialogOpen(true)} className="max-w-xs">
         <Ripple color="neutral" />
         <div className="relative z-[1]">
-          <Card.Body className="px-large pb-0 pt-plus">
+          <Card.Body className="px-0 pb-0 pt-0">
             <div
-              className="h-24 w-full overflow-hidden rounded-small bg-cover bg-center"
+              className="h-24 w-full overflow-hidden bg-cover bg-center"
               style={{ backgroundImage: `url(${PIN_IMAGE4})` }}
             />
           </Card.Body>
-          <Card.Header className="pt-small">
+          <Card.Header className="pt-base gap-xsmall">
             <Card.Title>Pressable</Card.Title>
             <Card.Description>Нажми — откроется Dialog.</Card.Description>
           </Card.Header>

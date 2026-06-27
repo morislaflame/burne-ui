@@ -8,7 +8,7 @@ export function SurfaceDashboardWidgetDemo() {
     <Surface variant="secondary" padding="mid" shadow="md" className="flex w-full max-w-sm flex-col gap-mid">
       <div className="flex items-start justify-between gap-mid">
         <div className="flex flex-col gap-xsmall">
-          <Text as="p" variant="small" className="font-medium">
+          <Text as="p" variant="base" className="font-medium">
             Деплои
           </Text>
           <Text as="p" variant="tools" className="text-muted">

@@ -8,7 +8,7 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 import {
-  BORDER_COLOR_CSS_FORMULA,
+  BORDER_COLOR_CSS_FORMULA_BY_THEME,
   COLOR_LABELS,
   FONT_PRESETS,
   MONO_FONT_PRESETS,
@@ -780,7 +780,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
                   <ColorControl
                     key={key}
                     label={COLOR_LABELS[key]}
-                    value={BORDER_COLOR_CSS_FORMULA[state.theme]}
+                    value={BORDER_COLOR_CSS_FORMULA_BY_THEME[state.theme]}
                     previewBackground="var(--color-border)"
                     onChange={(value) => setColor(key, value)}
                   />

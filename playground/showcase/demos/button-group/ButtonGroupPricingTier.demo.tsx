@@ -11,7 +11,7 @@ export function ButtonGroupPricingTierDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-small">
       <Label>Pricing Tier</Label>
-      <ButtonGroup aria-label="Выбор тарифа" segmented buttonSize="small" className="rounded-mid bg-tertiary p-small">
+      <ButtonGroup aria-label="Выбор тарифа" segmented buttonSize="small" className="rounded-mid bg-surface p-small">
         <Button 
           variant={isSelected("free") ? "primary" : "outline"} 
           className="flex-1" 

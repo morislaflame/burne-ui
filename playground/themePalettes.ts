@@ -15,16 +15,20 @@ export const BOLD_PRIMARY_TINT_STRONG = "color-mix(in oklab, #4361ee 24%, var(--
 export const AUTUMN_PRIMARY_TINT = "color-mix(in oklab, var(--color-primary) 14%, var(--color-surface))";
 export const AUTUMN_PRIMARY_TINT_STRONG = "color-mix(in oklab, #fcbf49 22%, var(--color-surface))";
 
+/** Как в tokens/styles.css — border от foreground (dark и light). */
+export const BORDER_COLOR_CSS_FORMULA =
+  "color-mix(in oklab, var(--color-foreground) 12%, transparent)";
+
 // ─── Base palettes ───────────────────────────────────────────────────────────
 
 export const DARK_COLORS: ThemeColors = {
   background: "#0c0d10",
-  surface: "#15171c",
-  secondary: "#25282d",
+  surface: "#171717",
+  secondary: "#2D2D2D",
   secondaryForeground: "#f4f5f7",
-  tertiary: "#2e3239",
+  tertiary: "#454545",
   tertiaryForeground: "#f4f5f7",
-  border: "#2a2d36",
+  border: BORDER_COLOR_CSS_FORMULA,
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#ebebef",
@@ -47,7 +51,7 @@ export const LIGHT_COLORS: ThemeColors = {
   secondaryForeground: "#18181b",
   tertiary: "#e2e2e4",
   tertiaryForeground: "#18181b",
-  border: "#e4e4e7",
+  border: BORDER_COLOR_CSS_FORMULA,
   foreground: "#18181b",
   muted: "#71717a",
   primary: "#18181b",
@@ -97,7 +101,7 @@ export const OCEAN_DARK_COLORS: ThemeColors = {
   secondaryForeground: "#f4f5f7",
   tertiary: "#283442",
   tertiaryForeground: "#f4f5f7",
-  border: "#2a2d36",
+  border: BORDER_COLOR_CSS_FORMULA,
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#38bdf8",
@@ -120,7 +124,7 @@ export const VIOLET_DARK_COLORS: ThemeColors = {
   secondaryForeground: "#f4f5f7",
   tertiary: "#312d45",
   tertiaryForeground: "#f4f5f7",
-  border: "#2a2d36",
+  border: BORDER_COLOR_CSS_FORMULA,
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#a354f2",
@@ -143,7 +147,7 @@ export const EMERALD_DARK_COLORS: ThemeColors = {
   secondaryForeground: "#f4f5f7",
   tertiary: "#273d38",
   tertiaryForeground: "#f4f5f7",
-  border: "#2a2d36",
+  border: BORDER_COLOR_CSS_FORMULA,
   foreground: "#f4f5f7",
   muted: "#8b90a0",
   primary: "#34d399",

@@ -33,6 +33,15 @@ import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift, FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import {
+  buttonGroupRoundingClasses,
+  buttonGroupSegmentSurfaceClasses,
+} from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import {
+  useOptionalButtonGroupLayout,
+  useOptionalButtonGroupSegment,
+} from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { cn } from "@/utils/cn";
 
 import {
@@ -83,10 +92,21 @@ const CHEVRON_ICON: Record<InputSize, string> = {
   large: CONTROL_SIZE_LAYOUT.large.chevronIcon,
 };
 
-export type ComboBoxInputGroupProps = HTMLAttributes<HTMLDivElement>;
+export type ComboBoxInputGroupProps = HTMLAttributes<HTMLDivElement> & {
+  groupSegment?: ButtonGroupSegment;
+};
 
 export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupProps>(
-  function ComboBoxInputGroup({ className, children, onPointerEnter, onPointerLeave, ...rest }, ref) {
+  function ComboBoxInputGroup({
+    className,
+    children,
+    groupSegment: groupSegmentProp,
+    onPointerEnter,
+    onPointerLeave,
+    ...rest
+  }, ref) {
+    const layoutCtx = useOptionalButtonGroupLayout();
+    const groupCtx = useOptionalButtonGroupSegment();
     const ctx = useComboBoxContext();
     const {
       open,
@@ -105,6 +125,9 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
       status === "danger" || status === "success" || status === "warning";
 
     const isGloss = variant === "gloss";
+    const groupSegment = layoutCtx?.segmented
+      ? undefined
+      : (groupSegmentProp ?? groupCtx?.segment);
 
     const shellSurface = isGloss
       ? "gloss-control"
@@ -116,8 +139,8 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
               : cn(VARIANT_SHELL[variant], "border-token"),
           );
 
-    const shellHoverLift = useFieldShellHoverLift(anchorRef, !disabled && !isGloss);
-    const glossShellMotion = useGlossFieldShellMotion(anchorRef, !disabled && isGloss);
+    const shellHoverLift = useFieldShellHoverLift(anchorRef, !disabled && !isGloss && groupSegment == null);
+    const glossShellMotion = useGlossFieldShellMotion(anchorRef, !disabled && isGloss && groupSegment == null);
 
     const setAnchorRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -140,7 +163,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         setOpen(true);
         return;
       }
-      const squeeze = isGloss
+      const squeeze = isGloss && groupSegment == null
         ? animateGlossInteractivePressSqueeze(el, true)
         : animateInteractivePressSqueeze(el);
       void squeeze.then(() => {
@@ -148,7 +171,14 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         if (disabled) return;
         setOpen(true);
       });
-    }, [anchorRef, disabled, isGloss, setOpen]);
+    }, [anchorRef, disabled, groupSegment, isGloss, setOpen]);
+
+    const groupShellClass = groupSegment
+      ? cn(
+          buttonGroupRoundingClasses(groupSegment),
+          buttonGroupSegmentSurfaceClasses(groupSegment),
+        )
+      : "rounded-base";
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -172,25 +202,27 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         onPointerEnter={(e) => {
           onPointerEnter?.(e);
           if (e.defaultPrevented) return;
-          if (isGloss) glossShellMotion.onShellPointerEnter(e);
+          if (isGloss && groupSegment == null) glossShellMotion.onShellPointerEnter(e);
           else shellHoverLift.onShellPointerEnter(e);
         }}
         onPointerLeave={(e) => {
           onPointerLeave?.(e);
-          if (isGloss) glossShellMotion.onShellPointerLeave(e);
+          if (isGloss && groupSegment == null) glossShellMotion.onShellPointerLeave(e);
           else shellHoverLift.onShellPointerLeave(e);
         }}
         onFocusCapture={
-          isGloss && !disabled ? glossShellMotion.onShellFocusIn : undefined
+          isGloss && !disabled && groupSegment == null ? glossShellMotion.onShellFocusIn : undefined
         }
         onBlurCapture={
-          isGloss && !disabled ? glossShellMotion.onShellFocusOut : undefined
+          isGloss && !disabled && groupSegment == null ? glossShellMotion.onShellFocusOut : undefined
         }
         {...(disabled && isGloss ? { "data-gloss-disabled": "" } : {})}
         className={cn(
-          "relative z-0 flex w-full min-w-0 items-stretch border-1 text-left",
-          "overflow-hidden rounded-base motion-reduce:transition-none",
+          "relative z-0 flex min-w-0 items-stretch border-1 text-left",
+          groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
+          "overflow-hidden motion-reduce:transition-none",
           INPUT_SHELL_H[size],
+          groupShellClass,
           shellSurface,
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,

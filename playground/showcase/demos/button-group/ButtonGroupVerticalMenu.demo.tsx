@@ -6,7 +6,7 @@ import { Surface } from "@/components/core/Surface";
 
 export function ButtonGroupVerticalMenuDemo() {
   return (
-    <Surface variant="secondary" padding="small" className="w-full max-w-[10rem]">
+    <Surface padding="small" className="w-full max-w-[10rem]">
       <ButtonGroup aria-label="Actions with file" segmented buttonSize="small" orientation="vertical" className="w-full" >
         <Button
           variant="ghost"

@@ -13,6 +13,7 @@ import {
 } from "react";
 
 import { ToggleButton } from "@/components/core/ToggleButton";
+import "@/components/core/utils/glossInteractive.css";
 import { ButtonGroupSegmentContext } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { cn } from "@/utils/cn";
@@ -58,6 +59,20 @@ function flattenFragmentChildren(children: ReactNode): ReactElement[] {
 
 function isToggleButtonChild(child: ReactElement): boolean {
   return child.type === ToggleButton;
+}
+
+function ToggleButtonGroupSeparator({ orientation }: { orientation: ToggleButtonGroupOrientation }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "pointer-events-none shrink-0",
+        orientation === "horizontal"
+          ? "my-[var(--border-width)] self-stretch border-r-token"
+          : "mx-[var(--border-width)] self-stretch border-b-token",
+      )}
+    />
+  );
 }
 
 function collectToggleButtons(root: HTMLElement): HTMLButtonElement[] {
@@ -257,7 +272,13 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
           aria-orientation={orientation}
           aria-disabled={disabled || undefined}
           className={cn(
-            "inline-flex text-left",
+            "inline-flex text-left w-fit",
+            !separated && cn(
+              "relative rounded-base",
+              variant === "gloss"
+                ? "gloss-panel gloss-deep border-0 text-foreground"
+                : "after:pointer-events-none after:absolute after:inset-0 after:rounded-base after:border-token after:content-['']",
+            ),
             orientation === "horizontal"
               ? cn("flex-row flex-nowrap items-stretch", separated && "gap-xsmall")
               : cn("flex-col flex-nowrap items-stretch", separated && "gap-xsmall"),
@@ -288,13 +309,17 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
             const seg: ButtonGroupSegment = { orientation, position };
 
             return (
-              <ToggleButtonGroupSegmentProvider
-                key={child.key ?? `tbg-seg-${i}`}
-                segment={seg}
-                buttonSize={size}
-              >
-                {child}
-              </ToggleButtonGroupSegmentProvider>
+              <Fragment key={child.key ?? `tbg-seg-${i}`}>
+                <ToggleButtonGroupSegmentProvider
+                  segment={seg}
+                  buttonSize={size}
+                >
+                  {child}
+                </ToggleButtonGroupSegmentProvider>
+                {variant !== "gloss" && position !== "last" && position !== "only" ? (
+                  <ToggleButtonGroupSeparator orientation={orientation} />
+                ) : null}
+              </Fragment>
             );
           })}
         </div>

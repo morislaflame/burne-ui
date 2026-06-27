@@ -1,11 +1,12 @@
 import { createContext, useContext } from "react";
 
-import type { ButtonSize } from "@/components/core/Button";
+import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 import type { ButtonGroupSegment } from "./buttonGroupSegment";
 
 export type ButtonGroupSegmentContextValue = {
   segment: ButtonGroupSegment;
   buttonSize: ButtonSize;
+  variant?: ButtonVariant;
 };
 
 const ButtonGroupSegmentContext = createContext<ButtonGroupSegmentContextValue | null>(

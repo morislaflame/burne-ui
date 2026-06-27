@@ -6,6 +6,7 @@ import {
   useEffect,
   useId,
   useMemo,
+  useRef,
   useState,
   type HTMLAttributes,
   type ReactNode,
@@ -30,7 +31,12 @@ import {
   OptionListItemIndicatorShell,
   OptionListItemLabel,
 } from "@/components/core/utils/optionListItemParts";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import {
+  animateInteractivePressSqueeze,
+  prefersReducedInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
 import {
   useMergedGlossPanelRef,
 } from "@/components/core/utils/glossInteractiveMotion";
@@ -292,6 +298,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
     hint,
     icon,
     onClick,
+    onPointerDown,
     onPointerEnter,
     ...rest
   },
@@ -312,15 +319,33 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
   const isSelected = selected.has(value);
   const isActive = activeValue === value;
   const optionId = `${listId}-opt-${value}`;
+  const labelMotionRef = useRef<HTMLElement>(null);
+  const reduceMotion = prefersReducedInteractiveHoverLift();
 
   const parts = partitionOptionListItemChildren(children);
   const hasCompoundIndicator = parts.indicator != null;
   const hasHint = parts.hint != null || hint != null;
   const hasIcon = parts.icon != null || icon != null;
   const isCompound = parts.label != null || parts.hint != null || parts.icon != null;
+  const hasLabel = label != null || parts.label != null;
+  const enableLabelMotion = !disabled && hasLabel;
   const showIndicatorSlot = isCompound
     ? showIndicator && hasCompoundIndicator
     : showIndicator;
+
+  useEffect(() => {
+    const el = labelMotionRef.current;
+    return () => {
+      if (el) killMotion(el);
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = labelMotionRef.current;
+    if (!el || !disabled) return;
+    killMotion(el);
+    el.style.transform = "";
+  }, [disabled]);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -340,6 +365,18 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
     [disabled, onPointerEnter, setActiveValue, value],
   );
 
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLButtonElement>) => {
+      onPointerDown?.(e);
+      if (e.defaultPrevented || !enableLabelMotion) return;
+      if (reduceMotion) return;
+      const el = labelMotionRef.current;
+      if (!el) return;
+      void animateInteractivePressSqueeze(el);
+    },
+    [enableLabelMotion, onPointerDown, reduceMotion],
+  );
+
   const itemCtx = {
     showIndicatorSlot,
     hasHint,
@@ -348,6 +385,8 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
     indicatorMode,
     disabled,
     mutedHint: disabled,
+    enableLabelMotion,
+    labelMotionRef,
   };
 
   const itemBody = isCompound ? (
@@ -382,6 +421,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(funct
           className,
         )}
         onClick={handleClick}
+        onPointerDown={handlePointerDown}
         onPointerEnter={handleEnter}
         {...rest}
       >

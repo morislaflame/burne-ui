@@ -159,7 +159,7 @@
   --color-primary-hover: color-mix(
     in oklab,
     var(--color-primary) 80%,
-    transparent
+    var(--color-surface)
   );
 
   /**
@@ -169,7 +169,7 @@
   --color-default-hover: color-mix(
     in oklab,
     var(--color-foreground) 8%,
-    transparent
+    var(--color-surface)
   );
 
   /**
@@ -600,18 +600,18 @@
   --color-primary-hover: color-mix(
     in oklab,
     var(--color-primary) 90%,
-    transparent
+    var(--color-surface)
   );
 
   --color-default-hover: color-mix(
     in oklab,
-    var(--color-foreground) 4%,
-    transparent
+    var(--color-foreground) 8%,
+    var(--color-surface)
   );
 
   --color-secondary: color-mix(
     in oklab,
-    var(--color-foreground) 8%,
+    var(--color-foreground) 12%,
     var(--color-surface)
   );
 

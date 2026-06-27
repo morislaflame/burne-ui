@@ -34,8 +34,8 @@ import { getMotionConfig, motionFeedbackExpand, motionInteractive } from "@/comp
 import { Ripple } from "@/components/core/Ripple";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import {
-  buttonGroupOverlapBorderClasses,
   buttonGroupRoundingClasses,
+  buttonGroupSegmentSurfaceClasses,
 } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { Text, type TextVariant } from "@/components/core/Text";
 import { colorToken } from "@/tokens";
@@ -88,7 +88,7 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
     loaderText: "text-foreground",
   },
   secondary: {
-    root: "bg-secondary text-secondary-foreground border border-transparent",
+    root: "bg-secondary text-secondary-foreground border border-token",
     loaderText: "text-secondary-foreground",
   },
   ghost: {
@@ -483,7 +483,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
     {
       className = "",
-      variant = "default",
+      variant: variantProp,
       status = "default",
       size: sizeProp,
       type = "button",
@@ -513,9 +513,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
     const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
+    const variant = variantProp ?? groupCtx?.variant ?? "default";
     const userDisabled = Boolean(disabledProp);
     const isGloss = variant === "gloss";
     const btnRef = useRef<HTMLButtonElement>(null);
+    const contentMotionRef = useRef<HTMLSpanElement>(null);
     const labelRef = useRef<HTMLSpanElement>(null);
     const loaderRef = useRef<HTMLSpanElement>(null);
     const successRef = useRef<HTMLSpanElement>(null);
@@ -665,9 +667,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     useEffect(() => {
       const el = btnRef.current;
-      if (!blocked || !el) return;
+      const content = contentMotionRef.current;
+      if (!blocked || (!el && !content)) return;
       hoverPointerInsideRef.current = false;
-      killMotion(el);
+      if (el) killMotion(el);
+      if (content) {
+        killMotion(content);
+        content.style.transform = "";
+      }
     }, [blocked]);
 
     const btnShadow = useMemo(
@@ -684,16 +691,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         if (e.defaultPrevented) return;
         if (blocked) return;
         if (shouldSkipInteractiveHoverLift()) return;
-        const el = btnRef.current;
+        const el = groupSegment ? contentMotionRef.current : btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
-        if (isGloss) {
+        if (isGloss && !groupSegment) {
           animateGlossInteractiveHoverLift(el, true);
         } else {
-          animateInteractiveHoverLift(el, true, undefined, btnShadow);
+          animateInteractiveHoverLift(el, true, undefined, groupSegment ? undefined : btnShadow);
         }
       },
-      [blocked, btnShadow, isGloss, onPointerEnter],
+      [blocked, btnShadow, groupSegment, isGloss, onPointerEnter],
     );
 
     const handlePointerLeave = useCallback(
@@ -702,35 +709,35 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         hoverPointerInsideRef.current = false;
         if (blocked) return;
         if (shouldSkipInteractiveHoverLift()) return;
-        const el = btnRef.current;
+        const el = groupSegment ? contentMotionRef.current : btnRef.current;
         if (!el) return;
-        if (isGloss) {
+        if (isGloss && !groupSegment) {
           animateGlossInteractiveHoverLift(el, false);
         } else {
-          animateInteractiveHoverLift(el, false, undefined, btnShadow);
+          animateInteractiveHoverLift(el, false, undefined, groupSegment ? undefined : btnShadow);
         }
       },
-      [blocked, btnShadow, isGloss, onPointerLeave],
+      [blocked, btnShadow, groupSegment, isGloss, onPointerLeave],
     );
 
     function onAnimeDown() {
-      if (!animated || !btnRef.current || asyncState !== "idle") return;
+      const el = groupSegment ? contentMotionRef.current : btnRef.current;
+      if (!animated || !el || asyncState !== "idle") return;
       if (prefersReducedInteractiveHoverLift()) return;
-      const el = btnRef.current;
       const afterPress = () => {
-        const btn = btnRef.current;
-        if (!btn || btn.disabled || asyncStateRef.current !== "idle") return;
+        const btn = groupSegment ? contentMotionRef.current : btnRef.current;
+        if (!btn || userDisabled || asyncStateRef.current !== "idle") return;
         if (shouldSkipInteractiveHoverLift()) return;
         if (hoverPointerInsideRef.current) {
-          if (isGloss) {
+          if (isGloss && !groupSegment) {
             animateGlossInteractiveHoverLift(btn, true);
           } else {
-            animateInteractiveHoverLift(btn, true, undefined, btnShadow);
+            animateInteractiveHoverLift(btn, true, undefined, groupSegment ? undefined : btnShadow);
           }
         }
       };
 
-      if (isGloss) {
+      if (isGloss && !groupSegment) {
         void animateGlossInteractivePressSqueeze(
           el,
           hoverPointerInsideRef.current,
@@ -807,12 +814,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ? buttonGroupRoundingClasses(groupSegment)
       : "rounded-base";
 
-    const groupGlue = groupSegment
-      ? cn(
-          buttonGroupOverlapBorderClasses(groupSegment),
-          "z-0 hover:z-[2] focus-visible:z-[2] active:z-[2]",
-        )
-      : "";
+    const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
 
     const clipClass = groupSegment
       ? buttonGroupRoundingClasses(groupSegment)
@@ -827,7 +829,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={asyncState === "loading"}
         className={cn(
           baseInteractive,
-          groupGlue,
           focusOutlineClass,
           sizeRoot,
           isGloss
@@ -839,12 +840,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             : cn(
                 buttonVariantRootClass(variant, status),
                 statusClass,
-                SHADOW_LIFT_MOTION_CLASS,
+                !groupSegment && SHADOW_LIFT_MOTION_CLASS,
                 idleSurfaceMotion,
               ),
           userDisabled ? "opacity-50" : "",
           roundingClass,
           className,
+          groupGlue,
           "cursor-pointer",
         )}
         onPointerDown={(e) => {
@@ -881,7 +883,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           ))}
         </span>
 
-        <span className="relative z-[1] grid place-items-center">
+        <span
+          ref={contentMotionRef}
+          className={cn(
+            "relative z-[1] grid place-items-center",
+            groupSegment && "origin-center will-change-transform",
+          )}
+        >
           <span
             ref={bindLabelRef}
             className="col-start-1 row-start-1 inline-flex min-w-0 items-center justify-center gap-xsmall"

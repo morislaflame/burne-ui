@@ -40,8 +40,8 @@ export const Horizontal: Story = {
     return (
       <ButtonGroup aria-label="Действия с документом">
         <ButtonGroupText>Вид</ButtonGroupText>
-        <Button variant="outline" ripple>Список</Button>
-        <Button variant="outline" groupSegment={{ orientation: "horizontal", position: "middle" }}>Сетка</Button>
+        <Button variant="secondary" ripple>Список</Button>
+        <Button variant="primary" groupSegment={{ orientation: "horizontal", position: "middle" }}>Сетка</Button>
         <Dropdown>
           <Dropdown.Trigger asChild>
             <Button

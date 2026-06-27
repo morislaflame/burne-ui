@@ -1,13 +1,20 @@
 export type ThemeMode = "dark" | "light";
 
 import {
+  BORDER_COLOR_CSS_FORMULA,
   DARK_COLORS,
   LIGHT_COLORS,
   DARK_STATUS_FOREGROUNDS,
   LIGHT_STATUS_FOREGROUNDS,
 } from "./themePalettes";
 
-export { DARK_COLORS, LIGHT_COLORS, DARK_STATUS_FOREGROUNDS, LIGHT_STATUS_FOREGROUNDS };
+export {
+  BORDER_COLOR_CSS_FORMULA,
+  DARK_COLORS,
+  LIGHT_COLORS,
+  DARK_STATUS_FOREGROUNDS,
+  LIGHT_STATUS_FOREGROUNDS,
+};
 
 export type ThemeColorKey =
   | "background"
@@ -142,20 +149,18 @@ export const STATUS_FOREGROUND_LABELS: Record<ThemeStatusForegroundKey, string> 
   ]),
 ) as Record<ThemeStatusForegroundKey, string>;
 
-/** Hex в `colors.border` для UI; по умолчанию не пишется inline — только при `borderCustomized`. */
-export const DEFAULT_BORDER_HEX: Record<ThemeMode, string> = {
-  dark: DARK_COLORS.border,
-  light: LIGHT_COLORS.border,
+/** Формула border для UI (dark и light — одна строка, как в tokens/styles.css). */
+export const BORDER_COLOR_CSS_FORMULA_BY_THEME: Record<ThemeMode, string> = {
+  dark: BORDER_COLOR_CSS_FORMULA,
+  light: BORDER_COLOR_CSS_FORMULA,
 };
 
-/** Как в `src/tokens/styles.css` — когда `borderCustomized === false`. */
-export const BORDER_COLOR_CSS_FORMULA: Record<ThemeMode, string> = {
-  dark: "color-mix(in oklab, var(--color-foreground) 12%, transparent)",
-  light: "color-mix(in oklab, var(--color-foreground) 12%, var(--color-surface))",
-};
+export function isDefaultBorderColor(border: string): boolean {
+  return border === BORDER_COLOR_CSS_FORMULA;
+}
 
-export function isBorderColorCustomized(colors: ThemeColors, theme: ThemeMode): boolean {
-  return colors.border !== DEFAULT_BORDER_HEX[theme];
+export function isBorderColorCustomized(colors: ThemeColors, _theme?: ThemeMode): boolean {
+  return !isDefaultBorderColor(colors.border);
 }
 
 
@@ -443,7 +448,7 @@ export function exportThemeCss(state: ThemeTokenState): string {
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
     if (key === "border" && !state.borderCustomized) {
       lines.push(
-        `  /* ${cssVar}: ${BORDER_COLOR_CSS_FORMULA[state.theme]} — из tokens/styles.css */`,
+        `  /* ${cssVar}: ${BORDER_COLOR_CSS_FORMULA} — из tokens/styles.css */`,
       );
       continue;
     }

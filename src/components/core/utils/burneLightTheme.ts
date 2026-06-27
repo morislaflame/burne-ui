@@ -51,6 +51,11 @@ export function burneLightThemePortalProps(
     anchor?.closest(THEME_ATTR_SELECTOR) ?? document.documentElement;
   if (readBurneThemeFromElement(themedAncestor) !== "light") return {};
 
+  // Если светлая тема задана на <html>, портал в document.body и так наследует
+  // все CSS-переменные с корня. Повторный data-theme="light" на самом портале
+  // заново применит дефолтные light-токены и перебьёт inline-пресеты playground.
+  if (themedAncestor === document.documentElement) return {};
+
   return { "data-theme": "light" };
 }
 

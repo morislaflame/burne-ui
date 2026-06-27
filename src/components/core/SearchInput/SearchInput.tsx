@@ -34,6 +34,15 @@ import {
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import {
+  buttonGroupRoundingClasses,
+  buttonGroupSegmentSurfaceClasses,
+} from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import {
+  useOptionalButtonGroupLayout,
+  useOptionalButtonGroupSegment,
+} from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
@@ -155,6 +164,8 @@ export type SearchInputProps = Omit<
   onValueChange?: (value: string) => void;
   /** Converge-ripple на оболочке (реализация — `<Ripple />` внутри). @default false */
   ripple?: boolean;
+  /** Склейка с соседями в `ButtonGroup`. */
+  groupSegment?: ButtonGroupSegment;
   /**
    * Доступное имя поля и триггера свёрнутого состояния.
    * Рекомендуется задавать явно; без prop свёрнутый триггер — «Открыть поиск», развёрнутый input — placeholder.
@@ -167,7 +178,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     {
       className = "",
       size: sizeProp = "base",
-      variant = "default",
+      variant: variantProp,
       expandedWidth,
       defaultExpanded = false,
       expanded: expandedProp,
@@ -185,10 +196,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       "aria-label": ariaLabelProp,
       onValueChange,
       ripple = false,
+      groupSegment: groupSegmentProp,
       ...rest
     },
     ref,
   ) {
+    const layoutCtx = useOptionalButtonGroupLayout();
+    const groupCtx = useOptionalButtonGroupSegment();
+    const groupSegment = layoutCtx?.segmented
+      ? undefined
+      : (groupSegmentProp ?? groupCtx?.segment);
+    const variant: SearchInputVariant = variantProp ?? (groupCtx?.variant === "gloss" ? "gloss" : "default");
     const genId = useId();
     const inputId = idProp ?? genId;
     const isExpandedControlled = expandedProp !== undefined;
@@ -281,18 +299,18 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       [expanded],
     );
 
-    const standardShellHover = useSecondLevelShadow(rootRef, !blocked && !isGloss, {
+    const standardShellHover = useSecondLevelShadow(rootRef, !blocked && !isGloss && groupSegment == null, {
       resolveIdle: resolveSearchIdleShadow,
       idleSyncKey: expanded,
     });
-    const glossShellMotion = useGlossFieldShellMotion(rootRef, !blocked && isGloss);
+    const glossShellMotion = useGlossFieldShellMotion(rootRef, !blocked && isGloss && groupSegment == null);
 
     const bindRootRef = useCallback(
       (node: HTMLDivElement | null) => {
         rootRef.current = node;
-        if (!blocked && isGloss) glossShellMotion.bindShellRef(node);
+        if (!blocked && isGloss && groupSegment == null) glossShellMotion.bindShellRef(node);
       },
-      [blocked, glossShellMotion, isGloss],
+      [blocked, glossShellMotion, groupSegment, isGloss],
     );
 
     const shellHorizontalBorderPx = useCallback(
@@ -470,11 +488,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           squeezePromiseRef.current = Promise.resolve();
           return;
         }
-        squeezePromiseRef.current = isGloss
+        squeezePromiseRef.current = isGloss && groupSegment == null
           ? animateGlossInteractivePressSqueeze(shell)
           : animateInteractivePressSqueeze(shell).then(() => {});
       },
-      [blocked, expanded, isGloss],
+      [blocked, expanded, groupSegment, isGloss],
     );
 
     const handleRootClick = useCallback(
@@ -488,10 +506,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       [blocked, expanded, openFromInteraction],
     );
 
-    const handlePointerEnter = isGloss
+    const handlePointerEnter = isGloss && groupSegment == null
       ? glossShellMotion.onShellPointerEnter
       : standardShellHover.onPointerEnter;
-    const handlePointerLeave = isGloss
+    const handlePointerLeave = isGloss && groupSegment == null
       ? glossShellMotion.onShellPointerLeave
       : standardShellHover.onPointerLeave;
 
@@ -548,6 +566,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const collapseA11yLabel = ariaLabelProp ?? "Открыть поиск";
     const inputAriaLabel =
       ariaLabelProp ?? (placeholder ? String(placeholder) : "Поиск");
+    const groupShellClass = groupSegment
+      ? cn(
+          buttonGroupRoundingClasses(groupSegment),
+          buttonGroupSegmentSurfaceClasses(groupSegment),
+        )
+      : null;
 
     return (
       <div
@@ -564,13 +588,15 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         aria-disabled={blocked || undefined}
         aria-label={expanded ? undefined : collapseA11yLabel}
         data-search-expanded={expanded ? "" : undefined}
-        onFocusCapture={isGloss ? glossShellMotion.onShellFocusIn : undefined}
-        onBlurCapture={isGloss ? glossShellMotion.onShellFocusOut : undefined}
+        onFocusCapture={isGloss && groupSegment == null ? glossShellMotion.onShellFocusIn : undefined}
+        onBlurCapture={isGloss && groupSegment == null ? glossShellMotion.onShellFocusOut : undefined}
         className={cn(
           layout.shellH,
-          expanded
-            ? SEARCH_EXPANDED_ROUNDED_CLASS[sizeProp]
-            : cn("rounded-full", layout.shellWCollapsed),
+          groupSegment
+            ? groupShellClass
+            : expanded
+              ? SEARCH_EXPANDED_ROUNDED_CLASS[sizeProp]
+              : cn("rounded-full", layout.shellWCollapsed),
           "relative box-border inline-block overflow-hidden text-left",
           isGloss
             ? "gloss-control border-0"

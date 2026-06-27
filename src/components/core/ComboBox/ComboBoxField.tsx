@@ -5,6 +5,7 @@ import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
 import { Label } from "@/components/core/Label";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 import { cn } from "@/utils/cn";
@@ -70,13 +71,15 @@ export function ComboBoxRoot({
   value: valueProp,
   defaultValue,
   onValueChange,
-  variant = "default",
+  variant: variantProp,
   disabled = false,
   placeholder = "Выберите значение",
   menuMaxHeight = "min(24rem, 70vh)",
   ...rest
 }: ComboBoxRootProps) {
   const autoId = useId();
+  const buttonGroupCtx = useOptionalButtonGroupSegment();
+  const variant: InputVariant = variantProp ?? (buttonGroupCtx?.variant === "gloss" ? "gloss" : "default");
   const comboBoxId = idProp ?? `combobox-${autoId}`;
   const hintId = fieldHintId(comboBoxId);
   const errorId = fieldErrorId(comboBoxId);

@@ -28,8 +28,8 @@ import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Text } from "@/components/core/Text";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import {
-  buttonGroupOverlapBorderClasses,
   buttonGroupRoundingClasses,
+  buttonGroupSegmentSurfaceClasses,
 } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
@@ -390,8 +390,8 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             variant === "outline" ? "bg-transparent border-token" : cn(VARIANT_SHELL[variant], "border-token"),
           );
 
-    const standardShellHover = useFieldShellHoverLift(shellRef, !blocked && !isGloss);
-    const glossShellMotion = useGlossFieldShellMotion(shellRef, !blocked && isGloss);
+    const standardShellHover = useFieldShellHoverLift(shellRef, !blocked && !isGloss && groupSegment == null);
+    const glossShellMotion = useGlossFieldShellMotion(shellRef, !blocked && isGloss && groupSegment == null);
 
     const setShellRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -404,12 +404,12 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     const handleShellPointerDown = useCallback(
       (e: PointerEvent<HTMLDivElement>) => {
         onPointerDown?.(e);
-        if (e.defaultPrevented || blocked || isGloss) return;
+        if (e.defaultPrevented || blocked || isGloss || groupSegment != null) return;
         const shell = shellRef.current;
         if (!shell || prefersReducedInteractiveHoverLift()) return;
         void animateInteractivePressSqueeze(shell);
       },
-      [blocked, isGloss, onPointerDown],
+      [blocked, groupSegment, isGloss, onPointerDown],
     );
 
     const isFile = inputType === "file";
@@ -515,8 +515,8 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
       groupSegment != null
         ? cn(
             buttonGroupRoundingClasses(groupSegment),
-            buttonGroupOverlapBorderClasses(groupSegment),
-            "relative z-0 focus-within:z-[2]",
+            buttonGroupSegmentSurfaceClasses(groupSegment),
+            "relative focus-within:z-[2]",
           )
         : "rounded-base";
 

@@ -18,8 +18,8 @@ import { useOptionalToggleButtonGroupContext } from "./toggleButtonGroupContext"
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import {
-  buttonGroupOverlapBorderClasses,
   buttonGroupRoundingClasses,
+  buttonGroupSegmentSurfaceClasses,
   type ButtonGroupSegment,
 } from "@/components/composite/ButtonGroup/buttonGroupSegment";
 import { hoverVariant, SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
@@ -167,6 +167,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         : localPressed;
 
     const btnRef = useRef<HTMLButtonElement>(null);
+    const contentMotionRef = useRef<HTMLSpanElement>(null);
     const fillRef = useRef<HTMLSpanElement>(null);
     const hoverPointerInsideRef = useRef(false);
 
@@ -189,9 +190,14 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
 
     useEffect(() => {
       const el = btnRef.current;
-      if (!el || !disabled) return;
+      const content = contentMotionRef.current;
+      if ((!el && !content) || !disabled) return;
       hoverPointerInsideRef.current = false;
-      killMotion(el);
+      if (el) killMotion(el);
+      if (content) {
+        killMotion(content);
+        content.style.transform = "";
+      }
     }, [disabled]);
 
     const btnShadow = useMemo(
@@ -204,16 +210,16 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         onPointerEnter?.(e);
         if (e.defaultPrevented || disabled || !animated) return;
         if (shouldSkipInteractiveHoverLift()) return;
-        const el = btnRef.current;
+        const el = groupSegment ? contentMotionRef.current : btnRef.current;
         if (!el) return;
         hoverPointerInsideRef.current = true;
-        if (isGloss) {
+        if (isGloss && !groupSegment) {
           animateGlossInteractiveHoverLift(el, true);
         } else {
-          animateInteractiveHoverLift(el, true, undefined, btnShadow);
+          animateInteractiveHoverLift(el, true, undefined, groupSegment ? undefined : btnShadow);
         }
       },
-      [animated, btnShadow, disabled, isGloss, onPointerEnter],
+      [animated, btnShadow, disabled, groupSegment, isGloss, onPointerEnter],
     );
 
     const handlePointerLeave = useCallback(
@@ -221,15 +227,15 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         onPointerLeave?.(e);
         hoverPointerInsideRef.current = false;
         if (!animated || shouldSkipInteractiveHoverLift()) return;
-        const el = btnRef.current;
+        const el = groupSegment ? contentMotionRef.current : btnRef.current;
         if (!el || disabled) return;
-        if (isGloss) {
+        if (isGloss && !groupSegment) {
           animateGlossInteractiveHoverLift(el, false);
         } else {
-          animateInteractiveHoverLift(el, false, undefined, btnShadow);
+          animateInteractiveHoverLift(el, false, undefined, groupSegment ? undefined : btnShadow);
         }
       },
-      [animated, btnShadow, disabled, isGloss, onPointerLeave],
+      [animated, btnShadow, disabled, groupSegment, isGloss, onPointerLeave],
     );
 
     const handlePointerDown = useCallback(
@@ -237,24 +243,24 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         onPointerDown?.(e);
         if (e.defaultPrevented || disabled || !animated) return;
         if (prefersReducedInteractiveHoverLift()) return;
-        const el = btnRef.current;
+        const el = groupSegment ? contentMotionRef.current : btnRef.current;
         if (!el) return;
-        const squeeze = isGloss
+        const squeeze = isGloss && !groupSegment
           ? animateGlossInteractivePressSqueeze(el)
           : animateInteractivePressSqueeze(el);
         void squeeze.then(() => {
-          const btn = btnRef.current;
+          const btn = groupSegment ? contentMotionRef.current : btnRef.current;
           if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
           if (hoverPointerInsideRef.current) {
-            if (isGloss) {
+            if (isGloss && !groupSegment) {
               animateGlossInteractiveHoverLift(btn, true);
             } else {
-              animateInteractiveHoverLift(btn, true, undefined, btnShadow);
+              animateInteractiveHoverLift(btn, true, undefined, groupSegment ? undefined : btnShadow);
             }
           }
         });
       },
-      [animated, btnShadow, disabled, isGloss, onPointerDown],
+      [animated, btnShadow, disabled, groupSegment, isGloss, onPointerDown],
     );
 
     const handleClick = useCallback(
@@ -291,12 +297,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
     const layout = CONTROL_SIZE_LAYOUT[size];
     const vn = TOGGLE_BUTTON_VARIANT[variant];
     const roundingClass = groupSegment ? buttonGroupRoundingClasses(groupSegment) : "rounded-base";
-    const groupGlue = groupSegment
-      ? cn(
-          buttonGroupOverlapBorderClasses(groupSegment),
-          "z-0 hover:z-[2] focus-visible:z-[2] active:z-[2]",
-        )
-      : "";
+    const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
 
     return (
       <button
@@ -311,15 +312,17 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         className={cn(
           "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none text-foreground",
           "font-medium focus-ring",
-          isGloss ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS) : cn(SHADOW_LIFT_MOTION_CLASS),
+          isGloss
+            ? cn("gloss-btn", !groupSegment && GLOSS_INTERACTIVE_MOTION_CLASS)
+            : cn(!groupSegment && SHADOW_LIFT_MOTION_CLASS),
           !isGloss && !pressed && !disabled && hoverVariant(),
-          groupGlue,
           !isGloss && vn.idle,
           pressed && "bg-transparent",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           buttonRootClass(size, true),
           roundingClass,
           className,
+          groupGlue,
         )}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
@@ -339,7 +342,13 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
             roundingClass,
           )}
         />
-        <span className="relative z-[1] inline-flex min-w-0 items-center justify-center gap-xsmall">
+        <span
+          ref={contentMotionRef}
+          className={cn(
+            "relative z-[1] inline-flex min-w-0 items-center justify-center gap-xsmall",
+            groupSegment && "origin-center will-change-transform",
+          )}
+        >
           {leftIcon != null ? (
             <span
               className={cn(

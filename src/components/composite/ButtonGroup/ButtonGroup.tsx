@@ -10,9 +10,13 @@ import {
   type ReactNode,
 } from "react";
 
-import { Button, type ButtonSize } from "@/components/core/Button";
+import { Button, type ButtonSize, type ButtonVariant } from "@/components/core/Button";
+import { ComboBox } from "@/components/core/ComboBox";
+import { Dropdown } from "@/components/core/Dropdown";
 import { InputControl } from "@/components/core/Input/Input";
+import { SearchInput } from "@/components/core/SearchInput";
 import { Text, type TextVariant } from "@/components/core/Text";
+import "@/components/core/utils/glossInteractive.css";
 import {
   ButtonGroupLayoutContext,
   ButtonGroupSegmentContext,
@@ -27,15 +31,17 @@ import { cn } from "@/utils/cn";
 function ButtonGroupSegmentProvider({
   segment,
   buttonSize,
+  variant,
   children,
 }: {
   segment: ButtonGroupSegment;
   buttonSize: ButtonSize;
+  variant?: ButtonVariant;
   children: ReactNode;
 }) {
   const value = useMemo(
-    () => ({ segment, buttonSize }),
-    [buttonSize, segment],
+    () => ({ segment, buttonSize, variant }),
+    [buttonSize, segment, variant],
   );
   return (
     <ButtonGroupSegmentContext.Provider value={value}>{children}</ButtonGroupSegmentContext.Provider>
@@ -79,6 +85,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
+    const groupVariant = groupCtx?.variant;
 
     return (
       <span
@@ -86,6 +93,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
         {...rest}
         className={cn(
           buttonGroupTextSurfaceClasses(groupSegment),
+          groupVariant === "gloss" && "bg-transparent text-foreground",
           "inline-flex items-center",
           buttonGroupTextFrameClass(buttonSize),
           className,
@@ -106,8 +114,29 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
 
 ButtonGroupText.displayName = "ButtonGroupText";
 
+function ButtonGroupSeparator({ orientation }: { orientation: ButtonGroupOrientation }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "pointer-events-none shrink-0",
+        orientation === "horizontal"
+          ? "my-[var(--border-width)] self-stretch border-r-token"
+          : "mx-[var(--border-width)] self-stretch border-b-token",
+      )}
+    />
+  );
+}
+
 function isGroupSegmentSlot(child: ReactElement): boolean {
-  return child.type === Button || child.type === ButtonGroupText || child.type === InputControl;
+  return (
+    child.type === Button ||
+    child.type === ButtonGroupText ||
+    child.type === InputControl ||
+    child.type === ComboBox ||
+    child.type === SearchInput ||
+    child.type === Dropdown
+  );
 }
 
 export type ButtonGroupOrientation = "horizontal" | "vertical";
@@ -117,6 +146,8 @@ export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "ch
   /** Отдельные кнопки с зазором вместо склейки сегментов. */
   segmented?: boolean;
   buttonSize?: ButtonSize;
+  /** Дефолтный variant для кнопок внутри склеенной группы. */
+  variant?: ButtonVariant;
   children: ReactNode;
 };
 
@@ -127,6 +158,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function
     orientation = "horizontal",
     segmented = false,
     buttonSize = "base",
+    variant = "default",
     ...rest
   },
   ref,
@@ -143,7 +175,13 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function
         ref={ref}
         role="group"
         className={cn(
-          "inline-flex text-left",
+          "inline-flex text-left w-fit",
+          !segmented && cn(
+            "relative rounded-base",
+            variant === "gloss"
+              ? "gloss-panel gloss-deep border-0 text-foreground"
+              : "after:pointer-events-none after:absolute after:inset-0 after:rounded-base after:border-token after:content-['']",
+          ),
           orientation === "horizontal"
             ? cn("flex-row flex-nowrap items-stretch", segmented && "gap-xsmall")
             : cn("flex-col flex-nowrap items-stretch", segmented && "gap-xsmall"),
@@ -173,13 +211,18 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function
           const seg: ButtonGroupSegment = { orientation, position };
 
           return (
-            <ButtonGroupSegmentProvider
-              key={child.key ?? `bg-seg-${i}`}
-              segment={seg}
-              buttonSize={buttonSize}
-            >
-              {child}
-            </ButtonGroupSegmentProvider>
+            <Fragment key={child.key ?? `bg-seg-${i}`}>
+              <ButtonGroupSegmentProvider
+                segment={seg}
+                buttonSize={buttonSize}
+                variant={variant}
+              >
+                {child}
+              </ButtonGroupSegmentProvider>
+              {variant !== "gloss" && position !== "last" && position !== "only" ? (
+                <ButtonGroupSeparator orientation={orientation} />
+              ) : null}
+            </Fragment>
           );
         })}
       </div>
