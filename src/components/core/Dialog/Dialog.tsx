@@ -45,22 +45,12 @@ import { MODAL_BODY_SCROLL_CLASS, MODAL_CONTENT_CLASS } from "@/components/core/
 export type DialogVariant = "default" | "gloss";
 
 export type DialogProps = {
-  /** Управляемое открытие. */
   open: boolean;
-  /** Изменение открытия. */
   onOpenChange: (open: boolean) => void;
-  /** Контент модалки. */
   children?: ReactNode;
-  /** Доп. класс на панель (контент модалки). */
   className?: string;
-  /** Стиль панели. `gloss` — стеклянная поверхность. */
   variant?: DialogVariant;
-  /** Закрытие по клику на подложку (вне панели). Для `AlertDialog` обычно `false`. */
   dismissOnBackdrop?: boolean;
-  /**
-   * Якорь для наследования светлой темы с обёртки (`data-theme`).
-   * По умолчанию — `document.activeElement` в момент открытия.
-   */
   themeAnchor?: HTMLElement | null;
 };
 
@@ -143,7 +133,6 @@ export function DialogDescription({
   );
 }
 
-/** Заголовок и подзаголовок: колонка с токенным зазором (`gap-base`). */
 export function DialogHeadingBlock({
   className = "",
   ...rest
@@ -182,7 +171,6 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
   },
 );
 
-/** Область контента между шапкой и футером: вертикальный скролл здесь; хедер и футер остаются на месте (`shrink-0` + `min-h-0` у панели). */
 export function DialogBody({ className = "", ...rest }: DialogBodyProps) {
   return (
     <div
@@ -219,7 +207,6 @@ export const DialogRoot = function Dialog({
   const titleId = useId();
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
-  /** Пока true — портал остаётся в DOM (включая анимацию закрытия). */
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);

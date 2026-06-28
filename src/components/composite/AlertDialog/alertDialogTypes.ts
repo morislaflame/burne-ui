@@ -6,7 +6,6 @@ import type { CloseButtonProps } from "@/components/core/CloseButton";
 import type { AlertDialogSizePreset } from "./alertDialogSizePresets";
 import type { ButtonSize } from "@/components/core/Button";
 
-/** Ширина и типографика панели. */
 export type AlertDialogSize = "small" | "base" | "mid" | "large";
 
 export type AlertDialogProps = {
@@ -14,15 +13,12 @@ export type AlertDialogProps = {
   onOpenChange: (open: boolean) => void;
   children?: ReactNode;
   className?: string;
-  /** Как у `Alert`: default, outline, secondary, danger, success, info, warning. */
   status?: AlertStatus;
-  /** Поверхность панели: `gloss` — стеклянная панель. */
   variant?: "default" | "gloss";
-  /** По умолчанию `m`. */
   size?: AlertDialogSize;
   /**
-   * Якорь для наследования светлой темы с обёртки (`data-theme`).
-   * По умолчанию — `document.activeElement` в момент открытия.
+   * Anchor for inheriting the light theme from the wrapper (`data-theme`).
+   * By default — `document.activeElement` at the moment of opening.
    */
   themeAnchor?: HTMLElement | null;
 };
@@ -36,17 +32,11 @@ export type AlertDialogContextValue = {
   tone: AlertStatus;
   size: AlertDialogSize;
   sizePreset: AlertDialogSizePreset;
-  /** Размер кнопок по умолчанию в `AlertDialog.Footer` (см. `footerButtonSizeForAlertDialog`). */
   footerButtonSize: ButtonSize;
 };
 
 export type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
-  /**
-   * Для тона `default` иконки нет по умолчанию — передайте узел, если нужна.
-   * Для остальных тонов по умолчанию показывается иконка тона; `null` — скрыть.
-   */
   icon?: ReactNode | null;
-  /** Кнопка закрытия справа в шапке. По умолчанию `true`. */
   showClose?: boolean;
 };
 

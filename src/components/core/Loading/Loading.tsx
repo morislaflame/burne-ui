@@ -17,11 +17,8 @@ export type LoadingColor =
   | "warning";
 
 export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
-  /** Габариты индикатора. По умолчанию `base`. */
   size?: LoadingSize;
-  /** Цвет кольца. По умолчанию `primary`. */
   color?: LoadingColor;
-  /** Текст для screen readers. По умолчанию «Загрузка». */
   label?: string;
 };
 
@@ -55,14 +52,11 @@ const LOADING_COLOR: Record<LoadingColor, string> = {
   warning: "text-warning",
 };
 
-/**
- * Круговой индикатор загрузки: размеры как у спиннера в `Button`, цвета — основные токены темы.
- */
 export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loading(
   {
     size = "base",
     color = "primary",
-    label = "Загрузка",
+    label = "Loading",
     className = "",
     ...rest
   },

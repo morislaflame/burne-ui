@@ -1,6 +1,5 @@
 import { cn } from "@/utils/cn";
 
-/** Размер круглого индикатора — через `--selection-indicator-*` в теме. */
 export type SelectionIndicatorSize = "small" | "base" | "mid" | "large";
 
 export type SelectionIndicatorVariant = "base" | "secondary" | "outline" | "gloss";
@@ -35,7 +34,6 @@ const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
   large: "--selection-indicator-large",
 };
 
-/** SSR-fallback, если CSS-переменные ещё недоступны (совпадает с tokens/styles.css). */
 const INDICATOR_SSR_REM: Record<SelectionIndicatorSize, number> = {
   small: 1,
   base: 1.125,
@@ -43,10 +41,6 @@ const INDICATOR_SSR_REM: Record<SelectionIndicatorSize, number> = {
   large: 1.75,
 };
 
-/**
- * Диаметр индикатора в px до первого измерения DOM.
- * Нужен Switch/Slider: расчёт travel/thumb до layout (ResizeObserver).
- */
 export function selectionIndicatorFallbackPx(
   size: SelectionIndicatorSize,
   rootPx = 16,

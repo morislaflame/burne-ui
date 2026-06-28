@@ -57,6 +57,7 @@ export function ComboBoxShowcase() {
             передайте <code>variant=&quot;gloss&quot;</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

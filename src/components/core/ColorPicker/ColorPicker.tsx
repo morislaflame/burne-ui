@@ -24,7 +24,6 @@ import {
 import { ColorSliderTrack } from "./ColorSlider";
 import { ColorSwatch, type ColorSwatchSize } from "./ColorSwatch";
 
-// ─── types ───────────────────────────────────────────────────────────────────
 
 export type ColorPickerSize = "small" | "base" | "mid";
 
@@ -41,7 +40,6 @@ export type ColorPickerProps = {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   size?: ColorPickerSize;
-  /** Стеклянная панель popover (`gloss-deep`). */
   variant?: ColorPickerVariant;
   side?: "top" | "bottom" | "left" | "right";
   disabled?: boolean;
@@ -52,13 +50,10 @@ export type ColorPickerTriggerProps = Omit<HTMLAttributes<HTMLButtonElement>, "c
 };
 
 export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
-  /** Show alpha slider. Default false. */
   showAlpha?: boolean;
-  /** Preset color strings (hex). */
   presets?: string[];
 };
 
-// ─── context ──────────────────────────────────────────────────────────────────
 
 type ColorPickerCtx = {
   hsva: HSVA;
@@ -76,7 +71,6 @@ function useColorPickerContext(): ColorPickerCtx {
   return ctx;
 }
 
-// ─── sizes ────────────────────────────────────────────────────────────────────
 
 const PICKER_WIDTH: Record<ColorPickerSize, string> = {
   small: "w-52",
@@ -108,7 +102,6 @@ const SLIDER_SIZE_MAP: Record<ColorPickerSize, "small" | "base" | "mid"> = {
   mid:   "mid",
 };
 
-// ─── Root ────────────────────────────────────────────────────────────────────
 
 export function ColorPickerRoot({
   children,
@@ -167,7 +160,6 @@ export function ColorPickerRoot({
 
 ColorPickerRoot.displayName = "ColorPickerRoot";
 
-// ─── Trigger ─────────────────────────────────────────────────────────────────
 
 export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTriggerProps>(
   function ColorPickerTrigger({ swatchSize, className = "", ...rest }, ref) {
@@ -188,7 +180,6 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
 
 ColorPickerTrigger.displayName = "ColorPickerTrigger";
 
-// ─── 2D Saturation × Value area ──────────────────────────────────────────────
 
 function ColorPickerArea({ size }: { size: ColorPickerSize }) {
   const { hsva, setHsva } = useColorPickerContext();
@@ -246,14 +237,12 @@ function ColorPickerArea({ size }: { size: ColorPickerSize }) {
           width:           "14px",
           height:          "14px",
           backgroundColor: thumbColor,
-          // boxShadow:       "0 0 0 1px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.35)",
         }}
       />
     </div>
   );
 }
 
-// ─── Hex input ────────────────────────────────────────────────────────────────
 
 function ColorPickerHexInput() {
   const { hex, setHsva } = useColorPickerContext();
@@ -303,7 +292,6 @@ function ColorPickerHexInput() {
   );
 }
 
-// ─── Content ─────────────────────────────────────────────────────────────────
 
 export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
   function ColorPickerContent(
@@ -413,6 +401,5 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
 
 ColorPickerContent.displayName = "ColorPickerContent";
 
-// ─── compound export ──────────────────────────────────────────────────────────
 
 export { useColorPickerContext as useColorPicker };

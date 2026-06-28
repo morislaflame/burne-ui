@@ -20,7 +20,6 @@ import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { TABLE_ROW_TONE_SURFACE, type TableRowTone } from "./tableRowToneSurface";
 
-// ─── types ─────────────────────────────────────────────────────────────────
 
 export type SortDirection = "ascending" | "descending";
 export type SortDescriptor = { column: string; direction: SortDirection };
@@ -38,7 +37,6 @@ export type TableColumnRenderProps = {
 
 const TONED_ROW_DEFAULT_TONE: TableRowTone = "secondary";
 
-// ─── context ────────────────────────────────────────────────────────────────
 
 type TableVariantCtx = TableVariant;
 const TableVariantContext = createContext<TableVariantCtx>("default");
@@ -73,13 +71,11 @@ const TableRowContext = createContext<TableRowContextValue | null>(null);
 
 const useTableRow = () => useContext(TableRowContext);
 
-// ─── variant styles ─────────────────────────────────────────────────────────
 
 const ROOT_CLS: Record<TableVariant, string> = {
   default: "rounded-mid border-token bg-surface overflow-clip",
   secondary: "",
   toned: "overflow-visible bg-transparent",
-  /** Статичная gloss-оболочка: одна стеклянная «табличная» панель, строки — как у default. */
   gloss: "gloss-panel gloss-deep rounded-mid overflow-clip border-0",
 };
 
@@ -120,7 +116,6 @@ const TD_CLS: Record<TableVariant, string> = {
   gloss: "px-large py-plus",
 };
 
-// ─── prop types ─────────────────────────────────────────────────────────────
 
 export type TableProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TableVariant;
@@ -161,7 +156,6 @@ export type TableBodyProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "chil
 
 export type TableRowProps = Omit<HTMLAttributes<HTMLTableRowElement>, "id"> & {
   id?: string | number;
-  /** Семантический фон строки (как у `Alert`). В `variant="toned"` — отдельная «карточка» на строку. */
   tone?: TableRowTone;
 };
 
@@ -169,7 +163,6 @@ export type TableCellProps = TdHTMLAttributes<HTMLTableCellElement>;
 
 export type TableFooterProps = HTMLAttributes<HTMLDivElement>;
 
-// ─── Root ────────────────────────────────────────────────────────────────────
 
 export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
   { variant = "default", className = "", children, ...rest },
@@ -187,7 +180,6 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
   );
 });
 
-// ─── ScrollContainer ─────────────────────────────────────────────────────────
 
 export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
   function TableScrollContainer({ className = "", ...rest }, ref) {
@@ -201,7 +193,6 @@ export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContai
   },
 );
 
-// ─── Content (<table>) ───────────────────────────────────────────────────────
 
 export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(function TableContent(
   {
@@ -235,7 +226,6 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(func
         onSelectionChange(new Set([key]));
         return;
       }
-      // multiple
       if (selectedKeys === "all") {
         onSelectionChange(new Set([key]));
         return;
@@ -266,7 +256,6 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(func
   );
 });
 
-// ─── Header (<thead>) ────────────────────────────────────────────────────────
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
   function TableHeader({ columns, children, className = "", ...rest }, ref) {
@@ -285,7 +274,6 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
   },
 );
 
-// ─── Column (<th>) ───────────────────────────────────────────────────────────
 
 function TableSortChevron({ direction }: { direction: SortDirection | undefined }) {
   const chevronRef = useRef<HTMLSpanElement>(null);
@@ -368,7 +356,6 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
   },
 );
 
-// ─── Body (<tbody>) ──────────────────────────────────────────────────────────
 
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
   function TableBody({ items, children, renderEmptyState, className = "", ...rest }, ref) {
@@ -399,7 +386,6 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
   },
 );
 
-// ─── Row (<tr>) ──────────────────────────────────────────────────────────────
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
   function TableRow({ id, tone, children, className = "", onClick, ...rest }, ref) {
@@ -471,7 +457,6 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
   },
 );
 
-// ─── Cell (<td>) ─────────────────────────────────────────────────────────────
 
 export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
   function TableCell({ className = "", ...rest }, ref) {
@@ -502,7 +487,6 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
   },
 );
 
-// ─── Footer ──────────────────────────────────────────────────────────────────
 
 export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(
   function TableFooter({ className = "", ...rest }, ref) {
@@ -519,5 +503,4 @@ export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(
   },
 );
 
-// ─── compound export ──────────────────────────────────────────────────────────
 

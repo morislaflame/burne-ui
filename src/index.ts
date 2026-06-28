@@ -21,7 +21,6 @@ export {
 } from "@/components/core/Button/buttonLayout";
 export {
   buttonGroupTextFrameClass,
-  controlTextFrameClass,
 } from "@/components/composite/ButtonGroup/buttonGroupLayout";
 export {
   Button,

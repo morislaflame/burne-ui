@@ -58,6 +58,7 @@ export function RadioGroupShowcase() {
             <code>value</code> и <code>label</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

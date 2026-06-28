@@ -65,7 +65,7 @@ export type OptionGroupHeaderProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-/** Обёртка для `Label` + `Hint` внутри `Legend`. */
+/** Wrapper for `Label` + `Hint` inside `Legend`. */
 export function OptionGroupHeader({ children, className, ...rest }: OptionGroupHeaderProps) {
   return (
     <FieldLegendHeader className={className} {...rest}>

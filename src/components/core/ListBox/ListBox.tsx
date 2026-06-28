@@ -63,7 +63,7 @@ const ListBoxContext = createContext<ListBoxContextValue | null>(null);
 
 function useListBox(who: string): ListBoxContextValue {
   const ctx = useContext(ListBoxContext);
-  if (!ctx) throw new Error(`${who} должен быть внутри <ListBox>.`);
+  if (!ctx) throw new Error(`${who} must be inside <ListBox>.`);
   return ctx;
 }
 
@@ -80,13 +80,10 @@ export type ListBoxRootProps = Omit<HTMLAttributes<HTMLDivElement>, "children" |
   value?: string | string[];
   defaultValue?: string | string[];
   onValueChange?: (value: string | string[]) => void;
-  /** Показывать индикатор выбора слева. По умолчанию `true`. */
   selectionIndicator?: boolean;
   disabled?: boolean;
-  /** Управляемый активный пункт (для combobox `aria-activedescendant`). */
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;
-  /** `id` корня listbox; иначе генерируется. */
   listId?: string;
 };
 
@@ -270,7 +267,7 @@ export function ListBoxEmpty({ className, children, ...rest }: ListBoxEmptyProps
       className={cn("px-mid py-small text-center text-muted", className)}
       {...rest}
     >
-      {children ?? "Нет совпадений"}
+      {children ?? "No matches"}
     </Text>
   );
 }
@@ -280,11 +277,8 @@ ListBoxEmpty.displayName = "ListBoxEmpty";
 export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
   disabled?: boolean;
-  /** Текстовая подпись (simple API). */
   label?: ReactNode;
-  /** Подсказка под подписью (simple API). */
   hint?: ReactNode;
-  /** Иконка справа (simple API). */
   icon?: ReactNode;
 };
 

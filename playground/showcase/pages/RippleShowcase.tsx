@@ -60,17 +60,16 @@ export function RippleShowcase() {
         <ShowcaseDoc.Block title="Связь с Button">
           <p>
             На <code>Button</code> достаточно пропа <code>ripple</code>. Для ручного слоя —{" "}
-            <code>buttonRippleTone(variant, status)</code> из <code>@/components/core/Button</code> или
-            константы <code>RIPPLE_COLOR</code>.
+            <code>buttonRippleTone(variant, status)</code> из пакета или константы <code>RIPPLE_COLOR</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Customization>
           <p>
-            Контейнер с <code>overflow-hidden</code> и <code>position: relative</code>; контент поверх
-            слоя с <code>relative z-[1]</code>. Слой <code>pointer-events-none</code> — события идут
-            через всплытие к интерактивному корню.
+            Контейнер с <code>overflow-hidden</code> и <code>position: relative</code>. Длительность и easing —{" "}
+            <code>configureMotion()</code> (<code>rippleDefaultDuration</code>, <code>rippleEaseCss</code>,{" "}
+            <code>enableRipple</code>). Тон кнопки — <code>buttonRippleTone</code> из пакета.
           </p>
-        </ShowcaseDoc.Block>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

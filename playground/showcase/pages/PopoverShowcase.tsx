@@ -68,6 +68,7 @@ export function PopoverShowcase() {
             <code>showArrow</code> на Content включает Popover.Arrow — указатель к триггеру.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

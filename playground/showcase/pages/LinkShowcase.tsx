@@ -51,6 +51,7 @@ export function LinkShowcase() {
             <code>target=&quot;_blank&quot;</code> и <code>rel=&quot;noreferrer&quot;</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

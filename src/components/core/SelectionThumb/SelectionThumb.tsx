@@ -13,18 +13,14 @@ import {
 import { useSelectionIndicatorAnimation } from "../SelectionIndicator/useSelectionIndicatorAnimation";
 
 export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
-  /** Заливка кружка (checked / active / drag). */
   active: boolean;
-  /** Размер иконки внутри (`icon-xsmall` …). */
   size?: SelectionIndicatorSize;
   shellRef?: RefObject<HTMLSpanElement | null>;
   fillRef?: RefObject<HTMLSpanElement | null>;
-  /** Gloss-вариант: стеклянный кружок с gloss-заливкой и иконкой foreground цвета. */
   gloss?: boolean;
   children?: ReactNode;
 };
 
-/** Кружок-ручка для Slider / Switch: shell + primary-fill; размер от родителя (`size-full`). */
 export function SelectionThumb({
   active,
   size = "base",
@@ -68,9 +64,7 @@ SelectionThumb.displayName = "SelectionThumb";
 
 export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   size?: SelectionIndicatorSize;
-  /** `true` — indicator-foreground на заливке; `false` — primary в покое (Slider/Switch off). */
   highlighted?: boolean;
-  /** `true` — всегда foreground (gloss-режим). */
   gloss?: boolean;
   iconRef?: RefObject<HTMLSpanElement | null>;
   children?: ReactNode;

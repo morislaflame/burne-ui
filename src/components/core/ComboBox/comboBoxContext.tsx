@@ -48,7 +48,7 @@ const ComboBoxContext = createContext<ComboBoxContextValue | null>(null);
 
 export function useComboBoxFieldContext() {
   const ctx = useContext(ComboBoxFieldContext);
-  if (!ctx) throw new Error("ComboBox compound-части должны быть внутри <ComboBox>.");
+  if (!ctx) throw new Error("ComboBox compound-parts must be inside <ComboBox>.");
   return ctx;
 }
 
@@ -58,7 +58,7 @@ function useOptionalComboBoxFieldContext() {
 
 export function useComboBoxContext() {
   const ctx = useContext(ComboBoxContext);
-  if (!ctx) throw new Error("ComboBox.* должны быть внутри <ComboBox>.");
+  if (!ctx) throw new Error("ComboBox.* must be inside <ComboBox>.");
   return ctx;
 }
 

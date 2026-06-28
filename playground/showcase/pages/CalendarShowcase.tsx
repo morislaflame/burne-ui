@@ -45,21 +45,22 @@ export function CalendarShowcase() {
         <ShowcaseDoc.Block title="Импорт">
           <ShowcaseDoc.Import path="@/components/core/Calendar" />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.ApiRow
-          api="simple"
-          description="value / onValueChange на корне с пропом mode."
-        />
-        <ShowcaseDoc.ApiRow
-          api="compound"
-          description="Calendar.Header, Calendar.Grid, Calendar.Footer для кастомной компоновки."
-        />
-        <ShowcaseDoc.Block title="Кастомизация">
-          <p>
-            Для локализации и ограничений дат используйте пропы <code>minValue</code>,{" "}
-            <code>maxValue</code> и <code>locale</code>. Ячейки поддерживают gloss-интерактив через
-            тему.
-          </p>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="value / onValueChange на корне с пропом mode."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Calendar.Header, Calendar.Grid, Calendar.Footer для кастомной компоновки."
+          />
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss>
+          <p>
+            Локализация и ограничения — <code>minValue</code>, <code>maxValue</code>, <code>locale</code>.
+            Заливка выбранных ячеек — <code>configureMotion()</code> (<code>enableToggleButtonFill</code>).
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

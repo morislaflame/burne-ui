@@ -25,6 +25,6 @@ export const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function useToastContext(): ToastContextValue {
   const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error("useToast must be used inside <Toast.Provider>.");
+  if (!ctx) throw new Error("Components Toast must be used inside <Toast.Provider>.");
   return ctx;
 }

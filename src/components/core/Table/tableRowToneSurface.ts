@@ -2,7 +2,6 @@ import type { AlertStatus } from "@/components/core/Alert/alertUtils";
 
 export type TableRowTone = AlertStatus;
 
-/** Фон строки — те же семантические тоны, что у `Alert`. */
 export const TABLE_ROW_TONE_SURFACE: Record<TableRowTone, string> = {
   default: "bg-surface text-foreground",
   outline: "bg-transparent border-token text-foreground",

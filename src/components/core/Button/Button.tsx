@@ -46,13 +46,10 @@ import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 
 import "../utils/glossInteractive.css";
 
-/** Состояние асинхронного сценария после клика. */
 export type ButtonAsyncState = "idle" | "loading" | "success" | "error";
 
-/** Размер кнопки: высота, отступы, типографика, спиннер и иконки результата. */
 export type ButtonSize = ComponentSize;
 
-/** Визуальный вариант заливки и обводки. */
 export type ButtonVariant =
   | "default"
   | "primary"
@@ -69,7 +66,6 @@ type VariantVisual = {
   loaderText: string;
 };
 
-/** Варианты, у которых тень появляется при hover (анимируем shadow-sm). */
 const BUTTON_VARIANT_HAS_HOVER_SHADOW = new Set<ButtonVariant>([
   "default", "primary", "outline", "secondary", "ghost",
 ]);
@@ -101,7 +97,6 @@ const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   },
 };
 
-/** Тинт стекла по статусу для `variant="gloss"` (нейтральные слои — в CSS). */
 const BUTTON_GLOSS_STATUS: Record<ButtonStatus, string> = {
   default: "",
   danger: "gloss-btn-danger",
@@ -162,8 +157,8 @@ const BUTTON_STATUS_FILL_TEXT: Record<Exclude<ButtonStatus, "default">, string> 
 };
 
 /**
- * Иконки в слоте должны масштабироваться по размеру кнопки,
- * но произвольный контент (например Avatar) не должен ужиматься до icon-*.
+ * Icons in the slot must be scaled to the button size,
+ * but arbitrary content (e.g. Avatar) should not be squeezed to icon-*.
  */
 const BUTTON_ICON_SLOT_SVG_SIZE: Record<ButtonSize, string> = {
   small: "[&_svg]:icon-small",
@@ -239,7 +234,6 @@ function buttonStatusClass(variant: ButtonVariant, status: ButtonStatus): string
   }
 }
 
-/** Типографика подписи — через `Text`, без `text-*` на корне кнопки. */
 const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",
   base: "base",
@@ -248,41 +242,19 @@ const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /**
-   * Склейка с соседями в `ButtonGroup`: без зазора, общий контур скругления только по краям группы.
-   * Задаётся автоматически при использовании внутри `<ButtonGroup>`.
-   */
   groupSegment?: ButtonGroupSegment;
-  /** Стиль заливки и акцента. По умолчанию `default`. */
   variant?: ButtonVariant;
-  /** Семантический статус: меняет акцент, но не тип поверхности (`variant`). */
   status?: ButtonStatus;
-  /** Габариты и типографика. По умолчанию `base`. */
   size?: ButtonSize;
-  /**
-   * Кнопка только с иконкой: вместо `min-w-button-*` используется `min-w-fit` (узкая обводка по контенту).
-   */
   iconOnly?: boolean;
-  /** Включить лёгкий scale-пульс при нажатии (GSAP), только в idle. */
   animated?: boolean;
-  /**
-   * Управляемое состояние: loading → success | error с рябью и иконками.
-   * Без `onAsyncClick` переходы задаёт родитель.
-   */
   asyncState?: ButtonAsyncState;
-  /** При контроле `asyncState` — уведомление о смене (опционально). */
   onAsyncStateChange?: (state: ButtonAsyncState) => void;
-  /**
-   * Неконтролируемый режим: `true` из промиса → success + зелёная галочка,
-   * `false` → error + красный крест. Отклонение промиса трактуется как error.
-   */
   onAsyncClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<boolean>;
-  /** Через сколько вернуться в idle после success/error (неконтролируемый режим). */
   asyncFeedbackMs?: number;
-  /** Иконка слева от подписи (только в состоянии idle). */
   leftIcon?: ReactNode;
   /**
-   * Включить converge-ripple от точки нажатия (`<Ripple />` внутри кнопки, тон под `variant`).
+   * Enable converge-ripple from the press point (`<Ripple />` inside the button, tone under `variant`).
    * @default false
    */
   ripple?: boolean;

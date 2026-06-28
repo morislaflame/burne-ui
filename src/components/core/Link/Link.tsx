@@ -27,18 +27,10 @@ export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"
   href: string;
   children: ReactNode;
   size?: LinkSize;
-  /** Подчёркивание текста ссылки. */
   underline?: boolean;
-  /** Иконка слева от текста. */
   leftIcon?: ReactNode;
-  /** Иконка справа от текста. */
   rightIcon?: ReactNode;
-  /**
-   * Показать стандартную стрелку ↗, если не переданы `leftIcon` / `rightIcon`.
-   * По умолчанию `false`.
-   */
   showDefaultIcon?: boolean;
-  /** Сторона для стандартной стрелки. По умолчанию `end`. */
   defaultIconPosition?: LinkIconPosition;
 };
 
@@ -72,7 +64,6 @@ function LinkIconSlot({
 }: {
   children: ReactNode;
   size: LinkSize;
-  /** Стандартная иконка: muted в покое, primary при hover на ссылке. */
   muted?: boolean;
 }) {
   return (

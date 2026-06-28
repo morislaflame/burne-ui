@@ -34,7 +34,7 @@ export function SwitchShowcase() {
         <ShowcaseDemoFromFile Demo={SwitchDisabledDemo} source={switchDisabledSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="gloss — стеклянный трек и кружок.">
+      <ShowcaseSection title="Gloss" description="gloss — стеклянный трек и кружок (проп gloss на корне).">
         <ShowcaseDemoFromFile Demo={SwitchGlossDemo} source={switchGlossSource} />
       </ShowcaseSection>
 
@@ -54,14 +54,20 @@ export function SwitchShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, checked, onChange, disabled на корне — нативный checkbox с визуальным thumb."
+            description="label, hint, checked, onChange, disabled, gloss на корне — без children."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Switch.Label, Switch.Hint, Switch.Track — кастомная разметка переключателя."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Customization gloss="gloss">
           <p>
-            Размеры через <code>size</code>. Цвета активного состояния — через CSS-переменные темы.
+            Булевый <code>gloss</code> — стеклянный трек. Цвета активного состояния — CSS-переменные темы.
+            Анимация thumb — <code>configureMotion()</code> (<code>switchThumbDuration</code>,{" "}
+            <code>switchThumbEase</code>).
           </p>
-        </ShowcaseDoc.Block>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

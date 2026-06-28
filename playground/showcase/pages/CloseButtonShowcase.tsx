@@ -20,7 +20,7 @@ export function CloseButtonShowcase() {
       importPath='import { CloseButton } from "@/components/core/CloseButton";'
       tags={["core", "actions"]}
     >
-      <ShowcaseSection title="Варианты" description="default и outline.">
+      <ShowcaseSection title="Варианты" description="default, primary, outline, secondary, ghost, gloss.">
         <ShowcaseDemoFromFile Demo={CloseButtonVariantsDemo} source={closeButtonVariantsSource} />
       </ShowcaseSection>
 
@@ -51,12 +51,12 @@ export function CloseButtonShowcase() {
             description="variant, size, aria-label (обязателен), onClick. Иконка IoClose встроена."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Customization gloss>
           <p>
-            Варианты заливки совпадают с <code>Button</code> (без статусных тонов). Для диалогов и
-            drawer размещайте в header с достаточной областью нажатия.
+            Варианты заливки совпадают с <code>Button</code> (без статусных тонов). Для Dialog и Drawer —
+            в header с достаточной областью нажатия; обязателен <code>aria-label</code>.
           </p>
-        </ShowcaseDoc.Block>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

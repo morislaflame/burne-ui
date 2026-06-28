@@ -3,7 +3,6 @@ import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicat
 
 export type SwitchSize = "small" | "base" | "mid" | "large";
 
-/** Диаметр кружка по `size` (px), если `thickness` не задан. */
 const THUMB_PX: Record<SwitchSize, number> = {
   small: selectionIndicatorFallbackPx("small"),
   base: selectionIndicatorFallbackPx("base"),
@@ -11,7 +10,6 @@ const THUMB_PX: Record<SwitchSize, number> = {
   large: selectionIndicatorFallbackPx("large"),
 };
 
-/** Fallback для геометрии до первого измерения DOM. */
 export function resolveFallbackThumbPx(
   thickness: number | string | undefined,
   size: SwitchSize,
@@ -36,7 +34,6 @@ export function measureSwitchTravel(trackEl: HTMLElement, thumbEl: HTMLElement):
   return Math.max(0, trackW - thumbW);
 }
 
-/** Толщина трека = диаметру кружка; ширина трека — 2× диаметр (как cross-axis у Slider). */
 const SWITCH_TRACK: Record<SwitchSize, string> = {
   small:
     "h-[var(--selection-indicator-small)] min-h-[var(--selection-indicator-small)] w-[calc(2*var(--selection-indicator-small))] min-w-[calc(2*var(--selection-indicator-small))]",

@@ -45,9 +45,7 @@ export type TabsSize = ComponentSize;
 
 export type TabsRootProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
-  /** Контролируемое значение активного таба. */
   value?: string;
-  /** Начальное значение (неконтролируемый режим). */
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   orientation?: TabsOrientation;
@@ -61,7 +59,6 @@ export type TabsListProps = HTMLAttributes<HTMLDivElement>;
 export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
   children?: ReactNode;
-  /** Пробросить пропы на единственного ребёнка (например `<Button />`). */
   asChild?: boolean;
 };
 

@@ -1,7 +1,7 @@
 import type { AlertStatus } from "@/components/core/Alert/alertUtils";
 import type { ButtonStatus, ButtonVariant } from "@/components/core/Button";
 
-/** Основная кнопка действия в футере модалки в тон окна. */
+/** Primary action button in the modal footer in the window tone. */
 export function primaryButtonVariantForAlertTone(
   tone: AlertStatus,
 ): ButtonVariant {
@@ -9,7 +9,7 @@ export function primaryButtonVariantForAlertTone(
   return "primary";
 }
 
-/** Статус primary-кнопки действия в футере модалки в тон окна. */
+/** Status of the primary action button in the modal footer in the window tone. */
 export function primaryButtonStatusForAlertTone(
   tone: AlertStatus,
 ): ButtonStatus {

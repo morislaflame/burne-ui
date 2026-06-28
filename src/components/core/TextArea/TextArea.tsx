@@ -20,7 +20,6 @@ import { cn } from "@/utils/cn";
 import { useOptionalTextAreaFieldContext } from "./textareaFieldContext";
 import { useTextAreaResize } from "./useTextAreaResize";
 
-/** Совпадает с `InputVariant`. */
 export type TextAreaVariant = "default" | "outline" | "gloss";
 
 export type TextAreaStatus = "default" | "danger" | "success" | "warning";
@@ -34,11 +33,8 @@ export type TextAreaProps = Omit<
   variant?: TextAreaVariant;
   size?: TextAreaSize;
   status?: TextAreaStatus;
-  /** Минимальная высота как у `Input` (`rows` только для SSR/fallback). По умолчанию `1`. */
   rows?: number;
-  /** Ручка ресайза в правом нижнем углу. По умолчанию `true`. */
   resizable?: boolean;
-  /** `className` применяется к оболочке (`data-slot="textarea-shell"`). */
   className?: string;
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
 };
@@ -61,7 +57,6 @@ const TEXTAREA_MIN_H: Record<TextAreaSize, string> = {
   large: "min-h-control-large",
 };
 
-/** Вертикальный паддинг чуть меньше горизонтального (`px-plus` → `py-small`). */
 const TEXTAREA_PY_BY_PX: Record<string, string> = {
   "px-base": "py-xsmall",
   "px-plus": "py-small",
@@ -95,7 +90,7 @@ function TextAreaResizeHandle({
   return (
     <div
       data-textarea-resize-handle
-      aria-label="Изменить высоту"
+      aria-label="Change height"
       aria-disabled={disabled || undefined}
       onPointerDown={onPointerDown}
       className={cn(

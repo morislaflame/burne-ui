@@ -1,12 +1,12 @@
 import { cn } from "@/utils/cn";
 
-/** Положение сегмента в склеенной группе (`Button`, `ButtonGroup.Text`, смежные элементы формы в тулбарах). */
+/** Position of the segment in the joined group (`Button`, `ButtonGroup.Text`, adjacent form elements in toolbars). */
 export type ButtonGroupSegment = Readonly<{
   orientation: "horizontal" | "vertical";
   position: "first" | "middle" | "last" | "only";
 }>;
 
-/** Радиус обрезки Ripple / overflow — совпадает с краем кнопки. */
+/** Ripple rounding / overflow radius — matches the button edge. */
 export function buttonGroupRoundingClasses(seg: ButtonGroupSegment | undefined): string {
   if (seg == null) return "";
   const { orientation, position } = seg;
@@ -34,7 +34,7 @@ function buttonGroupRoundingOverrideClasses(seg: ButtonGroupSegment): string {
   return "!rounded-b-base !rounded-t-none";
 }
 
-/** Убираем сдвоенную линию у внутренних стыков. */
+/** Remove the double line at the internal joints. */
 export function buttonGroupOverlapBorderClasses(
   seg: ButtonGroupSegment | undefined,
 ): string {
@@ -46,7 +46,7 @@ export function buttonGroupOverlapBorderClasses(
   return position === "first" ? "" : "border-t-0";
 }
 
-/** Поверхность сегмента внутри склеенной группы: без собственной рамки. */
+/** Surface of the segment inside the joined group: without its own frame. */
 export function buttonGroupSegmentSurfaceClasses(seg: ButtonGroupSegment | undefined): string {
   if (seg == null) return "";
   return cn(

@@ -3,7 +3,6 @@ import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 
-/** Shell контрола: min-height, min-width, горизонтальные и вертикальные отступы. */
 export function controlShellClass(
   size: ComponentSize,
   minW = CONTROL_SIZE_LAYOUT[size].minWButton,
@@ -12,7 +11,6 @@ export function controlShellClass(
   return cn(layout.h, minW, layout.padX, layout.padY);
 }
 
-/** Корневые классы кнопки (Button, ToggleButton с `min-w-fit`). */
 export function buttonRootClass(size: ComponentSize, iconOnly = false): string {
   const layout = CONTROL_SIZE_LAYOUT[size];
   return cn(

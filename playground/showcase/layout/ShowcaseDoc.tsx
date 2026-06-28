@@ -73,9 +73,61 @@ function ShowcaseDocApiRow({
   );
 }
 
+/**
+ * Стандартный блок кастомизации для showcase-документации.
+ * @param gloss — `true` → `variant="gloss"`; строка — произвольный проп (напр. `surface="gloss"`).
+ */
+function ShowcaseDocCustomization({
+  gloss,
+  motion = true,
+  children,
+}: {
+  gloss?: boolean | string;
+  /** Показывать подсказку про configureMotion(). По умолчанию true. */
+  motion?: boolean;
+  children?: ReactNode;
+}) {
+  const glossProp =
+    gloss === true ? 'variant="gloss"' : typeof gloss === "string" ? gloss : null;
+
+  return (
+    <ShowcaseDocBlock title="Кастомизация">
+      <div className="flex flex-col gap-xsmall">
+        <p>
+          Дополнительные стили — через <code>className</code> на корне и слотах.
+          {glossProp ? (
+            <>
+              {" "}
+              <code>{glossProp}</code> — стеклянная поверхность; прозрачность и обводка задаются
+              CSS-переменными темы (<code>--color-surface</code>, <code>--color-border</code>).
+            </>
+          ) : (
+            <>
+              {" "}
+              Палитра и отступы — переопределение CSS-переменных темы после{" "}
+              <code>burne-ui/styles.css</code> (<code>--color-*</code>, <code>--space-*</code>,{" "}
+              <code>--radius</code>).
+            </>
+          )}
+          {motion ? (
+            <>
+              {" "}
+              Тайминги анимаций — через <code>configureMotion()</code> из пакета (
+              <code>interactiveDuration</code>, <code>enableHoverLift</code>, <code>enableRipple</code>{" "}
+              и др.).
+            </>
+          ) : null}
+        </p>
+        {children}
+      </div>
+    </ShowcaseDocBlock>
+  );
+}
+
 export const ShowcaseDoc = Object.assign(ShowcaseDocRoot, {
   Block: ShowcaseDocBlock,
   Code: ShowcaseDocCode,
   Import: ShowcaseDocImport,
   ApiRow: ShowcaseDocApiRow,
+  Customization: ShowcaseDocCustomization,
 });

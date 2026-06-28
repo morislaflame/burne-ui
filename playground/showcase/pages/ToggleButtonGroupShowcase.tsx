@@ -54,8 +54,8 @@ export function ToggleButtonGroupShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
-            api="compound"
-            description="ToggleButtonGroup оборачивает ToggleButton с value. type: single | multiple."
+            api="simple"
+            description="type (single | multiple, по умолчанию multiple), value, onValueChange, variant, size, separated, orientation, aria-label на корне. Дочерние ToggleButton с value."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Доступность">
@@ -64,6 +64,7 @@ export function ToggleButtonGroupShowcase() {
             иконка с <code>aria-hidden</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

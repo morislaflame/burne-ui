@@ -68,8 +68,11 @@ export function BadgeShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Кастомизация">
           <p>
-            <code>placement</code> для dot-режима, <code>variant=&quot;gloss&quot;</code> — стеклянная
-            оболочка. Размеры: <code>small</code>, <code>base</code>.
+            <code>placement</code> для dot-режима в <code>Badge.Anchor</code>. Размеры:{" "}
+            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.{" "}
+            <code>variant=&quot;gloss&quot;</code> — стеклянная оболочка. Дополнительные стили —{" "}
+            <code>className</code>; hover-lift у дочернего Badge в Anchor —{" "}
+            <code>configureMotion()</code> (<code>badgeAnchorHoverLiftScale</code>).
           </p>
         </ShowcaseDoc.Block>
       </ShowcaseDoc>

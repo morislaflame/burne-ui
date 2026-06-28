@@ -39,16 +39,18 @@ export function DialogShowcase() {
         <ShowcaseDoc.Block title="Импорт">
           <ShowcaseDoc.Import path="@/components/core/Dialog" />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.ApiRow
-          api="compound"
-          description="Dialog.Header, Dialog.Body, Dialog.Footer, Dialog.Close — полная компоновка панели."
-        />
-        <ShowcaseDoc.Block title="Кастомизация">
-          <p>
-            Управляйте размером через <code>size</code>, вариантом через <code>variant</code>. Закрытие
-            по Escape и клику на backdrop настраивается пропами.
-          </p>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Dialog.Header, Dialog.Body, Dialog.Footer, Dialog.Close — полная компоновка панели."
+          />
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss>
+          <p>
+            <code>size</code> и <code>variant</code> на корне. Закрытие по Escape и клику на backdrop —
+            настраиваемые пропы. Enter/leave — <code>configureMotion()</code>.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

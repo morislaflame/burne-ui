@@ -1,10 +1,14 @@
 import type { Preview } from "@storybook/react-vite";
+import { INITIAL_VIEWPORTS } from "storybook/viewport";
 
 import "../src/styles.css";
 
 const preview: Preview = {
   parameters: {
     layout: "centered",
+    viewport: {
+      options: INITIAL_VIEWPORTS,
+    },
     backgrounds: {
       default: "background",
       values: [

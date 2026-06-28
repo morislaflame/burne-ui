@@ -51,19 +51,12 @@ const PROGRESS_INDETERMINATE_MS = 1500;
 const PROGRESS_INDETERMINATE_EASE = "expo.inOut" as const;
 
 export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  /** Текущий прогресс. Не используется при `indeterminate`. */
   value?: number;
-  /** Неопределённый прогресс (анимация без конкретного значения). */
   indeterminate?: boolean;
   min?: number;
   max?: number;
   size?: ProgressBarSize;
-  /**
-   * Толщина линии. Перекрывает cross-axis из `size`.
-   * Число — px; строка — любая CSS-длина (`"0.75rem"`, `"12px"`).
-   */
   thickness?: number | string;
-  /** Цвет заливки: CSS-цвет или `linear-gradient(...)`. По умолчанию primary. */
   color?: string;
   formatValue?: (value: number) => string;
   orientation?: ProgressBarOrientation;
@@ -136,7 +129,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
     }, [isHorizontal, percent]);
 
     const statusText = useMemo(() => {
-      if (indeterminate) return "Загрузка…";
+      if (indeterminate) return "Loading…";
       return formatValue(clampedValue);
     }, [clampedValue, formatValue, indeterminate]);
 

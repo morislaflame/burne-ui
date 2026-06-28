@@ -36,7 +36,6 @@ function measureControlHeightPx(size: ComponentSize): number | null {
       return computedHeight;
     }
   } catch {
-    // fallback ниже
   }
 
   return null;

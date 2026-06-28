@@ -2,7 +2,6 @@ import { createElement, forwardRef, type ElementType, type HTMLAttributes } from
 
 import { cn } from "@/utils/cn";
 
-/** Роли типографики из `@utility` / темы (см. Foundations/Typography). */
 export type TextVariant =
   | "accent-header"
   | "header-1"
@@ -24,10 +23,6 @@ const VARIANT_CLASS: Record<TextVariant, string> = {
   tools: "text-tools",
 };
 
-/**
- * Семантика по умолчанию: заголовки — уровни 1–3, остальное — абзац.
- * Задайте `as`, если нужен `span` внутри строки или другой тег.
- */
 const VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
   "accent-header": "h1",
   "header-1": "h2",
@@ -41,9 +36,7 @@ const VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
 
 export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
   variant: TextVariant;
-  /** HTML-тег или компонент. По умолчанию зависит от `variant`. */
   as?: ElementType;
-  /** Без `text-foreground` — цвет наследуется от родителя (например, `Button`). */
   inheritColor?: boolean;
   className?: string;
 };

@@ -67,6 +67,7 @@ export function TimeFieldShowcase() {
             (обычно иконку времени).
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

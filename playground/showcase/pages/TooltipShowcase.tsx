@@ -60,9 +60,11 @@ export function TooltipShowcase() {
         <ShowcaseDoc.Block title="Позиционирование">
           <p>
             Проп <code>side</code> на корне — <code>top</code>, <code>bottom</code>, <code>left</code>,{" "}
-            <code>right</code>. Размер — <code>small</code> или <code>base</code>.
+            <code>right</code>. Размер — <code>small</code>, <code>base</code>, <code>mid</code>,{" "}
+            <code>large</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss='surface="gloss"' />
       </ShowcaseDoc>
     </ShowcasePage>
   );

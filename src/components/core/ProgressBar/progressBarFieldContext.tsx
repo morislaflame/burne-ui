@@ -26,7 +26,7 @@ const ProgressBarFieldContext = createContext<ProgressBarFieldContextValue | nul
 export function useProgressBarFieldContext() {
   const ctx = useContext(ProgressBarFieldContext);
   if (!ctx) {
-    throw new Error("ProgressBar.* должны быть внутри <ProgressBar>.");
+    throw new Error("ProgressBar.* components must be inside <ProgressBar>.");
   }
   return ctx;
 }

@@ -18,7 +18,6 @@ const BUTTON_STATUS_CONVERGE_BG: Record<Exclude<ButtonStatus, "default">, string
   warning: colorToken("converge-ripple-warning"),
 };
 
-/** CSS-цвет converge-ripple под комбинацию variant/status — для собственного `<Ripple color={…} />`. */
 export function buttonRippleTone(
   variant: ButtonVariant,
   status: ButtonStatus = "default",

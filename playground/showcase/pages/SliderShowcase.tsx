@@ -42,7 +42,7 @@ export function SliderShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={SliderVariantsDemo} source={sliderVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="gloss — стеклянный кружок на рельсе.">
+      <ShowcaseSection title="Gloss" description="gloss — стеклянный кружок на рельсе (проп gloss на корне).">
         <ShowcaseDemoFromFile align="center" Demo={SliderGlossDemo} source={sliderGlossSource} />
       </ShowcaseSection>
 
@@ -63,7 +63,11 @@ export function SliderShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="value, onValueChange, min, max, step, range, marks, showValue, formatValue, orientation."
+            description="value, onValueChange, min, max, step, range, marks, showValue, formatValue, orientation, gloss."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Slider.Track, Slider.Rail, Slider.Fill, Slider.Thumb — кастомная разметка рельса."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Диапазон">
@@ -72,6 +76,12 @@ export function SliderShowcase() {
             тип. <code>formatValue</code> форматирует отображаемое значение.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss="gloss">
+          <p>
+            Булевый проп <code>gloss</code> на корне — стеклянный thumb. Заполнение при смене value —{" "}
+            <code>configureMotion()</code> не применяется; thumb drag использует интерактивные токены.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

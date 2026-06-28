@@ -61,6 +61,7 @@ export function FormShowcase() {
             работают внутри Form через name/value.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -19,7 +19,7 @@ const TextAreaFieldContext = createContext<TextAreaFieldContextValue | null>(nul
 export function useTextAreaFieldContext() {
   const ctx = useContext(TextAreaFieldContext);
   if (!ctx) {
-    throw new Error("TextArea compound-части должны быть внутри <TextArea>.");
+    throw new Error("TextArea compound parts must be inside <TextArea>.");
   }
   return ctx;
 }

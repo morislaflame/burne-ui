@@ -49,40 +49,21 @@ function inputSizeFromButtonSize(bs: ButtonSize): InputSize {
 
 export type InputVariant = "default" | "outline" | "gloss";
 
-/** Валидация / обратная связь: бордер оболочки и цвет примечания. */
 export type InputStatus = "default" | "danger" | "success" | "warning";
 
-/** Совпадает с размерами `Button`: `small` · `base` · `mid` · `large`. */
 export type InputSize = ComponentSize;
 
 export type InputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type" | "prefix" | "onPointerDown"
 > & {
-  /** Визуал заливки. */
   variant?: InputVariant;
-  /**
-   * Высота и отступы поля — как у `Button` того же размера. По умолчанию `base`.
-   * `className` применяется к оболочке поля (`data-slot="input-shell"`).
-   */
   size?: InputSize;
-  /**
-   * Склейка в `ButtonGroup`: без скруглений на общей стороне с соседом.
-   * Задаётся из `<ButtonGroup>`.
-   */
   groupSegment?: ButtonGroupSegment;
-  /** Состояние поля */
   status?: InputStatus;
-  /** Тип значения: текст, число, пароль или файл (с превью для изображений). */
   inputType?: "text" | "number" | "password" | "file";
-  /** Слот слева внутри оболочки, отделён вертикальной чертой. */
   prefix?: ReactNode;
-  /** Слот справа внутри оболочки, отделён вертикальной чертой. */
   suffix?: ReactNode;
-  /**
-   * Нажатие на оболочку поля (включая область префикса/суффикса).
-   * Вызывается до анимации сжатия; предотвратите по умолчанию, чтобы отменить squeeze.
-   */
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
 };
 
@@ -91,7 +72,6 @@ const VARIANT_SHELL: Record<Exclude<InputVariant, "gloss">, string> = {
   outline: "bg-transparent",
 };
 
-/** Как `Alert`: тонированный фон, бордер не цвет статуса. */
 const STATUS_TINT_SHELL: Record<
   Exclude<InputStatus, "default">,
   string
@@ -219,7 +199,7 @@ function PasswordVisibilityAffix({
       <button
         type="button"
         disabled={disabled}
-        aria-label={visible ? "Скрыть пароль" : "Показать пароль"}
+        aria-label={visible ? "Hide password" : "Show password"}
         aria-pressed={visible}
         onClick={(e) => {
           e.preventDefault();
@@ -595,7 +575,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
                     variant="base"
                     className="pointer-events-none max-w-[18rem] text-center text-muted"
                   >
-                    {placeholder ?? "Выберите файл"}
+                    {placeholder ?? "Select file"}
                   </Text>
                 </>
               ) : multipleFiles ? (

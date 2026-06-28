@@ -16,7 +16,7 @@ const AlertContext = createContext<AlertContextValue | null>(null);
 function useAlertContext() {
   const ctx = useContext(AlertContext);
   if (!ctx) {
-    throw new Error("Alert.* должны быть внутри <Alert>.");
+    throw new Error("Alert.* components must be inside <Alert>.");
   }
   return ctx;
 }

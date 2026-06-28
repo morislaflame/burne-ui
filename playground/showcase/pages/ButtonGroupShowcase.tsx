@@ -53,21 +53,21 @@ export function ButtonGroupShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
-            api="compound"
-            description="ButtonGroup + ButtonGroupText; дочерние Button получают groupSegment из контекста."
+            api="simple"
+            description="aria-label, buttonSize, orientation, variant, segmented на корне ButtonGroup. Дочерние Button и ButtonGroupText; groupSegment у кнопок задаётся контекстом группы."
           />
           <ShowcaseDoc.ApiRow
-            api="simple"
-            description="aria-label на группе, buttonSize, orientation; у Button — groupSegment для позиции сегмента."
+            api="compound"
+            description="ButtonGroupText — подпись сегмента; вложенные Input/ComboBox наследуют variant группы."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Customization gloss>
           <p>
-            Позиции сегмента: <code>first</code>, <code>middle</code>, <code>last</code>. Для
-            вертикальной ориентации передайте <code>orientation=&quot;vertical&quot;</code> на группе и в{" "}
-            <code>groupSegment</code>.
+            Позиции сегмента: <code>first</code>, <code>middle</code>, <code>last</code>,{" "}
+            <code>only</code>. Для вертикальной группы — <code>orientation=&quot;vertical&quot;</code> на
+            корне.
           </p>
-        </ShowcaseDoc.Block>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

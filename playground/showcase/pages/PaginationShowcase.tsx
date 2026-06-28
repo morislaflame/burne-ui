@@ -54,6 +54,7 @@ export function PaginationShowcase() {
             клике по кнопкам и номерам.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

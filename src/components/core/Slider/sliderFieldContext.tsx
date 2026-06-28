@@ -29,7 +29,7 @@ const SliderFieldContext = createContext<SliderFieldContextValue | null>(null);
 export function useSliderFieldContext() {
   const ctx = useContext(SliderFieldContext);
   if (!ctx) {
-    throw new Error("Slider.* должны быть внутри <Slider>.");
+    throw new Error("Slider.* must be inside <Slider>.");
   }
   return ctx;
 }

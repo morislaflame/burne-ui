@@ -45,16 +45,18 @@ export function AlertDialogShowcase() {
         <ShowcaseDoc.Block title="Импорт">
           <ShowcaseDoc.Import path="@/components/composite/AlertDialog" />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.ApiRow
-          api="compound"
-          description="AlertDialog.Header, AlertDialog.Footer — фиксированная структура подтверждения."
-        />
-        <ShowcaseDoc.Block title="Кастомизация">
-          <p>
-            Используйте <code>primaryButtonVariantForAlertTone</code> для согласованной primary-кнопки.
-            Gloss-вариант — <code>variant=&quot;gloss&quot;</code> на корне.
-          </p>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="AlertDialog.Header, AlertDialog.Footer — фиксированная структура подтверждения."
+          />
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss>
+          <p>
+            Тон primary-кнопки — хелпер <code>primaryButtonVariantForAlertTone</code> из пакета.{" "}
+            <code>status</code> на корне влияет на иконку и кнопку подтверждения.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

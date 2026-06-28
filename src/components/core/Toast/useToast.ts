@@ -4,16 +4,12 @@ import type { AddToastOpts, PromiseToastOpts, ToastStatus } from "./Toast";
 import { useToastContext } from "./toastContext";
 
 type ToastAPI = {
-  /** Показать тост с произвольными параметрами. Возвращает ID. */
   show: (opts: AddToastOpts) => string;
-  /** Удобные методы по статусу. */
   success: (title: string, opts?: Omit<AddToastOpts, "status" | "title">) => string;
   danger: (title: string, opts?: Omit<AddToastOpts, "status" | "title">) => string;
   info: (title: string, opts?: Omit<AddToastOpts, "status" | "title">) => string;
   warning: (title: string, opts?: Omit<AddToastOpts, "status" | "title">) => string;
-  /** Тост с состоянием промиса: loading → success / error. */
   promise: <T>(p: Promise<T>, opts: PromiseToastOpts<T>) => string;
-  /** Закрыть тост по ID. */
   dismiss: (id: string) => void;
 };
 
@@ -33,7 +29,7 @@ export function useToast(): { toast: ToastAPI } {
     <T,>(p: Promise<T>, opts: PromiseToastOpts<T>): string => {
       const id = ctx.add({
         status: "default",
-        title: opts.loading ?? "Загрузка…",
+        title: opts.loading ?? "Loading…",
         timeout: 0,
         isLoading: true,
         placement: opts.placement,
@@ -55,7 +51,7 @@ export function useToast(): { toast: ToastAPI } {
         (err: unknown) => {
           const errorTitle =
             opts.error == null
-              ? "Произошла ошибка"
+              ? "An error occurred"
               : typeof opts.error === "function"
                 ? (opts.error as (e: unknown) => string)(err)
                 : opts.error;

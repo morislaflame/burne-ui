@@ -19,9 +19,7 @@ export type SelectionIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
   size?: SelectionIndicatorSize;
   variant?: SelectionIndicatorVariant;
   selected: boolean;
-  /** Галочка при выборе (Checkbox, multi Dropdown). */
   check?: boolean;
-  /** Своя иконка поверх заливки вместо галочки. */
   icon?: ReactNode;
 };
 

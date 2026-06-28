@@ -70,9 +70,10 @@ export function InputShowcase() {
         <ShowcaseDoc.Block title="Варианты">
           <p>
             <code>variant</code>: default, gloss, outline. <code>status</code>: default, danger, success,
-            warning.
+            warning. Подсказки поля — проп <code>hint</code>, не <code>description</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

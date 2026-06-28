@@ -24,7 +24,7 @@ const TabsContext = createContext<TabsContextValue | null>(null);
 export function useTabsContext(): TabsContextValue {
   const ctx = useContext(TabsContext);
   if (!ctx) {
-    throw new Error("Компоненты Tabs должны быть внутри <Tabs>.");
+    throw new Error("Components Tabs must be inside <Tabs>.");
   }
   return ctx;
 }

@@ -49,26 +49,16 @@ export type ToggleButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "aria-pressed" | "aria-checked" | "role" | "value"
 > & {
-  /** Идентификатор внутри `ToggleButtonGroup`. */
   value?: string;
-  /** Склейка с соседями в `ToggleButtonGroup` (без `separated`). */
   groupSegment?: ButtonGroupSegment;
-  /** Контролируемое состояние «нажато» (вне группы или override). */
   pressed?: boolean;
-  /** Начальное состояние (неконтролируемый режим). */
   defaultPressed?: boolean;
   onPressedChange?: (pressed: boolean) => void;
-  /** Поверхность в покое. По умолчанию `default`. */
   variant?: ToggleButtonVariant;
-  /** Заполняемый цвет заливки. */
   fillColor?: string;
-  /** Габариты по высоте как у `Button`, без `min-w-button-*`. */
   size?: ToggleButtonSize;
-  /** Иконка слева от подписи. */
   leftIcon?: ReactNode;
-  /** Иконка справа от подписи. */
   rightIcon?: ReactNode;
-  /** Включить hover-lift и squeeze при нажатии. По умолчанию `true`. */
   animated?: boolean;
 };
 
@@ -269,8 +259,6 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         if (e.defaultPrevented || disabled) return;
 
         if (inGroup && itemValue != null) {
-          // В группе состояние и заливку ведёт selection — не toggl'им локально:
-          // в single повторный клик не меняет value, optimistic animateTo(false) ломал контраст текста.
           groupCtx!.select(itemValue);
           return;
         }

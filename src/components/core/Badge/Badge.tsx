@@ -34,10 +34,8 @@ import { cn } from "@/utils/cn";
 
 import "../utils/glossInteractive.css";
 
-/** Визуальный вариант бейджа (поверхность/рамка), как у Button. */
 export type BadgeVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
 
-/** Семантический статус бейджа, как у Button. */
 export type BadgeStatus = "default" | "danger" | "success" | "info" | "warning";
 
 const BADGE_VARIANT_SURFACE: Record<Exclude<BadgeVariant, "gloss">, string> = {
@@ -97,7 +95,6 @@ function dotFillClass(variant: BadgeVariant, status: BadgeStatus): string {
 
 export type BadgeSize = "small" | "base" | "mid" | "large";
 
-/** Угол привязки внутри `Badge.Anchor`. */
 export type BadgePlacement =
   | "top-right"
   | "top-left"
@@ -122,7 +119,6 @@ const BADGE_TEXT_ROW: Record<BadgeSize, string> = {
   large: "gap-small px-plus py-xsmall",
 };
 
-/** Минимальный квадрат: ширина не уже высоты однострочного бейджа. */
 const BADGE_SQUARE_MIN: Record<BadgeSize, string> = {
   small: "min-h-3 min-w-3",
   base: "min-h-4 min-w-4",
@@ -161,7 +157,6 @@ const BADGE_INLINE_SVG_SIZE: Record<BadgeSize, string> = {
 
 export type BadgeIconPosition = "start" | "end";
 
-/** Значение `data-icon` на inline-иконке в children. */
 export type BadgeInlineIconPosition = "inline-start" | "inline-end";
 
 
@@ -280,18 +275,14 @@ function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus): string {
 }
 
 type BadgeLiftContextValue = {
-  /** Регистрация узла бейджа для scale при hover контейнера (как у Button). */
   registerLiftTarget: (el: HTMLElement | null) => void;
   anchorRef: React.RefObject<HTMLDivElement | null>;
-  /** Меняется после коммита DOM якоря; дочерние Badge перепривязываются без «мигания». */
   anchorCommitGen: number;
-  /** Подъём прямого дочернего Badge при наведении на якорь. */
   hoverLift: boolean;
 };
 
 const BadgeLiftTargetContext = createContext<BadgeLiftContextValue | null>(null);
 
-/** Прямой ребёнок `Badge.Anchor` — placement применяется синхронно, без проверки DOM. */
 const BadgeDirectAnchorChildContext = createContext(false);
 
 function isBadgeElement(child: ReactElement): boolean {
@@ -309,7 +300,7 @@ function BadgeDirectAnchorChildProvider({ children }: { children: ReactNode }) {
 export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children?: ReactNode;
   /**
-   * При наведении на якорь слегка увеличивать (GSAP) прямой дочерний `Badge`, как hover у `Button`.
+   * Slightly increase (GSAP) the direct child `Badge` on hover.
    * @default true
    */
   hoverLift?: boolean;
@@ -389,30 +380,18 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
 });
 
 export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
-  /** Визуальный вариант поверхности: `default` · `primary` · `outline` · `secondary`. */
   variant?: BadgeVariant;
-  /** Семантический статус: `danger` · `success` · `info` · `warning`. */
   status?: BadgeStatus;
-  /** `small` · `base` · `mid` · `large`. По умолчанию `base`. */
   size?: BadgeSize;
-  /** Simple API: иконка через prop. Игнорируется, если в `children` есть элемент с `data-icon`. */
   icon?: ReactNode;
   iconPosition?: BadgeIconPosition;
   iconOnly?: boolean;
   dot?: boolean;
-  /**
-   * Только для бейджа — **прямого** ребёнка `Badge.Anchor`: угол наложения.
-   * По умолчанию `top-right`. Внутри вложенных контейнеров не действует.
-   */
   placement?: BadgePlacement;
-  /**
-   * Текст или compound-иконки: `data-icon="inline-start" | "inline-end"` (также `start` / `end`).
-   * Декоративные иконки получают `aria-hidden`, если нет `aria-label`.
-   */
   children?: ReactNode;
   /**
-   * Подъём и усиление тени при hover (как у `Alert`): покой `sm`, hover `md`.
-   * Не дублируется, если бейдж — прямой ребёнок `Badge.Anchor` с `hoverLift`: там подъём на якоре.
+   * Lift and shadow enhancement on hover (like `Alert`): `sm` at rest, `md` on hover.
+   * Does not duplicate if the badge is a direct child of `Badge.Anchor` with `hoverLift`: there is a lift on the anchor.
    * @default true
    */
   hoverLift?: boolean;
@@ -768,5 +747,3 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     </span>
   );
 });
-
-/** Компактный статус-бейдж; hover-lift как у `Alert`. С `Badge.Anchor` — наложение и подъём на якоре. */

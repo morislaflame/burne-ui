@@ -83,15 +83,14 @@ function collectToggleButtons(root: HTMLElement): HTMLButtonElement[] {
 
 export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
-  /** `multiple` — независимые toggle; `single` — только один выбран (radio). По умолчанию `multiple`. */
+  /** `multiple` — independent toggle; `single` — only one selected (radio). By default `multiple`. */
   type?: ToggleButtonGroupType;
   orientation?: ToggleButtonGroupOrientation;
-  /** Разделить кнопки зазором вместо склейки. */
   separated?: boolean;
   disabled?: boolean;
   size?: ToggleButtonSize;
   variant?: ToggleButtonVariant;
-  /** Контролируемое значение: `string` при `type="single"`, `string[]` при `type="multiple"`. */
+  /** Controlled value: `string` when `type="single"`, `string[]` when `type="multiple"`. */
   value?: string | string[];
   defaultValue?: string | string[];
   onValueChange?: (value: string | string[]) => void;

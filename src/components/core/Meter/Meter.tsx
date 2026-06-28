@@ -48,17 +48,11 @@ function defaultFormatValue(value: number) {
 }
 
 export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  /** Текущее значение шкалы. */
   value: number;
   min?: number;
   max?: number;
   size?: MeterSize;
-  /**
-   * Толщина линии. Перекрывает cross-axis из `size`.
-   * Число — px; строка — любая CSS-длина (`"0.75rem"`, `"12px"`).
-   */
   thickness?: number | string;
-  /** Цвет заливки: CSS-цвет или `linear-gradient(...)`. По умолчанию primary. */
   color?: string;
   formatValue?: (value: number) => string;
   orientation?: MeterOrientation;

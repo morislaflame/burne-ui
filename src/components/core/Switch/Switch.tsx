@@ -48,18 +48,10 @@ export type SwitchControlProps = Omit<
 > &
   Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "size" | "children" | "className"> & {
     size?: SwitchSize;
-    /**
-     * Толщина трека и диаметр кружка. Перекрывает cross-axis из `size`.
-     * Число — px; строка — любая CSS-длина (`"0.75rem"`, `"12px"`).
-     */
     thickness?: number | string;
-    /** Иконка в кружке, когда выключен (цвет primary). Если задана хотя бы одна — primary-заливка кружка при включении. */
     iconOff?: ReactNode;
-    /** Иконка в кружке, когда включен (цвет primary-foreground на заливке). */
     iconOn?: ReactNode;
-    /** Фон трека во включённом состоянии: CSS-цвет или `linear-gradient(...)`. Заливка кружка всегда primary. */
     color?: string;
-    /** Gloss-вариант: стеклянный трек и кружок. */
     gloss?: boolean;
     className?: string;
     children?: ReactNode;

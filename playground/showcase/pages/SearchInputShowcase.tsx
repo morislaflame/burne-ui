@@ -63,6 +63,7 @@ export function SearchInputShowcase() {
             текстовую подпись по умолчанию.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

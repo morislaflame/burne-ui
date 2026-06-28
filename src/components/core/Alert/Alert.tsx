@@ -53,9 +53,6 @@ function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
   return tone !== "default" && tone !== "secondary";
 }
 
-/**
- * Компактный Alert.
- */
 const ALERT_INLINE_SURFACE_CLASSES: Record<AlertStatus, string> = {
   default: "bg-surface border-token text-foreground",
   outline: "bg-transparent border-token text-foreground",
@@ -120,21 +117,15 @@ function resolveAlertGridSlots(
 export type AlertVariant = "default" | "gloss";
 
 export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
-  /** Поверхность: `gloss` — стеклянная панель с hover как у gloss-кнопки. */
   variant?: AlertVariant;
   status?: AlertStatus;
-  /** Live region: `alert` (срочно) или `status` (информативно). По умолчанию — из `status`. */
   role?: AlertLiveRole;
-  /** Simple API: заголовок. В compound игнорируется. */
+  /** Simple API: title. In compound is ignored. */
   title?: ReactNode;
-  /** Simple API: описание. В compound — `<Alert.Description>`. */
+  /** Simple API: description. In compound is `<Alert.Description>`. */
   description?: ReactNode;
-  /**
-   * Simple API: иконка в `Indicator`.
-   * Не задано — дефолт по `status`; `null` — без иконки.
-   */
   icon?: ReactNode | null;
-  /** Simple API: слот действия справа. В compound — `<Alert.Action>`. */
+  /** Simple API: action slot on the right. In compound is `<Alert.Action>`. */
   action?: ReactNode;
 };
 

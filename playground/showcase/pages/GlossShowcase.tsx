@@ -20,18 +20,21 @@ export function GlossShowcase() {
       <ShowcaseDoc>
         <ShowcaseDoc.Block title="Применение">
           <p>
-            Передайте <code>variant=&quot;gloss&quot;</code> на Button, Input, Card, Dialog, Alert и
-            других компонентах, где вариант поддерживается. Токены темы управляют прозрачностью и
-            обводкой.
+            Передайте <code>variant=&quot;gloss&quot;</code> на Button, Input, Card, Dialog, Drawer,
+            Alert, Badge, Popover и других компонентах, где вариант поддерживается. У Tooltip —{" "}
+            <code>surface=&quot;gloss&quot;</code>, у Slider и Switch — булевый проп <code>gloss</code>.
+            Токены темы управляют прозрачностью и conic-обводкой.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Customization gloss>
           <p>
-            Gloss-интерактив (hover, press) настраивается через CSS-переменные темы и утилиты{" "}
-            <code>glossInteractiveMotion</code>. Для фона демо используйте dotted-grid из{" "}
-            <code>glossStoryChrome</code>.
+            Hover/press для gloss-поверхностей — через <code>configureMotion()</code> (
+            <code>enableHoverLift</code>, <code>interactiveDuration</code>,{" "}
+            <code>pressSqueezeScale</code>). Цвета стекла — CSS-переменные <code>--color-surface</code>,{" "}
+            <code>--color-border</code> и связанные токены после импорта{" "}
+            <code>burne-ui/styles.css</code>.
           </p>
-        </ShowcaseDoc.Block>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

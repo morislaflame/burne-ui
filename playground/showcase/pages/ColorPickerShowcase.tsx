@@ -68,6 +68,7 @@ export function ColorPickerShowcase() {
             Значение — hex-строка (<code>#rrggbb</code>). <code>hsvaToHex</code> для конвертации из HSVA.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

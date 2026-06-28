@@ -233,7 +233,6 @@ function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) 
 const BreadcrumbsCollapseContext = createContext(true);
 
 export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
-  /** Сжимать длинные цепочки: первый · … · два последних. По умолчанию `true`. */
   collapse?: boolean;
   children?: ReactNode;
 };
@@ -356,17 +355,14 @@ export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps
 export type BreadcrumbsItemProps = {
   href?: string;
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
-  /** Текущая страница; по умолчанию последний пункт. */
   current?: boolean;
   children?: ReactNode;
 };
 
-/** Маркер данных для `Breadcrumbs.List` — в DOM не рендерится. */
 export function BreadcrumbsItem(_props: BreadcrumbsItemProps) {
   return null;
 }
 
-/** Разделитель для кастомной разметки; в `Breadcrumbs.List` chevron добавляется автоматически. */
 export function BreadcrumbsSeparator({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) {
   return (
     <span className={cn("inline-flex", className)} {...rest}>

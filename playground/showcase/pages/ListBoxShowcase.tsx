@@ -66,6 +66,7 @@ export function ListBoxShowcase() {
             Одиночный режим — строка в <code>value</code>. <code>multiple</code> — массив строк.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

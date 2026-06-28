@@ -25,7 +25,7 @@ const SwitchFieldContext = createContext<SwitchFieldContextValue | null>(null);
 export function useSwitchFieldContext() {
   const ctx = useContext(SwitchFieldContext);
   if (!ctx) {
-    throw new Error("Switch.* должны быть внутри <Switch>.");
+    throw new Error("Switch.* must be inside <Switch>.");
   }
   return ctx;
 }

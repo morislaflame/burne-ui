@@ -69,6 +69,7 @@ export function DisclosureShowcase() {
             <code>defaultValue</code> — открытый пункт по умолчанию.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

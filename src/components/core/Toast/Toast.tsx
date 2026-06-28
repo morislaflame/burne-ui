@@ -53,7 +53,6 @@ import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
 
 import { ToastContext, type ToastContextValue } from "./toastContext";
 
-// ─── types ─────────────────────────────────────────────────────────────────
 
 export type ToastStatus = "default" | "success" | "danger" | "info" | "warning";
 export type ToastVariant = "default" | "gloss";
@@ -68,16 +67,13 @@ export type ToastPlacement =
 
 export type AddToastOpts = {
   status?: ToastStatus;
-  /** Стеклянная поверхность. По умолчанию `default`. */
   variant?: ToastVariant;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
-  /** Таймаут в мс. 0 = без автозакрытия. По умолчанию 4000. */
   timeout?: number;
   placement?: ToastPlacement;
   id?: string;
-  /** Показывает `Loading` вместо иконки статуса. */
   isLoading?: boolean;
 };
 
@@ -102,7 +98,6 @@ type ToastEntry = {
   isLoading: boolean;
 };
 
-// ─── constants ─────────────────────────────────────────────────────────────
 
 const STACK_PEEK = 8; // px — how much older toast peeks behind the newer
 const STACK_SCALE = 0.04; // scale reduction per stack level
@@ -111,7 +106,6 @@ const DEFAULT_TIMEOUT_MS = 4000;
 const TOAST_WIDTH_PX = 360;
 const ENTRY_OFFSET_PX = 24;
 
-// ─── per-item context ────────────────────────────────────────────────────────
 
 type ToastItemContextValue = {
   status: ToastStatus;
@@ -211,7 +205,6 @@ function useToastItem() {
   return ctx;
 }
 
-// ─── surface styles (same tokens as Alert) ──────────────────────────────────
 
 const TOAST_SURFACE: Record<ToastStatus, string> = {
   default: "bg-surface border-token text-foreground",
@@ -229,13 +222,10 @@ const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
   warning: "text-warning",
 };
 
-// ─── compound part types ─────────────────────────────────────────────────────
 
 export type ToastProviderProps = {
   children: ReactNode;
-  /** Плейсмент по умолчанию. */
   defaultPlacement?: ToastPlacement;
-  /** Вариант поверхности по умолчанию для `add()`. */
   defaultVariant?: ToastVariant;
 };
 
@@ -259,7 +249,6 @@ export type ToastCloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   "aria-label"?: string;
 };
 
-// ─── Indicator ───────────────────────────────────────────────────────────────
 
 export function ToastIndicator({ className = "", children, ...rest }: ToastIndicatorProps) {
   const { status, isLoading, gridSlots } = useToastItem();
@@ -313,7 +302,6 @@ export function ToastIndicator({ className = "", children, ...rest }: ToastIndic
 
 ToastIndicator.displayName = "ToastIndicator";
 
-// ─── Message ─────────────────────────────────────────────────────────────────
 
 export function ToastMessage({ className = "", ...rest }: ToastMessageProps) {
   return <div className={cn("contents", className)} {...rest} />;
@@ -321,7 +309,6 @@ export function ToastMessage({ className = "", ...rest }: ToastMessageProps) {
 
 ToastMessage.displayName = "ToastMessage";
 
-// ─── Content ─────────────────────────────────────────────────────────────────
 
 export function ToastContent({ className = "", ...rest }: ToastContentProps) {
   return <div className={cn("contents", className)} {...rest} />;
@@ -329,7 +316,6 @@ export function ToastContent({ className = "", ...rest }: ToastContentProps) {
 
 ToastContent.displayName = "ToastContent";
 
-// ─── Title ───────────────────────────────────────────────────────────────────
 
 export function ToastTitle({ className = "", id: idProp, ...rest }: ToastTitleProps) {
   const { titleId, gridSlots } = useToastItem();
@@ -350,7 +336,6 @@ export function ToastTitle({ className = "", id: idProp, ...rest }: ToastTitlePr
 
 ToastTitle.displayName = "ToastTitle";
 
-// ─── Description ─────────────────────────────────────────────────────────────
 
 export function ToastDescription({ className = "", id: idProp, ...rest }: ToastDescriptionProps) {
   const { descriptionId, gridSlots } = useToastItem();
@@ -371,7 +356,6 @@ export function ToastDescription({ className = "", id: idProp, ...rest }: ToastD
 
 ToastDescription.displayName = "ToastDescription";
 
-// ─── ActionButton ─────────────────────────────────────────────────────────────
 
 export function ToastActionButton({ className = "", ...rest }: ToastActionButtonProps) {
   const { gridSlots } = useToastItem();
@@ -385,7 +369,6 @@ export function ToastActionButton({ className = "", ...rest }: ToastActionButton
 
 ToastActionButton.displayName = "ToastActionButton";
 
-// ─── CloseButton ─────────────────────────────────────────────────────────────
 
 export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonProps>(
   function ToastCloseButton(
@@ -416,7 +399,6 @@ export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonPr
 
 ToastCloseButton.displayName = "ToastCloseButton";
 
-// ─── Toast (visual root) ──────────────────────────────────────────────────────
 
 export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
   {
@@ -528,7 +510,6 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
   );
 });
 
-// ─── Animated item wrapper ────────────────────────────────────────────────────
 
 type ToastItemWrapperProps = {
   entry: ToastEntry;
@@ -583,9 +564,6 @@ function ToastItemWrapper({
     }
 
     if (isFirstMount && entry.variant !== "gloss") {
-      // Non-gloss: fade in from opacity 0 to avoid abrupt appearance.
-      // We use `opacity` (not `autoAlpha`) so visibility stays intact and the
-      // stacking context is not disturbed for any sibling gloss surfaces.
       gsap.fromTo(
         el,
         { opacity: 0 },
@@ -602,12 +580,9 @@ function ToastItemWrapper({
     }
   }, [peekY, stackScale, stackOpacity]);
 
-  // Track height
   useLayoutEffect(() => {
     const el = cardRef.current;
     if (!el) return;
-    // Сразу фиксируем начальную высоту, чтобы новый тост не обрезался
-    // до первого срабатывания ResizeObserver (особенно в стек-сценариях undo).
     onHeightChange(entry.id, el.offsetHeight);
     const ro = new ResizeObserver(() => {
       onHeightChange(entry.id, el.offsetHeight);
@@ -616,7 +591,6 @@ function ToastItemWrapper({
     return () => ro.disconnect();
   }, [entry.id, onHeightChange]);
 
-  // Entry animation
   useLayoutEffect(() => {
     const el = animRef.current;
     if (!el) return;
@@ -633,7 +607,6 @@ function ToastItemWrapper({
     });
   }, [isTop]);
 
-  // Exit animation
   useEffect(() => {
     if (!isDismissing) return;
     const el = animRef.current;
@@ -652,7 +625,6 @@ function ToastItemWrapper({
     });
   }, [isDismissing, isTop, entry.id, onRemoveFinal]);
 
-  // Auto-dismiss timer
   useEffect(() => {
     if (entry.timeout === 0 || isDismissing || entry.isLoading) return;
     const id = setTimeout(() => onDismiss(entry.id), entry.timeout);
@@ -692,7 +664,6 @@ function ToastItemWrapper({
   );
 }
 
-// ─── Viewport ─────────────────────────────────────────────────────────────────
 
 const PLACEMENT_CLASS: Record<ToastPlacement, string> = {
   "top-left": "top-4 left-4",
@@ -705,7 +676,6 @@ const PLACEMENT_CLASS: Record<ToastPlacement, string> = {
 
 type ToastViewportProps = {
   placement: ToastPlacement;
-  /** Newest first. */
   sorted: ToastEntry[];
   dismissingIds: Set<string>;
   onDismiss: (id: string) => void;
@@ -723,8 +693,6 @@ function ToastViewport({
   const [heights, setHeights] = useState<Map<string, number>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
-  // Keeps the last measured container height so we never collapse to 0 when a
-  // new front toast hasn't been measured yet (e.g. dismiss + show in one tick).
   const prevContainerHRef = useRef(0);
 
   const onHeightChange = useCallback((id: string, h: number) => {
@@ -735,12 +703,9 @@ function ToastViewport({
     });
   }, []);
 
-  // Container height = front toast height + peek offsets for visible extras
   const frontHeight = (sorted[0] && heights.get(sorted[0].id)) ?? 0;
   const extraPeek = Math.min(sorted.length - 1, MAX_VISIBLE - 1) * STACK_PEEK;
   const rawContainerH = frontHeight + extraPeek;
-  // When the new front toast hasn't been measured yet (frontHeight=0), fall back
-  // to the last known good height to avoid a momentary collapse of the container.
   const containerH = rawContainerH > 0 ? rawContainerH : prevContainerHRef.current;
   if (rawContainerH > 0) prevContainerHRef.current = rawContainerH;
 
@@ -765,20 +730,17 @@ function ToastViewport({
     });
   }, [containerH]);
 
-  // Initialise scrim to invisible before first paint
   useLayoutEffect(() => {
     const el = scrimRef.current;
     if (el) gsap.set(el, { opacity: 0 });
   }, []);
 
-  // Animate scrim in/out — appears with first toast, exits with last
   useLayoutEffect(() => {
     const el = scrimRef.current;
     if (!el) return;
 
     const reduceMotion = prefersReducedInteractiveHoverLift();
 
-    // Fade out when the single remaining toast has started its exit animation
     const isLastDismissing =
       sorted.length === 1 && dismissingIds.has(sorted[0]?.id ?? "");
 
@@ -790,7 +752,6 @@ function ToastViewport({
     }
 
     if (isLastDismissing) {
-      // Match the toast exit duration so both disappear together
       gsap.to(el, { opacity: 0, duration: 0.22, ease: "power2.in", overwrite: "auto" });
     } else {
       gsap.to(el, { opacity: 1, ...motionInteractive(), overwrite: "auto" });
@@ -846,7 +807,6 @@ function ToastViewport({
   );
 }
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function ToastProviderRoot({
   children,
@@ -869,8 +829,6 @@ export function ToastProviderRoot({
         action: opts.action,
         timeout: opts.timeout ?? DEFAULT_TIMEOUT_MS,
         placement: opts.placement ?? defaultPlacement,
-        // Monotonic order key: avoids Date.now() collisions when a new toast
-        // is created in the same tick as dismiss (undo scenario).
         createdAt: ++orderRef.current,
         isLoading: opts.isLoading ?? false,
       };
@@ -900,7 +858,6 @@ export function ToastProviderRoot({
     });
   }, []);
 
-  // Group active placements
   const placementSet = new Set(toasts.map((t) => t.placement));
   const placements = [...placementSet] as ToastPlacement[];
 
@@ -929,5 +886,4 @@ export function ToastProviderRoot({
   );
 }
 
-// ─── compound export ──────────────────────────────────────────────────────────
 

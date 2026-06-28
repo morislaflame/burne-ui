@@ -1,6 +1,5 @@
 import { Children, isValidElement, type ReactNode } from "react";
 
-/** Семантический тон алерта и заливки. */
 export type AlertStatus =
   | "default"
   | "outline"
@@ -61,7 +60,6 @@ function walkAlertIndicatorProps(
   }
 }
 
-/** Будет ли `<Alert.Indicator>` реально отрисован при данном tone и children. */
 export function alertIndicatorWouldRender(
   tone: AlertStatus,
   indicatorChildren: ReactNode | undefined,
@@ -80,7 +78,6 @@ export function alertIndicatorWouldRender(
   );
 }
 
-/** Compound: колонка indicator только если хотя бы один Indicator действительно виден. */
 export function alertCompoundShowsIndicator(
   children: ReactNode,
   tone: AlertStatus,
@@ -114,7 +111,6 @@ export function hasAlertCompoundChildren(children: ReactNode): boolean {
   );
 }
 
-/** `alert` для срочных тонов; иначе `status`. */
 export function resolveAlertLiveRole(status: AlertStatus, roleProp?: AlertLiveRole): AlertLiveRole {
   if (roleProp != null) return roleProp;
   if (status === "danger" || status === "warning") return "alert";

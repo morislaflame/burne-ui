@@ -52,6 +52,7 @@ export function TextShowcase() {
             Дополнительные цвета — через <code>className</code> (например, <code>text-muted</code>).
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

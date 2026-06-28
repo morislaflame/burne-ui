@@ -8,13 +8,9 @@ export type SeparatorProps = Omit<
   HTMLAttributes<HTMLElement>,
   "role"
 > & {
-  /** Линия или столбец. По умолчанию горизонтальная линия во всю ширину. */
   orientation?: SeparatorOrientation;
 };
 
-/**
- * Разделитель списков и блоков — по теме (`border-token`).
- */
 export const Separator = forwardRef<HTMLElement, SeparatorProps>(
   function Separator(
     {

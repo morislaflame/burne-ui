@@ -63,7 +63,6 @@ export function Label({
   );
 }
 
-/** Маркер для Switch: текст забирает корень, сам не рендерится. */
 export function LabelSlot(_props: LabelProps) {
   return null;
 }

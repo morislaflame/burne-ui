@@ -14,7 +14,7 @@ export function DrawerShowcase() {
   return (
     <ShowcasePage
       title="Drawer"
-      description="Выдвижная панель с размещением слева/справа и настраиваемым размером."
+      description="Выдвижная панель с размещением по четырём сторонам и настраиваемым размером."
       importPath='import { Drawer } from "@/components/core/Drawer";'
       tags={["core", "overlay"]}
     >
@@ -39,16 +39,18 @@ export function DrawerShowcase() {
         <ShowcaseDoc.Block title="Импорт">
           <ShowcaseDoc.Import path="@/components/core/Drawer" />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.ApiRow
-          api="compound"
-          description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close — структура панели."
-        />
-        <ShowcaseDoc.Block title="Кастомизация">
-          <p>
-            Используйте <code>placement</code> (left, right, top, bottom) и <code>size</code> для
-            ширины/высоты. Подходит для мобильной навигации и боковых настроек.
-          </p>
+        <ShowcaseDoc.Block title="API">
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close — структура панели."
+          />
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss>
+          <p>
+            <code>placement</code>: left, right, top, bottom. <code>size</code> — ширина или высота
+            панели. Slide-анимация — <code>configureMotion()</code> (<code>interactiveDuration</code>).
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -54,6 +54,7 @@ export function SelectionIndicatorShowcase() {
             <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

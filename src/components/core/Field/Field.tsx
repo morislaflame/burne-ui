@@ -28,7 +28,6 @@ export function FieldRoot({ className, children, ...rest }: FieldRootProps) {
 export type FieldHintProps = HTMLAttributes<HTMLElement> & {
   children?: ReactNode;
   status?: FieldHintStatus;
-  /** Тег подсказки. `span` — внутри label/grid; `p` — под полем. */
   as?: "p" | "span";
   variant?: TextVariant;
 };
@@ -60,7 +59,6 @@ export const FieldLabel = Label;
 
 export type FieldErrorProps = Omit<FieldHintProps, "status">;
 
-/** Сообщение об ошибке поля (`FieldHint` со `status="danger"`). */
 export function FieldError({ role = "alert", ...props }: FieldErrorProps) {
   return <FieldHint status="danger" role={role} {...props} />;
 }

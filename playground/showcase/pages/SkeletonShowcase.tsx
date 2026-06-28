@@ -61,6 +61,7 @@ export function SkeletonShowcase() {
             подкомпоненте Skeleton.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

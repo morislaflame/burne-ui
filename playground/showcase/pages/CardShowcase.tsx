@@ -51,7 +51,7 @@ export function CardShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Header, Title, Description, Body и Footer — слоты карточки."
+            description="Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer — слоты карточки."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
@@ -64,6 +64,7 @@ export function CardShowcase() {
             <code>variant</code> на корне Card.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -50,18 +50,15 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   };
 }
 
-// ─── types ────────────────────────────────────────────────────────────────────
 
 export type DisclosureVariant = "default" | "outline" | "secondary" | "card" | "ghost" | "gloss";
 export type DisclosureSize = ComponentSize;
 export type DisclosureIconPos = "left" | "right";
 
-/** Контент в отдельной рамке под триггером (outline / secondary). */
 function isFramedVariant(variant: DisclosureVariant): boolean {
   return variant === "outline" || variant === "secondary" || variant === "default";
 }
 
-// ─── DisclosureGroup context ──────────────────────────────────────────────────
 
 type DisclosureGroupCtx = {
   openValue: string | null;
@@ -74,7 +71,6 @@ type DisclosureGroupCtx = {
 
 const DisclosureGroupContext = createContext<DisclosureGroupCtx | null>(null);
 
-// ─── Disclosure context ───────────────────────────────────────────────────────
 
 type DisclosureCtx = {
   open: boolean;
@@ -100,7 +96,6 @@ function useDisclosureCtx(): DisclosureCtx {
   return ctx;
 }
 
-// ─── size maps (CONTROL_SIZE_LAYOUT) ─────────────────────────────────────────
 
 const DISCLOSURE_CONTENT_PAD: Record<DisclosureSize, string> = {
   small: "p-base",
@@ -119,7 +114,6 @@ function disclosureTriggerShell(size: DisclosureSize) {
   };
 }
 
-// ─── variant maps ─────────────────────────────────────────────────────────────
 
 const VARIANT_ROOT: Record<DisclosureVariant, string> = {
   default: "flex flex-col",
@@ -157,7 +151,6 @@ function readDisclosurePartDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;
 }
 
-/** Заголовок → контент → хэндл: раскрываемая часть между триггером и полоской. */
 function orderDragHandleChildren(children: ReactNode): ReactNode[] {
   const trigger: ReactNode[] = [];
   const content: ReactNode[] = [];
@@ -179,12 +172,10 @@ function orderDragHandleChildren(children: ReactNode): ReactNode[] {
   return [...trigger, ...content, ...handle, ...other];
 }
 
-// ─── Disclosure.Trigger ───────────────────────────────────────────────────────
 
 export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
   icon?: ReactNode | null;
-  /** Пробросить пропы на единственного ребёнка (например `<Button />`). */
   asChild?: boolean;
 };
 
@@ -392,7 +383,6 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
 
 DisclosureTrigger.displayName = "DisclosureTrigger";
 
-// ─── Disclosure.Handle (card + dragHandle) ────────────────────────────────────
 
 export type DisclosureHandleProps = HTMLAttributes<HTMLDivElement>;
 
@@ -446,7 +436,6 @@ export function DisclosureHandleInner({
 
 DisclosureHandleInner.displayName = "DisclosureHandle";
 
-// ─── Disclosure.Content ───────────────────────────────────────────────────────
 
 export type DisclosureContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
@@ -472,7 +461,6 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
 
     const framed = isFramedVariant(variant);
 
-    /** Отступ триггер→контент через padding обёртки (margin на section ломает measure при height:auto). */
     const contentWrapCls =
       variant === "outline" || variant === "secondary" || variant === "gloss"
         ? "pt-xsmall"
@@ -528,7 +516,6 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
 
 DisclosureContent.displayName = "DisclosureContent";
 
-// ─── Disclosure root ──────────────────────────────────────────────────────────
 
 export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
@@ -540,7 +527,6 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   size?: DisclosureSize;
   disabled?: boolean;
   iconPos?: DisclosureIconPos;
-  /** Полоска-хэндл для drag-раскрытия; работает только с `variant="card"`. */
   dragHandle?: boolean;
 };
 
@@ -563,7 +549,6 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
   ) {
     const groupCtx = useContext(DisclosureGroupContext);
 
-    // В режиме accordion=false каждый Disclosure управляет своим состоянием самостоятельно
     const isGrouped = groupCtx !== null && value !== undefined && groupCtx.accordion;
     const groupOpen = isGrouped ? groupCtx!.openValue === value : undefined;
 
@@ -640,7 +625,6 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(functi
 
 DisclosureRoot.displayName = "Disclosure";
 
-// ─── DisclosureGroup ──────────────────────────────────────────────────────────
 
 export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;

@@ -8,9 +8,9 @@ export type CheckboxGroupContextValue = {
   isRequired: boolean;
   hintId: string;
   errorId: string;
-  /** Только для `selection="single"`. */
+  /** Only for `selection="single"`. */
   selectedValue: string | undefined;
-  /** Только для `selection="single"`. */
+  /** Only for `selection="single"`. */
   selectSingleValue: (value: string, checked: boolean) => void;
 };
 
@@ -19,7 +19,7 @@ const CheckboxGroupContext = createContext<CheckboxGroupContextValue | null>(nul
 export function useCheckboxGroupContext() {
   const ctx = useContext(CheckboxGroupContext);
   if (!ctx) {
-    throw new Error("Компоненты CheckboxGroup должны быть внутри <CheckboxGroup>.");
+    throw new Error("CheckboxGroup components must be inside <CheckboxGroup>.");
   }
   return ctx;
 }

@@ -45,7 +45,7 @@ export function MeterShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Header, Label, Value, Track, Hint и Error — кастомная разметка и стили слотов."
+            description="Meter.Header, Meter.Label, Meter.Value, Meter.Track, Meter.Hint, Meter.Error — compound-слоты."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
@@ -58,6 +58,7 @@ export function MeterShowcase() {
             вертикальную ориентацию.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

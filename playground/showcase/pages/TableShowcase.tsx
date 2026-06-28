@@ -58,6 +58,7 @@ export function TableShowcase() {
             <code>selectedKeys</code> и <code>onSelectionChange</code> — для выбора.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

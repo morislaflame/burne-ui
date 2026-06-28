@@ -1,6 +1,5 @@
 export type TooltipSide = "top" | "right" | "bottom" | "left";
 
-/** Выравнивание плавающей панели вдоль оси, перпендикулярной `side`. */
 export type FloatingAlign = "start" | "center" | "end";
 
 const VIEWPORT_PAD = 8;
@@ -135,7 +134,6 @@ const FLIP_ORDER: Record<TooltipSide, TooltipSide[]> = {
   right: ["right", "left", "top", "bottom"],
 };
 
-/** Позиционирует тултип относительно триггера с flip при нехватке места. */
 export function computeTooltipPlacement(
   triggerRect: DOMRect,
   floatingRect: DOMRect,
@@ -165,7 +163,6 @@ export const TOOLTIP_ARROW_CLASS: Record<TooltipSide, string> = {
   right: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2",
 };
 
-/** Отступ оболочки под половину стрелки (size-2 → 4px) для позиционирования и overflow. */
 export const TOOLTIP_ARROW_SHELL_PAD: Record<TooltipSide, string> = {
   top: "pb-1",
   bottom: "pt-1",

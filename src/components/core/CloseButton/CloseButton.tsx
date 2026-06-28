@@ -34,7 +34,6 @@ import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVa
 
 export type CloseButtonSize = ComponentSize;
 
-/** Визуальный вариант — как у `Button`, без статусных тонов. */
 export type CloseButtonVariant =
   | "default"
   | "primary"
@@ -125,16 +124,9 @@ export type CloseButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children"
 > & {
-  /** Стиль заливки. По умолчанию `default`. */
   variant?: CloseButtonVariant;
-  /** Диаметр кнопки и иконки. По умолчанию `base`. */
   size?: CloseButtonSize;
-  /** Лёгкий scale при нажатии. По умолчанию `true`. */
   animated?: boolean;
-  /**
-   * Converge-ripple от точки нажатия (`<Ripple />` внутри кнопки, тон под `variant`).
-   * @default false
-   */
   ripple?: boolean;
 };
 

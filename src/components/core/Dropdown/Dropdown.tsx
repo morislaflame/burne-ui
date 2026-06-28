@@ -14,7 +14,7 @@ import {
   cloneElement,
   isValidElement,
   type HTMLAttributes,
-  type MutableRefObject,
+  type RefObject,
   type ReactElement,
   type ReactNode,
   type Ref,
@@ -65,7 +65,7 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
     for (const r of refs) {
       if (r == null) continue;
       if (typeof r === "function") r(node);
-      else (r as MutableRefObject<T | null>).current = node;
+      else (r as RefObject<T | null>).current = node;
     }
   };
 }
@@ -84,19 +84,15 @@ type DropdownContextValue = {
   indicatorMode: "radio" | "multi";
   closeOnSelect: boolean;
   popoverVariant: PopoverVariant;
-  triggerRef: MutableRefObject<HTMLElement | null>;
-  contentRef: MutableRefObject<HTMLDivElement | null>;
+  triggerRef: RefObject<HTMLElement | null>;
+  contentRef: RefObject<HTMLDivElement | null>;
   contentId: string;
-  /** Корни портальных саб-панелей — не считаются «кликом снаружи» для закрытия меню. */
-  subPanelRootsRef: MutableRefObject<Set<HTMLElement>>;
+  /** Portal sub-panel roots — not considered as a click outside to close the menu. */
+  subPanelRootsRef: RefObject<Set<HTMLElement>>;
 };
 
 const DropdownContext = createContext<DropdownContextValue | null>(null);
 
-/**
- * Для одиночного выбора: показывать ли слот индикатора слева (наследование + `selectionIndicator` у группы).
- * В режиме `multiple` пункты всё равно показывают индикатор независимо от этого значения.
- */
 const DropdownIndicatorPreferenceContext = createContext<boolean>(false);
 
 function useDropdownIndicatorPreference() {
@@ -105,7 +101,7 @@ function useDropdownIndicatorPreference() {
 
 function useDropdown() {
   const ctx = useContext(DropdownContext);
-  if (!ctx) throw new Error("Компоненты Dropdown.* должны быть внутри <Dropdown>.");
+  if (!ctx) throw new Error("Dropdown.* components must be inside <Dropdown>.");
   return ctx;
 }
 
@@ -129,27 +125,15 @@ const DropdownGroupLabelRegisterContext = createContext<
 
 export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
-  /** Управляемое открытие. */
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Несколько значений `value`. */
   multiple?: boolean;
-  /** Выбранное значение или значения (`Dropdown.Item` → `value`). */
   value?: string | string[];
   defaultValue?: string | string[];
   onValueChange?: (value: string | string[]) => void;
-  /**
-   * Индикатор слева для одиночного выбора: радио слева у пунктов с `selection`.
-   * По умолчанию выключен. У `DropdownGroup` можно задать свой `selectionIndicator` — он действует на эту группу и вложенные (пока не переопределят).
-   * В режиме `multiple` индикаторы у выбираемых пунктов всегда включены.
-   */
   selectionIndicator?: boolean;
-  /**
-   * Закрыть после выбора пункта. По умолчанию `true` при `multiple === false`, иначе `false`.
-   */
   closeOnSelect?: boolean;
-  /** Вариант панели меню (`Popover`). По умолчанию `default`. */
   popoverVariant?: PopoverVariant;
 };
 
@@ -272,7 +256,6 @@ export function DropdownRoot({
 }
 
 export type DropdownTriggerProps = HTMLAttributes<HTMLElement> & {
-  /** Пробросить пропы на единственного ребёнка (например `<Button />`). */
   asChild?: boolean;
 };
 
@@ -331,9 +314,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
 );
 
 export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
-  /** Вариант панели меню; переопределяет `popoverVariant` на `<Dropdown>`. */
   variant?: PopoverVariant;
-  /** Классы для внутренней панели меню (`Popover.Body`): padding, gap, max-height, … */
   bodyClassName?: string;
 };
 
@@ -451,16 +432,9 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
 );
 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
-  /**
-   * Переопределить показ индикатора выбора слева для этой группы и вложенных групп (только при одиночном выборе).
-   * Не задано — наследовать от родителя (`Dropdown` или внешней `DropdownGroup`).
-   */
   selectionIndicator?: boolean;
 };
 
-/**
- * Логическая группа пунктов (как `DropdownMenuGroup`): внутри — `Dropdown.Label`, `Dropdown.Item`, без лишнего отступа между соседними группами кроме `gap` у контента и `Dropdown.Separator`.
- */
 export function DropdownGroup({
   className = "",
   children,
@@ -521,14 +495,13 @@ export function DropdownLabel({
 export type DropdownSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
 export function DropdownSeparator({ className = "", ...rest }: DropdownSeparatorProps) {
-  /** Поля панели — `p-base`; сепаратор на всю ширину внутренней области. */
   return <Separator className={className} {...rest} />;
 }
 
 type DropdownSubContextValue = {
   open: boolean;
   setOpen: (next: boolean) => void;
-  triggerRef: MutableRefObject<HTMLDivElement | null>;
+  triggerRef: RefObject<HTMLDivElement | null>;
   scheduleClose: () => void;
   cancelClose: () => void;
 };
@@ -538,16 +511,13 @@ const DropdownSubContext = createContext<DropdownSubContextValue | null>(null);
 function useDropdownSub() {
   const v = useContext(DropdownSubContext);
   if (!v) {
-    throw new Error("Компоненты DropdownSub.* должны быть внутри <DropdownSub>.");
+    throw new Error("DropdownSub.* components must be inside <DropdownSub>.");
   }
   return v;
 }
 
 export type DropdownSubProps = HTMLAttributes<HTMLDivElement>;
 
-/**
- * Вложенное меню по hover (и по клику для тач): `DropdownSubTrigger` + `DropdownSubContent`.
- */
 export function DropdownSub({ className = "", children, ...rest }: DropdownSubProps) {
   const { open: menuOpen } = useDropdown();
   const [open, setOpen] = useState(false);
@@ -591,7 +561,6 @@ export function DropdownSub({ className = "", children, ...rest }: DropdownSubPr
 }
 
 export type DropdownSubTriggerProps = HTMLAttributes<HTMLDivElement> & {
-  /** Пробросить пропы на единственного ребёнка (обёртка вокруг текста). */
   asChild?: boolean;
 };
 
@@ -655,7 +624,6 @@ export const DropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerP
 
     const rowClass = cn(
       "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none",
-      /* как у подписи в `Dropdown.Item`: токен `text-base`, не наследованный `1rem` у `html` */
       "text-base font-medium text-foreground focus-ring",
       hoverVariant(),
       className,
@@ -928,9 +896,7 @@ DropdownItemIcon.displayName = "DropdownItemIcon";
 export type DropdownItemIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   variant?: SelectionIndicatorVariant;
   size?: SelectionIndicatorSize;
-  /** Галочка при выборе; по умолчанию — в режиме `multiple`. */
   check?: boolean;
-  /** Своя иконка поверх заливки вместо галочки. */
   children?: ReactNode;
 };
 
@@ -991,19 +957,10 @@ const DROPDOWN_ITEM_VARIANT_CLASS: Record<DropdownItemVariant, string> = {
 };
 
 export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
-  /**
-   * Ключ для режима выбора. Не нужен при `selection={false}` или при `href`.
-   */
   value?: string;
-  /** Навигационная ссылка — рендер `<a role="menuitem">`; выбор значения отключён. */
   href?: string;
   disabled?: boolean;
-  /**
-   * Пункт участвует в выборе значения; при `multiple` или при включённом `selectionIndicator` у `Dropdown` / `Dropdown.Group` слева показывается индикатор.
-   * `false` — действие: без выбора значения; клик закрывает меню.
-   */
   selection?: boolean;
-  /** Семантический цвет подписи и строки (hint наследует тон с прозрачностью). */
   variant?: DropdownItemVariant;
 };
 
@@ -1167,5 +1124,3 @@ DropdownSub.displayName = "Dropdown.Sub";
 DropdownSubTrigger.displayName = "Dropdown.SubTrigger";
 DropdownSubContent.displayName = "Dropdown.SubContent";
 DropdownRoot.displayName = "Dropdown";
-
-/** Составной API: `Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Item`, … */

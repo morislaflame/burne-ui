@@ -69,6 +69,7 @@ export function TabsShowcase() {
             <code>variant</code> на корне Tabs.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

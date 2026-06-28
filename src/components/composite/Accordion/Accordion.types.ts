@@ -11,9 +11,8 @@ import type {
 } from "@/components/core/Expandable";
 
 export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  /** Начально открытый пункт по id (`Accordion.Item value`) или индексу. */
   defaultOpenId?: string | null;
-  /** Начально открытый пункт по порядковому номеру (0-based), если `value` не задан. */
+  /** Initial open item by index (0-based), if `value` is not provided. */
   defaultOpenIndex?: number | null;
   openId?: string | null;
   onOpenIdChange?: (id: string | null) => void;
@@ -22,7 +21,7 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
 };
 
 export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  /** Явный id пункта; без него используется порядковый номер среди siblings. */
+  /** Explicit item id; if not provided, the index among siblings is used. */
   value?: string;
   disabled?: boolean;
   children?: ReactNode;

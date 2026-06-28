@@ -17,7 +17,6 @@ export {
 
 export { ensureRippleEase, gsap, killMotion, useGSAP } from "./gsapMotion";
 
-// --- defaults (equal to motionConfig) ---
 
 export const MOTION_INTERACTIVE_MS = 280;
 export const MOTION_INTERACTIVE_EASE = "power2.out" as const;
@@ -39,7 +38,6 @@ export const MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE = 1.052;
 /** Ключевые кадры squeeze: покой → сжатие → покой */
 export const MOTION_PRESS_SQUEEZE_SCALE = [1, 0.98, 1] as const;
 
-// --- converge ripple (точка от пальца) ---
 
 /** Нижняя граница масштаба: круг не сходится в математическую точку, остаётся мягкое «ядро». */
 export const MOTION_RIPPLE_MIN_SCALE = 0.12;

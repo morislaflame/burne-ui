@@ -40,7 +40,7 @@ const PaginationContext = createContext<PaginationContextValue | null>(null);
 function usePagination() {
   const ctx = useContext(PaginationContext);
   if (!ctx) {
-    throw new Error("Компоненты Pagination должны быть внутри <Pagination>.");
+    throw new Error("Pagination components must be inside <Pagination>.");
   }
   return ctx;
 }
@@ -137,11 +137,9 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
 
 export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children?: ReactNode;
-  /** Текущая страница (1-based) для `Pagination.Pages` и навигации по контексту. */
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
-  /** Соседние страницы вокруг текущей в `Pagination.Pages`. */
   siblingCount?: number;
 };
 
@@ -153,7 +151,7 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(function 
     totalPages,
     onPageChange,
     siblingCount = 1,
-    "aria-label": ariaLabel = "Пагинация",
+    "aria-label": ariaLabel = "Pagination",
     ...rest
   },
   ref,
@@ -199,11 +197,6 @@ export const PaginationSummary = forwardRef<HTMLDivElement, PaginationSummaryPro
   },
 );
 
-/**
- * FLIP-анимация прямых `<li>` детей: при изменении состава/позиций элементы
- * плавно съезжаются/разъезжаются вместо резкого скачка. Новые элементы
- * проявляются (opacity + scale), существующие — едут из старой позиции в новую.
- */
 function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
   const prevRectsRef = useRef<Map<string, { x: number; y: number }>>(null!);
   if (!prevRectsRef.current) prevRectsRef.current = new Map();
@@ -235,10 +228,6 @@ function usePaginationFlip(olRef: React.RefObject<HTMLOListElement | null>) {
 
       const prev = prevRects.get(key);
       if (prev) {
-        // Только горизонтальная ось: пагинация — один ряд, элементы
-        // съезжаются/разъезжаются по X. Вертикальную дельту игнорируем,
-        // чтобы из-за реflow раскладки (шрифты/центрирование) элементы не
-        // «выезжали снизу» при первом переключении.
         const dx = prev.x - pos.x;
         if (Math.abs(dx) > 0.5) {
           killMotion(el);
@@ -351,7 +340,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
           <>
             <PaginationPreviousIcon />
             <Text variant="small" inheritColor as="span">
-              Назад
+              Back
             </Text>
           </>
         )}
@@ -394,7 +383,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
         {children ?? (
           <>
             <Text variant="small" inheritColor as="span">
-              Вперёд
+              Forward
             </Text>
             <PaginationNextIcon />
           </>
@@ -472,7 +461,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     }
 
     const pageAriaLabel =
-      ariaLabel ?? (children != null ? `Страница ${pageNumber}` : undefined);
+      ariaLabel ?? (children != null ? `Page ${pageNumber}` : undefined);
 
     return (
       <PaginationInteractive
@@ -540,7 +529,6 @@ function getPaginationRange(
   return items;
 }
 
-/** Без props: диапазон берётся из `page` / `totalPages` / `siblingCount` на корневом `<Pagination>`. */
 export type PaginationPagesProps = Record<string, never>;
 
 export function PaginationPages() {
@@ -548,7 +536,7 @@ export function PaginationPages() {
 
     if (page == null || totalPages == null) {
       throw new Error(
-        "Pagination.Pages требует `page` и `totalPages` на корневом <Pagination>.",
+        "Pagination.Pages requires `page` and `totalPages` on the root <Pagination>.",
       );
     }
 
@@ -582,7 +570,6 @@ export function PaginationPages() {
     );
 }
 
-/** Пагинация: составной API в стиле `Breadcrumbs` — summary, prev/next, номера страниц. */
 PaginationRoot.displayName = "Pagination";
 PaginationSummary.displayName = "Pagination.Summary";
 PaginationContent.displayName = "Pagination.Content";

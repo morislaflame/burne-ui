@@ -8,7 +8,6 @@ import "../utils/glossInteractive.css";
 
 export type SurfaceVariant = "default" | "secondary" | "tertiary" | "gloss";
 
-/** @alias ShadowSize */
 export type SurfaceShadow = ShadowSize;
 
 export type SurfacePadding = "none" | "small" | "base" | "plus" | "mid";
@@ -16,17 +15,12 @@ export type SurfacePadding = "none" | "small" | "base" | "plus" | "mid";
 export type SurfaceRadius = "base" | "mid" | "large";
 
 export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
-  /** Заливка поверхности. По умолчанию `default` — только фон, без рамки. */
   variant?: SurfaceVariant;
-  /** Тень панели. По умолчанию `none`. */
   shadow?: SurfaceShadow;
-  /** Внутренние отступы. По умолчанию `none` — задайте через `className` или prop. */
   padding?: SurfacePadding;
-  /** Скругление углов. По умолчанию `mid`. */
   radius?: SurfaceRadius;
 };
 
-/** Только заливка — без рамки (`surface-*` утилиты с border для кнопок и контролов). */
 const SURFACE_VARIANT: Record<Exclude<SurfaceVariant, "gloss">, string> = {
   default: "bg-surface",
   secondary: "bg-secondary",
@@ -54,12 +48,6 @@ const SURFACE_RADIUS: Record<SurfaceRadius, string> = {
   large: "rounded-large",
 };
 
-/**
- * Базовая панель: только фон, скругление и опциональная тень — без рамки.
- * Примитив для меню, секций, обёрток списков — без семантики Card.
- *
- * `variant="gloss"` — стеклянная CSS-панель с conic-обводкой, бликом и мягкой drop-shadow.
- */
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
   {
     className = "",

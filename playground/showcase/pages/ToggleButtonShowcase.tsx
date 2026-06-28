@@ -72,6 +72,7 @@ export function ToggleButtonShowcase() {
             <code>ToggleButtonGroup</code> из <code>@/components/composite/ToggleButtonGroup</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

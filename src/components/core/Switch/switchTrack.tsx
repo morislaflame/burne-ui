@@ -52,7 +52,7 @@ const SwitchTrackContext = createContext<SwitchTrackContextValue | null>(null);
 function useSwitchTrackContext() {
   const ctx = useContext(SwitchTrackContext);
   if (!ctx) {
-    throw new Error("Switch.Track, Switch.Fill, Switch.Thumb, Switch.Icon — внутри Switch.Track");
+    throw new Error("Switch.Track, Switch.Fill, Switch.Thumb, Switch.Icon must be inside Switch.Track");
   }
   return ctx;
 }
@@ -60,14 +60,12 @@ function useSwitchTrackContext() {
 export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   size: SwitchSize;
   thickness?: number | string;
-  /** Задаётся `<Switch.Control>`; в compound-разметке можно опустить. */
   checked?: boolean;
   disabled?: boolean;
   color?: string;
   squeezeToken?: number;
   iconOff?: ReactNode;
   iconOn?: ReactNode;
-  /** Gloss-вариант: стеклянный трек и кружок. */
   gloss?: boolean;
 };
 

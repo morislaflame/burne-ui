@@ -98,8 +98,6 @@ const CalendarInteractiveCellInner = forwardRef<HTMLButtonElement, CalendarInter
     onMouseEnterRef.current = onMouseEnter;
     onMouseLeaveRef.current = onMouseLeave;
 
-    // Заливку ведёт только `selected` через layout-effect — без optimistic toggle на click
-    // (range preview уже поднимает selected до клика).
     const { bindFillRef } = useToggleButtonFillAnimation(selected, fillRef);
 
     const rounding = "rounded-mid";

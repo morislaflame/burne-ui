@@ -15,7 +15,7 @@ const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
 export function useRadioGroupContext() {
   const ctx = useContext(RadioGroupContext);
   if (!ctx) {
-    throw new Error("Компоненты RadioGroup должны быть внутри <RadioGroup>.");
+    throw new Error("RadioGroup components must be inside <RadioGroup>.");
   }
   return ctx;
 }

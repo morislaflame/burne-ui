@@ -35,10 +35,8 @@ import { sliderThicknessToCss } from "./sliderThickness";
 
 export type SliderOrientation = "horizontal" | "vertical";
 export type SliderSize = "small" | "base" | "mid" | "large";
-/** Толщина дорожки / диаметр кружка: число (px) или CSS-длина. */
 export type SliderThickness = number | string;
 
-/** Fallback, если трек ещё не измерен; в runtime берём cross-axis из `getBoundingClientRect`. */
 const THUMB_PX: Record<SliderSize, number> = {
   small: selectionIndicatorFallbackPx("small"),
   base: selectionIndicatorFallbackPx("base"),
@@ -46,7 +44,6 @@ const THUMB_PX: Record<SliderSize, number> = {
   large: selectionIndicatorFallbackPx("large"),
 };
 
-/** Толщина дорожки = диаметру кружка (только cross-axis). */
 const RAIL_HEIGHT: Record<SliderSize, string> = {
   small: "h-[var(--selection-indicator-small)] min-h-[var(--selection-indicator-small)]",
   base: "h-[var(--selection-indicator-base)] min-h-[var(--selection-indicator-base)]",
@@ -72,7 +69,6 @@ function readTrackMetrics(
   return { trackSpanPx, thumbSpanPx };
 }
 
-/** Fallback для геометрии до первого измерения DOM. */
 function resolveFallbackThumbPx(
   thickness: number | string | undefined,
   size: SliderSize,
@@ -94,27 +90,17 @@ function resolveFallbackThumbPx(
 type SliderCommonProps = {
   orientation?: SliderOrientation;
   size?: SliderSize;
-  /**
-   * Толщина дорожки и диаметр кружка. Перекрывает cross-axis из `size`.
-   * Число — px; строка — любая CSS-длина (`"0.75rem"`, `"12px"`).
-   */
   thickness?: number | string;
   min?: number;
   max?: number;
-  /** Шаг смещения (игнорируется, если задан `marks`). */
   step?: number;
-  /** Дискретные значения: ползунок «прилипает» только к этим точкам; на треке — метки. */
   marks?: number[];
   formatValue?: (value: number) => string;
-  /** Иконка внутри кружка: primary в покое, primary-foreground при захвате. */
   icon?: ReactNode;
-  /** Gloss-вариант: стеклянный кружок. */
   gloss?: boolean;
-  /** className на `SelectionThumb` (форма, цвет оболочки). */
   thumbClassName?: string;
   disabled?: boolean;
   className?: string;
-  /** Явная подпись ползунков (`aria-label`); перекрывает связь с `<Slider.Label>` через `aria-labelledby`. */
   ariaLabel?: string;
   children?: ReactNode;
 };
@@ -149,7 +135,6 @@ function valueToRatio(value: number, min: number, max: number) {
   return (value - min) / (max - min);
 }
 
-/** Центр кружка в % ширины/высоты трека с учётом inset, чтобы на min/max не вылезал за край. */
 function thumbCenterPercent(
   value: number,
   min: number,
@@ -179,7 +164,6 @@ function thumbCenterPx(
 
 type FillSpan = { start: number; end: number };
 
-/** Край заливки доходит до дальнего края кружка (не только до центра). */
 function fillSpanForValues(
   trackPx: number,
   thumbPx: number,
@@ -532,14 +516,14 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       if (explicitLabel) {
         if (kind === "start") {
           return {
-            ariaLabel: `${explicitLabel}, минимум`,
+            ariaLabel: `${explicitLabel}, minimum`,
             ariaLabelledBy: undefined as string | undefined,
             ariaDescribedBy,
           };
         }
         if (kind === "end") {
           return {
-            ariaLabel: `${explicitLabel}, максимум`,
+            ariaLabel: `${explicitLabel}, maximum`,
             ariaLabelledBy: undefined as string | undefined,
             ariaDescribedBy,
           };
@@ -552,14 +536,14 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       }
       if (kind === "start") {
         return {
-          ariaLabel: "Минимум диапазона",
+          ariaLabel: "Minimum range",
           ariaLabelledBy: undefined as string | undefined,
           ariaDescribedBy,
         };
       }
       if (kind === "end") {
         return {
-          ariaLabel: "Максимум диапазона",
+          ariaLabel: "Maximum range",
           ariaLabelledBy: undefined as string | undefined,
           ariaDescribedBy,
         };
@@ -572,7 +556,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
         };
       }
       return {
-        ariaLabel: "Значение",
+        ariaLabel: "Value",
         ariaLabelledBy: undefined as string | undefined,
         ariaDescribedBy,
       };

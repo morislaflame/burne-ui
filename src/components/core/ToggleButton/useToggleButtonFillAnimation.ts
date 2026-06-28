@@ -13,8 +13,8 @@ import { motionSelectionFill, getMotionConfig } from "@/components/core/utils/mo
 const TOGGLE_FILL_INIT_ATTR = "data-toggle-fill-init";
 
 /**
- * Заливка ToggleButton / CalendarInteractiveCell.
- * Не задавайте `style={{ transform, opacity }}` на fill — React перезапишет GSAP при ререндере родителя.
+ * Fill for ToggleButton / CalendarInteractiveCell.
+ * Do not set `style={{ transform, opacity }}` on fill — React will overwrite GSAP on parent re-render.
  */
 export function applyToggleButtonFillInstant(fill: HTMLElement, pressed: boolean) {
   killMotion(fill);

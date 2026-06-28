@@ -184,7 +184,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(funct
           ctx.hintConnected ? ctx.hintId : undefined,
           ctx.errorConnected ? ctx.errorId : undefined,
         )}
-        aria-label={ctx.inputProps.value != null ? String(ctx.inputProps.value) : "Вариант"}
+        aria-label={ctx.inputProps.value != null ? String(ctx.inputProps.value) : "Option"}
         onChange={ctx.onChange}
         onClick={ctx.onActivate}
       />
@@ -246,7 +246,6 @@ RadioContent.displayName = "RadioContent";
 
 export type RadioLabelProps = Omit<LabelProps, "htmlFor">;
 
-/** Текст опции внутри `<Radio>` — span, без вложенного `<label>`. */
 export function RadioLabel({
   children,
   className,

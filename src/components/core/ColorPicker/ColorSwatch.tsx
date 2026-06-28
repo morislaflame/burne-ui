@@ -17,23 +17,18 @@ import { cn } from "@/utils/cn";
 
 import { CHECKER_STYLE } from "./colorUtils";
 
-// ─── types ───────────────────────────────────────────────────────────────────
 
 export type ColorSwatchSize = "xsmall" | "small" | "base" | "mid" | "large" | "xlarge";
 export type ColorSwatchShape = "square" | "circle" | "rounded";
 
 export type ColorSwatchProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color"> & {
-  /** CSS color string to display. */
   color?: string;
   size?: ColorSwatchSize;
   shape?: ColorSwatchShape;
-  /** Highlighted ring indicating current selection. */
   selected?: boolean;
-  /** Show a checkerboard background (useful for semi-transparent colors). */
   showChecker?: boolean;
 };
 
-// ─── size / shape maps ───────────────────────────────────────────────────────
 
 const SIZE_CLASS: Record<ColorSwatchSize, string> = {
   xsmall: "h-4 w-4",
@@ -50,7 +45,6 @@ const SHAPE_CLASS: Record<ColorSwatchShape, string> = {
   square:  "rounded-none",
 };
 
-// ─── component ───────────────────────────────────────────────────────────────
 
 export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
   function ColorSwatch(
@@ -145,7 +139,6 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         style={checkerStyle}
         {...rest}
       >
-        {/* Color overlay */}
         <span
           aria-hidden
           className="absolute inset-0"

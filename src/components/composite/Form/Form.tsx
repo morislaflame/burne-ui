@@ -7,7 +7,6 @@ export type FormProps = FormHTMLAttributes<HTMLFormElement>;
 
 export type FormSectionProps = HTMLAttributes<HTMLDivElement>;
 
-/** Группа полей: плотный `gap-small` между дочерними элементами внутри секции. */
 export function FormSection({ className = "", ...rest }: FormSectionProps) {
   return (
     <div
@@ -17,7 +16,6 @@ export function FormSection({ className = "", ...rest }: FormSectionProps) {
   );
 }
 
-/** Вертикальная раскладка: `gap-mid` между секциями и прочими дочерними блоками. */
 export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot(
   { className = "", ...rest },
   ref,

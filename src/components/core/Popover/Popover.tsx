@@ -162,7 +162,7 @@ const PopoverResolvedSideContext = createContext<PopoverSide>("bottom");
 function usePopoverContext(who: string): PopoverContextValue {
   const ctx = useContext(PopoverContext);
   if (!ctx) {
-    throw new Error(`${who} должен быть внутри <Popover>.`);
+    throw new Error(`${who} must be inside <Popover>.`);
   }
   return ctx;
 }
@@ -171,14 +171,11 @@ export type PopoverRootProps = {
   children?: ReactNode;
   size?: PopoverSize;
   variant?: PopoverVariant;
-  /** Предпочтительная сторона. При нехватке места — flip. По умолчанию `bottom`. */
   side?: PopoverSide;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Внешний якорь позиционирования (если нет `<Popover.Trigger>`). */
   anchorRef?: React.RefObject<HTMLElement | null>;
-  /** Дополнительная проверка перед закрытием по клику снаружи. */
   shouldDismiss?: (target: Node) => boolean;
 };
 
@@ -427,22 +424,12 @@ export function PopoverBody({ className, children, ...rest }: PopoverBodyProps) 
 PopoverBody.displayName = "PopoverBody";
 
 export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
-  /** Показать стрелку к триггеру. Можно передать свой `<Popover.Arrow />` в children. */
   showArrow?: boolean;
-  /** Зазор между триггером и панелью (px). По умолчанию `8`. */
   offset?: number;
-  /** Зазор между `<Popover.Header>` и `<Popover.Body>`. По умолчанию зависит от `size`. */
   gap?: PopoverContentGap;
-  /** Минимальная ширина панели = ширина якоря. */
   matchAnchorWidth?: boolean;
-  /**
-   * Выравнивание вдоль якоря: `start` — левый край под левым краем якоря (дефолт при `matchAnchorWidth`).
-   * `center` — по центру (дефолт для обычных popover).
-   */
   align?: FloatingAlign;
-  /** Без дефолтных min/max-width и padding — для меню и listbox. */
   unstyled?: boolean;
-  /** ARIA role оболочки. По умолчанию `dialog`; `undefined` — без role. */
   contentRole?: "dialog" | undefined;
 };
 

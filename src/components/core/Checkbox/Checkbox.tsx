@@ -91,7 +91,6 @@ const INPUT_VISUALLY_HIDDEN =
 const INPUT_TRACK_OVERLAY =
   "absolute inset-0 z-[2] m-0 h-full w-full cursor-pointer opacity-0";
 
-/** Свой `<Label htmlFor>` / `<label htmlFor>` — не оборачиваем Content во второй label. */
 function compoundContentHasExternalLabel(children: ReactNode): boolean {
   let found = false;
 
@@ -138,14 +137,11 @@ export type CheckboxRootProps = Omit<
 > &
   Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "size" | "children" | "className"> & {
     children?: ReactNode;
-    /** Simple API: подпись справа от индикатора. В compound игнорируется. */
     label?: ReactNode;
-    /** Simple API: подсказка под заголовком. В compound — `<Checkbox.Hint>`. */
     hint?: ReactNode;
     error?: ReactNode;
     size?: CheckboxSize;
     variant?: CheckboxVariant;
-    /** Иконка внутри залитого кружка. По умолчанию `IoCheckmark`. */
     checkIcon?: ReactNode;
     danger?: boolean;
     className?: string;
@@ -299,7 +295,6 @@ CheckboxContent.displayName = "CheckboxContent";
 
 export type CheckboxLabelProps = Omit<LabelProps, "htmlFor">;
 
-/** Подпись в compound; `id` для a11y на `<Checkbox.Content>` (label). Для `<Label htmlFor>` — без обёртки Content в label. */
 export function CheckboxLabel({
   children,
   className,

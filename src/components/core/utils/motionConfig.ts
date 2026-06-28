@@ -12,7 +12,6 @@
  * });
  */
 
-// ─── Config shape ─────────────────────────────────────────────────────────────
 
 export interface MotionConfig {
   /**
@@ -143,7 +142,6 @@ export interface MotionConfig {
   enableProgressFill: boolean;
 }
 
-// ─── Defaults ─────────────────────────────────────────────────────────────────
 
 const DEFAULTS: MotionConfig = {
   interactiveDuration: 280,
@@ -178,11 +176,9 @@ const DEFAULTS: MotionConfig = {
   enableProgressFill: true,
 };
 
-// ─── Mutable config state ─────────────────────────────────────────────────────
 
 let _config: MotionConfig = { ...DEFAULTS };
 
-// ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
  * Override any subset of the global motion config.
@@ -197,7 +193,6 @@ export function getMotionConfig(): Readonly<MotionConfig> {
   return _config;
 }
 
-// ─── Derived helpers (called at animation time, not module-load time) ─────────
 
 /** Returns `{ duration, ease }` for standard interactive GSAP tweens (duration in seconds). */
 export function motionInteractive() {

@@ -44,18 +44,10 @@ export type ExpandableVariant = "default" | "gloss";
 
 export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
-  /** `gloss` — стеклянная панель на всём блоке (триггер + контент). */
   variant?: ExpandableVariant;
-  /**
-   * Составная разметка (`Trigger` / `Panel` и слоты).
-   * `Accordion.Item` включает автоматически.
-   */
   compound?: boolean;
-  /** Simple API: заголовок триггера. В compound игнорируется. */
   title?: ReactNode;
-  /** Simple API: подзаголовок под заголовком. В compound — `<Expandable.Description>`. */
   description?: ReactNode;
-  /** Simple API: иконка слева от текста. В compound — `<Expandable.Icon>`. */
   icon?: ReactNode;
   size?: ExpandableSize;
   defaultOpen?: boolean;
@@ -65,9 +57,7 @@ export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> 
 };
 
 export type ExpandableTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /** Если `true`, автоматический шеврон справа не показывается — используйте `<Expandable.Chevron />` внутри. */
   hideChevron?: boolean;
-  /** Пробросить пропы на единственного ребёнка (например `<Button />`). */
   asChild?: boolean;
 };
 
@@ -92,10 +82,10 @@ type ExpandableContextValue = {
 };
 
 const EXPANDABLE_PANEL_PAD: Record<ExpandableSize, string> = {
-  small: "p-base",
-  base: "p-plus",
-  mid: "p-mid",
-  large: "p-large",
+  small: "px-base pb-base pt-small",
+  base: "px-plus pb-plus pt-base",
+  mid: "px-mid pb-mid pt-base",
+  large: "px-large pb-large pt-base",
 };
 
 const EXPANDABLE_DESCRIPTION_VARIANT = {
@@ -128,7 +118,6 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   };
 }
 
-/** Выносит `<Ripple />` на полный `<button>`, а не в узкий flex-ряд с текстом. */
 function partitionTriggerRipple(children: ReactNode): {
   rippleOverlay: ReactNode;
   rest: ReactNode;
@@ -641,4 +630,3 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
 
 ExpandableRoot.displayName = "ExpandableRoot";
 
-/** Раскрывающийся блок. **Simple** — `title`, `description`, `icon` на root, контент в `children`. **Compound** — `Trigger`, `Panel`, опционально `Message`, `Icon`, `Content`, `Title`, `Description`, `Chevron`. */

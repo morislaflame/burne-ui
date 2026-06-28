@@ -58,7 +58,7 @@ export function ExpandableShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Trigger, Message, Icon, Content, Title, Description и Panel — полная разметка."
+            description="Trigger (Message: Title, Description, Icon) + Panel (Body). Content — внутри Trigger, Panel — раскрываемая область."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Иконка">
@@ -66,6 +66,7 @@ export function ExpandableShowcase() {
             Передайте React-элемент в <code>icon</code> (Simple) или <code>Expandable.Icon</code> (Compound).
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

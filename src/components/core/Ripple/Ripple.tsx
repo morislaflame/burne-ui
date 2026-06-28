@@ -18,11 +18,6 @@ function resolveRipplePaint(input?: string): string {
   return input;
 }
 
-/**
- * Элемент для слушателя и геометрии риппла: интерактивный корень (кнопка/ссылка/role=button),
- * иначе непосредственный родитель слоя. Так клики по контенту поверх слоя `pointer-events-none`
- * всё равно доходят до корня по всплытию; overlay сам по себе событий не получает.
- */
 function resolveRippleEventTarget(layer: HTMLElement): HTMLElement | null {
   const interactive = layer.closest(
     "button,a[href],[role='button']",
@@ -31,27 +26,13 @@ function resolveRippleEventTarget(layer: HTMLElement): HTMLElement | null {
 }
 
 export type RippleProps = {
-  /**
-   * Ключ из `RIPPLE_COLOR` или любая строка цвета для фона круга
-   * (`"#fff"`, `rgb()`, `color-mix`, `var(...)`).
-   */
   color?: RippleColor | string;
-  /** Не создавать волны и не вешать слушатель. */
   disabled?: boolean;
-  /** Длительность анимации точки сходимости, мс. */
   duration?: number;
-  /** Направление: сжатие к центру (`in`) или расход от точки (`out`). */
   direction?: RippleDirection;
   className?: string;
 };
 
-/** Начальная непрозрачность точки задаётся в motion-токенах (не часть публичного API). */
-
-/**
- * Сходящийся или расходящийся риппл от точки нажатия (GSAP). Слушатель вешается на ближайший
- * интерактивный корень (`button`, ссылка, `[role='button']`) или на родителя слоя. У
- * `Expandable.Trigger` узлы `<Ripple />` выносятся на полный размер кнопки.
- */
 export function Ripple({
   color,
   disabled = false,

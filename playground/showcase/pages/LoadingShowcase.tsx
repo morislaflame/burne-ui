@@ -39,12 +39,13 @@ export function LoadingShowcase() {
             description="size, color на корне — SVG-спиннер с анимацией."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Customization motion={false}>
           <p>
-            Цвета: <code>primary</code>, <code>success</code>, <code>muted</code> и др. Размеры:{" "}
-            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.
+            Цвета: <code>primary</code>, <code>success</code>, <code>muted</code> и др. или произвольный CSS через{" "}
+            <code>color</code>. Размеры: <code>small</code>, <code>base</code>, <code>mid</code>,{" "}
+            <code>large</code>. <code>className</code> на корне.
           </p>
-        </ShowcaseDoc.Block>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

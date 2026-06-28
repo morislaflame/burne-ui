@@ -31,32 +31,21 @@ import { cn } from "@/utils/cn";
 
 import "../utils/glossPanel.css";
 
-/** Размер круга аватара. */
 export type AvatarSize = "small" | "base" | "mid" | "large";
 
 /** Поверхность аватара. */
 export type AvatarVariant = "default" | "gloss";
 
 export type AvatarProps = Omit<HTMLAttributes<HTMLDivElement>, "aria-label"> & {
-  /** Поверхность: `gloss` — стеклянная обводка. */
   variant?: AvatarVariant;
-  /** Круг диаметром small / base / mid / large. По умолчанию `base`. */
   size?: AvatarSize;
-  /** Подпись пользователя — первая буква во `Avatar.Fallback`, если там нет текста; также `aria-label` корня. */
   label?: string;
-  /** URL фото — только **simple API** (без `children`). В compound игнорируется. */
   src?: string;
-  /** `alt` для `<img>` в simple API. По умолчанию пустая строка. */
   alt?: string;
-  /** `loading` для `<img>` в simple API. */
   loading?: ImgHTMLAttributes<HTMLImageElement>["loading"];
-  /** Никнейм во всплывающем `Tooltip` при наведении. Без текста тултип не показывается. */
   nickname?: string;
-  /** Размер тултипа при заданном `nickname`. По умолчанию `base`. */
   tooltipSize?: TooltipSize;
-  /** Вариант тултипа (как у `Alert`). По умолчанию `default`. */
   tooltipVariant?: TooltipVariant;
-  /** Сторона тултипа относительно аватара при `nickname`. По умолчанию `top`. */
   tooltipSide?: TooltipSide;
 };
 
@@ -329,7 +318,6 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
   );
 });
 
-/** Аватар: simple (`src` + `label`) или compound (`Avatar.Image` / `Avatar.Fallback`). */
 const AVATAR_GROUP_HOVER_TRANSLATE_Y = -10;
 const AVATAR_GROUP_HOVER_SCALE = 1.08;
 

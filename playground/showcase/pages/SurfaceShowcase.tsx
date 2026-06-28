@@ -50,6 +50,7 @@ export function SurfaceShowcase() {
             <code>mid</code>, <code>plus</code>, <code>large</code> — предустановленные отступы внутри Surface.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

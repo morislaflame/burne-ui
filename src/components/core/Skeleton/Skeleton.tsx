@@ -6,14 +6,7 @@ import {
 
 import { cn } from "@/utils/cn";
 
-// ─── types ────────────────────────────────────────────────────────────────────
 
-/**
- * - `pulse`   — мягкое мигание прозрачности.
- * - `wave`    — светлая полоса, скользящая справа-налево (эффект «волны»).
- * - `shimmer` — анимированный градиент по всей поверхности.
- * - `none`    — без анимации (статичный скелетон).
- */
 export type SkeletonVariant = "pulse" | "wave" | "shimmer" | "none";
 
 export type SkeletonRadius = "none" | "small" | "mid" | "full";
@@ -25,19 +18,15 @@ export type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
 
 export type SkeletonCircleProps = HTMLAttributes<HTMLDivElement> & {
   variant?: SkeletonVariant;
-  /** Diameter via Tailwind class, e.g. `"w-10 h-10"`. Defaults to control-base size. */
   size?: string;
 };
 
 export type SkeletonTextProps = HTMLAttributes<HTMLDivElement> & {
   variant?: SkeletonVariant;
-  /** Number of lines. */
   lines?: number;
-  /** Last line shorter than others (natural paragraph look). */
   lastShort?: boolean;
 };
 
-// ─── constants ────────────────────────────────────────────────────────────────
 
 const RADIUS_CLASS: Record<SkeletonRadius, string> = {
   none:  "rounded-none",
@@ -48,7 +37,6 @@ const RADIUS_CLASS: Record<SkeletonRadius, string> = {
 
 const BASE_CLS = "relative overflow-hidden bg-primary-tint";
 
-// ─── animation helpers ────────────────────────────────────────────────────────
 
 function pulseStyle(): CSSProperties {
   return {
@@ -85,9 +73,7 @@ function variantStyle(variant: SkeletonVariant): CSSProperties {
   return {};
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
-/** Generic skeleton block. Control size/shape via `className`. */
 export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
   function Skeleton(
     { variant = "wave", radius = "small", className = "", style, children, ...rest },
@@ -111,7 +97,6 @@ export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
 
 Skeleton.displayName = "Skeleton";
 
-// ─── Skeleton.Circle ─────────────────────────────────────────────────────────
 
 export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
   function SkeletonCircle(
@@ -135,7 +120,6 @@ export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
 
 SkeletonCircle.displayName = "SkeletonCircle";
 
-// ─── Skeleton.Text ────────────────────────────────────────────────────────────
 
 export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(
   function SkeletonText(
@@ -182,9 +166,7 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(
 
 SkeletonText.displayName = "SkeletonText";
 
-// ─── Skeleton.Block ───────────────────────────────────────────────────────────
 
-/** Card-shaped skeleton with optional header/content lines layout. */
 export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonProps>(
   function SkeletonBlock(
     { variant = "wave", className = "", style, children, ...rest },
@@ -211,6 +193,3 @@ export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonProps>(
 );
 
 SkeletonBlock.displayName = "SkeletonBlock";
-
-// ─── compound export ──────────────────────────────────────────────────────────
-

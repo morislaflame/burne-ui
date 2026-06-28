@@ -25,7 +25,7 @@ const MeterFieldContext = createContext<MeterFieldContextValue | null>(null);
 export function useMeterFieldContext() {
   const ctx = useContext(MeterFieldContext);
   if (!ctx) {
-    throw new Error("Meter.* должны быть внутри <Meter>.");
+    throw new Error("Meter.* components must be inside <Meter>.");
   }
   return ctx;
 }

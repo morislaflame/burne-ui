@@ -35,7 +35,6 @@ import "../utils/glossInteractive.css";
 
 export type CardVariant = "default" | "outline" | "secondary" | "gloss";
 
-/** Событие активации нажимаемой карточки (`pressable`): клик или клавиши Enter / Space. */
 export type CardPressEvent =
   | MouseEvent<HTMLElement>
   | KeyboardEvent<HTMLElement>;
@@ -44,15 +43,14 @@ export type CardProps = Omit<
   HTMLAttributes<HTMLElement>,
   "onClick" | "onKeyDown"
 > & {
-  /** Поверхность и обводка. По умолчанию `default`. */
   variant?: CardVariant;
   /**
-   * Интерактивная карточка: hover-lift, тень и squeeze при нажатии (как у кнопки).
-   * Риппл не встроен — при необходимости передайте `<Ripple />` первым ребёнком и оберните остальной контент в слой с `relative z-[1]`.
-   * Не помещайте внутрь другие кнопки/ссылки без `stopPropagation` на их клик — иначе сработает и `onPress` карточки.
+   * Interactive card: hover-lift, shadow and squeeze on press (like a button).
+   * Ripple is not built-in — if needed, pass `<Ripple />` as the first child and wrap the rest of the content in a layer with `relative z-[1]`.
+   * Do not place other buttons/links inside without `stopPropagation` on their click — otherwise the `onPress` of the card will also trigger.
    */
   pressable?: boolean;
-  /** Вызывается при активации (`click` или Enter / Space на корне). Имеет смысл только при `pressable`. */
+  /** Called when activated (`click` or Enter / Space on the root). Only meaningful when `pressable`. */
   onPress?: (event: CardPressEvent) => void;
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
@@ -64,7 +62,7 @@ const CARD_SURFACE: Record<Exclude<CardVariant, "gloss">, string> = {
   secondary: "bg-secondary border-token",
 };
 
-/** Пассивный 2-й уровень — статичная sm-тень без hover-lift. */
+/** Passive 2nd level — static sm-shadow without hover-lift. */
 const CARD_STATIC_SHADOW = "shadow-token-sm";
 
 export type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
@@ -73,7 +71,7 @@ export type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
 export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
 
-/** Шапка карточки: заголовок, описание, мета. */
+/** Card header: title, description, meta. */
 export function CardHeader({ className = "", ...rest }: CardHeaderProps) {
   return (
     <div
@@ -86,7 +84,6 @@ export function CardHeader({ className = "", ...rest }: CardHeaderProps) {
   );
 }
 
-/** Колонка заголовка и подзаголовка внутри `Card.Header`. */
 export function CardHeadingBlock({ className = "", ...rest }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
@@ -96,7 +93,6 @@ export function CardHeadingBlock({ className = "", ...rest }: HTMLAttributes<HTM
   );
 }
 
-/** Основной контент между шапкой и футером. */
 export function CardBody({ className = "", ...rest }: CardBodyProps) {
   return (
     <div className={cn("min-w-0 px-large pb-mid", className)} {...rest} />
@@ -132,7 +128,6 @@ export const CardDescription = forwardRef<
   );
 });
 
-/** Нижняя зона действий / мета с разделителем. */
 export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   return (
     <div

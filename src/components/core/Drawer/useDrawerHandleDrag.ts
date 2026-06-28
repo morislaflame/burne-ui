@@ -35,8 +35,6 @@ export function useDrawerHandleDrag(
   placement: DrawerPlacement,
   onClose: () => void,
   disabled: boolean,
-  /** Ref, который нужно поставить в `true` перед вызовом onClose, чтобы
-   *  close-эффект в DrawerRoot пропустил повторную анимацию. */
   skipCloseAnimRef?: RefObject<boolean>,
 ): {
   onPointerDown: (e: ReactPointerEvent<HTMLElement>) => void;

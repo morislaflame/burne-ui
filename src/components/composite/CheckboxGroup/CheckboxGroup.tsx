@@ -40,11 +40,11 @@ export type CheckboxGroupProps = Omit<
   value?: string | null;
   defaultValue?: string;
   onValueChange?: (value: string | undefined) => void;
-  /** id для `aria-describedby`; по умолчанию генерируется автоматически. */
+  /** id for `aria-describedby`; generated automatically by default. */
   hintId?: string;
-  /** id ошибки для `aria-describedby`; по умолчанию генерируется автоматически. */
+  /** id for error in `aria-describedby`; generated automatically by default. */
   errorId?: string;
-  /** Шкала отступов fieldset. По умолчанию `small`. */
+  /** Fieldset padding scale. By default `small`. */
   size?: ComponentSize;
   children?: ReactNode;
 };

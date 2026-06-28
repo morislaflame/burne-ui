@@ -46,7 +46,6 @@ import { useDrawerHandleDrag } from "./useDrawerHandleDrag";
 
 export type { DrawerPlacement };
 
-// ─── public types ─────────────────────────────────────────────────────────────
 
 export type DrawerSize = "default" | "mid" | "full";
 export type DrawerVariant = "default" | "gloss";
@@ -55,18 +54,10 @@ export type DrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children?: ReactNode;
-  /** Откуда выезжает ящик. По умолчанию `right`. */
   placement?: DrawerPlacement;
-  /** Ширина/высота панели. `default` — до 24rem, `mid` — половина экрана, `full` — весь экран. */
   size?: DrawerSize;
-  /** Стеклянная панель. */
   variant?: DrawerVariant;
-  /** Доп. класс на панель. */
   className?: string;
-  /**
-   * Якорь для наследования светлой темы с обёртки (`data-theme`).
-   * По умолчанию — `document.activeElement` в момент открытия.
-   */
   themeAnchor?: HTMLElement | null;
 };
 
@@ -84,7 +75,6 @@ export type DrawerBodyProps = HTMLAttributes<HTMLDivElement>;
 export type DrawerFooterProps = HTMLAttributes<HTMLDivElement>;
 export type DrawerCloseProps = CloseButtonProps;
 
-// ─── context ──────────────────────────────────────────────────────────────────
 
 type DrawerContextValue = {
   titleId: string;
@@ -95,8 +85,6 @@ type DrawerContextValue = {
   placement: DrawerPlacement;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
-  /** Поставить в true перед вызовом onOpenChange(false) из Handle, чтобы
-   *  корень пропустил повторную анимацию выхода. */
   skipCloseAnimRef: React.RefObject<boolean>;
 };
 
@@ -108,7 +96,6 @@ function useDrawer() {
   return ctx;
 }
 
-// ─── layout helpers ───────────────────────────────────────────────────────────
 
 const PANEL_PLACEMENT_CLASS: Record<DrawerPlacement, string> = {
   left: "left-0 top-0 h-full",
@@ -183,9 +170,6 @@ function getSlideOutTo(placement: DrawerPlacement): GsapMotionVars {
   }
 }
 
-// ─── Backdrop (sentinel) ─────────────────────────────────────────────────────
-// Renders null — root reads isDismissable via React.Children.
-
 export function DrawerBackdropInner(_props: DrawerBackdropProps) {
   return null;
 }
@@ -197,7 +181,6 @@ function DrawerContent({ className = "", ...rest }: HTMLAttributes<HTMLDivElemen
 
 export { DrawerContent };
 
-// ─── Handle ───────────────────────────────────────────────────────────────────
 
 export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: DrawerHandleProps) {
   const { onOpenChange, placement, overlayRef, panelRef, skipCloseAnimRef } = useDrawer();
@@ -243,7 +226,6 @@ export function DrawerHandleInner({ className = "", onPointerDown, ...rest }: Dr
 }
 (DrawerHandleInner as { _drawerHandle?: boolean })._drawerHandle = true;
 
-// ─── Structural parts ─────────────────────────────────────────────────────────
 
 export function DrawerHeader({ className = "", ...rest }: DrawerHeaderProps) {
   return (
@@ -343,7 +325,6 @@ export function DrawerFooter({ className = "", ...rest }: DrawerFooterProps) {
   );
 }
 
-// ─── Root ─────────────────────────────────────────────────────────────────────
 
 export const DrawerRoot = function Drawer({
   open,
@@ -367,7 +348,6 @@ export const DrawerRoot = function Drawer({
     () => createGlossInteractiveRefCallback(glossPanelRef, variant === "gloss"),
     [variant],
   );
-  /** true = Handle уже выполнил анимацию выхода, повторная не нужна */
   const skipCloseAnimRef = useRef(false);
 
   const setHasDescriptionStable = useCallback((v: boolean) => setHasDescription(v), []);
@@ -375,7 +355,6 @@ export const DrawerRoot = function Drawer({
   const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor);
   const lightUi = useBurneLightTheme(portalThemeAnchor);
 
-  // Extract Drawer.Backdrop config; partition Handle vs content (preserve order).
   let backdropIsDismissable = true;
   const panelNodes: ReactNode[] = [];
   let contentChunk: ReactNode[] = [];
@@ -435,7 +414,6 @@ export const DrawerRoot = function Drawer({
     return () => { document.body.style.overflow = prev; };
   }, [mounted]);
 
-  // close animation
   useLayoutEffect(() => {
     if (open || !mounted) return;
     const overlay = overlayRef.current;
@@ -443,14 +421,10 @@ export const DrawerRoot = function Drawer({
     let cancelled = false;
     const finish = () => {
       if (!cancelled) {
-        // Размонтируем без dialog.close(): close() снимает open раньше unmount
-        // и на кадр вспыхивает нативный ::backdrop. clearProps тоже не нужен —
-        // сброс inline opacity перед unmount давал обратное мигание.
         setMounted(false);
       }
     };
 
-    // Handle уже анимировал выход — просто убираем из DOM
     if (skipCloseAnimRef.current) {
       skipCloseAnimRef.current = false;
       finish();
@@ -479,7 +453,6 @@ export const DrawerRoot = function Drawer({
     };
   }, [open, mounted, placement]);
 
-  // open animation
   useLayoutEffect(() => {
     if (!open || !mounted) return;
 
@@ -504,7 +477,6 @@ export const DrawerRoot = function Drawer({
     });
   }, [open, mounted, placement]);
 
-  // focus trap
   useLayoutEffect(() => {
     if (!open || !mounted || !panelRef.current) return;
     panelRef.current.focus();
@@ -586,5 +558,4 @@ export const DrawerRoot = function Drawer({
   );
 };
 
-// ─── compound export ──────────────────────────────────────────────────────────
 

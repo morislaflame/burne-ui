@@ -65,7 +65,6 @@ const SHELL_W_COLLAPSED: Record<ComponentSize, string> = {
   large: "w-control-large",
 };
 
-/** Горизонтальный padding (px) — совпадает с `px-base` / `px-plus` / … */
 const SEARCH_PAD_X_PX: Record<ComponentSize, number> = {
   small: 8,
   base: 12,
@@ -73,7 +72,6 @@ const SEARCH_PAD_X_PX: Record<ComponentSize, number> = {
   large: 20,
 };
 
-/** Размер иконки (px) — совпадает с `--icon-size-*`. */
 const SEARCH_ICON_BOX_PX: Record<ComponentSize, number> = {
   small: 14,
   base: 16,
@@ -139,37 +137,16 @@ export type SearchInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type"
 > & {
-  /**
-   * Высота в свёрнутом виде и габариты иконки / поля — как у `Input` / `Button`.
-   * `small` · `base` · `mid` · `large`. По умолчанию `base`.
-   */
   size?: SearchInputSize;
-  /** Стиль оболочки. `gloss` — стеклянная оболочка как у `Input`. */
   variant?: SearchInputVariant;
-  /** Ширина в развёрнутом виде (px). */
   expandedWidth?: number;
-  /** Начать развёрнутым. */
   defaultExpanded?: boolean;
-  /** Контролируемое раскрытие. */
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
-  /**
-   * Свернуть при потере фокуса, если значение пустое.
-   * По умолчанию true.
-   */
   collapseOnBlur?: boolean;
-  /**
-   * Текущая строка после ввода (удобно для поиска; дублирует `onChange`).
-   */
   onValueChange?: (value: string) => void;
-  /** Converge-ripple на оболочке (реализация — `<Ripple />` внутри). @default false */
   ripple?: boolean;
-  /** Склейка с соседями в `ButtonGroup`. */
   groupSegment?: ButtonGroupSegment;
-  /**
-   * Доступное имя поля и триггера свёрнутого состояния.
-   * Рекомендуется задавать явно; без prop свёрнутый триггер — «Открыть поиск», развёрнутый input — placeholder.
-   */
   "aria-label"?: string;
 };
 
@@ -186,7 +163,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       collapseOnBlur = true,
       disabled,
       readOnly,
-      placeholder = "Поиск…",
+      placeholder = "Search…",
       value: valueProp,
       defaultValue,
       onChange,
@@ -563,9 +540,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       layout.padX +
       (showClear ? layout.clearTap + layout.textGapClear : 0);
 
-    const collapseA11yLabel = ariaLabelProp ?? "Открыть поиск";
+    const collapseA11yLabel = ariaLabelProp ?? "Open search";
     const inputAriaLabel =
-      ariaLabelProp ?? (placeholder ? String(placeholder) : "Поиск");
+      ariaLabelProp ?? (placeholder ? String(placeholder) : "Search");
     const groupShellClass = groupSegment
       ? cn(
           buttonGroupRoundingClasses(groupSegment),
@@ -662,7 +639,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         {showClear ? (
           <button
             type="button"
-            aria-label="Очистить поле"
+            aria-label="Clear field"
             onClick={handleClearClick}
             onPointerDown={(e) => e.stopPropagation()}
             className={cn(

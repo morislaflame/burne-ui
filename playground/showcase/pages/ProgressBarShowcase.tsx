@@ -51,12 +51,13 @@ export function ProgressBarShowcase() {
             description="label, value, min, max, indeterminate, orientation, showValue, color на корне."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Customization>
           <p>
-            <code>color</code> — CSS-переменная или цвет заливки. <code>indeterminate</code> — анимация без
-            конкретного value.
+            <code>color</code> — семантический ключ или CSS-цвет заливки. <code>indeterminate</code> — анимация
+            без value. Плавное заполнение — <code>configureMotion()</code> (<code>enableProgressFill</code>,{" "}
+            <code>progressFillDuration</code>).
           </p>
-        </ShowcaseDoc.Block>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -64,10 +64,8 @@ import {
 
 export type { TooltipSide };
 
-/** Варианты заливки — как у `Alert`. */
 export type TooltipVariant = AlertStatus;
 
-/** Стиль поверхности тултипа (отдельно от семантического `variant`). */
 export type TooltipSurface = "default" | "gloss";
 
 export type TooltipSize = "small" | "base" | "mid" | "large";
@@ -78,10 +76,8 @@ export type TooltipRootProps = {
   children?: ReactNode;
   size?: TooltipSize;
   variant?: TooltipVariant;
-  /** Стеклянная панель (`gloss-deep`). Семантика — в `variant`. */
   surface?: TooltipSurface;
   delayShowMs?: number;
-  /** Предпочтительная сторона. При нехватке места — flip. По умолчанию `top`. */
   side?: TooltipSide;
   icon?: ReactNode;
   showIcon?: boolean;
@@ -90,9 +86,7 @@ export type TooltipRootProps = {
 export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement>;
 
 export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
-  /** Показать стрелку к триггеру. Можно передать свой `<Tooltip.Arrow />` в children. */
   showArrow?: boolean;
-  /** Зазор между триггером и тултипом (px). По умолчанию `8`. */
   offset?: number;
 };
 
@@ -312,7 +306,7 @@ const TooltipBodyContext = createContext<TooltipBodyContextValue | null>(null);
 function useTooltipBodyContext(who: string): TooltipBodyContextValue {
   const ctx = useContext(TooltipBodyContext);
   if (!ctx) {
-    throw new Error(`${who} должен быть внутри <Tooltip.Panel> или <Tooltip.Content>.`);
+    throw new Error(`${who} must be inside <Tooltip.Panel> or <Tooltip.Content>.`);
   }
   return ctx;
 }

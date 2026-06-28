@@ -2,7 +2,6 @@ import type { ButtonSize } from "@/components/core/Button";
 
 import type { AlertDialogSize } from "./alertDialogTypes";
 
-/** Размер `Button` в `AlertDialog.Footer` по размеру модалки (имена ступеней совпадают). */
 const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
   small: "small",
   base: "base",
@@ -10,7 +9,7 @@ const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
   large: "large",
 };
 
-/** Размер кнопок футера для заданного `size` модалки (если не используете `AlertDialog.Footer` с авто-подстановкой). */
+/** Button size for the given `size` modal (if you don't use `AlertDialog.Footer` with auto-substitution). */
 export function footerButtonSizeForAlertDialog(
   dialogSize: AlertDialogSize,
 ): ButtonSize {

@@ -41,7 +41,7 @@ const AccordionContext = createContext<AccordionContextValue | null>(null);
 function useAccordionContext() {
   const ctx = useContext(AccordionContext);
   if (!ctx) {
-    throw new Error("Компоненты Accordion.* должны быть внутри <Accordion>.");
+    throw new Error("Accordion components must be inside <Accordion>.");
   }
   return ctx;
 }

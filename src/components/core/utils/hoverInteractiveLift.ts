@@ -75,7 +75,6 @@ export function shouldSkipInteractiveHoverLift(): boolean {
   return prefersReducedInteractiveHoverLift() || isTouchOrNarrowViewport() || !getMotionConfig().enableHoverLift;
 }
 
-// ─── Adaptive scale helpers ────────────────────────────────────────────────────
 //
 // Вместо фиксированного процента сжатия/подъёма используем фиксированное
 // абсолютное смещение в пикселях. Это даёт правильное ощущение на любом размере:
@@ -135,7 +134,6 @@ function adaptiveHoverLiftScale(element: HTMLElement): number {
   return 1 + delta;
 }
 
-// ─── Animation functions ───────────────────────────────────────────────────────
 
 /**
  * Останавливает активные tweens, затем плавно масштабирует только по scale (без смещения).
@@ -188,8 +186,7 @@ export function animateInteractivePressSqueeze(element: HTMLElement): Promise<vo
   killMotion(element);
   const s = adaptiveSqueezeScale(element);
   const cfg = getMotionConfig();
-  // Чуть длиннее interactive: в anime.js [1, s, 1] шёл одной кривой,
-  // а GSAP-keyframes делят время поровну — пик сжатия ощущается резче.
+  // GSAP keyframes делят время поровну — пик сжатия резче, чем при одной easing-кривой
   const total = (cfg.interactiveDuration * 1.15) / 1000;
   return new Promise((resolve) => {
     gsap

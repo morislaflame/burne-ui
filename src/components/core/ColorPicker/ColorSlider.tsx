@@ -32,7 +32,6 @@ import {
   type HSVA,
 } from "./colorUtils";
 
-// ─── types ───────────────────────────────────────────────────────────────────
 
 export type ColorChannel = "hue" | "saturation" | "value" | "alpha" | "red" | "green" | "blue";
 export type ColorSliderSize = SelectionIndicatorSize;
@@ -40,7 +39,6 @@ export type ColorSliderOrientation = "horizontal" | "vertical";
 
 export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   channel: ColorChannel;
-  /** Current full HSVA color (provides context for gradient generation). */
   color?: HSVA;
   value?: number;
   defaultValue?: number;
@@ -62,7 +60,6 @@ export type ColorSliderRootProps = Omit<HTMLAttributes<HTMLDivElement>, "color">
   disabled?: boolean;
 };
 
-// ─── channel config ──────────────────────────────────────────────────────────
 
 const CHANNEL_RANGE: Record<ColorChannel, { min: number; max: number; step: number }> = {
   hue:        { min: 0,   max: 360, step: 1   },
@@ -78,7 +75,6 @@ const CHANNEL_DEFAULT: Record<ColorChannel, number> = {
   hue: 0, saturation: 100, value: 100, alpha: 100, red: 255, green: 0, blue: 0,
 };
 
-// ─── gradient generation ─────────────────────────────────────────────────────
 
 function channelGradient(channel: ColorChannel, color: HSVA, horizontal: boolean): CSSProperties {
   const dir = horizontal ? "to right" : "to top";
@@ -114,7 +110,6 @@ function channelGradient(channel: ColorChannel, color: HSVA, horizontal: boolean
   }
 }
 
-// ─── rail height = thumb diameter (from selection-indicator tokens) ──────────
 
 const RAIL_CROSS_CLASS: Record<ColorSliderSize, { h: string; w: string }> = {
   small: { h: "h-[var(--selection-indicator-small)]", w: "w-[var(--selection-indicator-small)]" },
@@ -123,7 +118,6 @@ const RAIL_CROSS_CLASS: Record<ColorSliderSize, { h: string; w: string }> = {
   large: { h: "h-[var(--selection-indicator-large)]", w: "w-[var(--selection-indicator-large)]" },
 };
 
-// ─── useMergedValue ──────────────────────────────────────────────────────────
 
 function useMergedValue(
   value: number | undefined,
@@ -140,7 +134,6 @@ function useMergedValue(
   return [merged, set];
 }
 
-// ─── ColorSliderTrack ────────────────────────────────────────────────────────
 
 export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps>(
   function ColorSliderTrack(
@@ -319,7 +312,6 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
 
 ColorSliderTrack.displayName = "ColorSliderTrack";
 
-// ─── ColorSliderRoot (simple API with optional label + track) ────────────────
 
 export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
   function ColorSliderRoot(
@@ -351,5 +343,4 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
 
 ColorSliderRoot.displayName = "ColorSliderRoot";
 
-// ─── compound export ──────────────────────────────────────────────────────────
 

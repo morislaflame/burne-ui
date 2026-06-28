@@ -42,16 +42,22 @@ export function FieldShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Field.Set, Field.Legend, Field.Group, Field.Actions — составные части набора полей."
+            description="Field.Root, Field.Label, Field.Hint, Field.Error — примитив оболочки поля. Field.Set, Field.Legend, Field.Group, Field.Actions — набор полей формы."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Состав">
           <p>
+            <code>Field.Hint</code> — подсказка под полем (не путать с <code>Card.Description</code>).{" "}
             <code>Field.Legend</code> + <code>Field.LegendHeader</code> — заголовок секции.{" "}
-            <code>Field.Group</code> — контейнер для Input/TextArea. <code>Field.Actions</code> — кнопки
-            отправки и отмены.
+            <code>Field.Group</code> — контейнер для Input/TextArea.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization>
+          <p>
+            <code>className</code> на Set/Group. Статус подсказки — <code>Field.Hint status=&quot;danger&quot;</code>.
+            Для кастомных контролов оборачивайте input в <code>Field.Root</code>.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -50,6 +50,7 @@ export function BreadcrumbsShowcase() {
             Список рендерится как <code>&lt;ol&gt;</code>. Текущая страница помечается <code>aria-current</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization />
       </ShowcaseDoc>
     </ShowcasePage>
   );

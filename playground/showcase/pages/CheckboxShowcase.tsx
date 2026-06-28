@@ -60,6 +60,7 @@ export function CheckboxShowcase() {
             <code>@/components/composite/CheckboxGroup</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

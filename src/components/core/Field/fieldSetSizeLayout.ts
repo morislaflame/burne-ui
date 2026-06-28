@@ -1,17 +1,12 @@
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 
 export type FieldSetSizeLayout = {
-  /** Отступ между legend и основным контентом fieldset. */
   legendGap: string;
-  /** Зазор между секциями stack (group, loose, actions). */
   stackGap: string;
-  /** Зазор между полями внутри `FieldSet.Group`. */
   groupGap: string;
-  /** Зазор между кнопками в `FieldSet.Actions`. */
   actionsGap: string;
 };
 
-/** Шкала отступов fieldset: `base` — текущие дефолты библиотеки. */
 export const FIELD_SET_SIZE_LAYOUT: Record<ComponentSize, FieldSetSizeLayout> = {
   small: {
     legendGap: "mt-mid",

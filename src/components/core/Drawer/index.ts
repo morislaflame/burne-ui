@@ -13,9 +13,7 @@ import {
 } from "./Drawer";
 
 export const Drawer = Object.assign(DrawerRoot, {
-  /** Конфигурирует подложку (`isDismissable`). Сам ничего не рендерит. */
   Backdrop: DrawerBackdropInner,
-  /** Полоска перетягивания для свайп-закрытия. */
   Handle: DrawerHandleInner,
   Content: DrawerContent,
   Header: DrawerHeader,

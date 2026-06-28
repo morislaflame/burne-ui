@@ -61,6 +61,7 @@ export function AvatarShowcase() {
             <code>label</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

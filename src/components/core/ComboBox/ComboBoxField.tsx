@@ -42,7 +42,6 @@ export type ComboBoxRootProps = HTMLAttributes<HTMLDivElement> & {
   isRequired?: boolean;
   status?: InputStatus;
   size?: InputSize;
-  /** Варианты для simple API и дефолтного `<ComboBox.Popover>`. */
   options?: ComboBoxOption[];
   value?: string;
   defaultValue?: string;

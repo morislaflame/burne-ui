@@ -13,7 +13,6 @@ export type ToggleButtonGroupContextValue = {
   variant: ToggleButtonVariant;
   isSelected: (value: string) => boolean;
   select: (value: string) => void;
-  /** Roving tabindex для `type="single"`. */
   tabIndexFor: (value: string) => 0 | -1 | undefined;
 };
 
@@ -26,7 +25,7 @@ export function useOptionalToggleButtonGroupContext() {
 function useToggleButtonGroupContext(): ToggleButtonGroupContextValue {
   const ctx = useContext(ToggleButtonGroupContext);
   if (!ctx) {
-    throw new Error("ToggleButton с `value` должен быть внутри <ToggleButtonGroup>.");
+    throw new Error("ToggleButton with `value` must be inside <ToggleButtonGroup>.");
   }
   return ctx;
 }

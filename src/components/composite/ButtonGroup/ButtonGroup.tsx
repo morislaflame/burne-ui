@@ -143,10 +143,8 @@ export type ButtonGroupOrientation = "horizontal" | "vertical";
 
 export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "children"> & {
   orientation?: ButtonGroupOrientation;
-  /** Отдельные кнопки с зазором вместо склейки сегментов. */
   segmented?: boolean;
   buttonSize?: ButtonSize;
-  /** Дефолтный variant для кнопок внутри склеенной группы. */
   variant?: ButtonVariant;
   children: ReactNode;
 };

@@ -48,7 +48,7 @@ export function DropdownShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Trigger, Popover, Group, Item, ItemIndicator, ItemLabel и ItemIcon — слоты меню."
+            description="Dropdown.Trigger, Dropdown.Popover (variant gloss), Group, Item, ItemLabel, ItemHint, ItemIcon, Sub."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Выбор">
@@ -57,6 +57,12 @@ export function DropdownShowcase() {
             <code>multiple</code> переключает на массив значений.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss>
+          <p>
+            <code>variant=&quot;gloss&quot;</code> на <code>Dropdown.Popover</code>. Пункты с{" "}
+            <code>href</code> рендерятся как ссылки с ролью menuitem.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

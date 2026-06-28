@@ -42,7 +42,7 @@ export function AccordionShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Item, Heading, Trigger, Message, Content, Title, Description, Icon, Indicator, Panel и Body."
+            description="Accordion.Item → Heading (Trigger, Message с Content/Title/Description) → Panel (Body). Icon, Indicator — опционально."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Состояние">
@@ -51,6 +51,12 @@ export function AccordionShowcase() {
             за раз (аккордеон-поведение).
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization>
+          <p>
+            Раскрытие панели — <code>configureMotion()</code> (<code>expandDuration</code>,{" "}
+            <code>enableExpandable</code>). <code>className</code> на Item и Panel.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

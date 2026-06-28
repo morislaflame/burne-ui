@@ -35,15 +35,12 @@ import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { cn } from "@/utils/cn";
 
-// ─── types ────────────────────────────────────────────────────────────────────
 
 export type TimeFieldSize = ComponentSize;
 export type TimeFieldStatus = "default" | "danger" | "success" | "warning";
-/** `segmented` — сегменты в отдельных «ячейках» внутри оболочки. */
 export type TimeFieldVariant = "default" | "outline" | "segmented" | "gloss";
 export type TimeFieldFormat = "HH:mm" | "HH:mm:ss";
 
-// ─── context ──────────────────────────────────────────────────────────────────
 
 type TimeFieldCtx = {
   fieldId: string;
@@ -63,7 +60,7 @@ const TimeFieldContext = createContext<TimeFieldCtx | null>(null);
 
 function useTimeFieldContext(): TimeFieldCtx {
   const ctx = useContext(TimeFieldContext);
-  if (!ctx) throw new Error("TimeField compound parts must be inside <TimeField>.");
+  if (!ctx) throw new Error("Components TimeField must be inside <TimeField>.");
   return ctx;
 }
 
@@ -71,7 +68,6 @@ function useOptionalTimeFieldContext() {
   return useContext(TimeFieldContext);
 }
 
-// ─── parsing / formatting ─────────────────────────────────────────────────────
 
 type HMS = { h: number; m: number; s: number };
 
@@ -91,11 +87,10 @@ function formatTime(hms: HMS, fmt: TimeFieldFormat): string {
   return fmt === "HH:mm:ss" ? `${h}:${m}:${s}` : `${h}:${m}`;
 }
 
-// ─── segment config ───────────────────────────────────────────────────────────
 
 type SegId = "h" | "m" | "s";
 const SEG_MAX: Record<SegId, number> = { h: 23, m: 59, s: 59 };
-const SEG_LABEL: Record<SegId, string> = { h: "часы", m: "минуты", s: "секунды" };
+const SEG_LABEL: Record<SegId, string> = { h: "hours", m: "minutes", s: "seconds" };
 
 function segValue(hms: HMS, seg: SegId): number {
   return hms[seg];
@@ -106,7 +101,6 @@ function withSeg(hms: HMS, seg: SegId, val: number): HMS {
   return { ...hms, [seg]: clamped };
 }
 
-// ─── shell styling (matches Input) ───────────────────────────────────────────
 
 const VARIANT_SHELL: Record<Exclude<TimeFieldVariant, "outline" | "gloss">, string> = {
   default: "bg-surface",
@@ -169,7 +163,6 @@ function AffixSlot({
   );
 }
 
-// ─── TimeFieldControl ─────────────────────────────────────────────────────────
 
 export type TimeFieldControlProps = Omit<
   HTMLAttributes<HTMLFieldSetElement>,
@@ -183,11 +176,8 @@ export type TimeFieldControlProps = Omit<
   size?: TimeFieldSize;
   status?: TimeFieldStatus;
   variant?: TimeFieldVariant;
-  /** Оболочка по ширине времени, без растягивания на всю строку. */
   compact?: boolean;
-  /** Слот слева внутри оболочки, отделён вертикальной чертой. */
   prefix?: ReactNode;
-  /** Слот справа внутри оболочки, отделён вертикальной чертой. */
   suffix?: ReactNode;
   onPointerDown?: PointerEventHandler<HTMLFieldSetElement>;
 };
@@ -595,7 +585,6 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
 
 TimeFieldControl.displayName = "TimeFieldControl";
 
-// ─── TimeFieldRoot (simple + compound) ────────────────────────────────────────
 
 export type TimeFieldRootProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "suffix"> & {
   children?: ReactNode;
@@ -715,7 +704,6 @@ export function TimeFieldRoot({
   );
 }
 
-// ─── TimeFieldHint / TimeFieldError ──────────────────────────────────────────
 
 export type TimeFieldHintProps = HTMLAttributes<HTMLParagraphElement> & { children?: ReactNode };
 export type TimeFieldErrorProps = HTMLAttributes<HTMLParagraphElement> & { children?: ReactNode };

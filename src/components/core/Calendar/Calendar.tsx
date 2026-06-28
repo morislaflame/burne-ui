@@ -31,7 +31,6 @@ import { Button } from "@/components/core/Button";
 import { CalendarInteractiveCell, DAY_BTN } from "./CalendarInteractiveCell";
 import { RU_LOCALE, type CalendarLocale } from "./calendarLocale";
 
-// ─── date utils ──────────────────────────────────────────────────────────────
 
 function isSameDay(a: Date, b: Date): boolean {
   return (
@@ -49,12 +48,10 @@ function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
 }
 
-/** Monday-based week offset: Mon=0 … Sun=6 */
 function getMonthStartOffset(year: number, month: number): number {
   return (new Date(year, month, 1).getDay() + 6) % 7;
 }
 
-// ─── types ───────────────────────────────────────────────────────────────────
 
 export type CalendarMode = "single" | "range" | "multiple";
 export type CalendarView = "days" | "months" | "years";
@@ -64,7 +61,6 @@ export type CalendarRangeValue = { start: Date | null; end: Date | null };
 
 export type { CalendarLocale };
 
-// ─── size / variant maps ──────────────────────────────────────────────────────
 
 const WEEKDAY_CELL: Record<CalendarSize, string> = {
   small: "mx-auto flex aspect-square w-full max-w-control-small items-center justify-center text-xs",
@@ -87,7 +83,6 @@ const ROOT_PAD: Record<CalendarSize, string> = {
   large: "p-large gap-base",
 };
 
-/** Минимальная ширина сетки — заметнее различает размеры. */
 const ROOT_MIN_W: Record<CalendarSize, string> = {
   small: "min-w-[15.5rem]",
   base:  "min-w-[18rem]",
@@ -116,7 +111,6 @@ const MONTH_GRID_GAP: Record<CalendarSize, string> = {
   large: "gap-small",
 };
 
-/** Половина полосы диапазона — плавное появление/исчезновение. */
 function CalendarRangeHalfFill({
   visible,
   side,
@@ -169,7 +163,6 @@ function CalendarRangeHalfFill({
   );
 }
 
-// ─── context ──────────────────────────────────────────────────────────────────
 
 type CalendarCtx = {
   mode: CalendarMode;
@@ -177,19 +170,16 @@ type CalendarCtx = {
   setView: (v: CalendarView) => void;
   viewDate: Date;
   navigate: (delta: number) => void;
-  // selection
   selectedDates: Date[];
   rangeStart: Date | null;
   rangeEnd: Date | null;
   hoverDate: Date | null;
   setHoverDate: (d: Date | null) => void;
-  // handlers
   onDayPress: (d: Date) => void;
   onMonthPress: (month: number) => void;
   onYearPress: (year: number) => void;
   onClear: () => void;
   onToday: () => void;
-  // config
   size: CalendarSize;
   variant: CalendarVariant;
   locale: CalendarLocale;
@@ -205,14 +195,11 @@ function useCalendar(): CalendarCtx {
   return ctx;
 }
 
-// ─── prop types ───────────────────────────────────────────────────────────────
 
 type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
   variant?: CalendarVariant;
   size?: CalendarSize;
-  /** Initial month/year displayed. */
   defaultMonth?: Date;
-  /** Which picker to open first. */
   initialView?: CalendarView;
   locale?: CalendarLocale;
   minDate?: Date;
@@ -243,11 +230,9 @@ export type CalendarHeaderProps = HTMLAttributes<HTMLDivElement>;
 export type CalendarGridProps = HTMLAttributes<HTMLDivElement>;
 export type CalendarFooterProps = HTMLAttributes<HTMLDivElement>;
 
-// ─── root ─────────────────────────────────────────────────────────────────────
 
 export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
   function CalendarRoot(rawProps, ref) {
-    // Cast to a unified internal type for easier handling
     const props = rawProps as CalendarCommonProps & {
       mode?: CalendarMode;
       value?: unknown;
@@ -278,7 +263,6 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
     const today = useMemo(() => startOfDay(new Date()), []);
     const isControlled = value !== undefined;
 
-    // ── value state ───────────────────────────────────────────────────────────
     const [internalValue, setInternalValue] = useState<unknown>(() => {
       if (defaultValue !== undefined) return defaultValue;
       if (mode === "range") return { start: null, end: null } satisfies CalendarRangeValue;
@@ -304,7 +288,6 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       [isControlled, onValueChange],
     );
 
-    // ── view state ────────────────────────────────────────────────────────────
     const [view, setView] = useState<CalendarView>(initialView);
     const [viewDate, setViewDateRaw] = useState<Date>(() => {
       if (defaultMonth) return new Date(defaultMonth.getFullYear(), defaultMonth.getMonth(), 1);
@@ -316,11 +299,9 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       return new Date(today.getFullYear(), today.getMonth(), 1);
     });
 
-    // ── range: first-click pending ────────────────────────────────────────────
     const [rangePending, setRangePending] = useState<Date | null>(null);
     const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
-    // ── derived selection ─────────────────────────────────────────────────────
     const selectedDates = useMemo((): Date[] => {
       if (mode === "single") {
         const v = resolvedValue as Date | null;
@@ -341,11 +322,10 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
 
     const rangeEnd = useMemo((): Date | null => {
       if (mode !== "range") return null;
-      if (rangePending) return null; // awaiting second click → show hover preview instead
+      if (rangePending) return null;
       return (resolvedValue as CalendarRangeValue)?.end ?? null;
     }, [mode, rangePending, resolvedValue]);
 
-    // ── navigation ────────────────────────────────────────────────────────────
     const navigate = useCallback(
       (delta: number) => {
         setViewDateRaw((prev) => {
@@ -357,7 +337,6 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       [view],
     );
 
-    // ── day press ─────────────────────────────────────────────────────────────
     const onDayPress = useCallback(
       (d: Date) => {
         const day = startOfDay(d);
@@ -488,7 +467,6 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
   },
 );
 
-// ─── CalendarHeader ───────────────────────────────────────────────────────────
 
 function CalendarNavButton({
   label,
@@ -610,7 +588,6 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
   },
 );
 
-// ─── CalendarGrid ─────────────────────────────────────────────────────────────
 
 export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
   function CalendarGrid({ className = "", ...rest }, ref) {
@@ -625,7 +602,6 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
   },
 );
 
-// ─── CalendarDaysView (internal) ──────────────────────────────────────────────
 
 function CalendarDaysView() {
   const {
@@ -649,10 +625,8 @@ function CalendarDaysView() {
   const daysInMonth = getDaysInMonth(year, month);
   const offset = getMonthStartOffset(year, month);
 
-  // Effective range end: confirmed OR hover preview
   const effectiveRangeEnd = rangeEnd ?? (rangeStart && hoverDate ? hoverDate : null);
 
-  // Normalised [low, high] for range bounds
   const rLow =
     rangeStart && effectiveRangeEnd
       ? rangeStart <= effectiveRangeEnd
@@ -666,7 +640,6 @@ function CalendarDaysView() {
         : rangeStart
       : null;
 
-  // Build flat cell array: null = empty padding, number = day
   const cells: (number | null)[] = [
     ...Array<null>(offset).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
@@ -676,7 +649,6 @@ function CalendarDaysView() {
 
   return (
     <div>
-      {/* Weekday header row */}
       <div className={cn("grid grid-cols-7 gap-xsmall")}>
         {locale.weekDays.map((wd) => (
           <div
@@ -691,7 +663,6 @@ function CalendarDaysView() {
         ))}
       </div>
 
-      {/* Day cells */}
       <div className={cn("grid grid-cols-7 gap-xsmall")}>
         {cells.map((day, idx) => {
           if (day === null) {
@@ -753,7 +724,6 @@ function CalendarDaysView() {
   );
 }
 
-// ─── CalendarMonthsView (internal) ────────────────────────────────────────────
 
 function CalendarMonthsView() {
   const { viewDate, onMonthPress, selectedDates, size, locale } = useCalendar();
@@ -785,12 +755,10 @@ function CalendarMonthsView() {
   );
 }
 
-// ─── CalendarYearsView (internal) ─────────────────────────────────────────────
 
 function CalendarYearsView() {
   const { viewDate, onYearPress, selectedDates, size } = useCalendar();
   const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
-  // Show decade - 1 to decade + 10 (12 items total, with prev/next year for context)
   const years = Array.from({ length: 12 }, (_, i) => decadeStart - 1 + i);
   const today = new Date();
 
@@ -819,7 +787,6 @@ function CalendarYearsView() {
   );
 }
 
-// ─── CalendarFooter ───────────────────────────────────────────────────────────
 
 export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
   function CalendarFooter({ className = "", ...rest }, ref) {
@@ -845,12 +812,10 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
   },
 );
 
-// ─── compound export ──────────────────────────────────────────────────────────
 
 CalendarRoot.displayName = "Calendar";
 CalendarHeader.displayName = "Calendar.Header";
 CalendarGrid.displayName = "Calendar.Grid";
 CalendarFooter.displayName = "Calendar.Footer";
 
-// Export context hook for advanced use
 export { useCalendar };

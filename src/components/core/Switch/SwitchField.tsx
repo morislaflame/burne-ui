@@ -110,7 +110,6 @@ SwitchContent.displayName = "SwitchContent";
 
 export type SwitchLabelProps = Omit<LabelProps, "htmlFor">;
 
-/** Текст опции внутри `<Switch>` — span, без вложенного `<label>`. */
 export function SwitchLabel({ children, className, ...rest }: SwitchLabelProps) {
   const field = useSwitchFieldContext();
   const sz = SWITCH_LAYOUT[field.size];

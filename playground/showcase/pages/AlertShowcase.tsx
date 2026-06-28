@@ -42,7 +42,7 @@ export function AlertShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="title, description, status, icon, action на корне."
+            description="title, description, status, variant (в т.ч. gloss), icon, action на корне."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
@@ -55,6 +55,7 @@ export function AlertShowcase() {
             для <code>aria-labelledby</code> / <code>aria-describedby</code>.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );

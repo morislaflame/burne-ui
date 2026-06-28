@@ -52,17 +52,25 @@ export function ToastShowcase() {
           <ShowcaseDoc.Import path="@/components/core/Toast" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
-          <ShowcaseDoc.ApiRow
-            api="simple"
-            description="useToast() возвращает toast.show(). Toast.Provider оборачивает каталог приложения, не отдельную страницу."
-          />
+          <p>
+            Императивный API: <code>useToast()</code> → <code>toast.show</code>, <code>toast.success</code>,{" "}
+            <code>toast.danger</code>, <code>toast.promise</code> и др. Параметры: <code>title</code>,{" "}
+            <code>description</code>, <code>status</code>, <code>variant</code>, <code>placement</code>,{" "}
+            <code>timeout</code>, <code>action</code>.
+          </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Провайдер">
           <p>
-            <code>Toast.Provider</code> должен быть выше по дереву (в layout каталога). Без него{" "}
+            <code>Toast.Provider</code> должен оборачивать приложение (layout). Без него{" "}
             <code>useToast</code> не сможет отображать уведомления.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss>
+          <p>
+            Стек и reposition — <code>configureMotion()</code> (<code>enableToastStack</code>). Scrim
+            плотности — токены <code>--toast-scrim-size</code>, <code>--toast-scrim-density</code>.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

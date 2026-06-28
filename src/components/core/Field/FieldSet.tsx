@@ -119,7 +119,6 @@ export type FieldLegendHeaderProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 
-/** Обёртка для подписи и подсказки внутри `FieldLegend`. */
 export function FieldLegendHeader({ children, className, ...rest }: FieldLegendHeaderProps) {
   return (
     <span className={cn("flex flex-col w-fit", className)} {...rest}>
@@ -132,7 +131,6 @@ export type FieldSetGroupProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-/** Основной контент fieldset: поля, списки опций, групповые ошибки. */
 export const FieldSetGroup = forwardRef<HTMLDivElement, FieldSetGroupProps>(function FieldSetGroup(
   { className, children, ...rest },
   ref,
@@ -153,7 +151,6 @@ export type FieldSetActionsProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-/** Кнопки и действия fieldset (submit, reset и т.д.). */
 export const FieldSetActions = forwardRef<HTMLDivElement, FieldSetActionsProps>(
   function FieldSetActions({ className, children, ...rest }, ref) {
     const size = useFieldSetSize();
@@ -175,12 +172,9 @@ FieldSetActions.displayName = "FieldSetActions";
 
 export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "children"> & {
   children?: ReactNode;
-  /** id подсказки для `aria-describedby`. */
   hintId?: string;
-  /** id ошибки для `aria-describedby`. */
   errorId?: string;
   isRequired?: boolean;
-  /** Шкала отступов fieldset: legend, stack, group и actions. */
   size?: ComponentSize;
 };
 
@@ -221,13 +215,11 @@ export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(funct
 
 FieldSetRoot.displayName = "FieldSet";
 
-/** Стабильный id подсказки для fieldset (или переданный явно). */
 export function useFieldSetHintId(providedId?: string) {
   const autoId = useId();
   return providedId ?? `${autoId}-hint`;
 }
 
-/** Стабильный id ошибки для fieldset (или переданный явно). */
 export function useFieldSetErrorId(providedId?: string) {
   const autoId = useId();
   return providedId ?? `${autoId}-error`;

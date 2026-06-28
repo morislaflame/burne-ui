@@ -57,20 +57,22 @@ export function ButtonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, size, status, leftIcon, iconOnly, ripple, onAsyncClick, disabled, groupSegment."
+            description="variant, size, status, leftIcon, iconOnly, ripple, onAsyncClick, disabled, variant gloss."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Ripple">
           <p>
             Проп <code>ripple</code> монтирует встроенный <code>&lt;Ripple /&gt;</code> с тоном под{" "}
-            <code>variant</code>/<code>status</code>. Для кастомного слоя используйте{" "}
-            <code>buttonRippleTone(variant, status)</code> из того же пакета.
+            <code>variant</code>/<code>status</code>. Для кастомного слоя —{" "}
+            <code>buttonRippleTone(variant, status)</code> из пакета.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Кастомизация">
           <p>
-            Дополнительные стили — через <code>className</code>. В <code>ButtonGroup</code> передайте{" "}
-            <code>groupSegment</code> для скругления и границ сегмента.
+            Дополнительные стили — <code>className</code>. <code>variant=&quot;gloss&quot;</code> — стеклянная
+            поверхность (токены <code>--color-surface</code>, <code>--color-border</code>). В{" "}
+            <code>ButtonGroup</code> сегменты скругляются через контекст группы. Ripple и hover/press —{" "}
+            <code>configureMotion()</code> и <code>buttonRippleTone(variant, status)</code> из пакета.
           </p>
         </ShowcaseDoc.Block>
       </ShowcaseDoc>

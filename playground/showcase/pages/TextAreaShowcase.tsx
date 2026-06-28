@@ -54,15 +54,20 @@ export function TextAreaShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, hint, error, rows, placeholder и status — на корне TextArea."
+            description="label, hint, error, rows, placeholder, variant, status — на корне TextArea без children."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="TextArea.Label, TextArea.Control, TextArea.Hint, TextArea.Error — кастомная разметка."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Поведение">
           <p>
-            Наследует визуальные variant и status от Input. Поддерживает controlled и uncontrolled режимы
-            через value/defaultValue.
+            Наследует визуальные variant и status от Input. Подсказки — <code>hint</code>, не{" "}
+            <code>description</code>. Controlled/uncontrolled через value/defaultValue.
           </p>
         </ShowcaseDoc.Block>
+        <ShowcaseDoc.Customization gloss />
       </ShowcaseDoc>
     </ShowcasePage>
   );
