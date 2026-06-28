@@ -1,5 +1,6 @@
 import type { ComponentType, FormEvent } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { useCallback, useState } from "react";
 
 import { Form } from "@/components/composite/Form/Form";
@@ -181,6 +182,32 @@ export const Pressable: Story = {
         </Card>
       </div>
     );
+  },
+};
+
+export const PressInteraction: Story = {
+  name: "Interaction: нажатие",
+  render: function PressInteractionDemo() {
+    const [n, setN] = useState(0);
+    return (
+      <div className="flex flex-col gap-mid">
+        <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
+          Нажатий: {n}
+        </p>
+        <Card pressable onPress={() => setN((c) => c + 1)}>
+          <Ripple color={CARD_RIPPLE_COLOR.default} direction="out" />
+          <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
+            <Card.Header>
+              <Card.Title>Карточка-кнопка</Card.Title>
+            </Card.Header>
+          </div>
+        </Card>
+      </div>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: /Карточка-кнопка/ }));
+    await expect(canvas.getByText("Нажатий: 1")).toBeInTheDocument();
   },
 };
 

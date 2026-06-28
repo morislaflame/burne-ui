@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
@@ -97,6 +98,16 @@ function ConfirmTemplate({
 export const ConfirmDelete: Story = {
   name: "Danger",
   render: () => <ConfirmTemplate status="danger" label="Удалить (danger)" />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Удалить (danger)" }));
+    await expect(
+      await screen.findByRole("alertdialog", { name: "Подтверждение" }),
+    ).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Продолжить" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    });
+  },
 };
 
 export const StatusDefault: Story = {

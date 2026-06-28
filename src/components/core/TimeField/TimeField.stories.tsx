@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoTimeOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
@@ -139,6 +140,12 @@ export const Segmented: Story = {
         <TimeField.Hint>Каждый сегмент — отдельная ячейка внутри оболочки.</TimeField.Hint>
       </TimeField>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const hours = canvas.getByRole("spinbutton", { name: "hours" });
+    await userEvent.click(hours);
+    await userEvent.keyboard("{ArrowUp}");
+    await expect(hours).toHaveTextContent("15");
   },
 };
 

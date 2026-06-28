@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 import { IoCopyOutline, IoLinkOutline, IoShareSocialOutline, IoTrashOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button/Button";
@@ -59,6 +60,14 @@ export const Basic: Story = {
       </Popover.Content>
     </Popover>
   ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Открыть" }));
+    await expect(screen.getByText("Произвольный контент внутри панели.")).toBeVisible();
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(screen.queryByText("Произвольный контент внутри панели.")).not.toBeInTheDocument(),
+    );
+  },
 };
 
 export const WithHeader: Story = {

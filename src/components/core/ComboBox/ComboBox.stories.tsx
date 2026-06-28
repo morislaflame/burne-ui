@@ -1,6 +1,7 @@
 import type { ComponentProps, ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen } from "storybook/test";
 import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
@@ -213,6 +214,18 @@ export const Outline: Story = {
   render: () => (
     <ControlledComboBox variant="outline" label="Язык интерфейса" placeholder="Выберите язык" />
   ),
+};
+
+export const SelectInteraction: Story = {
+  name: "Interaction: выбор",
+  render: () => (
+    <ControlledComboBox variant="outline" label="Язык интерфейса" placeholder="Выберите язык" />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Открыть список" }));
+    await userEvent.click(screen.getByRole("option", { name: /English/ }));
+    await expect(canvas.getByDisplayValue("English")).toBeInTheDocument();
+  },
 };
 
 export const Large: Story = {

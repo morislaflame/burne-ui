@@ -85,21 +85,22 @@ function TextAreaResizeHandle({
   onPointerDown,
 }: {
   disabled?: boolean;
-  onPointerDown: PointerEventHandler<HTMLDivElement>;
+  onPointerDown: PointerEventHandler<HTMLButtonElement>;
 }) {
   return (
-    <div
+    <button
+      type="button"
       data-textarea-resize-handle
-      aria-label="Change height"
-      aria-disabled={disabled || undefined}
+      aria-label="Изменить высоту"
+      disabled={disabled}
       onPointerDown={onPointerDown}
       className={cn(
-        "absolute bottom-0 right-0 z-[2] flex touch-none select-none items-end justify-end p-xsmall",
+        "absolute bottom-0 right-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end p-xsmall",
         disabled ? "cursor-not-allowed opacity-45" : "cursor-ns-resize",
       )}
     >
       <TextAreaResizeGrip />
-    </div>
+    </button>
   );
 }
 

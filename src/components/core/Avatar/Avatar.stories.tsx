@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 
 import {
   DualApiStoryPanel,
@@ -154,6 +155,29 @@ export const WithNicknameTooltip: Story = {
       loading="lazy"
     />
   ),
+};
+
+export const HoverInteraction: Story = {
+  name: "Interaction: tooltip",
+  render: () => (
+    <Avatar
+      size="large"
+      label="Амелия Кларк"
+      nickname="starlight.muse"
+      tooltipVariant="default"
+      tooltipSize="base"
+      src={PIN_IMAGE1}
+      alt=""
+      loading="lazy"
+    />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.hover(canvas.getByRole("group", { name: "Амелия Кларк" }));
+    await waitFor(
+      () => expect(screen.getByRole("tooltip")).toHaveTextContent("starlight.muse"),
+      { timeout: 1000 },
+    );
+  },
 };
 
 export const CompoundCustomFallback: Story = {

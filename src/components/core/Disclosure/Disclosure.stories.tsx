@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoInformationCircleOutline, IoLockClosedOutline, IoNotificationsOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
@@ -64,6 +65,14 @@ export const Basic: Story = {
       </Disclosure.Content>
     </Disclosure>
   ),
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole("button", { name: "Основная информация" });
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(trigger);
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(trigger);
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  },
 };
 
 // ─── Variants ─────────────────────────────────────────────────────────────────

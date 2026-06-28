@@ -1,6 +1,7 @@
 import type { ComponentType, MouseEvent } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen } from "storybook/test";
 
 import { Breadcrumbs } from ".";
 
@@ -94,6 +95,10 @@ export const Collapsed: Story = {
       </Breadcrumbs>
     </div>
   ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: /скрытых разделов/ }));
+    await expect(screen.getByRole("menu")).toBeVisible();
+  },
 };
 
 export const Expanded: Story = {

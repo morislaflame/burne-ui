@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Checkbox } from "@/components/core/Checkbox";
 import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
@@ -83,6 +84,11 @@ export const SingleSelection: Story = {
       </CheckboxGroup.List>
     </CheckboxGroup>
   ),
+  play: async ({ canvas, userEvent }) => {
+    const pickup = canvas.getByRole("checkbox", { name: "Самовывоз" });
+    await userEvent.click(pickup);
+    await expect(pickup).toBeChecked();
+  },
 };
 
 export const Required: Story = {

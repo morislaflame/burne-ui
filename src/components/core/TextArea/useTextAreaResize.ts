@@ -11,7 +11,7 @@ export function useTextAreaResize(
   blocked: boolean,
   size: ComponentSize,
 ): {
-  onResizePointerDown: (e: ReactPointerEvent<HTMLDivElement>) => void;
+  onResizePointerDown: (e: ReactPointerEvent<HTMLButtonElement>) => void;
 } {
   const setHeight = useCallback(
     (next: number | null) => {
@@ -24,7 +24,7 @@ export function useTextAreaResize(
   );
 
   const onResizePointerDown = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
+    (e: ReactPointerEvent<HTMLButtonElement>) => {
       if (blocked || !enabled) return;
       e.preventDefault();
       e.stopPropagation();

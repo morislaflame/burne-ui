@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import {
   DualApiStoryPanel,
@@ -213,6 +214,11 @@ export const WithAction: Story = {
       }
     />
   ),
+  play: async ({ canvas, userEvent }) => {
+    const action = canvas.getByRole("button", { name: "Refresh" });
+    await userEvent.click(action);
+    await expect(action).toHaveFocus();
+  },
 };
 
 export const Variants: Story = {

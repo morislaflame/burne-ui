@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import {
   IoBookmarkOutline,
   IoCheckmarkCircleOutline,
@@ -265,6 +266,19 @@ export const IconInlineChildren: Story = {
       </DualApiStoryPanel>
     </DualApiStoryPanels>
   ),
+};
+
+export const VisibilityInteraction: Story = {
+  name: "Interaction: видимость",
+  render: () => (
+    <Badge variant="secondary">
+      <IoCheckmarkCircleOutline data-icon="inline-start" />
+      Verified
+    </Badge>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("Verified")).toBeVisible();
+  },
 };
 
 export const IconStartEnd: Story = {

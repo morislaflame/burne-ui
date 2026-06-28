@@ -289,7 +289,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
         },
         "aria-expanded": open,
         "aria-haspopup": "menu",
-        "aria-controls": contentId,
+        "aria-controls": open ? contentId : undefined,
       });
     }
 
@@ -303,7 +303,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
         className={cn("inline-flex", className)}
         aria-expanded={open}
         aria-haspopup="menu"
-        aria-controls={contentId}
+        aria-controls={open ? contentId : undefined}
         onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
         {...rest}
       >

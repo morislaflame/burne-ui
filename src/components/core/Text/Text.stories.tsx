@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Text } from "./Text";
 
@@ -60,7 +61,11 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("Пример текста дизайн-системы Burne UI")).toBeVisible();
+  },
+};
 
 export const AsSpanWithWrap: Story = {
   name: "Как span + перенос",

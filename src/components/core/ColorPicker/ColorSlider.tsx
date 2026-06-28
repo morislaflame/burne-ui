@@ -119,6 +119,16 @@ const RAIL_CROSS_CLASS: Record<ColorSliderSize, { h: string; w: string }> = {
 };
 
 
+const CHANNEL_A11Y_LABEL: Record<ColorChannel, string> = {
+  hue: "Hue",
+  saturation: "Saturation",
+  value: "Value",
+  alpha: "Alpha",
+  red: "Red",
+  green: "Green",
+  blue: "Blue",
+};
+
 function useMergedValue(
   value: number | undefined,
   defaultValue: number | undefined,
@@ -287,6 +297,7 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
           aria-valuemax={max}
           aria-valuenow={value}
           aria-orientation={orientation}
+          aria-label={CHANNEL_A11Y_LABEL[channel]}
           disabled={disabled}
           tabIndex={disabled ? -1 : 0}
           className={cn(

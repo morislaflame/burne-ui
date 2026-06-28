@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoStar } from "react-icons/io5";
 
 import {
@@ -77,6 +78,27 @@ export const WithHint: Story = {
     label: "Курьер",
     hint: "Доставка 1–2 дня",
     defaultChecked: true,
+  },
+};
+
+export const SelectInteraction: Story = {
+  name: "Interaction: выбор",
+  args: {
+    name: "delivery",
+    value: "courier",
+    label: "Курьер",
+    hint: "Доставка 1–2 дня",
+  },
+  render: (args) => (
+    <div className="flex flex-col gap-mid">
+      <Radio {...args} />
+      <Radio name="delivery" value="pickup" label="Самовывоз" />
+    </div>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const pickup = canvas.getByRole("radio", { name: "pickup" });
+    await userEvent.click(pickup);
+    await expect(pickup).toBeChecked();
   },
 };
 

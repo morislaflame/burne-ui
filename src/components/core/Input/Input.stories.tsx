@@ -1,6 +1,7 @@
 import type { ComponentType, ChangeEvent } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import {
   DualApiStoryPanel,
@@ -119,6 +120,22 @@ export const Default: Story = {
       </DualApiStoryPanel>
     </DualApiStoryPanels>
   ),
+};
+
+export const TypeInteraction: Story = {
+  name: "Interaction: ввод",
+  render: () => (
+    <Input
+      label="Email"
+      placeholder="you@example.com"
+      autoComplete="email"
+    />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const field = canvas.getByRole("textbox", { name: "Email" });
+    await userEvent.type(field, "test@example.com");
+    await expect(field).toHaveValue("test@example.com");
+  },
 };
 
 export const Outline: Story = {

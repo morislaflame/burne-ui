@@ -1,6 +1,7 @@
 import { useState, type ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import {
   IoBookmarkOutline,
   IoGridOutline,
@@ -107,6 +108,10 @@ export const SingleSelection: Story = {
         </Text>
       </div>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("radio", { name: "Сетка" }));
+    await expect(canvas.getByText('value="grid"')).toBeInTheDocument();
   },
 };
 

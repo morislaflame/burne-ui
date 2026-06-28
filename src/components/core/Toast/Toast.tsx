@@ -760,6 +760,7 @@ function ToastViewport({
 
   return (
     <div
+      role="region"
       aria-label={`Уведомления (${placement})`}
       className={cn("fixed z-[300] pointer-events-none", PLACEMENT_CLASS[placement])}
       style={{ width: TOAST_WIDTH_PX }}

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import {
   DualApiStoryPanel,
@@ -65,6 +66,18 @@ export const Default: Story = {
       </DualApiStoryPanel>
     </DualApiStoryPanels>
   ),
+};
+
+export const TypeInteraction: Story = {
+  name: "Interaction: ввод",
+  render: () => (
+    <TextArea label="Комментарий" placeholder="Ваш отзыв…" rows={3} />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const field = canvas.getByRole("textbox", { name: "Комментарий" });
+    await userEvent.type(field, "Тестовый отзыв");
+    await expect(field).toHaveValue("Тестовый отзыв");
+  },
 };
 
 export const Outline: Story = {

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, waitFor } from "storybook/test";
 
 import { Pagination } from ".";
 
@@ -104,6 +105,13 @@ export const FullPages: Story = {
         </Pagination.Content>
       </Pagination>
     );
+  },
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Forward" }));
+    await waitFor(() => {
+      const current = canvasElement.querySelector("[aria-current='page']");
+      expect(current).toHaveTextContent("6");
+    });
   },
 };
 

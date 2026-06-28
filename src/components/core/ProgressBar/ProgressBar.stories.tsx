@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import {
   DualApiStoryPanel,
@@ -197,4 +198,10 @@ export const Accessibility: Story = {
       />
     </div>
   ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("progressbar", { name: /Скачивание/ })).toHaveAttribute(
+      "aria-valuenow",
+      "48",
+    );
+  },
 };

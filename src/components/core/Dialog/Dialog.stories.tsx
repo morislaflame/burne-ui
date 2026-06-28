@@ -1,6 +1,7 @@
 import type { ComponentType, FormEvent } from "react";
 import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 
 import { Form } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
@@ -93,6 +94,52 @@ export const Default: Story = {
         </Dialog>
       </>
     );
+  },
+};
+
+export const OpenCloseInteraction: Story = {
+  name: "Interaction: открытие",
+  render: function DialogInteractionDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Открыть диалог
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Header>
+            <Dialog.HeadingBlock>
+              <Dialog.Title>Настройки экспорта</Dialog.Title>
+              <Dialog.Description>
+                Выберите формат и директорию.
+              </Dialog.Description>
+            </Dialog.HeadingBlock>
+            <Dialog.Close />
+          </Dialog.Header>
+          <Dialog.Body>
+            <p className="text-sm text-muted">Содержимое диалога.</p>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+              Отмена
+            </Button>
+            <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
+              Сохранить
+            </Button>
+          </Dialog.Footer>
+        </Dialog>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Открыть диалог" }));
+    await expect(
+      await screen.findByRole("dialog", { name: "Настройки экспорта" }),
+    ).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Отмена" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
   },
 };
 

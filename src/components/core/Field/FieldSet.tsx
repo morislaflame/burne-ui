@@ -174,12 +174,11 @@ export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "c
   children?: ReactNode;
   hintId?: string;
   errorId?: string;
-  isRequired?: boolean;
   size?: ComponentSize;
 };
 
 export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(function FieldSetRoot(
-  { children, className, hintId, errorId, isRequired, disabled, size = "base", ...rest },
+  { children, className, hintId, errorId, disabled, size = "base", ...rest },
   ref,
 ) {
   const { legend, body } = splitFieldSetChildren(children);
@@ -191,7 +190,6 @@ export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(funct
       <fieldset
         ref={ref}
         disabled={disabled}
-        aria-required={isRequired || undefined}
         aria-describedby={joinFieldDescribedBy(hintId, errorId)}
         className={cn(FIELDSET_CLASS, className)}
         {...rest}

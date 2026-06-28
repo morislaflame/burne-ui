@@ -1,8 +1,10 @@
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useId,
   useMemo,
+  useRef,
   useState,
   type FieldsetHTMLAttributes,
   type ReactNode,
@@ -86,6 +88,17 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(f
     [controlled, isRequired, onValueChange],
   );
 
+  const requiredAnchorClaimedRef = useRef(false);
+  useEffect(() => {
+    requiredAnchorClaimedRef.current = false;
+  }, [isRequired, groupName]);
+
+  const claimRequiredAnchor = useCallback(() => {
+    if (!isRequired || requiredAnchorClaimedRef.current) return false;
+    requiredAnchorClaimedRef.current = true;
+    return true;
+  }, [isRequired]);
+
   const contextValue = useMemo<RadioGroupContextValue>(
     () => ({
       name: groupName,
@@ -95,8 +108,9 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(f
       errorId,
       selectedValue,
       selectValue,
+      claimRequiredAnchor,
     }),
-    [disabled, errorId, hintId, groupName, isRequired, selectValue, selectedValue],
+    [claimRequiredAnchor, disabled, errorId, groupName, hintId, isRequired, selectValue, selectedValue],
   );
 
   const fieldLabelCtx = useMemo(() => ({ isRequired }), [isRequired]);
@@ -107,7 +121,6 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(f
         <OptionGroupFieldset
           ref={ref}
           disabled={disabled}
-          isRequired={isRequired}
           hintId={hintId}
           errorId={errorId}
           size={size}

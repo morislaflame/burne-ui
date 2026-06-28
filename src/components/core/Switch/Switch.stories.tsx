@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoMoon, IoSunny } from "react-icons/io5";
 
 import {
@@ -85,6 +86,28 @@ export const Default: Story = {
       </DualApiStoryPanel>
     </DualApiStoryPanels>
   ),
+};
+
+export const ToggleInteraction: Story = {
+  name: "Interaction: переключение",
+  render: function ToggleInteractionDemo() {
+    const [on, setOn] = useState(false);
+    return (
+      <Switch
+        label="Уведомления"
+        hint={`Сейчас: ${on ? "вкл" : "выкл"}`}
+        checked={on}
+        onChange={(e) => setOn(e.target.checked)}
+      />
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const toggle = canvas.getByRole("switch", { name: /Уведомления/ });
+    await expect(toggle).not.toBeChecked();
+    await userEvent.click(toggle);
+    await expect(toggle).toBeChecked();
+    await expect(canvas.getByText(/Сейчас: вкл/)).toBeVisible();
+  },
 };
 
 export const Sizes: Story = {

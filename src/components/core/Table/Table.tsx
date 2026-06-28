@@ -182,10 +182,11 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
 
 
 export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
-  function TableScrollContainer({ className = "", ...rest }, ref) {
+  function TableScrollContainer({ className = "", tabIndex = 0, ...rest }, ref) {
     return (
       <div
         ref={ref}
+        tabIndex={tabIndex}
         className={cn("w-full overflow-x-auto", className)}
         {...rest}
       />

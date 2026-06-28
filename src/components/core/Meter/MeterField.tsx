@@ -73,6 +73,7 @@ export function MeterRoot({
   }, []);
 
   const isCompound = hasCompoundChildren(children);
+  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
   const hasHint = hint != null || (isCompound && hasCompoundChild(children, MeterHint));
   const hasError = error != null || (isCompound && hasCompoundChild(children, MeterError));
 
@@ -83,11 +84,12 @@ export function MeterRoot({
       errorId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      labelConnected: hasLabel,
       orientation,
       display,
       setDisplay,
     }),
-    [display, errorId, hasError, hasHint, hintId, meterId, orientation, setDisplay],
+    [display, errorId, hasError, hasHint, hasLabel, hintId, meterId, orientation, setDisplay],
   );
 
   const trackProps = { value, min, max, size, thickness, color, formatValue, orientation };

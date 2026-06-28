@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen } from "storybook/test";
 
 import { Text } from "@/components/core/Text";
 
@@ -58,6 +59,10 @@ export const Basic: Story = {
         <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
       </div>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: /Selected color/ }));
+    await expect(screen.getByRole("textbox", { name: "Hex code of the color" })).toBeVisible();
   },
 };
 
@@ -174,28 +179,28 @@ export const SliderChannels: Story = {
         <ColorSlider
           channel="hue"
           color={hsva}
-          label="Оттенок (H)"
+          label="Hue (H)"
           value={hsva.h}
           onValueChange={(h) => setHsva({ ...hsva, h })}
         />
         <ColorSlider
           channel="saturation"
           color={hsva}
-          label="Насыщенность (S)"
+          label="Saturation (S)"
           value={hsva.s}
           onValueChange={(s) => setHsva({ ...hsva, s })}
         />
         <ColorSlider
           channel="value"
           color={hsva}
-          label="Яркость (V)"
+          label="Value (V)"
           value={hsva.v}
           onValueChange={(v) => setHsva({ ...hsva, v })}
         />
         <ColorSlider
           channel="alpha"
           color={hsva}
-          label="Прозрачность (A)"
+          label="Transparency (A)"
           value={hsva.a}
           onValueChange={(a) => setHsva({ ...hsva, a })}
         />

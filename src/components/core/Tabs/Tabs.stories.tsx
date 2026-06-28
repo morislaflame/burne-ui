@@ -1,6 +1,7 @@
 import { useState, type ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoDocumentTextOutline, IoSettingsOutline, IoPersonOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
@@ -92,6 +93,23 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => <TabsDemo />,
+};
+
+export const SwitchTabInteraction: Story = {
+  name: "Interaction: вкладки",
+  render: () => <TabsDemo />,
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByRole("tab", { name: "Аккаунт" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await userEvent.click(canvas.getByRole("tab", { name: "Документы" }));
+    await expect(canvas.getByRole("tab", { name: "Документы" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await expect(canvas.getByRole("tabpanel")).toHaveTextContent("Документы");
+  },
 };
 
 export const Vertical: Story = {

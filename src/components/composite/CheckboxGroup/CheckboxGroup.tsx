@@ -1,7 +1,9 @@
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type FieldsetHTMLAttributes,
   type ReactNode,
@@ -92,6 +94,17 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
       [controlled, onValueChange, selection],
     );
 
+    const requiredAnchorClaimedRef = useRef(false);
+    useEffect(() => {
+      requiredAnchorClaimedRef.current = false;
+    }, [isRequired, selection]);
+
+    const claimRequiredAnchor = useCallback(() => {
+      if (selection !== "single" || !isRequired || requiredAnchorClaimedRef.current) return false;
+      requiredAnchorClaimedRef.current = true;
+      return true;
+    }, [isRequired, selection]);
+
     const contextValue = useMemo<CheckboxGroupContextValue>(
       () => ({
         selection,
@@ -101,8 +114,18 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
         errorId,
         selectedValue,
         selectSingleValue,
+        claimRequiredAnchor,
       }),
-      [disabled, errorId, hintId, isRequired, selectSingleValue, selectedValue, selection],
+      [
+        claimRequiredAnchor,
+        disabled,
+        errorId,
+        hintId,
+        isRequired,
+        selectSingleValue,
+        selectedValue,
+        selection,
+      ],
     );
 
     const fieldLabelCtx = useMemo(() => ({ isRequired }), [isRequired]);
@@ -113,7 +136,6 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
           <OptionGroupFieldset
             ref={ref}
             disabled={disabled}
-            isRequired={isRequired}
             hintId={hintId}
             errorId={errorId}
             size={size}

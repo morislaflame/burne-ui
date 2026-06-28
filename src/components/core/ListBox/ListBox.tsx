@@ -18,7 +18,6 @@ import type {
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
-import { Separator } from "@/components/core/Separator";
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
 import {
@@ -85,6 +84,8 @@ export type ListBoxRootProps = Omit<HTMLAttributes<HTMLDivElement>, "children" |
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;
   listId?: string;
+  /** Доступное имя списка, если нет `aria-label` / `aria-labelledby`. */
+  label?: string;
 };
 
 export function ListBoxRoot({
@@ -101,6 +102,9 @@ export function ListBoxRoot({
   activeValue: activeValueProp,
   onActiveValueChange,
   listId: listIdProp,
+  label,
+  "aria-label": ariaLabelProp,
+  "aria-labelledby": ariaLabelledByProp,
   ...rest
 }: ListBoxRootProps) {
   const autoId = useId();
@@ -183,6 +187,8 @@ export function ListBoxRoot({
         ref={setRootRef}
         id={listId}
         role="listbox"
+        aria-label={ariaLabelProp ?? (ariaLabelledByProp ? undefined : label)}
+        aria-labelledby={ariaLabelledByProp}
         className={cn(
           "flex min-h-0 flex-col gap-xsmall text-left outline-none",
           isGloss &&
@@ -252,7 +258,14 @@ ListBoxHeader.displayName = "ListBoxHeader";
 export type ListBoxSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
 export function ListBoxSeparator({ className, ...rest }: ListBoxSeparatorProps) {
-  return <Separator className={className} {...rest} />;
+  return (
+    <div
+      role="presentation"
+      aria-hidden
+      className={cn("my-xsmall h-0 w-full shrink-0 border-t-token", className)}
+      {...rest}
+    />
+  );
 }
 
 ListBoxSeparator.displayName = "ListBoxSeparator";

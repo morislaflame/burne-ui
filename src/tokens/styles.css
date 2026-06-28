@@ -10,7 +10,7 @@
   --color-surface: #171717;
   --color-foreground: #f4f5f7;
   --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
-  --color-muted: #8b90a0;
+  --color-muted: #858994;
 
   /**
    * PRIMARY (brand) — заливка primary-кнопки, ссылки, активные текстовые состояния.
@@ -504,7 +504,7 @@
   --color-surface: #ffffff;
   --color-foreground: #18181b;
   --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
-  --color-muted: #71717a;
+  --color-muted: #646467;
   --color-primary: #18181b;
   --color-primary-foreground: #fafafa;
 

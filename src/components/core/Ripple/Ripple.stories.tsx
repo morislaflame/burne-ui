@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Alert } from "@/components/core/Alert";
 import { Button } from "@/components/core/Button";
@@ -105,6 +106,32 @@ export const Playground: Story = {
       </div>
     </div>
   ),
+};
+
+export const ClickInteraction: Story = {
+  name: "Interaction: клик",
+  args: {
+    disabled: false,
+    color: "neutral",
+    direction: "in",
+  },
+  render: (args) => (
+    <div
+      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-sm"
+      role="presentation"
+    >
+      <Ripple {...args} className="rounded-[inherit]" />
+      <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-plus py-plus">
+        <Text variant="mid" className="font-medium">
+          Область с Ripple
+        </Text>
+      </div>
+    </div>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByText("Область с Ripple"));
+    await expect(canvas.getByText("Область с Ripple")).toBeVisible();
+  },
 };
 
 export const WithCardManual: Story = {

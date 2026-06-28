@@ -195,7 +195,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
         ref={mergeRefs(ref, setAnchorRef)}
         role="combobox"
         aria-expanded={open}
-        aria-controls={listId}
+        aria-controls={open ? listId : undefined}
         aria-haspopup="listbox"
         aria-disabled={disabled || undefined}
         onPointerDown={handlePointerDown}
@@ -574,6 +574,9 @@ export function ComboBoxPopover({ children, className, offset = 6, ...rest }: Co
     setOpen,
     anchorRef,
     listId,
+    labelId,
+    labelConnected,
+    placeholder,
     menuMaxHeight,
     options,
     filteredValues,
@@ -628,6 +631,8 @@ export function ComboBoxPopover({ children, className, offset = 6, ...rest }: Co
         <Popover.Body className="gap-0 p-base">
           <ListBox
             listId={listId}
+            aria-labelledby={labelConnected ? labelId : undefined}
+            aria-label={labelConnected ? undefined : placeholder}
             value={value}
             onValueChange={handleValueChange}
             activeValue={activeValue}

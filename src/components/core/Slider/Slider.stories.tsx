@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoVolumeHigh } from "react-icons/io5";
 
 import {
@@ -47,7 +48,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Слайдер с кружком в стиле `Checkbox`. **Simple** — props на root; **Compound** — `<Slider.Header>` + `<Slider.Track>` + `<Slider.Hint>`. **a11y:** `role=\"slider\"` на thumb, подпись — `aria-labelledby`, hint — `aria-describedby`.",
+          "Slider with a circle in the style of `Checkbox`. **Simple** — props on root; **Compound** — `<Slider.Header>` + `<Slider.Track>` + `<Slider.Hint>`. **a11y:** `role=\"slider\"` on thumb, label — `aria-labelledby`, hint — `aria-describedby`.",
       },
     },
   },
@@ -223,6 +224,12 @@ export const Controlled: Story = {
     return (
       <Slider label="Контролируемый" showValue value={value} onValueChange={setValue} />
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const slider = canvas.getByRole("slider", { name: /Контролируемый/ });
+    slider.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(slider).toHaveAttribute("aria-valuenow", "36");
   },
 };
 

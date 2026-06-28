@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen } from "storybook/test";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button/Button";
@@ -273,6 +274,10 @@ export const WithArrow: Story = {
       </Tooltip>
     </div>
   ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.hover(canvas.getByRole("button", { name: "Со стрелкой" }));
+    await expect(screen.getByRole("tooltip")).toHaveTextContent("Тултип со стрелкой сверху");
+  },
 };
 
 export const CustomOffset: Story = {

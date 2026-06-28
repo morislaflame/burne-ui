@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, waitFor } from "storybook/test";
 
 import { Calendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from ".";
 
@@ -119,6 +120,15 @@ export const WithFooter: Story = {
         </p>
       </div>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const today = new Date();
+    await userEvent.click(canvas.getByRole("button", { name: "Сегодня" }));
+    await waitFor(() => {
+      expect(canvas.getByText("Выбрано:").parentElement?.textContent).toContain(
+        String(today.getDate()),
+      );
+    });
   },
 };
 

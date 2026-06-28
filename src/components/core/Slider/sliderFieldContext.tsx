@@ -19,6 +19,7 @@ export type SliderFieldContextValue = {
   errorId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  labelConnected: boolean;
   orientation: SliderOrientation;
   display: SliderDisplayState | null;
   setDisplay: (next: SliderDisplayState | null) => void;

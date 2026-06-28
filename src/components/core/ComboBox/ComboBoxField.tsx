@@ -86,6 +86,7 @@ export function ComboBoxRoot({
   const listId = `${comboBoxId}-listbox`;
 
   const isCompound = hasCompoundChildren(children);
+  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
   const hasHint = hint != null || (isCompound && hasCompoundChild(children, "ComboBoxHint"));
   const hasError = error != null || (isCompound && hasCompoundChild(children, "ComboBoxError"));
 
@@ -124,13 +125,14 @@ export function ComboBoxRoot({
       hintId,
       errorId,
       labelId,
+      labelConnected: hasLabel,
       hintConnected: hasHint,
       errorConnected: hasError,
       isRequired,
       status,
       size,
     }),
-    [comboBoxId, errorId, hasError, hasHint, hintId, isRequired, labelId, size, status],
+    [comboBoxId, errorId, hasError, hasHint, hasLabel, hintId, isRequired, labelId, size, status],
   );
 
   const comboCtx = useMemo<ComboBoxContextValue>(

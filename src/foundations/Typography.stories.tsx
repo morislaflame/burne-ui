@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 function TypographySamples() {
   return (
@@ -36,6 +37,10 @@ type Story = StoryObj<typeof meta>;
 export const Roles: Story = {
   name: "Роли текста",
   render: () => <TypographySamples />,
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText(/accent-header/)).toBeVisible();
+    await expect(canvas.getByText(/text-small/)).toBeVisible();
+  },
 };
 
 export const OnDarkCanvas: Story = {

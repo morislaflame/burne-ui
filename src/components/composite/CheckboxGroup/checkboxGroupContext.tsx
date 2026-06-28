@@ -12,6 +12,8 @@ export type CheckboxGroupContextValue = {
   selectedValue: string | undefined;
   /** Only for `selection="single"`. */
   selectSingleValue: (value: string, checked: boolean) => void;
+  /** First option claims native `required` when `isRequired` (single selection only). */
+  claimRequiredAnchor: () => boolean;
 };
 
 const CheckboxGroupContext = createContext<CheckboxGroupContextValue | null>(null);

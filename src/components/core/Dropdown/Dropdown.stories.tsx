@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 import {
   IoChevronForward,
   IoGlobeOutline,
@@ -100,6 +101,14 @@ export const SingleSelect: Story = {
         </Dropdown.Popover>
       </Dropdown>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Язык интерфейса" }));
+    await expect(await screen.findByRole("menu")).toBeVisible();
+    await userEvent.click(screen.getByRole("menuitemradio", { name: /English/i }));
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
   },
 };
 

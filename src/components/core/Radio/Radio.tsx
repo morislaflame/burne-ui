@@ -436,6 +436,9 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
 
   const canClearSelection = !isDisabled && !readOnly && !required && !(inGroup && group.isRequired);
 
+  const inputRequired =
+    required ?? (inGroup && group.isRequired ? group.claimRequiredAnchor() : undefined);
+
   const handleClick = useCallback(
     (e: MouseEvent<HTMLInputElement>) => {
       onClick?.(e);
@@ -499,7 +502,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       inputProps: {
         value,
         defaultChecked: !isControlled ? defaultChecked : undefined,
-        required,
+        required: inputRequired,
         form,
         autoFocus,
         tabIndex,
@@ -530,8 +533,8 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
       mergedChecked,
       onBlur,
       onFocus,
+      inputRequired,
       readOnly,
-      required,
       size,
       tabIndex,
       value,

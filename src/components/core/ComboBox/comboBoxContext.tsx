@@ -16,6 +16,7 @@ export type ComboBoxFieldContextValue = {
   hintId: string;
   errorId: string;
   labelId: string;
+  labelConnected: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
   isRequired: boolean;

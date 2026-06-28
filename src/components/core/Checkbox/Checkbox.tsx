@@ -217,7 +217,8 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
               ctx.hintConnected ? ctx.hintId : undefined,
               ctx.errorConnected ? ctx.errorId : undefined,
             )}
-            aria-labelledby={ctx.isCompound ? ctx.labelId : undefined}
+            aria-labelledby={ctx.labelConnected ? ctx.labelId : undefined}
+            aria-label={!ctx.labelConnected ? ctx.accessibleName : undefined}
             {...(ctx.isControlled
               ? { checked: ctx.mergedChecked, onChange: ctx.onChange }
               : {
@@ -418,6 +419,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
     onBlur,
     onFocus,
     onPointerDown,
+    "aria-label": ariaLabelProp,
     ...labelRest
   },
   ref,
@@ -448,6 +450,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
 
   const isDisabled = Boolean(disabled ?? group?.disabled);
   const isCompound = hasCompoundChildren(children);
+  const hasCompoundLabel = isCompound && hasCompoundChild(children, "Label");
   const hasCompoundHint = isCompound ? hasCompoundChild(children, CheckboxHint) : false;
   const hasCompoundError = isCompound ? hasCompoundChild(children, CheckboxError) : false;
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
@@ -499,6 +502,10 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
     [enableTextMotion, isDisabled, onPointerDown, reduceMotion],
   );
 
+  const inputRequired =
+    required ??
+    (inSingleGroup && group.isRequired ? group.claimRequiredAnchor() : undefined);
+
   const contextValue = useMemo(
     () => ({
       inputId,
@@ -515,6 +522,8 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
       hasCompoundError,
       hintConnected: isCompound ? hasCompoundHint : hasHint,
       errorConnected: isCompound ? hasCompoundError : hasError,
+      labelConnected: hasCompoundLabel,
+      accessibleName: ariaLabelProp,
       useInlineCompoundMotion,
       textMotionRef: textColRef,
       danger,
@@ -524,7 +533,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
         name,
         value,
         defaultChecked: !isControlled ? defaultChecked : undefined,
-        required,
+        required: inputRequired,
         form,
         autoFocus,
         tabIndex,
@@ -534,6 +543,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
       },
     }),
     [
+      ariaLabelProp,
       checkIcon,
       danger,
       defaultChecked,
@@ -544,6 +554,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
       hintId,
       hasCompoundError,
       hasCompoundHint,
+      hasCompoundLabel,
       hasError,
       hasHint,
       inputId,
@@ -555,8 +566,8 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
       name,
       onBlur,
       onFocus,
+      inputRequired,
       readOnly,
-      required,
       size,
       tabIndex,
       useInlineCompoundMotion,
@@ -637,7 +648,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(func
         <FieldLabelContext.Provider value={fieldLabelContext}>
           <fieldset
             ref={ref as Ref<HTMLFieldSetElement>}
-            aria-labelledby={labelId}
+            aria-labelledby={hasCompoundLabel ? labelId : undefined}
             data-checked={mergedChecked ? true : undefined}
             className={cn(gridClass, "m-0 min-w-0 border-0 p-0")}
             onPointerDown={handlePointerDown}

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, fn } from "storybook/test";
 import { IoAdd } from "react-icons/io5";
 
 import {
@@ -107,6 +108,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const ClickInteraction: Story = {
+  name: "Interaction: клик",
+  args: {
+    children: "Кнопка",
+    onClick: fn(),
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Кнопка" }));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
 
 export const Sizes: Story = {
   name: "Размеры (small — large)",

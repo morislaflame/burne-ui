@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Ripple } from "@/components/core/Ripple";
 
@@ -107,6 +108,27 @@ export const Default: Story = {
       ))}
     </Accordion>
   ),
+};
+
+export const ExpandInteraction: Story = {
+  name: "Interaction: раскрытие",
+  render: () => (
+    <Accordion className="max-w-2xl" defaultOpenIndex={0}>
+      {items.map((item) => (
+        <Accordion.Item key={item.title}>
+          <AccordionItemDemo item={item} />
+        </Accordion.Item>
+      ))}
+    </Accordion>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const first = canvas.getByRole("button", { name: /Как оформить заказ/ });
+    const second = canvas.getByRole("button", { name: /При каких условиях/ });
+    await expect(first).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(second);
+    await expect(second).toHaveAttribute("aria-expanded", "true");
+    await expect(canvas.getByText(/Возврат возможен/)).toBeVisible();
+  },
 };
 
 export const PressRipple: Story = {

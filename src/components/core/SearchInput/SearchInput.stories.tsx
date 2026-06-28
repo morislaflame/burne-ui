@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, waitFor } from "storybook/test";
 
 import { Card } from "@/components/core/Card";
 
@@ -128,6 +129,18 @@ export const Accessibility: Story = {
       <SearchInput aria-label="Поиск по документации" placeholder="Найти…" />
     </div>
   ),
+};
+
+export const ExpandInteraction: Story = {
+  name: "Interaction: ввод",
+  render: () => (
+    <SearchInput aria-label="Поиск по документации" placeholder="Найти…" defaultExpanded />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const input = canvas.getByRole("searchbox");
+    await userEvent.type(input, "компонент");
+    await expect(input).toHaveValue("компонент");
+  },
 };
 
 const DEMO_EVENTS = [

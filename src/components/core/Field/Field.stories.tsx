@@ -1,6 +1,7 @@
 import type { ComponentType, ChangeEvent } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
@@ -187,5 +188,10 @@ export const WithForm: Story = {
         </Button>
       </form>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByLabelText("Имя"), "Анна");
+    await userEvent.click(canvas.getByRole("button", { name: "Отправить" }));
+    await expect(canvas.getByLabelText("Имя")).toHaveValue("Анна");
   },
 };

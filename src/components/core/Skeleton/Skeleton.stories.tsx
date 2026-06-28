@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Skeleton } from ".";
 
@@ -49,6 +50,10 @@ export const AllVariants: Story = {
       ))}
     </div>
   ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("wave")).toBeVisible();
+    await expect(canvas.getByText("shimmer")).toBeVisible();
+  },
 };
 
 // ─── Text skeleton ────────────────────────────────────────────────────────────

@@ -252,6 +252,16 @@ function badgeHasAccessibleName(props: HTMLAttributes<HTMLSpanElement>): boolean
   );
 }
 
+/** Dot/icon-only badges use `aria-label` on a `<span>` — `role="img"` is required. */
+function badgeRootA11yProps(
+  props: HTMLAttributes<HTMLSpanElement>,
+): Pick<HTMLAttributes<HTMLSpanElement>, "aria-hidden" | "role"> {
+  if (badgeHasAccessibleName(props)) {
+    return { role: "img" };
+  }
+  return { "aria-hidden": true, role: "presentation" };
+}
+
 function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus): string {
   if (variant === "gloss") {
     return cn(
@@ -540,8 +550,6 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   ]);
 
   if (dot) {
-    const hasLabel = badgeHasAccessibleName(rest);
-
     const dotInnerCls = cn(
       "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1",
       BADGE_DOT_DIM[rk],
@@ -560,10 +568,8 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           ref={setMergedRef}
           data-badge-root
           className={cn("pointer-events-none", placementClass)}
-          {...(hasLabel
-            ? {}
-            : { "aria-hidden": true, role: "presentation" as const })}
           {...rest}
+          {...badgeRootA11yProps(rest)}
         >
           <span
             ref={innerLiftRef}
@@ -584,11 +590,9 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
           isDirectAnchorChild && !isGloss && "pointer-events-none",
           placementClass,
         )}
-        {...(hasLabel
-          ? {}
-          : { "aria-hidden": true, role: "presentation" as const })}
-        {...bindSelfLiftPointer}
         {...rest}
+        {...badgeRootA11yProps(rest)}
+        {...bindSelfLiftPointer}
       />
     );
   }
@@ -652,8 +656,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       className,
     );
 
-    const iconOnlyA11y =
-      badgeHasAccessibleName(rest) ? rest : { ...rest, "aria-hidden": true as const, role: "presentation" as const };
+    const iconOnlyA11y = { ...rest, ...badgeRootA11yProps(rest) };
 
     if (splitLift) {
       return (

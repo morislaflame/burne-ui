@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, fn } from "storybook/test";
 import { IoDocumentTextOutline, IoOpenOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
@@ -56,6 +57,26 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const ClickInteraction: Story = {
+  name: "Interaction: клик",
+  args: {
+    onClick: fn(),
+  },
+  render: (args) => (
+    <Link
+      {...args}
+      onClick={(event) => {
+        event.preventDefault();
+        args.onClick?.(event);
+      }}
+    />
+  ),
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("link", { name: "Подробнее" }));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
 
 export const WithDefaultIcon: Story = {
   name: "Стандартная иконка",

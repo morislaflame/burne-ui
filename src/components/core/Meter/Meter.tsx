@@ -79,6 +79,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
   const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
   const meterId = fieldCtx?.meterId;
   const labelId = meterId != null ? `${meterId}-label` : undefined;
+  const labelConnected = fieldCtx?.labelConnected ?? false;
   const hintConnected = fieldCtx?.hintConnected ?? false;
   const errorConnected = fieldCtx?.errorConnected ?? false;
   const hintId = fieldCtx?.hintId;
@@ -175,9 +176,9 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function M
       aria-valuemin={min}
       aria-valuemax={max}
       aria-valuetext={statusText}
-      aria-labelledby={labelId}
+      aria-labelledby={labelConnected ? labelId : undefined}
       aria-describedby={ariaDescribedBy}
-      aria-label={labelId == null ? statusText : undefined}
+      aria-label={labelConnected ? undefined : statusText}
       className={cn(trackHitAreaClass, className)}
       style={trackCrossStyle}
       {...rest}

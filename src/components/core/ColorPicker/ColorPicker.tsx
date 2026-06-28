@@ -217,6 +217,8 @@ function ColorPickerArea({ size }: { size: ColorPickerSize }) {
   return (
     <div
       ref={areaRef}
+      role="group"
+      aria-label="Saturation and brightness"
       className={cn("relative w-full touch-none select-none rounded-small cursor-crosshair overflow-hidden", AREA_HEIGHT[size])}
       style={{
         background: `linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, ${hueColor})`,
@@ -268,7 +270,7 @@ function ColorPickerHexInput() {
         value={displayValue}
         maxLength={8}
         spellCheck={false}
-        aria-label="Hex-код цвета"
+        aria-label="Hex code of the color"
         className="min-w-0 flex-1 bg-transparent text-small font-mono uppercase text-foreground outline-none"
         onFocus={() => {
           setIsEditing(true);
@@ -307,6 +309,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
         unstyled
         offset={6}
         align="start"
+        aria-label="Color selection"
         className={className}
       >
         <div
@@ -362,7 +365,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
                 <input
                   type="text"
                   value={Math.round(hsva.a)}
-                  aria-label="Прозрачность (%)"
+                  aria-label="Transparency (%)"
                   className="w-8 bg-transparent text-right text-small font-mono text-foreground outline-none"
                   onChange={(e) => {
                     const n = parseInt(e.target.value, 10);

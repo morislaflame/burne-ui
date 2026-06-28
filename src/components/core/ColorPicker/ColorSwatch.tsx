@@ -46,6 +46,15 @@ const SHAPE_CLASS: Record<ColorSwatchShape, string> = {
 };
 
 
+function swatchAccessibleName(
+  color: string,
+  props: ButtonHTMLAttributes<HTMLButtonElement>,
+): string | undefined {
+  if (typeof props["aria-label"] === "string") return props["aria-label"];
+  if (typeof props["aria-labelledby"] === "string") return undefined;
+  return `Select color ${color}`;
+}
+
 export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
   function ColorSwatch(
     {
@@ -117,6 +126,35 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
 
     const checkerStyle: CSSProperties = showChecker ? CHECKER_STYLE : {};
 
+    const { "aria-label": ariaLabelProp, ...buttonRest } = rest;
+    const isInteractive = Boolean(onClick);
+    const hasExplicitName =
+      typeof ariaLabelProp === "string" || typeof buttonRest["aria-labelledby"] === "string";
+
+    if (!isInteractive && !hasExplicitName) {
+      return (
+        <span
+          aria-hidden
+          className={cn(
+            "relative shrink-0 overflow-hidden",
+            SIZE_CLASS[size],
+            SHAPE_CLASS[shape],
+            className,
+          )}
+          style={checkerStyle}
+        >
+          <span
+            aria-hidden
+            className="absolute inset-0"
+            style={{ backgroundColor: color }}
+          />
+        </span>
+      );
+    }
+
+    const ariaLabel =
+      ariaLabelProp ?? (isInteractive ? swatchAccessibleName(color, rest) : undefined);
+
     return (
       <button
         ref={setRefs}
@@ -126,6 +164,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
+        aria-label={ariaLabel}
         className={cn(
           "relative shrink-0 origin-center overflow-hidden will-change-transform",
           "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
@@ -137,7 +176,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
           className,
         )}
         style={checkerStyle}
-        {...rest}
+        {...buttonRest}
       >
         <span
           aria-hidden

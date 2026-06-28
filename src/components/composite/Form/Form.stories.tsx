@@ -1,6 +1,7 @@
 import type { ComponentType, FormEvent } from "react";
 import { useCallback, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Checkbox } from "@/components/core/Checkbox";
 import { Button } from "@/components/core/Button/Button";
@@ -127,6 +128,16 @@ function ProfileForm() {
 
 export const Default: Story = {
   render: () => <ProfileForm />,
+};
+
+export const SubmitInteraction: Story = {
+  name: "Interaction: отправка",
+  render: () => <ProfileForm />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByPlaceholderText("Иван"), "Иван");
+    await userEvent.click(canvas.getByRole("button", { name: "Сохранить" }));
+    await expect(canvas.getByPlaceholderText("Иван")).toHaveValue("Иван");
+  },
 };
 
 function ValidationForm() {

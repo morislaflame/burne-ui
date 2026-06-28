@@ -1,6 +1,7 @@
 import { useState, type ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoBookmarkOutline, IoHeartOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
@@ -56,6 +57,21 @@ export const Default: Story = {
   render: () => (
     <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Нравится</ToggleButton>
   ),
+};
+
+export const PressInteraction: Story = {
+  name: "Interaction: нажатие",
+  render: () => (
+    <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Нравится</ToggleButton>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const button = canvas.getByRole("button", { name: "Нравится" });
+    await expect(button).toHaveAttribute("aria-pressed", "false");
+    await userEvent.click(button);
+    await expect(button).toHaveAttribute("aria-pressed", "true");
+    await userEvent.click(button);
+    await expect(button).toHaveAttribute("aria-pressed", "false");
+  },
 };
 
 export const Variants: Story = {

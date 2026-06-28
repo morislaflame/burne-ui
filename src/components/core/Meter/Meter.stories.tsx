@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import {
   DualApiStoryPanel,
@@ -207,4 +208,8 @@ export const Accessibility: Story = {
       <Meter label="Квота API" hint="Лимит обновляется раз в сутки" showValue value={92} error="Превышен лимит запросов." />
     </div>
   ),
+  play: async ({ canvas }) => {
+    const meters = canvas.getAllByRole("meter");
+    await expect(meters[0]).toHaveAttribute("aria-valuenow", "67");
+  },
 };

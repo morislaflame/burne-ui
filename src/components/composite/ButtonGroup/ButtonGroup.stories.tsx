@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoEllipsisHorizontal, IoSearch, IoTrashOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button";
@@ -81,6 +82,23 @@ export const Segmented: Story = {
         <Button variant="primary">Сохранить</Button>
       </ButtonGroup>
     );
+  },
+};
+
+export const ClickInteraction: Story = {
+  name: "Interaction: клик",
+  render() {
+    return (
+      <ButtonGroup segmented aria-label="Действия" buttonSize="base">
+        <Button variant="outline">Отмена</Button>
+        <Button variant="outline">Черновик</Button>
+        <Button variant="primary">Сохранить</Button>
+      </ButtonGroup>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Сохранить" }));
+    await expect(canvas.getByRole("button", { name: "Сохранить" })).toHaveFocus();
   },
 };
 

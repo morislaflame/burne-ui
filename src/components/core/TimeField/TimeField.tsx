@@ -45,6 +45,7 @@ export type TimeFieldFormat = "HH:mm" | "HH:mm:ss";
 type TimeFieldCtx = {
   fieldId: string;
   labelId: string;
+  labelConnected: boolean;
   hintId: string;
   errorId: string;
   hintConnected: boolean;
@@ -213,6 +214,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
     const isGloss = variant === "gloss";
     const fieldId = ctx?.fieldId;
     const labelId = ctx?.labelId;
+    const labelConnected = ctx?.labelConnected ?? false;
     const isRequired = ctx?.isRequired ?? false;
 
     const isControlled = valueProp !== undefined;
@@ -463,8 +465,8 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       <fieldset
         ref={bindShellRef}
         id={id ?? fieldId}
-        aria-label={labelId ? undefined : "Время"}
-        aria-labelledby={labelId}
+        aria-label={labelConnected ? undefined : "Время"}
+        aria-labelledby={labelConnected ? labelId : undefined}
         aria-describedby={ariaDescribedBy}
         data-slot="timefield-shell"
         onPointerDown={
@@ -633,6 +635,7 @@ export function TimeFieldRoot({
   const errorId = fieldErrorId(fieldId);
   const labelId = `${fieldId}-label`;
   const isCompound = hasCompoundChildren(children);
+  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
   const hasHint = hint != null || (isCompound && hasCompoundChild(children, TimeFieldHint));
   const hasError = error != null || (isCompound && hasCompoundChild(children, TimeFieldError));
 
@@ -664,6 +667,7 @@ export function TimeFieldRoot({
     () => ({
       fieldId,
       labelId,
+      labelConnected: hasLabel,
       hintId,
       errorId,
       hintConnected: hasHint,
@@ -680,6 +684,7 @@ export function TimeFieldRoot({
       fieldId,
       hasError,
       hasHint,
+      hasLabel,
       hintId,
       isRequired,
       labelId,

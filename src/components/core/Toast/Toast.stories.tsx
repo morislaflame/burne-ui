@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 
@@ -153,6 +154,10 @@ export const QuickMethods: Story = {
         </Button>
       </div>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "success" }));
+    await expect(screen.getByRole("status")).toHaveTextContent("Файл сохранён");
   },
 };
 

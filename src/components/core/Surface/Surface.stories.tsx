@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Badge } from "@/components/core/Badge";
 import { Button } from "@/components/core/Button";
@@ -123,6 +124,34 @@ export const MenuPanel: Story = {
       </ul>
     </Surface>
   ),
+};
+
+export const MenuInteraction: Story = {
+  name: "Interaction: меню",
+  render: () => (
+    <Surface variant="default" shadow="md" padding="small" className="w-64">
+      <ul className="m-0 flex list-none flex-col gap-xsmall p-0">
+        {["Dashboard", "Profile", "Settings"].map((label) => (
+          <li key={label}>
+            <button
+              type="button"
+              className={cn(
+                "w-full rounded-mid px-base py-small text-left text-base",
+                hoverVariant(),
+              )}
+            >
+              {label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </Surface>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const profile = canvas.getByRole("button", { name: "Profile" });
+    await userEvent.click(profile);
+    await expect(profile).toHaveFocus();
+  },
 };
 
 export const NestedSections: Story = {

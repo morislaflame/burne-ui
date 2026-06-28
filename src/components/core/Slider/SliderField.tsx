@@ -90,6 +90,7 @@ export function SliderRoot({
   }, []);
 
   const isCompound = hasCompoundChildren(children);
+  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
   const hasHint = hint != null || (isCompound && hasCompoundChild(children, SliderHint));
   const hasError = error != null || (isCompound && hasCompoundChild(children, SliderError));
 
@@ -101,11 +102,12 @@ export function SliderRoot({
       errorId,
       hintConnected: hasHint,
       errorConnected: hasError,
+      labelConnected: hasLabel,
       orientation,
       display,
       setDisplay,
     }),
-    [display, errorId, hasError, hasHint, hintId, labelId, orientation, setDisplay, sliderId],
+    [display, errorId, hasError, hasHint, hasLabel, hintId, labelId, orientation, setDisplay, sliderId],
   );
 
   const trackProps = {

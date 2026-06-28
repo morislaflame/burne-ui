@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoChevronUp } from "react-icons/io5";
 
 import { Badge } from "@/components/core/Badge";
@@ -225,6 +226,11 @@ export const Sorting: Story = {
         </Table.ScrollContainer>
       </Table>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const nameHeader = canvas.getByRole("rowheader", { name: /Имя/ });
+    await userEvent.click(nameHeader);
+    await expect(nameHeader).toHaveAttribute("aria-sort", "descending");
   },
 };
 

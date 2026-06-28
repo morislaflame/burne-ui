@@ -15,6 +15,7 @@ export type MeterFieldContextValue = {
   errorId: string;
   hintConnected: boolean;
   errorConnected: boolean;
+  labelConnected: boolean;
   orientation: MeterOrientation;
   display: MeterDisplayState | null;
   setDisplay: (next: MeterDisplayState | null) => void;

@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Ripple } from "@/components/core/Ripple";
 import {
@@ -196,6 +197,13 @@ export const Accessibility: Story = {
       </Expandable>
     </div>
   ),
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole("button", { name: /Настройки уведомлений/ });
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(trigger);
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await expect(canvas.getByText(/Содержимое недоступно/)).toBeVisible();
+  },
 };
 
 export const AllVariationsLight: Story = {

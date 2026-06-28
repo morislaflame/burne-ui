@@ -28,8 +28,13 @@
     "playground": "vite --config vite.playground.config.ts",
     "playground:tunnel": "tuna http 5173 --subdomain=drus",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build -o storybook-static"
+    "storybook": "bash scripts/storybook.sh",
+    "build-storybook": "storybook build -o storybook-static",
+    "playwright:install": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
+    "postinstall": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
+    "test": "PLAYWRIGHT_BROWSERS_PATH=0 vitest",
+    "test-storybook": "PLAYWRIGHT_BROWSERS_PATH=0 vitest --project=storybook",
+    "test-storybook:run": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=storybook"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -44,20 +49,25 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "10.3.6",
-    "@storybook/addon-docs": "10.3.6",
-    "@storybook/react-vite": "^10.3.6",
+    "@storybook/addon-a11y": "10.4.6",
+    "@storybook/addon-docs": "10.4.6",
+    "@storybook/addon-vitest": "10.4.6",
+    "@storybook/react-vite": "10.4.6",
     "@tailwindcss/vite": "^4.1.5",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/browser-playwright": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.9",
+    "playwright": "^1.61.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.6.0",
-    "storybook": "^10.3.6",
+    "storybook": "10.4.6",
     "tailwindcss": "^4.1.5",
     "typescript": "^5.8.3",
     "vite": "^6.3.4",
-    "vite-plugin-dts": "^4.5.3"
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^4.1.9"
   }
 }

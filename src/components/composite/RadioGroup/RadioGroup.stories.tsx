@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoGlobeOutline, IoPeopleOutline, IoVideocamOutline } from "react-icons/io5";
 
 import { Radio } from "@/components/core/Radio";
@@ -65,6 +66,12 @@ export const Playground: Story = {
       </RadioGroup.List>
     </RadioGroup>
   ),
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByRole("radio", { name: "card" })).toBeChecked();
+    await userEvent.click(canvas.getByRole("radio", { name: "cash" }));
+    await expect(canvas.getByRole("radio", { name: "cash" })).toBeChecked();
+    await expect(canvas.getByRole("radio", { name: "card" })).not.toBeChecked();
+  },
 };
 
 export const CardLayout: Story = {

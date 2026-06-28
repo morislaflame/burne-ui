@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
 import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
@@ -43,7 +44,7 @@ type Story = StoryObj<typeof meta>;
 export const Basic: Story = {
   name: "Базовый",
   render: () => (
-    <ListBox defaultValue="ru">
+    <ListBox defaultValue="ru" label="Язык интерфейса">
       <ListBox.Item value="ru" label="Русский" hint="Интерфейс на русском" />
       <ListBox.Item value="en" label="English" hint="UI in English" />
       <ListBox.Item value="de" label="Deutsch" disabled hint="Скоро" />
@@ -51,10 +52,25 @@ export const Basic: Story = {
   ),
 };
 
+export const SelectInteraction: Story = {
+  name: "Interaction: выбор",
+  render: () => (
+    <ListBox defaultValue="ru" label="Язык интерфейса">
+      <ListBox.Item value="ru" label="Русский" hint="Интерфейс на русском" />
+      <ListBox.Item value="en" label="English" hint="UI in English" />
+    </ListBox>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const english = canvas.getByRole("option", { name: /English/ });
+    await userEvent.click(english);
+    await expect(english).toHaveAttribute("aria-selected", "true");
+  },
+};
+
 export const Compound: Story = {
   name: "Compound",
   render: () => (
-    <ListBox defaultValue="en">
+    <ListBox defaultValue="en" label="Настройки языка">
       <ListBox.Section>
         <ListBox.Header>Языки</ListBox.Header>
         <ListBox.Item value="ru">
@@ -91,7 +107,7 @@ export const Multiple: Story = {
   render: function MultipleList() {
     const [value, setValue] = useState<string[]>(["a", "c"]);
     return (
-      <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])}>
+      <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])} label="Поля профиля">
         <ListBox.Item value="a" label="Пользователь" hint="Имя и аватар" />
         <ListBox.Item value="b" label="Страна" hint="ISO-код" />
         <ListBox.Item value="c" label="Статус" />
@@ -108,7 +124,7 @@ export const Empty: Story = {
 export const CustomEmpty: Story = {
   name: "Кастомное empty-состояние",
   render: () => (
-    <ListBox>
+    <ListBox label="Результаты поиска">
       <ListBox.Empty>Ничего не найдено по запросу</ListBox.Empty>
     </ListBox>
   ),
@@ -117,7 +133,7 @@ export const CustomEmpty: Story = {
 export const WithIcons: Story = {
   name: "С иконками",
   render: () => (
-    <ListBox defaultValue="ok">
+    <ListBox defaultValue="ok" label="Статусы">
       <ListBox.Item value="ok">
         <ListBox.Label>Успех</ListBox.Label>
         <ListBox.Icon>
@@ -137,7 +153,7 @@ export const WithIcons: Story = {
 export const CustomItemParts: Story = {
   name: "Compound — layout слотов",
   render: () => (
-    <ListBox selectionIndicator={false} defaultValue="full-grid">
+    <ListBox selectionIndicator={false} defaultValue="full-grid" label="Варианты layout">
       <ListBox.Section>
         <ListBox.Header>Как меняется grid</ListBox.Header>
         <OptionListItemLayoutShowcase

@@ -28,6 +28,8 @@ export type CheckboxFieldContextValue = {
   textMotionRef: RefObject<HTMLElement | null>;
   hintConnected: boolean;
   errorConnected: boolean;
+  labelConnected: boolean;
+  accessibleName?: string;
   danger: boolean;
   checkIcon?: ReactNode;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;

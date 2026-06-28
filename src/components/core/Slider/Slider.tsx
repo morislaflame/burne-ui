@@ -505,6 +505,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
   const fieldCtx = useOptionalSliderFieldContext();
   const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
   const labelId = fieldCtx?.labelId;
+  const labelConnected = fieldCtx?.labelConnected ?? false;
   const ariaDescribedBy = joinFieldDescribedBy(
     fieldCtx?.hintConnected ? fieldCtx.hintId : undefined,
     fieldCtx?.errorConnected ? fieldCtx.errorId : undefined,
@@ -548,7 +549,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
           ariaDescribedBy,
         };
       }
-      if (labelId) {
+      if (labelConnected && labelId) {
         return {
           ariaLabel: undefined as string | undefined,
           ariaLabelledBy: labelId,
@@ -556,12 +557,12 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
         };
       }
       return {
-        ariaLabel: "Value",
+        ariaLabel: explicitLabel ?? "Value",
         ariaLabelledBy: undefined as string | undefined,
         ariaDescribedBy,
       };
     },
-    [ariaDescribedBy, explicitLabel, labelId],
+    [ariaDescribedBy, explicitLabel, labelConnected, labelId],
   );
   const trackRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLSpanElement>(null);

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, waitFor } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
@@ -64,6 +65,42 @@ export const Default: Story = {
         </Drawer>
       </>
     );
+  },
+};
+
+export const OpenCloseInteraction: Story = {
+  name: "Interaction: открытие",
+  render: function DrawerInteractionDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>Открыть Drawer</Button>
+        <Drawer open={open} onOpenChange={setOpen}>
+          <Drawer.Header>
+            <Drawer.HeadingBlock>
+              <Drawer.Title>Настройки</Drawer.Title>
+              <Drawer.Description>Выберите нужные параметры.</Drawer.Description>
+            </Drawer.HeadingBlock>
+            <Drawer.Close />
+          </Drawer.Header>
+          <Drawer.Body>
+            <p className="text-base text-muted">Произвольный контент внутри боди.</p>
+          </Drawer.Body>
+          <Drawer.Footer>
+            <Button variant="ghost" onClick={() => setOpen(false)}>Отмена</Button>
+            <Button onClick={() => setOpen(false)}>Сохранить</Button>
+          </Drawer.Footer>
+        </Drawer>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Открыть Drawer" }));
+    await expect(await screen.findByRole("dialog", { name: "Настройки" })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Отмена" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
   },
 };
 

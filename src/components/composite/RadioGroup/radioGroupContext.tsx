@@ -8,6 +8,8 @@ export type RadioGroupContextValue = {
   errorId: string;
   selectedValue: string | undefined;
   selectValue: (value: string | undefined) => void;
+  /** First option in the group claims native `required` when `isRequired`. */
+  claimRequiredAnchor: () => boolean;
 };
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);

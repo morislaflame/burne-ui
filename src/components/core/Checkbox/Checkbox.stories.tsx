@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 import { IoStar } from "react-icons/io5";
 
 import {
@@ -110,6 +111,21 @@ export const WithLabelHtmlFor: Story = {
 };
 
 export const Playground: Story = {};
+
+export const ToggleInteraction: Story = {
+  name: "Interaction: переключение",
+  args: { label: "Согласие на обработку данных" },
+  play: async ({ canvas, userEvent }) => {
+    const checkbox = canvas.getByRole("checkbox", {
+      name: "Согласие на обработку данных",
+    });
+    await expect(checkbox).not.toBeChecked();
+    await userEvent.click(checkbox);
+    await expect(checkbox).toBeChecked();
+    await userEvent.click(checkbox);
+    await expect(checkbox).not.toBeChecked();
+  },
+};
 
 export const Sizes: Story = {
   name: "Размеры",
