@@ -42,6 +42,12 @@ const preview: Preview = {
 
       options: {},
     },
+
+    // Visual tests (Chromatic): https://storybook.js.org/docs/writing-tests/visual-testing
+    chromatic: {
+      // GSAP/hover-анимации — дать кадру стабилизироваться перед снимком
+      delay: 300,
+    },
   },
 };
 

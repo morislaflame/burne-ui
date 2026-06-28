@@ -61,7 +61,7 @@ export const Basic: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: /Selected color/ }));
+    await userEvent.click(canvas.getByRole("button", { name: /Выбранный цвет/ }));
     await expect(screen.getByRole("textbox", { name: "Hex code of the color" })).toBeVisible();
   },
 };

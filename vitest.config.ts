@@ -14,10 +14,29 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url));
 
 // https://storybook.js.org/docs/writing-tests/integrations/vitest-addon
+// https://storybook.js.org/docs/writing-tests/test-coverage
 export default mergeConfig(
   viteStorybookConfig,
   defineConfig({
     test: {
+      coverage: {
+        provider: "v8",
+        reportsDirectory: "./coverage",
+        reportOnFailure: true,
+        include: ["src/**/*.{ts,tsx}"],
+        exclude: [
+          "**/*.stories.{ts,tsx}",
+          "**/*.d.ts",
+          "src/playground/**",
+        ],
+        reporter: ["text", "html", "json-summary"],
+        watermarks: {
+          statements: [50, 80],
+          branches: [50, 80],
+          functions: [50, 80],
+          lines: [50, 80],
+        },
+      },
       projects: [
         {
           extends: true,

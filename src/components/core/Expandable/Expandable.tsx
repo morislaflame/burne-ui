@@ -83,7 +83,7 @@ type ExpandableContextValue = {
 
 const EXPANDABLE_PANEL_PAD: Record<ExpandableSize, string> = {
   small: "px-base pb-base pt-small",
-  base: "px-plus pb-plus pt-base",
+  base: "px-plus pb-plus pt-small",
   mid: "px-mid pb-mid pt-base",
   large: "px-large pb-large pt-base",
 };
