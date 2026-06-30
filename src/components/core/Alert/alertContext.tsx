@@ -1,17 +1,9 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 
-import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-
-import type { AlertStatus } from "./alertUtils";
-
-export type AlertContextValue = {
-  status: AlertStatus;
-  titleId: string;
-  descriptionId: string;
-  gridSlots: MessageBannerGridSlots;
-};
+import type { AlertClassNames, AlertContextValue } from "./alertTypes";
 
 const AlertContext = createContext<AlertContextValue | null>(null);
+const AlertClassNamesContext = createContext<AlertClassNames>({});
 
 function useAlertContext() {
   const ctx = useContext(AlertContext);
@@ -23,6 +15,30 @@ function useAlertContext() {
 
 function useOptionalAlertContext() {
   return useContext(AlertContext);
+}
+
+export function AlertClassNamesProvider({
+  classNames,
+  children,
+}: {
+  classNames?: AlertClassNames;
+  children: ReactNode;
+}) {
+  const parent = useContext(AlertClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <AlertClassNamesContext.Provider value={merged}>
+      {children}
+    </AlertClassNamesContext.Provider>
+  );
+}
+
+export function useAlertClassNames(): AlertClassNames {
+  return useContext(AlertClassNamesContext);
 }
 
 export { AlertContext };

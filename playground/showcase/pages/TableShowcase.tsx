@@ -2,6 +2,8 @@ import { TableActivityFeedDemo } from "../demos/table/TableActivityFeed.demo";
 import tableActivityFeedSource from "../demos/table/TableActivityFeed.demo.tsx?raw";
 import { TableBasicDemo } from "../demos/table/TableBasic.demo";
 import tableBasicSource from "../demos/table/TableBasic.demo.tsx?raw";
+import { TableClassNamesFullDemo } from "../demos/table/TableClassNamesFull.demo";
+import tableClassNamesFullSource from "../demos/table/TableClassNamesFull.demo.tsx?raw";
 import { TableGlossDemo } from "../demos/table/TableGloss.demo";
 import tableGlossSource from "../demos/table/TableGloss.demo.tsx?raw";
 import { TableInvoiceToolbarDemo } from "../demos/table/TableInvoiceToolbar.demo";
@@ -30,6 +32,17 @@ export function TableShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная таблица с hover-lift.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableGlossDemo} source={tableGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={TableClassNamesFullDemo}
+          source={tableClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

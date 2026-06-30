@@ -294,3 +294,32 @@ export const SwatchesWithTransparency: Story = {
     );
   },
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для ColorPicker",
+      },
+    },
+  },
+  render: () => {
+    const [color, setColor] = useState("#3b82f6");
+    return (
+      <ColorPicker
+        value={color}
+        onValueChange={setColor}
+        classNames={{
+          contentPanel: "border border-primary/30 bg-primary/5",
+          area: "rounded-base ring-1 ring-primary/20",
+          hexInput: "border-primary/30 bg-primary/10",
+          hexInputField: "text-primary",
+        }}
+      >
+        <ColorPicker.Trigger />
+        <ColorPicker.Content />
+      </ColorPicker>
+    );
+  },
+};

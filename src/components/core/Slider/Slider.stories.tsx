@@ -255,3 +255,37 @@ export const Accessibility: Story = {
     </div>
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Slider (compound API)",
+      },
+    },
+  },
+  render: () => (
+    <Slider
+      defaultValue={55}
+      min={0}
+      max={100}
+      classNames={{
+        root: "rounded-mid border border-primary/25 p-base",
+        header: "text-primary",
+        value: "font-semibold text-primary",
+        track: "ring-1 ring-primary/20",
+        rail: "bg-primary/10",
+        fill: "bg-primary/80",
+        hint: "text-muted/80",
+      }}
+    >
+      <Slider.Header>
+        <Slider.Label>Громкость</Slider.Label>
+        <Slider.Value />
+      </Slider.Header>
+      <Slider.Track />
+      <Slider.Hint>Все слоты настроены через classNames.</Slider.Hint>
+    </Slider>
+  ),
+};

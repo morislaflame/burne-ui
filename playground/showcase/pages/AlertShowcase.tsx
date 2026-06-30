@@ -1,5 +1,7 @@
 import { AlertCompactStackDemo } from "../demos/alert/AlertCompactStack.demo";
 import alertCompactStackSource from "../demos/alert/AlertCompactStack.demo.tsx?raw";
+import { AlertClassNamesFullDemo } from "../demos/alert/AlertClassNamesFull.demo";
+import alertClassNamesFullSource from "../demos/alert/AlertClassNamesFull.demo.tsx?raw";
 import { AlertCompoundBannerDemo } from "../demos/alert/AlertCompoundBanner.demo";
 import alertCompoundBannerSource from "../demos/alert/AlertCompoundBanner.demo.tsx?raw";
 import { AlertGlossDemo } from "../demos/alert/AlertGloss.demo";
@@ -30,6 +32,7 @@ export function AlertShowcase() {
         title="Кастомные вариации"
         description="Action, стек уведомлений и compound-разметка — demo-файлы в `demos/alert/`."
       >
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertClassNamesFullDemo} source={alertClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AlertWithActionDemo} source={alertWithActionSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AlertCompactStackDemo} source={alertCompactStackSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AlertCompoundBannerDemo} source={alertCompoundBannerSource} />
@@ -53,6 +56,13 @@ export function AlertShowcase() {
           <p>
             Для <code>danger</code> и <code>warning</code> — <code>role=&quot;alert&quot;</code>. Auto-id
             для <code>aria-labelledby</code> / <code>aria-describedby</code>.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Следующий шаг">
+          <p>
+            Следующим шагом могу пройтись и унифицировать названия слотов (
+            <code>root</code>/<code>content</code>/<code>message</code> и т.п.) в общем гайдлайне,
+            чтобы одинаково назывались везде по киту.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

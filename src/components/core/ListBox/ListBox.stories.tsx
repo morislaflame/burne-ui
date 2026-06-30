@@ -6,7 +6,7 @@ import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
 import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
 
-import { ListBox } from ".";
+import { ListBox } from "@/components/core/ListBox";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -163,6 +163,36 @@ export const CustomItemParts: Story = {
           ItemIcon={ListBox.Icon}
           ItemIndicator={ListBox.ItemIndicator}
         />
+      </ListBox.Section>
+    </ListBox>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "Слоты root, section, header, item, label и hint через prop classNames.",
+      },
+    },
+  },
+  render: () => (
+    <ListBox
+      defaultValue="ru"
+      label="Язык интерфейса"
+      classNames={{
+        root: "rounded-mid border border-primary/20 p-base",
+        headerText: "text-primary",
+        item: "rounded-lg",
+        label: "font-semibold",
+        hint: "text-muted/80",
+      }}
+    >
+      <ListBox.Section>
+        <ListBox.Header>Доступные языки</ListBox.Header>
+        <ListBox.Item value="ru" label="Русский" hint="Кириллица" />
+        <ListBox.Item value="en" label="English" hint="Latin script" />
       </ListBox.Section>
     </ListBox>
   ),

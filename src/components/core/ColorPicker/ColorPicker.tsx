@@ -1,112 +1,28 @@
-import {
-  createContext,
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type HTMLAttributes,
-} from "react";
-
 import { Popover } from "@/components/core/Popover";
-import { cn } from "@/utils/cn";
 
 import {
-  clampN,
-  hexToHsva,
-  hsvaToColorString,
-  hsvaToHex,
-  hueToRgbString,
-  type HSVA,
-} from "./colorUtils";
-import { ColorSliderTrack } from "./ColorSlider";
-import { ColorSwatch, type ColorSwatchSize } from "./ColorSwatch";
+  ColorPickerClassNamesProvider,
+  ColorPickerProvider,
+} from "./colorPickerContext";
+import { ColorPickerContent, ColorPickerTrigger } from "./colorPickerParts";
+import type { ColorPickerProps } from "./colorPickerTypes";
+import { useColorPickerRootState } from "./useColorPickerRootState";
 
+export type {
+  ColorPickerProps,
+  ColorPickerTriggerProps,
+  ColorPickerContentProps,
+  ColorPickerSize,
+  ColorPickerVariant,
+  ColorPickerClassNames,
+} from "./colorPickerTypes";
 
-export type ColorPickerSize = "small" | "base" | "mid";
-
-export type ColorPickerVariant = "default" | "gloss";
-
-export type ColorPickerProps = {
-  children?: React.ReactNode;
-  /** Controlled value (hex string). */
-  value?: string;
-  /** Uncontrolled default (hex string). */
-  defaultValue?: string;
-  onValueChange?: (hex: string) => void;
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  size?: ColorPickerSize;
-  variant?: ColorPickerVariant;
-  side?: "top" | "bottom" | "left" | "right";
-  disabled?: boolean;
-};
-
-export type ColorPickerTriggerProps = Omit<HTMLAttributes<HTMLButtonElement>, "children"> & {
-  swatchSize?: ColorSwatchSize;
-};
-
-export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
-  showAlpha?: boolean;
-  presets?: string[];
-};
-
-
-type ColorPickerCtx = {
-  hsva: HSVA;
-  setHsva: (next: HSVA) => void;
-  hex: string;
-  disabled: boolean;
-  size: ColorPickerSize;
-};
-
-const ColorPickerContext = createContext<ColorPickerCtx | null>(null);
-
-function useColorPickerContext(): ColorPickerCtx {
-  const ctx = useContext(ColorPickerContext);
-  if (!ctx) throw new Error("ColorPicker compound parts must be inside <ColorPicker>.");
-  return ctx;
-}
-
-
-const PICKER_WIDTH: Record<ColorPickerSize, string> = {
-  small: "w-52",
-  base:  "w-64",
-  mid:   "w-72",
-};
-
-const AREA_HEIGHT: Record<ColorPickerSize, string> = {
-  small: "h-32",
-  base:  "h-40",
-  mid:   "h-48",
-};
-
-const PICKER_PAD: Record<ColorPickerSize, string> = {
-  small: "p-small gap-small",
-  base:  "p-plus gap-plus",
-  mid:   "p-mid gap-mid",
-};
-
-const SWATCH_SIZE_MAP: Record<ColorPickerSize, ColorSwatchSize> = {
-  small: "small",
-  base:  "base",
-  mid:   "mid",
-};
-
-const SLIDER_SIZE_MAP: Record<ColorPickerSize, "small" | "base" | "mid"> = {
-  small: "small",
-  base:  "base",
-  mid:   "mid",
-};
-
+export { useColorPicker } from "./colorPickerContext";
 
 export function ColorPickerRoot({
   children,
   value,
-  defaultValue = "#3b82f6",
+  defaultValue,
   onValueChange,
   open: openProp,
   defaultOpen = false,
@@ -115,294 +31,33 @@ export function ColorPickerRoot({
   variant = "default",
   side = "bottom",
   disabled = false,
+  classNames,
 }: ColorPickerProps) {
-  const isControlled = value !== undefined;
-  const [internalHsva, setInternalHsva] = useState<HSVA>(
-    () => hexToHsva(value ?? defaultValue) ?? { h: 217, s: 90, v: 96, a: 100 },
-  );
-
-  const hsva = useMemo(() => {
-    if (isControlled && value != null) {
-      return hexToHsva(value) ?? internalHsva;
-    }
-    return internalHsva;
-  }, [internalHsva, isControlled, value]);
-
-  const setHsva = useCallback(
-    (next: HSVA) => {
-      if (!isControlled) setInternalHsva(next);
-      onValueChange?.(hsvaToHex(next));
-    },
-    [isControlled, onValueChange],
-  );
-
-  const hex = hsvaToHex(hsva);
-
-  const ctx: ColorPickerCtx = useMemo(
-    () => ({ hsva, setHsva, hex, disabled, size }),
-    [hsva, setHsva, hex, disabled, size],
-  );
+  const { contextValue } = useColorPickerRootState({
+    value,
+    defaultValue,
+    onValueChange,
+    size,
+    disabled,
+  });
 
   return (
-    <ColorPickerContext.Provider value={ctx}>
-      <Popover
-        open={openProp}
-        defaultOpen={defaultOpen}
-        onOpenChange={onOpenChange}
-        side={side}
-        variant={variant === "gloss" ? "gloss" : "default"}
-      >
-        {children}
-      </Popover>
-    </ColorPickerContext.Provider>
+    <ColorPickerProvider value={contextValue}>
+      <ColorPickerClassNamesProvider classNames={classNames}>
+        <Popover
+          open={openProp}
+          defaultOpen={defaultOpen}
+          onOpenChange={onOpenChange}
+          side={side}
+          variant={variant === "gloss" ? "gloss" : "default"}
+        >
+          {children}
+        </Popover>
+      </ColorPickerClassNamesProvider>
+    </ColorPickerProvider>
   );
 }
 
 ColorPickerRoot.displayName = "ColorPickerRoot";
 
-
-export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTriggerProps>(
-  function ColorPickerTrigger({ swatchSize, className = "", ...rest }, ref) {
-    const { hex, disabled, size } = useColorPickerContext();
-    return (
-      <Popover.Trigger ref={ref} className={className} {...rest}>
-        <ColorSwatch
-          color={hex}
-          size={swatchSize ?? SWATCH_SIZE_MAP[size]}
-          shape="rounded"
-          disabled={disabled}
-          aria-label={`Выбранный цвет: ${hex}`}
-        />
-      </Popover.Trigger>
-    );
-  },
-);
-
-ColorPickerTrigger.displayName = "ColorPickerTrigger";
-
-
-function ColorPickerArea({ size }: { size: ColorPickerSize }) {
-  const { hsva, setHsva } = useColorPickerContext();
-  const areaRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-
-  const update = useCallback(
-    (clientX: number, clientY: number) => {
-      const el = areaRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const s = clampN(((clientX - rect.left) / rect.width) * 100, 0, 100);
-      const v = clampN(100 - ((clientY - rect.top) / rect.height) * 100, 0, 100);
-      setHsva({ ...hsva, s: Math.round(s), v: Math.round(v) });
-    },
-    [hsva, setHsva],
-  );
-
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => { if (dragging.current) update(e.clientX, e.clientY); };
-    const onUp   = () => { dragging.current = false; };
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup",   onUp);
-    window.addEventListener("pointercancel", onUp);
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup",   onUp);
-      window.removeEventListener("pointercancel", onUp);
-    };
-  }, [update]);
-
-  const hueColor  = hueToRgbString(hsva.h);
-  const thumbColor = hsvaToColorString(hsva);
-
-  return (
-    <div
-      ref={areaRef}
-      role="group"
-      aria-label="Saturation and brightness"
-      className={cn("relative w-full touch-none select-none rounded-small cursor-crosshair overflow-hidden", AREA_HEIGHT[size])}
-      style={{
-        background: `linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, ${hueColor})`,
-      }}
-      onPointerDown={(e) => {
-        e.preventDefault();
-        dragging.current = true;
-        update(e.clientX, e.clientY);
-      }}
-    >
-      {/* Thumb */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-token-md"
-        style={{
-          left:            `${hsva.s}%`,
-          top:             `${100 - hsva.v}%`,
-          width:           "14px",
-          height:          "14px",
-          backgroundColor: thumbColor,
-        }}
-      />
-    </div>
-  );
-}
-
-
-function ColorPickerHexInput() {
-  const { hex, setHsva } = useColorPickerContext();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editDraft, setEditDraft] = useState("");
-
-  const commit = useCallback(
-    (draft: string) => {
-      const candidate = `#${draft}`;
-      const parsed = hexToHsva(candidate);
-      if (parsed) setHsva(parsed);
-    },
-    [setHsva],
-  );
-
-  const displayValue = isEditing ? editDraft : hex.slice(1);
-
-  return (
-    <div className="flex items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall">
-      <span className="text-small text-muted select-none">#</span>
-      <input
-        type="text"
-        value={displayValue}
-        maxLength={8}
-        spellCheck={false}
-        aria-label="Hex code of the color"
-        className="min-w-0 flex-1 bg-transparent text-small font-mono uppercase text-foreground outline-none"
-        onFocus={() => {
-          setIsEditing(true);
-          setEditDraft(hex.slice(1));
-        }}
-        onChange={(e) =>
-          setEditDraft(e.target.value.replace(/[^0-9a-fA-F]/g, "").toUpperCase())
-        }
-        onBlur={() => {
-          commit(editDraft);
-          setIsEditing(false);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            commit(editDraft);
-            setIsEditing(false);
-          }
-        }}
-      />
-    </div>
-  );
-}
-
-
-export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
-  function ColorPickerContent(
-    { showAlpha = false, presets, className = "", ...rest },
-    ref,
-  ) {
-    const { hsva, setHsva, hex, size } = useColorPickerContext();
-    const sliderSize = SLIDER_SIZE_MAP[size];
-
-    return (
-      <Popover.Content
-        ref={ref}
-        unstyled
-        offset={6}
-        align="start"
-        aria-label="Color selection"
-        className={className}
-      >
-        <div
-          className={cn(
-            "flex flex-col rounded-mid text-foreground",
-            PICKER_WIDTH[size],
-            PICKER_PAD[size],
-          )}
-          {...rest}
-        >
-          {/* 2D picker area */}
-          <ColorPickerArea size={size} />
-
-          {/* Hue + alpha sliders + preview */}
-          <div className="flex items-center gap-small">
-            {/* Current color swatch preview */}
-            <ColorSwatch
-              color={hex}
-              size="mid"
-              shape="circle"
-              className="shrink-0"
-              showChecker
-            />
-
-            <div className="flex min-w-0 flex-1 flex-col gap-xsmall">
-              {/* Hue slider */}
-              <ColorSliderTrack
-                channel="hue"
-                color={hsva}
-                value={hsva.h}
-                size={sliderSize}
-                onValueChange={(h) => setHsva({ ...hsva, h })}
-              />
-
-              {/* Alpha slider */}
-              {showAlpha && (
-                <ColorSliderTrack
-                  channel="alpha"
-                  color={hsva}
-                  value={hsva.a}
-                  size={sliderSize}
-                  onValueChange={(a) => setHsva({ ...hsva, a })}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Hex input */}
-          <div className="flex items-center gap-small">
-            <ColorPickerHexInput />
-            {showAlpha && (
-              <div className="flex items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall">
-                <input
-                  type="text"
-                  value={Math.round(hsva.a)}
-                  aria-label="Transparency (%)"
-                  className="w-8 bg-transparent text-right text-small font-mono text-foreground outline-none"
-                  onChange={(e) => {
-                    const n = parseInt(e.target.value, 10);
-                    if (!Number.isNaN(n)) setHsva({ ...hsva, a: clampN(n, 0, 100) });
-                  }}
-                />
-                <span className="text-small text-muted select-none">%</span>
-              </div>
-            )}
-          </div>
-
-          {/* Preset swatches */}
-          {presets && presets.length > 0 && (
-            <div className="flex flex-wrap gap-xsmall border-t-token pt-small">
-              {presets.map((preset) => (
-                <ColorSwatch
-                  key={preset}
-                  color={preset}
-                  size={SWATCH_SIZE_MAP[size]}
-                  shape="rounded"
-                  selected={hex.toLowerCase() === preset.toLowerCase()}
-                  showChecker
-                  onClick={() => {
-                    const parsed = hexToHsva(preset);
-                    if (parsed) setHsva(parsed);
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </Popover.Content>
-    );
-  },
-);
-
-ColorPickerContent.displayName = "ColorPickerContent";
-
-
-export { useColorPickerContext as useColorPicker };
+export { ColorPickerTrigger, ColorPickerContent };

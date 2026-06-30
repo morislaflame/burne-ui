@@ -364,3 +364,38 @@ export const Accessibility: Story = {
     </div>
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Слоты trigger, content, arrow, panel, glossContent, indicator, title и description через prop classNames на корне.",
+      },
+    },
+  },
+  render: () => (
+    <Tooltip
+      delayShowMs={0}
+      variant="info"
+      classNames={{
+        content: "ring-1 ring-primary/25",
+        panel: "border-primary/30",
+        title: "text-primary font-semibold",
+        description: "text-muted/80",
+      }}
+    >
+      <Tooltip.Trigger>
+        <Button variant="outline" type="button">
+          Кастомные слоты
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content showArrow>
+        <Tooltip.Arrow />
+        <Tooltip.Title>Заголовок</Tooltip.Title>
+        <Tooltip.Description>Описание с кастомными классами</Tooltip.Description>
+      </Tooltip.Content>
+    </Tooltip>
+  ),
+};

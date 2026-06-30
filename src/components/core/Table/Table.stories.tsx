@@ -681,3 +681,47 @@ export const TonedRowsWithSelection: Story = {
     );
   },
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Table (compound API)",
+      },
+    },
+  },
+  render: () => (
+    <Table
+      classNames={{
+        root: "rounded-mid border border-info/25 shadow-token-sm",
+        headerRow: "bg-info/10",
+        column: "text-info font-semibold",
+        row: "hover:bg-info/5",
+        cell: "text-foreground/90",
+        footer: "bg-info/5",
+      }}
+      className="max-w-2xl"
+    >
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Команда">
+          <Table.Header>
+            <Table.Column isRowHeader>Имя</Table.Column>
+            <Table.Column>Роль</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            {users.slice(0, 3).map((user) => (
+              <Table.Row key={user.id} id={user.id}>
+                <Table.Cell className="font-medium">{user.name}</Table.Cell>
+                <Table.Cell className="text-muted">{user.role}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+      <Table.Footer>
+        <span className="text-small text-muted">Все слоты настроены через classNames.</span>
+      </Table.Footer>
+    </Table>
+  ),
+};

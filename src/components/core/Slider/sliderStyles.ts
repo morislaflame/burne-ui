@@ -1,0 +1,173 @@
+import type { CSSProperties } from "react";
+
+import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
+
+import { mergeSliderSlotClass, sliderThicknessToCss } from "./sliderAPI";
+import type { SliderOrientation, SliderSize } from "./sliderTypes";
+
+export const SLIDER_RAIL_HEIGHT: Record<SliderSize, string> = {
+  small: "h-[var(--selection-indicator-small)] min-h-[var(--selection-indicator-small)]",
+  base: "h-[var(--selection-indicator-base)] min-h-[var(--selection-indicator-base)]",
+  mid: "h-[var(--selection-indicator-mid)] min-h-[var(--selection-indicator-mid)]",
+  large: "h-[var(--selection-indicator-large)] min-h-[var(--selection-indicator-large)]",
+};
+
+export const SLIDER_RAIL_WIDTH: Record<SliderSize, string> = {
+  small: "w-[var(--selection-indicator-small)] min-w-[var(--selection-indicator-small)]",
+  base: "w-[var(--selection-indicator-base)] min-w-[var(--selection-indicator-base)]",
+  mid: "w-[var(--selection-indicator-mid)] min-w-[var(--selection-indicator-mid)]",
+  large: "w-[var(--selection-indicator-large)] min-w-[var(--selection-indicator-large)]",
+};
+
+export const SLIDER_RAIL_BASE_CLASS =
+  "pointer-events-none absolute inset-0 overflow-hidden rounded-full bg-primary-tint";
+
+export const SLIDER_RAIL_DISABLED_CLASS = "opacity-48";
+
+export const SLIDER_FILL_BASE_CLASS = "absolute rounded-full bg-primary";
+
+export const SLIDER_FILL_HORIZONTAL_CLASS = "inset-y-0";
+
+export const SLIDER_FILL_VERTICAL_CLASS = "inset-x-0";
+
+export const SLIDER_TRACK_HIT_BASE_CLASS = "relative touch-none select-none";
+
+export const SLIDER_TRACK_HIT_HORIZONTAL_CLASS = "w-full";
+
+export const SLIDER_TRACK_HIT_VERTICAL_CLASS = "h-48";
+
+export const SLIDER_MARK_CLASS =
+  "pointer-events-none absolute z-[1] size-1 rounded-full bg-primary/30";
+
+export const SLIDER_THUMB_BUTTON_BASE_CLASS =
+  "absolute z-[2] box-border flex shrink-0 origin-center items-center justify-center m-0 appearance-none border-0 bg-transparent p-0 focus-ring";
+
+export const SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS =
+  "top-0 h-full w-auto -translate-x-1/2 aspect-square";
+
+export const SLIDER_THUMB_BUTTON_VERTICAL_CLASS =
+  "left-0 w-full h-auto -translate-y-1/2 aspect-square";
+
+export const SLIDER_THUMB_BUTTON_DISABLED_CLASS = "cursor-not-allowed";
+
+export const SLIDER_THUMB_BUTTON_ENABLED_CLASS = "cursor-grab active:cursor-grabbing";
+
+export function sliderRootClass({
+  orientation,
+  slotClass,
+  className,
+}: {
+  orientation: SliderOrientation;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return mergeSliderSlotClass(scaleFieldRootClassName(orientation, className), slotClass);
+}
+
+export function sliderRailClass({
+  disabled,
+  slotClass,
+  className,
+}: {
+  disabled?: boolean;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return mergeSliderSlotClass(
+    SLIDER_RAIL_BASE_CLASS,
+    disabled && SLIDER_RAIL_DISABLED_CLASS,
+    slotClass,
+    className,
+  );
+}
+
+export function sliderFillClass({
+  isHorizontal,
+  slotClass,
+  className,
+}: {
+  isHorizontal: boolean;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return mergeSliderSlotClass(
+    SLIDER_FILL_BASE_CLASS,
+    isHorizontal ? SLIDER_FILL_HORIZONTAL_CLASS : SLIDER_FILL_VERTICAL_CLASS,
+    slotClass,
+    className,
+  );
+}
+
+export function sliderTrackHitAreaClass({
+  isHorizontal,
+  size,
+  thickness,
+  slotClass,
+  className,
+}: {
+  isHorizontal: boolean;
+  size: SliderSize;
+  thickness?: number | string;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return mergeSliderSlotClass(
+    SLIDER_TRACK_HIT_BASE_CLASS,
+    isHorizontal ? SLIDER_TRACK_HIT_HORIZONTAL_CLASS : SLIDER_TRACK_HIT_VERTICAL_CLASS,
+    thickness == null && (isHorizontal ? SLIDER_RAIL_HEIGHT[size] : SLIDER_RAIL_WIDTH[size]),
+    slotClass,
+    className,
+  );
+}
+
+export function sliderThumbButtonClass({
+  orientation,
+  disabled,
+  slotClass,
+  className,
+}: {
+  orientation: SliderOrientation;
+  disabled?: boolean;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return mergeSliderSlotClass(
+    SLIDER_THUMB_BUTTON_BASE_CLASS,
+    orientation === "horizontal"
+      ? SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS
+      : SLIDER_THUMB_BUTTON_VERTICAL_CLASS,
+    disabled ? SLIDER_THUMB_BUTTON_DISABLED_CLASS : SLIDER_THUMB_BUTTON_ENABLED_CLASS,
+    slotClass,
+    className,
+  );
+}
+
+export function sliderThumbPositionStyle(
+  percent: number,
+  orientation: SliderOrientation,
+): CSSProperties {
+  return orientation === "horizontal" ? { left: `${percent}%` } : { top: `${100 - percent}%` };
+}
+
+export function sliderMarkStyle(
+  percent: number,
+  orientation: SliderOrientation,
+): CSSProperties {
+  return orientation === "horizontal"
+    ? { left: `${percent}%`, top: "50%", transform: "translate(-50%, -50%)" }
+    : { bottom: `${percent}%`, left: "50%", top: "auto", transform: "translate(-50%, 50%)" };
+}
+
+export function sliderTrackCrossStyle({
+  isHorizontal,
+  thickness,
+}: {
+  isHorizontal: boolean;
+  thickness?: number | string;
+}): CSSProperties | undefined {
+  if (thickness == null) return undefined;
+  const crossSizeCss = sliderThicknessToCss(thickness);
+  return isHorizontal
+    ? { height: crossSizeCss, minHeight: crossSizeCss }
+    : { width: crossSizeCss, minWidth: crossSizeCss };
+}

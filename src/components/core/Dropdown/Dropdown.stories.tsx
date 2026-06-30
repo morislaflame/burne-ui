@@ -491,3 +491,44 @@ export const Accessibility: Story = {
     );
   },
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Dropdown",
+      },
+    },
+  },
+  render: function DropdownClassNamesStory() {
+    return (
+      <Dropdown
+        selectionIndicator
+        defaultValue="ru"
+        classNames={{
+          popoverBody: "border border-primary/20",
+          label: "text-primary",
+          item: "rounded-lg",
+        }}
+      >
+        <Dropdown.Trigger asChild>
+          <Button variant="outline">Язык интерфейса</Button>
+        </Dropdown.Trigger>
+        <Dropdown.Popover>
+          <Dropdown.Group>
+            <Dropdown.Label>Выберите язык</Dropdown.Label>
+            <Dropdown.Item value="ru">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+            </Dropdown.Item>
+            <Dropdown.Item value="en">
+              <Dropdown.ItemIndicator />
+              <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
+            </Dropdown.Item>
+          </Dropdown.Group>
+        </Dropdown.Popover>
+      </Dropdown>
+    );
+  },
+};

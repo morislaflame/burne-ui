@@ -1,0 +1,386 @@
+import {
+  Children,
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useCallback,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
+  type ReactElement,
+  type Ref,
+} from "react";
+import { createPortal } from "react-dom";
+
+import { FieldHint } from "@/components/core/Field";
+import { Text } from "@/components/core/Text";
+import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
+import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
+
+import {
+  resolvePopoverDescribedBy,
+  resolvePopoverLabelledBy,
+} from "./popoverA11y";
+import {
+  mergePopoverRefs,
+  mergePopoverSlotClass,
+  partitionPopoverContentChildren,
+  POPOVER_ARROW_DISPLAY_NAME,
+} from "./popoverAPI";
+import {
+  resolvePopoverContentAlign,
+  usePopoverContentLifecycle,
+} from "./popoverAnimations";
+import {
+  PopoverResolvedSideProvider,
+  usePopoverClassNames,
+  usePopoverContext,
+  usePopoverResolvedSide,
+} from "./popoverContext";
+import {
+  POPOVER_DEFAULT_GAP,
+  POPOVER_DEFAULT_OFFSET,
+  popoverArrowClass,
+  popoverBodyClass,
+  popoverContentClass,
+  popoverDefaultPanelClass,
+  popoverGlossContentClass,
+  popoverGlossPanelClass,
+  popoverHeaderClass,
+  popoverHintVariant,
+  popoverLabelClass,
+  popoverTitleVariant,
+  popoverTriggerClass,
+  POPOVER_PANEL_RELATIVE_CLASS,
+} from "./popoverStyles";
+import type {
+  PopoverArrowProps,
+  PopoverBodyProps,
+  PopoverContentProps,
+  PopoverHeaderProps,
+  PopoverHintProps,
+  PopoverLabelProps,
+  PopoverTriggerProps,
+} from "./popoverTypes";
+
+export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
+  function PopoverTrigger({ className = "", children, onClick, ...rest }, ref) {
+    const { open, setOpen, triggerRef, popoverId } =
+      usePopoverContext("Popover.Trigger");
+    const slotClassNames = usePopoverClassNames();
+
+    const toggle = useCallback(
+      (event: ReactMouseEvent<HTMLElement>) => {
+        onClick?.(event as ReactMouseEvent<HTMLButtonElement>);
+        if (event.defaultPrevented) return;
+        setOpen(!open);
+      },
+      [onClick, open, setOpen],
+    );
+
+    const handleKeyDown = useCallback(
+      (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toggle(event as unknown as ReactMouseEvent<HTMLElement>);
+        }
+      },
+      [toggle],
+    );
+
+    const mergedRef = useCallback(
+      (node: HTMLButtonElement | null) => {
+        triggerRef.current = node;
+        mergePopoverRefs(ref)(node);
+      },
+      [ref, triggerRef],
+    );
+
+    const onlyChild =
+      Children.count(children) === 1 && isValidElement(children) ? children : null;
+
+    if (onlyChild) {
+      const child = onlyChild as ReactElement<{
+        "aria-expanded"?: boolean;
+        "aria-controls"?: string;
+        onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
+        ref?: Ref<HTMLElement>;
+      }>;
+
+      return cloneElement(child, {
+        onClick: (event: ReactMouseEvent<HTMLElement>) => {
+          toggle(event);
+          child.props.onClick?.(event);
+        },
+        "aria-expanded": open,
+        "aria-controls": open ? popoverId : undefined,
+        ref: mergePopoverRefs(child.props.ref, mergedRef),
+      });
+    }
+
+    return (
+      <button
+        type="button"
+        ref={mergedRef}
+        className={popoverTriggerClass({
+          slotClass: slotClassNames.trigger,
+          className,
+        })}
+        aria-expanded={open}
+        aria-controls={open ? popoverId : undefined}
+        onClick={toggle}
+        onKeyDown={handleKeyDown}
+        {...rest}
+      >
+        {children}
+      </button>
+    );
+  },
+);
+
+PopoverTrigger.displayName = "PopoverTrigger";
+
+export function PopoverArrow({ className, ...rest }: PopoverArrowProps) {
+  const resolvedSide = usePopoverResolvedSide();
+  const { variant } = usePopoverContext("Popover.Arrow");
+  const slotClassNames = usePopoverClassNames();
+  const isGloss = variant === "gloss";
+
+  return (
+    <span
+      aria-hidden
+      className={popoverArrowClass({
+        isGloss,
+        resolvedSide,
+        arrowSideClass: TOOLTIP_ARROW_CLASS[resolvedSide],
+        slotClass: slotClassNames.arrow,
+        className,
+      })}
+      {...rest}
+    />
+  );
+}
+
+PopoverArrow.displayName = POPOVER_ARROW_DISPLAY_NAME;
+
+export function PopoverHeader({ className, children, ...rest }: PopoverHeaderProps) {
+  const slotClassNames = usePopoverClassNames();
+
+  return (
+    <div
+      className={popoverHeaderClass({
+        slotClass: slotClassNames.header,
+        className,
+      })}
+      {...rest}
+    >
+      {children}
+    </div>
+  );
+}
+
+PopoverHeader.displayName = "PopoverHeader";
+
+export const PopoverLabel = forwardRef<HTMLHeadingElement, PopoverLabelProps>(
+  function PopoverLabel({ className, children, id: idProp, ...rest }, ref) {
+    const { labelId, size } = usePopoverContext("Popover.Label");
+    const slotClassNames = usePopoverClassNames();
+
+    return (
+      <Text
+        ref={ref as Ref<HTMLElement>}
+        as="h2"
+        variant={popoverTitleVariant(size)}
+        id={idProp ?? labelId}
+        className={popoverLabelClass({
+          slotClass: slotClassNames.label,
+          className,
+        })}
+        {...rest}
+      >
+        {children}
+      </Text>
+    );
+  },
+);
+
+PopoverLabel.displayName = "PopoverLabel";
+
+export function PopoverHint({
+  className,
+  children,
+  variant,
+  ...rest
+}: PopoverHintProps) {
+  const { hintId, size } = usePopoverContext("Popover.Hint");
+  const slotClassNames = usePopoverClassNames();
+
+  return (
+    <FieldHint
+      as="p"
+      id={hintId}
+      variant={variant ?? popoverHintVariant(size)}
+      className={mergePopoverSlotClass(slotClassNames.hint, className)}
+      {...rest}
+    >
+      {children}
+    </FieldHint>
+  );
+}
+
+PopoverHint.displayName = "PopoverHint";
+
+export function PopoverBody({ className, children, ...rest }: PopoverBodyProps) {
+  const slotClassNames = usePopoverClassNames();
+
+  return (
+    <div
+      className={popoverBodyClass({
+        slotClass: slotClassNames.body,
+        className,
+      })}
+      {...rest}
+    >
+      {children}
+    </div>
+  );
+}
+
+PopoverBody.displayName = "PopoverBody";
+
+export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
+  function PopoverContent(
+    {
+      className = "",
+      children,
+      showArrow = false,
+      offset = POPOVER_DEFAULT_OFFSET,
+      gap: gapProp,
+      matchAnchorWidth = false,
+      align: alignProp,
+      unstyled = false,
+      contentRole = "dialog",
+      ...rest
+    },
+    forwardedRef,
+  ) {
+    const {
+      open,
+      popoverId,
+      size,
+      variant,
+      side,
+      labelConnected,
+      hintConnected,
+      labelId,
+      hintId,
+      triggerRef,
+      anchorRef,
+      contentRef,
+    } = usePopoverContext("Popover.Content");
+    const slotClassNames = usePopoverClassNames();
+    const isGloss = variant === "gloss";
+    const align = resolvePopoverContentAlign({ alignProp, matchAnchorWidth });
+    const contentGap = gapProp ?? POPOVER_DEFAULT_GAP[size];
+
+    const { customArrow, panelChildren } =
+      partitionPopoverContentChildren(children);
+
+    const {
+      setPanelRef,
+      bindGlossPanelRef,
+      portalMounted,
+      resolvedSide,
+    } = usePopoverContentLifecycle({
+      open,
+      side,
+      offset,
+      align,
+      matchAnchorWidth,
+      showArrow,
+      isGloss,
+      forwardedRef,
+      contentRef,
+      triggerRef,
+      anchorRef,
+    });
+
+    if (!portalMounted) return null;
+    if (typeof document === "undefined") return null;
+
+    const portalTheme = burneLightThemePortalProps(
+      anchorRef?.current ?? triggerRef.current,
+    );
+
+    const describedBy = resolvePopoverDescribedBy({
+      contentRole,
+      labelConnected,
+      hintConnected,
+      labelId,
+      hintId,
+    });
+
+    const labelledBy = resolvePopoverLabelledBy({
+      contentRole,
+      labelConnected,
+      labelId,
+    });
+
+    const node = (
+      <PopoverResolvedSideProvider value={resolvedSide}>
+        <div
+          ref={setPanelRef}
+          {...portalTheme}
+          id={popoverId}
+          role={contentRole}
+          aria-modal={contentRole === "dialog" ? "false" : undefined}
+          aria-labelledby={labelledBy}
+          aria-describedby={describedBy}
+          data-side={resolvedSide}
+          className={popoverContentClass({
+            resolvedSide,
+            showArrow,
+            slotClass: slotClassNames.content,
+            className,
+          })}
+          {...rest}
+        >
+          <div className={POPOVER_PANEL_RELATIVE_CLASS}>
+            {showArrow ? (customArrow ?? <PopoverArrow />) : null}
+            {isGloss ? (
+              <div
+                ref={bindGlossPanelRef}
+                className={popoverGlossPanelClass({
+                  size,
+                  unstyled,
+                  contentGap,
+                  slotClass: slotClassNames.glossPanel,
+                })}
+              >
+                <div
+                  className={popoverGlossContentClass(slotClassNames.glossContent)}
+                >
+                  {panelChildren}
+                </div>
+              </div>
+            ) : (
+              <div
+                className={popoverDefaultPanelClass({
+                  size,
+                  unstyled,
+                  contentGap,
+                  slotClass: slotClassNames.panel,
+                })}
+              >
+                {panelChildren}
+              </div>
+            )}
+          </div>
+        </div>
+      </PopoverResolvedSideProvider>
+    );
+
+    return createPortal(node, document.body);
+  },
+);
+
+PopoverContent.displayName = "PopoverContent";

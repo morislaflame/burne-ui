@@ -1,0 +1,25 @@
+[21:59:03.708] [INFO] storybook v10.4.6
+[21:59:04.019] [DEBUG] Getting package.json info for /Users/andrey/Projects/burne-ui-repo/burne-ui/package.json...
+[21:59:05.328] [WARN] 🚨 Unable to index ./src/components/composite/AlertDialog/AlertDialog.stories.tsx:
+  SyntaxError: Identifier 'status' has already been declared. (61:2)
+    at constructor (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:12164:21)
+    at Parser.raise (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:16342:71)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:13130:75)
+    at TypeScriptScopeHandler.declareName (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:13122:96)
+    at TypeScriptScopeHandler.declareName (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:15165:15)
+    at Parser.declareNameFromIdentifier (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:16996:20)
+    at Parser.checkIdentifier (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:16993:126)
+    at Parser.checkLVal (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:16960:16)
+    at Parser.checkLVal (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:16986:26)
+    at Parser.checkLVal (file:///Users/andrey/Projects/burne-ui-repo/burne-ui/node_modules/storybook/dist/_node-chunks/chunk-BCIMUOON.js:16985:27)
+[21:59:05.331] [ERROR] Error: Unable to index ./src/components/composite/AlertDialog/AlertDialog.stories.tsx
+    at _StoryIndexGenerator.getIndexAndStats (file://./node_modules/storybook/dist/core-server/index.js:19468:15)
+    at async _StoryIndexGenerator.getIndex (file://./node_modules/storybook/dist/core-server/index.js:19457:13)
+    at async Object.experimental_serverChannel (file://./node_modules/@storybook/addon-vitest/dist/preset.js:460:14)
+    at async buildDevStandalone (file://./node_modules/storybook/dist/core-server/index.js:12051:32)
+    at async withTelemetry (file://./node_modules/storybook/dist/_node-chunks/chunk-G7NXW2C2.js:650:12)
+    at async dev (file://./node_modules/storybook/dist/bin/core.js:2735:3)
+    at async _Command.<anonymous> (file://./node_modules/storybook/dist/bin/core.js:2805:92)
+[21:59:05.332] [WARN] Broken build, fix the error above.
+You may need to refresh the browser.
+[21:59:10.829] [PROMPT] Would you like to send anonymous crash reports to improve Storybook and fix bugs faster? {"choice":false}

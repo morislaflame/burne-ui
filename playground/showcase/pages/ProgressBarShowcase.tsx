@@ -1,3 +1,5 @@
+import { ProgressBarClassNamesFullDemo } from "../demos/progress-bar/ProgressBarClassNamesFull.demo";
+import progressBarClassNamesFullSource from "../demos/progress-bar/ProgressBarClassNamesFull.demo.tsx?raw";
 import { ProgressPipelineDemo } from "../demos/progress-bar/ProgressPipeline.demo";
 import progressPipelineSource from "../demos/progress-bar/ProgressPipeline.demo.tsx?raw";
 import { ProgressHorizontalDemo } from "../demos/progress-bar/ProgressHorizontal.demo";
@@ -30,6 +32,13 @@ export function ProgressBarShowcase() {
 
       <ShowcaseSection title="Вертикальный" description="orientation=&quot;vertical&quot; с showValue.">
         <ShowcaseDemoFromFile Demo={ProgressVerticalDemo} source={progressVerticalSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты root, header, value, track, fill, indeterminateFill, hint и error — через prop classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarClassNamesFullDemo} source={progressBarClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

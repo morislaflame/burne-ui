@@ -242,3 +242,29 @@ export const AllVariationsLight: Story = {
     </div>
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Expandable",
+      },
+    },
+  },
+  render: () => (
+    <Expandable
+      defaultOpen
+      title="Настройки"
+      description="Слоты настроены через classNames"
+      classNames={{
+        root: "border border-primary/30",
+        trigger: "bg-primary/5",
+        title: "text-primary font-semibold",
+        panel: "bg-primary/5",
+      }}
+    >
+      <p className="text-small text-muted">Контент панели.</p>
+    </Expandable>
+  ),
+};

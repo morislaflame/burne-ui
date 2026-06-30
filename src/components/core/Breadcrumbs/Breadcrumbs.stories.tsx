@@ -3,6 +3,12 @@ import type { ComponentType, MouseEvent } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen } from "storybook/test";
 
+import {
+  DualApiStoryPanel,
+  DualApiStoryPanels,
+} from "@/components/core/utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
+
 import { Breadcrumbs } from ".";
 
 const framedDecorator = [
@@ -41,7 +47,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Навигационная цепочка. Compound: `Breadcrumbs.List` + `Breadcrumbs.Item`. При `collapse` кнопка «…» открывает `Dropdown` со скрытыми разделами (`Dropdown.Item` с `href`).",
+          "Навигационная цепочка. **Simple** — `items` на root; **Compound** — `Breadcrumbs.List` + `Breadcrumbs.Item`. При `collapse` кнопка «…» открывает `Dropdown` со скрытыми разделами.",
       },
     },
   },
@@ -53,18 +59,33 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  name: "Simple и Compound",
+  ...dualApiStorySource,
   render: () => (
-    <Breadcrumbs>
-      <Breadcrumbs.List>
-        <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Главная
-        </Breadcrumbs.Item>
-        <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Каталог
-        </Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Текущая страница</Breadcrumbs.Item>
-      </Breadcrumbs.List>
-    </Breadcrumbs>
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — items на &lt;Breadcrumbs&gt;">
+        <Breadcrumbs
+          items={[
+            { label: "Главная", href: "#", onClick: preventNav },
+            { label: "Каталог", href: "#", onClick: preventNav },
+            { label: "Текущая страница", current: true },
+          ]}
+        />
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — children">
+        <Breadcrumbs>
+          <Breadcrumbs.List>
+            <Breadcrumbs.Item href="#" onClick={preventNav}>
+              Главная
+            </Breadcrumbs.Item>
+            <Breadcrumbs.Item href="#" onClick={preventNav}>
+              Каталог
+            </Breadcrumbs.Item>
+            <Breadcrumbs.Item current>Текущая страница</Breadcrumbs.Item>
+          </Breadcrumbs.List>
+        </Breadcrumbs>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
   ),
 };
 
@@ -178,6 +199,60 @@ export const Accessibility: Story = {
   ),
 };
 
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "кастомизация classNames для Breadcrumbs",
+      },
+    },
+  },
+  render: () => (
+    <Breadcrumbs
+      className="rounded-mid border border-token p-small"
+      classNames={{
+        list: "gap-small",
+        listItem: "gap-small",
+        separator: "text-primary opacity-100",
+        separatorWrapper: "text-primary",
+        link: "text-info hover:text-info",
+        linkWrapper: "rounded-small",
+        linkText: "tracking-tight",
+        static: "text-warning",
+        current: "font-semibold text-success",
+        ellipsisLiftWrapper: "rounded-small",
+        ellipsisText: "font-semibold",
+        ellipsisPopover: "border border-token",
+        dropdownItem: "text-foreground",
+      }}
+    >
+      <Breadcrumbs.List
+        classNames={{
+          ellipsisTrigger: "text-warning",
+        }}
+      >
+        <Breadcrumbs.Item href="#" onClick={preventNav} className="underline">
+          Главная
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Item href="#" onClick={preventNav}>
+          Каталог
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Item href="#" onClick={preventNav}>
+          Подраздел
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Item href="#" onClick={preventNav}>
+          Категория
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Item current className="tracking-wide">
+          Текущая
+        </Breadcrumbs.Item>
+      </Breadcrumbs.List>
+    </Breadcrumbs>
+  ),
+};
+
 export const LightTheme: Story = {
   decorators: [...lightThemeDecorator],
   render: () => (
@@ -196,6 +271,27 @@ export const LightTheme: Story = {
           Категория
         </Breadcrumbs.Item>
         <Breadcrumbs.Item current>Страница</Breadcrumbs.Item>
+      </Breadcrumbs.List>
+    </Breadcrumbs>
+  ),
+};
+
+export const CompoundWrappedItems: Story = {
+  name: "Compound — обёртки между Item",
+  render: () => (
+    <Breadcrumbs>
+      <Breadcrumbs.List>
+        <div>
+          <Breadcrumbs.Item href="#" onClick={preventNav}>
+            Главная
+          </Breadcrumbs.Item>
+        </div>
+        <div className="contents">
+          <Breadcrumbs.Item href="#" onClick={preventNav}>
+            Каталог
+          </Breadcrumbs.Item>
+          <Breadcrumbs.Item current>Страница</Breadcrumbs.Item>
+        </div>
       </Breadcrumbs.List>
     </Breadcrumbs>
   ),

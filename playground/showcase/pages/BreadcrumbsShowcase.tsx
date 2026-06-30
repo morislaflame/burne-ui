@@ -1,3 +1,5 @@
+import { BreadcrumbsClassNamesFullDemo } from "../demos/breadcrumbs/BreadcrumbsClassNamesFull.demo";
+import breadcrumbsClassNamesFullSource from "../demos/breadcrumbs/BreadcrumbsClassNamesFull.demo.tsx?raw";
 import { BreadcrumbsCollapsedMenuDemo } from "../demos/breadcrumbs/BreadcrumbsCollapsedMenu.demo";
 import breadcrumbsCollapsedMenuSource from "../demos/breadcrumbs/BreadcrumbsCollapsedMenu.demo.tsx?raw";
 import { BreadcrumbsDocTrailDemo } from "../demos/breadcrumbs/BreadcrumbsDocTrail.demo";
@@ -30,6 +32,7 @@ export function BreadcrumbsShowcase() {
         title="Кастомные вариации"
         description="Сжатие с меню «…», шапка товара и документационный путь — `demos/breadcrumbs/`."
       >
+        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsClassNamesFullDemo} source={breadcrumbsClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsCollapsedMenuDemo} source={breadcrumbsCollapsedMenuSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsProductHeaderDemo} source={breadcrumbsProductHeaderSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsDocTrailDemo} source={breadcrumbsDocTrailSource} />
@@ -41,13 +44,24 @@ export function BreadcrumbsShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
+            api="simple"
+            description="`items` на root для быстрой сборки. Слоты настраиваются через `classNames`."
+          />
+          <ShowcaseDoc.ApiRow
             api="compound"
-            description="Breadcrumbs.List оборачивает Breadcrumbs.Item. Проп current на последнем пункте — без ссылки."
+            description="Breadcrumbs.List + Breadcrumbs.Item. Item можно вкладывать через обёртки, сбор выполняется рекурсивно."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Доступность">
           <p>
             Список рендерится как <code>&lt;ol&gt;</code>. Текущая страница помечается <code>aria-current</code>.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Следующий шаг">
+          <p>
+            Следующим шагом могу пройтись и унифицировать названия слотов (
+            <code>root</code>/<code>content</code>/<code>message</code> и т.п.) в общем гайдлайне,
+            чтобы одинаково назывались везде по киту.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

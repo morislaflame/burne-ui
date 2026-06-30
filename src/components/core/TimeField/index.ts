@@ -14,14 +14,8 @@ export const TimeField = Object.assign(TimeFieldRoot, {
   Error: TimeFieldError,
 });
 
-export {
-  TimeFieldControl,
-  TimeFieldHint,
-  TimeFieldError,
-  TimeFieldRoot,
-} from "./TimeField";
-
 export type {
+  TimeFieldClassNames,
   TimeFieldRootProps,
   TimeFieldControlProps,
   TimeFieldHintProps,
@@ -30,4 +24,17 @@ export type {
   TimeFieldStatus,
   TimeFieldVariant,
   TimeFieldFormat,
+} from "./timeFieldTypes";
+
+export {
+  TimeFieldControl,
+  TimeFieldHint,
+  TimeFieldError,
+  TimeFieldRoot,
 } from "./TimeField";
+
+export {
+  useTimeFieldContext,
+  useOptionalTimeFieldContext,
+  useTimeFieldClassNames,
+} from "./timeFieldContext";

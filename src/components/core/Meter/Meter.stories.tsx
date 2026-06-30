@@ -9,7 +9,7 @@ import {
 } from "@/components/core/utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 
-import { Meter } from ".";
+import { Meter } from "@/components/core/Meter";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -212,4 +212,32 @@ export const Accessibility: Story = {
     const meters = canvas.getAllByRole("meter");
     await expect(meters[0]).toHaveAttribute("aria-valuenow", "67");
   },
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "Слоты root, header, value, track, fill, hint и error через prop classNames.",
+      },
+    },
+  },
+  render: () => (
+    <Meter
+      label="Хранилище"
+      hint="Read-only шкала"
+      showValue
+      value={72}
+      color="var(--color-info)"
+      classNames={{
+        root: "rounded-mid border border-primary/20 p-base",
+        header: "text-primary",
+        value: "text-info font-semibold",
+        track: "ring-1 ring-primary/15",
+        fill: "opacity-90",
+        hint: "text-muted/80",
+      }}
+    />
+  ),
 };

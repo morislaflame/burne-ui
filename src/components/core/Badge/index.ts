@@ -1,10 +1,9 @@
-import { BadgeAnchor, BadgeRoot } from "./Badge";
+import { BadgeRoot } from "./Badge";
+import { BadgeAnchor } from "./badgeParts";
 
 export const Badge = Object.assign(BadgeRoot, {
   Anchor: BadgeAnchor,
 });
-
-export { BadgeAnchor } from "./Badge";
 
 export type {
   BadgeProps,
@@ -14,5 +13,6 @@ export type {
   BadgePlacement,
   BadgeIconPosition,
   BadgeInlineIconPosition,
-  BadgeAnchorProps,
+  BadgeClassNames,
 } from "./Badge";
+export type { BadgeAnchorProps } from "./badgeTypes";

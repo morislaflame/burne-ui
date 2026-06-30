@@ -7,7 +7,7 @@ import {
   FieldSetActions,
   FieldSetGroup,
   type FieldSetProps,
-} from "@/components/core/Field/FieldSet";
+} from "@/components/core/Field";
 import { FieldHint } from "@/components/core/Field";
 import { cn } from "@/utils/cn";
 

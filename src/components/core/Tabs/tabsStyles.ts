@@ -1,0 +1,134 @@
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import { cn } from "@/utils/cn";
+
+import { mergeTabsSlotClass } from "./tabsAPI";
+import type { TabsOrientation, TabsSize, TabsVariant } from "./tabsTypes";
+
+const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
+  default: "",
+  outline: "bg-transparent border-token rounded-mid p-base",
+  secondary: "bg-secondary border-token rounded-mid p-base",
+  gloss: "border-0 p-base",
+};
+
+const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
+  default: "bg-primary",
+  outline: "bg-secondary",
+  secondary: "bg-tertiary",
+  gloss: "bg-default-hover",
+};
+
+export function tabsRootClass({
+  orientation,
+  slotClass,
+  className,
+}: {
+  orientation: TabsOrientation;
+  slotClass?: string;
+  className?: string;
+}) {
+  return mergeTabsSlotClass(
+    "flex min-w-0 text-left",
+    orientation === "horizontal" ? "flex-col gap-mid" : "flex-row gap-mid",
+    slotClass,
+    className,
+  );
+}
+
+export function tabsListClass({
+  orientation,
+  variant,
+  slotClass,
+  className,
+}: {
+  orientation: TabsOrientation;
+  variant: TabsVariant;
+  slotClass?: string;
+  className?: string;
+}) {
+  const isGloss = variant === "gloss";
+  const isSurface = variant === "outline" || variant === "secondary" || variant === "gloss";
+
+  return mergeTabsSlotClass(
+    "relative box-border min-w-0 w-fit",
+    orientation === "horizontal"
+      ? cn(
+          "flex flex-row flex-wrap gap-xsmall",
+          isSurface ? "items-center" : "items-stretch border-b-token",
+        )
+      : cn(
+          "flex flex-col gap-xsmall",
+          isSurface ? "items-start" : "items-stretch border-l-token",
+        ),
+    isGloss && "gloss-panel rounded-mid text-foreground",
+    LIST_VARIANT_CLASS[variant],
+    slotClass,
+    className,
+  );
+}
+
+export function tabsIndicatorClass({
+  variant,
+  slotClass,
+}: {
+  variant: TabsVariant;
+  slotClass?: string;
+}) {
+  return mergeTabsSlotClass(
+    "pointer-events-none absolute z-0 motion-reduce:transition-none",
+    variant === "default" ? "rounded-full" : "rounded-mid",
+    INDICATOR_VARIANT_CLASS[variant],
+    slotClass,
+  );
+}
+
+export function tabsTabClass({
+  size,
+  variant,
+  isSelected,
+  isDisabled,
+  slotClass,
+  className,
+}: {
+  size: TabsSize;
+  variant: TabsVariant;
+  isSelected: boolean;
+  isDisabled: boolean | undefined;
+  slotClass?: string;
+  className?: string;
+}) {
+  const layout = CONTROL_SIZE_LAYOUT[size];
+  const isSurface = variant === "outline" || variant === "secondary" || variant === "gloss";
+
+  return mergeTabsSlotClass(
+    "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
+    layout.h,
+    isSurface ? "rounded-mid px-mid" : layout.padX,
+    "focus-ring",
+    isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
+    isSelected ? "text-primary" : "text-muted hover:text-primary",
+    !isSelected && !isDisabled && TEXT_COLOR_TRANSITION,
+    slotClass,
+    className,
+  );
+}
+
+export const TABS_TAB_AS_CHILD_CLASS = "relative z-[1] shrink-0";
+
+export function tabsTabTextClass(slotClass?: string) {
+  return mergeTabsSlotClass(
+    "inline-flex origin-center items-center gap-xsmall will-change-transform",
+    slotClass,
+  );
+}
+
+export function tabsPanelClass({
+  slotClass,
+  className,
+}: {
+  slotClass?: string;
+  className?: string;
+}) {
+  return mergeTabsSlotClass("min-w-0 outline-none focus-ring", slotClass, className);
+}

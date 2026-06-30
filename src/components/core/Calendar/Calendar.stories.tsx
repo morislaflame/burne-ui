@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Календарь с тремя режимами выбора: одна дата, диапазон, несколько дат. Поддерживает переключение вида: дни → месяцы → годы.",
+          "Календарь с тремя режимами выбора: одна дата, диапазон, несколько дат. Поддерживает переключение вида: дни → месяцы → годы. Слоты можно настраивать через `classNames` на root (`root`, `header`, `grid`, `dayCell`, `cell`, `footer` и др.).",
       },
     },
   },
@@ -251,4 +251,39 @@ export const Uncontrolled: Story = {
     const props: any = { mode: "single", defaultValue: defaultDate };
     return <Calendar {...props} />;
   },
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Calendar",
+      },
+    },
+  },
+  render: () => (
+    <Calendar
+      mode="range"
+      classNames={{
+        root: "rounded-large border-primary/30 bg-primary/5 shadow-token-md",
+        header: "gap-small",
+        navPrev: "text-primary",
+        navNext: "text-primary",
+        headerTitle: "font-semibold text-primary",
+        grid: "mt-small",
+        weekdayCell: "text-primary/70 uppercase tracking-wide",
+        dayCell: "rounded-full",
+        cellFill: "rounded-full bg-primary",
+        rangeHalfFill: "bg-primary/15",
+        footer: "border-primary/20",
+        footerToday: "text-primary",
+        footerClear: "font-medium",
+      }}
+    >
+      <Calendar.Header />
+      <Calendar.Grid />
+      <Calendar.Footer />
+    </Calendar>
+  ),
 };

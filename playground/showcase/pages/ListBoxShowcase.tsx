@@ -1,3 +1,5 @@
+import { ListBoxClassNamesFullDemo } from "../demos/listBox/ListBoxClassNamesFull.demo";
+import listBoxClassNamesFullSource from "../demos/listBox/ListBoxClassNamesFull.demo.tsx?raw";
 import { ListBoxCommandPaletteDemo } from "../demos/listBox/ListBoxCommandPalette.demo";
 import listBoxCommandPaletteSource from "../demos/listBox/ListBoxCommandPalette.demo.tsx?raw";
 import { ListBoxCompoundDemo } from "../demos/listBox/ListBoxCompound.demo";
@@ -36,6 +38,13 @@ export function ListBoxShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная панель списка с hover-lift.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxGlossDemo} source={listBoxGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты root, section, header, item, label, hint и icon — через prop classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxClassNamesFullDemo} source={listBoxClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

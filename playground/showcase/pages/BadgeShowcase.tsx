@@ -1,5 +1,7 @@
 import { BadgeAnchorDemo } from "../demos/badge/BadgeAnchor.demo";
 import badgeAnchorSource from "../demos/badge/BadgeAnchor.demo.tsx?raw";
+import { BadgeClassNamesFullDemo } from "../demos/badge/BadgeClassNamesFull.demo";
+import badgeClassNamesFullSource from "../demos/badge/BadgeClassNamesFull.demo.tsx?raw";
 import { BadgeGlossDemo } from "../demos/badge/BadgeGloss.demo";
 import badgeGlossSource from "../demos/badge/BadgeGloss.demo.tsx?raw";
 import { BadgeInboxButtonDemo } from "../demos/badge/BadgeInboxButton.demo";
@@ -51,6 +53,7 @@ export function BadgeShowcase() {
         title="Кастомные вариации"
         description="Теги, статусы и Badge.Anchor — demo-файлы в `demos/badge/`."
       >
+        <ShowcaseDemoFromFile Demo={BadgeClassNamesFullDemo} source={badgeClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BadgeTagCloudDemo} source={badgeTagCloudSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BadgeServiceStatusListDemo} source={badgeServiceStatusListSource} />
         <ShowcaseDemoFromFile Demo={BadgeInboxButtonDemo} source={badgeInboxButtonSource} />
@@ -71,8 +74,15 @@ export function BadgeShowcase() {
             <code>placement</code> для dot-режима в <code>Badge.Anchor</code>. Размеры:{" "}
             <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.{" "}
             <code>variant=&quot;gloss&quot;</code> — стеклянная оболочка. Дополнительные стили —{" "}
-            <code>className</code>; hover-lift у дочернего Badge в Anchor —{" "}
+            <code>className</code> и <code>classNames</code>; hover-lift у дочернего Badge в Anchor —{" "}
             <code>configureMotion()</code> (<code>badgeAnchorHoverLiftScale</code>).
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Следующий шаг">
+          <p>
+            Следующим шагом могу пройтись и унифицировать названия слотов (
+            <code>root</code>/<code>content</code>/<code>message</code> и т.п.) в общем гайдлайне,
+            чтобы одинаково назывались везде по киту.
           </p>
         </ShowcaseDoc.Block>
       </ShowcaseDoc>

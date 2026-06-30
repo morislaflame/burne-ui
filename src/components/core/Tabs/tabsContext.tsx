@@ -1,25 +1,30 @@
-import { createContext, useContext, type RefObject } from "react";
+import { createContext, useContext, useMemo } from "react";
 
-import type { ComponentSize } from "@/components/core/utils/componentSize";
-
-export type TabsOrientation = "horizontal" | "vertical";
-
-export type TabsVariant = "default" | "outline" | "secondary" | "gloss";
-
-export type TabsContextValue = {
-  value: string;
-  setValue: (next: string) => void;
-  orientation: TabsOrientation;
-  size: ComponentSize;
-  variant: TabsVariant;
-  baseId: string;
-  disabled: boolean;
-  tabElementsRef: RefObject<Map<string, HTMLButtonElement>>;
-  layoutEpoch: number;
-  notifyTabLayout: () => void;
-};
+import type {
+  TabsClassNames,
+  TabsClassNamesProviderProps,
+  TabsContextValue,
+} from "./tabsTypes";
 
 const TabsContext = createContext<TabsContextValue | null>(null);
+const TabsClassNamesContext = createContext<TabsClassNames>({});
+
+export function TabsClassNamesProvider({
+  classNames,
+  children,
+}: TabsClassNamesProviderProps) {
+  const parent = useContext(TabsClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <TabsClassNamesContext.Provider value={merged}>
+      {children}
+    </TabsClassNamesContext.Provider>
+  );
+}
 
 export function useTabsContext(): TabsContextValue {
   const ctx = useContext(TabsContext);
@@ -27,6 +32,10 @@ export function useTabsContext(): TabsContextValue {
     throw new Error("Components Tabs must be inside <Tabs>.");
   }
   return ctx;
+}
+
+export function useTabsClassNames(): TabsClassNames {
+  return useContext(TabsClassNamesContext);
 }
 
 export { TabsContext };

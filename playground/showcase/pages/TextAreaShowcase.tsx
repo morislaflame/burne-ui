@@ -1,3 +1,5 @@
+import { TextAreaClassNamesCompoundDemo, TextAreaClassNamesFullDemo } from "../demos/textarea/TextAreaClassNamesFull.demo";
+import textAreaClassNamesFullSource from "../demos/textarea/TextAreaClassNamesFull.demo.tsx?raw";
 import { TextAreaBasicDemo } from "../demos/textarea/TextAreaBasic.demo";
 import textAreaBasicSource from "../demos/textarea/TextAreaBasic.demo.tsx?raw";
 import { TextAreaSizesDemo } from "../demos/textarea/TextAreaSizes.demo";
@@ -36,6 +38,14 @@ export function TextAreaShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка с motion.">
         <ShowcaseDemoFromFile align="center" Demo={TextAreaGlossDemo} source={textAreaGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Полная кастомизация classNames"
+        description="Слоты root, shell, control, resizeHandle, hint, error через classNames на корне."
+      >
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaClassNamesFullDemo} source={textAreaClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaClassNamesCompoundDemo} source={textAreaClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

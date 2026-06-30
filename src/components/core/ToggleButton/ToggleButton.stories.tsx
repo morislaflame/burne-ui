@@ -7,7 +7,7 @@ import { IoBookmarkOutline, IoHeartOutline } from "react-icons/io5";
 import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
 
-import { ToggleButton, type ToggleButtonVariant } from "./ToggleButton";
+import { ToggleButton, type ToggleButtonVariant } from ".";
 
 const VARIANTS: ToggleButtonVariant[] = ["default", "outline", "ghost"];
 
@@ -152,4 +152,30 @@ export const Disabled: Story = {
     children: "Недоступно",
     leftIcon: <IoHeartOutline aria-hidden />,
   },
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для ToggleButton",
+      },
+    },
+  },
+  render: () => (
+    <ToggleButton
+      defaultPressed
+      leftIcon={<IoHeartOutline aria-hidden />}
+      classNames={{
+        root: "rounded-mid ring-1 ring-danger/25",
+        fill: "bg-danger/20",
+        content: "gap-small",
+        leftIcon: "text-danger",
+        label: "font-semibold text-danger",
+      }}
+    >
+      Нравится
+    </ToggleButton>
+  ),
 };

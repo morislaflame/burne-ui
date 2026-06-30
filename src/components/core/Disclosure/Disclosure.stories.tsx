@@ -389,3 +389,32 @@ export const GroupControlled: Story = {
     );
   },
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Disclosure",
+      },
+    },
+  },
+  render: () => (
+    <Disclosure
+      variant="outline"
+      defaultOpen
+      classNames={{
+        trigger: "border border-primary/30 rounded-mid",
+        triggerTitle: "text-primary font-semibold",
+        contentPanel: "border border-primary/20 bg-primary/5",
+      }}
+    >
+      <Disclosure.Trigger>Настройки уведомлений</Disclosure.Trigger>
+      <Disclosure.Content>
+        <Text as="p" variant="small" className="text-muted">
+          Слоты настроены через classNames на root.
+        </Text>
+      </Disclosure.Content>
+    </Disclosure>
+  ),
+};

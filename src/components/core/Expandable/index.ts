@@ -21,7 +21,7 @@ export const Expandable = Object.assign(ExpandableRoot, {
   Panel: ExpandablePanel,
 });
 
-export { useExpandableContext } from "./Expandable";
+export { useExpandableContext } from "./expandableContext";
 
 export type {
   ExpandableProps,
@@ -36,4 +36,5 @@ export type {
   ExpandablePanelProps,
   ExpandableSize,
   ExpandableVariant,
-} from "./Expandable";
+  ExpandableClassNames,
+} from "./expandableTypes";

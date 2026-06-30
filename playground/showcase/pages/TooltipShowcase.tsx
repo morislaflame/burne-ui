@@ -1,5 +1,10 @@
 import { TooltipFormHintDemo } from "../demos/tooltip/TooltipFormHint.demo";
 import tooltipFormHintSource from "../demos/tooltip/TooltipFormHint.demo.tsx?raw";
+import {
+  TooltipClassNamesFullDemo,
+  TooltipClassNamesGlossDemo,
+} from "../demos/tooltip/TooltipClassNamesFull.demo";
+import tooltipClassNamesFullSource from "../demos/tooltip/TooltipClassNamesFull.demo.tsx?raw";
 import { TooltipGlossDemo } from "../demos/tooltip/TooltipGloss.demo";
 import tooltipGlossSource from "../demos/tooltip/TooltipGloss.demo.tsx?raw";
 import { TooltipIconToolbarDemo } from "../demos/tooltip/TooltipIconToolbar.demo";
@@ -36,6 +41,14 @@ export function TooltipShowcase() {
 
       <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={TooltipSidesDemo} source={tooltipSidesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Кастомизация classNames"
+        description="Слоты trigger, content, arrow, panel, glossContent, indicator, title и description."
+      >
+        <ShowcaseDemoFromFile Demo={TooltipClassNamesFullDemo} source={tooltipClassNamesFullSource} />
+        <ShowcaseDemoFromFile Demo={TooltipClassNamesGlossDemo} source={tooltipClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

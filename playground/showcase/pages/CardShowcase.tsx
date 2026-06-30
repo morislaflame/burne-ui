@@ -1,5 +1,7 @@
 import { CardAuthPanelDemo } from "../demos/card/CardAuthPanel.demo";
 import cardAuthPanelSource from "../demos/card/CardAuthPanel.demo.tsx?raw";
+import { CardClassNamesFullDemo } from "../demos/card/CardClassNamesFull.demo";
+import cardClassNamesFullSource from "../demos/card/CardClassNamesFull.demo.tsx?raw";
 import { CardGlossDemo } from "../demos/card/CardGloss.demo";
 import cardGlossSource from "../demos/card/CardGloss.demo.tsx?raw";
 import { CardMetricTilesDemo } from "../demos/card/CardMetricTiles.demo";
@@ -35,6 +37,17 @@ export function CardShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={CardClassNamesFullDemo}
+          source={cardClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="Тарифы, метрики, вход/регистрация и выбираемый товар — `demos/card/`."
       >
@@ -56,6 +69,10 @@ export function CardShowcase() {
           <ShowcaseDoc.ApiRow
             api="simple"
             description="pressable и onPress на корне — интерактивная карточка-кнопка."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="root, header, title, description, body, footer, content, glossContent."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Варианты">

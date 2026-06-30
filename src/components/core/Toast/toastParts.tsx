@@ -1,0 +1,337 @@
+import { forwardRef, useCallback, useMemo, useRef } from "react";
+
+import { CloseButton } from "@/components/core/CloseButton";
+import { Loading } from "@/components/core/Loading";
+import { Text } from "@/components/core/Text";
+import {
+  createGlossInteractiveRefCallback,
+  useGlossInteractiveHandlers,
+} from "@/components/core/utils/glossInteractiveMotion";
+import {
+  messageBannerActionCellClass,
+  messageBannerCloseCellClass,
+  messageBannerDescriptionCellClass,
+  messageBannerIndicatorCellClass,
+  messageBannerTitleCellClass,
+} from "@/components/core/utils/messageBannerGridLayout";
+import {
+  SEMANTIC_STATUS_ICONS,
+} from "@/components/core/utils/semanticStatusIcons";
+
+import "@/components/core/utils/glossInteractive.css";
+
+import { TOAST_CLOSE_ARIA_LABEL } from "./toastA11y";
+import { mergeToastSlotClass } from "./toastAPI";
+import {
+  ToastClassNamesProvider,
+  ToastItemProvider,
+  useToastClassNames,
+  useToastItem,
+} from "./toastContext";
+import {
+  TOAST_CLOSE_BUTTON_OFFSET_CLASS,
+  TOAST_COMPOUND_CONTENTS_CLASS,
+  TOAST_DESCRIPTION_CLASS,
+  TOAST_TITLE_CLASS,
+  toastIndicatorClass,
+  toastRootClass,
+} from "./toastStyles";
+import type {
+  ToastActionButtonProps,
+  ToastCloseButtonProps,
+  ToastContentProps,
+  ToastDescriptionProps,
+  ToastIndicatorProps,
+  ToastMessageProps,
+  ToastRootProps,
+  ToastSimpleBodyProps,
+  ToastTitleProps,
+} from "./toastTypes";
+import { useToastRootState } from "./useToastRootState";
+
+export function ToastIndicator({ className, children, ...rest }: ToastIndicatorProps) {
+  const { status, isLoading, gridSlots } = useToastItem();
+  const slotClassNames = useToastClassNames();
+
+  if (children !== undefined) {
+    return (
+      <span
+        className={mergeToastSlotClass(
+          toastIndicatorClass(status),
+          messageBannerIndicatorCellClass(gridSlots),
+          slotClassNames.indicator,
+          className,
+        )}
+        {...rest}
+      >
+        {children}
+      </span>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <span
+        className={mergeToastSlotClass(
+          messageBannerIndicatorCellClass(gridSlots),
+          slotClassNames.indicator,
+          className,
+        )}
+        {...rest}
+      >
+        <Loading size="base" color="primary" />
+      </span>
+    );
+  }
+
+  if (status === "default") return null;
+
+  const Icon = SEMANTIC_STATUS_ICONS[status as keyof typeof SEMANTIC_STATUS_ICONS];
+  if (!Icon) return null;
+
+  return (
+    <span
+      className={mergeToastSlotClass(
+        toastIndicatorClass(status),
+        messageBannerIndicatorCellClass(gridSlots),
+        slotClassNames.indicator,
+        className,
+      )}
+      {...rest}
+    >
+      <Icon aria-hidden />
+    </span>
+  );
+}
+
+ToastIndicator.displayName = "ToastIndicator";
+
+export function ToastMessage({ className, ...rest }: ToastMessageProps) {
+  const slotClassNames = useToastClassNames();
+  return (
+    <div
+      className={mergeToastSlotClass(TOAST_COMPOUND_CONTENTS_CLASS, slotClassNames.message, className)}
+      {...rest}
+    />
+  );
+}
+
+ToastMessage.displayName = "ToastMessage";
+
+export function ToastContent({ className, ...rest }: ToastContentProps) {
+  const slotClassNames = useToastClassNames();
+  return (
+    <div
+      className={mergeToastSlotClass(TOAST_COMPOUND_CONTENTS_CLASS, slotClassNames.content, className)}
+      {...rest}
+    />
+  );
+}
+
+ToastContent.displayName = "ToastContent";
+
+export function ToastTitle({ className, id: idProp, ...rest }: ToastTitleProps) {
+  const { titleId, gridSlots } = useToastItem();
+  const slotClassNames = useToastClassNames();
+
+  return (
+    <Text
+      as="div"
+      variant="base"
+      id={idProp ?? titleId}
+      className={mergeToastSlotClass(
+        TOAST_TITLE_CLASS,
+        messageBannerTitleCellClass(gridSlots),
+        slotClassNames.title,
+        className,
+      )}
+      {...rest}
+    />
+  );
+}
+
+ToastTitle.displayName = "ToastTitle";
+
+export function ToastDescription({ className, id: idProp, ...rest }: ToastDescriptionProps) {
+  const { descriptionId, gridSlots } = useToastItem();
+  const slotClassNames = useToastClassNames();
+
+  return (
+    <Text
+      as="div"
+      variant="small"
+      id={idProp ?? descriptionId}
+      className={mergeToastSlotClass(
+        TOAST_DESCRIPTION_CLASS,
+        messageBannerDescriptionCellClass(gridSlots),
+        slotClassNames.description,
+        className,
+      )}
+      {...rest}
+    />
+  );
+}
+
+ToastDescription.displayName = "ToastDescription";
+
+export function ToastActionButton({ className, ...rest }: ToastActionButtonProps) {
+  const { gridSlots } = useToastItem();
+  const slotClassNames = useToastClassNames();
+
+  return (
+    <div
+      className={mergeToastSlotClass(
+        messageBannerActionCellClass(gridSlots),
+        slotClassNames.action,
+        className,
+      )}
+      {...rest}
+    />
+  );
+}
+
+ToastActionButton.displayName = "ToastActionButton";
+
+export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonProps>(
+  function ToastCloseButton(
+    { className, onClick, "aria-label": ariaLabel = TOAST_CLOSE_ARIA_LABEL, ...rest },
+    ref,
+  ) {
+    const { dismiss, gridSlots } = useToastItem();
+    const slotClassNames = useToastClassNames();
+
+    return (
+      <CloseButton
+        ref={ref}
+        size="small"
+        variant="ghost"
+        aria-label={ariaLabel}
+        className={mergeToastSlotClass(
+          TOAST_CLOSE_BUTTON_OFFSET_CLASS,
+          messageBannerCloseCellClass(gridSlots),
+          slotClassNames.close,
+          className,
+        )}
+        onClick={(e) => {
+          onClick?.(e);
+          if (!e.defaultPrevented) dismiss();
+        }}
+        {...rest}
+      />
+    );
+  },
+);
+
+ToastCloseButton.displayName = "ToastCloseButton";
+
+export function ToastSimpleBody({
+  gridSlots,
+  title,
+  description,
+  action,
+  onClose,
+}: ToastSimpleBodyProps) {
+  return (
+    <>
+      {gridSlots.hasIndicator ? <ToastIndicator /> : null}
+      {title != null ? <ToastTitle>{title}</ToastTitle> : null}
+      {description != null ? <ToastDescription>{description}</ToastDescription> : null}
+      {action != null ? <ToastActionButton>{action}</ToastActionButton> : null}
+      {onClose != null ? <ToastCloseButton /> : null}
+    </>
+  );
+}
+
+export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
+  {
+    status = "default",
+    variant = "default",
+    title,
+    description,
+    action,
+    isLoading = false,
+    onClose,
+    className,
+    classNames,
+    children,
+    onPointerOver: onPointerOverProp,
+    onPointerOut: onPointerOutProp,
+    ...rest
+  },
+  ref,
+) {
+  const state = useToastRootState({
+    status,
+    title,
+    description,
+    action,
+    isLoading,
+    onClose,
+    children,
+  });
+
+  const isGloss = variant === "gloss";
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(rootRef, isGloss),
+    [isGloss],
+  );
+
+  const setRootRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      bindGlossRef(node);
+      rootRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [bindGlossRef, ref],
+  );
+
+  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
+  const slotClassNames = useToastClassNames();
+
+  return (
+    <ToastItemProvider value={state.itemCtx}>
+      <ToastClassNamesProvider classNames={classNames}>
+        <div
+          ref={setRootRef}
+          role={state.liveRole}
+          aria-labelledby={state.titleId}
+          aria-live={state.liveRole === "alert" ? "assertive" : "polite"}
+          className={toastRootClass({
+            variant,
+            status,
+            gridSlots: state.gridSlots,
+            slotClass: slotClassNames.root,
+            className,
+          })}
+          onPointerOver={(e) => {
+            onPointerOverProp?.(e);
+            if (e.defaultPrevented) return;
+            if (isGloss) glossPointerHandlers.onPointerOver(e);
+          }}
+          onPointerOut={(e) => {
+            onPointerOutProp?.(e);
+            if (isGloss) glossPointerHandlers.onPointerOut(e);
+          }}
+          {...rest}
+        >
+          {state.isCompound ? (
+            children
+          ) : (
+            <ToastSimpleBody
+              gridSlots={state.gridSlots}
+              title={title}
+              description={description}
+              action={action}
+              onClose={onClose}
+            />
+          )}
+        </div>
+      </ToastClassNamesProvider>
+    </ToastItemProvider>
+  );
+});
+
+ToastRoot.displayName = "ToastRoot";

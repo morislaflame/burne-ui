@@ -320,3 +320,33 @@ export const Disabled: Story = {
     <TimeField label="Недоступно" defaultValue="09:30" disabled prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />} />
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для TimeField",
+      },
+    },
+  },
+  render: () => (
+    <TimeField
+      className="max-w-sm"
+      classNames={{
+        root: "rounded-mid border border-primary/20 p-base",
+        shell: "ring-1 ring-primary/15",
+        segment: "font-semibold",
+        prefix: "text-primary",
+        hint: "text-foreground/70",
+        error: "font-medium",
+      }}
+      label="Время встречи"
+      defaultValue="09:30"
+      status="danger"
+      hint="24-часовой формат"
+      error="Укажите корректное время."
+      prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
+    />
+  ),
+};

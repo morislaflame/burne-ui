@@ -1,73 +1,69 @@
-import { createContext, useContext, type ReactNode, type RefObject } from "react";
+import { createContext, useContext, useMemo } from "react";
 
-import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
-
-export type ComboBoxOption = {
-  value: string;
-  label: ReactNode;
-  hint?: ReactNode;
-  icon?: ReactNode;
-  disabled?: boolean;
-  filterText?: string;
-};
-
-export type ComboBoxFieldContextValue = {
-  comboBoxId: string;
-  hintId: string;
-  errorId: string;
-  labelId: string;
-  labelConnected: boolean;
-  hintConnected: boolean;
-  errorConnected: boolean;
-  isRequired: boolean;
-  status: InputStatus;
-  size: InputSize;
-};
-
-export type ComboBoxContextValue = ComboBoxFieldContextValue & {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  value: string;
-  setValue: (value: string) => void;
-  filterQuery: string;
-  setFilterQuery: (query: string) => void;
-  listId: string;
-  activeValue: string | null;
-  setActiveValue: (value: string | null) => void;
-  anchorRef: RefObject<HTMLDivElement | null>;
-  inputRef: RefObject<HTMLInputElement | null>;
-  variant: InputVariant;
-  disabled: boolean;
-  placeholder: string;
-  menuMaxHeight: string;
-  options: ComboBoxOption[];
-  filteredValues: string[];
-};
+import type {
+  ComboBoxClassNames,
+  ComboBoxClassNamesProviderProps,
+  ComboBoxContextValue,
+  ComboBoxFieldContextValue,
+} from "./comboBoxTypes";
 
 const ComboBoxFieldContext = createContext<ComboBoxFieldContextValue | null>(null);
 const ComboBoxContext = createContext<ComboBoxContextValue | null>(null);
+const ComboBoxClassNamesContext = createContext<ComboBoxClassNames>({});
 
-export function useComboBoxFieldContext() {
+export function ComboBoxFieldProvider({
+  value,
+  children,
+}: {
+  value: ComboBoxFieldContextValue;
+  children: React.ReactNode;
+}) {
+  return (
+    <ComboBoxFieldContext.Provider value={value}>{children}</ComboBoxFieldContext.Provider>
+  );
+}
+
+export function ComboBoxProvider({
+  value,
+  children,
+}: {
+  value: ComboBoxContextValue;
+  children: React.ReactNode;
+}) {
+  return (
+    <ComboBoxContext.Provider value={value}>{children}</ComboBoxContext.Provider>
+  );
+}
+
+export function ComboBoxClassNamesProvider({
+  classNames,
+  children,
+}: ComboBoxClassNamesProviderProps) {
+  const parent = useContext(ComboBoxClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <ComboBoxClassNamesContext.Provider value={merged}>
+      {children}
+    </ComboBoxClassNamesContext.Provider>
+  );
+}
+
+export function useComboBoxFieldContext(): ComboBoxFieldContextValue {
   const ctx = useContext(ComboBoxFieldContext);
   if (!ctx) throw new Error("ComboBox compound-parts must be inside <ComboBox>.");
   return ctx;
 }
 
-function useOptionalComboBoxFieldContext() {
-  return useContext(ComboBoxFieldContext);
-}
-
-export function useComboBoxContext() {
+export function useComboBoxContext(): ComboBoxContextValue {
   const ctx = useContext(ComboBoxContext);
   if (!ctx) throw new Error("ComboBox.* must be inside <ComboBox>.");
   return ctx;
 }
 
-function useOptionalComboBoxContext() {
-  return useContext(ComboBoxContext);
+export function useComboBoxClassNames(): ComboBoxClassNames {
+  return useContext(ComboBoxClassNamesContext);
 }
-
-export { ComboBoxFieldContext, ComboBoxContext };
-
-void useOptionalComboBoxFieldContext;
-void useOptionalComboBoxContext;

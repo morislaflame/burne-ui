@@ -1,4 +1,4 @@
-import { TabsList, TabsPanel, TabsRoot, TabsTab } from "./Tabs";
+import { TabsList, TabsPanel, TabsRoot, TabsTab } from "./tabsParts";
 
 export const Tabs = Object.assign(TabsRoot, {
   Root: TabsRoot,
@@ -7,8 +7,8 @@ export const Tabs = Object.assign(TabsRoot, {
   Panel: TabsPanel,
 });
 
-export { TabsRoot, TabsList, TabsTab, TabsPanel } from "./Tabs";
-export { useTabsContext } from "./tabsContext";
+export { TabsRoot, TabsList, TabsTab, TabsPanel } from "./tabsParts";
+export { useTabsContext, useTabsClassNames } from "./tabsContext";
 
 export type {
   TabsRootProps,
@@ -18,4 +18,5 @@ export type {
   TabsSize,
   TabsOrientation,
   TabsVariant,
-} from "./Tabs";
+  TabsClassNames,
+} from "./tabsTypes";

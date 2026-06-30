@@ -30,6 +30,7 @@ export type {
   DrawerPlacement,
   DrawerSize,
   DrawerVariant,
+  DrawerClassNames,
   DrawerBackdropProps,
   DrawerHandleProps,
   DrawerHeaderProps,
@@ -39,4 +40,5 @@ export type {
   DrawerBodyProps,
   DrawerFooterProps,
   DrawerCloseProps,
-} from "./Drawer";
+  DrawerContentProps,
+} from "./drawerTypes";

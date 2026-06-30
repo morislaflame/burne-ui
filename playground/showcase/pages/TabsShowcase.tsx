@@ -1,3 +1,5 @@
+import { TabsClassNamesFullDemo } from "../demos/tabs/TabsClassNamesFull.demo";
+import tabsClassNamesFullSource from "../demos/tabs/TabsClassNamesFull.demo.tsx?raw";
 import { TabsDashboardShellDemo } from "../demos/tabs/TabsDashboardShell.demo";
 import tabsDashboardShellSource from "../demos/tabs/TabsDashboardShell.demo.tsx?raw";
 import { TabsDefaultDemo } from "../demos/tabs/TabsDefault.demo";
@@ -42,6 +44,13 @@ export function TabsShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянный список вкладок с индикатором.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsGlossDemo} source={tabsGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Полная кастомизация classNames"
+        description="Слоты root, list, indicator, tab, tabText, panel через classNames на корне."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={TabsClassNamesFullDemo} source={tabsClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

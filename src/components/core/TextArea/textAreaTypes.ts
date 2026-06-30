@@ -1,0 +1,88 @@
+import type {
+  HTMLAttributes,
+  PointerEventHandler,
+  ReactNode,
+  TextareaHTMLAttributes,
+} from "react";
+
+import type { ComponentSize } from "@/components/core/utils/componentSize";
+
+export type TextAreaVariant = "default" | "outline" | "gloss";
+
+export type TextAreaStatus = "default" | "danger" | "success" | "warning";
+
+export type TextAreaSize = ComponentSize;
+
+export type TextAreaClassNames = {
+  root?: string;
+  shell?: string;
+  control?: string;
+  resizeHandle?: string;
+  hint?: string;
+  error?: string;
+};
+
+export type TextAreaProps = Omit<
+  TextareaHTMLAttributes<HTMLTextAreaElement>,
+  "size"
+> & {
+  variant?: TextAreaVariant;
+  size?: TextAreaSize;
+  status?: TextAreaStatus;
+  rows?: number;
+  resizable?: boolean;
+  onPointerDown?: PointerEventHandler<HTMLDivElement>;
+};
+
+export type TextAreaFieldContextValue = {
+  textareaId: string;
+  hintId: string;
+  errorId: string;
+  labelId: string;
+  hintConnected: boolean;
+  errorConnected: boolean;
+  isRequired: boolean;
+  status: TextAreaStatus;
+  size: TextAreaSize;
+};
+
+export type TextAreaClassNamesProviderProps = {
+  classNames?: TextAreaClassNames;
+  children: ReactNode;
+};
+
+export type TextAreaRootProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  id?: string;
+  isRequired?: boolean;
+  status?: TextAreaStatus;
+  size?: TextAreaSize;
+  classNames?: TextAreaClassNames;
+};
+
+export type TextAreaSimpleProps = TextAreaRootProps & TextAreaProps;
+
+export type TextAreaHintProps = HTMLAttributes<HTMLParagraphElement> & {
+  children?: ReactNode;
+  status?: Exclude<TextAreaStatus, "danger"> | "default";
+};
+
+export type TextAreaErrorProps = HTMLAttributes<HTMLParagraphElement> & {
+  children?: ReactNode;
+};
+
+export type UseTextAreaRootStateProps = TextAreaSimpleProps;
+
+export type TextAreaSimpleBodyProps = {
+  label?: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  textareaId: string;
+  labelId: string;
+  size: TextAreaSize;
+  status: TextAreaStatus;
+  controlProps: TextAreaProps;
+};

@@ -1,3 +1,5 @@
+import { PaginationClassNamesFullDemo } from "../demos/pagination/PaginationClassNamesFull.demo";
+import paginationClassNamesFullSource from "../demos/pagination/PaginationClassNamesFull.demo.tsx?raw";
 import { PaginationCompactCenteredDemo } from "../demos/pagination/PaginationCompactCentered.demo";
 import paginationCompactCenteredSource from "../demos/pagination/PaginationCompactCentered.demo.tsx?raw";
 import { PaginationCompactDemo } from "../demos/pagination/PaginationCompact.demo";
@@ -27,6 +29,13 @@ export function PaginationShowcase() {
 
       <ShowcaseSection title="С номерами" description="Pagination.Pages для прямого перехода к странице.">
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationWithPagesDemo} source={paginationWithPagesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты root, summary, content, interactive, pageActive, navText и ellipsis — через prop classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={PaginationClassNamesFullDemo} source={paginationClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

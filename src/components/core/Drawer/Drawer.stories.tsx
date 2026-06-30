@@ -373,3 +373,51 @@ export const WithForm: Story = {
     );
   },
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Drawer",
+      },
+    },
+  },
+  render: function DrawerClassNamesStory() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Открыть Drawer
+        </Button>
+        <Drawer
+          open={open}
+          onOpenChange={setOpen}
+          classNames={{
+            panel: "border-primary/40 shadow-token-lg",
+            header: "border-b border-primary/20 pb-small",
+            title: "text-primary font-semibold",
+            description: "text-foreground/75",
+            footer: "border-t border-primary/20 pt-small",
+          }}
+        >
+          <Drawer.Header>
+            <Drawer.HeadingBlock>
+              <Drawer.Title>Настройки</Drawer.Title>
+              <Drawer.Description>Все слоты настроены через classNames.</Drawer.Description>
+            </Drawer.HeadingBlock>
+            <Drawer.Close />
+          </Drawer.Header>
+          <Drawer.Body>
+            <p className="text-small text-muted">Контент выдвижной панели.</p>
+          </Drawer.Body>
+          <Drawer.Footer>
+            <Button type="button" size="small" onClick={() => setOpen(false)}>
+              Закрыть
+            </Button>
+          </Drawer.Footer>
+        </Drawer>
+      </>
+    );
+  },
+};

@@ -1,13 +1,14 @@
 import { Label } from "@/components/core/Label";
 
 import {
+  ComboBoxError,
+  ComboBoxHint,
   ComboBoxInput,
   ComboBoxInputGroup,
   ComboBoxPopover,
+  ComboBoxRoot,
   ComboBoxTrigger,
 } from "./ComboBox";
-import type { ComboBoxOption } from "./comboBoxContext";
-import { ComboBoxError, ComboBoxHint, ComboBoxRoot } from "./ComboBoxField";
 
 export const ComboBox = Object.assign(ComboBoxRoot, {
   Label,
@@ -19,16 +20,18 @@ export const ComboBox = Object.assign(ComboBoxRoot, {
   Error: ComboBoxError,
 });
 
-export type { ComboBoxOption };
+export type { ComboBoxOption } from "./comboBoxTypes";
+
 export type {
   ComboBoxRootProps,
   ComboBoxSimpleProps,
   ComboBoxHintProps,
   ComboBoxErrorProps,
-} from "./ComboBoxField";
-export type {
   ComboBoxInputGroupProps,
   ComboBoxInputProps,
   ComboBoxTriggerProps,
   ComboBoxPopoverProps,
-} from "./ComboBox";
+  ComboBoxClassNames,
+} from "./comboBoxTypes";
+
+export { comboBoxFilteredValues } from "./comboBoxAPI";

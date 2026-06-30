@@ -17,12 +17,13 @@ export const Alert = Object.assign(AlertRoot, {
   Action: AlertAction,
 });
 
-export { resolveAlertStatus } from "./alertUtils";
+export { resolveAlertStatus, resolveAlertVariant } from "./alertAPI";
 
 export type {
   AlertProps,
   AlertVariant,
   AlertStatus,
+  AlertClassNames,
   AlertIndicatorProps,
   AlertContentProps,
   AlertMessageProps,
@@ -30,4 +31,5 @@ export type {
   AlertDescriptionProps,
   AlertActionProps,
 } from "./Alert";
-export { resolveAlertLiveRole, type AlertLiveRole } from "./alertUtils";
+export { resolveAlertLiveRole } from "./alertA11y";
+export type { AlertLiveRole } from "./alertTypes";

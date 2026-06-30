@@ -2,6 +2,8 @@ import { SwitchAccentColorDemo } from "../demos/switch/SwitchAccentColor.demo";
 import switchAccentColorSource from "../demos/switch/SwitchAccentColor.demo.tsx?raw";
 import { SwitchCompoundThemeDemo } from "../demos/switch/SwitchCompoundTheme.demo";
 import switchCompoundThemeSource from "../demos/switch/SwitchCompoundTheme.demo.tsx?raw";
+import { SwitchClassNamesFullDemo } from "../demos/switch/SwitchClassNamesFull.demo";
+import switchClassNamesFullSource from "../demos/switch/SwitchClassNamesFull.demo.tsx?raw";
 import { SwitchDisabledDemo } from "../demos/switch/SwitchDisabled.demo";
 import switchDisabledSource from "../demos/switch/SwitchDisabled.demo.tsx?raw";
 import { SwitchGlossDemo } from "../demos/switch/SwitchGloss.demo";
@@ -36,6 +38,17 @@ export function SwitchShowcase() {
 
       <ShowcaseSection title="Gloss" description="gloss — стеклянный трек и кружок (проп gloss на корне).">
         <ShowcaseDemoFromFile Demo={SwitchGlossDemo} source={switchGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={SwitchClassNamesFullDemo}
+          source={switchClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

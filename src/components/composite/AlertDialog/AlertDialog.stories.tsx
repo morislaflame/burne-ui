@@ -42,9 +42,13 @@ const meta = {
       control: "select",
       options: ["small", "base", "mid", "large"],
     },
+    variant: {
+      control: "select",
+      options: ["default", "outline", "secondary", "gloss"],
+    },
     status: {
       control: "select",
-      options: ["default", "outline", "secondary", "danger", "success", "info", "warning"],
+      options: ["default", "danger", "success", "info", "warning"],
     },
   },
 } satisfies Meta;
@@ -54,7 +58,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 function ConfirmTemplate({
-  status,
+  status: statusProp,
   size = "base",
   label = "Открыть",
   variant = "default",
@@ -62,12 +66,12 @@ function ConfirmTemplate({
   status?: AlertStatus;
   size?: AlertDialogSize;
   label?: string;
-  variant?: "default" | "gloss";
+  variant?: "default" | "outline" | "secondary" | "gloss";
 }) {
   const [open, setOpen] = useState(false);
-  const tone = status ?? "default";
-  const primaryVariant = primaryButtonVariantForAlertTone(tone);
-  const primaryStatus = primaryButtonStatusForAlertTone(tone);
+  const status = statusProp ?? "default";
+  const primaryVariant = primaryButtonVariantForAlertTone(status);
+  const primaryStatus = primaryButtonStatusForAlertTone(status);
   return (
     <>
       <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>

@@ -1,24 +1,18 @@
+import { Label } from "@/components/core/Label";
+
 import {
-  SliderTrack,
+  SliderError,
   SliderFill,
+  SliderHeader,
+  SliderHint,
   SliderIcon,
   SliderRail,
+  SliderRoot,
   SliderThumb,
-  type SliderTrackProps,
-  type SliderSingleProps,
-  type SliderRangeProps,
-  type SliderOrientation,
-  type SliderSize,
-  type SliderThickness,
-  type SliderFillProps,
-  type SliderIconProps,
-  type SliderRailProps,
-  type SliderThumbProps,
-  type SliderThumbKind,
+  SliderTrack,
+  SliderValue,
+  sliderThicknessToCss,
 } from "./Slider";
-import { sliderThicknessToCss } from "./sliderThickness";
-import { Label } from "@/components/core/Label";
-import { SliderError, SliderHeader, SliderHint, SliderRoot, SliderValue } from "./SliderField";
 
 export const Slider = Object.assign(SliderRoot, {
   Header: SliderHeader,
@@ -45,6 +39,12 @@ export type {
   SliderRailProps,
   SliderThumbProps,
   SliderThumbKind,
-};
+  SliderRootProps,
+  SliderHeaderProps,
+  SliderValueProps,
+  SliderHintProps,
+  SliderErrorProps,
+  SliderClassNames,
+} from "./sliderTypes";
+
 export { sliderThicknessToCss };
-export type { SliderRootProps, SliderHeaderProps, SliderValueProps, SliderHintProps, SliderErrorProps } from "./SliderField";

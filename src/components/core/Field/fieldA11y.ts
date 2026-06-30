@@ -1,3 +1,10 @@
+export const FIELD_LEGEND_DISPLAY_NAMES = new Set([
+  "FieldLegend",
+  "OptionGroupLegend",
+  "RadioGroup.Legend",
+  "CheckboxGroup.Legend",
+]);
+
 /** Объединяет id для `aria-describedby` (hint, error, …). */
 export function joinFieldDescribedBy(...ids: (string | undefined)[]) {
   const joined = ids.filter(Boolean).join(" ");

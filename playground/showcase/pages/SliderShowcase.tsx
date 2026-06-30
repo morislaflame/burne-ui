@@ -1,5 +1,7 @@
 import { SliderBudgetPanelDemo } from "../demos/slider/SliderBudgetPanel.demo";
 import sliderBudgetPanelSource from "../demos/slider/SliderBudgetPanel.demo.tsx?raw";
+import { SliderClassNamesFullDemo } from "../demos/slider/SliderClassNamesFull.demo";
+import sliderClassNamesFullSource from "../demos/slider/SliderClassNamesFull.demo.tsx?raw";
 import { SliderGlossDemo } from "../demos/slider/SliderGloss.demo";
 import sliderGlossSource from "../demos/slider/SliderGloss.demo.tsx?raw";
 import { SliderOpacityStripDemo } from "../demos/slider/SliderOpacityStrip.demo";
@@ -44,6 +46,17 @@ export function SliderShowcase() {
 
       <ShowcaseSection title="Gloss" description="gloss — стеклянный кружок на рельсе (проп gloss на корне).">
         <ShowcaseDemoFromFile align="center" Demo={SliderGlossDemo} source={sliderGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={SliderClassNamesFullDemo}
+          source={sliderClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

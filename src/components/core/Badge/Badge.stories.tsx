@@ -91,7 +91,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Компактный статус-бейдж. **Simple** — `icon` + текст в `children`; **inline-иконки** — `data-icon=\"inline-start\" | \"inline-end\"` на child. `variant=\"gloss\"` — стеклянная поверхность. Для наложения — `Badge.Anchor`.",
+          "Компактный статус-бейдж. **Simple** — `icon` + текст в `children`; **inline-иконки** — `data-icon=\"inline-start\" | \"inline-end\"` на child. `variant=\"gloss\"` — стеклянная поверхность. Для наложения — `Badge.Anchor`. Слоты настраиваются через `classNames` (`root`, `text`, `iconOnly`, `dot`, `anchor`).",
       },
     },
   },
@@ -497,6 +497,50 @@ export const CustomColors: Story = {
           </span>
         </div>
       </div>
+    </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "кастомизация classNames для Badge",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col items-center gap-xlarge">
+      <Badge
+        status="info"
+        classNames={{
+          root: "rounded-large",
+          text: "border-info/50 bg-info/10 text-info",
+        }}
+      >
+        Глобальный стиль текста
+      </Badge>
+      <Badge
+        iconOnly
+        icon={<IoRocketOutline aria-hidden />}
+        aria-label="icon-only slot"
+        classNames={{
+          root: "rounded-large",
+          iconOnly: "border-success/40 bg-success/10 text-success",
+        }}
+      />
+      <Badge.Anchor
+        classNames={{
+          anchor: "rounded-full ring-2 ring-primary/30",
+          root: "rounded-full",
+          dot: "ring-2 ring-background border-0 bg-success",
+        }}
+      >
+        <Avatar size="base" label="Demo" />
+        <Badge dot status="success" aria-label="Онлайн" />
+      </Badge.Anchor>
     </div>
   ),
 };

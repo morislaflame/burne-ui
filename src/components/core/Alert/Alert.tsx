@@ -1,253 +1,29 @@
-import {
-  forwardRef,
-  useCallback,
-  useContext,
-  useId,
-  useMemo,
-  useRef,
-  type HTMLAttributes,
-  type ReactNode,
-} from "react";
-import type { IconType } from "react-icons";
-import { IoHelpCircleOutline } from "react-icons/io5";
+import { forwardRef } from "react";
 
-import { Text } from "@/components/core/Text";
-import {
-  createGlossInteractiveRefCallback,
-  GLOSS_INTERACTIVE_MOTION_CLASS,
-  useGlossInteractiveHandlers,
-} from "@/components/core/utils/glossInteractiveMotion";
-import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
-import {
-  SEMANTIC_STATUS_ICONS,
-  type SemanticStatus,
-} from "@/components/core/utils/semanticStatusIcons";
-import {
-  messageBannerActionCellClass,
-  messageBannerDescriptionCellClass,
-  messageBannerGridClass,
-  messageBannerIndicatorCellClass,
-  messageBannerTitleCellClass,
-  type MessageBannerGridSlots,
-} from "@/components/core/utils/messageBannerGridLayout";
+import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
 import { cn } from "@/utils/cn";
 
-import "../utils/glossInteractive.css";
+import { AlertClassNamesProvider, AlertContext } from "./alertContext";
+import { ALERT_ROOT_SHELL_CLASS } from "./alertStyles";
+import type { AlertProps } from "./alertTypes";
+import { AlertSimpleContent } from "./alertSimpleContent";
+import { useAlertAnimations } from "./alertAnimations";
+import { useAlertRootState } from "./useAlertRootState";
 
-import { AlertContext } from "./alertContext";
-import {
-  alertCompoundShowsIndicator,
-  alertHasAction,
-  alertHasDescription,
-  alertHasTitle,
-  hasAlertCompoundChildren,
-  resolveAlertAriaDescribedBy,
-  resolveAlertAriaLabelledBy,
-  resolveAlertLiveRole,
-  resolveAlertStatus,
-  type AlertLiveRole,
-  type AlertStatus,
-} from "./alertUtils";
-
-function alertShowsDefaultIndicatorIcon(tone: AlertStatus): boolean {
-  return tone !== "default" && tone !== "secondary";
-}
-
-const ALERT_INLINE_SURFACE_CLASSES: Record<AlertStatus, string> = {
-  default: "bg-surface border-token text-foreground",
-  outline: "bg-transparent border-token text-foreground",
-  secondary: "bg-secondary border-token text-secondary-foreground",
-  danger: "bg-surface-tint-danger border-token text-foreground ",
-  success: "bg-surface-tint-success border-token text-foreground",
-  info: "bg-surface-tint-info border-token text-foreground",
-  warning: "bg-surface-tint-warning border-token text-foreground",
-};
-
-function alertIndicatorWrapperTextClass(tone: AlertStatus): string {
-  switch (tone) {
-    case "danger":
-      return "text-danger";
-    case "success":
-      return "text-success";
-    case "info":
-      return "text-info";
-    case "warning":
-      return "text-warning";
-    default:
-      return "text-primary";
-  }
-}
-
-function alertDefaultIndicatorIcon(tone: AlertStatus): IconType | null {
-  if (tone === "default" || tone === "secondary") return null;
-  if (tone === "outline") return IoHelpCircleOutline;
-  return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
-}
-
-function alertShowsIndicator(
-  tone: AlertStatus,
-  icon: ReactNode | null | undefined,
-  isCompound: boolean,
-  children: ReactNode,
-): boolean {
-  if (isCompound) return alertCompoundShowsIndicator(children, tone);
-  if (icon === null) return false;
-  if (icon !== undefined) return true;
-  return alertShowsDefaultIndicatorIcon(tone) && alertDefaultIndicatorIcon(tone) !== null;
-}
-
-function resolveAlertGridSlots(
-  tone: AlertStatus,
-  icon: ReactNode | null | undefined,
-  action: ReactNode | undefined,
-  isCompound: boolean,
-  children: ReactNode,
-  hasTitle: boolean,
-  hasDescription: boolean,
-): MessageBannerGridSlots {
-  return {
-    hasIndicator: alertShowsIndicator(tone, icon, isCompound, children),
-    hasTitle,
-    hasDescription,
-    hasAction: isCompound ? alertHasAction(children) : action != null,
-    hasClose: false,
-  };
-}
-
-export type AlertVariant = "default" | "gloss";
-
-export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
-  variant?: AlertVariant;
-  status?: AlertStatus;
-  role?: AlertLiveRole;
-  /** Simple API: title. In compound is ignored. */
-  title?: ReactNode;
-  /** Simple API: description. In compound is `<Alert.Description>`. */
-  description?: ReactNode;
-  icon?: ReactNode | null;
-  /** Simple API: action slot on the right. In compound is `<Alert.Action>`. */
-  action?: ReactNode;
-};
-
-type AlertIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
-  status?: AlertStatus;
-};
-type AlertContentProps = HTMLAttributes<HTMLDivElement>;
-type AlertMessageProps = HTMLAttributes<HTMLDivElement>;
-type AlertTitleProps = HTMLAttributes<HTMLDivElement>;
-type AlertDescriptionProps = HTMLAttributes<HTMLDivElement>;
-type AlertActionProps = HTMLAttributes<HTMLDivElement>;
-
-export function AlertIndicator({
-  status,
-  className = "",
-  children,
-  ...rest
-}: AlertIndicatorProps) {
-  const ctx = useContext(AlertContext);
-  const tone = status ?? ctx?.status ?? "default";
-  const gridSlots = ctx?.gridSlots;
-
-  if (children === null) return null;
-
-  const DefaultIcon = alertDefaultIndicatorIcon(tone);
-  const inner =
-    children !== undefined
-      ? children
-      : alertShowsDefaultIndicatorIcon(tone) && DefaultIcon !== null
-        ? <DefaultIcon aria-hidden />
-        : null;
-
-  if (inner === null) return null;
-
-  return (
-    <span
-      className={cn(
-        "[&_svg]:icon-mid",
-        alertIndicatorWrapperTextClass(tone),
-        gridSlots && messageBannerIndicatorCellClass(gridSlots),
-        className,
-      )}
-      {...rest}
-    >
-      {inner}
-    </span>
-  );
-}
-
-AlertIndicator.displayName = "AlertIndicator";
-
-export function AlertContent({ className = "", ...rest }: AlertContentProps) {
-  return <div className={cn("contents", className)} {...rest} />;
-}
-
-AlertContent.displayName = "AlertContent";
-
-export const AlertMessage = forwardRef<HTMLDivElement, AlertMessageProps>(function AlertMessage(
-  { className = "", ...rest },
-  ref,
-) {
-  return <div ref={ref} className={cn("contents", className)} {...rest} />;
-});
-
-AlertMessage.displayName = "AlertMessage";
-
-export function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitleProps) {
-  const ctx = useContext(AlertContext);
-  return (
-    <Text
-      as="div"
-      id={idProp ?? ctx?.titleId}
-      variant="base"
-      className={cn(
-        "font-medium",
-        ctx?.gridSlots && messageBannerTitleCellClass(ctx.gridSlots),
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
-
-AlertTitle.displayName = "AlertTitle";
-
-export function AlertDescription({
-  className = "",
-  id: idProp,
-  ...rest
-}: AlertDescriptionProps) {
-  const ctx = useContext(AlertContext);
-  return (
-    <Text
-      as="div"
-      id={idProp ?? ctx?.descriptionId}
-      variant="small"
-      className={cn(
-        "text-muted",
-        ctx?.gridSlots && messageBannerDescriptionCellClass(ctx.gridSlots),
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
-
-AlertDescription.displayName = "AlertDescription";
-
-export function AlertAction({ className = "", ...rest }: AlertActionProps) {
-  const ctx = useContext(AlertContext);
-  return (
-    <div
-      className={cn(
-        ctx?.gridSlots && messageBannerActionCellClass(ctx.gridSlots),
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
-
-AlertAction.displayName = "AlertAction";
+export type {
+  AlertActionProps,
+  AlertContentProps,
+  AlertDescriptionProps,
+  AlertIndicatorProps,
+  AlertMessageProps,
+  AlertTitleProps,
+  AlertSimpleContentProps,
+  AlertVariant,
+  AlertStatus,
+  AlertLiveRole,
+  AlertClassNames,
+  AlertProps,
+} from "./alertTypes";
 
 export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   {
@@ -258,151 +34,91 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     description,
     icon,
     action,
+    classNames,
+    hoverLift = true,
     className = "",
     children,
-    onPointerOver: onPointerOverProp,
-    onPointerOut: onPointerOutProp,
+    onPointerOver,
+    onPointerOut,
     "aria-labelledby": ariaLabelledByProp,
     "aria-describedby": ariaDescribedByProp,
     ...rest
   },
   ref,
 ) {
-  const tone = resolveAlertStatus(status);
-  const isGloss = variant === "gloss";
-  const autoId = useId();
-  const titleId = `${autoId}-title`;
-  const descriptionId = `${autoId}-description`;
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const {
+    isCompound,
+    gridSlots,
+    liveRole,
+    ariaLabelledBy,
+    ariaDescribedBy,
+    contextValue,
+  } = useAlertRootState({
+    variant,
+    status,
+    role: roleProp,
+    title,
+    description,
+    icon,
+    action,
+    children,
+    ariaLabelledByProp,
+    ariaDescribedByProp,
+  });
 
-  const isCompound = hasAlertCompoundChildren(children);
-  const hasTitle = useMemo(
-    () => title != null || alertHasTitle(children),
-    [children, title],
-  );
-  const hasDescription = useMemo(
-    () => description != null || alertHasDescription(children),
-    [children, description],
-  );
-
-  const gridSlots = useMemo(
-    () =>
-      resolveAlertGridSlots(
-        tone,
-        icon,
-        action,
-        isCompound,
-        children,
-        hasTitle,
-        hasDescription,
-      ),
-    [
-      action,
-      children,
-      hasDescription,
-      hasTitle,
-      icon,
-      isCompound,
-      tone,
-    ],
-  );
-
-  const liveRole = resolveAlertLiveRole(tone, roleProp);
-  const ariaLabelledBy =
-    ariaLabelledByProp ??
-    resolveAlertAriaLabelledBy(titleId, descriptionId, hasTitle, hasDescription);
-  const ariaDescribedBy =
-    ariaDescribedByProp ??
-    resolveAlertAriaDescribedBy(descriptionId, hasTitle, hasDescription);
-
-  const contextValue = useMemo(
-    () => ({ status: tone, titleId, descriptionId, gridSlots }),
-    [descriptionId, gridSlots, titleId, tone],
-  );
-
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, isGloss),
-    [isGloss],
-  );
-
-  const setRootRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      bindGlossRef(node);
-      rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    },
-    [bindGlossRef, ref],
-  );
-
-  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
-
-  const secondLevelLift = useSecondLevelShadow(rootRef, !isGloss);
-
-  const surfaceClass = isGloss
-    ? cn(
-        "gloss-panel",
-        GLOSS_INTERACTIVE_MOTION_CLASS,
-        "border-0 text-foreground",
-      )
-    : ALERT_INLINE_SURFACE_CLASSES[tone];
+  const { setRootRef, surfaceClass, pointerHandlers } = useAlertAnimations({
+    variant: contextValue.variant,
+    status: contextValue.status,
+    hoverLift,
+    ref,
+    onPointerOver,
+    onPointerOut,
+  });
 
   return (
     <AlertContext.Provider value={contextValue}>
-      <div
-        ref={setRootRef}
-        role={liveRole}
-        aria-labelledby={ariaLabelledBy}
-        aria-describedby={ariaDescribedBy}
-        className={cn(
-          messageBannerGridClass(gridSlots),
-          "w-fit max-w-component-base rounded-mid py-base px-plus",
-          !isGloss && secondLevelLift.motionClass,
-          surfaceClass,
-          className,
-        )}
-        onPointerOver={(e) => {
-          onPointerOverProp?.(e);
-          if (e.defaultPrevented) return;
-          if (isGloss) glossPointerHandlers.onPointerOver(e);
-          else secondLevelLift.onPointerEnter(e);
-        }}
-        onPointerOut={(e) => {
-          onPointerOutProp?.(e);
-          if (isGloss) glossPointerHandlers.onPointerOut(e);
-          else secondLevelLift.onPointerLeave(e);
-        }}
-        {...rest}
-      >
-        {isCompound ? (
-          children
-        ) : (
-          <>
-            {gridSlots.hasIndicator ? (
-              <AlertIndicator>{icon}</AlertIndicator>
-            ) : null}
-            {title != null ? <AlertTitle>{title}</AlertTitle> : null}
-            {description != null ? (
-              <AlertDescription>{description}</AlertDescription>
-            ) : null}
-            {children}
-            {action != null ? <AlertAction>{action}</AlertAction> : null}
-          </>
-        )}
-      </div>
+      <AlertClassNamesProvider classNames={classNames}>
+        <div
+          ref={setRootRef}
+          role={liveRole}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+          className={cn(
+            messageBannerGridClass(gridSlots),
+            ALERT_ROOT_SHELL_CLASS,
+            surfaceClass,
+            classNames?.root,
+            className,
+          )}
+          {...pointerHandlers}
+          {...rest}
+        >
+          {isCompound ? (
+            children
+          ) : (
+            <AlertSimpleContent
+              gridSlots={gridSlots}
+              title={title}
+              description={description}
+              icon={icon}
+              action={action}
+            >
+              {children}
+            </AlertSimpleContent>
+          )}
+        </div>
+      </AlertClassNamesProvider>
     </AlertContext.Provider>
   );
 });
 
 AlertRoot.displayName = "AlertRoot";
 
-export type {
-  AlertIndicatorProps,
-  AlertContentProps,
-  AlertMessageProps,
-  AlertTitleProps,
-  AlertDescriptionProps,
-  AlertActionProps,
-};
-
-export type { AlertStatus, AlertLiveRole } from "./alertUtils";
+export {
+  AlertAction,
+  AlertContent,
+  AlertDescription,
+  AlertIndicator,
+  AlertMessage,
+  AlertTitle,
+} from "./alertParts";

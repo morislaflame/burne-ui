@@ -140,3 +140,32 @@ export const Required: Story = {
     <TextArea isRequired label="Биография" placeholder="Расскажите о себе…" />
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для TextArea",
+      },
+    },
+  },
+  render: () => (
+    <TextArea
+      className="max-w-md"
+      classNames={{
+        root: "rounded-mid border border-primary/20 p-base",
+        shell: "ring-1 ring-primary/15",
+        control: "text-primary placeholder:text-primary/50",
+        hint: "text-foreground/70",
+        error: "font-medium",
+      }}
+      label="Комментарий"
+      placeholder="Ваш отзыв…"
+      rows={3}
+      status="danger"
+      hint="До 500 символов."
+      error="Текст слишком короткий."
+    />
+  ),
+};

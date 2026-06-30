@@ -1,3 +1,5 @@
+import { ColorPickerClassNamesFullDemo } from "../demos/colorPicker/ColorPickerClassNamesFull.demo";
+import colorPickerClassNamesFullSource from "../demos/colorPicker/ColorPickerClassNamesFull.demo.tsx?raw";
 import { ColorPickerAlphaChannelDemo } from "../demos/colorPicker/ColorPickerAlphaChannel.demo";
 import colorPickerAlphaChannelSource from "../demos/colorPicker/ColorPickerAlphaChannel.demo.tsx?raw";
 import { ColorPickerBasicDemo } from "../demos/colorPicker/ColorPickerBasic.demo";
@@ -40,6 +42,16 @@ export function ColorPickerShowcase() {
         <ShowcaseDemoFromFile Demo={ColorPickerGlossDemo} source={colorPickerGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="classNames"
+        description="Кастомизация слотов панели через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          Demo={ColorPickerClassNamesFullDemo}
+          source={colorPickerClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={ColorPickerSidesDemo} source={colorPickerSidesSource} />
       </ShowcaseSection>
@@ -61,6 +73,10 @@ export function ColorPickerShowcase() {
           <ShowcaseDoc.ApiRow
             api="compound"
             description="ColorPicker.Trigger и ColorPicker.Content. ColorSlider и ColorSwatch — отдельные примитивы."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="content, contentPanel, trigger, area, slidersRow, hexInput, presets и др."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Формат">

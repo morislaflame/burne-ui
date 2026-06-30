@@ -21,7 +21,7 @@ export const Table = Object.assign(TableRoot, {
   Footer: TableFooter,
 });
 
-export { TABLE_ROW_TONE_SURFACE } from "./tableRowToneSurface";
+export { TABLE_ROW_TONE_SURFACE } from "./tableStyles";
 
 export type {
   TableProps,
@@ -40,4 +40,5 @@ export type {
   SortDirection,
   SelectionMode,
   Selection,
-} from "./Table";
+  TableClassNames,
+} from "./tableTypes";

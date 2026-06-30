@@ -50,6 +50,7 @@ export {
 
 export type {
   DropdownProps,
+  DropdownClassNames,
   DropdownTriggerProps,
   DropdownPopoverProps,
   DropdownGroupProps,
@@ -64,4 +65,4 @@ export type {
   DropdownSubProps,
   DropdownSubTriggerProps,
   DropdownSubContentProps,
-} from "./Dropdown";
+} from "./dropdownTypes";

@@ -2,6 +2,8 @@ import { LinkArticleInlineDemo } from "../demos/link/LinkArticleInline.demo";
 import linkArticleInlineSource from "../demos/link/LinkArticleInline.demo.tsx?raw";
 import { LinkCardActionsDemo } from "../demos/link/LinkCardActions.demo";
 import linkCardActionsSource from "../demos/link/LinkCardActions.demo.tsx?raw";
+import { LinkClassNamesFullDemo } from "../demos/link/LinkClassNamesFull.demo";
+import linkClassNamesFullSource from "../demos/link/LinkClassNamesFull.demo.tsx?raw";
 import { LinkFooterNavDemo } from "../demos/link/LinkFooterNav.demo";
 import linkFooterNavSource from "../demos/link/LinkFooterNav.demo.tsx?raw";
 import { LinkSizesDemo } from "../demos/link/LinkSizes.demo";
@@ -24,6 +26,13 @@ export function LinkShowcase() {
 
       <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={LinkSizesDemo} source={linkSizesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты motion, anchor, text, iconStart и iconEnd — через prop classNames."
+      >
+        <ShowcaseDemoFromFile align="center" Demo={LinkClassNamesFullDemo} source={linkClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

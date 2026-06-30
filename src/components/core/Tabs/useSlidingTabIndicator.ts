@@ -4,7 +4,7 @@ import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hove
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 
-import type { TabsOrientation, TabsVariant } from "./tabsContext";
+import type { TabsOrientation, TabsVariant } from "./tabsTypes";
 
 type IndicatorMetrics = {
   left: number;

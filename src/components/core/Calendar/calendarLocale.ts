@@ -1,13 +1,4 @@
-export type CalendarLocale = {
-  /** 7 items: Mon → Sun */
-  weekDays: string[];
-  /** 12 full month names */
-  months: string[];
-  /** 12 abbreviated month names */
-  monthsShort: string[];
-  today: string;
-  clear: string;
-};
+import type { CalendarLocale } from "./calendarTypes";
 
 export const RU_LOCALE: CalendarLocale = {
   weekDays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],

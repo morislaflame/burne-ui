@@ -1,6 +1,5 @@
 import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button";
-import { CardBody } from "@/components/core/Card/Card";
 import { Popover } from "@/components/core/Popover";
 import { Text } from "@/components/core/Text";
 import { Card } from "@/index";

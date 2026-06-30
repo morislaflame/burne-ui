@@ -1,3 +1,5 @@
+import { ExpandableClassNamesFullDemo } from "../demos/expandable/ExpandableClassNamesFull.demo";
+import expandableClassNamesFullSource from "../demos/expandable/ExpandableClassNamesFull.demo.tsx?raw";
 import { ExpandableCompoundDemo } from "../demos/expandable/ExpandableCompound.demo";
 import expandableCompoundSource from "../demos/expandable/ExpandableCompound.demo.tsx?raw";
 import { ExpandableGlossDemo } from "../demos/expandable/ExpandableGloss.demo";
@@ -36,6 +38,17 @@ export function ExpandableShowcase() {
 
       <ShowcaseSection title="Compound API" description="Trigger, Message, Icon, Title, Description и Panel.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableCompoundDemo} source={expandableCompoundSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на Root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={ExpandableClassNamesFullDemo}
+          source={expandableClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

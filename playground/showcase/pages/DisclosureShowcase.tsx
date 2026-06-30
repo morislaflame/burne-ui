@@ -1,3 +1,5 @@
+import { DisclosureClassNamesFullDemo } from "../demos/disclosure/DisclosureClassNamesFull.demo";
+import disclosureClassNamesFullSource from "../demos/disclosure/DisclosureClassNamesFull.demo.tsx?raw";
 import { DisclosureCardGroupDemo } from "../demos/disclosure/DisclosureCardGroup.demo";
 import disclosureCardGroupSource from "../demos/disclosure/DisclosureCardGroup.demo.tsx?raw";
 import { DisclosureChangelogDemo } from "../demos/disclosure/DisclosureChangelog.demo";
@@ -45,6 +47,17 @@ export function DisclosureShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Кастомизация слотов trigger, content и group через classNames."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={DisclosureClassNamesFullDemo}
+          source={disclosureClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="Шаги оформления, группа настроек и changelog — `demos/disclosure/`."
       >
@@ -61,6 +74,10 @@ export function DisclosureShowcase() {
           <ShowcaseDoc.ApiRow
             api="compound"
             description="Disclosure.Trigger и Disclosure.Content — слоты блока. DisclosureGroup объединяет несколько."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="root, trigger, triggerTitle, contentPanel, glossPanel, handle, group."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Группы">

@@ -9,7 +9,7 @@ import {
 } from "@/components/core/utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 
-import { ProgressBar } from ".";
+import { ProgressBar } from "@/components/core/ProgressBar";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -204,4 +204,31 @@ export const Accessibility: Story = {
       "48",
     );
   },
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "Слоты root, value, track, fill, hint и error через prop classNames.",
+      },
+    },
+  },
+  render: () => (
+    <ProgressBar
+      label="Загрузка"
+      hint="Оставшееся время зависит от скорости сети"
+      showValue
+      value={62}
+      color="var(--color-info)"
+      classNames={{
+        root: "rounded-mid border border-primary/20 p-base",
+        value: "text-info font-semibold",
+        track: "bg-primary/10",
+        fill: "opacity-95",
+        hint: "text-muted/80",
+      }}
+    />
+  ),
 };

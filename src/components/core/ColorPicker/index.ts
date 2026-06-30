@@ -10,7 +10,7 @@ export const ColorSlider = Object.assign(ColorSliderRoot, {
   Track: ColorSliderTrack,
 });
 
-export { useColorPicker } from "./ColorPicker";
+export { useColorPicker } from "./colorPickerContext";
 
 export type {
   ColorPickerProps,
@@ -18,7 +18,8 @@ export type {
   ColorPickerContentProps,
   ColorPickerSize,
   ColorPickerVariant,
-} from "./ColorPicker";
+  ColorPickerClassNames,
+} from "./colorPickerTypes";
 
 export {
   ColorSliderTrack,

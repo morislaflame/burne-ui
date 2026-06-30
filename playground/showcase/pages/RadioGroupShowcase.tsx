@@ -1,5 +1,7 @@
 import { RadioGroupContactMethodDemo } from "../demos/radioGroup/RadioGroupContactMethod.demo";
 import radioGroupContactMethodSource from "../demos/radioGroup/RadioGroupContactMethod.demo.tsx?raw";
+import { RadioClassNamesFullDemo } from "../demos/radio/RadioClassNamesFull.demo";
+import radioClassNamesFullSource from "../demos/radio/RadioClassNamesFull.demo.tsx?raw";
 import { RadioSizesDemo } from "../demos/radioGroup/RadioSizes.demo";
 import radioSizesSource from "../demos/radioGroup/RadioSizes.demo.tsx?raw";
 import { RadioGroupCustomIndicatorDemo } from "../demos/radioGroup/RadioGroupCustomIndicator.demo";
@@ -30,6 +32,17 @@ export function RadioGroupShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss на Radio — стеклянный индикатор.">
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupGlossDemo} source={radioGroupGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов Radio через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={RadioClassNamesFullDemo}
+          source={radioClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

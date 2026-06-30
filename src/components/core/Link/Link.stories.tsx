@@ -6,7 +6,7 @@ import { IoDocumentTextOutline, IoOpenOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
 
-import { Link } from "./Link";
+import { Link } from "@/components/core/Link";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -160,4 +160,30 @@ export const LightTheme: Story = {
     showDefaultIcon: true,
     children: "Ссылка на светлом фоне",
   },
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "Слоты motion, anchor, text, iconStart и iconEnd через prop classNames.",
+      },
+    },
+  },
+  render: () => (
+    <Link
+      href="#"
+      showDefaultIcon
+      underline
+      classNames={{
+        motion: "rounded-mid border border-primary/20 p-xsmall",
+        anchor: "gap-small text-info",
+        text: "font-semibold",
+        iconEnd: "text-warning",
+      }}
+    >
+      Кастомная ссылка
+    </Link>
+  ),
 };

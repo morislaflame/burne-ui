@@ -1,5 +1,7 @@
 import { SkeletonAnimationsDemo } from "../demos/skeleton/SkeletonAnimations.demo";
 import skeletonAnimationsSource from "../demos/skeleton/SkeletonAnimations.demo.tsx?raw";
+import { SkeletonClassNamesFullDemo } from "../demos/skeleton/SkeletonClassNamesFull.demo";
+import skeletonClassNamesFullSource from "../demos/skeleton/SkeletonClassNamesFull.demo.tsx?raw";
 import { SkeletonArticlePreviewDemo } from "../demos/skeleton/SkeletonArticlePreview.demo";
 import skeletonArticlePreviewSource from "../demos/skeleton/SkeletonArticlePreview.demo.tsx?raw";
 import { SkeletonBasicShapesDemo } from "../demos/skeleton/SkeletonBasicShapes.demo";
@@ -33,6 +35,17 @@ export function SkeletonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на каждом подкомпоненте."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={SkeletonClassNamesFullDemo}
+          source={skeletonClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="Профиль, строки таблицы и превью статьи — `demos/skeleton/`."
       >
@@ -48,7 +61,7 @@ export function SkeletonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Skeleton.Circle, Skeleton.Text и Skeleton.Block — готовые формы плейсхолдера."
+            description="Skeleton.Circle, Skeleton.Text и Skeleton.Block — готовые формы. classNames на каждом подкомпоненте."
           />
           <ShowcaseDoc.ApiRow
             api="simple"

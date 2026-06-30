@@ -6,17 +6,7 @@ import {
   CheckboxIndicator,
   CheckboxLabel,
   CheckboxRoot,
-  type CheckboxContentProps,
-  type CheckboxControlProps,
-  type CheckboxErrorProps,
-  type CheckboxHintProps,
-  type CheckboxIndicatorProps,
-  type CheckboxLabelProps,
-  type CheckboxProps,
-  type CheckboxRootProps,
 } from "./Checkbox";
-
-export type { CheckboxSize, CheckboxVariant } from "./checkboxFieldContext";
 
 export const Checkbox = Object.assign(CheckboxRoot, {
   Control: CheckboxControl,
@@ -36,4 +26,7 @@ export type {
   CheckboxLabelProps,
   CheckboxHintProps,
   CheckboxErrorProps,
-};
+  CheckboxSize,
+  CheckboxVariant,
+  CheckboxClassNames,
+} from "./checkboxTypes";

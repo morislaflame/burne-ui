@@ -6,9 +6,9 @@ export {
   type ButtonVariant,
   type ButtonStatus,
 } from "./Button";
-export { buttonRippleTone } from "./buttonRippleTone";
+export { buttonRippleTone } from "./buttonStyles";
 export {
   buttonRootClass,
   buttonSpinnerClass,
   controlShellClass,
-} from "./buttonLayout";
+} from "./buttonStyles";

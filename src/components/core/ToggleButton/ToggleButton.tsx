@@ -1,126 +1,41 @@
-import { killMotion } from "@/components/core/utils/gsapMotion";
+import { forwardRef } from "react";
+
+import "@/components/core/utils/glossInteractive.css";
+
+import { useToggleButtonAnimations } from "./toggleButtonAnimations";
 import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ButtonHTMLAttributes,
-  type MouseEvent,
-  type PointerEvent,
-  type ReactNode,
-} from "react";
+  ToggleButtonContent,
+  ToggleButtonFill,
+  useToggleButtonFill,
+} from "./toggleButtonParts";
+import type { ToggleButtonProps } from "./toggleButtonTypes";
+import { useToggleButtonRootState } from "./useToggleButtonRootState";
 
-import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
-import { Text, type TextVariant } from "@/components/core/Text";
-import { useOptionalToggleButtonGroupContext } from "./toggleButtonGroupContext";
-import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import {
-  buttonGroupRoundingClasses,
-  buttonGroupSegmentSurfaceClasses,
-  type ButtonGroupSegment,
-} from "@/components/composite/ButtonGroup/buttonGroupSegment";
-import { hoverVariant, SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
-import { buttonRootClass } from "@/components/core/Button/buttonLayout";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
-import { firstLevelHoverShadow, SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
-import {
-  animateGlossInteractiveHoverLift,
-  animateGlossInteractivePressSqueeze,
-  createGlossInteractiveRefCallback,
-  GLOSS_INTERACTIVE_MOTION_CLASS,
-} from "@/components/core/utils/glossInteractiveMotion";
-import "../utils/glossInteractive.css";
-import { cn } from "@/utils/cn";
-
-export type ToggleButtonSize = ComponentSize;
-
-export type ToggleButtonVariant = "default" | "outline" | "ghost" | "gloss";
-
-export type ToggleButtonProps = Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  "aria-pressed" | "aria-checked" | "role" | "value"
-> & {
-  value?: string;
-  groupSegment?: ButtonGroupSegment;
-  pressed?: boolean;
-  defaultPressed?: boolean;
-  onPressedChange?: (pressed: boolean) => void;
-  variant?: ToggleButtonVariant;
-  fillColor?: string;
-  size?: ToggleButtonSize;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
-  animated?: boolean;
-};
-
-const TOGGLE_BUTTON_TEXT_VARIANT: Record<ToggleButtonSize, TextVariant> = {
-  small: "small",
-  base: "base",
-  mid: "mid",
-  large: "mid",
-};
-
-type ToggleButtonVariantVisual = {
-  idle: string;
-};
-
-const TOGGLE_BUTTON_VARIANT: Record<ToggleButtonVariant, ToggleButtonVariantVisual> = {
-  default: {
-    idle: "border-token bg-surface text-foreground"
-  },
-  outline: {
-    idle: "bg-transparent border-token text-foreground"
-  },
-  ghost: {
-    idle: "bg-transparent border-token border-transparent text-foreground",
-  },
-  gloss: {
-    idle: "border-0 bg-transparent text-foreground",
-  },
-};
-
-function useMergedPressed(
-  pressed: boolean | undefined,
-  defaultPressed: boolean | undefined,
-): [boolean, (next: boolean) => void, boolean] {
-  const isControlled = pressed !== undefined;
-  const [internal, setInternal] = useState(Boolean(defaultPressed));
-  const value = isControlled ? Boolean(pressed) : internal;
-  const setValue = useCallback(
-    (next: boolean) => {
-      if (!isControlled) setInternal(next);
-    },
-    [isControlled],
-  );
-  return [value, setValue, isControlled];
-}
+export type {
+  ToggleButtonProps,
+  ToggleButtonSize,
+  ToggleButtonVariant,
+  ToggleButtonClassNames,
+} from "./toggleButtonTypes";
 
 export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
   function ToggleButton(
     {
-      className = "",
+      className,
+      classNames,
       value: itemValue,
-      groupSegment: groupSegmentProp,
-      pressed: pressedProp,
-      defaultPressed = false,
+      groupSegment,
+      pressed,
+      defaultPressed,
       onPressedChange,
-      variant: variantProp,
-      fillColor = "bg-primary-tint",
-      size: sizeProp,
+      variant,
+      fillColor,
+      size,
       type = "button",
       leftIcon,
       rightIcon,
-      animated = true,
-      disabled: disabledProp = false,
+      animated,
+      disabled,
       children,
       onClick,
       onPointerDown,
@@ -130,241 +45,69 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
     },
     ref,
   ) {
-    const groupCtx = useOptionalToggleButtonGroupContext();
-    const segmentCtx = useOptionalButtonGroupSegment();
-    const groupSegment = groupSegmentProp ?? segmentCtx?.segment;
+    const state = useToggleButtonRootState({
+      value: itemValue,
+      groupSegment,
+      pressed,
+      defaultPressed,
+      onPressedChange,
+      variant,
+      fillColor,
+      size,
+      animated,
+      disabled,
+      className,
+      classNames,
+      onClick,
+    });
 
-    const inGroup = groupCtx != null && itemValue != null;
-    const isSingleGroup = groupCtx?.type === "single";
+    const animations = useToggleButtonAnimations({
+      animated: state.animated,
+      disabled: state.disabled,
+      variant: state.variant,
+      groupSegment: state.groupSegment,
+      forwardedRef: ref,
+      onPointerEnter,
+      onPointerLeave,
+      onPointerDown,
+    });
 
-    const size = sizeProp ?? groupCtx?.size ?? segmentCtx?.buttonSize ?? "base";
-    const variant = variantProp ?? groupCtx?.variant ?? "default";
-    const isGloss = variant === "gloss";
-    const disabled = disabledProp || Boolean(groupCtx?.disabled);
-
-    const [localPressed, setLocalPressed] = useMergedPressed(
-      inGroup ? undefined : pressedProp,
-      inGroup ? false : defaultPressed,
-    );
-
-    const pressedFromGroup = inGroup ? groupCtx!.isSelected(itemValue!) : localPressed;
-    const pressed = inGroup
-      ? pressedProp !== undefined
-        ? Boolean(pressedProp)
-        : pressedFromGroup
-      : pressedProp !== undefined
-        ? Boolean(pressedProp)
-        : localPressed;
-
-    const btnRef = useRef<HTMLButtonElement>(null);
-    const contentMotionRef = useRef<HTMLSpanElement>(null);
-    const fillRef = useRef<HTMLSpanElement>(null);
-    const hoverPointerInsideRef = useRef(false);
-
-    const { animateTo, bindFillRef } = useToggleButtonFillAnimation(pressed, fillRef);
-
-    const bindGlossRef = useMemo(
-      () => createGlossInteractiveRefCallback(btnRef, isGloss),
-      [isGloss],
-    );
-
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        bindGlossRef(node);
-        btnRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [bindGlossRef, ref],
-    );
-
-    useEffect(() => {
-      const el = btnRef.current;
-      const content = contentMotionRef.current;
-      if ((!el && !content) || !disabled) return;
-      hoverPointerInsideRef.current = false;
-      if (el) killMotion(el);
-      if (content) {
-        killMotion(content);
-        content.style.transform = "";
-      }
-    }, [disabled]);
-
-    const btnShadow = useMemo(
-      () => (isGloss ? undefined : firstLevelHoverShadow()),
-      [isGloss],
-    );
-
-    const handlePointerEnter = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        onPointerEnter?.(e);
-        if (e.defaultPrevented || disabled || !animated) return;
-        if (shouldSkipInteractiveHoverLift()) return;
-        const el = groupSegment ? contentMotionRef.current : btnRef.current;
-        if (!el) return;
-        hoverPointerInsideRef.current = true;
-        if (isGloss && !groupSegment) {
-          animateGlossInteractiveHoverLift(el, true);
-        } else {
-          animateInteractiveHoverLift(el, true, undefined, groupSegment ? undefined : btnShadow);
-        }
-      },
-      [animated, btnShadow, disabled, groupSegment, isGloss, onPointerEnter],
-    );
-
-    const handlePointerLeave = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        onPointerLeave?.(e);
-        hoverPointerInsideRef.current = false;
-        if (!animated || shouldSkipInteractiveHoverLift()) return;
-        const el = groupSegment ? contentMotionRef.current : btnRef.current;
-        if (!el || disabled) return;
-        if (isGloss && !groupSegment) {
-          animateGlossInteractiveHoverLift(el, false);
-        } else {
-          animateInteractiveHoverLift(el, false, undefined, groupSegment ? undefined : btnShadow);
-        }
-      },
-      [animated, btnShadow, disabled, groupSegment, isGloss, onPointerLeave],
-    );
-
-    const handlePointerDown = useCallback(
-      (e: PointerEvent<HTMLButtonElement>) => {
-        onPointerDown?.(e);
-        if (e.defaultPrevented || disabled || !animated) return;
-        if (prefersReducedInteractiveHoverLift()) return;
-        const el = groupSegment ? contentMotionRef.current : btnRef.current;
-        if (!el) return;
-        const squeeze = isGloss && !groupSegment
-          ? animateGlossInteractivePressSqueeze(el)
-          : animateInteractivePressSqueeze(el);
-        void squeeze.then(() => {
-          const btn = groupSegment ? contentMotionRef.current : btnRef.current;
-          if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
-          if (hoverPointerInsideRef.current) {
-            if (isGloss && !groupSegment) {
-              animateGlossInteractiveHoverLift(btn, true);
-            } else {
-              animateInteractiveHoverLift(btn, true, undefined, groupSegment ? undefined : btnShadow);
-            }
-          }
-        });
-      },
-      [animated, btnShadow, disabled, groupSegment, isGloss, onPointerDown],
-    );
-
-    const handleClick = useCallback(
-      (e: MouseEvent<HTMLButtonElement>) => {
-        onClick?.(e);
-        if (e.defaultPrevented || disabled) return;
-
-        if (inGroup && itemValue != null) {
-          groupCtx!.select(itemValue);
-          return;
-        }
-
-        const next = !pressed;
-        animateTo(next);
-
-        setLocalPressed(next);
-        onPressedChange?.(next);
-      },
-      [
-        animateTo,
-        disabled,
-        groupCtx,
-        inGroup,
-        itemValue,
-        onClick,
-        onPressedChange,
-        pressed,
-        setLocalPressed,
-      ],
-    );
-
-    const layout = CONTROL_SIZE_LAYOUT[size];
-    const vn = TOGGLE_BUTTON_VARIANT[variant];
-    const roundingClass = groupSegment ? buttonGroupRoundingClasses(groupSegment) : "rounded-base";
-    const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
+    const { animateTo, bindFillRef } = useToggleButtonFill(state.pressed);
 
     return (
       <button
-        ref={setRefs}
+        ref={animations.setRefs}
         type={type}
-        disabled={disabled}
-        data-toggle-button-value={itemValue}
-        role={inGroup && isSingleGroup ? "radio" : undefined}
-        aria-pressed={!inGroup || !isSingleGroup ? pressed : undefined}
-        aria-checked={inGroup && isSingleGroup ? pressed : undefined}
-        tabIndex={inGroup && isSingleGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined}
-        className={cn(
-          "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none text-foreground",
-          "font-medium focus-ring",
-          isGloss
-            ? cn("gloss-btn", !groupSegment && GLOSS_INTERACTIVE_MOTION_CLASS)
-            : cn(!groupSegment && SHADOW_LIFT_MOTION_CLASS),
-          !isGloss && !pressed && !disabled && hoverVariant(),
-          !isGloss && vn.idle,
-          pressed && "bg-transparent",
-          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
-          buttonRootClass(size, true),
-          roundingClass,
-          className,
-          groupGlue,
-        )}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
-        onPointerDown={handlePointerDown}
-        onClick={handleClick}
+        disabled={state.disabled}
+        data-toggle-button-value={state.itemValue}
+        role={state.role}
+        aria-pressed={state.ariaPressed}
+        aria-checked={state.ariaChecked}
+        tabIndex={state.tabIndex}
+        className={state.buttonClass}
+        onPointerEnter={animations.handlePointerEnter}
+        onPointerLeave={animations.handlePointerLeave}
+        onPointerDown={animations.handlePointerDown}
+        onClick={(e) => state.handleClick(e, animateTo)}
         {...rest}
       >
-        <span
-          ref={bindFillRef}
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute -inset-px z-0 origin-center",
-            fillColor,
-            SURFACE_COLOR_TRANSITION,
-            "motion-reduce:transition-none",
-            pressed ? `group-hover/toggle:${fillColor}/80` : "group-hover/toggle:bg-default-hover",
-            roundingClass,
-          )}
+        <ToggleButtonFill
+          bindFillRef={bindFillRef}
+          fillColor={state.fillColor}
+          pressed={state.pressed}
+          roundingClass={state.roundingClass}
+          className={state.classNames?.fill}
         />
-        <span
-          ref={contentMotionRef}
-          className={cn(
-            "relative z-[1] inline-flex min-w-0 items-center justify-center gap-xsmall",
-            groupSegment && "origin-center will-change-transform",
-          )}
+        <ToggleButtonContent
+          size={state.size}
+          groupSegment={state.groupSegment}
+          leftIcon={leftIcon}
+          rightIcon={rightIcon}
+          contentMotionRef={animations.contentMotionRef}
+          classNames={state.classNames}
         >
-          {leftIcon != null ? (
-            <span
-              className={cn(
-                "inline-flex shrink-0 items-center justify-center [&_svg]:size-full",
-                layout.icon,
-              )}
-              aria-hidden
-            >
-              {leftIcon}
-            </span>
-          ) : null}
-          {children != null ? (
-            <Text variant={TOGGLE_BUTTON_TEXT_VARIANT[size]} as="span" inheritColor className="min-w-0 shrink">
-              {children}
-            </Text>
-          ) : null}
-          {rightIcon != null ? (
-            <span
-              className={cn(
-                "inline-flex shrink-0 items-center justify-center [&_svg]:size-full",
-                layout.icon,
-              )}
-              aria-hidden
-            >
-              {rightIcon}
-            </span>
-          ) : null}
-        </span>
+          {children}
+        </ToggleButtonContent>
       </button>
     );
   },

@@ -1,3 +1,5 @@
+import { ToastClassNamesCompoundDemo, ToastClassNamesFullDemo } from "../demos/toast/ToastClassNamesFull.demo";
+import toastClassNamesFullSource from "../demos/toast/ToastClassNamesFull.demo.tsx?raw";
 import { ToastDefaultDemo } from "../demos/toast/ToastDefault.demo";
 import toastDefaultSource from "../demos/toast/ToastDefault.demo.tsx?raw";
 import { ToastDeployPanelDemo } from "../demos/toast/ToastDeployPanel.demo";
@@ -29,6 +31,14 @@ export function ToastShowcase() {
         description="status, variant gloss, action, isLoading и timeout: 0."
       >
         <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Полная кастомизация classNames"
+        description="Слоты root, indicator, title, description, action, close, viewport, scrim, stack."
+      >
+        <ShowcaseDemoFromFile Demo={ToastClassNamesFullDemo} source={toastClassNamesFullSource} />
+        <ShowcaseDemoFromFile Demo={ToastClassNamesCompoundDemo} source={toastClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

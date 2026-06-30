@@ -1,4 +1,12 @@
-export { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type ToggleButtonVariant } from "./ToggleButton";
+export { ToggleButton } from "./ToggleButton";
+
+export type {
+  ToggleButtonProps,
+  ToggleButtonSize,
+  ToggleButtonVariant,
+  ToggleButtonClassNames,
+} from "./toggleButtonTypes";
+
 export {
   useOptionalToggleButtonGroupContext,
   type ToggleButtonGroupType,

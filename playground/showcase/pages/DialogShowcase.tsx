@@ -1,3 +1,5 @@
+import { DialogClassNamesFullDemo } from "../demos/dialog/DialogClassNamesFull.demo";
+import dialogClassNamesFullSource from "../demos/dialog/DialogClassNamesFull.demo.tsx?raw";
 import { DialogBasicDemo } from "../demos/dialog/DialogBasic.demo";
 import dialogBasicSource from "../demos/dialog/DialogBasic.demo.tsx?raw";
 import { DialogCompactConfirmDemo } from "../demos/dialog/DialogCompactConfirm.demo";
@@ -27,6 +29,16 @@ export function DialogShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Кастомизация слотов panel, header, title, body, footer через classNames."
+      >
+        <ShowcaseDemoFromFile
+          Demo={DialogClassNamesFullDemo}
+          source={dialogClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="Приглашение в команду, настройки приватности и компактное подтверждение — `demos/dialog/`."
       >
@@ -43,6 +55,10 @@ export function DialogShowcase() {
           <ShowcaseDoc.ApiRow
             api="compound"
             description="Dialog.Header, Dialog.Body, Dialog.Footer, Dialog.Close — полная компоновка панели."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="dialog, overlay, panel, content, header, title, description, body, footer, close."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>

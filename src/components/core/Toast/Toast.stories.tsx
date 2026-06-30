@@ -356,3 +356,36 @@ export const DismissProgrammatically: Story = {
     );
   },
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Toast (imperative API)",
+      },
+    },
+  },
+  render: function CustomClassNamesDemo() {
+    const { toast } = useToast();
+    return (
+      <Button
+        onClick={() =>
+          toast.show({
+            status: "info",
+            title: "Полная кастомизация Toast",
+            description: "Слоты root, title, description через classNames.",
+            classNames: {
+              root: "rounded-large border-info/50 bg-info/10 ring-1 ring-info/20",
+              indicator: "text-info",
+              title: "font-semibold text-info",
+              description: "text-foreground/80",
+            },
+          })
+        }
+      >
+        Показать toast с classNames
+      </Button>
+    );
+  },
+};

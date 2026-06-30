@@ -23,7 +23,7 @@ import {
 } from "@/components/composite/utils/optionGroupFieldset";
 import { FieldError, useFieldSetErrorId, useFieldSetHintId, type FieldErrorProps } from "@/components/core/Field";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
+import { FieldLabelContext } from "@/components/core/Label";
 import {
   RadioGroupContext,
   useRadioGroupContext,

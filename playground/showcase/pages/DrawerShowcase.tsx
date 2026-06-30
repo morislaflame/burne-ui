@@ -1,3 +1,5 @@
+import { DrawerClassNamesFullDemo } from "../demos/drawer/DrawerClassNamesFull.demo";
+import drawerClassNamesFullSource from "../demos/drawer/DrawerClassNamesFull.demo.tsx?raw";
 import { DrawerFilterSheetDemo } from "../demos/drawer/DrawerFilterSheet.demo";
 import drawerFilterSheetSource from "../demos/drawer/DrawerFilterSheet.demo.tsx?raw";
 import { DrawerGlossDemo } from "../demos/drawer/DrawerGloss.demo";
@@ -24,6 +26,16 @@ export function DrawerShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная боковая панель.">
         <ShowcaseDemoFromFile Demo={DrawerGlossDemo} source={drawerGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на Root."
+      >
+        <ShowcaseDemoFromFile
+          Demo={DrawerClassNamesFullDemo}
+          source={drawerClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

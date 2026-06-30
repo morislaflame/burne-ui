@@ -1,5 +1,5 @@
 ---
-description: 
+description: Конвенции burne-ui — структура компонентов, стили, рефакторинг
 alwaysApply: true
 ---
 
@@ -14,3 +14,76 @@ alwaysApply: true
 
 Компоненты второго уровня (вроде алерта, бейджа и тд.) (находятся "над" остальными элементами), у них тень должна быть и в обычном состоянии, а при наведении увеличивается
 У всех остальных тень должны появлятся только при наведении
+
+## Структура папки компонента (примеры: `Alert/`, `Badge/`, `Avatar/`, `Breadcrumbs/`)
+
+```
+ComponentName/
+├── ComponentName.tsx           # оркестратор (~100–150 строк)
+├── index.ts                    # compound API + публичные экспорты
+├── ComponentName.stories.tsx
+│
+├── componentNameTypes.ts       # ОБЯЗАТЕЛЬНО: Все типы, которые используюся в файлах компонента, только типы (+ Use*RootStateProps, props подчастей)
+├── componentNameStyles.ts      # ОБЯЗАТЕЛЬНО: все CSS и функции по определению стилей
+│
+├── useComponentRootState.ts    # props → state, context value, grid/slots
+├── componentNameAnimations.ts  # Все что связано с анимациями
+├── componentNameContext.tsx    # только createContext + Provider + use*Context
+│
+├── componentNameParts.tsx      # DOM-подчасти компонента
+├── componentNameAPI.ts         # resolve*Variant/Status, walk children, resolve*Body, icons
+├── componentNameA11y.ts        # role, aria-*, accessible name, decorative icons
+```
+
+Префикс файлов: `alert*`, `badge*` — camelCase. Корневой файл: `Alert.tsx` — PascalCase.
+
+`*Utils.ts` — **не создавать** ради `resolve*Variant` / `resolve*Status`: это часть `*API`. Отдельный Utils — только если есть helpers, которые не ложатся в Types / API / A11y.
+
+Опциональные файлы создавать только при необходимости, но лучше что выбивается из общей структуры класть в *Utils.ts.
+
+## variant + status
+
+- `variant` — визуальный стиль: `default` | `outline` | `secondary` | `gloss` (+ `primary` у Button/Badge)
+- `status` — семантика: `default` | `danger` | `success` | `info` | `warning`
+
+## Стили
+
+- **Все Tailwind/CSS-классы** — только в `*Styles.ts`
+- Статичные строки без `className` и без переиспользования — прямо в `fooClass()`; `const` только для композиции (inner → button) или `Record<...>`
+- В `.tsx` не оставлять сырые строки (`"font-medium"`, `"[&_svg]:icon-mid"`) — только импорт из Styles и `cn(..., className)` пропа пользователя
+- `*Styles.ts` **не импортирует** `*API` и `*Parts`
+- Все публичные `*Props`/`*ContextValue`/`Use*Props` хранить и экспортировать только из `*Types.ts`; в `*API`/`*Parts`/`*Context` и других файлах компонента допустимы только короткие HTMLAttributes<HTMLDivElement>
+
+## Граф зависимостей (без циклов)
+
+```
+Types → A11y → API → Styles → Context → Parts → Animations → use*RootState → Component.tsx
+```
+
+- **A11y** — pure-функции на готовых флагах (`hasTitle`), не ходит по `children`
+- **API** — walk по `displayName`, `resolve*Body`, `*SimpleContent`; может импортировать A11y
+- **Parts** — рендер DOM; импортирует Styles, Context, A11y; **не** импортирует API
+- **Context** — только Types; lift-контекст anchor — в Context, **не** в Animations
+- **use*RootState** — склеивает API + A11y + Styles
+
+## Публичный API
+
+- Compound: `Object.assign(Root, { Part })` в `index.ts`
+- Не дублировать runtime-экспорт подчастей, убирать если такое есть (`Badge.Anchor`, не отдельный `BadgeAnchor`)
+- Типы подчастей экспортировать можно
+- Сохранять simple и compound API без изменения поведения
+- Кастомизация стилей: `classNames` на `Root` / `List` (слоты) + `className` на `Item` (пер-пункт); `List` переопределяет `Root`
+
+## Общие утилиты (`core/utils/`)
+
+Если есть обзие паттерны в компонентах - они выносятся в общий слой.
+
+## При рефакторинге
+
+Мы добавляем classNames компоненту, чтобы можно было кастомизировать все его части
+
+симпл апи пользователь будет использовать тогда, когда ему просто нужен быстрый компонент, с уже готовой компоновкой, и при этом он может поправить стили через classNames. Compound будет использоватся когда пользователю нужно поменять компоновку (например переставить местами отдельные части компонента, обернуть их в другие блоки и тд.) и при этом он сможет как задавать стили напрямую каждой части компаунд апи, так и пользоватся classNames. 
+
+## После изменений
+
+`npm run build` + `npx react-doctor@latest --verbose --scope changed`

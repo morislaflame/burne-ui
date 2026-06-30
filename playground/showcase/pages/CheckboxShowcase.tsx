@@ -1,3 +1,5 @@
+import { CheckboxClassNamesFullDemo } from "../demos/checkbox/CheckboxClassNamesFull.demo";
+import checkboxClassNamesFullSource from "../demos/checkbox/CheckboxClassNamesFull.demo.tsx?raw";
 import { CheckboxConsentCardDemo } from "../demos/checkbox/CheckboxConsentCard.demo";
 import checkboxConsentCardSource from "../demos/checkbox/CheckboxConsentCard.demo.tsx?raw";
 import { CheckboxFeatureFlagsDemo } from "../demos/checkbox/CheckboxFeatureFlags.demo";
@@ -35,6 +37,17 @@ export function CheckboxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={CheckboxClassNamesFullDemo}
+          source={checkboxClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="Форма индикатора, compound API и variant-микс — demo-файлы в `demos/checkbox/`."
       >
@@ -52,6 +65,10 @@ export function CheckboxShowcase() {
           <ShowcaseDoc.ApiRow
             api="simple"
             description="label, checked, onChange, size, disabled на корне. SelectionIndicator внутри."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="root, control, controlTrack, indicator, content, label, labelText, hint, error, input."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Группы">

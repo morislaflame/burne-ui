@@ -1,5 +1,12 @@
 import { InputAuthPanelDemo } from "../demos/input/InputAuthPanel.demo";
 import inputAuthPanelSource from "../demos/input/InputAuthPanel.demo.tsx?raw";
+import {
+  InputClassNamesCompoundDemo,
+  InputClassNamesFullDemo,
+} from "../demos/input/InputClassNamesFull.demo";
+import inputClassNamesFullSource from "../demos/input/InputClassNamesFull.demo.tsx?raw";
+import { LabelClassNamesFullDemo } from "../demos/label/LabelClassNamesFull.demo";
+import labelClassNamesFullSource from "../demos/label/LabelClassNamesFull.demo.tsx?raw";
 import { InputCompoundDemo } from "../demos/input/InputCompound.demo";
 import inputCompoundSource from "../demos/input/InputCompound.demo.tsx?raw";
 import { InputGlossDemo } from "../demos/input/InputGloss.demo";
@@ -38,6 +45,15 @@ export function InputShowcase() {
 
       <ShowcaseSection title="Compound API" description="Input.Label, Input.Control, Input.Hint — явная разметка.">
         <ShowcaseDemoFromFile align="center" Demo={InputCompoundDemo} source={inputCompoundSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты root, shell, control, prefix, suffix, hint и error — через prop classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesFullDemo} source={inputClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesCompoundDemo} source={inputClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={LabelClassNamesFullDemo} source={labelClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка с motion.">

@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
-import type { AddToastOpts, PromiseToastOpts, ToastStatus } from "./Toast";
+import type { AddToastOpts, PromiseToastOpts, ToastStatus } from "./toastTypes";
+import { TOAST_DEFAULT_TIMEOUT_MS } from "./toastAPI";
 import { useToastContext } from "./toastContext";
 
 type ToastAPI = {
@@ -33,6 +34,7 @@ export function useToast(): { toast: ToastAPI } {
         timeout: 0,
         isLoading: true,
         placement: opts.placement,
+        classNames: opts.classNames,
       });
 
       void p.then(
@@ -45,7 +47,7 @@ export function useToast(): { toast: ToastAPI } {
             status: "success",
             title: successTitle,
             isLoading: false,
-            timeout: opts.timeout ?? 4000,
+            timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
           });
         },
         (err: unknown) => {
@@ -59,7 +61,7 @@ export function useToast(): { toast: ToastAPI } {
             status: "danger",
             title: errorTitle,
             isLoading: false,
-            timeout: opts.timeout ?? 4000,
+            timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
           });
         },
       );

@@ -1,0 +1,51 @@
+import { createContext, useContext, useMemo } from "react";
+
+import type {
+  DialogClassNames,
+  DialogClassNamesProviderProps,
+  DialogContextValue,
+} from "./dialogTypes";
+
+const DialogContext = createContext<DialogContextValue | null>(null);
+const DialogClassNamesContext = createContext<DialogClassNames>({});
+
+export function DialogProvider({
+  value,
+  children,
+}: {
+  value: DialogContextValue;
+  children: React.ReactNode;
+}) {
+  return (
+    <DialogContext.Provider value={value}>{children}</DialogContext.Provider>
+  );
+}
+
+export function DialogClassNamesProvider({
+  classNames,
+  children,
+}: DialogClassNamesProviderProps) {
+  const parent = useContext(DialogClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <DialogClassNamesContext.Provider value={merged}>
+      {children}
+    </DialogClassNamesContext.Provider>
+  );
+}
+
+export function useDialog(): DialogContextValue {
+  const ctx = useContext(DialogContext);
+  if (!ctx) {
+    throw new Error("Компоненты Dialog.* должны быть внутри <Dialog>.");
+  }
+  return ctx;
+}
+
+export function useDialogClassNames(): DialogClassNames {
+  return useContext(DialogClassNamesContext);
+}

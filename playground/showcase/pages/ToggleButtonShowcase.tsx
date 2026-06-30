@@ -1,3 +1,5 @@
+import { ToggleButtonClassNamesFullDemo } from "../demos/toggle-button/ToggleButtonClassNamesFull.demo";
+import toggleButtonClassNamesFullSource from "../demos/toggle-button/ToggleButtonClassNamesFull.demo.tsx?raw";
 import { ToggleButtonControlledDemo } from "../demos/toggle-button/ToggleButtonControlled.demo";
 import toggleButtonControlledSource from "../demos/toggle-button/ToggleButtonControlled.demo.tsx?raw";
 import { ToggleButtonGlossDemo } from "../demos/toggle-button/ToggleButtonGloss.demo";
@@ -46,6 +48,13 @@ export function ToggleButtonShowcase() {
 
       <ShowcaseSection title="Gloss" description="Стеклянная поверхность в нажатом и покойном состоянии.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGlossDemo} source={toggleButtonGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Полная кастомизация classNames"
+        description="Слоты root, fill, content, leftIcon, rightIcon, label через classNames."
+      >
+        <ShowcaseDemoFromFile Demo={ToggleButtonClassNamesFullDemo} source={toggleButtonClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

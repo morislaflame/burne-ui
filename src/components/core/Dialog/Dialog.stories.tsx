@@ -352,3 +352,50 @@ export const GlossLight: Story = {
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Dialog",
+      },
+    },
+  },
+  render: function DialogClassNamesStory() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Открыть диалог
+        </Button>
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          classNames={{
+            panel: "border-primary/40 bg-primary/5 shadow-token-lg",
+            title: "text-primary font-semibold",
+            description: "text-foreground/80",
+            footer: "border-t border-primary/20 pt-small",
+          }}
+        >
+          <Dialog.Header>
+            <Dialog.HeadingBlock>
+              <Dialog.Title>Настройки</Dialog.Title>
+              <Dialog.Description>Все слоты настроены через classNames.</Dialog.Description>
+            </Dialog.HeadingBlock>
+            <Dialog.Close />
+          </Dialog.Header>
+          <Dialog.Body>
+            <p className="text-sm text-muted">Контент модального окна.</p>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button type="button" size="small" onClick={() => setOpen(false)}>
+              Закрыть
+            </Button>
+          </Dialog.Footer>
+        </Dialog>
+      </>
+    );
+  },
+};

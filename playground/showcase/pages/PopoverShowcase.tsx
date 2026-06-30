@@ -1,3 +1,5 @@
+import { PopoverClassNamesFullDemo } from "../demos/popover/PopoverClassNamesFull.demo";
+import popoverClassNamesFullSource from "../demos/popover/PopoverClassNamesFull.demo.tsx?raw";
 import { PopoverFilterPanelDemo } from "../demos/popover/PopoverFilterPanel.demo";
 import popoverFilterPanelSource from "../demos/popover/PopoverFilterPanel.demo.tsx?raw";
 import { PopoverGlossDemo } from "../demos/popover/PopoverGloss.demo";
@@ -42,6 +44,13 @@ export function PopoverShowcase() {
 
       <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={PopoverSidesDemo} source={popoverSidesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты trigger, content, panel, glossPanel, label, hint и body — через prop classNames."
+      >
+        <ShowcaseDemoFromFile Demo={PopoverClassNamesFullDemo} source={popoverClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

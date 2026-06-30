@@ -778,3 +778,38 @@ export const GlossLight: Story = {
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Card",
+      },
+    },
+  },
+  render: () => (
+    <Card
+      variant="outline"
+      classNames={{
+        root: "rounded-large border-primary/40 bg-primary/5 shadow-token-md",
+        header: "bg-primary/5",
+        title: "text-primary font-semibold",
+        description: "text-foreground/80",
+        body: "text-small",
+        footer: "border-primary/20 bg-primary/5",
+      }}
+    >
+      <Card.Header>
+        <Card.Title>Профиль</Card.Title>
+        <Card.Description>Все слоты настроены через classNames.</Card.Description>
+      </Card.Header>
+      <Card.Body>
+        <Text variant="small">Контент карточки с кастомными отступами и цветами.</Text>
+      </Card.Body>
+      <Card.Footer>
+        <Button size="small">Сохранить</Button>
+      </Card.Footer>
+    </Card>
+  ),
+};

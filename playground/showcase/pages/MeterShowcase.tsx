@@ -1,3 +1,5 @@
+import { MeterClassNamesFullDemo } from "../demos/meter/MeterClassNamesFull.demo";
+import meterClassNamesFullSource from "../demos/meter/MeterClassNamesFull.demo.tsx?raw";
 import { MeterHorizontalDemo } from "../demos/meter/MeterHorizontal.demo";
 import meterHorizontalSource from "../demos/meter/MeterHorizontal.demo.tsx?raw";
 import { MeterSizesDemo } from "../demos/meter/MeterSizes.demo";
@@ -28,6 +30,13 @@ export function MeterShowcase() {
 
       <ShowcaseSection title="Вертикальный" description="orientation=&quot;vertical&quot;.">
         <ShowcaseDemoFromFile Demo={MeterVerticalDemo} source={meterVerticalSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты root, header, value, track, fill, hint и error — через prop classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={MeterClassNamesFullDemo} source={meterClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

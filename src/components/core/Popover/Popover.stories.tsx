@@ -9,7 +9,7 @@ import { Input } from "@/components/core/Input";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import { Popover } from ".";
+import { Popover } from "@/components/core/Popover";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -311,5 +311,45 @@ export const Accessibility: Story = {
         </Popover.Content>
       </Popover>
     </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Слоты trigger, content, panel, label, hint и body через prop classNames.",
+      },
+    },
+  },
+  render: () => (
+    <Popover
+      classNames={{
+        content: "ring-1 ring-primary/20",
+        panel: "border-primary/25",
+        label: "text-primary",
+        hint: "text-muted/80",
+        body: "text-foreground",
+      }}
+    >
+      <Popover.Trigger>
+        <Button variant="outline" type="button">
+          Настройки
+        </Button>
+      </Popover.Trigger>
+      <Popover.Content>
+        <Popover.Header>
+          <Popover.Label>Фильтры</Popover.Label>
+          <Popover.Hint>Изменения применяются сразу</Popover.Hint>
+        </Popover.Header>
+        <Popover.Body>
+          <Text as="p" variant="small">
+            Контент панели с кастомными слотами.
+          </Text>
+        </Popover.Body>
+      </Popover.Content>
+    </Popover>
   ),
 };

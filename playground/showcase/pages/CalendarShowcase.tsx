@@ -1,5 +1,7 @@
 import { CalendarBookingPanelDemo } from "../demos/calendar/CalendarBookingPanel.demo";
 import calendarBookingPanelSource from "../demos/calendar/CalendarBookingPanel.demo.tsx?raw";
+import { CalendarClassNamesFullDemo } from "../demos/calendar/CalendarClassNamesFull.demo";
+import calendarClassNamesFullSource from "../demos/calendar/CalendarClassNamesFull.demo.tsx?raw";
 import { CalendarCompoundLayoutDemo } from "../demos/calendar/CalendarCompoundLayout.demo";
 import calendarCompoundLayoutSource from "../demos/calendar/CalendarCompoundLayout.demo.tsx?raw";
 import { CalendarGlossDemo } from "../demos/calendar/CalendarGloss.demo";
@@ -33,6 +35,17 @@ export function CalendarShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на root."
+      >
+        <ShowcaseDemoFromFile
+          align="start"
+          Demo={CalendarClassNamesFullDemo}
+          source={calendarClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="Бронирование в Surface, compound layout и компактный виджет — `demos/calendar/`."
       >
@@ -53,6 +66,10 @@ export function CalendarShowcase() {
           <ShowcaseDoc.ApiRow
             api="compound"
             description="Calendar.Header, Calendar.Grid, Calendar.Footer для кастомной компоновки."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="root, header, grid, dayCell, cell, cellFill, footer и другие слоты на root."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>

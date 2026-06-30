@@ -27,6 +27,7 @@ export const Pagination = Object.assign(PaginationRoot, {
 
 export type {
   PaginationProps,
+  PaginationClassNames,
   PaginationSummaryProps,
   PaginationContentProps,
   PaginationItemProps,

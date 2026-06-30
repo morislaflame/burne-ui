@@ -370,3 +370,31 @@ export const GlossLight: Story = {
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Input",
+      },
+    },
+  },
+  render: () => (
+    <Input
+      className="max-w-sm"
+      classNames={{
+        root: "rounded-mid border border-primary/20 p-base",
+        shell: "ring-1 ring-primary/15",
+        control: "text-primary placeholder:text-primary/50",
+        hint: "text-foreground/70",
+        error: "font-medium",
+      }}
+      label="Email"
+      placeholder="you@example.com"
+      status="danger"
+      hint="Мы не передаём адрес третьим лицам."
+      error="Введите корректный email."
+    />
+  ),
+};

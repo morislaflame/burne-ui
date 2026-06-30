@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import { FieldError, type FieldErrorProps } from "@/components/core/Field";
-import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field/FieldSet";
+import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import {
   OptionGroupFieldset,
@@ -23,7 +23,7 @@ import {
   type OptionGroupListProps,
   type OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
-import { FieldLabelContext } from "@/components/core/Label/fieldLabelContext";
+import { FieldLabelContext } from "@/components/core/Label";
 import {
   CheckboxGroupContext,
   useCheckboxGroupContext,

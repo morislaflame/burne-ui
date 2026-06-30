@@ -9,6 +9,7 @@ import {
   ListBoxRoot,
   ListBoxSection,
   ListBoxSeparator,
+  useListBox,
 } from "./ListBox";
 
 export const ListBox = Object.assign(ListBoxRoot, {
@@ -23,7 +24,7 @@ export const ListBox = Object.assign(ListBoxRoot, {
   ItemIndicator: ListBoxItemIndicator,
 });
 
-export { useListBox } from "./ListBox";
+export { useListBox };
 
 export type {
   ListBoxRootProps,
@@ -38,4 +39,5 @@ export type {
   ListBoxItemIndicatorProps,
   ListBoxSize,
   ListBoxVariant,
+  ListBoxClassNames,
 } from "./ListBox";

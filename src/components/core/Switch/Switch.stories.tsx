@@ -298,3 +298,33 @@ export const Accessibility: Story = {
     </div>
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Switch (compound API)",
+      },
+    },
+  },
+  render: () => (
+    <Switch
+      defaultChecked
+      gloss
+      classNames={{
+        root: "rounded-mid border border-primary/25 p-base",
+        track: "ring-1 ring-primary/20",
+        fill: "bg-primary/90",
+        labelText: "text-primary font-semibold",
+        hint: "text-muted/80",
+      }}
+    >
+      <Switch.Control />
+      <Switch.Content>
+        <Switch.Label>Тёмная тема</Switch.Label>
+        <Switch.Hint>Все слоты настроены через classNames.</Switch.Hint>
+      </Switch.Content>
+    </Switch>
+  ),
+};

@@ -246,3 +246,35 @@ export const OnLightTheme: Story = {
     </div>
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Checkbox (compound API)",
+      },
+    },
+  },
+  render: () => (
+    <Checkbox
+      defaultChecked
+      variant="outline"
+      classNames={{
+        root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-md",
+        control: "ring-primary/30",
+        controlTrack: "border-primary/50",
+        labelText: "text-primary font-semibold",
+        hint: "text-foreground/80",
+      }}
+    >
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Checkbox.Label>Согласие на рассылку</Checkbox.Label>
+        <Checkbox.Hint>Все слоты настроены через classNames.</Checkbox.Hint>
+      </Checkbox.Content>
+    </Checkbox>
+  ),
+};

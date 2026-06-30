@@ -1,222 +1,32 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  Children,
-  createContext,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ImgHTMLAttributes,
-  type HTMLAttributes,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { forwardRef } from "react";
 
-import {
-  Tooltip,
-  type TooltipSide,
-  type TooltipSize,
-  type TooltipVariant,
-} from "@/components/core/Tooltip";
-import { getMotionConfig, motionContentFade, motionInteractive } from "@/components/core/utils/motionConfig";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { Text, type TextVariant } from "@/components/core/Text";
-import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
-import { cn } from "@/utils/cn";
+import { Tooltip } from "@/components/core/Tooltip";
 
 import "../utils/glossPanel.css";
 
-export type AvatarSize = "small" | "base" | "mid" | "large";
+import { AvatarClassNamesProvider, AvatarContext } from "./avatarContext";
+import {
+  AvatarDefaultShell,
+  AvatarGlossShell,
+  AvatarSimpleContent,
+} from "./avatarParts";
+import type { AvatarProps } from "./avatarTypes";
+import { useAvatarRootState } from "./useAvatarRootState";
 
-/** Поверхность аватара. */
-export type AvatarVariant = "default" | "gloss";
-
-export type AvatarProps = Omit<HTMLAttributes<HTMLDivElement>, "aria-label"> & {
-  variant?: AvatarVariant;
-  size?: AvatarSize;
-  label?: string;
-  src?: string;
-  alt?: string;
-  loading?: ImgHTMLAttributes<HTMLImageElement>["loading"];
-  nickname?: string;
-  tooltipSize?: TooltipSize;
-  tooltipVariant?: TooltipVariant;
-  tooltipSide?: TooltipSide;
-};
-
-export type AvatarImageProps = ImgHTMLAttributes<HTMLImageElement>;
-
-export type AvatarFallbackProps = HTMLAttributes<HTMLSpanElement>;
-
-export type AvatarGroupProps = HTMLAttributes<HTMLDivElement>;
-
-type ImageStatus = "idle" | "loaded" | "error";
-
-type AvatarContextValue = {
-  size: AvatarSize;
-  label: string | undefined;
-  imageStatus: ImageStatus;
-  onImageLoad: () => void;
-  onImageError: () => void;
-};
-
-const AvatarContext = createContext<AvatarContextValue | null>(null);
-
-function useAvatarContext(component: string): AvatarContextValue {
-  const ctx = useContext(AvatarContext);
-  if (!ctx) {
-    throw new Error(`${component} должен использоваться внутри <Avatar>`);
-  }
-  return ctx;
-}
-
-const SIZE_CLASS: Record<AvatarSize, { root: string }> = {
-  small: { root: "avatar-size-small" },
-  base: { root: "avatar-size-base" },
-  mid: { root: "avatar-size-mid" },
-  large: { root: "avatar-size-large" },
-};
-
-const AVATAR_FALLBACK_TEXT: Record<
+export type {
+  AvatarClassNames,
+  AvatarFallbackProps,
+  AvatarGroupProps,
+  AvatarImageProps,
+  AvatarProps,
   AvatarSize,
-  { variant: TextVariant; className: string }
-> = {
-  small: {
-    variant: "small",
-    className: "font-semibold uppercase",
-  },
-  base: {
-    variant: "base",
-    className: "font-semibold uppercase",
-  },
-  mid: {
-    variant: "mid",
-    className: "font-semibold uppercase",
-  },
-  large: {
-    variant: "header-2",
-    className: "font-semibold uppercase",
-  },
-};
-
-function letterFromLabel(label: string | undefined): string {
-  const t = label?.trim();
-  if (!t) return "?";
-  const first = [...t][0];
-  return first ? first.toLocaleUpperCase() : "?";
-}
-
-export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
-  function AvatarImage({ className = "", onLoad, onError, ...rest }, ref) {
-    const { imageStatus, onImageLoad, onImageError } = useAvatarContext("Avatar.Image");
-    const imgRef = useRef<HTMLImageElement | null>(null);
-
-    const setImgRef = useCallback(
-      (node: HTMLImageElement | null) => {
-        imgRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
-    );
-
-    const mergedOnLoad = useCallback(
-      (e: React.SyntheticEvent<HTMLImageElement>) => {
-        onLoad?.(e);
-        if (!e.defaultPrevented) onImageLoad();
-      },
-      [onLoad, onImageLoad],
-    );
-
-    const mergedOnError = useCallback(
-      (e: React.SyntheticEvent<HTMLImageElement>) => {
-        onError?.(e);
-        if (!e.defaultPrevented) onImageError();
-      },
-      [onError, onImageError],
-    );
-
-    const visible = imageStatus === "loaded";
-
-    useLayoutEffect(() => {
-      const el = imgRef.current;
-      if (!el) return;
-
-      const reduceMotion =
-        prefersReducedInteractiveHoverLift() || !getMotionConfig().enableContentFade;
-
-      killMotion(el);
-
-      if (reduceMotion) {
-        gsap.set(el, { autoAlpha: visible ? 1 : 0 });
-        return;
-      }
-
-      gsap.to(el, {
-        autoAlpha: visible ? 1 : 0,
-        ...motionContentFade(),
-        overwrite: "auto",
-      });
-    }, [visible]);
-
-    return (
-      <img
-        ref={setImgRef}
-        className={cn(
-          "absolute inset-0 z-[1] size-full object-cover",
-          !visible && "pointer-events-none",
-          className,
-        )}
-        alt={rest.alt ?? ""}
-        onLoad={mergedOnLoad}
-        onError={mergedOnError}
-        {...rest}
-      />
-    );
-  },
-);
-
-export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
-  function AvatarFallback({ className = "", children, ...rest }, ref) {
-    const { label, imageStatus, size } = useAvatarContext("Avatar.Fallback");
-
-    const show = imageStatus !== "loaded";
-
-    const hasCustomChild =
-      children !== undefined && children !== null && children !== false && children !== "";
-
-    const text = hasCustomChild ? children : letterFromLabel(label);
-
-    const fb = AVATAR_FALLBACK_TEXT[size];
-
-    return (
-      <span
-        ref={ref}
-        className={cn(
-          "absolute inset-0 z-0 flex items-center justify-center bg-primary-tint text-primary",
-          show ? "opacity-100" : "pointer-events-none opacity-0",
-          className,
-        )}
-        aria-hidden
-        {...rest}
-      >
-        <Text as="span" variant={fb.variant} inheritColor className={fb.className}>
-          {text}
-        </Text>
-      </span>
-    );
-  },
-);
+  AvatarVariant,
+} from "./avatarTypes";
 
 export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
   {
-    variant = "default",
-    size = "base",
+    variant: variantProp,
+    size: sizeProp,
     label,
     src,
     alt = "",
@@ -225,6 +35,7 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     tooltipSize = "base",
     tooltipVariant = "default",
     tooltipSide = "top",
+    classNames,
     className = "",
     children,
     role,
@@ -232,172 +43,63 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
   },
   ref,
 ) {
-  const [imageStatus, setImageStatus] = useState<ImageStatus>("idle");
-
-  const onImageLoad = useCallback(() => {
-    setImageStatus("loaded");
-  }, []);
-
-  const onImageError = useCallback(() => {
-    setImageStatus("error");
-  }, []);
-
-  const ctx = useMemo<AvatarContextValue>(
-    () => ({
-      size,
-      label,
-      imageStatus,
-      onImageLoad,
-      onImageError,
-    }),
-    [size, label, imageStatus, onImageLoad, onImageError],
-  );
-
-  const isCompound = hasCompoundChildren(children);
-  const hasLabel = Boolean(label?.trim());
-  const nick = nickname?.trim();
+  const {
+    size,
+    ctx,
+    isCompound,
+    isGloss,
+    rootRole,
+    ariaLabel,
+    tooltip,
+  } = useAvatarRootState({
+    variant: variantProp,
+    size: sizeProp,
+    label,
+    nickname,
+    tooltipSize,
+    tooltipVariant,
+    tooltipSide,
+    children,
+    role,
+  });
 
   const avatarContent = isCompound ? (
     children
   ) : (
-    <>
-      {src ? (
-        <AvatarImage src={src} alt={alt} loading={loading} />
-      ) : null}
-      <AvatarFallback />
-    </>
+    <AvatarSimpleContent src={src} alt={alt} loading={loading} />
   );
 
-  const isGloss = variant === "gloss";
-
-  const avatarInner = (
-    <div
-      ref={isGloss ? undefined : ref}
-      role={role ?? "group"}
-      className={cn(
-        "relative inline-flex shrink-0 select-none overflow-hidden text-left",
-        isGloss
-          ? cn("gloss-panel size-full rounded-full border-token", SIZE_CLASS[size].root)
-          : cn(
-              "rounded-full bg-surface border-token",
-              SIZE_CLASS[size].root,
-            ),
-        !isGloss && className,
-      )}
-      aria-label={hasLabel ? label!.trim() : undefined}
-      {...(isGloss ? {} : rest)}
-    >
-      {avatarContent}
-    </div>
-  );
+  const shellProps = {
+    size,
+    className,
+    role: rootRole,
+    "aria-label": ariaLabel,
+    children: avatarContent,
+    ...rest,
+  };
 
   const shell = isGloss ? (
-    <div
-      ref={ref}
-      className={cn("gloss-wrap inline-flex shrink-0 rounded-full", SIZE_CLASS[size].root, className)}
-      {...rest}
-    >
-      <div className="gloss-shadow rounded-full" aria-hidden />
-      {avatarInner}
-    </div>
+    <AvatarGlossShell ref={ref} {...shellProps} />
   ) : (
-    avatarInner
+    <AvatarDefaultShell ref={ref} {...shellProps} />
+  );
+
+  const wrapped = tooltip ? (
+    <Tooltip size={tooltip.size} variant={tooltip.variant} side={tooltip.side}>
+      <Tooltip.Trigger>{shell}</Tooltip.Trigger>
+      <Tooltip.Content>{tooltip.content}</Tooltip.Content>
+    </Tooltip>
+  ) : (
+    shell
   );
 
   return (
     <AvatarContext.Provider value={ctx}>
-      {nick ? (
-        <Tooltip size={tooltipSize} variant={tooltipVariant} side={tooltipSide}>
-          <Tooltip.Trigger>{shell}</Tooltip.Trigger>
-          <Tooltip.Content>{nick}</Tooltip.Content>
-        </Tooltip>
-      ) : (
-        shell
-      )}
+      <AvatarClassNamesProvider classNames={classNames}>
+        {wrapped}
+      </AvatarClassNamesProvider>
     </AvatarContext.Provider>
   );
 });
 
-const AVATAR_GROUP_HOVER_TRANSLATE_Y = -10;
-const AVATAR_GROUP_HOVER_SCALE = 1.08;
-
-export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
-  function AvatarGroup({ className = "", children, ...rest }, ref) {
-    const mapped = Children.toArray(children).filter(isValidElement) as ReactElement[];
-
-    return (
-      <div
-        ref={ref}
-        role="group"
-        className={cn("flex flex-row flex-nowrap items-center text-left", className)}
-        {...rest}
-      >
-        {mapped.map((child, index) => (
-          <AvatarGroupItem key={child.key ?? index} stackIndex={index}>
-            {child}
-          </AvatarGroupItem>
-        ))}
-      </div>
-    );
-  },
-);
-
-function AvatarGroupItem({
-  stackIndex,
-  children,
-}: {
-  stackIndex: number;
-  children: ReactNode;
-}) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const reduced = prefersReducedInteractiveHoverLift();
-
-  const applyRest = useCallback(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    killMotion(el);
-    if (reduced) {
-      el.style.transform = "";
-      return;
-    }
-    gsap.to(el, { y: 0, scale: 1, ...motionInteractive(), overwrite: "auto" });
-  }, [reduced]);
-
-  const applyLift = useCallback(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    killMotion(el);
-    if (reduced) {
-      el.style.transform = `translateY(${AVATAR_GROUP_HOVER_TRANSLATE_Y}px) scale(${AVATAR_GROUP_HOVER_SCALE})`;
-      return;
-    }
-    gsap.to(el, {
-      y: AVATAR_GROUP_HOVER_TRANSLATE_Y,
-      scale: AVATAR_GROUP_HOVER_SCALE,
-      ...motionInteractive(),
-      overwrite: "auto",
-    });
-  }, [reduced]);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    return () => {
-      if (el) killMotion(el);
-    };
-  }, []);
-
-  return (
-    <div
-      ref={wrapRef}
-      style={{ transformOrigin: "center bottom" }}
-      className={cn(
-        "relative inline-flex will-change-transform",
-        stackIndex > 0 && "-ml-plus",
-      )}
-      onPointerEnter={applyLift}
-      onPointerLeave={applyRest}
-    >
-      {children}
-    </div>
-  );
-}
+AvatarRoot.displayName = "AvatarRoot";

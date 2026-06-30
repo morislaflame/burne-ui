@@ -21,7 +21,12 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { resolveAlertStatus, type AlertStatus } from "@/components/core/Alert/alertUtils";
+import { alertSurfaceClass } from "@/components/core/Alert/alertStyles";
+import {
+  resolveAlertStatus,
+  resolveAlertVariant,
+} from "@/components/core/Alert/alertAPI";
+import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import {
   messageBannerCloseCellClass,
   messageBannerDescriptionCellClass,
@@ -116,9 +121,6 @@ function injectFooterButtonSize(
   });
 }
 
-const ALERT_DIALOG_SHELL_FILLED =
-  "bg-surface text-foreground border-token shadow-token-lg";
-
 function AlertDialogContent({
   className = "",
   ...rest
@@ -129,22 +131,17 @@ function AlertDialogContent({
 
 export { AlertDialogContent };
 
-function alertDialogPanelClass(tone: AlertStatus): string {
-  if (tone === "outline") {
-    return "bg-transparent border-token text-foreground shadow-token-lg";
-  }
-  if (tone === "secondary") {
-    return "bg-secondary border-token text-secondary-foreground shadow-token-lg";
-  }
-  return ALERT_DIALOG_SHELL_FILLED;
-}
-
 type AlertDialogHeaderContextValue = {
-  tone: AlertStatus;
+  variant: AlertVariant;
+  status: AlertStatus;
   sizePreset: AlertDialogSizePreset;
   gridSlots: MessageBannerGridSlots;
   headerIcon?: ReactNode | null;
 };
+
+function alertDialogPanelClass(variant: AlertVariant, status: AlertStatus): string {
+  return cn(alertSurfaceClass(variant, status), "shadow-token-lg");
+}
 
 const AlertDialogHeaderContext = createContext<AlertDialogHeaderContextValue | null>(
   null,
@@ -197,18 +194,18 @@ export function AlertDialogIndicator({
   children,
   ...rest
 }: AlertDialogIndicatorProps) {
-  const { tone, sizePreset, gridSlots, headerIcon } =
+  const { variant, status, sizePreset, gridSlots, headerIcon } =
     useAlertDialogHeaderContext("AlertDialog.Indicator");
 
   if (children === null) return null;
 
-  const DefaultIcon = alertDialogDefaultHeaderIcon(tone);
+  const DefaultIcon = alertDialogDefaultHeaderIcon(variant, status);
   const inner =
     children !== undefined
       ? children
       : headerIcon !== undefined
         ? headerIcon
-        : alertDialogShowsDefaultHeaderIcon(tone) && DefaultIcon !== null
+        : alertDialogShowsDefaultHeaderIcon(variant, status) && DefaultIcon !== null
           ? <DefaultIcon aria-hidden className={sizePreset.iconClass} />
           : null;
 
@@ -218,7 +215,7 @@ export function AlertDialogIndicator({
     <span
       className={cn(
         "shrink-0 [&_svg]:block",
-        alertDialogHeaderIconWrapperClass(tone),
+        alertDialogHeaderIconWrapperClass(status),
         messageBannerIndicatorCellClass(gridSlots),
         className,
       )}
@@ -238,18 +235,18 @@ export function AlertDialogHeader({
   children,
   ...rest
 }: AlertDialogHeaderProps) {
-  const { tone, sizePreset } = useAlertDialog();
+  const { variant, status, sizePreset } = useAlertDialog();
   const compoundHasIndicator = alertDialogHasIndicator(children);
   const compoundHasClose = alertDialogHasClose(children);
 
   const gridSlots = useMemo(
-    () => resolveAlertDialogHeaderGridSlots(tone, icon, showClose, children),
-    [children, icon, showClose, tone],
+    () => resolveAlertDialogHeaderGridSlots(variant, status, icon, showClose, children),
+    [children, icon, showClose, status, variant],
   );
 
   const headerCtx = useMemo<AlertDialogHeaderContextValue>(
-    () => ({ tone, sizePreset, gridSlots, headerIcon: icon }),
-    [gridSlots, icon, sizePreset, tone],
+    () => ({ variant, status, sizePreset, gridSlots, headerIcon: icon }),
+    [gridSlots, icon, sizePreset, status, variant],
   );
 
   const showAutoIndicator = gridSlots.hasIndicator && !compoundHasIndicator;
@@ -393,8 +390,9 @@ export const AlertDialogRoot = function AlertDialog({
   size = "base",
   themeAnchor,
 }: AlertDialogProps) {
-  const tone = resolveAlertStatus(status);
-  const isGloss = variant === "gloss";
+  const resolvedVariant = resolveAlertVariant(variant);
+  const resolvedStatus = resolveAlertStatus(status);
+  const isGloss = resolvedVariant === "gloss";
   const sizePreset = ALERT_DIALOG_SIZE[size];
 
   const titleId = useId();
@@ -486,7 +484,8 @@ export const AlertDialogRoot = function AlertDialog({
     hasDescription,
     setHasDescription: setHasDescriptionStable,
     onOpenChange,
-    tone,
+    variant: resolvedVariant,
+    status: resolvedStatus,
     size,
     sizePreset,
     footerButtonSize: footerButtonSizeForAlertDialog(size),
@@ -529,7 +528,7 @@ export const AlertDialogRoot = function AlertDialog({
               cn(
                 "flex min-h-0 flex-col overflow-hidden rounded-mid text-left",
                 sizePreset.maxHeight,
-                alertDialogPanelClass(tone),
+                alertDialogPanelClass(resolvedVariant, resolvedStatus),
               ),
             className,
           )}

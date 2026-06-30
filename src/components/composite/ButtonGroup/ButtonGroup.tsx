@@ -13,7 +13,7 @@ import {
 import { Button, type ButtonSize, type ButtonVariant } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { Dropdown } from "@/components/core/Dropdown";
-import { InputControl } from "@/components/core/Input/Input";
+import { InputControl } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
 import { Text, type TextVariant } from "@/components/core/Text";
 import "@/components/core/utils/glossInteractive.css";

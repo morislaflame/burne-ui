@@ -1,17 +1,19 @@
-import { AvatarFallback, AvatarImage, AvatarRoot } from "./Avatar";
+import { AvatarRoot } from "./Avatar";
+import { AvatarFallback, AvatarGroup, AvatarImage } from "./avatarParts";
 
 export const Avatar = Object.assign(AvatarRoot, {
   Image: AvatarImage,
   Fallback: AvatarFallback,
 });
 
-export { AvatarGroup } from "./Avatar";
+export { AvatarGroup };
 
 export type {
   AvatarProps,
+  AvatarClassNames,
   AvatarVariant,
   AvatarSize,
   AvatarImageProps,
   AvatarFallbackProps,
   AvatarGroupProps,
-} from "./Avatar";
+} from "./avatarTypes";

@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
 
-import { CloseButton } from "./CloseButton";
+import { CloseButton } from "./index";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -156,4 +156,25 @@ export const WithRipple: Story = {
 export const OnLightTheme: Story = {
   name: "Светлая тема (data-theme)",
   decorators: [...lightThemeDecorator],
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для CloseButton",
+      },
+    },
+  },
+  render: () => (
+    <CloseButton
+      variant="outline"
+      classNames={{
+        root: "border-primary/50 bg-primary/5 shadow-token-md hover:bg-primary/10",
+        icon: "text-primary",
+      }}
+      aria-label="Закрыть с кастомными слотами"
+    />
+  ),
 };

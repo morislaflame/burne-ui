@@ -12,7 +12,7 @@ import {
 import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
 
-import type { ComboBoxOption } from "./comboBoxContext";
+import type { ComboBoxOption } from "./comboBoxTypes";
 import { ComboBox } from ".";
 
 const darkThemeDecorator = [
@@ -313,5 +313,28 @@ export const Accessibility: Story = {
         <ComboBox.Error>Выберите язык из списка.</ComboBox.Error>
       </ComboBox>
     </div>
+  ),
+};
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для ComboBox",
+      },
+    },
+  },
+  render: () => (
+    <ControlledComboBox
+      label="Язык интерфейса"
+      hint="Слоты настроены через classNames"
+      classNames={{
+        inputGroup: "border-primary/40 bg-primary/5",
+        input: "text-primary placeholder:text-primary/50",
+        trigger: "text-primary hover:text-primary",
+        popoverBody: "bg-primary/5",
+      }}
+    />
   ),
 };

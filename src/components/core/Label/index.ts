@@ -1,7 +1,19 @@
-import { Label, LabelSlot, type LabelComponent } from "./Label";
+import { Label, LabelRoot, LabelSlot } from "./Label";
+import type { LabelProps } from "./labelTypes";
+
+export type LabelComponent = ((props: LabelProps) => ReturnType<typeof Label>) & {
+  Slot: typeof LabelSlot;
+};
 
 const LabelCompound = Object.assign(Label, { Slot: LabelSlot }) as LabelComponent;
 
-export { LabelCompound as Label };
-export type { LabelProps, LabelComponent } from "./Label";
-export { type FieldLabelContextValue } from "./fieldLabelContext";
+export { LabelCompound as Label, LabelRoot, LabelSlot };
+
+export type { LabelProps, LabelClassNames, FieldLabelContextValue } from "./labelTypes";
+
+export {
+  FieldLabelContext,
+  useOptionalFieldLabelContext,
+} from "./labelContext";
+
+

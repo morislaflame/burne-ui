@@ -1,24 +1,24 @@
-import type { AlertStatus } from "@/components/core/Alert/alertUtils";
+import type { AlertStatus } from "@/components/core/Alert/alertTypes";
 import type { ButtonStatus, ButtonVariant } from "@/components/core/Button";
 
 /** Primary action button in the modal footer in the window tone. */
 export function primaryButtonVariantForAlertTone(
-  tone: AlertStatus,
+  status: AlertStatus,
 ): ButtonVariant {
-  void tone;
+  void status;
   return "primary";
 }
 
 /** Status of the primary action button in the modal footer in the window tone. */
 export function primaryButtonStatusForAlertTone(
-  tone: AlertStatus,
+  status: AlertStatus,
 ): ButtonStatus {
-  switch (tone) {
+  switch (status) {
     case "danger":
     case "success":
     case "info":
     case "warning":
-      return tone;
+      return status;
     default:
       return "default";
   }

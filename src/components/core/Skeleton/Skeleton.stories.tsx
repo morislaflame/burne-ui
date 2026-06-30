@@ -178,3 +178,41 @@ export const CustomSizes: Story = {
     </div>
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Skeleton, Skeleton.Text и Skeleton.Circle",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex w-full max-w-sm flex-col gap-mid">
+      <Skeleton
+        variant="wave"
+        className="h-4 w-full"
+        classNames={{
+          root: "rounded-full bg-info/15",
+          wave: "from-info/30",
+        }}
+      />
+      <Skeleton.Text
+        variant="shimmer"
+        lines={3}
+        classNames={{
+          root: "gap-xsmall",
+          line: "rounded-full bg-warning/15",
+        }}
+      />
+      <Skeleton.Circle
+        variant="pulse"
+        size="h-12 w-12"
+        classNames={{
+          root: "bg-success/15 ring-2 ring-success/20",
+        }}
+      />
+    </div>
+  ),
+};

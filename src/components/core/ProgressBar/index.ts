@@ -1,17 +1,13 @@
-import {
-  ProgressBarTrack,
-  type ProgressBarTrackProps,
-  type ProgressBarSize,
-  type ProgressBarOrientation,
-} from "./ProgressBar";
 import { Label } from "@/components/core/Label";
+
 import {
   ProgressBarError,
   ProgressBarHeader,
   ProgressBarHint,
   ProgressBarRoot,
+  ProgressBarTrack,
   ProgressBarValue,
-} from "./ProgressBarField";
+} from "./ProgressBar";
 
 export const ProgressBar = Object.assign(ProgressBarRoot, {
   Header: ProgressBarHeader,
@@ -22,11 +18,27 @@ export const ProgressBar = Object.assign(ProgressBarRoot, {
   Track: ProgressBarTrack,
 });
 
-export type { ProgressBarTrackProps, ProgressBarSize, ProgressBarOrientation };
+export type {
+  ProgressBarTrackProps,
+  ProgressBarSize,
+  ProgressBarOrientation,
+  ProgressBarClassNames,
+} from "./ProgressBar";
+
 export type {
   ProgressBarRootProps,
   ProgressBarHeaderProps,
   ProgressBarValueProps,
   ProgressBarHintProps,
   ProgressBarErrorProps,
-} from "./ProgressBarField";
+} from "./ProgressBar";
+
+export {
+  useProgressBarFieldContext,
+  useOptionalProgressBarFieldContext,
+} from "./ProgressBar";
+
+export type {
+  ProgressBarDisplayState,
+  ProgressBarFieldContextValue,
+} from "./progressBarTypes";

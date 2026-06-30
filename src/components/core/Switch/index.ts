@@ -1,29 +1,15 @@
 import {
-  SwitchControl,
-  SwitchFill,
-  SwitchIcon,
-  SwitchThumb,
-  SwitchTrack,
-  type SwitchControlProps,
-  type SwitchFillProps,
-  type SwitchIconProps,
-  type SwitchIconWhen,
-  type SwitchLabelPosition,
-  type SwitchSize,
-  type SwitchThumbProps,
-  type SwitchTrackProps,
-} from "./Switch";
-import {
   SwitchContent,
+  SwitchControl,
   SwitchError,
+  SwitchFill,
   SwitchHint,
+  SwitchIcon,
   SwitchLabel,
   SwitchRoot,
-  type SwitchContentProps,
-  type SwitchErrorProps,
-  type SwitchHintProps,
-  type SwitchLabelProps,
-} from "./SwitchField";
+  SwitchThumb,
+  SwitchTrack,
+} from "./Switch";
 
 export const Switch = Object.assign(SwitchRoot, {
   Control: SwitchControl,
@@ -50,5 +36,7 @@ export type {
   SwitchLabelProps,
   SwitchHintProps,
   SwitchErrorProps,
-};
-export type { SwitchRootProps, SwitchSimpleProps } from "./SwitchField";
+  SwitchRootProps,
+  SwitchSimpleProps,
+  SwitchClassNames,
+} from "./switchTypes";

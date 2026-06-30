@@ -1,3 +1,5 @@
+import { TimeFieldClassNamesCompoundDemo, TimeFieldClassNamesFullDemo } from "../demos/time-field/TimeFieldClassNamesFull.demo";
+import timeFieldClassNamesFullSource from "../demos/time-field/TimeFieldClassNamesFull.demo.tsx?raw";
 import { TimeFieldCompoundSegmentedDemo } from "../demos/time-field/TimeFieldCompoundSegmented.demo";
 import timeFieldCompoundSegmentedSource from "../demos/time-field/TimeFieldCompoundSegmented.demo.tsx?raw";
 import { TimeFieldGlossDemo } from "../demos/time-field/TimeFieldGloss.demo";
@@ -32,6 +34,14 @@ export function TimeFieldShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldGlossDemo} source={timeFieldGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Полная кастомизация classNames"
+        description="Слоты root, shell, prefix, suffix, segments, segment, hint, error через classNames на корне."
+      >
+        <ShowcaseDemoFromFile align="center" Demo={TimeFieldClassNamesFullDemo} source={timeFieldClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="center" Demo={TimeFieldClassNamesCompoundDemo} source={timeFieldClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Compound и Segmented" description="TimeField.Label/Control/Hint и variant segmented.">

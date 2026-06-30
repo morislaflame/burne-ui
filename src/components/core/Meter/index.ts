@@ -1,6 +1,12 @@
-import { MeterTrack, type MeterTrackProps, type MeterSize, type MeterOrientation } from "./Meter";
 import { Label } from "@/components/core/Label";
-import { MeterError, MeterHeader, MeterHint, MeterRoot, MeterValue } from "./MeterField";
+
+import { MeterRoot, MeterTrack } from "./Meter";
+import {
+  MeterError,
+  MeterHeader,
+  MeterHint,
+  MeterValue,
+} from "./meterParts";
 
 export const Meter = Object.assign(MeterRoot, {
   Header: MeterHeader,
@@ -11,5 +17,24 @@ export const Meter = Object.assign(MeterRoot, {
   Track: MeterTrack,
 });
 
-export type { MeterTrackProps, MeterSize, MeterOrientation };
-export type { MeterRootProps, MeterHeaderProps, MeterValueProps, MeterHintProps, MeterErrorProps } from "./MeterField";
+export type {
+  MeterTrackProps,
+  MeterSize,
+  MeterOrientation,
+  MeterClassNames,
+} from "./Meter";
+
+export type {
+  MeterRootProps,
+  MeterHeaderProps,
+  MeterValueProps,
+  MeterHintProps,
+  MeterErrorProps,
+} from "./Meter";
+
+export {
+  useMeterFieldContext,
+  useOptionalMeterFieldContext,
+} from "./Meter";
+
+export type { MeterDisplayState, MeterFieldContextValue } from "./meterTypes";

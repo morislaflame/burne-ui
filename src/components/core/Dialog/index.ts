@@ -23,12 +23,16 @@ export const Dialog = Object.assign(DialogRoot, {
 
 export type {
   DialogProps,
+  DialogVariant,
   DialogHeaderProps,
   DialogTitleProps,
   DialogDescriptionProps,
   DialogBodyProps,
   DialogFooterProps,
   DialogCloseProps,
-} from "./Dialog";
+  DialogContentProps,
+  DialogHeadingBlockProps,
+  DialogClassNames,
+} from "./dialogTypes";
 
 export { DialogContent };

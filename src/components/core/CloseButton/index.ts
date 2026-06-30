@@ -1,6 +1,8 @@
-export {
-  CloseButton,
-  type CloseButtonProps,
-  type CloseButtonSize,
-  type CloseButtonVariant,
-} from "./CloseButton";
+export { CloseButton } from "./CloseButton";
+
+export type {
+  CloseButtonProps,
+  CloseButtonSize,
+  CloseButtonVariant,
+  CloseButtonClassNames,
+} from "./closeButtonTypes";

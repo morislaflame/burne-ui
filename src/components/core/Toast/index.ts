@@ -9,6 +9,7 @@ import {
   ToastRoot,
   ToastTitle,
 } from "./Toast";
+
 export const Toast = Object.assign(ToastRoot, {
   Provider: ToastProviderRoot,
   Message: ToastMessage,
@@ -20,10 +21,11 @@ export const Toast = Object.assign(ToastRoot, {
   CloseButton: ToastCloseButton,
 });
 
-export { ToastContext, useToastContext } from "./toastContext";
+export { ToastContext, useToastContext, useToastClassNames } from "./toastContext";
 export { useToast } from "./useToast";
 
 export type {
+  ToastClassNames,
   ToastStatus,
   ToastPlacement,
   ToastProviderProps,
@@ -38,5 +40,17 @@ export type {
   AddToastOpts,
   PromiseToastOpts,
   ToastVariant,
+  ToastContextValue,
+} from "./toastTypes";
+
+export {
+  ToastActionButton,
+  ToastCloseButton,
+  ToastContent,
+  ToastDescription,
+  ToastIndicator,
+  ToastMessage,
+  ToastProviderRoot,
+  ToastRoot,
+  ToastTitle,
 } from "./Toast";
-export type { ToastContextValue } from "./toastContext";

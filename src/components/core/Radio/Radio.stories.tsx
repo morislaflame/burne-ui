@@ -189,3 +189,37 @@ export const Accessibility: Story = {
     </div>
   ),
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "кастомизация classNames для Radio (compound API)",
+      },
+    },
+  },
+  render: () => (
+    <Radio
+      name="classnames"
+      value="custom"
+      defaultChecked
+      variant="gloss"
+      classNames={{
+        root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-md",
+        control: "ring-primary/30",
+        controlTrack: "border-primary/50",
+        labelText: "text-primary font-semibold",
+        hint: "text-foreground/80",
+      }}
+    >
+      <Radio.Control>
+        <Radio.Indicator />
+      </Radio.Control>
+      <Radio.Content>
+        <Radio.Label>Курьер</Radio.Label>
+        <Radio.Hint>Все слоты настроены через classNames.</Radio.Hint>
+      </Radio.Content>
+    </Radio>
+  ),
+};

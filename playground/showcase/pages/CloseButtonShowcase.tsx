@@ -1,3 +1,5 @@
+import { CloseButtonClassNamesFullDemo } from "../demos/close-button/CloseButtonClassNamesFull.demo";
+import closeButtonClassNamesFullSource from "../demos/close-button/CloseButtonClassNamesFull.demo.tsx?raw";
 import { CloseButtonFilterChipDemo } from "../demos/close-button/CloseButtonFilterChip.demo";
 import closeButtonFilterChipSource from "../demos/close-button/CloseButtonFilterChip.demo.tsx?raw";
 import { CloseButtonGlossDemo } from "../demos/close-button/CloseButtonGloss.demo";
@@ -33,6 +35,16 @@ export function CloseButtonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Кастомизация слотов root, icon и ripple через classNames."
+      >
+        <ShowcaseDemoFromFile
+          Demo={CloseButtonClassNamesFullDemo}
+          source={closeButtonClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="CloseButton в реальных layout — демо в `demos/close-button/`."
       >
@@ -49,6 +61,10 @@ export function CloseButtonShowcase() {
           <ShowcaseDoc.ApiRow
             api="simple"
             description="variant, size, aria-label (обязателен), onClick. Иконка IoClose встроена."
+          />
+          <ShowcaseDoc.ApiRow
+            api="simple"
+            description="root, icon, ripple — слоты classNames на корне."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>

@@ -1,5 +1,10 @@
 import { FieldAddressSetDemo } from "../demos/field/FieldAddressSet.demo";
 import fieldAddressSetSource from "../demos/field/FieldAddressSet.demo.tsx?raw";
+import {
+  FieldClassNamesFullDemo,
+  FieldSetClassNamesFullDemo,
+} from "../demos/field/FieldClassNamesFull.demo";
+import fieldClassNamesFullSource from "../demos/field/FieldClassNamesFull.demo.tsx?raw";
 import { FieldBillingSetDemo } from "../demos/field/FieldBillingSet.demo";
 import fieldBillingSetSource from "../demos/field/FieldBillingSet.demo.tsx?raw";
 import { FieldContactSetDemo } from "../demos/field/FieldContactSet.demo";
@@ -24,6 +29,14 @@ export function FieldShowcase() {
 
       <ShowcaseSection title="Legend и Hint" description="Field.LegendHeader объединяет заголовок и подсказку.">
         <ShowcaseDemoFromFile align="stretch" Demo={FieldAddressSetDemo} source={fieldAddressSetSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Field.Root и Field.Set — кастомизация слотов через classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={FieldClassNamesFullDemo} source={fieldClassNamesFullSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={FieldSetClassNamesFullDemo} source={fieldClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

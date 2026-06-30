@@ -1,3 +1,5 @@
+import { ComboBoxClassNamesFullDemo } from "../demos/combobox/ComboBoxClassNamesFull.demo";
+import comboBoxClassNamesFullSource from "../demos/combobox/ComboBoxClassNamesFull.demo.tsx?raw";
 import { ComboBoxDefaultDemo } from "../demos/combobox/ComboBoxDefault.demo";
 import comboBoxDefaultSource from "../demos/combobox/ComboBoxDefault.demo.tsx?raw";
 import { ComboBoxSizesDemo } from "../demos/combobox/ComboBoxSizes.demo";
@@ -33,6 +35,17 @@ export function ComboBoxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="classNames"
+        description="Кастомизация слотов inputGroup, input, trigger, popover и listBox."
+      >
+        <ShowcaseDemoFromFile
+          align="center"
+          Demo={ComboBoxClassNamesFullDemo}
+          source={comboBoxClassNamesFullSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Кастомные вариации"
         description="Compound ListBox в Popover, gradient Fill, segmented TimeField — demo-файлы в `demos/combobox/`."
       >
@@ -49,6 +62,10 @@ export function ComboBoxShowcase() {
           <ShowcaseDoc.ApiRow
             api="simple"
             description="options: { value, label }[], value, onValueChange, label, hint, variant."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="root, inputGroup, input, trigger, popover, popoverBody, listBox, hint, error."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Опции">

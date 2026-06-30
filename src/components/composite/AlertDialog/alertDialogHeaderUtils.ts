@@ -1,15 +1,12 @@
 import { Children, isValidElement, type ReactNode } from "react";
 
-import type { AlertStatus } from "@/components/core/Alert/alertUtils";
-import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-
-import type { IconType } from "react-icons";
-import { IoHelpCircleOutline } from "react-icons/io5";
-
+import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import {
-  SEMANTIC_STATUS_ICONS,
-  type SemanticStatus,
-} from "@/components/core/utils/semanticStatusIcons";
+  alertDefaultIndicatorIcon,
+  alertShowsDefaultIndicatorIcon,
+} from "@/components/core/Alert/alertAPI";
+import { alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertStyles";
+import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 
 const ALERT_DIALOG_HEADER_SLOT_NAMES = new Set([
   "AlertDialogIndicator",
@@ -74,18 +71,23 @@ export function hasAlertDialogHeaderCompoundChildren(children: ReactNode): boole
   );
 }
 
-export function alertDialogShowsDefaultHeaderIcon(tone: AlertStatus): boolean {
-  return tone !== "default" && tone !== "secondary";
+export function alertDialogShowsDefaultHeaderIcon(
+  variant: AlertVariant,
+  status: AlertStatus,
+): boolean {
+  return alertShowsDefaultIndicatorIcon(variant, status);
 }
 
-export function alertDialogDefaultHeaderIcon(tone: AlertStatus): IconType | null {
-  if (tone === "default" || tone === "secondary") return null;
-  if (tone === "outline") return IoHelpCircleOutline;
-  return SEMANTIC_STATUS_ICONS[tone as SemanticStatus];
+export function alertDialogDefaultHeaderIcon(
+  variant: AlertVariant,
+  status: AlertStatus,
+) {
+  return alertDefaultIndicatorIcon(variant, status);
 }
 
 export function alertDialogShowsIndicator(
-  tone: AlertStatus,
+  variant: AlertVariant,
+  status: AlertStatus,
   icon: ReactNode | null | undefined,
   compoundHasIndicator: boolean,
 ): boolean {
@@ -93,13 +95,14 @@ export function alertDialogShowsIndicator(
   if (icon === null) return false;
   if (icon !== undefined) return true;
   return (
-    alertDialogShowsDefaultHeaderIcon(tone) &&
-    alertDialogDefaultHeaderIcon(tone) !== null
+    alertDialogShowsDefaultHeaderIcon(variant, status) &&
+    alertDialogDefaultHeaderIcon(variant, status) !== null
   );
 }
 
 export function resolveAlertDialogHeaderGridSlots(
-  tone: AlertStatus,
+  variant: AlertVariant,
+  status: AlertStatus,
   icon: ReactNode | null | undefined,
   showClose: boolean,
   children: ReactNode,
@@ -108,7 +111,7 @@ export function resolveAlertDialogHeaderGridSlots(
   const compoundHasClose = alertDialogHasClose(children);
 
   return {
-    hasIndicator: alertDialogShowsIndicator(tone, icon, compoundHasIndicator),
+    hasIndicator: alertDialogShowsIndicator(variant, status, icon, compoundHasIndicator),
     hasTitle: alertDialogHasTitle(children),
     hasDescription: alertDialogHasDescription(children),
     hasAction: false,
@@ -116,17 +119,6 @@ export function resolveAlertDialogHeaderGridSlots(
   };
 }
 
-export function alertDialogHeaderIconWrapperClass(tone: AlertStatus): string {
-  switch (tone) {
-    case "danger":
-      return "text-danger";
-    case "success":
-      return "text-success";
-    case "info":
-      return "text-info";
-    case "warning":
-      return "text-warning";
-    default:
-      return "text-primary";
-  }
+export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {
+  return alertIndicatorWrapperTextClass(status);
 }

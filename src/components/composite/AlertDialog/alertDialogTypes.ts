@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-import type { AlertStatus } from "@/components/core/Alert/alertUtils";
+import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 
 import type { AlertDialogSizePreset } from "./alertDialogSizePresets";
@@ -14,7 +14,7 @@ export type AlertDialogProps = {
   children?: ReactNode;
   className?: string;
   status?: AlertStatus;
-  variant?: "default" | "gloss";
+  variant?: AlertVariant;
   size?: AlertDialogSize;
   /**
    * Anchor for inheriting the light theme from the wrapper (`data-theme`).
@@ -29,7 +29,8 @@ export type AlertDialogContextValue = {
   hasDescription: boolean;
   setHasDescription: (v: boolean) => void;
   onOpenChange: (open: boolean) => void;
-  tone: AlertStatus;
+  variant: AlertVariant;
+  status: AlertStatus;
   size: AlertDialogSize;
   sizePreset: AlertDialogSizePreset;
   footerButtonSize: ButtonSize;

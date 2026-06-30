@@ -1,6 +1,6 @@
-import { InputControl, type InputProps, type InputSize, type InputStatus, type InputVariant } from "./Input";
 import { Label } from "@/components/core/Label";
-import { InputError, InputHint, InputRoot } from "./InputField";
+
+import { InputControl, InputError, InputHint, InputRoot } from "./Input";
 
 export const Input = Object.assign(InputRoot, {
   Label,
@@ -10,10 +10,15 @@ export const Input = Object.assign(InputRoot, {
 });
 
 export type {
+  InputClassNames,
+  InputErrorProps,
+  InputHintProps,
   InputProps,
+  InputRootProps,
+  InputSimpleProps,
   InputSize,
   InputStatus,
   InputVariant,
-};
+} from "./inputTypes";
 
-export type { InputRootProps, InputHintProps, InputErrorProps, InputSimpleProps } from "./InputField";
+export { InputControl, InputError, InputHint } from "./Input";

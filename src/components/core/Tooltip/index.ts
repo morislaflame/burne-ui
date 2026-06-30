@@ -24,6 +24,7 @@ export type {
   TooltipSurface,
   TooltipSize,
   TooltipSide,
+  TooltipClassNames,
   TooltipRootProps,
   TooltipTriggerProps,
   TooltipContentProps,
@@ -32,4 +33,4 @@ export type {
   TooltipIndicatorProps,
   TooltipTitleProps,
   TooltipDescriptionProps,
-} from "./Tooltip";
+} from "./tooltipTypes";

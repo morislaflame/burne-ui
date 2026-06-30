@@ -1,3 +1,5 @@
+import { DropdownClassNamesFullDemo } from "../demos/dropdown/DropdownClassNamesFull.demo";
+import dropdownClassNamesFullSource from "../demos/dropdown/DropdownClassNamesFull.demo.tsx?raw";
 import { DropdownActionMenuDemo } from "../demos/dropdown/DropdownActionMenu.demo";
 import dropdownActionMenuSource from "../demos/dropdown/DropdownActionMenu.demo.tsx?raw";
 import { DropdownGlossDemo } from "../demos/dropdown/DropdownGloss.demo";
@@ -30,6 +32,16 @@ export function DropdownShowcase() {
 
       <ShowcaseSection title="Gloss" description='popoverVariant="gloss" — стеклянное выпадающее меню.'>
         <ShowcaseDemoFromFile Demo={DropdownGlossDemo} source={dropdownGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Полная кастомизация слотов через classNames на Root."
+      >
+        <ShowcaseDemoFromFile
+          Demo={DropdownClassNamesFullDemo}
+          source={dropdownClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

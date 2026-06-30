@@ -22,8 +22,10 @@ export type {
   CardProps,
   CardVariant,
   CardHeaderProps,
+  CardHeadingBlockProps,
   CardBodyProps,
   CardTitleProps,
   CardDescriptionProps,
   CardFooterProps,
-} from "./Card";
+  CardClassNames,
+} from "./cardTypes";

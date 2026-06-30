@@ -1,204 +1,111 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { FieldRoot } from "@/components/core/Field";
+import { FieldLabelContext } from "@/components/core/Label";
+
 import {
-  forwardRef,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  type CSSProperties,
-  type HTMLAttributes,
-} from "react";
+  MeterClassNamesProvider,
+  MeterFieldProvider,
+} from "./meterContext";
+import { MeterSimpleBody } from "./meterParts";
+import { meterRootClass } from "./meterStyles";
+import type { MeterRootProps } from "./meterTypes";
+import { useMeterRootState } from "./useMeterRootState";
 
-import { sliderThicknessToCss } from "@/components/core/Slider/sliderThickness";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
-import { cn } from "@/utils/cn";
+export type {
+  MeterClassNames,
+  MeterErrorProps,
+  MeterHeaderProps,
+  MeterHintProps,
+  MeterOrientation,
+  MeterRootProps,
+  MeterSize,
+  MeterTrackProps,
+  MeterValueProps,
+} from "./meterTypes";
 
-import { useOptionalMeterFieldContext } from "./meterFieldContext";
-import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+export {
+  MeterError,
+  MeterHeader,
+  MeterHint,
+  MeterSimpleBody,
+  MeterTrack,
+  MeterValue,
+} from "./meterParts";
 
-export type MeterSize = "small" | "base" | "mid" | "large";
-export type MeterOrientation = "horizontal" | "vertical";
+export {
+  useMeterFieldContext,
+  useOptionalMeterFieldContext,
+} from "./meterContext";
 
-const RAIL_HEIGHT: Record<MeterSize, string> = {
-  small: "h-small",
-  base: "h-base",
-  mid: "h-plus",
-  large: "h-mid",
-};
-
-const RAIL_WIDTH: Record<MeterSize, string> = {
-  small: "w-small",
-  base: "w-base",
-  mid: "w-plus",
-  large: "w-mid",
-};
-
-function clamp(n: number, lo: number, hi: number) {
-  return Math.min(hi, Math.max(lo, n));
-}
-
-function valueToPercent(value: number, min: number, max: number) {
-  if (max <= min) return 0;
-  return ((value - min) / (max - min)) * 100;
-}
-
-function defaultFormatValue(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
-}
-
-export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  value: number;
-  min?: number;
-  max?: number;
-  size?: MeterSize;
-  thickness?: number | string;
-  color?: string;
-  formatValue?: (value: number) => string;
-  orientation?: MeterOrientation;
-  className?: string;
-};
-
-export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(function MeterTrack(
-  {
+export function MeterRoot({
+  children,
+  className,
+  classNames,
+  id,
+  orientation,
+  label,
+  showValue,
+  valueText,
+  hint,
+  error,
+  value,
+  min,
+  max,
+  size,
+  thickness,
+  color,
+  formatValue,
+  ...divRest
+}: MeterRootProps) {
+  const state = useMeterRootState({
+    children,
+    id,
+    orientation,
+    label,
+    showValue,
+    valueText,
+    hint,
+    error,
     value,
-    min = 0,
-    max = 100,
-    size = "base",
+    min,
+    max,
+    size,
     thickness,
     color,
-    formatValue = defaultFormatValue,
-    orientation: orientationProp,
-    className,
-    "aria-describedby": ariaDescribedByProp,
-    ...rest
-  },
-  ref,
-) {
-  const fieldCtx = useOptionalMeterFieldContext();
-  const orientation = orientationProp ?? fieldCtx?.orientation ?? "horizontal";
-  const meterId = fieldCtx?.meterId;
-  const labelId = meterId != null ? `${meterId}-label` : undefined;
-  const labelConnected = fieldCtx?.labelConnected ?? false;
-  const hintConnected = fieldCtx?.hintConnected ?? false;
-  const errorConnected = fieldCtx?.errorConnected ?? false;
-  const hintId = fieldCtx?.hintId;
-  const errorId = fieldCtx?.errorId;
-  const ariaDescribedBy =
-    ariaDescribedByProp ??
-    joinFieldDescribedBy(
-      hintConnected ? hintId : undefined,
-      errorConnected ? errorId : undefined,
-    );
-  const fillRef = useRef<HTMLSpanElement>(null);
-  const firstLayoutRef = useRef(true);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+    formatValue,
+  });
 
-  const clampedValue = useMemo(
-    () => clamp(value, min, max),
-    [max, min, value],
-  );
-  const percent = useMemo(
-    () => valueToPercent(clampedValue, min, max),
-    [clampedValue, max, min],
-  );
-
-  const isHorizontal = orientation === "horizontal";
-  const thicknessCss = thickness != null ? sliderThicknessToCss(thickness) : undefined;
-
-  const trackCrossStyle = useMemo((): CSSProperties | undefined => {
-    if (thicknessCss == null) return undefined;
-    return isHorizontal ? { height: thicknessCss } : { width: thicknessCss };
-  }, [isHorizontal, thicknessCss]);
-
-  const fillColorStyle = useMemo((): CSSProperties | undefined => {
-    if (!color) return undefined;
-    return { background: color };
-  }, [color]);
-
-  const fillTargetStyle = useMemo((): CSSProperties => {
-    if (isHorizontal) {
-      return { width: `${percent}%`, height: "100%" };
-    }
-    return { width: "100%", height: `${percent}%` };
-  }, [isHorizontal, percent]);
-
-  const statusText = useMemo(() => formatValue(clampedValue), [clampedValue, formatValue]);
-
-  const setDisplay = fieldCtx?.setDisplay;
-
-  useLayoutEffect(() => {
-    setDisplay?.({ clampedValue, statusText, min, max });
-  }, [clampedValue, max, min, setDisplay, statusText]);
-
-  useLayoutEffect(() => {
-    const fill = fillRef.current;
-    if (!fill) return;
-
-    if (reduceMotion || firstLayoutRef.current) {
-      firstLayoutRef.current = false;
-      killMotion(fill);
-      fill.style.width =
-        fillTargetStyle.width != null ? String(fillTargetStyle.width) : "";
-      fill.style.height =
-        fillTargetStyle.height != null ? String(fillTargetStyle.height) : "";
-      return;
-    }
-
-    killMotion(fill);
-    void gsap.to(fill, {
-      ...(isHorizontal
-        ? { width: fillTargetStyle.width }
-        : { height: fillTargetStyle.height }),
-      ...motionInteractive(),
-      overwrite: "auto",
-    });
-  }, [fillTargetStyle.height, fillTargetStyle.width, isHorizontal, reduceMotion]);
-
-  useEffect(() => {
-    const fill = fillRef.current;
-    return () => {
-      if (fill) killMotion(fill);
-    };
-  }, []);
-
-  const trackHitAreaClass = cn(
-    "relative overflow-hidden rounded-full bg-primary-tint",
-    isHorizontal ? "w-full" : "h-48",
-    thickness == null && (isHorizontal ? RAIL_HEIGHT[size] : RAIL_WIDTH[size]),
+  const body = state.isCompound ? (
+    children
+  ) : (
+    <MeterSimpleBody
+      label={state.label}
+      showValue={state.showValue}
+      valueText={state.valueText}
+      hint={state.hint}
+      error={state.error}
+      trackProps={state.trackProps}
+    />
   );
 
   return (
-    <div
-      ref={ref}
-      role="meter"
-      aria-valuenow={clampedValue}
-      aria-valuemin={min}
-      aria-valuemax={max}
-      aria-valuetext={statusText}
-      aria-labelledby={labelConnected ? labelId : undefined}
-      aria-describedby={ariaDescribedBy}
-      aria-label={labelConnected ? undefined : statusText}
-      className={cn(trackHitAreaClass, className)}
-      style={trackCrossStyle}
-      {...rest}
-    >
-        <span
-          ref={fillRef}
-          aria-hidden
-          className={cn(
-            "absolute rounded-full",
-            isHorizontal ? "inset-y-0 left-0" : "inset-x-0 bottom-0",
-            !color && "bg-primary",
-          )}
-          style={{
-            width: isHorizontal ? `${percent}%` : "100%",
-            height: isHorizontal ? "100%" : `${percent}%`,
-            ...fillColorStyle,
-          }}
-        />
-    </div>
+    <MeterFieldProvider value={state.fieldCtx}>
+      <MeterClassNamesProvider classNames={classNames}>
+        <FieldLabelContext.Provider value={state.fieldLabelCtx}>
+          <FieldRoot
+            id={state.meterId}
+            className={meterRootClass({
+              orientation: state.fieldCtx.orientation,
+              slotClass: classNames?.root,
+              className,
+            })}
+            {...divRest}
+          >
+            {body}
+          </FieldRoot>
+        </FieldLabelContext.Provider>
+      </MeterClassNamesProvider>
+    </MeterFieldProvider>
   );
-});
+}
 
-MeterTrack.displayName = "Meter.Track";
+MeterRoot.displayName = "Meter";

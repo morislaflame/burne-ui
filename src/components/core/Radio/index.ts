@@ -6,15 +6,6 @@ import {
   RadioIndicator,
   RadioLabel,
   RadioRoot,
-  type RadioContentProps,
-  type RadioControlProps,
-  type RadioErrorProps,
-  type RadioHintProps,
-  type RadioIndicatorProps,
-  type RadioLabelProps,
-  type RadioProps,
-  type RadioRootProps,
-  type RadioSize,
 } from "./Radio";
 
 export const Radio = Object.assign(RadioRoot, {
@@ -36,6 +27,6 @@ export type {
   RadioHintProps,
   RadioErrorProps,
   RadioSize,
-};
-
-export type { RadioVariant } from "./Radio";
+  RadioVariant,
+  RadioClassNames,
+} from "./radioTypes";
