@@ -126,23 +126,25 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
         </div>
       </div>
 
-      <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} placement="left" size="default">
-        <Drawer.Header>
-          <Drawer.HeadingBlock>
-            <Drawer.Title>Компоненты</Drawer.Title>
-            <Drawer.Description>Выберите компонент для просмотра.</Drawer.Description>
-          </Drawer.HeadingBlock>
-          <Drawer.Close />
-        </Drawer.Header>
-        <Drawer.Body className="p-0">
-          <ShowcaseSidebar
-            activePageId={activePageId}
-            onPageChange={(pageId) => {
-              setActivePageId(pageId);
-              setMobileMenuOpen(false);
-            }}
-          />
-        </Drawer.Body>
+      <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} placement="left">
+        <Drawer.Panel size="default">
+          <Drawer.Header>
+            <Drawer.HeadingBlock>
+              <Drawer.Title>Компоненты</Drawer.Title>
+              <Drawer.Description>Выберите компонент для просмотра.</Drawer.Description>
+            </Drawer.HeadingBlock>
+            <Drawer.Close />
+          </Drawer.Header>
+          <Drawer.Body className="p-0">
+            <ShowcaseSidebar
+              activePageId={activePageId}
+              onPageChange={(pageId) => {
+                setActivePageId(pageId);
+                setMobileMenuOpen(false);
+              }}
+            />
+          </Drawer.Body>
+        </Drawer.Panel>
       </Drawer>
     </div>
   );

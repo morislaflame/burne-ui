@@ -12,8 +12,6 @@ export type LinkSize = ComponentSize;
 export type LinkIconPosition = "start" | "end";
 
 export type LinkClassNames = {
-  /** Обёртка lift-motion (`<span>` вокруг якоря). */
-  motion?: string;
   /** Якорь `<a>`. */
   anchor?: string;
   /** Текст ссылки (`Text`). */
@@ -26,7 +24,7 @@ export type LinkClassNames = {
 
 export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"> & {
   href: string;
-  children: ReactNode;
+  children?: ReactNode;
   size?: LinkSize;
   underline?: boolean;
   leftIcon?: ReactNode;
@@ -36,9 +34,20 @@ export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"
   classNames?: LinkClassNames;
 };
 
-export type LinkClassNamesProviderProps = {
-  classNames?: LinkClassNames;
-  children: ReactNode;
+export type LinkIconProps = {
+  position?: LinkIconPosition;
+  children?: ReactNode;
+};
+
+export type ResolvedLinkIconSlot = {
+  node: ReactNode | "default";
+  muted: boolean;
+};
+
+export type ResolvedLinkCompoundBody = {
+  textChildren: ReactNode;
+  startIcon?: ResolvedLinkIconSlot;
+  endIcon?: ResolvedLinkIconSlot;
 };
 
 export type UseLinkRootStateProps = Pick<
@@ -49,6 +58,7 @@ export type UseLinkRootStateProps = Pick<
   | "rightIcon"
   | "showDefaultIcon"
   | "defaultIconPosition"
+  | "children"
 >;
 
 export type LinkIconPlacement = {
@@ -56,6 +66,28 @@ export type LinkIconPlacement = {
   defaultIconAtStart: boolean;
   defaultIconAtEnd: boolean;
 };
+
+export type LinkClassNamesProviderProps = {
+  classNames?: LinkClassNames;
+  children: ReactNode;
+};
+
+export type LinkAnchorBodyProps = {
+  href: string;
+  size: LinkSize;
+  underline: boolean;
+  textVariant: import("@/components/core/Text").TextVariant;
+  textChildren: ReactNode;
+  startIcon: ReactNode | null;
+  endIcon: ReactNode | null;
+  startIconMuted: boolean;
+  endIconMuted: boolean;
+  className?: string;
+  setAnchorRef: (node: HTMLAnchorElement | null) => void;
+  handlePointerEnter: (event: PointerEvent<HTMLAnchorElement>) => void;
+  handlePointerLeave: (event: PointerEvent<HTMLAnchorElement>) => void;
+  handlePointerDown: (event: PointerEvent<HTMLAnchorElement>) => void;
+} & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "href" | "className">;
 
 export type LinkIconSlotProps = {
   children: ReactNode;

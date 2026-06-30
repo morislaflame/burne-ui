@@ -16,7 +16,8 @@ export function AlertDialogUnsavedChangesDemo() {
       </Button>
 
       <AlertDialog open={open} onOpenChange={setOpen} status="warning">
-        <AlertDialog.Header>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Несохранённые изменения</AlertDialog.Title>
             <AlertDialog.Description>
@@ -37,6 +38,7 @@ export function AlertDialogUnsavedChangesDemo() {
             Уйти без сохранения
           </Button>
         </AlertDialog.Footer>
+        </AlertDialog.Panel>
       </AlertDialog>
     </>
   );

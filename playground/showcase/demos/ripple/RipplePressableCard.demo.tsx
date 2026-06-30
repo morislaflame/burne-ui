@@ -27,7 +27,13 @@ export function RipplePressableCardDemo() {
         </div>
       </Card>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <Dialog.Header>
+        <Dialog.Trigger asChild>
+          <Card pressable variant="gloss" className="max-w-xs">
+            <Ripple color="neutral" />
+          </Card>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Ripple на Card</Dialog.Title>
             <Dialog.Description>
@@ -41,6 +47,7 @@ export function RipplePressableCardDemo() {
             Закрыть
           </Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
     </>
   );

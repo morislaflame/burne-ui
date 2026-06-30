@@ -1,5 +1,6 @@
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 
 import { mergeComboBoxSlotClass } from "./comboBoxAPI";
 import {
@@ -55,17 +56,26 @@ export function ComboBoxRoot({
   disabled,
   placeholder,
   menuMaxHeight,
+  name,
   ...rest
 }: ComboBoxRootProps) {
+  const formCtx = useOptionalFormBindingContext();
+  const fieldName = typeof name === "string" ? name : undefined;
+  const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
+  const resolvedError = error ?? formError;
+  const resolvedStatus = status === "default" && formError ? "danger" : status;
+  const resolvedSize = size ?? formCtx?.size ?? "base";
+
   const state = useComboBoxRootState({
     children,
     label,
     hint,
-    error,
+    error: resolvedError,
     id,
+    name,
     isRequired,
-    status,
-    size,
+    status: resolvedStatus,
+    size: resolvedSize,
     options,
     value,
     defaultValue,

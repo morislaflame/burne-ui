@@ -1,7 +1,5 @@
 import { Button } from "@/components/core/Button";
-import { Tooltip, type TooltipSide } from "@/components/core/Tooltip";
-
-const SIDES: TooltipSide[] = ["top", "right", "bottom", "left"];
+import { Tooltip } from "@/components/core/Tooltip";
 
 export function TooltipSidesDemo() {
   return (

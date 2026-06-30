@@ -34,11 +34,11 @@ import {
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
-import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import {
   buttonGroupRoundingClasses,
   buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupSegment";
+} from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import {
   useOptionalButtonGroupLayout,
   useOptionalButtonGroupSegment,

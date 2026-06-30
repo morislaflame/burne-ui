@@ -14,18 +14,16 @@ import {
   SKELETON_TEXT_ROOT_CLASS,
   SKELETON_WAVE_OVERLAY_CLASS,
   skeletonLineAnimationDelay,
-  skeletonRadiusClass,
   skeletonWaveOverlayStyle,
 } from "./skeletonStyles";
 import type {
   SkeletonBlockProps,
   SkeletonCircleProps,
-  SkeletonProps,
   SkeletonTextProps,
   SkeletonWaveProps,
 } from "./skeletonTypes";
 
-function SkeletonWave({ className, style }: SkeletonWaveProps) {
+export function SkeletonWave({ className, style }: SkeletonWaveProps) {
   return (
     <span
       aria-hidden
@@ -34,39 +32,6 @@ function SkeletonWave({ className, style }: SkeletonWaveProps) {
     />
   );
 }
-
-export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function SkeletonRoot(
-  {
-    variant = "wave",
-    radius = "small",
-    className,
-    classNames,
-    style,
-    children,
-    ...rest
-  },
-  ref,
-) {
-  return (
-    <div
-      ref={ref}
-      className={mergeSkeletonSlotClass(
-        SKELETON_BASE_CLASS,
-        skeletonRadiusClass(radius),
-        classNames?.root,
-        className,
-      )}
-      style={{ ...skeletonVariantStyle(variant), ...style }}
-      {...skeletonPresentationProps()}
-      {...rest}
-    >
-      {variant === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
-      {children}
-    </div>
-  );
-});
-
-SkeletonRoot.displayName = "Skeleton";
 
 export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
   function SkeletonCircle(

@@ -1,27 +1,46 @@
-import { useCallback, type FormEvent } from "react";
+import { useCallback } from "react";
 
 import { CheckboxGroup } from "@/components/composite/CheckboxGroup";
-import { Form } from "@/components/composite/Form";
+import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { Input } from "@/components/core/Input";
 
 export function FormProfileDemo() {
-  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback((values: FormValues) => {
+    void values;
   }, []);
 
   return (
-    <Form onSubmit={onSubmit} aria-label="Пример формы" className="max-w-md">
+    <Form
+      onSubmit={onSubmit}
+      aria-label="Пример формы"
+      className="max-w-md"
+      rules={{
+        name: { required: "Введите имя" },
+        email: {
+          required: "Email обязателен",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Некорректный email",
+          },
+        },
+      }}
+    >
+      <Form.Title>Профиль</Form.Title>
       <Form.Section>
-        <Input isRequired label="Имя" name="name" placeholder="Иван" autoComplete="name" />
-        <Input
-          isRequired
-          label="Email"
-          name="email"
-          placeholder="you@example.com"
-          autoComplete="email"
-        />
+        <Form.Field name="name">
+          <Input isRequired name="name" label="Имя" placeholder="Иван" autoComplete="name" />
+        </Form.Field>
+        <Form.Field name="email">
+          <Input
+            isRequired
+            name="email"
+            label="Email"
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
+        </Form.Field>
       </Form.Section>
       <Form.Section>
         <CheckboxGroup>
@@ -34,12 +53,12 @@ export function FormProfileDemo() {
           </CheckboxGroup.List>
         </CheckboxGroup>
       </Form.Section>
-      <div className="flex justify-end gap-small pt-small">
+      <Form.Actions>
         <Button type="button" variant="outline">
           Отмена
         </Button>
         <Button type="submit">Сохранить</Button>
-      </div>
+      </Form.Actions>
     </Form>
   );
 }

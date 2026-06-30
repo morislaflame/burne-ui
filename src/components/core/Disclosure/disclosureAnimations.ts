@@ -1,4 +1,5 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -32,8 +33,7 @@ export function useDisclosureTriggerMotion({
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
       btnRef.current = node;
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
+      mergeForwardedRef(forwardedRef, node);
     },
     [forwardedRef],
   );

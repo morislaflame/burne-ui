@@ -16,7 +16,8 @@ export function DialogSettingsModalDemo() {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <Dialog.Header>
+        <Dialog.Panel>
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Приватность</Dialog.Title>
             <Dialog.Description>Управление сбором данных.</Dialog.Description>
@@ -39,6 +40,7 @@ export function DialogSettingsModalDemo() {
             Готово
           </Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
     </>
   );

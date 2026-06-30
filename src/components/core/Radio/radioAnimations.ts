@@ -1,10 +1,8 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
+import { useLayoutEffect, useRef } from "react";
 
 import { useRadioFieldContext } from "./radioContext";
 import type { UseRadioAnimationsProps } from "./radioTypes";
@@ -53,33 +51,10 @@ export function useRadioTextMotion({
   textMotionRef,
   onPointerDown,
 }: UseRadioAnimationsProps) {
-  const reduceMotion = prefersReducedInteractiveHoverLift();
-
-  useEffect(() => {
-    const el = textMotionRef.current;
-    return () => {
-      if (el) killMotion(el);
-    };
-  }, [textMotionRef]);
-
-  useEffect(() => {
-    const el = textMotionRef.current;
-    if (!el || !isDisabled) return;
-    killMotion(el);
-    el.style.transform = "";
-  }, [isDisabled, textMotionRef]);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLLabelElement>) => {
-      onPointerDown?.(e);
-      if (e.defaultPrevented || isDisabled || !enableTextMotion) return;
-      if (reduceMotion) return;
-      const t = textMotionRef.current;
-      if (!t) return;
-      void animateInteractivePressSqueeze(t);
-    },
-    [enableTextMotion, isDisabled, onPointerDown, reduceMotion, textMotionRef],
-  );
-
-  return { handlePointerDown };
+  return usePressableElementTextMotion<HTMLLabelElement>({
+    isDisabled,
+    enabled: enableTextMotion,
+    textMotionRef,
+    onPointerDown,
+  });
 }

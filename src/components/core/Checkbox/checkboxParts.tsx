@@ -70,6 +70,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
           )}
         >
           <input
+            ref={ctx.inputProps.inputRef}
             id={ctx.inputId}
             type="checkbox"
             className={
@@ -93,6 +94,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
             readOnly={ctx.inputProps.readOnly}
             onBlur={ctx.inputProps.onBlur}
             onFocus={ctx.inputProps.onFocus}
+            aria-invalid={ctx.inputProps.ariaInvalid}
             aria-describedby={joinFieldDescribedBy(
               ctx.hintConnected ? ctx.hintId : undefined,
               ctx.errorConnected ? ctx.errorId : undefined,

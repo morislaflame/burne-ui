@@ -16,15 +16,18 @@ export function DrawerNotificationPanelDemo() {
 
   return (
     <>
-      <Button variant="outline" type="button" onClick={() => setOpen(true)}>
-        Уведомления
-        <Badge size="small" className="ml-xsmall">
-          3
-        </Badge>
-      </Button>
 
       <Drawer open={open} onOpenChange={setOpen} placement="right">
-        <Drawer.Header>
+        <Drawer.Trigger asChild>
+          <Button variant="outline">
+            Уведомления
+            <Badge size="small" className="ml-xsmall">
+              3
+            </Badge>
+          </Button>
+        </Drawer.Trigger>
+        <Drawer.Panel>
+          <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Уведомления</Drawer.Title>
             <Drawer.Description>Последние события</Drawer.Description>
@@ -43,6 +46,7 @@ export function DrawerNotificationPanelDemo() {
             </div>
           ))}
         </Drawer.Body>
+        </Drawer.Panel>
       </Drawer>
     </>
   );

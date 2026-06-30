@@ -1,5 +1,6 @@
 import "../utils/glossInteractive.css";
 
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
@@ -39,15 +40,22 @@ export function InputRoot({
   size = "base",
   ...rest
 }: InputSimpleProps) {
+  const formCtx = useOptionalFormBindingContext();
+  const fieldName = typeof rest.name === "string" ? rest.name : undefined;
+  const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
+  const resolvedError = error ?? formError;
+  const resolvedStatus = status === "default" && formError ? "danger" : status;
+  const resolvedSize = size ?? formCtx?.size ?? "base";
+
   const state = useInputRootState({
     children,
     label,
     hint,
-    error,
+    error: resolvedError,
     id: idProp,
     isRequired,
-    status,
-    size,
+    status: resolvedStatus,
+    size: resolvedSize,
   });
 
   const body = state.isCompound ? (

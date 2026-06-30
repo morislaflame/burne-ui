@@ -593,8 +593,9 @@ export function GlossComponentsDemo() {
         </div>
       </div>
 
-      <Dialog open={glossDialogOpen} onOpenChange={setGlossDialogOpen} variant="gloss">
-        <Dialog.Header>
+      <Dialog open={glossDialogOpen} onOpenChange={setGlossDialogOpen}>
+        <Dialog.Panel variant="gloss">
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Gloss Dialog</Dialog.Title>
             <Dialog.Description>Стеклянная модальная панель с gloss-полями.</Dialog.Description>
@@ -619,10 +620,12 @@ export function GlossComponentsDemo() {
             Сохранить
           </Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
 
       <AlertDialog open={glossAlertOpen} onOpenChange={setGlossAlertOpen} variant="gloss" status="danger">
-        <AlertDialog.Header>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Удалить проект?</AlertDialog.Title>
             <AlertDialog.Description>
@@ -643,10 +646,12 @@ export function GlossComponentsDemo() {
             Удалить
           </Button>
         </AlertDialog.Footer>
+        </AlertDialog.Panel>
       </AlertDialog>
 
-      <Drawer open={glossDrawerOpen} onOpenChange={setGlossDrawerOpen} variant="gloss">
-        <Drawer.Header>
+      <Drawer open={glossDrawerOpen} onOpenChange={setGlossDrawerOpen}>
+        <Drawer.Panel variant="gloss">
+          <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Gloss Drawer</Drawer.Title>
             <Drawer.Description>Стеклянная боковая панель.</Drawer.Description>
@@ -664,6 +669,7 @@ export function GlossComponentsDemo() {
             Закрыть
           </Button>
         </Drawer.Footer>
+        </Drawer.Panel>
       </Drawer>
     </div>
   );

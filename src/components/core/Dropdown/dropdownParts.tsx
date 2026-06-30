@@ -8,6 +8,7 @@ import {
   useId,
   useState,
   type HTMLAttributes,
+  type PointerEvent as ReactPointerEvent,
   type ReactElement,
   type Ref,
 } from "react";
@@ -21,6 +22,10 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  runOpenAfterSqueeze,
+  useOpeningRef,
+} from "@/components/core/utils/runOpenAfterSqueeze";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import {
   OptionListItemContextProvider,
@@ -88,24 +93,40 @@ import { useDropdownSubState } from "./useDropdownSubState";
 
 export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
   function DropdownTrigger(
-    { children, className, asChild, onClick, ...rest },
+    { children, className, asChild, onClick, onPointerDown, ...rest },
     forwardedRef,
   ) {
     const { open, setOpen, triggerRef, contentId } = useDropdown();
     const slotClassNames = useDropdownClassNames();
+    const openingRef = useOpeningRef();
+
+    const handlePointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLElement>) => {
+        if (open || openingRef.current || e.button !== 0) return;
+        // Prevent child Button's own squeeze so Trigger drives the animation.
+        e.preventDefault();
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+      },
+      [open, openingRef, triggerRef, setOpen],
+    );
 
     const handleClick = useCallback(
       (e: React.MouseEvent<HTMLElement>) => {
         onClick?.(e);
         if (e.defaultPrevented) return;
-        setOpen(!open);
+        // When open, close immediately (no squeeze animation needed for closing).
+        if (open) setOpen(false);
+        // When closed, opening was already kicked off by pointerDown.
       },
       [onClick, open, setOpen],
     );
 
     if (asChild && isValidElement(children)) {
       const child = children as ReactElement<
-        HTMLAttributes<HTMLElement> & { ref?: Ref<HTMLElement> }
+        HTMLAttributes<HTMLElement> & {
+          ref?: Ref<HTMLElement>;
+          onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
+        }
       >;
       return cloneElement(child, {
         ...rest,
@@ -116,6 +137,13 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
           slotClassNames.trigger,
           className,
         ),
+        // Trigger's pointerDown runs FIRST so e.preventDefault() suppresses
+        // the child Button's own animation before it sees the event.
+        onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+          handlePointerDown(e);
+          child.props.onPointerDown?.(e);
+          onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+        },
         onClick: (e: React.MouseEvent<HTMLElement>) => {
           child.props.onClick?.(e);
           handleClick(e);
@@ -141,6 +169,10 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={open ? contentId : undefined}
+        onPointerDown={(e) => {
+          onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+          handlePointerDown(e as ReactPointerEvent<HTMLElement>);
+        }}
         onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
         {...rest}
       >

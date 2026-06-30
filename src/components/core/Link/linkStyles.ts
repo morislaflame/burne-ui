@@ -4,9 +4,6 @@ import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { mergeLinkSlotClass } from "./linkAPI";
 import type { LinkSize } from "./linkTypes";
 
-export const LINK_MOTION_CLASS =
-  "inline-flex origin-center will-change-transform w-fit";
-
 export const LINK_ANCHOR_CLASS =
   "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit text-primary focus-ring";
 
@@ -35,16 +32,6 @@ export const LINK_ICON_SIZE_CLASS: Record<LinkSize, string> = {
   mid: "icon-mid",
   large: "icon-large",
 };
-
-export function linkMotionClass({
-  slotClass,
-  className,
-}: {
-  slotClass?: string;
-  className?: string;
-}): string {
-  return mergeLinkSlotClass(LINK_MOTION_CLASS, slotClass, className);
-}
 
 export function linkAnchorClass({
   slotClass,

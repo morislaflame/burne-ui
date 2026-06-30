@@ -31,6 +31,8 @@ export type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: SkeletonClassNames;
 };
 
+export type UseSkeletonRootStateProps = Pick<SkeletonProps, "variant" | "radius">;
+
 export type SkeletonCircleProps = HTMLAttributes<HTMLDivElement> & {
   variant?: SkeletonVariant;
   size?: string;

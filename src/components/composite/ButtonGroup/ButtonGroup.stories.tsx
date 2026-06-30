@@ -8,7 +8,7 @@ import { Button } from "@/components/core/Button";
 import { Dropdown } from "@/components/core/Dropdown";
 import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
-import { ButtonGroup, ButtonGroupText } from "./ButtonGroup";
+import { ButtonGroup, ButtonGroupText } from "./index";
 
 const framedDecorator = [
   (Story: ComponentType) => (

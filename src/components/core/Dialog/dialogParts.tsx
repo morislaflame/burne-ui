@@ -1,10 +1,34 @@
-import { forwardRef, useLayoutEffect, type Ref } from "react";
+import {
+  Children,
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+  type Ref,
+  type ReactElement,
+} from "react";
+import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
+import {
+  burneLightThemePortalProps,
+  useBurneLightTheme,
+  usePortalThemeAnchor,
+} from "@/components/core/utils/burneLightTheme";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import {
+  runOpenAfterSqueeze,
+  useOpeningRef,
+} from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { DIALOG_CLOSE_DEFAULT_ARIA_LABEL } from "./dialogA11y";
 import { mergeDialogSlotClass } from "./dialogAPI";
+import { useDialogModalMotion } from "./dialogAnimations";
 import { useDialog, useDialogClassNames } from "./dialogContext";
 import {
   DIALOG_CLOSE_CLASS,
@@ -30,8 +54,10 @@ import type {
   DialogFooterProps,
   DialogHeaderProps,
   DialogHeadingBlockProps,
+  DialogPanelProps,
   DialogPortalShellProps,
   DialogTitleProps,
+  DialogTriggerProps,
 } from "./dialogTypes";
 
 export function DialogContent({ className, ...rest }: DialogContentProps) {
@@ -207,6 +233,141 @@ export function DialogFooter({ className, ...rest }: DialogFooterProps) {
 }
 
 DialogFooter.displayName = "DialogFooter";
+
+// ─── Dialog.Trigger ──────────────────────────────────────────────────────────
+
+export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
+  function DialogTrigger({ children, asChild, onClick, onPointerDown, ...rest }, forwardedRef) {
+    const { open, onOpenChange } = useDialog();
+    const triggerRef = useRef<HTMLElement | null>(null);
+    const openingRef = useOpeningRef();
+
+    const setRefs = useCallback(
+      (node: HTMLButtonElement | null) => {
+        triggerRef.current = node;
+        mergeForwardedRef(forwardedRef, node);
+      },
+      [forwardedRef],
+    );
+
+    const handlePointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLElement>) => {
+        if (open || openingRef.current || e.button !== 0) return;
+        // Call e.preventDefault() BEFORE the child's handler so that
+        // Button's useFirstLevelInteractiveMotion sees defaultPrevented = true
+        // and skips its own animation (we drive it from here instead).
+        e.preventDefault();
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+      },
+      [open, openingRef, triggerRef, onOpenChange],
+    );
+
+    const handleClick = useCallback(
+      (e: ReactMouseEvent<HTMLElement>) => {
+        onClick?.(e as ReactMouseEvent<HTMLButtonElement>);
+        if (e.defaultPrevented) return;
+        // Keyboard activation (Enter/Space) doesn't generate pointerDown —
+        // open immediately as fallback when openingRef hasn't been set.
+        if (!open && !openingRef.current) onOpenChange(true);
+      },
+      [onClick, open, openingRef, onOpenChange],
+    );
+
+    if (asChild && isValidElement(children)) {
+      const onlyChild = Children.count(children) === 1 ? children : null;
+      if (onlyChild) {
+        const child = onlyChild as ReactElement<{
+          ref?: Ref<HTMLElement>;
+          onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
+          onClick?: (e: ReactMouseEvent<HTMLElement>) => void;
+          "aria-haspopup"?: string;
+          "aria-expanded"?: boolean;
+        }>;
+        return cloneElement(child, {
+          ref: ((node: HTMLElement | null) => { triggerRef.current = node; }) as unknown as Ref<HTMLElement>,
+          // Trigger runs FIRST so e.preventDefault() suppresses child Button animation
+          onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+            handlePointerDown(e);
+            child.props.onPointerDown?.(e);
+            onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+          },
+          onClick: (e: ReactMouseEvent<HTMLElement>) => {
+            child.props.onClick?.(e);
+            handleClick(e);
+          },
+          "aria-haspopup": "dialog",
+          "aria-expanded": open,
+        });
+      }
+    }
+
+    return (
+      <button
+        type="button"
+        ref={setRefs}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onPointerDown={(e) => {
+          onPointerDown?.(e);
+          handlePointerDown(e);
+        }}
+        onClick={handleClick}
+        {...rest}
+      >
+        {children}
+      </button>
+    );
+  },
+);
+
+DialogTrigger.displayName = "Dialog.Trigger";
+
+// ─── Dialog.Panel ─────────────────────────────────────────────────────────────
+
+export function DialogPanel({
+  variant = "default",
+  dismissOnBackdrop = true,
+  className,
+  themeAnchor,
+  children,
+}: DialogPanelProps) {
+  const { open, onOpenChange, titleId, descriptionId, hasDescription } = useDialog();
+
+  const motion = useDialogModalMotion({ open, onOpenChange, variant, dismissOnBackdrop });
+
+  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
+  const lightUi = useBurneLightTheme(portalThemeAnchor);
+  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
+
+  if (typeof document === "undefined" || !motion.mounted) return null;
+
+  // Context (DialogProvider, DialogClassNamesProvider) flows through the React
+  // component tree, not the DOM tree — so portal children inherit it correctly.
+  return createPortal(
+    <DialogPortalShell
+      className={className}
+      variant={variant}
+      portalTheme={portalTheme}
+      lightUi={lightUi}
+      titleId={titleId}
+      descriptionId={descriptionId}
+      hasDescription={hasDescription}
+      dialogRef={motion.dialogRef}
+      overlayRef={motion.overlayRef}
+      panelRef={motion.panelRef}
+      bindGlossPanelRef={motion.bindGlossPanelRef}
+      onBackdropMouseDown={motion.handleBackdropPointerDown}
+      onDialogClose={() => onOpenChange(false)}
+    >
+      {children}
+    </DialogPortalShell>,
+    document.body,
+  );
+}
+
+DialogPanel.displayName = "Dialog.Panel";
+
+// ─── DialogPortalShell ───────────────────────────────────────────────────────
 
 export function DialogPortalShell({
   children,

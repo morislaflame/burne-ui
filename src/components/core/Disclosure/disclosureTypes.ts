@@ -1,6 +1,5 @@
 import type {
   HTMLAttributes,
-  MutableRefObject,
   ReactNode,
   Ref,
   RefObject,

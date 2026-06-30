@@ -34,6 +34,17 @@ export type TabsRootProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue">
   classNames?: TabsClassNames;
 };
 
+export type UseTabsRootStateProps = Pick<
+  TabsRootProps,
+  | "value"
+  | "defaultValue"
+  | "onValueChange"
+  | "orientation"
+  | "size"
+  | "variant"
+  | "disabled"
+>;
+
 export type TabsListProps = HTMLAttributes<HTMLDivElement>;
 
 export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"> & {

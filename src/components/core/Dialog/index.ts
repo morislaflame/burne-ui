@@ -6,11 +6,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogHeadingBlock,
+  DialogPanel,
   DialogRoot,
   DialogTitle,
+  DialogTrigger,
 } from "./Dialog";
 
 export const Dialog = Object.assign(DialogRoot, {
+  Trigger: DialogTrigger,
+  Panel: DialogPanel,
   Content: DialogContent,
   Header: DialogHeader,
   HeadingBlock: DialogHeadingBlock,
@@ -23,6 +27,8 @@ export const Dialog = Object.assign(DialogRoot, {
 
 export type {
   DialogProps,
+  DialogPanelProps,
+  DialogTriggerProps,
   DialogVariant,
   DialogHeaderProps,
   DialogTitleProps,

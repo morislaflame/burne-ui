@@ -39,6 +39,12 @@ export type CardProps = Omit<
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
   classNames?: CardClassNames;
+  /**
+   * Enable GSAP interactions (hover lift, press squeeze).
+   * Set to `false` to disable all motion while keeping `pressable` semantics (accessible activation still works).
+   * @default true
+   */
+  animated?: boolean;
 };
 
 export type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
@@ -66,6 +72,7 @@ export type UseCardRootStateProps = Pick<
 export type UseCardAnimationsProps = {
   pressable: boolean;
   isGloss: boolean;
+  animated: boolean;
   onPress?: (event: CardPressEvent) => void;
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
@@ -84,21 +91,10 @@ export type CardRootShellProps = {
   setRootRef: (node: HTMLElement | null) => void;
   rest: HTMLAttributes<HTMLElement>;
   children: ReactNode;
-  glossPointerHandlers: {
-    onPointerOver: (e: React.PointerEvent<HTMLElement>) => void;
-    onPointerOut: (e: React.PointerEvent<HTMLElement>) => void;
-  };
-  pressableLift: {
-    onPointerOver: (e: React.PointerEvent<HTMLElement>) => void;
-    onPointerOut: (e: React.PointerEvent<HTMLElement>) => void;
-    motionClass: string;
-  };
-  onPointerOverProp?: HTMLAttributes<HTMLElement>["onPointerOver"];
-  onPointerOutProp?: HTMLAttributes<HTMLElement>["onPointerOut"];
-  handlePointerDown: (e: React.PointerEvent<HTMLElement>) => void;
-  handleClick: (e: React.MouseEvent<HTMLElement>) => void;
-  handleKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
-  onPointerDownProp?: HTMLAttributes<HTMLElement>["onPointerDown"];
-  onClickProp?: HTMLAttributes<HTMLElement>["onClick"];
-  onKeyDownProp?: HTMLAttributes<HTMLElement>["onKeyDown"];
+  /** Merged handlers (user prop + animation). Safe to use in all branches. */
+  onPointerOver?: HTMLAttributes<HTMLElement>["onPointerOver"];
+  onPointerOut?: HTMLAttributes<HTMLElement>["onPointerOut"];
+  onPointerDown?: HTMLAttributes<HTMLElement>["onPointerDown"];
+  onClick?: HTMLAttributes<HTMLElement>["onClick"];
+  onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
 };

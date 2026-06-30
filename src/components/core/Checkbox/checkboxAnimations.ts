@@ -1,16 +1,12 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
-  useCallback,
-  useEffect,
   useLayoutEffect,
   useRef,
 } from "react";
 
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
 import { useCheckboxFieldContext } from "./checkboxContext";
 import type { UseCheckboxAnimationsProps } from "./checkboxTypes";
@@ -59,33 +55,10 @@ export function useCheckboxTextMotion({
   textMotionRef,
   onPointerDown,
 }: UseCheckboxAnimationsProps) {
-  const reduceMotion = prefersReducedInteractiveHoverLift();
-
-  useEffect(() => {
-    const el = textMotionRef.current;
-    return () => {
-      if (el) killMotion(el);
-    };
-  }, [textMotionRef]);
-
-  useEffect(() => {
-    const el = textMotionRef.current;
-    if (!el || !isDisabled) return;
-    killMotion(el);
-    el.style.transform = "";
-  }, [isDisabled, textMotionRef]);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLElement>) => {
-      onPointerDown?.(e);
-      if (e.defaultPrevented || isDisabled || !enableTextMotion) return;
-      if (reduceMotion) return;
-      const t = textMotionRef.current;
-      if (!t) return;
-      void animateInteractivePressSqueeze(t);
-    },
-    [enableTextMotion, isDisabled, onPointerDown, reduceMotion, textMotionRef],
-  );
-
-  return { handlePointerDown };
+  return usePressableElementTextMotion({
+    isDisabled,
+    enabled: enableTextMotion,
+    textMotionRef,
+    onPointerDown,
+  });
 }

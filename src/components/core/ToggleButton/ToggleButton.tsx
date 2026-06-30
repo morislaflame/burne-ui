@@ -2,11 +2,10 @@ import { forwardRef } from "react";
 
 import "@/components/core/utils/glossInteractive.css";
 
-import { useToggleButtonAnimations } from "./toggleButtonAnimations";
+import { useToggleButtonAnimations, useToggleButtonFill } from "./toggleButtonAnimations";
 import {
   ToggleButtonContent,
   ToggleButtonFill,
-  useToggleButtonFill,
 } from "./toggleButtonParts";
 import type { ToggleButtonProps } from "./toggleButtonTypes";
 import { useToggleButtonRootState } from "./useToggleButtonRootState";

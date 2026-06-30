@@ -26,7 +26,7 @@ import {
 } from "./toastAPI";
 import { toastViewportAriaLabel } from "./toastA11y";
 import { ToastClassNamesProvider } from "./toastContext";
-import { ToastRoot } from "./toastParts";
+import { ToastRoot } from "./Toast";
 import {
   toastScrimClass,
   toastStackClass,

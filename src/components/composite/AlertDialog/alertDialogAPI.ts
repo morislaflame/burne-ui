@@ -1,20 +1,64 @@
-import { Children, isValidElement, type ReactNode } from "react";
+import type { ClassValue } from "clsx";
+import {
+  Children,
+  cloneElement,
+  Fragment,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
-import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import {
   alertDefaultIndicatorIcon,
   alertShowsDefaultIndicatorIcon,
 } from "@/components/core/Alert/alertAPI";
-import { alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertStyles";
+import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
+import { Button, type ButtonProps, type ButtonSize, type ButtonStatus, type ButtonVariant } from "@/components/core/Button";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import { cn } from "@/utils/cn";
 
-const ALERT_DIALOG_HEADER_SLOT_NAMES = new Set([
-  "AlertDialogIndicator",
-  "AlertDialogTitle",
-  "AlertDialogDescription",
-  "AlertDialogClose",
-  "AlertDialogHeadingBlock",
-]);
+import type { AlertDialogSize } from "./alertDialogTypes";
+
+const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
+  small: "small",
+  base: "base",
+  mid: "mid",
+  large: "large",
+};
+
+export function mergeAlertDialogSlotClass(...parts: ClassValue[]): string {
+  return cn(...parts);
+}
+
+/** Button size for the given `size` modal (if you don't use `AlertDialog.Footer` with auto-substitution). */
+export function footerButtonSizeForAlertDialog(
+  dialogSize: AlertDialogSize,
+): ButtonSize {
+  return FOOTER_BUTTON_SIZE[dialogSize];
+}
+
+/** Primary action button in the modal footer in the window tone. */
+export function primaryButtonVariantForAlertTone(
+  status: AlertStatus,
+): ButtonVariant {
+  void status;
+  return "primary";
+}
+
+/** Status of the primary action button in the modal footer in the window tone. */
+export function primaryButtonStatusForAlertTone(
+  status: AlertStatus,
+): ButtonStatus {
+  switch (status) {
+    case "danger":
+    case "success":
+    case "info":
+    case "warning":
+      return status;
+    default:
+      return "default";
+  }
+}
 
 function walkAlertDialogHeaderChildren(
   node: ReactNode,
@@ -61,13 +105,6 @@ export function alertDialogHasClose(children: ReactNode): boolean {
   return walkAlertDialogHeaderChildren(
     children,
     (name) => name === "AlertDialogClose",
-  );
-}
-
-export function hasAlertDialogHeaderCompoundChildren(children: ReactNode): boolean {
-  return walkAlertDialogHeaderChildren(
-    children,
-    (name) => name != null && ALERT_DIALOG_HEADER_SLOT_NAMES.has(name),
   );
 }
 
@@ -119,6 +156,26 @@ export function resolveAlertDialogHeaderGridSlots(
   };
 }
 
-export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {
-  return alertIndicatorWrapperTextClass(status);
+export function injectFooterButtonSize(
+  children: ReactNode,
+  buttonSize: ButtonSize,
+): ReactNode {
+  return Children.map(children, (child) => {
+    if (!isValidElement(child)) return child;
+    if (child.type === Button) {
+      const props = child.props as ButtonProps;
+      return cloneElement(child as ReactElement<ButtonProps>, {
+        size: props.size ?? buttonSize,
+      });
+    }
+    if (child.type === Fragment) {
+      const f = child as ReactElement<{ children?: ReactNode }>;
+      return cloneElement(
+        f,
+        { key: f.key ?? undefined },
+        injectFooterButtonSize(f.props.children, buttonSize),
+      );
+    }
+    return child;
+  });
 }

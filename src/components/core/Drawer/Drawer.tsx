@@ -1,8 +1,5 @@
-import { createPortal } from "react-dom";
-
 import "../utils/glossInteractive.css";
 
-import { useDrawerModalMotion } from "./drawerAnimations";
 import {
   DrawerClassNamesProvider,
   DrawerProvider,
@@ -17,14 +14,17 @@ import {
   DrawerHandleInner,
   DrawerHeader,
   DrawerHeadingBlock,
-  DrawerPortalShell,
+  DrawerPanel,
   DrawerTitle,
+  DrawerTrigger,
 } from "./drawerParts";
-import type { DrawerContextValue, DrawerProps } from "./drawerTypes";
+import type { DrawerProps } from "./drawerTypes";
 import { useDrawerRootState } from "./useDrawerRootState";
 
 export type {
   DrawerProps,
+  DrawerPanelProps,
+  DrawerTriggerProps,
   DrawerPlacement,
   DrawerSize,
   DrawerVariant,
@@ -44,58 +44,18 @@ export type {
 export function DrawerRoot({
   open,
   onOpenChange,
-  children,
   placement = "right",
-  size = "default",
-  variant = "default",
-  className,
+  children,
   classNames,
-  themeAnchor,
 }: DrawerProps) {
-  const state = useDrawerRootState({ open, onOpenChange, themeAnchor, children });
-  const motion = useDrawerModalMotion({
-    open,
-    onOpenChange,
-    variant,
-    placement,
-    backdropIsDismissable: state.backdropIsDismissable,
-  });
+  const state = useDrawerRootState({ open, onOpenChange, placement });
 
-  const contextValue: DrawerContextValue = {
-    ...state.contextBase,
-    placement,
-    overlayRef: motion.overlayRef,
-    panelRef: motion.panelRef,
-    skipCloseAnimRef: motion.skipCloseAnimRef,
-  };
-
-  if (typeof document === "undefined" || !motion.mounted) return null;
-
-  return createPortal(
-    <DrawerProvider value={contextValue}>
+  return (
+    <DrawerProvider value={state.contextValue}>
       <DrawerClassNamesProvider classNames={classNames}>
-        <DrawerPortalShell
-          className={className}
-          variant={variant}
-          placement={placement}
-          size={size}
-          portalTheme={state.portalTheme}
-          lightUi={state.lightUi}
-          titleId={state.titleId}
-          descriptionId={state.descriptionId}
-          hasDescription={state.hasDescription}
-          backdropIsDismissable={state.backdropIsDismissable}
-          panelSegments={state.panelSegments}
-          dialogRef={motion.dialogRef}
-          overlayRef={motion.overlayRef}
-          panelRef={motion.panelRef}
-          bindGlossPanelRef={motion.bindGlossPanelRef}
-          onBackdropMouseDown={motion.handleBackdropMouseDown}
-          onDialogClose={() => onOpenChange(false)}
-        />
+        {children}
       </DrawerClassNamesProvider>
-    </DrawerProvider>,
-    document.body,
+    </DrawerProvider>
   );
 }
 
@@ -112,4 +72,6 @@ export {
   DrawerClose,
   DrawerBody,
   DrawerFooter,
+  DrawerPanel,
+  DrawerTrigger,
 };

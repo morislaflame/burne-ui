@@ -8,12 +8,14 @@ export function AlertDialogLogoutDemo() {
 
   return (
     <>
-      <Button variant="ghost" type="button" onClick={() => setOpen(true)}>
-        Выйти
-      </Button>
-
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialog.Header>
+        <AlertDialog.Trigger asChild>
+          <Button variant="ghost">
+            Выйти
+          </Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Выйти из аккаунта?</AlertDialog.Title>
             <AlertDialog.Description>Текущая сессия будет завершена на этом устройстве.</AlertDialog.Description>
@@ -27,6 +29,7 @@ export function AlertDialogLogoutDemo() {
             Выйти
           </Button>
         </AlertDialog.Footer>
+        </AlertDialog.Panel>
       </AlertDialog>
     </>
   );

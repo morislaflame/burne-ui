@@ -78,6 +78,7 @@ export type UseButtonAnimationsProps = {
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   onPointerEnter?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: React.PointerEventHandler<HTMLButtonElement>;
+  onPointerDown?: React.PointerEventHandler<HTMLButtonElement>;
 };
 
 export type ButtonFeedbackExpandRippleProps = {

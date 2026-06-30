@@ -9,12 +9,14 @@ export function DialogGlossDemo() {
 
   return (
     <>
-      <Button variant="gloss" onClick={() => setOpen(true)}>
-        Gloss Dialog
-      </Button>
-
-      <Dialog open={open} onOpenChange={setOpen} variant="gloss">
-        <Dialog.Header>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog.Trigger asChild>
+          <Button variant="gloss">
+            Gloss Dialog
+          </Button>
+        </Dialog.Trigger>
+        <Dialog.Panel variant="gloss">
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Gloss Dialog</Dialog.Title>
             <Dialog.Description>Стеклянная модальная панель.</Dialog.Description>
@@ -44,6 +46,7 @@ export function DialogGlossDemo() {
             Сохранить
           </Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
     </>
   );

@@ -8,11 +8,15 @@ import {
   DrawerHandleInner,
   DrawerHeader,
   DrawerHeadingBlock,
+  DrawerPanel,
   DrawerRoot,
   DrawerTitle,
+  DrawerTrigger,
 } from "./Drawer";
 
 export const Drawer = Object.assign(DrawerRoot, {
+  Trigger: DrawerTrigger,
+  Panel: DrawerPanel,
   Backdrop: DrawerBackdropInner,
   Handle: DrawerHandleInner,
   Content: DrawerContent,
@@ -27,6 +31,8 @@ export const Drawer = Object.assign(DrawerRoot, {
 
 export type {
   DrawerProps,
+  DrawerPanelProps,
+  DrawerTriggerProps,
   DrawerPlacement,
   DrawerSize,
   DrawerVariant,

@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, waitFor } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Card } from "@/components/core/Card";
 

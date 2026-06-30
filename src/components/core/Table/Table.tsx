@@ -1,14 +1,27 @@
-export {
-  TableRoot,
-  TableScrollContainer,
-  TableContent,
-  TableHeader,
-  TableColumn,
+import { forwardRef } from "react";
+
+import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+
+import "@/components/core/utils/glossInteractive.css";
+
+import { mergeTableSlotClass } from "./tableAPI";
+import {
   TableBody,
-  TableRow,
   TableCell,
+  TableColumn,
+  TableContent,
   TableFooter,
+  TableHeader,
+  TableRow,
+  TableScrollContainer,
 } from "./tableParts";
+import {
+  TableClassNamesProvider,
+  TableVariantProvider,
+} from "./tableContext";
+import { TABLE_GLOSS_CONTENT_CLASS, tableRootClass } from "./tableStyles";
+import type { TableProps } from "./tableTypes";
+import { useTableRootState } from "./useTableRootState";
 
 export type {
   TableProps,
@@ -31,3 +44,48 @@ export type {
 } from "./tableTypes";
 
 export { TABLE_ROW_TONE_SURFACE } from "./tableStyles";
+
+export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
+  { variant: variantProp = "default", className, classNames, children, ...rest },
+  ref,
+) {
+  const { variant, isGloss } = useTableRootState({ variant: variantProp });
+  const setRootRef = useMergedGlossPanelRef(ref, isGloss);
+
+  return (
+    <TableVariantProvider variant={variant}>
+      <TableClassNamesProvider classNames={classNames}>
+        <div
+          ref={setRootRef}
+          className={tableRootClass({
+            variant,
+            slotClass: classNames?.root,
+            className,
+          })}
+          {...rest}
+        >
+          {isGloss ? (
+            <div className={mergeTableSlotClass(TABLE_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
+              {children}
+            </div>
+          ) : (
+            children
+          )}
+        </div>
+      </TableClassNamesProvider>
+    </TableVariantProvider>
+  );
+});
+
+TableRoot.displayName = "TableRoot";
+
+export {
+  TableScrollContainer,
+  TableContent,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableFooter,
+};

@@ -22,7 +22,8 @@ export function AlertDialogStatusDemo() {
       </div>
 
       <AlertDialog open={dangerOpen} onOpenChange={setDangerOpen} status="danger">
-        <AlertDialog.Header>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Удалить элемент?</AlertDialog.Title>
             <AlertDialog.Description>
@@ -42,10 +43,12 @@ export function AlertDialogStatusDemo() {
             Удалить
           </Button>
         </AlertDialog.Footer>
+        </AlertDialog.Panel>
       </AlertDialog>
 
       <AlertDialog open={successOpen} onOpenChange={setSuccessOpen} status="success">
-        <AlertDialog.Header>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Изменения сохранены</AlertDialog.Title>
             <AlertDialog.Description>Настройки профиля обновлены успешно.</AlertDialog.Description>
@@ -60,6 +63,7 @@ export function AlertDialogStatusDemo() {
             Отлично
           </Button>
         </AlertDialog.Footer>
+        </AlertDialog.Panel>
       </AlertDialog>
     </>
   );

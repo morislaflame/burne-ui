@@ -1,19 +1,18 @@
-import { useCallback, useState, type FormEvent } from "react";
+import { useCallback, useState } from "react";
 
-import { Form } from "@/components/composite/Form";
+import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
 import { Checkbox } from "@/components/core/Checkbox";
 import { Input } from "@/components/core/Input";
 import { Link } from "@/components/core/Link";
 import { Tabs } from "@/components/core/Tabs";
-import { Text } from "@/components/core/Text";
 
 export function CardAuthPanelDemo() {
   const [tab, setTab] = useState("login");
 
-  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback((values: FormValues) => {
+    void values;
   }, []);
 
   return (

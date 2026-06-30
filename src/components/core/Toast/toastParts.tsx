@@ -1,12 +1,8 @@
-import { forwardRef, useCallback, useMemo, useRef } from "react";
+import { forwardRef } from "react";
 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Loading } from "@/components/core/Loading";
 import { Text } from "@/components/core/Text";
-import {
-  createGlossInteractiveRefCallback,
-  useGlossInteractiveHandlers,
-} from "@/components/core/utils/glossInteractiveMotion";
 import {
   messageBannerActionCellClass,
   messageBannerCloseCellClass,
@@ -18,13 +14,9 @@ import {
   SEMANTIC_STATUS_ICONS,
 } from "@/components/core/utils/semanticStatusIcons";
 
-import "@/components/core/utils/glossInteractive.css";
-
 import { TOAST_CLOSE_ARIA_LABEL } from "./toastA11y";
 import { mergeToastSlotClass } from "./toastAPI";
 import {
-  ToastClassNamesProvider,
-  ToastItemProvider,
   useToastClassNames,
   useToastItem,
 } from "./toastContext";
@@ -34,7 +26,6 @@ import {
   TOAST_DESCRIPTION_CLASS,
   TOAST_TITLE_CLASS,
   toastIndicatorClass,
-  toastRootClass,
 } from "./toastStyles";
 import type {
   ToastActionButtonProps,
@@ -43,11 +34,9 @@ import type {
   ToastDescriptionProps,
   ToastIndicatorProps,
   ToastMessageProps,
-  ToastRootProps,
   ToastSimpleBodyProps,
   ToastTitleProps,
 } from "./toastTypes";
-import { useToastRootState } from "./useToastRootState";
 
 export function ToastIndicator({ className, children, ...rest }: ToastIndicatorProps) {
   const { status, isLoading, gridSlots } = useToastItem();
@@ -241,97 +230,3 @@ export function ToastSimpleBody({
     </>
   );
 }
-
-export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
-  {
-    status = "default",
-    variant = "default",
-    title,
-    description,
-    action,
-    isLoading = false,
-    onClose,
-    className,
-    classNames,
-    children,
-    onPointerOver: onPointerOverProp,
-    onPointerOut: onPointerOutProp,
-    ...rest
-  },
-  ref,
-) {
-  const state = useToastRootState({
-    status,
-    title,
-    description,
-    action,
-    isLoading,
-    onClose,
-    children,
-  });
-
-  const isGloss = variant === "gloss";
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, isGloss),
-    [isGloss],
-  );
-
-  const setRootRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      bindGlossRef(node);
-      rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    },
-    [bindGlossRef, ref],
-  );
-
-  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
-  const slotClassNames = useToastClassNames();
-
-  return (
-    <ToastItemProvider value={state.itemCtx}>
-      <ToastClassNamesProvider classNames={classNames}>
-        <div
-          ref={setRootRef}
-          role={state.liveRole}
-          aria-labelledby={state.titleId}
-          aria-live={state.liveRole === "alert" ? "assertive" : "polite"}
-          className={toastRootClass({
-            variant,
-            status,
-            gridSlots: state.gridSlots,
-            slotClass: slotClassNames.root,
-            className,
-          })}
-          onPointerOver={(e) => {
-            onPointerOverProp?.(e);
-            if (e.defaultPrevented) return;
-            if (isGloss) glossPointerHandlers.onPointerOver(e);
-          }}
-          onPointerOut={(e) => {
-            onPointerOutProp?.(e);
-            if (isGloss) glossPointerHandlers.onPointerOut(e);
-          }}
-          {...rest}
-        >
-          {state.isCompound ? (
-            children
-          ) : (
-            <ToastSimpleBody
-              gridSlots={state.gridSlots}
-              title={title}
-              description={description}
-              action={action}
-              onClose={onClose}
-            />
-          )}
-        </div>
-      </ToastClassNamesProvider>
-    </ToastItemProvider>
-  );
-});
-
-ToastRoot.displayName = "ToastRoot";

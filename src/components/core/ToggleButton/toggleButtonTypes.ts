@@ -4,7 +4,7 @@ import type {
   ReactNode,
 } from "react";
 
-import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import type { TextVariant } from "@/components/core/Text";
 

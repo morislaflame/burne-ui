@@ -73,11 +73,13 @@ function ConfirmTemplate({
   const primaryVariant = primaryButtonVariantForAlertTone(status);
   const primaryStatus = primaryButtonStatusForAlertTone(status);
   return (
-    <>
-      <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
-        {label}
-      </Button>
-      <AlertDialog open={open} onOpenChange={setOpen} size={size} status={status} variant={variant}>
+    <AlertDialog open={open} onOpenChange={setOpen} size={size} status={status} variant={variant}>
+      <AlertDialog.Trigger asChild>
+        <Button type="button" size="base" variant="outline">
+          {label}
+        </Button>
+      </AlertDialog.Trigger>
+      <AlertDialog.Panel>
         <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Подтверждение</AlertDialog.Title>
@@ -94,8 +96,8 @@ function ConfirmTemplate({
             Продолжить
           </Button>
         </AlertDialog.Footer>
-      </AlertDialog>
-    </>
+      </AlertDialog.Panel>
+    </AlertDialog>
   );
 }
 

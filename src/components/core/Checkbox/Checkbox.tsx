@@ -1,5 +1,6 @@
 import { forwardRef, type HTMLAttributes, type Ref } from "react";
 
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { mergeCheckboxSlotClass } from "./checkboxAPI";
@@ -72,12 +73,18 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
     },
     ref,
   ) {
+    const formCtx = useOptionalFormBindingContext();
+    const fieldName = typeof name === "string" ? name : undefined;
+    const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
+    const resolvedError = error ?? formError;
+    const resolvedDanger = danger || Boolean(formError);
+
     const state = useCheckboxRootState(
       {
         size,
         variant,
         checkIcon,
-        danger,
+        danger: resolvedDanger,
         disabled,
         checked,
         defaultChecked,
@@ -95,7 +102,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
         "aria-label": ariaLabel,
         label,
         hint,
-        error,
+        error: resolvedError,
       },
       children,
       className,

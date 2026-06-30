@@ -1,5 +1,6 @@
 import type {
   ChangeEvent,
+  FocusEvent,
   KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
@@ -189,7 +190,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
 ComboBoxInputGroup.displayName = "ComboBoxInputGroup";
 
 export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
-  function ComboBoxInput({ className, onKeyDown, onChange, ...rest }, ref) {
+  function ComboBoxInput({ className, onKeyDown, onChange, onBlur, ...rest }, ref) {
     const slotClassNames = useComboBoxClassNames();
     const ctx = useComboBoxContext();
     const {
@@ -217,6 +218,8 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       hintId,
       errorId,
       variant,
+      formInputRef,
+      formOnBlur,
     } = ctx;
 
     const openingRef = useComboBoxOpeningRef();
@@ -389,9 +392,17 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
 
     const inputValue = open ? filterQuery : selectedDisplayString;
 
+    const handleBlur = useCallback(
+      (e: FocusEvent<HTMLInputElement>) => {
+        onBlur?.(e);
+        formOnBlur?.();
+      },
+      [formOnBlur, onBlur],
+    );
+
     return (
       <input
-        ref={mergeRefs(ref, inputRef)}
+        ref={mergeRefs(ref, inputRef, formInputRef)}
         id={comboBoxId}
         type="text"
         aria-autocomplete="list"
@@ -406,6 +417,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         value={inputValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
         className={comboBoxInputClass({
           size,
           muted: !open && !selectedOption,
@@ -625,7 +637,7 @@ export function ComboBoxError({
       className={mergeComboBoxSlotClass(slotClassNames.error, className)}
       {...rest}
     >
-      {children}
+      {children ?? field.errorMessage}
     </FieldError>
   );
 }

@@ -1,8 +1,5 @@
-import { createPortal } from "react-dom";
-
 import "../utils/glossInteractive.css";
 
-import { useDialogModalMotion } from "./dialogAnimations";
 import {
   DialogClassNamesProvider,
   DialogProvider,
@@ -15,14 +12,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogHeadingBlock,
-  DialogPortalShell,
+  DialogPanel,
   DialogTitle,
+  DialogTrigger,
 } from "./dialogParts";
 import type { DialogProps } from "./dialogTypes";
 import { useDialogRootState } from "./useDialogRootState";
 
 export type {
   DialogProps,
+  DialogPanelProps,
+  DialogTriggerProps,
   DialogVariant,
   DialogHeaderProps,
   DialogTitleProps,
@@ -39,45 +39,16 @@ export function DialogRoot({
   open,
   onOpenChange,
   children,
-  className,
   classNames,
-  variant = "default",
-  dismissOnBackdrop = true,
-  themeAnchor,
 }: DialogProps) {
-  const state = useDialogRootState({ open, onOpenChange, themeAnchor });
-  const motion = useDialogModalMotion({
-    open,
-    onOpenChange,
-    variant,
-    dismissOnBackdrop,
-  });
+  const state = useDialogRootState({ open, onOpenChange });
 
-  if (typeof document === "undefined" || !motion.mounted) return null;
-
-  return createPortal(
+  return (
     <DialogProvider value={state.contextValue}>
       <DialogClassNamesProvider classNames={classNames}>
-        <DialogPortalShell
-          className={className}
-          variant={variant}
-          portalTheme={state.portalTheme}
-          lightUi={state.lightUi}
-          titleId={state.titleId}
-          descriptionId={state.descriptionId}
-          hasDescription={state.hasDescription}
-          dialogRef={motion.dialogRef}
-          overlayRef={motion.overlayRef}
-          panelRef={motion.panelRef}
-          bindGlossPanelRef={motion.bindGlossPanelRef}
-          onBackdropMouseDown={motion.handleBackdropPointerDown}
-          onDialogClose={() => onOpenChange(false)}
-        >
-          {children}
-        </DialogPortalShell>
+        {children}
       </DialogClassNamesProvider>
-    </DialogProvider>,
-    document.body,
+    </DialogProvider>
   );
 }
 
@@ -92,4 +63,6 @@ export {
   DialogClose,
   DialogBody,
   DialogFooter,
+  DialogPanel,
+  DialogTrigger,
 };

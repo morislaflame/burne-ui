@@ -3,10 +3,13 @@ import {
   forwardRef,
   useCallback,
   useMemo,
+  useRef,
   type MouseEvent,
 } from "react";
 
 import { Text } from "@/components/core/Text";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
 import {
   PAGINATION_ELLIPSIS_ARIA_HIDDEN,
@@ -20,10 +23,7 @@ import {
   resolvePaginationNextDisabled,
   resolvePaginationPreviousDisabled,
 } from "./paginationAPI";
-import {
-  usePaginationContentRef,
-  usePaginationInteractiveMotion,
-} from "./paginationAnimations";
+import { usePaginationContentRef } from "./paginationAnimations";
 import {
   useOptionalPagination,
   usePagination,
@@ -33,7 +33,6 @@ import {
   paginationContentClass,
   paginationEllipsisClass,
   paginationInteractiveButtonClass,
-  paginationInteractiveMotionClass,
   paginationItemClass,
   paginationNavTextClass,
   paginationNextIconClass,
@@ -97,48 +96,42 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       className,
       disabled,
       onPointerDown,
-      onPointerEnter,
-      onPointerLeave,
       ...rest
     },
     ref,
   ) {
     const slotClassNames = usePaginationClassNames();
-    const {
-      liftRef,
-      handlePointerEnter,
-      handlePointerLeave,
-      handlePointerDown,
-    } = usePaginationInteractiveMotion({
-      disabled,
-      onPointerEnter,
-      onPointerLeave,
+    const btnRef = useRef<HTMLButtonElement>(null);
+
+    const setRefs = useCallback(
+      (node: HTMLButtonElement | null) => {
+        btnRef.current = node;
+        mergeForwardedRef(ref, node);
+      },
+      [ref],
+    );
+
+    const { handlePointerDown } = usePressableElementTextMotion({
+      isDisabled: !!disabled,
+      enabled: !disabled,
+      textMotionRef: btnRef,
       onPointerDown,
     });
 
     return (
-      <span
-        ref={liftRef}
-        className={paginationInteractiveMotionClass({
+      <button
+        ref={setRefs}
+        type="button"
+        disabled={disabled}
+        className={paginationInteractiveButtonClass({
           slotClass: slotClassNames.interactive,
           className,
         })}
+        onPointerDown={handlePointerDown}
+        {...rest}
       >
-        <button
-          ref={ref}
-          type="button"
-          disabled={disabled}
-          className={paginationInteractiveButtonClass({
-            slotClass: slotClassNames.interactiveButton,
-          })}
-          onPointerEnter={handlePointerEnter}
-          onPointerLeave={handlePointerLeave}
-          onPointerDown={handlePointerDown}
-          {...rest}
-        >
-          {children}
-        </button>
-      </span>
+        {children}
+      </button>
     );
   },
 );

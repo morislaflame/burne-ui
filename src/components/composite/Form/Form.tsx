@@ -1,34 +1,109 @@
-import type { FormHTMLAttributes, HTMLAttributes } from "react";
 import { forwardRef } from "react";
 
-import { cn } from "@/utils/cn";
+import { FormBindingContext } from "./formContext";
 
-export type FormProps = FormHTMLAttributes<HTMLFormElement>;
+import { formRootDescribedBy, formRootLabelledBy } from "./formA11y";
+import { FormClassNamesProvider, FormShellProvider } from "./formContext";
+import {
+  FormActions,
+  FormAnnounce,
+  FormDescription,
+  FormErrorSummary,
+  FormField,
+  FormSection,
+  FormTitle,
+} from "./formParts";
+import { formRootClass } from "./formStyles";
+import type { FormProps } from "./formTypes";
+import { useFormRootState } from "./useFormRootState";
 
-export type FormSectionProps = HTMLAttributes<HTMLDivElement>;
-
-export function FormSection({ className = "", ...rest }: FormSectionProps) {
-  return (
-    <div
-      className={cn("flex flex-col gap-small", className)}
-      {...rest}
-    />
-  );
-}
+export type {
+  FormProps,
+  FormSectionProps,
+  FormTitleProps,
+  FormDescriptionProps,
+  FormActionsProps,
+  FormErrorSummaryProps,
+  FormAnnounceProps,
+  FormFieldProps,
+  FormClassNames,
+} from "./formTypes";
 
 export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot(
-  { className = "", ...rest },
-  ref,
+  {
+    children,
+    className = "",
+    classNames,
+    defaultValues,
+    values,
+    onValuesChange,
+    rules,
+    resolver,
+    validateMode,
+    readOnly,
+    size,
+    disabled,
+  onSubmit,
+  onSubmitError,
+  ...rest
+}, ref,
 ) {
+  const {
+    shellIds,
+    bindingValue,
+    handleSubmit,
+    hasErrors,
+    announce,
+  } = useFormRootState({
+    defaultValues,
+    values,
+    onValuesChange,
+    rules,
+    resolver,
+    validateMode,
+    readOnly,
+    size,
+    disabled,
+    onSubmit,
+    onSubmitError,
+    classNames,
+  });
+
   return (
-    <form
-      ref={ref}
-      className={cn("flex w-full max-w-full flex-col gap-mid text-left", className)}
-      {...rest}
-    />
+    <FormClassNamesProvider classNames={classNames}>
+      <FormBindingContext.Provider value={bindingValue}>
+        <FormShellProvider shellIds={shellIds}>
+          <form
+          ref={ref}
+          noValidate
+          onSubmit={handleSubmit}
+          aria-labelledby={formRootLabelledBy(shellIds.titleId)}
+          aria-describedby={formRootDescribedBy({
+            descriptionId: shellIds.descriptionId,
+            errorSummaryId: shellIds.errorSummaryId,
+            hasErrors,
+          })}
+          className={formRootClass(className, classNames)}
+          {...rest}
+        >
+          <FormAnnounce message={announce} />
+          <FormErrorSummary />
+          {children}
+        </form>
+        </FormShellProvider>
+      </FormBindingContext.Provider>
+    </FormClassNamesProvider>
   );
 });
 
-export const Form = Object.assign(FormRoot, {
-  Section: FormSection,
-});
+FormRoot.displayName = "Form";
+
+export {
+  FormSection,
+  FormTitle,
+  FormDescription,
+  FormActions,
+  FormErrorSummary,
+  FormAnnounce,
+  FormField,
+};

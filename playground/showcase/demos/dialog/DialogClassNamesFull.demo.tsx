@@ -8,9 +8,6 @@ export function DialogClassNamesFullDemo() {
 
   return (
     <>
-      <Button type="button" onClick={() => setOpen(true)}>
-        Открыть с classNames
-      </Button>
       <Dialog
         open={open}
         onOpenChange={setOpen}
@@ -22,7 +19,13 @@ export function DialogClassNamesFullDemo() {
           footer: "border-t border-primary/20 pt-small",
         }}
       >
-        <Dialog.Header>
+        <Dialog.Trigger asChild>
+          <Button variant="outline">
+            Открыть с classNames
+          </Button>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Настройки</Dialog.Title>
             <Dialog.Description>Слоты настроены через classNames.</Dialog.Description>
@@ -37,6 +40,7 @@ export function DialogClassNamesFullDemo() {
             Закрыть
           </Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
     </>
   );

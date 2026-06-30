@@ -1,6 +1,6 @@
 import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
-import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
 
 export type ComboBoxOption = {
@@ -31,6 +31,7 @@ export type ComboBoxRootProps = HTMLAttributes<HTMLDivElement> & {
   hint?: ReactNode;
   error?: ReactNode;
   id?: string;
+  name?: string;
   isRequired?: boolean;
   status?: InputStatus;
   size?: InputSize;
@@ -60,6 +61,7 @@ export type ComboBoxFieldContextValue = {
   isRequired: boolean;
   status: InputStatus;
   size: InputSize;
+  errorMessage?: ReactNode;
 };
 
 export type ComboBoxContextValue = ComboBoxFieldContextValue & {
@@ -80,6 +82,8 @@ export type ComboBoxContextValue = ComboBoxFieldContextValue & {
   menuMaxHeight: string;
   options: ComboBoxOption[];
   filteredValues: string[];
+  formInputRef?: (node: HTMLInputElement | null) => void;
+  formOnBlur?: () => void;
 };
 
 export type ComboBoxClassNamesProviderProps = {

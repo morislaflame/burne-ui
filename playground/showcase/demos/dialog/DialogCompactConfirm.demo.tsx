@@ -9,12 +9,14 @@ export function DialogCompactConfirmDemo() {
 
   return (
     <>
-      <Button variant="ghost" type="button" onClick={() => setOpen(true)}>
-        Архивировать проект
-      </Button>
-
       <Dialog open={open} onOpenChange={setOpen}>
-        <Dialog.Header>
+        <Dialog.Trigger asChild>
+          <Button variant="ghost">
+            Архивировать проект
+          </Button>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Архивировать?</Dialog.Title>
             <Dialog.Description>Проект скроется из списка, но его можно восстановить.</Dialog.Description>
@@ -34,6 +36,7 @@ export function DialogCompactConfirmDemo() {
             Архивировать
           </Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
     </>
   );

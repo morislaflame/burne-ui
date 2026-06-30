@@ -2,6 +2,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import {
@@ -32,8 +33,7 @@ export function useExpandableTriggerMotion({
 
   const setTriggerRef = useCallback(
     (node: HTMLButtonElement | null) => {
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
+      mergeForwardedRef(forwardedRef, node);
     },
     [forwardedRef],
   );

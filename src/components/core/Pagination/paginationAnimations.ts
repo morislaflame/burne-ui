@@ -1,76 +1,9 @@
 import { useCallback, useLayoutEffect, useRef, type ForwardedRef } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
-import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
-
-import type { UsePaginationInteractiveMotionProps } from "./paginationTypes";
-
-export function usePaginationInteractiveMotion({
-  disabled,
-  onPointerEnter,
-  onPointerLeave,
-  onPointerDown,
-}: UsePaginationInteractiveMotionProps) {
-  const liftRef = useRef<HTMLSpanElement>(null);
-  const hoverInsideRef = useRef(false);
-
-  const handlePointerEnter = useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
-      onPointerEnter?.(event);
-      if (disabled) return;
-      const el = liftRef.current;
-      if (!el || shouldSkipInteractiveHoverLift()) return;
-      hoverInsideRef.current = true;
-      animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
-    },
-    [disabled, onPointerEnter],
-  );
-
-  const handlePointerLeave = useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
-      onPointerLeave?.(event);
-      hoverInsideRef.current = false;
-      const el = liftRef.current;
-      if (!el || shouldSkipInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, false, getMotionConfig().hoverLiftScale);
-    },
-    [onPointerLeave],
-  );
-
-  const handlePointerDown = useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
-      onPointerDown?.(event);
-      if (disabled || event.defaultPrevented) return;
-      const el = liftRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
-      void animateInteractivePressSqueeze(el).then(() => {
-        const shell = liftRef.current;
-        if (
-          !shell ||
-          shouldSkipInteractiveHoverLift() ||
-          !hoverInsideRef.current
-        ) {
-          return;
-        }
-        animateInteractiveHoverLift(shell, true, getMotionConfig().hoverLiftScale);
-      });
-    },
-    [disabled, onPointerDown],
-  );
-
-  return {
-    liftRef,
-    handlePointerEnter,
-    handlePointerLeave,
-    handlePointerDown,
-  };
-}
+import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 export function usePaginationFlip(
   olRef: React.RefObject<HTMLOListElement | null>,
@@ -160,8 +93,7 @@ export function usePaginationContentRef(
   const setRefs = useCallback(
     (node: HTMLOListElement | null) => {
       olRef.current = node;
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
+      mergeForwardedRef(forwardedRef, node);
     },
     [forwardedRef],
   );

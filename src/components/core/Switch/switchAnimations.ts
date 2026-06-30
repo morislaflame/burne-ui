@@ -4,6 +4,7 @@ import {
   prefersReducedInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive, motionSwitchThumb } from "@/components/core/utils/motionConfig";
+import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 import { measureSwitchTravel, resolveFallbackThumbPx } from "./switchGeometry";
@@ -15,35 +16,12 @@ export function useSwitchTextMotion({
   textMotionRef,
   onPointerDown,
 }: UseSwitchAnimationsProps) {
-  const reduceMotion = prefersReducedInteractiveHoverLift();
-
-  useEffect(() => {
-    const el = textMotionRef.current;
-    return () => {
-      if (el) killMotion(el);
-    };
-  }, [textMotionRef]);
-
-  useEffect(() => {
-    const el = textMotionRef.current;
-    if (!el || !isDisabled) return;
-    killMotion(el);
-    el.style.transform = "";
-  }, [isDisabled, textMotionRef]);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLLabelElement>) => {
-      onPointerDown?.(e);
-      if (e.defaultPrevented || isDisabled || !enableTextMotion) return;
-      if (reduceMotion) return;
-      const t = textMotionRef.current;
-      if (!t) return;
-      void animateInteractivePressSqueeze(t);
-    },
-    [enableTextMotion, isDisabled, onPointerDown, reduceMotion, textMotionRef],
-  );
-
-  return { handlePointerDown };
+  return usePressableElementTextMotion<HTMLLabelElement>({
+    isDisabled: !!isDisabled,
+    enabled: enableTextMotion,
+    textMotionRef,
+    onPointerDown,
+  });
 }
 
 export function useSwitchTrackAnimations({

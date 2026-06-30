@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 
@@ -27,16 +27,29 @@ export type DrawerClassNames = {
 export type DrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  children?: ReactNode;
+  /** Slide direction (structural, used in context). */
   placement?: DrawerPlacement;
+  children?: ReactNode;
+  classNames?: DrawerClassNames;
+};
+
+export type DrawerPanelProps = {
   size?: DrawerSize;
   variant?: DrawerVariant;
   className?: string;
-  classNames?: DrawerClassNames;
   themeAnchor?: HTMLElement | null;
+  children?: ReactNode;
+};
+
+export type DrawerTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  /** Render trigger as a child element (the child receives all trigger props). */
+  asChild?: boolean;
+  children?: ReactNode;
 };
 
 export type DrawerContextValue = {
+  /** Whether the drawer is currently open. */
+  open: boolean;
   titleId: string;
   descriptionId: string;
   hasDescription: boolean;
@@ -72,15 +85,18 @@ export type DrawerPanelSegment =
   | { kind: "handle"; node: ReactNode }
   | { kind: "content"; children: ReactNode[] };
 
-export type UseDrawerRootStateProps = Pick<
-  DrawerProps,
-  "open" | "onOpenChange" | "themeAnchor" | "children"
->;
+export type UseDrawerRootStateProps = Pick<DrawerProps, "open" | "onOpenChange">;
 
-export type UseDrawerModalMotionProps = Pick<
-  DrawerProps,
-  "open" | "onOpenChange" | "variant"
-> & {
+export type UseDrawerPanelStateProps = {
+  open: boolean;
+  themeAnchor: HTMLElement | null | undefined;
+  children: ReactNode | undefined;
+};
+
+export type UseDrawerModalMotionProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  variant: DrawerVariant;
   placement: DrawerPlacement;
   backdropIsDismissable: boolean;
 };
@@ -103,4 +119,8 @@ export type DrawerPortalShellProps = {
   bindGlossPanelRef: (node: HTMLDivElement | null) => void;
   onBackdropMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDialogClose: () => void;
+};
+
+export type DrawerTriggerInternalProps = {
+  triggerRef: React.RefObject<HTMLElement | null>;
 };

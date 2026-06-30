@@ -1,4 +1,4 @@
-import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
 import { mergePaginationSlotClass } from "./paginationAPI";
 
@@ -14,11 +14,8 @@ export const PAGINATION_CONTENT_CLASS =
 
 export const PAGINATION_ITEM_CLASS = "flex items-center";
 
-export const PAGINATION_INTERACTIVE_MOTION_CLASS =
-  "inline-flex origin-center items-center rounded-mid motion-reduce:animate-none";
-
 export const PAGINATION_INTERACTIVE_BUTTON_CLASS =
-  "inline-flex min-w-0 cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none hover:text-foreground focus-ring disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted";
+  "inline-flex min-w-0 origin-center cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none hover:text-foreground focus-ring disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted disabled:hover:bg-transparent motion-reduce:animate-none";
 
 export const PAGINATION_PAGE_ACTIVE_CLASS =
   "inline-flex min-w-[1.75rem] items-center justify-center px-xsmall py-xsmall font-medium text-foreground tabular-nums";
@@ -88,20 +85,6 @@ export function paginationItemClass({
   return mergePaginationSlotClass(PAGINATION_ITEM_CLASS, slotClass, className);
 }
 
-export function paginationInteractiveMotionClass({
-  slotClass,
-  className,
-}: {
-  slotClass?: string;
-  className?: string;
-}): string {
-  return mergePaginationSlotClass(
-    PAGINATION_INTERACTIVE_MOTION_CLASS,
-    slotClass,
-    className,
-  );
-}
-
 export function paginationInteractiveButtonClass({
   slotClass,
   className,
@@ -111,7 +94,7 @@ export function paginationInteractiveButtonClass({
 }): string {
   return mergePaginationSlotClass(
     PAGINATION_INTERACTIVE_BUTTON_CLASS,
-    TEXT_COLOR_TRANSITION,
+    hoverVariant(),
     slotClass,
     className,
   );

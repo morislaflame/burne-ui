@@ -28,9 +28,9 @@ export function DrawerPlacementDemo() {
             open={open === placement}
             onOpenChange={(next) => !next && setOpen(null)}
             placement={placement}
-            size={isHorizontal ? "mid" : "default"}
           >
-            <Drawer.Header>
+            <Drawer.Panel size={isHorizontal ? "mid" : "default"}>
+              <Drawer.Header>
               <Drawer.HeadingBlock>
                 <Drawer.Title>placement={placement}</Drawer.Title>
                 <Drawer.Description>
@@ -49,6 +49,7 @@ export function DrawerPlacementDemo() {
                 Закрыть
               </Button>
             </Drawer.Footer>
+            </Drawer.Panel>
           </Drawer>
         );
       })}

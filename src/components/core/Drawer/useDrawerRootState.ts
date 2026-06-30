@@ -1,53 +1,39 @@
-import { useCallback, useId, useMemo, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 
-import {
-  burneLightThemePortalProps,
-  useBurneLightTheme,
-  usePortalThemeAnchor,
-} from "@/components/core/utils/burneLightTheme";
+import type { DrawerContextValue, DrawerPlacement, UseDrawerRootStateProps } from "./drawerTypes";
 
-import { partitionDrawerChildren } from "./drawerAPI";
-import type { UseDrawerRootStateProps } from "./drawerTypes";
+const DEFAULT_PLACEMENT: DrawerPlacement = "right";
 
 export function useDrawerRootState({
   open,
   onOpenChange,
-  themeAnchor,
-  children,
-}: UseDrawerRootStateProps) {
+  placement = DEFAULT_PLACEMENT,
+}: UseDrawerRootStateProps & { placement?: DrawerPlacement }) {
   const titleId = useId();
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
+
+  // Placeholder refs — overridden by DrawerPanel's context inside the portal.
+  const placeholderOverlayRef = useRef<HTMLDivElement | null>(null);
+  const placeholderPanelRef = useRef<HTMLDivElement | null>(null);
+  const placeholderSkipCloseAnimRef = useRef(false);
 
   const setHasDescriptionStable = useCallback((value: boolean) => {
     setHasDescription(value);
   }, []);
 
-  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor);
-  const lightUi = useBurneLightTheme(portalThemeAnchor);
-  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
-
-  const { backdropIsDismissable, panelSegments } = useMemo(
-    () => partitionDrawerChildren(children),
-    [children],
-  );
-
-  const contextBase = {
+  const contextValue: DrawerContextValue = {
+    open,
     titleId,
     descriptionId,
     hasDescription,
     setHasDescription: setHasDescriptionStable,
     onOpenChange,
+    placement,
+    overlayRef: placeholderOverlayRef,
+    panelRef: placeholderPanelRef,
+    skipCloseAnimRef: placeholderSkipCloseAnimRef,
   };
 
-  return {
-    contextBase,
-    portalTheme,
-    lightUi,
-    titleId,
-    descriptionId,
-    hasDescription,
-    backdropIsDismissable,
-    panelSegments,
-  };
+  return { contextValue };
 }

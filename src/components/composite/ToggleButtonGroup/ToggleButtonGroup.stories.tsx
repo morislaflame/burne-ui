@@ -13,7 +13,7 @@ import {
 import { Text } from "@/components/core/Text";
 import { ToggleButton } from "@/components/core/ToggleButton";
 
-import { ToggleButtonGroup } from "./ToggleButtonGroup";
+import { ToggleButtonGroup } from "./index";
 
 const framedDecorator = [
   (Story: ComponentType) => (

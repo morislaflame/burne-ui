@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 
@@ -24,14 +24,26 @@ export type DialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children?: ReactNode;
-  className?: string;
   classNames?: DialogClassNames;
+};
+
+export type DialogPanelProps = {
   variant?: DialogVariant;
   dismissOnBackdrop?: boolean;
+  className?: string;
   themeAnchor?: HTMLElement | null;
+  children?: ReactNode;
+};
+
+export type DialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  /** Render trigger as a child element (the child receives all trigger props). */
+  asChild?: boolean;
+  children?: ReactNode;
 };
 
 export type DialogContextValue = {
+  /** Whether the dialog is currently open. */
+  open: boolean;
   titleId: string;
   descriptionId: string;
   hasDescription: boolean;
@@ -53,15 +65,14 @@ export type DialogCloseProps = CloseButtonProps;
 export type DialogContentProps = HTMLAttributes<HTMLDivElement>;
 export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
-export type UseDialogRootStateProps = Pick<
-  DialogProps,
-  "open" | "onOpenChange" | "themeAnchor"
->;
+export type UseDialogRootStateProps = Pick<DialogProps, "open" | "onOpenChange">;
 
-export type UseDialogModalMotionProps = Pick<
-  DialogProps,
-  "open" | "onOpenChange" | "variant" | "dismissOnBackdrop"
->;
+export type UseDialogModalMotionProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  variant: DialogVariant;
+  dismissOnBackdrop: boolean;
+};
 
 export type DialogPortalShellProps = {
   children: ReactNode;
@@ -78,4 +89,8 @@ export type DialogPortalShellProps = {
   bindGlossPanelRef: (node: HTMLDivElement | null) => void;
   onBackdropMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDialogClose: () => void;
+};
+
+export type DialogTriggerInternalProps = {
+  triggerRef: React.RefObject<HTMLElement | null>;
 };

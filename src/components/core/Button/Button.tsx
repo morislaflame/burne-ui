@@ -78,6 +78,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     forwardedRef: ref,
     onPointerEnter,
     onPointerLeave,
+    onPointerDown,
   });
 
   const handleClick = animations.createAsyncClickHandler(
@@ -97,10 +98,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={state.blocked}
       aria-busy={state.ariaBusy}
       className={state.buttonClass}
-      onPointerDown={(e) => {
-        animations.onAnimeDown();
-        onPointerDown?.(e);
-      }}
+      onPointerDown={animations.handlePointerDown}
       onPointerEnter={animations.handlePointerEnter}
       onPointerLeave={animations.handlePointerLeave}
       onMouseDown={onMouseDown}

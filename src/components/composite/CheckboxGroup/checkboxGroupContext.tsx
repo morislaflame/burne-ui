@@ -1,22 +1,20 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, type ReactNode } from "react";
 
-export type CheckboxGroupSelection = "multiple" | "single";
-
-export type CheckboxGroupContextValue = {
-  selection: CheckboxGroupSelection;
-  disabled: boolean;
-  isRequired: boolean;
-  hintId: string;
-  errorId: string;
-  /** Only for `selection="single"`. */
-  selectedValue: string | undefined;
-  /** Only for `selection="single"`. */
-  selectSingleValue: (value: string, checked: boolean) => void;
-  /** First option claims native `required` when `isRequired` (single selection only). */
-  claimRequiredAnchor: () => boolean;
-};
+import type { CheckboxGroupContextValue } from "./checkboxGroupTypes";
 
 const CheckboxGroupContext = createContext<CheckboxGroupContextValue | null>(null);
+
+export function CheckboxGroupProvider({
+  value,
+  children,
+}: {
+  value: CheckboxGroupContextValue;
+  children: ReactNode;
+}) {
+  return (
+    <CheckboxGroupContext.Provider value={value}>{children}</CheckboxGroupContext.Provider>
+  );
+}
 
 export function useCheckboxGroupContext() {
   const ctx = useContext(CheckboxGroupContext);

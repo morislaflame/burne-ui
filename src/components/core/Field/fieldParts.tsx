@@ -1,5 +1,5 @@
-import type { ElementType } from "react";
-import { forwardRef, useId } from "react";
+import type { ElementType, ReactNode } from "react";
+import { forwardRef } from "react";
 
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
@@ -8,8 +8,6 @@ import { mergeFieldSlotClass } from "./fieldAPI";
 import { joinFieldDescribedBy } from "./fieldA11y";
 import {
   FieldClassNamesProvider,
-  FieldSetClassNamesProvider,
-  FieldSetSizeProvider,
   useFieldClassNames,
   useFieldSetClassNames,
   useFieldSetSize,
@@ -34,9 +32,9 @@ import type {
   FieldSetGroupProps,
   FieldSetProps,
 } from "./fieldTypes";
-import { useFieldSetRootState } from "./useFieldSetRootState";
+import type { UseFieldSetRootStateResult } from "./fieldTypes";
 
-function FieldRootShell({
+export function FieldRootShell({
   className,
   children,
   ...rest
@@ -196,15 +194,15 @@ export const FieldSetActions = forwardRef<HTMLDivElement, FieldSetActionsProps>(
 
 FieldSetActions.displayName = "FieldSetActions";
 
-function FieldSetStack({
+export function FieldSetStack({
   legend,
   loose,
   groups,
   actions,
-}: ReturnType<typeof useFieldSetRootState>) {
+}: UseFieldSetRootStateResult) {
   const size = useFieldSetSize();
   const slotClassNames = useFieldSetClassNames();
-  const stack: React.ReactNode[] = [];
+  const stack: ReactNode[] = [];
 
   if (groups.length > 0) {
     stack.push(...loose, ...groups);
@@ -233,44 +231,10 @@ function FieldSetStack({
   );
 }
 
-export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(
-  function FieldSetRoot(
-    {
-      children,
-      className,
-      classNames,
-      hintId,
-      errorId,
-      disabled,
-      size = "base",
-      ...rest
-    },
-    ref,
-  ) {
-    const state = useFieldSetRootState(children);
-
-    return (
-      <FieldSetSizeProvider size={size}>
-        <FieldSetClassNamesProvider classNames={classNames}>
-          <FieldSetRootInner
-            ref={ref}
-            className={className}
-            hintId={hintId}
-            errorId={errorId}
-            disabled={disabled}
-            state={state}
-            {...rest}
-          />
-        </FieldSetClassNamesProvider>
-      </FieldSetSizeProvider>
-    );
-  },
-);
-
-const FieldSetRootInner = forwardRef<
+export const FieldSetRootInner = forwardRef<
   HTMLFieldSetElement,
   Omit<FieldSetProps, "classNames" | "size" | "children"> & {
-    state: ReturnType<typeof useFieldSetRootState>;
+    state: UseFieldSetRootStateResult;
   }
 >(function FieldSetRootInner(
   { className, hintId, errorId, disabled, state, ...rest },
@@ -296,14 +260,4 @@ const FieldSetRootInner = forwardRef<
   );
 });
 
-FieldSetRoot.displayName = "FieldSet";
-
-export function useFieldSetHintId(providedId?: string) {
-  const autoId = useId();
-  return providedId ?? `${autoId}-hint`;
-}
-
-export function useFieldSetErrorId(providedId?: string) {
-  const autoId = useId();
-  return providedId ?? `${autoId}-error`;
-}
+FieldSetRootInner.displayName = "FieldSetRootInner";

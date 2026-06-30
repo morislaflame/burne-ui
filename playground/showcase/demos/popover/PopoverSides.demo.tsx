@@ -1,8 +1,6 @@
 import { Button } from "@/components/core/Button";
-import { Popover, type PopoverSide } from "@/components/core/Popover";
+import { Popover } from "@/components/core/Popover";
 import { Text } from "@/components/core/Text";
-
-const SIDES: PopoverSide[] = ["top", "right", "bottom", "left"];
 
 export function PopoverSidesDemo() {
   return (

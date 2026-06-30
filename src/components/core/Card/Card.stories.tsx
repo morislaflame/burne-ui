@@ -1,9 +1,9 @@
-import type { ComponentType, FormEvent } from "react";
+import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 import { useCallback, useState } from "react";
 
-import { Form } from "@/components/composite/Form/Form";
+import { Form, type FormValues } from "@/components/composite/Form";
 import { Badge } from "@/components/core/Badge";
 import { Button } from "@/components/core/Button/Button";
 import { Input } from "@/components/core/Input";
@@ -268,8 +268,8 @@ export const WithImageBody: Story = {
 };
 
 function QuickSubscribeCard() {
-  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback((values: FormValues) => {
+    void values;
   }, []);
 
   return (

@@ -1,7 +1,6 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -9,19 +8,11 @@ import {
   type MouseEvent,
 } from "react";
 
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
-import { firstLevelHoverShadow } from "@/components/core/utils/useShadowMotion";
-import {
-  animateGlossInteractiveHoverLift,
-  animateGlossInteractivePressSqueeze,
-  createGlossInteractiveRefCallback,
-} from "@/components/core/utils/glossInteractiveMotion";
+import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
 import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
+import {
+  prefersReducedInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
 
 import { centerCoverDiameter, isButtonAsyncLayerActive } from "./buttonAPI";
 import type { ButtonAsyncLayerKind, ButtonAsyncState, ExpandRipple, UseButtonAnimationsProps } from "./buttonTypes";
@@ -77,25 +68,24 @@ export function useButtonAnimations({
   forwardedRef,
   onPointerEnter,
   onPointerLeave,
+  onPointerDown,
 }: UseButtonAnimationsProps) {
-  const isGloss = variant === "gloss";
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const contentMotionRef = useRef<HTMLSpanElement>(null);
   const labelRef = useRef<HTMLSpanElement>(null);
   const loaderRef = useRef<HTMLSpanElement>(null);
   const successRef = useRef<HTMLSpanElement>(null);
   const errorRef = useRef<HTMLSpanElement>(null);
-  const hoverPointerInsideRef = useRef(false);
+
   const asyncStateRef = useRef<ButtonAsyncState>("idle");
+  asyncStateRef.current = asyncState;
+
   const expandId = useRef(0);
   const prevAsyncRef = useRef<ButtonAsyncState>("idle");
   const prevCrossfadeAsyncRef = useRef<ButtonAsyncState | undefined>(undefined);
   const asyncInFlight = useRef(false);
 
-  asyncStateRef.current = asyncState;
-  const initialAsyncRef = useRef(asyncState);
-
   const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
+
+  const initialAsyncRef = useRef(asyncState);
 
   const bindLabelRef = useMemo(
     () => createButtonAsyncLayerRefCallback(labelRef, initialAsyncRef.current, "label"),
@@ -114,30 +104,32 @@ export function useButtonAnimations({
     [],
   );
 
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(btnRef, isGloss),
-    [isGloss],
-  );
-
-  const setRefs = useCallback(
-    (node: HTMLButtonElement | null) => {
-      bindGlossRef(node);
-      btnRef.current = node;
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
-    },
-    [bindGlossRef, forwardedRef],
-  );
-
   const pushExpandRipple = useCallback((tone: "success" | "error") => {
-    const el = btnRef.current;
+    const el = motionRefs.btnRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
     const size = centerCoverDiameter(r.width, r.height);
     const id = ++expandId.current;
     setExpandRipples((prev) => [...prev, { id, size, tone }]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Shared interactive motion (hover lift, press squeeze, refs merge)
+  const motionRefs = useFirstLevelInteractiveMotion({
+    isGloss: variant === "gloss",
+    animated,
+    enabled: !blocked,
+    hasHoverShadow: BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant),
+    useContentRef: !!groupSegment,
+    forwardedRef,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerDown,
+    // Async-aware check: don't restore hover lift if async kicked in during the press animation
+    afterPressEnabled: () => !userDisabled && asyncStateRef.current === "idle",
+  });
+
+  // Sync expand ripples push with async state transitions
   useLayoutEffect(() => {
     if (!isControlled) return;
     const prev = prevAsyncRef.current;
@@ -150,6 +142,7 @@ export function useButtonAnimations({
     prevAsyncRef.current = asyncState;
   }, [asyncState, isControlled, pushExpandRipple]);
 
+  // Async crossfade between label / loader / success / error layers
   useLayoutEffect(() => {
     const label = labelRef.current;
     const loader = loaderRef.current;
@@ -201,86 +194,6 @@ export function useButtonAnimations({
     }
   }, [asyncState]);
 
-  useEffect(() => {
-    const el = btnRef.current;
-    const content = contentMotionRef.current;
-    if (!blocked || (!el && !content)) return;
-    hoverPointerInsideRef.current = false;
-    if (el) killMotion(el);
-    if (content) {
-      killMotion(content);
-      content.style.transform = "";
-    }
-  }, [blocked]);
-
-  const btnShadow = useMemo(
-    () =>
-      BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant)
-        ? firstLevelHoverShadow()
-        : undefined,
-    [variant],
-  );
-
-  const handlePointerEnter = useCallback(
-    (e: React.PointerEvent<HTMLButtonElement>) => {
-      onPointerEnter?.(e);
-      if (e.defaultPrevented) return;
-      if (blocked) return;
-      if (shouldSkipInteractiveHoverLift()) return;
-      const el = groupSegment ? contentMotionRef.current : btnRef.current;
-      if (!el) return;
-      hoverPointerInsideRef.current = true;
-      if (isGloss && !groupSegment) {
-        animateGlossInteractiveHoverLift(el, true);
-      } else {
-        animateInteractiveHoverLift(el, true, undefined, groupSegment ? undefined : btnShadow);
-      }
-    },
-    [blocked, btnShadow, groupSegment, isGloss, onPointerEnter],
-  );
-
-  const handlePointerLeave = useCallback(
-    (e: React.PointerEvent<HTMLButtonElement>) => {
-      onPointerLeave?.(e);
-      hoverPointerInsideRef.current = false;
-      if (blocked) return;
-      if (shouldSkipInteractiveHoverLift()) return;
-      const el = groupSegment ? contentMotionRef.current : btnRef.current;
-      if (!el) return;
-      if (isGloss && !groupSegment) {
-        animateGlossInteractiveHoverLift(el, false);
-      } else {
-        animateInteractiveHoverLift(el, false, undefined, groupSegment ? undefined : btnShadow);
-      }
-    },
-    [blocked, btnShadow, groupSegment, isGloss, onPointerLeave],
-  );
-
-  const onAnimeDown = useCallback(() => {
-    const el = groupSegment ? contentMotionRef.current : btnRef.current;
-    if (!animated || !el || asyncState !== "idle") return;
-    if (prefersReducedInteractiveHoverLift()) return;
-    const afterPress = () => {
-      const btn = groupSegment ? contentMotionRef.current : btnRef.current;
-      if (!btn || userDisabled || asyncStateRef.current !== "idle") return;
-      if (shouldSkipInteractiveHoverLift()) return;
-      if (hoverPointerInsideRef.current) {
-        if (isGloss && !groupSegment) {
-          animateGlossInteractiveHoverLift(btn, true);
-        } else {
-          animateInteractiveHoverLift(btn, true, undefined, groupSegment ? undefined : btnShadow);
-        }
-      }
-    };
-
-    if (isGloss && !groupSegment) {
-      void animateGlossInteractivePressSqueeze(el, hoverPointerInsideRef.current);
-      return;
-    }
-
-    void animateInteractivePressSqueeze(el).then(afterPress);
-  }, [animated, asyncState, btnShadow, groupSegment, isGloss, userDisabled]);
-
   const dismissExpand = useCallback((id: number) => {
     setExpandRipples((prev) => prev.filter((rp) => rp.id !== id));
   }, []);
@@ -289,14 +202,14 @@ export function useButtonAnimations({
     (
       onClick: ((e: MouseEvent<HTMLButtonElement>) => void) | undefined,
       onAsyncClick: ((e: MouseEvent<HTMLButtonElement>) => Promise<boolean>) | undefined,
-      isControlled: boolean,
+      isControlledArg: boolean,
       internalAsync: ButtonAsyncState,
       setUncontrolledAsync: (next: ButtonAsyncState) => void,
       scheduleAsyncIdleReset: () => void,
     ) =>
       (e: MouseEvent<HTMLButtonElement>) => {
         onClick?.(e);
-        if (isControlled || !onAsyncClick || e.defaultPrevented) return;
+        if (isControlledArg || !onAsyncClick || e.defaultPrevented) return;
         if (asyncInFlight.current || internalAsync !== "idle") return;
         asyncInFlight.current = true;
         setUncontrolledAsync("loading");
@@ -320,8 +233,8 @@ export function useButtonAnimations({
   );
 
   return {
-    setRefs,
-    contentMotionRef,
+    setRefs: motionRefs.setRefs,
+    contentMotionRef: motionRefs.contentMotionRef,
     bindLabelRef,
     bindLoaderRef,
     bindSuccessRef,
@@ -329,9 +242,9 @@ export function useButtonAnimations({
     expandRipples,
     dismissExpand,
     pushExpandRipple,
-    handlePointerEnter,
-    handlePointerLeave,
-    onAnimeDown,
+    handlePointerEnter: motionRefs.handlePointerEnter,
+    handlePointerLeave: motionRefs.handlePointerLeave,
+    handlePointerDown: motionRefs.handlePointerDown,
     createAsyncClickHandler,
     asyncInFlight,
   };

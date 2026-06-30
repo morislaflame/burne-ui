@@ -5,11 +5,11 @@ import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotio
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
+import { INTERACTIVE_VARIANT_ROOT } from "@/components/core/Button/buttonStyles";
 import { mergeCloseButtonSlotClass } from "./closeButtonAPI";
 import type { CloseButtonSize, CloseButtonVariant } from "./closeButtonTypes";
 
 type VariantVisual = {
-  root: string;
   focusOutline: string;
   convergeBg: string;
 };
@@ -33,32 +33,26 @@ const CLOSE_BUTTON_HOVER_VARIANT: Record<CloseButtonVariant, HoverVariant> = {
 
 const CLOSE_BUTTON_VARIANT: Record<CloseButtonVariant, VariantVisual> = {
   default: {
-    root: "bg-surface text-foreground border-token",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   primary: {
-    root: "bg-primary text-primary-foreground border border-transparent",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-primary-fill"),
   },
   outline: {
-    root: "bg-transparent border-token text-foreground",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   secondary: {
-    root: "bg-secondary text-secondary-foreground border border-transparent",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   ghost: {
-    root: "bg-transparent text-foreground border border-transparent",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   gloss: {
-    root: "",
     focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
@@ -123,14 +117,13 @@ export function closeButtonRootClass({
 
   return mergeCloseButtonSlotClass(
     CLOSE_BUTTON_ROOT_BASE_CLASS,
-    !isGloss && SHADOW_LIFT_MOTION_CLASS,
-    !disabled && !isGloss && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant]),
     isGloss
       ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS)
-      : "will-change-transform origin-center",
-    sizeClasses.root,
-    !isGloss && vn.root,
+      : SHADOW_LIFT_MOTION_CLASS,
+    !disabled && !isGloss && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant]),
+    !isGloss && INTERACTIVE_VARIANT_ROOT[variant],
     vn.focusOutline,
+    sizeClasses.root,
     disabled && CLOSE_BUTTON_DISABLED_CLASS,
     className,
     slotRoot,

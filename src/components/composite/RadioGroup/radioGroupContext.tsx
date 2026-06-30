@@ -1,18 +1,20 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, type ReactNode } from "react";
 
-export type RadioGroupContextValue = {
-  name: string;
-  disabled: boolean;
-  isRequired: boolean;
-  hintId: string;
-  errorId: string;
-  selectedValue: string | undefined;
-  selectValue: (value: string | undefined) => void;
-  /** First option in the group claims native `required` when `isRequired`. */
-  claimRequiredAnchor: () => boolean;
-};
+import type { RadioGroupContextValue } from "./radioGroupTypes";
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
+
+export function RadioGroupProvider({
+  value,
+  children,
+}: {
+  value: RadioGroupContextValue;
+  children: ReactNode;
+}) {
+  return (
+    <RadioGroupContext.Provider value={value}>{children}</RadioGroupContext.Provider>
+  );
+}
 
 export function useRadioGroupContext() {
   const ctx = useContext(RadioGroupContext);

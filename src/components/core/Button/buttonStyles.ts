@@ -10,6 +10,8 @@ import {
   type SemanticSurfaceStatus,
 } from "@/components/core/utils/semanticStatusSurface";
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
+import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
+import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
@@ -18,6 +20,19 @@ import type { ButtonSize, ButtonStatus, ButtonVariant } from "./buttonTypes";
 type VariantVisual = {
   root: string;
   loaderText: string;
+};
+
+/**
+ * Shared surface root classes for interactive controls that share the same variant set
+ * (Button, CloseButton). Single source of truth — import here instead of duplicating.
+ */
+export const INTERACTIVE_VARIANT_ROOT: Record<ButtonVariant, string> = {
+  default: "bg-surface text-foreground border-token",
+  primary: "bg-primary text-primary-foreground border border-transparent",
+  outline: "bg-transparent border-token text-foreground",
+  secondary: "bg-secondary text-secondary-foreground border border-token",
+  ghost: "bg-transparent text-foreground border border-transparent",
+  gloss: "",
 };
 
 export const BUTTON_VARIANT_HAS_HOVER_SHADOW = new Set<ButtonVariant>([
@@ -30,27 +45,27 @@ export const BUTTON_VARIANT_HAS_HOVER_SHADOW = new Set<ButtonVariant>([
 
 const BUTTON_VARIANT: Record<ButtonVariant, VariantVisual> = {
   default: {
-    root: "bg-surface text-foreground border-token",
+    root: INTERACTIVE_VARIANT_ROOT.default,
     loaderText: "text-foreground",
   },
   primary: {
-    root: "bg-primary text-primary-foreground border border-transparent",
+    root: INTERACTIVE_VARIANT_ROOT.primary,
     loaderText: "text-primary-foreground",
   },
   outline: {
-    root: "bg-transparent border-token text-foreground",
+    root: INTERACTIVE_VARIANT_ROOT.outline,
     loaderText: "text-foreground",
   },
   secondary: {
-    root: "bg-secondary text-secondary-foreground border border-token",
+    root: INTERACTIVE_VARIANT_ROOT.secondary,
     loaderText: "text-secondary-foreground",
   },
   ghost: {
-    root: "bg-transparent text-foreground border border-transparent",
+    root: INTERACTIVE_VARIANT_ROOT.ghost,
     loaderText: "text-foreground",
   },
   gloss: {
-    root: "",
+    root: INTERACTIVE_VARIANT_ROOT.gloss,
     loaderText: "text-foreground",
   },
 };
@@ -281,4 +296,27 @@ export function buttonRippleTone(
 ): string {
   if (status !== "default") return BUTTON_STATUS_CONVERGE_BG[status];
   return BUTTON_CONVERGE_BG[variant];
+}
+
+/**
+ * Returns the surface + motion class for the button root.
+ * Consolidates: gloss-btn / GLOSS_INTERACTIVE_MOTION_CLASS / SHADOW_LIFT_MOTION_CLASS / hover variant.
+ * Lives here (Styles layer) so that state hooks don't import motion utility classes directly.
+ */
+export function buttonSurfaceMotionClass(
+  isGloss: boolean,
+  status: ButtonStatus,
+  variant: ButtonVariant,
+  hasGroupSegment: boolean,
+  blocked: boolean,
+): string {
+  if (isGloss) {
+    return cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS, BUTTON_GLOSS_STATUS[status]);
+  }
+  return cn(
+    buttonVariantRootClass(variant, status),
+    buttonStatusClass(variant, status),
+    !hasGroupSegment && SHADOW_LIFT_MOTION_CLASS,
+    buttonIdleSurfaceMotion(variant, status, blocked),
+  );
 }

@@ -11,12 +11,15 @@ export function AlertDialogGlossDemo() {
 
   return (
     <>
-      <Button variant="gloss" status="danger" onClick={() => setOpen(true)}>
-        Gloss AlertDialog
-      </Button>
 
       <AlertDialog open={open} onOpenChange={setOpen} variant="gloss" status="danger">
-        <AlertDialog.Header>
+        <AlertDialog.Trigger asChild>
+          <Button variant="gloss" status="danger">
+            Gloss AlertDialog
+          </Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Удалить элемент?</AlertDialog.Title>
             <AlertDialog.Description>
@@ -37,6 +40,7 @@ export function AlertDialogGlossDemo() {
             Удалить
           </Button>
         </AlertDialog.Footer>
+        </AlertDialog.Panel>
       </AlertDialog>
     </>
   );

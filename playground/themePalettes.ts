@@ -193,7 +193,7 @@ export const AMBER_LIGHT_COLORS: ThemeColors = {
   secondaryForeground: "#18181b",
   tertiary: "#e2e2e4",
   tertiaryForeground: "#18181b",
-  border: "#fde68a",
+  border: "#f8e0c4",
   foreground: "#18181b",
   muted: "#71717a",
   primary: "#d97706",

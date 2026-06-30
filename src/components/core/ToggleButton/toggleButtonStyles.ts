@@ -1,8 +1,8 @@
 import {
   buttonGroupRoundingClasses,
   buttonGroupSegmentSurfaceClasses,
-  type ButtonGroupSegment,
-} from "@/components/composite/ButtonGroup/buttonGroupSegment";
+} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { buttonRootClass } from "@/components/core/Button/buttonStyles";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";

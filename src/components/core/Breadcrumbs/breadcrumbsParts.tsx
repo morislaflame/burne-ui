@@ -4,6 +4,8 @@ import {
   useCallback,
 } from "react";
 
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+
 import { Dropdown } from "@/components/core/Dropdown";
 import { Text } from "@/components/core/Text";
 
@@ -34,7 +36,7 @@ import {
   crumbInteractiveTextClass,
   crumbInteractiveWrapperClass,
 } from "./breadcrumbsStyles";
-import { useBreadcrumbsRootState } from "./useBreadcrumbsRootState";
+import { useBreadcrumbsListState } from "./useBreadcrumbsRootState";
 import type {
   BreadcrumbListItemProps,
   BreadcrumbSegmentProps,
@@ -55,7 +57,7 @@ BreadcrumbsItem.displayName = "Breadcrumbs.Item";
 
 export const BreadcrumbsList = forwardRef<HTMLOListElement, BreadcrumbsListProps>(
   function BreadcrumbsList({ className, classNames, children, ...rest }, ref) {
-    const { pieces } = useBreadcrumbsRootState(children);
+    const { pieces } = useBreadcrumbsListState(children);
 
     return (
       <BreadcrumbsClassNamesProvider classNames={classNames}>
@@ -209,20 +211,14 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
     },
     forwardedRef,
   ) {
-    const {
-      innerRef,
-      handlePointerEnter,
-      handlePointerLeave,
-      handlePointerDown,
-    } = useBreadcrumbInteractiveMotion();
+    const { textRef, handlePointerDown } = useBreadcrumbInteractiveMotion();
 
     const setRefs = useCallback(
       (node: HTMLSpanElement | null) => {
-        innerRef.current = node;
-        if (typeof forwardedRef === "function") forwardedRef(node);
-        else if (forwardedRef) forwardedRef.current = node;
+        textRef.current = node;
+        mergeForwardedRef(forwardedRef, node);
       },
-      [forwardedRef, innerRef],
+      [forwardedRef, textRef],
     );
 
     const innerCls = href
@@ -233,8 +229,6 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
       <span
         ref={setRefs}
         className={crumbInteractiveWrapperClass(className)}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
       >
         {href ? (
@@ -270,12 +264,7 @@ InteractiveCrumb.displayName = "BreadcrumbsInteractiveCrumb";
 export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
   const slotClassNames = useBreadcrumbsClassNames();
   const count = hiddenItems.length;
-  const {
-    innerRef: liftRef,
-    handlePointerEnter,
-    handlePointerLeave,
-    handlePointerDown,
-  } = useBreadcrumbInteractiveMotion();
+  const { textRef: liftRef, handlePointerDown } = useBreadcrumbInteractiveMotion();
 
   if (count === 0) return null;
 
@@ -284,8 +273,6 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
       <Dropdown.Trigger
         aria-label={ellipsisTriggerAriaLabel(count)}
         className={breadcrumbsEllipsisTriggerClass(slotClassNames.ellipsisTrigger)}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
       >
         <span

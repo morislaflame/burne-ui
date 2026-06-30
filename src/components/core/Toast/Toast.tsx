@@ -1,9 +1,30 @@
-import { createPortal } from "react-dom";
+import { forwardRef, useCallback, useMemo, useRef } from "react";
 
-import { ToastContext } from "./toastContext";
-import { ToastViewport } from "./toastAnimations";
-import type { ToastProviderProps } from "./toastTypes";
-import { useToastProviderState } from "./useToastProviderState";
+import {
+  createGlossInteractiveRefCallback,
+  useGlossInteractiveHandlers,
+} from "@/components/core/utils/glossInteractiveMotion";
+
+import "@/components/core/utils/glossInteractive.css";
+
+import {
+  ToastClassNamesProvider,
+  ToastItemProvider,
+  useToastClassNames,
+} from "./toastContext";
+import {
+  ToastActionButton,
+  ToastCloseButton,
+  ToastContent,
+  ToastDescription,
+  ToastIndicator,
+  ToastMessage,
+  ToastSimpleBody,
+  ToastTitle,
+} from "./toastParts";
+import { toastRootClass } from "./toastStyles";
+import type { ToastRootProps } from "./toastTypes";
+import { useToastRootState } from "./useToastRootState";
 
 export type {
   ToastClassNames,
@@ -24,8 +45,103 @@ export type {
   ToastContextValue,
 } from "./toastTypes";
 
+export { ToastProviderRoot } from "./toastProvider";
+
+export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
+  {
+    status = "default",
+    variant = "default",
+    title,
+    description,
+    action,
+    isLoading = false,
+    onClose,
+    className,
+    classNames,
+    children,
+    onPointerOver: onPointerOverProp,
+    onPointerOut: onPointerOutProp,
+    ...rest
+  },
+  ref,
+) {
+  const state = useToastRootState({
+    status,
+    title,
+    description,
+    action,
+    isLoading,
+    onClose,
+    children,
+  });
+
+  const isGloss = variant === "gloss";
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(rootRef, isGloss),
+    [isGloss],
+  );
+
+  const setRootRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      bindGlossRef(node);
+      rootRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [bindGlossRef, ref],
+  );
+
+  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
+  const slotClassNames = useToastClassNames();
+
+  return (
+    <ToastItemProvider value={state.itemCtx}>
+      <ToastClassNamesProvider classNames={classNames}>
+        <div
+          ref={setRootRef}
+          role={state.liveRole}
+          aria-labelledby={state.titleId}
+          aria-live={state.liveRole === "alert" ? "assertive" : "polite"}
+          className={toastRootClass({
+            variant,
+            status,
+            gridSlots: state.gridSlots,
+            slotClass: slotClassNames.root,
+            className,
+          })}
+          onPointerOver={(e) => {
+            onPointerOverProp?.(e);
+            if (e.defaultPrevented) return;
+            if (isGloss) glossPointerHandlers.onPointerOver(e);
+          }}
+          onPointerOut={(e) => {
+            onPointerOutProp?.(e);
+            if (isGloss) glossPointerHandlers.onPointerOut(e);
+          }}
+          {...rest}
+        >
+          {state.isCompound ? (
+            children
+          ) : (
+            <ToastSimpleBody
+              gridSlots={state.gridSlots}
+              title={title}
+              description={description}
+              action={action}
+              onClose={onClose}
+            />
+          )}
+        </div>
+      </ToastClassNamesProvider>
+    </ToastItemProvider>
+  );
+});
+
+ToastRoot.displayName = "ToastRoot";
+
 export {
-  ToastRoot,
   ToastIndicator,
   ToastMessage,
   ToastContent,
@@ -33,38 +149,4 @@ export {
   ToastDescription,
   ToastActionButton,
   ToastCloseButton,
-} from "./toastParts";
-
-export function ToastProviderRoot({
-  children,
-  defaultPlacement = "bottom-center",
-  defaultVariant = "default",
-  classNames,
-}: ToastProviderProps) {
-  const state = useToastProviderState({
-    defaultPlacement,
-    defaultVariant,
-    classNames,
-  });
-
-  return (
-    <ToastContext.Provider value={state.ctx}>
-      {children}
-      {typeof document !== "undefined" &&
-        state.placements.map((placement) =>
-          createPortal(
-            <ToastViewport
-              placement={placement}
-              sorted={state.sortedByPlacement(placement)}
-              dismissingIds={state.dismissingIds}
-              onDismiss={state.dismiss}
-              onRemoveFinal={state.removeFinal}
-              classNames={classNames}
-            />,
-            document.body,
-            placement,
-          ),
-        )}
-    </ToastContext.Provider>
-  );
-}
+};

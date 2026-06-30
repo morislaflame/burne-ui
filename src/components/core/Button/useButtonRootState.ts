@@ -4,9 +4,8 @@ import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/c
 import {
   buttonGroupRoundingClasses,
   buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupSegment";
-import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
-import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
+} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { cn } from "@/utils/cn";
 
 import { buttonAriaBusy } from "./buttonA11y";
@@ -15,14 +14,11 @@ import {
   BUTTON_BASE_INTERACTIVE_CLASS,
   BUTTON_CURSOR_CLASS,
   BUTTON_DISABLED_OPACITY_CLASS,
-  BUTTON_GLOSS_STATUS,
   BUTTON_STATUS_FOCUS_OUTLINE,
   buttonConvergeRippleColor,
-  buttonIdleSurfaceMotion,
   buttonLoaderTextClass,
   buttonRootClass,
-  buttonStatusClass,
-  buttonVariantRootClass,
+  buttonSurfaceMotionClass,
 } from "./buttonStyles";
 
 export function useButtonRootState({
@@ -46,12 +42,13 @@ export function useButtonRootState({
 }: UseButtonRootStateProps) {
   const layoutCtx = useOptionalButtonGroupLayout();
   const groupCtx = useOptionalButtonGroupSegment();
+  const formCtx = useOptionalFormBindingContext();
   const groupSegment = layoutCtx?.segmented
     ? undefined
     : (groupSegmentProp ?? groupCtx?.segment);
-  const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
+  const size = sizeProp ?? groupCtx?.buttonSize ?? formCtx?.size ?? "base";
   const variant = variantProp ?? groupCtx?.variant ?? "default";
-  const userDisabled = Boolean(disabledProp);
+  const userDisabled = Boolean(disabledProp ?? formCtx?.disabled ?? formCtx?.isSubmitting);
   const isGloss = variant === "gloss";
 
   const [internalAsync, setInternalAsync] = useState<ButtonAsyncState>("idle");
@@ -92,14 +89,7 @@ export function useButtonRootState({
     BUTTON_BASE_INTERACTIVE_CLASS,
     BUTTON_STATUS_FOCUS_OUTLINE[status],
     buttonRootClass(size, iconOnly),
-    isGloss
-      ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS, BUTTON_GLOSS_STATUS[status])
-      : cn(
-          buttonVariantRootClass(variant, status),
-          buttonStatusClass(variant, status),
-          !groupSegment && SHADOW_LIFT_MOTION_CLASS,
-          buttonIdleSurfaceMotion(variant, status, blocked),
-        ),
+    buttonSurfaceMotionClass(isGloss, status, variant, !!groupSegment, blocked),
     userDisabled ? BUTTON_DISABLED_OPACITY_CLASS : "",
     roundingClass,
     className,

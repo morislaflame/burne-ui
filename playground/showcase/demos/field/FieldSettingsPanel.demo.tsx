@@ -1,8 +1,6 @@
 import { Field } from "@/components/core/Field";
-import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
 import { Switch } from "@/components/core/Switch";
-import { Text } from "@/components/core/Text";
 
 export function FieldSettingsPanelDemo() {
   return (

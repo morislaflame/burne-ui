@@ -1,9 +1,6 @@
-import { useRef } from "react";
-
 import { Text } from "@/components/core/Text";
 
 import { mergeToggleButtonSlotClass } from "./toggleButtonAPI";
-import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
 import {
   toggleButtonContentClass,
   toggleButtonFillClass,
@@ -83,7 +80,3 @@ export function ToggleButtonContent({
   );
 }
 
-export function useToggleButtonFill(pressed: boolean) {
-  const fillRef = useRef<HTMLSpanElement>(null);
-  return useToggleButtonFillAnimation(pressed, fillRef);
-}

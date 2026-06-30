@@ -1,5 +1,7 @@
 import { LinkArticleInlineDemo } from "../demos/link/LinkArticleInline.demo";
 import linkArticleInlineSource from "../demos/link/LinkArticleInline.demo.tsx?raw";
+import { LinkCompoundApiDemo } from "../demos/link/LinkCompoundApi.demo";
+import linkCompoundApiSource from "../demos/link/LinkCompoundApi.demo.tsx?raw";
 import { LinkCardActionsDemo } from "../demos/link/LinkCardActions.demo";
 import linkCardActionsSource from "../demos/link/LinkCardActions.demo.tsx?raw";
 import { LinkClassNamesFullDemo } from "../demos/link/LinkClassNamesFull.demo";
@@ -22,6 +24,10 @@ export function LinkShowcase() {
     >
       <ShowcaseSection title="Варианты" description="Внутренние, внешние ссылки и кастомизация иконок.">
         <ShowcaseDemoFromFile Demo={LinkVariantsDemo} source={linkVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Compound API" description="Link.Icon — маркер иконки в разметке; без children — стандартная ↗.">
+        <ShowcaseDemoFromFile Demo={LinkCompoundApiDemo} source={linkCompoundApiSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
@@ -52,6 +58,10 @@ export function LinkShowcase() {
           <ShowcaseDoc.ApiRow
             api="simple"
             description="href, underline, leftIcon и showDefaultIcon на корне — основные пропы для ссылок."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Link.Icon с position start|end; пустой Link.Icon — стандартная иконка ↗."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Внешние ссылки">

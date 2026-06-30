@@ -22,7 +22,8 @@ export function DrawerClassNamesFullDemo() {
           footer: "border-t border-primary/20 pt-small",
         }}
       >
-        <Drawer.Header>
+        <Drawer.Panel>
+          <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Настройки</Drawer.Title>
             <Drawer.Description>Слоты настроены через classNames.</Drawer.Description>
@@ -37,6 +38,7 @@ export function DrawerClassNamesFullDemo() {
             Закрыть
           </Button>
         </Drawer.Footer>
+        </Drawer.Panel>
       </Drawer>
     </>
   );

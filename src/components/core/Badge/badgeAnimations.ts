@@ -6,6 +6,8 @@ import {
   type RefObject,
 } from "react";
 
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+
 import {
   createGlossInteractiveRefCallback,
   GLOSS_INTERACTIVE_MOTION_CLASS,
@@ -107,8 +109,7 @@ export function useBadgeAnimations({
         liftCtx?.registerLiftTarget(null);
       }
 
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
+      mergeForwardedRef(forwardedRef, node);
     },
     [bindGlossRef, forwardedRef, liftCtx],
   );

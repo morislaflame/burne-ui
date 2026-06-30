@@ -7,8 +7,8 @@ import {
 import {
   buttonGroupRoundingClasses,
   buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupSegment";
-import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
+} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
 import { cn } from "@/utils/cn";
 

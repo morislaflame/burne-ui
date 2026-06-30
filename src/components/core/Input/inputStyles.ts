@@ -6,8 +6,8 @@ import {
 import {
   buttonGroupRoundingClasses,
   buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupSegment";
-import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
+} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { affixSlotClass, affixToggleMinWClass } from "@/components/core/utils/inputAffixLayout";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";

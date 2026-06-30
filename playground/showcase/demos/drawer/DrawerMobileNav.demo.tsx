@@ -10,12 +10,13 @@ export function DrawerMobileNavDemo() {
 
   return (
     <>
-      <Button variant="outline" type="button" onClick={() => setOpen(true)}>
-        Меню
-      </Button>
 
       <Drawer open={open} onOpenChange={setOpen} placement="left">
-        <Drawer.Header>
+        <Drawer.Trigger asChild>
+          <Button variant="outline">Меню</Button>
+        </Drawer.Trigger>
+        <Drawer.Panel>
+          <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Навигация</Drawer.Title>
           </Drawer.HeadingBlock>
@@ -30,6 +31,7 @@ export function DrawerMobileNavDemo() {
             ))}
           </nav>
         </Drawer.Body>
+        </Drawer.Panel>
       </Drawer>
     </>
   );

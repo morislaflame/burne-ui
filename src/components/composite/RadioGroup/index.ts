@@ -22,16 +22,19 @@ export const RadioGroup = Object.assign(RadioGroupRoot, {
   Actions: OptionGroupActions,
 });
 
-export type { RadioGroupProps, RadioGroupOrientation } from "./RadioGroup";
 export type {
+  RadioGroupProps,
+  RadioGroupOrientation,
   RadioGroupHintProps,
   RadioGroupErrorProps,
   RadioGroupLabelProps,
   RadioGroupLegendProps,
   RadioGroupListProps,
-} from "./RadioGroup";
+} from "./radioGroupTypes";
+
+export type { RadioGroupContextValue } from "./radioGroupTypes";
+
 export {
   useRadioGroupContext,
   useOptionalRadioGroupContext,
-  type RadioGroupContextValue,
 } from "./radioGroupContext";

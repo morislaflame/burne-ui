@@ -36,17 +36,19 @@ export function ThemePlayground() {
       </div>
 
       {/* Mobile Drawer */}
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} placement="bottom" size="default">
-        <Drawer.Header>
-          <Drawer.HeadingBlock>
-            <Drawer.Title>Настройки темы</Drawer.Title>
-            <Drawer.Description>Настройте токены темы для Burne UI.</Drawer.Description>
-          </Drawer.HeadingBlock>
-          <Drawer.Close />
-        </Drawer.Header>
-        <Drawer.Body className="p-mid">
-          <ThemeControls tokens={tokens} />
-        </Drawer.Body>
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} placement="bottom">
+        <Drawer.Panel size="default">
+          <Drawer.Header>
+            <Drawer.HeadingBlock>
+              <Drawer.Title>Настройки темы</Drawer.Title>
+              <Drawer.Description>Настройте токены темы для Burne UI.</Drawer.Description>
+            </Drawer.HeadingBlock>
+            <Drawer.Close />
+          </Drawer.Header>
+          <Drawer.Body className="p-mid">
+            <ThemeControls tokens={tokens} />
+          </Drawer.Body>
+        </Drawer.Panel>
       </Drawer>
     </div>
   );

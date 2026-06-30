@@ -19,6 +19,8 @@ import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { cn } from "@/utils/cn";
 
 import { animateInputFileRowExit, useInputShellMotion } from "./inputAnimations";
@@ -208,12 +210,34 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
       groupSegment: groupSegmentProp,
       onPointerDown,
       onChange,
+      onBlur,
       "aria-describedby": ariaDescribedByProp,
+      name,
+      value,
       ...rest
     },
     ref,
   ) {
+    const formBinding = useFormControlProps({
+      name: typeof name === "string" ? name : undefined,
+      value,
+      onChange: onChange as ((event: unknown) => void) | undefined,
+      onBlur: onBlur as ((event: unknown) => void) | undefined,
+      disabled,
+      readOnly,
+      type: inputType,
+    });
+
+    const resolvedName = formBinding.name ?? name;
+    const resolvedValue = formBinding.bound ? formBinding.value : value;
+    const resolvedOnChange = formBinding.onChange;
+    const resolvedOnBlur = formBinding.onBlur;
+    const resolvedDisabled = formBinding.disabled ?? disabled;
+    const resolvedReadOnly = formBinding.readOnly ?? readOnly;
+    const resolvedRef = formBinding.ref;
+
     const fieldCtx = useOptionalInputFieldContext();
+    const formCtx = useOptionalFormBindingContext();
     const slotClassNames = useInputClassNames();
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
@@ -221,7 +245,10 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     const id = idProp ?? fieldCtx?.inputId ?? genId;
     const status = statusProp ?? fieldCtx?.status ?? "default";
     const size =
-      sizeProp ?? fieldCtx?.size ?? inputSizeFromButtonSize(groupCtx?.buttonSize ?? "base");
+      sizeProp ??
+      fieldCtx?.size ??
+      formCtx?.size ??
+      inputSizeFromButtonSize(groupCtx?.buttonSize ?? "base");
     const isRequired = fieldCtx?.isRequired ?? false;
     const hintConnected = fieldCtx?.hintConnected ?? false;
     const errorConnected = fieldCtx?.errorConnected ?? false;
@@ -242,13 +269,14 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
     const setInputRef = useCallback(
       (node: HTMLInputElement | null) => {
         inputRef.current = node;
+        resolvedRef(node);
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref],
+      [ref, resolvedRef],
     );
 
-    const blocked = Boolean(disabled || readOnly);
+    const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
     const statusTinted =
       status === "danger" || status === "success" || status === "warning";
     const isGloss = variant === "gloss";
@@ -304,9 +332,9 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
       (e: ChangeEvent<HTMLInputElement>) => {
         const list = e.target.files;
         setPickedFiles(list ? Array.from(list) : []);
-        onChange?.(e);
+        resolvedOnChange?.(e);
       },
-      [onChange],
+      [resolvedOnChange],
     );
 
     const removePickedFile = useCallback(
@@ -488,12 +516,14 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             <input
               ref={setInputRef}
               id={id}
+              name={resolvedName}
               type="file"
-              disabled={disabled}
-              readOnly={readOnly}
+              disabled={resolvedDisabled}
+              readOnly={resolvedReadOnly}
               onChange={handleFileChange}
+              onBlur={resolvedOnBlur}
               aria-required={isRequired || undefined}
-              aria-invalid={status === "danger" ? true : undefined}
+              aria-invalid={formBinding["aria-invalid"] ?? (status === "danger" ? true : undefined)}
               aria-describedby={ariaDescribedBy}
               className={INPUT_FILE_INPUT_CLASS}
               {...rest}
@@ -503,13 +533,16 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={setInputRef}
             id={id}
+            name={resolvedName}
             type={isPassword ? (passwordVisible ? "text" : "password") : inputType}
-            disabled={disabled}
-            readOnly={readOnly}
+            disabled={resolvedDisabled}
+            readOnly={resolvedReadOnly}
             placeholder={placeholder}
-            onChange={onChange}
+            value={resolvedValue as string | number | readonly string[] | undefined}
+            onChange={resolvedOnChange}
+            onBlur={resolvedOnBlur}
             aria-required={isRequired || undefined}
-            aria-invalid={status === "danger" ? true : undefined}
+            aria-invalid={formBinding["aria-invalid"] ?? (status === "danger" ? true : undefined)}
             aria-describedby={ariaDescribedBy}
             className={mergeInputSlotClass(
               INPUT_CONTROL_BASE_CLASS,

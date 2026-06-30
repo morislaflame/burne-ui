@@ -3,7 +3,6 @@ import type {
   HTMLAttributes,
   LiHTMLAttributes,
   OlHTMLAttributes,
-  PointerEvent,
   ReactNode,
 } from "react";
 
@@ -18,10 +17,8 @@ export type PaginationClassNames = {
   content?: string;
   /** `Pagination.Item` (`<li>`). */
   item?: string;
-  /** Обёртка lift у интерактивных кнопок. */
+  /** Кнопка `PaginationInteractive`. */
   interactive?: string;
-  /** Кнопка внутри `PaginationInteractive`. */
-  interactiveButton?: string;
   /** Активная страница (`aria-current="page"`). */
   pageActive?: string;
   /** Текст номера страницы в кнопке. */
@@ -85,13 +82,6 @@ export type PaginationPagesProps = Record<string, never>;
 
 export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
-};
-
-export type UsePaginationInteractiveMotionProps = {
-  disabled?: boolean;
-  onPointerEnter?: (event: PointerEvent<HTMLButtonElement>) => void;
-  onPointerLeave?: (event: PointerEvent<HTMLButtonElement>) => void;
-  onPointerDown?: (event: PointerEvent<HTMLButtonElement>) => void;
 };
 
 export type PaginationIconProps = {

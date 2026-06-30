@@ -1,7 +1,5 @@
 import { forwardRef } from "react";
 
-import { resolveBreadcrumbsAriaLabel } from "./breadcrumbsA11y";
-import { hasBreadcrumbCompoundChildren } from "./breadcrumbsAPI";
 import {
   BreadcrumbsClassNamesProvider,
   BreadcrumbsCollapseProvider,
@@ -12,7 +10,9 @@ import {
   BreadcrumbsSeparator,
 } from "./breadcrumbsParts";
 import { BreadcrumbsSimpleContent } from "./breadcrumbsSimpleContent";
+import { resolveBreadcrumbsAriaLabel } from "./breadcrumbsA11y";
 import type { BreadcrumbsProps } from "./breadcrumbsTypes";
+import { useBreadcrumbsRootState } from "./useBreadcrumbsRootState";
 
 export type {
   BreadcrumbsItemProps,
@@ -36,7 +36,7 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
     },
     ref,
   ) {
-    const isCompound = hasBreadcrumbCompoundChildren(children);
+    const { isCompound } = useBreadcrumbsRootState({ children });
 
     return (
       <BreadcrumbsCollapseProvider collapse={collapse}>

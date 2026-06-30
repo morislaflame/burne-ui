@@ -1,288 +1,63 @@
-import {
-  Children,
-  Fragment,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useMemo,
-  useState,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactElement,
-  type ReactNode,
-} from "react";
-
-import { ToggleButton } from "@/components/core/ToggleButton";
-import "@/components/core/utils/glossInteractive.css";
-import { ButtonGroupSegmentContext } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupSegment";
-import { cn } from "@/utils/cn";
+import { Fragment, forwardRef } from "react";
 
 import {
-  ToggleButtonGroupContext,
-  type ToggleButtonGroupOrientation,
-  type ToggleButtonGroupType,
-} from "@/components/core/ToggleButton/toggleButtonGroupContext";
-import type { ToggleButtonSize, ToggleButtonVariant } from "@/components/core/ToggleButton/ToggleButton";
+  buildButtonGroupSegment,
+  resolveButtonGroupSegmentPosition,
+} from "@/components/composite/ButtonGroup/buttonGroupAPI";
+import { ButtonGroupSegmentProvider } from "@/components/composite/ButtonGroup/buttonGroupContext";
 
-function ToggleButtonGroupSegmentProvider({
-  segment,
-  buttonSize,
-  children,
-}: {
-  segment: ButtonGroupSegment;
-  buttonSize: ToggleButtonSize;
-  children: ReactNode;
-}) {
-  const value = useMemo(
-    () => ({ segment, buttonSize }),
-    [buttonSize, segment],
-  );
-  return (
-    <ButtonGroupSegmentContext.Provider value={value}>{children}</ButtonGroupSegmentContext.Provider>
-  );
-}
+import { toggleButtonGroupRootTabIndex } from "./toggleButtonGroupA11y";
+import { isToggleButtonChild } from "./toggleButtonGroupAPI";
+import { ToggleButtonGroupProvider } from "./toggleButtonGroupContext";
+import { ToggleButtonGroupSeparator } from "./toggleButtonGroupParts";
+import { toggleButtonGroupRootClass } from "./toggleButtonGroupStyles";
+import type { ToggleButtonGroupProps } from "./toggleButtonGroupTypes";
+import { useToggleButtonGroupRootState } from "./useToggleButtonGroupRootState";
 
-function flattenFragmentChildren(children: ReactNode): ReactElement[] {
-  const out: ReactElement[] = [];
-  Children.forEach(children, (node) => {
-    if (!isValidElement(node)) return;
-    if (node.type === Fragment) {
-      const { children: fragKids } = node.props as { children?: ReactNode };
-      out.push(...flattenFragmentChildren(fragKids));
-      return;
-    }
-    out.push(node);
-  });
-  return out;
-}
+export type {
+  ToggleButtonGroupProps,
+  ToggleButtonGroupType,
+  ToggleButtonGroupOrientation,
+  ToggleButtonGroupContextValue,
+} from "./toggleButtonGroupTypes";
 
-function isToggleButtonChild(child: ReactElement): boolean {
-  return child.type === ToggleButton;
-}
-
-function ToggleButtonGroupSeparator({ orientation }: { orientation: ToggleButtonGroupOrientation }) {
-  return (
-    <span
-      aria-hidden
-      className={cn(
-        "pointer-events-none shrink-0",
-        orientation === "horizontal"
-          ? "my-[var(--border-width)] self-stretch border-r-token"
-          : "mx-[var(--border-width)] self-stretch border-b-token",
-      )}
-    />
-  );
-}
-
-function collectToggleButtons(root: HTMLElement): HTMLButtonElement[] {
-  return Array.from(root.querySelectorAll('[data-toggle-button-value]:not([disabled])')).filter(
-    (el): el is HTMLButtonElement => el instanceof HTMLButtonElement,
-  );
-}
-
-export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
-  children?: ReactNode;
-  /** `multiple` — independent toggle; `single` — only one selected (radio). By default `multiple`. */
-  type?: ToggleButtonGroupType;
-  orientation?: ToggleButtonGroupOrientation;
-  separated?: boolean;
-  disabled?: boolean;
-  size?: ToggleButtonSize;
-  variant?: ToggleButtonVariant;
-  /** Controlled value: `string` when `type="single"`, `string[]` when `type="multiple"`. */
-  value?: string | string[];
-  defaultValue?: string | string[];
-  onValueChange?: (value: string | string[]) => void;
-};
-
-function normalizeMultipleDefault(value: string | string[] | undefined): string[] {
-  if (value == null) return [];
-  return Array.isArray(value) ? value : [value];
-}
-
-function normalizeSingleDefault(value: string | string[] | undefined): string | undefined {
-  if (value == null) return undefined;
-  return Array.isArray(value) ? value[0] : value;
-}
-
-export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupProps>(
-  function ToggleButtonGroup(
-    {
+export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGroupProps>(
+  function ToggleButtonGroupRoot(props, ref) {
+    const {
       children,
       className = "",
-      type = "multiple",
       orientation = "horizontal",
       separated = false,
       disabled = false,
       size = "base",
       variant = "default",
-      value: valueProp,
-      defaultValue,
-      onValueChange,
-      onKeyDown,
+      type = "multiple",
+      value: _value,
+      defaultValue: _defaultValue,
+      onValueChange: _onValueChange,
+      onKeyDown: _onKeyDown,
       ...rest
-    },
-    ref,
-  ) {
-    const isSingle = type === "single";
-    const isControlled = valueProp !== undefined;
+    } = props;
 
-    const [internalSingle, setInternalSingle] = useState<string | undefined>(() =>
-      normalizeSingleDefault(defaultValue),
-    );
-    const [internalMultiple, setInternalMultiple] = useState<string[]>(() =>
-      normalizeMultipleDefault(defaultValue),
-    );
+    const { flat, segmentCount, contextValue, handleKeyDown, isSingle } =
+      useToggleButtonGroupRootState(props);
 
-    const singleValue = isSingle
-      ? isControlled
-        ? normalizeSingleDefault(valueProp)
-        : internalSingle
-      : undefined;
-
-    const multipleValues = useMemo(
-      () =>
-        !isSingle
-          ? isControlled
-            ? normalizeMultipleDefault(valueProp)
-            : internalMultiple
-          : [],
-      [internalMultiple, isControlled, isSingle, valueProp],
-    );
-
-    const isSelected = useCallback(
-      (itemValue: string) => {
-        if (isSingle) return singleValue === itemValue;
-        return multipleValues.includes(itemValue);
-      },
-      [isSingle, multipleValues, singleValue],
-    );
-
-    const select = useCallback(
-      (itemValue: string) => {
-        if (disabled) return;
-
-        if (isSingle) {
-          if (singleValue === itemValue) return;
-          if (!isControlled) setInternalSingle(itemValue);
-          onValueChange?.(itemValue);
-          return;
-        }
-
-        const next = multipleValues.includes(itemValue)
-          ? multipleValues.filter((v) => v !== itemValue)
-          : [...multipleValues, itemValue];
-
-        if (!isControlled) setInternalMultiple(next);
-        onValueChange?.(next);
-      },
-      [disabled, isControlled, isSingle, multipleValues, onValueChange, singleValue],
-    );
-
-    const flat = flattenFragmentChildren(children);
-    const segmentCount = flat.reduce((n, el) => n + (isToggleButtonChild(el) ? 1 : 0), 0);
     let segmentIndex = -1;
 
-    const toggleItemValues = flat.reduce<string[]>((acc, el) => {
-      if (!isToggleButtonChild(el)) return acc;
-      const value = (el.props as { value?: string }).value;
-      if (typeof value === "string") acc.push(value);
-      return acc;
-    }, []);
-
-    const firstToggleValue = toggleItemValues[0];
-
-    const tabIndexFor = useCallback(
-      (itemValue: string): 0 | -1 | undefined => {
-        if (!isSingle) return undefined;
-        if (singleValue != null) return singleValue === itemValue ? 0 : -1;
-        return itemValue === firstToggleValue ? 0 : -1;
-      },
-      [firstToggleValue, isSingle, singleValue],
-    );
-
-    const ctx = useMemo(
-      () => ({
-        type,
-        disabled,
-        size,
-        variant,
-        isSelected,
-        select,
-        tabIndexFor,
-      }),
-      [disabled, isSelected, select, size, tabIndexFor, type, variant],
-    );
-
-    const handleKeyDown = useCallback(
-      (e: KeyboardEvent<HTMLDivElement>) => {
-        onKeyDown?.(e);
-        if (e.defaultPrevented || disabled || !isSingle) return;
-
-        const root = e.currentTarget;
-        const items = collectToggleButtons(root);
-        if (items.length === 0) return;
-
-        const currentIndex = items.findIndex((el) => el === document.activeElement);
-        const horizontal = orientation === "horizontal";
-
-        let nextIndex: number | null = null;
-
-        switch (e.key) {
-          case "ArrowRight":
-            if (horizontal) nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % items.length;
-            break;
-          case "ArrowLeft":
-            if (horizontal) {
-              nextIndex =
-                currentIndex < 0 ? items.length - 1 : (currentIndex - 1 + items.length) % items.length;
-            }
-            break;
-          case "ArrowDown":
-            if (!horizontal) nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % items.length;
-            break;
-          case "ArrowUp":
-            if (!horizontal) {
-              nextIndex =
-                currentIndex < 0 ? items.length - 1 : (currentIndex - 1 + items.length) % items.length;
-            }
-            break;
-          default:
-            return;
-        }
-
-        if (nextIndex == null) return;
-        e.preventDefault();
-        const next = items[nextIndex]!;
-        next.focus();
-        const nextValue = next.dataset.toggleButtonValue;
-        if (nextValue) select(nextValue);
-      },
-      [disabled, isSingle, onKeyDown, orientation, select],
-    );
-
     return (
-      <ToggleButtonGroupContext.Provider value={ctx}>
+      <ToggleButtonGroupProvider value={contextValue}>
         <div
           ref={ref}
           role="toolbar"
-          tabIndex={disabled ? -1 : 0}
+          tabIndex={toggleButtonGroupRootTabIndex(disabled)}
           aria-orientation={orientation}
           aria-disabled={disabled || undefined}
-          className={cn(
-            "inline-flex text-left w-fit",
-            !separated && cn(
-              "relative rounded-base",
-              variant === "gloss"
-                ? "gloss-panel gloss-deep border-0 text-foreground"
-                : "after:pointer-events-none after:absolute after:inset-0 after:rounded-base after:border-token after:content-['']",
-            ),
-            orientation === "horizontal"
-              ? cn("flex-row flex-nowrap items-stretch", separated && "gap-xsmall")
-              : cn("flex-col flex-nowrap items-stretch", separated && "gap-xsmall"),
+          className={toggleButtonGroupRootClass({
+            orientation,
+            separated,
+            variant,
             className,
-          )}
+          })}
           {...(isSingle ? { onKeyDown: handleKeyDown } : {})}
           {...rest}
         >
@@ -296,25 +71,14 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
             }
 
             segmentIndex += 1;
-            const position =
-              segmentCount <= 1
-                ? ("only" as const)
-                : segmentIndex === 0
-                  ? ("first" as const)
-                  : segmentIndex === segmentCount - 1
-                    ? ("last" as const)
-                    : ("middle" as const);
-
-            const seg: ButtonGroupSegment = { orientation, position };
+            const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
+            const segment = buildButtonGroupSegment(orientation, position);
 
             return (
               <Fragment key={child.key ?? `tbg-seg-${i}`}>
-                <ToggleButtonGroupSegmentProvider
-                  segment={seg}
-                  buttonSize={size}
-                >
+                <ButtonGroupSegmentProvider segment={segment} buttonSize={size}>
                   {child}
-                </ToggleButtonGroupSegmentProvider>
+                </ButtonGroupSegmentProvider>
                 {variant !== "gloss" && position !== "last" && position !== "only" ? (
                   <ToggleButtonGroupSeparator orientation={orientation} />
                 ) : null}
@@ -322,9 +86,9 @@ export const ToggleButtonGroup = forwardRef<HTMLDivElement, ToggleButtonGroupPro
             );
           })}
         </div>
-      </ToggleButtonGroupContext.Provider>
+      </ToggleButtonGroupProvider>
     );
   },
 );
 
-ToggleButtonGroup.displayName = "ToggleButtonGroup";
+ToggleButtonGroupRoot.displayName = "ToggleButtonGroup";

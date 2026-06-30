@@ -11,12 +11,13 @@ export function DrawerFilterSheetDemo() {
 
   return (
     <>
-      <Button variant="outline" type="button" onClick={() => setOpen(true)}>
-        Фильтры
-      </Button>
 
-      <Drawer open={open} onOpenChange={setOpen} placement="right" size="mid">
-        <Drawer.Header>
+      <Drawer open={open} onOpenChange={setOpen} placement="right">
+        <Drawer.Trigger asChild>
+          <Button variant="outline">Фильтры</Button>
+        </Drawer.Trigger>
+        <Drawer.Panel size="mid">
+          <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Фильтры</Drawer.Title>
             <Drawer.Description>Уточните выборку списка.</Drawer.Description>
@@ -37,6 +38,7 @@ export function DrawerFilterSheetDemo() {
             Применить
           </Button>
         </Drawer.Footer>
+        </Drawer.Panel>
       </Drawer>
     </>
   );

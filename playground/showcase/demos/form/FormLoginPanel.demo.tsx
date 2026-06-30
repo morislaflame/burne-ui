@@ -1,14 +1,14 @@
-import { useCallback, type FormEvent } from "react";
+import { useCallback } from "react";
 
-import { Form } from "@/components/composite/Form";
+import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 import { Surface } from "@/components/core/Surface";
 import { Text } from "@/components/core/Text";
 
 export function FormLoginPanelDemo() {
-  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback((values: FormValues) => {
+    void values;
   }, []);
 
   return (
@@ -21,20 +21,34 @@ export function FormLoginPanelDemo() {
           Демо-аккаунт для playground
         </Text>
       </div>
-      <Form onSubmit={onSubmit} aria-label="Вход в аккаунт" className="gap-xlarge">
+      <Form
+        onSubmit={onSubmit}
+        aria-label="Вход в аккаунт"
+        className="gap-xlarge"
+        rules={{
+          login: { required: "Укажите email" },
+          password: { required: "Укажите пароль" },
+        }}
+      >
         <Form.Section>
-          <Input isRequired label="Email" name="login" autoComplete="email" />
-          <Input
-            isRequired
-            label="Пароль"
-            name="password"
-            inputType="password"
-            autoComplete="current-password"
-          />
+          <Form.Field name="login">
+            <Input isRequired label="Email" name="login" autoComplete="email" />
+          </Form.Field>
+          <Form.Field name="password">
+            <Input
+              isRequired
+              label="Пароль"
+              name="password"
+              inputType="password"
+              autoComplete="current-password"
+            />
+          </Form.Field>
         </Form.Section>
-        <Button type="submit" variant="primary" className="w-full">
-          Войти
-        </Button>
+        <Form.Actions>
+          <Button type="submit" variant="primary" className="w-full">
+            Войти
+          </Button>
+        </Form.Actions>
       </Form>
     </Surface>
   );

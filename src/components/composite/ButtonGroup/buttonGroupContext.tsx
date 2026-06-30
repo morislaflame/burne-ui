@@ -1,25 +1,57 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
-import type { ButtonGroupSegment } from "./buttonGroupSegment";
 
-export type ButtonGroupSegmentContextValue = {
-  segment: ButtonGroupSegment;
-  buttonSize: ButtonSize;
-  variant?: ButtonVariant;
-};
+import type {
+  ButtonGroupLayoutContextValue,
+  ButtonGroupSegment,
+  ButtonGroupSegmentContextValue,
+} from "./buttonGroupTypes";
 
 const ButtonGroupSegmentContext = createContext<ButtonGroupSegmentContextValue | null>(
   null,
 );
 
-export type ButtonGroupLayoutContextValue = {
-  segmented: boolean;
-};
-
 const ButtonGroupLayoutContext = createContext<ButtonGroupLayoutContextValue | null>(
   null,
 );
+
+export function ButtonGroupLayoutProvider({
+  value,
+  children,
+}: {
+  value: ButtonGroupLayoutContextValue;
+  children: ReactNode;
+}) {
+  return (
+    <ButtonGroupLayoutContext.Provider value={value}>
+      {children}
+    </ButtonGroupLayoutContext.Provider>
+  );
+}
+
+export function ButtonGroupSegmentProvider({
+  segment,
+  buttonSize,
+  variant,
+  children,
+}: {
+  segment: ButtonGroupSegment;
+  buttonSize: ButtonSize;
+  variant?: ButtonVariant;
+  children: ReactNode;
+}) {
+  const value = useMemo(
+    () => ({ segment, buttonSize, variant }),
+    [buttonSize, segment, variant],
+  );
+
+  return (
+    <ButtonGroupSegmentContext.Provider value={value}>
+      {children}
+    </ButtonGroupSegmentContext.Provider>
+  );
+}
 
 export function useOptionalButtonGroupSegment() {
   return useContext(ButtonGroupSegmentContext);

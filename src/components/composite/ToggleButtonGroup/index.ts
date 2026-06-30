@@ -1,11 +1,16 @@
-export {
-  ToggleButtonGroup,
-  type ToggleButtonGroupProps,
-} from "./ToggleButtonGroup";
+import { ToggleButtonGroupRoot } from "./ToggleButtonGroup";
+
+export const ToggleButtonGroup = ToggleButtonGroupRoot;
 
 export {
-  useOptionalToggleButtonGroupContext,
+  ToggleButtonGroupRoot,
+  type ToggleButtonGroupProps,
   type ToggleButtonGroupType,
   type ToggleButtonGroupOrientation,
   type ToggleButtonGroupContextValue,
-} from "@/components/core/ToggleButton/toggleButtonGroupContext";
+} from "./ToggleButtonGroup";
+
+export {
+  ToggleButtonGroupContext,
+  useOptionalToggleButtonGroupContext,
+} from "./toggleButtonGroupContext";

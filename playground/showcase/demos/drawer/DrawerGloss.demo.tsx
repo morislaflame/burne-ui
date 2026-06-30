@@ -9,12 +9,12 @@ export function DrawerGlossDemo() {
 
   return (
     <>
-      <Button variant="gloss" onClick={() => setOpen(true)}>
-        Gloss Drawer
-      </Button>
-
-      <Drawer open={open} onOpenChange={setOpen} variant="gloss">
-        <Drawer.Header>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <Drawer.Trigger asChild>
+          <Button variant="gloss">Gloss Drawer</Button>
+        </Drawer.Trigger>
+        <Drawer.Panel variant="gloss">
+          <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Gloss Drawer</Drawer.Title>
             <Drawer.Description>Стеклянная боковая панель.</Drawer.Description>
@@ -32,6 +32,7 @@ export function DrawerGlossDemo() {
             Закрыть
           </Button>
         </Drawer.Footer>
+        </Drawer.Panel>
       </Drawer>
     </>
   );

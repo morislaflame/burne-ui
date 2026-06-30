@@ -1,24 +1,31 @@
-import { useCallback, type FormEvent } from "react";
+import { useCallback } from "react";
 
-import { Form } from "@/components/composite/Form";
+import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 
 export function FormMinimalSubscribeDemo() {
-  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback((values: FormValues) => {
+    void values;
   }, []);
 
   return (
-    <Form onSubmit={onSubmit} aria-label="Быстрая подписка" className="max-w-sm">
+    <Form
+      onSubmit={onSubmit}
+      aria-label="Быстрая подписка"
+      className="max-w-sm"
+      rules={{ subscribe: { required: "Укажите email" } }}
+    >
       <Form.Section>
-        <Input label="Email" name="subscribe" placeholder="you@example.com" autoComplete="email" />
+        <Form.Field name="subscribe">
+          <Input label="Email" name="subscribe" placeholder="you@example.com" autoComplete="email" />
+        </Form.Field>
       </Form.Section>
-      <div className="flex justify-end">
+      <Form.Actions>
         <Button type="submit" variant="primary" className="w-full">
           Подписаться
         </Button>
-      </div>
+      </Form.Actions>
     </Form>
   );
 }

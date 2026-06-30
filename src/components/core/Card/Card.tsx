@@ -36,6 +36,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     className = "",
     variant = "default",
     pressable = false,
+    animated = true,
     classNames,
     onPress,
     onPointerOver: onPointerOverProp,
@@ -59,6 +60,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const animations = useCardAnimations({
     pressable,
     isGloss: state.isGloss,
+    animated,
     onPress,
     onClick: onClickProp,
     onKeyDown: onKeyDownProp,
@@ -77,7 +79,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     : cardRootClass(
         state.variant as Exclude<CardVariant, "gloss">,
         pressable,
-        animations.pressableLift.motionClass,
+        animations.pressableLiftMotionClass,
         mergeCardSlotClass(classNames?.root, className),
       );
 
@@ -91,16 +93,11 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         rootClassName={rootClassName}
         setRootRef={animations.setRootRef}
         rest={rest}
-        glossPointerHandlers={animations.glossPointerHandlers}
-        pressableLift={animations.pressableLift}
-        onPointerOverProp={animations.onPointerOverProp}
-        onPointerOutProp={animations.onPointerOutProp}
-        handlePointerDown={animations.handlePointerDown}
-        handleClick={animations.handleClick}
-        handleKeyDown={animations.handleKeyDown}
-        onPointerDownProp={onPointerDownProp}
-        onClickProp={onClickProp}
-        onKeyDownProp={onKeyDownProp}
+        onPointerOver={animations.onPointerOver}
+        onPointerOut={animations.onPointerOut}
+        onPointerDown={pressable ? animations.handlePointerDown : animations.onPointerDownProp}
+        onClick={pressable ? animations.handleClick : animations.onClickProp}
+        onKeyDown={pressable ? animations.handleKeyDown : animations.onKeyDownProp}
       >
         {children}
       </CardRootShell>

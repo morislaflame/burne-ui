@@ -1,11 +1,7 @@
-import { useCallback, useEffect, useRef, type PointerEvent } from "react";
+import { useRef } from "react";
 
-import { killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
 import type { UseListBoxItemAnimationsProps } from "./listBoxTypes";
 
@@ -19,34 +15,14 @@ export function useListBoxItemAnimations({
   onPointerDown,
 }: UseListBoxItemAnimationsProps) {
   const labelMotionRef = useRef<HTMLElement>(null);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
   const enableLabelMotion = !disabled && hasLabel;
 
-  useEffect(() => {
-    const el = labelMotionRef.current;
-    return () => {
-      if (el) killMotion(el);
-    };
-  }, []);
-
-  useEffect(() => {
-    const el = labelMotionRef.current;
-    if (!el || !disabled) return;
-    killMotion(el);
-    el.style.transform = "";
-  }, [disabled]);
-
-  const handlePointerDown = useCallback(
-    (event: PointerEvent<HTMLButtonElement>) => {
-      onPointerDown?.(event);
-      if (event.defaultPrevented || !enableLabelMotion) return;
-      if (reduceMotion) return;
-      const el = labelMotionRef.current;
-      if (!el) return;
-      void animateInteractivePressSqueeze(el);
-    },
-    [enableLabelMotion, onPointerDown, reduceMotion],
-  );
+  const { handlePointerDown } = usePressableElementTextMotion<HTMLButtonElement, HTMLElement>({
+    isDisabled: disabled,
+    enabled: enableLabelMotion,
+    textMotionRef: labelMotionRef,
+    onPointerDown,
+  });
 
   return {
     labelMotionRef,

@@ -1,26 +1,19 @@
-import { killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  type PointerEvent,
-} from "react";
+import { useRef } from "react";
 
-import {
-  animateGlossInteractiveHoverLift,
-  animateGlossInteractivePressSqueeze,
-  createGlossInteractiveRefCallback,
-} from "@/components/core/utils/glossInteractiveMotion";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
-import { firstLevelHoverShadow } from "@/components/core/utils/useShadowMotion";
+import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
 
+import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
 import type { UseToggleButtonAnimationsProps } from "./toggleButtonTypes";
+
+/**
+ * Manages the pressed-state fill animation for ToggleButton.
+ * Moved here (Animations layer) from toggleButtonParts to respect the dependency graph:
+ * Parts → Animations → use*RootState → Component.tsx
+ */
+export function useToggleButtonFill(pressed: boolean) {
+  const fillRef = useRef<HTMLSpanElement>(null);
+  return useToggleButtonFillAnimation(pressed, fillRef);
+}
 
 export function useToggleButtonAnimations({
   animated,
@@ -32,110 +25,23 @@ export function useToggleButtonAnimations({
   onPointerLeave,
   onPointerDown,
 }: UseToggleButtonAnimationsProps) {
-  const isGloss = variant === "gloss";
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const contentMotionRef = useRef<HTMLSpanElement>(null);
-  const hoverPointerInsideRef = useRef(false);
-
-  const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(btnRef, isGloss),
-    [isGloss],
-  );
-
-  const setRefs = useCallback(
-    (node: HTMLButtonElement | null) => {
-      bindGlossRef(node);
-      btnRef.current = node;
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
-    },
-    [bindGlossRef, forwardedRef],
-  );
-
-  useEffect(() => {
-    const el = btnRef.current;
-    const content = contentMotionRef.current;
-    if ((!el && !content) || !disabled) return;
-    hoverPointerInsideRef.current = false;
-    if (el) killMotion(el);
-    if (content) {
-      killMotion(content);
-      content.style.transform = "";
-    }
-  }, [disabled]);
-
-  const btnShadow = useMemo(
-    () => (isGloss ? undefined : firstLevelHoverShadow()),
-    [isGloss],
-  );
-
-  const motionTarget = useCallback(() => {
-    return groupSegment ? contentMotionRef.current : btnRef.current;
-  }, [groupSegment]);
-
-  const handlePointerEnter = useCallback(
-    (e: PointerEvent<HTMLButtonElement>) => {
-      onPointerEnter?.(e);
-      if (e.defaultPrevented || disabled || !animated) return;
-      if (shouldSkipInteractiveHoverLift()) return;
-      const el = motionTarget();
-      if (!el) return;
-      hoverPointerInsideRef.current = true;
-      if (isGloss && !groupSegment) {
-        animateGlossInteractiveHoverLift(el, true);
-      } else {
-        animateInteractiveHoverLift(el, true, undefined, groupSegment ? undefined : btnShadow);
-      }
-    },
-    [animated, btnShadow, disabled, groupSegment, isGloss, motionTarget, onPointerEnter],
-  );
-
-  const handlePointerLeave = useCallback(
-    (e: PointerEvent<HTMLButtonElement>) => {
-      onPointerLeave?.(e);
-      hoverPointerInsideRef.current = false;
-      if (!animated || shouldSkipInteractiveHoverLift()) return;
-      const el = motionTarget();
-      if (!el || disabled) return;
-      if (isGloss && !groupSegment) {
-        animateGlossInteractiveHoverLift(el, false);
-      } else {
-        animateInteractiveHoverLift(el, false, undefined, groupSegment ? undefined : btnShadow);
-      }
-    },
-    [animated, btnShadow, disabled, groupSegment, isGloss, motionTarget, onPointerLeave],
-  );
-
-  const handlePointerDown = useCallback(
-    (e: PointerEvent<HTMLButtonElement>) => {
-      onPointerDown?.(e);
-      if (e.defaultPrevented || disabled || !animated) return;
-      if (prefersReducedInteractiveHoverLift()) return;
-      const el = motionTarget();
-      if (!el) return;
-      const squeeze = isGloss && !groupSegment
-        ? animateGlossInteractivePressSqueeze(el)
-        : animateInteractivePressSqueeze(el);
-      void squeeze.then(() => {
-        const btn = motionTarget();
-        if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
-        if (hoverPointerInsideRef.current) {
-          if (isGloss && !groupSegment) {
-            animateGlossInteractiveHoverLift(btn, true);
-          } else {
-            animateInteractiveHoverLift(btn, true, undefined, groupSegment ? undefined : btnShadow);
-          }
-        }
-      });
-    },
-    [animated, btnShadow, disabled, groupSegment, isGloss, motionTarget, onPointerDown],
-  );
+  const motion = useFirstLevelInteractiveMotion({
+    isGloss: variant === "gloss",
+    animated,
+    enabled: !disabled,
+    hasHoverShadow: variant !== "gloss",
+    useContentRef: !!groupSegment,
+    forwardedRef,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerDown,
+  });
 
   return {
-    setRefs,
-    contentMotionRef,
-    handlePointerEnter,
-    handlePointerLeave,
-    handlePointerDown,
+    setRefs: motion.setRefs,
+    contentMotionRef: motion.contentMotionRef,
+    handlePointerEnter: motion.handlePointerEnter,
+    handlePointerLeave: motion.handlePointerLeave,
+    handlePointerDown: motion.handlePointerDown,
   };
 }

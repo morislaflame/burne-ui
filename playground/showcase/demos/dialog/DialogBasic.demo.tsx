@@ -9,10 +9,13 @@ export function DialogBasicDemo() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Открыть Dialog</Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <Dialog.Header>
+        <Dialog.Trigger asChild>
+          <Button variant="outline">Открыть Dialog</Button>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Пример диалога</Dialog.Title>
             <Dialog.Description>Нативный &lt;dialog&gt; с анимацией из библиотеки.</Dialog.Description>
@@ -30,6 +33,7 @@ export function DialogBasicDemo() {
           </Button>
           <Button onClick={() => setOpen(false)}>Готово</Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
     </>
   );

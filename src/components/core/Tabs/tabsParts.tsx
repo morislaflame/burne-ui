@@ -3,10 +3,8 @@ import {
   forwardRef,
   isValidElement,
   useCallback,
-  useId,
   useLayoutEffect,
   useRef,
-  useState,
   type ButtonHTMLAttributes,
   type KeyboardEvent,
   type MouseEvent,
@@ -26,101 +24,20 @@ import {
   mergeRefs,
   mergeTabsSlotClass,
   tabTextVariant,
-  useMergedTabsValue,
   collectTabButtons,
 } from "./tabsAPI";
 import { useTabPointerMotion } from "./tabsAnimations";
-import {
-  TabsClassNamesProvider,
-  TabsContext,
-  useTabsClassNames,
-  useTabsContext,
-} from "./tabsContext";
+import { useTabsClassNames, useTabsContext } from "./tabsContext";
 import {
   TABS_TAB_AS_CHILD_CLASS,
   tabsIndicatorClass,
   tabsListClass,
   tabsPanelClass,
-  tabsRootClass,
   tabsTabClass,
   tabsTabTextClass,
 } from "./tabsStyles";
-import type {
-  TabsListProps,
-  TabsPanelProps,
-  TabsRootProps,
-  TabsTabProps,
-} from "./tabsTypes";
+import type { TabsListProps, TabsPanelProps, TabsTabProps } from "./tabsTypes";
 import { useSlidingTabIndicator } from "./useSlidingTabIndicator";
-
-export const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>(function TabsRoot(
-  {
-    children,
-    className,
-    classNames,
-    value: valueProp,
-    defaultValue,
-    onValueChange,
-    orientation = "horizontal",
-    size = "base",
-    variant = "default",
-    disabled = false,
-    ...rest
-  },
-  ref,
-) {
-  const baseId = useId();
-  const [value, setInternalValue] = useMergedTabsValue(valueProp, defaultValue);
-  const tabElementsRef = useRef<Map<string, HTMLButtonElement>>(null!);
-  if (!tabElementsRef.current) tabElementsRef.current = new Map();
-  const [layoutEpoch, setLayoutEpoch] = useState(0);
-
-  const setValue = useCallback(
-    (next: string) => {
-      setInternalValue(next);
-      onValueChange?.(next);
-    },
-    [onValueChange, setInternalValue],
-  );
-
-  const notifyTabLayout = useCallback(() => {
-    setLayoutEpoch((epoch) => epoch + 1);
-  }, []);
-
-  const ctx = {
-    value,
-    setValue,
-    orientation,
-    size,
-    variant,
-    baseId,
-    disabled,
-    tabElementsRef,
-    layoutEpoch,
-    notifyTabLayout,
-  };
-
-  return (
-    <TabsContext.Provider value={ctx}>
-      <TabsClassNamesProvider classNames={classNames}>
-        <div
-          ref={ref}
-          className={tabsRootClass({
-            orientation,
-            slotClass: classNames?.root,
-            className,
-          })}
-          data-orientation={orientation}
-          {...rest}
-        >
-          {children}
-        </div>
-      </TabsClassNamesProvider>
-    </TabsContext.Provider>
-  );
-});
-
-TabsRoot.displayName = "Tabs";
 
 export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
   { className, children, onKeyDown, ...rest },

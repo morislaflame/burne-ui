@@ -9,12 +9,13 @@ export function DialogInviteTeamDemo() {
 
   return (
     <>
-      <Button type="button" onClick={() => setOpen(true)}>
-        Пригласить в команду
-      </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <Dialog.Header>
+        <Dialog.Trigger asChild>
+          <Button variant="outline">Пригласить в команду</Button>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Приглашение</Dialog.Title>
             <Dialog.Description>Отправьте ссылку коллеге по email.</Dialog.Description>
@@ -35,6 +36,7 @@ export function DialogInviteTeamDemo() {
             Отправить
           </Button>
         </Dialog.Footer>
+        </Dialog.Panel>
       </Dialog>
     </>
   );

@@ -2,6 +2,7 @@ import { useMemo, type ReactNode } from "react";
 
 import {
   collectBreadcrumbItems,
+  hasBreadcrumbCompoundChildren,
   toCollapsedPieces,
   toExpandedPieces,
 } from "./breadcrumbsAPI";
@@ -16,7 +17,17 @@ function useBreadcrumbPieces(items: BreadcrumbItemData[]) {
   );
 }
 
-export function useBreadcrumbsRootState(children?: ReactNode) {
+export function useBreadcrumbsRootState({
+  children,
+}: {
+  children?: ReactNode;
+} = {}) {
+  return {
+    isCompound: hasBreadcrumbCompoundChildren(children),
+  };
+}
+
+export function useBreadcrumbsListState(children?: ReactNode) {
   const collapse = useBreadcrumbsCollapse();
   const items = useMemo(() => collectBreadcrumbItems(children), [children]);
   const pieces = useBreadcrumbPieces(items);

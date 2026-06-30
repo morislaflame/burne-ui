@@ -40,7 +40,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Текстовая ссылка: по умолчанию `text-primary`; цвет можно переопределить через `className` (например `text-muted`). Стандартная иконка ↗ — `text-muted` до hover. Hover-lift и squeeze при нажатии. Опционально `underline`, иконки слева/справа или `showDefaultIcon`.",
+          "Текстовая ссылка: по умолчанию `text-primary`; цвет можно переопределить через `className` (например `text-muted`). Стандартная иконка ↗ — `text-muted` до hover. Hover-lift и squeeze при нажатии. Simple API: `underline`, `leftIcon`/`rightIcon`, `showDefaultIcon`. Compound API: `<Link.Icon />` в children.",
       },
     },
   },
@@ -162,6 +162,28 @@ export const LightTheme: Story = {
   },
 };
 
+export const CompoundApi: Story = {
+  name: "Compound API",
+  render: () => (
+    <div className="flex flex-col items-center gap-mid">
+      <Link href="#">
+        Icon at end (default)
+        <Link.Icon />
+      </Link>
+      <Link href="#">
+        <Link.Icon position="start" />
+        Icon at start
+      </Link>
+      <Link href="#">
+        Custom icon
+        <Link.Icon>
+          <IoOpenOutline aria-hidden className="icon-base" />
+        </Link.Icon>
+      </Link>
+    </div>
+  ),
+};
+
 export const CustomClassNames: Story = {
   name: "Полная кастомизация classNames",
   parameters: {
@@ -177,8 +199,7 @@ export const CustomClassNames: Story = {
       showDefaultIcon
       underline
       classNames={{
-        motion: "rounded-mid border border-primary/20 p-xsmall",
-        anchor: "gap-small text-info",
+        anchor: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
         text: "font-semibold",
         iconEnd: "text-warning",
       }}

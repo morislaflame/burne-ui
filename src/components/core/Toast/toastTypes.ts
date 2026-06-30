@@ -111,6 +111,11 @@ export type ToastRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   classNames?: ToastClassNames;
 };
 
+export type UseToastRootStateProps = Pick<
+  ToastRootProps,
+  "status" | "title" | "description" | "action" | "isLoading" | "onClose" | "children"
+>;
+
 export type ToastIndicatorProps = HTMLAttributes<HTMLSpanElement>;
 export type ToastMessageProps = HTMLAttributes<HTMLDivElement>;
 export type ToastContentProps = HTMLAttributes<HTMLDivElement>;

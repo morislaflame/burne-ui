@@ -100,6 +100,8 @@ export type CheckboxFieldContextValue = {
     readOnly?: boolean;
     onBlur?: InputHTMLAttributes<HTMLInputElement>["onBlur"];
     onFocus?: InputHTMLAttributes<HTMLInputElement>["onFocus"];
+    inputRef?: (node: HTMLInputElement | null) => void;
+    ariaInvalid?: boolean | "false" | "true" | "grammar" | "spelling";
   };
 };
 

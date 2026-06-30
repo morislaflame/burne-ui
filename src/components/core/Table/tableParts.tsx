@@ -6,10 +6,6 @@ import {
   type ReactNode,
 } from "react";
 
-import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
-
-import "@/components/core/utils/glossInteractive.css";
-
 import { columnAriaSort, rowAriaSelected } from "./tableA11y";
 import {
   mergeTableSlotClass,
@@ -19,10 +15,8 @@ import {
 } from "./tableAPI";
 import { TableSortChevron } from "./tableAnimations";
 import {
-  TableClassNamesProvider,
   TableContentProvider,
   TableRowProvider,
-  TableVariantProvider,
   useTableClassNames,
   useTableContent,
   useTableRow,
@@ -33,13 +27,11 @@ import {
   TABLE_COLUMN_INNER_CLASS,
   TABLE_COLUMN_LABEL_CLASS,
   TABLE_FOOTER_CLASS,
-  TABLE_GLOSS_CONTENT_CLASS,
   TABLE_HEADER_ROW_VARIANT_CLASS,
   TABLE_SCROLL_CONTAINER_CLASS,
   tableCellClass,
   tableColumnClass,
   tableContentClass,
-  tableRootClass,
   tableRowClass,
 } from "./tableStyles";
 import type {
@@ -50,46 +42,11 @@ import type {
   TableContentProps,
   TableFooterProps,
   TableHeaderProps,
-  TableProps,
   TableRowContextValue,
   TableRowProps,
   TableScrollContainerProps,
 } from "./tableTypes";
 import { useTableContentState } from "./useTableContentState";
-
-export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRoot(
-  { variant = "default", className, classNames, children, ...rest },
-  ref,
-) {
-  const isGloss = variant === "gloss";
-  const setRootRef = useMergedGlossPanelRef(ref, isGloss);
-
-  return (
-    <TableVariantProvider variant={variant}>
-      <TableClassNamesProvider classNames={classNames}>
-        <div
-          ref={setRootRef}
-          className={tableRootClass({
-            variant,
-            slotClass: classNames?.root,
-            className,
-          })}
-          {...rest}
-        >
-          {isGloss ? (
-            <div className={mergeTableSlotClass(TABLE_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
-              {children}
-            </div>
-          ) : (
-            children
-          )}
-        </div>
-      </TableClassNamesProvider>
-    </TableVariantProvider>
-  );
-});
-
-TableRoot.displayName = "TableRoot";
 
 export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
   function TableScrollContainer({ className, tabIndex = 0, ...rest }, ref) {

@@ -42,6 +42,8 @@ export type TableProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: TableClassNames;
 };
 
+export type UseTableRootStateProps = Pick<TableProps, "variant">;
+
 export type TableScrollContainerProps = HTMLAttributes<HTMLDivElement>;
 
 export type TableContentProps = HTMLAttributes<HTMLTableElement> & {

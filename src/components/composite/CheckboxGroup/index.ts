@@ -30,9 +30,12 @@ export type {
   CheckboxGroupLabelProps,
   CheckboxGroupLegendProps,
   CheckboxGroupListProps,
-} from "./CheckboxGroup";
+  CheckboxGroupErrorProps,
+} from "./checkboxGroupTypes";
+
+export type { CheckboxGroupContextValue } from "./checkboxGroupTypes";
+
 export {
   useCheckboxGroupContext,
   useOptionalCheckboxGroupContext,
-  type CheckboxGroupContextValue,
 } from "./checkboxGroupContext";

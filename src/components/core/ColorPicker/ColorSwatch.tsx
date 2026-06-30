@@ -1,18 +1,11 @@
 import {
   forwardRef,
-  useCallback,
-  useMemo,
-  useRef,
   type ButtonHTMLAttributes,
   type CSSProperties,
 } from "react";
 
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  shouldSkipInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
-import { firstLevelHoverShadow, SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
+import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
+import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 
 import { CHECKER_STYLE } from "./colorUtils";
@@ -73,56 +66,21 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
     },
     ref,
   ) {
-    const btnRef = useRef<HTMLButtonElement>(null);
-    const hoverInsideRef = useRef(false);
-    const shadow = useMemo(() => firstLevelHoverShadow(), []);
-
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        btnRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
-    );
-
-    const handlePointerEnter = useCallback(
-      (e: React.PointerEvent<HTMLButtonElement>) => {
-        onPointerEnter?.(e);
-        if (disabled || e.defaultPrevented || shouldSkipInteractiveHoverLift()) return;
-        hoverInsideRef.current = true;
-        const el = btnRef.current;
-        if (!el) return;
-        animateInteractiveHoverLift(el, true, undefined, shadow);
-      },
-      [disabled, onPointerEnter, shadow],
-    );
-
-    const handlePointerLeave = useCallback(
-      (e: React.PointerEvent<HTMLButtonElement>) => {
-        onPointerLeave?.(e);
-        hoverInsideRef.current = false;
-        const el = btnRef.current;
-        if (!el || shouldSkipInteractiveHoverLift()) return;
-        animateInteractiveHoverLift(el, false, undefined, shadow);
-      },
-      [onPointerLeave, shadow],
-    );
-
-    const handlePointerDown = useCallback(
-      (e: React.PointerEvent<HTMLButtonElement>) => {
-        onPointerDown?.(e);
-        if (disabled || e.defaultPrevented || shouldSkipInteractiveHoverLift()) return;
-        const el = btnRef.current;
-        if (!el) return;
-        void animateInteractivePressSqueeze(el).then(() => {
-          if (btnRef.current && hoverInsideRef.current && !shouldSkipInteractiveHoverLift()) {
-            animateInteractiveHoverLift(btnRef.current, true, undefined, shadow);
-          }
-        });
-      },
-      [disabled, onPointerDown, shadow],
-    );
+    const {
+      setRefs,
+      handlePointerEnter,
+      handlePointerLeave,
+      handlePointerDown,
+    } = useFirstLevelInteractiveMotion({
+      isGloss: false,
+      animated: true,
+      enabled: !disabled,
+      hasHoverShadow: true,
+      forwardedRef: ref,
+      onPointerEnter,
+      onPointerLeave,
+      onPointerDown,
+    });
 
     const checkerStyle: CSSProperties = showChecker ? CHECKER_STYLE : {};
 

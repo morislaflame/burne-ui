@@ -27,6 +27,7 @@ import {
   type MessageBannerGridSlots,
 } from "@/components/core/utils/messageBannerGridLayout";
 import { shadowSm } from "@/components/core/utils/hoverInteractiveLift";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import "../utils/glossInteractive.css";
 
@@ -429,8 +430,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
     const setTipRef = useCallback(
       (node: HTMLDivElement | null) => {
         tipRef.current = node;
-        if (typeof forwardedRef === "function") forwardedRef(node);
-        else if (forwardedRef) forwardedRef.current = node;
+        mergeForwardedRef(forwardedRef, node);
       },
       [forwardedRef],
     );

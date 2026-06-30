@@ -4,7 +4,7 @@ import { resolveToastGridSlots } from "./toastAPI";
 import {
   resolveToastLiveRole,
 } from "./toastA11y";
-import type { ToastItemContextValue, ToastRootProps } from "./toastTypes";
+import type { ToastItemContextValue, UseToastRootStateProps } from "./toastTypes";
 
 export function useToastRootState({
   status = "default",
@@ -14,10 +14,7 @@ export function useToastRootState({
   isLoading = false,
   onClose,
   children,
-}: Pick<
-  ToastRootProps,
-  "status" | "title" | "description" | "action" | "isLoading" | "onClose" | "children"
->) {
+}: UseToastRootStateProps) {
   const autoId = useId();
   const titleId = `${autoId}-title`;
   const descriptionId = `${autoId}-description`;

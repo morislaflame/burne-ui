@@ -12,12 +12,15 @@ export function AlertDialogDeleteAccountDemo() {
 
   return (
     <>
-      <Button variant="primary" status="danger" type="button" onClick={() => setOpen(true)}>
-        Удалить аккаунт
-      </Button>
 
       <AlertDialog open={open} onOpenChange={setOpen} status="danger">
-        <AlertDialog.Header>
+        <AlertDialog.Trigger asChild>
+          <Button variant="primary" status="danger">
+            Удалить аккаунт
+          </Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
             <AlertDialog.Title>Удалить аккаунт?</AlertDialog.Title>
             <AlertDialog.Description>
@@ -43,6 +46,7 @@ export function AlertDialogDeleteAccountDemo() {
             Удалить
           </Button>
         </AlertDialog.Footer>
+        </AlertDialog.Panel>
       </AlertDialog>
     </>
   );

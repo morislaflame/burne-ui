@@ -6,6 +6,7 @@ import {
   useCallback,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactElement,
   type Ref,
 } from "react";
@@ -14,6 +15,10 @@ import { createPortal } from "react-dom";
 import { FieldHint } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
+import {
+  runOpenAfterSqueeze,
+  useOpeningRef,
+} from "@/components/core/utils/runOpenAfterSqueeze";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
 
 import {
@@ -63,16 +68,34 @@ import type {
 } from "./popoverTypes";
 
 export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
-  function PopoverTrigger({ className = "", children, onClick, ...rest }, ref) {
+  function PopoverTrigger({ className = "", children, onClick, onPointerDown, ...rest }, ref) {
     const { open, setOpen, triggerRef, popoverId } =
       usePopoverContext("Popover.Trigger");
     const slotClassNames = usePopoverClassNames();
+    const openingRef = useOpeningRef();
 
-    const toggle = useCallback(
+    const mergedRef = useCallback(
+      (node: HTMLButtonElement | null) => {
+        triggerRef.current = node;
+        mergePopoverRefs(ref)(node);
+      },
+      [ref, triggerRef],
+    );
+
+    const handlePointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLElement>) => {
+        if (open || openingRef.current || e.button !== 0) return;
+        e.preventDefault();
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+      },
+      [open, openingRef, triggerRef, setOpen],
+    );
+
+    const handleClick = useCallback(
       (event: ReactMouseEvent<HTMLElement>) => {
         onClick?.(event as ReactMouseEvent<HTMLButtonElement>);
         if (event.defaultPrevented) return;
-        setOpen(!open);
+        if (open) setOpen(false);
       },
       [onClick, open, setOpen],
     );
@@ -81,18 +104,11 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       (event: ReactKeyboardEvent<HTMLButtonElement>) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          toggle(event as unknown as ReactMouseEvent<HTMLElement>);
+          if (open) setOpen(false);
+          else if (!openingRef.current) setOpen(true);
         }
       },
-      [toggle],
-    );
-
-    const mergedRef = useCallback(
-      (node: HTMLButtonElement | null) => {
-        triggerRef.current = node;
-        mergePopoverRefs(ref)(node);
-      },
-      [ref, triggerRef],
+      [open, openingRef, setOpen],
     );
 
     const onlyChild =
@@ -103,13 +119,20 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         "aria-expanded"?: boolean;
         "aria-controls"?: string;
         onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
+        onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
         ref?: Ref<HTMLElement>;
       }>;
 
       return cloneElement(child, {
+        // Trigger's pointerDown runs FIRST to call e.preventDefault() before child
+        onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+          handlePointerDown(e);
+          child.props.onPointerDown?.(e);
+          onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+        },
         onClick: (event: ReactMouseEvent<HTMLElement>) => {
-          toggle(event);
           child.props.onClick?.(event);
+          handleClick(event);
         },
         "aria-expanded": open,
         "aria-controls": open ? popoverId : undefined,
@@ -127,7 +150,11 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         })}
         aria-expanded={open}
         aria-controls={open ? popoverId : undefined}
-        onClick={toggle}
+        onPointerDown={(e) => {
+          onPointerDown?.(e);
+          handlePointerDown(e);
+        }}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         {...rest}
       >

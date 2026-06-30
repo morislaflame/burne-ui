@@ -26,7 +26,8 @@ export function AlertDialogSizesDemo() {
           size={size}
           status="info"
         >
-          <AlertDialog.Header>
+          <AlertDialog.Panel>
+            <AlertDialog.Header>
             <AlertDialog.HeadingBlock>
               <AlertDialog.Title>AlertDialog size={size}</AlertDialog.Title>
               <AlertDialog.Description>
@@ -42,6 +43,7 @@ export function AlertDialogSizesDemo() {
               OK
             </Button>
           </AlertDialog.Footer>
+          </AlertDialog.Panel>
         </AlertDialog>
       ))}
     </>

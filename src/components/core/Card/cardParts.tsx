@@ -115,16 +115,11 @@ export function CardRootShell({
   setRootRef,
   rest,
   children,
-  glossPointerHandlers,
-  pressableLift,
-  onPointerOverProp,
-  onPointerOutProp,
-  handlePointerDown,
-  handleClick,
-  handleKeyDown,
-  onPointerDownProp,
-  onClickProp,
-  onKeyDownProp,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onClick,
+  onKeyDown,
 }: CardRootShellProps) {
   const slotClassNames = useCardClassNames();
 
@@ -146,23 +141,11 @@ export function CardRootShell({
             glossPanelClass,
             cardGlossPressableClass(pressable),
           )}
-          onPointerOver={(e) => {
-            onPointerOverProp?.(e);
-            if (pressable && !e.defaultPrevented) {
-              if (isGloss) glossPointerHandlers.onPointerOver(e);
-              else pressableLift.onPointerOver(e);
-            }
-          }}
-          onPointerOut={(e) => {
-            onPointerOutProp?.(e);
-            if (pressable) {
-              if (isGloss) glossPointerHandlers.onPointerOut(e);
-              else pressableLift.onPointerOut(e);
-            }
-          }}
-          onPointerDown={handlePointerDown}
-          onClick={handleClick}
-          onKeyDown={handleKeyDown}
+          onPointerOver={onPointerOver}
+          onPointerOut={onPointerOut}
+          onPointerDown={onPointerDown}
+          onClick={onClick}
+          onKeyDown={onKeyDown}
         >
           {glossChildren}
         </button>
@@ -174,11 +157,11 @@ export function CardRootShell({
         {...rest}
         ref={setRootRef}
         className={glossPanelClass}
-        onPointerOver={onPointerOverProp}
-        onPointerOut={onPointerOutProp}
-        onPointerDown={onPointerDownProp}
-        onClick={onClickProp}
-        onKeyDown={onKeyDownProp}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+        onPointerDown={onPointerDown}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
       >
         {glossChildren}
       </div>
@@ -192,17 +175,11 @@ export function CardRootShell({
         {...rest}
         ref={setRootRef}
         className={cn(CARD_BUTTON_SHELL_CLASS, rootClassName)}
-        onPointerOver={(e) => {
-          onPointerOverProp?.(e);
-          if (!e.defaultPrevented) pressableLift.onPointerOver(e);
-        }}
-        onPointerOut={(e) => {
-          onPointerOutProp?.(e);
-          pressableLift.onPointerOut(e);
-        }}
-        onPointerDown={handlePointerDown}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+        onPointerDown={onPointerDown}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
       >
         <div
           className={mergeCardSlotClass(
@@ -223,11 +200,11 @@ export function CardRootShell({
         {...rest}
         ref={setRootRef}
         className={cn(CARD_BUTTON_SHELL_CLASS, rootClassName)}
-        onPointerOver={onPointerOverProp}
-        onPointerOut={onPointerOutProp}
-        onPointerDown={onPointerDownProp}
-        onClick={onClickProp}
-        onKeyDown={onKeyDownProp}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+        onPointerDown={onPointerDown}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
       >
         {children}
       </button>
@@ -239,8 +216,8 @@ export function CardRootShell({
       {...rest}
       ref={setRootRef}
       className={rootClassName}
-      onPointerOver={onPointerOverProp}
-      onPointerOut={onPointerOutProp}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
     >
       {children}
     </div>

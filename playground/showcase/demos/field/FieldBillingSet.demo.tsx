@@ -2,7 +2,6 @@ import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
-import { Text } from "@/components/core/Text";
 
 export function FieldBillingSetDemo() {
   return (

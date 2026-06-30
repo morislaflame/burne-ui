@@ -253,7 +253,7 @@ export const CustomClassNames: Story = {
           root: "rounded-mid border border-primary/20 p-base",
           summaryText: "text-primary",
           content: "gap-small",
-          interactiveButton: "text-info hover:text-primary",
+          interactive: "text-info hover:text-primary",
           pageActive: "text-primary font-semibold",
           navText: "font-medium",
         }}
