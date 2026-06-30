@@ -1,17 +1,3 @@
-export type {
-  AccordionProps,
-  AccordionItemProps,
-  AccordionHeadingProps,
-  AccordionTriggerProps,
-  AccordionMessageProps,
-  AccordionIconProps,
-  AccordionContentProps,
-  AccordionTitleProps,
-  AccordionDescriptionProps,
-  AccordionIndicatorProps,
-  AccordionPanelProps,
-  AccordionBodyProps,
-} from "./Accordion.types";
 import {
   AccordionBody,
   AccordionContent,
@@ -40,3 +26,30 @@ export const Accordion = Object.assign(AccordionRoot, {
   Panel: AccordionPanel,
   Body: AccordionBody,
 });
+
+export {
+  AccordionRoot,
+  AccordionItem,
+  AccordionHeading,
+  AccordionTrigger,
+  AccordionMessage,
+  AccordionIcon,
+  AccordionContent,
+  AccordionTitle,
+  AccordionDescription,
+  AccordionIndicator,
+  AccordionPanel,
+  AccordionBody,
+  type AccordionProps,
+  type AccordionItemProps,
+  type AccordionHeadingProps,
+  type AccordionTriggerProps,
+  type AccordionMessageProps,
+  type AccordionIconProps,
+  type AccordionContentProps,
+  type AccordionTitleProps,
+  type AccordionDescriptionProps,
+  type AccordionIndicatorProps,
+  type AccordionPanelProps,
+  type AccordionBodyProps,
+} from "./Accordion";

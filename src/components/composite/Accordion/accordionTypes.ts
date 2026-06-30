@@ -48,3 +48,12 @@ export type AccordionIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
 export type AccordionPanelProps = HTMLAttributes<HTMLDivElement>;
 
 export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
+
+export type AccordionContextValue = {
+  openId: string | null;
+  setOpenId: (id: string | null) => void;
+  getItemId: (explicit?: string) => string;
+  size: ExpandableSize;
+};
+
+export type UseAccordionRootStateProps = AccordionProps;
