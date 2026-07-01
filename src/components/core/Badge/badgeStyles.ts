@@ -80,7 +80,7 @@ export const BADGE_ICON_ONLY_BASE =
   "box-border isolate inline-flex items-center justify-center rounded-full whitespace-nowrap";
 
 export const BADGE_DOT_RING =
-  "box-border isolate rounded-full ring-2 ring-background motion-reduce:ring-1";
+  "box-border isolate inline-flex shrink-0 rounded-full ring-2 ring-background motion-reduce:ring-1";
 
 const BADGE_DOT_FILL: Record<Exclude<BadgeVariant, "gloss"> | SemanticSurfaceStatus, string> = {
   default: "bg-foreground",

@@ -217,7 +217,7 @@ export const BadgeAnchorComposition: Story = {
           <Badge
             status="success"
             dot
-            placement="bottom-right"
+            // placement="bottom-right"
             size="small"
             aria-label="Активен"
           />
