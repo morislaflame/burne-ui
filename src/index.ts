@@ -249,6 +249,7 @@ export {
   type LoadingProps,
   type LoadingSize,
   type LoadingColor,
+  type LoadingVariant,
 } from "@/components/core/Loading";
 export {
   Input,

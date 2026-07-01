@@ -5,6 +5,8 @@ import {
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { cn } from "@/utils/cn";
 
+import type { LoadingColor } from "@/components/core/Loading";
+
 import { mergeToastSlotClass, TOAST_WIDTH_PX } from "./toastAPI";
 import type { ToastPlacement, ToastStatus, ToastVariant } from "./toastTypes";
 
@@ -34,7 +36,16 @@ export const TOAST_DESCRIPTION_CLASS = "text-muted";
 
 export const TOAST_CLOSE_BUTTON_OFFSET_CLASS = "-mx-xsmall";
 
-export const TOAST_INDICATOR_ICON_CLASS = "[&_svg]:icon-mid";
+export const TOAST_INDICATOR_MEDIA_CLASS =
+  "inline-flex shrink-0 items-center justify-center [&_svg]:icon-mid";
+
+const TOAST_LOADING_COLOR: Record<ToastStatus, LoadingColor> = {
+  default: "primary",
+  success: "success",
+  danger: "danger",
+  info: "info",
+  warning: "warning",
+};
 
 export const TOAST_STACK_LAYER_CLASS = "will-change-transform";
 
@@ -58,7 +69,11 @@ export function toastPlacementClass(placement: ToastPlacement): string {
 }
 
 export function toastIndicatorClass(status: ToastStatus, slotClass?: string) {
-  return mergeToastSlotClass(TOAST_INDICATOR_ICON_CLASS, TOAST_ICON_CLASS[status], slotClass);
+  return mergeToastSlotClass(TOAST_INDICATOR_MEDIA_CLASS, TOAST_ICON_CLASS[status], slotClass);
+}
+
+export function toastLoadingColor(status: ToastStatus): LoadingColor {
+  return TOAST_LOADING_COLOR[status];
 }
 
 export function toastRootClass({

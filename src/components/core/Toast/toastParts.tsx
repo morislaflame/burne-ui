@@ -26,6 +26,7 @@ import {
   TOAST_DESCRIPTION_CLASS,
   TOAST_TITLE_CLASS,
   toastIndicatorClass,
+  toastLoadingColor,
 } from "./toastStyles";
 import type {
   ToastActionButtonProps,
@@ -62,13 +63,14 @@ export function ToastIndicator({ className, children, ...rest }: ToastIndicatorP
     return (
       <span
         className={mergeToastSlotClass(
+          toastIndicatorClass(status),
           messageBannerIndicatorCellClass(gridSlots),
           slotClassNames.indicator,
           className,
         )}
         {...rest}
       >
-        <Loading size="base" color="primary" />
+        <Loading size="small" color={toastLoadingColor(status)} />
       </span>
     );
   }

@@ -88,7 +88,15 @@ function useThemeTokensState() {
   }, []);
 
   const setMotionDuration = useCallback(
-    (key: "interactiveDuration" | "tooltipDuration" | "expandDuration" | "progressFillDuration", value: number) => {
+    (
+      key:
+        | "interactiveDuration"
+        | "tooltipDuration"
+        | "expandDuration"
+        | "progressFillDuration"
+        | "loadingDotsDuration",
+      value: number,
+    ) => {
       setState((prev) => ({ ...prev, [key]: value }));
     },
     [],
@@ -106,7 +114,8 @@ function useThemeTokensState() {
         | "enableAsyncButtonCrossfade"
         | "enableContentFade"
         | "enableFeedbackExpand"
-        | "enableProgressFill",
+        | "enableProgressFill"
+        | "enableLoadingDots",
       value: boolean,
     ) => {
       setState((prev) => ({ ...prev, [key]: value }));

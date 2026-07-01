@@ -2,6 +2,8 @@ import { LoadingCardOverlayDemo } from "../demos/loading/LoadingCardOverlay.demo
 import loadingCardOverlaySource from "../demos/loading/LoadingCardOverlay.demo.tsx?raw";
 import { LoadingColorGridDemo } from "../demos/loading/LoadingColorGrid.demo";
 import loadingColorGridSource from "../demos/loading/LoadingColorGrid.demo.tsx?raw";
+import { LoadingDotsWaveDemo } from "../demos/loading/LoadingDotsWave.demo";
+import loadingDotsWaveSource from "../demos/loading/LoadingDotsWave.demo.tsx?raw";
 import { LoadingInlineStatusDemo } from "../demos/loading/LoadingInlineStatus.demo";
 import loadingInlineStatusSource from "../demos/loading/LoadingInlineStatus.demo.tsx?raw";
 import { LoadingSizesColorsDemo } from "../demos/loading/LoadingSizesColors.demo";
@@ -12,12 +14,19 @@ export function LoadingShowcase() {
   return (
     <ShowcasePage
       title="Loading"
-      description="Индикатор загрузки с размерами и цветовыми вариантами."
+      description="Индикатор загрузки: спиннер и прыгающие точки (GSAP)."
       importPath='import { Loading } from "@/components/core/Loading";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Размеры и цвета" description="size и color на корне.">
+      <ShowcaseSection title="Размеры и цвета" description="Спиннер: size и color на корне.">
         <ShowcaseDemoFromFile Demo={LoadingSizesColorsDemo} source={loadingSizesColorsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Прыгающие точки"
+        description='variant="dots" — волна 1 → 2 → 3. Скорость: configureMotion() (loadingDotsDuration, enableLoadingDots). Слайдер в панели Motion.'
+      >
+        <ShowcaseDemoFromFile Demo={LoadingDotsWaveDemo} source={loadingDotsWaveSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -36,14 +45,16 @@ export function LoadingShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="size, color на корне — SVG-спиннер с анимацией."
+            description="variant spinner | dots, size, color на корне."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization motion={false}>
+        <ShowcaseDoc.Customization>
           <p>
-            Цвета: <code>primary</code>, <code>success</code>, <code>muted</code> и др. или произвольный CSS через{" "}
-            <code>color</code>. Размеры: <code>small</code>, <code>base</code>, <code>mid</code>,{" "}
-            <code>large</code>. <code>className</code> на корне.
+            Цвета: <code>primary</code>, <code>success</code>, <code>muted</code> и др. Размеры:{" "}
+            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>. Точки:{" "}
+            <code>loadingDotsDuration</code> (полный прыжок, шаг волны = duration / 3),{" "}
+            <code>loadingDotsEaseUp</code>, <code>loadingDotsEaseDown</code>,{" "}
+            <code>enableLoadingDots</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

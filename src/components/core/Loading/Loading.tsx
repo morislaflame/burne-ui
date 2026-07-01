@@ -1,59 +1,21 @@
-import { forwardRef, type HTMLAttributes } from "react";
+import { forwardRef } from "react";
 
-import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
 
-export type LoadingSize = ComponentSize;
+import { LoadingDots, LoadingSpinner } from "./loadingParts";
+import { LOADING_ROOT_CLASS } from "./loadingStyles";
+import type { LoadingProps } from "./loadingTypes";
 
-export type LoadingColor =
-  | "primary"
-  | "foreground"
-  | "muted"
-  | "secondary"
-  | "danger"
-  | "success"
-  | "info"
-  | "warning";
-
-export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
-  size?: LoadingSize;
-  color?: LoadingColor;
-  label?: string;
-};
-
-const LOADING_RING: Record<LoadingSize, { icon: string; border: string }> = {
-  small: {
-    icon: CONTROL_SIZE_LAYOUT.small.spinnerIcon,
-    border: CONTROL_SIZE_LAYOUT.small.spinnerBorder,
-  },
-  base: {
-    icon: CONTROL_SIZE_LAYOUT.base.spinnerIcon,
-    border: CONTROL_SIZE_LAYOUT.base.spinnerBorder,
-  },
-  mid: {
-    icon: CONTROL_SIZE_LAYOUT.mid.spinnerIcon,
-    border: CONTROL_SIZE_LAYOUT.mid.spinnerBorder,
-  },
-  large: {
-    icon: CONTROL_SIZE_LAYOUT.large.spinnerIcon,
-    border: CONTROL_SIZE_LAYOUT.large.spinnerBorder,
-  },
-};
-
-const LOADING_COLOR: Record<LoadingColor, string> = {
-  primary: "text-primary",
-  foreground: "text-foreground",
-  muted: "text-muted",
-  secondary: "text-primary",
-  danger: "text-danger",
-  success: "text-success",
-  info: "text-info",
-  warning: "text-warning",
-};
+export type {
+  LoadingColor,
+  LoadingProps,
+  LoadingSize,
+  LoadingVariant,
+} from "./loadingTypes";
 
 export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loading(
   {
+    variant = "spinner",
     size = "base",
     color = "primary",
     label = "Loading",
@@ -62,27 +24,20 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
   },
   ref,
 ) {
-  const ring = LOADING_RING[size];
-
   return (
     <span
       ref={ref}
       role="status"
       aria-live="polite"
       aria-label={label}
-      className={cn("inline-flex shrink-0 items-center justify-center", className)}
+      className={cn(LOADING_ROOT_CLASS, className)}
       {...rest}
     >
-      <span
-        aria-hidden
-        className={cn(
-          "box-border inline-block rounded-full border-current border-t-transparent",
-          "animate-spin motion-reduce:animate-none",
-          ring.icon,
-          ring.border,
-          LOADING_COLOR[color],
-        )}
-      />
+      {variant === "dots" ? (
+        <LoadingDots size={size} color={color} />
+      ) : (
+        <LoadingSpinner size={size} color={color} />
+      )}
     </span>
   );
 });

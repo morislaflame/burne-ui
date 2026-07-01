@@ -89,6 +89,7 @@ export type ThemeTokenState = {
   tooltipDuration: number;
   expandDuration: number;
   progressFillDuration: number;
+  loadingDotsDuration: number;
   enableHoverLift: boolean;
   enablePressSqueeze: boolean;
   enableToggleButtonFill: boolean;
@@ -99,6 +100,7 @@ export type ThemeTokenState = {
   enableContentFade: boolean;
   enableFeedbackExpand: boolean;
   enableProgressFill: boolean;
+  enableLoadingDots: boolean;
   colors: ThemeColors;
   statusForegrounds: ThemeStatusForegrounds;
   /** true — `--color-border` задаётся inline; false — формула из tokens/styles.css (как в Storybook). */
@@ -179,6 +181,7 @@ export const SCALE_DEFAULTS = {
   tooltipDuration: 200,
   expandDuration: 200,
   progressFillDuration: 600,
+  loadingDotsDuration: 900,
   enableHoverLift: true,
   enablePressSqueeze: true,
   enableToggleButtonFill: true,
@@ -189,6 +192,7 @@ export const SCALE_DEFAULTS = {
   enableContentFade: true,
   enableFeedbackExpand: true,
   enableProgressFill: true,
+  enableLoadingDots: true,
 } as const;
 
 /** Наборы только scale-значений для лейаут-пресетов. Не трогают цвета. */
@@ -402,6 +406,8 @@ export async function applyThemeTokens(state: ThemeTokenState, root: HTMLElement
     enableFeedbackExpand: state.enableFeedbackExpand,
     progressFillDuration: state.progressFillDuration,
     enableProgressFill: state.enableProgressFill,
+    loadingDotsDuration: state.loadingDotsDuration,
+    enableLoadingDots: state.enableLoadingDots,
   });
 
   applyTextScale(root, state.textScale);

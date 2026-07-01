@@ -140,6 +140,22 @@ export interface MotionConfig {
 
   /** Animate ProgressBar fill on value change. @default true */
   enableProgressFill: boolean;
+
+  /**
+   * Duration (ms) одного полного прыжка точки Loading dots (вверх + вниз).
+   * Задержка между точками = duration / 3 (волна 1 → 2 → 3).
+   * @default 900
+   */
+  loadingDotsDuration: number;
+
+  /** GSAP easing подъёма точки Loading dots. @default "power2.out" */
+  loadingDotsEaseUp: string;
+
+  /** GSAP easing спуска точки Loading dots. @default "power2.in" */
+  loadingDotsEaseDown: string;
+
+  /** Анимация прыгающих точек Loading (`variant="dots"`). @default true */
+  enableLoadingDots: boolean;
 }
 
 
@@ -174,10 +190,30 @@ const DEFAULTS: MotionConfig = {
   progressFillDuration: 600,
   progressFillEase: "power2.out",
   enableProgressFill: true,
+  loadingDotsDuration: 900,
+  loadingDotsEaseUp: "power2.out",
+  loadingDotsEaseDown: "power2.in",
+  enableLoadingDots: true,
 };
 
 
 let _config: MotionConfig = { ...DEFAULTS };
+
+let _motionConfigRevision = 0;
+const _motionConfigListeners = new Set<() => void>();
+
+/** Подписка на изменения `configureMotion()` (для live-пересборки GSAP-твинов). */
+export function subscribeMotionConfig(onStoreChange: () => void): () => void {
+  _motionConfigListeners.add(onStoreChange);
+  return () => {
+    _motionConfigListeners.delete(onStoreChange);
+  };
+}
+
+/** Счётчик ревизий motion config — для `useSyncExternalStore`. */
+export function getMotionConfigRevision(): number {
+  return _motionConfigRevision;
+}
 
 
 /**
@@ -186,6 +222,10 @@ let _config: MotionConfig = { ...DEFAULTS };
  */
 export function configureMotion(overrides: Partial<MotionConfig>): void {
   _config = { ..._config, ...overrides };
+  _motionConfigRevision += 1;
+  for (const listener of _motionConfigListeners) {
+    listener();
+  }
 }
 
 /** Returns the current (possibly customised) motion config. */
@@ -262,5 +302,20 @@ export function motionProgressFill() {
   return {
     duration: _config.progressFillDuration / 1000,
     ease: _config.progressFillEase,
+  } as const;
+}
+
+const LOADING_DOTS_COUNT = 3;
+
+/** Прыгающие точки Loading — волна с фиксированным шагом duration / 3. */
+export function motionLoadingDots() {
+  const cycleSec = _config.loadingDotsDuration / 1000;
+  return {
+    cycleSec,
+    staggerSec: cycleSec / LOADING_DOTS_COUNT,
+    halfCycleSec: cycleSec / 2,
+    easeUp: _config.loadingDotsEaseUp,
+    easeDown: _config.loadingDotsEaseDown,
+    enabled: _config.enableLoadingDots,
   } as const;
 }

@@ -585,6 +585,15 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           unit="ms"
           onChange={(v) => setMotionDuration("progressFillDuration", v)}
         />
+        <ScaleControl
+          label="loadingDotsDuration"
+          value={state.loadingDotsDuration}
+          min={300}
+          max={2400}
+          step={50}
+          unit="ms"
+          onChange={(v) => setMotionDuration("loadingDotsDuration", v)}
+        />
         <Button
           type="button"
           size="small"
@@ -595,6 +604,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             setMotionDuration("tooltipDuration", SCALE_DEFAULTS.tooltipDuration);
             setMotionDuration("expandDuration", SCALE_DEFAULTS.expandDuration);
             setMotionDuration("progressFillDuration", SCALE_DEFAULTS.progressFillDuration);
+            setMotionDuration("loadingDotsDuration", SCALE_DEFAULTS.loadingDotsDuration);
           }}
         >
           Motion по умолчанию
@@ -686,7 +696,8 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
               state.enableAsyncButtonCrossfade &&
               state.enableContentFade &&
               state.enableFeedbackExpand &&
-              state.enableProgressFill
+              state.enableProgressFill &&
+              state.enableLoadingDots
             }
             onChange={(e) => {
               const checked = e.target.checked;
@@ -700,6 +711,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
               setAnimationFlag("enableContentFade", checked);
               setAnimationFlag("enableFeedbackExpand", checked);
               setAnimationFlag("enableProgressFill", checked);
+              setAnimationFlag("enableLoadingDots", checked);
             }}
             label="Все анимации включены"
           />
@@ -753,6 +765,11 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             checked={state.enableProgressFill}
             onChange={(e) => setAnimationFlag("enableProgressFill", e.target.checked)}
             label="ProgressBar fill (плавное заполнение)"
+          />
+          <Switch
+            checked={state.enableLoadingDots}
+            onChange={(e) => setAnimationFlag("enableLoadingDots", e.target.checked)}
+            label="Loading dots wave"
           />
         </div>
       </div>
