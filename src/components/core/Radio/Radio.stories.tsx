@@ -142,7 +142,7 @@ export const CustomIndicator: Story = {
       <Radio name="custom-indicator" value="star" defaultChecked>
         <Radio.Control>
           <Radio.Indicator>
-            <IoStar aria-hidden className="size-full text-primary-foreground" />
+            <IoStar aria-hidden className="text-primary-foreground" />
           </Radio.Indicator>
         </Radio.Control>
         <Radio.Content>
@@ -151,6 +151,26 @@ export const CustomIndicator: Story = {
         </Radio.Content>
       </Radio>
     </div>
+  ),
+};
+
+export const IndicatorShape: Story = {
+  name: "Indicator — форма",
+  render: () => (
+    <Radio name="shape" value="mid" defaultChecked size="large">
+      <Radio.Control>
+        <Radio.Indicator
+          classNames={{
+            shell: "rounded-mid",
+            fill: "rounded-[inherit]",
+          }}
+        />
+      </Radio.Control>
+      <Radio.Content>
+        <Radio.Label>rounded-mid</Radio.Label>
+        <Radio.Hint>Dot наследует форму через rounded-[inherit].</Radio.Hint>
+      </Radio.Content>
+    </Radio>
   ),
 };
 
@@ -209,6 +229,8 @@ export const CustomClassNames: Story = {
         root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-md",
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
+        indicator: "rounded-mid",
+        indicatorFill: "rounded-[inherit]",
         labelText: "text-primary font-semibold",
         hint: "text-foreground/80",
       }}

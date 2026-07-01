@@ -11,6 +11,7 @@ import type {
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
+import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
 
 export type RadioVariant = "default" | "gloss";
 
@@ -21,6 +22,8 @@ export type RadioClassNames = {
   control?: string;
   controlTrack?: string;
   indicator?: string;
+  indicatorFill?: string;
+  indicatorMark?: string;
   content?: string;
   label?: string;
   labelText?: string;
@@ -55,6 +58,7 @@ export type RadioControlProps = HTMLAttributes<HTMLSpanElement>;
 
 export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  classNames?: SelectionIndicatorClassNames;
 };
 
 export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {

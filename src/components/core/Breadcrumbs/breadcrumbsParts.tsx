@@ -226,14 +226,17 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
       : crumbInteractiveButtonClass(innerClassName);
 
     return (
-      <span
-        ref={setRefs}
-        className={crumbInteractiveWrapperClass(className)}
-        onPointerDown={handlePointerDown}
-      >
+      <span className={crumbInteractiveWrapperClass(className)}>
         {href ? (
-          <a href={href} onClick={onClick} aria-current={ariaCurrent} className={innerCls}>
+          <a
+            href={href}
+            onClick={onClick}
+            aria-current={ariaCurrent}
+            className={innerCls}
+            onPointerDown={handlePointerDown}
+          >
             <Text
+              ref={setRefs}
               variant="small"
               inheritColor
               as="span"
@@ -243,8 +246,15 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
             </Text>
           </a>
         ) : (
-          <button type="button" onClick={onClick} aria-current={ariaCurrent} className={innerCls}>
+          <button
+            type="button"
+            onClick={onClick}
+            aria-current={ariaCurrent}
+            className={innerCls}
+            onPointerDown={handlePointerDown}
+          >
             <Text
+              ref={setRefs}
               variant="small"
               inheritColor
               as="span"

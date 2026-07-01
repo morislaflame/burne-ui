@@ -108,14 +108,8 @@ export function useDisclosureTriggerMotion({
       if (e.defaultPrevented || disabled) return;
       const el = titleLiftRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      void animateInteractivePressSqueeze(el).then(() => {
-        if (
-          hoverInsideRef.current &&
-          titleLiftRef.current &&
-          !shouldSkipInteractiveHoverLift()
-        ) {
-          animateInteractiveHoverLift(titleLiftRef.current, true);
-        }
+      void animateInteractivePressSqueeze(el, {
+        pointerInside: hoverInsideRef.current,
       });
     },
     [disabled, onPointerDown],

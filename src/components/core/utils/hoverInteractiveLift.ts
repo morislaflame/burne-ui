@@ -178,29 +178,68 @@ export function animateInteractiveHoverLift(
  * Короткий «сжимающий» импульс при pointer down.
  * Степень сжатия автоматически адаптируется к размеру элемента.
  * Возвращает промис окончания анимации.
+ *
+ * При `pointerInside` и активном hover-lift release идёт сразу к hover-scale
+ * (без паузы на scale 1 и отдельного hover-tween).
  */
-export function animateInteractivePressSqueeze(element: HTMLElement): Promise<void> {
+export type AnimateInteractivePressSqueezeOptions = {
+  pointerInside?: boolean;
+  liftScale?: number;
+  shadow?: HoverShadowConfig;
+  /** Вызывается в момент начала release-фазы (перед tween к rest/hover). */
+  onReleaseStart?: () => void;
+};
+
+export function animateInteractivePressSqueeze(
+  element: HTMLElement,
+  options?: AnimateInteractivePressSqueezeOptions,
+): Promise<void> {
   if (!getMotionConfig().enablePressSqueeze) {
+    options?.onReleaseStart?.();
     return Promise.resolve();
   }
   killMotion(element);
   const s = adaptiveSqueezeScale(element);
   const cfg = getMotionConfig();
-  // GSAP keyframes делят время поровну — пик сжатия резче, чем при одной easing-кривой
   const total = (cfg.interactiveDuration * 1.15) / 1000;
+  const pressIn = total * 0.3;
+
+  const canHoverLift = !shouldSkipInteractiveHoverLift();
+  const releaseToHover = Boolean(options?.pointerInside && canHoverLift);
+  const releaseScale = releaseToHover
+    ? (options?.liftScale !== undefined ? options.liftScale : adaptiveHoverLiftScale(element))
+    : 1;
+  const releaseOut = releaseToHover ? total : total * 0.5;
+  const releaseEase = releaseToHover ? cfg.hoverLiftEase : "sine.inOut";
+  const shadow = options?.shadow;
+
+  if (shadow) {
+    const idle = shadow.idle ?? shadowNone();
+    element.style.setProperty("--el-shadow", releaseToHover ? shadow.hover : idle);
+  }
+
   return new Promise((resolve) => {
     gsap
-      .timeline({ onComplete: () => resolve() })
+      .timeline({
+        onComplete: () => {
+          gsap.set(element, { scale: releaseScale });
+          resolve();
+        },
+      })
       .to(element, {
         scale: s,
-        duration: total * 0.3,
+        duration: pressIn,
         ease: "power1.out",
         overwrite: "auto",
       })
+      .add(() => {
+        options?.onReleaseStart?.();
+      })
       .to(element, {
-        scale: 1,
-        duration: total * 0.5,
-        ease: "sine.inOut",
+        scale: releaseScale,
+        duration: releaseOut,
+        ease: releaseEase,
+        overwrite: "auto",
       });
   });
 }

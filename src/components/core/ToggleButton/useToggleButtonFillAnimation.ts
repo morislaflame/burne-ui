@@ -59,7 +59,14 @@ export function animateToggleButtonFill(
 export function useToggleButtonFillAnimation(
   pressed: boolean,
   fillRef: RefObject<HTMLElement | null>,
+  options?: {
+    /** Пока true — `useLayoutEffect` не запускает fill (ждём press-release). */
+    deferFillFromPressRef?: RefObject<boolean>;
+    onFillStart?: (pressed: boolean) => void;
+  },
 ) {
+  const deferFillFromPressRef = options?.deferFillFromPressRef;
+  const onFillStart = options?.onFillStart;
   const initialPressedRef = useRef(pressed);
   const prevPressedRef = useRef<boolean | undefined>(undefined);
   const reduceMotion = prefersReducedInteractiveHoverLift();
@@ -75,9 +82,10 @@ export function useToggleButtonFillAnimation(
       if (!fill) return;
       if (prevPressedRef.current === next) return;
       prevPressedRef.current = next;
+      onFillStart?.(next);
       animateToggleButtonFill(fill, next, reduceMotion);
     },
-    [fillRef, reduceMotion],
+    [fillRef, onFillStart, reduceMotion],
   );
 
   useLayoutEffect(() => {
@@ -91,9 +99,15 @@ export function useToggleButtonFillAnimation(
     }
 
     if (prevPressedRef.current === pressed) return;
+
+    if (deferFillFromPressRef?.current) {
+      return;
+    }
+
     prevPressedRef.current = pressed;
+    onFillStart?.(pressed);
     animateToggleButtonFill(fill, pressed, reduceMotion);
-  }, [pressed, fillRef, reduceMotion]);
+  }, [deferFillFromPressRef, onFillStart, pressed, fillRef, reduceMotion]);
 
   return { animateTo, bindFillRef };
 }

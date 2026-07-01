@@ -7,7 +7,7 @@ import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 import { radioInputAriaLabel } from "./radioA11y";
-import { mergeRadioSlotClass, radioVariantToIndicator } from "./radioAPI";
+import { mergeRadioSlotClass, radioVariantToIndicator, resolveRadioIndicatorClassNames } from "./radioAPI";
 import { useRadioControlTrackAnimation } from "./radioAnimations";
 import { useRadioClassNames, useRadioFieldContext } from "./radioContext";
 import {
@@ -101,7 +101,12 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
 
 RadioControl.displayName = "RadioControl";
 
-export function RadioIndicator({ children, className, ...rest }: RadioIndicatorProps) {
+export function RadioIndicator({
+  children,
+  className,
+  classNames: classNamesProp,
+  ...rest
+}: RadioIndicatorProps) {
   const ctx = useRadioFieldContext();
   const slotClassNames = useRadioClassNames();
 
@@ -110,10 +115,16 @@ export function RadioIndicator({ children, className, ...rest }: RadioIndicatorP
       size={ctx.size}
       variant={radioVariantToIndicator(ctx.variant)}
       selected={ctx.mergedChecked}
-      icon={children ?? undefined}
-      className={mergeRadioSlotClass(slotClassNames.indicator, className)}
+      dot
+      classNames={resolveRadioIndicatorClassNames({
+        slotClassNames,
+        classNames: classNamesProp,
+        className,
+      })}
       {...rest}
-    />
+    >
+      {children}
+    </SelectionIndicator>
   );
 }
 

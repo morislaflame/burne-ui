@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 import type { PopoverVariant } from "@/components/core/Popover";
 import type {
+  SelectionIndicatorClassNames,
   SelectionIndicatorSize,
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
@@ -26,6 +27,9 @@ export type DropdownClassNames = {
   itemHint?: string;
   itemIcon?: string;
   itemIndicator?: string;
+  itemIndicatorShell?: string;
+  itemIndicatorFill?: string;
+  itemIndicatorMark?: string;
   sub?: string;
   subTrigger?: string;
   subTriggerLabelWrap?: string;
@@ -113,6 +117,7 @@ export type DropdownItemIndicatorProps = Omit<
   size?: SelectionIndicatorSize;
   check?: boolean;
   children?: ReactNode;
+  classNames?: SelectionIndicatorClassNames;
 };
 
 export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {

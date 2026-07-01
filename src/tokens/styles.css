@@ -6,7 +6,7 @@
    */
   --border-width: 1px;
 
-  --color-background: #0c0d10;
+  --color-background: #020202;
   --color-surface: #171717;
   --color-foreground: #f4f5f7;
   --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);

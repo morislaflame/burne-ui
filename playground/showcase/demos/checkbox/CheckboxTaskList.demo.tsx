@@ -17,16 +17,15 @@ export function CheckboxTaskListDemo() {
   });
 
   return (
-    <div className="flex w-full max-w-xs flex-col gap-small">
+    <div className="flex w-full max-w-xs flex-col gap-plus">
       <Text as="p" variant="small" className="font-medium">
         Права доступа
       </Text>
-      <ul className="flex flex-col gap-small">
+      <ul className="flex flex-col gap-base">
         {PERMISSIONS.map((perm) => (
           <li key={perm.id}>
             <Checkbox
               variant={perm.variant}
-              size="small"
               checked={granted[perm.id]}
               onChange={(e) => setGranted((prev) => ({ ...prev, [perm.id]: e.target.checked }))}
               label={perm.label}

@@ -6,14 +6,14 @@ import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 export function useSelectionIndicatorAnimation(
   active: boolean,
-  fillRef: RefObject<HTMLElement | null>,
+  fillRef?: RefObject<HTMLElement | null>,
   iconRef?: RefObject<HTMLElement | null>,
 ) {
   const firstLayoutRef = useRef(true);
   const reduceMotion = prefersReducedInteractiveHoverLift();
 
   useLayoutEffect(() => {
-    const fill = fillRef.current;
+    const fill = fillRef?.current;
     const icon = iconRef?.current;
 
     const applyInstant = (on: boolean) => {

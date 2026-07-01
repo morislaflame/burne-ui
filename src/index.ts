@@ -571,6 +571,7 @@ export {
   shadowSm,
   shouldSkipInteractiveHoverLift,
   useInteractiveHoverLiftContainerHandlers,
+  type AnimateInteractivePressSqueezeOptions,
   type HoverShadowConfig,
 } from "@/components/core/utils/hoverInteractiveLift";
 export {

@@ -24,7 +24,10 @@ export function SelectionIndicatorShapeCompareDemo() {
             variant="base"
             selected={selected}
             check
-            className="rounded-mid"
+            classNames={{
+              shell: "rounded-mid",
+              fill: "rounded-[inherit]",
+            }}
           />
           <Text as="span" variant="tools" className="text-muted">
             rounded-mid

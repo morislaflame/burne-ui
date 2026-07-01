@@ -2,6 +2,8 @@ import { SelectionIndicatorGalleryDemo } from "../demos/selectionIndicator/Selec
 import selectionIndicatorGallerySource from "../demos/selectionIndicator/SelectionIndicatorGallery.demo.tsx?raw";
 import { SelectionIndicatorGlossDemo } from "../demos/selectionIndicator/SelectionIndicatorGloss.demo";
 import selectionIndicatorGlossSource from "../demos/selectionIndicator/SelectionIndicatorGloss.demo.tsx?raw";
+import { SelectionIndicatorClassNamesDemo } from "../demos/selectionIndicator/SelectionIndicatorClassNames.demo";
+import selectionIndicatorClassNamesSource from "../demos/selectionIndicator/SelectionIndicatorClassNames.demo.tsx?raw";
 import { SelectionIndicatorShapeCompareDemo } from "../demos/selectionIndicator/SelectionIndicatorShapeCompare.demo";
 import selectionIndicatorShapeCompareSource from "../demos/selectionIndicator/SelectionIndicatorShapeCompare.demo.tsx?raw";
 import { SelectionIndicatorThumbGalleryDemo } from "../demos/selectionIndicator/SelectionIndicatorThumbGallery.demo";
@@ -27,6 +29,17 @@ export function SelectionIndicatorShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянный индикатор.">
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGlossDemo} source={selectionIndicatorGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Слоты shell, fill и mark на SelectionIndicator."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={SelectionIndicatorClassNamesDemo}
+          source={selectionIndicatorClassNamesSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

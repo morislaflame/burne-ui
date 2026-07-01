@@ -7,10 +7,16 @@ import {
   CheckboxLabel,
   CheckboxRoot,
 } from "./Checkbox";
+import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+
+const CheckboxIndicatorCompound = Object.assign(CheckboxIndicator, {
+  Fill: SelectionIndicator.Fill,
+  Mark: SelectionIndicator.Mark,
+});
 
 export const Checkbox = Object.assign(CheckboxRoot, {
   Control: CheckboxControl,
-  Indicator: CheckboxIndicator,
+  Indicator: CheckboxIndicatorCompound,
   Content: CheckboxContent,
   Label: CheckboxLabel,
   Hint: CheckboxHint,

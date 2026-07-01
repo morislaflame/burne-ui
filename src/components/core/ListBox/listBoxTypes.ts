@@ -3,6 +3,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 import type {
   SelectionIndicatorSize,
   SelectionIndicatorVariant,
+  SelectionIndicatorClassNames,
 } from "@/components/core/SelectionIndicator";
 
 export type ListBoxSize = "small" | "base" | "mid" | "large";
@@ -30,8 +31,12 @@ export type ListBoxClassNames = {
   hint?: string;
   /** `ListBox.Icon`. */
   icon?: string;
-  /** Оболочка `ListBox.ItemIndicator`. */
+  /** Оболочка `ListBox.ItemIndicator` (grid shell). */
   itemIndicator?: string;
+  /** Корень `SelectionIndicator` внутри ItemIndicator. */
+  itemIndicatorShell?: string;
+  itemIndicatorFill?: string;
+  itemIndicatorMark?: string;
 };
 
 export type ListBoxContextValue = {
@@ -108,6 +113,7 @@ export type ListBoxItemIndicatorProps = Omit<
   size?: SelectionIndicatorSize;
   check?: boolean;
   children?: ReactNode;
+  classNames?: SelectionIndicatorClassNames;
 };
 
 export type ListBoxRootShellProps = Omit<

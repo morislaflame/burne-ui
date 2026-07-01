@@ -14,6 +14,12 @@ import {
   DropdownSubTrigger,
   DropdownTrigger,
 } from "./Dropdown";
+import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+
+const DropdownItemIndicatorCompound = Object.assign(DropdownItemIndicator, {
+  Fill: SelectionIndicator.Fill,
+  Mark: SelectionIndicator.Mark,
+});
 
 export const Dropdown = Object.assign(DropdownRoot, {
   Trigger: DropdownTrigger,
@@ -26,7 +32,7 @@ export const Dropdown = Object.assign(DropdownRoot, {
   ItemLabel: DropdownItemLabel,
   ItemHint: DropdownItemHint,
   ItemIcon: DropdownItemIcon,
-  ItemIndicator: DropdownItemIndicator,
+  ItemIndicator: DropdownItemIndicatorCompound,
   Sub: DropdownSub,
   SubTrigger: DropdownSubTrigger,
   SubContent: DropdownSubContent,

@@ -1,6 +1,7 @@
 import { forwardRef, useCallback, useState } from "react";
 
 import { Popover } from "@/components/core/Popover";
+import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 
 import {
   COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL,
@@ -250,7 +251,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
       <Popover.Content
         ref={ref}
         unstyled
-        offset={6}
+        offset={POPOVER_DEFAULT_OFFSET}
         align="start"
         aria-label={COLOR_PICKER_CONTENT_ARIA_LABEL}
         className={mergeColorPickerSlotClass(slotClassNames.content, className)}

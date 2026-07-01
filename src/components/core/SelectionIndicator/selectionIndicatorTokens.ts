@@ -18,11 +18,35 @@ export const SELECTION_INDICATOR_ICON_CLASS: Record<SelectionIndicatorSize, stri
   large: "icon-mid",
 };
 
+export const SELECTION_INDICATOR_MARK_CLASS =
+  "pointer-events-none relative z-[2] inline-flex items-center justify-center";
+
+export function selectionIndicatorMarkIconClass(size: SelectionIndicatorSize): string {
+  return cn("[&_svg]:size-full", SELECTION_INDICATOR_ICON_CLASS[size]);
+}
+
+export const SELECTION_INDICATOR_DOT_CLASS: Record<SelectionIndicatorSize, string> = {
+  small: "size-[calc(var(--selection-indicator-small)*0.333333)]",
+  base: "size-[calc(var(--selection-indicator-base)*0.333333)]",
+  mid: "size-[calc(var(--selection-indicator-mid)*0.333333)]",
+  large: "size-[calc(var(--selection-indicator-large)*0.333333)]",
+};
+
+export const SELECTION_INDICATOR_DOT_INNER_CLASS = "shrink-0 rounded-full bg-indicator-foreground";
+
+export const SELECTION_INDICATOR_DOT_INNER_GLOSS_CLASS = "shrink-0 rounded-full bg-foreground";
+
 export const SELECTION_INDICATOR_SHELL_CLASS =
   "relative box-border inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full";
 
+export const SELECTION_INDICATOR_FILL_BASE_CLASS =
+  "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-[inherit]";
+
 export const SELECTION_INDICATOR_FILL_CLASS =
-  "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-[inherit] bg-indicator text-indicator-foreground";
+  "bg-indicator text-indicator-foreground";
+
+export const SELECTION_INDICATOR_FILL_SECONDARY_CLASS =
+  "bg-secondary text-secondary-foreground";
 
 export const SELECTION_INDICATOR_FILL_GLOSS_CLASS =
   "pointer-events-none absolute inset-px z-[1] flex origin-center items-center justify-center rounded-[inherit] gloss-indicator-fill text-foreground";
@@ -57,6 +81,49 @@ export function selectionIndicatorFallbackPx(
   return INDICATOR_SSR_REM[size] * rootPx;
 }
 
+export function selectionIndicatorDotInnerClass(
+  variant: SelectionIndicatorVariant,
+): string {
+  switch (variant) {
+    case "gloss":
+    case "outline":
+      return SELECTION_INDICATOR_DOT_INNER_GLOSS_CLASS;
+    case "secondary":
+      return "shrink-0 rounded-full bg-secondary-foreground";
+    default:
+      return SELECTION_INDICATOR_DOT_INNER_CLASS;
+  }
+}
+
+export function selectionIndicatorShowsFill(variant: SelectionIndicatorVariant): boolean {
+  return variant !== "outline";
+}
+
+export function selectionIndicatorFillClass(variant: SelectionIndicatorVariant): string {
+  if (variant === "gloss") return SELECTION_INDICATOR_FILL_GLOSS_CLASS;
+
+  const surfaceClass =
+    variant === "secondary"
+      ? SELECTION_INDICATOR_FILL_SECONDARY_CLASS
+      : SELECTION_INDICATOR_FILL_CLASS;
+
+  return cn(SELECTION_INDICATOR_FILL_BASE_CLASS, surfaceClass);
+}
+
+export function selectionIndicatorMarkColorClass(
+  variant: SelectionIndicatorVariant,
+): string {
+  switch (variant) {
+    case "gloss":
+    case "outline":
+      return "text-foreground";
+    case "secondary":
+      return "text-secondary-foreground";
+    default:
+      return "text-indicator-foreground";
+  }
+}
+
 export function selectionIndicatorShellClass(
   size: SelectionIndicatorSize,
   className?: string,
@@ -66,15 +133,15 @@ export function selectionIndicatorShellClass(
 
 export function selectionIndicatorVariantClass(
   variant: SelectionIndicatorVariant,
-  selected: boolean,
+  _selected: boolean,
 ): string {
   switch (variant) {
     case "base":
       return "border border-primary bg-surface";
     case "secondary":
-      return cn("bg-secondary", selected && "border-primary");
+      return "border-token bg-secondary";
     case "outline":
-      return cn("bg-transparent border-token", selected && "border-primary");
+      return "border border-primary bg-surface";
     case "gloss":
       return "gloss-indicator border-0";
   }

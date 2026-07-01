@@ -57,7 +57,10 @@ export function crumbInteractiveWrapperClass(className?: string): string {
 }
 
 export function crumbInteractiveTextClass(className?: string): string {
-  return cn("min-w-0 truncate", className);
+  return cn(
+    "inline-flex origin-center min-w-0 truncate will-change-transform",
+    className,
+  );
 }
 
 export function breadcrumbsEllipsisTriggerClass(className?: string): string {
@@ -65,7 +68,7 @@ export function breadcrumbsEllipsisTriggerClass(className?: string): string {
 }
 
 export function breadcrumbsEllipsisLiftWrapperClass(className?: string): string {
-  return cn("inline-flex will-change-transform", className);
+  return cn("inline-flex origin-center will-change-transform", className);
 }
 
 export function breadcrumbsEllipsisTextClass(className?: string): string {

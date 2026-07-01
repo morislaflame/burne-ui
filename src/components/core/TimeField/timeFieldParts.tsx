@@ -19,6 +19,7 @@ import {
   timeFieldSegmentSeparatorClass,
   timeFieldSegmentsClass,
   timeFieldShellClass,
+  timeFieldShellInnerClass,
 } from "./timeFieldStyles";
 import type {
   TimeFieldControlProps,
@@ -115,6 +116,13 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         })}
         {...rest}
       >
+        <div
+          className={timeFieldShellInnerClass({
+            variant: state.variant,
+            size: state.size,
+          })}
+          onClick={state.handleShellClick}
+        >
         {prefix != null ? (
           <TimeFieldAffixSlot
             side="prefix"
@@ -202,6 +210,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
             {suffix}
           </TimeFieldAffixSlot>
         ) : null}
+        </div>
       </fieldset>
     );
   },

@@ -238,6 +238,17 @@ export function useTimeFieldControlState({
     [focusSeg],
   );
 
+  const handleShellClick = useCallback(
+    (e: MouseEvent<HTMLDivElement>) => {
+      if (disabled) return;
+      const firstSeg = segments[0];
+      if (!firstSeg) return;
+      if (e.target instanceof Element && e.target.closest('[role="spinbutton"]')) return;
+      focusSeg(firstSeg);
+    },
+    [disabled, focusSeg, segments],
+  );
+
   const isPending = (seg: TimeFieldSegId) =>
     pendingRef.current?.seg === seg && focusedSeg === seg;
 
@@ -285,6 +296,7 @@ export function useTimeFieldControlState({
     handleKeyboardInput,
     handleKeyboardInputKeyDown,
     handleSegClick,
+    handleShellClick,
     segDisplay,
   };
 }

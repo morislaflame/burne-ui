@@ -34,6 +34,7 @@ export type ToggleButtonProps = Omit<
   pressed?: boolean;
   defaultPressed?: boolean;
   onPressedChange?: (pressed: boolean) => void;
+  onFillStart?: (pressed: boolean) => void;
   variant?: ToggleButtonVariant;
   fillColor?: string;
   size?: ToggleButtonSize;
@@ -60,6 +61,7 @@ export type UseToggleButtonRootStateProps = Pick<
   | "pressed"
   | "defaultPressed"
   | "onPressedChange"
+  | "onFillStart"
   | "variant"
   | "fillColor"
   | "size"
@@ -76,6 +78,8 @@ export type UseToggleButtonAnimationsProps = {
   variant: ToggleButtonVariant;
   groupSegment: ButtonGroupSegment | undefined;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
+  pressed: boolean;
+  onFillStart?: (pressed: boolean) => void;
   onPointerEnter?: PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: PointerEventHandler<HTMLButtonElement>;

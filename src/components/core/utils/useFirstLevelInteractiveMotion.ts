@@ -58,6 +58,10 @@ export type UseFirstLevelInteractiveMotionProps = {
   onPointerLeave?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerDown?: (e: PointerEvent<HTMLButtonElement>) => void;
   /**
+   * Вызывается в начале release-фазы press-squeeze (перед восстановлением hover).
+   */
+  onPressReleaseStart?: () => void;
+  /**
    * Optional override for the "still enabled?" check inside the async `afterPress` callback.
    * Useful when `enabled` might change between press and animation completion (e.g. Button async).
    * Default: returns the current `enabled` closure value.
@@ -75,7 +79,7 @@ export function useFirstLevelInteractiveMotion({
   onPointerEnter: onPointerEnterProp,
   onPointerLeave: onPointerLeaveProp,
   onPointerDown: onPointerDownProp,
-  afterPressEnabled,
+  onPressReleaseStart,
 }: UseFirstLevelInteractiveMotionProps) {
   const btnRef = useRef<HTMLButtonElement>(null);
   const contentMotionRef = useRef<HTMLSpanElement>(null);
@@ -161,29 +165,23 @@ export function useFirstLevelInteractiveMotion({
       const el = motionTarget();
       if (!el) return;
 
-      const isStillEnabled = afterPressEnabled ?? (() => enabled);
-
-      const afterPress = () => {
-        const btn = motionTarget();
-        if (!btn || !isStillEnabled() || shouldSkipInteractiveHoverLift()) return;
-        if (hoverPointerInsideRef.current) {
-          if (isGloss && !useContentRef) {
-            animateGlossInteractiveHoverLift(btn, true);
-          } else {
-            animateInteractiveHoverLift(btn, true, undefined, useContentRef ? undefined : btnShadow);
-          }
-        }
-      };
-
       if (isGloss && !useContentRef) {
-        void animateGlossInteractivePressSqueeze(el, hoverPointerInsideRef.current);
+        void animateGlossInteractivePressSqueeze(
+          el,
+          hoverPointerInsideRef.current,
+          undefined,
+          onPressReleaseStart,
+        );
         return;
       }
 
-      void animateInteractivePressSqueeze(el).then(afterPress);
+      void animateInteractivePressSqueeze(el, {
+        pointerInside: hoverPointerInsideRef.current,
+        shadow: useContentRef ? undefined : btnShadow,
+        onReleaseStart: onPressReleaseStart,
+      });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [afterPressEnabled, animated, btnShadow, enabled, isGloss, motionTarget, onPointerDownProp, useContentRef],
+    [animated, btnShadow, enabled, isGloss, motionTarget, onPointerDownProp, onPressReleaseStart, useContentRef],
   );
 
   return {

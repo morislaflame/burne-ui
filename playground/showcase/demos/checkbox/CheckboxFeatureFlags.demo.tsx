@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { IoShieldCheckmark } from "react-icons/io5";
 
 import { Checkbox } from "@/components/core/Checkbox";
 
@@ -9,13 +8,16 @@ export function CheckboxFeatureFlagsDemo() {
   return (
     <Checkbox variant="outline" checked={enabled} onChange={(e) => setEnabled(e.target.checked)}>
       <Checkbox.Control>
-        <Checkbox.Indicator className="rounded-mid">
-          <IoShieldCheckmark aria-hidden className="size-full text-primary" />
-        </Checkbox.Indicator>
+        <Checkbox.Indicator
+          classNames={{
+            shell: "rounded-mid",
+            fill: "rounded-mid",
+          }}
+        />
       </Checkbox.Control>
       <Checkbox.Content>
         <Checkbox.Label>Двухфакторная аутентификация</Checkbox.Label>
-        <Checkbox.Hint>Квадратный индикатор через className=&quot;rounded-mid&quot;.</Checkbox.Hint>
+        <Checkbox.Hint>Форма через classNames.indicator + indicatorFill на root.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   );

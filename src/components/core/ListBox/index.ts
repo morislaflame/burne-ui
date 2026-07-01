@@ -11,6 +11,12 @@ import {
   ListBoxSeparator,
   useListBox,
 } from "./ListBox";
+import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+
+const ListBoxItemIndicatorCompound = Object.assign(ListBoxItemIndicator, {
+  Fill: SelectionIndicator.Fill,
+  Mark: SelectionIndicator.Mark,
+});
 
 export const ListBox = Object.assign(ListBoxRoot, {
   Section: ListBoxSection,
@@ -21,7 +27,7 @@ export const ListBox = Object.assign(ListBoxRoot, {
   Label: ListBoxLabel,
   Hint: ListBoxHint,
   Icon: ListBoxIcon,
-  ItemIndicator: ListBoxItemIndicator,
+  ItemIndicator: ListBoxItemIndicatorCompound,
 });
 
 export { useListBox };

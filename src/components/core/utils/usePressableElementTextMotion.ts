@@ -110,14 +110,9 @@ export function usePressableElementTextMotion<
       const el = textMotionRef.current;
       if (!el) return;
       if (hoverLift) {
-        void animateInteractivePressSqueeze(el).then(() => {
-          if (hoverInsideRef.current && textMotionRef.current && !shouldSkipInteractiveHoverLift()) {
-            animateInteractiveHoverLift(
-              textMotionRef.current,
-              true,
-              getMotionConfig().hoverLiftScale,
-            );
-          }
+        void animateInteractivePressSqueeze(el, {
+          pointerInside: hoverInsideRef.current,
+          liftScale: getMotionConfig().hoverLiftScale,
         });
       } else {
         void animateInteractivePressSqueeze(el);

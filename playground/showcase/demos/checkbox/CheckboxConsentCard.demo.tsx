@@ -20,7 +20,7 @@ export function CheckboxConsentCardDemo() {
         className="w-full gap-x-mid gap-y-xsmall"
       >
         <Checkbox.Control>
-          <Checkbox.Indicator className="rounded-mid">
+          <Checkbox.Indicator>
             <IoStar aria-hidden className="size-full text-primary-foreground" />
           </Checkbox.Indicator>
         </Checkbox.Control>

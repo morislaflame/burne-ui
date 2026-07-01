@@ -21,6 +21,7 @@ export function useToggleButtonRootState({
   pressed: pressedProp,
   defaultPressed = false,
   onPressedChange,
+  onFillStart,
   variant: variantProp,
   fillColor = "bg-primary-tint",
   size: sizeProp,
@@ -68,7 +69,7 @@ export function useToggleButtonRootState({
   });
 
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>, animateTo: (next: boolean) => void) => {
+    (e: React.MouseEvent<HTMLButtonElement>, queueFillOnClick: (next: boolean) => void) => {
       onClick?.(e);
       if (e.defaultPrevented || disabled) return;
 
@@ -78,7 +79,7 @@ export function useToggleButtonRootState({
       }
 
       const next = !pressed;
-      animateTo(next);
+      queueFillOnClick(next);
       setLocalPressed(next);
       onPressedChange?.(next);
     },
@@ -104,6 +105,7 @@ export function useToggleButtonRootState({
     variant,
     disabled,
     pressed,
+    onFillStart,
     fillColor,
     animated,
     classNames,

@@ -180,12 +180,52 @@ export const CustomIndicator: Story = {
     <Checkbox defaultChecked>
       <Checkbox.Control>
         <Checkbox.Indicator>
-          <IoStar aria-hidden className="size-full text-primary-foreground" />
+          <IoStar aria-hidden className="text-primary-foreground" />
         </Checkbox.Indicator>
       </Checkbox.Control>
       <Checkbox.Content>
         <Checkbox.Label>Избранное</Checkbox.Label>
         <Checkbox.Hint>Своя иконка с той же анимацией заливки, что у галочки</Checkbox.Hint>
+      </Checkbox.Content>
+    </Checkbox>
+  ),
+};
+
+export const IndicatorShape: Story = {
+  name: "Indicator — форма",
+  render: () => (
+    <Checkbox defaultChecked size="large">
+      <Checkbox.Control>
+        <Checkbox.Indicator
+          classNames={{
+            shell: "rounded-mid",
+            fill: "rounded-[inherit]",
+          }}
+        />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Checkbox.Label>rounded-mid</Checkbox.Label>
+        <Checkbox.Hint>classNames.shell + fill с rounded-[inherit].</Checkbox.Hint>
+      </Checkbox.Content>
+    </Checkbox>
+  ),
+};
+
+export const IndicatorCompound: Story = {
+  name: "Indicator — Fill + Mark",
+  render: () => (
+    <Checkbox defaultChecked variant="outline">
+      <Checkbox.Control>
+        <Checkbox.Indicator classNames={{ shell: "rounded-mid" }}>
+          <Checkbox.Indicator.Fill className="rounded-[inherit]" />
+          <Checkbox.Indicator.Mark>
+            <IoStar aria-hidden className="text-primary" />
+          </Checkbox.Indicator.Mark>
+        </Checkbox.Indicator>
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Checkbox.Label>Compound слоты</Checkbox.Label>
+        <Checkbox.Hint>Checkbox.Indicator.Fill и Checkbox.Indicator.Mark.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   ),
@@ -264,6 +304,8 @@ export const CustomClassNames: Story = {
         root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-md",
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
+        indicator: "rounded-mid",
+        indicatorFill: "rounded-[inherit]",
         labelText: "text-primary font-semibold",
         hint: "text-foreground/80",
       }}

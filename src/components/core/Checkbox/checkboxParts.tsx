@@ -8,7 +8,7 @@ import {
   SelectionIndicator,
 } from "@/components/core/SelectionIndicator";
 
-import { mergeCheckboxSlotClass, checkboxVariantToIndicator, compoundContentHasExternalLabel } from "./checkboxAPI";
+import { mergeCheckboxSlotClass, checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
 import { useCheckboxControlTrackAnimation } from "./checkboxAnimations";
 import { useCheckboxFieldContext, useCheckboxClassNames } from "./checkboxContext";
 import {
@@ -117,21 +117,31 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
 
 CheckboxControl.displayName = "CheckboxControl";
 
-export function CheckboxIndicator({ children, className, ...rest }: CheckboxIndicatorProps) {
+export function CheckboxIndicator({
+  children,
+  className,
+  classNames: classNamesProp,
+  ...rest
+}: CheckboxIndicatorProps) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
-  const hasCustomIcon = children != null || ctx.checkIcon != null;
 
   return (
     <SelectionIndicator
       variant={checkboxVariantToIndicator(ctx.variant)}
       size={ctx.size}
       selected={ctx.mergedChecked}
-      icon={children ?? ctx.checkIcon ?? undefined}
-      check={!hasCustomIcon}
-      className={mergeCheckboxSlotClass(slotClassNames.indicator, className)}
+      icon={ctx.checkIcon ?? undefined}
+      check
+      classNames={resolveCheckboxIndicatorClassNames({
+        slotClassNames,
+        classNames: classNamesProp,
+        className,
+      })}
       {...rest}
-    />
+    >
+      {children}
+    </SelectionIndicator>
   );
 }
 

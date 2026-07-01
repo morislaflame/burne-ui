@@ -34,10 +34,8 @@ export function useCalendarNavButtonAnimations(disabled = false) {
       if (disabled || e.defaultPrevented) return;
       const el = ref.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      void animateInteractivePressSqueeze(el).then(() => {
-        const btn = ref.current;
-        if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
-        if (hoverInsideRef.current) animateInteractiveHoverLift(btn, true);
+      void animateInteractivePressSqueeze(el, {
+        pointerInside: hoverInsideRef.current,
       });
     },
     [disabled],
@@ -78,10 +76,8 @@ export function useCalendarInteractiveCellAnimations(disabled = false) {
       if (disabled || e.defaultPrevented) return;
       const el = btnRef.current;
       if (!el || prefersReducedInteractiveHoverLift()) return;
-      void animateInteractivePressSqueeze(el).then(() => {
-        const btn = btnRef.current;
-        if (!btn || disabled || shouldSkipInteractiveHoverLift()) return;
-        if (hoverInsideRef.current) animateInteractiveHoverLift(btn, true);
+      void animateInteractivePressSqueeze(el, {
+        pointerInside: hoverInsideRef.current,
       });
     },
     [disabled],

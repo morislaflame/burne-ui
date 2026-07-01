@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 
 import "@/components/core/utils/glossInteractive.css";
 
-import { useToggleButtonAnimations, useToggleButtonFill } from "./toggleButtonAnimations";
+import { useToggleButtonAnimations } from "./toggleButtonAnimations";
 import {
   ToggleButtonContent,
   ToggleButtonFill,
@@ -27,6 +27,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       pressed,
       defaultPressed,
       onPressedChange,
+      onFillStart,
       variant,
       fillColor,
       size,
@@ -50,6 +51,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       pressed,
       defaultPressed,
       onPressedChange,
+      onFillStart,
       variant,
       fillColor,
       size,
@@ -65,13 +67,13 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       disabled: state.disabled,
       variant: state.variant,
       groupSegment: state.groupSegment,
+      pressed: state.pressed,
+      onFillStart: state.onFillStart,
       forwardedRef: ref,
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
     });
-
-    const { animateTo, bindFillRef } = useToggleButtonFill(state.pressed);
 
     return (
       <button
@@ -87,11 +89,11 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         onPointerEnter={animations.handlePointerEnter}
         onPointerLeave={animations.handlePointerLeave}
         onPointerDown={animations.handlePointerDown}
-        onClick={(e) => state.handleClick(e, animateTo)}
+        onClick={(e) => state.handleClick(e, animations.queueFillOnClick)}
         {...rest}
       >
         <ToggleButtonFill
-          bindFillRef={bindFillRef}
+          bindFillRef={animations.bindFillRef}
           fillColor={state.fillColor}
           pressed={state.pressed}
           roundingClass={state.roundingClass}

@@ -11,7 +11,7 @@ import type {
   PopoverTitleVariantMap,
 } from "./popoverTypes";
 
-export const POPOVER_DEFAULT_OFFSET = 8;
+export const POPOVER_DEFAULT_OFFSET = 6;
 
 export const POPOVER_TITLE_VARIANT: PopoverTitleVariantMap = {
   small: "small",

@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 
-import type { SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
+import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 import type { ClassValue } from "clsx";
 
 import { cn } from "@/utils/cn";
 
-import type { RadioVariant } from "./radioTypes";
+import type { RadioClassNames, RadioVariant } from "./radioTypes";
 
 export function mergeRadioSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
@@ -13,6 +13,22 @@ export function mergeRadioSlotClass(...parts: ClassValue[]): string {
 
 export function radioVariantToIndicator(variant: RadioVariant): SelectionIndicatorVariant {
   return variant === "gloss" ? "gloss" : "base";
+}
+
+export function resolveRadioIndicatorClassNames({
+  slotClassNames,
+  classNames,
+  className,
+}: {
+  slotClassNames: RadioClassNames;
+  classNames?: SelectionIndicatorClassNames;
+  className?: string;
+}): SelectionIndicatorClassNames {
+  return {
+    shell: mergeRadioSlotClass(slotClassNames.indicator, classNames?.shell, className),
+    fill: mergeRadioSlotClass(slotClassNames.indicatorFill, classNames?.fill),
+    mark: mergeRadioSlotClass(slotClassNames.indicatorMark, classNames?.mark),
+  };
 }
 
 export function compoundUsesInlineMotion(className: string | undefined): boolean {

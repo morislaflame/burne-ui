@@ -11,11 +11,18 @@ export function CheckboxIndicatorShapeDemo() {
         <Checkbox size="large" defaultChecked label="Круглый (default)" />
         <Checkbox size="large" defaultChecked>
           <Checkbox.Control>
-            <Checkbox.Indicator className="rounded-mid" />
+            <Checkbox.Indicator
+              classNames={{
+                shell: "rounded-mid",
+                fill: "rounded-base",
+              }}
+            />
           </Checkbox.Control>
           <Checkbox.Content>
             <Checkbox.Label>rounded-mid</Checkbox.Label>
-            <Checkbox.Hint>className на Indicator — заливка обрезается оболочкой.</Checkbox.Hint>
+            <Checkbox.Hint>
+              classNames.shell + fill с rounded-[inherit] — заливка повторяет форму оболочки.
+            </Checkbox.Hint>
           </Checkbox.Content>
         </Checkbox>
       </div>

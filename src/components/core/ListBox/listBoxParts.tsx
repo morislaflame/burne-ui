@@ -23,7 +23,7 @@ import {
 import {
   LISTBOX_EMPTY_DEFAULT_CHILDREN,
 } from "./listBoxA11y";
-import { mergeListBoxSlotClass } from "./listBoxAPI";
+import { mergeListBoxSlotClass, resolveListBoxItemIndicatorClassNames } from "./listBoxAPI";
 import { useListBoxItemAnimations, useListBoxRootGlossRef } from "./listBoxAnimations";
 import {
   useListBoxClassNames,
@@ -367,6 +367,7 @@ export function ListBoxItemIndicator({
   check,
   children,
   className,
+  classNames: classNamesProp,
   ...rest
 }: ListBoxItemIndicatorProps) {
   const ctx = useOptionListItemContext("ListBox.ItemIndicator");
@@ -375,23 +376,24 @@ export function ListBoxItemIndicator({
   if (!ctx.showIndicatorSlot) return null;
 
   const showCheck = check ?? ctx.indicatorMode === "multi";
-  const hasCustomIcon = children != null;
 
   return (
     <OptionListItemIndicatorShell
-      className={mergeListBoxSlotClass(
-        slotClassNames.itemIndicator,
-        className,
-      )}
+      className={mergeListBoxSlotClass(slotClassNames.itemIndicator, className)}
       {...rest}
     >
       <SelectionIndicator
         variant={variant}
         size={size}
         selected={ctx.selected}
-        check={showCheck && !hasCustomIcon}
-        icon={children ?? undefined}
-      />
+        check={showCheck}
+        classNames={resolveListBoxItemIndicatorClassNames({
+          slotClassNames,
+          classNames: classNamesProp,
+        })}
+      >
+        {children}
+      </SelectionIndicator>
     </OptionListItemIndicatorShell>
   );
 }

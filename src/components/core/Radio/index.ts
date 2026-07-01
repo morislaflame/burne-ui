@@ -7,10 +7,16 @@ import {
   RadioLabel,
   RadioRoot,
 } from "./Radio";
+import { SelectionIndicator } from "@/components/core/SelectionIndicator";
+
+const RadioIndicatorCompound = Object.assign(RadioIndicator, {
+  Fill: SelectionIndicator.Fill,
+  Mark: SelectionIndicator.Mark,
+});
 
 export const Radio = Object.assign(RadioRoot, {
   Control: RadioControl,
-  Indicator: RadioIndicator,
+  Indicator: RadioIndicatorCompound,
   Content: RadioContent,
   Label: RadioLabel,
   Hint: RadioHint,

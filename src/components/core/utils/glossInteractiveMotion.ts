@@ -9,9 +9,8 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
-  type MutableRefObject,
-  type Ref,
   type RefObject,
+  type Ref,
 } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
@@ -255,6 +254,7 @@ export function animateGlossInteractivePressSqueeze(
   element: HTMLElement,
   pointerInside = false,
   liftScale?: number,
+  onReleaseStart?: () => void,
 ): Promise<void> {
   if (prefersReducedInteractiveHoverLift()) {
     return Promise.resolve();
@@ -262,6 +262,7 @@ export function animateGlossInteractivePressSqueeze(
 
   const cfg = getMotionConfig();
   if (!cfg.enablePressSqueeze) {
+    onReleaseStart?.();
     if (!shouldSkipInteractiveHoverLift()) {
       animateGlossInteractiveHoverLift(element, pointerInside, liftScale);
     }
@@ -291,6 +292,9 @@ export function animateGlossInteractivePressSqueeze(
         ease: "power1.out",
         overwrite: "auto",
       })
+      .add(() => {
+        onReleaseStart?.();
+      })
       .to(element, {
         ...glossSurfaceProps(element, releaseState),
         scale: releaseScale,
@@ -311,7 +315,7 @@ export function useGlossInteractiveHandlers(
   ref: RefObject<HTMLElement | null>,
   enabled: boolean,
   options?: {
-    pointerInsideRef?: MutableRefObject<boolean>;
+    pointerInsideRef?: RefObject<boolean>;
     liftScale?: number;
   },
 ) {
@@ -383,6 +387,18 @@ export function useGlossFieldShellMotion(
   const pointerHandlers = useGlossInteractiveHandlers(shellRef, enabled, {
     pointerInsideRef,
   });
+
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    const el = shellRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+
+    const ro = new ResizeObserver(() => {
+      refreshGlossInteractiveState(el);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [enabled, shellRef]);
 
   const onShellPointerEnter = useCallback(
     (e: ReactPointerEvent<HTMLElement>) => {

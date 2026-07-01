@@ -15,6 +15,7 @@ import {
 import { createPortal } from "react-dom";
 
 import { Popover } from "@/components/core/Popover";
+import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
@@ -46,6 +47,7 @@ import {
   mergeDropdownRefs,
   mergeDropdownSlotClass,
   partitionDropdownItemChildren,
+  resolveDropdownItemIndicatorClassNames,
 } from "./dropdownAPI";
 import {
   useDropdown,
@@ -228,7 +230,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
           matchAnchorWidth
           unstyled
           contentRole={undefined}
-          offset={6}
+          offset={POPOVER_DEFAULT_OFFSET}
           id={contentId}
           className={mergeDropdownSlotClass(
             DROPDOWN_POPOVER_CLASS,
@@ -659,6 +661,7 @@ export function DropdownItemIndicator({
   check,
   children,
   className,
+  classNames: classNamesProp,
   ...rest
 }: DropdownItemIndicatorProps) {
   const ctx = useOptionListItemContext("Dropdown.ItemIndicator");
@@ -667,23 +670,24 @@ export function DropdownItemIndicator({
   if (!ctx.showIndicatorSlot) return null;
 
   const showCheck = check ?? ctx.indicatorMode === "multi";
-  const hasCustomIcon = children != null;
 
   return (
     <OptionListItemIndicatorShell
-      className={mergeDropdownSlotClass(
-        slotClassNames.itemIndicator,
-        className,
-      )}
+      className={mergeDropdownSlotClass(slotClassNames.itemIndicator, className)}
       {...rest}
     >
       <SelectionIndicator
         variant={variant}
         size={size}
         selected={ctx.selected}
-        check={showCheck && !hasCustomIcon}
-        icon={children ?? undefined}
-      />
+        check={showCheck}
+        classNames={resolveDropdownItemIndicatorClassNames({
+          slotClassNames,
+          classNames: classNamesProp,
+        })}
+      >
+        {children}
+      </SelectionIndicator>
     </OptionListItemIndicatorShell>
   );
 }

@@ -22,6 +22,7 @@ import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Label } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
+import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
@@ -497,7 +498,7 @@ ComboBoxTrigger.displayName = "ComboBoxTrigger";
 export function ComboBoxPopover({
   children,
   className,
-  offset = 6,
+  offset = POPOVER_DEFAULT_OFFSET,
   ...rest
 }: ComboBoxPopoverProps) {
   const slotClassNames = useComboBoxClassNames();

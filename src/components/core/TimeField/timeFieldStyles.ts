@@ -68,6 +68,10 @@ export const TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS = "mx-[1px]";
 export const TIME_FIELD_SEGMENTS_BASE_CLASS =
   "relative flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none";
 
+/** Flex-ряд внутри `<fieldset>` — flex на самом fieldset ломает высоту при resize. */
+export const TIME_FIELD_SHELL_INNER_CLASS =
+  "flex min-w-0 w-full items-stretch";
+
 export const TIME_FIELD_SEGMENTS_SEGMENTED_CLASS = "gap-xsmall";
 
 const AFFIX_PADDING: Record<TimeFieldSize, string> = {
@@ -165,10 +169,9 @@ export function timeFieldShellClass({
   const isGloss = variant === "gloss";
 
   return mergeTimeFieldSlotClass(
-    "m-0 flex min-w-0 items-stretch overflow-hidden rounded-base border-1 p-0",
-    isGloss && "relative",
-    TIME_FIELD_SHELL_H[size],
-    compact ? "inline-flex w-fit shrink-0" : "w-full min-w-0",
+    "m-0 min-w-0 overflow-hidden rounded-base p-0",
+    isGloss ? "relative" : mergeTimeFieldSlotClass("border-1", TIME_FIELD_SHELL_H[size]),
+    compact ? "w-fit shrink-0" : "w-full min-w-0",
     shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
     FIELD_SHELL_FOCUS_CLASS,
@@ -177,6 +180,21 @@ export function timeFieldShellClass({
     disabled ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
     slotClass,
     className,
+  );
+}
+
+export function timeFieldShellInnerClass({
+  variant,
+  size,
+}: {
+  variant: TimeFieldVariant;
+  size: TimeFieldSize;
+}): string {
+  const isGloss = variant === "gloss";
+
+  return mergeTimeFieldSlotClass(
+    TIME_FIELD_SHELL_INNER_CLASS,
+    !isGloss && mergeTimeFieldSlotClass("min-h-full", TIME_FIELD_SHELL_H[size]),
   );
 }
 

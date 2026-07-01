@@ -10,10 +10,8 @@ import {
 } from "react";
 
 import {
-  animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import {
   animateGlossInteractivePressSqueeze,
@@ -88,13 +86,9 @@ export function useCardAnimations({
         return;
       }
 
-      void animateInteractivePressSqueeze(shell).then(() => {
-        const el = rootRef.current;
-        if (!el) return;
-        if (shouldSkipInteractiveHoverLift()) return;
-        if (pointerInsideRef.current) {
-          animateInteractiveHoverLift(el, true, undefined, pressableLift.shadow);
-        }
+      void animateInteractivePressSqueeze(shell, {
+        pointerInside: pointerInsideRef.current,
+        shadow: pressableLift.shadow,
       });
     },
     [animated, isGloss, onPointerDownProp, pressable, pressableLift.shadow],

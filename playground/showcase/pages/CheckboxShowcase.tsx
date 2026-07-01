@@ -8,6 +8,8 @@ import { CheckboxGlossDemo } from "../demos/checkbox/CheckboxGloss.demo";
 import checkboxGlossSource from "../demos/checkbox/CheckboxGloss.demo.tsx?raw";
 import { CheckboxIndicatorShapeDemo } from "../demos/checkbox/CheckboxIndicatorShape.demo";
 import checkboxIndicatorShapeSource from "../demos/checkbox/CheckboxIndicatorShape.demo.tsx?raw";
+import { CheckboxIndicatorCompoundDemo } from "../demos/checkbox/CheckboxIndicatorCompound.demo";
+import checkboxIndicatorCompoundSource from "../demos/checkbox/CheckboxIndicatorCompound.demo.tsx?raw";
 import { CheckboxSizesDemo } from "../demos/checkbox/CheckboxSizes.demo";
 import checkboxSizesSource from "../demos/checkbox/CheckboxSizes.demo.tsx?raw";
 import { CheckboxTaskListDemo } from "../demos/checkbox/CheckboxTaskList.demo";
@@ -52,6 +54,7 @@ export function CheckboxShowcase() {
         description="Форма индикатора, compound API и variant-микс — demo-файлы в `demos/checkbox/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxIndicatorShapeDemo} source={checkboxIndicatorShapeSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxIndicatorCompoundDemo} source={checkboxIndicatorCompoundSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxFeatureFlagsDemo} source={checkboxFeatureFlagsSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxConsentCardDemo} source={checkboxConsentCardSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxTaskListDemo} source={checkboxTaskListSource} />
@@ -68,7 +71,11 @@ export function CheckboxShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="root, control, controlTrack, indicator, content, label, labelText, hint, error, input."
+            description="root, control, indicator, indicatorFill, indicatorMark, content, label, hint, error."
+          />
+          <ShowcaseDoc.ApiRow
+            api="compound"
+            description="Checkbox.Indicator.Fill / .Mark; classNames.shell / fill / mark."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Группы">

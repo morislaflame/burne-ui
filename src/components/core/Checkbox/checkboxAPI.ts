@@ -1,11 +1,11 @@
 import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
 
-import type { SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
+import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 import type { ClassValue } from "clsx";
 
 import { cn } from "@/utils/cn";
 
-import type { CheckboxVariant } from "./checkboxTypes";
+import type { CheckboxClassNames, CheckboxVariant } from "./checkboxTypes";
 
 export function mergeCheckboxSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
@@ -16,6 +16,22 @@ export function checkboxVariantToIndicator(
 ): SelectionIndicatorVariant {
   if (variant === "default") return "base";
   return variant;
+}
+
+export function resolveCheckboxIndicatorClassNames({
+  slotClassNames,
+  classNames,
+  className,
+}: {
+  slotClassNames: CheckboxClassNames;
+  classNames?: SelectionIndicatorClassNames;
+  className?: string;
+}): SelectionIndicatorClassNames {
+  return {
+    shell: mergeCheckboxSlotClass(slotClassNames.indicator, classNames?.shell, className),
+    fill: mergeCheckboxSlotClass(slotClassNames.indicatorFill, classNames?.fill),
+    mark: mergeCheckboxSlotClass(slotClassNames.indicatorMark, classNames?.mark),
+  };
 }
 
 export function compoundContentHasExternalLabel(children: ReactNode): boolean {
