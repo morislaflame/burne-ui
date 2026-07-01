@@ -1,0 +1,125 @@
+import { FieldRoot } from "@/components/core/Field";
+import { FieldLabelContext } from "@/components/core/Label";
+import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
+
+import { mergeSelectSlotClass } from "./selectAPI";
+import {
+  SelectClassNamesProvider,
+  SelectFieldProvider,
+  SelectProvider,
+} from "./selectContext";
+import {
+  SelectError,
+  SelectHint,
+  SelectPopover,
+  SelectSimpleBody,
+  SelectTrigger,
+  SelectTriggerGroup,
+  SelectValue,
+} from "./selectParts";
+import type { SelectRootProps } from "./selectTypes";
+import { useSelectRootState } from "./useSelectRootState";
+
+import "../utils/glossInteractive.css";
+
+export type {
+  SelectRootProps,
+  SelectSimpleProps,
+  SelectHintProps,
+  SelectErrorProps,
+  SelectTriggerGroupProps,
+  SelectValueProps,
+  SelectTriggerProps,
+  SelectPopoverProps,
+  SelectOption,
+  SelectClassNames,
+} from "./selectTypes";
+
+export type SelectProps = SelectRootProps;
+
+export function SelectRoot({
+  children,
+  label,
+  hint,
+  error,
+  className,
+  classNames,
+  id,
+  isRequired,
+  status,
+  size,
+  options,
+  value,
+  defaultValue,
+  onValueChange,
+  variant,
+  disabled,
+  placeholder,
+  menuMaxHeight,
+  name,
+  ...rest
+}: SelectRootProps) {
+  const formCtx = useOptionalFormBindingContext();
+  const fieldName = typeof name === "string" ? name : undefined;
+  const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
+  const resolvedError = error ?? formError;
+  const resolvedStatus = status === "default" && formError ? "danger" : status;
+  const resolvedSize = size ?? formCtx?.size ?? "base";
+
+  const state = useSelectRootState({
+    children,
+    label,
+    hint,
+    error: resolvedError,
+    id,
+    name,
+    isRequired,
+    status: resolvedStatus,
+    size: resolvedSize,
+    options,
+    value,
+    defaultValue,
+    onValueChange,
+    variant,
+    disabled,
+    placeholder,
+    menuMaxHeight,
+  });
+
+  return (
+    <SelectFieldProvider value={state.fieldCtx}>
+      <SelectProvider value={state.selectCtx}>
+        <SelectClassNamesProvider classNames={classNames}>
+          <FieldLabelContext.Provider value={state.fieldLabelCtx}>
+            <FieldRoot
+              className={mergeSelectSlotClass(className, classNames?.root)}
+              {...rest}
+            >
+              {state.isCompound ? (
+                children
+              ) : (
+                <SelectSimpleBody
+                  label={state.label}
+                  hint={state.hint}
+                  error={state.error}
+                  labelId={state.fieldCtx.labelId}
+                />
+              )}
+            </FieldRoot>
+          </FieldLabelContext.Provider>
+        </SelectClassNamesProvider>
+      </SelectProvider>
+    </SelectFieldProvider>
+  );
+}
+
+SelectRoot.displayName = "Select";
+
+export {
+  SelectTriggerGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectPopover,
+  SelectHint,
+  SelectError,
+};

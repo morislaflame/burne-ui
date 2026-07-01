@@ -29,7 +29,9 @@ export type TooltipClassNames = {
   arrow?: string;
   panel?: string;
   glossContent?: string;
+  message?: string;
   indicator?: string;
+  icon?: string;
   title?: string;
   description?: string;
 };
@@ -66,7 +68,14 @@ export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   glossPanelRef?: Ref<HTMLDivElement>;
 };
 
-export type TooltipIndicatorProps = HTMLAttributes<HTMLSpanElement>;
+export type TooltipIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
+  showIcon?: boolean;
+};
+
+export type TooltipIconProps = TooltipIndicatorProps;
+
+export type TooltipMessageProps = HTMLAttributes<HTMLDivElement>;
+
 export type TooltipTitleProps = HTMLAttributes<HTMLDivElement>;
 export type TooltipDescriptionProps = HTMLAttributes<HTMLDivElement>;
 

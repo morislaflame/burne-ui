@@ -6,6 +6,8 @@ import { TableClassNamesFullDemo } from "../demos/table/TableClassNamesFull.demo
 import tableClassNamesFullSource from "../demos/table/TableClassNamesFull.demo.tsx?raw";
 import { TableGlossDemo } from "../demos/table/TableGloss.demo";
 import tableGlossSource from "../demos/table/TableGloss.demo.tsx?raw";
+import { TableGlossSelectionDemo } from "../demos/table/TableGlossSelection.demo";
+import tableGlossSelectionSource from "../demos/table/TableGlossSelection.demo.tsx?raw";
 import { TableInvoiceToolbarDemo } from "../demos/table/TableInvoiceToolbar.demo";
 import tableInvoiceToolbarSource from "../demos/table/TableInvoiceToolbar.demo.tsx?raw";
 import { TableRowSelectionDemo } from "../demos/table/TableRowSelection.demo";
@@ -30,8 +32,19 @@ export function TableShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TableRowSelectionDemo} source={tableRowSelectionSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная таблица с hover-lift.">
+      <ShowcaseSection title="Gloss" description="variant gloss — hover строк primary-tint, hover-lift панели.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableGlossDemo} source={tableGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Gloss + выбор"
+        description="selectionMode multiple — выбранные строки тоже primary-tint."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={TableGlossSelectionDemo}
+          source={tableGlossSelectionSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

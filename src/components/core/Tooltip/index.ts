@@ -2,7 +2,9 @@ import {
   TooltipArrow,
   TooltipContent,
   TooltipDescription,
+  TooltipIcon,
   TooltipIndicator,
+  TooltipMessage,
   TooltipPanel,
   TooltipRoot,
   TooltipTitle,
@@ -15,6 +17,8 @@ export const Tooltip = Object.assign(TooltipRoot, {
   Arrow: TooltipArrow,
   Panel: TooltipPanel,
   Indicator: TooltipIndicator,
+  Icon: TooltipIcon,
+  Message: TooltipMessage,
   Title: TooltipTitle,
   Description: TooltipDescription,
 });
@@ -31,6 +35,8 @@ export type {
   TooltipArrowProps,
   TooltipPanelProps,
   TooltipIndicatorProps,
+  TooltipIconProps,
+  TooltipMessageProps,
   TooltipTitleProps,
   TooltipDescriptionProps,
 } from "./tooltipTypes";

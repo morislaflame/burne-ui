@@ -65,6 +65,8 @@ export const SWITCH_FILL_GLOSS_CLASS = "z-[1]";
 
 export const SWITCH_FILL_COLOR_CLASS = "bg-primary";
 
+export const SWITCH_FILL_GLOSS_TINT_CLASS = "bg-primary-tint";
+
 export const SWITCH_THUMB_BASE_CLASS =
   "absolute inset-y-0 left-0 aspect-square h-full w-auto will-change-transform flex";
 

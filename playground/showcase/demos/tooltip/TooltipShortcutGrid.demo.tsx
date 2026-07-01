@@ -1,4 +1,5 @@
 import { Button } from "@/components/core/Button";
+import { Kbd } from "@/components/core/Kbd";
 import { Text } from "@/components/core/Text";
 import { Tooltip } from "@/components/core/Tooltip";
 
@@ -20,7 +21,9 @@ export function TooltipShortcutGridDemo() {
             <Tooltip.Trigger>
               <Button variant="outline" size="small" type="button" className="w-full justify-between">
                 <span>{item.label}</span>
-                <kbd className="rounded-small bg-secondary px-xsmall font-mono text-xs">{item.keys}</kbd>
+                <Kbd size="small" variant="secondary">
+                  {item.keys}
+                </Kbd>
               </Button>
             </Tooltip.Trigger>
             <Tooltip.Content>{item.label}</Tooltip.Content>

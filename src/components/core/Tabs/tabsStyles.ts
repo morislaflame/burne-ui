@@ -7,16 +7,16 @@ import type { TabsOrientation, TabsSize, TabsVariant } from "./tabsTypes";
 
 const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "",
-  outline: "bg-transparent border-token rounded-mid p-base",
-  secondary: "bg-secondary border-token rounded-mid p-base",
-  gloss: "border-0 p-base",
+  outline: "bg-transparent border-token rounded-mid p-xsmall",
+  secondary: "bg-secondary border-token rounded-mid p-xsmall",
+  gloss: "border-0 p-small",
 };
 
 const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "bg-primary",
   outline: "bg-secondary",
   secondary: "bg-tertiary",
-  gloss: "bg-default-hover",
+  gloss: "bg-tertiary",
 };
 
 export function tabsRootClass({

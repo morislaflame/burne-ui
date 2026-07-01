@@ -288,6 +288,18 @@ export {
   type ComboBoxClassNames,
 } from "@/components/core/ComboBox";
 export {
+  Select,
+  type SelectOption,
+  type SelectRootProps,
+  type SelectSimpleProps,
+  type SelectHintProps,
+  type SelectTriggerGroupProps,
+  type SelectValueProps,
+  type SelectTriggerProps,
+  type SelectPopoverProps,
+  type SelectClassNames,
+} from "@/components/core/Select";
+export {
   ListBox,
   useListBox,
   type ListBoxRootProps,
@@ -437,6 +449,8 @@ export {
   type TooltipArrowProps,
   type TooltipPanelProps,
   type TooltipIndicatorProps,
+  type TooltipIconProps,
+  type TooltipMessageProps,
   type TooltipTitleProps,
   type TooltipDescriptionProps,
   type TooltipClassNames,
@@ -532,6 +546,14 @@ export {
   type BadgeClassNames,
   type BadgeAnchorProps,
 } from "@/components/core/Badge";
+export {
+  Kbd,
+  type KbdProps,
+  type KbdVariant,
+  type KbdSize,
+  type KbdClassNames,
+  type KbdGroupProps,
+} from "@/components/core/Kbd";
 export {
   configureMotion,
   getMotionConfig,

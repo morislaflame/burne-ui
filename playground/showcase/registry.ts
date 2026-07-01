@@ -23,6 +23,7 @@ import { FieldShowcase } from "./pages/FieldShowcase";
 import { FormShowcase } from "./pages/FormShowcase";
 import { GlossShowcase } from "./pages/GlossShowcase";
 import { InputShowcase } from "./pages/InputShowcase";
+import { KbdShowcase } from "./pages/KbdShowcase";
 import { LinkShowcase } from "./pages/LinkShowcase";
 import { ListBoxShowcase } from "./pages/ListBoxShowcase";
 import { LoadingShowcase } from "./pages/LoadingShowcase";
@@ -33,6 +34,7 @@ import { ProgressBarShowcase } from "./pages/ProgressBarShowcase";
 import { RadioGroupShowcase } from "./pages/RadioGroupShowcase";
 import { RippleShowcase } from "./pages/RippleShowcase";
 import { SearchInputShowcase } from "./pages/SearchInputShowcase";
+import { SelectShowcase } from "./pages/SelectShowcase";
 import { SelectionIndicatorShowcase } from "./pages/SelectionIndicatorShowcase";
 import { SkeletonShowcase } from "./pages/SkeletonShowcase";
 import { SliderShowcase } from "./pages/SliderShowcase";
@@ -64,7 +66,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   {
     id: "typography",
     label: "Типографика",
-    pages: [{ id: "text", label: "Text", Page: TextShowcase }],
+    pages: [{ id: "text", label: "Text", Page: TextShowcase }, { id: "kbd", label: "Kbd", Page: KbdShowcase }],
   },
   {
     id: "actions",
@@ -99,6 +101,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
       { id: "input", label: "Input", Page: InputShowcase },
       { id: "textarea", label: "TextArea", Page: TextAreaShowcase },
       { id: "combobox", label: "ComboBox", Page: ComboBoxShowcase },
+      { id: "select", label: "Select", Page: SelectShowcase },
       { id: "search-input", label: "SearchInput", Page: SearchInputShowcase },
       { id: "slider", label: "Slider", Page: SliderShowcase },
       { id: "time-field", label: "TimeField", Page: TimeFieldShowcase },

@@ -682,6 +682,98 @@ export const TonedRowsWithSelection: Story = {
   },
 };
 
+export const Gloss: Story = {
+  name: "Gloss",
+  render: () => (
+    <div className="flex flex-col gap-base">
+      <Table variant="gloss" className="w-full">
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Gloss команда" className="min-w-[600px]">
+            <Table.Header>
+              <Table.Column isRowHeader>Имя</Table.Column>
+              <Table.Column>Роль</Table.Column>
+              <Table.Column>Статус</Table.Column>
+              <Table.Column>Email</Table.Column>
+            </Table.Header>
+            <Table.Body>
+              {users.slice(0, 6).map((user) => (
+                <Table.Row key={user.id} id={user.id}>
+                  <Table.Cell className="font-medium">{user.name}</Table.Cell>
+                  <Table.Cell className="text-muted">{user.role}</Table.Cell>
+                  <Table.Cell>
+                    <Badge status={statusBadgeColor[user.status]} size="small">
+                      {user.status}
+                    </Badge>
+                  </Table.Cell>
+                  <Table.Cell className="text-muted">{user.email}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+      <p className="text-small text-muted">
+        Наведите на строку — подсветка <span className="text-foreground">primary-tint</span>.
+      </p>
+    </div>
+  ),
+};
+
+export const GlossWithSelection: Story = {
+  name: "Gloss + выбор",
+  render: function GlossWithSelectionStory() {
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<number>([2, 4]));
+
+    const selectedLabel =
+      selectedKeys === "all"
+        ? "Все"
+        : (selectedKeys as Set<number>).size > 0
+          ? Array.from(selectedKeys as Set<number>).join(", ")
+          : "Нет";
+
+    return (
+      <div className="flex flex-col gap-base">
+        <Table variant="gloss" className="w-full">
+          <Table.ScrollContainer>
+            <Table.Content
+              aria-label="Gloss команда с выбором"
+              className="min-w-[600px]"
+              selectionMode="multiple"
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}
+            >
+              <Table.Header>
+                <Table.Column isRowHeader>Имя</Table.Column>
+                <Table.Column>Роль</Table.Column>
+                <Table.Column>Статус</Table.Column>
+                <Table.Column>Email</Table.Column>
+              </Table.Header>
+              <Table.Body>
+                {users.slice(0, 6).map((user) => (
+                  <Table.Row key={user.id} id={user.id}>
+                    <Table.Cell className="font-medium">{user.name}</Table.Cell>
+                    <Table.Cell className="text-muted">{user.role}</Table.Cell>
+                    <Table.Cell>
+                      <Badge status={statusBadgeColor[user.status]} size="small">
+                        {user.status}
+                      </Badge>
+                    </Table.Cell>
+                    <Table.Cell className="text-muted">{user.email}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Content>
+          </Table.ScrollContainer>
+        </Table>
+        <p className="text-small text-muted">
+          Hover и выбор — <span className="text-foreground">primary-tint</span>. Выбрано:{" "}
+          <span className="font-medium text-foreground">{selectedLabel}</span>
+        </p>
+      </div>
+    );
+  },
+};
+
 export const CustomClassNames: Story = {
   name: "Полная кастомизация classNames",
   parameters: {

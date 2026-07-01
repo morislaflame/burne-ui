@@ -371,7 +371,7 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Слоты trigger, content, arrow, panel, glossContent, indicator, title и description через prop classNames на корне.",
+          "Слоты trigger, content, arrow, panel, glossContent, message, icon, indicator, title и description через prop classNames на корне.",
       },
     },
   },
@@ -393,8 +393,48 @@ export const CustomClassNames: Story = {
       </Tooltip.Trigger>
       <Tooltip.Content showArrow>
         <Tooltip.Arrow />
+        <Tooltip.Icon />
         <Tooltip.Title>Заголовок</Tooltip.Title>
         <Tooltip.Description>Описание с кастомными классами</Tooltip.Description>
+      </Tooltip.Content>
+    </Tooltip>
+  ),
+};
+
+export const GlossWithCompoundLayout: Story = {
+  name: "Gloss — grid как у Alert",
+  render: () => (
+    <Tooltip delayShowMs={0} surface="gloss" variant="info">
+      <Tooltip.Trigger>
+        <Button variant="gloss" type="button">
+          Gloss compound
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content showArrow>
+        <Tooltip.Arrow />
+        <Tooltip.Icon />
+        <Tooltip.Title>Справка</Tooltip.Title>
+        <Tooltip.Description>Иконка слева от заголовка и описания</Tooltip.Description>
+      </Tooltip.Content>
+    </Tooltip>
+  ),
+};
+
+export const CompoundCustomIcon: Story = {
+  name: "Compound — своя иконка",
+  render: () => (
+    <Tooltip delayShowMs={0} variant="default">
+      <Tooltip.Trigger>
+        <Button variant="outline" type="button">
+          Своя иконка
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <Tooltip.Icon>
+          <IoHelpCircleOutline aria-hidden className="text-primary" />
+        </Tooltip.Icon>
+        <Tooltip.Title>Подсказка</Tooltip.Title>
+        <Tooltip.Description>Иконка задаётся через Tooltip.Icon в compound API</Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>
   ),

@@ -19,12 +19,24 @@ export const SLIDER_RAIL_WIDTH: Record<SliderSize, string> = {
   large: "w-[var(--selection-indicator-large)] min-w-[var(--selection-indicator-large)]",
 };
 
-export const SLIDER_RAIL_BASE_CLASS =
-  "pointer-events-none absolute inset-0 overflow-hidden rounded-full bg-primary-tint";
+export const SLIDER_RAIL_LAYOUT_CLASS =
+  "pointer-events-none absolute inset-0 overflow-hidden rounded-full";
+
+export const SLIDER_RAIL_DEFAULT_CLASS = "bg-primary-tint";
+
+export const SLIDER_RAIL_GLOSS_CLASS = "gloss-indicator border-0";
+
+export const SLIDER_RAIL_GLOSS_SHAPE_CLASS = "overflow-hidden rounded-full";
 
 export const SLIDER_RAIL_DISABLED_CLASS = "opacity-48";
 
-export const SLIDER_FILL_BASE_CLASS = "absolute rounded-full bg-primary";
+export const SLIDER_FILL_LAYOUT_CLASS = "absolute rounded-full";
+
+export const SLIDER_FILL_DEFAULT_CLASS = "bg-primary";
+
+export const SLIDER_FILL_GLOSS_CLASS = "bg-primary-tint";
+
+export const SLIDER_FILL_GLOSS_LAYER_CLASS = "z-[1]";
 
 export const SLIDER_FILL_HORIZONTAL_CLASS = "inset-y-0";
 
@@ -66,15 +78,18 @@ export function sliderRootClass({
 
 export function sliderRailClass({
   disabled,
+  gloss = false,
   slotClass,
   className,
 }: {
   disabled?: boolean;
+  gloss?: boolean;
   slotClass?: string;
   className?: string;
 }): string {
   return mergeSliderSlotClass(
-    SLIDER_RAIL_BASE_CLASS,
+    SLIDER_RAIL_LAYOUT_CLASS,
+    !gloss && SLIDER_RAIL_DEFAULT_CLASS,
     disabled && SLIDER_RAIL_DISABLED_CLASS,
     slotClass,
     className,
@@ -83,16 +98,20 @@ export function sliderRailClass({
 
 export function sliderFillClass({
   isHorizontal,
+  gloss = false,
   slotClass,
   className,
 }: {
   isHorizontal: boolean;
+  gloss?: boolean;
   slotClass?: string;
   className?: string;
 }): string {
   return mergeSliderSlotClass(
-    SLIDER_FILL_BASE_CLASS,
+    SLIDER_FILL_LAYOUT_CLASS,
     isHorizontal ? SLIDER_FILL_HORIZONTAL_CLASS : SLIDER_FILL_VERTICAL_CLASS,
+    gloss ? SLIDER_FILL_GLOSS_CLASS : SLIDER_FILL_DEFAULT_CLASS,
+    gloss && SLIDER_FILL_GLOSS_LAYER_CLASS,
     slotClass,
     className,
   );
@@ -102,12 +121,14 @@ export function sliderTrackHitAreaClass({
   isHorizontal,
   size,
   thickness,
+  gloss = false,
   slotClass,
   className,
 }: {
   isHorizontal: boolean;
   size: SliderSize;
   thickness?: number | string;
+  gloss?: boolean;
   slotClass?: string;
   className?: string;
 }): string {
@@ -115,6 +136,8 @@ export function sliderTrackHitAreaClass({
     SLIDER_TRACK_HIT_BASE_CLASS,
     isHorizontal ? SLIDER_TRACK_HIT_HORIZONTAL_CLASS : SLIDER_TRACK_HIT_VERTICAL_CLASS,
     thickness == null && (isHorizontal ? SLIDER_RAIL_HEIGHT[size] : SLIDER_RAIL_WIDTH[size]),
+    gloss && SLIDER_RAIL_GLOSS_SHAPE_CLASS,
+    gloss && SLIDER_RAIL_GLOSS_CLASS,
     slotClass,
     className,
   );

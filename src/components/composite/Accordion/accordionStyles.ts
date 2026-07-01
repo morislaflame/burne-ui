@@ -20,7 +20,7 @@ export function accordionHeadingClass(className?: string): string {
 
 export function accordionIndicatorClass(className?: string): string {
   return mergeAccordionSlotClass(
-    "relative z-[1] ml-auto flex shrink-0 origin-center",
+    "relative z-[1] flex shrink-0 origin-center self-center",
     className,
   );
 }

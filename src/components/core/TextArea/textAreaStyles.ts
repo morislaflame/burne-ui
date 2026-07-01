@@ -29,21 +29,16 @@ export const TEXTAREA_MIN_H: Record<TextAreaSize, string> = {
   large: "min-h-control-large",
 };
 
-const TEXTAREA_PY_BY_PX: Record<string, string> = {
-  "px-base": "py-xsmall",
-  "px-plus": "py-small",
-  "px-mid": "py-base",
-  "px-large": "py-plus",
-};
+export const TEXTAREA_SHELL_LAYOUT_CLASS = "flex flex-col items-stretch";
 
 export const TEXTAREA_CONTROL_BASE_CLASS =
-  "absolute inset-0 box-border block h-full w-full resize-none overflow-auto bg-transparent text-foreground outline-none placeholder:text-muted";
+  "box-border block min-h-0 w-full flex-1 resize-none overflow-auto bg-transparent font-inherit text-foreground outline-none placeholder:text-muted appearance-none [field-sizing:content]";
 
 export const TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS =
-  "absolute bottom-[2px] right-0 block h-px w-[9px] origin-bottom-right rotate-[135deg] bg-[color-mix(in_oklab,var(--color-border)_65%,var(--color-muted))]";
+  "absolute bottom-[2px] right-0 block h-px w-[9px] origin-bottom-right rotate-[135deg] bg-muted";
 
 export const TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS =
-  "absolute bottom-[6px] right-0 block h-px w-[6px] origin-bottom-right rotate-[135deg] bg-[color-mix(in_oklab,var(--color-border)_65%,var(--color-muted))]";
+  "absolute bottom-[6px] right-0 block h-px w-[6px] origin-bottom-right rotate-[135deg] bg-muted";
 
 export const TEXTAREA_RESIZE_GRIP_WRAP_CLASS = "relative block size-3 shrink-0";
 
@@ -55,10 +50,7 @@ export const TEXTAREA_RESIZE_HANDLE_DISABLED_CLASS = "cursor-not-allowed opacity
 export const TEXTAREA_RESIZE_HANDLE_ENABLED_CLASS = "cursor-ns-resize";
 
 export function textareaControlClass(size: TextAreaSize): string {
-  const controlPad = CONTROL_SIZE_LAYOUT[size].controlPad;
-  const pxToken = controlPad.match(/\b(px-[\w-]+)\b/)?.[1];
-  const py = (pxToken && TEXTAREA_PY_BY_PX[pxToken]) ?? "py-small";
-  return controlPad.replace(/\bh-full\b/, "min-h-0").replace(/\bpy-0\b/, py);
+  return CONTROL_SIZE_LAYOUT[size].controlPad;
 }
 
 export function textareaShellSurfaceClass({
@@ -111,6 +103,7 @@ export function textareaShellClass({
 
   return mergeTextAreaSlotClass(
     "relative w-full overflow-hidden rounded-base border-1",
+    TEXTAREA_SHELL_LAYOUT_CLASS,
     isGloss && "relative",
     TEXTAREA_MIN_H[size],
     shellSurface,

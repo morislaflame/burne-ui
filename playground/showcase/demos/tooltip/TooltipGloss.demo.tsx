@@ -7,7 +7,13 @@ export function TooltipGlossDemo() {
       <Tooltip.Trigger>
         <Button variant="gloss">Gloss Tooltip</Button>
       </Tooltip.Trigger>
-      <Tooltip.Content>Стеклянная подсказка (surface=&quot;gloss&quot;)</Tooltip.Content>
+      <Tooltip.Content>
+        <Tooltip.Icon />
+        <Tooltip.Title>Справка</Tooltip.Title>
+        <Tooltip.Description>
+          Стеклянная подсказка с иконкой слева от текста (surface=&quot;gloss&quot;)
+        </Tooltip.Description>
+      </Tooltip.Content>
     </Tooltip>
   );
 }

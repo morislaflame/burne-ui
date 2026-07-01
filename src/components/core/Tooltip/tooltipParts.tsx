@@ -51,6 +51,7 @@ import {
 } from "./tooltipContext";
 import { computeTooltipPlacement } from "./tooltipPosition";
 import {
+  TOOLTIP_COMPOUND_CONTENTS_CLASS,
   TOOLTIP_CONTENT_INNER_CLASS,
   TOOLTIP_CONTENT_VARIANT,
   TOOLTIP_DEFAULT_OFFSET,
@@ -63,13 +64,16 @@ import {
   TOOLTIP_TRIGGER_BASE_CLASS,
   tooltipArrowClass,
   tooltipContentClass,
+  tooltipGlossContentClass,
   tooltipPanelClass,
 } from "./tooltipStyles";
 import type {
   TooltipArrowProps,
   TooltipContentProps,
   TooltipDescriptionProps,
+  TooltipIconProps,
   TooltipIndicatorProps,
+  TooltipMessageProps,
   TooltipPanelProps,
   TooltipSize,
   TooltipTitleProps,
@@ -153,6 +157,7 @@ function renderTooltipSimpleBody(
 export function TooltipIndicator({
   className,
   children,
+  showIcon: showIconProp,
   ...rest
 }: TooltipIndicatorProps) {
   const slotClassNames = useTooltipClassNames();
@@ -160,7 +165,7 @@ export function TooltipIndicator({
   const inner = resolveTooltipIndicatorInner({
     variant,
     size,
-    showIcon,
+    showIcon: showIconProp ?? showIcon,
     icon,
     children,
   });
@@ -175,6 +180,7 @@ export function TooltipIndicator({
         TOOLTIP_ICON_TEXT_CLASS[variant],
         messageBannerIndicatorCellClass(gridSlots),
         slotClassNames.indicator,
+        slotClassNames.icon,
         className,
       )}
       {...rest}
@@ -185,6 +191,28 @@ export function TooltipIndicator({
 }
 
 TooltipIndicator.displayName = "TooltipIndicator";
+
+export function TooltipIcon(props: TooltipIconProps) {
+  return <TooltipIndicator {...props} />;
+}
+
+TooltipIcon.displayName = "TooltipIcon";
+
+export function TooltipMessage({ className, ...rest }: TooltipMessageProps) {
+  const slotClassNames = useTooltipClassNames();
+  return (
+    <div
+      className={mergeTooltipSlotClass(
+        TOOLTIP_COMPOUND_CONTENTS_CLASS,
+        slotClassNames.message,
+        className,
+      )}
+      {...rest}
+    />
+  );
+}
+
+TooltipMessage.displayName = "TooltipMessage";
 
 export function TooltipTitle({ className, ...rest }: TooltipTitleProps) {
   const slotClassNames = useTooltipClassNames();
@@ -279,7 +307,13 @@ export function TooltipPanel({
     return (
       <TooltipBodyContext.Provider value={bodyCtx}>
         <div ref={glossPanelRef} className={panelClass} {...rest}>
-          <div className={mergeTooltipSlotClass("gloss-content", slotClassNames.glossContent)}>
+          <div
+            className={tooltipGlossContentClass({
+              gridSlots,
+              size,
+              slotClass: slotClassNames.glossContent,
+            })}
+          >
             {body}
           </div>
         </div>

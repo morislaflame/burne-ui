@@ -51,6 +51,12 @@ export const SELECTION_INDICATOR_FILL_SECONDARY_CLASS =
 export const SELECTION_INDICATOR_FILL_GLOSS_CLASS =
   "pointer-events-none absolute inset-px z-[1] flex origin-center items-center justify-center rounded-[inherit] gloss-indicator-fill text-foreground";
 
+/** Gloss fill для Switch/Slider thumb — primary-tint как у ToggleButton, без gloss-indicator-fill. */
+export const SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS = cn(
+  SELECTION_INDICATOR_FILL_BASE_CLASS,
+  "z-[1] rounded-[inherit] bg-primary-tint",
+);
+
 const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
   small: "--selection-indicator-small",
   base: "--selection-indicator-base",

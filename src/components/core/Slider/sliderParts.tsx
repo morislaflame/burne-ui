@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 
+import "@/components/core/utils/glossPanel.css";
 import { FieldError, FieldHint } from "@/components/core/Field";
 import {
   ScaleFieldHeader,

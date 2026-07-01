@@ -513,11 +513,13 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
 
   const fillClassResolved = sliderFillClass({
     isHorizontal,
+    gloss,
     slotClass: slotClassNames.fill,
   });
 
   const railClass = sliderRailClass({
     disabled,
+    gloss,
     slotClass: slotClassNames.rail,
   });
 
@@ -579,6 +581,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     isHorizontal,
     size,
     thickness,
+    gloss,
     slotClass: slotClassNames.track,
     className,
   });

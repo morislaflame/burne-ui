@@ -1,6 +1,8 @@
 import { forwardRef } from "react";
 
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
+import { useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
+import { messageBannerActionCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { Text } from "@/components/core/Text";
 
 import { useAccordionIndicatorAnimation } from "./accordionAnimations";
@@ -126,13 +128,17 @@ AccordionDescription.displayName = "Accordion.Description";
 export function AccordionIndicator({ className, children, ...rest }: AccordionIndicatorProps) {
   const { open, hasPanel } = useExpandableContext();
   const bindChevronRef = useAccordionIndicatorAnimation(open);
+  const gridSlots = useOptionalExpandableTriggerGrid();
 
   if (!hasPanel) return null;
 
   return (
     <span
       ref={bindChevronRef}
-      className={accordionIndicatorClass(className)}
+      className={mergeAccordionSlotClass(
+        gridSlots && messageBannerActionCellClass(gridSlots),
+        accordionIndicatorClass(className),
+      )}
       aria-hidden
       {...rest}
     >

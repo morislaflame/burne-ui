@@ -201,7 +201,6 @@ function ColorPickerPresets({ presets, hex, setHsva, size }: ColorPickerPresetsP
           size={COLOR_PICKER_SWATCH_SIZE_MAP[size]}
           shape="rounded"
           selected={hex.toLowerCase() === preset.toLowerCase()}
-          showChecker
           className={slotClassNames.presetSwatch}
           onClick={() => {
             const parsed = hexToHsva(preset);
@@ -276,7 +275,6 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
                 "shrink-0",
                 slotClassNames.previewSwatch,
               )}
-              showChecker
             />
 
             <div className={COLOR_PICKER_SLIDERS_STACK_CLASS}>

@@ -12,8 +12,10 @@ export function mergeTooltipSlotClass(...parts: ClassValue[]): string {
 
 export const TOOLTIP_COMPOUND_SLOT_NAMES = new Set([
   "TooltipIndicator",
+  "TooltipIcon",
   "TooltipTitle",
   "TooltipDescription",
+  "TooltipMessage",
 ]);
 
 export function walkTooltipChildren(
@@ -55,7 +57,60 @@ export function tooltipHasDescription(children: ReactNode): boolean {
 }
 
 export function tooltipHasIndicator(children: ReactNode): boolean {
-  return walkTooltipChildren(children, (name) => name === "TooltipIndicator");
+  return walkTooltipChildren(
+    children,
+    (name) => name === "TooltipIndicator" || name === "TooltipIcon",
+  );
+}
+
+function walkTooltipIndicatorProps(
+  node: ReactNode,
+  visit: (props: { children?: ReactNode; showIcon?: boolean }) => void,
+): void {
+  for (const child of Children.toArray(node)) {
+    if (!isValidElement(child)) continue;
+    const displayName = (child.type as { displayName?: string }).displayName;
+    if (displayName === "TooltipIndicator" || displayName === "TooltipIcon") {
+      visit(child.props as { children?: ReactNode; showIcon?: boolean });
+    }
+    walkTooltipIndicatorProps((child.props as { children?: ReactNode }).children, visit);
+  }
+}
+
+export function tooltipIndicatorWouldRender(
+  variant: TooltipVariant,
+  icon: ReactNode | undefined,
+  showIcon: boolean | undefined,
+  indicatorChildren: ReactNode | undefined,
+): boolean {
+  if (showIcon === false) return false;
+  if (indicatorChildren === null) return false;
+  if (indicatorChildren !== undefined) return true;
+  if (icon != null) return true;
+  return isSemanticTooltipVariant(variant);
+}
+
+export function tooltipCompoundShowsIndicator(
+  children: ReactNode,
+  variant: TooltipVariant,
+  icon: ReactNode | undefined,
+  showIcon: boolean | undefined,
+): boolean {
+  if (!tooltipHasIndicator(children)) return false;
+  let visible = false;
+  walkTooltipIndicatorProps(children, (props) => {
+    if (
+      tooltipIndicatorWouldRender(
+        variant,
+        icon,
+        props.showIcon ?? showIcon,
+        props.children,
+      )
+    ) {
+      visible = true;
+    }
+  });
+  return visible;
 }
 
 export function isSemanticTooltipVariant(v: TooltipVariant): v is "danger" | "success" | "info" | "warning" {
@@ -67,10 +122,10 @@ export function tooltipShowsIndicator(
   icon: ReactNode | undefined,
   showIcon: boolean | undefined,
   isCompound: boolean,
-  compoundHasIndicator: boolean,
+  children: ReactNode,
 ): boolean {
   if (showIcon === false) return false;
-  if (isCompound) return compoundHasIndicator;
+  if (isCompound) return tooltipCompoundShowsIndicator(children, variant, icon, showIcon);
   if (icon != null) return true;
   return isSemanticTooltipVariant(variant);
 }
@@ -101,13 +156,7 @@ export function resolveTooltipGridSlots({
     description != null || (isCompound && tooltipHasDescription(children));
 
   return {
-    hasIndicator: tooltipShowsIndicator(
-      variant,
-      icon,
-      showIcon,
-      isCompound,
-      tooltipHasIndicator(children),
-    ),
+    hasIndicator: tooltipShowsIndicator(variant, icon, showIcon, isCompound, children),
     hasTitle,
     hasDescription,
     hasAction: false,

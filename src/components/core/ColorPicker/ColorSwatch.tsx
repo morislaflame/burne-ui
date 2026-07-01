@@ -1,14 +1,11 @@
 import {
   forwardRef,
   type ButtonHTMLAttributes,
-  type CSSProperties,
 } from "react";
 
 import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
-
-import { CHECKER_STYLE } from "./colorUtils";
 
 
 export type ColorSwatchSize = "xsmall" | "small" | "base" | "mid" | "large" | "xlarge";
@@ -19,7 +16,6 @@ export type ColorSwatchProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "co
   size?: ColorSwatchSize;
   shape?: ColorSwatchShape;
   selected?: boolean;
-  showChecker?: boolean;
 };
 
 
@@ -55,7 +51,6 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       size = "base",
       shape = "rounded",
       selected = false,
-      showChecker = true,
       disabled = false,
       className = "",
       onClick,
@@ -82,8 +77,6 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       onPointerDown,
     });
 
-    const checkerStyle: CSSProperties = showChecker ? CHECKER_STYLE : {};
-
     const { "aria-label": ariaLabelProp, ...buttonRest } = rest;
     const isInteractive = Boolean(onClick);
     const hasExplicitName =
@@ -99,14 +92,8 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
             SHAPE_CLASS[shape],
             className,
           )}
-          style={checkerStyle}
-        >
-          <span
-            aria-hidden
-            className="absolute inset-0"
-            style={{ backgroundColor: color }}
-          />
-        </span>
+          style={{ backgroundColor: color }}
+        />
       );
     }
 
@@ -133,15 +120,9 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
           disabled ? "cursor-not-allowed opacity-40" : onClick ? "cursor-pointer" : "cursor-default",
           className,
         )}
-        style={checkerStyle}
+        style={{ backgroundColor: color }}
         {...buttonRest}
-      >
-        <span
-          aria-hidden
-          className="absolute inset-0"
-          style={{ backgroundColor: color }}
-        />
-      </button>
+      />
     );
   },
 );

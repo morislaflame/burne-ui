@@ -94,8 +94,47 @@ export const TOOLTIP_CONTENT_INNER_CLASS = "relative overflow-visible";
 export const TOOLTIP_GLOSS_PANEL_BASE_CLASS =
   "gloss-panel gloss-deep relative z-[1] w-max min-w-0 origin-center overflow-hidden rounded-mid text-left text-foreground";
 
+export const TOOLTIP_GLOSS_CONTENT_CLASS = "gloss-content";
+
+/** Compound slots (`Tooltip.Message`) — pass-through grid children. */
+export const TOOLTIP_COMPOUND_CONTENTS_CLASS = "contents";
+
 export const TOOLTIP_PANEL_BASE_CLASS =
   "relative z-[1] w-max min-w-0 rounded-mid text-left animate-shadow";
+
+export function tooltipGlossShellClass({
+  size,
+  slotClass,
+  className,
+}: {
+  size: TooltipSize;
+  slotClass?: string;
+  className?: string;
+}) {
+  return mergeTooltipSlotClass(
+    TOOLTIP_GLOSS_PANEL_BASE_CLASS,
+    GLOSS_INTERACTIVE_MOTION_CLASS,
+    TOOLTIP_TEXT_LAYOUT[size],
+    slotClass,
+    className,
+  );
+}
+
+export function tooltipGlossContentClass({
+  gridSlots,
+  size,
+  slotClass,
+}: {
+  gridSlots: Parameters<typeof messageBannerGridClass>[0];
+  size: TooltipSize;
+  slotClass?: string;
+}) {
+  return mergeTooltipSlotClass(
+    messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
+    TOOLTIP_GLOSS_CONTENT_CLASS,
+    slotClass,
+  );
+}
 
 export function tooltipPanelClass({
   variant,
@@ -115,14 +154,7 @@ export function tooltipPanelClass({
   const isGloss = surface === "gloss";
 
   if (isGloss) {
-    return mergeTooltipSlotClass(
-      messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
-      TOOLTIP_GLOSS_PANEL_BASE_CLASS,
-      GLOSS_INTERACTIVE_MOTION_CLASS,
-      TOOLTIP_TEXT_LAYOUT[size],
-      slotClass,
-      className,
-    );
+    return tooltipGlossShellClass({ size, slotClass, className });
   }
 
   return mergeTooltipSlotClass(

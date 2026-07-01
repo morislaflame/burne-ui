@@ -2,64 +2,45 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
-  type CSSProperties,
-  type HTMLAttributes,
   type KeyboardEvent,
   type PointerEvent,
 } from "react";
 
 import { Text } from "@/components/core/Text";
 import {
-  SelectionThumb,
-} from "@/components/core/SelectionThumb";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
-import {
-  SELECTION_INDICATOR_SIZE_CLASS,
-  type SelectionIndicatorSize,
-} from "@/components/core/SelectionIndicator/selectionIndicatorTokens";
+  readSliderTrackMetrics,
+  resolveSliderFallbackThumbPx,
+  sliderPointerToValue,
+  sliderThumbCenterPercent,
+} from "@/components/core/Slider/sliderAPI";
+import { SliderThumbButton } from "@/components/core/Slider/sliderThumbParts";
 import { cn } from "@/utils/cn";
 
 import {
-  CHECKER_STYLE,
-  clampN,
-  hsvaToRgba,
-  hueToRgbString,
-  type HSVA,
-} from "./colorUtils";
+  CHANNEL_A11Y_LABEL,
+  COLOR_SLIDER_LABEL_ROW_CLASS,
+  COLOR_SLIDER_ROOT_CLASS,
+  colorSliderBackgroundStyle,
+  colorSliderTrackClass,
+} from "./colorSliderStyles";
+import type {
+  ColorChannel,
+  ColorSliderRootProps,
+  ColorSliderTrackProps,
+} from "./colorSliderTypes";
+import { clampN } from "./colorUtils";
 
-
-export type ColorChannel = "hue" | "saturation" | "value" | "alpha" | "red" | "green" | "blue";
-export type ColorSliderSize = SelectionIndicatorSize;
-export type ColorSliderOrientation = "horizontal" | "vertical";
-
-export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
-  channel: ColorChannel;
-  color?: HSVA;
-  value?: number;
-  defaultValue?: number;
-  onValueChange?: (value: number) => void;
-  size?: ColorSliderSize;
-  orientation?: ColorSliderOrientation;
-  disabled?: boolean;
-};
-
-export type ColorSliderRootProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
-  channel: ColorChannel;
-  color?: HSVA;
-  label?: string;
-  value?: number;
-  defaultValue?: number;
-  onValueChange?: (value: number) => void;
-  size?: ColorSliderSize;
-  orientation?: ColorSliderOrientation;
-  disabled?: boolean;
-};
-
+export type {
+  ColorChannel,
+  ColorSliderOrientation,
+  ColorSliderRootProps,
+  ColorSliderSize,
+  ColorSliderTrackProps,
+} from "./colorSliderTypes";
 
 const CHANNEL_RANGE: Record<ColorChannel, { min: number; max: number; step: number }> = {
   hue:        { min: 0,   max: 360, step: 1   },
@@ -73,60 +54,6 @@ const CHANNEL_RANGE: Record<ColorChannel, { min: number; max: number; step: numb
 
 const CHANNEL_DEFAULT: Record<ColorChannel, number> = {
   hue: 0, saturation: 100, value: 100, alpha: 100, red: 255, green: 0, blue: 0,
-};
-
-
-function channelGradient(channel: ColorChannel, color: HSVA, horizontal: boolean): CSSProperties {
-  const dir = horizontal ? "to right" : "to top";
-  const { r, g, b } = hsvaToRgba(color);
-
-  switch (channel) {
-    case "hue":
-      return {
-        background: `linear-gradient(${dir}, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)`,
-      };
-    case "saturation": {
-      const desaturated = hsvaToRgba({ ...color, s: 0 });
-      const pure        = hueToRgbString(color.h);
-      return { background: `linear-gradient(${dir}, rgb(${desaturated.r},${desaturated.g},${desaturated.b}), ${pure})` };
-    }
-    case "value": {
-      const pure = hueToRgbString(color.h);
-      return { background: `linear-gradient(${dir}, #000, ${pure})` };
-    }
-    case "alpha":
-      return {
-        ...CHECKER_STYLE,
-        backgroundImage:
-          CHECKER_STYLE.backgroundImage +
-          `,linear-gradient(${dir}, rgba(${r},${g},${b},0), rgb(${r},${g},${b}))`,
-      };
-    case "red":
-      return { background: `linear-gradient(${dir}, rgb(0,${g},${b}), rgb(255,${g},${b}))` };
-    case "green":
-      return { background: `linear-gradient(${dir}, rgb(${r},0,${b}), rgb(${r},255,${b}))` };
-    case "blue":
-      return { background: `linear-gradient(${dir}, rgb(${r},${g},0), rgb(${r},${g},255))` };
-  }
-}
-
-
-const RAIL_CROSS_CLASS: Record<ColorSliderSize, { h: string; w: string }> = {
-  small: { h: "h-[var(--selection-indicator-small)]", w: "w-[var(--selection-indicator-small)]" },
-  base:  { h: "h-[var(--selection-indicator-base)]",  w: "w-[var(--selection-indicator-base)]"  },
-  mid:   { h: "h-[var(--selection-indicator-mid)]",   w: "w-[var(--selection-indicator-mid)]"   },
-  large: { h: "h-[var(--selection-indicator-large)]", w: "w-[var(--selection-indicator-large)]" },
-};
-
-
-const CHANNEL_A11Y_LABEL: Record<ColorChannel, string> = {
-  hue: "Hue",
-  saturation: "Saturation",
-  value: "Value",
-  alpha: "Alpha",
-  red: "Red",
-  green: "Green",
-  blue: "Blue",
 };
 
 function useMergedValue(
@@ -143,7 +70,6 @@ function useMergedValue(
   );
   return [merged, set];
 }
-
 
 export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps>(
   function ColorSliderTrack(
@@ -165,9 +91,35 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
     const [value, setValueInternal] = useMergedValue(valueProp, defaultValue, CHANNEL_DEFAULT[channel]);
     const dragging = useRef(false);
     const trackRef = useRef<HTMLDivElement>(null);
-    const thumbRef = useRef<HTMLButtonElement>(null);
     const [active, setActive] = useState(false);
-    const horizontal = orientation === "horizontal";
+    const [trackSpanPx, setTrackSpanPx] = useState(0);
+    const fallbackThumbPx = useMemo(
+      () => resolveSliderFallbackThumbPx(undefined, size),
+      [size],
+    );
+    const [thumbSpanPx, setThumbSpanPx] = useState(fallbackThumbPx);
+
+    useLayoutEffect(() => {
+      const el = trackRef.current;
+      if (!el) return;
+
+      const measure = () => {
+        const rect = el.getBoundingClientRect();
+        const { trackSpanPx: spanPx, thumbSpanPx: thumbPx } = readSliderTrackMetrics(
+          rect,
+          orientation,
+        );
+        setTrackSpanPx(spanPx);
+        if (thumbPx > 0) {
+          setThumbSpanPx((prev) => (prev === thumbPx ? prev : thumbPx));
+        }
+      };
+
+      measure();
+      const observer = new ResizeObserver(measure);
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, [orientation]);
 
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
@@ -187,17 +139,26 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
       [min, max, step, setValueInternal, onValueChange],
     );
 
+    const effectiveThumbPx = thumbSpanPx > 0 ? thumbSpanPx : fallbackThumbPx;
+
     const updateFromPointer = useCallback(
       (clientX: number, clientY: number) => {
         const el = trackRef.current;
         if (!el || disabled) return;
         const rect = el.getBoundingClientRect();
-        const ratio = horizontal
-          ? clampN((clientX - rect.left) / rect.width,  0, 1)
-          : clampN(1 - (clientY - rect.top) / rect.height, 0, 1);
-        emit(min + ratio * (max - min));
+        emit(
+          sliderPointerToValue(
+            clientX,
+            clientY,
+            rect,
+            orientation,
+            min,
+            max,
+            effectiveThumbPx,
+          ),
+        );
       },
-      [disabled, horizontal, min, max, emit],
+      [disabled, effectiveThumbPx, emit, max, min, orientation],
     );
 
     useEffect(() => {
@@ -226,7 +187,6 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
         dragging.current = true;
         setActive(true);
         updateFromPointer(e.clientX, e.clientY);
-        thumbRef.current?.focus();
       },
       [disabled, updateFromPointer],
     );
@@ -238,9 +198,6 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
         dragging.current = true;
         setActive(true);
         e.currentTarget.setPointerCapture(e.pointerId);
-        if (!prefersReducedInteractiveHoverLift()) {
-          void animateInteractivePressSqueeze(e.currentTarget);
-        }
       },
       [disabled],
     );
@@ -249,7 +206,7 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
       (e: KeyboardEvent<HTMLButtonElement>) => {
         if (disabled) return;
         let delta = 0;
-        if (horizontal) {
+        if (orientation === "horizontal") {
           if (e.key === "ArrowRight") delta = step;
           else if (e.key === "ArrowLeft") delta = -step;
           else if (e.key === "PageUp")   delta = step * 10;
@@ -264,65 +221,45 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
         }
         if (delta !== 0) { e.preventDefault(); emit(value + delta); }
       },
-      [disabled, horizontal, step, min, max, value, emit],
+      [disabled, orientation, step, min, max, value, emit],
     );
 
-    const percent = ((value - min) / (max - min)) * 100;
-    const thumbStyle: CSSProperties = horizontal
-      ? { left: `${percent}%`, top: 0, height: "100%", aspectRatio: "1", transform: "translateX(-50%)" }
-      : { bottom: `${percent}%`, left: 0, width: "100%", aspectRatio: "1", transform: "translateY(50%)" };
-
-    const gradientStyle = channelGradient(channel, color, horizontal);
-    const cross = RAIL_CROSS_CLASS[size];
+    const thumbPercent = sliderThumbCenterPercent(
+      value,
+      min,
+      max,
+      trackSpanPx,
+      effectiveThumbPx,
+    );
 
     return (
       <div
         ref={setRefs}
         role="presentation"
-        className={cn(
-          "relative touch-none select-none rounded-full",
-          horizontal ? `w-full ${cross.h}` : `h-48 ${cross.w}`,
-          disabled && "opacity-48",
-          className,
-        )}
-        style={gradientStyle}
+        className={colorSliderTrackClass({ size, orientation, disabled, className })}
+        style={colorSliderBackgroundStyle(channel, color, orientation)}
         onPointerDown={handleTrackDown}
         {...rest}
       >
-        <button
-          ref={thumbRef}
-          type="button"
-          role="slider"
-          aria-valuemin={min}
-          aria-valuemax={max}
-          aria-valuenow={value}
-          aria-orientation={orientation}
-          aria-label={CHANNEL_A11Y_LABEL[channel]}
+        <SliderThumbButton
+          size={size}
+          percent={thumbPercent}
+          orientation={orientation}
           disabled={disabled}
-          tabIndex={disabled ? -1 : 0}
-          className={cn(
-            "absolute z-[2] box-border flex items-center justify-center",
-            "m-0 appearance-none border-0 bg-transparent p-0",
-            horizontal
-              ? "top-0 h-full w-auto -translate-x-1/2"
-              : "left-0 w-full h-auto translate-y-1/2",
-            "aspect-square origin-center",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-            disabled ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
-          )}
-          style={thumbStyle}
+          active={active}
+          ariaLabel={CHANNEL_A11Y_LABEL[channel]}
+          ariaValueNow={value}
+          ariaValueMin={min}
+          ariaValueMax={max}
           onPointerDown={handleThumbDown}
           onKeyDown={handleKeyDown}
-        >
-          <SelectionThumb active={active} size={size} className={SELECTION_INDICATOR_SIZE_CLASS[size]} />
-        </button>
+        />
       </div>
     );
   },
 );
 
 ColorSliderTrack.displayName = "ColorSliderTrack";
-
 
 export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
   function ColorSliderRoot(
@@ -331,21 +268,21 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
   ) {
     if (!children) {
       return (
-        <div ref={ref} className={cn("flex flex-col gap-xsmall", className)}>
-          {label && (
-            <div className="flex items-center justify-between">
+        <div ref={ref} className={cn(COLOR_SLIDER_ROOT_CLASS, className)}>
+          {label ? (
+            <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
               <Text as="span" variant="small" className="text-muted">{label}</Text>
               <Text as="span" variant="small" className="font-medium text-foreground">
                 {rest.value ?? rest.defaultValue ?? CHANNEL_DEFAULT[channel]}
               </Text>
             </div>
-          )}
+          ) : null}
           <ColorSliderTrack channel={channel} color={color} size={size} orientation={orientation} {...rest} />
         </div>
       );
     }
     return (
-      <div ref={ref} className={cn("flex flex-col gap-xsmall", className)}>
+      <div ref={ref} className={cn(COLOR_SLIDER_ROOT_CLASS, className)}>
         {children}
       </div>
     );
@@ -353,5 +290,3 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
 );
 
 ColorSliderRoot.displayName = "ColorSliderRoot";
-
-

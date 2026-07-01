@@ -1,4 +1,5 @@
-import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import { hoverVariant, SURFACE_COLOR_TRANSITION, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import { cn } from "@/utils/cn";
 
 import { mergeTableSlotClass } from "./tableAPI";
 import type { TableVariant } from "./tableTypes";
@@ -70,6 +71,14 @@ export const TABLE_ROW_VARIANT_CLASS: Record<TableVariant, string> = {
 export const TABLE_ROW_SELECTABLE_CLASS = "cursor-pointer";
 
 export const TABLE_ROW_SELECTED_CLASS = "bg-default-hover";
+
+export const TABLE_ROW_GLOSS_SELECTED_CLASS =
+  "bg-primary-tint hover:bg-primary-tint-strong";
+
+export const TABLE_ROW_GLOSS_HOVER_CLASS = cn(
+  SURFACE_COLOR_TRANSITION,
+  "hover:bg-primary-tint focus-visible:bg-primary-tint",
+);
 
 export const TABLE_ROW_FOCUS_CLASS = "focus-ring-inset";
 
@@ -182,7 +191,12 @@ export function tableRowClass({
     TABLE_ROW_BASE_CLASS,
     TABLE_ROW_VARIANT_CLASS[variant],
     isSelectable && TABLE_ROW_SELECTABLE_CLASS,
-    !isToned && (isSelected ? TABLE_ROW_SELECTED_CLASS : hoverVariant()),
+    variant === "gloss" &&
+      !isToned &&
+      (isSelected ? TABLE_ROW_GLOSS_SELECTED_CLASS : TABLE_ROW_GLOSS_HOVER_CLASS),
+    variant !== "gloss" &&
+      !isToned &&
+      (isSelected ? TABLE_ROW_SELECTED_CLASS : hoverVariant()),
     isSelectable && TABLE_ROW_FOCUS_CLASS,
     slotClass,
     className,

@@ -4,10 +4,10 @@ import "../utils/glossPanel.css";
 import { cn } from "@/utils/cn";
 
 import {
-  SELECTION_INDICATOR_FILL_CLASS,
-  SELECTION_INDICATOR_FILL_GLOSS_CLASS,
+  SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS,
   SELECTION_INDICATOR_ICON_CLASS,
   SELECTION_INDICATOR_SHELL_CLASS,
+  selectionIndicatorFillClass,
   type SelectionIndicatorSize,
 } from "../SelectionIndicator/selectionIndicatorTokens";
 import { useSelectionIndicatorAnimation } from "../SelectionIndicator/useSelectionIndicatorAnimation";
@@ -40,7 +40,9 @@ export function SelectionThumb({
     ? cn(SELECTION_INDICATOR_SHELL_CLASS, "gloss-indicator size-full min-h-0 min-w-0 origin-center border-0", className)
     : cn(SELECTION_INDICATOR_SHELL_CLASS, "size-full min-h-0 min-w-0 origin-center border border-primary bg-surface", className);
 
-  const fillClass = gloss ? SELECTION_INDICATOR_FILL_GLOSS_CLASS : SELECTION_INDICATOR_FILL_CLASS;
+  const fillClass = gloss
+    ? SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS
+    : selectionIndicatorFillClass("base");
 
   return (
     <span

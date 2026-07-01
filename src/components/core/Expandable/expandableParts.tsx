@@ -3,6 +3,7 @@ import {
   forwardRef,
   isValidElement,
   useCallback,
+  useMemo,
   useLayoutEffect,
   useRef,
   type HTMLAttributes,
@@ -11,17 +12,31 @@ import {
 } from "react";
 
 import { Text } from "@/components/core/Text";
+import {
+  messageBannerActionCellClass,
+  messageBannerDescriptionCellClass,
+  messageBannerIndicatorCellClass,
+  messageBannerTitleCellClass,
+} from "@/components/core/utils/messageBannerGridLayout";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
 import {
+  expandableTriggerHasActionSlot,
   hasExpandableMessage,
   mergeExpandableRefs,
   mergeExpandableSlotClass,
   partitionExpandableTriggerRipple,
+  resolveExpandableTriggerGridSlots,
 } from "./expandableAPI";
-import { useExpandable, useExpandableClassNames } from "./expandableContext";
+import {
+  ExpandableTriggerGridProvider,
+  useExpandable,
+  useExpandableClassNames,
+  useExpandableTriggerGrid,
+  useOptionalExpandableTriggerGrid,
+} from "./expandableContext";
 import {
   EXPANDABLE_CHEVRON_WRAP_CLASS,
   EXPANDABLE_CONTENT_CLASS,
@@ -30,6 +45,7 @@ import {
   EXPANDABLE_GLOSS_CONTENT_CLASS,
   EXPANDABLE_MESSAGE_CLASS,
   EXPANDABLE_PANEL_SHELL_CLASS,
+  EXPANDABLE_TITLE_CLASS,
   EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS,
   EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS,
   expandableChevronIconClass,
@@ -129,11 +145,25 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
 
     const { ripples, rest: triggerChildren } =
       partitionExpandableTriggerRipple(children);
+
+    const gridSlots = useMemo(
+      () =>
+        resolveExpandableTriggerGridSlots({
+          children: triggerChildren,
+          hideChevron,
+          hasPanel,
+        }),
+      [triggerChildren, hideChevron, hasPanel],
+    );
+
     const mainChildren = hasExpandableMessage(triggerChildren) ? (
       <>{triggerChildren}</>
     ) : (
       <ExpandableMessage>{triggerChildren}</ExpandableMessage>
     );
+
+    const showsDefaultChevron =
+      hasPanel && !hideChevron && !expandableTriggerHasActionSlot(triggerChildren);
 
     const rippleOverlay =
       ripples.length > 0 ? (
@@ -147,6 +177,27 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
           {ripples}
         </span>
       ) : null;
+
+    const liftBody = (
+      <>
+        {mainChildren}
+        {showsDefaultChevron ? (
+          <span
+            ref={motion.bindChevronRef}
+            className={mergeExpandableSlotClass(
+              messageBannerActionCellClass(gridSlots),
+              EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS,
+              slotClassNames.chevron,
+            )}
+            aria-hidden
+          >
+            <ExpandableChevronSvg
+              className={expandableTriggerChevronIconClass(size)}
+            />
+          </span>
+        ) : null}
+      </>
+    );
 
     if (asChild && isValidElement(children)) {
       const child = children as ReactElement<
@@ -192,29 +243,17 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         {...props}
       >
         {rippleOverlay}
-        <span
-          ref={motion.liftSpanRef}
-          className={expandableTriggerLiftClass({
-            hideChevron,
-            slotClass: slotClassNames.triggerLift,
-          })}
-        >
-          {mainChildren}
-        </span>
-        {!hideChevron && hasPanel ? (
+        <ExpandableTriggerGridProvider gridSlots={gridSlots}>
           <span
-            ref={motion.bindChevronRef}
-            className={mergeExpandableSlotClass(
-              EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS,
-              slotClassNames.chevron,
-            )}
-            aria-hidden
+            ref={motion.liftSpanRef}
+            className={expandableTriggerLiftClass({
+              gridSlots,
+              slotClass: slotClassNames.triggerLift,
+            })}
           >
-            <ExpandableChevronSvg
-              className={expandableTriggerChevronIconClass(size)}
-            />
+            {liftBody}
           </span>
-        ) : null}
+        </ExpandableTriggerGridProvider>
       </button>
     );
   },
@@ -222,20 +261,28 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
 
 ExpandableTrigger.displayName = "ExpandableTrigger";
 
-export function ExpandableIcon({ className, ...props }: ExpandableIconProps) {
+export function ExpandableIcon({ className, children, ...props }: ExpandableIconProps) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
+  const gridSlots = useOptionalExpandableTriggerGrid();
+
+  if (children == null) return null;
 
   return (
     <span
       aria-hidden
-      className={expandableIconClass({
-        size,
-        className,
-        slotClass: slotClassNames.icon,
-      })}
+      className={mergeExpandableSlotClass(
+        expandableIconClass({
+          size,
+          className,
+          slotClass: slotClassNames.icon,
+        }),
+        gridSlots && messageBannerIndicatorCellClass(gridSlots),
+      )}
       {...props}
-    />
+    >
+      {children}
+    </span>
   );
 }
 
@@ -261,12 +308,18 @@ ExpandableContent.displayName = "ExpandableContent";
 export function ExpandableTitle({ className, ...props }: ExpandableTitleProps) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
+  const gridSlots = useOptionalExpandableTriggerGrid();
 
   return (
     <Text
       as="div"
       variant={expandableTitleVariant(size)}
-      className={mergeExpandableSlotClass(slotClassNames.title, className)}
+      className={mergeExpandableSlotClass(
+        EXPANDABLE_TITLE_CLASS,
+        gridSlots && messageBannerTitleCellClass(gridSlots),
+        slotClassNames.title,
+        className,
+      )}
       {...props}
     />
   );
@@ -280,6 +333,7 @@ export function ExpandableDescription({
 }: ExpandableDescriptionProps) {
   const { size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
+  const gridSlots = useOptionalExpandableTriggerGrid();
 
   return (
     <Text
@@ -287,6 +341,7 @@ export function ExpandableDescription({
       variant={EXPANDABLE_DESCRIPTION_VARIANT[size]}
       className={mergeExpandableSlotClass(
         EXPANDABLE_DESCRIPTION_CLASS,
+        gridSlots && messageBannerDescriptionCellClass(gridSlots),
         slotClassNames.description,
         className,
       )}
@@ -300,6 +355,7 @@ ExpandableDescription.displayName = "ExpandableDescription";
 export function ExpandableChevron({ className, ...props }: ExpandableChevronProps) {
   const { open, hasPanel, size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
+  const gridSlots = useExpandableTriggerGrid();
   const chevronRef = useRef<HTMLSpanElement | null>(null);
   const bindChevronRef = useChevronRotation(
     open,
@@ -313,6 +369,7 @@ export function ExpandableChevron({ className, ...props }: ExpandableChevronProp
     <span
       ref={bindChevronRef}
       className={mergeExpandableSlotClass(
+        messageBannerActionCellClass(gridSlots),
         EXPANDABLE_CHEVRON_WRAP_CLASS,
         slotClassNames.chevron,
         className,
@@ -387,15 +444,11 @@ export function ExpandableSimpleBody({
   return (
     <>
       <ExpandableTrigger>
-        <ExpandableMessage>
-          {icon != null ? <ExpandableIcon>{icon}</ExpandableIcon> : null}
-          <ExpandableContent>
-            {title != null ? <ExpandableTitle>{title}</ExpandableTitle> : null}
-            {description != null ? (
-              <ExpandableDescription>{description}</ExpandableDescription>
-            ) : null}
-          </ExpandableContent>
-        </ExpandableMessage>
+        {icon != null ? <ExpandableIcon>{icon}</ExpandableIcon> : null}
+        {title != null ? <ExpandableTitle>{title}</ExpandableTitle> : null}
+        {description != null ? (
+          <ExpandableDescription>{description}</ExpandableDescription>
+        ) : null}
       </ExpandableTrigger>
       {panelChildren != null ? (
         <ExpandablePanel>{panelChildren}</ExpandablePanel>

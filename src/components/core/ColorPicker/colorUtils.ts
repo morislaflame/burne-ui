@@ -111,14 +111,10 @@ export function hueToRgbString(hue: number): string {
   return `rgb(${r},${g},${b})`;
 }
 
-/** Inline style for checkerboard (for alpha display) */
-export const CHECKER_STYLE: React.CSSProperties = {
-  backgroundImage:
-    "linear-gradient(45deg,#808080 25%,transparent 25%)," +
-    "linear-gradient(-45deg,#808080 25%,transparent 25%)," +
-    "linear-gradient(45deg,transparent 75%,#808080 75%)," +
-    "linear-gradient(-45deg,transparent 75%,#808080 75%)",
-  backgroundSize: "8px 8px",
-  backgroundPosition: "0 0, 0 4px, 4px -4px, -4px 0",
-  backgroundColor: "#fff",
-};
+export function alphaSliderGradientStyle(color: HSVA, horizontal: boolean): React.CSSProperties {
+  const dir = horizontal ? "to right" : "to top";
+  const { r, g, b } = hsvaToRgba(color);
+  return {
+    background: `linear-gradient(${dir}, rgba(${r},${g},${b},0), rgb(${r},${g},${b}))`,
+  };
+}

@@ -42,6 +42,7 @@ import {
   SWITCH_FILL_BASE_CLASS,
   SWITCH_FILL_COLOR_CLASS,
   SWITCH_FILL_GLOSS_CLASS,
+  SWITCH_FILL_GLOSS_TINT_CLASS,
   SWITCH_HINT_DISABLED_CLASS,
   SWITCH_ICON_BASE_CLASS,
   SWITCH_INPUT_VISUALLY_HIDDEN_CLASS,
@@ -345,7 +346,7 @@ export function SwitchFill({ className, style, ...rest }: SwitchFillProps) {
       className={mergeSwitchSlotClass(
         SWITCH_FILL_BASE_CLASS,
         ctx.gloss && SWITCH_FILL_GLOSS_CLASS,
-        !ctx.color && SWITCH_FILL_COLOR_CLASS,
+        !ctx.color && (ctx.gloss ? SWITCH_FILL_GLOSS_TINT_CLASS : SWITCH_FILL_COLOR_CLASS),
         slotClassNames.fill,
         className,
       )}

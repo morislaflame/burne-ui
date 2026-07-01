@@ -1,4 +1,8 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import {
+  messageBannerGridClass,
+  type MessageBannerGridSlots,
+} from "@/components/core/utils/messageBannerGridLayout";
 
 import { mergeExpandableSlotClass } from "./expandableAPI";
 import type { ExpandableSize, ExpandableVariant } from "./expandableTypes";
@@ -28,7 +32,7 @@ export const EXPANDABLE_GLOSS_CONTENT_CLASS =
   "gloss-content flex min-w-0 flex-col";
 
 export const EXPANDABLE_TRIGGER_BASE_CLASS =
-  "relative flex w-full items-center gap-base overflow-hidden py-base text-left outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2";
+  "relative w-full overflow-hidden py-base text-left outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2";
 
 export const EXPANDABLE_TRIGGER_DISABLED_CLASS =
   "cursor-not-allowed opacity-50";
@@ -36,24 +40,26 @@ export const EXPANDABLE_TRIGGER_DISABLED_CLASS =
 export const EXPANDABLE_TRIGGER_ENABLED_CLASS = "cursor-pointer";
 
 export const EXPANDABLE_TRIGGER_LIFT_BASE_CLASS =
-  "relative z-[1] flex min-w-0 flex-1 origin-center will-change-transform";
+  "relative z-[1] w-full min-w-0 origin-center will-change-transform";
+
+/** Compound slots (`Expandable.Content`, `Expandable.Message`) — pass-through grid children. */
+export const EXPANDABLE_COMPOUND_CONTENTS_CLASS = "contents";
 
 export const EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS =
-  "relative z-[1] ml-auto flex shrink-0 origin-center";
+  "relative z-[1] flex shrink-0 origin-center self-center";
 
-export const EXPANDABLE_MESSAGE_CLASS =
-  "flex min-w-0 flex-1 items-start gap-base";
+export const EXPANDABLE_MESSAGE_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
 export const EXPANDABLE_ICON_BASE_CLASS =
   "shrink-0 text-primary [&_svg]:size-full";
 
-export const EXPANDABLE_CONTENT_CLASS =
-  "flex min-w-0 max-w-full flex-col gap-xsmall text-left";
+export const EXPANDABLE_CONTENT_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
 export const EXPANDABLE_DESCRIPTION_CLASS = "text-muted";
 
-export const EXPANDABLE_CHEVRON_WRAP_CLASS =
-  "relative z-[1] flex shrink-0 self-center origin-center";
+export const EXPANDABLE_TITLE_CLASS = "font-medium";
+
+export const EXPANDABLE_CHEVRON_WRAP_CLASS = EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS;
 
 export const EXPANDABLE_PANEL_SHELL_CLASS = "overflow-hidden";
 
@@ -105,15 +111,15 @@ export function expandableTriggerClass({
 }
 
 export function expandableTriggerLiftClass({
-  hideChevron,
+  gridSlots,
   slotClass,
 }: {
-  hideChevron: boolean;
+  gridSlots: MessageBannerGridSlots;
   slotClass?: string;
 }): string {
   return mergeExpandableSlotClass(
     EXPANDABLE_TRIGGER_LIFT_BASE_CLASS,
-    hideChevron && "w-full",
+    messageBannerGridClass(gridSlots),
     slotClass,
   );
 }
