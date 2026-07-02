@@ -673,7 +673,11 @@ export function DropdownItemIndicator({
 
   return (
     <OptionListItemIndicatorShell
-      className={mergeDropdownSlotClass(slotClassNames.itemIndicator, className)}
+      className={mergeDropdownSlotClass(
+        slotClassNames.itemIndicator,
+        classNamesProp?.itemIndicator,
+        className,
+      )}
       {...rest}
     >
       <SelectionIndicator

@@ -20,6 +20,7 @@ export type TimeFieldHMS = { h: number; m: number; s: number };
 
 export type TimeFieldClassNames = {
   root?: string;
+  label?: string;
   shell?: string;
   prefix?: string;
   suffix?: string;

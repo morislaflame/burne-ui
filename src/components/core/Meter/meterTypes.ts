@@ -11,6 +11,8 @@ export type MeterOrientation = "horizontal" | "vertical";
 export type MeterClassNames = {
   /** Корень поля (`FieldRoot`). */
   root?: string;
+  /** Label в simple API и `Meter.Label`. */
+  label?: string;
   /** `Meter.Header`. */
   header?: string;
   /** `Meter.Value`. */

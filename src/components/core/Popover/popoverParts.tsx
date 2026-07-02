@@ -116,6 +116,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
 
     if (onlyChild) {
       const child = onlyChild as ReactElement<{
+        className?: string;
         "aria-expanded"?: boolean;
         "aria-controls"?: string;
         onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
@@ -124,6 +125,12 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       }>;
 
       return cloneElement(child, {
+        className: mergePopoverSlotClass(
+          slotClassNames.root,
+          slotClassNames.trigger,
+          child.props.className,
+          className,
+        ),
         // Trigger's pointerDown runs FIRST to call e.preventDefault() before child
         onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
           handlePointerDown(e);
@@ -145,6 +152,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         type="button"
         ref={mergedRef}
         className={popoverTriggerClass({
+          rootSlot: slotClassNames.root,
           slotClass: slotClassNames.trigger,
           className,
         })}

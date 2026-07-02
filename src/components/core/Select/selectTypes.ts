@@ -13,6 +13,7 @@ export type SelectOption = {
 
 export type SelectClassNames = {
   root?: string;
+  label?: string;
   triggerGroup?: string;
   value?: string;
   trigger?: string;

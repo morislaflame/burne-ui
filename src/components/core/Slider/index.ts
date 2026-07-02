@@ -1,11 +1,10 @@
-import { Label } from "@/components/core/Label";
-
 import {
   SliderError,
   SliderFill,
   SliderHeader,
   SliderHint,
   SliderIcon,
+  SliderLabel,
   SliderRail,
   SliderRoot,
   SliderThumb,
@@ -16,7 +15,7 @@ import {
 
 export const Slider = Object.assign(SliderRoot, {
   Header: SliderHeader,
-  Label,
+  Label: SliderLabel,
   Value: SliderValue,
   Hint: SliderHint,
   Error: SliderError,

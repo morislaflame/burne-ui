@@ -14,6 +14,7 @@ export type InputSize = ComponentSize;
 
 export type InputClassNames = {
   root?: string;
+  label?: string;
   shell?: string;
   control?: string;
   prefix?: string;

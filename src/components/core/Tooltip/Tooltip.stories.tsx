@@ -371,7 +371,7 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Слоты trigger, content, arrow, panel, glossContent, message, icon, indicator, title и description через prop classNames на корне.",
+          "Слоты root (триггер), trigger, content, arrow, panel, glossContent, message, icon, indicator, title и description через prop classNames на корне.",
       },
     },
   },
@@ -380,6 +380,8 @@ export const CustomClassNames: Story = {
       delayShowMs={0}
       variant="info"
       classNames={{
+        root: "rounded-mid ring-2 ring-primary/35",
+        trigger: "rounded-mid",
         content: "ring-1 ring-primary/25",
         panel: "border-primary/30",
         title: "text-primary font-semibold",

@@ -1,5 +1,7 @@
 import { CheckboxClassNamesFullDemo } from "../demos/checkbox/CheckboxClassNamesFull.demo";
 import checkboxClassNamesFullSource from "../demos/checkbox/CheckboxClassNamesFull.demo.tsx?raw";
+import { CheckboxClassNamesSimpleLabelDemo } from "../demos/checkbox/CheckboxClassNamesSimpleLabel.demo";
+import checkboxClassNamesSimpleLabelSource from "../demos/checkbox/CheckboxClassNamesSimpleLabel.demo.tsx?raw";
 import { CheckboxConsentCardDemo } from "../demos/checkbox/CheckboxConsentCard.demo";
 import checkboxConsentCardSource from "../demos/checkbox/CheckboxConsentCard.demo.tsx?raw";
 import { CheckboxFeatureFlagsDemo } from "../demos/checkbox/CheckboxFeatureFlags.demo";
@@ -46,6 +48,11 @@ export function CheckboxShowcase() {
           align="stretch"
           Demo={CheckboxClassNamesFullDemo}
           source={checkboxClassNamesFullSource}
+        />
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={CheckboxClassNamesSimpleLabelDemo}
+          source={checkboxClassNamesSimpleLabelSource}
         />
       </ShowcaseSection>
 

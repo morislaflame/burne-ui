@@ -320,3 +320,27 @@ export const CustomClassNames: Story = {
     </Checkbox>
   ),
 };
+
+export const SimpleLabelClassNames: Story = {
+  name: "Simple API — classNames.label",
+  parameters: {
+    docs: {
+      description: {
+        story: "В simple API слоты label и labelText стилизуют подпись на корне.",
+      },
+    },
+  },
+  render: () => (
+    <Checkbox
+      defaultChecked
+      label="Email-рассылка"
+      hint="classNames.label и labelText в simple API."
+      classNames={{
+        label: "text-primary",
+        labelText: "font-semibold underline decoration-primary/30 underline-offset-4",
+        hint: "text-muted/80",
+      }}
+      className="max-w-md"
+    />
+  ),
+};

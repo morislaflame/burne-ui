@@ -48,7 +48,7 @@ export function PopoverShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты trigger, content, panel, glossPanel, label, hint и body — через prop classNames."
+        description="Слоты root (триггер), trigger, content, panel, glossPanel, label, hint и body — через prop classNames."
       >
         <ShowcaseDemoFromFile Demo={PopoverClassNamesFullDemo} source={popoverClassNamesFullSource} />
       </ShowcaseSection>

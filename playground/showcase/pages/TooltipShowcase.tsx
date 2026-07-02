@@ -45,7 +45,7 @@ export function TooltipShowcase() {
 
       <ShowcaseSection
         title="Кастомизация classNames"
-        description="Слоты trigger, content, arrow, panel, glossContent, indicator, title и description."
+        description="Слоты root (триггер), trigger, content, arrow, panel, glossContent, indicator, title и description."
       >
         <ShowcaseDemoFromFile Demo={TooltipClassNamesFullDemo} source={tooltipClassNamesFullSource} />
         <ShowcaseDemoFromFile Demo={TooltipClassNamesGlossDemo} source={tooltipClassNamesFullSource} />

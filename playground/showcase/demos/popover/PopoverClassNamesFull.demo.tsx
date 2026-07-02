@@ -6,6 +6,8 @@ export function PopoverClassNamesFullDemo() {
   return (
     <Popover
       classNames={{
+        root: "rounded-mid ring-2 ring-primary/40",
+        trigger: "rounded-mid",
         content: "ring-1 ring-primary/25",
         panel: "border-primary/30 bg-surface/95",
         label: "text-primary font-semibold",
@@ -21,7 +23,7 @@ export function PopoverClassNamesFullDemo() {
       <Popover.Content>
         <Popover.Header>
           <Popover.Label>Настройки отображения</Popover.Label>
-          <Popover.Hint>Слоты panel, label и body через classNames</Popover.Hint>
+          <Popover.Hint>root на триггере, panel/label/body через classNames</Popover.Hint>
         </Popover.Header>
         <Popover.Body>
           <Text as="p" variant="small">

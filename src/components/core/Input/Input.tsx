@@ -25,7 +25,7 @@ export type {
   InputVariant,
 } from "./inputTypes";
 
-export { InputControl, InputError, InputHint } from "./inputParts";
+export { InputControl, InputError, InputHint, InputLabel } from "./inputParts";
 
 export function InputRoot({
   children,

@@ -1,9 +1,8 @@
-import { Label } from "@/components/core/Label";
-
 import {
   ProgressBarError,
   ProgressBarHeader,
   ProgressBarHint,
+  ProgressBarLabel,
   ProgressBarRoot,
   ProgressBarTrack,
   ProgressBarValue,
@@ -11,7 +10,7 @@ import {
 
 export const ProgressBar = Object.assign(ProgressBarRoot, {
   Header: ProgressBarHeader,
-  Label,
+  Label: ProgressBarLabel,
   Value: ProgressBarValue,
   Hint: ProgressBarHint,
   Error: ProgressBarError,

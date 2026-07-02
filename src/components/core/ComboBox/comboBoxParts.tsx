@@ -19,7 +19,7 @@ import {
 } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { Label } from "@/components/core/Label";
+import { Label, type LabelProps } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -598,6 +598,23 @@ export function ComboBoxPopover({
 
 ComboBoxPopover.displayName = "ComboBoxPopover";
 
+export function ComboBoxLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useComboBoxClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeComboBoxSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+ComboBoxLabel.displayName = "ComboBoxLabel";
+
 export function ComboBoxHint({
   children,
   status,
@@ -656,9 +673,15 @@ export function ComboBoxSimpleBody({
   error: React.ReactNode;
   labelId: string;
 }) {
+  const slotClassNames = useComboBoxClassNames();
+
   return (
     <>
-      {label != null ? <Label id={labelId}>{label}</Label> : null}
+      {label != null ? (
+        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+          {label}
+        </Label>
+      ) : null}
       <ComboBoxInputGroup>
         <ComboBoxInput />
         <ComboBoxTrigger />

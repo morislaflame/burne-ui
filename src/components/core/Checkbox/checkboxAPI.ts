@@ -5,7 +5,7 @@ import type { ClassValue } from "clsx";
 
 import { cn } from "@/utils/cn";
 
-import type { CheckboxClassNames, CheckboxVariant } from "./checkboxTypes";
+import type { CheckboxClassNames, CheckboxIndicatorClassNames, CheckboxVariant } from "./checkboxTypes";
 
 export function mergeCheckboxSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
@@ -24,13 +24,26 @@ export function resolveCheckboxIndicatorClassNames({
   className,
 }: {
   slotClassNames: CheckboxClassNames;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: CheckboxIndicatorClassNames;
   className?: string;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeCheckboxSlotClass(slotClassNames.indicator, classNames?.shell, className),
-    fill: mergeCheckboxSlotClass(slotClassNames.indicatorFill, classNames?.fill),
-    mark: mergeCheckboxSlotClass(slotClassNames.indicatorMark, classNames?.mark),
+    shell: mergeCheckboxSlotClass(
+      slotClassNames.indicator,
+      classNames?.shell,
+      classNames?.indicator,
+      className,
+    ),
+    fill: mergeCheckboxSlotClass(
+      slotClassNames.indicatorFill,
+      classNames?.fill,
+      classNames?.indicatorFill,
+    ),
+    mark: mergeCheckboxSlotClass(
+      slotClassNames.indicatorMark,
+      classNames?.mark,
+      classNames?.indicatorMark,
+    ),
   };
 }
 

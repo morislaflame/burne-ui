@@ -5,7 +5,7 @@ import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIn
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
 import { cn } from "@/utils/cn";
 
-import type { ListBoxClassNames, UseListBoxItemStateProps } from "./listBoxTypes";
+import type { ListBoxClassNames, ListBoxItemIndicatorClassNames, UseListBoxItemStateProps } from "./listBoxTypes";
 
 export function mergeListBoxSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
@@ -16,12 +16,24 @@ export function resolveListBoxItemIndicatorClassNames({
   classNames,
 }: {
   slotClassNames: ListBoxClassNames;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: ListBoxItemIndicatorClassNames;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeListBoxSlotClass(slotClassNames.itemIndicatorShell, classNames?.shell),
-    fill: mergeListBoxSlotClass(slotClassNames.itemIndicatorFill, classNames?.fill),
-    mark: mergeListBoxSlotClass(slotClassNames.itemIndicatorMark, classNames?.mark),
+    shell: mergeListBoxSlotClass(
+      slotClassNames.itemIndicatorShell,
+      classNames?.shell,
+      classNames?.itemIndicatorShell,
+    ),
+    fill: mergeListBoxSlotClass(
+      slotClassNames.itemIndicatorFill,
+      classNames?.fill,
+      classNames?.itemIndicatorFill,
+    ),
+    mark: mergeListBoxSlotClass(
+      slotClassNames.itemIndicatorMark,
+      classNames?.mark,
+      classNames?.itemIndicatorMark,
+    ),
   };
 }
 

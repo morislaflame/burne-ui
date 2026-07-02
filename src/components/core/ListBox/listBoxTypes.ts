@@ -105,6 +105,14 @@ export type ListBoxHintProps = HTMLAttributes<HTMLSpanElement>;
 
 export type ListBoxIconProps = HTMLAttributes<HTMLSpanElement>;
 
+export type ListBoxItemIndicatorClassNames = SelectionIndicatorClassNames &
+  Partial<
+    Pick<
+      ListBoxClassNames,
+      "itemIndicator" | "itemIndicatorShell" | "itemIndicatorFill" | "itemIndicatorMark"
+    >
+  >;
+
 export type ListBoxItemIndicatorProps = Omit<
   HTMLAttributes<HTMLSpanElement>,
   "children"
@@ -113,7 +121,7 @@ export type ListBoxItemIndicatorProps = Omit<
   size?: SelectionIndicatorSize;
   check?: boolean;
   children?: ReactNode;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: ListBoxItemIndicatorClassNames;
 };
 
 export type ListBoxRootShellProps = Omit<

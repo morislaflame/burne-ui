@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 
 import "@/components/core/utils/glossPanel.css";
 import { FieldError, FieldHint } from "@/components/core/Field";
+import { Label, type LabelProps } from "@/components/core/Label";
 import {
   ScaleFieldHeader,
   ScaleFieldValue,
@@ -47,8 +48,11 @@ export function SliderSimpleBody({
   errorId?: string;
   trackProps: SliderTrackProps;
 }) {
+  const slotClassNames = useSliderClassNames();
+
   return renderScaleSimpleLayout({
     label,
+    labelClassName: slotClassNames.label,
     showValue,
     valueText,
     hint,
@@ -60,6 +64,23 @@ export function SliderSimpleBody({
     track: <SliderTrack {...trackProps} />,
   });
 }
+
+export function SliderLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useSliderClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeSliderSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+SliderLabel.displayName = "SliderLabel";
 
 export function SliderHeader({ children, className, ...rest }: SliderHeaderProps) {
   const { orientation } = useSliderFieldContext();

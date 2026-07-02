@@ -245,3 +245,29 @@ export const CustomClassNames: Story = {
     </Radio>
   ),
 };
+
+export const SimpleLabelClassNames: Story = {
+  name: "Simple API — classNames.label",
+  parameters: {
+    docs: {
+      description: {
+        story: "В simple API слоты label и labelText стилизуют подпись на корне.",
+      },
+    },
+  },
+  render: () => (
+    <Radio
+      name="simple-label"
+      value="express"
+      defaultChecked
+      label="Экспресс-доставка"
+      hint="Слот label стилизует подпись в simple API."
+      classNames={{
+        label: "text-info",
+        labelText: "font-semibold underline decoration-info/30 underline-offset-4",
+        hint: "text-muted/80",
+      }}
+      className="max-w-md"
+    />
+  ),
+};

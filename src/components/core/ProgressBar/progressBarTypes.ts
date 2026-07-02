@@ -10,6 +10,7 @@ export type ProgressBarOrientation = "horizontal" | "vertical";
 
 export type ProgressBarClassNames = {
   root?: string;
+  label?: string;
   header?: string;
   value?: string;
   track?: string;

@@ -15,6 +15,7 @@ export type TextAreaSize = ComponentSize;
 
 export type TextAreaClassNames = {
   root?: string;
+  label?: string;
   shell?: string;
   control?: string;
   resizeHandle?: string;

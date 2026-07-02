@@ -1,8 +1,7 @@
-import { Label } from "@/components/core/Label";
-
 import {
   ComboBoxError,
   ComboBoxHint,
+  ComboBoxLabel,
   ComboBoxInput,
   ComboBoxInputGroup,
   ComboBoxPopover,
@@ -11,7 +10,7 @@ import {
 } from "./ComboBox";
 
 export const ComboBox = Object.assign(ComboBoxRoot, {
-  Label,
+  Label: ComboBoxLabel,
   InputGroup: ComboBoxInputGroup,
   Input: ComboBoxInput,
   Trigger: ComboBoxTrigger,

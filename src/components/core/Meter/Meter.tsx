@@ -26,6 +26,7 @@ export {
   MeterError,
   MeterHeader,
   MeterHint,
+  MeterLabel,
   MeterSimpleBody,
   MeterTrack,
   MeterValue,

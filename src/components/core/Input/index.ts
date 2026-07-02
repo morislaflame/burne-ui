@@ -1,9 +1,7 @@
-import { Label } from "@/components/core/Label";
-
-import { InputControl, InputError, InputHint, InputRoot } from "./Input";
+import { InputControl, InputError, InputHint, InputLabel, InputRoot } from "./Input";
 
 export const Input = Object.assign(InputRoot, {
-  Label,
+  Label: InputLabel,
   Control: InputControl,
   Hint: InputHint,
   Error: InputError,

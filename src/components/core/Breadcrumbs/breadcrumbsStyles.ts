@@ -25,6 +25,10 @@ export function breadcrumbsListClass(className?: string): string {
   );
 }
 
+export function breadcrumbsRootClass(className?: string): string {
+  return cn(className);
+}
+
 export function breadcrumbListItemClass(className?: string): string {
   return cn("flex items-center gap-xsmall", className);
 }

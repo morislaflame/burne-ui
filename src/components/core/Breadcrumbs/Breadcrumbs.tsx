@@ -11,6 +11,8 @@ import {
 } from "./breadcrumbsParts";
 import { BreadcrumbsSimpleContent } from "./breadcrumbsSimpleContent";
 import { resolveBreadcrumbsAriaLabel } from "./breadcrumbsA11y";
+import { mergeBreadcrumbSlotClass } from "./breadcrumbsAPI";
+import { breadcrumbsRootClass } from "./breadcrumbsStyles";
 import type { BreadcrumbsProps } from "./breadcrumbsTypes";
 import { useBreadcrumbsRootState } from "./useBreadcrumbsRootState";
 
@@ -44,7 +46,9 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
           <nav
             ref={ref}
             aria-label={resolveBreadcrumbsAriaLabel(ariaLabel)}
-            className={className}
+            className={breadcrumbsRootClass(
+              mergeBreadcrumbSlotClass("", classNames?.root, className),
+            )}
             {...rest}
           >
             {isCompound ? (

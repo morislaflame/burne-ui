@@ -16,7 +16,7 @@ import { IoClose, IoEye, IoEyeOff, IoFolderOpen } from "react-icons/io5";
 
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { Label } from "@/components/core/Label";
+import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
@@ -573,6 +573,23 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
 
 InputControl.displayName = "InputControl";
 
+export function InputLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useInputClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeInputSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+InputLabel.displayName = "InputLabel";
+
 export function InputHint({
   children,
   status,
@@ -636,9 +653,15 @@ export function InputSimpleBody({
   status,
   controlProps,
 }: InputSimpleBodyProps) {
+  const slotClassNames = useInputClassNames();
+
   return (
     <>
-      {label != null ? <Label id={labelId}>{label}</Label> : null}
+      {label != null ? (
+        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+          {label}
+        </Label>
+      ) : null}
       <InputControl id={inputId} size={size} status={status} {...controlProps} />
       {hint != null ? <InputHint>{hint}</InputHint> : null}
       {error != null ? <InputError>{error}</InputError> : null}

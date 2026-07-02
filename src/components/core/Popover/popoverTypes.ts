@@ -12,6 +12,7 @@ export type PopoverVariant = "default" | "gloss";
 export type PopoverContentGap = "small" | "base" | "plus" | "mid";
 
 export type PopoverClassNames = {
+  root?: string;
   trigger?: string;
   content?: string;
   panel?: string;

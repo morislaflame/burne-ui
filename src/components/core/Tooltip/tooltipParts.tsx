@@ -363,6 +363,7 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
 
     if (onlyChild) {
       const child = onlyChild as ReactElement<{
+        className?: string;
         "aria-describedby"?: string;
         onPointerEnter?: (e: React.PointerEvent<HTMLElement>) => void;
         onPointerLeave?: (e: React.PointerEvent<HTMLElement>) => void;
@@ -378,6 +379,12 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
           onFocus,
           onBlur,
         }),
+        className: mergeTooltipSlotClass(
+          slotClassNames.root,
+          slotClassNames.trigger,
+          child.props.className,
+          className,
+        ),
         "aria-describedby": mergeDescribedBy(child.props["aria-describedby"], tooltipId, open),
         ref: mergeRefs(child.props.ref, mergedRef),
       });
@@ -386,7 +393,12 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
     return (
       <span
         ref={mergedRef}
-        className={mergeTooltipSlotClass(TOOLTIP_TRIGGER_BASE_CLASS, slotClassNames.trigger, className)}
+        className={mergeTooltipSlotClass(
+          TOOLTIP_TRIGGER_BASE_CLASS,
+          slotClassNames.root,
+          slotClassNames.trigger,
+          className,
+        )}
         aria-describedby={open ? tooltipId : undefined}
         tabIndex={rest.tabIndex ?? 0}
         {...bindTriggerEvents(triggerHandlers, {

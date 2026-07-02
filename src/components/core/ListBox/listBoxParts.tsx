@@ -379,7 +379,11 @@ export function ListBoxItemIndicator({
 
   return (
     <OptionListItemIndicatorShell
-      className={mergeListBoxSlotClass(slotClassNames.itemIndicator, className)}
+      className={mergeListBoxSlotClass(
+        slotClassNames.itemIndicator,
+        classNamesProp?.itemIndicator,
+        className,
+      )}
       {...rest}
     >
       <SelectionIndicator

@@ -16,6 +16,7 @@ export type SliderThumbKind = "single" | "start" | "end";
 
 export type SliderClassNames = {
   root?: string;
+  label?: string;
   header?: string;
   value?: string;
   hint?: string;

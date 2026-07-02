@@ -37,6 +37,7 @@ export {
   SliderCompoundThumb as SliderThumb,
   SliderIcon,
   SliderHeader,
+  SliderLabel,
   SliderValue,
   SliderHint,
   SliderError,

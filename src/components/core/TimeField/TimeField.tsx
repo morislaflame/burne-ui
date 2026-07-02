@@ -24,7 +24,7 @@ export type {
   TimeFieldVariant,
 } from "./timeFieldTypes";
 
-export { TimeFieldControl, TimeFieldError, TimeFieldHint } from "./timeFieldParts";
+export { TimeFieldControl, TimeFieldError, TimeFieldHint, TimeFieldLabel } from "./timeFieldParts";
 
 export function TimeFieldRoot({
   children,

@@ -1,6 +1,8 @@
 import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactNode } from "react";
 
 export type BreadcrumbsClassNames = {
+  /** Корневой `<nav>`. */
+  root?: string;
   /** `<ol>` у `Breadcrumbs.List` и simple-режима. */
   list?: string;
   /** `<li>` в `Breadcrumbs.List`. */

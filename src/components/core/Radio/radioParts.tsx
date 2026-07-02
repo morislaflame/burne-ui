@@ -301,6 +301,7 @@ export function RadioSimpleBody({
           radioLabelCellClass(),
           !secondaryLines && RADIO_SIMPLE_LABEL_WRAP_CLASS,
           slotClassNames.simpleLabelWrap,
+          slotClassNames.label,
         )}
       >
         <Text

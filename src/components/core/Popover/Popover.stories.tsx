@@ -320,13 +320,15 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Слоты trigger, content, panel, label, hint и body через prop classNames.",
+          "Слоты root (триггер), trigger, content, panel, label, hint и body через prop classNames.",
       },
     },
   },
   render: () => (
     <Popover
       classNames={{
+        root: "rounded-mid ring-2 ring-primary/40",
+        trigger: "rounded-mid",
         content: "ring-1 ring-primary/20",
         panel: "border-primary/25",
         label: "text-primary",

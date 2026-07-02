@@ -1,14 +1,13 @@
-import { Label } from "@/components/core/Label";
-
 import {
   TimeFieldControl,
   TimeFieldError,
   TimeFieldHint,
+  TimeFieldLabel,
   TimeFieldRoot,
 } from "./TimeField";
 
 export const TimeField = Object.assign(TimeFieldRoot, {
-  Label,
+  Label: TimeFieldLabel,
   Control: TimeFieldControl,
   Hint: TimeFieldHint,
   Error: TimeFieldError,

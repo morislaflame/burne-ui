@@ -1,3 +1,5 @@
+import { AvatarClassNamesGlossDemo } from "../demos/avatar/AvatarClassNamesGloss.demo";
+import avatarClassNamesGlossSource from "../demos/avatar/AvatarClassNamesGloss.demo.tsx?raw";
 import { AvatarCommentRowDemo } from "../demos/avatar/AvatarCommentRow.demo";
 import avatarCommentRowSource from "../demos/avatar/AvatarCommentRow.demo.tsx?raw";
 import { AvatarGlossDemo } from "../demos/avatar/AvatarGloss.demo";
@@ -30,6 +32,13 @@ export function AvatarShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность.">
         <ShowcaseDemoFromFile Demo={AvatarGlossDemo} source={avatarGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="В gloss: root и className — на круге аватара, glossWrap — на внешней оболочке."
+      >
+        <ShowcaseDemoFromFile Demo={AvatarClassNamesGlossDemo} source={avatarClassNamesGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

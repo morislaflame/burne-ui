@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 
 import { FieldError, FieldHint } from "@/components/core/Field";
-import { Label } from "@/components/core/Label";
+import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
 import { mergeMeterSlotClass } from "./meterAPI";
@@ -34,13 +34,16 @@ export function MeterSimpleBody({
   error,
   trackProps,
 }: MeterSimpleBodyProps) {
+  const slotClassNames = useMeterClassNames();
   const showHeader = label != null || showValue || valueText != null;
 
   return (
     <>
       {showHeader ? (
         <MeterHeader>
-          {label != null ? <Label>{label}</Label> : null}
+          {label != null ? (
+            <Label classNames={{ root: slotClassNames.label }}>{label}</Label>
+          ) : null}
           {valueText != null ? (
             <MeterValue>{valueText}</MeterValue>
           ) : showValue ? (
@@ -56,6 +59,23 @@ export function MeterSimpleBody({
     </>
   );
 }
+
+export function MeterLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useMeterClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeMeterSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+MeterLabel.displayName = "MeterLabel";
 
 export function MeterHeader({ children, className, ...rest }: MeterHeaderProps) {
   const { orientation } = useMeterFieldContext();

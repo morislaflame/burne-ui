@@ -5,7 +5,7 @@ import type { ClassValue } from "clsx";
 
 import { cn } from "@/utils/cn";
 
-import type { RadioClassNames, RadioVariant } from "./radioTypes";
+import type { RadioClassNames, RadioIndicatorClassNames, RadioVariant } from "./radioTypes";
 
 export function mergeRadioSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
@@ -21,13 +21,26 @@ export function resolveRadioIndicatorClassNames({
   className,
 }: {
   slotClassNames: RadioClassNames;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: RadioIndicatorClassNames;
   className?: string;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeRadioSlotClass(slotClassNames.indicator, classNames?.shell, className),
-    fill: mergeRadioSlotClass(slotClassNames.indicatorFill, classNames?.fill),
-    mark: mergeRadioSlotClass(slotClassNames.indicatorMark, classNames?.mark),
+    shell: mergeRadioSlotClass(
+      slotClassNames.indicator,
+      classNames?.shell,
+      classNames?.indicator,
+      className,
+    ),
+    fill: mergeRadioSlotClass(
+      slotClassNames.indicatorFill,
+      classNames?.fill,
+      classNames?.indicatorFill,
+    ),
+    mark: mergeRadioSlotClass(
+      slotClassNames.indicatorMark,
+      classNames?.mark,
+      classNames?.indicatorMark,
+    ),
   };
 }
 

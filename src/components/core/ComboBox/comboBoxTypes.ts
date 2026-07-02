@@ -14,6 +14,7 @@ export type ComboBoxOption = {
 
 export type ComboBoxClassNames = {
   root?: string;
+  label?: string;
   inputGroup?: string;
   input?: string;
   trigger?: string;

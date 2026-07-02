@@ -52,6 +52,7 @@ export type ScaleSimpleLayoutParts = {
 
 export type ScaleSimpleLayoutProps = ScaleSimpleLayoutParts & {
   label?: ReactNode;
+  labelClassName?: string;
   showValue?: boolean;
   valueText?: ReactNode;
   hint?: ReactNode;

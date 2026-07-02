@@ -10,7 +10,8 @@ export function TooltipClassNamesFullDemo() {
       variant="info"
       side="top"
       classNames={{
-        trigger: "rounded-full ring-1 ring-primary/20",
+        root: "rounded-full ring-2 ring-primary/35",
+        trigger: "rounded-full",
         content: "ring-1 ring-primary/25",
         arrow: "bg-surface-tint-info",
         panel: "border-primary/30",
@@ -28,7 +29,7 @@ export function TooltipClassNamesFullDemo() {
         <Tooltip.Arrow />
         <Tooltip.Title>Кастомные слоты</Tooltip.Title>
         <Tooltip.Description>
-          trigger, content, arrow, panel, indicator, title и description через classNames.
+          trigger, root, content, arrow, panel, indicator, title и description через classNames.
         </Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>

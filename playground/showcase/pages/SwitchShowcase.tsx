@@ -4,6 +4,8 @@ import { SwitchCompoundThemeDemo } from "../demos/switch/SwitchCompoundTheme.dem
 import switchCompoundThemeSource from "../demos/switch/SwitchCompoundTheme.demo.tsx?raw";
 import { SwitchClassNamesFullDemo } from "../demos/switch/SwitchClassNamesFull.demo";
 import switchClassNamesFullSource from "../demos/switch/SwitchClassNamesFull.demo.tsx?raw";
+import { SwitchClassNamesSimpleLabelDemo } from "../demos/switch/SwitchClassNamesSimpleLabel.demo";
+import switchClassNamesSimpleLabelSource from "../demos/switch/SwitchClassNamesSimpleLabel.demo.tsx?raw";
 import { SwitchDisabledDemo } from "../demos/switch/SwitchDisabled.demo";
 import switchDisabledSource from "../demos/switch/SwitchDisabled.demo.tsx?raw";
 import { SwitchGlossDemo } from "../demos/switch/SwitchGloss.demo";
@@ -48,6 +50,11 @@ export function SwitchShowcase() {
           align="stretch"
           Demo={SwitchClassNamesFullDemo}
           source={switchClassNamesFullSource}
+        />
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={SwitchClassNamesSimpleLabelDemo}
+          source={switchClassNamesSimpleLabelSource}
         />
       </ShowcaseSection>
 

@@ -335,6 +335,7 @@ export function CheckboxSimpleBody({
           checkboxLabelCellClass(),
           !secondaryLines && CHECKBOX_SIMPLE_LABEL_WRAP_CLASS,
           slotClassNames.simpleLabelWrap,
+          slotClassNames.label,
         )}
       >
         <Text

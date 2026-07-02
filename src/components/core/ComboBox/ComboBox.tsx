@@ -11,6 +11,7 @@ import {
 import {
   ComboBoxError,
   ComboBoxHint,
+  ComboBoxLabel,
   ComboBoxInput,
   ComboBoxInputGroup,
   ComboBoxPopover,
@@ -120,6 +121,7 @@ export {
   ComboBoxInputGroup,
   ComboBoxTrigger,
   ComboBoxPopover,
+  ComboBoxLabel,
   ComboBoxHint,
   ComboBoxError,
 };

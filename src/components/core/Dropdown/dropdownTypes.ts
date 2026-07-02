@@ -109,6 +109,14 @@ export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement>;
 export type DropdownItemHintProps = HTMLAttributes<HTMLSpanElement>;
 export type DropdownItemIconProps = HTMLAttributes<HTMLSpanElement>;
 
+export type DropdownItemIndicatorClassNames = SelectionIndicatorClassNames &
+  Partial<
+    Pick<
+      DropdownClassNames,
+      "itemIndicator" | "itemIndicatorShell" | "itemIndicatorFill" | "itemIndicatorMark"
+    >
+  >;
+
 export type DropdownItemIndicatorProps = Omit<
   HTMLAttributes<HTMLSpanElement>,
   "children"
@@ -117,7 +125,7 @@ export type DropdownItemIndicatorProps = Omit<
   size?: SelectionIndicatorSize;
   check?: boolean;
   children?: ReactNode;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: DropdownItemIndicatorClassNames;
 };
 
 export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {

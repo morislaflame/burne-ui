@@ -1,16 +1,15 @@
-import { Label } from "@/components/core/Label";
-
 import { MeterRoot, MeterTrack } from "./Meter";
 import {
   MeterError,
   MeterHeader,
   MeterHint,
+  MeterLabel,
   MeterValue,
 } from "./meterParts";
 
 export const Meter = Object.assign(MeterRoot, {
   Header: MeterHeader,
-  Label,
+  Label: MeterLabel,
   Value: MeterValue,
   Hint: MeterHint,
   Error: MeterError,

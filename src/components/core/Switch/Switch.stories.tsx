@@ -328,3 +328,27 @@ export const CustomClassNames: Story = {
     </Switch>
   ),
 };
+
+export const SimpleLabelClassNames: Story = {
+  name: "Simple API — classNames.label",
+  parameters: {
+    docs: {
+      description: {
+        story: "В simple API слоты label и labelText стилизуют подпись на корне.",
+      },
+    },
+  },
+  render: () => (
+    <Switch
+      defaultChecked
+      label="Push-уведомления"
+      hint="classNames.label применяется к ячейке подписи."
+      classNames={{
+        label: "text-success",
+        labelText: "font-semibold underline decoration-success/30 underline-offset-4",
+        hint: "text-muted/80",
+      }}
+      className="max-w-md"
+    />
+  ),
+};

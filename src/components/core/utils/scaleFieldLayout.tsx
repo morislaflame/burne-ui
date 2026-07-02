@@ -6,6 +6,7 @@ import type { ScaleSimpleLayoutProps } from "./scaleFieldParts";
 /** Разметка simple mode для Meter / ProgressBar / Slider. */
 export function renderScaleSimpleLayout({
   label,
+  labelClassName,
   showValue,
   valueText,
   hint,
@@ -22,7 +23,11 @@ export function renderScaleSimpleLayout({
     <>
       {showHeader ? (
         <Header>
-          {label != null ? <Label>{label}</Label> : null}
+          {label != null ? (
+            <Label classNames={labelClassName ? { root: labelClassName } : undefined}>
+              {label}
+            </Label>
+          ) : null}
           {valueText != null ? (
             <Value>{valueText}</Value>
           ) : showValue ? (

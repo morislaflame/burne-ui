@@ -26,6 +26,7 @@ export {
   ProgressBarError,
   ProgressBarHeader,
   ProgressBarHint,
+  ProgressBarLabel,
   ProgressBarSimpleBody,
   ProgressBarTrack,
   ProgressBarValue,

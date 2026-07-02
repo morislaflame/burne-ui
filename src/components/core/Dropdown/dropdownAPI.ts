@@ -5,7 +5,7 @@ import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIn
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
 import { cn } from "@/utils/cn";
 
-import type { DropdownClassNames } from "./dropdownTypes";
+import type { DropdownClassNames, DropdownItemIndicatorClassNames } from "./dropdownTypes";
 
 export function mergeDropdownSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
@@ -16,12 +16,24 @@ export function resolveDropdownItemIndicatorClassNames({
   classNames,
 }: {
   slotClassNames: DropdownClassNames;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: DropdownItemIndicatorClassNames;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeDropdownSlotClass(slotClassNames.itemIndicatorShell, classNames?.shell),
-    fill: mergeDropdownSlotClass(slotClassNames.itemIndicatorFill, classNames?.fill),
-    mark: mergeDropdownSlotClass(slotClassNames.itemIndicatorMark, classNames?.mark),
+    shell: mergeDropdownSlotClass(
+      slotClassNames.itemIndicatorShell,
+      classNames?.shell,
+      classNames?.itemIndicatorShell,
+    ),
+    fill: mergeDropdownSlotClass(
+      slotClassNames.itemIndicatorFill,
+      classNames?.fill,
+      classNames?.itemIndicatorFill,
+    ),
+    mark: mergeDropdownSlotClass(
+      slotClassNames.itemIndicatorMark,
+      classNames?.mark,
+      classNames?.itemIndicatorMark,
+    ),
   };
 }
 

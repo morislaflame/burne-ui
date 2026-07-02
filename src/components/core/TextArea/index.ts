@@ -1,9 +1,7 @@
-import { Label } from "@/components/core/Label";
-
-import { TextAreaControl, TextAreaError, TextAreaHint, TextAreaRoot } from "./TextArea";
+import { TextAreaControl, TextAreaError, TextAreaHint, TextAreaLabel, TextAreaRoot } from "./TextArea";
 
 export const TextArea = Object.assign(TextAreaRoot, {
-  Label,
+  Label: TextAreaLabel,
   Control: TextAreaControl,
   Hint: TextAreaHint,
   Error: TextAreaError,

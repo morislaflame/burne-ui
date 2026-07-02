@@ -56,9 +56,12 @@ export type CheckboxProps = CheckboxRootProps;
 
 export type CheckboxControlProps = HTMLAttributes<HTMLSpanElement>;
 
+export type CheckboxIndicatorClassNames = SelectionIndicatorClassNames &
+  Partial<Pick<CheckboxClassNames, "indicator" | "indicatorFill" | "indicatorMark">>;
+
 export type CheckboxIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: CheckboxIndicatorClassNames;
 };
 
 export type CheckboxContentProps = HTMLAttributes<HTMLDivElement> & {

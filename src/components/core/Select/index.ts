@@ -1,8 +1,7 @@
-import { Label } from "@/components/core/Label";
-
 import {
   SelectError,
   SelectHint,
+  SelectLabel,
   SelectPopover,
   SelectRoot,
   SelectTrigger,
@@ -11,7 +10,7 @@ import {
 } from "./Select";
 
 export const Select = Object.assign(SelectRoot, {
-  Label,
+  Label: SelectLabel,
   TriggerGroup: SelectTriggerGroup,
   Value: SelectValue,
   Trigger: SelectTrigger,

@@ -224,3 +224,54 @@ export const GlossLight: Story = {
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
+
+export const CustomClassNames: Story = {
+  name: "Gloss — classNames root и glossWrap",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "В variant gloss слот root и prop className попадают на круг аватара; glossWrap — на внешнюю стеклянную оболочку.",
+      },
+    },
+  },
+  decorators: [glossDottedDecorator(false)],
+  render: () => (
+    <div className="flex flex-wrap items-center gap-xlarge">
+      <Avatar
+        variant="gloss"
+        size="base"
+        label="Root"
+        src={PIN_IMAGE1}
+        alt=""
+        loading="lazy"
+        classNames={{
+          root: "ring-2 ring-primary ring-offset-2 ring-offset-background",
+          glossWrap: "rounded-full",
+        }}
+      />
+      <Avatar
+        variant="gloss"
+        size="mid"
+        label="Wrap"
+        src={PIN_IMAGE2}
+        alt=""
+        loading="lazy"
+        classNames={{
+          root: "border border-info/40",
+          glossWrap: "p-0.5 ring-1 ring-info/30 rounded-full",
+        }}
+      />
+      <Avatar
+        variant="gloss"
+        size="large"
+        label="Fallback"
+        className="text-primary"
+        classNames={{
+          root: "bg-primary/10 text-primary font-semibold",
+          glossWrap: "shadow-token-md",
+        }}
+      />
+    </div>
+  ),
+};

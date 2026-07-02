@@ -8,7 +8,7 @@ import {
 
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { Label } from "@/components/core/Label";
+import { Label, type LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
 
@@ -186,6 +186,23 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
 TextAreaControl.displayName = "TextAreaControl";
 
+export function TextAreaLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useTextAreaClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeTextAreaSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+TextAreaLabel.displayName = "TextAreaLabel";
+
 export function TextAreaHint({
   children,
   status,
@@ -249,9 +266,15 @@ export function TextAreaSimpleBody({
   status,
   controlProps,
 }: TextAreaSimpleBodyProps) {
+  const slotClassNames = useTextAreaClassNames();
+
   return (
     <>
-      {label != null ? <Label id={labelId}>{label}</Label> : null}
+      {label != null ? (
+        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+          {label}
+        </Label>
+      ) : null}
       <TextAreaControl id={textareaId} size={size} status={status} {...controlProps} />
       {hint != null ? <TextAreaHint>{hint}</TextAreaHint> : null}
       {error != null ? <TextAreaError>{error}</TextAreaError> : null}

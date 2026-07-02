@@ -24,6 +24,7 @@ export type TooltipSurface = "default" | "gloss";
 export type TooltipSize = "small" | "base" | "mid" | "large";
 
 export type TooltipClassNames = {
+  root?: string;
   trigger?: string;
   content?: string;
   arrow?: string;

@@ -2,6 +2,8 @@ import { RadioGroupContactMethodDemo } from "../demos/radioGroup/RadioGroupConta
 import radioGroupContactMethodSource from "../demos/radioGroup/RadioGroupContactMethod.demo.tsx?raw";
 import { RadioClassNamesFullDemo } from "../demos/radio/RadioClassNamesFull.demo";
 import radioClassNamesFullSource from "../demos/radio/RadioClassNamesFull.demo.tsx?raw";
+import { RadioClassNamesSimpleLabelDemo } from "../demos/radio/RadioClassNamesSimpleLabel.demo";
+import radioClassNamesSimpleLabelSource from "../demos/radio/RadioClassNamesSimpleLabel.demo.tsx?raw";
 import { RadioSizesDemo } from "../demos/radioGroup/RadioSizes.demo";
 import radioSizesSource from "../demos/radioGroup/RadioSizes.demo.tsx?raw";
 import { RadioGroupCustomIndicatorDemo } from "../demos/radioGroup/RadioGroupCustomIndicator.demo";
@@ -42,6 +44,11 @@ export function RadioGroupShowcase() {
           align="stretch"
           Demo={RadioClassNamesFullDemo}
           source={radioClassNamesFullSource}
+        />
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={RadioClassNamesSimpleLabelDemo}
+          source={radioClassNamesSimpleLabelSource}
         />
       </ShowcaseSection>
 

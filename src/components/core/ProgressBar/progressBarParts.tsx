@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 
 import { FieldError, FieldHint } from "@/components/core/Field";
-import { Label } from "@/components/core/Label";
+import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
 import { mergeProgressBarSlotClass } from "./progressBarAPI";
@@ -36,13 +36,16 @@ export function ProgressBarSimpleBody({
   error,
   trackProps,
 }: ProgressBarSimpleBodyProps) {
+  const slotClassNames = useProgressBarClassNames();
   const showHeader = label != null || showValue || valueText != null;
 
   return (
     <>
       {showHeader ? (
         <ProgressBarHeader>
-          {label != null ? <Label>{label}</Label> : null}
+          {label != null ? (
+            <Label classNames={{ root: slotClassNames.label }}>{label}</Label>
+          ) : null}
           {valueText != null ? (
             <ProgressBarValue>{valueText}</ProgressBarValue>
           ) : showValue ? (
@@ -56,6 +59,23 @@ export function ProgressBarSimpleBody({
     </>
   );
 }
+
+export function ProgressBarLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useProgressBarClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeProgressBarSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+ProgressBarLabel.displayName = "ProgressBarLabel";
 
 export function ProgressBarHeader({
   children,

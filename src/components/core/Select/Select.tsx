@@ -11,6 +11,7 @@ import {
 import {
   SelectError,
   SelectHint,
+  SelectLabel,
   SelectPopover,
   SelectSimpleBody,
   SelectTrigger,
@@ -120,6 +121,7 @@ export {
   SelectValue,
   SelectTrigger,
   SelectPopover,
+  SelectLabel,
   SelectHint,
   SelectError,
 };

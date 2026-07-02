@@ -200,13 +200,13 @@ export const AvatarGlossShell = forwardRef<HTMLDivElement, AvatarShellProps>(
     return (
       <div
         ref={ref}
-        className={avatarGlossWrapClass(size, cn(slotClassNames.glossWrap, className))}
+        className={avatarGlossWrapClass(size, slotClassNames.glossWrap)}
         {...outerRest}
       >
         <div className={AVATAR_GLOSS_SHADOW_CLASS} aria-hidden />
         <div
           role={role}
-          className={avatarRootClass(size, true, slotClassNames.root)}
+          className={avatarRootClass(size, true, cn(slotClassNames.root, className))}
           aria-label={ariaLabel}
         >
           {children}

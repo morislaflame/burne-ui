@@ -56,9 +56,12 @@ export type RadioProps = RadioRootProps;
 
 export type RadioControlProps = HTMLAttributes<HTMLSpanElement>;
 
+export type RadioIndicatorClassNames = SelectionIndicatorClassNames &
+  Partial<Pick<RadioClassNames, "indicator" | "indicatorFill" | "indicatorMark">>;
+
 export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: RadioIndicatorClassNames;
 };
 
 export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {

@@ -17,7 +17,7 @@ import {
 } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { Label } from "@/components/core/Label";
+import { Label, type LabelProps } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -559,6 +559,23 @@ export function SelectPopover({
 
 SelectPopover.displayName = "SelectPopover";
 
+export function SelectLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useSelectClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeSelectSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+SelectLabel.displayName = "SelectLabel";
+
 export function SelectHint({
   children,
   status,
@@ -617,9 +634,15 @@ export function SelectSimpleBody({
   error: React.ReactNode;
   labelId: string;
 }) {
+  const slotClassNames = useSelectClassNames();
+
   return (
     <>
-      {label != null ? <Label id={labelId}>{label}</Label> : null}
+      {label != null ? (
+        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+          {label}
+        </Label>
+      ) : null}
       <SelectTriggerGroup>
         <SelectValue />
         <SelectTrigger />

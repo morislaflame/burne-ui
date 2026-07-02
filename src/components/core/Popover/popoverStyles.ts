@@ -95,13 +95,15 @@ export const POPOVER_LABEL_CLASS = "min-w-0 font-medium";
 export const POPOVER_BODY_CLASS = "min-h-0 min-w-0 text-left";
 
 export function popoverTriggerClass({
+  rootSlot,
   slotClass,
   className,
 }: {
+  rootSlot?: string;
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePopoverSlotClass(POPOVER_TRIGGER_CLASS, slotClass, className);
+  return mergePopoverSlotClass(POPOVER_TRIGGER_CLASS, rootSlot, slotClass, className);
 }
 
 export function popoverContentClass({

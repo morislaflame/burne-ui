@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { forwardRef } from "react";
 
 import { FieldError, FieldHint } from "@/components/core/Field";
-import { Label } from "@/components/core/Label";
+import { Label, type LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
 
@@ -218,6 +218,23 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
 
 TimeFieldControl.displayName = "TimeFieldControl";
 
+export function TimeFieldLabel({ className, classNames, ...rest }: LabelProps) {
+  const slotClassNames = useTimeFieldClassNames();
+
+  return (
+    <Label
+      className={className}
+      classNames={{
+        ...classNames,
+        root: mergeTimeFieldSlotClass(slotClassNames.label, classNames?.root),
+      }}
+      {...rest}
+    />
+  );
+}
+
+TimeFieldLabel.displayName = "TimeFieldLabel";
+
 export function TimeFieldHint({
   children,
   id: idProp,
@@ -271,9 +288,15 @@ export function TimeFieldSimpleBody({
   labelId,
   controlProps,
 }: TimeFieldSimpleBodyProps) {
+  const slotClassNames = useTimeFieldClassNames();
+
   return (
     <>
-      {label != null && <Label id={labelId}>{label}</Label>}
+      {label != null ? (
+        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+          {label}
+        </Label>
+      ) : null}
       <TimeFieldControl {...controlProps} />
       {hint != null && <TimeFieldHint>{hint}</TimeFieldHint>}
       {error != null && <TimeFieldError>{error}</TimeFieldError>}

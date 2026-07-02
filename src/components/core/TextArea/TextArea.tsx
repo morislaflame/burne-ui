@@ -24,7 +24,7 @@ export type {
   TextAreaVariant,
 } from "./textAreaTypes";
 
-export { TextAreaControl, TextAreaError, TextAreaHint } from "./textAreaParts";
+export { TextAreaControl, TextAreaError, TextAreaHint, TextAreaLabel } from "./textAreaParts";
 
 export function TextAreaRoot({
   children,
