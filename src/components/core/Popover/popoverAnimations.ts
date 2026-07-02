@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { killMotion } from "@/components/core/utils/gsapMotion";
-import { shadowSm } from "@/components/core/utils/hoverInteractiveLift";
+import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import {
   animatePortalClose,
@@ -80,7 +80,7 @@ export function usePopoverContentLifecycle({
     if (open) setPortalMounted(true);
   }, [open]);
 
-  usePersistentElShadow(panelRef, !isGloss, shadowSm);
+  usePersistentElShadow(panelRef, !isGloss, shadowBase);
 
   useLayoutEffect(() => {
     if (!open) return;

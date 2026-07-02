@@ -177,7 +177,7 @@ export function timeFieldShellClass({
     FIELD_SHELL_FOCUS_CLASS,
     isGloss ? "" : fieldShellHoverClass(!disabled, status),
     isGloss ? glossShellHoverMotionClass : standardShellHoverMotionClass,
-    disabled ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
+    disabled ? "cursor-not-allowed opacity-55 shadow-token-base" : "",
     slotClass,
     className,
   );

@@ -29,9 +29,9 @@ const SURFACE_VARIANT: Record<Exclude<SurfaceVariant, "gloss">, string> = {
 
 const SURFACE_SHADOW: Record<SurfaceShadow, string> = {
   none: "",
-  sm: "shadow-token-sm",
-  md: "shadow-token-md",
-  lg: "shadow-token-lg",
+  base: "shadow-token-base",
+  mid: "shadow-token-mid",
+  large: "shadow-token-large",
 };
 
 const SURFACE_PADDING: Record<SurfacePadding, string> = {

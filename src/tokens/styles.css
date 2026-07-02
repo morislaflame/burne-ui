@@ -274,12 +274,6 @@
   --space-xlarge: calc(var(--space) * 3);
 
   /**
-   * Зазор между ячейками календаря (сетка дней).
-   * При дефолтном `--space` (0.5rem) = 0; растёт при увеличении spacing в теме.
-   */
-  --calendar-cell-gap: max(0px, calc((var(--space) - 0.5rem) * 2));
-
-  /**
    * Базовый радиус скругления. Ступени — множители (одна «ручка» для white-label).
    * Утилиты: `rounded-xsmall` … `rounded-large`.
    */
@@ -292,67 +286,79 @@
 
   /**
    * Примитивная типографическая шкала (`--text-scale-*`).
+   * Ступени: `tools`, `xsmall` … `3xlarge` — как у `--space-*` / `--radius-value-*`.
    * line-height = calc(высота_строки / font-size) — unitless, как Tailwind v4.
    */
   --text-scale-tools: 0.6875rem;
   --text-scale-tools--line-height: calc(0.875rem / 0.6875rem);
 
-  --text-scale-xs: 0.75rem;
-  --text-scale-xs--line-height: calc(1rem / 0.75rem);
+  --text-scale-xsmall: 0.75rem;
+  --text-scale-xsmall--line-height: calc(1rem / 0.75rem);
 
-  --text-scale-sm: 0.875rem;
-  --text-scale-sm--line-height: calc(1.25rem / 0.875rem);
+  --text-scale-small: 0.875rem;
+  --text-scale-small--line-height: calc(1.25rem / 0.875rem);
 
-  --text-scale-md: 1rem;
-  --text-scale-md--line-height: calc(1.5rem / 1rem);
+  --text-scale-base: 1rem;
+  --text-scale-base--line-height: calc(1.5rem / 1rem);
 
-  --text-scale-lg: 1.125rem;
-  --text-scale-lg--line-height: calc(1.75rem / 1.125rem);
+  --text-scale-mid: 1.125rem;
+  --text-scale-mid--line-height: calc(1.75rem / 1.125rem);
 
-  --text-scale-xl: 1.25rem;
-  --text-scale-xl--line-height: calc(1.75rem / 1.25rem);
+  --text-scale-large: 1.25rem;
+  --text-scale-large--line-height: calc(1.75rem / 1.25rem);
 
-  --text-scale-2xl: 1.5rem;
-  --text-scale-2xl--line-height: calc(2rem / 1.5rem);
+  --text-scale-xlarge: 1.5rem;
+  --text-scale-xlarge--line-height: calc(2rem / 1.5rem);
 
-  --text-scale-3xl: 1.875rem;
-  --text-scale-3xl--line-height: calc(2.25rem / 1.875rem);
+  --text-scale-2xlarge: 1.875rem;
+  --text-scale-2xlarge--line-height: calc(2.25rem / 1.875rem);
 
-  --text-scale-4xl: 2.25rem;
-  --text-scale-4xl--line-height: calc(2.5rem / 2.25rem);
+  --text-scale-3xlarge: 2.25rem;
+  --text-scale-3xlarge--line-height: calc(2.5rem / 2.25rem);
+
+  /**
+   * Примитивная шкала начертания (`--font-w-*`).
+   * Семантические роли текста ссылаются на эти токены.
+   */
+  --font-w-small: 400;
+  --font-w-base: 400;
+  --font-w-mid: 500;
+  --font-w-strong: 600;
+  --font-w-bold: 700;
+
 
   /** Семантические роли UI-текста (алиасы шкалы + weight). */
-  --text-accent-header-size: var(--text-scale-4xl);
-  --text-accent-header-line-height: var(--text-scale-4xl--line-height);
-  --text-accent-header-weight: 600;
+  --text-accent-header-size: var(--text-scale-3xlarge);
+  --text-accent-header-line-height: var(--text-scale-3xlarge--line-height);
+  --text-accent-header-weight: var(--font-w-bold);
 
-  --text-header-1-size: var(--text-scale-3xl);
-  --text-header-1-line-height: var(--text-scale-3xl--line-height);
-  --text-header-1-weight: 600;
+  --text-header-1-size: var(--text-scale-2xlarge);
+  --text-header-1-line-height: var(--text-scale-2xlarge--line-height);
+  --text-header-1-weight: var(--font-w-strong);
 
-  --text-header-2-size: var(--text-scale-2xl);
-  --text-header-2-line-height: var(--text-scale-2xl--line-height);
-  --text-header-2-weight: 600;
+  --text-header-2-size: var(--text-scale-xlarge);
+  --text-header-2-line-height: var(--text-scale-xlarge--line-height);
+  --text-header-2-weight: var(--font-w-strong);
 
-  --text-large-size: var(--text-scale-xl);
-  --text-large-line-height: var(--text-scale-xl--line-height);
-  --text-large-weight: 500;
+  --text-large-size: var(--text-scale-large);
+  --text-large-line-height: var(--text-scale-large--line-height);
+  --text-large-weight: var(--font-w-mid);
 
-  --text-mid-size: var(--text-scale-md);
-  --text-mid-line-height: var(--text-scale-md--line-height);
-  --text-mid-weight: 400;
+  --text-mid-size: var(--text-scale-base);
+  --text-mid-line-height: var(--text-scale-base--line-height);
+  --text-mid-weight: var(--font-w-base);
 
-  --text-base-size: var(--text-scale-sm);
-  --text-base-line-height: var(--text-scale-sm--line-height);
-  --text-base-weight: 400;
+  --text-base-size: var(--text-scale-small);
+  --text-base-line-height: var(--text-scale-small--line-height);
+  --text-base-weight: var(--font-w-base);
 
-  --text-small-size: var(--text-scale-xs);
-  --text-small-line-height: var(--text-scale-xs--line-height);
-  --text-small-weight: 400;
+  --text-small-size: var(--text-scale-xsmall);
+  --text-small-line-height: var(--text-scale-xsmall--line-height);
+  --text-small-weight: var(--font-w-small);
 
   --text-tools-size: var(--text-scale-tools);
   --text-tools-line-height: var(--text-scale-tools--line-height);
-  --text-tools-weight: 400;
+  --text-tools-weight: var(--font-w-small);
 
   /**
    * Базовый размер контролов (иконки, индикаторы, min-width кнопок, ширина модалок).
@@ -360,14 +366,14 @@
    */
   --size: 1rem;
 
-  /** Примитивная шкала размеров контролов (`--size-scale-*`). */
-  --size-scale-xs: calc(var(--size) * 0.65);
-  --size-scale-sm: calc(var(--size) * 0.875);
-  --size-scale-md: calc(var(--size) * 1);
-  --size-scale-lg: calc(var(--size) * 1.125);
-  --size-scale-xl: calc(var(--size) * 1.375);
-  --size-scale-2xl: calc(var(--size) * 1.5);
-  --size-scale-3xl: calc(var(--size) * 1.75);
+  /** Примитивная шкала размеров контролов (`--size-scale-*`) — как `--space-*`. */
+  --size-scale-xsmall: calc(var(--size) * 0.65);
+  --size-scale-small: calc(var(--size) * 0.875);
+  --size-scale-base: calc(var(--size) * 1);
+  --size-scale-plus: calc(var(--size) * 1.125);
+  --size-scale-mid: calc(var(--size) * 1.375);
+  --size-scale-large: calc(var(--size) * 1.5);
+  --size-scale-xlarge: calc(var(--size) * 1.75);
 
   /** Крупность контейнеров (модалки, панели, лэйауты) — max-w-component-* */
   --max-component-small: calc(var(--size) * 20);
@@ -395,40 +401,40 @@
   /**
    * Иконки (react-icons и др.) — единая шкала; утилиты `icon-xsmall` … `icon-2xlarge`.
    */
-  --icon-size-xsmall: var(--size-scale-xs);
-  --icon-size-small: var(--size-scale-sm);
-  --icon-size-base: var(--size-scale-md);
-  --icon-size-mid: var(--size-scale-lg);
-  --icon-size-large: var(--size-scale-xl);
-  --icon-size-xlarge: var(--size-scale-2xl);
-  --icon-size-2xlarge: var(--size-scale-3xl);
+  --icon-size-xsmall: var(--size-scale-xsmall);
+  --icon-size-small: var(--size-scale-small);
+  --icon-size-base: var(--size-scale-base);
+  --icon-size-mid: var(--size-scale-plus);
+  --icon-size-large: var(--size-scale-mid);
+  --icon-size-xlarge: var(--size-scale-large);
+  --icon-size-2xlarge: var(--size-scale-xlarge);
 
   /**
    * Круглые индикаторы выбора (Radio, Checkbox, Slider thumb, Dropdown).
    * Диаметр внешнего кольца; заливка — inset 1px.
    */
-  --selection-indicator-small: var(--size-scale-md);
-  --selection-indicator-base: var(--size-scale-lg);
-  --selection-indicator-mid: var(--size-scale-xl);
-  --selection-indicator-large: var(--size-scale-2xl);
+  --selection-indicator-small: var(--size-scale-base);
+  --selection-indicator-base: var(--size-scale-plus);
+  --selection-indicator-mid: var(--size-scale-mid);
+  --selection-indicator-large: var(--size-scale-large);
 
   /**
    * Тени компонентов — один слой, только снизу.
    * offset-x: 0; отрицательный spread «обрезает» blur по бокам.
-   * sm: покой второго уровня (Badge, Alert); md: hover второго уровня; lg: панели.
-   * none: геометрия sm, opacity 0 — для `transition: box-shadow`.
+   * base: покой второго уровня (Badge, Alert); mid: hover второго уровня; large: панели.
+   * none: геометрия base, opacity 0 — для `transition: box-shadow`.
    */
   --shadow-size: 0.5;
   --shadow-none:
     0 calc(2px * var(--shadow-size)) calc(4px * var(--shadow-size))
       calc(-2px * var(--shadow-size)) rgb(0 0 0 / 0);
-  --shadow-sm:
+  --shadow-base:
     0 calc(2px * var(--shadow-size)) calc(4px * var(--shadow-size))
       calc(-2px * var(--shadow-size)) rgb(0 0 0 / 0.15);
-  --shadow-md:
+  --shadow-mid:
     0 calc(4px * var(--shadow-size)) calc(10px * var(--shadow-size))
       calc(-6px * var(--shadow-size)) rgb(0 0 0 / 0.20);
-  --shadow-lg:
+  --shadow-large:
     0 calc(8px * var(--shadow-size)) calc(20px * var(--shadow-size))
       calc(-12px * var(--shadow-size)) rgb(0 0 0 / 0.24);
 
@@ -480,7 +486,7 @@
   --gloss-inset-top: rgba(167, 166, 166, 0.1);
   --gloss-inset-bottom: rgb(255 255 255 / 0.3);
 
-  /* ── тени / свечение (внешняя снизу — как --shadow-sm / --shadow-md) ── */
+  /* ── тени / свечение (внешняя снизу — как --shadow-base / --shadow-mid) ── */
   --gloss-elevation: rgb(0 0 0 / 0.15);
   --gloss-elevation-hover: rgb(0 0 0 / 0.20);
   --gloss-inner-glow: rgb(255 255 255 / 0.08);
@@ -711,13 +717,13 @@
   --shadow-none:
     0 calc(2px * var(--shadow-size)) calc(4px * var(--shadow-size))
       calc(-2px * var(--shadow-size)) rgb(0 0 0 / 0);
-  --shadow-sm:
+  --shadow-base:
     0 calc(2px * var(--shadow-size)) calc(4px * var(--shadow-size))
       calc(-2px * var(--shadow-size)) rgb(0 0 0 / 0.08);
-  --shadow-md:
+  --shadow-mid:
     0 calc(4px * var(--shadow-size)) calc(10px * var(--shadow-size))
       calc(-6px * var(--shadow-size)) rgb(0 0 0 / 0.12);
-  --shadow-lg:
+  --shadow-large:
     0 calc(8px * var(--shadow-size)) calc(20px * var(--shadow-size))
       calc(-12px * var(--shadow-size)) rgb(0 0 0 / 0.16);
 }

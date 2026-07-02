@@ -40,9 +40,9 @@ export const CALENDAR_HEADER_TEXT: Record<CalendarSize, string> = {
 };
 
 export const CALENDAR_ROOT_SURFACE: Record<CalendarVariant, string> = {
-  default: "rounded-large border-token bg-surface shadow-token-sm",
-  secondary: "rounded-large border-token bg-secondary shadow-token-sm",
-  outline: "rounded-large bg-transparent border-token shadow-token-sm",
+  default: "rounded-large border-token bg-surface shadow-token-base",
+  secondary: "rounded-large border-token bg-secondary shadow-token-base",
+  outline: "rounded-large bg-transparent border-token shadow-token-base",
   gloss: "rounded-large border-0",
 };
 
@@ -94,7 +94,7 @@ export const CALENDAR_RANGE_HALF_FILL_CLASS =
 export const CALENDAR_HEADER_CLASS = "flex items-center gap-xsmall";
 
 export const CALENDAR_HEADER_TITLE_CLASS =
-  "flex-1 rounded-base py-xsmall text-center font-medium";
+  "flex-1 rounded-base py-xsmall text-center font-w-mid";
 
 export const CALENDAR_HEADER_TITLE_INTERACTIVE_CLASS =
   "cursor-pointer hover:text-primary focus-ring";
@@ -107,7 +107,7 @@ export const CALENDAR_DAYS_WEEKDAY_GRID_CLASS = "grid grid-cols-7 gap-xsmall";
 
 export const CALENDAR_DAYS_CELL_GRID_CLASS = "grid grid-cols-7 gap-xsmall";
 
-export const CALENDAR_WEEKDAY_LABEL_CLASS = "flex items-center justify-center font-medium text-muted";
+export const CALENDAR_WEEKDAY_LABEL_CLASS = "flex items-center justify-center font-w-mid text-muted";
 
 export const CALENDAR_DAY_CELL_WRAPPER_CLASS = "relative flex items-center justify-center";
 
@@ -149,9 +149,9 @@ export const CALENDAR_CELL_TODAY_DOT_CLASS =
 export const CALENDAR_NAV_ICON_CLASS = "icon-xsmall";
 
 export const CALENDAR_CELL_SELECTED_CLASS =
-  "bg-transparent font-medium text-primary-foreground";
+  "bg-transparent font-w-mid text-primary-foreground";
 
-export const CALENDAR_CELL_CURRENT_CLASS = "font-semibold text-primary";
+export const CALENDAR_CELL_CURRENT_CLASS = "font-w-mid text-primary";
 
 export const CALENDAR_CELL_DEFAULT_CLASS = "text-foreground";
 

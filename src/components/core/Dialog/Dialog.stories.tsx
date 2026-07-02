@@ -425,7 +425,7 @@ export const CustomClassNames: Story = {
           open={open}
           onOpenChange={setOpen}
           classNames={{
-            panel: "border-primary/40 bg-primary/5 shadow-token-lg",
+            panel: "border-primary/40 bg-primary/5 shadow-token-large",
             title: "text-primary font-semibold",
             description: "text-foreground/80",
             footer: "border-t border-primary/20 pt-small",

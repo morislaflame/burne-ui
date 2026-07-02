@@ -67,6 +67,26 @@ export const Default: Story = {
   },
 };
 
+export const AllVariants: Story = {
+  name: "Все варианты",
+  render: () => (
+    <div className="flex flex-col gap-plus">
+      <Text variant="accent-header">accent-header</Text>
+      <Text variant="header-1">header-1</Text>
+      <Text variant="header-2">header-2</Text>
+      <Text variant="large">text-large</Text>
+      <Text variant="mid">text-mid</Text>
+      <Text variant="base">text-base</Text>
+      <Text variant="small" className="text-muted">
+        text-small
+      </Text>
+      <Text variant="tools" className="text-muted">
+        text-tools
+      </Text>
+    </div>
+  ),
+};
+
 export const AsSpanWithWrap: Story = {
   name: "Как span + перенос",
   render: () => (

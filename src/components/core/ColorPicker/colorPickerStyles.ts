@@ -23,7 +23,7 @@ export const COLOR_PICKER_AREA_CLASS =
   "relative w-full touch-none select-none rounded-small cursor-crosshair overflow-hidden";
 
 export const COLOR_PICKER_AREA_THUMB_CLASS =
-  "pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-token-md";
+  "pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-token-mid";
 
 export const COLOR_PICKER_SLIDERS_ROW_CLASS = "flex items-center gap-small";
 

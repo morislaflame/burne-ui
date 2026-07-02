@@ -11,7 +11,7 @@ const CARD_SURFACE: Record<Exclude<CardVariant, "gloss">, string> = {
 };
 
 /** Passive 2nd level — static sm-shadow without hover-lift. */
-export const CARD_STATIC_SHADOW_CLASS = "shadow-token-sm";
+export const CARD_STATIC_SHADOW_CLASS = "shadow-token-base";
 
 export const CARD_GLOSS_PANEL_CLASS =
   "gloss-panel flex min-w-0 flex-col rounded-mid text-foreground outline-none";

@@ -56,7 +56,7 @@ export const CHECKBOX_CONTENT_COMPOUND_CLASS = "min-w-0";
 
 export const CHECKBOX_CONTENT_POINTER_CLASS = "cursor-pointer";
 
-export const CHECKBOX_LABEL_CLASS = "inline-flex flex-wrap items-center gap-x-xsmall gap-y-0";
+export const CHECKBOX_LABEL_CLASS = "inline-flex flex-wrap items-center gap-x-xsmall gap-y-0 font-w-mid";
 
 export const CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS = "min-w-0";
 
@@ -74,7 +74,7 @@ export const CHECKBOX_ERROR_DISABLED_CLASS = "text-muted";
 
 export const CHECKBOX_SIMPLE_LABEL_WRAP_CLASS = "origin-center will-change-transform";
 
-export const CHECKBOX_SIMPLE_LABEL_TEXT_CLASS = "min-w-0";
+export const CHECKBOX_SIMPLE_LABEL_TEXT_CLASS = "min-w-0 font-w-mid";
 
 export const CHECKBOX_ROOT_BASE_CLASS =
   "relative cursor-pointer select-none rounded-small text-left";

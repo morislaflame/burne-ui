@@ -29,8 +29,8 @@ function AppHeader({
   return (
     <header className="sticky top-0 z-20 border-b-token bg-surface/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-4xl items-center justify-between gap-small sm:gap-mid px-small sm:px-mid py-small">
-        <span className="text-sm font-medium max-sm:hidden">Burne UI Playground</span>
-        <span className="text-sm font-medium sm:hidden">Burne UI</span>
+        <span className="text-sm font-w-mid max-sm:hidden">Burne UI Playground</span>
+        <span className="text-sm font-w-mid sm:hidden">Burne UI</span>
         <div className="flex items-center gap-small sm:gap-plus">
           <Switch
             size="small"
@@ -63,7 +63,7 @@ function AppBody() {
   const [page, setPage] = useState<PlaygroundPage>("theme");
 
   return (
-    <div className="min-h-[100dvh] bg-background text-foreground">
+    <div className="min-h-[100dvh] bg-background font-sans text-foreground">
       <AppHeader page={page} onPageChange={setPage} />
 
       {page === "components" ? (
@@ -72,8 +72,8 @@ function AppBody() {
         <ThemePlayground />
       ) : (
         <div className="relative min-h-[calc(100dvh-3rem)]">
-          <div className="pointer-events-none absolute left-4 top-4 z-10 max-w-[min(90vw,28rem)] rounded-small border-token/60 bg-surface/85 px-mid py-plus text-sm shadow-lg backdrop-blur-md">
-            <p className="font-medium text-foreground">Simple Fresnel Shader</p>
+          <div className="pointer-events-none absolute left-4 top-4 z-10 max-w-[min(90vw,28rem)] rounded-small border-token/60 bg-surface/85 px-mid py-plus text-sm shadow-mid backdrop-blur-md">
+            <p className="font-w-mid text-foreground">Simple Fresnel Shader</p>
             <p className="mt-1 text-muted">
               Как в{" "}
               <code className="rounded bg-background/80 px-1 py-0.5 text-xs">

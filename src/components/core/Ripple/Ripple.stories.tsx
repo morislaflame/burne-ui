@@ -92,7 +92,7 @@ export const Playground: Story = {
   },
   render: (args) => (
     <div
-      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-sm"
+      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-base"
       role="presentation"
     >
       <Ripple {...args} className="rounded-[inherit]" />
@@ -117,7 +117,7 @@ export const ClickInteraction: Story = {
   },
   render: (args) => (
     <div
-      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-sm"
+      className="relative cursor-pointer overflow-hidden rounded-mid border-token bg-surface shadow-token-base"
       role="presentation"
     >
       <Ripple {...args} className="rounded-[inherit]" />
@@ -260,7 +260,7 @@ export const WithInputShell: Story = {
       <Text variant="base" className="text-muted">
         Общая интерактивная карточка вокруг поля
       </Text>
-      <div className="relative overflow-hidden rounded-base border-token bg-surface p-mid shadow-token-sm">
+      <div className="relative overflow-hidden rounded-base border-token bg-surface p-mid shadow-token-base">
         <Ripple color="neutral" />
         <div className="relative z-[1] flex flex-col gap-small">
           <Text variant="small" className="font-medium text-muted">

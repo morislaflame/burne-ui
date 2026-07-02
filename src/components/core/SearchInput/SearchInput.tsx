@@ -22,7 +22,7 @@ import {
   animateInteractivePressSqueeze,
   prefersReducedInteractiveHoverLift,
   shadowNone,
-  shadowSm,
+  shadowBase,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { useGlossFieldShellMotion, animateGlossInteractivePressSqueeze } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
@@ -272,7 +272,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const isGloss = variant === "gloss";
 
     const resolveSearchIdleShadow = useCallback(
-      () => (expanded ? shadowSm() : shadowNone()),
+      () => (expanded ? shadowBase() : shadowNone()),
       [expanded],
     );
 

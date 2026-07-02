@@ -226,7 +226,7 @@ export const CustomClassNames: Story = {
       defaultChecked
       variant="gloss"
       classNames={{
-        root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-md",
+        root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-mid",
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
         indicator: "rounded-mid",

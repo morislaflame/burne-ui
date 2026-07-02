@@ -53,7 +53,7 @@ const meta = {
   decorators: [...framedDecorator],
   argTypes: {
     variant: { control: "select", options: VARIANTS },
-    shadow: { control: "select", options: ["none", "sm", "md", "lg"] },
+    shadow: { control: "select", options: ["none", "base", "mid", "large"] },
     padding: { control: "select", options: ["none", "small", "base", "plus", "mid"] },
     radius: { control: "select", options: ["base", "mid", "large"] },
   },
@@ -92,7 +92,7 @@ export const WithShadow: Story = {
   name: "Тень",
   render: () => (
     <div className="flex flex-wrap items-start justify-center gap-large">
-      {(["none", "sm", "md", "lg"] as const).map((shadow) => (
+      {(["none", "base", "mid", "large"] as const).map((shadow) => (
         <Surface key={shadow} shadow={shadow} padding="plus" className="w-44">
           <Text as="p" variant="base" className="font-medium">
             shadow=&quot;{shadow}&quot;
@@ -106,7 +106,7 @@ export const WithShadow: Story = {
 export const MenuPanel: Story = {
   name: "Панель меню",
   render: () => (
-    <Surface variant="default" shadow="md" padding="small" className="w-64">
+    <Surface variant="default" shadow="mid" padding="small" className="w-64">
       <ul className="m-0 flex list-none flex-col gap-xsmall p-0">
         {["Dashboard", "Profile", "Settings"].map((label) => (
           <li key={label}>
@@ -129,7 +129,7 @@ export const MenuPanel: Story = {
 export const MenuInteraction: Story = {
   name: "Interaction: меню",
   render: () => (
-    <Surface variant="default" shadow="md" padding="small" className="w-64">
+    <Surface variant="default" shadow="mid" padding="small" className="w-64">
       <ul className="m-0 flex list-none flex-col gap-xsmall p-0">
         {["Dashboard", "Profile", "Settings"].map((label) => (
           <li key={label}>
@@ -157,7 +157,7 @@ export const MenuInteraction: Story = {
 export const NestedSections: Story = {
   name: "Вложенные секции",
   render: () => (
-    <Surface padding="plus" shadow="sm" className="flex w-full max-w-sm flex-col gap-plus">
+    <Surface padding="plus" shadow="base" className="flex w-full max-w-sm flex-col gap-plus">
       <Text as="p" variant="base" className="font-medium">
         Внешняя панель (default)
       </Text>
@@ -179,7 +179,7 @@ export const LightTheme: Story = {
   name: "Светлая тема",
   decorators: [...lightDecorator],
   args: {
-    shadow: "sm",
+    shadow: "base",
     padding: "plus",
     children: "Surface на светлом фоне",
   },

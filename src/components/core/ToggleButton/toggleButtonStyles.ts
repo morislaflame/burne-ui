@@ -21,7 +21,7 @@ const TOGGLE_BUTTON_VARIANT_IDLE: Record<ToggleButtonVariant, string> = {
 };
 
 export const TOGGLE_BUTTON_ROOT_BASE_CLASS =
-  "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none text-foreground font-medium focus-ring";
+  "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none text-foreground focus-ring";
 
 export const TOGGLE_BUTTON_GLOSS_CLASS = "gloss-btn";
 
@@ -35,7 +35,7 @@ export const TOGGLE_BUTTON_FILL_BASE_CLASS =
   "pointer-events-none absolute -inset-px z-0 origin-center motion-reduce:transition-none";
 
 export const TOGGLE_BUTTON_CONTENT_BASE_CLASS =
-  "relative z-[1] inline-flex min-w-0 items-center justify-center gap-xsmall";
+  "relative z-[1] inline-flex w-full min-w-0 items-center justify-center gap-xsmall";
 
 export const TOGGLE_BUTTON_CONTENT_GROUP_MOTION_CLASS =
   "origin-center will-change-transform";
@@ -43,7 +43,24 @@ export const TOGGLE_BUTTON_CONTENT_GROUP_MOTION_CLASS =
 export const TOGGLE_BUTTON_ICON_SLOT_CLASS =
   "inline-flex shrink-0 items-center justify-center [&_svg]:size-full";
 
-export const TOGGLE_BUTTON_LABEL_CLASS = "min-w-0 shrink";
+export const TOGGLE_BUTTON_LABEL_LAYER_CLASS =
+  "inline-flex w-full min-w-0 items-center gap-xsmall";
+
+export const TOGGLE_BUTTON_TEXT_CLASS = "min-w-0 shrink";
+
+export function toggleButtonLabelClass({
+  slotClass,
+  className,
+}: {
+  slotClass?: string;
+  className?: string;
+}): string {
+  return mergeToggleButtonSlotClass(TOGGLE_BUTTON_LABEL_LAYER_CLASS, slotClass, className);
+}
+
+export function toggleButtonTextClass(slotClass?: string, className?: string): string {
+  return mergeToggleButtonSlotClass(TOGGLE_BUTTON_TEXT_CLASS, slotClass, className);
+}
 
 export function toggleButtonVariantIdleClass(variant: ToggleButtonVariant): string {
   return TOGGLE_BUTTON_VARIANT_IDLE[variant];

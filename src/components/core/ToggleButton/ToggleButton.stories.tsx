@@ -172,10 +172,35 @@ export const CustomClassNames: Story = {
         fill: "bg-danger/20",
         content: "gap-small",
         leftIcon: "text-danger",
-        label: "font-semibold text-danger",
+        text: "font-semibold text-danger",
       }}
     >
       Нравится
+    </ToggleButton>
+  ),
+};
+
+export const LabelLayout: Story = {
+  name: "Разметка label + trailing",
+  render: () => (
+    <ToggleButton className="w-full max-w-xs justify-between gap-plus" leftIcon={<IoHeartOutline aria-hidden />}>
+      <span>Нравится</span>
+      <span className="text-tools">128</span>
+    </ToggleButton>
+  ),
+};
+
+export const CompoundLayout: Story = {
+  name: "Compound API",
+  render: () => (
+    <ToggleButton className="w-full max-w-xs">
+      <ToggleButton.Content className="justify-between gap-plus">
+        <ToggleButton.Icon>
+          <IoHeartOutline aria-hidden />
+        </ToggleButton.Icon>
+        <ToggleButton.Text>Нравится</ToggleButton.Text>
+        <ToggleButton.Trailing className="text-tools">128</ToggleButton.Trailing>
+      </ToggleButton.Content>
     </ToggleButton>
   ),
 };

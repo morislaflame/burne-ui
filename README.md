@@ -50,7 +50,7 @@ import "./burne-theme-overrides.css";
   --size: 1.0625rem;    /* крупнее иконки, индикаторы, кнопки */
   --radius: 0.625rem;   /* мягче скругления */
   --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --text-scale-sm: 0.9375rem; /* UI-текст (роль text-base) */
+  --text-scale-small: 0.9375rem; /* UI-текст (роль text-base) */
 }
 
 /* Светлая тема: те же ветки, что и в пакете */

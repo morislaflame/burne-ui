@@ -22,6 +22,7 @@ import {
   type ColorPresetKey,
   type LayoutPresetKey,
   type ThemeColorKey,
+  type ThemeFontWeightKey,
   type ThemeMode,
   type ThemeStatusForegroundKey,
   type ThemeTokenState,
@@ -69,6 +70,13 @@ function useThemeTokensState() {
 
   const setFontFamilyMono = useCallback((fontFamilyMono: string) => {
     setState((prev) => ({ ...prev, fontFamilyMono }));
+  }, []);
+
+  const setFontWeight = useCallback((key: ThemeFontWeightKey, value: number) => {
+    setState((prev) => ({
+      ...prev,
+      fontWeights: { ...prev.fontWeights, [key]: value },
+    }));
   }, []);
 
   const setShadowStrength = useCallback((shadowStrength: number) => {
@@ -172,6 +180,7 @@ function useThemeTokensState() {
     setScale,
     setFontFamily,
     setFontFamilyMono,
+    setFontWeight,
     setShadowStrength,
     setShadowSize,
     setToastScrimSize,

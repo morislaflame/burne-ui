@@ -54,6 +54,6 @@ export function alertIndicatorClass(status: AlertStatus): string {
 /** Compound slots (`Alert.Content`, `Alert.Message`) — pass-through grid children. */
 export const ALERT_COMPOUND_CONTENTS_CLASS = "contents";
 
-export const ALERT_TITLE_CLASS = "font-medium";
+export const ALERT_TITLE_CLASS = "font-w-mid";
 
 export const ALERT_DESCRIPTION_CLASS = "text-muted";

@@ -66,7 +66,7 @@ export const COMBOBOX_POPOVER_BODY_CLASS = "gap-0 p-base";
 export const COMBOBOX_LISTBOX_CLASS = "overflow-y-auto overflow-x-hidden";
 
 export const COMBOBOX_INPUT_GROUP_DISABLED_CLASS =
-  "cursor-not-allowed opacity-55 shadow-token-sm";
+  "cursor-not-allowed opacity-55 shadow-token-base";
 
 export const COMBOBOX_INPUT_GROUP_ENABLED_CLASS = "cursor-pointer";
 

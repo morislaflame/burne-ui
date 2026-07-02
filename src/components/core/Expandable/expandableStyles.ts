@@ -24,7 +24,7 @@ const EXPANDABLE_PANEL_PAD: Record<ExpandableSize, string> = {
 export const EXPANDABLE_ROOT_BASE_CLASS = "rounded-mid text-left text-foreground";
 
 export const EXPANDABLE_ROOT_SURFACE_CLASS =
-  "border-token bg-surface shadow-token-sm";
+  "border-token bg-surface shadow-token-base";
 
 export const EXPANDABLE_ROOT_GLOSS_CLASS = "gloss-panel gloss-deep border-0";
 
@@ -57,7 +57,7 @@ export const EXPANDABLE_CONTENT_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
 export const EXPANDABLE_DESCRIPTION_CLASS = "text-muted";
 
-export const EXPANDABLE_TITLE_CLASS = "font-medium";
+export const EXPANDABLE_TITLE_CLASS = "font-w-mid";
 
 export const EXPANDABLE_CHEVRON_WRAP_CLASS = EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS;
 

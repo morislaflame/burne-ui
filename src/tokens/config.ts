@@ -6,10 +6,10 @@
  * - `--space` — отступы (gap, padding); ступени `gap-*`, `p-*` через множители.
  * - `--size` — размеры контролов (иконки, индикаторы, min-width кнопок, max-w модалок).
  * - `--radius` — базовый радиус; ступени `rounded-*` через множители.
- * - `--shadow-size` — множитель blur/offset для `--shadow-sm|md|lg`.
- * - `--toast-scrim-size` / `--toast-scrim-density` — размер и плотность подложки Toast.
- * - `--calendar-cell-gap` — зазор между ячейками календаря (0 при дефолтном `--space`).
- * - `--text-scale-*` — примитивная типографика; роли `text-base`, `text-large` — алиасы.
+ * - `--shadow-size` — множитель blur/offset для `--shadow-base|mid|large`.
+ * - `--toast-scrim-size` / `--toast-scrim-density` — размер и плотность подложки Toast.календаря (0 при дефолтном `--space`).
+ * - `--text-scale-*` — примитивная типографика (`xsmall` … `3xlarge`, базовая ступень `base`); роли `text-base`, `text-large` — алиасы.
+ * - `--font-w-*` — примитивная шкала начертания;
  */
 export const tokensConfig = {
   /** Пространство имён для документации */

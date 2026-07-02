@@ -269,7 +269,7 @@ export const CustomClassNames: Story = {
         className="text-primary"
         classNames={{
           root: "bg-primary/10 text-primary font-semibold",
-          glossWrap: "shadow-token-md",
+          glossWrap: "shadow-token-mid",
         }}
       />
     </div>

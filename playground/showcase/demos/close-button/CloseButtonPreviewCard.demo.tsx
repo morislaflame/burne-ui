@@ -13,7 +13,7 @@ export function CloseButtonPreviewCardDemo() {
       <CloseButton
         aria-label="Закрыть превью"
         size="small"
-        className="absolute right-small top-small shadow-token-md"
+        className="absolute right-small top-small shadow-token-mid"
       />
       <Surface variant="default" padding="base" className="rounded-none rounded-b-mid">
         <Text as="p" variant="base">

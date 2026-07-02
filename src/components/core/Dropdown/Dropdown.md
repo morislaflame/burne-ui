@@ -224,7 +224,7 @@ animateInteractivePressSqueeze(el);
 
 **Close delay:** `scheduleClose` на `pointerleave` sub row (hover bridge).
 
-Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `bg-surface shadow-md`.
+Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `bg-surface shadow-mid`.
 
 ### 5. Keyboard navigation
 

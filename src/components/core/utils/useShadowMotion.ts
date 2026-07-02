@@ -1,9 +1,9 @@
 /**
  * Унифицированные паттерны тени + hover-lift через `--el-shadow` и `animate-shadow`.
  *
- * 1-й уровень (Button): `firstLevelHoverShadow()` — none → sm.
- * 2-й уровень интерактивный (Alert, Badge, поля): `secondLevelShadow()` — sm → md.
- * 2-й уровень статичный (Tooltip, Popover): `usePersistentElShadow` — sm без hover.
+ * 1-й уровень (Button): `firstLevelHoverShadow()` — none → small.
+ * 2-й уровень интерактивный (Alert, Badge, поля): `secondLevelShadow()` — small → mid.
+ * 2-й уровень статичный (Tooltip, Popover): `usePersistentElShadow` — small без hover.
  */
 
 import { useCallback, useLayoutEffect, useMemo, type MutableRefObject, type RefObject } from "react";
@@ -12,8 +12,8 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import {
   animateInteractiveHoverLift,
   initElementShadow,
-  shadowMd,
-  shadowSm,
+  shadowMid,
+  shadowBase,
   shouldSkipInteractiveHoverLift,
   useInteractiveHoverLiftContainerHandlers,
   type HoverShadowConfig,
@@ -23,14 +23,14 @@ import {
 export const SHADOW_LIFT_MOTION_CLASS =
   "animate-shadow will-change-transform origin-center";
 
-/** Hover-only: покой `--shadow-none`, hover `--shadow-sm` (Button, ToggleButton). */
+/** Hover-only: покой `--shadow-none`, hover `--shadow-base` (Button, ToggleButton). */
 export function firstLevelHoverShadow(): HoverShadowConfig {
-  return { hover: shadowSm() };
+  return { hover: shadowBase() };
 }
 
-/** Второй уровень интерактивный: покой sm, hover md (Alert, Badge, Input). */
+/** Второй уровень интерактивный: покой small, hover mid (Alert, Badge, Input). */
 export function secondLevelShadow(): HoverShadowConfig {
-  return { idle: shadowSm(), hover: shadowMd() };
+  return { idle: shadowBase(), hover: shadowMid() };
 }
 
 /**
@@ -40,7 +40,7 @@ export function secondLevelShadow(): HoverShadowConfig {
 export function usePersistentElShadow(
   ref: RefObject<HTMLElement | null>,
   enabled: boolean,
-  resolveShadow: () => string = shadowSm,
+  resolveShadow: () => string = shadowBase,
   syncKey?: unknown,
 ): void {
   useLayoutEffect(() => {
@@ -59,7 +59,7 @@ export type UseSecondLevelShadowOptions = {
 };
 
 /**
- * 2-й уровень: init sm + handlers на том же элементе (Alert, self-lift Badge).
+ * 2-й уровень: init small + handlers на том же элементе (Alert, self-lift Badge).
  */
 export function useSecondLevelShadow(
   targetRef: RefObject<HTMLElement | null>,
@@ -67,7 +67,7 @@ export function useSecondLevelShadow(
   options?: UseSecondLevelShadowOptions,
 ) {
   const shadow = useMemo(() => secondLevelShadow(), []);
-  const resolveIdle = options?.resolveIdle ?? shadowSm;
+  const resolveIdle = options?.resolveIdle ?? shadowBase;
 
   useLayoutEffect(() => {
     if (!enabled) return;
@@ -111,7 +111,7 @@ export function useSecondLevelShadowContainer(
   options?: UseSecondLevelShadowOptions,
 ) {
   const shadow = useMemo(() => secondLevelShadow(), []);
-  const resolveIdle = options?.resolveIdle ?? shadowSm;
+  const resolveIdle = options?.resolveIdle ?? shadowBase;
 
   useLayoutEffect(() => {
     if (!enabled) return;

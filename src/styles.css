@@ -104,9 +104,9 @@ p {
   --radius-mid: var(--radius-value-mid);
   --radius-large: var(--radius-value-large);
 
-  --shadow-token-sm: var(--shadow-sm);
-  --shadow-token-md: var(--shadow-md);
-  --shadow-token-lg: var(--shadow-lg);
+  --shadow-token-base: var(--shadow-base);
+  --shadow-token-mid: var(--shadow-mid);
+  --shadow-token-large: var(--shadow-large);
 
   /**
    * Единственный источник правды для утилиты `text-base` (без дубля с @utility).
@@ -122,19 +122,17 @@ p {
    */
   --border-width-DEFAULT: var(--border-width, 1px);
   --border-width-1: var(--border-width, 1px);
-
-  --calendar-cell-gap: var(--calendar-cell-gap);
 }
 
 /** Тени на токенах — не зависят от Tailwind-дефолтов. */
-@utility shadow-token-sm {
-  box-shadow: var(--shadow-sm);
+@utility shadow-token-base {
+  box-shadow: var(--shadow-base);
 }
-@utility shadow-token-md {
-  box-shadow: var(--shadow-md);
+@utility shadow-token-mid {
+  box-shadow: var(--shadow-mid);
 }
-@utility shadow-token-lg {
-  box-shadow: var(--shadow-lg);
+@utility shadow-token-large {
+  box-shadow: var(--shadow-large);
 }
 
 /**
@@ -349,6 +347,23 @@ p {
   font-size: var(--text-tools-size);
   line-height: var(--text-tools-line-height);
   font-weight: var(--text-tools-weight);
+}
+
+/** Начертание из токенов `--font-w-*` (не Tailwind `font-medium`). */
+@utility font-w-small {
+  font-weight: var(--font-w-small);
+}
+@utility font-w-base {
+  font-weight: var(--font-w-base);
+}
+@utility font-w-mid {
+  font-weight: var(--font-w-mid);
+}
+@utility font-w-strong {
+  font-weight: var(--font-w-strong);
+}
+@utility font-w-bold {
+  font-weight: var(--font-w-bold);
 }
 
 @utility max-w-component-small {

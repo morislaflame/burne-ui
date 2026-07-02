@@ -28,7 +28,7 @@ export function ThemePlayground() {
       <div className="fixed bottom-6 right-6 z-30 md:hidden">
         <Button
           onClick={() => setDrawerOpen(true)}
-          className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-token-lg bg-primary text-primary-foreground hover:bg-primary-hover active:scale-95 transition-transform"
+          className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-token-large bg-primary text-primary-foreground hover:bg-primary-hover active:scale-95 transition-transform"
           aria-label="Настройки темы"
         >
           <IoColorPaletteOutline className="size-6" />

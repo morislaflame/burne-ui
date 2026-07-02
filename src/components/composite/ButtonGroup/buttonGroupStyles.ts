@@ -140,4 +140,4 @@ export function buttonGroupTextClass({
 }
 
 export const BUTTON_GROUP_TEXT_LABEL_CLASS =
-  "max-w-[12rem] truncate font-medium whitespace-nowrap md:max-w-[18rem]";
+  "max-w-[12rem] truncate font-w-base whitespace-nowrap md:max-w-[18rem]";

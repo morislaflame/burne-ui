@@ -245,7 +245,7 @@ export function inputShellClass({
     FIELD_SHELL_FOCUS_CLASS,
     !isGloss && fieldShellHoverClass(!blocked, status),
     shellHoverMotionClass,
-    blocked && "cursor-not-allowed opacity-55 shadow-token-sm",
+    blocked && "cursor-not-allowed opacity-55 shadow-token-base",
     slotClass,
     className,
   );

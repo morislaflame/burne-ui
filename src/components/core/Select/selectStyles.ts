@@ -66,7 +66,7 @@ export const SELECT_POPOVER_BODY_CLASS = "gap-0 p-base";
 export const SELECT_LISTBOX_CLASS = "overflow-y-auto overflow-x-hidden";
 
 export const SELECT_TRIGGER_GROUP_DISABLED_CLASS =
-  "cursor-not-allowed opacity-55 shadow-token-sm";
+  "cursor-not-allowed opacity-55 shadow-token-base";
 
 export const SELECT_TRIGGER_GROUP_ENABLED_CLASS = "cursor-pointer";
 

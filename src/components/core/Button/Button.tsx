@@ -6,8 +6,21 @@ import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import "../utils/glossInteractive.css";
 
 import { useButtonAnimations } from "./buttonAnimations";
-import { ButtonContent, ButtonExpandRippleLayer } from "./buttonParts";
+import { buttonHasCompoundPart } from "./buttonAPI";
+import { ButtonClassNamesProvider, ButtonContextProvider } from "./buttonContext";
+import {
+  ButtonContent,
+  ButtonError,
+  ButtonExpandRippleLayer,
+  ButtonIcon,
+  ButtonLabel,
+  ButtonLoader,
+  ButtonSuccess,
+  ButtonText,
+} from "./buttonParts";
+import { ButtonSimpleContent } from "./buttonSimpleContent";
 import type { ButtonProps } from "./buttonTypes";
+import { cn } from "@/utils/cn";
 import { useButtonRootState } from "./useButtonRootState";
 
 export type {
@@ -16,11 +29,30 @@ export type {
   ButtonSize,
   ButtonVariant,
   ButtonStatus,
+  ButtonClassNames,
+  ButtonContentProps,
+  ButtonLabelProps,
+  ButtonIconProps,
+  ButtonTextProps,
+  ButtonLoaderProps,
+  ButtonSuccessProps,
+  ButtonErrorProps,
 } from "./buttonTypes";
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+export {
+  ButtonContent,
+  ButtonLabel,
+  ButtonIcon,
+  ButtonText,
+  ButtonLoader,
+  ButtonSuccess,
+  ButtonError,
+} from "./buttonParts";
+
+export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     className,
+    classNames,
     variant,
     status,
     size,
@@ -47,6 +79,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 ) {
   const state = useButtonRootState({
     className,
+    classNames,
     variant,
     status,
     size,
@@ -90,49 +123,89 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     state.scheduleAsyncIdleReset,
   );
 
+  const contextValue = {
+    size: state.size,
+    variant: state.variant,
+    status: state.status,
+    asyncState: state.asyncState,
+    groupSegment: state.groupSegment,
+    loaderTextClass: state.loaderTextClass,
+    bindLabelRef: animations.bindLabelRef,
+    bindLoaderRef: animations.bindLoaderRef,
+    bindSuccessRef: animations.bindSuccessRef,
+    bindErrorRef: animations.bindErrorRef,
+    contentMotionRef: animations.contentMotionRef,
+  };
+
+  const hasCompoundContent = buttonHasCompoundPart(children, "ButtonContent");
+  const hasCompoundLoader = buttonHasCompoundPart(children, "ButtonLoader");
+  const hasCompoundSuccess = buttonHasCompoundPart(children, "ButtonSuccess");
+  const hasCompoundError = buttonHasCompoundPart(children, "ButtonError");
+
   return (
-    <button
-      ref={animations.setRefs}
-      {...rest}
-      type={state.type}
-      disabled={state.blocked}
-      aria-busy={state.ariaBusy}
-      className={state.buttonClass}
-      onPointerDown={animations.handlePointerDown}
-      onPointerEnter={animations.handlePointerEnter}
-      onPointerLeave={animations.handlePointerLeave}
-      onMouseDown={onMouseDown}
-      onClick={handleClick}
-    >
-      {state.ripple ? (
-        <Ripple
-          color={state.convergeRippleColor}
-          disabled={state.blocked || state.asyncState !== "idle"}
-          duration={getMotionConfig().rippleDefaultDuration}
-          className={state.clipClass}
-        />
-      ) : null}
-      <ButtonExpandRippleLayer
-        clipClass={state.clipClass}
-        expandRipples={animations.expandRipples}
-        onDismiss={animations.dismissExpand}
-      />
-      <ButtonContent
-        size={state.size}
-        variant={state.variant}
-        status={state.status}
-        asyncState={state.asyncState}
-        groupSegment={state.groupSegment}
-        leftIcon={state.leftIcon}
-        bindLabelRef={animations.bindLabelRef}
-        bindLoaderRef={animations.bindLoaderRef}
-        bindSuccessRef={animations.bindSuccessRef}
-        bindErrorRef={animations.bindErrorRef}
-        contentMotionRef={animations.contentMotionRef}
-        loaderTextClass={state.loaderTextClass}
-      >
-        {state.children}
-      </ButtonContent>
-    </button>
+    <ButtonContextProvider value={contextValue}>
+      <ButtonClassNamesProvider classNames={state.classNames}>
+        <button
+          ref={animations.setRefs}
+          {...rest}
+          type={state.type}
+          disabled={state.blocked}
+          aria-busy={state.ariaBusy}
+          className={state.buttonClass}
+          onPointerDown={animations.handlePointerDown}
+          onPointerEnter={animations.handlePointerEnter}
+          onPointerLeave={animations.handlePointerLeave}
+          onMouseDown={onMouseDown}
+          onClick={handleClick}
+        >
+          {state.ripple ? (
+            <Ripple
+              color={state.convergeRippleColor}
+              disabled={state.blocked || state.asyncState !== "idle"}
+              duration={getMotionConfig().rippleDefaultDuration}
+              className={state.clipClass}
+            />
+          ) : null}
+          <ButtonExpandRippleLayer
+            clipClass={state.clipClass}
+            expandRipples={animations.expandRipples}
+            onDismiss={animations.dismissExpand}
+          />
+          {state.isCompound ? (
+            hasCompoundContent ? (
+              children
+            ) : (
+              <ButtonContent>
+                {children}
+                {!hasCompoundLoader ? <ButtonLoader /> : null}
+                {!hasCompoundSuccess ? <ButtonSuccess /> : null}
+                {!hasCompoundError ? <ButtonError /> : null}
+              </ButtonContent>
+            )
+          ) : (
+            <ButtonContent>
+              <ButtonLabel className={cn(state.classNames?.label, state.labelLayoutClass)}>
+                <ButtonSimpleContent leftIcon={state.leftIcon}>{state.children}</ButtonSimpleContent>
+              </ButtonLabel>
+              <ButtonLoader />
+              <ButtonSuccess />
+              <ButtonError />
+            </ButtonContent>
+          )}
+        </button>
+      </ButtonClassNamesProvider>
+    </ButtonContextProvider>
   );
+});
+
+ButtonRoot.displayName = "ButtonRoot";
+
+export const Button = Object.assign(ButtonRoot, {
+  Content: ButtonContent,
+  Label: ButtonLabel,
+  Icon: ButtonIcon,
+  Text: ButtonText,
+  Loader: ButtonLoader,
+  Success: ButtonSuccess,
+  Error: ButtonError,
 });

@@ -12,7 +12,7 @@ export const LISTBOX_SECTION_CLASS = "flex min-w-0 flex-col gap-xsmall";
 
 export const LISTBOX_HEADER_CLASS = "px-plus text-left";
 
-export const LISTBOX_HEADER_TEXT_CLASS = "font-medium text-muted";
+export const LISTBOX_HEADER_TEXT_CLASS = "text-muted";
 
 export const LISTBOX_SEPARATOR_CLASS =
   "my-xsmall h-0 w-full shrink-0 border-t-token";

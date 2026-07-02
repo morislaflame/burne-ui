@@ -97,7 +97,7 @@ export function buildGlossBoxShadow(element: HTMLElement, state: GlossDecorState
 
   const base = `inset 0 0.425em 0.425em ${insetTop}, inset 0 -0.225em 0.225em ${insetBottom}`;
 
-  /** Геометрия как --shadow-sm (rest) / --shadow-md (hover), em ≈ px при 16px. */
+  /** Геометрия как --shadow-base (rest) / --shadow-mid (hover), em ≈ px при 16px. */
   const elevationLayer =
     state === "hover"
       ? `0 0.125em 0.3125em -0.1875em ${elevationHover}`

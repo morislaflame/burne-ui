@@ -35,7 +35,7 @@ export function OptionListItemLabel({ className, children, ...rest }: OptionList
         as="span"
         variant="base"
         inheritColor
-        className={cn("font-medium", ctx.disabled && "text-muted")}
+        className={cn("font-w-mid", ctx.disabled && "text-muted")}
       >
         {children}
       </Text>

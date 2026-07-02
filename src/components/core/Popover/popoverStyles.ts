@@ -90,7 +90,7 @@ export const POPOVER_ARROW_DEFAULT_CLASS = "border-token bg-surface";
 export const POPOVER_HEADER_CLASS =
   "flex shrink-0 flex-col gap-xsmall text-left";
 
-export const POPOVER_LABEL_CLASS = "min-w-0 font-medium";
+export const POPOVER_LABEL_CLASS = "min-w-0 font-w-mid";
 
 export const POPOVER_BODY_CLASS = "min-h-0 min-w-0 text-left";
 

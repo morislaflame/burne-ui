@@ -3,11 +3,22 @@ import { forwardRef } from "react";
 import "@/components/core/utils/glossInteractive.css";
 
 import { useToggleButtonAnimations } from "./toggleButtonAnimations";
+import { toggleButtonHasCompoundPart } from "./toggleButtonAPI";
+import {
+  ToggleButtonClassNamesProvider,
+  ToggleButtonContextProvider,
+} from "./toggleButtonContext";
 import {
   ToggleButtonContent,
   ToggleButtonFill,
+  ToggleButtonIcon,
+  ToggleButtonLabel,
+  ToggleButtonText,
+  ToggleButtonTrailing,
 } from "./toggleButtonParts";
+import { ToggleButtonSimpleContent } from "./toggleButtonSimpleContent";
 import type { ToggleButtonProps } from "./toggleButtonTypes";
+import { cn } from "@/utils/cn";
 import { useToggleButtonRootState } from "./useToggleButtonRootState";
 
 export type {
@@ -15,9 +26,24 @@ export type {
   ToggleButtonSize,
   ToggleButtonVariant,
   ToggleButtonClassNames,
+  ToggleButtonFillProps,
+  ToggleButtonContentProps,
+  ToggleButtonLabelProps,
+  ToggleButtonIconProps,
+  ToggleButtonTrailingProps,
+  ToggleButtonTextProps,
 } from "./toggleButtonTypes";
 
-export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
+export {
+  ToggleButtonContent,
+  ToggleButtonFill,
+  ToggleButtonLabel,
+  ToggleButtonIcon,
+  ToggleButtonTrailing,
+  ToggleButtonText,
+} from "./toggleButtonParts";
+
+export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>(
   function ToggleButton(
     {
       className,
@@ -59,6 +85,7 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       disabled,
       className,
       classNames,
+      children,
       onClick,
     });
 
@@ -75,43 +102,68 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
       onPointerDown,
     });
 
+    const contextValue = {
+      size: state.size,
+      groupSegment: state.groupSegment,
+      contentMotionRef: animations.contentMotionRef,
+      bindFillRef: animations.bindFillRef,
+      fillColor: state.fillColor,
+      pressed: state.pressed,
+      roundingClass: state.roundingClass,
+    };
+
+    const hasCompoundFill = toggleButtonHasCompoundPart(children, "ToggleButtonFill");
+    const hasCompoundContent = toggleButtonHasCompoundPart(children, "ToggleButtonContent");
+
     return (
-      <button
-        ref={animations.setRefs}
-        type={type}
-        disabled={state.disabled}
-        data-toggle-button-value={state.itemValue}
-        role={state.role}
-        aria-pressed={state.ariaPressed}
-        aria-checked={state.ariaChecked}
-        tabIndex={state.tabIndex}
-        className={state.buttonClass}
-        onPointerEnter={animations.handlePointerEnter}
-        onPointerLeave={animations.handlePointerLeave}
-        onPointerDown={animations.handlePointerDown}
-        onClick={(e) => state.handleClick(e, animations.queueFillOnClick)}
-        {...rest}
-      >
-        <ToggleButtonFill
-          bindFillRef={animations.bindFillRef}
-          fillColor={state.fillColor}
-          pressed={state.pressed}
-          roundingClass={state.roundingClass}
-          className={state.classNames?.fill}
-        />
-        <ToggleButtonContent
-          size={state.size}
-          groupSegment={state.groupSegment}
-          leftIcon={leftIcon}
-          rightIcon={rightIcon}
-          contentMotionRef={animations.contentMotionRef}
-          classNames={state.classNames}
-        >
-          {children}
-        </ToggleButtonContent>
-      </button>
+      <ToggleButtonContextProvider value={contextValue}>
+        <ToggleButtonClassNamesProvider classNames={state.classNames}>
+          <button
+            ref={animations.setRefs}
+            type={type}
+            disabled={state.disabled}
+            data-toggle-button-value={state.itemValue}
+            role={state.role}
+            aria-pressed={state.ariaPressed}
+            aria-checked={state.ariaChecked}
+            tabIndex={state.tabIndex}
+            className={state.buttonClass}
+            onPointerEnter={animations.handlePointerEnter}
+            onPointerLeave={animations.handlePointerLeave}
+            onPointerDown={animations.handlePointerDown}
+            onClick={(e) => state.handleClick(e, animations.queueFillOnClick)}
+            {...rest}
+          >
+            {!hasCompoundFill ? <ToggleButtonFill /> : null}
+            {state.isCompound ? (
+              hasCompoundContent ? (
+                children
+              ) : (
+                <ToggleButtonContent>{children}</ToggleButtonContent>
+              )
+            ) : (
+              <ToggleButtonContent
+                className={cn(state.classNames?.content, state.contentLayoutClass)}
+              >
+                <ToggleButtonSimpleContent leftIcon={leftIcon} rightIcon={rightIcon}>
+                  {state.children}
+                </ToggleButtonSimpleContent>
+              </ToggleButtonContent>
+            )}
+          </button>
+        </ToggleButtonClassNamesProvider>
+      </ToggleButtonContextProvider>
     );
   },
 );
 
-ToggleButton.displayName = "ToggleButton";
+ToggleButtonRoot.displayName = "ToggleButtonRoot";
+
+export const ToggleButton = Object.assign(ToggleButtonRoot, {
+  Content: ToggleButtonContent,
+  Fill: ToggleButtonFill,
+  Label: ToggleButtonLabel,
+  Icon: ToggleButtonIcon,
+  Trailing: ToggleButtonTrailing,
+  Text: ToggleButtonText,
+});

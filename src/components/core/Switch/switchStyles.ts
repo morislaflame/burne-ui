@@ -31,7 +31,7 @@ export const SWITCH_LABEL_COMPOUND_SECONDARY_CLASS = "min-w-0";
 
 export const SWITCH_LABEL_MOTION_CLASS = "origin-center will-change-transform";
 
-export const SWITCH_LABEL_TEXT_CLASS = "font-medium";
+export const SWITCH_LABEL_TEXT_CLASS = "font-w-mid";
 
 export const SWITCH_LABEL_TEXT_DISABLED_CLASS = "text-muted";
 
@@ -41,7 +41,7 @@ export const SWITCH_ERROR_DISABLED_CLASS = "text-muted";
 
 export const SWITCH_SIMPLE_LABEL_WRAP_CLASS = "origin-center will-change-transform";
 
-export const SWITCH_SIMPLE_LABEL_TEXT_CLASS = "min-w-0 font-medium";
+export const SWITCH_SIMPLE_LABEL_TEXT_CLASS = "min-w-0 font-w-mid";
 
 export const SWITCH_ROOT_BASE_CLASS =
   "relative cursor-pointer select-none rounded-small text-left";

@@ -9,6 +9,7 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { cn } from "@/utils/cn";
 
 import { buttonAriaBusy } from "./buttonA11y";
+import { hasButtonCompoundChildren } from "./buttonAPI";
 import type { ButtonAsyncState, UseButtonRootStateProps } from "./buttonTypes";
 import {
   BUTTON_BASE_INTERACTIVE_CLASS,
@@ -37,6 +38,7 @@ export function useButtonRootState({
   iconOnly = false,
   groupSegment: groupSegmentProp,
   className = "",
+  classNames,
   children,
   onClick,
 }: UseButtonRootStateProps) {
@@ -85,6 +87,9 @@ export function useButtonRootState({
     ? buttonGroupRoundingClasses(groupSegment)
     : "rounded-base";
 
+  const isCompound = hasButtonCompoundChildren(children);
+  const labelLayoutClass = !isCompound ? className : undefined;
+
   const buttonClass = cn(
     BUTTON_BASE_INTERACTIVE_CLASS,
     BUTTON_STATUS_FOCUS_OUTLINE[status],
@@ -121,6 +126,9 @@ export function useButtonRootState({
     internalAsync,
     leftIcon,
     children,
+    classNames,
+    isCompound,
+    labelLayoutClass,
     onClick,
     onAsyncClick,
     setUncontrolledAsync,

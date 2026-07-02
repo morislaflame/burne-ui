@@ -16,7 +16,7 @@ const VARIANT_ROOT: Record<DisclosureVariant, string> = {
   default: "flex flex-col",
   outline: "flex flex-col",
   secondary: "flex flex-col",
-  card: "overflow-hidden rounded-base border-token bg-surface shadow-token-sm",
+  card: "overflow-hidden rounded-base border-token bg-surface shadow-token-base",
   ghost: "flex flex-col",
   gloss: "flex flex-col",
 };
@@ -51,7 +51,7 @@ export const DISCLOSURE_TRIGGER_ENABLED_CLASS = "cursor-pointer";
 export const DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS =
   "min-w-0 flex-1 origin-center will-change-transform";
 
-export const DISCLOSURE_TRIGGER_TITLE_CLASS = "block font-medium";
+export const DISCLOSURE_TRIGGER_TITLE_CLASS = "block";
 
 export const DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS =
   "inline-flex shrink-0 origin-center items-center justify-center text-muted";
@@ -187,7 +187,7 @@ export function disclosureGroupClass({
     !separated && variant === "default" && "divide-y-token border-t-token border-b-token",
     !separated &&
       variant === "card" &&
-      "overflow-hidden rounded-mid border-token bg-surface shadow-token-sm divide-y-token",
+      "overflow-hidden rounded-mid border-token bg-surface shadow-token-base divide-y-token",
     !separated &&
       (variant === "outline" ||
         variant === "secondary" ||

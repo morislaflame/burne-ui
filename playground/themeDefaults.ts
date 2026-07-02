@@ -7,6 +7,13 @@ import {
   DARK_STATUS_FOREGROUNDS,
   LIGHT_STATUS_FOREGROUNDS,
 } from "./themePalettes";
+import {
+  FONT_WEIGHT_CSS_VAR,
+  FONT_WEIGHT_DEFAULTS,
+  type FontWeightStep,
+} from "../src/tokens/fontWeights";
+
+export { FONT_WEIGHT_DEFAULTS };
 
 export {
   BORDER_COLOR_CSS_FORMULA,
@@ -44,6 +51,9 @@ export type ThemeStatusForegroundKey =
   | "infoForeground"
   | "warningForeground";
 
+export type ThemeFontWeightKey = FontWeightStep;
+export type ThemeFontWeights = Record<ThemeFontWeightKey, number>;
+
 export type ThemeColors = Record<ThemeColorKey, string>;
 export type ThemeStatusForegrounds = Record<ThemeStatusForegroundKey, string>;
 
@@ -78,6 +88,7 @@ export type ThemeTokenState = {
   textScale: number;
   fontFamily: string;
   fontFamilyMono: string;
+  fontWeights: ThemeFontWeights;
   shadowStrength: number;
   /** Множитель blur/offset теней (`--shadow-size`). */
   shadowSize: number;
@@ -138,6 +149,13 @@ export const STATUS_FOREGROUND_CSS_VAR: Record<ThemeStatusForegroundKey, string>
   infoForeground: "--color-info-foreground",
   warningForeground: "--color-warning-foreground",
 };
+
+export const FONT_WEIGHT_LABELS: Record<ThemeFontWeightKey, string> = Object.fromEntries(
+  (Object.keys(FONT_WEIGHT_CSS_VAR) as ThemeFontWeightKey[]).map((key) => [
+    key,
+    FONT_WEIGHT_CSS_VAR[key],
+  ]),
+) as Record<ThemeFontWeightKey, string>;
 
 /** Лейблы контролов = имена CSS-переменных. */
 export const COLOR_LABELS: Record<ThemeColorKey, string> = Object.fromEntries(
@@ -226,6 +244,31 @@ export const FONT_PRESETS = [
     label: "IBM Plex Sans",
     value: '"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif',
   },
+  {
+    id: "dm-sans",
+    label: "DM Sans",
+    value: '"DM Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  {
+    id: "manrope",
+    label: "Manrope",
+    value: "Manrope, ui-sans-serif, system-ui, sans-serif",
+  },
+  {
+    id: "source-sans",
+    label: "Source Sans 3",
+    value: '"Source Sans 3", ui-sans-serif, system-ui, sans-serif',
+  },
+  {
+    id: "outfit",
+    label: "Outfit",
+    value: "Outfit, ui-sans-serif, system-ui, sans-serif",
+  },
+  {
+    id: "plus-jakarta",
+    label: "Plus Jakarta Sans",
+    value: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
+  },
 ] as const;
 
 export const MONO_FONT_PRESETS = [
@@ -240,41 +283,46 @@ export const MONO_FONT_PRESETS = [
     label: "Fira Code",
     value: '"Fira Code", ui-monospace, monospace',
   },
+  {
+    id: "source-code-pro",
+    label: "Source Code Pro",
+    value: '"Source Code Pro", ui-monospace, monospace',
+  },
 ] as const;
 
 /** Базовые размеры типографики из `src/tokens/styles.css` (rem). */
 export const TEXT_SCALE_BASES = {
   tools: { size: 0.6875, line: 0.875 },
-  xs: { size: 0.75, line: 1 },
-  sm: { size: 0.875, line: 1.25 },
-  md: { size: 1, line: 1.5 },
-  lg: { size: 1.125, line: 1.75 },
-  xl: { size: 1.25, line: 1.75 },
-  "2xl": { size: 1.5, line: 2 },
-  "3xl": { size: 1.875, line: 2.25 },
-  "4xl": { size: 2.25, line: 2.5 },
+  xsmall: { size: 0.75, line: 1 },
+  small: { size: 0.875, line: 1.25 },
+  base: { size: 1, line: 1.5 },
+  mid: { size: 1.125, line: 1.75 },
+  large: { size: 1.25, line: 1.75 },
+  xlarge: { size: 1.5, line: 2 },
+  "2xlarge": { size: 1.875, line: 2.25 },
+  "3xlarge": { size: 2.25, line: 2.5 },
 } as const;
 
 type TextScaleToken = keyof typeof TEXT_SCALE_BASES;
 
 const SHADOW_BASE = {
   dark: {
-    sm: 0.15,
-    md: 0.2,
-    lg: 0.24,
+    base: 0.15,
+    mid: 0.2,
+    large: 0.24,
   },
   light: {
-    sm: 0.08,
-    md: 0.12,
-    lg: 0.16,
+    base: 0.08,
+    mid: 0.12,
+    large: 0.16,
   },
 } as const;
 
 /** Один слой, offset-x: 0, отрицательный spread — тень только снизу. [offsetX, offsetY, blur, spread] */
 const SHADOW_LAYER_GEOM = {
-  sm: [[0, 2, 4, -2]],
-  md: [[0, 4, 10, -6]],
-  lg: [[0, 8, 20, -12]],
+  base: [[0, 2, 4, -2]],
+  mid: [[0, 4, 10, -6]],
+  large: [[0, 8, 20, -12]],
 } as const;
 
 type ShadowLevelKey = keyof typeof SHADOW_LAYER_GEOM;
@@ -312,10 +360,10 @@ function applyShadows(
   size: number,
 ) {
   root.style.setProperty("--shadow-size", String(size));
-  root.style.setProperty("--shadow-none", buildShadowLevel("sm", theme, 0, size));
-  root.style.setProperty("--shadow-sm", buildShadowLevel("sm", theme, strength, size));
-  root.style.setProperty("--shadow-md", buildShadowLevel("md", theme, strength, size));
-  root.style.setProperty("--shadow-lg", buildShadowLevel("lg", theme, strength, size));
+  root.style.setProperty("--shadow-none", buildShadowLevel("base", theme, 0, size));
+  root.style.setProperty("--shadow-base", buildShadowLevel("base", theme, strength, size));
+  root.style.setProperty("--shadow-mid", buildShadowLevel("mid", theme, strength, size));
+  root.style.setProperty("--shadow-large", buildShadowLevel("large", theme, strength, size));
 }
 
 function applyTextScale(root: HTMLElement, textScale: number) {
@@ -331,12 +379,19 @@ function applyTextScale(root: HTMLElement, textScale: number) {
   }
 }
 
+function applyFontWeights(root: HTMLElement, fontWeights: ThemeFontWeights) {
+  for (const [key, cssVar] of Object.entries(FONT_WEIGHT_CSS_VAR) as [ThemeFontWeightKey, string][]) {
+    root.style.setProperty(cssVar, String(fontWeights[key]));
+  }
+}
+
 export function createDefaultThemeState(theme: ThemeMode = "dark"): ThemeTokenState {
   return {
     theme,
     ...SCALE_DEFAULTS,
     fontFamily: DEFAULT_FONT,
     fontFamilyMono: DEFAULT_FONT_MONO,
+    fontWeights: { ...FONT_WEIGHT_DEFAULTS },
     colors: theme === "light" ? { ...LIGHT_COLORS } : { ...DARK_COLORS },
     statusForegrounds:
       theme === "light" ? { ...LIGHT_STATUS_FOREGROUNDS } : { ...DARK_STATUS_FOREGROUNDS },
@@ -353,11 +408,12 @@ const INLINE_TOKEN_VARS = [
   "--border-width",
   "--font-family-sans",
   "--font-family-mono",
+  ...Object.values(FONT_WEIGHT_CSS_VAR),
   "--shadow-size",
   "--shadow-none",
-  "--shadow-sm",
-  "--shadow-md",
-  "--shadow-lg",
+  "--shadow-base",
+  "--shadow-mid",
+  "--shadow-large",
   "--toast-scrim-size",
   "--toast-scrim-density",
   ...Object.keys(TEXT_SCALE_BASES).flatMap((key) => [
@@ -388,6 +444,7 @@ export async function applyThemeTokens(state: ThemeTokenState, root: HTMLElement
   root.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
   root.style.setProperty("--font-family-sans", state.fontFamily);
   root.style.setProperty("--font-family-mono", state.fontFamilyMono);
+  applyFontWeights(root, state.fontWeights);
 
   // Применяем глобальные флаги анимации в наш MotionConfig
   const { configureMotion } = await import("@/components/core/utils/motionConfig");
@@ -443,6 +500,9 @@ export function exportThemeCss(state: ThemeTokenState): string {
     `  --border-width: ${state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`};`,
     `  --font-family-sans: ${state.fontFamily};`,
     `  --font-family-mono: ${state.fontFamilyMono};`,
+    ...Object.entries(FONT_WEIGHT_CSS_VAR).map(
+      ([key, cssVar]) => `  ${cssVar}: ${state.fontWeights[key as ThemeFontWeightKey]};`,
+    ),
     `  --shadow-size: ${state.shadowSize};`,
     `  --toast-scrim-size: ${state.toastScrimSize};`,
     `  --toast-scrim-density: ${state.toastScrimDensity};`,

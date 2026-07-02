@@ -5,7 +5,7 @@ import { Text } from "@/components/core/Text";
 
 export function SurfaceDashboardWidgetDemo() {
   return (
-    <Surface variant="secondary" padding="mid" shadow="md" className="flex w-full max-w-sm flex-col gap-mid">
+    <Surface variant="secondary" padding="mid" shadow="mid" className="flex w-full max-w-sm flex-col gap-mid">
       <div className="flex items-start justify-between gap-mid">
         <div className="flex flex-col gap-xsmall">
           <Text as="p" variant="base" className="font-medium">

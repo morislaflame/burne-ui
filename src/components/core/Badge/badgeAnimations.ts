@@ -14,7 +14,7 @@ import {
   useGlossInteractiveHandlers,
 } from "@/components/core/utils/glossInteractiveMotion";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
-import { initElementShadow, shadowSm } from "@/components/core/utils/hoverInteractiveLift";
+import { initElementShadow, shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import {
   SHADOW_LIFT_MOTION_CLASS,
   useSecondLevelShadow,
@@ -159,5 +159,5 @@ export function registerBadgeAnchorLiftTarget(
   el: HTMLElement | null,
   hoverLift: boolean,
 ): void {
-  if (el && hoverLift) initElementShadow(el, shadowSm());
+  if (el && hoverLift) initElementShadow(el, shadowBase());
 }

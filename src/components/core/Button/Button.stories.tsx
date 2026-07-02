@@ -408,3 +408,31 @@ export const GlossLight: Story = {
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
+
+export const LabelLayout: Story = {
+  name: "Разметка label + shortcut",
+  render: () => (
+    <Button variant="gloss" type="button" className="w-full max-w-xs justify-between gap-plus">
+      <span>Командная палитра</span>
+      <span className="inline-flex gap-xsmall">
+        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-tools">⌘</span>
+        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-tools">K</span>
+      </span>
+    </Button>
+  ),
+};
+
+export const CompoundLayout: Story = {
+  name: "Compound API",
+  render: () => (
+    <Button variant="outline" type="button" className="w-full max-w-xs">
+      <Button.Label className="justify-between gap-plus">
+        <Button.Text>Командная палитра</Button.Text>
+        <span className="inline-flex gap-xsmall font-mono text-tools">
+          <span>⌘</span>
+          <span>K</span>
+        </span>
+      </Button.Label>
+    </Button>
+  ),
+};

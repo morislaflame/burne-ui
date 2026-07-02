@@ -35,7 +35,7 @@ export function breadcrumbListItemClass(className?: string): string {
 
 export function breadcrumbCurrentClass(className?: string): string {
   return cn(
-    "min-w-0 max-w-[min(14rem,50vw)] truncate px-xsmall py-xsmall font-medium text-foreground",
+    "min-w-0 max-w-[min(14rem,50vw)] truncate px-xsmall py-xsmall font-w-mid text-foreground",
     className,
   );
 }

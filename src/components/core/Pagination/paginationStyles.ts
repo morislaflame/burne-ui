@@ -18,7 +18,7 @@ export const PAGINATION_INTERACTIVE_BUTTON_CLASS =
   "inline-flex min-w-0 origin-center cursor-pointer items-center justify-center gap-xsmall rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted no-underline outline-none hover:text-foreground focus-ring disabled:cursor-not-allowed disabled:opacity-48 disabled:hover:text-muted disabled:hover:bg-transparent motion-reduce:animate-none";
 
 export const PAGINATION_PAGE_ACTIVE_CLASS =
-  "inline-flex min-w-[1.75rem] items-center justify-center px-xsmall py-xsmall font-medium text-foreground tabular-nums";
+  "inline-flex min-w-[1.75rem] items-center justify-center px-xsmall py-xsmall font-w-mid text-foreground tabular-nums text-base";
 
 export const PAGINATION_PAGE_TEXT_CLASS = "min-w-[1.75rem] tabular-nums";
 

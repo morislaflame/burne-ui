@@ -26,7 +26,7 @@ import {
   messageBannerTitleCellClass,
   type MessageBannerGridSlots,
 } from "@/components/core/utils/messageBannerGridLayout";
-import { shadowSm } from "@/components/core/utils/hoverInteractiveLift";
+import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import "../utils/glossInteractive.css";
@@ -512,7 +512,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       if (open) setPortalMounted(true);
     }, [open]);
 
-    usePersistentElShadow(tipRef, !isGloss, shadowSm);
+    usePersistentElShadow(tipRef, !isGloss, shadowBase);
 
     useLayoutEffect(() => {
       if (!open) return;

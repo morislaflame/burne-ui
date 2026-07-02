@@ -10,7 +10,7 @@ export function TableClassNamesFullDemo() {
   return (
     <Table
       classNames={{
-        root: "rounded-mid border border-info/25 shadow-token-sm",
+        root: "rounded-mid border border-info/25 shadow-token-base",
         headerRow: "bg-info/10",
         column: "text-info font-semibold",
         row: "hover:bg-info/5",

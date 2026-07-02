@@ -1,39 +1,43 @@
-import { ensureRippleEase, gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { useLayoutEffect, useRef } from "react";
+import { forwardRef, useLayoutEffect, useRef } from "react";
 
+import { Text } from "@/components/core/Text";
+import { ensureRippleEase, gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig, motionFeedbackExpand } from "@/components/core/utils/motionConfig";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { cn } from "@/utils/cn";
 
+import { useButtonClassNames, useOptionalButtonContext } from "./buttonContext";
 import {
+  buttonContentClass,
+  buttonErrorLayerClass,
   buttonFeedbackExpandRippleClass,
+  buttonIconClass,
   buttonIconSvgClass,
+  buttonLabelClass,
+  buttonLoaderLayerClass,
+  buttonSpinnerClass,
   buttonSpinnerInnerClass,
+  buttonSuccessLayerClass,
+  buttonTextClass,
+  BUTTON_CLIP_LAYER_CLASS,
+  BUTTON_SIZE_TEXT_VARIANT,
+  BUTTON_SPINNER_MOTION_CLASS,
 } from "./buttonStyles";
 import type {
   ButtonContentProps,
+  ButtonErrorProps,
+  ButtonExpandRippleLayerProps,
   ButtonFeedbackExpandRippleProps,
   ButtonIconCheckProps,
   ButtonIconCrossProps,
+  ButtonIconProps,
+  ButtonLabelProps,
+  ButtonLoaderProps,
   ButtonSpinnerProps,
+  ButtonSuccessProps,
+  ButtonTextProps,
 } from "./buttonTypes";
-import {
-  BUTTON_ASYNC_GRID_LAYER_CLASS,
-  BUTTON_CONTENT_MOTION_CLASS,
-  BUTTON_CONTENT_MOTION_GROUP_CLASS,
-  BUTTON_ERROR_LAYER_CLASS,
-  BUTTON_LABEL_LAYER_CLASS,
-  BUTTON_LABEL_TEXT_CLASS,
-  BUTTON_LEFT_ICON_SLOT_CLASS,
-  BUTTON_SIZE_TEXT_VARIANT,
-  BUTTON_SPINNER_MOTION_CLASS,
-  BUTTON_SUCCESS_LAYER_CLASS,
-  BUTTON_CLIP_LAYER_CLASS,
-  BUTTON_ICON_SLOT_SVG_SIZE,
-  buttonSpinnerClass,
-} from "./buttonStyles";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
-import { Text } from "@/components/core/Text";
-import { cn } from "@/utils/cn";
 
 export function ButtonSpinner({ className }: ButtonSpinnerProps) {
   return (
@@ -144,83 +148,168 @@ export function ButtonFeedbackExpandRipple({
   );
 }
 
-export function ButtonContent({
-  size,
-  asyncState,
-  groupSegment,
-  leftIcon,
-  children,
-  bindLabelRef,
-  bindLoaderRef,
-  bindSuccessRef,
-  bindErrorRef,
-  contentMotionRef,
-  loaderTextClass,
-}: ButtonContentProps & { loaderTextClass: string }) {
-  const layout = CONTROL_SIZE_LAYOUT[size];
+export const ButtonContent = forwardRef<HTMLSpanElement, ButtonContentProps>(
+  function ButtonContent({ className = "", children, ...rest }, ref) {
+    const ctx = useOptionalButtonContext();
+    const slotClassNames = useButtonClassNames();
+
+    return (
+      <span
+        ref={ref ?? ctx?.contentMotionRef}
+        className={buttonContentClass({
+          groupSegment: Boolean(ctx?.groupSegment),
+          slotClass: slotClassNames.content,
+          className,
+        })}
+        {...rest}
+      >
+        {children}
+      </span>
+    );
+  },
+);
+
+ButtonContent.displayName = "ButtonContent";
+
+export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
+  function ButtonLabel({ className = "", children, ...rest }, ref) {
+    const ctx = useOptionalButtonContext();
+    const slotClassNames = useButtonClassNames();
+
+    return (
+      <span
+        ref={ref ?? ctx?.bindLabelRef}
+        className={buttonLabelClass({
+          slotClass: slotClassNames.label,
+          className,
+        })}
+        {...rest}
+      >
+        {children}
+      </span>
+    );
+  },
+);
+
+ButtonLabel.displayName = "ButtonLabel";
+
+export function ButtonIcon({ className = "", children, ...rest }: ButtonIconProps) {
+  const ctx = useOptionalButtonContext();
+  const slotClassNames = useButtonClassNames();
+  const size = ctx?.size ?? "base";
 
   return (
     <span
-      ref={contentMotionRef}
-      className={cn(
-        BUTTON_CONTENT_MOTION_CLASS,
-        groupSegment && BUTTON_CONTENT_MOTION_GROUP_CLASS,
-      )}
+      className={buttonIconClass(size, cn(slotClassNames.icon, className))}
+      aria-hidden
+      {...rest}
     >
-      <span ref={bindLabelRef} className={BUTTON_LABEL_LAYER_CLASS}>
-        {leftIcon != null ? (
-          <span
-            className={cn(BUTTON_LEFT_ICON_SLOT_CLASS, BUTTON_ICON_SLOT_SVG_SIZE[size])}
-            aria-hidden
-          >
-            {leftIcon}
-          </span>
-        ) : null}
-        <Text
-          variant={BUTTON_SIZE_TEXT_VARIANT[size]}
-          as="span"
-          inheritColor
-          className={BUTTON_LABEL_TEXT_CLASS}
-        >
-          {children}
-        </Text>
-      </span>
+      {children}
+    </span>
+  );
+}
+
+ButtonIcon.displayName = "ButtonIcon";
+
+export function ButtonText({ className = "", children, ...rest }: ButtonTextProps) {
+  const ctx = useOptionalButtonContext();
+  const slotClassNames = useButtonClassNames();
+  const size = ctx?.size ?? "base";
+
+  return (
+    <Text
+      variant={BUTTON_SIZE_TEXT_VARIANT[size]}
+      as="span"
+      inheritColor
+      className={buttonTextClass(slotClassNames.text, className)}
+      {...rest}
+    >
+      {children}
+    </Text>
+  );
+}
+
+ButtonText.displayName = "ButtonText";
+
+export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
+  function ButtonLoader({ className = "", ...rest }, ref) {
+    const ctx = useOptionalButtonContext();
+    const slotClassNames = useButtonClassNames();
+    const size = ctx?.size ?? "base";
+    const asyncState = ctx?.asyncState ?? "idle";
+    const loaderTextClass = ctx?.loaderTextClass ?? "";
+
+    return (
       <span
-        ref={bindLoaderRef}
-        className={cn(BUTTON_ASYNC_GRID_LAYER_CLASS, loaderTextClass)}
+        ref={ref ?? ctx?.bindLoaderRef}
+        className={buttonLoaderLayerClass(
+          loaderTextClass,
+          cn(slotClassNames.loader, className),
+        )}
         aria-hidden={asyncState !== "loading"}
+        {...rest}
       >
         <ButtonSpinner
           className={cn(buttonSpinnerClass(size), BUTTON_SPINNER_MOTION_CLASS)}
         />
       </span>
+    );
+  },
+);
+
+ButtonLoader.displayName = "ButtonLoader";
+
+export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
+  function ButtonSuccess({ className = "", ...rest }, ref) {
+    const ctx = useOptionalButtonContext();
+    const slotClassNames = useButtonClassNames();
+    const size = ctx?.size ?? "base";
+    const asyncState = ctx?.asyncState ?? "idle";
+    const layout = CONTROL_SIZE_LAYOUT[size];
+
+    return (
       <span
-        ref={bindSuccessRef}
-        className={cn(BUTTON_ASYNC_GRID_LAYER_CLASS, BUTTON_SUCCESS_LAYER_CLASS)}
+        ref={ref ?? ctx?.bindSuccessRef}
+        className={buttonSuccessLayerClass(cn(slotClassNames.success, className))}
         aria-hidden={asyncState !== "success"}
+        {...rest}
       >
         <ButtonIconCheck className={layout.icon} />
       </span>
+    );
+  },
+);
+
+ButtonSuccess.displayName = "ButtonSuccess";
+
+export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
+  function ButtonError({ className = "", ...rest }, ref) {
+    const ctx = useOptionalButtonContext();
+    const slotClassNames = useButtonClassNames();
+    const size = ctx?.size ?? "base";
+    const asyncState = ctx?.asyncState ?? "idle";
+    const layout = CONTROL_SIZE_LAYOUT[size];
+
+    return (
       <span
-        ref={bindErrorRef}
-        className={cn(BUTTON_ASYNC_GRID_LAYER_CLASS, BUTTON_ERROR_LAYER_CLASS)}
+        ref={ref ?? ctx?.bindErrorRef}
+        className={buttonErrorLayerClass(cn(slotClassNames.error, className))}
         aria-hidden={asyncState !== "error"}
+        {...rest}
       >
         <ButtonIconCross className={layout.icon} />
       </span>
-    </span>
-  );
-}
+    );
+  },
+);
+
+ButtonError.displayName = "ButtonError";
 
 export function ButtonExpandRippleLayer({
   clipClass,
   expandRipples,
   onDismiss,
-}: {
-  clipClass: string;
-  expandRipples: { id: number; size: number; tone: "success" | "error" }[];
-  onDismiss: (id: number) => void;
-}) {
+}: ButtonExpandRippleLayerProps) {
   return (
     <span className={cn(BUTTON_CLIP_LAYER_CLASS, clipClass)} aria-hidden>
       {expandRipples.map((rp) => (

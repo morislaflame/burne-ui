@@ -14,7 +14,7 @@ export function formSectionClass(className?: string, classNames?: FormClassNames
 }
 
 export function formTitleClass(className?: string, classNames?: FormClassNames): string {
-  return mergeFormSlotClass("text-header-3 font-semibold text-foreground", classNames?.title, className);
+  return mergeFormSlotClass("text-base font-w-strong text-mid text-foreground", classNames?.title, className);
 }
 
 export function formDescriptionClass(className?: string, classNames?: FormClassNames): string {

@@ -30,7 +30,7 @@ export const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
 
 export const TOAST_COMPOUND_CONTENTS_CLASS = "contents";
 
-export const TOAST_TITLE_CLASS = "font-medium";
+export const TOAST_TITLE_CLASS = "font-w-mid";
 
 export const TOAST_DESCRIPTION_CLASS = "text-muted";
 
@@ -96,7 +96,7 @@ export function toastRootClass({
     "w-full rounded-mid py-base px-plus",
     isGloss
       ? cn("gloss-panel gloss-deep border-0 text-foreground", GLOSS_INTERACTIVE_MOTION_CLASS)
-      : cn("shadow-token-md", TOAST_SURFACE_CLASS[status]),
+      : cn("shadow-token-mid", TOAST_SURFACE_CLASS[status]),
     slotClass,
     className,
   );

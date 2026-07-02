@@ -171,7 +171,7 @@ export const CustomClassNames: Story = {
     <CloseButton
       variant="outline"
       classNames={{
-        root: "border-primary/50 bg-primary/5 shadow-token-md hover:bg-primary/10",
+        root: "border-primary/50 bg-primary/5 shadow-token-mid hover:bg-primary/10",
         icon: "text-primary",
       }}
       aria-label="Закрыть с кастомными слотами"

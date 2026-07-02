@@ -12,7 +12,7 @@ export function TextHeroBlockDemo() {
       >
         Кастомный hero-блок
       </Text>
-      <Text as="p" variant="large" className="max-w-md text-muted">
+      <Text as="p" variant="mid" className="max-w-md text-muted">
         Градиент на заголовке и фоновая плашка — через utility-классы поверх preset variant.
       </Text>
     </div>

@@ -1,8 +1,14 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 
-import type { ToggleButtonGroupContextValue } from "./toggleButtonTypes";
+import type {
+  ToggleButtonClassNames,
+  ToggleButtonContextValue,
+  ToggleButtonGroupContextValue,
+} from "./toggleButtonTypes";
 
 const ToggleButtonGroupContext = createContext<ToggleButtonGroupContextValue | null>(null);
+const ToggleButtonContext = createContext<ToggleButtonContextValue | null>(null);
+const ToggleButtonClassNamesContext = createContext<ToggleButtonClassNames>({});
 
 export function useOptionalToggleButtonGroupContext() {
   return useContext(ToggleButtonGroupContext);
@@ -16,6 +22,52 @@ function useToggleButtonGroupContext(): ToggleButtonGroupContextValue {
   return ctx;
 }
 
-export { ToggleButtonGroupContext };
+export function ToggleButtonClassNamesProvider({
+  classNames,
+  children,
+}: {
+  classNames?: ToggleButtonClassNames;
+  children: ReactNode;
+}) {
+  const parent = useContext(ToggleButtonClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <ToggleButtonClassNamesContext.Provider value={merged}>
+      {children}
+    </ToggleButtonClassNamesContext.Provider>
+  );
+}
+
+export function useToggleButtonClassNames(): ToggleButtonClassNames {
+  return useContext(ToggleButtonClassNamesContext);
+}
+
+export function useToggleButtonContext(): ToggleButtonContextValue {
+  const ctx = useContext(ToggleButtonContext);
+  if (!ctx) {
+    throw new Error("ToggleButton.* components must be inside <ToggleButton>.");
+  }
+  return ctx;
+}
+
+export function useOptionalToggleButtonContext(): ToggleButtonContextValue | null {
+  return useContext(ToggleButtonContext);
+}
+
+export function ToggleButtonContextProvider({
+  value,
+  children,
+}: {
+  value: ToggleButtonContextValue;
+  children: ReactNode;
+}) {
+  return <ToggleButtonContext.Provider value={value}>{children}</ToggleButtonContext.Provider>;
+}
 
 void useToggleButtonGroupContext;
+
+export { ToggleButtonGroupContext };

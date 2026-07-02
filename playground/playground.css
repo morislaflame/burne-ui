@@ -3,3 +3,10 @@
 /* Tailwind v4: при root=playground/ сканируется только эта папка — явно подключаем src. */
 @source "../src/**/*.{tsx,ts}";
 @source "./**/*.{tsx,ts}";
+
+html,
+body {
+  font-family: var(--font-family-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

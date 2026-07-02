@@ -111,7 +111,7 @@ export function textareaShellClass({
     FIELD_SHELL_FOCUS_CLASS,
     isGloss ? glossShellHoverMotionClass : fieldShellHoverClass(!blocked, status),
     !isGloss && standardShellHoverMotionClass,
-    blocked ? "cursor-not-allowed opacity-55 shadow-token-sm" : "",
+    blocked ? "cursor-not-allowed opacity-55 shadow-token-base" : "",
     slotClass,
     className,
   );

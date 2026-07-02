@@ -792,7 +792,7 @@ export const CustomClassNames: Story = {
     <Card
       variant="outline"
       classNames={{
-        root: "rounded-large border-primary/40 bg-primary/5 shadow-token-md",
+        root: "rounded-large border-primary/40 bg-primary/5 shadow-token-mid",
         header: "bg-primary/5",
         title: "text-primary font-semibold",
         description: "text-foreground/80",

@@ -7,7 +7,7 @@ import {
   toggleButtonAriaPressed,
   toggleButtonRole,
 } from "./toggleButtonA11y";
-import { useMergedPressed } from "./toggleButtonAPI";
+import { hasToggleButtonCompoundChildren, useMergedPressed } from "./toggleButtonAPI";
 import { useOptionalToggleButtonGroupContext } from "./toggleButtonContext";
 import {
   toggleButtonRootClass,
@@ -29,6 +29,7 @@ export function useToggleButtonRootState({
   disabled: disabledProp = false,
   className,
   classNames,
+  children,
   onClick,
 }: UseToggleButtonRootStateProps) {
   const groupCtx = useOptionalToggleButtonGroupContext();
@@ -57,6 +58,9 @@ export function useToggleButtonRootState({
       : localPressed;
 
   const roundingClass = toggleButtonRoundingClass(groupSegment);
+
+  const isCompound = hasToggleButtonCompoundChildren(children);
+  const contentLayoutClass = !isCompound ? className : undefined;
 
   const buttonClass = toggleButtonRootClass({
     variant,
@@ -116,6 +120,9 @@ export function useToggleButtonRootState({
     ariaChecked: toggleButtonAriaChecked({ inGroup, isSingleGroup, pressed }),
     tabIndex:
       inGroup && isSingleGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined,
+    isCompound,
+    contentLayoutClass,
+    children,
     handleClick,
   };
 }

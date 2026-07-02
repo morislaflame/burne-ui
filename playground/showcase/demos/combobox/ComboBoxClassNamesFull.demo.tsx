@@ -30,7 +30,7 @@ export function ComboBoxClassNamesFullDemo() {
       onValueChange={setValue}
       variant="outline"
       classNames={{
-        inputGroup: "border-info/40 bg-info/5 shadow-token-sm",
+        inputGroup: "border-info/40 bg-info/5 shadow-token-base",
         input: "text-info placeholder:text-info/50",
         trigger: "text-info hover:text-info",
         popoverBody: "bg-info/5",

@@ -15,10 +15,10 @@ export const AVATAR_FALLBACK_TEXT: Record<
   AvatarSize,
   { variant: TextVariant; className: string }
 > = {
-  small: { variant: "small", className: "font-semibold uppercase" },
-  base: { variant: "base", className: "font-semibold uppercase" },
-  mid: { variant: "mid", className: "font-semibold uppercase" },
-  large: { variant: "header-2", className: "font-semibold uppercase" },
+  small: { variant: "small", className: "font-w-strong uppercase" },
+  base: { variant: "base", className: "font-w-strong uppercase" },
+  mid: { variant: "mid", className: "font-w-strong uppercase" },
+  large: { variant: "header-2", className: "font-w-strong uppercase" },
 };
 
 export function avatarRootClass(

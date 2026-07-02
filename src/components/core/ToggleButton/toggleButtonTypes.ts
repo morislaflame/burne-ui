@@ -1,7 +1,9 @@
 import type {
   ButtonHTMLAttributes,
+  HTMLAttributes,
   PointerEventHandler,
   ReactNode,
+  RefObject,
 } from "react";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
@@ -20,9 +22,20 @@ export type ToggleButtonClassNames = {
   root?: string;
   fill?: string;
   content?: string;
+  label?: string;
   leftIcon?: string;
   rightIcon?: string;
-  label?: string;
+  text?: string;
+};
+
+export type ToggleButtonContextValue = {
+  size: ToggleButtonSize;
+  groupSegment: ButtonGroupSegment | undefined;
+  contentMotionRef: RefObject<HTMLSpanElement | null>;
+  bindFillRef: (node: HTMLSpanElement | null) => void;
+  fillColor: string;
+  pressed: boolean;
+  roundingClass: string;
 };
 
 export type ToggleButtonProps = Omit<
@@ -42,6 +55,30 @@ export type ToggleButtonProps = Omit<
   rightIcon?: ReactNode;
   animated?: boolean;
   classNames?: ToggleButtonClassNames;
+};
+
+export type ToggleButtonFillProps = HTMLAttributes<HTMLSpanElement>;
+
+export type ToggleButtonContentProps = HTMLAttributes<HTMLSpanElement>;
+
+export type ToggleButtonLabelProps = HTMLAttributes<HTMLSpanElement>;
+
+export type ToggleButtonIconProps = HTMLAttributes<HTMLSpanElement> & {
+  children?: ReactNode;
+};
+
+export type ToggleButtonTrailingProps = HTMLAttributes<HTMLSpanElement> & {
+  children?: ReactNode;
+};
+
+export type ToggleButtonTextProps = HTMLAttributes<HTMLSpanElement> & {
+  children?: ReactNode;
+};
+
+export type ToggleButtonSimpleContentProps = {
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  children?: ReactNode;
 };
 
 export type ToggleButtonGroupContextValue = {
@@ -69,6 +106,7 @@ export type UseToggleButtonRootStateProps = Pick<
   | "disabled"
   | "className"
   | "classNames"
+  | "children"
   | "onClick"
 >;
 
@@ -83,16 +121,6 @@ export type UseToggleButtonAnimationsProps = {
   onPointerEnter?: PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: PointerEventHandler<HTMLButtonElement>;
-};
-
-export type ToggleButtonContentProps = {
-  size: ToggleButtonSize;
-  groupSegment: ButtonGroupSegment | undefined;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
-  children?: ReactNode;
-  contentMotionRef: React.RefObject<HTMLSpanElement | null>;
-  classNames?: ToggleButtonClassNames;
 };
 
 export const TOGGLE_BUTTON_TEXT_VARIANT: Record<ToggleButtonSize, TextVariant> = {

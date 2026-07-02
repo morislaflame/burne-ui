@@ -18,12 +18,12 @@ export const DROPDOWN_GROUP_CLASS =
 
 export const DROPDOWN_LABEL_CLASS = "px-base text-left";
 
-export const DROPDOWN_LABEL_TEXT_CLASS = "font-medium text-muted";
+export const DROPDOWN_LABEL_TEXT_CLASS = "text-muted";
 
 export const DROPDOWN_SUB_CLASS = "relative min-w-0";
 
 export const DROPDOWN_SUB_TRIGGER_CLASS =
-  "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none text-base font-medium text-foreground focus-ring";
+  "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none text-base text-foreground focus-ring";
 
 export const DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS = "min-w-0 flex-1";
 
@@ -34,7 +34,7 @@ export const DROPDOWN_SUB_CONTENT_BASE_CLASS =
   "fixed z-[110] outline-none will-change-transform";
 
 export const DROPDOWN_SUB_CONTENT_SURFACE_CLASS =
-  "flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border-token bg-surface p-base text-left shadow-token-md";
+  "flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border-token bg-surface p-base text-left shadow-token-mid";
 
 export const DROPDOWN_SUB_CONTENT_GLOSS_PANEL_CLASS =
   "gloss-panel gloss-deep flex max-h-[min(22rem,65vh)] min-w-0 origin-center flex-col overflow-hidden rounded-mid text-foreground";

@@ -266,7 +266,7 @@ export const CustomClassNames: Story = {
     <Calendar
       mode="range"
       classNames={{
-        root: "rounded-large border-primary/30 bg-primary/5 shadow-token-md",
+        root: "rounded-large border-primary/30 bg-primary/5 shadow-token-mid",
         header: "gap-small",
         navPrev: "text-primary",
         navNext: "text-primary",

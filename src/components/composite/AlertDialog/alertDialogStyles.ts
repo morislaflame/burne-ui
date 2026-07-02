@@ -91,7 +91,7 @@ export const ALERT_DIALOG_FOOTER_CLASS =
 
 export function alertDialogPanelSurfaceClass(variant: AlertVariant): string {
   // Panel surface follows variant only; status colors icon/text in the header, not the shell.
-  return cn(alertSurfaceClass(variant, "default"), "shadow-token-lg");
+  return cn(alertSurfaceClass(variant, "default"), "shadow-token-large");
 }
 
 export function alertDialogOverlayClass(lightUi: boolean, slotClass?: string): string {

@@ -3,7 +3,7 @@ import { Text } from "@/components/core/Text";
 
 export function SurfaceNestedPanelsDemo() {
   return (
-    <Surface variant="default" padding="plus" shadow="sm" className="w-full max-w-md flex flex-col gap-mid p-mid">
+    <Surface variant="default" padding="plus" shadow="base" className="w-full max-w-md flex flex-col gap-mid p-mid">
       <Text as="p" variant="small" className="mb-mid font-medium">
         Панель проекта
       </Text>

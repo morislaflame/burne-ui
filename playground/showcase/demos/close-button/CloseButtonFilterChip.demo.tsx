@@ -3,7 +3,7 @@ import { Text } from "@/components/core/Text";
 
 export function CloseButtonFilterChipDemo() {
   return (
-    <div className="inline-flex items-center gap-small rounded-full border-token bg-tertiary py-xsmall pl-mid pr-xsmall shadow-token-sm">
+    <div className="inline-flex items-center gap-small rounded-full border-token bg-tertiary py-xsmall pl-mid pr-xsmall shadow-token-base">
       <Text as="span" variant="small" className="text-muted">
         Фильтр: опубликовано
       </Text>

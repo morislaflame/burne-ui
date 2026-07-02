@@ -30,7 +30,7 @@ export function SelectClassNamesFullDemo() {
       onValueChange={setValue}
       variant="outline"
       classNames={{
-        triggerGroup: "border-info/40 bg-info/5 shadow-token-sm",
+        triggerGroup: "border-info/40 bg-info/5 shadow-token-base",
         value: "text-info",
         trigger: "text-info hover:text-info",
         popoverBody: "bg-info/5",

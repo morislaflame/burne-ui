@@ -18,7 +18,7 @@ import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
  */
 export interface HoverShadowConfig {
   /**
-   * box-shadow в покое (второй уровень — sm; hover-only — см. `shadowNone`).
+   * box-shadow в покое (второй уровень — base; hover-only — см. `shadowNone`).
    * Если undefined — используется `shadowNone()` (не `none`: иначе transition не работает).
    */
   idle?: string;
@@ -32,12 +32,12 @@ function readShadowVar(varName: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "none";
 }
 
-/** «Пустая» тень: визуально как без тени, но интерполируется с `--shadow-sm`. */
+/** «Пустая» тень: визуально как без тени, но интерполируется с `--shadow-base`. */
 export const shadowNone = () => readShadowVar("--shadow-none");
 
-export const shadowSm = () => readShadowVar(SHADOW_CSS_VAR.sm);
-export const shadowMd = () => readShadowVar(SHADOW_CSS_VAR.md);
-export const shadowLg = () => readShadowVar(SHADOW_CSS_VAR.lg);
+export const shadowBase = () => readShadowVar(SHADOW_CSS_VAR.base);
+export const shadowMid = () => readShadowVar(SHADOW_CSS_VAR.mid);
+export const shadowLarge = () => readShadowVar(SHADOW_CSS_VAR.large);
 
 /** Значение `box-shadow` для ступени тени из текущей темы. */
 export function readShadowSize(size: ShadowSize): string {

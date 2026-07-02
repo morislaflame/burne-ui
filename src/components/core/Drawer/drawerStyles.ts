@@ -58,7 +58,7 @@ export const DRAWER_PANEL_BASE_CLASS =
   "absolute z-10 flex flex-col outline-none overflow-hidden";
 
 export const DRAWER_PANEL_SURFACE_CLASS =
-  "border-token bg-surface text-foreground shadow-token-lg";
+  "border-token bg-surface text-foreground shadow-token-large";
 
 export const DRAWER_GLOSS_PANEL_CLASS =
   "gloss-panel gloss-deep flex min-h-0 flex-1 flex-col text-foreground";

@@ -20,7 +20,7 @@ export const DIALOG_PANEL_BASE_CLASS =
   "relative z-10 w-full max-w-component-mid outline-none";
 
 export const DIALOG_PANEL_SURFACE_CLASS =
-  "flex min-h-0 max-h-[min(90dvh,36rem)] flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-lg";
+  "flex min-h-0 max-h-[min(90dvh,36rem)] flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-large";
 
 export const DIALOG_GLOSS_PANEL_CLASS =
   "gloss-panel gloss-deep flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col rounded-mid text-foreground";

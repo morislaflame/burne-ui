@@ -441,13 +441,13 @@ export const CustomColors: Story = {
         <div className="flex flex-wrap items-center gap-plus">
           <Badge
             size="base"
-            className="border-transparent bg-[oklch(58%_0.24_300)] text-white shadow-sm"
+            className="border-transparent bg-[oklch(58%_0.24_300)] text-white shadow-base"
           >
             OKLCH фиолетовый
           </Badge>
           <Badge
             size="base"
-            className="border-0 bg-[linear-gradient(90deg,#0891b2_0%,#0891b2_12%,#1d4ed8_88%,#1d4ed8_100%)] bg-no-repeat text-white shadow-sm [background-size:100%_100%]"
+            className="border-0 bg-[linear-gradient(90deg,#0891b2_0%,#0891b2_12%,#1d4ed8_88%,#1d4ed8_100%)] bg-no-repeat text-white shadow-base [background-size:100%_100%]"
           >
             Градиент
           </Badge>

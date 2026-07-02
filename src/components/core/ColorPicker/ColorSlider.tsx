@@ -272,7 +272,7 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
           {label ? (
             <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
               <Text as="span" variant="small" className="text-muted">{label}</Text>
-              <Text as="span" variant="small" className="font-medium text-foreground">
+              <Text as="span" variant="small" className="font-w-mid text-foreground">
                 {rest.value ?? rest.defaultValue ?? CHANNEL_DEFAULT[channel]}
               </Text>
             </div>

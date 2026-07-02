@@ -7,7 +7,7 @@ import type { LinkSize } from "./linkTypes";
 export const LINK_ANCHOR_CLASS =
   "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit text-primary focus-ring";
 
-export const LINK_TEXT_BASE_CLASS = "min-w-0 truncate font-medium";
+export const LINK_TEXT_BASE_CLASS = "min-w-0 truncate font-w-mid";
 
 export const LINK_TEXT_UNDERLINE_CLASS =
   "underline decoration-current/70 underline-offset-[0.2em]";

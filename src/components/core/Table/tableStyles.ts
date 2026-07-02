@@ -33,14 +33,14 @@ export const TABLE_HEADER_ROW_VARIANT_CLASS: Record<TableVariant, string> = {
   gloss: "border-b-token",
 };
 
-export const TABLE_COLUMN_BASE_CLASS = "group/col text-small";
+export const TABLE_COLUMN_BASE_CLASS = "group/col";
 
 export const TABLE_COLUMN_VARIANT_CLASS: Record<TableVariant, string> = {
   default:
-    "bg-secondary px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
-  secondary: "px-large py-plus text-left font-medium text-secondary-foreground whitespace-nowrap",
-  toned: "px-large py-plus text-left font-medium text-muted whitespace-nowrap bg-transparent",
-  gloss: "bg-transparent px-large py-plus text-left font-medium text-muted whitespace-nowrap",
+    "bg-secondary px-large py-plus text-secondary-foreground whitespace-nowrap",
+  secondary: "px-large py-plus text-secondary-foreground whitespace-nowrap",
+  toned: "px-large py-plus text-muted whitespace-nowrap bg-transparent",
+  gloss: "bg-transparent px-large py-plus text-muted whitespace-nowrap",
 };
 
 export const TABLE_COLUMN_SORTABLE_CLASS =
@@ -48,7 +48,7 @@ export const TABLE_COLUMN_SORTABLE_CLASS =
 
 export const TABLE_COLUMN_INNER_CLASS = "inline-flex items-center gap-xsmall";
 
-export const TABLE_COLUMN_LABEL_CLASS = "min-w-0";
+export const TABLE_COLUMN_LABEL_CLASS = "min-w-0 text-small text-left font-w-mid";
 
 export const TABLE_COLUMN_SORT_CHEVRON_BASE_CLASS = "shrink-0 origin-center";
 

@@ -15,7 +15,7 @@ export const KBD_TEXT_VARIANT: Record<KbdSize, TextVariant> = {
   small: "tools",
   base: "tools",
   mid: "small",
-  large: "small",
+  large: "base",
 };
 
 export const KBD_LAYOUT: Record<KbdSize, string> = {

@@ -15,6 +15,9 @@ export function TextVariantsDemo() {
       <Text as="p" variant="large">
         text-large
       </Text>
+      <Text as="p" variant="mid">
+        text-mid
+      </Text>
       <Text as="p" variant="base">
         text-base — основной текст
       </Text>

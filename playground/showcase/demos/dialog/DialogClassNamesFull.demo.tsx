@@ -12,7 +12,7 @@ export function DialogClassNamesFullDemo() {
         open={open}
         onOpenChange={setOpen}
         classNames={{
-          panel: "border-primary/40 shadow-token-lg",
+          panel: "border-primary/40 shadow-token-large",
           header: "border-b border-primary/20 pb-small",
           title: "text-primary font-semibold",
           description: "text-foreground/75",

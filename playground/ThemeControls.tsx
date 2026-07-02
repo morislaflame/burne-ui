@@ -11,10 +11,13 @@ import {
   BORDER_COLOR_CSS_FORMULA_BY_THEME,
   COLOR_LABELS,
   FONT_PRESETS,
+  FONT_WEIGHT_DEFAULTS,
+  FONT_WEIGHT_LABELS,
   MONO_FONT_PRESETS,
   SCALE_DEFAULTS,
   STATUS_FOREGROUND_LABELS,
   type ThemeColorKey,
+  type ThemeFontWeightKey,
   type ThemeStatusForegroundKey,
 } from "./themeDefaults";
 import {
@@ -27,6 +30,8 @@ import {
 import type { ThemeTokensApi } from "./useThemeTokens";
 
 const TINT_COLOR_KEYS = new Set<ThemeColorKey>(["primaryTint", "primaryTintStrong"]);
+
+const FONT_WEIGHT_OPTIONS = [300, 400, 500, 600, 700, 800] as const;
 
 const TINT_DEFAULT_PERCENT: Record<"primaryTint" | "primaryTintStrong", number> = {
   primaryTint: 10,
@@ -73,7 +78,7 @@ const STATUS_FOREGROUND_KEYS = Object.keys(
 
 function SectionTitle({ children }: { children: string }) {
   return (
-    <Text as="span" variant="base" className="font-medium">
+    <Text as="span" variant="base" className="font-w-mid">
       {children}
     </Text>
   );
@@ -273,6 +278,39 @@ function TintColorControl({
   );
 }
 
+function FontWeightSelect({
+  id,
+  label,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-small">
+      <Label htmlFor={id}>{label}</Label>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className={cn(
+          "w-full rounded-base border-token bg-surface px-small py-xsmall text-small text-foreground outline-none",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        )}
+      >
+        {FONT_WEIGHT_OPTIONS.map((weight) => (
+          <option key={weight} value={weight}>
+            {weight}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 function FontSelect({
   id,
   label,
@@ -345,6 +383,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
     setScale,
     setFontFamily,
     setFontFamilyMono,
+    setFontWeight,
     setShadowStrength,
     setShadowSize,
     setToastScrimSize,
@@ -538,11 +577,48 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           presets={MONO_FONT_PRESETS}
           onChange={setFontFamilyMono}
         />
-        <Text as="p" variant="tools" className="rounded-small border-token bg-background p-small font-mono text-muted">
-          Aa Bb 123 — sans
+        <Text as="p" variant="tools" className="rounded-small border-token bg-background p-small text-muted">
+          <span className="font-sans">Aa Bb 123 — sans</span>
           <br />
-          <span style={{ fontFamily: "var(--font-family-mono)" }}>{`{ code: true }`}</span>
+          <span className="font-mono">{`{ code: true }`}</span>
         </Text>
+      </div>
+
+      <div className="flex flex-col gap-small">
+        <SectionTitle>Начертание</SectionTitle>
+        {(Object.keys(FONT_WEIGHT_LABELS) as ThemeFontWeightKey[]).map((key) => (
+          <FontWeightSelect
+            key={key}
+            id={`theme-font-weight-${key}`}
+            label={FONT_WEIGHT_LABELS[key]}
+            value={state.fontWeights[key]}
+            onChange={(value) => setFontWeight(key, value)}
+          />
+        ))}
+        <Text as="p" variant="tools" className="rounded-small border-token bg-background p-small text-muted">
+          <span className="font-w-small">Small — мелкий и служебный текст</span>
+          <br />
+          <span className="font-w-base">Base — основной текст</span>
+          <br />
+          <span className="font-w-mid">Mid — контролы</span>
+          <br />
+          <span className="font-w-strong">Strong — заголовки</span>
+          <br />
+          <span className="font-w-bold">Bold — акцент</span>
+        </Text>
+        <Button
+          type="button"
+          size="small"
+          variant="ghost"
+          className="self-start text-muted"
+          onClick={() => {
+            (Object.keys(FONT_WEIGHT_DEFAULTS) as ThemeFontWeightKey[]).forEach((key) => {
+              setFontWeight(key, FONT_WEIGHT_DEFAULTS[key]);
+            });
+          }}
+        >
+          Начертание по умолчанию
+        </Button>
       </div>
 
       <Separator />

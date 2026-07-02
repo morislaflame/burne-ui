@@ -10,7 +10,7 @@ export function ButtonFabClusterDemo() {
         iconOnly
         aria-label="Создать"
         size="small"
-        className="rounded-full shadow-token-lg"
+        className="rounded-full shadow-token-large"
       >
         <IoAdd aria-hidden className="size-4" />
       </Button>

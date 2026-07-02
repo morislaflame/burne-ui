@@ -116,17 +116,17 @@ export const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
 };
 
 export const BUTTON_BASE_INTERACTIVE_CLASS =
-  "relative overflow-hidden inline-flex items-center justify-center font-medium outline-none focus-ring disabled:pointer-events-none";
+  "relative overflow-hidden inline-flex items-center justify-center outline-none focus-ring disabled:pointer-events-none";
 
 export const BUTTON_CLIP_LAYER_CLASS = "pointer-events-none absolute inset-0 z-0 overflow-hidden";
 
 export const BUTTON_CONTENT_MOTION_CLASS =
-  "relative z-[1] grid place-items-center";
+  "relative z-[1] grid w-full min-w-0 place-items-center";
 
 export const BUTTON_CONTENT_MOTION_GROUP_CLASS = "origin-center will-change-transform";
 
 export const BUTTON_LABEL_LAYER_CLASS =
-  "col-start-1 row-start-1 inline-flex min-w-0 items-center justify-center gap-xsmall";
+  "col-start-1 row-start-1 inline-flex w-full min-w-0 items-center justify-center gap-xsmall";
 
 export const BUTTON_LEFT_ICON_SLOT_CLASS = "inline-flex shrink-0 items-center justify-center";
 
@@ -267,6 +267,55 @@ export function buttonFeedbackExpandRippleClass(): string {
 
 export function buttonSpinnerInnerClass(): string {
   return "box-border inline-block rounded-full border-current border-t-transparent";
+}
+
+export function buttonContentClass({
+  groupSegment,
+  slotClass,
+  className,
+}: {
+  groupSegment: boolean;
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(
+    BUTTON_CONTENT_MOTION_CLASS,
+    groupSegment && BUTTON_CONTENT_MOTION_GROUP_CLASS,
+    slotClass,
+    className,
+  );
+}
+
+export function buttonLabelClass({
+  slotClass,
+  className,
+  layoutClass,
+}: {
+  slotClass?: string;
+  className?: string;
+  layoutClass?: string;
+}): string {
+  return cn(BUTTON_LABEL_LAYER_CLASS, slotClass, layoutClass, className);
+}
+
+export function buttonIconClass(size: ComponentSize, slotClass?: string): string {
+  return cn(BUTTON_LEFT_ICON_SLOT_CLASS, BUTTON_ICON_SLOT_SVG_SIZE[size], slotClass);
+}
+
+export function buttonTextClass(slotClass?: string, className?: string): string {
+  return cn(BUTTON_LABEL_TEXT_CLASS, slotClass, className);
+}
+
+export function buttonLoaderLayerClass(loaderTextClass: string, slotClass?: string): string {
+  return cn(BUTTON_ASYNC_GRID_LAYER_CLASS, loaderTextClass, slotClass);
+}
+
+export function buttonSuccessLayerClass(slotClass?: string): string {
+  return cn(BUTTON_ASYNC_GRID_LAYER_CLASS, BUTTON_SUCCESS_LAYER_CLASS, slotClass);
+}
+
+export function buttonErrorLayerClass(slotClass?: string): string {
+  return cn(BUTTON_ASYNC_GRID_LAYER_CLASS, BUTTON_ERROR_LAYER_CLASS, slotClass);
 }
 
 export function buttonIconSvgClass(): string {
