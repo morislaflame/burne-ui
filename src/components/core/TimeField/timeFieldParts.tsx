@@ -119,7 +119,6 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         <div
           className={timeFieldShellInnerClass({
             variant: state.variant,
-            size: state.size,
           })}
           onClick={state.handleShellClick}
         >

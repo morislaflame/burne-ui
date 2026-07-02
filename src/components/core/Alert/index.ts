@@ -23,6 +23,7 @@ export type {
   AlertProps,
   AlertVariant,
   AlertStatus,
+  AlertSize,
   AlertClassNames,
   AlertIndicatorProps,
   AlertContentProps,

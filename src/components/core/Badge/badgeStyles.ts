@@ -48,8 +48,8 @@ export const BADGE_SQUARE_MIN: Record<BadgeSize, string> = {
 export const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
   small: "tools",
   base: "small",
-  mid: "small",
-  large: "base",
+  mid: "base",
+  large: "mid",
 };
 
 export const BADGE_ICON_ONLY: Record<BadgeSize, string> = {

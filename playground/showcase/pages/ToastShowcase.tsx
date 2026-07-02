@@ -10,6 +10,8 @@ import { ToastPlacementsDemo } from "../demos/toast/ToastPlacements.demo";
 import toastPlacementsSource from "../demos/toast/ToastPlacements.demo.tsx?raw";
 import { ToastPromiseFlowDemo } from "../demos/toast/ToastPromiseFlow.demo";
 import toastPromiseFlowSource from "../demos/toast/ToastPromiseFlow.demo.tsx?raw";
+import { ToastSizesDemo } from "../demos/toast/ToastSizes.demo";
+import toastSizesSource from "../demos/toast/ToastSizes.demo.tsx?raw";
 import { ToastUndoActionDemo } from "../demos/toast/ToastUndoAction.demo";
 import toastUndoActionSource from "../demos/toast/ToastUndoAction.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
@@ -24,6 +26,10 @@ export function ToastShowcase() {
     >
       <ShowcaseSection title="Базовый" description="toast.show с title и description — status и variant по умолчанию.">
         <ShowcaseDemoFromFile Demo={ToastDefaultDemo} source={toastDefaultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large — padding, типографика и ширина viewport.">
+        <ShowcaseDemoFromFile Demo={ToastSizesDemo} source={toastSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -65,8 +71,8 @@ export function ToastShowcase() {
           <p>
             Императивный API: <code>useToast()</code> → <code>toast.show</code>, <code>toast.success</code>,{" "}
             <code>toast.danger</code>, <code>toast.promise</code> и др. Параметры: <code>title</code>,{" "}
-            <code>description</code>, <code>status</code>, <code>variant</code>, <code>placement</code>,{" "}
-            <code>timeout</code>, <code>action</code>.
+            <code>description</code>, <code>status</code>, <code>variant</code>, <code>size</code>,{" "}
+            <code>placement</code>, <code>timeout</code>, <code>action</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Провайдер">

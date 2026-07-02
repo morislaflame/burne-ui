@@ -9,11 +9,13 @@ export function ToastProviderRoot({
   children,
   defaultPlacement = "bottom-center",
   defaultVariant = "default",
+  defaultSize = "base",
   classNames,
 }: ToastProviderProps) {
   const state = useToastProviderState({
     defaultPlacement,
     defaultVariant,
+    defaultSize,
     classNames,
   });
 
@@ -30,6 +32,7 @@ export function ToastProviderRoot({
               onDismiss={state.dismiss}
               onRemoveFinal={state.removeFinal}
               classNames={classNames}
+              defaultSize={state.defaultSize}
             />,
             document.body,
             placement,

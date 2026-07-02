@@ -1,8 +1,24 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
+import type { ButtonSize } from "@/components/core/Button";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
+import type { TextVariant } from "@/components/core/Text";
 
 export type DialogVariant = "default" | "gloss";
+
+export type DialogSize = "small" | "base" | "mid" | "large";
+
+export type DialogSizePreset = {
+  panelMax: string;
+  maxHeight: string;
+  headerGap: string;
+  contentClass: string;
+  headingBlockGap: string;
+  titleVariant: TextVariant;
+  descVariant: TextVariant;
+  descClassName: string;
+  bodyVariant: TextVariant;
+};
 
 export type DialogClassNames = {
   dialog?: string;
@@ -24,6 +40,7 @@ export type DialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children?: ReactNode;
+  size?: DialogSize;
   classNames?: DialogClassNames;
 };
 
@@ -49,6 +66,9 @@ export type DialogContextValue = {
   hasDescription: boolean;
   setHasDescription: (value: boolean) => void;
   onOpenChange: (open: boolean) => void;
+  size: DialogSize;
+  sizePreset: DialogSizePreset;
+  footerButtonSize: ButtonSize;
 };
 
 export type DialogClassNamesProviderProps = {
@@ -65,7 +85,7 @@ export type DialogCloseProps = CloseButtonProps;
 export type DialogContentProps = HTMLAttributes<HTMLDivElement>;
 export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
-export type UseDialogRootStateProps = Pick<DialogProps, "open" | "onOpenChange">;
+export type UseDialogRootStateProps = Pick<DialogProps, "open" | "onOpenChange" | "size">;
 
 export type UseDialogModalMotionProps = {
   open: boolean;
@@ -78,6 +98,7 @@ export type DialogPortalShellProps = {
   children: ReactNode;
   className?: string;
   variant: DialogVariant;
+  sizePreset: DialogSizePreset;
   portalTheme: Record<string, string | undefined>;
   lightUi: boolean;
   titleId: string;

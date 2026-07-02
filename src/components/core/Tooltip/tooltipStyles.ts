@@ -24,38 +24,38 @@ export const TOOLTIP_SURFACE_CLASS: Record<TooltipVariant, string> = {
 };
 
 export const TOOLTIP_TEXT_LAYOUT: Record<TooltipSize, string> = {
-  small: "max-w-[12rem] px-base py-xsmall",
-  base: "max-w-[16rem] px-base py-small",
-  mid: "max-w-[18rem] px-plus py-small",
-  large: "max-w-xs px-plus py-base",
+  small: "max-w-[12rem] p-small",
+  base: "max-w-[16rem] p-base",
+  mid: "max-w-xs p-plus",
+  large: "max-w-sm p-mid",
 };
 
 export const TOOLTIP_CONTENT_VARIANT: Record<TooltipSize, TextVariant> = {
   small: "tools",
   base: "small",
-  mid: "small",
-  large: "base",
+  mid: "base",
+  large: "mid",
 };
 
 export const TOOLTIP_DESC_VARIANT: Record<TooltipSize, TextVariant> = {
   small: "tools",
   base: "tools",
-  mid: "tools",
-  large: "small",
+  mid: "small",
+  large: "base",
 };
 
 export const TOOLTIP_ICON_SIZE: Record<TooltipSize, string> = {
   small: "icon-small",
   base: "icon-base",
-  mid: "icon-base",
-  large: "icon-mid",
+  mid: "icon-mid",
+  large: "icon-large",
 };
 
 export const TOOLTIP_ICON_SLOT_SVG: Record<TooltipSize, string> = {
   small: "[&_svg]:icon-small",
   base: "[&_svg]:icon-base",
-  mid: "[&_svg]:icon-base",
-  large: "[&_svg]:icon-mid",
+  mid: "[&_svg]:icon-mid",
+  large: "[&_svg]:icon-large",
 };
 
 export const TOOLTIP_ICON_TEXT_CLASS: Record<TooltipVariant, string> = {
@@ -69,10 +69,10 @@ export const TOOLTIP_ICON_TEXT_CLASS: Record<TooltipVariant, string> = {
 };
 
 export const TOOLTIP_GRID_GAP: Record<TooltipSize, string> = {
-  small: "gap-x-xsmall",
-  base: "gap-x-small",
-  mid: "gap-x-base",
-  large: "gap-x-base",
+  small: "gap-x-xsmall gap-y-0",
+  base: "gap-x-small gap-y-xsmall",
+  mid: "gap-x-base gap-y-xsmall",
+  large: "gap-x-plus gap-y-small",
 };
 
 export const TOOLTIP_TRIGGER_BASE_CLASS = "inline-flex shrink-0";

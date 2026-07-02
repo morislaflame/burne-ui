@@ -4,7 +4,7 @@ import { messageBannerGridClass } from "@/components/core/utils/messageBannerGri
 import { cn } from "@/utils/cn";
 
 import { AlertClassNamesProvider, AlertContext } from "./alertContext";
-import { ALERT_ROOT_SHELL_CLASS } from "./alertStyles";
+import { alertRootShellClass } from "@/components/core/utils/messageBannerSize";
 import type { AlertProps } from "./alertTypes";
 import { AlertSimpleContent } from "./alertSimpleContent";
 import { useAlertAnimations } from "./alertAnimations";
@@ -22,6 +22,7 @@ export type {
   AlertStatus,
   AlertLiveRole,
   AlertClassNames,
+  AlertSize,
   AlertProps,
 } from "./alertTypes";
 
@@ -29,6 +30,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   {
     variant = "default",
     status,
+    size = "base",
     role: roleProp,
     title,
     description,
@@ -49,6 +51,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   const {
     isCompound,
     gridSlots,
+    sizePreset,
     liveRole,
     ariaLabelledBy,
     ariaDescribedBy,
@@ -56,6 +59,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   } = useAlertRootState({
     variant,
     status,
+    size,
     role: roleProp,
     title,
     description,
@@ -84,8 +88,8 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           aria-labelledby={ariaLabelledBy}
           aria-describedby={ariaDescribedBy}
           className={cn(
-            messageBannerGridClass(gridSlots),
-            ALERT_ROOT_SHELL_CLASS,
+            messageBannerGridClass(gridSlots, sizePreset.gridGap),
+            alertRootShellClass(size),
             surfaceClass,
             classNames?.root,
             className,

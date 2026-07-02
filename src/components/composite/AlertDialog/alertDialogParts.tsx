@@ -58,6 +58,7 @@ import {
   ALERT_DIALOG_HEADER_CLASS,
   alertDialogHeaderIconWrapperClass,
   ALERT_DIALOG_HEADING_BLOCK_CLASS,
+  ALERT_DIALOG_TITLE_CLASS,
   ALERT_DIALOG_INDICATOR_CLASS,
   ALERT_DIALOG_NATIVE_CLASS,
   alertDialogBodyClass,
@@ -108,7 +109,6 @@ export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogClosePr
     return (
       <CloseButton
         ref={ref}
-        size="small"
         variant="secondary"
         className={mergeAlertDialogSlotClass(
           ALERT_DIALOG_CLOSE_CLASS,
@@ -228,6 +228,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
         variant={sizePreset.titleVariant}
         id={id ?? titleId}
         className={mergeAlertDialogSlotClass(
+          ALERT_DIALOG_TITLE_CLASS,
           headerCtx && messageBannerTitleCellClass(headerCtx.gridSlots),
           slotClassNames.title,
           className,

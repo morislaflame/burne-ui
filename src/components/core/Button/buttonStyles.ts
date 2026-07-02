@@ -238,18 +238,25 @@ export function buttonConvergeRippleColor(
   return BUTTON_STATUS_RIPPLE[status];
 }
 
+export const BUTTON_CONTROL_HEIGHT_CLASS: Record<ComponentSize, string> = {
+  small: "h-control-small",
+  base: "h-control-base",
+  mid: "h-control-mid",
+  large: "h-control-large",
+};
+
 export function controlShellClass(
   size: ComponentSize,
   minW = CONTROL_SIZE_LAYOUT[size].minWButton,
 ): string {
   const layout = CONTROL_SIZE_LAYOUT[size];
-  return cn(layout.h, minW, layout.padX, layout.padY);
+  return cn(minW, layout.padX, layout.padY);
 }
 
 export function buttonRootClass(size: ComponentSize, iconOnly = false): string {
   const layout = CONTROL_SIZE_LAYOUT[size];
   return cn(
-    layout.h,
+    BUTTON_CONTROL_HEIGHT_CLASS[size],
     iconOnly ? "min-w-fit" : layout.minWButton,
     layout.padX,
     layout.padY,

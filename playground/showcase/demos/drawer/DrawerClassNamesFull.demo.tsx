@@ -8,20 +8,20 @@ export function DrawerClassNamesFullDemo() {
 
   return (
     <>
-      <Button type="button" onClick={() => setOpen(true)}>
-        Открыть с classNames
-      </Button>
       <Drawer
         open={open}
         onOpenChange={setOpen}
         classNames={{
           panel: "border-primary/40 shadow-token-large",
           header: "border-b border-primary/20 pb-small",
-          title: "text-primary font-semibold",
+          title: "text-primary font-w-strong",
           description: "text-foreground/75",
           footer: "border-t border-primary/20 pt-small",
         }}
       >
+        <Drawer.Trigger asChild>
+          <Button variant="outline">Открыть с classNames</Button>
+        </Drawer.Trigger>
         <Drawer.Panel>
           <Drawer.Header>
           <Drawer.HeadingBlock>

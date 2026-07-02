@@ -9,10 +9,12 @@ import type { AddToastOpts, ToastContextValue, ToastEntry, ToastPlacement } from
 export function useToastProviderState({
   defaultPlacement = "bottom-center",
   defaultVariant = "default",
+  defaultSize = "base",
   classNames: providerClassNames,
 }: {
   defaultPlacement?: ToastPlacement;
   defaultVariant?: "default" | "gloss";
+  defaultSize?: AddToastOpts["size"];
   classNames?: AddToastOpts["classNames"];
 }) {
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
@@ -26,6 +28,7 @@ export function useToastProviderState({
         id,
         status: opts.status ?? "default",
         variant: opts.variant ?? defaultVariant,
+        size: opts.size ?? defaultSize,
         title: opts.title,
         description: opts.description,
         action: opts.action,
@@ -38,7 +41,7 @@ export function useToastProviderState({
       setToasts((prev) => [...prev, entry]);
       return id;
     },
-    [defaultPlacement, defaultVariant, providerClassNames],
+    [defaultPlacement, defaultSize, defaultVariant, providerClassNames],
   );
 
   const update = useCallback(
@@ -88,5 +91,6 @@ export function useToastProviderState({
     dismiss,
     removeFinal,
     providerClassNames,
+    defaultSize,
   };
 }

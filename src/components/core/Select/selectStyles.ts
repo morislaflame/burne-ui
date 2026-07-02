@@ -25,13 +25,6 @@ const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
   warning: "bg-surface-tint-warning",
 };
 
-export const SELECT_TRIGGER_GROUP_SHELL_H: Record<InputSize, string> = {
-  small: CONTROL_SIZE_LAYOUT.small.h,
-  base: CONTROL_SIZE_LAYOUT.base.h,
-  mid: CONTROL_SIZE_LAYOUT.mid.h,
-  large: CONTROL_SIZE_LAYOUT.large.h,
-};
-
 export const SELECT_VALUE_CONTROL: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.controlPad,
   base: CONTROL_SIZE_LAYOUT.base.controlPad,
@@ -104,7 +97,6 @@ export function selectGroupShellClass(groupSegment?: ButtonGroupSegment): string
 }
 
 export function selectTriggerGroupClass({
-  size,
   variant,
   status,
   disabled,
@@ -113,7 +105,6 @@ export function selectTriggerGroupClass({
   className,
   slotClass,
 }: {
-  size: InputSize;
   variant: InputVariant;
   status: InputStatus;
   disabled: boolean;
@@ -127,7 +118,6 @@ export function selectTriggerGroupClass({
   return mergeSelectSlotClass(
     SELECT_TRIGGER_GROUP_BASE_CLASS,
     groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
-    SELECT_TRIGGER_GROUP_SHELL_H[size],
     selectGroupShellClass(groupSegment),
     selectShellSurface({ variant, status }),
     FIELD_SHELL_TRANSITION_CLASS,

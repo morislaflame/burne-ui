@@ -75,6 +75,7 @@ export {
   type AlertProps,
   type AlertVariant,
   type AlertStatus,
+  type AlertSize,
   type AlertLiveRole,
   type AlertClassNames,
   type AlertIndicatorProps,
@@ -164,6 +165,7 @@ export {
 export {
   Dialog,
   type DialogProps,
+  type DialogSize,
   type DialogVariant,
   type DialogClassNames,
   type DialogHeaderProps,
@@ -193,6 +195,7 @@ export {
   type PromiseToastOpts,
   type ToastContextValue,
   type ToastVariant,
+  type ToastSize,
   type ToastClassNames,
 } from "@/components/core/Toast";
 export {

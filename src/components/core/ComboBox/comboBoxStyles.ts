@@ -25,13 +25,6 @@ const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
   warning: "bg-surface-tint-warning",
 };
 
-export const COMBOBOX_INPUT_SHELL_H: Record<InputSize, string> = {
-  small: CONTROL_SIZE_LAYOUT.small.h,
-  base: CONTROL_SIZE_LAYOUT.base.h,
-  mid: CONTROL_SIZE_LAYOUT.mid.h,
-  large: CONTROL_SIZE_LAYOUT.large.h,
-};
-
 export const COMBOBOX_INPUT_CONTROL: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.controlPad,
   base: CONTROL_SIZE_LAYOUT.base.controlPad,
@@ -104,7 +97,6 @@ export function comboBoxGroupShellClass(groupSegment?: ButtonGroupSegment): stri
 }
 
 export function comboBoxInputGroupClass({
-  size,
   variant,
   status,
   disabled,
@@ -127,7 +119,6 @@ export function comboBoxInputGroupClass({
   return mergeComboBoxSlotClass(
     COMBOBOX_INPUT_GROUP_BASE_CLASS,
     groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
-    COMBOBOX_INPUT_SHELL_H[size],
     comboBoxGroupShellClass(groupSegment),
     comboBoxShellSurface({ variant, status }),
     FIELD_SHELL_TRANSITION_CLASS,

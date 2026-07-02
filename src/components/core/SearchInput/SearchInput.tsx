@@ -99,7 +99,6 @@ type SearchSizeLayout = {
   padX: number;
   iconClass: string;
   controlPad: string;
-  shellH: string;
   shellWCollapsed: string;
   clearTap: number;
   clearIconClass: string;
@@ -114,7 +113,6 @@ function buildSearchLayout(size: ComponentSize): SearchSizeLayout {
     padX: SEARCH_PAD_X_PX[size],
     iconClass: control.icon,
     controlPad: control.controlPad,
-    shellH: control.h,
     shellWCollapsed: SHELL_W_COLLAPSED[size],
     clearTap: SEARCH_CLEAR_TAP_PX[size],
     clearIconClass: control.chevronIcon,
@@ -568,7 +566,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         onFocusCapture={isGloss && groupSegment == null ? glossShellMotion.onShellFocusIn : undefined}
         onBlurCapture={isGloss && groupSegment == null ? glossShellMotion.onShellFocusOut : undefined}
         className={cn(
-          layout.shellH,
           groupSegment
             ? groupShellClass
             : expanded

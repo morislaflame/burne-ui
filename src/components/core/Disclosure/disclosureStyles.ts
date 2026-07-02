@@ -75,7 +75,6 @@ export const DISCLOSURE_GLOSS_CONTENT_CLASS = "gloss-content text-muted";
 export function disclosureTriggerShell(size: DisclosureSize) {
   const layout = CONTROL_SIZE_LAYOUT[size];
   return {
-    minH: layout.h.replace(/^h-/, "min-h-"),
     padX: layout.padX,
     text: layout.controlText,
     chevron: layout.chevronIcon,
@@ -116,7 +115,6 @@ export function disclosureTriggerClass({
 
   return mergeDisclosureSlotClass(
     DISCLOSURE_TRIGGER_BASE_CLASS,
-    shell.minH,
     shell.padX,
     VARIANT_TRIGGER[variant],
     disabled

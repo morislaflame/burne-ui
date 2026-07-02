@@ -1,6 +1,9 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/messageBannerSize";
+
+export type AlertSize = MessageBannerSize;
 
 export type AlertVariant = "default" | "outline" | "secondary" | "gloss";
 
@@ -21,6 +24,7 @@ export type AlertClassNames = {
 export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   variant?: AlertVariant;
   status?: AlertStatus;
+  size?: AlertSize;
   role?: AlertLiveRole;
   /** Simple API: title. In compound is ignored. */
   title?: ReactNode;
@@ -40,6 +44,8 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
 export type AlertContextValue = {
   variant: AlertVariant;
   status: AlertStatus;
+  size: AlertSize;
+  sizePreset: MessageBannerSizePreset;
   titleId: string;
   descriptionId: string;
   gridSlots: MessageBannerGridSlots;

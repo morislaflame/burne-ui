@@ -6,6 +6,8 @@ import { AlertCompoundBannerDemo } from "../demos/alert/AlertCompoundBanner.demo
 import alertCompoundBannerSource from "../demos/alert/AlertCompoundBanner.demo.tsx?raw";
 import { AlertGlossDemo } from "../demos/alert/AlertGloss.demo";
 import alertGlossSource from "../demos/alert/AlertGloss.demo.tsx?raw";
+import { AlertSizesDemo } from "../demos/alert/AlertSizes.demo";
+import alertSizesSource from "../demos/alert/AlertSizes.demo.tsx?raw";
 import { AlertStatusesDemo } from "../demos/alert/AlertStatuses.demo";
 import alertStatusesSource from "../demos/alert/AlertStatuses.demo.tsx?raw";
 import { AlertWithActionDemo } from "../demos/alert/AlertWithAction.demo";
@@ -22,6 +24,10 @@ export function AlertShowcase() {
     >
       <ShowcaseSection title="Статусы" description="title и description на корне — Simple API.">
         <ShowcaseDemoFromFile align="stretch" Demo={AlertStatusesDemo} source={alertStatusesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertSizesDemo} source={alertSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="Стеклянная панель с hover-lift.">
@@ -45,7 +51,7 @@ export function AlertShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="title, description, status, variant (в т.ч. gloss), icon, action на корне."
+            description="title, description, status, variant (в т.ч. gloss), size, icon, action на корне."
           />
           <ShowcaseDoc.ApiRow
             api="compound"

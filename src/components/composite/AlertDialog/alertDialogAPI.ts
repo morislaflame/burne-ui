@@ -17,25 +17,11 @@ import { Button, type ButtonProps, type ButtonSize, type ButtonStatus, type Butt
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { cn } from "@/utils/cn";
 
-import type { AlertDialogSize } from "./alertDialogTypes";
-
-const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
-  small: "small",
-  base: "base",
-  mid: "mid",
-  large: "large",
-};
 
 export function mergeAlertDialogSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
 }
 
-/** Button size for the given `size` modal (if you don't use `AlertDialog.Footer` with auto-substitution). */
-export function footerButtonSizeForAlertDialog(
-  dialogSize: AlertDialogSize,
-): ButtonSize {
-  return FOOTER_BUTTON_SIZE[dialogSize];
-}
 
 /** Primary action button in the modal footer in the window tone. */
 export function primaryButtonVariantForAlertTone(

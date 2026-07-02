@@ -5,8 +5,7 @@ import {
   resolveAlertVariant,
 } from "@/components/core/Alert/alertAPI";
 
-import { footerButtonSizeForAlertDialog } from "./alertDialogAPI";
-import { ALERT_DIALOG_SIZE } from "./alertDialogStyles";
+import { ALERT_DIALOG_SIZE, footerButtonSizeForAlertDialog } from "./alertDialogStyles";
 import type { AlertDialogContextValue, UseAlertDialogRootStateProps } from "./alertDialogTypes";
 
 export function useAlertDialogRootState({

@@ -13,10 +13,10 @@ export const FONT_WEIGHT_CSS_VAR: Record<FontWeightStep, `--font-w-${FontWeightS
 
 export const FONT_WEIGHT_DEFAULTS: Record<FontWeightStep, number> = {
   small: 400,
-  base: 400,
-  mid: 500,
-  strong: 600,
-  bold: 700,
+  base: 500,
+  mid: 600,
+  strong: 700,
+  bold: 800,
 };
 
 /** CSS `var(--font-w-small|base|mid|strong|bold)` для inline-стилей и документации. */

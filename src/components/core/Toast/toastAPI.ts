@@ -2,6 +2,7 @@ import type { ClassValue } from "clsx";
 import { Children, isValidElement, type ReactNode } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import { messageBannerSizePreset } from "@/components/core/utils/messageBannerSize";
 import { cn } from "@/utils/cn";
 
 import type { ToastStatus } from "./toastTypes";
@@ -14,7 +15,7 @@ export const TOAST_STACK_PEEK_PX = 8;
 export const TOAST_STACK_SCALE_STEP = 0.04;
 export const TOAST_MAX_VISIBLE = 3;
 export const TOAST_DEFAULT_TIMEOUT_MS = 4000;
-export const TOAST_WIDTH_PX = 360;
+export const TOAST_WIDTH_PX = messageBannerSizePreset("base").toastWidthPx;
 export const TOAST_ENTRY_OFFSET_PX = 24;
 
 export function createToastId(): string {

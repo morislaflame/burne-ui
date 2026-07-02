@@ -1,4 +1,3 @@
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
@@ -63,20 +62,20 @@ const CLOSE_BUTTON_SIZE: Record<
   { root: string; icon: string }
 > = {
   small: {
-    root: CONTROL_SIZE_LAYOUT.small.toggleBox,
-    icon: CONTROL_SIZE_LAYOUT.small.toggleIcon,
+    root: "h-control-xsmall w-control-xsmall",
+    icon: "icon-small",
   },
   base: {
-    root: CONTROL_SIZE_LAYOUT.base.toggleBox,
-    icon: CONTROL_SIZE_LAYOUT.base.toggleIcon,
+    root: "h-control-small w-control-small",
+    icon: "icon-base",
   },
   mid: {
-    root: CONTROL_SIZE_LAYOUT.mid.toggleBox,
-    icon: CONTROL_SIZE_LAYOUT.mid.toggleIcon,
+    root: "h-control-base w-control-base",
+    icon: "icon-mid",
   },
   large: {
-    root: CONTROL_SIZE_LAYOUT.large.toggleBox,
-    icon: CONTROL_SIZE_LAYOUT.large.toggleIcon,
+    root: "h-control-mid w-control-mid",
+    icon: "icon-large",
   },
 };
 

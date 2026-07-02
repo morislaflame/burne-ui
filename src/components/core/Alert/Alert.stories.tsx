@@ -10,7 +10,7 @@ import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 import { Button } from "@/components/core/Button";
 import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
 
-import { Alert, type AlertStatus, type AlertVariant } from ".";
+import { Alert, type AlertSize, type AlertStatus, type AlertVariant } from ".";
 
 const ALERT_VARIANTS: AlertVariant[] = ["default", "outline", "secondary", "gloss"];
 
@@ -71,6 +71,11 @@ const meta = {
     status: {
       control: "select",
       options: ["default", "danger", "success", "info", "warning"],
+    },
+    size: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+      table: { defaultValue: { summary: "base" } },
     },
     children: {
       control: false,
@@ -452,5 +457,28 @@ export const CustomClassNames: Story = {
         <Button size="small">Открыть</Button>
       </Alert.Action>
     </Alert>
+  ),
+};
+
+const ALERT_SIZES: AlertSize[] = ["small", "base", "mid", "large"];
+
+export const Sizes: Story = {
+  name: "Размеры",
+  render: () => (
+    <div className="flex w-full max-w-md flex-col gap-plus">
+      {ALERT_SIZES.map((size) => (
+        <Alert key={size} status="info" size={size} className="w-full">
+          <Alert.Message>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>size={size}</Alert.Title>
+              <Alert.Description>
+                Padding, иконка и типографика масштабируются по размерной сетке.
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Message>
+        </Alert>
+      ))}
+    </div>
   ),
 };

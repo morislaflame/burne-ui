@@ -7,9 +7,6 @@ import { cn } from "@/utils/cn";
 
 import type { AlertStatus, AlertVariant } from "./alertTypes";
 
-export const ALERT_ROOT_SHELL_CLASS =
-  "w-fit max-w-component-base rounded-mid py-base px-plus";
-
 export const ALERT_VARIANT_SURFACE: Record<Exclude<AlertVariant, "gloss">, string> = {
   default: "bg-surface border-token text-foreground",
   outline: "bg-transparent border-token text-foreground",
@@ -45,10 +42,10 @@ export function alertIndicatorWrapperTextClass(status: AlertStatus): string {
   return "text-primary";
 }
 
-export const ALERT_INDICATOR_CLASS = "[&_svg]:icon-mid";
+export const ALERT_INDICATOR_BASE_CLASS = "inline-flex shrink-0 items-center justify-center";
 
-export function alertIndicatorClass(status: AlertStatus): string {
-  return cn(ALERT_INDICATOR_CLASS, alertIndicatorWrapperTextClass(status));
+export function alertIndicatorClass(status: AlertStatus, iconSvgClass: string): string {
+  return cn(ALERT_INDICATOR_BASE_CLASS, iconSvgClass, alertIndicatorWrapperTextClass(status));
 }
 
 /** Compound slots (`Alert.Content`, `Alert.Message`) — pass-through grid children. */

@@ -6,7 +6,7 @@ import { expect, screen, waitFor } from "storybook/test";
 import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
-import { Dialog } from ".";
+import { Dialog, type DialogSize } from ".";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -43,11 +43,17 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модальное окно (портал в `document.body`). Панель: общий `p-large` и `gap-mid` между `Header` / `Body` / `Footer`; скролл — в `Body`. `variant=\"gloss\"` — стеклянная панель.\n\n`Dialog.Trigger` — встроенный триггер, который открывает диалог после анимации нажатия.",
+          "Модальное окно (портал в `document.body`). Панель: общий `p-large` и `gap-mid` между `Header` / `Body` / `Footer`; скролл — в `Body`. Размеры `small`–`large`. `variant=\"gloss\"` — стеклянная панель. В `Dialog.Footer` для прямых потомков `Button` без `size` подставляется размер кнопки по размеру модалки.\n\n`Dialog.Trigger` — встроенный триггер, который открывает диалог после анимации нажатия.",
       },
     },
   },
   decorators: [...darkThemeDecorator],
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+    },
+  },
 } satisfies Meta;
 
 export default meta;
@@ -401,6 +407,66 @@ export const GlossLight: Story = {
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
+};
+
+function DialogTemplate({
+  size = "base",
+  label = "Открыть диалог",
+}: {
+  size?: DialogSize;
+  label?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+        {label}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen} size={size}>
+        <Dialog.Panel>
+          <Dialog.Header>
+            <Dialog.HeadingBlock>
+              <Dialog.Title>Настройки экспорта</Dialog.Title>
+              <Dialog.Description>
+                Выберите формат и директорию. Изменения не применятся, пока вы не
+                сохраните проект.
+              </Dialog.Description>
+            </Dialog.HeadingBlock>
+            <Dialog.Close />
+          </Dialog.Header>
+          <Dialog.Body>
+            <p className="text-sm text-muted">Контент диалога для демонстрации размера.</p>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+              Отмена
+            </Button>
+            <Button type="button" variant="primary" onClick={() => setOpen(false)}>
+              Сохранить
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
+    </>
+  );
+}
+
+export const Sizes: Story = {
+  name: "Размеры small · base · mid · large",
+  render: function SizesDemo() {
+    return (
+      <div className="flex max-w-2xl flex-col flex-wrap gap-xlarge sm:flex-row sm:items-start">
+        {(["small", "base", "mid", "large"] as const).map((size) => (
+          <div key={size} className="flex flex-col items-start gap-base">
+            <span className="text-xs font-medium uppercase tracking-wide text-muted">
+              {size}
+            </span>
+            <DialogTemplate size={size} label={`Открыть (${size})`} />
+          </div>
+        ))}
+      </div>
+    );
+  },
 };
 
 // ─── Custom classNames ────────────────────────────────────────────────────────

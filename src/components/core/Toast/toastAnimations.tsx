@@ -22,8 +22,8 @@ import {
   TOAST_MAX_VISIBLE,
   TOAST_STACK_PEEK_PX,
   TOAST_STACK_SCALE_STEP,
-  TOAST_WIDTH_PX,
 } from "./toastAPI";
+import { toastViewportWidthPx } from "@/components/core/utils/messageBannerSize";
 import { toastViewportAriaLabel } from "./toastA11y";
 import { ToastClassNamesProvider } from "./toastContext";
 import { ToastRoot } from "./Toast";
@@ -168,6 +168,7 @@ export function ToastItemWrapper({
             ref={cardRef}
             status={entry.status}
             variant={entry.variant}
+            size={entry.size}
             title={entry.title}
             description={entry.description}
             action={entry.action}
@@ -187,6 +188,7 @@ export function ToastViewport({
   onDismiss,
   onRemoveFinal,
   classNames,
+  defaultSize = "base",
 }: ToastViewportProps) {
   const isTop = placement.startsWith("top");
   const [heights, setHeights] = useState<Map<string, number>>(new Map());
@@ -262,7 +264,7 @@ export function ToastViewport({
       role="region"
       aria-label={toastViewportAriaLabel(placement)}
       className={toastViewportClass({ placement, slotClass: classNames?.viewport })}
-      style={{ width: TOAST_WIDTH_PX }}
+      style={{ width: toastViewportWidthPx(sorted, defaultSize) }}
     >
       <div
         ref={scrimRef}

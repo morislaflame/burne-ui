@@ -13,7 +13,12 @@ export function TooltipSizesDemo() {
               {size}
             </Button>
           </Tooltip.Trigger>
-          <Tooltip.Content>size={size}</Tooltip.Content>
+          <Tooltip.Content>
+            <Tooltip.Title>size={size}</Tooltip.Title>
+            <Tooltip.Description>
+              Подсказка с разным padding, типографикой и шириной панели.
+            </Tooltip.Description>
+          </Tooltip.Content>
         </Tooltip>
       ))}
     </div>

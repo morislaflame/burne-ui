@@ -13,6 +13,7 @@ import { cn } from "@/utils/cn";
 
 import { mergeAlertDialogSlotClass } from "./alertDialogAPI";
 import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes";
+import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 
 export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> = {
   small: {
@@ -28,7 +29,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     bodyVariant: "small",
   },
   base: {
-    panelMax: "max-w-component-mid",
+    panelMax: "max-w-component-base",
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-x-plus gap-y-xsmall",
     contentClass: MODAL_CONTENT_CLASS,
@@ -57,12 +58,19 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     headerGap: "gap-x-plus gap-y-small",
     contentClass: MODAL_CONTENT_CLASS,
     headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-2xlarge",
-    titleVariant: "large",
-    descVariant: "mid",
+    iconClass: "icon-large",
+    titleVariant: "mid",
+    descVariant: "base",
     descClassName: "text-muted",
     bodyVariant: "mid",
   },
+};
+
+export const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
+  small: "small",
+  base: "base",
+  mid: "base",
+  large: "base",
 };
 
 export const ALERT_DIALOG_NATIVE_CLASS =
@@ -85,6 +93,8 @@ export const ALERT_DIALOG_INDICATOR_CLASS = "shrink-0 [&_svg]:block";
 export const ALERT_DIALOG_HEADER_CLASS = "shrink-0";
 
 export const ALERT_DIALOG_HEADING_BLOCK_CLASS = "contents";
+
+export const ALERT_DIALOG_TITLE_CLASS = "font-w-mid";
 
 export const ALERT_DIALOG_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";
@@ -142,4 +152,10 @@ export function alertDialogGlossPanelClass(maxHeight: string, slotClass?: string
 
 export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {
   return alertIndicatorWrapperTextClass(status);
+}
+
+export function footerButtonSizeForAlertDialog(
+  dialogSize: AlertDialogSize,
+): ButtonSize {
+  return FOOTER_BUTTON_SIZE[dialogSize];
 }

@@ -7,6 +7,7 @@ import {
   messageBannerIndicatorCellClass,
   messageBannerTitleCellClass,
 } from "@/components/core/utils/messageBannerGridLayout";
+import { messageBannerSizePreset } from "@/components/core/utils/messageBannerSize";
 import { cn } from "@/utils/cn";
 
 import { AlertContext, useAlertClassNames } from "./alertContext";
@@ -39,6 +40,7 @@ export function AlertIndicator({
   const slotClassNames = useAlertClassNames();
   const variant = ctx?.variant ?? "default";
   const status = statusProp ?? ctx?.status ?? "default";
+  const sizePreset = ctx?.sizePreset ?? messageBannerSizePreset("base");
   const gridSlots = ctx?.gridSlots;
 
   if (children === null) return null;
@@ -56,7 +58,7 @@ export function AlertIndicator({
   return (
     <span
       className={cn(
-        alertIndicatorClass(status),
+        alertIndicatorClass(status, sizePreset.iconSvgClass),
         gridSlots && messageBannerIndicatorCellClass(gridSlots),
         slotClassNames.indicator,
         className,
@@ -96,11 +98,12 @@ AlertMessage.displayName = "AlertMessage";
 export function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitleProps) {
   const ctx = useContext(AlertContext);
   const slotClassNames = useAlertClassNames();
+  const sizePreset = ctx?.sizePreset ?? messageBannerSizePreset("base");
   return (
     <Text
       as="div"
       id={idProp ?? ctx?.titleId}
-      variant="base"
+      variant={sizePreset.titleVariant}
       className={cn(
         ALERT_TITLE_CLASS,
         ctx?.gridSlots && messageBannerTitleCellClass(ctx.gridSlots),
@@ -121,11 +124,12 @@ export function AlertDescription({
 }: AlertDescriptionProps) {
   const ctx = useContext(AlertContext);
   const slotClassNames = useAlertClassNames();
+  const sizePreset = ctx?.sizePreset ?? messageBannerSizePreset("base");
   return (
     <Text
       as="div"
       id={idProp ?? ctx?.descriptionId}
-      variant="small"
+      variant={sizePreset.descVariant}
       className={cn(
         ALERT_DESCRIPTION_CLASS,
         ctx?.gridSlots && messageBannerDescriptionCellClass(ctx.gridSlots),

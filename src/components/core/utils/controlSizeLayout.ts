@@ -3,8 +3,6 @@ import type { TextVariant } from "@/components/core/Text";
 import type { ComponentSize } from "./componentSize";
 
 export type ControlSizeLayout = {
-  /** Фиксированная высота контрола (совпадает с `--control-height-*`). */
-  h: string;
   minWButton: string;
   padX: string;
   padY: string;
@@ -16,14 +14,10 @@ export type ControlSizeLayout = {
   chevronIcon: string;
   spinnerIcon: string;
   spinnerBorder: string;
-  toggleBox: string;
-  toggleIcon: string;
-  togglePad: string;
 };
 
 export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
   small: {
-    h: "h-control-small",
     minWButton: "min-w-button-small",
     padX: "px-base",
     padY: "py-xsmall",
@@ -35,12 +29,8 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-small",
     spinnerIcon: "icon-small",
     spinnerBorder: "border-2",
-    toggleBox: "h-control-small w-control-small",
-    toggleIcon: "icon-small",
-    togglePad: "px-xsmall",
   },
   base: {
-    h: "h-control-base",
     minWButton: "min-w-button-base",
     padX: "px-plus",
     padY: "py-small",
@@ -52,12 +42,8 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-base",
     spinnerIcon: "icon-base",
     spinnerBorder: "border-2",
-    toggleBox: "h-control-base w-control-base",
-    toggleIcon: "icon-base",
-    togglePad: "px-small",
   },
   mid: {
-    h: "h-control-mid",
     minWButton: "min-w-button-mid",
     padX: "px-plus",
     padY: "py-base",
@@ -69,12 +55,8 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-large",
     spinnerIcon: "icon-large",
     spinnerBorder: "border-2",
-    toggleBox: "h-control-mid w-control-mid",
-    toggleIcon: "icon-large",
-    togglePad: "px-base",
   },
   large: {
-    h: "h-control-large",
     minWButton: "min-w-button-large",
     padX: "px-large",
     padY: "py-plus",
@@ -86,8 +68,5 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-large",
     spinnerIcon: "icon-large",
     spinnerBorder: "border-[2.5px]",
-    toggleBox: "h-control-large w-control-large",
-    toggleIcon: "icon-large",
-    togglePad: "px-plus",
   },
 };

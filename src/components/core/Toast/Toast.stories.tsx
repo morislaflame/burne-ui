@@ -5,7 +5,7 @@ import { expect, screen } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 
-import { Toast, type ToastPlacement, type ToastStatus } from ".";
+import { Toast, type ToastPlacement, type ToastSize, type ToastStatus } from ".";
 import { useToast } from "./useToast";
 
 const decorator = [
@@ -386,6 +386,36 @@ export const CustomClassNames: Story = {
       >
         Показать toast с classNames
       </Button>
+    );
+  },
+};
+
+const TOAST_SIZES: ToastSize[] = ["small", "base", "mid", "large"];
+
+export const Sizes: Story = {
+  name: "Размеры",
+  render: function ToastSizesDemo() {
+    const { toast } = useToast();
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-mid">
+        {TOAST_SIZES.map((size) => (
+          <Button
+            key={size}
+            variant="outline"
+            type="button"
+            onClick={() =>
+              toast.show({
+                status: "info",
+                size,
+                title: `size=${size}`,
+                description: "Padding, иконка, типографика и ширина viewport.",
+              })
+            }
+          >
+            {size}
+          </Button>
+        ))}
+      </div>
     );
   },
 };

@@ -3,14 +3,15 @@ import {
   messageBannerGridClass,
 } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import {
+  messageBannerSizePreset,
+} from "@/components/core/utils/messageBannerSize";
 import { cn } from "@/utils/cn";
 
 import type { LoadingColor } from "@/components/core/Loading";
 
-import { mergeToastSlotClass, TOAST_WIDTH_PX } from "./toastAPI";
-import type { ToastPlacement, ToastStatus, ToastVariant } from "./toastTypes";
-
-export { TOAST_WIDTH_PX };
+import { mergeToastSlotClass } from "./toastAPI";
+import type { ToastPlacement, ToastSize, ToastStatus, ToastVariant } from "./toastTypes";
 
 export const TOAST_SURFACE_CLASS: Record<ToastStatus, string> = {
   default: "bg-surface border-token text-foreground",
@@ -36,8 +37,21 @@ export const TOAST_DESCRIPTION_CLASS = "text-muted";
 
 export const TOAST_CLOSE_BUTTON_OFFSET_CLASS = "-mx-xsmall";
 
-export const TOAST_INDICATOR_MEDIA_CLASS =
-  "inline-flex shrink-0 items-center justify-center [&_svg]:icon-mid";
+export const TOAST_INDICATOR_BASE_CLASS =
+  "inline-flex shrink-0 items-center justify-center";
+
+export function toastIndicatorClass(
+  status: ToastStatus,
+  iconSvgClass: string,
+  slotClass?: string,
+) {
+  return mergeToastSlotClass(
+    TOAST_INDICATOR_BASE_CLASS,
+    iconSvgClass,
+    TOAST_ICON_CLASS[status],
+    slotClass,
+  );
+}
 
 const TOAST_LOADING_COLOR: Record<ToastStatus, LoadingColor> = {
   default: "primary",
@@ -68,8 +82,8 @@ export function toastPlacementClass(placement: ToastPlacement): string {
   return PLACEMENT_CLASS[placement];
 }
 
-export function toastIndicatorClass(status: ToastStatus, slotClass?: string) {
-  return mergeToastSlotClass(TOAST_INDICATOR_MEDIA_CLASS, TOAST_ICON_CLASS[status], slotClass);
+export function toastIndicatorMediaClass(status: ToastStatus, iconSvgClass: string) {
+  return toastIndicatorClass(status, iconSvgClass);
 }
 
 export function toastLoadingColor(status: ToastStatus): LoadingColor {
@@ -79,21 +93,24 @@ export function toastLoadingColor(status: ToastStatus): LoadingColor {
 export function toastRootClass({
   variant,
   status,
+  size,
   gridSlots,
   slotClass,
   className,
 }: {
   variant: ToastVariant;
   status: ToastStatus;
+  size?: ToastSize;
   gridSlots: MessageBannerGridSlots;
   slotClass?: string;
   className?: string;
 }) {
   const isGloss = variant === "gloss";
+  const preset = messageBannerSizePreset(size);
 
   return mergeToastSlotClass(
-    messageBannerGridClass(gridSlots),
-    "w-full rounded-mid py-base px-plus",
+    messageBannerGridClass(gridSlots, preset.gridGap),
+    `w-full ${preset.shellPadding}`,
     isGloss
       ? cn("gloss-panel gloss-deep border-0 text-foreground", GLOSS_INTERACTIVE_MOTION_CLASS)
       : cn("shadow-token-mid", TOAST_SURFACE_CLASS[status]),

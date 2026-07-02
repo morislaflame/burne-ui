@@ -103,8 +103,9 @@ export function tabsTabClass({
 
   return mergeTabsSlotClass(
     "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
-    layout.h,
-    isSurface ? "rounded-mid px-mid" : layout.padX,
+    layout.padX,
+    layout.padY,
+    isSurface && "rounded-mid",
     "focus-ring",
     isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
     isSelected ? "text-primary" : "text-muted hover:text-primary",

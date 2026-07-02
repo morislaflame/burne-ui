@@ -40,14 +40,15 @@ import type {
 } from "./toastTypes";
 
 export function ToastIndicator({ className, children, ...rest }: ToastIndicatorProps) {
-  const { status, isLoading, gridSlots } = useToastItem();
+  const { status, isLoading, gridSlots, sizePreset } = useToastItem();
   const slotClassNames = useToastClassNames();
+  const indicatorClass = toastIndicatorClass(status, sizePreset.iconSvgClass);
 
   if (children !== undefined) {
     return (
       <span
         className={mergeToastSlotClass(
-          toastIndicatorClass(status),
+          indicatorClass,
           messageBannerIndicatorCellClass(gridSlots),
           slotClassNames.indicator,
           className,
@@ -63,14 +64,14 @@ export function ToastIndicator({ className, children, ...rest }: ToastIndicatorP
     return (
       <span
         className={mergeToastSlotClass(
-          toastIndicatorClass(status),
+          indicatorClass,
           messageBannerIndicatorCellClass(gridSlots),
           slotClassNames.indicator,
           className,
         )}
         {...rest}
       >
-        <Loading size="small" color={toastLoadingColor(status)} />
+        <Loading size={sizePreset.loadingSize} color={toastLoadingColor(status)} />
       </span>
     );
   }
@@ -83,7 +84,7 @@ export function ToastIndicator({ className, children, ...rest }: ToastIndicatorP
   return (
     <span
       className={mergeToastSlotClass(
-        toastIndicatorClass(status),
+        indicatorClass,
         messageBannerIndicatorCellClass(gridSlots),
         slotClassNames.indicator,
         className,
@@ -122,13 +123,13 @@ export function ToastContent({ className, ...rest }: ToastContentProps) {
 ToastContent.displayName = "ToastContent";
 
 export function ToastTitle({ className, id: idProp, ...rest }: ToastTitleProps) {
-  const { titleId, gridSlots } = useToastItem();
+  const { titleId, gridSlots, sizePreset } = useToastItem();
   const slotClassNames = useToastClassNames();
 
   return (
     <Text
       as="div"
-      variant="base"
+      variant={sizePreset.titleVariant}
       id={idProp ?? titleId}
       className={mergeToastSlotClass(
         TOAST_TITLE_CLASS,
@@ -144,13 +145,13 @@ export function ToastTitle({ className, id: idProp, ...rest }: ToastTitleProps) 
 ToastTitle.displayName = "ToastTitle";
 
 export function ToastDescription({ className, id: idProp, ...rest }: ToastDescriptionProps) {
-  const { descriptionId, gridSlots } = useToastItem();
+  const { descriptionId, gridSlots, sizePreset } = useToastItem();
   const slotClassNames = useToastClassNames();
 
   return (
     <Text
       as="div"
-      variant="small"
+      variant={sizePreset.descVariant}
       id={idProp ?? descriptionId}
       className={mergeToastSlotClass(
         TOAST_DESCRIPTION_CLASS,

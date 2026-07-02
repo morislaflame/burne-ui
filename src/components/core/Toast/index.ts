@@ -40,6 +40,7 @@ export type {
   AddToastOpts,
   PromiseToastOpts,
   ToastVariant,
+  ToastSize,
   ToastContextValue,
 } from "./toastTypes";
 

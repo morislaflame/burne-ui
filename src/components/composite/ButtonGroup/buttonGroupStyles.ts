@@ -17,10 +17,17 @@ export const BUTTON_GROUP_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   large: "mid",
 };
 
+const BUTTON_GROUP_CONTROL_HEIGHT_CLASS: Record<ComponentSize, string> = {
+  small: "h-control-small",
+  base: "h-control-base",
+  mid: "h-control-mid",
+  large: "h-control-large",
+};
+
 /** Frame for static text in ButtonGroup — alignment of the buttons height. */
 export function buttonGroupTextFrameClass(size: ComponentSize): string {
-  const { h, padX, padY } = CONTROL_SIZE_LAYOUT[size];
-  return cn(h, padX, padY);
+  const { padX, padY } = CONTROL_SIZE_LAYOUT[size];
+  return cn(BUTTON_GROUP_CONTROL_HEIGHT_CLASS[size], padX, padY);
 }
 
 /** Ripple rounding / overflow radius — matches the button edge. */

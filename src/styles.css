@@ -398,6 +398,10 @@ p {
   min-width: var(--button-min-width-large);
 }
 
+@utility min-h-control-xsmall {
+  min-height: var(--control-height-xsmall);
+}
+
 @utility min-h-control-small {
   min-height: var(--control-height-small);
 }
@@ -412,6 +416,10 @@ p {
 
 @utility min-h-control-large {
   min-height: var(--control-height-large);
+}
+
+@utility h-control-xsmall {
+  min-height: var(--control-height-xsmall);
 }
 
 @utility h-control-small {
@@ -430,6 +438,10 @@ p {
   min-height: var(--control-height-large);
 }
 
+@utility w-control-xsmall {
+  width: var(--control-height-xsmall);
+}
+
 @utility w-control-small {
   width: var(--control-height-small);
 }
@@ -446,6 +458,10 @@ p {
   width: var(--control-height-large);
 }
 
+@utility min-w-control-xsmall {
+  min-width: var(--control-height-xsmall);
+}
+
 @utility min-w-control-small {
   min-width: var(--control-height-small);
 }
@@ -460,6 +476,10 @@ p {
 
 @utility min-w-control-large {
   min-width: var(--control-height-large);
+}
+
+@utility max-w-control-xsmall {
+  max-width: var(--control-height-xsmall);
 }
 
 @utility max-w-control-small {

@@ -10,6 +10,8 @@ import { DialogInviteTeamDemo } from "../demos/dialog/DialogInviteTeam.demo";
 import dialogInviteTeamSource from "../demos/dialog/DialogInviteTeam.demo.tsx?raw";
 import { DialogSettingsModalDemo } from "../demos/dialog/DialogSettingsModal.demo";
 import dialogSettingsModalSource from "../demos/dialog/DialogSettingsModal.demo.tsx?raw";
+import { DialogSizesDemo } from "../demos/dialog/DialogSizes.demo";
+import dialogSizesSource from "../demos/dialog/DialogSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
 
 export function DialogShowcase() {
@@ -22,6 +24,10 @@ export function DialogShowcase() {
     >
       <ShowcaseSection title="Базовый диалог" description="open / onOpenChange, Header, Body, Footer.">
         <ShowcaseDemoFromFile Demo={DialogBasicDemo} source={dialogBasicSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+        <ShowcaseDemoFromFile Demo={DialogSizesDemo} source={dialogSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная модальная панель.">

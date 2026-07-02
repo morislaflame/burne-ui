@@ -96,32 +96,25 @@ export const INPUT_CONTROL_PAD: Record<InputSize, string> = {
   large: CONTROL_SIZE_LAYOUT.large.controlPad,
 };
 
-export const INPUT_SHELL_H: Record<InputSize, string> = {
-  small: CONTROL_SIZE_LAYOUT.small.h,
-  base: CONTROL_SIZE_LAYOUT.base.h,
-  mid: CONTROL_SIZE_LAYOUT.mid.h,
-  large: CONTROL_SIZE_LAYOUT.large.h,
-};
-
 export const INPUT_PASSWORD_TOGGLE_CONTROL: Record<
   InputSize,
   { icon: string; pad: string }
 > = {
   small: {
-    icon: CONTROL_SIZE_LAYOUT.small.toggleIcon,
-    pad: CONTROL_SIZE_LAYOUT.small.togglePad,
+    icon: "icon-small",
+    pad: "px-xsmall",
   },
   base: {
-    icon: CONTROL_SIZE_LAYOUT.base.toggleIcon,
-    pad: CONTROL_SIZE_LAYOUT.base.togglePad,
+    icon: "icon-base",
+    pad: "px-small",
   },
   mid: {
-    icon: CONTROL_SIZE_LAYOUT.mid.toggleIcon,
-    pad: CONTROL_SIZE_LAYOUT.mid.togglePad,
+    icon: "icon-mid",
+    pad: "px-base",
   },
   large: {
-    icon: CONTROL_SIZE_LAYOUT.large.toggleIcon,
-    pad: CONTROL_SIZE_LAYOUT.large.togglePad,
+    icon: "icon-large",
+    pad: "px-base",
   },
 };
 
@@ -238,7 +231,7 @@ export function inputShellClass({
     groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "w-full",
     fileListEmpty
       ? "min-h-[7.25rem]"
-      : mergeInputSlotClass(isGloss ? "" : "border-1", INPUT_SHELL_H[size]),
+      : mergeInputSlotClass(isGloss ? "" : "border-1"),
     inputShellRoundingClass(groupSegment),
     shellFileEmptySurface ?? shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
@@ -311,5 +304,3 @@ export function inputFileRemoveButtonClass({
     slotClass,
   );
 }
-
-export { CONTROL_SIZE_LAYOUT };

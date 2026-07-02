@@ -59,7 +59,7 @@ import {
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `variant` | `wave` | Animation variant |
-| `size` | `h-control-base w-control-base` | Tailwind size classes |
+| `size` | `h-[34px] w-control-base` | Tailwind size classes |
 | `classNames` | — | `root`, `wave` |
 
 ### `Skeleton.Text` props

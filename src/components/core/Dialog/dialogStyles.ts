@@ -1,11 +1,67 @@
 import {
   MODAL_BODY_SCROLL_CLASS,
   MODAL_CONTENT_CLASS,
+  MODAL_CONTENT_COMPACT_CLASS,
 } from "@/components/core/utils/modalPanelLayout";
 import { modalOverlayEnterStyle } from "@/components/core/utils/modalSurfaceMotion";
 
 import { mergeDialogSlotClass } from "./dialogAPI";
-import type { DialogVariant } from "./dialogTypes";
+import type { ButtonSize } from "@/components/core/Button/buttonTypes";
+import type { DialogSize, DialogSizePreset, DialogVariant } from "./dialogTypes";
+
+export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
+  small: {
+    panelMax: "max-w-component-small",
+    maxHeight: "max-h-[min(85dvh,26rem)]",
+    headerGap: "gap-base",
+    contentClass: MODAL_CONTENT_COMPACT_CLASS,
+    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-xsmall text-left",
+    titleVariant: "base",
+    descVariant: "small",
+    descClassName: "text-muted",
+    bodyVariant: "small",
+  },
+  base: {
+    panelMax: "max-w-component-base",
+    maxHeight: "max-h-[min(90dvh,36rem)]",
+    headerGap: "gap-plus",
+    contentClass: MODAL_CONTENT_CLASS,
+    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
+    titleVariant: "mid",
+    descVariant: "base",
+    descClassName: "text-muted",
+    bodyVariant: "base",
+  },
+  mid: {
+    panelMax: "max-w-component-mid",
+    maxHeight: "max-h-[min(90dvh,40rem)]",
+    headerGap: "gap-plus",
+    contentClass: MODAL_CONTENT_CLASS,
+    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
+    titleVariant: "mid",
+    descVariant: "base",
+    descClassName: "text-muted",
+    bodyVariant: "base",
+  },
+  large: {
+    panelMax: "max-w-component-large",
+    maxHeight: "max-h-[min(90dvh,44rem)]",
+    headerGap: "gap-plus",
+    contentClass: MODAL_CONTENT_CLASS,
+    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
+    titleVariant: "mid",
+    descVariant: "base",
+    descClassName: "text-muted",
+    bodyVariant: "mid",
+  },
+};
+
+export const FOOTER_BUTTON_SIZE: Record<DialogSize, ButtonSize> = {
+  small: "small",
+  base: "base",
+  mid: "base",
+  large: "base",
+};
 
 export const DIALOG_NATIVE_CLASS =
   "fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
@@ -17,18 +73,17 @@ export const DIALOG_OVERLAY_DARK_CLASS =
   "bg-[color-mix(in_oklab,black_58%,transparent)]";
 
 export const DIALOG_PANEL_BASE_CLASS =
-  "relative z-10 w-full max-w-component-mid outline-none";
+  "relative z-10 w-full outline-none";
 
 export const DIALOG_PANEL_SURFACE_CLASS =
-  "flex min-h-0 max-h-[min(90dvh,36rem)] flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-large";
+  "flex min-h-0 flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-large";
 
 export const DIALOG_GLOSS_PANEL_CLASS =
-  "gloss-panel gloss-deep flex min-h-0 max-h-[min(90dvh,36rem)] w-full flex-col rounded-mid text-foreground";
+  "gloss-panel gloss-deep flex min-h-0 w-full flex-col rounded-mid text-foreground";
 
-export const DIALOG_HEADER_CLASS = "flex shrink-0 items-start gap-plus";
+export const DIALOG_HEADER_CLASS = "flex shrink-0 items-start";
 
-export const DIALOG_HEADING_BLOCK_CLASS =
-  "flex min-w-0 flex-1 flex-col gap-xsmall text-left";
+export const DIALOG_HEADING_BLOCK_CLASS = "min-w-0";
 
 export const DIALOG_TITLE_CLASS = "min-w-0";
 
@@ -55,24 +110,37 @@ export function dialogOverlayClass(lightUi: boolean, slotClass?: string): string
 
 export function dialogPanelClass({
   variant,
+  sizePreset,
   className,
   slotClass,
 }: {
   variant: DialogVariant;
+  sizePreset: Pick<DialogSizePreset, "panelMax" | "maxHeight">;
   className?: string;
   slotClass?: string;
 }): string {
+  const isGloss = variant === "gloss";
   return mergeDialogSlotClass(
     DIALOG_PANEL_BASE_CLASS,
-    variant !== "gloss" && DIALOG_PANEL_SURFACE_CLASS,
+    sizePreset.panelMax,
+    !isGloss && DIALOG_PANEL_SURFACE_CLASS,
+    !isGloss && sizePreset.maxHeight,
     className,
     slotClass,
   );
 }
 
-export function dialogContentClass(slotClass?: string, gloss = false): string {
+export function dialogGlossPanelClass(maxHeight: string, slotClass?: string): string {
+  return mergeDialogSlotClass(DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
+}
+
+export function dialogContentClass(
+  sizePresetContentClass: string,
+  slotClass?: string,
+  gloss = false,
+): string {
   return mergeDialogSlotClass(
-    MODAL_CONTENT_CLASS,
+    sizePresetContentClass,
     gloss && DIALOG_GLOSS_CONTENT_CLASS,
     slotClass,
   );
@@ -80,6 +148,10 @@ export function dialogContentClass(slotClass?: string, gloss = false): string {
 
 export function dialogBodyClass(slotClass?: string): string {
   return mergeDialogSlotClass(MODAL_BODY_SCROLL_CLASS, slotClass);
+}
+
+export function footerButtonSizeForDialog(dialogSize: DialogSize): ButtonSize {
+  return FOOTER_BUTTON_SIZE[dialogSize];
 }
 
 export {

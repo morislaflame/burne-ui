@@ -30,6 +30,7 @@ export type {
   DialogPanelProps,
   DialogTriggerProps,
   DialogVariant,
+  DialogSize,
   DialogHeaderProps,
   DialogTitleProps,
   DialogDescriptionProps,

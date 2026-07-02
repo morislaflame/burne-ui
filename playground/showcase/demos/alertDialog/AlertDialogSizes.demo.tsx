@@ -39,7 +39,7 @@ export function AlertDialogSizesDemo() {
             <Button type="button" variant="outline" onClick={() => setOpenSize(null)}>
               Закрыть
             </Button>
-            <Button type="button" variant={primaryButtonVariantForAlertTone("info")} onClick={() => setOpenSize(null)}>
+            <Button type="button" variant="primary" onClick={() => setOpenSize(null)}>
               OK
             </Button>
           </AlertDialog.Footer>

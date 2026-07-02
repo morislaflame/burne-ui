@@ -321,10 +321,10 @@
    * Семантические роли текста ссылаются на эти токены.
    */
   --font-w-small: 400;
-  --font-w-base: 400;
-  --font-w-mid: 500;
-  --font-w-strong: 600;
-  --font-w-bold: 700;
+  --font-w-base: 500;
+  --font-w-mid: 600;
+  --font-w-strong: 700;
+  --font-w-bold: 800;
 
 
   /** Семантические роли UI-текста (алиасы шкалы + weight). */
@@ -387,10 +387,11 @@
   --button-min-width-large: calc(var(--control-height-large) * 2.6);
 
   /** Минимальная высота интерактивных контролов (Button, Input, Selector, SearchInput). */
-  --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + 2px);
-  --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + 2px);
-  --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + 2px);
-  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-plus) * 2 + 2px);
+  --control-height-xsmall: calc(var(--text-tools-size) * var(--text-tools-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
+  --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
+  --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + var(--border-width) * 2);
+  --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + var(--border-width) * 2);
+  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-plus) * 2 + var(--border-width) * 2);
 
   /** Диаметр аватара по ступени размера. */
   --avatar-size-small: calc(var(--size) * 2);

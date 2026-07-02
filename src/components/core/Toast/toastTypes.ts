@@ -5,6 +5,9 @@ import type {
 } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/messageBannerSize";
+
+export type ToastSize = MessageBannerSize;
 
 export type ToastStatus = "default" | "success" | "danger" | "info" | "warning";
 
@@ -37,6 +40,7 @@ export type ToastLiveRole = "status" | "alert";
 export type AddToastOpts = {
   status?: ToastStatus;
   variant?: ToastVariant;
+  size?: ToastSize;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -60,6 +64,7 @@ export type ToastEntry = {
   id: string;
   status: ToastStatus;
   variant: ToastVariant;
+  size: ToastSize;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -81,6 +86,8 @@ export type ToastContextValue = {
 
 export type ToastItemContextValue = {
   status: ToastStatus;
+  size: ToastSize;
+  sizePreset: MessageBannerSizePreset;
   titleId: string;
   descriptionId: string;
   isLoading: boolean;
@@ -97,12 +104,14 @@ export type ToastProviderProps = {
   children: ReactNode;
   defaultPlacement?: ToastPlacement;
   defaultVariant?: ToastVariant;
+  defaultSize?: ToastSize;
   classNames?: ToastClassNames;
 };
 
 export type ToastRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   status?: ToastStatus;
   variant?: ToastVariant;
+  size?: ToastSize;
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
@@ -113,7 +122,7 @@ export type ToastRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
 
 export type UseToastRootStateProps = Pick<
   ToastRootProps,
-  "status" | "title" | "description" | "action" | "isLoading" | "onClose" | "children"
+  "status" | "size" | "title" | "description" | "action" | "isLoading" | "onClose" | "children"
 >;
 
 export type ToastIndicatorProps = HTMLAttributes<HTMLSpanElement>;
@@ -153,4 +162,5 @@ export type ToastViewportProps = {
   onDismiss: (id: string) => void;
   onRemoveFinal: (id: string) => void;
   classNames?: ToastClassNames;
+  defaultSize?: ToastSize;
 };

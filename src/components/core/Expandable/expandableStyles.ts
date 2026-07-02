@@ -66,9 +66,6 @@ export const EXPANDABLE_PANEL_SHELL_CLASS = "overflow-hidden";
 export const EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS =
   "pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]";
 
-export function expandableControlMinHeightClass(size: ExpandableSize): string {
-  return CONTROL_SIZE_LAYOUT[size].h.replace(/^h-/, "min-h-");
-}
 
 export function expandableRootClass({
   variant,
@@ -102,7 +99,6 @@ export function expandableTriggerClass({
 
   return mergeExpandableSlotClass(
     EXPANDABLE_TRIGGER_BASE_CLASS,
-    expandableControlMinHeightClass(size),
     layout.padX,
     disabled ? EXPANDABLE_TRIGGER_DISABLED_CLASS : EXPANDABLE_TRIGGER_ENABLED_CLASS,
     slotClass,
@@ -169,5 +165,3 @@ export function expandableTriggerChevronIconClass(size: ExpandableSize): string 
 export function expandableTitleVariant(size: ExpandableSize) {
   return CONTROL_SIZE_LAYOUT[size].controlText;
 }
-
-export { CONTROL_SIZE_LAYOUT };

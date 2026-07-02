@@ -88,8 +88,6 @@ type CloseButtonClassNames = {
 
 ## Размеры
 
-Квадратная область и иконка из `CONTROL_SIZE_LAYOUT` (`toggleBox` / `toggleIcon`):
-
 | size | Корень | Иконка |
 |------|--------|--------|
 | `small` | `h-control-small w-control-small` | `icon-small` |

@@ -1,10 +1,12 @@
 import { useCallback, useId, useState } from "react";
 
+import { DIALOG_SIZE, footerButtonSizeForDialog } from "./dialogStyles";
 import type { DialogContextValue, UseDialogRootStateProps } from "./dialogTypes";
 
 export function useDialogRootState({
   open,
   onOpenChange,
+  size = "base",
 }: UseDialogRootStateProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -14,6 +16,8 @@ export function useDialogRootState({
     setHasDescription(value);
   }, []);
 
+  const sizePreset = DIALOG_SIZE[size];
+
   const contextValue: DialogContextValue = {
     open,
     titleId,
@@ -21,6 +25,9 @@ export function useDialogRootState({
     hasDescription,
     setHasDescription: setHasDescriptionStable,
     onOpenChange,
+    size,
+    sizePreset,
+    footerButtonSize: footerButtonSizeForDialog(size),
   };
 
   return { contextValue };

@@ -5,6 +5,10 @@ import {
 } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import {
+  messageBannerSizePreset,
+  resolveMessageBannerSize,
+} from "@/components/core/utils/messageBannerSize";
 
 import {
   alertHasAction,
@@ -25,6 +29,7 @@ import type {
   AlertLiveRole,
   AlertStatus,
   AlertVariant,
+  AlertSize,
 } from "./alertTypes";
 
 function resolveAlertGridSlots(
@@ -49,6 +54,7 @@ function resolveAlertGridSlots(
 export function useAlertRootState({
   variant: variantProp,
   status: statusProp,
+  size: sizeProp,
   role: roleProp,
   title,
   description,
@@ -68,9 +74,12 @@ export function useAlertRootState({
   children?: ReactNode;
   ariaLabelledByProp?: string;
   ariaDescribedByProp?: string;
+  size?: AlertSize;
 }) {
   const variant = resolveAlertVariant(variantProp);
   const status = resolveAlertStatus(statusProp);
+  const size = resolveMessageBannerSize(sizeProp);
+  const sizePreset = messageBannerSizePreset(size);
   const autoId = useId();
   const titleId = `${autoId}-title`;
   const descriptionId = `${autoId}-description`;
@@ -109,13 +118,15 @@ export function useAlertRootState({
     resolveAlertAriaDescribedBy(descriptionId, hasTitle, hasDescription);
 
   const contextValue = useMemo<AlertContextValue>(
-    () => ({ variant, status, titleId, descriptionId, gridSlots }),
-    [descriptionId, gridSlots, status, titleId, variant],
+    () => ({ variant, status, size, sizePreset, titleId, descriptionId, gridSlots }),
+    [descriptionId, gridSlots, size, sizePreset, status, titleId, variant],
   );
 
   return {
     variant,
     status,
+    size,
+    sizePreset,
     isCompound,
     gridSlots,
     liveRole,

@@ -279,7 +279,6 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
     return (
       <CloseButton
         ref={ref}
-        size="small"
         variant="secondary"
         aria-label={ariaLabel}
         className={mergeDrawerSlotClass(

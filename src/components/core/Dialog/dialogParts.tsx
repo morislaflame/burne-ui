@@ -5,6 +5,7 @@ import {
   isValidElement,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
   type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
@@ -27,21 +28,20 @@ import {
 } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { DIALOG_CLOSE_DEFAULT_ARIA_LABEL } from "./dialogA11y";
-import { mergeDialogSlotClass } from "./dialogAPI";
+import { injectFooterButtonSize, mergeDialogSlotClass } from "./dialogAPI";
 import { useDialogModalMotion } from "./dialogAnimations";
 import { useDialog, useDialogClassNames } from "./dialogContext";
 import {
   DIALOG_CLOSE_CLASS,
-  DIALOG_DESCRIPTION_CLASS,
   DIALOG_FOOTER_CLASS,
   DIALOG_GLOSS_CONTENT_CLASS,
-  DIALOG_GLOSS_PANEL_CLASS,
   DIALOG_HEADER_CLASS,
   DIALOG_HEADING_BLOCK_CLASS,
   DIALOG_NATIVE_CLASS,
   DIALOG_TITLE_CLASS,
   dialogBodyClass,
   dialogContentClass,
+  dialogGlossPanelClass,
   dialogOverlayClass,
   dialogOverlayEnterStyle,
   dialogPanelClass,
@@ -61,11 +61,13 @@ import type {
 } from "./dialogTypes";
 
 export function DialogContent({ className, ...rest }: DialogContentProps) {
+  const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
 
   return (
     <div
       className={dialogContentClass(
+        sizePreset.contentClass,
         mergeDialogSlotClass(slotClassNames.content, className),
       )}
       {...rest}
@@ -76,12 +78,14 @@ export function DialogContent({ className, ...rest }: DialogContentProps) {
 DialogContent.displayName = "DialogContent";
 
 export function DialogHeader({ className, ...rest }: DialogHeaderProps) {
+  const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
 
   return (
     <div
       className={mergeDialogSlotClass(
         DIALOG_HEADER_CLASS,
+        sizePreset.headerGap,
         slotClassNames.header,
         className,
       )}
@@ -94,14 +98,14 @@ DialogHeader.displayName = "DialogHeader";
 
 export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
   function DialogTitle({ className, id, ...rest }, ref) {
-    const { titleId } = useDialog();
+    const { titleId, sizePreset } = useDialog();
     const slotClassNames = useDialogClassNames();
 
     return (
       <Text
         ref={ref as Ref<HTMLElement>}
         as="h2"
-        variant="mid"
+        variant={sizePreset.titleVariant}
         id={id ?? titleId}
         className={mergeDialogSlotClass(
           DIALOG_TITLE_CLASS,
@@ -121,7 +125,7 @@ export function DialogDescription({
   id,
   ...rest
 }: DialogDescriptionProps) {
-  const { descriptionId, setHasDescription } = useDialog();
+  const { descriptionId, setHasDescription, sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
 
   useLayoutEffect(() => {
@@ -132,10 +136,10 @@ export function DialogDescription({
   return (
     <Text
       as="p"
-      variant="base"
+      variant={sizePreset.descVariant}
       id={id ?? descriptionId}
       className={mergeDialogSlotClass(
-        DIALOG_DESCRIPTION_CLASS,
+        sizePreset.descClassName,
         slotClassNames.description,
         className,
       )}
@@ -150,12 +154,14 @@ export function DialogHeadingBlock({
   className,
   ...rest
 }: DialogHeadingBlockProps) {
+  const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
 
   return (
     <div
       className={mergeDialogSlotClass(
         DIALOG_HEADING_BLOCK_CLASS,
+        sizePreset.headingBlockGap,
         slotClassNames.headingBlock,
         className,
       )}
@@ -182,7 +188,6 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
     return (
       <CloseButton
         ref={ref}
-        size="small"
         variant="secondary"
         aria-label={ariaLabel}
         className={mergeDialogSlotClass(
@@ -217,8 +222,13 @@ export function DialogBody({ className, ...rest }: DialogBodyProps) {
 
 DialogBody.displayName = "DialogBody";
 
-export function DialogFooter({ className, ...rest }: DialogFooterProps) {
+export function DialogFooter({ className, children, ...rest }: DialogFooterProps) {
+  const { footerButtonSize } = useDialog();
   const slotClassNames = useDialogClassNames();
+  const footerChildren = useMemo(
+    () => injectFooterButtonSize(children, footerButtonSize),
+    [children, footerButtonSize],
+  );
 
   return (
     <div
@@ -228,7 +238,9 @@ export function DialogFooter({ className, ...rest }: DialogFooterProps) {
         className,
       )}
       {...rest}
-    />
+    >
+      {footerChildren}
+    </div>
   );
 }
 
@@ -331,7 +343,8 @@ export function DialogPanel({
   themeAnchor,
   children,
 }: DialogPanelProps) {
-  const { open, onOpenChange, titleId, descriptionId, hasDescription } = useDialog();
+  const { open, onOpenChange, titleId, descriptionId, hasDescription, sizePreset } =
+    useDialog();
 
   const motion = useDialogModalMotion({ open, onOpenChange, variant, dismissOnBackdrop });
 
@@ -347,6 +360,7 @@ export function DialogPanel({
     <DialogPortalShell
       className={className}
       variant={variant}
+      sizePreset={sizePreset}
       portalTheme={portalTheme}
       lightUi={lightUi}
       titleId={titleId}
@@ -373,6 +387,7 @@ export function DialogPortalShell({
   children,
   className,
   variant,
+  sizePreset,
   portalTheme,
   lightUi,
   titleId,
@@ -385,6 +400,7 @@ export function DialogPortalShell({
   onBackdropMouseDown,
   onDialogClose,
 }: DialogPortalShellProps) {
+  const isGloss = variant === "gloss";
   const slotClassNames = useDialogClassNames();
 
   return (
@@ -408,20 +424,22 @@ export function DialogPortalShell({
         tabIndex={-1}
         className={dialogPanelClass({
           variant,
+          sizePreset,
           className,
           slotClass: slotClassNames.panel,
         })}
       >
-        {variant === "gloss" ? (
+        {isGloss ? (
           <div
             ref={bindGlossPanelRef}
-            className={mergeDialogSlotClass(
-              DIALOG_GLOSS_PANEL_CLASS,
+            className={dialogGlossPanelClass(
+              sizePreset.maxHeight,
               slotClassNames.glossPanel,
             )}
           >
             <div
               className={dialogContentClass(
+                sizePreset.contentClass,
                 mergeDialogSlotClass(
                   DIALOG_GLOSS_CONTENT_CLASS,
                   slotClassNames.glossContent,

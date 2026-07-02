@@ -51,6 +51,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
   {
     status = "default",
     variant = "default",
+    size = "base",
     title,
     description,
     action,
@@ -67,6 +68,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
 ) {
   const state = useToastRootState({
     status,
+    size,
     title,
     description,
     action,
@@ -107,6 +109,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
           className={toastRootClass({
             variant,
             status,
+            size: state.size,
             gridSlots: state.gridSlots,
             slotClass: slotClassNames.root,
             className,

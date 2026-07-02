@@ -24,6 +24,7 @@ export type {
   DialogPanelProps,
   DialogTriggerProps,
   DialogVariant,
+  DialogSize,
   DialogHeaderProps,
   DialogTitleProps,
   DialogDescriptionProps,
@@ -38,10 +39,11 @@ export type {
 export function DialogRoot({
   open,
   onOpenChange,
+  size = "base",
   children,
   classNames,
 }: DialogProps) {
-  const state = useDialogRootState({ open, onOpenChange });
+  const state = useDialogRootState({ open, onOpenChange, size });
 
   return (
     <DialogProvider value={state.contextValue}>

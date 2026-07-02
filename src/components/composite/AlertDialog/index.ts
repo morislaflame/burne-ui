@@ -28,11 +28,11 @@ export const AlertDialog = Object.assign(AlertDialogRoot, {
 });
 
 export {
-  footerButtonSizeForAlertDialog,
   primaryButtonVariantForAlertTone,
   primaryButtonStatusForAlertTone,
 } from "./alertDialogAPI";
 export { useAlertDialog, type AlertDialogContextValue } from "./useAlertDialog";
+export { footerButtonSizeForAlertDialog } from "./alertDialogStyles";
 
 export type {
   AlertDialogProps,

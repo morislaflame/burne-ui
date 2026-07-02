@@ -81,13 +81,6 @@ const AFFIX_PADDING: Record<TimeFieldSize, string> = {
   large: affixSlotClass("large"),
 };
 
-export const TIME_FIELD_SHELL_H: Record<TimeFieldSize, string> = {
-  small: CONTROL_SIZE_LAYOUT.small.h,
-  base: CONTROL_SIZE_LAYOUT.base.h,
-  mid: CONTROL_SIZE_LAYOUT.mid.h,
-  large: CONTROL_SIZE_LAYOUT.large.h,
-};
-
 export function timeFieldAffixSurfaceClass(status: TimeFieldStatus): string {
   return status === "default"
     ? TIME_FIELD_AFFIX_SURFACE_CLASS
@@ -147,7 +140,6 @@ export function timeFieldShellClass({
   variant,
   status,
   disabled,
-  size,
   compact,
   shellSurface,
   glossShellHoverMotionClass,
@@ -170,7 +162,7 @@ export function timeFieldShellClass({
 
   return mergeTimeFieldSlotClass(
     "m-0 min-w-0 overflow-hidden rounded-base p-0",
-    isGloss ? "relative" : mergeTimeFieldSlotClass("border-1", TIME_FIELD_SHELL_H[size]),
+    isGloss ? "relative" : mergeTimeFieldSlotClass("border-1"),
     compact ? "w-fit shrink-0" : "w-full min-w-0",
     shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
@@ -185,16 +177,14 @@ export function timeFieldShellClass({
 
 export function timeFieldShellInnerClass({
   variant,
-  size,
 }: {
   variant: TimeFieldVariant;
-  size: TimeFieldSize;
 }): string {
   const isGloss = variant === "gloss";
 
   return mergeTimeFieldSlotClass(
     TIME_FIELD_SHELL_INNER_CLASS,
-    !isGloss && mergeTimeFieldSlotClass("min-h-full", TIME_FIELD_SHELL_H[size]),
+    !isGloss && mergeTimeFieldSlotClass("min-h-full"),
   );
 }
 
