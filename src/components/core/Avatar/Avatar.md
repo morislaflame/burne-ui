@@ -1,0 +1,302 @@
+# Avatar
+
+Аватар пользователя с изображением, fallback-буквой, tooltip по `nickname`, `variant="gloss"` и группировкой через `AvatarGroup`. Есть Simple API (`src`, `label`) и compound API (`Avatar.Image`, `Avatar.Fallback`).
+
+## Импорт
+
+```tsx
+import {
+  Avatar,
+  AvatarGroup,
+  type AvatarProps,
+  type AvatarClassNames,
+  type AvatarSize,
+  type AvatarImageProps,
+  type AvatarFallbackProps,
+  type AvatarGroupProps,
+} from "burne-ui";
+```
+
+## API
+
+### Simple API
+
+```tsx
+<Avatar
+  size="base"
+  label="Grace Hopper"
+  src={avatarUrl}
+  alt=""
+  loading="lazy"
+  nickname="grace_h"
+/>
+```
+
+Если `src` не передан или изображение не загрузилось, показывается fallback из первой буквы `label`.
+
+### Compound API
+
+```tsx
+<Avatar size="base" label="Grace Hopper" nickname="grace_h">
+  <Avatar.Image src={avatarUrl} alt="" loading="lazy" />
+  <Avatar.Fallback />
+</Avatar>
+```
+
+Кастомный fallback:
+
+```tsx
+<Avatar size="base" label="Design System">
+  <Avatar.Fallback>DS</Avatar.Fallback>
+</Avatar>
+```
+
+### AvatarGroup
+
+```tsx
+<AvatarGroup>
+  <Avatar size="base" label="Один" src={one} alt="" />
+  <Avatar size="base" label="Два" src={two} alt="" />
+  <Avatar size="base" label="Плюс пять" nickname="+5" />
+</AvatarGroup>
+```
+
+### Props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `variant` | `default` | `default` \| `gloss` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `label` | — | Accessible name + fallback source |
+| `src` | — | Image URL для Simple API |
+| `alt` | `""` | Alt image; обычно пустой, так как root уже имеет label |
+| `loading` | — | `img.loading` |
+| `nickname` | — | Tooltip content |
+| `tooltipSize` | `base` | Размер tooltip |
+| `tooltipVariant` | `default` | Вариант tooltip |
+| `tooltipSide` | `top` | Сторона tooltip |
+| `className` | — | Root shell (в gloss — внутренний круг) |
+| `classNames` | — | Слоты компонента |
+
+### `AvatarClassNames`
+
+`root`, `image`, `fallback`, `group`, `groupItem`, `glossWrap`.
+
+## Variant / размеры
+
+### Variant
+
+| Variant | Поверхность |
+|---------|-------------|
+| `default` | `rounded-full bg-surface border-token` |
+| `gloss` | `gloss-wrap` + `gloss-panel` + `gloss-shadow` |
+
+### Sizes
+
+`small`, `base`, `mid`, `large` мапятся на классы `avatar-size-*`. Эти токены задают размер root, image и fallback.
+
+Fallback typography:
+
+| Size | Text variant |
+|------|--------------|
+| `small` | `small` |
+| `base` | `base` |
+| `mid` | `mid` |
+| `large` | `header-2` |
+
+## Анимации
+
+`avatarAnimations.ts`.
+
+**DOM (default):**
+
+```
+<div role="group" aria-label=label>
+  <img ref=imgRef />
+  <span fallback />
+</div>
+```
+
+**DOM (gloss):**
+
+```
+<div glossWrap>
+  <div gloss-shadow aria-hidden />
+  <div role="group" gloss-panel>
+    image + fallback
+  </div>
+</div>
+```
+
+### 1. Image fade
+
+`useAvatarImageFade(visible, imgRef)`:
+
+1. `Avatar.Image` хранит `imageStatus`: `idle` → `loaded` или `error`
+2. При `loaded`: `gsap.to(img, { autoAlpha: 1, ...motionContentFade() })`
+3. При fallback/error: `autoAlpha: 0`
+4. Reduced motion или `enableContentFade: false`: instant `gsap.set`
+
+#### Кастомизация fade
+
+```ts
+import { configureMotion } from "burne-ui";
+
+configureMotion({
+  tooltipDuration: 180,
+  interactiveEase: "power2.out",
+  enableContentFade: true,
+});
+```
+
+### 2. AvatarGroup lift
+
+Каждый item в `AvatarGroup` получает wrapper:
+
+```
+<div style={{ transformOrigin: "center bottom" }}>
+  <Avatar />
+</div>
+```
+
+Hover:
+
+- `y: -10`
+- `scale: 1.08`
+- duration/ease из `motionInteractive()`
+
+Reduced motion: transform ставится мгновенно.
+
+### Чего нет
+
+- Press squeeze на avatar
+- Hover lift на одиночном avatar (только group stack)
+- Ripple
+- Portal motion (кроме auto Tooltip по `nickname`)
+
+### Сводка: что настраивается где
+
+| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
+|----------|---------|---------------------------|----------------|
+| Image fade in | `useAvatarImageFade` | `tooltipDuration`, `interactiveEase`, `enableContentFade` | `src` load state |
+| Group hover lift | GSAP в group wrapper | `interactiveDuration`, `interactiveEase` | `AvatarGroup` |
+| Gloss depth | CSS `gloss-panel` | — | `variant="gloss"` |
+
+## Токены и CSS
+
+| Класс / токен | Назначение |
+|---------------|------------|
+| `AVATAR_ROOT_CLASS` | Круг, `overflow-hidden`, size per prop |
+| `AVATAR_FALLBACK_CLASS` | Initials / placeholder bg |
+| `AVATAR_IMAGE_CLASS` | `object-cover`, start `opacity-0` до fade |
+| gloss wrap layers | Outer ring/shadow в `variant="gloss"` |
+| `groupItem` negative margin | Stack overlap в `AvatarGroup` |
+
+## Стилизация и кастомизация
+
+### Два уровня
+
+1. **`className` на `Avatar`** — root shell. В `variant="gloss"` попадает на внутренний круг.
+2. **`classNames` на root** — слоты root/image/fallback; `AvatarGroup` — `group`/`groupItem`.
+
+### Слоты `AvatarClassNames`
+
+| Слот | DOM | Когда использовать |
+|------|-----|-------------------|
+| `root` | Avatar circle | Ring, border, fallback color |
+| `image` | `img` | Object-fit, filters, opacity helpers |
+| `fallback` | Fallback span | Initials bg/text |
+| `group` | `AvatarGroup` root | Gap, justify stack |
+| `groupItem` | Group item wrapper | Overlap margin, lift target |
+| `glossWrap` | Outer gloss wrapper | Ring/padding вокруг gloss circle |
+
+### Simple (src + label)
+
+```tsx
+<Avatar
+  variant="gloss"
+  size="mid"
+  label="Андрей"
+  src={avatarUrl}
+  alt=""
+  classNames={{
+    root: "border border-info/40",
+    glossWrap: "p-0.5 ring-1 ring-info/30 rounded-full",
+  }}
+/>
+```
+
+### Compound (custom fallback)
+
+```tsx
+<Avatar
+  size="base"
+  label="Design System"
+  classNames={{
+    root: "bg-primary/10 text-primary",
+    fallback: "bg-primary/15",
+  }}
+>
+  <Avatar.Fallback>DS</Avatar.Fallback>
+</Avatar>
+```
+
+### Group stack
+
+```tsx
+<AvatarGroup
+  classNames={{
+    group: "justify-center",
+    groupItem: "-ml-small",
+  }}
+>
+  <Avatar label="A" />
+  <Avatar label="B" />
+</AvatarGroup>
+```
+
+### Практические заметки
+
+- Декоративная картинка: `alt=""`; имя — через `label` → `aria-label`.
+- `nickname` auto-wrap в `Tooltip` (portal motion из Tooltip.md).
+- Gloss: `classNames.root` на inner circle, `glossWrap` на outer shell.
+- **Не `overflow-visible` на root** — image выйдет за круг.
+- **Не `opacity` на `image` в CSS** — конфликт с fade GSAP.
+
+## Интеграции
+
+| Компонент | Использование |
+|-----------|---------------|
+| `Tooltip` | Автоматически при `nickname` |
+| `Badge.Anchor` | Наложение статуса/счётчика на avatar |
+| `AvatarGroup` | Stack + hover lift |
+
+## Доступность
+
+- Root avatar: `role="group"`
+- `aria-label` берётся из trimmed `label`
+- `AvatarGroup`: `role="group"`
+- Fallback: `aria-hidden`
+- Image `alt` по умолчанию `""`; root label отвечает за имя аватара
+- Tooltip trigger получает тот же root
+
+## Структура файлов
+
+```
+Avatar/
+├── Avatar.tsx
+├── index.ts
+├── avatarTypes.ts
+├── avatarStyles.ts
+├── avatarAnimations.ts
+├── avatarContext.tsx
+├── avatarParts.tsx
+├── useAvatarRootState.ts
+├── avatarAPI.ts
+├── avatarA11y.ts
+└── Avatar.stories.tsx
+```
+
+## Storybook
+
+`Core Components/Avatar` — Simple/Compound, размеры, fallback, broken image, group lift, nickname tooltip, gloss, light theme, `classNames`.

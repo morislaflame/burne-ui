@@ -144,6 +144,7 @@ export {
   useAlertDialog,
   type AlertDialogProps,
   type AlertDialogSize,
+  type AlertDialogClassNames,
   type AlertDialogHeaderProps,
   type AlertDialogIndicatorProps,
   type AlertDialogTitleProps,

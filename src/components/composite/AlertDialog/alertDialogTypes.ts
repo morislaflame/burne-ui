@@ -8,6 +8,24 @@ import type { MessageBannerGridSlots } from "@/components/core/utils/messageBann
 
 export type AlertDialogSize = "small" | "base" | "mid" | "large";
 
+export type AlertDialogClassNames = {
+  dialog?: string;
+  overlay?: string;
+  panel?: string;
+  glossPanel?: string;
+  glossContent?: string;
+  content?: string;
+  trigger?: string;
+  header?: string;
+  indicator?: string;
+  headingBlock?: string;
+  title?: string;
+  description?: string;
+  body?: string;
+  footer?: string;
+  close?: string;
+};
+
 export type AlertDialogSizePreset = {
   panelMax: string;
   maxHeight: string;
@@ -28,6 +46,12 @@ export type AlertDialogProps = {
   status?: AlertStatus;
   variant?: AlertVariant;
   size?: AlertDialogSize;
+  classNames?: AlertDialogClassNames;
+};
+
+export type AlertDialogClassNamesProviderProps = {
+  classNames?: AlertDialogClassNames;
+  children?: ReactNode;
 };
 
 export type AlertDialogPanelProps = {

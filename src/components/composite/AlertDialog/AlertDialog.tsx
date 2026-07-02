@@ -1,6 +1,6 @@
 import "@/components/core/utils/glossInteractive.css";
 
-import { AlertDialogProvider } from "./alertDialogContext";
+import { AlertDialogClassNamesProvider, AlertDialogProvider } from "./alertDialogContext";
 import {
   AlertDialogBody,
   AlertDialogClose,
@@ -31,6 +31,7 @@ export type {
   AlertDialogTitleProps,
   AlertDialogContentProps,
   AlertDialogHeadingBlockProps,
+  AlertDialogClassNames,
 } from "./alertDialogTypes";
 
 export function AlertDialogRoot({
@@ -40,6 +41,7 @@ export function AlertDialogRoot({
   status,
   variant = "default",
   size = "base",
+  classNames,
 }: AlertDialogProps) {
   const state = useAlertDialogRootState({
     open,
@@ -50,7 +52,9 @@ export function AlertDialogRoot({
   });
 
   return (
-    <AlertDialogProvider value={state.contextValue}>{children}</AlertDialogProvider>
+    <AlertDialogClassNamesProvider classNames={classNames}>
+      <AlertDialogProvider value={state.contextValue}>{children}</AlertDialogProvider>
+    </AlertDialogClassNamesProvider>
   );
 }
 

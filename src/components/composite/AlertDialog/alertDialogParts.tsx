@@ -47,6 +47,7 @@ import { useAlertDialogModalMotion } from "./alertDialogAnimations";
 import {
   AlertDialogHeaderProvider,
   useAlertDialog,
+  useAlertDialogClassNames,
   useAlertDialogHeaderContext,
   useOptionalAlertDialogHeaderContext,
 } from "./alertDialogContext";
@@ -83,10 +84,14 @@ import type {
 
 export function AlertDialogContent({ className, ...rest }: AlertDialogContentProps) {
   const { sizePreset } = useAlertDialog();
+  const slotClassNames = useAlertDialogClassNames();
 
   return (
     <div
-      className={alertDialogContentClass(sizePreset.contentClass, className)}
+      className={alertDialogContentClass(
+        sizePreset.contentClass,
+        mergeAlertDialogSlotClass(slotClassNames.content, className),
+      )}
       {...rest}
     />
   );
@@ -98,6 +103,7 @@ export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogClosePr
   function AlertDialogClose({ className, onClick, ...rest }, ref) {
     const { onOpenChange } = useAlertDialog();
     const headerCtx = useOptionalAlertDialogHeaderContext();
+    const slotClassNames = useAlertDialogClassNames();
 
     return (
       <CloseButton
@@ -107,6 +113,7 @@ export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogClosePr
         className={mergeAlertDialogSlotClass(
           ALERT_DIALOG_CLOSE_CLASS,
           headerCtx && messageBannerCloseCellClass(headerCtx.gridSlots),
+          slotClassNames.close,
           className,
         )}
         onClick={(e) => {
@@ -128,6 +135,7 @@ export function AlertDialogIndicator({
 }: AlertDialogIndicatorProps) {
   const { variant, status, sizePreset, gridSlots, headerIcon } =
     useAlertDialogHeaderContext("AlertDialog.Indicator");
+  const slotClassNames = useAlertDialogClassNames();
 
   if (children === null) return null;
 
@@ -149,6 +157,7 @@ export function AlertDialogIndicator({
         ALERT_DIALOG_INDICATOR_CLASS,
         alertDialogHeaderIconWrapperClass(status),
         messageBannerIndicatorCellClass(gridSlots),
+        slotClassNames.indicator,
         className,
       )}
       {...rest}
@@ -168,6 +177,7 @@ export function AlertDialogHeader({
   ...rest
 }: AlertDialogHeaderProps) {
   const { variant, status, sizePreset } = useAlertDialog();
+  const slotClassNames = useAlertDialogClassNames();
   const compoundHasIndicator = alertDialogHasIndicator(children);
   const compoundHasClose = alertDialogHasClose(children);
 
@@ -190,6 +200,7 @@ export function AlertDialogHeader({
         className={mergeAlertDialogSlotClass(
           ALERT_DIALOG_HEADER_CLASS,
           messageBannerGridClass(gridSlots, sizePreset.headerGap),
+          slotClassNames.header,
           className,
         )}
         {...rest}
@@ -208,6 +219,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
   function AlertDialogTitle({ className, id, ...rest }, ref) {
     const { titleId, sizePreset } = useAlertDialog();
     const headerCtx = useOptionalAlertDialogHeaderContext();
+    const slotClassNames = useAlertDialogClassNames();
 
     return (
       <Text
@@ -217,6 +229,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
         id={id ?? titleId}
         className={mergeAlertDialogSlotClass(
           headerCtx && messageBannerTitleCellClass(headerCtx.gridSlots),
+          slotClassNames.title,
           className,
         )}
         {...rest}
@@ -234,6 +247,7 @@ export function AlertDialogDescription({
 }: AlertDialogDescriptionProps) {
   const { descriptionId, setHasDescription, sizePreset } = useAlertDialog();
   const headerCtx = useOptionalAlertDialogHeaderContext();
+  const slotClassNames = useAlertDialogClassNames();
 
   useLayoutEffect(() => {
     setHasDescription(true);
@@ -248,6 +262,7 @@ export function AlertDialogDescription({
       className={mergeAlertDialogSlotClass(
         sizePreset.descClassName,
         headerCtx && messageBannerDescriptionCellClass(headerCtx.gridSlots),
+        slotClassNames.description,
         className,
       )}
       {...rest}
@@ -261,9 +276,15 @@ export function AlertDialogHeadingBlock({
   className,
   ...rest
 }: AlertDialogHeadingBlockProps) {
+  const slotClassNames = useAlertDialogClassNames();
+
   return (
     <div
-      className={mergeAlertDialogSlotClass(ALERT_DIALOG_HEADING_BLOCK_CLASS, className)}
+      className={mergeAlertDialogSlotClass(
+        ALERT_DIALOG_HEADING_BLOCK_CLASS,
+        slotClassNames.headingBlock,
+        className,
+      )}
       {...rest}
     />
   );
@@ -273,9 +294,15 @@ AlertDialogHeadingBlock.displayName = "AlertDialogHeadingBlock";
 
 export function AlertDialogBody({ className, children, ...rest }: AlertDialogBodyProps) {
   const { sizePreset } = useAlertDialog();
+  const slotClassNames = useAlertDialogClassNames();
 
   return (
-    <div className={alertDialogBodyClass(className)} {...rest}>
+    <div
+      className={alertDialogBodyClass(
+        mergeAlertDialogSlotClass(slotClassNames.body, className),
+      )}
+      {...rest}
+    >
       <Text variant={sizePreset.bodyVariant} as="div">
         {children}
       </Text>
@@ -287,13 +314,21 @@ AlertDialogBody.displayName = "AlertDialogBody";
 
 export function AlertDialogFooter({ className, children, ...rest }: AlertDialogFooterProps) {
   const { footerButtonSize } = useAlertDialog();
+  const slotClassNames = useAlertDialogClassNames();
   const footerChildren = useMemo(
     () => injectFooterButtonSize(children, footerButtonSize),
     [children, footerButtonSize],
   );
 
   return (
-    <div className={mergeAlertDialogSlotClass(ALERT_DIALOG_FOOTER_CLASS, className)} {...rest}>
+    <div
+      className={mergeAlertDialogSlotClass(
+        ALERT_DIALOG_FOOTER_CLASS,
+        slotClassNames.footer,
+        className,
+      )}
+      {...rest}
+    >
       {footerChildren}
     </div>
   );
@@ -305,10 +340,11 @@ AlertDialogFooter.displayName = "AlertDialogFooter";
 
 export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTriggerProps>(
   function AlertDialogTrigger(
-    { children, asChild, onClick, onPointerDown, ...rest },
+    { children, asChild, className, onClick, onPointerDown, ...rest },
     forwardedRef,
   ) {
     const { open, onOpenChange } = useAlertDialog();
+    const slotClassNames = useAlertDialogClassNames();
     const triggerRef = useRef<HTMLElement | null>(null);
     const openingRef = useOpeningRef();
 
@@ -343,6 +379,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
       if (onlyChild) {
         const child = onlyChild as ReactElement<{
           ref?: Ref<HTMLElement>;
+          className?: string;
           onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
           onClick?: (e: ReactMouseEvent<HTMLElement>) => void;
           "aria-haspopup"?: string;
@@ -352,6 +389,11 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
           ref: ((node: HTMLElement | null) => {
             triggerRef.current = node;
           }) as unknown as Ref<HTMLElement>,
+          className: mergeAlertDialogSlotClass(
+            slotClassNames.trigger,
+            child.props.className,
+            className,
+          ),
           onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
             handlePointerDown(e);
             child.props.onPointerDown?.(e);
@@ -373,6 +415,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
         ref={setRefs}
         aria-haspopup="dialog"
         aria-expanded={open}
+        className={mergeAlertDialogSlotClass(slotClassNames.trigger, className)}
         onPointerDown={(e) => {
           onPointerDown?.(e);
           handlePointerDown(e);
@@ -449,6 +492,7 @@ export function AlertDialogPortalShell({
   bindGlossPanelRef,
 }: AlertDialogPortalShellProps) {
   const isGloss = variant === "gloss";
+  const slotClassNames = useAlertDialogClassNames();
 
   return (
     <dialog
@@ -458,27 +502,46 @@ export function AlertDialogPortalShell({
       onCancel={(e) => e.preventDefault()}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
-      className={ALERT_DIALOG_NATIVE_CLASS}
+      className={mergeAlertDialogSlotClass(
+        ALERT_DIALOG_NATIVE_CLASS,
+        slotClassNames.dialog,
+      )}
     >
       <div
         ref={overlayRef}
-        className={alertDialogOverlayClass(lightUi)}
+        className={alertDialogOverlayClass(lightUi, slotClassNames.overlay)}
         style={alertDialogOverlayEnterStyle()}
         aria-hidden
       />
       <div
         ref={panelRef}
         tabIndex={-1}
-        className={alertDialogPanelClass({ variant, sizePreset, className })}
+        className={alertDialogPanelClass({
+          variant,
+          sizePreset,
+          className,
+          slotClass: slotClassNames.panel,
+        })}
       >
         {isGloss ? (
           <div
             ref={bindGlossPanelRef}
-            className={alertDialogGlossPanelClass(sizePreset.maxHeight)}
+            className={alertDialogGlossPanelClass(
+              sizePreset.maxHeight,
+              slotClassNames.glossPanel,
+            )}
           >
-            <AlertDialogContent className={ALERT_DIALOG_GLOSS_CONTENT_CLASS}>
+            <div
+              className={alertDialogContentClass(
+                sizePreset.contentClass,
+                mergeAlertDialogSlotClass(
+                  ALERT_DIALOG_GLOSS_CONTENT_CLASS,
+                  slotClassNames.glossContent,
+                ),
+              )}
+            >
               {children}
-            </AlertDialogContent>
+            </div>
           </div>
         ) : (
           <AlertDialogContent>{children}</AlertDialogContent>

@@ -1,3 +1,5 @@
+import { AlertDialogClassNamesFullDemo } from "../demos/alertDialog/AlertDialogClassNamesFull.demo";
+import alertDialogClassNamesFullSource from "../demos/alertDialog/AlertDialogClassNamesFull.demo.tsx?raw";
 import { AlertDialogDeleteAccountDemo } from "../demos/alertDialog/AlertDialogDeleteAccount.demo";
 import alertDialogDeleteAccountSource from "../demos/alertDialog/AlertDialogDeleteAccount.demo.tsx?raw";
 import { AlertDialogGlossDemo } from "../demos/alertDialog/AlertDialogGloss.demo";
@@ -30,6 +32,16 @@ export function AlertDialogShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная панель подтверждения.">
         <ShowcaseDemoFromFile Demo={AlertDialogGlossDemo} source={alertDialogGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Кастомизация слотов panel, header, title, description, footer через classNames."
+      >
+        <ShowcaseDemoFromFile
+          Demo={AlertDialogClassNamesFullDemo}
+          source={alertDialogClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

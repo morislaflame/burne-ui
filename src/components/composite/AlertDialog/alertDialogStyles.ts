@@ -94,8 +94,8 @@ export function alertDialogPanelSurfaceClass(variant: AlertVariant): string {
   return cn(alertSurfaceClass(variant, "default"), "shadow-token-lg");
 }
 
-export function alertDialogOverlayClass(lightUi: boolean): string {
-  return dialogOverlayClass(lightUi);
+export function alertDialogOverlayClass(lightUi: boolean, slotClass?: string): string {
+  return dialogOverlayClass(lightUi, slotClass);
 }
 
 export function alertDialogOverlayEnterStyle() {
@@ -117,10 +117,12 @@ export function alertDialogPanelClass({
   variant,
   sizePreset,
   className,
+  slotClass,
 }: {
   variant: AlertVariant;
   sizePreset: Pick<AlertDialogSizePreset, "panelMax" | "maxHeight">;
   className?: string;
+  slotClass?: string;
 }): string {
   const isGloss = variant === "gloss";
   return mergeAlertDialogSlotClass(
@@ -130,11 +132,12 @@ export function alertDialogPanelClass({
     !isGloss && sizePreset.maxHeight,
     !isGloss && alertDialogPanelSurfaceClass(variant),
     className,
+    slotClass,
   );
 }
 
-export function alertDialogGlossPanelClass(maxHeight: string): string {
-  return mergeAlertDialogSlotClass(ALERT_DIALOG_GLOSS_PANEL_CLASS, maxHeight);
+export function alertDialogGlossPanelClass(maxHeight: string, slotClass?: string): string {
+  return mergeAlertDialogSlotClass(ALERT_DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
 }
 
 export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {

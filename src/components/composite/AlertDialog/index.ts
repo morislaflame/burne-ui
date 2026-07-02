@@ -39,6 +39,7 @@ export type {
   AlertDialogPanelProps,
   AlertDialogTriggerProps,
   AlertDialogSize,
+  AlertDialogClassNames,
   AlertDialogBodyProps,
   AlertDialogCloseProps,
   AlertDialogDescriptionProps,

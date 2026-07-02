@@ -178,3 +178,54 @@ export const GlossLight: Story = {
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
+
+export const CustomClassNames: Story = {
+  name: "Полная кастомизация classNames",
+  parameters: {
+    docs: {
+      description: {
+        story: "Кастомизация слотов через `classNames` на root (как у `Dialog`).",
+      },
+    },
+  },
+  render: function AlertDialogClassNamesStory() {
+    const [open, setOpen] = useState(false);
+    return (
+      <AlertDialog
+        open={open}
+        onOpenChange={setOpen}
+        status="warning"
+        classNames={{
+          panel: "ring-1 ring-warning/30",
+          title: "text-warning font-semibold",
+          description: "text-foreground/80",
+          footer: "border-t border-warning/20 pt-small",
+        }}
+      >
+        <AlertDialog.Trigger asChild>
+          <Button type="button" variant="outline">
+            Открыть
+          </Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
+            <AlertDialog.HeadingBlock>
+              <AlertDialog.Title>Несохранённые изменения</AlertDialog.Title>
+              <AlertDialog.Description>
+                Все слоты настроены через classNames на root.
+              </AlertDialog.Description>
+            </AlertDialog.HeadingBlock>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Отмена
+            </Button>
+            <Button type="button" onClick={() => setOpen(false)}>
+              Продолжить
+            </Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Panel>
+      </AlertDialog>
+    );
+  },
+};

@@ -1,11 +1,14 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 
 import type {
+  AlertDialogClassNames,
+  AlertDialogClassNamesProviderProps,
   AlertDialogContextValue,
   AlertDialogHeaderContextValue,
 } from "./alertDialogTypes";
 
 const AlertDialogContext = createContext<AlertDialogContextValue | null>(null);
+const AlertDialogClassNamesContext = createContext<AlertDialogClassNames>({});
 
 const AlertDialogHeaderContext = createContext<AlertDialogHeaderContextValue | null>(
   null,
@@ -21,6 +24,27 @@ export function AlertDialogProvider({
   return (
     <AlertDialogContext.Provider value={value}>{children}</AlertDialogContext.Provider>
   );
+}
+
+export function AlertDialogClassNamesProvider({
+  classNames,
+  children,
+}: AlertDialogClassNamesProviderProps) {
+  const parent = useContext(AlertDialogClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <AlertDialogClassNamesContext.Provider value={merged}>
+      {children}
+    </AlertDialogClassNamesContext.Provider>
+  );
+}
+
+export function useAlertDialogClassNames(): AlertDialogClassNames {
+  return useContext(AlertDialogClassNamesContext);
 }
 
 export function AlertDialogHeaderProvider({
