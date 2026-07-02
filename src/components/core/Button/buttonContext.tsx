@@ -31,14 +31,6 @@ export function useButtonClassNames(): ButtonClassNames {
   return useContext(ButtonClassNamesContext);
 }
 
-export function useButtonContext(): ButtonContextValue {
-  const ctx = useContext(ButtonContext);
-  if (!ctx) {
-    throw new Error("Button.* components must be inside <Button>.");
-  }
-  return ctx;
-}
-
 export function useOptionalButtonContext(): ButtonContextValue | null {
   return useContext(ButtonContext);
 }

@@ -6,14 +6,10 @@ import type { TextVariant } from "@/components/core/Text";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
 
-import type { TabsSize, TabsVariant } from "./tabsTypes";
+import type { TabsSize } from "./tabsTypes";
 
 export function mergeTabsSlotClass(...parts: ClassValue[]): string {
   return cn(...parts);
-}
-
-export function isSurfaceTabsVariant(variant: TabsVariant): boolean {
-  return variant === "outline" || variant === "secondary" || variant === "gloss";
 }
 
 export function useMergedTabsValue(

@@ -46,14 +46,6 @@ export function useToggleButtonClassNames(): ToggleButtonClassNames {
   return useContext(ToggleButtonClassNamesContext);
 }
 
-export function useToggleButtonContext(): ToggleButtonContextValue {
-  const ctx = useContext(ToggleButtonContext);
-  if (!ctx) {
-    throw new Error("ToggleButton.* components must be inside <ToggleButton>.");
-  }
-  return ctx;
-}
-
 export function useOptionalToggleButtonContext(): ToggleButtonContextValue | null {
   return useContext(ToggleButtonContext);
 }

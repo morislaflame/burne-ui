@@ -65,10 +65,6 @@ export function skeletonRadiusClass(radius: SkeletonRadius): string {
   return SKELETON_RADIUS_CLASS[radius];
 }
 
-export function skeletonTextLineWidthClass(lastShort: boolean): string {
-  return lastShort ? SKELETON_TEXT_LINE_LAST_SHORT_CLASS : SKELETON_TEXT_LINE_FULL_CLASS;
-}
-
 export function skeletonLineAnimationDelay(index: number): string {
   return `${index * 0.06}s`;
 }

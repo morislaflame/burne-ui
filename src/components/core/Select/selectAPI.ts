@@ -28,14 +28,6 @@ export function selectOptionValues(options: SelectOption[]): string[] {
   return options.map((o) => o.value);
 }
 
-export function selectOptionDisplayString(
-  selectedOption: SelectOption | undefined,
-): string {
-  if (!selectedOption) return "";
-  if (typeof selectedOption.label === "string") return selectedOption.label;
-  return selectedOption.value;
-}
-
 export function selectBumpActiveValue({
   optionValues,
   activeValue,

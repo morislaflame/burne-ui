@@ -72,11 +72,6 @@ export function alertRootShellClass(size?: MessageBannerSize): string {
   return `w-fit ${preset.maxWidthClass} ${preset.shellPadding}`;
 }
 
-export function toastRootShellClass(size?: MessageBannerSize): string {
-  const preset = messageBannerSizePreset(size);
-  return `w-full ${preset.shellPadding}`;
-}
-
 export function toastViewportWidthPx(
   entries: ReadonlyArray<{ size?: MessageBannerSize }>,
   fallbackSize: MessageBannerSize = "base",

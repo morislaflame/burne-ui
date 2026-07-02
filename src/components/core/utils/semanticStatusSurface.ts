@@ -35,14 +35,3 @@ export const SEMANTIC_STATUS_OUTLINE_BORDER: Record<SemanticSurfaceStatus, strin
   info: "border-token-info",
   warning: "border-token-warning",
 };
-
-export function isSemanticSurfaceStatus(
-  status: string,
-): status is SemanticSurfaceStatus {
-  return (
-    status === "danger" ||
-    status === "success" ||
-    status === "info" ||
-    status === "warning"
-  );
-}

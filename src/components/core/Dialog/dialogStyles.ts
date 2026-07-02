@@ -87,8 +87,6 @@ export const DIALOG_HEADING_BLOCK_CLASS = "min-w-0";
 
 export const DIALOG_TITLE_CLASS = "min-w-0";
 
-export const DIALOG_DESCRIPTION_CLASS = "text-muted";
-
 export const DIALOG_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";
 

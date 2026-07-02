@@ -16,14 +16,6 @@ export function formErrorEntries(errors: Record<string, string>): Array<[string,
   return Object.entries(errors);
 }
 
-export function getFormValueAtPath(values: FormValues, path: string): unknown {
-  if (!path.includes(".")) return values[path];
-  return path.split(".").reduce<unknown>((acc, key) => {
-    if (acc == null || typeof acc !== "object") return undefined;
-    return (acc as Record<string, unknown>)[key];
-  }, values);
-}
-
 export function setFormValueAtPath(
   values: FormValues,
   path: string,

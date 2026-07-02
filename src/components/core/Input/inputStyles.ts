@@ -67,9 +67,6 @@ export const INPUT_FILE_ROW_SINGLE_CLASS =
 
 export const INPUT_FILE_NAME_CLASS = "min-w-0 flex-1 truncate";
 
-export const INPUT_FILE_GLYPH_CLASS =
-  "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token";
-
 export const INPUT_FILE_REMOVE_CLASS =
   "relative z-10 flex size-8 shrink-0 items-center justify-center rounded-base text-danger outline-none";
 
@@ -204,7 +201,6 @@ export function inputShellClass({
   blocked,
   groupSegment,
   fileListEmpty,
-  size,
   shellSurface,
   shellFileEmptySurface,
   shellHoverMotionClass,

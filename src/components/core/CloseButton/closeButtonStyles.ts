@@ -93,10 +93,6 @@ export function closeButtonVariantVisual(variant: CloseButtonVariant): VariantVi
   return CLOSE_BUTTON_VARIANT[variant];
 }
 
-export function closeButtonSizeClasses(size: CloseButtonSize) {
-  return CLOSE_BUTTON_SIZE[size];
-}
-
 export function closeButtonRootClass({
   variant,
   size,

@@ -61,8 +61,6 @@ const TOAST_LOADING_COLOR: Record<ToastStatus, LoadingColor> = {
   warning: "warning",
 };
 
-export const TOAST_STACK_LAYER_CLASS = "will-change-transform";
-
 export const TOAST_VIEWPORT_BASE_CLASS = "fixed z-[300] pointer-events-none";
 
 export const TOAST_STACK_CONTAINER_CLASS = "relative grid";
@@ -80,10 +78,6 @@ const PLACEMENT_CLASS: Record<ToastPlacement, string> = {
 
 export function toastPlacementClass(placement: ToastPlacement): string {
   return PLACEMENT_CLASS[placement];
-}
-
-export function toastIndicatorMediaClass(status: ToastStatus, iconSvgClass: string) {
-  return toastIndicatorClass(status, iconSvgClass);
 }
 
 export function toastLoadingColor(status: ToastStatus): LoadingColor {

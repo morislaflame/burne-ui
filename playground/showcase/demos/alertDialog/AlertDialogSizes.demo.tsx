@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { AlertDialog, primaryButtonVariantForAlertTone } from "@/components/composite/AlertDialog";
+import { AlertDialog } from "@/components/composite/AlertDialog";
 import { Button } from "@/components/core/Button";
 
 const SIZES = ["small", "base", "mid", "large"] as const;

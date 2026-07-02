@@ -3,8 +3,6 @@ import { Children, isValidElement, type ReactNode } from "react";
 import type {
   ButtonAsyncLayerKind,
   ButtonAsyncState,
-  ButtonStatus,
-  ButtonVariant,
 } from "./buttonTypes";
 
 export const BUTTON_COMPOUND_SLOT_NAMES = new Set([
@@ -51,11 +49,6 @@ export function buttonHasCompoundPart(children: ReactNode, part: string): boolea
   return walkButtonChildren(children, (name) => name === part);
 }
 
-export function isButtonElement(child: React.ReactElement): boolean {
-  const displayName = (child.type as { displayName?: string }).displayName;
-  return displayName != null && BUTTON_COMPOUND_SLOT_NAMES.has(displayName);
-}
-
 export function shouldWrapButtonChildrenInText(children: ReactNode): boolean {
   if (children == null || children === false) return false;
   if (typeof children === "string" || typeof children === "number") return true;
@@ -69,27 +62,6 @@ export function shouldWrapButtonChildrenInText(children: ReactNode): boolean {
 
   const displayName = (only.type as { displayName?: string }).displayName;
   return displayName == null || !BUTTON_COMPOUND_SLOT_NAMES.has(displayName);
-}
-
-export function resolveButtonVariant(variant: ButtonVariant | undefined): ButtonVariant {
-  return variant ?? "default";
-}
-
-export function resolveButtonStatus(status: ButtonStatus | undefined): ButtonStatus {
-  return status ?? "default";
-}
-
-export function resolveButtonAsyncState(
-  asyncState: ButtonAsyncState | undefined,
-): ButtonAsyncState {
-  return asyncState ?? "idle";
-}
-
-export function isButtonBlocked(
-  disabled: boolean | undefined,
-  asyncState: ButtonAsyncState,
-): boolean {
-  return Boolean(disabled) || asyncState === "loading";
 }
 
 export function maxDistanceToCorners(px: number, py: number, w: number, h: number) {

@@ -84,7 +84,6 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       disabled,
       variant,
       status,
-      size,
       anchorRef,
       listId,
       valueRef,
@@ -176,7 +175,6 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
         }
         {...(disabled && isGloss ? { "data-gloss-disabled": "" } : {})}
         className={selectTriggerGroupClass({
-          size,
           variant,
           status,
           disabled,

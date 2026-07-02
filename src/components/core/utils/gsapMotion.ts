@@ -34,9 +34,4 @@ export function killMotion(...targets: gsap.TweenTarget[]): void {
   gsap.killTweensOf(targets);
 }
 
-/** Converts configured duration (ms) to GSAP seconds. */
-export function msToSec(ms: number): number {
-  return ms / 1000;
-}
-
 export { gsap, useGSAP };

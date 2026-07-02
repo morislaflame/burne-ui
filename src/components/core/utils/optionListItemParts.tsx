@@ -74,11 +74,8 @@ function OptionListItemStringLabel({ children }: { children: string }) {
 
 export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement>;
 
-export type OptionListItemIconTextProps = {
-  children: string;
-};
 
-export function OptionListItemIconText({ children }: OptionListItemIconTextProps) {
+export function OptionListItemIconText({ children }: { children: string }) {
   return <OptionListItemStringLabel>{children}</OptionListItemStringLabel>;
 }
 

@@ -577,21 +577,6 @@ export {
   getMotionConfig,
   type MotionConfig,
 } from "@/components/core/utils/motionConfig";
-export {
-  MOTION_INTERACTIVE_MS,
-  MOTION_INTERACTIVE_EASE,
-  MOTION_TOOLTIP_MS,
-  MOTION_HOVER_LIFT_SCALE,
-  MOTION_BADGE_ANCHOR_HOVER_LIFT_SCALE,
-  MOTION_PRESS_SQUEEZE_SCALE,
-  MOTION_RIPPLE_DEFAULT_DURATION_MS,
-  MOTION_RIPPLE_DEFAULT_OPACITY_FROM,
-  MOTION_RIPPLE_EXPANDABLE_DURATION_MS,
-  MOTION_RIPPLE_EXPANDABLE_OPACITY_FROM,
-  MOTION_RIPPLE_EASE_CSS,
-  MOTION_RIPPLE_MIN_SCALE,
-  MOTION_FEEDBACK_EXPAND_MS,
-} from "@/components/core/utils/motionTokens";
 export { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 export { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 export {

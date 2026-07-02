@@ -1,5 +1,5 @@
 /**
- * Hover-подъём и squeeze при нажатии — GSAP; константы см. `motionTokens.ts`.
+ * Hover-подъём и squeeze при нажатии — GSAP;
  * Регистры подъёма по hover совпадают с `Button` (`animateInteractiveHoverLift`, `shouldSkipInteractiveHoverLift`).
  */
 
