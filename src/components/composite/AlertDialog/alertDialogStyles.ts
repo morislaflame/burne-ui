@@ -4,23 +4,33 @@ import {
   dialogOverlayClass,
   dialogOverlayEnterStyle,
 } from "@/components/core/Dialog/dialogStyles";
-import {
-  MODAL_BODY_SCROLL_CLASS,
-  MODAL_CONTENT_CLASS,
-  MODAL_CONTENT_COMPACT_CLASS,
-} from "@/components/core/utils/modalPanelLayout";
 import { cn } from "@/utils/cn";
 
 import { mergeAlertDialogSlotClass } from "./alertDialogAPI";
 import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 
+export const ALERT_DIALOG_CONTENT_CLASS =
+  "flex min-h-0 flex-1 flex-col gap-mid text-left";
+
+const ALERT_DIALOG_SECTION_PADDING_COMPACT = {
+  headerPadding: "px-plus pt-plus",
+  bodyPadding: "px-plus",
+  footerPadding: "px-plus pb-plus",
+} as const;
+
+const ALERT_DIALOG_SECTION_PADDING_DEFAULT = {
+  headerPadding: "px-mid pt-mid",
+  bodyPadding: "px-mid",
+  footerPadding: "px-mid pb-mid",
+} as const;
+
 export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> = {
   small: {
     panelMax: "max-w-component-small",
     maxHeight: "max-h-[min(85dvh,26rem)]",
     headerGap: "gap-x-base",
-    contentClass: MODAL_CONTENT_COMPACT_CLASS,
+    ...ALERT_DIALOG_SECTION_PADDING_COMPACT,
     headingBlockGap: "flex min-w-0 flex-col gap-xsmall",
     iconClass: "icon-mid",
     titleVariant: "base",
@@ -32,7 +42,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     panelMax: "max-w-component-base",
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-x-plus gap-y-xsmall",
-    contentClass: MODAL_CONTENT_CLASS,
+    ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-col gap-base",
     iconClass: "icon-large",
     titleVariant: "mid",
@@ -44,7 +54,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     panelMax: "max-w-component-mid",
     maxHeight: "max-h-[min(90dvh,40rem)]",
     headerGap: "gap-x-plus gap-y-small",
-    contentClass: MODAL_CONTENT_CLASS,
+    ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-col gap-base",
     iconClass: "icon-large",
     titleVariant: "mid",
@@ -56,7 +66,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     panelMax: "max-w-component-large",
     maxHeight: "max-h-[min(90dvh,44rem)]",
     headerGap: "gap-x-plus gap-y-small",
-    contentClass: MODAL_CONTENT_CLASS,
+    ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-col gap-base",
     iconClass: "icon-large",
     titleVariant: "mid",
@@ -96,6 +106,8 @@ export const ALERT_DIALOG_HEADING_BLOCK_CLASS = "contents";
 
 export const ALERT_DIALOG_TITLE_CLASS = "font-w-mid";
 
+export const ALERT_DIALOG_BODY_BASE_CLASS = "min-h-0 flex-1 overflow-y-auto";
+
 export const ALERT_DIALOG_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";
 
@@ -112,15 +124,17 @@ export function alertDialogOverlayEnterStyle() {
   return dialogOverlayEnterStyle();
 }
 
-export function alertDialogBodyClass(className?: string): string {
-  return mergeAlertDialogSlotClass(MODAL_BODY_SCROLL_CLASS, "text-left", className);
+export function alertDialogBodyClass(bodyPadding: string, className?: string): string {
+  return mergeAlertDialogSlotClass(
+    ALERT_DIALOG_BODY_BASE_CLASS,
+    bodyPadding,
+    "text-left",
+    className,
+  );
 }
 
-export function alertDialogContentClass(
-  sizePresetContentClass: string,
-  className?: string,
-): string {
-  return mergeAlertDialogSlotClass(sizePresetContentClass, className);
+export function alertDialogContentClass(className?: string): string {
+  return mergeAlertDialogSlotClass(ALERT_DIALOG_CONTENT_CLASS, className);
 }
 
 export function alertDialogPanelClass({

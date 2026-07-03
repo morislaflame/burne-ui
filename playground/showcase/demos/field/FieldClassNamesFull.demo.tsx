@@ -26,9 +26,7 @@ export function FieldSetClassNamesFullDemo() {
     <Field.Set
       className="max-w-md"
       classNames={{
-        set: "rounded-mid border border-primary/30 p-mid",
-        legend: "text-primary",
-        group: "gap-mid",
+        stack: "gap-xlarge mt-xlarge",
       }}
     >
       <Field.Legend>

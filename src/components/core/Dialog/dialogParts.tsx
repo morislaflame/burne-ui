@@ -61,13 +61,11 @@ import type {
 } from "./dialogTypes";
 
 export function DialogContent({ className, ...rest }: DialogContentProps) {
-  const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
 
   return (
     <div
       className={dialogContentClass(
-        sizePreset.contentClass,
         mergeDialogSlotClass(slotClassNames.content, className),
       )}
       {...rest}
@@ -86,6 +84,7 @@ export function DialogHeader({ className, ...rest }: DialogHeaderProps) {
       className={mergeDialogSlotClass(
         DIALOG_HEADER_CLASS,
         sizePreset.headerGap,
+        sizePreset.headerPadding,
         slotClassNames.header,
         className,
       )}
@@ -208,11 +207,13 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 DialogClose.displayName = "DialogClose";
 
 export function DialogBody({ className, ...rest }: DialogBodyProps) {
+  const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
 
   return (
     <div
       className={dialogBodyClass(
+        sizePreset.bodyPadding,
         mergeDialogSlotClass(slotClassNames.body, className),
       )}
       {...rest}
@@ -223,7 +224,7 @@ export function DialogBody({ className, ...rest }: DialogBodyProps) {
 DialogBody.displayName = "DialogBody";
 
 export function DialogFooter({ className, children, ...rest }: DialogFooterProps) {
-  const { footerButtonSize } = useDialog();
+  const { footerButtonSize, sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
   const footerChildren = useMemo(
     () => injectFooterButtonSize(children, footerButtonSize),
@@ -234,6 +235,7 @@ export function DialogFooter({ className, children, ...rest }: DialogFooterProps
     <div
       className={mergeDialogSlotClass(
         DIALOG_FOOTER_CLASS,
+        sizePreset.footerPadding,
         slotClassNames.footer,
         className,
       )}
@@ -439,7 +441,6 @@ export function DialogPortalShell({
           >
             <div
               className={dialogContentClass(
-                sizePreset.contentClass,
                 mergeDialogSlotClass(
                   DIALOG_GLOSS_CONTENT_CLASS,
                   slotClassNames.glossContent,

@@ -12,7 +12,9 @@ export type DialogSizePreset = {
   panelMax: string;
   maxHeight: string;
   headerGap: string;
-  contentClass: string;
+  headerPadding: string;
+  bodyPadding: string;
+  footerPadding: string;
   headingBlockGap: string;
   titleVariant: TextVariant;
   descVariant: TextVariant;

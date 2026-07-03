@@ -35,7 +35,9 @@ import {
   DRAWER_CLOSE_CLASS,
   DRAWER_DESCRIPTION_CLASS,
   DRAWER_FOOTER_CLASS,
+  DRAWER_FOOTER_PADDING,
   DRAWER_HEADER_CLASS,
+  DRAWER_HEADER_PADDING,
   DRAWER_HEADING_BLOCK_CLASS,
   DRAWER_NATIVE_CLASS,
   DRAWER_TITLE_CLASS,
@@ -179,6 +181,7 @@ export function DrawerHeader({ className, ...rest }: DrawerHeaderProps) {
     <div
       className={mergeDrawerSlotClass(
         DRAWER_HEADER_CLASS,
+        DRAWER_HEADER_PADDING,
         slotClassNames.header,
         className,
       )}
@@ -320,6 +323,7 @@ export function DrawerFooter({ className, ...rest }: DrawerFooterProps) {
     <div
       className={mergeDrawerSlotClass(
         DRAWER_FOOTER_CLASS,
+        DRAWER_FOOTER_PADDING,
         slotClassNames.footer,
         className,
       )}

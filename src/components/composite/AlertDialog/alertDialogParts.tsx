@@ -84,13 +84,11 @@ import type {
 } from "./alertDialogTypes";
 
 export function AlertDialogContent({ className, ...rest }: AlertDialogContentProps) {
-  const { sizePreset } = useAlertDialog();
   const slotClassNames = useAlertDialogClassNames();
 
   return (
     <div
       className={alertDialogContentClass(
-        sizePreset.contentClass,
         mergeAlertDialogSlotClass(slotClassNames.content, className),
       )}
       {...rest}
@@ -199,6 +197,7 @@ export function AlertDialogHeader({
       <div
         className={mergeAlertDialogSlotClass(
           ALERT_DIALOG_HEADER_CLASS,
+          sizePreset.headerPadding,
           messageBannerGridClass(gridSlots, sizePreset.headerGap),
           slotClassNames.header,
           className,
@@ -300,6 +299,7 @@ export function AlertDialogBody({ className, children, ...rest }: AlertDialogBod
   return (
     <div
       className={alertDialogBodyClass(
+        sizePreset.bodyPadding,
         mergeAlertDialogSlotClass(slotClassNames.body, className),
       )}
       {...rest}
@@ -314,7 +314,7 @@ export function AlertDialogBody({ className, children, ...rest }: AlertDialogBod
 AlertDialogBody.displayName = "AlertDialogBody";
 
 export function AlertDialogFooter({ className, children, ...rest }: AlertDialogFooterProps) {
-  const { footerButtonSize } = useAlertDialog();
+  const { footerButtonSize, sizePreset } = useAlertDialog();
   const slotClassNames = useAlertDialogClassNames();
   const footerChildren = useMemo(
     () => injectFooterButtonSize(children, footerButtonSize),
@@ -325,6 +325,7 @@ export function AlertDialogFooter({ className, children, ...rest }: AlertDialogF
     <div
       className={mergeAlertDialogSlotClass(
         ALERT_DIALOG_FOOTER_CLASS,
+        sizePreset.footerPadding,
         slotClassNames.footer,
         className,
       )}
@@ -534,7 +535,6 @@ export function AlertDialogPortalShell({
           >
             <div
               className={alertDialogContentClass(
-                sizePreset.contentClass,
                 mergeAlertDialogSlotClass(
                   ALERT_DIALOG_GLOSS_CONTENT_CLASS,
                   slotClassNames.glossContent,

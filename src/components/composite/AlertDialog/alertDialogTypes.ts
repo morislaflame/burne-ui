@@ -30,7 +30,9 @@ export type AlertDialogSizePreset = {
   panelMax: string;
   maxHeight: string;
   headerGap: string;
-  contentClass: string;
+  headerPadding: string;
+  bodyPadding: string;
+  footerPadding: string;
   headingBlockGap: string;
   iconClass: string;
   titleVariant: TextVariant;

@@ -1,7 +1,3 @@
-import {
-  MODAL_BODY_SCROLL_CLASS,
-  MODAL_CONTENT_CLASS,
-} from "@/components/core/utils/modalPanelLayout";
 import { modalOverlayEnterStyle } from "@/components/core/utils/modalSurfaceMotion";
 
 import { mergeDrawerSlotClass } from "./drawerAPI";
@@ -45,6 +41,15 @@ export const HANDLE_EDGE_PADDING_CLASS: Record<DrawerPlacement, string> = {
   right: "pl-plus",
 };
 
+export const DRAWER_CONTENT_CLASS =
+  "flex min-h-0 flex-1 flex-col gap-mid text-left";
+
+export const DRAWER_HEADER_PADDING = "px-mid pt-mid";
+
+export const DRAWER_BODY_PADDING = "px-mid";
+
+export const DRAWER_FOOTER_PADDING = "px-mid pb-mid";
+
 export const DRAWER_NATIVE_CLASS =
   "fixed inset-0 z-[100] m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";
 
@@ -75,6 +80,8 @@ export const DRAWER_HEADING_BLOCK_CLASS =
 export const DRAWER_TITLE_CLASS = "min-w-0";
 
 export const DRAWER_DESCRIPTION_CLASS = "text-muted";
+
+export const DRAWER_BODY_BASE_CLASS = "min-h-0 flex-1 overflow-y-auto";
 
 export const DRAWER_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";
@@ -163,7 +170,7 @@ export function drawerGlossPanelClass({
 }
 
 export function drawerContentClass(slotClass?: string): string {
-  return mergeDrawerSlotClass(MODAL_CONTENT_CLASS, slotClass);
+  return mergeDrawerSlotClass(DRAWER_CONTENT_CLASS, slotClass);
 }
 
 export function drawerGlossContentWrapClass(slotClass?: string): string {
@@ -171,7 +178,7 @@ export function drawerGlossContentWrapClass(slotClass?: string): string {
 }
 
 export function drawerBodyClass(slotClass?: string): string {
-  return mergeDrawerSlotClass(MODAL_BODY_SCROLL_CLASS, slotClass);
+  return mergeDrawerSlotClass(DRAWER_BODY_BASE_CLASS, DRAWER_BODY_PADDING, slotClass);
 }
 
 export function drawerHandleClass({

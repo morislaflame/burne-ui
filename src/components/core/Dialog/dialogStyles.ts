@@ -1,20 +1,30 @@
-import {
-  MODAL_BODY_SCROLL_CLASS,
-  MODAL_CONTENT_CLASS,
-  MODAL_CONTENT_COMPACT_CLASS,
-} from "@/components/core/utils/modalPanelLayout";
 import { modalOverlayEnterStyle } from "@/components/core/utils/modalSurfaceMotion";
 
 import { mergeDialogSlotClass } from "./dialogAPI";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 import type { DialogSize, DialogSizePreset, DialogVariant } from "./dialogTypes";
 
+export const DIALOG_CONTENT_CLASS =
+  "flex min-h-0 flex-1 flex-col gap-mid text-left";
+
+const DIALOG_SECTION_PADDING_COMPACT = {
+  headerPadding: "px-plus pt-plus",
+  bodyPadding: "px-plus",
+  footerPadding: "px-plus pb-plus",
+} as const;
+
+const DIALOG_SECTION_PADDING_DEFAULT = {
+  headerPadding: "px-mid pt-mid",
+  bodyPadding: "px-mid",
+  footerPadding: "px-mid pb-mid",
+} as const;
+
 export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
   small: {
     panelMax: "max-w-component-small",
     maxHeight: "max-h-[min(85dvh,26rem)]",
     headerGap: "gap-base",
-    contentClass: MODAL_CONTENT_COMPACT_CLASS,
+    ...DIALOG_SECTION_PADDING_COMPACT,
     headingBlockGap: "flex min-w-0 flex-1 flex-col gap-xsmall text-left",
     titleVariant: "base",
     descVariant: "small",
@@ -25,7 +35,7 @@ export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
     panelMax: "max-w-component-base",
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-plus",
-    contentClass: MODAL_CONTENT_CLASS,
+    ...DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
     titleVariant: "mid",
     descVariant: "base",
@@ -36,7 +46,7 @@ export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
     panelMax: "max-w-component-mid",
     maxHeight: "max-h-[min(90dvh,40rem)]",
     headerGap: "gap-plus",
-    contentClass: MODAL_CONTENT_CLASS,
+    ...DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
     titleVariant: "mid",
     descVariant: "base",
@@ -47,7 +57,7 @@ export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
     panelMax: "max-w-component-large",
     maxHeight: "max-h-[min(90dvh,44rem)]",
     headerGap: "gap-plus",
-    contentClass: MODAL_CONTENT_CLASS,
+    ...DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
     titleVariant: "mid",
     descVariant: "base",
@@ -86,6 +96,8 @@ export const DIALOG_HEADER_CLASS = "flex shrink-0 items-start";
 export const DIALOG_HEADING_BLOCK_CLASS = "min-w-0";
 
 export const DIALOG_TITLE_CLASS = "min-w-0";
+
+export const DIALOG_BODY_BASE_CLASS = "min-h-0 flex-1 overflow-y-auto";
 
 export const DIALOG_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";
@@ -132,27 +144,18 @@ export function dialogGlossPanelClass(maxHeight: string, slotClass?: string): st
   return mergeDialogSlotClass(DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
 }
 
-export function dialogContentClass(
-  sizePresetContentClass: string,
-  slotClass?: string,
-  gloss = false,
-): string {
+export function dialogContentClass(slotClass?: string, gloss = false): string {
   return mergeDialogSlotClass(
-    sizePresetContentClass,
+    DIALOG_CONTENT_CLASS,
     gloss && DIALOG_GLOSS_CONTENT_CLASS,
     slotClass,
   );
 }
 
-export function dialogBodyClass(slotClass?: string): string {
-  return mergeDialogSlotClass(MODAL_BODY_SCROLL_CLASS, slotClass);
+export function dialogBodyClass(bodyPadding: string, slotClass?: string): string {
+  return mergeDialogSlotClass(DIALOG_BODY_BASE_CLASS, bodyPadding, slotClass);
 }
 
 export function footerButtonSizeForDialog(dialogSize: DialogSize): ButtonSize {
   return FOOTER_BUTTON_SIZE[dialogSize];
 }
-
-export {
-  MODAL_CONTENT_CLASS,
-  MODAL_BODY_SCROLL_CLASS,
-};
