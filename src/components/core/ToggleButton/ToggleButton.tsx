@@ -11,10 +11,6 @@ import {
 import {
   ToggleButtonContent,
   ToggleButtonFill,
-  ToggleButtonIcon,
-  ToggleButtonLabel,
-  ToggleButtonText,
-  ToggleButtonTrailing,
 } from "./toggleButtonParts";
 import { ToggleButtonSimpleContent } from "./toggleButtonSimpleContent";
 import type { ToggleButtonProps } from "./toggleButtonTypes";
@@ -158,12 +154,3 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
 );
 
 ToggleButtonRoot.displayName = "ToggleButtonRoot";
-
-export const ToggleButton = Object.assign(ToggleButtonRoot, {
-  Content: ToggleButtonContent,
-  Fill: ToggleButtonFill,
-  Label: ToggleButtonLabel,
-  Icon: ToggleButtonIcon,
-  Trailing: ToggleButtonTrailing,
-  Text: ToggleButtonText,
-});

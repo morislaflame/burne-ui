@@ -207,6 +207,18 @@ p {
   }
 }
 
+/** Prevent iOS Safari auto-zoom on focused inputs with font-size below 16px. */
+@utility field-control-mobile-no-zoom {
+  /**
+   * Touch / narrow viewports (aligned with hoverInteractiveLift).
+   * `any-pointer: coarse` covers iPad with pointer devices attached.
+   * `!important` beats `text-base` / `text-small` on the same element.
+   */
+  @media (max-width: 1024px), (hover: none), (pointer: coarse), (any-pointer: coarse) {
+    font-size: 16px !important;
+  }
+}
+
 /**
  * focus-ring — standard outline focus ring for interactive elements.
  * focus-within-ring — same, triggers on focus inside (Input, TextArea, ComboBox shells).

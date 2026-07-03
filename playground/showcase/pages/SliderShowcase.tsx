@@ -18,7 +18,10 @@ import { SliderVolumeCardDemo } from "../demos/slider/SliderVolumeCard.demo";
 import sliderVolumeCardSource from "../demos/slider/SliderVolumeCard.demo.tsx?raw";
 import { SliderVolumeDemo } from "../demos/slider/SliderVolume.demo";
 import sliderVolumeSource from "../demos/slider/SliderVolume.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function SliderShowcase() {
   return (

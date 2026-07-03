@@ -18,7 +18,7 @@ import {
 import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
 
 import { Avatar } from "@/components/core/Avatar";
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
 import {
   Badge,

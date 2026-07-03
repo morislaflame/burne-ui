@@ -10,7 +10,10 @@ import { BreadcrumbsProductHeaderDemo } from "../demos/breadcrumbs/BreadcrumbsPr
 import breadcrumbsProductHeaderSource from "../demos/breadcrumbs/BreadcrumbsProductHeader.demo.tsx?raw";
 import { BreadcrumbsShortPathDemo } from "../demos/breadcrumbs/BreadcrumbsShortPath.demo";
 import breadcrumbsShortPathSource from "../demos/breadcrumbs/BreadcrumbsShortPath.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function BreadcrumbsShowcase() {
   return (

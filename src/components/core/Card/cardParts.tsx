@@ -152,6 +152,24 @@ export function CardRootShell({
       );
     }
 
+    if (renderAsButton) {
+      return (
+        <button
+          type="button"
+          {...rest}
+          ref={setRootRef}
+          className={cn(CARD_BUTTON_SHELL_CLASS, glossPanelClass)}
+          onPointerOver={onPointerOver}
+          onPointerOut={onPointerOut}
+          onPointerDown={onPointerDown}
+          onClick={onClick}
+          onKeyDown={onKeyDown}
+        >
+          {glossChildren}
+        </button>
+      );
+    }
+
     return (
       <div
         {...rest}
@@ -159,9 +177,6 @@ export function CardRootShell({
         className={glossPanelClass}
         onPointerOver={onPointerOver}
         onPointerOut={onPointerOut}
-        onPointerDown={onPointerDown}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
       >
         {glossChildren}
       </div>

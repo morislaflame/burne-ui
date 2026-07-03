@@ -14,7 +14,10 @@ import { TableRowSelectionDemo } from "../demos/table/TableRowSelection.demo";
 import tableRowSelectionSource from "../demos/table/TableRowSelection.demo.tsx?raw";
 import { TableTeamRosterDemo } from "../demos/table/TableTeamRoster.demo";
 import tableTeamRosterSource from "../demos/table/TableTeamRoster.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function TableShowcase() {
   return (

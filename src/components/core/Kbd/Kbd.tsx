@@ -2,8 +2,8 @@ import { forwardRef } from "react";
 
 import { mergeKbdSlotClass } from "./kbdAPI";
 import { useKbdAnimations } from "./kbdAnimations";
+import { KbdBody } from "./kbdBodyPart";
 import { KbdClassNamesProvider } from "./kbdContext";
-import { KbdBody } from "./kbdParts";
 import type { KbdProps } from "./kbdTypes";
 import { useKbdRootState } from "./useKbdRootState";
 

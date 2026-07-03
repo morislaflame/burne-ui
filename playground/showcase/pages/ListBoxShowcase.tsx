@@ -14,7 +14,10 @@ import { ListBoxSizesDemo } from "../demos/listBox/ListBoxSizes.demo";
 import listBoxSizesSource from "../demos/listBox/ListBoxSizes.demo.tsx?raw";
 import { ListBoxWorkspacePickerDemo } from "../demos/listBox/ListBoxWorkspacePicker.demo";
 import listBoxWorkspacePickerSource from "../demos/listBox/ListBoxWorkspacePicker.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function ListBoxShowcase() {
   return (

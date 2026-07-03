@@ -8,7 +8,10 @@ import { LoadingInlineStatusDemo } from "../demos/loading/LoadingInlineStatus.de
 import loadingInlineStatusSource from "../demos/loading/LoadingInlineStatus.demo.tsx?raw";
 import { LoadingSizesColorsDemo } from "../demos/loading/LoadingSizesColors.demo";
 import loadingSizesColorsSource from "../demos/loading/LoadingSizesColors.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function LoadingShowcase() {
   return (

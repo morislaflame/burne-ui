@@ -136,10 +136,3 @@ export function SliderRoot({
 }
 
 SliderRoot.displayName = "Slider";
-
-export {
-  useSliderFieldContext,
-  useOptionalSliderFieldContext,
-} from "./sliderContext";
-
-export { sliderThicknessToCss } from "./sliderAPI";

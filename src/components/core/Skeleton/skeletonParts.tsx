@@ -94,7 +94,7 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(functi
     >
       {lineWidths.map((widthClass, index) => (
         <div
-          key={index}
+          key={widthClass}
           className={mergeSkeletonSlotClass(
             SKELETON_BASE_CLASS,
             SKELETON_TEXT_LINE_CLASS,

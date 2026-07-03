@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen } from "storybook/test";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 
 import { Tooltip, type TooltipVariant } from ".";
 

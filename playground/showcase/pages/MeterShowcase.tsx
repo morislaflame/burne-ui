@@ -10,7 +10,10 @@ import { MeterStorageGridDemo } from "../demos/meter/MeterStorageGrid.demo";
 import meterStorageGridSource from "../demos/meter/MeterStorageGrid.demo.tsx?raw";
 import { MeterVerticalDemo } from "../demos/meter/MeterVertical.demo";
 import meterVerticalSource from "../demos/meter/MeterVertical.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function MeterShowcase() {
   return (

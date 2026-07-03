@@ -14,7 +14,10 @@ import { TextAreaSupportTicketDemo } from "../demos/textarea/TextAreaSupportTick
 import textAreaSupportTicketSource from "../demos/textarea/TextAreaSupportTicket.demo.tsx?raw";
 import { TextAreaWithErrorDemo } from "../demos/textarea/TextAreaWithError.demo";
 import textAreaWithErrorSource from "../demos/textarea/TextAreaWithError.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function TextAreaShowcase() {
   return (

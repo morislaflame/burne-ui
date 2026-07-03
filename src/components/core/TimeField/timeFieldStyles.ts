@@ -4,6 +4,7 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
 
 import { mergeTimeFieldSlotClass } from "./timeFieldAPI";
@@ -45,7 +46,7 @@ export const TIME_FIELD_AFFIX_PREFIX_EDGE_CLASS = "border-r-token";
 export const TIME_FIELD_AFFIX_SUFFIX_EDGE_CLASS = "border-l-token";
 
 export const TIME_FIELD_KEYBOARD_INPUT_CLASS =
-  "pointer-events-none absolute h-px w-px opacity-0";
+  `pointer-events-none absolute h-px w-px opacity-0 ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const TIME_FIELD_SEGMENT_BASE_CLASS =
   "inline-flex min-w-[2ch] select-none items-center justify-center outline-none";

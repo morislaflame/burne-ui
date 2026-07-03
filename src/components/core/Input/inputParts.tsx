@@ -30,6 +30,7 @@ import {
   INPUT_FILE_REMOVE_ARIA_LABEL,
 } from "./inputA11y";
 import { assignInputFiles, inputSizeFromButtonSize, mergeInputSlotClass } from "./inputAPI";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import {
   useInputClassNames,
   useInputFieldContext,
@@ -548,6 +549,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
               INPUT_CONTROL_BASE_CLASS,
               INPUT_CONTROL_PAD[size],
               slotClassNames.control,
+              FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
             )}
             {...rest}
           />

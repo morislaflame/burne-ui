@@ -1,4 +1,5 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import {
   FIELD_SHELL_FOCUS_CLASS,
   FIELD_SHELL_TRANSITION_CLASS,
@@ -43,7 +44,7 @@ export const COMBOBOX_INPUT_GROUP_BASE_CLASS =
   "relative z-0 flex min-w-0 items-stretch border-1 text-left overflow-hidden motion-reduce:transition-none";
 
 export const COMBOBOX_INPUT_BASE_CLASS =
-  "min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted";
+  `min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const COMBOBOX_INPUT_MUTED_CLASS = "text-muted";
 
@@ -150,6 +151,7 @@ export function comboBoxInputClass({
     muted && COMBOBOX_INPUT_MUTED_CLASS,
     className,
     slotClass,
+    FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
   );
 }
 

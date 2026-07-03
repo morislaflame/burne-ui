@@ -8,7 +8,10 @@ import { SelectGlossDemo } from "../demos/select/SelectGloss.demo";
 import selectGlossSource from "../demos/select/SelectGloss.demo.tsx?raw";
 import { SelectSizesDemo } from "../demos/select/SelectSizes.demo";
 import selectSizesSource from "../demos/select/SelectSizes.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function SelectShowcase() {
   return (

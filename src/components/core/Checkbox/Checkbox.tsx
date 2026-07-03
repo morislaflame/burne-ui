@@ -152,6 +152,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
         <CheckboxClassNamesProvider classNames={classNames}>
           <label
             ref={ref}
+            htmlFor={state.contextValue.inputId}
             data-checked={state.mergedChecked ? true : undefined}
             className={gridClass}
             {...rest}

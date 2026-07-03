@@ -16,7 +16,10 @@ import { DisclosureSingleDemo } from "../demos/disclosure/DisclosureSingle.demo"
 import disclosureSingleSource from "../demos/disclosure/DisclosureSingle.demo.tsx?raw";
 import { DisclosureSizesDemo } from "../demos/disclosure/DisclosureSizes.demo";
 import disclosureSizesSource from "../demos/disclosure/DisclosureSizes.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function DisclosureShowcase() {
   return (

@@ -13,7 +13,10 @@ import { FieldHorizontalPairDemo } from "../demos/field/FieldHorizontalPair.demo
 import fieldHorizontalPairSource from "../demos/field/FieldHorizontalPair.demo.tsx?raw";
 import { FieldSettingsPanelDemo } from "../demos/field/FieldSettingsPanel.demo";
 import fieldSettingsPanelSource from "../demos/field/FieldSettingsPanel.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function FieldShowcase() {
   return (

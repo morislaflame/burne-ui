@@ -16,7 +16,10 @@ import { ColorPickerSidesDemo } from "../demos/colorPicker/ColorPickerSides.demo
 import colorPickerSidesSource from "../demos/colorPicker/ColorPickerSides.demo.tsx?raw";
 import { ColorSlidersDemo } from "../demos/colorPicker/ColorSliders.demo";
 import colorSlidersSource from "../demos/colorPicker/ColorSliders.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function ColorPickerShowcase() {
   return (

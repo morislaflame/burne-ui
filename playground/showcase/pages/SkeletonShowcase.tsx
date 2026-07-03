@@ -12,7 +12,10 @@ import { SkeletonTableRowsDemo } from "../demos/skeleton/SkeletonTableRows.demo"
 import skeletonTableRowsSource from "../demos/skeleton/SkeletonTableRows.demo.tsx?raw";
 import { SkeletonTextBlockDemo } from "../demos/skeleton/SkeletonTextBlock.demo";
 import skeletonTextBlockSource from "../demos/skeleton/SkeletonTextBlock.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function SkeletonShowcase() {
   return (

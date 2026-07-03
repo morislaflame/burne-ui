@@ -90,7 +90,19 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       value,
       optionValues,
       setActiveValue,
+      activeValue,
+      isRequired,
+      hintConnected,
+      errorConnected,
+      hintId,
+      errorId,
     } = ctx;
+
+    const activeOptionId = selectActiveOptionId(listId, open, activeValue);
+    const ariaDescribedBy = joinFieldDescribedBy(
+      hintConnected ? hintId : undefined,
+      errorConnected ? errorId : undefined,
+    );
 
     const openingRef = useSelectOpeningRef();
     const isGloss = variant === "gloss";
@@ -150,7 +162,12 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
         aria-haspopup="listbox"
+        aria-activedescendant={open ? activeOptionId : undefined}
+        aria-required={isRequired || undefined}
+        aria-invalid={status === "danger" ? true : undefined}
+        aria-describedby={ariaDescribedBy}
         aria-disabled={disabled || undefined}
+        tabIndex={disabled ? -1 : 0}
         onPointerDown={handlePointerDown}
         onPointerEnter={(e) => {
           onPointerEnter?.(e);
@@ -205,7 +222,6 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       setOpen,
       value,
       setValue,
-      listId,
       activeValue,
       setActiveValue,
       valueRef,
@@ -215,12 +231,6 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       disabled,
       placeholder: contextPlaceholder,
       size,
-      status,
-      isRequired,
-      hintConnected,
-      errorConnected,
-      hintId,
-      errorId,
       variant,
       formValueRef,
       formOnBlur,
@@ -239,13 +249,6 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
     const selectedOption = useMemo(
       () => optionsByValue.get(value),
       [optionsByValue, value],
-    );
-
-    const activeOptionId = selectActiveOptionId(listId, open, activeValue);
-
-    const ariaDescribedBy = joinFieldDescribedBy(
-      hintConnected ? hintId : undefined,
-      errorConnected ? errorId : undefined,
     );
 
     const finishOpen = useCallback(() => {
@@ -372,10 +375,6 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         ref={mergeRefs(ref, valueRef, formValueRef)}
         id={selectId}
         type="button"
-        aria-activedescendant={activeOptionId}
-        aria-required={isRequired || undefined}
-        aria-invalid={status === "danger" ? true : undefined}
-        aria-describedby={ariaDescribedBy}
         disabled={disabled}
         className={selectValueClass({
           size,

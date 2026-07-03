@@ -12,7 +12,10 @@ import { AlertDialogSizesDemo } from "../demos/alertDialog/AlertDialogSizes.demo
 import alertDialogSizesSource from "../demos/alertDialog/AlertDialogSizes.demo.tsx?raw";
 import { AlertDialogUnsavedChangesDemo } from "../demos/alertDialog/AlertDialogUnsavedChanges.demo";
 import alertDialogUnsavedChangesSource from "../demos/alertDialog/AlertDialogUnsavedChanges.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function AlertDialogShowcase() {
   return (

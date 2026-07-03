@@ -12,7 +12,10 @@ import { ButtonSizesDemo } from "../demos/button/ButtonSizes.demo";
 import buttonSizesSource from "../demos/button/ButtonSizes.demo.tsx?raw";
 import { ButtonVariantsDemo } from "../demos/button/ButtonVariants.demo";
 import buttonVariantsSource from "../demos/button/ButtonVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function ButtonShowcase() {
   return (

@@ -12,7 +12,10 @@ import { DropdownStatusPickerDemo } from "../demos/dropdown/DropdownStatusPicker
 import dropdownStatusPickerSource from "../demos/dropdown/DropdownStatusPicker.demo.tsx?raw";
 import { DropdownUserMenuDemo } from "../demos/dropdown/DropdownUserMenu.demo";
 import dropdownUserMenuSource from "../demos/dropdown/DropdownUserMenu.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function DropdownShowcase() {
   return (

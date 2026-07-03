@@ -18,7 +18,10 @@ import { CheckboxTaskListDemo } from "../demos/checkbox/CheckboxTaskList.demo";
 import checkboxTaskListSource from "../demos/checkbox/CheckboxTaskList.demo.tsx?raw";
 import { CheckboxTermsDemo } from "../demos/checkbox/CheckboxTerms.demo";
 import checkboxTermsSource from "../demos/checkbox/CheckboxTerms.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function CheckboxShowcase() {
   return (

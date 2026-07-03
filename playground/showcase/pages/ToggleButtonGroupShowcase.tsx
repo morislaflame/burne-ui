@@ -12,7 +12,10 @@ import { ToggleButtonGroupVerticalDemo } from "../demos/toggleButtonGroup/Toggle
 import toggleButtonGroupVerticalSource from "../demos/toggleButtonGroup/ToggleButtonGroupVertical.demo.tsx?raw";
 import { ToggleButtonGroupViewToolbarDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupViewToolbar.demo";
 import toggleButtonGroupViewToolbarSource from "../demos/toggleButtonGroup/ToggleButtonGroupViewToolbar.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function ToggleButtonGroupShowcase() {
   return (

@@ -14,7 +14,10 @@ import { ToggleButtonVariantsDemo } from "../demos/toggle-button/ToggleButtonVar
 import toggleButtonVariantsSource from "../demos/toggle-button/ToggleButtonVariants.demo.tsx?raw";
 import { ToggleButtonViewSwitchDemo } from "../demos/toggle-button/ToggleButtonViewSwitch.demo";
 import toggleButtonViewSwitchSource from "../demos/toggle-button/ToggleButtonViewSwitch.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function ToggleButtonShowcase() {
   return (

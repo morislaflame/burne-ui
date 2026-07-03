@@ -16,7 +16,10 @@ import { SwitchSizesDemo } from "../demos/switch/SwitchSizes.demo";
 import switchSizesSource from "../demos/switch/SwitchSizes.demo.tsx?raw";
 import { SwitchSettingsPanelDemo } from "../demos/switch/SwitchSettingsPanel.demo";
 import switchSettingsPanelSource from "../demos/switch/SwitchSettingsPanel.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function SwitchShowcase() {
   return (

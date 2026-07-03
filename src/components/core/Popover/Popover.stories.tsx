@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 import { IoCopyOutline, IoLinkOutline, IoShareSocialOutline, IoTrashOutline } from "react-icons/io5";
 
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";

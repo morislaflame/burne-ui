@@ -12,7 +12,10 @@ import { SearchInputGlossHeroDemo } from "../demos/search-input/SearchInputGloss
 import searchInputGlossHeroSource from "../demos/search-input/SearchInputGlossHero.demo.tsx?raw";
 import { SearchInputWithResultDemo } from "../demos/search-input/SearchInputWithResult.demo";
 import searchInputWithResultSource from "../demos/search-input/SearchInputWithResult.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function SearchInputShowcase() {
   return (

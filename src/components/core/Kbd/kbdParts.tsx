@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from "react";
+import { Fragment } from "react";
 
 import { Text } from "@/components/core/Text";
 
@@ -6,11 +6,10 @@ import { flattenKbdGroupChildren } from "./kbdAPI";
 import { KBD_GROUP_SEPARATOR_ARIA_HIDDEN } from "./kbdA11y";
 import { useKbdClassNames } from "./kbdContext";
 import {
-  KBD_TEXT_VARIANT,
   kbdGroupClass,
   kbdGroupSeparatorClass,
 } from "./kbdStyles";
-import type { KbdGroupProps, KbdSize } from "./kbdTypes";
+import type { KbdGroupProps } from "./kbdTypes";
 
 export function KbdGroup({
   className,
@@ -50,22 +49,4 @@ export function KbdGroup({
 
 KbdGroup.displayName = "KbdGroup";
 
-export function KbdBody({
-  size,
-  children,
-}: {
-  size: KbdSize;
-  children: ReactNode;
-}) {
-  if (children == null || children === false) return null;
-
-  if (typeof children === "string" || typeof children === "number") {
-    return (
-      <Text as="span" variant={KBD_TEXT_VARIANT[size]} inheritColor>
-        {children}
-      </Text>
-    );
-  }
-
-  return children;
-}
+export { KbdText } from "./kbdTextPart";

@@ -8,7 +8,10 @@ import { TextStatsGridDemo } from "../demos/text/TextStatsGrid.demo";
 import textStatsGridSource from "../demos/text/TextStatsGrid.demo.tsx?raw";
 import { TextVariantsDemo } from "../demos/text/TextVariants.demo";
 import textVariantsSource from "../demos/text/TextVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function TextShowcase() {
   return (

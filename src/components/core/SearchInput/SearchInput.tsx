@@ -47,6 +47,7 @@ import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import {
   readSearchExpandedRadiusPx,
   SEARCH_EXPANDED_ROUNDED_CLASS,
@@ -619,6 +620,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",
             "disabled:cursor-not-allowed disabled:opacity-100",
             layout.controlPad,
+            FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
             expanded
               ? "relative z-[2] opacity-100"
               : "pointer-events-none absolute inset-0 opacity-0",

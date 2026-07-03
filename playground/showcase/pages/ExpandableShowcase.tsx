@@ -14,7 +14,10 @@ import { ExpandableSimpleApiDemo } from "../demos/expandable/ExpandableSimpleApi
 import expandableSimpleApiSource from "../demos/expandable/ExpandableSimpleApi.demo.tsx?raw";
 import { ExpandableSizesDemo } from "../demos/expandable/ExpandableSizes.demo";
 import expandableSizesSource from "../demos/expandable/ExpandableSizes.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function ExpandableShowcase() {
   return (

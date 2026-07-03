@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 
 import { Form, type FormValues } from "@/components/composite/Form";
 import { Badge } from "@/components/core/Badge";
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 import { Ripple } from "@/components/core/Ripple";
 import { Separator } from "@/components/core/Separator";

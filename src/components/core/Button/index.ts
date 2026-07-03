@@ -1,5 +1,4 @@
 export {
-  Button,
   ButtonRoot,
   ButtonContent,
   ButtonLabel,
@@ -22,6 +21,27 @@ export {
   type ButtonSuccessProps,
   type ButtonErrorProps,
 } from "./Button";
+
+import {
+  ButtonRoot,
+  ButtonContent,
+  ButtonLabel,
+  ButtonIcon,
+  ButtonText,
+  ButtonLoader,
+  ButtonSuccess,
+  ButtonError,
+} from "./Button";
+
+export const Button = Object.assign(ButtonRoot, {
+  Content: ButtonContent,
+  Label: ButtonLabel,
+  Icon: ButtonIcon,
+  Text: ButtonText,
+  Loader: ButtonLoader,
+  Success: ButtonSuccess,
+  Error: ButtonError,
+});
 
 export { buttonRippleTone } from "./buttonStyles";
 export {

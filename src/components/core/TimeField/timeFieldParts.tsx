@@ -8,6 +8,7 @@ import "@/components/core/utils/glossInteractive.css";
 
 import { timeFieldHintStatus, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
 import { mergeTimeFieldSlotClass } from "./timeFieldAPI";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import {
   useTimeFieldClassNames,
   useTimeFieldContext,
@@ -153,8 +154,8 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
             className={mergeTimeFieldSlotClass(
               TIME_FIELD_KEYBOARD_INPUT_CLASS,
               slotClassNames.keyboardInput,
+              FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
             )}
-            style={{ fontSize: 16 }}
             onInput={state.handleKeyboardInput}
             onKeyDown={state.handleKeyboardInputKeyDown}
             onBlur={state.handleFieldBlur}

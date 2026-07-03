@@ -16,7 +16,10 @@ import { PopoverSizesDemo } from "../demos/popover/PopoverSizes.demo";
 import popoverSizesSource from "../demos/popover/PopoverSizes.demo.tsx?raw";
 import { PopoverWithHeaderDemo } from "../demos/popover/PopoverWithHeader.demo";
 import popoverWithHeaderSource from "../demos/popover/PopoverWithHeader.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function PopoverShowcase() {
   return (

@@ -1,6 +1,9 @@
 import { GlossComponentsDemo } from "../demos/gloss/GlossComponents.demo";
 import glossComponentsSource from "../demos/gloss/GlossComponents.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function GlossShowcase() {
   return (

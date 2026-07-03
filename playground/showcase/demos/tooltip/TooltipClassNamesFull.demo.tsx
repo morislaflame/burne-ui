@@ -1,6 +1,6 @@
 import { IoHelpCircleOutline } from "react-icons/io5";
 
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 import { Tooltip } from "@/components/core/Tooltip";
 
 export function TooltipClassNamesFullDemo() {

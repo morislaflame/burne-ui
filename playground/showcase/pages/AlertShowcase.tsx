@@ -12,7 +12,10 @@ import { AlertStatusesDemo } from "../demos/alert/AlertStatuses.demo";
 import alertStatusesSource from "../demos/alert/AlertStatuses.demo.tsx?raw";
 import { AlertWithActionDemo } from "../demos/alert/AlertWithAction.demo";
 import alertWithActionSource from "../demos/alert/AlertWithAction.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function AlertShowcase() {
   return (

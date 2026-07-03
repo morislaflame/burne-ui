@@ -12,7 +12,10 @@ import { CalendarModesDemo } from "../demos/calendar/CalendarModes.demo";
 import calendarModesSource from "../demos/calendar/CalendarModes.demo.tsx?raw";
 import { CalendarSizesDemo } from "../demos/calendar/CalendarSizes.demo";
 import calendarSizesSource from "../demos/calendar/CalendarSizes.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function CalendarShowcase() {
   return (

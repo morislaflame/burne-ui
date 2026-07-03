@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useState } from "react";
 
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 
 import {
   COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL,
@@ -126,6 +127,7 @@ function ColorPickerHexInput({ hex, setHsva }: ColorPickerHexInputProps) {
         className={mergeColorPickerSlotClass(
           COLOR_PICKER_HEX_FIELD_CLASS,
           slotClassNames.hexInputField,
+          FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
         )}
         onFocus={() => {
           setIsEditing(true);
@@ -166,6 +168,7 @@ function ColorPickerAlphaInput({ hsva, setHsva }: ColorPickerAlphaInputProps) {
         className={mergeColorPickerSlotClass(
           COLOR_PICKER_ALPHA_FIELD_CLASS,
           slotClassNames.alphaInputField,
+          FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
         )}
         onChange={(e) => {
           const n = parseInt(e.target.value, 10);

@@ -14,7 +14,10 @@ import { CardProductSelectableDemo } from "../demos/card/CardProductSelectable.d
 import cardProductSelectableSource from "../demos/card/CardProductSelectable.demo.tsx?raw";
 import { CardVariantsDemo } from "../demos/card/CardVariants.demo";
 import cardVariantsSource from "../demos/card/CardVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function CardShowcase() {
   return (

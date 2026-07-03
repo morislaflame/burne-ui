@@ -1,4 +1,4 @@
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 import { Popover } from "@/components/core/Popover";
 import { Text } from "@/components/core/Text";
 

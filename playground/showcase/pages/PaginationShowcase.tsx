@@ -10,7 +10,10 @@ import { PaginationTableFooterDemo } from "../demos/pagination/PaginationTableFo
 import paginationTableFooterSource from "../demos/pagination/PaginationTableFooter.demo.tsx?raw";
 import { PaginationWithPagesDemo } from "../demos/pagination/PaginationWithPages.demo";
 import paginationWithPagesSource from "../demos/pagination/PaginationWithPages.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function PaginationShowcase() {
   return (

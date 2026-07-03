@@ -12,7 +12,10 @@ import { CloseButtonSizesDemo } from "../demos/close-button/CloseButtonSizes.dem
 import closeButtonSizesSource from "../demos/close-button/CloseButtonSizes.demo.tsx?raw";
 import { CloseButtonVariantsDemo } from "../demos/close-button/CloseButtonVariants.demo";
 import closeButtonVariantsSource from "../demos/close-button/CloseButtonVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function CloseButtonShowcase() {
   return (

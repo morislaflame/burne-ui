@@ -16,7 +16,10 @@ import { BadgeSizesDemo } from "../demos/badge/BadgeSizes.demo";
 import badgeSizesSource from "../demos/badge/BadgeSizes.demo.tsx?raw";
 import { BadgeVariantsDemo } from "../demos/badge/BadgeVariants.demo";
 import badgeVariantsSource from "../demos/badge/BadgeVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function BadgeShowcase() {
   return (

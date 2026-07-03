@@ -14,7 +14,10 @@ import { ToastSizesDemo } from "../demos/toast/ToastSizes.demo";
 import toastSizesSource from "../demos/toast/ToastSizes.demo.tsx?raw";
 import { ToastUndoActionDemo } from "../demos/toast/ToastUndoAction.demo";
 import toastUndoActionSource from "../demos/toast/ToastUndoAction.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function ToastShowcase() {
   return (

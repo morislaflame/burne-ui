@@ -10,7 +10,10 @@ import { SelectionIndicatorThumbGalleryDemo } from "../demos/selectionIndicator/
 import selectionIndicatorThumbGallerySource from "../demos/selectionIndicator/SelectionIndicatorThumbGallery.demo.tsx?raw";
 import { SelectionIndicatorVariantMixDemo } from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo";
 import selectionIndicatorVariantMixSource from "../demos/selectionIndicator/SelectionIndicatorVariantMix.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function SelectionIndicatorShowcase() {
   return (

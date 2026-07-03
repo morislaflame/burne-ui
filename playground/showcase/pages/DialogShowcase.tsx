@@ -12,7 +12,10 @@ import { DialogSettingsModalDemo } from "../demos/dialog/DialogSettingsModal.dem
 import dialogSettingsModalSource from "../demos/dialog/DialogSettingsModal.demo.tsx?raw";
 import { DialogSizesDemo } from "../demos/dialog/DialogSizes.demo";
 import dialogSizesSource from "../demos/dialog/DialogSizes.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function DialogShowcase() {
   return (

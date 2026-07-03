@@ -17,7 +17,10 @@ import { TooltipSizesDemo } from "../demos/tooltip/TooltipSizes.demo";
 import tooltipSizesSource from "../demos/tooltip/TooltipSizes.demo.tsx?raw";
 import { TooltipVariantsDemo } from "../demos/tooltip/TooltipVariants.demo";
 import tooltipVariantsSource from "../demos/tooltip/TooltipVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function TooltipShowcase() {
   return (

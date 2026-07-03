@@ -4,6 +4,7 @@ import {
   fieldShellHoverClass,
 } from "@/components/core/utils/useFieldShellHoverLift";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 
 import { mergeTextAreaSlotClass } from "./textAreaAPI";
 import type { TextAreaSize, TextAreaStatus, TextAreaVariant } from "./textAreaTypes";
@@ -32,7 +33,7 @@ export const TEXTAREA_MIN_H: Record<TextAreaSize, string> = {
 export const TEXTAREA_SHELL_LAYOUT_CLASS = "flex flex-col items-stretch";
 
 export const TEXTAREA_CONTROL_BASE_CLASS =
-  "box-border block min-h-0 w-full flex-1 resize-none overflow-auto bg-transparent font-inherit text-foreground outline-none placeholder:text-muted appearance-none [field-sizing:content]";
+  `box-border block min-h-0 w-full flex-1 resize-none overflow-auto bg-transparent font-inherit text-foreground outline-none placeholder:text-muted appearance-none [field-sizing:content] ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS =
   "absolute bottom-[2px] right-0 block h-px w-[9px] origin-bottom-right rotate-[135deg] bg-muted";
@@ -131,6 +132,7 @@ export function textareaControlClassNames({
     resizable && "pr-mid",
     textareaControlClass(size),
     slotClass,
+    FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
   );
 }
 

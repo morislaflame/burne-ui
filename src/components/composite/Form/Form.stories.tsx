@@ -5,7 +5,7 @@ import { expect } from "storybook/test";
 import { IoSearchOutline } from "react-icons/io5";
 
 import { Checkbox } from "@/components/core/Checkbox";
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 import type { ComboBoxOption } from "@/components/core/ComboBox";
 import { ComboBox } from "@/components/core/ComboBox";

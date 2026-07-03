@@ -1,5 +1,4 @@
 export {
-  ToggleButton,
   ToggleButtonRoot,
   ToggleButtonContent,
   ToggleButtonFill,
@@ -18,6 +17,25 @@ export {
   type ToggleButtonTrailingProps,
   type ToggleButtonTextProps,
 } from "./ToggleButton";
+
+import {
+  ToggleButtonRoot,
+  ToggleButtonContent,
+  ToggleButtonFill,
+  ToggleButtonLabel,
+  ToggleButtonIcon,
+  ToggleButtonTrailing,
+  ToggleButtonText,
+} from "./ToggleButton";
+
+export const ToggleButton = Object.assign(ToggleButtonRoot, {
+  Content: ToggleButtonContent,
+  Fill: ToggleButtonFill,
+  Label: ToggleButtonLabel,
+  Icon: ToggleButtonIcon,
+  Trailing: ToggleButtonTrailing,
+  Text: ToggleButtonText,
+});
 
 export {
   useOptionalToggleButtonGroupContext,

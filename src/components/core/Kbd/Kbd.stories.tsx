@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Button } from "@/components/core/Button/Button";
+import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
 import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
 

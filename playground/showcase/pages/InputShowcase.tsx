@@ -21,7 +21,10 @@ import { InputSizesDemo } from "../demos/input/InputSizes.demo";
 import inputSizesSource from "../demos/input/InputSizes.demo.tsx?raw";
 import { InputVariantsDemo } from "../demos/input/InputVariants.demo";
 import inputVariantsSource from "../demos/input/InputVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function InputShowcase() {
   return (

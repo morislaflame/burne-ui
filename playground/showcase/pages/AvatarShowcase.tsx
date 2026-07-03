@@ -12,7 +12,10 @@ import { AvatarProjectMembersDemo } from "../demos/avatar/AvatarProjectMembers.d
 import avatarProjectMembersSource from "../demos/avatar/AvatarProjectMembers.demo.tsx?raw";
 import { AvatarSizesFallbackDemo } from "../demos/avatar/AvatarSizesFallback.demo";
 import avatarSizesFallbackSource from "../demos/avatar/AvatarSizesFallback.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function AvatarShowcase() {
   return (

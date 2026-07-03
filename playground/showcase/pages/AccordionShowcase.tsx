@@ -8,7 +8,10 @@ import { AccordionDocsSectionsDemo } from "../demos/accordion/AccordionDocsSecti
 import accordionDocsSectionsSource from "../demos/accordion/AccordionDocsSections.demo.tsx?raw";
 import { AccordionReleaseNotesDemo } from "../demos/accordion/AccordionReleaseNotes.demo";
 import accordionReleaseNotesSource from "../demos/accordion/AccordionReleaseNotes.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function AccordionShowcase() {
   return (

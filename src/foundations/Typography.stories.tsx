@@ -13,7 +13,9 @@ function TypographySamples() {
         <p className="text-header-2">header-2 — scale 2xl</p>
         <p className="text-large">text-large — scale xl</p>
         <p className="text-mid">text-mid — scale md</p>
-        <p className="text-base">text-base — scale sm (0.875rem)</p>
+        <p className="text-base">
+          text-base — scale sm (0.875rem); on mobile / touch → scale base (1rem)
+        </p>
         <p className="text-small text-muted">text-small — scale xs</p>
         <p className="text-tools text-muted">text-tools — scale tools</p>
       </div>

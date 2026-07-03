@@ -9,6 +9,7 @@ import {
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { affixSlotClass, affixToggleMinWClass } from "@/components/core/utils/inputAffixLayout";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
@@ -46,10 +47,10 @@ export const INPUT_SHELL_BASE_CLASS = "flex items-stretch overflow-hidden";
 export const INPUT_SHELL_GLOSS_CLASS = "relative";
 
 export const INPUT_CONTROL_BASE_CLASS =
-  "min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted";
+  `min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const INPUT_FILE_INPUT_CLASS =
-  "absolute inset-0 cursor-pointer opacity-0 disabled:cursor-not-allowed";
+  `absolute inset-0 cursor-pointer opacity-0 disabled:cursor-not-allowed ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const INPUT_FILE_EMPTY_ICON_CLASS =
   "pointer-events-none size-12 shrink-0 text-muted";

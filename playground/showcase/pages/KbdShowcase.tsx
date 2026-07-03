@@ -10,7 +10,10 @@ import { KbdGroupDemo } from "../demos/kbd/KbdGroup.demo";
 import kbdGroupSource from "../demos/kbd/KbdGroup.demo.tsx?raw";
 import { KbdShortcutsDemo } from "../demos/kbd/KbdShortcuts.demo";
 import kbdShortcutsSource from "../demos/kbd/KbdShortcuts.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function KbdShowcase() {
   return (

@@ -12,7 +12,10 @@ import { LinkSizesDemo } from "../demos/link/LinkSizes.demo";
 import linkSizesSource from "../demos/link/LinkSizes.demo.tsx?raw";
 import { LinkVariantsDemo } from "../demos/link/LinkVariants.demo";
 import linkVariantsSource from "../demos/link/LinkVariants.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function LinkShowcase() {
   return (

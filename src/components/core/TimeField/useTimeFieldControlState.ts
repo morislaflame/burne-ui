@@ -107,6 +107,7 @@ export function useTimeFieldControlState({
   const focusSeg = useCallback((seg: TimeFieldSegId) => {
     pendingRef.current = null;
     setFocusedSeg(seg);
+    shellRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
     keyboardInputRef.current?.focus({ preventScroll: true });
   }, []);
 
@@ -195,9 +196,20 @@ export function useTimeFieldControlState({
 
   const handleFieldBlur = useCallback(
     (e: FocusEvent<HTMLSpanElement | HTMLInputElement>) => {
-      const related = e.relatedTarget as Node | null;
       const shell = shellRef.current;
+      const related = e.relatedTarget as Node | null;
       if (shell && related && shell.contains(related)) return;
+
+      if (shell && related == null) {
+        requestAnimationFrame(() => {
+          const active = document.activeElement;
+          if (shell.contains(active)) return;
+          commitPending();
+          setFocusedSeg(null);
+        });
+        return;
+      }
+
       commitPending();
       setFocusedSeg(null);
     },

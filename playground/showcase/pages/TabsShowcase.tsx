@@ -16,7 +16,10 @@ import { TabsSettingsPanelDemo } from "../demos/tabs/TabsSettingsPanel.demo";
 import tabsSettingsPanelSource from "../demos/tabs/TabsSettingsPanel.demo.tsx?raw";
 import { TabsVerticalSidebarDemo } from "../demos/tabs/TabsVerticalSidebar.demo";
 import tabsVerticalSidebarSource from "../demos/tabs/TabsVerticalSidebar.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function TabsShowcase() {
   return (

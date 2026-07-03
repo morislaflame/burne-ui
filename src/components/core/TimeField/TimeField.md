@@ -225,7 +225,7 @@ React state — `bg-primary text-primary-foreground` на focused segment. Бе�
 - `compact` — inline time в toolbar/forms.
 - `segmented` — отдельные ячейки; `outline` — прозрачный shell.
 - **Не задавайте `transform` на shell** при gloss/default motion.
-- Hidden `keyboardInput` — для мобильной клавиатуры (`font-size: 16px`).
+- Hidden `keyboardInput` — для мобильной клавиатуры (`field-control-mobile-no-zoom`, ≥16px на touch).
 
 ## Интеграции
 

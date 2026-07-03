@@ -1,3 +1,5 @@
+import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
+
 import type { ColorPickerSize } from "./colorPickerTypes";
 import { mergeColorPickerSlotClass } from "./colorPickerAPI";
 
@@ -37,13 +39,13 @@ export const COLOR_PICKER_HEX_INPUT_CLASS =
 export const COLOR_PICKER_HEX_PREFIX_CLASS = "text-small text-muted select-none";
 
 export const COLOR_PICKER_HEX_FIELD_CLASS =
-  "min-w-0 flex-1 bg-transparent text-small font-mono uppercase text-foreground outline-none";
+  `min-w-0 flex-1 bg-transparent text-small font-mono uppercase text-foreground outline-none ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const COLOR_PICKER_ALPHA_INPUT_CLASS =
   "flex items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall";
 
 export const COLOR_PICKER_ALPHA_FIELD_CLASS =
-  "w-8 bg-transparent text-right text-small font-mono text-foreground outline-none";
+  `w-8 bg-transparent text-right text-small font-mono text-foreground outline-none ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const COLOR_PICKER_ALPHA_SUFFIX_CLASS = "text-small text-muted select-none";
 

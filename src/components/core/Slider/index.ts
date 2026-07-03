@@ -10,8 +10,12 @@ import {
   SliderThumb,
   SliderTrack,
   SliderValue,
-  sliderThicknessToCss,
 } from "./Slider";
+import { sliderThicknessToCss } from "./sliderAPI";
+import {
+  useOptionalSliderFieldContext,
+  useSliderFieldContext,
+} from "./sliderContext";
 
 export const Slider = Object.assign(SliderRoot, {
   Header: SliderHeader,
@@ -47,3 +51,8 @@ export type {
 } from "./sliderTypes";
 
 export { sliderThicknessToCss };
+
+export {
+  useOptionalSliderFieldContext,
+  useSliderFieldContext,
+};

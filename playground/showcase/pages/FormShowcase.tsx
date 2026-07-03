@@ -8,7 +8,10 @@ import { FormProfileDemo } from "../demos/form/FormProfile.demo";
 import formProfileSource from "../demos/form/FormProfile.demo.tsx?raw";
 import { FormSearchToolbarDemo } from "../demos/form/FormSearchToolbar.demo";
 import formSearchToolbarSource from "../demos/form/FormSearchToolbar.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function FormShowcase() {
   return (

@@ -1,8 +1,9 @@
 import { KbdRoot } from "./Kbd";
-import { KbdGroup } from "./kbdParts";
+import { KbdGroup, KbdText } from "./kbdParts";
 
 export const Kbd = Object.assign(KbdRoot, {
   Group: KbdGroup,
+  Text: KbdText,
 });
 
 export type {

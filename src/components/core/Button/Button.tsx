@@ -12,11 +12,9 @@ import {
   ButtonContent,
   ButtonError,
   ButtonExpandRippleLayer,
-  ButtonIcon,
   ButtonLabel,
   ButtonLoader,
   ButtonSuccess,
-  ButtonText,
 } from "./buttonParts";
 import { ButtonSimpleContent } from "./buttonSimpleContent";
 import type { ButtonProps } from "./buttonTypes";
@@ -199,13 +197,3 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
 });
 
 ButtonRoot.displayName = "ButtonRoot";
-
-export const Button = Object.assign(ButtonRoot, {
-  Content: ButtonContent,
-  Label: ButtonLabel,
-  Icon: ButtonIcon,
-  Text: ButtonText,
-  Loader: ButtonLoader,
-  Success: ButtonSuccess,
-  Error: ButtonError,
-});

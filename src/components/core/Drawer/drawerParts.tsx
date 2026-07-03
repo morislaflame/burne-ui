@@ -95,11 +95,9 @@ DrawerContent.displayName = "DrawerContent";
 function DrawerPanelSegment({
   segment,
   variant,
-  index,
 }: {
   segment: DrawerPanelSegment;
   variant: DrawerVariant;
-  index: number;
 }) {
   const slotClassNames = useDrawerClassNames();
 
@@ -109,20 +107,13 @@ function DrawerPanelSegment({
 
   if (variant === "gloss") {
     return (
-      <div
-        key={`drawer-content-${index}`}
-        className={drawerGlossContentWrapClass(slotClassNames.glossContent)}
-      >
+      <div className={drawerGlossContentWrapClass(slotClassNames.glossContent)}>
         <DrawerContent>{segment.children}</DrawerContent>
       </div>
     );
   }
 
-  return (
-    <DrawerContent key={`drawer-content-${index}`}>
-      {segment.children}
-    </DrawerContent>
-  );
+  return <DrawerContent>{segment.children}</DrawerContent>;
 }
 
 export function DrawerHandleInner({
@@ -515,7 +506,6 @@ export function DrawerPortalShell({
       key={segment.kind === "handle" ? `handle-${index}` : `content-${index}`}
       segment={segment}
       variant={variant}
-      index={index}
     />
   ));
 

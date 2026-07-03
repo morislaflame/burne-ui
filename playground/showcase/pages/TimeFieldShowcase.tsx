@@ -14,7 +14,10 @@ import { TimeFieldSimpleDemo } from "../demos/time-field/TimeFieldSimple.demo";
 import timeFieldSimpleSource from "../demos/time-field/TimeFieldSimple.demo.tsx?raw";
 import { TimeFieldSizesDemo } from "../demos/time-field/TimeFieldSizes.demo";
 import timeFieldSizesSource from "../demos/time-field/TimeFieldSizes.demo.tsx?raw";
-import { ShowcaseDemoFromFile, ShowcaseDoc, ShowcasePage, ShowcaseSection } from "../layout";
+import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
+import { ShowcaseDoc } from "../layout/ShowcaseDoc";
+import { ShowcasePage } from "../layout/ShowcasePage";
+import { ShowcaseSection } from "../layout/ShowcaseSection";
 
 export function TimeFieldShowcase() {
   return (

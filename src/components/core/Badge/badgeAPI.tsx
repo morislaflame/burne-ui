@@ -9,28 +9,19 @@ import {
 import { Text } from "@/components/core/Text";
 
 import { ensureDecorativeIcon } from "./badgeA11y";
+import { BadgeInlineChild } from "./badgeInlineChild";
+import { isInlineIconChild, readBadgeInlineIconPosition } from "./badgeInlineIcon";
 import {
   badgeIconSlotClass,
   BADGE_TEXT_VARIANT,
 } from "./badgeStyles";
 import type {
-  BadgeInlineChildProps,
-  BadgeInlineIconPosition,
   ResolvedBadgeBody,
   ResolveBadgeBodyProps,
   BadgeSize,
 } from "./badgeTypes";
 
-export function readBadgeInlineIconPosition(el: ReactElement): BadgeInlineIconPosition | null {
-  const raw = (el.props as { "data-icon"?: string })["data-icon"];
-  if (raw === "inline-start" || raw === "start") return "inline-start";
-  if (raw === "inline-end" || raw === "end") return "inline-end";
-  return null;
-}
-
-export function isInlineIconChild(node: ReactNode): node is ReactElement {
-  return isValidElement(node) && readBadgeInlineIconPosition(node) != null;
-}
+export { isInlineIconChild, readBadgeInlineIconPosition } from "./badgeInlineIcon";
 
 export function hasInlineIconChildren(children: ReactNode): boolean {
   return Children.toArray(children).some(isInlineIconChild);
@@ -53,41 +44,6 @@ export function hasMeaningfulContent(node: ReactNode): boolean {
   if (typeof node === "number") return true;
   if (Array.isArray(node)) return node.some(hasMeaningfulContent);
   return isValidElement(node);
-}
-
-function BadgeInlineChild({ node, size }: BadgeInlineChildProps) {
-  if (node == null || node === false) return null;
-
-  if (typeof node === "string") {
-    const trimmed = node.trim();
-    if (!trimmed) return null;
-    return (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor>
-        {node}
-      </Text>
-    );
-  }
-
-  if (typeof node === "number") {
-    return (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor>
-        {node}
-      </Text>
-    );
-  }
-
-  if (isValidElement(node)) {
-    if (readBadgeInlineIconPosition(node)) {
-      return (
-        <span className={badgeIconSlotClass(size)}>
-          {ensureDecorativeIcon(node)}
-        </span>
-      );
-    }
-    return node;
-  }
-
-  return null;
 }
 
 export function renderBadgeInlineChildren(children: ReactNode, size: BadgeSize): ReactNode {

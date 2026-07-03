@@ -9,7 +9,7 @@ import {
   type ButtonAsyncState,
   type ButtonStatus,
   type ButtonVariant,
-} from "./Button";
+} from ".";
 
 const BUTTON_VARIANTS: ButtonVariant[] = [
   "default",
