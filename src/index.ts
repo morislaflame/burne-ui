@@ -299,6 +299,7 @@ export {
   type ComboBoxPopoverProps,
   type ComboBoxClassNames,
 } from "@/components/core/ComboBox";
+export { useComboBoxContext } from "@/components/core/ComboBox/comboBoxContext";
 export {
   Select,
   type SelectOption,

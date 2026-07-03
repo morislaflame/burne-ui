@@ -1,0 +1,430 @@
+# Начальная настройка Burne UI
+
+Полное руководство по первой интеграции `burne-ui` в приложение: зависимости, стили, Tailwind CSS v4, тема, анимации, провайдеры и типичные проблемы (в том числе SSR в Next.js).
+
+Краткий обзор API и токенов — в [README.md](../README.md).
+
+---
+
+## 1. Установка
+
+```bash
+npm install burne-ui react-icons
+# или: pnpm / yarn / bun
+```
+
+### Peer-зависимости
+
+В приложении должны быть установлены совместимые версии:
+
+| Пакет | Версия |
+|-------|--------|
+| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
+| `react-icons` | `^5.0.0` |
+
+GSAP и `@gsap/react` уже входят в `burne-ui` — отдельно ставить их не нужно.
+
+---
+
+## 2. Подключение стилей
+
+Импортируйте собранный CSS **один раз** в глобальной точке входа (корневой layout, `main.tsx`, `_app`):
+
+```ts
+import "burne-ui/styles.css";
+```
+
+Файл `burne-ui/styles.css` (артефакт сборки `dist/ui.css`) содержит:
+
+- **дизайн-токены** — `--color-*`, `--space`, `--size`, `--radius`, `--text-scale-*`, шрифты, тени;
+- **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted`, `gap-mid`, `rounded-base` и т.д.;
+- **кастомные утилиты** — `border-token`, `text-header-1`, `shadow-token-sm` и др.
+
+Полный перечень имён токенов — экспорт **`designTokenNames`** из `burne-ui`. Исходные значения по умолчанию — `src/tokens/styles.css` в репозитории.
+
+---
+
+## 3. Tailwind CSS v4 в приложении-потребителе
+
+Компоненты используют классы Tailwind, привязанные к токенам пакета. Чтобы **ваши** классы в `className` попали в итоговый CSS, Tailwind должен сканировать исходники приложения.
+
+### Рекомендуемый `globals.css`
+
+```css
+@import "tailwindcss";
+
+/* Сканируем только код приложения — классы из burne-ui уже в ui.css */
+@source "../app/**/*.{tsx,ts}";
+@source "../components/**/*.{tsx,ts}";
+@source "../lib/**/*.{tsx,ts}";
+
+@import "burne-ui/styles.css";
+```
+
+### Зачем не сканировать весь `node_modules/burne-ui/dist`
+
+`burne-ui/styles.css` уже включает prebuilt-утилиты для всех классов библиотеки. Повторный `@source` на весь `dist/` (сотни файлов):
+
+- **не обязателен** для корректного отображения компонентов;
+- **заметно нагружает CPU** в dev (Tailwind пересканирует bundle при каждом HMR).
+
+Добавляйте `@source "../node_modules/burne-ui/dist"` только если используете классы из `dist/*.js`, которых **нет** в prebuilt `ui.css`, и они не попадают в scan вашего кода.
+
+### Порядок слоёв
+
+Правила приложения подключайте **после** `@import "burne-ui/styles.css"`, иначе утилиты из `ui.css` (например `.grid-cols-1`) могут перекрыть ваши responsive-классы при одинаковой специфичности.
+
+---
+
+## 4. Базовый layout (Next.js App Router)
+
+```tsx
+// app/layout.tsx
+import "./globals.css";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ru" className="min-h-[100dvh] antialiased" suppressHydrationWarning>
+      <body className="min-h-[100dvh] bg-background text-foreground">{children}</body>
+    </html>
+  );
+}
+```
+
+`suppressHydrationWarning` на `<html>` полезен, если тема (`data-theme`) задаётся на клиенте до гидрации.
+
+Первый компонент:
+
+```tsx
+"use client";
+
+import { Button } from "burne-ui";
+
+export function Demo() {
+  return <Button variant="primary">Нажми меня</Button>;
+}
+```
+
+---
+
+## 5. Рекомендуемая структура провайдеров
+
+```text
+app/
+  globals.css
+  layout.tsx
+components/
+  providers/
+    app-providers.tsx   # Toast.Provider, theme, motion
+```
+
+```tsx
+// components/providers/app-providers.tsx
+"use client";
+
+import { Toast } from "burne-ui";
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return <Toast.Provider>{children}</Toast.Provider>;
+}
+```
+
+```tsx
+// app/layout.tsx
+import { AppProviders } from "@/components/providers/app-providers";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ru" suppressHydrationWarning>
+      <body>
+        <AppProviders>{children}</AppProviders>
+      </body>
+    </html>
+  );
+}
+```
+
+---
+
+## 6. Светлая и тёмная тема
+
+Светлая тема включается атрибутом на корне:
+
+```html
+<html data-theme="light">
+```
+
+Runtime-переключатель:
+
+```ts
+type SiteTheme = "light" | "dark";
+
+function applyTheme(theme: SiteTheme) {
+  const root = document.documentElement;
+  if (theme === "light") {
+    root.dataset.theme = "light";
+  } else {
+    delete root.dataset.theme;
+  }
+}
+```
+
+Портальные компоненты (`Dialog`, `AlertDialog`, `Drawer`, `Tooltip`, `Toast`, `Popover`, `Dropdown`) наследуют тему с якоря/триггера или с `<html>`.
+
+---
+
+## 7. Кастомизация дизайн-токенов
+
+Переопределяйте CSS-переменные **после** импорта `burne-ui/styles.css`:
+
+```css
+/* app/burne-theme-overrides.css */
+:root {
+  --color-primary: #6366f1;
+  --color-surface: #121212;
+  --space: 0.5625rem;
+  --size: 1.0625rem;
+  --radius: 0.625rem;
+  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme="light"] {
+  --color-primary: #4f46e5;
+}
+```
+
+```css
+/* globals.css */
+@import "tailwindcss";
+@source "../app/**/*.{tsx,ts}";
+@source "../components/**/*.{tsx,ts}";
+
+@import "burne-ui/styles.css";
+@import "./burne-theme-overrides.css";
+```
+
+Из JS:
+
+```ts
+import { designTokenNames, colorToken } from "burne-ui";
+
+const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ripple-neutral)
+```
+
+Переменные наследуются по DOM — можно задать их на обёртке виджета вместо `html`.
+
+---
+
+## 8. Глобальная конфигурация анимаций (`configureMotion`)
+
+Burne UI использует **GSAP**. Поведение hover-lift, press-squeeze, ripple, async-кнопок, Loading dots и др. настраивается через **`configureMotion()`** из `burne-ui`.
+
+### Где вызывать
+
+| Среда | Место |
+|-------|--------|
+| Vite / CRA | `main.tsx` до `createRoot(...).render(...)` |
+| Next.js | Client-провайдер в `layout.tsx`; предпочтительно **`useLayoutEffect`**, не `useEffect` |
+
+### Пример (Next.js)
+
+```tsx
+"use client";
+
+import { configureMotion } from "burne-ui";
+import { useLayoutEffect } from "react";
+
+export function MotionProvider({ children }: { children: React.ReactNode }) {
+  useLayoutEffect(() => {
+    configureMotion({
+      interactiveDuration: 280,
+      tooltipDuration: 200,
+      expandDuration: 320,
+      enableHoverLift: true,
+      enablePressSqueeze: true,
+      enableRipple: true,
+      enableAsyncButtonCrossfade: true,
+      enableProgressFill: true,
+      enableLoadingDots: true,
+    });
+  }, []);
+
+  return <>{children}</>;
+}
+```
+
+### Основные группы `MotionConfig`
+
+| Группа | Ключи |
+|--------|--------|
+| Тайминги / easing | `interactiveDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `loadingDotsDuration`, `*Ease` |
+| Hover / press | `hoverLiftScale`, `pressSqueezeScale`, `badgeAnchorHoverLiftScale` |
+| Ripple | `rippleDefaultDuration`, `rippleExpandableDuration`, `rippleEaseCss`, … |
+| Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableAsyncButtonCrossfade`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableFeedbackExpand`, `enableProgressFill`, `enableLoadingDots` |
+
+Библиотека учитывает **`prefers-reduced-motion: reduce`**.
+
+### Важно при live-theme builder
+
+Если `configureMotion()` вызывается при каждом движении слайдера темы, **дедуплируйте** вызовы с одинаковыми значениями: каждый вызов увеличивает revision и пересоздаёт GSAP-тween'ы у подписчиков (Loading dots и др.), что нагружает CPU.
+
+---
+
+## 9. Toast
+
+Обёрните приложение в провайдер — иначе `useToast()` не работает:
+
+```tsx
+"use client";
+
+import { Toast } from "burne-ui";
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <Toast.Provider defaultPlacement="bottom-center">
+      {children}
+    </Toast.Provider>
+  );
+}
+```
+
+```tsx
+"use client";
+
+import { Button, useToast } from "burne-ui";
+
+export function SaveButton() {
+  const { toast } = useToast();
+
+  return (
+    <Button
+      onClick={() =>
+        toast.success("Сохранено", {
+          description: "Изменения успешно применены",
+        })
+      }
+    >
+      Сохранить
+    </Button>
+  );
+}
+```
+
+API: `toast.show`, `toast.success`, `toast.danger`, `toast.warning`, `toast.info`, `toast.promise`, `toast.dismiss`.
+
+---
+
+## 10. SSR и Next.js: async-слои `Button`
+
+У `Button` с `onAsyncClick` (и у controlled `asyncState`) в одной grid-ячейке одновременно монтируются слои:
+
+- **label** — текст / иконки;
+- **loader** — спиннер (`animate-spin`);
+- **success** — галочка;
+- **error** — крестик.
+
+На клиенте неактивные слои скрывает **GSAP** (`autoAlpha`) в ref-callback и `useLayoutEffect`. React параллельно выставляет **`aria-hidden`** по `asyncState`.
+
+### Проблема при SSR
+
+Next.js pre-render'ит client components на сервере **без GSAP**. В HTML все слои видны сразу: текст + крутящийся loader + иконка ошибки. После гидрации GSAP обычно всё исправляет, но возможен flash и лишняя нагрузка (десятки спиннеров на странице).
+
+### Решения
+
+**1. CSS-fallback** (рекомендуется для Next.js) — скрывать слои с `aria-hidden="true"` в grid-ячейке кнопки:
+
+```css
+/* globals.css — после burne-ui/styles.css */
+button .col-start-1.row-start-1[aria-hidden="true"] {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+```
+
+Селектор совпадает с классом async-слоёв в `Button` (`col-start-1 row-start-1`). `aria-hidden` синхронизирован с `asyncState` — fallback корректен и до, и после GSAP.
+
+**2. Client-only для тяжёлых demo-страниц**
+
+```tsx
+import dynamic from "next/dynamic";
+
+const ButtonShowcase = dynamic(
+  () => import("./ButtonShowcase").then((m) => ({ default: m.ButtonShowcase })),
+  { ssr: false },
+);
+```
+
+Подходит для каталогов компонентов и playground-подобных страниц.
+
+**3. Не дублировать `configureMotion` без необходимости**
+
+Лишние вызовы при каждом render/theme tick усугубляют нагрузку вместе с большим числом интерактивных компонентов.
+
+---
+
+## 11. Утилита `cn`
+
+```ts
+import { cn } from "burne-ui";
+
+<div className={cn("flex gap-mid", className)} />
+```
+
+`clsx` + `tailwind-merge` уже в зависимостях пакета.
+
+---
+
+## 12. Частые проблемы
+
+### Стили «сломаны», компонент без оформления
+
+1. Подключён ли `import "burne-ui/styles.css"`?
+2. Tailwind v4 сканирует ваш код (`@source` на `app/`, `components/`)?
+3. Override-токены идут **после** импорта `burne-ui/styles.css`?
+
+### `useToast()` падает или toast не показывается
+
+- Нет `<Toast.Provider>` выше по дереву.
+
+### Тема не переключается
+
+- `data-theme="light"` должен быть на `<html>` (или на предке портала), не на вложенном `div` без наследования.
+
+### На кнопке сразу видны loader, текст и крестик
+
+- Типично для **SSR без CSS-fallback** (см. [§10](#10-ssr-и-nextjs-async-слои-button)).
+- Проверьте, что `enableAsyncButtonCrossfade` не отключён без альтернативного скрытия слоёв.
+
+### Анимации не меняются после `configureMotion`
+
+- Вызов слишком поздно (`useEffect` после paint) — используйте `useLayoutEffect`.
+- Вызов не в client boundary (`"use client"`).
+
+### Высокая нагрузка CPU в dev (Next.js)
+
+1. Уберите `@source` на весь `node_modules/burne-ui/dist`, если достаточно `burne-ui/styles.css`.
+2. Не вызывайте `configureMotion` на каждый tick theme UI без дедупликации.
+3. Изолируйте тяжёлые theme-панели: не подписывайте весь layout на context темы, если перерисовывается только sidebar.
+
+---
+
+## 13. Checklist первой настройки
+
+- [ ] Установлены `burne-ui` и `react-icons`
+- [ ] Подключён `burne-ui/styles.css`
+- [ ] Tailwind v4: `@source` на код приложения
+- [ ] (Next.js) CSS-fallback для async-слоёв `Button` или `ssr: false` для demo
+- [ ] (Опционально) Override-токены в отдельном CSS после импорта пакета
+- [ ] (Опционально) `configureMotion(...)` в client-провайдере через `useLayoutEffect`
+- [ ] (Если нужны toast) `Toast.Provider` в корне
+
+После этого библиотека готова к использованию; кастомизация — через CSS-токены на `:root` / `[data-theme="light"]` и `configureMotion()`.
+
+---
+
+## 14. Связанные материалы
+
+- [README.md](../README.md) — обзор API, dual API полей, миграция `hint`
+- [CHANGELOG.md](../CHANGELOG.md) — breaking changes между версиями
+- `playground/` в репозитории — theme builder и каталог компонентов (Vite, client-only)

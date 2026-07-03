@@ -9,6 +9,8 @@ npm install burne-ui
 # или: pnpm / yarn / bun
 ```
 
+**Полная пошаговая настройка** (Tailwind v4, Next.js, тема, motion, SSR, troubleshooting): **[docs/SETUP.md](./docs/SETUP.md)**.
+
 ### Peer-зависимости
 
 Убедитесь, что в приложении установлены совместимые версии:
