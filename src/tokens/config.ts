@@ -3,9 +3,9 @@
  * Tailwind utilities — in `src/styles.css` (`@theme`, `@utility`).
  *
  * Customization:
- * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers.
- * - `--size` — control sizes (icons, indicators, button min-width, modal max-w).
- * - `--radius` — base radius; `rounded-*` steps via multipliers.
+ * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers; fluid `clamp` by viewport.
+ * - `--size` — control sizes (icons, indicators, button min-width, modal max-w); fluid `clamp` by viewport.
+ * - `--radius` — base radius; `rounded-*` steps via multipliers; fluid `clamp` by viewport.
  * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large`.
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--text-scale-*` — primitive typography (`xsmall` … `3xlarge`, base step `base`); roles `text-base`, `text-large` are aliases.

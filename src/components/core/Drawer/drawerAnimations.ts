@@ -1,10 +1,9 @@
-import { killMotion } from "@/components/core/utils/gsapMotion";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import {
-  animateModalClose,
-  animateModalOpen,
   applyReducedModalMotion,
   isReducedModalMotion,
+  type GsapMotionVars,
 } from "@/components/core/utils/modalSurfaceMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import {
@@ -18,11 +17,56 @@ import {
 } from "react";
 
 import {
-  getDrawerSlideInFrom,
-  getDrawerSlideInTo,
-  getDrawerSlideOutTo,
+  getDrawerSlideCloseTo,
+  getDrawerSlideOpenFrom,
+  getDrawerSlideRest,
 } from "./drawerAPI";
-import type { UseDrawerModalMotionProps } from "./drawerTypes";
+import type { DrawerPlacement, UseDrawerModalMotionProps } from "./drawerTypes";
+
+function resetDrawerPanelTransform(panel: HTMLElement): void {
+  gsap.set(panel, { xPercent: 0, yPercent: 0, x: 0, y: 0 });
+}
+
+function animateDrawerOpen({
+  overlay,
+  panel,
+  placement,
+  vars,
+}: {
+  overlay: HTMLElement;
+  panel: HTMLElement;
+  placement: DrawerPlacement;
+  vars: GsapMotionVars;
+}): void {
+  killMotion(overlay, panel);
+  resetDrawerPanelTransform(panel);
+  gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, ...vars });
+  gsap.fromTo(
+    panel,
+    getDrawerSlideOpenFrom(panel, placement),
+    { ...getDrawerSlideRest(), ...vars },
+  );
+}
+
+function animateDrawerClose({
+  overlay,
+  panel,
+  placement,
+  vars,
+  onComplete,
+}: {
+  overlay: HTMLElement;
+  panel: HTMLElement;
+  placement: DrawerPlacement;
+  vars: GsapMotionVars;
+  onComplete: () => void;
+}) {
+  killMotion(overlay, panel);
+  const tl = gsap.timeline({ onComplete });
+  tl.to(overlay, { opacity: 0, ...vars }, 0);
+  tl.to(panel, { ...getDrawerSlideCloseTo(panel, placement), ...vars }, 0);
+  return tl;
+}
 
 export function useDrawerModalMotion({
   open,
@@ -38,6 +82,8 @@ export function useDrawerModalMotion({
   const glossPanelRef = useRef<HTMLDivElement>(null);
   const skipCloseAnimRef = useRef(false);
 
+  const showPortal = open || mounted;
+
   const bindGlossPanelRef = useMemo(
     () => createGlossInteractiveRefCallback(glossPanelRef, variant === "gloss"),
     [variant],
@@ -51,13 +97,13 @@ export function useDrawerModalMotion({
   }, [open]);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!showPortal) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [mounted]);
+  }, [showPortal]);
 
   useLayoutEffect(() => {
     if (open || !mounted) return;
@@ -83,12 +129,12 @@ export function useDrawerModalMotion({
 
     killMotion(overlay, panel);
     const vars = { ...motionInteractive(), overwrite: "auto" as const };
-    const tl = animateModalClose({
+    const tl = animateDrawerClose({
       overlay,
       panel,
+      placement,
       vars,
       onComplete: finishClose,
-      panelExit: getDrawerSlideOutTo(placement),
     });
 
     return () => {
@@ -99,7 +145,7 @@ export function useDrawerModalMotion({
   }, [open, mounted, placement]);
 
   useLayoutEffect(() => {
-    if (!open || !mounted) return;
+    if (!open) return;
 
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) dialog.showModal();
@@ -113,19 +159,18 @@ export function useDrawerModalMotion({
       return;
     }
 
-    animateModalOpen({
+    animateDrawerOpen({
       overlay,
       panel,
+      placement,
       vars: { ...motionInteractive(), overwrite: "auto" as const },
-      panelFrom: getDrawerSlideInFrom(placement),
-      panelTo: getDrawerSlideInTo(placement),
     });
-  }, [open, mounted, placement]);
+  }, [open, placement]);
 
   useLayoutEffect(() => {
-    if (!open || !mounted || !panelRef.current) return;
+    if (!open || !panelRef.current) return;
     panelRef.current.focus();
-  }, [open, mounted]);
+  }, [open]);
 
   const handleBackdropMouseDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -136,6 +181,7 @@ export function useDrawerModalMotion({
   );
 
   return {
+    showPortal,
     mounted,
     dialogRef,
     overlayRef,

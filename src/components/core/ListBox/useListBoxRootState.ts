@@ -1,4 +1,6 @@
-import { useCallback, useId, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
+
+import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
 
 import { normalizeListBoxValues } from "./listBoxAPI";
 import type { ListBoxContextValue, UseListBoxRootStateProps } from "./listBoxTypes";
@@ -26,6 +28,8 @@ export function useListBoxRootState({
     ? normalizeListBoxValues(valueProp)
     : internalSelected;
   const selected = useMemo(() => new Set(selectedArr), [selectedArr]);
+  const latestSelectedRef = useRef(selectedArr);
+  latestSelectedRef.current = selectedArr;
 
   const [internalActive, setInternalActive] = useState<string | null>(null);
   const isControlledActive = activeValueProp !== undefined;
@@ -49,18 +53,15 @@ export function useListBoxRootState({
 
   const selectItem = useCallback(
     (itemValue: string) => {
-      let next: string[];
-      if (multiple) {
-        next = [...selectedArr];
-        const i = next.indexOf(itemValue);
-        if (i >= 0) next.splice(i, 1);
-        else next.push(itemValue);
-      } else {
-        next = selected.has(itemValue) ? [] : [itemValue];
-      }
+      const next = toggleOptionListSelection(
+        latestSelectedRef.current,
+        itemValue,
+        multiple,
+      );
+      latestSelectedRef.current = next;
       setSelectedArr(next);
     },
-    [multiple, selected, selectedArr, setSelectedArr],
+    [multiple, setSelectedArr],
   );
 
   const contextValue = useMemo<ListBoxContextValue>(

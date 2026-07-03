@@ -56,39 +56,40 @@ export function partitionDrawerChildren(children: ReactNode): {
   return { backdropIsDismissable, panelSegments };
 }
 
-export function getDrawerSlideInFrom(placement: DrawerPlacement): GsapMotionVars {
+/** Slide distance in px — stable for vertical drawers whose height grows after mount. */
+export function measureDrawerSlideDistance(
+  panel: HTMLElement,
+  placement: DrawerPlacement,
+): number {
+  return placement === "left" || placement === "right"
+    ? panel.offsetWidth
+    : panel.offsetHeight;
+}
+
+export function getDrawerSlideOpenFrom(
+  panel: HTMLElement,
+  placement: DrawerPlacement,
+): GsapMotionVars {
+  const distance = measureDrawerSlideDistance(panel, placement);
   switch (placement) {
     case "left":
-      return { xPercent: -100 };
+      return { x: -distance, y: 0 };
     case "right":
-      return { xPercent: 100 };
+      return { x: distance, y: 0 };
     case "top":
-      return { yPercent: -100 };
+      return { x: 0, y: -distance };
     case "bottom":
-      return { yPercent: 100 };
+      return { x: 0, y: distance };
   }
 }
 
-export function getDrawerSlideInTo(placement: DrawerPlacement): GsapMotionVars {
-  switch (placement) {
-    case "left":
-    case "right":
-      return { xPercent: 0 };
-    case "top":
-    case "bottom":
-      return { yPercent: 0 };
-  }
+export function getDrawerSlideRest(): GsapMotionVars {
+  return { x: 0, y: 0 };
 }
 
-export function getDrawerSlideOutTo(placement: DrawerPlacement): GsapMotionVars {
-  switch (placement) {
-    case "left":
-      return { xPercent: -100 };
-    case "right":
-      return { xPercent: 100 };
-    case "top":
-      return { yPercent: -100 };
-    case "bottom":
-      return { yPercent: 100 };
-  }
+export function getDrawerSlideCloseTo(
+  panel: HTMLElement,
+  placement: DrawerPlacement,
+): GsapMotionVars {
+  return getDrawerSlideOpenFrom(panel, placement);
 }

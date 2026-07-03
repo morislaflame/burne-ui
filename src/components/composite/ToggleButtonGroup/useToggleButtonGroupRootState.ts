@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+
+import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
 
 import { createToggleButtonGroupKeyDownHandler, resolveToggleButtonTabIndex } from "./toggleButtonGroupA11y";
 import {
@@ -52,6 +54,8 @@ export function useToggleButtonGroupRootState({
         : [],
     [internalMultiple, isControlled, isSingle, valueProp],
   );
+  const latestMultipleRef = useRef(multipleValues);
+  latestMultipleRef.current = multipleValues;
 
   const isSelected = useCallback(
     (itemValue: string) =>
@@ -63,24 +67,25 @@ export function useToggleButtonGroupRootState({
     (itemValue: string) => {
       if (disabled) return;
 
-      const change = resolveToggleButtonGroupSelectionChange(
-        type,
-        itemValue,
-        singleValue,
-        multipleValues,
-      );
-      if (change == null) return;
-
-      if (change.kind === "single") {
+      if (isSingle) {
+        const change = resolveToggleButtonGroupSelectionChange(
+          type,
+          itemValue,
+          singleValue,
+          multipleValues,
+        );
+        if (change == null || change.kind !== "single") return;
         if (!isControlled) setInternalSingle(change.value);
         onValueChange?.(change.value);
         return;
       }
 
-      if (!isControlled) setInternalMultiple(change.value);
-      onValueChange?.(change.value);
+      const next = toggleOptionListSelection(latestMultipleRef.current, itemValue, true);
+      latestMultipleRef.current = next;
+      if (!isControlled) setInternalMultiple(next);
+      onValueChange?.(next);
     },
-    [disabled, isControlled, multipleValues, onValueChange, singleValue, type],
+    [disabled, isControlled, isSingle, multipleValues, onValueChange, singleValue, type],
   );
 
   const flat = useMemo(() => flattenFragmentChildren(children), [children]);

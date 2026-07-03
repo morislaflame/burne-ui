@@ -263,8 +263,9 @@
   /**
    * Base spacing step (gap, padding, margin).
    * Steps are multipliers; utilities: `gap-mid`, `p-xsmall`, `m-plus`, …
+   * Fluid: ~93.75% at narrow viewports → 100% from ~1024px (override via inline `--space` in Theme Playground).
    */
-  --space: 0.5rem;
+  --space: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
   --space-xsmall: calc(var(--space) * 0.5);
   --space-small: calc(var(--space) * 0.75);
   --space-base: calc(var(--space) * 1);
@@ -276,8 +277,9 @@
   /**
    * Base border radius. Steps are multipliers (single knob for white-label).
    * Utilities: `rounded-xsmall` … `rounded-large`.
+   * Fluid: same curve as `--space`.
    */
-  --radius: 0.5rem;
+  --radius: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
   --radius-value-xsmall: calc(var(--radius) * 0.5);
   --radius-value-small: calc(var(--radius) * 0.75);
   --radius-value-base: calc(var(--radius) * 1);
@@ -363,8 +365,9 @@
   /**
    * Base control size (icons, indicators, button min-width, modal width).
    * Separate from `--space` (spacing) and `--text-scale-*` (typography).
+   * Fluid: ~93.75% at narrow viewports → 100% from ~1024px (override via inline `--size` in Theme Playground).
    */
-  --size: 1rem;
+  --size: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
 
   /** Primitive control size scale (`--size-scale-*`) — same as `--space-*`. */
   --size-scale-xsmall: calc(var(--size) * 0.65);

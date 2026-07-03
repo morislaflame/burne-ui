@@ -92,41 +92,42 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
         <ShowcaseSidebar activePageId={activePageId} onPageChange={setActivePageId} />
       </aside>
 
-      <div className="lg:hidden fixed top-12 left-0 right-0 z-10 flex items-center justify-between border-b border-token bg-surface/90 px-mid py-xsmall backdrop-blur-md">
-        <Text as="span" variant="base" className="font-semibold text-foreground">
-          {currentPage.label}
-        </Text>
-        <Button
-          size="small"
-          variant="outline"
-          leftIcon={<IoMenuOutline className="size-4" />}
-          onClick={() => setMobileMenuOpen(true)}
-        >
-          Components
-        </Button>
-      </div>
+      <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} placement="left">
+        <div className="lg:hidden fixed top-12 left-0 right-0 z-10 flex items-center justify-between border-b border-token bg-surface/90 px-mid py-xsmall backdrop-blur-md">
+          <Text as="span" variant="base" className="font-semibold text-foreground">
+            {currentPage.label}
+          </Text>
+          <Drawer.Trigger asChild>
+            <Button
+              size="small"
+              variant="outline"
+              leftIcon={<IoMenuOutline className="size-4" />}
+            >
+              Components
+            </Button>
+          </Drawer.Trigger>
+        </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden min-h-0 min-w-0">
-        <div className="flex-1 overflow-y-auto px-mid py-xlarge lg:py-xlarge max-lg:pt-24">
-          {!embedded && (
-            <header className="flex flex-col gap-xsmall mb-large max-lg:hidden">
-              <Text as="h1" variant="header-1">
-                Burne UI
-              </Text>
-              <Text as="p" variant="base" className="text-muted">
-                Local component directory from <code className="text-primary">src/</code> — Same API,
-                what's in Storybook.
-              </Text>
-            </header>
-          )}
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0 min-w-0">
+          <div className="flex-1 overflow-y-auto px-mid py-xlarge lg:py-xlarge max-lg:pt-24">
+            {!embedded && (
+              <header className="flex flex-col gap-xsmall mb-large max-lg:hidden">
+                <Text as="h1" variant="header-1">
+                  Burne UI
+                </Text>
+                <Text as="p" variant="base" className="text-muted">
+                  Local component directory from <code className="text-primary">src/</code> — Same API,
+                  what's in Storybook.
+                </Text>
+              </header>
+            )}
 
-          <div className="max-w-4xl mx-auto w-full">
-            <PageComponent key={currentPage.id} />
+            <div className="max-w-4xl mx-auto w-full">
+              <PageComponent key={currentPage.id} />
+            </div>
           </div>
         </div>
-      </div>
 
-      <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} placement="left">
         <Drawer.Panel size="default">
           <Drawer.Header>
             <Drawer.HeadingBlock>

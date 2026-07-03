@@ -456,7 +456,7 @@ export function DrawerPanel({
     [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef],
   );
 
-  if (typeof document === "undefined" || !motion.mounted) return null;
+  if (typeof document === "undefined" || !motion.showPortal) return null;
 
   return createPortal(
     // Provide full context (with real motion refs) for children inside the portal.

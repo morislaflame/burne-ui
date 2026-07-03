@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoColorPaletteOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button";
@@ -6,7 +6,35 @@ import { Drawer } from "@/components/core/Drawer";
 
 import { ComponentsCatalog } from "./showcase/ComponentsCatalog";
 import { ThemeControls } from "./ThemeControls";
+import type { ThemeTokensApi } from "./useThemeTokens";
 import { useThemeTokens } from "./useThemeTokens";
+
+/** Renders heavy controls after the drawer open animation has started. */
+function DeferredThemeControls({ open, tokens }: { open: boolean; tokens: ThemeTokensApi }) {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setReady(false);
+      return;
+    }
+
+    let cancelled = false;
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled) setReady(true);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [open]);
+
+  if (!ready) return null;
+  return <ThemeControls tokens={tokens} />;
+}
 
 export function ThemePlayground() {
   const tokens = useThemeTokens();
@@ -24,19 +52,18 @@ export function ThemePlayground() {
         </div>
       </aside>
 
-      {/* Mobile Floating Button */}
-      <div className="fixed bottom-6 right-6 z-30 md:hidden">
-        <Button
-          onClick={() => setDrawerOpen(true)}
-          className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-token-large bg-primary text-primary-foreground hover:bg-primary-hover active:scale-95 transition-transform"
-          aria-label="Theme settings"
-        >
-          <IoColorPaletteOutline className="size-6" />
-        </Button>
-      </div>
-
-      {/* Mobile Drawer */}
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} placement="bottom">
+        <div className="fixed bottom-6 right-6 z-30 md:hidden">
+          <Drawer.Trigger asChild>
+            <Button
+              className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-token-large bg-primary text-primary-foreground hover:bg-primary-hover"
+              aria-label="Theme settings"
+            >
+              <IoColorPaletteOutline className="size-6" />
+            </Button>
+          </Drawer.Trigger>
+        </div>
+
         <Drawer.Panel size="default">
           <Drawer.Header>
             <Drawer.HeadingBlock>
@@ -46,7 +73,7 @@ export function ThemePlayground() {
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body className="p-mid">
-            <ThemeControls tokens={tokens} />
+            <DeferredThemeControls open={drawerOpen} tokens={tokens} />
           </Drawer.Body>
         </Drawer.Panel>
       </Drawer>

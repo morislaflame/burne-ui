@@ -1,5 +1,7 @@
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 
+import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
+
 import { normalizeDropdownValues } from "./dropdownAPI";
 import type { DropdownContextValue, UseDropdownRootStateProps } from "./dropdownTypes";
 
@@ -35,6 +37,8 @@ export function useDropdownRootState({
     ? normalizeDropdownValues(valueProp)
     : internalSelected;
   const selected = useMemo(() => new Set(selectedArr), [selectedArr]);
+  const latestSelectedRef = useRef(selectedArr);
+  latestSelectedRef.current = selectedArr;
 
   const setSelectedArr = useCallback(
     (next: string[]) => {
@@ -46,20 +50,17 @@ export function useDropdownRootState({
 
   const selectItem = useCallback(
     (itemValue: string) => {
-      let next: string[];
-      if (multiple) {
-        next = [...selectedArr];
-        const i = next.indexOf(itemValue);
-        if (i >= 0) next.splice(i, 1);
-        else next.push(itemValue);
-      } else {
-        next = selected.has(itemValue) ? [] : [itemValue];
-      }
+      const next = toggleOptionListSelection(
+        latestSelectedRef.current,
+        itemValue,
+        multiple,
+      );
+      latestSelectedRef.current = next;
       setSelectedArr(next);
       const close = closeOnSelectProp ?? !multiple;
       if (close) setOpen(false);
     },
-    [multiple, selected, selectedArr, setOpen, setSelectedArr, closeOnSelectProp],
+    [closeOnSelectProp, multiple, setOpen, setSelectedArr],
   );
 
   const triggerRef = useRef<HTMLElement | null>(null);
