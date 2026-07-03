@@ -14,21 +14,21 @@ export function SurfaceShowcase() {
   return (
     <ShowcasePage
       title="Surface"
-      description="Фоновые поверхности для группировки контента с настраиваемым padding."
+      description="Background surfaces for grouping content with customizable padding."
       importPath='import { Surface } from "@/components/core/Surface";'
       tags={["core", "layout"]}
     >
-      <ShowcaseSection title="Варианты" description="default, secondary и tertiary.">
+      <ShowcaseSection title="Options" description="default, secondary and tertiary.">
         <ShowcaseDemoFromFile Demo={SurfaceVariantsDemo} source={surfaceVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность с motion.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
         <ShowcaseDemoFromFile Demo={SurfaceGlossDemo} source={surfaceGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Вложенные панели, виджет дашборда и gloss-стек — `demos/surface/`."
+        title="Custom Variations"
+        description="Nested panels, dashboard widget and gloss-stack — `demos/surface/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SurfaceNestedPanelsDemo} source={surfaceNestedPanelsSource} />
         <ShowcaseDemoFromFile Demo={SurfaceDashboardWidgetDemo} source={surfaceDashboardWidgetSource} />
@@ -36,18 +36,18 @@ export function SurfaceShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Surface" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant и padding на корне — основной способ задать фон и отступы контейнера."
+            description="variant and padding on the root - the main way to set the background and padding of the container."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Padding">
           <p>
-            <code>mid</code>, <code>plus</code>, <code>large</code> — предустановленные отступы внутри Surface.
+            <code>mid</code>, <code>plus</code>, <code>large</code> — preset padding inside Surface.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

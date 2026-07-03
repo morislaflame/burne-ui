@@ -10,15 +10,15 @@ export function ToggleButtonGroupSingleDemo() {
   return (
     <ToggleButtonGroup
       type="single"
-      aria-label="Вид списка"
+      aria-label="List view"
       value={viewMode}
       onValueChange={(v) => setViewMode(v as string)}
     >
       <ToggleButton variant="default" value="list" leftIcon={<IoListOutline aria-hidden />}>
-        Список
+        List
       </ToggleButton>
       <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
-        Сетка
+        Net
       </ToggleButton>
     </ToggleButtonGroup>
   );

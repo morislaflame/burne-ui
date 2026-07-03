@@ -5,22 +5,22 @@ import { Text } from "@/components/core/Text";
 
 const SECTIONS = [
   {
-    title: "Уведомления",
-    description: "Email и push",
+    title: "Notifications",
+    description: "Email and push",
     icon: <IoNotificationsOutline aria-hidden className="size-full" />,
-    body: "Настройте каналы оповещений и частоту дайджеста.",
+    body: "Set up alert channels and digest frequency.",
   },
   {
-    title: "Безопасность",
-    description: "2FA и сессии",
+    title: "Safety",
+    description: "2FA and sessions",
     icon: <IoShieldCheckmarkOutline aria-hidden className="size-full" />,
-    body: "Включите двухфакторную аутентификацию и просмотрите активные сессии.",
+    body: "Enable two-factor authentication and view active sessions.",
   },
   {
-    title: "Оплата",
-    description: "Карты и счета",
+    title: "Payment",
+    description: "Cards and accounts",
     icon: <IoCardOutline aria-hidden className="size-full" />,
-    body: "Способы оплаты и история транзакций.",
+    body: "Payment methods and transaction history.",
   },
 ] as const;
 

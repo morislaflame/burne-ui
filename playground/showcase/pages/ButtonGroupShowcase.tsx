@@ -16,56 +16,56 @@ export function ButtonGroupShowcase() {
   return (
     <ShowcasePage
       title="ButtonGroup"
-      description="Склеенные кнопки и подписи: единая обводка, сегменты и вложенные контролы."
+      description="Glued buttons and labels: single stroke, segments and nested controls."
       importPath='import { ButtonGroup, ButtonGroupText } from "@/components/composite/ButtonGroup";'
       tags={["composite", "actions"]}
     >
       <ShowcaseSection
-        title="Горизонтальная группа"
-        description="ButtonGroupText, сегменты groupSegment и Dropdown в последнем сегменте."
+        title="Horizontal group"
+        description="ButtonGroupText, segments groupSegment and Dropdown in the last segment."
       >
         <ShowcaseDemoFromFile Demo={ButtonGroupHorizontalDemo} source={buttonGroupHorizontalSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Только кнопки" description="Несколько outline-кнопок без подписи.">
+      <ShowcaseSection title="Buttons only" description="Some outline-buttons without signature.">
         <ShowcaseDemoFromFile Demo={ButtonGroupButtonsOnlyDemo} source={buttonGroupButtonsOnlySource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="buttonSize: small, base, mid, large — высота всех сегментов.">
+      <ShowcaseSection title="Dimensions" description="buttonSize: small, base, mid, large — height of all segments.">
         <ShowcaseDemoFromFile Demo={ButtonGroupSizesDemo} source={buttonGroupSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — общая стеклянная поверхность группы.">
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — common glass surface of the group.">
         <ShowcaseDemoFromFile Demo={ButtonGroupGlossDemo} source={buttonGroupGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Вертикальные панели и цветные сегменты — demo-файлы в `demos/button-group/`."
+        title="Custom Variations"
+        description="Vertical panels and colored segments — demo-files in `demos/button-group/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ButtonGroupVerticalMenuDemo} source={buttonGroupVerticalMenuSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ButtonGroupPricingTierDemo} source={buttonGroupPricingTierSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/composite/ButtonGroup" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="aria-label, buttonSize, orientation, variant, segmented на корне ButtonGroup. Дочерние Button и ButtonGroupText; groupSegment у кнопок задаётся контекстом группы."
+            description="aria-label, buttonSize, orientation, variant, segmented on the root ButtonGroup. Child Button and ButtonGroupText; groupSegment for buttons is specified by the group context."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="ButtonGroupText — подпись сегмента; вложенные Input/ComboBox наследуют variant группы."
+            description="ButtonGroupText — segment signature; nested Input/ComboBox inherit variant groups."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            Позиции сегмента: <code>first</code>, <code>middle</code>, <code>last</code>,{" "}
-            <code>only</code>. Для вертикальной группы — <code>orientation=&quot;vertical&quot;</code> на
-            корне.
+            Segment positions: <code>first</code>, <code>middle</code>, <code>last</code>,{" "}
+            <code>only</code>. For vertical group — <code>orientation=&quot;vertical&quot;</code> on
+            root.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

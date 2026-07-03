@@ -30,19 +30,19 @@ export function DialogSizesDemo() {
               <Dialog.HeadingBlock>
                 <Dialog.Title>Dialog size={size}</Dialog.Title>
                 <Dialog.Description>
-                  Ширина панели, типографика и кнопки футера масштабируются с size.
+                  Panel width, typography and footer buttons scale with size.
                 </Dialog.Description>
               </Dialog.HeadingBlock>
               <Dialog.Close />
             </Dialog.Header>
             <Dialog.Body>
               <p className="text-sm text-muted">
-                Произвольный контент в Body — формы, текст, списки.
+                Custom content in Body — forms, text, lists.
               </p>
             </Dialog.Body>
             <Dialog.Footer>
               <Button type="button" variant="ghost" onClick={() => setOpenSize(null)}>
-                Отмена
+                Cancel
               </Button>
               <Button type="button" variant="primary" onClick={() => setOpenSize(null)}>
                 OK

@@ -22,7 +22,7 @@ export function RipplePressableCardDemo() {
           </Card.Body>
           <Card.Header className="pt-base gap-xsmall">
             <Card.Title>Pressable</Card.Title>
-            <Card.Description>Нажми — откроется Dialog.</Card.Description>
+            <Card.Description>Click - it will open Dialog.</Card.Description>
           </Card.Header>
         </div>
       </Card>
@@ -35,16 +35,16 @@ export function RipplePressableCardDemo() {
         <Dialog.Panel>
           <Dialog.Header>
           <Dialog.HeadingBlock>
-            <Dialog.Title>Ripple на Card</Dialog.Title>
+            <Dialog.Title>Ripple on Card</Dialog.Title>
             <Dialog.Description>
-              Слой Ripple слушает нажатия на pressable-корне карточки.
+              Layer Ripple listens to clicks on pressable-root of the card.
             </Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Footer>
           <Button variant="outline" onClick={() => setDialogOpen(false)}>
-            Закрыть
+            Close
           </Button>
         </Dialog.Footer>
         </Dialog.Panel>

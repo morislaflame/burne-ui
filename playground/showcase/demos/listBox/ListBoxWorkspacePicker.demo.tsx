@@ -5,9 +5,9 @@ import { ListBox } from "@/components/core/ListBox";
 import { Surface } from "@/components/core/Surface";
 
 const WORKSPACES = [
-  { value: "personal", label: "Личное", hint: "Только вы", icon: IoLockClosedOutline },
-  { value: "acme", label: "Acme Inc", hint: "12 участников", icon: IoFolderOutline },
-  { value: "global", label: "Global Team", hint: "Публичные проекты", icon: IoGlobeOutline },
+  { value: "personal", label: "Personal", hint: "Only you", icon: IoLockClosedOutline },
+  { value: "acme", label: "Acme Inc", hint: "12 participants", icon: IoFolderOutline },
+  { value: "global", label: "Global Team", hint: "Public projects", icon: IoGlobeOutline },
 ] as const;
 
 export function ListBoxWorkspacePickerDemo() {
@@ -17,7 +17,7 @@ export function ListBoxWorkspacePickerDemo() {
     <Surface variant="secondary" padding="plus" className="w-full max-w-sm">
       <ListBox value={value} onValueChange={(v) => setValue(v as string)}>
         <ListBox.Section>
-          <ListBox.Header>Рабочие пространства</ListBox.Header>
+          <ListBox.Header>Workspaces</ListBox.Header>
           {WORKSPACES.map((ws) => (
             <ListBox.Item key={ws.value} value={ws.value}>
               <ListBox.ItemIndicator />

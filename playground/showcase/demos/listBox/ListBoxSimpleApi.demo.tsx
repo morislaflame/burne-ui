@@ -9,9 +9,9 @@ export function ListBoxSimpleApiDemo() {
   return (
     <Surface variant="default" padding="plus" className="max-w-sm">
       <ListBox multiple value={listBoxMulti} onValueChange={(v) => setListBoxMulti(v as string[])}>
-        <ListBox.Item value="ru" label="Русский" />
+        <ListBox.Item value="ru" label="Russian" />
         <ListBox.Item value="en" label="English" />
-        <ListBox.Item value="de" label="Deutsch" disabled hint="Скоро" />
+        <ListBox.Item value="de" label="Deutsch" disabled hint="Soon" />
       </ListBox>
     </Surface>
   );

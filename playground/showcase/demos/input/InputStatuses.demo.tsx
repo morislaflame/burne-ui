@@ -4,23 +4,23 @@ export function InputStatusesDemo() {
   return (
     <div className="flex flex-col gap-mid items-center w-full">
       <Input
-        label="Ошибка"
+        label="Error"
         status="danger"
         defaultValue="bad@"
-        error="Некорректный email."
+        error="Incorrect email."
         className="w-64"
       />
       <Input
-        label="Успех"
+        label="Success"
         status="success"
         defaultValue="verified@mail.ru"
         className="w-64"
       />
       <Input
-        label="Предупреждение"
+        label="Warning"
         status="warning"
         defaultValue="temp@…"
-        hint="Проверьте домен."
+        hint="Check the domain."
         className="w-64"
       />
     </div>

@@ -660,7 +660,7 @@ export {
 } from "@/components/core/Table";
 export {
   Calendar,
-  RU_LOCALE,
+  EN_LOCALE,
   useCalendar,
   type CalendarProps,
   type CalendarHeaderProps,

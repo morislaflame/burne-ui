@@ -1,9 +1,9 @@
 /**
- * Унифицированные паттерны тени + hover-lift через `--el-shadow` и `animate-shadow`.
+ * Unified shadow + hover-lift patterns via `--el-shadow` and `animate-shadow`.
  *
- * 1-й уровень (Button): `firstLevelHoverShadow()` — none → small.
- * 2-й уровень интерактивный (Alert, Badge, поля): `secondLevelShadow()` — small → mid.
- * 2-й уровень статичный (Tooltip, Popover): `usePersistentElShadow` — small без hover.
+ * Level 1 (Button): `firstLevelHoverShadow()` — none → small.
+ * Level 2 interactive (Alert, Badge, fields): `secondLevelShadow()` — small → mid.
+ * Level 2 static (Tooltip, Popover): `usePersistentElShadow` — small without hover.
  */
 
 import { useCallback, useLayoutEffect, useMemo, type MutableRefObject, type RefObject } from "react";
@@ -19,23 +19,23 @@ import {
   type HoverShadowConfig,
 } from "./hoverInteractiveLift";
 
-/** Класс для JS-анимируемой тени и scale-lift. */
+/** Class for JS-animated shadow and scale-lift. */
 export const SHADOW_LIFT_MOTION_CLASS =
   "animate-shadow will-change-transform origin-center";
 
-/** Hover-only: покой `--shadow-none`, hover `--shadow-base` (Button, ToggleButton). */
+/** Hover-only: idle `--shadow-none`, hover `--shadow-base` (Button, ToggleButton). */
 export function firstLevelHoverShadow(): HoverShadowConfig {
   return { hover: shadowBase() };
 }
 
-/** Второй уровень интерактивный: покой small, hover mid (Alert, Badge, Input). */
+/** Level 2 interactive: idle small, hover mid (Alert, Badge, Input). */
 export function secondLevelShadow(): HoverShadowConfig {
   return { idle: shadowBase(), hover: shadowMid() };
 }
 
 /**
- * Постоянная `--el-shadow` без hover-lift (Tooltip, Popover).
- * `resolveShadow` пересчитывается при изменении `syncKey` (напр. expanded у SearchInput).
+ * Persistent `--el-shadow` without hover-lift (Tooltip, Popover).
+ * `resolveShadow` is recomputed when `syncKey` changes (e.g. expanded on SearchInput).
  */
 export function usePersistentElShadow(
   ref: RefObject<HTMLElement | null>,
@@ -52,14 +52,14 @@ export function usePersistentElShadow(
 export type UseSecondLevelShadowOptions = {
   liftScale?: number;
   pointerInsideRef?: MutableRefObject<boolean>;
-  /** Переопределить idle (SearchInput: collapsed → none). */
+  /** Override idle (SearchInput: collapsed → none). */
   resolveIdle?: () => string;
-  /** Ключ для пересчёта idle-тени (expanded и т.п.). */
+  /** Key to recompute idle shadow (expanded, etc.). */
   idleSyncKey?: unknown;
 };
 
 /**
- * 2-й уровень: init small + handlers на том же элементе (Alert, self-lift Badge).
+ * Level 2: init small + handlers on the same element (Alert, self-lift Badge).
  */
 export function useSecondLevelShadow(
   targetRef: RefObject<HTMLElement | null>,
@@ -103,7 +103,7 @@ export function useSecondLevelShadow(
 }
 
 /**
- * 2-й уровень: init на `liftedRef`, handlers на контейнере (Badge.Anchor).
+ * Level 2: init on `liftedRef`, handlers on container (Badge.Anchor).
  */
 export function useSecondLevelShadowContainer(
   liftedRef: RefObject<HTMLElement | null>,

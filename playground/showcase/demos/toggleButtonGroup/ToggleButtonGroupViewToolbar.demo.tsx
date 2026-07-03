@@ -12,19 +12,19 @@ export function ToggleButtonGroupViewToolbarDemo() {
   return (
     <Surface variant="secondary" padding="mid" className="flex w-full max-w-md items-center justify-between gap-mid">
       <Text as="span" variant="small" className="font-medium">
-        Вид каталога
+        Catalog view
       </Text>
       <ToggleButtonGroup
         type="single"
         variant="outline"
         size="small"
-        aria-label="Вид каталога"
+        aria-label="Catalog view"
         value={view}
         onValueChange={(v) => setView(v as string)}
       >
-        <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />} aria-label="Список" />
-        <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />} aria-label="Сетка" />
-        <ToggleButton value="tiles" leftIcon={<IoSquareOutline aria-hidden />} aria-label="Плитки" />
+        <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />} aria-label="List" />
+        <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />} aria-label="Net" />
+        <ToggleButton value="tiles" leftIcon={<IoSquareOutline aria-hidden />} aria-label="Tiles" />
       </ToggleButtonGroup>
     </Surface>
   );

@@ -7,10 +7,10 @@ export function LoadingInlineStatusDemo() {
       <Loading size="small" color="info" />
       <div className="min-w-0">
         <Text as="p" variant="small" className="font-medium">
-          Синхронизация темы
+          Sync Theme
         </Text>
         <Text as="p" variant="tools" className="text-muted">
-          Обычно занимает несколько секунд
+          Usually takes a few seconds
         </Text>
       </div>
     </div>

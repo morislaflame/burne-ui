@@ -15,7 +15,7 @@ export function ToggleButtonClassNamesFullDemo() {
         label: "font-semibold text-danger",
       }}
     >
-      Нравится
+      Like
     </ToggleButton>
   );
 }

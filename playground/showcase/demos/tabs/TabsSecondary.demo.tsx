@@ -15,7 +15,7 @@ export function TabsSecondaryDemo() {
       </Tabs.Panel>
       <Tabs.Panel value="y" className="pt-mid">
         <Text as="p" variant="small" className="text-muted">
-          surface-secondary контейнер
+          surface-secondary container
         </Text>
       </Tabs.Panel>
     </Tabs>

@@ -8,19 +8,19 @@ export function ButtonCtaCardDemo() {
     <div className="flex w-full max-w-sm flex-col gap-mid rounded-mid border-token bg-secondary p-mid">
       <div className="flex flex-col gap-xsmall">
         <Text as="p" variant="header-2">
-          Запустить проект
+          Launch the project
         </Text>
         <Text as="p" variant="small" className="text-muted">
-          Деплой за минуту — без кредитной карты.
+          Deploy in a minute - no credit card required.
         </Text>
       </div>
       <div className="flex flex-col gap-small">
         <Button variant="primary" className="w-full" leftIcon={<IoRocketOutline aria-hidden />}>
-          Создать workspace
+          Create workspace
         </Button>
         <Button variant="ghost" className="w-full text-muted hover:text-primary">
           <span className="inline-flex w-full items-center justify-center gap-xsmall">
-            Смотреть документацию
+            View documentation
             <IoArrowForward aria-hidden />
           </span>
         </Button>

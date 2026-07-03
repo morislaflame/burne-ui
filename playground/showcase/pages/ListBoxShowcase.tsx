@@ -20,36 +20,36 @@ export function ListBoxShowcase() {
   return (
     <ShowcasePage
       title="ListBox"
-      description="Список выбора для встраивания в панели, формы и выпадающие меню."
+      description="Selection list for embedding in panels, forms and drop-down menus."
       importPath='import { ListBox } from "@/components/core/ListBox";'
       tags={["core", "selection"]}
     >
-      <ShowcaseSection title="Compound" description="Секции, подсказки и иконки у пунктов.">
+      <ShowcaseSection title="Compound" description="Sections, tips and icons for items.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxCompoundDemo} source={listBoxCompoundSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Simple API" description="label на Item и множественный выбор.">
+      <ShowcaseSection title="Simple API" description="label on Item and multiple choice.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxSimpleApiDemo} source={listBoxSimpleApiSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxSizesDemo} source={listBoxSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная панель списка с hover-lift.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass list panel with hover-lift.">
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxGlossDemo} source={listBoxGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты root, section, header, item, label, hint и icon — через prop classNames."
+        description="Slots root, section, header, item, label, hint and icon — through prop classNames."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxClassNamesFullDemo} source={listBoxClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Выбор workspace, права доступа и command palette — `demos/listBox/`."
+        title="Custom Variations"
+        description="Choice workspace, access rights and command palette — `demos/listBox/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxWorkspacePickerDemo} source={listBoxWorkspacePickerSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxPermissionsDemo} source={listBoxPermissionsSource} />
@@ -57,22 +57,22 @@ export function ListBoxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/ListBox" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Section, Header, Item, ItemIndicator, Label, Hint и Icon — полная разметка списка."
+            description="Section, Header, Item, ItemIndicator, Label, Hint and Icon — full list markup."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="ListBox.Item с пропами label, hint и disabled — сокращённый вариант."
+            description="ListBox.Item with props label, hint and disabled — shortened version."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Выбор">
+        <ShowcaseDoc.Block title="Choice">
           <p>
-            Одиночный режим — строка в <code>value</code>. <code>multiple</code> — массив строк.
+            Single mode - line in <code>value</code>. <code>multiple</code> — array of strings.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

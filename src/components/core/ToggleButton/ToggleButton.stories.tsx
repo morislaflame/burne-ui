@@ -31,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Кнопка-переключатель (лайк, закладка): варианты `default`, `outline`, `ghost`. При нажатии плавно заливается primary, `aria-pressed`. Hover-lift и squeeze как у `Button`. Без `min-w-button-*` — только паддинги; высота как у кнопки.",
+          "Toggle button (like, bookmark): variants `default`, `outline`, `ghost`. On press, smoothly fills with primary, `aria-pressed`. Hover-lift and squeeze like `Button`. No `min-w-button-*` — padding only; height matches Button.",
       },
     },
   },
@@ -55,17 +55,17 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Нравится</ToggleButton>
+    <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Like</ToggleButton>
   ),
 };
 
 export const PressInteraction: Story = {
-  name: "Interaction: нажатие",
+  name: "Interaction: press",
   render: () => (
-    <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Нравится</ToggleButton>
+    <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Like</ToggleButton>
   ),
   play: async ({ canvas, userEvent }) => {
-    const button = canvas.getByRole("button", { name: "Нравится" });
+    const button = canvas.getByRole("button", { name: "Like" });
     await expect(button).toHaveAttribute("aria-pressed", "false");
     await userEvent.click(button);
     await expect(button).toHaveAttribute("aria-pressed", "true");
@@ -75,7 +75,7 @@ export const PressInteraction: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-mid">
       {VARIANTS.map((variant) => (
@@ -92,14 +92,14 @@ export const Variants: Story = {
 };
 
 export const IconOnly: Story = {
-  name: "Только иконка",
+  name: "Icon only",
   render: () => (
-    <ToggleButton aria-label="Добавить в закладки" leftIcon={<IoBookmarkOutline aria-hidden />} />
+    <ToggleButton aria-label="Add to bookmarks" leftIcon={<IoBookmarkOutline aria-hidden />} />
   ),
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-mid">
       {COMPONENT_SIZES.map((size) => (
@@ -116,7 +116,7 @@ export const Sizes: Story = {
 };
 
 export const Controlled: Story = {
-  name: "Контролируемый режим",
+  name: "Controlled mode",
   render: function ControlledToggle() {
     const [pressed, setPressed] = useState(false);
     return (
@@ -126,7 +126,7 @@ export const Controlled: Story = {
           onPressedChange={setPressed}
           leftIcon={<IoHeartOutline aria-hidden />}
         >
-          {pressed ? "Нравится" : "Лайкнуть"}
+          {pressed ? "Like" : "Like"}
         </ToggleButton>
         <Text as="p" variant="small" className="text-muted">
           pressed={String(pressed)}
@@ -137,10 +137,10 @@ export const Controlled: Story = {
 };
 
 export const DefaultPressed: Story = {
-  name: "Изначально нажата",
+  name: "Initially pressed",
   args: {
     defaultPressed: true,
-    children: "В избранном",
+    children: "In favorites",
     leftIcon: <IoBookmarkOutline aria-hidden />,
   },
 };
@@ -149,17 +149,17 @@ export const Disabled: Story = {
   name: "Disabled",
   args: {
     disabled: true,
-    children: "Недоступно",
+    children: "Unavailable",
     leftIcon: <IoHeartOutline aria-hidden />,
   },
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для ToggleButton",
+        story: "classNames customization for ToggleButton",
       },
     },
   },
@@ -175,16 +175,16 @@ export const CustomClassNames: Story = {
         text: "font-semibold text-danger",
       }}
     >
-      Нравится
+      Like
     </ToggleButton>
   ),
 };
 
 export const LabelLayout: Story = {
-  name: "Разметка label + trailing",
+  name: "Label + trailing layout",
   render: () => (
     <ToggleButton className="w-full max-w-xs justify-between gap-plus" leftIcon={<IoHeartOutline aria-hidden />}>
-      <span>Нравится</span>
+      <span>Like</span>
       <span className="text-tools">128</span>
     </ToggleButton>
   ),
@@ -198,7 +198,7 @@ export const CompoundLayout: Story = {
         <ToggleButton.Icon>
           <IoHeartOutline aria-hidden />
         </ToggleButton.Icon>
-        <ToggleButton.Text>Нравится</ToggleButton.Text>
+        <ToggleButton.Text>Like</ToggleButton.Text>
         <ToggleButton.Trailing className="text-tools">128</ToggleButton.Trailing>
       </ToggleButton.Content>
     </ToggleButton>

@@ -21,23 +21,23 @@ export function DialogClassNamesFullDemo() {
       >
         <Dialog.Trigger asChild>
           <Button variant="outline">
-            Открыть с classNames
+            Open from classNames
           </Button>
         </Dialog.Trigger>
         <Dialog.Panel>
           <Dialog.Header>
           <Dialog.HeadingBlock>
-            <Dialog.Title>Настройки</Dialog.Title>
-            <Dialog.Description>Слоты настроены через classNames.</Dialog.Description>
+            <Dialog.Title>Settings</Dialog.Title>
+            <Dialog.Description>Slots are configured via classNames.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
-          <p className="text-small text-muted">Пример body-слота с кастомными стилями панели.</p>
+          <p className="text-small text-muted">Example body-slots with custom panel styles.</p>
         </Dialog.Body>
         <Dialog.Footer>
           <Button size="small" variant="outline" onClick={() => setOpen(false)}>
-            Закрыть
+            Close
           </Button>
         </Dialog.Footer>
         </Dialog.Panel>

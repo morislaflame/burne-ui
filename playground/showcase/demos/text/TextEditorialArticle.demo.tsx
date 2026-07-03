@@ -9,17 +9,17 @@ export function TextEditorialArticleDemo() {
           variant="tools"
           className="rounded-full bg-danger/15 px-small py-xsmall font-medium text-danger"
         >
-          Черновик
+          Draft
         </Text>
         <Text as="span" variant="tools" className="text-muted">
-          12 мин чтения
+          12 min reading
         </Text>
       </div>
       <Text as="h3" variant="header-2" className="leading-tight">
-        Как собирать кастомные секции в playground
+        How to assemble custom sections in playground
       </Text>
       <Text as="p" variant="small" className="border-l-2 border-primary pl-small text-muted">
-        Lead-параграф с акцентной полосой слева — типографика Text, оформление className.
+        Lead-paragraph with an accent bar on the left - typography Text, registration className.
       </Text>
     </article>
   );

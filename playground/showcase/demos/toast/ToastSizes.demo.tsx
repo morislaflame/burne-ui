@@ -18,7 +18,7 @@ export function ToastSizesDemo() {
               status: "info",
               size,
               title: `size=${size}`,
-              description: "Padding, иконка, типографика и ширина viewport.",
+              description: "Padding, icon, typography and width viewport.",
             })
           }
         >

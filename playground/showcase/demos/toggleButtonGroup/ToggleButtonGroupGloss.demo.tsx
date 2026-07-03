@@ -11,18 +11,18 @@ export function ToggleButtonGroupGlossDemo() {
     <ToggleButtonGroup
       type="single"
       variant="gloss"
-      aria-label="Gloss вид каталога"
+      aria-label="Gloss catalog view"
       value={view}
       onValueChange={(v) => setView(v as string)}
     >
       <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
-        Список
+        List
       </ToggleButton>
       <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
-        Сетка
+        Net
       </ToggleButton>
       <ToggleButton value="tiles" leftIcon={<IoSquareOutline aria-hidden />}>
-        Плитки
+        Tiles
       </ToggleButton>
     </ToggleButtonGroup>
   );

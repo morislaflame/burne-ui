@@ -14,24 +14,24 @@ export function LoadingShowcase() {
   return (
     <ShowcasePage
       title="Loading"
-      description="Индикатор загрузки: спиннер и прыгающие точки (GSAP)."
+      description="Loading indicator: spinner and jumping dots (GSAP)."
       importPath='import { Loading } from "@/components/core/Loading";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Размеры и цвета" description="Спиннер: size и color на корне.">
+      <ShowcaseSection title="Sizes and colors" description="spinner: size and color on the root.">
         <ShowcaseDemoFromFile Demo={LoadingSizesColorsDemo} source={loadingSizesColorsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Прыгающие точки"
-        description='variant="dots" — волна 1 → 2 → 3. Скорость: configureMotion() (loadingDotsDuration, enableLoadingDots). Слайдер в панели Motion.'
+        title="Jumping dots"
+        description='variant="dots" — wave 1 → 2 → 3. Speed: configureMotion() (loadingDotsDuration, enableLoadingDots). Slider in panel Motion.'
       >
         <ShowcaseDemoFromFile Demo={LoadingDotsWaveDemo} source={loadingDotsWaveSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Overlay на карточке, inline-статус и сетка цветов — demo-файлы в `demos/loading/`."
+        title="Custom Variations"
+        description="Overlay on the card, inline-status and color grid — demo-files in `demos/loading/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={LoadingCardOverlayDemo} source={loadingCardOverlaySource} />
         <ShowcaseDemoFromFile align="stretch" Demo={LoadingInlineStatusDemo} source={loadingInlineStatusSource} />
@@ -39,20 +39,20 @@ export function LoadingShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Loading" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant spinner | dots, size, color на корне."
+            description="variant spinner | dots, size, color on the root."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
-            Цвета: <code>primary</code>, <code>success</code>, <code>muted</code> и др. Размеры:{" "}
-            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>. Точки:{" "}
-            <code>loadingDotsDuration</code> (полный прыжок, шаг волны = duration / 3),{" "}
+            Colors: <code>primary</code>, <code>success</code>, <code>muted</code> etc. Dimensions:{" "}
+            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>. Points:{" "}
+            <code>loadingDotsDuration</code> (full jump, wave step = duration / 3),{" "}
             <code>loadingDotsEaseUp</code>, <code>loadingDotsEaseDown</code>,{" "}
             <code>enableLoadingDots</code>.
           </p>

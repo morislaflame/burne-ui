@@ -4,7 +4,7 @@ import { expect } from "storybook/test";
 
 import { Text } from "./Text";
 
-/** Тёмная тема — токены из `:root`, явный фон под сторисы. */
+/** Dark theme — tokens from `:root`, explicit background for stories. */
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
@@ -38,7 +38,7 @@ const meta = {
   decorators: [...darkThemeDecorator],
   args: {
     variant: "base" as const,
-    children: "Пример текста дизайн-системы Burne UI",
+    children: "Burne UI design system sample text",
   },
   argTypes: {
     variant: {
@@ -63,12 +63,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   play: async ({ canvas }) => {
-    await expect(canvas.getByText("Пример текста дизайн-системы Burne UI")).toBeVisible();
+    await expect(canvas.getByText("Burne UI design system sample text")).toBeVisible();
   },
 };
 
 export const AllVariants: Story = {
-  name: "Все варианты",
+  name: "All variants",
   render: () => (
     <div className="flex flex-col gap-plus">
       <Text variant="accent-header">accent-header</Text>
@@ -88,7 +88,7 @@ export const AllVariants: Story = {
 };
 
 export const AsSpanWithWrap: Story = {
-  name: "Как span + перенос",
+  name: "As span + wrap",
   render: () => (
     <div
       className="w-[140px]"
@@ -98,14 +98,14 @@ export const AsSpanWithWrap: Story = {
       as="span"
       className="break-words break-all"
     >
-      Очень_длинное_имя_файла_без_пробелов_для_проверки_break_all.tsx
+      very_long_filename_without_spaces_for_break_all_test.tsx
     </Text>
     </div>
   ),
 };
 
 export const OnSurface: Story = {
-  name: "На панели surface",
+  name: "On surface panel",
   render: () => (
     <div
       className="box-border w-full max-w-xl rounded-base border-token p-mid text-foreground"
@@ -130,6 +130,6 @@ export const OnSurface: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема (data-theme)",
+  name: "Light theme (data-theme)",
   decorators: [...lightThemeDecorator],
 };

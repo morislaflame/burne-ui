@@ -11,7 +11,7 @@ const config: StorybookConfig = {
   features: {
     viewport: true,
     interactions: true,
-    // React act() до a11y-проверок — меньше ложных пропусков на async-сторисах
+    // React act() before a11y checks — fewer false skips on async stories
     developmentModeForBuild: true,
   },
   framework: {

@@ -6,7 +6,7 @@ import {
 } from "./alertParts";
 import type { AlertSimpleContentProps } from "./alertTypes";
 
-/** Simple API: собирает подчасти из props на root. */
+/** Simple API: assembles sub-parts from root props. */
 export function AlertSimpleContent({
   gridSlots,
   title,

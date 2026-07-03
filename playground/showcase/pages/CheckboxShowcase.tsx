@@ -24,25 +24,25 @@ export function CheckboxShowcase() {
   return (
     <ShowcasePage
       title="Checkbox"
-      description="Флажок выбора с поддержкой размеров и состояния disabled."
+      description="Selection checkbox with size and state support disabled."
       importPath='import { Checkbox } from "@/components/core/Checkbox";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Базовый" description="Контролируемый чекбокс с label на корне.">
+      <ShowcaseSection title="Base" description="Controlled checkbox with label on the root.">
         <ShowcaseDemoFromFile Demo={CheckboxTermsDemo} source={checkboxTermsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={CheckboxSizesDemo} source={checkboxSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянный индикатор с motion.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass indicator with motion.">
         <ShowcaseDemoFromFile Demo={CheckboxGlossDemo} source={checkboxGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на root."
+        description="Full customization of slots via classNames on root."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -57,8 +57,8 @@ export function CheckboxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Форма индикатора, compound API и variant-микс — demo-файлы в `demos/checkbox/`."
+        title="Custom Variations"
+        description="Indicator shape, compound API and variant-mix — demo-files in `demos/checkbox/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxIndicatorShapeDemo} source={checkboxIndicatorShapeSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CheckboxIndicatorCompoundDemo} source={checkboxIndicatorCompoundSource} />
@@ -68,13 +68,13 @@ export function CheckboxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Checkbox" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, checked, onChange, size, disabled на корне. SelectionIndicator внутри."
+            description="label, checked, onChange, size, disabled on the root. SelectionIndicator inside."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
@@ -85,9 +85,9 @@ export function CheckboxShowcase() {
             description="Checkbox.Indicator.Fill / .Mark; classNames.shell / fill / mark."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Группы">
+        <ShowcaseDoc.Block title="Groups">
           <p>
-            Для набора чекбоксов используйте <code>CheckboxGroup</code> из{" "}
+            To set checkboxes use <code>CheckboxGroup</code> from{" "}
             <code>@/components/composite/CheckboxGroup</code>.
           </p>
         </ShowcaseDoc.Block>

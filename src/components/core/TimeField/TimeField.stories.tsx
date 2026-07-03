@@ -26,14 +26,14 @@ function ValidatedTimeCompoundDemo({ initialValue = "25:00" }: { initialValue?: 
 
   return (
     <TimeField status={invalid ? "danger" : "default"} isRequired>
-      <TimeField.Label>Начало смены</TimeField.Label>
+      <TimeField.Label>Shift start</TimeField.Label>
       <TimeField.Control
         value={value}
         onValueChange={setValue}
         prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
       />
-      <TimeField.Hint>Формат: ЧЧ:ММ (24 часа)</TimeField.Hint>
-      {invalid ? <TimeField.Error>Укажите корректное время.</TimeField.Error> : null}
+      <TimeField.Hint>Format: HH:MM (24-hour)</TimeField.Hint>
+      {invalid ? <TimeField.Error>Enter a valid time.</TimeField.Error> : null}
     </TimeField>
   );
 }
@@ -44,9 +44,9 @@ function ValidatedTimeSimpleDemo({ initialValue = "25:00" }: { initialValue?: st
 
   return (
     <TimeField
-      label="Начало смены"
-      hint="Формат: ЧЧ:ММ (24 часа)"
-      error={invalid ? "Укажите корректное время." : undefined}
+      label="Shift start"
+      hint="Format: HH:MM (24-hour)"
+      error={invalid ? "Enter a valid time." : undefined}
       status={invalid ? "danger" : "default"}
       isRequired
       value={value}
@@ -78,7 +78,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Поле ввода времени. **Simple** — `label`, `hint`, `error`, `prefix`, `suffix` и props контрола на root; **Compound** — `<TimeField.Label>` / `<TimeField.Control>` / `<TimeField.Hint>` / `<TimeField.Error>`. Варианты: `default`, `outline`, `segmented`. Prop `compact` — оболочка по ширине времени. **a11y:** `aria-describedby`, `aria-invalid` при `status=\"danger\"`, `role=\"spinbutton\"` на сегментах.",
+          "Time input field. **Simple** — `label`, `hint`, `error`, `prefix`, `suffix`, and control props on root; **Compound** — `<TimeField.Label>` / `<TimeField.Control>` / `<TimeField.Hint>` / `<TimeField.Error>`. Variants: `default`, `outline`, `segmented`. `compact` prop — shell sized to the time width. **a11y:** `aria-describedby`, `aria-invalid` when `status=\"danger\"`, `role=\"spinbutton\"` on segments.",
       },
     },
   },
@@ -91,22 +91,22 @@ type Story = StoryObj<typeof meta>;
 function DualApiDemo() {
   return (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;TimeField&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;TimeField&gt;">
         <TimeField
-          label="Время встречи"
-          hint="24-часовой формат"
+          label="Meeting time"
+          hint="24-hour format"
           defaultValue="09:30"
           prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
         />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — children">
         <TimeField>
-          <TimeField.Label>Время встречи</TimeField.Label>
+          <TimeField.Label>Meeting time</TimeField.Label>
           <TimeField.Control
             defaultValue="09:30"
             prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
           />
-          <TimeField.Hint>24-часовой формат</TimeField.Hint>
+          <TimeField.Hint>24-hour format</TimeField.Hint>
         </TimeField>
       </DualApiStoryPanel>
     </DualApiStoryPanels>
@@ -133,11 +133,11 @@ export const Segmented: Story = {
           prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
           suffix={
             <Text as="span" variant="small" className="text-muted">
-              МСК
+              MSK
             </Text>
           }
         />
-        <TimeField.Hint>Каждый сегмент — отдельная ячейка внутри оболочки.</TimeField.Hint>
+        <TimeField.Hint>Each segment is a separate cell inside the shell.</TimeField.Hint>
       </TimeField>
     );
   },
@@ -159,16 +159,16 @@ export const Outline: Story = {
         defaultValue="09:00"
         prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
       />
-      <TimeField.Hint>Прозрачный фон оболочки — как у Input outline.</TimeField.Hint>
+      <TimeField.Hint>Transparent shell background — like Input outline.</TimeField.Hint>
     </TimeField>
   ),
 };
 
 export const WithAffixes: Story = {
-  name: "Prefix и suffix",
+  name: "Prefix and suffix",
   render: () => (
     <TimeField>
-      <TimeField.Label>Длительность</TimeField.Label>
+      <TimeField.Label>Duration</TimeField.Label>
       <TimeField.Control
         format="HH:mm:ss"
         defaultValue="01:30:00"
@@ -179,16 +179,16 @@ export const WithAffixes: Story = {
           </Text>
         }
       />
-      <TimeField.Hint>Префикс и суффикс с отдельным фоном и разделителем.</TimeField.Hint>
+      <TimeField.Hint>Prefix and suffix with separate background and divider.</TimeField.Hint>
     </TimeField>
   ),
 };
 
 export const Compact: Story = {
-  name: "Компактный",
+  name: "Compact",
   render: () => (
     <div className="flex flex-col gap-mid">
-      <TimeField label="Компактный" compact defaultValue="09:30" />
+      <TimeField label="Compact" compact defaultValue="09:30" />
       <TimeField
         compact
         variant="segmented"
@@ -205,12 +205,12 @@ export const Compact: Story = {
 };
 
 export const WithSeconds: Story = {
-  name: "С секундами",
+  name: "With seconds",
   render: () => {
     const [value, setValue] = useState("12:30:45");
     return (
       <TimeField
-        label="Точное время"
+        label="Exact time"
         format="HH:mm:ss"
         value={value}
         onValueChange={setValue}
@@ -221,14 +221,14 @@ export const WithSeconds: Story = {
 };
 
 export const Validation: Story = {
-  name: "Валидация (hint + error)",
+  name: "Validation (hint + error)",
   render: () => (
     <div className="flex w-full flex-col gap-plus">
       <p className="text-sm text-muted">
-        Подсказка — <code className="text-primary">TimeField.Hint</code>; ошибка —{" "}
+        Hint — <code className="text-primary">TimeField.Hint</code>; error —{" "}
         <code className="text-primary">TimeField.Error</code> (
-        <code className="text-primary">role=&quot;alert&quot;</code>). Оба id попадают в{" "}
-        <code className="text-primary">aria-describedby</code> контрола.
+        <code className="text-primary">role=&quot;alert&quot;</code>). Both ids are included in{" "}
+        <code className="text-primary">aria-describedby</code> on the control.
       </p>
       <ValidatedTimeCompoundDemo />
       <ValidatedTimeSimpleDemo />
@@ -240,9 +240,9 @@ export const Danger: Story = {
   name: "Danger",
   render: () => (
     <TimeField status="danger">
-      <TimeField.Label>Время</TimeField.Label>
+      <TimeField.Label>Time</TimeField.Label>
       <TimeField.Control defaultValue="25:00" />
-      <TimeField.Error>Некорректное время.</TimeField.Error>
+      <TimeField.Error>Invalid time.</TimeField.Error>
     </TimeField>
   ),
 };
@@ -250,9 +250,9 @@ export const Danger: Story = {
 export const Success: Story = {
   render: () => (
     <TimeField status="success">
-      <TimeField.Label>Время</TimeField.Label>
+      <TimeField.Label>Time</TimeField.Label>
       <TimeField.Control defaultValue="09:00" />
-      <TimeField.Hint>Сохранено.</TimeField.Hint>
+      <TimeField.Hint>Saved.</TimeField.Hint>
     </TimeField>
   ),
 };
@@ -260,9 +260,9 @@ export const Success: Story = {
 export const Warning: Story = {
   render: () => (
     <TimeField status="warning">
-      <TimeField.Label>Время</TimeField.Label>
+      <TimeField.Label>Time</TimeField.Label>
       <TimeField.Control defaultValue="23:59" />
-      <TimeField.Hint>Близко к концу рабочего дня.</TimeField.Hint>
+      <TimeField.Hint>Close to the end of the workday.</TimeField.Hint>
     </TimeField>
   ),
 };
@@ -270,7 +270,7 @@ export const Warning: Story = {
 export const Required: Story = {
   render: () => (
     <TimeField isRequired>
-      <TimeField.Label>Начало</TimeField.Label>
+      <TimeField.Label>Start</TimeField.Label>
       <TimeField.Control defaultValue="09:00" />
     </TimeField>
   ),
@@ -297,7 +297,7 @@ function cnIcon(size: "small" | "base" | "mid" | "large") {
 }
 
 export const VariantsComparison: Story = {
-  name: "Все варианты",
+  name: "All variants",
   render: () => (
     <div className="flex flex-col gap-mid">
       {(["default", "outline", "segmented"] as const).map((variant) => (
@@ -315,18 +315,18 @@ export const VariantsComparison: Story = {
 };
 
 export const Disabled: Story = {
-  name: "Отключён",
+  name: "Disabled",
   render: () => (
-    <TimeField label="Недоступно" defaultValue="09:30" disabled prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />} />
+    <TimeField label="Unavailable" defaultValue="09:30" disabled prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />} />
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для TimeField",
+        story: "classNames customization for TimeField",
       },
     },
   },
@@ -341,11 +341,11 @@ export const CustomClassNames: Story = {
         hint: "text-foreground/70",
         error: "font-medium",
       }}
-      label="Время встречи"
+      label="Meeting time"
       defaultValue="09:30"
       status="danger"
-      hint="24-часовой формат"
-      error="Укажите корректное время."
+      hint="24-hour format"
+      error="Enter a valid time."
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
     />
   ),

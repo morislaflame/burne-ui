@@ -7,7 +7,7 @@ import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
 import type { UseToggleButtonAnimationsProps } from "./toggleButtonTypes";
 
 /**
- * Interactive motion + fill: заливка стартует в начале release-фазы squeeze.
+ * Interactive motion + fill: fill starts at the beginning of the squeeze release phase.
  */
 export function useToggleButtonAnimations({
   animated,

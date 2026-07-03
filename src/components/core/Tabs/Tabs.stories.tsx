@@ -23,9 +23,9 @@ const framedDecorator = [
 const VARIANTS: TabsVariant[] = ["default", "outline", "secondary"];
 
 const TAB_ITEMS = [
-  { value: "account", label: "Аккаунт", icon: IoPersonOutline },
-  { value: "documents", label: "Документы", icon: IoDocumentTextOutline },
-  { value: "settings", label: "Настройки", icon: IoSettingsOutline },
+  { value: "account", label: "Account", icon: IoPersonOutline },
+  { value: "documents", label: "Documents", icon: IoDocumentTextOutline },
+  { value: "settings", label: "Settings", icon: IoSettingsOutline },
 ] as const;
 
 function TabsDemo({
@@ -58,7 +58,7 @@ function TabsDemo({
       {TAB_ITEMS.map(({ value, label }) => (
         <Tabs.Panel key={value} value={value}>
           <Text as="p" variant="base" className="text-muted">
-            Контент вкладки «{label}».
+            Tab content «{label}».
           </Text>
         </Tabs.Panel>
       ))}
@@ -75,7 +75,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Compound Tabs: горизонтальная или вертикальная ориентация, шкала `small | base | mid | large`, три варианта поверхности (`default`, `outline`, `secondary`). Неактивные табы — `text-muted`; при hover текст приподнимается и становится primary; при нажатии — squeeze. Индикатор активного таба плавно переезжает.",
+          "Compound Tabs: horizontal or vertical orientation, `small | base | mid | large` scale, three surface variants (`default`, `outline`, `secondary`). Inactive tabs — `text-muted`; on hover text lifts and becomes primary; on press — squeeze. Active tab indicator moves smoothly.",
       },
     },
   },
@@ -96,29 +96,29 @@ export const Default: Story = {
 };
 
 export const SwitchTabInteraction: Story = {
-  name: "Interaction: вкладки",
+  name: "Interaction: tabs",
   render: () => <TabsDemo />,
   play: async ({ canvas, userEvent }) => {
-    await expect(canvas.getByRole("tab", { name: "Аккаунт" })).toHaveAttribute(
+    await expect(canvas.getByRole("tab", { name: "Account" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    await userEvent.click(canvas.getByRole("tab", { name: "Документы" }));
-    await expect(canvas.getByRole("tab", { name: "Документы" })).toHaveAttribute(
+    await userEvent.click(canvas.getByRole("tab", { name: "Documents" }));
+    await expect(canvas.getByRole("tab", { name: "Documents" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    await expect(canvas.getByRole("tabpanel")).toHaveTextContent("Документы");
+    await expect(canvas.getByRole("tabpanel")).toHaveTextContent("Documents");
   },
 };
 
 export const Vertical: Story = {
-  name: "Вертикальные",
+  name: "Vertical",
   render: () => <TabsDemo orientation="vertical" />,
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex w-full max-w-3xl flex-col gap-xlarge">
       {VARIANTS.map((variant) => (
@@ -134,7 +134,7 @@ export const Variants: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex w-full max-w-3xl flex-col gap-xlarge">
       {COMPONENT_SIZES.map((size) => (
@@ -150,7 +150,7 @@ export const Sizes: Story = {
 };
 
 export const Controlled: Story = {
-  name: "Контролируемый режим",
+  name: "Controlled mode",
   render: function ControlledTabs() {
     const [value, setValue] = useState("documents");
     return (
@@ -166,7 +166,7 @@ export const Controlled: Story = {
           {TAB_ITEMS.map(({ value: tabValue, label }) => (
             <Tabs.Panel key={tabValue} value={tabValue}>
               <Text as="p" variant="base">
-                Активно: {label}
+                Active: {label}
               </Text>
             </Tabs.Panel>
           ))}
@@ -192,7 +192,7 @@ export const Disabled: Story = {
       </Tabs.List>
       <Tabs.Panel value="account">
         <Text as="p" variant="base" className="text-muted">
-          Группа отключена.
+          Group is disabled.
         </Text>
       </Tabs.Panel>
     </Tabs>
@@ -200,11 +200,11 @@ export const Disabled: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Tabs (compound API)",
+        story: "classNames customization for Tabs (compound API)",
       },
     },
   },
@@ -231,7 +231,7 @@ export const CustomClassNames: Story = {
       {TAB_ITEMS.map(({ value, label }) => (
         <Tabs.Panel key={value} value={value}>
           <Text as="p" variant="base" className="text-muted">
-            Контент вкладки «{label}».
+            Tab content «{label}».
           </Text>
         </Tabs.Panel>
       ))}

@@ -21,12 +21,12 @@ export function formRootLabelledBy(titleId?: string): string | undefined {
 
 export function buildFormErrorSummaryMessage(errorCount: number): string {
   if (errorCount <= 0) return "";
-  if (errorCount === 1) return "Исправьте ошибку в форме";
-  return `Исправьте ${errorCount} ошибки в форме`;
+  if (errorCount === 1) return "Fix the error in the form";
+  return `Fix ${errorCount} errors in the form`;
 }
 
 export function buildFormSuccessAnnounceMessage(): string {
-  return "Форма успешно отправлена";
+  return "Form submitted successfully";
 }
 
 export function focusFirstFormInvalidField(

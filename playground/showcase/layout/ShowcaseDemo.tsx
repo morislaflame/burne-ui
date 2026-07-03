@@ -36,7 +36,7 @@ function ShowcaseCodePanel({ code }: { code: string }) {
             size="small"
             className="h-8 shrink-0 gap-xsmall px-small text-muted hover:text-foreground"
           >
-            {open ? "Скрыть код" : "Показать код"}
+            {open ? "Hide code" : "Show code"}
           </Button>
         </Disclosure.Trigger>
         {open ? (
@@ -48,7 +48,7 @@ function ShowcaseCodePanel({ code }: { code: string }) {
             onClick={onCopy}
             leftIcon={copied ? <IoCheckmark aria-hidden className="text-success" /> : <IoCopyOutline aria-hidden />}
           >
-            {copied ? "Скопировано" : "Копировать"}
+            {copied ? "Copied" : "Copy"}
           </Button>
         ) : null}
       </div>
@@ -69,7 +69,7 @@ export function ShowcaseDemo({
   padding = "mid",
 }: {
   children: ReactNode;
-  /** JSX/TSX-сниппет, соответствующий демо выше. */
+  /** JSX/TSX-snippet corresponding to the demo above. */
   code?: string;
   className?: string;
   align?: "start" | "center" | "stretch";

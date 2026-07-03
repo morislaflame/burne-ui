@@ -57,7 +57,7 @@ export type ThemeFontWeights = Record<ThemeFontWeightKey, number>;
 export type ThemeColors = Record<ThemeColorKey, string>;
 export type ThemeStatusForegrounds = Record<ThemeStatusForegroundKey, string>;
 
-/** Ключи цветовых пресетов — каждый имеет dark и light вариант. */
+/** Color preset keys - each has dark and light option. */
 export type ColorPresetKey =
   | "dark"
   | "light"
@@ -90,11 +90,11 @@ export type ThemeTokenState = {
   fontFamilyMono: string;
   fontWeights: ThemeFontWeights;
   shadowStrength: number;
-  /** Множитель blur/offset теней (`--shadow-size`). */
+  /** Factor blur/offset shadows (`--shadow-size`). */
   shadowSize: number;
-  /** Множитель размера подложки Toast (`--toast-scrim-size`). */
+  /** Substrate size multiplier Toast (`--toast-scrim-size`). */
   toastScrimSize: number;
-  /** Множитель плотности подложки Toast (`--toast-scrim-density`). */
+  /** Substrate Density Multiplier Toast (`--toast-scrim-density`). */
   toastScrimDensity: number;
   interactiveDuration: number;
   tooltipDuration: number;
@@ -114,9 +114,9 @@ export type ThemeTokenState = {
   enableLoadingDots: boolean;
   colors: ThemeColors;
   statusForegrounds: ThemeStatusForegrounds;
-  /** true — `--color-border` задаётся inline; false — формула из tokens/styles.css (как в Storybook). */
+  /** true — `--color-border` is given inline; false — formula from tokens/styles.css (as in Storybook). */
   borderCustomized: boolean;
-  /** Активный цветовой пресет; `null` — ручная правка цветов. */
+  /** Active color preset; `null` — manual color editing. */
   colorPreset: ColorPresetKey | null;
 };
 
@@ -157,7 +157,7 @@ export const FONT_WEIGHT_LABELS: Record<ThemeFontWeightKey, string> = Object.fro
   ]),
 ) as Record<ThemeFontWeightKey, string>;
 
-/** Лейблы контролов = имена CSS-переменных. */
+/** Control labels = names CSS-variables. */
 export const COLOR_LABELS: Record<ThemeColorKey, string> = Object.fromEntries(
   (Object.keys(COLOR_CSS_VAR) as ThemeColorKey[]).map((key) => [key, COLOR_CSS_VAR[key]]),
 ) as Record<ThemeColorKey, string>;
@@ -169,7 +169,7 @@ export const STATUS_FOREGROUND_LABELS: Record<ThemeStatusForegroundKey, string> 
   ]),
 ) as Record<ThemeStatusForegroundKey, string>;
 
-/** Формула border для UI (dark и light — одна строка, как в tokens/styles.css). */
+/** Border formula for UI (dark and light — one line, as in tokens/styles.css). */
 export const BORDER_COLOR_CSS_FORMULA_BY_THEME: Record<ThemeMode, string> = {
   dark: BORDER_COLOR_CSS_FORMULA,
   light: BORDER_COLOR_CSS_FORMULA,
@@ -187,7 +187,7 @@ export function isBorderColorCustomized(colors: ThemeColors, _theme?: ThemeMode)
 export const SCALE_DEFAULTS = {
   space: 0.5,
   size: 1,
-  /** Базовый радиус в rem; ступени `rounded-*` — множители от `--radius`. */
+  /** Base radius in rem; steps `rounded-*` — multipliers from `--radius`. */
   radius: 0.5,
   borderWidth: 1,
   textScale: 1,
@@ -213,7 +213,7 @@ export const SCALE_DEFAULTS = {
   enableLoadingDots: true,
 } as const;
 
-/** Наборы только scale-значений для лейаут-пресетов. Не трогают цвета. */
+/** Sets only scale-values ​​for layout presets. Don't touch the colors. */
 export const LAYOUT_PRESETS = {
   compact:  { space: 0.4,   size: 0.9,   radius: 0.375, borderWidth: 1, textScale: 0.95 },
   spacious: { space: 0.625, size: 1.125, radius: 0.625, borderWidth: 1, textScale: 1.05 },
@@ -290,7 +290,7 @@ export const MONO_FONT_PRESETS = [
   },
 ] as const;
 
-/** Базовые размеры типографики из `src/tokens/styles.css` (rem). */
+/** Basic typography sizes from `src/tokens/styles.css` (rem). */
 export const TEXT_SCALE_BASES = {
   tools: { size: 0.6875, line: 0.875 },
   xsmall: { size: 0.75, line: 1 },
@@ -318,7 +318,7 @@ const SHADOW_BASE = {
   },
 } as const;
 
-/** Один слой, offset-x: 0, отрицательный spread — тень только снизу. [offsetX, offsetY, blur, spread] */
+/** One layer, offset-x: 0, negative spread — shadow only from below. [offsetX, offsetY, blur, spread] */
 const SHADOW_LAYER_GEOM = {
   base: [[0, 2, 4, -2]],
   mid: [[0, 4, 10, -6]],
@@ -446,7 +446,7 @@ export async function applyThemeTokens(state: ThemeTokenState, root: HTMLElement
   root.style.setProperty("--font-family-mono", state.fontFamilyMono);
   applyFontWeights(root, state.fontWeights);
 
-  // Применяем глобальные флаги анимации в наш MotionConfig
+  // Apply global animation flags to our MotionConfig
   const { configureMotion } = await import("@/components/core/utils/motionConfig");
   configureMotion({
     interactiveDuration: state.interactiveDuration,
@@ -506,7 +506,7 @@ export function exportThemeCss(state: ThemeTokenState): string {
     `  --shadow-size: ${state.shadowSize};`,
     `  --toast-scrim-size: ${state.toastScrimSize};`,
     `  --toast-scrim-density: ${state.toastScrimDensity};`,
-    `  /* textScale: ${state.textScale} — задайте --text-scale-* вручную или через applyThemeTokens */`,
+    `  /* textScale: ${state.textScale} — set --text-scale-* manually or via applyThemeTokens */`,
     `  /* shadowStrength: ${state.shadowStrength}, shadowSize: ${state.shadowSize} */`,
     `  /* toastScrimSize: ${state.toastScrimSize}, toastScrimDensity: ${state.toastScrimDensity} */`,
   ];
@@ -514,7 +514,7 @@ export function exportThemeCss(state: ThemeTokenState): string {
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
     if (key === "border" && !state.borderCustomized) {
       lines.push(
-        `  /* ${cssVar}: ${BORDER_COLOR_CSS_FORMULA} — из tokens/styles.css */`,
+        `  /* ${cssVar}: ${BORDER_COLOR_CSS_FORMULA} — from tokens/styles.css */`,
       );
       continue;
     }
@@ -531,7 +531,7 @@ export function exportThemeCss(state: ThemeTokenState): string {
   lines.push("}");
 
   if (state.theme === "light") {
-    lines.push("", '/* Опционально: светлая тема через data-атрибут */');
+    lines.push("", '/* Optional: light theme via data-attribute */');
     lines.push('/* <html data-theme="light"> */');
   }
 

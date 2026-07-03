@@ -10,30 +10,30 @@ import { PIN_IMAGE1, PIN_IMAGE3 } from "@/utils/mockImages";
 const MEMBERS = [
   {
     value: "anya",
-    label: "Аня Иванова",
+    label: "Anya Ivanova",
     role: "Product Design",
     handle: "@anya",
     badge: "Lead",
     src: PIN_IMAGE1,
-    filterText: "Аня Иванова Product Design @anya",
+    filterText: "Anya Ivanova Product Design @anya",
   },
   {
     value: "max",
-    label: "Макс Петров",
+    label: "Max Petrov",
     role: "Frontend",
     handle: "@max",
     badge: "Dev",
     src: PIN_IMAGE3,
-    filterText: "Макс Петров Frontend @max",
+    filterText: "Max Petrov Frontend @max",
   },
   {
     value: "kate",
-    label: "Кейт Мур",
+    label: "Keith Moore",
     role: "Design Systems",
     handle: "@kate",
     badge: "Pro",
     src: PIN_IMAGE1,
-    filterText: "Кейт Мур Design Systems @kate",
+    filterText: "Keith Moore Design Systems @kate",
   },
 ] as const;
 
@@ -48,12 +48,12 @@ function MemberListItems() {
   const byValue = useMemo(() => new Map(MEMBERS.map((m) => [m.value, m])), []);
 
   if (filteredValues.length === 0) {
-    return <ListBox.Empty>Никого не нашли</ListBox.Empty>;
+    return <ListBox.Empty>No one was found</ListBox.Empty>;
   }
 
   return (
     <ListBox.Section>
-      <ListBox.Header>Назначить исполнителя</ListBox.Header>
+      <ListBox.Header>Assign an executor</ListBox.Header>
       {filteredValues.map((value) => {
         const member = byValue.get(value as (typeof MEMBERS)[number]["value"]);
         if (!member) return null;
@@ -91,15 +91,15 @@ export function ComboBoxWorkspacePickerDemo() {
       onValueChange={setValue}
       className="w-full max-w-sm"
     >
-      <ComboBox.Label>Исполнитель задачи</ComboBox.Label>
+      <ComboBox.Label>Task executor</ComboBox.Label>
       <ComboBox.InputGroup>
-        <ComboBox.Input placeholder="Поиск по команде…" />
+        <ComboBox.Input placeholder="Search by command…" />
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover>
         <MemberListItems />
       </ComboBox.Popover>
-      <ComboBox.Hint>Compound ListBox.Item — аватар, роль и badge в слотах.</ComboBox.Hint>
+      <ComboBox.Hint>Compound ListBox.Item — avatar, role and badge in slots.</ComboBox.Hint>
     </ComboBox>
   );
 }

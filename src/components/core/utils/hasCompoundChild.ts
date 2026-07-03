@@ -8,7 +8,7 @@ function matchesCompoundType(type: unknown, matcher: unknown): boolean {
   return matcherName != null && displayName === matcherName;
 }
 
-/** Есть ли среди compound-children экземпляр одного из переданных типов. */
+/** Whether compound children include an instance of one of the given types. */
 export function hasCompoundChild(children: ReactNode, ...matchers: unknown[]): boolean {
   let found = false;
 

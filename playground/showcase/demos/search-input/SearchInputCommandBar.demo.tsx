@@ -12,8 +12,8 @@ export function SearchInputCommandBarDemo() {
         Command palette
       </Text>
       <SearchInput
-        aria-label="Поиск команд"
-        placeholder="Перейти к компоненту или действию…"
+        aria-label="Search commands"
+        placeholder="Go to component or action…"
         value={query}
         onValueChange={setQuery}
         variant="default"

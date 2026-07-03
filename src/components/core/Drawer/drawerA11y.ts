@@ -1,16 +1,16 @@
 import type { DrawerPlacement } from "./drawerTypes";
 
-export const DRAWER_CLOSE_DEFAULT_ARIA_LABEL = "Закрыть";
+export const DRAWER_CLOSE_DEFAULT_ARIA_LABEL = "Close";
 
 export function drawerHandleAriaLabel(placement: DrawerPlacement): string {
   switch (placement) {
     case "bottom":
-      return "Потянуть вниз для закрытия";
+      return "Drag down to close";
     case "top":
-      return "Потянуть вверх для закрытия";
+      return "Drag up to close";
     case "left":
-      return "Потянуть влево для закрытия";
+      return "Drag left to close";
     case "right":
-      return "Потянуть вправо для закрытия";
+      return "Drag right to close";
   }
 }

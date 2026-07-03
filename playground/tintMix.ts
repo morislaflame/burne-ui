@@ -1,4 +1,4 @@
-/** Парсинг и сборка `color-mix` для primary-tint в playground. */
+/** Parsing and assembling `color-mix` for primary-tint in the playground. */
 
 export type TintMixMode = "primary-transparent" | "primary-surface" | "color-surface" | "custom";
 

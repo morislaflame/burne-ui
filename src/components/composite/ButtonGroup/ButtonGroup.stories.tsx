@@ -35,19 +35,19 @@ export default meta;
 
 type Story = StoryObj<typeof ButtonGroup>;
 
-/** Базово: текст + кнопки + меню «⋯» (`Dropdown` в конце группы). */
+/** Basic: text + buttons + «⋯» menu (`Dropdown` at end of group). */
 export const Horizontal: Story = {
   render() {
     return (
-      <ButtonGroup aria-label="Действия с документом">
-        <ButtonGroupText>Вид</ButtonGroupText>
-        <Button variant="secondary" ripple>Список</Button>
-        <Button variant="primary" groupSegment={{ orientation: "horizontal", position: "middle" }}>Сетка</Button>
+      <ButtonGroup aria-label="Document actions">
+        <ButtonGroupText>View</ButtonGroupText>
+        <Button variant="secondary" ripple>List</Button>
+        <Button variant="primary" groupSegment={{ orientation: "horizontal", position: "middle" }}>Grid</Button>
         <Dropdown>
           <Dropdown.Trigger asChild>
             <Button
               variant="outline"
-              aria-label="Дополнительные действия"
+              aria-label="Additional actions"
               iconOnly
               groupSegment={{ orientation: "horizontal", position: "last" }}
             >
@@ -56,14 +56,14 @@ export const Horizontal: Story = {
           </Dropdown.Trigger>
           <Dropdown.Popover>
             <Dropdown.Item value="dup" selection={false}>
-              Дублировать
+              Duplicate
             </Dropdown.Item>
             <Dropdown.Item value="share" selection={false}>
-              Поделиться
+              Share
             </Dropdown.Item>
             <Dropdown.Separator />
             <Dropdown.Item value="del" variant="danger" selection={false}>
-              Удалить
+              Delete
             </Dropdown.Item>
           </Dropdown.Popover>
         </Dropdown>
@@ -72,57 +72,57 @@ export const Horizontal: Story = {
   },
 };
 
-/** Кнопки с зазором — каждая со своим скруглением, без общей границы. */
+/** Buttons with gap — each with its own radius, no shared border. */
 export const Segmented: Story = {
   render() {
     return (
-      <ButtonGroup segmented aria-label="Действия" buttonSize="base">
-        <Button variant="outline">Отмена</Button>
-        <Button variant="outline">Черновик</Button>
-        <Button variant="primary">Сохранить</Button>
+      <ButtonGroup segmented aria-label="Actions" buttonSize="base">
+        <Button variant="outline">Cancel</Button>
+        <Button variant="outline">Draft</Button>
+        <Button variant="primary">Save</Button>
       </ButtonGroup>
     );
   },
 };
 
 export const ClickInteraction: Story = {
-  name: "Interaction: клик",
+  name: "Interaction: click",
   render() {
     return (
-      <ButtonGroup segmented aria-label="Действия" buttonSize="base">
-        <Button variant="outline">Отмена</Button>
-        <Button variant="outline">Черновик</Button>
-        <Button variant="primary">Сохранить</Button>
+      <ButtonGroup segmented aria-label="Actions" buttonSize="base">
+        <Button variant="outline">Cancel</Button>
+        <Button variant="outline">Draft</Button>
+        <Button variant="primary">Save</Button>
       </ButtonGroup>
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Сохранить" }));
-    await expect(canvas.getByRole("button", { name: "Сохранить" })).toHaveFocus();
+    await userEvent.click(canvas.getByRole("button", { name: "Save" }));
+    await expect(canvas.getByRole("button", { name: "Save" })).toHaveFocus();
   },
 };
 
 export const Vertical: Story = {
   render() {
     return (
-      <ButtonGroup orientation="vertical" buttonSize="base" aria-label="Вертикальная группа">
-        <ButtonGroupText>Сортировка</ButtonGroupText>
-        <Button variant="outline">По дате</Button>
-        <Button variant="outline">По имени</Button>
+      <ButtonGroup orientation="vertical" buttonSize="base" aria-label="Vertical group">
+        <ButtonGroupText>Sorting</ButtonGroupText>
+        <Button variant="outline">By date</Button>
+        <Button variant="outline">By name</Button>
         <Button variant="primary" status="danger" leftIcon={<IoTrashOutline />}>
-          Удалить
+          Delete
         </Button>
       </ButtonGroup>
     );
   },
 };
 
-/** Поле поиска + иконка: общий край между `Input` и `Button` без скругления. */
+/** Search field + icon: shared edge between `Input` and `Button` without radius. */
 export const ToolbarFusedInput: Story = {
   render() {
     return (
       <div className="max-w-lg">
-        <ButtonGroup aria-label="Поиск">
+        <ButtonGroup aria-label="Search">
           <Input.Control placeholder="Search..." aria-label="Search query" variant="outline" />
           <Button variant="outline" aria-label="Search" className="min-w-fit min-h-fit">
             <IoSearch aria-hidden className="icon-base" />
@@ -133,30 +133,30 @@ export const ToolbarFusedInput: Story = {
   },
 };
 
-/** Строка: SearchInput и отдельная группа (`SearchInput` с инлайновым радиусом не клеится в группу без доработки). */
+/** Row: SearchInput and separate group (`SearchInput` with inline radius does not attach to group without extra work). */
 export const ToolbarWithSearchInputRow: Story = {
   render() {
     return (
       <div className="flex min-w-[min(100%,40rem)] max-w-[min(100%,48rem)] flex-wrap items-center justify-center gap-small">
-        <SearchInput defaultExpanded expandedWidth={280} placeholder="Везде искать…" aria-label="Поиск по разделам" />
-        <ButtonGroup aria-label="Представление" buttonSize="base">
-          <ButtonGroupText>Таблица</ButtonGroupText>
-          <Button variant="outline">Карты</Button>
-          <Button variant="outline">Список</Button>
-          <Button variant="primary">Сохранить</Button>
+        <SearchInput defaultExpanded expandedWidth={280} placeholder="Search everywhere…" aria-label="Search sections" />
+        <ButtonGroup aria-label="View" buttonSize="base">
+          <ButtonGroupText>Table</ButtonGroupText>
+          <Button variant="outline">Cards</Button>
+          <Button variant="outline">List</Button>
+          <Button variant="primary">Save</Button>
         </ButtonGroup>
       </div>
     );
   },
 };
 
-/** Несколько независимых групп в одном ряду с отступами между блоками. */
+/** Multiple independent groups in one row with spacing between blocks. */
 export const MultipleGroupsInRow: Story = {
   render() {
     return (
       <div className="flex flex-wrap items-center justify-center gap-large">
-        <ButtonGroup aria-label="Формат" buttonSize="small">
-          <ButtonGroupText>Формат</ButtonGroupText>
+        <ButtonGroup aria-label="Format" buttonSize="small">
+          <ButtonGroupText>Format</ButtonGroupText>
           <Button size="small" variant="outline">
             JSON
           </Button>
@@ -164,11 +164,11 @@ export const MultipleGroupsInRow: Story = {
             YAML
           </Button>
           <Button size="small" variant="primary">
-            Экспорт
+            Export
           </Button>
         </ButtonGroup>
-        <ButtonGroup aria-label="Вид" buttonSize="small">
-          <ButtonGroupText>Вид</ButtonGroupText>
+        <ButtonGroup aria-label="View" buttonSize="small">
+          <ButtonGroupText>View</ButtonGroupText>
           <Button size="small" variant="outline">
             A
           </Button>
@@ -176,9 +176,9 @@ export const MultipleGroupsInRow: Story = {
             B
           </Button>
         </ButtonGroup>
-        <ButtonGroup aria-label="Статус" buttonSize="small">
+        <ButtonGroup aria-label="Status" buttonSize="small">
           <Button size="small" variant="primary" status="danger" leftIcon={<IoTrashOutline />}>
-            Сброс
+            Reset
           </Button>
         </ButtonGroup>
       </div>

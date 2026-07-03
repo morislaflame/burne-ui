@@ -7,7 +7,7 @@ export function SwitchCompoundThemeDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Тема оформления
+        Theme
       </Text>
       <Switch>
         <Switch.Control defaultChecked>
@@ -24,8 +24,8 @@ export function SwitchCompoundThemeDemo() {
           </Switch.Track>
         </Switch.Control>
         <Switch.Content>
-          <Switch.Label>Тёмная тема</Switch.Label>
-          <Switch.Hint>Switch.Track, Thumb и Icon — compound API.</Switch.Hint>
+          <Switch.Label>Dark theme</Switch.Label>
+          <Switch.Hint>Switch.Track, Thumb and Icon — compound API.</Switch.Hint>
         </Switch.Content>
       </Switch>
     </div>

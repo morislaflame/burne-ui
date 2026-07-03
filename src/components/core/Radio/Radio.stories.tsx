@@ -33,13 +33,13 @@ const meta = {
     docs: {
       description: {
         component:
-          "Радиокнопка. **Simple** — `label`, `hint` и props input на root; **Compound** — `<Radio.Control>` / `<Radio.Indicator>` / `<Radio.Content>` с `<Radio.Label>` и `<Radio.Hint>`.",
+          "Radio button. **Simple** — `label`, `hint`, and input props on root; **Compound** — `<Radio.Control>` / `<Radio.Indicator>` / `<Radio.Content>` with `<Radio.Label>` and `<Radio.Hint>`.",
       },
     },
   },
   decorators: [...darkThemeDecorator],
   args: {
-    label: "Вариант A",
+    label: "Option A",
     name: "demo",
     value: "a",
   },
@@ -50,19 +50,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Radio&gt;">
-        <Radio name="simple" value="a" label="Вариант A" hint="Краткое описание варианта" defaultChecked />
+      <DualApiStoryPanel title="Simple — props on &lt;Radio&gt;">
+        <Radio name="simple" value="a" label="Option A" hint="Short option description" defaultChecked />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — children">
         <Radio name="compound" value="b">
           <Radio.Control />
           <Radio.Content>
-            <Radio.Label>Вариант B</Radio.Label>
-            <Radio.Hint>Краткое описание варианта</Radio.Hint>
+            <Radio.Label>Option B</Radio.Label>
+            <Radio.Hint>Short option description</Radio.Hint>
           </Radio.Content>
         </Radio>
       </DualApiStoryPanel>
@@ -73,26 +73,26 @@ export const Default: Story = {
 export const Playground: Story = {};
 
 export const WithHint: Story = {
-  name: "С подсказкой",
+  name: "With hint",
   args: {
-    label: "Курьер",
-    hint: "Доставка 1–2 дня",
+    label: "Courier",
+    hint: "Delivery in 1–2 days",
     defaultChecked: true,
   },
 };
 
 export const SelectInteraction: Story = {
-  name: "Interaction: выбор",
+  name: "Interaction: selection",
   args: {
     name: "delivery",
     value: "courier",
-    label: "Курьер",
-    hint: "Доставка 1–2 дня",
+    label: "Courier",
+    hint: "Delivery in 1–2 days",
   },
   render: (args) => (
     <div className="flex flex-col gap-mid">
       <Radio {...args} />
-      <Radio name="delivery" value="pickup" label="Самовывоз" />
+      <Radio name="delivery" value="pickup" label="Pickup" />
     </div>
   ),
   play: async ({ canvas, userEvent }) => {
@@ -103,7 +103,7 @@ export const SelectInteraction: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-col gap-mid">
       {(["small", "base", "mid", "large"] as const).map((size) => (
@@ -112,7 +112,7 @@ export const Sizes: Story = {
           size={size}
           name="sizes"
           value={size}
-          label={`Размер ${size}`}
+          label={`Size ${size}`}
           defaultChecked={size === "base"}
         />
       ))}
@@ -121,7 +121,7 @@ export const Sizes: Story = {
 };
 
 export const Disabled: Story = {
-  name: "Отключён",
+  name: "Disabled",
   args: {
     disabled: true,
     defaultChecked: true,
@@ -129,14 +129,14 @@ export const Disabled: Story = {
 };
 
 export const CustomIndicator: Story = {
-  name: "Свой индикатор",
+  name: "Custom indicator",
   render: () => (
     <div className="flex flex-col gap-mid">
       <Radio name="custom-indicator" value="plain">
         <Radio.Control />
         <Radio.Content>
-          <Radio.Label>Стандартный</Radio.Label>
-          <Radio.Hint>Круг с анимированной заливкой</Radio.Hint>
+          <Radio.Label>Standard</Radio.Label>
+          <Radio.Hint>Circle with animated fill</Radio.Hint>
         </Radio.Content>
       </Radio>
       <Radio name="custom-indicator" value="star" defaultChecked>
@@ -146,8 +146,8 @@ export const CustomIndicator: Story = {
           </Radio.Indicator>
         </Radio.Control>
         <Radio.Content>
-          <Radio.Label>Избранный</Radio.Label>
-          <Radio.Hint>Своя иконка с той же анимацией заливки, что у дефолтного индикатора</Radio.Hint>
+          <Radio.Label>Favorite</Radio.Label>
+          <Radio.Hint>Custom icon with the same fill animation as the default indicator</Radio.Hint>
         </Radio.Content>
       </Radio>
     </div>
@@ -155,7 +155,7 @@ export const CustomIndicator: Story = {
 };
 
 export const IndicatorShape: Story = {
-  name: "Indicator — форма",
+  name: "Indicator — shape",
   render: () => (
     <Radio name="shape" value="mid" defaultChecked size="large">
       <Radio.Control>
@@ -168,54 +168,54 @@ export const IndicatorShape: Story = {
       </Radio.Control>
       <Radio.Content>
         <Radio.Label>rounded-mid</Radio.Label>
-        <Radio.Hint>Dot наследует форму через rounded-[inherit].</Radio.Hint>
+        <Radio.Hint>Dot inherits shape via rounded-[inherit].</Radio.Hint>
       </Radio.Content>
     </Radio>
   ),
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Simple и compound — native <code className="text-primary">&lt;label&gt;</code> вокруг input и
-        текста. Hint и error — через{" "}
-        <code className="text-primary">aria-describedby</code> (оба id, если заданы).
+        Simple and compound — native <code className="text-primary">&lt;label&gt;</code> around input and
+        text. Hint and error — via{" "}
+        <code className="text-primary">aria-describedby</code> (both ids when set).
       </p>
       <Radio
         id="a11y-radio-simple"
         name="a11y-radio"
         value="simple"
         defaultChecked
-        label="Курьер"
-        hint="Доставка 1–2 рабочих дня"
+        label="Courier"
+        hint="Delivery in 1–2 business days"
       />
       <Radio id="a11y-radio-compound" name="a11y-radio" value="compound">
         <Radio.Control />
         <Radio.Content>
-          <Radio.Label>Самовывоз</Radio.Label>
-          <Radio.Hint>Бесплатно, сегодня</Radio.Hint>
+          <Radio.Label>Pickup</Radio.Label>
+          <Radio.Hint>Free, today</Radio.Hint>
         </Radio.Content>
       </Radio>
       <Radio
         id="a11y-radio-error"
         name="a11y-radio-error"
         value="invalid"
-        label="Экспресс"
-        hint="Доставка в день заказа"
-        error="Недоступно для вашего региона."
+        label="Express"
+        hint="Same-day delivery"
+        error="Unavailable in your region."
       />
     </div>
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Radio (compound API)",
+        story: "classNames customization for Radio (compound API)",
       },
     },
   },
@@ -239,8 +239,8 @@ export const CustomClassNames: Story = {
         <Radio.Indicator />
       </Radio.Control>
       <Radio.Content>
-        <Radio.Label>Курьер</Radio.Label>
-        <Radio.Hint>Все слоты настроены через classNames.</Radio.Hint>
+        <Radio.Label>Courier</Radio.Label>
+        <Radio.Hint>All slots configured via classNames.</Radio.Hint>
       </Radio.Content>
     </Radio>
   ),
@@ -251,7 +251,7 @@ export const SimpleLabelClassNames: Story = {
   parameters: {
     docs: {
       description: {
-        story: "В simple API слоты label и labelText стилизуют подпись на корне.",
+        story: "In simple API, label and labelText slots style the root label.",
       },
     },
   },
@@ -260,8 +260,8 @@ export const SimpleLabelClassNames: Story = {
       name="simple-label"
       value="express"
       defaultChecked
-      label="Экспресс-доставка"
-      hint="Слот label стилизует подпись в simple API."
+      label="Express delivery"
+      hint="The label slot styles the label in simple API."
       classNames={{
         label: "text-info",
         labelText: "font-semibold underline decoration-info/30 underline-offset-4",

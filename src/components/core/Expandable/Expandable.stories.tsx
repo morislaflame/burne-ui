@@ -65,13 +65,13 @@ const meta = {
     docs: {
       description: {
         component:
-          "Раскрывающийся блок. **Simple** — `title`, `description`, `icon` на root, контент в `children`. **Compound** — `Trigger`, `Panel`, опционально `Message`, `Icon`, `Content`, `Title`, `Description`.",
+          "Expandable block. **Simple** — `title`, `description`, `icon` on root, content in `children`. **Compound** — `Trigger`, `Panel`, optional `Message`, `Icon`, `Content`, `Title`, `Description`.",
       },
     },
   },
   decorators: [...darkThemeDecorator],
   args: {
-    title: "Заголовок",
+    title: "Title",
   },
 } satisfies Meta<typeof Expandable>;
 
@@ -80,18 +80,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Expandable&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Expandable&gt;">
         <Expandable
-          title="Уведомления"
+          title="Notifications"
           icon={infoIcon}
-          description="Краткое описание в триггере"
+          description="Short description in trigger"
         >
           <p className="text-sm leading-relaxed">
-            Контент панели — любые дети root, без отдельного Panel.
+            Panel content — any root children, no separate Panel.
           </p>
         </Expandable>
       </DualApiStoryPanel>
@@ -101,14 +101,14 @@ export const Default: Story = {
             <Expandable.Message>
               <Expandable.Icon>{infoIcon}</Expandable.Icon>
               <Expandable.Content>
-                <Expandable.Title>Уведомления</Expandable.Title>
-                <Expandable.Description>Краткое описание в триггере</Expandable.Description>
+                <Expandable.Title>Notifications</Expandable.Title>
+                <Expandable.Description>Short description in trigger</Expandable.Description>
               </Expandable.Content>
             </Expandable.Message>
           </Expandable.Trigger>
           <Expandable.Panel>
             <p className="text-sm leading-relaxed">
-              Любой контент: текст, списки, вложенные блоки.
+              Any content: text, lists, nested blocks.
             </p>
           </Expandable.Panel>
         </Expandable>
@@ -121,7 +121,7 @@ export const Playground: Story = {
   render: (args) => (
     <Expandable {...args}>
       <p className="text-sm leading-relaxed">
-        Любой контент внутри панели. В simple API достаточно обернуть его в{" "}
+        Any content inside the panel. In simple API, wrap it in{" "}
         <code className="text-xs">&lt;Expandable&gt;</code>.
       </p>
     </Expandable>
@@ -129,25 +129,25 @@ export const Playground: Story = {
 };
 
 export const WithIcon: Story = {
-  name: "С иконкой",
+  name: "With icon",
   render: () => (
-    <Expandable title="Уведомления" icon={infoIcon}>
-      <p className="text-sm">Иконка на одной линии с заголовком.</p>
+    <Expandable title="Notifications" icon={infoIcon}>
+      <p className="text-sm">Icon on the same line as the title.</p>
     </Expandable>
   ),
 };
 
 export const WithImage: Story = {
-  name: "С изображением",
+  name: "With image",
   render: () => (
     <Expandable
       defaultOpen
       title="Progress is a mindset"
-      description="Редакционный кадр в раскрывающемся блоке."
+      description="Editorial frame in the expandable block."
     >
       <img
         src={PIN_IMAGE}
-        alt="Портрет в глянцевом красном шлеме, текст на визоре"
+        alt="Portrait in glossy red helmet, text on visor"
         className="w-full max-h-[min(420px,55vh)] rounded-mid object-cover"
         loading="lazy"
       />
@@ -156,15 +156,15 @@ export const WithImage: Story = {
 };
 
 export const PressRipple: Story = {
-  name: "Риппл по нажатию",
+  name: "Ripple on press",
   render: () => (
     <Expandable>
       <Expandable.Trigger>
         <Ripple color="neutralMuted" />
         <Expandable.Content>
-          <Expandable.Title>Нажми на строку заголовка</Expandable.Title>
+          <Expandable.Title>Click the title row</Expandable.Title>
           <Expandable.Description>
-            Ripple среди детей триггера — слой на всю кнопку (включая шеврон):{" "}
+            Ripple among trigger children — layer across the full button (including chevron):{" "}
             <code className="text-xs">
               {`<Ripple color="neutralMuted" />`}
             </code>
@@ -173,7 +173,7 @@ export const PressRipple: Story = {
       </Expandable.Trigger>
       <Expandable.Panel>
         <p className="text-sm">
-          Отдельный режим для компонентов с акцентом на click-feedback.
+          Separate mode for components focused on click feedback.
         </p>
       </Expandable.Panel>
     </Expandable>
@@ -181,56 +181,56 @@ export const PressRipple: Story = {
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Триггер — native <code className="text-primary">&lt;button type=&quot;button&quot;&gt;</code> с{" "}
-        <code className="text-primary">aria-expanded</code> и{" "}
-        <code className="text-primary">aria-controls</code>. Панель —{" "}
+        Trigger — native <code className="text-primary">&lt;button type=&quot;button&quot;&gt;</code> with{" "}
+        <code className="text-primary">aria-expanded</code> and{" "}
+        <code className="text-primary">aria-controls</code>. Panel —{" "}
         <code className="text-primary">role=&quot;region&quot;</code>,{" "}
-        <code className="text-primary">aria-labelledby</code>; при закрытии —{" "}
-        <code className="text-primary">aria-hidden</code> и <code className="text-primary">inert</code>.
+        <code className="text-primary">aria-labelledby</code>; when closed —{" "}
+        <code className="text-primary">aria-hidden</code> and <code className="text-primary">inert</code>.
       </p>
-      <Expandable title="Настройки уведомлений" description="Email и push">
-        <p className="text-sm">Содержимое недоступно с клавиатуры, пока блок свёрнут.</p>
+      <Expandable title="Notification settings" description="Email and push">
+        <p className="text-sm">Content is unavailable from the keyboard while the block is collapsed.</p>
       </Expandable>
     </div>
   ),
   play: async ({ canvas, userEvent }) => {
-    const trigger = canvas.getByRole("button", { name: /Настройки уведомлений/ });
+    const trigger = canvas.getByRole("button", { name: /Notification settings/ });
     await expect(trigger).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(trigger);
     await expect(trigger).toHaveAttribute("aria-expanded", "true");
-    await expect(canvas.getByText(/Содержимое недоступно/)).toBeVisible();
+    await expect(canvas.getByText(/Content unavailable/)).toBeVisible();
   },
 };
 
 export const AllVariationsLight: Story = {
-  name: "Все варианты — светлая тема",
+  name: "All variants — light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex flex-col gap-mid">
-      <Expandable title="Только заголовок">
-        <p className="text-sm">Контент без описания в триггере.</p>
+      <Expandable title="Title only">
+        <p className="text-sm">Content without description in the trigger.</p>
       </Expandable>
 
-      <Expandable title="С описанием" description="Дополнительная строка под заголовком.">
-        <p className="text-sm">Текст внутри панели.</p>
+      <Expandable title="With description" description="Additional line below the title.">
+        <p className="text-sm">Text inside the panel.</p>
       </Expandable>
 
       <Expandable
-        title="С иконкой"
+        title="With icon"
         icon={infoIcon}
-        description="Иконка слева."
+        description="Icon on the left."
       >
-        <p className="text-sm">Контент.</p>
+        <p className="text-sm">Content.</p>
       </Expandable>
 
       <Expandable
         defaultOpen
-        title="С изображением"
-        description="По умолчанию развёрнуто."
+        title="With image"
+        description="Default expanded."
       >
         <img
           src={PIN_IMAGE}
@@ -244,19 +244,19 @@ export const AllVariationsLight: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Expandable",
+        story: "classNames customization for Expandable",
       },
     },
   },
   render: () => (
     <Expandable
       defaultOpen
-      title="Настройки"
-      description="Слоты настроены через classNames"
+      title="Settings"
+      description="Slots configured via classNames"
       classNames={{
         root: "border border-primary/30",
         trigger: "bg-primary/5",
@@ -264,7 +264,7 @@ export const CustomClassNames: Story = {
         panel: "bg-primary/5",
       }}
     >
-      <p className="text-small text-muted">Контент панели.</p>
+      <p className="text-small text-muted">Panel content.</p>
     </Expandable>
   ),
 };

@@ -27,42 +27,42 @@ export function InputShowcase() {
   return (
     <ShowcasePage
       title="Input"
-      description="Текстовое поле с Simple и Compound API — label, hint и error на корне или через слоты."
+      description="Text field with Simple and Compound API — label, hint and error on the root or through slots."
       importPath='import { Input } from "@/components/core/Input";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Варианты" description="default и variant outline — альтернативные оболочки поля.">
+      <ShowcaseSection title="Options" description="default and variant outline — alternative field shells.">
         <ShowcaseDemoFromFile align="center" Demo={InputVariantsDemo} source={inputVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={InputSizesDemo} source={inputSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Статусы" description="status меняет цвет обводки и текста ошибки.">
+      <ShowcaseSection title="Statuses" description="status changes the color of the stroke and error text.">
         <ShowcaseDemoFromFile align="center" Demo={InputStatusesDemo} source={inputStatusesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Compound API" description="Input.Label, Input.Control, Input.Hint — явная разметка.">
+      <ShowcaseSection title="Compound API" description="Input.Label, Input.Control, Input.Hint — explicit markup.">
         <ShowcaseDemoFromFile align="center" Demo={InputCompoundDemo} source={inputCompoundSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты root, shell, control, prefix, suffix, hint и error — через prop classNames."
+        description="Slots root, shell, control, prefix, suffix, hint and error — through prop classNames."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesFullDemo} source={inputClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={InputClassNamesCompoundDemo} source={inputClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={LabelClassNamesFullDemo} source={labelClassNamesFullSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка с motion.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass shell with motion.">
         <ShowcaseDemoFromFile align="center" Demo={InputGlossDemo} source={inputGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Affixes, auth-панель и inline-пара — demo-файлы в `demos/input/`."
+        title="Custom Variations"
+        description="Affixes, auth-panel and inline-pair — demo-files in `demos/input/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={InputUrlAffixesDemo} source={inputUrlAffixesSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={InputAuthPanelDemo} source={inputAuthPanelSource} />
@@ -70,23 +70,23 @@ export function InputShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Input" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, hint, error, placeholder, variant и status — props на корне Input."
+            description="label, hint, error, placeholder, variant and status — props on the root Input."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Input.Label, Input.Control, Input.Hint, Input.Error — для кастомной разметки."
+            description="Input.Label, Input.Control, Input.Hint, Input.Error — for custom markup."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Варианты">
+        <ShowcaseDoc.Block title="Options">
           <p>
             <code>variant</code>: default, gloss, outline. <code>status</code>: default, danger, success,
-            warning. Подсказки поля — проп <code>hint</code>, не <code>description</code>.
+            warning. Field tips — prop <code>hint</code>, not <code>description</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

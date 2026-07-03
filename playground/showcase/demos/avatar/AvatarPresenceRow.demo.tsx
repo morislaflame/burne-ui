@@ -13,7 +13,7 @@ export function AvatarPresenceRowDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Статус в сети
+        Online status
       </Text>
       <ul className="flex flex-col gap-small">
         {USERS.map((user) => (
@@ -25,7 +25,7 @@ export function AvatarPresenceRowDemo() {
                 dot
                 placement="bottom-right"
                 size="small"
-                aria-label={user.online ? "В сети" : "Не в сети"}
+                aria-label={user.online ? "Online" : "Offline"}
               />
             </Badge.Anchor>
             <Text as="span" variant="small">

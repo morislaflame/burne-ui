@@ -11,12 +11,12 @@ export function TextAreaClassNamesFullDemo() {
         hint: "text-foreground/70",
         error: "font-medium",
       }}
-      label="Комментарий"
-      placeholder="Ваш отзыв…"
+      label="Comment"
+      placeholder="Your review…"
       rows={3}
       status="danger"
-      hint="До 500 символов."
-      error="Текст слишком короткий."
+      hint="Up to 500 characters."
+      error="The text is too short."
     />
   );
 }
@@ -33,9 +33,9 @@ export function TextAreaClassNamesCompoundDemo() {
         hint: "text-info/80",
       }}
     >
-      <TextArea.Label>Описание</TextArea.Label>
-      <TextArea.Control placeholder="Кратко о задаче…" rows={2} />
-      <TextArea.Hint>Слоты shell, control и resizeHandle через classNames.</TextArea.Hint>
+      <TextArea.Label>Description</TextArea.Label>
+      <TextArea.Control placeholder="Briefly about the task…" rows={2} />
+      <TextArea.Hint>Slots shell, control and resizeHandle through classNames.</TextArea.Hint>
     </TextArea>
   );
 }

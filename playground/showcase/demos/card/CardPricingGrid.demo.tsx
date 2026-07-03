@@ -9,16 +9,16 @@ const PLANS = [
     id: "free",
     title: "Free",
     price: "0 ₽",
-    description: "Для личных проектов",
-    features: ["3 проекта", "Community support"],
+    description: "For personal projects",
+    features: ["3 project", "Community support"],
     highlighted: false,
   },
   {
     id: "pro",
     title: "Pro",
     price: "990 ₽",
-    description: "Для команд до 10 человек",
-    features: ["Безлимитные проекты", "Приоритетная поддержка"],
+    description: "For teams of up to 10 people",
+    features: ["Unlimited projects", "Priority support"],
     highlighted: true,
   },
 ] as const;
@@ -37,7 +37,7 @@ export function CardPricingGridDemo() {
               {plan.price}
               <Text as="span" variant="tools" className="font-normal text-muted">
                 {" "}
-                / мес
+                / months
               </Text>
             </Text>
             <ul className="mt-mid flex flex-col gap-xsmall">
@@ -51,7 +51,7 @@ export function CardPricingGridDemo() {
           </Card.Body>
           <Card.Footer className="flex justify-end">
             <Button size="small" variant={plan.highlighted ? "primary" : "outline"}>
-              Выбрать
+              Choose
             </Button>
           </Card.Footer>
         </Card>

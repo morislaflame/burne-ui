@@ -10,7 +10,7 @@ const THEME_ATTR_SELECTOR = `[${THEME_ATTR}]`;
 
 type BurneThemeMode = "light" | "dark";
 
-/** Синхронное чтение режима темы с элемента (`data-theme`). */
+/** Synchronous theme mode read from element (`data-theme`). */
 export function readBurneThemeFromElement(el: Element): BurneThemeMode | null {
   const theme = el.getAttribute(THEME_ATTR);
   if (theme === "light") return "light";
@@ -19,7 +19,7 @@ export function readBurneThemeFromElement(el: Element): BurneThemeMode | null {
 }
 
 /**
- * Светлая тема Burne UI: сначала ближайшая обёртка у `anchor`, иначе `<html>`.
+ * Burne UI light theme: nearest wrapper at `anchor` first, otherwise `<html>`.
  */
 export function isBurneLightTheme(anchor?: Element | null): boolean {
   if (typeof document === "undefined") return false;
@@ -39,8 +39,8 @@ export type BurneLightThemePortalProps = {
 };
 
 /**
- * Атрибуты темы для портала в `body`: копирует светлую тему с `anchor` или корня.
- * Используется в порталах (`Dialog`, `AlertDialog`, `Drawer`, `Tooltip`, `Dropdown`, `Popover`).
+ * Theme attributes for portal in `body`: copies light theme from `anchor` or root.
+ * Used in portals (`Dialog`, `AlertDialog`, `Drawer`, `Tooltip`, `Dropdown`, `Popover`).
  */
 export function burneLightThemePortalProps(
   anchor?: Element | null,
@@ -51,9 +51,9 @@ export function burneLightThemePortalProps(
     anchor?.closest(THEME_ATTR_SELECTOR) ?? document.documentElement;
   if (readBurneThemeFromElement(themedAncestor) !== "light") return {};
 
-  // Если светлая тема задана на <html>, портал в document.body и так наследует
-  // все CSS-переменные с корня. Повторный data-theme="light" на самом портале
-  // заново применит дефолтные light-токены и перебьёт inline-пресеты playground.
+  // If light theme is set on <html>, portal in document.body already inherits
+  // all CSS variables from root. Repeating data-theme="light" on the portal itself
+  // would re-apply default light tokens and override playground inline presets.
   if (themedAncestor === document.documentElement) return {};
 
   return { "data-theme": "light" };
@@ -95,7 +95,7 @@ function subscribeToBurneTheme(
   return () => observer.disconnect();
 }
 
-/** Реактивная светлая тема: обновляется при смене `data-theme` на корне или у `anchor`. */
+/** Reactive light theme: updates when `data-theme` changes on root or `anchor`. */
 export function useBurneLightTheme(anchor?: Element | null): boolean {
   return useSyncExternalStore(
     useCallback((onStoreChange) => subscribeToBurneTheme(anchor, onStoreChange), [anchor]),
@@ -116,7 +116,7 @@ function resolveThemeAnchor(anchor?: BurneThemeAnchor): Element | null {
 }
 
 /**
- * Якорь наследования темы для портала: явный `themeAnchor` или `document.activeElement` при открытии.
+ * Theme inheritance anchor for portal: explicit `themeAnchor` or `document.activeElement` on open.
  */
 export function usePortalThemeAnchor(
   open: boolean,

@@ -8,16 +8,16 @@ export function LinkVariantsDemo() {
   return (
     <div className="flex flex-wrap gap-mid">
       <Link href="#" onClick={preventNav}>
-        Внутренняя ссылка
+        Internal link
       </Link>
       <Link href="https://github.com" target="_blank" rel="noreferrer" showDefaultIcon>
-        Внешняя ссылка
+        External link
       </Link>
       <Link href="#" onClick={preventNav} underline leftIcon={<IoRocketOutline aria-hidden />}>
-        С иконкой
+        With icon
       </Link>
       <Link href="#" onClick={preventNav} underline showDefaultIcon>
-        Подчёркнутая
+        Underlined
       </Link>
     </div>
   );

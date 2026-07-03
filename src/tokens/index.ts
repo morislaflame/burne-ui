@@ -20,7 +20,7 @@ export {
   type ToastScrimCssVar,
 } from "./toastScrim";
 
-/** Имена CSS-переменных для типобезопасного доступа и генераторов */
+/** CSS variable names for type-safe access and generators */
 export const designTokenNames = [
   "--border-width",
   "--color-background",
@@ -183,13 +183,13 @@ export type DesignCssVar = (typeof designTokenNames)[number];
 
 type ColorCssVarName = Extract<DesignCssVar, `--color-${string}`>;
 
-/** Хвост имени после `--color-` (как в theme key без префикса `color-`) */
+/** Suffix after `--color-` (same as theme key without the `color-` prefix) */
 export type ColorTokenSuffix = ColorCssVarName extends `--color-${infer S}`
   ? S
   : never;
 
 /**
- * Ссылка на цветовой токен для `style` / ripple: без литерала `var(--...)`.
+ * Reference to a color token for `style` / ripple: without a literal `var(--...)`.
  * @example colorToken("converge-ripple-neutral") // → var(--color-converge-ripple-neutral)
  */
 export function colorToken<S extends ColorTokenSuffix>(suffix: S): `var(--color-${S})` {

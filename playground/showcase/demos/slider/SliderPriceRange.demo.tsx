@@ -8,7 +8,7 @@ export function SliderPriceRangeDemo() {
   return (
     <Slider
       range
-      label="Цена"
+      label="Price"
       showValue
       min={0}
       max={1000}

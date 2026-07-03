@@ -20,25 +20,25 @@ export function TableShowcase() {
   return (
     <ShowcasePage
       title="Table"
-      description="Таблицы данных с сортировкой, выбором строк и прокруткой."
+      description="Data tables with sorting, row selection and scrolling."
       importPath='import { Table } from "@/components/core/Table";'
       tags={["core", "data"]}
     >
-      <ShowcaseSection title="Базовая" description="ScrollContainer, Header, Body и Badge в ячейках.">
+      <ShowcaseSection title="Basic" description="ScrollContainer, Header, Body and Badge in cells.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableBasicDemo} source={tableBasicSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Выбор строк" description="selectionMode multiple и контроль selectedKeys.">
+      <ShowcaseSection title="Row selection" description="selectionMode multiple and control selectedKeys.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableRowSelectionDemo} source={tableRowSelectionSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — hover строк primary-tint, hover-lift панели.">
+      <ShowcaseSection title="Gloss" description="variant gloss — hover lines primary-tint, hover-lift panels.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableGlossDemo} source={tableGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Gloss + выбор"
-        description="selectionMode multiple — выбранные строки тоже primary-tint."
+        title="Gloss + choice"
+        description="selectionMode multiple — selected rows too primary-tint."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -49,7 +49,7 @@ export function TableShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на root."
+        description="Full customization of slots via classNames on root."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -59,8 +59,8 @@ export function TableShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Ростер с аватарами, тулбар счетов и лента активности — `demos/table/`."
+        title="Custom Variations"
+        description="Roster with avatars, account toolbar and activity feed — `demos/table/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={TableTeamRosterDemo} source={tableTeamRosterSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TableInvoiceToolbarDemo} source={tableInvoiceToolbarSource} />
@@ -68,20 +68,20 @@ export function TableShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Table" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="ScrollContainer, Content, Header, Column, Body, Row и Cell — слоты таблицы."
+            description="ScrollContainer, Content, Header, Column, Body, Row and Cell — table slots."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Данные">
+        <ShowcaseDoc.Block title="Data">
           <p>
-            <code>items</code> на Body и render-prop{" "}
-            <code>{`{(row) => ...}`}</code> для строк. <code>selectionMode</code>,{" "}
-            <code>selectedKeys</code> и <code>onSelectionChange</code> — для выбора.
+            <code>items</code> on Body and render-prop{" "}
+            <code>{`{(row) => ...}`}</code> for strings. <code>selectionMode</code>,{" "}
+            <code>selectedKeys</code> and <code>onSelectionChange</code> — for selection.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

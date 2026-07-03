@@ -13,7 +13,7 @@ export function PopoverSimpleDemo() {
       <Popover.Content>
         <Popover.Body>
           <Text as="p" variant="small">
-            Панель по клику на триггер.
+            Trigger click panel.
           </Text>
         </Popover.Body>
       </Popover.Content>

@@ -65,12 +65,12 @@ export type ShowcaseGroup = {
 export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   {
     id: "typography",
-    label: "Типографика",
+    label: "Typography",
     pages: [{ id: "text", label: "Text", Page: TextShowcase }, { id: "kbd", label: "Kbd", Page: KbdShowcase }],
   },
   {
     id: "actions",
-    label: "Действия",
+    label: "Actions",
     pages: [
       { id: "button", label: "Button", Page: ButtonShowcase },
       { id: "close-button", label: "CloseButton", Page: CloseButtonShowcase },
@@ -82,7 +82,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   },
   {
     id: "feedback",
-    label: "Обратная связь",
+    label: "Feedback",
     pages: [
       { id: "badge", label: "Badge", Page: BadgeShowcase },
       { id: "alert", label: "Alert", Page: AlertShowcase },
@@ -94,7 +94,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   },
   {
     id: "forms",
-    label: "Формы",
+    label: "Forms",
     pages: [
       { id: "form", label: "Form", Page: FormShowcase },
       { id: "field", label: "Field", Page: FieldShowcase },
@@ -115,7 +115,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   },
   {
     id: "navigation",
-    label: "Навигация",
+    label: "Navigation",
     pages: [
       { id: "breadcrumbs", label: "Breadcrumbs", Page: BreadcrumbsShowcase },
       { id: "link", label: "Link", Page: LinkShowcase },
@@ -125,7 +125,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   },
   {
     id: "overlays",
-    label: "Оверлеи",
+    label: "Overlays",
     pages: [
       { id: "tooltip", label: "Tooltip", Page: TooltipShowcase },
       { id: "popover", label: "Popover", Page: PopoverShowcase },
@@ -137,7 +137,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   },
   {
     id: "data-display",
-    label: "Отображение данных",
+    label: "Data display",
     pages: [
       { id: "listbox", label: "ListBox", Page: ListBoxShowcase },
       { id: "card", label: "Card", Page: CardShowcase },
@@ -149,7 +149,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   },
   {
     id: "disclosure",
-    label: "Раскрытие",
+    label: "Disclosure",
     pages: [
       { id: "expandable", label: "Expandable", Page: ExpandableShowcase },
       { id: "disclosure", label: "Disclosure", Page: DisclosureShowcase },
@@ -158,7 +158,7 @@ export const SHOWCASE_GROUPS: ShowcaseGroup[] = [
   },
   {
     id: "theme",
-    label: "Тема",
+    label: "Theme",
     pages: [{ id: "gloss", label: "Gloss", Page: GlossShowcase }],
   },
 ];

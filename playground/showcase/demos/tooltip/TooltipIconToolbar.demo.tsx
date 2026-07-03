@@ -8,27 +8,27 @@ export function TooltipIconToolbarDemo() {
     <div className="flex items-center gap-xsmall rounded-mid border-token bg-surface p-xsmall">
       <Tooltip side="top">
         <Tooltip.Trigger>
-          <Button variant="ghost" size="small" type="button" aria-label="Редактировать">
+          <Button variant="ghost" size="small" type="button" aria-label="Edit">
             <IoPencilOutline aria-hidden className="size-4" />
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Редактировать</Tooltip.Content>
+        <Tooltip.Content>Edit</Tooltip.Content>
       </Tooltip>
       <Tooltip side="top">
         <Tooltip.Trigger>
-          <Button variant="ghost" size="small" type="button" aria-label="Копировать">
+          <Button variant="ghost" size="small" type="button" aria-label="Copy">
             <IoCopyOutline aria-hidden className="size-4" />
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Копировать ссылку</Tooltip.Content>
+        <Tooltip.Content>Copy link</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="danger" side="top">
         <Tooltip.Trigger>
-          <Button variant="ghost" size="small" type="button" aria-label="Удалить">
+          <Button variant="ghost" size="small" type="button" aria-label="Delete">
             <IoTrashOutline aria-hidden className="size-4" />
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Удалить</Tooltip.Content>
+        <Tooltip.Content>Delete</Tooltip.Content>
       </Tooltip>
     </div>
   );

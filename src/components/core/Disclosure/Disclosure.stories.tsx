@@ -40,7 +40,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Компонент раскрытия/скрытия контента с анимацией. **Варианты**: `default` (разделитель), `outline` / `secondary` (триггер снаружи, рамка только у контента), `card` (единая карточка), `ghost`. Hover-lift и squeeze на триггере. `DisclosureGroup` — аккордеон и `separated`.",
+          "Expand/collapse content component with animation. **Variants**: `default` (divider), `outline` / `secondary` (trigger outside, border only on content), `card` (single card), `ghost`. Hover-lift and squeeze on trigger. `DisclosureGroup` — accordion and `separated`.",
       },
     },
   },
@@ -51,22 +51,22 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const bodyText =
-  "Это контент, который появляется при раскрытии блока. Анимация высоты реализована через GSAP с плавным эзингом. Содержимое может быть любым — текст, компоненты, списки.";
+  "This is content that appears when the block expands. Height animation is implemented with GSAP and smooth easing. Content can be anything — text, components, lists.";
 
 // ─── Basic ───────────────────────────────────────────────────────────────────
 
 export const Basic: Story = {
-  name: "Базовый",
+  name: "Basic",
   render: () => (
     <Disclosure defaultOpen>
-      <Disclosure.Trigger>Основная информация</Disclosure.Trigger>
+      <Disclosure.Trigger>Main information</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
       </Disclosure.Content>
     </Disclosure>
   ),
   play: async ({ canvas, userEvent }) => {
-    const trigger = canvas.getByRole("button", { name: "Основная информация" });
+    const trigger = canvas.getByRole("button", { name: "Main information" });
     await expect(trigger).toHaveAttribute("aria-expanded", "true");
     await userEvent.click(trigger);
     await expect(trigger).toHaveAttribute("aria-expanded", "false");
@@ -78,14 +78,14 @@ export const Basic: Story = {
 // ─── Variants ─────────────────────────────────────────────────────────────────
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex flex-col gap-mid">
       {(["default", "outline", "secondary", "card", "ghost"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-xsmall">
           <Text as="p" variant="small" className="text-muted capitalize">{variant}</Text>
           <Disclosure variant={variant} defaultOpen>
-            <Disclosure.Trigger>Заголовок ({variant})</Disclosure.Trigger>
+            <Disclosure.Trigger>Title ({variant})</Disclosure.Trigger>
             <Disclosure.Content>
               <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
             </Disclosure.Content>
@@ -99,12 +99,12 @@ export const Variants: Story = {
 // ─── Sizes ────────────────────────────────────────────────────────────────────
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-col gap-mid">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Disclosure key={size} variant="outline" size={size}>
-          <Disclosure.Trigger>Размер: {size}</Disclosure.Trigger>
+          <Disclosure.Trigger>Size: {size}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -117,31 +117,31 @@ export const Sizes: Story = {
 // ─── Icon position ────────────────────────────────────────────────────────────
 
 export const IconPosition: Story = {
-  name: "Позиция иконки",
+  name: "Icon position",
   render: () => (
     <div className="flex flex-col gap-small">
       <Disclosure variant="outline" iconPos="right" defaultOpen>
-        <Disclosure.Trigger>Иконка справа (по умолчанию)</Disclosure.Trigger>
+        <Disclosure.Trigger>Icon on the right (default)</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="outline" iconPos="left">
-        <Disclosure.Trigger>Иконка слева</Disclosure.Trigger>
+        <Disclosure.Trigger>Icon on the left</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="outline" iconPos="right">
         <Disclosure.Trigger icon={<IoInformationCircleOutline className="size-full" />}>
-          Кастомная иконка
+          Custom icon
         </Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="outline" iconPos="right">
-        <Disclosure.Trigger icon={null}>Без иконки</Disclosure.Trigger>
+        <Disclosure.Trigger icon={null}>No icon</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
@@ -153,7 +153,7 @@ export const IconPosition: Story = {
 // ─── Controlled ───────────────────────────────────────────────────────────────
 
 export const Controlled: Story = {
-  name: "Контролируемый",
+  name: "Controlled",
   render: () => {
     const [open, setOpen] = useState(false);
     return (
@@ -164,11 +164,11 @@ export const Controlled: Story = {
             className="text-small text-primary underline"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? "Свернуть" : "Развернуть"} извне
+            {open ? "Collapse" : "Expand"} externally
           </button>
         </div>
         <Disclosure variant="outline" open={open} onOpenChange={setOpen}>
-          <Disclosure.Trigger>Контролируемый блок</Disclosure.Trigger>
+          <Disclosure.Trigger>Controlled block</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -181,10 +181,10 @@ export const Controlled: Story = {
 // ─── Disabled ─────────────────────────────────────────────────────────────────
 
 export const Disabled: Story = {
-  name: "Отключён",
+  name: "Disabled",
   render: () => (
     <Disclosure variant="outline" disabled>
-      <Disclosure.Trigger>Недоступный блок</Disclosure.Trigger>
+      <Disclosure.Trigger>Unavailable block</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
       </Disclosure.Content>
@@ -199,9 +199,9 @@ export const GroupDefault: Story = {
   render: () => (
     <DisclosureGroup variant="default">
       {[
-        { value: "a", title: "Что такое компонент Disclosure?",   icon: <IoInformationCircleOutline /> },
-        { value: "b", title: "Как использовать в проекте?",        icon: <IoNotificationsOutline /> },
-        { value: "c", title: "Есть ли режим аккордеона?",          icon: <IoLockClosedOutline /> },
+        { value: "a", title: "What is the Disclosure component?",   icon: <IoInformationCircleOutline /> },
+        { value: "b", title: "How to use it in a project?",        icon: <IoNotificationsOutline /> },
+        { value: "c", title: "Is there an accordion mode?",          icon: <IoLockClosedOutline /> },
       ].map(({ value, title, icon }) => (
         <Disclosure key={value} value={value}>
           <Disclosure.Trigger icon={icon}>{title}</Disclosure.Trigger>
@@ -222,7 +222,7 @@ export const GroupSecondary: Story = {
     <DisclosureGroup variant="secondary" defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
-          <Disclosure.Trigger>Раздел {v.toUpperCase()}</Disclosure.Trigger>
+          <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -238,7 +238,7 @@ export const GroupOutline: Story = {
     <DisclosureGroup variant="outline" defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
-          <Disclosure.Trigger>Раздел {v.toUpperCase()}</Disclosure.Trigger>
+          <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -256,7 +256,7 @@ export const GroupCard: Story = {
     <DisclosureGroup variant="card" defaultValue="b">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
-          <Disclosure.Trigger>Элемент {v.toUpperCase()}</Disclosure.Trigger>
+          <Disclosure.Trigger>Item {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -269,17 +269,17 @@ export const GroupCard: Story = {
 // ─── DisclosureGroup: Separated ──────────────────────────────────────────────
 
 export const FramedVariantsClosed: Story = {
-  name: "Outline / Secondary — закрыты",
+  name: "Outline / Secondary — closed",
   render: () => (
     <div className="flex flex-col gap-mid">
       <Disclosure variant="outline">
-        <Disclosure.Trigger>Outline — заголовок вне рамки</Disclosure.Trigger>
+        <Disclosure.Trigger>Outline — title outside border</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
       <Disclosure variant="secondary">
-        <Disclosure.Trigger>Secondary — заголовок вне рамки</Disclosure.Trigger>
+        <Disclosure.Trigger>Secondary — title outside border</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
@@ -294,7 +294,7 @@ export const GroupSeparated: Story = {
     <DisclosureGroup variant="outline" separated defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
-          <Disclosure.Trigger>Раздел {v.toUpperCase()}</Disclosure.Trigger>
+          <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -307,13 +307,13 @@ export const GroupSeparated: Story = {
 // ─── DisclosureGroup: Separated Card ─────────────────────────────────────────
 
 export const CardDragHandle: Story = {
-  name: "Card — drag-хэндл",
+  name: "Card — drag handle",
   render: () => (
     <Disclosure variant="card" dragHandle defaultOpen>
-      <Disclosure.Trigger>Потяните полоску вниз или вверх</Disclosure.Trigger>
+      <Disclosure.Trigger>Drag the handle down or up</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">
-          {bodyText} Раскрытие и сворачивание работает перетаскиванием хэндла или кликом по заголовку.
+          {bodyText} Expand and collapse work by dragging the handle or clicking the title.
         </Text>
       </Disclosure.Content>
       <Disclosure.Handle />
@@ -327,7 +327,7 @@ export const GroupSeparatedCard: Story = {
     <DisclosureGroup variant="card" separated defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
-          <Disclosure.Trigger>Карточка {v.toUpperCase()}</Disclosure.Trigger>
+          <Disclosure.Trigger>Card {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -340,12 +340,12 @@ export const GroupSeparatedCard: Story = {
 // ─── DisclosureGroup: Non-accordion ──────────────────────────────────────────
 
 export const GroupNonAccordion: Story = {
-  name: "DisclosureGroup — несколько открытых",
+  name: "DisclosureGroup — multiple open",
   render: () => (
     <DisclosureGroup variant="outline" accordion={false}>
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v} defaultOpen={v === "a" || v === "b"}>
-          <Disclosure.Trigger>Раздел {v.toUpperCase()}</Disclosure.Trigger>
+          <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
           </Disclosure.Content>
@@ -358,7 +358,7 @@ export const GroupNonAccordion: Story = {
 // ─── DisclosureGroup: Controlled ─────────────────────────────────────────────
 
 export const GroupControlled: Story = {
-  name: "DisclosureGroup — контролируемый",
+  name: "DisclosureGroup — controlled",
   render: () => {
     const [value, setValue] = useState<string | null>("a");
     return (
@@ -378,7 +378,7 @@ export const GroupControlled: Story = {
         <DisclosureGroup variant="outline" value={value} onValueChange={setValue}>
           {["a", "b", "c"].map((v) => (
             <Disclosure key={v} value={v}>
-              <Disclosure.Trigger>Раздел {v.toUpperCase()}</Disclosure.Trigger>
+              <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
               <Disclosure.Content>
                 <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
               </Disclosure.Content>
@@ -391,11 +391,11 @@ export const GroupControlled: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Disclosure",
+        story: "classNames customization for Disclosure",
       },
     },
   },
@@ -409,10 +409,10 @@ export const CustomClassNames: Story = {
         contentPanel: "border border-primary/20 bg-primary/5",
       }}
     >
-      <Disclosure.Trigger>Настройки уведомлений</Disclosure.Trigger>
+      <Disclosure.Trigger>Notification settings</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">
-          Слоты настроены через classNames на root.
+          Slots configured via classNames on root.
         </Text>
       </Disclosure.Content>
     </Disclosure>

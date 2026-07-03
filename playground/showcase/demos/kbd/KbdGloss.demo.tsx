@@ -14,14 +14,14 @@ export function KbdGlossDemo() {
         <Kbd variant="gloss">P</Kbd>
       </Kbd.Group>
       <Text as="p" variant="small" className="text-muted">
-        Нажмите{" "}
+        Click{" "}
         <Kbd variant="gloss" size="small">
           Esc
         </Kbd>{" "}
-        для закрытия
+        to close
       </Text>
       <Button variant="gloss" type="button" className="justify-between gap-plus">
-        <span>Командная палитра</span>
+        <span>Command Palette</span>
         <Kbd.Group>
           <Kbd variant="gloss" size="small">
             ⌘

@@ -14,21 +14,21 @@ export function TextShowcase() {
   return (
     <ShowcasePage
       title="Text"
-      description="Типографические варианты для заголовков, основного текста и служебных подписей."
+      description="Typographic variations for headings, body text, and captions."
       importPath='import { Text } from "@/components/core/Text";'
       tags={["core", "typography"]}
     >
-      <ShowcaseSection title="Варианты" description="Все preset-варианты variant на компоненте Text.">
+      <ShowcaseSection title="Options" description="All preset-options variant on the component Text.">
         <ShowcaseDemoFromFile Demo={TextVariantsDemo} source={textVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Семантика" description="Проп as задаёт HTML-элемент без смены визуального стиля.">
+      <ShowcaseSection title="Semantics" description="Prop as sets HTML-element without changing visual style.">
         <ShowcaseDemoFromFile Demo={TextSemanticsDemo} source={textSemanticsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Свои цвета, layout и композиции — демо в отдельных файлах, код подтягивается через ?raw."
+        title="Custom Variations"
+        description="Your colors, layout and compositions - demos in separate files, the code is pulled up via ?raw."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={TextHeroBlockDemo} source={textHeroBlockSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TextEditorialArticleDemo} source={textEditorialArticleSource} />
@@ -36,20 +36,20 @@ export function TextShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Text" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant и as на корне — основной способ типографики в приложении."
+            description="variant and as on the root - the main type of typography in the application."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Варианты">
+        <ShowcaseDoc.Block title="Options">
           <p>
             <code>accent-header</code>, <code>header-1</code>, <code>header-2</code>,{" "}
             <code>large</code>, <code>mid</code>, <code>base</code>, <code>small</code>, <code>tools</code>.
-            Дополнительные цвета — через <code>className</code> (например, <code>text-muted</code>).
+            Additional colors - via <code>className</code> (For example, <code>text-muted</code>).
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

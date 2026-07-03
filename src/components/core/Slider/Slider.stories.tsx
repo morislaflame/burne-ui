@@ -64,14 +64,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Slider&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Slider&gt;">
         <Slider
-          label="Громкость"
-          hint="Подсказка под шкалой"
+          label="Volume"
+          hint="Hint below track"
           showValue
           defaultValue={40}
           min={0}
@@ -82,11 +82,11 @@ export const Default: Story = {
       <DualApiStoryPanel title="Compound — children">
         <Slider>
           <Slider.Header>
-            <Slider.Label>Громкость</Slider.Label>
+            <Slider.Label>Volume</Slider.Label>
             <Slider.Value />
           </Slider.Header>
           <Slider.Track defaultValue={55} min={0} max={100} step={1} />
-          <Slider.Hint>Подсказка под шкалой</Slider.Hint>
+          <Slider.Hint>Hint below track</Slider.Hint>
         </Slider>
       </DualApiStoryPanel>
     </DualApiStoryPanels>
@@ -94,14 +94,14 @@ export const Default: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Slider
           key={size}
           size={size}
-          label={`Размер ${size}`}
+          label={`Size ${size}`}
           showValue
           defaultValue={30 + (size === "large" ? 40 : size === "mid" ? 25 : 15)}
         />
@@ -111,11 +111,11 @@ export const Sizes: Story = {
 };
 
 export const Range: Story = {
-  name: "Диапазон",
+  name: "Range",
   render: () => (
     <Slider
       range={true}
-      label="Цена"
+      label="Price"
       showValue
       min={0}
       max={1000}
@@ -127,10 +127,10 @@ export const Range: Story = {
 };
 
 export const WithMarks: Story = {
-  name: "Деления",
+  name: "Ticks",
   render: () => (
     <Slider
-      label="Уровень"
+      label="Level"
       showValue
       min={0}
       max={100}
@@ -141,18 +141,18 @@ export const WithMarks: Story = {
 };
 
 export const WithIcon: Story = {
-  name: "С иконкой",
+  name: "With icon",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       <Slider
-        label="Громкость"
+        label="Volume"
         showValue
         defaultValue={45}
         icon={<IoVolumeHigh aria-hidden className="size-full" />}
       />
       <Slider
         range={true}
-        label="Диапазон"
+        label="Range"
         showValue
         defaultValue={[25, 70]}
         icon={<IoVolumeHigh aria-hidden className="size-full" />}
@@ -166,7 +166,7 @@ export const CompoundTrack: Story = {
   render: () => (
     <Slider>
       <Slider.Header>
-        <Slider.Label>Громкость</Slider.Label>
+        <Slider.Label>Volume</Slider.Label>
         <Slider.Value />
       </Slider.Header>
       <Slider.Track defaultValue={55} min={0} max={100} step={1}>
@@ -185,7 +185,7 @@ export const CompoundTrack: Story = {
 };
 
 export const CustomThickness: Story = {
-  name: "Своя толщина",
+  name: "Custom thickness",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       <Slider label="10px" showValue thickness={10} defaultValue={35} />
@@ -196,37 +196,37 @@ export const CustomThickness: Story = {
 };
 
 export const Disabled: Story = {
-  name: "Отключён",
+  name: "Disabled",
   render: () => (
-    <Slider disabled defaultValue={60} label="Недоступно" showValue />
+    <Slider disabled defaultValue={60} label="Unavailable" showValue />
   ),
 };
 
 export const Vertical: Story = {
-  name: "Вертикальный",
+  name: "Vertical",
   render: () => (
     <div className="flex h-64 items-center gap-xlarge">
-      <Slider orientation="vertical" label="Яркость" showValue defaultValue={65} />
-      <Slider orientation="vertical" range={true} label="Диапазон" showValue defaultValue={[20, 80]} />
+      <Slider orientation="vertical" label="Brightness" showValue defaultValue={65} />
+      <Slider orientation="vertical" range={true} label="Range" showValue defaultValue={[20, 80]} />
     </div>
   ),
 };
 
 export const WithoutLabel: Story = {
-  name: "Без подписи",
+  name: "Without label",
   render: () => <Slider showValue={false} defaultValue={25} />,
 };
 
 export const Controlled: Story = {
-  name: "Контролируемый",
+  name: "Controlled",
   render: function Controlled() {
     const [value, setValue] = useState(35);
     return (
-      <Slider label="Контролируемый" showValue value={value} onValueChange={setValue} />
+      <Slider label="Controlled" showValue value={value} onValueChange={setValue} />
     );
   },
   play: async ({ canvas, userEvent }) => {
-    const slider = canvas.getByRole("slider", { name: /Контролируемый/ });
+    const slider = canvas.getByRole("slider", { name: /Controlled/ });
     slider.focus();
     await userEvent.keyboard("{ArrowRight}");
     await expect(slider).toHaveAttribute("aria-valuenow", "36");
@@ -234,34 +234,34 @@ export const Controlled: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
-  render: () => <Slider label="Светлая тема" showValue defaultValue={55} />,
+  render: () => <Slider label="Light theme" showValue defaultValue={55} />,
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        Ползунок — <code className="text-primary">role=&quot;slider&quot;</code> на{" "}
-        <code className="text-primary">&lt;button&gt;</code> с{" "}
-        <code className="text-primary">aria-valuenow</code> / min / max. Подпись —{" "}
-        <code className="text-primary">aria-labelledby</code> от <code className="text-primary">Slider.Label</code>
-        , hint — <code className="text-primary">aria-describedby</code>. Без label — fallback{" "}
-        <code className="text-primary">aria-label=&quot;Значение&quot;</code>.
+        Slider — <code className="text-primary">role=&quot;slider&quot;</code> on{" "}
+        <code className="text-primary">&lt;button&gt;</code> with{" "}
+        <code className="text-primary">aria-valuenow</code> / min / max. Label —{" "}
+        <code className="text-primary">aria-labelledby</code> from <code className="text-primary">Slider.Label</code>
+         , hint — <code className="text-primary">aria-describedby</code>. Without label — fallback{" "}
+        <code className="text-primary">aria-label=&quot;Value&quot;</code>.
       </p>
-      <Slider label="Громкость" hint="Подсказка связана через aria-describedby" showValue defaultValue={48} />
+      <Slider label="Volume" hint="Hint linked via aria-describedby" showValue defaultValue={48} />
     </div>
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Slider (compound API)",
+        story: "classNames customization for Slider (compound API)",
       },
     },
   },
@@ -281,11 +281,11 @@ export const CustomClassNames: Story = {
       }}
     >
       <Slider.Header>
-        <Slider.Label>Громкость</Slider.Label>
+        <Slider.Label>Volume</Slider.Label>
         <Slider.Value />
       </Slider.Header>
       <Slider.Track />
-      <Slider.Hint>Все слоты настроены через classNames.</Slider.Hint>
+      <Slider.Hint>All slots configured via classNames.</Slider.Hint>
     </Slider>
   ),
 };

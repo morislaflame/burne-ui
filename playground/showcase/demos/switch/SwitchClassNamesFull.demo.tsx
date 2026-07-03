@@ -17,8 +17,8 @@ export function SwitchClassNamesFullDemo() {
     >
       <Switch.Control />
       <Switch.Content>
-        <Switch.Label>Уведомления</Switch.Label>
-        <Switch.Hint>Настройка слотов через classNames на root.</Switch.Hint>
+        <Switch.Label>Notifications</Switch.Label>
+        <Switch.Hint>Setting up slots via classNames on root.</Switch.Hint>
       </Switch.Content>
     </Switch>
   );

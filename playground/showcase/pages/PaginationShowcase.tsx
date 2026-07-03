@@ -16,31 +16,31 @@ export function PaginationShowcase() {
   return (
     <ShowcasePage
       title="Pagination"
-      description="Навигация по страницам списка с кнопками «назад/вперёд» и нумерацией."
+      description="Navigation through list pages with back/forward buttons and numbering."
       importPath='import { Pagination } from "@/components/core/Pagination";'
       tags={["core", "navigation"]}
     >
       <ShowcaseSection
-        title="Компактная"
-        description="Предыдущая и следующая страница с текстовой сводкой."
+        title="Compact"
+        description="Previous and next page with text summary."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationCompactDemo} source={paginationCompactSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="С номерами" description="Pagination.Pages для прямого перехода к странице.">
+      <ShowcaseSection title="With numbers" description="Pagination.Pages to go directly to the page.">
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationWithPagesDemo} source={paginationWithPagesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты root, summary, content, interactive, pageActive, navText и ellipsis — через prop classNames."
+        description="Slots root, summary, content, interactive, pageActive, navText and ellipsis — through prop classNames."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationClassNamesFullDemo} source={paginationClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Футер таблицы, центрированная навигация и свои подписи — `demos/pagination/`."
+        title="Custom Variations"
+        description="Table footer, centered navigation and custom captions — `demos/pagination/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationTableFooterDemo} source={paginationTableFooterSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationCompactCenteredDemo} source={paginationCompactCenteredSource} />
@@ -48,19 +48,19 @@ export function PaginationShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Pagination" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="page, totalPages и onPageChange на корне. Summary, Content, Item, Previous, Next и Pages — слоты."
+            description="page, totalPages and onPageChange on the root. Summary, Content, Item, Previous, Next and Pages — slots."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Управление">
+        <ShowcaseDoc.Block title="Control">
           <p>
-            Состояние страницы храните снаружи через <code>useState</code>. <code>onPageChange</code> вызывается при
-            клике по кнопкам и номерам.
+            Store page state externally via <code>useState</code>. <code>onPageChange</code> called when
+            click on buttons and numbers.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

@@ -23,8 +23,8 @@ export function RadioClassNamesFullDemo() {
         <Radio.Indicator />
       </Radio.Control>
       <Radio.Content>
-        <Radio.Label>Курьер</Radio.Label>
-        <Radio.Hint>Настройка слотов через classNames на root.</Radio.Hint>
+        <Radio.Label>Courier</Radio.Label>
+        <Radio.Hint>Setting up slots via classNames on root.</Radio.Hint>
       </Radio.Content>
     </Radio>
   );

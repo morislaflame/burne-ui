@@ -12,28 +12,28 @@ export function DialogCompactConfirmDemo() {
       <Dialog open={open} onOpenChange={setOpen}>
         <Dialog.Trigger asChild>
           <Button variant="ghost">
-            Архивировать проект
+            Archive project
           </Button>
         </Dialog.Trigger>
         <Dialog.Panel>
           <Dialog.Header>
           <Dialog.HeadingBlock>
-            <Dialog.Title>Архивировать?</Dialog.Title>
-            <Dialog.Description>Проект скроется из списка, но его можно восстановить.</Dialog.Description>
+            <Dialog.Title>Archive?</Dialog.Title>
+            <Dialog.Description>The project will disappear from the list, but it can be restored.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
           <Text as="p" variant="small" className="text-muted">
-            Компактный диалог без лишних полей — только подтверждение.
+            Compact dialog without unnecessary fields - only confirmation.
           </Text>
         </Dialog.Body>
         <Dialog.Footer>
           <Button variant="outline" type="button" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button type="button" onClick={() => setOpen(false)}>
-            Архивировать
+            Archive
           </Button>
         </Dialog.Footer>
         </Dialog.Panel>

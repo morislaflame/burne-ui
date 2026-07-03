@@ -36,7 +36,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Клавиша или сочетание клавиш. Варианты и размеры как у `Badge`, без `status`. Compound: `Kbd.Group` для нескольких клавиш с разделителем.",
+          "Key or key combination. Variants and sizes like `Badge`, without `status`. Compound: `Kbd.Group` for multiple keys with a separator.",
       },
     },
   },
@@ -58,7 +58,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex flex-wrap items-center gap-small">
       {KBD_VARIANTS.map((variant) => (
@@ -71,7 +71,7 @@ export const Variants: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-wrap items-end gap-small">
       <Kbd size="small">Esc</Kbd>
@@ -103,11 +103,11 @@ export const Group: Story = {
 };
 
 export const InContext: Story = {
-  name: "В контексте",
+  name: "In context",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <Text as="p" variant="small" className="text-muted">
-        Нажмите <Kbd>Esc</Kbd>, чтобы закрыть. Сохранить —{" "}
+        Press <Kbd>Esc</Kbd> to close. Save —{" "}
         <Kbd.Group>
           <Kbd>⌘</Kbd>
           <Kbd>S</Kbd>
@@ -115,7 +115,7 @@ export const InContext: Story = {
         .
       </Text>
       <Button variant="outline" size="base" type="button" className="justify-between">
-        <span>Командная палитра</span>
+        <span>Command palette</span>
         <Kbd.Group>
           <Kbd size="small" variant="secondary">
             ⌘
@@ -163,7 +163,7 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <KbdGlossDemo />,

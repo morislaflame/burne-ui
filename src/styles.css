@@ -39,7 +39,7 @@ p {
   --color-surface: var(--color-surface);
   --color-border: var(--color-border);
 
-  /* OVERLAY — фон модалов, поповеров, дропдаунов (обычно = surface или чуть светлее) */
+  /* OVERLAY — modal, popover, dropdown backgrounds (usually = surface or slightly lighter) */
   /* PRIMARY (brand): bg-primary, text-primary, border-primary … */
   --color-primary: var(--color-primary);
   --color-primary-foreground: var(--color-primary-foreground);
@@ -109,8 +109,8 @@ p {
   --shadow-token-large: var(--shadow-large);
 
   /**
-   * Единственный источник правды для утилиты `text-base` (без дубля с @utility).
-   * Переопределяет дефолт Tailwind (1rem) на семантический `text-base` (= scale sm).
+   * Single source of truth for the `text-base` utility (no duplicate with @utility).
+   * Overrides Tailwind default (1rem) with semantic `text-base` (= scale sm).
    */
   --text-base: var(--text-base-size);
   --text-base--line-height: var(--text-base-line-height);
@@ -124,7 +124,7 @@ p {
   --border-width-1: var(--border-width, 1px);
 }
 
-/** Тени на токенах — не зависят от Tailwind-дефолтов. */
+/** Token-based shadows — independent of Tailwind defaults. */
 @utility shadow-token-base {
   box-shadow: var(--shadow-base);
 }
@@ -136,10 +136,10 @@ p {
 }
 
 /**
- * Тень через локальный `--el-shadow` (переключается из JS) + плавная смена `box-shadow`.
- * Явный сброс на элементе — иначе `--el-shadow` наследуется от предка (Popover, Alert)
- * и дочерние кнопки получают чужую тень до первого hover.
- * Постоянная тень: `usePersistentElShadow` / `useSecondLevelShadow` (см. useShadowMotion.ts).
+ * Shadow via local `--el-shadow` (toggled from JS) + smooth `box-shadow` transition.
+ * Explicit reset on the element — otherwise `--el-shadow` is inherited from an ancestor (Popover, Alert)
+ * and child buttons get a foreign shadow until first hover.
+ * Persistent shadow: `usePersistentElShadow` / `useSecondLevelShadow` (see useShadowMotion.ts).
  */
 @utility animate-shadow {
   --el-shadow: var(--shadow-none);
@@ -156,7 +156,7 @@ p {
 }
 
 /**
- * Текст и иконки: только color / fill / stroke (Link, Tabs, Breadcrumbs, заголовки Table).
+ * Text and icons: color / fill / stroke only (Link, Tabs, Breadcrumbs, Table headers).
  */
 @utility text-color-transition {
   transition:
@@ -172,8 +172,8 @@ p {
 }
 
 /**
- * Интерактивные поверхности: фон, бордер, текст, тень, focus-ring.
- * Один shorthand — иначе Tailwind-классы конфликтуют в каскаде.
+ * Interactive surfaces: background, border, text, shadow, focus-ring.
+ * Single shorthand — otherwise Tailwind classes conflict in the cascade.
  */
 @utility surface-color-transition {
   transition:
@@ -192,7 +192,7 @@ p {
   }
 }
 
-/** Оболочки полей: фон, бордер, тень и focus-ring — один shorthand без конфликтов. */
+/** Field shells: background, border, shadow, and focus-ring — one shorthand without conflicts. */
 @utility field-shell-transition {
   transition:
     background-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -208,12 +208,12 @@ p {
 }
 
 /**
- * focus-ring — стандартный outline-фокус-кольцо для интерактивных элементов.
- * focus-within-ring — то же, срабатывает при фокусе внутри (оболочки Input, TextArea, ComboBox).
- * focus-ring-inset — кольцо внутрь (кнопки внутри поля, Table-ячеек).
+ * focus-ring — standard outline focus ring for interactive elements.
+ * focus-within-ring — same, triggers on focus inside (Input, TextArea, ComboBox shells).
+ * focus-ring-inset — ring inward (buttons inside fields, Table cells).
  *
- * Внешние кольца: фиксированная ширина 2px без offset; плавно только outline-color
- * (анимация outline-width давала скачок в конце).
+ * Outer rings: fixed 2px width without offset; only outline-color animates smoothly
+ * (animating outline-width caused a jump at the end).
  */
 @utility focus-ring {
   outline-style: solid;
@@ -244,8 +244,8 @@ p {
 }
 
 /**
- * border-token-* — направленные и полные обводки с шириной из токена --border-width.
- * Preflight уже ставит border-style:solid на все элементы — style не нужен.
+ * border-token-* — directional and full borders with width from the --border-width token.
+ * Preflight already sets border-style:solid on all elements — style is not needed.
  */
 @utility border-token {
   border-width: var(--border-width, 1px);
@@ -289,8 +289,8 @@ p {
 }
 
 /**
- * divide-token — divider между дочерними элементами с шириной из --border-width.
- * Использовать вместо Tailwind `divide-y` / `divide-x` с дефолтным цветом.
+ * divide-token — divider between child elements with width from --border-width.
+ * Use instead of Tailwind `divide-y` / `divide-x` with the default color.
  */
 @utility divide-x-token {
   & > * + * {
@@ -329,14 +329,14 @@ p {
   font-weight: var(--text-large-weight);
 }
 
-/** Мелкий UI-текст: scale xs */
+/** Small UI text: scale xs */
 @utility text-small {
   font-size: var(--text-small-size);
   line-height: var(--text-small-line-height);
   font-weight: var(--text-small-weight);
 }
 
-/** Средний UI-текст: scale md */
+/** Medium UI text: scale md */
 @utility text-mid {
   font-size: var(--text-mid-size);
   line-height: var(--text-mid-line-height);
@@ -349,7 +349,7 @@ p {
   font-weight: var(--text-tools-weight);
 }
 
-/** Начертание из токенов `--font-w-*` (не Tailwind `font-medium`). */
+/** Font weight from `--font-w-*` tokens (not Tailwind `font-medium`). */
 @utility font-w-small {
   font-weight: var(--font-w-small);
 }
@@ -518,7 +518,7 @@ p {
   height: var(--avatar-size-large);
 }
 
-/** Круглые индикаторы выбора — диаметр из `--selection-indicator-*` (→ space-токены). */
+/** Round selection indicators — diameter from `--selection-indicator-*` (→ space tokens). */
 @utility selection-indicator-small {
   width: var(--selection-indicator-small);
   height: var(--selection-indicator-small);
@@ -544,7 +544,7 @@ p {
   min-height: var(--selection-indicator-large);
 }
 
-/** Иконки: ширина и высота из `--icon-size-*` (см. `tokens/styles.css`). */
+/** Icons: width and height from `--icon-size-*` (see `tokens/styles.css`). */
 @utility icon-xsmall {
   width: var(--icon-size-xsmall);
   height: var(--icon-size-xsmall);

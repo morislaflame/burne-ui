@@ -8,15 +8,15 @@ export function SearchInputWithResultDemo() {
   return (
     <>
       <SearchInput
-        aria-label="Поиск с подсказкой"
-        placeholder="Введите запрос…"
+        aria-label="Search with hint"
+        placeholder="Enter your request…"
         value={search}
         onValueChange={setSearch}
         className="w-64"
       />
       {search ? (
         <p className="mt-mid text-sm text-muted">
-          Запрос: <span className="font-medium text-foreground">{search}</span>
+          Request: <span className="font-medium text-foreground">{search}</span>
         </p>
       ) : null}
     </>

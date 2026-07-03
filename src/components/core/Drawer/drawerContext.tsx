@@ -41,7 +41,7 @@ export function DrawerClassNamesProvider({
 export function useDrawer(): DrawerContextValue {
   const ctx = useContext(DrawerContext);
   if (!ctx) {
-    throw new Error("Компоненты Drawer.* должны быть внутри <Drawer>.");
+    throw new Error("Drawer.* components must be used inside <Drawer>.");
   }
   return ctx;
 }

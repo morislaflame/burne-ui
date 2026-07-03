@@ -21,7 +21,7 @@ export function CheckboxIndicatorCompoundDemo() {
         <Checkbox.Content>
           <Checkbox.Label>2FA</Checkbox.Label>
           <Checkbox.Hint>
-            Квадратный индикатор через compound Fill/Mark и rounded-mid на shell.
+            Square indicator through compound Fill/Mark and rounded-mid on shell.
           </Checkbox.Hint>
         </Checkbox.Content>
       </Checkbox>

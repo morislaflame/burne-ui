@@ -40,14 +40,14 @@ const meta = {
     docs: {
       description: {
         component:
-          "Текстовая ссылка: по умолчанию `text-primary`; цвет можно переопределить через `className` (например `text-muted`). Стандартная иконка ↗ — `text-muted` до hover. Hover-lift и squeeze при нажатии. Simple API: `underline`, `leftIcon`/`rightIcon`, `showDefaultIcon`. Compound API: `<Link.Icon />` в children.",
+          "Text link: defaults to `text-primary`; color can be overridden via `className` (e.g. `text-muted`). Default ↗ icon — `text-muted` until hover. Hover-lift and squeeze on press. Simple API: `underline`, `leftIcon`/`rightIcon`, `showDefaultIcon`. Compound API: `<Link.Icon />` in children.",
       },
     },
   },
   decorators: [...framedDecorator],
   args: {
     href: "#",
-    children: "Подробнее",
+    children: "Learn more",
     size: "base",
   },
 } satisfies Meta<typeof Link>;
@@ -59,7 +59,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const ClickInteraction: Story = {
-  name: "Interaction: клик",
+  name: "Interaction: click",
   args: {
     onClick: fn(),
   },
@@ -73,55 +73,55 @@ export const ClickInteraction: Story = {
     />
   ),
   play: async ({ args, canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("link", { name: "Подробнее" }));
+    await userEvent.click(canvas.getByRole("link", { name: "Learn more" }));
     await expect(args.onClick).toHaveBeenCalledOnce();
   },
 };
 
 export const WithDefaultIcon: Story = {
-  name: "Стандартная иконка",
+  name: "Default icon",
   render: () => (
     <div className="flex flex-col items-center gap-mid">
       <Link href="#" showDefaultIcon defaultIconPosition="end">
-        Дальше
+        Next
       </Link>
       <Link href="#" showDefaultIcon defaultIconPosition="start">
-        Назад к списку
+        Back to list
       </Link>
     </div>
   ),
 };
 
 export const Underline: Story = {
-  name: "С подчёркиванием",
+  name: "With underline",
   render: () => (
     <div className="flex flex-col items-center gap-mid">
       <Link href="#" underline>
-        Подчёркнутая ссылка
+        Underlined link
       </Link>
       <Link href="#" underline showDefaultIcon>
-        С иконкой
+        With icon
       </Link>
     </div>
   ),
 };
 
 export const CustomIcons: Story = {
-  name: "Свои иконки",
+  name: "Custom icons",
   render: () => (
     <div className="flex flex-col items-center gap-mid">
       <Link href="#" leftIcon={<IoDocumentTextOutline aria-hidden className="icon-base" />}>
-        Документация
+        Documentation
       </Link>
       <Link href="https://example.com" rightIcon={<IoOpenOutline aria-hidden className="icon-base" />}>
-        Открыть сайт
+        Open site
       </Link>
     </div>
   ),
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-col items-start gap-small">
       <Link href="#" size="small" showDefaultIcon>
@@ -141,24 +141,24 @@ export const Sizes: Story = {
 };
 
 export const InParagraph: Story = {
-  name: "В тексте",
+  name: "In text",
   render: () => (
     <Text as="p" variant="base" className="max-w-md text-center text-muted">
-      Прочитайте{" "}
+      Read the{" "}
       <Link href="#" underline showDefaultIcon className="inline-flex align-baseline">
-        руководство
+        guide
       </Link>{" "}
-      или перейдите в раздел настроек профиля.
+      or go to profile settings.
     </Text>
   ),
 };
 
 export const LightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightDecorator],
   args: {
     showDefaultIcon: true,
-    children: "Ссылка на светлом фоне",
+    children: "Link on light background",
   },
 };
 
@@ -185,11 +185,11 @@ export const CompoundApi: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "Слоты motion, anchor, text, iconStart и iconEnd через prop classNames.",
+        story: "Slots motion, anchor, text, iconStart, and iconEnd via classNames prop.",
       },
     },
   },
@@ -204,7 +204,7 @@ export const CustomClassNames: Story = {
         iconEnd: "text-warning",
       }}
     >
-      Кастомная ссылка
+      Custom link
     </Link>
   ),
 };

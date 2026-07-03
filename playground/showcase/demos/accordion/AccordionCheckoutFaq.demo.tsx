@@ -2,19 +2,19 @@ import { Accordion } from "@/components/composite/Accordion";
 
 const FAQ = [
   {
-    title: "Как оформить заказ?",
-    description: "Доставка и оплата",
-    body: "Доставка по РФ 2–5 дней. Оплата картой, СБП или при получении.",
+    title: "How to place an order?",
+    description: "Delivery and payment",
+    body: "Delivery within the Russian Federation 2–5 days. Payment by card, SBP or upon receipt.",
   },
   {
-    title: "Можно ли вернуть товар?",
-    description: "Условия возврата",
-    body: "Возврат в течение 14 дней при сохранении товарного вида и упаковки.",
+    title: "Is it possible to return an item??",
+    description: "Return Policy",
+    body: "Return within 14 days if the original condition and packaging are preserved.",
   },
   {
-    title: "Как ухаживать за изделием?",
-    description: "Рекомендации по уходу",
-    body: "Деликатная стирка при 30°C. Не использовать отбеливатель.",
+    title: "How to care for the product?",
+    description: "Care instructions",
+    body: "Delicate wash 30°C. Do not use bleach.",
   },
 ] as const;
 

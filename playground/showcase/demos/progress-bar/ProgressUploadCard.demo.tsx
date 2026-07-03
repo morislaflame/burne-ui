@@ -27,7 +27,7 @@ export function ProgressUploadCardDemo() {
         value={value}
         color="var(--color-info)"
         className="w-full"
-        aria-label="Загрузка assets.zip"
+        aria-label="Loading assets.zip"
       />
     </div>
   );

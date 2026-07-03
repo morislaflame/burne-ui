@@ -110,10 +110,10 @@ export function GlossComponentsDemo() {
 
   const glossTableSelectionLabel =
     glossTableSelection === "all"
-      ? "Все"
+      ? "All"
       : glossTableSelection.size > 0
         ? Array.from(glossTableSelection).join(", ")
-        : "Нет";
+        : "No";
 
   return (
     <div
@@ -122,14 +122,14 @@ export function GlossComponentsDemo() {
     >
       <div className="flex flex-col gap-xsmall">
         <Text as="p" variant="small" className="text-muted">
-          Универсальный <code className="text-primary">variant=&quot;gloss&quot;</code> — стеклянная
-          поверхность с conic-обводкой, GSAP hover-lift и адаптивным бликом.
+          Universal <code className="text-primary">variant=&quot;gloss&quot;</code> — glass
+          surface with conic-stroke, GSAP hover-lift and adaptive glare.
         </Text>
       </div>
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Кнопки
+          Buttons
         </Text>
         <div className="flex flex-wrap items-center gap-small">
           {GLOSS_STATUSES.map((status) => (
@@ -138,9 +138,9 @@ export function GlossComponentsDemo() {
             </Button>
           ))}
           <Button variant="gloss" leftIcon={<IoAdd aria-hidden />}>
-            С иконкой
+            With icon
           </Button>
-          <CloseButton variant="gloss" aria-label="Закрыть gloss" />
+          <CloseButton variant="gloss" aria-label="Close gloss" />
           <ToggleButton
             variant="gloss"
             pressed={glossToggle}
@@ -153,38 +153,38 @@ export function GlossComponentsDemo() {
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Поля ввода
+          Input fields
         </Text>
         <div className="grid max-w-md gap-small">
           <Input.Control variant="gloss" placeholder="you@example.com" autoComplete="email" />
           <Input.Control variant="gloss" prefix="https://" suffix=".com" placeholder="example" />
           <ComboBox
             variant="gloss"
-            label="Фреймворк"
+            label="Framework"
             options={GLOSS_COMBO_OPTIONS}
             value={glossComboValue}
             onValueChange={setGlossComboValue}
-            hint={`Выбрано: ${glossComboValue}`}
+            hint={`Selected: ${glossComboValue}`}
           />
           <TimeField
             variant="gloss"
-            label="Время"
+            label="Time"
             value={glossTimeValue}
             onValueChange={setGlossTimeValue}
             prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
-            hint="Стеклянная оболочка TimeField"
+            hint="Glass shell TimeField"
           />
           <TextArea
             variant="gloss"
-            label="Комментарий"
-            placeholder="Текст сообщения…"
+            label="Comment"
+            placeholder="Message text…"
             rows={2}
             hint="TextArea gloss"
           />
           <SearchInput
             variant="gloss"
-            aria-label="Поиск gloss"
-            placeholder="Найти…"
+            aria-label="Search gloss"
+            placeholder="Find…"
             value={glossSearch}
             onValueChange={setGlossSearch}
           />
@@ -199,7 +199,7 @@ export function GlossComponentsDemo() {
           <Disclosure.Trigger>Gloss disclosure</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">
-              Стеклянная панель с hover-lift на корне.
+              Glass panel with hover-lift on the root.
             </Text>
           </Disclosure.Content>
         </Disclosure>
@@ -207,7 +207,7 @@ export function GlossComponentsDemo() {
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Popover и Dropdown
+          Popover and Dropdown
         </Text>
         <div className="flex flex-wrap items-center gap-small">
           <Popover variant="gloss">
@@ -216,12 +216,12 @@ export function GlossComponentsDemo() {
             </Popover.Trigger>
             <Popover.Content showArrow>
               <Popover.Header>
-                <Popover.Label>Заголовок</Popover.Label>
-                <Popover.Hint>Стеклянная всплывающая панель</Popover.Hint>
+                <Popover.Label>Heading</Popover.Label>
+                <Popover.Hint>Glass pop-up panel</Popover.Hint>
               </Popover.Header>
               <Popover.Body>
                 <Text as="p" variant="small" className="text-muted">
-                  Контент внутри gloss Popover.
+                  Content inside gloss Popover.
                 </Text>
               </Popover.Body>
             </Popover.Content>
@@ -232,7 +232,7 @@ export function GlossComponentsDemo() {
             </Dropdown.Trigger>
             <Dropdown.Popover>
               <Dropdown.Item value="ru" selection={false}>
-                <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+                <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
               </Dropdown.Item>
               <Dropdown.Item value="en" selection={false}>
                 <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
@@ -252,7 +252,7 @@ export function GlossComponentsDemo() {
             onClick={() =>
               toast.show({
                 title: "Gloss toast",
-                description: "Стеклянное уведомление с hover-lift.",
+                description: "Glass notice with hover-lift.",
                 status: "info",
                 variant: "gloss",
               })
@@ -264,22 +264,22 @@ export function GlossComponentsDemo() {
             <Tooltip.Trigger>
               <Button variant="gloss">Gloss Tooltip</Button>
             </Tooltip.Trigger>
-            <Tooltip.Content>Стеклянная подсказка (`surface=&quot;gloss&quot;`)</Tooltip.Content>
+            <Tooltip.Content>Glass tip (`surface=&quot;gloss&quot;`)</Tooltip.Content>
           </Tooltip>
         </div>
         <Tabs variant="gloss" value={glossTab} onValueChange={setGlossTab} className="max-w-md">
           <Tabs.List>
-            <Tabs.Tab value="overview">Обзор</Tabs.Tab>
-            <Tabs.Tab value="details">Детали</Tabs.Tab>
+            <Tabs.Tab value="overview">Review</Tabs.Tab>
+            <Tabs.Tab value="details">Details</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="overview" className="pt-mid">
             <Text as="p" variant="small" className="text-muted">
-              Gloss Tabs — стеклянный список вкладок с индикатором.
+              Gloss Tabs — glass tab list with indicator.
             </Text>
           </Tabs.Panel>
           <Tabs.Panel value="details" className="pt-mid">
             <Text as="p" variant="small" className="text-muted">
-              Активная вкладка: {glossTab}
+              Active tab: {glossTab}
             </Text>
           </Tabs.Panel>
         </Tabs>
@@ -297,10 +297,10 @@ export function GlossComponentsDemo() {
             onValueChange={(v) => setGlossListBox(v as string)}
           >
             <ListBox.Section>
-              <ListBox.Header>Языки</ListBox.Header>
+              <ListBox.Header>Languages</ListBox.Header>
               <ListBox.Item value="ru">
                 <ListBox.ItemIndicator />
-                <ListBox.Label>Русский</ListBox.Label>
+                <ListBox.Label>Russian</ListBox.Label>
               </ListBox.Item>
               <ListBox.Item value="en">
                 <ListBox.ItemIndicator />
@@ -316,7 +316,7 @@ export function GlossComponentsDemo() {
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          ColorPicker и Table
+          ColorPicker and Table
         </Text>
         <ColorPicker variant="gloss" value={glossColor} onValueChange={setGlossColor}>
           <ColorPicker.Trigger />
@@ -325,15 +325,15 @@ export function GlossComponentsDemo() {
         <div className="grid gap-mid xl:grid-cols-2">
           <div className="flex min-w-0 flex-col gap-xsmall">
             <Text as="p" variant="small" className="text-muted">
-              Базовая таблица
+              Base table
             </Text>
             <Table variant="gloss" className="w-full">
               <Table.ScrollContainer>
-                <Table.Content aria-label="Gloss команда" className="min-w-[28rem]">
+                <Table.Content aria-label="Gloss team" className="min-w-[28rem]">
                   <Table.Header>
-                    <Table.Column isRowHeader>Имя</Table.Column>
-                    <Table.Column>Роль</Table.Column>
-                    <Table.Column>Статус</Table.Column>
+                    <Table.Column isRowHeader>Name</Table.Column>
+                    <Table.Column>Role</Table.Column>
+                    <Table.Column>Status</Table.Column>
                   </Table.Header>
                   <Table.Body items={GLOSS_TABLE_ROWS}>
                     {(row: GlossTableRow) => (
@@ -352,25 +352,25 @@ export function GlossComponentsDemo() {
           </div>
           <div className="flex min-w-0 flex-col gap-xsmall">
             <Text as="p" variant="small" className="text-muted">
-              Сортировка по колонкам
+              Sorting by columns
             </Text>
             <Table variant="gloss" className="w-full">
               <Table.ScrollContainer>
                 <Table.Content
-                  aria-label="Gloss сортировка"
+                  aria-label="Gloss sorting"
                   className="min-w-[28rem]"
                   sortDescriptor={glossTableSort}
                   onSortChange={setGlossTableSort}
                 >
                   <Table.Header>
                     <Table.Column allowsSorting isRowHeader id="name">
-                      Имя
+                      Name
                     </Table.Column>
                     <Table.Column allowsSorting id="role">
-                      Роль
+                      Role
                     </Table.Column>
                     <Table.Column allowsSorting id="status">
-                      Статус
+                      Status
                     </Table.Column>
                   </Table.Header>
                   <Table.Body items={glossTableSortedRows}>
@@ -390,21 +390,21 @@ export function GlossComponentsDemo() {
           </div>
           <div className="flex min-w-0 flex-col gap-xsmall xl:col-span-2">
             <Text as="p" variant="small" className="text-muted">
-              Множественный выбор строк · выбрано: {glossTableSelectionLabel}
+              Multiple row selection · selected: {glossTableSelectionLabel}
             </Text>
             <Table variant="gloss" className="w-full max-w-3xl">
               <Table.ScrollContainer>
                 <Table.Content
-                  aria-label="Gloss выбор строк"
+                  aria-label="Gloss row selection"
                   className="min-w-[28rem]"
                   selectionMode="multiple"
                   selectedKeys={glossTableSelection}
                   onSelectionChange={setGlossTableSelection}
                 >
                   <Table.Header>
-                    <Table.Column isRowHeader>Имя</Table.Column>
-                    <Table.Column>Роль</Table.Column>
-                    <Table.Column>Статус</Table.Column>
+                    <Table.Column isRowHeader>Name</Table.Column>
+                    <Table.Column>Role</Table.Column>
+                    <Table.Column>Status</Table.Column>
                   </Table.Header>
                   <Table.Body items={GLOSS_TABLE_ROWS}>
                     {(row: GlossTableRow) => (
@@ -421,7 +421,7 @@ export function GlossComponentsDemo() {
               </Table.ScrollContainer>
               <Table.Footer>
                 <Text as="span" variant="small" className="text-muted">
-                  {GLOSS_TABLE_ROWS.length} записей
+                  {GLOSS_TABLE_ROWS.length} records
                 </Text>
               </Table.Footer>
             </Table>
@@ -439,10 +439,10 @@ export function GlossComponentsDemo() {
             defaultOpen
             title="Gloss expandable"
             icon={EXPANDABLE_INFO_ICON}
-            description="Стеклянная панель на всём блоке"
+            description="Glass panel throughout the unit"
           >
             <Text as="p" variant="small" className="text-muted">
-              Контент внутри gloss Expandable.
+              Content inside gloss Expandable.
             </Text>
           </Expandable>
         </div>
@@ -450,7 +450,7 @@ export function GlossComponentsDemo() {
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Индикаторы
+          Indicators
         </Text>
         <div className="flex flex-wrap items-center gap-mid">
           <Checkbox
@@ -491,10 +491,10 @@ export function GlossComponentsDemo() {
             onChange={(e: ChangeEvent<HTMLInputElement>) => setGlossSwitch(!e.target.checked)}
             iconOff={<IoMoon aria-hidden />}
             iconOn={<IoSunny aria-hidden />}
-            aria-label="Gloss switch с иконками"
+            aria-label="Gloss switch with icons"
           />
           <Text as="span" variant="small" className="text-muted">
-            Switch: трек и кружок gloss, заливка primary
+            Switch: track and circle gloss, filling primary
           </Text>
         </div>
         <div className="flex max-w-xs flex-col gap-xsmall">
@@ -505,14 +505,14 @@ export function GlossComponentsDemo() {
             ariaLabel="Gloss slider"
           />
           <Text as="span" variant="small" className="text-muted">
-            Slider gloss: рельса original, кружок gloss — значение: {glossSlider}
+            Slider gloss: rail original, circle gloss — meaning: {glossSlider}
           </Text>
         </div>
       </div>
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Бейджи и алерты
+          Badges and alerts
         </Text>
         <div className="flex flex-wrap items-center gap-small">
           <Badge variant="gloss">Gloss</Badge>
@@ -527,14 +527,14 @@ export function GlossComponentsDemo() {
           </Badge>
         </div>
         <div className="flex flex-col gap-small">
-          <Alert variant="gloss" status="info" title="Gloss alert" description="Стеклянная панель с hover-lift." />
-          <Alert variant="gloss" status="danger" title="Ошибка" description="Статус — только цвет текста и иконки." />
+          <Alert variant="gloss" status="info" title="Gloss alert" description="Glass panel with hover-lift." />
+          <Alert variant="gloss" status="danger" title="Error" description="Status - text and icon color only." />
         </div>
       </div>
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Поверхности
+          Surfaces
         </Text>
         <div className="grid gap-mid lg:grid-cols-2">
           <Surface variant="gloss" padding="plus" radius="mid">
@@ -542,14 +542,14 @@ export function GlossComponentsDemo() {
               Surface gloss
             </Text>
             <Text as="p" variant="small" className="text-muted">
-              Статическая стеклянная панель.
+              Static glass panel.
             </Text>
           </Surface>
           <Card variant="gloss" pressable onPress={() => setCardPressCount((n) => n + 1)}>
             <Card.Header>
               <Card.Title>Card gloss + pressable</Card.Title>
               <Card.Description>
-                Нажатий: {cardPressCount}. Hover-lift и squeeze как у кнопки.
+                Clicks: {cardPressCount}. Hover-lift and squeeze like a button.
               </Card.Description>
             </Card.Header>
             <Card.Footer className="flex justify-end gap-small">
@@ -566,7 +566,7 @@ export function GlossComponentsDemo() {
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Аватары
+          Avatars
         </Text>
         <div className="flex flex-wrap items-center gap-mid">
           <Avatar variant="gloss" size="small" label="Ada" src={PIN_IMAGE1} alt="" loading="lazy" />
@@ -578,7 +578,7 @@ export function GlossComponentsDemo() {
 
       <div className="flex flex-col gap-small">
         <Text as="h3" variant="base" className="font-medium">
-          Модальные окна
+          Modal windows
         </Text>
         <div className="flex flex-wrap gap-small">
           <Button variant="gloss" onClick={() => setGlossDialogOpen(true)}>
@@ -598,14 +598,14 @@ export function GlossComponentsDemo() {
           <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Gloss Dialog</Dialog.Title>
-            <Dialog.Description>Стеклянная модальная панель с gloss-полями.</Dialog.Description>
+            <Dialog.Description>Glass modal panel with gloss-fields.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body className="flex flex-col gap-plus">
           <Input>
-            <Input.Label>Имя</Input.Label>
-            <Input.Control variant="gloss" name="name" placeholder="Иван" autoComplete="name" />
+            <Input.Label>Name</Input.Label>
+            <Input.Control variant="gloss" name="name" placeholder="Ivan" autoComplete="name" />
           </Input>
           <Input>
             <Input.Label>Email</Input.Label>
@@ -614,10 +614,10 @@ export function GlossComponentsDemo() {
         </Dialog.Body>
         <Dialog.Footer>
           <Button variant="gloss" onClick={() => setGlossDialogOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button variant="primary" onClick={() => setGlossDialogOpen(false)}>
-            Сохранить
+            Save
           </Button>
         </Dialog.Footer>
         </Dialog.Panel>
@@ -627,15 +627,15 @@ export function GlossComponentsDemo() {
         <AlertDialog.Panel>
           <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Удалить проект?</AlertDialog.Title>
+            <AlertDialog.Title>Delete project?</AlertDialog.Title>
             <AlertDialog.Description>
-              Gloss AlertDialog — подтверждение на стеклянной панели.
+              Gloss AlertDialog — confirmation on glass panel.
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant="gloss" onClick={() => setGlossAlertOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button
             type="button"
@@ -643,7 +643,7 @@ export function GlossComponentsDemo() {
             status="danger"
             onClick={() => setGlossAlertOpen(false)}
           >
-            Удалить
+            Delete
           </Button>
         </AlertDialog.Footer>
         </AlertDialog.Panel>
@@ -654,19 +654,19 @@ export function GlossComponentsDemo() {
           <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Gloss Drawer</Drawer.Title>
-            <Drawer.Description>Стеклянная боковая панель.</Drawer.Description>
+            <Drawer.Description>Glass side panel.</Drawer.Description>
           </Drawer.HeadingBlock>
           <Drawer.Close />
         </Drawer.Header>
         <Drawer.Body className="flex flex-col gap-plus">
           <Input>
-            <Input.Label>Заметка</Input.Label>
-            <Input.Control variant="gloss" placeholder="Текст…" />
+            <Input.Label>Note</Input.Label>
+            <Input.Control variant="gloss" placeholder="Text…" />
           </Input>
         </Drawer.Body>
         <Drawer.Footer>
           <Button variant="gloss" onClick={() => setGlossDrawerOpen(false)}>
-            Закрыть
+            Close
           </Button>
         </Drawer.Footer>
         </Drawer.Panel>

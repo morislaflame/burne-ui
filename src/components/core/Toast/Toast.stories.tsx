@@ -29,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Уведомления-тосты. **Императивный API** через `useToast()`. Стек до 3 видимых; новые сверху (для `top-*`) или снизу (для `bottom-*`). Поддерживает промис-состояния, 5 статусов, 6 плейсментов, кастомный таймаут.",
+          "Toast notifications. **Imperative API** via `useToast()`. Stack of up to 3 visible toasts; new ones on top (for `top-*`) or bottom (for `bottom-*`). Supports promise states, 5 statuses, 6 placements, custom timeout.",
       },
     },
   },
@@ -54,7 +54,7 @@ const TOAST_VARIANT_ITEMS: Array<{
   {
     status: "default",
     title: "default",
-    description: "Нейтральное уведомление без иконки статуса.",
+    description: "Neutral notification without a status icon.",
   },
   {
     status: "success",
@@ -67,8 +67,8 @@ const TOAST_VARIANT_ITEMS: Array<{
   },
   {
     status: "info",
-    title: "Справка",
-    description: "Дополнительная информация в нейтрально-информационном тоне.",
+    title: "Help",
+    description: "Additional information in a neutral informational tone.",
   },
   {
     status: "warning",
@@ -77,18 +77,18 @@ const TOAST_VARIANT_ITEMS: Array<{
   },
   {
     status: "info",
-    title: "Доступно обновление",
-    description: "Версия 2.4.0 готова к установке.",
+    title: "Update available",
+    description: "Version 2.4.0 is ready to install.",
     action: (
       <Button size="small" variant="primary" status="info">
-        Обновить
+        Update
       </Button>
     ),
   },
   {
     status: "default",
-    title: "Сохранение…",
-    description: "Дождитесь завершения операции.",
+    title: "Saving…",
+    description: "Wait for the operation to complete.",
     isLoading: true,
   },
 ];
@@ -112,18 +112,18 @@ function ToastVariantsDemo() {
 }
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => <ToastVariantsDemo />,
 };
 
 export const Statuses: Story = {
-  name: "Статусы",
+  name: "Statuses",
   render: function StatusesDemo() {
     const { toast } = useToast();
     return (
       <div className="flex flex-wrap gap-base">
         {STATUSES.map((s) => (
-          <Button key={s} variant="outline" onClick={() => toast.show({ status: s, title: s, description: `Тост со статусом «${s}»` })}>
+          <Button key={s} variant="outline" onClick={() => toast.show({ status: s, title: s, description: `Toast with status «${s}»` })}>
             {s}
           </Button>
         ))}
@@ -135,21 +135,21 @@ export const Statuses: Story = {
 // ─── Quick methods ────────────────────────────────────────────────────────────
 
 export const QuickMethods: Story = {
-  name: "Быстрые методы",
+  name: "Quick methods",
   render: function QuickDemo() {
     const { toast } = useToast();
     return (
       <div className="flex flex-wrap gap-base">
-        <Button onClick={() => toast.success("Файл сохранён", { description: "Синхронизация выполнена" })}>
+        <Button onClick={() => toast.success("File saved", { description: "Sync completed" })}>
           success
         </Button>
-        <Button variant="primary" status="danger" onClick={() => toast.danger("Ошибка соединения", { description: "Проверьте сеть и повторите попытку" })}>
+        <Button variant="primary" status="danger" onClick={() => toast.danger("Connection error", { description: "Check your network and try again" })}>
           danger
         </Button>
-        <Button variant="outline" onClick={() => toast.info("Доступна новая версия")}>
+        <Button variant="outline" onClick={() => toast.info("A new version is available")}>
           info
         </Button>
-        <Button variant="outline" onClick={() => toast.warning("Хранилище почти заполнено")}>
+        <Button variant="outline" onClick={() => toast.warning("Storage is almost full")}>
           warning
         </Button>
       </div>
@@ -157,23 +157,23 @@ export const QuickMethods: Story = {
   },
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "success" }));
-    await expect(screen.getByRole("status")).toHaveTextContent("Файл сохранён");
+    await expect(screen.getByRole("status")).toHaveTextContent("File saved");
   },
 };
 
 // ─── Promise ──────────────────────────────────────────────────────────────────
 
 export const PromiseToast: Story = {
-  name: "Промис (loading → success / error)",
+  name: "Promise (loading → success / error)",
   render: function PromiseDemo() {
     const { toast } = useToast();
 
     const handleSuccess = () => {
-      const p = new Promise<string>((resolve) => setTimeout(() => resolve("Готово"), 2500));
+      const p = new Promise<string>((resolve) => setTimeout(() => resolve("Done"), 2500));
       toast.promise(p, {
-        loading: "Сохранение…",
-        success: (v) => `${v}! Данные сохранены`,
-        error: "Не удалось сохранить",
+        loading: "Saving…",
+        success: (v) => `${v}! Data saved`,
+        error: "Failed to save",
       });
     };
 
@@ -182,9 +182,9 @@ export const PromiseToast: Story = {
         setTimeout(() => reject(new Error("Network error")), 2000),
       );
       toast.promise(p, {
-        loading: "Загрузка файла…",
-        success: "Файл загружен",
-        error: (e) => `Ошибка: ${(e as Error).message}`,
+        loading: "Uploading file…",
+        success: "File uploaded",
+        error: (e) => `Error: ${(e as Error).message}`,
       });
     };
 
@@ -200,7 +200,7 @@ export const PromiseToast: Story = {
 // ─── Stack ────────────────────────────────────────────────────────────────────
 
 export const Stack: Story = {
-  name: "Стек (несколько тостов)",
+  name: "Stack (multiple toasts)",
   render: function StackDemo() {
     const { toast } = useToast();
     const statuses: ToastStatus[] = ["success", "info", "warning", "danger"];
@@ -208,12 +208,12 @@ export const Stack: Story = {
     const addToast = () => {
       const s = statuses[i % statuses.length];
       i++;
-      toast.show({ status: s, title: `Уведомление #${i}`, description: "Появляются в стеке" });
+      toast.show({ status: s, title: `Notification #${i}`, description: "They appear in the stack" });
     };
     return (
       <div className="flex gap-base">
-        <Button onClick={addToast}>Добавить тост</Button>
-        <Button variant="outline" onClick={addToast}>Ещё один</Button>
+        <Button onClick={addToast}>Add toast</Button>
+        <Button variant="outline" onClick={addToast}>Another one</Button>
       </div>
     );
   },
@@ -227,7 +227,7 @@ const PLACEMENTS: ToastPlacement[] = [
 ];
 
 export const AllPlacements: Story = {
-  name: "Все плейсменты",
+  name: "All placements",
   render: function AllPlacementsDemo() {
     const { toast } = useToast();
     return (
@@ -240,7 +240,7 @@ export const AllPlacements: Story = {
               toast.show({
                 status: "info",
                 title: p,
-                description: "Это уведомление",
+                description: "This notification",
                 placement: p,
               })
             }
@@ -256,44 +256,44 @@ export const AllPlacements: Story = {
 // ─── With action ──────────────────────────────────────────────────────────────
 
 export const WithAction: Story = {
-  name: "С кнопкой действия",
+  name: "With action button",
   render: function WithActionDemo() {
     const { toast } = useToast();
     const show = () =>
       toast.show({
         status: "info",
-        title: "Доступно обновление",
-        description: "Версия 2.4.0 готова к установке",
+        title: "Update available",
+        description: "Version 2.4.0 is ready to install",
         action: (
           <Button size="small" variant="primary" status="info">
-            Обновить
+            Update
           </Button>
         ),
         timeout: 8000,
       });
-    return <Button onClick={show}>Показать с действием</Button>;
+    return <Button onClick={show}>Show with action</Button>;
   },
 };
 
 // ─── Custom timeout ───────────────────────────────────────────────────────────
 
 export const CustomTimeout: Story = {
-  name: "Кастомный таймаут",
+  name: "Custom timeout",
   render: function CustomTimeoutDemo() {
     const { toast } = useToast();
     return (
       <div className="flex flex-wrap gap-base">
-        <Button onClick={() => toast.success("Закроется через 1 сек", { timeout: 1000 })}>
-          1 сек
+        <Button onClick={() => toast.success("Closes in 1 sec", { timeout: 1000 })}>
+          1 sec
         </Button>
-        <Button onClick={() => toast.info("Закроется через 8 сек", { timeout: 8000 })}>
-          8 сек
+        <Button onClick={() => toast.info("Closes in 8 sec", { timeout: 8000 })}>
+          8 sec
         </Button>
         <Button
           variant="outline"
-          onClick={() => toast.warning("Не закроется сам", { timeout: 0 })}
+          onClick={() => toast.warning("Will not auto-close", { timeout: 0 })}
         >
-          Без таймаута
+          No timeout
         </Button>
       </div>
     );
@@ -303,18 +303,18 @@ export const CustomTimeout: Story = {
 // ─── Compound API ─────────────────────────────────────────────────────────────
 
 export const CompoundApi: Story = {
-  name: "Compound API (управляемый)",
+  name: "Compound API (controlled)",
   render: function CompoundApiDemo() {
     const [show, setShow] = useState(false);
     return (
       <div className="flex gap-base">
-        <Button onClick={() => setShow(true)}>Показать compound</Button>
+        <Button onClick={() => setShow(true)}>Show compound</Button>
         {show && (
           <div className="fixed bottom-4 right-4 z-[300] w-[360px]">
             <Toast status="success" onClose={() => setShow(false)}>
               <Toast.Indicator />
-              <Toast.Title>Готово!</Toast.Title>
-              <Toast.Description>Данные успешно сохранены</Toast.Description>
+              <Toast.Title>Done!</Toast.Title>
+              <Toast.Description>Data saved successfully</Toast.Description>
               <Toast.CloseButton />
             </Toast>
           </div>
@@ -327,7 +327,7 @@ export const CompoundApi: Story = {
 // ─── Dismiss programmatically ─────────────────────────────────────────────────
 
 export const DismissProgrammatically: Story = {
-  name: "Закрытие по ID",
+  name: "Dismiss by ID",
   render: function DismissDemo() {
     const { toast } = useToast();
     const [lastId, setLastId] = useState<string | null>(null);
@@ -335,11 +335,11 @@ export const DismissProgrammatically: Story = {
       <div className="flex gap-base">
         <Button
           onClick={() => {
-            const id = toast.show({ status: "info", title: "Постоянный тост", timeout: 0 });
+            const id = toast.show({ status: "info", title: "Persistent toast", timeout: 0 });
             setLastId(id);
           }}
         >
-          Показать
+          Show
         </Button>
         <Button
           variant="primary"
@@ -350,7 +350,7 @@ export const DismissProgrammatically: Story = {
             setLastId(null);
           }}
         >
-          Закрыть по ID
+          Dismiss by ID
         </Button>
       </div>
     );
@@ -358,11 +358,11 @@ export const DismissProgrammatically: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Toast (imperative API)",
+        story: "classNames customization for Toast (imperative API)",
       },
     },
   },
@@ -373,8 +373,8 @@ export const CustomClassNames: Story = {
         onClick={() =>
           toast.show({
             status: "info",
-            title: "Полная кастомизация Toast",
-            description: "Слоты root, title, description через classNames.",
+            title: "Full Toast customization",
+            description: "Slots root, title, description via classNames.",
             classNames: {
               root: "rounded-large border-info/50 bg-info/10 ring-1 ring-info/20",
               indicator: "text-info",
@@ -384,7 +384,7 @@ export const CustomClassNames: Story = {
           })
         }
       >
-        Показать toast с classNames
+        Show toast with classNames
       </Button>
     );
   },
@@ -393,7 +393,7 @@ export const CustomClassNames: Story = {
 const TOAST_SIZES: ToastSize[] = ["small", "base", "mid", "large"];
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: function ToastSizesDemo() {
     const { toast } = useToast();
     return (
@@ -408,7 +408,7 @@ export const Sizes: Story = {
                 status: "info",
                 size,
                 title: `size=${size}`,
-                description: "Padding, иконка, типографика и ширина viewport.",
+                description: "Padding, icon, typography, and viewport width.",
               })
             }
           >

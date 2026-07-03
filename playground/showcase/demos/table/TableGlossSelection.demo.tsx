@@ -10,26 +10,26 @@ export function TableGlossSelectionDemo() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<number>([2]));
   const selectedLabel =
     selectedKeys === "all"
-      ? "Все"
+      ? "All"
       : (selectedKeys as Set<number>).size > 0
         ? Array.from(selectedKeys as Set<number>).join(", ")
-        : "Нет";
+        : "No";
 
   return (
     <div className="flex flex-col gap-mid">
       <Table variant="gloss" className="w-full">
         <Table.ScrollContainer>
           <Table.Content
-            aria-label="Gloss таблица с выбором"
+            aria-label="Gloss selection table"
             className="min-w-[28rem]"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
           >
             <Table.Header>
-              <Table.Column isRowHeader>Имя</Table.Column>
-              <Table.Column>Роль</Table.Column>
-              <Table.Column>Статус</Table.Column>
+              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column>Role</Table.Column>
+              <Table.Column>Status</Table.Column>
             </Table.Header>
             <Table.Body items={TABLE_ROWS}>
               {(row: TableRow) => (
@@ -46,7 +46,7 @@ export function TableGlossSelectionDemo() {
         </Table.ScrollContainer>
       </Table>
       <Text as="p" variant="small" className="text-muted">
-        Hover и выбор — <span className="text-foreground">primary-tint</span>. Выбранные id:{" "}
+        Hover and choice — <span className="text-foreground">primary-tint</span>. Selected id:{" "}
         <span className="font-medium text-foreground">{selectedLabel}</span>
       </Text>
     </div>

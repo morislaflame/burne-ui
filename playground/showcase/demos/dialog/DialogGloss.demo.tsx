@@ -19,14 +19,14 @@ export function DialogGlossDemo() {
           <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Gloss Dialog</Dialog.Title>
-            <Dialog.Description>Стеклянная модальная панель.</Dialog.Description>
+            <Dialog.Description>Glass modal panel.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body className="flex flex-col gap-plus">
           <Input>
-            <Input.Label>Имя</Input.Label>
-            <Input.Control variant="gloss" name="gloss-name" placeholder="Иван" autoComplete="name" />
+            <Input.Label>Name</Input.Label>
+            <Input.Control variant="gloss" name="gloss-name" placeholder="Ivan" autoComplete="name" />
           </Input>
           <Input>
             <Input.Label>Email</Input.Label>
@@ -40,10 +40,10 @@ export function DialogGlossDemo() {
         </Dialog.Body>
         <Dialog.Footer>
           <Button variant="gloss" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button variant="primary" onClick={() => setOpen(false)}>
-            Сохранить
+            Save
           </Button>
         </Dialog.Footer>
         </Dialog.Panel>

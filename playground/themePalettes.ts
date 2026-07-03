@@ -1,21 +1,21 @@
 import type { ThemeColors, ThemeStatusForegrounds } from "./themeDefaults";
 
-// ─── Tint formulas (как в tokens/styles.css) ─────────────────────────────────
+// ─── Tint formulas (as in tokens/styles.css) ─────────────────────────────────
 
 
-/** Как в tokens/styles.css — следует при смене primary через var(). */
+/** As in tokens/styles.css — follows when changing primary through var(). */
 export const PRIMARY_TINT = "color-mix(in oklab, var(--color-primary) 20%, transparent)";
 export const PRIMARY_TINT_STRONG = "color-mix(in oklab, var(--color-primary) 25%, transparent)";
 
-/** Bold — mix с surface на тёмном фоне. */
+/** Bold — mix with surface on a dark background. */
 export const BOLD_PRIMARY_TINT = "color-mix(in oklab, var(--color-primary) 16%, var(--color-surface))";
 export const BOLD_PRIMARY_TINT_STRONG = "color-mix(in oklab, #4361ee 24%, var(--color-surface))";
 
-/** Autumn — тёплый strong-tint из Sunflower Gold. */
+/** Autumn — warm strong-tint from Sunflower Gold. */
 export const AUTUMN_PRIMARY_TINT = "color-mix(in oklab, var(--color-primary) 14%, var(--color-surface))";
 export const AUTUMN_PRIMARY_TINT_STRONG = "color-mix(in oklab, #fcbf49 22%, var(--color-surface))";
 
-/** Как в tokens/styles.css — border от foreground (dark и light). */
+/** As in tokens/styles.css — border from foreground (dark and light). */
 export const BORDER_COLOR_CSS_FORMULA =
   "color-mix(in oklab, var(--color-foreground) 12%, transparent)";
 
@@ -236,7 +236,7 @@ export const SLATE_LIGHT_COLORS: ThemeColors = {
 // ─── Extended palettes ──────────────────────────────────────────────────────────
 
 /**
- * Toffee — тёплая кремово-коричневая светлая тема.
+ * Toffee — warm creamy brown light theme.
  * Palette: Almond Cream → Desert Sand → Tan → Faded Copper → Coffee Bean → Toffee Brown
  */
 export const TOFFEE_LIGHT_COLORS: ThemeColors = {
@@ -263,8 +263,8 @@ export const TOFFEE_LIGHT_COLORS: ThemeColors = {
 };
 
 /**
- * Berry — светлая тема в тонах спелой ягоды.
- * Самые светлые цвета палитры — в роли фонов, Rich Mahogany — текст, Berry Crush — акцент.
+ * Berry — light theme in tones of ripe berries.
+ * The lightest colors in the palette serve as backgrounds, Rich Mahogany — text, Berry Crush — accent.
  * Palette: Almond Silk → Rosy Taupe → Berry Crush → Burgundy → Rich Mahogany
  */
 export const BERRY_LIGHT_COLORS: ThemeColors = {
@@ -291,7 +291,7 @@ export const BERRY_LIGHT_COLORS: ThemeColors = {
 };
 
 /**
- * Paprika — пряная светлая тема: тёплые нейтральные + яркий оранжево-красный акцент.
+ * Paprika — spicy light theme: warm neutrals + bright orange-red accent.
  * Palette: Dust Grey ≈ Bone → Powder Blush → Spicy Paprika → Burnt Tangerine
  */
 export const PAPRIKA_LIGHT_COLORS: ThemeColors = {
@@ -318,8 +318,8 @@ export const PAPRIKA_LIGHT_COLORS: ThemeColors = {
 };
 
 /**
- * Cherry — светлая тема в тонах чёрной вишни.
- * Производные светлые фоны из палитры, тёмные красные тона — текст и акцент.
+ * Cherry — light theme in black cherry tones.
+ * Derived light backgrounds from the palette, dark red tones - text and accent.
  * Palette: Brown Red → Dark Wine → Black Cherry → Rich Mahogany (#38040e / #250902)
  */
 export const CHERRY_LIGHT_COLORS: ThemeColors = {

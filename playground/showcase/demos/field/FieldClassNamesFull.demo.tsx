@@ -15,8 +15,8 @@ export function FieldClassNamesFullDemo() {
     >
       <Field.Label htmlFor="field-demo-email">Email</Field.Label>
       <Input.Control id="field-demo-email" placeholder="you@example.com" status="danger" />
-      <Field.Hint>Мы не передаём адрес третьим лицам.</Field.Hint>
-      <Field.Error>Введите корректный email.</Field.Error>
+      <Field.Hint>We do not share the address with third parties.</Field.Hint>
+      <Field.Error>Please enter correct email.</Field.Error>
     </Field>
   );
 }
@@ -31,19 +31,19 @@ export function FieldSetClassNamesFullDemo() {
     >
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Контактные данные</Label>
-          <Field.Hint as="span">classNames на Field.Set</Field.Hint>
+          <Label>Contact details</Label>
+          <Field.Hint as="span">classNames on Field.Set</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
       <Field.Group>
         <Input>
-          <Input.Label>Телефон</Input.Label>
+          <Input.Label>Telephone</Input.Label>
           <Input.Control placeholder="+7 …" />
         </Input>
       </Field.Group>
       <Field.Actions>
         <Button type="button" size="base">
-          Сохранить
+          Save
         </Button>
       </Field.Actions>
     </Field.Set>

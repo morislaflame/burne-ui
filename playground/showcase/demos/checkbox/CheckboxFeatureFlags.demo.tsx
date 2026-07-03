@@ -16,8 +16,8 @@ export function CheckboxFeatureFlagsDemo() {
         />
       </Checkbox.Control>
       <Checkbox.Content>
-        <Checkbox.Label>Двухфакторная аутентификация</Checkbox.Label>
-        <Checkbox.Hint>Форма через classNames.indicator + indicatorFill на root.</Checkbox.Hint>
+        <Checkbox.Label>Two-factor authentication</Checkbox.Label>
+        <Checkbox.Hint>Form via classNames.indicator + indicatorFill on root.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   );

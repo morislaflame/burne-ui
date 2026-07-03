@@ -6,18 +6,18 @@ export function ToastStatusesDemo() {
 
   return (
     <div className="flex flex-wrap gap-small">
-      <Button variant="outline" onClick={() => toast.show({ title: "Сохранено", status: "success" })}>
+      <Button variant="outline" onClick={() => toast.show({ title: "Saved", status: "success" })}>
         Success
       </Button>
-      <Button variant="outline" onClick={() => toast.show({ title: "Ошибка сети", status: "danger" })}>
+      <Button variant="outline" onClick={() => toast.show({ title: "Network error", status: "danger" })}>
         Danger
       </Button>
       <Button
         variant="outline"
         onClick={() =>
           toast.show({
-            title: "Обновление",
-            description: "Доступна новая версия библиотеки.",
+            title: "Update",
+            description: "New version of library available.",
             status: "info",
           })
         }
@@ -28,8 +28,8 @@ export function ToastStatusesDemo() {
         variant="outline"
         onClick={() =>
           toast.show({
-            title: "Лимит скоро",
-            description: "Осталось 10% квоты.",
+            title: "Limit coming soon",
+            description: "10% of quota left.",
             status: "warning",
           })
         }

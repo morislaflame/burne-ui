@@ -10,7 +10,7 @@ export function ToastGlossDemo() {
       onClick={() =>
         toast.show({
           title: "Gloss toast",
-          description: "Стеклянное уведомление с hover-lift.",
+          description: "Glass notice with hover-lift.",
           status: "info",
           variant: "gloss",
         })

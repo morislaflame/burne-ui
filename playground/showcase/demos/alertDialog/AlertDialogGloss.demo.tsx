@@ -21,15 +21,15 @@ export function AlertDialogGlossDemo() {
         <AlertDialog.Panel>
           <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Удалить элемент?</AlertDialog.Title>
+            <AlertDialog.Title>Remove element?</AlertDialog.Title>
             <AlertDialog.Description>
-              Gloss AlertDialog — подтверждение на стеклянной панели.
+              Gloss AlertDialog — confirmation on glass panel.
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant="gloss" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button
             type="button"
@@ -37,7 +37,7 @@ export function AlertDialogGlossDemo() {
             status="danger"
             onClick={() => setOpen(false)}
           >
-            Удалить
+            Delete
           </Button>
         </AlertDialog.Footer>
         </AlertDialog.Panel>

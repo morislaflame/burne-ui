@@ -5,9 +5,9 @@ import { Badge } from "@/components/core/Badge";
 import { ListBox } from "@/components/core/ListBox";
 
 const COMMANDS = [
-  { value: "search", label: "Поиск", hint: "Найти компонент", shortcut: "⌘ K" },
-  { value: "new", label: "Создать", hint: "Новый файл", shortcut: "⌘ N" },
-  { value: "settings", label: "Настройки", hint: "Параметры проекта", shortcut: "⌘ ," },
+  { value: "search", label: "Search", hint: "Find component", shortcut: "⌘ K" },
+  { value: "new", label: "Create", hint: "New file", shortcut: "⌘ N" },
+  { value: "settings", label: "Settings", hint: "Project Options", shortcut: "⌘ ," },
 ] as const;
 
 export function ListBoxCommandPaletteDemo() {
@@ -16,7 +16,7 @@ export function ListBoxCommandPaletteDemo() {
   return (
     <ListBox className="w-full max-w-sm" value={value} onValueChange={(v) => setValue(v as string)}>
       <ListBox.Section>
-        <ListBox.Header>Команды</ListBox.Header>
+        <ListBox.Header>Teams</ListBox.Header>
         {COMMANDS.map((cmd) => (
           <ListBox.Item key={cmd.value} value={cmd.value}>
             <ListBox.Label>{cmd.label}</ListBox.Label>

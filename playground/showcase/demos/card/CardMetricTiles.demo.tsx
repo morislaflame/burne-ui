@@ -2,8 +2,8 @@ import { Card } from "@/components/core/Card";
 import { Text } from "@/components/core/Text";
 
 const METRICS = [
-  { label: "Активные пользователи", value: "12.4k", delta: "+8%" },
-  { label: "Конверсия", value: "3.2%", delta: "+0.4%" },
+  { label: "Active users", value: "12.4k", delta: "+8%" },
+  { label: "Conversion", value: "3.2%", delta: "+0.4%" },
   { label: "MRR", value: "₽840k", delta: "+12%" },
 ] as const;
 
@@ -22,7 +22,7 @@ export function CardMetricTilesDemo() {
             </Text>
             <Text as="span" variant="tools" className="text-muted">
               {" "}
-              за 30 дней
+              in 30 days
             </Text>
           </Card.Body>
         </Card>

@@ -7,11 +7,11 @@ export function TableBasicDemo() {
   return (
     <Table>
       <Table.ScrollContainer>
-        <Table.Content aria-label="Команда" className="min-w-[480px]">
+        <Table.Content aria-label="Team" className="min-w-[480px]">
           <Table.Header>
-            <Table.Column isRowHeader>Имя</Table.Column>
-            <Table.Column>Роль</Table.Column>
-            <Table.Column>Статус</Table.Column>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
           </Table.Header>
           <Table.Body items={TABLE_ROWS}>
             {(row: TableRow) => (

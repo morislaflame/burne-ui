@@ -1,6 +1,6 @@
 /**
- * Hover-подъём и squeeze при нажатии — GSAP;
- * Регистры подъёма по hover совпадают с `Button` (`animateInteractiveHoverLift`, `shouldSkipInteractiveHoverLift`).
+ * Hover lift and press squeeze — GSAP;
+ * Hover lift registry matches `Button` (`animateInteractiveHoverLift`, `shouldSkipInteractiveHoverLift`).
  */
 
 import { useEffect, useMemo, type MutableRefObject, type RefObject } from "react";
@@ -11,44 +11,44 @@ import { getMotionConfig } from "./motionConfig";
 import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
 
 /**
- * Значения `box-shadow` для анимации при hover.
- * `null` означает «не анимировать тень» (для outline / ghost вариантов).
- * Берём из CSS-переменных (поддерживают тему), но GSAP требует конкретную строку —
- * поэтому передаём их явно через `getComputedStyle` при вызове.
+ * `box-shadow` values for hover animation.
+ * `null` means "do not animate shadow" (for outline / ghost variants).
+ * Read from CSS variables (theme-aware), but GSAP needs a concrete string —
+ * so pass them explicitly via `getComputedStyle` at call time.
  */
 export interface HoverShadowConfig {
   /**
-   * box-shadow в покое (второй уровень — base; hover-only — см. `shadowNone`).
-   * Если undefined — используется `shadowNone()` (не `none`: иначе transition не работает).
+   * box-shadow at rest (second level — base; hover-only — see `shadowNone`).
+   * If undefined — `shadowNone()` is used (not `none`: otherwise transition breaks).
    */
   idle?: string;
-  /** box-shadow при hover. */
+  /** box-shadow on hover. */
   hover: string;
 }
 
-/** Считывает CSS-переменную тени с корня документа. */
+/** Reads shadow CSS variable from document root. */
 function readShadowVar(varName: string): string {
   if (typeof window === "undefined") return "none";
   return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "none";
 }
 
-/** «Пустая» тень: визуально как без тени, но интерполируется с `--shadow-base`. */
+/** "Empty" shadow: visually shadowless, but interpolates with `--shadow-base`. */
 export const shadowNone = () => readShadowVar("--shadow-none");
 
 export const shadowBase = () => readShadowVar(SHADOW_CSS_VAR.base);
 export const shadowMid = () => readShadowVar(SHADOW_CSS_VAR.mid);
 export const shadowLarge = () => readShadowVar(SHADOW_CSS_VAR.large);
 
-/** Значение `box-shadow` для ступени тени из текущей темы. */
+/** `box-shadow` value for a shadow tier from the current theme. */
 export function readShadowSize(size: ShadowSize): string {
   if (size === "none") return shadowNone();
   return readShadowVar(SHADOW_CSS_VAR[size]);
 }
 
 /**
- * Выставляет `--el-shadow` на элементе (inline, перекрывает локальный сброс `animate-shadow`).
- * Вызывайте после маунта для компонентов с постоянной тенью (Alert, Badge, Tooltip).
- * Для hover-only тени достаточно класса `animate-shadow` (idle = `--shadow-none`).
+ * Sets `--el-shadow` on the element (inline, overrides local `animate-shadow` reset).
+ * Call after mount for components with a persistent shadow (Alert, Badge, Tooltip).
+ * For hover-only shadow, `animate-shadow` class is enough (idle = `--shadow-none`).
  */
 export function initElementShadow(element: HTMLElement | null, shadow: string): void {
   if (!element) return;
@@ -61,7 +61,7 @@ export function prefersReducedInteractiveHoverLift(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** Viewport ≤ tablet (Tailwind `lg`), touch без hover или coarse pointer — без hover-lift. */
+/** Viewport ≤ tablet (Tailwind `lg`), touch without hover or coarse pointer — no hover-lift. */
 const HOVER_LIFT_TOUCH_VIEWPORT_MQL =
   "(max-width: 1024px), (hover: none), (pointer: coarse)";
 
@@ -70,33 +70,33 @@ function isTouchOrNarrowViewport(): boolean {
   return window.matchMedia(HOVER_LIFT_TOUCH_VIEWPORT_MQL).matches;
 }
 
-/** Hover-подъём и смена тени: off при reduced-motion, touch и viewport ≤ tablet. */
+/** Hover lift and shadow change: off for reduced-motion, touch and viewport ≤ tablet. */
 export function shouldSkipInteractiveHoverLift(): boolean {
   return prefersReducedInteractiveHoverLift() || isTouchOrNarrowViewport() || !getMotionConfig().enableHoverLift;
 }
 
 //
-// Вместо фиксированного процента сжатия/подъёма используем фиксированное
-// абсолютное смещение в пикселях. Это даёт правильное ощущение на любом размере:
+// Instead of a fixed squeeze/lift percentage, use a fixed
+// absolute pixel offset. This feels right at any size:
 //
 //   scale_delta = TARGET_PX / max(width, height)
 //
-// Маленькая кнопка  (120 × 36): delta = 2.4 / 120 = 0.020 → squeeze 0.980
-// Широкий инпут    (280 × 40): delta = 2.4 / 280 = 0.009 → squeeze 0.991
+// Small button     (120 × 36): delta = 2.4 / 120 = 0.020 → squeeze 0.980
+// Wide input       (280 × 40): delta = 2.4 / 280 = 0.009 → squeeze 0.991
 // Disclosure       (500 × 48): delta = 2.4 / 500 = 0.005 → squeeze 0.995
-// Полноэкранный    (1200 × 60): delta = 2.4 / 1200 = 0.002 → squeeze 0.998
+// Full-width       (1200 × 60): delta = 2.4 / 1200 = 0.002 → squeeze 0.998
 //
-// Верхняя граница = исходный фиксированный дефолт (сохраняет поведение малых кнопок).
-// Нижняя граница = всегда заметное, но не нулевое движение.
+// Upper bound = original fixed default (preserves small-button behavior).
+// Lower bound = always noticeable but non-zero motion.
 
-/** Абсолютное пиксельное смещение — «ощущение» сжатия в px с каждой стороны. */
+/** Absolute pixel offset — squeeze "feel" in px from each side. */
 const ADAPTIVE_SQUEEZE_TARGET_PX = 2.4;
-/** Минимально заметное сжатие (очень большие элементы). */
+/** Minimally noticeable squeeze (very large elements). */
 const ADAPTIVE_SQUEEZE_MIN_DELTA = 0.003;
 
-/** Абсолютное пиксельное смещение для hover-подъёма. */
+/** Absolute pixel offset for hover lift. */
 const ADAPTIVE_LIFT_TARGET_PX = 1.8;
-/** Минимально заметный подъём. */
+/** Minimally noticeable lift. */
 const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
 
 function adaptiveSqueezeScale(element: HTMLElement): number {
@@ -110,19 +110,19 @@ function adaptiveSqueezeScale(element: HTMLElement): number {
   return 1 - delta;
 }
 
-/** Адаптивный scale для hover-lift (для gloss-combined motion). */
+/** Adaptive scale for hover-lift (for gloss-combined motion). */
 export function resolveAdaptiveHoverLiftScale(element: HTMLElement): number {
   return adaptiveHoverLiftScale(element);
 }
 
-/** Адаптивный scale для press-squeeze (для gloss-combined motion). */
+/** Adaptive scale for press-squeeze (for gloss-combined motion). */
 export function resolveAdaptivePressSqueezeScale(element: HTMLElement): number {
   return adaptiveSqueezeScale(element);
 }
 
 /**
- * Возвращает scale > 1 для hover-lift, адаптированный под фактический размер элемента.
- * Передайте явный `liftScale`, чтобы переопределить (напр. Badge.Anchor).
+ * Returns scale > 1 for hover-lift, adapted to the element's actual size.
+ * Pass explicit `liftScale` to override (e.g. Badge.Anchor).
  */
 function adaptiveHoverLiftScale(element: HTMLElement): number {
   const { width, height } = element.getBoundingClientRect();
@@ -136,9 +136,9 @@ function adaptiveHoverLiftScale(element: HTMLElement): number {
 
 
 /**
- * Останавливает активные tweens, затем плавно масштабирует только по scale (без смещения).
- * Если `liftScale` не передан — вычисляется адаптивно по размеру элемента.
- * Опционально: `shadow` — конфиг для плавного изменения `box-shadow` вместе со scale.
+ * Stops active tweens, then smoothly scales by scale only (no translation).
+ * If `liftScale` is omitted — computed adaptively from element size.
+ * Optional: `shadow` — config for smooth `box-shadow` change along with scale.
  */
 export function animateInteractiveHoverLift(
   element: HTMLElement,
@@ -175,18 +175,18 @@ export function animateInteractiveHoverLift(
 }
 
 /**
- * Короткий «сжимающий» импульс при pointer down.
- * Степень сжатия автоматически адаптируется к размеру элемента.
- * Возвращает промис окончания анимации.
+ * Short squeeze impulse on pointer down.
+ * Squeeze amount adapts automatically to element size.
+ * Returns a promise that resolves when the animation ends.
  *
- * При `pointerInside` и активном hover-lift release идёт сразу к hover-scale
- * (без паузы на scale 1 и отдельного hover-tween).
+ * With `pointerInside` and active hover-lift, release goes straight to hover-scale
+ * (no pause at scale 1 and no separate hover tween).
  */
 export type AnimateInteractivePressSqueezeOptions = {
   pointerInside?: boolean;
   liftScale?: number;
   shadow?: HoverShadowConfig;
-  /** Вызывается в момент начала release-фазы (перед tween к rest/hover). */
+  /** Called at the start of the release phase (before tween to rest/hover). */
   onReleaseStart?: () => void;
 };
 
@@ -250,14 +250,14 @@ function cameFromOutsideContainer(root: HTMLElement, related: EventTarget | null
   return !root.contains(related);
 }
 
-/** Возвращённые обработчики вешайте на тот же корень, где был бы `pointer` у Button (`currentTarget`). */
+/** Attach returned handlers to the same root where Button would use `pointer` (`currentTarget`). */
 export function useInteractiveHoverLiftContainerHandlers<
   Element extends HTMLElement = HTMLElement,
 >(
   liftedRef: RefObject<HTMLElement | null>,
   enabled: boolean,
   pointerInsideRef?: MutableRefObject<boolean>,
-  /** Явный scale подъёма; `undefined` (дефолт) — адаптивный по размеру элемента. */
+  /** Explicit lift scale; `undefined` (default) — adaptive by element size. */
   liftScale?: number,
   shadow?: HoverShadowConfig,
 ): {

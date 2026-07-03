@@ -56,13 +56,13 @@ export const Playground: Story = {
   render: (args) => (
     <RadioGroup {...args} defaultValue="card">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
-        <RadioGroup.Hint>Можно выбрать только один вариант.</RadioGroup.Hint>
+        <RadioGroup.Label>Payment method</RadioGroup.Label>
+        <RadioGroup.Hint>Only one option can be selected.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List>
-        <Radio value="card" label="Банковская карта" />
-        <Radio value="cash" label="Наличные" />
-        <Radio value="invoice" label="Счёт для юрлица" />
+        <Radio value="card" label="Bank card" />
+        <Radio value="cash" label="Cash" />
+        <Radio value="invoice" label="Invoice for business" />
       </RadioGroup.List>
     </RadioGroup>
   ),
@@ -75,28 +75,28 @@ export const Playground: Story = {
 };
 
 export const CardLayout: Story = {
-  name: "Карточки (compound Radio)",
+  name: "Cards (compound Radio)",
   render: () => {
     const formats = [
       {
         value: "online",
-        title: "Онлайн",
-        hint: "Трансляция и чат в реальном времени",
-        meta: "Бесплатно",
+        title: "Online",
+        hint: "Live stream and real-time chat",
+        meta: "Free",
         icon: IoVideocamOutline,
       },
       {
         value: "hybrid",
-        title: "Гибрид",
-        hint: "Зал + онлайн-доступ для удалённых участников",
-        meta: "от 2 900 ₽",
+        title: "Hybrid",
+        hint: "Venue + online access for remote participants",
+        meta: "from 2,900 ₽",
         icon: IoGlobeOutline,
       },
       {
         value: "offline",
-        title: "Очно",
-        hint: "Живое общение, нетворкинг и кофе-брейки",
-        meta: "от 4 500 ₽",
+        title: "In person",
+        hint: "Live networking and coffee breaks",
+        meta: "from 4,500 ₽",
         icon: IoPeopleOutline,
       },
     ] as const;
@@ -104,8 +104,8 @@ export const CardLayout: Story = {
     return (
       <RadioGroup defaultValue="hybrid" name="event-format" className="max-w-2xl">
         <RadioGroup.Legend>
-          <RadioGroup.Label>Формат участия</RadioGroup.Label>
-          <RadioGroup.Hint>Выберите, как вы хотите присоединиться к мероприятию.</RadioGroup.Hint>
+          <RadioGroup.Label>Participation format</RadioGroup.Label>
+          <RadioGroup.Hint>Choose how you want to join the event.</RadioGroup.Hint>
         </RadioGroup.Legend>
         <div className="grid gap-mid md:grid-cols-3">
           {formats.map((option) => (
@@ -132,12 +132,12 @@ export const CardLayout: Story = {
 };
 
 export const Horizontal: Story = {
-  name: "Горизонтально",
+  name: "Horizontal",
   render: () => (
     <RadioGroup defaultValue="s">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Размер</RadioGroup.Label>
-        <RadioGroup.Hint>Пункты в ряд с переносом при нехватке места.</RadioGroup.Hint>
+        <RadioGroup.Label>Size</RadioGroup.Label>
+        <RadioGroup.Hint>Items in a row with wrap when space is tight.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List orientation="horizontal">
         <Radio value="s" label="S" />
@@ -150,30 +150,30 @@ export const Horizontal: Story = {
 };
 
 export const WithDescriptions: Story = {
-  name: "С описаниями",
+  name: "With descriptions",
   render: () => (
     <RadioGroup defaultValue="courier">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Доставка</RadioGroup.Label>
+        <RadioGroup.Label>Delivery</RadioGroup.Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
-        <Radio value="courier" label="Курьер" hint="1–2 рабочих дня" />
-        <Radio value="pickup" label="Самовывоз" hint="Бесплатно, сегодня" />
-        <Radio value="post" label="Почта" hint="5–7 дней" />
+        <Radio value="courier" label="Courier" hint="1–2 business days" />
+        <Radio value="pickup" label="Pickup" hint="Free, today" />
+        <Radio value="post" label="Mail" hint="5–7 days" />
       </RadioGroup.List>
     </RadioGroup>
   ),
 };
 
 export const Required: Story = {
-  name: "Обязательное поле",
+  name: "Required field",
   render: () => (
     <RadioGroup isRequired>
       <RadioGroup.Legend>
-        <RadioGroup.Label>Тариф</RadioGroup.Label>
+        <RadioGroup.Label>Plan</RadioGroup.Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
-        <Radio value="free" label="Бесплатный" />
+        <Radio value="free" label="Free" />
         <Radio value="pro" label="Pro" />
       </RadioGroup.List>
     </RadioGroup>
@@ -181,38 +181,38 @@ export const Required: Story = {
 };
 
 export const WithError: Story = {
-  name: "С ошибкой",
+  name: "With error",
   render: () => (
     <RadioGroup isRequired>
       <RadioGroup.Legend>
-        <RadioGroup.Label>Тариф</RadioGroup.Label>
-        <RadioGroup.Hint>Нужно выбрать один вариант перед продолжением.</RadioGroup.Hint>
+        <RadioGroup.Label>Plan</RadioGroup.Label>
+        <RadioGroup.Hint>Select one option before continuing.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.Group>
         <RadioGroup.List>
-          <Radio value="free" label="Бесплатный" />
+          <Radio value="free" label="Free" />
           <Radio value="pro" label="Pro" />
         </RadioGroup.List>
-        <RadioGroup.Error>Выберите тариф, чтобы продолжить.</RadioGroup.Error>
+        <RadioGroup.Error>Select a plan to continue.</RadioGroup.Error>
       </RadioGroup.Group>
     </RadioGroup>
   ),
 };
 
 export const Controlled: Story = {
-  name: "Контролируемый",
+  name: "Controlled",
   render: function Controlled() {
     const [value, setValue] = useState<string | undefined>("card");
 
     return (
       <RadioGroup value={value} onValueChange={setValue}>
         <RadioGroup.Legend>
-          <RadioGroup.Label>Контролируемый</RadioGroup.Label>
-          <RadioGroup.Hint>{`Выбрано: ${value ?? "—"}`}</RadioGroup.Hint>
+          <RadioGroup.Label>Controlled</RadioGroup.Label>
+          <RadioGroup.Hint>{`Selected: ${value ?? "—"}`}</RadioGroup.Hint>
         </RadioGroup.Legend>
         <RadioGroup.List>
-          <Radio value="card" label="Карта" />
-          <Radio value="cash" label="Наличные" />
+          <Radio value="card" label="Card" />
+          <Radio value="cash" label="Cash" />
         </RadioGroup.List>
       </RadioGroup>
     );
@@ -220,11 +220,11 @@ export const Controlled: Story = {
 };
 
 export const WithoutDescription: Story = {
-  name: "Без подзаголовка",
+  name: "Without subtitle",
   render: () => (
     <RadioGroup defaultValue="m">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Размер</RadioGroup.Label>
+        <RadioGroup.Label>Size</RadioGroup.Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="s" label="S" />
@@ -236,7 +236,7 @@ export const WithoutDescription: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры small · base · mid · large",
+  name: "Sizes small · base · mid · large",
   render: () => (
     <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
       {COMPONENT_SIZES.map((size) => (
@@ -244,13 +244,13 @@ export const Sizes: Story = {
           <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
           <RadioGroup size={size} defaultValue="card">
             <RadioGroup.Legend>
-              <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
+              <RadioGroup.Label>Payment method</RadioGroup.Label>
               <RadioGroup.Hint>size={size}</RadioGroup.Hint>
             </RadioGroup.Legend>
             <RadioGroup.List>
-              <Radio value="card" label="Банковская карта" />
-              <Radio value="cash" label="Наличные" />
-              <Radio value="invoice" label="Счёт для юрлица" />
+              <Radio value="card" label="Bank card" />
+              <Radio value="cash" label="Cash" />
+              <Radio value="invoice" label="Invoice for business" />
             </RadioGroup.List>
           </RadioGroup>
         </div>
@@ -260,25 +260,25 @@ export const Sizes: Story = {
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Группа — native <code className="text-primary">&lt;fieldset&gt;</code> +{" "}
-        <code className="text-primary">&lt;legend&gt;</code>. Подсказка и ошибка —{" "}
-        <code className="text-primary">aria-describedby</code> на fieldset; у опции hint — на input
-        через <code className="text-primary">Radio.Hint</code>.
+        Group — native <code className="text-primary">&lt;fieldset&gt;</code> +{" "}
+        <code className="text-primary">&lt;legend&gt;</code>. Hint and error —{" "}
+        <code className="text-primary">aria-describedby</code> on fieldset; option hint — on input
+        via <code className="text-primary">Radio.Hint</code>.
       </p>
       <RadioGroup isRequired>
         <RadioGroup.Legend>
-          <RadioGroup.Label>Доставка</RadioGroup.Label>
-          <RadioGroup.Hint>Выберите один способ доставки.</RadioGroup.Hint>
+          <RadioGroup.Label>Delivery</RadioGroup.Label>
+          <RadioGroup.Hint>Select one delivery method.</RadioGroup.Hint>
         </RadioGroup.Legend>
         <RadioGroup.List>
-          <Radio value="courier" label="Курьер" hint="1–2 рабочих дня" />
-          <Radio value="pickup" label="Самовывоз" hint="Бесплатно, сегодня" />
+          <Radio value="courier" label="Courier" hint="1–2 business days" />
+          <Radio value="pickup" label="Pickup" hint="Free, today" />
         </RadioGroup.List>
-        <RadioGroup.Error role="alert">Выберите способ доставки.</RadioGroup.Error>
+        <RadioGroup.Error role="alert">Select a delivery method.</RadioGroup.Error>
       </RadioGroup>
     </div>
   ),

@@ -13,7 +13,7 @@ export function BadgeAnchorDemo() {
       </Badge.Anchor>
       <Badge.Anchor>
         <Avatar size="large" label="Casey Davis" src={PIN_IMAGE3} alt="" loading="lazy" />
-        <Badge status="success" dot placement="bottom-right" size="small" aria-label="Онлайн" />
+        <Badge status="success" dot placement="bottom-right" size="small" aria-label="Online" />
       </Badge.Anchor>
     </div>
   );

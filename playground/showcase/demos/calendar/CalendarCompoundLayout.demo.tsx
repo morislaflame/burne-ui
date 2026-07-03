@@ -4,7 +4,7 @@ import { Calendar } from "@/components/core/Calendar";
 import { Text } from "@/components/core/Text";
 
 function formatDate(d: Date | null) {
-  if (!d) return "дата не выбрана";
+  if (!d) return "date not selected";
   return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
 }
 

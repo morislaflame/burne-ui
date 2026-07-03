@@ -41,7 +41,7 @@ export function InputClassNamesProvider({
 export function useInputFieldContext(): InputFieldContextValue {
   const ctx = useContext(InputFieldContext);
   if (!ctx) {
-    throw new Error("Input compound-части должны быть внутри <Input>.");
+    throw new Error("Input compound parts must be used inside <Input>.");
   }
   return ctx;
 }

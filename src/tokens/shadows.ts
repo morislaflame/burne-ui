@@ -1,4 +1,4 @@
-/** Ступени тени компонентов — совпадают с `shadow-token-*` и `--shadow-*`. */
+/** Component shadow levels — match `shadow-token-*` and `--shadow-*`. */
 export const burneShadowScale = ["none", "base", "mid", "large"] as const;
 
 export type ShadowSize = (typeof burneShadowScale)[number];
@@ -11,7 +11,7 @@ export const SHADOW_CSS_VAR: Record<ShadowLevel, `--shadow-${ShadowLevel}`> = {
   large: "--shadow-large",
 };
 
-/** CSS `var(--shadow-base|mid|large)` для inline-стилей и документации. */
+/** CSS `var(--shadow-base|mid|large)` for inline styles and documentation. */
 export function shadowToken<S extends ShadowLevel>(level: S): `var(--shadow-${S})` {
   return `var(--shadow-${level})` as `var(--shadow-${S})`;
 }

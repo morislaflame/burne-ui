@@ -29,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Примитивы поля формы: **Field.Root**, **Field.Label**, **Field.Hint**, **Field.Error**, **Field.Set** (+ **Field.Group**, **Field.Actions**). Используются внутри Input, ComboBox, Meter и др.; можно собирать поля вручную.",
+          "Form field primitives: **Field.Root**, **Field.Label**, **Field.Hint**, **Field.Error**, **Field.Set** (+ **Field.Group**, **Field.Actions**). Used inside Input, ComboBox, Meter, etc.; you can also compose fields manually.",
       },
     },
   },
@@ -46,8 +46,8 @@ export const RootWithHintAndError: Story = {
     <Field className="max-w-sm">
       <Field.Label htmlFor="field-email">Email</Field.Label>
       <Input.Control id="field-email" placeholder="you@example.com" status="danger" />
-      <Field.Hint>Мы не передаём адрес третьим лицам.</Field.Hint>
-      <Field.Error>Введите корректный email.</Field.Error>
+      <Field.Hint>We do not share your address with third parties.</Field.Hint>
+      <Field.Error>Enter a valid email.</Field.Error>
     </Field>
   ),
 };
@@ -58,28 +58,28 @@ export const FieldSetGroup: Story = {
     <Field.Set className="max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Контактные данные</Label>
-          <Field.Hint as="span">Все поля обязательны</Field.Hint>
+          <Label>Contact details</Label>
+          <Field.Hint as="span">All fields are required</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
       <Field.Group>
         <Input>
-          <Input.Label>Телефон</Input.Label>
+          <Input.Label>Phone</Input.Label>
           <Input.Control placeholder="+7 …" />
         </Input>
         <Input status="danger">
           <Input.Label>Email</Input.Label>
           <Input.Control defaultValue="bad@" />
-          <Input.Error>Некорректный адрес.</Input.Error>
+          <Input.Error>Invalid address.</Input.Error>
         </Input>
-        <Field.Error>Исправьте ошибки перед продолжением.</Field.Error>
+        <Field.Error>Fix errors before continuing.</Field.Error>
       </Field.Group>
       <Field.Actions>
         <Button type="submit" size="base">
-          Сохранить
+          Save
         </Button>
         <Button type="button" variant="ghost" size="base">
-          Отмена
+          Cancel
         </Button>
       </Field.Actions>
     </Field.Set>
@@ -91,27 +91,27 @@ function FieldSetSizeDemo({ size }: { size: (typeof COMPONENT_SIZES)[number] }) 
     <Field.Set size={size} className="max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Контактные данные</Label>
+          <Label>Contact details</Label>
           <Field.Hint as="span">size={size}</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
       <Field.Group>
         <Input>
-          <Input.Label>Телефон</Input.Label>
+          <Input.Label>Phone</Input.Label>
           <Input.Control placeholder="+7 …" />
         </Input>
         <Input>
           <Input.Label>Email</Input.Label>
           <Input.Control placeholder="you@example.com" />
         </Input>
-        <Field.Error>Пример групповой ошибки.</Field.Error>
+        <Field.Error>Example group error.</Field.Error>
       </Field.Group>
       <Field.Actions>
         <Button type="button" size="base">
-          Сохранить
+          Save
         </Button>
         <Button type="button" variant="ghost" size="base">
-          Отмена
+          Cancel
         </Button>
       </Field.Actions>
     </Field.Set>
@@ -119,7 +119,7 @@ function FieldSetSizeDemo({ size }: { size: (typeof COMPONENT_SIZES)[number] }) 
 }
 
 export const FieldSetSizes: Story = {
-  name: "FieldSet — размеры",
+  name: "FieldSet — sizes",
   render: () => (
     <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
       {COMPONENT_SIZES.map((size) => (
@@ -133,35 +133,35 @@ export const FieldSetSizes: Story = {
 };
 
 export const HintStatuses: Story = {
-  name: "Hint — статусы",
+  name: "Hint — statuses",
   render: () => (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Field>
-        <Field.Label>По умолчанию</Field.Label>
-        <Field.Hint>Нейтральная подсказка (muted).</Field.Hint>
+        <Field.Label>Default</Field.Label>
+        <Field.Hint>Neutral hint (muted).</Field.Hint>
       </Field>
       <Field>
-        <Field.Label>Успех</Field.Label>
-        <Field.Hint status="success">Значение сохранено.</Field.Hint>
+        <Field.Label>Success</Field.Label>
+        <Field.Hint status="success">Value saved.</Field.Hint>
       </Field>
       <Field>
-        <Field.Label>Предупреждение</Field.Label>
-        <Field.Hint status="warning">Проверьте данные перед отправкой.</Field.Hint>
+        <Field.Label>Warning</Field.Label>
+        <Field.Hint status="warning">Review data before submitting.</Field.Hint>
       </Field>
       <Field>
-        <Field.Label>Ошибка (Hint)</Field.Label>
-        <Field.Hint status="danger">Hint со status=danger — для редких кейсов.</Field.Hint>
+        <Field.Label>Error (Hint)</Field.Label>
+        <Field.Hint status="danger">Hint with status=danger — for rare cases.</Field.Hint>
       </Field>
       <Field>
-        <Field.Label>Ошибка (Error)</Field.Label>
-        <Field.Error>Field.Error — основной паттерн для ошибок.</Field.Error>
+        <Field.Label>Error (Error)</Field.Label>
+        <Field.Error>Field.Error — primary pattern for errors.</Field.Error>
       </Field>
     </div>
   ),
 };
 
 export const WithForm: Story = {
-  name: "Внутри Form",
+  name: "Inside Form",
   render: function WithFormStory() {
     const [email, setEmail] = useState("");
     const emailInvalid = email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -169,39 +169,39 @@ export const WithForm: Story = {
     return (
       <form
         className="flex w-full max-w-sm flex-col gap-mid text-left"
-        aria-label="Демо форма"
+        aria-label="Demo form"
         onSubmit={(e) => e.preventDefault()}
       >
-        <Input label="Имя" placeholder="Иван" />
+        <Input label="Name" placeholder="Ivan" />
         <Input
           label="Email"
           placeholder="you@example.com"
-          hint="Формат: name@domain.tld"
-          error={emailInvalid ? "Некорректный адрес" : undefined}
+          hint="Format: name@domain.tld"
+          error={emailInvalid ? "Invalid address" : undefined}
           status={emailInvalid ? "danger" : "default"}
           value={email}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           autoComplete="email"
         />
         <Button type="submit" size="base">
-          Отправить
+          Submit
         </Button>
       </form>
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.type(canvas.getByLabelText("Имя"), "Анна");
-    await userEvent.click(canvas.getByRole("button", { name: "Отправить" }));
-    await expect(canvas.getByLabelText("Имя")).toHaveValue("Анна");
+    await userEvent.type(canvas.getByLabelText("Name"), "Anna");
+    await userEvent.click(canvas.getByRole("button", { name: "Submit" }));
+    await expect(canvas.getByLabelText("Name")).toHaveValue("Anna");
   },
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Field",
+        story: "classNames customization for Field",
       },
     },
   },
@@ -217,19 +217,19 @@ export const CustomClassNames: Story = {
     >
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Контактные данные</Label>
-          <Field.Hint as="span">Слоты через classNames</Field.Hint>
+          <Label>Contact details</Label>
+          <Field.Hint as="span">Slots via classNames</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
       <Field.Group>
         <Input>
-          <Input.Label>Телефон</Input.Label>
+          <Input.Label>Phone</Input.Label>
           <Input.Control placeholder="+7 …" />
         </Input>
       </Field.Group>
       <Field.Actions>
         <Button type="button" size="base">
-          Сохранить
+          Save
         </Button>
       </Field.Actions>
     </Field.Set>

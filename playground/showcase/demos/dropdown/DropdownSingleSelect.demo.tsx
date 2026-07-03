@@ -7,14 +7,14 @@ export function DropdownSingleSelectDemo() {
   return (
     <Dropdown selectionIndicator defaultValue="ru">
       <Dropdown.Trigger asChild>
-        <Button variant="outline">Язык</Button>
+        <Button variant="outline">Language</Button>
       </Dropdown.Trigger>
       <Dropdown.Popover>
         <Dropdown.Group>
-          <Dropdown.Label>Интерфейс</Dropdown.Label>
+          <Dropdown.Label>Interface</Dropdown.Label>
           <Dropdown.Item value="ru">
             <Dropdown.ItemIndicator />
-            <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+            <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
           </Dropdown.Item>
           <Dropdown.Item value="en">
             <Dropdown.ItemIndicator />

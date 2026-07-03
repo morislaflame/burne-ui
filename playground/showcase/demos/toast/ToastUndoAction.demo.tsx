@@ -10,8 +10,8 @@ export function ToastUndoActionDemo() {
       variant="outline"
       onClick={() => {
         const undoToastId = toast.show({
-          title: "Элемент удалён",
-          description: "Файл «draft-v3.sketch» перемещён в корзину.",
+          title: "Item deleted",
+          description: "File «draft-v3.sketch» moved to trash.",
           status: "default",
           action: (
             <Button
@@ -21,19 +21,19 @@ export function ToastUndoActionDemo() {
               onClick={() => {
                 update(undoToastId, {
                   status: "info",
-                  title: "Отменено",
-                  description: "Файл «draft-v3.sketch» восстановлен.",
+                  title: "Canceled",
+                  description: "File «draft-v3.sketch» restored.",
                   action: undefined,
                 });
               }}
             >
-              Отменить
+              Cancel
             </Button>
           ),
         });
       }}
     >
-      Удалить с undo
+      Remove from undo
     </Button>
   );
 }

@@ -41,7 +41,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Пагинация в стиле `Breadcrumbs`: muted-кнопки с hover-lift и squeeze. Составной API — `Summary`, `Content`, `Item`, `Previous` / `Next`, `Pages`.",
+          "Pagination in the `Breadcrumbs` style: muted buttons with hover-lift and squeeze. Compound API — `Summary`, `Content`, `Item`, `Previous` / `Next`, `Pages`.",
       },
     },
   },
@@ -53,7 +53,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SimplePrevNext: Story = {
-  name: "Назад / Вперёд",
+  name: "Previous / Next",
   render: function SimplePrevNext() {
     const [page, setPage] = useState(1);
     const totalPages = 10;
@@ -66,7 +66,7 @@ export const SimplePrevNext: Story = {
     return (
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
         <Pagination.Summary>
-          {startItem}–{endItem} из {totalItems} счетов
+          {startItem}–{endItem} of {totalItems} invoices
         </Pagination.Summary>
         <Pagination.Content>
           <Pagination.Item>
@@ -82,7 +82,7 @@ export const SimplePrevNext: Story = {
 };
 
 export const FullPages: Story = {
-  name: "Номера страниц",
+  name: "Page numbers",
   render: function FullPages() {
     const [page, setPage] = useState(5);
     const totalPages = 20;
@@ -116,7 +116,7 @@ export const FullPages: Story = {
 };
 
 export const WithSummary: Story = {
-  name: "Summary + страницы",
+  name: "Summary + pages",
   render: function WithSummary() {
     const [page, setPage] = useState(3);
     const totalPages = 12;
@@ -124,7 +124,7 @@ export const WithSummary: Story = {
     return (
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
         <Pagination.Summary>
-          Страница {page} из {totalPages}
+          Page {page} of {totalPages}
         </Pagination.Summary>
         <Pagination.Content>
           <Pagination.Item>
@@ -141,7 +141,7 @@ export const WithSummary: Story = {
 };
 
 export const CustomLabels: Story = {
-  name: "Свои подписи",
+  name: "Custom labels",
   render: function CustomLabels() {
     const [page, setPage] = useState(2);
     const totalPages = 8;
@@ -169,7 +169,7 @@ export const CustomLabels: Story = {
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: function Accessibility() {
     const [page, setPage] = useState(4);
     const totalPages = 10;
@@ -177,17 +177,17 @@ export const Accessibility: Story = {
     return (
       <div className="flex flex-col gap-mid text-left">
         <p className="text-sm text-muted">
-          Корень — <code className="text-primary">&lt;nav aria-label&gt;</code>. Список —{" "}
+          Root — <code className="text-primary">&lt;nav aria-label&gt;</code>. List —{" "}
           <code className="text-primary">&lt;ol&gt;</code> /{" "}
-          <code className="text-primary">&lt;li&gt;</code>. Текущая страница —{" "}
-          <code className="text-primary">aria-current=&quot;page&quot;</code> (не кнопка). У
-          prev/next с видимым текстом имя берётся из подписи (WCAG Label in Name); для icon-only —
-          передайте <code className="text-primary">aria-label</code>. Ellipsis —{" "}
+          <code className="text-primary">&lt;li&gt;</code>. Current page —{" "}
+          <code className="text-primary">aria-current=&quot;page&quot;</code> (not a button). For
+          prev/next with visible text, the name comes from the label (WCAG Label in Name); for icon-only —
+          pass <code className="text-primary">aria-label</code>. Ellipsis —{" "}
           <code className="text-primary">aria-hidden</code>.
         </p>
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
           <Pagination.Summary>
-            Страница {page} из {totalPages}
+            Page {page} of {totalPages}
           </Pagination.Summary>
           <Pagination.Content>
             <Pagination.Item>
@@ -205,7 +205,7 @@ export const Accessibility: Story = {
 };
 
 export const LightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: function LightTheme() {
     const [page, setPage] = useState(3);
@@ -214,7 +214,7 @@ export const LightTheme: Story = {
     return (
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
         <Pagination.Summary>
-          Страница {page} из {totalPages}
+          Page {page} of {totalPages}
         </Pagination.Summary>
         <Pagination.Content>
           <Pagination.Item>
@@ -231,12 +231,12 @@ export const LightTheme: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
         story:
-          "Слоты root, summary, content, interactive, pageActive и navText через prop classNames.",
+          "Slots root, summary, content, interactive, pageActive, and navText via the classNames prop.",
       },
     },
   },
@@ -259,7 +259,7 @@ export const CustomClassNames: Story = {
         }}
       >
         <Pagination.Summary>
-          Страница {page} из {totalPages}
+          Page {page} of {totalPages}
         </Pagination.Summary>
         <Pagination.Content>
           <Pagination.Item>

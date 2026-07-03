@@ -20,37 +20,37 @@ export function TimeFieldShowcase() {
   return (
     <ShowcasePage
       title="TimeField"
-      description="Поле ввода времени в формате ЧЧ:ММ с prefix и вариантами segmented/gloss."
+      description="Time input field in HH:MM s format prefix and options segmented/gloss."
       importPath='import { TimeField } from "@/components/core/TimeField";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Simple API" description="Controlled value в формате 24 часа.">
+      <ShowcaseSection title="Simple API" description="Controlled value in 24 hour format.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldSimpleDemo} source={timeFieldSimpleSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldSizesDemo} source={timeFieldSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass shell.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldGlossDemo} source={timeFieldGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Полная кастомизация classNames"
-        description="Слоты root, shell, prefix, suffix, segments, segment, hint, error через classNames на корне."
+        title="Full customization classNames"
+        description="Slots root, shell, prefix, suffix, segments, segment, hint, error through classNames on the root."
       >
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldClassNamesFullDemo} source={timeFieldClassNamesFullSource} />
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldClassNamesCompoundDemo} source={timeFieldClassNamesFullSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Compound и Segmented" description="TimeField.Label/Control/Hint и variant segmented.">
+      <ShowcaseSection title="Compound and Segmented" description="TimeField.Label/Control/Hint and variant segmented.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldCompoundSegmentedDemo} source={timeFieldCompoundSegmentedSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Segmented + affixes, HH:mm:ss и compact compound-пара — demo-файлы в `demos/time-field/`."
+        title="Custom Variations"
+        description="Segmented + affixes, HH:mm:ss and compact compound-pair — demo-files in `demos/time-field/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldShiftWindowDemo} source={timeFieldShiftWindowSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldReminderCardDemo} source={timeFieldReminderCardSource} />
@@ -58,7 +58,7 @@ export function TimeFieldShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/TimeField" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
@@ -68,13 +68,13 @@ export function TimeFieldShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="TimeField.Label, TimeField.Control, TimeField.Hint — явная разметка поля."
+            description="TimeField.Label, TimeField.Control, TimeField.Hint — explicit field marking."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Формат">
+        <ShowcaseDoc.Block title="Format">
           <p>
-            Значение — строка <code>&quot;ЧЧ:ММ&quot;</code> в 24-часовом формате. prefix принимает ReactNode
-            (обычно иконку времени).
+            Value is string <code>&quot;HH:MM&quot;</code> in 24 hour format. prefix accepts ReactNode
+            (usually a time icon).
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

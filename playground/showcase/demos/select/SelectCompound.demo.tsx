@@ -1,21 +1,21 @@
 import { Select } from "@/components/core/Select";
 
 const options = [
-  { value: "draft", label: "Черновик" },
-  { value: "review", label: "На ревью" },
-  { value: "published", label: "Опубликовано" },
+  { value: "draft", label: "Draft" },
+  { value: "review", label: "For review" },
+  { value: "published", label: "Published" },
 ];
 
 export function SelectCompoundDemo() {
   return (
     <Select options={options} defaultValue="draft" className="w-64">
-      <Select.Label>Статус</Select.Label>
+      <Select.Label>Status</Select.Label>
       <Select.TriggerGroup>
-        <Select.Value placeholder="Выберите статус" />
+        <Select.Value placeholder="Select status" />
         <Select.Trigger />
       </Select.TriggerGroup>
       <Select.Popover />
-      <Select.Hint>Смена статуса сохраняется автоматически.</Select.Hint>
+      <Select.Hint>Status changes are saved automatically.</Select.Hint>
     </Select>
   );
 }

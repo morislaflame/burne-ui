@@ -7,8 +7,8 @@ export function SearchInputBasicDemo() {
 
   return (
     <SearchInput
-      aria-label="Поиск"
-      placeholder="Найти компонент…"
+      aria-label="Search"
+      placeholder="Find component…"
       value={search}
       onValueChange={setSearch}
       className="w-64"

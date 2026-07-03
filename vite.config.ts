@@ -21,7 +21,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    /** Читаемый `ui.css` для npm (без сжатия в одну строку). */
+    /** Readable `ui.css` for npm (not minified to a single line). */
     cssMinify: false,
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),

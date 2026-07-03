@@ -6,8 +6,8 @@ import { Select } from "@/components/core/Select";
 const options = [
   {
     value: "ru",
-    label: "Русский",
-    hint: "Интерфейс на русском",
+    label: "Russian",
+    hint: "Interface in Russian",
     icon: <IoGlobeOutline aria-hidden />,
   },
   {
@@ -29,12 +29,12 @@ export function SelectGlossDemo() {
         options={options}
         value={value}
         onValueChange={setValue}
-        hint="Стеклянная оболочка и gloss-popover"
+        hint="Glass shell and gloss-popover"
       />
       <Select options={options} defaultValue="en" variant="gloss">
         <Select.Label>Compound</Select.Label>
         <Select.TriggerGroup>
-          <Select.Value placeholder="Выберите язык" />
+          <Select.Value placeholder="Select language" />
           <Select.Trigger />
         </Select.TriggerGroup>
         <Select.Popover />

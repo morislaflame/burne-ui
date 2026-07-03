@@ -32,7 +32,7 @@ export function SelectionIndicatorClassNamesDemo() {
           onChange={(e) => setSelected(e.target.checked)}
           className="size-4"
         />
-        Выбрано
+        Selected
       </label>
     </div>
   );

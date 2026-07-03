@@ -33,7 +33,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Многострочное поле. **Simple** — `label`, `hint`, `error` на root; **Compound** — `<TextArea.Label>` / `<TextArea.Control>` / … Варианты и статусы как у `Input`. Минимальная высота — как у `Input`; выше — потянув за маркер в правом нижнем углу.",
+          "Multiline field. **Simple** — `label`, `hint`, `error` on root; **Compound** — `<TextArea.Label>` / `<TextArea.Control>` / … Variants and statuses like `Input`. Minimum height matches `Input`; taller by dragging the bottom-right handle.",
       },
     },
   },
@@ -45,23 +45,23 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
       <DualApiStoryPanel title="Simple">
         <TextArea
-          label="Комментарий"
-          hint="До 500 символов."
-          placeholder="Ваш отзыв…"
+          label="Comment"
+          hint="Up to 500 characters."
+          placeholder="Your review…"
           rows={1}
         />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound">
         <TextArea>
-          <TextArea.Label>Комментарий</TextArea.Label>
-          <TextArea.Control placeholder="Ваш отзыв…" rows={1} />
-          <TextArea.Hint>До 500 символов.</TextArea.Hint>
+          <TextArea.Label>Comment</TextArea.Label>
+          <TextArea.Control placeholder="Your review…" rows={1} />
+          <TextArea.Hint>Up to 500 characters.</TextArea.Hint>
         </TextArea>
       </DualApiStoryPanel>
     </DualApiStoryPanels>
@@ -69,29 +69,29 @@ export const Default: Story = {
 };
 
 export const TypeInteraction: Story = {
-  name: "Interaction: ввод",
+  name: "Interaction: input",
   render: () => (
-    <TextArea label="Комментарий" placeholder="Ваш отзыв…" rows={3} />
+    <TextArea label="Comment" placeholder="Your review…" rows={3} />
   ),
   play: async ({ canvas, userEvent }) => {
-    const field = canvas.getByRole("textbox", { name: "Комментарий" });
-    await userEvent.type(field, "Тестовый отзыв");
-    await expect(field).toHaveValue("Тестовый отзыв");
+    const field = canvas.getByRole("textbox", { name: "Comment" });
+    await userEvent.type(field, "Sample review");
+    await expect(field).toHaveValue("Sample review");
   },
 };
 
 export const Outline: Story = {
   render: () => (
     <TextArea>
-      <TextArea.Label>Описание</TextArea.Label>
-      <TextArea.Control variant="outline" placeholder="Кратко о задаче…" />
-      <TextArea.Hint>Вариант outline — прозрачный фон оболочки.</TextArea.Hint>
+      <TextArea.Label>Description</TextArea.Label>
+      <TextArea.Control variant="outline" placeholder="Brief task summary…" />
+      <TextArea.Hint>Outline variant — transparent shell background.</TextArea.Hint>
     </TextArea>
   ),
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex w-full flex-col gap-large">
       <TextArea label="Default" variant="default" placeholder="default" />
@@ -101,18 +101,18 @@ export const Variants: Story = {
 };
 
 export const Statuses: Story = {
-  name: "Статусы",
+  name: "Statuses",
   render: () => (
     <div className="flex w-full flex-col gap-large">
-      <TextArea status="danger" label="Danger" error="Слишком короткий текст." defaultValue="Ок" />
-      <TextArea status="success" label="Success" hint="Текст сохранён." defaultValue="Готово" />
-      <TextArea status="warning" label="Warning" hint="Проверьте формулировку." defaultValue="Черновик" />
+      <TextArea status="danger" label="Danger" error="Text is too short." defaultValue="OK" />
+      <TextArea status="success" label="Success" hint="Text saved." defaultValue="Done" />
+      <TextArea status="warning" label="Warning" hint="Review the wording." defaultValue="Draft" />
     </div>
   ),
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex w-full flex-col gap-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
@@ -123,30 +123,30 @@ export const Sizes: Story = {
 };
 
 export const NotResizable: Story = {
-  name: "Без ресайза",
+  name: "Without resize",
   render: () => (
-    <TextArea resizable={false} label="Фиксированная высота" hint="Ручка отключена (`resizable={false}`)." />
+    <TextArea resizable={false} label="Fixed height" hint="Handle disabled (`resizable={false}`)." />
   ),
 };
 
 export const Disabled: Story = {
   render: () => (
-    <TextArea disabled label="Disabled" defaultValue="Недоступно для редактирования." />
+    <TextArea disabled label="Disabled" defaultValue="Unavailable for editing." />
   ),
 };
 
 export const Required: Story = {
   render: () => (
-    <TextArea isRequired label="Биография" placeholder="Расскажите о себе…" />
+    <TextArea isRequired label="Biography" placeholder="Tell us about yourself…" />
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для TextArea",
+        story: "classNames customization for TextArea",
       },
     },
   },
@@ -160,12 +160,12 @@ export const CustomClassNames: Story = {
         hint: "text-foreground/70",
         error: "font-medium",
       }}
-      label="Комментарий"
-      placeholder="Ваш отзыв…"
+      label="Comment"
+      placeholder="Your review…"
       rows={3}
       status="danger"
-      hint="До 500 символов."
-      error="Текст слишком короткий."
+      hint="Up to 500 characters."
+      error="Text is too short."
     />
   ),
 };

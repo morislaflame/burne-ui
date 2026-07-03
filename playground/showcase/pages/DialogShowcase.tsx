@@ -18,25 +18,25 @@ export function DialogShowcase() {
   return (
     <ShowcasePage
       title="Dialog"
-      description="Модальное окно на нативном &lt;dialog&gt; с анимацией и compound API."
+      description="Modal window on native &lt;dialog&gt; with animation and compound API."
       importPath='import { Dialog } from "@/components/core/Dialog";'
       tags={["core", "overlay"]}
     >
-      <ShowcaseSection title="Базовый диалог" description="open / onOpenChange, Header, Body, Footer.">
+      <ShowcaseSection title="Basic dialogue" description="open / onOpenChange, Header, Body, Footer.">
         <ShowcaseDemoFromFile Demo={DialogBasicDemo} source={dialogBasicSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={DialogSizesDemo} source={dialogSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная модальная панель.">
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass modal panel.">
         <ShowcaseDemoFromFile Demo={DialogGlossDemo} source={dialogGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Кастомизация слотов panel, header, title, body, footer через classNames."
+        description="Slot customization panel, header, title, body, footer through classNames."
       >
         <ShowcaseDemoFromFile
           Demo={DialogClassNamesFullDemo}
@@ -45,8 +45,8 @@ export function DialogShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Приглашение в команду, настройки приватности и компактное подтверждение — `demos/dialog/`."
+        title="Custom Variations"
+        description="Invitation to the team, privacy settings and compact confirmation — `demos/dialog/`."
       >
         <ShowcaseDemoFromFile Demo={DialogInviteTeamDemo} source={dialogInviteTeamSource} />
         <ShowcaseDemoFromFile Demo={DialogSettingsModalDemo} source={dialogSettingsModalSource} />
@@ -54,13 +54,13 @@ export function DialogShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Dialog" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Dialog.Header, Dialog.Body, Dialog.Footer, Dialog.Close — полная компоновка панели."
+            description="Dialog.Header, Dialog.Body, Dialog.Footer, Dialog.Close — full panel layout."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
@@ -69,8 +69,8 @@ export function DialogShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            <code>size</code> и <code>variant</code> на корне. Закрытие по Escape и клику на backdrop —
-            настраиваемые пропы. Enter/leave — <code>configureMotion()</code>.
+            <code>size</code> and <code>variant</code> on the root. Closing by Escape and click on backdrop —
+            custom props. Enter/leave — <code>configureMotion()</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

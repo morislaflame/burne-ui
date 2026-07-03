@@ -22,40 +22,40 @@ export function TabsShowcase() {
   return (
     <ShowcasePage
       title="Tabs"
-      description="Вкладки для переключения между связанными панелями контента."
+      description="Tabs for switching between related content panels."
       importPath='import { Tabs } from "@/components/core/Tabs";'
       tags={["core", "navigation"]}
     >
-      <ShowcaseSection title="Default" description="Контролируемые вкладки с disabled-состоянием.">
+      <ShowcaseSection title="Default" description="Controlled tabs with disabled-condition.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsDefaultDemo} source={tabsDefaultSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsSizesDemo} source={tabsSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Outline" description="variant outline — индикатор с primary-tint.">
+      <ShowcaseSection title="Outline" description="variant outline — indicator with primary-tint.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsOutlineDemo} source={tabsOutlineSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Secondary" description="variant secondary — контейнер surface-secondary.">
+      <ShowcaseSection title="Secondary" description="variant secondary — container surface-secondary.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsSecondaryDemo} source={tabsSecondarySource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянный список вкладок с индикатором.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass tab list with indicator.">
         <ShowcaseDemoFromFile align="stretch" Demo={TabsGlossDemo} source={tabsGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Полная кастомизация classNames"
-        description="Слоты root, list, indicator, tab, tabText, panel через classNames на корне."
+        title="Full customization classNames"
+        description="Slots root, list, indicator, tab, tabText, panel through classNames on the root."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={TabsClassNamesFullDemo} source={tabsClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Панель настроек, вертикальный сайдбар и дашборд — `demos/tabs/`."
+        title="Custom Variations"
+        description="Settings panel, vertical sidebar and dashboard — `demos/tabs/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={TabsSettingsPanelDemo} source={tabsSettingsPanelSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TabsVerticalSidebarDemo} source={tabsVerticalSidebarSource} />
@@ -63,19 +63,19 @@ export function TabsShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Tabs" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Tabs.List, Tabs.Tab и Tabs.Panel — слоты. value/onValueChange или defaultValue для состояния."
+            description="Tabs.List, Tabs.Tab and Tabs.Panel — slots. value/onValueChange or defaultValue for state."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Варианты">
+        <ShowcaseDoc.Block title="Options">
           <p>
-            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>gloss</code> — задаются пропом{" "}
-            <code>variant</code> на корне Tabs.
+            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>gloss</code> — are set by prop{" "}
+            <code>variant</code> on the root Tabs.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

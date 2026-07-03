@@ -19,7 +19,7 @@ export function TextVariantsDemo() {
         text-mid
       </Text>
       <Text as="p" variant="base">
-        text-base — основной текст
+        text-base — main text
       </Text>
       <Text as="p" variant="small" className="text-muted">
         text-small muted

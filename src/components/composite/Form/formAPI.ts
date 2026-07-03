@@ -60,7 +60,7 @@ export function validateFormFieldRules(
   if (rules == null) return undefined;
 
   if (rules.required) {
-    const message = typeof rules.required === "string" ? rules.required : "Обязательное поле";
+    const message = typeof rules.required === "string" ? rules.required : "Required field";
     if (typeof value === "boolean") {
       if (!value) return message;
     } else if (isFormValueEmpty(value)) {

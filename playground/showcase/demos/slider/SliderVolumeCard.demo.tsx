@@ -9,7 +9,7 @@ export function SliderVolumeCardDemo() {
   return (
     <Slider className="w-full max-w-sm">
       <Slider.Header>
-        <Slider.Label>Громкость</Slider.Label>
+        <Slider.Label>Volume</Slider.Label>
         <Slider.Value />
       </Slider.Header>
       <Slider.Track

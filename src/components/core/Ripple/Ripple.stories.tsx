@@ -50,15 +50,15 @@ const meta = {
     layout: "fullscreen",
     docs: {
       description: {
-        component: `Вставляйте **первым ребёнком** относительно области с \`relative\`: слушатель \`pointerdown\` висит на **родителе** узла Ripple, контент — с \`relative z-[1]\` поверх слоя.
+        component: `Insert **as the first child** relative to an area with \`relative\`: the \`pointerdown\` listener is on the Ripple node's **parent**; content sits at \`relative z-[1]\` above the layer.
 
-**Именованные цвета** (\`color\`): ${RIPPLE_COLOR_KEYS} — см. объект \`RIPPLE_COLOR\` в экспорте кита. Любая другая строка трактуется как обычный CSS-цвет.
+**Named colors** (\`color\`): ${RIPPLE_COLOR_KEYS} — see the \`RIPPLE_COLOR\` object in the kit export. Any other string is treated as a regular CSS color.
 
-**Button** (\`ripple\`): встроенный риппл выключен по умолчанию, включение — булевый проп. **SearchInput** — то же. **Expandable / Accordion**: положите \`<Ripple />\` среди детей \`<Expandable.Trigger>\` — триггер вынесет его в слой на **весь** \`<button>\` (до краёв, включая область шеврона).
+**Button** (\`ripple\`): built-in ripple is off by default; enable with a boolean prop. **SearchInput** — same. **Expandable / Accordion**: place \`<Ripple />\` among \`<Expandable.Trigger>\` children — the trigger lifts it into a layer across the **full** \`<button>\` (to the edges, including the chevron area).
 
-Проп **\`direction\`**: \`in\` — к точке нажатия сходится (по умолчанию), \`out\` — расширяется от точки.
+**\`direction\`** prop: \`in\` — converges to the press point (default), \`out\` — expands from the point.
 
-Длительность — **\`duration\`** (мс). Стартовая непрозрачность точки — только через motion-токены.`,
+Duration — **\`duration\`** (ms). Starting point opacity — only via motion tokens.`,
       },
     },
   },
@@ -67,14 +67,14 @@ const meta = {
     color: {
       control: "select",
       options: Object.keys(RIPPLE_COLOR),
-      description: `Ключ из RIPPLE_COLOR или произвольная строка цвета`,
+      description: `Key from RIPPLE_COLOR or an arbitrary color string`,
     },
     disabled: { control: "boolean" },
     duration: { control: "number" },
     direction: {
       control: "select",
       options: ["in", "out"],
-      description: "in — схлопывание к точке, out — расход от точки",
+      description: "in — collapse to point, out — expand from point",
     },
   },
 } satisfies Meta<typeof Ripple>;
@@ -84,7 +84,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
-  name: "Песочница",
+  name: "Playground",
   args: {
     disabled: false,
     color: "neutral",
@@ -98,10 +98,10 @@ export const Playground: Story = {
       <Ripple {...args} className="rounded-[inherit]" />
       <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-plus py-plus">
         <Text variant="mid" className="font-medium">
-          Область с Ripple
+          Ripple area
         </Text>
         <Text variant="base" className="text-muted">
-          Нажмите в любом месте — волна сойдётся к точке.
+          Click anywhere — the wave converges to the point.
         </Text>
       </div>
     </div>
@@ -109,7 +109,7 @@ export const Playground: Story = {
 };
 
 export const ClickInteraction: Story = {
-  name: "Interaction: клик",
+  name: "Interaction: click",
   args: {
     disabled: false,
     color: "neutral",
@@ -123,19 +123,19 @@ export const ClickInteraction: Story = {
       <Ripple {...args} className="rounded-[inherit]" />
       <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-plus py-plus">
         <Text variant="mid" className="font-medium">
-          Область с Ripple
+          Ripple area
         </Text>
       </div>
     </div>
   ),
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByText("Область с Ripple"));
-    await expect(canvas.getByText("Область с Ripple")).toBeVisible();
+    await userEvent.click(canvas.getByText("Ripple area"));
+    await expect(canvas.getByText("Ripple area")).toBeVisible();
   },
 };
 
 export const WithCardManual: Story = {
-  name: "С Card",
+  name: "With Card",
   render: () => (
     <Card
       variant="outline"
@@ -145,9 +145,9 @@ export const WithCardManual: Story = {
       <Ripple color="neutral" />
       <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
         <Card.Header>
-          <Card.Title>Вариант без pressable</Card.Title>
+          <Card.Title>Variant without pressable</Card.Title>
           <Card.Description>
-            Первым ребёнком — Ripple, текст в слое <code className="text-xs">z-[1]</code>.
+            Ripple as first child, text in <code className="text-xs">z-[1]</code> layer.
           </Card.Description>
         </Card.Header>
       </div>
@@ -156,18 +156,18 @@ export const WithCardManual: Story = {
 };
 
 export const WithButton: Story = {
-  name: "С Button",
+  name: "With Button",
   render: () => (
     <div className="flex flex-col gap-small">
       <Text variant="base" className="text-muted">
-        В приложении включаете <code className="text-xs">ripple</code>
+        In the app, enable <code className="text-xs">ripple</code>
       </Text>
       <div className="flex flex-wrap gap-small">
         <Button variant="primary" ripple>
-          По умолчанию
+          Default
         </Button>
         <Button variant="ghost" ripple={false}>
-          Без риппла
+          No ripple
         </Button>
       </div>
     </div>
@@ -175,7 +175,7 @@ export const WithButton: Story = {
 };
 
 export const DirectionCompare: Story = {
-  name: "Направление in / out",
+  name: "Direction in / out",
   render: () => (
     <div className="flex flex-wrap gap-mid">
       <div
@@ -201,21 +201,21 @@ export const DirectionCompare: Story = {
 };
 
 export const WithExpandable: Story = {
-  name: "С Expandable",
+  name: "With Expandable",
   render: () => (
     <Expandable defaultOpen>
       <Expandable.Trigger>
         <Ripple color="neutralMuted" />
         <Expandable.Content>
-          <Expandable.Title>Риппл на весь триггер</Expandable.Title>
+          <Expandable.Title>Ripple across the full trigger</Expandable.Title>
           <Expandable.Description className="text-muted">
-            Напишите <code className="text-xs">&lt;Ripple /&gt;</code> рядом с контентом — триггер примонтирует слой на всю ширину кнопки и под шеврон.
+            Place <code className="text-xs">&lt;Ripple /&gt;</code> next to content — the trigger mounts the layer across the full button width and under the chevron.
           </Expandable.Description>
         </Expandable.Content>
       </Expandable.Trigger>
       <Expandable.Panel>
         <Text variant="base" className="leading-relaxed">
-          Нажмите у края строки или у шеврона — эффект на всей кнопке.
+          Click near the row edge or chevron — effect across the full button.
         </Text>
       </Expandable.Panel>
     </Expandable>
@@ -223,19 +223,19 @@ export const WithExpandable: Story = {
 };
 
 export const WithSearchInput: Story = {
-  name: "С SearchInput",
+  name: "With SearchInput",
   render: () => (
     <div className="flex flex-col gap-small">
       <Text variant="base" className="text-muted">
-        <code className="text-xs">ripple</code> — булевый проп
+        <code className="text-xs">ripple</code> — boolean prop
       </Text>
-      <SearchInput placeholder="Найти…" ripple />
+      <SearchInput placeholder="Search…" ripple />
     </div>
   ),
 };
 
 export const WithAlert: Story = {
-  name: "С Alert",
+  name: "With Alert",
   render: () => (
     <Alert
       status="info"
@@ -245,8 +245,8 @@ export const WithAlert: Story = {
       <Alert.Message className="relative z-[1]">
         <Alert.Indicator />
         <Alert.Content>
-          <Alert.Title>Уведомление с Ripple</Alert.Title>
-          <Alert.Description>Скругление через наследование у родителя.</Alert.Description>
+          <Alert.Title>Notification with Ripple</Alert.Title>
+          <Alert.Description>Rounding via parent inheritance.</Alert.Description>
         </Alert.Content>
       </Alert.Message>
     </Alert>
@@ -254,17 +254,17 @@ export const WithAlert: Story = {
 };
 
 export const WithInputShell: Story = {
-  name: "С Input (оболочка)",
+  name: "With Input (shell)",
   render: () => (
     <div className="flex flex-col gap-small">
       <Text variant="base" className="text-muted">
-        Общая интерактивная карточка вокруг поля
+        Shared interactive card around the field
       </Text>
       <div className="relative overflow-hidden rounded-base border-token bg-surface p-mid shadow-token-base">
         <Ripple color="neutral" />
         <div className="relative z-[1] flex flex-col gap-small">
           <Text variant="small" className="font-medium text-muted">
-            Контакт
+            Contact
           </Text>
           <Input>
             <Input.Control placeholder="you@example.com" />
@@ -276,7 +276,7 @@ export const WithInputShell: Story = {
 };
 
 export const ArbitraryCssColor: Story = {
-  name: "Произвольный CSS-цвет",
+  name: "Arbitrary CSS color",
   render: () => (
     <div
       className="relative max-w-xs cursor-pointer overflow-hidden rounded-mid border-token bg-surface p-plus"
@@ -284,14 +284,14 @@ export const ArbitraryCssColor: Story = {
     >
       <Ripple color="oklch(0.72 0.14 250 / 0.55)" duration={550} />
       <div className="relative z-[1]">
-        <Text variant="base">Проп color — любая строка, не только пресеты.</Text>
+        <Text variant="base">The color prop accepts any string, not just presets.</Text>
       </div>
     </div>
   ),
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div
@@ -300,7 +300,7 @@ export const OnLightTheme: Story = {
     >
       <Ripple color="neutral" />
       <div className="relative z-[1] flex min-h-[6rem] items-center justify-center px-plus">
-        <Text variant="base">Ripple на светлом фоне</Text>
+        <Text variant="base">Ripple on light background</Text>
       </div>
     </div>
   ),

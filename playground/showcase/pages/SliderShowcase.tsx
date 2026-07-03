@@ -24,33 +24,33 @@ export function SliderShowcase() {
   return (
     <ShowcasePage
       title="Slider"
-      description="Ползунок для одного значения или диапазона с метками и форматированием."
+      description="Slider for a single value or range with labels and formatting."
       importPath='import { Slider } from "@/components/core/Slider";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Одиночный" description="showValue и marks для шкалы с подписями.">
+      <ShowcaseSection title="Single" description="showValue and marks for scale with labels.">
         <ShowcaseDemoFromFile align="center" Demo={SliderVolumeDemo} source={sliderVolumeSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={SliderSizesDemo} source={sliderSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Диапазон" description="range + formatValue для двух ползунков.">
+      <ShowcaseSection title="Range" description="range + formatValue for two sliders.">
         <ShowcaseDemoFromFile align="center" Demo={SliderPriceRangeDemo} source={sliderPriceRangeSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Disabled и вертикальный" description="orientation vertical и disabled состояние.">
+      <ShowcaseSection title="Disabled and vertical" description="orientation vertical and disabled state.">
         <ShowcaseDemoFromFile align="center" Demo={SliderVariantsDemo} source={sliderVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="gloss — стеклянный кружок на рельсе (проп gloss на корне).">
+      <ShowcaseSection title="Gloss" description="gloss — glass circle on rail (prop gloss on the root).">
         <ShowcaseDemoFromFile align="center" Demo={SliderGlossDemo} source={sliderGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на root."
+        description="Full customization of slots via classNames on root."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -60,8 +60,8 @@ export function SliderShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Форма thumb, compound Track и gradient range — demo-файлы в `demos/slider/`."
+        title="Custom Variations"
+        description="Form thumb, compound Track and gradient range — demo-files in `demos/slider/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SliderThumbShapeDemo} source={sliderThumbShapeSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SliderVolumeCardDemo} source={sliderVolumeCardSource} />
@@ -70,7 +70,7 @@ export function SliderShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Slider" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
@@ -80,19 +80,19 @@ export function SliderShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Slider.Track, Slider.Rail, Slider.Fill, Slider.Thumb — кастомная разметка рельса."
+            description="Slider.Track, Slider.Rail, Slider.Fill, Slider.Thumb — custom rail markings."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Диапазон">
+        <ShowcaseDoc.Block title="Range">
           <p>
-            При <code>range</code> value — кортеж <code>[number, number]</code>, onValueChange получает тот же
-            тип. <code>formatValue</code> форматирует отображаемое значение.
+            At <code>range</code> value — motorcade <code>[number, number]</code>, onValueChange gets the same
+            type. <code>formatValue</code> formats the displayed value.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss="gloss">
           <p>
-            Булевый проп <code>gloss</code> на корне — стеклянный thumb. Заполнение при смене value —{" "}
-            <code>configureMotion()</code> не применяется; thumb drag использует интерактивные токены.
+            Boolean prop <code>gloss</code> on the root - glass thumb. Filling during change value —{" "}
+            <code>configureMotion()</code> not applicable; thumb drag uses interactive tokens.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

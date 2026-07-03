@@ -1,15 +1,15 @@
 import type { CalendarLocale } from "./calendarTypes";
 
-export const RU_LOCALE: CalendarLocale = {
-  weekDays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+export const EN_LOCALE: CalendarLocale = {
+  weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
   months: [
-    "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-    "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
   ],
   monthsShort: [
-    "Янв", "Фев", "Мар", "Апр", "Май", "Июн",
-    "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек",
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
   ],
-  today: "Сегодня",
-  clear: "Очистить",
+  today: "Today",
+  clear: "Clear",
 };

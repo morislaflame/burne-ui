@@ -5,11 +5,11 @@ export function AlertClassNamesFullDemo() {
   return (
     <Alert
       status="info"
-      title="Полная кастомизация Alert"
-      description="Все слоты переопределяются через classNames."
+      title="Full customization Alert"
+      description="All slots are redefined via classNames."
       action={
         <Button size="small" variant="primary" status="info">
-          Открыть
+          Open
         </Button>
       }
       classNames={{

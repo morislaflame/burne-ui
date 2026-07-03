@@ -41,7 +41,7 @@ const meta = {
     animated: true,
     disabled: false,
     ripple: false,
-    "aria-label": "Закрыть",
+    "aria-label": "Close",
   },
   argTypes: {
     variant: {
@@ -56,7 +56,7 @@ const meta = {
     ripple: {
       control: "boolean",
       description:
-        "Встроенный `<Ripple />` с тоном под variant. По умолчанию в сторибуке выключен.",
+        "Built-in `<Ripple />` with tone matching variant. Off by default in Storybook.",
     },
   },
   render: (args) => <CloseButton {...args} />,
@@ -69,61 +69,61 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const ClickInteraction: Story = {
-  name: "Interaction: клик",
+  name: "Interaction: click",
   args: {
     onClick: fn(),
   },
   play: async ({ args, canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Закрыть" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Close" }));
     await expect(args.onClick).toHaveBeenCalledOnce();
   },
 };
 
 export const Sizes: Story = {
-  name: "Размеры (small — large)",
+  name: "Sizes (small — large)",
   render: () => (
     <div className="flex items-center gap-plus">
-      <CloseButton size="small" aria-label="Закрыть small" />
-      <CloseButton size="base" aria-label="Закрыть base" />
-      <CloseButton size="mid" aria-label="Закрыть mid" />
-      <CloseButton size="large" aria-label="Закрыть large" />
+      <CloseButton size="small" aria-label="Close small" />
+      <CloseButton size="base" aria-label="Close base" />
+      <CloseButton size="mid" aria-label="Close mid" />
+      <CloseButton size="large" aria-label="Close large" />
     </div>
   ),
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex flex-wrap items-center gap-plus">
-      <CloseButton variant="default" aria-label="Закрыть default" />
-      <CloseButton aria-label="Закрыть (по умолчанию)" />
-      <CloseButton variant="primary" aria-label="Закрыть primary" />
-      <CloseButton variant="outline" aria-label="Закрыть outline" />
-      <CloseButton variant="secondary" aria-label="Закрыть secondary" />
-      <CloseButton variant="ghost" aria-label="Закрыть ghost" />
-      <CloseButton variant="gloss" aria-label="Закрыть gloss" />
+      <CloseButton variant="default" aria-label="Close default" />
+      <CloseButton aria-label="Close (default)" />
+      <CloseButton variant="primary" aria-label="Close primary" />
+      <CloseButton variant="outline" aria-label="Close outline" />
+      <CloseButton variant="secondary" aria-label="Close secondary" />
+      <CloseButton variant="ghost" aria-label="Close ghost" />
+      <CloseButton variant="gloss" aria-label="Close gloss" />
     </div>
   ),
 };
 
 export const VariantsOnLightTheme: Story = {
-  name: "Варианты — светлая тема",
+  name: "Variants — light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex flex-wrap items-center gap-plus">
-      <CloseButton variant="default" aria-label="Закрыть default" />
-      <CloseButton aria-label="Закрыть (по умолчанию)" />
-      <CloseButton variant="primary" aria-label="Закрыть primary" />
-      <CloseButton variant="outline" aria-label="Закрыть outline" />
-      <CloseButton variant="secondary" aria-label="Закрыть secondary" />
-      <CloseButton variant="ghost" aria-label="Закрыть ghost" />
-      <CloseButton variant="gloss" aria-label="Закрыть gloss" />
+      <CloseButton variant="default" aria-label="Close default" />
+      <CloseButton aria-label="Close (default)" />
+      <CloseButton variant="primary" aria-label="Close primary" />
+      <CloseButton variant="outline" aria-label="Close outline" />
+      <CloseButton variant="secondary" aria-label="Close secondary" />
+      <CloseButton variant="ghost" aria-label="Close ghost" />
+      <CloseButton variant="gloss" aria-label="Close gloss" />
     </div>
   ),
 };
 
 export const VariantSizesMatrix: Story = {
-  name: "Матрица variant × size",
+  name: "variant × size matrix",
   render: () => (
     <div className="flex flex-col gap-plus">
       {(["default", "primary", "outline", "secondary", "ghost"] as const).map((variant) => (
@@ -144,26 +144,26 @@ export const Disabled: Story = {
 };
 
 export const WithoutAnimation: Story = {
-  name: "Без анимации нажатия",
+  name: "Without press animation",
   args: { animated: false },
 };
 
 export const WithRipple: Story = {
-  name: "С рипплом",
+  name: "With ripple",
   args: { ripple: true },
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема (data-theme)",
+  name: "Light theme (data-theme)",
   decorators: [...lightThemeDecorator],
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для CloseButton",
+        story: "classNames customization for CloseButton",
       },
     },
   },
@@ -174,7 +174,7 @@ export const CustomClassNames: Story = {
         root: "border-primary/50 bg-primary/5 shadow-token-mid hover:bg-primary/10",
         icon: "text-primary",
       }}
-      aria-label="Закрыть с кастомными слотами"
+      aria-label="Close with custom slots"
     />
   ),
 };

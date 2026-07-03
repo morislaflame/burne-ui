@@ -17,19 +17,19 @@ export function DrawerGlossDemo() {
           <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Gloss Drawer</Drawer.Title>
-            <Drawer.Description>Стеклянная боковая панель.</Drawer.Description>
+            <Drawer.Description>Glass side panel.</Drawer.Description>
           </Drawer.HeadingBlock>
           <Drawer.Close />
         </Drawer.Header>
         <Drawer.Body className="flex flex-col gap-plus">
           <Input>
-            <Input.Label>Заметка</Input.Label>
-            <Input.Control variant="gloss" placeholder="Текст…" />
+            <Input.Label>Note</Input.Label>
+            <Input.Control variant="gloss" placeholder="Text…" />
           </Input>
         </Drawer.Body>
         <Drawer.Footer>
           <Button variant="gloss" onClick={() => setOpen(false)}>
-            Закрыть
+            Close
           </Button>
         </Drawer.Footer>
         </Drawer.Panel>

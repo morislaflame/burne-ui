@@ -47,7 +47,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Индикатор уровня (read-only). **Simple** — props на root; **Compound** — `<Meter.Header>` / `<Meter.Track>` / `<Meter.Hint>` / `<Meter.Error>`. **a11y:** `role=\"meter\"`, `aria-labelledby`, `aria-describedby` (hint + error), `aria-valuetext`.",
+          "Level indicator (read-only). **Simple** — props on root; **Compound** — `<Meter.Header>` / `<Meter.Track>` / `<Meter.Hint>` / `<Meter.Error>`. **a11y:** `role=\"meter\"`, `aria-labelledby`, `aria-describedby` (hint + error), `aria-valuetext`.",
       },
     },
   },
@@ -63,21 +63,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Meter&gt;">
-        <Meter label="Загрузка" hint="Read-only шкала" showValue value={42} min={0} max={100} />
+      <DualApiStoryPanel title="Simple — props on &lt;Meter&gt;">
+        <Meter label="Loading" hint="Read-only scale" showValue value={42} min={0} max={100} />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — children">
         <Meter>
           <Meter.Header>
-            <Meter.Label>Загрузка</Meter.Label>
+            <Meter.Label>Loading</Meter.Label>
             <Meter.Value />
           </Meter.Header>
           <Meter.Track value={58} min={0} max={100} />
-          <Meter.Hint>Read-only шкала</Meter.Hint>
+          <Meter.Hint>Read-only scale</Meter.Hint>
         </Meter>
       </DualApiStoryPanel>
     </DualApiStoryPanels>
@@ -85,14 +85,14 @@ export const Default: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Meter
           key={size}
           size={size}
-          label={`Размер ${size}`}
+          label={`Size ${size}`}
           showValue
           value={25 + (size === "large" ? 50 : size === "mid" ? 35 : size === "base" ? 20 : 10)}
         />
@@ -102,16 +102,16 @@ export const Sizes: Story = {
 };
 
 export const CustomColor: Story = {
-  name: "Свой цвет",
+  name: "Custom color",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-mid">
-      <Meter label="Primary (по умолчанию)" showValue value={65} />
+      <Meter label="Primary (default)" showValue value={65} />
       <Meter label="Success" showValue value={80} color="var(--color-success)" />
       <Meter label="Danger" showValue value={35} color="var(--color-danger)" />
       <Meter label="Warning" showValue value={55} color="var(--color-warning)" />
       <Meter label="Hex" showValue value={70} color="#7c3aed" />
       <Meter
-        label="Градиент"
+        label="Gradient"
         showValue
         value={85}
         color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-info) 100%)"
@@ -121,7 +121,7 @@ export const CustomColor: Story = {
 };
 
 export const CustomThickness: Story = {
-  name: "Своя толщина",
+  name: "Custom thickness",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       <Meter label="6px" showValue thickness={6} value={40} />
@@ -132,39 +132,39 @@ export const CustomThickness: Story = {
 };
 
 export const StatusText: Story = {
-  name: "Текст состояния",
+  name: "State text",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-mid">
-      <Meter label="Батарея" valueText="Заряжается" value={72} />
-      <Meter label="Сеть" valueText="Отличное соединение" value={92} color="var(--color-success)" />
+      <Meter label="Battery" valueText="Charging" value={72} />
+      <Meter label="Network" valueText="Excellent connection" value={92} color="var(--color-success)" />
       <Meter
-        label="Память"
+        label="Memory"
         value={88}
         showValue
-        formatValue={(v: number) => `${v}% занято`}
+        formatValue={(v: number) => `${v}% used`}
       />
     </div>
   ),
 };
 
 export const Vertical: Story = {
-  name: "Вертикальный",
+  name: "Vertical",
   render: () => (
     <div className="flex h-64 items-end gap-xlarge">
       <Meter orientation="vertical" label="CPU" showValue value={45} />
       <Meter orientation="vertical" label="RAM" showValue value={72} color="var(--color-info)" />
-      <Meter orientation="vertical" label="Disk" valueText="Высокая" value={88} color="var(--color-warning)" />
+      <Meter orientation="vertical" label="Disk" valueText="High" value={88} color="var(--color-warning)" />
     </div>
   ),
 };
 
 export const WithoutLabel: Story = {
-  name: "Без подписи",
+  name: "Without label",
   render: () => <Meter showValue value={30} />,
 };
 
 export const Animated: Story = {
-  name: "Анимация",
+  name: "Animation",
   render: function Animated() {
     const [value, setValue] = useState(20);
 
@@ -177,7 +177,7 @@ export const Animated: Story = {
 
     return (
       <Meter
-        label="Анимация значения"
+        label="Value animation"
         showValue
         value={value}
         color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-success) 100%)"
@@ -187,25 +187,25 @@ export const Animated: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
-  render: () => <Meter label="Светлая тема" showValue value={58} />,
+  render: () => <Meter label="Light theme" showValue value={58} />,
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        Шкала — <code className="text-primary">role=&quot;meter&quot;</code> с{" "}
+        Scale — <code className="text-primary">role=&quot;meter&quot;</code> with{" "}
         <code className="text-primary">aria-valuenow</code> /{" "}
         <code className="text-primary">aria-valuemin</code> /{" "}
-        <code className="text-primary">aria-valuemax</code>, подпись —{" "}
-        <code className="text-primary">aria-labelledby</code>, hint и error —{" "}
+        <code className="text-primary">aria-valuemax</code>, label —{" "}
+        <code className="text-primary">aria-labelledby</code>, hint and error —{" "}
         <code className="text-primary">aria-describedby</code>.
       </p>
-      <Meter label="Загрузка CPU" hint="Read-only; значение обновляется автоматически" showValue value={67} />
-      <Meter label="Квота API" hint="Лимит обновляется раз в сутки" showValue value={92} error="Превышен лимит запросов." />
+      <Meter label="CPU load" hint="Read-only; value updates automatically" showValue value={67} />
+      <Meter label="API quota" hint="Limit refreshes once per day" showValue value={92} error="Request limit exceeded." />
     </div>
   ),
   play: async ({ canvas }) => {
@@ -215,18 +215,18 @@ export const Accessibility: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "Слоты root, header, value, track, fill, hint и error через prop classNames.",
+        story: "Slots root, header, value, track, fill, hint, and error via classNames prop.",
       },
     },
   },
   render: () => (
     <Meter
-      label="Хранилище"
-      hint="Read-only шкала"
+      label="Storage"
+      hint="Read-only scale"
       showValue
       value={72}
       color="var(--color-info)"

@@ -8,15 +8,15 @@ export function FieldSettingsPanelDemo() {
       <div className="flex flex-col gap-mid p-mid">
         <Field.Legend>
           <Field.LegendHeader>
-            <Label>Уведомления</Label>
-            <Field.Hint as="span">Email и push</Field.Hint>
+            <Label>Notifications</Label>
+            <Field.Hint as="span">Email and push</Field.Hint>
           </Field.LegendHeader>
         </Field.Legend>
         <div className="flex items-center justify-between gap-mid">
-          <Switch defaultChecked aria-label="Еженедельный дайджест" >
+          <Switch defaultChecked aria-label="Weekly digest" >
             <Switch.Control defaultChecked />
             <Switch.Content>
-              <Switch.Label>Еженедельный дайджест</Switch.Label>
+              <Switch.Label>Weekly digest</Switch.Label>
             </Switch.Content>
           </Switch>
         </div>

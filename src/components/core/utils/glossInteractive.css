@@ -1,6 +1,6 @@
 /**
- * Gloss interactive — статусный цвет текста и shell-утилиты.
- * Motion (lift, squeeze, gloss box-shadow, блик, conic) — GSAP: glossInteractiveMotion.ts
+ * Gloss interactive — status text color and shell utilities.
+ * Motion (lift, squeeze, gloss box-shadow, shine, conic) — GSAP: glossInteractiveMotion.ts
  */
 
 @import "./glossPanel.css";

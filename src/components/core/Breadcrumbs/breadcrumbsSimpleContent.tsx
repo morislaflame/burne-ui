@@ -2,7 +2,7 @@ import type { BreadcrumbsSimpleContentProps } from "./breadcrumbsTypes";
 import { BreadcrumbsPiecesList } from "./breadcrumbsParts";
 import { useBreadcrumbsPiecesFromItems } from "./useBreadcrumbsRootState";
 
-/** Simple API: рендер `<ol>` из `items` на root. */
+/** Simple API: renders `<ol>` from `items` on root. */
 export function BreadcrumbsSimpleContent({
   items,
   className,

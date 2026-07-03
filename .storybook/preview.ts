@@ -28,14 +28,14 @@ const preview: Preview = {
     },
 
   a11y: {
-      // Поведение a11y-тестов с Vitest addon (axe-core):
-      // 'off'   — не запускать автоматически
-      // 'todo'  — предупреждения в UI Storybook, CI не падает (базовая линия)
-      // 'error' — падение в UI и CLI/CI при нарушениях
+      // a11y test behavior with Vitest addon (axe-core):
+      // 'off'   — do not run automatically
+      // 'todo'  — warnings in Storybook UI, CI does not fail (baseline)
+      // 'error' — fail in UI and CLI/CI on violations
       // https://storybook.js.org/docs/writing-tests/accessibility-testing#test-behavior
       test: "todo",
 
-      // Анализируем отрендеренный DOM сториса (по умолчанию Storybook отключает rule 'region')
+      // Analyze the rendered story DOM (Storybook disables rule 'region' by default)
       context: "body",
 
       config: {},
@@ -45,7 +45,7 @@ const preview: Preview = {
 
     // Visual tests (Chromatic): https://storybook.js.org/docs/writing-tests/visual-testing
     chromatic: {
-      // GSAP/hover-анимации — дать кадру стабилизироваться перед снимком
+      // GSAP/hover animations — let the frame stabilize before capture
       delay: 300,
     },
   },

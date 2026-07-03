@@ -17,7 +17,7 @@ export function ExpandableCompoundDemo() {
       </Expandable.Trigger>
       <Expandable.Panel>
         <Text as="p" variant="small" className="text-muted">
-          Полный compound-вариант с иконкой и описанием в триггере.
+          Full compound-option with an icon and description in the trigger.
         </Text>
       </Expandable.Panel>
     </Expandable>

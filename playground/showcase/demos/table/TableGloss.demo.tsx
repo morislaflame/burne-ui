@@ -9,11 +9,11 @@ export function TableGlossDemo() {
     <div className="flex flex-col gap-mid">
       <Table variant="gloss" className="w-full">
         <Table.ScrollContainer>
-          <Table.Content aria-label="Gloss команда" className="min-w-[28rem]">
+          <Table.Content aria-label="Gloss team" className="min-w-[28rem]">
             <Table.Header>
-              <Table.Column isRowHeader>Имя</Table.Column>
-              <Table.Column>Роль</Table.Column>
-              <Table.Column>Статус</Table.Column>
+              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column>Role</Table.Column>
+              <Table.Column>Status</Table.Column>
             </Table.Header>
             <Table.Body items={TABLE_ROWS}>
               {(row: TableRow) => (
@@ -30,7 +30,7 @@ export function TableGlossDemo() {
         </Table.ScrollContainer>
       </Table>
       <Text as="p" variant="small" className="text-muted">
-        Наведите на строку — подсветка <span className="text-foreground">primary-tint</span>.
+        Hover over a line - highlight <span className="text-foreground">primary-tint</span>.
       </Text>
     </div>
   );

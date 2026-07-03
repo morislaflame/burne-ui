@@ -9,26 +9,26 @@ export function CardVariantsDemo() {
       <Card>
         <Card.Header>
           <Card.Title>Default</Card.Title>
-          <Card.Description>Базовая карточка с заголовком и описанием.</Card.Description>
+          <Card.Description>Basic card with title and description.</Card.Description>
         </Card.Header>
       </Card>
       <Card variant="outline">
         <Card.Header>
           <Card.Title>Outline</Card.Title>
-          <Card.Description>Только обводка, без заливки.</Card.Description>
+          <Card.Description>Stroke only, no fill.</Card.Description>
         </Card.Header>
       </Card>
       <Card variant="secondary">
         <Card.Header>
           <Card.Title>Secondary</Card.Title>
-          <Card.Description>Вторичная поверхность.</Card.Description>
+          <Card.Description>Secondary surface.</Card.Description>
         </Card.Header>
         <Card.Footer className="flex justify-end gap-small">
           <Button variant="ghost" size="small">
-            Отмена
+            Cancel
           </Button>
           <Button size="small" leftIcon={<IoArrowForward aria-hidden />}>
-            Далее
+            Next
           </Button>
         </Card.Footer>
       </Card>

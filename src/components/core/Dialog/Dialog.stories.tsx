@@ -43,7 +43,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модальное окно (портал в `document.body`). Панель: общий `p-large` и `gap-mid` между `Header` / `Body` / `Footer`; скролл — в `Body`. Размеры `small`–`large`. `variant=\"gloss\"` — стеклянная панель. В `Dialog.Footer` для прямых потомков `Button` без `size` подставляется размер кнопки по размеру модалки.\n\n`Dialog.Trigger` — встроенный триггер, который открывает диалог после анимации нажатия.",
+          "Modal dialog (portal to `document.body`). Panel: shared `p-large` and `gap-mid` between `Header` / `Body` / `Footer`; scroll lives in `Body`. Sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `Dialog.Footer`, direct `Button` children without `size` inherit the modal button size.\n\n`Dialog.Trigger` — built-in trigger that opens the dialog after the press animation.",
       },
     },
   },
@@ -68,24 +68,24 @@ export const Default: Story = {
     return (
       <>
         <Button type="button" onClick={() => setOpen(true)}>
-          Открыть диалог
+          Open dialog
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <Dialog.Panel>
             <Dialog.Header>
               <Dialog.HeadingBlock>
-                <Dialog.Title>Настройки экспорта</Dialog.Title>
+                <Dialog.Title>Export settings</Dialog.Title>
                 <Dialog.Description>
-                  Выберите формат и директорию. Изменения не применятся, пока вы не
-                  сохраните проект.
+                  Choose format and directory. Changes will not apply until you
+                  save the project.
                 </Dialog.Description>
               </Dialog.HeadingBlock>
               <Dialog.Close />
             </Dialog.Header>
             <Dialog.Body>
               <p className="text-sm leading-relaxed text-muted">
-                Произвольный контент: поля формы, списки, предпросмотр. Здесь только
-                иллюстрация скролла при большом объёме текста.
+                Arbitrary content: form fields, lists, preview. Here only
+                an illustration of scroll with a large amount of text.
               </p>
               <p className="mt-plus text-sm leading-relaxed text-muted">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
@@ -94,10 +94,10 @@ export const Default: Story = {
             </Dialog.Body>
             <Dialog.Footer>
               <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-                Отмена
+                Cancel
               </Button>
               <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
-                Сохранить
+                Save
               </Button>
             </Dialog.Footer>
           </Dialog.Panel>
@@ -110,12 +110,12 @@ export const Default: Story = {
 // ─── With built-in Trigger ────────────────────────────────────────────────────
 
 export const WithTrigger: Story = {
-  name: "С Dialog.Trigger",
+  name: "With Dialog.Trigger",
   parameters: {
     docs: {
       description: {
         story:
-          "`Dialog.Trigger asChild` — триггер открывает диалог после завершения press-анимации кнопки. `e.preventDefault()` подавляет собственную анимацию `Button`, Trigger управляет ею сам.",
+          "`Dialog.Trigger asChild` — the trigger opens the dialog after the button press animation completes. `e.preventDefault()` suppresses the `Button`'s own animation; Trigger controls it.",
       },
     },
   },
@@ -124,27 +124,27 @@ export const WithTrigger: Story = {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <Dialog.Trigger asChild>
-          <Button type="button">Открыть диалог</Button>
+          <Button type="button">Open dialog</Button>
         </Dialog.Trigger>
         <Dialog.Panel>
           <Dialog.Header>
             <Dialog.HeadingBlock>
-              <Dialog.Title>Настройки</Dialog.Title>
+              <Dialog.Title>Settings</Dialog.Title>
               <Dialog.Description>
-                Диалог открылся после анимации нажатия на кнопку.
+                Dialog opened after the button press animation.
               </Dialog.Description>
             </Dialog.HeadingBlock>
             <Dialog.Close />
           </Dialog.Header>
           <Dialog.Body>
-            <p className="text-sm text-muted">Содержимое диалога.</p>
+            <p className="text-sm text-muted">Dialog content.</p>
           </Dialog.Body>
           <Dialog.Footer>
             <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-              Закрыть
+              Close
             </Button>
             <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
-              Готово
+              Done
             </Button>
           </Dialog.Footer>
         </Dialog.Panel>
@@ -156,34 +156,34 @@ export const WithTrigger: Story = {
 // ─── Interaction test ─────────────────────────────────────────────────────────
 
 export const OpenCloseInteraction: Story = {
-  name: "Interaction: открытие",
+  name: "Interaction: open",
   render: function DialogInteractionDemo() {
     const [open, setOpen] = useState(false);
     return (
       <>
         <Button type="button" onClick={() => setOpen(true)}>
-          Открыть диалог
+          Open dialog
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <Dialog.Panel>
             <Dialog.Header>
               <Dialog.HeadingBlock>
-                <Dialog.Title>Настройки экспорта</Dialog.Title>
+                <Dialog.Title>Export settings</Dialog.Title>
                 <Dialog.Description>
-                  Выберите формат и директорию.
+                  Choose format and directory.
                 </Dialog.Description>
               </Dialog.HeadingBlock>
               <Dialog.Close />
             </Dialog.Header>
             <Dialog.Body>
-              <p className="text-sm text-muted">Содержимое диалога.</p>
+              <p className="text-sm text-muted">Dialog content.</p>
             </Dialog.Body>
             <Dialog.Footer>
               <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-                Отмена
+                Cancel
               </Button>
               <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
-                Сохранить
+                Save
               </Button>
             </Dialog.Footer>
           </Dialog.Panel>
@@ -192,11 +192,11 @@ export const OpenCloseInteraction: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Открыть диалог" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Open dialog" }));
     await expect(
-      await screen.findByRole("dialog", { name: "Настройки экспорта" }),
+      await screen.findByRole("dialog", { name: "Export settings" }),
     ).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Отмена" }));
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
@@ -206,7 +206,7 @@ export const OpenCloseInteraction: Story = {
 // ─── With form ────────────────────────────────────────────────────────────────
 
 export const WithForm: Story = {
-  name: "С формой",
+  name: "With form",
   render: function DialogWithFormDemo() {
     const [open, setOpen] = useState(false);
     const onSubmit = useCallback((values: FormValues) => {
@@ -217,29 +217,29 @@ export const WithForm: Story = {
     return (
       <>
         <Button type="button" onClick={() => setOpen(true)}>
-          Открыть форму в диалоге
+          Open form in dialog
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <Dialog.Panel>
             <Dialog.Header>
               <Dialog.HeadingBlock>
-                <Dialog.Title>Быстрое редактирование</Dialog.Title>
+                <Dialog.Title>Quick edit</Dialog.Title>
                 <Dialog.Description>
-                  Данные отправляются только в демо — страница не перезагружается.
+                  Data is submitted in the demo only — the page does not reload.
                 </Dialog.Description>
               </Dialog.HeadingBlock>
               <Dialog.Close />
             </Dialog.Header>
             <Form
               onSubmit={onSubmit}
-              aria-label="Форма в диалоге"
+              aria-label="Form in dialog"
               className="min-w-0"
             >
               <Dialog.Body>
                 <Form.Section>
                   <Input>
-                    <Input.Label>Имя</Input.Label>
-                    <Input.Control name="name" placeholder="Иван" autoComplete="name" />
+                    <Input.Label>Name</Input.Label>
+                    <Input.Control name="name" placeholder="Ivan" autoComplete="name" />
                   </Input>
                   <Input>
                     <Input.Label>Email</Input.Label>
@@ -259,10 +259,10 @@ export const WithForm: Story = {
                   variant="ghost"
                   onClick={() => setOpen(false)}
                 >
-                  Отмена
+                  Cancel
                 </Button>
                 <Button type="submit" size="base" variant="primary">
-                  Сохранить
+                  Save
                 </Button>
               </Dialog.Footer>
             </Form>
@@ -276,21 +276,21 @@ export const WithForm: Story = {
 // ─── Scrollable content ───────────────────────────────────────────────────────
 
 export const ScrollableContent: Story = {
-  name: "С прокручиваемым контентом",
+  name: "With scrollable content",
   render: function ScrollableContentDemo() {
     const [open, setOpen] = useState(false);
     return (
       <>
         <Button type="button" size="base" variant="outline" onClick={() => setOpen(true)}>
-          Длинный контент
+          Long content
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <Dialog.Panel>
             <Dialog.Header>
               <Dialog.HeadingBlock>
-                <Dialog.Title>Прокручиваемый контент</Dialog.Title>
+                <Dialog.Title>Scrollable content</Dialog.Title>
                 <Dialog.Description>
-                  Заголовок и описание остаются на месте; прокрутка только в области ниже.
+                  Header and description stay in place; scroll only in the area below.
                 </Dialog.Description>
               </Dialog.HeadingBlock>
               <Dialog.Close />
@@ -309,10 +309,10 @@ export const ScrollableContent: Story = {
             </Dialog.Body>
             <Dialog.Footer>
               <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-                Закрыть
+                Close
               </Button>
               <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
-                Готово
+                Done
               </Button>
             </Dialog.Footer>
           </Dialog.Panel>
@@ -323,7 +323,7 @@ export const ScrollableContent: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: Default.render,
 };
@@ -355,22 +355,22 @@ function GlossDemo() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <Button type="button" variant="gloss">Открыть gloss-диалог</Button>
+        <Button type="button" variant="gloss">Open gloss dialog</Button>
       </Dialog.Trigger>
       <Dialog.Panel variant="gloss">
         <Dialog.Header>
           <Dialog.HeadingBlock>
-            <Dialog.Title>Стеклянный диалог</Dialog.Title>
+            <Dialog.Title>Glass dialog</Dialog.Title>
             <Dialog.Description>
-              variant=&quot;gloss&quot; — модальная панель с conic-обводкой и бликом.
+              variant=&quot;gloss&quot; — modal panel with conic border and highlight.
             </Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body className="flex flex-col gap-mid">
           <Input>
-            <Input.Label>Имя</Input.Label>
-            <Input.Control variant="gloss" name="name" placeholder="Иван" autoComplete="name" />
+            <Input.Label>Name</Input.Label>
+            <Input.Control variant="gloss" name="name" placeholder="Ivan" autoComplete="name" />
           </Input>
           <Input>
             <Input.Label>Email</Input.Label>
@@ -384,10 +384,10 @@ function GlossDemo() {
         </Dialog.Body>
         <Dialog.Footer>
           <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button type="button" size="base" variant="gloss" onClick={() => setOpen(false)}>
-            Сохранить
+            Save
           </Button>
         </Dialog.Footer>
       </Dialog.Panel>
@@ -403,7 +403,7 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
@@ -411,7 +411,7 @@ export const GlossLight: Story = {
 
 function DialogTemplate({
   size = "base",
-  label = "Открыть диалог",
+  label = "Open dialog",
 }: {
   size?: DialogSize;
   label?: string;
@@ -426,23 +426,23 @@ function DialogTemplate({
         <Dialog.Panel>
           <Dialog.Header>
             <Dialog.HeadingBlock>
-              <Dialog.Title>Настройки экспорта</Dialog.Title>
+              <Dialog.Title>Export settings</Dialog.Title>
               <Dialog.Description>
-                Выберите формат и директорию. Изменения не применятся, пока вы не
-                сохраните проект.
+                Choose format and directory. Changes will not apply until you
+                save the project.
               </Dialog.Description>
             </Dialog.HeadingBlock>
             <Dialog.Close />
           </Dialog.Header>
           <Dialog.Body>
-            <p className="text-sm text-muted">Контент диалога для демонстрации размера.</p>
+            <p className="text-sm text-muted">Dialog content to demonstrate size.</p>
           </Dialog.Body>
           <Dialog.Footer>
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
-              Отмена
+              Cancel
             </Button>
             <Button type="button" variant="primary" onClick={() => setOpen(false)}>
-              Сохранить
+              Save
             </Button>
           </Dialog.Footer>
         </Dialog.Panel>
@@ -452,7 +452,7 @@ function DialogTemplate({
 }
 
 export const Sizes: Story = {
-  name: "Размеры small · base · mid · large",
+  name: "Sizes small · base · mid · large",
   render: function SizesDemo() {
     return (
       <div className="flex max-w-2xl flex-col flex-wrap gap-xlarge sm:flex-row sm:items-start">
@@ -461,7 +461,7 @@ export const Sizes: Story = {
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
               {size}
             </span>
-            <DialogTemplate size={size} label={`Открыть (${size})`} />
+            <DialogTemplate size={size} label={`Open (${size})`} />
           </div>
         ))}
       </div>
@@ -472,11 +472,11 @@ export const Sizes: Story = {
 // ─── Custom classNames ────────────────────────────────────────────────────────
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Dialog",
+        story: "classNames customization for Dialog",
       },
     },
   },
@@ -485,7 +485,7 @@ export const CustomClassNames: Story = {
     return (
       <>
         <Button type="button" onClick={() => setOpen(true)}>
-          Открыть диалог
+          Open dialog
         </Button>
         <Dialog
           open={open}
@@ -500,17 +500,17 @@ export const CustomClassNames: Story = {
           <Dialog.Panel>
             <Dialog.Header>
               <Dialog.HeadingBlock>
-                <Dialog.Title>Настройки</Dialog.Title>
-                <Dialog.Description>Все слоты настроены через classNames.</Dialog.Description>
+                <Dialog.Title>Settings</Dialog.Title>
+                <Dialog.Description>All slots configured via classNames.</Dialog.Description>
               </Dialog.HeadingBlock>
               <Dialog.Close />
             </Dialog.Header>
             <Dialog.Body>
-              <p className="text-sm text-muted">Контент модального окна.</p>
+              <p className="text-sm text-muted">Modal content.</p>
             </Dialog.Body>
             <Dialog.Footer>
               <Button type="button" size="small" onClick={() => setOpen(false)}>
-                Закрыть
+                Close
               </Button>
             </Dialog.Footer>
           </Dialog.Panel>

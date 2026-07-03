@@ -6,21 +6,21 @@ import { Text } from "@/components/core/Text";
 const STEPS = [
   {
     value: "cart",
-    title: "Корзина",
+    title: "Basket",
     icon: <IoCubeOutline aria-hidden />,
-    body: "Проверьте состав заказа и промокод.",
+    body: "Check the contents of your order and promotional code.",
   },
   {
     value: "payment",
-    title: "Оплата",
+    title: "Payment",
     icon: <IoWalletOutline aria-hidden />,
-    body: "Выберите способ оплаты: карта, СБП или счёт.",
+    body: "Select payment method: card, SBP or account.",
   },
   {
     value: "done",
-    title: "Подтверждение",
+    title: "Confirmation",
     icon: <IoCheckmarkCircleOutline aria-hidden />,
-    body: "Мы отправим чек на email после оплаты.",
+    body: "We will send a check to email after payment.",
   },
 ] as const;
 

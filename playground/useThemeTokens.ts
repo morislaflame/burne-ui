@@ -38,7 +38,7 @@ export function ThemeTokensProvider({ children }: { children: ReactNode }) {
 export function useThemeTokens(): ThemeTokensApi {
   const ctx = useContext(ThemeTokensContext);
   if (!ctx) {
-    throw new Error("useThemeTokens должен быть внутри ThemeTokensProvider.");
+    throw new Error("useThemeTokens must be inside ThemeTokensProvider.");
   }
   return ctx;
 }
@@ -148,12 +148,12 @@ function useThemeTokensState() {
     }));
   }, []);
 
-  /** Полный пресет — сбрасывает scale и применяет палитру для текущего режима темы. */
+  /** Full preset - resets scale and applies the palette to the current theme mode. */
   const applyPreset = useCallback((preset: ColorPresetKey) => {
     setState((prev) => applyColorPresetToState(prev, preset, { resetScale: true }));
   }, []);
 
-  /** Цветовой пресет — только colors / statusForegrounds, режим темы не меняется. */
+  /** Color preset - only colors / statusForegrounds, theme mode does not change. */
   const applyColorPreset = useCallback((preset: ColorPresetKey) => {
     setState((prev) => applyColorPresetToState(prev, preset));
   }, []);

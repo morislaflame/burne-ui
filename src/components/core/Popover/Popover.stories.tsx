@@ -31,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Всплывающая панель по **click** на триггере. Compound: `<Popover.Trigger>`, `<Popover.Content>`, опционально `<Popover.Header>` с `<Popover.Label>` / `<Popover.Hint>`, `<Popover.Body>`, `<Popover.Arrow />`. Padding — на всей панели; зазор между header и body — prop `gap` у `<Popover.Content>`. Placement и flip — как у `Tooltip`; закрытие — клик снаружи или `Escape`.",
+          "Popover panel on trigger **click**. Compound: `<Popover.Trigger>`, `<Popover.Content>`, optional `<Popover.Header>` with `<Popover.Label>` / `<Popover.Hint>`, `<Popover.Body>`, `<Popover.Arrow />`. Padding on the whole panel; gap between header and body — `gap` prop on `<Popover.Content>`. Placement and flip — like `Tooltip`; dismiss — click outside or `Escape`.",
       },
     },
   },
@@ -43,29 +43,29 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
-  name: "Базовый",
+  name: "Basic",
   render: () => (
     <Popover>
       <Popover.Trigger>
         <Button variant="outline" type="button">
-          Открыть
+          Open
         </Button>
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Body>
           <Text as="p" variant="small">
-            Произвольный контент внутри панели.
+            Arbitrary content inside the panel.
           </Text>
         </Popover.Body>
       </Popover.Content>
     </Popover>
   ),
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Открыть" }));
-    await expect(screen.getByText("Произвольный контент внутри панели.")).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Open" }));
+    await expect(screen.getByText("Arbitrary content inside the panel.")).toBeVisible();
     await userEvent.keyboard("{Escape}");
     await waitFor(() =>
-      expect(screen.queryByText("Произвольный контент внутри панели.")).not.toBeInTheDocument(),
+      expect(screen.queryByText("Arbitrary content inside the panel.")).not.toBeInTheDocument(),
     );
   },
 };
@@ -76,22 +76,22 @@ export const WithHeader: Story = {
     <Popover side="bottom">
       <Popover.Trigger>
         <Button variant="secondary" type="button">
-          Настройки
+          Settings
         </Button>
       </Popover.Trigger>
       <Popover.Content showArrow>
         <Popover.Arrow />
         <Popover.Header>
-          <Popover.Label>Экспорт</Popover.Label>
-          <Popover.Hint>Выберите формат или скопируйте ссылку</Popover.Hint>
+          <Popover.Label>Export</Popover.Label>
+          <Popover.Hint>Choose a format or copy the link</Popover.Hint>
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-small">
             <Button variant="ghost" size="small" type="button">
-              Скачать PDF
+              Download PDF
             </Button>
             <Button variant="ghost" size="small" type="button">
-              Скачать CSV
+              Download CSV
             </Button>
           </div>
         </Popover.Body>
@@ -101,7 +101,7 @@ export const WithHeader: Story = {
 };
 
 export const Placements: Story = {
-  name: "Placement (4 стороны)",
+  name: "Placement (4 sides)",
   render: () => (
     <div className="grid grid-cols-2 gap-xlarge py-xlarge">
       {(["top", "right", "bottom", "left"] as const).map((side) => (
@@ -133,7 +133,7 @@ const TAG_COLORS = [
   { id: "info", label: "Info", className: "bg-info" },
 ] as const;
 
-/** Кастомная панель: выбор цвета тега + превью — пример для dropdown-подобных сценариев. */
+/** Custom panel: tag color picker + preview — example for dropdown-like scenarios. */
 function TagColorPopoverDemo() {
   const [colorId, setColorId] = useState<(typeof TAG_COLORS)[number]["id"]>("primary");
   const active = TAG_COLORS.find((c) => c.id === colorId)!;
@@ -143,14 +143,14 @@ function TagColorPopoverDemo() {
       <Popover.Trigger>
         <Button variant="outline" type="button" className="gap-small">
           <span className={cn("size-3 rounded-full", active.className)} aria-hidden />
-          Цвет тега
+          Tag color
         </Button>
       </Popover.Trigger>
       <Popover.Content showArrow className="max-w-none">
         <Popover.Arrow />
         <Popover.Header>
-          <Popover.Label>Метка задачи</Popover.Label>
-          <Popover.Hint>Цвет виден в списке и на канбан-доске</Popover.Hint>
+          <Popover.Label>Task label</Popover.Label>
+          <Popover.Hint>Color is visible in the list and on the kanban board</Popover.Hint>
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-plus">
@@ -178,7 +178,7 @@ function TagColorPopoverDemo() {
                 {active.label}
               </Text>
             </div>
-            <Input label="Подпись" defaultValue="Срочно" size="small" />
+            <Input label="Label" defaultValue="Urgent" size="small" />
           </div>
         </Popover.Body>
       </Popover.Content>
@@ -187,7 +187,7 @@ function TagColorPopoverDemo() {
 }
 
 export const CustomTagColorPanel: Story = {
-  name: "Кастомная панель (TagColorPicker)",
+  name: "Custom panel (TagColorPicker)",
   render: () => <TagColorPopoverDemo />,
 };
 
@@ -198,14 +198,14 @@ function ShareLinkPopoverDemo() {
     <Popover side="top">
       <Popover.Trigger>
         <Button variant="primary" type="button" leftIcon={<IoShareSocialOutline aria-hidden />}>
-          Поделиться
+          Share
         </Button>
       </Popover.Trigger>
       <Popover.Content showArrow>
         <Popover.Arrow />
         <Popover.Header>
-          <Popover.Label>Поделиться ссылкой</Popover.Label>
-          <Popover.Hint>Доступ по ссылке — только чтение</Popover.Hint>
+          <Popover.Label>Share link</Popover.Label>
+          <Popover.Hint>Link access — read only</Popover.Hint>
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-plus">
@@ -218,7 +218,7 @@ function ShareLinkPopoverDemo() {
                   variant="ghost"
                   size="small"
                   type="button"
-                  aria-label="Копировать"
+                  aria-label="Copy"
                   onClick={() => {
                     setCopied(true);
                     window.setTimeout(() => setCopied(false), 1500);
@@ -230,15 +230,15 @@ function ShareLinkPopoverDemo() {
             />
             <div className="grid grid-cols-2 gap-small">
               <Button variant="outline" size="small" type="button" leftIcon={<IoLinkOutline aria-hidden />}>
-                Ссылка
+                Link
               </Button>
               <Button variant="ghost" size="small" type="button" className="text-danger" leftIcon={<IoTrashOutline aria-hidden />}>
-                Отозвать
+                Revoke
               </Button>
             </div>
             {copied ? (
               <Text as="p" variant="tools" className="text-success">
-                Скопировано
+                Copied
               </Text>
             ) : null}
           </div>
@@ -249,12 +249,12 @@ function ShareLinkPopoverDemo() {
 }
 
 export const CustomSharePanel: Story = {
-  name: "Кастомная панель (ShareLink)",
+  name: "Custom panel (ShareLink)",
   render: () => <ShareLinkPopoverDemo />,
 };
 
 export const Controlled: Story = {
-  name: "Контролируемый",
+  name: "Controlled",
   render: function ControlledPopover() {
     const [open, setOpen] = useState(false);
     return (
@@ -262,19 +262,19 @@ export const Controlled: Story = {
         <Popover open={open} onOpenChange={setOpen}>
           <Popover.Trigger>
             <Button variant="outline" type="button">
-              {open ? "Закрыть" : "Открыть"}
+              {open ? "Close" : "Open"}
             </Button>
           </Popover.Trigger>
           <Popover.Content>
             <Popover.Body>
               <Text as="p" variant="small">
-                Состояние снаружи: {open ? "открыт" : "закрыт"}
+                External state: {open ? "open" : "closed"}
               </Text>
             </Popover.Body>
           </Popover.Content>
         </Popover>
         <Button variant="ghost" size="small" type="button" onClick={() => setOpen((v) => !v)}>
-          Toggle снаружи
+          Toggle externally
         </Button>
       </div>
     );
@@ -282,30 +282,30 @@ export const Controlled: Story = {
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Панель: <code className="text-primary">role=&quot;dialog&quot;</code>,{" "}
+        Panel: <code className="text-primary">role=&quot;dialog&quot;</code>,{" "}
         <code className="text-primary">aria-labelledby</code> /{" "}
-        <code className="text-primary">aria-describedby</code> от Header. Триггер —{" "}
-        <code className="text-primary">aria-expanded</code> и{" "}
-        <code className="text-primary">aria-controls</code>. Закрытие: клик вне панели,{" "}
+        <code className="text-primary">aria-describedby</code> from Header. Trigger —{" "}
+        <code className="text-primary">aria-expanded</code> and{" "}
+        <code className="text-primary">aria-controls</code>. Dismiss: click outside the panel,{" "}
         <kbd className="rounded-small border-token px-xsmall py-0.5 text-tools">Escape</kbd>.
       </p>
       <Popover>
         <Popover.Trigger>
           <Button variant="outline" type="button">
-            Справка
+            Help
           </Button>
         </Popover.Trigger>
         <Popover.Content>
           <Popover.Header>
-            <Popover.Label>Справка по полю</Popover.Label>
+            <Popover.Label>Field help</Popover.Label>
           </Popover.Header>
           <Popover.Body>
             <Text as="p" variant="small" className="text-muted">
-              Используйте формат ISO 8601 для даты.
+              Use ISO 8601 format for the date.
             </Text>
           </Popover.Body>
         </Popover.Content>
@@ -315,12 +315,12 @@ export const Accessibility: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
         story:
-          "Слоты root (триггер), trigger, content, panel, label, hint и body через prop classNames.",
+          "Slots root (trigger), trigger, content, panel, label, hint, and body via classNames prop.",
       },
     },
   },
@@ -338,17 +338,17 @@ export const CustomClassNames: Story = {
     >
       <Popover.Trigger>
         <Button variant="outline" type="button">
-          Настройки
+          Settings
         </Button>
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Header>
-          <Popover.Label>Фильтры</Popover.Label>
-          <Popover.Hint>Изменения применяются сразу</Popover.Hint>
+          <Popover.Label>Filters</Popover.Label>
+          <Popover.Hint>Changes apply immediately</Popover.Hint>
         </Popover.Header>
         <Popover.Body>
           <Text as="p" variant="small">
-            Контент панели с кастомными слотами.
+            Panel content with custom slots.
           </Text>
         </Popover.Body>
       </Popover.Content>

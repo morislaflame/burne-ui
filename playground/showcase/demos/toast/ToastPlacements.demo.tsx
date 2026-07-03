@@ -24,7 +24,7 @@ export function ToastPlacementsDemo() {
             toast.show({
               status: "info",
               title: placement,
-              description: "Уведомление в выбранном углу экрана",
+              description: "Notification in selected corner of the screen",
               placement,
             })
           }

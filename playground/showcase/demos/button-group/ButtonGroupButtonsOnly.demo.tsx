@@ -3,13 +3,13 @@ import { Button } from "@/components/core/Button";
 
 export function ButtonGroupButtonsOnlyDemo() {
   return (
-    <ButtonGroup aria-label="Форматирование">
-      <Button variant="outline" groupSegment={{orientation: "horizontal", position: "first"}}>Жирный</Button>
+    <ButtonGroup aria-label="Formatting">
+      <Button variant="outline" groupSegment={{orientation: "horizontal", position: "first"}}>Fatty</Button>
       <Button variant="outline" groupSegment={{ orientation: "horizontal", position: "middle" }}>
-        Курсив
+        Italics
       </Button>
       <Button variant="outline" groupSegment={{ orientation: "horizontal", position: "last" }}>
-        Подчёркнутый
+        Underlined
       </Button>
     </ButtonGroup>
   );

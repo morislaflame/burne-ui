@@ -24,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Подпись поля формы. Поддерживает `htmlFor`, `isRequired` и контекст `FieldLabelContext` из Input/ComboBox. `Label.Slot` — null-компонент для compound-разметки.",
+          "Form field label. Supports `htmlFor`, `isRequired`, and `FieldLabelContext` from Input/ComboBox. `Label.Slot` — null component for compound layout.",
       },
     },
   },
@@ -36,37 +36,37 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "По умолчанию",
+  name: "Default",
   render: () => <Label htmlFor="label-demo">Email</Label>,
 };
 
 export const Required: Story = {
-  name: "Обязательное поле",
+  name: "Required field",
   render: () => (
     <Label htmlFor="label-required" isRequired>
-      Пароль
+      Password
     </Label>
   ),
 };
 
 export const WithInput: Story = {
-  name: "С Input",
+  name: "With Input",
   render: () => (
-    <Input label="Имя пользователя" placeholder="ivan" className="max-w-sm" />
+    <Input label="Username" placeholder="ivan" className="max-w-sm" />
   ),
 };
 
 export const LegendSpan: Story = {
-  name: "Без htmlFor (span)",
-  render: () => <Label id="legend-label">Заголовок секции</Label>,
+  name: "Without htmlFor (span)",
+  render: () => <Label id="legend-label">Section title</Label>,
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Label",
+        story: "classNames customization for Label",
       },
     },
   },

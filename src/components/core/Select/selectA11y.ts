@@ -26,5 +26,5 @@ export function selectActiveOptionId(
 }
 
 export function selectTriggerAriaLabel(open: boolean): string {
-  return open ? "Закрыть список" : "Открыть список";
+  return open ? "Close list" : "Open list";
 }

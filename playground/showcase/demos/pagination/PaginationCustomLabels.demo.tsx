@@ -8,19 +8,19 @@ export function PaginationCustomLabelsDemo() {
   return (
     <Pagination page={page} totalPages={8} onPageChange={setPage} className="w-full max-w-md">
       <Pagination.Summary>
-        Страница {page} из 8
+        Page {page} from 8
       </Pagination.Summary>
       <Pagination.Content className="mx-auto">
         <Pagination.Item>
           <Pagination.Previous>
             <Pagination.PreviousIcon />
-            <span className="text-base">Назад</span>
+            <span className="text-base">Back</span>
           </Pagination.Previous>
         </Pagination.Item>
         <Pagination.Pages />
         <Pagination.Item>
           <Pagination.Next>
-            <span className="text-base">Вперёд</span>
+            <span className="text-base">Forward</span>
             <Pagination.NextIcon />
           </Pagination.Next>
         </Pagination.Item>

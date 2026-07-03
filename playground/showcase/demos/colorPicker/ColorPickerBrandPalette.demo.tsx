@@ -12,7 +12,7 @@ export function ColorPickerBrandPaletteDemo() {
   return (
     <Surface variant="secondary" padding="mid" className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Брендовая палитра
+        Brand palette
       </Text>
       <div className="flex items-center gap-mid">
         <ColorPicker value={color} onValueChange={setColor}>

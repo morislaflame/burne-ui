@@ -11,22 +11,22 @@ export function AlertDialogLogoutDemo() {
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialog.Trigger asChild>
           <Button variant="ghost">
-            Выйти
+            Log out
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Panel>
           <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Выйти из аккаунта?</AlertDialog.Title>
-            <AlertDialog.Description>Текущая сессия будет завершена на этом устройстве.</AlertDialog.Description>
+            <AlertDialog.Title>Log out of your account?</AlertDialog.Title>
+            <AlertDialog.Description>The current session will end on this device.</AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button type="button" onClick={() => setOpen(false)}>
-            Выйти
+            Log out
           </Button>
         </AlertDialog.Footer>
         </AlertDialog.Panel>

@@ -25,22 +25,22 @@ export function AlertDialogStatusDemo() {
         <AlertDialog.Panel>
           <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Удалить элемент?</AlertDialog.Title>
+            <AlertDialog.Title>Remove element?</AlertDialog.Title>
             <AlertDialog.Description>
-              Действие необратимо. Окно не закроется по клику вне панели.
+              The action is irreversible. The window will not close when clicked outside the panel.
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant="outline" onClick={() => setDangerOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button
             type="button"
             variant={primaryButtonVariantForAlertTone("danger")}
             onClick={() => setDangerOpen(false)}
           >
-            Удалить
+            Delete
           </Button>
         </AlertDialog.Footer>
         </AlertDialog.Panel>
@@ -50,8 +50,8 @@ export function AlertDialogStatusDemo() {
         <AlertDialog.Panel>
           <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Изменения сохранены</AlertDialog.Title>
-            <AlertDialog.Description>Настройки профиля обновлены успешно.</AlertDialog.Description>
+            <AlertDialog.Title>Changes saved</AlertDialog.Title>
+            <AlertDialog.Description>Profile settings updated successfully.</AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
@@ -60,7 +60,7 @@ export function AlertDialogStatusDemo() {
             variant={primaryButtonVariantForAlertTone("success")}
             onClick={() => setSuccessOpen(false)}
           >
-            Отлично
+            Great
           </Button>
         </AlertDialog.Footer>
         </AlertDialog.Panel>

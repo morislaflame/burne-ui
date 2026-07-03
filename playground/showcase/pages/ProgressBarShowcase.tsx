@@ -18,32 +18,32 @@ export function ProgressBarShowcase() {
   return (
     <ShowcasePage
       title="ProgressBar"
-      description="Индикатор прогресса с определённым и неопределённым состоянием."
+      description="Progress indicator with definite and indefinite state."
       importPath='import { ProgressBar } from "@/components/core/ProgressBar";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Горизонтальный" description="label, value, indeterminate и color.">
+      <ShowcaseSection title="Horizontal" description="label, value, indeterminate and color.">
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressHorizontalDemo} source={progressHorizontalSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarSizesDemo} source={progressBarSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Вертикальный" description="orientation=&quot;vertical&quot; с showValue.">
+      <ShowcaseSection title="Vertical" description="orientation=&quot;vertical&quot; with showValue.">
         <ShowcaseDemoFromFile Demo={ProgressVerticalDemo} source={progressVerticalSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты root, header, value, track, fill, indeterminateFill, hint и error — через prop classNames."
+        description="Slots root, header, value, track, fill, indeterminateFill, hint and error — through prop classNames."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarClassNamesFullDemo} source={progressBarClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Карточка загрузки, pipeline и вертикальные метры — demo-файлы в `demos/progress-bar/`."
+        title="Custom Variations"
+        description="Download card, pipeline and vertical meters — demo-files in `demos/progress-bar/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressUploadCardDemo} source={progressUploadCardSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressPipelineDemo} source={progressPipelineSource} />
@@ -51,19 +51,19 @@ export function ProgressBarShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/ProgressBar" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, value, min, max, indeterminate, orientation, showValue, color на корне."
+            description="label, value, min, max, indeterminate, orientation, showValue, color on the root."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
-            <code>color</code> — семантический ключ или CSS-цвет заливки. <code>indeterminate</code> — анимация
-            без value. Плавное заполнение — <code>configureMotion()</code> (<code>enableProgressFill</code>,{" "}
+            <code>color</code> — semantic key or CSS-fill color. <code>indeterminate</code> — animation
+            without value. Smooth filling — <code>configureMotion()</code> (<code>enableProgressFill</code>,{" "}
             <code>progressFillDuration</code>).
           </p>
         </ShowcaseDoc.Customization>

@@ -18,25 +18,25 @@ export function CalendarShowcase() {
   return (
     <ShowcasePage
       title="Calendar"
-      description="Выбор даты: одиночная, диапазон, несколько дат и compound API с футером."
+      description="Date picker: single, range, multiple dates and compound API with footer."
       importPath='import { Calendar } from "@/components/core/Calendar";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Режимы выбора" description="mode: single, range, multiple и compound с Calendar.Footer.">
+      <ShowcaseSection title="Selection Modes" description="mode: single, range, multiple and compound with Calendar.Footer.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarModesDemo} source={calendarModesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarSizesDemo} source={calendarSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная панель календаря.">
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass calendar panel.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarGlossDemo} source={calendarGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на root."
+        description="Full customization of slots via classNames on root."
       >
         <ShowcaseDemoFromFile
           align="start"
@@ -46,8 +46,8 @@ export function CalendarShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Бронирование в Surface, compound layout и компактный виджет — `demos/calendar/`."
+        title="Custom Variations"
+        description="Booking in Surface, compound layout and compact widget — `demos/calendar/`."
       >
         <ShowcaseDemoFromFile align="start" Demo={CalendarBookingPanelDemo} source={calendarBookingPanelSource} />
         <ShowcaseDemoFromFile align="start" Demo={CalendarCompoundLayoutDemo} source={calendarCompoundLayoutSource} />
@@ -55,27 +55,27 @@ export function CalendarShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Calendar" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="value / onValueChange на корне с пропом mode."
+            description="value / onValueChange on the root with prop mode."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Calendar.Header, Calendar.Grid, Calendar.Footer для кастомной компоновки."
+            description="Calendar.Header, Calendar.Grid, Calendar.Footer for custom layout."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="root, header, grid, dayCell, cell, cellFill, footer и другие слоты на root."
+            description="root, header, grid, dayCell, cell, cellFill, footer and other slots on root."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            Локализация и ограничения — <code>minValue</code>, <code>maxValue</code>, <code>locale</code>.
-            Заливка выбранных ячеек — <code>configureMotion()</code> (<code>enableToggleButtonFill</code>).
+            Localization and restrictions — <code>minValue</code>, <code>maxValue</code>, <code>locale</code>.
+            Fill selected cells — <code>configureMotion()</code> (<code>enableToggleButtonFill</code>).
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

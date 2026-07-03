@@ -13,11 +13,11 @@ export function ComboBoxDefaultDemo() {
 
   return (
     <ComboBox
-      label="Фреймворк"
+      label="Framework"
       options={options}
       value={value}
       onValueChange={setValue}
-      hint={`Выбрано: ${value}`}
+      hint={`Selected: ${value}`}
       className="w-64"
     />
   );

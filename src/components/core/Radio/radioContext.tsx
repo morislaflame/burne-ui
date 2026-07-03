@@ -41,7 +41,7 @@ export function RadioClassNamesProvider({
 export function useRadioFieldContext(): RadioFieldContextValue {
   const ctx = useContext(RadioFieldContext);
   if (!ctx) {
-    throw new Error("Radio.* должны быть внутри <Radio>.");
+    throw new Error("Radio.* parts must be used inside <Radio>.");
   }
   return ctx;
 }

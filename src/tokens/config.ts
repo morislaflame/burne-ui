@@ -1,18 +1,18 @@
 /**
- * Метаданные слоя токенов. Значения задаются в `./styles.css`,
- * утилиты Tailwind — в `src/styles.css` (`@theme`, `@utility`).
+ * Token layer metadata. Values are defined in `./styles.css`,
+ * Tailwind utilities — in `src/styles.css` (`@theme`, `@utility`).
  *
- * Кастомизация:
- * - `--space` — отступы (gap, padding); ступени `gap-*`, `p-*` через множители.
- * - `--size` — размеры контролов (иконки, индикаторы, min-width кнопок, max-w модалок).
- * - `--radius` — базовый радиус; ступени `rounded-*` через множители.
- * - `--shadow-size` — множитель blur/offset для `--shadow-base|mid|large`.
- * - `--toast-scrim-size` / `--toast-scrim-density` — размер и плотность подложки Toast.календаря (0 при дефолтном `--space`).
- * - `--text-scale-*` — примитивная типографика (`xsmall` … `3xlarge`, базовая ступень `base`); роли `text-base`, `text-large` — алиасы.
- * - `--font-w-*` — примитивная шкала начертания;
+ * Customization:
+ * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers.
+ * - `--size` — control sizes (icons, indicators, button min-width, modal max-w).
+ * - `--radius` — base radius; `rounded-*` steps via multipliers.
+ * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large`.
+ * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
+ * - `--text-scale-*` — primitive typography (`xsmall` … `3xlarge`, base step `base`); roles `text-base`, `text-large` are aliases.
+ * - `--font-w-*` — primitive font-weight scale;
  */
 export const tokensConfig = {
-  /** Пространство имён для документации */
+  /** Namespace for documentation */
   namespace: "burne" as const,
   tailwindBridge: {
     "font-sans": "font-family-sans",
@@ -88,7 +88,7 @@ export const tokensConfig = {
   },
 } as const;
 
-/** Ступени `--spacing-*` → утилиты `gap-*`, `p-*`, `m-*`, `space-*`, … */
+/** `--spacing-*` steps → `gap-*`, `p-*`, `m-*`, `space-*`, … utilities */
 export const burneSpacingScale = [
   "xsmall",
   "small",
@@ -99,7 +99,7 @@ export const burneSpacingScale = [
   "xlarge",
 ] as const;
 
-/** Ступени `--radius-*` → утилиты `rounded-*`. */
+/** `--radius-*` steps → `rounded-*` utilities */
 export const burneRadiusScale = [
   "xsmall",
   "small",
@@ -109,8 +109,8 @@ export const burneRadiusScale = [
 ] as const;
 
 /**
- * Роли `@utility text-*` (размер/начертание), не путать с `text-foreground` и другими цветами.
- * `text-base` — переопределение дефолта Tailwind, в merge не нужен отдельно.
+ * `@utility text-*` roles (size/weight); not to be confused with `text-foreground` and other colors.
+ * `text-base` — Tailwind default override; no separate entry needed in merge.
  */
 export const burneTextScale = [
   "small",

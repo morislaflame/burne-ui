@@ -4,8 +4,8 @@ export function CheckboxClassNamesSimpleLabelDemo() {
   return (
     <Checkbox
       defaultChecked
-      label="Email-рассылка"
-      hint="classNames.label и labelText работают в simple API."
+      label="Email-newsletter"
+      hint="classNames.label and labelText work in simple API."
       classNames={{
         label: "text-primary",
         labelText: "font-semibold underline decoration-primary/30 underline-offset-4",

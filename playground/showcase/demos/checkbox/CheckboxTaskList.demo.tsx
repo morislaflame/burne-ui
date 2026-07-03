@@ -4,9 +4,9 @@ import { Checkbox } from "@/components/core/Checkbox";
 import { Text } from "@/components/core/Text";
 
 const PERMISSIONS = [
-  { id: "read", label: "Чтение", variant: "secondary" as const },
-  { id: "write", label: "Запись", variant: "default" as const },
-  { id: "admin", label: "Админ", variant: "outline" as const },
+  { id: "read", label: "Reading", variant: "secondary" as const },
+  { id: "write", label: "Record", variant: "default" as const },
+  { id: "admin", label: "Admin", variant: "outline" as const },
 ] as const;
 
 export function CheckboxTaskListDemo() {
@@ -19,7 +19,7 @@ export function CheckboxTaskListDemo() {
   return (
     <div className="flex w-full max-w-xs flex-col gap-plus">
       <Text as="p" variant="small" className="font-medium">
-        Права доступа
+        Access rights
       </Text>
       <ul className="flex flex-col gap-base">
         {PERMISSIONS.map((perm) => (
@@ -34,7 +34,7 @@ export function CheckboxTaskListDemo() {
         ))}
       </ul>
       <Text as="p" variant="tools" className="text-muted">
-        variant secondary / default / outline на одном экране.
+        variant secondary / default / outline on one screen.
       </Text>
     </div>
   );

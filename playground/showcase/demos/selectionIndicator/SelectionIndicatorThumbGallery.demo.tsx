@@ -35,7 +35,7 @@ export function SelectionIndicatorThumbGalleryDemo() {
           onChange={(e) => setActive(e.target.checked)}
           className="size-4"
         />
-        Активен
+        Active
       </label>
     </div>
   );

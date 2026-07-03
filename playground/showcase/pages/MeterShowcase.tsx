@@ -16,55 +16,55 @@ export function MeterShowcase() {
   return (
     <ShowcasePage
       title="Meter"
-      description="Измеритель заполненности с min, max и отображением значения."
+      description="Occupancy meter with min, max and displaying the value."
       importPath='import { Meter } from "@/components/core/Meter";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Горизонтальный" description="label, value, showValue и color.">
+      <ShowcaseSection title="Horizontal" description="label, value, showValue and color.">
         <ShowcaseDemoFromFile align="stretch" Demo={MeterHorizontalDemo} source={meterHorizontalSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={MeterSizesDemo} source={meterSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Вертикальный" description="orientation=&quot;vertical&quot;.">
+      <ShowcaseSection title="Vertical" description="orientation=&quot;vertical&quot;.">
         <ShowcaseDemoFromFile Demo={MeterVerticalDemo} source={meterVerticalSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты root, header, value, track, fill, hint и error — через prop classNames."
+        description="Slots root, header, value, track, fill, hint and error — through prop classNames."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={MeterClassNamesFullDemo} source={meterClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Сетка метрик и баннер квоты — demo-файлы в `demos/meter/`."
+        title="Custom Variations"
+        description="Metrics grid and quota banner — demo-files in `demos/meter/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={MeterStorageGridDemo} source={meterStorageGridSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={MeterQuotaBannerDemo} source={meterQuotaBannerSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Meter" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Meter.Header, Meter.Label, Meter.Value, Meter.Track, Meter.Hint, Meter.Error — compound-слоты."
+            description="Meter.Header, Meter.Label, Meter.Value, Meter.Track, Meter.Hint, Meter.Error — compound-slots."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, value, min, max, showValue, orientation, color на корне."
+            description="label, value, min, max, showValue, orientation, color on the root."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Отличие от ProgressBar">
+        <ShowcaseDoc.Block title="Difference from ProgressBar">
           <p>
-            Meter — для текущего уровня (диск, память). ProgressBar — для процесса с завершением. Оба поддерживают
-            вертикальную ориентацию.
+            Meter — for the current level (disk, memory). ProgressBar — for a process with termination. Both support
+            vertical orientation.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

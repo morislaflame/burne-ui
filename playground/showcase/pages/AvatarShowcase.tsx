@@ -18,32 +18,32 @@ export function AvatarShowcase() {
   return (
     <ShowcasePage
       title="Avatar"
-      description="Аватары пользователей с инициалами, изображением и группировкой."
+      description="User avatars with initials, image and grouping."
       importPath='import { Avatar, AvatarGroup } from "@/components/core/Avatar";'
       tags={["core", "media"]}
     >
-      <ShowcaseSection title="Размеры и fallback" description="size, label, src и кастомный Fallback.">
+      <ShowcaseSection title="Dimensions and fallback" description="size, label, src and custom Fallback.">
         <ShowcaseDemoFromFile Demo={AvatarSizesFallbackDemo} source={avatarSizesFallbackSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="AvatarGroup" description="Стек аватаров в одной группе.">
+      <ShowcaseSection title="AvatarGroup" description="Stack of avatars in one group.">
         <ShowcaseDemoFromFile Demo={AvatarGroupDemo} source={avatarGroupSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass surface.">
         <ShowcaseDemoFromFile Demo={AvatarGlossDemo} source={avatarGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="В gloss: root и className — на круге аватара, glossWrap — на внешней оболочке."
+        description="In gloss: root and className — on the avatar circle, glossWrap — on the outer shell."
       >
         <ShowcaseDemoFromFile Demo={AvatarClassNamesGlossDemo} source={avatarClassNamesGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Строка комментария, участники проекта и статус в сети — `demos/avatar/`."
+        title="Custom Variations"
+        description="Comment line, project participants and online status — `demos/avatar/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={AvatarCommentRowDemo} source={avatarCommentRowSource} />
         <ShowcaseDemoFromFile Demo={AvatarProjectMembersDemo} source={avatarProjectMembersSource} />
@@ -51,22 +51,22 @@ export function AvatarShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Avatar" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, src, size и variant на корне Avatar — основной способ."
+            description="label, src, size and variant on the root Avatar — main method."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Avatar.Fallback — кастомный контент при отсутствии изображения."
+            description="Avatar.Fallback — custom content if there is no image."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Размеры">
+        <ShowcaseDoc.Block title="Dimensions">
           <p>
-            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>. Инициалы генерируются из{" "}
+            <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>. Initials are generated from{" "}
             <code>label</code>.
           </p>
         </ShowcaseDoc.Block>

@@ -5,7 +5,7 @@ export function RadioGroupHorizontalSizesDemo() {
   return (
     <RadioGroup defaultValue="m" className="w-full max-w-md">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Размер</RadioGroup.Label>
+        <RadioGroup.Label>Size</RadioGroup.Label>
         <RadioGroup.Hint>RadioGroup.List orientation=&quot;horizontal&quot;.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List orientation="horizontal">

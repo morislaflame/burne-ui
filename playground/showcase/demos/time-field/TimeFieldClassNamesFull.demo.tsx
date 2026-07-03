@@ -14,11 +14,11 @@ export function TimeFieldClassNamesFullDemo() {
         hint: "text-foreground/70",
         error: "font-medium",
       }}
-      label="Время встречи"
+      label="Meeting time"
       defaultValue="09:30"
       status="danger"
-      hint="24-часовой формат"
-      error="Укажите корректное время."
+      hint="24-hour format"
+      error="Please enter the correct time."
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
     />
   );
@@ -37,13 +37,13 @@ export function TimeFieldClassNamesCompoundDemo() {
         hint: "text-info/80",
       }}
     >
-      <TimeField.Label>Начало смены</TimeField.Label>
+      <TimeField.Label>Start of shift</TimeField.Label>
       <TimeField.Control
         defaultValue="14:30"
         variant="segmented"
         prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
       />
-      <TimeField.Hint>Слоты shell, segments и segment через classNames.</TimeField.Hint>
+      <TimeField.Hint>Slots shell, segments and segment through classNames.</TimeField.Hint>
     </TimeField>
   );
 }

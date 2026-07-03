@@ -9,7 +9,7 @@ export function TimeFieldShiftWindowDemo() {
 
   return (
     <TimeField className="w-full max-w-xs">
-      <TimeField.Label>Начало смены</TimeField.Label>
+      <TimeField.Label>Start of shift</TimeField.Label>
       <TimeField.Control
         variant="segmented"
         value={value}
@@ -17,11 +17,11 @@ export function TimeFieldShiftWindowDemo() {
         prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
         suffix={
           <Text as="span" variant="small" className="font-medium text-muted">
-            МСК
+            MSK
           </Text>
         }
       />
-      <TimeField.Hint>Segmented-сегменты + affixes внутри оболочки.</TimeField.Hint>
+      <TimeField.Hint>Segmented-segments + affixes inside the shell.</TimeField.Hint>
     </TimeField>
   );
 }

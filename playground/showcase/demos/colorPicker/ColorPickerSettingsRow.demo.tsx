@@ -12,7 +12,7 @@ export function ColorPickerSettingsRowDemo() {
       <div className="flex items-center justify-between gap-mid">
         <div className="flex min-w-0 flex-col gap-xsmall">
           <Text as="span" variant="small" className="font-medium">
-            Акцентный цвет
+            Accent color
           </Text>
           <Text as="span" variant="tools" className="font-mono text-muted">
             {accent}

@@ -68,7 +68,7 @@ export const TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS = "mx-[1px]";
 export const TIME_FIELD_SEGMENTS_BASE_CLASS =
   "relative flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none";
 
-/** Flex-ряд внутри `<fieldset>` — flex на самом fieldset ломает высоту при resize. */
+/** Flex row inside `<fieldset>` — flex on fieldset itself breaks height on resize. */
 export const TIME_FIELD_SHELL_INNER_CLASS =
   "flex min-w-0 w-full items-stretch";
 

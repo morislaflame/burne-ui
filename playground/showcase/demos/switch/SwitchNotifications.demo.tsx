@@ -9,7 +9,7 @@ export function SwitchNotificationsDemo() {
     <Switch
       checked={enabled}
       onChange={(e) => setEnabled(e.target.checked)}
-      label="Уведомления"
+      label="Notifications"
     />
   );
 }

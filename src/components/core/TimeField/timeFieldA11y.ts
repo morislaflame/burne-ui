@@ -1,6 +1,6 @@
 import type { TimeFieldSegId, TimeFieldStatus } from "./timeFieldTypes";
 
-export const TIME_FIELD_FALLBACK_ARIA_LABEL = "Время";
+export const TIME_FIELD_FALLBACK_ARIA_LABEL = "Time";
 
 export const TIME_FIELD_SEG_LABEL: Record<TimeFieldSegId, string> = {
   h: "hours",

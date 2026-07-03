@@ -32,7 +32,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Модалка подтверждения (`alertdialog`): те же семантические статусы и иконки, что у `Alert`; размеры `small`–`large`. `variant=\"gloss\"` — стеклянная панель. В `AlertDialog.Footer` для прямых потомков `Button` без `size` подставляется размер кнопки по размеру модалки (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Подложка и Escape не закрывают окно.",
+          "Confirmation modal (`alertdialog`): same semantic statuses and icons as `Alert`; sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `AlertDialog.Footer`, direct `Button` children without `size` inherit the modal button size (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Backdrop and Escape do not close the dialog.",
       },
     },
   },
@@ -60,7 +60,7 @@ type Story = StoryObj<typeof meta>;
 function ConfirmTemplate({
   status: statusProp,
   size = "base",
-  label = "Открыть",
+  label = "Open",
   variant = "default",
 }: {
   status?: AlertStatus;
@@ -82,18 +82,18 @@ function ConfirmTemplate({
       <AlertDialog.Panel>
         <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Подтверждение</AlertDialog.Title>
+            <AlertDialog.Title>Confirmation</AlertDialog.Title>
             <AlertDialog.Description>
-              Выберите действие — окно не закроется по клику вне панели.
+              Choose an action — clicking outside the panel will not close the dialog.
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button type="button" variant={primaryVariant} status={primaryStatus} onClick={() => setOpen(false)}>
-            Продолжить
+            Continue
           </Button>
         </AlertDialog.Footer>
       </AlertDialog.Panel>
@@ -103,13 +103,13 @@ function ConfirmTemplate({
 
 export const ConfirmDelete: Story = {
   name: "Danger",
-  render: () => <ConfirmTemplate status="danger" label="Удалить (danger)" />,
+  render: () => <ConfirmTemplate status="danger" label="Delete (danger)" />,
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Удалить (danger)" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Delete (danger)" }));
     await expect(
-      await screen.findByRole("alertdialog", { name: "Подтверждение" }),
+      await screen.findByRole("alertdialog", { name: "Confirmation" }),
     ).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Продолжить" }));
+    await userEvent.click(screen.getByRole("button", { name: "Continue" }));
     await waitFor(() => {
       expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
     });
@@ -117,27 +117,27 @@ export const ConfirmDelete: Story = {
 };
 
 export const StatusDefault: Story = {
-  name: "Статус default",
+  name: "Status default",
   render: () => <ConfirmTemplate status="default" label="Default" />,
 };
 
 export const StatusSuccess: Story = {
-  name: "Статус success",
+  name: "Status success",
   render: () => <ConfirmTemplate status="success" label="Success" />,
 };
 
 export const StatusInfo: Story = {
-  name: "Статус info",
+  name: "Status info",
   render: () => <ConfirmTemplate status="info" label="Info" />,
 };
 
 export const StatusWarning: Story = {
-  name: "Статус warning",
+  name: "Status warning",
   render: () => <ConfirmTemplate status="warning" label="Warning" />,
 };
 
 export const Sizes: Story = {
-  name: "Размеры small · base · mid · large",
+  name: "Sizes small · base · mid · large",
   render: function SizesDemo() {
     return (
       <div className="flex max-w-2xl flex-col flex-wrap gap-xlarge sm:flex-row sm:items-start">
@@ -146,7 +146,7 @@ export const Sizes: Story = {
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
               {size}
             </span>
-            <ConfirmTemplate status="info" size={size} label={`Открыть (${size})`} />
+            <ConfirmTemplate status="info" size={size} label={`Open (${size})`} />
           </div>
         ))}
       </div>
@@ -173,18 +173,18 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "Кастомизация слотов через `classNames` на root (как у `Dialog`).",
+        story: "Slot customization via `classNames` on root (like `Dialog`).",
       },
     },
   },
@@ -204,24 +204,24 @@ export const CustomClassNames: Story = {
       >
         <AlertDialog.Trigger asChild>
           <Button type="button" variant="outline">
-            Открыть
+            Open
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Panel>
           <AlertDialog.Header>
             <AlertDialog.HeadingBlock>
-              <AlertDialog.Title>Несохранённые изменения</AlertDialog.Title>
+              <AlertDialog.Title>Unsaved changes</AlertDialog.Title>
               <AlertDialog.Description>
-                Все слоты настроены через classNames на root.
+                All slots configured via classNames on root.
               </AlertDialog.Description>
             </AlertDialog.HeadingBlock>
           </AlertDialog.Header>
           <AlertDialog.Footer>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Отмена
+              Cancel
             </Button>
             <Button type="button" onClick={() => setOpen(false)}>
-              Продолжить
+              Continue
             </Button>
           </AlertDialog.Footer>
         </AlertDialog.Panel>

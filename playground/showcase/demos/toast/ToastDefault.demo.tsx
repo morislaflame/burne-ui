@@ -9,12 +9,12 @@ export function ToastDefaultDemo() {
       variant="outline"
       onClick={() =>
         toast.show({
-          title: "Изменения сохранены",
-          description: "Настройки профиля обновлены.",
+          title: "Changes saved",
+          description: "Profile settings have been updated.",
         })
       }
     >
-      Показать toast
+      Show toast
     </Button>
   );
 }

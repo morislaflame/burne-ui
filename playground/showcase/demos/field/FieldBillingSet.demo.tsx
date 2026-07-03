@@ -8,24 +8,24 @@ export function FieldBillingSetDemo() {
     <Field.Set className="w-full max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Оплата</Label>
-          <Field.Hint as="span">Данные защищены</Field.Hint>
+          <Label>Payment</Label>
+          <Field.Hint as="span">Data protected</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
       <Field.Group>
         <Input>
-          <Input.Label>Имя на карте</Input.Label>
+          <Input.Label>Name on the card</Input.Label>
           <Input.Control placeholder="IVAN IVANOV" autoComplete="cc-name" />
         </Input>
         <Input>
-          <Input.Label>Номер карты</Input.Label>
+          <Input.Label>Card number</Input.Label>
           <Input.Control placeholder="•••• •••• •••• 4242" inputMode="numeric" />
-          <Input.Hint>Списание произойдёт после подтверждения.</Input.Hint>
+          <Input.Hint>The debit will occur after confirmation.</Input.Hint>
         </Input>
       </Field.Group>
       <Field.Actions>
         <Button type="button" variant="primary" size="small">
-          Оплатить
+          Pay
         </Button>
       </Field.Actions>
     </Field.Set>

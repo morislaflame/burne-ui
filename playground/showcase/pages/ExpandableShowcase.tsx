@@ -20,29 +20,29 @@ export function ExpandableShowcase() {
   return (
     <ShowcasePage
       title="Expandable"
-      description="Раскрывающиеся панели с заголовком, иконкой и описанием."
+      description="Drop-down panels with title, icon and description."
       importPath='import { Expandable } from "@/components/core/Expandable";'
       tags={["core", "disclosure"]}
     >
-      <ShowcaseSection title="Simple API" description="title, icon и description на корне.">
+      <ShowcaseSection title="Simple API" description="title, icon and description on the root.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableSimpleApiDemo} source={expandableSimpleApiSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableSizesDemo} source={expandableSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная панель с hover-lift.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass panel with hover-lift.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableGlossDemo} source={expandableGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Compound API" description="Trigger, Message, Icon, Title, Description и Panel.">
+      <ShowcaseSection title="Compound API" description="Trigger, Message, Icon, Title, Description and Panel.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableCompoundDemo} source={expandableCompoundSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на Root."
+        description="Full customization of slots via classNames on Root."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -52,8 +52,8 @@ export function ExpandableShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Стек настроек, compound доставка и детали заказа — `demos/expandable/`."
+        title="Custom Variations"
+        description="Settings stack, compound delivery and order details — `demos/expandable/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableSettingsStackDemo} source={expandableSettingsStackSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableShippingCompoundDemo} source={expandableShippingCompoundSource} />
@@ -61,22 +61,22 @@ export function ExpandableShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Expandable" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="title, icon, description и children-панель на корне Expandable."
+            description="title, icon, description and children-root panel Expandable."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Trigger (Message: Title, Description, Icon) + Panel (Body). Content — внутри Trigger, Panel — раскрываемая область."
+            description="Trigger (Message: Title, Description, Icon) + Panel (Body). Content — inside Trigger, Panel — expandable area."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Иконка">
+        <ShowcaseDoc.Block title="Icon">
           <p>
-            Передайте React-элемент в <code>icon</code> (Simple) или <code>Expandable.Icon</code> (Compound).
+            Pass it on React-element in <code>icon</code> (Simple) or <code>Expandable.Icon</code> (Compound).
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

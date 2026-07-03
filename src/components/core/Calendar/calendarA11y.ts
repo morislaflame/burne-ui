@@ -1,11 +1,11 @@
 import type { CalendarLocale } from "./calendarTypes";
 
 export function calendarNavBackLabel(): string {
-  return "Назад";
+  return "Previous";
 }
 
 export function calendarNavForwardLabel(): string {
-  return "Вперёд";
+  return "Next";
 }
 
 export function calendarDayAriaLabel(

@@ -23,7 +23,7 @@ export function AccordionSizesDemo() {
               </Accordion.Trigger>
             </Accordion.Heading>
             <Accordion.Panel>
-              <Accordion.Body>Контент панели для размера {size}.</Accordion.Body>
+              <Accordion.Body>Panel content for size {size}.</Accordion.Body>
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>

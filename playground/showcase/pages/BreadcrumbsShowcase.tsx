@@ -16,21 +16,21 @@ export function BreadcrumbsShowcase() {
   return (
     <ShowcasePage
       title="Breadcrumbs"
-      description="Цепочка навигации по иерархии страниц с поддержкой текущего пункта."
+      description="Navigation chain through the page hierarchy with support for the current item."
       importPath='import { Breadcrumbs } from "@/components/core/Breadcrumbs";'
       tags={["core", "navigation"]}
     >
-      <ShowcaseSection title="Короткий путь" description="Типичная цепочка из трёх уровней.">
+      <ShowcaseSection title="Shortcut" description="Typical chain of three levels.">
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsShortPathDemo} source={breadcrumbsShortPathSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Длинный путь" description="Несколько промежуточных уровней перед текущей страницей.">
+      <ShowcaseSection title="Long way" description="Several intermediate levels before the current page.">
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsLongPathDemo} source={breadcrumbsLongPathSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Сжатие с меню «…», шапка товара и документационный путь — `demos/breadcrumbs/`."
+        title="Custom Variations"
+        description="Compression from menu «…», product header and documentation path — `demos/breadcrumbs/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsClassNamesFullDemo} source={breadcrumbsClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsCollapsedMenuDemo} source={breadcrumbsCollapsedMenuSource} />
@@ -39,29 +39,29 @@ export function BreadcrumbsShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Breadcrumbs" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="`items` на root для быстрой сборки. Слоты настраиваются через `classNames`."
+            description="`items` on root for quick assembly. Slots can be configured via `classNames`."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Breadcrumbs.List + Breadcrumbs.Item. Item можно вкладывать через обёртки, сбор выполняется рекурсивно."
+            description="Breadcrumbs.List + Breadcrumbs.Item. Item can be nested through wrappers, collection is done recursively."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Доступность">
+        <ShowcaseDoc.Block title="Availability">
           <p>
-            Список рендерится как <code>&lt;ol&gt;</code>. Текущая страница помечается <code>aria-current</code>.
+            The list is rendered as <code>&lt;ol&gt;</code>. The current page is marked <code>aria-current</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Следующий шаг">
+        <ShowcaseDoc.Block title="Next step">
           <p>
-            Следующим шагом могу пройтись и унифицировать названия слотов (
-            <code>root</code>/<code>content</code>/<code>message</code> и т.п.) в общем гайдлайне,
-            чтобы одинаково назывались везде по киту.
+            The next step is to go through and unify the names of the slots (
+            <code>root</code>/<code>content</code>/<code>message</code> etc.) in the general guideline,
+            so that they are called the same everywhere in China.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

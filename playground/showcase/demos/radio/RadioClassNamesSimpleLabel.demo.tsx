@@ -6,8 +6,8 @@ export function RadioClassNamesSimpleLabelDemo() {
       name="simple-label"
       value="express"
       defaultChecked
-      label="Экспресс-доставка"
-      hint="Слот label стилизует подпись в simple API."
+      label="Express delivery"
+      hint="Slot label stylizes the signature in simple API."
       classNames={{
         label: "text-info",
         labelText: "font-semibold underline decoration-info/30 underline-offset-4",

@@ -2,7 +2,7 @@ import { shouldWrapButtonChildrenInText } from "./buttonAPI";
 import { ButtonIcon, ButtonText } from "./buttonParts";
 import type { ButtonSimpleContentProps } from "./buttonTypes";
 
-/** Simple API: собирает label-слот из props на root. */
+/** Simple API: assembles label slot from root props. */
 export function ButtonSimpleContent({ leftIcon, children }: ButtonSimpleContentProps) {
   const wrapText = shouldWrapButtonChildrenInText(children);
 

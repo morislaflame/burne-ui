@@ -24,7 +24,7 @@ export function createChevronRotationRefCallback(
 }
 
 /**
- * GSAP-поворот шеврона при open/close (Expandable, Accordion, ComboBox, Disclosure).
+ * GSAP chevron rotation on open/close (Expandable, Accordion, ComboBox, Disclosure).
  */
 export function useChevronRotation(
   open: boolean,

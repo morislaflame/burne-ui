@@ -17,15 +17,15 @@ export function SearchInputFilterResultsDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-mid">
       <SearchInput
-        aria-label="Фильтр компонентов"
-        placeholder="Фильтр по имени…"
+        aria-label="Component filter"
+        placeholder="Filter by name…"
         value={query}
         onValueChange={setQuery}
         className="w-full"
       />
       <div className="flex flex-wrap items-center gap-small">
         <Text as="span" variant="small" className="text-muted">
-          Найдено:
+          Found:
         </Text>
         <Badge variant="primary">{results.length}</Badge>
         {results.map((name) => (

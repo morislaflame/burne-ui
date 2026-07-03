@@ -11,15 +11,15 @@ export function AccordionCompoundDemo() {
             <Accordion.Message>
               <Accordion.Icon>{EXPANDABLE_INFO_ICON}</Accordion.Icon>
               <Accordion.Content>
-                <Accordion.Title>Что такое Burne UI?</Accordion.Title>
-                <Accordion.Description>Набор React-компонентов с compound API.</Accordion.Description>
+                <Accordion.Title>What's happened Burne UI?</Accordion.Title>
+                <Accordion.Description>Kit React-components with compound API.</Accordion.Description>
               </Accordion.Content>
             </Accordion.Message>
             <Accordion.Indicator />
           </Accordion.Trigger>
         </Accordion.Heading>
         <Accordion.Panel>
-          <Accordion.Body>Импортируйте из пакета или через alias в playground.</Accordion.Body>
+          <Accordion.Body>Import from a package or via alias in playground.</Accordion.Body>
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item>
@@ -27,8 +27,8 @@ export function AccordionCompoundDemo() {
           <Accordion.Trigger>
             <Accordion.Message>
               <Accordion.Content>
-                <Accordion.Title>Как запустить Storybook?</Accordion.Title>
-                <Accordion.Description>Локальная документация компонентов.</Accordion.Description>
+                <Accordion.Title>How to launch Storybook?</Accordion.Title>
+                <Accordion.Description>Local component documentation.</Accordion.Description>
               </Accordion.Content>
             </Accordion.Message>
             <Accordion.Indicator />
@@ -36,7 +36,7 @@ export function AccordionCompoundDemo() {
         </Accordion.Heading>
         <Accordion.Panel>
           <Accordion.Body>
-            <code className="text-primary">bun run storybook</code> — порт 6006.
+            <code className="text-primary">bun run storybook</code> — port 6006.
           </Accordion.Body>
         </Accordion.Panel>
       </Accordion.Item>

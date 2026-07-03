@@ -12,26 +12,26 @@ export function DialogBasicDemo() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <Dialog.Trigger asChild>
-          <Button variant="outline">Открыть Dialog</Button>
+          <Button variant="outline">Open Dialog</Button>
         </Dialog.Trigger>
         <Dialog.Panel>
           <Dialog.Header>
           <Dialog.HeadingBlock>
-            <Dialog.Title>Пример диалога</Dialog.Title>
-            <Dialog.Description>Нативный &lt;dialog&gt; с анимацией из библиотеки.</Dialog.Description>
+            <Dialog.Title>Dialogue example</Dialog.Title>
+            <Dialog.Description>Native &lt;dialog&gt; with animation from the library.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
           <Text as="p" variant="base">
-            Контент модального окна. Закройте по Escape или кнопке.
+            Modal window content. Close by Escape or button.
           </Text>
         </Dialog.Body>
         <Dialog.Footer>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
-          <Button onClick={() => setOpen(false)}>Готово</Button>
+          <Button onClick={() => setOpen(false)}>Ready</Button>
         </Dialog.Footer>
         </Dialog.Panel>
       </Dialog>

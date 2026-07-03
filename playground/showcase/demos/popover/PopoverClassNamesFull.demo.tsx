@@ -17,17 +17,17 @@ export function PopoverClassNamesFullDemo() {
     >
       <Popover.Trigger>
         <Button variant="outline" type="button">
-          Фильтры
+          Filters
         </Button>
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Header>
-          <Popover.Label>Настройки отображения</Popover.Label>
-          <Popover.Hint>root на триггере, panel/label/body через classNames</Popover.Hint>
+          <Popover.Label>Display Settings</Popover.Label>
+          <Popover.Hint>root on the trigger, panel/label/body through classNames</Popover.Hint>
         </Popover.Header>
         <Popover.Body>
           <Text as="p" variant="small">
-            Пример кастомизации всплывающей панели.
+            Example of customizing a pop-up panel.
           </Text>
         </Popover.Body>
       </Popover.Content>

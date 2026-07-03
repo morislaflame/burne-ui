@@ -18,25 +18,25 @@ export function CloseButtonShowcase() {
   return (
     <ShowcasePage
       title="CloseButton"
-      description="Компактная иконка закрытия с вариантами поверхности как у Button."
+      description="Compact closure icon with surface options like Button."
       importPath='import { CloseButton } from "@/components/core/CloseButton";'
       tags={["core", "actions"]}
     >
-      <ShowcaseSection title="Варианты" description="default, primary, outline, secondary, ghost, gloss.">
+      <ShowcaseSection title="Options" description="default, primary, outline, secondary, ghost, gloss.">
         <ShowcaseDemoFromFile Demo={CloseButtonVariantsDemo} source={closeButtonVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size совпадает с Button: small … large.">
+      <ShowcaseSection title="Dimensions" description="size coincides with Button: small … large.">
         <ShowcaseDemoFromFile Demo={CloseButtonSizesDemo} source={closeButtonSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="Стеклянная поверхность на тёмном фоне.">
+      <ShowcaseSection title="Gloss" description="Glass surface on a dark background.">
         <ShowcaseDemoFromFile Demo={CloseButtonGlossDemo} source={closeButtonGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Кастомизация слотов root, icon и ripple через classNames."
+        description="Slot customization root, icon and ripple through classNames."
       >
         <ShowcaseDemoFromFile
           Demo={CloseButtonClassNamesFullDemo}
@@ -45,8 +45,8 @@ export function CloseButtonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="CloseButton в реальных layout — демо в `demos/close-button/`."
+        title="Custom Variations"
+        description="CloseButton in real layout — demo in `demos/close-button/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={CloseButtonInfoBannerDemo} source={closeButtonInfoBannerSource} />
         <ShowcaseDemoFromFile Demo={CloseButtonPreviewCardDemo} source={closeButtonPreviewCardSource} />
@@ -54,23 +54,23 @@ export function CloseButtonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/CloseButton" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, size, aria-label (обязателен), onClick. Иконка IoClose встроена."
+            description="variant, size, aria-label (required), onClick. Icon IoClose built-in."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="root, icon, ripple — слоты classNames на корне."
+            description="root, icon, ripple — slots classNames on the root."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            Варианты заливки совпадают с <code>Button</code> (без статусных тонов). Для Dialog и Drawer —
-            в header с достаточной областью нажатия; обязателен <code>aria-label</code>.
+            Fill options match <code>Button</code> (without status tones). For Dialog and Drawer —
+            in header with sufficient pressing area; required <code>aria-label</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

@@ -70,7 +70,7 @@ export function animateModalClose({
 }) {
   killMotion(overlay, panel);
   const tl = gsapInstance.timeline({ onComplete });
-  // opacity, не autoAlpha — visibility:hidden на blur-подложке даёт мигание в конце
+  // opacity, not autoAlpha — visibility:hidden on blur backdrop causes flicker at the end
   tl.to(overlay, { opacity: 0, ...vars }, 0);
   tl.to(panel, { ...panelExit, ...vars }, 0);
   return tl;

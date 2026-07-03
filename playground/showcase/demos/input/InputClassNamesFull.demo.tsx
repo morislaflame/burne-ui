@@ -14,8 +14,8 @@ export function InputClassNamesFullDemo() {
       label="Email"
       placeholder="you@example.com"
       status="danger"
-      hint="Мы не передаём адрес третьим лицам."
-      error="Введите корректный email."
+      hint="We do not share the address with third parties."
+      error="Please enter correct email."
     />
   );
 }
@@ -32,9 +32,9 @@ export function InputClassNamesCompoundDemo() {
         hint: "text-info/80",
       }}
     >
-      <Input.Label>Домен</Input.Label>
+      <Input.Label>Domain</Input.Label>
       <Input.Control prefix="https://" suffix=".com" placeholder="example" />
-      <Input.Hint>Слоты prefix, suffix и shell через classNames.</Input.Hint>
+      <Input.Hint>Slots prefix, suffix and shell through classNames.</Input.Hint>
     </Input>
   );
 }

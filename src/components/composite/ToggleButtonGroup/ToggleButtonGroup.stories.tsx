@@ -35,7 +35,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Группа `ToggleButton`: по умолчанию склеена как `ButtonGroup`; `separated` — с зазором. `type=\"single\"` — только один выбран (radiogroup). Горизонтальная и вертикальная ориентация, `disabled` на группе.",
+          "`ToggleButton` group: attached like `ButtonGroup` by default; `separated` — with gap. `type=\"single\"` — only one selected (radiogroup). Horizontal and vertical orientation, `disabled` on the group.",
       },
     },
   },
@@ -47,27 +47,27 @@ export default meta;
 type Story = StoryObj<typeof ToggleButtonGroup>;
 
 export const ConnectedHorizontal: Story = {
-  name: "Склеенная (горизонталь)",
+  name: "Attached (horizontal)",
   render: () => (
-    <ToggleButtonGroup aria-label="Фильтр формата" defaultValue={["bold"]}>
+    <ToggleButtonGroup aria-label="Format filter" defaultValue={["bold"]}>
       <ToggleButton value="bold" leftIcon={<IoTextOutline aria-hidden />}>
-        Жирный
+        Bold
       </ToggleButton>
-      <ToggleButton value="italic">Курсив</ToggleButton>
-      <ToggleButton value="underline">Подчёркнутый</ToggleButton>
+      <ToggleButton value="italic">Italic</ToggleButton>
+      <ToggleButton value="underline">Underline</ToggleButton>
     </ToggleButtonGroup>
   ),
 };
 
 export const ConnectedVertical: Story = {
-  name: "Склеенная (вертикаль)",
+  name: "Attached (vertical)",
   render: () => (
-    <ToggleButtonGroup orientation="vertical" aria-label="Вид списка" defaultValue={["list"]}>
+    <ToggleButtonGroup orientation="vertical" aria-label="List view" defaultValue={["list"]}>
       <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
-        Список
+        List
       </ToggleButton>
       <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
-        Сетка
+        Grid
       </ToggleButton>
     </ToggleButtonGroup>
   ),
@@ -76,7 +76,7 @@ export const ConnectedVertical: Story = {
 export const Separated: Story = {
   name: "Separated",
   render: () => (
-    <ToggleButtonGroup separated aria-label="Теги" defaultValue={["design"]}>
+    <ToggleButtonGroup separated aria-label="Tags" defaultValue={["design"]}>
       <ToggleButton value="design">Design</ToggleButton>
       <ToggleButton value="dev">Dev</ToggleButton>
       <ToggleButton value="qa">QA</ToggleButton>
@@ -94,13 +94,13 @@ export const SingleSelection: Story = {
           type="single"
           value={value}
           onValueChange={(v) => setValue(v as string)}
-          aria-label="Режим отображения"
+          aria-label="Display mode"
         >
           <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
-            Список
+            List
           </ToggleButton>
           <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
-            Сетка
+            Grid
           </ToggleButton>
         </ToggleButtonGroup>
         <Text as="p" variant="small" className="text-muted">
@@ -110,7 +110,7 @@ export const SingleSelection: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("radio", { name: "Сетка" }));
+    await userEvent.click(canvas.getByRole("radio", { name: "Grid" }));
     await expect(canvas.getByText('value="grid"')).toBeInTheDocument();
   },
 };
@@ -118,7 +118,7 @@ export const SingleSelection: Story = {
 export const SingleSeparated: Story = {
   name: "Single + separated",
   render: () => (
-    <ToggleButtonGroup type="single" separated defaultValue="like" aria-label="Реакции">
+    <ToggleButtonGroup type="single" separated defaultValue="like" aria-label="Reactions">
       <ToggleButton value="like" leftIcon={<IoHeartOutline aria-hidden />}>
         Like
       </ToggleButton>
@@ -132,7 +132,7 @@ export const SingleSeparated: Story = {
 export const Disabled: Story = {
   name: "Disabled",
   render: () => (
-    <ToggleButtonGroup disabled defaultValue={["a"]} aria-label="Отключённая группа">
+    <ToggleButtonGroup disabled defaultValue={["a"]} aria-label="Disabled group">
       <ToggleButton value="a">A</ToggleButton>
       <ToggleButton value="b">B</ToggleButton>
       <ToggleButton value="c">C</ToggleButton>
@@ -141,7 +141,7 @@ export const Disabled: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex flex-col items-center gap-large">
       {(["default", "outline", "ghost"] as const).map((variant) => (

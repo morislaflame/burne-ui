@@ -6,22 +6,22 @@ import { Dropdown } from "@/components/core/Dropdown";
 
 export function ButtonGroupGlossDemo() {
   return (
-    <ButtonGroup variant="gloss" aria-label="Gloss действия">
-      <ButtonGroupText>Вид</ButtonGroupText>
-      <Button>Список</Button>
-      <Button>Сетка</Button>
+    <ButtonGroup variant="gloss" aria-label="Gloss actions">
+      <ButtonGroupText>View</ButtonGroupText>
+      <Button>List</Button>
+      <Button>Net</Button>
       <Dropdown>
         <Dropdown.Trigger asChild>
-          <Button aria-label="Дополнительные действия" iconOnly>
+          <Button aria-label="Additional actions" iconOnly>
             <IoEllipsisHorizontal aria-hidden className="icon-base" />
           </Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Item value="share" selection={false}>
-            Поделиться
+            Share
           </Dropdown.Item>
           <Dropdown.Item value="del" variant="danger" selection={false}>
-            Удалить
+            Delete
           </Dropdown.Item>
         </Dropdown.Popover>
       </Dropdown>

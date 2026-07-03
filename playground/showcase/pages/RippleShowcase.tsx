@@ -16,31 +16,31 @@ export function RippleShowcase() {
   return (
     <ShowcasePage
       title="Ripple"
-      description="Converge-ripple от точки нажатия: отдельный слой или внутри pressable-поверхностей."
+      description="Converge-ripple from the point of pressure: separate layer or inside pressable-surfaces."
       importPath='import { Ripple } from "@/components/core/Ripple";'
       tags={["core", "motion"]}
     >
       <ShowcaseSection
-        title="Кастомный слой"
-        description="Ripple поверх контейнера; интерактивный элемент — поверх слоя (z-index)."
+        title="Custom layer"
+        description="Ripple on top of the container; interactive element - on top of the layer (z-index)."
       >
         <ShowcaseDemoFromFile Demo={RippleCustomLayerDemo} source={rippleCustomLayerSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Цвета" description="color из RIPPLE_COLOR или произвольная CSS-строка.">
+      <ShowcaseSection title="Colors" description="color from RIPPLE_COLOR or arbitrary CSS-line.">
         <ShowcaseDemoFromFile Demo={RippleColorsDemo} source={rippleColorsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="Pressable Card"
-        description="Ripple на всю карточку; клик по контенту всплывает к pressable-корню."
+        description="Ripple for the entire card; click on content pops up to pressable-root."
       >
         <ShowcaseDemoFromFile Demo={RipplePressableCardDemo} source={ripplePressableCardSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Сетки, баннеры и Surface — исходники в `demos/ripple/`."
+        title="Custom Variations"
+        description="Grids, banners and Surface — sources in `demos/ripple/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={RippleColorTilesDemo} source={rippleColorTilesSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={RipplePromoBannerDemo} source={ripplePromoBannerSource} />
@@ -48,26 +48,26 @@ export function RippleShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Ripple" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="color (ключ RIPPLE_COLOR или CSS), direction in|out, duration, disabled."
+            description="color (key RIPPLE_COLOR or CSS), direction in|out, duration, disabled."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Связь с Button">
+        <ShowcaseDoc.Block title="Contact with Button">
           <p>
-            На <code>Button</code> достаточно пропа <code>ripple</code>. Для ручного слоя —{" "}
-            <code>buttonRippleTone(variant, status)</code> из пакета или константы <code>RIPPLE_COLOR</code>.
+            On <code>Button</code> propa enough <code>ripple</code>. For manual layer —{" "}
+            <code>buttonRippleTone(variant, status)</code> from package or constant <code>RIPPLE_COLOR</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
-            Контейнер с <code>overflow-hidden</code> и <code>position: relative</code>. Длительность и easing —{" "}
+            Container with <code>overflow-hidden</code> and <code>position: relative</code>. Duration and easing —{" "}
             <code>configureMotion()</code> (<code>rippleDefaultDuration</code>, <code>rippleEaseCss</code>,{" "}
-            <code>enableRipple</code>). Тон кнопки — <code>buttonRippleTone</code> из пакета.
+            <code>enableRipple</code>). Button tone — <code>buttonRippleTone</code> from the package.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

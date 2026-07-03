@@ -27,7 +27,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Выдвижная панель (портал в `document.body`). Поддерживает четыре направления, три размера, перетягивание (`Drawer.Handle`), скролл в `Drawer.Body` и `isDismissable={false}` на `Drawer.Backdrop`.\n\n`Drawer.Trigger` — встроенный триггер, открывает дравер после анимации нажатия.",
+          "Slide-out panel (portal to `document.body`). Supports four directions, three sizes, dragging (`Drawer.Handle`), scroll in `Drawer.Body`, and `isDismissable={false}` on `Drawer.Backdrop`.\n\n`Drawer.Trigger` — built-in trigger that opens the drawer after the press animation.",
       },
     },
   },
@@ -41,27 +41,27 @@ type Story = StoryObj<typeof meta>;
 // ─── Default (right) ─────────────────────────────────────────────────────────
 
 export const Default: Story = {
-  name: "По умолчанию (right)",
+  name: "Default (right)",
   render: function DefaultDemo() {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button onClick={() => setOpen(true)}>Открыть Drawer</Button>
+        <Button onClick={() => setOpen(true)}>Open Drawer</Button>
         <Drawer open={open} onOpenChange={setOpen}>
           <Drawer.Panel>
             <Drawer.Header>
               <Drawer.HeadingBlock>
-                <Drawer.Title>Настройки</Drawer.Title>
-                <Drawer.Description>Выберите нужные параметры.</Drawer.Description>
+                <Drawer.Title>Settings</Drawer.Title>
+                <Drawer.Description>Choose the required options.</Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
-              <p className="text-base text-muted">Произвольный контент внутри боди.</p>
+              <p className="text-base text-muted">Arbitrary content inside the body.</p>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Отмена</Button>
-              <Button onClick={() => setOpen(false)}>Сохранить</Button>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={() => setOpen(false)}>Save</Button>
             </Drawer.Footer>
           </Drawer.Panel>
         </Drawer>
@@ -73,12 +73,12 @@ export const Default: Story = {
 // ─── With built-in Trigger ────────────────────────────────────────────────────
 
 export const WithTrigger: Story = {
-  name: "С Drawer.Trigger",
+  name: "With Drawer.Trigger",
   parameters: {
     docs: {
       description: {
         story:
-          "`Drawer.Trigger asChild` — триггер открывает дравер после завершения press-анимации кнопки.",
+          "`Drawer.Trigger asChild` — the trigger opens the drawer after the button press animation completes.",
       },
     },
   },
@@ -87,21 +87,21 @@ export const WithTrigger: Story = {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <Drawer.Trigger asChild>
-          <Button>Открыть Drawer</Button>
+          <Button>Open Drawer</Button>
         </Drawer.Trigger>
         <Drawer.Panel>
           <Drawer.Header>
             <Drawer.HeadingBlock>
-              <Drawer.Title>Настройки</Drawer.Title>
-              <Drawer.Description>Открылся после анимации нажатия.</Drawer.Description>
+              <Drawer.Title>Settings</Drawer.Title>
+              <Drawer.Description>Opened after the press animation.</Drawer.Description>
             </Drawer.HeadingBlock>
             <Drawer.Close />
           </Drawer.Header>
           <Drawer.Body>
-            <p className="text-base text-muted">Содержимое дравера.</p>
+            <p className="text-base text-muted">Drawer content.</p>
           </Drawer.Body>
           <Drawer.Footer>
-            <Button variant="ghost" onClick={() => setOpen(false)}>Закрыть</Button>
+            <Button variant="ghost" onClick={() => setOpen(false)}>Close</Button>
           </Drawer.Footer>
         </Drawer.Panel>
       </Drawer>
@@ -112,27 +112,27 @@ export const WithTrigger: Story = {
 // ─── Interaction test ─────────────────────────────────────────────────────────
 
 export const OpenCloseInteraction: Story = {
-  name: "Interaction: открытие",
+  name: "Interaction: open",
   render: function DrawerInteractionDemo() {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button onClick={() => setOpen(true)}>Открыть Drawer</Button>
+        <Button onClick={() => setOpen(true)}>Open Drawer</Button>
         <Drawer open={open} onOpenChange={setOpen}>
           <Drawer.Panel>
             <Drawer.Header>
               <Drawer.HeadingBlock>
-                <Drawer.Title>Настройки</Drawer.Title>
-                <Drawer.Description>Выберите нужные параметры.</Drawer.Description>
+                <Drawer.Title>Settings</Drawer.Title>
+                <Drawer.Description>Choose the required options.</Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
-              <p className="text-base text-muted">Произвольный контент внутри боди.</p>
+              <p className="text-base text-muted">Arbitrary content inside the body.</p>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Отмена</Button>
-              <Button onClick={() => setOpen(false)}>Сохранить</Button>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={() => setOpen(false)}>Save</Button>
             </Drawer.Footer>
           </Drawer.Panel>
         </Drawer>
@@ -140,9 +140,9 @@ export const OpenCloseInteraction: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Открыть Drawer" }));
-    await expect(await screen.findByRole("dialog", { name: "Настройки" })).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Отмена" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Open Drawer" }));
+    await expect(await screen.findByRole("dialog", { name: "Settings" })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
@@ -154,10 +154,10 @@ export const OpenCloseInteraction: Story = {
 const PLACEMENTS: DrawerPlacement[] = ["right", "left", "bottom", "top"];
 
 const HANDLE_HINT: Record<DrawerPlacement, string> = {
-  bottom: "Потяните полоску вниз, чтобы закрыть.",
-  top: "Потяните полоску вверх, чтобы закрыть.",
-  left: "Потяните полоску влево, чтобы закрыть.",
-  right: "Потяните полоску вправо, чтобы закрыть.",
+  bottom: "Drag the handle down to close.",
+  top: "Drag the handle up to close.",
+  left: "Drag the handle left to close.",
+  right: "Drag the handle right to close.",
 };
 
 function DrawerHandleDemoContent({ placement }: { placement: DrawerPlacement }) {
@@ -206,7 +206,7 @@ function DrawerHandleDemoContent({ placement }: { placement: DrawerPlacement }) 
 }
 
 export const AllPlacements: Story = {
-  name: "Все плейсменты",
+  name: "All placements",
   render: function AllPlacementsDemo() {
     const [open, setOpen] = useState(false);
     const [placement, setPlacement] = useState<DrawerPlacement>("right");
@@ -232,10 +232,10 @@ export const AllPlacements: Story = {
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
-              <p className="text-base text-muted">Ящик выезжает со стороны «{placement}».</p>
+              <p className="text-base text-muted">The drawer slides in from «{placement}».</p>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button onClick={() => setOpen(false)}>Закрыть</Button>
+              <Button onClick={() => setOpen(false)}>Close</Button>
             </Drawer.Footer>
           </Drawer.Panel>
         </Drawer>
@@ -249,7 +249,7 @@ export const AllPlacements: Story = {
 const SIZES: DrawerSize[] = ["default", "mid", "full"];
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: function SizesDemo() {
     const [open, setOpen] = useState(false);
     const [size, setSize] = useState<DrawerSize>("default");
@@ -272,18 +272,18 @@ export const Sizes: Story = {
               <Drawer.HeadingBlock>
                 <Drawer.Title>size="{size}"</Drawer.Title>
                 <Drawer.Description>
-                  {size === "default" && "Стандарт — до 24rem."}
-                  {size === "mid" && "Половина экрана — 50vw."}
-                  {size === "full" && "На весь экран."}
+                  {size === "default" && "Default — up to 24rem."}
+                  {size === "mid" && "Half screen — 50vw."}
+                  {size === "full" && "Full screen."}
                 </Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
-              <p className="text-base text-muted">Контент ящика размера «{size}».</p>
+              <p className="text-base text-muted">Drawer content for size «{size}».</p>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button onClick={() => setOpen(false)}>Закрыть</Button>
+              <Button onClick={() => setOpen(false)}>Close</Button>
             </Drawer.Footer>
           </Drawer.Panel>
         </Drawer>
@@ -295,7 +295,7 @@ export const Sizes: Story = {
 // ─── Handle (all placements) ──────────────────────────────────────────────────
 
 export const WithHandle: Story = {
-  name: "Handle (все плейсменты)",
+  name: "Handle (all placements)",
   render: function WithHandleDemo() {
     const [open, setOpen] = useState(false);
     const [placement, setPlacement] = useState<DrawerPlacement>("bottom");
@@ -331,24 +331,24 @@ export const NonDismissable: Story = {
     return (
       <>
         <Button variant="outline" onClick={() => setOpen(true)}>
-          Открыть (фон не закрывает)
+          Open (backdrop does not dismiss)
         </Button>
         <Drawer open={open} onOpenChange={setOpen}>
           <Drawer.Panel>
             <Drawer.Backdrop isDismissable={false} />
             <Drawer.Header>
               <Drawer.HeadingBlock>
-                <Drawer.Title>Подтвердите действие</Drawer.Title>
+                <Drawer.Title>Confirm action</Drawer.Title>
               </Drawer.HeadingBlock>
             </Drawer.Header>
             <Drawer.Body>
               <p className="text-base text-muted">
-                Клик по подложке не закрывает. Используйте кнопку ниже.
+                Clicking the backdrop does not close. Use the button below.
               </p>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Отмена</Button>
-              <Button onClick={() => setOpen(false)}>Подтвердить</Button>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={() => setOpen(false)}>Confirm</Button>
             </Drawer.Footer>
           </Drawer.Panel>
         </Drawer>
@@ -360,30 +360,30 @@ export const NonDismissable: Story = {
 // ─── Scrollable body ──────────────────────────────────────────────────────────
 
 export const ScrollableBody: Story = {
-  name: "Скролл в Body",
+  name: "Scroll in Body",
   render: function ScrollableBodyDemo() {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button variant="outline" onClick={() => setOpen(true)}>Длинный контент</Button>
+        <Button variant="outline" onClick={() => setOpen(true)}>Long content</Button>
         <Drawer open={open} onOpenChange={setOpen} placement="right">
           <Drawer.Panel>
             <Drawer.Header>
               <Drawer.HeadingBlock>
-                <Drawer.Title>Длинный список</Drawer.Title>
-                <Drawer.Description>Шапка и футер зафиксированы.</Drawer.Description>
+                <Drawer.Title>Long list</Drawer.Title>
+                <Drawer.Description>Header and footer are fixed.</Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
               {Array.from({ length: 18 }).map((_, i) => (
                 <p key={i} className="mb-mid text-sm leading-normal text-muted last:mb-0">
-                  Строка {i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Row {i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 </p>
               ))}
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Закрыть</Button>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Close</Button>
             </Drawer.Footer>
           </Drawer.Panel>
         </Drawer>
@@ -395,25 +395,25 @@ export const ScrollableBody: Story = {
 // ─── With Form ────────────────────────────────────────────────────────────────
 
 export const WithForm: Story = {
-  name: "С формой",
+  name: "With form",
   render: function WithFormDemo() {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <Button onClick={() => setOpen(true)}>Форма в Drawer</Button>
+        <Button onClick={() => setOpen(true)}>Form in Drawer</Button>
         <Drawer open={open} onOpenChange={setOpen} placement="right">
           <Drawer.Panel>
             <Drawer.Header>
               <Drawer.HeadingBlock>
-                <Drawer.Title>Редактировать профиль</Drawer.Title>
-                <Drawer.Description>Заполните поля и сохраните изменения.</Drawer.Description>
+                <Drawer.Title>Edit profile</Drawer.Title>
+                <Drawer.Description>Fill in the fields and save changes.</Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body className="flex flex-col gap-mid">
               <Input>
-                <Input.Label>Имя</Input.Label>
-                <Input.Control name="name" placeholder="Иван" />
+                <Input.Label>Name</Input.Label>
+                <Input.Control name="name" placeholder="Ivan" />
               </Input>
               <Input>
                 <Input.Label>Email</Input.Label>
@@ -421,8 +421,8 @@ export const WithForm: Story = {
               </Input>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Отмена</Button>
-              <Button onClick={() => setOpen(false)}>Сохранить</Button>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={() => setOpen(false)}>Save</Button>
             </Drawer.Footer>
           </Drawer.Panel>
         </Drawer>
@@ -434,11 +434,11 @@ export const WithForm: Story = {
 // ─── Custom classNames ────────────────────────────────────────────────────────
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Drawer",
+        story: "classNames customization for Drawer",
       },
     },
   },
@@ -447,7 +447,7 @@ export const CustomClassNames: Story = {
     return (
       <>
         <Button type="button" onClick={() => setOpen(true)}>
-          Открыть Drawer
+          Open Drawer
         </Button>
         <Drawer
           open={open}
@@ -463,17 +463,17 @@ export const CustomClassNames: Story = {
           <Drawer.Panel>
             <Drawer.Header>
               <Drawer.HeadingBlock>
-                <Drawer.Title>Настройки</Drawer.Title>
-                <Drawer.Description>Все слоты настроены через classNames.</Drawer.Description>
+                <Drawer.Title>Settings</Drawer.Title>
+                <Drawer.Description>All slots configured via classNames.</Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
-              <p className="text-small text-muted">Контент выдвижной панели.</p>
+              <p className="text-small text-muted">Slide-out panel content.</p>
             </Drawer.Body>
             <Drawer.Footer>
               <Button type="button" size="small" onClick={() => setOpen(false)}>
-                Закрыть
+                Close
               </Button>
             </Drawer.Footer>
           </Drawer.Panel>

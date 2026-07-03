@@ -45,8 +45,8 @@ const lightThemeDecorator = [
 const sampleOptions: ComboBoxOption[] = [
   {
     value: "ru",
-    label: "Русский",
-    hint: "Интерфейс и уведомления на русском языке",
+    label: "Russian",
+    hint: "Interface and notifications in Russian",
     icon: <IoGlobeOutline aria-hidden />,
   },
   {
@@ -58,7 +58,7 @@ const sampleOptions: ComboBoxOption[] = [
   {
     value: "de",
     label: "Deutsch",
-    hint: "Nur Titel in der Auswahl; подсказка только в списке",
+    hint: "Title only in selection; hint only in list",
     icon: <IoGlobeOutline aria-hidden />,
   },
 ];
@@ -72,7 +72,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Combobox с поиском. **Simple** — `options` на root; **Compound** — `<ComboBox.Label>`, `<ComboBox.InputGroup>` + `<ComboBox.Input>` / `<ComboBox.Trigger>`, `<ComboBox.Popover>` с `<ListBox>`. Панель — через `Popover`.",
+          "Searchable combobox. **Simple** — `options` on root; **Compound** — `<ComboBox.Label>`, `<ComboBox.InputGroup>` + `<ComboBox.Input>` / `<ComboBox.Trigger>`, `<ComboBox.Popover>` with `<ListBox>`. Panel — via `Popover`.",
       },
     },
   },
@@ -92,28 +92,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;ComboBox&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;ComboBox&gt;">
         <ComboBox
-          label="Язык интерфейса"
-          hint="В поле — только название выбранного пункта."
-          placeholder="Выберите язык"
+          label="Interface language"
+          hint="In the field — only the selected item name."
+          placeholder="Select language"
           options={sampleOptions}
           defaultValue="ru"
         />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — children">
         <ComboBox options={sampleOptions} defaultValue="en">
-          <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+          <ComboBox.Label>Interface language</ComboBox.Label>
           <ComboBox.InputGroup>
-            <ComboBox.Input placeholder="Выберите язык" />
+            <ComboBox.Input placeholder="Select language" />
             <ComboBox.Trigger />
           </ComboBox.InputGroup>
           <ComboBox.Popover />
-          <ComboBox.Hint>Описание пункта видно только в списке.</ComboBox.Hint>
+          <ComboBox.Hint>Item description is visible only in the list.</ComboBox.Hint>
         </ComboBox>
       </DualApiStoryPanel>
     </DualApiStoryPanels>
@@ -124,18 +124,18 @@ export const CustomListBox: Story = {
   name: "Compound ListBox",
   render: () => (
     <ComboBox options={sampleOptions} defaultValue="ru">
-      <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+      <ComboBox.Label>Interface language</ComboBox.Label>
       <ComboBox.InputGroup>
-        <ComboBox.Input placeholder="Выберите язык" />
+        <ComboBox.Input placeholder="Select language" />
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover>
         <ListBox.Section>
-          <ListBox.Header>Доступные языки</ListBox.Header>
+          <ListBox.Header>Available languages</ListBox.Header>
           <ListBox.Item value="ru">
             <ListBox.ItemIndicator />
-            <ListBox.Label>Русский</ListBox.Label>
-            <ListBox.Hint>Кириллица</ListBox.Hint>
+            <ListBox.Label>Russian</ListBox.Label>
+            <ListBox.Hint>Cyrillic</ListBox.Hint>
           </ListBox.Item>
           <ListBox.Item value="en">
             <ListBox.ItemIndicator />
@@ -152,33 +152,33 @@ export const CustomListBox: Story = {
 };
 
 const layoutShowcaseOptions: ComboBoxOption[] = [
-  { value: "label-only", label: "Только Label" },
-  { value: "label-hint", label: "Label + Hint", hint: "ItemHint → вторая строка в средней колонке" },
+  { value: "label-only", label: "Label only" },
+  { value: "label-hint", label: "Label + Hint", hint: "ItemHint → second line in the middle column" },
   { value: "label-icon", label: "Label + Icon" },
   { value: "indicator-label", label: "Indicator + Label" },
   {
     value: "full-grid",
     label: "Indicator + Label + Hint + Icon",
-    hint: "3 cols × 2 rows — все слоты заняты",
+    hint: "3 cols × 2 rows — all slots filled",
     icon: <IoGlobeOutline aria-hidden />,
   },
-  { value: "member", label: "Аня Иванова", hint: "@anya · в команде с 2023" },
-  { value: "action", label: "Ещё действия" },
+  { value: "member", label: "Anya Ivanova", hint: "@anya · on the team since 2023" },
+  { value: "action", label: "More actions" },
 ];
 
 export const CustomItemParts: Story = {
-  name: "Compound — layout слотов",
+  name: "Compound — slot layout",
   render: () => (
     <ComboBox options={layoutShowcaseOptions} defaultValue="full-grid">
-      <ComboBox.Label>Layout слотов</ComboBox.Label>
+      <ComboBox.Label>Slot layout</ComboBox.Label>
       <ComboBox.InputGroup>
-        <ComboBox.Input placeholder="Выберите пункт" />
+        <ComboBox.Input placeholder="Select item" />
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover>
         <ListBox selectionIndicator={false}>
           <ListBox.Section>
-            <ListBox.Header>Как меняется grid</ListBox.Header>
+            <ListBox.Header>How the grid changes</ListBox.Header>
             <OptionListItemLayoutShowcase
               Item={ListBox.Item}
               ItemLabel={ListBox.Label}
@@ -190,7 +190,7 @@ export const CustomItemParts: Story = {
         </ListBox>
       </ComboBox.Popover>
       <ComboBox.Hint>
-        Hint и Icon меняют число строк и колонок; rest-children — доп. строка (теги у «member»).
+        Hint and Icon change row and column counts; rest-children — extra row (tags on «member»).
       </ComboBox.Hint>
     </ComboBox>
   ),
@@ -212,17 +212,17 @@ function ControlledComboBox(props: ComboBoxStoryProps) {
 
 export const Outline: Story = {
   render: () => (
-    <ControlledComboBox variant="outline" label="Язык интерфейса" placeholder="Выберите язык" />
+    <ControlledComboBox variant="outline" label="Interface language" placeholder="Select language" />
   ),
 };
 
 export const SelectInteraction: Story = {
-  name: "Interaction: выбор",
+  name: "Interaction: selection",
   render: () => (
-    <ControlledComboBox variant="outline" label="Язык интерфейса" placeholder="Выберите язык" />
+    <ControlledComboBox variant="outline" label="Interface language" placeholder="Select language" />
   ),
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Открыть список" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Open list" }));
     await userEvent.click(screen.getByRole("option", { name: /English/ }));
     await expect(canvas.getByDisplayValue("English")).toBeInTheDocument();
   },
@@ -230,7 +230,7 @@ export const SelectInteraction: Story = {
 
 export const Large: Story = {
   render: () => (
-    <ControlledComboBox size="mid" label="Размер mid" placeholder="Выберите язык" />
+    <ControlledComboBox size="mid" label="Size mid" placeholder="Select language" />
   ),
 };
 
@@ -239,28 +239,28 @@ export const Disabled: Story = {
     <ComboBox
       disabled
       value="en"
-      label="Язык"
+      label="Language"
       options={sampleOptions}
-      placeholder="Выберите язык"
+      placeholder="Select language"
     />
   ),
 };
 
 export const LongList: Story = {
-  name: "Длинный список",
+  name: "Long list",
   render: function LongList() {
     const many: ComboBoxOption[] = Array.from({ length: 40 }, (_, i) => ({
       value: `opt-${i}`,
-      label: `Пункт ${i + 1}`,
-      hint: i % 5 === 0 ? "С опциональной подсказкой в списке" : undefined,
+      label: `Item ${i + 1}`,
+      hint: i % 5 === 0 ? "With optional hint in list" : undefined,
       icon:
         i % 7 === 0 ? <IoCheckmarkCircle aria-hidden className="text-success" /> : undefined,
     }));
     const [value, setValue] = useState("opt-0");
     return (
       <ComboBox
-        label="Много пунктов"
-        hint="Прокрутка внутри `<ComboBox.Popover>`."
+        label="Many items"
+        hint="Scroll inside `<ComboBox.Popover>`."
         options={many}
         value={value}
         onValueChange={setValue}
@@ -273,62 +273,62 @@ export const LongList: Story = {
 export const LightTheme: Story = {
   decorators: [...lightThemeDecorator],
   render: () => (
-    <ControlledComboBox label="Язык интерфейса" hint="Светлая тема" placeholder="Выберите язык" />
+    <ControlledComboBox label="Interface language" hint="Light theme" placeholder="Select language" />
   ),
 };
 
 export const Validation: Story = {
-  name: "Валидация",
+  name: "Validation",
   render: () => (
     <ComboBox status="danger" isRequired options={sampleOptions}>
-      <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+      <ComboBox.Label>Interface language</ComboBox.Label>
       <ComboBox.InputGroup>
-        <ComboBox.Input placeholder="Выберите язык" />
+        <ComboBox.Input placeholder="Select language" />
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover />
-      <ComboBox.Hint>Язык влияет на интерфейс и письма.</ComboBox.Hint>
-      <ComboBox.Error>Выберите язык из списка.</ComboBox.Error>
+      <ComboBox.Hint>Language affects the interface and emails.</ComboBox.Hint>
+      <ComboBox.Error>Select a language from the list.</ComboBox.Error>
     </ComboBox>
   ),
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
         Combobox — <code className="text-primary">aria-expanded</code>,{" "}
         <code className="text-primary">aria-controls</code>,{" "}
-        <code className="text-primary">aria-activedescendant</code>. Listbox внутри Popover.
+        <code className="text-primary">aria-activedescendant</code>. Listbox inside Popover.
       </p>
       <ComboBox status="danger" isRequired options={sampleOptions}>
-        <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+        <ComboBox.Label>Interface language</ComboBox.Label>
         <ComboBox.InputGroup>
-          <ComboBox.Input placeholder="Выберите язык" />
+          <ComboBox.Input placeholder="Select language" />
           <ComboBox.Trigger />
         </ComboBox.InputGroup>
         <ComboBox.Popover />
-        <ComboBox.Hint>Язык влияет на интерфейс и письма.</ComboBox.Hint>
-        <ComboBox.Error>Выберите язык из списка.</ComboBox.Error>
+        <ComboBox.Hint>Language affects the interface and emails.</ComboBox.Hint>
+        <ComboBox.Error>Select a language from the list.</ComboBox.Error>
       </ComboBox>
     </div>
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для ComboBox",
+        story: "classNames customization for ComboBox",
       },
     },
   },
   render: () => (
     <ControlledComboBox
-      label="Язык интерфейса"
-      hint="Слоты настроены через classNames"
+      label="Interface language"
+      hint="Slots configured via classNames"
       classNames={{
         inputGroup: "border-primary/40 bg-primary/5",
         input: "text-primary placeholder:text-primary/50",

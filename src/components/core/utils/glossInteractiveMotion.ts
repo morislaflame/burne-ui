@@ -1,6 +1,6 @@
 /**
- * GSAP-анимации для gloss-интерактивов: lift/squeeze как у UI-кита
- * + gloss box-shadow (elevation, inner glow, press-inset) + декор (блик, conic).
+ * GSAP animations for gloss interactives: lift/squeeze like the UI kit
+ * + gloss box-shadow (elevation, inner glow, press-inset) + decor (shine, conic).
  */
 
 import {
@@ -25,7 +25,7 @@ import {
 
 const GLOSS_INIT_ATTR = "data-gloss-motion-init";
 
-/** Классы motion без `animate-shadow` — gloss тени анимируются GSAP, не `--el-shadow`. */
+/** Motion classes without `animate-shadow` — gloss shadows are animated by GSAP, not `--el-shadow`. */
 export const GLOSS_INTERACTIVE_MOTION_CLASS = "will-change-transform origin-center";
 
 export type GlossDecorState = "rest" | "hover" | "press";
@@ -39,9 +39,9 @@ const GLOSS_DECOR: Record<
   press: { angle1: -75, angle2: -15, shineX: 15, shineY: 15 },
 };
 
-/** Эталонный размер (≈ gloss-кнопка base) — масштабируем только travel hover/press. */
+/** Reference size (≈ gloss button base) — only hover/press travel is scaled. */
 const GLOSS_SHINE_REFERENCE_DIM = 120;
-/** Минимальная доля travel на очень больших поверхностях. */
+/** Minimum travel fraction on very large surfaces. */
 const GLOSS_SHINE_MIN_TRAVEL = 0.35;
 
 function resolveAdaptiveGlossShineTravel(element: HTMLElement): number {
@@ -82,8 +82,8 @@ function glossDecorVars(element: HTMLElement, state: GlossDecorState) {
 }
 
 /**
- * Многослойный gloss box-shadow (rest / hover / press).
- * Всегда 5 слоёв — GSAP может плавно интерполировать hover ↔ press.
+ * Multi-layer gloss box-shadow (rest / hover / press).
+ * Always 5 layers — GSAP can smoothly interpolate hover ↔ press.
  */
 export function buildGlossBoxShadow(element: HTMLElement, state: GlossDecorState): string {
   const insetTop = readGlossVar(element, "--gloss-inset-top");
@@ -97,7 +97,7 @@ export function buildGlossBoxShadow(element: HTMLElement, state: GlossDecorState
 
   const base = `inset 0 0.425em 0.425em ${insetTop}, inset 0 -0.225em 0.225em ${insetBottom}`;
 
-  /** Геометрия как --shadow-base (rest) / --shadow-mid (hover), em ≈ px при 16px. */
+  /** Geometry like --shadow-base (rest) / --shadow-mid (hover), em ≈ px at 16px. */
   const elevationLayer =
     state === "hover"
       ? `0 0.125em 0.3125em -0.1875em ${elevationHover}`
@@ -125,7 +125,7 @@ function glossSurfaceProps(element: HTMLElement, state: GlossDecorState) {
   };
 }
 
-/** Мгновенно выставляет rest: scale=1, декор и gloss box-shadow. */
+/** Instantly sets rest: scale=1, decor and gloss box-shadow. */
 export function applyGlossInteractiveInstant(element: HTMLElement) {
   killMotion(element);
   gsap.set(element, {
@@ -136,7 +136,7 @@ export function applyGlossInteractiveInstant(element: HTMLElement) {
 
 let glossThemeRefreshObserver: MutationObserver | null = null;
 
-/** Пересчитывает inline gloss-тени/декор с актуальными CSS-токенами темы. */
+/** Recalculates inline gloss shadows/decor with current theme CSS tokens. */
 function refreshGlossInteractiveState(element: HTMLElement) {
   if (shouldSkipInteractiveHoverLift()) {
     applyGlossInteractiveInstant(element);
@@ -157,7 +157,7 @@ function refreshGlossInteractiveState(element: HTMLElement) {
   applyGlossInteractiveInstant(element);
 }
 
-/** Обновляет все gloss-интерактивы с `data-gloss-motion-init` (после смены темы). */
+/** Refreshes all gloss interactives with `data-gloss-motion-init` (after theme change). */
 export function refreshAllGlossInteractiveSurfaces(root: ParentNode = document) {
   if (typeof document === "undefined") return;
   root.querySelectorAll<HTMLElement>(`[${GLOSS_INIT_ATTR}]`).forEach(refreshGlossInteractiveState);
@@ -197,7 +197,7 @@ export function createGlossInteractiveRefCallback(
   };
 }
 
-/** Rest-состояние gloss-панели как у `.gloss-btn` + merge с внешним ref. */
+/** Rest state of gloss panel like `.gloss-btn` + merge with external ref. */
 export function useMergedGlossPanelRef<T extends HTMLElement>(
   externalRef: Ref<T | null> | undefined,
   enabled = true,
@@ -219,7 +219,7 @@ export function useMergedGlossPanelRef<T extends HTMLElement>(
   );
 }
 
-/** Hover-lift + gloss box-shadow + декор (единый tween, без конфликта killMotion). */
+/** Hover-lift + gloss box-shadow + decor (single tween, no killMotion conflict). */
 export function animateGlossInteractiveHoverLift(
   element: HTMLElement,
   lifted: boolean,
@@ -249,7 +249,7 @@ export function animateGlossInteractiveHoverLift(
   });
 }
 
-/** Press-squeeze + press gloss-shadow; сразу возврат в hover/rest одним timeline. */
+/** Press-squeeze + press gloss-shadow; immediate return to hover/rest in one timeline. */
 export function animateGlossInteractivePressSqueeze(
   element: HTMLElement,
   pointerInside = false,
@@ -363,7 +363,7 @@ export function useGlossInteractiveHandlers(
   }, [enabled, liftScale, pointerInsideRef, ref]);
 }
 
-/** Gloss shell поля: hover + focus-within поднимают одинаково. */
+/** Field gloss shell: hover + focus-within lift equally. */
 export function useGlossFieldShellMotion(
   shellRef: RefObject<HTMLElement | null>,
   enabled: boolean,
@@ -419,7 +419,7 @@ export function useGlossFieldShellMotion(
   const onShellFocusIn = useCallback(() => {
     if (!enabled) return;
     focusedRef.current = true;
-    // focusin после pointerdown убивает squeeze через syncLift → killMotion
+    // focusin after pointerdown cancels squeeze via syncLift → killMotion
     if (pressingRef.current || pointerInsideRef.current) return;
     syncLift();
   }, [enabled, syncLift]);

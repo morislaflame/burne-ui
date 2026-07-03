@@ -25,7 +25,7 @@ export function CardPressableDemo() {
             </Card.Body>
             <Card.Header className="pt-plus gap-xsmall">
               <Card.Title>Pressable</Card.Title>
-              <Card.Description>Нажми — откроется Dialog.</Card.Description>
+              <Card.Description>Click - it will open Dialog.</Card.Description>
             </Card.Header>
           </div>
         </Card>
@@ -34,17 +34,17 @@ export function CardPressableDemo() {
           <Dialog.Header>
           <Dialog.HeadingBlock>
             <Dialog.Title>Pressable Card</Dialog.Title>
-            <Dialog.Description>Диалог открыт по нажатию на карточку.</Dialog.Description>
+            <Dialog.Description>The dialogue is opened by clicking on the card.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
         <Dialog.Body>
           <Text as="p" variant="base">
-            Контент модального окна.
+            Modal window content.
           </Text>
         </Dialog.Body>
         <Dialog.Footer>
-          <Button onClick={() => setDialogOpen(false)}>Закрыть</Button>
+          <Button onClick={() => setDialogOpen(false)}>Close</Button>
         </Dialog.Footer>
         </Dialog.Panel>
       </Dialog>

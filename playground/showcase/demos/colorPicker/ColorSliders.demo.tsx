@@ -16,14 +16,14 @@ export function ColorSlidersDemo() {
       <ColorSlider
         channel="hue"
         color={hsva}
-        label="Оттенок (Hue)"
+        label="Hue (Hue)"
         value={hsva.h}
         onValueChange={(h) => setHsva({ ...hsva, h })}
       />
       <ColorSlider
         channel="saturation"
         color={hsva}
-        label="Насыщенность"
+        label="Saturation"
         value={hsva.s}
         onValueChange={(s) => setHsva({ ...hsva, s })}
       />

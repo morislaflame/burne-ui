@@ -10,12 +10,12 @@ export function PopoverGlossDemo() {
       </Popover.Trigger>
       <Popover.Content showArrow>
         <Popover.Header>
-          <Popover.Label>Заголовок</Popover.Label>
-          <Popover.Hint>Стеклянная всплывающая панель</Popover.Hint>
+          <Popover.Label>Heading</Popover.Label>
+          <Popover.Hint>Glass pop-up panel</Popover.Hint>
         </Popover.Header>
         <Popover.Body>
           <Text as="p" variant="small" className="text-muted">
-            Контент внутри gloss Popover.
+            Content inside gloss Popover.
           </Text>
         </Popover.Body>
       </Popover.Content>

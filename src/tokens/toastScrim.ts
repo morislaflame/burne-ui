@@ -1,4 +1,4 @@
-/** Токены мягкой подложки за стеком Toast — см. `--toast-scrim-*` в `styles.css`. */
+/** Soft backdrop tokens behind the Toast stack — see `--toast-scrim-*` in `styles.css`. */
 
 export const TOAST_SCRIM_CSS_VAR = {
   size: "--toast-scrim-size",
@@ -13,12 +13,12 @@ export const TOAST_SCRIM_CSS_VAR = {
 
 export type ToastScrimCssVar = (typeof TOAST_SCRIM_CSS_VAR)[keyof typeof TOAST_SCRIM_CSS_VAR];
 
-/** CSS `var(--toast-scrim-*)` для inline-стилей и документации. */
+/** CSS `var(--toast-scrim-*)` for inline styles and documentation. */
 export function toastScrimToken<V extends ToastScrimCssVar>(name: V): `var(${V})` {
   return `var(${name})` as `var(${V})`;
 }
 
-/** Значения по умолчанию — совпадают с `:root` в tokens/styles.css. */
+/** Default values — match `:root` in tokens/styles.css. */
 export const TOAST_SCRIM_DEFAULTS = {
   size: 1,
   density: 1,

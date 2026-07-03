@@ -47,7 +47,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Навигационная цепочка. **Simple** — `items` на root; **Compound** — `Breadcrumbs.List` + `Breadcrumbs.Item`. При `collapse` кнопка «…» открывает `Dropdown` со скрытыми разделами.",
+          "Navigation breadcrumb trail. **Simple** — `items` on root; **Compound** — `Breadcrumbs.List` + `Breadcrumbs.Item`. With `collapse`, the «…» button opens a `Dropdown` with hidden sections.",
       },
     },
   },
@@ -59,16 +59,16 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — items на &lt;Breadcrumbs&gt;">
+      <DualApiStoryPanel title="Simple — items on &lt;Breadcrumbs&gt;">
         <Breadcrumbs
           items={[
-            { label: "Главная", href: "#", onClick: preventNav },
-            { label: "Каталог", href: "#", onClick: preventNav },
-            { label: "Текущая страница", current: true },
+            { label: "Home", href: "#", onClick: preventNav },
+            { label: "Catalog", href: "#", onClick: preventNav },
+            { label: "Current page", current: true },
           ]}
         />
       </DualApiStoryPanel>
@@ -76,12 +76,12 @@ export const Default: Story = {
         <Breadcrumbs>
           <Breadcrumbs.List>
             <Breadcrumbs.Item href="#" onClick={preventNav}>
-              Главная
+              Home
             </Breadcrumbs.Item>
             <Breadcrumbs.Item href="#" onClick={preventNav}>
-              Каталог
+              Catalog
             </Breadcrumbs.Item>
-            <Breadcrumbs.Item current>Текущая страница</Breadcrumbs.Item>
+            <Breadcrumbs.Item current>Current page</Breadcrumbs.Item>
           </Breadcrumbs.List>
         </Breadcrumbs>
       </DualApiStoryPanel>
@@ -90,56 +90,56 @@ export const Default: Story = {
 };
 
 export const Collapsed: Story = {
-  name: "Сжатие + меню «…»",
+  name: "Collapse + «…» menu",
   render: () => (
     <div className="flex flex-col items-center gap-mid">
       <p className="max-w-md text-center text-sm text-muted">
-        При более чем трёх пунктах: первый · … · два последних. Нажмите «…» — список скрытых
-        разделов.
+        With more than three items: first · … · last two. Click «…» — list of hidden
+        sections.
       </p>
       <Breadcrumbs>
         <Breadcrumbs.List>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Главная
+            Home
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Раздел
+            Section
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Подраздел
+            Subsection
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Категория
+            Category
           </Breadcrumbs.Item>
-          <Breadcrumbs.Item current>Страница</Breadcrumbs.Item>
+          <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
         </Breadcrumbs.List>
       </Breadcrumbs>
     </div>
   ),
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: /скрытых разделов/ }));
+    await userEvent.click(canvas.getByRole("button", { name: /hidden sections/ }));
     await expect(screen.getByRole("menu")).toBeVisible();
   },
 };
 
 export const Expanded: Story = {
-  name: "Без сжатия",
+  name: "No collapse",
   render: () => (
     <Breadcrumbs collapse={false}>
       <Breadcrumbs.List>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Главная
+          Home
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Раздел
+          Section
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Подраздел
+          Subsection
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Категория
+          Category
         </Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Страница</Breadcrumbs.Item>
+        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
       </Breadcrumbs.List>
     </Breadcrumbs>
   ),
@@ -150,9 +150,9 @@ export const TwoItems: Story = {
     <Breadcrumbs>
       <Breadcrumbs.List>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Каталог
+          Catalog
         </Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Товар</Breadcrumbs.Item>
+        <Breadcrumbs.Item current>Product</Breadcrumbs.Item>
       </Breadcrumbs.List>
     </Breadcrumbs>
   ),
@@ -162,35 +162,35 @@ export const SingleCurrent: Story = {
   render: () => (
     <Breadcrumbs>
       <Breadcrumbs.List>
-        <Breadcrumbs.Item current>Только текущая</Breadcrumbs.Item>
+        <Breadcrumbs.Item current>Current only</Breadcrumbs.Item>
       </Breadcrumbs.List>
     </Breadcrumbs>
   ),
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-lg flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        <code className="text-primary">&lt;nav aria-label&gt;</code>, текущая страница —{" "}
-        <code className="text-primary">aria-current=&quot;page&quot;</code> на последнем пункте,
-        меню «…» — <code className="text-primary">aria-expanded</code> /{" "}
-        <code className="text-primary">role=&quot;menu&quot;</code>, Escape закрывает.
+        <code className="text-primary">&lt;nav aria-label&gt;</code>, current page —{" "}
+        <code className="text-primary">aria-current=&quot;page&quot;</code> on the last item,
+        «…» menu — <code className="text-primary">aria-expanded</code> /{" "}
+        <code className="text-primary">role=&quot;menu&quot;</code>, Escape closes.
       </p>
-      <Breadcrumbs aria-label="Путь к странице">
+      <Breadcrumbs aria-label="Path to page">
         <Breadcrumbs.List>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Главная
+            Home
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Каталог
+            Catalog
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Электроника
+            Electronics
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Ноутбуки
+            Laptops
           </Breadcrumbs.Item>
           <Breadcrumbs.Item current>MacBook Pro</Breadcrumbs.Item>
         </Breadcrumbs.List>
@@ -200,12 +200,12 @@ export const Accessibility: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
         story:
-          "кастомизация classNames для Breadcrumbs",
+          "classNames customization for Breadcrumbs",
       },
     },
   },
@@ -234,19 +234,19 @@ export const CustomClassNames: Story = {
         }}
       >
         <Breadcrumbs.Item href="#" onClick={preventNav} className="underline">
-          Главная
+          Home
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Каталог
+          Catalog
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Подраздел
+          Subsection
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Категория
+          Category
         </Breadcrumbs.Item>
         <Breadcrumbs.Item current className="tracking-wide">
-          Текущая
+          Current
         </Breadcrumbs.Item>
       </Breadcrumbs.List>
     </Breadcrumbs>
@@ -259,38 +259,38 @@ export const LightTheme: Story = {
     <Breadcrumbs>
       <Breadcrumbs.List>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Главная
+          Home
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Раздел
+          Section
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Подраздел
+          Subsection
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Категория
+          Category
         </Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Страница</Breadcrumbs.Item>
+        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
       </Breadcrumbs.List>
     </Breadcrumbs>
   ),
 };
 
 export const CompoundWrappedItems: Story = {
-  name: "Compound — обёртки между Item",
+  name: "Compound — wrappers between Item",
   render: () => (
     <Breadcrumbs>
       <Breadcrumbs.List>
         <div>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Главная
+            Home
           </Breadcrumbs.Item>
         </div>
         <div className="contents">
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Каталог
+            Catalog
           </Breadcrumbs.Item>
-          <Breadcrumbs.Item current>Страница</Breadcrumbs.Item>
+          <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
         </div>
       </Breadcrumbs.List>
     </Breadcrumbs>

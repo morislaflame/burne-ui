@@ -10,7 +10,7 @@ export function SliderVariantsDemo() {
       <Slider label="Disabled" value={30} min={0} max={100} disabled className="w-64" />
       <Slider
         orientation="vertical"
-        label="Вертикальный"
+        label="Vertical"
         className="h-32"
         value={value}
         onValueChange={setValue}

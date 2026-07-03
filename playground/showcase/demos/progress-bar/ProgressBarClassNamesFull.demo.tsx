@@ -3,8 +3,8 @@ import { ProgressBar } from "@/components/core/ProgressBar";
 export function ProgressBarClassNamesFullDemo() {
   return (
     <ProgressBar
-      label="Загрузка файла"
-      hint="Оставшееся время зависит от скорости сети"
+      label="Uploading a file"
+      hint="The remaining time depends on the network speed"
       showValue
       value={72}
       color="var(--color-primary)"

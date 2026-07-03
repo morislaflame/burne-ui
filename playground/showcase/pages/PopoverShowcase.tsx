@@ -22,40 +22,40 @@ export function PopoverShowcase() {
   return (
     <ShowcasePage
       title="Popover"
-      description="Панель по клику на триггер — для меню, форм и дополнительного контента."
+      description="Trigger click panel - for menus, forms and additional content."
       importPath='import { Popover } from "@/components/core/Popover";'
       tags={["core", "overlay"]}
     >
-      <ShowcaseSection title="Простой" description="Минимальная разметка: Trigger + Content + Body.">
+      <ShowcaseSection title="Simple" description="Minimal markup: Trigger + Content + Body.">
         <ShowcaseDemoFromFile Demo={PopoverSimpleDemo} source={popoverSimpleSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={PopoverSizesDemo} source={popoverSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="С заголовком" description="Header, Label, Hint и стрелка showArrow.">
+      <ShowcaseSection title="With header" description="Header, Label, Hint and arrow showArrow.">
         <ShowcaseDemoFromFile Demo={PopoverWithHeaderDemo} source={popoverWithHeaderSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная всплывающая панель.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass pop-up panel.">
         <ShowcaseDemoFromFile Demo={PopoverGlossDemo} source={popoverGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
+      <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={PopoverSidesDemo} source={popoverSidesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты root (триггер), trigger, content, panel, glossPanel, label, hint и body — через prop classNames."
+        description="Slots root (trigger), trigger, content, panel, glossPanel, label, hint and body — through prop classNames."
       >
         <ShowcaseDemoFromFile Demo={PopoverClassNamesFullDemo} source={popoverClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Карточка профиля, меню «Поделиться» и панель фильтров — `demos/popover/`."
+        title="Custom Variations"
+        description="Profile card, Share menu and filter panel — `demos/popover/`."
       >
         <ShowcaseDemoFromFile Demo={PopoverProfileCardDemo} source={popoverProfileCardSource} />
         <ShowcaseDemoFromFile Demo={PopoverShareMenuDemo} source={popoverShareMenuSource} />
@@ -63,18 +63,18 @@ export function PopoverShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Popover" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Trigger, Content, Header, Body, Label, Hint и Arrow — слоты для структуры панели."
+            description="Trigger, Content, Header, Body, Label, Hint and Arrow — slots for panel structure."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Стрелка">
+        <ShowcaseDoc.Block title="Arrow">
           <p>
-            <code>showArrow</code> на Content включает Popover.Arrow — указатель к триггеру.
+            <code>showArrow</code> on Content includes Popover.Arrow — pointer to trigger.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

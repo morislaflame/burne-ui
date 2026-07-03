@@ -1,4 +1,4 @@
-/** Параметры docs: показывать исходник `render`, а не сгенерированный JSX из args. */
+/** Docs params: show `render` source, not generated JSX from args. */
 export const dualApiStorySource = {
   docs: {
     source: {

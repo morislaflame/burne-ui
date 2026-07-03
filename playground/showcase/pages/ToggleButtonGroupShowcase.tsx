@@ -18,29 +18,29 @@ export function ToggleButtonGroupShowcase() {
   return (
     <ShowcasePage
       title="ToggleButtonGroup"
-      description="Группа кнопок-переключателей: одиночный или множественный выбор."
+      description="Group of radio buttons: single or multiple selection."
       importPath='import { ToggleButtonGroup } from "@/components/composite/ToggleButtonGroup";'
       tags={["composite", "forms"]}
     >
-      <ShowcaseSection title="Одиночный выбор" description="type=&quot;single&quot; — вид списка.">
+      <ShowcaseSection title="Single selection" description="type=&quot;single&quot; — list view.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupSingleDemo} source={toggleButtonGroupSingleSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large — пробрасывается дочерним ToggleButton.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large — forwarded to child ToggleButton.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupSizesDemo} source={toggleButtonGroupSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Множественный выбор" description="type=&quot;multiple&quot; — форматирование текста.">
+      <ShowcaseSection title="Multiple Choice" description="type=&quot;multiple&quot; — text formatting.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupMultipleDemo} source={toggleButtonGroupMultipleSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная группа переключателей.">
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass switch group.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupGlossDemo} source={toggleButtonGroupGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Тулбар вида, вертикальная группа и панель форматирования — `demos/toggleButtonGroup/`."
+        title="Custom Variations"
+        description="View toolbar, vertical group and format bar — `demos/toggleButtonGroup/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ToggleButtonGroupViewToolbarDemo} source={toggleButtonGroupViewToolbarSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ToggleButtonGroupVerticalDemo} source={toggleButtonGroupVerticalSource} />
@@ -48,20 +48,20 @@ export function ToggleButtonGroupShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/composite/ToggleButtonGroup" />
           <ShowcaseDoc.Import path="@/components/core/ToggleButton" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="type (single | multiple, по умолчанию multiple), value, onValueChange, variant, size, separated, orientation, aria-label на корне. Дочерние ToggleButton с value."
+            description="type (single | multiple, default multiple), value, onValueChange, variant, size, separated, orientation, aria-label on the root. Child ToggleButton with value."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Доступность">
+        <ShowcaseDoc.Block title="Availability">
           <p>
-            Обязательный <code>aria-label</code> на группе. <code>leftIcon</code> на ToggleButton — декоративная
-            иконка с <code>aria-hidden</code>.
+            Required <code>aria-label</code> in the group. <code>leftIcon</code> on ToggleButton — decorative
+            icon with <code>aria-hidden</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

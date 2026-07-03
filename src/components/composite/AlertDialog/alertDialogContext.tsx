@@ -64,7 +64,7 @@ export function AlertDialogHeaderProvider({
 export function useAlertDialog(): AlertDialogContextValue {
   const ctx = useContext(AlertDialogContext);
   if (!ctx) {
-    throw new Error("Компоненты AlertDialog.* должны быть внутри <AlertDialog>.");
+    throw new Error("AlertDialog.* components must be used inside <AlertDialog>.");
   }
   return ctx;
 }
@@ -72,7 +72,7 @@ export function useAlertDialog(): AlertDialogContextValue {
 export function useAlertDialogHeaderContext(who: string): AlertDialogHeaderContextValue {
   const ctx = useContext(AlertDialogHeaderContext);
   if (!ctx) {
-    throw new Error(`${who} должен быть внутри <AlertDialog.Header>.`);
+    throw new Error(`${who} must be used inside <AlertDialog.Header>.`);
   }
   return ctx;
 }

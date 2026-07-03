@@ -24,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Компонент-заглушка для состояния загрузки. **Три анимации**: `pulse` (мигание), `wave` (скользящая полоса), `shimmer` (градиент), `none` (без анимации). Состав: `<Skeleton>` — произвольный блок, `<Skeleton.Circle>` — круг, `<Skeleton.Text>` — строки текста, `<Skeleton.Block>` — карточка.",
+          "Loading placeholder component. **Four animations**: `pulse` (blink), `wave` (sliding bar), `shimmer` (gradient), `none` (no animation). Composition: `<Skeleton>` — arbitrary block, `<Skeleton.Circle>` — circle, `<Skeleton.Text>` — text lines, `<Skeleton.Block>` — card.",
       },
     },
   },
@@ -37,7 +37,7 @@ type Story = StoryObj<typeof meta>;
 // ─── Variants ─────────────────────────────────────────────────────────────────
 
 export const AllVariants: Story = {
-  name: "Все варианты анимации",
+  name: "All animation variants",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       {(["wave", "pulse", "shimmer", "none"] as const).map((variant) => (
@@ -59,7 +59,7 @@ export const AllVariants: Story = {
 // ─── Text skeleton ────────────────────────────────────────────────────────────
 
 export const TextLines: Story = {
-  name: "Текстовые строки",
+  name: "Text lines",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
@@ -75,7 +75,7 @@ export const TextLines: Story = {
 // ─── Circle skeleton ──────────────────────────────────────────────────────────
 
 export const Circles: Story = {
-  name: "Круглые",
+  name: "Circles",
   render: () => (
     <div className="flex flex-wrap gap-mid">
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
@@ -91,7 +91,7 @@ export const Circles: Story = {
 // ─── Card layout ─────────────────────────────────────────────────────────────
 
 export const CardLayout: Story = {
-  name: "Карточка (все варианты)",
+  name: "Card (all variants)",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-xlarge">
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
@@ -125,7 +125,7 @@ export const CardLayout: Story = {
 // ─── List layout ─────────────────────────────────────────────────────────────
 
 export const ListLayout: Story = {
-  name: "Список",
+  name: "List",
   render: () => (
     <div className="flex w-full max-w-sm flex-col gap-xsmall">
       {Array.from({ length: 5 }, (_, i) => (
@@ -165,7 +165,7 @@ export const BlockSkeleton: Story = {
 // ─── Sizes ────────────────────────────────────────────────────────────────────
 
 export const CustomSizes: Story = {
-  name: "Разные размеры",
+  name: "Various sizes",
   render: () => (
     <div className="flex w-full max-w-sm flex-col gap-small">
       <Skeleton variant="wave" className="h-2 w-full rounded-full" />
@@ -180,11 +180,11 @@ export const CustomSizes: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Skeleton, Skeleton.Text и Skeleton.Circle",
+        story: "classNames customization for Skeleton, Skeleton.Text, and Skeleton.Circle",
       },
     },
   },

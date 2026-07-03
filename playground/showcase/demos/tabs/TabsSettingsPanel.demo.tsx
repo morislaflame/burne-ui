@@ -11,23 +11,23 @@ export function TabsSettingsPanelDemo() {
     <Surface variant="secondary" padding="mid" className="w-full max-w-md">
       <Tabs value={tab} onValueChange={setTab}>
         <Tabs.List>
-          <Tabs.Tab value="general">Общие</Tabs.Tab>
-          <Tabs.Tab value="security">Безопасность</Tabs.Tab>
-          <Tabs.Tab value="billing">Оплата</Tabs.Tab>
+          <Tabs.Tab value="general">General</Tabs.Tab>
+          <Tabs.Tab value="security">Safety</Tabs.Tab>
+          <Tabs.Tab value="billing">Payment</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="general" className="pt-mid">
           <Text as="p" variant="small" className="text-muted">
-            Язык, часовой пояс и уведомления.
+            Language, time zone and notifications.
           </Text>
         </Tabs.Panel>
         <Tabs.Panel value="security" className="pt-mid">
           <Text as="p" variant="small" className="text-muted">
-            Пароль, 2FA и активные сессии.
+            Password, 2FA and active sessions.
           </Text>
         </Tabs.Panel>
         <Tabs.Panel value="billing" className="pt-mid">
           <Text as="p" variant="small" className="text-muted">
-            Тариф, способ оплаты и счета.
+            Tariff, payment method and invoices.
           </Text>
         </Tabs.Panel>
       </Tabs>

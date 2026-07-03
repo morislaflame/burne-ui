@@ -19,29 +19,29 @@ export function FieldShowcase() {
   return (
     <ShowcasePage
       title="Field"
-      description="Низкоуровневые примитивы поля формы: legend, группа, подсказки и действия."
+      description="Low-level form field primitives: legend, group, tips and actions."
       importPath='import { Field } from "@/components/core/Field";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Field.Set" description="Compound API для набора связанных полей.">
+      <ShowcaseSection title="Field.Set" description="Compound API for a set of related fields.">
         <ShowcaseDemoFromFile align="stretch" Demo={FieldContactSetDemo} source={fieldContactSetSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Legend и Hint" description="Field.LegendHeader объединяет заголовок и подсказку.">
+      <ShowcaseSection title="Legend and Hint" description="Field.LegendHeader combines title and tooltip.">
         <ShowcaseDemoFromFile align="stretch" Demo={FieldAddressSetDemo} source={fieldAddressSetSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Field.Root и Field.Set — кастомизация слотов через classNames."
+        description="Field.Root and Field.Set — slot customization via classNames."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FieldClassNamesFullDemo} source={fieldClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={FieldSetClassNamesFullDemo} source={fieldClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Billing fieldset, горизонтальная пара дат и панель настроек — demo-файлы в `demos/field/`."
+        title="Custom Variations"
+        description="Billing fieldset, horizontal pair of dates and settings panel — demo-files in `demos/field/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FieldBillingSetDemo} source={fieldBillingSetSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={FieldHorizontalPairDemo} source={fieldHorizontalPairSource} />
@@ -49,26 +49,26 @@ export function FieldShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Field" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Field.Root, Field.Label, Field.Hint, Field.Error — примитив оболочки поля. Field.Set, Field.Legend, Field.Group, Field.Actions — набор полей формы."
+            description="Field.Root, Field.Label, Field.Hint, Field.Error — field wrapper primitive. Field.Set, Field.Legend, Field.Group, Field.Actions — set of form fields."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Состав">
+        <ShowcaseDoc.Block title="Compound">
           <p>
-            <code>Field.Hint</code> — подсказка под полем (не путать с <code>Card.Description</code>).{" "}
-            <code>Field.Legend</code> + <code>Field.LegendHeader</code> — заголовок секции.{" "}
-            <code>Field.Group</code> — контейнер для Input/TextArea.
+            <code>Field.Hint</code> — tooltip below the field (not to be confused with <code>Card.Description</code>).{" "}
+            <code>Field.Legend</code> + <code>Field.LegendHeader</code> — section header.{" "}
+            <code>Field.Group</code> — container for Input/TextArea.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
-            <code>className</code> на Set/Group. Статус подсказки — <code>Field.Hint status=&quot;danger&quot;</code>.
-            Для кастомных контролов оборачивайте input в <code>Field.Root</code>.
+            <code>className</code> on Set/Group. Hint status — <code>Field.Hint status=&quot;danger&quot;</code>.
+            For custom controls, wrap input in <code>Field.Root</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

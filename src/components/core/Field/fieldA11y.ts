@@ -5,7 +5,7 @@ export const FIELD_LEGEND_DISPLAY_NAMES = new Set([
   "CheckboxGroup.Legend",
 ]);
 
-/** Объединяет id для `aria-describedby` (hint, error, …). */
+/** Merges ids for `aria-describedby` (hint, error, …). */
 export function joinFieldDescribedBy(...ids: (string | undefined)[]) {
   const joined = ids.filter(Boolean).join(" ");
   return joined.length > 0 ? joined : undefined;

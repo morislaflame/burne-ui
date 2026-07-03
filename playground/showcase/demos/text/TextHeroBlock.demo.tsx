@@ -10,10 +10,10 @@ export function TextHeroBlockDemo() {
         as="h2"
         variant="accent-header"
       >
-        Кастомный hero-блок
+        Custom hero-block
       </Text>
       <Text as="p" variant="mid" className="max-w-md text-muted">
-        Градиент на заголовке и фоновая плашка — через utility-классы поверх preset variant.
+        Gradient on the header and background solid - via utility-classes on top preset variant.
       </Text>
     </div>
   );

@@ -46,7 +46,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Базовая панель с токенами темы (`bg-surface`, `bg-secondary`, `bg-tertiary`, `gloss`) — только заливка, без рамки. `variant=\"gloss\"` — стеклянная CSS-панель с conic-обводкой и бликом. Примитив для меню и секций — без compound-API Card.",
+          "Base panel with theme tokens (`bg-surface`, `bg-secondary`, `bg-tertiary`, `gloss`) — fill only, no border. `variant=\"gloss\"` — glass CSS panel with conic border and highlight. Primitive for menus and sections — no Card compound API.",
       },
     },
   },
@@ -66,12 +66,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     padding: "plus",
-    children: "Контент на surface",
+    children: "Content on surface",
   },
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex flex-wrap items-start justify-center gap-large">
       {VARIANTS.map((variant) => (
@@ -89,7 +89,7 @@ export const Variants: Story = {
 };
 
 export const WithShadow: Story = {
-  name: "Тень",
+  name: "Shadow",
   render: () => (
     <div className="flex flex-wrap items-start justify-center gap-large">
       {(["none", "base", "mid", "large"] as const).map((shadow) => (
@@ -104,7 +104,7 @@ export const WithShadow: Story = {
 };
 
 export const MenuPanel: Story = {
-  name: "Панель меню",
+  name: "Menu panel",
   render: () => (
     <Surface variant="default" shadow="mid" padding="small" className="w-64">
       <ul className="m-0 flex list-none flex-col gap-xsmall p-0">
@@ -127,7 +127,7 @@ export const MenuPanel: Story = {
 };
 
 export const MenuInteraction: Story = {
-  name: "Interaction: меню",
+  name: "Interaction: menu",
   render: () => (
     <Surface variant="default" shadow="mid" padding="small" className="w-64">
       <ul className="m-0 flex list-none flex-col gap-xsmall p-0">
@@ -155,19 +155,19 @@ export const MenuInteraction: Story = {
 };
 
 export const NestedSections: Story = {
-  name: "Вложенные секции",
+  name: "Nested sections",
   render: () => (
     <Surface padding="plus" shadow="base" className="flex w-full max-w-sm flex-col gap-plus">
       <Text as="p" variant="base" className="font-medium">
-        Внешняя панель (default)
+        Outer panel (default)
       </Text>
       <Surface variant="secondary" padding="base" radius="base">
         <Text as="p" variant="small" className="text-muted">
-          Внутренний блок secondary
+          Inner secondary block
         </Text>
         <Surface variant="tertiary" padding="small" radius="base" className="mt-small">
           <Text as="p" variant="small" className="text-muted">
-            Внутренний блок tertiary
+            Inner tertiary block
           </Text>
         </Surface>
       </Surface>
@@ -176,12 +176,12 @@ export const NestedSections: Story = {
 };
 
 export const LightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightDecorator],
   args: {
     shadow: "base",
     padding: "plus",
-    children: "Surface на светлом фоне",
+    children: "Surface on light background",
   },
 };
 
@@ -204,7 +204,7 @@ function GlossPanels() {
       </Surface>
       <Surface variant="gloss" padding="mid" radius="mid" className="w-40">
         <Text as="p" variant="small" className="font-medium">
-          Компактная
+          Compact
         </Text>
       </Surface>
     </div>
@@ -257,7 +257,7 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   decorators: [
     (Story: ComponentType) => (
       <div

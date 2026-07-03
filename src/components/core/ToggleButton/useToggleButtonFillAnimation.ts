@@ -60,7 +60,7 @@ export function useToggleButtonFillAnimation(
   pressed: boolean,
   fillRef: RefObject<HTMLElement | null>,
   options?: {
-    /** Пока true — `useLayoutEffect` не запускает fill (ждём press-release). */
+    /** While true — `useLayoutEffect` does not start fill (waiting for press-release). */
     deferFillFromPressRef?: RefObject<boolean>;
     onFillStart?: (pressed: boolean) => void;
   },

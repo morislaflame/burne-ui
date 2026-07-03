@@ -13,20 +13,20 @@ export function BreadcrumbsProductHeaderDemo() {
           <Breadcrumbs.Item href="#" onClick={preventNav}>
             <span className="inline-flex items-center gap-xsmall">
               <IoHomeOutline aria-hidden className="size-3.5" />
-              Магазин
+              Shop
             </span>
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Одежда
+            Cloth
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Куртки
+            Jackets
           </Breadcrumbs.Item>
-          <Breadcrumbs.Item current>Парка Arctic</Breadcrumbs.Item>
+          <Breadcrumbs.Item current>Parka Arctic</Breadcrumbs.Item>
         </Breadcrumbs.List>
       </Breadcrumbs>
       <Text as="h3" variant="base" className="font-semibold">
-        Парка Arctic
+        Parka Arctic
       </Text>
     </div>
   );

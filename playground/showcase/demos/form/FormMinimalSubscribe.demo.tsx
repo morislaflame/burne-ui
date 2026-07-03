@@ -12,9 +12,9 @@ export function FormMinimalSubscribeDemo() {
   return (
     <Form
       onSubmit={onSubmit}
-      aria-label="Быстрая подписка"
+      aria-label="Quick subscription"
       className="max-w-sm"
-      rules={{ subscribe: { required: "Укажите email" } }}
+      rules={{ subscribe: { required: "Specify email" } }}
     >
       <Form.Section>
         <Form.Field name="subscribe">
@@ -23,7 +23,7 @@ export function FormMinimalSubscribeDemo() {
       </Form.Section>
       <Form.Actions>
         <Button type="submit" variant="primary" className="w-full">
-          Подписаться
+          Subscribe
         </Button>
       </Form.Actions>
     </Form>

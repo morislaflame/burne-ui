@@ -18,25 +18,25 @@ export function ComboBoxShowcase() {
   return (
     <ShowcasePage
       title="ComboBox"
-      description="Выпадающий список с поиском и controlled value."
+      description="Dropdown list with search and controlled value."
       importPath='import { ComboBox } from "@/components/core/ComboBox";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Default" description="options, value и onValueChange — controlled режим.">
+      <ShowcaseSection title="Default" description="options, value and onValueChange — controlled mode.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxDefaultDemo} source={comboBoxDefaultSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxSizesDemo} source={comboBoxSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass shell.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxGlossDemo} source={comboBoxGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Кастомизация слотов inputGroup, input, trigger, popover и listBox."
+        description="Slot customization inputGroup, input, trigger, popover and listBox."
       >
         <ShowcaseDemoFromFile
           align="center"
@@ -46,8 +46,8 @@ export function ComboBoxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Compound ListBox в Popover, gradient Fill, segmented TimeField — demo-файлы в `demos/combobox/`."
+        title="Custom Variations"
+        description="Compound ListBox in Popover, gradient Fill, segmented TimeField — demo-files in `demos/combobox/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxWorkspacePickerDemo} source={comboBoxWorkspacePickerSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxInlineToolbarDemo} source={comboBoxInlineToolbarSource} />
@@ -55,7 +55,7 @@ export function ComboBoxShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/ComboBox" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
@@ -68,10 +68,10 @@ export function ComboBoxShowcase() {
             description="root, inputGroup, input, trigger, popover, popoverBody, listBox, hint, error."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Опции">
+        <ShowcaseDoc.Block title="Options">
           <p>
-            Массив <code>options</code> с полями <code>value</code> и <code>label</code>. Для gloss-стиля
-            передайте <code>variant=&quot;gloss&quot;</code>.
+            Array <code>options</code> with margins <code>value</code> and <code>label</code>. For gloss-style
+            pass it on <code>variant=&quot;gloss&quot;</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

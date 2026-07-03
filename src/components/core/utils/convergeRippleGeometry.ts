@@ -25,7 +25,7 @@ export function createConvergeRippleAtPointer(
   return { id, x, y, size };
 }
 
-/** Только в синхронной фазе обработчика: позже `e.currentTarget` у React может стать `null`. */
+/** Only in synchronous handler phase: later React `e.currentTarget` may be `null`. */
 export function createConvergeRippleFromPointer(
   e: PointerEvent<HTMLElement>,
   id: number,

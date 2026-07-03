@@ -21,15 +21,15 @@ export function TooltipClassNamesFullDemo() {
       }}
     >
       <Tooltip.Trigger>
-        <Button variant="outline" type="button" aria-label="Справка">
+        <Button variant="outline" type="button" aria-label="Reference">
           <IoHelpCircleOutline aria-hidden className="icon-mid" />
         </Button>
       </Tooltip.Trigger>
       <Tooltip.Content showArrow>
         <Tooltip.Arrow />
-        <Tooltip.Title>Кастомные слоты</Tooltip.Title>
+        <Tooltip.Title>Custom slots</Tooltip.Title>
         <Tooltip.Description>
-          trigger, root, content, arrow, panel, indicator, title и description через classNames.
+          trigger, root, content, arrow, panel, indicator, title and description through classNames.
         </Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>
@@ -55,7 +55,7 @@ export function TooltipClassNamesGlossDemo() {
       </Tooltip.Trigger>
       <Tooltip.Content showArrow>
         <Tooltip.Arrow />
-        Стеклянная подсказка с кастомным glossContent
+        Glass tip with custom glossContent
       </Tooltip.Content>
     </Tooltip>
   );

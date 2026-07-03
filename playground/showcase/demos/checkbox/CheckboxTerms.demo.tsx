@@ -9,7 +9,7 @@ export function CheckboxTermsDemo() {
     <Checkbox
       checked={checked}
       onChange={(e) => setChecked(e.target.checked)}
-      label="Согласен с условиями"
+      label="I agree with the terms"
     />
   );
 }

@@ -22,7 +22,7 @@ export function ColorPickerShowcase() {
   return (
     <ShowcasePage
       title="ColorPicker"
-      description="Выбор цвета через popover и отдельные слайдеры каналов."
+      description="Color selection via popover and separate channel sliders."
       importPath='import { ColorPicker, ColorSwatch } from "@/components/core/ColorPicker";'
       tags={["core", "forms"]}
     >
@@ -30,21 +30,21 @@ export function ColorPickerShowcase() {
         <ShowcaseDemoFromFile Demo={ColorPickerBasicDemo} source={colorPickerBasicSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid.">
         <ShowcaseDemoFromFile Demo={ColorPickerSizesDemo} source={colorPickerSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="ColorSlider" description="Отдельные слайдеры Hue и Saturation.">
+      <ShowcaseSection title="ColorSlider" description="Individual sliders Hue and Saturation.">
         <ShowcaseDemoFromFile align="stretch" Demo={ColorSlidersDemo} source={colorSlidersSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянный trigger и панель.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass trigger and panel.">
         <ShowcaseDemoFromFile Demo={ColorPickerGlossDemo} source={colorPickerGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Кастомизация слотов панели через classNames на root."
+        description="Customization of panel slots via classNames on root."
       >
         <ShowcaseDemoFromFile
           Demo={ColorPickerClassNamesFullDemo}
@@ -52,13 +52,13 @@ export function ColorPickerShowcase() {
         />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
+      <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={ColorPickerSidesDemo} source={colorPickerSidesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Брендовая палитра, альфа-канал и строка настроек — `demos/colorPicker/`."
+        title="Custom Variations"
+        description="Brand palette, alpha channel and settings bar — `demos/colorPicker/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ColorPickerBrandPaletteDemo} source={colorPickerBrandPaletteSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ColorPickerAlphaChannelDemo} source={colorPickerAlphaChannelSource} />
@@ -66,22 +66,22 @@ export function ColorPickerShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/ColorPicker" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="ColorPicker.Trigger и ColorPicker.Content. ColorSlider и ColorSwatch — отдельные примитивы."
+            description="ColorPicker.Trigger and ColorPicker.Content. ColorSlider and ColorSwatch — individual primitives."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="content, contentPanel, trigger, area, slidersRow, hexInput, presets и др."
+            description="content, contentPanel, trigger, area, slidersRow, hexInput, presets etc.."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Формат">
+        <ShowcaseDoc.Block title="Format">
           <p>
-            Значение — hex-строка (<code>#rrggbb</code>). <code>hsvaToHex</code> для конвертации из HSVA.
+            Meaning — hex-line (<code>#rrggbb</code>). <code>hsvaToHex</code> to convert from HSVA.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

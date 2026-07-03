@@ -11,10 +11,10 @@ export function LinkCardActionsDemo() {
     <Surface variant="secondary" padding="mid" className="flex w-full max-w-sm flex-col gap-mid">
       <div className="flex flex-col gap-xsmall">
         <Text as="p" variant="base" className="font-medium">
-          Релиз 1.2.0
+          Release 1.2.0
         </Text>
         <Text as="p" variant="tools" className="text-muted">
-          Обновление компонентов форм и gloss-вариантов.
+          Updating form components and gloss-options.
         </Text>
       </div>
       <div className="flex flex-wrap gap-mid">
@@ -22,7 +22,7 @@ export function LinkCardActionsDemo() {
           Changelog
         </Link>
         <Link href="#" onClick={preventNav} leftIcon={<IoShareSocialOutline aria-hidden />} size="small">
-          Поделиться
+          Share
         </Link>
       </div>
     </Surface>

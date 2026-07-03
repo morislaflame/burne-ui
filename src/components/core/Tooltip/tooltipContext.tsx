@@ -37,7 +37,7 @@ export function useTooltipClassNames(): TooltipClassNames {
 export function useTooltipContext(who: string): TooltipContextValue {
   const ctx = useContext(TooltipContext);
   if (!ctx) {
-    throw new Error(`${who} должен быть внутри <Tooltip>.`);
+    throw new Error(`${who} must be used inside <Tooltip>.`);
   }
   return ctx;
 }

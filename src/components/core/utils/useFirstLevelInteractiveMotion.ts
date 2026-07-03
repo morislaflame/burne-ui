@@ -58,7 +58,7 @@ export type UseFirstLevelInteractiveMotionProps = {
   onPointerLeave?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerDown?: (e: PointerEvent<HTMLButtonElement>) => void;
   /**
-   * Вызывается в начале release-фазы press-squeeze (перед восстановлением hover).
+   * Called at the start of press-squeeze release phase (before restoring hover).
    */
   onPressReleaseStart?: () => void;
   /**

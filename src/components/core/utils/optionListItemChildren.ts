@@ -23,7 +23,7 @@ function partDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;
 }
 
-/** Разбирает compound-children пункта списка на слоты label / hint / icon / indicator. */
+/** Parses list item compound children into label / hint / icon / indicator slots. */
 export function partitionOptionListItemChildren(children: ReactNode): OptionListItemParts {
   let indicator: ReactNode | null = null;
   let label: ReactNode | null = null;

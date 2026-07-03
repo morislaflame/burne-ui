@@ -12,15 +12,15 @@ export function DialogSettingsModalDemo() {
   return (
     <>
       <Button variant="outline" type="button" onClick={() => setOpen(true)}>
-        Настройки приватности
+        Privacy Settings
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <Dialog.Panel>
           <Dialog.Header>
           <Dialog.HeadingBlock>
-            <Dialog.Title>Приватность</Dialog.Title>
-            <Dialog.Description>Управление сбором данных.</Dialog.Description>
+            <Dialog.Title>Privacy</Dialog.Title>
+            <Dialog.Description>Data Collection Management.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
@@ -28,16 +28,16 @@ export function DialogSettingsModalDemo() {
           <Switch
             checked={analytics}
             onChange={(e) => setAnalytics(e.target.checked)}
-            label="Аналитика использования"
-            hint="Анонимная статистика для улучшения продукта"
+            label="Usage analytics"
+            hint="Anonymous statistics to improve the product"
           />
           <Text as="p" variant="tools" className="text-muted">
-            Dialog с формой настроек внутри Body.
+            Dialog with settings form inside Body.
           </Text>
         </Dialog.Body>
         <Dialog.Footer>
           <Button type="button" onClick={() => setOpen(false)}>
-            Готово
+            Ready
           </Button>
         </Dialog.Footer>
         </Dialog.Panel>

@@ -2,7 +2,7 @@ import { ToggleButtonIcon, ToggleButtonText, ToggleButtonTrailing } from "./togg
 import { shouldWrapToggleButtonChildrenInText } from "./toggleButtonAPI";
 import type { ToggleButtonSimpleContentProps } from "./toggleButtonTypes";
 
-/** Simple API: собирает content-слот из props на root. */
+/** Simple API: assembles content slot from root props. */
 export function ToggleButtonSimpleContent({
   leftIcon,
   rightIcon,

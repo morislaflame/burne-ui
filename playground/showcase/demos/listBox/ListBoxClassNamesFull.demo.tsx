@@ -4,7 +4,7 @@ export function ListBoxClassNamesFullDemo() {
   return (
     <ListBox
       defaultValue="ru"
-      label="Язык интерфейса"
+      label="Interface language"
       classNames={{
         root: "rounded-mid border border-primary/25 p-base",
         headerText: "text-primary font-medium",
@@ -14,10 +14,10 @@ export function ListBoxClassNamesFullDemo() {
       }}
     >
       <ListBox.Section>
-        <ListBox.Header>Доступные языки</ListBox.Header>
-        <ListBox.Item value="ru" label="Русский" hint="Кириллица" />
+        <ListBox.Header>Available languages</ListBox.Header>
+        <ListBox.Item value="ru" label="Russian" hint="Cyrillic" />
         <ListBox.Item value="en" label="English" hint="Latin script" />
-        <ListBox.Item value="de" label="Deutsch" disabled hint="Скоро" />
+        <ListBox.Item value="de" label="Deutsch" disabled hint="Soon" />
       </ListBox.Section>
     </ListBox>
   );

@@ -12,14 +12,14 @@ export function FormInlineSubscribeDemo() {
   return (
     <Form
       onSubmit={onSubmit}
-      aria-label="Подписка на рассылку"
+      aria-label="Subscribe to the newsletter"
       className="flex w-full max-w-lg flex-col gap-small sm:flex-row sm:items-end"
       rules={{
         email: {
-          required: "Email обязателен",
+          required: "Email required",
           pattern: {
             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Некорректный email",
+            message: "Incorrect email",
           },
         },
       }}
@@ -35,7 +35,7 @@ export function FormInlineSubscribeDemo() {
         </Form.Field>
       </Form.Section>
       <Button type="submit" variant="primary" className="w-full shrink-0 sm:w-auto">
-        Подписаться
+        Subscribe
       </Button>
     </Form>
   );

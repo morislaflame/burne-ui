@@ -14,28 +14,28 @@ export function DrawerFilterSheetDemo() {
 
       <Drawer open={open} onOpenChange={setOpen} placement="right">
         <Drawer.Trigger asChild>
-          <Button variant="outline">Фильтры</Button>
+          <Button variant="outline">Filters</Button>
         </Drawer.Trigger>
         <Drawer.Panel size="mid">
           <Drawer.Header>
           <Drawer.HeadingBlock>
-            <Drawer.Title>Фильтры</Drawer.Title>
-            <Drawer.Description>Уточните выборку списка.</Drawer.Description>
+            <Drawer.Title>Filters</Drawer.Title>
+            <Drawer.Description>Refine the list selection.</Drawer.Description>
           </Drawer.HeadingBlock>
           <Drawer.Close />
         </Drawer.Header>
         <Drawer.Body className="flex flex-col gap-mid">
-          <Checkbox checked={draft} onChange={(e) => setDraft(e.target.checked)} label="Только черновики" />
+          <Checkbox checked={draft} onChange={(e) => setDraft(e.target.checked)} label="Drafts only" />
           <Text as="p" variant="tools" className="text-muted">
-            Drawer справа с формой фильтрации.
+            Drawer on the right with the filter form.
           </Text>
         </Drawer.Body>
         <Drawer.Footer>
           <Button variant="ghost" type="button" onClick={() => setOpen(false)}>
-            Сбросить
+            Reset
           </Button>
           <Button type="button" onClick={() => setOpen(false)}>
-            Применить
+            Apply
           </Button>
         </Drawer.Footer>
         </Drawer.Panel>

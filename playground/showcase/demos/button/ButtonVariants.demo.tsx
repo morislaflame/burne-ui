@@ -11,12 +11,12 @@ export function ButtonVariantsDemo() {
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
       <Button disabled>Disabled</Button>
-      <Button leftIcon={<IoAdd aria-hidden />}>С иконкой</Button>
-      <Button iconOnly aria-label="Добавить">
+      <Button leftIcon={<IoAdd aria-hidden />}>With icon</Button>
+      <Button iconOnly aria-label="Add">
         <IoAdd aria-hidden />
       </Button>
       <Button ripple variant="outline">
-        С ripple
+        With ripple
       </Button>
     </div>
   );

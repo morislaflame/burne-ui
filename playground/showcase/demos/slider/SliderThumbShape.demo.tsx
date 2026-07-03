@@ -10,10 +10,10 @@ export function SliderThumbShapeDemo() {
   return (
     <div className="flex w-full max-w-md flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Форма thumb
+        Form thumb
       </Text>
       <Slider
-        label="Круглый thumb (default)"
+        label="Round thumb (default)"
         showValue
         value={round}
         onValueChange={setRound}

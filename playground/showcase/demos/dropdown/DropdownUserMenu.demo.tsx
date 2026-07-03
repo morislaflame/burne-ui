@@ -11,8 +11,8 @@ export function DropdownUserMenuDemo() {
       <Dropdown.Trigger asChild>
         <Button variant="secondary">
           <div className="flex items-center justify-center gap-base">
-            <Avatar size="small" label="МИ" />
-            <span>Аккаунт</span>
+            <Avatar size="small" label="MI" />
+            <span>Account</span>
           </div>
         </Button>
       </Dropdown.Trigger>
@@ -20,17 +20,17 @@ export function DropdownUserMenuDemo() {
         <Dropdown.Group>
           <Dropdown.Label>
             <Text as="span" variant="tools" className="text-muted">
-              Мария Иванова
+              Maria Ivanova
             </Text>
           </Dropdown.Label>
           <Dropdown.Item value="profile">
-            <Dropdown.ItemLabel>Профиль</Dropdown.ItemLabel>
+            <Dropdown.ItemLabel>Profile</Dropdown.ItemLabel>
             <Dropdown.ItemIcon>
               <IoPersonOutline aria-hidden />
             </Dropdown.ItemIcon>
           </Dropdown.Item>
           <Dropdown.Item value="settings">
-            <Dropdown.ItemLabel>Настройки</Dropdown.ItemLabel>
+            <Dropdown.ItemLabel>Settings</Dropdown.ItemLabel>
             <Dropdown.ItemIcon>
               <IoSettingsOutline aria-hidden />
             </Dropdown.ItemIcon>
@@ -39,7 +39,7 @@ export function DropdownUserMenuDemo() {
         <Dropdown.Separator />
         <Dropdown.Group>
           <Dropdown.Item value="logout" selection={false}>
-            <Dropdown.ItemLabel>Выйти</Dropdown.ItemLabel>
+            <Dropdown.ItemLabel>Log out</Dropdown.ItemLabel>
             <Dropdown.ItemIcon>
               <IoLogOutOutline aria-hidden />
             </Dropdown.ItemIcon>

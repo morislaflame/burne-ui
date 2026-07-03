@@ -1,13 +1,13 @@
 export type FormatShowcaseSourceOptions = {
   /**
-   * Только импорты + JSX из `return`, без `export function`.
-   * По умолчанию показываем весь файл — удобнее копировать в проект.
+   * Imports only + JSX from `return`, without `export function`.
+   * By default, we show the entire file - it’s more convenient to copy it into the project.
    */
   usageOnly?: boolean;
 };
 
 /**
- * Нормализует исходник demo-файла для панели «Показать код».
+ * Normalizes the source demo-file for the “Show Code” panel».
  */
 export function formatShowcaseSource(
   raw: string,

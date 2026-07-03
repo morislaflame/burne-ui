@@ -12,7 +12,7 @@ export function AlertSizesDemo() {
             <Alert.Content>
               <Alert.Title>size={size}</Alert.Title>
               <Alert.Description>
-                Padding, иконка и типографика масштабируются по размерной сетке.
+                Padding, icon and typography are scaled according to the dimensional grid.
               </Alert.Description>
             </Alert.Content>
           </Alert.Message>

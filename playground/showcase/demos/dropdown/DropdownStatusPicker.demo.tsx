@@ -5,9 +5,9 @@ import { Button } from "@/components/core/Button";
 import { Dropdown } from "@/components/core/Dropdown";
 
 const STATUSES = [
-  { value: "active", label: "Активен", icon: IoCheckmarkCircle },
-  { value: "away", label: "Отошёл", icon: IoPauseCircle },
-  { value: "offline", label: "Не в сети", icon: IoEllipseOutline },
+  { value: "active", label: "Active", icon: IoCheckmarkCircle },
+  { value: "away", label: "Moved away", icon: IoPauseCircle },
+  { value: "offline", label: "Offline", icon: IoEllipseOutline },
 ] as const;
 
 export function DropdownStatusPickerDemo() {
@@ -23,7 +23,7 @@ export function DropdownStatusPickerDemo() {
       </Dropdown.Trigger>
       <Dropdown.Popover>
         <Dropdown.Group>
-          <Dropdown.Label>Статус</Dropdown.Label>
+          <Dropdown.Label>Status</Dropdown.Label>
           {STATUSES.map((item) => (
             <Dropdown.Item key={item.value} value={item.value}>
               <Dropdown.ItemIndicator />

@@ -14,27 +14,27 @@ export function FormShowcase() {
   return (
     <ShowcasePage
       title="Form"
-      description="Обёртка формы с нативной отправкой и доступностью для групп полей."
+      description="Form wrapper with native submission and availability for field groups."
       importPath='import { Form } from "@/components/composite/Form";'
       tags={["composite", "forms"]}
     >
       <ShowcaseSection
-        title="Профиль"
-        description="Form.Section группирует поля; CheckboxGroup — в отдельной секции с большим отступом."
+        title="Profile"
+        description="Form.Section groups fields; CheckboxGroup — in a separate section with a large indentation."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FormProfileDemo} source={formProfileSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Минимальная форма"
-        description="Form принимает onSubmit и aria-label; кнопки действий размещаются внутри формы."
+        title="Minimal form"
+        description="Form accepts onSubmit and aria-label; action buttons are placed inside the form."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FormMinimalSubscribeDemo} source={formMinimalSubscribeSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Inline-подписка, панель входа и поисковый toolbar — demo-файлы в `demos/form/`."
+        title="Custom Variations"
+        description="Inline-subscription, login panel and search toolbar — demo-files in `demos/form/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FormInlineSubscribeDemo} source={formInlineSubscribeSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={FormLoginPanelDemo} source={formLoginPanelSource} />
@@ -42,23 +42,23 @@ export function FormShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/composite/Form" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Section — группа полей с плотным gap-small внутри; Form задаёт gap-mid между секциями."
+            description="Section — group of fields with dense gap-small inside; Form sets gap-mid between sections."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="Корневой Form — нативный &lt;form&gt; с onSubmit. Поля (Input, CheckboxGroup) вкладываются как children."
+            description="Root Form — native &lt;form&gt; with onSubmit. Fields (Input, CheckboxGroup) are invested as children."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Связанные компоненты">
+        <ShowcaseDoc.Block title="Related Components">
           <p>
-            <code>Input</code>, <code>CheckboxGroup</code>, <code>Button</code> — импортируются отдельно и
-            работают внутри Form через name/value.
+            <code>Input</code>, <code>CheckboxGroup</code>, <code>Button</code> — imported separately and
+            work inside Form through name/value.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

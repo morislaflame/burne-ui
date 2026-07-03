@@ -3,8 +3,8 @@ import { IoDocumentTextOutline, IoPersonOutline } from "react-icons/io5";
 import { Tabs } from "@/components/core/Tabs";
 
 const TAB_ITEMS = [
-  { value: "account", label: "Аккаунт", icon: IoPersonOutline },
-  { value: "documents", label: "Документы", icon: IoDocumentTextOutline },
+  { value: "account", label: "Account", icon: IoPersonOutline },
+  { value: "documents", label: "Documents", icon: IoDocumentTextOutline },
 ] as const;
 
 export function TabsClassNamesFullDemo() {
@@ -30,7 +30,7 @@ export function TabsClassNamesFullDemo() {
       </Tabs.List>
       {TAB_ITEMS.map(({ value, label }) => (
         <Tabs.Panel key={value} value={value}>
-          <p className="text-small text-muted">Контент вкладки «{label}».</p>
+          <p className="text-small text-muted">Tab content «{label}».</p>
         </Tabs.Panel>
       ))}
     </Tabs>

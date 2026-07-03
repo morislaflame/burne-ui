@@ -1,35 +1,35 @@
 import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactNode } from "react";
 
 export type BreadcrumbsClassNames = {
-  /** Корневой `<nav>`. */
+  /** Root `<nav>`. */
   root?: string;
-  /** `<ol>` у `Breadcrumbs.List` и simple-режима. */
+  /** `<ol>` on `Breadcrumbs.List` and simple mode. */
   list?: string;
-  /** `<li>` в `Breadcrumbs.List`. */
+  /** `<li>` in `Breadcrumbs.List`. */
   listItem?: string;
-  /** Иконка-chevron между пунктами. */
+  /** Chevron icon between items. */
   separator?: string;
-  /** Обёртка `<span>` у `Breadcrumbs.Separator`. */
+  /** `<span>` wrapper on `Breadcrumbs.Separator`. */
   separatorWrapper?: string;
-  /** Текущая страница (`aria-current="page"`). */
+  /** Current page (`aria-current="page"`). */
   current?: string;
-  /** Ссылка / кнопка внутри интерактивной крошки. */
+  /** Link / button inside interactive crumb. */
   link?: string;
-  /** Обёртка `<span>` вокруг ссылки-крошки. */
+  /** `<span>` wrapper around crumb link. */
   linkWrapper?: string;
-  /** Текст внутри ссылки-крошки (`Text`). */
+  /** Text inside crumb link (`Text`). */
   linkText?: string;
-  /** Некликабельный сегмент. */
+  /** Non-clickable segment. */
   static?: string;
-  /** Кнопка «…». */
+  /** "…" button. */
   ellipsisTrigger?: string;
-  /** Обёртка lift внутри trigger «…». */
+  /** Lift wrapper inside "…" trigger. */
   ellipsisLiftWrapper?: string;
-  /** Текст «…». */
+  /** "…" text. */
   ellipsisText?: string;
-  /** Тело popover меню «…». */
+  /** Popover body of "…" menu. */
   ellipsisPopover?: string;
-  /** Пункты в dropdown скрытых крошек. */
+  /** Items in hidden crumbs dropdown. */
   dropdownItem?: string;
 };
 
@@ -53,7 +53,7 @@ export type BreadcrumbSegmentPiece = Extract<DisplayPiece, { kind: "segment" }>;
 export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   collapse?: boolean;
   classNames?: BreadcrumbsClassNames;
-  /** Simple API: пункты цепочки. Игнорируется при compound (`Breadcrumbs.List`). */
+  /** Simple API: chain items. Ignored in compound mode (`Breadcrumbs.List`). */
   items?: BreadcrumbItem[];
   children?: ReactNode;
 };

@@ -10,8 +10,8 @@ export function ToastPromiseFlowDemo() {
     });
 
     toast.promise(promise, {
-      loading: "Сохранение…",
-      success: "Изменения сохранены",
+      loading: "Saving…",
+      success: "Changes saved",
       timeout: 3000,
     });
   };
@@ -19,14 +19,14 @@ export function ToastPromiseFlowDemo() {
   return (
     <div className="flex flex-wrap gap-small">
       <Button variant="outline" onClick={simulateSave}>
-        Сохранить с прогрессом
+        Save with progress
       </Button>
       <Button
         variant="ghost"
         onClick={() =>
           toast.show({
-            title: "Нет соединения",
-            description: "Проверьте сеть и повторите.",
+            title: "No connection",
+            description: "Check your network and try again.",
             status: "danger",
             variant: "gloss",
           })

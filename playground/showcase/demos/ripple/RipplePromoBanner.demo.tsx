@@ -9,14 +9,14 @@ export function RipplePromoBannerDemo() {
       <div className="relative z-[1] flex flex-col gap-small sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Text as="p" variant="header-2" className="text-white">
-            Летняя акция
+            Summer promotion
           </Text>
           <Text as="p" variant="small" className="text-white/80">
-            −30% на все gloss-компоненты до конца месяца.
+            −30% for everything gloss-components by the end of the month.
           </Text>
         </div>
         <Button variant="secondary" className="shrink-0">
-          Узнать больше
+          Find out more
         </Button>
       </div>
     </div>

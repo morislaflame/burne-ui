@@ -44,7 +44,7 @@ const framedDecorator = [
   ),
 ] as const;
 
-/** Как `Alert.stories` — светлая тема и фон `var(--color-background)`. */
+/** Like `Alert.stories` — light theme and `var(--color-background)` background. */
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
@@ -91,7 +91,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Компактный статус-бейдж. **Simple** — `icon` + текст в `children`; **inline-иконки** — `data-icon=\"inline-start\" | \"inline-end\"` на child. `variant=\"gloss\"` — стеклянная поверхность. Для наложения — `Badge.Anchor`. Слоты настраиваются через `classNames` (`root`, `text`, `iconOnly`, `dot`, `anchor`).",
+          "Compact status badge. **Simple** — `icon` + text in `children`; **inline icons** — `data-icon=\"inline-start\" | \"inline-end\"` on child. `variant=\"gloss\"` — glass surface. For overlay — `Badge.Anchor`. Slots are configured via `classNames` (`root`, `text`, `iconOnly`, `dot`, `anchor`).",
       },
     },
   },
@@ -142,12 +142,12 @@ function SizesAndVariantsDemo() {
 }
 
 export const SizesAndVariants: Story = {
-  name: "Размеры и варианты (тёмная тема)",
+  name: "Sizes and variants (dark theme)",
   render: () => <SizesAndVariantsDemo />,
 };
 
 export const SizesAndVariantsOnLightTheme: Story = {
-  name: "Размеры и варианты (светлая тема)",
+  name: "Sizes and variants (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <SizesAndVariantsDemo />,
 };
@@ -179,22 +179,22 @@ function StatusVariantsDemo() {
 }
 
 export const StatusVariants: Story = {
-  name: "Статусы × варианты (тёмная тема)",
+  name: "Statuses × variants (dark theme)",
   render: () => <StatusVariantsDemo />,
 };
 
 export const StatusVariantsOnLightTheme: Story = {
-  name: "Статусы × варианты (светлая тема)",
+  name: "Statuses × variants (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <StatusVariantsDemo />,
 };
 
 export const BadgeAnchorComposition: Story = {
-  name: "Badge.Anchor + Avatar (как в API)",
+  name: "Badge.Anchor + Avatar (as in API)",
   render: () => (
     <div className="flex flex-col gap-xlarge">
       <p className="max-w-xl text-center text-sm text-muted">
-        Наведите на аватар: бейдж слегка увеличивается (scale как у&nbsp;
+        Hover the avatar: the badge scales up slightly (like&nbsp;
         <code className="text-primary">Button</code>).
       </p>
       <div className="flex flex-wrap items-start justify-center gap-xlarge">
@@ -219,7 +219,7 @@ export const BadgeAnchorComposition: Story = {
             dot
             // placement="bottom-right"
             size="small"
-            aria-label="Активен"
+            aria-label="Active"
           />
         </Badge.Anchor>
       </div>
@@ -228,11 +228,11 @@ export const BadgeAnchorComposition: Story = {
 };
 
 export const IconInlineChildren: Story = {
-  name: "Inline-иконки (data-icon)",
+  name: "Inline icons (data-icon)",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Compound — data-icon на child">
+      <DualApiStoryPanel title="Compound — data-icon on child">
         <div className="flex flex-wrap gap-small">
           <Badge variant="secondary">
             <IoCheckmarkCircleOutline data-icon="inline-start" />
@@ -252,7 +252,7 @@ export const IconInlineChildren: Story = {
             icon={<IoRocketOutline aria-hidden />}
             iconPosition="start"
           >
-            Старт
+            Start
           </Badge>
           <Badge
             status="success"
@@ -260,7 +260,7 @@ export const IconInlineChildren: Story = {
             icon={<IoRocketOutline aria-hidden />}
             iconPosition="end"
           >
-            Конец
+            End
           </Badge>
         </div>
       </DualApiStoryPanel>
@@ -269,7 +269,7 @@ export const IconInlineChildren: Story = {
 };
 
 export const VisibilityInteraction: Story = {
-  name: "Interaction: видимость",
+  name: "Interaction: visibility",
   render: () => (
     <Badge variant="secondary">
       <IoCheckmarkCircleOutline data-icon="inline-start" />
@@ -287,7 +287,7 @@ export const IconStartEnd: Story = {
     <div className="flex flex-col items-start gap-mid">
       <p className="text-sm text-muted">
         Prop <code className="text-primary">icon</code> +{" "}
-        <code className="text-primary">iconPosition</code> — root получает{" "}
+        <code className="text-primary">iconPosition</code> — root gets{" "}
         <code className="text-primary">data-icon=&quot;start&quot;</code> /{" "}
         <code className="text-primary">end</code>.
       </p>
@@ -298,7 +298,7 @@ export const IconStartEnd: Story = {
           icon={<IoRocketOutline aria-hidden />}
           iconPosition="start"
         >
-          Старт
+          Start
         </Badge>
         <Badge
           status="success"
@@ -306,7 +306,7 @@ export const IconStartEnd: Story = {
           icon={<IoRocketOutline aria-hidden />}
           iconPosition="end"
         >
-          Конец
+          End
         </Badge>
       </div>
     </div>
@@ -314,12 +314,12 @@ export const IconStartEnd: Story = {
 };
 
 export const IconOnly: Story = {
-  name: "Только иконка",
+  name: "Icon only",
   render: () => (
     <div className="flex flex-wrap items-center gap-mid">
-      <Badge status="danger" icon={<IoHeartOutline aria-hidden />} aria-label="Избранное" />
+      <Badge status="danger" icon={<IoHeartOutline aria-hidden />} aria-label="Favorites" />
       <Badge variant="secondary" iconOnly icon={<IoMoonOutline aria-hidden />} aria-label="Secondary" />
-      <Badge status="warning" size="small" icon={<IoNotificationsOutline aria-hidden />} aria-label="Уведомления" />
+      <Badge status="warning" size="small" icon={<IoNotificationsOutline aria-hidden />} aria-label="Notifications" />
     </div>
   ),
 };
@@ -344,22 +344,22 @@ function DotsVariantsDemo() {
 }
 
 export const DotsVariants: Story = {
-  name: "Только кружок (dot, тёмная тема)",
+  name: "Dot only (dark theme)",
   render: () => <DotsVariantsDemo />,
 };
 
 export const DotsVariantsOnLightTheme: Story = {
-  name: "Только кружок (dot, светлая тема)",
+  name: "Dot only (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <DotsVariantsDemo />,
 };
 
 export const CornersViaAnchorPlacement: Story = {
-  name: "Углы через placement у Badge.Anchor",
+  name: "Corners via Badge.Anchor placement",
   render: () => (
     <div className="flex flex-col gap-mid">
       <p className="max-w-lg text-sm text-muted">
-        Внутри якоря бейдж по умолчанию <code>top-right</code>; угол задаётся prop{" "}
+        Inside the anchor, badge defaults to <code>top-right</code>; corner is set via prop{" "}
         <code>placement</code>.
       </p>
       <div className="grid grid-cols-2 gap-xlarge sm:grid-cols-4">
@@ -379,62 +379,62 @@ export const CornersViaAnchorPlacement: Story = {
 };
 
 export const WithCard: Story = {
-  name: "С Card",
+  name: "With Card",
   render: () => (
     <div className="flex w-full max-w-md justify-center">
       <Badge.Anchor className="relative w-full max-w-none shrink-0">
         <Card className="w-full overflow-hidden">
           <Card.Header>
-            <Card.Title>Релиз 0.12</Card.Title>
+            <Card.Title>Release 0.12</Card.Title>
             <Card.Description>
-              Поддержка Badge, уведомления и счётчиков на интерфейсах продукта.
+              Badge support, notifications, and counters on product interfaces.
             </Card.Description>
           </Card.Header>
           <Card.Footer className="flex flex-wrap items-center gap-plus">
             <Badge status="success" size="small" icon={<IoCheckmarkCircleOutline aria-hidden />}>
-              Готово
+              Done
             </Badge>
             <Badge status="warning" size="small" iconPosition="end" icon={<IoRocketOutline aria-hidden />}>
               Beta
             </Badge>
             <Button type="button" size="base" variant="outline">
-              Детали
+              Details
             </Button>
           </Card.Footer>
         </Card>
-        <Badge variant="outline" size="small" aria-label="Новое на карте" dot />
+        <Badge variant="outline" size="small" aria-label="New on map" dot />
       </Badge.Anchor>
     </div>
   ),
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-lg flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Текстовый бейдж читается как подпись; inline-иконки декоративные (
-        <code className="text-primary">aria-hidden</code>). Icon-only и dot без подписи требуют{" "}
+        Text badge is read as a label; inline icons are decorative (
+        <code className="text-primary">aria-hidden</code>). Icon-only and dot without label require{" "}
         <code className="text-primary">aria-label</code>.
       </p>
       <div className="flex flex-wrap items-center gap-plus">
         <Badge status="success">
           <IoCheckmarkCircleOutline data-icon="inline-start" />
-          Опубликовано
+          Published
         </Badge>
         <Badge
           status="danger"
           icon={<IoHeartOutline aria-hidden />}
-          aria-label="Избранное"
+          aria-label="Favorites"
         />
-        <Badge dot status="info" aria-label="Есть обновления" />
+        <Badge dot status="info" aria-label="Updates available" />
       </div>
     </div>
   ),
 };
 
 export const CustomColors: Story = {
-  name: "Кастомные бейджи",
+  name: "Custom badges",
   render: () => (
     <div className="flex flex-col gap-xlarge">
       <div className="flex flex-col gap-base">
@@ -443,13 +443,13 @@ export const CustomColors: Story = {
             size="base"
             className="border-transparent bg-[oklch(58%_0.24_300)] text-white shadow-base"
           >
-            OKLCH фиолетовый
+            OKLCH purple
           </Badge>
           <Badge
             size="base"
             className="border-0 bg-[linear-gradient(90deg,#0891b2_0%,#0891b2_12%,#1d4ed8_88%,#1d4ed8_100%)] bg-no-repeat text-white shadow-base [background-size:100%_100%]"
           >
-            Градиент
+            Gradient
           </Badge>
           <Badge
             size="base"
@@ -463,7 +463,7 @@ export const CustomColors: Story = {
             iconPosition="start"
             className="border-transparent bg-rose-600 text-white shadow-none [&_svg]:text-white"
           >
-            Иконка + кастом
+            Icon + custom
           </Badge>
         </div>
       </div>
@@ -473,13 +473,13 @@ export const CustomColors: Story = {
           <Badge
             dot
             size="base"
-            aria-label="Кастомная точка violet"
+            aria-label="Custom violet dot"
             className="border-0 bg-[oklch(55%_0.2_280)] ring-2 ring-background motion-reduce:ring-1"
           />
           <Badge
             dot
             size="base"
-            aria-label="Кастомная точка lime"
+            aria-label="Custom lime dot"
             className="border-0 bg-lime-500 ring-2 ring-background motion-reduce:ring-1 dark:bg-lime-400"
           />
           <Badge.Anchor className="rounded-full">
@@ -493,7 +493,7 @@ export const CustomColors: Story = {
             </Badge>
           </Badge.Anchor>
           <span className="text-xs text-muted">
-            Якорь + бейдж с произвольными цветами
+            Anchor + badge with arbitrary colors
           </span>
         </div>
       </div>
@@ -502,12 +502,12 @@ export const CustomColors: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
         story:
-          "кастомизация classNames для Badge",
+          "classNames customization for Badge",
       },
     },
   },
@@ -520,7 +520,7 @@ export const CustomClassNames: Story = {
           text: "border-info/50 bg-info/10 text-info",
         }}
       >
-        Глобальный стиль текста
+        Global text style
       </Badge>
       <Badge
         iconOnly
@@ -539,7 +539,7 @@ export const CustomClassNames: Story = {
         }}
       >
         <Avatar size="base" label="Demo" />
-        <Badge dot status="success" aria-label="Онлайн" />
+        <Badge dot status="success" aria-label="Online" />
       </Badge.Anchor>
     </div>
   ),
@@ -583,7 +583,7 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,

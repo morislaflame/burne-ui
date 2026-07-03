@@ -132,7 +132,7 @@ function ColorControl({
   label: string;
   value: string;
   onChange: (value: string) => void;
-  /** Когда `value` — формула, превью через CSS var (например `var(--color-border)`). */
+  /** When `value` — formula, preview via CSS var (For example `var(--color-border)`). */
   previewBackground?: string;
 }) {
   const isHex = /^#[0-9a-f]{6}$/i.test(value.trim());
@@ -409,24 +409,24 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
     <div className="flex flex-col gap-mid">
       <div>
         <Text as="h2" variant="header-2">
-          Токены темы
+          Theme tokens
         </Text>
         <Text as="p" variant="small" className="mt-xsmall text-muted">
-          Меняют CSS-переменные на <code className="text-primary">:root</code> — превью справа
-          обновляется сразу.
+          Change CSS-variables on <code className="text-primary">:root</code> — preview on the right
+          updated immediately.
         </Text>
       </div>
 
       <div className="flex flex-col gap-small">
         <Text as="span" variant="small" className="text-muted">
-          Цветовые пресеты
+          Color presets
         </Text>
         <div className="flex flex-wrap gap-xsmall">
           {(
             [
               { id: "dark", label: "Dark" },
               { id: "light", label: "Light" },
-              { id: "contrast", label: "Контраст" },
+              { id: "contrast", label: "Contrast" },
               { id: "ocean", label: "Ocean" },
               { id: "violet", label: "Violet" },
               { id: "emerald", label: "Emerald" },
@@ -460,23 +460,23 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
 
       <div className="flex flex-col gap-small">
         <Text as="span" variant="small" className="text-muted">
-          Компоновка
+          Layout
         </Text>
         <div className="flex flex-wrap gap-xsmall">
           <Button type="button" size="small" variant="outline" onClick={() => applyLayoutPreset("compact")}>
-            Компакт
+            Compact
           </Button>
           <Button type="button" size="small" variant="outline" onClick={() => applyLayoutPreset("spacious")}>
-            Простор
+            Spacious
           </Button>
           <Button type="button" size="small" variant="outline" onClick={() => applyLayoutPreset("flat")}>
             Flat
           </Button>
           <Button type="button" size="small" variant="ghost" onClick={reset}>
-            Сброс
+            Reset
           </Button>
           <Button type="button" size="small" variant="secondary" onClick={handleCopy}>
-            {copied ? "Скопировано" : "Copy CSS"}
+            {copied ? "Copied" : "Copy CSS"}
           </Button>
         </div>
       </div>
@@ -486,16 +486,16 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
       <Switch
         checked={state.theme === "light"}
         onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
-        label="Светлая тема"
+        label="Light theme"
         hint={
           state.colorPreset
-            ? `Пресет «${state.colorPreset}» — ${state.theme}`
-            : "Кастомные цвета"
+            ? `Preset «${state.colorPreset}» — ${state.theme}`
+            : "Custom colors"
         }
       />
 
       <div className="flex flex-col gap-small">
-        <SectionTitle>Масштаб</SectionTitle>
+        <SectionTitle>Scale</SectionTitle>
         <ScaleControl
           label="--space"
           value={state.space}
@@ -555,14 +555,14 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             setScale("textScale", SCALE_DEFAULTS.textScale);
           }}
         >
-          Масштаб по умолчанию
+          Default scale
         </Button>
       </div>
 
       <Separator />
 
       <div className="flex flex-col gap-small">
-        <SectionTitle>Шрифты</SectionTitle>
+        <SectionTitle>Fonts</SectionTitle>
         <FontSelect
           id="theme-font-sans"
           label="Sans (--font-family-sans)"
@@ -585,7 +585,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
       </div>
 
       <div className="flex flex-col gap-small">
-        <SectionTitle>Начертание</SectionTitle>
+        <SectionTitle>Typeface</SectionTitle>
         {(Object.keys(FONT_WEIGHT_LABELS) as ThemeFontWeightKey[]).map((key) => (
           <FontWeightSelect
             key={key}
@@ -596,15 +596,15 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           />
         ))}
         <Text as="p" variant="tools" className="rounded-small border-token bg-background p-small text-muted">
-          <span className="font-w-small">Small — мелкий и служебный текст</span>
+          <span className="font-w-small">Small — small and official text</span>
           <br />
-          <span className="font-w-base">Base — основной текст</span>
+          <span className="font-w-base">Base — main text</span>
           <br />
-          <span className="font-w-mid">Mid — контролы</span>
+          <span className="font-w-mid">Mid — controls</span>
           <br />
-          <span className="font-w-strong">Strong — заголовки</span>
+          <span className="font-w-strong">Strong — headers</span>
           <br />
-          <span className="font-w-bold">Bold — акцент</span>
+          <span className="font-w-bold">Bold — accent</span>
         </Text>
         <Button
           type="button"
@@ -617,7 +617,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             });
           }}
         >
-          Начертание по умолчанию
+          Default style
         </Button>
       </div>
 
@@ -683,16 +683,16 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             setMotionDuration("loadingDotsDuration", SCALE_DEFAULTS.loadingDotsDuration);
           }}
         >
-          Motion по умолчанию
+          Motion default
         </Button>
       </div>
 
       <Separator />
 
       <div className="flex flex-col gap-small">
-        <SectionTitle>Тени и стекло</SectionTitle>
+        <SectionTitle>Shadows and glass</SectionTitle>
         <ScaleControl
-          label="Интенсивность теней (opacity)"
+          label="Shadow intensity (opacity)"
           value={state.shadowStrength}
           min={0.5}
           max={1.75}
@@ -710,7 +710,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           onChange={setShadowSize}
         />
         <ScaleControl
-          label="--toast-scrim-size (размер подложки Toast)"
+          label="--toast-scrim-size (substrate size Toast)"
           value={state.toastScrimSize}
           min={0.5}
           max={2}
@@ -719,7 +719,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           onChange={setToastScrimSize}
         />
         <ScaleControl
-          label="--toast-scrim-density (плотность подложки Toast)"
+          label="--toast-scrim-density (substrate density Toast)"
           value={state.toastScrimDensity}
           min={0}
           max={2}
@@ -752,14 +752,14 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             setToastScrimDensity(SCALE_DEFAULTS.toastScrimDensity);
           }}
         >
-          Тени по умолчанию
+          Default shadows
         </Button>
       </div>
 
       <Separator />
 
       <div className="flex flex-col gap-small">
-        <SectionTitle>Анимации</SectionTitle>
+        <SectionTitle>Animations</SectionTitle>
         <div className="flex flex-col gap-small rounded-base border-token bg-secondary p-small">
           <Switch
             checked={
@@ -789,28 +789,28 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
               setAnimationFlag("enableProgressFill", checked);
               setAnimationFlag("enableLoadingDots", checked);
             }}
-            label="Все анимации включены"
+            label="All animations included"
           />
           <Separator className="my-xsmall opacity-50" />
           <Switch
             checked={state.enableHoverLift}
             onChange={(e) => setAnimationFlag("enableHoverLift", e.target.checked)}
-            label="Hover Lift (подъём при наведении)"
+            label="Hover Lift (rise on hover)"
           />
           <Switch
             checked={state.enablePressSqueeze}
             onChange={(e) => setAnimationFlag("enablePressSqueeze", e.target.checked)}
-            label="Press Squeeze (сжатие при клике)"
+            label="Press Squeeze (compression on click)"
           />
           <Switch
             checked={state.enableToggleButtonFill}
             onChange={(e) => setAnimationFlag("enableToggleButtonFill", e.target.checked)}
-            label="Toggle & Calendar Fill (заливка)"
+            label="Toggle & Calendar Fill (filling)"
           />
           <Switch
             checked={state.enableRipple}
             onChange={(e) => setAnimationFlag("enableRipple", e.target.checked)}
-            label="Press Ripple (волны пульсации)"
+            label="Press Ripple (ripple waves)"
           />
           <Switch
             checked={state.enableExpandable}
@@ -830,7 +830,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           <Switch
             checked={state.enableContentFade}
             onChange={(e) => setAnimationFlag("enableContentFade", e.target.checked)}
-            label="Content fade (Avatar и др.)"
+            label="Content fade (Avatar etc..)"
           />
           <Switch
             checked={state.enableFeedbackExpand}
@@ -840,7 +840,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           <Switch
             checked={state.enableProgressFill}
             onChange={(e) => setAnimationFlag("enableProgressFill", e.target.checked)}
-            label="ProgressBar fill (плавное заполнение)"
+            label="ProgressBar fill (smooth filling)"
           />
           <Switch
             checked={state.enableLoadingDots}

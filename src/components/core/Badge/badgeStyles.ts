@@ -138,21 +138,21 @@ export function badgeDotSurfaceClass(
     : dotFillClass(variant, status);
 }
 
-/** Обёртка иконки в simple/inline API (`icon` prop или `data-icon` на child). */
+/** Icon wrapper in simple/inline API (`icon` prop or `data-icon` on child). */
 export const BADGE_ICON_SLOT_BASE = "inline-flex shrink-0 [&_svg]:shrink-0";
 
 export function badgeIconSlotClass(size: BadgeSize): string {
   return cn(BADGE_ICON_SLOT_BASE, BADGE_INLINE_SVG_SIZE[size]);
 }
 
-/** Корень `Badge.Anchor` — grid-наложение дочерних элементов. */
+/** `Badge.Anchor` root — grid overlay of child elements. */
 export const BADGE_ANCHOR_ROOT_CLASS =
   "relative isolate inline-grid w-fit shrink-0 [&>*]:col-start-1 [&>*]:row-start-1";
 
-/** Shell: внешний span при split-lift (hover на anchor). */
+/** Shell: outer span for split-lift (hover on anchor). */
 export const BADGE_SHELL_SPLIT_OUTER_CLASS = "pointer-events-none";
 
-/** Shell: badge внутри anchor без gloss — события на anchor. */
+/** Shell: badge inside anchor without gloss — events on anchor. */
 export const BADGE_SHELL_ANCHOR_CHILD_CLASS = "pointer-events-none";
 
 export function badgeDotViewClass(

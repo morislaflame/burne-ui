@@ -11,19 +11,19 @@ export type ListBoxSize = "small" | "base" | "mid" | "large";
 export type ListBoxVariant = "default" | "gloss";
 
 export type ListBoxClassNames = {
-  /** Корень `role="listbox"`. */
+  /** Root `role="listbox"`. */
   root?: string;
   /** `ListBox.Section` (`role="group"`). */
   section?: string;
-  /** Обёртка `ListBox.Header`. */
+  /** `ListBox.Header` wrapper. */
   header?: string;
-  /** Текст в `ListBox.Header`. */
+  /** Text in `ListBox.Header`. */
   headerText?: string;
   /** `ListBox.Separator`. */
   separator?: string;
   /** `ListBox.Empty`. */
   empty?: string;
-  /** Кнопка `ListBox.Item`. */
+  /** `ListBox.Item` button. */
   item?: string;
   /** `ListBox.Label`. */
   label?: string;
@@ -31,9 +31,9 @@ export type ListBoxClassNames = {
   hint?: string;
   /** `ListBox.Icon`. */
   icon?: string;
-  /** Оболочка `ListBox.ItemIndicator` (grid shell). */
+  /** `ListBox.ItemIndicator` shell (grid shell). */
   itemIndicator?: string;
-  /** Корень `SelectionIndicator` внутри ItemIndicator. */
+  /** `SelectionIndicator` root inside ItemIndicator. */
   itemIndicatorShell?: string;
   itemIndicatorFill?: string;
   itemIndicatorMark?: string;
@@ -68,7 +68,7 @@ export type ListBoxRootProps = Omit<
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;
   listId?: string;
-  /** Доступное имя списка, если нет `aria-label` / `aria-labelledby`. */
+  /** Accessible list name when no `aria-label` / `aria-labelledby`. */
   label?: string;
   classNames?: ListBoxClassNames;
 };

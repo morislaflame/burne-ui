@@ -20,25 +20,25 @@ export function CardShowcase() {
   return (
     <ShowcasePage
       title="Card"
-      description="Карточки для группировки контента с заголовком, описанием и действиями."
+      description="Cards for grouping content with title, description and actions."
       importPath='import { Card } from "@/components/core/Card";'
       tags={["core", "layout"]}
     >
-      <ShowcaseSection title="Варианты" description="default, outline и secondary.">
+      <ShowcaseSection title="Options" description="default, outline and secondary.">
         <ShowcaseDemoFromFile align="stretch" Demo={CardVariantsDemo} source={cardVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Pressable" description="Кликабельная карточка с ripple и превью.">
+      <ShowcaseSection title="Pressable" description="Clickable card with ripple and preview.">
         <ShowcaseDemoFromFile align="stretch" Demo={CardPressableDemo} source={cardPressableSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность с motion.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
         <ShowcaseDemoFromFile align="stretch" Demo={CardGlossDemo} source={cardGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на root."
+        description="Full customization of slots via classNames on root."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -48,8 +48,8 @@ export function CardShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Тарифы, метрики, вход/регистрация и выбираемый товар — `demos/card/`."
+        title="Custom Variations"
+        description="Tariffs, metrics, login/registration and selected product — `demos/card/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={CardAuthPanelDemo} source={cardAuthPanelSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={CardPricingGridDemo} source={cardPricingGridSource} />
@@ -58,27 +58,27 @@ export function CardShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Card" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer — слоты карточки."
+            description="Card.Header, Card.Title, Card.Description, Card.Body, Card.Footer — card slots."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="pressable и onPress на корне — интерактивная карточка-кнопка."
+            description="pressable and onPress on the root - an interactive card-button."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
             description="root, header, title, description, body, footer, content, glossContent."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Варианты">
+        <ShowcaseDoc.Block title="Options">
           <p>
-            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>gloss</code> — проп{" "}
-            <code>variant</code> на корне Card.
+            <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>gloss</code> — prop{" "}
+            <code>variant</code> on the root Card.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

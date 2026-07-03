@@ -18,7 +18,7 @@ export function SliderOpacityStripDemo() {
           max={100}
           step={1}
           thickness="1rem"
-          ariaLabel="Контраст"
+          ariaLabel="Contrast"
         >
           <Slider.Rail>
             <Slider.Fill className="bg-primary/80" />

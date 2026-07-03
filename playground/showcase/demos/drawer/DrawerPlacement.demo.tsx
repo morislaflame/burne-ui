@@ -34,19 +34,19 @@ export function DrawerPlacementDemo() {
               <Drawer.HeadingBlock>
                 <Drawer.Title>placement={placement}</Drawer.Title>
                 <Drawer.Description>
-                  {isHorizontal ? "Горизонтальная панель, size mid." : "Вертикальная панель, size default."}
+                  {isHorizontal ? "Horizontal panel, size mid." : "Vertical panel, size default."}
                 </Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
               <Text as="p" variant="small" className="text-muted">
-                Контент drawer с placement &quot;{placement}&quot;.
+                Content drawer with placement &quot;{placement}&quot;.
               </Text>
             </Drawer.Body>
             <Drawer.Footer>
               <Button variant="ghost" onClick={() => setOpen(null)}>
-                Закрыть
+                Close
               </Button>
             </Drawer.Footer>
             </Drawer.Panel>

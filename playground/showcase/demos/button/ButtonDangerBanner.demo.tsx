@@ -8,15 +8,15 @@ export function ButtonDangerBannerDemo() {
     <div className="flex w-full max-w-md flex-col gap-mid rounded-mid border border-danger/30 bg-danger/5 p-mid sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 flex flex-col gap-xsmall">
         <Text as="p" variant="base" className="font-medium text-danger">
-          Удалить все черновики?
+          Delete all drafts?
         </Text>
         <Text as="p" variant="small" className="text-muted">
-          Действие необратимо.
+          The action is irreversible.
         </Text>
       </div>
       <div className="flex shrink-0 gap-xsmall">
         <Button variant="ghost" size="small" className="text-muted">
-          Отмена
+          Cancel
         </Button>
         <Button
           variant="primary"
@@ -25,7 +25,7 @@ export function ButtonDangerBannerDemo() {
           leftIcon={<IoTrashOutline aria-hidden />}
           className="shadow-none"
         >
-          Удалить
+          Delete
         </Button>
       </div>
     </div>

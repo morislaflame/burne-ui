@@ -30,7 +30,7 @@ export function useComboBoxRootState({
   onValueChange,
   variant: variantProp,
   disabled: disabledProp = false,
-  placeholder = "Выберите значение",
+  placeholder = "Select a value",
   menuMaxHeight = "min(24rem, 70vh)",
 }: UseComboBoxRootStateProps) {
   const formBinding = useFormFieldBinding({

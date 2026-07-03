@@ -15,22 +15,22 @@ const PLANS = [
   {
     value: "starter",
     title: "Starter",
-    hint: "Для личных проектов и прототипов",
+    hint: "For personal projects and prototypes",
     price: "0 ₽",
     icon: IoVideocamOutline,
   },
   {
     value: "team",
     title: "Team",
-    hint: "Совместная работа и общие библиотеки",
+    hint: "Collaboration and shared libraries",
     price: "2 900 ₽",
     icon: IoGlobeOutline,
   },
   {
     value: "enterprise",
     title: "Enterprise",
-    hint: "SSO, аудит и выделенная поддержка",
-    price: "по запросу",
+    hint: "SSO, audit and dedicated support",
+    price: "on request",
     icon: IoPeopleOutline,
   },
 ] as const;
@@ -39,8 +39,8 @@ export function RadioGroupPlanCardsDemo() {
   return (
     <RadioGroup defaultValue="team" name="plan" className="w-full max-w-2xl">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Тарифный план</RadioGroup.Label>
-        <RadioGroup.Hint>Карточки с compound Radio — индикатор в углу.</RadioGroup.Hint>
+        <RadioGroup.Label>Tariff plan</RadioGroup.Label>
+        <RadioGroup.Hint>Cards with compound Radio — indicator in the corner.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <div className="grid gap-mid md:grid-cols-3">
         {PLANS.map((plan) => (

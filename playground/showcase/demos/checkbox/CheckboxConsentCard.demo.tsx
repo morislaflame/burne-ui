@@ -29,7 +29,7 @@ export function CheckboxConsentCardDemo() {
             Button · Primary
           </Text>
           <Text as="p" variant="small" className="text-muted">
-            Весь блок кликабелен.
+            The entire block is clickable.
           </Text>
         </div>
       </Checkbox>

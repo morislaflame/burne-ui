@@ -49,7 +49,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Составной API: `Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Item` с `<Dropdown.ItemIndicator />`, `<Dropdown.ItemLabel>`, `<Dropdown.ItemHint>`, `<Dropdown.ItemIcon>`. Layout пункта — grid как у Radio/Checkbox: индикатор | label+hint | icon. Панель — через `Popover`.",
+          "Compound API: `Dropdown.Trigger`, `Dropdown.Popover`, `Dropdown.Item` with `<Dropdown.ItemIndicator />`, `<Dropdown.ItemLabel>`, `<Dropdown.ItemHint>`, `<Dropdown.ItemIcon>`. Item layout — grid like Radio/Checkbox: indicator | label+hint | icon. Panel — via `Popover`.",
       },
     },
   },
@@ -61,20 +61,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SingleSelect: Story = {
-  name: "Одиночный выбор",
+  name: "Single selection",
   render() {
     return (
       <Dropdown selectionIndicator defaultValue="ru">
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Язык интерфейса</Button>
+          <Button variant="outline">Interface language</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Group>
-            <Dropdown.Label>Выберите язык</Dropdown.Label>
+            <Dropdown.Label>Select language</Dropdown.Label>
             <Dropdown.Item value="ru">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
-              <Dropdown.ItemHint>Кириллица, локаль по умолчанию</Dropdown.ItemHint>
+              <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Cyrillic, default locale</Dropdown.ItemHint>
             </Dropdown.Item>
             <Dropdown.Item value="en">
               <Dropdown.ItemIndicator />
@@ -87,14 +87,14 @@ export const SingleSelect: Story = {
             <Dropdown.Item value="de" disabled>
               <Dropdown.ItemIndicator />
               <Dropdown.ItemLabel>Deutsch</Dropdown.ItemLabel>
-              <Dropdown.ItemHint>Скоро</Dropdown.ItemHint>
+              <Dropdown.ItemHint>Coming soon</Dropdown.ItemHint>
             </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group>
-            <Dropdown.Label>Система</Dropdown.Label>
+            <Dropdown.Label>System</Dropdown.Label>
             <Dropdown.Item value="sys" selection={false}>
-              <Dropdown.ItemLabel>Настройки</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Settings</Dropdown.ItemLabel>
               <Dropdown.ItemIcon>⌘</Dropdown.ItemIcon>
             </Dropdown.Item>
           </Dropdown.Group>
@@ -103,7 +103,7 @@ export const SingleSelect: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Язык интерфейса" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Interface language" }));
     await expect(await screen.findByRole("menu")).toBeVisible();
     await userEvent.click(screen.getByRole("menuitemradio", { name: /English/i }));
     await waitFor(() => {
@@ -113,35 +113,35 @@ export const SingleSelect: Story = {
 };
 
 export const MultiSelect: Story = {
-  name: "Мультивыбор",
+  name: "Multi-select",
   render() {
     return (
       <Dropdown multiple defaultValue={["a", "c"]}>
         <Dropdown.Trigger asChild>
-          <Button variant="ghost">Колонки таблицы</Button>
+          <Button variant="ghost">Table columns</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover className="max-w-xs">
           <Dropdown.Group>
-            <Dropdown.Label>Видимость</Dropdown.Label>
+            <Dropdown.Label>Visibility</Dropdown.Label>
             <Dropdown.Item value="a">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Пользователь</Dropdown.ItemLabel>
-              <Dropdown.ItemHint>Имя и аватар</Dropdown.ItemHint>
+              <Dropdown.ItemLabel>User</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Name and avatar</Dropdown.ItemHint>
             </Dropdown.Item>
             <Dropdown.Item value="b">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Страна</Dropdown.ItemLabel>
-              <Dropdown.ItemHint>ISO-код</Dropdown.ItemHint>
+              <Dropdown.ItemLabel>Country</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>ISO code</Dropdown.ItemHint>
             </Dropdown.Item>
             <Dropdown.Item value="c">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Статус</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Status</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group>
             <Dropdown.Item value="d" selection={false}>
-              <Dropdown.ItemLabel>Действия</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Actions</Dropdown.ItemLabel>
               <Dropdown.ItemIcon>
                 <IoChevronForward aria-hidden />
               </Dropdown.ItemIcon>
@@ -154,33 +154,33 @@ export const MultiSelect: Story = {
 };
 
 export const GroupsWithDifferentIndicators: Story = {
-  name: "Группы: индикатор только в одной",
+  name: "Groups: indicator in one only",
   render() {
     return (
       <Dropdown defaultValue="a">
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Смешанное меню</Button>
+          <Button variant="outline">Mixed menu</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover className="max-w-xs">
           <Dropdown.Group selectionIndicator>
-            <Dropdown.Label>С индикатором</Dropdown.Label>
+            <Dropdown.Label>With indicator</Dropdown.Label>
             <Dropdown.Item value="a">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Вариант A</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Option A</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Item value="b">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Вариант B</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Option B</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group selectionIndicator={false}>
-            <Dropdown.Label>Без индикатора (тот же одиночный выбор)</Dropdown.Label>
+            <Dropdown.Label>Without indicator (same single selection)</Dropdown.Label>
             <Dropdown.Item value="c">
-              <Dropdown.ItemLabel>Вариант C</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Option C</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Item value="d">
-              <Dropdown.ItemLabel>Вариант D</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Option D</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
         </Dropdown.Popover>
@@ -190,30 +190,30 @@ export const GroupsWithDifferentIndicators: Story = {
 };
 
 export const ItemVariants: Story = {
-  name: "Варианты Item (семантика)",
+  name: "Item variants (semantics)",
   render() {
     return (
       <Dropdown>
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Статусные действия</Button>
+          <Button variant="outline">Status actions</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Group>
-            <Dropdown.Label>Сообщения</Dropdown.Label>
+            <Dropdown.Label>Messages</Dropdown.Label>
             <Dropdown.Item value="ok" variant="success" selection={false}>
-              <Dropdown.ItemLabel>Успех</Dropdown.ItemLabel>
-              <Dropdown.ItemHint>Операция прошла успешно</Dropdown.ItemHint>
+              <Dropdown.ItemLabel>Success</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Operation succeeded</Dropdown.ItemHint>
             </Dropdown.Item>
             <Dropdown.Item value="warn" variant="warning" selection={false}>
-              <Dropdown.ItemLabel>Предупреждение</Dropdown.ItemLabel>
-              <Dropdown.ItemHint>Проверьте данные</Dropdown.ItemHint>
+              <Dropdown.ItemLabel>Warning</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>Review data</Dropdown.ItemHint>
             </Dropdown.Item>
             <Dropdown.Item value="inf" variant="info" selection={false}>
-              <Dropdown.ItemLabel>Справка</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Help</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Item value="bad" variant="danger" selection={false}>
-              <Dropdown.ItemLabel>Удалить навсегда</Dropdown.ItemLabel>
-              <Dropdown.ItemHint>Без отмены</Dropdown.ItemHint>
+              <Dropdown.ItemLabel>Delete permanently</Dropdown.ItemLabel>
+              <Dropdown.ItemHint>No undo</Dropdown.ItemHint>
             </Dropdown.Item>
           </Dropdown.Group>
         </Dropdown.Popover>
@@ -223,31 +223,31 @@ export const ItemVariants: Story = {
 };
 
 export const WithSubmenu: Story = {
-  name: "Вложенное меню (hover)",
+  name: "Nested menu (hover)",
   render() {
     return (
       <Dropdown>
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Меню</Button>
+          <Button variant="outline">Menu</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Group>
-            <Dropdown.Label>Действия</Dropdown.Label>
+            <Dropdown.Label>Actions</Dropdown.Label>
             <Dropdown.Item value="new" selection={false}>
-              <Dropdown.ItemLabel>Новый документ</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>New document</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Sub>
-              <Dropdown.SubTrigger>Пригласить пользователей</Dropdown.SubTrigger>
+              <Dropdown.SubTrigger>Invite users</Dropdown.SubTrigger>
               <Dropdown.SubContent>
                 <Dropdown.Item value="email" selection={false}>
                   <Dropdown.ItemLabel>Email</Dropdown.ItemLabel>
                 </Dropdown.Item>
                 <Dropdown.Item value="msg" selection={false}>
-                  <Dropdown.ItemLabel>Сообщение</Dropdown.ItemLabel>
+                  <Dropdown.ItemLabel>Message</Dropdown.ItemLabel>
                 </Dropdown.Item>
                 <Dropdown.Separator />
                 <Dropdown.Item value="more" selection={false}>
-                  <Dropdown.ItemLabel>Ещё…</Dropdown.ItemLabel>
+                  <Dropdown.ItemLabel>More…</Dropdown.ItemLabel>
                 </Dropdown.Item>
               </Dropdown.SubContent>
             </Dropdown.Sub>
@@ -259,28 +259,28 @@ export const WithSubmenu: Story = {
 };
 
 export const WithSelectionIndicator: Story = {
-  name: "С индикатором выбора",
+  name: "With selection indicator",
   render() {
     return (
       <Dropdown selectionIndicator defaultValue="copy">
         <Dropdown.Trigger asChild>
-          <Button variant="secondary">Действие</Button>
+          <Button variant="secondary">Action</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Group>
             <Dropdown.Item value="copy">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Копировать</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Copy</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Item value="move">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Перенести</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Move</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group>
             <Dropdown.Item value="del" variant="danger" selection={false}>
-              <Dropdown.ItemLabel>Удалить</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Delete</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
         </Dropdown.Popover>
@@ -295,14 +295,14 @@ export const CustomItemIndicator: Story = {
     return (
       <Dropdown multiple defaultValue={["ru"]}>
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Языки</Button>
+          <Button variant="outline">Languages</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Group>
-            <Dropdown.Label>С variant secondary</Dropdown.Label>
+            <Dropdown.Label>With secondary variant</Dropdown.Label>
             <Dropdown.Item value="ru">
               <Dropdown.ItemIndicator variant="secondary" />
-              <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Item value="en">
               <Dropdown.ItemIndicator variant="outline" />
@@ -316,16 +316,16 @@ export const CustomItemIndicator: Story = {
 };
 
 export const CustomItemParts: Story = {
-  name: "Compound — layout слотов",
+  name: "Compound — slot layout",
   render() {
     return (
       <Dropdown selectionIndicator={false} defaultValue="full-grid">
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Layout слотов</Button>
+          <Button variant="outline">Slot layout</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover className="max-w-md">
           <Dropdown.Group>
-            <Dropdown.Label>Как меняется grid</Dropdown.Label>
+            <Dropdown.Label>How the grid changes</Dropdown.Label>
             <OptionListItemLayoutShowcase
               Item={Dropdown.Item}
               ItemLabel={Dropdown.ItemLabel}
@@ -341,7 +341,7 @@ export const CustomItemParts: Story = {
 };
 
 export const CustomAvatarTrigger: Story = {
-  name: "Кастомный триггер (Avatar)",
+  name: "Custom trigger (Avatar)",
   render() {
     return (
       <Dropdown>
@@ -349,7 +349,7 @@ export const CustomAvatarTrigger: Story = {
           <button
             type="button"
             className="rounded-full outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            aria-label="Меню пользователя Jane Doe"
+            aria-label="Jane Doe user menu"
           >
             <Avatar size="base" label="Jane Doe">
               <Avatar.Image src={PIN_IMAGE2} alt="" loading="lazy" />
@@ -408,17 +408,17 @@ export const CustomAvatarTrigger: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightDecorator],
   render() {
     return (
       <Dropdown multiple defaultValue={["x"]}>
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Мультивыбор</Button>
+          <Button variant="outline">Multi-select</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Group>
-            <Dropdown.Label>Теги</Dropdown.Label>
+            <Dropdown.Label>Tags</Dropdown.Label>
             <Dropdown.Item value="x">
               <Dropdown.ItemIndicator />
               <Dropdown.ItemLabel>Alpha</Dropdown.ItemLabel>
@@ -435,22 +435,22 @@ export const OnLightTheme: Story = {
 };
 
 export const LinkItems: Story = {
-  name: "Link-пункты (href)",
+  name: "Link items (href)",
   render() {
     return (
       <Dropdown>
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Навигация</Button>
+          <Button variant="outline">Navigation</Button>
         </Dropdown.Trigger>
-        <Dropdown.Popover aria-label="Разделы">
+        <Dropdown.Popover aria-label="Sections">
           <Dropdown.Item href="/catalog" selection={false}>
-            <Dropdown.ItemLabel>Каталог</Dropdown.ItemLabel>
+            <Dropdown.ItemLabel>Catalog</Dropdown.ItemLabel>
           </Dropdown.Item>
           <Dropdown.Item href="/docs" selection={false}>
-            <Dropdown.ItemLabel>Документация</Dropdown.ItemLabel>
+            <Dropdown.ItemLabel>Documentation</Dropdown.ItemLabel>
           </Dropdown.Item>
           <Dropdown.Item value="settings" selection={false}>
-            <Dropdown.ItemLabel>Настройки (кнопка)</Dropdown.ItemLabel>
+            <Dropdown.ItemLabel>Settings (button)</Dropdown.ItemLabel>
           </Dropdown.Item>
         </Dropdown.Popover>
       </Dropdown>
@@ -459,26 +459,26 @@ export const LinkItems: Story = {
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render() {
     return (
       <div className="flex max-w-md flex-col gap-mid text-left">
         <p className="text-sm text-muted">
-          Триггер: <code className="text-primary">aria-expanded</code>,{" "}
-          <code className="text-primary">aria-controls</code>. Меню: стрелки, Home/End, Escape
-          возвращает фокус на триггер. Группа с <code className="text-primary">Dropdown.Label</code>{" "}
+          Trigger: <code className="text-primary">aria-expanded</code>,{" "}
+          <code className="text-primary">aria-controls</code>. Menu: arrows, Home/End, Escape
+          returns focus to trigger. Group with <code className="text-primary">Dropdown.Label</code>{" "}
           — <code className="text-primary">aria-labelledby</code>.
         </p>
         <Dropdown selectionIndicator defaultValue="ru">
           <Dropdown.Trigger asChild>
-            <Button variant="secondary">Язык</Button>
+            <Button variant="secondary">Language</Button>
           </Dropdown.Trigger>
           <Dropdown.Popover>
             <Dropdown.Group>
-              <Dropdown.Label>Выберите язык</Dropdown.Label>
+              <Dropdown.Label>Select language</Dropdown.Label>
               <Dropdown.Item value="ru">
                 <Dropdown.ItemIndicator />
-                <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+                <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
               </Dropdown.Item>
               <Dropdown.Item value="en">
                 <Dropdown.ItemIndicator />
@@ -493,11 +493,11 @@ export const Accessibility: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Dropdown",
+        story: "classNames customization for Dropdown",
       },
     },
   },
@@ -513,14 +513,14 @@ export const CustomClassNames: Story = {
         }}
       >
         <Dropdown.Trigger asChild>
-          <Button variant="outline">Язык интерфейса</Button>
+          <Button variant="outline">Interface language</Button>
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Group>
-            <Dropdown.Label>Выберите язык</Dropdown.Label>
+            <Dropdown.Label>Select language</Dropdown.Label>
             <Dropdown.Item value="ru">
               <Dropdown.ItemIndicator />
-              <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+              <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
             </Dropdown.Item>
             <Dropdown.Item value="en">
               <Dropdown.ItemIndicator />

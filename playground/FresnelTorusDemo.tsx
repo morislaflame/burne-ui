@@ -1,12 +1,12 @@
 /**
- * Демо: 3D-тор с эффектом Френеля, как в examples/fresnel.html из ogl.
+ * Demo: 3D-torus with Fresnel effect, as in examples/fresnel.html from ogl.
  *
- * Поток данных:
- * 1) Renderer создаёт WebGL-контекст и canvas.
- * 2) Camera задаёт обзор (перспектива, позиция, куда смотрит).
- * 3) Сцена: задник и одна mesh — только «центральный стакан» (цилиндр + крышки).
- * 4) Program — шейдеры + uniform’ы; полупрозрачность (блендинг, depthWrite: false).
- * 5) Два прохода: фон в RenderTarget → на экран фон + тор, читающий RT со смещением (преломление у кромок).
+ * Data flow:
+ * 1) Renderer creates WebGL-context and canvas.
+ * 2) Camera sets the overview (perspective, position, where he is looking).
+ * 3) Stage: backdrop and one mesh — only the “central glass” (cylinder + lids).
+ * 4) Program — shaders + uniform’s; translucency (blending), depthWrite: false).
+ * 5) Two passes: background in RenderTarget → on screen background + torus reading RT with displacement (refraction at the edges).
  *
  * @see https://github.com/oframe/ogl/blob/master/examples/fresnel.html
  */
@@ -25,10 +25,10 @@ import { useEffect, useRef } from "react";
 import { createPlugGeometry } from "./solidTorusGeometry";
 
 /**
- * Вершинный шейдер: для каждой вершины меша считает данные для фрагментного.
- * - position/normal — из геометрии Torus (ogl сам прокидывает в атрибуты).
- * - Матрицы model / modelView / projection выставляет ogl при рендере.
- * - cameraPosition — позиция камеры в мировых координатах (нужна для «взгляда»).
+ * Vertex shader: for each vertex of the mesh, calculates data for the fragment.
+ * - position/normal — from geometry Torus (ogl puts it into the attributes itself).
+ * - Matrices model / modelView / projection exposes ogl when rendering.
+ * - cameraPosition — camera position in world coordinates (needed for “look”»).
  */
 const VERTEX = /* glsl */ `
   attribute vec3 position;
@@ -55,8 +55,8 @@ const VERTEX = /* glsl */ `
 `;
 
 /**
- * Фрагментный шейдер: Френель + выборка фона из uSceneMap со сдвигом UV.
- * Сдвиг усиливается у кромок (inverse fresnel) — искажение сильнее сбоку.
+ * Fragment shader: Fresnel + background sampling from uSceneMap with shift UV.
+ * The shear increases at the edges (inverse fresnel) — distortion is stronger on the side.
  */
 const FRAGMENT = /* glsl */ `
   precision highp float;
@@ -81,8 +81,8 @@ const FRAGMENT = /* glsl */ `
     fresnelFactor = pow(fresnelFactor, uFresnelPower);
     inversefresnelFactor = pow(inversefresnelFactor, uFresnelPower);
 
-    // Направление сдвига: в view space у «лица» к камере vViewNormal.xy ≈ 0 — почти не смещало;
-    // берём мир + запасной вектор, плюс базовая доля сдвига, чтобы искажение было заметно везде.
+    // Shift direction: in view space facing the camera vViewNormal.xy ≈ 0 — almost did not move;
+    // take the world + spare vector, plus a basic shift fraction so that the distortion is noticeable everywhere.
     float edge = inversefresnelFactor;
     vec2 dir =
       length(vWorldNormal.xy) > 0.08
@@ -92,7 +92,7 @@ const FRAGMENT = /* glsl */ `
     float strength = 0.5 + 0.92 * edge;
     vec2 offsetPx = dir * uRefractPx * strength;
 
-    // Текстура с FBO в WebGL ориентирована как bottom-left; переворачиваем Y при чтении.
+    // Texture with FBO in WebGL oriented as bottom-left; turn it over Y while reading.
     vec2 uv = gl_FragCoord.xy / uResolution;
     uv.y = 1.0 - uv.y;
     vec2 refractUv = uv + offsetPx / uResolution;
@@ -113,7 +113,7 @@ const FRAGMENT = /* glsl */ `
   }
 `;
 
-/** Задник: большая плоскость позади тора; шахматная кладка по UV — хорошо видно сквозь стекло. */
+/** Backdrop: large plane behind the torus; checkerboard UV — clearly visible through glass. */
 const BG_VERTEX = /* glsl */ `
   attribute vec3 position;
   attribute vec2 uv;
@@ -144,28 +144,28 @@ const BG_FRAGMENT = /* glsl */ `
 `;
 
 export function FresnelTorusDemo() {
-  /** Контейнер в DOM: сюда вставляем canvas и по его размеру настраиваем viewport. */
+  /** Container in DOM: paste here canvas and adjust according to its size viewport. */
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = hostRef.current;
     if (!root) return;
 
-    // Палитра и сила Френеля — те же параметры, что в официальном примере.
+    // Palette and Fresnel strength - the same parameters as in the official example.
     const params = {
       backgroundColor: new Color("#e6e8eb"),
       baseColor: new Color("#000000"),
       fresnelColor: new Color("#e6e8eb"),
       fresnelFactor: 1.5,
-      /** Прозрачность «в лоб» (видно фон сильнее). */
+      /** Transparency “on the forehead” (the background is more visible). */
       alphaBody: 0.18,
-      /** Прозрачность у кромок / скользящего блика (плотнее). */
+      /** Transparency at edges/gliding highlights (more dense). */
       alphaRim: 0.72,
-      /** Сила смещения при «преломлении» (пиксели буфера; ~×1.4 дополнительно даёт strength в шейдере). */
+      /** Displacement force during “refraction” (buffer pixels; ~×1.4 additionally gives strength in the shader). */
       refractPx: 220,
     };
 
-    // webgl: 1 — те же GLSL100 / texture2D, что и в kit; WebGL2 без #version 300 часто ломает молча линковку.
+    // webgl: 1 — the same GLSL100 / texture2D, as in kit; WebGL2 without #version 300 often silently breaks the link.
     const renderer = new Renderer({
       dpr: Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2),
       alpha: true,
@@ -173,18 +173,18 @@ export function FresnelTorusDemo() {
     });
     const gl = renderer.gl;
 
-    // Цвет очистки буфера кадра перед каждым render (небо за тором).
+    // Framebuffer clear color before each render (the sky behind the torus).
     const bg = params.backgroundColor;
     gl.clearColor(bg[0], bg[1], bg[2], 1);
     root.appendChild(gl.canvas);
 
     const canvas = gl.canvas;
     canvas.style.display = "block";
-    // Растягиваем canvas по CSS; реальное разрешение задаёт renderer.setSize в resize.
+    // Stretch canvas By CSS; actual resolution is set renderer.setSize in resize.
     canvas.style.width = "100%";
     canvas.style.height = "100%";
 
-    // Перспективная камера: fov — угол обзора; позиция и lookAt — стартовый ракурс как в демо.
+    // Perspective camera: fov — viewing angle; position and lookAt — starting angle as in demo.
     const camera = new Camera(gl, { fov: 35 });
     camera.position.set(0, 1, 7);
     camera.lookAt([0, 0, 0]);
@@ -205,7 +205,7 @@ export function FresnelTorusDemo() {
     backdrop.position.set(0, 0, -6);
     backdrop.setParent(scene);
 
-    /** Текстура кадра без тора — тор смещает UV при чтении, имитируя преломление у рёбер. */
+    /** Frame texture without a torus - the torus is displaced UV when reading, simulating refraction at the ribs. */
     let refractionTarget: RenderTarget | null = null;
 
     function syncRefractionTarget(): RenderTarget {
@@ -306,7 +306,7 @@ export function FresnelTorusDemo() {
     <div
       ref={hostRef}
       className="h-[100dvh] w-full min-h-[320px]"
-      aria-label="Демо WebGL: цилиндр со стенками и крышками (Fresnel + преломление)"
+      aria-label="Demo WebGL: cylinder with walls and covers (Fresnel + refraction)"
     />
   );
 }

@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Список выбора (`role=\"listbox\"`) без собственного фона — оболочка (Popover, Card) задаётся снаружи. Compound: `<ListBox.Item>` с `<ListBox.Label>`, `<ListBox.Hint>`, `<ListBox.Icon>`; `<ListBox.ItemIndicator />` — только при явном добавлении. Секции — `<ListBox.Section>` + `<ListBox.Header>`.",
+          "Selection list (`role=\"listbox\"`) without its own background — wrapper (Popover, Card) is set outside. Compound: `<ListBox.Item>` with `<ListBox.Label>`, `<ListBox.Hint>`, `<ListBox.Icon>`; `<ListBox.ItemIndicator />` — only when explicitly added. Sections — `<ListBox.Section>` + `<ListBox.Header>`.",
       },
     },
   },
@@ -42,21 +42,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
-  name: "Базовый",
+  name: "Basic",
   render: () => (
-    <ListBox defaultValue="ru" label="Язык интерфейса">
-      <ListBox.Item value="ru" label="Русский" hint="Интерфейс на русском" />
+    <ListBox defaultValue="ru" label="Interface language">
+      <ListBox.Item value="ru" label="Russian" hint="Interface in Russian" />
       <ListBox.Item value="en" label="English" hint="UI in English" />
-      <ListBox.Item value="de" label="Deutsch" disabled hint="Скоро" />
+      <ListBox.Item value="de" label="Deutsch" disabled hint="Coming soon" />
     </ListBox>
   ),
 };
 
 export const SelectInteraction: Story = {
-  name: "Interaction: выбор",
+  name: "Interaction: selection",
   render: () => (
-    <ListBox defaultValue="ru" label="Язык интерфейса">
-      <ListBox.Item value="ru" label="Русский" hint="Интерфейс на русском" />
+    <ListBox defaultValue="ru" label="Interface language">
+      <ListBox.Item value="ru" label="Russian" hint="Interface in Russian" />
       <ListBox.Item value="en" label="English" hint="UI in English" />
     </ListBox>
   ),
@@ -70,13 +70,13 @@ export const SelectInteraction: Story = {
 export const Compound: Story = {
   name: "Compound",
   render: () => (
-    <ListBox defaultValue="en" label="Настройки языка">
+    <ListBox defaultValue="en" label="Language settings">
       <ListBox.Section>
-        <ListBox.Header>Языки</ListBox.Header>
+        <ListBox.Header>Languages</ListBox.Header>
         <ListBox.Item value="ru">
           <ListBox.ItemIndicator />
-          <ListBox.Label>Русский</ListBox.Label>
-          <ListBox.Hint>Кириллица, локаль по умолчанию</ListBox.Hint>
+          <ListBox.Label>Russian</ListBox.Label>
+          <ListBox.Hint>Cyrillic, default locale</ListBox.Hint>
           <ListBox.Icon>
             <IoGlobeOutline aria-hidden />
           </ListBox.Icon>
@@ -92,10 +92,10 @@ export const Compound: Story = {
       </ListBox.Section>
       <ListBox.Separator />
       <ListBox.Section>
-        <ListBox.Header>Дополнительно</ListBox.Header>
+        <ListBox.Header>Additional</ListBox.Header>
         <ListBox.Item value="sys">
-          <ListBox.Label>Системный</ListBox.Label>
-          <ListBox.Hint>Следовать настройкам ОС</ListBox.Hint>
+          <ListBox.Label>System</ListBox.Label>
+          <ListBox.Hint>Follow OS settings</ListBox.Hint>
         </ListBox.Item>
       </ListBox.Section>
     </ListBox>
@@ -103,39 +103,39 @@ export const Compound: Story = {
 };
 
 export const Multiple: Story = {
-  name: "Мультивыбор",
+  name: "Multi-select",
   render: function MultipleList() {
     const [value, setValue] = useState<string[]>(["a", "c"]);
     return (
-      <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])} label="Поля профиля">
-        <ListBox.Item value="a" label="Пользователь" hint="Имя и аватар" />
-        <ListBox.Item value="b" label="Страна" hint="ISO-код" />
-        <ListBox.Item value="c" label="Статус" />
+      <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])} label="Profile fields">
+        <ListBox.Item value="a" label="User" hint="Name and avatar" />
+        <ListBox.Item value="b" label="Country" hint="ISO code" />
+        <ListBox.Item value="c" label="Status" />
       </ListBox>
     );
   },
 };
 
 export const Empty: Story = {
-  name: "Пустой список",
+  name: "Empty list",
   render: () => <ListBox.Empty />,
 };
 
 export const CustomEmpty: Story = {
-  name: "Кастомное empty-состояние",
+  name: "Custom empty state",
   render: () => (
-    <ListBox label="Результаты поиска">
-      <ListBox.Empty>Ничего не найдено по запросу</ListBox.Empty>
+    <ListBox label="Search results">
+      <ListBox.Empty>Nothing found for query</ListBox.Empty>
     </ListBox>
   ),
 };
 
 export const WithIcons: Story = {
-  name: "С иконками",
+  name: "With icons",
   render: () => (
-    <ListBox defaultValue="ok" label="Статусы">
+    <ListBox defaultValue="ok" label="Statuses">
       <ListBox.Item value="ok">
-        <ListBox.Label>Успех</ListBox.Label>
+        <ListBox.Label>Success</ListBox.Label>
         <ListBox.Icon>
           <IoCheckmarkCircle aria-hidden className="text-success" />
         </ListBox.Icon>
@@ -151,11 +151,11 @@ export const WithIcons: Story = {
 };
 
 export const CustomItemParts: Story = {
-  name: "Compound — layout слотов",
+  name: "Compound — slot layout",
   render: () => (
-    <ListBox selectionIndicator={false} defaultValue="full-grid" label="Варианты layout">
+    <ListBox selectionIndicator={false} defaultValue="full-grid" label="Variants layout">
       <ListBox.Section>
-        <ListBox.Header>Как меняется grid</ListBox.Header>
+        <ListBox.Header>How the grid changes</ListBox.Header>
         <OptionListItemLayoutShowcase
           Item={ListBox.Item}
           ItemLabel={ListBox.Label}
@@ -169,18 +169,18 @@ export const CustomItemParts: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "Слоты root, section, header, item, label и hint через prop classNames.",
+        story: "Slots root, section, header, item, label, and hint via classNames prop.",
       },
     },
   },
   render: () => (
     <ListBox
       defaultValue="ru"
-      label="Язык интерфейса"
+      label="Interface language"
       classNames={{
         root: "rounded-mid border border-primary/20 p-base",
         headerText: "text-primary",
@@ -190,8 +190,8 @@ export const CustomClassNames: Story = {
       }}
     >
       <ListBox.Section>
-        <ListBox.Header>Доступные языки</ListBox.Header>
-        <ListBox.Item value="ru" label="Русский" hint="Кириллица" />
+        <ListBox.Header>Available languages</ListBox.Header>
+        <ListBox.Item value="ru" label="Russian" hint="Cyrillic" />
         <ListBox.Item value="en" label="English" hint="Latin script" />
       </ListBox.Section>
     </ListBox>

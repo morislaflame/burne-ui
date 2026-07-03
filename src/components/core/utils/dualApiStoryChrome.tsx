@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-/** Обёртка для сторис: два варианта API в одной story, JSX компонента остаётся в `.stories.tsx`. */
+/** Story wrapper: two API variants in one story, component JSX stays in `.stories.tsx`. */
 export function DualApiStoryPanels({ children }: { children: ReactNode }) {
   return <div className="flex w-full max-w-md flex-col gap-xlarge">{children}</div>;
 }

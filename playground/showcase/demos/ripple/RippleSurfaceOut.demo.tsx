@@ -10,7 +10,7 @@ export function RippleSurfaceOutDemo() {
         Ripple direction=&quot;out&quot;
       </Text>
       <Text as="p" variant="small" className="relative z-[1] text-muted">
-        Медленная волна на Surface-панели.
+        Slow wave on Surface-panels.
       </Text>
     </Surface>
   );

@@ -12,20 +12,20 @@ export function ToggleButtonGroupEditorBarDemo() {
     <Surface variant="secondary" padding="small" className="w-full max-w-md">
       <div className="flex flex-col gap-small">
         <Text as="span" variant="tools" className="text-muted">
-          Панель форматирования
+          Format panel
         </Text>
         <ToggleButtonGroup
           type="multiple"
           size="small"
           variant="outline"
-          aria-label="Форматирование текста"
+          aria-label="Formatting text"
           value={formats}
           onValueChange={(v) => setFormats(v as string[])}
         >
-          <ToggleButton value="bold">Ж</ToggleButton>
-          <ToggleButton value="italic">К</ToggleButton>
-          <ToggleButton value="underline">Ч</ToggleButton>
-          <ToggleButton value="strike">З</ToggleButton>
+          <ToggleButton value="bold">B</ToggleButton>
+          <ToggleButton value="italic">I</ToggleButton>
+          <ToggleButton value="underline">U</ToggleButton>
+          <ToggleButton value="strike">S</ToggleButton>
         </ToggleButtonGroup>
       </div>
     </Surface>

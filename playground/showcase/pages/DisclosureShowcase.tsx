@@ -22,33 +22,33 @@ export function DisclosureShowcase() {
   return (
     <ShowcasePage
       title="Disclosure"
-      description="Раскрывающиеся блоки с анимацией высоты — для FAQ и одиночных секций."
+      description="Expanding blocks with height animation - for FAQ and single sections."
       importPath='import { Disclosure, DisclosureGroup } from "@/components/core/Disclosure";'
       tags={["core", "disclosure"]}
     >
-      <ShowcaseSection title="Одиночный" description="Один Disclosure без группы.">
+      <ShowcaseSection title="Single" description="One Disclosure without a group.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSingleDemo} source={disclosureSingleSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSizesDemo} source={disclosureSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Card group" description="DisclosureGroup variant card — общая карточка.">
+      <ShowcaseSection title="Card group" description="DisclosureGroup variant card — general card.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureCardGroupDemo} source={disclosureCardGroupSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Outline FAQ" description="DisclosureGroup variant outline с иконками.">
+      <ShowcaseSection title="Outline FAQ" description="DisclosureGroup variant outline with icons.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureOutlineFaqDemo} source={disclosureOutlineFaqSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная панель с hover-lift.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass panel with hover-lift.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureGlossDemo} source={disclosureGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Кастомизация слотов trigger, content и group через classNames."
+        description="Slot customization trigger, content and group through classNames."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -58,8 +58,8 @@ export function DisclosureShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Шаги оформления, группа настроек и changelog — `demos/disclosure/`."
+        title="Custom Variations"
+        description="Design steps, group of settings and changelog — `demos/disclosure/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureCheckoutStepsDemo} source={disclosureCheckoutStepsSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSettingsGroupDemo} source={disclosureSettingsGroupSource} />
@@ -67,23 +67,23 @@ export function DisclosureShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Disclosure" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Disclosure.Trigger и Disclosure.Content — слоты блока. DisclosureGroup объединяет несколько."
+            description="Disclosure.Trigger and Disclosure.Content — block slots. DisclosureGroup combines several."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
             description="root, trigger, triggerTitle, contentPanel, glossPanel, handle, group."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Группы">
+        <ShowcaseDoc.Block title="Groups">
           <p>
-            <code>variant=&quot;card&quot;</code> и <code>variant=&quot;outline&quot;</code> на DisclosureGroup.
-            <code>defaultValue</code> — открытый пункт по умолчанию.
+            <code>variant=&quot;card&quot;</code> and <code>variant=&quot;outline&quot;</code> on DisclosureGroup.
+            <code>defaultValue</code> — open item by default.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

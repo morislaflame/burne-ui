@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn";
 
-/** Слоты grid для Alert / Toast / Tooltip: indicator | title+description | action | close. */
+/** Grid slots for Alert / Toast / Tooltip: indicator | title+description | action | close. */
 export type MessageBannerGridSlots = {
   hasIndicator: boolean;
   hasTitle: boolean;

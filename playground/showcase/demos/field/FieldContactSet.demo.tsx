@@ -8,27 +8,27 @@ export function FieldContactSetDemo() {
     <Field.Set className="max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Контактные данные</Label>
-          <Field.Hint as="span">Все поля обязательны</Field.Hint>
+          <Label>Contact details</Label>
+          <Field.Hint as="span">All fields are required</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
       <Field.Group>
         <Input>
-          <Input.Label>Телефон</Input.Label>
+          <Input.Label>Telephone</Input.Label>
           <Input.Control placeholder="+7 …" />
         </Input>
         <Input status="danger">
           <Input.Label>Email</Input.Label>
           <Input.Control defaultValue="bad@" />
-          <Input.Error>Некорректный адрес.</Input.Error>
+          <Input.Error>Invalid address.</Input.Error>
         </Input>
       </Field.Group>
       <Field.Actions>
         <Button type="button" size="base">
-          Сохранить
+          Save
         </Button>
         <Button type="button" variant="ghost" size="base">
-          Отмена
+          Cancel
         </Button>
       </Field.Actions>
     </Field.Set>

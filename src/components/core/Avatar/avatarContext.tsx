@@ -12,7 +12,7 @@ const AvatarClassNamesContext = createContext<AvatarClassNames>({});
 export function useAvatarContext(component: string): AvatarContextValue {
   const ctx = useContext(AvatarContext);
   if (!ctx) {
-    throw new Error(`${component} должен использоваться внутри <Avatar>`);
+    throw new Error(`${component} must be used inside <Avatar>`);
   }
   return ctx;
 }

@@ -5,8 +5,8 @@ export function RadioGroupCustomIndicatorDemo() {
   return (
     <RadioGroup defaultValue="design" className="w-full max-w-sm">
       <RadioGroup.Legend>
-        <RadioGroup.Label>Отдел</RadioGroup.Label>
-        <RadioGroup.Hint>Квадратный индикатор через Radio.Indicator className.</RadioGroup.Hint>
+        <RadioGroup.Label>Department</RadioGroup.Label>
+        <RadioGroup.Hint>Square indicator through Radio.Indicator className.</RadioGroup.Hint>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="design">
@@ -14,7 +14,7 @@ export function RadioGroupCustomIndicatorDemo() {
             <Radio.Indicator className="rounded-mid" />
           </Radio.Control>
           <Radio.Content>
-            <Radio.Label>Дизайн</Radio.Label>
+            <Radio.Label>Design</Radio.Label>
           </Radio.Content>
         </Radio>
         <Radio value="dev">
@@ -22,7 +22,7 @@ export function RadioGroupCustomIndicatorDemo() {
             <Radio.Indicator className="rounded-mid" />
           </Radio.Control>
           <Radio.Content>
-            <Radio.Label>Разработка</Radio.Label>
+            <Radio.Label>Development</Radio.Label>
           </Radio.Content>
         </Radio>
         <Radio value="qa">
@@ -30,7 +30,7 @@ export function RadioGroupCustomIndicatorDemo() {
             <Radio.Indicator className="rounded-mid" />
           </Radio.Control>
           <Radio.Content>
-            <Radio.Label>Тестирование</Radio.Label>
+            <Radio.Label>Testing</Radio.Label>
           </Radio.Content>
         </Radio>
       </RadioGroup.List>

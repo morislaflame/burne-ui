@@ -12,11 +12,11 @@ export function AvatarCommentRowDemo() {
             Grace Hopper
           </Text>
           <Text as="span" variant="tools" className="text-muted">
-            2 ч. назад
+            2 hours ago
           </Text>
         </div>
         <Text as="p" variant="small" className="text-muted">
-          Compound Avatar + текст — типичная строка комментария.
+          Compound Avatar + text - a typical comment line.
         </Text>
       </div>
     </div>

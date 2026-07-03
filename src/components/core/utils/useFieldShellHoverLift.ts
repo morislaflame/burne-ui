@@ -5,7 +5,7 @@ import { useSecondLevelShadow } from "./useShadowMotion";
 
 export type FieldShellStatus = "default" | "danger" | "success" | "warning";
 
-/** Статусный tint-фон поля → усиленный tint на hover (не *-fill как у залитых кнопок). */
+/** Field status tint background → stronger tint on hover (not *-fill like filled buttons). */
 const FIELD_SHELL_HOVER_VARIANT: Record<FieldShellStatus, HoverVariant> = {
   default: "default",
   danger: "danger-tint-hover",
@@ -13,7 +13,7 @@ const FIELD_SHELL_HOVER_VARIANT: Record<FieldShellStatus, HoverVariant> = {
   warning: "warning-tint-hover",
 };
 
-/** Hover-фон оболочки поля через `hoverVariant`; `focus-within` — фокус на внутреннем control. */
+/** Field shell hover background via `hoverVariant`; `focus-within` — focus on inner control. */
 export function fieldShellHoverClass(
   enabled: boolean,
   status: FieldShellStatus = "default",
@@ -22,15 +22,15 @@ export function fieldShellHoverClass(
   return hoverVariantBg(FIELD_SHELL_HOVER_VARIANT[status], "focus-within");
 }
 
-/** Transition оболочки: фон, тень, focus-ring (всегда, в t.ч. disabled). */
+/** Shell transition: background, shadow, focus-ring (always, including disabled). */
 export const FIELD_SHELL_TRANSITION_CLASS =
   "field-shell-transition motion-reduce:transition-none";
 
-/** Внешнее focus-кольцо primary при `:focus-within` на оболочке. */
+/** Outer primary focus ring on shell `:focus-within`. */
 export const FIELD_SHELL_FOCUS_CLASS = "focus-within-ring";
 
 /**
- * Hover-подъём и sm → md тень для оболочки input-like полей (`Input`, `TextArea`, `TimeField`, `ComboBox`).
+ * Hover lift and sm → md shadow for input-like field shells (`Input`, `TextArea`, `TimeField`, `ComboBox`).
  */
 export function useFieldShellHoverLift(
   shellRef: RefObject<HTMLElement | null>,

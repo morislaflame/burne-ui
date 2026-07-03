@@ -8,14 +8,14 @@ export function PopoverShareMenuDemo() {
     <Popover side="bottom">
       <Popover.Trigger>
         <Button variant="outline" type="button">
-          Поделиться
+          Share
         </Button>
       </Popover.Trigger>
       <Popover.Content showArrow>
         <Popover.Arrow />
         <Popover.Header className="px-base pt-base">
-          <Popover.Label>Поделиться</Popover.Label>
-          <Popover.Hint>Выберите способ</Popover.Hint>
+          <Popover.Label>Share</Popover.Label>
+          <Popover.Hint>Choose a method</Popover.Hint>
         </Popover.Header>
         <Popover.Body className="flex flex-col gap-xsmall p-base">
           <Button 
@@ -25,7 +25,7 @@ export function PopoverShareMenuDemo() {
           leftIcon={<IoLinkOutline aria-hidden />}
           className="justify-start"
           >
-            Скопировать ссылку
+            Copy link
           </Button>
           <Button 
           variant="ghost" 
@@ -34,7 +34,7 @@ export function PopoverShareMenuDemo() {
           leftIcon={<IoMailOutline aria-hidden />}
           className="justify-start"
           >
-            Отправить email
+            Send email
           </Button>
           <Button 
           variant="ghost" 

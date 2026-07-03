@@ -9,10 +9,10 @@ export function SurfaceDashboardWidgetDemo() {
       <div className="flex items-start justify-between gap-mid">
         <div className="flex flex-col gap-xsmall">
           <Text as="p" variant="base" className="font-medium">
-            Деплои
+            Deploys
           </Text>
           <Text as="p" variant="tools" className="text-muted">
-            Последние 24 часа
+            Last 24 hours
           </Text>
         </div>
         <Badge status="success" size="small">
@@ -24,7 +24,7 @@ export function SurfaceDashboardWidgetDemo() {
       </Text>
       <div className="flex justify-end">
         <Button variant="ghost" size="small" type="button">
-          Подробнее
+          More details
         </Button>
       </div>
     </Surface>

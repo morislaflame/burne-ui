@@ -4,10 +4,10 @@ import { Text } from "@/components/core/Text";
 export function DisclosureSingleDemo() {
   return (
     <Disclosure className="max-w-lg" defaultOpen>
-      <Disclosure.Trigger>Одиночный блок</Disclosure.Trigger>
+      <Disclosure.Trigger>Single block</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">
-          Disclosure с анимацией высоты — альтернатива Accordion для одиночных блоков.
+          Disclosure with height animation - alternative Accordion for single blocks.
         </Text>
       </Disclosure.Content>
     </Disclosure>

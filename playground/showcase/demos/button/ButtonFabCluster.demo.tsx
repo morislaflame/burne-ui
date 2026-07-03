@@ -8,14 +8,14 @@ export function ButtonFabClusterDemo() {
       <Button
         variant="primary"
         iconOnly
-        aria-label="Создать"
+        aria-label="Create"
         size="small"
         className="rounded-full shadow-token-large"
       >
         <IoAdd aria-hidden className="size-4" />
       </Button>
       <Button variant="outline" size="small" className="rounded-full border-dashed px-mid">
-        Пригласить
+        Invite
       </Button>
     </div>
   );

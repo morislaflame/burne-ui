@@ -41,7 +41,7 @@ export function DialogClassNamesProvider({
 export function useDialog(): DialogContextValue {
   const ctx = useContext(DialogContext);
   if (!ctx) {
-    throw new Error("Компоненты Dialog.* должны быть внутри <Dialog>.");
+    throw new Error("Dialog.* components must be used inside <Dialog>.");
   }
   return ctx;
 }

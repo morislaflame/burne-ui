@@ -16,21 +16,21 @@ export function DrawerShowcase() {
   return (
     <ShowcasePage
       title="Drawer"
-      description="Выдвижная панель с размещением по четырём сторонам и настраиваемым размером."
+      description="Retractable panel with four sides and adjustable size."
       importPath='import { Drawer } from "@/components/core/Drawer";'
       tags={["core", "overlay"]}
     >
-      <ShowcaseSection title="Размещение" description="placement: left, right, top, bottom.">
+      <ShowcaseSection title="Accommodation" description="placement: left, right, top, bottom.">
         <ShowcaseDemoFromFile Demo={DrawerPlacementDemo} source={drawerPlacementSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная боковая панель.">
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass side panel.">
         <ShowcaseDemoFromFile Demo={DrawerGlossDemo} source={drawerGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на Root."
+        description="Full customization of slots via classNames on Root."
       >
         <ShowcaseDemoFromFile
           Demo={DrawerClassNamesFullDemo}
@@ -39,8 +39,8 @@ export function DrawerShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Фильтры, мобильная навигация и панель уведомлений — `demos/drawer/`."
+        title="Custom Variations"
+        description="Filters, mobile navigation and notification panel — `demos/drawer/`."
       >
         <ShowcaseDemoFromFile Demo={DrawerFilterSheetDemo} source={drawerFilterSheetSource} />
         <ShowcaseDemoFromFile Demo={DrawerMobileNavDemo} source={drawerMobileNavSource} />
@@ -48,19 +48,19 @@ export function DrawerShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Drawer" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close — структура панели."
+            description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close — panel structure."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            <code>placement</code>: left, right, top, bottom. <code>size</code> — ширина или высота
-            панели. Slide-анимация — <code>configureMotion()</code> (<code>interactiveDuration</code>).
+            <code>placement</code>: left, right, top, bottom. <code>size</code> — width or height
+            panels. Slide-animation — <code>configureMotion()</code> (<code>interactiveDuration</code>).
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

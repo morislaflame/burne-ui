@@ -22,8 +22,8 @@ export function CheckboxClassNamesFullDemo() {
         <Checkbox.Indicator />
       </Checkbox.Control>
       <Checkbox.Content>
-        <Checkbox.Label>Уведомления</Checkbox.Label>
-        <Checkbox.Hint>Настройка слотов через classNames на root.</Checkbox.Hint>
+        <Checkbox.Label>Notifications</Checkbox.Label>
+        <Checkbox.Hint>Setting up slots via classNames on root.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   );

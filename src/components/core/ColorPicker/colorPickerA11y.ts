@@ -7,5 +7,5 @@ export const COLOR_PICKER_HEX_INPUT_ARIA_LABEL = "Hex code of the color";
 export const COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL = "Transparency (%)";
 
 export function colorPickerTriggerAriaLabel(hex: string): string {
-  return `Выбранный цвет: ${hex}`;
+  return `Selected color: ${hex}`;
 }

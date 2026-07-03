@@ -27,7 +27,7 @@ export function OptionListItemContextProvider({
 export function useOptionListItemContext(who: string): OptionListItemContextValue {
   const ctx = useContext(OptionListItemContext);
   if (!ctx) {
-    throw new Error(`${who} должен быть внутри пункта списка (Dropdown.Item / ListBox.Item).`);
+    throw new Error(`${who} must be used inside a list item (Dropdown.Item / ListBox.Item).`);
   }
   return ctx;
 }

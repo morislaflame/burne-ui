@@ -8,8 +8,8 @@ export function TimeFieldSimpleDemo() {
 
   return (
     <TimeField
-      label="Начало смены"
-      hint="Формат: ЧЧ:ММ (24 часа)"
+      label="Start of shift"
+      hint="Format: HH:MM (24 hours)"
       value={timeValue}
       onValueChange={setTimeValue}
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}

@@ -26,7 +26,7 @@ export function ToastDeployPanelDemo() {
           })
         }
       >
-        Задеплоить
+        Deploy
       </Button>
     </Surface>
   );

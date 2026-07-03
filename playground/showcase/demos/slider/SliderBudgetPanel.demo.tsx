@@ -8,7 +8,7 @@ export function SliderBudgetPanelDemo() {
   return (
     <Slider className="w-full max-w-md">
       <Slider.Header>
-        <Slider.Label>Диапазон яркости</Slider.Label>
+        <Slider.Label>Brightness Range</Slider.Label>
         <Slider.Value />
       </Slider.Header>
       <Slider.Track
@@ -26,7 +26,7 @@ export function SliderBudgetPanelDemo() {
         <Slider.Thumb thumb="start" />
         <Slider.Thumb thumb="end" />
       </Slider.Track>
-      <Slider.Hint>Толстая рельса, gradient Fill и два compound-thumb.</Slider.Hint>
+      <Slider.Hint>Thick rail, gradient Fill and two compound-thumb.</Slider.Hint>
     </Slider>
   );
 }

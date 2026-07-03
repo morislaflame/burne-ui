@@ -14,23 +14,23 @@ export function FormProfileDemo() {
   return (
     <Form
       onSubmit={onSubmit}
-      aria-label="Пример формы"
+      aria-label="Example form"
       className="max-w-md"
       rules={{
-        name: { required: "Введите имя" },
+        name: { required: "Enter name" },
         email: {
-          required: "Email обязателен",
+          required: "Email required",
           pattern: {
             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Некорректный email",
+            message: "Incorrect email",
           },
         },
       }}
     >
-      <Form.Title>Профиль</Form.Title>
+      <Form.Title>Profile</Form.Title>
       <Form.Section>
         <Form.Field name="name">
-          <Input isRequired name="name" label="Имя" placeholder="Иван" autoComplete="name" />
+          <Input isRequired name="name" label="Name" placeholder="Ivan" autoComplete="name" />
         </Form.Field>
         <Form.Field name="email">
           <Input
@@ -45,19 +45,19 @@ export function FormProfileDemo() {
       <Form.Section>
         <CheckboxGroup>
           <CheckboxGroup.Legend>
-            <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
+            <CheckboxGroup.Label>Delivery method</CheckboxGroup.Label>
           </CheckboxGroup.Legend>
           <CheckboxGroup.List>
-            <Checkbox name="ship" value="courier" label="Курьер" />
-            <Checkbox name="ship" value="pickup" label="Самовывоз" />
+            <Checkbox name="ship" value="courier" label="Courier" />
+            <Checkbox name="ship" value="pickup" label="Pickup" />
           </CheckboxGroup.List>
         </CheckboxGroup>
       </Form.Section>
       <Form.Actions>
         <Button type="button" variant="outline">
-          Отмена
+          Cancel
         </Button>
-        <Button type="submit">Сохранить</Button>
+        <Button type="submit">Save</Button>
       </Form.Actions>
     </Form>
   );

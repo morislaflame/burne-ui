@@ -8,7 +8,7 @@ export function TimeFieldGlossDemo() {
       label="Gloss"
       variant="gloss"
       defaultValue="12:00"
-      hint="Стеклянная оболочка"
+      hint="Glass shell"
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
       className="w-64"
     />

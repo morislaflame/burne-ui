@@ -39,7 +39,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Индикатор загрузки: круговой спиннер (`variant=\"spinner\"`) или три прыгающие точки на GSAP (`variant=\"dots\"`). Скорость точек — `configureMotion({ loadingDotsDuration })` (шаг волны = duration / 3). Размеры `small | base | mid | large`.",
+          "Loading indicator: circular spinner (`variant=\"spinner\"`) or three GSAP bouncing dots (`variant=\"dots\"`). Dot speed — `configureMotion({ loadingDotsDuration })` (wave step = duration / 3). Sizes `small | base | mid | large`.",
       },
     },
   },
@@ -67,7 +67,7 @@ export const Default: Story = {
 };
 
 export const Dots: Story = {
-  name: "Прыгающие точки",
+  name: "Bouncing dots",
   args: {
     variant: "dots",
     size: "mid",
@@ -76,7 +76,7 @@ export const Dots: Story = {
 };
 
 export const DotsColors: Story = {
-  name: "Точки — цвета",
+  name: "Dots — colors",
   render: () => (
     <div className="flex flex-wrap items-end justify-center gap-xlarge">
       {COLORS.map((color) => (
@@ -92,7 +92,7 @@ export const DotsColors: Story = {
 };
 
 export const DotsSizes: Story = {
-  name: "Точки — размеры",
+  name: "Dots — sizes",
   render: () => (
     <div className="flex flex-wrap items-end justify-center gap-xlarge">
       {COMPONENT_SIZES.map((size) => (
@@ -108,7 +108,7 @@ export const DotsSizes: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-wrap items-end justify-center gap-xlarge">
       {COMPONENT_SIZES.map((size) => (
@@ -124,7 +124,7 @@ export const Sizes: Story = {
 };
 
 export const Colors: Story = {
-  name: "Цвета",
+  name: "Colors",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-xlarge">
       {COLORS.map((color) => (
@@ -140,22 +140,22 @@ export const Colors: Story = {
 };
 
 export const WithLabel: Story = {
-  name: "С подписью",
+  name: "With label",
   render: () => (
     <div className="inline-flex items-center gap-base">
       <Loading size="small" />
       <Text as="span" variant="base" className="text-muted">
-        Загружаем данные…
+        Loading data…
       </Text>
     </div>
   ),
 };
 
 export const Centered: Story = {
-  name: "По центру блока",
+  name: "Centered in block",
   render: () => (
     <div className="flex h-40 w-72 items-center justify-center rounded-mid border-token bg-surface">
-      <Loading size="large" color="primary" label="Загрузка содержимого" />
+      <Loading size="large" color="primary" label="Loading content" />
     </div>
   ),
 };

@@ -3,7 +3,7 @@ import { Label } from "@/components/core/Label";
 
 import type { ScaleSimpleLayoutProps } from "./scaleFieldParts";
 
-/** Разметка simple mode для Meter / ProgressBar / Slider. */
+/** Simple mode layout for Meter / ProgressBar / Slider. */
 export function renderScaleSimpleLayout({
   label,
   labelClassName,

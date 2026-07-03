@@ -34,7 +34,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Color picker, использующий Popover. `<ColorPicker>` + `<ColorPicker.Trigger>` + `<ColorPicker.Content>`. Включает 2D saturation×value canvas, hue slider, alpha slider (опционально), hex-ввод, preset-свотчи. Standalone: `<ColorSlider>` для отдельных каналов, `<ColorSwatch>` для отображения цвета.",
+          "Color picker using Popover. `<ColorPicker>` + `<ColorPicker.Trigger>` + `<ColorPicker.Content>`. Includes 2D saturation×value canvas, hue slider, alpha slider (optional), hex input, preset swatches. Standalone: `<ColorSlider>` for individual channels, `<ColorSwatch>` for color display.",
       },
     },
   },
@@ -47,7 +47,7 @@ type Story = StoryObj<typeof meta>;
 // ─── ColorPicker stories ──────────────────────────────────────────────────────
 
 export const Basic: Story = {
-  name: "Базовый",
+  name: "Basic",
   render: () => {
     const [color, setColor] = useState("#3b82f6");
     return (
@@ -61,13 +61,13 @@ export const Basic: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: /Выбранный цвет/ }));
+    await userEvent.click(canvas.getByRole("button", { name: /Selected color/ }));
     await expect(screen.getByRole("textbox", { name: "Hex code of the color" })).toBeVisible();
   },
 };
 
 export const WithAlpha: Story = {
-  name: "С прозрачностью",
+  name: "With transparency",
   render: () => {
     const [color, setColor] = useState("#3b82f6");
     return (
@@ -83,7 +83,7 @@ export const WithAlpha: Story = {
 };
 
 export const WithPresets: Story = {
-  name: "С пресетами",
+  name: "With presets",
   render: () => {
     const [color, setColor] = useState("#3b82f6");
     const presets = [
@@ -104,7 +104,7 @@ export const WithPresets: Story = {
 };
 
 export const FullFeatured: Story = {
-  name: "Все функции",
+  name: "All features",
   render: () => {
     const [color, setColor] = useState("#8b5cf6cc");
     const presets = [
@@ -124,7 +124,7 @@ export const FullFeatured: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => {
     const [c1, setC1] = useState("#3b82f6");
     const [c2, setC2] = useState("#22c55e");
@@ -158,7 +158,7 @@ export const Sizes: Story = {
 };
 
 export const Uncontrolled: Story = {
-  name: "Неконтролируемый",
+  name: "Uncontrolled",
   render: () => (
     <ColorPicker defaultValue="#ef4444" defaultOpen>
       <ColorPicker.Trigger />
@@ -170,7 +170,7 @@ export const Uncontrolled: Story = {
 // ─── ColorSlider stories ──────────────────────────────────────────────────────
 
 export const SliderChannels: Story = {
-  name: "ColorSlider — каналы",
+  name: "ColorSlider — channels",
   render: () => {
     const [hsva, setHsva] = useState<HSVA>({ h: 217, s: 90, v: 96, a: 80 });
 
@@ -219,7 +219,7 @@ export const SliderChannels: Story = {
 };
 
 export const SliderSizes: Story = {
-  name: "ColorSlider — размеры",
+  name: "ColorSlider — sizes",
   render: () => {
     const hsva: HSVA = { h: 290, s: 75, v: 90, a: 100 };
     const sizes = ["small", "base", "mid", "large"] as Array<"small" | "base" | "mid" | "large">;
@@ -241,7 +241,7 @@ export const SliderSizes: Story = {
 // ─── ColorSwatch stories ──────────────────────────────────────────────────────
 
 export const Swatches: Story = {
-  name: "ColorSwatch — размеры и формы",
+  name: "ColorSwatch — sizes and shapes",
   render: () => {
     const [selected, setSelected] = useState("#3b82f6");
     const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899"];
@@ -279,7 +279,7 @@ export const Swatches: Story = {
 };
 
 export const SwatchesWithTransparency: Story = {
-  name: "ColorSwatch — с прозрачностью",
+  name: "ColorSwatch — with transparency",
   render: () => {
     const transparent = [
       "rgba(239,68,68,0.2)", "rgba(239,68,68,0.5)", "rgba(239,68,68,0.8)", "rgba(239,68,68,1)",
@@ -296,11 +296,11 @@ export const SwatchesWithTransparency: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для ColorPicker",
+        story: "classNames customization for ColorPicker",
       },
     },
   },

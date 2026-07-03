@@ -23,37 +23,37 @@ export function TooltipShowcase() {
   return (
     <ShowcasePage
       title="Tooltip"
-      description="Всплывающие подсказки по hover и focus на триггере."
+      description="Tooltips for hover and focus on the trigger."
       importPath='import { Tooltip } from "@/components/core/Tooltip";'
       tags={["core", "overlay"]}
     >
-      <ShowcaseSection title="Варианты" description="Семантические variant для разных контекстов.">
+      <ShowcaseSection title="Options" description="Semantic variant for different contexts.">
         <ShowcaseDemoFromFile Demo={TooltipVariantsDemo} source={tooltipVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={TooltipSizesDemo} source={tooltipSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description='surface="gloss" — стеклянная подсказка с hover-lift.'>
+      <ShowcaseSection title="Gloss" description='surface="gloss" — glass tip with hover-lift.'>
         <ShowcaseDemoFromFile Demo={TooltipGlossDemo} source={tooltipGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размещение" description="side: top, right, bottom, left.">
+      <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={TooltipSidesDemo} source={tooltipSidesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомизация classNames"
-        description="Слоты root (триггер), trigger, content, arrow, panel, glossContent, indicator, title и description."
+        title="Customization classNames"
+        description="Slots root (trigger), trigger, content, arrow, panel, glossContent, indicator, title and description."
       >
         <ShowcaseDemoFromFile Demo={TooltipClassNamesFullDemo} source={tooltipClassNamesFullSource} />
         <ShowcaseDemoFromFile Demo={TooltipClassNamesGlossDemo} source={tooltipClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Тулбар иконок, подсказка у поля и горячие клавиши — `demos/tooltip/`."
+        title="Custom Variations"
+        description="Icon toolbar, field tooltip and hotkeys — `demos/tooltip/`."
       >
         <ShowcaseDemoFromFile Demo={TooltipIconToolbarDemo} source={tooltipIconToolbarSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TooltipFormHintDemo} source={tooltipFormHintSource} />
@@ -61,19 +61,19 @@ export function TooltipShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Tooltip" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Tooltip.Trigger оборачивает интерактивный элемент, Tooltip.Content — текст подсказки."
+            description="Tooltip.Trigger wraps an interactive element, Tooltip.Content — tooltip text."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Позиционирование">
+        <ShowcaseDoc.Block title="Positioning">
           <p>
-            Проп <code>side</code> на корне — <code>top</code>, <code>bottom</code>, <code>left</code>,{" "}
-            <code>right</code>. Размер — <code>small</code>, <code>base</code>, <code>mid</code>,{" "}
+            Prop <code>side</code> on the root — <code>top</code>, <code>bottom</code>, <code>left</code>,{" "}
+            <code>right</code>. Size — <code>small</code>, <code>base</code>, <code>mid</code>,{" "}
             <code>large</code>.
           </p>
         </ShowcaseDoc.Block>

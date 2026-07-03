@@ -102,7 +102,7 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
           leftIcon={<IoMenuOutline className="size-4" />}
           onClick={() => setMobileMenuOpen(true)}
         >
-          Компоненты
+          Components
         </Button>
       </div>
 
@@ -114,8 +114,8 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
                 Burne UI
               </Text>
               <Text as="p" variant="base" className="text-muted">
-                Локальный каталог компонентов из <code className="text-primary">src/</code> — то же API,
-                что в Storybook.
+                Local component directory from <code className="text-primary">src/</code> — Same API,
+                what's in Storybook.
               </Text>
             </header>
           )}
@@ -130,8 +130,8 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
         <Drawer.Panel size="default">
           <Drawer.Header>
             <Drawer.HeadingBlock>
-              <Drawer.Title>Компоненты</Drawer.Title>
-              <Drawer.Description>Выберите компонент для просмотра.</Drawer.Description>
+              <Drawer.Title>Components</Drawer.Title>
+              <Drawer.Description>Select a component to view.</Drawer.Description>
             </Drawer.HeadingBlock>
             <Drawer.Close />
           </Drawer.Header>

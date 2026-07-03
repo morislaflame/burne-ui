@@ -1,4 +1,4 @@
-/** Семантические статусы с тинтом/заливкой/обводкой (общие для Badge, Button и др.). */
+/** Semantic statuses with tint/fill/border (shared by Badge, Button, etc.). */
 export type SemanticSurfaceStatus = "danger" | "success" | "info" | "warning";
 
 export const SEMANTIC_STATUS_TEXT: Record<SemanticSurfaceStatus, string> = {

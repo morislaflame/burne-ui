@@ -41,7 +41,7 @@ export function CheckboxClassNamesProvider({
 export function useCheckboxFieldContext(): CheckboxFieldContextValue {
   const ctx = useContext(CheckboxFieldContext);
   if (!ctx) {
-    throw new Error("Checkbox.* должны быть внутри <Checkbox>.");
+    throw new Error("Checkbox.* parts must be used inside <Checkbox>.");
   }
   return ctx;
 }

@@ -9,20 +9,20 @@ export function TooltipFormHintDemo() {
     <div className="flex w-full max-w-sm flex-col gap-xsmall">
       <div className="flex items-center gap-xsmall">
         <Label htmlFor="api-key" className="text-sm font-medium">
-          API-ключ
+          API-key
         </Label>
         <Tooltip variant="info" side="right">
           <Tooltip.Trigger>
             <button
               type="button"
               className="inline-flex text-muted hover:text-foreground"
-              aria-label="Подсказка про API-ключ"
+              aria-label="Hint about API-key"
             >
               <IoInformationCircleOutline aria-hidden className="size-4" />
             </button>
           </Tooltip.Trigger>
           <Tooltip.Content>
-            Ключ хранится локально и не отправляется на сервер без вашего действия.
+            The key is stored locally and is not sent to the server without your action.
           </Tooltip.Content>
         </Tooltip>
       </div>

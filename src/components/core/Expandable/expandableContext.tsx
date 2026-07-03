@@ -44,7 +44,7 @@ export function ExpandableClassNamesProvider({
 export function useExpandable(): ExpandableContextValue {
   const ctx = useContext(ExpandableContext);
   if (!ctx) {
-    throw new Error("Компоненты Expandable должны быть внутри <Expandable>.");
+    throw new Error("Expandable components must be used inside <Expandable>.");
   }
   return ctx;
 }

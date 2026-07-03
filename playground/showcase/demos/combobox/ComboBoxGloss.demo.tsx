@@ -18,7 +18,7 @@ export function ComboBoxGlossDemo() {
       options={options}
       value={value}
       onValueChange={setValue}
-      hint="Стеклянная оболочка"
+      hint="Glass shell"
       className="w-64"
     />
   );

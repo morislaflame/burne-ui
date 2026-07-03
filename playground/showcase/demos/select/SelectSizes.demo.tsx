@@ -1,7 +1,7 @@
 import { Select } from "@/components/core/Select";
 
 const options = [
-  { value: "ru", label: "Русский" },
+  { value: "ru", label: "Russian" },
   { value: "en", label: "English" },
   { value: "de", label: "Deutsch" },
 ];

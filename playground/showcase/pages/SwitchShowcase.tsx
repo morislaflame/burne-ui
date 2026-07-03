@@ -22,29 +22,29 @@ export function SwitchShowcase() {
   return (
     <ShowcasePage
       title="Switch"
-      description="Переключатель вкл/выкл с подписью и состоянием disabled."
+      description="On/off switch with label and status disabled."
       importPath='import { Switch } from "@/components/core/Switch";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Базовый" description="Контролируемый переключатель с label.">
+      <ShowcaseSection title="Base" description="Controlled switch with label.">
         <ShowcaseDemoFromFile Demo={SwitchNotificationsDemo} source={switchNotificationsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={SwitchSizesDemo} source={switchSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Disabled" description="Неактивный переключатель.">
+      <ShowcaseSection title="Disabled" description="Inactive switch.">
         <ShowcaseDemoFromFile Demo={SwitchDisabledDemo} source={switchDisabledSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="gloss — стеклянный трек и кружок (проп gloss на корне).">
+      <ShowcaseSection title="Gloss" description="gloss — glass track and circle (prop gloss on the root).">
         <ShowcaseDemoFromFile Demo={SwitchGlossDemo} source={switchGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на root."
+        description="Full customization of slots via classNames on root."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -59,8 +59,8 @@ export function SwitchShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Панель настроек, compound Track и кастомный color — demo-файлы в `demos/switch/`."
+        title="Custom Variations"
+        description="Settings panel, compound Track and custom color — demo-files in `demos/switch/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SwitchSettingsPanelDemo} source={switchSettingsPanelSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SwitchCompoundThemeDemo} source={switchCompoundThemeSource} />
@@ -68,23 +68,23 @@ export function SwitchShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Switch" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, hint, checked, onChange, disabled, gloss на корне — без children."
+            description="label, hint, checked, onChange, disabled, gloss at the root - without children."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Switch.Label, Switch.Hint, Switch.Track — кастомная разметка переключателя."
+            description="Switch.Label, Switch.Hint, Switch.Track — custom switch layout."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss="gloss">
           <p>
-            Булевый <code>gloss</code> — стеклянный трек. Цвета активного состояния — CSS-переменные темы.
-            Анимация thumb — <code>configureMotion()</code> (<code>switchThumbDuration</code>,{" "}
+            Boolean <code>gloss</code> — glass track. Active state colors — CSS-topic variables.
+            Animation thumb — <code>configureMotion()</code> (<code>switchThumbDuration</code>,{" "}
             <code>switchThumbEase</code>).
           </p>
         </ShowcaseDoc.Customization>

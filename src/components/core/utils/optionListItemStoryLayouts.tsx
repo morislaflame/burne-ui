@@ -14,7 +14,7 @@ export type OptionListItemLayoutParts = {
   ItemIndicator: ElementType;
 };
 
-/** Общие compound-пункты для stories Dropdown / ListBox / ComboBox — видно, как меняется grid. */
+/** Shared compound items for Dropdown / ListBox / ComboBox stories — shows how the grid changes. */
 export function OptionListItemLayoutShowcase({
   Item,
   ItemLabel,
@@ -25,12 +25,12 @@ export function OptionListItemLayoutShowcase({
   return (
     <>
       <Item value="label-only">
-        <ItemLabel>Только Label</ItemLabel>
+        <ItemLabel>Label only</ItemLabel>
       </Item>
 
       <Item value="label-hint">
         <ItemLabel>Label + Hint</ItemLabel>
-        <ItemHint>ItemHint → вторая строка в средней колонке</ItemHint>
+        <ItemHint>ItemHint → second line in the middle column</ItemHint>
       </Item>
 
       <Item value="label-icon">
@@ -48,7 +48,7 @@ export function OptionListItemLayoutShowcase({
       <Item value="full-grid">
         <ItemIndicator />
         <ItemLabel>Indicator + Label + Hint + Icon</ItemLabel>
-        <ItemHint>3 cols × 2 rows — все слоты заняты</ItemHint>
+        <ItemHint>3 cols × 2 rows — all slots filled</ItemHint>
         <ItemIcon>
           <IoGlobeOutline aria-hidden />
         </ItemIcon>
@@ -57,14 +57,14 @@ export function OptionListItemLayoutShowcase({
       <Item value="member" className="gap-y-base">
         <ItemLabel>
           <span className="flex min-w-0 items-center gap-small">
-            <Avatar size="small" label="Аня Иванова" src={PIN_IMAGE1} alt="" loading="lazy" />
+            <Avatar size="small" label="Anya Ivanova" src={PIN_IMAGE1} alt="" loading="lazy" />
             <span className="flex min-w-0 flex-col gap-px">
-              <span className="truncate font-medium">Аня Иванова</span>
+              <span className="truncate font-medium">Anya Ivanova</span>
               <span className="truncate text-tools text-muted">Product Design</span>
             </span>
           </span>
         </ItemLabel>
-        <ItemHint>@anya · в команде с 2023</ItemHint>
+        <ItemHint>@anya · on the team since 2023</ItemHint>
         <ItemIcon>
           <Badge status="success" size="small">
             Pro
@@ -89,7 +89,7 @@ export function OptionListItemLayoutShowcase({
       </Item>
 
       <Item value="action">
-        <ItemLabel>Ещё действия</ItemLabel>
+        <ItemLabel>More actions</ItemLabel>
         <ItemIcon>
           <IoChevronForward aria-hidden />
         </ItemIcon>

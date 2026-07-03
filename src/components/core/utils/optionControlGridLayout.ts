@@ -2,7 +2,7 @@ import { cn } from "@/utils/cn";
 
 export type OptionControlLabelSide = "left" | "right";
 
-/** Строки grid: label в row 1, hint/error — row 2 (+ row 3 при hint и error). */
+/** Grid rows: label in row 1, hint/error — row 2 (+ row 3 when both hint and error). */
 function optionControlSecondaryLineCount(hasHint: boolean, hasError: boolean): number {
   return (hasHint ? 1 : 0) + (hasError ? 1 : 0);
 }
@@ -42,7 +42,7 @@ export function optionLabelCellClass(labelSide: OptionControlLabelSide = "right"
   );
 }
 
-/** row: 2 — hint или единственная secondary; 3 — error при наличии hint. */
+/** row: 2 — hint or sole secondary; 3 — error when hint is present. */
 export function optionSecondaryCellClass(
   row: 2 | 3,
   labelSide: OptionControlLabelSide = "right",
@@ -58,7 +58,7 @@ export function optionErrorRow(hasHint: boolean): 2 | 3 {
   return hasHint ? 3 : 2;
 }
 
-/** Grid для пункта Dropdown / ListBox: indicator | label+hint | icon (icon только row 1). */
+/** Grid for Dropdown / ListBox item: indicator | label+hint | icon (icon row 1 only). */
 export function optionListItemGridClass(
   hasHint: boolean,
   gapX: string,

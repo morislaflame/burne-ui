@@ -29,8 +29,8 @@ export interface MotionConfig {
   interactiveEase: string;
 
   /**
-   * GSAP easing для hover-подъёма (scale lift).
-   * Мягче `interactiveEase`: та же длительность, плавнее разгон/замедление.
+   * GSAP easing for hover lift (scale lift).
+   * Softer than `interactiveEase`: same duration, smoother acceleration/deceleration.
    * @default "sine.inOut"
    */
   hoverLiftEase: string;
@@ -51,7 +51,7 @@ export interface MotionConfig {
   switchThumbEase: string;
 
   /**
-   * GSAP easing для заливки selection (ToggleButton, Calendar).
+   * GSAP easing for selection fill (ToggleButton, Calendar).
    * @default "back.out(1.25)"
    */
   selectionFillEase: string;
@@ -142,19 +142,19 @@ export interface MotionConfig {
   enableProgressFill: boolean;
 
   /**
-   * Duration (ms) одного полного прыжка точки Loading dots (вверх + вниз).
-   * Задержка между точками = duration / 3 (волна 1 → 2 → 3).
+   * Duration (ms) of one full Loading dots bounce (up + down).
+   * Delay between dots = duration / 3 (wave 1 → 2 → 3).
    * @default 900
    */
   loadingDotsDuration: number;
 
-  /** GSAP easing подъёма точки Loading dots. @default "power2.out" */
+  /** GSAP easing for Loading dots rise. @default "power2.out" */
   loadingDotsEaseUp: string;
 
-  /** GSAP easing спуска точки Loading dots. @default "power2.in" */
+  /** GSAP easing for Loading dots fall. @default "power2.in" */
   loadingDotsEaseDown: string;
 
-  /** Анимация прыгающих точек Loading (`variant="dots"`). @default true */
+  /** Bouncing Loading dots animation (`variant="dots"`). @default true */
   enableLoadingDots: boolean;
 }
 
@@ -202,7 +202,7 @@ let _config: MotionConfig = { ...DEFAULTS };
 let _motionConfigRevision = 0;
 const _motionConfigListeners = new Set<() => void>();
 
-/** Подписка на изменения `configureMotion()` (для live-пересборки GSAP-твинов). */
+/** Subscribe to `configureMotion()` changes (for live GSAP tween rebuild). */
 export function subscribeMotionConfig(onStoreChange: () => void): () => void {
   _motionConfigListeners.add(onStoreChange);
   return () => {
@@ -210,7 +210,7 @@ export function subscribeMotionConfig(onStoreChange: () => void): () => void {
   };
 }
 
-/** Счётчик ревизий motion config — для `useSyncExternalStore`. */
+/** Motion config revision counter — for `useSyncExternalStore`. */
 export function getMotionConfigRevision(): number {
   return _motionConfigRevision;
 }
@@ -250,7 +250,7 @@ export function motionHoverLift() {
   } as const;
 }
 
-/** Заливка selection (ToggleButton, календарь) — in/out симметричны. */
+/** Selection fill (ToggleButton, calendar) — in/out are symmetric. */
 export function motionSelectionFill() {
   return {
     duration: (_config.interactiveDuration * 1.15) / 1000,
@@ -274,7 +274,7 @@ export function motionSwitchThumb() {
   } as const;
 }
 
-/** Collapsible-панель (Expandable, Accordion) — in/out симметричны. */
+/** Collapsible panel (Expandable, Accordion) — in/out are symmetric. */
 export function motionExpand() {
   return {
     duration: _config.expandDuration / 1000,
@@ -282,7 +282,7 @@ export function motionExpand() {
   } as const;
 }
 
-/** Быстрый fade (Avatar image, Calendar range tint). */
+/** Quick fade (Avatar image, Calendar range tint). */
 export function motionContentFade() {
   return {
     duration: _config.tooltipDuration / 1000,
@@ -290,14 +290,14 @@ export function motionContentFade() {
   } as const;
 }
 
-/** Feedback-expand ring после async-кнопки. Easing — `ensureRippleEase()` в месте вызова. */
+/** Feedback-expand ring after async button. Easing — `ensureRippleEase()` at call site. */
 export function motionFeedbackExpand() {
   return {
     duration: _config.feedbackExpandDuration / 1000,
   } as const;
 }
 
-/** Плавное заполнение ProgressBar при изменении `value`. */
+/** Smooth ProgressBar fill when `value` changes. */
 export function motionProgressFill() {
   return {
     duration: _config.progressFillDuration / 1000,
@@ -307,7 +307,7 @@ export function motionProgressFill() {
 
 const LOADING_DOTS_COUNT = 3;
 
-/** Прыгающие точки Loading — волна с фиксированным шагом duration / 3. */
+/** Bouncing Loading dots — wave with fixed step duration / 3. */
 export function motionLoadingDots() {
   const cycleSec = _config.loadingDotsDuration / 1000;
   return {

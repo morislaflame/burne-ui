@@ -3,10 +3,10 @@ import { TextArea } from "@/components/core/TextArea";
 export function TextAreaBasicDemo() {
   return (
     <TextArea
-      label="Комментарий"
-      placeholder="Текст сообщения…"
+      label="Comment"
+      placeholder="Message text…"
       rows={3}
-      hint="До 500 символов."
+      hint="Up to 500 characters."
       className="w-64"
     />
   );

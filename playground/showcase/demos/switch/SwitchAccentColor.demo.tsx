@@ -9,13 +9,13 @@ export function SwitchAccentColorDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Акцентный цвет
+        Accent color
       </Text>
       <Switch
         checked={enabled}
         onChange={(e) => setEnabled(e.target.checked)}
-        label="Градиентная заливка"
-        hint="color — CSS-цвет или linear-gradient"
+        label="Gradient fill"
+        hint="color — CSS-color or linear-gradient"
         color="linear-gradient(90deg, var(--color-success) 0%, var(--color-primary) 100%)"
       />
     </div>

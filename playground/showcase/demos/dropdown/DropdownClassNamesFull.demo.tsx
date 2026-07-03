@@ -13,15 +13,15 @@ export function DropdownClassNamesFullDemo() {
       }}
     >
       <Dropdown.Trigger asChild>
-        <Button variant="outline">Язык интерфейса</Button>
+        <Button variant="outline">Interface language</Button>
       </Dropdown.Trigger>
       <Dropdown.Popover>
         <Dropdown.Group>
-          <Dropdown.Label>Выберите язык</Dropdown.Label>
+          <Dropdown.Label>Select language</Dropdown.Label>
           <Dropdown.Item value="ru">
             <Dropdown.ItemIndicator />
-            <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
-            <Dropdown.ItemHint>Кириллица</Dropdown.ItemHint>
+            <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
+            <Dropdown.ItemHint>Cyrillic</Dropdown.ItemHint>
           </Dropdown.Item>
           <Dropdown.Item value="en">
             <Dropdown.ItemIndicator />

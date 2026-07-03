@@ -6,8 +6,8 @@ import { IoGlobeOutline } from "react-icons/io5";
 const options = [
   {
     value: "ru",
-    label: "Русский",
-    hint: "Интерфейс на русском",
+    label: "Russian",
+    hint: "Interface in Russian",
     icon: <IoGlobeOutline aria-hidden />,
   },
   {
@@ -23,8 +23,8 @@ export function ComboBoxClassNamesFullDemo() {
 
   return (
     <ComboBox
-      label="Язык"
-      hint="Кастомизация через classNames"
+      label="Language"
+      hint="Customization via classNames"
       options={options}
       value={value}
       onValueChange={setValue}

@@ -21,7 +21,7 @@ export function PaginationClassNamesFullDemo() {
       }}
     >
       <Pagination.Summary>
-        Страница {page} из {totalPages}
+        Page {page} from {totalPages}
       </Pagination.Summary>
       <Pagination.Content>
         <Pagination.Item>

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { RU_LOCALE } from "./calendarLocale";
+import { EN_LOCALE } from "./calendarLocale";
 import {
   createDefaultCalendarValue,
   createInitialViewDate,
@@ -26,7 +26,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     size = "base",
     defaultMonth,
     initialView = "days",
-    locale = RU_LOCALE,
+    locale = EN_LOCALE,
     minDate,
     maxDate,
     value,

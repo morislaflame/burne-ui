@@ -96,7 +96,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Таблица для отображения структурированных данных. Поддерживает сортировку, выбор строк, пагинацию и кастомные ячейки.",
+          "Table for structured data. Supports sorting, row selection, pagination, and custom cells.",
       },
     },
   },
@@ -108,15 +108,15 @@ type Story = StoryObj;
 // ─── stories ─────────────────────────────────────────────────────────────────
 
 export const Basic: Story = {
-  name: "Базовая",
+  name: "Basic",
   render: () => (
     <Table>
       <Table.ScrollContainer>
-        <Table.Content aria-label="Команда" className="min-w-[600px]">
+        <Table.Content aria-label="Team" className="min-w-[600px]">
           <Table.Header>
-            <Table.Column isRowHeader>Имя</Table.Column>
-            <Table.Column>Роль</Table.Column>
-            <Table.Column>Статус</Table.Column>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
           </Table.Header>
           <Table.Body items={users}>
@@ -136,15 +136,15 @@ export const Basic: Story = {
 };
 
 export const SecondaryVariant: Story = {
-  name: "Вторичный вариант",
+  name: "Secondary variant",
   render: () => (
     <Table variant="secondary">
       <Table.ScrollContainer>
-        <Table.Content aria-label="Команда (secondary)" className="min-w-[600px]">
+        <Table.Content aria-label="Team (secondary)" className="min-w-[600px]">
           <Table.Header>
-            <Table.Column isRowHeader>Имя</Table.Column>
-            <Table.Column>Роль</Table.Column>
-            <Table.Column>Статус</Table.Column>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
           </Table.Header>
           <Table.Body items={users}>
@@ -164,7 +164,7 @@ export const SecondaryVariant: Story = {
 };
 
 export const Sorting: Story = {
-  name: "Сортировка",
+  name: "Sorting",
   render: function SortingStory() {
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
       column: "name",
@@ -185,7 +185,7 @@ export const Sorting: Story = {
       <Table>
         <Table.ScrollContainer>
           <Table.Content
-            aria-label="Команда (сортировка)"
+            aria-label="Team (sorting)"
             className="min-w-[600px]"
             sortDescriptor={sortDescriptor}
             onSortChange={setSortDescriptor}
@@ -193,17 +193,17 @@ export const Sorting: Story = {
             <Table.Header>
               <Table.Column allowsSorting isRowHeader id="name">
                 {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Имя</SortableHeader>
+                  <SortableHeader sortDirection={sortDirection}>Name</SortableHeader>
                 )}
               </Table.Column>
               <Table.Column allowsSorting id="role">
                 {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Роль</SortableHeader>
+                  <SortableHeader sortDirection={sortDirection}>Role</SortableHeader>
                 )}
               </Table.Column>
               <Table.Column allowsSorting id="status">
                 {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Статус</SortableHeader>
+                  <SortableHeader sortDirection={sortDirection}>Status</SortableHeader>
                 )}
               </Table.Column>
               <Table.Column allowsSorting id="email">
@@ -228,39 +228,39 @@ export const Sorting: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    const nameHeader = canvas.getByRole("rowheader", { name: /Имя/ });
+    const nameHeader = canvas.getByRole("rowheader", { name: /Name/ });
     await userEvent.click(nameHeader);
     await expect(nameHeader).toHaveAttribute("aria-sort", "descending");
   },
 };
 
 export const ClickToSelect: Story = {
-  name: "Выбор строк (клик)",
+  name: "Row selection (click)",
   render: function ClickToSelectStory() {
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<number>());
 
     const selectedLabel =
       selectedKeys === "all"
-        ? "Все"
+        ? "All"
         : (selectedKeys as Set<number>).size > 0
           ? Array.from(selectedKeys as Set<number>).join(", ")
-          : "Нет";
+          : "None";
 
     return (
       <div className="flex flex-col gap-base">
         <Table>
           <Table.ScrollContainer>
             <Table.Content
-              aria-label="Команда (выбор кликом)"
+              aria-label="Team (click selection)"
               className="min-w-[600px]"
               selectionMode="multiple"
               selectedKeys={selectedKeys}
               onSelectionChange={setSelectedKeys}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Имя</Table.Column>
-                <Table.Column>Роль</Table.Column>
-                <Table.Column>Статус</Table.Column>
+                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column>Role</Table.Column>
+                <Table.Column>Status</Table.Column>
                 <Table.Column>Email</Table.Column>
               </Table.Header>
               <Table.Body>
@@ -277,7 +277,7 @@ export const ClickToSelect: Story = {
           </Table.ScrollContainer>
         </Table>
         <p className="text-small text-muted">
-          Выбрано: <span className="font-medium text-foreground">{selectedLabel}</span>
+          Selected: <span className="font-medium text-foreground">{selectedLabel}</span>
         </p>
       </div>
     );
@@ -285,7 +285,7 @@ export const ClickToSelect: Story = {
 };
 
 export const CheckboxSelection: Story = {
-  name: "Выбор строк (чекбоксы)",
+  name: "Row selection (checkboxes)",
   render: function CheckboxSelectionStory() {
     const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
     const allSelected = selectedIds.size === users.length;
@@ -307,22 +307,22 @@ export const CheckboxSelection: Story = {
       <div className="flex flex-col gap-base">
         <Table>
           <Table.ScrollContainer>
-            <Table.Content aria-label="Команда (чекбоксы)" className="min-w-[640px]">
+            <Table.Content aria-label="Team (checkboxes)" className="min-w-[640px]">
               <Table.Header>
                 <Table.Column className="w-10 pr-0">
                   <Checkbox
                     checked={allSelected}
                     onChange={toggleAll}
-                    aria-label="Выбрать всех"
+                    aria-label="Select all"
                   >
                     <Checkbox.Control>
                       <Checkbox.Indicator />
                     </Checkbox.Control>
                   </Checkbox>
                 </Table.Column>
-                <Table.Column isRowHeader>Имя</Table.Column>
-                <Table.Column>Роль</Table.Column>
-                <Table.Column>Статус</Table.Column>
+                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column>Role</Table.Column>
+                <Table.Column>Status</Table.Column>
                 <Table.Column>Email</Table.Column>
               </Table.Header>
               <Table.Body>
@@ -332,7 +332,7 @@ export const CheckboxSelection: Story = {
                       <Checkbox
                         checked={selectedIds.has(user.id)}
                         onChange={() => toggleRow(user.id)}
-                        aria-label={`Выбрать ${user.name}`}
+                        aria-label={`Select ${user.name}`}
                         variant="secondary"
                       >
                         <Checkbox.Control>
@@ -351,9 +351,9 @@ export const CheckboxSelection: Story = {
           </Table.ScrollContainer>
         </Table>
         <p className="text-small text-muted">
-          Выбрано:{" "}
+          Selected:{" "}
           <span className="font-medium text-foreground">
-            {selectedIds.size > 0 ? Array.from(selectedIds).join(", ") : "Нет"}
+            {selectedIds.size > 0 ? Array.from(selectedIds).join(", ") : "None"}
           </span>
         </p>
       </div>
@@ -362,7 +362,7 @@ export const CheckboxSelection: Story = {
 };
 
 export const CustomCells: Story = {
-  name: "Кастомные ячейки",
+  name: "Custom cells",
   render: function CustomCellsStory() {
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
       column: "name",
@@ -383,7 +383,7 @@ export const CustomCells: Story = {
       <Table>
         <Table.ScrollContainer>
           <Table.Content
-            aria-label="Команда (кастомные ячейки)"
+            aria-label="Team (custom cells)"
             className="min-w-[720px]"
             sortDescriptor={sortDescriptor}
             onSortChange={setSortDescriptor}
@@ -391,21 +391,21 @@ export const CustomCells: Story = {
             <Table.Header>
               <Table.Column allowsSorting isRowHeader id="name">
                 {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Имя</SortableHeader>
+                  <SortableHeader sortDirection={sortDirection}>Name</SortableHeader>
                 )}
               </Table.Column>
               <Table.Column allowsSorting id="role">
                 {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Роль</SortableHeader>
+                  <SortableHeader sortDirection={sortDirection}>Role</SortableHeader>
                 )}
               </Table.Column>
               <Table.Column allowsSorting id="status">
                 {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Статус</SortableHeader>
+                  <SortableHeader sortDirection={sortDirection}>Status</SortableHeader>
                 )}
               </Table.Column>
               <Table.Column>Email</Table.Column>
-              <Table.Column className="text-end">Действия</Table.Column>
+              <Table.Column className="text-end">Actions</Table.Column>
             </Table.Header>
             <Table.Body>
               {sortedUsers.map((user) => (
@@ -439,7 +439,7 @@ export const CustomCells: Story = {
 };
 
 export const WithPagination: Story = {
-  name: "С пагинацией",
+  name: "With pagination",
   render: function WithPaginationStory() {
     const ROWS_PER_PAGE = 4;
     const [page, setPage] = useState(1);
@@ -456,11 +456,11 @@ export const WithPagination: Story = {
     return (
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Команда с пагинацией" className="min-w-[600px]">
+          <Table.Content aria-label="Team with pagination" className="min-w-[600px]">
             <Table.Header>
-              <Table.Column isRowHeader>Имя</Table.Column>
-              <Table.Column>Роль</Table.Column>
-              <Table.Column>Статус</Table.Column>
+              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column>Role</Table.Column>
+              <Table.Column>Status</Table.Column>
               <Table.Column>Email</Table.Column>
             </Table.Header>
             <Table.Body>
@@ -477,7 +477,7 @@ export const WithPagination: Story = {
         </Table.ScrollContainer>
         <Table.Footer>
           <span className="text-small text-muted">
-            {start}–{end} из {users.length}
+            {start}–{end} of {users.length}
           </span>
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} siblingCount={1}>
             <Pagination.Content>
@@ -487,7 +487,7 @@ export const WithPagination: Story = {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
                   <Pagination.PreviousIcon />
-                  Назад
+                  Back
                 </Pagination.Previous>
               </Pagination.Item>
               <Pagination.Pages />
@@ -496,7 +496,7 @@ export const WithPagination: Story = {
                   disabled={page === totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 >
-                  Вперёд
+                  Next
                   <Pagination.NextIcon />
                 </Pagination.Next>
               </Pagination.Item>
@@ -509,15 +509,15 @@ export const WithPagination: Story = {
 };
 
 export const EmptyState: Story = {
-  name: "Пустое состояние",
+  name: "Empty state",
   render: () => (
     <Table className="min-h-[200px]">
       <Table.ScrollContainer>
-        <Table.Content aria-label="Пустая таблица" className="min-w-[600px] h-full">
+        <Table.Content aria-label="Empty table" className="min-w-[600px] h-full">
           <Table.Header>
-            <Table.Column isRowHeader>Имя</Table.Column>
-            <Table.Column>Роль</Table.Column>
-            <Table.Column>Статус</Table.Column>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
           </Table.Header>
           <Table.Body
@@ -525,7 +525,7 @@ export const EmptyState: Story = {
             renderEmptyState={() => (
               <div className="flex flex-col items-center justify-center gap-small py-xlarge text-center">
                 <span className="text-2xl">📭</span>
-                <span className="text-small text-muted">Данные не найдены</span>
+                <span className="text-small text-muted">No data found</span>
               </div>
             )}
           />
@@ -536,18 +536,18 @@ export const EmptyState: Story = {
 };
 
 export const StickyHeader: Story = {
-  name: "Фиксированный заголовок (скролл)",
+  name: "Sticky header (scroll)",
   render: function StickyHeaderStory() {
     const manyUsers = [...users, ...users, ...users];
 
     return (
       <Table>
         <Table.ScrollContainer className="h-64 overflow-y-auto">
-          <Table.Content aria-label="Команда (скролл)" className="min-w-[600px]">
+          <Table.Content aria-label="Team (scroll)" className="min-w-[600px]">
             <Table.Header className="sticky top-0 z-10">
-              <Table.Column isRowHeader>Имя</Table.Column>
-              <Table.Column>Роль</Table.Column>
-              <Table.Column>Статус</Table.Column>
+              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column>Role</Table.Column>
+              <Table.Column>Status</Table.Column>
               <Table.Column>Email</Table.Column>
             </Table.Header>
             <Table.Body>
@@ -569,15 +569,15 @@ export const StickyHeader: Story = {
 };
 
 export const TonedRows: Story = {
-  name: "Строки с тонами",
+  name: "Toned rows",
   render: () => (
     <Table variant="toned">
       <Table.ScrollContainer>
-        <Table.Content aria-label="Команда (тонированные строки)" className="min-w-[600px]">
+        <Table.Content aria-label="Team (toned rows)" className="min-w-[600px]">
           <Table.Header>
-            <Table.Column isRowHeader>Имя</Table.Column>
-            <Table.Column>Роль</Table.Column>
-            <Table.Column>Статус</Table.Column>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
             <Table.Column>Email</Table.Column>
           </Table.Header>
           <Table.Body>
@@ -611,14 +611,14 @@ const toneLabels: { tone: TableRowTone; label: string }[] = [
 ];
 
 export const TonedRowsAllTones: Story = {
-  name: "Все тоны строк",
+  name: "All row tones",
   render: () => (
     <Table variant="toned">
       <Table.ScrollContainer>
-        <Table.Content aria-label="Все тоны строк" className="min-w-[480px]">
+        <Table.Content aria-label="All row tones" className="min-w-[480px]">
           <Table.Header>
-            <Table.Column isRowHeader>Тон</Table.Column>
-            <Table.Column>Описание</Table.Column>
+            <Table.Column isRowHeader>Tone</Table.Column>
+            <Table.Column>Description</Table.Column>
           </Table.Header>
           <Table.Body>
             {toneLabels.map(({ tone, label }) => (
@@ -637,7 +637,7 @@ export const TonedRowsAllTones: Story = {
 };
 
 export const TonedRowsWithSelection: Story = {
-  name: "Тонированные строки + выбор",
+  name: "Toned rows + selection",
   render: function TonedRowsWithSelectionStory() {
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<number>());
 
@@ -646,16 +646,16 @@ export const TonedRowsWithSelection: Story = {
         <Table variant="toned">
           <Table.ScrollContainer>
             <Table.Content
-              aria-label="Тонированные строки с выбором"
+              aria-label="Toned rows with selection"
               className="min-w-[600px]"
               selectionMode="multiple"
               selectedKeys={selectedKeys}
               onSelectionChange={setSelectedKeys}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Имя</Table.Column>
-                <Table.Column>Роль</Table.Column>
-                <Table.Column>Статус</Table.Column>
+                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column>Role</Table.Column>
+                <Table.Column>Status</Table.Column>
               </Table.Header>
               <Table.Body>
                 {users.slice(0, 5).map((user) => (
@@ -670,11 +670,11 @@ export const TonedRowsWithSelection: Story = {
           </Table.ScrollContainer>
         </Table>
         <p className="text-small text-muted">
-          Клик по строке для выбора. Выбрано:{" "}
+          Click a row to select. Selected:{" "}
           <span className="font-medium text-foreground">
             {(selectedKeys as Set<number>).size > 0
               ? Array.from(selectedKeys as Set<number>).join(", ")
-              : "Нет"}
+              : "None"}
           </span>
         </p>
       </div>
@@ -688,11 +688,11 @@ export const Gloss: Story = {
     <div className="flex flex-col gap-base">
       <Table variant="gloss" className="w-full">
         <Table.ScrollContainer>
-          <Table.Content aria-label="Gloss команда" className="min-w-[600px]">
+          <Table.Content aria-label="Gloss team" className="min-w-[600px]">
             <Table.Header>
-              <Table.Column isRowHeader>Имя</Table.Column>
-              <Table.Column>Роль</Table.Column>
-              <Table.Column>Статус</Table.Column>
+              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column>Role</Table.Column>
+              <Table.Column>Status</Table.Column>
               <Table.Column>Email</Table.Column>
             </Table.Header>
             <Table.Body>
@@ -713,39 +713,39 @@ export const Gloss: Story = {
         </Table.ScrollContainer>
       </Table>
       <p className="text-small text-muted">
-        Наведите на строку — подсветка <span className="text-foreground">primary-tint</span>.
+        Hover a row — <span className="text-foreground">primary-tint</span> highlight.
       </p>
     </div>
   ),
 };
 
 export const GlossWithSelection: Story = {
-  name: "Gloss + выбор",
+  name: "Gloss + selection",
   render: function GlossWithSelectionStory() {
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<number>([2, 4]));
 
     const selectedLabel =
       selectedKeys === "all"
-        ? "Все"
+        ? "All"
         : (selectedKeys as Set<number>).size > 0
           ? Array.from(selectedKeys as Set<number>).join(", ")
-          : "Нет";
+          : "None";
 
     return (
       <div className="flex flex-col gap-base">
         <Table variant="gloss" className="w-full">
           <Table.ScrollContainer>
             <Table.Content
-              aria-label="Gloss команда с выбором"
+              aria-label="Gloss team with selection"
               className="min-w-[600px]"
               selectionMode="multiple"
               selectedKeys={selectedKeys}
               onSelectionChange={setSelectedKeys}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Имя</Table.Column>
-                <Table.Column>Роль</Table.Column>
-                <Table.Column>Статус</Table.Column>
+                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column>Role</Table.Column>
+                <Table.Column>Status</Table.Column>
                 <Table.Column>Email</Table.Column>
               </Table.Header>
               <Table.Body>
@@ -766,7 +766,7 @@ export const GlossWithSelection: Story = {
           </Table.ScrollContainer>
         </Table>
         <p className="text-small text-muted">
-          Hover и выбор — <span className="text-foreground">primary-tint</span>. Выбрано:{" "}
+          Hover and selection — <span className="text-foreground">primary-tint</span>. Selected:{" "}
           <span className="font-medium text-foreground">{selectedLabel}</span>
         </p>
       </div>
@@ -775,11 +775,11 @@ export const GlossWithSelection: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Table (compound API)",
+        story: "classNames customization for Table (compound API)",
       },
     },
   },
@@ -796,10 +796,10 @@ export const CustomClassNames: Story = {
       className="max-w-2xl"
     >
       <Table.ScrollContainer>
-        <Table.Content aria-label="Команда">
+        <Table.Content aria-label="Team">
           <Table.Header>
-            <Table.Column isRowHeader>Имя</Table.Column>
-            <Table.Column>Роль</Table.Column>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
           </Table.Header>
           <Table.Body>
             {users.slice(0, 3).map((user) => (
@@ -812,7 +812,7 @@ export const CustomClassNames: Story = {
         </Table.Content>
       </Table.ScrollContainer>
       <Table.Footer>
-        <span className="text-small text-muted">Все слоты настроены через classNames.</span>
+        <span className="text-small text-muted">All slots configured via classNames.</span>
       </Table.Footer>
     </Table>
   ),

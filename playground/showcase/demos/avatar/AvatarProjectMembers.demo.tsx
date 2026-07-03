@@ -6,7 +6,7 @@ export function AvatarProjectMembersDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Участники проекта
+        Project participants
       </Text>
       <div className="flex items-center gap-mid">
         <AvatarGroup>
@@ -16,7 +16,7 @@ export function AvatarProjectMembersDemo() {
           <Avatar size="base" label="+2" />
         </AvatarGroup>
         <Text as="span" variant="tools" className="text-muted">
-          5 участников
+          5 participants
         </Text>
       </div>
     </div>

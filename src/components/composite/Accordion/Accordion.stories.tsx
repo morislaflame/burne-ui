@@ -37,17 +37,17 @@ const infoIcon = (
 const items = [
   {
     content:
-      "Доставка по РФ 2–5 дней. Международная доставка рассчитывается отдельно.",
+      "Delivery within Russia in 2–5 days. International shipping is calculated separately.",
     icon: infoIcon,
-    title: "Как оформить заказ?",
+    title: "How to place an order?",
   },
   {
-    content: "Возврат возможен в течение 14 дней при сохранении товарного вида.",
-    title: "При каких условиях можно вернуть товар?",
+    content: "Returns are available within 14 days if the product is in resalable condition.",
+    title: "Under what conditions can the product be returned?",
   },
   {
-    content: "Избегайте абразивов и агрессивной химии. Хранить в сухом месте.",
-    title: "Как ухаживать за товаром?",
+    content: "Avoid abrasives and harsh chemicals. Store in a dry place.",
+    title: "How to care for the product?",
   },
 ] as const;
 
@@ -87,7 +87,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Группа раскрывающихся пунктов на базе `Expandable`. Слоты `Message`, `Icon`, `Content`, `Title`, `Indicator` — те же стили, что у Expandable.",
+          "Group of expandable items based on `Expandable`. Slots `Message`, `Icon`, `Content`, `Title`, `Indicator` — same styles as Expandable.",
       },
     },
   },
@@ -111,7 +111,7 @@ export const Default: Story = {
 };
 
 export const ExpandInteraction: Story = {
-  name: "Interaction: раскрытие",
+  name: "Interaction: expand",
   render: () => (
     <Accordion className="max-w-2xl" defaultOpenIndex={0}>
       {items.map((item) => (
@@ -122,17 +122,17 @@ export const ExpandInteraction: Story = {
     </Accordion>
   ),
   play: async ({ canvas, userEvent }) => {
-    const first = canvas.getByRole("button", { name: /Как оформить заказ/ });
-    const second = canvas.getByRole("button", { name: /При каких условиях/ });
+    const first = canvas.getByRole("button", { name: /How to place an order/ });
+    const second = canvas.getByRole("button", { name: /Under what conditions/ });
     await expect(first).toHaveAttribute("aria-expanded", "true");
     await userEvent.click(second);
     await expect(second).toHaveAttribute("aria-expanded", "true");
-    await expect(canvas.getByText(/Возврат возможен/)).toBeVisible();
+    await expect(canvas.getByText(/Return available/)).toBeVisible();
   },
 };
 
 export const PressRipple: Story = {
-  name: "Риппл по нажатию в триггере",
+  name: "Ripple on press in trigger",
   render: () => (
     <Accordion className="max-w-md" defaultOpenIndex={0}>
       {items.map((item) => (

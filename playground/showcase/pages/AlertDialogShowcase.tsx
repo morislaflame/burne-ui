@@ -18,25 +18,25 @@ export function AlertDialogShowcase() {
   return (
     <ShowcasePage
       title="AlertDialog"
-      description="Диалог подтверждения с тоном status и блокировкой закрытия по backdrop."
+      description="Confirmation dialog with tone status and blocking closing by backdrop."
       importPath='import { AlertDialog } from "@/components/composite/AlertDialog";'
       tags={["composite", "overlay"]}
     >
-      <ShowcaseSection title="Статусы" description="status влияет на иконку и тон primary-кнопки.">
+      <ShowcaseSection title="Statuses" description="status affects icon and tone primary-buttons.">
         <ShowcaseDemoFromFile Demo={AlertDialogStatusDemo} source={alertDialogStatusSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={AlertDialogSizesDemo} source={alertDialogSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — стеклянная панель подтверждения.">
+      <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass confirmation panel.">
         <ShowcaseDemoFromFile Demo={AlertDialogGlossDemo} source={alertDialogGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Кастомизация слотов panel, header, title, description, footer через classNames."
+        description="Slot customization panel, header, title, description, footer through classNames."
       >
         <ShowcaseDemoFromFile
           Demo={AlertDialogClassNamesFullDemo}
@@ -45,8 +45,8 @@ export function AlertDialogShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Удаление аккаунта, несохранённые изменения и выход — `demos/alertDialog/`."
+        title="Custom Variations"
+        description="Deleting an account, unsaved changes and exit — `demos/alertDialog/`."
       >
         <ShowcaseDemoFromFile Demo={AlertDialogDeleteAccountDemo} source={alertDialogDeleteAccountSource} />
         <ShowcaseDemoFromFile Demo={AlertDialogUnsavedChangesDemo} source={alertDialogUnsavedChangesSource} />
@@ -54,19 +54,19 @@ export function AlertDialogShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/composite/AlertDialog" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="AlertDialog.Header, AlertDialog.Footer — фиксированная структура подтверждения."
+            description="AlertDialog.Header, AlertDialog.Footer — fixed confirmation structure."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            Тон primary-кнопки — хелпер <code>primaryButtonVariantForAlertTone</code> из пакета.{" "}
-            <code>status</code> на корне влияет на иконку и кнопку подтверждения.
+            Tone primary-buttons - helper <code>primaryButtonVariantForAlertTone</code> from the package.{" "}
+            <code>status</code> fundamentally affects the icon and confirmation button.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

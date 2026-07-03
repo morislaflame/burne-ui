@@ -18,32 +18,32 @@ export function ButtonShowcase() {
   return (
     <ShowcasePage
       title="Button"
-      description="Основная кнопка действия: варианты заливки, размеры, статусы, иконки, gloss и асинхронный клик."
+      description="Main action button: fill options, sizes, statuses, icons, gloss and asynchronous click."
       importPath='import { Button } from "@/components/core/Button";'
       tags={["core", "actions"]}
     >
-      <ShowcaseSection title="Варианты" description="variant, status, disabled, иконки и встроенный ripple.">
+      <ShowcaseSection title="Options" description="variant, status, disabled, icons and built-in ripple.">
         <ShowcaseDemoFromFile Demo={ButtonVariantsDemo} source={buttonVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={ButtonSizesDemo} source={buttonSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность с motion и опциональным ripple.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion and optional ripple.">
         <ShowcaseDemoFromFile Demo={ButtonGlossDemo} source={buttonGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Асинхронный клик"
-        description="onAsyncClick возвращает Promise; ripple и состояния loading/success/error."
+        title="Asynchronous click"
+        description="onAsyncClick returns Promise; ripple and state loading/success/error."
       >
         <ShowcaseDemoFromFile Demo={ButtonAsyncClickDemo} source={buttonAsyncClickSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Свой layout и палитра — один `.demo.tsx` на вариацию, код из ?raw."
+        title="Custom Variations"
+        description="Mine layout and palette - one `.demo.tsx` for variation, code from ?raw."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ButtonCtaCardDemo} source={buttonCtaCardSource} />
         <ShowcaseDemoFromFile Demo={ButtonFabClusterDemo} source={buttonFabClusterSource} />
@@ -51,7 +51,7 @@ export function ButtonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Button" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
@@ -62,17 +62,17 @@ export function ButtonShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Ripple">
           <p>
-            Проп <code>ripple</code> монтирует встроенный <code>&lt;Ripple /&gt;</code> с тоном под{" "}
-            <code>variant</code>/<code>status</code>. Для кастомного слоя —{" "}
-            <code>buttonRippleTone(variant, status)</code> из пакета.
+            Prop <code>ripple</code> mounts built-in <code>&lt;Ripple /&gt;</code> with a tone underneath{" "}
+            <code>variant</code>/<code>status</code>. For a custom layer —{" "}
+            <code>buttonRippleTone(variant, status)</code> from the package.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Block title="Customization">
           <p>
-            Дополнительные стили — <code>className</code>. <code>variant=&quot;gloss&quot;</code> — стеклянная
-            поверхность (токены <code>--color-surface</code>, <code>--color-border</code>). В{" "}
-            <code>ButtonGroup</code> сегменты скругляются через контекст группы. Ripple и hover/press —{" "}
-            <code>configureMotion()</code> и <code>buttonRippleTone(variant, status)</code> из пакета.
+            Additional styles — <code>className</code>. <code>variant=&quot;gloss&quot;</code> — glass
+            surface (tokens <code>--color-surface</code>, <code>--color-border</code>). In{" "}
+            <code>ButtonGroup</code> segments are rounded through group context. Ripple and hover/press —{" "}
+            <code>configureMotion()</code> and <code>buttonRippleTone(variant, status)</code> from the package.
           </p>
         </ShowcaseDoc.Block>
       </ShowcaseDoc>

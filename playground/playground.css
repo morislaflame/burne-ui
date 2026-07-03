@@ -1,6 +1,6 @@
 @import "../src/styles.css";
 
-/* Tailwind v4: при root=playground/ сканируется только эта папка — явно подключаем src. */
+/* Tailwind v4: with root=playground/ only this folder is scanned — explicitly include src. */
 @source "../src/**/*.{tsx,ts}";
 @source "./**/*.{tsx,ts}";
 

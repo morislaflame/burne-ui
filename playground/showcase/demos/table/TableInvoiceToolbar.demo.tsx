@@ -27,25 +27,25 @@ export function TableInvoiceToolbarDemo() {
     <div className="flex w-full max-w-xl flex-col gap-mid">
       <div className="flex items-center justify-between gap-mid">
         <Text as="span" variant="small" className="text-muted">
-          Выбрано: <span className="font-medium text-foreground">{count}</span>
+          Selected: <span className="font-medium text-foreground">{count}</span>
         </Text>
         <Button size="small" variant="outline" type="button" disabled={count === 0}>
-          Экспорт
+          Export
         </Button>
       </div>
       <Surface variant="secondary" padding="small">
         <Table>
           <Table.ScrollContainer>
             <Table.Content
-              aria-label="Счета"
+              aria-label="Accounts"
               selectionMode="multiple"
               selectedKeys={selected}
               onSelectionChange={setSelected}
             >
               <Table.Header>
-                <Table.Column isRowHeader>Номер</Table.Column>
-                <Table.Column>Сумма</Table.Column>
-                <Table.Column>Статус</Table.Column>
+                <Table.Column isRowHeader>Number</Table.Column>
+                <Table.Column>Sum</Table.Column>
+                <Table.Column>Status</Table.Column>
               </Table.Header>
               <Table.Body items={INVOICES}>
                 {(row: (typeof INVOICES)[number]) => (

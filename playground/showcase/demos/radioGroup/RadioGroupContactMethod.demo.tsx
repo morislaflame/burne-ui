@@ -9,12 +9,12 @@ export function RadioGroupContactMethodDemo() {
   return (
     <RadioGroup value={value} onValueChange={(v) => v != null && setValue(v)}>
       <RadioGroup.Legend>
-        <RadioGroup.Label>Способ связи</RadioGroup.Label>
+        <RadioGroup.Label>Communication method</RadioGroup.Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="email" label="Email" />
-        <Radio value="phone" label="Телефон" />
-        <Radio value="chat" label="Чат" />
+        <Radio value="phone" label="Telephone" />
+        <Radio value="chat" label="Chat" />
       </RadioGroup.List>
     </RadioGroup>
   );

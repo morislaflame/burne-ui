@@ -26,5 +26,5 @@ export function comboBoxActiveOptionId(
 }
 
 export function comboBoxTriggerAriaLabel(open: boolean): string {
-  return open ? "Закрыть список" : "Открыть список";
+  return open ? "Close list" : "Open list";
 }

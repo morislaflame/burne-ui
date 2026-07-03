@@ -12,8 +12,8 @@ import { ThemeTokensProvider, useThemeTokens } from "./useThemeTokens";
 type PlaygroundPage = "components" | "theme" | "fresnel";
 
 const NAV: { id: PlaygroundPage; label: string }[] = [
-  { id: "theme", label: "Тема" },
-  { id: "components", label: "Компоненты" },
+  { id: "theme", label: "Theme" },
+  { id: "components", label: "Components" },
   { id: "fresnel", label: "Fresnel 3D" },
 ];
 
@@ -36,10 +36,10 @@ function AppHeader({
             size="small"
             checked={state.theme === "light"}
             onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
-            label={<span className="hidden sm:inline">Светлая тема</span>}
+            label={<span className="hidden sm:inline">Light theme</span>}
             className="shrink-0"
           />
-          <nav className="flex gap-xsmall" aria-label="Разделы playground">
+          <nav className="flex gap-xsmall" aria-label="Playground sections">
             {NAV.map((item) => (
               <Button
                 key={item.id}
@@ -75,11 +75,11 @@ function AppBody() {
           <div className="pointer-events-none absolute left-4 top-4 z-10 max-w-[min(90vw,28rem)] rounded-small border-token/60 bg-surface/85 px-mid py-plus text-sm shadow-mid backdrop-blur-md">
             <p className="font-w-mid text-foreground">Simple Fresnel Shader</p>
             <p className="mt-1 text-muted">
-              Как в{" "}
+              As in{" "}
               <code className="rounded bg-background/80 px-1 py-0.5 text-xs">
                 examples/fresnel.html
               </code>{" "}
-              репозитория ogl. Тяни мышью по канвасу.
+              repository ogl. Drag your mouse across the canvas.
             </p>
           </div>
           <FresnelTorusDemo />

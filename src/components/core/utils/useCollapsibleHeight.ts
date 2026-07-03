@@ -9,7 +9,7 @@ import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig, motionExpand } from "./motionConfig";
 import { prefersReducedInteractiveHoverLift } from "./hoverInteractiveLift";
 
-/** Высота контент-обёртки (padding + border детей; без margin collapse). */
+/** Content wrapper height (padding + child borders; no margin collapse). */
 export function measureCollapsibleContentHeight(inner: HTMLElement): number {
   return inner.scrollHeight;
 }
@@ -24,7 +24,7 @@ export function releaseExpandedShellHeight(shell: HTMLElement, inner: HTMLElemen
     return;
   }
 
-  // Совпадает с GSAP — сразу auto без лишнего snap.
+  // Matches GSAP — straight to auto without extra snap.
   if (Math.abs(measured - current) <= 0.5) {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -62,8 +62,8 @@ export function applyCollapsibleInstantState(shell: HTMLElement, open: boolean) 
 const COLLAPSIBLE_INIT_ATTR = "data-collapsible-init";
 
 /**
- * Ref-callback: синхронно до paint выставляет высоту по начальному `open`.
- * Не через React `style` — иначе re-render (hasPanel и т.п.) сбросит inline-стили.
+ * Ref-callback: synchronously before paint sets height from initial `open`.
+ * Not via React `style` — otherwise re-render (hasPanel, etc.) resets inline styles.
  */
 export function useCollapsibleShellRef(
   shellRef: RefObject<HTMLElement | null>,
@@ -86,12 +86,12 @@ export function useCollapsibleShellRef(
 export type UseCollapsibleHeightOptions = {
   /** @default () => getMotionConfig().enableExpandable */
   enabled?: () => boolean;
-  /** Пропустить GSAP (Disclosure drag-handle): мгновенно выставить высоту. */
+  /** Skip GSAP (Disclosure drag-handle): set height instantly. */
   skipAnimRef?: RefObject<boolean>;
 };
 
 /**
- * GSAP-анимация высоты collapsible-панели (Expandable, Accordion, Disclosure).
+ * GSAP height animation for collapsible panel (Expandable, Accordion, Disclosure).
  */
 export function useCollapsibleHeight(
   open: boolean,

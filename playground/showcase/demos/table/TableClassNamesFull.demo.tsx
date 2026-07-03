@@ -20,10 +20,10 @@ export function TableClassNamesFullDemo() {
       className="max-w-2xl"
     >
       <Table.ScrollContainer>
-        <Table.Content aria-label="Команда">
+        <Table.Content aria-label="Team">
           <Table.Header>
-            <Table.Column isRowHeader>Имя</Table.Column>
-            <Table.Column>Роль</Table.Column>
+            <Table.Column isRowHeader>Name</Table.Column>
+            <Table.Column>Role</Table.Column>
           </Table.Header>
           <Table.Body>
             {rows.map((row) => (
@@ -36,7 +36,7 @@ export function TableClassNamesFullDemo() {
         </Table.Content>
       </Table.ScrollContainer>
       <Table.Footer>
-        <span className="text-small text-muted">Настройка слотов через classNames на root.</span>
+        <span className="text-small text-muted">Setting up slots via classNames on root.</span>
       </Table.Footer>
     </Table>
   );

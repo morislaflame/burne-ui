@@ -5,11 +5,11 @@ export function InputInlinePairDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-small">
       <Text as="p" variant="small" className="font-medium">
-        Контактное лицо
+        Contact person
       </Text>
       <div className="grid grid-cols-1 gap-mid sm:grid-cols-2">
-        <Input label="Имя" name="firstName" placeholder="Иван" autoComplete="given-name" />
-        <Input label="Фамилия" name="lastName" placeholder="Иванов" autoComplete="family-name" />
+        <Input label="Name" name="firstName" placeholder="Ivan" autoComplete="given-name" />
+        <Input label="Surname" name="lastName" placeholder="Ivanov" autoComplete="family-name" />
       </div>
     </div>
   );

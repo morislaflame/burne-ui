@@ -7,10 +7,10 @@ export function BreadcrumbsShortPathDemo() {
     <Breadcrumbs>
       <Breadcrumbs.List>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Главная
+          Home
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Компоненты
+          Components
         </Breadcrumbs.Item>
         <Breadcrumbs.Item current>Playground</Breadcrumbs.Item>
       </Breadcrumbs.List>

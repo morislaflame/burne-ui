@@ -6,7 +6,7 @@ export function InputGlossDemo() {
       label="Email"
       variant="gloss"
       placeholder="you@example.com"
-      hint="Стеклянная оболочка поля."
+      hint="Glass shell field."
       className="w-64"
     />
   );

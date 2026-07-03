@@ -12,7 +12,7 @@ export function ToastModificationsDemo() {
           onClick={() =>
             toast.show({
               title: "default",
-              description: "Нейтральное уведомление без иконки статуса.",
+              description: "Neutral notification without status icon.",
             })
           }
         >
@@ -20,7 +20,7 @@ export function ToastModificationsDemo() {
         </Button>
         <Button
           variant="outline"
-          onClick={() => toast.show({ title: "Сохранено", status: "success" })}
+          onClick={() => toast.show({ title: "Saved", status: "success" })}
         >
           success
         </Button>
@@ -28,8 +28,8 @@ export function ToastModificationsDemo() {
           variant="outline"
           onClick={() =>
             toast.show({
-              title: "Ошибка сети",
-              description: "Проверьте подключение и повторите попытку.",
+              title: "Network error",
+              description: "Check your connection and try again.",
               status: "danger",
             })
           }
@@ -40,8 +40,8 @@ export function ToastModificationsDemo() {
           variant="outline"
           onClick={() =>
             toast.show({
-              title: "Обновление",
-              description: "Доступна новая версия библиотеки.",
+              title: "Update",
+              description: "New version of library available.",
               status: "info",
             })
           }
@@ -52,8 +52,8 @@ export function ToastModificationsDemo() {
           variant="outline"
           onClick={() =>
             toast.show({
-              title: "Лимит скоро",
-              description: "Осталось 10% квоты.",
+              title: "Limit coming soon",
+              description: "10% of quota left.",
               status: "warning",
             })
           }
@@ -68,7 +68,7 @@ export function ToastModificationsDemo() {
           onClick={() =>
             toast.show({
               title: "Gloss toast",
-              description: "variant gloss — стеклянная поверхность.",
+              description: "variant gloss — glass surface.",
               status: "info",
               variant: "gloss",
             })
@@ -80,12 +80,12 @@ export function ToastModificationsDemo() {
           variant="outline"
           onClick={() =>
             toast.show({
-              title: "Доступно обновление",
-              description: "Версия 2.4.0 готова к установке.",
+              title: "Update available",
+              description: "Version 2.4.0 is ready for installation.",
               status: "info",
               action: (
                 <Button size="small" variant="primary" status="info">
-                  Обновить
+                  Update
                 </Button>
               ),
             })
@@ -97,8 +97,8 @@ export function ToastModificationsDemo() {
           variant="outline"
           onClick={() =>
             toast.show({
-              title: "Сохранение…",
-              description: "Дождитесь завершения операции.",
+              title: "Saving…",
+              description: "Wait for the operation to complete.",
               isLoading: true,
             })
           }
@@ -109,8 +109,8 @@ export function ToastModificationsDemo() {
           variant="outline"
           onClick={() =>
             toast.show({
-              title: "Постоянный тост",
-              description: "timeout: 0 — без автозакрытия.",
+              title: "Constant toast",
+              description: "timeout: 0 — without auto-closing.",
               status: "info",
               timeout: 0,
             })

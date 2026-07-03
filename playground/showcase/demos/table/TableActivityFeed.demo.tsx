@@ -2,20 +2,20 @@ import { Badge } from "@/components/core/Badge";
 import { Table } from "@/components/core/Table";
 
 const RECENT = [
-  { id: 1, event: "Деплой v1.2", env: "production", time: "2 мин" },
-  { id: 2, event: "Preview build", env: "staging", time: "18 мин" },
-  { id: 3, event: "Rollback", env: "production", time: "1 ч" },
+  { id: 1, event: "Deploy v1.2", env: "production", time: "2 min" },
+  { id: 2, event: "Preview build", env: "staging", time: "18 min" },
+  { id: 3, event: "Rollback", env: "production", time: "1 h" },
 ] as const;
 
 export function TableActivityFeedDemo() {
   return (
     <Table variant="toned" className="w-full max-w-lg">
       <Table.ScrollContainer>
-        <Table.Content aria-label="Активность">
+        <Table.Content aria-label="Activity">
           <Table.Header>
-            <Table.Column isRowHeader>Событие</Table.Column>
-            <Table.Column>Окружение</Table.Column>
-            <Table.Column>Время</Table.Column>
+            <Table.Column isRowHeader>Event</Table.Column>
+            <Table.Column>Environment</Table.Column>
+            <Table.Column>Time</Table.Column>
           </Table.Header>
           <Table.Body items={[...RECENT]}>
             {(row) => (

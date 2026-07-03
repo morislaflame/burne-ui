@@ -16,7 +16,7 @@ export function SelectionIndicatorGalleryDemo() {
       <Checkbox
         checked={selected}
         onChange={(e) => setSelected(e.target.checked)}
-        label="Выбрано (для всех индикаторов ниже)"
+        label="Selected (for all indicators below)"
       />
       <div className="flex flex-wrap items-end gap-mid">
         {SELECTION_INDICATOR_SIZES.map((size) => (

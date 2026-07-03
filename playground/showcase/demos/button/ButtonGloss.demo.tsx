@@ -22,7 +22,7 @@ export function ButtonGlossDemo() {
         <Button variant="gloss" ripple leftIcon={<IoAdd aria-hidden />}>
           Icon
         </Button>
-        <Button variant="gloss" ripple iconOnly aria-label="Добавить">
+        <Button variant="gloss" ripple iconOnly aria-label="Add">
           <IoAdd aria-hidden />
         </Button>
       </div>

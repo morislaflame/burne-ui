@@ -14,10 +14,10 @@ export function ListBoxGlossDemo() {
       onValueChange={(v) => setGlossListBox(v as string)}
     >
       <ListBox.Section>
-        <ListBox.Header>Языки</ListBox.Header>
+        <ListBox.Header>Languages</ListBox.Header>
         <ListBox.Item value="ru">
           <ListBox.ItemIndicator />
-          <ListBox.Label>Русский</ListBox.Label>
+          <ListBox.Label>Russian</ListBox.Label>
         </ListBox.Item>
         <ListBox.Item value="en">
           <ListBox.ItemIndicator />

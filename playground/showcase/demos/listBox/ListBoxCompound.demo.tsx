@@ -11,11 +11,11 @@ export function ListBoxCompoundDemo() {
     <Surface variant="default" padding="plus" className="max-w-sm">
       <ListBox value={listBoxValue} onValueChange={(v) => setListBoxValue(v as string)}>
         <ListBox.Section>
-          <ListBox.Header>Языки</ListBox.Header>
+          <ListBox.Header>Languages</ListBox.Header>
           <ListBox.Item value="ru">
             <ListBox.ItemIndicator />
-            <ListBox.Label>Русский</ListBox.Label>
-            <ListBox.Hint>Локаль по умолчанию</ListBox.Hint>
+            <ListBox.Label>Russian</ListBox.Label>
+            <ListBox.Hint>Default locale</ListBox.Hint>
           </ListBox.Item>
           <ListBox.Item value="en">
             <ListBox.ItemIndicator />

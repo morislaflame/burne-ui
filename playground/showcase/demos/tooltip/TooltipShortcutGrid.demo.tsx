@@ -4,16 +4,16 @@ import { Text } from "@/components/core/Text";
 import { Tooltip } from "@/components/core/Tooltip";
 
 const SHORTCUTS = [
-  { keys: "⌘ K", label: "Командная палитра" },
-  { keys: "⌘ S", label: "Сохранить" },
-  { keys: "⌘ ⇧ P", label: "Быстрые действия" },
+  { keys: "⌘ K", label: "Command Palette" },
+  { keys: "⌘ S", label: "Save" },
+  { keys: "⌘ ⇧ P", label: "Quick Actions" },
 ] as const;
 
 export function TooltipShortcutGridDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Горячие клавиши
+        Hotkeys
       </Text>
       <div className="grid gap-small">
         {SHORTCUTS.map((item) => (

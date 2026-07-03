@@ -10,26 +10,26 @@ export function TableRowSelectionDemo() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<number>());
   const selectedLabel =
     selectedKeys === "all"
-      ? "Все"
+      ? "All"
       : (selectedKeys as Set<number>).size > 0
         ? Array.from(selectedKeys as Set<number>).join(", ")
-        : "Нет";
+        : "No";
 
   return (
     <div className="flex flex-col gap-mid">
       <Table>
         <Table.ScrollContainer>
           <Table.Content
-            aria-label="Команда с выбором"
+            aria-label="Team with choice"
             className="min-w-[480px]"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
           >
             <Table.Header>
-              <Table.Column isRowHeader>Имя</Table.Column>
-              <Table.Column>Роль</Table.Column>
-              <Table.Column>Статус</Table.Column>
+              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column>Role</Table.Column>
+              <Table.Column>Status</Table.Column>
             </Table.Header>
             <Table.Body items={TABLE_ROWS}>
               {(row: TableRow) => (
@@ -46,7 +46,7 @@ export function TableRowSelectionDemo() {
         </Table.ScrollContainer>
       </Table>
       <Text as="p" variant="small" className="text-muted">
-        Выбранные id: <span className="font-medium text-foreground">{selectedLabel}</span>
+        Selected id: <span className="font-medium text-foreground">{selectedLabel}</span>
       </Text>
     </div>
   );

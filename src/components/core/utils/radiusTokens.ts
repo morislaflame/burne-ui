@@ -18,7 +18,7 @@ const RADIUS_STEP_MULTIPLIER: Record<RadiusStep, number> = {
   large: 1.5,
 };
 
-/** Ступень `--radius-*` для развёрнутого SearchInput по размеру контрола. */
+/** `--radius-*` tier for expanded SearchInput by control size. */
 const SEARCH_EXPANDED_RADIUS_STEP: Record<ComponentSize, RadiusStep> = {
   small: "small",
   base: "base",
@@ -41,7 +41,7 @@ function parseCssLengthPx(raw: string, rootPx: number): number | undefined {
   return undefined;
 }
 
-/** Радиус скругления в px — читает `--radius-value-*` с `:root`. */
+/** Border radius in px — reads `--radius-value-*` from `:root`. */
 export function readRadiusPx(step: RadiusStep, rootPx = 16): number {
   if (typeof document !== "undefined") {
     const raw = getComputedStyle(document.documentElement)

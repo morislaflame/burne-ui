@@ -12,7 +12,7 @@ export function LinkClassNamesFullDemo() {
         iconEnd: "text-warning",
       }}
     >
-      Документация
+      Documentation
     </Link>
   );
 }

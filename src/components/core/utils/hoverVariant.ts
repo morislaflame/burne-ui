@@ -7,11 +7,11 @@ export const TEXT_COLOR_TRANSITION =
   "text-color-transition motion-reduce:transition-none";
 
 /**
- * Hover-фон интерактивных поверхностей.
- * - `default` / `primary` / `secondary` — нейтральные и брендовые заливки.
- * - `danger` … `warning` — тинт на прозрачном/нейтральном фоне (Dropdown, ListBox).
- * - `danger-tint-hover` … — hover поверх `bg-surface-tint-*` (поля с status).
- * - `danger-fill` … `warning-fill` — hover поверх залитой статусной поверхности (Button danger и т.п.).
+ * Hover background for interactive surfaces.
+ * - `default` / `primary` / `secondary` — neutral and brand fills.
+ * - `danger` … `warning` — tint on transparent/neutral background (Dropdown, ListBox).
+ * - `danger-tint-hover` … — hover over `bg-surface-tint-*` (fields with status).
+ * - `danger-fill` … `warning-fill` — hover over filled status surface (Button danger, etc.).
  */
 export type HoverVariant =
   | "default"
@@ -128,7 +128,7 @@ const HOVER_VARIANT_BG: Record<
   },
 };
 
-/** Hover/focus фон без transition — для оболочек с собственным `field-shell-transition`. */
+/** Hover/focus background without transition — for shells with their own `field-shell-transition`. */
 export function hoverVariantBg(
   tone: HoverVariant = "default",
   focus: HoverFocusMode = "focus-visible",
@@ -136,7 +136,7 @@ export function hoverVariantBg(
   return HOVER_VARIANT_BG[tone][focus];
 }
 
-/** Hover-фон для интерактивных поверхностей. */
+/** Hover background for interactive surfaces. */
 export function hoverVariant(tone: HoverVariant = "default"): string {
   return cn(SURFACE_COLOR_TRANSITION, hoverVariantBg(tone, "focus-visible"));
 }

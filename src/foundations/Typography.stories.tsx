@@ -35,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Roles: Story = {
-  name: "Роли текста",
+  name: "Text roles",
   render: () => <TypographySamples />,
   play: async ({ canvas }) => {
     await expect(canvas.getByText(/accent-header/)).toBeVisible();
@@ -44,7 +44,7 @@ export const Roles: Story = {
 };
 
 export const OnDarkCanvas: Story = {
-  name: "Тёмный фон страницы",
+  name: "Dark page background",
   decorators: [
     (Story) => (
       <div

@@ -31,8 +31,8 @@ const darkThemeDecorator = [
 const sampleOptions: SelectOption[] = [
   {
     value: "ru",
-    label: "Русский",
-    hint: "Интерфейс и уведомления на русском языке",
+    label: "Russian",
+    hint: "Interface and notifications in Russian",
     icon: <IoGlobeOutline aria-hidden />,
   },
   {
@@ -44,7 +44,7 @@ const sampleOptions: SelectOption[] = [
   {
     value: "de",
     label: "Deutsch",
-    hint: "Подсказка только в списке",
+    hint: "Hint only in list",
     icon: <IoGlobeOutline aria-hidden />,
   },
 ];
@@ -58,7 +58,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Select без поиска. **Simple** — `options` на root; **Compound** — `<Select.Label>`, `<Select.TriggerGroup>` + `<Select.Value>` / `<Select.Trigger>`, `<Select.Popover>` с `<ListBox>`.",
+          "Select without search. **Simple** — `options` on root; **Compound** — `<Select.Label>`, `<Select.TriggerGroup>` + `<Select.Value>` / `<Select.Trigger>`, `<Select.Popover>` with `<ListBox>`.",
       },
     },
   },
@@ -78,28 +78,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Select&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Select&gt;">
         <Select
-          label="Язык интерфейса"
-          hint="Без поля поиска — только выбор из списка."
-          placeholder="Выберите язык"
+          label="Interface language"
+          hint="No search field — list selection only."
+          placeholder="Select language"
           options={sampleOptions}
           defaultValue="ru"
         />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — children">
         <Select options={sampleOptions} defaultValue="en">
-          <Select.Label>Язык интерфейса</Select.Label>
+          <Select.Label>Interface language</Select.Label>
           <Select.TriggerGroup>
-            <Select.Value placeholder="Выберите язык" />
+            <Select.Value placeholder="Select language" />
             <Select.Trigger />
           </Select.TriggerGroup>
           <Select.Popover />
-          <Select.Hint>Описание пункта видно только в списке.</Select.Hint>
+          <Select.Hint>Item description is visible only in the list.</Select.Hint>
         </Select>
       </DualApiStoryPanel>
     </DualApiStoryPanels>
@@ -110,18 +110,18 @@ export const CustomListBox: Story = {
   name: "Compound ListBox",
   render: () => (
     <Select options={sampleOptions} defaultValue="ru">
-      <Select.Label>Язык интерфейса</Select.Label>
+      <Select.Label>Interface language</Select.Label>
       <Select.TriggerGroup>
-        <Select.Value placeholder="Выберите язык" />
+        <Select.Value placeholder="Select language" />
         <Select.Trigger />
       </Select.TriggerGroup>
       <Select.Popover>
         <ListBox.Section>
-          <ListBox.Header>Доступные языки</ListBox.Header>
+          <ListBox.Header>Available languages</ListBox.Header>
           <ListBox.Item value="ru">
             <ListBox.ItemIndicator />
-            <ListBox.Label>Русский</ListBox.Label>
-            <ListBox.Hint>Кириллица</ListBox.Hint>
+            <ListBox.Label>Russian</ListBox.Label>
+            <ListBox.Hint>Cyrillic</ListBox.Hint>
           </ListBox.Item>
           <ListBox.Item value="en">
             <ListBox.ItemIndicator />
@@ -150,18 +150,18 @@ export const Controlled: Story = {
     ];
     return (
       <Select
-        label="Фреймворк"
+        label="Framework"
         options={options}
         value={value}
         onValueChange={setValue}
-        hint={`Выбрано: ${value}`}
+        hint={`Selected: ${value}`}
       />
     );
   },
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex w-full flex-col gap-mid">
       {(["small", "base", "mid", "large"] as const).map((size) => (
@@ -182,9 +182,9 @@ function SelectGlossDemo() {
     <div className="flex w-full flex-col gap-plus">
       <Select
         variant="gloss"
-        label="Язык интерфейса"
-        hint='variant="gloss" — стеклянная оболочка поля.'
-        placeholder="Выберите язык"
+        label="Interface language"
+        hint='variant="gloss" — glass field shell.'
+        placeholder="Select language"
         options={sampleOptions}
         defaultValue="ru"
       />
@@ -193,11 +193,11 @@ function SelectGlossDemo() {
       <Select options={sampleOptions} defaultValue="ru" variant="gloss">
         <Select.Label>Compound gloss</Select.Label>
         <Select.TriggerGroup>
-          <Select.Value placeholder="Выберите язык" />
+          <Select.Value placeholder="Select language" />
           <Select.Trigger />
         </Select.TriggerGroup>
         <Select.Popover />
-        <Select.Hint>Popover тоже в gloss-варианте.</Select.Hint>
+        <Select.Hint>Popover is also in gloss variant.</Select.Hint>
       </Select>
       <Select variant="gloss" disabled label="Disabled" options={sampleOptions} defaultValue="en" />
     </div>
@@ -212,17 +212,17 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <SelectGlossDemo />,
 };
 
 export const Keyboard: Story = {
-  name: "Клавиатура",
+  name: "Keyboard",
   render: () => (
     <Select
-      label="Фреймворк"
+      label="Framework"
       options={[
         { value: "react", label: "React" },
         { value: "vue", label: "Vue" },
@@ -241,7 +241,7 @@ export const CustomClassNames: Story = {
   name: "classNames",
   render: () => (
     <Select
-      label="Кастомные слоты"
+      label="Custom slots"
       options={sampleOptions}
       defaultValue="ru"
       classNames={{
@@ -257,9 +257,9 @@ export const StatusDanger: Story = {
   name: "status danger",
   render: () => (
     <Select
-      label="Обязательное поле"
+      label="Required field"
       status="danger"
-      error="Выберите значение"
+      error="Select a value"
       options={sampleOptions}
       isRequired
     />
@@ -269,8 +269,8 @@ export const StatusDanger: Story = {
 export const Playground: Story = {
   name: "Playground",
   args: {
-    label: "Язык",
-    placeholder: "Выберите язык",
+    label: "Language",
+    placeholder: "Select language",
     options: sampleOptions,
     defaultValue: "ru",
     size: "base",

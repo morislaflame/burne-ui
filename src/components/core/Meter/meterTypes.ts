@@ -9,17 +9,17 @@ export type MeterSize = "small" | "base" | "mid" | "large";
 export type MeterOrientation = "horizontal" | "vertical";
 
 export type MeterClassNames = {
-  /** Корень поля (`FieldRoot`). */
+  /** Field root (`FieldRoot`). */
   root?: string;
-  /** Label в simple API и `Meter.Label`. */
+  /** Label in simple API and `Meter.Label`. */
   label?: string;
   /** `Meter.Header`. */
   header?: string;
   /** `Meter.Value`. */
   value?: string;
-  /** Трек `role="meter"`. */
+  /** Track `role="meter"`. */
   track?: string;
-  /** Заливка трека. */
+  /** Track fill. */
   fill?: string;
   /** `Meter.Hint`. */
   hint?: string;

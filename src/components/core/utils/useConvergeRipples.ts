@@ -7,13 +7,13 @@ import {
 } from "./convergeRippleGeometry";
 
 /**
- * Состояние и пуш новых рипплов от pointer; геометрию читаем **синхронно** в обработчике —
- * в deferred-апдейтере `setState` у React `e.currentTarget` уже может быть `null`.
+ * State and push new ripples from pointer; read geometry **synchronously** in handler —
+ * in deferred `setState` updater React `e.currentTarget` may already be `null`.
  */
 export function useConvergeRipples(): {
   ripples: ConvergeRipple[];
   pushFromPointer: (e: PointerEvent<HTMLElement>) => void;
-  /** Геометрия относительно `target` (обычно корень интерактива: кнопка, карточка). */
+  /** Geometry relative to `target` (usually interactive root: button, card). */
   pushAtClientCoords: (
     target: HTMLElement,
     clientX: number,

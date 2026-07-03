@@ -4,8 +4,8 @@ export function SwitchClassNamesSimpleLabelDemo() {
   return (
     <Switch
       defaultChecked
-      label="Push-уведомления"
-      hint="classNames.label применяется к ячейке подписи."
+      label="Push-notifications"
+      hint="classNames.label applied to the signature cell."
       classNames={{
         label: "text-success",
         labelText: "font-semibold underline decoration-success/30 underline-offset-4",

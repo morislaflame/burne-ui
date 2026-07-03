@@ -13,10 +13,10 @@ export function DisclosureClassNamesFullDemo() {
         contentPanel: "border border-info/20 bg-info/5",
       }}
     >
-      <Disclosure.Trigger>Доставка и оплата</Disclosure.Trigger>
+      <Disclosure.Trigger>Delivery and payment</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">
-          Кастомизация trigger, title, chevron и content через classNames.
+          Customization trigger, title, chevron and content through classNames.
         </Text>
       </Disclosure.Content>
     </Disclosure>

@@ -10,23 +10,23 @@ export function TimeFieldSegmentedRowDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Интервал доставки
+        Delivery interval
       </Text>
       <div className="flex flex-wrap items-end gap-mid">
         <TimeField compact>
-          <TimeField.Label>С</TimeField.Label>
+          <TimeField.Label>From</TimeField.Label>
           <TimeField.Control variant="segmented" value={start} onValueChange={setStart} />
         </TimeField>
         <Text as="span" variant="tools" className="pb-small text-muted">
           —
         </Text>
         <TimeField compact>
-          <TimeField.Label>До</TimeField.Label>
+          <TimeField.Label>To</TimeField.Label>
           <TimeField.Control variant="segmented" value={end} onValueChange={setEnd} />
         </TimeField>
       </div>
       <Text as="p" variant="tools" className="text-muted">
-        Два compact compound TimeField с segmented variant.
+        Two compact compound TimeField with segmented variant.
       </Text>
     </div>
   );

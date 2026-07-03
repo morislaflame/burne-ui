@@ -16,49 +16,49 @@ export function KbdShowcase() {
   return (
     <ShowcasePage
       title="Kbd"
-      description="Отображение клавиш и сочетаний — варианты как у Badge, без status."
+      description="Displaying keys and shortcuts - options as in Badge, without status."
       importPath='import { Kbd } from "@/components/core/Kbd";'
       tags={["core", "typography"]}
     >
-      <ShowcaseSection title="Варианты" description="default, primary, secondary, outline, gloss.">
+      <ShowcaseSection title="Options" description="default, primary, secondary, outline, gloss.">
         <ShowcaseDemoFromFile Demo={KbdVariantsDemo} source={kbdVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={KbdSizesDemo} source={kbdSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description='variant="gloss" — стеклянная клавиша с hover-lift.'>
+      <ShowcaseSection title="Gloss" description='variant="gloss" — glass key with hover-lift.'>
         <ShowcaseDemoFromFile Demo={KbdGlossDemo} source={kbdGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Kbd.Group" description="Несколько клавиш с разделителем «+».">
+      <ShowcaseSection title="Kbd.Group" description="Multiple keys with separator «+».">
         <ShowcaseDemoFromFile Demo={KbdGroupDemo} source={kbdGroupSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Шорткаты" description="Kbd в кнопках и списках действий.">
+      <ShowcaseSection title="Shortcuts" description="Kbd in buttons and action lists.">
         <ShowcaseDemoFromFile Demo={KbdShortcutsDemo} source={kbdShortcutsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="classNames" description="Кастомизация слота root через classNames.">
+      <ShowcaseSection title="classNames" description="Slot customization root through classNames.">
         <ShowcaseDemoFromFile Demo={KbdClassNamesFullDemo} source={kbdClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Kbd" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, size, hoverLift на корне. Kbd.Group — compound для сочетаний клавиш."
+            description="variant, size, hoverLift on the root. Kbd.Group — compound for keyboard shortcuts."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Block title="Customization">
           <p>
-            Слоты <code>classNames.root</code>, <code>classNames.group</code>,{" "}
-            <code>classNames.separator</code>. Разделитель группы — prop <code>separator</code> (
-            <code>null</code> скрывает).
+            Slots <code>classNames.root</code>, <code>classNames.group</code>,{" "}
+            <code>classNames.separator</code>. Group separator — prop <code>separator</code> (
+            <code>null</code> hides).
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss='variant="gloss"' />

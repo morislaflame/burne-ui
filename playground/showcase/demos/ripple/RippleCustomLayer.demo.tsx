@@ -6,7 +6,7 @@ export function RippleCustomLayerDemo() {
     <div className="relative inline-flex w-fit overflow-hidden rounded-mid border-token bg-secondary shadow-token-base">
       <Ripple color="neutral" />
       <Button variant="ghost" className="relative z-[1] border-0 bg-transparent">
-        Кастомный Ripple
+        Custom Ripple
       </Button>
     </div>
   );

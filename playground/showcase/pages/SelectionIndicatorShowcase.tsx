@@ -16,24 +16,24 @@ export function SelectionIndicatorShowcase() {
   return (
     <ShowcasePage
       title="SelectionIndicator"
-      description="Публичный примитив индикатора выбора для Radio, Checkbox и Slider thumb."
+      description="Public selection indicator primitive for Radio, Checkbox and Slider thumb."
       importPath='import { SelectionIndicator } from "@/components/core/SelectionIndicator";'
       tags={["core", "forms"]}
     >
       <ShowcaseSection
-        title="Размеры и варианты"
-        description="Публичный примитив индикатора выбора (Radio, Checkbox, Slider thumb)."
+        title="Sizes and options"
+        description="Public selection indicator primitive (Radio, Checkbox, Slider thumb)."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGalleryDemo} source={selectionIndicatorGallerySource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянный индикатор.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass indicator.">
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorGlossDemo} source={selectionIndicatorGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты shell, fill и mark на SelectionIndicator."
+        description="Slots shell, fill and mark on SelectionIndicator."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -43,8 +43,8 @@ export function SelectionIndicatorShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Сравнение форм, сетка вариантов и SelectionThumb — `demos/selectionIndicator/`."
+        title="Custom Variations"
+        description="Comparison of forms, grid of options and SelectionThumb — `demos/selectionIndicator/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorShapeCompareDemo} source={selectionIndicatorShapeCompareSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SelectionIndicatorVariantMixDemo} source={selectionIndicatorVariantMixSource} />
@@ -52,18 +52,18 @@ export function SelectionIndicatorShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/SelectionIndicator" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="size, variant, selected, check на корне. Используется внутри Checkbox, Radio и SelectionThumb."
+            description="size, variant, selected, check on the root. Used inside Checkbox, Radio and SelectionThumb."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Связанные компоненты">
+        <ShowcaseDoc.Block title="Related Components">
           <p>
-            <code>SelectionThumb</code> и <code>SelectionThumbIcon</code> — для ползунков Slider. Размеры:{" "}
+            <code>SelectionThumb</code> and <code>SelectionThumbIcon</code> — for sliders Slider. Dimensions:{" "}
             <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.
           </p>
         </ShowcaseDoc.Block>

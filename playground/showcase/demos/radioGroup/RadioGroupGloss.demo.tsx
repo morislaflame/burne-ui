@@ -9,12 +9,12 @@ export function RadioGroupGlossDemo() {
   return (
     <RadioGroup value={value} onValueChange={(v) => v != null && setValue(v)}>
       <RadioGroup.Legend>
-        <RadioGroup.Label>Способ связи (gloss)</RadioGroup.Label>
+        <RadioGroup.Label>Communication method (gloss)</RadioGroup.Label>
       </RadioGroup.Legend>
       <RadioGroup.List>
         <Radio value="email" label="Email" variant="gloss" />
-        <Radio value="phone" label="Телефон" variant="gloss" />
-        <Radio value="chat" label="Чат" variant="gloss" />
+        <Radio value="phone" label="Telephone" variant="gloss" />
+        <Radio value="chat" label="Chat" variant="gloss" />
       </RadioGroup.List>
     </RadioGroup>
   );

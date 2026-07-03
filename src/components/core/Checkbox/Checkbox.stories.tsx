@@ -47,13 +47,13 @@ const meta = {
     docs: {
       description: {
         component:
-          "Чекбокс. **Simple** — `label`, `hint` на root; **Compound** — `<Checkbox.Control>` / `<Checkbox.Indicator>` / `<Checkbox.Content>` с `<Checkbox.Label>` или `<Label htmlFor>`.",
+          "Checkbox. **Simple** — `label`, `hint` on root; **Compound** — `<Checkbox.Control>` / `<Checkbox.Indicator>` / `<Checkbox.Content>` with `<Checkbox.Label>` or `<Label htmlFor>`.",
       },
     },
   },
   decorators: [...framedDecorator],
   args: {
-    label: "Согласие на обработку данных",
+    label: "Consent to data processing",
     size: "base" as const,
     variant: "default" as const,
     disabled: false,
@@ -70,15 +70,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Checkbox&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Checkbox&gt;">
         <Checkbox
           defaultChecked
-          label="Email-уведомления"
-          hint="Краткое описание опции"
+          label="Email notifications"
+          hint="Short option description"
         />
       </DualApiStoryPanel>
       <DualApiStoryPanel title="Compound — Checkbox.Label">
@@ -87,8 +87,8 @@ export const Default: Story = {
             <Checkbox.Indicator />
           </Checkbox.Control>
           <Checkbox.Content>
-            <Checkbox.Label>Email-уведомления</Checkbox.Label>
-            <Checkbox.Hint>Краткое описание опции</Checkbox.Hint>
+            <Checkbox.Label>Email notifications</Checkbox.Label>
+            <Checkbox.Hint>Short option description</Checkbox.Hint>
           </Checkbox.Content>
         </Checkbox>
       </DualApiStoryPanel>
@@ -113,11 +113,11 @@ export const WithLabelHtmlFor: Story = {
 export const Playground: Story = {};
 
 export const ToggleInteraction: Story = {
-  name: "Interaction: переключение",
-  args: { label: "Согласие на обработку данных" },
+  name: "Interaction: toggle",
+  args: { label: "Consent to data processing" },
   play: async ({ canvas, userEvent }) => {
     const checkbox = canvas.getByRole("checkbox", {
-      name: "Согласие на обработку данных",
+      name: "Consent to data processing",
     });
     await expect(checkbox).not.toBeChecked();
     await userEvent.click(checkbox);
@@ -128,7 +128,7 @@ export const ToggleInteraction: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid">
       {(["small", "base", "mid", "large"] as const).map((size) => (
@@ -136,8 +136,8 @@ export const Sizes: Story = {
           key={size}
           size={size}
           defaultChecked={size === "base"}
-          label={`Размер ${size}`}
-          hint="Подзаголовок в muted"
+          label={`Size ${size}`}
+          hint="Subtitle in muted"
         />
       ))}
     </div>
@@ -145,7 +145,7 @@ export const Sizes: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты кружка",
+  name: "Dot variants",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid">
       <Checkbox variant="default" defaultChecked label="default" />
@@ -156,26 +156,26 @@ export const Variants: Story = {
 };
 
 export const States: Story = {
-  name: "Состояния",
+  name: "States",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid">
-      <Checkbox label="Обычное" hint="Без danger" />
-      <Checkbox danger label="С ошибкой" hint="Подзаголовок остаётся muted" />
-      <Checkbox disabled label="Отключено" hint="Нельзя переключить" />
-      <Checkbox disabled defaultChecked label="Отключено, включено" />
+      <Checkbox label="Regular" hint="Without danger" />
+      <Checkbox danger label="With error" hint="Subtitle stays muted" />
+      <Checkbox disabled label="Disabled" hint="Cannot toggle" />
+      <Checkbox disabled defaultChecked label="Disabled, checked" />
     </div>
   ),
 };
 
 export const CustomIcon: Story = {
-  name: "Своя иконка",
+  name: "Custom icon",
   render: () => (
-    <Checkbox defaultChecked checkIcon={<IoStar aria-hidden className="size-full" />} label="Избранное" hint="Вместо галочки — звезда" />
+    <Checkbox defaultChecked checkIcon={<IoStar aria-hidden className="size-full" />} label="Favorites" hint="Star instead of checkmark" />
   ),
 };
 
 export const CustomIndicator: Story = {
-  name: "Compound — свой Indicator",
+  name: "Compound — custom Indicator",
   render: () => (
     <Checkbox defaultChecked>
       <Checkbox.Control>
@@ -184,15 +184,15 @@ export const CustomIndicator: Story = {
         </Checkbox.Indicator>
       </Checkbox.Control>
       <Checkbox.Content>
-        <Checkbox.Label>Избранное</Checkbox.Label>
-        <Checkbox.Hint>Своя иконка с той же анимацией заливки, что у галочки</Checkbox.Hint>
+        <Checkbox.Label>Favorites</Checkbox.Label>
+        <Checkbox.Hint>Custom icon with the same fill animation as the checkmark</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   ),
 };
 
 export const IndicatorShape: Story = {
-  name: "Indicator — форма",
+  name: "Indicator — shape",
   render: () => (
     <Checkbox defaultChecked size="large">
       <Checkbox.Control>
@@ -205,7 +205,7 @@ export const IndicatorShape: Story = {
       </Checkbox.Control>
       <Checkbox.Content>
         <Checkbox.Label>rounded-mid</Checkbox.Label>
-        <Checkbox.Hint>classNames.shell + fill с rounded-[inherit].</Checkbox.Hint>
+        <Checkbox.Hint>classNames.shell + fill with rounded-[inherit].</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   ),
@@ -224,34 +224,34 @@ export const IndicatorCompound: Story = {
         </Checkbox.Indicator>
       </Checkbox.Control>
       <Checkbox.Content>
-        <Checkbox.Label>Compound слоты</Checkbox.Label>
-        <Checkbox.Hint>Checkbox.Indicator.Fill и Checkbox.Indicator.Mark.</Checkbox.Hint>
+        <Checkbox.Label>Compound slots</Checkbox.Label>
+        <Checkbox.Hint>Checkbox.Indicator.Fill and Checkbox.Indicator.Mark.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   ),
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Simple: native <code className="text-primary">&lt;label&gt;</code> + скрытый input. Compound:{" "}
+        Simple: native <code className="text-primary">&lt;label&gt;</code> + hidden input. Compound:{" "}
         <code className="text-primary">role=&quot;group&quot;</code>,{" "}
-        <code className="text-primary">aria-labelledby</code>, hint и error —{" "}
+        <code className="text-primary">aria-labelledby</code>, hint and error —{" "}
         <code className="text-primary">aria-describedby</code>.
       </p>
       <Checkbox
         id="a11y-checkbox"
         defaultChecked
-        label="Согласие"
-        hint="Подсказка связана через aria-describedby"
+        label="Consent"
+        hint="Hint linked via aria-describedby"
       />
       <Checkbox
         id="a11y-checkbox-error"
-        label="Согласие на обработку"
-        hint="Обязательно для регистрации"
-        error="Примите условия, чтобы продолжить."
+        label="Consent to processing"
+        hint="Required for registration"
+        error="Accept the terms to continue."
       />
     </div>
   ),
@@ -264,35 +264,35 @@ function ControlledDemo() {
       <Checkbox
         checked={on}
         onChange={(e) => setOn(e.target.checked)}
-        label="Управляемый чекбокс"
-        hint={`Сейчас: ${on ? "вкл" : "выкл"}`}
+        label="Controlled checkbox"
+        hint={`Currently: ${on ? "on" : "off"}`}
       />
     </div>
   );
 }
 
 export const Controlled: Story = {
-  name: "Контролируемый",
+  name: "Controlled",
   render: () => <ControlledDemo />,
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex max-w-md flex-col gap-mid">
-      <Checkbox defaultChecked label="Светлая тема" hint="primary / primary-foreground" />
+      <Checkbox defaultChecked label="Light theme" hint="primary / primary-foreground" />
       <Checkbox variant="outline" label="Outline" />
     </div>
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Checkbox (compound API)",
+        story: "classNames customization for Checkbox (compound API)",
       },
     },
   },
@@ -314,8 +314,8 @@ export const CustomClassNames: Story = {
         <Checkbox.Indicator />
       </Checkbox.Control>
       <Checkbox.Content>
-        <Checkbox.Label>Согласие на рассылку</Checkbox.Label>
-        <Checkbox.Hint>Все слоты настроены через classNames.</Checkbox.Hint>
+        <Checkbox.Label>Newsletter consent</Checkbox.Label>
+        <Checkbox.Hint>All slots configured via classNames.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   ),
@@ -326,15 +326,15 @@ export const SimpleLabelClassNames: Story = {
   parameters: {
     docs: {
       description: {
-        story: "В simple API слоты label и labelText стилизуют подпись на корне.",
+        story: "In simple API, label and labelText slots style the root label.",
       },
     },
   },
   render: () => (
     <Checkbox
       defaultChecked
-      label="Email-рассылка"
-      hint="classNames.label и labelText в simple API."
+      label="Email newsletter"
+      hint="classNames.label and labelText in simple API."
       classNames={{
         label: "text-primary",
         labelText: "font-semibold underline decoration-primary/30 underline-offset-4",

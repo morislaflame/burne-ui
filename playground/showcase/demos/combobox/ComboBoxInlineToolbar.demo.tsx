@@ -7,7 +7,7 @@ import { ListBox } from "@/components/core/ListBox";
 
 const RECENT = ["ru", "en"] as const;
 const ALL_LANGS = [
-  { value: "ru", label: "Русский", hint: "Интерфейс на русском" },
+  { value: "ru", label: "Russian", hint: "Interface in Russian" },
   { value: "en", label: "English", hint: "UI in English" },
   { value: "de", label: "Deutsch", hint: "Demnächst" },
   { value: "fr", label: "Français", hint: "Beta" },
@@ -28,7 +28,7 @@ function GroupedLanguageItems() {
   const rest = filteredValues.filter((v) => !RECENT.includes(v as (typeof RECENT)[number]));
 
   if (filteredValues.length === 0) {
-    return <ListBox.Empty>Язык не найден</ListBox.Empty>;
+    return <ListBox.Empty>Language not found</ListBox.Empty>;
   }
 
   const renderItem = (value: string) => {
@@ -51,13 +51,13 @@ function GroupedLanguageItems() {
     <>
       {recent.length > 0 ? (
         <ListBox.Section>
-          <ListBox.Header>Недавние</ListBox.Header>
+          <ListBox.Header>Recent</ListBox.Header>
           {recent.map(renderItem)}
         </ListBox.Section>
       ) : null}
       {rest.length > 0 ? (
         <ListBox.Section>
-          <ListBox.Header>Все языки</ListBox.Header>
+          <ListBox.Header>All languages</ListBox.Header>
           {rest.map(renderItem)}
         </ListBox.Section>
       ) : null}
@@ -76,9 +76,9 @@ export function ComboBoxInlineToolbarDemo() {
       onValueChange={setValue}
       className="w-full max-w-xs"
     >
-      <ComboBox.Label>Язык интерфейса</ComboBox.Label>
+      <ComboBox.Label>Interface language</ComboBox.Label>
       <ComboBox.InputGroup>
-        <ComboBox.Input placeholder="Найти язык…" />
+        <ComboBox.Input placeholder="Find language…" />
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover>

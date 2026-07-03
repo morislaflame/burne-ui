@@ -19,8 +19,8 @@ export function ExpandableClassNamesFullDemo() {
   return (
     <Expandable
       defaultOpen
-      title="Доставка"
-      description="Слоты настроены через classNames"
+      title="Delivery"
+      description="Slots are configured via classNames"
       icon={infoIcon}
       classNames={{
         root: "border border-primary/30",
@@ -31,7 +31,7 @@ export function ExpandableClassNamesFullDemo() {
       }}
     >
       <p className="text-small text-muted">
-        Адрес и способ доставки можно изменить до отправки заказа.
+        The address and delivery method can be changed before the order is shipped..
       </p>
     </Expandable>
   );

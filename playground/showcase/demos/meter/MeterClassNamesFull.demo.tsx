@@ -3,8 +3,8 @@ import { Meter } from "@/components/core/Meter";
 export function MeterClassNamesFullDemo() {
   return (
     <Meter
-      label="Хранилище"
-      hint="Read-only шкала заполненности"
+      label="Storage"
+      hint="Read-only occupancy scale"
       showValue
       value={68}
       color="var(--color-primary)"

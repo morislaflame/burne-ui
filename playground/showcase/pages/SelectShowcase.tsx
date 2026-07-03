@@ -14,11 +14,11 @@ export function SelectShowcase() {
   return (
     <ShowcasePage
       title="Select"
-      description="Выпадающий список без поиска — выбор одного значения из options."
+      description="Drop-down list without search - select one value from options."
       importPath='import { Select } from "@/components/core/Select";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Default" description="options, value и onValueChange — controlled режим.">
+      <ShowcaseSection title="Default" description="options, value and onValueChange — controlled mode.">
         <ShowcaseDemoFromFile align="center" Demo={SelectDefaultDemo} source={selectDefaultSource} />
       </ShowcaseSection>
 
@@ -26,15 +26,15 @@ export function SelectShowcase() {
         <ShowcaseDemoFromFile align="center" Demo={SelectCompoundDemo} source={selectCompoundSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={SelectSizesDemo} source={selectSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass shell.">
         <ShowcaseDemoFromFile align="center" Demo={SelectGlossDemo} source={selectGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="classNames" description="Кастомизация слотов triggerGroup, value, popover и listBox.">
+      <ShowcaseSection title="classNames" description="Slot customization triggerGroup, value, popover and listBox.">
         <ShowcaseDemoFromFile
           align="center"
           Demo={SelectClassNamesFullDemo}
@@ -43,7 +43,7 @@ export function SelectShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Select" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">

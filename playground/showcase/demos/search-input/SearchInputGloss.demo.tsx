@@ -8,8 +8,8 @@ export function SearchInputGlossDemo() {
   return (
     <SearchInput
       variant="gloss"
-      aria-label="Поиск gloss"
-      placeholder="Найти…"
+      aria-label="Search gloss"
+      placeholder="Find…"
       value={search}
       onValueChange={setSearch}
       className="w-64"

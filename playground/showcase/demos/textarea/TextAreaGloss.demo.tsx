@@ -3,11 +3,11 @@ import { TextArea } from "@/components/core/TextArea";
 export function TextAreaGlossDemo() {
   return (
     <TextArea
-      label="Комментарий"
+      label="Comment"
       variant="gloss"
-      placeholder="Текст сообщения…"
+      placeholder="Message text…"
       rows={3}
-      hint="Стеклянная оболочка поля."
+      hint="Glass shell field."
       className="w-64"
     />
   );

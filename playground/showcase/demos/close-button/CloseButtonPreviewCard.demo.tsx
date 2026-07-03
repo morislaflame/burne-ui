@@ -11,7 +11,7 @@ export function CloseButtonPreviewCardDemo() {
         style={{ backgroundImage: `url(${PIN_IMAGE2})` }}
       />
       <CloseButton
-        aria-label="Закрыть превью"
+        aria-label="Close preview"
         size="small"
         className="absolute right-small top-small shadow-token-mid"
       />

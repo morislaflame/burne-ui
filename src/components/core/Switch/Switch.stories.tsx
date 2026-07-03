@@ -48,7 +48,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Переключатель. **Simple** — `label`, `hint` и props контрола на root; **Compound** — `<Switch.Control>` + `<Switch.Content>` с `<Switch.Label>` / `<Switch.Hint>`.",
+          "Switch. **Simple** — `label`, `hint`, and control props on root; **Compound** — `<Switch.Control>` + `<Switch.Content>` with `<Switch.Label>` / `<Switch.Hint>`.",
       },
     },
   },
@@ -64,14 +64,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Switch&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Switch&gt;">
         <Switch
-          label="Уведомления"
-          hint="Push-сообщения о новых событиях"
+          label="Notifications"
+          hint="Push notifications about new events"
           defaultChecked
         />
       </DualApiStoryPanel>
@@ -79,8 +79,8 @@ export const Default: Story = {
         <Switch>
           <Switch.Control defaultChecked />
           <Switch.Content>
-            <Switch.Label>Уведомления</Switch.Label>
-            <Switch.Hint>Push-сообщения о новых событиях</Switch.Hint>
+            <Switch.Label>Notifications</Switch.Label>
+            <Switch.Hint>Push notifications about new events</Switch.Hint>
           </Switch.Content>
         </Switch>
       </DualApiStoryPanel>
@@ -89,40 +89,40 @@ export const Default: Story = {
 };
 
 export const ToggleInteraction: Story = {
-  name: "Interaction: переключение",
+  name: "Interaction: toggle",
   render: function ToggleInteractionDemo() {
     const [on, setOn] = useState(false);
     return (
       <Switch
-        label="Уведомления"
-        hint={`Сейчас: ${on ? "вкл" : "выкл"}`}
+        label="Notifications"
+        hint={`Currently: ${on ? "on" : "off"}`}
         checked={on}
         onChange={(e) => setOn(e.target.checked)}
       />
     );
   },
   play: async ({ canvas, userEvent }) => {
-    const toggle = canvas.getByRole("switch", { name: /Уведомления/ });
+    const toggle = canvas.getByRole("switch", { name: /Notifications/ });
     await expect(toggle).not.toBeChecked();
     await userEvent.click(toggle);
     await expect(toggle).toBeChecked();
-    await expect(canvas.getByText(/Сейчас: вкл/)).toBeVisible();
+    await expect(canvas.getByText(/Currently: on/)).toBeVisible();
   },
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-col gap-mid">
       {(["small", "base", "mid", "large"] as const).map((size) => (
-        <Switch key={size} size={size} label={`Размер ${size}`} defaultChecked={size === "base"} />
+        <Switch key={size} size={size} label={`Size ${size}`} defaultChecked={size === "base"} />
       ))}
     </div>
   ),
 };
 
 export const CustomThickness: Story = {
-  name: "Своя толщина",
+  name: "Custom thickness",
   render: () => (
     <div className="flex flex-col gap-mid">
       <Switch label="10px" thickness={10} defaultChecked />
@@ -133,11 +133,11 @@ export const CustomThickness: Story = {
 };
 
 export const LabelLeft: Story = {
-  name: "Лейбл слева",
+  name: "Label on the left",
   render: () => (
     <Switch
-      label="Тёмная тема"
-      hint="Переключить оформление интерфейса"
+      label="Dark theme"
+      hint="Toggle interface theme"
       labelPosition="left"
       defaultChecked
     />
@@ -145,11 +145,11 @@ export const LabelLeft: Story = {
 };
 
 export const WithIcons: Story = {
-  name: "С иконками",
+  name: "With icons",
   render: () => (
     <Switch
-      label="Тема"
-      hint="Светлая или тёмная"
+      label="Topic"
+      hint="Light or dark"
       defaultChecked
       iconOff={<IoMoon aria-hidden className="size-full" />}
       iconOn={<IoSunny aria-hidden className="size-full" />}
@@ -160,7 +160,7 @@ export const WithIcons: Story = {
 export const CompoundTrack: Story = {
   name: "Compound Track",
   render: () => (
-    <Switch label="Тема" hint="Switch.Track + Thumb + Icon">
+    <Switch label="Topic" hint="Switch.Track + Thumb + Icon">
       <Switch.Control defaultChecked>
         <Switch.Track size="base">
           <Switch.Fill />
@@ -179,10 +179,10 @@ export const CompoundTrack: Story = {
 };
 
 export const CustomColor: Story = {
-  name: "Свой цвет",
+  name: "Custom color",
   render: () => (
     <div className="flex flex-col gap-mid">
-      <Switch label="Primary (по умолчанию)" hint="Трек primary" defaultChecked />
+      <Switch label="Primary (default)" hint="Primary track" defaultChecked />
       <Switch
         label="Success"
         hint="var(--color-success)"
@@ -204,20 +204,20 @@ export const CustomColor: Story = {
       <Switch label="Info" hint="var(--color-info)" color="var(--color-info)" defaultChecked />
       <Switch label="Hex" hint="#7c3aed" color="#7c3aed" defaultChecked />
       <Switch
-        label="Градиент"
+        label="Gradient"
         hint="linear-gradient primary → info"
         color="linear-gradient(90deg, var(--color-primary) 0%, var(--color-info) 100%)"
         defaultChecked
       />
       <Switch
-        label="Градиент warm"
+        label="Gradient warm"
         hint="orange → pink"
         color="linear-gradient(135deg, #f97316 0%, #ec4899 100%)"
         defaultChecked
       />
       <Switch
-        label="С иконками + градиент"
-        hint="Accent-иконка на заливке"
+        label="With icons + gradient"
+        hint="Accent icon on fill"
         color="linear-gradient(90deg, var(--color-success) 0%, var(--color-primary) 100%)"
         defaultChecked
         iconOff={<IoMoon aria-hidden className="size-full" />}
@@ -228,30 +228,30 @@ export const CustomColor: Story = {
 };
 
 export const WithoutLabel: Story = {
-  name: "Без подписи",
+  name: "Without label",
   render: () => (
     <div className="flex flex-col gap-mid">
       <Switch defaultChecked />
-      <Switch aria-label="Тёмная тема" defaultChecked />
+      <Switch aria-label="Dark theme" defaultChecked />
     </div>
   ),
 };
 
 export const Disabled: Story = {
-  name: "Отключён",
+  name: "Disabled",
   render: () => (
-    <Switch label="Недоступно" hint="Переключатель заблокирован" disabled defaultChecked />
+    <Switch label="Unavailable" hint="Switch is disabled" disabled defaultChecked />
   ),
 };
 
 export const Controlled: Story = {
-  name: "Контролируемый",
+  name: "Controlled",
   render: function Controlled() {
     const [on, setOn] = useState(false);
     return (
       <Switch
-        label="Контролируемый"
-        hint={`Сейчас: ${on ? "вкл" : "выкл"}`}
+        label="Controlled"
+        hint={`Currently: ${on ? "on" : "off"}`}
         checked={on}
         onChange={(e) => setOn(e.target.checked)}
       />
@@ -260,51 +260,51 @@ export const Controlled: Story = {
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема",
+  name: "Light theme",
   decorators: [...lightThemeDecorator],
-  render: () => <Switch label="Светлая тема" defaultChecked />,
+  render: () => <Switch label="Light theme" defaultChecked />,
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Simple и compound — native <code className="text-primary">&lt;label&gt;</code> вокруг input и
-        текста. Hint и error связываются через{" "}
-        <code className="text-primary">aria-describedby</code> (оба id, если заданы). Без подписи
-        — fallback <code className="text-primary">aria-label=&quot;Переключатель&quot;</code> или свой
+        Simple and compound — native <code className="text-primary">&lt;label&gt;</code> around input and
+        text. Hint and error are linked via{" "}
+        <code className="text-primary">aria-describedby</code> (both ids when set). Without label
+        — fallback <code className="text-primary">aria-label=&quot;Toggle&quot;</code> or your own
         label.
       </p>
       <Switch
         id="a11y-switch-simple"
-        label="Уведомления"
-        hint="Push-сообщения о новых событиях"
+        label="Notifications"
+        hint="Push notifications about new events"
         defaultChecked
       />
       <Switch id="a11y-switch-compound">
         <Switch.Control defaultChecked />
         <Switch.Content>
-          <Switch.Label>Email-рассылка</Switch.Label>
-          <Switch.Hint>Еженедельный дайджест</Switch.Hint>
+          <Switch.Label>Email newsletter</Switch.Label>
+          <Switch.Hint>Weekly digest</Switch.Hint>
         </Switch.Content>
       </Switch>
       <Switch
-        label="Маркетинг"
-        hint="Рекламные предложения по email"
-        error="Включите для продолжения регистрации."
+        label="Marketing"
+        hint="Promotional offers by email"
+        error="Enable to continue registration."
       />
-      <Switch aria-label="Только переключатель" />
+      <Switch aria-label="Toggle only" />
     </div>
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Switch (compound API)",
+        story: "classNames customization for Switch (compound API)",
       },
     },
   },
@@ -322,8 +322,8 @@ export const CustomClassNames: Story = {
     >
       <Switch.Control />
       <Switch.Content>
-        <Switch.Label>Тёмная тема</Switch.Label>
-        <Switch.Hint>Все слоты настроены через classNames.</Switch.Hint>
+        <Switch.Label>Dark theme</Switch.Label>
+        <Switch.Hint>All slots configured via classNames.</Switch.Hint>
       </Switch.Content>
     </Switch>
   ),
@@ -334,15 +334,15 @@ export const SimpleLabelClassNames: Story = {
   parameters: {
     docs: {
       description: {
-        story: "В simple API слоты label и labelText стилизуют подпись на корне.",
+        story: "In simple API, label and labelText slots style the root label.",
       },
     },
   },
   render: () => (
     <Switch
       defaultChecked
-      label="Push-уведомления"
-      hint="classNames.label применяется к ячейке подписи."
+      label="Push notifications"
+      hint="classNames.label applies to the label cell."
       classNames={{
         label: "text-success",
         labelText: "font-semibold underline decoration-success/30 underline-offset-4",

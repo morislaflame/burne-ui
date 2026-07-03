@@ -15,19 +15,19 @@ export function FormLoginPanelDemo() {
     <Surface variant="secondary" padding="mid" className="w-full max-w-sm">
       <div className="mb-mid flex flex-col gap-xsmall">
         <Text as="h3" variant="header-2">
-          Вход
+          Entrance
         </Text>
         <Text as="p" variant="small" className="text-muted">
-          Демо-аккаунт для playground
+          Demo account for playground
         </Text>
       </div>
       <Form
         onSubmit={onSubmit}
-        aria-label="Вход в аккаунт"
+        aria-label="Login"
         className="gap-xlarge"
         rules={{
-          login: { required: "Укажите email" },
-          password: { required: "Укажите пароль" },
+          login: { required: "Specify email" },
+          password: { required: "Enter your password" },
         }}
       >
         <Form.Section>
@@ -37,7 +37,7 @@ export function FormLoginPanelDemo() {
           <Form.Field name="password">
             <Input
               isRequired
-              label="Пароль"
+              label="Password"
               name="password"
               inputType="password"
               autoComplete="current-password"
@@ -46,7 +46,7 @@ export function FormLoginPanelDemo() {
         </Form.Section>
         <Form.Actions>
           <Button type="submit" variant="primary" className="w-full">
-            Войти
+            Login
           </Button>
         </Form.Actions>
       </Form>

@@ -7,9 +7,9 @@ import { useComboBoxContext } from "@/components/core/ComboBox/comboBoxContext";
 import { ListBox } from "@/components/core/ListBox";
 
 const ACTIONS = [
-  { value: "duplicate", label: "Дублировать", hint: "Создать копию компонента", shortcut: "⌘K" },
-  { value: "export", label: "Экспорт в Figma", hint: "Code Connect", shortcut: "⌘E" },
-  { value: "archive", label: "В архив", hint: "Скрыть из каталога", shortcut: "⌘A" },
+  { value: "duplicate", label: "Duplicate", hint: "Create a copy of a component", shortcut: "⌘K" },
+  { value: "export", label: "Export to Figma", hint: "Code Connect", shortcut: "⌘E" },
+  { value: "archive", label: "To the archive", hint: "Hide from catalog", shortcut: "⌘A" },
 ] as const;
 
 const COMBO_OPTIONS = ACTIONS.map((a) => ({
@@ -24,12 +24,12 @@ function ActionListItems() {
   const byValue = useMemo(() => new Map(ACTIONS.map((a) => [a.value, a])), []);
 
   if (filteredValues.length === 0) {
-    return <ListBox.Empty>Действие не найдено</ListBox.Empty>;
+    return <ListBox.Empty>Action not found</ListBox.Empty>;
   }
 
   return (
     <ListBox.Section>
-      <ListBox.Header>Действия с компонентом</ListBox.Header>
+      <ListBox.Header>Actions with a component</ListBox.Header>
       {filteredValues.map((value) => {
         const action = byValue.get(value as (typeof ACTIONS)[number]["value"]);
         if (!action) return null;
@@ -61,16 +61,16 @@ export function ComboBoxStackPickerDemo() {
       onValueChange={setValue}
       className="w-full max-w-sm"
     >
-      <ComboBox.Label>Быстрое действие</ComboBox.Label>
+      <ComboBox.Label>Fast action</ComboBox.Label>
       <ComboBox.InputGroup>
-        <ComboBox.Input placeholder="Выберите или найдите…" />
+        <ComboBox.Input placeholder="Select or search…" />
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover>
         <ActionListItems />
       </ComboBox.Popover>
       <ComboBox.Hint>
-        Label, Hint и Icon — прямые дочерние слоты Item; badge и chevron внутри Icon.
+        Label, Hint and Icon — direct child slots Item; badge and chevron inside Icon.
       </ComboBox.Hint>
     </ComboBox>
   );

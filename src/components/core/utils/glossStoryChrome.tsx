@@ -6,7 +6,7 @@ export const glossDottedGridStyle = {
   backgroundPosition: "2px 2px",
 } as const;
 
-/** Storybook-декоратор: dotted-grid фон для демо gloss-поверхностей. */
+/** Storybook decorator: dotted-grid background for gloss surface demos. */
 export function glossDottedDecorator(light = false) {
   return (Story: ComponentType) => (
     <div

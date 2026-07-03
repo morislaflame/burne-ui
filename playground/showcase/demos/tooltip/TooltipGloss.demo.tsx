@@ -9,9 +9,9 @@ export function TooltipGlossDemo() {
       </Tooltip.Trigger>
       <Tooltip.Content>
         <Tooltip.Icon />
-        <Tooltip.Title>Справка</Tooltip.Title>
+        <Tooltip.Title>Reference</Tooltip.Title>
         <Tooltip.Description>
-          Стеклянная подсказка с иконкой слева от текста (surface=&quot;gloss&quot;)
+          Glass tip with icon to the left of the text (surface=&quot;gloss&quot;)
         </Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>

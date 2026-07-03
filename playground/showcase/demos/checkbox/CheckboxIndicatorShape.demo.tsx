@@ -5,10 +5,10 @@ export function CheckboxIndicatorShapeDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Форма индикатора
+        Indicator shape
       </Text>
       <div className="flex flex-wrap items-start gap-xlarge">
-        <Checkbox size="large" defaultChecked label="Круглый (default)" />
+        <Checkbox size="large" defaultChecked label="Round (default)" />
         <Checkbox size="large" defaultChecked>
           <Checkbox.Control>
             <Checkbox.Indicator
@@ -21,7 +21,7 @@ export function CheckboxIndicatorShapeDemo() {
           <Checkbox.Content>
             <Checkbox.Label>rounded-mid</Checkbox.Label>
             <Checkbox.Hint>
-              classNames.shell + fill с rounded-[inherit] — заливка повторяет форму оболочки.
+              classNames.shell + fill with rounded-[inherit] — the filling follows the shape of the shell.
             </Checkbox.Hint>
           </Checkbox.Content>
         </Checkbox>

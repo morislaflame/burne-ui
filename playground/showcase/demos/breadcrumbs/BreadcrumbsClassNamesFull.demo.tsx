@@ -26,17 +26,17 @@ export function BreadcrumbsClassNamesFullDemo() {
       <Breadcrumbs.List>
         <div>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Главная
+            Home
           </Breadcrumbs.Item>
         </div>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Каталог
+          Catalog
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Электроника
+          Electronics
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Ноутбуки
+          Laptops
         </Breadcrumbs.Item>
         <Breadcrumbs.Item current>MacBook Pro</Breadcrumbs.Item>
       </Breadcrumbs.List>

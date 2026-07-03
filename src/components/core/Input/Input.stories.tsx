@@ -27,8 +27,8 @@ function ValidatedEmailCompoundDemo({ initialValue = "bad@" }: { initialValue?: 
         onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
         autoComplete="email"
       />
-      <Input.Hint>Формат: name@domain.tld</Input.Hint>
-      {invalid ? <Input.Error>Укажите корректный адрес.</Input.Error> : null}
+      <Input.Hint>Format: name@domain.tld</Input.Hint>
+      {invalid ? <Input.Error>Enter a valid address.</Input.Error> : null}
     </Input>
   );
 }
@@ -40,8 +40,8 @@ function ValidatedEmailSimpleDemo({ initialValue = "bad@" }: { initialValue?: st
   return (
     <Input
       label="Email"
-      hint="Формат: name@domain.tld"
-      error={invalid ? "Укажите корректный адрес." : undefined}
+      hint="Format: name@domain.tld"
+      error={invalid ? "Enter a valid address." : undefined}
       status={invalid ? "danger" : "default"}
       isRequired
       value={value}
@@ -87,7 +87,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Текстовое поле. **Simple** — `label`, `hint`, `error` и props контрола на root; **Compound** — `<Input.Label>` / `<Input.Control>` / `<Input.Hint>` / `<Input.Error>`. `variant=\"gloss\"` — стеклянная оболочка поля. **a11y:** `htmlFor`, `aria-describedby` (hint + error), `aria-invalid` при `status=\"danger\"`, `aria-required`.",
+          "Text field. **Simple** — `label`, `hint`, `error`, and control props on root; **Compound** — `<Input.Label>` / `<Input.Control>` / `<Input.Hint>` / `<Input.Error>`. `variant=\"gloss\"` — glass field shell. **a11y:** `htmlFor`, `aria-describedby` (hint + error), `aria-invalid` when `status=\"danger\"`, `aria-required`.",
       },
     },
   },
@@ -99,14 +99,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Input&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Input&gt;">
         <Input
           label="Email"
-          hint="Мы не передаём адрес третьим лицам."
+          hint="We do not share your address with third parties."
           placeholder="you@example.com"
           autoComplete="email"
         />
@@ -115,7 +115,7 @@ export const Default: Story = {
         <Input>
           <Input.Label>Email</Input.Label>
           <Input.Control placeholder="you@example.com" autoComplete="email" />
-          <Input.Hint>Мы не передаём адрес третьим лицам.</Input.Hint>
+          <Input.Hint>We do not share your address with third parties.</Input.Hint>
         </Input>
       </DualApiStoryPanel>
     </DualApiStoryPanels>
@@ -123,7 +123,7 @@ export const Default: Story = {
 };
 
 export const TypeInteraction: Story = {
-  name: "Interaction: ввод",
+  name: "Interaction: input",
   render: () => (
     <Input
       label="Email"
@@ -141,9 +141,9 @@ export const TypeInteraction: Story = {
 export const Outline: Story = {
   render: () => (
     <Input>
-      <Input.Label>Сайт</Input.Label>
+      <Input.Label>Website</Input.Label>
       <Input.Control variant="outline" placeholder="example.com" />
-      <Input.Hint>Вариант outline — прозрачный фон оболочки.</Input.Hint>
+      <Input.Hint>Outline variant — transparent shell background.</Input.Hint>
     </Input>
   ),
 };
@@ -151,9 +151,9 @@ export const Outline: Story = {
 export const WithAffixes: Story = {
   render: () => (
     <Input>
-      <Input.Label>Домен</Input.Label>
+      <Input.Label>Domain</Input.Label>
       <Input.Control prefix="https://" suffix=".com" placeholder="example" />
-      <Input.Hint>Префикс и суффикс с отдельным фоном и разделителем.</Input.Hint>
+      <Input.Hint>Prefix and suffix with separate background and divider.</Input.Hint>
     </Input>
   ),
 };
@@ -163,21 +163,21 @@ export const Danger: Story = {
   render: () => (
     <Input status="danger">
       <Input.Label>Email</Input.Label>
-      <Input.Control defaultValue="некорректно" />
-      <Input.Error>Исправьте значение перед отправкой формы.</Input.Error>
+      <Input.Control defaultValue="invalid" />
+      <Input.Error>Fix the value before submitting the form.</Input.Error>
     </Input>
   ),
 };
 
 export const Validation: Story = {
-  name: "Валидация (hint + error)",
+  name: "Validation (hint + error)",
   render: () => (
     <div className="flex w-full flex-col gap-plus">
       <p className="text-sm text-muted">
-        Подсказка — <code className="text-primary">Input.Hint</code> (muted); сообщение об ошибке —{" "}
+        Hint — <code className="text-primary">Input.Hint</code> (muted); error message —{" "}
         <code className="text-primary">Input.Error</code> (danger, <code className="text-primary">role=&quot;alert&quot;</code>
-        ). Оба id попадают в <code className="text-primary">aria-describedby</code> контрола. Ошибка
-        снимается при вводе корректного email.
+        ). Both ids are included in the control's <code className="text-primary">aria-describedby</code>. The error
+        clears when a valid email is entered.
       </p>
       <ValidatedEmailCompoundDemo />
       <ValidatedEmailSimpleDemo />
@@ -190,7 +190,7 @@ export const Success: Story = {
     <Input status="success">
       <Input.Label>Email</Input.Label>
       <Input.Control defaultValue="ok@example.com" />
-      <Input.Hint>Адрес подтверждён.</Input.Hint>
+      <Input.Hint>Address confirmed.</Input.Hint>
     </Input>
   ),
 };
@@ -200,7 +200,7 @@ export const Warning: Story = {
     <Input status="warning">
       <Input.Label>Slug</Input.Label>
       <Input.Control defaultValue="draft-v2" />
-      <Input.Hint>Этот идентификатор уже занят в другом проекте.</Input.Hint>
+      <Input.Hint>This identifier is already taken in another project.</Input.Hint>
     </Input>
   ),
 };
@@ -208,8 +208,8 @@ export const Warning: Story = {
 export const Required: Story = {
   render: () => (
     <Input isRequired>
-      <Input.Label>Имя</Input.Label>
-      <Input.Control placeholder="Иван" autoComplete="name" />
+      <Input.Label>Name</Input.Label>
+      <Input.Control placeholder="Ivan" autoComplete="name" />
     </Input>
   ),
 };
@@ -217,9 +217,9 @@ export const Required: Story = {
 export const Password: Story = {
   render: () => (
     <Input>
-      <Input.Label>Пароль</Input.Label>
+      <Input.Label>Password</Input.Label>
       <Input.Control inputType="password" placeholder="••••••••" autoComplete="current-password" />
-      <Input.Hint>Не менее 8 символов.</Input.Hint>
+      <Input.Hint>At least 8 characters.</Input.Hint>
     </Input>
   ),
 };
@@ -227,7 +227,7 @@ export const Password: Story = {
 export const File: Story = {
   render: () => (
     <Input>
-      <Input.Label>Аватар</Input.Label>
+      <Input.Label>Avatar</Input.Label>
       <Input.Control inputType="file" accept="image/*" />
     </Input>
   ),
@@ -267,16 +267,16 @@ export const LightTheme: Story = {
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex flex-col gap-plus text-left">
       <p className="text-sm text-muted">
-        <code className="text-primary">&lt;Label htmlFor&gt;</code> через{" "}
-        <code className="text-primary">FieldLabelContext</code>. Hint и error — через{" "}
-        <code className="text-primary">aria-describedby</code> (оба id, если заданы). При{" "}
+        <code className="text-primary">&lt;Label htmlFor&gt;</code> via{" "}
+        <code className="text-primary">FieldLabelContext</code>. Hint and error — via{" "}
+        <code className="text-primary">aria-describedby</code> (both ids when set). When{" "}
         <code className="text-primary">status=&quot;danger&quot;</code> —{" "}
-        <code className="text-primary">aria-invalid</code> на контроле; ошибка —{" "}
-        <code className="text-primary">Input.Error</code>, не tinted hint.
+        <code className="text-primary">aria-invalid</code> on the control; error —{" "}
+        <code className="text-primary">Input.Error</code>, not a tinted hint.
       </p>
       <ValidatedEmailCompoundDemo />
     </div>
@@ -311,14 +311,14 @@ function GlossDemo() {
       <Input>
         <Input.Label>Email</Input.Label>
         <Input.Control variant="gloss" placeholder="you@example.com" autoComplete="email" />
-        <Input.Hint>variant=&quot;gloss&quot; — стеклянная оболочка поля.</Input.Hint>
+        <Input.Hint>variant=&quot;gloss&quot; — glass field shell.</Input.Hint>
       </Input>
       <Input>
-        <Input.Label>Домен</Input.Label>
+        <Input.Label>Domain</Input.Label>
         <Input.Control variant="gloss" prefix="https://" suffix=".com" placeholder="example" />
       </Input>
       <Input>
-        <Input.Label>Пароль</Input.Label>
+        <Input.Label>Password</Input.Label>
         <Input.Control
           variant="gloss"
           inputType="password"
@@ -347,7 +347,7 @@ function GlossDemo() {
       <Input status="danger">
         <Input.Label>Email</Input.Label>
         <Input.Control variant="gloss" defaultValue="bad@" />
-        <Input.Error>Укажите корректный адрес.</Input.Error>
+        <Input.Error>Enter a valid address.</Input.Error>
       </Input>
       <Input disabled>
         <Input.Label>Disabled</Input.Label>
@@ -365,18 +365,18 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Input",
+        story: "classNames customization for Input",
       },
     },
   },
@@ -393,8 +393,8 @@ export const CustomClassNames: Story = {
       label="Email"
       placeholder="you@example.com"
       status="danger"
-      hint="Мы не передаём адрес третьим лицам."
-      error="Введите корректный email."
+      hint="We do not share your address with third parties."
+      error="Enter a valid email."
     />
   ),
 };

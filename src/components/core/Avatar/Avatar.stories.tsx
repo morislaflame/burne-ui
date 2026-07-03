@@ -33,7 +33,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Аватар пользователя. **Simple** — `label`, `src`, `nickname` на root; **Compound** — `<Avatar.Image>` / `<Avatar.Fallback>`. `variant=\"gloss\"` — стеклянная обводка.",
+          "User avatar. **Simple** — `label`, `src`, `nickname` on root; **Compound** — `<Avatar.Image>` / `<Avatar.Fallback>`. `variant=\"gloss\"` — glass border.",
       },
     },
   },
@@ -45,11 +45,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Avatar&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Avatar&gt;">
         <Avatar
           size="base"
           label="Grace Hopper"
@@ -70,7 +70,7 @@ export const Default: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex flex-row flex-wrap items-center gap-xlarge">
       <Avatar size="small" label="Ada Lovelace" src={PIN_IMAGE1} alt="" loading="lazy" />
@@ -82,22 +82,22 @@ export const Sizes: Story = {
 };
 
 export const FallbackOnly: Story = {
-  name: "Только буква из label",
+  name: "Letter from label only",
   render: () => (
     <div className="flex flex-row flex-wrap items-center gap-large">
       <Avatar size="small" label="Burne Team" />
-      <Avatar size="base" label="Анна Каренина" />
+      <Avatar size="base" label="Anna Karenina" />
       <Avatar size="large" label="北京" />
     </div>
   ),
 };
 
 export const BrokenImageUsesFallback: Story = {
-  name: "Сбой изображения → фоллбек",
+  name: "Broken image → fallback",
   render: () => (
     <Avatar
       size="base"
-      label="Сергей Прокофьев"
+      label="Sergei Prokofiev"
       src="https://example.invalid/avatar-missing.png"
       alt=""
     />
@@ -105,13 +105,13 @@ export const BrokenImageUsesFallback: Story = {
 };
 
 export const AvatarGroupStory: Story = {
-  name: "Группа (наслоение + подъём GSAP)",
+  name: "Group (stacking + GSAP lift)",
   render: () => (
     <AvatarGroup>
-      <Avatar size="base" label="Один" nickname="echo_north" src={PIN_IMAGE1} alt="" loading="lazy" />
+      <Avatar size="base" label="One" nickname="echo_north" src={PIN_IMAGE1} alt="" loading="lazy" />
       <Avatar
         size="base"
-        label="Два"
+        label="Two"
         nickname="orbit_fox"
         tooltipVariant="info"
         src={PIN_IMAGE2}
@@ -120,7 +120,7 @@ export const AvatarGroupStory: Story = {
       />
       <Avatar
         size="base"
-        label="Три"
+        label="Three"
         nickname="vela_wave"
         tooltipVariant="success"
         src={PIN_IMAGE3}
@@ -129,24 +129,24 @@ export const AvatarGroupStory: Story = {
       />
       <Avatar
         size="base"
-        label="Четыре"
+        label="Four"
         nickname="rust_line"
         tooltipVariant="outline"
         src={PIN_IMAGE4}
         alt=""
         loading="lazy"
       />
-      <Avatar size="base" label="Плюс пять" nickname="+5" tooltipVariant="warning" />
+      <Avatar size="base" label="Plus five" nickname="+5" tooltipVariant="warning" />
     </AvatarGroup>
   ),
 };
 
 export const WithNicknameTooltip: Story = {
-  name: "Никнейм в Tooltip",
+  name: "Nickname in Tooltip",
   render: () => (
     <Avatar
       size="large"
-      label="Амелия Кларк"
+      label="Amelia Clarke"
       nickname="starlight.muse"
       tooltipVariant="default"
       tooltipSize="base"
@@ -162,7 +162,7 @@ export const HoverInteraction: Story = {
   render: () => (
     <Avatar
       size="large"
-      label="Амелия Кларк"
+      label="Amelia Clarke"
       nickname="starlight.muse"
       tooltipVariant="default"
       tooltipSize="base"
@@ -172,7 +172,7 @@ export const HoverInteraction: Story = {
     />
   ),
   play: async ({ canvas, userEvent }) => {
-    await userEvent.hover(canvas.getByRole("group", { name: "Амелия Кларк" }));
+    await userEvent.hover(canvas.getByRole("group", { name: "Amelia Clarke" }));
     await waitFor(
       () => expect(screen.getByRole("tooltip")).toHaveTextContent("starlight.muse"),
       { timeout: 1000 },
@@ -181,7 +181,7 @@ export const HoverInteraction: Story = {
 };
 
 export const CompoundCustomFallback: Story = {
-  name: "Compound — кастомный Fallback",
+  name: "Compound — custom Fallback",
   render: () => (
     <Avatar size="base" label="Design System">
       <Avatar.Fallback>DS</Avatar.Fallback>
@@ -203,9 +203,9 @@ function GlossDemo() {
         <Avatar variant="gloss" size="large" label="北京" />
       </div>
       <AvatarGroup>
-        <Avatar variant="gloss" size="base" label="Один" src={PIN_IMAGE1} alt="" loading="lazy" />
-        <Avatar variant="gloss" size="base" label="Два" src={PIN_IMAGE2} alt="" loading="lazy" />
-        <Avatar variant="gloss" size="base" label="Три" src={PIN_IMAGE3} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="base" label="One" src={PIN_IMAGE1} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="base" label="Two" src={PIN_IMAGE2} alt="" loading="lazy" />
+        <Avatar variant="gloss" size="base" label="Three" src={PIN_IMAGE3} alt="" loading="lazy" />
       </AvatarGroup>
     </div>
   );
@@ -219,19 +219,19 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
 
 export const CustomClassNames: Story = {
-  name: "Gloss — classNames root и glossWrap",
+  name: "Gloss — classNames root and glossWrap",
   parameters: {
     docs: {
       description: {
         story:
-          "В variant gloss слот root и prop className попадают на круг аватара; glossWrap — на внешнюю стеклянную оболочку.",
+          "In variant gloss, the root slot and className prop apply to the avatar circle; glossWrap — to the outer glass shell.",
       },
     },
   },

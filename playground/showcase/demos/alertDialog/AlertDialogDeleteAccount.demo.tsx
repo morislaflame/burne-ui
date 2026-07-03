@@ -16,34 +16,34 @@ export function AlertDialogDeleteAccountDemo() {
       <AlertDialog open={open} onOpenChange={setOpen} status="danger">
         <AlertDialog.Trigger asChild>
           <Button variant="primary" status="danger">
-            Удалить аккаунт
+            Delete account
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Panel>
           <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Удалить аккаунт?</AlertDialog.Title>
+            <AlertDialog.Title>Delete account?</AlertDialog.Title>
             <AlertDialog.Description>
-              Все проекты и данные будут удалены безвозвратно.
+              All projects and data will be deleted permanently.
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Body className="flex flex-col gap-plus">
           <Input>
-            <Input.Label>Подтвердите email</Input.Label>
+            <Input.Label>Confirm email</Input.Label>
             <Input.Control name="confirm-email" placeholder="you@example.com" autoComplete="email" />
           </Input>
         </AlertDialog.Body>
         <AlertDialog.Footer>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button
             type="button"
             variant={primaryButtonVariantForAlertTone("danger")}
             onClick={() => setOpen(false)}
           >
-            Удалить
+            Delete
           </Button>
         </AlertDialog.Footer>
         </AlertDialog.Panel>

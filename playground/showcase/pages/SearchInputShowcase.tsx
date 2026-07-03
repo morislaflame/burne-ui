@@ -18,29 +18,29 @@ export function SearchInputShowcase() {
   return (
     <ShowcasePage
       title="SearchInput"
-      description="Поле поиска с иконкой и controlled value."
+      description="Search field with icon and controlled value."
       importPath='import { SearchInput } from "@/components/core/SearchInput";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Поиск" description="Controlled через value и onValueChange.">
+      <ShowcaseSection title="Search" description="Controlled through value and onValueChange.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputBasicDemo} source={searchInputBasicSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputSizesDemo} source={searchInputSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Результат" description="Текущее значение поля поиска.">
+      <ShowcaseSection title="Result" description="Current search field value.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputWithResultDemo} source={searchInputWithResultSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная оболочка с motion.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass shell with motion.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputGlossDemo} source={searchInputGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Command bar, фильтр с бейджами и gloss hero — demo-файлы в `demos/search-input/`."
+        title="Custom Variations"
+        description="Command bar, filter with badges and gloss hero — demo-files in `demos/search-input/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SearchInputCommandBarDemo} source={searchInputCommandBarSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SearchInputFilterResultsDemo} source={searchInputFilterResultsSource} />
@@ -48,19 +48,19 @@ export function SearchInputShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/SearchInput" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="value, onValueChange, placeholder, aria-label — controlled поле с иконкой поиска."
+            description="value, onValueChange, placeholder, aria-label — controlled search icon field."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Доступность">
+        <ShowcaseDoc.Block title="Availability">
           <p>
-            Обязательно укажите <code>aria-label</code>, если нет видимого label — компонент не рендерит
-            текстовую подпись по умолчанию.
+            Be sure to indicate <code>aria-label</code>, if there is no visible label — the component does not render
+            default text signature.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

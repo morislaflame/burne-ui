@@ -31,13 +31,13 @@ export function AlertDialogSizesDemo() {
             <AlertDialog.HeadingBlock>
               <AlertDialog.Title>AlertDialog size={size}</AlertDialog.Title>
               <AlertDialog.Description>
-                Ширина панели, типографика и кнопки футера масштабируются с size.
+                Panel width, typography and footer buttons scale with size.
               </AlertDialog.Description>
             </AlertDialog.HeadingBlock>
           </AlertDialog.Header>
           <AlertDialog.Footer>
             <Button type="button" variant="outline" onClick={() => setOpenSize(null)}>
-              Закрыть
+              Close
             </Button>
             <Button type="button" variant="primary" onClick={() => setOpenSize(null)}>
               OK

@@ -9,8 +9,8 @@ export function ToastClassNamesFullDemo() {
       onClick={() =>
         toast.show({
           status: "info",
-          title: "Полная кастомизация Toast",
-          description: "Слоты root, title, description через classNames.",
+          title: "Full customization Toast",
+          description: "Slots root, title, description through classNames.",
           classNames: {
             root: "rounded-large border-info/50 bg-info/10 ring-1 ring-info/20",
             indicator: "text-info",
@@ -20,7 +20,7 @@ export function ToastClassNamesFullDemo() {
         })
       }
     >
-      Показать toast с classNames
+      Show toast with classNames
     </Button>
   );
 }
@@ -37,7 +37,7 @@ export function ToastClassNamesCompoundDemo() {
       }}
       onClose={() => {}}
       title="Compound toast"
-      description="classNames на Toast root для декларативного API."
+      description="classNames on Toast root for declarative API."
     />
   );
 }

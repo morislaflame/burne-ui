@@ -18,32 +18,32 @@ export function LinkShowcase() {
   return (
     <ShowcasePage
       title="Link"
-      description="Стилизованные ссылки для внутренней и внешней навигации с иконками и подчёркиванием."
+      description="Stylized links for internal and external navigation with icons and underlining."
       importPath='import { Link } from "@/components/core/Link";'
       tags={["core", "navigation"]}
     >
-      <ShowcaseSection title="Варианты" description="Внутренние, внешние ссылки и кастомизация иконок.">
+      <ShowcaseSection title="Options" description="Internal, external links and icon customization.">
         <ShowcaseDemoFromFile Demo={LinkVariantsDemo} source={linkVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Compound API" description="Link.Icon — маркер иконки в разметке; без children — стандартная ↗.">
+      <ShowcaseSection title="Compound API" description="Link.Icon — icon marker in markup; without children — standard ↗.">
         <ShowcaseDemoFromFile Demo={LinkCompoundApiDemo} source={linkCompoundApiSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={LinkSizesDemo} source={linkSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Слоты motion, anchor, text, iconStart и iconEnd — через prop classNames."
+        description="Slots motion, anchor, text, iconStart and iconEnd — through prop classNames."
       >
         <ShowcaseDemoFromFile align="center" Demo={LinkClassNamesFullDemo} source={linkClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Подвал, inline-ссылки в тексте и действия карточки — `demos/link/`."
+        title="Custom Variations"
+        description="Basement, inline-links in the text and card actions — `demos/link/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={LinkFooterNavDemo} source={linkFooterNavSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={LinkArticleInlineDemo} source={linkArticleInlineSource} />
@@ -51,23 +51,23 @@ export function LinkShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Link" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="href, underline, leftIcon и showDefaultIcon на корне — основные пропы для ссылок."
+            description="href, underline, leftIcon and showDefaultIcon on the root - the main props for links."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Link.Icon с position start|end; пустой Link.Icon — стандартная иконка ↗."
+            description="Link.Icon with position start|end; empty Link.Icon — standard icon ↗."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Внешние ссылки">
+        <ShowcaseDoc.Block title="External links">
           <p>
-            <code>showDefaultIcon</code> добавляет иконку «открыть в новой вкладке». Для внешних URL используйте{" "}
-            <code>target=&quot;_blank&quot;</code> и <code>rel=&quot;noreferrer&quot;</code>.
+            <code>showDefaultIcon</code> adds an “open in new tab” icon. For external URL use{" "}
+            <code>target=&quot;_blank&quot;</code> and <code>rel=&quot;noreferrer&quot;</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

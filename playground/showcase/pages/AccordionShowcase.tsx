@@ -14,21 +14,21 @@ export function AccordionShowcase() {
   return (
     <ShowcasePage
       title="Accordion"
-      description="Аккордеон с compound API — несколько связанных раскрывающихся секций."
+      description="Accordion with compound API — multiple linked drop-down sections."
       importPath='import { Accordion } from "@/components/composite/Accordion";'
       tags={["composite", "disclosure"]}
     >
-      <ShowcaseSection title="Compound" description="Item, Heading, Trigger, Message, Panel и Indicator.">
+      <ShowcaseSection title="Compound" description="Item, Heading, Trigger, Message, Panel and Indicator.">
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionCompoundDemo} source={accordionCompoundSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionSizesDemo} source={accordionSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="FAQ оформления, секции документации и release notes — `demos/accordion/`."
+        title="Custom Variations"
+        description="FAQ registration, documentation sections and release notes — `demos/accordion/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionCheckoutFaqDemo} source={accordionCheckoutFaqSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionDocsSectionsDemo} source={accordionDocsSectionsSource} />
@@ -36,25 +36,25 @@ export function AccordionShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/composite/Accordion" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Accordion.Item → Heading (Trigger, Message с Content/Title/Description) → Panel (Body). Icon, Indicator — опционально."
+            description="Accordion.Item → Heading (Trigger, Message with Content/Title/Description) → Panel (Body). Icon, Indicator — optional."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Состояние">
+        <ShowcaseDoc.Block title="State">
           <p>
-            <code>defaultOpenIndex</code> на корне — индекс открытого пункта при монтировании. Один открытый пункт
-            за раз (аккордеон-поведение).
+            <code>defaultOpenIndex</code> on the root - the index of the open item when mounted. One open item
+            at a time (accordion-behavior).
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
-            Раскрытие панели — <code>configureMotion()</code> (<code>expandDuration</code>,{" "}
-            <code>enableExpandable</code>). <code>className</code> на Item и Panel.
+            Panel opening — <code>configureMotion()</code> (<code>expandDuration</code>,{" "}
+            <code>enableExpandable</code>). <code>className</code> on Item and Panel.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

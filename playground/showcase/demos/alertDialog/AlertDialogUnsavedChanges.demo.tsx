@@ -12,22 +12,22 @@ export function AlertDialogUnsavedChangesDemo() {
   return (
     <>
       <Button variant="outline" type="button" onClick={() => setOpen(true)}>
-        Покинуть страницу
+        Leave page
       </Button>
 
       <AlertDialog open={open} onOpenChange={setOpen} status="warning">
         <AlertDialog.Panel>
           <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Несохранённые изменения</AlertDialog.Title>
+            <AlertDialog.Title>Unsaved changes</AlertDialog.Title>
             <AlertDialog.Description>
-              Если уйти сейчас, правки в документе будут потеряны.
+              If you leave now, your edits to the document will be lost..
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-            Остаться
+            Stay
           </Button>
           <Button
             type="button"
@@ -35,7 +35,7 @@ export function AlertDialogUnsavedChangesDemo() {
             status="warning"
             onClick={() => setOpen(false)}
           >
-            Уйти без сохранения
+            Leave without saving
           </Button>
         </AlertDialog.Footer>
         </AlertDialog.Panel>

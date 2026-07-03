@@ -11,7 +11,7 @@ export const Calendar = Object.assign(CalendarRoot, {
   Footer: CalendarFooter,
 });
 
-export { RU_LOCALE } from "./calendarLocale";
+export { EN_LOCALE } from "./calendarLocale";
 export { useCalendar } from "./calendarContext";
 
 export type {

@@ -6,14 +6,14 @@ export function InputVariantsDemo() {
       <Input
         label="Email"
         placeholder="you@example.com"
-        hint="Мы не рассылаем спам."
+        hint="We do not send spam."
         className="w-64"
       />
       <Input
         label="Outline"
         variant="outline"
         placeholder="variant outline"
-        hint="Прозрачный фон с обводкой."
+        hint="Transparent background with outline."
         className="w-64"
       />
     </div>

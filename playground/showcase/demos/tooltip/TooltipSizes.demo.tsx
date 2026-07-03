@@ -16,7 +16,7 @@ export function TooltipSizesDemo() {
           <Tooltip.Content>
             <Tooltip.Title>size={size}</Tooltip.Title>
             <Tooltip.Description>
-              Подсказка с разным padding, типографикой и шириной панели.
+              Hint with different padding, typography and panel width.
             </Tooltip.Description>
           </Tooltip.Content>
         </Tooltip>

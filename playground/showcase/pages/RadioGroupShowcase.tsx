@@ -20,25 +20,25 @@ export function RadioGroupShowcase() {
   return (
     <ShowcasePage
       title="RadioGroup"
-      description="Группа взаимоисключающих вариантов выбора с Radio внутри."
+      description="A group of mutually exclusive choices with Radio inside."
       importPath='import { RadioGroup } from "@/components/composite/RadioGroup"; import { Radio } from "@/components/core/Radio";'
       tags={["composite", "forms"]}
     >
-      <ShowcaseSection title="Способ связи" description="RadioGroup + Radio с Legend и List.">
+      <ShowcaseSection title="Communication method" description="RadioGroup + Radio with Legend and List.">
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupContactMethodDemo} source={radioGroupContactMethodSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size на Radio: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size on Radio: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={RadioSizesDemo} source={radioSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss на Radio — стеклянный индикатор.">
+      <ShowcaseSection title="Gloss" description="variant gloss on Radio — glass indicator.">
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupGlossDemo} source={radioGroupGlossSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов Radio через classNames на root."
+        description="Full customization of slots Radio through classNames on root."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -53,8 +53,8 @@ export function RadioGroupShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Карточки тарифов, горизонтальный список и кастомный индикатор — `demos/radioGroup/`."
+        title="Custom Variations"
+        description="Tariff cards, horizontal list and custom indicator — `demos/radioGroup/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupPlanCardsDemo} source={radioGroupPlanCardsSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupHorizontalSizesDemo} source={radioGroupHorizontalSizesSource} />
@@ -62,20 +62,20 @@ export function RadioGroupShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/composite/RadioGroup" />
           <ShowcaseDoc.Import path="@/components/core/Radio" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="RadioGroup.Legend, RadioGroup.Label, RadioGroup.List — обёртка. Radio — отдельный пункт с value и label."
+            description="RadioGroup.Legend, RadioGroup.Label, RadioGroup.List — wrapper. Radio — separate item with value and label."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Состояние">
+        <ShowcaseDoc.Block title="State">
           <p>
-            <code>value</code> и <code>onValueChange</code> на RadioGroup. Каждый <code>Radio</code> задаёт{" "}
-            <code>value</code> и <code>label</code>.
+            <code>value</code> and <code>onValueChange</code> on RadioGroup. Every <code>Radio</code> sets{" "}
+            <code>value</code> and <code>label</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

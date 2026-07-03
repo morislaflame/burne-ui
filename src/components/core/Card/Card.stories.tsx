@@ -48,7 +48,7 @@ const lightThemeDecorator = [
   ),
 ] as const;
 
-/** Широкая область для сеток и горизонтальных лейаутов. */
+/** Wide area for grids and horizontal layouts. */
 const wideDarkDecorator = [
   (Story: ComponentType) => (
     <div
@@ -74,7 +74,7 @@ const meta = {
     pressable: {
       control: "boolean",
       description:
-        "Hover-lift + тень и squeeze при нажатии; role=\"button\", активация Enter/Space. Риппл — отдельно (`<Ripple />` первым ребёнком внутри карточки + контент в `z-[1]`).",
+        "Hover-lift + shadow and squeeze on press; role=\"button\", activated with Enter/Space. Ripple — separately (`<Ripple />` as first child inside the card + content in `z-[1]`).",
     },
     onPress: { action: "press" },
   },
@@ -88,9 +88,9 @@ export const Default: Story = {
   render: () => (
     <Card>
       <Card.Header>
-        <Card.Title>Заголовок карточки</Card.Title>
+        <Card.Title>Card title</Card.Title>
         <Card.Description>
-          Краткое описание или подзаголовок в вторичном цвете.
+          Short description or subtitle in secondary color.
         </Card.Description>
       </Card.Header>
     </Card>
@@ -98,19 +98,19 @@ export const Default: Story = {
 };
 
 export const WithFooter: Story = {
-  name: "С футером",
+  name: "With footer",
   render: () => (
     <Card>
       <Card.Header>
-        <Card.Title>Документ</Card.Title>
-        <Card.Description>Обновлён 10 мая 2026</Card.Description>
+        <Card.Title>Document</Card.Title>
+        <Card.Description>Updated May 10, 2026</Card.Description>
       </Card.Header>
       <Card.Footer className="flex items-center justify-end gap-base">
         <Button variant="ghost" size="base" ripple>
-          Отмена
+          Cancel
         </Button>
         <Button variant="primary" size="base" ripple>
-          Открыть
+          Open
         </Button>
       </Card.Footer>
     </Card>
@@ -122,8 +122,8 @@ export const Outline: Story = {
   render: () => (
     <Card variant="outline">
       <Card.Header>
-        <Card.Title>Прозрачная заливка</Card.Title>
-        <Card.Description>Только обводка — как вторичный блок.</Card.Description>
+        <Card.Title>Transparent fill</Card.Title>
+        <Card.Description>Border only — like a secondary block.</Card.Description>
       </Card.Header>
     </Card>
   ),
@@ -134,30 +134,30 @@ export const Secondary: Story = {
   render: () => (
     <Card variant="secondary">
       <Card.Header>
-        <Card.Title>Вторичная поверхность</Card.Title>
-        <Card.Description>Тот же стиль, что у Alert/Badge secondary.</Card.Description>
+        <Card.Title>Secondary surface</Card.Title>
+        <Card.Description>Same style as Alert/Badge secondary.</Card.Description>
       </Card.Header>
     </Card>
   ),
 };
 
 export const Pressable: Story = {
-  name: "Нажимаемая (pressable)",
+  name: "Pressable",
   render: function PressableDemo() {
     const [n, setN] = useState(0);
     return (
       <div className="flex flex-col gap-mid">
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
-          Нажатий (любая из карточек ниже): {n}
+          Presses (any card below): {n}
         </p>
         <Card pressable onPress={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
-              <Card.Title>Карточка-кнопка</Card.Title>
+              <Card.Title>Card button</Card.Title>
               <Card.Description>
-                Наведение — lift и тень; клик — squeeze и onPress; риппл задаётся{" "}
-                <code className="text-xs">&lt;Ripple /&gt;</code> снаружи.
+                Hover — lift and shadow; click — squeeze and onPress; ripple is set with{" "}
+                <code className="text-xs">&lt;Ripple /&gt;</code> outside.
               </Card.Description>
             </Card.Header>
           </div>
@@ -167,7 +167,7 @@ export const Pressable: Story = {
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
               <Card.Title>Outline + pressable</Card.Title>
-              <Card.Description>Тот же паттерн, стеклянная обводка.</Card.Description>
+              <Card.Description>Same pattern, glass border.</Card.Description>
             </Card.Header>
           </div>
         </Card>
@@ -176,7 +176,7 @@ export const Pressable: Story = {
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
               <Card.Title>Secondary + pressable</Card.Title>
-              <Card.Description>Тон риппла под вторичную поверхность.</Card.Description>
+              <Card.Description>Ripple tone for secondary surface.</Card.Description>
             </Card.Header>
           </div>
         </Card>
@@ -186,19 +186,19 @@ export const Pressable: Story = {
 };
 
 export const PressInteraction: Story = {
-  name: "Interaction: нажатие",
+  name: "Interaction: press",
   render: function PressInteractionDemo() {
     const [n, setN] = useState(0);
     return (
       <div className="flex flex-col gap-mid">
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
-          Нажатий: {n}
+          Presses: {n}
         </p>
         <Card pressable onPress={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.default} direction="out" />
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
-              <Card.Title>Карточка-кнопка</Card.Title>
+              <Card.Title>Card button</Card.Title>
             </Card.Header>
           </div>
         </Card>
@@ -206,35 +206,35 @@ export const PressInteraction: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: /Карточка-кнопка/ }));
-    await expect(canvas.getByText("Нажатий: 1")).toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: /Card button/ }));
+    await expect(canvas.getByText("Presses: 1")).toBeInTheDocument();
   },
 };
 
 export const PressableWithNestedCard: Story = {
-  name: "Нажимаемая с карточкой внутри",
+  name: "Pressable with nested card",
   render: function PressableNestedDemo() {
     const [n, setN] = useState(0);
     return (
       <div className="flex flex-col gap-mid">
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
-          Нажатий по внешней карточке: {n}
+          Presses on outer card: {n}
         </p>
         <Card pressable onPress={() => setN((c) => c + 1)}>
           <Ripple color={CARD_RIPPLE_COLOR.default} direction="out"/>
           <div className="relative z-[1] flex min-w-0 flex-1 flex-col">
             <Card.Header>
-              <Card.Title>Внешняя pressable</Card.Title>
+              <Card.Title>Outer pressable</Card.Title>
               <Card.Description>
-                Клик по области вне внутренней карточки увеличивает счётчик сверху. Внутренняя карточка
-                статическая — только текст.
+                Clicking outside the inner card increments the counter above. The inner card is
+                static — text only.
               </Card.Description>
             </Card.Header>
             <Card.Body>
               <Card className="mt-plus">
                 <p className="px-mid py-plus text-base leading-normal text-foreground">
-                  Вложенная обычная карточка без заголовка и описания — только этот абзац текста для
-                  проверки вложенной поверхности и отступов.
+                  Nested plain card without title or description — only this paragraph to
+                  verify nested surface and spacing.
                 </p>
               </Card>
             </Card.Body>
@@ -246,19 +246,19 @@ export const PressableWithNestedCard: Story = {
 };
 
 export const WithImageBody: Story = {
-  name: "С изображением в теле",
+  name: "With image in body",
   render: () => (
     <Card>
       <Card.Header>
         <Card.Title>Progress is a mindset</Card.Title>
         <Card.Description>
-          Редакционный кадр в теле карточки (как в примере Expandable).
+          Editorial frame in the card body (as in the Expandable example).
         </Card.Description>
       </Card.Header>
       <Card.Body className="px-0 pb-0 pt-base">
         <img
           src={PIN_IMAGE1}
-          alt="Портрет в глянцевом красном шлеме, текст на визоре"
+          alt="Portrait in glossy red helmet, text on visor"
           className="max-h-[min(380px,48vh)] w-full object-cover"
           loading="lazy"
         />
@@ -275,13 +275,13 @@ function QuickSubscribeCard() {
   return (
     <Card>
       <Card.Header>
-        <Card.Title>Подписка</Card.Title>
+        <Card.Title>Subscription</Card.Title>
         <Card.Description>
-          Короткая форма внутри Card.Body с компонентом Form.
+          Short form inside Card.Body with the Form component.
         </Card.Description>
       </Card.Header>
       <Card.Body className="border-t-token pt-mid">
-        <Form onSubmit={onSubmit} aria-label="Подписка на рассылку">
+        <Form onSubmit={onSubmit} aria-label="Newsletter subscription">
           <Form.Section>
             <Input>
               <Input.Label>Email</Input.Label>
@@ -294,7 +294,7 @@ function QuickSubscribeCard() {
             </Input>
           </Form.Section>
           <Button type="submit" variant="primary" size="mid" className="w-full" ripple>
-            Подписаться
+            Subscribe
           </Button>
         </Form>
       </Card.Body>
@@ -303,19 +303,19 @@ function QuickSubscribeCard() {
 }
 
 export const WithFormBody: Story = {
-  name: "С формой в теле",
+  name: "With form in body",
   render: () => <QuickSubscribeCard />,
 };
 
-/** Обложка на всю ширину, текст и действия ниже — кастомный порядок блоков. */
+/** Full-bleed cover, text and actions below — custom block order. */
 export const ImageCoverOnTop: Story = {
-  name: "Обложка сверху (full bleed)",
+  name: "Cover on top (full bleed)",
   render: () => (
     <Card className="max-w-lg overflow-hidden">
       <div className="relative aspect-[16/10] w-full shrink-0 bg-muted">
         <img
           src={PIN_IMAGE2}
-          alt="Абстрактный портрет в тёплых тонах"
+          alt="Abstract portrait in warm tones"
           className="absolute inset-0 h-full w-full object-cover"
           loading="lazy"
         />
@@ -323,25 +323,25 @@ export const ImageCoverOnTop: Story = {
       <Card.Header>
         <div className="flex flex-wrap items-center gap-xsmall">
           <Badge status="info" size="small">
-            Редакция
+            Editorial
           </Badge>
           <span className="inline-flex items-center gap-xsmall text-muted text-tools">
             <IoTimeOutline className="icon-small shrink-0" aria-hidden />
-            8 мин
+            8 min
           </span>
         </div>
-        <Card.Title className="mt-xsmall">Материал недели</Card.Title>
+        <Card.Title className="mt-xsmall">Article of the week</Card.Title>
         <Card.Description>
-          Крупное изображение без отступов по краям карточки; подпись и мета — в{" "}
+          Large image flush with card edges; caption and meta — in{" "}
           <code className="text-xs">Card.Header</code>.
         </Card.Description>
       </Card.Header>
       <Card.Footer className="flex items-center justify-between gap-base">
         <Text as="span" variant="tools" className="text-muted">
-          Автор: студия
+          Author: studio
         </Text>
         <Button variant="ghost" size="base" ripple>
-          Читать
+          Read
           <IoArrowForward className="ml-xsmall inline icon-small align-middle" aria-hidden />
         </Button>
       </Card.Footer>
@@ -349,9 +349,9 @@ export const ImageCoverOnTop: Story = {
   ),
 };
 
-/** Горизонтальный сплит: медиа слева, контент справа (адаптивно столбиком на узком экране). */
+/** Horizontal split: media left, content right (stacks on narrow screens). */
 export const HorizontalMediaSplit: Story = {
-  name: "Горизонтальный сплит (медиа + текст)",
+  name: "Horizontal split (media + text)",
   decorators: [...wideDarkDecorator],
   render: () => (
     <Card className="">
@@ -359,27 +359,27 @@ export const HorizontalMediaSplit: Story = {
         <div className="relative aspect-[5/3] min-h-[11rem] w-full shrink-0 min-[520px]:aspect-auto min-[520px]:min-h-[14rem] min-[520px]:w-[44%]">
           <img
             src={PIN_IMAGE3}
-            alt="Композиция с мягким светом и геометрией"
+            alt="Composition with soft light and geometry"
             className="absolute inset-0 h-full w-full object-cover"
             loading="lazy"
           />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
           <Card.Header>
-            <Card.Title>Курс: визуальная иерархия</Card.Title>
+            <Card.Title>Course: visual hierarchy</Card.Title>
             <Card.Description>
-              Лейаут «изображение + колонка текста»
+              Layout «image + text column»
             </Card.Description>
           </Card.Header>
           <Card.Body className="flex-1 pt-0">
             <ul className="list-inside list-disc space-y-xsmall text-small leading-normal text-muted">
-              <li>Токены отступов из Body</li>
-              <li>Футер с кнопками прижат внизу колонки</li>
+              <li>Spacing tokens from Body</li>
+              <li>Footer with buttons pinned to column bottom</li>
             </ul>
           </Card.Body>
           <Card.Footer className="mt-0 flex justify-end gap-base border-t-token">
             <Button variant="primary" size="base" ripple>
-              Записаться
+              Enroll
             </Button>
           </Card.Footer>
         </div>
@@ -388,16 +388,16 @@ export const HorizontalMediaSplit: Story = {
   ),
 };
 
-/** Две колонки превью внутри тела — кастомная сетка в `Card.Body`. */
+/** Two preview columns in body — custom grid in `Card.Body`. */
 export const BodyImageGrid: Story = {
-  name: "Сетка 2×1 изображений в теле",
+  name: "2×1 image grid in body",
   decorators: [...wideDarkDecorator],
   render: () => (
     <Card className="max-w-3xl">
       <Card.Header>
-        <Card.Title>Галерея вариантов</Card.Title>
+        <Card.Title>Variant gallery</Card.Title>
         <Card.Description>
-          В <code className="text-xs">Card.Body</code> — сетка из двух кадров из{" "}
+          In <code className="text-xs">Card.Body</code> — grid of two frames from{" "}
           <code className="text-xs">mockImages</code>.
         </Card.Description>
       </Card.Header>
@@ -406,20 +406,20 @@ export const BodyImageGrid: Story = {
           <figure className="min-w-0 overflow-hidden rounded-base border-token flex flex-col gap-xsmall">
             <img
               src={PIN_IMAGE1}
-              alt="Портрет в красном шлеме"
+              alt="Portrait in red helmet"
               className="aspect-[4/3] w-full object-cover"
               loading="lazy"
             />
-            <figcaption className="px-base py-xsmall text-tools text-muted">Кадр A</figcaption>
+            <figcaption className="px-base py-xsmall text-tools text-muted">Frame A</figcaption>
           </figure>
           <figure className="min-w-0 overflow-hidden rounded-base border-token flex flex-col gap-xsmall">
             <img
               src={PIN_IMAGE4}
-              alt="Минималистичная сцена"
+              alt="Minimalist scene"
               className="aspect-[4/3] w-full object-cover"
               loading="lazy"
             />
-            <figcaption className="px-base py-xsmall text-tools text-muted">Кадр B</figcaption>
+            <figcaption className="px-base py-xsmall text-tools text-muted">Frame B</figcaption>
           </figure>
         </div>
       </Card.Body>
@@ -427,37 +427,37 @@ export const BodyImageGrid: Story = {
   ),
 };
 
-/** Бейджи статуса и плотный ряд действий — кастомизация шапки и футера. */
+/** Status badges and dense action row — header and footer customization. */
 export const WithBadgesAndMeta: Story = {
-  name: "Бейджи и мета",
+  name: "Badges and meta",
   render: () => (
     <Card variant="outline">
       <Card.Header>
         <div className="flex flex-wrap items-center gap-xsmall">
           <Badge status="success" size="small">
-            Онлайн
+            Online
           </Badge>
           <Badge status="warning" size="small">
-            Бета
+            Beta
           </Badge>
           <Badge variant="secondary" size="small">
             API v2
           </Badge>
         </div>
-        <Card.Title className="mt-small">Сервис уведомлений</Card.Title>
+        <Card.Title className="mt-small">Notification service</Card.Title>
         <Card.Description>
-          Комбинация <code className="text-xs">Badge</code> и вторичного текста; вариант карточки{" "}
+          Combination of <code className="text-xs">Badge</code> and secondary text; card variant{" "}
           <code className="text-xs">outline</code>.
         </Card.Description>
       </Card.Header>
       <Card.Footer className="flex flex-wrap items-center justify-between gap-base">
-        <span className="text-tools text-muted">Последний деплой: сегодня</span>
+        <span className="text-tools text-muted">Last deploy: today</span>
         <div className="flex flex-wrap gap-xsmall">
           <Button variant="ghost" size="small" ripple>
-            Логи
+            Logs
           </Button>
           <Button variant="secondary" size="small" ripple>
-            Настройки
+            Settings
           </Button>
         </div>
       </Card.Footer>
@@ -465,15 +465,15 @@ export const WithBadgesAndMeta: Story = {
   ),
 };
 
-/** Акцентная метрика + подпись — кастомный блок внутри Body. */
+/** Accent metric + label — custom block inside Body. */
 export const MetricHighlight: Story = {
-  name: "Метрика (KPI)",
+  name: "Metric (KPI)",
   render: () => (
     <Card variant="secondary" className="max-w-xs">
       <Card.Body className="gap-mid">
         <div>
           <Text as="span" variant="tools" className="font-medium uppercase tracking-wide text-muted">
-            Конверсия
+            Conversion
           </Text>
           <div className="mt-xsmall flex items-baseline gap-xsmall">
             <Text as="span" variant="header-2" className="tabular-nums">
@@ -486,45 +486,45 @@ export const MetricHighlight: Story = {
         </div>
         <Separator />
         <Card.Description className="text-foreground">
-          Сравнение с прошлой неделей
+          Compared to last week
         </Card.Description>
       </Card.Body>
     </Card>
   ),
 };
 
-/** Список шагов с разделителями — композиция без изображений. */
+/** Step list with separators — composition without images. */
 export const StepsWithSeparators: Story = {
-  name: "Шаги с разделителями",
+  name: "Steps with separators",
   render: () => (
     <Card>
       <Card.Header>
-        <Card.Title>Чеклист публикации</Card.Title>
-        <Card.Description>Три шага и <code className="text-xs">Separator</code> между блоками.</Card.Description>
+        <Card.Title>Publication checklist</Card.Title>
+        <Card.Description>Three steps and <code className="text-xs">Separator</code> between blocks.</Card.Description>
       </Card.Header>
       <Card.Body className="px-mid pb-mid pt-0">
         <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
-          <p className="text-small font-medium text-foreground">1. Черновик</p>
-          <p className="mt-xsmall text-tools text-muted">Текст и медиа собраны.</p>
+          <p className="text-small font-medium text-foreground">1. Draft</p>
+          <p className="mt-xsmall text-tools text-muted">Text and media collected.</p>
         </div>
         <Separator className="my-small" />
         <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
-          <p className="text-small font-medium text-foreground">2. Редакция</p>
-          <p className="mt-xsmall text-tools text-muted">Правки и согласование.</p>
+          <p className="text-small font-medium text-foreground">2. Editorial</p>
+          <p className="mt-xsmall text-tools text-muted">Edits and approval.</p>
         </div>
         <Separator className="my-small" />
         <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
-          <p className="text-small font-medium text-foreground">3. Выход</p>
-          <p className="mt-xsmall text-tools text-muted">Публикация и рассылка.</p>
+          <p className="text-small font-medium text-foreground">3. Launch</p>
+          <p className="mt-xsmall text-tools text-muted">Publication and newsletter.</p>
         </div>
       </Card.Body>
     </Card>
   ),
 };
 
-/** Pressable + обложка + риппл — интерактивная карточка-«плитка». */
+/** Pressable + cover + ripple — interactive «tile» card. */
 export const PressableWithCoverImage: Story = {
-  name: "Pressable с обложкой",
+  name: "Pressable with cover",
   render: function PressableCoverDemo() {
     const [n, setN] = useState(0);
     return (
@@ -534,15 +534,15 @@ export const PressableWithCoverImage: Story = {
           <div className="relative aspect-[2/1] w-full shrink-0">
             <img
               src={PIN_IMAGE4}
-              alt="Ночная сцена с неоном"
+              alt="Night scene with neon"
               className="absolute inset-0 h-full w-full object-cover"
               loading="lazy"
             />
           </div>
           <Card.Header>
-            <Card.Title>Открыть проект</Card.Title>
+            <Card.Title>Open project</Card.Title>
             <Card.Description>
-              Нажатий: <span className="tabular-nums">{n}</span>. Клавиатура: Enter / Space.
+              Presses: <span className="tabular-nums">{n}</span>. Keyboard: Enter / Space.
             </Card.Description>
           </Card.Header>
         </div>
@@ -551,9 +551,9 @@ export const PressableWithCoverImage: Story = {
   },
 };
 
-/** Четыре карточки — все варианты поверхности и четыре изображения из mock. */
+/** Four cards — all surface variants and four mock images. */
 export const MosaicFourCards: Story = {
-  name: "Мозаика: 4 карточки × 4 изображения",
+  name: "Mosaic: 4 cards × 4 images",
   decorators: [...wideDarkDecorator],
   render: () => {
     const tiles: {
@@ -566,30 +566,30 @@ export const MosaicFourCards: Story = {
       {
         variant: "default",
         src: PIN_IMAGE1,
-        alt: "Портрет в красном шлеме",
+        alt: "Portrait in red helmet",
         title: "Default",
-        desc: "Плотная surface и обводка.",
+        desc: "Dense surface and border.",
       },
       {
         variant: "outline",
         src: PIN_IMAGE2,
-        alt: "Тёплый портрет",
+        alt: "Warm portrait",
         title: "Outline",
-        desc: "Стеклянная обводка.",
+        desc: "Glass border.",
       },
       {
         variant: "secondary",
         src: PIN_IMAGE3,
-        alt: "Свет и геометрия",
+        alt: "Light and geometry",
         title: "Secondary",
         desc: "Accent-wash.",
       },
       {
         variant: "default",
         src: PIN_IMAGE4,
-        alt: "Неоновая сцена",
-        title: "Снова default",
-        desc: "Четвёртое фото из набора.",
+        alt: "Neon scene",
+        title: "Default again",
+        desc: "Fourth photo from the set.",
       },
     ];
     return (
@@ -615,9 +615,9 @@ export const MosaicFourCards: Story = {
   },
 };
 
-/** Светлая тема: горизонтальный сплит с изображением. */
+/** Light theme: horizontal split with image. */
 export const LightHorizontalCard: Story = {
-  name: "Светлая тема: сплит с фото",
+  name: "Light theme: split with photo",
   decorators: [...lightThemeDecorator],
   parameters: {
     layout: "fullscreen",
@@ -629,20 +629,20 @@ export const LightHorizontalCard: Story = {
           <div className="relative aspect-video w-full shrink-0 min-[480px]:w-2/5">
             <img
               src={PIN_IMAGE2}
-              alt="Иллюстрация для светлой темы"
+              alt="Illustration for light theme"
               className="absolute inset-0 h-full w-full object-cover"
               loading="lazy"
             />
           </div>
           <Card.Header className="min-[480px]:flex-1">
-            <Card.Title>Карточка на светлом фоне</Card.Title>
+            <Card.Title>Card on light background</Card.Title>
             <Card.Description>
-              Тот же лейаут, что в «Горизонтальный сплит», с декоратором светлой темы.
+              Same layout as «Horizontal split», with light theme decorator.
             </Card.Description>
           </Card.Header>
           <Card.Body className="pt-0">
             <Button className="mt-small w-full min-[480px]:w-auto" variant="primary" size="base" ripple>
-              Действие
+              Action
             </Button>
           </Card.Body>
         </div>
@@ -652,51 +652,51 @@ export const LightHorizontalCard: Story = {
 };
 
 export const LightTheme: Story = {
-  name: "Светлая тема (Default)",
+  name: "Light theme (Default)",
   decorators: [...lightThemeDecorator],
   render: () => (
     <Card>
       <Card.Header>
-        <Card.Title>Заголовок карточки</Card.Title>
+        <Card.Title>Card title</Card.Title>
         <Card.Description>
-          Обычная карточка без эффекта при наведении.
+          Regular card without hover effect.
         </Card.Description>
       </Card.Header>
       <Card.Footer className="flex items-center justify-end gap-base">
-        <Button variant="ghost" size="base" ripple>Отмена</Button>
-        <Button variant="primary" size="base" ripple>Открыть</Button>
+        <Button variant="ghost" size="base" ripple>Cancel</Button>
+        <Button variant="primary" size="base" ripple>Open</Button>
       </Card.Footer>
     </Card>
   ),
 };
 
 export const LightThemeVariants: Story = {
-  name: "Светлая тема (все варианты)",
+  name: "Light theme (all variants)",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex flex-col gap-mid">
       <Card variant="default">
         <Card.Header>
           <Card.Title>Default</Card.Title>
-          <Card.Description>Статическая карточка, без подъёма при наведении.</Card.Description>
+          <Card.Description>Static card, no hover lift.</Card.Description>
         </Card.Header>
       </Card>
       <Card variant="outline">
         <Card.Header>
           <Card.Title>Outline</Card.Title>
-          <Card.Description>Прозрачный фон и обводка.</Card.Description>
+          <Card.Description>Transparent background and border.</Card.Description>
         </Card.Header>
       </Card>
       <Card variant="secondary">
         <Card.Header>
           <Card.Title>Secondary</Card.Title>
-          <Card.Description>Accent-wash на surface.</Card.Description>
+          <Card.Description>Accent-wash on surface.</Card.Description>
         </Card.Header>
       </Card>
       <Card variant="gloss">
         <Card.Header>
           <Card.Title>Gloss</Card.Title>
-          <Card.Description>Стеклянная панель с conic-обводкой и бликом.</Card.Description>
+          <Card.Description>Glass panel with conic border and highlight.</Card.Description>
         </Card.Header>
       </Card>
     </div>
@@ -731,14 +731,14 @@ function GlossDemo() {
     <div className="flex flex-col gap-mid">
       <Card variant="gloss">
         <Card.Header>
-          <Card.Title>Стеклянная карточка</Card.Title>
+          <Card.Title>Glass card</Card.Title>
           <Card.Description>
-            variant=&quot;gloss&quot; — статическая стеклянная панель с conic-обводкой.
+            variant=&quot;gloss&quot; — static glass panel with conic border.
           </Card.Description>
         </Card.Header>
         <Card.Body>
           <Text as="p" variant="base" className="text-muted">
-            Контент внутри gloss-панели читается поверх блика и обводки.
+            Content inside the gloss panel reads over the highlight and border.
           </Text>
         </Card.Body>
         <Card.Footer className="flex items-center justify-end gap-base">
@@ -756,7 +756,7 @@ function GlossDemo() {
           <Card.Header>
             <Card.Title>Gloss + pressable</Card.Title>
             <Card.Description>
-              Нажатий: {n}. Нажимаемая карточка с тем же стеклянным оформлением.
+              Presses: {n}. Pressable card with the same glass styling.
             </Card.Description>
           </Card.Header>
         </div>
@@ -773,18 +773,18 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Card",
+        story: "classNames customization for Card",
       },
     },
   },
@@ -801,14 +801,14 @@ export const CustomClassNames: Story = {
       }}
     >
       <Card.Header>
-        <Card.Title>Профиль</Card.Title>
-        <Card.Description>Все слоты настроены через classNames.</Card.Description>
+        <Card.Title>Profile</Card.Title>
+        <Card.Description>All slots configured via classNames.</Card.Description>
       </Card.Header>
       <Card.Body>
-        <Text variant="small">Контент карточки с кастомными отступами и цветами.</Text>
+        <Text variant="small">Card content with custom spacing and colors.</Text>
       </Card.Body>
       <Card.Footer>
-        <Button size="small">Сохранить</Button>
+        <Button size="small">Save</Button>
       </Card.Footer>
     </Card>
   ),

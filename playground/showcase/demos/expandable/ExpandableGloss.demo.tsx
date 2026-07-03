@@ -9,10 +9,10 @@ export function ExpandableGlossDemo() {
       variant="gloss"
       title="Gloss"
       icon={EXPANDABLE_INFO_ICON}
-      description="Стеклянная панель с hover-lift"
+      description="Glass panel with hover-lift"
     >
       <Text as="p" variant="small" className="text-muted">
-        variant=&quot;gloss&quot; на корне Expandable.
+        variant=&quot;gloss&quot; on the root Expandable.
       </Text>
     </Expandable>
   );

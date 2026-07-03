@@ -7,25 +7,25 @@ import type {
 } from "react";
 
 export type PaginationClassNames = {
-  /** Корень `<nav>`. */
+  /** Root `<nav>`. */
   root?: string;
   /** `Pagination.Summary`. */
   summary?: string;
-  /** Текст в `Pagination.Summary`. */
+  /** Text in `Pagination.Summary`. */
   summaryText?: string;
   /** `Pagination.Content` (`<ol>`). */
   content?: string;
   /** `Pagination.Item` (`<li>`). */
   item?: string;
-  /** Кнопка `PaginationInteractive`. */
+  /** `PaginationInteractive` button. */
   interactive?: string;
-  /** Активная страница (`aria-current="page"`). */
+  /** Active page (`aria-current="page"`). */
   pageActive?: string;
-  /** Текст номера страницы в кнопке. */
+  /** Page number text in button. */
   pageText?: string;
   /** `Pagination.Ellipsis`. */
   ellipsis?: string;
-  /** Текст «Back» / «Forward» в nav-кнопках. */
+  /** "Back" / "Forward" text in nav buttons. */
   navText?: string;
   /** `Pagination.PreviousIcon`. */
   previousIcon?: string;

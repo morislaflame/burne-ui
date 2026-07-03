@@ -9,15 +9,15 @@ export function SearchInputGlossHeroDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col items-center gap-mid rounded-large border border-primary/20 bg-gradient-to-b from-primary/10 to-surface px-mid py-large text-center">
       <Text as="h3" variant="header-2">
-        Каталог Burne UI
+        Catalog Burne UI
       </Text>
       <Text as="p" variant="small" className="max-w-sm text-muted">
-        Gloss SearchInput в hero-блоке — для landing и документации.
+        Gloss SearchInput in hero-block - for landing and documentation.
       </Text>
       <SearchInput
         variant="gloss"
-        aria-label="Поиск по каталогу"
-        placeholder="Найти компонент…"
+        aria-label="Catalog search"
+        placeholder="Find component…"
         value={query}
         onValueChange={setQuery}
         className="w-full max-w-sm"

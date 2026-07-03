@@ -1,8 +1,8 @@
-/** Burne UI — дизайн-токены (CSS variables) */
+/** Burne UI — design tokens (CSS variables) */
 :root {
   /**
-   * BORDER WIDTH — толщина рамок (border-token, inputs, cards).
-   * Установите 0 для полностью «flat» вида.
+   * BORDER WIDTH — border thickness (border-token, inputs, cards).
+   * Set to 0 for a fully flat appearance.
    */
   --border-width: 1px;
 
@@ -13,37 +13,37 @@
   --color-muted: #858994;
 
   /**
-   * PRIMARY (brand) — заливка primary-кнопки, ссылки, активные текстовые состояния.
-   * Текстовый цвет на этой заливке: `--color-primary-foreground`.
+   * PRIMARY (brand) — primary button fill, links, active text states.
+   * Text color on this fill: `--color-primary-foreground`.
    */
   --color-primary: #ebebef;
   --color-primary-foreground: #0c0c0e;
 
   /**
-   * FOCUS RING — цвет outline при фокусе (focus-ring, focus-ring-inset utilities).
-   * По умолчанию === primary, может быть переопределён независимо.
+   * FOCUS RING — outline color on focus (focus-ring, focus-ring-inset utilities).
+   * Defaults to === primary; can be overridden independently.
    */
   --color-focus-ring: var(--color-primary);
 
   /**
-   * INDICATOR — заливка внутри индикаторов выбора (Radio, Checkbox, Switch, Slider track,
+   * INDICATOR — fill inside selection indicators (Radio, Checkbox, Switch, Slider track,
    * Calendar selected, ProgressBar/Meter fill).
-   * По умолчанию === primary, но может быть переопределён независимо.
+   * Defaults to === primary, but can be overridden independently.
    */
   --color-indicator: var(--color-primary);
 
-  /** Текст и иконки на заливке `--color-indicator` (галочка Checkbox, Switch/Slider в on). */
+  /** Text and icons on `--color-indicator` fill (Checkbox checkmark, Switch/Slider in on state). */
   --color-indicator-foreground: var(--color-primary-foreground);
 
   /*
    * STATUS: DANGER
    * 1) --color-danger                     (base / text / primary fill)
    * 2) --color-surface-tint-danger        (default-status surface + outline/ghost hover)
-   * 3) --color-surface-tint-danger-hover  (hover поверх surface-tint-danger)
-   * 4) --color-danger-fill-hover          (hover поверх bg-danger)
+   * 3) --color-surface-tint-danger-hover  (hover over surface-tint-danger)
+   * 4) --color-danger-fill-hover          (hover over bg-danger)
    *
-   * surface-tint-* — непрозрачный mix статуса с black (тёмная) / white (светлая),
-   * чтобы панели не просвечивали при наложении.
+   * surface-tint-* — opaque mix of status with black (dark) / white (light),
+   * so panels do not show through when stacked.
    */
   --color-danger: #e34848;
   --color-danger-foreground: #fafafa;
@@ -67,8 +67,8 @@
    * STATUS: SUCCESS
    * 1) --color-success                     (base / text / primary fill)
    * 2) --color-surface-tint-success        (default-status surface + outline/ghost hover)
-   * 3) --color-surface-tint-success-hover  (hover поверх surface-tint-success)
-   * 4) --color-success-fill-hover          (hover поверх bg-success)
+   * 3) --color-surface-tint-success-hover  (hover over surface-tint-success)
+   * 4) --color-success-fill-hover          (hover over bg-success)
    */
   --color-success: #22c55e;
   --color-success-foreground: #fafafa;
@@ -92,8 +92,8 @@
    * STATUS: INFO
    * 1) --color-info                     (base / text / primary fill)
    * 2) --color-surface-tint-info        (default-status surface + outline/ghost hover)
-   * 3) --color-surface-tint-info-hover  (hover поверх surface-tint-info)
-   * 4) --color-info-fill-hover          (hover поверх bg-info)
+   * 3) --color-surface-tint-info-hover  (hover over surface-tint-info)
+   * 4) --color-info-fill-hover          (hover over bg-info)
    */
   --color-info: #0ea5e9;
   --color-info-foreground: #fafafa;
@@ -117,8 +117,8 @@
    * STATUS: WARNING
    * 1) --color-warning                     (base / text / primary fill)
    * 2) --color-surface-tint-warning        (default-status surface + outline/ghost hover)
-   * 3) --color-surface-tint-warning-hover  (hover поверх surface-tint-warning)
-   * 4) --color-warning-fill-hover          (hover поверх bg-warning)
+   * 3) --color-surface-tint-warning-hover  (hover over surface-tint-warning)
+   * 4) --color-warning-fill-hover          (hover over bg-warning)
    */
   --color-warning: #f59e0b;
   --color-warning-foreground: #0c0c0e;
@@ -139,8 +139,8 @@
   );
 
   /**
-   * PRIMARY TINT — бренд-тинт primary (выделение, range календаря, Skeleton и т.д.).
-   * Для hover строк меню используйте `--color-default-hover`.
+   * PRIMARY TINT — primary brand tint (highlight, calendar range, Skeleton, etc.).
+   * For menu row hover use `--color-default-hover`.
    */
   --color-primary-tint: color-mix(
     in oklab,
@@ -148,14 +148,14 @@
     transparent
   );
 
-  /** PRIMARY TINT STRONG — бренд-тинт primary/20 (hover усиленный, ripple, skeleton wave). */
+  /** PRIMARY TINT STRONG — primary/20 brand tint (enhanced hover, ripple, skeleton wave). */
   --color-primary-tint-strong: color-mix(
     in oklab,
     var(--color-primary) 25%,
     transparent
   );
 
-  /** PRIMARY HOVER — залитая primary-кнопка: лёгкое осветление/приглушение заливки */
+  /** PRIMARY HOVER — filled primary button: slight lightening/muting of the fill */
   --color-primary-hover: color-mix(
     in oklab,
     var(--color-primary) 80%,
@@ -163,8 +163,8 @@
   );
 
   /**
-   * DEFAULT HOVER — нейтральный hover для outline/ghost, строк меню и пр. (без заливки).
-   * Единый foreground-wash на прозрачном фоне.
+   * DEFAULT HOVER — neutral hover for outline/ghost, menu rows, etc. (no fill).
+   * Uniform foreground wash on a transparent background.
    */
   --color-default-hover: color-mix(
     in oklab,
@@ -173,8 +173,8 @@
   );
 
   /**
-   * SECONDARY surface — фон для secondary-кнопки, tertiary-контролов.
-   * Нейтральный mix foreground+surface, НЕ primary.
+   * SECONDARY surface — background for secondary button, tertiary controls.
+   * Neutral mix of foreground+surface, NOT primary.
    */
   --color-secondary: color-mix(
     in oklab,
@@ -182,10 +182,10 @@
     var(--color-surface)
   );
 
-  /** Текстовый цвет поверх --color-secondary. По умолчанию = foreground, переопределите при нестандартном фоне. */
+  /** Text color on --color-secondary. Defaults to foreground; override for non-standard backgrounds. */
   --color-secondary-foreground: var(--color-foreground);
 
-  /** SECONDARY HOVER — нейтральная поверхность при hover secondary-кнопки (6% foreground поверх secondary) */
+  /** SECONDARY HOVER — neutral surface on secondary button hover (6% foreground over secondary) */
   --color-secondary-hover: color-mix(
     in oklab,
     var(--color-foreground) 6%,
@@ -193,8 +193,8 @@
   );
 
   /**
-   * TERTIARY surface — третий уровень вложенных панелей (`Surface variant="tertiary"`).
-   * Насыщеннее secondary (24% foreground wash).
+   * TERTIARY surface — third level of nested panels (`Surface variant="tertiary"`).
+   * Richer than secondary (24% foreground wash).
    */
   --color-tertiary: color-mix(
     in oklab,
@@ -202,10 +202,10 @@
     var(--color-surface)
   );
 
-  /** Текстовый цвет поверх --color-tertiary. По умолчанию = foreground, переопределите при нестандартном фоне. */
+  /** Text color on --color-tertiary. Defaults to foreground; override for non-standard backgrounds. */
   --color-tertiary-foreground: var(--color-foreground);
 
-  /** TERTIARY HOVER — нейтральная поверхность при hover tertiary-элементов (6% foreground поверх tertiary) */
+  /** TERTIARY HOVER — neutral surface on tertiary element hover (6% foreground over tertiary) */
   --color-tertiary-hover: color-mix(
     in oklab,
     var(--color-foreground) 6%,
@@ -214,9 +214,9 @@
 
   /**
    * RIPPLE TOKENS
-   * primary-fill — точка сходимости на залитой primary-кнопке (`Button variant="primary"`).
-   * neutral — ripple для default / outline / ghost / secondary / Disclosure / Dropdown.
-   * neutral-muted — широкие триггеры (Expandable и т.п.).
+   * primary-fill — convergence point on filled primary button (`Button variant="primary"`).
+   * neutral — ripple for default / outline / ghost / secondary / Disclosure / Dropdown.
+   * neutral-muted — wide triggers (Expandable, etc.).
    */
   --color-converge-ripple-primary-fill: color-mix(
     in oklab,
@@ -261,8 +261,8 @@
   --font-family-mono: ui-monospace, monospace;
 
   /**
-   * Базовый шаг отступов (gap, padding, margin).
-   * Ступени — множители; утилиты: `gap-mid`, `p-xsmall`, `m-plus`, …
+   * Base spacing step (gap, padding, margin).
+   * Steps are multipliers; utilities: `gap-mid`, `p-xsmall`, `m-plus`, …
    */
   --space: 0.5rem;
   --space-xsmall: calc(var(--space) * 0.5);
@@ -274,8 +274,8 @@
   --space-xlarge: calc(var(--space) * 3);
 
   /**
-   * Базовый радиус скругления. Ступени — множители (одна «ручка» для white-label).
-   * Утилиты: `rounded-xsmall` … `rounded-large`.
+   * Base border radius. Steps are multipliers (single knob for white-label).
+   * Utilities: `rounded-xsmall` … `rounded-large`.
    */
   --radius: 0.5rem;
   --radius-value-xsmall: calc(var(--radius) * 0.5);
@@ -285,9 +285,9 @@
   --radius-value-large: calc(var(--radius) * 1.5);
 
   /**
-   * Примитивная типографическая шкала (`--text-scale-*`).
-   * Ступени: `tools`, `xsmall` … `3xlarge` — как у `--space-*` / `--radius-value-*`.
-   * line-height = calc(высота_строки / font-size) — unitless, как Tailwind v4.
+   * Primitive typographic scale (`--text-scale-*`).
+   * Steps: `tools`, `xsmall` … `3xlarge` — same as `--space-*` / `--radius-value-*`.
+   * line-height = calc(line_height / font-size) — unitless, like Tailwind v4.
    */
   --text-scale-tools: 0.6875rem;
   --text-scale-tools--line-height: calc(0.875rem / 0.6875rem);
@@ -317,8 +317,8 @@
   --text-scale-3xlarge--line-height: calc(2.5rem / 2.25rem);
 
   /**
-   * Примитивная шкала начертания (`--font-w-*`).
-   * Семантические роли текста ссылаются на эти токены.
+   * Primitive font-weight scale (`--font-w-*`).
+   * Semantic text roles reference these tokens.
    */
   --font-w-small: 400;
   --font-w-base: 500;
@@ -327,7 +327,7 @@
   --font-w-bold: 800;
 
 
-  /** Семантические роли UI-текста (алиасы шкалы + weight). */
+  /** Semantic UI text roles (scale + weight aliases). */
   --text-accent-header-size: var(--text-scale-3xlarge);
   --text-accent-header-line-height: var(--text-scale-3xlarge--line-height);
   --text-accent-header-weight: var(--font-w-bold);
@@ -361,12 +361,12 @@
   --text-tools-weight: var(--font-w-small);
 
   /**
-   * Базовый размер контролов (иконки, индикаторы, min-width кнопок, ширина модалок).
-   * Отдельно от `--space` (отступы) и `--text-scale-*` (типографика).
+   * Base control size (icons, indicators, button min-width, modal width).
+   * Separate from `--space` (spacing) and `--text-scale-*` (typography).
    */
   --size: 1rem;
 
-  /** Примитивная шкала размеров контролов (`--size-scale-*`) — как `--space-*`. */
+  /** Primitive control size scale (`--size-scale-*`) — same as `--space-*`. */
   --size-scale-xsmall: calc(var(--size) * 0.65);
   --size-scale-small: calc(var(--size) * 0.875);
   --size-scale-base: calc(var(--size) * 1);
@@ -375,7 +375,7 @@
   --size-scale-large: calc(var(--size) * 1.5);
   --size-scale-xlarge: calc(var(--size) * 1.75);
 
-  /** Крупность контейнеров (модалки, панели, лэйауты) — max-w-component-* */
+  /** Container scale (modals, panels, layouts) — max-w-component-* */
   --max-component-small: calc(var(--size) * 20);
   --max-component-base: calc(var(--size) * 28);
   --max-component-mid: calc(var(--size) * 32);
@@ -386,21 +386,21 @@
   --button-min-width-mid: calc(var(--control-height-mid) * 2.7);
   --button-min-width-large: calc(var(--control-height-large) * 2.6);
 
-  /** Минимальная высота интерактивных контролов (Button, Input, Selector, SearchInput). */
+  /** Minimum height of interactive controls (Button, Input, Selector, SearchInput). */
   --control-height-xsmall: calc(var(--text-tools-size) * var(--text-tools-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
   --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
   --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + var(--border-width) * 2);
   --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + var(--border-width) * 2);
   --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-plus) * 2 + var(--border-width) * 2);
 
-  /** Диаметр аватара по ступени размера. */
+  /** Avatar diameter per size step. */
   --avatar-size-small: calc(var(--size) * 2);
   --avatar-size-base: calc(var(--size) * 2.5);
   --avatar-size-mid: calc(var(--size) * 3);
   --avatar-size-large: calc(var(--size) * 3.5);
 
   /**
-   * Иконки (react-icons и др.) — единая шкала; утилиты `icon-xsmall` … `icon-2xlarge`.
+   * Icons (react-icons, etc.) — unified scale; utilities `icon-xsmall` … `icon-2xlarge`.
    */
   --icon-size-xsmall: var(--size-scale-xsmall);
   --icon-size-small: var(--size-scale-small);
@@ -411,8 +411,8 @@
   --icon-size-2xlarge: var(--size-scale-xlarge);
 
   /**
-   * Круглые индикаторы выбора (Radio, Checkbox, Slider thumb, Dropdown).
-   * Диаметр внешнего кольца; заливка — inset 1px.
+   * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
+   * Outer ring diameter; fill uses inset 1px.
    */
   --selection-indicator-small: var(--size-scale-base);
   --selection-indicator-base: var(--size-scale-plus);
@@ -420,10 +420,10 @@
   --selection-indicator-large: var(--size-scale-large);
 
   /**
-   * Тени компонентов — один слой, только снизу.
-   * offset-x: 0; отрицательный spread «обрезает» blur по бокам.
-   * base: покой второго уровня (Badge, Alert); mid: hover второго уровня; large: панели.
-   * none: геометрия base, opacity 0 — для `transition: box-shadow`.
+   * Component shadows — single layer, bottom only.
+   * offset-x: 0; negative spread "clips" blur on the sides.
+   * base: second-level rest (Badge, Alert); mid: second-level hover; large: panels.
+   * none: base geometry, opacity 0 — for `transition: box-shadow`.
    */
   --shadow-size: 0.5;
   --shadow-none:
@@ -440,9 +440,9 @@
       calc(-12px * var(--shadow-size)) rgb(0 0 0 / 0.24);
 
   /**
-   * Toast scrim — мягкая подложка за стеком уведомлений (градиент к прозрачности).
-   * --toast-scrim-size — множитель высоты и горизонтального выноса.
-   * --toast-scrim-density — множитель плотности color-mix (center / mid).
+   * Toast scrim — soft backdrop behind the notification stack (gradient to transparency).
+   * --toast-scrim-size — height and horizontal inset multiplier.
+   * --toast-scrim-density — color-mix density multiplier (center / mid).
    */
   --toast-scrim-size: 1;
   --toast-scrim-density: 1;
@@ -472,8 +472,8 @@
   );
 
   /**
-   * GLOSS — универсальная система токенов стекла (тёмная тема / dark).
-   * Базовый fill: --gloss-edge + color-mix(--gloss-tint-default) в glossPanel.css.
+   * GLOSS — universal glass token system (dark theme).
+   * Base fill: --gloss-edge + color-mix(--gloss-tint-default) in glossPanel.css.
    */
 
   /* ── backdrop ─────────────────────────────────────────────────────────── */
@@ -481,28 +481,28 @@
   --gloss-blur-deep: clamp(16px, 1.5em, 32px);
   --gloss-shadow-cutoff: 2em;
 
-  /* ── surface fill (edge + tint mix — см. :is(.gloss-panel, …) в glossPanel.css) */
+  /* ── surface fill (edge + tint mix — see :is(.gloss-panel, …) in glossPanel.css) */
   --gloss-tint-default: rgba(135, 135, 140, 0.275);
   --gloss-edge: rgb(255 255 255 / 0.05);
   --gloss-inset-top: rgba(167, 166, 166, 0.1);
   --gloss-inset-bottom: rgb(255 255 255 / 0.3);
 
-  /* ── тени / свечение (внешняя снизу — как --shadow-base / --shadow-mid) ── */
+  /* ── shadows / glow (external bottom — like --shadow-base / --shadow-mid) ── */
   --gloss-elevation: rgb(0 0 0 / 0.15);
   --gloss-elevation-hover: rgb(0 0 0 / 0.20);
   --gloss-inner-glow: rgb(255 255 255 / 0.08);
   --gloss-glow-hover: rgba(255, 255, 255, 0.074);
   --gloss-drop-shadow: linear-gradient(180deg, rgb(0 0 0 / 0.15), rgb(0 0 0 / 0));
 
-  /* ── conic-обводка ───────────────────────────────────────────────────── */
+  /* ── conic outline ───────────────────────────────────────────────────── */
   --gloss-outline-fade: rgba(0, 0, 0, 0.337);
   --gloss-outline-base: rgb(255 255 255 / 0.26);
 
-  /* ── блик (только интерактив) ────────────────────────────────────────── */
+  /* ── highlight (interactive only) ────────────────────────────────────────── */
   --gloss-shine: rgba(255, 255, 255, 0.01);
   /* --gloss-shine-blur: clamp(2px, 0.5em, 12px); */
 
-  /* ── интерактив (press-inset для active) ─────────────────────────────── */
+  /* ── interactive (press-inset for active) ─────────────────────────────── */
   --gloss-press-inset: rgb(0 0 0 / 0.22);
 }
 
@@ -516,8 +516,8 @@
   --color-primary-foreground: #fafafa;
 
   /**
-   * Переопределяем var()-зависимые токены на этом же элементе, иначе с :root
-   * унаследуется уже вычисленное значение тёмной темы (nested data-theme).
+   * Re-define var()-dependent tokens on this same element; otherwise from :root
+   * the already computed dark-theme value is inherited (nested data-theme).
    */
   --color-focus-ring: var(--color-primary);
   --color-indicator: var(--color-primary);
@@ -642,7 +642,7 @@
 
   
 
-  /** В светлой теме foreground тёмный (#18181b) — явно дублируем для чёткости каскада */
+  /** In light theme foreground is dark (#18181b) — explicitly duplicated for cascade clarity */
   --color-secondary-foreground: var(--color-foreground);
   --color-tertiary-foreground: var(--color-foreground);
 
@@ -691,7 +691,7 @@
     transparent 100%
   );
 
-  /* ── GLOSS светлая тема (light) ─────────────────────────────────────── */
+  /* ── GLOSS light theme ─────────────────────────────────────── */
 
   --gloss-inset-top: rgb(0 0 0 / 0.05);
   --gloss-inset-bottom: rgb(255 255 255 / 0.5);
@@ -707,14 +707,14 @@
   --gloss-edge: rgb(255 255 255 / 0.05);
   --gloss-press-inset: rgba(0, 0, 0, 0.026);
 
-  /** Primary-тинт в светлой теме — mix с white вместо black. */
+  /** Primary tint in light theme — mix with white instead of black. */
   --color-surface-tint-primary: color-mix(
     in oklab,
     var(--color-primary) 14%,
     white
   );
 
-  /* В светлой теме тени чуть заметнее (меньше контраста фон/компонент) */
+  /* In light theme shadows are slightly more visible (less background/component contrast) */
   --shadow-none:
     0 calc(2px * var(--shadow-size)) calc(4px * var(--shadow-size))
       calc(-2px * var(--shadow-size)) rgb(0 0 0 / 0);

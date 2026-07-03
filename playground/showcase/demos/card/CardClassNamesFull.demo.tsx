@@ -17,15 +17,15 @@ export function CardClassNamesFullDemo() {
       className="max-w-md"
     >
       <Card.Header>
-        <Card.Title>Уведомления</Card.Title>
-        <Card.Description>Настройка слотов через classNames на root.</Card.Description>
+        <Card.Title>Notifications</Card.Title>
+        <Card.Description>Setting up slots via classNames on root.</Card.Description>
       </Card.Header>
       <Card.Body>
-        <Text variant="small">Пример body-слота с дополнительным отступом сверху.</Text>
+        <Text variant="small">Example body-slots with additional space at the top.</Text>
       </Card.Body>
       <Card.Footer>
         <Button size="small" variant="outline">
-          Настроить
+          Tune
         </Button>
       </Card.Footer>
     </Card>

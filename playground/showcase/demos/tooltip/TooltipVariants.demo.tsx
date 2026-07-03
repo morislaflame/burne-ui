@@ -10,7 +10,7 @@ export function TooltipVariantsDemo() {
             Default
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Подсказка по hover и focus</Tooltip.Content>
+        <Tooltip.Content>Hint on hover and focus</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="success" side="top">
         <Tooltip.Trigger>
@@ -18,7 +18,7 @@ export function TooltipVariantsDemo() {
             Success
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Операция выполнена</Tooltip.Content>
+        <Tooltip.Content>Operation completed</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="danger" size="small">
         <Tooltip.Trigger>
@@ -26,7 +26,7 @@ export function TooltipVariantsDemo() {
             Danger
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Действие необратимо</Tooltip.Content>
+        <Tooltip.Content>The action is irreversible</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="info">
         <Tooltip.Trigger>
@@ -34,7 +34,7 @@ export function TooltipVariantsDemo() {
             Info
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Дополнительная информация</Tooltip.Content>
+        <Tooltip.Content>Additional information</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="warning">
         <Tooltip.Trigger>
@@ -42,7 +42,7 @@ export function TooltipVariantsDemo() {
             Warning
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Проверьте настройки</Tooltip.Content>
+        <Tooltip.Content>Check your settings</Tooltip.Content>
       </Tooltip>
     </div>
   );

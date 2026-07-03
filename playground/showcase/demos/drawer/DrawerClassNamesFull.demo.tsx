@@ -20,22 +20,22 @@ export function DrawerClassNamesFullDemo() {
         }}
       >
         <Drawer.Trigger asChild>
-          <Button variant="outline">Открыть с classNames</Button>
+          <Button variant="outline">Open from classNames</Button>
         </Drawer.Trigger>
         <Drawer.Panel>
           <Drawer.Header>
           <Drawer.HeadingBlock>
-            <Drawer.Title>Настройки</Drawer.Title>
-            <Drawer.Description>Слоты настроены через classNames.</Drawer.Description>
+            <Drawer.Title>Settings</Drawer.Title>
+            <Drawer.Description>Slots are configured via classNames.</Drawer.Description>
           </Drawer.HeadingBlock>
           <Drawer.Close />
         </Drawer.Header>
         <Drawer.Body>
-          <p className="text-small text-muted">Пример body-слота с кастомными стилями панели.</p>
+          <p className="text-small text-muted">Example body-slots with custom panel styles.</p>
         </Drawer.Body>
         <Drawer.Footer>
           <Button size="small" variant="outline" onClick={() => setOpen(false)}>
-            Закрыть
+            Close
           </Button>
         </Drawer.Footer>
         </Drawer.Panel>

@@ -12,13 +12,13 @@ export type LinkSize = ComponentSize;
 export type LinkIconPosition = "start" | "end";
 
 export type LinkClassNames = {
-  /** Якорь `<a>`. */
+  /** Anchor `<a>`. */
   anchor?: string;
-  /** Текст ссылки (`Text`). */
+  /** Link text (`Text`). */
   text?: string;
-  /** Обёртка иконки слева. */
+  /** Left icon wrapper. */
   iconStart?: string;
-  /** Обёртка иконки справа. */
+  /** Right icon wrapper. */
   iconEnd?: string;
 };
 

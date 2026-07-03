@@ -9,13 +9,13 @@ export function ToggleButtonGroupMultipleDemo() {
   return (
     <ToggleButtonGroup
       type="multiple"
-      aria-label="Форматирование"
+      aria-label="Formatting"
       value={formats}
       onValueChange={(v) => setFormats(v as string[])}
     >
-      <ToggleButton value="bold">Жирный</ToggleButton>
-      <ToggleButton value="italic">Курсив</ToggleButton>
-      <ToggleButton value="underline">Подчёркнутый</ToggleButton>
+      <ToggleButton value="bold">Fatty</ToggleButton>
+      <ToggleButton value="italic">Italics</ToggleButton>
+      <ToggleButton value="underline">Underlined</ToggleButton>
     </ToggleButtonGroup>
   );
 }

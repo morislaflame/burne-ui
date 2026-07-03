@@ -24,14 +24,14 @@ export function CardProductSelectableDemo() {
           >
             {selected ? (
               <Badge status="success" size="small" className="absolute top-small right-small">
-                Выбрано
+                Selected
               </Badge>
             ) : null}
           </div>
         </Card.Body>
         <Card.Header className="pt-plus gap-xsmall">
-          <Card.Title>Парка Arctic</Card.Title>
-          <Card.Description>Нажмите для выбора варианта.</Card.Description>
+          <Card.Title>Parka Arctic</Card.Title>
+          <Card.Description>Click to select option.</Card.Description>
         </Card.Header>
       </div>
     </Card>

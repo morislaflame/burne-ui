@@ -29,7 +29,7 @@ const framedDecorator = [
   ),
 ] as const;
 
-/** Фон страницы и `data-theme="light"`, как у `Alert.stories` («Варианты (светлая тема)»). */
+/** Page background and `data-theme="light"`, like `Alert.stories` («Variants (light theme)»). */
 const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
@@ -53,7 +53,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Подсказка по **hover** и **focus**. Compound: `<Tooltip.Trigger>` + `<Tooltip.Content>`; опционально `<Tooltip.Arrow />`. С единственным child триггера handlers и `aria-describedby` пробрасываются на него.",
+          "Tooltip on **hover** and **focus**. Compound: `<Tooltip.Trigger>` + `<Tooltip.Content>`; optional `<Tooltip.Arrow />`. With a single trigger child, handlers and `aria-describedby` are forwarded to it.",
       },
     },
   },
@@ -74,22 +74,22 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
   {
     variant: "default",
     title: "Default",
-    description: "Нейтральная подсказка без иконки статуса.",
+    description: "Neutral tooltip without a status icon.",
   },
   {
     variant: "outline",
     title: "Outline",
-    description: "Полупрозрачный фон с рамкой.",
+    description: "Semi-transparent background with border.",
   },
   {
     variant: "secondary",
     title: "Secondary",
-    description: "Тот же фон, что у secondary-компонентов.",
+    description: "Same background as secondary components.",
   },
   {
     variant: "success",
     title: "Profile updated successfully",
-    description: "Изменения сохранены и синхронизированы.",
+    description: "Changes saved and synced.",
   },
   {
     variant: "danger",
@@ -98,8 +98,8 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
   },
   {
     variant: "info",
-    title: "Справка",
-    description: "Дополнительная информация в нейтрально-информационном тоне.",
+    title: "Help",
+    description: "Additional information in a neutral informational tone.",
   },
   {
     variant: "warning",
@@ -108,19 +108,19 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
   },
   {
     variant: "default",
-    title: "Своя иконка",
-    description: "Иконка через prop `icon` на Panel.",
+    title: "Custom icon",
+    description: "Icon via the `icon` prop on Panel.",
     icon: <IoHelpCircleOutline aria-hidden className="text-primary" />,
   },
   {
     variant: "danger",
-    title: "Semantic без иконки",
-    description: "showIcon={false} отключает стандартную иконку.",
+    title: "Semantic without icon",
+    description: "showIcon={false} disables the default icon.",
     showIcon: false,
   },
   {
     variant: "success",
-    title: "Только заголовок",
+    title: "Title only",
   },
 ];
 
@@ -143,12 +143,12 @@ function TooltipVariantsDemo() {
 }
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => <TooltipVariantsDemo />,
 };
 
 export const OnButtonSizes: Story = {
-  name: "Размеры на кнопке",
+  name: "Sizes on button",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-mid">
       <Tooltip size="small" variant="default">
@@ -157,7 +157,7 @@ export const OnButtonSizes: Story = {
             Hover (small)
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Компактный тултип</Tooltip.Content>
+        <Tooltip.Content>Compact tooltip</Tooltip.Content>
       </Tooltip>
       <Tooltip size="base" variant="default">
         <Tooltip.Trigger>
@@ -165,7 +165,7 @@ export const OnButtonSizes: Story = {
             Hover (base)
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Стандартный размер подсказки</Tooltip.Content>
+        <Tooltip.Content>Standard tooltip size</Tooltip.Content>
       </Tooltip>
       <Tooltip size="mid" variant="default">
         <Tooltip.Trigger>
@@ -173,7 +173,7 @@ export const OnButtonSizes: Story = {
             Hover (mid)
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Средний размер подсказки</Tooltip.Content>
+        <Tooltip.Content>Medium tooltip size</Tooltip.Content>
       </Tooltip>
       <Tooltip size="large" variant="default">
         <Tooltip.Trigger>
@@ -181,7 +181,7 @@ export const OnButtonSizes: Story = {
             Hover (large)
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Более широкий отступ для длинной подсказки</Tooltip.Content>
+        <Tooltip.Content>Wider padding for a long tooltip</Tooltip.Content>
       </Tooltip>
     </div>
   ),
@@ -197,7 +197,7 @@ function SemanticVariantsDemo() {
               {variant}
             </Button>
           </Tooltip.Trigger>
-          <Tooltip.Content>{`Вариант «${variant}»`}</Tooltip.Content>
+          <Tooltip.Content>{`Variant «${variant}»`}</Tooltip.Content>
         </Tooltip>
       ))}
     </div>
@@ -205,18 +205,18 @@ function SemanticVariantsDemo() {
 }
 
 export const SemanticVariants: Story = {
-  name: "Варианты как у Alert — semantic (тёмная тема)",
+  name: "Variants like Alert — semantic (dark theme)",
   render: () => <SemanticVariantsDemo />,
 };
 
 export const SemanticVariantsOnLightTheme: Story = {
-  name: "Варианты как у Alert — semantic (светлая тема)",
+  name: "Variants like Alert — semantic (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <SemanticVariantsDemo />,
 };
 
 export const DefaultWithOptionalIcon: Story = {
-  name: "Опциональная иконка на default",
+  name: "Optional icon on default",
   render: () => (
     <Tooltip
       variant="default"
@@ -227,13 +227,13 @@ export const DefaultWithOptionalIcon: Story = {
           Hover
         </Button>
       </Tooltip.Trigger>
-      <Tooltip.Content>Своя иконка только через prop `icon`</Tooltip.Content>
+      <Tooltip.Content>Custom icon only via prop `icon`</Tooltip.Content>
     </Tooltip>
   ),
 };
 
 export const SemanticIconHidden: Story = {
-  name: "Semantic без иконки",
+  name: "Semantic without icon",
   render: () => (
     <Tooltip variant="danger" showIcon={false}>
       <Tooltip.Trigger>
@@ -241,47 +241,47 @@ export const SemanticIconHidden: Story = {
           Hover
         </Button>
       </Tooltip.Trigger>
-      <Tooltip.Content>Без стандартной иконки</Tooltip.Content>
+      <Tooltip.Content>Without default icon</Tooltip.Content>
     </Tooltip>
   ),
 };
 
 export const WithArrow: Story = {
-  name: "Со стрелкой",
+  name: "With arrow",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-mid">
       <Tooltip delayShowMs={0} side="top">
         <Tooltip.Trigger>
           <Button variant="secondary" type="button">
-            Со стрелкой
+            With arrow
           </Button>
         </Tooltip.Trigger>
         <Tooltip.Content showArrow>
           <Tooltip.Arrow />
-          Тултип со стрелкой сверху
+          Tooltip with arrow on top
         </Tooltip.Content>
       </Tooltip>
       <Tooltip delayShowMs={0} side="bottom">
         <Tooltip.Trigger>
           <Button variant="outline" type="button">
-            Снизу
+            Bottom
           </Button>
         </Tooltip.Trigger>
         <Tooltip.Content showArrow>
           <Tooltip.Arrow />
-          Подсказка снизу
+          Tooltip below
         </Tooltip.Content>
       </Tooltip>
     </div>
   ),
   play: async ({ canvas, userEvent }) => {
-    await userEvent.hover(canvas.getByRole("button", { name: "Со стрелкой" }));
-    await expect(screen.getByRole("tooltip")).toHaveTextContent("Тултип со стрелкой сверху");
+    await userEvent.hover(canvas.getByRole("button", { name: "With arrow" }));
+    await expect(screen.getByRole("tooltip")).toHaveTextContent("Tooltip with arrow on top");
   },
 };
 
 export const CustomOffset: Story = {
-  name: "Кастомный offset",
+  name: "Custom offset",
   render: () => (
     <Tooltip delayShowMs={0} side="top">
       <Tooltip.Trigger>
@@ -291,14 +291,14 @@ export const CustomOffset: Story = {
       </Tooltip.Trigger>
       <Tooltip.Content showArrow offset={12}>
         <Tooltip.Arrow />
-        Больший зазор от триггера
+        Larger offset from trigger
       </Tooltip.Content>
     </Tooltip>
   ),
 };
 
 export const Placements: Story = {
-  name: "Placement (4 стороны)",
+  name: "Placement (4 sides)",
   render: () => (
     <div className="grid grid-cols-2 gap-xlarge py-xlarge">
       {(["top", "right", "bottom", "left"] as const).map((side) => (
@@ -321,57 +321,57 @@ export const Placements: Story = {
 };
 
 export const KeyboardFocus: Story = {
-  name: "Focus (клавиатура)",
+  name: "Focus (keyboard)",
   render: () => (
     <Tooltip delayShowMs={0}>
       <Tooltip.Trigger>
         <Button variant="outline" type="button">
-          Tab сюда
+          Tab here
         </Button>
       </Tooltip.Trigger>
-      <Tooltip.Content>Подсказка при фокусе и hover</Tooltip.Content>
+      <Tooltip.Content>Tooltip on focus and hover</Tooltip.Content>
     </Tooltip>
   ),
 };
 
 export const Accessibility: Story = {
-  name: "Доступность",
+  name: "Accessibility",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid text-left">
       <p className="text-sm text-muted">
-        Контент: <code className="text-primary">role=&quot;tooltip&quot;</code>. Связь с триггером —{" "}
-        <code className="text-primary">aria-describedby</code> только пока подсказка открыта. Hover и
+        Content: <code className="text-primary">role=&quot;tooltip&quot;</code>. Link to trigger —{" "}
+        <code className="text-primary">aria-describedby</code> only while the tooltip is open. Hover and
         focus; <kbd className="rounded-small border-token px-xsmall py-0.5 text-tools">Escape</kbd>{" "}
-        закрывает. Единственный child <code className="text-primary">Trigger</code> получает handlers без
-        лишнего tab-stop.
+        closes. A single <code className="text-primary">Trigger</code> child receives handlers without
+        an extra tab stop.
       </p>
       <Tooltip delayShowMs={0}>
         <Tooltip.Trigger>
           <Button variant="outline" type="button">
-            Кнопка с подсказкой
+            Button with tooltip
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Дополнительное описание для AT</Tooltip.Content>
+        <Tooltip.Content>Additional description for AT</Tooltip.Content>
       </Tooltip>
       <Tooltip delayShowMs={0} variant="info">
         <Tooltip.Trigger>
-          <Button variant="ghost" type="button" aria-label="Справка по полю">
+          <Button variant="ghost" type="button" aria-label="Field help">
             ?
           </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Триггер без видимой подписи — нужен aria-label</Tooltip.Content>
+        <Tooltip.Content>Trigger without visible label — set aria-label</Tooltip.Content>
       </Tooltip>
     </div>
   ),
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
         story:
-          "Слоты root (триггер), trigger, content, arrow, panel, glossContent, message, icon, indicator, title и description через prop classNames на корне.",
+          "Slots root (trigger), trigger, content, arrow, panel, glossContent, message, icon, indicator, title, and description via classNames prop on root.",
       },
     },
   },
@@ -390,21 +390,21 @@ export const CustomClassNames: Story = {
     >
       <Tooltip.Trigger>
         <Button variant="outline" type="button">
-          Кастомные слоты
+          Custom slots
         </Button>
       </Tooltip.Trigger>
       <Tooltip.Content showArrow>
         <Tooltip.Arrow />
         <Tooltip.Icon />
-        <Tooltip.Title>Заголовок</Tooltip.Title>
-        <Tooltip.Description>Описание с кастомными классами</Tooltip.Description>
+        <Tooltip.Title>Title</Tooltip.Title>
+        <Tooltip.Description>Description with custom classes</Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>
   ),
 };
 
 export const GlossWithCompoundLayout: Story = {
-  name: "Gloss — grid как у Alert",
+  name: "Gloss — grid like Alert",
   render: () => (
     <Tooltip delayShowMs={0} surface="gloss" variant="info">
       <Tooltip.Trigger>
@@ -415,28 +415,28 @@ export const GlossWithCompoundLayout: Story = {
       <Tooltip.Content showArrow>
         <Tooltip.Arrow />
         <Tooltip.Icon />
-        <Tooltip.Title>Справка</Tooltip.Title>
-        <Tooltip.Description>Иконка слева от заголовка и описания</Tooltip.Description>
+        <Tooltip.Title>Help</Tooltip.Title>
+        <Tooltip.Description>Icon to the left of title and description</Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>
   ),
 };
 
 export const CompoundCustomIcon: Story = {
-  name: "Compound — своя иконка",
+  name: "Compound — custom icon",
   render: () => (
     <Tooltip delayShowMs={0} variant="default">
       <Tooltip.Trigger>
         <Button variant="outline" type="button">
-          Своя иконка
+          Custom icon
         </Button>
       </Tooltip.Trigger>
       <Tooltip.Content>
         <Tooltip.Icon>
           <IoHelpCircleOutline aria-hidden className="text-primary" />
         </Tooltip.Icon>
-        <Tooltip.Title>Подсказка</Tooltip.Title>
-        <Tooltip.Description>Иконка задаётся через Tooltip.Icon в compound API</Tooltip.Description>
+        <Tooltip.Title>Hint</Tooltip.Title>
+        <Tooltip.Description>Icon is set via Tooltip.Icon in compound API</Tooltip.Description>
       </Tooltip.Content>
     </Tooltip>
   ),

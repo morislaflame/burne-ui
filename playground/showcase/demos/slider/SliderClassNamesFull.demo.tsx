@@ -18,11 +18,11 @@ export function SliderClassNamesFullDemo() {
       }}
     >
       <Slider.Header>
-        <Slider.Label>Яркость</Slider.Label>
+        <Slider.Label>Brightness</Slider.Label>
         <Slider.Value />
       </Slider.Header>
       <Slider.Track />
-      <Slider.Hint>Настройка слотов через classNames на root.</Slider.Hint>
+      <Slider.Hint>Setting up slots via classNames on root.</Slider.Hint>
     </Slider>
   );
 }

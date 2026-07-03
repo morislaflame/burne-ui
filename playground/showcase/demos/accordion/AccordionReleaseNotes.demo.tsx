@@ -7,13 +7,13 @@ const CHANGES = [
   {
     version: "1.2.0",
     badge: "Latest",
-    title: "Gloss и playground",
-    items: ["Кастомные вариации в showcase", "SelectionIndicator rounded-mid", "Slider thumbClassName"],
+    title: "Gloss and playground",
+    items: ["Custom variations in showcase", "SelectionIndicator rounded-mid", "Slider thumbClassName"],
   },
   {
     version: "1.1.0",
     badge: null,
-    title: "Формы и календарь",
+    title: "Forms and calendar",
     items: ["Calendar compound Footer", "TimeField segmented", "ComboBox Popover API"],
   },
 ] as const;

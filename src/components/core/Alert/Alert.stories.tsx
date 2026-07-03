@@ -58,7 +58,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Сообщение пользователю. **Simple** — `title`, `description`, `icon`, `action` на root. **Compound** — `Message`, `Indicator`, `Content`, `Title`, `Description`, `Action`. `variant` — визуальный стиль (`default`, `outline`, `secondary`, `gloss`); `status` — семантика (`danger`, `success`, `info`, `warning`). `hoverLift={false}` — без анимации подъёма при наведении. Слоты можно настраивать через `classNames` на root (`root`, `indicator`, `message`, `content`, `title`, `description`, `action`). **a11y:** auto-`id`, `aria-labelledby` / `aria-describedby`; для `status=\"danger\"`/`\"warning\"` — `role=\"alert\"`.",
+          "User-facing message. **Simple** — `title`, `description`, `icon`, `action` on root. **Compound** — `Message`, `Indicator`, `Content`, `Title`, `Description`, `Action`. `variant` — visual style (`default`, `outline`, `secondary`, `gloss`); `status` — semantics (`danger`, `success`, `info`, `warning`). `hoverLift={false}` — no hover lift animation. Slots can be customized via `classNames` on root (`root`, `indicator`, `message`, `content`, `title`, `description`, `action`). **a11y:** auto-`id`, `aria-labelledby` / `aria-describedby`; for `status=\"danger\"`/`\"warning\"` — `role=\"alert\"`.",
       },
     },
   },
@@ -91,7 +91,7 @@ const meta = {
     },
     hoverLift: {
       control: "boolean",
-      description: "Подъём и тень при наведении (как у Badge).",
+      description: "Lift and shadow on hover (like Badge).",
       table: { defaultValue: { summary: "true" } },
     },
   },
@@ -165,17 +165,17 @@ function AlertAllVariantsDemo({ simple = false }: { simple?: boolean }) {
     {
       variant: "default" as const,
       title: "Default",
-      description: "Нейтральное сообщение.",
+      description: "Neutral message.",
     },
     {
       variant: "outline" as const,
       title: "Outline",
-      description: "Полупрозрачный фон с обводкой.",
+      description: "Semi-transparent background with border.",
     },
     {
       variant: "secondary" as const,
       title: "Secondary",
-      description: "Тот же фон, что у бейджа/кнопки secondary.",
+      description: "Same background as secondary badge/button.",
     },
     {
       status: "danger" as const,
@@ -193,8 +193,8 @@ function AlertAllVariantsDemo({ simple = false }: { simple?: boolean }) {
     },
     {
       status: "info" as const,
-      title: "Справка",
-      description: "Дополнительная информация в нейтрально-информационном тоне.",
+      title: "Help",
+      description: "Additional information in a neutral informational tone.",
     },
     {
       status: "warning" as const,
@@ -245,11 +245,11 @@ function AlertAllVariantsDemo({ simple = false }: { simple?: boolean }) {
 }
 
 export const Default: Story = {
-  name: "Simple и Compound",
+  name: "Simple and Compound",
   ...dualApiStorySource,
   render: () => (
     <DualApiStoryPanels>
-      <DualApiStoryPanel title="Simple — props на &lt;Alert&gt;">
+      <DualApiStoryPanel title="Simple — props on &lt;Alert&gt;">
         <Alert
           status="info"
           title="Heads up!"
@@ -303,12 +303,12 @@ export const WithAction: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты (тёмная тема)",
+  name: "Variants (dark theme)",
   render: () => <VariantsOnlyDemo />,
 };
 
 export const VariantsSimple: Story = {
-  name: "Варианты — simple API",
+  name: "Variants — simple API",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-plus py-mid">
       {ALERT_VARIANTS.map((variant) => (
@@ -325,51 +325,51 @@ export const VariantsSimple: Story = {
 };
 
 export const VariantsOnLightTheme: Story = {
-  name: "Варианты (светлая тема)",
+  name: "Variants (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <VariantsOnlyDemo />,
 };
 
 export const StatusVariants: Story = {
-  name: "Статусы × варианты (тёмная тема)",
+  name: "Statuses × variants (dark theme)",
   render: () => <StatusVariantsDemo />,
 };
 
 export const StatusVariantsOnLightTheme: Story = {
-  name: "Статусы × варианты (светлая тема)",
+  name: "Statuses × variants (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <StatusVariantsDemo />,
 };
 
 export const Overview: Story = {
-  name: "Обзор (variant + status)",
+  name: "Overview (variant + status)",
   render: () => <AlertAllVariantsDemo />,
 };
 
 export const OverviewSimple: Story = {
-  name: "Обзор — simple API",
+  name: "Overview — simple API",
   render: () => <AlertAllVariantsDemo simple />,
 };
 
 export const OverviewOnLightTheme: Story = {
-  name: "Обзор (светлая тема)",
+  name: "Overview (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <AlertAllVariantsDemo />,
 };
 
 export const Accessibility: Story = {
-  name: "Доступность (auto id + role)",
+  name: "Accessibility (auto id + role)",
   render: () => (
     <div className="flex flex-col gap-plus">
       <Alert
         status="danger"
-        title="Не удалось сохранить"
-        description="Проверьте соединение и повторите попытку."
+        title="Failed to save"
+        description="Check your connection and try again."
       />
       <Alert
         status="info"
-        title="Черновик сохранён"
-        description="Синхронизация выполняется в фоне."
+        title="Draft saved"
+        description="Sync is running in the background."
       />
     </div>
   ),
@@ -387,13 +387,13 @@ function GlossDemo() {
             <Alert.Content>
               <Alert.Title className="capitalize">{status}</Alert.Title>
               <Alert.Description>
-                variant=&quot;gloss&quot; — статус только в тексте и иконке.
+                variant=&quot;gloss&quot; — status only in text and icon.
               </Alert.Description>
             </Alert.Content>
           </Alert.Message>
         </Alert>
       ))}
-      <Alert variant="gloss" status="info" title="Simple API" description="Props title и description на корне." />
+      <Alert variant="gloss" status="info" title="Simple API" description="Props title and description on root." />
     </div>
   );
 }
@@ -406,29 +406,29 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
 
 export const NoHoverLift: Story = {
-  name: "Без hover-lift",
+  name: "No hover-lift",
   args: {
     status: "info",
-    title: "Статичный alert",
-    description: "hoverLift={false} — без подъёма и усиления тени при наведении.",
+    title: "Static alert",
+    description: "hoverLift={false} — no lift or stronger shadow on hover.",
     hoverLift: false,
   },
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
         story:
-          "кастомизация classNames для Alert",
+          "classNames customization for Alert",
       },
     },
   },
@@ -449,12 +449,12 @@ export const CustomClassNames: Story = {
       <Alert.Message>
         <Alert.Indicator />
         <Alert.Content>
-          <Alert.Title>Профиль обновлён</Alert.Title>
-          <Alert.Description>Все слоты настроены через classNames.</Alert.Description>
+          <Alert.Title>Profile updated</Alert.Title>
+          <Alert.Description>All slots configured via classNames.</Alert.Description>
         </Alert.Content>
       </Alert.Message>
       <Alert.Action>
-        <Button size="small">Открыть</Button>
+        <Button size="small">Open</Button>
       </Alert.Action>
     </Alert>
   ),
@@ -463,7 +463,7 @@ export const CustomClassNames: Story = {
 const ALERT_SIZES: AlertSize[] = ["small", "base", "mid", "large"];
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: () => (
     <div className="flex w-full max-w-md flex-col gap-plus">
       {ALERT_SIZES.map((size) => (
@@ -473,7 +473,7 @@ export const Sizes: Story = {
             <Alert.Content>
               <Alert.Title>size={size}</Alert.Title>
               <Alert.Description>
-                Padding, иконка и типографика масштабируются по размерной сетке.
+                Padding, icon, and typography scale with the size grid.
               </Alert.Description>
             </Alert.Content>
           </Alert.Message>

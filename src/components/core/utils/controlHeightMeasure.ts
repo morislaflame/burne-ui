@@ -7,7 +7,7 @@ const CONTROL_HEIGHT_VAR: Record<ComponentSize, string> = {
   large: "--control-height-large",
 };
 
-/** SSR-fallback: множитель root rem, если DOM-измерение недоступно. */
+/** SSR fallback: root rem multiplier when DOM measurement is unavailable. */
 const CONTROL_HEIGHT_SCALE: Record<ComponentSize, number> = {
   small: 1.75,
   base: 2.2,
@@ -41,7 +41,7 @@ function measureControlHeightPx(size: ComponentSize): number | null {
   return null;
 }
 
-/** Высота контрола в px — читает `--control-height-*` с `:root`. */
+/** Control height in px — reads `--control-height-*` from `:root`. */
 export function readControlHeightPx(size: ComponentSize, rootPx = 16): number {
   return measureControlHeightPx(size) ?? rootPx * CONTROL_HEIGHT_SCALE[size];
 }

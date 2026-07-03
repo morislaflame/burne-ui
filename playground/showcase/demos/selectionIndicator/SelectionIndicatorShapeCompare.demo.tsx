@@ -9,7 +9,7 @@ export function SelectionIndicatorShapeCompareDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Форма оболочки
+        Shell shape
       </Text>
       <div className="flex flex-wrap items-end gap-xlarge">
         <div className="flex flex-col items-center gap-xsmall">
@@ -41,7 +41,7 @@ export function SelectionIndicatorShapeCompareDemo() {
           onChange={(e) => setSelected(e.target.checked)}
           className="size-4"
         />
-        Выбрано
+        Selected
       </label>
     </div>
   );

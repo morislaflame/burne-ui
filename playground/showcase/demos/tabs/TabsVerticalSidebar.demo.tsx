@@ -15,23 +15,23 @@ export function TabsVerticalSidebarDemo() {
       className="w-full max-w-md"
     >
       <Tabs.List>
-        <Tabs.Tab value="profile">Профиль</Tabs.Tab>
-        <Tabs.Tab value="team">Команда</Tabs.Tab>
-        <Tabs.Tab value="api">API-ключи</Tabs.Tab>
+        <Tabs.Tab value="profile">Profile</Tabs.Tab>
+        <Tabs.Tab value="team">Team</Tabs.Tab>
+        <Tabs.Tab value="api">API-keys</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="profile">
         <Text as="p" variant="small" className="text-muted">
-          orientation=&quot;vertical&quot; — боковая навигация.
+          orientation=&quot;vertical&quot; — side navigation.
         </Text>
       </Tabs.Panel>
       <Tabs.Panel value="team">
         <Text as="p" variant="small" className="text-muted">
-          Участники и роли.
+          Participants and roles.
         </Text>
       </Tabs.Panel>
       <Tabs.Panel value="api">
         <Text as="p" variant="small" className="text-muted">
-          Создание и отзыв ключей.
+          Key creation and revocation.
         </Text>
       </Tabs.Panel>
     </Tabs>

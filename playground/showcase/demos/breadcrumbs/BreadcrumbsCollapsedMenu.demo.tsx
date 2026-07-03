@@ -7,21 +7,21 @@ export function BreadcrumbsCollapsedMenuDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-mid">
       <Text as="p" variant="small" className="text-muted">
-        Более трёх пунктов сжимаются: первый · … · два последних.
+        More than three points are compressed: first · … · last two.
       </Text>
       <Breadcrumbs>
         <Breadcrumbs.List>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Главная
+            Home
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Каталог
+            Catalog
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Электроника
+            Electronics
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
-            Ноутбуки
+            Laptops
           </Breadcrumbs.Item>
           <Breadcrumbs.Item href="#" onClick={preventNav}>
             Apple

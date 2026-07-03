@@ -22,36 +22,36 @@ export function BadgeShowcase() {
   return (
     <ShowcasePage
       title="Badge"
-      description="Метки статуса, счётчики и точки-индикаторы на элементах интерфейса."
+      description="Status marks, counters and indicator dots on interface elements."
       importPath='import { Badge } from "@/components/core/Badge";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Варианты и статусы" description="variant, status и иконка на корне Badge.">
+      <ShowcaseSection title="Options and statuses" description="variant, status and an icon on the root Badge.">
         <ShowcaseDemoFromFile Demo={BadgeVariantsDemo} source={badgeVariantsSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={BadgeSizesDemo} source={badgeSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description="variant gloss — стеклянная поверхность с motion.">
+      <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
         <ShowcaseDemoFromFile Demo={BadgeGlossDemo} source={badgeGlossSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Badge.Anchor" description="Счётчик и dot-индикатор поверх аватара.">
+      <ShowcaseSection title="Badge.Anchor" description="Counter and dot-indicator on top of avatar.">
         <ShowcaseDemoFromFile Demo={BadgeAnchorDemo} source={badgeAnchorSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Размещение"
-        description="placement у Badge внутри Badge.Anchor: top-right, top-left, bottom-right, bottom-left."
+        title="Accommodation"
+        description="placement at Badge inside Badge.Anchor: top-right, top-left, bottom-right, bottom-left."
       >
         <ShowcaseDemoFromFile Demo={BadgePlacementsDemo} source={badgePlacementsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Теги, статусы и Badge.Anchor — demo-файлы в `demos/badge/`."
+        title="Custom Variations"
+        description="Tags, statuses and Badge.Anchor — demo-files in `demos/badge/`."
       >
         <ShowcaseDemoFromFile Demo={BadgeClassNamesFullDemo} source={badgeClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BadgeTagCloudDemo} source={badgeTagCloudSource} />
@@ -60,29 +60,29 @@ export function BadgeShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Badge" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, status, size, icon на корне Badge. Badge.Anchor — compound-обёртка для позиционирования поверх children."
+            description="variant, status, size, icon on the root Badge. Badge.Anchor — compound-wrapper for positioning on top children."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Кастомизация">
+        <ShowcaseDoc.Block title="Customization">
           <p>
-            <code>placement</code> для dot-режима в <code>Badge.Anchor</code>. Размеры:{" "}
+            <code>placement</code> For dot-mode in <code>Badge.Anchor</code>. Dimensions:{" "}
             <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.{" "}
-            <code>variant=&quot;gloss&quot;</code> — стеклянная оболочка. Дополнительные стили —{" "}
-            <code>className</code> и <code>classNames</code>; hover-lift у дочернего Badge в Anchor —{" "}
+            <code>variant=&quot;gloss&quot;</code> — glass shell. Additional styles —{" "}
+            <code>className</code> and <code>classNames</code>; hover-lift at the subsidiary Badge in Anchor —{" "}
             <code>configureMotion()</code> (<code>badgeAnchorHoverLiftScale</code>).
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Следующий шаг">
+        <ShowcaseDoc.Block title="Next step">
           <p>
-            Следующим шагом могу пройтись и унифицировать названия слотов (
-            <code>root</code>/<code>content</code>/<code>message</code> и т.п.) в общем гайдлайне,
-            чтобы одинаково назывались везде по киту.
+            The next step is to go through and unify the names of the slots (
+            <code>root</code>/<code>content</code>/<code>message</code> etc.) in the general guideline,
+            so that they are called the same everywhere in China.
           </p>
         </ShowcaseDoc.Block>
       </ShowcaseDoc>

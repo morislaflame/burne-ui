@@ -18,25 +18,25 @@ export function SkeletonShowcase() {
   return (
     <ShowcasePage
       title="Skeleton"
-      description="Плейсхолдеры загрузки с анимациями pulse, wave и shimmer."
+      description="Loading placeholders with animations pulse, wave and shimmer."
       importPath='import { Skeleton } from "@/components/core/Skeleton";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Базовые формы" description="Прямоугольник и круг.">
+      <ShowcaseSection title="Basic forms" description="Rectangle and circle.">
         <ShowcaseDemoFromFile Demo={SkeletonBasicShapesDemo} source={skeletonBasicShapesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Text и Block" description="Многострочный текст и блок-контейнер.">
+      <ShowcaseSection title="Text and Block" description="Multiline text and block container.">
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonTextBlockDemo} source={skeletonTextBlockSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Анимации" description="variant pulse, wave и shimmer.">
+      <ShowcaseSection title="Animations" description="variant pulse, wave and shimmer.">
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonAnimationsDemo} source={skeletonAnimationsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Полная кастомизация слотов через classNames на каждом подкомпоненте."
+        description="Full customization of slots via classNames on each subcomponent."
       >
         <ShowcaseDemoFromFile
           align="stretch"
@@ -46,8 +46,8 @@ export function SkeletonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Профиль, строки таблицы и превью статьи — `demos/skeleton/`."
+        title="Custom Variations"
+        description="Profile, table rows and article preview — `demos/skeleton/`."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonProfileCardDemo} source={skeletonProfileCardSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonTableRowsDemo} source={skeletonTableRowsSource} />
@@ -55,23 +55,23 @@ export function SkeletonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Skeleton" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Skeleton.Circle, Skeleton.Text и Skeleton.Block — готовые формы. classNames на каждом подкомпоненте."
+            description="Skeleton.Circle, Skeleton.Text and Skeleton.Block — ready-made forms. classNames on each subcomponent."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="Корневой Skeleton с className — произвольная форма через размеры."
+            description="Root Skeleton with className — arbitrary shape through dimensions."
           />
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Анимации">
+        <ShowcaseDoc.Block title="Animations">
           <p>
-            <code>pulse</code>, <code>wave</code>, <code>shimmer</code> — проп <code>variant</code> на любом
-            подкомпоненте Skeleton.
+            <code>pulse</code>, <code>wave</code>, <code>shimmer</code> — prop <code>variant</code> on any
+            subcomponent Skeleton.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

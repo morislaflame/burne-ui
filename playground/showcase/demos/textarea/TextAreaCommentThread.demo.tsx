@@ -6,12 +6,12 @@ export function TextAreaCommentThreadDemo() {
     <div className="flex w-full max-w-lg flex-col gap-small">
       <div className="rounded-mid border-token bg-secondary px-mid py-small w-fit self-end">
         <Text as="p" variant="base" className="text-muted">
-          Алекс: «Можно добавить gloss на SearchInput?»
+          Alex: “Can I add gloss on SearchInput?»
         </Text>
       </div>
       <TextArea
-        label="Ответ"
-        placeholder="Напишите комментарий…"
+        label="Answer"
+        placeholder="Write a comment…"
         rows={2}
         variant="gloss"
         className="w-full"

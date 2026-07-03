@@ -12,13 +12,13 @@ export function DialogInviteTeamDemo() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <Dialog.Trigger asChild>
-          <Button variant="outline">Пригласить в команду</Button>
+          <Button variant="outline">Invite to the team</Button>
         </Dialog.Trigger>
         <Dialog.Panel>
           <Dialog.Header>
           <Dialog.HeadingBlock>
-            <Dialog.Title>Приглашение</Dialog.Title>
-            <Dialog.Description>Отправьте ссылку коллеге по email.</Dialog.Description>
+            <Dialog.Title>Invitation</Dialog.Title>
+            <Dialog.Description>Send the link to a colleague on email.</Dialog.Description>
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
@@ -30,10 +30,10 @@ export function DialogInviteTeamDemo() {
         </Dialog.Body>
         <Dialog.Footer>
           <Button variant="outline" type="button" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
           <Button type="button" onClick={() => setOpen(false)}>
-            Отправить
+            Send
           </Button>
         </Dialog.Footer>
         </Dialog.Panel>

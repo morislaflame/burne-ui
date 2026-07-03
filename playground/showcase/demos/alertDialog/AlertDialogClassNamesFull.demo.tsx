@@ -19,22 +19,22 @@ export function AlertDialogClassNamesFullDemo() {
       }}
     >
       <AlertDialog.Trigger asChild>
-        <Button variant="outline">Открыть с classNames</Button>
+        <Button variant="outline">Open from classNames</Button>
       </AlertDialog.Trigger>
       <AlertDialog.Panel>
         <AlertDialog.Header>
           <AlertDialog.HeadingBlock>
-            <AlertDialog.Title>Несохранённые изменения</AlertDialog.Title>
+            <AlertDialog.Title>Unsaved changes</AlertDialog.Title>
             <AlertDialog.Description>
-              Слоты panel, title, description и footer настроены через classNames.
+              Slots panel, title, description and footer configured via classNames.
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Отмена
+            Cancel
           </Button>
-          <Button onClick={() => setOpen(false)}>Продолжить</Button>
+          <Button onClick={() => setOpen(false)}>Continue</Button>
         </AlertDialog.Footer>
       </AlertDialog.Panel>
     </AlertDialog>

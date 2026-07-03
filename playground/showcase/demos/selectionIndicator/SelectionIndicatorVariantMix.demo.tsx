@@ -7,7 +7,7 @@ export function SelectionIndicatorVariantMixDemo() {
   return (
     <div className="flex w-full max-w-xl flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Варианты (on / off)
+        Options (on / off)
       </Text>
       <div className="grid grid-cols-2 gap-mid sm:grid-cols-4">
         {VARIANTS.map((variant) => (

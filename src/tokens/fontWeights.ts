@@ -1,4 +1,4 @@
-/** Примитивная шкала начертания — совпадает с `--font-w-*` в `styles.css`. */
+/** Primitive font-weight scale — matches `--font-w-*` in `styles.css`. */
 export const burneFontWeightScale = ["small", "base", "mid", "strong", "bold"] as const;
 
 export type FontWeightStep = (typeof burneFontWeightScale)[number];
@@ -19,7 +19,7 @@ export const FONT_WEIGHT_DEFAULTS: Record<FontWeightStep, number> = {
   bold: 800,
 };
 
-/** CSS `var(--font-w-small|base|mid|strong|bold)` для inline-стилей и документации. */
+/** CSS `var(--font-w-small|base|mid|strong|bold)` for inline styles and documentation. */
 export function fontWeightToken<S extends FontWeightStep>(step: S): `var(--font-w-${S})` {
   return `var(--font-w-${step})` as `var(--font-w-${S})`;
 }

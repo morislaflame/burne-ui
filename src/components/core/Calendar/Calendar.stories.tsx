@@ -30,7 +30,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Календарь с тремя режимами выбора: одна дата, диапазон, несколько дат. Поддерживает переключение вида: дни → месяцы → годы. Слоты можно настраивать через `classNames` на root (`root`, `header`, `grid`, `dayCell`, `cell`, `footer` и др.).",
+          "Calendar with three selection modes: single date, range, multiple dates. Supports view switching: days → months → years. Slots can be customized via `classNames` on root (`root`, `header`, `grid`, `dayCell`, `cell`, `footer`, etc.).",
       },
     },
   },
@@ -54,14 +54,14 @@ function formatDate(d: Date | null | undefined): string {
 // ─── stories ─────────────────────────────────────────────────────────────────
 
 export const Single: Story = {
-  name: "Одиночный выбор",
+  name: "Single selection",
   render: function SingleStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
       <div className="flex flex-col items-center gap-mid">
         <Calendar mode="single" value={date} onValueChange={setDate} />
         <p className="text-small text-muted">
-          Выбрано: <span className="font-medium text-foreground">{formatDate(date)}</span>
+          Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </p>
       </div>
     );
@@ -69,16 +69,16 @@ export const Single: Story = {
 };
 
 export const Range: Story = {
-  name: "Диапазон дат",
+  name: "Date range",
   render: function RangeStory() {
     const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null });
     return (
       <div className="flex flex-col items-center gap-mid">
         <Calendar mode="range" value={range} onValueChange={setRange} />
         <p className="text-small text-muted">
-          От{" "}
+          From{" "}
           <span className="font-medium text-foreground">{formatDate(range.start)}</span>
-          {" "}до{" "}
+          {" "}to{" "}
           <span className="font-medium text-foreground">{formatDate(range.end)}</span>
         </p>
       </div>
@@ -87,14 +87,14 @@ export const Range: Story = {
 };
 
 export const Multiple: Story = {
-  name: "Множественный выбор",
+  name: "Multiple selection",
   render: function MultipleStory() {
     const [dates, setDates] = useState<Date[]>([]);
     return (
       <div className="flex flex-col items-center gap-mid">
         <Calendar mode="multiple" value={dates} onValueChange={setDates} />
         <p className="text-small text-muted">
-          Выбрано:{" "}
+          Selected:{" "}
           <span className="font-medium text-foreground">
             {dates.length > 0 ? dates.map((d) => formatDate(d)).join(", ") : "—"}
           </span>
@@ -105,7 +105,7 @@ export const Multiple: Story = {
 };
 
 export const WithFooter: Story = {
-  name: "С кнопками «Сегодня» и «Очистить»",
+  name: "With Today and Clear buttons",
   render: function WithFooterStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
@@ -116,16 +116,16 @@ export const WithFooter: Story = {
           <Calendar.Footer />
         </Calendar>
         <p className="text-small text-muted">
-          Выбрано: <span className="font-medium text-foreground">{formatDate(date)}</span>
+          Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </p>
       </div>
     );
   },
   play: async ({ canvas, userEvent }) => {
     const today = new Date();
-    await userEvent.click(canvas.getByRole("button", { name: "Сегодня" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Today" }));
     await waitFor(() => {
-      expect(canvas.getByText("Выбрано:").parentElement?.textContent).toContain(
+      expect(canvas.getByText("Selected:").parentElement?.textContent).toContain(
         String(today.getDate()),
       );
     });
@@ -133,7 +133,7 @@ export const WithFooter: Story = {
 };
 
 export const RangeWithFooter: Story = {
-  name: "Диапазон с подвалом",
+  name: "Range with footer",
   render: function RangeWithFooterStory() {
     const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null });
     return (
@@ -144,9 +144,9 @@ export const RangeWithFooter: Story = {
           <Calendar.Footer />
         </Calendar>
         <p className="text-small text-muted">
-          От{" "}
+          From{" "}
           <span className="font-medium text-foreground">{formatDate(range.start)}</span>
-          {" "}до{" "}
+          {" "}to{" "}
           <span className="font-medium text-foreground">{formatDate(range.end)}</span>
         </p>
       </div>
@@ -155,14 +155,14 @@ export const RangeWithFooter: Story = {
 };
 
 export const StartFromMonthView: Story = {
-  name: "Открыть с выбора месяца",
+  name: "Open from month picker",
   render: function MonthViewStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
       <div className="flex flex-col items-center gap-mid">
         <Calendar mode="single" value={date} onValueChange={setDate} initialView="months" />
         <p className="text-small text-muted">
-          Выбрано: <span className="font-medium text-foreground">{formatDate(date)}</span>
+          Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </p>
       </div>
     );
@@ -170,14 +170,14 @@ export const StartFromMonthView: Story = {
 };
 
 export const StartFromYearView: Story = {
-  name: "Открыть с выбора года",
+  name: "Open from year picker",
   render: function YearViewStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
       <div className="flex flex-col items-center gap-mid">
         <Calendar mode="single" value={date} onValueChange={setDate} initialView="years" />
         <p className="text-small text-muted">
-          Выбрано: <span className="font-medium text-foreground">{formatDate(date)}</span>
+          Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </p>
       </div>
     );
@@ -185,7 +185,7 @@ export const StartFromYearView: Story = {
 };
 
 export const WithMinMax: Story = {
-  name: "С ограничением дат (min/max)",
+  name: "With date limits (min/max)",
   render: function WithMinMaxStory() {
     const today = new Date();
     const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 5);
@@ -201,7 +201,7 @@ export const WithMinMax: Story = {
           maxDate={maxDate}
         />
         <p className="text-small text-muted">
-          Доступно: {formatDate(minDate)} — {formatDate(maxDate)}
+          Available: {formatDate(minDate)} — {formatDate(maxDate)}
         </p>
       </div>
     );
@@ -209,7 +209,7 @@ export const WithMinMax: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты оформления",
+  name: "Style variants",
   render: function VariantsStory() {
     const variants: CalendarVariant[] = ["default", "secondary", "outline"];
     return (
@@ -226,7 +226,7 @@ export const Variants: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Размеры",
+  name: "Sizes",
   render: function SizesStory() {
     const sizes: CalendarSize[] = ["small", "base", "mid", "large"];
     return (
@@ -243,7 +243,7 @@ export const Sizes: Story = {
 };
 
 export const Uncontrolled: Story = {
-  name: "Неконтролируемый (defaultValue)",
+  name: "Uncontrolled (defaultValue)",
   render: () => {
     const today = new Date();
     const defaultDate = new Date(today.getFullYear(), today.getMonth(), 15);
@@ -254,11 +254,11 @@ export const Uncontrolled: Story = {
 };
 
 export const CustomClassNames: Story = {
-  name: "Полная кастомизация classNames",
+  name: "Full classNames customization",
   parameters: {
     docs: {
       description: {
-        story: "кастомизация classNames для Calendar",
+        story: "classNames customization for Calendar",
       },
     },
   },

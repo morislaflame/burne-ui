@@ -8,13 +8,13 @@ export function ExpandableOrderDetailsDemo() {
   return (
     <Surface variant="secondary" padding="mid" className="w-full max-w-md">
       <Text as="p" variant="small" className="mb-mid font-medium">
-        Заказ #1042
+        Order #1042
       </Text>
-      <Expandable defaultOpen title="Состав заказа" icon={EXPANDABLE_INFO_ICON} description="3 позиции">
+      <Expandable defaultOpen title="Order contents" icon={EXPANDABLE_INFO_ICON} description="3 positions">
         <ul className="flex flex-col gap-xsmall text-sm text-muted">
-          <li>Парка Arctic — 1 шт.</li>
-          <li>Шапка Wool — 1 шт.</li>
-          <li>Перчатки Pro — 1 шт.</li>
+          <li>Parka Arctic — 1 pcs.</li>
+          <li>Cap Wool — 1 pcs.</li>
+          <li>Gloves Pro — 1 pcs.</li>
         </ul>
       </Expandable>
     </Surface>

@@ -20,43 +20,43 @@ export function ToastShowcase() {
   return (
     <ShowcasePage
       title="Toast"
-      description="Императивные уведомления через useToast — стек до 3 видимых тостов."
+      description="Imperative notifications via useToast — stack up to 3 visible toasts."
       importPath='import { Toast, useToast } from "@/components/core/Toast";'
       tags={["core", "feedback"]}
     >
-      <ShowcaseSection title="Базовый" description="toast.show с title и description — status и variant по умолчанию.">
+      <ShowcaseSection title="Base" description="toast.show with title and description — status and variant default.">
         <ShowcaseDemoFromFile Demo={ToastDefaultDemo} source={toastDefaultSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Размеры" description="size: small, base, mid, large — padding, типографика и ширина viewport.">
+      <ShowcaseSection title="Dimensions" description="size: small, base, mid, large — padding, typography and width viewport.">
         <ShowcaseDemoFromFile Demo={ToastSizesDemo} source={toastSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Модификации"
-        description="status, variant gloss, action, isLoading и timeout: 0."
+        title="Modifications"
+        description="status, variant gloss, action, isLoading and timeout: 0."
       >
         <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Полная кастомизация classNames"
-        description="Слоты root, indicator, title, description, action, close, viewport, scrim, stack."
+        title="Full customization classNames"
+        description="Slots root, indicator, title, description, action, close, viewport, scrim, stack."
       >
         <ShowcaseDemoFromFile Demo={ToastClassNamesFullDemo} source={toastClassNamesFullSource} />
         <ShowcaseDemoFromFile Demo={ToastClassNamesCompoundDemo} source={toastClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Размещение"
+        title="Accommodation"
         description="placement: top-left, top-center, top-right, bottom-left, bottom-center, bottom-right."
       >
         <ShowcaseDemoFromFile Demo={ToastPlacementsDemo} source={toastPlacementsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Кастомные вариации"
-        description="Undo-action, панель деплоя и toast.promise — demo-файлы в `demos/toast/`."
+        title="Custom Variations"
+        description="Undo-action, deployment panel and toast.promise — demo-files in `demos/toast/`."
       >
         <ShowcaseDemoFromFile Demo={ToastUndoActionDemo} source={toastUndoActionSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ToastDeployPanelDemo} source={toastDeployPanelSource} />
@@ -64,27 +64,27 @@ export function ToastShowcase() {
       </ShowcaseSection>
 
       <ShowcaseDoc>
-        <ShowcaseDoc.Block title="Импорт">
+        <ShowcaseDoc.Block title="Import">
           <ShowcaseDoc.Import path="@/components/core/Toast" />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="API">
           <p>
-            Императивный API: <code>useToast()</code> → <code>toast.show</code>, <code>toast.success</code>,{" "}
-            <code>toast.danger</code>, <code>toast.promise</code> и др. Параметры: <code>title</code>,{" "}
+            Imperative API: <code>useToast()</code> → <code>toast.show</code>, <code>toast.success</code>,{" "}
+            <code>toast.danger</code>, <code>toast.promise</code> etc. Parameters: <code>title</code>,{" "}
             <code>description</code>, <code>status</code>, <code>variant</code>, <code>size</code>,{" "}
             <code>placement</code>, <code>timeout</code>, <code>action</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Block title="Провайдер">
+        <ShowcaseDoc.Block title="Provider">
           <p>
-            <code>Toast.Provider</code> должен оборачивать приложение (layout). Без него{" "}
-            <code>useToast</code> не сможет отображать уведомления.
+            <code>Toast.Provider</code> should wrap the application (layout). Without him{" "}
+            <code>useToast</code> will not be able to display notifications.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            Стек и reposition — <code>configureMotion()</code> (<code>enableToastStack</code>). Scrim
-            плотности — токены <code>--toast-scrim-size</code>, <code>--toast-scrim-density</code>.
+            Stack and reposition — <code>configureMotion()</code> (<code>enableToastStack</code>). Scrim
+            density - tokens <code>--toast-scrim-size</code>, <code>--toast-scrim-density</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

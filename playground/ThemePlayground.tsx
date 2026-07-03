@@ -29,7 +29,7 @@ export function ThemePlayground() {
         <Button
           onClick={() => setDrawerOpen(true)}
           className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-token-large bg-primary text-primary-foreground hover:bg-primary-hover active:scale-95 transition-transform"
-          aria-label="Настройки темы"
+          aria-label="Theme settings"
         >
           <IoColorPaletteOutline className="size-6" />
         </Button>
@@ -40,8 +40,8 @@ export function ThemePlayground() {
         <Drawer.Panel size="default">
           <Drawer.Header>
             <Drawer.HeadingBlock>
-              <Drawer.Title>Настройки темы</Drawer.Title>
-              <Drawer.Description>Настройте токены темы для Burne UI.</Drawer.Description>
+              <Drawer.Title>Theme settings</Drawer.Title>
+              <Drawer.Description>Set up theme tokens for Burne UI.</Drawer.Description>
             </Drawer.HeadingBlock>
             <Drawer.Close />
           </Drawer.Header>

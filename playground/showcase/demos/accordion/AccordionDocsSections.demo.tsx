@@ -5,21 +5,21 @@ import { Accordion } from "@/components/composite/Accordion";
 const SECTIONS = [
   {
     icon: <IoLayersOutline aria-hidden className="size-full" />,
-    title: "Компоненты",
-    description: "Core и composite",
-    body: "Button, Input, Dialog, Accordion и другие примитивы с compound API.",
+    title: "Components",
+    description: "Core and composite",
+    body: "Button, Input, Dialog, Accordion and other primitives with compound API.",
   },
   {
     icon: <IoColorPaletteOutline aria-hidden className="size-full" />,
-    title: "Тема",
-    description: "Токены и gloss",
-    body: "CSS-переменные, surface-варианты и стеклянные gloss-панели.",
+    title: "Theme",
+    description: "Tokens and gloss",
+    body: "CSS-variables, surface-options and glass gloss-panels.",
   },
   {
     icon: <IoCodeSlashOutline aria-hidden className="size-full" />,
     title: "Playground",
-    description: "Живые примеры",
-    body: "Каталог компонентов с кастомными вариациями и исходным кодом.",
+    description: "Live examples",
+    body: "Catalog of components with custom variations and source code.",
   },
 ] as const;
 

@@ -15,7 +15,7 @@ export function TabsOutlineDemo() {
       </Tabs.Panel>
       <Tabs.Panel value="b" className="pt-mid">
         <Text as="p" variant="small" className="text-muted">
-          primary-tint индикатора
+          primary-tint indicator
         </Text>
       </Tabs.Panel>
     </Tabs>

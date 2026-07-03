@@ -6,7 +6,7 @@ import {
   IoWarning,
 } from "react-icons/io5";
 
-/** Семантические статусы с собственной иконкой и цветом (размер задаётся в компоненте через `className`). */
+/** Semantic statuses with their own icon and color (size set in component via `className`). */
 export type SemanticStatus = "danger" | "success" | "info" | "warning";
 
 export const SEMANTIC_STATUS_ICONS: Record<SemanticStatus, IconType> = {

@@ -12,7 +12,7 @@ export function PopoverFilterPanelDemo() {
     <Popover open={active} onOpenChange={setActive}>
       <Popover.Trigger>
         <Button variant="outline" type="button">
-          Фильтры
+          Filters
         </Button>
       </Popover.Trigger>
       <Popover.Content className="w-56">
@@ -22,27 +22,27 @@ export function PopoverFilterPanelDemo() {
           >
             <CheckboxGroup.Legend>
               <Label>
-                Статус
+                Status
               </Label>
               <CheckboxGroup.Hint>
-                Выберите отображение
+                Select display
               </CheckboxGroup.Hint>
             </CheckboxGroup.Legend>
             <CheckboxGroup.List>
               <Checkbox
-                label="Все"
+                label="All"
                 name="visible"
                 value="all"
               />
               <Checkbox
-                label="Только черновики"
+                label="Drafts only"
                 name="visible"
                 value="drafts"
               />
             </CheckboxGroup.List>
           </CheckboxGroup>
           <Button size="small" type="button" onClick={() => setActive(false)}>
-            Применить
+            Apply
           </Button>
         </Popover.Body>
       </Popover.Content>

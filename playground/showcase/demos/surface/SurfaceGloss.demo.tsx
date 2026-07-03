@@ -5,7 +5,7 @@ export function SurfaceGlossDemo() {
   return (
     <Surface variant="gloss" padding="mid" className="min-w-[12rem]">
       <Text as="span" variant="small">
-        Стеклянная поверхность для группировки контента.
+        Glass surface for grouping content.
       </Text>
     </Surface>
   );

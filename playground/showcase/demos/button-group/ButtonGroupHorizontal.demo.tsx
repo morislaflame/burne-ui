@@ -6,17 +6,17 @@ import { Dropdown } from "@/components/core/Dropdown";
 
 export function ButtonGroupHorizontalDemo() {
   return (
-    <ButtonGroup aria-label="Действия с документом">
-      <ButtonGroupText>Вид</ButtonGroupText>
-      <Button variant="outline">Список</Button>
+    <ButtonGroup aria-label="Actions with a document">
+      <ButtonGroupText>View</ButtonGroupText>
+      <Button variant="outline">List</Button>
       <Button variant="outline" groupSegment={{ orientation: "horizontal", position: "middle" }}>
-        Сетка
+        Net
       </Button>
       <Dropdown>
         <Dropdown.Trigger asChild>
           <Button
             variant="primary"
-            aria-label="Дополнительные действия"
+            aria-label="Additional actions"
             iconOnly
             groupSegment={{ orientation: "horizontal", position: "last" }}
           >
@@ -25,10 +25,10 @@ export function ButtonGroupHorizontalDemo() {
         </Dropdown.Trigger>
         <Dropdown.Popover>
           <Dropdown.Item value="dup" selection={false}>
-            Дублировать
+            Duplicate
           </Dropdown.Item>
           <Dropdown.Item value="del" variant="danger" selection={false}>
-            Удалить
+            Delete
           </Dropdown.Item>
         </Dropdown.Popover>
       </Dropdown>

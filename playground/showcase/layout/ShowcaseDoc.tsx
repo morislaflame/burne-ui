@@ -8,8 +8,8 @@ function ShowcaseDocRoot({ children, className }: { children: ReactNode; classNa
   return (
     <Card variant="outline" className={cn("flex flex-col gap-mid", className)}>
       <Card.Header>
-        <Card.Title>Документация</Card.Title>
-        <Card.Description>Импорт, API и правила кастомизации.</Card.Description>
+        <Card.Title>Documentation</Card.Title>
+        <Card.Description>Import, API and customization rules.</Card.Description>
       </Card.Header>
       <Card.Body className="flex flex-col gap-mid pt-0">{children}</Card.Body>
     </Card>
@@ -74,8 +74,8 @@ function ShowcaseDocApiRow({
 }
 
 /**
- * Стандартный блок кастомизации для showcase-документации.
- * @param gloss — `true` → `variant="gloss"`; строка — произвольный проп (напр. `surface="gloss"`).
+ * Standard customization block for showcase-documentation.
+ * @param gloss — `true` → `variant="gloss"`; string - arbitrary prop (for example. `surface="gloss"`).
  */
 function ShowcaseDocCustomization({
   gloss,
@@ -83,7 +83,7 @@ function ShowcaseDocCustomization({
   children,
 }: {
   gloss?: boolean | string;
-  /** Показывать подсказку про configureMotion(). По умолчанию true. */
+  /** Show hint about configureMotion(). Default true. */
   motion?: boolean;
   children?: ReactNode;
 }) {
@@ -91,20 +91,20 @@ function ShowcaseDocCustomization({
     gloss === true ? 'variant="gloss"' : typeof gloss === "string" ? gloss : null;
 
   return (
-    <ShowcaseDocBlock title="Кастомизация">
+    <ShowcaseDocBlock title="Customization">
       <div className="flex flex-col gap-xsmall">
         <p>
-          Дополнительные стили — через <code>className</code> на корне и слотах.
+          Additional styles - via <code>className</code> on root and slots.
           {glossProp ? (
             <>
               {" "}
-              <code>{glossProp}</code> — стеклянная поверхность; прозрачность и обводка задаются
-              CSS-переменными темы (<code>--color-surface</code>, <code>--color-border</code>).
+              <code>{glossProp}</code> — glass surface; transparency and stroke are set
+              CSS-theme variables (<code>--color-surface</code>, <code>--color-border</code>).
             </>
           ) : (
             <>
               {" "}
-              Палитра и отступы — переопределение CSS-переменных темы после{" "}
+              Palette and Padding - Override CSS-topic variables after{" "}
               <code>burne-ui/styles.css</code> (<code>--color-*</code>, <code>--space-*</code>,{" "}
               <code>--radius</code>).
             </>
@@ -112,9 +112,9 @@ function ShowcaseDocCustomization({
           {motion ? (
             <>
               {" "}
-              Тайминги анимаций — через <code>configureMotion()</code> из пакета (
+              Animation timings - via <code>configureMotion()</code> from the package (
               <code>interactiveDuration</code>, <code>enableHoverLift</code>, <code>enableRipple</code>{" "}
-              и др.).
+              etc..).
             </>
           ) : null}
         </p>

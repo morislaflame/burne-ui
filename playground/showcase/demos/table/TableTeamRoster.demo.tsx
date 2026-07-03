@@ -42,17 +42,17 @@ export function TableTeamRosterDemo() {
       <Table>
         <Table.ScrollContainer>
           <Table.Content
-            aria-label="Команда"
+            aria-label="Team"
             className="min-w-[28rem]"
             sortDescriptor={sort}
             onSortChange={setSort}
           >
             <Table.Header>
               <Table.Column id="name" isRowHeader allowsSorting>
-                Участник
+                Participant
               </Table.Column>
-              <Table.Column id="role">Роль</Table.Column>
-              <Table.Column id="status">Статус</Table.Column>
+              <Table.Column id="role">Role</Table.Column>
+              <Table.Column id="status">Status</Table.Column>
             </Table.Header>
             <Table.Body items={sorted}>
               {(row: Member) => (

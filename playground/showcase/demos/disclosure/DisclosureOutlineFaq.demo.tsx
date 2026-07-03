@@ -8,9 +8,9 @@ import { Disclosure, DisclosureGroup } from "@/components/core/Disclosure";
 import { Text } from "@/components/core/Text";
 
 const faqItems = [
-  { value: "faq-1", title: "Что такое Burne UI?", icon: <IoInformationCircleOutline /> },
-  { value: "faq-2", title: "Как подключить тему?", icon: <IoNotificationsOutline /> },
-  { value: "faq-3", title: "Есть ли SSR?", icon: <IoLockClosedOutline /> },
+  { value: "faq-1", title: "What's happened Burne UI?", icon: <IoInformationCircleOutline /> },
+  { value: "faq-2", title: "How to connect a theme?", icon: <IoNotificationsOutline /> },
+  { value: "faq-3", title: "Is there SSR?", icon: <IoLockClosedOutline /> },
 ] as const;
 
 export function DisclosureOutlineFaqDemo() {
@@ -21,7 +21,7 @@ export function DisclosureOutlineFaqDemo() {
           <Disclosure.Trigger icon={icon}>{title}</Disclosure.Trigger>
           <Disclosure.Content>
             <Text as="p" variant="small" className="text-muted">
-              Ответ на вопрос «{title}» — compound DisclosureGroup с аккордеон-поведением.
+              Answer to the question «{title}» — compound DisclosureGroup with accordion-behavior.
             </Text>
           </Disclosure.Content>
         </Disclosure>

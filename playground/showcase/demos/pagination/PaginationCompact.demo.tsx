@@ -7,7 +7,7 @@ export function PaginationCompactDemo() {
 
   return (
     <Pagination page={page} totalPages={10} onPageChange={setPage}>
-      <Pagination.Summary>Страница {page} из 10</Pagination.Summary>
+      <Pagination.Summary>Page {page} from 10</Pagination.Summary>
       <Pagination.Content>
         <Pagination.Item>
           <Pagination.Previous />

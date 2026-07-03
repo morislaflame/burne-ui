@@ -67,7 +67,7 @@ export type DrawerClassNamesProviderProps = {
 };
 
 export type DrawerBackdropProps = HTMLAttributes<HTMLDivElement> & {
-  /** Закрывать по клику вне панели. По умолчанию `true`. */
+  /** Close on click outside panel. Default `true`. */
   isDismissable?: boolean;
 };
 

@@ -7,7 +7,7 @@ export function DisclosureGlossDemo() {
       <Disclosure.Trigger>Gloss disclosure</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">
-          Стеклянная панель с hover-lift на корне.
+          Glass panel with hover-lift on the root.
         </Text>
       </Disclosure.Content>
     </Disclosure>

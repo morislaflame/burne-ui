@@ -7,18 +7,18 @@ export function BreadcrumbsLongPathDemo() {
     <Breadcrumbs>
       <Breadcrumbs.List>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Главная
+          Home
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Раздел
+          Chapter
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Подраздел
+          Subsection
         </Breadcrumbs.Item>
         <Breadcrumbs.Item href="#" onClick={preventNav}>
-          Категория
+          Category
         </Breadcrumbs.Item>
-        <Breadcrumbs.Item current>Страница</Breadcrumbs.Item>
+        <Breadcrumbs.Item current>Page</Breadcrumbs.Item>
       </Breadcrumbs.List>
     </Breadcrumbs>
   );

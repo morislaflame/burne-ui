@@ -28,7 +28,7 @@ const BUTTON_STATUSES: ButtonStatus[] = [
   "warning",
 ];
 
-/** Тёмная тема — токены из `:root`, явный фон под сторисы. */
+/** Dark theme — tokens from `:root`, explicit background for stories. */
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
@@ -61,7 +61,7 @@ const meta = {
   },
   decorators: [...darkThemeDecorator],
   args: {
-    children: "Кнопка",
+    children: "Button",
     variant: "default",
     status: "default",
     size: "base",
@@ -92,12 +92,12 @@ const meta = {
     animated: { control: "boolean" },
     iconOnly: {
       control: "boolean",
-      description: "Только иконка: `min-w-fit` вместо `min-w-button-*`. Задайте `aria-label`.",
+      description: "Icon only: `min-w-fit` instead of `min-w-button-*`. Set `aria-label`.",
     },
     ripple: {
       control: "boolean",
       description:
-        "Встроенный `<Ripple />` с тоном под variant. По умолчанию в сторибуке включён для демо.",
+        "Built-in `<Ripple />` with tone matching variant. Enabled by default in Storybook for demo.",
     },
   },
   render: (args) => <Button {...args} />,
@@ -110,19 +110,19 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const ClickInteraction: Story = {
-  name: "Interaction: клик",
+  name: "Interaction: click",
   args: {
-    children: "Кнопка",
+    children: "Button",
     onClick: fn(),
   },
   play: async ({ args, canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Кнопка" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Button" }));
     await expect(args.onClick).toHaveBeenCalledOnce();
   },
 };
 
 export const Sizes: Story = {
-  name: "Размеры (small — large)",
+  name: "Sizes (small — large)",
   render: () => (
     <div className="flex items-start gap-plus">
       <Button size="small">
@@ -142,19 +142,19 @@ export const Sizes: Story = {
 };
 
 export const IconOnlySizes: Story = {
-  name: "Только иконка (iconOnly)",
+  name: "Icon only (iconOnly)",
   render: () => (
     <div className="flex flex-wrap items-center gap-plus">
-      <Button size="small" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="small" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-small" />
       </Button>
-      <Button size="base" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="base" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-base" />
       </Button>
-      <Button size="mid" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="mid" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-large" />
       </Button>
-      <Button size="large" variant="outline" iconOnly aria-label="Добавить">
+      <Button size="large" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-large" />
       </Button>
     </div>
@@ -162,7 +162,7 @@ export const IconOnlySizes: Story = {
 };
 
 export const Variants: Story = {
-  name: "Варианты",
+  name: "Variants",
   render: () => (
     <div className="flex flex-wrap items-start gap-plus">
       <Button>
@@ -185,7 +185,7 @@ export const Variants: Story = {
 };
 
 export const VariantsOnLightTheme: Story = {
-  name: "Варианты — светлая тема",
+  name: "Variants — light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
     <div className="flex flex-wrap items-start gap-plus">
@@ -235,28 +235,28 @@ function StatusVariantsDemo() {
 }
 
 export const StatusVariants: Story = {
-  name: "Статусы × варианты (тёмная тема)",
+  name: "Statuses × variants (dark theme)",
   render: () => <StatusVariantsDemo />,
 };
 
 export const StatusVariantsOnLightTheme: Story = {
-  name: "Статусы × варианты (светлая тема)",
+  name: "Statuses × variants (light theme)",
   decorators: [...lightThemeDecorator],
   render: () => <StatusVariantsDemo />,
 };
 
 export const WithLeftIcon: Story = {
-  name: "С иконкой слева",
+  name: "With left icon",
   render: () => (
     <div className="flex flex-wrap items-center gap-plus">
       <Button size="small" leftIcon={<IoAdd aria-hidden />}>
-        Добавить
+        Add
       </Button>
       <Button size="base" variant="outline" leftIcon={<IoAdd aria-hidden />}>
-        Создать
+        Create
       </Button>
       <Button size="large" variant="ghost" leftIcon={<IoAdd aria-hidden />}>
-        Ещё
+        More
       </Button>
     </div>
   ),
@@ -271,19 +271,19 @@ export const WithoutAnimation: Story = {
 };
 
 export const WithoutRipple: Story = {
-  name: "С рипплом",
+  name: "With ripple",
   args: { ripple: true },
 };
 
 export const OnLightTheme: Story = {
-  name: "Светлая тема (data-theme)",
+  name: "Light theme (data-theme)",
   decorators: [...lightThemeDecorator],
 };
 
 export const AsyncSuccess: Story = {
-  name: "Async → успех",
+  name: "Async → success",
   args: {
-    children: "Сохранить",
+    children: "Save",
     ripple: true,
     onAsyncClick: () =>
       new Promise<boolean>((resolve) => {
@@ -293,9 +293,9 @@ export const AsyncSuccess: Story = {
 };
 
 export const AsyncError: Story = {
-  name: "Async → ошибка",
+  name: "Async → error",
   args: {
-    children: "Отправить",
+    children: "Submit",
     ripple: true,
     onAsyncClick: () =>
       new Promise<boolean>((resolve) => {
@@ -318,21 +318,21 @@ function ControlledAsyncDemo() {
   return (
     <div className="flex flex-col items-center gap-plus">
       <Button asyncState={state} onClick={run} disabled={state !== "idle"} ripple>
-        Контролируемая
+        Controlled
       </Button>
       <button
         type="button"
         className="text-muted text-sm underline"
         onClick={() => setState("idle")}
       >
-        Сбросить в idle
+        Reset to idle
       </button>
     </div>
   );
 }
 
 export const ControlledAsync: Story = {
-  name: "Контроль asyncState",
+  name: "Controlled asyncState",
   render: () => <ControlledAsyncDemo />,
 };
 
@@ -382,9 +382,9 @@ function GlossDemo() {
       </div>
       <div className="flex flex-wrap items-center justify-center gap-plus">
         <Button variant="gloss" leftIcon={<IoAdd aria-hidden />}>
-          С иконкой
+          With icon
         </Button>
-        <Button variant="gloss" iconOnly aria-label="Добавить">
+        <Button variant="gloss" iconOnly aria-label="Add">
           <IoAdd aria-hidden className="icon-base" />
         </Button>
         <Button variant="gloss" disabled>
@@ -403,17 +403,17 @@ export const Gloss: Story = {
 };
 
 export const GlossLight: Story = {
-  name: "Gloss — светлая тема",
+  name: "Gloss — light theme",
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
 };
 
 export const LabelLayout: Story = {
-  name: "Разметка label + shortcut",
+  name: "Label + shortcut layout",
   render: () => (
     <Button variant="gloss" type="button" className="w-full max-w-xs justify-between gap-plus">
-      <span>Командная палитра</span>
+      <span>Command palette</span>
       <span className="inline-flex gap-xsmall">
         <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-tools">⌘</span>
         <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-tools">K</span>
@@ -427,7 +427,7 @@ export const CompoundLayout: Story = {
   render: () => (
     <Button variant="outline" type="button" className="w-full max-w-xs">
       <Button.Label className="justify-between gap-plus">
-        <Button.Text>Командная палитра</Button.Text>
+        <Button.Text>Command palette</Button.Text>
         <span className="inline-flex gap-xsmall font-mono text-tools">
           <span>⌘</span>
           <span>K</span>

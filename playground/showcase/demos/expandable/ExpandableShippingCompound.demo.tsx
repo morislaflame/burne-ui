@@ -12,18 +12,18 @@ export function ExpandableShippingCompoundDemo() {
             <IoCubeOutline aria-hidden className="size-full" />
           </Expandable.Icon>
           <Expandable.Content>
-            <Expandable.Title>Доставка и возврат</Expandable.Title>
-            <Expandable.Description>Сроки, стоимость и условия</Expandable.Description>
+            <Expandable.Title>Delivery and returns</Expandable.Title>
+            <Expandable.Description>Terms, cost and conditions</Expandable.Description>
           </Expandable.Content>
         </Expandable.Message>
       </Expandable.Trigger>
       <Expandable.Panel>
         <div className="flex flex-col gap-small">
           <Text as="p" variant="small">
-            <span className="font-medium">По России:</span> 2–5 рабочих дней, от 290 ₽.
+            <span className="font-medium">Across Russia:</span> 2–5 working days, from 290 ₽.
           </Text>
           <Text as="p" variant="small" className="text-muted">
-            Возврат в течение 14 дней при сохранении товарного вида.
+            Return within 14 days if the product is in original condition.
           </Text>
         </div>
       </Expandable.Panel>

@@ -13,7 +13,7 @@ export function DropdownGlossDemo() {
       </Dropdown.Trigger>
       <Dropdown.Popover>
         <Dropdown.Item value="ru" selection={false}>
-          <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
+          <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
         </Dropdown.Item>
         <Dropdown.Item value="en" selection={false}>
           <Dropdown.ItemLabel>English</Dropdown.ItemLabel>

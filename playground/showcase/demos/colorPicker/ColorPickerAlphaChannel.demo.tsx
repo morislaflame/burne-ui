@@ -9,7 +9,7 @@ export function ColorPickerAlphaChannelDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
-        Канал прозрачности
+        Transparency channel
       </Text>
       <div className="flex items-center gap-mid">
         <ColorPicker value={color} onValueChange={setColor}>

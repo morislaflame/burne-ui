@@ -7,8 +7,8 @@ export function SliderVolumeDemo() {
 
   return (
     <Slider
-      label="Громкость"
-      hint="Подсказка под шкалой"
+      label="Volume"
+      hint="Hint below the scale"
       showValue
       value={value}
       onValueChange={setValue}

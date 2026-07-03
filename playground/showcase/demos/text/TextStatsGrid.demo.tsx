@@ -1,8 +1,8 @@
 import { Text } from "@/components/core/Text";
 
 const STATS = [
-  { label: "Пользователи", value: "12.4k" },
-  { label: "Конверсия", value: "3.8%" },
+  { label: "Users", value: "12.4k" },
+  { label: "Conversion", value: "3.8%" },
   { label: "Uptime", value: "99.9%" },
 ] as const;
 
