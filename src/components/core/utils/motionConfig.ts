@@ -176,7 +176,7 @@ const DEFAULTS: MotionConfig = {
   switchThumbDuration: 340,
   switchThumbEase: "back.out(1.4)",
   selectionFillEase: "back.out(1.25)",
-  selectionFillDuration: 280,
+  selectionFillDuration: 200,
   hoverLiftScale: 1.025,
   badgeAnchorHoverLiftScale: 1.052,
   pressSqueezeScale: [1, 0.98, 1],

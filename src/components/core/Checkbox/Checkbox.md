@@ -141,7 +141,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 |----------|---------|-------------------|
 | Track fade disabled | `useCheckboxControlTrackAnimation` | `interactiveDuration` |
 | Label squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` |
-| Check mark | `useSelectionIndicatorAnimation` | `interactiveDuration` |
+| Check mark | `useSelectionIndicatorAnimation` | `selectionFillDuration` |
 
 ## Стилизация и кастомизация
 

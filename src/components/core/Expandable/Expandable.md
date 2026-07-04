@@ -108,10 +108,10 @@ Compound определяется автоматически при наличи
 
 | size | min-h триггера | padX триггера | pad панели | chevron / icon |
 |------|----------------|---------------|------------|----------------|
-| `small` | `min-h-control-small` | `px-base` | `px-base pb-base pt-small` | `icon-small` |
-| `base` | `min-h-control-base` | `px-plus` | `px-plus pb-plus pt-small` | `icon-base` |
-| `mid` | `min-h-control-mid` | `px-mid` | `px-mid pb-mid pt-base` | `icon-large` |
-| `large` | `min-h-control-large` | `px-large` | `px-large pb-large pt-base` | `icon-large` |
+| `small` | `min-h-control-small` | `px-base` | `px-base pb-base pt-small` | `[&_svg]:icon-small` |
+| `base` | `min-h-control-base` | `px-plus` | `px-plus pb-plus pt-small` | `[&_svg]:icon-base` |
+| `mid` | `min-h-control-mid` | `px-mid` | `px-mid pb-mid pt-base` | `[&_svg]:icon-large` |
+| `large` | `min-h-control-large` | `px-large` | `px-large pb-large pt-base` | `[&_svg]:icon-large` |
 
 Текст: title — `controlText` размера; description — `small` / `base` по size.
 

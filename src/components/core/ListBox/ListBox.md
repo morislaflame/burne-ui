@@ -140,7 +140,7 @@ Reduced motion: skip GSAP.
 |----------|---------|-------------------|
 | Gloss root | `useMergedGlossPanelRef` | gloss CSS |
 | Label squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` |
-| Indicator | `useSelectionIndicatorAnimation` | `interactiveDuration` |
+| Indicator | `useSelectionIndicatorAnimation` | `selectionFillDuration` |
 | Active row | CSS `LISTBOX_ITEM_ACTIVE_CLASS` | — |
 
 ## Стилизация и кастомизация

@@ -119,10 +119,10 @@ CSS-переменные: `--selection-indicator-small` … `--selection-indicat
 1. **First layout:** instant `applyInstant(selected)` — без GSAP
 2. **Reduced motion:** instant scale/opacity, `killMotion`
 3. **Fill (если variant ≠ outline):**
-   - select: `gsap.fromTo(fill, { scale:0, autoAlpha:0 }, { scale:1, autoAlpha:1, ...motionInteractive() })`
+   - select: `gsap.fromTo(fill, { scale:0, autoAlpha:0 }, { scale:1, autoAlpha:1, ...motionSelectionFill() })`
    - deselect: `gsap.to(fill, { scale:0, autoAlpha:0, ... })`
 4. **Mark (если есть):**
-   - select: `fromTo icon { scale:0.88, autoAlpha:0 } → { scale:1, autoAlpha:1 }`
+   - select: `fromTo mark { scale:0.88, autoAlpha:0 } → { scale:1, autoAlpha:1 }` — те же `motionSelectionFill()`
    - deselect: `to { scale:0.92, autoAlpha:0 }`
 
 Initial inline style на Fill/Mark: `scale(0)`, `opacity: 0`.
@@ -133,8 +133,8 @@ Initial inline style на Fill/Mark: `scale(0)`, `opacity: 0`.
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,
-  interactiveEase: "power2.out",
+  selectionFillDuration: 280,
+  selectionFillEase: "back.out(1.25)",
 });
 ```
 
@@ -142,7 +142,7 @@ configureMotion({
 
 | Слой | Анимируется | `configureMotion` |
 |------|-------------|-------------------|
-| Fill | scale + autoAlpha | `interactiveDuration`, `interactiveEase` |
+| Fill | scale + autoAlpha | `selectionFillDuration`, `selectionFillEase` |
 | Mark | scale + autoAlpha | те же |
 | Shell | CSS only | — |
 

@@ -133,7 +133,7 @@ import {
 | Анимация | Утилита | `configureMotion` |
 |----------|---------|-------------------|
 | Track disabled fade | `useRadioControlTrackAnimation` | `interactiveDuration` |
-| Dot/fill | `useSelectionIndicatorAnimation` | interactive |
+| Dot/fill | `useSelectionIndicatorAnimation` | `selectionFillDuration` |
 | Label squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` |
 
 ## Стилизация и кастомизация

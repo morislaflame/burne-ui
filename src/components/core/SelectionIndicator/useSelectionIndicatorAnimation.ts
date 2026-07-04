@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, type RefObject } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionInteractive, motionSelectionFill } from "@/components/core/utils/motionConfig";
+import { motionSelectionFill } from "@/components/core/utils/motionConfig";
 
 export function useSelectionIndicatorAnimation(
   active: boolean,
@@ -45,7 +45,7 @@ export function useSelectionIndicatorAnimation(
     }
 
     const fillVars = { ...motionSelectionFill(), overwrite: "auto" as const };
-    const iconVars = { ...motionInteractive(), overwrite: "auto" as const };
+    const markVars = { ...motionSelectionFill(), overwrite: "auto" as const };
 
     if (fill) {
       killMotion(fill);
@@ -59,9 +59,9 @@ export function useSelectionIndicatorAnimation(
     if (icon) {
       killMotion(icon);
       if (active) {
-        gsap.fromTo(icon, { scale: 0.88, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ...iconVars });
+        gsap.fromTo(icon, { scale: 0.88, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ...markVars });
       } else {
-        gsap.to(icon, { scale: 0.92, autoAlpha: 0, ...iconVars });
+        gsap.to(icon, { scale: 0.92, autoAlpha: 0, ...markVars });
       }
     }
   }, [active, fillRef, iconRef, reduceMotion]);
