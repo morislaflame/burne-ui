@@ -180,7 +180,7 @@ export const CustomIndicator: Story = {
     <Checkbox defaultChecked>
       <Checkbox.Control>
         <Checkbox.Indicator>
-          <IoStar aria-hidden className="text-primary-foreground" />
+          <IoStar aria-hidden className="text-primary-foreground -translate-y-[0.5px]" />
         </Checkbox.Indicator>
       </Checkbox.Control>
       <Checkbox.Content>

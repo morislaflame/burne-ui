@@ -11,8 +11,9 @@ import {
 import {
   SELECTION_INDICATOR_MARK_CLASS,
   selectionIndicatorFillClass,
+  selectionIndicatorMarkCheckIconClass,
+  selectionIndicatorMarkCustomIconClass,
   selectionIndicatorMarkColorClass,
-  selectionIndicatorMarkIconClass,
   selectionIndicatorShellClass,
   selectionIndicatorShowsFill,
   selectionIndicatorVariantClass,
@@ -45,7 +46,6 @@ export function useSelectionIndicatorRootState({
 
   const showCheck = check && !hasCustomIcon;
   const showDot = dot && !hasCustomIcon && !showCheck;
-  const useIconMarkSizing = showCheck || hasCustomIcon;
 
   const markContent = resolveSelectionIndicatorMarkContent({
     resolvedIcon,
@@ -69,7 +69,8 @@ export function useSelectionIndicatorRootState({
     fill: selectionIndicatorFillClass(variant),
     mark: cn(
       SELECTION_INDICATOR_MARK_CLASS,
-      useIconMarkSizing && selectionIndicatorMarkIconClass(size),
+      showCheck && selectionIndicatorMarkCheckIconClass(size),
+      hasCustomIcon && selectionIndicatorMarkCustomIconClass(size),
       selectionIndicatorMarkColorClass(variant),
     ),
     classNames,

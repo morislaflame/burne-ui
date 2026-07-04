@@ -8,6 +8,8 @@
  *
  * configureMotion({
  *   interactiveDuration: 350,
+ *   selectionFillDuration: 400,
+ *   selectionFillEase: "back.out(1.25)",
  *   switchThumbEase: "back.out(1.6)",
  * });
  */
@@ -55,6 +57,13 @@ export interface MotionConfig {
    * @default "back.out(1.25)"
    */
   selectionFillEase: string;
+
+  /**
+   * Duration (ms) for selection fill scale animations:
+   * ToggleButton, Calendar cell, Checkbox/Radio/ListBox indicator fill, Switch thumb fill.
+   * @default 280
+   */
+  selectionFillDuration: number;
 
   /** Scale applied when a hoverable element lifts. @default 1.015 */
   hoverLiftScale: number;
@@ -167,6 +176,7 @@ const DEFAULTS: MotionConfig = {
   switchThumbDuration: 340,
   switchThumbEase: "back.out(1.4)",
   selectionFillEase: "back.out(1.25)",
+  selectionFillDuration: 280,
   hoverLiftScale: 1.025,
   badgeAnchorHoverLiftScale: 1.052,
   pressSqueezeScale: [1, 0.98, 1],
@@ -250,10 +260,10 @@ export function motionHoverLift() {
   } as const;
 }
 
-/** Selection fill (ToggleButton, calendar) — in/out are symmetric. */
+/** Selection fill (ToggleButton, Calendar, Checkbox/Radio indicator fill). */
 export function motionSelectionFill() {
   return {
-    duration: (_config.interactiveDuration * 1.15) / 1000,
+    duration: _config.selectionFillDuration / 1000,
     ease: _config.selectionFillEase,
   } as const;
 }

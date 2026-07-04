@@ -21,8 +21,13 @@ export const SELECTION_INDICATOR_ICON_CLASS: Record<SelectionIndicatorSize, stri
 export const SELECTION_INDICATOR_MARK_CLASS =
   "pointer-events-none relative z-[2] inline-flex items-center justify-center";
 
-export function selectionIndicatorMarkIconClass(size: SelectionIndicatorSize): string {
+export function selectionIndicatorMarkCheckIconClass(size: SelectionIndicatorSize): string {
   return cn("[&_svg]:size-full", SELECTION_INDICATOR_ICON_CLASS[size]);
+}
+
+/** Custom mark icons: no `[&_svg]:size-full` — `icon-*` on the icon itself controls size. */
+export function selectionIndicatorMarkCustomIconClass(size: SelectionIndicatorSize): string {
+  return SELECTION_INDICATOR_ICON_CLASS[size];
 }
 
 export const SELECTION_INDICATOR_DOT_CLASS: Record<SelectionIndicatorSize, string> = {
