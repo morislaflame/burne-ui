@@ -8,7 +8,7 @@ import type {
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 
-export type InputVariant = "default" | "outline" | "gloss";
+export type InputVariant = "default" | "outline" | "secondary" | "gloss";
 export type InputStatus = "default" | "danger" | "success" | "warning";
 export type InputSize = ComponentSize;
 

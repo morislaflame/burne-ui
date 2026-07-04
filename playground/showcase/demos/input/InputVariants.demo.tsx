@@ -16,6 +16,13 @@ export function InputVariantsDemo() {
         hint="Transparent background with outline."
         className="w-64"
       />
+      <Input
+        label="Secondary"
+        variant="secondary"
+        placeholder="variant secondary"
+        hint="Secondary surface — like Button secondary."
+        className="w-64"
+      />
     </div>
   );
 }

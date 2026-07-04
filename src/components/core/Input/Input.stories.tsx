@@ -148,6 +148,16 @@ export const Outline: Story = {
   ),
 };
 
+export const Secondary: Story = {
+  render: () => (
+    <Input>
+      <Input.Label>Display name</Input.Label>
+      <Input.Control variant="secondary" placeholder="Ivan" />
+      <Input.Hint>Secondary variant — bg-secondary shell, like Button.</Input.Hint>
+    </Input>
+  ),
+};
+
 export const WithAffixes: Story = {
   render: () => (
     <Input>

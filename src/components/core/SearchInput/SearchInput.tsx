@@ -43,6 +43,7 @@ import {
   useOptionalButtonGroupLayout,
   useOptionalButtonGroupSegment,
 } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { FIELD_SHELL_VARIANT_BG_CLASS, fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
@@ -55,7 +56,7 @@ import {
 
 export type SearchInputSize = ComponentSize;
 
-export type SearchInputVariant = "default" | "gloss";
+export type SearchInputVariant = "default" | "outline" | "secondary" | "gloss";
 
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 
@@ -182,7 +183,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
-    const variant: SearchInputVariant = variantProp ?? (groupCtx?.variant === "gloss" ? "gloss" : "default");
+    const variant: SearchInputVariant =
+      variantProp ??
+      (groupCtx?.variant != null
+        ? fieldShellVariantFromButtonGroup(groupCtx.variant)
+        : "default");
     const genId = useId();
     const inputId = idProp ?? genId;
     const isExpandedControlled = expandedProp !== undefined;
@@ -575,10 +580,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           "relative box-border inline-block overflow-hidden text-left",
           isGloss
             ? "gloss-control border-0"
-            : "border-1 border-token bg-surface",
+            : cn("border-1 border-token", FIELD_SHELL_VARIANT_BG_CLASS[variant]),
           FIELD_SHELL_TRANSITION_CLASS,
           FIELD_SHELL_FOCUS_CLASS,
-          isGloss ? glossShellMotion.shellHoverMotionClass : fieldShellHoverClass(!blocked),
+          isGloss ? glossShellMotion.shellHoverMotionClass : fieldShellHoverClass(!blocked, "default", variant),
           !isGloss && !blocked && standardShellHover.motionClass,
           expanded ? "cursor-text" : "",
           !expanded && !blocked ? "cursor-pointer" : "",

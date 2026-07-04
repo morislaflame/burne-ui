@@ -1,5 +1,7 @@
 import type { RefObject } from "react";
 
+import type { FieldShellFilledVariant } from "./fieldShellVariant";
+import { fieldShellHoverVariantForShell } from "./fieldShellVariant";
 import { hoverVariantBg, type HoverVariant } from "./hoverVariant";
 import { useSecondLevelShadow } from "./useShadowMotion";
 
@@ -17,9 +19,14 @@ const FIELD_SHELL_HOVER_VARIANT: Record<FieldShellStatus, HoverVariant> = {
 export function fieldShellHoverClass(
   enabled: boolean,
   status: FieldShellStatus = "default",
+  variant: FieldShellFilledVariant = "default",
 ): string {
   if (!enabled) return "";
-  return hoverVariantBg(FIELD_SHELL_HOVER_VARIANT[status], "focus-within");
+  const hoverVariant: HoverVariant =
+    status !== "default"
+      ? FIELD_SHELL_HOVER_VARIANT[status]
+      : fieldShellHoverVariantForShell(variant);
+  return hoverVariantBg(hoverVariant, "focus-within");
 }
 
 /** Shell transition: background, shadow, focus-ring (always, including disabled). */

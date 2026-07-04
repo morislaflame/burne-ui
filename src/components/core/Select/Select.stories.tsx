@@ -65,7 +65,7 @@ const meta = {
   decorators: [...darkThemeDecorator],
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
-    variant: { control: "select", options: ["default", "outline", "gloss"] },
+    variant: { control: "select", options: ["default", "outline", "secondary", "gloss"] },
     status: {
       control: "select",
       options: ["default", "danger", "success", "warning"],

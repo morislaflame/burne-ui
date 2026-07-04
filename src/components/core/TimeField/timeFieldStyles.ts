@@ -7,6 +7,9 @@ import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
 
+import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+import type { FieldShellFilledVariant } from "@/components/core/utils/fieldShellVariant";
+
 import { mergeTimeFieldSlotClass } from "./timeFieldAPI";
 import type {
   TimeFieldSize,
@@ -14,13 +17,10 @@ import type {
   TimeFieldVariant,
 } from "./timeFieldTypes";
 
-export const TIME_FIELD_VARIANT_SHELL_CLASS: Record<
-  Exclude<TimeFieldVariant, "outline" | "gloss">,
-  string
-> = {
-  default: "bg-surface",
-  segmented: "bg-surface",
-};
+function timeFieldShellHoverVariant(variant: TimeFieldVariant): FieldShellFilledVariant {
+  if (variant === "segmented" || variant === "gloss") return "default";
+  return variant;
+}
 
 export const TIME_FIELD_STATUS_TINT_SHELL_CLASS: Record<
   Exclude<TimeFieldStatus, "default">,
@@ -118,23 +118,11 @@ export function timeFieldShellSurfaceClass({
   status: TimeFieldStatus;
   statusTinted: boolean;
 }): string {
-  if (variant === "gloss") return "gloss-control";
-
-  if (statusTinted && status !== "default") {
-    return mergeTimeFieldSlotClass(
-      TIME_FIELD_STATUS_TINT_SHELL_CLASS[status],
-      "border-token",
-    );
-  }
-
-  return mergeTimeFieldSlotClass(
-    variant === "outline"
-      ? "bg-transparent border-token"
-      : mergeTimeFieldSlotClass(
-          TIME_FIELD_VARIANT_SHELL_CLASS[variant],
-          "border-token",
-        ),
-  );
+  return resolveFieldShellSurfaceClass({
+    variant: variant === "segmented" ? "default" : variant,
+    statusTinted: statusTinted && status !== "default",
+    statusTintClass: status !== "default" ? TIME_FIELD_STATUS_TINT_SHELL_CLASS[status] : "",
+  });
 }
 
 export function timeFieldShellClass({
@@ -168,7 +156,7 @@ export function timeFieldShellClass({
     shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
     FIELD_SHELL_FOCUS_CLASS,
-    isGloss ? "" : fieldShellHoverClass(!disabled, status),
+    isGloss ? "" : fieldShellHoverClass(!disabled, status, timeFieldShellHoverVariant(variant)),
     isGloss ? glossShellHoverMotionClass : standardShellHoverMotionClass,
     disabled ? "cursor-not-allowed opacity-55 shadow-token-base" : "",
     slotClass,

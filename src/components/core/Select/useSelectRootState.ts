@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import type { InputVariant } from "@/components/core/Input";
+import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
@@ -43,7 +44,10 @@ export function useSelectRootState({
   const autoId = useId();
   const buttonGroupCtx = useOptionalButtonGroupSegment();
   const variant: InputVariant =
-    variantProp ?? (buttonGroupCtx?.variant === "gloss" ? "gloss" : "default");
+    variantProp ??
+    (buttonGroupCtx?.variant != null
+      ? fieldShellVariantFromButtonGroup(buttonGroupCtx.variant)
+      : "default");
   const selectId = idProp ?? `select-${autoId}`;
   const { hintId, errorId, labelId, listId } = selectFieldIds(selectId);
 

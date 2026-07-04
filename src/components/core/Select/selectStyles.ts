@@ -10,14 +10,10 @@ import {
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 import { cn } from "@/utils/cn";
 
 import { mergeSelectSlotClass } from "./selectAPI";
-
-const VARIANT_SHELL: Record<Exclude<InputVariant, "gloss">, string> = {
-  default: "bg-surface",
-  outline: "bg-transparent",
-};
 
 const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
   danger: "bg-surface-tint-danger",
@@ -74,17 +70,11 @@ export function selectShellSurface({
   const statusTinted =
     status === "danger" || status === "success" || status === "warning";
 
-  if (variant === "gloss") return "gloss-control";
-
-  if (statusTinted) {
-    return cn(STATUS_TINT_SHELL[status], "border-token");
-  }
-
-  return cn(
-    variant === "outline"
-      ? "bg-transparent border-token"
-      : cn(VARIANT_SHELL[variant], "border-token"),
-  );
+  return resolveFieldShellSurfaceClass({
+    variant,
+    statusTinted,
+    statusTintClass: statusTinted ? STATUS_TINT_SHELL[status] : "",
+  });
 }
 
 export function selectGroupShellClass(groupSegment?: ButtonGroupSegment): string {
@@ -123,7 +113,7 @@ export function selectTriggerGroupClass({
     selectShellSurface({ variant, status }),
     FIELD_SHELL_TRANSITION_CLASS,
     FIELD_SHELL_FOCUS_CLASS,
-    isGloss ? "" : fieldShellHoverClass(!disabled, status),
+    isGloss ? "" : fieldShellHoverClass(!disabled, status, variant),
     shellHoverMotionClass,
     disabled
       ? SELECT_TRIGGER_GROUP_DISABLED_CLASS

@@ -6,13 +6,10 @@ import {
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 
+import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+
 import { mergeTextAreaSlotClass } from "./textAreaAPI";
 import type { TextAreaSize, TextAreaStatus, TextAreaVariant } from "./textAreaTypes";
-
-export const TEXTAREA_VARIANT_SHELL_CLASS: Record<Exclude<TextAreaVariant, "gloss">, string> = {
-  default: "bg-surface",
-  outline: "bg-transparent",
-};
 
 export const TEXTAREA_STATUS_TINT_SHELL_CLASS: Record<
   Exclude<TextAreaStatus, "default">,
@@ -63,20 +60,11 @@ export function textareaShellSurfaceClass({
   status: TextAreaStatus;
   statusTinted: boolean;
 }): string {
-  if (variant === "gloss") return "gloss-control";
-
-  if (statusTinted && status !== "default") {
-    return mergeTextAreaSlotClass(
-      TEXTAREA_STATUS_TINT_SHELL_CLASS[status],
-      "border-token",
-    );
-  }
-
-  return mergeTextAreaSlotClass(
-    variant === "outline"
-      ? "bg-transparent border-token"
-      : mergeTextAreaSlotClass(TEXTAREA_VARIANT_SHELL_CLASS[variant], "border-token"),
-  );
+  return resolveFieldShellSurfaceClass({
+    variant,
+    statusTinted: statusTinted && status !== "default",
+    statusTintClass: status !== "default" ? TEXTAREA_STATUS_TINT_SHELL_CLASS[status] : "",
+  });
 }
 
 export function textareaShellClass({
@@ -110,7 +98,7 @@ export function textareaShellClass({
     shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
     FIELD_SHELL_FOCUS_CLASS,
-    isGloss ? glossShellHoverMotionClass : fieldShellHoverClass(!blocked, status),
+    isGloss ? glossShellHoverMotionClass : fieldShellHoverClass(!blocked, status, variant),
     !isGloss && standardShellHoverMotionClass,
     blocked ? "cursor-not-allowed opacity-55 shadow-token-base" : "",
     slotClass,

@@ -10,7 +10,7 @@ export type TimeFieldSize = ComponentSize;
 
 export type TimeFieldStatus = "default" | "danger" | "success" | "warning";
 
-export type TimeFieldVariant = "default" | "outline" | "segmented" | "gloss";
+export type TimeFieldVariant = "default" | "outline" | "secondary" | "segmented" | "gloss";
 
 export type TimeFieldFormat = "HH:mm" | "HH:mm:ss";
 

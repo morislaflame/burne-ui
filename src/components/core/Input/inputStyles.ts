@@ -14,13 +14,14 @@ import { affixSlotClass, affixToggleMinWClass } from "@/components/core/utils/in
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
+import type { FieldShellFilledVariant } from "@/components/core/utils/fieldShellVariant";
+import {
+  FIELD_SHELL_VARIANT_BG_CLASS,
+  resolveFieldShellSurfaceClass,
+} from "@/components/core/utils/fieldShellVariant";
+
 import { mergeInputSlotClass } from "./inputAPI";
 import type { InputSize, InputStatus, InputVariant } from "./inputTypes";
-
-export const INPUT_VARIANT_SHELL_CLASS: Record<Exclude<InputVariant, "gloss">, string> = {
-  default: "bg-surface",
-  outline: "bg-transparent",
-};
 
 export const INPUT_STATUS_TINT_SHELL_CLASS: Record<
   Exclude<InputStatus, "default">,
@@ -150,20 +151,11 @@ export function inputShellSurfaceClass({
   status: InputStatus;
   statusTinted: boolean;
 }): string {
-  if (variant === "gloss") return "gloss-control";
-
-  if (statusTinted && status !== "default") {
-    return mergeInputSlotClass(
-      INPUT_STATUS_TINT_SHELL_CLASS[status],
-      "border-token",
-    );
-  }
-
-  return mergeInputSlotClass(
-    variant === "outline"
-      ? "bg-transparent border-token"
-      : mergeInputSlotClass(INPUT_VARIANT_SHELL_CLASS[variant], "border-token"),
-  );
+  return resolveFieldShellSurfaceClass({
+    variant,
+    statusTinted: statusTinted && status !== "default",
+    statusTintClass: status !== "default" ? INPUT_STATUS_TINT_SHELL_CLASS[status] : "",
+  });
 }
 
 export function inputFileEmptyShellSurfaceClass({
@@ -179,7 +171,7 @@ export function inputFileEmptyShellSurfaceClass({
 
   if (statusTinted && status !== "default") return INPUT_STATUS_TINT_SHELL_CLASS[status];
 
-  return INPUT_VARIANT_SHELL_CLASS[variant];
+  return FIELD_SHELL_VARIANT_BG_CLASS[variant as FieldShellFilledVariant];
 }
 
 export function inputShellRoundingClass(
@@ -233,7 +225,7 @@ export function inputShellClass({
     shellFileEmptySurface ?? shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
     FIELD_SHELL_FOCUS_CLASS,
-    !isGloss && fieldShellHoverClass(!blocked, status),
+    !isGloss && fieldShellHoverClass(!blocked, status, variant),
     shellHoverMotionClass,
     blocked && "cursor-not-allowed opacity-55 shadow-token-base",
     slotClass,

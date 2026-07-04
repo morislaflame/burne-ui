@@ -7,7 +7,7 @@ import type {
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 
-export type TextAreaVariant = "default" | "outline" | "gloss";
+export type TextAreaVariant = "default" | "outline" | "secondary" | "gloss";
 
 export type TextAreaStatus = "default" | "danger" | "success" | "warning";
 

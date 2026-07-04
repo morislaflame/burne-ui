@@ -96,6 +96,7 @@ export const Variants: Story = {
     <div className="flex w-full flex-col gap-large">
       <TextArea label="Default" variant="default" placeholder="default" />
       <TextArea label="Outline" variant="outline" placeholder="outline" />
+      <TextArea label="Secondary" variant="secondary" placeholder="secondary" />
     </div>
   ),
 };
