@@ -121,6 +121,7 @@ export function CheckboxIndicator({
   children,
   className,
   classNames: classNamesProp,
+  size: sizeProp,
   ...rest
 }: CheckboxIndicatorProps) {
   const ctx = useCheckboxFieldContext();
@@ -129,7 +130,7 @@ export function CheckboxIndicator({
   return (
     <SelectionIndicator
       variant={checkboxVariantToIndicator(ctx.variant)}
-      size={ctx.size}
+      size={sizeProp ?? ctx.size}
       selected={ctx.mergedChecked}
       icon={ctx.checkIcon ?? undefined}
       check

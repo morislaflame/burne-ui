@@ -61,6 +61,7 @@ export type CheckboxIndicatorClassNames = SelectionIndicatorClassNames &
 
 export type CheckboxIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  size?: CheckboxSize;
   classNames?: CheckboxIndicatorClassNames;
 };
 

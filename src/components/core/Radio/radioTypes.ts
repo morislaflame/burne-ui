@@ -61,6 +61,7 @@ export type RadioIndicatorClassNames = SelectionIndicatorClassNames &
 
 export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  size?: RadioSize;
   classNames?: RadioIndicatorClassNames;
 };
 

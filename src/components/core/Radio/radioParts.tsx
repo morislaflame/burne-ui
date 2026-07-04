@@ -105,6 +105,7 @@ export function RadioIndicator({
   children,
   className,
   classNames: classNamesProp,
+  size: sizeProp,
   ...rest
 }: RadioIndicatorProps) {
   const ctx = useRadioFieldContext();
@@ -112,7 +113,7 @@ export function RadioIndicator({
 
   return (
     <SelectionIndicator
-      size={ctx.size}
+      size={sizeProp ?? ctx.size}
       variant={radioVariantToIndicator(ctx.variant)}
       selected={ctx.mergedChecked}
       dot
