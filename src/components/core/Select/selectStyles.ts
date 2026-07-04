@@ -52,7 +52,8 @@ export const SELECT_TRIGGER_BASE_CLASS =
 
 export const SELECT_TRIGGER_DISABLED_CLASS = "pointer-events-none";
 
-export const SELECT_POPOVER_CLASS = "z-[100]";
+/** Above Dialog/Drawer (`z-[100]`), aligned with Dropdown submenus. */
+export const SELECT_POPOVER_CLASS = "z-[110]";
 
 export const SELECT_POPOVER_BODY_CLASS = "gap-0 p-base";
 

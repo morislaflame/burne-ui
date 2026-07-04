@@ -1,6 +1,6 @@
-import { forwardRef, type LabelHTMLAttributes } from "react";
+import { forwardRef } from "react";
 
-import { mergeSwitchSlotClass } from "./switchAPI";
+import { injectSwitchControlProps, mergeSwitchSlotClass } from "./switchAPI";
 import { useSwitchTextMotion } from "./switchAnimations";
 import { SwitchClassNamesProvider, SwitchFieldProvider } from "./switchContext";
 import {
@@ -90,14 +90,9 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchRootProps & Partial
     return (
       <SwitchFieldProvider value={state.fieldCtx}>
         <SwitchClassNamesProvider classNames={classNames}>
-          <label
-            ref={ref}
-            className={gridClass}
-            onPointerDown={handlePointerDown}
-            {...(state.isCompound ? (rest as LabelHTMLAttributes<HTMLLabelElement>) : {})}
-          >
+          <label ref={ref} className={gridClass} onPointerDown={handlePointerDown}>
             {state.isCompound ? (
-              children
+              injectSwitchControlProps(children, state.controlRest)
             ) : (
               <SwitchSimpleBody
                 label={state.label}

@@ -885,3 +885,187 @@ export const CONTRAST_LIGHT_COLORS: ThemeColors = withTints({
   info: "#0ea5e9",
   warning: "#f59e0b",
 });
+
+/**
+ * Pastel Dreamland Adventure — whimsical violets, candy pinks, gentle blues.
+ * Palette: Pink Orchid → Pastel Petal → Blush Pop → Icy Blue → Sky Blue
+ */
+export const DREAMLAND_LIGHT_COLORS: ThemeColors = withTints({
+  background: "#fef8fc",
+  surface: "#ffffff",
+  secondary: "#ffe8f3",
+  secondaryForeground: "#3d2d50",
+  tertiary: "#e8f4fe",
+  tertiaryForeground: "#3d2d50",
+  border: "#cdb4db",
+  foreground: "#3d2d50",
+  muted: "#9a7aab",
+  primary: "#ffafcc",
+  primaryForeground: "#ffffff",
+  focusRing: "#a2d2ff",
+  indicator: "#7eb0f0",
+  indicatorForeground: "#ffffff",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#f59e0b",
+});
+
+export const DREAMLAND_DARK_COLORS: ThemeColors = withTints({
+  background: "#1a1428",
+  surface: "#241e34",
+  secondary: "#2e2840",
+  secondaryForeground: "#f5e8fc",
+  tertiary: "#382e4c",
+  tertiaryForeground: "#f5e8fc",
+  border: "#5a4870",
+  foreground: "#ffe8f3",
+  muted: "#b89ac8",
+  primary: "#ffafcc",
+  primaryForeground: "#1a1428",
+  focusRing: "#a2d2ff",
+  indicator: "#cdb4db",
+  indicatorForeground: "#1a1428",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#f59e0b",
+});
+
+/**
+ * Autumn Harvest — toasted reds, brown sugar, mellow golds.
+ * Palette: Dark Wine → Camel → Dark Coffee → Chocolate Brown → Light Apricot
+ */
+export const HARVEST_DARK_COLORS: ThemeColors = withTints({
+  background: "#2a1408",
+  surface: "#432818",
+  secondary: "#4d3018",
+  secondaryForeground: "#ffe6a7",
+  tertiary: "#5c3820",
+  tertiaryForeground: "#ffe6a7",
+  border: "#99582a",
+  foreground: "#ffe6a7",
+  muted: "#bb9457",
+  primary: "#bb9457",
+  primaryForeground: "#432818",
+  focusRing: "#bb9457",
+  indicator: "#6f1d1b",
+  indicatorForeground: "#ffe6a7",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#d97706",
+});
+
+export const HARVEST_LIGHT_COLORS: ThemeColors = withTints({
+  background: "#fff8e8",
+  surface: "#fffef5",
+  secondary: "#fce8c0",
+  secondaryForeground: "#432818",
+  tertiary: "#f5dcc8",
+  tertiaryForeground: "#432818",
+  border: "#d4a868",
+  foreground: "#432818",
+  muted: "#99582a",
+  primary: "#6f1d1b",
+  primaryForeground: "#fff8e8",
+  focusRing: "#99582a",
+  indicator: "#bb9457",
+  indicatorForeground: "#432818",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#d97706",
+});
+
+/**
+ * Mystic Evening — deep plum, lilac, rose, soft peach nocturne.
+ * Palette: Midnight Violet → Deep Violet → Mauve Shadow → Dusty Mauve → Almond Silk
+ */
+export const MYSTIC_DARK_COLORS: ThemeColors = withTints({
+  background: "#1a1423",
+  surface: "#372549",
+  secondary: "#3f2d52",
+  secondaryForeground: "#eacdc2",
+  tertiary: "#4a355c",
+  tertiaryForeground: "#eacdc2",
+  border: "#774c60",
+  foreground: "#eacdc2",
+  muted: "#b75d69",
+  primary: "#b75d69",
+  primaryForeground: "#1a1423",
+  focusRing: "#b75d69",
+  indicator: "#774c60",
+  indicatorForeground: "#eacdc2",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#d97706",
+});
+
+export const MYSTIC_LIGHT_COLORS: ThemeColors = withTints({
+  background: "#faf5f3",
+  surface: "#fff9f7",
+  secondary: "#f5ebe6",
+  secondaryForeground: "#1a1423",
+  tertiary: "#eacdc2",
+  tertiaryForeground: "#1a1423",
+  border: "#c9a8b0",
+  foreground: "#1a1423",
+  muted: "#774c60",
+  primary: "#774c60",
+  primaryForeground: "#fff9f7",
+  focusRing: "#774c60",
+  indicator: "#372549",
+  indicatorForeground: "#fff9f7",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#d97706",
+});
+
+/**
+ * Soft Lavender — dusky indigo, soft mauve, smoky plum, blush beige, creamy white.
+ * Palette: Space Indigo → Dusty Grape → Lilac Ash → Almond Silk → Seashell
+ */
+export const LAVENDER_LIGHT_COLORS: ThemeColors = withTints({
+  background: "#f2e9e4",
+  surface: "#faf7f5",
+  secondary: "#ebe3de",
+  secondaryForeground: "#22223b",
+  tertiary: "#e5ddd8",
+  tertiaryForeground: "#22223b",
+  border: "#c9ada7",
+  foreground: "#22223b",
+  muted: "#9a8c98",
+  primary: "#4a4e69",
+  primaryForeground: "#f2e9e4",
+  focusRing: "#4a4e69",
+  indicator: "#9a8c98",
+  indicatorForeground: "#f2e9e4",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#d97706",
+});
+
+export const LAVENDER_DARK_COLORS: ThemeColors = withTints({
+  background: "#16162a",
+  surface: "#22223b",
+  secondary: "#2c2e48",
+  secondaryForeground: "#f2e9e4",
+  tertiary: "#363852",
+  tertiaryForeground: "#f2e9e4",
+  border: "#4a4e69",
+  foreground: "#f2e9e4",
+  muted: "#9a8c98",
+  primary: "#c9ada7",
+  primaryForeground: "#22223b",
+  focusRing: "#c9ada7",
+  indicator: "#9a8c98",
+  indicatorForeground: "#22223b",
+  danger: "#dc2626",
+  success: "#22c55e",
+  info: "#0ea5e9",
+  warning: "#d97706",
+});

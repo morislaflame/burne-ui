@@ -1,4 +1,11 @@
-import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  useCallback,
+  useState,
+  type ReactNode,
+} from "react";
 
 import type { ClassValue } from "clsx";
 
@@ -26,6 +33,23 @@ export function useMergedChecked(
 
 export function compoundUsesInlineMotion(className: string | undefined): boolean {
   return !/\bflex-col\b/.test(className ?? "");
+}
+
+export function injectSwitchControlProps(
+  children: ReactNode,
+  controlProps: Record<string, unknown>,
+): ReactNode {
+  return Children.map(children, (child) => {
+    if (!isValidElement(child)) return child;
+    const name = (child.type as { displayName?: string }).displayName;
+    if (name === "SwitchControl") {
+      return cloneElement(child, {
+        ...controlProps,
+        ...(child.props as object),
+      });
+    }
+    return child;
+  });
 }
 
 export function compoundHasLabel(children: ReactNode): boolean {

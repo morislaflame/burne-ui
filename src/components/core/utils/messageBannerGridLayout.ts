@@ -84,7 +84,7 @@ export function messageBannerTitleCellClass(slots: MessageBannerGridSlots) {
 export function messageBannerDescriptionCellClass(slots: MessageBannerGridSlots) {
   return cn(
     slots.hasTitle ? "row-start-2" : "row-start-1",
-    "self-center min-w-0 max-w-full justify-self-start",
+    "min-w-0 w-full max-w-full justify-self-stretch self-start",
     COL_START[messageBannerContentCol(slots.hasIndicator)],
   );
 }

@@ -3,6 +3,14 @@ import {
   AMBER_LIGHT_COLORS,
   AUTUMN_DARK_COLORS,
   AUTUMN_LIGHT_COLORS,
+  DREAMLAND_DARK_COLORS,
+  DREAMLAND_LIGHT_COLORS,
+  HARVEST_DARK_COLORS,
+  HARVEST_LIGHT_COLORS,
+  LAVENDER_DARK_COLORS,
+  LAVENDER_LIGHT_COLORS,
+  MYSTIC_DARK_COLORS,
+  MYSTIC_LIGHT_COLORS,
   BERRY_DARK_COLORS,
   BERRY_LIGHT_COLORS,
   BOLD_DARK_COLORS,
@@ -135,6 +143,22 @@ export const COLOR_PRESET_DEFINITIONS: Record<ColorPresetKey, ColorPresetDefinit
   autumn: def(
     { colors: AUTUMN_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
     { colors: AUTUMN_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
+  ),
+  dreamland: def(
+    { colors: DREAMLAND_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
+    { colors: DREAMLAND_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
+  ),
+  harvest: def(
+    { colors: HARVEST_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
+    { colors: HARVEST_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
+  ),
+  mystic: def(
+    { colors: MYSTIC_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
+    { colors: MYSTIC_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
+  ),
+  lavender: def(
+    { colors: LAVENDER_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
+    { colors: LAVENDER_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
   ),
 };
 

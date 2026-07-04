@@ -77,7 +77,11 @@ export type ColorPresetKey =
   | "peach"
   | "sand"
   | "bold"
-  | "autumn";
+  | "autumn"
+  | "dreamland"
+  | "harvest"
+  | "mystic"
+  | "lavender";
 
 export type ThemeTokenState = {
   theme: ThemeMode;
@@ -269,6 +273,31 @@ export const FONT_PRESETS = [
     label: "Plus Jakarta Sans",
     value: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
   },
+  {
+    id: "roboto",
+    label: "Roboto",
+    value: "Roboto, ui-sans-serif, system-ui, sans-serif",
+  },
+  {
+    id: "open-sans",
+    label: "Open Sans",
+    value: '"Open Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  {
+    id: "figtree",
+    label: "Figtree",
+    value: "Figtree, ui-sans-serif, system-ui, sans-serif",
+  },
+  {
+    id: "nunito-sans",
+    label: "Nunito Sans",
+    value: '"Nunito Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  {
+    id: "work-sans",
+    label: "Work Sans",
+    value: '"Work Sans", ui-sans-serif, system-ui, sans-serif',
+  },
 ] as const;
 
 export const MONO_FONT_PRESETS = [
@@ -287,6 +316,21 @@ export const MONO_FONT_PRESETS = [
     id: "source-code-pro",
     label: "Source Code Pro",
     value: '"Source Code Pro", ui-monospace, monospace',
+  },
+  {
+    id: "roboto-mono",
+    label: "Roboto Mono",
+    value: '"Roboto Mono", ui-monospace, monospace',
+  },
+  {
+    id: "plex-mono",
+    label: "IBM Plex Mono",
+    value: '"IBM Plex Mono", ui-monospace, monospace',
+  },
+  {
+    id: "space-mono",
+    label: "Space Mono",
+    value: '"Space Mono", ui-monospace, monospace',
   },
 ] as const;
 

@@ -1,26 +1,61 @@
-import { Button } from "@/components/core/Button";
-import { Toast, useToast } from "@/components/core/Toast";
+import { type FormEvent, useState } from "react";
+
+import { Button, Input, Toast, useToast } from "burne-ui";
+
+function ToastRenameForm({ onSubmit }: { onSubmit: (name: string) => void }) {
+  const [name, setName] = useState("");
+
+  return (
+    <form
+      className="mt-small flex flex-col gap-small w-full"
+      onSubmit={(e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const value = name.trim();
+        if (!value) return;
+        onSubmit(value);
+      }}
+    >
+      <Input.Control
+        size="small"
+        placeholder="New name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        autoComplete="off"
+      />
+      <Button type="submit" size="small" variant="primary" disabled={!name.trim()}>
+        Save
+      </Button>
+    </form>
+  );
+}
 
 export function ToastClassNamesFullDemo() {
   const { toast } = useToast();
 
   return (
     <Button
-      onClick={() =>
-        toast.show({
-          status: "info",
-          title: "Full customization Toast",
-          description: "Slots root, title, description through classNames.",
+      onClick={() => {
+        let id = "";
+        id = toast.show({
+          title: "Rename item",
+          description: (
+            <ToastRenameForm
+              onSubmit={() => {
+                toast.dismiss(id);
+              }}
+            />
+          ),
+          timeout: 0,
           classNames: {
-            root: "rounded-large border-info/50 bg-info/10 ring-1 ring-info/20",
-            indicator: "text-info",
-            title: "font-semibold text-info",
+            root: "rounded-large",
+            indicator: "text-primary",
+            title: "font-semibold text-primary text-large",
             description: "text-foreground/80",
           },
-        })
-      }
+        });
+      }}
     >
-      Show toast with classNames
+      Show toast with form
     </Button>
   );
 }
