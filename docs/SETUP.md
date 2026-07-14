@@ -113,20 +113,47 @@ export function Demo() {
 app/
   globals.css
   layout.tsx
+  burne-theme.ts          # опционально: конфиг из playground (Copy config)
 components/
   providers/
-    app-providers.tsx   # Toast.Provider, theme, motion
+    app-providers.tsx
 ```
 
 ```tsx
 // components/providers/app-providers.tsx
 "use client";
 
-import { Toast } from "burne-ui";
+import { BurneUIProvider } from "burne-ui";
+// import burneTheme from "@/burne-theme"; // после Copy config с сайта
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  return <Toast.Provider>{children}</Toast.Provider>;
+  return (
+    <BurneUIProvider
+      // config={burneTheme}
+      defaultTheme="system"
+      toast
+    >
+      {children}
+    </BurneUIProvider>
+  );
 }
+```
+
+`BurneUIProvider` объединяет:
+
+- **ThemeProvider** — `data-theme` (`light` | `dark` | `system`), опционально `localStorage`
+- **токены** — runtime-overrides из `config.tokens` / пропа `tokens`
+- **motion** — `configureMotion` из `config.motion`
+- **Toast.Provider** — по умолчанию включён (`toast={false}` чтобы отключить)
+
+Только тема без тостов/токенов:
+
+```tsx
+import { ThemeProvider, useBurneTheme } from "burne-ui";
+
+<ThemeProvider defaultTheme="dark" storageKey="burne-ui-theme">
+  {children}
+</ThemeProvider>
 ```
 
 ```tsx
@@ -144,11 +171,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
+### Конфиг с playground сайта
+
+1. Настройте тему в theme builder на сайте.
+2. **Copy config** — в буфер попадёт файл `burne-theme.ts`.
+3. Сохраните его в проект и передайте в провайдер:
+
+```tsx
+import { BurneUIProvider } from "burne-ui";
+import burneTheme from "./burne-theme";
+
+<BurneUIProvider config={burneTheme}>{children}</BurneUIProvider>
+```
+
+Альтернатива: **Copy CSS** → `burne-theme-overrides.css` (без JS runtime), см. §7.
+
 ---
 
 ## 6. Светлая и тёмная тема
 
-Светлая тема включается атрибутом на корне:
+Светлая тема включается атрибутом на корне (это делает `ThemeProvider` / `BurneUIProvider`):
 
 ```html
 <html data-theme="light">
@@ -156,16 +198,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 Runtime-переключатель:
 
-```ts
-type SiteTheme = "light" | "dark";
+```tsx
+"use client";
 
-function applyTheme(theme: SiteTheme) {
-  const root = document.documentElement;
-  if (theme === "light") {
-    root.dataset.theme = "light";
-  } else {
-    delete root.dataset.theme;
-  }
+import { useBurneTheme } from "burne-ui";
+
+export function ThemeToggle() {
+  const { theme, setTheme, resolvedTheme } = useBurneTheme();
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
+    >
+      {theme}
+    </button>
+  );
 }
 ```
 
@@ -331,18 +378,18 @@ Next.js pre-render'ит client components на сервере **без GSAP**. �
 
 ### Решения
 
-**1. CSS-fallback** (рекомендуется для Next.js) — скрывать слои с `aria-hidden="true"` в grid-ячейке кнопки:
+**1. CSS-fallback** (рекомендуется для Next.js) — скрывать async-слои кнопки по `data-button-async-layer`:
 
 ```css
 /* globals.css — после burne-ui/styles.css */
-button .col-start-1.row-start-1[aria-hidden="true"] {
+button [data-button-async-layer][aria-hidden="true"] {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
 }
 ```
 
-Селектор совпадает с классом async-слоёв в `Button` (`col-start-1 row-start-1`). `aria-hidden` синхронизирован с `asyncState` — fallback корректен и до, и после GSAP.
+Атрибут стоит на `Button.Loader` / `Button.Success` / `Button.Error`. Не используйте селектор по `col-start-1 row-start-1` — у `Expandable.Icon` в trigger те же grid-классы, и иконка пропадёт.
 
 **2. Client-only для тяжёлых demo-страниц**
 

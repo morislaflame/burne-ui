@@ -242,6 +242,7 @@ export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
     return (
       <span
         ref={ref ?? ctx?.bindLoaderRef}
+        data-button-async-layer
         className={buttonLoaderLayerClass(
           loaderTextClass,
           cn(slotClassNames.loader, className),
@@ -270,6 +271,7 @@ export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
     return (
       <span
         ref={ref ?? ctx?.bindSuccessRef}
+        data-button-async-layer
         className={buttonSuccessLayerClass(cn(slotClassNames.success, className))}
         aria-hidden={asyncState !== "success"}
         {...rest}
@@ -293,6 +295,7 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
     return (
       <span
         ref={ref ?? ctx?.bindErrorRef}
+        data-button-async-layer
         className={buttonErrorLayerClass(cn(slotClassNames.error, className))}
         aria-hidden={asyncState !== "error"}
         {...rest}

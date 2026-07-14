@@ -36,6 +36,29 @@ import "burne-ui/styles.css";
 
 ## Кастомизация темы
 
+### BurneUIProvider (рекомендуется)
+
+```tsx
+"use client";
+
+import { BurneUIProvider } from "burne-ui";
+// import burneTheme from "./burne-theme"; // после Copy config с сайта
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <BurneUIProvider defaultTheme="system" toast>
+      {children}
+    </BurneUIProvider>
+  );
+}
+```
+
+На сайте в theme builder: **Copy config** → сохраните как `burne-theme.ts` → `<BurneUIProvider config={burneTheme}>`.
+
+Только переключение `data-theme`: `ThemeProvider` + `useBurneTheme()`. Подробности — [docs/SETUP.md](./docs/SETUP.md).
+
+### CSS-переопределения
+
 Чтобы поменять палитру, отступы, шрифты, шкалу типографики и прочее, переопределите те же переменные **после** импорта `burne-ui/styles.css`:
 
 ```ts

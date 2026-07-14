@@ -15,6 +15,7 @@ import { Text } from "@/components/core/Text";
 import {
   messageBannerActionCellClass,
   messageBannerDescriptionCellClass,
+  messageBannerIndicatorCellClass,
   messageBannerTitleCellClass,
 } from "@/components/core/utils/messageBannerGridLayout";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
@@ -42,7 +43,6 @@ import {
   EXPANDABLE_DESCRIPTION_CLASS,
   EXPANDABLE_DESCRIPTION_VARIANT,
   EXPANDABLE_GLOSS_CONTENT_CLASS,
-  EXPANDABLE_ICON_GRID_CELL_CLASS,
   EXPANDABLE_MESSAGE_CLASS,
   EXPANDABLE_PANEL_SHELL_CLASS,
   EXPANDABLE_TITLE_CLASS,
@@ -277,7 +277,7 @@ export function ExpandableIcon({ className, children, ...props }: ExpandableIcon
           className,
           slotClass: slotClassNames.icon,
         }),
-        gridSlots && EXPANDABLE_ICON_GRID_CELL_CLASS,
+        gridSlots && messageBannerIndicatorCellClass(gridSlots),
       )}
       {...props}
     >

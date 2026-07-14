@@ -51,18 +51,7 @@ export const EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS =
 export const EXPANDABLE_MESSAGE_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
 export const EXPANDABLE_ICON_BASE_CLASS =
-  "inline-flex shrink-0 items-center justify-center text-primary";
-
-/** Default svg size per control size — same pattern as Alert (`[&_svg]:icon-*`). */
-export const EXPANDABLE_ICON_SVG_CLASS: Record<ExpandableSize, string> = {
-  small: "[&_svg]:icon-small",
-  base: "[&_svg]:icon-base",
-  mid: "[&_svg]:icon-large",
-  large: "[&_svg]:icon-large",
-};
-
-export const EXPANDABLE_ICON_GRID_CELL_CLASS =
-  "col-start-1 row-start-1 self-center shrink-0";
+  "shrink-0 text-primary [&_svg]:size-full";
 
 export const EXPANDABLE_CONTENT_CLASS = EXPANDABLE_COMPOUND_CONTENTS_CLASS;
 
@@ -142,7 +131,7 @@ export function expandableIconClass({
 }): string {
   return mergeExpandableSlotClass(
     EXPANDABLE_ICON_BASE_CLASS,
-    EXPANDABLE_ICON_SVG_CLASS[size],
+    CONTROL_SIZE_LAYOUT[size].icon,
     slotClass,
     className,
   );
