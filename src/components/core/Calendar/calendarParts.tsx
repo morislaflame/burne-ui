@@ -14,7 +14,7 @@ import { motionContentFade } from "@/components/core/utils/motionConfig";
 
 import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
-import { useToggleButtonFillAnimation } from "@/components/core/ToggleButton/useToggleButtonFillAnimation";
+import { useToggleButtonFillAnimation, SELECTION_FILL_DATA_ATTR } from "@/components/core/ToggleButton/useToggleButtonFillAnimation";
 import { cn } from "@/utils/cn";
 
 import {
@@ -233,6 +233,8 @@ const CalendarInteractiveCellInner = forwardRef<
       <span
         ref={bindFillRef}
         aria-hidden
+        {...{ [SELECTION_FILL_DATA_ATTR]: "" }}
+        data-pressed={selected ? "true" : "false"}
         className={mergeCalendarSlotClass(CALENDAR_CELL_FILL_CLASS, slotClassNames.cellFill)}
       />
       <Text

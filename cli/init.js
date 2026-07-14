@@ -139,18 +139,26 @@ export function BurneProviders({ children }: { children: React.ReactNode }) {
  */
 function resolveProviderPath(cwd, framework) {
   if (framework === "vite") {
-    const dir = path.join(cwd, "src", "components");
+    const dir = path.join(cwd, "src");
     return {
       dir,
       file: path.join(dir, "burne-providers.tsx"),
-      importHint: "./components/burne-providers",
+      importHint: "./burne-providers",
     };
   }
-  const dir = path.join(cwd, "components", "providers");
+  const dir = path.join(cwd, "app");
+  const srcApp = path.join(cwd, "src", "app");
+  if (fs.existsSync(srcApp) && !fs.existsSync(dir)) {
+    return {
+      dir: srcApp,
+      file: path.join(srcApp, "burne-providers.tsx"),
+      importHint: "./burne-providers",
+    };
+  }
   return {
     dir,
     file: path.join(dir, "burne-providers.tsx"),
-    importHint: "@/components/providers/burne-providers",
+    importHint: "./burne-providers",
   };
 }
 
@@ -174,6 +182,7 @@ createRoot(document.getElementById("root")!).render(
   }
   return `// app/layout.tsx
 import { BurneProviders } from "${importHint}";
+import "./globals.css";
 
 export default function RootLayout({ children }) {
   return (
@@ -288,7 +297,7 @@ export async function runInit(argv, cliVersion) {
   console.log(`\nburne-ui init  v${cliVersion}`);
   console.log(
     framework === "unknown"
-      ? "Framework: not detected (will use components/providers)\n"
+      ? "Framework: not detected (will use app/burne-providers.tsx)\n"
       : `Detected: ${framework}\n`,
   );
 

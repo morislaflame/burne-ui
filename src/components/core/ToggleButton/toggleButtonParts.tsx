@@ -23,6 +23,7 @@ import {
   type ToggleButtonTextProps,
   type ToggleButtonTrailingProps,
 } from "./toggleButtonTypes";
+import { SELECTION_FILL_DATA_ATTR } from "./useToggleButtonFillAnimation";
 
 export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProps>(
   function ToggleButtonFill({ className = "", ...rest }, ref) {
@@ -42,6 +43,8 @@ export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProp
           slotClass: cn(slotClassNames.fill, className),
         })}
         {...rest}
+        {...{ [SELECTION_FILL_DATA_ATTR]: "" }}
+        data-pressed={ctx.pressed ? "true" : "false"}
       />
     );
   },

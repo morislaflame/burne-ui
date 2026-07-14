@@ -134,7 +134,7 @@ export const BUTTON_LABEL_TEXT_CLASS = "min-w-0 shrink";
 
 export const BUTTON_ASYNC_GRID_LAYER_CLASS = "col-start-1 row-start-1 flex items-center justify-center";
 
-/** SSR fallback in app CSS: `button [data-button-async-layer][aria-hidden="true"]` */
+/** SSR: inactive layers hidden in `styles.css` via `[data-button-async-layer][aria-hidden="true"]` */
 export const BUTTON_ASYNC_LAYER_DATA_ATTR = "data-button-async-layer";
 
 export const BUTTON_SUCCESS_LAYER_CLASS = "text-success";

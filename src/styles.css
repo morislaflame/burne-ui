@@ -585,3 +585,36 @@ p {
   width: var(--icon-size-2xlarge);
   height: var(--icon-size-2xlarge);
 }
+
+/*
+ * SSR / pre-hydration visibility — GSAP owns these after mount (Next.js flash).
+ * Consumers no longer need to copy this into app globals.css.
+ */
+
+/* Button: inactive async layers (loader / success / error) share one grid cell */
+button [data-button-async-layer][aria-hidden="true"] {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/*
+ * ToggleButton / Calendar cell fill: hide until GSAP marks ready when not pressed.
+ * Pressed + not ready stays visible (correct SSR for selected / pressed).
+ */
+[data-selection-fill]:not([data-selection-fill-ready])[data-pressed="false"] {
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+/*
+ * Gloss blur OOTB: Lightning CSS / Tailwind can drop unprefixed `backdrop-filter`
+ * when `-webkit-backdrop-filter` is listed second (often after `@source` on dist).
+ * Re-assert with webkit-first order so Chromium/Firefox keep blur without app CSS.
+ */
+:is(.gloss-panel, .gloss-control, .gloss-btn, .gloss-indicator) {
+  -webkit-backdrop-filter: blur(var(--gloss-blur));
+  backdrop-filter: blur(var(--gloss-blur));
+}

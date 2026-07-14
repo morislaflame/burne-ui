@@ -10,14 +10,21 @@ import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hove
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionSelectionFill, getMotionConfig } from "@/components/core/utils/motionConfig";
 
-const TOGGLE_FILL_INIT_ATTR = "data-toggle-fill-init";
+/** Marks ToggleButton / Calendar cell fill for SSR CSS in `styles.css`. */
+export const SELECTION_FILL_DATA_ATTR = "data-selection-fill";
+
+/** Set by GSAP init — removes SSR hide rule so animations own visibility. */
+export const SELECTION_FILL_READY_ATTR = "data-selection-fill-ready";
 
 /**
  * Fill for ToggleButton / CalendarInteractiveCell.
  * Do not set `style={{ transform, opacity }}` on fill — React will overwrite GSAP on parent re-render.
+ * SSR: CSS hides via `[data-selection-fill]:not([data-selection-fill-ready])[data-pressed="false"]`.
  */
 export function applyToggleButtonFillInstant(fill: HTMLElement, pressed: boolean) {
   killMotion(fill);
+  fill.setAttribute(SELECTION_FILL_READY_ATTR, "");
+  fill.dataset.pressed = pressed ? "true" : "false";
   gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
 }
 
@@ -27,8 +34,7 @@ export function createToggleButtonFillRefCallback(
 ) {
   return (node: HTMLElement | null) => {
     ref.current = node;
-    if (node && !node.hasAttribute(TOGGLE_FILL_INIT_ATTR)) {
-      node.setAttribute(TOGGLE_FILL_INIT_ATTR, "");
+    if (node && !node.hasAttribute(SELECTION_FILL_READY_ATTR)) {
       applyToggleButtonFillInstant(node, initialPressed);
     }
   };
@@ -40,8 +46,10 @@ export function animateToggleButtonFill(
   reduceMotion = prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToggleButtonFill,
 ): void {
   killMotion(fill);
+  fill.setAttribute(SELECTION_FILL_READY_ATTR, "");
+  fill.dataset.pressed = pressed ? "true" : "false";
   if (reduceMotion) {
-    applyToggleButtonFillInstant(fill, pressed);
+    gsap.set(fill, { scale: pressed ? 1 : 0, autoAlpha: pressed ? 1 : 0 });
     return;
   }
 

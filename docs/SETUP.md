@@ -377,54 +377,6 @@ API: `toast.show`, `toast.success`, `toast.danger`, `toast.warning`, `toast.info
 
 ---
 
-## 10. SSR и Next.js: async-слои `Button`
-
-У `Button` с `onAsyncClick` (и у controlled `asyncState`) в одной grid-ячейке одновременно монтируются слои:
-
-- **label** — текст / иконки;
-- **loader** — спиннер (`animate-spin`);
-- **success** — галочка;
-- **error** — крестик.
-
-На клиенте неактивные слои скрывает **GSAP** (`autoAlpha`) в ref-callback и `useLayoutEffect`. React параллельно выставляет **`aria-hidden`** по `asyncState`.
-
-### Проблема при SSR
-
-Next.js pre-render'ит client components на сервере **без GSAP**. В HTML все слои видны сразу: текст + крутящийся loader + иконка ошибки. После гидрации GSAP обычно всё исправляет, но возможен flash и лишняя нагрузка (десятки спиннеров на странице).
-
-### Решения
-
-**1. CSS-fallback** (рекомендуется для Next.js) — скрывать async-слои кнопки по `data-button-async-layer`:
-
-```css
-/* globals.css — после burne-ui/styles.css */
-button [data-button-async-layer][aria-hidden="true"] {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-```
-
-Атрибут стоит на `Button.Loader` / `Button.Success` / `Button.Error`. Не используйте селектор по `col-start-1 row-start-1` — у `Expandable.Icon` в trigger те же grid-классы, и иконка пропадёт.
-
-**2. Client-only для тяжёлых demo-страниц**
-
-```tsx
-import dynamic from "next/dynamic";
-
-const ButtonShowcase = dynamic(
-  () => import("./ButtonShowcase").then((m) => ({ default: m.ButtonShowcase })),
-  { ssr: false },
-);
-```
-
-Подходит для каталогов компонентов и playground-подобных страниц.
-
-**3. Не дублировать `configureMotion` без необходимости**
-
-Лишние вызовы при каждом render/theme tick усугубляют нагрузку вместе с большим числом интерактивных компонентов.
-
----
 
 ## 11. Утилита `cn`
 
@@ -456,7 +408,7 @@ import { cn } from "burne-ui";
 
 ### На кнопке сразу видны loader, текст и крестик
 
-- Типично для **SSR без CSS-fallback** (см. [§10](#10-ssr-и-nextjs-async-слои-button)).
+- Типично для **SSR** со старым `burne-ui` без правил в `styles.css` (см. [§10](#10-ssr-и-nextjs-async-слои-button-и-selection-fill)) — обновите пакет.
 - Проверьте, что `enableAsyncButtonCrossfade` не отключён без альтернативного скрытия слоёв.
 
 ### Анимации не меняются после `configureMotion`
@@ -477,7 +429,7 @@ import { cn } from "burne-ui";
 - [ ] Установлены `burne-ui` и `react-icons`
 - [ ] Подключён `burne-ui/styles.css`
 - [ ] Tailwind v4: `@source` на код приложения
-- [ ] (Next.js) CSS-fallback для async-слоёв `Button` или `ssr: false` для demo
+- [ ] `burne-ui` ≥ 1.5.3 (SSR + gloss blur CSS в `styles.css`); для тяжёлых demo можно `ssr: false`
 - [ ] (Опционально) Override-токены в отдельном CSS после импорта пакета
 - [ ] (Опционально) `configureMotion(...)` в client-провайдере через `useLayoutEffect`
 - [ ] (Если нужны toast) `Toast.Provider` в корне
