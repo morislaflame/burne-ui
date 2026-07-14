@@ -263,7 +263,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 
 ### asChild trigger
 
-При единственном child handlers и `aria-describedby` merge на child — задайте `aria-label` на icon-only кнопках.
+`asChild` (по умолчанию `true` при одном element-child): handlers и `aria-describedby` merge на child — задайте `aria-label` на icon-only кнопках. `asChild={false}` — обёртка `<span>`.
 
 ### Практические заметки
 

@@ -49,7 +49,10 @@ export type TooltipRootProps = {
   classNames?: TooltipClassNames;
 };
 
-export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement>;
+export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement> & {
+  /** Merge props onto the single child (Button, etc.) instead of wrapping in `<span>`. */
+  asChild?: boolean;
+};
 
 export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
   showArrow?: boolean;

@@ -61,7 +61,10 @@ export type PopoverClassNamesProviderProps = {
 
 export type UsePopoverRootStateProps = Omit<PopoverRootProps, "classNames">;
 
-export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement>;
+export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement> & {
+  /** Merge props onto the single child (Button, etc.) instead of rendering a `<button>` wrapper. */
+  asChild?: boolean;
+};
 
 export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement>;
 

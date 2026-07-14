@@ -334,7 +334,16 @@ TooltipPanel.displayName = "TooltipPanel";
 
 export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
   function TooltipTrigger(
-    { className, children, onPointerEnter, onPointerLeave, onFocus, onBlur, ...rest },
+    {
+      asChild = true,
+      className,
+      children,
+      onPointerEnter,
+      onPointerLeave,
+      onFocus,
+      onBlur,
+      ...rest
+    },
     ref,
   ) {
     const slotClassNames = useTooltipClassNames();
@@ -361,7 +370,7 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
 
     const onlyChild = Children.count(children) === 1 && isValidElement(children) ? children : null;
 
-    if (onlyChild) {
+    if (asChild && onlyChild) {
       const child = onlyChild as ReactElement<{
         className?: string;
         "aria-describedby"?: string;

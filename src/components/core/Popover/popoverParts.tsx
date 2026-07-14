@@ -68,7 +68,10 @@ import type {
 } from "./popoverTypes";
 
 export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
-  function PopoverTrigger({ className = "", children, onClick, onPointerDown, ...rest }, ref) {
+  function PopoverTrigger(
+    { className = "", children, asChild = true, onClick, onPointerDown, ...rest },
+    ref,
+  ) {
     const { open, setOpen, triggerRef, popoverId } =
       usePopoverContext("Popover.Trigger");
     const slotClassNames = usePopoverClassNames();
@@ -114,7 +117,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
     const onlyChild =
       Children.count(children) === 1 && isValidElement(children) ? children : null;
 
-    if (onlyChild) {
+    if (asChild && onlyChild) {
       const child = onlyChild as ReactElement<{
         className?: string;
         "aria-expanded"?: boolean;

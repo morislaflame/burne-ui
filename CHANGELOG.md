@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.5
+
+### Fixed
+
+- `Tooltip.Trigger` / `Popover.Trigger`: public `asChild` prop in types (merge onto child Button); default `asChild` stays on for a single element child.
+
 ## 1.5.4
 
 ### Fixed
