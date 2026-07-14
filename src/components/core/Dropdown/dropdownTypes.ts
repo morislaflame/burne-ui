@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
 import type { PopoverVariant } from "@/components/core/Popover";
+import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 import type {
   SelectionIndicatorClassNames,
   SelectionIndicatorSize,
@@ -89,6 +90,8 @@ export type DropdownTriggerProps = HTMLAttributes<HTMLElement> & {
 export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   variant?: PopoverVariant;
   bodyClassName?: string;
+  /** Panel alignment relative to trigger (passed to Popover). Default: `start` when matching width. */
+  align?: FloatingAlign;
 };
 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {

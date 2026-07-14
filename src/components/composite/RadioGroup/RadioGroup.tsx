@@ -25,7 +25,20 @@ export type {
 
 export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
   function RadioGroupRoot(props, ref) {
-    const { children, className, size, disabled = false, name: _name, ...fieldsetProps } = props;
+    const {
+      children,
+      className,
+      size,
+      disabled = false,
+      name: _name,
+      isRequired: _isRequired,
+      value: _value,
+      defaultValue: _defaultValue,
+      onValueChange: _onValueChange,
+      hintId: _hintId,
+      errorId: _errorId,
+      ...fieldsetProps
+    } = props;
     const { contextValue, fieldLabelCtx, hintId, errorId } = useRadioGroupRootState(props);
 
     return (

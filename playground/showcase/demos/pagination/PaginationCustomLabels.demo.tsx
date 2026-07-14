@@ -6,7 +6,7 @@ export function PaginationCustomLabelsDemo() {
   const [page, setPage] = useState(2);
 
   return (
-    <Pagination page={page} totalPages={8} onPageChange={setPage} className="w-full max-w-md">
+    <Pagination page={page} totalPages={8} onPageChange={setPage} className="w-full max-w-component-mid">
       <Pagination.Summary>
         Page {page} from 8
       </Pagination.Summary>

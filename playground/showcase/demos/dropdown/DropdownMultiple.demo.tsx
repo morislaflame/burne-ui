@@ -8,6 +8,7 @@ export function DropdownMultipleDemo() {
         <Button variant="outline">Multi-select</Button>
       </Dropdown.Trigger>
       <Dropdown.Popover>
+        <Dropdown.Group>
         <Dropdown.Item value="ru">
           <Dropdown.ItemIndicator />
           <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
@@ -20,6 +21,7 @@ export function DropdownMultipleDemo() {
           <Dropdown.ItemIndicator />
           <Dropdown.ItemLabel>Deutsch</Dropdown.ItemLabel>
         </Dropdown.Item>
+        </Dropdown.Group>
       </Dropdown.Popover>
     </Dropdown>
   );

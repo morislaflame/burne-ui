@@ -56,6 +56,14 @@ export function usePopoverContentLifecycle({
     if (!anchor || !panel) return;
 
     const anchorRect = anchor.getBoundingClientRect();
+    // Apply width before measuring — otherwise align clamp uses a too-narrow rect
+    // and the panel can spill past the viewport after minWidth is set.
+    if (matchAnchorWidth) {
+      panel.style.minWidth = `${Math.max(anchorRect.width, 12 * 16)}px`;
+    } else {
+      panel.style.minWidth = "";
+    }
+
     const placement = computeTooltipPlacement(
       anchorRect,
       panel.getBoundingClientRect(),
@@ -69,11 +77,6 @@ export function usePopoverContentLifecycle({
     panel.style.left = `${placement.left}px`;
     panel.style.top = `${placement.top}px`;
     panel.style.transform = "";
-    if (matchAnchorWidth) {
-      panel.style.minWidth = `${Math.max(anchorRect.width, 12 * 16)}px`;
-    } else {
-      panel.style.minWidth = "";
-    }
   }, [align, anchorRef, matchAnchorWidth, offset, side, triggerRef]);
 
   useLayoutEffect(() => {

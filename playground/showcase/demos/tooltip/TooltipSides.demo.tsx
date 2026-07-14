@@ -5,7 +5,7 @@ export function TooltipSidesDemo() {
   return (
     <div className="flex flex-col items-center gap-mid py-mid">
       <Tooltip side="top">
-        <Tooltip.Trigger>
+        <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             top
           </Button>
@@ -15,7 +15,7 @@ export function TooltipSidesDemo() {
 
       <div className="flex items-center gap-mid">
         <Tooltip side="left">
-          <Tooltip.Trigger>
+          <Tooltip.Trigger asChild>
             <Button variant="outline" type="button">
               left
             </Button>
@@ -28,7 +28,7 @@ export function TooltipSidesDemo() {
         </div>
 
         <Tooltip side="right">
-          <Tooltip.Trigger>
+          <Tooltip.Trigger asChild>
             <Button variant="outline" type="button">
               right
             </Button>
@@ -38,7 +38,7 @@ export function TooltipSidesDemo() {
       </div>
 
       <Tooltip side="bottom">
-        <Tooltip.Trigger>
+        <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             bottom
           </Button>

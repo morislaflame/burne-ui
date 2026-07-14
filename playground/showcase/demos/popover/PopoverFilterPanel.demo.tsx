@@ -10,7 +10,7 @@ export function PopoverFilterPanelDemo() {
 
   return (
     <Popover open={active} onOpenChange={setActive}>
-      <Popover.Trigger>
+      <Popover.Trigger asChild>
         <Button variant="outline" type="button">
           Filters
         </Button>

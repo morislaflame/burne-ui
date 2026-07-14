@@ -5,7 +5,7 @@ import { Text } from "@/components/core/Text";
 export function PopoverGlossDemo() {
   return (
     <Popover variant="gloss">
-      <Popover.Trigger>
+      <Popover.Trigger asChild>
         <Button variant="gloss">Gloss Popover</Button>
       </Popover.Trigger>
       <Popover.Content showArrow>

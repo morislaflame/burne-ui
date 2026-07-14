@@ -74,6 +74,16 @@ const [page, setPage] = useState(1);
 
 `Pagination.Pages` требует `page` и `totalPages` на root.
 
+## Layout / responsive
+
+Root — `flex-wrap` + `min-w-0`. На широком контейнере `Summary` слева, `Content` справа (`ms-auto` / `justify-start`). Если ряд не влезает:
+
+1. `Summary` сжимается (`flex-1`, `basis-[12rem]`, текст с `truncate`)
+2. `Content` уходит на следующую строку и/или переносит кнопки внутри `<ol>` (`min-w-0 max-w-full flex-wrap`)
+3. `Item` — `shrink-0`, чтобы переносились целыми контролами
+
+Горизонтальный overflow родителя не должен появляться; отдельно сужать `siblingCount` API не нужно — достаточно CSS wrap.
+
 ## Поведение range
 
 `getPaginationRange(page, totalPages, siblingCount)`:

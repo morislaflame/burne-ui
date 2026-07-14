@@ -16,7 +16,7 @@ export function ButtonGroupGlossDemo() {
             <IoEllipsisHorizontal aria-hidden className="icon-base" />
           </Button>
         </Dropdown.Trigger>
-        <Dropdown.Popover>
+        <Dropdown.Popover align="end">
           <Dropdown.Item value="share" selection={false}>
             Share
           </Dropdown.Item>

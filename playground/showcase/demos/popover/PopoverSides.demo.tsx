@@ -6,7 +6,7 @@ export function PopoverSidesDemo() {
   return (
     <div className="flex flex-col items-center gap-mid py-mid">
       <Popover side="top">
-        <Popover.Trigger>
+        <Popover.Trigger asChild>
           <Button variant="outline" type="button">
             top
           </Button>
@@ -22,7 +22,7 @@ export function PopoverSidesDemo() {
 
       <div className="flex items-center gap-mid">
         <Popover side="left">
-          <Popover.Trigger>
+          <Popover.Trigger asChild>
             <Button variant="outline" type="button">
               left
             </Button>
@@ -43,7 +43,7 @@ export function PopoverSidesDemo() {
         </div>
 
         <Popover side="right">
-          <Popover.Trigger>
+          <Popover.Trigger asChild>
             <Button variant="outline" type="button">
               right
             </Button>
@@ -59,7 +59,7 @@ export function PopoverSidesDemo() {
       </div>
 
       <Popover side="bottom">
-        <Popover.Trigger>
+        <Popover.Trigger asChild>
           <Button variant="outline" type="button">
             bottom
           </Button>

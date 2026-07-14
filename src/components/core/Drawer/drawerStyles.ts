@@ -44,11 +44,11 @@ export const HANDLE_EDGE_PADDING_CLASS: Record<DrawerPlacement, string> = {
 export const DRAWER_CONTENT_CLASS =
   "flex min-h-0 flex-1 flex-col gap-mid text-left";
 
-export const DRAWER_HEADER_PADDING = "px-mid pt-mid";
+export const DRAWER_HEADER_PADDING = "px-mid pt-plus";
 
-export const DRAWER_BODY_PADDING = "px-mid";
+export const DRAWER_BODY_PADDING = "px-mid py-base";
 
-export const DRAWER_FOOTER_PADDING = "px-mid pb-mid";
+export const DRAWER_FOOTER_PADDING = "px-mid pb-plus";
 
 export const DRAWER_NATIVE_CLASS =
   "fixed inset-0 z-[100] m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";

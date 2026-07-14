@@ -211,7 +211,7 @@ export function GlossComponentsDemo() {
         </Text>
         <div className="flex flex-wrap items-center gap-small">
           <Popover variant="gloss">
-            <Popover.Trigger>
+            <Popover.Trigger asChild>
               <Button variant="gloss">Gloss Popover</Button>
             </Popover.Trigger>
             <Popover.Content showArrow>
@@ -227,15 +227,15 @@ export function GlossComponentsDemo() {
             </Popover.Content>
           </Popover>
           <Dropdown popoverVariant="gloss" value={glossLang} onValueChange={(v) => setGlossLang(v as string)}>
-            <Dropdown.Trigger>
+            <Dropdown.Trigger asChild>
               <Button variant="gloss">Gloss Dropdown</Button>
             </Dropdown.Trigger>
             <Dropdown.Popover>
               <Dropdown.Item value="ru" selection={false}>
-                <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
+                <Dropdown.Label>Russian</Dropdown.Label>
               </Dropdown.Item>
               <Dropdown.Item value="en" selection={false}>
-                <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
+                <Dropdown.Label>English</Dropdown.Label>
               </Dropdown.Item>
             </Dropdown.Popover>
           </Dropdown>
@@ -261,7 +261,7 @@ export function GlossComponentsDemo() {
             Gloss Toast
           </Button>
           <Tooltip surface="gloss" variant="info">
-            <Tooltip.Trigger>
+            <Tooltip.Trigger asChild>
               <Button variant="gloss">Gloss Tooltip</Button>
             </Tooltip.Trigger>
             <Tooltip.Content>Glass tip (`surface=&quot;gloss&quot;`)</Tooltip.Content>

@@ -18,7 +18,7 @@ export function TooltipShortcutGridDemo() {
       <div className="grid gap-small">
         {SHORTCUTS.map((item) => (
           <Tooltip key={item.keys} side="right">
-            <Tooltip.Trigger>
+            <Tooltip.Trigger asChild>
               <Button variant="outline" size="small" type="button" className="w-full justify-between">
                 <span>{item.label}</span>
                 <Kbd size="small" variant="secondary">

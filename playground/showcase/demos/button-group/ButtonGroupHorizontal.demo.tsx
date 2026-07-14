@@ -23,7 +23,7 @@ export function ButtonGroupHorizontalDemo() {
             <IoEllipsisHorizontal aria-hidden className="icon-base" />
           </Button>
         </Dropdown.Trigger>
-        <Dropdown.Popover>
+        <Dropdown.Popover align="end">
           <Dropdown.Item value="dup" selection={false}>
             Duplicate
           </Dropdown.Item>

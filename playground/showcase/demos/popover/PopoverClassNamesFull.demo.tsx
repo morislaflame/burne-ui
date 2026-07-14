@@ -15,7 +15,7 @@ export function PopoverClassNamesFullDemo() {
         body: "text-foreground",
       }}
     >
-      <Popover.Trigger>
+      <Popover.Trigger asChild>
         <Button variant="outline" type="button">
           Filters
         </Button>

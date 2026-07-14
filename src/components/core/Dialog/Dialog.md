@@ -300,7 +300,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 
 - **Panel vs Dialog:** `classNames` задаются на `<Dialog>`, рендерятся в портале внутри `Dialog.Panel`.
 - **Close:** `Dialog.Close` — обёртка `CloseButton`; принимает `variant`, `size`, `classNames` CloseButton.
-- **Scroll:** только `Dialog.Body` скроллится — min-height/max-height задавайте на `body` слот.
+- **Scroll:** только `Dialog.Body` скроллится — min-height/max-height задавайте на `body` слот. У Body есть `py-xsmall`, чтобы focus-ring / hover-shadow полей не обрезались футером и краем scrollport.
 - **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти / `Dialog.Panel`.
 
 ## Доступность

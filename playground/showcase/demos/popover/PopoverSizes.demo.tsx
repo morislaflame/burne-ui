@@ -9,7 +9,7 @@ export function PopoverSizesDemo() {
     <div className="flex flex-wrap items-center gap-mid">
       {SIZES.map((size) => (
         <Popover key={size} size={size}>
-          <Popover.Trigger>
+          <Popover.Trigger asChild>
             <Button variant="outline" type="button" size={size}>
               {size}
             </Button>

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.4
+
+### Fixed
+
+- `RadioGroup` / `CheckboxGroup`: do not forward `onValueChange`, `value`, `defaultValue`, `isRequired`, `hintId`, `errorId` (and `selection` for CheckboxGroup) to the native `<fieldset>`.
+- `Pagination`: no horizontal overflow in narrow parents — `min-w-0` / wrap on root & content, drop `shrink-0` on the controls list, truncate summary.
+- `Popover` / `Dropdown`: apply `matchAnchorWidth` minWidth **before** placement measure so viewport clamp keeps the panel on-screen (esp. trailing triggers on mobile). Drop the hardcoded `12rem` floor — width follows content (or `className` `min-w-*`).
+- `Skeleton.Text`: unique keys per line (was keyed by width class `w-full`, which duplicated).
+
 ## 1.5.3
 
 ### Fixed

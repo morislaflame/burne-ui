@@ -14,15 +14,15 @@ export const ALERT_DIALOG_CONTENT_CLASS =
   "flex min-h-0 flex-1 flex-col gap-mid text-left";
 
 const ALERT_DIALOG_SECTION_PADDING_COMPACT = {
-  headerPadding: "px-plus pt-plus",
-  bodyPadding: "px-plus",
-  footerPadding: "px-plus pb-plus",
+  headerPadding: "px-plus pt-base",
+  bodyPadding: "px-plus py-small",
+  footerPadding: "px-plus pb-base",
 } as const;
 
 const ALERT_DIALOG_SECTION_PADDING_DEFAULT = {
-  headerPadding: "px-mid pt-mid",
-  bodyPadding: "px-mid",
-  footerPadding: "px-mid pb-mid",
+  headerPadding: "px-mid pt-plus",
+  bodyPadding: "px-mid py-small",
+  footerPadding: "px-mid pb-plus",
 } as const;
 
 export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> = {
@@ -106,7 +106,8 @@ export const ALERT_DIALOG_HEADING_BLOCK_CLASS = "contents";
 
 export const ALERT_DIALOG_TITLE_CLASS = "font-w-mid";
 
-export const ALERT_DIALOG_BODY_BASE_CLASS = "min-h-0 flex-1 overflow-y-auto";
+export const ALERT_DIALOG_BODY_BASE_CLASS =
+  "min-h-0 flex-1 overflow-y-auto py-small";
 
 export const ALERT_DIALOG_FOOTER_CLASS =
   "flex shrink-0 flex-wrap items-center justify-end gap-base";

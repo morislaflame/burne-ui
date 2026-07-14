@@ -181,6 +181,7 @@ configureMotion({
 `Dropdown.Popover` — thin wrapper над `Popover`:
 
 - `matchAnchorWidth` — ширина panel = trigger
+- `align` — `start` | `center` | `end` (по умолчанию `start` при match width); для trailing «⋯» в ButtonGroup удобен `align="end"`
 - `unstyled` — surface задаётся `popoverBody`
 - `contentRole={undefined}` — dialog semantics отключены; `role="menu"` на `Popover.Body`
 - `shouldDismiss` — игнорирует клики внутри `subPanelRootsRef`

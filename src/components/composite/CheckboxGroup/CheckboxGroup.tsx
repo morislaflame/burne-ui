@@ -26,7 +26,20 @@ export type {
 
 export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>(
   function CheckboxGroupRoot(props, ref) {
-    const { children, className, size, disabled = false, ...fieldsetProps } = props;
+    const {
+      children,
+      className,
+      size,
+      disabled = false,
+      isRequired: _isRequired,
+      selection: _selection,
+      value: _value,
+      defaultValue: _defaultValue,
+      onValueChange: _onValueChange,
+      hintId: _hintId,
+      errorId: _errorId,
+      ...fieldsetProps
+    } = props;
     const { contextValue, fieldLabelCtx, hintId, errorId } = useCheckboxGroupRootState(props);
 
     return (

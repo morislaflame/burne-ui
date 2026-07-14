@@ -8,7 +8,7 @@ export function DropdownGlossDemo() {
 
   return (
     <Dropdown popoverVariant="gloss" value={glossLang} onValueChange={(v) => setGlossLang(v as string)}>
-      <Dropdown.Trigger>
+      <Dropdown.Trigger asChild>
         <Button variant="gloss">Gloss Dropdown</Button>
       </Dropdown.Trigger>
       <Dropdown.Popover>

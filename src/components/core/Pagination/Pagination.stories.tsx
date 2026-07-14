@@ -140,6 +140,33 @@ export const WithSummary: Story = {
   },
 };
 
+export const NarrowContainer: Story = {
+  name: "Narrow container",
+  render: function NarrowContainer() {
+    const [page, setPage] = useState(5);
+    const totalPages = 20;
+
+    return (
+      <div className="w-full max-w-[16rem] rounded-mid border-token p-mid">
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
+          <Pagination.Summary>
+            Page {page} of {totalPages}
+          </Pagination.Summary>
+          <Pagination.Content>
+            <Pagination.Item>
+              <Pagination.Previous />
+            </Pagination.Item>
+            <Pagination.Pages />
+            <Pagination.Item>
+              <Pagination.Next />
+            </Pagination.Item>
+          </Pagination.Content>
+        </Pagination>
+      </div>
+    );
+  },
+};
+
 export const CustomLabels: Story = {
   name: "Custom labels",
   render: function CustomLabels() {

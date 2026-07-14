@@ -42,10 +42,10 @@ export const POPOVER_MAX_WIDTH_CLASS: Record<PopoverSize, string> = {
 };
 
 export const POPOVER_PADDING_CLASS: Record<PopoverSize, string> = {
-  small: "p-small",
-  base: "p-base",
-  mid: "p-plus",
-  large: "p-mid",
+  small: "px-small py-xsmall",
+  base: "px-plus py-base",
+  mid: "px-mid py-plus",
+  large: "px-large py-mid",
 };
 
 export const POPOVER_GAP_CLASS: Record<PopoverContentGap, string> = {

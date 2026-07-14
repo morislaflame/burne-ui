@@ -8,7 +8,7 @@ export function TooltipSizesDemo() {
     <div className="flex flex-wrap items-center gap-mid">
       {SIZES.map((size) => (
         <Tooltip key={size} size={size}>
-          <Tooltip.Trigger>
+          <Tooltip.Trigger asChild>
             <Button variant="outline" type="button" size={size}>
               {size}
             </Button>

@@ -37,10 +37,10 @@ export const TABLE_COLUMN_BASE_CLASS = "group/col";
 
 export const TABLE_COLUMN_VARIANT_CLASS: Record<TableVariant, string> = {
   default:
-    "bg-secondary px-large py-plus text-secondary-foreground whitespace-nowrap",
-  secondary: "px-large py-plus text-secondary-foreground whitespace-nowrap",
-  toned: "px-large py-plus text-muted whitespace-nowrap bg-transparent",
-  gloss: "bg-transparent px-large py-plus text-muted whitespace-nowrap",
+    "bg-secondary px-mid py-plus text-secondary-foreground whitespace-nowrap",
+  secondary: "px-mid py-plus text-secondary-foreground whitespace-nowrap",
+  toned: "px-mid py-plus text-muted whitespace-nowrap bg-transparent",
+  gloss: "bg-transparent px-mid py-plus text-muted whitespace-nowrap",
 };
 
 export const TABLE_COLUMN_SORTABLE_CLASS =
@@ -57,7 +57,7 @@ export const TABLE_COLUMN_SORT_CHEVRON_ACTIVE_CLASS = "text-primary opacity-100"
 export const TABLE_COLUMN_SORT_CHEVRON_IDLE_CLASS =
   "opacity-0 group-hover/col:opacity-40 text-muted";
 
-export const TABLE_BODY_EMPTY_CELL_CLASS = "px-large py-xlarge text-center";
+export const TABLE_BODY_EMPTY_CELL_CLASS = "px-mid py-mid text-center";
 
 export const TABLE_ROW_BASE_CLASS = "outline-none";
 
@@ -85,10 +85,10 @@ export const TABLE_ROW_FOCUS_CLASS = "focus-ring-inset";
 export const TABLE_CELL_BASE_CLASS = "text-small";
 
 export const TABLE_CELL_VARIANT_CLASS: Record<TableVariant, string> = {
-  default: "px-large py-plus",
-  secondary: "px-large py-plus",
-  toned: "px-large py-plus first:rounded-l-mid last:rounded-r-mid",
-  gloss: "px-large py-plus",
+  default: "px-mid py-plus",
+  secondary: "px-mid py-plus",
+  toned: "px-mid py-plus first:rounded-l-mid last:rounded-r-mid",
+  gloss: "px-mid py-plus",
 };
 
 export const TABLE_CELL_SELECTED_RING_CLASS = "ring-2 ring-inset ring-primary";

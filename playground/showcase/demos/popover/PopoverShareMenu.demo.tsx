@@ -6,7 +6,7 @@ import { Popover } from "@/components/core/Popover";
 export function PopoverShareMenuDemo() {
   return (
     <Popover side="bottom">
-      <Popover.Trigger>
+      <Popover.Trigger asChild>
         <Button variant="outline" type="button">
           Share
         </Button>

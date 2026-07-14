@@ -20,7 +20,7 @@ export function TooltipClassNamesFullDemo() {
         description: "text-muted/80",
       }}
     >
-      <Tooltip.Trigger>
+      <Tooltip.Trigger asChild>
         <Button variant="outline" type="button" aria-label="Reference">
           <IoHelpCircleOutline aria-hidden className="icon-mid" />
         </Button>
@@ -48,7 +48,7 @@ export function TooltipClassNamesGlossDemo() {
         title: "text-foreground/95",
       }}
     >
-      <Tooltip.Trigger>
+      <Tooltip.Trigger asChild>
         <Button variant="secondary" type="button">
           Gloss tooltip
         </Button>

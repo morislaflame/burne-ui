@@ -11,8 +11,8 @@ export function PaginationTableFooterDemo() {
   const total = 118;
 
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-xl">
-      <div className="flex flex-wrap items-center justify-between gap-mid">
+    <Surface variant="secondary" padding="mid" className="w-full max-w-component-mid">
+      <div className="flex min-w-0 flex-col gap-mid">
         <Text as="span" variant="tools" className="text-muted">
           Shown {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} from {total}
         </Text>

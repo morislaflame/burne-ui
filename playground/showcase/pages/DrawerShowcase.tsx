@@ -1,9 +1,13 @@
+import { DrawerBottomSheetHandleDemo } from "../demos/drawer/DrawerBottomSheetHandle.demo";
+import drawerBottomSheetHandleSource from "../demos/drawer/DrawerBottomSheetHandle.demo.tsx?raw";
 import { DrawerClassNamesFullDemo } from "../demos/drawer/DrawerClassNamesFull.demo";
 import drawerClassNamesFullSource from "../demos/drawer/DrawerClassNamesFull.demo.tsx?raw";
 import { DrawerFilterSheetDemo } from "../demos/drawer/DrawerFilterSheet.demo";
 import drawerFilterSheetSource from "../demos/drawer/DrawerFilterSheet.demo.tsx?raw";
 import { DrawerGlossDemo } from "../demos/drawer/DrawerGloss.demo";
 import drawerGlossSource from "../demos/drawer/DrawerGloss.demo.tsx?raw";
+import { DrawerHandleDemo } from "../demos/drawer/DrawerHandle.demo";
+import drawerHandleSource from "../demos/drawer/DrawerHandle.demo.tsx?raw";
 import { DrawerMobileNavDemo } from "../demos/drawer/DrawerMobileNav.demo";
 import drawerMobileNavSource from "../demos/drawer/DrawerMobileNav.demo.tsx?raw";
 import { DrawerNotificationPanelDemo } from "../demos/drawer/DrawerNotificationPanel.demo";
@@ -27,6 +31,17 @@ export function DrawerShowcase() {
         <ShowcaseDemoFromFile Demo={DrawerPlacementDemo} source={drawerPlacementSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="Handle"
+        description="Drawer.Handle — swipe-to-dismiss for each placement; bottom sheet example."
+      >
+        <ShowcaseDemoFromFile Demo={DrawerHandleDemo} source={drawerHandleSource} />
+        <ShowcaseDemoFromFile
+          Demo={DrawerBottomSheetHandleDemo}
+          source={drawerBottomSheetHandleSource}
+        />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass side panel.">
         <ShowcaseDemoFromFile Demo={DrawerGlossDemo} source={drawerGlossSource} />
       </ShowcaseSection>
@@ -47,7 +62,10 @@ export function DrawerShowcase() {
       >
         <ShowcaseDemoFromFile Demo={DrawerFilterSheetDemo} source={drawerFilterSheetSource} />
         <ShowcaseDemoFromFile Demo={DrawerMobileNavDemo} source={drawerMobileNavSource} />
-        <ShowcaseDemoFromFile Demo={DrawerNotificationPanelDemo} source={drawerNotificationPanelSource} />
+        <ShowcaseDemoFromFile
+          Demo={DrawerNotificationPanelDemo}
+          source={drawerNotificationPanelSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseDoc>
@@ -57,13 +75,14 @@ export function DrawerShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close — panel structure."
+            description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close, Drawer.Handle — panel structure."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
             <code>placement</code>: left, right, top, bottom. <code>size</code> — width or height
-            panels. Slide-animation — <code>configureMotion()</code> (<code>interactiveDuration</code>).
+            panels. <code>Drawer.Handle</code> — swipe dismiss. Slide-animation —{" "}
+            <code>configureMotion()</code> (<code>interactiveDuration</code>).
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

@@ -5,7 +5,7 @@ export function TooltipVariantsDemo() {
   return (
     <div className="flex flex-wrap items-center gap-mid">
       <Tooltip variant="default">
-        <Tooltip.Trigger>
+        <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             Default
           </Button>
@@ -13,7 +13,7 @@ export function TooltipVariantsDemo() {
         <Tooltip.Content>Hint on hover and focus</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="success" side="top">
-        <Tooltip.Trigger>
+        <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             Success
           </Button>
@@ -21,7 +21,7 @@ export function TooltipVariantsDemo() {
         <Tooltip.Content>Operation completed</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="danger" size="small">
-        <Tooltip.Trigger>
+        <Tooltip.Trigger asChild>
           <Button variant="outline" type="button" size="small">
             Danger
           </Button>
@@ -29,7 +29,7 @@ export function TooltipVariantsDemo() {
         <Tooltip.Content>The action is irreversible</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="info">
-        <Tooltip.Trigger>
+        <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             Info
           </Button>
@@ -37,7 +37,7 @@ export function TooltipVariantsDemo() {
         <Tooltip.Content>Additional information</Tooltip.Content>
       </Tooltip>
       <Tooltip variant="warning">
-        <Tooltip.Trigger>
+        <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             Warning
           </Button>
