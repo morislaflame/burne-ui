@@ -11,6 +11,20 @@ npm install burne-ui
 
 **Полная пошаговая настройка** (Tailwind v4, Next.js, тема, motion, SSR, troubleshooting): **[docs/SETUP.md](./docs/SETUP.md)**.
 
+**Готовый проект одной командой** (npm / pnpm / bun):
+
+```bash
+npm create burne-app@latest my-app
+# pnpm create burne-app my-app
+# bunx create-burne-app my-app
+```
+
+В существующий проект:
+
+```bash
+npx burne-ui@latest init
+```
+
 ### Peer-зависимости
 
 Убедитесь, что в приложении установлены совместимые версии:

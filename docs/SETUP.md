@@ -4,6 +4,22 @@
 
 Краткий обзор API и токенов — в [README.md](../README.md).
 
+**Быстрый старт (scaffold):** CLI `create-burne-app` — Next или Vite уже с `BurneUIProvider`:
+
+```bash
+npm create burne-app@latest my-app
+# pnpm create burne-app my-app
+# bunx create-burne-app my-app
+```
+
+В существующий проект:
+
+```bash
+npx burne-ui@latest init
+# pnpm dlx burne-ui init
+# bunx burne-ui init
+```
+
 ---
 
 ## 1. Установка
