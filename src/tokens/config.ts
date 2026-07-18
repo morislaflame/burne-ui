@@ -77,7 +77,6 @@ export const tokensConfig = {
     "color-surface-tint-success-hover": "color-surface-tint-success-hover",
     "color-surface-tint-info-hover": "color-surface-tint-info-hover",
     "color-surface-tint-warning-hover": "color-surface-tint-warning-hover",
-    "color-surface-tint-primary": "color-surface-tint-primary",
     "icon-xsmall": "icon-size-xsmall",
     "icon-small": "icon-size-small",
     "icon-base": "icon-size-base",

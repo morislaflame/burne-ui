@@ -36,7 +36,7 @@ export function useFormControlProps({
     [form, name, rulesProp],
   );
 
-  const value = bound && name ? form.getValue(name) : valueProp;
+  const rawValue = bound && name ? form.getValue(name) : valueProp;
   const onChange = useCallback(
     (event: unknown) => {
       onChangeProp?.(event);
@@ -61,14 +61,18 @@ export function useFormControlProps({
     [bound, form, name, onBlurProp],
   );
 
+  // Form-bound fields must stay controlled from the first render.
+  // `getValue` is undefined until the field is written — coerce to "" (same as Select/ComboBox).
   return {
     bound,
     name,
     value:
       bound && type === "checkbox"
-        ? Boolean(value)
-        : (value as string | number | readonly string[] | undefined),
-    checked: bound && type === "checkbox" ? Boolean(value) : undefined,
+        ? Boolean(rawValue)
+        : bound
+          ? ((rawValue ?? "") as string | number | readonly string[])
+          : (rawValue as string | number | readonly string[] | undefined),
+    checked: bound && type === "checkbox" ? Boolean(rawValue) : undefined,
     onChange,
     onBlur,
     disabled: disabled || form?.isSubmitting,

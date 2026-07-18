@@ -40,6 +40,7 @@ function mergeProviderConfig(props: BurneUIProviderProps): BurneThemeConfig {
     theme: theme ?? config?.theme ?? "dark",
     storageKey: storageKey !== undefined ? storageKey : (config?.storageKey ?? "burne-ui-theme"),
     tokens: tokens ?? config?.tokens,
+    colors: config?.colors,
     motion: motion ?? config?.motion,
     toast: toast !== undefined ? toast : (config?.toast ?? true),
   };
@@ -56,7 +57,7 @@ function BurneUIRuntime({
 
   useLayoutEffect(() => {
     // Skip when no overrides — keep CSS from `burne-ui/styles.css` / user overrides file.
-    if (!resolvedConfig.tokens && !resolvedConfig.motion) return;
+    if (!resolvedConfig.tokens && !resolvedConfig.motion && !resolvedConfig.colors) return;
     applyBurneThemeConfig(resolvedConfig, document.documentElement, resolvedTheme);
   }, [resolvedConfig, resolvedTheme]);
 

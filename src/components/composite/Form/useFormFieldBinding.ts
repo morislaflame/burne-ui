@@ -34,7 +34,9 @@ export function useFormFieldBinding({
     [form, name, rulesProp],
   );
 
-  const value = bound && name ? form.getValue(name) : valueProp;
+  const rawValue = bound && name ? form.getValue(name) : valueProp;
+  // Keep form-bound controls controlled from mount (undefined → "" would warn in React).
+  const value = bound ? (rawValue ?? "") : rawValue;
 
   const setValue = useCallback(
     (next: unknown) => {

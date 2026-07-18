@@ -8,18 +8,17 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 import {
-  BORDER_COLOR_CSS_FORMULA_BY_THEME,
   COLOR_LABELS,
-  FONT_PRESETS,
   FONT_WEIGHT_DEFAULTS,
   FONT_WEIGHT_LABELS,
-  MONO_FONT_PRESETS,
+  MOTION_DEFAULTS,
   SCALE_DEFAULTS,
   STATUS_FOREGROUND_LABELS,
   type ThemeColorKey,
   type ThemeFontWeightKey,
   type ThemeStatusForegroundKey,
 } from "./themeDefaults";
+import { FONT_PRESETS, MONO_FONT_PRESETS } from "./themePresets";
 import {
   buildTintValue,
   parseTintValue,
@@ -34,8 +33,8 @@ const TINT_COLOR_KEYS = new Set<ThemeColorKey>(["primaryTint", "primaryTintStron
 const FONT_WEIGHT_OPTIONS = [300, 400, 500, 600, 700, 800] as const;
 
 const TINT_DEFAULT_PERCENT: Record<"primaryTint" | "primaryTintStrong", number> = {
-  primaryTint: 10,
-  primaryTintStrong: 20,
+  primaryTint: 20,
+  primaryTintStrong: 25,
 };
 
 const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
@@ -69,6 +68,39 @@ const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
   {
     label: "status tokens",
     keys: ["danger", "success", "info", "warning"],
+  },
+  {
+    label: "hover tokens",
+    keys: [
+      "primaryHover",
+      "defaultHover",
+      "secondaryHover",
+      "tertiaryHover",
+      "surfaceTintDanger",
+      "surfaceTintDangerHover",
+      "dangerFillHover",
+      "surfaceTintSuccess",
+      "surfaceTintSuccessHover",
+      "successFillHover",
+      "surfaceTintInfo",
+      "surfaceTintInfoHover",
+      "infoFillHover",
+      "surfaceTintWarning",
+      "surfaceTintWarningHover",
+      "warningFillHover",
+    ],
+  },
+  {
+    label: "ripple tokens",
+    keys: [
+      "convergeRipplePrimaryFill",
+      "convergeRippleNeutral",
+      "convergeRippleNeutralMuted",
+      "convergeRippleDanger",
+      "convergeRippleSuccess",
+      "convergeRippleInfo",
+      "convergeRippleWarning",
+    ],
   },
 ];
 
@@ -424,8 +456,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
         <div className="flex flex-wrap gap-xsmall">
           {(
             [
-              { id: "dark", label: "Dark" },
-              { id: "light", label: "Light" },
+              { id: "default", label: "Default" },
               { id: "contrast", label: "Contrast" },
               { id: "ocean", label: "Ocean" },
               { id: "violet", label: "Violet" },
@@ -680,11 +711,11 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           variant="ghost"
           className="self-start text-muted"
           onClick={() => {
-            setMotionDuration("interactiveDuration", SCALE_DEFAULTS.interactiveDuration);
-            setMotionDuration("tooltipDuration", SCALE_DEFAULTS.tooltipDuration);
-            setMotionDuration("expandDuration", SCALE_DEFAULTS.expandDuration);
-            setMotionDuration("progressFillDuration", SCALE_DEFAULTS.progressFillDuration);
-            setMotionDuration("loadingDotsDuration", SCALE_DEFAULTS.loadingDotsDuration);
+            setMotionDuration("interactiveDuration", MOTION_DEFAULTS.interactiveDuration);
+            setMotionDuration("tooltipDuration", MOTION_DEFAULTS.tooltipDuration);
+            setMotionDuration("expandDuration", MOTION_DEFAULTS.expandDuration);
+            setMotionDuration("progressFillDuration", MOTION_DEFAULTS.progressFillDuration);
+            setMotionDuration("loadingDotsDuration", MOTION_DEFAULTS.loadingDotsDuration);
           }}
         >
           Motion default
@@ -873,14 +904,6 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
                     defaultPercent={TINT_DEFAULT_PERCENT[key as "primaryTint" | "primaryTintStrong"]}
                     onChange={(value) => setColor(key, value)}
                   />
-                ) : key === "border" && !state.borderCustomized ? (
-                  <ColorControl
-                    key={key}
-                    label={COLOR_LABELS[key]}
-                    value={BORDER_COLOR_CSS_FORMULA_BY_THEME[state.theme]}
-                    previewBackground="var(--color-border)"
-                    onChange={(value) => setColor(key, value)}
-                  />
                 ) : (
                   <ColorControl
                     key={key}
@@ -904,7 +927,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             <ColorControl
               key={key}
               label={STATUS_FOREGROUND_LABELS[key]}
-              value={state.statusForegrounds[key]}
+              value={state.colors[key]}
               onChange={(value) => setStatusForeground(key, value)}
             />
           ))}

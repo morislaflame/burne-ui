@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.5.9
+
+### Breaking
+
+- Theme config: `modes.light` / `modes.dark` → flat **`colors.light` / `colors.dark`** (status foregrounds + hover tokens — обычные ключи палитры).
+- Убран `borderCustomized` — `--color-border` всегда задаётся как остальные цвета.
+- Из публичного API убраны named color presets (`OCEAN_*` и др.), `FONT_PRESETS` / `LAYOUT_PRESETS` / `COLOR_PRESET_*` — живут на docs site и в playground.
+- Убраны публичные `PRIMARY_TINT` / `PRIMARY_TINT_STRONG`, `BORDER_COLOR_CSS_FORMULA`, `finalizePalette`, `ThemeColorSeed` — дефолтные палитры собираются внутри кита; named presets на site/playground — плоские `ThemeColors`.
+- `DARK_COLORS` / `LIGHT_COLORS` — плоские снимки (без seed/`finalizePalette`).
+- Удалён неиспользуемый токен `--color-surface-tint-primary`.
+- В палитру / конфиг добавлены converge-ripple цвета (`convergeRipple*`).
+- Убран editor chrome из публичного API (`*_LABELS`, `GSAP_EASE_OPTIONS`, `RIPPLE_EASE_CSS_OPTIONS`, …) — только site/playground `themeEditorChrome`.
+- Удалён алиас `ThemeModePalette` (используйте `ThemeColors`).
+- `resolveBurneTheme` / `resolveConfigTheme` → единый **`resolveTheme`**.
+- `colorPreset` убран из `ThemeTokenState` — только в site/playground `ThemeEditorState`.
+- `SCALE_DEFAULTS` разрезан: scale-only + **`MOTION_DEFAULTS`** (шрифты по-прежнему `DEFAULT_FONT*` / `FONT_WEIGHT_DEFAULTS`).
+- Scaffold / `burne-ui init` пишут стартовый `burne-theme.ts` и провайдер с `config={burneTheme}`.
+
+### Added
+
+- `createDefaultBurneThemeConfig` / `exportDefaultBurneThemeConfigSource`.
+- `DARK_COLORS` / `LIGHT_COLORS` (только дефолтная пара; named presets — плоские снимки на site/playground).
+- Editable hover CSS vars в конфиге (`primaryHover`, `defaultHover`, surface-tint-*, fill-hover, …).
+- Converge-ripple цвета в палитре / `BurneThemeConfig` (`convergeRipple*`).
+- `resolveTheme`, `MOTION_DEFAULTS`.
+
+### Migration
+
+| Было | Стало |
+|------|-------|
+| `modes: { dark: { colors: {…} } }` | `colors: { dark: {…} }` |
+| `import { OCEAN_DARK_COLORS } from "burne-ui"` | инлайн в `burne-theme.ts` или Copy config с сайта |
+| отдельный `statusForegrounds` | ключи `dangerForeground` и т.д. внутри `colors.*` |
+
+## 1.5.6
+
+### Fixed
+
+- `Form` + `Input`: form-bound controls no longer flip from uncontrolled → controlled when `getValue` is still `undefined` (coerce to `""`, same pattern as Select/ComboBox). Fixes React console warning on Card auth demos and any `<Input name>` inside `<Form>` without `defaultValues`.
+
 ## 1.5.5
 
 ### Fixed

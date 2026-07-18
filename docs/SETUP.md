@@ -129,7 +129,7 @@ export function Demo() {
 app/
   globals.css
   layout.tsx
-  burne-theme.ts          # опционально: конфиг из playground (Copy config)
+  burne-theme.ts          # стартовый конфиг (scaffold / init) или Copy config с сайта
 components/
   providers/
     app-providers.tsx
@@ -140,15 +140,11 @@ components/
 "use client";
 
 import { BurneUIProvider } from "burne-ui";
-// import burneTheme from "@/burne-theme"; // после Copy config с сайта
+import burneTheme from "@/burne-theme";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <BurneUIProvider
-      // config={burneTheme}
-      defaultTheme="system"
-      toast
-    >
+    <BurneUIProvider config={burneTheme} defaultTheme="system" toast>
       {children}
     </BurneUIProvider>
   );
@@ -158,7 +154,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 `BurneUIProvider` объединяет:
 
 - **ThemeProvider** — `data-theme` (`light` | `dark` | `system`), опционально `localStorage`
-- **токены** — runtime-overrides из `config.tokens` / пропа `tokens`
+- **токены** — shared `config.tokens` + цвета `config.colors.light` / `colors.dark` (или проп `tokens`)
 - **motion** — `configureMotion` из `config.motion`
 - **Toast.Provider** — по умолчанию включён (`toast={false}` чтобы отключить)
 
@@ -189,9 +185,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ### Конфиг с playground сайта
 
-1. Настройте тему в theme builder на сайте.
-2. **Copy config** — в буфер попадёт файл `burne-theme.ts`.
-3. Сохраните его в проект и передайте в провайдер:
+1. Настройте тему в theme builder на сайте (пресеты цветов/шрифтов живут **на сайте**, не в npm-пакете).
+2. **Copy config** — в буфер попадёт файл `burne-theme.ts` (`tokens` + `colors.light` / `colors.dark` + `motion`).
+3. Сохраните его в проект (замените стартовый) и передайте в провайдер:
 
 ```tsx
 import { BurneUIProvider } from "burne-ui";
@@ -199,6 +195,10 @@ import burneTheme from "./burne-theme";
 
 <BurneUIProvider config={burneTheme}>{children}</BurneUIProvider>
 ```
+
+### Можно ли править «стандартную» тему?
+
+Да. Стартовый `burne-theme.ts` — это **ваш** снимок дефолтных light/dark палитр + shared tokens. Меняйте любые ключи в `colors.dark` / `colors.light` (включая `primary`, `border`, hover, status foregrounds) и поля в `tokens` / `motion`. Частичный объект тоже ок: незаданные ключи берутся из дефолтов кита.
 
 Альтернатива: **Copy CSS** → `burne-theme-overrides.css` (без JS runtime), см. §7.
 

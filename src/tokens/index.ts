@@ -70,7 +70,6 @@ export const designTokenNames = [
   "--color-surface-tint-success-hover",
   "--color-surface-tint-info-hover",
   "--color-surface-tint-warning-hover",
-  "--color-surface-tint-primary",
 
   "--font-family-sans",
   "--font-family-mono",

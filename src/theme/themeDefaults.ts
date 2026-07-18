@@ -5,25 +5,44 @@ import {
   type FontWeightStep,
 } from "@/tokens/fontWeights";
 
-import {
-  BORDER_COLOR_CSS_FORMULA,
-  DARK_COLORS,
-  LIGHT_COLORS,
-  DARK_STATUS_FOREGROUNDS,
-  LIGHT_STATUS_FOREGROUNDS,
-} from "./themePalettes";
+import { DARK_COLORS, LIGHT_COLORS } from "./themePalettes";
 
 export type ThemeMode = "dark" | "light";
 
 export { FONT_WEIGHT_DEFAULTS, FONT_WEIGHT_CSS_VAR };
 
-export {
-  BORDER_COLOR_CSS_FORMULA,
-  DARK_COLORS,
-  LIGHT_COLORS,
-  DARK_STATUS_FOREGROUNDS,
-  LIGHT_STATUS_FOREGROUNDS,
-};
+export { DARK_COLORS, LIGHT_COLORS };
+
+export type ThemeStatusForegroundKey =
+  | "dangerForeground"
+  | "successForeground"
+  | "infoForeground"
+  | "warningForeground";
+
+export type ThemeDerivedColorKey =
+  | "primaryHover"
+  | "defaultHover"
+  | "secondaryHover"
+  | "tertiaryHover"
+  | "surfaceTintDanger"
+  | "surfaceTintDangerHover"
+  | "dangerFillHover"
+  | "surfaceTintSuccess"
+  | "surfaceTintSuccessHover"
+  | "successFillHover"
+  | "surfaceTintInfo"
+  | "surfaceTintInfoHover"
+  | "infoFillHover"
+  | "surfaceTintWarning"
+  | "surfaceTintWarningHover"
+  | "warningFillHover"
+  | "convergeRipplePrimaryFill"
+  | "convergeRippleNeutral"
+  | "convergeRippleNeutralMuted"
+  | "convergeRippleDanger"
+  | "convergeRippleSuccess"
+  | "convergeRippleInfo"
+  | "convergeRippleWarning";
 
 export type ThemeColorKey =
   | "background"
@@ -45,42 +64,15 @@ export type ThemeColorKey =
   | "danger"
   | "success"
   | "info"
-  | "warning";
-
-export type ThemeStatusForegroundKey =
-  | "dangerForeground"
-  | "successForeground"
-  | "infoForeground"
-  | "warningForeground";
+  | "warning"
+  | ThemeStatusForegroundKey
+  | ThemeDerivedColorKey;
 
 export type ThemeFontWeightKey = FontWeightStep;
 export type ThemeFontWeights = Record<ThemeFontWeightKey, number>;
 
 export type ThemeColors = Record<ThemeColorKey, string>;
 export type ThemeStatusForegrounds = Record<ThemeStatusForegroundKey, string>;
-
-/** Color preset keys — each preset has dark and light palette slices. */
-export type ColorPresetKey =
-  | "default"
-  | "contrast"
-  | "ocean"
-  | "violet"
-  | "emerald"
-  | "rose"
-  | "amber"
-  | "slate"
-  | "toffee"
-  | "berry"
-  | "paprika"
-  | "cherry"
-  | "rustic"
-  | "earthy"
-  | "peach"
-  | "sand"
-  | "bold"
-  | "autumn"
-  | "harvest"
-  | "mystic";
 
 export type ThemeTokenState = {
   theme: ThemeMode;
@@ -136,90 +128,9 @@ export type ThemeTokenState = {
   enableProgressFill: boolean;
   enableLoadingDots: boolean;
   colors: ThemeColors;
-  statusForegrounds: ThemeStatusForegrounds;
-  /** true — `--color-border` is given inline; false — formula from tokens/styles.css (as in Storybook). */
-  borderCustomized: boolean;
-  /** Active color preset; `null` — manual color editing. */
-  colorPreset: ColorPresetKey | null;
+  /** Light/dark palettes — shared tokens stay on the root state; mode switch reads from here. */
+  modePalettes: Record<ThemeMode, ThemeColors>;
 };
-
-export const SCALE_TOKEN_LABELS = {
-  space: "Spacing",
-  size: "Control size",
-  radius: "Radius",
-  borderWidth: "Border width",
-  textScale: "Type scale",
-  shadowStrength: "Shadow intensity",
-  shadowSize: "Shadow blur scale",
-  toastScrimSize: "Toast scrim size",
-  toastScrimDensity: "Toast scrim density",
-} as const;
-
-export const MOTION_DURATION_LABELS = {
-  interactiveDuration: "Interactive duration",
-  tooltipDuration: "Tooltip duration",
-  switchThumbDuration: "Switch thumb duration",
-  selectionFillDuration: "Selection fill duration",
-  expandDuration: "Expand duration",
-  feedbackExpandDuration: "Feedback ring duration",
-  rippleDefaultDuration: "Ripple duration",
-  rippleExpandableDuration: "Expandable ripple duration",
-  progressFillDuration: "Progress fill duration",
-  loadingDotsDuration: "Loading dots duration",
-} as const;
-
-export const MOTION_SCALE_LABELS = {
-  hoverLiftScale: "Hover lift scale",
-  badgeAnchorHoverLiftScale: "Badge anchor lift scale",
-  pressSqueezeMid: "Press squeeze depth",
-  rippleDefaultOpacityFrom: "Ripple opacity",
-  rippleExpandableOpacityFrom: "Expandable ripple opacity",
-} as const;
-
-export const MOTION_EASE_LABELS = {
-  interactiveEase: "Interactive easing",
-  hoverLiftEase: "Hover lift easing",
-  switchThumbEase: "Switch thumb easing",
-  selectionFillEase: "Selection fill easing",
-  expandOpenEase: "Expand open easing",
-  progressFillEase: "Progress fill easing",
-  loadingDotsEaseUp: "Loading dots up",
-  loadingDotsEaseDown: "Loading dots down",
-} as const;
-
-export const GSAP_EASE_OPTIONS = [
-  "power1.out",
-  "power2.out",
-  "power3.out",
-  "power1.inOut",
-  "power2.inOut",
-  "power3.inOut",
-  "sine.inOut",
-  "back.out(1.4)",
-  "back.out(1.25)",
-  "elastic.out(1, 0.5)",
-] as const;
-
-export const RIPPLE_EASE_CSS_OPTIONS = [
-  "cubic-bezier(0.25, 0.55, 0.35, 0.95)",
-  "cubic-bezier(0.22, 1, 0.36, 1)",
-  "ease-out",
-  "ease-in-out",
-] as const;
-
-export const ANIMATION_FLAG_LABELS = {
-  enableHoverLift: "Hover lift",
-  enablePressSqueeze: "Press squeeze",
-  enableToggleButtonFill: "Toggle & calendar fill",
-  enableRipple: "Press ripple",
-  enableExpandable: "Expandable / accordion",
-  enableToastStack: "Toast stack",
-  enableAsyncButtonCrossfade: "Button async crossfade",
-  enableContentFade: "Content fade",
-  enableFeedbackExpand: "Button feedback ring",
-  enableProgressFill: "Progress bar fill",
-  enableLoadingDots: "Loading dots wave",
-} as const;
 
 export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   background: "--color-background",
@@ -242,72 +153,39 @@ export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   success: "--color-success",
   info: "--color-info",
   warning: "--color-warning",
-};
-
-export const STATUS_FOREGROUND_CSS_VAR: Record<ThemeStatusForegroundKey, string> = {
   dangerForeground: "--color-danger-foreground",
   successForeground: "--color-success-foreground",
   infoForeground: "--color-info-foreground",
   warningForeground: "--color-warning-foreground",
+  primaryHover: "--color-primary-hover",
+  defaultHover: "--color-default-hover",
+  secondaryHover: "--color-secondary-hover",
+  tertiaryHover: "--color-tertiary-hover",
+  surfaceTintDanger: "--color-surface-tint-danger",
+  surfaceTintDangerHover: "--color-surface-tint-danger-hover",
+  dangerFillHover: "--color-danger-fill-hover",
+  surfaceTintSuccess: "--color-surface-tint-success",
+  surfaceTintSuccessHover: "--color-surface-tint-success-hover",
+  successFillHover: "--color-success-fill-hover",
+  surfaceTintInfo: "--color-surface-tint-info",
+  surfaceTintInfoHover: "--color-surface-tint-info-hover",
+  infoFillHover: "--color-info-fill-hover",
+  surfaceTintWarning: "--color-surface-tint-warning",
+  surfaceTintWarningHover: "--color-surface-tint-warning-hover",
+  warningFillHover: "--color-warning-fill-hover",
+  convergeRipplePrimaryFill: "--color-converge-ripple-primary-fill",
+  convergeRippleNeutral: "--color-converge-ripple-neutral",
+  convergeRippleNeutralMuted: "--color-converge-ripple-neutral-muted",
+  convergeRippleDanger: "--color-converge-ripple-danger",
+  convergeRippleSuccess: "--color-converge-ripple-success",
+  convergeRippleInfo: "--color-converge-ripple-info",
+  convergeRippleWarning: "--color-converge-ripple-warning",
 };
-
-export const FONT_WEIGHT_LABELS: Record<ThemeFontWeightKey, string> = {
-  small: "Small",
-  base: "Base",
-  mid: "Mid",
-  strong: "Strong",
-  bold: "Bold",
-};
-
-export const COLOR_LABELS: Record<ThemeColorKey, string> = {
-  background: "Background",
-  surface: "Surface",
-  secondary: "Secondary",
-  secondaryForeground: "Secondary foreground",
-  tertiary: "Tertiary",
-  tertiaryForeground: "Tertiary foreground",
-  border: "Border",
-  foreground: "Foreground",
-  muted: "Muted",
-  primary: "Primary",
-  primaryForeground: "Primary foreground",
-  primaryTint: "Primary tint",
-  primaryTintStrong: "Primary tint strong",
-  focusRing: "Focus ring",
-  indicator: "Indicator",
-  indicatorForeground: "Indicator foreground",
-  danger: "Danger",
-  success: "Success",
-  info: "Info",
-  warning: "Warning",
-};
-
-export const STATUS_FOREGROUND_LABELS: Record<ThemeStatusForegroundKey, string> = {
-  dangerForeground: "Danger foreground",
-  successForeground: "Success foreground",
-  infoForeground: "Info foreground",
-  warningForeground: "Warning foreground",
-};
-
-/** Border formula for UI (dark and light — one line, as in tokens/styles.css). */
-export const BORDER_COLOR_CSS_FORMULA_BY_THEME: Record<ThemeMode, string> = {
-  dark: BORDER_COLOR_CSS_FORMULA,
-  light: BORDER_COLOR_CSS_FORMULA,
-};
-
-export function isDefaultBorderColor(border: string): boolean {
-  return border === BORDER_COLOR_CSS_FORMULA;
-}
-
-export function isBorderColorCustomized(colors: ThemeColors): boolean {
-  return !isDefaultBorderColor(colors.border);
-}
 
 
 export const SCALE_DEFAULTS = {
   space: 0.5,
   size: 1,
-  /** Base radius in rem; steps `rounded-*` — multipliers from `--radius`. */
   radius: 0.5,
   borderWidth: 1,
   textScale: 1,
@@ -315,6 +193,9 @@ export const SCALE_DEFAULTS = {
   shadowSize: 1,
   toastScrimSize: 1,
   toastScrimDensity: 1,
+} as const;
+
+export const MOTION_DEFAULTS = {
   interactiveDuration: 280,
   interactiveEase: "power2.out",
   hoverLiftEase: "sine.inOut",
@@ -352,122 +233,10 @@ export const SCALE_DEFAULTS = {
   enableLoadingDots: true,
 } as const;
 
-/** Sets only scale-values ​​for layout presets. Don't touch the colors. */
-export const LAYOUT_PRESETS = {
-  compact:  { space: 0.4,   size: 0.9,   radius: 0.375, borderWidth: 1, textScale: 0.95 },
-  spacious: { space: 0.625, size: 1.125, radius: 0.625, borderWidth: 1, textScale: 1.05 },
-  flat:     { space: 0.5,   size: 1,     radius: 0.375, borderWidth: 0, textScale: 1 },
-} as const;
-
-export type LayoutPresetKey = keyof typeof LAYOUT_PRESETS;
-
 export const DEFAULT_FONT =
   'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 
 export const DEFAULT_FONT_MONO = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
-
-export const FONT_PRESETS = [
-  { id: "system", label: "System UI", value: DEFAULT_FONT },
-  {
-    id: "inter",
-    label: "Inter",
-    value: 'Inter, ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "geist",
-    label: "Geist",
-    value: 'Geist, ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "plex-sans",
-    label: "IBM Plex Sans",
-    value: '"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "dm-sans",
-    label: "DM Sans",
-    value: '"DM Sans", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "manrope",
-    label: "Manrope",
-    value: "Manrope, ui-sans-serif, system-ui, sans-serif",
-  },
-  {
-    id: "source-sans",
-    label: "Source Sans 3",
-    value: '"Source Sans 3", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "outfit",
-    label: "Outfit",
-    value: "Outfit, ui-sans-serif, system-ui, sans-serif",
-  },
-  {
-    id: "plus-jakarta",
-    label: "Plus Jakarta Sans",
-    value: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "roboto",
-    label: "Roboto",
-    value: "Roboto, ui-sans-serif, system-ui, sans-serif",
-  },
-  {
-    id: "open-sans",
-    label: "Open Sans",
-    value: '"Open Sans", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "figtree",
-    label: "Figtree",
-    value: "Figtree, ui-sans-serif, system-ui, sans-serif",
-  },
-  {
-    id: "nunito-sans",
-    label: "Nunito Sans",
-    value: '"Nunito Sans", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "work-sans",
-    label: "Work Sans",
-    value: '"Work Sans", ui-sans-serif, system-ui, sans-serif',
-  },
-] as const;
-
-export const MONO_FONT_PRESETS = [
-  { id: "system", label: "System Mono", value: DEFAULT_FONT_MONO },
-  {
-    id: "jetbrains",
-    label: "JetBrains Mono",
-    value: '"JetBrains Mono", ui-monospace, monospace',
-  },
-  {
-    id: "fira",
-    label: "Fira Code",
-    value: '"Fira Code", ui-monospace, monospace',
-  },
-  {
-    id: "source-code-pro",
-    label: "Source Code Pro",
-    value: '"Source Code Pro", ui-monospace, monospace',
-  },
-  {
-    id: "roboto-mono",
-    label: "Roboto Mono",
-    value: '"Roboto Mono", ui-monospace, monospace',
-  },
-  {
-    id: "plex-mono",
-    label: "IBM Plex Mono",
-    value: '"IBM Plex Mono", ui-monospace, monospace',
-  },
-  {
-    id: "space-mono",
-    label: "Space Mono",
-    value: '"Space Mono", ui-monospace, monospace',
-  },
-] as const;
 
 /** Basic typography sizes from `src/tokens/styles.css` (rem). */
 export const TEXT_SCALE_BASES = {
@@ -564,18 +333,72 @@ function applyFontWeights(root: HTMLElement, fontWeights: ThemeFontWeights) {
   }
 }
 
+function createDefaultModePalettes(): Record<ThemeMode, ThemeColors> {
+  return {
+    dark: { ...DARK_COLORS },
+    light: { ...LIGHT_COLORS },
+  };
+}
+
+/** Ensure `modePalettes` exists (migration for older playground state snapshots). */
+export function ensureModePalettes(state: ThemeTokenState): ThemeTokenState {
+  if (state.modePalettes?.dark && state.modePalettes?.light) return state;
+  const defaults = createDefaultModePalettes();
+  const current: ThemeColors = { ...state.colors };
+  return {
+    ...state,
+    modePalettes: {
+      dark: state.theme === "dark" ? current : defaults.dark,
+      light: state.theme === "light" ? current : defaults.light,
+    },
+  };
+}
+
+/** Copy the active mode palette onto top-level `colors`. */
+export function activateThemeModePalette(
+  state: ThemeTokenState,
+  theme: ThemeMode,
+): ThemeTokenState {
+  const withPalettes = ensureModePalettes(state);
+  const palette = withPalettes.modePalettes[theme];
+  return {
+    ...withPalettes,
+    theme,
+    colors: { ...palette },
+  };
+}
+
+/** Patch a color on the active mode and keep `modePalettes` in sync. */
+export function patchThemeColor(
+  state: ThemeTokenState,
+  key: ThemeColorKey,
+  value: string,
+): ThemeTokenState {
+  const withPalettes = ensureModePalettes(state);
+  const colors = { ...withPalettes.colors, [key]: value };
+  return {
+    ...withPalettes,
+    colors,
+    modePalettes: {
+      ...withPalettes.modePalettes,
+      [withPalettes.theme]: colors,
+    },
+  };
+}
+
+
 export function createDefaultThemeState(theme: ThemeMode = "dark"): ThemeTokenState {
+  const modePalettes = createDefaultModePalettes();
+  const active = modePalettes[theme];
   return {
     theme,
     ...SCALE_DEFAULTS,
+    ...MOTION_DEFAULTS,
     fontFamily: DEFAULT_FONT,
     fontFamilyMono: DEFAULT_FONT_MONO,
     fontWeights: { ...FONT_WEIGHT_DEFAULTS },
-    colors: theme === "light" ? { ...LIGHT_COLORS } : { ...DARK_COLORS },
-    statusForegrounds:
-      theme === "light" ? { ...LIGHT_STATUS_FOREGROUNDS } : { ...DARK_STATUS_FOREGROUNDS },
-    borderCustomized: false,
-    colorPreset: "default",
+    colors: { ...active },
+    modePalettes,
   };
 }
 
@@ -600,7 +423,6 @@ const INLINE_TOKEN_VARS = [
     `--text-scale-${key}--line-height`,
   ]),
   ...Object.values(COLOR_CSS_VAR),
-  ...Object.values(STATUS_FOREGROUND_CSS_VAR),
 ] as const;
 
 export function clearThemeInlineTokens(root: HTMLElement = document.documentElement) {
@@ -715,22 +537,8 @@ export function applyThemeTokens(state: ThemeTokenState, root: HTMLElement = doc
   root.style.setProperty("--toast-scrim-size", String(state.toastScrimSize));
   root.style.setProperty("--toast-scrim-density", String(state.toastScrimDensity));
 
-  if (state.borderCustomized) {
-    root.style.setProperty("--color-border", state.colors.border);
-  } else {
-    root.style.removeProperty("--color-border");
-  }
-
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
-    if (key === "border") continue;
     root.style.setProperty(cssVar, state.colors[key]);
-  }
-
-  for (const [key, cssVar] of Object.entries(STATUS_FOREGROUND_CSS_VAR) as [
-    ThemeStatusForegroundKey,
-    string,
-  ][]) {
-    root.style.setProperty(cssVar, state.statusForegrounds[key]);
   }
 }
 
@@ -755,20 +563,7 @@ export function exportThemeCss(state: ThemeTokenState): string {
   ];
 
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
-    if (key === "border" && !state.borderCustomized) {
-      lines.push(
-        `  /* ${cssVar}: ${BORDER_COLOR_CSS_FORMULA} — from tokens/styles.css */`,
-      );
-      continue;
-    }
     lines.push(`  ${cssVar}: ${state.colors[key]};`);
-  }
-
-  for (const [key, cssVar] of Object.entries(STATUS_FOREGROUND_CSS_VAR) as [
-    ThemeStatusForegroundKey,
-    string,
-  ][]) {
-    lines.push(`  ${cssVar}: ${state.statusForegrounds[key]};`);
   }
 
   lines.push("}");

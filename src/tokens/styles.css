@@ -250,12 +250,6 @@
     transparent
   );
 
-  --color-surface-tint-primary: color-mix(
-    in oklab,
-    var(--color-primary) 28%,
-    black
-  );
-
 
   --font-family-sans: ui-sans-serif, system-ui, sans-serif;
   --font-family-mono: ui-monospace, monospace;
@@ -709,13 +703,6 @@
   --gloss-tint-default: rgb(255 255 255);
   --gloss-edge: rgb(255 255 255 / 0.05);
   --gloss-press-inset: rgba(0, 0, 0, 0.026);
-
-  /** Primary tint in light theme — mix with white instead of black. */
-  --color-surface-tint-primary: color-mix(
-    in oklab,
-    var(--color-primary) 14%,
-    white
-  );
 
   /* In light theme shadows are slightly more visible (less background/component contrast) */
   --shadow-none:

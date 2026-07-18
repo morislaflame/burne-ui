@@ -56,18 +56,19 @@ import "burne-ui/styles.css";
 "use client";
 
 import { BurneUIProvider } from "burne-ui";
-// import burneTheme from "./burne-theme"; // после Copy config с сайта
+import burneTheme from "./burne-theme";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <BurneUIProvider defaultTheme="system" toast>
+    <BurneUIProvider config={burneTheme} defaultTheme="system" toast>
       {children}
     </BurneUIProvider>
   );
 }
 ```
 
-На сайте в theme builder: **Copy config** → сохраните как `burne-theme.ts` → `<BurneUIProvider config={burneTheme}>`.
+Scaffold (`create-burne-app` / `burne-ui init`) уже кладёт `burne-theme.ts` с **`tokens`** (shared), **`colors.light` / `colors.dark`** и **`motion`**.
+
 
 Только переключение `data-theme`: `ThemeProvider` + `useBurneTheme()`. Подробности — [docs/SETUP.md](./docs/SETUP.md).
 

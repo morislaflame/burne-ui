@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
-import type { BurneThemeMode } from "./themeConfig";
+import { resolveTheme, type BurneThemeMode } from "./themeConfig";
 import type { ThemeMode } from "./themeDefaults";
 
 export type BurneThemeContextValue = {
@@ -43,15 +43,6 @@ function writeStoredTheme(storageKey: string | null, theme: BurneThemeMode) {
   } catch {
     /* ignore */
   }
-}
-
-function getSystemTheme(): ThemeMode {
-  if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-}
-
-export function resolveBurneTheme(theme: BurneThemeMode): ThemeMode {
-  return theme === "system" ? getSystemTheme() : theme;
 }
 
 /** Apply `data-theme` on the root element (light → attribute, dark → remove). */
@@ -92,7 +83,7 @@ export function ThemeProvider({
   });
 
   const theme = themeProp ?? uncontrolled;
-  const resolvedTheme = resolveBurneTheme(theme);
+  const resolvedTheme = resolveTheme(theme);
 
   const setTheme = useCallback(
     (next: BurneThemeMode) => {
@@ -116,7 +107,7 @@ export function ThemeProvider({
     const mq = window.matchMedia("(prefers-color-scheme: light)");
     const onChange = () => {
       const el = root ?? document.documentElement;
-      applyThemeMode(resolveBurneTheme("system"), el);
+      applyThemeMode(resolveTheme("system"), el);
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);

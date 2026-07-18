@@ -4,11 +4,11 @@ import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
 import {
   applyThemeTokens,
   createDefaultThemeState,
+  ensureModePalettes,
   exportThemeCss,
   type ThemeColors,
   type ThemeFontWeights,
   type ThemeMode,
-  type ThemeStatusForegrounds,
   type ThemeTokenState,
 } from "./themeDefaults";
 
@@ -16,8 +16,8 @@ import {
 export type BurneThemeMode = ThemeMode | "system";
 
 /**
- * Runtime CSS token overrides. Omit fields to keep values from `burne-ui/styles.css`.
- * When exporting from the playground, all fields are filled for a faithful snapshot.
+ * Shared (mode-independent) token overrides.
+ * Colors live only under `BurneThemeConfig.colors`.
  */
 export type ThemeTokenOverrides = {
   space?: number;
@@ -32,15 +32,17 @@ export type ThemeTokenOverrides = {
   shadowSize?: number;
   toastScrimSize?: number;
   toastScrimDensity?: number;
-  colors?: Partial<ThemeColors>;
-  statusForegrounds?: Partial<ThemeStatusForegrounds>;
-  /** When true, `--color-border` is set from `colors.border` instead of the CSS formula. */
-  borderCustomized?: boolean;
 };
+
+/** Per-mode flat palette (status + hover included as regular keys). */
+export type ThemeModeColorOverrides = ThemeColors | Partial<ThemeColors>;
 
 /**
  * Serializable theme config for `BurneUIProvider`.
- * Generate via `exportBurneThemeConfigSource()` from the playground and save as e.g. `burne-theme.ts`.
+ * Generate via `exportBurneThemeConfigSource()` from the playground.
+ *
+ * - `tokens` / `motion` — shared across light & dark
+ * - `colors.light` / `colors.dark` — flat palettes
  */
 export type BurneThemeConfig = {
   /** @default "dark" */
@@ -48,6 +50,7 @@ export type BurneThemeConfig = {
   /** localStorage key for theme preference. Pass `null` to disable persistence. */
   storageKey?: string | null;
   tokens?: ThemeTokenOverrides;
+  colors?: Partial<Record<ThemeMode, ThemeModeColorOverrides>>;
   motion?: Partial<MotionConfig>;
   /** Wrap children with `Toast.Provider`. @default true */
   toast?: boolean | Omit<ToastProviderProps, "children">;
@@ -90,73 +93,156 @@ const MOTION_STATE_KEYS = [
   "enableLoadingDots",
 ] as const satisfies ReadonlyArray<keyof ThemeTokenState>;
 
+/** Merge shared `tokens` with `colors[mode]` into a full `ThemeTokenState`. */
+export function resolveThemeTokenState(
+  config: Pick<BurneThemeConfig, "tokens" | "colors">,
+  mode: ThemeMode,
+): ThemeTokenState {
+  const base = createDefaultThemeState(mode);
+  const shared = config.tokens ?? {};
+  const modeOverrides = config.colors?.[mode];
+
+  const colors: ThemeColors = modeOverrides
+    ? { ...base.colors, ...modeOverrides }
+    : base.colors;
+  const shadowStrength = shared.shadowStrength ?? base.shadowStrength;
+
+  return {
+    ...base,
+    ...pickDefined({
+      space: shared.space,
+      size: shared.size,
+      radius: shared.radius,
+      borderWidth: shared.borderWidth,
+      textScale: shared.textScale,
+      fontFamily: shared.fontFamily,
+      fontFamilyMono: shared.fontFamilyMono,
+      shadowSize: shared.shadowSize,
+      toastScrimSize: shared.toastScrimSize,
+      toastScrimDensity: shared.toastScrimDensity,
+    }),
+    shadowStrength,
+    fontWeights: shared.fontWeights
+      ? { ...base.fontWeights, ...shared.fontWeights }
+      : base.fontWeights,
+    colors,
+    modePalettes: {
+      ...base.modePalettes,
+      [mode]: { ...colors },
+    },
+  };
+}
+
 /** Build a `BurneThemeConfig` snapshot from live playground state. */
 export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfig {
+  const withPalettes = ensureModePalettes(state);
+
   const motion: Partial<MotionConfig> = {
-    interactiveDuration: state.interactiveDuration,
-    interactiveEase: state.interactiveEase,
-    hoverLiftEase: state.hoverLiftEase,
-    tooltipDuration: state.tooltipDuration,
-    switchThumbDuration: state.switchThumbDuration,
-    switchThumbEase: state.switchThumbEase,
-    selectionFillDuration: state.selectionFillDuration,
-    selectionFillEase: state.selectionFillEase,
-    hoverLiftScale: state.hoverLiftScale,
-    badgeAnchorHoverLiftScale: state.badgeAnchorHoverLiftScale,
-    pressSqueezeScale: [1, state.pressSqueezeMid, 1],
-    rippleDefaultDuration: state.rippleDefaultDuration,
-    rippleDefaultOpacityFrom: state.rippleDefaultOpacityFrom,
-    rippleExpandableDuration: state.rippleExpandableDuration,
-    rippleExpandableOpacityFrom: state.rippleExpandableOpacityFrom,
-    rippleEaseCss: state.rippleEaseCss,
-    feedbackExpandDuration: state.feedbackExpandDuration,
-    expandDuration: state.expandDuration,
-    expandOpenEase: state.expandOpenEase,
-    progressFillDuration: state.progressFillDuration,
-    progressFillEase: state.progressFillEase,
-    loadingDotsDuration: state.loadingDotsDuration,
-    loadingDotsEaseUp: state.loadingDotsEaseUp,
-    loadingDotsEaseDown: state.loadingDotsEaseDown,
-    enableHoverLift: state.enableHoverLift,
-    enablePressSqueeze: state.enablePressSqueeze,
-    enableToggleButtonFill: state.enableToggleButtonFill,
-    enableRipple: state.enableRipple,
-    enableExpandable: state.enableExpandable,
-    enableToastStack: state.enableToastStack,
-    enableAsyncButtonCrossfade: state.enableAsyncButtonCrossfade,
-    enableContentFade: state.enableContentFade,
-    enableFeedbackExpand: state.enableFeedbackExpand,
-    enableProgressFill: state.enableProgressFill,
-    enableLoadingDots: state.enableLoadingDots,
+    interactiveDuration: withPalettes.interactiveDuration,
+    interactiveEase: withPalettes.interactiveEase,
+    hoverLiftEase: withPalettes.hoverLiftEase,
+    tooltipDuration: withPalettes.tooltipDuration,
+    switchThumbDuration: withPalettes.switchThumbDuration,
+    switchThumbEase: withPalettes.switchThumbEase,
+    selectionFillDuration: withPalettes.selectionFillDuration,
+    selectionFillEase: withPalettes.selectionFillEase,
+    hoverLiftScale: withPalettes.hoverLiftScale,
+    badgeAnchorHoverLiftScale: withPalettes.badgeAnchorHoverLiftScale,
+    pressSqueezeScale: [1, withPalettes.pressSqueezeMid, 1],
+    rippleDefaultDuration: withPalettes.rippleDefaultDuration,
+    rippleDefaultOpacityFrom: withPalettes.rippleDefaultOpacityFrom,
+    rippleExpandableDuration: withPalettes.rippleExpandableDuration,
+    rippleExpandableOpacityFrom: withPalettes.rippleExpandableOpacityFrom,
+    rippleEaseCss: withPalettes.rippleEaseCss,
+    feedbackExpandDuration: withPalettes.feedbackExpandDuration,
+    expandDuration: withPalettes.expandDuration,
+    expandOpenEase: withPalettes.expandOpenEase,
+    progressFillDuration: withPalettes.progressFillDuration,
+    progressFillEase: withPalettes.progressFillEase,
+    loadingDotsDuration: withPalettes.loadingDotsDuration,
+    loadingDotsEaseUp: withPalettes.loadingDotsEaseUp,
+    loadingDotsEaseDown: withPalettes.loadingDotsEaseDown,
+    enableHoverLift: withPalettes.enableHoverLift,
+    enablePressSqueeze: withPalettes.enablePressSqueeze,
+    enableToggleButtonFill: withPalettes.enableToggleButtonFill,
+    enableRipple: withPalettes.enableRipple,
+    enableExpandable: withPalettes.enableExpandable,
+    enableToastStack: withPalettes.enableToastStack,
+    enableAsyncButtonCrossfade: withPalettes.enableAsyncButtonCrossfade,
+    enableContentFade: withPalettes.enableContentFade,
+    enableFeedbackExpand: withPalettes.enableFeedbackExpand,
+    enableProgressFill: withPalettes.enableProgressFill,
+    enableLoadingDots: withPalettes.enableLoadingDots,
   };
 
   const tokens: ThemeTokenOverrides = {
-    space: state.space,
-    size: state.size,
-    radius: state.radius,
-    borderWidth: state.borderWidth,
-    textScale: state.textScale,
-    fontFamily: state.fontFamily,
-    fontFamilyMono: state.fontFamilyMono,
-    fontWeights: { ...state.fontWeights },
-    shadowStrength: state.shadowStrength,
-    shadowSize: state.shadowSize,
-    toastScrimSize: state.toastScrimSize,
-    toastScrimDensity: state.toastScrimDensity,
-    colors: { ...state.colors },
-    statusForegrounds: { ...state.statusForegrounds },
-    borderCustomized: state.borderCustomized,
+    space: withPalettes.space,
+    size: withPalettes.size,
+    radius: withPalettes.radius,
+    borderWidth: withPalettes.borderWidth,
+    textScale: withPalettes.textScale,
+    fontFamily: withPalettes.fontFamily,
+    fontFamilyMono: withPalettes.fontFamilyMono,
+    fontWeights: { ...withPalettes.fontWeights },
+    shadowStrength: withPalettes.shadowStrength,
+    shadowSize: withPalettes.shadowSize,
+    toastScrimSize: withPalettes.toastScrimSize,
+    toastScrimDensity: withPalettes.toastScrimDensity,
   };
 
   return {
-    theme: state.theme,
+    theme: withPalettes.theme,
     tokens,
+    colors: {
+      dark: { ...withPalettes.modePalettes.dark },
+      light: { ...withPalettes.modePalettes.light },
+    },
     motion,
     toast: true,
   };
 }
 
-/** Merge token overrides into a full `ThemeTokenState` (for `applyThemeTokens`). */
+/**
+ * Default app theme snapshot (shared tokens + light/dark colors + motion).
+ * Used by scaffolds / `burne-ui init` and as a starting point for Copy config edits.
+ */
+export function createDefaultBurneThemeConfig(options?: {
+  theme?: ThemeMode;
+  storageKey?: string | null;
+}): BurneThemeConfig {
+  const config = themeTokenStateToConfig(createDefaultThemeState(options?.theme ?? "dark"));
+  return {
+    ...config,
+    storageKey: options?.storageKey === undefined ? "burne-ui-theme" : options.storageKey,
+  };
+}
+
+/** TypeScript source for a starter `burne-theme.ts` (same shape as playground Copy config). */
+export function exportDefaultBurneThemeConfigSource(options?: { exportName?: string }): string {
+  const exportName = options?.exportName ?? "burneTheme";
+  const body = stringifyValue(createDefaultBurneThemeConfig(), 0);
+
+  return [
+    "/**",
+    " * Burne UI theme config (starter snapshot).",
+    " *",
+    " * - Edit `tokens` / `motion` (shared) and `colors.light` / `colors.dark`.",
+    " * - Or replace this file with docs site → Copy config.",
+    " *",
+    " *   import { BurneUIProvider } from \"burne-ui\";",
+    ` *   import ${exportName} from \"./burne-theme\";`,
+    ` *   <BurneUIProvider config={${exportName}}>{children}</BurneUIProvider>`,
+    " */",
+    'import type { BurneThemeConfig } from "burne-ui";',
+    "",
+    `const ${exportName} = ${body} satisfies BurneThemeConfig;`,
+    "",
+    `export default ${exportName};`,
+    "",
+  ].join("\n");
+}
+
+/** Merge shared token overrides into a full `ThemeTokenState` (no mode colors). */
 export function mergeThemeTokenOverrides(
   overrides: ThemeTokenOverrides | undefined,
   theme: ThemeMode = "dark",
@@ -178,16 +264,10 @@ export function mergeThemeTokenOverrides(
       shadowSize: overrides.shadowSize,
       toastScrimSize: overrides.toastScrimSize,
       toastScrimDensity: overrides.toastScrimDensity,
-      borderCustomized: overrides.borderCustomized,
     }),
     fontWeights: overrides.fontWeights
       ? { ...base.fontWeights, ...overrides.fontWeights }
       : base.fontWeights,
-    colors: overrides.colors ? { ...base.colors, ...overrides.colors } : base.colors,
-    statusForegrounds: overrides.statusForegrounds
-      ? { ...base.statusForegrounds, ...overrides.statusForegrounds }
-      : base.statusForegrounds,
-    colorPreset: null,
   };
 }
 
@@ -200,15 +280,15 @@ function pickDefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
 }
 
 /**
- * Apply a `BurneThemeConfig` to the document (tokens + motion via `applyThemeTokens`).
- * Theme mode `system` is resolved by `ThemeProvider` — pass the resolved `"light" | "dark"` here.
+ * Apply a `BurneThemeConfig` to the document.
+ * Colors for the resolved mode come from `colors[mode]`.
  */
 export function applyBurneThemeConfig(
   config: BurneThemeConfig,
   root: HTMLElement = document.documentElement,
-  resolvedTheme: ThemeMode = resolveConfigTheme(config.theme),
+  resolvedTheme: ThemeMode = resolveTheme(config.theme),
 ) {
-  const state = mergeThemeTokenOverrides(config.tokens, resolvedTheme);
+  const state = resolveThemeTokenState(config, resolvedTheme);
 
   if (config.motion) {
     const m = config.motion;
@@ -262,7 +342,7 @@ export function applyBurneThemeConfig(
   applyThemeTokens(state, root);
 }
 
-export function resolveConfigTheme(theme: BurneThemeMode | undefined): ThemeMode {
+export function resolveTheme(theme: BurneThemeMode | undefined = "system"): ThemeMode {
   if (theme === "light" || theme === "dark") return theme;
   if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: light)").matches) {
     return "light";
@@ -270,7 +350,7 @@ export function resolveConfigTheme(theme: BurneThemeMode | undefined): ThemeMode
   return "dark";
 }
 
-/** Alias: apply token overrides without a full config object. */
+/** Alias: apply shared token overrides without mode colors. */
 export function applyTokens(
   overrides: ThemeTokenOverrides,
   root: HTMLElement = document.documentElement,
@@ -281,8 +361,8 @@ export function applyTokens(
 
 /** CSS string for `burne-theme-overrides.css` (same as playground “Copy CSS”). */
 export function exportBurneThemeCss(config: BurneThemeConfig): string {
-  const theme = resolveConfigTheme(config.theme === "system" ? undefined : config.theme);
-  const state = mergeThemeTokenOverrides(config.tokens, theme);
+  const theme = resolveTheme(config.theme);
+  const state = resolveThemeTokenState(config, theme);
   return exportThemeCss(state);
 }
 
@@ -320,7 +400,7 @@ function safeKey(key: string): string {
 
 /**
  * TypeScript source for a project file (e.g. `burne-theme.ts`).
- * Paste into the project and pass to `<BurneUIProvider config={burneTheme} />`.
+ * `tokens` / `motion` are shared; `colors.light` / `colors.dark` hold palettes.
  */
 export function exportBurneThemeConfigSource(
   config: BurneThemeConfig,
@@ -332,12 +412,14 @@ export function exportBurneThemeConfigSource(
   return [
     "/**",
     " * Generated from the Burne UI theme playground.",
-    " * Save as `burne-theme.ts` (or similar) and pass to BurneUIProvider:",
+    " * Save as `burne-theme.ts` and pass to BurneUIProvider:",
     " *",
     " *   import { BurneUIProvider } from \"burne-ui\";",
     ` *   import ${exportName} from \"./burne-theme\";`,
     " *",
     ` *   <BurneUIProvider config={${exportName}}>{children}</BurneUIProvider>`,
+    " *",
+    " * `tokens` / `motion` are shared; `colors.light` / `colors.dark` hold palettes.",
     " */",
     'import type { BurneThemeConfig } from "burne-ui";',
     "",

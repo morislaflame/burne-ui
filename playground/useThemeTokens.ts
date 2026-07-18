@@ -15,18 +15,18 @@ import {
 import {
   applyThemeTokens,
   clearThemeInlineTokens,
-  createDefaultThemeState,
+  createDefaultEditorState,
   exportThemeCss,
-  LAYOUT_PRESETS,
+  MOTION_DEFAULTS,
   SCALE_DEFAULTS,
-  type ColorPresetKey,
-  type LayoutPresetKey,
   type ThemeColorKey,
+  type ThemeEditorState,
   type ThemeFontWeightKey,
   type ThemeMode,
   type ThemeStatusForegroundKey,
-  type ThemeTokenState,
 } from "./themeDefaults";
+import { LAYOUT_PRESETS, type LayoutPresetKey } from "./themePresets";
+import type { ColorPresetKey } from "./colorPresets";
 
 const ThemeTokensContext = createContext<ThemeTokensApi | null>(null);
 
@@ -44,7 +44,7 @@ export function useThemeTokens(): ThemeTokensApi {
 }
 
 function useThemeTokensState() {
-  const [state, setState] = useState<ThemeTokenState>(() => createDefaultThemeState("dark"));
+  const [state, setState] = useState<ThemeEditorState>(() => createDefaultEditorState("dark"));
 
   useEffect(() => {
     void applyThemeTokens(state);
@@ -136,24 +136,23 @@ function useThemeTokensState() {
       ...prev,
       colorPreset: null,
       colors: { ...prev.colors, [key]: value },
-      ...(key === "border" ? { borderCustomized: true } : {}),
+      modePalettes: {
+        ...prev.modePalettes,
+        [prev.theme]: { ...prev.colors, [key]: value },
+      },
     }));
   }, []);
 
   const setStatusForeground = useCallback((key: ThemeStatusForegroundKey, value: string) => {
-    setState((prev) => ({
-      ...prev,
-      colorPreset: null,
-      statusForegrounds: { ...prev.statusForegrounds, [key]: value },
-    }));
-  }, []);
+    setColor(key, value);
+  }, [setColor]);
 
   /** Full preset - resets scale and applies the palette to the current theme mode. */
   const applyPreset = useCallback((preset: ColorPresetKey) => {
     setState((prev) => applyColorPresetToState(prev, preset, { resetScale: true }));
   }, []);
 
-  /** Color preset - only colors / statusForegrounds, theme mode does not change. */
+  /** Color preset — only palettes; theme mode does not change. */
   const applyColorPreset = useCallback((preset: ColorPresetKey) => {
     setState((prev) => applyColorPresetToState(prev, preset));
   }, []);
@@ -164,7 +163,7 @@ function useThemeTokensState() {
   }, []);
 
   const reset = useCallback(() => {
-    setState(createDefaultThemeState("dark"));
+    setState(createDefaultEditorState("dark"));
     clearThemeInlineTokens();
   }, []);
 
@@ -194,7 +193,7 @@ function useThemeTokensState() {
     applyLayoutPreset,
     reset,
     copyCss,
-    defaults: SCALE_DEFAULTS,
+    defaults: { ...SCALE_DEFAULTS, ...MOTION_DEFAULTS },
   };
 }
 

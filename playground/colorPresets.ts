@@ -1,16 +1,17 @@
 import {
+  activateThemeModePalette,
+  createDefaultEditorState,
+  ensureModePalettes,
+  type ThemeColors,
+  type ThemeEditorState,
+  type ThemeMode,
+} from "./themeDefaults";
+
+import {
   AMBER_DARK_COLORS,
   AMBER_LIGHT_COLORS,
   AUTUMN_DARK_COLORS,
   AUTUMN_LIGHT_COLORS,
-  DREAMLAND_DARK_COLORS,
-  DREAMLAND_LIGHT_COLORS,
-  HARVEST_DARK_COLORS,
-  HARVEST_LIGHT_COLORS,
-  LAVENDER_DARK_COLORS,
-  LAVENDER_LIGHT_COLORS,
-  MYSTIC_DARK_COLORS,
-  MYSTIC_LIGHT_COLORS,
   BERRY_DARK_COLORS,
   BERRY_LIGHT_COLORS,
   BOLD_DARK_COLORS,
@@ -20,13 +21,19 @@ import {
   CONTRAST_DARK_COLORS,
   CONTRAST_LIGHT_COLORS,
   DARK_COLORS,
-  DARK_STATUS_FOREGROUNDS,
+  DREAMLAND_DARK_COLORS,
+  DREAMLAND_LIGHT_COLORS,
   EARTHY_DARK_COLORS,
   EARTHY_LIGHT_COLORS,
   EMERALD_DARK_COLORS,
   EMERALD_LIGHT_COLORS,
+  HARVEST_DARK_COLORS,
+  HARVEST_LIGHT_COLORS,
+  LAVENDER_DARK_COLORS,
+  LAVENDER_LIGHT_COLORS,
   LIGHT_COLORS,
-  LIGHT_STATUS_FOREGROUNDS,
+  MYSTIC_DARK_COLORS,
+  MYSTIC_LIGHT_COLORS,
   OCEAN_DARK_COLORS,
   OCEAN_LIGHT_COLORS,
   PAPRIKA_DARK_COLORS,
@@ -46,19 +53,33 @@ import {
   VIOLET_DARK_COLORS,
   VIOLET_LIGHT_COLORS,
 } from "./themePalettes";
-import {
-  createDefaultThemeState,
-  isBorderColorCustomized,
-  type ColorPresetKey,
-  type ThemeColors,
-  type ThemeMode,
-  type ThemeStatusForegrounds,
-  type ThemeTokenState,
-} from "./themeDefaults";
+
+export type ColorPresetKey =
+  | "default"
+  | "contrast"
+  | "ocean"
+  | "violet"
+  | "emerald"
+  | "rose"
+  | "amber"
+  | "slate"
+  | "toffee"
+  | "berry"
+  | "paprika"
+  | "cherry"
+  | "rustic"
+  | "earthy"
+  | "peach"
+  | "sand"
+  | "bold"
+  | "autumn"
+  | "harvest"
+  | "mystic"
+  | "dreamland"
+  | "lavender";
 
 export type ColorPresetSlice = {
   colors: ThemeColors;
-  statusForegrounds: ThemeStatusForegrounds;
   shadowStrength?: number;
 };
 
@@ -68,98 +89,32 @@ function def(dark: ColorPresetSlice, light: ColorPresetSlice): ColorPresetDefini
   return { dark, light };
 }
 
-const BASE_PRESET_DEF = def(
-  { colors: DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-  { colors: LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-);
-
 export const COLOR_PRESET_DEFINITIONS: Record<ColorPresetKey, ColorPresetDefinition> = {
-  dark: BASE_PRESET_DEF,
-  light: BASE_PRESET_DEF,
+  default: def({ colors: DARK_COLORS }, { colors: LIGHT_COLORS }),
   contrast: def(
-    { colors: CONTRAST_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS, shadowStrength: 1.25 },
-    { colors: CONTRAST_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS, shadowStrength: 1.25 },
+    { colors: CONTRAST_DARK_COLORS, shadowStrength: 1.25 },
+    { colors: CONTRAST_LIGHT_COLORS, shadowStrength: 1.25 },
   ),
-  ocean: def(
-    { colors: OCEAN_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: OCEAN_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  violet: def(
-    { colors: VIOLET_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: VIOLET_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  emerald: def(
-    { colors: EMERALD_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: EMERALD_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  rose: def(
-    { colors: ROSE_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: ROSE_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  amber: def(
-    { colors: AMBER_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: AMBER_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  slate: def(
-    { colors: SLATE_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: SLATE_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  toffee: def(
-    { colors: TOFFEE_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: TOFFEE_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  berry: def(
-    { colors: BERRY_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: BERRY_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  paprika: def(
-    { colors: PAPRIKA_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: PAPRIKA_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  cherry: def(
-    { colors: CHERRY_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: CHERRY_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  rustic: def(
-    { colors: RUSTIC_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: RUSTIC_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  earthy: def(
-    { colors: EARTHY_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: EARTHY_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  peach: def(
-    { colors: PEACH_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: PEACH_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  sand: def(
-    { colors: SAND_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: SAND_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  bold: def(
-    { colors: BOLD_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: BOLD_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  autumn: def(
-    { colors: AUTUMN_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: AUTUMN_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  dreamland: def(
-    { colors: DREAMLAND_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: DREAMLAND_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  harvest: def(
-    { colors: HARVEST_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: HARVEST_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  mystic: def(
-    { colors: MYSTIC_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: MYSTIC_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
-  lavender: def(
-    { colors: LAVENDER_DARK_COLORS, statusForegrounds: DARK_STATUS_FOREGROUNDS },
-    { colors: LAVENDER_LIGHT_COLORS, statusForegrounds: LIGHT_STATUS_FOREGROUNDS },
-  ),
+  ocean: def({ colors: OCEAN_DARK_COLORS }, { colors: OCEAN_LIGHT_COLORS }),
+  violet: def({ colors: VIOLET_DARK_COLORS }, { colors: VIOLET_LIGHT_COLORS }),
+  emerald: def({ colors: EMERALD_DARK_COLORS }, { colors: EMERALD_LIGHT_COLORS }),
+  rose: def({ colors: ROSE_DARK_COLORS }, { colors: ROSE_LIGHT_COLORS }),
+  amber: def({ colors: AMBER_DARK_COLORS }, { colors: AMBER_LIGHT_COLORS }),
+  slate: def({ colors: SLATE_DARK_COLORS }, { colors: SLATE_LIGHT_COLORS }),
+  toffee: def({ colors: TOFFEE_DARK_COLORS }, { colors: TOFFEE_LIGHT_COLORS }),
+  berry: def({ colors: BERRY_DARK_COLORS }, { colors: BERRY_LIGHT_COLORS }),
+  paprika: def({ colors: PAPRIKA_DARK_COLORS }, { colors: PAPRIKA_LIGHT_COLORS }),
+  cherry: def({ colors: CHERRY_DARK_COLORS }, { colors: CHERRY_LIGHT_COLORS }),
+  rustic: def({ colors: RUSTIC_DARK_COLORS }, { colors: RUSTIC_LIGHT_COLORS }),
+  earthy: def({ colors: EARTHY_DARK_COLORS }, { colors: EARTHY_LIGHT_COLORS }),
+  peach: def({ colors: PEACH_DARK_COLORS }, { colors: PEACH_LIGHT_COLORS }),
+  sand: def({ colors: SAND_DARK_COLORS }, { colors: SAND_LIGHT_COLORS }),
+  bold: def({ colors: BOLD_DARK_COLORS }, { colors: BOLD_LIGHT_COLORS }),
+  autumn: def({ colors: AUTUMN_DARK_COLORS }, { colors: AUTUMN_LIGHT_COLORS }),
+  harvest: def({ colors: HARVEST_DARK_COLORS }, { colors: HARVEST_LIGHT_COLORS }),
+  mystic: def({ colors: MYSTIC_DARK_COLORS }, { colors: MYSTIC_LIGHT_COLORS }),
+  dreamland: def({ colors: DREAMLAND_DARK_COLORS }, { colors: DREAMLAND_LIGHT_COLORS }),
+  lavender: def({ colors: LAVENDER_DARK_COLORS }, { colors: LAVENDER_LIGHT_COLORS }),
 };
 
 export function colorPresetSlice(preset: ColorPresetKey, mode: ThemeMode): ColorPresetSlice {
@@ -167,36 +122,52 @@ export function colorPresetSlice(preset: ColorPresetKey, mode: ThemeMode): Color
 }
 
 export function applyColorPresetToState(
-  prev: ThemeTokenState,
+  prev: ThemeEditorState,
   preset: ColorPresetKey,
   options?: { resetScale?: boolean },
-): ThemeTokenState {
-  const slice = colorPresetSlice(preset, prev.theme);
-  const base = options?.resetScale ? createDefaultThemeState(prev.theme) : prev;
+): ThemeEditorState {
+  const base = options?.resetScale ? createDefaultEditorState(prev.theme) : ensureModePalettes(prev);
+  const dark = colorPresetSlice(preset, "dark");
+  const light = colorPresetSlice(preset, "light");
+  const activeSlice = colorPresetSlice(preset, prev.theme);
 
-  return {
+  const next: ThemeEditorState = {
     ...base,
     theme: prev.theme,
     colorPreset: preset,
-    colors: { ...slice.colors },
-    statusForegrounds: { ...slice.statusForegrounds },
-    borderCustomized: isBorderColorCustomized(slice.colors, prev.theme),
-    ...(slice.shadowStrength !== undefined ? { shadowStrength: slice.shadowStrength } : {}),
+    modePalettes: {
+      dark: { ...dark.colors },
+      light: { ...light.colors },
+    },
+    ...(activeSlice.shadowStrength !== undefined ? { shadowStrength: activeSlice.shadowStrength } : {}),
   };
+
+  return { ...activateThemeModePalette(next, prev.theme), colorPreset: preset };
 }
 
-export function applyThemeModeToState(prev: ThemeTokenState, theme: ThemeMode): ThemeTokenState {
-  if (prev.colorPreset != null) {
-    const slice = colorPresetSlice(prev.colorPreset, theme);
-    return {
-      ...prev,
+export function applyThemeModeToState(prev: ThemeEditorState, theme: ThemeMode): ThemeEditorState {
+  const state = ensureModePalettes(prev);
+
+  if (prev.colorPreset != null && prev.colorPreset in COLOR_PRESET_DEFINITIONS) {
+    const preset = prev.colorPreset as ColorPresetKey;
+    const slice = colorPresetSlice(preset, theme);
+    const next = activateThemeModePalette(
+      {
+        ...state,
+        modePalettes: {
+          dark: { ...colorPresetSlice(preset, "dark").colors },
+          light: { ...colorPresetSlice(preset, "light").colors },
+        },
+      },
       theme,
-      colors: { ...slice.colors },
-      statusForegrounds: { ...slice.statusForegrounds },
-      borderCustomized: isBorderColorCustomized(slice.colors, theme),
-      ...(slice.shadowStrength !== undefined ? { shadowStrength: slice.shadowStrength } : {}),
+    );
+    return {
+      ...(slice.shadowStrength !== undefined
+        ? { ...next, shadowStrength: slice.shadowStrength }
+        : next),
+      colorPreset: prev.colorPreset,
     };
   }
 
-  return createDefaultThemeState(theme);
+  return { ...activateThemeModePalette(state, theme), colorPreset: prev.colorPreset };
 }
