@@ -13,8 +13,6 @@ import type { InputSize, InputStatus, InputVariant } from "@/components/core/Inp
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 import { cn } from "@/utils/cn";
 
-import { mergeSelectSlotClass } from "./selectAPI";
-
 const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
@@ -106,7 +104,7 @@ export function selectTriggerGroupClass({
 }): string {
   const isGloss = variant === "gloss";
 
-  return mergeSelectSlotClass(
+  return cn(
     SELECT_TRIGGER_GROUP_BASE_CLASS,
     groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
     selectGroupShellClass(groupSegment),
@@ -134,7 +132,7 @@ export function selectValueClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeSelectSlotClass(
+  return cn(
     SELECT_VALUE_BASE_CLASS,
     SELECT_VALUE_CONTROL[size],
     muted && SELECT_VALUE_MUTED_CLASS,
@@ -152,7 +150,7 @@ export function selectTriggerClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeSelectSlotClass(
+  return cn(
     SELECT_TRIGGER_BASE_CLASS,
     disabled && SELECT_TRIGGER_DISABLED_CLASS,
     slotClass,

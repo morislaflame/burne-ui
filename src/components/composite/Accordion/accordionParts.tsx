@@ -6,7 +6,7 @@ import { messageBannerActionCellClass } from "@/components/core/utils/messageBan
 import { Text } from "@/components/core/Text";
 
 import { useAccordionIndicatorAnimation } from "./accordionAnimations";
-import { mergeAccordionSlotClass } from "./accordionAPI";
+
 import { useAccordionContext } from "./accordionContext";
 import {
   ACCORDION_CHEVRON_CLASS,
@@ -29,10 +29,12 @@ import type {
   AccordionTriggerProps,
 } from "./accordionTypes";
 
+import { cn } from "@/utils/cn";
+
 function AccordionChevronSvg({ className = "" }: { className?: string }) {
   return (
     <svg
-      className={mergeAccordionSlotClass(ACCORDION_CHEVRON_CLASS, className)}
+      className={cn(ACCORDION_CHEVRON_CLASS, className)}
       width="20"
       height="20"
       viewBox="0 0 24 24"
@@ -135,7 +137,7 @@ export function AccordionIndicator({ className, children, ...rest }: AccordionIn
   return (
     <span
       ref={bindChevronRef}
-      className={mergeAccordionSlotClass(
+      className={cn(
         gridSlots && messageBannerActionCellClass(gridSlots),
         accordionIndicatorClass(className),
       )}

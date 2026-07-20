@@ -1,6 +1,5 @@
 import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
 
-import { mergeSliderSlotClass } from "./sliderAPI";
 import {
   useSliderThumbPressAnimation,
   useSliderThumbShellAnimation,
@@ -8,6 +7,8 @@ import {
 import { useSliderClassNames } from "./sliderContext";
 import { sliderThumbButtonClass, sliderThumbPositionStyle } from "./sliderStyles";
 import type { SliderThumbButtonProps } from "./sliderTypes";
+
+import { cn } from "@/utils/cn";
 
 export function SliderThumbButton({
   size,
@@ -67,7 +68,7 @@ export function SliderThumbButton({
         size={size}
         gloss={gloss}
         shellRef={shellRef}
-        className={mergeSliderSlotClass(slotClassNames.thumbShell, thumbClassName)}
+        className={cn(slotClassNames.thumbShell, thumbClassName)}
       >
         {icon != null ? (
           <SelectionThumbIcon size={size} highlighted={active} gloss={gloss}>

@@ -1,15 +1,7 @@
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type { ColorSwatchSize } from "./ColorSwatch";
 import type { ColorSliderSize } from "./ColorSlider";
 import { hexToHsva, type HSVA } from "./colorUtils";
 import type { ColorPickerSize } from "./colorPickerTypes";
-
-export function mergeColorPickerSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export const COLOR_PICKER_DEFAULT_HEX = "#3b82f6";
 

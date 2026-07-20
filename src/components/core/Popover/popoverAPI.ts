@@ -1,14 +1,7 @@
-import type { ClassValue } from "clsx";
 import type { ReactElement, ReactNode, Ref } from "react";
 import { Children, isValidElement, useCallback, useState } from "react";
 
-import { cn } from "@/utils/cn";
-
 export const POPOVER_ARROW_DISPLAY_NAME = "PopoverArrow";
-
-export function mergePopoverSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function mergePopoverRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {

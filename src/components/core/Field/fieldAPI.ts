@@ -1,14 +1,7 @@
-import type { ClassValue } from "clsx";
 import { Children, isValidElement, type ReactNode } from "react";
-
-import { cn } from "@/utils/cn";
 
 import { FIELD_LEGEND_DISPLAY_NAMES } from "./fieldA11y";
 import type { UseFieldSetRootStateResult } from "./fieldTypes";
-
-export function mergeFieldSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function readFieldPartDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;

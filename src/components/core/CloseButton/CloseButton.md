@@ -270,7 +270,6 @@ CloseButton/
 ├── index.ts
 ├── closeButtonTypes.ts
 ├── closeButtonStyles.ts
-├── closeButtonAPI.ts          # mergeCloseButtonSlotClass
 ├── closeButtonA11y.ts         # дефолтный aria-label
 ├── closeButtonContext.tsx     # classNames provider
 ├── closeButtonParts.tsx       # Icon, Ripple

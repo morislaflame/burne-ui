@@ -3,7 +3,6 @@ import { forwardRef } from "react";
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
 
-import { mergeExpandableSlotClass } from "./expandableAPI";
 import {
   ExpandableClassNamesProvider,
   ExpandableProvider,
@@ -23,6 +22,8 @@ import {
 import { expandableRootClass } from "./expandableStyles";
 import type { ExpandableRootProps } from "./expandableTypes";
 import { useExpandableRootState } from "./useExpandableRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   ExpandableProps,
@@ -100,7 +101,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
           >
             {state.isGloss ? (
               <div
-                className={mergeExpandableSlotClass(
+                className={cn(
                   EXPANDABLE_GLOSS_CONTENT_CLASS,
                   classNames?.glossContent,
                 )}

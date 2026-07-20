@@ -3,7 +3,6 @@ import { forwardRef } from "react";
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
 
-import { mergeCalendarSlotClass } from "./calendarAPI";
 import {
   CalendarClassNamesProvider,
   CalendarProvider,
@@ -71,7 +70,7 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
               contextValue.variant,
               contextValue.size,
               isGloss,
-              mergeCalendarSlotClass("", classNames?.root, className),
+              cn("", classNames?.root, className),
             )}
             {...rest}
           >

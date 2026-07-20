@@ -20,8 +20,9 @@ import {
   resolveFieldShellSurfaceClass,
 } from "@/components/core/utils/fieldShellVariant";
 
-import { mergeInputSlotClass } from "./inputAPI";
 import type { InputSize, InputStatus, InputVariant } from "./inputTypes";
+
+import { cn } from "@/utils/cn";
 
 export const INPUT_STATUS_TINT_SHELL_CLASS: Record<
   Exclude<InputStatus, "default">,
@@ -134,7 +135,7 @@ export function inputAffixSlotClass({
   size: InputSize;
   slotClass?: string;
 }): string {
-  return mergeInputSlotClass(
+  return cn(
     AFFIX_PADDING[size],
     inputAffixSurfaceClass(status),
     side === "prefix" ? INPUT_AFFIX_PREFIX_EDGE_CLASS : INPUT_AFFIX_SUFFIX_EDGE_CLASS,
@@ -178,7 +179,7 @@ export function inputShellRoundingClass(
   groupSegment: ButtonGroupSegment | null | undefined,
 ): string {
   if (groupSegment != null) {
-    return mergeInputSlotClass(
+    return cn(
       buttonGroupRoundingClasses(groupSegment),
       buttonGroupSegmentSurfaceClasses(groupSegment),
       "relative focus-within:z-[2]",
@@ -214,13 +215,13 @@ export function inputShellClass({
 }): string {
   const isGloss = variant === "gloss";
 
-  return mergeInputSlotClass(
+  return cn(
     INPUT_SHELL_BASE_CLASS,
     isGloss && INPUT_SHELL_GLOSS_CLASS,
     groupSegment?.orientation === "horizontal" ? "min-w-0 flex-1" : "w-full",
     fileListEmpty
       ? "min-h-[7.25rem]"
-      : mergeInputSlotClass(isGloss ? "" : "border-1"),
+      : cn(isGloss ? "" : "border-1"),
     inputShellRoundingClass(groupSegment),
     shellFileEmptySurface ?? shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
@@ -234,7 +235,7 @@ export function inputShellClass({
 }
 
 export function inputFileEmptyAreaClass(slotClass?: string): string {
-  return mergeInputSlotClass(
+  return cn(
     "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-plus px-large py-xlarge",
     slotClass,
   );
@@ -247,7 +248,7 @@ export function inputFileFilledAreaClass({
   multipleFiles: boolean;
   slotClass?: string;
 }): string {
-  return mergeInputSlotClass(
+  return cn(
     "relative min-w-0 flex-1 px-large py-base",
     multipleFiles
       ? "flex flex-col gap-base"
@@ -267,7 +268,7 @@ export function inputPasswordToggleButtonClass({
 }): string {
   const pwd = INPUT_PASSWORD_TOGGLE_CONTROL[size];
 
-  return mergeInputSlotClass(
+  return cn(
     INPUT_PASSWORD_TOGGLE_BUTTON_CLASS,
     TEXT_COLOR_TRANSITION,
     affixToggleMinWClass(size),
@@ -284,7 +285,7 @@ export function inputFileRemoveButtonClass({
   disabled?: boolean;
   slotClass?: string;
 }): string {
-  return mergeInputSlotClass(
+  return cn(
     INPUT_FILE_REMOVE_CLASS,
     TEXT_COLOR_TRANSITION,
     hoverVariant("danger"),

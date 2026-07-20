@@ -1,4 +1,5 @@
-import { mergeDisclosureSlotClass } from "./disclosureAPI";
+import { cn } from "@/utils/cn";
+
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
 import {
   DISCLOSURE_HANDLE_BASE_CLASS,
@@ -41,7 +42,7 @@ export function DisclosureHandleInner({
   return (
     <div
       aria-hidden
-      className={mergeDisclosureSlotClass(
+      className={cn(
         DISCLOSURE_HANDLE_BASE_CLASS,
         disabled && DISCLOSURE_HANDLE_DISABLED_CLASS,
         slotClassNames.handle,

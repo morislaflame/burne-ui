@@ -8,8 +8,9 @@ import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fiel
 
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 
-import { mergeTextAreaSlotClass } from "./textAreaAPI";
 import type { TextAreaSize, TextAreaStatus, TextAreaVariant } from "./textAreaTypes";
+
+import { cn } from "@/utils/cn";
 
 export const TEXTAREA_STATUS_TINT_SHELL_CLASS: Record<
   Exclude<TextAreaStatus, "default">,
@@ -90,7 +91,7 @@ export function textareaShellClass({
 }) {
   const isGloss = variant === "gloss";
 
-  return mergeTextAreaSlotClass(
+  return cn(
     "relative w-full overflow-hidden rounded-base border-1",
     TEXTAREA_SHELL_LAYOUT_CLASS,
     isGloss && "relative",
@@ -115,7 +116,7 @@ export function textareaControlClassNames({
   resizable: boolean;
   slotClass?: string;
 }) {
-  return mergeTextAreaSlotClass(
+  return cn(
     TEXTAREA_CONTROL_BASE_CLASS,
     resizable && "pr-mid",
     textareaControlClass(size),
@@ -131,7 +132,7 @@ export function textareaResizeHandleClass({
   disabled?: boolean;
   slotClass?: string;
 }) {
-  return mergeTextAreaSlotClass(
+  return cn(
     TEXTAREA_RESIZE_HANDLE_BASE_CLASS,
     disabled ? TEXTAREA_RESIZE_HANDLE_DISABLED_CLASS : TEXTAREA_RESIZE_HANDLE_ENABLED_CLASS,
     slotClass,

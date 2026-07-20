@@ -8,7 +8,7 @@ import {
   SelectionIndicator,
 } from "@/components/core/SelectionIndicator";
 
-import { mergeCheckboxSlotClass, checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
+import { checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
 import { useCheckboxControlTrackAnimation } from "./checkboxAnimations";
 import { useCheckboxFieldContext, useCheckboxClassNames } from "./checkboxContext";
 import {
@@ -45,6 +45,8 @@ import type {
   CheckboxSize,
 } from "./checkboxTypes";
 
+import { cn } from "@/utils/cn";
+
 export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>(
   function CheckboxControl({ className, children, ...rest }, ref) {
     const ctx = useCheckboxFieldContext();
@@ -54,7 +56,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
     return (
       <span
         ref={ref}
-        className={mergeCheckboxSlotClass(
+        className={cn(
           CHECKBOX_CONTROL_CLASS,
           checkboxControlCellClass(),
           slotClassNames.control,
@@ -64,7 +66,7 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
       >
         <span
           ref={trackRef}
-          className={mergeCheckboxSlotClass(
+          className={cn(
             CHECKBOX_CONTROL_TRACK_CLASS,
             slotClassNames.controlTrack,
           )}
@@ -75,11 +77,11 @@ export const CheckboxControl = forwardRef<HTMLSpanElement, CheckboxControlProps>
             type="checkbox"
             className={
               ctx.isCompound
-                ? mergeCheckboxSlotClass(
+                ? cn(
                     CHECKBOX_INPUT_TRACK_OVERLAY_CLASS,
                     slotClassNames.input,
                   )
-                : mergeCheckboxSlotClass(
+                : cn(
                     CHECKBOX_INPUT_VISUALLY_HIDDEN_CLASS,
                     slotClassNames.input,
                   )
@@ -152,7 +154,7 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
   function CheckboxContent({ className, children, ...rest }, ref) {
     const ctx = useCheckboxFieldContext();
     const slotClassNames = useCheckboxClassNames();
-    const contentClass = mergeCheckboxSlotClass(
+    const contentClass = cn(
       CHECKBOX_CONTENT_PASS_THROUGH_CLASS,
       ctx.isCompound && CHECKBOX_CONTENT_COMPOUND_CLASS,
       slotClassNames.content,
@@ -168,7 +170,7 @@ export const CheckboxContent = forwardRef<HTMLDivElement, CheckboxContentProps>(
           ref={ref as Ref<HTMLLabelElement>}
           htmlFor={ctx.inputId}
           id={ctx.labelId}
-          className={mergeCheckboxSlotClass(
+          className={cn(
             contentClass,
             !ctx.isDisabled && CHECKBOX_CONTENT_POINTER_CLASS,
           )}
@@ -210,7 +212,7 @@ export function CheckboxLabel({
           field.textMotionRef.current = node;
         }
       }}
-      className={mergeCheckboxSlotClass(
+      className={cn(
         CHECKBOX_LABEL_CLASS,
         field.isCompound && checkboxLabelCellClass(),
         field.isCompound &&
@@ -226,7 +228,7 @@ export function CheckboxLabel({
         as="span"
         variant={sz.title}
         inheritColor
-        className={mergeCheckboxSlotClass(
+        className={cn(
           field.isDisabled && CHECKBOX_LABEL_TEXT_DISABLED_CLASS,
           !field.isDisabled && field.danger && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
           slotClassNames.labelText,
@@ -236,7 +238,7 @@ export function CheckboxLabel({
       </Text>
       {isRequired ? (
         <span
-          className={mergeCheckboxSlotClass(
+          className={cn(
             CHECKBOX_REQUIRED_MARK_CLASS,
             slotClassNames.requiredMark,
           )}
@@ -259,7 +261,7 @@ export function CheckboxHint({ children, className, variant, ...rest }: Checkbox
       as="span"
       id={ctx.hintId}
       variant={variant ?? CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
-      className={mergeCheckboxSlotClass(
+      className={cn(
         ctx.isCompound && checkboxSecondaryCellClass(2),
         ctx.isDisabled && CHECKBOX_HINT_DISABLED_CLASS,
         slotClassNames.hint,
@@ -282,7 +284,7 @@ export function CheckboxError({ children, className, ...rest }: CheckboxErrorPro
       as="span"
       id={ctx.errorId}
       variant={CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
-      className={mergeCheckboxSlotClass(
+      className={cn(
         ctx.isCompound && checkboxSecondaryCellClass(checkboxErrorRow(ctx.hasCompoundHint)),
         ctx.isDisabled && CHECKBOX_ERROR_DISABLED_CLASS,
         slotClassNames.error,
@@ -332,7 +334,7 @@ export function CheckboxSimpleBody({
       <CheckboxControl />
       <span
         ref={textColRef}
-        className={mergeCheckboxSlotClass(
+        className={cn(
           checkboxLabelCellClass(),
           !secondaryLines && CHECKBOX_SIMPLE_LABEL_WRAP_CLASS,
           slotClassNames.simpleLabelWrap,
@@ -343,7 +345,7 @@ export function CheckboxSimpleBody({
           as="span"
           variant={sz.title}
           inheritColor
-          className={mergeCheckboxSlotClass(
+          className={cn(
             CHECKBOX_SIMPLE_LABEL_TEXT_CLASS,
             isDisabled && CHECKBOX_LABEL_TEXT_DISABLED_CLASS,
             !isDisabled && danger && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
@@ -359,7 +361,7 @@ export function CheckboxSimpleBody({
           as="span"
           id={hintId}
           variant={sz.desc as "small"}
-          className={mergeCheckboxSlotClass(
+          className={cn(
             checkboxSecondaryCellClass(2),
             isDisabled && CHECKBOX_HINT_DISABLED_CLASS,
             slotClassNames.hint,
@@ -373,7 +375,7 @@ export function CheckboxSimpleBody({
           as="span"
           id={errorId}
           variant={sz.desc as "small"}
-          className={mergeCheckboxSlotClass(
+          className={cn(
             checkboxSecondaryCellClass(checkboxErrorRow(hasHint)),
             isDisabled && CHECKBOX_ERROR_DISABLED_CLASS,
             slotClassNames.error,

@@ -1,7 +1,5 @@
 import { Children, isValidElement, type ReactNode } from "react";
 
-import { cn } from "@/utils/cn";
-
 import type { BreadcrumbItemData, BreadcrumbsItemProps, DisplayPiece } from "./breadcrumbsTypes";
 
 const BREADCRUMBS_ITEM_DISPLAY_NAME = "Breadcrumbs.Item";
@@ -93,10 +91,3 @@ export function breadcrumbListItemKey(
   return `segment-${idx}-${typeof label === "string" ? label : idx}`;
 }
 
-export function mergeBreadcrumbSlotClass(
-  base: string,
-  slot?: string,
-  item?: string,
-): string {
-  return cn(base, slot, item);
-}

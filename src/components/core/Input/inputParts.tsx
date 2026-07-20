@@ -29,7 +29,7 @@ import {
   INPUT_PASSWORD_SHOW_ARIA_LABEL,
   INPUT_FILE_REMOVE_ARIA_LABEL,
 } from "./inputA11y";
-import { assignInputFiles, inputSizeFromButtonSize, mergeInputSlotClass } from "./inputAPI";
+import { assignInputFiles, inputSizeFromButtonSize } from "./inputAPI";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import {
   useInputClassNames,
@@ -114,7 +114,7 @@ function PasswordVisibilityAffix({
 
   return (
     <span
-      className={mergeInputSlotClass(
+      className={cn(
         INPUT_PASSWORD_TOGGLE_WRAP_CLASS,
         inputAffixSurfaceClass(status),
       )}
@@ -151,7 +151,7 @@ function FileGlyph({ className }: { className?: string }) {
 
   return (
     <span
-      className={mergeInputSlotClass(
+      className={cn(
         "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token",
         slotClassNames.fileGlyph,
         className,
@@ -379,7 +379,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
 
     const shellSurface = inputShellSurfaceClass({ variant, status, statusTinted });
     const shellFileEmptySurface = fileListEmpty
-      ? mergeInputSlotClass(
+      ? cn(
           inputFileEmptyShellSurfaceClass({ variant, status, statusTinted }),
           !isGloss && "border-2 border-dashed border-token",
         )
@@ -429,7 +429,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             {fileListEmpty ? (
               <>
                 <IoFolderOpen
-                  className={mergeInputSlotClass(
+                  className={cn(
                     INPUT_FILE_EMPTY_ICON_CLASS,
                     slotClassNames.fileEmpty,
                   )}
@@ -438,7 +438,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
                 <Text
                   as="span"
                   variant="base"
-                  className={mergeInputSlotClass(
+                  className={cn(
                     INPUT_FILE_EMPTY_TEXT_CLASS,
                     slotClassNames.fileEmpty,
                   )}
@@ -451,7 +451,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
                 <div
                   key={`${file.name}-${file.size}-${file.lastModified}`}
                   data-file-row=""
-                  className={mergeInputSlotClass(
+                  className={cn(
                     INPUT_FILE_ROW_CLASS,
                     slotClassNames.fileRow,
                   )}
@@ -460,7 +460,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
                     <img
                       src={previewUrl}
                       alt=""
-                      className={mergeInputSlotClass(
+                      className={cn(
                         INPUT_FILE_PREVIEW_CLASS,
                         slotClassNames.filePreview,
                       )}
@@ -483,7 +483,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             ) : (
               <div
                 data-file-row=""
-                className={mergeInputSlotClass(
+                className={cn(
                   INPUT_FILE_ROW_SINGLE_CLASS,
                   slotClassNames.fileRow,
                 )}
@@ -492,7 +492,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
                   <img
                     src={fileEntries[0]!.previewUrl}
                     alt=""
-                    className={mergeInputSlotClass(
+                    className={cn(
                       INPUT_FILE_PREVIEW_CLASS,
                       slotClassNames.filePreview,
                     )}
@@ -545,7 +545,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             aria-required={isRequired || undefined}
             aria-invalid={formBinding["aria-invalid"] ?? (status === "danger" ? true : undefined)}
             aria-describedby={ariaDescribedBy}
-            className={mergeInputSlotClass(
+            className={cn(
               INPUT_CONTROL_BASE_CLASS,
               INPUT_CONTROL_PAD[size],
               slotClassNames.control,
@@ -583,7 +583,7 @@ export function InputLabel({ className, classNames, ...rest }: LabelProps) {
       className={className}
       classNames={{
         ...classNames,
-        root: mergeInputSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -613,7 +613,7 @@ export function InputHint({
     <FieldHint
       id={idProp ?? field.hintId}
       status={hintStatus}
-      className={mergeInputSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -635,7 +635,7 @@ export function InputError({
   return (
     <FieldError
       id={idProp ?? field.errorId}
-      className={mergeInputSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}

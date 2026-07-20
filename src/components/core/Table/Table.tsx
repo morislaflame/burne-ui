@@ -4,7 +4,6 @@ import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractive
 
 import "@/components/core/utils/glossInteractive.css";
 
-import { mergeTableSlotClass } from "./tableAPI";
 import {
   TableBody,
   TableCell,
@@ -22,6 +21,8 @@ import {
 import { TABLE_GLOSS_CONTENT_CLASS, tableRootClass } from "./tableStyles";
 import type { TableProps } from "./tableTypes";
 import { useTableRootState } from "./useTableRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   TableProps,
@@ -65,7 +66,7 @@ export const TableRoot = forwardRef<HTMLDivElement, TableProps>(function TableRo
           {...rest}
         >
           {isGloss ? (
-            <div className={mergeTableSlotClass(TABLE_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
+            <div className={cn(TABLE_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
               {children}
             </div>
           ) : (

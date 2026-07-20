@@ -1,11 +1,3 @@
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
-export function mergePaginationSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
-
 export function getPaginationRange(
   page: number,
   totalPages: number,

@@ -2,7 +2,7 @@ import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { TEXT_COLOR_TRANSITION, hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
-import { isFramedVariant, mergeDisclosureSlotClass } from "./disclosureAPI";
+import { isFramedVariant } from "./disclosureAPI";
 import type { DisclosureGroupContextValue, DisclosureSize, DisclosureVariant } from "./disclosureTypes";
 
 export const DISCLOSURE_CONTENT_PAD: Record<DisclosureSize, string> = {
@@ -95,7 +95,7 @@ export function disclosureRootClass({
   const rootCls =
     variant === "card" && groupedCardShell ? "" : VARIANT_ROOT[variant];
 
-  return mergeDisclosureSlotClass(rootCls, slotClass, className);
+  return cn(rootCls, slotClass, className);
 }
 
 export function disclosureTriggerClass({
@@ -113,7 +113,7 @@ export function disclosureTriggerClass({
 }): string {
   const shell = disclosureTriggerShell(size);
 
-  return mergeDisclosureSlotClass(
+  return cn(
     DISCLOSURE_TRIGGER_BASE_CLASS,
     shell.padX,
     VARIANT_TRIGGER[variant],
@@ -145,7 +145,7 @@ export function disclosureContentPanelClass({
 }): string {
   const framed = isFramedVariant(variant);
 
-  return mergeDisclosureSlotClass(
+  return cn(
     DISCLOSURE_CONTENT_PAD[size],
     framed && variant === "outline" && FRAMED_PANEL.outline,
     framed && variant === "secondary" && FRAMED_PANEL.secondary,
@@ -161,7 +161,7 @@ export function disclosureGlossContentClass(
   size: DisclosureSize,
   slotClass?: string,
 ): string {
-  return mergeDisclosureSlotClass(
+  return cn(
     DISCLOSURE_GLOSS_CONTENT_CLASS,
     DISCLOSURE_CONTENT_PAD[size],
     slotClass,
@@ -179,7 +179,7 @@ export function disclosureGroupClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeDisclosureSlotClass(
+  return cn(
     "flex w-full flex-col",
     separated && "gap-mid",
     !separated && variant === "default" && "divide-y-token border-t-token border-b-token",

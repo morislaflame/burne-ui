@@ -1,12 +1,4 @@
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type { FormFieldRules, FormValues } from "./formTypes";
-
-export function mergeFormSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function countFormErrors(errors: Record<string, string>): number {
   return Object.keys(errors).length;

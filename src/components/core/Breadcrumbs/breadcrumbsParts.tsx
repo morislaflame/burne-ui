@@ -13,7 +13,7 @@ import {
   BREADCRUMBS_ELLIPSIS_POPOVER_ARIA_LABEL,
   ellipsisTriggerAriaLabel,
 } from "./breadcrumbsA11y";
-import { mergeBreadcrumbSlotClass, breadcrumbListItemKey } from "./breadcrumbsAPI";
+import { breadcrumbListItemKey } from "./breadcrumbsAPI";
 import { useBreadcrumbInteractiveMotion } from "./breadcrumbsAnimations";
 import {
   BreadcrumbsClassNamesProvider,
@@ -49,6 +49,8 @@ import type {
   InteractiveCrumbProps,
 } from "./breadcrumbsTypes";
 
+import { cn } from "@/utils/cn";
+
 export function BreadcrumbsItem(_props: BreadcrumbsItemProps) {
   return null;
 }
@@ -81,7 +83,7 @@ function BreadcrumbsPiecesList({ pieces, className, ...rest }, ref) {
   return (
     <ol
       ref={ref}
-      className={breadcrumbsListClass(mergeBreadcrumbSlotClass("", slotClassNames.list, className))}
+      className={breadcrumbsListClass(cn("", slotClassNames.list, className))}
       {...rest}
     >
       {pieces.map((piece, idx) => (
@@ -125,13 +127,13 @@ export function BreadcrumbsSeparator({
   return (
     <span
       className={breadcrumbsSeparatorClass(
-        mergeBreadcrumbSlotClass("", slotClassNames.separatorWrapper, className),
+        cn("", slotClassNames.separatorWrapper, className),
       )}
       {...rest}
     >
       <IoChevronForward
         className={breadcrumbChevronClass(
-          mergeBreadcrumbSlotClass("", slotClassNames.separator, iconClassName),
+          cn("", slotClassNames.separator, iconClassName),
         )}
         aria-hidden
       />
@@ -152,7 +154,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
         variant="small"
         aria-current="page"
         className={breadcrumbCurrentClass(
-          mergeBreadcrumbSlotClass("", slotClassNames.current, item.className),
+          cn("", slotClassNames.current, item.className),
         )}
       >
         {item.label}
@@ -166,7 +168,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
         href={item.href}
         onClick={item.onClick}
         className={slotClassNames.linkWrapper}
-        innerClassName={mergeBreadcrumbSlotClass("", slotClassNames.link, item.className)}
+        innerClassName={cn("", slotClassNames.link, item.className)}
         textClassName={slotClassNames.linkText}
       >
         {item.label}
@@ -179,7 +181,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
       as="span"
       variant="small"
       className={breadcrumbStaticClass(
-        mergeBreadcrumbSlotClass("", slotClassNames.static, item.className),
+        cn("", slotClassNames.static, item.className),
       )}
     >
       {item.label}
@@ -309,7 +311,7 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
               key={itemKey}
               item={item}
               className={breadcrumbsDropdownItemClass(
-                mergeBreadcrumbSlotClass("", slotClassNames.dropdownItem, item.className),
+                cn("", slotClassNames.dropdownItem, item.className),
               )}
             />
           );

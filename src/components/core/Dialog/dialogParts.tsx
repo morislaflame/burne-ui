@@ -28,7 +28,7 @@ import {
 } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { DIALOG_CLOSE_DEFAULT_ARIA_LABEL } from "./dialogA11y";
-import { injectFooterButtonSize, mergeDialogSlotClass } from "./dialogAPI";
+import { injectFooterButtonSize } from "./dialogAPI";
 import { useDialogModalMotion } from "./dialogAnimations";
 import { useDialog, useDialogClassNames } from "./dialogContext";
 import {
@@ -60,13 +60,15 @@ import type {
   DialogTriggerProps,
 } from "./dialogTypes";
 
+import { cn } from "@/utils/cn";
+
 export function DialogContent({ className, ...rest }: DialogContentProps) {
   const slotClassNames = useDialogClassNames();
 
   return (
     <div
       className={dialogContentClass(
-        mergeDialogSlotClass(slotClassNames.content, className),
+        cn(slotClassNames.content, className),
       )}
       {...rest}
     />
@@ -81,7 +83,7 @@ export function DialogHeader({ className, ...rest }: DialogHeaderProps) {
 
   return (
     <div
-      className={mergeDialogSlotClass(
+      className={cn(
         DIALOG_HEADER_CLASS,
         sizePreset.headerGap,
         sizePreset.headerPadding,
@@ -106,7 +108,7 @@ export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
         as="h2"
         variant={sizePreset.titleVariant}
         id={id ?? titleId}
-        className={mergeDialogSlotClass(
+        className={cn(
           DIALOG_TITLE_CLASS,
           slotClassNames.title,
           className,
@@ -137,7 +139,7 @@ export function DialogDescription({
       as="p"
       variant={sizePreset.descVariant}
       id={id ?? descriptionId}
-      className={mergeDialogSlotClass(
+      className={cn(
         sizePreset.descClassName,
         slotClassNames.description,
         className,
@@ -158,7 +160,7 @@ export function DialogHeadingBlock({
 
   return (
     <div
-      className={mergeDialogSlotClass(
+      className={cn(
         DIALOG_HEADING_BLOCK_CLASS,
         sizePreset.headingBlockGap,
         slotClassNames.headingBlock,
@@ -189,7 +191,7 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
         ref={ref}
         variant="secondary"
         aria-label={ariaLabel}
-        className={mergeDialogSlotClass(
+        className={cn(
           DIALOG_CLOSE_CLASS,
           slotClassNames.close,
           className,
@@ -214,7 +216,7 @@ export function DialogBody({ className, ...rest }: DialogBodyProps) {
     <div
       className={dialogBodyClass(
         sizePreset.bodyPadding,
-        mergeDialogSlotClass(slotClassNames.body, className),
+        cn(slotClassNames.body, className),
       )}
       {...rest}
     />
@@ -233,7 +235,7 @@ export function DialogFooter({ className, children, ...rest }: DialogFooterProps
 
   return (
     <div
-      className={mergeDialogSlotClass(
+      className={cn(
         DIALOG_FOOTER_CLASS,
         sizePreset.footerPadding,
         slotClassNames.footer,
@@ -425,7 +427,7 @@ export function DialogPortalShell({
       onCancel={onDialogCancel}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
-      className={mergeDialogSlotClass(DIALOG_NATIVE_CLASS, slotClassNames.dialog)}
+      className={cn(DIALOG_NATIVE_CLASS, slotClassNames.dialog)}
     >
       <div
         ref={overlayRef}
@@ -454,7 +456,7 @@ export function DialogPortalShell({
           >
             <div
               className={dialogContentClass(
-                mergeDialogSlotClass(
+                cn(
                   DIALOG_GLOSS_CONTENT_CLASS,
                   slotClassNames.glossContent,
                 ),

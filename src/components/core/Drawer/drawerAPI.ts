@@ -1,14 +1,7 @@
-import type { ClassValue } from "clsx";
 import { Children, isValidElement, type ReactNode } from "react";
 
 import type { GsapMotionVars } from "@/components/core/utils/modalSurfaceMotion";
-import { cn } from "@/utils/cn";
-
 import type { DrawerBackdropProps, DrawerPanelSegment, DrawerPlacement } from "./drawerTypes";
-
-export function mergeDrawerSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function readDrawerPartDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;

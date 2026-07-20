@@ -15,11 +15,13 @@ import {
 import { Text } from "@/components/core/Text";
 
 import { tabsPanelId, tabsTabA11y, tabsTabId } from "./tabsA11y";
-import { mergeRefs, mergeTabsSlotClass, tabTextVariant } from "./tabsAPI";
+import { mergeRefs, tabTextVariant } from "./tabsAPI";
 import { useTabPointerMotion } from "./tabsAnimations";
 import { useTabsClassNames, useTabsContext } from "./tabsContext";
 import { TABS_TAB_AS_CHILD_CLASS, tabsTabClass, tabsTabTextClass } from "./tabsStyles";
 import type { TabsTabProps } from "./tabsTypes";
+
+import { cn } from "@/utils/cn";
 
 export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
   {
@@ -119,7 +121,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       tabIndex: a11y.tabIndex,
       disabled: isDisabled || child.props.disabled,
       ref: mergeRefs(setRefs, child.props.ref),
-      className: mergeTabsSlotClass(child.props.className, TABS_TAB_AS_CHILD_CLASS, className),
+      className: cn(child.props.className, TABS_TAB_AS_CHILD_CLASS, className),
       onClick: (e: MouseEvent<HTMLButtonElement>) => {
         child.props.onClick?.(e);
         handleClick(e);

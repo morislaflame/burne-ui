@@ -1,4 +1,3 @@
-import type { ClassValue } from "clsx";
 import type { ReactNode, Ref, RefObject } from "react";
 
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
@@ -6,10 +5,6 @@ import { partitionOptionListItemChildren } from "@/components/core/utils/optionL
 import { cn } from "@/utils/cn";
 
 import type { DropdownClassNames, DropdownItemIndicatorClassNames } from "./dropdownTypes";
-
-export function mergeDropdownSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function resolveDropdownItemIndicatorClassNames({
   slotClassNames,
@@ -19,17 +14,17 @@ export function resolveDropdownItemIndicatorClassNames({
   classNames?: DropdownItemIndicatorClassNames;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeDropdownSlotClass(
+    shell: cn(
       slotClassNames.itemIndicatorShell,
       classNames?.shell,
       classNames?.itemIndicatorShell,
     ),
-    fill: mergeDropdownSlotClass(
+    fill: cn(
       slotClassNames.itemIndicatorFill,
       classNames?.fill,
       classNames?.itemIndicatorFill,
     ),
-    mark: mergeDropdownSlotClass(
+    mark: cn(
       slotClassNames.itemIndicatorMark,
       classNames?.mark,
       classNames?.itemIndicatorMark,

@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { injectSwitchControlProps, mergeSwitchSlotClass } from "./switchAPI";
+import { injectSwitchControlProps } from "./switchAPI";
 import { useSwitchTextMotion } from "./switchAnimations";
 import { SwitchClassNamesProvider, SwitchFieldProvider } from "./switchContext";
 import {
@@ -18,6 +18,8 @@ import {
 import { SWITCH_ROOT_DISABLED_CLASS, switchRootGridClass } from "./switchStyles";
 import type { SwitchControlProps, SwitchRootProps } from "./switchTypes";
 import { useSwitchRootState } from "./useSwitchRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   SwitchClassNames,
@@ -75,7 +77,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchRootProps & Partial
       onPointerDown,
     });
 
-    const gridClass = mergeSwitchSlotClass(
+    const gridClass = cn(
       switchRootGridClass({
         hasTextColumn: state.hasTextColumn,
         secondaryLines: state.secondaryLines,

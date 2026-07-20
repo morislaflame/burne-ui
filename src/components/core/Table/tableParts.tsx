@@ -8,7 +8,6 @@ import {
 
 import { columnAriaSort, rowAriaSelected } from "./tableA11y";
 import {
-  mergeTableSlotClass,
   resolveColumnSortDirection,
   resolveNextSortDescriptor,
   TONED_ROW_DEFAULT_TONE,
@@ -48,6 +47,8 @@ import type {
 } from "./tableTypes";
 import { useTableContentState } from "./useTableContentState";
 
+import { cn } from "@/utils/cn";
+
 export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
   function TableScrollContainer({ className, tabIndex = 0, ...rest }, ref) {
     const slotClassNames = useTableClassNames();
@@ -56,7 +57,7 @@ export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContai
       <div
         ref={ref}
         tabIndex={tabIndex}
-        className={mergeTableSlotClass(
+        className={cn(
           TABLE_SCROLL_CONTAINER_CLASS,
           slotClassNames.scrollContainer,
           className,
@@ -126,11 +127,11 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
     return (
       <thead
         ref={ref}
-        className={mergeTableSlotClass(slotClassNames.header, className)}
+        className={cn(slotClassNames.header, className)}
         {...rest}
       >
         <tr
-          className={mergeTableSlotClass(
+          className={cn(
             TABLE_HEADER_ROW_VARIANT_CLASS[variant],
             slotClassNames.headerRow,
           )}
@@ -193,13 +194,13 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
         {...rest}
       >
         <span
-          className={mergeTableSlotClass(
+          className={cn(
             TABLE_COLUMN_INNER_CLASS,
             slotClassNames.columnInner,
           )}
         >
           <span
-            className={mergeTableSlotClass(
+            className={cn(
               TABLE_COLUMN_LABEL_CLASS,
               slotClassNames.columnLabel,
             )}
@@ -227,7 +228,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
           <tr>
             <td
               colSpan={9999}
-              className={mergeTableSlotClass(
+              className={cn(
                 TABLE_BODY_EMPTY_CELL_CLASS,
                 slotClassNames.emptyCell,
               )}
@@ -246,7 +247,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
     return (
       <tbody
         ref={ref}
-        className={mergeTableSlotClass(slotClassNames.body, className)}
+        className={cn(slotClassNames.body, className)}
         {...rest}
       >
         {content}
@@ -360,7 +361,7 @@ export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(function
   return (
     <div
       ref={ref}
-      className={mergeTableSlotClass(TABLE_FOOTER_CLASS, slotClassNames.footer, className)}
+      className={cn(TABLE_FOOTER_CLASS, slotClassNames.footer, className)}
       {...rest}
     />
   );

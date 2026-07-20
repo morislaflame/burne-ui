@@ -2,7 +2,6 @@ import type { TextVariant } from "@/components/core/Text";
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { TOOLTIP_ARROW_SHELL_PAD } from "@/components/core/Tooltip/tooltipPosition";
 
-import { mergePopoverSlotClass } from "./popoverAPI";
 import type {
   PopoverContentGap,
   PopoverHintVariantMap,
@@ -10,6 +9,8 @@ import type {
   PopoverSize,
   PopoverTitleVariantMap,
 } from "./popoverTypes";
+
+import { cn } from "@/utils/cn";
 
 export const POPOVER_DEFAULT_OFFSET = 6;
 
@@ -103,7 +104,7 @@ export function popoverTriggerClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePopoverSlotClass(POPOVER_TRIGGER_CLASS, rootSlot, slotClass, className);
+  return cn(POPOVER_TRIGGER_CLASS, rootSlot, slotClass, className);
 }
 
 export function popoverContentClass({
@@ -117,7 +118,7 @@ export function popoverContentClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePopoverSlotClass(
+  return cn(
     POPOVER_CONTENT_CLASS,
     showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
     slotClass,
@@ -136,7 +137,7 @@ export function popoverGlossPanelClass({
   contentGap: PopoverContentGap;
   slotClass?: string;
 }): string {
-  return mergePopoverSlotClass(
+  return cn(
     POPOVER_GLOSS_PANEL_CLASS,
     GLOSS_INTERACTIVE_MOTION_CLASS,
     !unstyled && POPOVER_MIN_WIDTH_CLASS[size],
@@ -148,7 +149,7 @@ export function popoverGlossPanelClass({
 }
 
 export function popoverGlossContentClass(slotClass?: string): string {
-  return mergePopoverSlotClass(POPOVER_GLOSS_CONTENT_CLASS, slotClass);
+  return cn(POPOVER_GLOSS_CONTENT_CLASS, slotClass);
 }
 
 export function popoverDefaultPanelClass({
@@ -162,7 +163,7 @@ export function popoverDefaultPanelClass({
   contentGap: PopoverContentGap;
   slotClass?: string;
 }): string {
-  return mergePopoverSlotClass(
+  return cn(
     POPOVER_DEFAULT_PANEL_CLASS,
     !unstyled && POPOVER_MIN_WIDTH_CLASS[size],
     !unstyled && POPOVER_MAX_WIDTH_CLASS[size],
@@ -184,7 +185,7 @@ export function popoverArrowClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePopoverSlotClass(
+  return cn(
     POPOVER_ARROW_BASE_CLASS,
     isGloss ? POPOVER_ARROW_GLOSS_CLASS : POPOVER_ARROW_DEFAULT_CLASS,
     arrowSideClass,
@@ -200,7 +201,7 @@ export function popoverHeaderClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePopoverSlotClass(POPOVER_HEADER_CLASS, slotClass, className);
+  return cn(POPOVER_HEADER_CLASS, slotClass, className);
 }
 
 export function popoverLabelClass({
@@ -210,7 +211,7 @@ export function popoverLabelClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePopoverSlotClass(POPOVER_LABEL_CLASS, slotClass, className);
+  return cn(POPOVER_LABEL_CLASS, slotClass, className);
 }
 
 export function popoverBodyClass({
@@ -220,7 +221,7 @@ export function popoverBodyClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePopoverSlotClass(POPOVER_BODY_CLASS, slotClass, className);
+  return cn(POPOVER_BODY_CLASS, slotClass, className);
 }
 
 export function popoverTitleVariant(size: PopoverSize): TextVariant {

@@ -1,7 +1,6 @@
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import { mergeTextAreaSlotClass } from "./textAreaAPI";
 import {
   TextAreaClassNamesProvider,
   TextAreaFieldProvider,
@@ -11,6 +10,8 @@ import {
 } from "./textAreaParts";
 import type { TextAreaSimpleProps } from "./textAreaTypes";
 import { useTextAreaRootState } from "./useTextAreaRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   TextAreaClassNames,
@@ -69,7 +70,7 @@ export function TextAreaRoot({
     <TextAreaFieldProvider value={state.fieldCtx}>
       <TextAreaClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot className={mergeTextAreaSlotClass(classNames?.root, className)}>
+          <FieldRoot className={cn(classNames?.root, className)}>
             {body}
           </FieldRoot>
         </FieldLabelContext.Provider>

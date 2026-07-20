@@ -1,8 +1,9 @@
 import { modalOverlayEnterStyle } from "@/components/core/utils/modalSurfaceMotion";
 
-import { mergeDialogSlotClass } from "./dialogAPI";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 import type { DialogSize, DialogSizePreset, DialogVariant } from "./dialogTypes";
+
+import { cn } from "@/utils/cn";
 
 export const DIALOG_CONTENT_CLASS =
   "flex min-h-0 flex-1 flex-col gap-mid text-left";
@@ -112,7 +113,7 @@ export function dialogOverlayEnterStyle() {
 }
 
 export function dialogOverlayClass(lightUi: boolean, slotClass?: string): string {
-  return mergeDialogSlotClass(
+  return cn(
     "absolute inset-0",
     lightUi ? DIALOG_OVERLAY_LIGHT_CLASS : DIALOG_OVERLAY_DARK_CLASS,
     slotClass,
@@ -131,7 +132,7 @@ export function dialogPanelClass({
   slotClass?: string;
 }): string {
   const isGloss = variant === "gloss";
-  return mergeDialogSlotClass(
+  return cn(
     DIALOG_PANEL_BASE_CLASS,
     sizePreset.panelMax,
     !isGloss && DIALOG_PANEL_SURFACE_CLASS,
@@ -142,11 +143,11 @@ export function dialogPanelClass({
 }
 
 export function dialogGlossPanelClass(maxHeight: string, slotClass?: string): string {
-  return mergeDialogSlotClass(DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
+  return cn(DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
 }
 
 export function dialogContentClass(slotClass?: string, gloss = false): string {
-  return mergeDialogSlotClass(
+  return cn(
     DIALOG_CONTENT_CLASS,
     gloss && DIALOG_GLOSS_CONTENT_CLASS,
     slotClass,
@@ -154,7 +155,7 @@ export function dialogContentClass(slotClass?: string, gloss = false): string {
 }
 
 export function dialogBodyClass(bodyPadding: string, slotClass?: string): string {
-  return mergeDialogSlotClass(DIALOG_BODY_BASE_CLASS, bodyPadding, slotClass);
+  return cn(DIALOG_BODY_BASE_CLASS, bodyPadding, slotClass);
 }
 
 export function footerButtonSizeForDialog(dialogSize: DialogSize): ButtonSize {

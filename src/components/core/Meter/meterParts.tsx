@@ -4,7 +4,6 @@ import { FieldError, FieldHint } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
-import { mergeMeterSlotClass } from "./meterAPI";
 import { useMeterFillAnimation } from "./meterAnimations";
 import {
   useMeterClassNames,
@@ -25,6 +24,8 @@ import type {
   MeterValueProps,
 } from "./meterTypes";
 import { useMeterTrackState } from "./useMeterTrackState";
+
+import { cn } from "@/utils/cn";
 
 export function MeterSimpleBody({
   label,
@@ -68,7 +69,7 @@ export function MeterLabel({ className, classNames, ...rest }: LabelProps) {
       className={className}
       classNames={{
         ...classNames,
-        root: mergeMeterSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -133,7 +134,7 @@ export function MeterHint({
   return (
     <FieldHint
       id={idProp ?? ctx.hintId}
-      className={mergeMeterSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -155,7 +156,7 @@ export function MeterError({
   return (
     <FieldError
       id={idProp ?? ctx.errorId}
-      className={mergeMeterSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}

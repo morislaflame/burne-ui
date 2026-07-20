@@ -2,7 +2,6 @@ import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 
-import { mergeSelectSlotClass } from "./selectAPI";
 import {
   SelectClassNamesProvider,
   SelectFieldProvider,
@@ -22,6 +21,8 @@ import type { SelectRootProps } from "./selectTypes";
 import { useSelectRootState } from "./useSelectRootState";
 
 import "../utils/glossInteractive.css";
+
+import { cn } from "@/utils/cn";
 
 export type {
   SelectRootProps,
@@ -93,7 +94,7 @@ export function SelectRoot({
         <SelectClassNamesProvider classNames={classNames}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <FieldRoot
-              className={mergeSelectSlotClass(className, classNames?.root)}
+              className={cn(className, classNames?.root)}
               {...rest}
             >
               {state.isCompound ? (

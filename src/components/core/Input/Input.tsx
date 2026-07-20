@@ -4,7 +4,6 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import { mergeInputSlotClass } from "./inputAPI";
 import {
   InputClassNamesProvider,
   InputFieldProvider,
@@ -12,6 +11,8 @@ import {
 import { InputSimpleBody } from "./inputParts";
 import type { InputSimpleProps } from "./inputTypes";
 import { useInputRootState } from "./useInputRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   InputClassNames,
@@ -77,7 +78,7 @@ export function InputRoot({
     <InputFieldProvider value={state.fieldCtx}>
       <InputClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot className={mergeInputSlotClass(classNames?.root, className)}>
+          <FieldRoot className={cn(classNames?.root, className)}>
             {body}
           </FieldRoot>
         </FieldLabelContext.Provider>

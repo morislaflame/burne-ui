@@ -1,14 +1,6 @@
 import { useCallback, useState } from "react";
 
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type { TimeFieldFormat, TimeFieldHMS, TimeFieldSegId } from "./timeFieldTypes";
-
-export function mergeTimeFieldSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export const TIME_FIELD_SEG_MAX: Record<TimeFieldSegId, number> = { h: 23, m: 59, s: 59 };
 

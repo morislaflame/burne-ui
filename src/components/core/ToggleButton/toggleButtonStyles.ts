@@ -10,8 +10,9 @@ import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotio
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 
-import { mergeToggleButtonSlotClass } from "./toggleButtonAPI";
 import type { ToggleButtonSize, ToggleButtonVariant } from "./toggleButtonTypes";
+
+import { cn } from "@/utils/cn";
 
 const TOGGLE_BUTTON_VARIANT_IDLE: Record<ToggleButtonVariant, string> = {
   default: "border-token bg-surface text-foreground",
@@ -55,11 +56,11 @@ export function toggleButtonLabelClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeToggleButtonSlotClass(TOGGLE_BUTTON_LABEL_LAYER_CLASS, slotClass, className);
+  return cn(TOGGLE_BUTTON_LABEL_LAYER_CLASS, slotClass, className);
 }
 
 export function toggleButtonTextClass(slotClass?: string, className?: string): string {
-  return mergeToggleButtonSlotClass(TOGGLE_BUTTON_TEXT_CLASS, slotClass, className);
+  return cn(TOGGLE_BUTTON_TEXT_CLASS, slotClass, className);
 }
 
 export function toggleButtonVariantIdleClass(variant: ToggleButtonVariant): string {
@@ -77,7 +78,7 @@ export function toggleButtonFillClass({
   roundingClass: string;
   slotClass?: string;
 }) {
-  return mergeToggleButtonSlotClass(
+  return cn(
     TOGGLE_BUTTON_FILL_BASE_CLASS,
     fillColor,
     SURFACE_COLOR_TRANSITION,
@@ -88,7 +89,7 @@ export function toggleButtonFillClass({
 }
 
 export function toggleButtonIconClass(size: ToggleButtonSize, slotClass?: string) {
-  return mergeToggleButtonSlotClass(
+  return cn(
     TOGGLE_BUTTON_ICON_SLOT_CLASS,
     CONTROL_SIZE_LAYOUT[size].icon,
     slotClass,
@@ -116,14 +117,14 @@ export function toggleButtonRootClass({
   const roundingClass = groupSegment ? buttonGroupRoundingClasses(groupSegment) : "rounded-base";
   const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
 
-  return mergeToggleButtonSlotClass(
+  return cn(
     TOGGLE_BUTTON_ROOT_BASE_CLASS,
     isGloss
-      ? mergeToggleButtonSlotClass(
+      ? cn(
           TOGGLE_BUTTON_GLOSS_CLASS,
           !groupSegment && GLOSS_INTERACTIVE_MOTION_CLASS,
         )
-      : mergeToggleButtonSlotClass(!groupSegment && SHADOW_LIFT_MOTION_CLASS),
+      : cn(!groupSegment && SHADOW_LIFT_MOTION_CLASS),
     !isGloss && !pressed && !disabled && hoverVariant(),
     !isGloss && toggleButtonVariantIdleClass(variant),
     pressed && TOGGLE_BUTTON_PRESSED_SURFACE_CLASS,
@@ -143,7 +144,7 @@ export function toggleButtonContentClass({
   groupSegment: ButtonGroupSegment | undefined;
   slotClass?: string;
 }) {
-  return mergeToggleButtonSlotClass(
+  return cn(
     TOGGLE_BUTTON_CONTENT_BASE_CLASS,
     groupSegment && TOGGLE_BUTTON_CONTENT_GROUP_MOTION_CLASS,
     slotClass,

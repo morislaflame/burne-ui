@@ -1,12 +1,13 @@
 import { forwardRef } from "react";
 
-import { mergeRadioSlotClass } from "./radioAPI";
 import { useRadioTextMotion } from "./radioAnimations";
 import { RadioClassNamesProvider, RadioFieldProvider } from "./radioContext";
 import { RadioSimpleBody } from "./radioParts";
 import { RADIO_ROOT_DISABLED_CLASS, radioGridClass } from "./radioStyles";
 import type { RadioRootProps } from "./radioTypes";
 import { useRadioRootState } from "./useRadioRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   RadioProps,
@@ -88,7 +89,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function R
     onPointerDown,
   });
 
-  const gridClass = mergeRadioSlotClass(
+  const gridClass = cn(
     radioGridClass(state.secondaryLines, state.sz.gridGap, className),
     state.isDisabled && RADIO_ROOT_DISABLED_CLASS,
     classNames?.root,

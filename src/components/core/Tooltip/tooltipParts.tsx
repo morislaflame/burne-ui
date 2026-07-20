@@ -37,7 +37,6 @@ import {
   isSemanticTooltipVariant,
   isTooltipArrowElement,
   mergeRefs,
-  mergeTooltipSlotClass,
   resolveTooltipGridSlots,
 } from "./tooltipAPI";
 import { useTooltipPortalMotion } from "./tooltipAnimations";
@@ -81,6 +80,8 @@ import type {
   TooltipVariant,
 } from "./tooltipTypes";
 
+import { cn } from "@/utils/cn";
+
 function resolveTooltipIndicatorInner({
   variant,
   size,
@@ -104,7 +105,7 @@ function resolveTooltipIndicatorInner({
   return (
     <Icon
       aria-hidden
-      className={mergeTooltipSlotClass(
+      className={cn(
         "shrink-0",
         TOOLTIP_ICON_SIZE[size],
         TOOLTIP_ICON_TEXT_CLASS[variant],
@@ -174,7 +175,7 @@ export function TooltipIndicator({
 
   return (
     <span
-      className={mergeTooltipSlotClass(
+      className={cn(
         TOOLTIP_INDICATOR_BASE_CLASS,
         TOOLTIP_ICON_SLOT_SVG[size],
         TOOLTIP_ICON_TEXT_CLASS[variant],
@@ -202,7 +203,7 @@ export function TooltipMessage({ className, ...rest }: TooltipMessageProps) {
   const slotClassNames = useTooltipClassNames();
   return (
     <div
-      className={mergeTooltipSlotClass(
+      className={cn(
         TOOLTIP_COMPOUND_CONTENTS_CLASS,
         slotClassNames.message,
         className,
@@ -222,7 +223,7 @@ export function TooltipTitle({ className, ...rest }: TooltipTitleProps) {
     <Text
       as="div"
       variant={TOOLTIP_CONTENT_VARIANT[size]}
-      className={mergeTooltipSlotClass(
+      className={cn(
         messageBannerTitleCellClass(gridSlots),
         slotClassNames.title,
         className,
@@ -242,7 +243,7 @@ export function TooltipDescription({ className, ...rest }: TooltipDescriptionPro
     <Text
       as="div"
       variant={TOOLTIP_DESC_VARIANT[size]}
-      className={mergeTooltipSlotClass(
+      className={cn(
         TOOLTIP_DESCRIPTION_MUTED_CLASS,
         messageBannerDescriptionCellClass(gridSlots),
         slotClassNames.description,
@@ -388,7 +389,7 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
           onFocus,
           onBlur,
         }),
-        className: mergeTooltipSlotClass(
+        className: cn(
           slotClassNames.root,
           slotClassNames.trigger,
           child.props.className,
@@ -402,7 +403,7 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
     return (
       <span
         ref={mergedRef}
-        className={mergeTooltipSlotClass(
+        className={cn(
           TOOLTIP_TRIGGER_BASE_CLASS,
           slotClassNames.root,
           slotClassNames.trigger,

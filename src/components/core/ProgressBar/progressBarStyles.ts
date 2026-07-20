@@ -3,8 +3,9 @@ import type { CSSProperties } from "react";
 import { sliderThicknessToCss } from "@/components/core/Slider";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
 
-import { mergeProgressBarSlotClass } from "./progressBarAPI";
 import type { ProgressBarOrientation, ProgressBarSize } from "./progressBarTypes";
+
+import { cn } from "@/utils/cn";
 
 export const PROGRESS_BAR_RAIL_HEIGHT_CLASS: Record<ProgressBarSize, string> = {
   small: "h-small",
@@ -68,7 +69,7 @@ export function progressBarRootClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeProgressBarSlotClass(
+  return cn(
     scaleFieldRootClassName(orientation),
     slotClass,
     className,
@@ -84,7 +85,7 @@ export function progressBarHeaderClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeProgressBarSlotClass(
+  return cn(
     PROGRESS_BAR_HEADER_BASE_CLASS,
     orientation === "horizontal"
       ? PROGRESS_BAR_HEADER_HORIZONTAL_CLASS
@@ -101,7 +102,7 @@ export function progressBarValueClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeProgressBarSlotClass(PROGRESS_BAR_VALUE_CLASS, slotClass, className);
+  return cn(PROGRESS_BAR_VALUE_CLASS, slotClass, className);
 }
 
 export function progressBarTrackClass({
@@ -117,7 +118,7 @@ export function progressBarTrackClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeProgressBarSlotClass(
+  return cn(
     PROGRESS_BAR_TRACK_BASE_CLASS,
     isHorizontal
       ? PROGRESS_BAR_TRACK_HORIZONTAL_CLASS
@@ -140,7 +141,7 @@ export function progressBarFillClass({
   hasCustomColor: boolean;
   slotClass?: string;
 }): string {
-  return mergeProgressBarSlotClass(
+  return cn(
     PROGRESS_BAR_FILL_BASE_CLASS,
     isHorizontal
       ? PROGRESS_BAR_FILL_HORIZONTAL_CLASS
@@ -161,7 +162,7 @@ export function progressBarIndeterminateFillClass({
   reduceMotion: boolean;
   slotClass?: string;
 }): string {
-  return mergeProgressBarSlotClass(
+  return cn(
     PROGRESS_BAR_INDETERMINATE_FILL_BASE_CLASS,
     isHorizontal
       ? PROGRESS_BAR_INDETERMINATE_FILL_HORIZONTAL_CLASS

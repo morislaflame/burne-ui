@@ -5,7 +5,6 @@ import {
   useCollapsibleShellRef,
 } from "@/components/core/utils/useCollapsibleHeight";
 
-import { mergeDisclosureSlotClass } from "./disclosureAPI";
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
 import {
   DISCLOSURE_CONTENT_SHELL_CLASS,
@@ -15,6 +14,8 @@ import {
   disclosureGlossContentClass,
 } from "./disclosureStyles";
 import type { DisclosureContentProps } from "./disclosureTypes";
+
+import { cn } from "@/utils/cn";
 
 export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentProps>(
   function DisclosureContent({ children, className, ...rest }, ref) {
@@ -50,14 +51,14 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
       <div
         ref={setShellRef}
         aria-hidden={!open}
-        className={mergeDisclosureSlotClass(
+        className={cn(
           DISCLOSURE_CONTENT_SHELL_CLASS,
           slotClassNames.contentShell,
         )}
       >
         <div
           ref={innerRef}
-          className={mergeDisclosureSlotClass(
+          className={cn(
             contentWrapCls,
             slotClassNames.contentWrap,
           )}
@@ -66,14 +67,14 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
             <section
               id={panelId}
               aria-labelledby={triggerId}
-              className={mergeDisclosureSlotClass(
+              className={cn(
                 slotClassNames.contentPanel,
                 className,
               )}
               {...rest}
             >
               <div
-                className={mergeDisclosureSlotClass(
+                className={cn(
                   DISCLOSURE_GLOSS_PANEL_CLASS,
                   slotClassNames.glossPanel,
                 )}

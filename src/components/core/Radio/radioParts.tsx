@@ -7,7 +7,7 @@ import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 import { radioInputAriaLabel } from "./radioA11y";
-import { mergeRadioSlotClass, radioVariantToIndicator, resolveRadioIndicatorClassNames } from "./radioAPI";
+import { radioVariantToIndicator, resolveRadioIndicatorClassNames } from "./radioAPI";
 import { useRadioControlTrackAnimation } from "./radioAnimations";
 import { useRadioClassNames, useRadioFieldContext } from "./radioContext";
 import {
@@ -42,6 +42,8 @@ import type {
   RadioSize,
 } from "./radioTypes";
 
+import { cn } from "@/utils/cn";
+
 export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
   function RadioControl({ className, children, ...rest }, ref) {
     const ctx = useRadioFieldContext();
@@ -51,7 +53,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
     return (
       <span
         ref={ref}
-        className={mergeRadioSlotClass(
+        className={cn(
           RADIO_CONTROL_CLASS,
           radioControlCellClass(),
           slotClassNames.control,
@@ -62,7 +64,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
         <input
           id={ctx.inputId}
           type="radio"
-          className={mergeRadioSlotClass(
+          className={cn(
             RADIO_INPUT_VISUALLY_HIDDEN_CLASS,
             slotClassNames.input,
           )}
@@ -87,7 +89,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
         />
         <span
           ref={trackRef}
-          className={mergeRadioSlotClass(
+          className={cn(
             RADIO_CONTROL_TRACK_CLASS,
             slotClassNames.controlTrack,
           )}
@@ -139,7 +141,7 @@ export const RadioContent = forwardRef<HTMLDivElement, RadioContentProps>(
     return (
       <div
         ref={ref}
-        className={mergeRadioSlotClass(
+        className={cn(
           RADIO_CONTENT_PASS_THROUGH_CLASS,
           ctx.isCompound && RADIO_CONTENT_COMPOUND_CLASS,
           slotClassNames.content,
@@ -174,7 +176,7 @@ export function RadioLabel({
           field.textMotionRef.current = node;
         }
       }}
-      className={mergeRadioSlotClass(
+      className={cn(
         RADIO_LABEL_CLASS,
         field.isCompound && radioLabelCellClass(),
         field.isCompound &&
@@ -190,7 +192,7 @@ export function RadioLabel({
         as="span"
         variant={sz.title}
         inheritColor
-        className={mergeRadioSlotClass(
+        className={cn(
           field.isDisabled && RADIO_LABEL_TEXT_DISABLED_CLASS,
           !field.isDisabled && field.danger && RADIO_LABEL_TEXT_DANGER_CLASS,
           slotClassNames.labelText,
@@ -200,7 +202,7 @@ export function RadioLabel({
       </Text>
       {isRequired ? (
         <span
-          className={mergeRadioSlotClass(
+          className={cn(
             RADIO_REQUIRED_MARK_CLASS,
             slotClassNames.requiredMark,
           )}
@@ -224,7 +226,7 @@ export function RadioHint({ children, className, variant, ...rest }: RadioHintPr
       as="span"
       id={ctx.hintId}
       variant={variant ?? RADIO_SIZE_LAYOUT[ctx.size].desc}
-      className={mergeRadioSlotClass(
+      className={cn(
         ctx.isCompound && radioSecondaryCellClass(2),
         ctx.isDisabled && RADIO_HINT_DISABLED_CLASS,
         slotClassNames.hint,
@@ -248,7 +250,7 @@ export function RadioError({ children, className, ...rest }: RadioErrorProps) {
       as="span"
       id={ctx.errorId}
       variant={RADIO_SIZE_LAYOUT[ctx.size].desc}
-      className={mergeRadioSlotClass(
+      className={cn(
         ctx.isCompound && radioSecondaryCellClass(radioErrorRow(ctx.hasCompoundHint)),
         ctx.isDisabled && RADIO_ERROR_DISABLED_CLASS,
         slotClassNames.error,
@@ -298,7 +300,7 @@ export function RadioSimpleBody({
       <RadioControl />
       <span
         ref={textColRef}
-        className={mergeRadioSlotClass(
+        className={cn(
           radioLabelCellClass(),
           !secondaryLines && RADIO_SIMPLE_LABEL_WRAP_CLASS,
           slotClassNames.simpleLabelWrap,
@@ -309,7 +311,7 @@ export function RadioSimpleBody({
           as="span"
           variant={sz.title}
           inheritColor
-          className={mergeRadioSlotClass(
+          className={cn(
             RADIO_SIMPLE_LABEL_TEXT_CLASS,
             isDisabled && RADIO_LABEL_TEXT_DISABLED_CLASS,
             !isDisabled && danger && RADIO_LABEL_TEXT_DANGER_CLASS,
@@ -325,7 +327,7 @@ export function RadioSimpleBody({
           as="span"
           id={hintId}
           variant={sz.desc}
-          className={mergeRadioSlotClass(
+          className={cn(
             radioSecondaryCellClass(2),
             isDisabled && RADIO_HINT_DISABLED_CLASS,
             slotClassNames.hint,
@@ -339,7 +341,7 @@ export function RadioSimpleBody({
           as="span"
           id={errorId}
           variant={sz.desc}
-          className={mergeRadioSlotClass(
+          className={cn(
             radioSecondaryCellClass(radioErrorRow(hasHint)),
             isDisabled && RADIO_ERROR_DISABLED_CLASS,
             slotClassNames.error,

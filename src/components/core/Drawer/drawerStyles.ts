@@ -1,7 +1,8 @@
 import { modalOverlayEnterStyle } from "@/components/core/utils/modalSurfaceMotion";
 
-import { mergeDrawerSlotClass } from "./drawerAPI";
 import type { DrawerPlacement, DrawerSize, DrawerVariant } from "./drawerTypes";
+
+import { cn } from "@/utils/cn";
 
 const PANEL_PLACEMENT_CLASS: Record<DrawerPlacement, string> = {
   left: "left-0 top-0 h-full",
@@ -117,7 +118,7 @@ export function drawerOverlayClass({
   dismissable: boolean;
   slotClass?: string;
 }): string {
-  return mergeDrawerSlotClass(
+  return cn(
     "absolute inset-0",
     lightUi ? DRAWER_OVERLAY_LIGHT_CLASS : DRAWER_OVERLAY_DARK_CLASS,
     dismissable ? "cursor-pointer" : "cursor-default",
@@ -140,7 +141,7 @@ export function drawerPanelClass({
 }): string {
   const rounding = size !== "full" ? PANEL_ROUNDING_CLASS[placement] : undefined;
 
-  return mergeDrawerSlotClass(
+  return cn(
     DRAWER_PANEL_BASE_CLASS,
     variant !== "gloss" && DRAWER_PANEL_SURFACE_CLASS,
     PANEL_PLACEMENT_CLASS[placement],
@@ -162,7 +163,7 @@ export function drawerGlossPanelClass({
 }): string {
   const rounding = size !== "full" ? PANEL_ROUNDING_CLASS[placement] : undefined;
 
-  return mergeDrawerSlotClass(
+  return cn(
     DRAWER_GLOSS_PANEL_CLASS,
     rounding,
     slotClass,
@@ -170,15 +171,15 @@ export function drawerGlossPanelClass({
 }
 
 export function drawerContentClass(slotClass?: string): string {
-  return mergeDrawerSlotClass(DRAWER_CONTENT_CLASS, slotClass);
+  return cn(DRAWER_CONTENT_CLASS, slotClass);
 }
 
 export function drawerGlossContentWrapClass(slotClass?: string): string {
-  return mergeDrawerSlotClass(DRAWER_GLOSS_CONTENT_WRAP_CLASS, slotClass);
+  return cn(DRAWER_GLOSS_CONTENT_WRAP_CLASS, slotClass);
 }
 
 export function drawerBodyClass(slotClass?: string): string {
-  return mergeDrawerSlotClass(DRAWER_BODY_BASE_CLASS, DRAWER_BODY_PADDING, slotClass);
+  return cn(DRAWER_BODY_BASE_CLASS, DRAWER_BODY_PADDING, slotClass);
 }
 
 export function drawerHandleClass({
@@ -192,7 +193,7 @@ export function drawerHandleClass({
 }): string {
   const isHorizontal = placement === "left" || placement === "right";
 
-  return mergeDrawerSlotClass(
+  return cn(
     DRAWER_HANDLE_BASE_CLASS,
     isHorizontal ? "self-stretch w-xsmall" : "h-xsmall w-full",
     HANDLE_EDGE_PADDING_CLASS[placement],
@@ -210,7 +211,7 @@ export function drawerHandleGripClass({
 }): string {
   const isHorizontal = placement === "left" || placement === "right";
 
-  return mergeDrawerSlotClass(
+  return cn(
     DRAWER_HANDLE_GRIP_BASE_CLASS,
     isHorizontal ? DRAWER_HANDLE_GRIP_VERTICAL_CLASS : DRAWER_HANDLE_GRIP_HORIZONTAL_CLASS,
     slotClass,

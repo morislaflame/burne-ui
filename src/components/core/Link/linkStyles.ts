@@ -1,8 +1,9 @@
 import type { TextVariant } from "@/components/core/Text";
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 
-import { mergeLinkSlotClass } from "./linkAPI";
 import type { LinkSize } from "./linkTypes";
+
+import { cn } from "@/utils/cn";
 
 export const LINK_ANCHOR_CLASS =
   "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit text-primary focus-ring";
@@ -40,7 +41,7 @@ export function linkAnchorClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeLinkSlotClass(LINK_ANCHOR_CLASS, slotClass, className);
+  return cn(LINK_ANCHOR_CLASS, slotClass, className);
 }
 
 export function linkTextClass({
@@ -50,7 +51,7 @@ export function linkTextClass({
   underline: boolean;
   slotClass?: string;
 }): string {
-  return mergeLinkSlotClass(
+  return cn(
     LINK_TEXT_BASE_CLASS,
     underline && LINK_TEXT_UNDERLINE_CLASS,
     slotClass,
@@ -66,7 +67,7 @@ export function linkIconSlotClass({
   muted: boolean;
   slotClass?: string;
 }): string {
-  return mergeLinkSlotClass(
+  return cn(
     TEXT_COLOR_TRANSITION,
     LINK_ICON_SIZE_CLASS[size],
     "[&_svg]:size-full",
@@ -76,7 +77,7 @@ export function linkIconSlotClass({
 }
 
 export function linkDefaultIconClass(size: LinkSize): string {
-  return mergeLinkSlotClass(
+  return cn(
     LINK_ICON_SIZE_CLASS[size],
     LINK_DEFAULT_ICON_ROTATE_CLASS,
   );

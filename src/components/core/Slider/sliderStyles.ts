@@ -2,8 +2,10 @@ import type { CSSProperties } from "react";
 
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
 
-import { mergeSliderSlotClass, sliderThicknessToCss } from "./sliderAPI";
+import { sliderThicknessToCss } from "./sliderAPI";
 import type { SliderOrientation, SliderSize } from "./sliderTypes";
+
+import { cn } from "@/utils/cn";
 
 export const SLIDER_RAIL_HEIGHT: Record<SliderSize, string> = {
   small: "h-[var(--selection-indicator-small)] min-h-[var(--selection-indicator-small)]",
@@ -73,7 +75,7 @@ export function sliderRootClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeSliderSlotClass(scaleFieldRootClassName(orientation, className), slotClass);
+  return cn(scaleFieldRootClassName(orientation, className), slotClass);
 }
 
 export function sliderRailClass({
@@ -87,7 +89,7 @@ export function sliderRailClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeSliderSlotClass(
+  return cn(
     SLIDER_RAIL_LAYOUT_CLASS,
     !gloss && SLIDER_RAIL_DEFAULT_CLASS,
     disabled && SLIDER_RAIL_DISABLED_CLASS,
@@ -107,7 +109,7 @@ export function sliderFillClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeSliderSlotClass(
+  return cn(
     SLIDER_FILL_LAYOUT_CLASS,
     isHorizontal ? SLIDER_FILL_HORIZONTAL_CLASS : SLIDER_FILL_VERTICAL_CLASS,
     gloss ? SLIDER_FILL_GLOSS_CLASS : SLIDER_FILL_DEFAULT_CLASS,
@@ -132,7 +134,7 @@ export function sliderTrackHitAreaClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeSliderSlotClass(
+  return cn(
     SLIDER_TRACK_HIT_BASE_CLASS,
     isHorizontal ? SLIDER_TRACK_HIT_HORIZONTAL_CLASS : SLIDER_TRACK_HIT_VERTICAL_CLASS,
     thickness == null && (isHorizontal ? SLIDER_RAIL_HEIGHT[size] : SLIDER_RAIL_WIDTH[size]),
@@ -154,7 +156,7 @@ export function sliderThumbButtonClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeSliderSlotClass(
+  return cn(
     SLIDER_THUMB_BUTTON_BASE_CLASS,
     orientation === "horizontal"
       ? SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS

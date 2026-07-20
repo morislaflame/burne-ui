@@ -2,7 +2,6 @@ import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 
-import { mergeComboBoxSlotClass } from "./comboBoxAPI";
 import {
   ComboBoxClassNamesProvider,
   ComboBoxFieldProvider,
@@ -22,6 +21,8 @@ import type { ComboBoxRootProps } from "./comboBoxTypes";
 import { useComboBoxRootState } from "./useComboBoxRootState";
 
 import "../utils/glossInteractive.css";
+
+import { cn } from "@/utils/cn";
 
 export type {
   ComboBoxRootProps,
@@ -93,7 +94,7 @@ export function ComboBoxRoot({
         <ComboBoxClassNamesProvider classNames={classNames}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <FieldRoot
-              className={mergeComboBoxSlotClass(className, classNames?.root)}
+              className={cn(className, classNames?.root)}
               {...rest}
             >
               {state.isCompound ? (

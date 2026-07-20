@@ -1,4 +1,3 @@
-import type { ClassValue } from "clsx";
 import {
   Children,
   cloneElement,
@@ -15,14 +14,6 @@ import {
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import { Button, type ButtonProps, type ButtonSize, type ButtonStatus, type ButtonVariant } from "@/components/core/Button";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import { cn } from "@/utils/cn";
-
-
-export function mergeAlertDialogSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
-
-
 /** Primary action button in the modal footer in the window tone. */
 export function primaryButtonVariantForAlertTone(
   status: AlertStatus,

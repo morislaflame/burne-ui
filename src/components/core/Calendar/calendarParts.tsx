@@ -22,8 +22,7 @@ import {
   buildMonthCellModels,
   buildYearCellModels,
   formatCalendarHeaderTitle,
-  mergeCalendarSlotClass,
-} from "./calendarAPI";
+  } from "./calendarAPI";
 import { calendarNavBackLabel, calendarNavForwardLabel } from "./calendarA11y";
 import {
   useCalendarInteractiveCellAnimations,
@@ -103,7 +102,7 @@ function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
     <div
       ref={ref}
       aria-hidden
-      className={mergeCalendarSlotClass(
+      className={cn(
         cn(CALENDAR_RANGE_HALF_FILL_CLASS, calendarRangeHalfFillSideClass(side)),
         slotClassNames.rangeHalfFill,
       )}
@@ -129,7 +128,7 @@ function CalendarNavButton({ direction, size, onClick, disabled }: CalendarNavBu
       onPointerEnter={motion.handlePointerEnter}
       onPointerLeave={motion.handlePointerLeave}
       onPointerDown={motion.handlePointerDown}
-      className={mergeCalendarSlotClass(calendarNavButtonClass(size), navSlot)}
+      className={cn(calendarNavButtonClass(size), navSlot)}
     >
       {direction === "prev" ? (
         <IoChevronBack className={CALENDAR_NAV_ICON_CLASS} />
@@ -227,7 +226,7 @@ const CalendarInteractiveCellInner = forwardRef<
         size,
         rounded,
         { selected, disabled, isToday, isCurrent },
-        mergeCalendarSlotClass(slotClassNames.cell, kindSlot, className),
+        cn(slotClassNames.cell, kindSlot, className),
       )}
     >
       <span
@@ -235,20 +234,20 @@ const CalendarInteractiveCellInner = forwardRef<
         aria-hidden
         {...{ [SELECTION_FILL_DATA_ATTR]: "" }}
         data-pressed={selected ? "true" : "false"}
-        className={mergeCalendarSlotClass(CALENDAR_CELL_FILL_CLASS, slotClassNames.cellFill)}
+        className={cn(CALENDAR_CELL_FILL_CLASS, slotClassNames.cellFill)}
       />
       <Text
         variant={textVariant}
         as="span"
         inheritColor
-        className={mergeCalendarSlotClass(CALENDAR_CELL_TEXT_CLASS, slotClassNames.cellText)}
+        className={cn(CALENDAR_CELL_TEXT_CLASS, slotClassNames.cellText)}
       >
         {children}
       </Text>
       {isToday && !selected && (
         <span
           aria-hidden
-          className={mergeCalendarSlotClass(
+          className={cn(
             CALENDAR_CELL_TODAY_DOT_CLASS,
             slotClassNames.cellTodayDot,
           )}
@@ -327,18 +326,18 @@ function CalendarDaysView() {
 
   return (
     <div>
-      <div className={mergeCalendarSlotClass(CALENDAR_DAYS_WEEKDAY_GRID_CLASS, slotClassNames.weekdayGrid)}>
+      <div className={cn(CALENDAR_DAYS_WEEKDAY_GRID_CLASS, slotClassNames.weekdayGrid)}>
         {locale.weekDays.map((wd) => (
           <div
             key={wd}
-            className={mergeCalendarSlotClass(calendarWeekdayLabelClass(size), slotClassNames.weekdayCell)}
+            className={cn(calendarWeekdayLabelClass(size), slotClassNames.weekdayCell)}
           >
             {wd}
           </div>
         ))}
       </div>
 
-      <div className={mergeCalendarSlotClass(CALENDAR_DAYS_CELL_GRID_CLASS, slotClassNames.daysGrid)}>
+      <div className={cn(CALENDAR_DAYS_CELL_GRID_CLASS, slotClassNames.daysGrid)}>
         {cells.map((cell) => {
           if (cell.day === null) {
             return (
@@ -349,7 +348,7 @@ function CalendarDaysView() {
           return (
             <div
               key={cell.key}
-              className={mergeCalendarSlotClass(
+              className={cn(
                 CALENDAR_DAY_CELL_WRAPPER_CLASS,
                 slotClassNames.dayCellWrapper,
               )}
@@ -392,7 +391,7 @@ function CalendarMonthsView() {
   );
 
   return (
-    <div className={mergeCalendarSlotClass(calendarMonthsGridClass(size), slotClassNames.monthsGrid)}>
+    <div className={cn(calendarMonthsGridClass(size), slotClassNames.monthsGrid)}>
       {months.map((cell) => (
         <CalendarInteractiveCell
           key={cell.month}
@@ -420,7 +419,7 @@ function CalendarYearsView() {
   );
 
   return (
-    <div className={mergeCalendarSlotClass(calendarYearsGridClass(size), slotClassNames.yearsGrid)}>
+    <div className={cn(calendarYearsGridClass(size), slotClassNames.yearsGrid)}>
       {years.map((cell) => (
         <CalendarInteractiveCell
           key={cell.year}
@@ -452,7 +451,7 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
     return (
       <div
         ref={ref}
-        className={mergeCalendarSlotClass(CALENDAR_HEADER_CLASS, slotClassNames.header, className)}
+        className={cn(CALENDAR_HEADER_CLASS, slotClassNames.header, className)}
         {...rest}
       >
         <CalendarNavButton direction="prev" size={size} onClick={() => navigate(-1)} />
@@ -464,7 +463,7 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
             if (view === "days") setView("months");
             else if (view === "months") setView("years");
           }}
-          className={mergeCalendarSlotClass(
+          className={cn(
             calendarHeaderTitleClass(size, view),
             slotClassNames.headerTitle,
           )}
@@ -486,7 +485,7 @@ export const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
     return (
       <div
         ref={ref}
-        className={mergeCalendarSlotClass(CALENDAR_GRID_CLASS, slotClassNames.grid, className)}
+        className={cn(CALENDAR_GRID_CLASS, slotClassNames.grid, className)}
         {...rest}
       >
         {view === "days" && <CalendarDaysView />}
@@ -505,13 +504,13 @@ export const CalendarFooter = forwardRef<HTMLDivElement, CalendarFooterProps>(
     return (
       <div
         ref={ref}
-        className={mergeCalendarSlotClass(CALENDAR_FOOTER_CLASS, slotClassNames.footer, className)}
+        className={cn(CALENDAR_FOOTER_CLASS, slotClassNames.footer, className)}
         {...rest}
       >
         <Button
           variant="ghost"
           size="small"
-          className={mergeCalendarSlotClass(
+          className={cn(
             CALENDAR_FOOTER_TODAY_BUTTON_CLASS,
             slotClassNames.footerToday,
           )}

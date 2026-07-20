@@ -1,7 +1,5 @@
 import type { CSSProperties } from "react";
 
-import { cn } from "@/utils/cn";
-
 import type { SkeletonRadius } from "./skeletonTypes";
 
 export const SKELETON_BASE_CLASS = "relative overflow-hidden bg-primary-tint";
@@ -69,6 +67,3 @@ export function skeletonLineAnimationDelay(index: number): string {
   return `${index * 0.06}s`;
 }
 
-export function mergeSkeletonSlotClass(...parts: (string | false | null | undefined)[]): string {
-  return cn(...parts);
-}

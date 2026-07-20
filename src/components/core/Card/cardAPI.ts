@@ -1,9 +1,3 @@
-import { cn } from "@/utils/cn";
-
-export function mergeCardSlotClass(...parts: Array<string | undefined>): string {
-  return cn(...parts);
-}
-
 export function cardRenderAsButton(
   pressable: boolean,
   hasExplicitHandlers: boolean,

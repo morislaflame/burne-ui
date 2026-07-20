@@ -1,14 +1,6 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, type Ref } from "react";
 
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type { TooltipVariant } from "./tooltipTypes";
-
-export function mergeTooltipSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export const TOOLTIP_COMPOUND_SLOT_NAMES = new Set([
   "TooltipIndicator",

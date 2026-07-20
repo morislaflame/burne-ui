@@ -3,7 +3,6 @@ import { forwardRef, type HTMLAttributes, type Ref } from "react";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import { mergeCheckboxSlotClass } from "./checkboxAPI";
 import { useCheckboxTextMotion } from "./checkboxAnimations";
 import {
   CheckboxClassNamesProvider,
@@ -25,6 +24,8 @@ import {
 } from "./checkboxStyles";
 import type { CheckboxRootProps } from "./checkboxTypes";
 import { useCheckboxRootState } from "./useCheckboxRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   CheckboxProps,
@@ -115,7 +116,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
       onPointerDown,
     });
 
-    const gridClass = mergeCheckboxSlotClass(
+    const gridClass = cn(
       checkboxGridClass(state.secondaryLines, state.sz.gridGap, className),
       state.isDisabled && CHECKBOX_ROOT_DISABLED_CLASS,
       classNames?.root,
@@ -132,7 +133,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
                   state.contextValue.labelConnected ? state.contextValue.labelId : undefined
                 }
                 data-checked={state.mergedChecked ? true : undefined}
-                className={mergeCheckboxSlotClass(
+                className={cn(
                   gridClass,
                   CHECKBOX_COMPOUND_FIELDSET_CLASS,
                 )}

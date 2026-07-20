@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 import { cardTitleHeadingTag } from "./cardA11y";
-import { mergeCardSlotClass } from "./cardAPI";
+
 import { useCardClassNames } from "./cardContext";
 import {
   CARD_BODY_CLASS,
@@ -32,7 +32,7 @@ export function CardHeader({ className = "", ...rest }: CardHeaderProps) {
   const slotClassNames = useCardClassNames();
   return (
     <div
-      className={mergeCardSlotClass(CARD_HEADER_CLASS, slotClassNames.header, className)}
+      className={cn(CARD_HEADER_CLASS, slotClassNames.header, className)}
       {...rest}
     />
   );
@@ -42,7 +42,7 @@ export function CardHeadingBlock({ className = "", ...rest }: CardHeadingBlockPr
   const slotClassNames = useCardClassNames();
   return (
     <div
-      className={mergeCardSlotClass(
+      className={cn(
         CARD_HEADING_BLOCK_CLASS,
         slotClassNames.headingBlock,
         className,
@@ -56,7 +56,7 @@ export function CardBody({ className = "", ...rest }: CardBodyProps) {
   const slotClassNames = useCardClassNames();
   return (
     <div
-      className={mergeCardSlotClass(CARD_BODY_CLASS, slotClassNames.body, className)}
+      className={cn(CARD_BODY_CLASS, slotClassNames.body, className)}
       {...rest}
     />
   );
@@ -70,7 +70,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
         ref={ref as Ref<HTMLElement>}
         as={cardTitleHeadingTag()}
         variant="base"
-        className={mergeCardSlotClass(CARD_TITLE_CLASS, slotClassNames.title, className)}
+        className={cn(CARD_TITLE_CLASS, slotClassNames.title, className)}
         {...rest}
       />
     );
@@ -85,7 +85,7 @@ export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionP
         ref={ref as Ref<HTMLElement>}
         as="p"
         variant="base"
-        className={mergeCardSlotClass(
+        className={cn(
           CARD_DESCRIPTION_CLASS,
           slotClassNames.description,
           className,
@@ -100,7 +100,7 @@ export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   const slotClassNames = useCardClassNames();
   return (
     <div
-      className={mergeCardSlotClass(CARD_FOOTER_CLASS, slotClassNames.footer, className)}
+      className={cn(CARD_FOOTER_CLASS, slotClassNames.footer, className)}
       {...rest}
     />
   );
@@ -197,7 +197,7 @@ export function CardRootShell({
         onKeyDown={onKeyDown}
       >
         <div
-          className={mergeCardSlotClass(
+          className={cn(
             CARD_PRESSABLE_CONTENT_CLASS,
             slotClassNames.content,
           )}

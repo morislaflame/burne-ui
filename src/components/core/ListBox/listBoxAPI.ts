@@ -1,4 +1,3 @@
-import type { ClassValue } from "clsx";
 import type { ReactNode } from "react";
 
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
@@ -6,10 +5,6 @@ import { partitionOptionListItemChildren } from "@/components/core/utils/optionL
 import { cn } from "@/utils/cn";
 
 import type { ListBoxClassNames, ListBoxItemIndicatorClassNames, UseListBoxItemStateProps } from "./listBoxTypes";
-
-export function mergeListBoxSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function resolveListBoxItemIndicatorClassNames({
   slotClassNames,
@@ -19,17 +14,17 @@ export function resolveListBoxItemIndicatorClassNames({
   classNames?: ListBoxItemIndicatorClassNames;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeListBoxSlotClass(
+    shell: cn(
       slotClassNames.itemIndicatorShell,
       classNames?.shell,
       classNames?.itemIndicatorShell,
     ),
-    fill: mergeListBoxSlotClass(
+    fill: cn(
       slotClassNames.itemIndicatorFill,
       classNames?.fill,
       classNames?.itemIndicatorFill,
     ),
-    mark: mergeListBoxSlotClass(
+    mark: cn(
       slotClassNames.itemIndicatorMark,
       classNames?.mark,
       classNames?.itemIndicatorMark,

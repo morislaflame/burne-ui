@@ -8,13 +8,11 @@ import {
   SkeletonText,
   SkeletonWave,
 } from "./skeletonParts";
-import {
-  mergeSkeletonSlotClass,
-  SKELETON_BASE_CLASS,
-  skeletonRadiusClass,
-} from "./skeletonStyles";
+import { SKELETON_BASE_CLASS, skeletonRadiusClass } from "./skeletonStyles";
 import type { SkeletonProps } from "./skeletonTypes";
 import { useSkeletonRootState } from "./useSkeletonRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   SkeletonProps,
@@ -49,7 +47,7 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
   return (
     <div
       ref={ref}
-      className={mergeSkeletonSlotClass(
+      className={cn(
         SKELETON_BASE_CLASS,
         skeletonRadiusClass(radius),
         classNames?.root,

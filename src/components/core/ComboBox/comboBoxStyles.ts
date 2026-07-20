@@ -14,8 +14,6 @@ import type { InputSize, InputStatus, InputVariant } from "@/components/core/Inp
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 import { cn } from "@/utils/cn";
 
-import { mergeComboBoxSlotClass } from "./comboBoxAPI";
-
 const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
@@ -107,7 +105,7 @@ export function comboBoxInputGroupClass({
 }): string {
   const isGloss = variant === "gloss";
 
-  return mergeComboBoxSlotClass(
+  return cn(
     COMBOBOX_INPUT_GROUP_BASE_CLASS,
     groupSegment?.orientation === "horizontal" ? "flex-1" : "w-full",
     comboBoxGroupShellClass(groupSegment),
@@ -135,7 +133,7 @@ export function comboBoxInputClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeComboBoxSlotClass(
+  return cn(
     COMBOBOX_INPUT_BASE_CLASS,
     COMBOBOX_INPUT_CONTROL[size],
     muted && COMBOBOX_INPUT_MUTED_CLASS,
@@ -154,7 +152,7 @@ export function comboBoxTriggerClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeComboBoxSlotClass(
+  return cn(
     COMBOBOX_TRIGGER_BASE_CLASS,
     disabled && COMBOBOX_TRIGGER_DISABLED_CLASS,
     slotClass,

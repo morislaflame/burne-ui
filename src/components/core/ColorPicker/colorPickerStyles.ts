@@ -1,7 +1,8 @@
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 
 import type { ColorPickerSize } from "./colorPickerTypes";
-import { mergeColorPickerSlotClass } from "./colorPickerAPI";
+
+import { cn } from "@/utils/cn";
 
 export const COLOR_PICKER_WIDTH: Record<ColorPickerSize, string> = {
   small: "w-52",
@@ -58,7 +59,7 @@ export function colorPickerContentPanelClass(
   size: ColorPickerSize,
   slotPanel?: string,
 ): string {
-  return mergeColorPickerSlotClass(
+  return cn(
     COLOR_PICKER_CONTENT_PANEL_CLASS,
     COLOR_PICKER_WIDTH[size],
     COLOR_PICKER_PAD[size],
@@ -67,7 +68,7 @@ export function colorPickerContentPanelClass(
 }
 
 export function colorPickerAreaClass(size: ColorPickerSize, slotArea?: string): string {
-  return mergeColorPickerSlotClass(
+  return cn(
     COLOR_PICKER_AREA_CLASS,
     COLOR_PICKER_AREA_HEIGHT[size],
     slotArea,

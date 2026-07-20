@@ -1,4 +1,4 @@
-import { mergeLabelSlotClass } from "./labelAPI";
+import { cn } from "@/utils/cn";
 
 export const LABEL_ROOT_WRAP_CLASS =
   "inline-flex flex-wrap items-baseline gap-x-xsmall gap-y-0";
@@ -14,13 +14,13 @@ export function labelRootClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeLabelSlotClass(LABEL_ROOT_WRAP_CLASS, slotClass, className);
+  return cn(LABEL_ROOT_WRAP_CLASS, slotClass, className);
 }
 
 export function labelTextClass(slotClass?: string): string {
-  return mergeLabelSlotClass(LABEL_TEXT_CLASS, slotClass);
+  return cn(LABEL_TEXT_CLASS, slotClass);
 }
 
 export function labelRequiredClass(slotClass?: string): string {
-  return mergeLabelSlotClass(LABEL_REQUIRED_CLASS, slotClass);
+  return cn(LABEL_REQUIRED_CLASS, slotClass);
 }

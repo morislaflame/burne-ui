@@ -1,7 +1,4 @@
-import type { ClassValue } from "clsx";
 import { Children, Fragment, createElement, isValidElement, type ReactNode } from "react";
-
-import { cn } from "@/utils/cn";
 
 import type {
   LinkIconPlacement,
@@ -12,10 +9,6 @@ import type {
 } from "./linkTypes";
 
 export const LINK_ICON_DISPLAY_NAME = "Link.Icon";
-
-export function mergeLinkSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 function elementDisplayName(node: ReactNode): string | undefined {
   if (!isValidElement(node)) return undefined;

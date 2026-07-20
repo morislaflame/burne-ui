@@ -4,7 +4,6 @@ import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 import type { TextVariant } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import { mergeButtonGroupSlotClass } from "./buttonGroupAPI";
 import type {
   ButtonGroupOrientation,
   ButtonGroupSegment,
@@ -101,7 +100,7 @@ export function buttonGroupRootClass({
   variant: ButtonVariant;
   className?: string;
 }): string {
-  return mergeButtonGroupSlotClass(
+  return cn(
     "inline-flex text-left w-fit",
     !segmented &&
       cn(
@@ -118,7 +117,7 @@ export function buttonGroupRootClass({
 }
 
 export function buttonGroupSeparatorClass(orientation: ButtonGroupOrientation): string {
-  return mergeButtonGroupSlotClass(
+  return cn(
     "pointer-events-none shrink-0",
     orientation === "horizontal"
       ? "my-[var(--border-width)] self-stretch border-r-token"
@@ -137,7 +136,7 @@ export function buttonGroupTextClass({
   buttonSize: ButtonSize;
   className?: string;
 }): string {
-  return mergeButtonGroupSlotClass(
+  return cn(
     buttonGroupTextSurfaceClasses(groupSegment),
     groupVariant === "gloss" && "bg-transparent text-foreground",
     "inline-flex items-center",

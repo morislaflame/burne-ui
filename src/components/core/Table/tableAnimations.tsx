@@ -3,10 +3,11 @@ import { IoChevronUp } from "react-icons/io5";
 
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
-import { mergeTableSlotClass } from "./tableAPI";
 import { useTableClassNames } from "./tableContext";
 import { tableSortChevronClass } from "./tableStyles";
 import type { SortDirection } from "./tableTypes";
+
+import { cn } from "@/utils/cn";
 
 export function TableSortChevron({ direction }: { direction: SortDirection | undefined }) {
   const slotClassNames = useTableClassNames();
@@ -17,7 +18,7 @@ export function TableSortChevron({ direction }: { direction: SortDirection | und
     <span
       ref={bindChevronRef}
       aria-hidden
-      className={mergeTableSlotClass(
+      className={cn(
         tableSortChevronClass(Boolean(direction)),
         slotClassNames.columnSortChevron,
       )}

@@ -40,7 +40,6 @@ import {
   comboBoxOptionDisplayString,
   comboBoxOptionsByValue,
   comboBoxResolveHintStatus,
-  mergeComboBoxSlotClass,
   mergeRefs,
 } from "./comboBoxAPI";
 import {
@@ -65,6 +64,8 @@ import type {
   ComboBoxPopoverProps,
   ComboBoxTriggerProps,
 } from "./comboBoxTypes";
+
+import { cn } from "@/utils/cn";
 
 export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupProps>(
   function ComboBoxInputGroup(
@@ -482,7 +483,7 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         {...rest}
       >
         <IoChevronDown
-          className={mergeComboBoxSlotClass(
+          className={cn(
             COMBOBOX_CHEVRON_ICON[size],
             slotClassNames.triggerIcon,
           )}
@@ -564,11 +565,11 @@ export function ComboBoxPopover({
         unstyled
         contentRole={undefined}
         offset={offset}
-        className={mergeComboBoxSlotClass(COMBOBOX_POPOVER_CLASS, slotClassNames.popover, className)}
+        className={cn(COMBOBOX_POPOVER_CLASS, slotClassNames.popover, className)}
         {...rest}
       >
         <Popover.Body
-          className={mergeComboBoxSlotClass(
+          className={cn(
             COMBOBOX_POPOVER_BODY_CLASS,
             slotClassNames.popoverBody,
           )}
@@ -582,7 +583,7 @@ export function ComboBoxPopover({
             activeValue={activeValue}
             onActiveValueChange={setActiveValue}
             selectionIndicator
-            className={mergeComboBoxSlotClass(
+            className={cn(
               COMBOBOX_LISTBOX_CLASS,
               slotClassNames.listBox,
             )}
@@ -606,7 +607,7 @@ export function ComboBoxLabel({ className, classNames, ...rest }: LabelProps) {
       className={className}
       classNames={{
         ...classNames,
-        root: mergeComboBoxSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -630,7 +631,7 @@ export function ComboBoxHint({
     <FieldHint
       id={idProp ?? field.hintId}
       status={hintStatus}
-      className={mergeComboBoxSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -652,7 +653,7 @@ export function ComboBoxError({
   return (
     <FieldError
       id={idProp ?? field.errorId}
-      className={mergeComboBoxSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children ?? field.errorMessage}

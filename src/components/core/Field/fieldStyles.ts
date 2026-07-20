@@ -1,7 +1,8 @@
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 
-import { mergeFieldSlotClass } from "./fieldAPI";
 import type { FieldHintStatus } from "./fieldTypes";
+
+import { cn } from "@/utils/cn";
 
 export type FieldSetSizeLayout = {
   legendGap: string;
@@ -68,7 +69,7 @@ export function fieldHintClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeFieldSlotClass(
+  return cn(
     FIELD_HINT_STATUS_CLASS[status],
     slotClass,
     className,
@@ -86,7 +87,7 @@ export function fieldSetStackClass({
 }): string {
   const layout = FIELD_SET_SIZE_LAYOUT[size];
 
-  return mergeFieldSlotClass(
+  return cn(
     FIELD_SET_STACK_BASE_CLASS,
     layout.stackGap,
     hasLegend && layout.legendGap,
@@ -103,7 +104,7 @@ export function fieldSetGroupClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeFieldSlotClass(
+  return cn(
     FIELD_SET_GROUP_BASE_CLASS,
     FIELD_SET_SIZE_LAYOUT[size].groupGap,
     slotClass,
@@ -120,7 +121,7 @@ export function fieldSetActionsClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeFieldSlotClass(
+  return cn(
     FIELD_SET_ACTIONS_BASE_CLASS,
     FIELD_SET_SIZE_LAYOUT[size].actionsGap,
     slotClass,

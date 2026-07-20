@@ -9,9 +9,10 @@ import {
 } from "@/components/core/utils/optionControlGridLayout";
 import { sliderThicknessToCss } from "@/components/core/Slider";
 
-import { mergeSwitchSlotClass } from "./switchAPI";
 import { SWITCH_LAYOUT, type SwitchSize } from "./switchGeometry";
 import type { SwitchLabelPosition } from "./switchTypes";
+
+import { cn } from "@/utils/cn";
 
 export { SWITCH_LAYOUT };
 
@@ -112,7 +113,7 @@ export function switchRootGridClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeSwitchSlotClass(
+  return cn(
     SWITCH_ROOT_BASE_CLASS,
     hasTextColumn
       ? optionControlGridClass(
@@ -141,7 +142,7 @@ export function switchTrackClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeSwitchSlotClass(
+  return cn(
     SWITCH_TRACK_BASE_CLASS,
     thickness == null && SWITCH_LAYOUT[size].track,
     gloss ? SWITCH_TRACK_GLOSS_CLASS : SWITCH_TRACK_DEFAULT_CLASS,

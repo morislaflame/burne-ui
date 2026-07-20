@@ -2,7 +2,6 @@ import { forwardRef } from "react";
 
 import "../utils/glossInteractive.css";
 
-import { mergeCardSlotClass } from "./cardAPI";
 import { useCardAnimations } from "./cardAnimations";
 import {
   CardBody,
@@ -17,6 +16,8 @@ import { CardClassNamesProvider } from "./cardContext";
 import { cardGlossPanelClass, cardRootClass } from "./cardStyles";
 import type { CardProps, CardVariant } from "./cardTypes";
 import { useCardRootState } from "./useCardRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   CardPressEvent,
@@ -71,7 +72,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   });
 
   const glossPanelClass = cardGlossPanelClass(
-    mergeCardSlotClass(classNames?.root, className),
+    cn(classNames?.root, className),
   );
 
   const rootClassName = state.isGloss
@@ -80,7 +81,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         state.variant as Exclude<CardVariant, "gloss">,
         pressable,
         animations.pressableLiftMotionClass,
-        mergeCardSlotClass(classNames?.root, className),
+        cn(classNames?.root, className),
       );
 
   return (

@@ -1,8 +1,9 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
 
-import { mergeDropdownSlotClass } from "./dropdownAPI";
 import type { DropdownItemVariant } from "./dropdownTypes";
+
+import { cn } from "@/utils/cn";
 
 export const DROPDOWN_ROOT_CLASS = "relative inline-flex";
 
@@ -49,27 +50,27 @@ export const DROPDOWN_ITEM_DISABLED_CLASS =
   "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent";
 
 const DROPDOWN_ITEM_VARIANT_CLASS: Record<DropdownItemVariant, string> = {
-  default: mergeDropdownSlotClass(
+  default: cn(
     "text-foreground",
     hoverVariant(),
     "focus-ring",
   ),
-  danger: mergeDropdownSlotClass(
+  danger: cn(
     "text-danger",
     hoverVariant("danger"),
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger",
   ),
-  warning: mergeDropdownSlotClass(
+  warning: cn(
     "text-warning",
     hoverVariant("warning"),
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning",
   ),
-  info: mergeDropdownSlotClass(
+  info: cn(
     "text-info",
     hoverVariant("info"),
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info",
   ),
-  success: mergeDropdownSlotClass(
+  success: cn(
     "text-success",
     hoverVariant("success"),
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success",
@@ -93,11 +94,11 @@ export function dropdownItemRowClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeDropdownSlotClass(
+  return cn(
     DROPDOWN_ITEM_BASE_CLASS,
     optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
     !disabled &&
-      mergeDropdownSlotClass("cursor-pointer", DROPDOWN_ITEM_VARIANT_CLASS[variant]),
+      cn("cursor-pointer", DROPDOWN_ITEM_VARIANT_CLASS[variant]),
     disabled && DROPDOWN_ITEM_DISABLED_CLASS,
     slotClass,
     className,
@@ -111,7 +112,7 @@ export function dropdownSubTriggerRowClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeDropdownSlotClass(
+  return cn(
     DROPDOWN_SUB_TRIGGER_CLASS,
     hoverVariant(),
     slotClass,
@@ -132,7 +133,7 @@ export function dropdownSubContentClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeDropdownSlotClass(
+  return cn(
     DROPDOWN_SUB_CONTENT_BASE_CLASS,
     !isGlossPanel && DROPDOWN_SUB_CONTENT_SURFACE_CLASS,
     !subOpen && portalMounted && "pointer-events-none",

@@ -10,7 +10,6 @@ import { cn } from "@/utils/cn";
 
 import type { LoadingColor } from "@/components/core/Loading";
 
-import { mergeToastSlotClass } from "./toastAPI";
 import type { ToastPlacement, ToastSize, ToastStatus, ToastVariant } from "./toastTypes";
 
 export const TOAST_SURFACE_CLASS: Record<ToastStatus, string> = {
@@ -45,7 +44,7 @@ export function toastIndicatorClass(
   iconSvgClass: string,
   slotClass?: string,
 ) {
-  return mergeToastSlotClass(
+  return cn(
     TOAST_INDICATOR_BASE_CLASS,
     iconSvgClass,
     TOAST_ICON_CLASS[status],
@@ -102,7 +101,7 @@ export function toastRootClass({
   const isGloss = variant === "gloss";
   const preset = messageBannerSizePreset(size);
 
-  return mergeToastSlotClass(
+  return cn(
     messageBannerGridClass(gridSlots, preset.gridGap),
     `w-full ${preset.shellPadding}`,
     isGloss
@@ -120,7 +119,7 @@ export function toastViewportClass({
   placement: ToastPlacement;
   slotClass?: string;
 }) {
-  return mergeToastSlotClass(
+  return cn(
     TOAST_VIEWPORT_BASE_CLASS,
     toastPlacementClass(placement),
     slotClass,
@@ -128,9 +127,9 @@ export function toastViewportClass({
 }
 
 export function toastStackClass(slotClass?: string) {
-  return mergeToastSlotClass(TOAST_STACK_CONTAINER_CLASS, slotClass);
+  return cn(TOAST_STACK_CONTAINER_CLASS, slotClass);
 }
 
 export function toastScrimClass(slotClass?: string) {
-  return mergeToastSlotClass(TOAST_SCRIM_BASE_CLASS, slotClass);
+  return cn(TOAST_SCRIM_BASE_CLASS, slotClass);
 }

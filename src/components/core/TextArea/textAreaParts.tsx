@@ -13,7 +13,7 @@ import { Label, type LabelProps } from "@/components/core/Label";
 import "@/components/core/utils/glossInteractive.css";
 
 import { TEXTAREA_RESIZE_HANDLE_ARIA_LABEL } from "./textAreaA11y";
-import { mergeTextAreaSlotClass } from "./textAreaAPI";
+
 import { useTextAreaShellMotion } from "./textAreaAnimations";
 import {
   useOptionalTextAreaFieldContext,
@@ -36,6 +36,8 @@ import type {
   TextAreaSimpleBodyProps,
 } from "./textAreaTypes";
 import { useTextAreaResize } from "./useTextAreaResize";
+
+import { cn } from "@/utils/cn";
 
 function TextAreaResizeGrip() {
   return (
@@ -194,7 +196,7 @@ export function TextAreaLabel({ className, classNames, ...rest }: LabelProps) {
       className={className}
       classNames={{
         ...classNames,
-        root: mergeTextAreaSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -224,7 +226,7 @@ export function TextAreaHint({
     <FieldHint
       id={idProp ?? field.hintId}
       status={hintStatus}
-      className={mergeTextAreaSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -246,7 +248,7 @@ export function TextAreaError({
   return (
     <FieldError
       id={idProp ?? field.errorId}
-      className={mergeTextAreaSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}

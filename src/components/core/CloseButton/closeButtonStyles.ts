@@ -5,7 +5,7 @@ import { colorToken } from "@/tokens";
 import { cn } from "@/utils/cn";
 
 import { INTERACTIVE_VARIANT_ROOT } from "@/components/core/Button/buttonStyles";
-import { mergeCloseButtonSlotClass } from "./closeButtonAPI";
+
 import type { CloseButtonSize, CloseButtonVariant } from "./closeButtonTypes";
 
 type VariantVisual = {
@@ -110,7 +110,7 @@ export function closeButtonRootClass({
   const vn = CLOSE_BUTTON_VARIANT[variant];
   const sizeClasses = CLOSE_BUTTON_SIZE[size];
 
-  return mergeCloseButtonSlotClass(
+  return cn(
     CLOSE_BUTTON_ROOT_BASE_CLASS,
     isGloss
       ? cn("gloss-btn", GLOSS_INTERACTIVE_MOTION_CLASS)
@@ -126,7 +126,7 @@ export function closeButtonRootClass({
 }
 
 export function closeButtonIconClass(size: CloseButtonSize, slotIcon?: string): string {
-  return mergeCloseButtonSlotClass(
+  return cn(
     CLOSE_BUTTON_ICON_BASE_CLASS,
     CLOSE_BUTTON_SIZE[size].icon,
     slotIcon,

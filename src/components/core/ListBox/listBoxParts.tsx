@@ -23,7 +23,7 @@ import {
 import {
   LISTBOX_EMPTY_DEFAULT_CHILDREN,
 } from "./listBoxA11y";
-import { mergeListBoxSlotClass, resolveListBoxItemIndicatorClassNames } from "./listBoxAPI";
+import { resolveListBoxItemIndicatorClassNames } from "./listBoxAPI";
 import { useListBoxItemAnimations, useListBoxRootGlossRef } from "./listBoxAnimations";
 import {
   useListBoxClassNames,
@@ -52,6 +52,8 @@ import type {
   ListBoxSeparatorProps,
 } from "./listBoxTypes";
 import { useListBoxItemState } from "./useListBoxItemState";
+
+import { cn } from "@/utils/cn";
 
 export function ListBoxRootShell({
   listId,
@@ -294,7 +296,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
           aria-selected={isSelected}
           disabled={disabled}
           tabIndex={-1}
-          className={mergeListBoxSlotClass(
+          className={cn(
             listBoxItemClass({
               disabled,
               isActive,
@@ -327,7 +329,7 @@ export function ListBoxLabel({ className, ...props }: ListBoxLabelProps) {
 
   return (
     <OptionListItemLabel
-      className={mergeListBoxSlotClass(slotClassNames.label, className)}
+      className={cn(slotClassNames.label, className)}
       {...props}
     />
   );
@@ -340,7 +342,7 @@ export function ListBoxHint({ className, ...props }: ListBoxHintProps) {
 
   return (
     <OptionListItemHint
-      className={mergeListBoxSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...props}
     />
   );
@@ -353,7 +355,7 @@ export function ListBoxIcon({ className, ...props }: ListBoxIconProps) {
 
   return (
     <OptionListItemIcon
-      className={mergeListBoxSlotClass(slotClassNames.icon, className)}
+      className={cn(slotClassNames.icon, className)}
       {...props}
     />
   );
@@ -379,7 +381,7 @@ export function ListBoxItemIndicator({
 
   return (
     <OptionListItemIndicatorShell
-      className={mergeListBoxSlotClass(
+      className={cn(
         slotClassNames.itemIndicator,
         classNamesProp?.itemIndicator,
         className,

@@ -27,10 +27,6 @@ import type {
 export const SELECTION_INDICATOR_FILL_DISPLAY_NAME = "SelectionIndicatorFill";
 export const SELECTION_INDICATOR_MARK_DISPLAY_NAME = "SelectionIndicatorMark";
 
-export function mergeSelectionIndicatorSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
-
 export function isSelectionIndicatorFillElement(
   el: ReactElement,
 ): el is ReactElement<SelectionIndicatorFillProps> {
@@ -132,8 +128,8 @@ export function resolveSelectionIndicatorClassNames({
   className?: string;
 }): ResolvedSelectionIndicatorClassNames {
   return {
-    shell: mergeSelectionIndicatorSlotClass(shell, classNames?.shell, className),
-    fill: mergeSelectionIndicatorSlotClass(fill, classNames?.fill),
-    mark: mergeSelectionIndicatorSlotClass(mark, classNames?.mark),
+    shell: cn(shell, classNames?.shell, className),
+    fill: cn(fill, classNames?.fill),
+    mark: cn(mark, classNames?.mark),
   };
 }

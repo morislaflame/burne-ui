@@ -19,12 +19,7 @@ import { Text } from "@/components/core/Text";
 
 import "@/components/core/utils/glossPanel.css";
 
-import {
-  hasSwitchThumbChild,
-  mergeSwitchSlotClass,
-  partitionSwitchControlChildren,
-  useMergedChecked,
-} from "./switchAPI";
+import { hasSwitchThumbChild, partitionSwitchControlChildren, useMergedChecked } from "./switchAPI";
 import { switchFallbackAriaLabel, switchInputId } from "./switchA11y";
 import { useSwitchTrackAnimations } from "./switchAnimations";
 import {
@@ -77,6 +72,8 @@ import type {
   SwitchTrackContextValue,
   SwitchTrackProps,
 } from "./switchTypes";
+
+import { cn } from "@/utils/cn";
 
 export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
   function SwitchControl(
@@ -189,7 +186,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
 
     return (
       <span
-        className={mergeSwitchSlotClass(
+        className={cn(
           SWITCH_CONTROL_BASE_CLASS,
           fieldCtx != null
             ? switchControlCellClass(fieldCtx.labelPosition)
@@ -204,7 +201,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
           type="checkbox"
           role="switch"
           aria-checked={mergedChecked}
-          className={mergeSwitchSlotClass(
+          className={cn(
             SWITCH_INPUT_VISUALLY_HIDDEN_CLASS,
             slotClassNames.input,
           )}
@@ -343,7 +340,7 @@ export function SwitchFill({ className, style, ...rest }: SwitchFillProps) {
     <span
       ref={ctx.trackFillRef}
       aria-hidden
-      className={mergeSwitchSlotClass(
+      className={cn(
         SWITCH_FILL_BASE_CLASS,
         ctx.gloss && SWITCH_FILL_GLOSS_CLASS,
         !ctx.color && (ctx.gloss ? SWITCH_FILL_GLOSS_TINT_CLASS : SWITCH_FILL_COLOR_CLASS),
@@ -365,7 +362,7 @@ export function SwitchThumb({ className, children, ...rest }: SwitchThumbProps) 
   return (
     <span
       ref={ctx.thumbRef}
-      className={mergeSwitchSlotClass(
+      className={cn(
         SWITCH_THUMB_BASE_CLASS,
         ctx.gloss && SWITCH_THUMB_GLOSS_CLASS,
         slotClassNames.thumb,
@@ -402,7 +399,7 @@ export function SwitchIcon({ when, children, className, ...rest }: SwitchIconPro
       size={ctx.size}
       highlighted={highlighted}
       gloss={ctx.gloss}
-      className={mergeSwitchSlotClass(SWITCH_ICON_BASE_CLASS, slotClassNames.icon, className)}
+      className={cn(SWITCH_ICON_BASE_CLASS, slotClassNames.icon, className)}
       style={{ opacity: visible ? 1 : 0 }}
       {...rest}
     >
@@ -421,7 +418,7 @@ export const SwitchContent = forwardRef<HTMLDivElement, SwitchContentProps>(
     return (
       <div
         ref={ref}
-        className={mergeSwitchSlotClass(
+        className={cn(
           SWITCH_CONTENT_PASS_THROUGH_CLASS,
           ctx.isCompound && SWITCH_CONTENT_COMPOUND_CLASS,
           slotClassNames.content,
@@ -449,7 +446,7 @@ export function SwitchLabel({ children, className, ...rest }: SwitchLabelProps) 
           field.textMotionRef.current = node;
         }
       }}
-      className={mergeSwitchSlotClass(
+      className={cn(
         SWITCH_LABEL_CLASS,
         field.isCompound && switchLabelCellClass(field.labelPosition),
         field.isCompound &&
@@ -465,7 +462,7 @@ export function SwitchLabel({ children, className, ...rest }: SwitchLabelProps) 
         as="span"
         variant={sz.title}
         inheritColor
-        className={mergeSwitchSlotClass(
+        className={cn(
           SWITCH_LABEL_TEXT_CLASS,
           field.disabled && SWITCH_LABEL_TEXT_DISABLED_CLASS,
           slotClassNames.labelText,
@@ -488,7 +485,7 @@ export function SwitchHint({ children, className, variant, ...rest }: SwitchHint
       as="span"
       id={ctx.hintId}
       variant={variant ?? SWITCH_LAYOUT[ctx.size].desc}
-      className={mergeSwitchSlotClass(
+      className={cn(
         ctx.isCompound && switchSecondaryCellClass(2, ctx.labelPosition),
         ctx.disabled && SWITCH_HINT_DISABLED_CLASS,
         slotClassNames.hint,
@@ -512,7 +509,7 @@ export function SwitchError({ children, className, ...rest }: SwitchErrorProps) 
       as="span"
       id={ctx.errorId}
       variant={SWITCH_LAYOUT[ctx.size].desc}
-      className={mergeSwitchSlotClass(
+      className={cn(
         ctx.isCompound &&
           switchSecondaryCellClass(switchErrorRow(ctx.hasCompoundHint), ctx.labelPosition),
         ctx.disabled && SWITCH_ERROR_DISABLED_CLASS,
@@ -574,7 +571,7 @@ export function SwitchSimpleBody({
         <>
           <span
             ref={textColRef}
-            className={mergeSwitchSlotClass(
+            className={cn(
               switchLabelCellClass(labelPosition),
               !secondaryLines && SWITCH_SIMPLE_LABEL_WRAP_CLASS,
               slotClassNames.simpleLabelWrap,
@@ -585,7 +582,7 @@ export function SwitchSimpleBody({
               as="span"
               variant={sz.title}
               inheritColor
-              className={mergeSwitchSlotClass(
+              className={cn(
                 SWITCH_SIMPLE_LABEL_TEXT_CLASS,
                 disabled && SWITCH_LABEL_TEXT_DISABLED_CLASS,
                 slotClassNames.simpleLabelText,
@@ -600,7 +597,7 @@ export function SwitchSimpleBody({
               as="span"
               id={hintId}
               variant={sz.desc}
-              className={mergeSwitchSlotClass(
+              className={cn(
                 switchSecondaryCellClass(2, labelPosition),
                 disabled && SWITCH_HINT_DISABLED_CLASS,
                 slotClassNames.hint,
@@ -614,7 +611,7 @@ export function SwitchSimpleBody({
               as="span"
               id={errorId}
               variant={sz.desc}
-              className={mergeSwitchSlotClass(
+              className={cn(
                 switchSecondaryCellClass(hasHint ? 3 : 2, labelPosition),
                 disabled && SWITCH_ERROR_DISABLED_CLASS,
                 slotClassNames.error,

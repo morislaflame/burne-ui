@@ -12,11 +12,7 @@ import {
   colorPickerTriggerAriaLabel,
 } from "./colorPickerA11y";
 import { useColorPickerAreaDrag } from "./colorPickerAnimations";
-import {
-  COLOR_PICKER_SLIDER_SIZE_MAP,
-  COLOR_PICKER_SWATCH_SIZE_MAP,
-  mergeColorPickerSlotClass,
-} from "./colorPickerAPI";
+import { COLOR_PICKER_SLIDER_SIZE_MAP, COLOR_PICKER_SWATCH_SIZE_MAP } from "./colorPickerAPI";
 import { useColorPicker, useColorPickerClassNames } from "./colorPickerContext";
 import {
   colorPickerAreaClass,
@@ -50,6 +46,8 @@ import type {
   ColorPickerTriggerProps,
 } from "./colorPickerTypes";
 
+import { cn } from "@/utils/cn";
+
 function ColorPickerArea({ size }: { size: ColorPickerSize }) {
   const { hsva, setHsva } = useColorPicker();
   const slotClassNames = useColorPickerClassNames();
@@ -71,7 +69,7 @@ function ColorPickerArea({ size }: { size: ColorPickerSize }) {
     >
       <div
         aria-hidden
-        className={mergeColorPickerSlotClass(
+        className={cn(
           COLOR_PICKER_AREA_THUMB_CLASS,
           slotClassNames.areaThumb,
         )}
@@ -105,13 +103,13 @@ function ColorPickerHexInput({ hex, setHsva }: ColorPickerHexInputProps) {
 
   return (
     <div
-      className={mergeColorPickerSlotClass(
+      className={cn(
         COLOR_PICKER_HEX_INPUT_CLASS,
         slotClassNames.hexInput,
       )}
     >
       <span
-        className={mergeColorPickerSlotClass(
+        className={cn(
           COLOR_PICKER_HEX_PREFIX_CLASS,
           slotClassNames.hexPrefix,
         )}
@@ -124,7 +122,7 @@ function ColorPickerHexInput({ hex, setHsva }: ColorPickerHexInputProps) {
         maxLength={8}
         spellCheck={false}
         aria-label={COLOR_PICKER_HEX_INPUT_ARIA_LABEL}
-        className={mergeColorPickerSlotClass(
+        className={cn(
           COLOR_PICKER_HEX_FIELD_CLASS,
           slotClassNames.hexInputField,
           FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
@@ -156,7 +154,7 @@ function ColorPickerAlphaInput({ hsva, setHsva }: ColorPickerAlphaInputProps) {
 
   return (
     <div
-      className={mergeColorPickerSlotClass(
+      className={cn(
         COLOR_PICKER_ALPHA_INPUT_CLASS,
         slotClassNames.alphaInput,
       )}
@@ -165,7 +163,7 @@ function ColorPickerAlphaInput({ hsva, setHsva }: ColorPickerAlphaInputProps) {
         type="text"
         value={Math.round(hsva.a)}
         aria-label={COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL}
-        className={mergeColorPickerSlotClass(
+        className={cn(
           COLOR_PICKER_ALPHA_FIELD_CLASS,
           slotClassNames.alphaInputField,
           FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
@@ -176,7 +174,7 @@ function ColorPickerAlphaInput({ hsva, setHsva }: ColorPickerAlphaInputProps) {
         }}
       />
       <span
-        className={mergeColorPickerSlotClass(
+        className={cn(
           COLOR_PICKER_ALPHA_SUFFIX_CLASS,
           slotClassNames.alphaSuffix,
         )}
@@ -192,7 +190,7 @@ function ColorPickerPresets({ presets, hex, setHsva, size }: ColorPickerPresetsP
 
   return (
     <div
-      className={mergeColorPickerSlotClass(
+      className={cn(
         COLOR_PICKER_PRESETS_CLASS,
         slotClassNames.presets,
       )}
@@ -223,7 +221,7 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
     return (
       <Popover.Trigger
         ref={ref}
-        className={mergeColorPickerSlotClass(slotClassNames.trigger, className)}
+        className={cn(slotClassNames.trigger, className)}
         {...rest}
       >
         <ColorSwatch
@@ -256,7 +254,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
         offset={POPOVER_DEFAULT_OFFSET}
         align="start"
         aria-label={COLOR_PICKER_CONTENT_ARIA_LABEL}
-        className={mergeColorPickerSlotClass(slotClassNames.content, className)}
+        className={cn(slotClassNames.content, className)}
       >
         <div
           className={colorPickerContentPanelClass(size, slotClassNames.contentPanel)}
@@ -265,7 +263,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
           <ColorPickerArea size={size} />
 
           <div
-            className={mergeColorPickerSlotClass(
+            className={cn(
               COLOR_PICKER_SLIDERS_ROW_CLASS,
               slotClassNames.slidersRow,
             )}
@@ -274,7 +272,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
               color={hex}
               size="mid"
               shape="circle"
-              className={mergeColorPickerSlotClass(
+              className={cn(
                 "shrink-0",
                 slotClassNames.previewSwatch,
               )}
@@ -304,7 +302,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
           </div>
 
           <div
-            className={mergeColorPickerSlotClass(
+            className={cn(
               COLOR_PICKER_INPUTS_ROW_CLASS,
               slotClassNames.inputsRow,
             )}

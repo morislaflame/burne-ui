@@ -1,6 +1,6 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
-import { mergeListBoxSlotClass } from "./listBoxAPI";
+import { cn } from "@/utils/cn";
 
 export const LISTBOX_ROOT_CLASS =
   "flex min-h-0 flex-col gap-xsmall text-left outline-none";
@@ -39,7 +39,7 @@ export function listBoxRootClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeListBoxSlotClass(
+  return cn(
     LISTBOX_ROOT_CLASS,
     isGloss && LISTBOX_ROOT_GLOSS_CLASS,
     slotClass,
@@ -54,7 +54,7 @@ export function listBoxSectionClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeListBoxSlotClass(LISTBOX_SECTION_CLASS, slotClass, className);
+  return cn(LISTBOX_SECTION_CLASS, slotClass, className);
 }
 
 export function listBoxHeaderClass({
@@ -64,7 +64,7 @@ export function listBoxHeaderClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeListBoxSlotClass(LISTBOX_HEADER_CLASS, slotClass, className);
+  return cn(LISTBOX_HEADER_CLASS, slotClass, className);
 }
 
 export function listBoxHeaderTextClass({
@@ -74,7 +74,7 @@ export function listBoxHeaderTextClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeListBoxSlotClass(LISTBOX_HEADER_TEXT_CLASS, slotClass, className);
+  return cn(LISTBOX_HEADER_TEXT_CLASS, slotClass, className);
 }
 
 export function listBoxSeparatorClass({
@@ -84,7 +84,7 @@ export function listBoxSeparatorClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeListBoxSlotClass(LISTBOX_SEPARATOR_CLASS, slotClass, className);
+  return cn(LISTBOX_SEPARATOR_CLASS, slotClass, className);
 }
 
 export function listBoxEmptyClass({
@@ -94,7 +94,7 @@ export function listBoxEmptyClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeListBoxSlotClass(LISTBOX_EMPTY_CLASS, slotClass, className);
+  return cn(LISTBOX_EMPTY_CLASS, slotClass, className);
 }
 
 export function listBoxItemClass({
@@ -108,9 +108,9 @@ export function listBoxItemClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeListBoxSlotClass(
+  return cn(
     LISTBOX_ITEM_BASE_CLASS,
-    !disabled && mergeListBoxSlotClass(LISTBOX_ITEM_INTERACTIVE_CLASS, hoverVariant()),
+    !disabled && cn(LISTBOX_ITEM_INTERACTIVE_CLASS, hoverVariant()),
     disabled && LISTBOX_ITEM_DISABLED_CLASS,
     isActive && !disabled && LISTBOX_ITEM_ACTIVE_CLASS,
     slotClass,

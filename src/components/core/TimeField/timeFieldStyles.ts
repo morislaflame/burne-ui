@@ -10,12 +10,13 @@ import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 import type { FieldShellFilledVariant } from "@/components/core/utils/fieldShellVariant";
 
-import { mergeTimeFieldSlotClass } from "./timeFieldAPI";
 import type {
   TimeFieldSize,
   TimeFieldStatus,
   TimeFieldVariant,
 } from "./timeFieldTypes";
+
+import { cn } from "@/utils/cn";
 
 function timeFieldShellHoverVariant(variant: TimeFieldVariant): FieldShellFilledVariant {
   if (variant === "segmented" || variant === "gloss") return "default";
@@ -99,7 +100,7 @@ export function timeFieldAffixSlotClass({
   size: TimeFieldSize;
   slotClass?: string;
 }) {
-  return mergeTimeFieldSlotClass(
+  return cn(
     AFFIX_PADDING[size],
     timeFieldAffixSurfaceClass(status),
     side === "prefix"
@@ -149,9 +150,9 @@ export function timeFieldShellClass({
 }) {
   const isGloss = variant === "gloss";
 
-  return mergeTimeFieldSlotClass(
+  return cn(
     "m-0 min-w-0 overflow-hidden rounded-base p-0",
-    isGloss ? "relative" : mergeTimeFieldSlotClass("border-1"),
+    isGloss ? "relative" : cn("border-1"),
     compact ? "w-fit shrink-0" : "w-full min-w-0",
     shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
@@ -171,9 +172,9 @@ export function timeFieldShellInnerClass({
 }): string {
   const isGloss = variant === "gloss";
 
-  return mergeTimeFieldSlotClass(
+  return cn(
     TIME_FIELD_SHELL_INNER_CLASS,
-    !isGloss && mergeTimeFieldSlotClass("min-h-full"),
+    !isGloss && cn("min-h-full"),
   );
 }
 
@@ -196,7 +197,7 @@ export function timeFieldSegmentsClass({
         ? "text-mid"
         : "text-base";
 
-  return mergeTimeFieldSlotClass(
+  return cn(
     TIME_FIELD_SEGMENTS_BASE_CLASS,
     compact ? "justify-center px-small" : layout.padX,
     layout.padY,
@@ -217,7 +218,7 @@ export function timeFieldSegmentClass({
   disabled: boolean;
   slotClass?: string;
 }) {
-  return mergeTimeFieldSlotClass(
+  return cn(
     TIME_FIELD_SEGMENT_BASE_CLASS,
     variant === "segmented"
       ? TIME_FIELD_SEGMENT_SEGMENTED_CLASS
@@ -235,7 +236,7 @@ export function timeFieldSegmentSeparatorClass({
   variant: TimeFieldVariant;
   slotClass?: string;
 }) {
-  return mergeTimeFieldSlotClass(
+  return cn(
     TIME_FIELD_SEGMENT_SEPARATOR_BASE_CLASS,
     variant === "segmented" && TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS,
     slotClass,
@@ -251,5 +252,5 @@ export function timeFieldRootClass({
   slotClass?: string;
   className?: string;
 }) {
-  return mergeTimeFieldSlotClass(compact && "w-fit", slotClass, className);
+  return cn(compact && "w-fit", slotClass, className);
 }

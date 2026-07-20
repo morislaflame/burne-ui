@@ -1,4 +1,3 @@
-import type { ClassValue } from "clsx";
 import {
   Children,
   Fragment,
@@ -12,17 +11,11 @@ import { ComboBox } from "@/components/core/ComboBox";
 import { Dropdown } from "@/components/core/Dropdown";
 import { InputControl } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
-import { cn } from "@/utils/cn";
-
 import type {
   ButtonGroupOrientation,
   ButtonGroupSegment,
   ButtonGroupSegmentPosition,
 } from "./buttonGroupTypes";
-
-export function mergeButtonGroupSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function flattenFragmentChildren(children: ReactNode): ReactElement[] {
   const out: ReactElement[] = [];

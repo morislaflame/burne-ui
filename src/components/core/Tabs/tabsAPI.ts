@@ -1,16 +1,8 @@
 import { useCallback, useState, type Ref } from "react";
 
-import type { ClassValue } from "clsx";
-
 import type { TextVariant } from "@/components/core/Text";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
-import { cn } from "@/utils/cn";
-
 import type { TabsSize } from "./tabsTypes";
-
-export function mergeTabsSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function useMergedTabsValue(
   value: string | undefined,

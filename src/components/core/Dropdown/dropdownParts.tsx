@@ -45,7 +45,6 @@ import {
 } from "./dropdownAnimations";
 import {
   mergeDropdownRefs,
-  mergeDropdownSlotClass,
   partitionDropdownItemChildren,
   resolveDropdownItemIndicatorClassNames,
 } from "./dropdownAPI";
@@ -93,6 +92,8 @@ import type {
 } from "./dropdownTypes";
 import { useDropdownSubState } from "./useDropdownSubState";
 
+import { cn } from "@/utils/cn";
+
 export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
   function DropdownTrigger(
     { children, className, asChild, onClick, onPointerDown, ...rest },
@@ -133,7 +134,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
       return cloneElement(child, {
         ...rest,
         ref: mergeDropdownRefs(forwardedRef, triggerRef, child.props.ref),
-        className: mergeDropdownSlotClass(
+        className: cn(
           child.props.className,
           DROPDOWN_TRIGGER_CLASS,
           slotClassNames.trigger,
@@ -163,7 +164,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
           forwardedRef as Ref<HTMLButtonElement>,
           triggerRef as Ref<HTMLButtonElement>,
         )}
-        className={mergeDropdownSlotClass(
+        className={cn(
           DROPDOWN_TRIGGER_CLASS,
           slotClassNames.trigger,
           className,
@@ -232,7 +233,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
           contentRole={undefined}
           offset={POPOVER_DEFAULT_OFFSET}
           id={contentId}
-          className={mergeDropdownSlotClass(
+          className={cn(
             DROPDOWN_POPOVER_CLASS,
             slotClassNames.popover,
             className,
@@ -241,7 +242,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         >
           <Popover.Body
             role="menu"
-            className={mergeDropdownSlotClass(
+            className={cn(
               DROPDOWN_POPOVER_BODY_CLASS,
               slotClassNames.popoverBody,
               bodyClassName,
@@ -279,7 +280,7 @@ export function DropdownGroup({
         <div
           role="group"
           aria-labelledby={labelId}
-          className={mergeDropdownSlotClass(
+          className={cn(
             DROPDOWN_GROUP_CLASS,
             slotClassNames.group,
             className,
@@ -314,7 +315,7 @@ export function DropdownLabel({
   return (
     <div
       id={id}
-      className={mergeDropdownSlotClass(
+      className={cn(
         DROPDOWN_LABEL_CLASS,
         slotClassNames.label,
         className,
@@ -342,7 +343,7 @@ export function DropdownSeparator({
 
   return (
     <Separator
-      className={mergeDropdownSlotClass(slotClassNames.separator, className)}
+      className={cn(slotClassNames.separator, className)}
       {...rest}
     />
   );
@@ -358,7 +359,7 @@ export function DropdownSub({ className, children, ...rest }: DropdownSubProps) 
   return (
     <DropdownSubProvider value={contextValue}>
       <div
-        className={mergeDropdownSlotClass(
+        className={cn(
           DROPDOWN_SUB_CLASS,
           slotClassNames.sub,
           className,
@@ -451,7 +452,7 @@ export const DropdownSubTrigger = forwardRef<
         triggerRef,
         child.props.ref,
       ) as Ref<HTMLElement>,
-      className: mergeDropdownSlotClass(child.props.className, rowClass),
+      className: cn(child.props.className, rowClass),
       onPointerEnter: (e: React.PointerEvent<HTMLElement>) => {
         (child.props as HTMLAttributes<HTMLElement>).onPointerEnter?.(e);
         handleEnter(e as unknown as React.PointerEvent<HTMLDivElement>);
@@ -489,7 +490,7 @@ export const DropdownSubTrigger = forwardRef<
       {...rest}
     >
       <span
-        className={mergeDropdownSlotClass(
+        className={cn(
           DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS,
           slotClassNames.subTriggerLabelWrap,
         )}
@@ -497,7 +498,7 @@ export const DropdownSubTrigger = forwardRef<
         {children}
       </span>
       <IoChevronForward
-        className={mergeDropdownSlotClass(
+        className={cn(
           DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
           slotClassNames.subTriggerChevron,
         )}
@@ -583,13 +584,13 @@ export const DropdownSubContent = forwardRef<
     >
       {portal.isGlossPanel ? (
         <div
-          className={mergeDropdownSlotClass(
+          className={cn(
             DROPDOWN_SUB_CONTENT_GLOSS_PANEL_CLASS,
             slotClassNames.subContentGlossPanel,
           )}
         >
           <div
-            className={mergeDropdownSlotClass(
+            className={cn(
               DROPDOWN_SUB_CONTENT_GLOSS_CONTENT_CLASS,
               slotClassNames.subContentGlossContent,
             )}
@@ -618,7 +619,7 @@ export function DropdownItemLabel({
 
   return (
     <OptionListItemLabel
-      className={mergeDropdownSlotClass(slotClassNames.itemLabel, className)}
+      className={cn(slotClassNames.itemLabel, className)}
       {...props}
     />
   );
@@ -631,7 +632,7 @@ export function DropdownItemHint({ className, ...props }: DropdownItemHintProps)
 
   return (
     <OptionListItemHint
-      className={mergeDropdownSlotClass(slotClassNames.itemHint, className)}
+      className={cn(slotClassNames.itemHint, className)}
       {...props}
     />
   );
@@ -647,7 +648,7 @@ export function DropdownItemIcon({
 
   return (
     <OptionListItemIcon
-      className={mergeDropdownSlotClass(slotClassNames.itemIcon, className)}
+      className={cn(slotClassNames.itemIcon, className)}
       {...props}
     />
   );
@@ -673,7 +674,7 @@ export function DropdownItemIndicator({
 
   return (
     <OptionListItemIndicatorShell
-      className={mergeDropdownSlotClass(
+      className={cn(
         slotClassNames.itemIndicator,
         classNamesProp?.itemIndicator,
         className,

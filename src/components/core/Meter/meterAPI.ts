@@ -1,12 +1,4 @@
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type { MeterDisplayState } from "./meterTypes";
-
-export function mergeMeterSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function clampMeterValue(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));

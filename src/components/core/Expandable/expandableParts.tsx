@@ -26,7 +26,6 @@ import {
   expandableTriggerHasActionSlot,
   hasExpandableMessage,
   mergeExpandableRefs,
-  mergeExpandableSlotClass,
   partitionExpandableTriggerRipple,
   resolveExpandableTriggerGridSlots,
 } from "./expandableAPI";
@@ -68,10 +67,12 @@ import type {
   ExpandableTriggerProps,
 } from "./expandableTypes";
 
+import { cn } from "@/utils/cn";
+
 function ExpandableChevronSvg({ className }: { className?: string }) {
   return (
     <svg
-      className={mergeExpandableSlotClass("shrink-0", className)}
+      className={cn("shrink-0", className)}
       width="20"
       height="20"
       viewBox="0 0 24 24"
@@ -94,7 +95,7 @@ export const ExpandableMessage = forwardRef<HTMLDivElement, ExpandableMessagePro
     return (
       <div
         ref={ref}
-        className={mergeExpandableSlotClass(
+        className={cn(
           EXPANDABLE_MESSAGE_CLASS,
           slotClassNames.message,
           className,
@@ -168,7 +169,7 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
     const rippleOverlay =
       ripples.length > 0 ? (
         <span
-          className={mergeExpandableSlotClass(
+          className={cn(
             EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS,
             slotClassNames.triggerRippleOverlay,
           )}
@@ -184,7 +185,7 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         {showsDefaultChevron ? (
           <span
             ref={motion.bindChevronRef}
-            className={mergeExpandableSlotClass(
+            className={cn(
               messageBannerActionCellClass(gridSlots),
               EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS,
               slotClassNames.chevron,
@@ -208,7 +209,7 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         ...props,
         id: headerId,
         ref: mergeExpandableRefs(ref, child.props.ref),
-        className: mergeExpandableSlotClass(child.props.className, className),
+        className: cn(child.props.className, className),
         disabled: disabled || child.props.disabled,
         "aria-expanded": hasPanel ? open : undefined,
         "aria-controls": hasPanel ? panelId : undefined,
@@ -271,7 +272,7 @@ export function ExpandableIcon({ className, children, ...props }: ExpandableIcon
   return (
     <span
       aria-hidden
-      className={mergeExpandableSlotClass(
+      className={cn(
         expandableIconClass({
           size,
           className,
@@ -293,7 +294,7 @@ export function ExpandableContent({ className, ...props }: ExpandableContentProp
 
   return (
     <div
-      className={mergeExpandableSlotClass(
+      className={cn(
         EXPANDABLE_CONTENT_CLASS,
         slotClassNames.content,
         className,
@@ -314,7 +315,7 @@ export function ExpandableTitle({ className, ...props }: ExpandableTitleProps) {
     <Text
       as="div"
       variant={expandableTitleVariant(size)}
-      className={mergeExpandableSlotClass(
+      className={cn(
         EXPANDABLE_TITLE_CLASS,
         gridSlots && messageBannerTitleCellClass(gridSlots),
         slotClassNames.title,
@@ -339,7 +340,7 @@ export function ExpandableDescription({
     <Text
       as="div"
       variant={EXPANDABLE_DESCRIPTION_VARIANT[size]}
-      className={mergeExpandableSlotClass(
+      className={cn(
         EXPANDABLE_DESCRIPTION_CLASS,
         gridSlots && messageBannerDescriptionCellClass(gridSlots),
         slotClassNames.description,
@@ -368,7 +369,7 @@ export function ExpandableChevron({ className, ...props }: ExpandableChevronProp
   return (
     <span
       ref={bindChevronRef}
-      className={mergeExpandableSlotClass(
+      className={cn(
         messageBannerActionCellClass(gridSlots),
         EXPANDABLE_CHEVRON_WRAP_CLASS,
         slotClassNames.chevron,
@@ -406,7 +407,7 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
     return (
       <div
         ref={panelMotion.bindShellRef}
-        className={mergeExpandableSlotClass(
+        className={cn(
           EXPANDABLE_PANEL_SHELL_CLASS,
           slotClassNames.panelShell,
         )}

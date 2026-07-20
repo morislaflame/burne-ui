@@ -1,9 +1,5 @@
 import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
 
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 export const TOGGLE_BUTTON_COMPOUND_SLOT_NAMES = new Set([
   "ToggleButtonContent",
   "ToggleButtonFill",
@@ -60,10 +56,6 @@ export function shouldWrapToggleButtonChildrenInText(children: ReactNode): boole
 
   const displayName = (only.type as { displayName?: string }).displayName;
   return displayName == null || !TOGGLE_BUTTON_COMPOUND_SLOT_NAMES.has(displayName);
-}
-
-export function mergeToggleButtonSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
 }
 
 export function useMergedPressed(

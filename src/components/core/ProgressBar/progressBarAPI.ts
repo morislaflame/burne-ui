@@ -1,15 +1,7 @@
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type { ProgressBarDisplayState } from "./progressBarTypes";
 
 export const PROGRESS_INDETERMINATE_MS = 1500;
 export const PROGRESS_INDETERMINATE_EASE = "expo.inOut" as const;
-
-export function mergeProgressBarSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function clampProgressBarValue(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));

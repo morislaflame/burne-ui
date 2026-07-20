@@ -7,7 +7,7 @@ import { Label, type LabelProps } from "@/components/core/Label";
 import "@/components/core/utils/glossInteractive.css";
 
 import { timeFieldHintStatus, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
-import { mergeTimeFieldSlotClass } from "./timeFieldAPI";
+
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import {
   useTimeFieldClassNames,
@@ -29,6 +29,8 @@ import type {
   TimeFieldSimpleBodyProps,
 } from "./timeFieldTypes";
 import { useTimeFieldControlState } from "./useTimeFieldControlState";
+
+import { cn } from "@/utils/cn";
 
 function TimeFieldAffixSlot({
   side,
@@ -151,7 +153,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
             aria-hidden
             tabIndex={-1}
             disabled={state.disabled}
-            className={mergeTimeFieldSlotClass(
+            className={cn(
               TIME_FIELD_KEYBOARD_INPUT_CLASS,
               slotClassNames.keyboardInput,
               FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
@@ -226,7 +228,7 @@ export function TimeFieldLabel({ className, classNames, ...rest }: LabelProps) {
       className={className}
       classNames={{
         ...classNames,
-        root: mergeTimeFieldSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -248,7 +250,7 @@ export function TimeFieldHint({
     <FieldHint
       id={idProp ?? ctx.hintId}
       status={timeFieldHintStatus(ctx.status)}
-      className={mergeTimeFieldSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -271,7 +273,7 @@ export function TimeFieldError({
     <FieldError
       id={idProp ?? ctx.errorId}
       role="alert"
-      className={mergeTimeFieldSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}

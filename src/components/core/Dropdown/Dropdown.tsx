@@ -1,6 +1,5 @@
 import "../utils/glossInteractive.css";
 
-import { mergeDropdownSlotClass } from "./dropdownAPI";
 import {
   DropdownClassNamesProvider,
   DropdownIndicatorPreferenceProvider,
@@ -24,6 +23,8 @@ import {
 } from "./dropdownParts";
 import type { DropdownProps } from "./dropdownTypes";
 import { useDropdownRootState } from "./useDropdownRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   DropdownProps,
@@ -77,7 +78,7 @@ export function DropdownRoot({
       <DropdownClassNamesProvider classNames={classNames}>
         <DropdownIndicatorPreferenceProvider value={selectionIndicator}>
           <div
-            className={mergeDropdownSlotClass(
+            className={cn(
               DROPDOWN_ROOT_CLASS,
               classNames?.root,
               className,

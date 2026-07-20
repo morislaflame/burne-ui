@@ -2,12 +2,13 @@ import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInt
 import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
 import type { TextVariant } from "@/components/core/Text";
 
-import { mergeTooltipSlotClass } from "./tooltipAPI";
 import {
   TOOLTIP_ARROW_CLASS,
   TOOLTIP_ARROW_SHELL_PAD,
 } from "./tooltipPosition";
 import type { TooltipSize, TooltipSurface, TooltipVariant } from "./tooltipTypes";
+
+import { cn } from "@/utils/cn";
 
 export { TOOLTIP_ARROW_CLASS, TOOLTIP_ARROW_SHELL_PAD };
 
@@ -111,7 +112,7 @@ export function tooltipGlossShellClass({
   slotClass?: string;
   className?: string;
 }) {
-  return mergeTooltipSlotClass(
+  return cn(
     TOOLTIP_GLOSS_PANEL_BASE_CLASS,
     GLOSS_INTERACTIVE_MOTION_CLASS,
     TOOLTIP_TEXT_LAYOUT[size],
@@ -129,7 +130,7 @@ export function tooltipGlossContentClass({
   size: TooltipSize;
   slotClass?: string;
 }) {
-  return mergeTooltipSlotClass(
+  return cn(
     messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
     TOOLTIP_GLOSS_CONTENT_CLASS,
     slotClass,
@@ -157,7 +158,7 @@ export function tooltipPanelClass({
     return tooltipGlossShellClass({ size, slotClass, className });
   }
 
-  return mergeTooltipSlotClass(
+  return cn(
     messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
     TOOLTIP_PANEL_BASE_CLASS,
     TOOLTIP_SURFACE_CLASS[variant],
@@ -182,7 +183,7 @@ export function tooltipArrowClass({
 }) {
   const isGloss = surface === "gloss";
 
-  return mergeTooltipSlotClass(
+  return cn(
     TOOLTIP_ARROW_BASE_CLASS,
     isGloss ? TOOLTIP_ARROW_GLOSS_CLASS : TOOLTIP_SURFACE_CLASS[variant],
     TOOLTIP_ARROW_CLASS[resolvedSide],
@@ -202,7 +203,7 @@ export function tooltipContentClass({
   slotClass?: string;
   className?: string;
 }) {
-  return mergeTooltipSlotClass(
+  return cn(
     TOOLTIP_CONTENT_BASE_CLASS,
     showArrow && TOOLTIP_ARROW_SHELL_PAD[resolvedSide],
     slotClass,

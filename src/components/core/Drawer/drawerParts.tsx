@@ -28,7 +28,7 @@ import {
 } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { drawerHandleAriaLabel, DRAWER_CLOSE_DEFAULT_ARIA_LABEL } from "./drawerA11y";
-import { mergeDrawerSlotClass, partitionDrawerChildren } from "./drawerAPI";
+import { partitionDrawerChildren } from "./drawerAPI";
 import { useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerProvider, useDrawer, useDrawerClassNames } from "./drawerContext";
 import {
@@ -71,6 +71,8 @@ import type {
 } from "./drawerTypes";
 import { useDrawerHandleDrag } from "./useDrawerHandleDrag";
 
+import { cn } from "@/utils/cn";
+
 export function DrawerBackdropInner(_props: DrawerBackdropProps) {
   return null;
 }
@@ -83,7 +85,7 @@ export function DrawerContent({ className, ...rest }: DrawerContentProps) {
   return (
     <div
       className={drawerContentClass(
-        mergeDrawerSlotClass(slotClassNames.content, className),
+        cn(slotClassNames.content, className),
       )}
       {...rest}
     />
@@ -170,7 +172,7 @@ export function DrawerHeader({ className, ...rest }: DrawerHeaderProps) {
 
   return (
     <div
-      className={mergeDrawerSlotClass(
+      className={cn(
         DRAWER_HEADER_CLASS,
         DRAWER_HEADER_PADDING,
         slotClassNames.header,
@@ -191,7 +193,7 @@ export function DrawerHeadingBlock({
 
   return (
     <div
-      className={mergeDrawerSlotClass(
+      className={cn(
         DRAWER_HEADING_BLOCK_CLASS,
         slotClassNames.headingBlock,
         className,
@@ -214,7 +216,7 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
         as="h2"
         variant="mid"
         id={id ?? titleId}
-        className={mergeDrawerSlotClass(
+        className={cn(
           DRAWER_TITLE_CLASS,
           slotClassNames.title,
           className,
@@ -245,7 +247,7 @@ export function DrawerDescription({
       as="p"
       variant="base"
       id={id ?? descriptionId}
-      className={mergeDrawerSlotClass(
+      className={cn(
         DRAWER_DESCRIPTION_CLASS,
         slotClassNames.description,
         className,
@@ -275,7 +277,7 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
         ref={ref}
         variant="secondary"
         aria-label={ariaLabel}
-        className={mergeDrawerSlotClass(
+        className={cn(
           DRAWER_CLOSE_CLASS,
           slotClassNames.close,
           className,
@@ -298,7 +300,7 @@ export function DrawerBody({ className, ...rest }: DrawerBodyProps) {
   return (
     <div
       className={drawerBodyClass(
-        mergeDrawerSlotClass(slotClassNames.body, className),
+        cn(slotClassNames.body, className),
       )}
       {...rest}
     />
@@ -312,7 +314,7 @@ export function DrawerFooter({ className, ...rest }: DrawerFooterProps) {
 
   return (
     <div
-      className={mergeDrawerSlotClass(
+      className={cn(
         DRAWER_FOOTER_CLASS,
         DRAWER_FOOTER_PADDING,
         slotClassNames.footer,
@@ -525,7 +527,7 @@ export function DrawerPortalShell({
       onCancel={onDialogCancel}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
-      className={mergeDrawerSlotClass(DRAWER_NATIVE_CLASS, slotClassNames.dialog)}
+      className={cn(DRAWER_NATIVE_CLASS, slotClassNames.dialog)}
     >
       <div
         ref={overlayRef}

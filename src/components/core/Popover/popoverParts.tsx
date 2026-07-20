@@ -27,7 +27,6 @@ import {
 } from "./popoverA11y";
 import {
   mergePopoverRefs,
-  mergePopoverSlotClass,
   partitionPopoverContentChildren,
   POPOVER_ARROW_DISPLAY_NAME,
 } from "./popoverAPI";
@@ -66,6 +65,8 @@ import type {
   PopoverLabelProps,
   PopoverTriggerProps,
 } from "./popoverTypes";
+
+import { cn } from "@/utils/cn";
 
 export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
   function PopoverTrigger(
@@ -131,7 +132,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       }>;
 
       return cloneElement(child, {
-        className: mergePopoverSlotClass(
+        className: cn(
           slotClassNames.root,
           slotClassNames.trigger,
           child.props.className,
@@ -264,7 +265,7 @@ export function PopoverHint({
       as="p"
       id={hintId}
       variant={variant ?? popoverHintVariant(size)}
-      className={mergePopoverSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}

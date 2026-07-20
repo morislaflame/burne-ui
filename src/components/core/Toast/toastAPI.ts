@@ -1,14 +1,7 @@
-import type { ClassValue } from "clsx";
 import { Children, isValidElement, type ReactNode } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import { cn } from "@/utils/cn";
-
 import type { ToastStatus } from "./toastTypes";
-
-export function mergeToastSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export const TOAST_STACK_PEEK_PX = 8;
 export const TOAST_STACK_SCALE_STEP = 0.04;

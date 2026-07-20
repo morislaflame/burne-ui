@@ -1,7 +1,7 @@
-import { mergeAccordionSlotClass } from "./accordionAPI";
+import { cn } from "@/utils/cn";
 
 export function accordionRootClass(className?: string): string {
-  return mergeAccordionSlotClass(
+  return cn(
     "flex w-full flex-col text-left",
     "[&>[data-accordion-item]:first-child]:!rounded-t-mid",
     "[&>[data-accordion-item]:last-child]:!rounded-b-mid",
@@ -11,22 +11,22 @@ export function accordionRootClass(className?: string): string {
 }
 
 export function accordionItemClass(className?: string): string {
-  return mergeAccordionSlotClass("relative !rounded-none", className);
+  return cn("relative !rounded-none", className);
 }
 
 export function accordionHeadingClass(className?: string): string {
-  return mergeAccordionSlotClass("m-0 font-[inherit] text-[inherit]", className);
+  return cn("m-0 font-[inherit] text-[inherit]", className);
 }
 
 export function accordionIndicatorClass(className?: string): string {
-  return mergeAccordionSlotClass(
+  return cn(
     "relative z-[1] flex shrink-0 origin-center self-center",
     className,
   );
 }
 
 export function accordionBodyClass(className?: string): string {
-  return mergeAccordionSlotClass("text-muted", className);
+  return cn("text-muted", className);
 }
 
 export const ACCORDION_CHEVRON_CLASS = "shrink-0";

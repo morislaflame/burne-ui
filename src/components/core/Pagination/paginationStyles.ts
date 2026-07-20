@@ -1,6 +1,6 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
-import { mergePaginationSlotClass } from "./paginationAPI";
+import { cn } from "@/utils/cn";
 
 export const PAGINATION_ROOT_CLASS =
   "flex w-full min-w-0 flex-wrap items-center justify-between gap-xsmall gap-y-xsmall text-left";
@@ -38,7 +38,7 @@ export function paginationRootClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(PAGINATION_ROOT_CLASS, slotClass, className);
+  return cn(PAGINATION_ROOT_CLASS, slotClass, className);
 }
 
 export function paginationSummaryClass({
@@ -48,7 +48,7 @@ export function paginationSummaryClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(PAGINATION_SUMMARY_CLASS, slotClass, className);
+  return cn(PAGINATION_SUMMARY_CLASS, slotClass, className);
 }
 
 export function paginationSummaryTextClass({
@@ -58,7 +58,7 @@ export function paginationSummaryTextClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_SUMMARY_TEXT_CLASS,
     slotClass,
     className,
@@ -72,7 +72,7 @@ export function paginationContentClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(PAGINATION_CONTENT_CLASS, slotClass, className);
+  return cn(PAGINATION_CONTENT_CLASS, slotClass, className);
 }
 
 export function paginationItemClass({
@@ -82,7 +82,7 @@ export function paginationItemClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(PAGINATION_ITEM_CLASS, slotClass, className);
+  return cn(PAGINATION_ITEM_CLASS, slotClass, className);
 }
 
 export function paginationInteractiveButtonClass({
@@ -92,7 +92,7 @@ export function paginationInteractiveButtonClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_INTERACTIVE_BUTTON_CLASS,
     hoverVariant(),
     slotClass,
@@ -107,7 +107,7 @@ export function paginationPageActiveClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_PAGE_ACTIVE_CLASS,
     slotClass,
     className,
@@ -121,7 +121,7 @@ export function paginationPageTextClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_PAGE_TEXT_CLASS,
     slotClass,
     className,
@@ -135,7 +135,7 @@ export function paginationEllipsisClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_ELLIPSIS_CLASS,
     slotClass,
     className,
@@ -149,7 +149,7 @@ export function paginationNavTextClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_NAV_TEXT_CLASS,
     slotClass,
     className,
@@ -163,7 +163,7 @@ export function paginationPreviousIconClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_PREVIOUS_ICON_CLASS,
     slotClass,
     className,
@@ -177,7 +177,7 @@ export function paginationNextIconClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergePaginationSlotClass(
+  return cn(
     PAGINATION_NEXT_ICON_CLASS,
     slotClass,
     className,

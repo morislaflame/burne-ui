@@ -1,10 +1,7 @@
-import type { ClassValue } from "clsx";
 import { Children, isValidElement, type ReactNode, type Ref, type RefObject } from "react";
 
 import { Ripple } from "@/components/core/Ripple";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import { cn } from "@/utils/cn";
-
 import {
   EXPANDABLE_ACTION_DISPLAY_NAMES,
   EXPANDABLE_COMPOUND_SLOT_DISPLAY_NAMES,
@@ -13,10 +10,6 @@ import {
   EXPANDABLE_TITLE_DISPLAY_NAMES,
   EXPANDABLE_ICON_DISPLAY_NAMES,
 } from "./expandableA11y";
-
-export function mergeExpandableSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function mergeExpandableRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {

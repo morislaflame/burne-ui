@@ -6,7 +6,6 @@ import {
 } from "@/components/core/Dialog/dialogStyles";
 import { cn } from "@/utils/cn";
 
-import { mergeAlertDialogSlotClass } from "./alertDialogAPI";
 import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 
@@ -126,7 +125,7 @@ export function alertDialogOverlayEnterStyle() {
 }
 
 export function alertDialogBodyClass(bodyPadding: string, className?: string): string {
-  return mergeAlertDialogSlotClass(
+  return cn(
     ALERT_DIALOG_BODY_BASE_CLASS,
     bodyPadding,
     "text-left",
@@ -135,7 +134,7 @@ export function alertDialogBodyClass(bodyPadding: string, className?: string): s
 }
 
 export function alertDialogContentClass(className?: string): string {
-  return mergeAlertDialogSlotClass(ALERT_DIALOG_CONTENT_CLASS, className);
+  return cn(ALERT_DIALOG_CONTENT_CLASS, className);
 }
 
 export function alertDialogPanelClass({
@@ -150,7 +149,7 @@ export function alertDialogPanelClass({
   slotClass?: string;
 }): string {
   const isGloss = variant === "gloss";
-  return mergeAlertDialogSlotClass(
+  return cn(
     ALERT_DIALOG_PANEL_SHELL_CLASS,
     sizePreset.panelMax,
     !isGloss && ALERT_DIALOG_PANEL_SURFACE_CLASS,
@@ -162,7 +161,7 @@ export function alertDialogPanelClass({
 }
 
 export function alertDialogGlossPanelClass(maxHeight: string, slotClass?: string): string {
-  return mergeAlertDialogSlotClass(ALERT_DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
+  return cn(ALERT_DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
 }
 
 export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {

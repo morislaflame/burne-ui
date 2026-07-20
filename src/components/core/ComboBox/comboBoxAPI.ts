@@ -1,14 +1,7 @@
-import type { ClassValue } from "clsx";
 import type { Ref, RefObject } from "react";
 
 import type { InputStatus } from "@/components/core/Input";
-import { cn } from "@/utils/cn";
-
 import type { ComboBoxOption } from "./comboBoxTypes";
-
-export function mergeComboBoxSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {

@@ -12,7 +12,7 @@ import { IoChevronDown } from "react-icons/io5";
 import { Text } from "@/components/core/Text";
 
 import { useDisclosureTriggerMotion } from "./disclosureAnimations";
-import { mergeDisclosureSlotClass } from "./disclosureAPI";
+
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
 import {
   DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
@@ -24,6 +24,8 @@ import {
   disclosureTriggerShell,
 } from "./disclosureStyles";
 import type { DisclosureTriggerProps } from "./disclosureTypes";
+
+import { cn } from "@/utils/cn";
 
 export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTriggerProps>(
   function DisclosureTrigger(
@@ -76,7 +78,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         <span
           ref={motion.bindChevronRef}
           aria-hidden
-          className={mergeDisclosureSlotClass(
+          className={cn(
             DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
             triggerShell.chevron,
             TEXT_COLOR_TRANSITION,
@@ -97,7 +99,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         ...rest,
         id: triggerId,
         ref: motion.mergeRefs(ref, motion.setRefs, child.props.ref),
-        className: mergeDisclosureSlotClass(child.props.className, className),
+        className: cn(child.props.className, className),
         disabled: disabled || child.props.disabled,
         "aria-expanded": open,
         "aria-controls": panelId,
@@ -137,7 +139,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         {iconPos === "left" && chevronNode}
         <span
           ref={motion.titleLiftRef}
-          className={mergeDisclosureSlotClass(
+          className={cn(
             DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS,
             slotClassNames.triggerTitleLift,
           )}
@@ -145,7 +147,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
           <Text
             as="span"
             variant={triggerShell.text}
-            className={mergeDisclosureSlotClass(
+            className={cn(
               DISCLOSURE_TRIGGER_TITLE_CLASS,
               open ? "text-primary" : "text-foreground",
               slotClassNames.triggerTitle,

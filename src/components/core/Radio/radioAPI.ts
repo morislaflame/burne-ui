@@ -1,15 +1,9 @@
 import { useCallback, useState } from "react";
 
 import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
-import type { ClassValue } from "clsx";
-
 import { cn } from "@/utils/cn";
 
 import type { RadioClassNames, RadioIndicatorClassNames, RadioVariant } from "./radioTypes";
-
-export function mergeRadioSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function radioVariantToIndicator(variant: RadioVariant): SelectionIndicatorVariant {
   return variant === "gloss" ? "gloss" : "base";
@@ -25,18 +19,18 @@ export function resolveRadioIndicatorClassNames({
   className?: string;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeRadioSlotClass(
+    shell: cn(
       slotClassNames.indicator,
       classNames?.shell,
       classNames?.indicator,
       className,
     ),
-    fill: mergeRadioSlotClass(
+    fill: cn(
       slotClassNames.indicatorFill,
       classNames?.fill,
       classNames?.indicatorFill,
     ),
-    mark: mergeRadioSlotClass(
+    mark: cn(
       slotClassNames.indicatorMark,
       classNames?.mark,
       classNames?.indicatorMark,

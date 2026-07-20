@@ -1,15 +1,9 @@
 import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
 
 import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
-import type { ClassValue } from "clsx";
-
 import { cn } from "@/utils/cn";
 
 import type { CheckboxClassNames, CheckboxIndicatorClassNames, CheckboxVariant } from "./checkboxTypes";
-
-export function mergeCheckboxSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function checkboxVariantToIndicator(
   variant: CheckboxVariant,
@@ -28,18 +22,18 @@ export function resolveCheckboxIndicatorClassNames({
   className?: string;
 }): SelectionIndicatorClassNames {
   return {
-    shell: mergeCheckboxSlotClass(
+    shell: cn(
       slotClassNames.indicator,
       classNames?.shell,
       classNames?.indicator,
       className,
     ),
-    fill: mergeCheckboxSlotClass(
+    fill: cn(
       slotClassNames.indicatorFill,
       classNames?.fill,
       classNames?.indicatorFill,
     ),
-    mark: mergeCheckboxSlotClass(
+    mark: cn(
       slotClassNames.indicatorMark,
       classNames?.mark,
       classNames?.indicatorMark,

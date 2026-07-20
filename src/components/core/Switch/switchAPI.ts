@@ -7,14 +7,6 @@ import {
   type ReactNode,
 } from "react";
 
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
-export function mergeSwitchSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
-
 export function useMergedChecked(
   checked: boolean | undefined,
   defaultChecked: boolean | undefined,

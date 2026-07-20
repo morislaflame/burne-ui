@@ -4,7 +4,6 @@ import { FieldError, FieldHint } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
-import { mergeProgressBarSlotClass } from "./progressBarAPI";
 import { useProgressBarFillAnimation } from "./progressBarAnimations";
 import {
   useProgressBarClassNames,
@@ -27,6 +26,8 @@ import type {
   ProgressBarValueProps,
 } from "./progressBarTypes";
 import { useProgressBarTrackState } from "./useProgressBarTrackState";
+
+import { cn } from "@/utils/cn";
 
 export function ProgressBarSimpleBody({
   label,
@@ -68,7 +69,7 @@ export function ProgressBarLabel({ className, classNames, ...rest }: LabelProps)
       className={className}
       classNames={{
         ...classNames,
-        root: mergeProgressBarSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -141,7 +142,7 @@ export function ProgressBarHint({
   return (
     <FieldHint
       id={idProp ?? ctx.hintId}
-      className={mergeProgressBarSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -163,7 +164,7 @@ export function ProgressBarError({
   return (
     <FieldError
       id={idProp ?? ctx.errorId}
-      className={mergeProgressBarSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}

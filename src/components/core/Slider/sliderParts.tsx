@@ -9,7 +9,7 @@ import {
 } from "@/components/core/utils/scaleFieldParts";
 import { renderScaleSimpleLayout } from "@/components/core/utils/scaleFieldLayout";
 
-import { mergeSliderSlotClass, resolveSliderThumbIcon } from "./sliderAPI";
+import { resolveSliderThumbIcon } from "./sliderAPI";
 import {
   SliderTrackProvider,
   useSliderClassNames,
@@ -28,6 +28,8 @@ import type {
   SliderValueProps,
 } from "./sliderTypes";
 import { useSliderTrackState } from "./useSliderTrackState";
+
+import { cn } from "@/utils/cn";
 
 export function SliderSimpleBody({
   label,
@@ -73,7 +75,7 @@ export function SliderLabel({ className, classNames, ...rest }: LabelProps) {
       className={className}
       classNames={{
         ...classNames,
-        root: mergeSliderSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -89,7 +91,7 @@ export function SliderHeader({ children, className, ...rest }: SliderHeaderProps
   return (
     <ScaleFieldHeader
       orientation={orientation}
-      className={mergeSliderSlotClass(slotClassNames.header, className)}
+      className={cn(slotClassNames.header, className)}
       {...rest}
     >
       {children}
@@ -106,7 +108,7 @@ export function SliderValue({ children, className, ...rest }: SliderValueProps) 
   return (
     <ScaleFieldValue
       fallback={display?.valueLabel}
-      className={mergeSliderSlotClass(slotClassNames.value, className)}
+      className={cn(slotClassNames.value, className)}
       {...rest}
     >
       {children}
@@ -128,7 +130,7 @@ export function SliderHint({
   return (
     <FieldHint
       id={idProp ?? ctx.hintId}
-      className={mergeSliderSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -150,7 +152,7 @@ export function SliderError({
   return (
     <FieldError
       id={idProp ?? ctx.errorId}
-      className={mergeSliderSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}
@@ -210,7 +212,7 @@ export function SliderFill({ className, ...rest }: SliderFillProps) {
   return (
     <span
       ref={ctx.fillRef}
-      className={mergeSliderSlotClass(ctx.fillClassResolved, slotClassNames.fill, className)}
+      className={cn(ctx.fillClassResolved, slotClassNames.fill, className)}
       {...rest}
     />
   );
@@ -224,7 +226,7 @@ export function SliderRail({ className, children, ...rest }: SliderRailProps) {
 
   return (
     <div
-      className={mergeSliderSlotClass(ctx.railClass, slotClassNames.rail, className)}
+      className={cn(ctx.railClass, slotClassNames.rail, className)}
       aria-hidden
       {...rest}
     >

@@ -13,7 +13,6 @@ import {
 import {
   clampSliderValue,
   defaultSliderFormatValue,
-  mergeSliderSlotClass,
   normalizeSliderMarks,
   partitionSliderTrackChildren,
   readSliderTrackMetrics,
@@ -42,6 +41,8 @@ import {
 } from "./sliderStyles";
 import { SliderThumbButton } from "./sliderThumbParts";
 import type { SliderThumbKind, SliderTrackContextValue, SliderTrackProps } from "./sliderTypes";
+
+import { cn } from "@/utils/cn";
 
 export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTMLDivElement>) {
   const {
@@ -529,7 +530,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       <span
         key={mark}
         aria-hidden
-        className={mergeSliderSlotClass(SLIDER_MARK_CLASS, slotClassNames.mark)}
+        className={cn(SLIDER_MARK_CLASS, slotClassNames.mark)}
         style={sliderMarkStyle(percent, orientation)}
       />
     );

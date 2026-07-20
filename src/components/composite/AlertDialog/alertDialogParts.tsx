@@ -40,7 +40,6 @@ import {
   alertDialogHasIndicator,
   alertDialogShowsDefaultHeaderIcon,
   injectFooterButtonSize,
-  mergeAlertDialogSlotClass,
   resolveAlertDialogHeaderGridSlots,
 } from "./alertDialogAPI";
 import { useAlertDialogModalMotion } from "./alertDialogAnimations";
@@ -83,13 +82,15 @@ import type {
   AlertDialogTriggerProps,
 } from "./alertDialogTypes";
 
+import { cn } from "@/utils/cn";
+
 export function AlertDialogContent({ className, ...rest }: AlertDialogContentProps) {
   const slotClassNames = useAlertDialogClassNames();
 
   return (
     <div
       className={alertDialogContentClass(
-        mergeAlertDialogSlotClass(slotClassNames.content, className),
+        cn(slotClassNames.content, className),
       )}
       {...rest}
     />
@@ -108,7 +109,7 @@ export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogClosePr
       <CloseButton
         ref={ref}
         variant="secondary"
-        className={mergeAlertDialogSlotClass(
+        className={cn(
           ALERT_DIALOG_CLOSE_CLASS,
           headerCtx && messageBannerCloseCellClass(headerCtx.gridSlots),
           slotClassNames.close,
@@ -151,7 +152,7 @@ export function AlertDialogIndicator({
 
   return (
     <span
-      className={mergeAlertDialogSlotClass(
+      className={cn(
         ALERT_DIALOG_INDICATOR_CLASS,
         alertDialogHeaderIconWrapperClass(status),
         messageBannerIndicatorCellClass(gridSlots),
@@ -195,7 +196,7 @@ export function AlertDialogHeader({
   return (
     <AlertDialogHeaderProvider value={headerCtx}>
       <div
-        className={mergeAlertDialogSlotClass(
+        className={cn(
           ALERT_DIALOG_HEADER_CLASS,
           sizePreset.headerPadding,
           messageBannerGridClass(gridSlots, sizePreset.headerGap),
@@ -226,7 +227,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
         as="h2"
         variant={sizePreset.titleVariant}
         id={id ?? titleId}
-        className={mergeAlertDialogSlotClass(
+        className={cn(
           ALERT_DIALOG_TITLE_CLASS,
           headerCtx && messageBannerTitleCellClass(headerCtx.gridSlots),
           slotClassNames.title,
@@ -259,7 +260,7 @@ export function AlertDialogDescription({
       as="p"
       variant={sizePreset.descVariant}
       id={id ?? descriptionId}
-      className={mergeAlertDialogSlotClass(
+      className={cn(
         sizePreset.descClassName,
         headerCtx && messageBannerDescriptionCellClass(headerCtx.gridSlots),
         slotClassNames.description,
@@ -280,7 +281,7 @@ export function AlertDialogHeadingBlock({
 
   return (
     <div
-      className={mergeAlertDialogSlotClass(
+      className={cn(
         ALERT_DIALOG_HEADING_BLOCK_CLASS,
         slotClassNames.headingBlock,
         className,
@@ -300,7 +301,7 @@ export function AlertDialogBody({ className, children, ...rest }: AlertDialogBod
     <div
       className={alertDialogBodyClass(
         sizePreset.bodyPadding,
-        mergeAlertDialogSlotClass(slotClassNames.body, className),
+        cn(slotClassNames.body, className),
       )}
       {...rest}
     >
@@ -323,7 +324,7 @@ export function AlertDialogFooter({ className, children, ...rest }: AlertDialogF
 
   return (
     <div
-      className={mergeAlertDialogSlotClass(
+      className={cn(
         ALERT_DIALOG_FOOTER_CLASS,
         sizePreset.footerPadding,
         slotClassNames.footer,
@@ -394,7 +395,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
           ref: ((node: HTMLElement | null) => {
             triggerRef.current = node;
           }) as unknown as Ref<HTMLElement>,
-          className: mergeAlertDialogSlotClass(
+          className: cn(
             slotClassNames.trigger,
             child.props.className,
             className,
@@ -420,7 +421,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
         ref={setRefs}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={mergeAlertDialogSlotClass(slotClassNames.trigger, className)}
+        className={cn(slotClassNames.trigger, className)}
         onPointerDown={(e) => {
           onPointerDown?.(e);
           handlePointerDown(e);
@@ -507,7 +508,7 @@ export function AlertDialogPortalShell({
       onCancel={(e) => e.preventDefault()}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
-      className={mergeAlertDialogSlotClass(
+      className={cn(
         ALERT_DIALOG_NATIVE_CLASS,
         slotClassNames.dialog,
       )}
@@ -538,7 +539,7 @@ export function AlertDialogPortalShell({
           >
             <div
               className={alertDialogContentClass(
-                mergeAlertDialogSlotClass(
+                cn(
                   ALERT_DIALOG_GLOSS_CONTENT_CLASS,
                   slotClassNames.glossContent,
                 ),

@@ -1,16 +1,8 @@
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type { Selection, SelectionMode, SortDescriptor } from "./tableTypes";
 
 export const EMPTY_TABLE_SELECTION = new Set<string | number>();
 
 export const TONED_ROW_DEFAULT_TONE = "secondary" as const;
-
-export function mergeTableSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function isRowInSelection(selectedKeys: Selection, key: string | number): boolean {
   if (selectedKeys === "all") return true;

@@ -3,8 +3,9 @@ import type { CSSProperties } from "react";
 import { sliderThicknessToCss } from "@/components/core/Slider";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
 
-import { mergeMeterSlotClass } from "./meterAPI";
 import type { MeterOrientation, MeterSize } from "./meterTypes";
+
+import { cn } from "@/utils/cn";
 
 export const METER_RAIL_HEIGHT_CLASS: Record<MeterSize, string> = {
   small: "h-small",
@@ -53,7 +54,7 @@ export function meterRootClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeMeterSlotClass(
+  return cn(
     scaleFieldRootClassName(orientation),
     slotClass,
     className,
@@ -69,7 +70,7 @@ export function meterHeaderClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeMeterSlotClass(
+  return cn(
     METER_HEADER_BASE_CLASS,
     orientation === "horizontal"
       ? METER_HEADER_HORIZONTAL_CLASS
@@ -86,7 +87,7 @@ export function meterValueClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeMeterSlotClass(METER_VALUE_CLASS, slotClass, className);
+  return cn(METER_VALUE_CLASS, slotClass, className);
 }
 
 export function meterTrackClass({
@@ -102,7 +103,7 @@ export function meterTrackClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeMeterSlotClass(
+  return cn(
     METER_TRACK_BASE_CLASS,
     isHorizontal ? METER_TRACK_HORIZONTAL_CLASS : METER_TRACK_VERTICAL_CLASS,
     thickness == null &&
@@ -121,7 +122,7 @@ export function meterFillClass({
   hasCustomColor: boolean;
   slotClass?: string;
 }): string {
-  return mergeMeterSlotClass(
+  return cn(
     METER_FILL_BASE_CLASS,
     isHorizontal ? METER_FILL_HORIZONTAL_CLASS : METER_FILL_VERTICAL_CLASS,
     !hasCustomColor && METER_FILL_DEFAULT_COLOR_CLASS,

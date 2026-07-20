@@ -1,11 +1,12 @@
 import { forwardRef } from "react";
 
-import { mergeKbdSlotClass } from "./kbdAPI";
 import { useKbdAnimations } from "./kbdAnimations";
 import { KbdBody } from "./kbdBodyPart";
 import { KbdClassNamesProvider } from "./kbdContext";
 import type { KbdProps } from "./kbdTypes";
 import { useKbdRootState } from "./useKbdRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   KbdProps,
@@ -48,7 +49,7 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     <KbdClassNamesProvider classNames={classNames}>
       <kbd
         ref={animations.setMergedRef}
-        className={mergeKbdSlotClass(
+        className={cn(
           state.rootClass,
           animations.motionClass,
           animations.glossMotionClass,

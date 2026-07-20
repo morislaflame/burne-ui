@@ -6,15 +6,8 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
-import type { ClassValue } from "clsx";
-
 import { Button, type ButtonProps } from "@/components/core/Button";
-import { cn } from "@/utils/cn";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
-
-export function mergeDialogSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function injectFooterButtonSize(
   children: ReactNode,

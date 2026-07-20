@@ -1,20 +1,12 @@
 import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
 
 import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
-import type { ClassValue } from "clsx";
-
-import { cn } from "@/utils/cn";
-
 import type {
   FillSpan,
   SliderDisplayState,
   SliderOrientation,
   SliderSize,
 } from "./sliderTypes";
-
-export function mergeSliderSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function sliderThicknessToCss(thickness: number | string): string {
   return typeof thickness === "number" ? `${thickness}px` : thickness;

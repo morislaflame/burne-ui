@@ -206,7 +206,7 @@ Toggle password и remove file — **CSS** `hoverVariant`, `TEXT_COLOR_TRANSITIO
 1. **`className` на root** — дополнительные классы на обёртку `Field` (мержатся с `classNames.root`).
 2. **`classNames` на root** — точечные слоты через `InputClassNamesProvider`; все подчасти читают контекст.
 
-В compound API слоты из root `classNames` применяются ко всем частям. Дополнительно каждая подчасть принимает свой **`className`**, который мержится поверх слота контекста (`mergeInputSlotClass`).
+В compound API слоты из root `classNames` применяются ко всем частям. Дополнительно каждая подчасть принимает свой **`className`**, который мержится поверх слота контекста через `cn`.
 
 ### Слоты `InputClassNames`
 

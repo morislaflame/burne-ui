@@ -1,13 +1,6 @@
-import type { ClassValue } from "clsx";
 import { Children, isValidElement, type RefObject, type ReactNode, type Ref } from "react";
 
-import { cn } from "@/utils/cn";
-
 import type { DisclosureVariant } from "./disclosureTypes";
-
-export function mergeDisclosureSlotClass(...parts: ClassValue[]): string {
-  return cn(...parts);
-}
 
 export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {

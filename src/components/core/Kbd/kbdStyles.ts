@@ -1,7 +1,6 @@
 import type { TextVariant } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import { mergeKbdSlotClass } from "./kbdAPI";
 import type { KbdSize, KbdVariant } from "./kbdTypes";
 
 export const KBD_VARIANT_SURFACE: Record<Exclude<KbdVariant, "gloss">, string> = {
@@ -52,7 +51,7 @@ export function kbdRootClass({
   slotRoot?: string;
   className?: string;
 }): string {
-  return mergeKbdSlotClass(
+  return cn(
     KBD_ROOT_BASE_CLASS,
     kbdSurfaceClass(variant),
     KBD_LAYOUT[size],

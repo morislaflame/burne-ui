@@ -1,5 +1,4 @@
 import type { CalendarLocale } from "./calendarTypes";
-import { cn } from "@/utils/cn";
 import { calendarDayAriaLabel } from "./calendarA11y";
 import type {
   CalendarDayCellModel,
@@ -245,8 +244,3 @@ export function createDefaultCalendarValue(
   return null;
 }
 
-export function mergeCalendarSlotClass(
-  ...parts: Array<string | undefined>
-): string {
-  return cn(...parts);
-}

@@ -1,7 +1,6 @@
 import { hoverVariant, SURFACE_COLOR_TRANSITION, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
-import { mergeTableSlotClass } from "./tableAPI";
 import type { TableVariant } from "./tableTypes";
 
 export const TABLE_ROOT_BASE_CLASS = "w-full";
@@ -127,7 +126,7 @@ export function tableRootClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeTableSlotClass(
+  return cn(
     TABLE_ROOT_BASE_CLASS,
     TABLE_ROOT_VARIANT_CLASS[variant],
     slotClass,
@@ -144,7 +143,7 @@ export function tableContentClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeTableSlotClass(
+  return cn(
     TABLE_CONTENT_BASE_CLASS,
     TABLE_CONTENT_VARIANT_CLASS[variant],
     slotClass,
@@ -163,10 +162,10 @@ export function tableColumnClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeTableSlotClass(
+  return cn(
     TABLE_COLUMN_BASE_CLASS,
     TABLE_COLUMN_VARIANT_CLASS[variant],
-    allowsSorting && mergeTableSlotClass(TABLE_COLUMN_SORTABLE_CLASS, TEXT_COLOR_TRANSITION),
+    allowsSorting && cn(TABLE_COLUMN_SORTABLE_CLASS, TEXT_COLOR_TRANSITION),
     slotClass,
     className,
   );
@@ -187,7 +186,7 @@ export function tableRowClass({
   slotClass?: string;
   className?: string;
 }): string {
-  return mergeTableSlotClass(
+  return cn(
     TABLE_ROW_BASE_CLASS,
     TABLE_ROW_VARIANT_CLASS[variant],
     isSelectable && TABLE_ROW_SELECTABLE_CLASS,
@@ -219,7 +218,7 @@ export function tableCellClass({
   const isToned = variant === "toned";
   const toneSurface = tone ? TABLE_ROW_TONE_SURFACE[tone] : undefined;
 
-  return mergeTableSlotClass(
+  return cn(
     TABLE_CELL_BASE_CLASS,
     TABLE_CELL_VARIANT_CLASS[variant],
     isToned && toneSurface,
@@ -231,7 +230,7 @@ export function tableCellClass({
 }
 
 export function tableSortChevronClass(active: boolean): string {
-  return mergeTableSlotClass(
+  return cn(
     TABLE_COLUMN_SORT_CHEVRON_BASE_CLASS,
     active ? TABLE_COLUMN_SORT_CHEVRON_ACTIVE_CLASS : TABLE_COLUMN_SORT_CHEVRON_IDLE_CLASS,
   );

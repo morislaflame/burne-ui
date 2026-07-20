@@ -4,7 +4,6 @@ import { forwardRef } from "react";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
-import { mergeFieldSlotClass } from "./fieldAPI";
 import { joinFieldDescribedBy } from "./fieldA11y";
 import {
   FieldClassNamesProvider,
@@ -34,6 +33,8 @@ import type {
 } from "./fieldTypes";
 import type { UseFieldSetRootStateResult } from "./fieldTypes";
 
+import { cn } from "@/utils/cn";
+
 export function FieldRootShell({
   className,
   children,
@@ -43,7 +44,7 @@ export function FieldRootShell({
 
   return (
     <div
-      className={mergeFieldSlotClass(
+      className={cn(
         FIELD_ROOT_CLASS,
         slotClassNames.root,
         className,
@@ -99,7 +100,7 @@ export function FieldError({ role = "alert", className, ...props }: FieldErrorPr
     <FieldHint
       status="danger"
       role={role}
-      className={mergeFieldSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...props}
     />
   );
@@ -112,7 +113,7 @@ export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
     return (
       <legend
         ref={ref}
-        className={mergeFieldSlotClass(
+        className={cn(
           FIELD_LEGEND_CLASS,
           slotClassNames.legend,
           className,
@@ -136,7 +137,7 @@ export function FieldLegendHeader({
 
   return (
     <span
-      className={mergeFieldSlotClass(
+      className={cn(
         FIELD_LEGEND_HEADER_CLASS,
         slotClassNames.legendHeader,
         className,
@@ -247,7 +248,7 @@ export const FieldSetRootInner = forwardRef<
       ref={ref}
       disabled={disabled}
       aria-describedby={joinFieldDescribedBy(hintId, errorId)}
-      className={mergeFieldSlotClass(
+      className={cn(
         FIELD_SET_CLASS,
         slotClassNames.set,
         className,

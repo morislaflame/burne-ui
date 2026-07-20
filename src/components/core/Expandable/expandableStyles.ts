@@ -4,8 +4,9 @@ import {
   type MessageBannerGridSlots,
 } from "@/components/core/utils/messageBannerGridLayout";
 
-import { mergeExpandableSlotClass } from "./expandableAPI";
 import type { ExpandableSize, ExpandableVariant } from "./expandableTypes";
+
+import { cn } from "@/utils/cn";
 
 export const EXPANDABLE_DESCRIPTION_VARIANT = {
   small: "small",
@@ -66,7 +67,6 @@ export const EXPANDABLE_PANEL_SHELL_CLASS = "overflow-hidden";
 export const EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS =
   "pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]";
 
-
 export function expandableRootClass({
   variant,
   className,
@@ -76,7 +76,7 @@ export function expandableRootClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeExpandableSlotClass(
+  return cn(
     EXPANDABLE_ROOT_BASE_CLASS,
     variant === "gloss" ? EXPANDABLE_ROOT_GLOSS_CLASS : EXPANDABLE_ROOT_SURFACE_CLASS,
     slotClass,
@@ -97,7 +97,7 @@ export function expandableTriggerClass({
 }): string {
   const layout = CONTROL_SIZE_LAYOUT[size];
 
-  return mergeExpandableSlotClass(
+  return cn(
     EXPANDABLE_TRIGGER_BASE_CLASS,
     layout.padX,
     disabled ? EXPANDABLE_TRIGGER_DISABLED_CLASS : EXPANDABLE_TRIGGER_ENABLED_CLASS,
@@ -113,7 +113,7 @@ export function expandableTriggerLiftClass({
   gridSlots: MessageBannerGridSlots;
   slotClass?: string;
 }): string {
-  return mergeExpandableSlotClass(
+  return cn(
     EXPANDABLE_TRIGGER_LIFT_BASE_CLASS,
     messageBannerGridClass(gridSlots),
     slotClass,
@@ -129,7 +129,7 @@ export function expandableIconClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeExpandableSlotClass(
+  return cn(
     EXPANDABLE_ICON_BASE_CLASS,
     CONTROL_SIZE_LAYOUT[size].icon,
     slotClass,
@@ -146,7 +146,7 @@ export function expandablePanelClass({
   className?: string;
   slotClass?: string;
 }): string {
-  return mergeExpandableSlotClass(
+  return cn(
     EXPANDABLE_PANEL_PAD[size],
     "text-left",
     slotClass,

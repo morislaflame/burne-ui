@@ -32,7 +32,6 @@ import {
 } from "./selectAnimations";
 import {
   mergeRefs,
-  mergeSelectSlotClass,
   selectBumpActiveValue,
   selectFirstEnabledValue,
   selectLastEnabledValue,
@@ -61,6 +60,8 @@ import type {
   SelectTriggerProps,
   SelectValueProps,
 } from "./selectTypes";
+
+import { cn } from "@/utils/cn";
 
 export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupProps>(
   function SelectTriggerGroup(
@@ -442,7 +443,7 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         {...rest}
       >
         <IoChevronDown
-          className={mergeSelectSlotClass(
+          className={cn(
             SELECT_CHEVRON_ICON[size],
             slotClassNames.triggerIcon,
           )}
@@ -522,11 +523,11 @@ export function SelectPopover({
         unstyled
         contentRole={undefined}
         offset={offset}
-        className={mergeSelectSlotClass(SELECT_POPOVER_CLASS, slotClassNames.popover, className)}
+        className={cn(SELECT_POPOVER_CLASS, slotClassNames.popover, className)}
         {...rest}
       >
         <Popover.Body
-          className={mergeSelectSlotClass(
+          className={cn(
             SELECT_POPOVER_BODY_CLASS,
             slotClassNames.popoverBody,
           )}
@@ -540,7 +541,7 @@ export function SelectPopover({
             activeValue={activeValue}
             onActiveValueChange={setActiveValue}
             selectionIndicator
-            className={mergeSelectSlotClass(
+            className={cn(
               SELECT_LISTBOX_CLASS,
               slotClassNames.listBox,
             )}
@@ -564,7 +565,7 @@ export function SelectLabel({ className, classNames, ...rest }: LabelProps) {
       className={className}
       classNames={{
         ...classNames,
-        root: mergeSelectSlotClass(slotClassNames.label, classNames?.root),
+        root: cn(slotClassNames.label, classNames?.root),
       }}
       {...rest}
     />
@@ -588,7 +589,7 @@ export function SelectHint({
     <FieldHint
       id={idProp ?? field.hintId}
       status={hintStatus}
-      className={mergeSelectSlotClass(slotClassNames.hint, className)}
+      className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
@@ -610,7 +611,7 @@ export function SelectError({
   return (
     <FieldError
       id={idProp ?? field.errorId}
-      className={mergeSelectSlotClass(slotClassNames.error, className)}
+      className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children ?? field.errorMessage}

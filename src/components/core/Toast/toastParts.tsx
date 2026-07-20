@@ -15,7 +15,7 @@ import {
 } from "@/components/core/utils/semanticStatusIcons";
 
 import { TOAST_CLOSE_ARIA_LABEL } from "./toastA11y";
-import { mergeToastSlotClass } from "./toastAPI";
+
 import {
   useToastClassNames,
   useToastItem,
@@ -39,6 +39,8 @@ import type {
   ToastTitleProps,
 } from "./toastTypes";
 
+import { cn } from "@/utils/cn";
+
 export function ToastIndicator({ className, children, ...rest }: ToastIndicatorProps) {
   const { status, isLoading, gridSlots, sizePreset } = useToastItem();
   const slotClassNames = useToastClassNames();
@@ -47,7 +49,7 @@ export function ToastIndicator({ className, children, ...rest }: ToastIndicatorP
   if (children !== undefined) {
     return (
       <span
-        className={mergeToastSlotClass(
+        className={cn(
           indicatorClass,
           messageBannerIndicatorCellClass(gridSlots),
           slotClassNames.indicator,
@@ -63,7 +65,7 @@ export function ToastIndicator({ className, children, ...rest }: ToastIndicatorP
   if (isLoading) {
     return (
       <span
-        className={mergeToastSlotClass(
+        className={cn(
           indicatorClass,
           messageBannerIndicatorCellClass(gridSlots),
           slotClassNames.indicator,
@@ -83,7 +85,7 @@ export function ToastIndicator({ className, children, ...rest }: ToastIndicatorP
 
   return (
     <span
-      className={mergeToastSlotClass(
+      className={cn(
         indicatorClass,
         messageBannerIndicatorCellClass(gridSlots),
         slotClassNames.indicator,
@@ -102,7 +104,7 @@ export function ToastMessage({ className, ...rest }: ToastMessageProps) {
   const slotClassNames = useToastClassNames();
   return (
     <div
-      className={mergeToastSlotClass(TOAST_COMPOUND_CONTENTS_CLASS, slotClassNames.message, className)}
+      className={cn(TOAST_COMPOUND_CONTENTS_CLASS, slotClassNames.message, className)}
       {...rest}
     />
   );
@@ -114,7 +116,7 @@ export function ToastContent({ className, ...rest }: ToastContentProps) {
   const slotClassNames = useToastClassNames();
   return (
     <div
-      className={mergeToastSlotClass(TOAST_COMPOUND_CONTENTS_CLASS, slotClassNames.content, className)}
+      className={cn(TOAST_COMPOUND_CONTENTS_CLASS, slotClassNames.content, className)}
       {...rest}
     />
   );
@@ -131,7 +133,7 @@ export function ToastTitle({ className, id: idProp, ...rest }: ToastTitleProps) 
       as="div"
       variant={sizePreset.titleVariant}
       id={idProp ?? titleId}
-      className={mergeToastSlotClass(
+      className={cn(
         TOAST_TITLE_CLASS,
         messageBannerTitleCellClass(gridSlots),
         slotClassNames.title,
@@ -153,7 +155,7 @@ export function ToastDescription({ className, id: idProp, ...rest }: ToastDescri
       as="div"
       variant={sizePreset.descVariant}
       id={idProp ?? descriptionId}
-      className={mergeToastSlotClass(
+      className={cn(
         TOAST_DESCRIPTION_CLASS,
         messageBannerDescriptionCellClass(gridSlots),
         slotClassNames.description,
@@ -172,7 +174,7 @@ export function ToastActionButton({ className, ...rest }: ToastActionButtonProps
 
   return (
     <div
-      className={mergeToastSlotClass(
+      className={cn(
         messageBannerActionCellClass(gridSlots),
         slotClassNames.action,
         className,
@@ -198,7 +200,7 @@ export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonPr
         size="small"
         variant="ghost"
         aria-label={ariaLabel}
-        className={mergeToastSlotClass(
+        className={cn(
           TOAST_CLOSE_BUTTON_OFFSET_CLASS,
           messageBannerCloseCellClass(gridSlots),
           slotClassNames.close,

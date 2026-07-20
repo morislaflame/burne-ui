@@ -3,7 +3,6 @@ import { forwardRef } from "react";
 import { skeletonPresentationProps } from "./skeletonA11y";
 import { skeletonVariantStyle } from "./skeletonAPI";
 import {
-  mergeSkeletonSlotClass,
   SKELETON_BASE_CLASS,
   SKELETON_BLOCK_CLASS,
   SKELETON_CIRCLE_RADIUS_CLASS,
@@ -23,11 +22,13 @@ import type {
   SkeletonWaveProps,
 } from "./skeletonTypes";
 
+import { cn } from "@/utils/cn";
+
 export function SkeletonWave({ className, style }: SkeletonWaveProps) {
   return (
     <span
       aria-hidden
-      className={mergeSkeletonSlotClass(SKELETON_WAVE_OVERLAY_CLASS, className)}
+      className={cn(SKELETON_WAVE_OVERLAY_CLASS, className)}
       style={{ ...skeletonWaveOverlayStyle(), ...style }}
     />
   );
@@ -48,7 +49,7 @@ export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
     return (
       <div
         ref={ref}
-        className={mergeSkeletonSlotClass(
+        className={cn(
           SKELETON_BASE_CLASS,
           SKELETON_CIRCLE_RADIUS_CLASS,
           size,
@@ -87,7 +88,7 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(functi
   return (
     <div
       ref={ref}
-      className={mergeSkeletonSlotClass(SKELETON_TEXT_ROOT_CLASS, classNames?.root, className)}
+      className={cn(SKELETON_TEXT_ROOT_CLASS, classNames?.root, className)}
       style={style}
       {...skeletonPresentationProps()}
       {...rest}
@@ -95,7 +96,7 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(functi
       {lineWidths.map((widthClass, index) => (
         <div
           key={index}
-          className={mergeSkeletonSlotClass(
+          className={cn(
             SKELETON_BASE_CLASS,
             SKELETON_TEXT_LINE_CLASS,
             widthClass,
@@ -122,7 +123,7 @@ export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonBlockProps>(func
   return (
     <div
       ref={ref}
-      className={mergeSkeletonSlotClass(
+      className={cn(
         SKELETON_BASE_CLASS,
         SKELETON_BLOCK_CLASS,
         classNames?.root,
