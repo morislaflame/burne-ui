@@ -9,7 +9,7 @@ import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractive
 
 import "@/components/core/utils/glossInteractive.css";
 
-import { focusTabAt, collectTabButtons } from "./tabsAPI";
+import { collectTabButtons, focusTabAt } from "./tabsA11y";
 import { useTabsClassNames, useTabsContext } from "./tabsContext";
 import { tabsIndicatorClass, tabsListClass } from "./tabsStyles";
 import type { TabsListProps } from "./tabsTypes";

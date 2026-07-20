@@ -8,8 +8,8 @@ import { Text } from "@/components/core/Text";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-} from "@/components/core/utils/dualApiStoryChrome";
-import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
+} from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { TimeField } from "./index";
 

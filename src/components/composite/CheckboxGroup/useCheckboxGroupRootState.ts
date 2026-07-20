@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field";
+import { useOptionGroupRequiredAnchor } from "@/components/composite/utils/useOptionGroupRequiredAnchor";
+import { useOptionGroupSingleValue } from "@/components/composite/utils/useOptionGroupSingleValue";
 
 import type {
   CheckboxGroupContextValue,
@@ -20,38 +22,32 @@ export function useCheckboxGroupRootState({
   const hintId = useFieldSetHintId(hintIdProp);
   const errorId = useFieldSetErrorId(errorIdProp);
 
-  const controlled = valueProp !== undefined;
-  const [internalValue, setInternalValue] = useState<string | undefined>(defaultValue);
+  const { selectedValue: singleSelectedValue, selectValue } = useOptionGroupSingleValue({
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    allowClear: true,
+  });
 
-  const selectedValue =
-    selection === "single"
-      ? controlled
-        ? valueProp == null
-          ? undefined
-          : String(valueProp)
-        : internalValue
-      : undefined;
+  const selectedValue = selection === "single" ? singleSelectedValue : undefined;
 
   const selectSingleValue = useCallback(
     (optionValue: string, checked: boolean) => {
       if (selection !== "single") return;
-      const next = checked ? optionValue : undefined;
-      if (!controlled) setInternalValue(next);
-      onValueChange?.(next);
+      selectValue(checked ? optionValue : undefined);
     },
-    [controlled, onValueChange, selection],
+    [selectValue, selection],
   );
 
-  const requiredAnchorClaimedRef = useRef(false);
-  useEffect(() => {
-    requiredAnchorClaimedRef.current = false;
-  }, [isRequired, selection]);
+  const { claimRequiredAnchor: claimAnchor } = useOptionGroupRequiredAnchor([
+    isRequired,
+    selection,
+  ]);
 
   const claimRequiredAnchor = useCallback(() => {
-    if (selection !== "single" || !isRequired || requiredAnchorClaimedRef.current) return false;
-    requiredAnchorClaimedRef.current = true;
-    return true;
-  }, [isRequired, selection]);
+    if (selection !== "single" || !isRequired) return false;
+    return claimAnchor();
+  }, [claimAnchor, isRequired, selection]);
 
   const contextValue = useMemo<CheckboxGroupContextValue>(
     () => ({

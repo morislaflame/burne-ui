@@ -138,14 +138,9 @@ configureMotion({
 
 ## Токены и CSS
 
-`toggleButtonGroupStyles.ts` делегирует в `ButtonGroup`:
+Стили root/separator импортируются напрямую из `ButtonGroup/buttonGroupStyles` (`buttonGroupRootClass`, `buttonGroupSeparatorClass`) — отдельный styles-слой не нужен.
 
-| Функция | Назначение |
-|---------|------------|
-| `toggleButtonGroupRootClass` | → `buttonGroupRootClass` |
-| `toggleButtonGroupSeparatorClass` | → `buttonGroupSeparatorClass` |
-
-Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`.
+Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Legend/Hint/Error API нет (осознанное исключение от option-group fieldset утилит).
 
 ## Стилизация и кастомизация
 
@@ -213,10 +208,8 @@ ToggleButtonGroup/
 ├── ToggleButtonGroup.tsx
 ├── index.ts
 ├── toggleButtonGroupTypes.ts
-├── toggleButtonGroupStyles.ts
 ├── toggleButtonGroupAPI.ts
 ├── toggleButtonGroupA11y.ts
-├── toggleButtonGroupContext.tsx
 ├── toggleButtonGroupParts.tsx      # Separator (internal)
 ├── useToggleButtonGroupRootState.ts
 └── ToggleButtonGroup.stories.tsx

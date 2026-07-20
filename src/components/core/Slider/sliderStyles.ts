@@ -7,6 +7,14 @@ import type { SliderOrientation, SliderSize } from "./sliderTypes";
 
 import { cn } from "@/utils/cn";
 
+export const SLIDER_SCALE_HEADER_BASE_CLASS = "flex items-baseline justify-between gap-xsmall";
+
+export const SLIDER_SCALE_HEADER_HORIZONTAL_CLASS = "w-full";
+
+export const SLIDER_SCALE_HEADER_VERTICAL_CLASS = "min-w-[8rem]";
+
+export const SLIDER_SCALE_VALUE_CLASS = "tabular-nums text-muted";
+
 export const SLIDER_RAIL_HEIGHT: Record<SliderSize, string> = {
   small: "h-[var(--selection-indicator-small)] min-h-[var(--selection-indicator-small)]",
   base: "h-[var(--selection-indicator-base)] min-h-[var(--selection-indicator-base)]",

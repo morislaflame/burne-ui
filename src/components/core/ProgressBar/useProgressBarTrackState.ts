@@ -1,7 +1,8 @@
 import { useLayoutEffect, useMemo } from "react";
 
+import { clampNumber } from "@/components/core/utils/clampNumber";
+
 import {
-  clampProgressBarValue,
   defaultProgressBarFormatValue,
   progressBarValueToPercent,
 } from "./progressBarAPI";
@@ -39,7 +40,7 @@ export function useProgressBarTrackState({
   const errorConnected = fieldCtx?.errorConnected ?? false;
 
   const clampedValue = useMemo(
-    () => clampProgressBarValue(value, min, max),
+    () => clampNumber(value, min, max),
     [max, min, value],
   );
   const percent = useMemo(

@@ -242,6 +242,8 @@ RadioGroup/
 ├── radioGroupContext.tsx
 ├── useRadioGroupRootState.ts
 └── RadioGroup.stories.tsx
+
+composite/utils/ — shared with CheckboxGroup (`optionGroupFieldset`, `optionGroupParts`, `useOptionGroup*`)
 ```
 
 ## Storybook

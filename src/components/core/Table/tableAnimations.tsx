@@ -4,7 +4,7 @@ import { IoChevronUp } from "react-icons/io5";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { useTableClassNames } from "./tableContext";
-import { tableSortChevronClass } from "./tableStyles";
+import { TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS, tableSortChevronClass } from "./tableStyles";
 import type { SortDirection } from "./tableTypes";
 
 import { cn } from "@/utils/cn";
@@ -23,7 +23,7 @@ export function TableSortChevron({ direction }: { direction: SortDirection | und
         slotClassNames.columnSortChevron,
       )}
     >
-      <IoChevronUp className="icon-xsmall" />
+      <IoChevronUp className={TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS} />
     </span>
   );
 }

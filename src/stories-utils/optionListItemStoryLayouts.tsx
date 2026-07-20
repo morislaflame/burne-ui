@@ -3,7 +3,7 @@ import { IoChevronForward, IoGlobeOutline } from "react-icons/io5";
 
 import { Avatar } from "@/components/core/Avatar";
 import { Badge } from "@/components/core/Badge";
-import { PIN_IMAGE1 } from "@/utils/mockImages";
+import { PIN_IMAGE1 } from "@/stories-utils/mockImages";
 import { cn } from "@/utils/cn";
 
 export type OptionListItemLayoutParts = {

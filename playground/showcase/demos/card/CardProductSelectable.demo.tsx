@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Badge } from "@/components/core/Badge";
 import { Card } from "@/components/core/Card";
 import { Ripple } from "@/components/core/Ripple";
-import { PIN_IMAGE4 } from "@/utils/mockImages";
+import { PIN_IMAGE4 } from "@/stories-utils/mockImages";
 
 export function CardProductSelectableDemo() {
   const [selected, setSelected] = useState(false);

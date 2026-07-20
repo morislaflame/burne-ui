@@ -16,6 +16,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
+import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import {
   prefersReducedInteractiveHoverLift,
   resolveAdaptiveHoverLiftScale,
@@ -303,12 +304,6 @@ export function animateGlossInteractivePressSqueeze(
         overwrite: "auto",
       });
   });
-}
-
-function cameFromOutsideContainer(root: HTMLElement, related: EventTarget | null): boolean {
-  if (related == null) return true;
-  if (!(related instanceof Node)) return true;
-  return !root.contains(related);
 }
 
 export function useGlossInteractiveHandlers(

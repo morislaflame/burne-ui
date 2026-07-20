@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-import type { SkeletonRadius } from "./skeletonTypes";
+import type { SkeletonRadius, SkeletonVariant } from "./skeletonTypes";
 
 export const SKELETON_BASE_CLASS = "relative overflow-hidden bg-primary-tint";
 
@@ -50,6 +50,12 @@ export function skeletonShimmerStyle(): CSSProperties {
     backgroundSize: "400% 100%",
     animation: SKELETON_SHIMMER_ANIMATION,
   };
+}
+
+export function skeletonVariantStyle(variant: SkeletonVariant): CSSProperties {
+  if (variant === "pulse") return skeletonPulseStyle();
+  if (variant === "shimmer") return skeletonShimmerStyle();
+  return {};
 }
 
 export function skeletonWaveOverlayStyle(): CSSProperties {

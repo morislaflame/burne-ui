@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
-import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
+import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStoryLayouts";
 
 import { ListBox } from "@/components/core/ListBox";
 

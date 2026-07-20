@@ -27,7 +27,7 @@ import {
   type MessageBannerGridSlots,
 } from "@/components/core/utils/messageBannerGridLayout";
 import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import "../utils/glossInteractive.css";
 
@@ -36,7 +36,6 @@ import {
   hasTooltipCompoundChildren,
   isSemanticTooltipVariant,
   isTooltipArrowElement,
-  mergeRefs,
   resolveTooltipGridSlots,
 } from "./tooltipAPI";
 import { useTooltipPortalMotion } from "./tooltipAnimations";

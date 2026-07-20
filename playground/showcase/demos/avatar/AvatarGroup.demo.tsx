@@ -1,5 +1,5 @@
 import { Avatar, AvatarGroup } from "@/components/core/Avatar";
-import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/utils/mockImages";
+import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 
 export function AvatarGroupDemo() {
   return (

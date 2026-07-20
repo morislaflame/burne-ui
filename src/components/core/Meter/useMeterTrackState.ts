@@ -1,7 +1,8 @@
 import { useLayoutEffect, useMemo } from "react";
 
+import { clampNumber } from "@/components/core/utils/clampNumber";
+
 import {
-  clampMeterValue,
   defaultMeterFormatValue,
   meterValueToPercent,
 } from "./meterAPI";
@@ -39,7 +40,7 @@ export function useMeterTrackState({
   const errorConnected = fieldCtx?.errorConnected ?? false;
 
   const clampedValue = useMemo(
-    () => clampMeterValue(value, min, max),
+    () => clampNumber(value, min, max),
     [max, min, value],
   );
   const percent = useMemo(

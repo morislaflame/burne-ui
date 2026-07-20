@@ -14,6 +14,10 @@ export const COLOR_SLIDER_ROOT_CLASS = "flex flex-col gap-xsmall";
 
 export const COLOR_SLIDER_LABEL_ROW_CLASS = "flex items-center justify-between";
 
+export const COLOR_SLIDER_LABEL_TEXT_CLASS = "text-muted";
+
+export const COLOR_SLIDER_VALUE_TEXT_CLASS = "font-w-mid text-foreground";
+
 export const CHANNEL_A11Y_LABEL: Record<ColorChannel, string> = {
   hue: "Hue",
   saturation: "Saturation",

@@ -1,7 +1,7 @@
 import { CloseButton } from "@/components/core/CloseButton";
 import { Surface } from "@/components/core/Surface";
 import { Text } from "@/components/core/Text";
-import { PIN_IMAGE2 } from "@/utils/mockImages";
+import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 export function CloseButtonPreviewCardDemo() {
   return (

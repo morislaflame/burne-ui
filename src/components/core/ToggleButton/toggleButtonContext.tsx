@@ -10,6 +10,20 @@ const ToggleButtonGroupContext = createContext<ToggleButtonGroupContextValue | n
 const ToggleButtonContext = createContext<ToggleButtonContextValue | null>(null);
 const ToggleButtonClassNamesContext = createContext<ToggleButtonClassNames>({});
 
+export function ToggleButtonGroupProvider({
+  value,
+  children,
+}: {
+  value: ToggleButtonGroupContextValue;
+  children: ReactNode;
+}) {
+  return (
+    <ToggleButtonGroupContext.Provider value={value}>
+      {children}
+    </ToggleButtonGroupContext.Provider>
+  );
+}
+
 export function useOptionalToggleButtonGroupContext() {
   return useContext(ToggleButtonGroupContext);
 }

@@ -4,7 +4,7 @@ import { Avatar } from "@/components/core/Avatar";
 import { Badge } from "@/components/core/Badge";
 import { Surface } from "@/components/core/Surface";
 import { Table, type SortDescriptor } from "@/components/core/Table";
-import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/utils/mockImages";
+import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 
 type Member = {
   id: number;

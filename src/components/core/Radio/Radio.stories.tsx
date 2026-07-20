@@ -6,8 +6,8 @@ import { IoStar } from "react-icons/io5";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-} from "@/components/core/utils/dualApiStoryChrome";
-import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
+} from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Radio } from ".";
 

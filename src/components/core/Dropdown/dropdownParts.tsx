@@ -27,6 +27,7 @@ import {
   runOpenAfterSqueeze,
   useOpeningRef,
 } from "@/components/core/utils/runOpenAfterSqueeze";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import {
   OptionListItemContextProvider,
@@ -43,11 +44,6 @@ import {
   useDropdownPopoverMenu,
   useDropdownSubContentPortal,
 } from "./dropdownAnimations";
-import {
-  mergeDropdownRefs,
-  partitionDropdownItemChildren,
-  resolveDropdownItemIndicatorClassNames,
-} from "./dropdownAPI";
 import {
   useDropdown,
   useDropdownClassNames,
@@ -72,6 +68,7 @@ import {
   DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS,
   DROPDOWN_TRIGGER_CLASS,
   dropdownItemRowClass,
+  resolveDropdownItemIndicatorClassNames,
   dropdownSubContentClass,
   dropdownSubTriggerRowClass,
 } from "./dropdownStyles";
@@ -91,6 +88,7 @@ import type {
   DropdownTriggerProps,
 } from "./dropdownTypes";
 import { useDropdownSubState } from "./useDropdownSubState";
+import { useDropdownItemState } from "./useDropdownItemState";
 
 import { cn } from "@/utils/cn";
 
@@ -133,7 +131,11 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
       >;
       return cloneElement(child, {
         ...rest,
-        ref: mergeDropdownRefs(forwardedRef, triggerRef, child.props.ref),
+        ref: (node: HTMLElement | null) => {
+          mergeForwardedRef(forwardedRef, node);
+          mergeForwardedRef(triggerRef, node);
+          if (child.props.ref) mergeForwardedRef(child.props.ref, node);
+        },
         className: cn(
           child.props.className,
           DROPDOWN_TRIGGER_CLASS,
@@ -160,10 +162,10 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
     return (
       <button
         type="button"
-        ref={mergeDropdownRefs(
-          forwardedRef as Ref<HTMLButtonElement>,
-          triggerRef as Ref<HTMLButtonElement>,
-        )}
+        ref={(node) => {
+          mergeForwardedRef(forwardedRef, node);
+          mergeForwardedRef(triggerRef, node);
+        }}
         className={cn(
           DROPDOWN_TRIGGER_CLASS,
           slotClassNames.trigger,
@@ -227,7 +229,10 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         shouldDismiss={shouldDismiss}
       >
         <Popover.Content
-          ref={mergeDropdownRefs(forwardedRef, contentRef)}
+          ref={(node) => {
+            mergeForwardedRef(forwardedRef, node);
+            mergeForwardedRef(contentRef, node);
+          }}
           matchAnchorWidth
           unstyled
           contentRole={undefined}
@@ -447,11 +452,14 @@ export const DropdownSubTrigger = forwardRef<
     >;
     return cloneElement(child, {
       ...rest,
-      ref: mergeDropdownRefs(
-        forwardedRef,
-        triggerRef,
-        child.props.ref,
-      ) as Ref<HTMLElement>,
+      ref: ((node: HTMLElement | null) => {
+        mergeForwardedRef<HTMLDivElement>(
+          forwardedRef,
+          node as HTMLDivElement | null,
+        );
+        mergeForwardedRef<HTMLDivElement>(triggerRef, node as HTMLDivElement | null);
+        if (child.props.ref) mergeForwardedRef(child.props.ref, node);
+      }) as Ref<HTMLElement>,
       className: cn(child.props.className, rowClass),
       onPointerEnter: (e: React.PointerEvent<HTMLElement>) => {
         (child.props as HTMLAttributes<HTMLElement>).onPointerEnter?.(e);
@@ -477,7 +485,10 @@ export const DropdownSubTrigger = forwardRef<
 
   return (
     <div
-      ref={mergeDropdownRefs(forwardedRef, triggerRef)}
+      ref={(node) => {
+        mergeForwardedRef(forwardedRef, node);
+        mergeForwardedRef(triggerRef, node);
+      }}
       role="menuitem"
       tabIndex={-1}
       aria-expanded={open}
@@ -562,7 +573,10 @@ export const DropdownSubContent = forwardRef<
 
   const panel = (
     <div
-      ref={mergeDropdownRefs(forwardedRef, portal.panelRef)}
+      ref={(node) => {
+        mergeForwardedRef(forwardedRef, node);
+        mergeForwardedRef(portal.panelRef, node);
+      }}
       {...portalTheme}
       role="menu"
       className={dropdownSubContentClass({
@@ -715,35 +729,30 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
     },
     ref,
   ) {
-    const { selected, selectItem, multiple, indicatorMode, setOpen } =
-      useDropdown();
-    const indicatorPreference = useDropdownIndicatorPreference();
     const slotClassNames = useDropdownClassNames();
-
-    const parts = partitionDropdownItemChildren(children);
-    const hasItemIndicator = parts.indicator != null;
-    const hasHint = parts.hint != null;
-    const hasIcon = parts.icon != null;
-
-    const isLink = Boolean(href);
-    const isSelectionItem = !isLink && selectionProp !== false;
-    const showIndicatorSlot =
-      isSelectionItem &&
-      (multiple || indicatorPreference || hasItemIndicator);
-
-    const itemRole = !showIndicatorSlot
-      ? "menuitem"
-      : indicatorMode === "multi"
-        ? "menuitemcheckbox"
-        : "menuitemradio";
-
-    const isSelected =
-      isSelectionItem && value != null && selected.has(value);
+    const {
+      parts,
+      selectItem,
+      indicatorMode,
+      setOpen,
+      hasItemIndicator,
+      hasHint,
+      hasIcon,
+      isLink,
+      isSelectionItem,
+      showIndicatorSlot,
+      itemRole,
+      isSelected,
+    } = useDropdownItemState({
+      children,
+      href,
+      selection: selectionProp,
+      value,
+    });
 
     const setRefs = useCallback(
       (node: HTMLElement | null) => {
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
+        mergeForwardedRef(ref, node);
       },
       [ref],
     );

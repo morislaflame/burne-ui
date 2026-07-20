@@ -1,6 +1,7 @@
 import { useOptionalCheckboxGroupContext } from "@/components/composite/CheckboxGroup/checkboxGroupContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { useCallback, useId, useMemo, useRef, type ChangeEvent, type ReactNode } from "react";
 
@@ -10,7 +11,7 @@ import {
   checkboxInputId,
   checkboxLabelId,
 } from "./checkboxA11y";
-import { compoundUsesInlineMotion, useMergedChecked } from "./checkboxAPI";
+import { compoundUsesInlineMotion } from "./checkboxAPI";
 import { CHECKBOX_SIZE_LAYOUT } from "./checkboxStyles";
 import type { CheckboxFieldContextValue, UseCheckboxRootStateProps } from "./checkboxTypes";
 
@@ -75,10 +76,12 @@ export function useCheckboxRootState(
         ? groupChecked
         : undefined;
 
-  const [mergedChecked, setMergedChecked, isControlled] = useMergedChecked(
-    resolvedChecked,
-    inSingleGroup || isExplicitlyControlled || formBound ? undefined : defaultChecked,
-  );
+  const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
+    value: resolvedChecked,
+    defaultValue: Boolean(
+      inSingleGroup || isExplicitlyControlled || formBound ? undefined : defaultChecked,
+    ),
+  });
 
   const isDisabled = Boolean(disabled ?? group?.disabled ?? formBinding.disabled);
   const isCompound = hasCompoundChildren(children);

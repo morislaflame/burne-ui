@@ -255,7 +255,6 @@ Skeleton/
 ├── skeletonTypes.ts
 ├── skeletonStyles.ts
 ├── skeletonParts.tsx
-├── skeletonAPI.ts
 ├── skeletonA11y.ts
 ├── useSkeletonRootState.ts
 └── Skeleton.stories.tsx

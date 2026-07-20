@@ -1,14 +1,9 @@
 import type {
-  ChangeEvent,
-  FocusEvent,
-  KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
 import {
   forwardRef,
   useCallback,
-  useEffect,
-  useMemo,
   useRef,
 } from "react";
 import { IoChevronDown } from "react-icons/io5";
@@ -18,30 +13,23 @@ import {
   useOptionalButtonGroupSegment,
 } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { FieldError, FieldHint } from "@/components/core/Field";
-import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
-import { comboBoxActiveOptionId, comboBoxTriggerAriaLabel } from "./comboBoxA11y";
+import {
+  comboBoxResolveHintStatus,
+  comboBoxTriggerAriaLabel,
+} from "./comboBoxA11y";
 import {
   runComboBoxOpenAfterSqueeze,
   useComboBoxOpeningRef,
 } from "./comboBoxAnimations";
-import {
-  comboBoxBumpActiveValue,
-  comboBoxFilteredValues,
-  comboBoxFirstEnabledValue,
-  comboBoxLastEnabledValue,
-  comboBoxOptionDisplayString,
-  comboBoxOptionsByValue,
-  comboBoxResolveHintStatus,
-  mergeRefs,
-} from "./comboBoxAPI";
 import {
   useComboBoxClassNames,
   useComboBoxContext,
@@ -64,6 +52,7 @@ import type {
   ComboBoxPopoverProps,
   ComboBoxTriggerProps,
 } from "./comboBoxTypes";
+import { useComboBoxInputState } from "./useComboBoxInputState";
 
 import { cn } from "@/utils/cn";
 
@@ -140,7 +129,10 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
 
     return (
       <div
-        ref={mergeRefs(ref, setAnchorRef)}
+        ref={(node) => {
+          mergeForwardedRef(ref, node);
+          setAnchorRef(node);
+        }}
         role="combobox"
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
@@ -194,217 +186,27 @@ ComboBoxInputGroup.displayName = "ComboBoxInputGroup";
 export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
   function ComboBoxInput({ className, onKeyDown, onChange, onBlur, ...rest }, ref) {
     const slotClassNames = useComboBoxClassNames();
-    const ctx = useComboBoxContext();
     const {
       comboBoxId,
       open,
-      setOpen,
-      value,
-      setValue,
-      filterQuery,
-      setFilterQuery,
-      listId,
-      activeValue,
-      setActiveValue,
-      inputRef,
-      anchorRef,
-      options,
-      filteredValues,
       disabled,
       placeholder,
       size,
       status,
       isRequired,
-      hintConnected,
-      errorConnected,
-      hintId,
-      errorId,
-      variant,
-      formInputRef,
-      formOnBlur,
-    } = ctx;
-
-    const openingRef = useComboBoxOpeningRef();
-    const queuedFilterCharRef = useRef<string | null>(null);
-    const isGloss = variant === "gloss";
-
-    const optionsByValue = useMemo(
-      () => comboBoxOptionsByValue(options),
-      [options],
-    );
-
-    const selectedOption = useMemo(
-      () => optionsByValue.get(value),
-      [optionsByValue, value],
-    );
-
-    const selectedDisplayString = useMemo(
-      () => comboBoxOptionDisplayString(selectedOption),
-      [selectedOption],
-    );
-
-    const activeOptionId = comboBoxActiveOptionId(listId, open, activeValue);
-
-    const ariaDescribedBy = joinFieldDescribedBy(
-      hintConnected ? hintId : undefined,
-      errorConnected ? errorId : undefined,
-    );
-
-    const finishOpen = useCallback(() => {
-      const append = queuedFilterCharRef.current;
-      queuedFilterCharRef.current = null;
-      const nextQ = append ?? "";
-      setFilterQuery(nextQ);
-
-      const fi = comboBoxFilteredValues(options, nextQ);
-      const selectedIdx = fi.indexOf(value);
-      setActiveValue(selectedIdx >= 0 ? value : fi[0] ?? null);
-
-      requestAnimationFrame(() => {
-        const el = inputRef.current;
-        if (!el) return;
-        el.focus();
-        const len = nextQ.length;
-        el.setSelectionRange(len, len);
-      });
-    }, [inputRef, options, setActiveValue, setFilterQuery, value]);
-
-    const openAfterSqueeze = useCallback(() => {
-      runComboBoxOpenAfterSqueeze({
-        anchorRef,
-        disabled,
-        isGloss,
-        setOpen,
-        onOpened: finishOpen,
-        openingRef,
-        preferStandardSqueeze: true,
-      });
-    }, [anchorRef, disabled, finishOpen, isGloss, setOpen, openingRef]);
-
-    const bumpActive = useCallback(
-      (delta: number) => {
-        const next = comboBoxBumpActiveValue({
-          filteredValues,
-          activeValue,
-          optionsByValue,
-          delta,
-        });
-        if (next) setActiveValue(next);
-      },
-      [activeValue, filteredValues, optionsByValue, setActiveValue],
-    );
-
-    const selectValue = useCallback(
-      (next: string) => {
-        const opt = optionsByValue.get(next);
-        if (!opt || opt.disabled) return;
-        setValue(next);
-        setOpen(false);
-        setFilterQuery("");
-        inputRef.current?.focus();
-      },
-      [inputRef, optionsByValue, setFilterQuery, setOpen, setValue],
-    );
-
-    const handleChange = useCallback(
-      (e: ChangeEvent<HTMLInputElement>) => {
-        onChange?.(e);
-        if (!open) return;
-        setFilterQuery(e.target.value);
-      },
-      [onChange, open, setFilterQuery],
-    );
-
-    const handleKeyDown = useCallback(
-      (e: ReactKeyboardEvent<HTMLInputElement>) => {
-        onKeyDown?.(e);
-        if (e.defaultPrevented || disabled) return;
-        if (e.nativeEvent.isComposing) return;
-
-        if (!open) {
-          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-            e.preventDefault();
-            openAfterSqueeze();
-            return;
-          }
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            openAfterSqueeze();
-            return;
-          }
-          if (
-            e.key.length === 1 &&
-            !e.ctrlKey &&
-            !e.metaKey &&
-            !e.altKey &&
-            e.key !== "Tab"
-          ) {
-            e.preventDefault();
-            queuedFilterCharRef.current = e.key;
-            openAfterSqueeze();
-          }
-          return;
-        }
-
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          bumpActive(1);
-          return;
-        }
-        if (e.key === "ArrowUp") {
-          e.preventDefault();
-          bumpActive(-1);
-          return;
-        }
-        if (e.key === "Enter") {
-          e.preventDefault();
-          if (activeValue) selectValue(activeValue);
-          return;
-        }
-        if (e.key === "Home") {
-          e.preventDefault();
-          const first = comboBoxFirstEnabledValue(filteredValues, optionsByValue);
-          if (first) setActiveValue(first);
-          return;
-        }
-        if (e.key === "End") {
-          e.preventDefault();
-          const last = comboBoxLastEnabledValue(filteredValues, optionsByValue);
-          if (last) setActiveValue(last);
-        }
-      },
-      [
-        activeValue,
-        bumpActive,
-        disabled,
-        filteredValues,
-        onKeyDown,
-        open,
-        openAfterSqueeze,
-        optionsByValue,
-        selectValue,
-        setActiveValue,
-      ],
-    );
-
-    useEffect(() => {
-      if (open) return;
-      setFilterQuery("");
-    }, [open, setFilterQuery]);
-
-    const inputValue = open ? filterQuery : selectedDisplayString;
-
-    const handleBlur = useCallback(
-      (e: FocusEvent<HTMLInputElement>) => {
-        onBlur?.(e);
-        formOnBlur?.();
-      },
-      [formOnBlur, onBlur],
-    );
+      activeOptionId,
+      ariaDescribedBy,
+      inputValue,
+      isMuted,
+      setRefs,
+      handleChange,
+      handleKeyDown,
+      handleBlur,
+    } = useComboBoxInputState({ onKeyDown, onChange, onBlur }, ref);
 
     return (
       <input
-        ref={mergeRefs(ref, inputRef, formInputRef)}
+        ref={setRefs}
         id={comboBoxId}
         type="text"
         aria-autocomplete="list"
@@ -422,7 +224,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         onBlur={handleBlur}
         className={comboBoxInputClass({
           size,
-          muted: !open && !selectedOption,
+          muted: isMuted,
           className,
           slotClass: slotClassNames.input,
         })}
@@ -444,8 +246,7 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
     const setTriggerRef = useCallback(
       (node: HTMLButtonElement | null) => {
         bindChevronRef(node);
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
+        mergeForwardedRef(ref, node);
       },
       [bindChevronRef, ref],
     );

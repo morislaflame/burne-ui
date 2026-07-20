@@ -18,8 +18,9 @@ import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionT
 import { Text } from "@/components/core/Text";
 
 import "@/components/core/utils/glossPanel.css";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 
-import { hasSwitchThumbChild, partitionSwitchControlChildren, useMergedChecked } from "./switchAPI";
+import { hasSwitchThumbChild, partitionSwitchControlChildren } from "./switchAPI";
 import { switchFallbackAriaLabel, switchInputId } from "./switchA11y";
 import { useSwitchTrackAnimations } from "./switchAnimations";
 import {
@@ -118,10 +119,10 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
     const errorId = fieldCtx?.errorId ?? `${inputId}-error`;
     const size = sizeProp ?? fieldCtx?.size ?? "base";
 
-    const [mergedChecked, setMergedChecked, isControlled] = useMergedChecked(
-      checked,
-      defaultChecked,
-    );
+    const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
+      value: checked,
+      defaultValue: Boolean(defaultChecked),
+    });
     const [squeezeToken, setSqueezeToken] = useState(0);
 
     const handleChange = useCallback(

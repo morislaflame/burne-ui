@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useMemo } from "react";
 
 import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field";
+import { useOptionGroupRequiredAnchor } from "@/components/composite/utils/useOptionGroupRequiredAnchor";
+import { useOptionGroupSingleValue } from "@/components/composite/utils/useOptionGroupSingleValue";
 
 import type { RadioGroupContextValue, UseRadioGroupRootStateProps } from "./radioGroupTypes";
 
@@ -19,34 +21,22 @@ export function useRadioGroupRootState({
   const hintId = useFieldSetHintId(hintIdProp);
   const errorId = useFieldSetErrorId(errorIdProp);
 
-  const controlled = valueProp !== undefined;
-  const [internalValue, setInternalValue] = useState<string | undefined>(defaultValue);
+  const { selectedValue, selectValue } = useOptionGroupSingleValue({
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    allowClear: !isRequired,
+  });
 
-  const selectedValue = controlled
-    ? valueProp == null
-      ? undefined
-      : String(valueProp)
-    : internalValue;
-
-  const selectValue = useCallback(
-    (next: string | undefined) => {
-      if (isRequired && next === undefined) return;
-      if (!controlled) setInternalValue(next);
-      onValueChange?.(next);
-    },
-    [controlled, isRequired, onValueChange],
-  );
-
-  const requiredAnchorClaimedRef = useRef(false);
-  useEffect(() => {
-    requiredAnchorClaimedRef.current = false;
-  }, [isRequired, groupName]);
+  const { claimRequiredAnchor: claimAnchor } = useOptionGroupRequiredAnchor([
+    isRequired,
+    groupName,
+  ]);
 
   const claimRequiredAnchor = useCallback(() => {
-    if (!isRequired || requiredAnchorClaimedRef.current) return false;
-    requiredAnchorClaimedRef.current = true;
-    return true;
-  }, [isRequired]);
+    if (!isRequired) return false;
+    return claimAnchor();
+  }, [claimAnchor, isRequired]);
 
   const contextValue = useMemo<RadioGroupContextValue>(
     () => ({

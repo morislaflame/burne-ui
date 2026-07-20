@@ -67,6 +67,8 @@ export const TIME_FIELD_SEGMENT_SEPARATOR_BASE_CLASS =
 
 export const TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS = "mx-[1px]";
 
+export const TIME_FIELD_SEGMENT_GROUP_CLASS = "inline-flex items-center";
+
 export const TIME_FIELD_SEGMENTS_BASE_CLASS =
   "relative flex min-w-0 flex-1 items-center font-mono tabular-nums leading-none";
 

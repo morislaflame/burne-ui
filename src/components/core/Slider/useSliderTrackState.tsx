@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { useControllableState } from "@/components/core/utils/useControllableState";
+
 import {
   clampSliderValue,
   defaultSliderFormatValue,
@@ -25,8 +27,6 @@ import {
   sliderThumbCenterPercent,
   snapSliderToMarks,
   snapSliderToStep,
-  useMergedRange,
-  useMergedSingle,
 } from "./sliderAPI";
 import { resolveSliderThumbA11y } from "./sliderA11y";
 import { applySliderFillStyle, useSliderFillCleanup } from "./sliderAnimations";
@@ -117,18 +117,19 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     [marks, min, max, step],
   );
 
-  const [singleValue, setSingleValue] = useMergedSingle(
-    !range ? (props as Extract<SliderTrackProps, { range?: false }>).value : undefined,
-    !range ? (props as Extract<SliderTrackProps, { range?: false }>).defaultValue : undefined,
-    min,
-  );
+  const [singleValue, setSingleValue] = useControllableState({
+    value: !range ? (props as Extract<SliderTrackProps, { range?: false }>).value : undefined,
+    defaultValue:
+      (!range ? (props as Extract<SliderTrackProps, { range?: false }>).defaultValue : undefined) ??
+      min,
+  });
 
-  const [rangeValue, setRangeValue] = useMergedRange(
-    range ? (props as Extract<SliderTrackProps, { range: true }>).value : undefined,
-    range ? (props as Extract<SliderTrackProps, { range: true }>).defaultValue : undefined,
-    min,
-    max,
-  );
+  const [rangeValue, setRangeValue] = useControllableState<[number, number]>({
+    value: range ? (props as Extract<SliderTrackProps, { range: true }>).value : undefined,
+    defaultValue:
+      (range ? (props as Extract<SliderTrackProps, { range: true }>).defaultValue : undefined) ??
+      ([min, max] as [number, number]),
+  });
 
   const onSingleChange = !range
     ? (props as Extract<SliderTrackProps, { range?: false }>).onValueChange

@@ -1,4 +1,5 @@
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
+import type { InputStatus } from "@/components/core/Input";
 
 export function comboBoxLabelId(comboBoxId: string): string {
   return `${comboBoxId}-label`;
@@ -27,4 +28,14 @@ export function comboBoxActiveOptionId(
 
 export function comboBoxTriggerAriaLabel(open: boolean): string {
   return open ? "Close list" : "Open list";
+}
+
+export function comboBoxResolveHintStatus(
+  status: Exclude<InputStatus, "danger"> | "default" | undefined,
+  fieldStatus: InputStatus,
+): Exclude<InputStatus, "danger"> | "default" {
+  if (status) return status;
+  if (fieldStatus === "danger") return "default";
+  if (fieldStatus === "default") return "default";
+  return fieldStatus;
 }

@@ -1,9 +1,7 @@
 import { cn } from "@/utils/cn";
 
-import type { ScaleOrientation } from "./scaleFieldParts";
-
 export function scaleFieldRootClassName(
-  orientation: ScaleOrientation,
+  orientation: "horizontal" | "vertical",
   className?: string,
 ) {
   return cn(

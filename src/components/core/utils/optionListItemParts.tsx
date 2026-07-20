@@ -10,6 +10,16 @@ import {
   optionListItemLabelCellClass,
 } from "./optionControlGridLayout";
 import { useOptionListItemContext } from "./optionListItemContext";
+import {
+  OPTION_LIST_ITEM_ICON_WRAP_CLASS,
+  OPTION_LIST_ITEM_INDICATOR_SHELL_CLASS,
+  OPTION_LIST_ITEM_LABEL_MIN_WIDTH_CLASS,
+  OPTION_LIST_ITEM_LABEL_MOTION_CLASS,
+  OPTION_LIST_ITEM_LABEL_WRAP_CLASS,
+  OPTION_LIST_ITEM_STRING_LABEL_CLASS,
+  optionListItemHintToneClass,
+  optionListItemLabelTextClass,
+} from "./optionListItemStyles";
 
 export type OptionListItemLabelProps = HTMLAttributes<HTMLSpanElement>;
 
@@ -23,10 +33,10 @@ export function OptionListItemLabel({ className, children, ...rest }: OptionList
         }
       }}
       className={cn(
-        "inline-flex min-w-0 items-center",
+        OPTION_LIST_ITEM_LABEL_WRAP_CLASS,
         optionListItemLabelCellClass(ctx.showIndicatorSlot),
-        ctx.hasHint && "min-w-0",
-        ctx.enableLabelMotion && "origin-center will-change-transform",
+        ctx.hasHint && OPTION_LIST_ITEM_LABEL_MIN_WIDTH_CLASS,
+        ctx.enableLabelMotion && OPTION_LIST_ITEM_LABEL_MOTION_CLASS,
         className,
       )}
       {...rest}
@@ -35,7 +45,7 @@ export function OptionListItemLabel({ className, children, ...rest }: OptionList
         as="span"
         variant="base"
         inheritColor
-        className={cn("font-w-mid", ctx.disabled && "text-muted")}
+        className={optionListItemLabelTextClass(Boolean(ctx.disabled))}
       >
         {children}
       </Text>
@@ -54,7 +64,7 @@ export function OptionListItemHint({ className, children, ...rest }: OptionListI
       inheritColor
       className={cn(
         optionListItemHintCellClass(ctx.showIndicatorSlot),
-        ctx.mutedHint || ctx.disabled ? "text-muted" : "opacity-80",
+        optionListItemHintToneClass(Boolean(ctx.mutedHint || ctx.disabled)),
         className,
       )}
       {...rest}
@@ -66,14 +76,13 @@ export function OptionListItemHint({ className, children, ...rest }: OptionListI
 
 function OptionListItemStringLabel({ children }: { children: string }) {
   return (
-    <Text as="span" variant="base" inheritColor className="opacity-90">
+    <Text as="span" variant="base" inheritColor className={OPTION_LIST_ITEM_STRING_LABEL_CLASS}>
       {children}
     </Text>
   );
 }
 
 export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement>;
-
 
 export function OptionListItemIconText({ children }: { children: string }) {
   return <OptionListItemStringLabel>{children}</OptionListItemStringLabel>;
@@ -84,9 +93,9 @@ export function OptionListItemIcon({ className, children, ...rest }: OptionListI
   return (
     <span
       className={cn(
-        "inline-flex items-center [&_svg]:icon-base",
+        OPTION_LIST_ITEM_ICON_WRAP_CLASS,
         optionListItemIconCellClass(ctx.showIndicatorSlot),
-        ctx.mutedHint || ctx.disabled ? "text-muted" : "opacity-80",
+        optionListItemHintToneClass(Boolean(ctx.mutedHint || ctx.disabled)),
         className,
       )}
       {...rest}
@@ -108,7 +117,7 @@ export function OptionListItemIndicatorShell({
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 items-center justify-center",
+        OPTION_LIST_ITEM_INDICATOR_SHELL_CLASS,
         optionListItemIndicatorCellClass(),
         className,
       )}

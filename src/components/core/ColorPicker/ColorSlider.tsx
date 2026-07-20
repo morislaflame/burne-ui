@@ -18,12 +18,15 @@ import {
   sliderThumbCenterPercent,
 } from "@/components/core/Slider/sliderAPI";
 import { SliderThumbButton } from "@/components/core/Slider/sliderThumbParts";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 import { cn } from "@/utils/cn";
 
 import {
   CHANNEL_A11Y_LABEL,
   COLOR_SLIDER_LABEL_ROW_CLASS,
+  COLOR_SLIDER_LABEL_TEXT_CLASS,
   COLOR_SLIDER_ROOT_CLASS,
+  COLOR_SLIDER_VALUE_TEXT_CLASS,
   colorSliderBackgroundStyle,
   colorSliderTrackClass,
 } from "./colorSliderStyles";
@@ -56,21 +59,6 @@ const CHANNEL_DEFAULT: Record<ColorChannel, number> = {
   hue: 0, saturation: 100, value: 100, alpha: 100, red: 255, green: 0, blue: 0,
 };
 
-function useMergedValue(
-  value: number | undefined,
-  defaultValue: number | undefined,
-  initial: number,
-): [number, (next: number) => void] {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = useState(defaultValue ?? initial);
-  const merged = isControlled ? value! : internal;
-  const set = useCallback(
-    (next: number) => { if (!isControlled) setInternal(next); },
-    [isControlled],
-  );
-  return [merged, set];
-}
-
 export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps>(
   function ColorSliderTrack(
     {
@@ -88,7 +76,10 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
     ref,
   ) {
     const { min, max, step } = CHANNEL_RANGE[channel];
-    const [value, setValueInternal] = useMergedValue(valueProp, defaultValue, CHANNEL_DEFAULT[channel]);
+    const [value, setValueInternal] = useControllableState({
+      value: valueProp,
+      defaultValue: defaultValue ?? CHANNEL_DEFAULT[channel],
+    });
     const dragging = useRef(false);
     const trackRef = useRef<HTMLDivElement>(null);
     const [active, setActive] = useState(false);
@@ -271,8 +262,8 @@ export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
         <div ref={ref} className={cn(COLOR_SLIDER_ROOT_CLASS, className)}>
           {label ? (
             <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
-              <Text as="span" variant="small" className="text-muted">{label}</Text>
-              <Text as="span" variant="small" className="font-w-mid text-foreground">
+              <Text as="span" variant="small" className={COLOR_SLIDER_LABEL_TEXT_CLASS}>{label}</Text>
+              <Text as="span" variant="small" className={COLOR_SLIDER_VALUE_TEXT_CLASS}>
                 {rest.value ?? rest.defaultValue ?? CHANNEL_DEFAULT[channel]}
               </Text>
             </div>

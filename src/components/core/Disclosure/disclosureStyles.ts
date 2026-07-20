@@ -56,6 +56,8 @@ export const DISCLOSURE_TRIGGER_TITLE_CLASS = "block";
 export const DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS =
   "inline-flex shrink-0 origin-center items-center justify-center text-muted";
 
+export const DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS = "size-full";
+
 export const DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS = "text-primary";
 
 export const DISCLOSURE_CONTENT_SHELL_CLASS = "overflow-hidden";

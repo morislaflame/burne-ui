@@ -6,10 +6,10 @@ import { expect, screen, waitFor } from "storybook/test";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-} from "@/components/core/utils/dualApiStoryChrome";
-import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
-import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/utils/mockImages";
-import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
+} from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
+import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/mockImages";
+import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Avatar, AvatarGroup } from ".";
 

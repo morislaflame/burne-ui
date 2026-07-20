@@ -4,10 +4,10 @@ import "@/components/core/utils/glossPanel.css";
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import {
-  ScaleFieldHeader,
-  ScaleFieldValue,
-} from "@/components/core/utils/scaleFieldParts";
-import { renderScaleSimpleLayout } from "@/components/core/utils/scaleFieldLayout";
+  renderSliderSimpleLayout,
+  SliderScaleFieldHeader,
+  SliderScaleFieldValue,
+} from "./sliderScaleField";
 
 import { resolveSliderThumbIcon } from "./sliderAPI";
 import {
@@ -52,7 +52,7 @@ export function SliderSimpleBody({
 }) {
   const slotClassNames = useSliderClassNames();
 
-  return renderScaleSimpleLayout({
+  return renderSliderSimpleLayout({
     label,
     labelClassName: slotClassNames.label,
     showValue,
@@ -89,13 +89,13 @@ export function SliderHeader({ children, className, ...rest }: SliderHeaderProps
   const slotClassNames = useSliderClassNames();
 
   return (
-    <ScaleFieldHeader
+    <SliderScaleFieldHeader
       orientation={orientation}
       className={cn(slotClassNames.header, className)}
       {...rest}
     >
       {children}
-    </ScaleFieldHeader>
+    </SliderScaleFieldHeader>
   );
 }
 
@@ -106,13 +106,13 @@ export function SliderValue({ children, className, ...rest }: SliderValueProps) 
   const slotClassNames = useSliderClassNames();
 
   return (
-    <ScaleFieldValue
+    <SliderScaleFieldValue
       fallback={display?.valueLabel}
       className={cn(slotClassNames.value, className)}
       {...rest}
     >
       {children}
-    </ScaleFieldValue>
+    </SliderScaleFieldValue>
   );
 }
 

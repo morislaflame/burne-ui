@@ -1,7 +1,13 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
 
-import type { DropdownItemVariant } from "./dropdownTypes";
+import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
+
+import type {
+  DropdownClassNames,
+  DropdownItemIndicatorClassNames,
+  DropdownItemVariant,
+} from "./dropdownTypes";
 
 import { cn } from "@/utils/cn";
 
@@ -140,4 +146,30 @@ export function dropdownSubContentClass({
     slotClass,
     className,
   );
+}
+
+export function resolveDropdownItemIndicatorClassNames({
+  slotClassNames,
+  classNames,
+}: {
+  slotClassNames: DropdownClassNames;
+  classNames?: DropdownItemIndicatorClassNames;
+}): SelectionIndicatorClassNames {
+  return {
+    shell: cn(
+      slotClassNames.itemIndicatorShell,
+      classNames?.shell,
+      classNames?.itemIndicatorShell,
+    ),
+    fill: cn(
+      slotClassNames.itemIndicatorFill,
+      classNames?.fill,
+      classNames?.itemIndicatorFill,
+    ),
+    mark: cn(
+      slotClassNames.itemIndicatorMark,
+      classNames?.mark,
+      classNames?.itemIndicatorMark,
+    ),
+  };
 }

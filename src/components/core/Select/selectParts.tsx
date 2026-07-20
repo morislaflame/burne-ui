@@ -22,6 +22,7 @@ import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
+import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
@@ -31,7 +32,6 @@ import {
   useSelectOpeningRef,
 } from "./selectAnimations";
 import {
-  mergeRefs,
   selectBumpActiveValue,
   selectFirstEnabledValue,
   selectLastEnabledValue,

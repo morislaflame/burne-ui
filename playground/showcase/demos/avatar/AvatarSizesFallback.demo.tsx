@@ -1,7 +1,7 @@
 import { IoPerson } from "react-icons/io5";
 
 import { Avatar } from "@/components/core/Avatar";
-import { PIN_IMAGE2 } from "@/utils/mockImages";
+import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 export function AvatarSizesFallbackDemo() {
   return (

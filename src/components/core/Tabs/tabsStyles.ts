@@ -123,6 +123,10 @@ export function tabsTabTextClass(slotClass?: string) {
   );
 }
 
+export function tabTextVariant(size: TabsSize) {
+  return CONTROL_SIZE_LAYOUT[size].controlText;
+}
+
 export function tabsPanelClass({
   slotClass,
   className,

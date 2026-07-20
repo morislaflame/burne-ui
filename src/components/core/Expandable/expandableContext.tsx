@@ -1,16 +1,82 @@
-export {
-  ExpandableProvider,
-  useExpandable,
-  useExpandableContext,
-} from "./expandableRootContext";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 
-export {
-  ExpandableClassNamesProvider,
-  useExpandableClassNames,
-} from "./expandableClassNamesContext";
+import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 
-export {
-  ExpandableTriggerGridProvider,
-  useExpandableTriggerGrid,
-  useOptionalExpandableTriggerGrid,
-} from "./expandableTriggerGridContext";
+import type {
+  ExpandableClassNames,
+  ExpandableClassNamesProviderProps,
+  ExpandableContextValue,
+} from "./expandableTypes";
+
+const ExpandableContext = createContext<ExpandableContextValue | null>(null);
+const ExpandableClassNamesContext = createContext<ExpandableClassNames>({});
+const ExpandableTriggerGridContext = createContext<MessageBannerGridSlots | null>(null);
+
+export function ExpandableProvider({
+  value,
+  children,
+}: {
+  value: ExpandableContextValue;
+  children: ReactNode;
+}) {
+  return (
+    <ExpandableContext.Provider value={value}>{children}</ExpandableContext.Provider>
+  );
+}
+
+export function useExpandable(): ExpandableContextValue {
+  const ctx = useContext(ExpandableContext);
+  if (!ctx) {
+    throw new Error("Expandable components must be used inside <Expandable>.");
+  }
+  return ctx;
+}
+
+export { useExpandable as useExpandableContext };
+
+export function ExpandableClassNamesProvider({
+  classNames,
+  children,
+}: ExpandableClassNamesProviderProps) {
+  const parent = useContext(ExpandableClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <ExpandableClassNamesContext.Provider value={merged}>
+      {children}
+    </ExpandableClassNamesContext.Provider>
+  );
+}
+
+export function useExpandableClassNames(): ExpandableClassNames {
+  return useContext(ExpandableClassNamesContext);
+}
+
+export function ExpandableTriggerGridProvider({
+  gridSlots,
+  children,
+}: {
+  gridSlots: MessageBannerGridSlots;
+  children: ReactNode;
+}) {
+  return (
+    <ExpandableTriggerGridContext.Provider value={gridSlots}>
+      {children}
+    </ExpandableTriggerGridContext.Provider>
+  );
+}
+
+export function useExpandableTriggerGrid(): MessageBannerGridSlots {
+  const ctx = useContext(ExpandableTriggerGridContext);
+  if (!ctx) {
+    throw new Error("Expandable trigger parts must be inside <Expandable.Trigger>.");
+  }
+  return ctx;
+}
+
+export function useOptionalExpandableTriggerGrid(): MessageBannerGridSlots | null {
+  return useContext(ExpandableTriggerGridContext);
+}

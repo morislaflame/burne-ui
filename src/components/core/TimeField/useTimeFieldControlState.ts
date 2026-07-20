@@ -11,13 +11,15 @@ import {
 } from "react";
 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 
 import { timeFieldShellAria } from "./timeFieldA11y";
 import {
+  formatTime,
+  parseTime,
   segmentsForFormat,
   segValue,
   TIME_FIELD_SEG_MAX,
-  useMergedTimeValue,
   withSeg,
 } from "./timeFieldAPI";
 import { useTimeFieldShellMotion } from "./timeFieldAnimations";
@@ -57,7 +59,11 @@ export function useTimeFieldControlState({
   const labelConnected = ctx?.labelConnected ?? false;
   const isRequired = ctx?.isRequired ?? false;
 
-  const [hms, setHms] = useMergedTimeValue(valueProp, defaultValue, format, onValueChange);
+  const [hms, setHms] = useControllableState({
+    value: valueProp !== undefined ? parseTime(valueProp) : undefined,
+    defaultValue: () => parseTime(defaultValue),
+    onChange: (next) => onValueChange?.(formatTime(next, format)),
+  });
 
   const pendingRef = useRef<{ seg: TimeFieldSegId; digit: number } | null>(null);
   const [focusedSeg, setFocusedSeg] = useState<TimeFieldSegId | null>(null);

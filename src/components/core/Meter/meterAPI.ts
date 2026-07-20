@@ -1,9 +1,5 @@
 import type { MeterDisplayState } from "./meterTypes";
 
-export function clampMeterValue(n: number, lo: number, hi: number): number {
-  return Math.min(hi, Math.max(lo, n));
-}
-
 export function meterValueToPercent(value: number, min: number, max: number): number {
   if (max <= min) return 0;
   return ((value - min) / (max - min)) * 100;

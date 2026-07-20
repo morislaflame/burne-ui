@@ -5,7 +5,6 @@ import {
   isValidElement,
   useCallback,
   useLayoutEffect,
-  useMemo,
   useRef,
   type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
@@ -28,7 +27,6 @@ import {
 } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { DIALOG_CLOSE_DEFAULT_ARIA_LABEL } from "./dialogA11y";
-import { injectFooterButtonSize } from "./dialogAPI";
 import { useDialogModalMotion } from "./dialogAnimations";
 import { useDialog, useDialogClassNames } from "./dialogContext";
 import {
@@ -59,6 +57,7 @@ import type {
   DialogTitleProps,
   DialogTriggerProps,
 } from "./dialogTypes";
+import { useDialogFooterState } from "./useDialogFooterState";
 
 import { cn } from "@/utils/cn";
 
@@ -226,12 +225,9 @@ export function DialogBody({ className, ...rest }: DialogBodyProps) {
 DialogBody.displayName = "DialogBody";
 
 export function DialogFooter({ className, children, ...rest }: DialogFooterProps) {
-  const { footerButtonSize, sizePreset } = useDialog();
+  const { sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
-  const footerChildren = useMemo(
-    () => injectFooterButtonSize(children, footerButtonSize),
-    [children, footerButtonSize],
-  );
+  const footerChildren = useDialogFooterState(children);
 
   return (
     <div

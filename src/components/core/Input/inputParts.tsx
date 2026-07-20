@@ -41,12 +41,16 @@ import {
   INPUT_CONTROL_PAD,
   INPUT_FILE_EMPTY_ICON_CLASS,
   INPUT_FILE_EMPTY_TEXT_CLASS,
+  INPUT_FILE_GLYPH_ICON_CLASS,
+  INPUT_FILE_GLYPH_SHELL_CLASS,
   INPUT_FILE_INPUT_CLASS,
   INPUT_FILE_NAME_CLASS,
   INPUT_FILE_PREVIEW_CLASS,
+  INPUT_FILE_REMOVE_ICON_CLASS,
   INPUT_FILE_ROW_CLASS,
   INPUT_FILE_ROW_SINGLE_CLASS,
   INPUT_PASSWORD_TOGGLE_CONTROL,
+  INPUT_PASSWORD_TOGGLE_ICON_CLASS,
   INPUT_PASSWORD_TOGGLE_WRAP_CLASS,
   inputAffixSlotClass,
   inputAffixSurfaceClass,
@@ -137,9 +141,9 @@ function PasswordVisibilityAffix({
         })}
       >
         {visible ? (
-          <IoEyeOff className={cn("shrink-0", pwd.icon)} aria-hidden />
+          <IoEyeOff className={cn(INPUT_PASSWORD_TOGGLE_ICON_CLASS, pwd.icon)} aria-hidden />
         ) : (
-          <IoEye className={cn("shrink-0", pwd.icon)} aria-hidden />
+          <IoEye className={cn(INPUT_PASSWORD_TOGGLE_ICON_CLASS, pwd.icon)} aria-hidden />
         )}
       </button>
     </span>
@@ -152,13 +156,13 @@ function FileGlyph({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token",
+        INPUT_FILE_GLYPH_SHELL_CLASS,
         slotClassNames.fileGlyph,
         className,
       )}
       aria-hidden
     >
-      <IoFolderOpen className="icon-mid shrink-0" aria-hidden />
+      <IoFolderOpen className={INPUT_FILE_GLYPH_ICON_CLASS} aria-hidden />
     </span>
   );
 }
@@ -189,7 +193,7 @@ function FileRemoveButton({
         slotClass: slotClassNames.fileRemove,
       })}
     >
-      <IoClose className="icon-mid shrink-0" aria-hidden />
+      <IoClose className={INPUT_FILE_REMOVE_ICON_CLASS} aria-hidden />
     </button>
   );
 }

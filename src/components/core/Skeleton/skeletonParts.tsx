@@ -1,7 +1,6 @@
 import { forwardRef } from "react";
 
 import { skeletonPresentationProps } from "./skeletonA11y";
-import { skeletonVariantStyle } from "./skeletonAPI";
 import {
   SKELETON_BASE_CLASS,
   SKELETON_BLOCK_CLASS,
@@ -13,6 +12,7 @@ import {
   SKELETON_TEXT_ROOT_CLASS,
   SKELETON_WAVE_OVERLAY_CLASS,
   skeletonLineAnimationDelay,
+  skeletonVariantStyle,
   skeletonWaveOverlayStyle,
 } from "./skeletonStyles";
 import type {

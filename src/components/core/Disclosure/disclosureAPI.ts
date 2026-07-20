@@ -1,16 +1,6 @@
-import { Children, isValidElement, type RefObject, type ReactNode, type Ref } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 
 import type { DisclosureVariant } from "./disclosureTypes";
-
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const r of refs) {
-      if (r == null) continue;
-      if (typeof r === "function") r(node);
-      else (r as RefObject<T | null>).current = node;
-    }
-  };
-}
 
 export function isFramedVariant(variant: DisclosureVariant): boolean {
   return variant === "outline" || variant === "secondary" || variant === "default";

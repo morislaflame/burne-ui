@@ -4,7 +4,7 @@ import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
 import { Dialog } from "@/components/core/Dialog";
 import { Ripple } from "@/components/core/Ripple";
-import { PIN_IMAGE4 } from "@/utils/mockImages";
+import { PIN_IMAGE4 } from "@/stories-utils/mockImages";
 
 export function RipplePressableCardDemo() {
   const [dialogOpen, setDialogOpen] = useState(false);

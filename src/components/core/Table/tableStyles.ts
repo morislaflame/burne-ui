@@ -51,6 +51,8 @@ export const TABLE_COLUMN_LABEL_CLASS = "min-w-0 text-small text-left font-w-mid
 
 export const TABLE_COLUMN_SORT_CHEVRON_BASE_CLASS = "shrink-0 origin-center";
 
+export const TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS = "icon-xsmall";
+
 export const TABLE_COLUMN_SORT_CHEVRON_ACTIVE_CLASS = "text-primary opacity-100";
 
 export const TABLE_COLUMN_SORT_CHEVRON_IDLE_CLASS =

@@ -13,8 +13,8 @@ import {
 import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
-import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
-import { PIN_IMAGE2 } from "@/utils/mockImages";
+import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStoryLayouts";
+import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 import { Dropdown } from ".";
 

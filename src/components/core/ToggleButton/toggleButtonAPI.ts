@@ -1,4 +1,4 @@
-import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 
 export const TOGGLE_BUTTON_COMPOUND_SLOT_NAMES = new Set([
   "ToggleButtonContent",
@@ -56,20 +56,4 @@ export function shouldWrapToggleButtonChildrenInText(children: ReactNode): boole
 
   const displayName = (only.type as { displayName?: string }).displayName;
   return displayName == null || !TOGGLE_BUTTON_COMPOUND_SLOT_NAMES.has(displayName);
-}
-
-export function useMergedPressed(
-  pressed: boolean | undefined,
-  defaultPressed: boolean | undefined,
-): [boolean, (next: boolean) => void, boolean] {
-  const isControlled = pressed !== undefined;
-  const [internal, setInternal] = useState(Boolean(defaultPressed));
-  const value = isControlled ? Boolean(pressed) : internal;
-  const setValue = useCallback(
-    (next: boolean) => {
-      if (!isControlled) setInternal(next);
-    },
-    [isControlled],
-  );
-  return [value, setValue, isControlled];
 }

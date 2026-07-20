@@ -5,7 +5,7 @@ import { Badge } from "@/components/core/Badge";
 import { ComboBox } from "@/components/core/ComboBox";
 import { useComboBoxContext } from "@/components/core/ComboBox/comboBoxContext";
 import { ListBox } from "@/components/core/ListBox";
-import { PIN_IMAGE1, PIN_IMAGE3 } from "@/utils/mockImages";
+import { PIN_IMAGE1, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 
 const MEMBERS = [
   {

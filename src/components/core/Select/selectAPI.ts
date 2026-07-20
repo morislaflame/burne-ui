@@ -1,17 +1,5 @@
-import type { Ref, RefObject } from "react";
-
 import type { InputStatus } from "@/components/core/Input";
 import type { SelectOption } from "./selectTypes";
-
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const r of refs) {
-      if (r == null) continue;
-      if (typeof r === "function") r(node);
-      else (r as RefObject<T | null>).current = node;
-    }
-  };
-}
 
 export function selectOptionsByValue(options: SelectOption[]): Map<string, SelectOption> {
   return new Map(options.map((o) => [o.value, o]));

@@ -6,6 +6,7 @@
 import { useEffect, useMemo, type MutableRefObject, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
+import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
 import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
@@ -244,13 +245,6 @@ export function animateInteractivePressSqueeze(
   });
 }
 
-function cameFromOutsideContainer(root: HTMLElement, related: EventTarget | null): boolean {
-  if (related == null) return true;
-  if (!(related instanceof Node)) return true;
-  return !root.contains(related);
-}
-
-/** Attach returned handlers to the same root where Button would use `pointer` (`currentTarget`). */
 export function useInteractiveHoverLiftContainerHandlers<
   Element extends HTMLElement = HTMLElement,
 >(

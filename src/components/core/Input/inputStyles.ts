@@ -57,6 +57,15 @@ export const INPUT_FILE_INPUT_CLASS =
 export const INPUT_FILE_EMPTY_ICON_CLASS =
   "pointer-events-none size-12 shrink-0 text-muted";
 
+export const INPUT_FILE_GLYPH_SHELL_CLASS =
+  "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token";
+
+export const INPUT_FILE_GLYPH_ICON_CLASS = "icon-mid shrink-0";
+
+export const INPUT_FILE_REMOVE_ICON_CLASS = "icon-mid shrink-0";
+
+export const INPUT_PASSWORD_TOGGLE_ICON_CLASS = "shrink-0";
+
 export const INPUT_FILE_EMPTY_TEXT_CLASS =
   "pointer-events-none max-w-[18rem] text-center text-muted";
 

@@ -1,10 +1,11 @@
 import { useOptionalRadioGroupContext } from "@/components/composite/RadioGroup/radioGroupContext";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useCallback, useId, useMemo, useRef, type ChangeEvent, type MouseEvent, type ReactNode } from "react";
 
 import { radioErrorId, radioHintId, radioInputId } from "./radioA11y";
-import { compoundUsesInlineMotion, useMergedChecked } from "./radioAPI";
+import { compoundUsesInlineMotion } from "./radioAPI";
 import { RADIO_SIZE_LAYOUT } from "./radioStyles";
 import type { RadioFieldContextValue, UseRadioRootStateProps } from "./radioTypes";
 
@@ -52,10 +53,10 @@ export function useRadioRootState(
       ? groupChecked
       : undefined;
 
-  const [mergedChecked, setMergedChecked, isControlled] = useMergedChecked(
-    resolvedChecked,
-    inGroup || isExplicitlyControlled ? undefined : defaultChecked,
-  );
+  const [mergedChecked, setMergedChecked, isControlled] = useControllableState({
+    value: resolvedChecked,
+    defaultValue: Boolean(inGroup || isExplicitlyControlled ? undefined : defaultChecked),
+  });
 
   const inputName = name ?? group?.name;
   const isDisabled = Boolean(disabled ?? group?.disabled);

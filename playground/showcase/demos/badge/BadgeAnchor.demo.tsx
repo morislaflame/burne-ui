@@ -1,6 +1,6 @@
 import { Avatar } from "@/components/core/Avatar";
 import { Badge } from "@/components/core/Badge";
-import { PIN_IMAGE1, PIN_IMAGE3 } from "@/utils/mockImages";
+import { PIN_IMAGE1, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 
 export function BadgeAnchorDemo() {
   return (

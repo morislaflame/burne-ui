@@ -5,12 +5,12 @@ import {
   resolveButtonGroupSegmentPosition,
 } from "@/components/composite/ButtonGroup/buttonGroupAPI";
 import { ButtonGroupSegmentProvider } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { buttonGroupRootClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { ToggleButtonGroupProvider } from "@/components/core/ToggleButton/toggleButtonContext";
 
 import { toggleButtonGroupRootTabIndex } from "./toggleButtonGroupA11y";
 import { isToggleButtonChild } from "./toggleButtonGroupAPI";
-import { ToggleButtonGroupProvider } from "./toggleButtonGroupContext";
 import { ToggleButtonGroupSeparator } from "./toggleButtonGroupParts";
-import { toggleButtonGroupRootClass } from "./toggleButtonGroupStyles";
 import type { ToggleButtonGroupProps } from "./toggleButtonGroupTypes";
 import { useToggleButtonGroupRootState } from "./useToggleButtonGroupRootState";
 
@@ -52,9 +52,9 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
           tabIndex={toggleButtonGroupRootTabIndex(disabled)}
           aria-orientation={orientation}
           aria-disabled={disabled || undefined}
-          className={toggleButtonGroupRootClass({
+          className={buttonGroupRootClass({
             orientation,
-            separated,
+            segmented: separated,
             variant,
             className,
           })}

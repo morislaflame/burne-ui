@@ -8,9 +8,9 @@ import { ListBox } from "@/components/core/ListBox";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-} from "@/components/core/utils/dualApiStoryChrome";
-import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
-import { OptionListItemLayoutShowcase } from "@/components/core/utils/optionListItemStoryLayouts";
+} from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
+import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStoryLayouts";
 
 import type { ComboBoxOption } from "./comboBoxTypes";
 import { ComboBox } from ".";

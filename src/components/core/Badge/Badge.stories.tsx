@@ -14,8 +14,8 @@ import {
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-} from "@/components/core/utils/dualApiStoryChrome";
-import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
+} from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button";
@@ -26,8 +26,8 @@ import {
   type BadgeStatus,
   type BadgeVariant,
 } from ".";
-import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/utils/mockImages";
-import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
+import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
+import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 const GREEN_AVATAR_URL = PIN_IMAGE1;
 const ORANGE_AVATAR_URL = PIN_IMAGE2;

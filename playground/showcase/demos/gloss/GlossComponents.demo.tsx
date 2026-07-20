@@ -36,8 +36,8 @@ import { TimeField } from "@/components/core/TimeField";
 import { useToast } from "@/components/core/Toast";
 import { ToggleButton } from "@/components/core/ToggleButton";
 import { Tooltip } from "@/components/core/Tooltip";
-import { glossDottedGridStyle } from "@/components/core/utils/glossStoryChrome";
-import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/utils/mockImages";
+import { glossDottedGridStyle } from "@/stories-utils/glossStoryChrome";
+import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 import { IoTimeOutline, IoGlobeOutline } from "react-icons/io5";
 
 const GLOSS_STATUSES = ["default", "danger", "success", "info", "warning"] as const;

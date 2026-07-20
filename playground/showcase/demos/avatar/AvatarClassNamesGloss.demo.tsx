@@ -1,5 +1,5 @@
 import { Avatar } from "@/components/core/Avatar";
-import { PIN_IMAGE1, PIN_IMAGE2 } from "@/utils/mockImages";
+import { PIN_IMAGE1, PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 export function AvatarClassNamesGlossDemo() {
   return (

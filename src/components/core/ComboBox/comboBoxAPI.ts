@@ -1,17 +1,4 @@
-import type { Ref, RefObject } from "react";
-
-import type { InputStatus } from "@/components/core/Input";
 import type { ComboBoxOption } from "./comboBoxTypes";
-
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const r of refs) {
-      if (r == null) continue;
-      if (typeof r === "function") r(node);
-      else (r as RefObject<T | null>).current = node;
-    }
-  };
-}
 
 function optionSearchHaystack(opt: ComboBoxOption): string {
   const parts: string[] = [opt.value];
@@ -92,16 +79,6 @@ export function comboBoxLastEnabledValue(
     if (opt && !opt.disabled) return v;
   }
   return null;
-}
-
-export function comboBoxResolveHintStatus(
-  status: Exclude<InputStatus, "danger"> | "default" | undefined,
-  fieldStatus: InputStatus,
-): Exclude<InputStatus, "danger"> | "default" {
-  if (status) return status;
-  if (fieldStatus === "danger") return "default";
-  if (fieldStatus === "default") return "default";
-  return fieldStatus;
 }
 
 export const EMPTY_COMBOBOX_OPTIONS: ComboBoxOption[] = [];

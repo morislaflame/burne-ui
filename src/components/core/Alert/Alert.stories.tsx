@@ -5,10 +5,10 @@ import { expect } from "storybook/test";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-} from "@/components/core/utils/dualApiStoryChrome";
-import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
+} from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { Button } from "@/components/core/Button";
-import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
+import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Alert, type AlertSize, type AlertStatus, type AlertVariant } from ".";
 

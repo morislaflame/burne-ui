@@ -52,7 +52,14 @@ import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fiel
 import {
   readSearchExpandedRadiusPx,
   SEARCH_EXPANDED_ROUNDED_CLASS,
-} from "@/components/core/utils/radiusTokens";
+  SEARCH_INPUT_CLEAR_BUTTON_CLASS,
+  SEARCH_INPUT_CLEAR_ICON_CLASS,
+  SEARCH_INPUT_CONTROL_BASE_CLASS,
+  SEARCH_INPUT_CONTROL_COLLAPSED_CLASS,
+  SEARCH_INPUT_CONTROL_EXPANDED_CLASS,
+  SEARCH_INPUT_ICON_CLASS,
+  SEARCH_INPUT_ICON_WRAP_CLASS,
+} from "./searchInputStyles";
 
 export type SearchInputSize = ComponentSize;
 
@@ -599,11 +606,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         ) : null}
         <span
           ref={bindIconRef}
-          className="pointer-events-none absolute inset-y-0 z-[1] flex items-center justify-center text-muted"
+          className={SEARCH_INPUT_ICON_WRAP_CLASS}
           style={{ width: layout.iconBox }}
           aria-hidden
         >
-          <IoSearch className={cn("shrink-0", layout.iconClass)} aria-hidden />
+          <IoSearch className={cn(SEARCH_INPUT_ICON_CLASS, layout.iconClass)} aria-hidden />
         </span>
 
         <input
@@ -621,14 +628,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           tabIndex={expanded ? 0 : -1}
           aria-label={inputAriaLabel}
           className={cn(
-            "box-border min-h-0 w-full border-0 bg-transparent text-foreground outline-none placeholder:text-muted",
-            "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",
-            "disabled:cursor-not-allowed disabled:opacity-100",
+            SEARCH_INPUT_CONTROL_BASE_CLASS,
             layout.controlPad,
             FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
             expanded
-              ? "relative z-[2] opacity-100"
-              : "pointer-events-none absolute inset-0 opacity-0",
+              ? SEARCH_INPUT_CONTROL_EXPANDED_CLASS
+              : SEARCH_INPUT_CONTROL_COLLAPSED_CLASS,
           )}
           style={
             expanded
@@ -647,12 +652,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             onClick={handleClearClick}
             onPointerDown={(e) => e.stopPropagation()}
             className={cn(
-              "absolute top-1/2 z-[3] flex -translate-y-1/2 items-center justify-center rounded-full border-0 bg-transparent p-0",
-              "text-foreground outline-none",
+              SEARCH_INPUT_CLEAR_BUTTON_CLASS,
               TEXT_COLOR_TRANSITION,
               hoverVariant(),
-              "focus-ring-inset",
-              "cursor-pointer",
             )}
             style={{
               right: layout.padX,
@@ -661,7 +663,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             }}
           >
             <IoClose
-              className={`shrink-0 ${layout.clearIconClass}`}
+              className={cn(SEARCH_INPUT_CLEAR_ICON_CLASS, layout.clearIconClass)}
               aria-hidden
             />
           </button>

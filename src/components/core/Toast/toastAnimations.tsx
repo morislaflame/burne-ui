@@ -28,6 +28,7 @@ import { toastViewportAriaLabel } from "./toastA11y";
 import { ToastClassNamesProvider } from "./toastContext";
 import { ToastRoot } from "./Toast";
 import {
+  TOAST_STACK_ITEM_CLASS,
   toastScrimClass,
   toastStackClass,
   toastViewportClass,
@@ -153,7 +154,7 @@ export function ToastItemWrapper({
     <div
       ref={stackRef}
       aria-hidden={!isVisible || undefined}
-      className="will-change-transform"
+      className={TOAST_STACK_ITEM_CLASS}
       style={{
         gridColumn: 1,
         gridRow: 1,

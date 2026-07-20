@@ -3,13 +3,13 @@ import {
   memo,
   useCallback,
   useLayoutEffect,
-  useMemo,
   useRef,
 } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { motionContentFade } from "@/components/core/utils/motionConfig";
 
 import { Button } from "@/components/core/Button";
@@ -17,12 +17,6 @@ import { Text } from "@/components/core/Text";
 import { useToggleButtonFillAnimation, SELECTION_FILL_DATA_ATTR } from "@/components/core/ToggleButton/useToggleButtonFillAnimation";
 import { cn } from "@/utils/cn";
 
-import {
-  buildDayCellModels,
-  buildMonthCellModels,
-  buildYearCellModels,
-  formatCalendarHeaderTitle,
-  } from "./calendarAPI";
 import { calendarNavBackLabel, calendarNavForwardLabel } from "./calendarA11y";
 import {
   useCalendarInteractiveCellAnimations,
@@ -63,6 +57,12 @@ import type {
   CalendarNavButtonProps,
   CalendarRangeHalfFillProps,
 } from "./calendarTypes";
+import {
+  useCalendarDayCellModels,
+  useCalendarHeaderTitle,
+  useCalendarMonthCellModels,
+  useCalendarYearCellModels,
+} from "./useCalendarViewModels";
 
 function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
   const slotClassNames = useCalendarClassNames();
@@ -186,8 +186,7 @@ const CalendarInteractiveCellInner = forwardRef<
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
       motion.btnRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
+      mergeForwardedRef(ref, node);
     },
     [motion.btnRef, ref],
   );
@@ -281,48 +280,13 @@ const CalendarInteractiveCell = memo(CalendarInteractiveCellInner, calendarCellP
 function CalendarDaysView() {
   const slotClassNames = useCalendarClassNames();
   const {
-    viewDate,
-    selectedDates,
-    rangeStart,
-    rangeEnd,
-    hoverDate,
     setHoverDate,
     onDayPress,
     size,
     mode,
     locale,
-    minDate,
-    maxDate,
-    today,
   } = useCalendar();
-
-  const cells = useMemo(
-    () =>
-      buildDayCellModels({
-        viewDate,
-        selectedDates,
-        rangeStart,
-        rangeEnd,
-        hoverDate,
-        mode,
-        locale,
-        minDate,
-        maxDate,
-        today,
-      }),
-    [
-      viewDate,
-      selectedDates,
-      rangeStart,
-      rangeEnd,
-      hoverDate,
-      mode,
-      locale,
-      minDate,
-      maxDate,
-      today,
-    ],
-  );
+  const cells = useCalendarDayCellModels();
 
   return (
     <div>
@@ -383,12 +347,8 @@ function CalendarDaysView() {
 
 function CalendarMonthsView() {
   const slotClassNames = useCalendarClassNames();
-  const { viewDate, onMonthPress, selectedDates, size, locale, today } = useCalendar();
-
-  const months = useMemo(
-    () => buildMonthCellModels(viewDate, selectedDates, locale, today),
-    [viewDate, selectedDates, locale, today],
-  );
+  const { onMonthPress, size } = useCalendar();
+  const months = useCalendarMonthCellModels();
 
   return (
     <div className={cn(calendarMonthsGridClass(size), slotClassNames.monthsGrid)}>
@@ -411,12 +371,8 @@ function CalendarMonthsView() {
 
 function CalendarYearsView() {
   const slotClassNames = useCalendarClassNames();
-  const { viewDate, onYearPress, selectedDates, size, today } = useCalendar();
-
-  const years = useMemo(
-    () => buildYearCellModels(viewDate, selectedDates, today),
-    [viewDate, selectedDates, today],
-  );
+  const { onYearPress, size } = useCalendar();
+  const years = useCalendarYearCellModels();
 
   return (
     <div className={cn(calendarYearsGridClass(size), slotClassNames.yearsGrid)}>
@@ -441,12 +397,8 @@ function CalendarYearsView() {
 export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
   function CalendarHeader({ className = "", ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
-    const { view, setView, viewDate, navigate, size, locale } = useCalendar();
-
-    const title = useMemo(
-      () => formatCalendarHeaderTitle(view, viewDate, locale),
-      [view, viewDate, locale],
-    );
+    const { view, setView, navigate, size } = useCalendar();
+    const title = useCalendarHeaderTitle();
 
     return (
       <div

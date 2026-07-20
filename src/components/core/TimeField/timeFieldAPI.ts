@@ -1,5 +1,3 @@
-import { useCallback, useState } from "react";
-
 import type { TimeFieldFormat, TimeFieldHMS, TimeFieldSegId } from "./timeFieldTypes";
 
 export const TIME_FIELD_SEG_MAX: Record<TimeFieldSegId, number> = { h: 23, m: 59, s: 59 };
@@ -27,27 +25,6 @@ export function segValue(hms: TimeFieldHMS, seg: TimeFieldSegId): number {
 export function withSeg(hms: TimeFieldHMS, seg: TimeFieldSegId, val: number): TimeFieldHMS {
   const clamped = Math.max(0, Math.min(TIME_FIELD_SEG_MAX[seg], val));
   return { ...hms, [seg]: clamped };
-}
-
-export function useMergedTimeValue(
-  value: string | undefined,
-  defaultValue: string,
-  format: TimeFieldFormat,
-  onValueChange?: (value: string) => void,
-): [TimeFieldHMS, (next: TimeFieldHMS) => void, boolean] {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = useState<TimeFieldHMS>(() =>
-    parseTime(value ?? defaultValue),
-  );
-  const hms = isControlled ? parseTime(value!) : internal;
-  const setHms = useCallback(
-    (next: TimeFieldHMS) => {
-      if (!isControlled) setInternal(next);
-      onValueChange?.(formatTime(next, format));
-    },
-    [format, isControlled, onValueChange],
-  );
-  return [hms, setHms, isControlled];
 }
 
 export function segmentsForFormat(format: TimeFieldFormat): TimeFieldSegId[] {

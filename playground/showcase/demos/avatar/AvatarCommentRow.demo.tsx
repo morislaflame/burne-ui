@@ -1,6 +1,6 @@
 import { Avatar } from "@/components/core/Avatar";
 import { Text } from "@/components/core/Text";
-import { PIN_IMAGE2 } from "@/utils/mockImages";
+import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 export function AvatarCommentRowDemo() {
   return (

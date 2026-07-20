@@ -296,7 +296,10 @@ CheckboxGroup/
 
 composite/utils/
 ├── optionGroupFieldset.tsx
-└── optionGroupLayout.ts
+├── optionGroupLayout.ts
+├── optionGroupParts.tsx
+├── useOptionGroupSingleValue.ts
+└── useOptionGroupRequiredAnchor.ts
 ```
 
 ## Storybook

@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
-import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
+import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Kbd, type KbdVariant } from ".";
 

@@ -16,6 +16,7 @@ import { useDisclosureTriggerMotion } from "./disclosureAnimations";
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
 import {
   DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
+  DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS,
   DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS,
   DISCLOSURE_TRIGGER_TITLE_CLASS,
   DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS,
@@ -86,7 +87,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
             slotClassNames.triggerChevron,
           )}
         >
-          {icon ?? <IoChevronDown className="size-full" />}
+          {icon ?? <IoChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
         </span>
       ) : null;
 

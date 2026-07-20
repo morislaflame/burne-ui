@@ -8,9 +8,9 @@ import { ListBox } from "@/components/core/ListBox";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
-} from "@/components/core/utils/dualApiStoryChrome";
-import { dualApiStorySource } from "@/components/core/utils/dualApiStorySource";
-import { glossDottedDecorator } from "@/components/core/utils/glossStoryChrome";
+} from "@/stories-utils/dualApiStoryChrome";
+import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
+import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import type { SelectOption } from "./selectTypes";
 import { Select } from ".";

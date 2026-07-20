@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
+import { PRESS_RIPPLE_DOT_CLASS } from "./pressRippleStyles";
 import type { ConvergeRipple } from "./convergeRippleGeometry";
 import { ensureRippleEase, gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
@@ -59,7 +60,7 @@ function ConvergeRippleDot({
   return (
     <span
       ref={ref}
-      className="pointer-events-none absolute z-0 rounded-full"
+      className={PRESS_RIPPLE_DOT_CLASS}
       style={{
         left: x - size / 2,
         top: y - size / 2,

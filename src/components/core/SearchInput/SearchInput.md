@@ -212,7 +212,7 @@ SearchInput/
 └── SearchInput.stories.tsx
 ```
 
-Утилиты: `readControlHeightPx`, `readSearchExpandedRadiusPx`, `CONTROL_SIZE_LAYOUT`.
+Утилиты: `readControlHeightPx`, `CONTROL_SIZE_LAYOUT`; радиус expanded — `readSearchExpandedRadiusPx` в `searchInputStyles`.
 
 ## Storybook
 

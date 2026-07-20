@@ -1,4 +1,4 @@
-import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 
 import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 import { cn } from "@/utils/cn";
@@ -63,20 +63,4 @@ export function compoundContentHasExternalLabel(children: ReactNode): boolean {
 
 export function compoundUsesInlineMotion(className: string | undefined): boolean {
   return !/\bflex-col\b/.test(className ?? "");
-}
-
-export function useMergedChecked(
-  checked: boolean | undefined,
-  defaultChecked: boolean | undefined,
-): [boolean, (next: boolean) => void, boolean] {
-  const isControlled = checked !== undefined;
-  const [internal, setInternal] = useState(Boolean(defaultChecked));
-  const value = isControlled ? Boolean(checked) : internal;
-  const setValue = useCallback(
-    (next: boolean) => {
-      if (!isControlled) setInternal(next);
-    },
-    [isControlled],
-  );
-  return [value, setValue, isControlled];
 }

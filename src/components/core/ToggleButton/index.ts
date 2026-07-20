@@ -37,9 +37,10 @@ export const ToggleButton = Object.assign(ToggleButtonRoot, {
   Text: ToggleButtonText,
 });
 
-export {
-  useOptionalToggleButtonGroupContext,
-  type ToggleButtonGroupType,
-  type ToggleButtonGroupOrientation,
-  type ToggleButtonGroupContextValue,
-} from "./toggleButtonGroupContext";
+export { useOptionalToggleButtonGroupContext } from "./toggleButtonContext";
+
+export type {
+  ToggleButtonGroupType,
+  ToggleButtonGroupOrientation,
+  ToggleButtonGroupContextValue,
+} from "./toggleButtonTypes";

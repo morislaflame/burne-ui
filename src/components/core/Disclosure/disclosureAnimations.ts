@@ -1,5 +1,5 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
@@ -10,7 +10,6 @@ import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useCallback, useEffect, useRef } from "react";
 
-import { mergeRefs } from "./disclosureAPI";
 import type { UseDisclosureTriggerMotionProps } from "./disclosureTypes";
 
 export function useDisclosureTriggerMotion({

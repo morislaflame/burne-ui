@@ -257,7 +257,6 @@ Tabs/
 ├── useTabsRootState.ts
 ├── useSlidingTabIndicator.ts
 ├── tabsContext.tsx
-├── tabsAPI.ts
 ├── tabsA11y.ts
 └── Tabs.stories.tsx
 ```

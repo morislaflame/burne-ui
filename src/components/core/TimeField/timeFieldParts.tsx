@@ -15,6 +15,7 @@ import {
 } from "./timeFieldContext";
 import {
   TIME_FIELD_KEYBOARD_INPUT_CLASS,
+  TIME_FIELD_SEGMENT_GROUP_CLASS,
   timeFieldAffixSlotClass,
   timeFieldSegmentClass,
   timeFieldSegmentSeparatorClass,
@@ -163,7 +164,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
             onBlur={state.handleFieldBlur}
           />
           {state.segments.map((seg, i) => (
-            <span key={seg} className="inline-flex items-center">
+            <span key={seg} className={TIME_FIELD_SEGMENT_GROUP_CLASS}>
               {i > 0 && (
                 <span
                   aria-hidden

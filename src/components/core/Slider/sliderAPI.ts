@@ -1,4 +1,4 @@
-import { Children, isValidElement, useCallback, useState, type ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 
 import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
 import type {
@@ -293,41 +293,6 @@ export function partitionSliderTrackChildren(children: ReactNode): {
 
   if (!hasCompoundParts) return { body: null, hasCompoundParts: false };
   return { body: parts, hasCompoundParts: true };
-}
-
-export function useMergedSingle(
-  value: number | undefined,
-  defaultValue: number | undefined,
-  min: number,
-): [number, (next: number) => void, boolean] {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = useState(defaultValue ?? min);
-  const merged = isControlled ? value! : internal;
-  const setMerged = useCallback(
-    (next: number) => {
-      if (!isControlled) setInternal(next);
-    },
-    [isControlled],
-  );
-  return [merged, setMerged, isControlled];
-}
-
-export function useMergedRange(
-  value: [number, number] | undefined,
-  defaultValue: [number, number] | undefined,
-  min: number,
-  max: number,
-): [[number, number], (next: [number, number]) => void, boolean] {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = useState<[number, number]>(defaultValue ?? [min, max]);
-  const merged = isControlled ? value! : internal;
-  const setMerged = useCallback(
-    (next: [number, number]) => {
-      if (!isControlled) setInternal(next);
-    },
-    [isControlled],
-  );
-  return [merged, setMerged, isControlled];
 }
 
 export function resolveSliderThumbIcon(children: ReactNode, fallback?: ReactNode): ReactNode {

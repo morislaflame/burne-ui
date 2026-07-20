@@ -1,4 +1,4 @@
-import { Children, isValidElement, type ReactElement, type ReactNode, type Ref } from "react";
+import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 
 import type { TooltipVariant } from "./tooltipTypes";
 
@@ -153,15 +153,6 @@ export function resolveTooltipGridSlots({
     hasDescription,
     hasAction: false,
     hasClose: false,
-  };
-}
-
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    }
   };
 }
 

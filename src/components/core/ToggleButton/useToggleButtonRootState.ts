@@ -1,13 +1,14 @@
 import { useCallback } from "react";
 
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 
 import {
   toggleButtonAriaChecked,
   toggleButtonAriaPressed,
   toggleButtonRole,
 } from "./toggleButtonA11y";
-import { hasToggleButtonCompoundChildren, useMergedPressed } from "./toggleButtonAPI";
+import { hasToggleButtonCompoundChildren } from "./toggleButtonAPI";
 import { useOptionalToggleButtonGroupContext } from "./toggleButtonContext";
 import {
   toggleButtonRootClass,
@@ -43,10 +44,10 @@ export function useToggleButtonRootState({
   const variant = variantProp ?? groupCtx?.variant ?? "default";
   const disabled = disabledProp || Boolean(groupCtx?.disabled);
 
-  const [localPressed, setLocalPressed] = useMergedPressed(
-    inGroup ? undefined : pressedProp,
-    inGroup ? false : defaultPressed,
-  );
+  const [localPressed, setLocalPressed] = useControllableState({
+    value: inGroup ? undefined : pressedProp,
+    defaultValue: Boolean(inGroup ? false : defaultPressed),
+  });
 
   const pressedFromGroup = inGroup ? groupCtx!.isSelected(itemValue!) : localPressed;
   const pressed = inGroup

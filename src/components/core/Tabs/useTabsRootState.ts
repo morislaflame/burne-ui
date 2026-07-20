@@ -1,6 +1,7 @@
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 
-import { useMergedTabsValue } from "./tabsAPI";
+import { useControllableState } from "@/components/core/utils/useControllableState";
+
 import type { TabsContextValue, UseTabsRootStateProps } from "./tabsTypes";
 
 export function useTabsRootState({
@@ -13,7 +14,10 @@ export function useTabsRootState({
   disabled = false,
 }: UseTabsRootStateProps) {
   const baseId = useId();
-  const [value, setInternalValue] = useMergedTabsValue(valueProp, defaultValue);
+  const [value, setInternalValue] = useControllableState({
+    value: valueProp,
+    defaultValue: defaultValue ?? "",
+  });
   const tabElementsRef = useRef<Map<string, HTMLButtonElement>>(null!);
   if (!tabElementsRef.current) tabElementsRef.current = new Map();
   const [layoutEpoch, setLayoutEpoch] = useState(0);
