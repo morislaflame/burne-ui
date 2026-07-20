@@ -146,8 +146,8 @@ export function drawerPanelClass({
     PANEL_PLACEMENT_CLASS[placement],
     panelSizeClass(placement, size),
     rounding,
-    className,
     slotClass,
+    className,
   );
 }
 

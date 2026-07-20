@@ -118,8 +118,8 @@ export function selectTriggerGroupClass({
     disabled
       ? SELECT_TRIGGER_GROUP_DISABLED_CLASS
       : SELECT_TRIGGER_GROUP_ENABLED_CLASS,
-    className,
     slotClass,
+    className,
   );
 }
 
@@ -138,8 +138,8 @@ export function selectValueClass({
     SELECT_VALUE_BASE_CLASS,
     SELECT_VALUE_CONTROL[size],
     muted && SELECT_VALUE_MUTED_CLASS,
-    className,
     slotClass,
+    className,
   );
 }
 
@@ -155,7 +155,7 @@ export function selectTriggerClass({
   return mergeSelectSlotClass(
     SELECT_TRIGGER_BASE_CLASS,
     disabled && SELECT_TRIGGER_DISABLED_CLASS,
-    className,
     slotClass,
+    className,
   );
 }

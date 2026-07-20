@@ -627,7 +627,7 @@
 
   --color-tertiary: color-mix(
     in oklab,
-    var(--color-foreground) 12%,
+    var(--color-foreground) 24%,
     var(--color-surface)
   );
 

@@ -112,6 +112,7 @@ export type DialogPortalShellProps = {
   bindGlossPanelRef: (node: HTMLDivElement | null) => void;
   onBackdropMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDialogClose: () => void;
+  onDialogCancel: (e: React.SyntheticEvent<HTMLDialogElement>) => void;
 };
 
 export type DialogTriggerInternalProps = {

@@ -135,7 +135,6 @@ export type UseButtonAnimationsProps = {
   asyncState: ButtonAsyncState;
   isControlled: boolean;
   blocked: boolean;
-  userDisabled: boolean;
   groupSegment: ButtonGroupSegment | undefined;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   onPointerEnter?: React.PointerEventHandler<HTMLButtonElement>;

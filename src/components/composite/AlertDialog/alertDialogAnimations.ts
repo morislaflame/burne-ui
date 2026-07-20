@@ -4,6 +4,8 @@ import {
   animateModalClose,
   animateModalOpen,
   applyReducedModalMotion,
+  captureModalFocusReturn,
+  completeModalDialogClose,
   isReducedModalMotion,
 } from "@/components/core/utils/modalSurfaceMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
@@ -17,12 +19,16 @@ import {
 
 import type { UseAlertDialogModalMotionProps } from "./alertDialogTypes";
 
-export function useAlertDialogModalMotion({ open, variant }: UseAlertDialogModalMotionProps) {
+export function useAlertDialogModalMotion({
+  open,
+  variant,
+}: UseAlertDialogModalMotionProps) {
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const glossPanelRef = useRef<HTMLDivElement>(null);
+  const focusReturnRef = useRef<HTMLElement | null>(null);
 
   const bindGlossPanelRef = useMemo(
     () => createGlossInteractiveRefCallback(glossPanelRef, variant === "gloss"),
@@ -50,7 +56,13 @@ export function useAlertDialogModalMotion({ open, variant }: UseAlertDialogModal
     let cancelled = false;
 
     const finishClose = () => {
-      if (!cancelled) setMounted(false);
+      if (cancelled) return;
+      completeModalDialogClose({
+        dialog: dialogRef.current,
+        focusReturn: focusReturnRef.current,
+        unmount: () => setMounted(false),
+      });
+      focusReturnRef.current = null;
     };
 
     if (!overlay || !panel || isReducedModalMotion()) {
@@ -73,7 +85,10 @@ export function useAlertDialogModalMotion({ open, variant }: UseAlertDialogModal
     if (!open || !mounted) return;
 
     const dialog = dialogRef.current;
-    if (dialog && !dialog.open) dialog.showModal();
+    if (dialog && !dialog.open) {
+      focusReturnRef.current = captureModalFocusReturn(dialog);
+      dialog.showModal();
+    }
 
     const overlay = overlayRef.current;
     const panel = panelRef.current;

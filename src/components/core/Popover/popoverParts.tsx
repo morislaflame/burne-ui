@@ -69,7 +69,7 @@ import type {
 
 export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
   function PopoverTrigger(
-    { className = "", children, asChild = true, onClick, onPointerDown, ...rest },
+    { className = "", children, asChild = true, onClick, onPointerDown, onKeyDown, ...rest },
     ref,
   ) {
     const { open, setOpen, triggerRef, popoverId } =
@@ -105,13 +105,15 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
 
     const handleKeyDown = useCallback(
       (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           if (open) setOpen(false);
           else if (!openingRef.current) setOpen(true);
         }
       },
-      [open, openingRef, setOpen],
+      [onKeyDown, open, openingRef, setOpen],
     );
 
     const onlyChild =
@@ -124,6 +126,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         "aria-controls"?: string;
         onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
         onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
+        onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
         ref?: Ref<HTMLElement>;
       }>;
 
@@ -143,6 +146,10 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         onClick: (event: ReactMouseEvent<HTMLElement>) => {
           child.props.onClick?.(event);
           handleClick(event);
+        },
+        onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
+          child.props.onKeyDown?.(event);
+          handleKeyDown(event as ReactKeyboardEvent<HTMLButtonElement>);
         },
         "aria-expanded": open,
         "aria-controls": open ? popoverId : undefined,

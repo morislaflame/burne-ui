@@ -25,7 +25,7 @@ Simple API + минимальный compound (`Label.Slot` — null-компон
 | Prop | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
 | `htmlFor` | `string` | из context | ID контрола; при наличии рендерится `<label>` |
-| `id` | `string` | из context | Для `<span>` без `htmlFor` |
+| `id` | `string` | из context | ID подписи (`aria-labelledby`); на `<label>` и на `<span>` |
 | `isRequired` | `boolean` | `false` / context | Показывает `*` (`text-danger`) |
 | `className` | `string` | — | На root |
 | `classNames` | `LabelClassNames` | — | Слоты: `root`, `text`, `required` |
@@ -69,7 +69,7 @@ type LabelClassNames = {
 
 | Условие | Элемент | Назначение |
 |---------|---------|------------|
-| `htmlFor` задан | `<label htmlFor>` | Клик фокусирует контрол |
+| `htmlFor` задан | `<label id htmlFor>` | Клик фокусирует контрол; `id` для `aria-labelledby` |
 | только `id` | `<span id>` | Подпись без прямой привязки |
 
 Текст: `Text` variant `base`, `font-medium`. Required: `*` с `aria-hidden` (семантика через `required` на контроле / `isRequired` в форме).

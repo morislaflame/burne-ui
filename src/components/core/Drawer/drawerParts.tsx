@@ -345,6 +345,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
+        triggerRef.current?.focus({ preventScroll: true });
         runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
       },
       [open, openingRef, triggerRef, onOpenChange],
@@ -354,7 +355,9 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       (e: ReactMouseEvent<HTMLElement>) => {
         onClick?.(e as ReactMouseEvent<HTMLButtonElement>);
         if (e.defaultPrevented) return;
-        if (!open && !openingRef.current) onOpenChange(true);
+        if (!open && !openingRef.current) {
+          onOpenChange(true);
+        }
       },
       [onClick, open, openingRef, onOpenChange],
     );
@@ -470,6 +473,10 @@ export function DrawerPanel({
         bindGlossPanelRef={motion.bindGlossPanelRef}
         onBackdropMouseDown={motion.handleBackdropMouseDown}
         onDialogClose={() => onOpenChange(false)}
+        onDialogCancel={(e) => {
+          e.preventDefault();
+          onOpenChange(false);
+        }}
       />
     </DrawerProvider>,
     document.body,
@@ -498,6 +505,7 @@ export function DrawerPortalShell({
   bindGlossPanelRef,
   onBackdropMouseDown,
   onDialogClose,
+  onDialogCancel,
 }: DrawerPortalShellProps) {
   const slotClassNames = useDrawerClassNames();
 
@@ -514,6 +522,7 @@ export function DrawerPortalShell({
       {...portalTheme}
       ref={dialogRef}
       onClose={onDialogClose}
+      onCancel={onDialogCancel}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
       className={mergeDrawerSlotClass(DRAWER_NATIVE_CLASS, slotClassNames.dialog)}

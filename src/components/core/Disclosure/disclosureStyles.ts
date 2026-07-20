@@ -95,7 +95,7 @@ export function disclosureRootClass({
   const rootCls =
     variant === "card" && groupedCardShell ? "" : VARIANT_ROOT[variant];
 
-  return mergeDisclosureSlotClass(rootCls, className, slotClass);
+  return mergeDisclosureSlotClass(rootCls, slotClass, className);
 }
 
 export function disclosureTriggerClass({
@@ -120,8 +120,8 @@ export function disclosureTriggerClass({
     disabled
       ? DISCLOSURE_TRIGGER_DISABLED_CLASS
       : DISCLOSURE_TRIGGER_ENABLED_CLASS,
-    className,
     slotClass,
+    className,
   );
 }
 
@@ -152,8 +152,8 @@ export function disclosureContentPanelClass({
     variant === "card" && "border-t-token",
     variant === "ghost" && "text-muted",
     variant === "default" && "text-muted",
-    className,
     slotClass,
+    className,
   );
 }
 
@@ -192,8 +192,8 @@ export function disclosureGroupClass({
         variant === "ghost" ||
         variant === "gloss") &&
       "gap-small",
-    className,
     slotClass,
+    className,
   );
 }
 

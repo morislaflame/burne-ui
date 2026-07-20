@@ -56,7 +56,6 @@ function BadgeShell({
   withA11y = false,
 }: BadgeShellProps) {
   const a11y = withA11y ? badgeRootA11yProps(rest) : undefined;
-  const innerCls = cn(className, splitLiftMotionCls, !splitLift && placementClass);
 
   if (splitLift) {
     return (
@@ -71,7 +70,7 @@ function BadgeShell({
           ref={innerLiftRef}
           data-badge-lift-target
           data-icon={dataIcon}
-          className={innerCls}
+          className={cn(splitLiftMotionCls, className)}
         >
           {children}
         </span>
@@ -85,10 +84,11 @@ function BadgeShell({
       data-icon={dataIcon}
       data-badge-root
       className={cn(
-        innerCls,
+        splitLiftMotionCls,
         selfLiftMotionCls,
         badgeShellAnchorChildClass(isDirectAnchorChild, isGloss),
         placementClass,
+        className,
       )}
       {...pointerHandlers}
       {...rest}

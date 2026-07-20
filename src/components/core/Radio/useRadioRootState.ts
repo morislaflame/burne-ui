@@ -60,8 +60,10 @@ export function useRadioRootState(
   const inputName = name ?? group?.name;
   const isDisabled = Boolean(disabled ?? group?.disabled);
   const isCompound = hasCompoundChildren(children);
+  const hasCompoundLabel = isCompound ? hasCompoundChild(children, "RadioLabel") : false;
   const hasCompoundHint = isCompound ? hasCompoundChild(children, "RadioHint") : false;
   const hasCompoundError = isCompound ? hasCompoundChild(children, "RadioError") : false;
+  const hasLabel = isCompound ? hasCompoundLabel : Boolean(label);
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
   const enableTextMotion = !isDisabled && (!isCompound || useInlineCompoundMotion);
   const sz = RADIO_SIZE_LAYOUT[size];
@@ -133,6 +135,7 @@ export function useRadioRootState(
       hasCompoundError,
       hintConnected: isCompound ? hasCompoundHint : hasHint,
       errorConnected: isCompound ? hasCompoundError : hasError,
+      hasLabel,
       useInlineCompoundMotion,
       textMotionRef: textColRef,
       danger,
@@ -163,6 +166,7 @@ export function useRadioRootState(
       hasCompoundHint,
       hasError,
       hasHint,
+      hasLabel,
       hintId,
       inputId,
       inputName,

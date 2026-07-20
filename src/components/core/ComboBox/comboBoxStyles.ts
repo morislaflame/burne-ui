@@ -119,8 +119,8 @@ export function comboBoxInputGroupClass({
     disabled
       ? COMBOBOX_INPUT_GROUP_DISABLED_CLASS
       : COMBOBOX_INPUT_GROUP_ENABLED_CLASS,
-    className,
     slotClass,
+    className,
   );
 }
 
@@ -139,9 +139,9 @@ export function comboBoxInputClass({
     COMBOBOX_INPUT_BASE_CLASS,
     COMBOBOX_INPUT_CONTROL[size],
     muted && COMBOBOX_INPUT_MUTED_CLASS,
-    className,
-    slotClass,
     FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,
+    slotClass,
+    className,
   );
 }
 
@@ -157,7 +157,7 @@ export function comboBoxTriggerClass({
   return mergeComboBoxSlotClass(
     COMBOBOX_TRIGGER_BASE_CLASS,
     disabled && COMBOBOX_TRIGGER_DISABLED_CLASS,
-    className,
     slotClass,
+    className,
   );
 }

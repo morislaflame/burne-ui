@@ -61,12 +61,6 @@ export type UseFirstLevelInteractiveMotionProps = {
    * Called at the start of press-squeeze release phase (before restoring hover).
    */
   onPressReleaseStart?: () => void;
-  /**
-   * Optional override for the "still enabled?" check inside the async `afterPress` callback.
-   * Useful when `enabled` might change between press and animation completion (e.g. Button async).
-   * Default: returns the current `enabled` closure value.
-   */
-  afterPressEnabled?: () => boolean;
 };
 
 export function useFirstLevelInteractiveMotion({

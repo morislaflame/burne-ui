@@ -136,8 +136,8 @@ export function dialogPanelClass({
     sizePreset.panelMax,
     !isGloss && DIALOG_PANEL_SURFACE_CLASS,
     !isGloss && sizePreset.maxHeight,
-    className,
     slotClass,
+    className,
   );
 }
 

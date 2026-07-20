@@ -234,7 +234,7 @@ import {
 ## Доступность
 
 - Native `<input type="radio">` — focus, arrow keys в группе
-- `aria-label` на input из value (`radioInputAriaLabel`)
+- Имя из видимой подписи (обёртка `<label>` / `Radio.Label`); `aria-label` из `value` — только fallback без подписи
 - `aria-describedby` hint/error
 - `data-selected` на label при checked
 

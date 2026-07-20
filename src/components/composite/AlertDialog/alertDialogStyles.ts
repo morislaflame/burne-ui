@@ -156,8 +156,8 @@ export function alertDialogPanelClass({
     !isGloss && ALERT_DIALOG_PANEL_SURFACE_CLASS,
     !isGloss && sizePreset.maxHeight,
     !isGloss && alertDialogPanelSurfaceClass(variant),
-    className,
     slotClass,
+    className,
   );
 }
 

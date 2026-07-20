@@ -81,7 +81,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
             ctx.hintConnected ? ctx.hintId : undefined,
             ctx.errorConnected ? ctx.errorId : undefined,
           )}
-          aria-label={radioInputAriaLabel(ctx.inputProps.value)}
+          aria-label={radioInputAriaLabel(ctx.inputProps.value, ctx.hasLabel)}
           onChange={ctx.onChange}
           onClick={ctx.onActivate}
         />

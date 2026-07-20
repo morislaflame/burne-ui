@@ -258,7 +258,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 TableBody.displayName = "TableBody";
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
-  { id, tone, children, className, onClick, ...rest },
+  { id, tone, children, className, onClick, onKeyDown, ...rest },
   ref,
 ) {
   const variant = useTableVariant();
@@ -288,12 +288,14 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function 
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented) return;
       if (isSelectable && (e.key === "Enter" || e.key === " ")) {
         e.preventDefault();
         onRowSelect(id!);
       }
     },
-    [id, isSelectable, onRowSelect],
+    [id, isSelectable, onKeyDown, onRowSelect],
   );
 
   return (

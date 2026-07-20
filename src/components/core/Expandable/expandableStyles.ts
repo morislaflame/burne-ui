@@ -79,8 +79,8 @@ export function expandableRootClass({
   return mergeExpandableSlotClass(
     EXPANDABLE_ROOT_BASE_CLASS,
     variant === "gloss" ? EXPANDABLE_ROOT_GLOSS_CLASS : EXPANDABLE_ROOT_SURFACE_CLASS,
-    className,
     slotClass,
+    className,
   );
 }
 

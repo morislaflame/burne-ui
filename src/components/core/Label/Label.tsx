@@ -33,7 +33,7 @@ export function LabelRoot({
 
   if (htmlFor != null) {
     return (
-      <label htmlFor={htmlFor} className={rootClass} {...rest}>
+      <label id={id} htmlFor={htmlFor} className={rootClass} {...rest}>
         <LabelContent isRequired={isRequired}>{children}</LabelContent>
       </label>
     );

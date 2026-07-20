@@ -126,3 +126,39 @@ export function animatePortalClose({
     { autoAlpha: 0, ...exit, ...vars, onComplete },
   );
 }
+
+/**
+ * Element to restore focus to after the modal closes.
+ * Call before `showModal()` — after that, focus moves into the dialog.
+ */
+export function captureModalFocusReturn(
+  dialog: HTMLDialogElement,
+): HTMLElement | null {
+  const active = typeof document !== "undefined" ? document.activeElement : null;
+  if (!(active instanceof HTMLElement)) return null;
+  if (active === dialog || dialog.contains(active)) return null;
+  return active;
+}
+
+/**
+ * Close the native dialog before unmounting its portal, then restore focus to
+ * the element that opened it. The dialog stays modal during its exit animation,
+ * so focus cannot legitimately leave it before this point.
+ */
+export function completeModalDialogClose({
+  dialog,
+  focusReturn,
+  unmount,
+}: {
+  dialog: HTMLDialogElement | null;
+  focusReturn: HTMLElement | null;
+  unmount: () => void;
+}): void {
+  if (dialog?.open) {
+    dialog.close();
+  }
+  unmount();
+  if (focusReturn && document.contains(focusReturn)) {
+    focusReturn.focus({ preventScroll: true });
+  }
+}

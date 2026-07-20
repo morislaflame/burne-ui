@@ -104,7 +104,6 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     asyncState: state.asyncState,
     isControlled: state.isControlled,
     blocked: state.blocked,
-    userDisabled: state.userDisabled,
     groupSegment: state.groupSegment,
     forwardedRef: ref,
     onPointerEnter,

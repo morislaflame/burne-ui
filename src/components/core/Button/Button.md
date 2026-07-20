@@ -142,7 +142,7 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 
 1. `animateInteractivePressSqueeze` — 3 ключевых кадра scale: `1 → adaptiveSqueeze → 1`
 2. Адаптивное сжатие: ~2.4px с каждой стороны, но не сильнее `pressSqueezeScale[1]` (default `0.98`)
-3. После release: если курсор всё ещё внутри — восстанавливает hover lift (`afterPressEnabled` проверяет `asyncState === "idle"`)
+3. После release: если курсор всё ещё внутри — восстанавливает hover lift
 
 **Pointer leave:** сброс scale + тени, `killMotion` при `blocked`.
 

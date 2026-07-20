@@ -89,6 +89,8 @@ export type RadioFieldContextValue = {
   hasCompoundError: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
+  /** Visible label present (simple `label` or compound `Radio.Label`) — skips fallback `aria-label`. */
+  hasLabel: boolean;
   useInlineCompoundMotion: boolean;
   textMotionRef: RefObject<HTMLElement | null>;
   danger: boolean;

@@ -5,6 +5,7 @@ import {
   useMemo,
   useRef,
   type MouseEvent,
+  type Ref,
 } from "react";
 
 import { Text } from "@/components/core/Text";
@@ -386,6 +387,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     if (active) {
       return (
         <Text
+          ref={ref as Ref<HTMLElement>}
           as="span"
           variant="small"
           aria-current="page"
@@ -393,6 +395,9 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
             slotClass: slotClassNames.pageActive,
             className,
           })}
+          onClick={onClick as ((event: MouseEvent<HTMLElement>) => void) | undefined}
+          {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
+          {...rest}
         >
           {label}
         </Text>

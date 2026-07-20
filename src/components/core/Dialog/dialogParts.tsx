@@ -271,6 +271,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         // Button's useFirstLevelInteractiveMotion sees defaultPrevented = true
         // and skips its own animation (we drive it from here instead).
         e.preventDefault();
+        triggerRef.current?.focus({ preventScroll: true });
         runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
       },
       [open, openingRef, triggerRef, onOpenChange],
@@ -282,7 +283,9 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         if (e.defaultPrevented) return;
         // Keyboard activation (Enter/Space) doesn't generate pointerDown —
         // open immediately as fallback when openingRef hasn't been set.
-        if (!open && !openingRef.current) onOpenChange(true);
+        if (!open && !openingRef.current) {
+          onOpenChange(true);
+        }
       },
       [onClick, open, openingRef, onOpenChange],
     );
@@ -345,10 +348,14 @@ export function DialogPanel({
   themeAnchor,
   children,
 }: DialogPanelProps) {
-  const { open, onOpenChange, titleId, descriptionId, hasDescription, sizePreset } =
-    useDialog();
+  const { open, onOpenChange, titleId, descriptionId, hasDescription, sizePreset } = useDialog();
 
-  const motion = useDialogModalMotion({ open, onOpenChange, variant, dismissOnBackdrop });
+  const motion = useDialogModalMotion({
+    open,
+    onOpenChange,
+    variant,
+    dismissOnBackdrop,
+  });
 
   const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
   const lightUi = useBurneLightTheme(portalThemeAnchor);
@@ -374,6 +381,10 @@ export function DialogPanel({
       bindGlossPanelRef={motion.bindGlossPanelRef}
       onBackdropMouseDown={motion.handleBackdropPointerDown}
       onDialogClose={() => onOpenChange(false)}
+      onDialogCancel={(e) => {
+        e.preventDefault();
+        onOpenChange(false);
+      }}
     >
       {children}
     </DialogPortalShell>,
@@ -401,6 +412,7 @@ export function DialogPortalShell({
   bindGlossPanelRef,
   onBackdropMouseDown,
   onDialogClose,
+  onDialogCancel,
 }: DialogPortalShellProps) {
   const isGloss = variant === "gloss";
   const slotClassNames = useDialogClassNames();
@@ -410,6 +422,7 @@ export function DialogPortalShell({
       {...portalTheme}
       ref={dialogRef}
       onClose={onDialogClose}
+      onCancel={onDialogCancel}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
       className={mergeDialogSlotClass(DIALOG_NATIVE_CLASS, slotClassNames.dialog)}

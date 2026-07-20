@@ -2,6 +2,8 @@ import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import {
   applyReducedModalMotion,
+  captureModalFocusReturn,
+  completeModalDialogClose,
   isReducedModalMotion,
   type GsapMotionVars,
 } from "@/components/core/utils/modalSurfaceMotion";
@@ -81,6 +83,7 @@ export function useDrawerModalMotion({
   const panelRef = useRef<HTMLDivElement>(null);
   const glossPanelRef = useRef<HTMLDivElement>(null);
   const skipCloseAnimRef = useRef(false);
+  const focusReturnRef = useRef<HTMLElement | null>(null);
 
   const showPortal = open || mounted;
 
@@ -113,7 +116,13 @@ export function useDrawerModalMotion({
     let cancelled = false;
 
     const finishClose = () => {
-      if (!cancelled) setMounted(false);
+      if (cancelled) return;
+      completeModalDialogClose({
+        dialog: dialogRef.current,
+        focusReturn: focusReturnRef.current,
+        unmount: () => setMounted(false),
+      });
+      focusReturnRef.current = null;
     };
 
     if (skipCloseAnimRef.current) {
@@ -148,7 +157,10 @@ export function useDrawerModalMotion({
     if (!open) return;
 
     const dialog = dialogRef.current;
-    if (dialog && !dialog.open) dialog.showModal();
+    if (dialog && !dialog.open) {
+      focusReturnRef.current = captureModalFocusReturn(dialog);
+      dialog.showModal();
+    }
 
     const overlay = overlayRef.current;
     const panel = panelRef.current;

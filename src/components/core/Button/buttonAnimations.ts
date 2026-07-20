@@ -63,7 +63,6 @@ export function useButtonAnimations({
   asyncState,
   isControlled,
   blocked,
-  userDisabled,
   groupSegment,
   forwardedRef,
   onPointerEnter,
@@ -74,9 +73,6 @@ export function useButtonAnimations({
   const loaderRef = useRef<HTMLSpanElement>(null);
   const successRef = useRef<HTMLSpanElement>(null);
   const errorRef = useRef<HTMLSpanElement>(null);
-
-  const asyncStateRef = useRef<ButtonAsyncState>("idle");
-  asyncStateRef.current = asyncState;
 
   const expandId = useRef(0);
   const prevAsyncRef = useRef<ButtonAsyncState>("idle");
@@ -125,8 +121,6 @@ export function useButtonAnimations({
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
-    // Async-aware check: don't restore hover lift if async kicked in during the press animation
-    afterPressEnabled: () => !userDisabled && asyncStateRef.current === "idle",
   });
 
   // Sync expand ripples push with async state transitions

@@ -362,6 +362,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
+        triggerRef.current?.focus({ preventScroll: true });
         runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
       },
       [open, openingRef, onOpenChange],
@@ -371,7 +372,9 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
       (e: ReactMouseEvent<HTMLElement>) => {
         onClick?.(e as ReactMouseEvent<HTMLButtonElement>);
         if (e.defaultPrevented) return;
-        if (!open && !openingRef.current) onOpenChange(true);
+        if (!open && !openingRef.current) {
+          onOpenChange(true);
+        }
       },
       [onClick, open, openingRef, onOpenChange],
     );
