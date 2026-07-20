@@ -65,6 +65,8 @@
 
 ### Added
 
+- `BurneThemeConfig.customTokens` для проектных CSS-переменных, mode-specific значений и metadata автоматических контролов.
+- Theme runtime preview API (`useBurneThemeRuntime`) для отдельного пакета `burne-ui-devtools`.
 - Публичный примитив **`Field`** (`Field.Root`, `Field.Hint`, `Field.Label`).
 - **Dual API** (simple + compound) для `Input`, `Selector`, `Switch`, `Meter`, `ProgressBar`, `Slider`, **`Avatar`** (`src` + `label` без children; compound — `Avatar.Image` / `Avatar.Fallback`).
 - **`Badge`**: inline-иконки в `children` через `data-icon="inline-start" | "inline-end"`; prop `icon` игнорируется при наличии таких children.

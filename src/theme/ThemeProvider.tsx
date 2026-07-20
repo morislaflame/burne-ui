@@ -81,9 +81,10 @@ export function ThemeProvider({
   const [uncontrolled, setUncontrolled] = useState<BurneThemeMode>(() => {
     return readStoredTheme(storageKey) ?? defaultTheme;
   });
+  const [systemRevision, setSystemRevision] = useState(0);
 
   const theme = themeProp ?? uncontrolled;
-  const resolvedTheme = resolveTheme(theme);
+  const resolvedTheme = useMemo(() => resolveTheme(theme), [theme, systemRevision]);
 
   const setTheme = useCallback(
     (next: BurneThemeMode) => {
@@ -106,12 +107,11 @@ export function ThemeProvider({
     if (theme !== "system" || typeof window === "undefined") return;
     const mq = window.matchMedia("(prefers-color-scheme: light)");
     const onChange = () => {
-      const el = root ?? document.documentElement;
-      applyThemeMode(resolveTheme("system"), el);
+      setSystemRevision((revision) => revision + 1);
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
-  }, [theme, root]);
+  }, [theme]);
 
   const value = useMemo<BurneThemeContextValue>(
     () => ({ theme, resolvedTheme, setTheme }),

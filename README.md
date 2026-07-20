@@ -69,6 +69,41 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
 Scaffold (`create-burne-app` / `burne-ui init`) уже кладёт `burne-theme.ts` с **`tokens`** (shared), **`colors.light` / `colors.dark`** и **`motion`**.
 
+Проектные CSS-переменные можно описать в том же конфиге. Они применяются Provider и автоматически
+появляются в `burne-ui-devtools`:
+
+```ts
+const burneTheme = {
+  // tokens, colors, motion...
+  customTokens: {
+    "--app-brand": "#38bdf8",
+    "--app-sidebar-width": {
+      value: 320,
+      unit: "px",
+      label: "Sidebar width",
+      control: "slider",
+      min: 240,
+      max: 480,
+      step: 4,
+    },
+  },
+} satisfies BurneThemeConfig;
+```
+
+### Devtools темы
+
+Интерактивный редактор устанавливается отдельно и подключается только в development:
+
+```bash
+npm install -D burne-ui-devtools
+```
+
+Он показывает плавающую кнопку, позволяет менять токены и пресеты в браузере, а затем скопировать
+или скачать готовый `burne-theme.ts`. Пресеты шрифтов подгружают Google Fonts лениво только в
+devtools; в production выбранный face нужно подключить самим. Полная интеграция для Vite и Next.js —
+в [`burne-ui-devtools`](https://www.npmjs.com/package/burne-ui-devtools) и
+[docs/SETUP.md](./docs/SETUP.md).
+
 
 Только переключение `data-theme`: `ThemeProvider` + `useBurneTheme()`. Подробности — [docs/SETUP.md](./docs/SETUP.md).
 

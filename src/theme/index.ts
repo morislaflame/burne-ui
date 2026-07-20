@@ -29,17 +29,24 @@ export { DARK_COLORS, LIGHT_COLORS } from "./themePalettes";
 
 export {
   applyBurneThemeConfig,
+  applyCustomThemeTokens,
   applyTokens,
+  clearCustomThemeTokens,
   exportBurneThemeConfigSource,
   exportBurneThemeCss,
   mergeThemeTokenOverrides,
   resolveTheme,
+  resolveCustomThemeTokens,
   resolveThemeTokenState,
   createDefaultBurneThemeConfig,
   exportDefaultBurneThemeConfigSource,
   themeTokenStateToConfig,
   type BurneThemeConfig,
   type BurneThemeMode,
+  type CustomThemeTokenControl,
+  type CustomThemeTokenDefinition,
+  type CustomThemeTokens,
+  type CustomThemeTokenValue,
   type ThemeModeColorOverrides,
   type ThemeTokenOverrides,
 } from "./themeConfig";
@@ -54,3 +61,9 @@ export {
 } from "./ThemeProvider";
 
 export { BurneUIProvider, type BurneUIProviderProps } from "./BurneUIProvider";
+
+export {
+  useBurneThemeRuntime,
+  useBurneThemeRuntimeOptional,
+  type BurneThemeRuntimeContextValue,
+} from "./themeRuntimeContext";

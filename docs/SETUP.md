@@ -202,6 +202,148 @@ import burneTheme from "./burne-theme";
 
 Альтернатива: **Copy CSS** → `burne-theme-overrides.css` (без JS runtime), см. §7.
 
+### Проектные переменные и автоматические контролы
+
+`customTokens` позволяет хранить CSS-переменные приложения рядом с темой. Ключ всегда начинается
+с `--`. Простые значения получают контрол автоматически; объект добавляет подпись, диапазон,
+единицу измерения или отдельные light/dark-значения:
+
+```ts
+import type { BurneThemeConfig } from "burne-ui";
+
+const burneTheme = {
+  theme: "dark",
+  customTokens: {
+    "--app-brand": "#38bdf8",
+    "--app-compact-navigation": false,
+    "--app-sidebar-width": {
+      value: 320,
+      unit: "px",
+      label: "Sidebar width",
+      group: "Application",
+      control: "slider",
+      min: 240,
+      max: 480,
+      step: 4,
+    },
+    "--app-hero-glow": {
+      values: {
+        dark: "oklch(72% 0.16 230)",
+        light: "oklch(58% 0.18 240)",
+      },
+      label: "Hero glow",
+      control: "color",
+    },
+  },
+} satisfies BurneThemeConfig;
+
+export default burneTheme;
+```
+
+`BurneUIProvider` применяет эти значения в production. `burne-ui-devtools` читает тот же конфиг и
+автоматически добавляет соответствующие поля в секцию Custom tokens.
+
+### Devtools темы
+
+Установите редактор как dev dependency:
+
+```bash
+npm install -D burne-ui-devtools
+```
+
+Компонент должен находиться внутри `BurneUIProvider`: он использует runtime preview Provider,
+поэтому не записывает токены параллельно с ним.
+
+Vite:
+
+```tsx
+import { lazy, Suspense } from "react";
+
+const ThemeDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("burne-ui-devtools").then(({ BurneThemeDevtools }) => ({
+        default: BurneThemeDevtools,
+      })),
+    )
+  : null;
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <BurneUIProvider config={burneTheme}>
+      {children}
+      {ThemeDevtools ? (
+        <Suspense fallback={null}>
+          <ThemeDevtools />
+        </Suspense>
+      ) : null}
+    </BurneUIProvider>
+  );
+}
+```
+
+Next.js App Router (`components/providers/app-providers.tsx`, обязательно client component):
+
+```tsx
+"use client";
+
+import dynamic from "next/dynamic";
+
+const ThemeDevtools =
+  process.env.NODE_ENV === "development"
+    ? dynamic(
+        () => import("burne-ui-devtools").then((module) => module.BurneThemeDevtools),
+        { ssr: false },
+      )
+    : () => null;
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <BurneUIProvider config={burneTheme}>
+      {children}
+      <ThemeDevtools />
+    </BurneUIProvider>
+  );
+}
+```
+
+В панели доступны live preview, light/dark, пресеты, Shuffle (рандомный цветовой пресет +
+Scale + шрифты, без motion), Reset, Copy CSS, Copy config и Download `burne-theme.ts`.
+Изменения сохраняются только в браузерном devtools storage; исходный файл автоматически не
+перезаписывается.
+
+Диапазоны слайдеров (min / max / step) задаются в пакете `burne-ui-devtools` в файле
+`src/BurneThemeDevtools/burneThemeDevtoolsData.ts` (`SCALE_CONTROLS`, `SHADOW_CONTROLS`,
+`MOTION_*`).
+
+Подключите стили панели рядом с `burne-ui/styles.css`:
+
+```css
+@import "burne-ui/styles.css";
+@import "burne-ui-devtools/styles.css";
+```
+
+#### Шрифты в пресетах
+
+Пресеты sans/mono в редакторе задают только CSS-стек (`--font-family-sans` /
+`--font-family-mono`). Файлы Google Fonts **подгружаются лениво** при выборе
+пресета или при восстановлении снимка из localStorage (`ensureThemeFontLoaded`):
+один stylesheet на семейство, плюс `preconnect` к Google Fonts. Системные
+стеки сеть не трогают.
+
+В production редактор обычно не монтируется — выбранный шрифт нужно подключить
+самим (self-host, `next/font`, или один `<link>` на нужные семейства). Export
+config копирует только строку `fontFamily`, не файлы шрифтов.
+
+Для документации / layout можно взять готовые URL всех пресетов:
+
+```ts
+import {
+  THEME_SANS_FONTS_URL,
+  THEME_MONO_FONTS_URL,
+  ensureThemeFontLoaded,
+} from "burne-ui-devtools";
+```
+
 ---
 
 ## 6. Светлая и тёмная тема

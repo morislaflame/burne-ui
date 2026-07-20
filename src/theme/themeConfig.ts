@@ -37,6 +37,40 @@ export type ThemeTokenOverrides = {
 /** Per-mode flat palette (status + hover included as regular keys). */
 export type ThemeModeColorOverrides = ThemeColors | Partial<ThemeColors>;
 
+export type CustomThemeTokenValue = string | number | boolean;
+
+export type CustomThemeTokenControl =
+  | "color"
+  | "number"
+  | "select"
+  | "slider"
+  | "switch"
+  | "text";
+
+export type CustomThemeTokenDefinition = {
+  /** Shared value. Use `values` when light and dark need different values. */
+  value?: CustomThemeTokenValue;
+  values?: Partial<Record<ThemeMode, CustomThemeTokenValue>>;
+  label?: string;
+  group?: string;
+  control?: CustomThemeTokenControl;
+  description?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+  options?: readonly (string | { label: string; value: string })[];
+};
+
+/**
+ * Project-specific CSS variables. Keys must be valid custom properties (`--*`).
+ * Primitive values get an inferred devtools control; use a definition for metadata.
+ */
+export type CustomThemeTokens = Record<
+  `--${string}`,
+  CustomThemeTokenValue | CustomThemeTokenDefinition
+>;
+
 /**
  * Serializable theme config for `BurneUIProvider`.
  * Generate via `exportBurneThemeConfigSource()` from the playground.
@@ -51,6 +85,7 @@ export type BurneThemeConfig = {
   storageKey?: string | null;
   tokens?: ThemeTokenOverrides;
   colors?: Partial<Record<ThemeMode, ThemeModeColorOverrides>>;
+  customTokens?: CustomThemeTokens;
   motion?: Partial<MotionConfig>;
   /** Wrap children with `Toast.Provider`. @default true */
   toast?: boolean | Omit<ToastProviderProps, "children">;
@@ -202,6 +237,92 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
   };
 }
 
+function resolveCustomTokenValue(
+  definition: CustomThemeTokenValue | CustomThemeTokenDefinition,
+  mode: ThemeMode,
+): { value: CustomThemeTokenValue; unit?: string } | null {
+  if (
+    typeof definition === "string" ||
+    typeof definition === "number" ||
+    typeof definition === "boolean"
+  ) {
+    return { value: definition };
+  }
+
+  const value = definition.values?.[mode] ?? definition.value;
+  return value === undefined ? null : { value, unit: definition.unit };
+}
+
+/** Resolve custom token definitions to CSS-ready values for the active mode. */
+export function resolveCustomThemeTokens(
+  customTokens: CustomThemeTokens | undefined,
+  mode: ThemeMode,
+): Record<`--${string}`, string> {
+  const resolved = {} as Record<`--${string}`, string>;
+  if (!customTokens) return resolved;
+
+  for (const [name, definition] of Object.entries(customTokens) as [
+    `--${string}`,
+    CustomThemeTokenValue | CustomThemeTokenDefinition,
+  ][]) {
+    const token = resolveCustomTokenValue(definition, mode);
+    if (!token) continue;
+    resolved[name] =
+      typeof token.value === "number" && token.unit
+        ? `${token.value}${token.unit}`
+        : String(token.value);
+  }
+
+  return resolved;
+}
+
+type PreviousCustomToken = { priority: string; value: string };
+const appliedCustomTokens = new WeakMap<HTMLElement, Map<string, PreviousCustomToken>>();
+
+/** Apply custom CSS variables and remove stale variables previously owned by Burne UI. */
+export function applyCustomThemeTokens(
+  customTokens: CustomThemeTokens | undefined,
+  root: HTMLElement,
+  mode: ThemeMode,
+) {
+  const resolved = resolveCustomThemeTokens(customTokens, mode);
+  const nextNames = new Set(Object.keys(resolved));
+  const previousTokens = appliedCustomTokens.get(root) ?? new Map<string, PreviousCustomToken>();
+
+  previousTokens.forEach((previous, name) => {
+    if (nextNames.has(name)) return;
+    if (previous.value) {
+      root.style.setProperty(name, previous.value, previous.priority);
+    } else {
+      root.style.removeProperty(name);
+    }
+    previousTokens.delete(name);
+  });
+  for (const [name, value] of Object.entries(resolved)) {
+    if (!previousTokens.has(name)) {
+      previousTokens.set(name, {
+        value: root.style.getPropertyValue(name),
+        priority: root.style.getPropertyPriority(name),
+      });
+    }
+    root.style.setProperty(name, value);
+  }
+
+  appliedCustomTokens.set(root, previousTokens);
+}
+
+/** Remove all custom variables last applied by Burne UI on this root. */
+export function clearCustomThemeTokens(root: HTMLElement = document.documentElement) {
+  appliedCustomTokens.get(root)?.forEach((previous, name) => {
+    if (previous.value) {
+      root.style.setProperty(name, previous.value, previous.priority);
+    } else {
+      root.style.removeProperty(name);
+    }
+  });
+  appliedCustomTokens.delete(root);
+}
+
 /**
  * Default app theme snapshot (shared tokens + light/dark colors + motion).
  * Used by scaffolds / `burne-ui init` and as a starting point for Copy config edits.
@@ -226,7 +347,8 @@ export function exportDefaultBurneThemeConfigSource(options?: { exportName?: str
     "/**",
     " * Burne UI theme config (starter snapshot).",
     " *",
-    " * - Edit `tokens` / `motion` (shared) and `colors.light` / `colors.dark`.",
+    " * - Edit `tokens` / `motion` (shared), `colors.light` / `colors.dark`,",
+    " *   and optional `customTokens` for project-specific CSS variables.",
     " * - Or replace this file with docs site → Copy config.",
     " *",
     " *   import { BurneUIProvider } from \"burne-ui\";",
@@ -340,6 +462,7 @@ export function applyBurneThemeConfig(
   }
 
   applyThemeTokens(state, root);
+  applyCustomThemeTokens(config.customTokens, root, resolvedTheme);
 }
 
 export function resolveTheme(theme: BurneThemeMode | undefined = "system"): ThemeMode {
@@ -363,7 +486,13 @@ export function applyTokens(
 export function exportBurneThemeCss(config: BurneThemeConfig): string {
   const theme = resolveTheme(config.theme);
   const state = resolveThemeTokenState(config, theme);
-  return exportThemeCss(state);
+  const css = exportThemeCss(state);
+  const custom = resolveCustomThemeTokens(config.customTokens, theme);
+  const entries = Object.entries(custom);
+  if (entries.length === 0) return css;
+
+  const customLines = entries.map(([name, value]) => `  ${name}: ${value};`).join("\n");
+  return css.replace(/\n}(\n|$)/, `\n  /* Custom project tokens */\n${customLines}\n}$1`);
 }
 
 function stringifyValue(value: unknown, indent: number): string {
@@ -420,6 +549,7 @@ export function exportBurneThemeConfigSource(
     ` *   <BurneUIProvider config={${exportName}}>{children}</BurneUIProvider>`,
     " *",
     " * `tokens` / `motion` are shared; `colors.light` / `colors.dark` hold palettes.",
+    " * Project-specific CSS variables and editor metadata live in `customTokens`.",
     " */",
     'import type { BurneThemeConfig } from "burne-ui";',
     "",
