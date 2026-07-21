@@ -9,8 +9,11 @@ import type {
   OptionGroupListProps,
   OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
+import type { OptionGroupClassNames } from "@/components/composite/utils/optionGroupClassNames";
 
 export type RadioGroupOrientation = OptionGroupOrientation;
+
+export type RadioGroupClassNames = OptionGroupClassNames;
 
 export type RadioGroupContextValue = {
   name: string;
@@ -38,6 +41,7 @@ export type RadioGroupProps = Omit<
   errorId?: string;
   size?: ComponentSize;
   children?: ReactNode;
+  classNames?: RadioGroupClassNames;
 };
 
 export type UseRadioGroupRootStateProps = RadioGroupProps;

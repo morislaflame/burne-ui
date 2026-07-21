@@ -16,6 +16,7 @@ export const RadioGroup = Object.assign(RadioGroupRoot, {
 export type {
   RadioGroupProps,
   RadioGroupOrientation,
+  RadioGroupClassNames,
   RadioGroupHintProps,
   RadioGroupErrorProps,
   RadioGroupLabelProps,

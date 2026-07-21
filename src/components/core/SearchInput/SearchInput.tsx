@@ -32,6 +32,13 @@ export type SearchInputSize = ComponentSize;
 
 export type SearchInputVariant = "default" | "outline" | "secondary" | "gloss";
 
+export type SearchInputClassNames = {
+  root?: string;
+  icon?: string;
+  input?: string;
+  clear?: string;
+};
+
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 
 const SHELL_W_COLLAPSED: Record<ComponentSize, string> = {
@@ -121,6 +128,7 @@ export type SearchInputProps = Omit<
   ripple?: boolean;
   groupSegment?: ButtonGroupSegment;
   "aria-label"?: string;
+  classNames?: SearchInputClassNames;
 };
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -146,6 +154,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       "aria-label": ariaLabelProp,
       ripple = false,
       groupSegment: groupSegmentProp,
+      classNames,
       ...rest
     },
     ref,
@@ -558,6 +567,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           expanded ? "cursor-text" : "",
           !expanded && !blocked ? "cursor-pointer" : "",
           blocked ? "pointer-events-none opacity-55" : "",
+          classNames?.root,
           className,
         )}
         onPointerDown={handleRootPointerDown}
@@ -569,7 +579,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         ) : null}
         <span
           ref={bindIconRef}
-          className={SEARCH_INPUT_ICON_WRAP_CLASS}
+          className={cn(SEARCH_INPUT_ICON_WRAP_CLASS, classNames?.icon)}
           style={{ width: layout.iconBox }}
           aria-hidden
         >
@@ -597,6 +607,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             expanded
               ? SEARCH_INPUT_CONTROL_EXPANDED_CLASS
               : SEARCH_INPUT_CONTROL_COLLAPSED_CLASS,
+            classNames?.input,
           )}
           style={
             expanded
@@ -618,6 +629,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               SEARCH_INPUT_CLEAR_BUTTON_CLASS,
               TEXT_COLOR_TRANSITION,
               hoverVariant(),
+              classNames?.clear,
             )}
             style={{
               right: layout.padX,

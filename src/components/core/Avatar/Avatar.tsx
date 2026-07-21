@@ -40,6 +40,7 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     className = "",
     children,
     role,
+    "aria-label": ariaLabelProp,
     ...rest
   },
   ref,
@@ -63,6 +64,7 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     tooltipSide,
     children,
     role,
+    "aria-label": ariaLabelProp,
   });
 
   const avatarContent = isCompound ? (

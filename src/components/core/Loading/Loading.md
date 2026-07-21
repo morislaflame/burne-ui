@@ -158,7 +158,11 @@ configureMotion({
 
 ## Стилизация и кастомизация
 
-Loading — leaf-компонент: **только `className` на root** (`<span role="status">`). Отдельного `classNames` нет.
+### `LoadingClassNames`
+
+`root`, `spinner`, `dots`, `dot`.
+
+`className` мержится в `root`.
 
 ### Что можно настроить
 

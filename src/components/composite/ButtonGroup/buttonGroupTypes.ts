@@ -12,17 +12,34 @@ export type ButtonGroupSegment = Readonly<{
   position: ButtonGroupSegmentPosition;
 }>;
 
+export type ButtonGroupClassNames = {
+  /** Root `<div role="group">`. */
+  root?: string;
+  /** Separator between glued segments — layout only, no compound part. */
+  separator?: string;
+  /** `ButtonGroupText` span wrapper. */
+  text?: string;
+  /** Text label inside `ButtonGroupText`. */
+  textLabel?: string;
+};
+
 export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "children"> & {
   orientation?: ButtonGroupOrientation;
   segmented?: boolean;
   buttonSize?: ButtonSize;
   variant?: ButtonVariant;
+  classNames?: ButtonGroupClassNames;
   children: ReactNode;
 };
 
 export type ButtonGroupTextProps = ComponentPropsWithoutRef<"span"> & {
   groupSegment?: ButtonGroupSegment;
   buttonSize?: ButtonSize;
+};
+
+export type ButtonGroupClassNamesProviderProps = {
+  classNames?: ButtonGroupClassNames;
+  children: ReactNode;
 };
 
 export type ButtonGroupSegmentContextValue = {

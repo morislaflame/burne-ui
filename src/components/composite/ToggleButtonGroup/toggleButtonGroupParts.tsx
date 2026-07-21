@@ -1,5 +1,6 @@
 import { buttonGroupSeparatorClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 
+import { useToggleButtonGroupClassNames } from "./toggleButtonGroupContext";
 import type { ToggleButtonGroupOrientation } from "./toggleButtonGroupTypes";
 
 export function ToggleButtonGroupSeparator({
@@ -7,5 +8,11 @@ export function ToggleButtonGroupSeparator({
 }: {
   orientation: ToggleButtonGroupOrientation;
 }) {
-  return <span aria-hidden className={buttonGroupSeparatorClass(orientation)} />;
+  const slotClassNames = useToggleButtonGroupClassNames();
+  return (
+    <span
+      aria-hidden
+      className={buttonGroupSeparatorClass(orientation, slotClassNames.separator)}
+    />
+  );
 }

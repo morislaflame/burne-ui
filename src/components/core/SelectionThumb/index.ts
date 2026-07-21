@@ -3,4 +3,6 @@ export {
   SelectionThumbIcon,
   type SelectionThumbIconProps,
   type SelectionThumbProps,
+  type SelectionThumbClassNames,
+  type SelectionThumbIconClassNames,
 } from "./SelectionThumb";

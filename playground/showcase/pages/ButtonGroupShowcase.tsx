@@ -1,5 +1,7 @@
 import { ButtonGroupButtonsOnlyDemo } from "../demos/button-group/ButtonGroupButtonsOnly.demo";
 import buttonGroupButtonsOnlySource from "../demos/button-group/ButtonGroupButtonsOnly.demo.tsx?raw";
+import { ButtonGroupClassNamesFullDemo } from "../demos/button-group/ButtonGroupClassNamesFull.demo";
+import buttonGroupClassNamesFullSource from "../demos/button-group/ButtonGroupClassNamesFull.demo.tsx?raw";
 import { ButtonGroupGlossDemo } from "../demos/button-group/ButtonGroupGloss.demo";
 import buttonGroupGlossSource from "../demos/button-group/ButtonGroupGloss.demo.tsx?raw";
 import { ButtonGroupHorizontalDemo } from "../demos/button-group/ButtonGroupHorizontal.demo";
@@ -40,6 +42,10 @@ export function ButtonGroupShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — common glass surface of the group.">
         <ShowcaseDemoFromFile Demo={ButtonGroupGlossDemo} source={buttonGroupGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="classNames" description="Slots root, separator, text, textLabel via classNames.">
+        <ShowcaseDemoFromFile Demo={ButtonGroupClassNamesFullDemo} source={buttonGroupClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

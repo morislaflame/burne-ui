@@ -60,7 +60,13 @@ Compound API **нет** — только root + дочерние `ToggleButton`.
 | `onValueChange` | — | `(value: string \| string[]) => void` |
 | `className` | — | На root `<div role="toolbar">` |
 
-`status` и `classNames` на группе **нет**.
+`status` на группе нет.
+
+### `ToggleButtonGroupClassNames`
+
+`root`, `separator`.
+
+`separator` — слот layout-разделителя (compound-части нет).
 
 ### Дочерние элементы
 

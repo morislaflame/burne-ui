@@ -116,12 +116,16 @@ export function buttonGroupRootClass({
   );
 }
 
-export function buttonGroupSeparatorClass(orientation: ButtonGroupOrientation): string {
+export function buttonGroupSeparatorClass(
+  orientation: ButtonGroupOrientation,
+  className?: string,
+): string {
   return cn(
     "pointer-events-none shrink-0",
     orientation === "horizontal"
       ? "my-[var(--border-width)] self-stretch border-r-token"
       : "mx-[var(--border-width)] self-stretch border-b-token",
+    className,
   );
 }
 

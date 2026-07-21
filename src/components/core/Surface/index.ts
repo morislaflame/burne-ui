@@ -5,4 +5,5 @@ export {
   type SurfaceShadow,
   type SurfacePadding,
   type SurfaceRadius,
+  type SurfaceClassNames,
 } from "./Surface";

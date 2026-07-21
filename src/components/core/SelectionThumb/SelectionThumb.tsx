@@ -6,6 +6,16 @@ import { cn } from "@/utils/cn";
 import { SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS, SELECTION_INDICATOR_ICON_CLASS, SELECTION_INDICATOR_SHELL_CLASS, selectionIndicatorFillClass, type SelectionIndicatorSize } from "../SelectionIndicator/selectionIndicatorTokens";
 import { useSelectionIndicatorAnimation } from "../SelectionIndicator/useSelectionIndicatorAnimation";
 
+export type SelectionThumbClassNames = {
+  root?: string;
+  fill?: string;
+};
+
+export type SelectionThumbIconClassNames = {
+  root?: string;
+  icon?: string;
+};
+
 export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   active: boolean;
   size?: SelectionIndicatorSize;
@@ -13,6 +23,7 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
   fillRef?: RefObject<HTMLSpanElement | null>;
   gloss?: boolean;
   children?: ReactNode;
+  classNames?: SelectionThumbClassNames;
 };
 
 export function SelectionThumb({
@@ -22,6 +33,7 @@ export function SelectionThumb({
   shellRef,
   fillRef: fillRefProp,
   className,
+  classNames,
   children,
   ...rest
 }: SelectionThumbProps) {
@@ -31,12 +43,22 @@ export function SelectionThumb({
   useSelectionIndicatorAnimation(active, fillRef);
 
   const shellClass = gloss
-    ? cn(SELECTION_INDICATOR_SHELL_CLASS, "gloss-indicator size-full min-h-0 min-w-0 origin-center border-0", className)
-    : cn(SELECTION_INDICATOR_SHELL_CLASS, "size-full min-h-0 min-w-0 origin-center border border-primary bg-surface", className);
+    ? cn(
+        SELECTION_INDICATOR_SHELL_CLASS,
+        "gloss-indicator size-full min-h-0 min-w-0 origin-center border-0",
+        classNames?.root,
+        className,
+      )
+    : cn(
+        SELECTION_INDICATOR_SHELL_CLASS,
+        "size-full min-h-0 min-w-0 origin-center border border-primary bg-surface",
+        classNames?.root,
+        className,
+      );
 
   const fillClass = gloss
-    ? SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS
-    : selectionIndicatorFillClass("default");
+    ? cn(SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS, classNames?.fill)
+    : cn(selectionIndicatorFillClass("default"), classNames?.fill);
 
   return (
     <span
@@ -64,6 +86,7 @@ export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
   gloss?: boolean;
   iconRef?: RefObject<HTMLSpanElement | null>;
   children?: ReactNode;
+  classNames?: SelectionThumbIconClassNames;
 };
 
 export function SelectionThumbIcon({
@@ -72,6 +95,7 @@ export function SelectionThumbIcon({
   gloss = false,
   iconRef,
   className,
+  classNames,
   children,
   style,
   ...rest
@@ -89,6 +113,7 @@ export function SelectionThumbIcon({
       className={cn(
         "pointer-events-none z-[2] flex items-center justify-center",
         colorClass,
+        classNames?.root,
         className,
       )}
       style={style}
@@ -98,6 +123,7 @@ export function SelectionThumbIcon({
         className={cn(
           "inline-flex shrink-0 items-center justify-center [&_svg]:size-full",
           SELECTION_INDICATOR_ICON_CLASS[size],
+          classNames?.icon,
         )}
       >
         {children}

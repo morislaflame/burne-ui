@@ -44,7 +44,7 @@ type Story = StoryObj<typeof meta>;
 export const Basic: Story = {
   name: "Basic",
   render: () => (
-    <ListBox defaultValue="ru" label="Interface language">
+    <ListBox defaultValue="ru" aria-label="Interface language">
       <ListBox.Item value="ru" label="Russian" hint="Interface in Russian" />
       <ListBox.Item value="en" label="English" hint="UI in English" />
       <ListBox.Item value="de" label="Deutsch" disabled hint="Coming soon" />
@@ -55,7 +55,7 @@ export const Basic: Story = {
 export const SelectInteraction: Story = {
   name: "Interaction: selection",
   render: () => (
-    <ListBox defaultValue="ru" label="Interface language">
+    <ListBox defaultValue="ru" aria-label="Interface language">
       <ListBox.Item value="ru" label="Russian" hint="Interface in Russian" />
       <ListBox.Item value="en" label="English" hint="UI in English" />
     </ListBox>
@@ -70,7 +70,7 @@ export const SelectInteraction: Story = {
 export const Compound: Story = {
   name: "Compound",
   render: () => (
-    <ListBox defaultValue="en" label="Language settings">
+    <ListBox defaultValue="en" aria-label="Language settings">
       <ListBox.Section>
         <ListBox.Header>Languages</ListBox.Header>
         <ListBox.Item value="ru">
@@ -107,7 +107,7 @@ export const Multiple: Story = {
   render: function MultipleList() {
     const [value, setValue] = useState<string[]>(["a", "c"]);
     return (
-      <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])} label="Profile fields">
+      <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])} aria-label="Profile fields">
         <ListBox.Item value="a" label="User" hint="Name and avatar" />
         <ListBox.Item value="b" label="Country" hint="ISO code" />
         <ListBox.Item value="c" label="Status" />
@@ -124,7 +124,7 @@ export const Empty: Story = {
 export const CustomEmpty: Story = {
   name: "Custom empty state",
   render: () => (
-    <ListBox label="Search results">
+    <ListBox aria-label="Search results">
       <ListBox.Empty>Nothing found for query</ListBox.Empty>
     </ListBox>
   ),
@@ -133,7 +133,7 @@ export const CustomEmpty: Story = {
 export const WithIcons: Story = {
   name: "With icons",
   render: () => (
-    <ListBox defaultValue="ok" label="Statuses">
+    <ListBox defaultValue="ok" aria-label="Statuses">
       <ListBox.Item value="ok">
         <ListBox.Label>Success</ListBox.Label>
         <ListBox.Icon>
@@ -153,7 +153,7 @@ export const WithIcons: Story = {
 export const CustomItemParts: Story = {
   name: "Compound — slot layout",
   render: () => (
-    <ListBox selectionIndicator={false} defaultValue="full-grid" label="Variants layout">
+    <ListBox selectionIndicator={false} defaultValue="full-grid" aria-label="Variants layout">
       <ListBox.Section>
         <ListBox.Header>How the grid changes</ListBox.Header>
         <OptionListItemLayoutShowcase
@@ -180,7 +180,7 @@ export const CustomClassNames: Story = {
   render: () => (
     <ListBox
       defaultValue="ru"
-      label="Interface language"
+      aria-label="Interface language"
       classNames={{
         root: "rounded-mid border border-primary/20 p-base",
         headerText: "text-primary",

@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
 
 import { FieldLabelContext } from "@/components/core/Label";
-import { OptionGroupFieldset } from "@/components/composite/utils/optionGroupFieldset";
+import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
 
 import { CheckboxGroupError, CheckboxGroupHint, CheckboxGroupLegend, CheckboxGroupList } from "./checkboxGroupParts";
-import { CheckboxGroupProvider } from "./checkboxGroupContext";
+import { CheckboxGroupClassNamesProvider, CheckboxGroupProvider, useCheckboxGroupClassNames } from "./checkboxGroupContext";
 import type { CheckboxGroupProps } from "./checkboxGroupTypes";
 import { useCheckboxGroupRootState } from "./useCheckboxGroupRootState";
 
@@ -12,6 +12,7 @@ export type {
   CheckboxGroupProps,
   CheckboxGroupSelection,
   CheckboxGroupOrientation,
+  CheckboxGroupClassNames,
   CheckboxGroupHintProps,
   CheckboxGroupLabelProps,
   CheckboxGroupLegendProps,
@@ -19,11 +20,20 @@ export type {
   CheckboxGroupErrorProps,
 } from "./checkboxGroupTypes";
 
+const CheckboxGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroupFieldsetProps, "classNames">>(
+  function CheckboxGroupFieldsetShell(props, ref) {
+    const slotClassNames = useCheckboxGroupClassNames();
+
+    return <OptionGroupFieldset ref={ref} classNames={slotClassNames} {...props} />;
+  },
+);
+
 export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>(
   function CheckboxGroupRoot(props, ref) {
     const {
       children,
       className,
+      classNames,
       size,
       disabled = false,
       required: _required,
@@ -39,19 +49,21 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
 
     return (
       <CheckboxGroupProvider value={contextValue}>
-        <FieldLabelContext.Provider value={fieldLabelCtx}>
-          <OptionGroupFieldset
-            ref={ref}
-            disabled={disabled}
-            hintId={hintId}
-            errorId={errorId}
-            size={size}
-            className={className}
-            {...fieldsetProps}
-          >
-            {children}
-          </OptionGroupFieldset>
-        </FieldLabelContext.Provider>
+        <CheckboxGroupClassNamesProvider classNames={classNames}>
+          <FieldLabelContext.Provider value={fieldLabelCtx}>
+            <CheckboxGroupFieldsetShell
+              ref={ref}
+              disabled={disabled}
+              hintId={hintId}
+              errorId={errorId}
+              size={size}
+              className={className}
+              {...fieldsetProps}
+            >
+              {children}
+            </CheckboxGroupFieldsetShell>
+          </FieldLabelContext.Provider>
+        </CheckboxGroupClassNamesProvider>
       </CheckboxGroupProvider>
     );
   },

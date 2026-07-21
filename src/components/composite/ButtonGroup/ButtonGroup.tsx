@@ -2,8 +2,10 @@ import "@/components/core/utils/glossInteractive.css";
 
 import { Fragment, forwardRef } from "react";
 
+import { cn } from "@/utils/cn";
+
 import { buildButtonGroupSegment, isGroupSegmentSlot, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
-import { ButtonGroupLayoutProvider, ButtonGroupSegmentProvider } from "./buttonGroupContext";
+import { ButtonGroupClassNamesProvider, ButtonGroupLayoutProvider, ButtonGroupSegmentProvider, useButtonGroupClassNames } from "./buttonGroupContext";
 import { ButtonGroupText } from "./buttonGroupParts";
 import { buttonGroupRootClass, buttonGroupSeparatorClass } from "./buttonGroupStyles";
 import type { ButtonGroupOrientation, ButtonGroupProps } from "./buttonGroupTypes";
@@ -14,10 +16,12 @@ export type {
   ButtonGroupTextProps,
   ButtonGroupOrientation,
   ButtonGroupSegment,
+  ButtonGroupClassNames,
 } from "./buttonGroupTypes";
 
 function ButtonGroupSeparator({ orientation }: { orientation: ButtonGroupOrientation }) {
-  return <span aria-hidden className={buttonGroupSeparatorClass(orientation)} />;
+  const slotClassNames = useButtonGroupClassNames();
+  return <span aria-hidden className={buttonGroupSeparatorClass(orientation, slotClassNames.separator)} />;
 }
 
 export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
@@ -25,6 +29,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
     {
       children: _children,
       className = "",
+      classNames,
       orientation = "horizontal",
       segmented = false,
       buttonSize = "base",
@@ -45,46 +50,48 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
 
     return (
       <ButtonGroupLayoutProvider value={layoutValue}>
-        <div
-          ref={ref}
-          role="group"
-          className={buttonGroupRootClass({
-            orientation,
-            segmented,
-            variant,
-            className,
-          })}
-          {...rest}
-        >
-          {flat.map((child, i) => {
-            if (!isGroupSegmentSlot(child)) {
-              return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
-            }
+        <ButtonGroupClassNamesProvider classNames={classNames}>
+          <div
+            ref={ref}
+            role="group"
+            className={buttonGroupRootClass({
+              orientation,
+              segmented,
+              variant,
+              className: cn(classNames?.root, className),
+            })}
+            {...rest}
+          >
+            {flat.map((child, i) => {
+              if (!isGroupSegmentSlot(child)) {
+                return <Fragment key={child.key ?? `bg-wrap-${i}`}>{child}</Fragment>;
+              }
 
-            if (segmented) {
-              return <Fragment key={child.key ?? `bg-item-${i}`}>{child}</Fragment>;
-            }
+              if (segmented) {
+                return <Fragment key={child.key ?? `bg-item-${i}`}>{child}</Fragment>;
+              }
 
-            segmentIndex += 1;
-            const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
-            const segment = buildButtonGroupSegment(orientation, position);
+              segmentIndex += 1;
+              const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
+              const segment = buildButtonGroupSegment(orientation, position);
 
-            return (
-              <Fragment key={child.key ?? `bg-seg-${i}`}>
-                <ButtonGroupSegmentProvider
-                  segment={segment}
-                  buttonSize={buttonSize}
-                  variant={variant}
-                >
-                  {child}
-                </ButtonGroupSegmentProvider>
-                {variant !== "gloss" && position !== "last" && position !== "only" ? (
-                  <ButtonGroupSeparator orientation={orientation} />
-                ) : null}
-              </Fragment>
-            );
-          })}
-        </div>
+              return (
+                <Fragment key={child.key ?? `bg-seg-${i}`}>
+                  <ButtonGroupSegmentProvider
+                    segment={segment}
+                    buttonSize={buttonSize}
+                    variant={variant}
+                  >
+                    {child}
+                  </ButtonGroupSegmentProvider>
+                  {variant !== "gloss" && position !== "last" && position !== "only" ? (
+                    <ButtonGroupSeparator orientation={orientation} />
+                  ) : null}
+                </Fragment>
+              );
+            })}
+          </div>
+        </ButtonGroupClassNamesProvider>
       </ButtonGroupLayoutProvider>
     );
   },

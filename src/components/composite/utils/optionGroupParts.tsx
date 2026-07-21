@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 
 import { FieldError, type FieldErrorProps } from "@/components/core/Field";
+import { cn } from "@/utils/cn";
 
 import { OptionGroupHeader, OptionGroupHint, OptionGroupLegend, OptionGroupList, type OptionGroupHintProps, type OptionGroupLegendProps, type OptionGroupListProps } from "./optionGroupFieldset";
 
@@ -18,11 +19,13 @@ export function createOptionGroupLegendPart(displayName: string) {
 
 export function createOptionGroupHintPart(
   useHintId: () => string,
+  useSlotClassName: () => string | undefined,
   displayName: string,
 ) {
-  function Hint({ id, ...rest }: OptionGroupHintProps) {
+  function Hint({ id, className, ...rest }: OptionGroupHintProps) {
     const hintId = useHintId();
-    return <OptionGroupHint id={id ?? hintId} {...rest} />;
+    const slotClass = useSlotClassName();
+    return <OptionGroupHint id={id ?? hintId} className={cn(slotClass, className)} {...rest} />;
   }
   Hint.displayName = displayName;
   return Hint;
@@ -30,19 +33,28 @@ export function createOptionGroupHintPart(
 
 export function createOptionGroupErrorPart(
   useErrorId: () => string,
+  useSlotClassName: () => string | undefined,
   displayName: string,
 ) {
-  function ErrorPart({ id, ...rest }: FieldErrorProps) {
+  function ErrorPart({ id, className, ...rest }: FieldErrorProps) {
     const errorId = useErrorId();
-    return <FieldError id={id ?? errorId} {...rest} />;
+    const slotClass = useSlotClassName();
+    return <FieldError id={id ?? errorId} className={cn(slotClass, className)} {...rest} />;
   }
   ErrorPart.displayName = displayName;
   return ErrorPart;
 }
 
-export function createOptionGroupListPart(displayName: string) {
-  const List = forwardRef<HTMLDivElement, OptionGroupListProps>(function List(props, ref) {
-    return <OptionGroupList ref={ref} {...props} />;
+export function createOptionGroupListPart(
+  useSlotClassName: () => string | undefined,
+  displayName: string,
+) {
+  const List = forwardRef<HTMLDivElement, OptionGroupListProps>(function List(
+    { className, ...rest },
+    ref,
+  ) {
+    const slotClass = useSlotClassName();
+    return <OptionGroupList ref={ref} className={cn(slotClass, className)} {...rest} />;
   });
   List.displayName = displayName;
   return List;

@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { CheckboxGroup, type CheckboxGroupProps, type CheckboxGroupSelection, type CheckboxGroupOrientation, type CheckboxGroupHintProps, type CheckboxGroupLabelProps, type CheckboxGroupLegendProps, type CheckboxGroupListProps } from "burne-ui";
+import { CheckboxGroup, type CheckboxGroupProps, type CheckboxGroupSelection, type CheckboxGroupOrientation, type CheckboxGroupClassNames, type CheckboxGroupHintProps, type CheckboxGroupLabelProps, type CheckboxGroupLegendProps, type CheckboxGroupListProps } from "burne-ui";
 import { Checkbox } from "burne-ui";
 ```
 
@@ -61,8 +61,9 @@ Simple API нет.
 | `disabled` | `false` | На fieldset + context → Checkbox |
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
 | `className` | — | На `<fieldset>` |
+| `classNames` | — | Слоты `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` |
 
-`variant` и `classNames` на root **нет**.
+`variant` на root **нет**.
 
 ### Compound-подчасти
 
@@ -173,14 +174,57 @@ configureMotion({
 
 ## Стилизация и кастомизация
 
-### Один уровень — `className` per-part
+### Два уровня
 
-**Нет `classNames` API** на CheckboxGroup root.
+1. **`className` на root** — мерж с `classNames.root`.
+2. **`classNames`** — `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` через `CheckboxGroupClassNamesProvider` (мерж с родительским: базовые → `classNames.slot` → `className` подчасти).
+
+```tsx
+<CheckboxGroup
+  required
+  className="max-w-md"
+  classNames={{
+    root: "rounded-mid border border-primary/20 p-base",
+    legend: "text-primary",
+    legendHeader: "gap-xsmall",
+    hint: "text-foreground/70",
+    error: "font-medium",
+    list: "gap-base",
+    group: "gap-mid",
+    actions: "pt-small",
+  }}
+>
+  <CheckboxGroup.Legend>
+    <CheckboxGroup.Label>Согласия</CheckboxGroup.Label>
+    <CheckboxGroup.Hint>Слоты через classNames.</CheckboxGroup.Hint>
+  </CheckboxGroup.Legend>
+  <CheckboxGroup.Group>
+    <CheckboxGroup.List>
+      <Checkbox name="terms" label="Пользовательское соглашение" />
+    </CheckboxGroup.List>
+    <CheckboxGroup.Error>Примите условия</CheckboxGroup.Error>
+  </CheckboxGroup.Group>
+  <CheckboxGroup.Actions>...</CheckboxGroup.Actions>
+</CheckboxGroup>
+```
+
+| Слот | Элемент | Назначение |
+|------|---------|------------|
+| `root` | `<fieldset>` | Layout на корне (делегируется `Field.Set`) |
+| `legend` | `CheckboxGroup.Legend` (`<legend>`) | Заголовок группы |
+| `legendHeader` | Обёртка в legend | Label + hint в одной строке |
+| `hint` | `CheckboxGroup.Hint` | Подсказка |
+| `error` | `CheckboxGroup.Error` | Ошибка (`role="alert"`) |
+| `list` | `CheckboxGroup.List` | Список опций |
+| `group` | `CheckboxGroup.Group` | Доп. группировка (list + error) |
+| `actions` | `CheckboxGroup.Actions` | Кнопки внизу группы |
+
+`CheckboxGroup.Legend/Hint/Error/List` принимают свой **`className`** поверх слота. `root`/`legend`/`legendHeader`/`group`/`actions` прокидываются в `OptionGroupFieldset` (обёртка `Field.Set`) как `FieldSetClassNames`; `hint`/`error`/`list` — собственные слоты CheckboxGroup через `CheckboxGroupClassNamesProvider`.
 
 | Часть | Кастомизация |
 |-------|--------------|
-| root | `CheckboxGroup className` |
-| legend / list / hint / error | `className` на подчасти |
+| root / legend / legendHeader / group / actions | `classNames` на CheckboxGroup — делегируется `Field.Set` |
+| hint / error / list | `classNames` на CheckboxGroup — собственные слоты |
 | каждая опция | `Checkbox className` / `classNames` |
 
 ### Multiple + hint
@@ -262,7 +306,7 @@ configureMotion({
 | `Form` | Ограниченная интеграция (см. выше) |
 | `RadioGroup` | Альтернатива для strict single-select |
 
-Shared: `optionGroupFieldset.tsx`, `optionGroupLayout.ts` (с `RadioGroup`).
+Shared: `optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `optionGroupParts.tsx`, `optionGroupClassNames.tsx` (с `RadioGroup`).
 
 ## Доступность
 
@@ -289,10 +333,11 @@ composite/utils/
 ├── optionGroupFieldset.tsx
 ├── optionGroupLayout.ts
 ├── optionGroupParts.tsx
+├── optionGroupClassNames.tsx
 ├── useOptionGroupSingleValue.ts
 └── useOptionGroupRequiredAnchor.ts
 ```
 
 ## Storybook
 
-`Composite Components/CheckboxGroup` — playground, single selection, required, without hint, horizontal, sizes.
+`Composite Components/CheckboxGroup` — playground, single selection, required, without hint, horizontal, sizes, `classNames` customization.

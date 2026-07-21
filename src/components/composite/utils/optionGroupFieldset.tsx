@@ -12,7 +12,7 @@ export type OptionGroupFieldsetProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children"
 > &
-  Pick<FieldSetProps, "hintId" | "errorId" | "size"> & {
+  Pick<FieldSetProps, "hintId" | "errorId" | "size" | "classNames"> & {
     children?: ReactNode;
   };
 

@@ -7,17 +7,15 @@ export function listBoxOptionId(listId: string, value: string): string {
 export function resolveListBoxAriaLabel({
   ariaLabel,
   ariaLabelledBy,
-  label,
 }: {
   ariaLabel?: string;
   ariaLabelledBy?: string;
-  label?: string;
 }): {
   "aria-label"?: string;
   "aria-labelledby"?: string;
 } {
   return {
-    "aria-label": ariaLabel ?? (ariaLabelledBy ? undefined : label),
+    "aria-label": ariaLabel,
     "aria-labelledby": ariaLabelledBy,
   };
 }

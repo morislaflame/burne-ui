@@ -274,3 +274,27 @@ export const GlossLight: Story = {
   ],
   render: () => <GlossStoryLayout />,
 };
+
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  render: () => (
+    <div className="flex flex-col gap-large">
+      <Surface
+        padding="base"
+        classNames={{ root: "border border-primary/30 ring-1 ring-primary/10" }}
+      >
+        Default surface slots
+      </Surface>
+      <Surface
+        variant="gloss"
+        padding="base"
+        classNames={{
+          root: "ring-1 ring-primary/20",
+          glossContent: "gap-small text-primary",
+        }}
+      >
+        Gloss surface slots
+      </Surface>
+    </div>
+  ),
+};

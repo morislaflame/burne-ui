@@ -13,6 +13,13 @@ export type {
   ToggleButtonGroupContextValue,
 } from "@/components/core/ToggleButton/toggleButtonTypes";
 
+export type ToggleButtonGroupClassNames = {
+  /** Root `<div role="toolbar">`. */
+  root?: string;
+  /** Separator between glued segments — layout only, no compound part. */
+  separator?: string;
+};
+
 export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
   /** `multiple` — independent toggle; `single` — only one selected (radio). By default `multiple`. */
@@ -26,6 +33,12 @@ export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defau
   value?: string | string[];
   defaultValue?: string | string[];
   onValueChange?: (value: string | string[]) => void;
+  classNames?: ToggleButtonGroupClassNames;
+};
+
+export type ToggleButtonGroupClassNamesProviderProps = {
+  classNames?: ToggleButtonGroupClassNames;
+  children: ReactNode;
 };
 
 export type UseToggleButtonGroupRootStateProps = Pick<

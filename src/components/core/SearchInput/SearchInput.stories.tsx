@@ -193,6 +193,24 @@ function matchesQuery(
   );
 }
 
+export const ClassNamesFull: Story = {
+  name: "classNames",
+  render: () => (
+    <SearchInput
+      defaultExpanded
+      defaultValue="component"
+      placeholder="Search…"
+      aria-label="Search with custom slot styles"
+      classNames={{
+        root: "border-primary/40 ring-1 ring-primary/15",
+        icon: "text-primary",
+        input: "text-primary placeholder:text-primary/50",
+        clear: "text-primary hover:text-primary/70",
+      }}
+    />
+  ),
+};
+
 export const FilterList: Story = {
   name: "Search card list",
   render: function FilterDemo() {

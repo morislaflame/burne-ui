@@ -17,6 +17,7 @@ export type {
   CheckboxGroupProps,
   CheckboxGroupSelection,
   CheckboxGroupOrientation,
+  CheckboxGroupClassNames,
   CheckboxGroupHintProps,
   CheckboxGroupLabelProps,
   CheckboxGroupLegendProps,

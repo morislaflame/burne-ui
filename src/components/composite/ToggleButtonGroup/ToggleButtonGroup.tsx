@@ -4,9 +4,11 @@ import { buildButtonGroupSegment, resolveButtonGroupSegmentPosition } from "@/co
 import { ButtonGroupSegmentProvider } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupRootClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { ToggleButtonGroupProvider } from "@/components/core/ToggleButton/toggleButtonContext";
+import { cn } from "@/utils/cn";
 
 import { toggleButtonGroupRootTabIndex } from "./toggleButtonGroupA11y";
 import { isToggleButtonChild } from "./toggleButtonGroupAPI";
+import { ToggleButtonGroupClassNamesProvider } from "./toggleButtonGroupContext";
 import { ToggleButtonGroupSeparator } from "./toggleButtonGroupParts";
 import type { ToggleButtonGroupProps } from "./toggleButtonGroupTypes";
 import { useToggleButtonGroupRootState } from "./useToggleButtonGroupRootState";
@@ -16,6 +18,7 @@ export type {
   ToggleButtonGroupType,
   ToggleButtonGroupOrientation,
   ToggleButtonGroupContextValue,
+  ToggleButtonGroupClassNames,
 } from "./toggleButtonGroupTypes";
 
 export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGroupProps>(
@@ -23,6 +26,7 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
     const {
       children,
       className = "",
+      classNames,
       orientation = "horizontal",
       separated = false,
       disabled = false,
@@ -43,46 +47,48 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
 
     return (
       <ToggleButtonGroupProvider value={contextValue}>
-        <div
-          ref={ref}
-          role="toolbar"
-          tabIndex={toggleButtonGroupRootTabIndex(disabled)}
-          aria-orientation={orientation}
-          aria-disabled={disabled || undefined}
-          className={buttonGroupRootClass({
-            orientation,
-            segmented: separated,
-            variant,
-            className,
-          })}
-          {...(isSingle ? { onKeyDown: handleKeyDown } : {})}
-          {...rest}
-        >
-          {flat.map((child, i) => {
-            if (!isToggleButtonChild(child)) {
-              return <Fragment key={child.key ?? `tbg-wrap-${i}`}>{child}</Fragment>;
-            }
+        <ToggleButtonGroupClassNamesProvider classNames={classNames}>
+          <div
+            ref={ref}
+            role="toolbar"
+            tabIndex={toggleButtonGroupRootTabIndex(disabled)}
+            aria-orientation={orientation}
+            aria-disabled={disabled || undefined}
+            className={buttonGroupRootClass({
+              orientation,
+              segmented: separated,
+              variant,
+              className: cn(classNames?.root, className),
+            })}
+            {...(isSingle ? { onKeyDown: handleKeyDown } : {})}
+            {...rest}
+          >
+            {flat.map((child, i) => {
+              if (!isToggleButtonChild(child)) {
+                return <Fragment key={child.key ?? `tbg-wrap-${i}`}>{child}</Fragment>;
+              }
 
-            if (separated) {
-              return <Fragment key={child.key ?? `tbg-item-${i}`}>{child}</Fragment>;
-            }
+              if (separated) {
+                return <Fragment key={child.key ?? `tbg-item-${i}`}>{child}</Fragment>;
+              }
 
-            segmentIndex += 1;
-            const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
-            const segment = buildButtonGroupSegment(orientation, position);
+              segmentIndex += 1;
+              const position = resolveButtonGroupSegmentPosition(segmentIndex, segmentCount);
+              const segment = buildButtonGroupSegment(orientation, position);
 
-            return (
-              <Fragment key={child.key ?? `tbg-seg-${i}`}>
-                <ButtonGroupSegmentProvider segment={segment} buttonSize={size}>
-                  {child}
-                </ButtonGroupSegmentProvider>
-                {variant !== "gloss" && position !== "last" && position !== "only" ? (
-                  <ToggleButtonGroupSeparator orientation={orientation} />
-                ) : null}
-              </Fragment>
-            );
-          })}
-        </div>
+              return (
+                <Fragment key={child.key ?? `tbg-seg-${i}`}>
+                  <ButtonGroupSegmentProvider segment={segment} buttonSize={size}>
+                    {child}
+                  </ButtonGroupSegmentProvider>
+                  {variant !== "gloss" && position !== "last" && position !== "only" ? (
+                    <ToggleButtonGroupSeparator orientation={orientation} />
+                  ) : null}
+                </Fragment>
+              );
+            })}
+          </div>
+        </ToggleButtonGroupClassNamesProvider>
       </ToggleButtonGroupProvider>
     );
   },

@@ -1,8 +1,17 @@
 import { createContext, useContext, type ReactNode } from "react";
 
-import type { RadioGroupContextValue } from "./radioGroupTypes";
+import { createOptionGroupClassNamesContext } from "@/components/composite/utils/optionGroupClassNames";
+
+import type { RadioGroupClassNames, RadioGroupContextValue } from "./radioGroupTypes";
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
+
+const {
+  Provider: RadioGroupClassNamesProvider,
+  useClassNames: useRadioGroupClassNames,
+} = createOptionGroupClassNamesContext<RadioGroupClassNames>();
+
+export { RadioGroupClassNamesProvider, useRadioGroupClassNames };
 
 export function RadioGroupProvider({
   value,

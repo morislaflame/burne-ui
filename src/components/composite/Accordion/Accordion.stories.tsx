@@ -131,6 +131,38 @@ export const ExpandInteraction: Story = {
   },
 };
 
+export const CustomClassNames: Story = {
+  name: "Full classNames customization",
+  parameters: {
+    docs: {
+      description: {
+        story: "classNames customization for Accordion — root, item, heading and Expandable slots.",
+      },
+    },
+  },
+  render: () => (
+    <Accordion
+      className="max-w-2xl"
+      defaultOpenIndex={0}
+      classNames={{
+        root: "gap-px",
+        item: "border-primary/30",
+        heading: "text-primary",
+        trigger: "bg-primary/5",
+        title: "text-primary font-semibold",
+        chevron: "text-primary",
+        panel: "bg-primary/5",
+      }}
+    >
+      {items.map((item) => (
+        <Accordion.Item key={item.title}>
+          <AccordionItemDemo item={item} />
+        </Accordion.Item>
+      ))}
+    </Accordion>
+  ),
+};
+
 export const PressRipple: Story = {
   name: "Ripple on press in trigger",
   render: () => (

@@ -58,9 +58,10 @@ import { Avatar, Avatar.Group, type AvatarProps, type AvatarClassNames, type Ava
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `label` | — | Accessible name + fallback source |
+| `label` | — | Источник fallback-инициалов (видимый); не form-лейбл |
+| `aria-label` | — | Accessible name; если нет — берётся trimmed `label` |
 | `src` | — | Image URL для Simple API |
-| `alt` | `""` | Alt image; обычно пустой, так как root уже имеет label |
+| `alt` | `""` | Alt image; обычно пустой, так как root уже имеет accessible name |
 | `loading` | — | `img.loading` |
 | `nickname` | — | Tooltip content |
 | `tooltipSize` | `base` | Размер tooltip |
@@ -102,7 +103,7 @@ Fallback typography:
 **DOM (default):**
 
 ```
-<div role="group" aria-label=label>
+<div role="group" aria-label={aria-label ?? label}>
   <img ref=imgRef />
   <span fallback />
 </div>
@@ -248,7 +249,7 @@ Reduced motion: transform ставится мгновенно.
 
 ### Практические заметки
 
-- Декоративная картинка: `alt=""`; имя — через `label` → `aria-label`.
+- Декоративная картинка: `alt=""`; имя — через `aria-label` (или fallback из `label`).
 - `nickname` auto-wrap в `Tooltip` (portal motion из Tooltip.md).
 - Gloss: `classNames.root` на inner circle, `glossWrap` на outer shell.
 - **Не `overflow-visible` на root** — image выйдет за круг.
@@ -265,10 +266,10 @@ Reduced motion: transform ставится мгновенно.
 ## Доступность
 
 - Root avatar: `role="group"`
-- `aria-label` берётся из trimmed `label`
+- `aria-label` — явный проп; иначе trimmed `label` (источник инициалов)
 - `Avatar.Group`: `role="group"`
 - Fallback: `aria-hidden`
-- Image `alt` по умолчанию `""`; root label отвечает за имя аватара
+- Image `alt` по умолчанию `""`; accessible name на root
 - Tooltip trigger получает тот же root
 
 ## Структура файлов

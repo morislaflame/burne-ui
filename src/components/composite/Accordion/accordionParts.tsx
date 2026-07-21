@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
 import { useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
@@ -6,8 +6,9 @@ import { messageBannerActionCellClass } from "@/components/core/utils/messageBan
 import { Text } from "@/components/core/Text";
 
 import { useAccordionChevronAnimation } from "./accordionAnimations";
+import { resolveAccordionItemExpandableClassNames } from "./accordionAPI";
 
-import { useAccordionContext } from "./accordionContext";
+import { AccordionClassNamesProvider, useAccordionClassNames, useAccordionContext } from "./accordionContext";
 import { ACCORDION_CHEVRON_CLASS, accordionBodyClass, accordionHeadingClass, accordionChevronClass, accordionItemClass } from "./accordionStyles";
 import type {
   AccordionBodyProps,
@@ -45,35 +46,45 @@ function AccordionChevronSvg({ className = "" }: { className?: string }) {
 }
 
 export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(function AccordionItem(
-  { value, disabled, className, children, ...rest },
+  { value, disabled, classNames, className, children, ...rest },
   ref,
 ) {
   const { value: openValue, setValue, getItemId, size } = useAccordionContext();
+  const parentClassNames = useAccordionClassNames();
+  const mergedClassNames = useMemo(
+    () => ({ ...parentClassNames, ...classNames }),
+    [parentClassNames, classNames],
+  );
   const itemId = getItemId(value);
   const isOpen = openValue === itemId;
 
   return (
-    <Expandable
-      ref={ref}
-      compound
-      size={size}
-      data-accordion-item
-      disabled={disabled}
-      open={isOpen}
-      onOpenChange={(next) => setValue(next ? itemId : null)}
-      className={accordionItemClass(className)}
-      {...rest}
-    >
-      {children}
-    </Expandable>
+    <AccordionClassNamesProvider classNames={classNames}>
+      <Expandable
+        ref={ref}
+        compound
+        size={size}
+        data-accordion-item
+        disabled={disabled}
+        open={isOpen}
+        onOpenChange={(next) => setValue(next ? itemId : null)}
+        className={accordionItemClass(className)}
+        classNames={resolveAccordionItemExpandableClassNames(mergedClassNames)}
+        {...rest}
+      >
+        {children}
+      </Expandable>
+    </AccordionClassNamesProvider>
   );
 });
 
 AccordionItem.displayName = "Accordion.Item";
 
 export function AccordionHeading({ className, children, ...rest }: AccordionHeadingProps) {
+  const slotClassNames = useAccordionClassNames();
+
   return (
-    <h3 className={accordionHeadingClass(className)} {...rest}>
+    <h3 className={accordionHeadingClass({ className, slotClass: slotClassNames.heading })} {...rest}>
       {children}
     </h3>
   );
@@ -123,6 +134,7 @@ AccordionDescription.displayName = "Accordion.Description";
 
 export function AccordionChevron({ className, children, ...rest }: AccordionChevronProps) {
   const { open, hasPanel } = useExpandableContext();
+  const slotClassNames = useAccordionClassNames();
   const bindChevronRef = useAccordionChevronAnimation(open);
   const gridSlots = useOptionalExpandableTriggerGrid();
 
@@ -133,7 +145,7 @@ export function AccordionChevron({ className, children, ...rest }: AccordionChev
       ref={bindChevronRef}
       className={cn(
         gridSlots && messageBannerActionCellClass(gridSlots),
-        accordionChevronClass(className),
+        accordionChevronClass({ className, slotClass: slotClassNames.chevron }),
       )}
       aria-hidden
       {...rest}

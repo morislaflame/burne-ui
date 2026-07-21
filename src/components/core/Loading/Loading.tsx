@@ -7,6 +7,7 @@ import { LOADING_ROOT_CLASS } from "./loadingStyles";
 import type { LoadingProps } from "./loadingTypes";
 
 export type {
+  LoadingClassNames,
   LoadingColor,
   LoadingProps,
   LoadingSize,
@@ -20,6 +21,7 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
     color = "primary",
     label = "Loading",
     className = "",
+    classNames,
     ...rest
   },
   ref,
@@ -30,13 +32,18 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
       role="status"
       aria-live="polite"
       aria-label={label}
-      className={cn(LOADING_ROOT_CLASS, className)}
+      className={cn(LOADING_ROOT_CLASS, classNames?.root, className)}
       {...rest}
     >
       {type === "dots" ? (
-        <LoadingDots size={size} color={color} />
+        <LoadingDots
+          size={size}
+          color={color}
+          className={classNames?.dots}
+          dotClassName={classNames?.dot}
+        />
       ) : (
-        <LoadingSpinner size={size} color={color} />
+        <LoadingSpinner size={size} color={color} className={classNames?.spinner} />
       )}
     </span>
   );

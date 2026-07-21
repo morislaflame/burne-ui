@@ -16,11 +16,19 @@ export type LoadingColor =
   | "info"
   | "warning";
 
+export type LoadingClassNames = {
+  root?: string;
+  spinner?: string;
+  dots?: string;
+  dot?: string;
+};
+
 export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
   type?: LoadingType;
   size?: LoadingSize;
   color?: LoadingColor;
   label?: string;
+  classNames?: LoadingClassNames;
 };
 
 export type LoadingDotsLayout = {

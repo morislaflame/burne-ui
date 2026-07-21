@@ -1,5 +1,7 @@
 import { LoadingCardOverlayDemo } from "../demos/loading/LoadingCardOverlay.demo";
 import loadingCardOverlaySource from "../demos/loading/LoadingCardOverlay.demo.tsx?raw";
+import { LoadingClassNamesFullDemo } from "../demos/loading/LoadingClassNamesFull.demo";
+import loadingClassNamesFullSource from "../demos/loading/LoadingClassNamesFull.demo.tsx?raw";
 import { LoadingColorGridDemo } from "../demos/loading/LoadingColorGrid.demo";
 import loadingColorGridSource from "../demos/loading/LoadingColorGrid.demo.tsx?raw";
 import { LoadingDotsWaveDemo } from "../demos/loading/LoadingDotsWave.demo";
@@ -30,6 +32,10 @@ export function LoadingShowcase() {
         description='type="dots" — wave 1 → 2 → 3. Speed: configureMotion() (loadingDotsDuration, enableLoadingDots). Slider in panel Motion.'
       >
         <ShowcaseDemoFromFile Demo={LoadingDotsWaveDemo} source={loadingDotsWaveSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="classNames" description="Slots root, spinner, dots, dot via classNames.">
+        <ShowcaseDemoFromFile Demo={LoadingClassNamesFullDemo} source={loadingClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

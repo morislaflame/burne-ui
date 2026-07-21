@@ -101,6 +101,7 @@ export {
   type AccordionChevronProps,
   type AccordionPanelProps,
   type AccordionBodyProps,
+  type AccordionClassNames,
 } from "@/components/composite/Accordion";
 export {
   Form,
@@ -118,7 +119,9 @@ export {
   type CheckboxGroupProps,
   type CheckboxGroupSelection,
   type CheckboxGroupOrientation,
+  type CheckboxGroupClassNames,
   type CheckboxGroupHintProps,
+  type CheckboxGroupErrorProps,
   type CheckboxGroupLabelProps,
   type CheckboxGroupLegendProps,
   type CheckboxGroupListProps,
@@ -127,6 +130,7 @@ export {
   RadioGroup,
   type RadioGroupProps,
   type RadioGroupOrientation,
+  type RadioGroupClassNames,
   type RadioGroupHintProps,
   type RadioGroupErrorProps,
   type RadioGroupLabelProps,
@@ -140,12 +144,14 @@ export {
   type ButtonGroupTextProps,
   type ButtonGroupOrientation,
   type ButtonGroupSegment,
+  type ButtonGroupClassNames,
 } from "@/components/composite/ButtonGroup";
 export {
   ToggleButtonGroup,
   type ToggleButtonGroupProps,
   type ToggleButtonGroupType,
   type ToggleButtonGroupOrientation,
+  type ToggleButtonGroupClassNames,
 } from "@/components/composite/ToggleButtonGroup";
 export {
   AlertDialog,
@@ -264,6 +270,7 @@ export {
   type LoadingSize,
   type LoadingColor,
   type LoadingType,
+  type LoadingClassNames,
 } from "@/components/core/Loading";
 export {
   Input,
@@ -340,6 +347,8 @@ export {
   SelectionThumbIcon,
   type SelectionThumbProps,
   type SelectionThumbIconProps,
+  type SelectionThumbClassNames,
+  type SelectionThumbIconClassNames,
 } from "@/components/core/SelectionThumb";
 export {
   Radio,
@@ -434,6 +443,8 @@ export {
   SearchInput,
   type SearchInputProps,
   type SearchInputSize,
+  type SearchInputVariant,
+  type SearchInputClassNames,
 } from "@/components/core/SearchInput";
 export { Text, type TextProps, type TextVariant } from "@/components/core/Text";
 export {
@@ -522,6 +533,7 @@ export {
   type SurfaceShadow,
   type SurfacePadding,
   type SurfaceRadius,
+  type SurfaceClassNames,
 } from "@/components/core/Surface";
 export {
   Dropdown,

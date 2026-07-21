@@ -1,3 +1,5 @@
+import { ToggleButtonGroupClassNamesFullDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupClassNamesFull.demo";
+import toggleButtonGroupClassNamesFullSource from "../demos/toggleButtonGroup/ToggleButtonGroupClassNamesFull.demo.tsx?raw";
 import { ToggleButtonGroupEditorBarDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupEditorBar.demo";
 import toggleButtonGroupEditorBarSource from "../demos/toggleButtonGroup/ToggleButtonGroupEditorBar.demo.tsx?raw";
 import { ToggleButtonGroupGlossDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupGloss.demo";
@@ -39,6 +41,13 @@ export function ToggleButtonGroupShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass switch group.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupGlossDemo} source={toggleButtonGroupGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="classNames" description="Slots root and separator via classNames.">
+        <ShowcaseDemoFromFile
+          Demo={ToggleButtonGroupClassNamesFullDemo}
+          source={toggleButtonGroupClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

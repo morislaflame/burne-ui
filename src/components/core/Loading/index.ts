@@ -4,4 +4,5 @@ export {
   type LoadingSize,
   type LoadingColor,
   type LoadingType,
+  type LoadingClassNames,
 } from "./Loading";

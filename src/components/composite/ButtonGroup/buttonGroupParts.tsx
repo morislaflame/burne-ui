@@ -1,8 +1,9 @@
 import { forwardRef } from "react";
 
 import { Text } from "@/components/core/Text";
+import { cn } from "@/utils/cn";
 
-import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "./buttonGroupContext";
+import { useButtonGroupClassNames, useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "./buttonGroupContext";
 import { BUTTON_GROUP_TEXT_LABEL_CLASS, BUTTON_GROUP_TEXT_VARIANT, buttonGroupTextClass } from "./buttonGroupStyles";
 import type { ButtonGroupTextProps } from "./buttonGroupTypes";
 
@@ -19,6 +20,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
   ) {
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
+    const slotClassNames = useButtonGroupClassNames();
     const buttonSize = buttonSizeProp ?? groupCtx?.buttonSize ?? "base";
     const groupSegment = layoutCtx?.segmented
       ? undefined
@@ -33,14 +35,14 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
           groupSegment,
           groupVariant,
           buttonSize,
-          className,
+          className: cn(slotClassNames.text, className),
         })}
       >
         <Text
           variant={BUTTON_GROUP_TEXT_VARIANT[buttonSize]}
           inheritColor
           as="span"
-          className={BUTTON_GROUP_TEXT_LABEL_CLASS}
+          className={cn(BUTTON_GROUP_TEXT_LABEL_CLASS, slotClassNames.textLabel)}
         >
           {children}
         </Text>

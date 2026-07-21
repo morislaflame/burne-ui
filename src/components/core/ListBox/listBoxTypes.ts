@@ -68,8 +68,6 @@ export type ListBoxRootProps = Omit<
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;
   listId?: string;
-  /** Accessible list name when no `aria-label` / `aria-labelledby`. */
-  label?: string;
   classNames?: ListBoxClassNames;
 };
 

@@ -4,7 +4,7 @@ export function ListBoxClassNamesFullDemo() {
   return (
     <ListBox
       defaultValue="ru"
-      label="Interface language"
+      aria-label="Interface language"
       classNames={{
         root: "rounded-mid border border-primary/25 p-base",
         headerText: "text-primary font-medium",

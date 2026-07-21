@@ -9,8 +9,11 @@ import type {
   OptionGroupListProps,
   OptionGroupOrientation,
 } from "@/components/composite/utils/optionGroupFieldset";
+import type { OptionGroupClassNames } from "@/components/composite/utils/optionGroupClassNames";
 
 export type CheckboxGroupSelection = "multiple" | "single";
+
+export type CheckboxGroupClassNames = OptionGroupClassNames;
 
 export type CheckboxGroupContextValue = {
   selection: CheckboxGroupSelection;
@@ -42,6 +45,7 @@ export type CheckboxGroupProps = Omit<
   /** Fieldset padding scale. By default `small`. */
   size?: ComponentSize;
   children?: ReactNode;
+  classNames?: CheckboxGroupClassNames;
 };
 
 export type UseCheckboxGroupRootStateProps = CheckboxGroupProps;

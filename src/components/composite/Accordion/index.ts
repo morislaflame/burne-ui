@@ -39,4 +39,5 @@ export {
   type AccordionChevronProps,
   type AccordionPanelProps,
   type AccordionBodyProps,
+  type AccordionClassNames,
 } from "./Accordion";

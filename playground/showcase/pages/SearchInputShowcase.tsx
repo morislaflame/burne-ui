@@ -1,5 +1,7 @@
 import { SearchInputBasicDemo } from "../demos/search-input/SearchInputBasic.demo";
 import searchInputBasicSource from "../demos/search-input/SearchInputBasic.demo.tsx?raw";
+import { SearchInputClassNamesFullDemo } from "../demos/search-input/SearchInputClassNamesFull.demo";
+import searchInputClassNamesFullSource from "../demos/search-input/SearchInputClassNamesFull.demo.tsx?raw";
 import { SearchInputSizesDemo } from "../demos/search-input/SearchInputSizes.demo";
 import searchInputSizesSource from "../demos/search-input/SearchInputSizes.demo.tsx?raw";
 import { SearchInputCommandBarDemo } from "../demos/search-input/SearchInputCommandBar.demo";
@@ -35,6 +37,17 @@ export function SearchInputShowcase() {
 
       <ShowcaseSection title="Result" description="Current search field value.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputWithResultDemo} source={searchInputWithResultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="classNames"
+        description="Slots root, icon, input and clear — through prop classNames."
+      >
+        <ShowcaseDemoFromFile
+          align="center"
+          Demo={SearchInputClassNamesFullDemo}
+          source={searchInputClassNamesFullSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass shell with motion.">

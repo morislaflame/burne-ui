@@ -58,7 +58,13 @@ Simple API и compound `ButtonGroup.Text` **нет** — только `ButtonGro
 | `className` | — | На root `<div role="group">` |
 | `children` | — | Сегменты |
 
-`status` на группе нет — на дочерних `Button`. `classNames` на root **нет**.
+`status` на группе нет — на дочерних `Button`.
+
+### `ButtonGroupClassNames`
+
+`root`, `separator`, `text`, `textLabel`.
+
+`separator` — слот layout-разделителя (compound-части нет).
 
 ### `ButtonGroupText` props
 

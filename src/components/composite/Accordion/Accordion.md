@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Accordion, type AccordionProps, type AccordionItemProps, type AccordionHeadingProps, type AccordionTriggerProps, type AccordionMessageProps, type AccordionIconProps, type AccordionContentProps, type AccordionTitleProps, type AccordionDescriptionProps, type AccordionChevronProps, type AccordionPanelProps, type AccordionBodyProps } from "burne-ui";
+import { Accordion, type AccordionProps, type AccordionItemProps, type AccordionHeadingProps, type AccordionTriggerProps, type AccordionMessageProps, type AccordionIconProps, type AccordionContentProps, type AccordionTitleProps, type AccordionDescriptionProps, type AccordionChevronProps, type AccordionPanelProps, type AccordionBodyProps, type AccordionClassNames } from "burne-ui";
 ```
 
 ## API
@@ -46,9 +46,10 @@ Simple API нет.
 | `defaultOpenIndex` | `null` | Начальный индекс (0-based), если у Item нет `value` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — для всех Item |
 | `className` | — | На root `<div>` |
+| `classNames` | — | `AccordionClassNames` — слоты root + все Item (наследуются через `AccordionClassNamesProvider`) |
 | `children` | — | `Accordion.Item` |
 
-`variant` и `classNames` на root **нет**.
+`variant` на root **нет**.
 
 ### `Accordion.Item` props
 
@@ -57,8 +58,9 @@ Simple API нет.
 | `value` | auto index | Явный ID пункта (`"0"`, `"1"`, … или строка) |
 | `disabled` | `false` | Блокирует toggle |
 | `className` | — | Мерж с `accordionItemClass` |
+| `classNames` | — | `AccordionClassNames` — локально переопределяет слоты, унаследованные от root (мерж как `Breadcrumbs.List`: `{...parent, ...classNames}`) |
 
-Каждый Item — обёртка над `Expandable` (`compound={true}`, controlled `open`).
+Каждый Item — обёртка над `Expandable` (`compound={true}`, controlled `open`). Слоты `trigger`, `triggerLift`, `message`, `icon`, `content`, `title`, `description`, `chevron`, `panelShell`, `panel`, `glossContent` прокидываются в `classNames` вложенного `Expandable`; `item` прокидывается в `Expandable`'s `classNames.root`.
 
 ### Compound-подчасти
 
@@ -159,7 +161,6 @@ configureMotion({
 - Group-level FLIP при смене `value`
 - `variant="gloss"` на Accordion
 - Анимация `Accordion.Body` / `Heading`
-- `classNames` provider (только per-part `className`)
 
 ### Сводка: что настраивается где
 
@@ -190,19 +191,57 @@ configureMotion({
 
 ## Стилизация и кастомизация
 
-### Один уровень — `className` per-part
+### `classNames` на root — `AccordionClassNames`
 
-**Нет `classNames` на Accordion** (в отличие от `Expandable`). Кастомизация через `className` на каждой подчасти.
+```ts
+type AccordionClassNames = {
+  root?: string;
+  item?: string;
+  heading?: string;
+  trigger?: string;
+  triggerLift?: string;
+  message?: string;
+  icon?: string;
+  content?: string;
+  title?: string;
+  description?: string;
+  chevron?: string;
+  panelShell?: string;
+  panel?: string;
+  glossContent?: string;
+};
+```
 
-| Часть | Где задавать |
-|-------|--------------|
-| root | `Accordion className` |
-| item | `Accordion.Item className` |
-| heading / trigger / message / … | `className` на подчасти |
-| indicator | `Accordion.Chevron className` |
-| panel / body | `Accordion.Panel` / `Accordion.Body className` |
+Мерж-порядок для каждого слота: **база → `classNames.slot` → `className` подчасти**.
 
-`ExpandableClassNames` **не прокидывается** через Accordion.
+Провайдер `AccordionClassNamesProvider` на root — слоты наследуются всеми `Accordion.Item`. Каждый `Accordion.Item` может локально переопределить любой слот через свой проп `classNames` (мерж как `Breadcrumbs.List`: `{...parent, ...classNames}`), не затрагивая другие Item.
+
+| Слот | Куда попадает |
+|------|----------------|
+| `root` | `Accordion` root `<div>` |
+| `item` | Каждый `Accordion.Item` → `Expandable`'s `classNames.root` |
+| `heading` | `Accordion.Heading` (`<h3>`) |
+| `trigger` / `triggerLift` | `Accordion.Trigger` → `Expandable.Trigger` |
+| `message` | `Accordion.Message` → `Expandable.Message` |
+| `icon` | `Accordion.Icon` → `Expandable.Icon` |
+| `content` | `Accordion.Content` → `Expandable.Content` |
+| `title` | `Accordion.Title` → `Expandable.Title` |
+| `description` | `Accordion.Description` → `Expandable.Description` |
+| `chevron` | `Accordion.Chevron` (свой компонент, не `Expandable.Chevron`) |
+| `panelShell` / `panel` | `Accordion.Panel` → `Expandable.Panel` |
+| `glossContent` | `Expandable`'s gloss-wrapper (не используется, т.к. Item всегда `variant="default"`) |
+
+### Пример: переопределение на одном Item
+
+```tsx
+<Accordion classNames={{ trigger: "bg-primary/5", title: "text-primary" }}>
+  <Accordion.Item>...</Accordion.Item>
+  <Accordion.Item classNames={{ title: "text-danger" }}>
+    {/* title красный, trigger — унаследован от root */}
+    ...
+  </Accordion.Item>
+</Accordion>
+```
 
 ### FAQ-группа
 

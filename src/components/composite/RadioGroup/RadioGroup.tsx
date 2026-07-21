@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
 
 import { FieldLabelContext } from "@/components/core/Label";
-import { OptionGroupFieldset } from "@/components/composite/utils/optionGroupFieldset";
+import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
 
-import { RadioGroupProvider } from "./radioGroupContext";
+import { RadioGroupClassNamesProvider, RadioGroupProvider, useRadioGroupClassNames } from "./radioGroupContext";
 import { RadioGroupError, RadioGroupHint, RadioGroupLegend, RadioGroupList } from "./radioGroupParts";
 import type { RadioGroupProps } from "./radioGroupTypes";
 import { useRadioGroupRootState } from "./useRadioGroupRootState";
@@ -11,6 +11,7 @@ import { useRadioGroupRootState } from "./useRadioGroupRootState";
 export type {
   RadioGroupProps,
   RadioGroupOrientation,
+  RadioGroupClassNames,
   RadioGroupHintProps,
   RadioGroupLabelProps,
   RadioGroupLegendProps,
@@ -18,11 +19,20 @@ export type {
   RadioGroupErrorProps,
 } from "./radioGroupTypes";
 
+const RadioGroupFieldsetShell = forwardRef<HTMLFieldSetElement, Omit<OptionGroupFieldsetProps, "classNames">>(
+  function RadioGroupFieldsetShell(props, ref) {
+    const slotClassNames = useRadioGroupClassNames();
+
+    return <OptionGroupFieldset ref={ref} classNames={slotClassNames} {...props} />;
+  },
+);
+
 export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
   function RadioGroupRoot(props, ref) {
     const {
       children,
       className,
+      classNames,
       size,
       disabled = false,
       name: _name,
@@ -38,19 +48,21 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
 
     return (
       <RadioGroupProvider value={contextValue}>
-        <FieldLabelContext.Provider value={fieldLabelCtx}>
-          <OptionGroupFieldset
-            ref={ref}
-            disabled={disabled}
-            hintId={hintId}
-            errorId={errorId}
-            size={size}
-            className={className}
-            {...fieldsetProps}
-          >
-            {children}
-          </OptionGroupFieldset>
-        </FieldLabelContext.Provider>
+        <RadioGroupClassNamesProvider classNames={classNames}>
+          <FieldLabelContext.Provider value={fieldLabelCtx}>
+            <RadioGroupFieldsetShell
+              ref={ref}
+              disabled={disabled}
+              hintId={hintId}
+              errorId={errorId}
+              size={size}
+              className={className}
+              {...fieldsetProps}
+            >
+              {children}
+            </RadioGroupFieldsetShell>
+          </FieldLabelContext.Provider>
+        </RadioGroupClassNamesProvider>
       </RadioGroupProvider>
     );
   },

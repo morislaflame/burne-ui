@@ -67,7 +67,7 @@ Compound API нет.
 | Border | нет по умолчанию | `border-token` |
 | Header/Body/Footer | нет | compound слоты |
 | Shadow hover | нет | pressable lift |
-| `classNames` | нет | да |
+| `classNames` | да (`root`, `glossContent`) | да |
 | Pressable | нет | `pressable` prop |
 
 ## Анимации
@@ -111,7 +111,7 @@ Compound API нет.
 - Hover lift / press squeeze
 - Portal motion
 - Ripple
-- `classNames` API
+- `classNames` API (`root`, `glossContent`)
 - Persistent shadow animation (`--el-shadow` GSAP)
 
 Для интерактивного gloss hover: `Card pressable`, `Button`, `Popover`, `Kbd`.
@@ -144,7 +144,11 @@ Compound API нет.
 
 Только **`className`** + props `variant` / `shadow` / `padding` / `radius`.
 
-Отдельного `classNames` **нет** — весь кастом через `className` на root.
+### `SurfaceClassNames`
+
+`root`, `glossContent`.
+
+`className` мержится в `root`. При `variant="gloss"` внутренний wrapper — слот `glossContent`.
 
 ### Базовые панели
 

@@ -14,7 +14,7 @@ import { ListBox, useListBox, type ListBoxRootProps, type ListBoxItemProps, type
 
 ```tsx
 <ListBox
-  label="Язык"
+  aria-label="Язык"
   defaultValue="ru"
   selectionIndicator
   onValueChange={setLang}
@@ -54,7 +54,7 @@ import { ListBox, useListBox, type ListBoxRootProps, type ListBoxItemProps, type
 | `activeValue` / `onActiveValueChange` | — | Keyboard hover option (Select/ComboBox) |
 | `disabled` | `false` | Блокирует все items |
 | `listId` | auto | id для `aria-*` |
-| `label` | — | `aria-label` если нет labelledby |
+| `aria-label` / `aria-labelledby` | — | Accessible name списка |
 | `classNames` | — | см. стилизацию |
 
 ### Compound-подчасти
@@ -168,7 +168,7 @@ Reduced motion: skip GSAP.
 ```tsx
 <ListBox
   defaultValue="ru"
-  label="Язык интерфейса"
+  aria-label="Язык интерфейса"
   selectionIndicator
   classNames={{
     root: "rounded-mid border border-primary/20 p-base",

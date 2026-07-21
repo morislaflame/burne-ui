@@ -1,7 +1,5 @@
 import { useRef } from "react";
 
-import { cn } from "@/utils/cn";
-
 import { useLoadingDotsAnimation } from "./loadingAnimations";
 import { loadingDotClass, loadingDotsTrackClass, loadingDotsTrackStyle, loadingSpinnerRingClass } from "./loadingStyles";
 import type { LoadingColor, LoadingSize } from "./loadingTypes";
@@ -29,10 +27,12 @@ export function LoadingDots({
   size,
   color,
   className,
+  dotClassName,
 }: {
   size: LoadingSize;
   color: LoadingColor;
   className?: string;
+  dotClassName?: string;
 }) {
   const trackRef = useRef<HTMLSpanElement>(null);
   useLoadingDotsAnimation(trackRef, size);
@@ -40,7 +40,7 @@ export function LoadingDots({
   return (
     <span
       ref={trackRef}
-      className={cn(loadingDotsTrackClass(size), className)}
+      className={loadingDotsTrackClass(size, className)}
       style={loadingDotsTrackStyle(size)}
       aria-hidden
     >
@@ -48,7 +48,7 @@ export function LoadingDots({
         <span
           key={index}
           data-loading-dot
-          className={loadingDotClass(size, color)}
+          className={loadingDotClass(size, color, dotClassName)}
         />
       ))}
     </span>

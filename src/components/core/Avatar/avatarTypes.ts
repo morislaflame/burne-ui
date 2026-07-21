@@ -30,9 +30,10 @@ export type AvatarClassNames = {
   glossWrap?: string;
 };
 
-export type AvatarProps = Omit<HTMLAttributes<HTMLDivElement>, "aria-label"> & {
+export type AvatarProps = HTMLAttributes<HTMLDivElement> & {
   variant?: AvatarVariant;
   size?: AvatarSize;
+  /** Visible fallback initials source (not a form label). Accessible name: `aria-label`, else trimmed `label`. */
   label?: string;
   src?: string;
   alt?: string;
@@ -57,7 +58,9 @@ export type UseAvatarRootStateProps = Pick<
   | "tooltipSide"
   | "children"
   | "role"
->;
+> & {
+  "aria-label"?: string;
+};
 
 export type AvatarImageProps = ImgHTMLAttributes<HTMLImageElement>;
 

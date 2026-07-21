@@ -1,3 +1,5 @@
+import { SurfaceClassNamesFullDemo } from "../demos/surface/SurfaceClassNamesFull.demo";
+import surfaceClassNamesFullSource from "../demos/surface/SurfaceClassNamesFull.demo.tsx?raw";
 import { SurfaceDashboardWidgetDemo } from "../demos/surface/SurfaceDashboardWidget.demo";
 import surfaceDashboardWidgetSource from "../demos/surface/SurfaceDashboardWidget.demo.tsx?raw";
 import { SurfaceGlassStackDemo } from "../demos/surface/SurfaceGlassStack.demo";
@@ -27,6 +29,10 @@ export function SurfaceShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
         <ShowcaseDemoFromFile Demo={SurfaceGlossDemo} source={surfaceGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="classNames" description="Slots root and glossContent via classNames.">
+        <ShowcaseDemoFromFile Demo={SurfaceClassNamesFullDemo} source={surfaceClassNamesFullSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

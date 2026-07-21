@@ -3,6 +3,8 @@ import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 
 import type {
+  ButtonGroupClassNames,
+  ButtonGroupClassNamesProviderProps,
   ButtonGroupLayoutContextValue,
   ButtonGroupSegment,
   ButtonGroupSegmentContextValue,
@@ -15,6 +17,8 @@ const ButtonGroupSegmentContext = createContext<ButtonGroupSegmentContextValue |
 const ButtonGroupLayoutContext = createContext<ButtonGroupLayoutContextValue | null>(
   null,
 );
+
+const ButtonGroupClassNamesContext = createContext<ButtonGroupClassNames>({});
 
 export function ButtonGroupLayoutProvider({
   value,
@@ -59,6 +63,27 @@ export function useOptionalButtonGroupSegment() {
 
 export function useOptionalButtonGroupLayout() {
   return useContext(ButtonGroupLayoutContext);
+}
+
+export function ButtonGroupClassNamesProvider({
+  classNames,
+  children,
+}: ButtonGroupClassNamesProviderProps) {
+  const parent = useContext(ButtonGroupClassNamesContext);
+  const merged = useMemo(
+    () => ({ ...parent, ...classNames }),
+    [classNames, parent],
+  );
+
+  return (
+    <ButtonGroupClassNamesContext.Provider value={merged}>
+      {children}
+    </ButtonGroupClassNamesContext.Provider>
+  );
+}
+
+export function useButtonGroupClassNames(): ButtonGroupClassNames {
+  return useContext(ButtonGroupClassNamesContext);
 }
 
 export { ButtonGroupLayoutContext, ButtonGroupSegmentContext };

@@ -1,8 +1,17 @@
 import { createContext, useContext, type ReactNode } from "react";
 
-import type { CheckboxGroupContextValue } from "./checkboxGroupTypes";
+import { createOptionGroupClassNamesContext } from "@/components/composite/utils/optionGroupClassNames";
+
+import type { CheckboxGroupClassNames, CheckboxGroupContextValue } from "./checkboxGroupTypes";
 
 const CheckboxGroupContext = createContext<CheckboxGroupContextValue | null>(null);
+
+const {
+  Provider: CheckboxGroupClassNamesProvider,
+  useClassNames: useCheckboxGroupClassNames,
+} = createOptionGroupClassNamesContext<CheckboxGroupClassNames>();
+
+export { CheckboxGroupClassNamesProvider, useCheckboxGroupClassNames };
 
 export function CheckboxGroupProvider({
   value,

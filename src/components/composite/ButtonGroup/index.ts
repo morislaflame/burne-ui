@@ -7,6 +7,7 @@ export {
   type ButtonGroupProps,
   type ButtonGroupTextProps,
   type ButtonGroupOrientation,
+  type ButtonGroupClassNames,
 } from "./ButtonGroup";
 
 export type { ButtonGroupSegment } from "./buttonGroupTypes";
@@ -24,6 +25,8 @@ export {
   ButtonGroupSegmentContext,
   ButtonGroupLayoutProvider,
   ButtonGroupSegmentProvider,
+  ButtonGroupClassNamesProvider,
   useOptionalButtonGroupLayout,
   useOptionalButtonGroupSegment,
+  useButtonGroupClassNames,
 } from "./buttonGroupContext";

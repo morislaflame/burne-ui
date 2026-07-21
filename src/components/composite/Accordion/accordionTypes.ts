@@ -10,6 +10,23 @@ import type {
   ExpandableTriggerProps,
 } from "@/components/core/Expandable";
 
+export type AccordionClassNames = {
+  root?: string;
+  item?: string;
+  heading?: string;
+  trigger?: string;
+  triggerLift?: string;
+  message?: string;
+  icon?: string;
+  content?: string;
+  title?: string;
+  description?: string;
+  chevron?: string;
+  panelShell?: string;
+  panel?: string;
+  glossContent?: string;
+};
+
 export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "defaultValue"> & {
   /** Controlled: id of the open item (`null` = all closed). */
   value?: string | null;
@@ -19,6 +36,7 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "
   defaultOpenIndex?: number | null;
   onValueChange?: (value: string | null) => void;
   size?: ExpandableSize;
+  classNames?: AccordionClassNames;
   children?: ReactNode;
 };
 
@@ -26,6 +44,8 @@ export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"
   /** Explicit item id; if not provided, the index among siblings is used. */
   value?: string;
   disabled?: boolean;
+  /** Locally overrides slots inherited from the root (merged like `Breadcrumbs.List`). */
+  classNames?: AccordionClassNames;
   children?: ReactNode;
 };
 
@@ -56,6 +76,11 @@ export type AccordionContextValue = {
   setValue: (value: string | null) => void;
   getItemId: (explicit?: string) => string;
   size: ExpandableSize;
+};
+
+export type AccordionClassNamesProviderProps = {
+  classNames?: AccordionClassNames;
+  children: ReactNode;
 };
 
 export type UseAccordionRootStateProps = AccordionProps;

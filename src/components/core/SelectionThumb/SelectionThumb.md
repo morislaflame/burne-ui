@@ -93,7 +93,11 @@ configureMotion({ interactiveDuration: 280 });
 
 ## Стилизация и кастомизация
 
-Отдельного `classNames` **нет** — только `className` на shell и icon wrapper.
+### `SelectionThumbClassNames` / `SelectionThumbIconClassNames`
+
+Thumb: `root`, `fill`. Icon: `root`, `icon`.
+
+`className` мержится в `root`.
 
 ### `SelectionThumb`
 

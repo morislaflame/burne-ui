@@ -1,5 +1,7 @@
 import { RadioGroupContactMethodDemo } from "../demos/radioGroup/RadioGroupContactMethod.demo";
 import radioGroupContactMethodSource from "../demos/radioGroup/RadioGroupContactMethod.demo.tsx?raw";
+import { RadioGroupClassNamesFullDemo } from "../demos/radioGroup/RadioGroupClassNamesFull.demo";
+import radioGroupClassNamesFullSource from "../demos/radioGroup/RadioGroupClassNamesFull.demo.tsx?raw";
 import { RadioClassNamesFullDemo } from "../demos/radio/RadioClassNamesFull.demo";
 import radioClassNamesFullSource from "../demos/radio/RadioClassNamesFull.demo.tsx?raw";
 import { RadioClassNamesSimpleLabelDemo } from "../demos/radio/RadioClassNamesSimpleLabel.demo";
@@ -41,8 +43,13 @@ export function RadioGroupShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Full customization of slots Radio through classNames on root."
+        description="Full customization of slots RadioGroup and Radio through classNames."
       >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={RadioGroupClassNamesFullDemo}
+          source={radioGroupClassNamesFullSource}
+        />
         <ShowcaseDemoFromFile
           align="stretch"
           Demo={RadioClassNamesFullDemo}

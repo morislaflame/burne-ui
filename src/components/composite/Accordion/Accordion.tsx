@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { AccordionContext } from "./accordionContext";
+import { AccordionClassNamesProvider, AccordionContext } from "./accordionContext";
 import { AccordionBody, AccordionContent, AccordionDescription, AccordionHeading, AccordionIcon, AccordionChevron, AccordionItem, AccordionMessage, AccordionPanel, AccordionTitle, AccordionTrigger } from "./accordionParts";
 import { accordionRootClass } from "./accordionStyles";
 import type { AccordionProps } from "./accordionTypes";
@@ -19,6 +19,7 @@ export type {
   AccordionChevronProps,
   AccordionPanelProps,
   AccordionBodyProps,
+  AccordionClassNames,
 } from "./accordionTypes";
 
 export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function AccordionRoot(
@@ -29,6 +30,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function
     onValueChange,
     size = "base",
     className,
+    classNames,
     children,
     ...rest
   },
@@ -44,9 +46,15 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function
 
   return (
     <AccordionContext.Provider value={contextValue}>
-      <div ref={ref} className={accordionRootClass(className)} {...rest}>
-        {children}
-      </div>
+      <AccordionClassNamesProvider classNames={classNames}>
+        <div
+          ref={ref}
+          className={accordionRootClass({ className, slotClass: classNames?.root })}
+          {...rest}
+        >
+          {children}
+        </div>
+      </AccordionClassNamesProvider>
     </AccordionContext.Provider>
   );
 });

@@ -52,7 +52,6 @@ export function ListBoxRoot({
   activeValue,
   onActiveValueChange,
   listId: listIdProp,
-  label,
   "aria-label": ariaLabelProp,
   "aria-labelledby": ariaLabelledByProp,
   ...rest
@@ -73,7 +72,6 @@ export function ListBoxRoot({
   const aria = resolveListBoxAriaLabel({
     ariaLabel: ariaLabelProp,
     ariaLabelledBy: ariaLabelledByProp,
-    label,
   });
 
   return (

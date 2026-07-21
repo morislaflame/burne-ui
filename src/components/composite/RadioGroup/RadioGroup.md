@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { RadioGroup, type RadioGroupProps, type RadioGroupOrientation, type RadioGroupHintProps, type RadioGroupErrorProps, type RadioGroupLabelProps, type RadioGroupLegendProps, type RadioGroupListProps } from "burne-ui";
+import { RadioGroup, type RadioGroupProps, type RadioGroupOrientation, type RadioGroupClassNames, type RadioGroupHintProps, type RadioGroupErrorProps, type RadioGroupLabelProps, type RadioGroupLegendProps, type RadioGroupListProps } from "burne-ui";
 import { Radio } from "burne-ui";
 ```
 
@@ -52,8 +52,9 @@ Simple API нет.
 | `disabled` | `false` | На fieldset + context → `Radio` |
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
 | `className` | — | На `<fieldset>` |
+| `classNames` | — | Слоты `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` |
 
-`variant`, `status` и `classNames` на root **нет**.
+`variant`, `status` на root **нет**.
 
 ### Compound-подчасти
 
@@ -156,14 +157,59 @@ configureMotion({
 
 ## Стилизация и кастомизация
 
-### Один уровень — `className` per-part
+### Два уровня
 
-**Нет `classNames`** на RadioGroup root.
+1. **`className` на root** — мерж с `classNames.root`.
+2. **`classNames`** — `root`, `legend`, `legendHeader`, `hint`, `error`, `list`, `group`, `actions` через `RadioGroupClassNamesProvider` (мерж с родительским: базовые → `classNames.slot` → `className` подчасти).
+
+```tsx
+<RadioGroup
+  required
+  defaultValue="card"
+  className="max-w-md"
+  classNames={{
+    root: "rounded-mid border border-primary/20 p-base",
+    legend: "text-primary",
+    legendHeader: "gap-xsmall",
+    hint: "text-foreground/70",
+    error: "font-medium",
+    list: "gap-base",
+    group: "gap-mid",
+    actions: "pt-small",
+  }}
+>
+  <RadioGroup.Legend>
+    <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
+    <RadioGroup.Hint>Слоты через classNames.</RadioGroup.Hint>
+  </RadioGroup.Legend>
+  <RadioGroup.Group>
+    <RadioGroup.List>
+      <Radio value="card" label="Карта" />
+      <Radio value="cash" label="Наличные" />
+    </RadioGroup.List>
+    <RadioGroup.Error>Выберите способ оплаты</RadioGroup.Error>
+  </RadioGroup.Group>
+  <RadioGroup.Actions>...</RadioGroup.Actions>
+</RadioGroup>
+```
+
+| Слот | Элемент | Назначение |
+|------|---------|------------|
+| `root` | `<fieldset>` | Layout на корне (делегируется `Field.Set`) |
+| `legend` | `RadioGroup.Legend` (`<legend>`) | Заголовок группы |
+| `legendHeader` | Обёртка в legend | Label + hint в одной строке |
+| `hint` | `RadioGroup.Hint` | Подсказка |
+| `error` | `RadioGroup.Error` | Ошибка (`role="alert"`) |
+| `list` | `RadioGroup.List` | Список опций |
+| `group` | `RadioGroup.Group` | Доп. группировка (list + error) |
+| `actions` | `RadioGroup.Actions` | Кнопки внизу группы |
+
+`RadioGroup.Legend/Hint/Error/List` принимают свой **`className`** поверх слота. `root`/`legend`/`legendHeader`/`group`/`actions` прокидываются в `OptionGroupFieldset` (обёртка `Field.Set`) как `FieldSetClassNames`; `hint`/`error`/`list` — собственные слоты RadioGroup через `RadioGroupClassNamesProvider`.
 
 | Часть | Кастомизация |
 |-------|--------------|
-| root | `RadioGroup className` |
-| legend / list / hint / error | `className` на подчасти |
+| root / legend / legendHeader / group / actions | `classNames` на RadioGroup — делегируется `Field.Set` |
+| hint / error / list | `classNames` на RadioGroup — собственные слоты |
 | опция | `Radio className` / `classNames` |
 
 ### С описаниями (compound Radio)
@@ -212,7 +258,7 @@ configureMotion({
 | `Form` | Controlled `value`/`onValueChange` или кастом binding |
 | `CheckboxGroup` | Альтернатива single через checkbox UI |
 
-Shared: `composite/utils/optionGroupFieldset.tsx`, `optionGroupLayout.ts`.
+Shared: `composite/utils/optionGroupFieldset.tsx`, `optionGroupLayout.ts`, `optionGroupParts.tsx`, `optionGroupClassNames.tsx`.
 
 ## Доступность
 
@@ -234,9 +280,9 @@ RadioGroup/
 ├── useRadioGroupRootState.ts
 └── RadioGroup.stories.tsx
 
-composite/utils/ — shared with CheckboxGroup (`optionGroupFieldset`, `optionGroupParts`, `useOptionGroup*`)
+composite/utils/ — shared with CheckboxGroup (`optionGroupFieldset`, `optionGroupParts`, `optionGroupClassNames`, `useOptionGroup*`)
 ```
 
 ## Storybook
 
-`Composite Components/RadioGroup` — playground, card layout, horizontal, descriptions, required, error, controlled, sizes, accessibility.
+`Composite Components/RadioGroup` — playground, card layout, horizontal, descriptions, required, error, controlled, sizes, `classNames` customization, accessibility.

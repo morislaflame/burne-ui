@@ -5,7 +5,13 @@
 ## Импорт
 
 ```tsx
-import { SearchInput, type SearchInputProps, type SearchInputSize, type SearchInputVariant } from "burne-ui";
+import {
+  SearchInput,
+  type SearchInputProps,
+  type SearchInputSize,
+  type SearchInputVariant,
+  type SearchInputClassNames,
+} from "burne-ui";
 ```
 
 ## API
@@ -43,10 +49,9 @@ import { SearchInput, type SearchInputProps, type SearchInputSize, type SearchIn
 | `ripple` | `false` | `<Ripple color="neutral" />` |
 | `groupSegment` | — | Сегмент ButtonGroup |
 | `disabled` / `readOnly` | — | Блокировка |
-| `className` | — | Единственный слот стилей на shell |
+| `className` | — | Алиас `classNames.root` (доп. класс на shell) |
+| `classNames` | — | Слоты `root` / `icon` / `input` / `clear` |
 | `aria-label` | — | **Рекомендуется** — collapsed trigger + input |
-
-Нет `classNames` — только `className` на root shell.
 
 ## Состояния UI
 
@@ -132,13 +137,25 @@ configureMotion({
 
 ## Стилизация и кастомизация
 
-Отдельного `classNames` **нет** — только **`className`** на root shell + props `size` / `variant`.
+`classNames` — слоты `root` / `icon` / `input` / `clear`. Merge: база компонента → слот `classNames.*` → `className` (только для `root`).
+
+### Слоты `classNames`
+
+| Слот | DOM-элемент |
+|------|-------------|
+| `root` | Корневой `<div>` shell (то же, что и `className`) |
+| `icon` | `<span>`-обёртка иконки `IoSearch` |
+| `input` | `<input type="search">` |
+| `clear` | Кнопка очистки (`IoClose`) |
 
 ### Что можно настроить
 
 | Способ | Что меняет |
 |--------|------------|
-| `className` | Margin, max-width wrapper, external layout |
+| `className` / `classNames.root` | Margin, max-width wrapper, external layout, border/ring |
+| `classNames.icon` | Цвет/размер иконки поиска |
+| `classNames.input` | Текст, placeholder внутри поля |
+| `classNames.clear` | Цвет кнопки очистки |
 | `size` | Высота, icon box, collapsed width, default expanded width |
 | `variant="gloss"` | `gloss-control` surface |
 | `expandedWidth` | Целевая ширина expand (px) |
@@ -153,6 +170,12 @@ configureMotion({
   ripple
   expandedWidth={400}
   className="mx-auto"
+  classNames={{
+    root: "border-primary/40 ring-1 ring-primary/15",
+    icon: "text-primary",
+    input: "text-primary placeholder:text-primary/50",
+    clear: "text-primary hover:text-primary/70",
+  }}
   aria-label="Поиск товаров"
   placeholder="Найти товар…"
 />
@@ -171,7 +194,7 @@ configureMotion({
 
 ### Clear button
 
-Стили фиксированы (CSS `hoverVariant`, `focus-ring-inset`) — не кастомизируется через API.
+Базовые стили фиксированы (CSS `hoverVariant`, `focus-ring-inset`); доп. классы — через `classNames.clear`.
 
 ### Практические заметки
 
@@ -211,4 +234,4 @@ SearchInput/
 
 ## Storybook
 
-`Core Components/SearchInput` — collapsed/expanded, controlled, gloss, ripple, ButtonGroup, light theme, a11y.
+`Core Components/SearchInput` — collapsed/expanded, controlled, gloss, ripple, ButtonGroup, light theme, a11y, classNames.

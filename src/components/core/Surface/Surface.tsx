@@ -2,6 +2,7 @@ import { forwardRef, type HTMLAttributes } from "react";
 
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import type { ShadowSize } from "@/tokens/shadows";
+import { cn } from "@/utils/cn";
 
 import "../utils/glossInteractive.css";
 import { SURFACE_GLOSS_CONTENT_CLASS, surfaceRootClass } from "./surfaceStyles";
@@ -14,16 +15,23 @@ export type SurfacePadding = "none" | "small" | "base" | "plus" | "mid";
 
 export type SurfaceRadius = "base" | "mid" | "large";
 
+export type SurfaceClassNames = {
+  root?: string;
+  glossContent?: string;
+};
+
 export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
   variant?: SurfaceVariant;
   shadow?: SurfaceShadow;
   padding?: SurfacePadding;
   radius?: SurfaceRadius;
+  classNames?: SurfaceClassNames;
 };
 
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
   {
     className = "",
+    classNames,
     variant = "default",
     shadow = "none",
     padding = "none",
@@ -39,13 +47,15 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
     shadow,
     padding,
     radius,
-    className,
+    className: cn(classNames?.root, className),
   });
 
   if (variant === "gloss") {
     return (
       <div ref={setGlossRef} className={rootClass} {...rest}>
-        <div className={SURFACE_GLOSS_CONTENT_CLASS}>{children}</div>
+        <div className={cn(SURFACE_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
+          {children}
+        </div>
       </div>
     );
   }

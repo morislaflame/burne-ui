@@ -17,6 +17,7 @@ export function useAvatarRootState({
   tooltipSide = "top",
   children,
   role,
+  "aria-label": ariaLabelProp,
 }: UseAvatarRootStateProps) {
   const variant = resolveAvatarVariant(variantProp);
   const size = resolveAvatarSize(sizeProp);
@@ -46,7 +47,7 @@ export function useAvatarRootState({
   const nick = resolveAvatarNickname(nickname);
   const isGloss = variant === "gloss";
   const rootRole = avatarRootRole(role);
-  const ariaLabel = avatarRootAriaLabel(label);
+  const ariaLabel = avatarRootAriaLabel(ariaLabelProp, label);
 
   const tooltip = nick
     ? {
