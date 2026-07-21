@@ -11,6 +11,7 @@ import {
   primaryButtonVariantForAlertTone,
   type AlertDialogSize,
 } from "./index";
+import { useAlertDialog } from "./useAlertDialog";
 import type { AlertStatus } from "@/components/core/Alert";
 
 const darkThemeDecorator = [
@@ -113,6 +114,67 @@ export const ConfirmDelete: Story = {
     await waitFor(() => {
       expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
     });
+  },
+};
+
+function AlertDialogUncontrolledActions({
+  status,
+}: {
+  status: AlertStatus;
+}) {
+  const { onOpenChange } = useAlertDialog();
+  const primaryVariant = primaryButtonVariantForAlertTone(status);
+  const primaryStatus = primaryButtonStatusForAlertTone(status);
+  return (
+    <>
+      <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+        Cancel
+      </Button>
+      <Button
+        type="button"
+        variant={primaryVariant}
+        status={primaryStatus}
+        onClick={() => onOpenChange(false)}
+      >
+        Continue
+      </Button>
+    </>
+  );
+}
+
+export const Uncontrolled: Story = {
+  name: "Uncontrolled (defaultOpen)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Without `open` — internal state. Trigger opens; footer actions call `onOpenChange(false)` from context.",
+      },
+    },
+  },
+  render: function UncontrolledDemo() {
+    return (
+      <AlertDialog status="warning">
+        <AlertDialog.Trigger asChild>
+          <Button type="button" size="base" variant="outline">
+            Open (uncontrolled)
+          </Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Panel>
+          <AlertDialog.Header>
+            <AlertDialog.HeadingBlock>
+              <AlertDialog.Title>Uncontrolled alert</AlertDialog.Title>
+              <AlertDialog.Description>
+                No parent React state — only Trigger and footer actions.
+              </AlertDialog.Description>
+            </AlertDialog.HeadingBlock>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialogUncontrolledActions status="warning" />
+          </AlertDialog.Footer>
+        </AlertDialog.Panel>
+      </AlertDialog>
+    );
   },
 };
 

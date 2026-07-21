@@ -22,7 +22,7 @@ export function TooltipIconToolbarDemo() {
         </Tooltip.Trigger>
         <Tooltip.Content>Copy link</Tooltip.Content>
       </Tooltip>
-      <Tooltip variant="danger" side="top">
+      <Tooltip status="danger" side="top">
         <Tooltip.Trigger asChild>
           <Button variant="ghost" size="small" type="button" aria-label="Delete">
             <IoTrashOutline aria-hidden className="size-4" />

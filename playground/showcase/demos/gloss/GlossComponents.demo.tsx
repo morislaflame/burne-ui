@@ -186,7 +186,7 @@ export function GlossComponentsDemo() {
             aria-label="Search gloss"
             placeholder="Find…"
             value={glossSearch}
-            onValueChange={setGlossSearch}
+            onChange={(e) => setGlossSearch(e.target.value)}
           />
         </div>
       </div>
@@ -260,7 +260,7 @@ export function GlossComponentsDemo() {
           >
             Gloss Toast
           </Button>
-          <Tooltip surface="gloss" variant="info">
+          <Tooltip variant="gloss" status="info">
             <Tooltip.Trigger asChild>
               <Button variant="gloss">Gloss Tooltip</Button>
             </Tooltip.Trigger>

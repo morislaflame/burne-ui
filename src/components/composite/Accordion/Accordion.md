@@ -54,9 +54,9 @@ Simple API нет.
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `openId` | — | Controlled: ID открытого пункта |
-| `onOpenIdChange` | — | `(id: string \| null) => void` |
-| `defaultOpenId` | `null` | Начальный ID (приоритет над `defaultOpenIndex`) |
+| `value` | — | Controlled: ID открытого пункта (`null` = все закрыты) |
+| `onValueChange` | — | `(value: string \| null) => void` |
+| `defaultValue` | `null` | Начальный ID (приоритет над `defaultOpenIndex`) |
 | `defaultOpenIndex` | `null` | Начальный индекс (0-based), если у Item нет `value` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — для всех Item |
 | `className` | — | На root `<div>` |
@@ -96,16 +96,16 @@ Simple API нет.
 
 ```tsx
 // Uncontrolled
-<Accordion defaultOpenIndex={0} onOpenIdChange={(id) => console.log(id)} />
+<Accordion defaultOpenIndex={0} onValueChange={(id) => console.log(id)} />
 
 // Controlled
-const [openId, setOpenId] = useState<string | null>("shipping");
-<Accordion openId={openId} onOpenIdChange={setOpenId}>
+const [value, setValue] = useState<string | null>("shipping");
+<Accordion value={value} onValueChange={setValue}>
   <Accordion.Item value="shipping">...</Accordion.Item>
 </Accordion>
 ```
 
-Поведение: клик по открытому → `openId = null`; клик по другому → закрывает предыдущий.
+Поведение: клик по открытому → `value = null`; клик по другому → закрывает предыдущий.
 
 ## Размеры
 
@@ -170,7 +170,7 @@ configureMotion({
 
 ### Чего нет
 
-- Group-level FLIP при смене `openId`
+- Group-level FLIP при смене `value`
 - `variant="gloss"` на Accordion
 - Анимация `Accordion.Body` / `Heading`
 - `classNames` provider (только per-part `className`)
@@ -259,7 +259,7 @@ configureMotion({
 - Рекомендуемая структура: `Heading` → `Trigger` → `Message` → slots → `Panel` → `Body`.
 - `Accordion.Indicator` — внутри или рядом с `Message` (grid резолвит по `displayName`).
 - Для controlled state используйте стабильные `value` на Item, не полагайтесь на auto-index при reorder.
-- Сравнение с `Expandable`: один блок vs группа с `openId`.
+- Сравнение с `Expandable`: один блок vs группа с `value`.
 - **Не задавайте `rounded` на Item** — скругление задаёт root через селекторы first/last.
 
 ## Интеграции
@@ -281,7 +281,7 @@ configureMotion({
 - Icon / Indicator: `aria-hidden`
 - Keyboard: Enter/Space на trigger
 
-**Нет** `role="group"` / accordion pattern на root — каждый Item автономный disclosure; «один открыт» — только JS (`openId`).
+**Нет** `role="group"` / accordion pattern на root — каждый Item автономный disclosure; «один открыт» — только JS (`value`).
 
 ## Структура файлов
 

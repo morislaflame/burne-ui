@@ -43,9 +43,9 @@ export const AllVariants: Story = {
       {(["wave", "pulse", "shimmer", "none"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <p className="text-small font-medium text-muted capitalize">{variant}</p>
-          <Skeleton variant={variant} className="h-4 w-full" />
-          <Skeleton variant={variant} className="h-4 w-4/5" />
-          <Skeleton variant={variant} className="h-4 w-2/3" />
+          <Skeleton animation={variant} className="h-4 w-full" />
+          <Skeleton animation={variant} className="h-4 w-4/5" />
+          <Skeleton animation={variant} className="h-4 w-2/3" />
         </div>
       ))}
     </div>
@@ -65,7 +65,7 @@ export const TextLines: Story = {
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <p className="text-small text-muted">{variant}</p>
-          <Skeleton.Text variant={variant} lines={3} />
+          <Skeleton.Text animation={variant} lines={3} />
         </div>
       ))}
     </div>
@@ -81,7 +81,7 @@ export const Circles: Story = {
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
         <div key={variant} className="flex flex-col items-center gap-small">
           <p className="text-small text-muted">{variant}</p>
-          <Skeleton.Circle variant={variant} size="h-12 w-12" />
+          <Skeleton.Circle animation={variant} size="h-12 w-12" />
         </div>
       ))}
     </div>
@@ -100,20 +100,20 @@ export const CardLayout: Story = {
           <div className="flex flex-col gap-plus rounded-mid border-token p-plus">
             {/* avatar + name row */}
             <div className="flex items-center gap-plus">
-              <Skeleton.Circle variant={variant} size="h-10 w-10" />
+              <Skeleton.Circle animation={variant} size="h-10 w-10" />
               <div className="flex flex-1 flex-col gap-xsmall">
-                <Skeleton variant={variant} className="h-3 w-32 rounded-full" />
-                <Skeleton variant={variant} className="h-3 w-20 rounded-full" />
+                <Skeleton animation={variant} className="h-3 w-32 rounded-full" />
+                <Skeleton animation={variant} className="h-3 w-20 rounded-full" />
               </div>
             </div>
             {/* cover image */}
-            <Skeleton variant={variant} className="h-40 w-full rounded-small" />
+            <Skeleton animation={variant} className="h-40 w-full rounded-small" />
             {/* text lines */}
-            <Skeleton.Text variant={variant} lines={2} />
+            <Skeleton.Text animation={variant} lines={2} />
             {/* action row */}
             <div className="flex gap-small">
-              <Skeleton variant={variant} className="h-control-base w-20 rounded-small" />
-              <Skeleton variant={variant} className="h-control-base w-20 rounded-small" />
+              <Skeleton animation={variant} className="h-control-base w-20 rounded-small" />
+              <Skeleton animation={variant} className="h-control-base w-20 rounded-small" />
             </div>
           </div>
         </div>
@@ -130,15 +130,15 @@ export const ListLayout: Story = {
     <div className="flex w-full max-w-sm flex-col gap-xsmall">
       {Array.from({ length: 5 }, (_, i) => (
         <div key={i} className="flex items-center gap-plus py-small">
-          <Skeleton.Circle variant="wave" size="h-9 w-9" />
+          <Skeleton.Circle animation="wave" size="h-9 w-9" />
           <div className="flex flex-1 flex-col gap-xsmall">
             <Skeleton
-              variant="wave"
+              animation="wave"
               className="h-3 rounded-full"
               style={{ width: `${60 + (i % 3) * 15}%`, animationDelay: `${i * 0.08}s` }}
             />
             <Skeleton
-              variant="wave"
+              animation="wave"
               className="h-3 rounded-full w-2/5"
               style={{ animationDelay: `${i * 0.08 + 0.04}s` }}
             />
@@ -156,7 +156,7 @@ export const BlockSkeleton: Story = {
   render: () => (
     <div className="flex gap-mid">
       {(["wave", "pulse", "shimmer"] as const).map((v) => (
-        <Skeleton.Block key={v} variant={v} className="h-32 w-40" />
+        <Skeleton.Block key={v} animation={v} className="h-32 w-40" />
       ))}
     </div>
   ),
@@ -168,13 +168,13 @@ export const CustomSizes: Story = {
   name: "Various sizes",
   render: () => (
     <div className="flex w-full max-w-sm flex-col gap-small">
-      <Skeleton variant="wave" className="h-2 w-full rounded-full" />
-      <Skeleton variant="wave" className="h-3 w-full rounded-full" />
-      <Skeleton variant="wave" className="h-4 w-full rounded-full" />
-      <Skeleton variant="wave" className="h-6 w-full rounded-small" />
-      <Skeleton variant="wave" className="h-8 w-full rounded-small" />
-      <Skeleton variant="wave" className="h-12 w-full rounded-mid" />
-      <Skeleton variant="wave" className="h-24 w-full rounded-mid" />
+      <Skeleton animation="wave" className="h-2 w-full rounded-full" />
+      <Skeleton animation="wave" className="h-3 w-full rounded-full" />
+      <Skeleton animation="wave" className="h-4 w-full rounded-full" />
+      <Skeleton animation="wave" className="h-6 w-full rounded-small" />
+      <Skeleton animation="wave" className="h-8 w-full rounded-small" />
+      <Skeleton animation="wave" className="h-12 w-full rounded-mid" />
+      <Skeleton animation="wave" className="h-24 w-full rounded-mid" />
     </div>
   ),
 };
@@ -191,7 +191,7 @@ export const CustomClassNames: Story = {
   render: () => (
     <div className="flex w-full max-w-sm flex-col gap-mid">
       <Skeleton
-        variant="wave"
+        animation="wave"
         className="h-4 w-full"
         classNames={{
           root: "rounded-full bg-info/15",
@@ -199,7 +199,7 @@ export const CustomClassNames: Story = {
         }}
       />
       <Skeleton.Text
-        variant="shimmer"
+        animation="shimmer"
         lines={3}
         classNames={{
           root: "gap-xsmall",
@@ -207,7 +207,7 @@ export const CustomClassNames: Story = {
         }}
       />
       <Skeleton.Circle
-        variant="pulse"
+        animation="pulse"
         size="h-12 w-12"
         classNames={{
           root: "bg-success/15 ring-2 ring-success/20",

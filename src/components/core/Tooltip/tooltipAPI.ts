@@ -1,6 +1,6 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 
-import type { TooltipVariant } from "./tooltipTypes";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export const TOOLTIP_COMPOUND_SLOT_NAMES = new Set([
   "TooltipIndicator",
@@ -70,7 +70,7 @@ function walkTooltipIndicatorProps(
 }
 
 export function tooltipIndicatorWouldRender(
-  variant: TooltipVariant,
+  status: SemanticStatus,
   icon: ReactNode | undefined,
   showIcon: boolean | undefined,
   indicatorChildren: ReactNode | undefined,
@@ -79,12 +79,12 @@ export function tooltipIndicatorWouldRender(
   if (indicatorChildren === null) return false;
   if (indicatorChildren !== undefined) return true;
   if (icon != null) return true;
-  return isSemanticTooltipVariant(variant);
+  return status !== "default";
 }
 
 export function tooltipCompoundShowsIndicator(
   children: ReactNode,
-  variant: TooltipVariant,
+  status: SemanticStatus,
   icon: ReactNode | undefined,
   showIcon: boolean | undefined,
 ): boolean {
@@ -93,7 +93,7 @@ export function tooltipCompoundShowsIndicator(
   walkTooltipIndicatorProps(children, (props) => {
     if (
       tooltipIndicatorWouldRender(
-        variant,
+        status,
         icon,
         props.showIcon ?? showIcon,
         props.children,
@@ -105,25 +105,21 @@ export function tooltipCompoundShowsIndicator(
   return visible;
 }
 
-export function isSemanticTooltipVariant(v: TooltipVariant): v is "danger" | "success" | "info" | "warning" {
-  return v === "danger" || v === "success" || v === "info" || v === "warning";
-}
-
 export function tooltipShowsIndicator(
-  variant: TooltipVariant,
+  status: SemanticStatus,
   icon: ReactNode | undefined,
   showIcon: boolean | undefined,
   isCompound: boolean,
   children: ReactNode,
 ): boolean {
   if (showIcon === false) return false;
-  if (isCompound) return tooltipCompoundShowsIndicator(children, variant, icon, showIcon);
+  if (isCompound) return tooltipCompoundShowsIndicator(children, status, icon, showIcon);
   if (icon != null) return true;
-  return isSemanticTooltipVariant(variant);
+  return status !== "default";
 }
 
 export function resolveTooltipGridSlots({
-  variant,
+  status,
   icon,
   showIcon,
   title,
@@ -131,7 +127,7 @@ export function resolveTooltipGridSlots({
   isCompound,
   children,
 }: {
-  variant: TooltipVariant;
+  status: SemanticStatus;
   icon?: ReactNode;
   showIcon?: boolean;
   title?: ReactNode;
@@ -148,7 +144,7 @@ export function resolveTooltipGridSlots({
     description != null || (isCompound && tooltipHasDescription(children));
 
   return {
-    hasIndicator: tooltipShowsIndicator(variant, icon, showIcon, isCompound, children),
+    hasIndicator: tooltipShowsIndicator(status, icon, showIcon, isCompound, children),
     hasTitle,
     hasDescription,
     hasAction: false,

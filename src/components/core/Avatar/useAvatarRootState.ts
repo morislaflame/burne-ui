@@ -18,6 +18,7 @@ export function useAvatarRootState({
   nickname,
   tooltipSize = "base",
   tooltipVariant = "default",
+  tooltipStatus = "default",
   tooltipSide = "top",
   children,
   role,
@@ -53,7 +54,13 @@ export function useAvatarRootState({
   const ariaLabel = avatarRootAriaLabel(label);
 
   const tooltip = nick
-    ? { size: tooltipSize, variant: tooltipVariant, side: tooltipSide, content: nick }
+    ? {
+        size: tooltipSize,
+        variant: tooltipVariant,
+        status: tooltipStatus,
+        side: tooltipSide,
+        content: nick,
+      }
     : null;
 
   return {

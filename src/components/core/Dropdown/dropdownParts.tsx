@@ -671,7 +671,7 @@ export function DropdownItemIcon({
 DropdownItemIcon.displayName = "DropdownItemIcon";
 
 export function DropdownItemIndicator({
-  variant = "base",
+  variant = "default",
   size = "small",
   check,
   children,
@@ -722,7 +722,7 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
       href,
       disabled = false,
       selection: selectionProp,
-      variant = "default",
+      status = "default",
       onClick,
       onPointerDown,
       ...rest
@@ -758,7 +758,7 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
     );
 
     const rowClass = dropdownItemRowClass({
-      variant,
+        status,
       disabled,
       hasHint,
       showIndicatorSlot,
@@ -810,7 +810,7 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
       selected: isSelected,
       indicatorMode,
       disabled,
-      mutedHint: disabled || variant === "default",
+      mutedHint: disabled || status === "default",
     };
 
     if (isLink) {

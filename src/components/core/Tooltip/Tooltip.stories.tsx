@@ -12,10 +12,6 @@ const VARIANTS: TooltipVariant[] = [
   "default",
   "outline",
   "secondary",
-  "danger",
-  "info",
-  "warning",
-  "success",
 ];
 
 const framedDecorator = [
@@ -65,7 +61,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const TOOLTIP_VARIANT_ITEMS: Array<{
-  variant: TooltipVariant;
+  variant?: TooltipVariant;
+  status?: "danger" | "success" | "info" | "warning";
   title: string;
   description?: string;
   icon?: ReactNode;
@@ -87,22 +84,22 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
     description: "Same background as secondary components.",
   },
   {
-    variant: "success",
+    status: "success",
     title: "Profile updated successfully",
     description: "Changes saved and synced.",
   },
   {
-    variant: "danger",
+    status: "danger",
     title: "Unable to connect to server",
     description: "We're experiencing connection issues.",
   },
   {
-    variant: "info",
+    status: "info",
     title: "Help",
     description: "Additional information in a neutral informational tone.",
   },
   {
-    variant: "warning",
+    status: "warning",
     title: "Scheduled maintenance",
     description: "Services will be unavailable Sunday from 2:00 AM to 6:00 AM UTC.",
   },
@@ -113,13 +110,13 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
     icon: <IoHelpCircleOutline aria-hidden className="text-primary" />,
   },
   {
-    variant: "danger",
+    status: "danger",
     title: "Semantic without icon",
     description: "showIcon={false} disables the default icon.",
     showIcon: false,
   },
   {
-    variant: "success",
+    status: "success",
     title: "Title only",
   },
 ];
@@ -131,6 +128,7 @@ function TooltipVariantsDemo() {
         <Tooltip.Panel
           key={`${item.variant}-${item.title}`}
           variant={item.variant}
+          status={item.status}
           size="base"
           title={item.title}
           description={item.description}
@@ -235,7 +233,7 @@ export const DefaultWithOptionalIcon: Story = {
 export const SemanticIconHidden: Story = {
   name: "Semantic without icon",
   render: () => (
-    <Tooltip variant="danger" showIcon={false}>
+    <Tooltip status="danger" showIcon={false}>
       <Tooltip.Trigger>
         <Button size="large" variant="outline" type="button">
           Hover
@@ -353,7 +351,7 @@ export const Accessibility: Story = {
         </Tooltip.Trigger>
         <Tooltip.Content>Additional description for AT</Tooltip.Content>
       </Tooltip>
-      <Tooltip delayShowMs={0} variant="info">
+      <Tooltip delayShowMs={0} status="info">
         <Tooltip.Trigger>
           <Button variant="ghost" type="button" aria-label="Field help">
             ?
@@ -378,7 +376,7 @@ export const CustomClassNames: Story = {
   render: () => (
     <Tooltip
       delayShowMs={0}
-      variant="info"
+      status="info"
       classNames={{
         root: "rounded-mid ring-2 ring-primary/35",
         trigger: "rounded-mid",
@@ -406,7 +404,7 @@ export const CustomClassNames: Story = {
 export const GlossWithCompoundLayout: Story = {
   name: "Gloss — grid like Alert",
   render: () => (
-    <Tooltip delayShowMs={0} surface="gloss" variant="info">
+    <Tooltip delayShowMs={0} variant="gloss" status="info">
       <Tooltip.Trigger>
         <Button variant="gloss" type="button">
           Gloss compound

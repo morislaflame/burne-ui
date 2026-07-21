@@ -25,7 +25,6 @@ export const Tooltip = Object.assign(TooltipRoot, {
 
 export type {
   TooltipVariant,
-  TooltipSurface,
   TooltipSize,
   TooltipSide,
   TooltipClassNames,

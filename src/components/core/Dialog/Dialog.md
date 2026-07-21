@@ -1,6 +1,6 @@
 # Dialog
 
-Модальное окно на нативном `<dialog>` с порталом в `document.body`, GSAP enter/leave и compound-компоновкой. Только **controlled** API (`open` + `onOpenChange`).
+Модальное окно на нативном `<dialog>` с порталом в `document.body`, GSAP enter/leave и compound-компоновкой. Controlled / uncontrolled: `open` / `defaultOpen` / `onOpenChange`.
 
 ## Импорт
 
@@ -21,8 +21,9 @@ import {
 
 | Prop | Тип | Обязательный | Описание |
 |------|-----|--------------|----------|
-| `open` | `boolean` | да | Открыт ли диалог |
-| `onOpenChange` | `(open: boolean) => void` | да | Смена состояния |
+| `open` | `boolean` | нет | Controlled: открыт ли диалог |
+| `defaultOpen` | `false` | нет | Uncontrolled начальное состояние |
+| `onOpenChange` | `(open: boolean) => void` | нет | Смена состояния |
 | `children` | `ReactNode` | — | `Dialog.Panel`, `Dialog.Trigger`, … |
 | `classNames` | `DialogClassNames` | — | Слоты всех подчастей |
 

@@ -5,6 +5,7 @@ import { expect, screen } from "storybook/test";
 import { IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
+import { Button } from "@/components/core/Button";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
@@ -140,7 +141,7 @@ export const CustomListBox: Story = {
 type SelectStoryProps = ComponentProps<typeof Select>;
 
 export const Controlled: Story = {
-  name: "Controlled",
+  name: "Controlled value",
   render: function ControlledStory() {
     const [value, setValue] = useState("react");
     const options: SelectOption[] = [
@@ -158,6 +159,55 @@ export const Controlled: Story = {
       />
     );
   },
+};
+
+export const ControlledOpen: Story = {
+  name: "Controlled open",
+  parameters: {
+    docs: {
+      description: {
+        story: "`open` / `onOpenChange` control the popup independently of value.",
+      },
+    },
+  },
+  render: function ControlledOpenStory() {
+    const [open, setOpen] = useState(false);
+    return (
+      <div className="flex w-full flex-col gap-mid">
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open menu
+        </Button>
+        <Select
+          label="Framework"
+          options={sampleOptions}
+          defaultValue="ru"
+          open={open}
+          onOpenChange={setOpen}
+          hint={open ? "Popup open" : "Popup closed"}
+        />
+      </div>
+    );
+  },
+};
+
+export const DefaultOpen: Story = {
+  name: "Uncontrolled open (defaultOpen)",
+  parameters: {
+    docs: {
+      description: {
+        story: "`defaultOpen` opens the popup on mount without parent state.",
+      },
+    },
+  },
+  render: () => (
+    <Select
+      label="Language"
+      options={sampleOptions}
+      defaultValue="en"
+      defaultOpen
+      hint="Popup starts open via defaultOpen"
+    />
+  ),
 };
 
 export const Sizes: Story = {

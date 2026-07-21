@@ -276,7 +276,7 @@ export function useTimeFieldControlState({
   };
 
   const statusTinted =
-    status === "danger" || status === "success" || status === "warning";
+    status === "danger" || status === "success" || status === "info" || status === "warning";
 
   const shellSurface = timeFieldShellSurfaceClass({ variant, status, statusTinted });
 

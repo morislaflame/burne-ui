@@ -9,7 +9,6 @@ import {
   Tooltip,
   type TooltipRootProps,
   type TooltipVariant,
-  type TooltipSurface,
   type TooltipSize,
   type TooltipSide,
   type TooltipClassNames,
@@ -39,7 +38,7 @@ import {
 ### Compound с title / description
 
 ```tsx
-<Tooltip variant="info" surface="gloss" delayShowMs={0}>
+<Tooltip status="info" variant="gloss" delayShowMs={0}>
   <Tooltip.Trigger>
     <Button type="button">Статус</Button>
   </Tooltip.Trigger>
@@ -57,7 +56,7 @@ import {
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `danger` \| `success` \| `info` \| `warning` |
-| `surface` | `default` | `default` \| `gloss` |
+| `status` | `default` | `default` | `danger` | `success` | `info` | `warning` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `side` | `top` | `top` \| `bottom` \| `left` \| `right` (+ auto-flip) |
 | `delayShowMs` | `240` | Задержка перед показом |
@@ -83,7 +82,7 @@ import {
 
 `root` и `trigger` применяются к триггеру (в т.ч. при `cloneElement` единственного child).
 
-## Variant / surface / размеры
+## Variant / status / размеры
 
 ### Variant
 
@@ -186,8 +185,8 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 |----------|---------|---------------------------|----------------|
 | Portal enter/exit | `animatePortalOpen/Close` | `tooltipDuration`, `interactiveEase` | `surface` |
 | Show delay | `setTimeout` | — | `delayShowMs` |
-| Persistent shadow | `usePersistentElShadow` | — | `surface="default"` |
-| Gloss ref | gloss utils | — | `surface="gloss"` |
+| Persistent shadow | `usePersistentElShadow` | — | `variant="default"` |
+| Gloss ref | gloss utils | — | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side` |
 
 ## Токены и CSS
@@ -241,8 +240,8 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 ```tsx
 <Tooltip
   delayShowMs={0}
-  variant="info"
-  surface="gloss"
+  status="info"
+  variant="gloss"
   classNames={{
     panel: "border-primary/30",
     title: "text-primary font-semibold",
@@ -272,7 +271,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 - **Не фиксируйте `transform`/`left`/`top` на `content`** — positioning + GSAP.
 - Semantic variants: icon auto unless `showIcon={false}` или custom `icon`.
 - Gloss grid: `Tooltip.Message` + Icon/Title/Description как у `Alert`.
-- **Порядок мержа:** variant/surface → `classNames.slot` → `className` подчасти.
+- **Порядок мержа:** variant/status → `classNames.slot` → `className` подчасти.
 
 ## Интеграции
 
@@ -310,4 +309,4 @@ Tooltip/
 
 ## Storybook
 
-`Core Components/Tooltip` — variants, surfaces, gloss grid, semantic icons, light theme, a11y, `classNames`.
+`Core Components/Tooltip` — variants, statuses, gloss grid, semantic icons, light theme, a11y, `classNames`.

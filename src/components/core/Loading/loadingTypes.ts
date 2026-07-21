@@ -4,7 +4,7 @@ import type { ComponentSize } from "@/components/core/utils/componentSize";
 
 export type LoadingSize = ComponentSize;
 
-export type LoadingVariant = "spinner" | "dots";
+export type LoadingType = "spinner" | "dots";
 
 export type LoadingColor =
   | "primary"
@@ -17,7 +17,7 @@ export type LoadingColor =
   | "warning";
 
 export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
-  variant?: LoadingVariant;
+  type?: LoadingType;
   size?: LoadingSize;
   color?: LoadingColor;
   label?: string;

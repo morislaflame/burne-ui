@@ -50,8 +50,10 @@ export type TableContentProps = HTMLAttributes<HTMLTableElement> & {
   "aria-label"?: string;
   selectionMode?: SelectionMode;
   selectedKeys?: Selection;
+  defaultSelectedKeys?: Selection;
   onSelectionChange?: (keys: Selection) => void;
   sortDescriptor?: SortDescriptor;
+  defaultSortDescriptor?: SortDescriptor;
   onSortChange?: (descriptor: SortDescriptor) => void;
 };
 

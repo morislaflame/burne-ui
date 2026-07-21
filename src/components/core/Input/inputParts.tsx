@@ -283,7 +283,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
 
     const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
     const statusTinted =
-      status === "danger" || status === "success" || status === "warning";
+      status === "danger" || status === "success" || status === "info" || status === "warning";
     const isGloss = variant === "gloss";
 
     const shellMotion = useInputShellMotion({

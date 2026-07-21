@@ -15,10 +15,12 @@ export const COLOR_PICKER_SWATCH_SIZE_MAP: Record<ColorPickerSize, ColorSwatchSi
   small: "small",
   base: "base",
   mid: "mid",
+  large: "large",
 };
 
 export const COLOR_PICKER_SLIDER_SIZE_MAP: Record<ColorPickerSize, ColorSliderSize> = {
   small: "small",
   base: "base",
   mid: "mid",
+  large: "large",
 };

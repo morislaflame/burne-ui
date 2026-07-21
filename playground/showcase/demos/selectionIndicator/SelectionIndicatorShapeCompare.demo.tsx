@@ -13,7 +13,7 @@ export function SelectionIndicatorShapeCompareDemo() {
       </Text>
       <div className="flex flex-wrap items-end gap-xlarge">
         <div className="flex flex-col items-center gap-xsmall">
-          <SelectionIndicator size="large" variant="base" selected={selected} check />
+          <SelectionIndicator size="large" variant="default" selected={selected} check />
           <Text as="span" variant="tools" className="text-muted">
             rounded-full
           </Text>
@@ -21,7 +21,7 @@ export function SelectionIndicatorShapeCompareDemo() {
         <div className="flex flex-col items-center gap-xsmall">
           <SelectionIndicator
             size="large"
-            variant="base"
+            variant="default"
             selected={selected}
             check
             classNames={{

@@ -3,8 +3,9 @@ import type { FieldsetHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { LabelProps } from "@/components/core/Label";
 import type { TextVariant } from "@/components/core/Text";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
-export type FieldHintStatus = "default" | "danger" | "success" | "warning";
+export type FieldHintStatus = SemanticStatus;
 export type FieldSetSize = ComponentSize;
 
 export type FieldClassNames = {

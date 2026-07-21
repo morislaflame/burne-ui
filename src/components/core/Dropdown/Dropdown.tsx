@@ -39,7 +39,7 @@ export type {
   DropdownItemHintProps,
   DropdownItemIconProps,
   DropdownItemIndicatorProps,
-  DropdownItemVariant,
+  DropdownItemStatus,
   DropdownSubProps,
   DropdownSubTriggerProps,
   DropdownSubContentProps,

@@ -47,7 +47,8 @@ const [page, setPage] = useState(1);
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `page` | — | Текущая страница (1-based) |
+| `page` | — | Controlled: текущая страница (1-based) |
+| `defaultPage` | — | Uncontrolled начальная страница |
 | `totalPages` | — | Всего страниц |
 | `onPageChange` | — | `(page: number) => void` |
 | `siblingCount` | `1` | Соседние страницы вокруг current |
@@ -72,7 +73,7 @@ const [page, setPage] = useState(1);
 | `Pagination.Pages` | Auto range из context |
 | `Pagination.Ellipsis` | Декоративное `…` |
 
-`Pagination.Pages` требует `page` и `totalPages` на root.
+`Pagination.Pages` требует `page` (или `defaultPage`) и `totalPages` на root.
 
 ## Layout / responsive
 

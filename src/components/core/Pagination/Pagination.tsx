@@ -41,6 +41,7 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
       className,
       classNames,
       page,
+      defaultPage,
       totalPages,
       onPageChange,
       siblingCount,
@@ -51,6 +52,7 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
   ) {
     const { contextValue, ariaLabel: resolvedAriaLabel } = usePaginationRootState({
       page,
+      defaultPage,
       totalPages,
       onPageChange,
       siblingCount,

@@ -7,7 +7,7 @@ export function TooltipClassNamesFullDemo() {
   return (
     <Tooltip
       delayShowMs={0}
-      variant="info"
+      status="info"
       side="top"
       classNames={{
         root: "rounded-full ring-2 ring-primary/35",
@@ -40,7 +40,7 @@ export function TooltipClassNamesGlossDemo() {
   return (
     <Tooltip
       delayShowMs={0}
-      surface="gloss"
+      variant="gloss"
       side="bottom"
       classNames={{
         glossContent: "gap-y-xsmall",

@@ -22,7 +22,7 @@ export type {
   SkeletonCircleProps,
   SkeletonTextProps,
   SkeletonBlockProps,
-  SkeletonVariant,
+  SkeletonAnimation,
   SkeletonRadius,
   SkeletonClassNames,
   SkeletonCircleClassNames,
@@ -32,7 +32,7 @@ export type {
 
 export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function SkeletonRoot(
   {
-    variant: variantProp = "wave",
+    animation: animationProp = "wave",
     radius: radiusProp = "small",
     className,
     classNames,
@@ -42,8 +42,8 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
   },
   ref,
 ) {
-  const { variant, radius, isWave } = useSkeletonRootState({
-    variant: variantProp,
+  const { animation, radius, isWave } = useSkeletonRootState({
+    animation: animationProp,
     radius: radiusProp,
   });
 
@@ -56,7 +56,7 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
         classNames?.root,
         className,
       )}
-      style={{ ...skeletonVariantStyle(variant), ...style }}
+      style={{ ...skeletonVariantStyle(animation), ...style }}
       {...skeletonPresentationProps()}
       {...rest}
     >

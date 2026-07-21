@@ -234,6 +234,80 @@ export const Sorting: Story = {
   },
 };
 
+export const UncontrolledSorting: Story = {
+  name: "Uncontrolled sorting (defaultSortDescriptor)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`defaultSortDescriptor` owns header sort state. `onSortChange` syncs row order without controlled `sortDescriptor`.",
+      },
+    },
+  },
+  render: function UncontrolledSortingStory() {
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+      column: "name",
+      direction: "ascending",
+    });
+
+    const sortedUsers = useMemo(
+      () =>
+        [...users].sort((a, b) => {
+          const col = sortDescriptor.column as keyof User;
+          const cmp = String(a[col]).localeCompare(String(b[col]));
+          return sortDescriptor.direction === "descending" ? -cmp : cmp;
+        }),
+      [sortDescriptor],
+    );
+
+    return (
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content
+            aria-label="Team (uncontrolled sorting)"
+            className="min-w-[600px]"
+            defaultSortDescriptor={{ column: "name", direction: "ascending" }}
+            onSortChange={setSortDescriptor}
+          >
+            <Table.Header>
+              <Table.Column allowsSorting isRowHeader id="name">
+                {({ sortDirection }) => (
+                  <SortableHeader sortDirection={sortDirection}>Name</SortableHeader>
+                )}
+              </Table.Column>
+              <Table.Column allowsSorting id="role">
+                {({ sortDirection }) => (
+                  <SortableHeader sortDirection={sortDirection}>Role</SortableHeader>
+                )}
+              </Table.Column>
+              <Table.Column allowsSorting id="status">
+                {({ sortDirection }) => (
+                  <SortableHeader sortDirection={sortDirection}>Status</SortableHeader>
+                )}
+              </Table.Column>
+              <Table.Column allowsSorting id="email">
+                {({ sortDirection }) => (
+                  <SortableHeader sortDirection={sortDirection}>Email</SortableHeader>
+                )}
+              </Table.Column>
+            </Table.Header>
+            <Table.Body>
+              {sortedUsers.map((user) => (
+                <Table.Row key={user.id} id={user.id}>
+                  <Table.Cell>{user.name}</Table.Cell>
+                  <Table.Cell>{user.role}</Table.Cell>
+                  <Table.Cell>{user.status}</Table.Cell>
+                  <Table.Cell>{user.email}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+    );
+  },
+};
+
 export const ClickToSelect: Story = {
   name: "Row selection (click)",
   render: function ClickToSelectStory() {
@@ -278,6 +352,64 @@ export const ClickToSelect: Story = {
         </Table>
         <p className="text-small text-muted">
           Selected: <span className="font-medium text-foreground">{selectedLabel}</span>
+        </p>
+      </div>
+    );
+  },
+};
+
+export const UncontrolledSelection: Story = {
+  name: "Uncontrolled selection (defaultSelectedKeys)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`defaultSelectedKeys` owns selection. Optional `onSelectionChange` observes without controlled `selectedKeys`.",
+      },
+    },
+  },
+  render: function UncontrolledSelectionStory() {
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([2, 4]));
+
+    const selectedLabel =
+      selectedKeys === "all"
+        ? "All"
+        : (selectedKeys as Set<number>).size > 0
+          ? Array.from(selectedKeys as Set<number>).join(", ")
+          : "None";
+
+    return (
+      <div className="flex flex-col gap-base">
+        <Table>
+          <Table.ScrollContainer>
+            <Table.Content
+              aria-label="Team (uncontrolled selection)"
+              className="min-w-[600px]"
+              selectionMode="multiple"
+              defaultSelectedKeys={new Set([2, 4])}
+              onSelectionChange={setSelectedKeys}
+            >
+              <Table.Header>
+                <Table.Column isRowHeader>Name</Table.Column>
+                <Table.Column>Role</Table.Column>
+                <Table.Column>Status</Table.Column>
+                <Table.Column>Email</Table.Column>
+              </Table.Header>
+              <Table.Body>
+                {users.map((user) => (
+                  <Table.Row key={user.id} id={user.id}>
+                    <Table.Cell>{user.name}</Table.Cell>
+                    <Table.Cell>{user.role}</Table.Cell>
+                    <Table.Cell>{user.status}</Table.Cell>
+                    <Table.Cell>{user.email}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Content>
+          </Table.ScrollContainer>
+        </Table>
+        <p className="text-small text-muted">
+          Reported: <span className="font-medium text-foreground">{selectedLabel}</span>
         </p>
       </div>
     );

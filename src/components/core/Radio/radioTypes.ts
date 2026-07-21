@@ -13,7 +13,7 @@ import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
 
-export type RadioVariant = "default" | "gloss";
+export type RadioVariant = "default" | "secondary" | "outline" | "gloss";
 
 export type RadioSize = "small" | "base" | "mid" | "large";
 

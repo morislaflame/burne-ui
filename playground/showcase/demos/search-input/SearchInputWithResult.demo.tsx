@@ -11,7 +11,7 @@ export function SearchInputWithResultDemo() {
         aria-label="Search with hint"
         placeholder="Enter your request…"
         value={search}
-        onValueChange={setSearch}
+        onChange={(e) => setSearch(e.target.value)}
         className="w-64"
       />
       {search ? (

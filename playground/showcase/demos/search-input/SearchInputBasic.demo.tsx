@@ -10,7 +10,7 @@ export function SearchInputBasicDemo() {
       aria-label="Search"
       placeholder="Find component…"
       value={search}
-      onValueChange={setSearch}
+      onChange={(e) => setSearch(e.target.value)}
       className="w-64"
     />
   );

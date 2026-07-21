@@ -2,7 +2,7 @@ import { cn } from "@/utils/cn";
 
 export type SelectionIndicatorSize = "small" | "base" | "mid" | "large";
 
-export type SelectionIndicatorVariant = "base" | "secondary" | "outline" | "gloss";
+export type SelectionIndicatorVariant = "default" | "secondary" | "outline" | "gloss";
 
 export const SELECTION_INDICATOR_SIZE_CLASS: Record<SelectionIndicatorSize, string> = {
   small: "selection-indicator-small",
@@ -147,7 +147,7 @@ export function selectionIndicatorVariantClass(
   _selected: boolean,
 ): string {
   switch (variant) {
-    case "base":
+    case "default":
       return "border border-primary bg-surface";
     case "secondary":
       return "border-token bg-secondary";

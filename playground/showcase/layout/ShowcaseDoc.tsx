@@ -75,7 +75,7 @@ function ShowcaseDocApiRow({
 
 /**
  * Standard customization block for showcase-documentation.
- * @param gloss — `true` → `variant="gloss"`; string - arbitrary prop (for example. `surface="gloss"`).
+ * @param gloss — `true` → `variant="gloss"`; string - arbitrary prop (for example. `variant="gloss"`).
  */
 function ShowcaseDocCustomization({
   gloss,

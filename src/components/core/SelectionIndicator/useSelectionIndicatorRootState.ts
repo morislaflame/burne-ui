@@ -26,7 +26,7 @@ import { useSelectionIndicatorAnimation } from "./useSelectionIndicatorAnimation
 
 export function useSelectionIndicatorRootState({
   size = "base",
-  variant = "base",
+  variant = "default",
   selected,
   check = false,
   dot = false,

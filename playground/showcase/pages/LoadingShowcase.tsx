@@ -27,7 +27,7 @@ export function LoadingShowcase() {
 
       <ShowcaseSection
         title="Jumping dots"
-        description='variant="dots" — wave 1 → 2 → 3. Speed: configureMotion() (loadingDotsDuration, enableLoadingDots). Slider in panel Motion.'
+        description='type="dots" — wave 1 → 2 → 3. Speed: configureMotion() (loadingDotsDuration, enableLoadingDots). Slider in panel Motion.'
       >
         <ShowcaseDemoFromFile Demo={LoadingDotsWaveDemo} source={loadingDotsWaveSource} />
       </ShowcaseSection>

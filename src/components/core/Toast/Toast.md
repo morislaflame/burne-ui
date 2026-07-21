@@ -71,7 +71,7 @@ Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Ind
 | `status` | `default` | Семантический тон поверхности |
 | `variant` | `default` | `default` \| `gloss` |
 | `isLoading` | `false` | Spinner вместо status-иконки |
-| `onClose` | — | Показывает close-кнопку (simple API) |
+| `onClose` | — | Показывает close-кнопку (simple API). **Исключение state-API:** Toast не controlled по `open` — dismiss через Provider/`useToast`; `onClose` только гейтит кнопку и колбэк dismiss. Не путать с `onOpenChange` оверлеев. |
 | `classNames` | — | Слоты карточки |
 
 ## variant и status

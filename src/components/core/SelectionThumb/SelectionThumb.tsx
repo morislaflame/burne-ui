@@ -42,7 +42,7 @@ export function SelectionThumb({
 
   const fillClass = gloss
     ? SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS
-    : selectionIndicatorFillClass("base");
+    : selectionIndicatorFillClass("default");
 
   return (
     <span

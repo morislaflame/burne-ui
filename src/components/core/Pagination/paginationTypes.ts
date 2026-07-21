@@ -43,6 +43,7 @@ export type PaginationContextValue = {
 export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children?: ReactNode;
   page?: number;
+  defaultPage?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
   siblingCount?: number;

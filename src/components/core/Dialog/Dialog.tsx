@@ -38,12 +38,13 @@ export type {
 
 export function DialogRoot({
   open,
+  defaultOpen = false,
   onOpenChange,
   size = "base",
   children,
   classNames,
 }: DialogProps) {
-  const state = useDialogRootState({ open, onOpenChange, size });
+  const state = useDialogRootState({ open, defaultOpen, onOpenChange, size });
 
   return (
     <DialogProvider value={state.contextValue}>

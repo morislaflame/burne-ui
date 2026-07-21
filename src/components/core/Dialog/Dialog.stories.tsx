@@ -7,6 +7,7 @@ import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 import { Dialog, type DialogSize } from ".";
+import { useDialog } from "./dialogContext";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -146,6 +147,57 @@ export const WithTrigger: Story = {
             <Button type="button" size="base" variant="primary" onClick={() => setOpen(false)}>
               Done
             </Button>
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
+    );
+  },
+};
+
+// ─── Uncontrolled (defaultOpen) ───────────────────────────────────────────────
+
+function DialogUncontrolledDone() {
+  const { onOpenChange } = useDialog();
+  return (
+    <Button type="button" size="base" variant="primary" onClick={() => onOpenChange(false)}>
+      Done
+    </Button>
+  );
+}
+
+export const Uncontrolled: Story = {
+  name: "Uncontrolled (defaultOpen)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Without `open` — internal state via `defaultOpen` (here `false`). Trigger and Close/Done drive open/close through context.",
+      },
+    },
+  },
+  render: function UncontrolledDemo() {
+    return (
+      <Dialog>
+        <Dialog.Trigger asChild>
+          <Button type="button">Open dialog</Button>
+        </Dialog.Trigger>
+        <Dialog.Panel>
+          <Dialog.Header>
+            <Dialog.HeadingBlock>
+              <Dialog.Title>Uncontrolled dialog</Dialog.Title>
+              <Dialog.Description>
+                No React state on the parent — only Trigger / Close.
+              </Dialog.Description>
+            </Dialog.HeadingBlock>
+            <Dialog.Close />
+          </Dialog.Header>
+          <Dialog.Body>
+            <p className="text-sm text-muted">
+              Use <code className="text-foreground">defaultOpen</code> for the initial state.
+            </p>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <DialogUncontrolledDone />
           </Dialog.Footer>
         </Dialog.Panel>
       </Dialog>

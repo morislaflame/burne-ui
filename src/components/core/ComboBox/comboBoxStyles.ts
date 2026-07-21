@@ -17,6 +17,7 @@ import { cn } from "@/utils/cn";
 const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
+  info: "bg-surface-tint-info",
   warning: "bg-surface-tint-warning",
 };
 

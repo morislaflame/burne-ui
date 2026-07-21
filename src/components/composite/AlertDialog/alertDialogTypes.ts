@@ -42,8 +42,9 @@ export type AlertDialogSizePreset = {
 };
 
 export type AlertDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children?: ReactNode;
   status?: AlertStatus;
   variant?: AlertVariant;
@@ -111,7 +112,7 @@ export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
 export type UseAlertDialogRootStateProps = Pick<
   AlertDialogProps,
-  "open" | "onOpenChange" | "status" | "variant" | "size"
+  "open" | "defaultOpen" | "onOpenChange" | "status" | "variant" | "size"
 >;
 
 export type UseAlertDialogModalMotionProps = {

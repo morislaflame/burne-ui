@@ -35,10 +35,10 @@ export type {
 
 export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function AccordionRoot(
   {
-    defaultOpenId = null,
+    defaultValue = null,
     defaultOpenIndex = null,
-    openId,
-    onOpenIdChange,
+    value,
+    onValueChange,
     size = "base",
     className,
     children,
@@ -47,10 +47,10 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function
   ref,
 ) {
   const { contextValue } = useAccordionRootState({
-    defaultOpenId,
+    defaultValue,
     defaultOpenIndex,
-    openId,
-    onOpenIdChange,
+    value,
+    onValueChange,
     size,
   });
 

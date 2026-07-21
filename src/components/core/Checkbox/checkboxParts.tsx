@@ -230,7 +230,7 @@ export function CheckboxLabel({
         inheritColor
         className={cn(
           field.isDisabled && CHECKBOX_LABEL_TEXT_DISABLED_CLASS,
-          !field.isDisabled && field.danger && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
+          !field.isDisabled && field.status === "danger" && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
           slotClassNames.labelText,
         )}
       >
@@ -309,7 +309,7 @@ export function CheckboxSimpleBody({
   textColRef,
   size,
   isDisabled,
-  danger,
+  status,
   hintId,
   errorId,
 }: {
@@ -322,7 +322,7 @@ export function CheckboxSimpleBody({
   textColRef: React.RefObject<HTMLElement | null>;
   size: CheckboxSize;
   isDisabled: boolean;
-  danger: boolean;
+  status: boolean;
   hintId: string;
   errorId: string;
 }) {
@@ -348,7 +348,7 @@ export function CheckboxSimpleBody({
           className={cn(
             CHECKBOX_SIMPLE_LABEL_TEXT_CLASS,
             isDisabled && CHECKBOX_LABEL_TEXT_DISABLED_CLASS,
-            !isDisabled && danger && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
+            !isDisabled && status && CHECKBOX_LABEL_TEXT_DANGER_CLASS,
             slotClassNames.simpleLabelText,
             slotClassNames.labelText,
           )}

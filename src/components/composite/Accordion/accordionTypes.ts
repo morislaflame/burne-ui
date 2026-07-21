@@ -10,12 +10,14 @@ import type {
   ExpandableTriggerProps,
 } from "@/components/core/Expandable";
 
-export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  defaultOpenId?: string | null;
-  /** Initial open item by index (0-based), if `value` is not provided. */
+export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "defaultValue"> & {
+  /** Controlled: id of the open item (`null` = all closed). */
+  value?: string | null;
+  /** Uncontrolled initial id (takes priority over `defaultOpenIndex`). */
+  defaultValue?: string | null;
+  /** Initial open item by index (0-based), if `defaultValue` is not provided. */
   defaultOpenIndex?: number | null;
-  openId?: string | null;
-  onOpenIdChange?: (id: string | null) => void;
+  onValueChange?: (value: string | null) => void;
   size?: ExpandableSize;
   children?: ReactNode;
 };
@@ -50,8 +52,8 @@ export type AccordionPanelProps = HTMLAttributes<HTMLDivElement>;
 export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
 
 export type AccordionContextValue = {
-  openId: string | null;
-  setOpenId: (id: string | null) => void;
+  value: string | null;
+  setValue: (value: string | null) => void;
   getItemId: (explicit?: string) => string;
   size: ExpandableSize;
 };

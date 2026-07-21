@@ -21,7 +21,7 @@ import {
 <SearchInput
   placeholder="Найти…"
   defaultExpanded
-  onValueChange={setQuery}
+  onChange={(e) => setQuery(e.target.value)}
 />
 
 <SearchInput
@@ -44,7 +44,7 @@ import {
 | `onExpandedChange` | — | Колбэк раскрытия |
 | `expandedWidth` | по size | Ширина в px (240–360) |
 | `collapseOnBlur` | `true` | Свернуть при blur если пусто |
-| `onValueChange` | — | Строка запроса |
+| `value` / `defaultValue` / `onChange` | — | Нативный input state (как у `Input`) |
 | `ripple` | `false` | `<Ripple color="neutral" />` |
 | `groupSegment` | — | Сегмент ButtonGroup |
 | `disabled` / `readOnly` | — | Блокировка |

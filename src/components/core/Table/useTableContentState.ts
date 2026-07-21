@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from "react";
 
+import { useControllableState } from "@/components/core/utils/useControllableState";
+
 import {
   EMPTY_TABLE_SELECTION,
   isRowInSelection,
@@ -10,17 +12,37 @@ import type { Selection, SelectionMode, SortDescriptor, TableContentContextValue
 export function useTableContentState({
   selectionMode = "none",
   selectedKeys: selectedKeysProp,
+  defaultSelectedKeys,
   onSelectionChange,
-  sortDescriptor,
+  sortDescriptor: sortDescriptorProp,
+  defaultSortDescriptor,
   onSortChange,
 }: {
   selectionMode?: SelectionMode;
   selectedKeys?: Selection;
+  defaultSelectedKeys?: Selection;
   onSelectionChange?: (keys: Selection) => void;
   sortDescriptor?: SortDescriptor;
+  defaultSortDescriptor?: SortDescriptor;
   onSortChange?: (descriptor: SortDescriptor) => void;
 }): TableContentContextValue {
-  const selectedKeys: Selection = selectedKeysProp ?? EMPTY_TABLE_SELECTION;
+  const [selectedKeys, setSelectedKeys] = useControllableState<Selection>({
+    value: selectedKeysProp,
+    defaultValue: defaultSelectedKeys ?? EMPTY_TABLE_SELECTION,
+    onChange: onSelectionChange,
+  });
+
+  const [sortDescriptor, setSortDescriptor] = useControllableState<
+    SortDescriptor | undefined
+  >({
+    value: sortDescriptorProp,
+    defaultValue: defaultSortDescriptor,
+    onChange: onSortChange
+      ? (next) => {
+          if (next !== undefined) onSortChange(next);
+        }
+      : undefined,
+  });
 
   const isRowSelected = useCallback(
     (key: string | number) => isRowInSelection(selectedKeys, key),
@@ -30,9 +52,9 @@ export function useTableContentState({
   const onRowSelect = useCallback(
     (key: string | number) => {
       const next = toggleSelectionKey({ selectionMode, selectedKeys, key });
-      if (next && onSelectionChange) onSelectionChange(next);
+      if (next) setSelectedKeys(next);
     },
-    [onSelectionChange, selectedKeys, selectionMode],
+    [selectedKeys, selectionMode, setSelectedKeys],
   );
 
   return useMemo(
@@ -42,8 +64,8 @@ export function useTableContentState({
       onRowSelect,
       isRowSelected,
       sortDescriptor,
-      onSortChange,
+      onSortChange: setSortDescriptor,
     }),
-    [isRowSelected, onRowSelect, onSortChange, selectedKeys, selectionMode, sortDescriptor],
+    [isRowSelected, onRowSelect, selectedKeys, selectionMode, setSortDescriptor, sortDescriptor],
   );
 }

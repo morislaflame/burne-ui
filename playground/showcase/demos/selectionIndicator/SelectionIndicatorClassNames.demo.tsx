@@ -14,7 +14,7 @@ export function SelectionIndicatorClassNamesDemo() {
       <div className="flex flex-wrap items-end gap-xlarge">
         <SelectionIndicator
           size="large"
-          variant="base"
+          variant="default"
           selected={selected}
           check
           classNames={{
@@ -23,7 +23,7 @@ export function SelectionIndicatorClassNamesDemo() {
             mark: "text-danger-foreground",
           }}
         />
-        <SelectionIndicator size="large" variant="base" selected={selected} check />
+        <SelectionIndicator size="large" variant="default" selected={selected} check />
       </div>
       <label className="flex cursor-pointer items-center gap-small text-sm">
         <input

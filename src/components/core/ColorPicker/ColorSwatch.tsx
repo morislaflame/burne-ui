@@ -8,7 +8,7 @@ import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotio
 import { cn } from "@/utils/cn";
 
 
-export type ColorSwatchSize = "xsmall" | "small" | "base" | "mid" | "large" | "xlarge";
+export type ColorSwatchSize = "small" | "base" | "mid" | "large";
 export type ColorSwatchShape = "square" | "circle" | "rounded";
 
 export type ColorSwatchProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color"> & {
@@ -20,12 +20,10 @@ export type ColorSwatchProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "co
 
 
 const SIZE_CLASS: Record<ColorSwatchSize, string> = {
-  xsmall: "h-4 w-4",
   small:  "h-5 w-5",
   base:   "h-6 w-6",
   mid:    "h-7 w-7",
   large:  "h-8 w-8",
-  xlarge: "h-10 w-10",
 };
 
 const SHAPE_CLASS: Record<ColorSwatchShape, string> = {

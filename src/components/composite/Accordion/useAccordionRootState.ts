@@ -1,19 +1,19 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { accordionDefaultOpenId } from "./accordionAPI";
+import { accordionDefaultValue } from "./accordionAPI";
 import type { AccordionContextValue, UseAccordionRootStateProps } from "./accordionTypes";
 
 export function useAccordionRootState({
-  defaultOpenId: defaultOpenIdProp = null,
+  defaultValue: defaultValueProp = null,
   defaultOpenIndex = null,
-  openId: openIdProp,
-  onOpenIdChange,
+  value: valueProp,
+  onValueChange,
   size = "base",
 }: UseAccordionRootStateProps) {
-  const controlled = openIdProp !== undefined;
-  const defaultOpenId = accordionDefaultOpenId(defaultOpenIdProp, defaultOpenIndex);
-  const [internalOpenId, setInternalOpenId] = useState<string | null>(defaultOpenId);
-  const openId = controlled ? openIdProp : internalOpenId;
+  const controlled = valueProp !== undefined;
+  const defaultValue = accordionDefaultValue(defaultValueProp, defaultOpenIndex);
+  const [internalValue, setInternalValue] = useState<string | null>(defaultValue);
+  const value = controlled ? valueProp : internalValue;
   const itemIndexRef = useRef(0);
 
   itemIndexRef.current = 0;
@@ -25,22 +25,22 @@ export function useAccordionRootState({
     return id;
   }, []);
 
-  const setOpenId = useCallback(
+  const setValue = useCallback(
     (next: string | null) => {
-      if (!controlled) setInternalOpenId(next);
-      onOpenIdChange?.(next);
+      if (!controlled) setInternalValue(next);
+      onValueChange?.(next);
     },
-    [controlled, onOpenIdChange],
+    [controlled, onValueChange],
   );
 
   const contextValue = useMemo<AccordionContextValue>(
     () => ({
-      openId,
-      setOpenId,
+      value,
+      setValue,
       getItemId,
       size,
     }),
-    [getItemId, openId, setOpenId, size],
+    [getItemId, value, setValue, size],
   );
 
   return { contextValue };

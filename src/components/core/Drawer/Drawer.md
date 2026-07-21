@@ -1,6 +1,6 @@
 # Drawer
 
-Боковая (или верхняя/нижняя) панель поверх контента: нативный `<dialog>`, slide-in/out по `placement`, опциональный drag-to-dismiss через handle. Controlled API (`open` + `onOpenChange`).
+Боковая (или верхняя/нижняя) панель поверх контента: нативный `<dialog>`, slide-in/out по `placement`, опциональный drag-to-dismiss через handle. Controlled / uncontrolled: `open` / `defaultOpen` / `onOpenChange`.
 
 ## Импорт
 
@@ -22,7 +22,8 @@ import {
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `open` | — | Controlled состояние |
-| `onOpenChange` | — | Колбэк закрытия/открытия |
+| `defaultOpen` | `false` | Uncontrolled начальное состояние |
+| `onOpenChange` | — | `(open: boolean) => void` |
 | `placement` | `right` | `left` \| `right` \| `top` \| `bottom` |
 | `classNames` | — | Слоты портала и панели |
 
@@ -58,7 +59,7 @@ const [open, setOpen] = useState(false);
   <Drawer.Trigger asChild>
     <Button>Меню</Button>
   </Drawer.Trigger>
-  <Drawer.Panel size="default">
+  <Drawer.Panel extent="default">
     <Drawer.Handle />
     <Drawer.Header>
       <Drawer.HeadingBlock>
@@ -256,7 +257,7 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
     footer: "border-t border-primary/20 pt-small",
   }}
 >
-  <Drawer.Panel size="mid" variant="gloss">
+  <Drawer.Panel extent="mid" variant="gloss">
     <Drawer.Handle />
     <Drawer.Header>
       <Drawer.HeadingBlock>

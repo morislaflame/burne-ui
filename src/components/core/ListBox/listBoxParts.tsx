@@ -364,7 +364,7 @@ export function ListBoxIcon({ className, ...props }: ListBoxIconProps) {
 ListBoxIcon.displayName = "ListBoxIcon";
 
 export function ListBoxItemIndicator({
-  variant = "base",
+  variant = "default",
   size = "small",
   check,
   children,

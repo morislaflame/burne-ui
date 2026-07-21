@@ -29,6 +29,7 @@ export const TIME_FIELD_STATUS_TINT_SHELL_CLASS: Record<
 > = {
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
+  info: "bg-surface-tint-info",
   warning: "bg-surface-tint-warning",
 };
 
@@ -38,6 +39,7 @@ export const TIME_FIELD_STATUS_TINT_AFFIX_CLASS: Record<
 > = {
   danger: "bg-surface-tint-danger",
   success: "bg-surface-tint-success",
+  info: "bg-surface-tint-info",
   warning: "bg-surface-tint-warning",
 };
 

@@ -1,12 +1,13 @@
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { TextVariant } from "@/components/core/Text";
 
 import {
   TOOLTIP_ARROW_CLASS,
   TOOLTIP_ARROW_SHELL_PAD,
 } from "./tooltipPosition";
-import type { TooltipSize, TooltipSurface, TooltipVariant } from "./tooltipTypes";
+import type { TooltipSize, TooltipVariant } from "./tooltipTypes";
 
 import { cn } from "@/utils/cn";
 
@@ -14,14 +15,19 @@ export { TOOLTIP_ARROW_CLASS, TOOLTIP_ARROW_SHELL_PAD };
 
 export const TOOLTIP_DEFAULT_OFFSET = 8;
 
-export const TOOLTIP_SURFACE_CLASS: Record<TooltipVariant, string> = {
+export const TOOLTIP_SURFACE_CLASS: Record<SemanticStatus, string> = {
   default: "border-token bg-surface",
-  outline: "bg-transparent border-token",
-  secondary: "bg-secondary border-token",
   danger: "bg-surface-tint-danger border-token",
   success: "bg-surface-tint-success border-token",
   info: "bg-surface-tint-info border-token",
   warning: "bg-surface-tint-warning border-token",
+};
+
+export const TOOLTIP_VARIANT_SURFACE_CLASS: Record<TooltipVariant, string> = {
+  default: "border-token bg-surface",
+  outline: "bg-transparent border-token",
+  secondary: "bg-secondary border-token",
+  gloss: "",
 };
 
 export const TOOLTIP_TEXT_LAYOUT: Record<TooltipSize, string> = {
@@ -63,6 +69,11 @@ export const TOOLTIP_ICON_TEXT_CLASS: Record<TooltipVariant, string> = {
   default: "text-foreground",
   outline: "text-foreground",
   secondary: "text-secondary-foreground",
+  gloss: "text-foreground",
+};
+
+export const TOOLTIP_STATUS_ICON_CLASS: Record<SemanticStatus, string> = {
+  default: "text-foreground",
   danger: "text-danger",
   success: "text-success",
   info: "text-info",
@@ -139,20 +150,20 @@ export function tooltipGlossContentClass({
 
 export function tooltipPanelClass({
   variant,
-  surface,
+  status,
   size,
   gridSlots,
   slotClass,
   className,
 }: {
   variant: TooltipVariant;
-  surface: TooltipSurface;
+  status: SemanticStatus;
   size: TooltipSize;
   gridSlots: Parameters<typeof messageBannerGridClass>[0];
   slotClass?: string;
   className?: string;
 }) {
-  const isGloss = surface === "gloss";
+  const isGloss = variant === "gloss";
 
   if (isGloss) {
     return tooltipGlossShellClass({ size, slotClass, className });
@@ -161,7 +172,9 @@ export function tooltipPanelClass({
   return cn(
     messageBannerGridClass(gridSlots, TOOLTIP_GRID_GAP[size]),
     TOOLTIP_PANEL_BASE_CLASS,
-    TOOLTIP_SURFACE_CLASS[variant],
+    status === "default"
+      ? TOOLTIP_VARIANT_SURFACE_CLASS[variant]
+      : TOOLTIP_SURFACE_CLASS[status],
     TOOLTIP_TEXT_LAYOUT[size],
     slotClass,
     className,
@@ -170,22 +183,22 @@ export function tooltipPanelClass({
 
 export function tooltipArrowClass({
   variant,
-  surface,
+  status,
   resolvedSide,
   slotClass,
   className,
 }: {
   variant: TooltipVariant;
-  surface: TooltipSurface;
+  status: SemanticStatus;
   resolvedSide: keyof typeof TOOLTIP_ARROW_CLASS;
   slotClass?: string;
   className?: string;
 }) {
-  const isGloss = surface === "gloss";
+  const isGloss = variant === "gloss";
 
   return cn(
     TOOLTIP_ARROW_BASE_CLASS,
-    isGloss ? TOOLTIP_ARROW_GLOSS_CLASS : TOOLTIP_SURFACE_CLASS[variant],
+    isGloss ? TOOLTIP_ARROW_GLOSS_CLASS : TOOLTIP_SURFACE_CLASS[status],
     TOOLTIP_ARROW_CLASS[resolvedSide],
     slotClass,
     className,

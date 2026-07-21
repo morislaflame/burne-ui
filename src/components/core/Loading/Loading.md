@@ -37,7 +37,7 @@ Simple API — один `<span role="status">`.
 ```tsx
 <Loading />
 
-<Loading variant="dots" size="mid" color="success" label="Сохранение…" />
+<Loading type="dots" size="mid" color="success" label="Сохранение…" />
 
 // В Toast при isLoading
 <Toast status="default" isLoading title="Загрузка" />
@@ -71,7 +71,7 @@ Simple API — один `<span role="status">`.
 
 ## Анимации
 
-### 1. Spinner (`variant="spinner"`)
+### 1. Spinner (`type="spinner"`)
 
 **DOM:**
 
@@ -86,7 +86,7 @@ Simple API — один `<span role="status">`.
 
 Цвет: `text-{color}` на ring (`border-current`).
 
-### 2. Dots wave (`variant="dots"`)
+### 2. Dots wave (`type="dots"`)
 
 **DOM:**
 
@@ -178,7 +178,7 @@ Loading — leaf-компонент: **только `className` на root** (`<s
 
 ```tsx
 <Loading
-  variant="dots"
+  type="dots"
   size="large"
   color="info"
   className="opacity-90 mx-auto"
@@ -195,7 +195,7 @@ Loading — leaf-компонент: **только `className` на root** (`<s
 
 ```tsx
 <Button disabled className="gap-small">
-  <Loading variant="spinner" size="small" color="foreground" className="shrink-0" />
+  <Loading type="spinner" size="small" color="foreground" className="shrink-0" />
   Сохранение…
 </Button>
 ```

@@ -1,12 +1,12 @@
 import type { UseSkeletonRootStateProps } from "./skeletonTypes";
 
 export function useSkeletonRootState({
-  variant = "wave",
+  animation = "wave",
   radius = "small",
 }: UseSkeletonRootStateProps) {
   return {
-    variant,
+    animation,
     radius,
-    isWave: variant === "wave",
+    isWave: animation === "wave",
   };
 }

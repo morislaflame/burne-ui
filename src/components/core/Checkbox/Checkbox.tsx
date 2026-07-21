@@ -50,8 +50,8 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
       error,
       size,
       variant,
+      status,
       checkIcon,
-      danger,
       disabled,
       checked,
       defaultChecked,
@@ -78,14 +78,14 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
     const fieldName = typeof name === "string" ? name : undefined;
     const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
     const resolvedError = error ?? formError;
-    const resolvedDanger = danger || Boolean(formError);
+    const resolvedStatus = formError ? "danger" : (status ?? "default");
 
     const state = useCheckboxRootState(
       {
         size,
         variant,
+        status: resolvedStatus,
         checkIcon,
-        danger: resolvedDanger,
         disabled,
         checked,
         defaultChecked,
@@ -169,7 +169,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
               textColRef={state.textColRef}
               size={state.contextValue.size}
               isDisabled={state.isDisabled}
-              danger={state.danger}
+              status={state.isDanger}
               hintId={state.hintId}
               errorId={state.errorId}
             />

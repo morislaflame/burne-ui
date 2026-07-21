@@ -5,10 +5,11 @@ import type {
 } from "react";
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type TimeFieldSize = ComponentSize;
 
-export type TimeFieldStatus = "default" | "danger" | "success" | "warning";
+export type TimeFieldStatus = SemanticStatus;
 
 export type TimeFieldVariant = "default" | "outline" | "secondary" | "segmented" | "gloss";
 

@@ -151,7 +151,6 @@ export type SearchInputProps = Omit<
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
   collapseOnBlur?: boolean;
-  onValueChange?: (value: string) => void;
   ripple?: boolean;
   groupSegment?: ButtonGroupSegment;
   "aria-label"?: string;
@@ -178,7 +177,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       onKeyDown,
       id: idProp,
       "aria-label": ariaLabelProp,
-      onValueChange,
       ripple = false,
       groupSegment: groupSegmentProp,
       ...rest
@@ -243,12 +241,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const handleInputChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
         onChange?.(e);
-        onValueChange?.(e.target.value);
         if (!isValueControlled) {
           setHasQuery(e.target.value.trim().length > 0);
         }
       },
-      [isValueControlled, onChange, onValueChange],
+      [isValueControlled, onChange],
     );
 
     const handleClearClick = useCallback(
@@ -271,10 +268,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           target: el,
           currentTarget: el,
         } as ChangeEvent<HTMLInputElement>);
-        onValueChange?.("");
         requestAnimationFrame(() => el.focus());
       },
-      [blocked, isValueControlled, onChange, onValueChange],
+      [blocked, isValueControlled, onChange],
     );
 
     const layout = resolveSearchLayout(sizeProp);

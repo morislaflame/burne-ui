@@ -5,6 +5,7 @@ import type {
   TooltipSize,
   TooltipVariant,
 } from "@/components/core/Tooltip";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type AvatarSize = "small" | "base" | "mid" | "large";
 
@@ -39,6 +40,7 @@ export type AvatarProps = Omit<HTMLAttributes<HTMLDivElement>, "aria-label"> & {
   nickname?: string;
   tooltipSize?: TooltipSize;
   tooltipVariant?: TooltipVariant;
+  tooltipStatus?: SemanticStatus;
   tooltipSide?: TooltipSide;
   classNames?: AvatarClassNames;
 };
@@ -51,6 +53,7 @@ export type UseAvatarRootStateProps = Pick<
   | "nickname"
   | "tooltipSize"
   | "tooltipVariant"
+  | "tooltipStatus"
   | "tooltipSide"
   | "children"
   | "role"

@@ -10,12 +10,12 @@ export type {
   LoadingColor,
   LoadingProps,
   LoadingSize,
-  LoadingVariant,
+  LoadingType,
 } from "./loadingTypes";
 
 export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loading(
   {
-    variant = "spinner",
+    type = "spinner",
     size = "base",
     color = "primary",
     label = "Loading",
@@ -33,7 +33,7 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
       className={cn(LOADING_ROOT_CLASS, className)}
       {...rest}
     >
-      {variant === "dots" ? (
+      {type === "dots" ? (
         <LoadingDots size={size} color={color} />
       ) : (
         <LoadingSpinner size={size} color={color} />

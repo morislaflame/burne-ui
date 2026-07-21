@@ -115,6 +115,42 @@ export const FullPages: Story = {
   },
 };
 
+export const Uncontrolled: Story = {
+  name: "Uncontrolled (defaultPage)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`defaultPage` owns internal page state. Optional `onPageChange` only observes changes.",
+      },
+    },
+  },
+  render: function UncontrolledPages() {
+    const [lastPage, setLastPage] = useState(5);
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <Pagination
+          defaultPage={5}
+          totalPages={20}
+          onPageChange={setLastPage}
+          className="justify-center"
+        >
+          <Pagination.Content>
+            <Pagination.Item>
+              <Pagination.Previous />
+            </Pagination.Item>
+            <Pagination.Pages />
+            <Pagination.Item>
+              <Pagination.Next />
+            </Pagination.Item>
+          </Pagination.Content>
+        </Pagination>
+        <p className="text-sm text-muted">Last reported page: {lastPage}</p>
+      </div>
+    );
+  },
+};
+
 export const WithSummary: Story = {
   name: "Summary + pages",
   render: function WithSummary() {

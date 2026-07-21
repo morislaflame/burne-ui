@@ -54,9 +54,9 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
   { value, disabled, className, children, ...rest },
   ref,
 ) {
-  const { openId, setOpenId, getItemId, size } = useAccordionContext();
+  const { value: openValue, setValue, getItemId, size } = useAccordionContext();
   const itemId = getItemId(value);
-  const isOpen = openId === itemId;
+  const isOpen = openValue === itemId;
 
   return (
     <Expandable
@@ -66,7 +66,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
       data-accordion-item
       disabled={disabled}
       open={isOpen}
-      onOpenChange={(next) => setOpenId(next ? itemId : null)}
+      onOpenChange={(next) => setValue(next ? itemId : null)}
       className={accordionItemClass(className)}
       {...rest}
     >

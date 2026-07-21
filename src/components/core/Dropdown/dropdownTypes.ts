@@ -8,7 +8,7 @@ import type {
   SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
 
-export type DropdownItemVariant =
+export type DropdownItemStatus =
   | "default"
   | "danger"
   | "warning"
@@ -136,7 +136,7 @@ export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
   href?: string;
   disabled?: boolean;
   selection?: boolean;
-  variant?: DropdownItemVariant;
+  status?: DropdownItemStatus;
 };
 
 export type UseDropdownRootStateProps = Pick<

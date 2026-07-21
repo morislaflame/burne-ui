@@ -38,7 +38,7 @@ export function TooltipShowcase() {
         <ShowcaseDemoFromFile Demo={TooltipSizesDemo} source={tooltipSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Gloss" description='surface="gloss" — glass tip with hover-lift.'>
+      <ShowcaseSection title="Gloss" description='variant="gloss" — glass tip with hover-lift.'>
         <ShowcaseDemoFromFile Demo={TooltipGlossDemo} source={tooltipGlossSource} />
       </ShowcaseSection>
 
@@ -80,7 +80,7 @@ export function TooltipShowcase() {
             <code>large</code>.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss='surface="gloss"' />
+        <ShowcaseDoc.Customization gloss='variant="gloss"' />
       </ShowcaseDoc>
     </ShowcasePage>
   );

@@ -26,7 +26,7 @@ export type {
   DrawerPanelProps,
   DrawerTriggerProps,
   DrawerPlacement,
-  DrawerSize,
+  DrawerExtent,
   DrawerVariant,
   DrawerClassNames,
   DrawerBackdropProps,
@@ -43,12 +43,13 @@ export type {
 
 export function DrawerRoot({
   open,
+  defaultOpen = false,
   onOpenChange,
   placement = "right",
   children,
   classNames,
 }: DrawerProps) {
-  const state = useDrawerRootState({ open, onOpenChange, placement });
+  const state = useDrawerRootState({ open, defaultOpen, onOpenChange, placement });
 
   return (
     <DrawerProvider value={state.contextValue}>

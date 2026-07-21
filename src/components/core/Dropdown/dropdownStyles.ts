@@ -6,7 +6,7 @@ import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIn
 import type {
   DropdownClassNames,
   DropdownItemIndicatorClassNames,
-  DropdownItemVariant,
+  DropdownItemStatus,
 } from "./dropdownTypes";
 
 import { cn } from "@/utils/cn";
@@ -55,7 +55,7 @@ export const DROPDOWN_ITEM_BASE_CLASS =
 export const DROPDOWN_ITEM_DISABLED_CLASS =
   "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent";
 
-const DROPDOWN_ITEM_VARIANT_CLASS: Record<DropdownItemVariant, string> = {
+const DROPDOWN_ITEM_STATUS_CLASS: Record<DropdownItemStatus, string> = {
   default: cn(
     "text-foreground",
     hoverVariant(),
@@ -84,7 +84,7 @@ const DROPDOWN_ITEM_VARIANT_CLASS: Record<DropdownItemVariant, string> = {
 };
 
 export function dropdownItemRowClass({
-  variant,
+  status,
   disabled,
   hasHint,
   showIndicatorSlot,
@@ -92,7 +92,7 @@ export function dropdownItemRowClass({
   className,
   slotClass,
 }: {
-  variant: DropdownItemVariant;
+  status: DropdownItemStatus;
   disabled: boolean;
   hasHint: boolean;
   showIndicatorSlot: boolean;
@@ -104,7 +104,7 @@ export function dropdownItemRowClass({
     DROPDOWN_ITEM_BASE_CLASS,
     optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
     !disabled &&
-      cn("cursor-pointer", DROPDOWN_ITEM_VARIANT_CLASS[variant]),
+      cn("cursor-pointer", DROPDOWN_ITEM_STATUS_CLASS[status]),
     disabled && DROPDOWN_ITEM_DISABLED_CLASS,
     slotClass,
     className,

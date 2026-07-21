@@ -6,7 +6,8 @@ import { expect, screen, waitFor } from "storybook/test";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 
-import { Drawer, type DrawerPlacement, type DrawerSize } from ".";
+import { Drawer, type DrawerPlacement, type DrawerExtent } from ".";
+import { useDrawer } from "./drawerContext";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -102,6 +103,53 @@ export const WithTrigger: Story = {
           </Drawer.Body>
           <Drawer.Footer>
             <Button variant="ghost" onClick={() => setOpen(false)}>Close</Button>
+          </Drawer.Footer>
+        </Drawer.Panel>
+      </Drawer>
+    );
+  },
+};
+
+function DrawerUncontrolledClose() {
+  const { onOpenChange } = useDrawer();
+  return (
+    <Button variant="ghost" onClick={() => onOpenChange(false)}>
+      Close
+    </Button>
+  );
+}
+
+export const Uncontrolled: Story = {
+  name: "Uncontrolled (defaultOpen)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Without `open` — internal state. Trigger opens; Close / Escape / backdrop dismiss.",
+      },
+    },
+  },
+  render: function UncontrolledDemo() {
+    return (
+      <Drawer>
+        <Drawer.Trigger asChild>
+          <Button>Open Drawer</Button>
+        </Drawer.Trigger>
+        <Drawer.Panel>
+          <Drawer.Header>
+            <Drawer.HeadingBlock>
+              <Drawer.Title>Uncontrolled drawer</Drawer.Title>
+              <Drawer.Description>No parent state — only Trigger / Close.</Drawer.Description>
+            </Drawer.HeadingBlock>
+            <Drawer.Close />
+          </Drawer.Header>
+          <Drawer.Body>
+            <p className="text-base text-muted">
+              Optional <code className="text-foreground">defaultOpen</code> sets the initial state.
+            </p>
+          </Drawer.Body>
+          <Drawer.Footer>
+            <DrawerUncontrolledClose />
           </Drawer.Footer>
         </Drawer.Panel>
       </Drawer>
@@ -246,16 +294,16 @@ export const AllPlacements: Story = {
 
 // ─── Sizes ────────────────────────────────────────────────────────────────────
 
-const SIZES: DrawerSize[] = ["default", "mid", "full"];
+const SIZES: DrawerExtent[] = ["default", "mid", "full"];
 
 export const Sizes: Story = {
   name: "Sizes",
   render: function SizesDemo() {
     const [open, setOpen] = useState(false);
-    const [size, setSize] = useState<DrawerSize>("default");
+    const [extent, setExtent] = useState<DrawerExtent>("default");
 
-    const openWith = (s: DrawerSize) => {
-      setSize(s);
+    const openWith = (nextExtent: DrawerExtent) => {
+      setExtent(nextExtent);
       setOpen(true);
     };
 
@@ -267,20 +315,20 @@ export const Sizes: Story = {
           </Button>
         ))}
         <Drawer open={open} onOpenChange={setOpen} placement="right">
-          <Drawer.Panel size={size}>
+          <Drawer.Panel extent={extent}>
             <Drawer.Header>
               <Drawer.HeadingBlock>
-                <Drawer.Title>size="{size}"</Drawer.Title>
+                <Drawer.Title>extent="{extent}"</Drawer.Title>
                 <Drawer.Description>
-                  {size === "default" && "Default — up to 24rem."}
-                  {size === "mid" && "Half screen — 50vw."}
-                  {size === "full" && "Full screen."}
+                  {extent === "default" && "Default — up to 24rem."}
+                  {extent === "mid" && "Half screen — 50vw."}
+                  {extent === "full" && "Full screen."}
                 </Drawer.Description>
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
             <Drawer.Body>
-              <p className="text-base text-muted">Drawer content for size «{size}».</p>
+              <p className="text-base text-muted">Drawer content for size «{extent}».</p>
             </Drawer.Body>
             <Drawer.Footer>
               <Button onClick={() => setOpen(false)}>Close</Button>

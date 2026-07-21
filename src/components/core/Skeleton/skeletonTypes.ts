@@ -1,6 +1,6 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 
-export type SkeletonVariant = "pulse" | "wave" | "shimmer" | "none";
+export type SkeletonAnimation = "pulse" | "wave" | "shimmer" | "none";
 
 export type SkeletonRadius = "none" | "small" | "mid" | "full";
 
@@ -26,28 +26,28 @@ export type SkeletonBlockClassNames = {
 };
 
 export type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: SkeletonVariant;
+  animation?: SkeletonAnimation;
   radius?: SkeletonRadius;
   classNames?: SkeletonClassNames;
 };
 
-export type UseSkeletonRootStateProps = Pick<SkeletonProps, "variant" | "radius">;
+export type UseSkeletonRootStateProps = Pick<SkeletonProps, "animation" | "radius">;
 
 export type SkeletonCircleProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: SkeletonVariant;
+  animation?: SkeletonAnimation;
   size?: string;
   classNames?: SkeletonCircleClassNames;
 };
 
 export type SkeletonTextProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: SkeletonVariant;
+  animation?: SkeletonAnimation;
   lines?: number;
   lastShort?: boolean;
   classNames?: SkeletonTextClassNames;
 };
 
 export type SkeletonBlockProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: SkeletonVariant;
+  animation?: SkeletonAnimation;
   classNames?: SkeletonBlockClassNames;
 };
 

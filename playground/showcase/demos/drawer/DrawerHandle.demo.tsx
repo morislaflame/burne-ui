@@ -83,7 +83,7 @@ export function DrawerHandleDemo() {
             onOpenChange={(next) => !next && setOpen(null)}
             placement={placement}
           >
-            <Drawer.Panel size={isHorizontal ? "mid" : "default"}>
+            <Drawer.Panel extent={isHorizontal ? "mid" : "default"}>
               <DrawerHandlePanel placement={placement} />
             </Drawer.Panel>
           </Drawer>

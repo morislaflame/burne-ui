@@ -53,8 +53,10 @@ const options = [
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `options` | `[]` | `{ value, label, hint?, icon?, disabled?, filterText? }` |
-| `value` / `defaultValue` | — | Controlled / uncontrolled |
+| `value` / `defaultValue` | — | Controlled / uncontrolled значение |
 | `onValueChange` | — | Колбэк выбора |
+| `open` / `defaultOpen` | `false` | Controlled / uncontrolled попап |
+| `onOpenChange` | — | `(open: boolean) => void` |
 | `variant` | `default` / gloss из ButtonGroup | как Input |
 | `status` | `default` | danger/success/warning tint |
 | `size` | `base` | размер shell и текста |

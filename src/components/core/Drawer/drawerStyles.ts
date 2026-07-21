@@ -1,6 +1,6 @@
 import { modalOverlayEnterStyle } from "@/components/core/utils/modalSurfaceMotion";
 
-import type { DrawerPlacement, DrawerSize, DrawerVariant } from "./drawerTypes";
+import type { DrawerExtent, DrawerPlacement, DrawerVariant } from "./drawerTypes";
 
 import { cn } from "@/utils/cn";
 
@@ -13,7 +13,7 @@ const PANEL_PLACEMENT_CLASS: Record<DrawerPlacement, string> = {
 
 type SizeEntry = { horizontal: string; vertical: string };
 
-const PANEL_SIZE_CLASS: Record<DrawerSize, SizeEntry> = {
+const PANEL_SIZE_CLASS: Record<DrawerExtent, SizeEntry> = {
   default: {
     horizontal: "max-w-[min(100vw,24rem)] w-full",
     vertical: "max-h-[90dvh]",
@@ -98,7 +98,7 @@ export const DRAWER_HANDLE_GRIP_VERTICAL_CLASS = "h-10 w-1";
 
 export const DRAWER_HANDLE_GRIP_BASE_CLASS = "rounded-full bg-tertiary";
 
-function panelSizeClass(placement: DrawerPlacement, size: DrawerSize): string {
+function panelSizeClass(placement: DrawerPlacement, size: DrawerExtent): string {
   const entry = PANEL_SIZE_CLASS[size];
   return placement === "left" || placement === "right"
     ? entry.horizontal
@@ -129,23 +129,23 @@ export function drawerOverlayClass({
 export function drawerPanelClass({
   variant,
   placement,
-  size,
+  extent,
   className,
   slotClass,
 }: {
   variant: DrawerVariant;
   placement: DrawerPlacement;
-  size: DrawerSize;
+  extent: DrawerExtent;
   className?: string;
   slotClass?: string;
 }): string {
-  const rounding = size !== "full" ? PANEL_ROUNDING_CLASS[placement] : undefined;
+  const rounding = extent !== "full" ? PANEL_ROUNDING_CLASS[placement] : undefined;
 
   return cn(
     DRAWER_PANEL_BASE_CLASS,
     variant !== "gloss" && DRAWER_PANEL_SURFACE_CLASS,
     PANEL_PLACEMENT_CLASS[placement],
-    panelSizeClass(placement, size),
+    panelSizeClass(placement, extent),
     rounding,
     slotClass,
     className,
@@ -154,14 +154,14 @@ export function drawerPanelClass({
 
 export function drawerGlossPanelClass({
   placement,
-  size,
+  extent,
   slotClass,
 }: {
   placement: DrawerPlacement;
-  size: DrawerSize;
+  extent: DrawerExtent;
   slotClass?: string;
 }): string {
-  const rounding = size !== "full" ? PANEL_ROUNDING_CLASS[placement] : undefined;
+  const rounding = extent !== "full" ? PANEL_ROUNDING_CLASS[placement] : undefined;
 
   return cn(
     DRAWER_GLOSS_PANEL_CLASS,

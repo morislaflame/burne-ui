@@ -17,6 +17,7 @@ export const FIELD_HINT_STATUS_CLASS: Record<FieldHintStatus, string> = {
   default: "text-muted",
   danger: "text-danger",
   success: "text-success",
+  info: "text-info",
   warning: "text-warning",
 };
 

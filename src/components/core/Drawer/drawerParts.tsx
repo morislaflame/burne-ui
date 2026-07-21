@@ -415,7 +415,7 @@ DrawerTrigger.displayName = "Drawer.Trigger";
 // ─── Drawer.Panel ─────────────────────────────────────────────────────────────
 
 export function DrawerPanel({
-  size = "default",
+  extent = "default",
   variant = "default",
   className,
   themeAnchor,
@@ -461,7 +461,7 @@ export function DrawerPanel({
         className={className}
         variant={variant}
         placement={placement}
-        size={size}
+        extent={extent}
         portalTheme={portalTheme}
         lightUi={lightUi}
         titleId={baseCtx.titleId}
@@ -493,7 +493,7 @@ export function DrawerPortalShell({
   className,
   variant,
   placement,
-  size,
+  extent,
   portalTheme,
   lightUi,
   titleId,
@@ -546,7 +546,7 @@ export function DrawerPortalShell({
         className={drawerPanelClass({
           variant,
           placement,
-          size,
+          extent,
           className,
           slotClass: slotClassNames.panel,
         })}
@@ -556,7 +556,7 @@ export function DrawerPortalShell({
             ref={bindGlossPanelRef}
             className={drawerGlossPanelClass({
               placement,
-              size,
+              extent,
               slotClass: slotClassNames.glossPanel,
             })}
           >

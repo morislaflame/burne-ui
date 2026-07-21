@@ -4,7 +4,7 @@ import { cn } from "@/utils/cn";
 import type { RadioClassNames, RadioIndicatorClassNames, RadioVariant } from "./radioTypes";
 
 export function radioVariantToIndicator(variant: RadioVariant): SelectionIndicatorVariant {
-  return variant === "gloss" ? "gloss" : "base";
+  return variant;
 }
 
 export function resolveRadioIndicatorClassNames({

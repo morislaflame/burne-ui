@@ -214,7 +214,7 @@ export const FilterList: Story = {
             expandedWidth={400}
             collapseOnBlur={false}
             value={query}
-            onValueChange={setQuery}
+            onChange={(e) => setQuery(e.target.value)}
             aria-label="Card list filter"
           />
         </div>

@@ -114,7 +114,7 @@ export const FullFeatured: Story = {
     return (
       <div className="flex flex-col items-center gap-mid">
         <ColorPicker value={color} onValueChange={setColor} size="mid">
-          <ColorPicker.Trigger swatchSize="xlarge" />
+          <ColorPicker.Trigger swatchSize="large" />
           <ColorPicker.Content showAlpha presets={presets} />
         </ColorPicker>
         <Text as="p" variant="small" className="text-muted font-mono">{color}</Text>
@@ -249,7 +249,7 @@ export const Swatches: Story = {
     return (
       <div className="flex flex-col gap-large">
         {/* Sizes */}
-        {(["xsmall", "small", "base", "mid", "large", "xlarge"] as const).map((size) => (
+        {(["small", "base", "mid", "large"] as const).map((size) => (
           <div key={size} className="flex items-center gap-mid">
             <Text as="span" variant="small" className="w-16 text-right text-muted">{size}</Text>
             <div className="flex gap-small">

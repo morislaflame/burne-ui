@@ -34,7 +34,7 @@ export type {
   DrawerPanelProps,
   DrawerTriggerProps,
   DrawerPlacement,
-  DrawerSize,
+  DrawerExtent,
   DrawerVariant,
   DrawerClassNames,
   DrawerBackdropProps,

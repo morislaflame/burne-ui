@@ -11,6 +11,7 @@ import type {
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type CheckboxVariant = "default" | "secondary" | "outline" | "gloss";
 
@@ -45,8 +46,8 @@ export type CheckboxRootProps = Omit<
     error?: ReactNode;
     size?: CheckboxSize;
     variant?: CheckboxVariant;
+    status?: SemanticStatus;
     checkIcon?: ReactNode;
-    danger?: boolean;
     className?: string;
     classNames?: CheckboxClassNames;
     onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
@@ -94,7 +95,7 @@ export type CheckboxFieldContextValue = {
   errorConnected: boolean;
   labelConnected: boolean;
   accessibleName?: string;
-  danger: boolean;
+  status: SemanticStatus;
   checkIcon?: ReactNode;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   inputProps: {

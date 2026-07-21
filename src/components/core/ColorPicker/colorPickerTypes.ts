@@ -3,7 +3,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 import type { ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
 
-export type ColorPickerSize = "small" | "base" | "mid";
+export type ColorPickerSize = "small" | "base" | "mid" | "large";
 
 export type ColorPickerVariant = "default" | "gloss";
 

@@ -6,10 +6,11 @@ import type {
 } from "react";
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type TextAreaVariant = "default" | "outline" | "secondary" | "gloss";
 
-export type TextAreaStatus = "default" | "danger" | "success" | "warning";
+export type TextAreaStatus = SemanticStatus;
 
 export type TextAreaSize = ComponentSize;
 

@@ -13,7 +13,7 @@ export function SkeletonTableRowsDemo() {
           <Skeleton className="h-4 w-1/5 rounded-small" />
         </div>
         {Array.from({ length: ROWS }, (_, i) => (
-          <Skeleton key={i} className="h-10 w-full rounded-small" variant="pulse" />
+          <Skeleton key={i} className="h-10 w-full rounded-small" animation="pulse" />
         ))}
       </div>
     </Surface>

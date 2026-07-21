@@ -5,6 +5,7 @@ import { expect, screen } from "storybook/test";
 import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
+import { Button } from "@/components/core/Button";
 import {
   DualApiStoryPanel,
   DualApiStoryPanels,
@@ -213,6 +214,57 @@ function ControlledComboBox(props: ComboBoxStoryProps) {
 export const Outline: Story = {
   render: () => (
     <ControlledComboBox variant="outline" label="Interface language" placeholder="Select language" />
+  ),
+};
+
+export const ControlledOpen: Story = {
+  name: "Controlled open",
+  parameters: {
+    docs: {
+      description: {
+        story: "`open` / `onOpenChange` control the popup independently of value.",
+      },
+    },
+  },
+  render: function ControlledOpenStory() {
+    const [open, setOpen] = useState(false);
+    return (
+      <div className="flex w-full flex-col gap-mid">
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open list
+        </Button>
+        <ComboBox
+          label="Language"
+          options={sampleOptions}
+          defaultValue="ru"
+          open={open}
+          onOpenChange={setOpen}
+          hint={open ? "Popup open" : "Popup closed"}
+          placeholder="Select language"
+        />
+      </div>
+    );
+  },
+};
+
+export const DefaultOpen: Story = {
+  name: "Uncontrolled open (defaultOpen)",
+  parameters: {
+    docs: {
+      description: {
+        story: "`defaultOpen` opens the popup on mount without parent state.",
+      },
+    },
+  },
+  render: () => (
+    <ComboBox
+      label="Language"
+      options={sampleOptions}
+      defaultValue="en"
+      defaultOpen
+      hint="Popup starts open via defaultOpen"
+      placeholder="Select language"
+    />
   ),
 };
 

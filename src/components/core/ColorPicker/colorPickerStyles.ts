@@ -8,18 +8,21 @@ export const COLOR_PICKER_WIDTH: Record<ColorPickerSize, string> = {
   small: "w-52",
   base: "w-64",
   mid: "w-72",
+  large: "w-80",
 };
 
 export const COLOR_PICKER_AREA_HEIGHT: Record<ColorPickerSize, string> = {
   small: "h-32",
   base: "h-40",
   mid: "h-48",
+  large: "h-56",
 };
 
 export const COLOR_PICKER_PAD: Record<ColorPickerSize, string> = {
   small: "p-small gap-small",
   base: "p-plus gap-plus",
   mid: "p-mid gap-mid",
+  large: "p-large gap-large",
 };
 
 export const COLOR_PICKER_AREA_CLASS =

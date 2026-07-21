@@ -16,7 +16,7 @@ export function DrawerFilterSheetDemo() {
         <Drawer.Trigger asChild>
           <Button variant="outline">Filters</Button>
         </Drawer.Trigger>
-        <Drawer.Panel size="mid">
+        <Drawer.Panel extent="mid">
           <Drawer.Header>
           <Drawer.HeadingBlock>
             <Drawer.Title>Filters</Drawer.Title>

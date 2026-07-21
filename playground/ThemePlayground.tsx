@@ -64,7 +64,7 @@ export function ThemePlayground() {
           </Drawer.Trigger>
         </div>
 
-        <Drawer.Panel size="default">
+        <Drawer.Panel extent="default">
           <Drawer.Header>
             <Drawer.HeadingBlock>
               <Drawer.Title>Theme settings</Drawer.Title>

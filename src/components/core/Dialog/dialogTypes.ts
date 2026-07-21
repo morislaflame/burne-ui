@@ -39,8 +39,9 @@ export type DialogClassNames = {
 };
 
 export type DialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children?: ReactNode;
   size?: DialogSize;
   classNames?: DialogClassNames;
@@ -87,7 +88,10 @@ export type DialogCloseProps = CloseButtonProps;
 export type DialogContentProps = HTMLAttributes<HTMLDivElement>;
 export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
-export type UseDialogRootStateProps = Pick<DialogProps, "open" | "onOpenChange" | "size">;
+export type UseDialogRootStateProps = Pick<
+  DialogProps,
+  "open" | "defaultOpen" | "onOpenChange" | "size"
+>;
 
 export type UseDialogModalMotionProps = {
   open: boolean;

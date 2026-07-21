@@ -60,8 +60,9 @@ Simple API нет — всегда compound.
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `open` | — | **Required** controlled |
-| `onOpenChange` | — | **Required** `(open: boolean) => void` |
+| `open` | — | Controlled состояние |
+| `defaultOpen` | `false` | Uncontrolled начальное состояние |
+| `onOpenChange` | — | `(open: boolean) => void` |
 | `status` | `default` | `default` \| `danger` \| `success` \| `info` \| `warning` |
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
@@ -290,7 +291,7 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 
 ### Практические заметки
 
-- `open` и `onOpenChange` **обязательны** (fully controlled).
+- `open` / `defaultOpen` / `onOpenChange` — как у Popover/Dialog (controlled или uncontrolled).
 - Primary action: используйте `primaryButtonStatusForAlertTone(status)`.
 - Footer `Button` получает `size` из context автоматически (`injectFooterButtonSize`).
 - `AlertDialog.Description` регистрирует `hasDescription` → `aria-describedby`.

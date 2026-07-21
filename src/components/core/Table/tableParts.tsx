@@ -75,8 +75,10 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
     {
       selectionMode = "none",
       selectedKeys,
+      defaultSelectedKeys,
       onSelectionChange,
       sortDescriptor,
+      defaultSortDescriptor,
       onSortChange,
       className,
       children,
@@ -89,8 +91,10 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
     const ctx = useTableContentState({
       selectionMode,
       selectedKeys,
+      defaultSelectedKeys,
       onSelectionChange,
       sortDescriptor,
+      defaultSortDescriptor,
       onSortChange,
     });
 

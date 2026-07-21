@@ -21,7 +21,7 @@ export function TooltipRoot({
   classNames,
   size = "base",
   variant = "default",
-  surface = "default",
+  status = "default",
   delayShowMs = 240,
   side = "top",
   icon,
@@ -30,7 +30,7 @@ export function TooltipRoot({
   const { contextValue } = useTooltipRootState({
     size,
     variant,
-    surface,
+    status,
     delayShowMs,
     side,
     icon,

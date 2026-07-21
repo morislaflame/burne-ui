@@ -19,8 +19,8 @@ export function useCheckboxRootState(
   {
     size = "base",
     variant = "default",
+    status = "default",
     checkIcon,
-    danger = false,
     disabled,
     checked,
     defaultChecked,
@@ -91,6 +91,7 @@ export function useCheckboxRootState(
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
   const enableTextMotion = !isDisabled && (!isCompound || useInlineCompoundMotion);
   const sz = CHECKBOX_SIZE_LAYOUT[size];
+  const isDanger = status === "danger";
   const hasHint = hint != null;
   const hasError = error != null;
   const secondaryLines = isCompound
@@ -146,7 +147,7 @@ export function useCheckboxRootState(
       accessibleName: ariaLabelProp,
       useInlineCompoundMotion,
       textMotionRef: textColRef,
-      danger,
+      status,
       checkIcon,
       onChange: handleChange,
       inputProps: {
@@ -167,7 +168,7 @@ export function useCheckboxRootState(
     [
       ariaLabelProp,
       checkIcon,
-      danger,
+      status,
       defaultChecked,
       form,
       formBinding,
@@ -226,6 +227,7 @@ export function useCheckboxRootState(
     error,
     hintId,
     errorId,
-    danger,
+    status,
+    isDanger,
   };
 }

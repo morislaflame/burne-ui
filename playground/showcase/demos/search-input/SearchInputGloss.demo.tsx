@@ -11,7 +11,7 @@ export function SearchInputGlossDemo() {
       aria-label="Search gloss"
       placeholder="Find…"
       value={search}
-      onValueChange={setSearch}
+      onChange={(e) => setSearch(e.target.value)}
       className="w-64"
     />
   );

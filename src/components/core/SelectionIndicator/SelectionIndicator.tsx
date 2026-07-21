@@ -7,7 +7,7 @@ import { useSelectionIndicatorRootState } from "./useSelectionIndicatorRootState
 
 export function SelectionIndicator({
   size = "base",
-  variant = "base",
+  variant = "default",
   selected,
   check = false,
   dot = false,

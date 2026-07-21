@@ -122,7 +122,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
     const blocked = Boolean(disabled || readOnly);
     const statusTinted =
-      status === "danger" || status === "success" || status === "warning";
+      status === "danger" || status === "success" || status === "info" || status === "warning";
 
     const shellSurface = textareaShellSurfaceClass({ variant, status, statusTinted });
 

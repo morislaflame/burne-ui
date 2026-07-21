@@ -5,21 +5,13 @@ import type {
 } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 import type { TooltipSide } from "./tooltipPosition";
 
 export type { TooltipSide };
 
-export type TooltipVariant =
-  | "default"
-  | "outline"
-  | "secondary"
-  | "danger"
-  | "success"
-  | "info"
-  | "warning";
-
-export type TooltipSurface = "default" | "gloss";
+export type TooltipVariant = "default" | "outline" | "secondary" | "gloss";
 
 export type TooltipSize = "small" | "base" | "mid" | "large";
 
@@ -41,7 +33,7 @@ export type TooltipRootProps = {
   children?: ReactNode;
   size?: TooltipSize;
   variant?: TooltipVariant;
-  surface?: TooltipSurface;
+  status?: SemanticStatus;
   delayShowMs?: number;
   side?: TooltipSide;
   icon?: ReactNode;
@@ -63,7 +55,7 @@ export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement>;
 
 export type TooltipPanelProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TooltipVariant;
-  surface?: TooltipSurface;
+  status?: SemanticStatus;
   size?: TooltipSize;
   icon?: ReactNode;
   showIcon?: boolean;
@@ -87,7 +79,7 @@ export type TooltipContextValue = {
   open: boolean;
   tooltipId: string;
   variant: TooltipVariant;
-  surface: TooltipSurface;
+  status: SemanticStatus;
   size: TooltipSize;
   side: TooltipSide;
   icon?: ReactNode;
@@ -99,6 +91,7 @@ export type TooltipContextValue = {
 
 export type TooltipBodyContextValue = {
   variant: TooltipVariant;
+  status: SemanticStatus;
   size: TooltipSize;
   icon?: ReactNode;
   showIcon?: boolean;

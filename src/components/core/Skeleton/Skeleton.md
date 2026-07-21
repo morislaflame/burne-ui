@@ -25,19 +25,19 @@ import {
 ### Базовое использование
 
 ```tsx
-<Skeleton variant="wave" className="h-8 w-full" />
+<Skeleton animation="wave" className="h-8 w-full" />
 
-<Skeleton variant="pulse" radius="mid" className="h-24 w-full" />
+<Skeleton animation="pulse" radius="mid" className="h-24 w-full" />
 ```
 
 ### Compound API
 
 ```tsx
-<Skeleton.Block variant="wave">
+<Skeleton.Block animation="wave">
   <div className="flex gap-base">
     <Skeleton.Circle size="h-control-mid w-control-mid" />
     <div className="flex-1">
-      <Skeleton.Text lines={3} variant="wave" />
+      <Skeleton.Text lines={3} animation="wave" />
     </div>
   </div>
 </Skeleton.Block>
@@ -146,11 +146,11 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 
 | Поведение | Механизм | Ключи `configureMotion` | Локальный prop |
 |-----------|----------|---------------------------|----------------|
-| Wave slide | CSS `@keyframes` | — | `variant="wave"` |
-| Pulse | CSS `@keyframes` | — | `variant="pulse"` |
-| Shimmer | CSS `@keyframes` | — | `variant="shimmer"` |
+| Wave slide | CSS `@keyframes` | — | `animation="wave"` |
+| Pulse | CSS `@keyframes` | — | `animation="pulse"` |
+| Shimmer | CSS `@keyframes` | — | `animation="shimmer"` |
 | Line stagger | inline `animationDelay` | — | `Skeleton.Text` |
-| Static | no animation | — | `variant="none"` |
+| Static | no animation | — | `animation="none"` |
 
 ## Токены и CSS
 
@@ -185,7 +185,7 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 ### Card loading layout
 
 ```tsx
-<Skeleton.Block variant="wave" classNames={{ root: "rounded-large p-mid" }}>
+<Skeleton.Block animation="wave" classNames={{ root: "rounded-large p-mid" }}>
   <div className="flex gap-base">
     <Skeleton.Circle size="h-control-large w-control-large" />
     <div className="flex flex-1 flex-col gap-small">
@@ -204,7 +204,7 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 
 ```tsx
 <Skeleton
-  variant="shimmer"
+  animation="shimmer"
   className="h-4 w-full"
   classNames={{
     root: "bg-info/15",
@@ -213,7 +213,7 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 />
 
 <Skeleton.Text
-  variant="wave"
+  animation="wave"
   lines={4}
   classNames={{
     line: "bg-success/15 h-3",
@@ -226,7 +226,7 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 
 - Skeleton **декоративный** — `aria-hidden`, `role="presentation"`.
 - Родитель должен объявить loading (`aria-busy`, live region) отдельно.
-- `variant="none"` — static placeholder без motion (reduced motion friendly).
+- `animation="none"` — static placeholder без motion (reduced motion friendly).
 - Для списков — `Skeleton.Text` с wave + естественный stagger.
 - Размеры задавайте Tailwind на `className` (`h-8`, `w-3/4`), не через size enum.
 - **Не ожидайте hover effects** — компонент не интерактивный.

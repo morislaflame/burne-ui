@@ -16,7 +16,7 @@ export type {
   SkeletonCircleProps,
   SkeletonTextProps,
   SkeletonBlockProps,
-  SkeletonVariant,
+  SkeletonAnimation,
   SkeletonRadius,
   SkeletonClassNames,
   SkeletonCircleClassNames,

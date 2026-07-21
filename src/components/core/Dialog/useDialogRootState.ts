@@ -1,13 +1,21 @@
 import { useCallback, useId, useState } from "react";
 
+import { useControllableState } from "@/components/core/utils/useControllableState";
+
 import { DIALOG_SIZE, footerButtonSizeForDialog } from "./dialogStyles";
 import type { DialogContextValue, UseDialogRootStateProps } from "./dialogTypes";
 
 export function useDialogRootState({
-  open,
+  open: openProp,
+  defaultOpen = false,
   onOpenChange,
   size = "base",
 }: UseDialogRootStateProps) {
+  const [open, setOpen] = useControllableState({
+    value: openProp,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const titleId = useId();
   const descriptionId = useId();
   const [hasDescription, setHasDescription] = useState(false);
@@ -24,7 +32,7 @@ export function useDialogRootState({
     descriptionId,
     hasDescription,
     setHasDescription: setHasDescriptionStable,
-    onOpenChange,
+    onOpenChange: setOpen,
     size,
     sizePreset,
     footerButtonSize: footerButtonSizeForDialog(size),

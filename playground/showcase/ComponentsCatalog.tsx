@@ -128,7 +128,7 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
           </div>
         </div>
 
-        <Drawer.Panel size="default">
+        <Drawer.Panel extent="default">
           <Drawer.Header>
             <Drawer.HeadingBlock>
               <Drawer.Title>Components</Drawer.Title>

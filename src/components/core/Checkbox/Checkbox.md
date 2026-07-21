@@ -33,7 +33,7 @@ Root рендерится как `<label>` с grid: control + text column.
 ### Compound API
 
 ```tsx
-<Checkbox defaultChecked variant="outline" danger={hasError}>
+<Checkbox defaultChecked variant="outline" status={hasError ? "danger" : "default"}>
   <Checkbox.Control>
     <Checkbox.Indicator />
   </Checkbox.Control>
@@ -164,7 +164,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `indicatorMark` | Check icon | Color |
 | `content` | Content column | Gap label/hint/error |
 | `label` | Label span | Cell typography wrapper |
-| `labelText` | `Text` в label | Font, danger color |
+| `labelText` | `Text` в label | Font, status color |
 | `requiredMark` | `*` | Цвет asterisk |
 | `hint` / `error` | Field hint/error | Secondary lines |
 | `simpleLabelWrap` | Simple text column | Wrapper label+hint |
@@ -220,7 +220,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 ### Практические заметки
 
 - **Simple vs compound root:** simple — `<label>`; compound — `<fieldset>` (a11y group).
-- **danger:** красит `labelText`; Form error auto-включает danger.
+- **danger:** красит `labelText`; Form error auto-включает status.
 - **CheckboxGroup:** `value` + single selection mode; стили на каждом `Checkbox` отдельно.
 - **Не ломайте grid:** `root` задаёт `checkboxGridClass` — осторожно с `display` override.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
@@ -229,14 +229,14 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 
 | Контекст | Поведение |
 |----------|-----------|
-| `Form` | `name`, `checked`, `error` → danger |
+| `Form` | `name`, `checked`, `error` → status |
 | `CheckboxGroup` | single/multi selection, `disabled`, `isRequired` |
 
 ## Доступность
 
 - Native `<input type="checkbox">` — focus, Space toggle
 - `aria-describedby` hint/error; `aria-labelledby` / `aria-label`
-- `aria-invalid` при danger + error
+- `aria-invalid` при status + error
 - Compound fieldset: `aria-labelledby` от `Checkbox.Label`
 
 ## Структура файлов
@@ -257,4 +257,4 @@ Checkbox/
 
 ## Storybook
 
-`Core Components/Checkbox` — simple/compound, variants, sizes, gloss, CheckboxGroup, `classNames`, danger.
+`Core Components/Checkbox` — simple/compound, variants, sizes, gloss, CheckboxGroup, `classNames`, status.

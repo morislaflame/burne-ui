@@ -6,10 +6,13 @@ import {
   IoWarning,
 } from "react-icons/io5";
 
-/** Semantic statuses with their own icon and color (size set in component via `className`). */
-export type SemanticStatus = "danger" | "success" | "info" | "warning";
+/** Shared semantic status scale (size is set by the consuming component). */
+export type SemanticStatus = "default" | "danger" | "success" | "info" | "warning";
 
-export const SEMANTIC_STATUS_ICONS: Record<SemanticStatus, IconType> = {
+export const SEMANTIC_STATUS_ICONS: Record<
+  Exclude<SemanticStatus, "default">,
+  IconType
+> = {
   danger: IoCloseCircleOutline,
   success: IoCheckmarkCircleOutline,
   info: IoInformationCircleOutline,

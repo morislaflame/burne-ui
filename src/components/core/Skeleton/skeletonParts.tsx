@@ -37,7 +37,7 @@ export function SkeletonWave({ className, style }: SkeletonWaveProps) {
 export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
   function SkeletonCircle(
     {
-      variant = "wave",
+      animation = "wave",
       size = SKELETON_CIRCLE_SIZE_DEFAULT,
       className,
       classNames,
@@ -56,11 +56,11 @@ export const SkeletonCircle = forwardRef<HTMLDivElement, SkeletonCircleProps>(
           classNames?.root,
           className,
         )}
-        style={{ ...skeletonVariantStyle(variant), ...style }}
+        style={{ ...skeletonVariantStyle(animation), ...style }}
         {...skeletonPresentationProps()}
         {...rest}
       >
-        {variant === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
+        {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
       </div>
     );
   },
@@ -70,7 +70,7 @@ SkeletonCircle.displayName = "SkeletonCircle";
 
 export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(function SkeletonText(
   {
-    variant = "wave",
+    animation = "wave",
     lines = 3,
     lastShort = true,
     className,
@@ -103,11 +103,11 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(functi
             classNames?.line,
           )}
           style={{
-            ...skeletonVariantStyle(variant),
+            ...skeletonVariantStyle(animation),
             animationDelay: skeletonLineAnimationDelay(index),
           }}
         >
-          {variant === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
+          {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
         </div>
       ))}
     </div>
@@ -117,7 +117,7 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(functi
 SkeletonText.displayName = "SkeletonText";
 
 export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonBlockProps>(function SkeletonBlock(
-  { variant = "wave", className, classNames, style, children, ...rest },
+  { animation = "wave", className, classNames, style, children, ...rest },
   ref,
 ) {
   return (
@@ -129,11 +129,11 @@ export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonBlockProps>(func
         classNames?.root,
         className,
       )}
-      style={{ ...skeletonVariantStyle(variant), ...style }}
+      style={{ ...skeletonVariantStyle(animation), ...style }}
       {...skeletonPresentationProps()}
       {...rest}
     >
-      {variant === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
+      {animation === "wave" ? <SkeletonWave className={classNames?.wave} /> : null}
       {children}
     </div>
   );

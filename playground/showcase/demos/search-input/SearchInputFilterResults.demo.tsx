@@ -20,7 +20,7 @@ export function SearchInputFilterResultsDemo() {
         aria-label="Component filter"
         placeholder="Filter by name…"
         value={query}
-        onValueChange={setQuery}
+        onChange={(e) => setQuery(e.target.value)}
         className="w-full"
       />
       <div className="flex flex-wrap items-center gap-small">

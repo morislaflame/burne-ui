@@ -56,9 +56,9 @@ import {
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `defaultValues` | `{}` | Начальные values (uncontrolled) |
+| `defaultValues` | `{}` | Начальные values (uncontrolled). Множественная форма state-API: `values` / `defaultValues` / `onValuesChange` |
 | `values` | — | Controlled values |
-| `onValuesChange` | — | Колбэк при изменении |
+| `onValuesChange` | — | Колбэк при изменении карты полей |
 | `rules` | — | `Record<string, FormFieldRules>` на уровне формы |
 | `resolver` | — | Async/sync валидация после rules |
 | `validateMode` | `onSubmit` | `onSubmit` \| `onBlur` \| `onChange` |

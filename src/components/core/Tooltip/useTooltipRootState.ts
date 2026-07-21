@@ -7,7 +7,7 @@ export type UseTooltipRootStateProps = Omit<TooltipRootProps, "classNames" | "ch
 export function useTooltipRootState({
   size = "base",
   variant = "default",
-  surface = "default",
+  status = "default",
   delayShowMs = 240,
   side = "top",
   icon,
@@ -54,7 +54,7 @@ export function useTooltipRootState({
       open,
       tooltipId,
       variant,
-      surface,
+      status,
       size,
       side,
       icon,
@@ -63,7 +63,7 @@ export function useTooltipRootState({
       scheduleShow,
       hide,
     }),
-    [hide, icon, open, scheduleShow, showIcon, side, size, surface, tooltipId, variant],
+    [hide, icon, open, scheduleShow, showIcon, side, size, status, tooltipId, variant],
   );
 
   return { contextValue };

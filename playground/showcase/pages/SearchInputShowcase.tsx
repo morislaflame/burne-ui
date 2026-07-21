@@ -25,7 +25,7 @@ export function SearchInputShowcase() {
       importPath='import { SearchInput } from "@/components/core/SearchInput";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Search" description="Controlled through value and onValueChange.">
+      <ShowcaseSection title="Search" description="Controlled through value and onChange.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputBasicDemo} source={searchInputBasicSource} />
       </ShowcaseSection>
 
@@ -57,7 +57,7 @@ export function SearchInputShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="value, onValueChange, placeholder, aria-label — controlled search icon field."
+            description="value, onChange, placeholder, aria-label — controlled search icon field."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Availability">

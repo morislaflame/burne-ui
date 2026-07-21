@@ -200,18 +200,18 @@ export const ItemVariants: Story = {
         <Dropdown.Popover>
           <Dropdown.Group>
             <Dropdown.Label>Messages</Dropdown.Label>
-            <Dropdown.Item value="ok" variant="success" selection={false}>
+            <Dropdown.Item value="ok" status="success" selection={false}>
               <Dropdown.ItemLabel>Success</Dropdown.ItemLabel>
               <Dropdown.ItemHint>Operation succeeded</Dropdown.ItemHint>
             </Dropdown.Item>
-            <Dropdown.Item value="warn" variant="warning" selection={false}>
+            <Dropdown.Item value="warn" status="warning" selection={false}>
               <Dropdown.ItemLabel>Warning</Dropdown.ItemLabel>
               <Dropdown.ItemHint>Review data</Dropdown.ItemHint>
             </Dropdown.Item>
-            <Dropdown.Item value="inf" variant="info" selection={false}>
+            <Dropdown.Item value="inf" status="info" selection={false}>
               <Dropdown.ItemLabel>Help</Dropdown.ItemLabel>
             </Dropdown.Item>
-            <Dropdown.Item value="bad" variant="danger" selection={false}>
+            <Dropdown.Item value="bad" status="danger" selection={false}>
               <Dropdown.ItemLabel>Delete permanently</Dropdown.ItemLabel>
               <Dropdown.ItemHint>No undo</Dropdown.ItemHint>
             </Dropdown.Item>
@@ -279,7 +279,7 @@ export const WithSelectionIndicator: Story = {
           </Dropdown.Group>
           <Dropdown.Separator />
           <Dropdown.Group>
-            <Dropdown.Item value="del" variant="danger" selection={false}>
+            <Dropdown.Item value="del" status="danger" selection={false}>
               <Dropdown.ItemLabel>Delete</Dropdown.ItemLabel>
             </Dropdown.Item>
           </Dropdown.Group>
@@ -394,7 +394,7 @@ export const CustomAvatarTrigger: Story = {
                 <IoPeopleOutline aria-hidden className="opacity-70" />
               </Dropdown.ItemIcon>
             </Dropdown.Item>
-            <Dropdown.Item value="logout" variant="danger" selection={false}>
+            <Dropdown.Item value="logout" status="danger" selection={false}>
               <Dropdown.ItemLabel>Log Out</Dropdown.ItemLabel>
               <Dropdown.ItemIcon>
                 <IoLogOutOutline aria-hidden />

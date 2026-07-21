@@ -6,7 +6,7 @@ import { expect } from "storybook/test";
 import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
 
-import { Loading, type LoadingColor, type LoadingVariant } from "./Loading";
+import { Loading, type LoadingColor, type LoadingType } from "./Loading";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -39,18 +39,18 @@ const meta = {
     docs: {
       description: {
         component:
-          "Loading indicator: circular spinner (`variant=\"spinner\"`) or three GSAP bouncing dots (`variant=\"dots\"`). Dot speed — `configureMotion({ loadingDotsDuration })` (wave step = duration / 3). Sizes `small | base | mid | large`.",
+          "Loading indicator: circular spinner (`type=\"spinner\"`) or three GSAP bouncing dots (`type=\"dots\"`). Dot speed — `configureMotion({ loadingDotsDuration })` (wave step = duration / 3). Sizes `small | base | mid | large`.",
       },
     },
   },
   decorators: [...framedDecorator],
   args: {
-    variant: "spinner",
+    type: "spinner",
     size: "base",
     color: "primary",
   },
   argTypes: {
-    variant: { control: "select", options: ["spinner", "dots"] satisfies LoadingVariant[] },
+    type: { control: "select", options: ["spinner", "dots"] satisfies LoadingType[] },
     size: { control: "select", options: COMPONENT_SIZES },
     color: { control: "select", options: COLORS },
   },
@@ -69,7 +69,7 @@ export const Default: Story = {
 export const Dots: Story = {
   name: "Bouncing dots",
   args: {
-    variant: "dots",
+    type: "dots",
     size: "mid",
     color: "primary",
   },
@@ -81,7 +81,7 @@ export const DotsColors: Story = {
     <div className="flex flex-wrap items-end justify-center gap-xlarge">
       {COLORS.map((color) => (
         <div key={color} className="flex flex-col items-center gap-small">
-          <Loading variant="dots" color={color} size="mid" />
+          <Loading type="dots" color={color} size="mid" />
           <Text as="span" variant="small" className="capitalize text-muted">
             {color}
           </Text>
@@ -97,7 +97,7 @@ export const DotsSizes: Story = {
     <div className="flex flex-wrap items-end justify-center gap-xlarge">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col items-center gap-small">
-          <Loading variant="dots" size={size} />
+          <Loading type="dots" size={size} />
           <Text as="span" variant="small" className="capitalize text-muted">
             {size}
           </Text>

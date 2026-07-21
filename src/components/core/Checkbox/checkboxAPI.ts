@@ -8,7 +8,7 @@ import type { CheckboxClassNames, CheckboxIndicatorClassNames, CheckboxVariant }
 export function checkboxVariantToIndicator(
   variant: CheckboxVariant,
 ): SelectionIndicatorVariant {
-  if (variant === "default") return "base";
+  if (variant === "default") return "default";
   return variant;
 }
 

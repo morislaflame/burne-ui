@@ -57,7 +57,7 @@ const meta = {
     size: "base" as const,
     variant: "default" as const,
     disabled: false,
-    danger: false,
+    status: "default",
   },
   argTypes: {
     size: { control: "select", options: ["small", "base", "mid", "large"] },
@@ -159,8 +159,8 @@ export const States: Story = {
   name: "States",
   render: () => (
     <div className="flex max-w-md flex-col gap-mid">
-      <Checkbox label="Regular" hint="Without danger" />
-      <Checkbox danger label="With error" hint="Subtitle stays muted" />
+      <Checkbox label="Regular" hint="Without status" />
+      <Checkbox status="danger" label="With error" hint="Subtitle stays muted" />
       <Checkbox disabled label="Disabled" hint="Cannot toggle" />
       <Checkbox disabled defaultChecked label="Disabled, checked" />
     </div>

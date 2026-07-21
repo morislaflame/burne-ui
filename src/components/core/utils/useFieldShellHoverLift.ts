@@ -5,13 +5,14 @@ import { fieldShellHoverVariantForShell } from "./fieldShellVariant";
 import { hoverVariantBg, type HoverVariant } from "./hoverVariant";
 import { useSecondLevelShadow } from "./useShadowMotion";
 
-export type FieldShellStatus = "default" | "danger" | "success" | "warning";
+export type FieldShellStatus = "default" | "danger" | "success" | "info" | "warning";
 
 /** Field status tint background → stronger tint on hover (not *-fill like filled buttons). */
 const FIELD_SHELL_HOVER_VARIANT: Record<FieldShellStatus, HoverVariant> = {
   default: "default",
   danger: "danger-tint-hover",
   success: "success-tint-hover",
+  info: "info-tint-hover",
   warning: "warning-tint-hover",
 };
 

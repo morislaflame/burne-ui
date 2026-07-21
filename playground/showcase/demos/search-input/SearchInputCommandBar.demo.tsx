@@ -15,7 +15,7 @@ export function SearchInputCommandBarDemo() {
         aria-label="Search commands"
         placeholder="Go to component or action…"
         value={query}
-        onValueChange={setQuery}
+        onChange={(e) => setQuery(e.target.value)}
         variant="default"
         className="w-full"
       />

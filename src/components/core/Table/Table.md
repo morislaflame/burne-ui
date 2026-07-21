@@ -69,9 +69,11 @@ import {
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `selectionMode` | `none` | `none` \| `single` \| `multiple` |
-| `selectedKeys` | — | `Set` или `"all"` |
+| `selectedKeys` | — | Controlled: `Set` или `"all"` |
+| `defaultSelectedKeys` | `∅` | Uncontrolled начальный selection |
 | `onSelectionChange` | — | Колбэк |
-| `sortDescriptor` | — | `{ column, direction }` |
+| `sortDescriptor` | — | Controlled: `{ column, direction }` |
+| `defaultSortDescriptor` | — | Uncontrolled начальная сортировка |
 | `onSortChange` | — | Колбэк сортировки |
 | `aria-label` | — | Имя таблицы |
 
@@ -174,7 +176,7 @@ configureMotion({
 
 ### 3. Selection state
 
-Controlled через React (`selectedKeys`, `onSelectionChange`):
+Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKeys`, `onSelectionChange`):
 
 - Row: `aria-selected`, `bg-default-hover` или gloss tint
 - Cell (toned): `ring-2 ring-inset ring-primary` при selected
@@ -304,7 +306,7 @@ Controlled через React (`selectedKeys`, `onSelectionChange`):
 ### Практические заметки
 
 - **`Table.ScrollContainer` обязателен** для horizontal overflow на узких экранах (`tabIndex={0}`).
-- **Sort:** `allowsSorting` + controlled `sortDescriptor` / `onSortChange`; без них chevron decorative.
+- **Sort:** `allowsSorting` + `sortDescriptor` / `defaultSortDescriptor` / `onSortChange`; без `allowsSorting` chevron decorative.
 - **`isRowHeader`** на первой колонке — screen reader row headers.
 - **`renderEmptyState` на `Table.Body`** — кастом empty UI (`emptyCell` слот).
 - **Gloss:** children table внутри `glossContent` автоматически; не дублируйте `gloss-panel` в `classNames.root`.

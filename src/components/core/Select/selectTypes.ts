@@ -39,6 +39,9 @@ export type SelectRootProps = HTMLAttributes<HTMLDivElement> & {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   variant?: InputVariant;
   disabled?: boolean;
   placeholder?: string;

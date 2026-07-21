@@ -17,6 +17,7 @@ import { createPortal } from "react-dom";
 import { Text } from "@/components/core/Text";
 import {
   SEMANTIC_STATUS_ICONS,
+  type SemanticStatus,
 } from "@/components/core/utils/semanticStatusIcons";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
@@ -34,7 +35,6 @@ import "../utils/glossInteractive.css";
 import { bindTriggerEvents, mergeDescribedBy } from "./tooltipA11y";
 import {
   hasTooltipCompoundChildren,
-  isSemanticTooltipVariant,
   isTooltipArrowElement,
   resolveTooltipGridSlots,
 } from "./tooltipAPI";
@@ -57,7 +57,7 @@ import {
   TOOLTIP_DESCRIPTION_MUTED_CLASS,
   TOOLTIP_ICON_SIZE,
   TOOLTIP_ICON_SLOT_SVG,
-  TOOLTIP_ICON_TEXT_CLASS,
+  TOOLTIP_STATUS_ICON_CLASS,
   TOOLTIP_INDICATOR_BASE_CLASS,
   TOOLTIP_TRIGGER_BASE_CLASS,
   tooltipArrowClass,
@@ -76,19 +76,18 @@ import type {
   TooltipSize,
   TooltipTitleProps,
   TooltipTriggerProps,
-  TooltipVariant,
 } from "./tooltipTypes";
 
 import { cn } from "@/utils/cn";
 
 function resolveTooltipIndicatorInner({
-  variant,
+  status,
   size,
   showIcon,
   icon,
   children,
 }: {
-  variant: TooltipVariant;
+  status: SemanticStatus;
   size: TooltipSize;
   showIcon?: boolean;
   icon?: ReactNode;
@@ -98,16 +97,16 @@ function resolveTooltipIndicatorInner({
   if (children !== undefined) return children;
   if (showIcon === false) return null;
   if (icon != null) return icon;
-  if (!isSemanticTooltipVariant(variant)) return null;
+  if (status === "default") return null;
 
-  const Icon = SEMANTIC_STATUS_ICONS[variant];
+  const Icon = SEMANTIC_STATUS_ICONS[status];
   return (
     <Icon
       aria-hidden
       className={cn(
         "shrink-0",
         TOOLTIP_ICON_SIZE[size],
-        TOOLTIP_ICON_TEXT_CLASS[variant],
+        TOOLTIP_STATUS_ICON_CLASS[status],
       )}
     />
   );
@@ -161,9 +160,9 @@ export function TooltipIndicator({
   ...rest
 }: TooltipIndicatorProps) {
   const slotClassNames = useTooltipClassNames();
-  const { variant, size, icon, showIcon, gridSlots } = useTooltipBodyContext("Tooltip.Indicator");
+  const { status, size, icon, showIcon, gridSlots } = useTooltipBodyContext("Tooltip.Indicator");
   const inner = resolveTooltipIndicatorInner({
-    variant,
+    status,
     size,
     showIcon: showIconProp ?? showIcon,
     icon,
@@ -177,7 +176,7 @@ export function TooltipIndicator({
       className={cn(
         TOOLTIP_INDICATOR_BASE_CLASS,
         TOOLTIP_ICON_SLOT_SVG[size],
-        TOOLTIP_ICON_TEXT_CLASS[variant],
+        TOOLTIP_STATUS_ICON_CLASS[status],
         messageBannerIndicatorCellClass(gridSlots),
         slotClassNames.indicator,
         slotClassNames.icon,
@@ -257,7 +256,7 @@ TooltipDescription.displayName = "TooltipDescription";
 
 export function TooltipPanel({
   variant = "default",
-  surface = "default",
+  status = "default",
   size = "base",
   icon,
   showIcon,
@@ -269,12 +268,12 @@ export function TooltipPanel({
   ...rest
 }: TooltipPanelProps) {
   const slotClassNames = useTooltipClassNames();
-  const isGloss = surface === "gloss";
+  const isGloss = variant === "gloss";
   const isCompound = children != null && hasTooltipCompoundChildren(children);
   const gridSlots = useMemo(
     () =>
       resolveTooltipGridSlots({
-        variant,
+        status,
         icon,
         showIcon,
         title,
@@ -282,12 +281,12 @@ export function TooltipPanel({
         isCompound,
         children,
       }),
-    [children, description, icon, isCompound, showIcon, title, variant],
+    [children, description, icon, isCompound, showIcon, status, title],
   );
 
   const bodyCtx = useMemo(
-    () => ({ variant, size, icon, showIcon, gridSlots }),
-    [gridSlots, icon, showIcon, size, variant],
+    () => ({ variant, status, size, icon, showIcon, gridSlots }),
+    [gridSlots, icon, showIcon, size, status, variant],
   );
 
   const body = isCompound
@@ -296,7 +295,7 @@ export function TooltipPanel({
 
   const panelClass = tooltipPanelClass({
     variant,
-    surface,
+    status,
     size,
     gridSlots,
     slotClass: slotClassNames.panel,
@@ -429,14 +428,14 @@ TooltipTrigger.displayName = "TooltipTrigger";
 export function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
   const slotClassNames = useTooltipClassNames();
   const resolvedSide = useTooltipResolvedSide();
-  const { variant, surface } = useTooltipContext("Tooltip.Arrow");
+  const { variant, status } = useTooltipContext("Tooltip.Arrow");
 
   return (
     <span
       aria-hidden
       className={tooltipArrowClass({
         variant,
-        surface,
+        status,
         resolvedSide,
         slotClass: slotClassNames.arrow,
         className,
@@ -464,7 +463,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       open,
       tooltipId,
       variant,
-      surface,
+      status,
       size,
       side,
       icon,
@@ -474,7 +473,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
 
     const tipRef = useRef<HTMLDivElement | null>(null);
     const glossPanelRef = useRef<HTMLDivElement | null>(null);
-    const isGloss = surface === "gloss";
+    const isGloss = variant === "gloss";
     const bindGlossPanelRef = useMemo(
       () => createGlossInteractiveRefCallback(glossPanelRef, isGloss),
       [isGloss],
@@ -552,7 +551,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
     const bubble = (
       <TooltipPanel
         variant={variant}
-        surface={surface}
+        status={status}
         size={size}
         icon={icon}
         showIcon={showIcon}

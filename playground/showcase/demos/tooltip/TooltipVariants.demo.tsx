@@ -12,7 +12,7 @@ export function TooltipVariantsDemo() {
         </Tooltip.Trigger>
         <Tooltip.Content>Hint on hover and focus</Tooltip.Content>
       </Tooltip>
-      <Tooltip variant="success" side="top">
+      <Tooltip status="success" side="top">
         <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             Success
@@ -20,7 +20,7 @@ export function TooltipVariantsDemo() {
         </Tooltip.Trigger>
         <Tooltip.Content>Operation completed</Tooltip.Content>
       </Tooltip>
-      <Tooltip variant="danger" size="small">
+      <Tooltip status="danger" size="small">
         <Tooltip.Trigger asChild>
           <Button variant="outline" type="button" size="small">
             Danger
@@ -28,7 +28,7 @@ export function TooltipVariantsDemo() {
         </Tooltip.Trigger>
         <Tooltip.Content>The action is irreversible</Tooltip.Content>
       </Tooltip>
-      <Tooltip variant="info">
+      <Tooltip status="info">
         <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             Info
@@ -36,7 +36,7 @@ export function TooltipVariantsDemo() {
         </Tooltip.Trigger>
         <Tooltip.Content>Additional information</Tooltip.Content>
       </Tooltip>
-      <Tooltip variant="warning">
+      <Tooltip status="warning">
         <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
             Warning

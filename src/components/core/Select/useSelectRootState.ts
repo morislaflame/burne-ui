@@ -3,6 +3,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import type { InputVariant } from "@/components/core/Input";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
+import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useFormFieldBinding } from "@/components/composite/Form/useFormFieldBinding";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
@@ -29,6 +30,9 @@ export function useSelectRootState({
   value: valueProp,
   defaultValue,
   onValueChange,
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
   variant: variantProp,
   disabled: disabledProp = false,
   placeholder = "Select a value",
@@ -75,7 +79,11 @@ export function useSelectRootState({
     [formBound, formBinding, isControlled, onValueChange],
   );
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useControllableState({
+    value: openProp,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const [activeValue, setActiveValue] = useState<string | null>(null);
 
   const anchorRef = useRef<HTMLDivElement | null>(null);

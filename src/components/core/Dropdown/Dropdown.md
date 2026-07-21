@@ -28,7 +28,7 @@ import {
   <Dropdown.Popover>
     <Dropdown.Item onClick={handleEdit}>Редактировать</Dropdown.Item>
     <Dropdown.Separator />
-    <Dropdown.Item variant="danger">Удалить</Dropdown.Item>
+    <Dropdown.Item status="danger">Удалить</Dropdown.Item>
   </Dropdown.Popover>
 </Dropdown>
 ```
@@ -341,7 +341,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 <Dropdown classNames={{ item: "rounded-mid", subContent: "shadow-token-lg" }}>
   <Dropdown.Trigger>Меню</Dropdown.Trigger>
   <Dropdown.Popover bodyClassName="p-small">
-    <Dropdown.Item variant="danger">
+    <Dropdown.Item status="danger">
       <Dropdown.ItemLabel>Удалить</Dropdown.ItemLabel>
     </Dropdown.Item>
     <Dropdown.Separator />

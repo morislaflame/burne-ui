@@ -36,6 +36,7 @@ export type {
 
 export function AlertDialogRoot({
   open,
+  defaultOpen = false,
   onOpenChange,
   children,
   status,
@@ -45,6 +46,7 @@ export function AlertDialogRoot({
 }: AlertDialogProps) {
   const state = useAlertDialogRootState({
     open,
+    defaultOpen,
     onOpenChange,
     status,
     variant,

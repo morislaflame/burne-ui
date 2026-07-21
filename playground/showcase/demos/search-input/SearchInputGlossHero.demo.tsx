@@ -19,7 +19,7 @@ export function SearchInputGlossHeroDemo() {
         aria-label="Catalog search"
         placeholder="Find component…"
         value={query}
-        onValueChange={setQuery}
+        onChange={(e) => setQuery(e.target.value)}
         className="w-full max-w-sm"
       />
     </div>

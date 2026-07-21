@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 
 export type DrawerPlacement = "left" | "right" | "top" | "bottom";
-export type DrawerSize = "default" | "mid" | "full";
+export type DrawerExtent = "default" | "mid" | "full";
 export type DrawerVariant = "default" | "gloss";
 
 export type DrawerClassNames = {
@@ -25,8 +25,9 @@ export type DrawerClassNames = {
 };
 
 export type DrawerProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   /** Slide direction (structural, used in context). */
   placement?: DrawerPlacement;
   children?: ReactNode;
@@ -34,7 +35,7 @@ export type DrawerProps = {
 };
 
 export type DrawerPanelProps = {
-  size?: DrawerSize;
+  extent?: DrawerExtent;
   variant?: DrawerVariant;
   className?: string;
   themeAnchor?: HTMLElement | null;
@@ -85,7 +86,10 @@ export type DrawerPanelSegment =
   | { kind: "handle"; node: ReactNode }
   | { kind: "content"; children: ReactNode[] };
 
-export type UseDrawerRootStateProps = Pick<DrawerProps, "open" | "onOpenChange">;
+export type UseDrawerRootStateProps = Pick<
+  DrawerProps,
+  "open" | "defaultOpen" | "onOpenChange"
+>;
 
 export type UseDrawerPanelStateProps = {
   open: boolean;
@@ -105,7 +109,7 @@ export type DrawerPortalShellProps = {
   className?: string;
   variant: DrawerVariant;
   placement: DrawerPlacement;
-  size: DrawerSize;
+  extent: DrawerExtent;
   portalTheme: Record<string, string | undefined>;
   lightUi: boolean;
   titleId: string;

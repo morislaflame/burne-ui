@@ -62,7 +62,7 @@ export const Horizontal: Story = {
               Share
             </Dropdown.Item>
             <Dropdown.Separator />
-            <Dropdown.Item value="del" variant="danger" selection={false}>
+            <Dropdown.Item value="del" status="danger" selection={false}>
               Delete
             </Dropdown.Item>
           </Dropdown.Popover>

@@ -3,5 +3,5 @@ export {
   type LoadingProps,
   type LoadingSize,
   type LoadingColor,
-  type LoadingVariant,
+  type LoadingType,
 } from "./Loading";

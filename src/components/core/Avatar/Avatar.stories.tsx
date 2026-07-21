@@ -113,7 +113,7 @@ export const AvatarGroupStory: Story = {
         size="base"
         label="Two"
         nickname="orbit_fox"
-        tooltipVariant="info"
+        tooltipStatus="info"
         src={PIN_IMAGE2}
         alt=""
         loading="lazy"
@@ -122,7 +122,7 @@ export const AvatarGroupStory: Story = {
         size="base"
         label="Three"
         nickname="vela_wave"
-        tooltipVariant="success"
+        tooltipStatus="success"
         src={PIN_IMAGE3}
         alt=""
         loading="lazy"
@@ -136,7 +136,7 @@ export const AvatarGroupStory: Story = {
         alt=""
         loading="lazy"
       />
-      <Avatar size="base" label="Plus five" nickname="+5" tooltipVariant="warning" />
+      <Avatar size="base" label="Plus five" nickname="+5" tooltipStatus="warning" />
     </AvatarGroup>
   ),
 };
