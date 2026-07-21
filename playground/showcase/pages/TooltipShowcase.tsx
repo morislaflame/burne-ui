@@ -1,9 +1,6 @@
 import { TooltipFormHintDemo } from "../demos/tooltip/TooltipFormHint.demo";
 import tooltipFormHintSource from "../demos/tooltip/TooltipFormHint.demo.tsx?raw";
-import {
-  TooltipClassNamesFullDemo,
-  TooltipClassNamesGlossDemo,
-} from "../demos/tooltip/TooltipClassNamesFull.demo";
+import { TooltipClassNamesFullDemo, TooltipClassNamesGlossDemo } from "../demos/tooltip/TooltipClassNamesFull.demo";
 import tooltipClassNamesFullSource from "../demos/tooltip/TooltipClassNamesFull.demo.tsx?raw";
 import { TooltipGlossDemo } from "../demos/tooltip/TooltipGloss.demo";
 import tooltipGlossSource from "../demos/tooltip/TooltipGloss.demo.tsx?raw";

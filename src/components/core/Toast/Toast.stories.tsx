@@ -49,7 +49,7 @@ const TOAST_VARIANT_ITEMS: Array<{
   title: string;
   description?: string;
   action?: ReactNode;
-  isLoading?: boolean;
+  loading?: boolean;
 }> = [
   {
     status: "default",
@@ -89,7 +89,7 @@ const TOAST_VARIANT_ITEMS: Array<{
     status: "default",
     title: "Saving…",
     description: "Wait for the operation to complete.",
-    isLoading: true,
+    loading: true,
   },
 ];
 
@@ -103,7 +103,7 @@ function ToastVariantsDemo() {
           title={item.title}
           description={item.description}
           action={item.action}
-          isLoading={item.isLoading}
+          loading={item.loading}
           onClose={() => {}}
         />
       ))}
@@ -315,7 +315,7 @@ export const CompoundApi: Story = {
               <Toast.Indicator />
               <Toast.Title>Done!</Toast.Title>
               <Toast.Description>Data saved successfully</Toast.Description>
-              <Toast.CloseButton />
+              <Toast.Close />
             </Toast>
           </div>
         )}

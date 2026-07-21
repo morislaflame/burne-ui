@@ -31,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Popover panel on trigger **click**. Compound: `<Popover.Trigger>`, `<Popover.Content>`, optional `<Popover.Header>` with `<Popover.Label>` / `<Popover.Hint>`, `<Popover.Body>`, `<Popover.Arrow />`. Padding on the whole panel; gap between header and body — `gap` prop on `<Popover.Content>`. Placement and flip — like `Tooltip`; dismiss — click outside or `Escape`.",
+          "Popover panel on trigger **click**. Compound: `<Popover.Trigger>`, `<Popover.Content>`, optional `<Popover.Header>` with `<Popover.Title>` / `<Popover.Description>`, `<Popover.Body>`, `<Popover.Arrow />`. Padding on the whole panel; gap between header and body — `gap` prop on `<Popover.Content>`. Placement and flip — like `Tooltip`; dismiss — click outside or `Escape`.",
       },
     },
   },
@@ -82,8 +82,8 @@ export const WithHeader: Story = {
       <Popover.Content showArrow>
         <Popover.Arrow />
         <Popover.Header>
-          <Popover.Label>Export</Popover.Label>
-          <Popover.Hint>Choose a format or copy the link</Popover.Hint>
+          <Popover.Title>Export</Popover.Title>
+          <Popover.Description>Choose a format or copy the link</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-small">
@@ -149,8 +149,8 @@ function TagColorPopoverDemo() {
       <Popover.Content showArrow className="max-w-none">
         <Popover.Arrow />
         <Popover.Header>
-          <Popover.Label>Task label</Popover.Label>
-          <Popover.Hint>Color is visible in the list and on the kanban board</Popover.Hint>
+          <Popover.Title>Task label</Popover.Title>
+          <Popover.Description>Color is visible in the list and on the kanban board</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-plus">
@@ -197,15 +197,15 @@ function ShareLinkPopoverDemo() {
   return (
     <Popover side="top">
       <Popover.Trigger>
-        <Button variant="primary" type="button" leftIcon={<IoShareSocialOutline aria-hidden />}>
+        <Button variant="primary" type="button" icon={<IoShareSocialOutline aria-hidden />}>
           Share
         </Button>
       </Popover.Trigger>
       <Popover.Content showArrow>
         <Popover.Arrow />
         <Popover.Header>
-          <Popover.Label>Share link</Popover.Label>
-          <Popover.Hint>Link access — read only</Popover.Hint>
+          <Popover.Title>Share link</Popover.Title>
+          <Popover.Description>Link access — read only</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-plus">
@@ -229,10 +229,10 @@ function ShareLinkPopoverDemo() {
               }
             />
             <div className="grid grid-cols-2 gap-small">
-              <Button variant="outline" size="small" type="button" leftIcon={<IoLinkOutline aria-hidden />}>
+              <Button variant="outline" size="small" type="button" icon={<IoLinkOutline aria-hidden />}>
                 Link
               </Button>
-              <Button variant="ghost" size="small" type="button" className="text-danger" leftIcon={<IoTrashOutline aria-hidden />}>
+              <Button variant="ghost" size="small" type="button" className="text-danger" icon={<IoTrashOutline aria-hidden />}>
                 Revoke
               </Button>
             </div>
@@ -301,7 +301,7 @@ export const Accessibility: Story = {
         </Popover.Trigger>
         <Popover.Content>
           <Popover.Header>
-            <Popover.Label>Field help</Popover.Label>
+            <Popover.Title>Field help</Popover.Title>
           </Popover.Header>
           <Popover.Body>
             <Text as="p" variant="small" className="text-muted">
@@ -343,8 +343,8 @@ export const CustomClassNames: Story = {
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Header>
-          <Popover.Label>Filters</Popover.Label>
-          <Popover.Hint>Changes apply immediately</Popover.Hint>
+          <Popover.Title>Filters</Popover.Title>
+          <Popover.Description>Changes apply immediately</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <Text as="p" variant="small">

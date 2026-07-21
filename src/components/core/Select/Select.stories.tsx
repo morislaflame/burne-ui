@@ -6,10 +6,7 @@ import { IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
 import { Button } from "@/components/core/Button";
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
@@ -311,7 +308,7 @@ export const StatusDanger: Story = {
       status="danger"
       error="Select a value"
       options={sampleOptions}
-      isRequired
+      required
     />
   ),
 };

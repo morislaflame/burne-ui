@@ -1,20 +1,11 @@
 # RadioGroup
 
-Группа радиокнопок в native `<fieldset>`: compound API с `Legend`, `Label`, `Hint`, `Error`, `List`. Один выбранный `value`; повторный клик по выбранному снимает выбор (если не `isRequired`).
+Группа радиокнопок в native `<fieldset>`: compound API с `Legend`, `Label`, `Hint`, `Error`, `List`. Один выбранный `value`; повторный клик по выбранному снимает выбор (если не `required`).
 
 ## Импорт
 
 ```tsx
-import {
-  RadioGroup,
-  type RadioGroupProps,
-  type RadioGroupOrientation,
-  type RadioGroupHintProps,
-  type RadioGroupErrorProps,
-  type RadioGroupLabelProps,
-  type RadioGroupLegendProps,
-  type RadioGroupListProps,
-} from "burne-ui";
+import { RadioGroup, type RadioGroupProps, type RadioGroupOrientation, type RadioGroupHintProps, type RadioGroupErrorProps, type RadioGroupLabelProps, type RadioGroupLegendProps, type RadioGroupListProps } from "burne-ui";
 import { Radio } from "burne-ui";
 ```
 
@@ -56,7 +47,7 @@ Simple API нет.
 | `defaultValue` | — | Uncontrolled initial |
 | `onValueChange` | — | `(value: string \| undefined) => void` |
 | `name` | auto `radio-group-{id}` | Общий `name` для всех `Radio` |
-| `isRequired` | `false` | Required mark; native `required` на первом radio |
+| `required` | `false` | Required mark; native `required` на первом radio |
 | `size` | `small` | `small` \| `base` \| `mid` \| `large` |
 | `disabled` | `false` | На fieldset + context → `Radio` |
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
@@ -192,7 +183,7 @@ configureMotion({
 ### С ошибкой
 
 ```tsx
-<RadioGroup isRequired>
+<RadioGroup required>
   <RadioGroup.Legend>
     <RadioGroup.Label>Способ оплаты</RadioGroup.Label>
   </RadioGroup.Legend>
@@ -207,8 +198,8 @@ configureMotion({
 
 - Паттерн legend: `Legend` → `Label` + опционально `Hint`.
 - `name` на root — общий для всех `Radio` (auto-generate если не задан).
-- `isRequired` — `selectValue(undefined)` блокируется; required anchor на первом radio.
-- При `isRequired={false}` повторный клик снимает выбор.
+- `required` — `selectValue(undefined)` блокируется; required anchor на первом radio.
+- При `required={false}` повторный клик снимает выбор.
 - Сравнение с `CheckboxGroup selection="single"`: native radio semantics + arrow keys.
 - Стили опций — через `Radio`, не через группу.
 
@@ -229,7 +220,7 @@ Shared: `composite/utils/optionGroupFieldset.tsx`, `optionGroupLayout.ts`.
 - `Legend`: native `<legend>`
 - `Radio`: native `<input type="radio">`, arrow keys в группе
 - `Error`: `role="alert"`
-- `isRequired`: native `required` на первом radio (`claimRequiredAnchor`)
+- `required`: native `required` на первом radio (`claimRequiredAnchor`)
 
 ## Структура файлов
 

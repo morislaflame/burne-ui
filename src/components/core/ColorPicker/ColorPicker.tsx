@@ -1,9 +1,6 @@
 import { Popover } from "@/components/core/Popover";
 
-import {
-  ColorPickerClassNamesProvider,
-  ColorPickerProvider,
-} from "./colorPickerContext";
+import { ColorPickerClassNamesProvider, ColorPickerProvider } from "./colorPickerContext";
 import { ColorPickerContent, ColorPickerTrigger } from "./colorPickerParts";
 import type { ColorPickerProps } from "./colorPickerTypes";
 import { useColorPickerRootState } from "./useColorPickerRootState";

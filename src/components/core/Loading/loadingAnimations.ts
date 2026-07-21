@@ -2,11 +2,7 @@ import { useLayoutEffect, useSyncExternalStore, type RefObject } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  getMotionConfigRevision,
-  motionLoadingDots,
-  subscribeMotionConfig,
-} from "@/components/core/utils/motionConfig";
+import { getMotionConfigRevision, motionLoadingDots, subscribeMotionConfig } from "@/components/core/utils/motionConfig";
 
 import { LOADING_DOTS_LAYOUT } from "./loadingStyles";
 import type { LoadingSize } from "./loadingTypes";

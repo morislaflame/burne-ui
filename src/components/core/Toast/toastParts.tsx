@@ -3,34 +3,16 @@ import { forwardRef } from "react";
 import { CloseButton } from "@/components/core/CloseButton";
 import { Loading } from "@/components/core/Loading";
 import { Text } from "@/components/core/Text";
-import {
-  messageBannerActionCellClass,
-  messageBannerCloseCellClass,
-  messageBannerDescriptionCellClass,
-  messageBannerIndicatorCellClass,
-  messageBannerTitleCellClass,
-} from "@/components/core/utils/messageBannerGridLayout";
-import {
-  SEMANTIC_STATUS_ICONS,
-} from "@/components/core/utils/semanticStatusIcons";
+import { messageBannerActionCellClass, messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
+import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIcons";
 
 import { TOAST_CLOSE_ARIA_LABEL } from "./toastA11y";
 
-import {
-  useToastClassNames,
-  useToastItem,
-} from "./toastContext";
-import {
-  TOAST_CLOSE_BUTTON_OFFSET_CLASS,
-  TOAST_COMPOUND_CONTENTS_CLASS,
-  TOAST_DESCRIPTION_CLASS,
-  TOAST_TITLE_CLASS,
-  toastIndicatorClass,
-  toastLoadingColor,
-} from "./toastStyles";
+import { useToastClassNames, useToastItem } from "./toastContext";
+import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, TOAST_TITLE_CLASS, toastIndicatorClass, toastLoadingColor } from "./toastStyles";
 import type {
-  ToastActionButtonProps,
-  ToastCloseButtonProps,
+  ToastActionProps,
+  ToastCloseProps,
   ToastContentProps,
   ToastDescriptionProps,
   ToastIndicatorProps,
@@ -42,7 +24,7 @@ import type {
 import { cn } from "@/utils/cn";
 
 export function ToastIndicator({ className, children, ...rest }: ToastIndicatorProps) {
-  const { status, isLoading, gridSlots, sizePreset } = useToastItem();
+  const { status, loading, gridSlots, sizePreset } = useToastItem();
   const slotClassNames = useToastClassNames();
   const indicatorClass = toastIndicatorClass(status, sizePreset.iconSvgClass);
 
@@ -62,7 +44,7 @@ export function ToastIndicator({ className, children, ...rest }: ToastIndicatorP
     );
   }
 
-  if (isLoading) {
+  if (loading) {
     return (
       <span
         className={cn(
@@ -168,7 +150,7 @@ export function ToastDescription({ className, id: idProp, ...rest }: ToastDescri
 
 ToastDescription.displayName = "ToastDescription";
 
-export function ToastActionButton({ className, ...rest }: ToastActionButtonProps) {
+export function ToastAction({ className, ...rest }: ToastActionProps) {
   const { gridSlots } = useToastItem();
   const slotClassNames = useToastClassNames();
 
@@ -184,10 +166,10 @@ export function ToastActionButton({ className, ...rest }: ToastActionButtonProps
   );
 }
 
-ToastActionButton.displayName = "ToastActionButton";
+ToastAction.displayName = "ToastAction";
 
-export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonProps>(
-  function ToastCloseButton(
+export const ToastClose = forwardRef<HTMLButtonElement, ToastCloseProps>(
+  function ToastClose(
     { className, onClick, "aria-label": ariaLabel = TOAST_CLOSE_ARIA_LABEL, ...rest },
     ref,
   ) {
@@ -216,7 +198,7 @@ export const ToastCloseButton = forwardRef<HTMLButtonElement, ToastCloseButtonPr
   },
 );
 
-ToastCloseButton.displayName = "ToastCloseButton";
+ToastClose.displayName = "ToastClose";
 
 export function ToastSimpleBody({
   gridSlots,
@@ -230,8 +212,8 @@ export function ToastSimpleBody({
       {gridSlots.hasIndicator ? <ToastIndicator /> : null}
       {title != null ? <ToastTitle>{title}</ToastTitle> : null}
       {description != null ? <ToastDescription>{description}</ToastDescription> : null}
-      {action != null ? <ToastActionButton>{action}</ToastActionButton> : null}
-      {onClose != null ? <ToastCloseButton /> : null}
+      {action != null ? <ToastAction>{action}</ToastAction> : null}
+      {onClose != null ? <ToastClose /> : null}
     </>
   );
 }

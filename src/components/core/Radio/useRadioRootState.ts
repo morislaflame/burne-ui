@@ -89,10 +89,10 @@ export function useRadioRootState(
   );
 
   const canClearSelection =
-    !isDisabled && !readOnly && !required && !(inGroup && group.isRequired);
+    !isDisabled && !readOnly && !required && !(inGroup && group.required);
 
   const inputRequired =
-    required ?? (inGroup && group.isRequired ? group.claimRequiredAnchor() : undefined);
+    required ?? (inGroup && group.required ? group.claimRequiredAnchor() : undefined);
 
   const handleClick = useCallback(
     (e: MouseEvent<HTMLInputElement>) => {

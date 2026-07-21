@@ -24,10 +24,7 @@ export function LinkAnchorBody({
   handlePointerLeave,
   handlePointerDown,
   ...rest
-}: LinkAnchorBodyProps & {
-  usesDefaultAtStart: boolean;
-  usesDefaultAtEnd: boolean;
-}) {
+}: LinkAnchorBodyProps) {
   const slotClassNames = useLinkClassNames();
 
   const resolvedStart =

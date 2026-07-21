@@ -1,26 +1,14 @@
 import { useCallback, useState } from "react";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import {
-  buttonGroupRoundingClasses,
-  buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { cn } from "@/utils/cn";
 
 import { buttonAriaBusy } from "./buttonA11y";
 import { hasButtonCompoundChildren } from "./buttonAPI";
 import type { ButtonAsyncState, UseButtonRootStateProps } from "./buttonTypes";
-import {
-  BUTTON_BASE_INTERACTIVE_CLASS,
-  BUTTON_CURSOR_CLASS,
-  BUTTON_DISABLED_OPACITY_CLASS,
-  BUTTON_STATUS_FOCUS_OUTLINE,
-  buttonConvergeRippleColor,
-  buttonLoaderTextClass,
-  buttonRootClass,
-  buttonSurfaceMotionClass,
-} from "./buttonStyles";
+import { BUTTON_BASE_INTERACTIVE_CLASS, BUTTON_CURSOR_CLASS, BUTTON_DISABLED_OPACITY_CLASS, BUTTON_STATUS_FOCUS_OUTLINE, buttonConvergeRippleColor, buttonLoaderTextClass, buttonRootClass, buttonSurfaceMotionClass } from "./buttonStyles";
 
 export function useButtonRootState({
   variant: variantProp,
@@ -33,7 +21,8 @@ export function useButtonRootState({
   onAsyncClick,
   asyncFeedbackMs = 2000,
   disabled: disabledProp,
-  leftIcon,
+  icon,
+  iconPosition = "start",
   ripple = false,
   iconOnly = false,
   groupSegment: groupSegmentProp,
@@ -124,7 +113,8 @@ export function useButtonRootState({
     asyncState,
     isControlled,
     internalAsync,
-    leftIcon,
+    icon,
+    iconPosition,
     children,
     classNames,
     isCompound,

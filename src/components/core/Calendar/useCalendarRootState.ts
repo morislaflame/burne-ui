@@ -1,16 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { EN_LOCALE } from "./calendarLocale";
-import {
-  createDefaultCalendarValue,
-  createInitialViewDate,
-  isSameDay,
-  navigateViewDate,
-  resolveRangeEnd,
-  resolveRangeStart,
-  resolveSelectedDates,
-  startOfDay,
-} from "./calendarAPI";
+import { createDefaultCalendarValue, createInitialViewDate, isSameDay, navigateViewDate, resolveRangeEnd, resolveRangeStart, resolveSelectedDates, startOfDay } from "./calendarAPI";
 import type {
   CalendarContextValue,
   CalendarMode,

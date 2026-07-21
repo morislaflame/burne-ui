@@ -2,7 +2,7 @@ import { useOptionalFieldLabelContext } from "./labelContext";
 import type { UseLabelRootStateProps } from "./labelTypes";
 
 export function useLabelRootState({
-  isRequired: isRequiredProp,
+  required: requiredProp,
   htmlFor: htmlForProp,
   id: idProp,
 }: UseLabelRootStateProps) {
@@ -11,6 +11,6 @@ export function useLabelRootState({
   return {
     htmlFor: htmlForProp ?? ctx?.controlId,
     id: idProp ?? ctx?.labelId,
-    isRequired: isRequiredProp ?? ctx?.isRequired ?? false,
+    required: requiredProp ?? ctx?.required ?? false,
   };
 }

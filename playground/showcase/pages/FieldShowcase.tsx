@@ -1,9 +1,6 @@
 import { FieldAddressSetDemo } from "../demos/field/FieldAddressSet.demo";
 import fieldAddressSetSource from "../demos/field/FieldAddressSet.demo.tsx?raw";
-import {
-  FieldClassNamesFullDemo,
-  FieldSetClassNamesFullDemo,
-} from "../demos/field/FieldClassNamesFull.demo";
+import { FieldClassNamesFullDemo, FieldSetClassNamesFullDemo } from "../demos/field/FieldClassNamesFull.demo";
 import fieldClassNamesFullSource from "../demos/field/FieldClassNamesFull.demo.tsx?raw";
 import { FieldBillingSetDemo } from "../demos/field/FieldBillingSet.demo";
 import fieldBillingSetSource from "../demos/field/FieldBillingSet.demo.tsx?raw";
@@ -36,7 +33,7 @@ export function FieldShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Field.Root and Field.Set — slot customization via classNames."
+        description="Field and Field.Set — slot customization via classNames."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FieldClassNamesFullDemo} source={fieldClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={FieldSetClassNamesFullDemo} source={fieldClassNamesFullSource} />
@@ -58,7 +55,7 @@ export function FieldShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Field.Root, Field.Label, Field.Hint, Field.Error — field wrapper primitive. Field.Set, Field.Legend, Field.Group, Field.Actions — set of form fields."
+            description="Field, Field.Label, Field.Hint, Field.Error — field wrapper primitive. Field.Set, Field.Legend, Field.Group, Field.Actions — set of form fields."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Compound">
@@ -71,7 +68,7 @@ export function FieldShowcase() {
         <ShowcaseDoc.Customization>
           <p>
             <code>className</code> on Set/Group. Hint status — <code>Field.Hint status=&quot;danger&quot;</code>.
-            For custom controls, wrap input in <code>Field.Root</code>.
+            For custom controls, wrap input in <code>Field</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

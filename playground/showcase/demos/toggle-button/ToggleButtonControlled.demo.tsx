@@ -13,7 +13,7 @@ export function ToggleButtonControlledDemo() {
       onPressedChange={setLiked}
       onFillStart={setFilledIcon}
       variant="outline"
-      leftIcon={filledIcon ? <IoHeart aria-hidden /> : <IoHeartOutline aria-hidden />}
+      icon={filledIcon ? <IoHeart aria-hidden /> : <IoHeartOutline aria-hidden />}
     >
       Like
     </ToggleButton>

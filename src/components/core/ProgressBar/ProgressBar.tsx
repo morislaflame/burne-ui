@@ -1,10 +1,7 @@
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import {
-  ProgressBarClassNamesProvider,
-  ProgressBarFieldProvider,
-} from "./progressBarContext";
+import { ProgressBarClassNamesProvider, ProgressBarFieldProvider } from "./progressBarContext";
 import { ProgressBarSimpleBody } from "./progressBarParts";
 import { progressBarRootClass } from "./progressBarStyles";
 import type { ProgressBarRootProps } from "./progressBarTypes";

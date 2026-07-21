@@ -1,18 +1,9 @@
 import { forwardRef, useCallback } from "react";
 
-import {
-  useCollapsibleHeight,
-  useCollapsibleShellRef,
-} from "@/components/core/utils/useCollapsibleHeight";
+import { useCollapsibleHeight, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
 
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
-import {
-  DISCLOSURE_CONTENT_SHELL_CLASS,
-  DISCLOSURE_GLOSS_PANEL_CLASS,
-  disclosureContentPanelClass,
-  disclosureContentWrapClass,
-  disclosureGlossContentClass,
-} from "./disclosureStyles";
+import { DISCLOSURE_CONTENT_SHELL_CLASS, DISCLOSURE_GLOSS_PANEL_CLASS, disclosureContentPanelClass, disclosureContentWrapClass, disclosureGlossContentClass } from "./disclosureStyles";
 import type { DisclosureContentProps } from "./disclosureTypes";
 
 import { cn } from "@/utils/cn";

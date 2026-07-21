@@ -2,30 +2,15 @@ import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import {
-  IoBookmarkOutline,
-  IoCheckmarkCircleOutline,
-  IoHeartOutline,
-  IoMoonOutline,
-  IoNotificationsOutline,
-  IoRocketOutline,
-} from "react-icons/io5";
+import { IoBookmarkOutline, IoCheckmarkCircleOutline, IoHeartOutline, IoMoonOutline, IoNotificationsOutline, IoRocketOutline } from "react-icons/io5";
 
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
-import {
-  Badge,
-  type BadgePlacement,
-  type BadgeStatus,
-  type BadgeVariant,
-} from ".";
+import { Badge, type BadgePlacement, type BadgeStatus, type BadgeVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 

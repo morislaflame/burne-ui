@@ -1,12 +1,4 @@
-import {
-  AlertAction,
-  AlertContent,
-  AlertDescription,
-  AlertIndicator,
-  AlertMessage,
-  AlertRoot,
-  AlertTitle,
-} from "./Alert";
+import { AlertAction, AlertContent, AlertDescription, AlertIndicator, AlertMessage, AlertRoot, AlertTitle } from "./Alert";
 
 export const Alert = Object.assign(AlertRoot, {
   Indicator: AlertIndicator,

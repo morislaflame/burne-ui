@@ -1,27 +1,11 @@
 import { forwardRef, useCallback, useMemo, useRef } from "react";
 
-import {
-  createGlossInteractiveRefCallback,
-  useGlossInteractiveHandlers,
-} from "@/components/core/utils/glossInteractiveMotion";
+import { createGlossInteractiveRefCallback, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
 
 import "@/components/core/utils/glossInteractive.css";
 
-import {
-  ToastClassNamesProvider,
-  ToastItemProvider,
-  useToastClassNames,
-} from "./toastContext";
-import {
-  ToastActionButton,
-  ToastCloseButton,
-  ToastContent,
-  ToastDescription,
-  ToastIndicator,
-  ToastMessage,
-  ToastSimpleBody,
-  ToastTitle,
-} from "./toastParts";
+import { ToastClassNamesProvider, ToastItemProvider, useToastClassNames } from "./toastContext";
+import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator, ToastMessage, ToastSimpleBody, ToastTitle } from "./toastParts";
 import { toastRootClass } from "./toastStyles";
 import type { ToastRootProps } from "./toastTypes";
 import { useToastRootState } from "./useToastRootState";
@@ -38,8 +22,8 @@ export type {
   ToastContentProps,
   ToastTitleProps,
   ToastDescriptionProps,
-  ToastActionButtonProps,
-  ToastCloseButtonProps,
+  ToastActionProps,
+  ToastCloseProps,
   AddToastOpts,
   PromiseToastOpts,
   ToastContextValue,
@@ -55,7 +39,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
     title,
     description,
     action,
-    isLoading = false,
+    loading = false,
     onClose,
     className,
     classNames,
@@ -72,7 +56,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function Toa
     title,
     description,
     action,
-    isLoading,
+    loading,
     onClose,
     children,
   });
@@ -150,6 +134,6 @@ export {
   ToastContent,
   ToastTitle,
   ToastDescription,
-  ToastActionButton,
-  ToastCloseButton,
+  ToastAction,
+  ToastClose,
 };

@@ -5,15 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  TextArea,
-  type TextAreaProps,
-  type TextAreaSimpleProps,
-  type TextAreaVariant,
-  type TextAreaStatus,
-  type TextAreaSize,
-  type TextAreaClassNames,
-} from "burne-ui";
+import { TextArea, type TextAreaProps, type TextAreaSimpleProps, type TextAreaVariant, type TextAreaStatus, type TextAreaSize, type TextAreaClassNames } from "burne-ui";
 ```
 
 ## API
@@ -78,7 +70,7 @@ import {
 **DOM-структура:**
 
 ```
-Field.Root
+Field
   Label
   <div data-slot="textarea-shell" ref=shellRef>
     <textarea ref=textareaRef />
@@ -167,7 +159,7 @@ configureMotion({
 
 ### Два уровня
 
-1. **`className` на root** — классы на `Field.Root` (мерж с `classNames.root`).
+1. **`className` на root** — классы на `Field` (мерж с `classNames.root`).
 2. **`classNames` на root** — слоты через `TextAreaClassNamesProvider`.
 
 В compound API каждая подчасть (`TextArea.Control`, `TextArea.Label`, …) принимает **`className`**, мержится поверх слота из контекста.
@@ -176,7 +168,7 @@ configureMotion({
 
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
-| `root` | `Field.Root` | Max-width, внешние отступы, рамка поля |
+| `root` | `Field` | Max-width, внешние отступы, рамка поля |
 | `label` | `Label` | Типографика label |
 | `shell` | `[data-slot="textarea-shell"]` | Min-height, ring, border; сюда же inline `height` от resize |
 | `control` | `<textarea>` | Line-height, padding, `field-sizing` поведение |

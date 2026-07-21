@@ -4,37 +4,12 @@ import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
-import {
-  SelectionIndicator,
-} from "@/components/core/SelectionIndicator";
+import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 import { checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
 import { useCheckboxControlTrackAnimation } from "./checkboxAnimations";
 import { useCheckboxFieldContext, useCheckboxClassNames } from "./checkboxContext";
-import {
-  CHECKBOX_CONTENT_COMPOUND_CLASS,
-  CHECKBOX_CONTENT_PASS_THROUGH_CLASS,
-  CHECKBOX_CONTENT_POINTER_CLASS,
-  CHECKBOX_CONTROL_CLASS,
-  CHECKBOX_CONTROL_TRACK_CLASS,
-  CHECKBOX_ERROR_DISABLED_CLASS,
-  CHECKBOX_HINT_DISABLED_CLASS,
-  CHECKBOX_INPUT_TRACK_OVERLAY_CLASS,
-  CHECKBOX_INPUT_VISUALLY_HIDDEN_CLASS,
-  CHECKBOX_LABEL_CLASS,
-  CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS,
-  CHECKBOX_LABEL_MOTION_CLASS,
-  CHECKBOX_LABEL_TEXT_DANGER_CLASS,
-  CHECKBOX_LABEL_TEXT_DISABLED_CLASS,
-  CHECKBOX_REQUIRED_MARK_CLASS,
-  CHECKBOX_SIMPLE_LABEL_TEXT_CLASS,
-  CHECKBOX_SIMPLE_LABEL_WRAP_CLASS,
-  CHECKBOX_SIZE_LAYOUT,
-  checkboxControlCellClass,
-  checkboxErrorRow,
-  checkboxLabelCellClass,
-  checkboxSecondaryCellClass,
-} from "./checkboxStyles";
+import { CHECKBOX_CONTENT_COMPOUND_CLASS, CHECKBOX_CONTENT_PASS_THROUGH_CLASS, CHECKBOX_CONTENT_POINTER_CLASS, CHECKBOX_CONTROL_CLASS, CHECKBOX_CONTROL_TRACK_CLASS, CHECKBOX_ERROR_DISABLED_CLASS, CHECKBOX_HINT_DISABLED_CLASS, CHECKBOX_INPUT_TRACK_OVERLAY_CLASS, CHECKBOX_INPUT_VISUALLY_HIDDEN_CLASS, CHECKBOX_LABEL_CLASS, CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS, CHECKBOX_LABEL_MOTION_CLASS, CHECKBOX_LABEL_TEXT_DANGER_CLASS, CHECKBOX_LABEL_TEXT_DISABLED_CLASS, CHECKBOX_REQUIRED_MARK_CLASS, CHECKBOX_SIMPLE_LABEL_TEXT_CLASS, CHECKBOX_SIMPLE_LABEL_WRAP_CLASS, CHECKBOX_SIZE_LAYOUT, checkboxControlCellClass, checkboxErrorRow, checkboxLabelCellClass, checkboxSecondaryCellClass } from "./checkboxStyles";
 import type {
   CheckboxContentProps,
   CheckboxControlProps,
@@ -134,7 +109,7 @@ export function CheckboxIndicator({
       variant={checkboxVariantToIndicator(ctx.variant)}
       size={sizeProp ?? ctx.size}
       selected={ctx.mergedChecked}
-      icon={ctx.checkIcon ?? undefined}
+      icon={ctx.icon ?? undefined}
       check
       classNames={resolveCheckboxIndicatorClassNames({
         slotClassNames,
@@ -194,14 +169,14 @@ CheckboxContent.displayName = "CheckboxContent";
 export function CheckboxLabel({
   children,
   className,
-  isRequired: isRequiredProp,
+  required: requiredProp,
   id: idProp,
   ...rest
 }: CheckboxLabelProps) {
   const field = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   const labelCtx = useOptionalFieldLabelContext();
-  const isRequired = isRequiredProp ?? labelCtx?.isRequired ?? false;
+  const required = requiredProp ?? labelCtx?.required ?? false;
   const sz = CHECKBOX_SIZE_LAYOUT[field.size];
 
   return (
@@ -236,7 +211,7 @@ export function CheckboxLabel({
       >
         {children}
       </Text>
-      {isRequired ? (
+      {required ? (
         <span
           className={cn(
             CHECKBOX_REQUIRED_MARK_CLASS,

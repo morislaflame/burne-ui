@@ -7,6 +7,8 @@ import type {
   RefObject,
 } from "react";
 
+import type { IconPosition } from "@/components/core/utils/iconPosition";
+
 export type BadgeVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
 
 export type BadgeStatus = "default" | "danger" | "success" | "info" | "warning";
@@ -19,7 +21,7 @@ export type BadgePlacement =
   | "bottom-right"
   | "bottom-left";
 
-export type BadgeIconPosition = "start" | "end";
+export type BadgeIconPosition = IconPosition;
 
 export type BadgeInlineIconPosition = "inline-start" | "inline-end";
 

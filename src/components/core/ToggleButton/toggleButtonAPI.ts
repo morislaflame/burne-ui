@@ -4,8 +4,8 @@ export const TOGGLE_BUTTON_COMPOUND_SLOT_NAMES = new Set([
   "ToggleButtonContent",
   "ToggleButtonFill",
   "ToggleButtonLabel",
-  "ToggleButtonIcon",
-  "ToggleButtonTrailing",
+  "ToggleButtonIconStart",
+  "ToggleButtonIconEnd",
   "ToggleButtonText",
 ]);
 

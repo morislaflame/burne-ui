@@ -3,17 +3,10 @@ import { useCallback } from "react";
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
-import {
-  toggleButtonAriaChecked,
-  toggleButtonAriaPressed,
-  toggleButtonRole,
-} from "./toggleButtonA11y";
+import { toggleButtonAriaChecked, toggleButtonAriaPressed, toggleButtonRole } from "./toggleButtonA11y";
 import { hasToggleButtonCompoundChildren } from "./toggleButtonAPI";
 import { useOptionalToggleButtonGroupContext } from "./toggleButtonContext";
-import {
-  toggleButtonRootClass,
-  toggleButtonRoundingClass,
-} from "./toggleButtonStyles";
+import { toggleButtonRootClass, toggleButtonRoundingClass } from "./toggleButtonStyles";
 import type { UseToggleButtonRootStateProps } from "./toggleButtonTypes";
 
 export function useToggleButtonRootState({

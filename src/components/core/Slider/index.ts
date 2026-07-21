@@ -1,21 +1,6 @@
-import {
-  SliderError,
-  SliderFill,
-  SliderHeader,
-  SliderHint,
-  SliderIcon,
-  SliderLabel,
-  SliderRail,
-  SliderRoot,
-  SliderThumb,
-  SliderTrack,
-  SliderValue,
-} from "./Slider";
+import { SliderError, SliderFill, SliderHeader, SliderHint, SliderIcon, SliderLabel, SliderRail, SliderRoot, SliderThumb, SliderTrack, SliderValue } from "./Slider";
 import { sliderThicknessToCss } from "./sliderAPI";
-import {
-  useOptionalSliderFieldContext,
-  useSliderFieldContext,
-} from "./sliderContext";
+import { useOptionalSliderFieldContext, useSliderFieldContext } from "./sliderContext";
 
 export const Slider = Object.assign(SliderRoot, {
   Header: SliderHeader,

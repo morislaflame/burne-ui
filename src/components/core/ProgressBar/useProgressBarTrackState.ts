@@ -2,22 +2,10 @@ import { useLayoutEffect, useMemo } from "react";
 
 import { clampNumber } from "@/components/core/utils/clampNumber";
 
-import {
-  defaultProgressBarFormatValue,
-  progressBarValueToPercent,
-} from "./progressBarAPI";
-import {
-  PROGRESS_BAR_INDETERMINATE_STATUS_TEXT,
-  progressBarLabelId,
-  resolveProgressBarDescribedBy,
-  resolveProgressBarTrackAria,
-} from "./progressBarA11y";
+import { defaultProgressBarFormatValue, progressBarValueToPercent } from "./progressBarAPI";
+import { PROGRESS_BAR_INDETERMINATE_STATUS_TEXT, progressBarLabelId, resolveProgressBarDescribedBy, resolveProgressBarTrackAria } from "./progressBarA11y";
 import { useOptionalProgressBarFieldContext } from "./progressBarContext";
-import {
-  progressBarFillColorStyle,
-  progressBarFillTargetStyle,
-  progressBarTrackCrossStyle,
-} from "./progressBarStyles";
+import { progressBarFillColorStyle, progressBarFillTargetStyle, progressBarTrackCrossStyle } from "./progressBarStyles";
 import type { UseProgressBarTrackStateProps } from "./progressBarTypes";
 
 export function useProgressBarTrackState({

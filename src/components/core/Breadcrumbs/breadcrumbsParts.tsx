@@ -1,41 +1,16 @@
 import { IoChevronForward } from "react-icons/io5";
-import {
-  forwardRef,
-  useCallback,
-} from "react";
+import { forwardRef, useCallback } from "react";
 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
 import { Dropdown } from "@/components/core/Dropdown";
 import { Text } from "@/components/core/Text";
 
-import {
-  BREADCRUMBS_ELLIPSIS_POPOVER_ARIA_LABEL,
-  ellipsisTriggerAriaLabel,
-} from "./breadcrumbsA11y";
+import { BREADCRUMBS_ELLIPSIS_POPOVER_ARIA_LABEL, ellipsisTriggerAriaLabel } from "./breadcrumbsA11y";
 import { breadcrumbListItemKey } from "./breadcrumbsAPI";
 import { useBreadcrumbInteractiveMotion } from "./breadcrumbsAnimations";
-import {
-  BreadcrumbsClassNamesProvider,
-  useBreadcrumbsClassNames,
-} from "./breadcrumbsContext";
-import {
-  breadcrumbChevronClass,
-  breadcrumbCurrentClass,
-  breadcrumbListItemClass,
-  breadcrumbStaticClass,
-  breadcrumbsDropdownItemClass,
-  breadcrumbsEllipsisPopoverBodyClass,
-  breadcrumbsEllipsisLiftWrapperClass,
-  breadcrumbsEllipsisTextClass,
-  breadcrumbsEllipsisTriggerClass,
-  breadcrumbsListClass,
-  breadcrumbsSeparatorClass,
-  crumbInteractiveButtonClass,
-  crumbInteractiveInnerClass,
-  crumbInteractiveTextClass,
-  crumbInteractiveWrapperClass,
-} from "./breadcrumbsStyles";
+import { BreadcrumbsClassNamesProvider, useBreadcrumbsClassNames } from "./breadcrumbsContext";
+import { breadcrumbChevronClass, breadcrumbCurrentClass, breadcrumbListItemClass, breadcrumbStaticClass, breadcrumbsDropdownItemClass, breadcrumbsEllipsisPopoverBodyClass, breadcrumbsEllipsisLiftWrapperClass, breadcrumbsEllipsisTextClass, breadcrumbsEllipsisTriggerClass, breadcrumbsListClass, breadcrumbsSeparatorClass, crumbInteractiveButtonClass, crumbInteractiveInnerClass, crumbInteractiveTextClass, crumbInteractiveWrapperClass } from "./breadcrumbsStyles";
 import { useBreadcrumbsListState } from "./useBreadcrumbsRootState";
 import type {
   BreadcrumbListItemProps,

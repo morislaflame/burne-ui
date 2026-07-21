@@ -6,7 +6,7 @@ export function LabelClassNamesFullDemo() {
     <div className="flex w-full max-w-sm flex-col gap-xsmall">
       <Label
         htmlFor="label-demo-email"
-        isRequired
+        required
         classNames={{
           text: "text-primary font-semibold",
           required: "text-warning",

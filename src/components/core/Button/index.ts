@@ -22,16 +22,7 @@ export {
   type ButtonErrorProps,
 } from "./Button";
 
-import {
-  ButtonRoot,
-  ButtonContent,
-  ButtonLabel,
-  ButtonIcon,
-  ButtonText,
-  ButtonLoader,
-  ButtonSuccess,
-  ButtonError,
-} from "./Button";
+import { ButtonRoot, ButtonContent, ButtonLabel, ButtonIcon, ButtonText, ButtonLoader, ButtonSuccess, ButtonError } from "./Button";
 
 export const Button = Object.assign(ButtonRoot, {
   Content: ButtonContent,

@@ -3,10 +3,7 @@ import { forwardRef } from "react";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { cn } from "@/utils/cn";
 
-import {
-  SELECTION_INDICATOR_FILL_DISPLAY_NAME,
-  SELECTION_INDICATOR_MARK_DISPLAY_NAME,
-} from "./selectionIndicatorAPI";
+import { SELECTION_INDICATOR_FILL_DISPLAY_NAME, SELECTION_INDICATOR_MARK_DISPLAY_NAME } from "./selectionIndicatorAPI";
 import { useSelectionIndicatorContext } from "./selectionIndicatorContext";
 import type { SelectionIndicatorFillProps, SelectionIndicatorMarkProps } from "./selectionIndicatorTypes";
 

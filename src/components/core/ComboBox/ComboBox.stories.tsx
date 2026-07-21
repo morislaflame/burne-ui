@@ -6,10 +6,7 @@ import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
 import { Button } from "@/components/core/Button";
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStoryLayouts";
 
@@ -332,7 +329,7 @@ export const LightTheme: Story = {
 export const Validation: Story = {
   name: "Validation",
   render: () => (
-    <ComboBox status="danger" isRequired options={sampleOptions}>
+    <ComboBox status="danger" required options={sampleOptions}>
       <ComboBox.Label>Interface language</ComboBox.Label>
       <ComboBox.InputGroup>
         <ComboBox.Input placeholder="Select language" />
@@ -354,7 +351,7 @@ export const Accessibility: Story = {
         <code className="text-primary">aria-controls</code>,{" "}
         <code className="text-primary">aria-activedescendant</code>. Listbox inside Popover.
       </p>
-      <ComboBox status="danger" isRequired options={sampleOptions}>
+      <ComboBox status="danger" required options={sampleOptions}>
         <ComboBox.Label>Interface language</ComboBox.Label>
         <ComboBox.InputGroup>
           <ComboBox.Input placeholder="Select language" />

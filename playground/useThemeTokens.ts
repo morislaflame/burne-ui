@@ -1,30 +1,7 @@
-import {
-  createContext,
-  createElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, createElement, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
-import {
-  applyColorPresetToState,
-  applyThemeModeToState,
-} from "./colorPresets";
-import {
-  applyThemeTokens,
-  clearThemeInlineTokens,
-  createDefaultEditorState,
-  exportThemeCss,
-  MOTION_DEFAULTS,
-  SCALE_DEFAULTS,
-  type ThemeColorKey,
-  type ThemeEditorState,
-  type ThemeFontWeightKey,
-  type ThemeMode,
-  type ThemeStatusForegroundKey,
-} from "./themeDefaults";
+import { applyColorPresetToState, applyThemeModeToState } from "./colorPresets";
+import { applyThemeTokens, clearThemeInlineTokens, createDefaultEditorState, exportThemeCss, MOTION_DEFAULTS, SCALE_DEFAULTS, type ThemeColorKey, type ThemeEditorState, type ThemeFontWeightKey, type ThemeMode, type ThemeStatusForegroundKey } from "./themeDefaults";
 import { LAYOUT_PRESETS, type LayoutPresetKey } from "./themePresets";
 import type { ColorPresetKey } from "./colorPresets";
 

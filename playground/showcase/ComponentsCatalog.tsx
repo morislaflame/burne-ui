@@ -7,12 +7,7 @@ import { Text } from "@/components/core/Text";
 import { Toast } from "@/components/core/Toast";
 import { cn } from "@/utils/cn";
 
-import {
-  DEFAULT_SHOWCASE_PAGE_ID,
-  findShowcasePage,
-  SHOWCASE_GROUPS,
-  type ShowcaseGroup,
-} from "./registry";
+import { DEFAULT_SHOWCASE_PAGE_ID, findShowcasePage, SHOWCASE_GROUPS, type ShowcaseGroup } from "./registry";
 
 function ShowcaseNavButton({
   label,
@@ -101,7 +96,7 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
             <Button
               size="small"
               variant="outline"
-              leftIcon={<IoMenuOutline className="size-4" />}
+              icon={<IoMenuOutline className="size-4" />}
             >
               Components
             </Button>

@@ -1,56 +1,17 @@
-import {
-  Children,
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  type MouseEvent as ReactMouseEvent,
-  type PointerEvent as ReactPointerEvent,
-  type ReactElement,
-  type Ref,
-} from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
-import {
-  burneLightThemePortalProps,
-  useBurneLightTheme,
-  usePortalThemeAnchor,
-} from "@/components/core/utils/burneLightTheme";
+import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import {
-  runOpenAfterSqueeze,
-  useOpeningRef,
-} from "@/components/core/utils/runOpenAfterSqueeze";
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { drawerHandleAriaLabel, DRAWER_CLOSE_DEFAULT_ARIA_LABEL } from "./drawerA11y";
 import { partitionDrawerChildren } from "./drawerAPI";
 import { useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerProvider, useDrawer, useDrawerClassNames } from "./drawerContext";
-import {
-  DRAWER_CLOSE_CLASS,
-  DRAWER_DESCRIPTION_CLASS,
-  DRAWER_FOOTER_CLASS,
-  DRAWER_FOOTER_PADDING,
-  DRAWER_HEADER_CLASS,
-  DRAWER_HEADER_PADDING,
-  DRAWER_HEADING_BLOCK_CLASS,
-  DRAWER_NATIVE_CLASS,
-  DRAWER_TITLE_CLASS,
-  drawerBodyClass,
-  drawerContentClass,
-  drawerGlossContentWrapClass,
-  drawerGlossPanelClass,
-  drawerHandleClass,
-  drawerHandleGripClass,
-  drawerOverlayClass,
-  drawerOverlayEnterStyle,
-  drawerPanelClass,
-} from "./drawerStyles";
+import { DRAWER_CLOSE_CLASS, DRAWER_DESCRIPTION_CLASS, DRAWER_FOOTER_CLASS, DRAWER_FOOTER_PADDING, DRAWER_HEADER_CLASS, DRAWER_HEADER_PADDING, DRAWER_HEADING_BLOCK_CLASS, DRAWER_NATIVE_CLASS, DRAWER_TITLE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
 import type {
   DrawerBackdropProps,
   DrawerBodyProps,

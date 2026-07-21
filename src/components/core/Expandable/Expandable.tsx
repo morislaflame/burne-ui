@@ -3,22 +3,8 @@ import { forwardRef } from "react";
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
 
-import {
-  ExpandableClassNamesProvider,
-  ExpandableProvider,
-} from "./expandableContext";
-import {
-  EXPANDABLE_GLOSS_CONTENT_CLASS,
-  ExpandableChevron,
-  ExpandableContent,
-  ExpandableDescription,
-  ExpandableIcon,
-  ExpandableMessage,
-  ExpandablePanel,
-  ExpandableSimpleBody,
-  ExpandableTitle,
-  ExpandableTrigger,
-} from "./expandableParts";
+import { ExpandableClassNamesProvider, ExpandableProvider } from "./expandableContext";
+import { EXPANDABLE_GLOSS_CONTENT_CLASS, ExpandableChevron, ExpandableContent, ExpandableDescription, ExpandableIcon, ExpandableMessage, ExpandablePanel, ExpandableSimpleBody, ExpandableTitle, ExpandableTrigger } from "./expandableParts";
 import { expandableRootClass } from "./expandableStyles";
 import type { ExpandableRootProps } from "./expandableTypes";
 import { useExpandableRootState } from "./useExpandableRootState";

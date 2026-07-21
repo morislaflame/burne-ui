@@ -11,14 +11,14 @@ export function ButtonGroupVerticalMenuDemo() {
         <Button
           variant="ghost"
           className="w-full justify-start"
-          leftIcon={<IoFolderOutline aria-hidden />}
+          icon={<IoFolderOutline aria-hidden />}
         >
           Open
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start"
-          leftIcon={<IoSettingsOutline aria-hidden />}
+          icon={<IoSettingsOutline aria-hidden />}
         >
           Settings
         </Button>
@@ -26,7 +26,7 @@ export function ButtonGroupVerticalMenuDemo() {
           variant="ghost"
           status="danger"
           className="w-full justify-start"
-          leftIcon={<IoTrashOutline aria-hidden />}
+          icon={<IoTrashOutline aria-hidden />}
         >
           Delete
         </Button>

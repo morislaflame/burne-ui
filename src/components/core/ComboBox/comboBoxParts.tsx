@@ -1,17 +1,10 @@
 import type {
   PointerEvent as ReactPointerEvent,
 } from "react";
-import {
-  forwardRef,
-  useCallback,
-  useRef,
-} from "react";
+import { forwardRef, useCallback, useRef } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
-import {
-  useOptionalButtonGroupLayout,
-  useOptionalButtonGroupSegment,
-} from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
@@ -22,28 +15,10 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
-import {
-  comboBoxResolveHintStatus,
-  comboBoxTriggerAriaLabel,
-} from "./comboBoxA11y";
-import {
-  runComboBoxOpenAfterSqueeze,
-  useComboBoxOpeningRef,
-} from "./comboBoxAnimations";
-import {
-  useComboBoxClassNames,
-  useComboBoxContext,
-  useComboBoxFieldContext,
-} from "./comboBoxContext";
-import {
-  COMBOBOX_CHEVRON_ICON,
-  COMBOBOX_LISTBOX_CLASS,
-  COMBOBOX_POPOVER_BODY_CLASS,
-  COMBOBOX_POPOVER_CLASS,
-  comboBoxInputClass,
-  comboBoxInputGroupClass,
-  comboBoxTriggerClass,
-} from "./comboBoxStyles";
+import { comboBoxResolveHintStatus, comboBoxTriggerAriaLabel } from "./comboBoxA11y";
+import { runComboBoxOpenAfterSqueeze, useComboBoxOpeningRef } from "./comboBoxAnimations";
+import { useComboBoxClassNames, useComboBoxContext, useComboBoxFieldContext } from "./comboBoxContext";
+import { COMBOBOX_CHEVRON_ICON, COMBOBOX_LISTBOX_CLASS, COMBOBOX_POPOVER_BODY_CLASS, COMBOBOX_POPOVER_CLASS, comboBoxInputClass, comboBoxInputGroupClass, comboBoxTriggerClass } from "./comboBoxStyles";
 import type {
   ComboBoxErrorProps,
   ComboBoxHintProps,
@@ -193,7 +168,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       placeholder,
       size,
       status,
-      isRequired,
+      required,
       activeOptionId,
       ariaDescribedBy,
       inputValue,
@@ -211,7 +186,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
         type="text"
         aria-autocomplete="list"
         aria-activedescendant={activeOptionId}
-        aria-required={isRequired || undefined}
+        aria-required={required || undefined}
         aria-invalid={status === "danger" ? true : undefined}
         aria-describedby={ariaDescribedBy}
         disabled={disabled}

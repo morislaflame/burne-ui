@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  ComboBox,
-  comboBoxFilteredValues,
-  type ComboBoxOption,
-  type ComboBoxRootProps,
-  type ComboBoxSimpleProps,
-  type ComboBoxClassNames,
-} from "burne-ui";
+import { ComboBox, comboBoxFilteredValues, type ComboBoxOption, type ComboBoxRootProps, type ComboBoxSimpleProps, type ComboBoxClassNames } from "burne-ui";
 ```
 
 ## API
@@ -93,7 +86,7 @@ const options = [
 **DOM-структура:**
 
 ```
-Field.Root
+Field
   Label
   <div InputGroup ref=anchorRef role=combobox>   ← shell + open squeeze
     <input ComboBox.Input />
@@ -204,7 +197,7 @@ ListBox items — собственные selection animations (см. ListBox.md)
 
 ### Два уровня
 
-1. **`className` на root** — классы на `Field.Root` (мерж с `classNames.root`).
+1. **`className` на root** — классы на `Field` (мерж с `classNames.root`).
 2. **`classNames` на root** — слоты через `ComboBoxClassNamesProvider`.
 
 В compound API **`className` на каждой подчасти** (`InputGroup`, `Input`, `Trigger`, `Popover`) мержится поверх соответствующего слота контекста.
@@ -213,7 +206,7 @@ ListBox items — собственные selection animations (см. ListBox.md)
 
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
-| `root` | `Field.Root` | Max-width, layout поля |
+| `root` | `Field` | Max-width, layout поля |
 | `label` | `Label` | Типографика label |
 | `inputGroup` | Shell `role="combobox"` | Border, фон, hover shell, squeeze target |
 | `input` | `<input>` внутри группы | Текст, placeholder, muted-состояние |

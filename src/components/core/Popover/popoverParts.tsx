@@ -1,68 +1,24 @@
-import {
-  Children,
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  type KeyboardEvent as ReactKeyboardEvent,
-  type MouseEvent as ReactMouseEvent,
-  type PointerEvent as ReactPointerEvent,
-  type ReactElement,
-  type Ref,
-} from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { FieldHint } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
-import {
-  runOpenAfterSqueeze,
-  useOpeningRef,
-} from "@/components/core/utils/runOpenAfterSqueeze";
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
 
-import {
-  resolvePopoverDescribedBy,
-  resolvePopoverLabelledBy,
-} from "./popoverA11y";
-import {
-  mergePopoverRefs,
-  partitionPopoverContentChildren,
-  POPOVER_ARROW_DISPLAY_NAME,
-} from "./popoverAPI";
-import {
-  resolvePopoverContentAlign,
-  usePopoverContentLifecycle,
-} from "./popoverAnimations";
-import {
-  PopoverResolvedSideProvider,
-  usePopoverClassNames,
-  usePopoverContext,
-  usePopoverResolvedSide,
-} from "./popoverContext";
-import {
-  POPOVER_DEFAULT_GAP,
-  POPOVER_DEFAULT_OFFSET,
-  popoverArrowClass,
-  popoverBodyClass,
-  popoverContentClass,
-  popoverDefaultPanelClass,
-  popoverGlossContentClass,
-  popoverGlossPanelClass,
-  popoverHeaderClass,
-  popoverHintVariant,
-  popoverLabelClass,
-  popoverTitleVariant,
-  popoverTriggerClass,
-  POPOVER_PANEL_RELATIVE_CLASS,
-} from "./popoverStyles";
+import { resolvePopoverDescribedBy, resolvePopoverLabelledBy } from "./popoverA11y";
+import { mergePopoverRefs, partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
+import { resolvePopoverContentAlign, usePopoverContentLifecycle } from "./popoverAnimations";
+import { PopoverResolvedSideProvider, usePopoverClassNames, usePopoverContext, usePopoverResolvedSide } from "./popoverContext";
+import { POPOVER_DEFAULT_GAP, POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultPanelClass, popoverGlossContentClass, popoverGlossPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
 import type {
   PopoverArrowProps,
   PopoverBodyProps,
   PopoverContentProps,
   PopoverHeaderProps,
-  PopoverHintProps,
-  PopoverLabelProps,
+  PopoverDescriptionProps,
+  PopoverTitleProps,
   PopoverTriggerProps,
 } from "./popoverTypes";
 
@@ -226,9 +182,9 @@ export function PopoverHeader({ className, children, ...rest }: PopoverHeaderPro
 
 PopoverHeader.displayName = "PopoverHeader";
 
-export const PopoverLabel = forwardRef<HTMLHeadingElement, PopoverLabelProps>(
-  function PopoverLabel({ className, children, id: idProp, ...rest }, ref) {
-    const { labelId, size } = usePopoverContext("Popover.Label");
+export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
+  function PopoverTitle({ className, children, id: idProp, ...rest }, ref) {
+    const { labelId, size } = usePopoverContext("Popover.Title");
     const slotClassNames = usePopoverClassNames();
 
     return (
@@ -237,7 +193,7 @@ export const PopoverLabel = forwardRef<HTMLHeadingElement, PopoverLabelProps>(
         as="h2"
         variant={popoverTitleVariant(size)}
         id={idProp ?? labelId}
-        className={popoverLabelClass({
+        className={popoverTitleClass({
           slotClass: slotClassNames.label,
           className,
         })}
@@ -249,22 +205,22 @@ export const PopoverLabel = forwardRef<HTMLHeadingElement, PopoverLabelProps>(
   },
 );
 
-PopoverLabel.displayName = "PopoverLabel";
+PopoverTitle.displayName = "PopoverTitle";
 
-export function PopoverHint({
+export function PopoverDescription({
   className,
   children,
   variant,
   ...rest
-}: PopoverHintProps) {
-  const { hintId, size } = usePopoverContext("Popover.Hint");
+}: PopoverDescriptionProps) {
+  const { hintId, size } = usePopoverContext("Popover.Description");
   const slotClassNames = usePopoverClassNames();
 
   return (
     <FieldHint
       as="p"
       id={hintId}
-      variant={variant ?? popoverHintVariant(size)}
+      variant={variant ?? popoverDescriptionVariant(size)}
       className={cn(slotClassNames.hint, className)}
       {...rest}
     >
@@ -273,7 +229,7 @@ export function PopoverHint({
   );
 }
 
-PopoverHint.displayName = "PopoverHint";
+PopoverDescription.displayName = "PopoverDescription";
 
 export function PopoverBody({ className, children, ...rest }: PopoverBodyProps) {
   const slotClassNames = usePopoverClassNames();

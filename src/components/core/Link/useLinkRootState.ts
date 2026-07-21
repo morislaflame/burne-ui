@@ -5,8 +5,8 @@ import type { UseLinkRootStateProps } from "./linkTypes";
 export function useLinkRootState({
   size = "base",
   underline = false,
-  leftIcon,
-  rightIcon,
+  icon,
+  iconPosition = "start",
   showDefaultIcon = false,
   defaultIconPosition = "end",
   children,
@@ -14,8 +14,8 @@ export function useLinkRootState({
   const icons = resolveLinkBodyIcons({
     size,
     underline,
-    leftIcon,
-    rightIcon,
+    icon,
+    iconPosition,
     showDefaultIcon,
     defaultIconPosition,
     children,

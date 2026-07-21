@@ -1,16 +1,7 @@
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
 
-import {
-  applyThemeTokens,
-  createDefaultThemeState,
-  ensureModePalettes,
-  exportThemeCss,
-  type ThemeColors,
-  type ThemeFontWeights,
-  type ThemeMode,
-  type ThemeTokenState,
-} from "./themeDefaults";
+import { applyThemeTokens, createDefaultThemeState, ensureModePalettes, exportThemeCss, type ThemeColors, type ThemeFontWeights, type ThemeMode, type ThemeTokenState } from "./themeDefaults";
 
 /** Color mode for ThemeProvider / BurneUIProvider (`system` follows OS). */
 export type BurneThemeMode = ThemeMode | "system";

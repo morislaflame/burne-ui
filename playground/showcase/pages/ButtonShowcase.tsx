@@ -60,7 +60,7 @@ export function ButtonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, size, status, leftIcon, iconOnly, ripple, onAsyncClick, disabled, variant gloss."
+            description="variant, size, status, icon, iconOnly, ripple, onAsyncClick, disabled, variant gloss."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Ripple">

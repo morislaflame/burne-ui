@@ -67,7 +67,7 @@ function AccordionItemDemo({
             <Accordion.Content>
               <Accordion.Title>{item.title}</Accordion.Title>
             </Accordion.Content>
-            <Accordion.Indicator />
+            <Accordion.Chevron />
           </Accordion.Message>
         </Accordion.Trigger>
       </Accordion.Heading>
@@ -147,7 +147,7 @@ export const PressRipple: Story = {
                 <Accordion.Content>
                   <Accordion.Title>{item.title}</Accordion.Title>
                 </Accordion.Content>
-                <Accordion.Indicator />
+                <Accordion.Chevron />
               </Accordion.Message>
             </Accordion.Trigger>
           </Accordion.Heading>

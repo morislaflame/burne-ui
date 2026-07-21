@@ -1,7 +1,6 @@
 import { TabsList, TabsPanel, TabsRoot, TabsTab } from "./Tabs";
 
 export const Tabs = Object.assign(TabsRoot, {
-  Root: TabsRoot,
   List: TabsList,
   Tab: TabsTab,
   Panel: TabsPanel,

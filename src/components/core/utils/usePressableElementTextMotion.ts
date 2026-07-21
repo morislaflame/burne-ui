@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useRef, type PointerEvent, type RefObject } from "react";
 
 import { killMotion } from "./gsapMotion";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "./hoverInteractiveLift";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
 import { getMotionConfig } from "./motionConfig";
 
 export type UsePressableElementTextMotionProps<

@@ -1,8 +1,4 @@
-import {
-  cloneElement,
-  type HTMLAttributes,
-  type ReactElement,
-} from "react";
+import { cloneElement, type HTMLAttributes, type ReactElement } from "react";
 
 export function badgeHasAccessibleName(props: HTMLAttributes<HTMLSpanElement>): boolean {
   return (

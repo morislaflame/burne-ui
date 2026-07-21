@@ -38,7 +38,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       variant,
       size,
       disabled,
-      iconPos,
+      iconPosition,
       dragHandle,
       ...rest
     },
@@ -53,7 +53,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       variant,
       size,
       disabled,
-      iconPos,
+      iconPosition,
       dragHandle,
     });
 

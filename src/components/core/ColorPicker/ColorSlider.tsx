@@ -1,35 +1,12 @@
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type PointerEvent,
-} from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 
 import { Text } from "@/components/core/Text";
-import {
-  readSliderTrackMetrics,
-  resolveSliderFallbackThumbPx,
-  sliderPointerToValue,
-  sliderThumbCenterPercent,
-} from "@/components/core/Slider/sliderAPI";
+import { readSliderTrackMetrics, resolveSliderFallbackThumbPx, sliderPointerToValue, sliderThumbCenterPercent } from "@/components/core/Slider/sliderAPI";
 import { SliderThumbButton } from "@/components/core/Slider/sliderThumbParts";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { cn } from "@/utils/cn";
 
-import {
-  CHANNEL_A11Y_LABEL,
-  COLOR_SLIDER_LABEL_ROW_CLASS,
-  COLOR_SLIDER_LABEL_TEXT_CLASS,
-  COLOR_SLIDER_ROOT_CLASS,
-  COLOR_SLIDER_VALUE_TEXT_CLASS,
-  colorSliderBackgroundStyle,
-  colorSliderTrackClass,
-} from "./colorSliderStyles";
+import { CHANNEL_A11Y_LABEL, COLOR_SLIDER_LABEL_ROW_CLASS, COLOR_SLIDER_LABEL_TEXT_CLASS, COLOR_SLIDER_ROOT_CLASS, COLOR_SLIDER_VALUE_TEXT_CLASS, colorSliderBackgroundStyle, colorSliderTrackClass } from "./colorSliderStyles";
 import type {
   ColorChannel,
   ColorSliderRootProps,

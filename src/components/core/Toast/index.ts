@@ -1,14 +1,4 @@
-import {
-  ToastActionButton,
-  ToastCloseButton,
-  ToastContent,
-  ToastDescription,
-  ToastIndicator,
-  ToastMessage,
-  ToastProviderRoot,
-  ToastRoot,
-  ToastTitle,
-} from "./Toast";
+import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator, ToastMessage, ToastProviderRoot, ToastRoot, ToastTitle } from "./Toast";
 
 export const Toast = Object.assign(ToastRoot, {
   Provider: ToastProviderRoot,
@@ -17,8 +7,8 @@ export const Toast = Object.assign(ToastRoot, {
   Content: ToastContent,
   Title: ToastTitle,
   Description: ToastDescription,
-  ActionButton: ToastActionButton,
-  CloseButton: ToastCloseButton,
+  Action: ToastAction,
+  Close: ToastClose,
 });
 
 export { ToastContext, useToastContext, useToastClassNames } from "./toastContext";
@@ -35,8 +25,8 @@ export type {
   ToastContentProps,
   ToastTitleProps,
   ToastDescriptionProps,
-  ToastActionButtonProps,
-  ToastCloseButtonProps,
+  ToastActionProps,
+  ToastCloseProps,
   AddToastOpts,
   PromiseToastOpts,
   ToastVariant,
@@ -45,8 +35,8 @@ export type {
 } from "./toastTypes";
 
 export {
-  ToastActionButton,
-  ToastCloseButton,
+  ToastAction,
+  ToastClose,
   ToastContent,
   ToastDescription,
   ToastIndicator,

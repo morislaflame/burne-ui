@@ -5,12 +5,7 @@ import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import {
-  SLIDER_SCALE_HEADER_BASE_CLASS,
-  SLIDER_SCALE_HEADER_HORIZONTAL_CLASS,
-  SLIDER_SCALE_HEADER_VERTICAL_CLASS,
-  SLIDER_SCALE_VALUE_CLASS,
-} from "./sliderStyles";
+import { SLIDER_SCALE_HEADER_BASE_CLASS, SLIDER_SCALE_HEADER_HORIZONTAL_CLASS, SLIDER_SCALE_HEADER_VERTICAL_CLASS, SLIDER_SCALE_VALUE_CLASS } from "./sliderStyles";
 import type { SliderOrientation } from "./sliderTypes";
 
 export type SliderScaleFieldHeaderProps = HTMLAttributes<HTMLDivElement> & {

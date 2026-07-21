@@ -7,6 +7,7 @@ import type {
 } from "react";
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup";
 
 export type ButtonVariant =
@@ -67,7 +68,9 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onAsyncStateChange?: (state: ButtonAsyncState) => void;
   onAsyncClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<boolean>;
   asyncFeedbackMs?: number;
-  leftIcon?: ReactNode;
+  icon?: ReactNode;
+  /** @default "start" */
+  iconPosition?: IconPosition;
   classNames?: ButtonClassNames;
   /**
    * Enable converge-ripple from the press point (`<Ripple />` inside the button, tone under `variant`).
@@ -95,7 +98,8 @@ export type ButtonSuccessProps = HTMLAttributes<HTMLSpanElement>;
 export type ButtonErrorProps = HTMLAttributes<HTMLSpanElement>;
 
 export type ButtonSimpleContentProps = {
-  leftIcon?: ReactNode;
+  icon?: ReactNode;
+  iconPosition?: IconPosition;
   children?: ReactNode;
 };
 
@@ -121,7 +125,8 @@ export type UseButtonRootStateProps = Pick<
   | "classNames"
   | "animated"
   | "ripple"
-  | "leftIcon"
+  | "icon"
+  | "iconPosition"
   | "children"
   | "onClick"
   | "type"

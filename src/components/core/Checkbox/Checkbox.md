@@ -5,13 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Checkbox,
-  type CheckboxProps,
-  type CheckboxVariant,
-  type CheckboxSize,
-  type CheckboxClassNames,
-} from "burne-ui";
+import { Checkbox, type CheckboxProps, type CheckboxVariant, type CheckboxSize, type CheckboxClassNames } from "burne-ui";
 ```
 
 ## API
@@ -38,7 +32,7 @@ Root рендерится как `<label>` с grid: control + text column.
     <Checkbox.Indicator />
   </Checkbox.Control>
   <Checkbox.Content>
-    <Checkbox.Label isRequired>Email-рассылка</Checkbox.Label>
+    <Checkbox.Label required>Email-рассылка</Checkbox.Label>
     <Checkbox.Hint>Можно отписаться в любой момент</Checkbox.Hint>
     <Checkbox.Error>Нужно согласие</Checkbox.Error>
   </Checkbox.Content>
@@ -57,7 +51,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `onChange` | — | Native change event |
 | `disabled` | `false` | + opacity track animation |
 | `danger` | `false` | Красный label text (или из Form error) |
-| `checkIcon` | — | Кастомная иконка в indicator |
+| `icon` | — | Кастомная иконка отмеченного состояния (канон `icon`, как у `SelectionIndicator`; не путать с Switch `iconOn`/`iconOff`) |
 | `label` / `hint` / `error` | — | Simple API |
 | `name` / `value` | — | Form / CheckboxGroup |
 | `classNames` | — | см. стилизацию |
@@ -230,7 +224,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | Контекст | Поведение |
 |----------|-----------|
 | `Form` | `name`, `checked`, `error` → status |
-| `CheckboxGroup` | single/multi selection, `disabled`, `isRequired` |
+| `CheckboxGroup` | single/multi selection, `disabled`, `required` |
 
 ## Доступность
 

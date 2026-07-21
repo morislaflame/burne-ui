@@ -5,16 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Tooltip,
-  type TooltipRootProps,
-  type TooltipVariant,
-  type TooltipSize,
-  type TooltipSide,
-  type TooltipClassNames,
-  type TooltipTriggerProps,
-  type TooltipContentProps,
-} from "burne-ui";
+import { Tooltip, type TooltipRootProps, type TooltipVariant, type TooltipSize, type TooltipSide, type TooltipClassNames, type TooltipTriggerProps, type TooltipContentProps } from "burne-ui";
 ```
 
 ## API

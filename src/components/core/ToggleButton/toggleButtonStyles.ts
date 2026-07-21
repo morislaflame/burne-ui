@@ -1,7 +1,4 @@
-import {
-  buttonGroupRoundingClasses,
-  buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { buttonRootClass } from "@/components/core/Button/buttonStyles";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";

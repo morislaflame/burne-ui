@@ -1,9 +1,6 @@
 import { Fragment, forwardRef } from "react";
 
-import {
-  buildButtonGroupSegment,
-  resolveButtonGroupSegmentPosition,
-} from "@/components/composite/ButtonGroup/buttonGroupAPI";
+import { buildButtonGroupSegment, resolveButtonGroupSegmentPosition } from "@/components/composite/ButtonGroup/buttonGroupAPI";
 import { ButtonGroupSegmentProvider } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupRootClass } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { ToggleButtonGroupProvider } from "@/components/core/ToggleButton/toggleButtonContext";

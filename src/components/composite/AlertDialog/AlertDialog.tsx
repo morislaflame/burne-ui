@@ -1,19 +1,7 @@
 import "@/components/core/utils/glossInteractive.css";
 
 import { AlertDialogClassNamesProvider, AlertDialogProvider } from "./alertDialogContext";
-import {
-  AlertDialogBody,
-  AlertDialogClose,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogHeadingBlock,
-  AlertDialogIndicator,
-  AlertDialogPanel,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./alertDialogParts";
+import { AlertDialogBody, AlertDialogClose, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogHeadingBlock, AlertDialogIndicator, AlertDialogPanel, AlertDialogTitle, AlertDialogTrigger } from "./alertDialogParts";
 import type { AlertDialogProps } from "./alertDialogTypes";
 import { useAlertDialogRootState } from "./useAlertDialogRootState";
 

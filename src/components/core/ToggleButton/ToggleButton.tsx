@@ -4,14 +4,8 @@ import "@/components/core/utils/glossInteractive.css";
 
 import { useToggleButtonAnimations } from "./toggleButtonAnimations";
 import { toggleButtonHasCompoundPart } from "./toggleButtonAPI";
-import {
-  ToggleButtonClassNamesProvider,
-  ToggleButtonContextProvider,
-} from "./toggleButtonContext";
-import {
-  ToggleButtonContent,
-  ToggleButtonFill,
-} from "./toggleButtonParts";
+import { ToggleButtonClassNamesProvider, ToggleButtonContextProvider } from "./toggleButtonContext";
+import { ToggleButtonContent, ToggleButtonFill } from "./toggleButtonParts";
 import { ToggleButtonSimpleContent } from "./toggleButtonSimpleContent";
 import type { ToggleButtonProps } from "./toggleButtonTypes";
 import { cn } from "@/utils/cn";
@@ -25,8 +19,8 @@ export type {
   ToggleButtonFillProps,
   ToggleButtonContentProps,
   ToggleButtonLabelProps,
-  ToggleButtonIconProps,
-  ToggleButtonTrailingProps,
+  ToggleButtonIconStartProps,
+  ToggleButtonIconEndProps,
   ToggleButtonTextProps,
 } from "./toggleButtonTypes";
 
@@ -34,8 +28,8 @@ export {
   ToggleButtonContent,
   ToggleButtonFill,
   ToggleButtonLabel,
-  ToggleButtonIcon,
-  ToggleButtonTrailing,
+  ToggleButtonIconStart,
+  ToggleButtonIconEnd,
   ToggleButtonText,
 } from "./toggleButtonParts";
 
@@ -54,8 +48,8 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       fillColor,
       size,
       type = "button",
-      leftIcon,
-      rightIcon,
+      icon,
+      iconPosition,
       animated,
       disabled,
       children,
@@ -141,7 +135,7 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
               <ToggleButtonContent
                 className={cn(state.classNames?.content, state.contentLayoutClass)}
               >
-                <ToggleButtonSimpleContent leftIcon={leftIcon} rightIcon={rightIcon}>
+                <ToggleButtonSimpleContent icon={icon} iconPosition={iconPosition}>
                   {state.children}
                 </ToggleButtonSimpleContent>
               </ToggleButtonContent>

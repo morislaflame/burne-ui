@@ -2,9 +2,7 @@ import type { IconType } from "react-icons";
 import { IoHelpCircleOutline } from "react-icons/io5";
 import { Children, isValidElement, type ReactNode } from "react";
 
-import {
-  SEMANTIC_STATUS_ICONS,
-} from "@/components/core/utils/semanticStatusIcons";
+import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIcons";
 
 import type { AlertStatus, AlertVariant } from "./alertTypes";
 

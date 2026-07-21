@@ -1,11 +1,6 @@
 import { useMemo, type ReactNode } from "react";
 
-import {
-  collectBreadcrumbItems,
-  hasBreadcrumbCompoundChildren,
-  toCollapsedPieces,
-  toExpandedPieces,
-} from "./breadcrumbsAPI";
+import { collectBreadcrumbItems, hasBreadcrumbCompoundChildren, toCollapsedPieces, toExpandedPieces } from "./breadcrumbsAPI";
 import { useBreadcrumbsCollapse } from "./breadcrumbsContext";
 import type { BreadcrumbItemData } from "./breadcrumbsTypes";
 

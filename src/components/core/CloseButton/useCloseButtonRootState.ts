@@ -1,8 +1,5 @@
 import { closeButtonAriaLabel } from "./closeButtonA11y";
-import {
-  closeButtonRootClass,
-  closeButtonVariantVisual,
-} from "./closeButtonStyles";
+import { closeButtonRootClass, closeButtonVariantVisual } from "./closeButtonStyles";
 import type { UseCloseButtonRootStateProps } from "./closeButtonTypes";
 
 export function useCloseButtonRootState({

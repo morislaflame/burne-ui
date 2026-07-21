@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Drawer,
-  type DrawerProps,
-  type DrawerPlacement,
-  type DrawerSize,
-  type DrawerVariant,
-  type DrawerClassNames,
-} from "burne-ui";
+import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type DrawerVariant, type DrawerClassNames } from "burne-ui";
 ```
 
 ## API

@@ -5,19 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Calendar,
-  RU_LOCALE,
-  useCalendar,
-  type CalendarProps,
-  type CalendarMode,
-  type CalendarView,
-  type CalendarVariant,
-  type CalendarSize,
-  type CalendarRangeValue,
-  type CalendarLocale,
-  type CalendarClassNames,
-} from "burne-ui";
+import { Calendar, RU_LOCALE, useCalendar, type CalendarProps, type CalendarMode, type CalendarView, type CalendarVariant, type CalendarSize, type CalendarRangeValue, type CalendarLocale, type CalendarClassNames } from "burne-ui";
 ```
 
 ## API

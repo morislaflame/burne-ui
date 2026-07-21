@@ -2,12 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 
-import {
-  avatarHasLabel,
-  resolveAvatarNickname,
-  resolveAvatarSize,
-  resolveAvatarVariant,
-} from "./avatarAPI";
+import { avatarHasLabel, resolveAvatarNickname, resolveAvatarSize, resolveAvatarVariant } from "./avatarAPI";
 import { avatarRootAriaLabel, avatarRootRole } from "./avatarA11y";
 import type { ImageStatus, UseAvatarRootStateProps } from "./avatarTypes";
 

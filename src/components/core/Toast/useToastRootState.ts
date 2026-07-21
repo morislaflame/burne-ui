@@ -1,14 +1,9 @@
 import { useId, useMemo } from "react";
 
-import {
-  messageBannerSizePreset,
-  resolveMessageBannerSize,
-} from "@/components/core/utils/messageBannerSize";
+import { messageBannerSizePreset, resolveMessageBannerSize } from "@/components/core/utils/messageBannerSize";
 
 import { resolveToastGridSlots } from "./toastAPI";
-import {
-  resolveToastLiveRole,
-} from "./toastA11y";
+import { resolveToastLiveRole } from "./toastA11y";
 import type { ToastItemContextValue, UseToastRootStateProps } from "./toastTypes";
 
 export function useToastRootState({
@@ -17,7 +12,7 @@ export function useToastRootState({
   title,
   description,
   action,
-  isLoading = false,
+  loading = false,
   onClose,
   children,
 }: UseToastRootStateProps) {
@@ -36,11 +31,11 @@ export function useToastRootState({
         description,
         action,
         onClose,
-        isLoading,
+        loading,
         isCompound,
         children,
       ),
-    [action, children, description, isCompound, isLoading, onClose, status, title],
+    [action, children, description, isCompound, loading, onClose, status, title],
   );
 
   const liveRole = resolveToastLiveRole(status);
@@ -52,11 +47,11 @@ export function useToastRootState({
       sizePreset,
       titleId,
       descriptionId,
-      isLoading,
+      loading,
       dismiss: onClose ?? (() => {}),
       gridSlots,
     }),
-    [descriptionId, gridSlots, isLoading, onClose, size, sizePreset, status, titleId],
+    [descriptionId, gridSlots, loading, onClose, size, sizePreset, status, titleId],
   );
 
   return {

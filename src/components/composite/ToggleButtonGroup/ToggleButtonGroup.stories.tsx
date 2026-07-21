@@ -2,13 +2,7 @@ import { useState, type ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import {
-  IoBookmarkOutline,
-  IoGridOutline,
-  IoHeartOutline,
-  IoListOutline,
-  IoTextOutline,
-} from "react-icons/io5";
+import { IoBookmarkOutline, IoGridOutline, IoHeartOutline, IoListOutline, IoTextOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
 import { ToggleButton } from "@/components/core/ToggleButton";
@@ -50,7 +44,7 @@ export const ConnectedHorizontal: Story = {
   name: "Attached (horizontal)",
   render: () => (
     <ToggleButtonGroup aria-label="Format filter" defaultValue={["bold"]}>
-      <ToggleButton value="bold" leftIcon={<IoTextOutline aria-hidden />}>
+      <ToggleButton value="bold" icon={<IoTextOutline aria-hidden />}>
         Bold
       </ToggleButton>
       <ToggleButton value="italic">Italic</ToggleButton>
@@ -63,10 +57,10 @@ export const ConnectedVertical: Story = {
   name: "Attached (vertical)",
   render: () => (
     <ToggleButtonGroup orientation="vertical" aria-label="List view" defaultValue={["list"]}>
-      <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
+      <ToggleButton value="list" icon={<IoListOutline aria-hidden />}>
         List
       </ToggleButton>
-      <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
+      <ToggleButton value="grid" icon={<IoGridOutline aria-hidden />}>
         Grid
       </ToggleButton>
     </ToggleButtonGroup>
@@ -96,10 +90,10 @@ export const SingleSelection: Story = {
           onValueChange={(v) => setValue(v as string)}
           aria-label="Display mode"
         >
-          <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
+          <ToggleButton value="list" icon={<IoListOutline aria-hidden />}>
             List
           </ToggleButton>
-          <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
+          <ToggleButton value="grid" icon={<IoGridOutline aria-hidden />}>
             Grid
           </ToggleButton>
         </ToggleButtonGroup>
@@ -119,10 +113,10 @@ export const SingleSeparated: Story = {
   name: "Single + separated",
   render: () => (
     <ToggleButtonGroup type="single" separated defaultValue="like" aria-label="Reactions">
-      <ToggleButton value="like" leftIcon={<IoHeartOutline aria-hidden />}>
+      <ToggleButton value="like" icon={<IoHeartOutline aria-hidden />}>
         Like
       </ToggleButton>
-      <ToggleButton value="save" leftIcon={<IoBookmarkOutline aria-hidden />}>
+      <ToggleButton value="save" icon={<IoBookmarkOutline aria-hidden />}>
         Save
       </ToggleButton>
     </ToggleButtonGroup>

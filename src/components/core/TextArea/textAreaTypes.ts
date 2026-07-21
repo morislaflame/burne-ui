@@ -43,7 +43,7 @@ export type TextAreaFieldContextValue = {
   labelId: string;
   hintConnected: boolean;
   errorConnected: boolean;
-  isRequired: boolean;
+  required: boolean;
   status: TextAreaStatus;
   size: TextAreaSize;
 };
@@ -59,7 +59,7 @@ export type TextAreaRootProps = HTMLAttributes<HTMLDivElement> & {
   hint?: ReactNode;
   error?: ReactNode;
   id?: string;
-  isRequired?: boolean;
+  required?: boolean;
   status?: TextAreaStatus;
   size?: TextAreaSize;
   classNames?: TextAreaClassNames;

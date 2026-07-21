@@ -1,16 +1,6 @@
-import {
-  useCallback,
-  useMemo,
-  useRef,
-  type ForwardedRef,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
+import { useCallback, useMemo, useRef, type ForwardedRef, type PointerEvent as ReactPointerEvent } from "react";
 
-import {
-  createGlossInteractiveRefCallback,
-  GLOSS_INTERACTIVE_MOTION_CLASS,
-  useGlossInteractiveHandlers,
-} from "@/components/core/utils/glossInteractiveMotion";
+import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 

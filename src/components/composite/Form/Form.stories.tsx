@@ -92,11 +92,11 @@ function ProfileForm() {
           </ComboBox>
         </Form.Field>
         <Form.Field name="name">
-          <Input isRequired name="name" label="Name" placeholder="Ivan" autoComplete="name" />
+          <Input required name="name" label="Name" placeholder="Ivan" autoComplete="name" />
         </Form.Field>
         <Form.Field name="email">
           <Input
-            isRequired
+            required
             name="email"
             label="Email"
             placeholder="you@example.com"
@@ -105,7 +105,7 @@ function ProfileForm() {
         </Form.Field>
         <Form.Field name="password">
           <Input
-            isRequired
+            required
             name="password"
             label="Password"
             inputType="password"
@@ -116,7 +116,7 @@ function ProfileForm() {
         <Input name="avatar" label="Avatar" inputType="file" accept="image/*" placeholder="PNG or JPEG" />
       </Form.Section>
       <Form.Section>
-        <CheckboxGroup selection="single" isRequired>
+        <CheckboxGroup selection="single" required>
           <CheckboxGroup.Legend>
             <CheckboxGroup.Label>Notifications</CheckboxGroup.Label>
             <CheckboxGroup.Hint>
@@ -181,7 +181,7 @@ function ValidationForm() {
       <Form.Section>
         <Form.Field name="email">
           <Input
-            isRequired
+            required
             name="email"
             label="Email"
             autoComplete="email"
@@ -190,7 +190,7 @@ function ValidationForm() {
           />
         </Form.Field>
         <Form.Field name="locale">
-          <ComboBox name="locale" isRequired options={localeOptions}>
+          <ComboBox name="locale" required options={localeOptions}>
             <ComboBox.Label>Interface language</ComboBox.Label>
             <ComboBox.InputGroup>
               <ComboBox.Input placeholder="Select language" />
@@ -237,11 +237,11 @@ function LoginForm() {
         <Form.Title>Sign in</Form.Title>
         <Form.Section>
           <Form.Field name="login">
-            <Input isRequired name="login" label="Email" autoComplete="email" />
+            <Input required name="login" label="Email" autoComplete="email" />
           </Form.Field>
           <Form.Field name="password">
             <Input
-              isRequired
+              required
               name="password"
               label="Password"
               inputType="password"
@@ -431,7 +431,7 @@ function BillingForm() {
           Address
         </Text>
         <Form.Field name="country">
-          <ComboBox name="country" options={countryOptions} isRequired>
+          <ComboBox name="country" options={countryOptions} required>
             <ComboBox.Label>Country</ComboBox.Label>
             <ComboBox.InputGroup>
               <ComboBox.Input />

@@ -1,10 +1,7 @@
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import {
-  SliderClassNamesProvider,
-  SliderFieldProvider,
-} from "./sliderContext";
+import { SliderClassNamesProvider, SliderFieldProvider } from "./sliderContext";
 import { SliderSimpleBody } from "./sliderParts";
 import { sliderRootClass } from "./sliderStyles";
 import type { SliderRootProps } from "./sliderTypes";

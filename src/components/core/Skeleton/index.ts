@@ -1,9 +1,4 @@
-import {
-  SkeletonBlock,
-  SkeletonCircle,
-  SkeletonRoot,
-  SkeletonText,
-} from "./Skeleton";
+import { SkeletonBlock, SkeletonCircle, SkeletonRoot, SkeletonText } from "./Skeleton";
 
 export const Skeleton = Object.assign(SkeletonRoot, {
   Circle: SkeletonCircle,

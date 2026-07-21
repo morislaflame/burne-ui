@@ -1,7 +1,4 @@
-import {
-  forwardRef,
-  type ButtonHTMLAttributes,
-} from "react";
+import { forwardRef, type ButtonHTMLAttributes } from "react";
 
 import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";

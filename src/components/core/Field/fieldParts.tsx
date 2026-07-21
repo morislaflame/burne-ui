@@ -5,22 +5,8 @@ import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
 import { joinFieldDescribedBy } from "./fieldA11y";
-import {
-  FieldClassNamesProvider,
-  useFieldClassNames,
-  useFieldSetClassNames,
-  useFieldSetSize,
-} from "./fieldContext";
-import {
-  FIELD_LEGEND_CLASS,
-  FIELD_LEGEND_HEADER_CLASS,
-  FIELD_ROOT_CLASS,
-  FIELD_SET_CLASS,
-  fieldHintClass,
-  fieldSetActionsClass,
-  fieldSetGroupClass,
-  fieldSetStackClass,
-} from "./fieldStyles";
+import { FieldClassNamesProvider, useFieldClassNames, useFieldSetClassNames, useFieldSetSize } from "./fieldContext";
+import { FIELD_LEGEND_CLASS, FIELD_LEGEND_HEADER_CLASS, FIELD_ROOT_CLASS, FIELD_SET_CLASS, fieldHintClass, fieldSetActionsClass, fieldSetGroupClass, fieldSetStackClass } from "./fieldStyles";
 import type {
   FieldErrorProps,
   FieldHintProps,

@@ -4,12 +4,7 @@ import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset } from "@/components/composite/utils/optionGroupFieldset";
 
 import { RadioGroupProvider } from "./radioGroupContext";
-import {
-  RadioGroupError,
-  RadioGroupHint,
-  RadioGroupLegend,
-  RadioGroupList,
-} from "./radioGroupParts";
+import { RadioGroupError, RadioGroupHint, RadioGroupLegend, RadioGroupList } from "./radioGroupParts";
 import type { RadioGroupProps } from "./radioGroupTypes";
 import { useRadioGroupRootState } from "./useRadioGroupRootState";
 
@@ -31,7 +26,7 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
       size,
       disabled = false,
       name: _name,
-      isRequired: _isRequired,
+      required: _required,
       value: _value,
       defaultValue: _defaultValue,
       onValueChange: _onValueChange,

@@ -1,18 +1,4 @@
-import {
-  DrawerBackdropInner,
-  DrawerBody,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHandleInner,
-  DrawerHeader,
-  DrawerHeadingBlock,
-  DrawerPanel,
-  DrawerRoot,
-  DrawerTitle,
-  DrawerTrigger,
-} from "./Drawer";
+import { DrawerBackdropInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerRoot, DrawerTitle, DrawerTrigger } from "./Drawer";
 
 export const Drawer = Object.assign(DrawerRoot, {
   Trigger: DrawerTrigger,

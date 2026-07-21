@@ -2,20 +2,10 @@ import "@/components/core/utils/glossInteractive.css";
 
 import { Fragment, forwardRef } from "react";
 
-import {
-  buildButtonGroupSegment,
-  isGroupSegmentSlot,
-  resolveButtonGroupSegmentPosition,
-} from "./buttonGroupAPI";
-import {
-  ButtonGroupLayoutProvider,
-  ButtonGroupSegmentProvider,
-} from "./buttonGroupContext";
+import { buildButtonGroupSegment, isGroupSegmentSlot, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
+import { ButtonGroupLayoutProvider, ButtonGroupSegmentProvider } from "./buttonGroupContext";
 import { ButtonGroupText } from "./buttonGroupParts";
-import {
-  buttonGroupRootClass,
-  buttonGroupSeparatorClass,
-} from "./buttonGroupStyles";
+import { buttonGroupRootClass, buttonGroupSeparatorClass } from "./buttonGroupStyles";
 import type { ButtonGroupOrientation, ButtonGroupProps } from "./buttonGroupTypes";
 import { useButtonGroupRootState } from "./useButtonGroupRootState";
 

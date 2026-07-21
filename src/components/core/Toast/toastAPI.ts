@@ -49,21 +49,21 @@ export function toastHasIndicator(children: ReactNode): boolean {
 }
 
 export function toastHasAction(children: ReactNode): boolean {
-  return walkToastChildren(children, (name) => name === "ToastActionButton");
+  return walkToastChildren(children, (name) => name === "ToastAction");
 }
 
 export function toastHasClose(children: ReactNode): boolean {
-  return walkToastChildren(children, (name) => name === "ToastCloseButton");
+  return walkToastChildren(children, (name) => name === "ToastClose");
 }
 
 export function toastShowsIndicator(
   status: ToastStatus,
-  isLoading: boolean,
+  loading: boolean,
   isCompound: boolean,
   compoundHasIndicator: boolean,
 ): boolean {
   if (isCompound) return compoundHasIndicator;
-  if (isLoading) return true;
+  if (loading) return true;
   return status !== "default";
 }
 
@@ -73,7 +73,7 @@ export function resolveToastGridSlots(
   description: ReactNode | undefined,
   action: ReactNode | undefined,
   onClose: (() => void) | undefined,
-  isLoading: boolean,
+  loading: boolean,
   isCompound: boolean,
   children: ReactNode,
 ): MessageBannerGridSlots {
@@ -83,7 +83,7 @@ export function resolveToastGridSlots(
   return {
     hasIndicator: toastShowsIndicator(
       status,
-      isLoading,
+      loading,
       isCompound,
       toastHasIndicator(children),
     ),

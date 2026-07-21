@@ -5,12 +5,7 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { useCallback, useId, useMemo, useRef, type ChangeEvent, type ReactNode } from "react";
 
-import {
-  checkboxErrorId,
-  checkboxHintId,
-  checkboxInputId,
-  checkboxLabelId,
-} from "./checkboxA11y";
+import { checkboxErrorId, checkboxHintId, checkboxInputId, checkboxLabelId } from "./checkboxA11y";
 import { compoundUsesInlineMotion } from "./checkboxAPI";
 import { CHECKBOX_SIZE_LAYOUT } from "./checkboxStyles";
 import type { CheckboxFieldContextValue, UseCheckboxRootStateProps } from "./checkboxTypes";
@@ -20,7 +15,7 @@ export function useCheckboxRootState(
     size = "base",
     variant = "default",
     status = "default",
-    checkIcon,
+    icon,
     disabled,
     checked,
     defaultChecked,
@@ -125,7 +120,7 @@ export function useCheckboxRootState(
 
   const inputRequired =
     required ??
-    (inSingleGroup && group.isRequired ? group.claimRequiredAnchor() : undefined);
+    (inSingleGroup && group.required ? group.claimRequiredAnchor() : undefined);
 
   const contextValue: CheckboxFieldContextValue = useMemo(
     () => ({
@@ -148,7 +143,7 @@ export function useCheckboxRootState(
       useInlineCompoundMotion,
       textMotionRef: textColRef,
       status,
-      checkIcon,
+      icon,
       onChange: handleChange,
       inputProps: {
         name: formBinding.name ?? name,
@@ -167,7 +162,7 @@ export function useCheckboxRootState(
     }),
     [
       ariaLabelProp,
-      checkIcon,
+      icon,
       status,
       defaultChecked,
       form,
@@ -205,7 +200,7 @@ export function useCheckboxRootState(
     () => ({
       controlId: inputId,
       labelId,
-      isRequired: Boolean(required),
+      required: Boolean(required),
     }),
     [inputId, labelId, required],
   );

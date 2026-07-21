@@ -4,10 +4,7 @@ import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractive
 import type { ShadowSize } from "@/tokens/shadows";
 
 import "../utils/glossInteractive.css";
-import {
-  SURFACE_GLOSS_CONTENT_CLASS,
-  surfaceRootClass,
-} from "./surfaceStyles";
+import { SURFACE_GLOSS_CONTENT_CLASS, surfaceRootClass } from "./surfaceStyles";
 
 export type SurfaceVariant = "default" | "secondary" | "tertiary" | "gloss";
 

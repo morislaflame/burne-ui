@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useRef,
-  useSyncExternalStore,
-  type RefObject,
-} from "react";
+import { useCallback, useRef, useSyncExternalStore, type RefObject } from "react";
 
 const THEME_ATTR = "data-theme";
 const THEME_ATTR_SELECTOR = `[${THEME_ATTR}]`;

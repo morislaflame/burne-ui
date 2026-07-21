@@ -1,12 +1,4 @@
-import {
-  CardBody,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardHeadingBlock,
-  CardRoot,
-  CardTitle,
-} from "./Card";
+import { CardBody, CardDescription, CardFooter, CardHeader, CardHeadingBlock, CardRoot, CardTitle } from "./Card";
 
 export const Card = Object.assign(CardRoot, {
   Header: CardHeader,

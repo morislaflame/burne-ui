@@ -8,7 +8,7 @@ export type LabelClassNames = {
 
 export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children"> & {
   children?: ReactNode;
-  isRequired?: boolean;
+  required?: boolean;
   classNames?: LabelClassNames;
 };
 
@@ -20,15 +20,15 @@ export type LabelClassNamesProviderProps = {
 export type FieldLabelContextValue = {
   controlId?: string;
   labelId?: string;
-  isRequired?: boolean;
+  required?: boolean;
 };
 
 export type UseLabelRootStateProps = Pick<
   LabelProps,
-  "isRequired" | "htmlFor" | "id"
+  "required" | "htmlFor" | "id"
 >;
 
 export type LabelContentProps = {
   children?: ReactNode;
-  isRequired: boolean;
+  required: boolean;
 };

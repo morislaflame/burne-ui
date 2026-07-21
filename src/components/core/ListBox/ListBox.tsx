@@ -1,10 +1,7 @@
 import "../utils/glossInteractive.css";
 
 import { resolveListBoxAriaLabel } from "./listBoxA11y";
-import {
-  ListBoxClassNamesProvider,
-  ListBoxProvider,
-} from "./listBoxContext";
+import { ListBoxClassNamesProvider, ListBoxProvider } from "./listBoxContext";
 import { ListBoxRootShell } from "./listBoxParts";
 import type { ListBoxRootProps } from "./listBoxTypes";
 import { useListBoxRootState } from "./useListBoxRootState";

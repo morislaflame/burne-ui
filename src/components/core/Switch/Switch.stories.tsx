@@ -4,10 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 import { IoMoon, IoSunny } from "react-icons/io5";
 
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Switch } from ".";

@@ -18,12 +18,7 @@ import type {
 Дополнительно из пакета экспортируются утилиты стилей (для кастомных контролов с тем же shell):
 
 ```tsx
-import {
-  buttonRootClass,
-  buttonSpinnerClass,
-  controlShellClass,
-  buttonRippleTone,
-} from "burne-ui";
+import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTone } from "burne-ui";
 ```
 
 ## API
@@ -39,7 +34,8 @@ import {
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер; наследуется из `ButtonGroup` / `Form` |
 | `animated` | `boolean` | `true` | Hover lift + press squeeze (GSAP) |
 | `ripple` | `boolean` | `false` | Converge-ripple от точки нажатия (`<Ripple />`) |
-| `leftIcon` | `ReactNode` | — | Иконка слева от текста |
+| `icon` | `ReactNode` | — | Иконка рядом с текстом |
+| `iconPosition` | `start` \| `end` | `start` | Позиция `icon` |
 | `iconOnly` | `boolean` | `false` | Компактная ширина (`min-w-fit`); обязателен `aria-label` |
 | `disabled` | `boolean` | `false` | Блокировка; наследуется из `Form` |
 | `asyncState` | `idle` \| `loading` \| `success` \| `error` | — | Контролируемое async-состояние |
@@ -58,7 +54,7 @@ import {
 <Button variant="primary">Сохранить</Button>
 
 // С иконкой
-<Button leftIcon={<IoAdd aria-hidden />}>Добавить</Button>
+<Button icon={<IoAdd aria-hidden />}>Добавить</Button>
 
 // Только иконка
 <Button iconOnly aria-label="Добавить">
@@ -286,7 +282,7 @@ Button — leaf-компонент: **только `className` на `<button>`**
   status="danger"
   size="mid"
   className="min-w-[10rem] border-primary/40"
-  leftIcon={<IoSave aria-hidden />}
+  icon={<IoSave aria-hidden />}
 >
   Сохранить
 </Button>
@@ -301,7 +297,7 @@ Button — leaf-компонент: **только `className` на `<button>`**
 | `groupSegment` | Glue в ButtonGroup (rounding сегмента) |
 | `className` | Любые доп. Tailwind-классы поверх root |
 
-Иконки и текст — children / `leftIcon`; отдельных слотов для них нет.
+Иконки и текст — children / `icon` (+ `iconPosition`); отдельных слотов для них нет.
 
 ### Compound-подобные паттерны
 
@@ -342,7 +338,7 @@ const rippleColor = buttonRippleTone("primary", "danger");
 - Нативный `<button>` с корректным `type`.
 - `aria-busy={true}` при `asyncState === "loading"`.
 - При `iconOnly` — обязателен осмысленный `aria-label`.
-- Иконки в `leftIcon` и async-слоях — `aria-hidden`.
+- Иконки в `icon` и async-слоях — `aria-hidden`.
 - Focus ring через `focus-ring` + status outline.
 - При blocked (`disabled` или busy async) — `disabled` + `pointer-events-none`, opacity 50%.
 

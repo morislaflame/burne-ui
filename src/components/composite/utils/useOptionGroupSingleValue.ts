@@ -6,7 +6,7 @@ export type UseOptionGroupSingleValueOptions = {
   onValueChange?: (value: string | undefined) => void;
   /**
    * When `false`, clearing the selection (`undefined`) is ignored.
-   * RadioGroup uses `!isRequired`; CheckboxGroup single always allows clear.
+   * RadioGroup uses `!required`; CheckboxGroup single always allows clear.
    */
   allowClear?: boolean;
 };

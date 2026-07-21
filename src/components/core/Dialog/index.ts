@@ -1,16 +1,4 @@
-import {
-  DialogBody,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogHeadingBlock,
-  DialogPanel,
-  DialogRoot,
-  DialogTitle,
-  DialogTrigger,
-} from "./Dialog";
+import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogPanel, DialogRoot, DialogTitle, DialogTrigger } from "./Dialog";
 
 export const Dialog = Object.assign(DialogRoot, {
   Trigger: DialogTrigger,

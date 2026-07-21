@@ -5,19 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Skeleton,
-  type SkeletonProps,
-  type SkeletonCircleProps,
-  type SkeletonTextProps,
-  type SkeletonBlockProps,
-  type SkeletonVariant,
-  type SkeletonRadius,
-  type SkeletonClassNames,
-  type SkeletonCircleClassNames,
-  type SkeletonTextClassNames,
-  type SkeletonBlockClassNames,
-} from "burne-ui";
+import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTextProps, type SkeletonBlockProps, type SkeletonVariant, type SkeletonRadius, type SkeletonClassNames, type SkeletonCircleClassNames, type SkeletonTextClassNames, type SkeletonBlockClassNames } from "burne-ui";
 ```
 
 ## API

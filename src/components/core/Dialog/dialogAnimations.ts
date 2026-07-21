@@ -1,23 +1,8 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
-import {
-  animateModalClose,
-  animateModalOpen,
-  applyReducedModalMotion,
-  captureModalFocusReturn,
-  completeModalDialogClose,
-  isReducedModalMotion,
-} from "@/components/core/utils/modalSurfaceMotion";
+import { animateModalClose, animateModalOpen, applyReducedModalMotion, captureModalFocusReturn, completeModalDialogClose, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MouseEvent,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import type { UseDialogModalMotionProps } from "./dialogTypes";
 

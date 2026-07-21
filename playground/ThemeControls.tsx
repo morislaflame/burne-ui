@@ -7,25 +7,9 @@ import { Switch } from "@/components/core/Switch";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import {
-  COLOR_LABELS,
-  FONT_WEIGHT_DEFAULTS,
-  FONT_WEIGHT_LABELS,
-  MOTION_DEFAULTS,
-  SCALE_DEFAULTS,
-  STATUS_FOREGROUND_LABELS,
-  type ThemeColorKey,
-  type ThemeFontWeightKey,
-  type ThemeStatusForegroundKey,
-} from "./themeDefaults";
+import { COLOR_LABELS, FONT_WEIGHT_DEFAULTS, FONT_WEIGHT_LABELS, MOTION_DEFAULTS, SCALE_DEFAULTS, STATUS_FOREGROUND_LABELS, type ThemeColorKey, type ThemeFontWeightKey, type ThemeStatusForegroundKey } from "./themeDefaults";
 import { FONT_PRESETS, MONO_FONT_PRESETS } from "./themePresets";
-import {
-  buildTintValue,
-  parseTintValue,
-  TINT_MIX_MODE_LABELS,
-  type ParsedTint,
-  type TintMixMode,
-} from "./tintMix";
+import { buildTintValue, parseTintValue, TINT_MIX_MODE_LABELS, type ParsedTint, type TintMixMode } from "./tintMix";
 import type { ThemeTokensApi } from "./useThemeTokens";
 
 const TINT_COLOR_KEYS = new Set<ThemeColorKey>(["primaryTint", "primaryTintStrong"]);

@@ -1,12 +1,7 @@
 import { useRef } from "react";
 
-import {
-  animateGlossInteractivePressSqueeze,
-} from "@/components/core/utils/glossInteractiveMotion";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateGlossInteractivePressSqueeze } from "@/components/core/utils/glossInteractiveMotion";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 
 import type { RunComboBoxOpenAfterSqueezeOptions } from "./comboBoxTypes";
 

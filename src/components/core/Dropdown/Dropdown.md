@@ -5,15 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownPopover,
-  type DropdownProps,
-  type DropdownClassNames,
-  type DropdownItemProps,
-  type DropdownItemVariant,
-} from "burne-ui";
+import { Dropdown, DropdownTrigger, DropdownPopover, type DropdownProps, type DropdownClassNames, type DropdownItemProps, type DropdownItemVariant } from "burne-ui";
 ```
 
 ## API
@@ -96,7 +88,7 @@ import {
 | Часть | Назначение |
 |-------|------------|
 | `Dropdown.Trigger` | Toggle; `asChild` для `Button` |
-| `Dropdown.Popover` / `Content` | Обёртка над `Popover` |
+| `Dropdown.Popover` | Обёртка над `Popover` (меню-хост; не `Popover.Content`) |
 | `Dropdown.Group` | `role="group"` + optional indicators |
 | `Dropdown.Label` | Заголовок группы |
 | `Dropdown.Separator` | Разделитель (`Separator`) |
@@ -360,7 +352,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 
 ### Практические заметки
 
-- **`Dropdown.Content`** — alias для `Dropdown.Popover`.
+- **`Dropdown.Popover`** — плавающий host меню (Select/ComboBox тоже используют `Popover` для панели списка). Не путать с `Popover.Content` — там тело содержимого внутри Popover.
 - **`asChild` на Trigger:** стили `trigger` merge на child; squeeze координируется через `preventDefault`.
 - **Action items:** без `value` или `selection={false}` — закрывают меню без toggle selection.
 - **Link items:** `href` → `<a>`, role `menuitem`, close on navigate.

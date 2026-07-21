@@ -32,7 +32,7 @@ export function useToast(): { toast: ToastAPI } {
         status: "default",
         title: opts.loading ?? "Loading…",
         timeout: 0,
-        isLoading: true,
+        loading: true,
         placement: opts.placement,
         classNames: opts.classNames,
       });
@@ -46,7 +46,7 @@ export function useToast(): { toast: ToastAPI } {
           ctx.update(id, {
             status: "success",
             title: successTitle,
-            isLoading: false,
+            loading: false,
             timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
           });
         },
@@ -60,7 +60,7 @@ export function useToast(): { toast: ToastAPI } {
           ctx.update(id, {
             status: "danger",
             title: errorTitle,
-            isLoading: false,
+            loading: false,
             timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
           });
         },

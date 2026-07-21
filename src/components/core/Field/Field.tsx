@@ -1,16 +1,6 @@
 import { forwardRef, useId } from "react";
 
-import {
-  FieldError,
-  FieldHint,
-  FieldLabel,
-  FieldLegend,
-  FieldLegendHeader,
-  FieldRoot,
-  FieldSetActions,
-  FieldSetGroup,
-  FieldSetRootInner,
-} from "./fieldParts";
+import { FieldError, FieldHint, FieldLabel, FieldLegend, FieldLegendHeader, FieldRoot, FieldSetActions, FieldSetGroup, FieldSetRootInner } from "./fieldParts";
 import { FieldSetClassNamesProvider, FieldSetSizeProvider } from "./fieldContext";
 import type { FieldSetProps } from "./fieldTypes";
 import { useFieldSetRootState } from "./useFieldSetRootState";

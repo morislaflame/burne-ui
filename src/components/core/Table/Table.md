@@ -5,16 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Table,
-  TABLE_ROW_TONE_SURFACE,
-  type TableProps,
-  type TableVariant,
-  type TableClassNames,
-  type TableContentProps,
-  type SortDescriptor,
-  type SelectionMode,
-} from "burne-ui";
+import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type TableClassNames, type TableContentProps, type SortDescriptor, type SelectionMode } from "burne-ui";
 ```
 
 ## API
@@ -86,7 +77,7 @@ import {
 | Часть | Назначение |
 |-------|------------|
 | `Table.ScrollContainer` | Horizontal scroll + `tabIndex` |
-| `Table.Content` | `<table>` + selection/sort context |
+| `Table.Content` | Элемент `<table>` + selection/sort context. **Доменное исключение имени `Content`:** здесь это не «тело панели» (`Popover.Content` / `Dialog.Content`) и не текстовая колонка (`Toast.Content` / `Alert.Content`), а именно table-host. |
 | `Table.Header` | `<thead>` |
 | `Table.Column` | `<th>` + sort UI |
 | `Table.Body` | `<tbody>` + empty state |

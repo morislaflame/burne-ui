@@ -36,7 +36,7 @@ export function AccordionDocsSectionsDemo() {
                   <Accordion.Title>{section.title}</Accordion.Title>
                   <Accordion.Description>{section.description}</Accordion.Description>
                 </Accordion.Content>
-                <Accordion.Indicator />
+                <Accordion.Chevron />
               </Accordion.Message>
             </Accordion.Trigger>
           </Accordion.Heading>

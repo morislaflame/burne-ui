@@ -5,12 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  SearchInput,
-  type SearchInputProps,
-  type SearchInputSize,
-  type SearchInputVariant,
-} from "burne-ui";
+import { SearchInput, type SearchInputProps, type SearchInputSize, type SearchInputVariant } from "burne-ui";
 ```
 
 ## API

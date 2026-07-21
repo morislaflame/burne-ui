@@ -22,7 +22,7 @@ export function ButtonDangerBannerDemo() {
           variant="primary"
           status="danger"
           size="small"
-          leftIcon={<IoTrashOutline aria-hidden />}
+          icon={<IoTrashOutline aria-hidden />}
           className="shadow-none"
         >
           Delete

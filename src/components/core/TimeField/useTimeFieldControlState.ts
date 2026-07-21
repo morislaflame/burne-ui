@@ -1,27 +1,10 @@
-import {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  type FocusEvent,
-  type FormEvent,
-  type KeyboardEvent,
-  type MouseEvent,
-  type RefObject,
-} from "react";
+import { useCallback, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent, type MouseEvent, type RefObject } from "react";
 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
 import { timeFieldShellAria } from "./timeFieldA11y";
-import {
-  formatTime,
-  parseTime,
-  segmentsForFormat,
-  segValue,
-  TIME_FIELD_SEG_MAX,
-  withSeg,
-} from "./timeFieldAPI";
+import { formatTime, parseTime, segmentsForFormat, segValue, TIME_FIELD_SEG_MAX, withSeg } from "./timeFieldAPI";
 import { useTimeFieldShellMotion } from "./timeFieldAnimations";
 import { useOptionalTimeFieldContext } from "./timeFieldContext";
 import { timeFieldShellSurfaceClass } from "./timeFieldStyles";
@@ -57,7 +40,7 @@ export function useTimeFieldControlState({
   const fieldId = ctx?.fieldId;
   const labelId = ctx?.labelId ?? "";
   const labelConnected = ctx?.labelConnected ?? false;
-  const isRequired = ctx?.isRequired ?? false;
+  const required = ctx?.required ?? false;
 
   const [hms, setHms] = useControllableState({
     value: valueProp !== undefined ? parseTime(valueProp) : undefined,
@@ -299,7 +282,7 @@ export function useTimeFieldControlState({
     controlId: id ?? fieldId,
     shellAria,
     ariaDescribedBy,
-    isRequired,
+    required,
     hms,
     segments,
     segRefById,

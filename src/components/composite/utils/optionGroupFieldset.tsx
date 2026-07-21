@@ -1,20 +1,10 @@
 import { forwardRef, type FieldsetHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
 
-import {
-  FieldLegend,
-  FieldLegendHeader,
-  FieldSetRoot,
-  FieldSetActions,
-  FieldSetGroup,
-  type FieldSetProps,
-} from "@/components/core/Field";
+import { FieldLegend, FieldLegendHeader, FieldSetRoot, FieldSetActions, FieldSetGroup, type FieldSetProps } from "@/components/core/Field";
 import { FieldHint } from "@/components/core/Field";
 import { cn } from "@/utils/cn";
 
-import {
-  OPTION_GROUP_ORIENTATION_LAYOUT,
-  type OptionGroupOrientation,
-} from "./optionGroupLayout";
+import { OPTION_GROUP_ORIENTATION_LAYOUT, type OptionGroupOrientation } from "./optionGroupLayout";
 
 export type { OptionGroupOrientation };
 

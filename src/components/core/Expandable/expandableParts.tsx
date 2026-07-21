@@ -1,60 +1,14 @@
-import {
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useMemo,
-  useLayoutEffect,
-  useRef,
-  type HTMLAttributes,
-  type ReactElement,
-  type Ref,
-} from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useMemo, useLayoutEffect, useRef, type HTMLAttributes, type ReactElement, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
-import {
-  messageBannerActionCellClass,
-  messageBannerDescriptionCellClass,
-  messageBannerIndicatorCellClass,
-  messageBannerTitleCellClass,
-} from "@/components/core/utils/messageBannerGridLayout";
+import { messageBannerActionCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
-import {
-  expandableTriggerHasActionSlot,
-  hasExpandableMessage,
-  mergeExpandableRefs,
-  partitionExpandableTriggerRipple,
-  resolveExpandableTriggerGridSlots,
-} from "./expandableAPI";
-import {
-  ExpandableTriggerGridProvider,
-  useExpandable,
-  useExpandableClassNames,
-  useExpandableTriggerGrid,
-  useOptionalExpandableTriggerGrid,
-} from "./expandableContext";
-import {
-  EXPANDABLE_CHEVRON_WRAP_CLASS,
-  EXPANDABLE_CONTENT_CLASS,
-  EXPANDABLE_DESCRIPTION_CLASS,
-  EXPANDABLE_DESCRIPTION_VARIANT,
-  EXPANDABLE_GLOSS_CONTENT_CLASS,
-  EXPANDABLE_MESSAGE_CLASS,
-  EXPANDABLE_PANEL_SHELL_CLASS,
-  EXPANDABLE_TITLE_CLASS,
-  EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS,
-  EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS,
-  expandableChevronIconClass,
-  expandableIconClass,
-  expandablePanelClass,
-  expandableTitleVariant,
-  expandableTriggerChevronIconClass,
-  expandableTriggerClass,
-  expandableTriggerLiftClass,
-} from "./expandableStyles";
+import { expandableTriggerHasActionSlot, hasExpandableMessage, mergeExpandableRefs, partitionExpandableTriggerRipple, resolveExpandableTriggerGridSlots } from "./expandableAPI";
+import { ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableTriggerGrid, useOptionalExpandableTriggerGrid } from "./expandableContext";
+import { EXPANDABLE_CHEVRON_WRAP_CLASS, EXPANDABLE_CONTENT_CLASS, EXPANDABLE_DESCRIPTION_CLASS, EXPANDABLE_DESCRIPTION_VARIANT, EXPANDABLE_GLOSS_CONTENT_CLASS, EXPANDABLE_MESSAGE_CLASS, EXPANDABLE_PANEL_SHELL_CLASS, EXPANDABLE_TITLE_CLASS, EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS, EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS, expandableChevronIconClass, expandableIconClass, expandablePanelClass, expandableTitleVariant, expandableTriggerChevronIconClass, expandableTriggerClass, expandableTriggerLiftClass } from "./expandableStyles";
 import type {
   ExpandableChevronProps,
   ExpandableContentProps,

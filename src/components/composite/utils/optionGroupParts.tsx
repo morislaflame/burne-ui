@@ -2,15 +2,7 @@ import { forwardRef } from "react";
 
 import { FieldError, type FieldErrorProps } from "@/components/core/Field";
 
-import {
-  OptionGroupHeader,
-  OptionGroupHint,
-  OptionGroupLegend,
-  OptionGroupList,
-  type OptionGroupHintProps,
-  type OptionGroupLegendProps,
-  type OptionGroupListProps,
-} from "./optionGroupFieldset";
+import { OptionGroupHeader, OptionGroupHint, OptionGroupLegend, OptionGroupList, type OptionGroupHintProps, type OptionGroupLegendProps, type OptionGroupListProps } from "./optionGroupFieldset";
 
 export function createOptionGroupLegendPart(displayName: string) {
   function Legend({ children, ...rest }: OptionGroupLegendProps) {

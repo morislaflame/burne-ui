@@ -8,14 +8,7 @@ import "../utils/glossInteractive.css";
 import { useButtonAnimations } from "./buttonAnimations";
 import { buttonHasCompoundPart } from "./buttonAPI";
 import { ButtonClassNamesProvider, ButtonContextProvider } from "./buttonContext";
-import {
-  ButtonContent,
-  ButtonError,
-  ButtonExpandRippleLayer,
-  ButtonLabel,
-  ButtonLoader,
-  ButtonSuccess,
-} from "./buttonParts";
+import { ButtonContent, ButtonError, ButtonExpandRippleLayer, ButtonLabel, ButtonLoader, ButtonSuccess } from "./buttonParts";
 import { ButtonSimpleContent } from "./buttonSimpleContent";
 import type { ButtonProps } from "./buttonTypes";
 import { cn } from "@/utils/cn";
@@ -61,7 +54,8 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     onAsyncClick,
     asyncFeedbackMs,
     disabled,
-    leftIcon,
+    icon,
+    iconPosition,
     ripple,
     iconOnly,
     groupSegment,
@@ -88,7 +82,8 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     onAsyncClick,
     asyncFeedbackMs,
     disabled,
-    leftIcon,
+    icon,
+    iconPosition,
     ripple,
     iconOnly,
     groupSegment,
@@ -182,7 +177,9 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
           ) : (
             <ButtonContent>
               <ButtonLabel className={cn(state.classNames?.label, state.labelLayoutClass)}>
-                <ButtonSimpleContent leftIcon={state.leftIcon}>{state.children}</ButtonSimpleContent>
+                <ButtonSimpleContent icon={state.icon} iconPosition={state.iconPosition}>
+                  {state.children}
+                </ButtonSimpleContent>
               </ButtonLabel>
               <ButtonLoader />
               <ButtonSuccess />

@@ -5,18 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Badge,
-  type BadgeProps,
-  type BadgeAnchorProps,
-  type BadgeVariant,
-  type BadgeStatus,
-  type BadgeSize,
-  type BadgePlacement,
-  type BadgeIconPosition,
-  type BadgeInlineIconPosition,
-  type BadgeClassNames,
-} from "burne-ui";
+import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type BadgeStatus, type BadgeSize, type BadgePlacement, type BadgeIconPosition, type BadgeInlineIconPosition, type BadgeClassNames } from "burne-ui";
 ```
 
 ## API

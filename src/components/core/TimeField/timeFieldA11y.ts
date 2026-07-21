@@ -24,14 +24,14 @@ export function timeFieldShellAria({
 export function timeFieldSegSpinbuttonA11y({
   seg,
   value,
-  isRequired,
+  required,
   isDanger,
   isFirstSegment,
   disabled,
 }: {
   seg: TimeFieldSegId;
   value: number;
-  isRequired: boolean;
+  required: boolean;
   isDanger: boolean;
   isFirstSegment: boolean;
   disabled: boolean;
@@ -43,7 +43,7 @@ export function timeFieldSegSpinbuttonA11y({
     "aria-valuemax": seg === "h" ? 23 : 59,
     "aria-valuenow": value,
     "aria-valuetext": String(value).padStart(2, "0"),
-    "aria-required": isFirstSegment && isRequired ? true : undefined,
+    "aria-required": isFirstSegment && required ? true : undefined,
     "aria-invalid": isFirstSegment && isDanger ? true : undefined,
     tabIndex: disabled ? -1 : 0,
   };

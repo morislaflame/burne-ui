@@ -6,7 +6,7 @@ import { IoInformationCircleOutline, IoLockClosedOutline, IoNotificationsOutline
 
 import { Text } from "@/components/core/Text";
 
-import { Disclosure, DisclosureGroup } from ".";
+import { Disclosure } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -40,7 +40,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Expand/collapse content component with animation. **Variants**: `default` (divider), `outline` / `secondary` (trigger outside, border only on content), `card` (single card), `ghost`. Hover-lift and squeeze on trigger. `DisclosureGroup` — accordion and `separated`.",
+          "Expand/collapse content component with animation. **Variants**: `default` (divider), `outline` / `secondary` (trigger outside, border only on content), `card` (single card), `ghost`. Hover-lift and squeeze on trigger. `Disclosure.Group` — accordion and `separated`.",
       },
     },
   },
@@ -120,19 +120,19 @@ export const IconPosition: Story = {
   name: "Icon position",
   render: () => (
     <div className="flex flex-col gap-small">
-      <Disclosure variant="outline" iconPos="right" defaultOpen>
+      <Disclosure variant="outline" iconPosition="end" defaultOpen>
         <Disclosure.Trigger>Icon on the right (default)</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
-      <Disclosure variant="outline" iconPos="left">
+      <Disclosure variant="outline" iconPosition="start">
         <Disclosure.Trigger>Icon on the left</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
-      <Disclosure variant="outline" iconPos="right">
+      <Disclosure variant="outline" iconPosition="end">
         <Disclosure.Trigger icon={<IoInformationCircleOutline className="size-full" />}>
           Custom icon
         </Disclosure.Trigger>
@@ -140,7 +140,7 @@ export const IconPosition: Story = {
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
-      <Disclosure variant="outline" iconPos="right">
+      <Disclosure variant="outline" iconPosition="end">
         <Disclosure.Trigger icon={null}>No icon</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
@@ -192,12 +192,12 @@ export const Disabled: Story = {
   ),
 };
 
-// ─── DisclosureGroup: Default ─────────────────────────────────────────────────
+// ─── Disclosure.Group: Default ─────────────────────────────────────────────────
 
 export const GroupDefault: Story = {
-  name: "DisclosureGroup — default",
+  name: "Disclosure.Group — default",
   render: () => (
-    <DisclosureGroup variant="default">
+    <Disclosure.Group variant="default">
       {[
         { value: "a", title: "What is the Disclosure component?",   icon: <IoInformationCircleOutline /> },
         { value: "b", title: "How to use it in a project?",        icon: <IoNotificationsOutline /> },
@@ -210,16 +210,16 @@ export const GroupDefault: Story = {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   ),
 };
 
-// ─── DisclosureGroup: Outline ─────────────────────────────────────────────────
+// ─── Disclosure.Group: Outline ─────────────────────────────────────────────────
 
 export const GroupSecondary: Story = {
-  name: "DisclosureGroup — secondary",
+  name: "Disclosure.Group — secondary",
   render: () => (
-    <DisclosureGroup variant="secondary" defaultValue="a">
+    <Disclosure.Group variant="secondary" defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
@@ -228,14 +228,14 @@ export const GroupSecondary: Story = {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   ),
 };
 
 export const GroupOutline: Story = {
-  name: "DisclosureGroup — outline",
+  name: "Disclosure.Group — outline",
   render: () => (
-    <DisclosureGroup variant="outline" defaultValue="a">
+    <Disclosure.Group variant="outline" defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
@@ -244,16 +244,16 @@ export const GroupOutline: Story = {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   ),
 };
 
-// ─── DisclosureGroup: Card ────────────────────────────────────────────────────
+// ─── Disclosure.Group: Card ────────────────────────────────────────────────────
 
 export const GroupCard: Story = {
-  name: "DisclosureGroup — card",
+  name: "Disclosure.Group — card",
   render: () => (
-    <DisclosureGroup variant="card" defaultValue="b">
+    <Disclosure.Group variant="card" defaultValue="b">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Item {v.toUpperCase()}</Disclosure.Trigger>
@@ -262,11 +262,11 @@ export const GroupCard: Story = {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   ),
 };
 
-// ─── DisclosureGroup: Separated ──────────────────────────────────────────────
+// ─── Disclosure.Group: Separated ──────────────────────────────────────────────
 
 export const FramedVariantsClosed: Story = {
   name: "Outline / Secondary — closed",
@@ -289,9 +289,9 @@ export const FramedVariantsClosed: Story = {
 };
 
 export const GroupSeparated: Story = {
-  name: "DisclosureGroup — separated",
+  name: "Disclosure.Group — separated",
   render: () => (
-    <DisclosureGroup variant="outline" separated defaultValue="a">
+    <Disclosure.Group variant="outline" separated defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
@@ -300,11 +300,11 @@ export const GroupSeparated: Story = {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   ),
 };
 
-// ─── DisclosureGroup: Separated Card ─────────────────────────────────────────
+// ─── Disclosure.Group: Separated Card ─────────────────────────────────────────
 
 export const CardDragHandle: Story = {
   name: "Card — drag handle",
@@ -322,9 +322,9 @@ export const CardDragHandle: Story = {
 };
 
 export const GroupSeparatedCard: Story = {
-  name: "DisclosureGroup — separated cards",
+  name: "Disclosure.Group — separated cards",
   render: () => (
-    <DisclosureGroup variant="card" separated defaultValue="a">
+    <Disclosure.Group variant="card" separated defaultValue="a">
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v}>
           <Disclosure.Trigger>Card {v.toUpperCase()}</Disclosure.Trigger>
@@ -333,16 +333,16 @@ export const GroupSeparatedCard: Story = {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   ),
 };
 
-// ─── DisclosureGroup: Non-accordion ──────────────────────────────────────────
+// ─── Disclosure.Group: Non-accordion ──────────────────────────────────────────
 
 export const GroupNonAccordion: Story = {
-  name: "DisclosureGroup — multiple open",
+  name: "Disclosure.Group — multiple open",
   render: () => (
-    <DisclosureGroup variant="outline" accordion={false}>
+    <Disclosure.Group variant="outline" accordion={false}>
       {["a", "b", "c"].map((v) => (
         <Disclosure key={v} value={v} defaultOpen={v === "a" || v === "b"}>
           <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
@@ -351,14 +351,14 @@ export const GroupNonAccordion: Story = {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   ),
 };
 
-// ─── DisclosureGroup: Controlled ─────────────────────────────────────────────
+// ─── Disclosure.Group: Controlled ─────────────────────────────────────────────
 
 export const GroupControlled: Story = {
-  name: "DisclosureGroup — controlled",
+  name: "Disclosure.Group — controlled",
   render: () => {
     const [value, setValue] = useState<string | null>("a");
     return (
@@ -375,7 +375,7 @@ export const GroupControlled: Story = {
             </button>
           ))}
         </div>
-        <DisclosureGroup variant="outline" value={value} onValueChange={setValue}>
+        <Disclosure.Group variant="outline" value={value} onValueChange={setValue}>
           {["a", "b", "c"].map((v) => (
             <Disclosure key={v} value={v}>
               <Disclosure.Trigger>Section {v.toUpperCase()}</Disclosure.Trigger>
@@ -384,7 +384,7 @@ export const GroupControlled: Story = {
               </Disclosure.Content>
             </Disclosure>
           ))}
-        </DisclosureGroup>
+        </Disclosure.Group>
       </div>
     );
   },

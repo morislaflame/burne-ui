@@ -1,18 +1,9 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MouseEvent,
-} from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
 import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
-import {
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 
 import { centerCoverDiameter, isButtonAsyncLayerActive } from "./buttonAPI";
 import type { ButtonAsyncLayerKind, ButtonAsyncState, ExpandRipple, UseButtonAnimationsProps } from "./buttonTypes";

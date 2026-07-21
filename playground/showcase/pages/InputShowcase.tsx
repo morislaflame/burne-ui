@@ -1,9 +1,6 @@
 import { InputAuthPanelDemo } from "../demos/input/InputAuthPanel.demo";
 import inputAuthPanelSource from "../demos/input/InputAuthPanel.demo.tsx?raw";
-import {
-  InputClassNamesCompoundDemo,
-  InputClassNamesFullDemo,
-} from "../demos/input/InputClassNamesFull.demo";
+import { InputClassNamesCompoundDemo, InputClassNamesFullDemo } from "../demos/input/InputClassNamesFull.demo";
 import inputClassNamesFullSource from "../demos/input/InputClassNamesFull.demo.tsx?raw";
 import { LabelClassNamesFullDemo } from "../demos/label/LabelClassNamesFull.demo";
 import labelClassNamesFullSource from "../demos/label/LabelClassNamesFull.demo.tsx?raw";

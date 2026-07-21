@@ -53,7 +53,7 @@ export type InputFieldContextValue = {
   labelId: string;
   hintConnected: boolean;
   errorConnected: boolean;
-  isRequired: boolean;
+  required: boolean;
   status: InputStatus;
   size: InputSize;
 };
@@ -69,7 +69,7 @@ export type InputRootProps = HTMLAttributes<HTMLDivElement> & {
   hint?: ReactNode;
   error?: ReactNode;
   id?: string;
-  isRequired?: boolean;
+  required?: boolean;
   status?: InputStatus;
   size?: InputSize;
   classNames?: InputClassNames;

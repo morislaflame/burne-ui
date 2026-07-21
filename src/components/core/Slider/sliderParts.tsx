@@ -3,19 +3,10 @@ import { forwardRef } from "react";
 import "@/components/core/utils/glossPanel.css";
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
-import {
-  renderSliderSimpleLayout,
-  SliderScaleFieldHeader,
-  SliderScaleFieldValue,
-} from "./sliderScaleField";
+import { renderSliderSimpleLayout, SliderScaleFieldHeader, SliderScaleFieldValue } from "./sliderScaleField";
 
 import { resolveSliderThumbIcon } from "./sliderAPI";
-import {
-  SliderTrackProvider,
-  useSliderClassNames,
-  useSliderFieldContext,
-  useSliderTrackContext,
-} from "./sliderContext";
+import { SliderTrackProvider, useSliderClassNames, useSliderFieldContext, useSliderTrackContext } from "./sliderContext";
 import type {
   SliderCompoundThumbProps,
   SliderErrorProps,

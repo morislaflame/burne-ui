@@ -9,20 +9,8 @@ import "@/components/core/utils/glossInteractive.css";
 import { timeFieldHintStatus, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
 
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import {
-  useTimeFieldClassNames,
-  useTimeFieldContext,
-} from "./timeFieldContext";
-import {
-  TIME_FIELD_KEYBOARD_INPUT_CLASS,
-  TIME_FIELD_SEGMENT_GROUP_CLASS,
-  timeFieldAffixSlotClass,
-  timeFieldSegmentClass,
-  timeFieldSegmentSeparatorClass,
-  timeFieldSegmentsClass,
-  timeFieldShellClass,
-  timeFieldShellInnerClass,
-} from "./timeFieldStyles";
+import { useTimeFieldClassNames, useTimeFieldContext } from "./timeFieldContext";
+import { TIME_FIELD_KEYBOARD_INPUT_CLASS, TIME_FIELD_SEGMENT_GROUP_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
 import type {
   TimeFieldControlProps,
   TimeFieldErrorProps,
@@ -181,7 +169,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
                 {...timeFieldSegSpinbuttonA11y({
                   seg,
                   value: state.hms[seg],
-                  isRequired: state.isRequired,
+                  required: state.required,
                   isDanger: state.status === "danger",
                   isFirstSegment: seg === state.segments[0],
                   disabled: state.disabled,

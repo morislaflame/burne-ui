@@ -1,23 +1,9 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
-import {
-  animatePortalClose,
-  animatePortalOpen,
-  applyReducedPortalMotion,
-  isReducedModalMotion,
-} from "@/components/core/utils/modalSurfaceMotion";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import {
-  focusDropdownMenuItem,
-  getFocusableDropdownMenuItems,
-} from "./dropdownA11y";
+import { focusDropdownMenuItem, getFocusableDropdownMenuItems } from "./dropdownA11y";
 import type {
   UseDropdownPopoverMenuProps,
   UseDropdownSubContentPortalProps,

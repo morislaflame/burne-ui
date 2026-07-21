@@ -1,9 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
-import {
-  colorPickerInitialHsva,
-  COLOR_PICKER_DEFAULT_HEX,
-} from "./colorPickerAPI";
+import { colorPickerInitialHsva, COLOR_PICKER_DEFAULT_HEX } from "./colorPickerAPI";
 import { hexToHsva, hsvaToHex, type HSVA } from "./colorUtils";
 import type { ColorPickerContextValue, UseColorPickerRootStateProps } from "./colorPickerTypes";
 

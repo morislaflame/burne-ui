@@ -4,10 +4,7 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import {
-  InputClassNamesProvider,
-  InputFieldProvider,
-} from "./inputContext";
+import { InputClassNamesProvider, InputFieldProvider } from "./inputContext";
 import { InputSimpleBody } from "./inputParts";
 import type { InputSimpleProps } from "./inputTypes";
 import { useInputRootState } from "./useInputRootState";
@@ -36,7 +33,7 @@ export function InputRoot({
   className,
   classNames,
   id: idProp,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
   ...rest
@@ -54,7 +51,7 @@ export function InputRoot({
     hint,
     error: resolvedError,
     id: idProp,
-    isRequired,
+    required,
     status: resolvedStatus,
     size: resolvedSize,
   });

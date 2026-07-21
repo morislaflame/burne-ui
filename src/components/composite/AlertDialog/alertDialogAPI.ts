@@ -1,16 +1,6 @@
-import {
-  Children,
-  cloneElement,
-  Fragment,
-  isValidElement,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { Children, cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 
-import {
-  alertDefaultIndicatorIcon,
-  alertShowsDefaultIndicatorIcon,
-} from "@/components/core/Alert/alertAPI";
+import { alertDefaultIndicatorIcon, alertShowsDefaultIndicatorIcon } from "@/components/core/Alert/alertAPI";
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import { Button, type ButtonProps, type ButtonSize, type ButtonStatus, type ButtonVariant } from "@/components/core/Button";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";

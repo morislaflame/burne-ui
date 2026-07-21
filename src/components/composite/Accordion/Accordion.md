@@ -5,21 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Accordion,
-  type AccordionProps,
-  type AccordionItemProps,
-  type AccordionHeadingProps,
-  type AccordionTriggerProps,
-  type AccordionMessageProps,
-  type AccordionIconProps,
-  type AccordionContentProps,
-  type AccordionTitleProps,
-  type AccordionDescriptionProps,
-  type AccordionIndicatorProps,
-  type AccordionPanelProps,
-  type AccordionBodyProps,
-} from "burne-ui";
+import { Accordion, type AccordionProps, type AccordionItemProps, type AccordionHeadingProps, type AccordionTriggerProps, type AccordionMessageProps, type AccordionIconProps, type AccordionContentProps, type AccordionTitleProps, type AccordionDescriptionProps, type AccordionChevronProps, type AccordionPanelProps, type AccordionBodyProps } from "burne-ui";
 ```
 
 ## API
@@ -37,7 +23,7 @@ import {
             <Accordion.Title>Доставка</Accordion.Title>
             <Accordion.Description>Сроки и условия</Accordion.Description>
           </Accordion.Content>
-          <Accordion.Indicator />
+          <Accordion.Chevron />
         </Accordion.Message>
       </Accordion.Trigger>
     </Accordion.Heading>
@@ -79,14 +65,14 @@ Simple API нет.
 | Часть | Реализация | Назначение |
 |-------|------------|------------|
 | `Accordion.Item` | `Expandable` | Один пункт аккордеона |
-| `Accordion.Heading` | `<h3>` | Семантический заголовок секции |
+| `Accordion.Heading` | `<h3>` | Семантическая обёртка секции (a11y heading). Не путать с `Accordion.Title` — видимый текстовый заголовок внутри Message. |
 | `Accordion.Trigger` | `Expandable.Trigger` (`hideChevron=true`) | Кнопка toggle |
 | `Accordion.Message` | `Expandable.Message` | Grid-слоты в trigger |
 | `Accordion.Icon` | `Expandable.Icon` | Leading icon |
 | `Accordion.Content` | `Expandable.Content` | Title + Description group |
 | `Accordion.Title` | `Expandable.Title` | Заголовок |
 | `Accordion.Description` | `Expandable.Description` | Подзаголовок muted |
-| `Accordion.Indicator` | Custom chevron span | Шеврон вместо `Expandable.Chevron` |
+| `Accordion.Chevron` | Custom chevron span | Шеврон вместо `Expandable.Chevron` |
 | `Accordion.Panel` | `Expandable.Panel` | Раскрываемая `<section>` |
 | `Accordion.Body` | `Text as="div"` | Тело панели (`text-muted`) |
 
@@ -122,7 +108,7 @@ const [value, setValue] = useState<string | null>("shipping");
 
 ## Анимации
 
-Accordion добавляет только **Indicator rotation**; остальное — из `Expandable` + shared utils.
+Accordion добавляет только **Chevron rotation**; остальное — из `Expandable` + shared utils.
 
 **DOM (один Item):**
 
@@ -131,7 +117,7 @@ Accordion добавляет только **Indicator rotation**; остальн
   <h3>
     <button class=trigger>             ← squeeze на liftSpan
       <Accordion.Message grid>
-        <Icon /> <Title/> <Indicator/>  ← GSAP rotate chevron
+        <Icon /> <Title/> <Chevron/>  ← GSAP rotate chevron
   <div class=panelShell>               ← useCollapsibleHeight
     <section class=panel>
       <Accordion.Body />
@@ -157,9 +143,9 @@ configureMotion({
 
 `Expandable.Trigger` → `animateInteractivePressSqueeze` на `triggerLift` span.
 
-### 3. Indicator rotation (`accordionAnimations.ts`)
+### 3. Chevron rotation (`accordionAnimations.ts`)
 
-`useAccordionIndicatorAnimation(open)` → `useChevronRotation` на `Accordion.Indicator`.
+`useAccordionChevronAnimation(open)` → `useChevronRotation` на `Accordion.Chevron`.
 
 - `Accordion.Trigger` по умолчанию `hideChevron={true}`
 - Rotation: `motionInteractive()`; off при `enableExpandable: false`
@@ -181,7 +167,7 @@ configureMotion({
 |----------|---------|---------------------------|----------------|
 | Panel height | `useCollapsibleHeight` | `expandDuration`, `enableExpandable` | `open` на Item |
 | Trigger squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | `disabled` |
-| Indicator rotate | `useChevronRotation` | `interactiveDuration`, `enableExpandable` | `open` |
+| Chevron rotate | `useChevronRotation` | `interactiveDuration`, `enableExpandable` | `open` |
 | Ripple | `<Ripple />` | `rippleExpandableDuration` | в Trigger children |
 
 ## Токены и CSS
@@ -195,7 +181,7 @@ configureMotion({
 | `[&>item:not(:first-child)]:-mt-px` | Склейка border между Item |
 | `accordionItemClass` | `relative !rounded-none` |
 | `accordionHeadingClass` | Reset `<h3>` |
-| `accordionIndicatorClass` | Chevron wrapper `origin-center` |
+| `accordionChevronClass` | Chevron wrapper `origin-center` |
 | `accordionBodyClass` | `text-muted` |
 
 ### Унаследованные от Expandable (на Item)
@@ -213,7 +199,7 @@ configureMotion({
 | root | `Accordion className` |
 | item | `Accordion.Item className` |
 | heading / trigger / message / … | `className` на подчасти |
-| indicator | `Accordion.Indicator className` |
+| indicator | `Accordion.Chevron className` |
 | panel / body | `Accordion.Panel` / `Accordion.Body className` |
 
 `ExpandableClassNames` **не прокидывается** через Accordion.
@@ -231,7 +217,7 @@ configureMotion({
             <Accordion.Content>
               <Accordion.Title>{item.title}</Accordion.Title>
             </Accordion.Content>
-            <Accordion.Indicator />
+            <Accordion.Chevron />
           </Accordion.Message>
         </Accordion.Trigger>
       </Accordion.Heading>
@@ -257,7 +243,7 @@ configureMotion({
 ### Практические заметки
 
 - Рекомендуемая структура: `Heading` → `Trigger` → `Message` → slots → `Panel` → `Body`.
-- `Accordion.Indicator` — внутри или рядом с `Message` (grid резолвит по `displayName`).
+- `Accordion.Chevron` — внутри или рядом с `Message` (grid резолвит по `displayName`).
 - Для controlled state используйте стабильные `value` на Item, не полагайтесь на auto-index при reorder.
 - Сравнение с `Expandable`: один блок vs группа с `value`.
 - **Не задавайте `rounded` на Item** — скругление задаёт root через селекторы first/last.
@@ -278,7 +264,7 @@ configureMotion({
 - `Accordion.Heading` → `<h3>`
 - Trigger: `aria-expanded`, `aria-controls`, `id`
 - Panel: `<section aria-labelledby hidden inert>`
-- Icon / Indicator: `aria-hidden`
+- Icon / Chevron: `aria-hidden`
 - Keyboard: Enter/Space на trigger
 
 **Нет** `role="group"` / accordion pattern на root — каждый Item автономный disclosure; «один открыт» — только JS (`value`).
@@ -291,7 +277,7 @@ Accordion/
 ├── index.ts
 ├── accordionTypes.ts
 ├── accordionStyles.ts
-├── accordionAnimations.ts       # useAccordionIndicatorAnimation
+├── accordionAnimations.ts       # useAccordionChevronAnimation
 ├── accordionParts.tsx
 ├── accordionAPI.ts
 ├── accordionContext.tsx

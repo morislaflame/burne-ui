@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  IoBookmarkOutline,
-  IoHeart,
-  IoHeartOutline,
-  IoShareSocialOutline,
-} from "react-icons/io5";
+import { IoBookmarkOutline, IoHeart, IoHeartOutline, IoShareSocialOutline } from "react-icons/io5";
 
 import { ToggleButton } from "@/components/core/ToggleButton";
 import { Text } from "@/components/core/Text";
@@ -30,7 +25,7 @@ export function ToggleButtonReactionBarDemo() {
           onPressedChange={setLiked}
           variant="outline"
           size="small"
-          leftIcon={liked ? <IoHeart aria-hidden /> : <IoHeartOutline aria-hidden />}
+          icon={liked ? <IoHeart aria-hidden /> : <IoHeartOutline aria-hidden />}
           fillColor="bg-danger"
           className={liked ? "text-danger-foreground" : ""}
         >
@@ -41,14 +36,14 @@ export function ToggleButtonReactionBarDemo() {
           onPressedChange={setBookmarked}
           variant="ghost"
           size="small"
-          leftIcon={<IoBookmarkOutline aria-hidden />}
+          icon={<IoBookmarkOutline aria-hidden />}
         >
           Save
         </ToggleButton>
         <Button
           variant="ghost"
           size="small"
-          leftIcon={<IoShareSocialOutline aria-hidden />}
+          icon={<IoShareSocialOutline aria-hidden />}
         >
           Share
         </Button>

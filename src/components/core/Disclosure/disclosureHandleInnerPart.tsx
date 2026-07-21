@@ -1,11 +1,7 @@
 import { cn } from "@/utils/cn";
 
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
-import {
-  DISCLOSURE_HANDLE_BASE_CLASS,
-  DISCLOSURE_HANDLE_DISABLED_CLASS,
-  DISCLOSURE_HANDLE_GRIP_CLASS,
-} from "./disclosureStyles";
+import { DISCLOSURE_HANDLE_BASE_CLASS, DISCLOSURE_HANDLE_DISABLED_CLASS, DISCLOSURE_HANDLE_GRIP_CLASS } from "./disclosureStyles";
 import type { DisclosureHandleProps } from "./disclosureTypes";
 import { useDisclosureContentDrag } from "./useDisclosureContentDrag";
 

@@ -41,7 +41,7 @@ export type TimeFieldFieldContextValue = {
   errorId: string;
   hintConnected: boolean;
   errorConnected: boolean;
-  isRequired: boolean;
+  required: boolean;
   status: TimeFieldStatus;
   size: TimeFieldSize;
   variant: TimeFieldVariant;
@@ -77,7 +77,7 @@ export type TimeFieldRootProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" |
   hint?: ReactNode;
   error?: ReactNode;
   id?: string;
-  isRequired?: boolean;
+  required?: boolean;
   status?: TimeFieldStatus;
   size?: TimeFieldSize;
   variant?: TimeFieldVariant;

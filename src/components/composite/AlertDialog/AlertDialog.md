@@ -5,22 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  AlertDialog,
-  useAlertDialog,
-  footerButtonSizeForAlertDialog,
-  primaryButtonVariantForAlertTone,
-  primaryButtonStatusForAlertTone,
-  type AlertDialogProps,
-  type AlertDialogSize,
-  type AlertDialogTriggerProps,
-  type AlertDialogHeaderProps,
-  type AlertDialogTitleProps,
-  type AlertDialogDescriptionProps,
-  type AlertDialogBodyProps,
-  type AlertDialogFooterProps,
-  type AlertDialogCloseProps,
-} from "burne-ui";
+import { AlertDialog, useAlertDialog, footerButtonSizeForAlertDialog, primaryButtonVariantForAlertTone, primaryButtonStatusForAlertTone, type AlertDialogProps, type AlertDialogSize, type AlertDialogTriggerProps, type AlertDialogHeaderProps, type AlertDialogTitleProps, type AlertDialogDescriptionProps, type AlertDialogBodyProps, type AlertDialogFooterProps, type AlertDialogCloseProps } from "burne-ui";
 ```
 
 ## API

@@ -22,8 +22,8 @@ export function PopoverClassNamesFullDemo() {
       </Popover.Trigger>
       <Popover.Content>
         <Popover.Header>
-          <Popover.Label>Display Settings</Popover.Label>
-          <Popover.Hint>root on the trigger, panel/label/body through classNames</Popover.Hint>
+          <Popover.Title>Display Settings</Popover.Title>
+          <Popover.Description>root on the trigger, panel/label/body through classNames</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <Text as="p" variant="small">

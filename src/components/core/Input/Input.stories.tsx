@@ -3,10 +3,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Input } from "./index";
@@ -20,7 +17,7 @@ function ValidatedEmailCompoundDemo({ initialValue = "bad@" }: { initialValue?: 
   const invalid = value.length > 0 && !isValidEmail(value);
 
   return (
-    <Input status={invalid ? "danger" : "default"} isRequired>
+    <Input status={invalid ? "danger" : "default"} required>
       <Input.Label>Email</Input.Label>
       <Input.Control
         value={value}
@@ -43,7 +40,7 @@ function ValidatedEmailSimpleDemo({ initialValue = "bad@" }: { initialValue?: st
       hint="Format: name@domain.tld"
       error={invalid ? "Enter a valid address." : undefined}
       status={invalid ? "danger" : "default"}
-      isRequired
+      required
       value={value}
       onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
       autoComplete="email"
@@ -217,7 +214,7 @@ export const Warning: Story = {
 
 export const Required: Story = {
   render: () => (
-    <Input isRequired>
+    <Input required>
       <Input.Label>Name</Input.Label>
       <Input.Control placeholder="Ivan" autoComplete="name" />
     </Input>

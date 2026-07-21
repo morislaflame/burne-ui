@@ -2,12 +2,7 @@ import { useMemo } from "react";
 
 import { BADGE_ANCHOR_PLACEMENT } from "./badgeStyles";
 import type { BadgePlacement, UseBadgeRootStateProps } from "./badgeTypes";
-import {
-  hasBadgeTextContent,
-  hasInlineIconChildren,
-  hasMeaningfulContent,
-  resolveBadgeBody,
-} from "./badgeAPI";
+import { hasBadgeTextContent, hasInlineIconChildren, hasMeaningfulContent, resolveBadgeBody } from "./badgeAPI";
 import { useBadgeDirectAnchorChild } from "./badgeContext";
 import { badgeSurfaceClass } from "./badgeStyles";
 

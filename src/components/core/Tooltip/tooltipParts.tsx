@@ -1,70 +1,22 @@
-import {
-  Children,
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-  type Ref,
-} from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactElement, type ReactNode, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { Text } from "@/components/core/Text";
-import {
-  SEMANTIC_STATUS_ICONS,
-  type SemanticStatus,
-} from "@/components/core/utils/semanticStatusIcons";
+import { SEMANTIC_STATUS_ICONS, type SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
-import {
-  messageBannerDescriptionCellClass,
-  messageBannerIndicatorCellClass,
-  messageBannerTitleCellClass,
-  type MessageBannerGridSlots,
-} from "@/components/core/utils/messageBannerGridLayout";
+import { messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import "../utils/glossInteractive.css";
 
 import { bindTriggerEvents, mergeDescribedBy } from "./tooltipA11y";
-import {
-  hasTooltipCompoundChildren,
-  isTooltipArrowElement,
-  resolveTooltipGridSlots,
-} from "./tooltipAPI";
+import { hasTooltipCompoundChildren, isTooltipArrowElement, resolveTooltipGridSlots } from "./tooltipAPI";
 import { useTooltipPortalMotion } from "./tooltipAnimations";
-import {
-  TooltipBodyContext,
-  TooltipResolvedSideContext,
-  useTooltipBodyContext,
-  useTooltipClassNames,
-  useTooltipContext,
-  useTooltipResolvedSide,
-} from "./tooltipContext";
+import { TooltipBodyContext, TooltipResolvedSideContext, useTooltipBodyContext, useTooltipClassNames, useTooltipContext, useTooltipResolvedSide } from "./tooltipContext";
 import { computeTooltipPlacement } from "./tooltipPosition";
-import {
-  TOOLTIP_COMPOUND_CONTENTS_CLASS,
-  TOOLTIP_CONTENT_INNER_CLASS,
-  TOOLTIP_CONTENT_VARIANT,
-  TOOLTIP_DEFAULT_OFFSET,
-  TOOLTIP_DESC_VARIANT,
-  TOOLTIP_DESCRIPTION_MUTED_CLASS,
-  TOOLTIP_ICON_SIZE,
-  TOOLTIP_ICON_SLOT_SVG,
-  TOOLTIP_STATUS_ICON_CLASS,
-  TOOLTIP_INDICATOR_BASE_CLASS,
-  TOOLTIP_TRIGGER_BASE_CLASS,
-  tooltipArrowClass,
-  tooltipContentClass,
-  tooltipGlossContentClass,
-  tooltipPanelClass,
-} from "./tooltipStyles";
+import { TOOLTIP_COMPOUND_CONTENTS_CLASS, TOOLTIP_CONTENT_INNER_CLASS, TOOLTIP_CONTENT_VARIANT, TOOLTIP_DEFAULT_OFFSET, TOOLTIP_DESC_VARIANT, TOOLTIP_DESCRIPTION_MUTED_CLASS, TOOLTIP_ICON_SIZE, TOOLTIP_ICON_SLOT_SVG, TOOLTIP_STATUS_ICON_CLASS, TOOLTIP_INDICATOR_BASE_CLASS, TOOLTIP_TRIGGER_BASE_CLASS, tooltipArrowClass, tooltipContentClass, tooltipGlossContentClass, tooltipPanelClass } from "./tooltipStyles";
 import type {
   TooltipArrowProps,
   TooltipContentProps,

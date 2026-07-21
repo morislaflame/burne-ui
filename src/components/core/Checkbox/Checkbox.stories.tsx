@@ -4,10 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 import { IoStar } from "react-icons/io5";
 
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { Label } from "@/components/core/Label";
 
@@ -170,7 +167,7 @@ export const States: Story = {
 export const CustomIcon: Story = {
   name: "Custom icon",
   render: () => (
-    <Checkbox defaultChecked checkIcon={<IoStar aria-hidden className="size-full" />} label="Favorites" hint="Star instead of checkmark" />
+    <Checkbox defaultChecked icon={<IoStar aria-hidden className="size-full" />} label="Favorites" hint="Star instead of checkmark" />
   ),
 };
 

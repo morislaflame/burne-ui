@@ -31,7 +31,7 @@ const meta = {
   parameters: { layout: "fullscreen" },
   decorators: [...darkThemeDecorator],
   args: {
-    isRequired: false,
+    required: false,
   },
   argTypes: {
     size: {
@@ -168,7 +168,7 @@ export const WithDescriptions: Story = {
 export const Required: Story = {
   name: "Required field",
   render: () => (
-    <RadioGroup isRequired>
+    <RadioGroup required>
       <RadioGroup.Legend>
         <RadioGroup.Label>Plan</RadioGroup.Label>
       </RadioGroup.Legend>
@@ -183,7 +183,7 @@ export const Required: Story = {
 export const WithError: Story = {
   name: "With error",
   render: () => (
-    <RadioGroup isRequired>
+    <RadioGroup required>
       <RadioGroup.Legend>
         <RadioGroup.Label>Plan</RadioGroup.Label>
         <RadioGroup.Hint>Select one option before continuing.</RadioGroup.Hint>
@@ -269,7 +269,7 @@ export const Accessibility: Story = {
         <code className="text-primary">aria-describedby</code> on fieldset; option hint — on input
         via <code className="text-primary">Radio.Hint</code>.
       </p>
-      <RadioGroup isRequired>
+      <RadioGroup required>
         <RadioGroup.Legend>
           <RadioGroup.Label>Delivery</RadioGroup.Label>
           <RadioGroup.Hint>Select one delivery method.</RadioGroup.Hint>

@@ -1,12 +1,7 @@
 import { useLayoutEffect, type RefObject } from "react";
 
 import { killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  animatePortalClose,
-  animatePortalOpen,
-  applyReducedPortalMotion,
-  isReducedModalMotion,
-} from "@/components/core/utils/modalSurfaceMotion";
+import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 
 export function useTooltipPortalMotion({

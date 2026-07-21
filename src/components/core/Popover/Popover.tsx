@@ -1,9 +1,6 @@
 import "../utils/glossInteractive.css";
 
-import {
-  PopoverClassNamesProvider,
-  PopoverProvider,
-} from "./popoverContext";
+import { PopoverClassNamesProvider, PopoverProvider } from "./popoverContext";
 import type { PopoverRootProps } from "./popoverTypes";
 import { usePopoverRootState } from "./usePopoverRootState";
 
@@ -14,8 +11,8 @@ export type {
   PopoverContentGap,
   PopoverContentProps,
   PopoverHeaderProps,
-  PopoverHintProps,
-  PopoverLabelProps,
+  PopoverDescriptionProps,
+  PopoverTitleProps,
   PopoverRootProps,
   PopoverSide,
   PopoverSize,
@@ -28,8 +25,8 @@ export {
   PopoverBody,
   PopoverContent,
   PopoverHeader,
-  PopoverHint,
-  PopoverLabel,
+  PopoverDescription,
+  PopoverTitle,
   PopoverTrigger,
 } from "./popoverParts";
 

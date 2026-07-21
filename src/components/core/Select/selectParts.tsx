@@ -3,18 +3,10 @@ import type {
   KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
-import {
-  forwardRef,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
+import { forwardRef, useCallback, useMemo, useRef } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
-import {
-  useOptionalButtonGroupLayout,
-  useOptionalButtonGroupSegment,
-} from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Label, type LabelProps } from "@/components/core/Label";
@@ -27,31 +19,10 @@ import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
 import { selectActiveOptionId, selectTriggerAriaLabel } from "./selectA11y";
-import {
-  runSelectOpenAfterSqueeze,
-  useSelectOpeningRef,
-} from "./selectAnimations";
-import {
-  selectBumpActiveValue,
-  selectFirstEnabledValue,
-  selectLastEnabledValue,
-  selectOptionsByValue,
-  selectResolveHintStatus,
-} from "./selectAPI";
-import {
-  useSelectClassNames,
-  useSelectContext,
-  useSelectFieldContext,
-} from "./selectContext";
-import {
-  SELECT_CHEVRON_ICON,
-  SELECT_LISTBOX_CLASS,
-  SELECT_POPOVER_BODY_CLASS,
-  SELECT_POPOVER_CLASS,
-  selectTriggerClass,
-  selectTriggerGroupClass,
-  selectValueClass,
-} from "./selectStyles";
+import { runSelectOpenAfterSqueeze, useSelectOpeningRef } from "./selectAnimations";
+import { selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue, selectResolveHintStatus } from "./selectAPI";
+import { useSelectClassNames, useSelectContext, useSelectFieldContext } from "./selectContext";
+import { SELECT_CHEVRON_ICON, SELECT_LISTBOX_CLASS, SELECT_POPOVER_BODY_CLASS, SELECT_POPOVER_CLASS, selectTriggerClass, selectTriggerGroupClass, selectValueClass } from "./selectStyles";
 import type {
   SelectErrorProps,
   SelectHintProps,
@@ -92,7 +63,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       optionValues,
       setActiveValue,
       activeValue,
-      isRequired,
+      required,
       hintConnected,
       errorConnected,
       hintId,
@@ -164,7 +135,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
         aria-controls={open ? listId : undefined}
         aria-haspopup="listbox"
         aria-activedescendant={open ? activeOptionId : undefined}
-        aria-required={isRequired || undefined}
+        aria-required={required || undefined}
         aria-invalid={status === "danger" ? true : undefined}
         aria-describedby={ariaDescribedBy}
         aria-disabled={disabled || undefined}

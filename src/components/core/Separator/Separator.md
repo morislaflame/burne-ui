@@ -5,11 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Separator,
-  type SeparatorProps,
-  type SeparatorOrientation,
-} from "burne-ui";
+import { Separator, type SeparatorProps, type SeparatorOrientation } from "burne-ui";
 ```
 
 ## API

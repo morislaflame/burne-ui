@@ -15,7 +15,7 @@ export const EXPANDABLE_DESCRIPTION_DISPLAY_NAMES = new Set([
 
 export const EXPANDABLE_ACTION_DISPLAY_NAMES = new Set([
   "ExpandableChevron",
-  "Accordion.Indicator",
+  "Accordion.Chevron",
 ]);
 
 export const EXPANDABLE_MESSAGE_DISPLAY_NAMES = new Set([

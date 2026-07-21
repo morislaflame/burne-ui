@@ -11,7 +11,7 @@ export function ButtonVariantsDemo() {
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
       <Button disabled>Disabled</Button>
-      <Button leftIcon={<IoAdd aria-hidden />}>With icon</Button>
+      <Button icon={<IoAdd aria-hidden />}>With icon</Button>
       <Button iconOnly aria-label="Add">
         <IoAdd aria-hidden />
       </Button>

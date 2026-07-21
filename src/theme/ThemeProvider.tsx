@@ -1,14 +1,4 @@
-import {
-  createContext,
-  createElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, createElement, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 
 import { resolveTheme, type BurneThemeMode } from "./themeConfig";
 import type { ThemeMode } from "./themeDefaults";

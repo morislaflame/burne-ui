@@ -1,11 +1,5 @@
 import { MeterRoot, MeterTrack } from "./Meter";
-import {
-  MeterError,
-  MeterHeader,
-  MeterHint,
-  MeterLabel,
-  MeterValue,
-} from "./meterParts";
+import { MeterError, MeterHeader, MeterHint, MeterLabel, MeterValue } from "./meterParts";
 
 export const Meter = Object.assign(MeterRoot, {
   Header: MeterHeader,

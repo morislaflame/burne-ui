@@ -1,15 +1,4 @@
-import {
-  TooltipArrow,
-  TooltipContent,
-  TooltipDescription,
-  TooltipIcon,
-  TooltipIndicator,
-  TooltipMessage,
-  TooltipPanel,
-  TooltipRoot,
-  TooltipTitle,
-  TooltipTrigger,
-} from "./Tooltip";
+import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIcon, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipRoot, TooltipTitle, TooltipTrigger } from "./Tooltip";
 
 export const Tooltip = Object.assign(TooltipRoot, {
   Trigger: TooltipTrigger,

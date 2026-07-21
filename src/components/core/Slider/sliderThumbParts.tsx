@@ -1,9 +1,6 @@
 import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
 
-import {
-  useSliderThumbPressAnimation,
-  useSliderThumbShellAnimation,
-} from "./sliderAnimations";
+import { useSliderThumbPressAnimation, useSliderThumbShellAnimation } from "./sliderAnimations";
 import { useSliderClassNames } from "./sliderContext";
 import { sliderThumbButtonClass, sliderThumbPositionStyle } from "./sliderStyles";
 import type { SliderThumbButtonProps } from "./sliderTypes";

@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Link,
-  LinkIcon,
-  type LinkProps,
-  type LinkSize,
-  type LinkIconPosition,
-  type LinkClassNames,
-} from "burne-ui";
+import { Link, LinkIcon, type LinkProps, type LinkSize, type LinkIconPosition, type LinkClassNames } from "burne-ui";
 ```
 
 ## API
@@ -24,8 +17,9 @@ import {
 | `href` | `string` | — | Обязательный URL |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Текст и иконки |
 | `underline` | `boolean` | `false` | Подчёркивание текста |
-| `leftIcon` / `rightIcon` | `ReactNode` | — | Simple API иконки |
-| `showDefaultIcon` | `boolean` | `false` | `IoArrowForward` ↗ |
+| `icon` | `ReactNode` | — | Simple API иконка |
+| `iconPosition` | `start` \| `end` | `start` | Позиция `icon` |
+| `showDefaultIcon` | `boolean` | `false` | `IoArrowForward` ↗ (только без `icon`) |
 | `defaultIconPosition` | `start` \| `end` | `end` | Позиция дефолтной иконки |
 | `className` | `string` | — | На `<a>` |
 | `classNames` | `LinkClassNames` | — | `anchor`, `text`, `iconStart`, `iconEnd` |
@@ -49,7 +43,7 @@ type LinkClassNames = {
   Документация
 </Link>
 
-<Link href="/back" leftIcon={<IoChevronBack aria-hidden />} size="small">
+<Link href="/back" icon={<IoChevronBack aria-hidden />} size="small">
   Назад
 </Link>
 ```
@@ -177,7 +171,7 @@ Link — один компонент; «compound» меняет только р�
 | `anchor` | `<a>` | Gap, padding, border, hover-lift target |
 | `text` | `Text` (children) | Шрифт, underline override |
 | `iconStart` | Обёртка левой иконки | Размер, muted/hover цвет |
-| `iconEnd` | Обёртка правой иконки | Дефолтная ↗ или `rightIcon` |
+| `iconEnd` | Обёртка end-иконки | Дефолтная ↗ или `icon` при `iconPosition="end"` |
 
 `size`, `underline` — базовая типографика и подчёркивание из `linkStyles.ts`.
 
@@ -187,8 +181,7 @@ Link — один компонент; «compound» меняет только р�
 <Link
   href="/docs"
   underline
-  showDefaultIcon
-  leftIcon={<IoDocument aria-hidden />}
+  icon={<IoDocument aria-hidden />}
   className="max-w-xs"
   classNames={{
     anchor: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
@@ -201,7 +194,7 @@ Link — один компонент; «compound» меняет только р�
 </Link>
 ```
 
-Иконки через props `leftIcon` / `rightIcon` / `showDefaultIcon` — стили обёрток через `iconStart` / `iconEnd`.
+Иконки через props `icon` / `iconPosition` / `showDefaultIcon` — стили обёрток через `iconStart` / `iconEnd`.
 
 ### Compound API
 

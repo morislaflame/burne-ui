@@ -5,17 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Alert,
-  resolveAlertStatus,
-  resolveAlertVariant,
-  resolveAlertLiveRole,
-  type AlertProps,
-  type AlertVariant,
-  type AlertStatus,
-  type AlertLiveRole,
-  type AlertClassNames,
-} from "burne-ui";
+import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, type AlertProps, type AlertVariant, type AlertStatus, type AlertLiveRole, type AlertClassNames } from "burne-ui";
 ```
 
 ## API

@@ -1,26 +1,7 @@
 import "../utils/glossInteractive.css";
 
-import {
-  DropdownClassNamesProvider,
-  DropdownIndicatorPreferenceProvider,
-  DropdownProvider,
-} from "./dropdownContext";
-import {
-  DROPDOWN_ROOT_CLASS,
-  DropdownGroup,
-  DropdownItem,
-  DropdownItemHint,
-  DropdownItemIcon,
-  DropdownItemIndicator,
-  DropdownItemLabel,
-  DropdownLabel,
-  DropdownPopover,
-  DropdownSeparator,
-  DropdownSub,
-  DropdownSubContent,
-  DropdownSubTrigger,
-  DropdownTrigger,
-} from "./dropdownParts";
+import { DropdownClassNamesProvider, DropdownIndicatorPreferenceProvider, DropdownProvider } from "./dropdownContext";
+import { DROPDOWN_ROOT_CLASS, DropdownGroup, DropdownItem, DropdownItemHint, DropdownItemIcon, DropdownItemIndicator, DropdownItemLabel, DropdownLabel, DropdownPopover, DropdownSeparator, DropdownSub, DropdownSubContent, DropdownSubTrigger, DropdownTrigger } from "./dropdownParts";
 import type { DropdownProps } from "./dropdownTypes";
 import { useDropdownRootState } from "./useDropdownRootState";
 

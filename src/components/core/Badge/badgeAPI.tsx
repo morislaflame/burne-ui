@@ -1,20 +1,11 @@
-import {
-  Children,
-  Fragment,
-  isValidElement,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 
 import { Text } from "@/components/core/Text";
 
 import { ensureDecorativeIcon } from "./badgeA11y";
 import { BadgeInlineChild } from "./badgeInlineChild";
 import { isInlineIconChild, readBadgeInlineIconPosition } from "./badgeInlineIcon";
-import {
-  badgeIconSlotClass,
-  BADGE_TEXT_VARIANT,
-} from "./badgeStyles";
+import { badgeIconSlotClass, BADGE_TEXT_VARIANT } from "./badgeStyles";
 import type {
   ResolvedBadgeBody,
   ResolveBadgeBodyProps,

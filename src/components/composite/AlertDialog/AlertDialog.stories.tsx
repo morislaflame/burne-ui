@@ -5,12 +5,7 @@ import { expect, screen, waitFor } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
-import {
-  AlertDialog,
-  primaryButtonStatusForAlertTone,
-  primaryButtonVariantForAlertTone,
-  type AlertDialogSize,
-} from "./index";
+import { AlertDialog, primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone, type AlertDialogSize } from "./index";
 import { useAlertDialog } from "./useAlertDialog";
 import type { AlertStatus } from "@/components/core/Alert";
 

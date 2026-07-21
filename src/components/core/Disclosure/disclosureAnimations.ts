@@ -1,11 +1,6 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useCallback, useEffect, useRef } from "react";

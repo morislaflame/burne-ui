@@ -5,10 +5,7 @@ import { Text } from "@/components/core/Text";
 import { flattenKbdGroupChildren } from "./kbdAPI";
 import { KBD_GROUP_SEPARATOR_ARIA_HIDDEN } from "./kbdA11y";
 import { useKbdClassNames } from "./kbdContext";
-import {
-  kbdGroupClass,
-  kbdGroupSeparatorClass,
-} from "./kbdStyles";
+import { kbdGroupClass, kbdGroupSeparatorClass } from "./kbdStyles";
 import type { KbdGroupProps } from "./kbdTypes";
 
 export function KbdGroup({

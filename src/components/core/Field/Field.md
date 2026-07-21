@@ -5,21 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Field,
-  FieldSet,
-  joinFieldDescribedBy,
-  fieldHintId,
-  fieldErrorId,
-  useFieldSetHintId,
-  useFieldSetErrorId,
-  type FieldRootProps,
-  type FieldSetProps,
-  type FieldClassNames,
-  type FieldSetClassNames,
-  type FieldHintStatus,
-  type FieldSetSize,
-} from "burne-ui";
+import { Field, FieldSet, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHintId, useFieldSetErrorId, type FieldRootProps, type FieldSetProps, type FieldClassNames, type FieldSetClassNames, type FieldHintStatus, type FieldSetSize } from "burne-ui";
 ```
 
 ## API
@@ -30,7 +16,7 @@ Compound через `Object.assign`:
 
 | Часть | Назначение |
 |-------|------------|
-| `Field` / `Field.Root` | Вертикальный stack: label → control → hint/error |
+| `Field` / `Field` | Вертикальный stack: label → control → hint/error |
 | `Field.Label` | Алиас `Label` |
 | `Field.Hint` | Подсказка (`text-muted` или semantic) |
 | `Field.Error` | Ошибка (`status="danger"`, `role="alert"`) |
@@ -110,7 +96,7 @@ Field.Set (fieldset)
 
 ### 1. В самом Field — нет анимаций
 
-Нет `useLayoutEffect` с GSAP, нет hover handlers на `Field.Root`. Появление `Field.Error` — мгновенное (без built-in transition).
+Нет `useLayoutEffect` с GSAP, нет hover handlers на `Field`. Появление `Field.Error` — мгновенное (без built-in transition).
 
 ### 2. Shell hover у дочерних контролов (2-й уровень)
 
@@ -255,7 +241,7 @@ Field — layout-примитив: два независимых набора с
 
 | Слот | Элемент | Назначение |
 |------|---------|------------|
-| `root` | `Field.Root` div | Gap, max-width, внешняя рамка |
+| `root` | `Field` div | Gap, max-width, внешняя рамка |
 | `hint` | `Field.Hint` | Текст подсказки |
 | `error` | `Field.Error` | Текст ошибки (`role="alert"`) |
 

@@ -30,11 +30,11 @@ export function FormProfileDemo() {
       <Form.Title>Profile</Form.Title>
       <Form.Section>
         <Form.Field name="name">
-          <Input isRequired name="name" label="Name" placeholder="Ivan" autoComplete="name" />
+          <Input required name="name" label="Name" placeholder="Ivan" autoComplete="name" />
         </Form.Field>
         <Form.Field name="email">
           <Input
-            isRequired
+            required
             name="email"
             label="Email"
             placeholder="you@example.com"

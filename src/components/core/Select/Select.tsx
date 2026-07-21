@@ -2,21 +2,8 @@ import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 
-import {
-  SelectClassNamesProvider,
-  SelectFieldProvider,
-  SelectProvider,
-} from "./selectContext";
-import {
-  SelectError,
-  SelectHint,
-  SelectLabel,
-  SelectPopover,
-  SelectSimpleBody,
-  SelectTrigger,
-  SelectTriggerGroup,
-  SelectValue,
-} from "./selectParts";
+import { SelectClassNamesProvider, SelectFieldProvider, SelectProvider } from "./selectContext";
+import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectSimpleBody, SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectParts";
 import type { SelectRootProps } from "./selectTypes";
 import { useSelectRootState } from "./useSelectRootState";
 
@@ -47,7 +34,7 @@ export function SelectRoot({
   className,
   classNames,
   id,
-  isRequired,
+  required,
   status,
   size,
   options,
@@ -78,7 +65,7 @@ export function SelectRoot({
     error: resolvedError,
     id,
     name,
-    isRequired,
+    required,
     status: resolvedStatus,
     size: resolvedSize,
     options,

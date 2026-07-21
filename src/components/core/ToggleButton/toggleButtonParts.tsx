@@ -3,26 +3,9 @@ import { forwardRef } from "react";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
-import {
-  useToggleButtonClassNames,
-  useOptionalToggleButtonContext,
-} from "./toggleButtonContext";
-import {
-  toggleButtonContentClass,
-  toggleButtonFillClass,
-  toggleButtonIconClass,
-  toggleButtonLabelClass,
-  toggleButtonTextClass,
-} from "./toggleButtonStyles";
-import {
-  TOGGLE_BUTTON_TEXT_VARIANT,
-  type ToggleButtonContentProps,
-  type ToggleButtonFillProps,
-  type ToggleButtonIconProps,
-  type ToggleButtonLabelProps,
-  type ToggleButtonTextProps,
-  type ToggleButtonTrailingProps,
-} from "./toggleButtonTypes";
+import { useToggleButtonClassNames, useOptionalToggleButtonContext } from "./toggleButtonContext";
+import { toggleButtonContentClass, toggleButtonFillClass, toggleButtonIconClass, toggleButtonLabelClass, toggleButtonTextClass } from "./toggleButtonStyles";
+import { TOGGLE_BUTTON_TEXT_VARIANT, type ToggleButtonContentProps, type ToggleButtonFillProps, type ToggleButtonIconStartProps, type ToggleButtonLabelProps, type ToggleButtonTextProps, type ToggleButtonIconEndProps } from "./toggleButtonTypes";
 import { SELECTION_FILL_DATA_ATTR } from "./useToggleButtonFillAnimation";
 
 export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProps>(
@@ -95,14 +78,14 @@ export const ToggleButtonLabel = forwardRef<HTMLSpanElement, ToggleButtonLabelPr
 
 ToggleButtonLabel.displayName = "ToggleButtonLabel";
 
-export function ToggleButtonIcon({ className = "", children, ...rest }: ToggleButtonIconProps) {
+export function ToggleButtonIconStart({ className = "", children, ...rest }: ToggleButtonIconStartProps) {
   const ctx = useOptionalToggleButtonContext();
   const slotClassNames = useToggleButtonClassNames();
   const size = ctx?.size ?? "base";
 
   return (
     <span
-      className={toggleButtonIconClass(size, cn(slotClassNames.leftIcon, className))}
+      className={toggleButtonIconClass(size, cn(slotClassNames.icon, className))}
       aria-hidden
       {...rest}
     >
@@ -111,20 +94,20 @@ export function ToggleButtonIcon({ className = "", children, ...rest }: ToggleBu
   );
 }
 
-ToggleButtonIcon.displayName = "ToggleButtonIcon";
+ToggleButtonIconStart.displayName = "ToggleButtonIconStart";
 
-export function ToggleButtonTrailing({
+export function ToggleButtonIconEnd({
   className = "",
   children,
   ...rest
-}: ToggleButtonTrailingProps) {
+}: ToggleButtonIconEndProps) {
   const ctx = useOptionalToggleButtonContext();
   const slotClassNames = useToggleButtonClassNames();
   const size = ctx?.size ?? "base";
 
   return (
     <span
-      className={toggleButtonIconClass(size, cn(slotClassNames.rightIcon, className))}
+      className={toggleButtonIconClass(size, cn(slotClassNames.icon, className))}
       aria-hidden
       {...rest}
     >
@@ -133,7 +116,7 @@ export function ToggleButtonTrailing({
   );
 }
 
-ToggleButtonTrailing.displayName = "ToggleButtonTrailing";
+ToggleButtonIconEnd.displayName = "ToggleButtonIconEnd";
 
 export function ToggleButtonText({ className = "", children, ...rest }: ToggleButtonTextProps) {
   const ctx = useOptionalToggleButtonContext();

@@ -47,7 +47,7 @@ export type CheckboxRootProps = Omit<
     size?: CheckboxSize;
     variant?: CheckboxVariant;
     status?: SemanticStatus;
-    checkIcon?: ReactNode;
+    icon?: ReactNode;
     className?: string;
     classNames?: CheckboxClassNames;
     onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
@@ -96,7 +96,7 @@ export type CheckboxFieldContextValue = {
   labelConnected: boolean;
   accessibleName?: string;
   status: SemanticStatus;
-  checkIcon?: ReactNode;
+  icon?: ReactNode;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   inputProps: {
     name?: string;

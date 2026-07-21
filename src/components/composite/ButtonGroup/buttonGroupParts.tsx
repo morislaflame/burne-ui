@@ -2,15 +2,8 @@ import { forwardRef } from "react";
 
 import { Text } from "@/components/core/Text";
 
-import {
-  useOptionalButtonGroupLayout,
-  useOptionalButtonGroupSegment,
-} from "./buttonGroupContext";
-import {
-  BUTTON_GROUP_TEXT_LABEL_CLASS,
-  BUTTON_GROUP_TEXT_VARIANT,
-  buttonGroupTextClass,
-} from "./buttonGroupStyles";
+import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "./buttonGroupContext";
+import { BUTTON_GROUP_TEXT_LABEL_CLASS, BUTTON_GROUP_TEXT_VARIANT, buttonGroupTextClass } from "./buttonGroupStyles";
 import type { ButtonGroupTextProps } from "./buttonGroupTypes";
 
 export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>(

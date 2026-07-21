@@ -1,15 +1,4 @@
-import {
-  SwitchContent,
-  SwitchControl,
-  SwitchError,
-  SwitchFill,
-  SwitchHint,
-  SwitchIcon,
-  SwitchLabel,
-  SwitchRoot,
-  SwitchThumb,
-  SwitchTrack,
-} from "./Switch";
+import { SwitchContent, SwitchControl, SwitchError, SwitchFill, SwitchHint, SwitchIcon, SwitchLabel, SwitchRoot, SwitchThumb, SwitchTrack } from "./Switch";
 
 export const Switch = Object.assign(SwitchRoot, {
   Control: SwitchControl,

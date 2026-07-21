@@ -1,12 +1,5 @@
-import {
-  FIELD_SHELL_FOCUS_CLASS,
-  FIELD_SHELL_TRANSITION_CLASS,
-  fieldShellHoverClass,
-} from "@/components/core/utils/useFieldShellHoverLift";
-import {
-  buttonGroupRoundingClasses,
-  buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
+import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
@@ -15,10 +8,7 @@ import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
 import type { FieldShellFilledVariant } from "@/components/core/utils/fieldShellVariant";
-import {
-  FIELD_SHELL_VARIANT_BG_CLASS,
-  resolveFieldShellSurfaceClass,
-} from "@/components/core/utils/fieldShellVariant";
+import { FIELD_SHELL_VARIANT_BG_CLASS, resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 
 import type { InputSize, InputStatus, InputVariant } from "./inputTypes";
 

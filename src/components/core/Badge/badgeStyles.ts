@@ -1,12 +1,6 @@
 import type { TextVariant } from "@/components/core/Text";
 
-import {
-  SEMANTIC_STATUS_FILL,
-  SEMANTIC_STATUS_OUTLINE_BORDER,
-  SEMANTIC_STATUS_SURFACE_TINT,
-  SEMANTIC_STATUS_TEXT,
-  type SemanticSurfaceStatus,
-} from "@/components/core/utils/semanticStatusSurface";
+import { SEMANTIC_STATUS_FILL, SEMANTIC_STATUS_OUTLINE_BORDER, SEMANTIC_STATUS_SURFACE_TINT, SEMANTIC_STATUS_TEXT, type SemanticSurfaceStatus } from "@/components/core/utils/semanticStatusSurface";
 import { cn } from "@/utils/cn";
 
 import type { BadgePlacement, BadgeSize, BadgeStatus, BadgeVariant } from "./badgeTypes";

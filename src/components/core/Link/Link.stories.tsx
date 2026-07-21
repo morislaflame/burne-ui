@@ -40,7 +40,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Text link: defaults to `text-primary`; color can be overridden via `className` (e.g. `text-muted`). Default ↗ icon — `text-muted` until hover. Hover-lift and squeeze on press. Simple API: `underline`, `leftIcon`/`rightIcon`, `showDefaultIcon`. Compound API: `<Link.Icon />` in children.",
+          "Text link: defaults to `text-primary`; color can be overridden via `className` (e.g. `text-muted`). Default ↗ icon — `text-muted` until hover. Hover-lift and squeeze on press. Simple API: `underline`, `icon`/`iconPosition`, `showDefaultIcon`. Compound API: `<Link.Icon />` in children.",
       },
     },
   },
@@ -110,10 +110,10 @@ export const CustomIcons: Story = {
   name: "Custom icons",
   render: () => (
     <div className="flex flex-col items-center gap-mid">
-      <Link href="#" leftIcon={<IoDocumentTextOutline aria-hidden className="icon-base" />}>
+      <Link href="#" icon={<IoDocumentTextOutline aria-hidden className="icon-base" />}>
         Documentation
       </Link>
-      <Link href="https://example.com" rightIcon={<IoOpenOutline aria-hidden className="icon-base" />}>
+      <Link href="https://example.com" icon={<IoOpenOutline aria-hidden className="icon-base" />} iconPosition="end">
         Open site
       </Link>
     </div>

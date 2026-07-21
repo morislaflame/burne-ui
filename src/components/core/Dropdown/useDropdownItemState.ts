@@ -1,10 +1,7 @@
 import type { ReactNode } from "react";
 
 import { partitionDropdownItemChildren } from "./dropdownAPI";
-import {
-  useDropdown,
-  useDropdownIndicatorPreference,
-} from "./dropdownContext";
+import { useDropdown, useDropdownIndicatorPreference } from "./dropdownContext";
 
 export function useDropdownItemState({
   children,

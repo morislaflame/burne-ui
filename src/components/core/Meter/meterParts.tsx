@@ -5,16 +5,8 @@ import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
 import { useMeterFillAnimation } from "./meterAnimations";
-import {
-  useMeterClassNames,
-  useMeterFieldContext,
-} from "./meterContext";
-import {
-  meterFillClass,
-  meterHeaderClass,
-  meterTrackClass,
-  meterValueClass,
-} from "./meterStyles";
+import { useMeterClassNames, useMeterFieldContext } from "./meterContext";
+import { meterFillClass, meterHeaderClass, meterTrackClass, meterValueClass } from "./meterStyles";
 import type {
   MeterErrorProps,
   MeterHeaderProps,

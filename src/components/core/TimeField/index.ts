@@ -1,10 +1,4 @@
-import {
-  TimeFieldControl,
-  TimeFieldError,
-  TimeFieldHint,
-  TimeFieldLabel,
-  TimeFieldRoot,
-} from "./TimeField";
+import { TimeFieldControl, TimeFieldError, TimeFieldHint, TimeFieldLabel, TimeFieldRoot } from "./TimeField";
 
 export const TimeField = Object.assign(TimeFieldRoot, {
   Label: TimeFieldLabel,

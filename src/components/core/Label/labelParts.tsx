@@ -2,10 +2,7 @@ import { Text } from "@/components/core/Text";
 
 import { LABEL_REQUIRED_MARKER_ARIA_HIDDEN } from "./labelA11y";
 import { useLabelClassNames } from "./labelContext";
-import {
-  labelRequiredClass,
-  labelTextClass,
-} from "./labelStyles";
+import { labelRequiredClass, labelTextClass } from "./labelStyles";
 import type { LabelContentProps, LabelProps } from "./labelTypes";
 
 export function LabelSlot(_props: LabelProps) {
@@ -14,7 +11,7 @@ export function LabelSlot(_props: LabelProps) {
 
 LabelSlot.displayName = "Label";
 
-export function LabelContent({ children, isRequired }: LabelContentProps) {
+export function LabelContent({ children, required }: LabelContentProps) {
   const slotClassNames = useLabelClassNames();
 
   return (
@@ -26,7 +23,7 @@ export function LabelContent({ children, isRequired }: LabelContentProps) {
       >
         {children}
       </Text>
-      {isRequired ? (
+      {required ? (
         <span
           className={labelRequiredClass(slotClassNames.required)}
           aria-hidden={LABEL_REQUIRED_MARKER_ARIA_HIDDEN}

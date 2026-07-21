@@ -7,7 +7,7 @@ import { useOptionGroupSingleValue } from "@/components/composite/utils/useOptio
 import type { RadioGroupContextValue, UseRadioGroupRootStateProps } from "./radioGroupTypes";
 
 export function useRadioGroupRootState({
-  isRequired = false,
+  required = false,
   value: valueProp,
   defaultValue,
   onValueChange,
@@ -25,24 +25,24 @@ export function useRadioGroupRootState({
     value: valueProp,
     defaultValue,
     onValueChange,
-    allowClear: !isRequired,
+    allowClear: !required,
   });
 
   const { claimRequiredAnchor: claimAnchor } = useOptionGroupRequiredAnchor([
-    isRequired,
+    required,
     groupName,
   ]);
 
   const claimRequiredAnchor = useCallback(() => {
-    if (!isRequired) return false;
+    if (!required) return false;
     return claimAnchor();
-  }, [claimAnchor, isRequired]);
+  }, [claimAnchor, required]);
 
   const contextValue = useMemo<RadioGroupContextValue>(
     () => ({
       name: groupName,
       disabled,
-      isRequired,
+      required,
       hintId,
       errorId,
       selectedValue,
@@ -55,13 +55,13 @@ export function useRadioGroupRootState({
       errorId,
       groupName,
       hintId,
-      isRequired,
+      required,
       selectValue,
       selectedValue,
     ],
   );
 
-  const fieldLabelCtx = useMemo(() => ({ isRequired }), [isRequired]);
+  const fieldLabelCtx = useMemo(() => ({ required }), [required]);
 
   return { contextValue, fieldLabelCtx, hintId, errorId, disabled };
 }

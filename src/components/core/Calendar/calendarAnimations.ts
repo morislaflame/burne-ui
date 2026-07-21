@@ -1,11 +1,6 @@
 import { useCallback, useRef } from "react";
 
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 
 export function useCalendarNavButtonAnimations(disabled = false) {
   const ref = useRef<HTMLButtonElement>(null);

@@ -3,12 +3,7 @@ import { forwardRef } from "react";
 import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset } from "@/components/composite/utils/optionGroupFieldset";
 
-import {
-  CheckboxGroupError,
-  CheckboxGroupHint,
-  CheckboxGroupLegend,
-  CheckboxGroupList,
-} from "./checkboxGroupParts";
+import { CheckboxGroupError, CheckboxGroupHint, CheckboxGroupLegend, CheckboxGroupList } from "./checkboxGroupParts";
 import { CheckboxGroupProvider } from "./checkboxGroupContext";
 import type { CheckboxGroupProps } from "./checkboxGroupTypes";
 import { useCheckboxGroupRootState } from "./useCheckboxGroupRootState";
@@ -31,7 +26,7 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
       className,
       size,
       disabled = false,
-      isRequired: _isRequired,
+      required: _required,
       selection: _selection,
       value: _value,
       defaultValue: _defaultValue,

@@ -4,24 +4,9 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { useCheckboxTextMotion } from "./checkboxAnimations";
-import {
-  CheckboxClassNamesProvider,
-  CheckboxFieldProvider,
-} from "./checkboxContext";
-import {
-  CheckboxContent,
-  CheckboxControl,
-  CheckboxError,
-  CheckboxHint,
-  CheckboxIndicator,
-  CheckboxLabel,
-  CheckboxSimpleBody,
-} from "./checkboxParts";
-import {
-  CHECKBOX_COMPOUND_FIELDSET_CLASS,
-  CHECKBOX_ROOT_DISABLED_CLASS,
-  checkboxGridClass,
-} from "./checkboxStyles";
+import { CheckboxClassNamesProvider, CheckboxFieldProvider } from "./checkboxContext";
+import { CheckboxContent, CheckboxControl, CheckboxError, CheckboxHint, CheckboxIndicator, CheckboxLabel, CheckboxSimpleBody } from "./checkboxParts";
+import { CHECKBOX_COMPOUND_FIELDSET_CLASS, CHECKBOX_ROOT_DISABLED_CLASS, checkboxGridClass } from "./checkboxStyles";
 import type { CheckboxRootProps } from "./checkboxTypes";
 import { useCheckboxRootState } from "./useCheckboxRootState";
 
@@ -51,7 +36,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
       size,
       variant,
       status,
-      checkIcon,
+      icon,
       disabled,
       checked,
       defaultChecked,
@@ -85,7 +70,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
         size,
         variant,
         status: resolvedStatus,
-        checkIcon,
+        icon,
         disabled,
         checked,
         defaultChecked,

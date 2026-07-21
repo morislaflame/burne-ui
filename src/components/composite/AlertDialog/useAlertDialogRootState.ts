@@ -1,9 +1,6 @@
 import { useCallback, useId, useState } from "react";
 
-import {
-  resolveAlertStatus,
-  resolveAlertVariant,
-} from "@/components/core/Alert/alertAPI";
+import { resolveAlertStatus, resolveAlertVariant } from "@/components/core/Alert/alertAPI";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
 import { ALERT_DIALOG_SIZE, footerButtonSizeForAlertDialog } from "./alertDialogStyles";

@@ -109,7 +109,7 @@ export const Vertical: Story = {
         <ButtonGroupText>Sorting</ButtonGroupText>
         <Button variant="outline">By date</Button>
         <Button variant="outline">By name</Button>
-        <Button variant="primary" status="danger" leftIcon={<IoTrashOutline />}>
+        <Button variant="primary" status="danger" icon={<IoTrashOutline />}>
           Delete
         </Button>
       </ButtonGroup>
@@ -177,7 +177,7 @@ export const MultipleGroupsInRow: Story = {
           </Button>
         </ButtonGroup>
         <ButtonGroup aria-label="Status" buttonSize="small">
-          <Button size="small" variant="primary" status="danger" leftIcon={<IoTrashOutline />}>
+          <Button size="small" variant="primary" status="danger" icon={<IoTrashOutline />}>
             Reset
           </Button>
         </ButtonGroup>

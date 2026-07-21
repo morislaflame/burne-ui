@@ -3,11 +3,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 import { hasCompoundChildren } from "@/components/core/utils/hasCompoundChildren";
 
-import {
-  compoundHasLabel,
-  compoundUsesInlineMotion,
-  countSecondaryLines,
-} from "./switchAPI";
+import { compoundHasLabel, compoundUsesInlineMotion, countSecondaryLines } from "./switchAPI";
 import { switchErrorId, switchHintId } from "./switchA11y";
 import { SWITCH_LAYOUT } from "./switchStyles";
 import type { SwitchFieldContextValue, UseSwitchRootStateProps } from "./switchTypes";

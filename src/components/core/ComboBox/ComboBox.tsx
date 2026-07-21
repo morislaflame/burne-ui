@@ -2,21 +2,8 @@ import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 
-import {
-  ComboBoxClassNamesProvider,
-  ComboBoxFieldProvider,
-  ComboBoxProvider,
-} from "./comboBoxContext";
-import {
-  ComboBoxError,
-  ComboBoxHint,
-  ComboBoxLabel,
-  ComboBoxInput,
-  ComboBoxInputGroup,
-  ComboBoxPopover,
-  ComboBoxSimpleBody,
-  ComboBoxTrigger,
-} from "./comboBoxParts";
+import { ComboBoxClassNamesProvider, ComboBoxFieldProvider, ComboBoxProvider } from "./comboBoxContext";
+import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxSimpleBody, ComboBoxTrigger } from "./comboBoxParts";
 import type { ComboBoxRootProps } from "./comboBoxTypes";
 import { useComboBoxRootState } from "./useComboBoxRootState";
 
@@ -47,7 +34,7 @@ export function ComboBoxRoot({
   className,
   classNames,
   id,
-  isRequired,
+  required,
   status,
   size,
   options,
@@ -78,7 +65,7 @@ export function ComboBoxRoot({
     error: resolvedError,
     id,
     name,
-    isRequired,
+    required,
     status: resolvedStatus,
     size: resolvedSize,
     options,

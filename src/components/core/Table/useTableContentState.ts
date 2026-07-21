@@ -2,11 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
-import {
-  EMPTY_TABLE_SELECTION,
-  isRowInSelection,
-  toggleSelectionKey,
-} from "./tableAPI";
+import { EMPTY_TABLE_SELECTION, isRowInSelection, toggleSelectionKey } from "./tableAPI";
 import type { Selection, SelectionMode, SortDescriptor, TableContentContextValue } from "./tableTypes";
 
 export function useTableContentState({

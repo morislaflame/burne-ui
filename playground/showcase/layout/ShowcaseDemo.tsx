@@ -46,7 +46,7 @@ function ShowcaseCodePanel({ code }: { code: string }) {
             size="small"
             className="h-8 shrink-0 gap-xsmall px-small text-muted hover:text-foreground"
             onClick={onCopy}
-            leftIcon={copied ? <IoCheckmark aria-hidden className="text-success" /> : <IoCopyOutline aria-hidden />}
+            icon={copied ? <IoCheckmark aria-hidden className="text-success" /> : <IoCopyOutline aria-hidden />}
           >
             {copied ? "Copied" : "Copy"}
           </Button>

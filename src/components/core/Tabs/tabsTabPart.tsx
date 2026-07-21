@@ -1,16 +1,4 @@
-import {
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  type ButtonHTMLAttributes,
-  type MouseEvent,
-  type PointerEvent,
-  type ReactElement,
-  type Ref,
-} from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type ButtonHTMLAttributes, type MouseEvent, type PointerEvent, type ReactElement, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
@@ -18,12 +6,7 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { tabsPanelId, tabsTabA11y, tabsTabId } from "./tabsA11y";
 import { useTabPointerMotion } from "./tabsAnimations";
 import { useTabsClassNames, useTabsContext } from "./tabsContext";
-import {
-  TABS_TAB_AS_CHILD_CLASS,
-  tabsTabClass,
-  tabsTabTextClass,
-  tabTextVariant,
-} from "./tabsStyles";
+import { TABS_TAB_AS_CHILD_CLASS, tabsTabClass, tabsTabTextClass, tabTextVariant } from "./tabsStyles";
 import type { TabsTabProps } from "./tabsTypes";
 
 import { cn } from "@/utils/cn";

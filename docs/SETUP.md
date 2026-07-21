@@ -337,11 +337,7 @@ config копирует только строку `fontFamily`, не файлы 
 Для документации / layout можно взять готовые URL всех пресетов:
 
 ```ts
-import {
-  THEME_SANS_FONTS_URL,
-  THEME_MONO_FONTS_URL,
-  ensureThemeFontLoaded,
-} from "burne-ui-devtools";
+import { THEME_SANS_FONTS_URL, THEME_MONO_FONTS_URL, ensureThemeFontLoaded } from "burne-ui-devtools";
 ```
 
 ---

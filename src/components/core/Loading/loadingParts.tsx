@@ -3,12 +3,7 @@ import { useRef } from "react";
 import { cn } from "@/utils/cn";
 
 import { useLoadingDotsAnimation } from "./loadingAnimations";
-import {
-  loadingDotClass,
-  loadingDotsTrackClass,
-  loadingDotsTrackStyle,
-  loadingSpinnerRingClass,
-} from "./loadingStyles";
+import { loadingDotClass, loadingDotsTrackClass, loadingDotsTrackStyle, loadingSpinnerRingClass } from "./loadingStyles";
 import type { LoadingColor, LoadingSize } from "./loadingTypes";
 
 const LOADING_DOTS_INDICES = [0, 1, 2] as const;

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, type DependencyList } from "react";
 
 /**
  * First option in a required single-select group claims the native `required` attribute.
- * Resets when `resetDeps` change (e.g. isRequired, selection, group name).
+ * Resets when `resetDeps` change (e.g. required, selection, group name).
  */
 export function useOptionGroupRequiredAnchor(resetDeps: DependencyList) {
   const claimedRef = useRef(false);

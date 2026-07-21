@@ -18,7 +18,7 @@ export function accordionHeadingClass(className?: string): string {
   return cn("m-0 font-[inherit] text-[inherit]", className);
 }
 
-export function accordionIndicatorClass(className?: string): string {
+export function accordionChevronClass(className?: string): string {
   return cn(
     "relative z-[1] flex shrink-0 origin-center self-center",
     className,

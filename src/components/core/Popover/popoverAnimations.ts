@@ -3,18 +3,10 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
-import {
-  animatePortalClose,
-  animatePortalOpen,
-  applyReducedPortalMotion,
-  isReducedModalMotion,
-} from "@/components/core/utils/modalSurfaceMotion";
+import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
-import {
-  computeTooltipPlacement,
-  type FloatingAlign,
-} from "@/components/core/Tooltip/tooltipPosition";
+import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
 import { mergePopoverRefs } from "./popoverAPI";
 import type { PopoverSide, UsePopoverContentLifecycleProps } from "./popoverTypes";

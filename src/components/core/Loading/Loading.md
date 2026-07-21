@@ -5,13 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Loading,
-  type LoadingProps,
-  type LoadingVariant,
-  type LoadingSize,
-  type LoadingColor,
-} from "burne-ui";
+import { Loading, type LoadingProps, type LoadingVariant, type LoadingSize, type LoadingColor } from "burne-ui";
 ```
 
 ## API
@@ -39,8 +33,8 @@ Simple API — один `<span role="status">`.
 
 <Loading type="dots" size="mid" color="success" label="Сохранение…" />
 
-// В Toast при isLoading
-<Toast status="default" isLoading title="Загрузка" />
+// В Toast при loading
+<Toast status="default" loading title="Загрузка" />
 ```
 
 ## variant
@@ -142,7 +136,7 @@ configureMotion({
 | Место | variant | color |
 |-------|---------|-------|
 | `Button` async loader | spinner | по variant кнопки |
-| `Toast` `isLoading` | spinner | по `toastLoadingColor(status)` |
+| `Toast` `loading` | spinner | по `toastLoadingColor(status)` |
 | Standalone | оба | prop `color` |
 
 ### Сводка: что настраивается где

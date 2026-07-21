@@ -5,15 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Switch,
-  SWITCH_LAYOUT,
-  type SwitchRootProps,
-  type SwitchSimpleProps,
-  type SwitchSize,
-  type SwitchLabelPosition,
-  type SwitchClassNames,
-} from "burne-ui";
+import { Switch, SWITCH_LAYOUT, type SwitchRootProps, type SwitchSimpleProps, type SwitchSize, type SwitchLabelPosition, type SwitchClassNames } from "burne-ui";
 ```
 
 ## API
@@ -69,7 +61,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 | `gloss` | `false` | gloss track/fill/thumb |
 | `color` | — | CSS custom fill (`switchFillColorStyle`) |
 | `thickness` | — | Кастомная высота thumb (px/rem) |
-| `iconOff` / `iconOn` | — | Иконки в thumb |
+| `iconOff` / `iconOn` | — | Иконки в thumb для off/on. **Исключение словаря иконок:** у Checkbox / SelectionIndicator одна иконка отмеченного состояния — `icon`; у Switch две независимые иконки состояний — `iconOn` / `iconOff` (+ `Switch.Icon when`). |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
 

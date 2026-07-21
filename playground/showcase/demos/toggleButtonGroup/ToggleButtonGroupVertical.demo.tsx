@@ -22,10 +22,10 @@ export function ToggleButtonGroupVerticalDemo() {
         onValueChange={(v) => setView(v as string)}
         className="w-full"
       >
-        <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />} className="w-full justify-start">
+        <ToggleButton value="list" icon={<IoListOutline aria-hidden />} className="w-full justify-start">
           List
         </ToggleButton>
-        <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />} className="w-full justify-start">
+        <ToggleButton value="grid" icon={<IoGridOutline aria-hidden />} className="w-full justify-start">
           Net
         </ToggleButton>
       </ToggleButtonGroup>

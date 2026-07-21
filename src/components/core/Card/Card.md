@@ -5,16 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Card,
-  type CardProps,
-  type CardVariant,
-  type CardPressEvent,
-  type CardClassNames,
-  type CardHeaderProps,
-  type CardBodyProps,
-  type CardTitleProps,
-} from "burne-ui";
+import { Card, type CardProps, type CardVariant, type CardPressEvent, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps } from "burne-ui";
 ```
 
 ## API

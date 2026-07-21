@@ -1,12 +1,4 @@
-import {
-  CheckboxContent,
-  CheckboxControl,
-  CheckboxError,
-  CheckboxHint,
-  CheckboxIndicator,
-  CheckboxLabel,
-  CheckboxRoot,
-} from "./Checkbox";
+import { CheckboxContent, CheckboxControl, CheckboxError, CheckboxHint, CheckboxIndicator, CheckboxLabel, CheckboxRoot } from "./Checkbox";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 const CheckboxIndicatorCompound = Object.assign(CheckboxIndicator, {

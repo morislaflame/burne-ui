@@ -257,7 +257,7 @@ CloseButton — leaf-компонент (без compound/simple split): один
 | Children | текст / иконка | нет (`IoClose` внутри) |
 | `status` | да | нет |
 | Async states | да | нет |
-| `leftIcon` / `iconOnly` | да | нет (всегда icon-only) |
+| `icon` / `iconOnly` | да | нет (всегда icon-only) |
 | `classNames` | нет | `root`, `icon`, `ripple` |
 | Форма | `rounded-base` (или segment) | `rounded-full` |
 | Размерная сетка | `minWButton`, padding | `toggleBox` (квадрат) |

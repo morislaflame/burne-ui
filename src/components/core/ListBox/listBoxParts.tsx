@@ -1,44 +1,16 @@
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useId,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useEffect, useId, useState } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
-import {
-  OptionListItemContextProvider,
-  useOptionListItemContext,
-} from "@/components/core/utils/optionListItemContext";
-import {
-  OptionListItemHint,
-  OptionListItemIcon,
-  OptionListItemIndicatorShell,
-  OptionListItemLabel,
-} from "@/components/core/utils/optionListItemParts";
+import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
+import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 
-import {
-  LISTBOX_EMPTY_DEFAULT_CHILDREN,
-} from "./listBoxA11y";
+import { LISTBOX_EMPTY_DEFAULT_CHILDREN } from "./listBoxA11y";
 import { resolveListBoxItemIndicatorClassNames } from "./listBoxAPI";
 import { useListBoxItemAnimations, useListBoxRootGlossRef } from "./listBoxAnimations";
-import {
-  useListBoxClassNames,
-  useListBoxSectionLabelRegister,
-  ListBoxSectionLabelProvider,
-} from "./listBoxContext";
-import {
-  listBoxEmptyClass,
-  listBoxHeaderClass,
-  listBoxHeaderTextClass,
-  listBoxItemClass,
-  listBoxRootClass,
-  listBoxSectionClass,
-  listBoxSeparatorClass,
-} from "./listBoxStyles";
+import { useListBoxClassNames, useListBoxSectionLabelRegister, ListBoxSectionLabelProvider } from "./listBoxContext";
+import { listBoxEmptyClass, listBoxHeaderClass, listBoxHeaderTextClass, listBoxItemClass, listBoxRootClass, listBoxSectionClass, listBoxSeparatorClass } from "./listBoxStyles";
 import type {
   ListBoxEmptyProps,
   ListBoxHeaderProps,

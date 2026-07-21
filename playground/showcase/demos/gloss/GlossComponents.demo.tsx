@@ -1,10 +1,7 @@
 import { useMemo, useState, type ChangeEvent } from "react";
 import { IoAdd, IoCheckmark, IoMoon, IoSunny } from "react-icons/io5";
 
-import {
-  AlertDialog,
-  primaryButtonVariantForAlertTone,
-} from "@/components/composite/AlertDialog";
+import { AlertDialog, primaryButtonVariantForAlertTone } from "@/components/composite/AlertDialog";
 import { Alert } from "@/components/core/Alert";
 import { Avatar } from "@/components/core/Avatar";
 import { Badge } from "@/components/core/Badge";
@@ -137,7 +134,7 @@ export function GlossComponentsDemo() {
               {status}
             </Button>
           ))}
-          <Button variant="gloss" leftIcon={<IoAdd aria-hidden />}>
+          <Button variant="gloss" icon={<IoAdd aria-hidden />}>
             With icon
           </Button>
           <CloseButton variant="gloss" aria-label="Close gloss" />
@@ -216,8 +213,8 @@ export function GlossComponentsDemo() {
             </Popover.Trigger>
             <Popover.Content showArrow>
               <Popover.Header>
-                <Popover.Label>Heading</Popover.Label>
-                <Popover.Hint>Glass pop-up panel</Popover.Hint>
+                <Popover.Title>Heading</Popover.Title>
+                <Popover.Description>Glass pop-up panel</Popover.Description>
               </Popover.Header>
               <Popover.Body>
                 <Text as="p" variant="small" className="text-muted">
@@ -464,7 +461,7 @@ export function GlossComponentsDemo() {
             variant="gloss"
             checked={glossCheckB}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setGlossCheckB(e.target.checked)}
-            checkIcon={<IoCheckmark aria-hidden />}
+            icon={<IoCheckmark aria-hidden />}
           />
           <Radio
             label="Radio gloss (off)"

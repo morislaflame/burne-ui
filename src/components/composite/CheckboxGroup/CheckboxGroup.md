@@ -5,16 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  CheckboxGroup,
-  type CheckboxGroupProps,
-  type CheckboxGroupSelection,
-  type CheckboxGroupOrientation,
-  type CheckboxGroupHintProps,
-  type CheckboxGroupLabelProps,
-  type CheckboxGroupLegendProps,
-  type CheckboxGroupListProps,
-} from "burne-ui";
+import { CheckboxGroup, type CheckboxGroupProps, type CheckboxGroupSelection, type CheckboxGroupOrientation, type CheckboxGroupHintProps, type CheckboxGroupLabelProps, type CheckboxGroupLegendProps, type CheckboxGroupListProps } from "burne-ui";
 import { Checkbox } from "burne-ui";
 ```
 
@@ -23,7 +14,7 @@ import { Checkbox } from "burne-ui";
 ### Compound API
 
 ```tsx
-<CheckboxGroup isRequired selection="multiple" size="base">
+<CheckboxGroup required selection="multiple" size="base">
   <CheckboxGroup.Legend>
     <CheckboxGroup.Label>Способ доставки</CheckboxGroup.Label>
     <CheckboxGroup.Hint>Можно выбрать несколько вариантов.</CheckboxGroup.Hint>
@@ -65,7 +56,7 @@ Simple API нет.
 | `value` | — | Controlled (`single` only) |
 | `defaultValue` | — | Uncontrolled initial (`single`) |
 | `onValueChange` | — | `(value: string \| undefined) => void` (`single`) |
-| `isRequired` | `false` | Required mark на Label; native `required` на first checkbox в `single` |
+| `required` | `false` | Required mark на Label; native `required` на first checkbox в `single` |
 | `size` | `small` | `small` \| `base` \| `mid` \| `large` — gaps legend/list |
 | `disabled` | `false` | На fieldset + context → Checkbox |
 | `hintId` / `errorId` | auto | Для `aria-describedby` |
@@ -240,7 +231,7 @@ configureMotion({
 
 ```tsx
 <Form.Field name="consent" rules={{ required: true }}>
-  <CheckboxGroup selection="single" isRequired>
+  <CheckboxGroup selection="single" required>
     <CheckboxGroup.Legend>
       <CheckboxGroup.Label>Согласие</CheckboxGroup.Label>
     </CheckboxGroup.Legend>
@@ -257,7 +248,7 @@ configureMotion({
 
 - Паттерн legend: `Legend` → `Label` + опционально `Hint`.
 - `single`: все `Checkbox` должны иметь уникальный `value`.
-- `isRequired` в `single` — native `required` только на **первом** checkbox (`claimRequiredAnchor`).
+- `required` в `single` — native `required` только на **первом** checkbox (`claimRequiredAnchor`).
 - `multiple`: каждый checkbox со своим `name` или общим `name` + разными `value` — по сценарию.
 - Стили опций — через `Checkbox` `classNames`, не через группу.
 - Сравнение с `RadioGroup`: checkbox UI + optional single-selection mode.
@@ -280,7 +271,7 @@ Shared: `optionGroupFieldset.tsx`, `optionGroupLayout.ts` (с `RadioGroup`).
 - `aria-describedby` на fieldset → hint + error ids
 - `Checkbox`: native `<input type="checkbox">`, `aria-describedby`, labels
 - `Error`: `role="alert"` через `FieldError`
-- `single` + `isRequired`: required anchor на первом checkbox
+- `single` + `required`: required anchor на первом checkbox
 
 ## Структура файлов
 

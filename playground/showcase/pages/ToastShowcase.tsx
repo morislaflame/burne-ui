@@ -37,7 +37,7 @@ export function ToastShowcase() {
 
       <ShowcaseSection
         title="Modifications"
-        description="status, variant gloss, action, isLoading and timeout: 0."
+        description="status, variant gloss, action, loading and timeout: 0."
       >
         <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
       </ShowcaseSection>

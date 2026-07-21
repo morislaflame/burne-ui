@@ -28,7 +28,7 @@ const meta = {
   parameters: { layout: "fullscreen" },
   decorators: [...darkThemeDecorator],
   args: {
-    isRequired: false,
+    required: false,
     selection: "multiple" as const,
   },
   argTypes: {
@@ -94,7 +94,7 @@ export const SingleSelection: Story = {
 export const Required: Story = {
   name: "Required field",
   render: () => (
-    <CheckboxGroup isRequired>
+    <CheckboxGroup required>
       <CheckboxGroup.Legend>
         <CheckboxGroup.Label>Consents</CheckboxGroup.Label>
       </CheckboxGroup.Legend>

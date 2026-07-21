@@ -3,16 +3,8 @@ import { forwardRef } from "react";
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
 
-import {
-  CalendarClassNamesProvider,
-  CalendarProvider,
-} from "./calendarContext";
-import {
-  CalendarDefaultContent,
-  CalendarFooter,
-  CalendarGrid,
-  CalendarHeader,
-} from "./calendarParts";
+import { CalendarClassNamesProvider, CalendarProvider } from "./calendarContext";
+import { CalendarDefaultContent, CalendarFooter, CalendarGrid, CalendarHeader } from "./calendarParts";
 import { CALENDAR_GLOSS_CONTENT_CLASS, calendarRootClass } from "./calendarStyles";
 import type { CalendarProps, UseCalendarRootStateProps } from "./calendarTypes";
 import { useCalendarRootState } from "./useCalendarRootState";

@@ -1,12 +1,4 @@
-import {
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactElement,
-  type Ref,
-} from "react";
+import { cloneElement, forwardRef, isValidElement, type HTMLAttributes, type KeyboardEvent, type ReactElement, type Ref } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
@@ -14,16 +6,7 @@ import { Text } from "@/components/core/Text";
 import { useDisclosureTriggerMotion } from "./disclosureAnimations";
 
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
-import {
-  DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
-  DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS,
-  DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS,
-  DISCLOSURE_TRIGGER_TITLE_CLASS,
-  DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS,
-  TEXT_COLOR_TRANSITION,
-  disclosureTriggerClass,
-  disclosureTriggerShell,
-} from "./disclosureStyles";
+import { DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS, DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS, DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS, DISCLOSURE_TRIGGER_TITLE_CLASS, DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS, TEXT_COLOR_TRANSITION, disclosureTriggerClass, disclosureTriggerShell } from "./disclosureStyles";
 import type { DisclosureTriggerProps } from "./disclosureTypes";
 
 import { cn } from "@/utils/cn";
@@ -53,7 +36,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       variant,
       size,
       disabled,
-      iconPos,
+      iconPosition,
       chevronRef,
       skipContentAnimRef,
     } = useDisclosureContext();
@@ -137,7 +120,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         onPointerDown={motion.handlePointerDown}
         {...rest}
       >
-        {iconPos === "left" && chevronNode}
+        {iconPosition === "start" && chevronNode}
         <span
           ref={motion.titleLiftRef}
           className={cn(
@@ -157,7 +140,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
             {children}
           </Text>
         </span>
-        {iconPos === "right" && chevronNode}
+        {iconPosition === "end" && chevronNode}
       </button>
     );
   },

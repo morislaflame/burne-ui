@@ -60,7 +60,7 @@ export function LinkShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="href, underline, leftIcon and showDefaultIcon on the root - the main props for links."
+            description="href, underline, icon and showDefaultIcon on the root - the main props for links."
           />
           <ShowcaseDoc.ApiRow
             api="compound"

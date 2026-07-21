@@ -10,10 +10,10 @@ export function ToggleButtonGroupSizesDemo() {
     <div className="flex flex-col gap-mid">
       {SIZES.map((size) => (
         <ToggleButtonGroup key={size} type="single" size={size} defaultValue="list" aria-label={`Size ${size}`}>
-          <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
+          <ToggleButton value="list" icon={<IoListOutline aria-hidden />}>
             List
           </ToggleButton>
-          <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
+          <ToggleButton value="grid" icon={<IoGridOutline aria-hidden />}>
             Grid
           </ToggleButton>
         </ToggleButtonGroup>

@@ -1,17 +1,4 @@
-import {
-  AccordionBody,
-  AccordionContent,
-  AccordionDescription,
-  AccordionHeading,
-  AccordionIcon,
-  AccordionIndicator,
-  AccordionItem,
-  AccordionMessage,
-  AccordionPanel,
-  AccordionRoot,
-  AccordionTitle,
-  AccordionTrigger,
-} from "./Accordion";
+import { AccordionBody, AccordionContent, AccordionDescription, AccordionHeading, AccordionIcon, AccordionChevron, AccordionItem, AccordionMessage, AccordionPanel, AccordionRoot, AccordionTitle, AccordionTrigger } from "./Accordion";
 
 export const Accordion = Object.assign(AccordionRoot, {
   Item: AccordionItem,
@@ -22,7 +9,7 @@ export const Accordion = Object.assign(AccordionRoot, {
   Content: AccordionContent,
   Title: AccordionTitle,
   Description: AccordionDescription,
-  Indicator: AccordionIndicator,
+  Chevron: AccordionChevron,
   Panel: AccordionPanel,
   Body: AccordionBody,
 });
@@ -37,7 +24,7 @@ export {
   AccordionContent,
   AccordionTitle,
   AccordionDescription,
-  AccordionIndicator,
+  AccordionChevron,
   AccordionPanel,
   AccordionBody,
   type AccordionProps,
@@ -49,7 +36,7 @@ export {
   type AccordionContentProps,
   type AccordionTitleProps,
   type AccordionDescriptionProps,
-  type AccordionIndicatorProps,
+  type AccordionChevronProps,
   type AccordionPanelProps,
   type AccordionBodyProps,
 } from "./Accordion";

@@ -1,11 +1,6 @@
 import { useState } from "react";
 
-import {
-  ColorSlider,
-  ColorSwatch,
-  hsvaToHex,
-  type HSVA,
-} from "@/components/core/ColorPicker";
+import { ColorSlider, ColorSwatch, hsvaToHex, type HSVA } from "@/components/core/ColorPicker";
 import { Text } from "@/components/core/Text";
 
 export function ColorSlidersDemo() {

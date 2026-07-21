@@ -6,6 +6,7 @@ export {
   type ComponentSize,
   COMPONENT_SIZES,
 } from "@/components/core/utils/componentSize";
+export type { IconPosition } from "@/components/core/utils/iconPosition";
 export {
   CONTROL_SIZE_LAYOUT,
   type ControlSizeLayout,
@@ -97,7 +98,7 @@ export {
   type AccordionContentProps,
   type AccordionTitleProps,
   type AccordionDescriptionProps,
-  type AccordionIndicatorProps,
+  type AccordionChevronProps,
   type AccordionPanelProps,
   type AccordionBodyProps,
 } from "@/components/composite/Accordion";
@@ -190,8 +191,8 @@ export {
   type ToastContentProps,
   type ToastTitleProps,
   type ToastDescriptionProps,
-  type ToastActionButtonProps,
-  type ToastCloseButtonProps,
+  type ToastActionProps,
+  type ToastCloseProps,
   type AddToastOpts,
   type PromiseToastOpts,
   type ToastContextValue,
@@ -384,8 +385,8 @@ export {
   type ToggleButtonFillProps,
   type ToggleButtonContentProps,
   type ToggleButtonLabelProps,
-  type ToggleButtonIconProps,
-  type ToggleButtonTrailingProps,
+  type ToggleButtonIconStartProps,
+  type ToggleButtonIconEndProps,
   type ToggleButtonTextProps,
 } from "@/components/core/ToggleButton";
 export {
@@ -450,7 +451,6 @@ export {
 } from "@/components/core/Card";
 export {
   Avatar,
-  AvatarGroup,
   type AvatarProps,
   type AvatarClassNames,
   type AvatarSize,
@@ -482,8 +482,8 @@ export {
   type PopoverTriggerProps,
   type PopoverContentProps,
   type PopoverHeaderProps,
-  type PopoverLabelProps,
-  type PopoverHintProps,
+  type PopoverTitleProps,
+  type PopoverDescriptionProps,
   type PopoverBodyProps,
   type PopoverArrowProps,
   type PopoverSide,
@@ -741,7 +741,6 @@ export {
 
 export {
   Disclosure,
-  DisclosureGroup,
   type DisclosureProps,
   type DisclosureGroupProps,
   type DisclosureTriggerProps,

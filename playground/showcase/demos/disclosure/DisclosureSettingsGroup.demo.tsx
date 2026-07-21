@@ -1,10 +1,10 @@
-import { Disclosure, DisclosureGroup } from "@/components/core/Disclosure";
+import { Disclosure } from "@/components/core/Disclosure";
 import { Switch } from "@/components/core/Switch";
 import { Text } from "@/components/core/Text";
 
 export function DisclosureSettingsGroupDemo() {
   return (
-    <DisclosureGroup variant="card" defaultValue="notifications" className="w-full max-w-lg">
+    <Disclosure.Group variant="card" defaultValue="notifications" className="w-full max-w-lg">
       <Disclosure value="notifications">
         <Disclosure.Trigger>Notifications</Disclosure.Trigger>
         <Disclosure.Content>
@@ -22,6 +22,6 @@ export function DisclosureSettingsGroupDemo() {
           </Text>
         </Disclosure.Content>
       </Disclosure>
-    </DisclosureGroup>
+    </Disclosure.Group>
   );
 }

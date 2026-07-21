@@ -5,16 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Popover,
-  type PopoverRootProps,
-  type PopoverVariant,
-  type PopoverSize,
-  type PopoverSide,
-  type PopoverContentGap,
-  type PopoverClassNames,
-  type PopoverAlign,
-} from "burne-ui";
+import { Popover, type PopoverRootProps, type PopoverVariant, type PopoverSize, type PopoverSide, type PopoverContentGap, type PopoverClassNames, type PopoverAlign } from "burne-ui";
 ```
 
 ## API
@@ -30,8 +21,8 @@ import {
   </Popover.Trigger>
   <Popover.Content>
     <Popover.Header>
-      <Popover.Label>Фильтры</Popover.Label>
-      <Popover.Hint>Изменения применяются сразу</Popover.Hint>
+      <Popover.Title>Фильтры</Popover.Title>
+      <Popover.Description>Изменения применяются сразу</Popover.Description>
     </Popover.Header>
     <Popover.Body>
       Контент панели
@@ -83,8 +74,8 @@ const [open, setOpen] = useState(false);
 | `Popover.Trigger` | Toggle button / `asChild` clone |
 | `Popover.Content` | Portal + panel shell |
 | `Popover.Header` | Label + hint row |
-| `Popover.Label` | `h2` заголовок |
-| `Popover.Hint` | `FieldHint` подзаголовок |
+| `Popover.Title` | `h2` заголовок |
+| `Popover.Description` | `FieldHint` подзаголовок |
 | `Popover.Body` | Основной контент |
 | `Popover.Arrow` | Кастомная стрелка |
 
@@ -99,7 +90,7 @@ const [open, setOpen] = useState(false);
 | `default` | `bg-surface border-token` + persistent `shadowSm` |
 | `gloss` | `gloss-panel` + gloss interactive handlers |
 
-Sizes влияют на padding, typography (`Popover.Label` / `Hint`) и default `gap`.
+Sizes влияют на padding, typography (`Popover.Title` / `Hint`) и default `gap`.
 
 | size | Типичный padding panel |
 |------|------------------------|
@@ -260,8 +251,8 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
   </Popover.Trigger>
   <Popover.Content>
     <Popover.Header>
-      <Popover.Label>Фильтры</Popover.Label>
-      <Popover.Hint>Изменения применяются сразу</Popover.Hint>
+      <Popover.Title>Фильтры</Popover.Title>
+      <Popover.Description>Изменения применяются сразу</Popover.Description>
     </Popover.Header>
     <Popover.Body>Контент панели</Popover.Body>
   </Popover.Content>
@@ -314,7 +305,7 @@ const anchorRef = useRef<HTMLDivElement>(null);
 
 - Trigger: `aria-expanded`, `aria-controls={popoverId}` when open
 - Content: `role="dialog"` (default), `aria-labelledby`, `aria-describedby`
-- `Popover.Label` / `Hint` связываются через `labelId` / `hintId`
+- `Popover.Title` / `Hint` связываются через `labelId` / `hintId`
 - `Escape` закрывает
 - Outside `pointerdown` dismiss (с учётом `shouldDismiss`)
 - Portal theme sync через `burneLightThemePortalProps`

@@ -2,13 +2,7 @@ import type { ComponentType } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
-import {
-  IoChevronForward,
-  IoGlobeOutline,
-  IoLogOutOutline,
-  IoPeopleOutline,
-  IoSettingsOutline,
-} from "react-icons/io5";
+import { IoChevronForward, IoGlobeOutline, IoLogOutOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 
 import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button";

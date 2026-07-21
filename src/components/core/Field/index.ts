@@ -1,16 +1,4 @@
-import {
-  FieldError,
-  FieldHint,
-  FieldLabel,
-  FieldLegend,
-  FieldLegendHeader,
-  FieldRoot,
-  FieldSetActions,
-  FieldSetGroup,
-  FieldSetRoot,
-  useFieldSetErrorId,
-  useFieldSetHintId,
-} from "./Field";
+import { FieldError, FieldHint, FieldLabel, FieldLegend, FieldLegendHeader, FieldRoot, FieldSetActions, FieldSetGroup, FieldSetRoot, useFieldSetErrorId, useFieldSetHintId } from "./Field";
 import { fieldErrorId, fieldHintId, joinFieldDescribedBy } from "./fieldA11y";
 
 const FieldSet = Object.assign(FieldSetRoot, {
@@ -21,7 +9,6 @@ const FieldSet = Object.assign(FieldSetRoot, {
 });
 
 export const Field = Object.assign(FieldRoot, {
-  Root: FieldRoot,
   Hint: FieldHint,
   Label: FieldLabel,
   Error: FieldError,

@@ -1,11 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
-import {
-  burneRadiusScale,
-  burneSpacingScale,
-  burneTextScale,
-} from "@/tokens/config";
+import { burneRadiusScale, burneSpacingScale, burneTextScale } from "@/tokens/config";
 
 const twMerge = extendTailwindMerge({
   extend: {

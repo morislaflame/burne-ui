@@ -1,13 +1,4 @@
-import {
-  ComboBoxError,
-  ComboBoxHint,
-  ComboBoxLabel,
-  ComboBoxInput,
-  ComboBoxInputGroup,
-  ComboBoxPopover,
-  ComboBoxRoot,
-  ComboBoxTrigger,
-} from "./ComboBox";
+import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxRoot, ComboBoxTrigger } from "./ComboBox";
 
 export const ComboBox = Object.assign(ComboBoxRoot, {
   Label: ComboBoxLabel,

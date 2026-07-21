@@ -1,11 +1,4 @@
-import {
-  createContext,
-  createElement,
-  useContext,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
+import { createContext, createElement, useContext, type Dispatch, type ReactNode, type SetStateAction } from "react";
 
 import type { BurneThemeConfig } from "./themeConfig";
 import type { ThemeMode } from "./themeDefaults";

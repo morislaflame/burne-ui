@@ -5,13 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Select,
-  type SelectOption,
-  type SelectRootProps,
-  type SelectSimpleProps,
-  type SelectClassNames,
-} from "burne-ui";
+import { Select, type SelectOption, type SelectRootProps, type SelectSimpleProps, type SelectClassNames } from "burne-ui";
 ```
 
 ## API
@@ -92,7 +86,7 @@ const options = [
 **DOM-структура:**
 
 ```
-Field.Root
+Field
   Label
   <div TriggerGroup ref=anchorRef role=combobox>
     <button Select.Value />      ← focus + keyboard
@@ -156,7 +150,7 @@ Selection indicator + label press squeeze — см. ListBox.md.
 
 ### Два уровня
 
-1. **`className` на root** — `Field.Root` (мерж с `classNames.root`).
+1. **`className` на root** — `Field` (мерж с `classNames.root`).
 2. **`classNames` на root** — `SelectClassNamesProvider`.
 
 Подчасти принимают **`className`** поверх слота контекста.
@@ -165,7 +159,7 @@ Selection indicator + label press squeeze — см. ListBox.md.
 
 | Слот | DOM | Назначение |
 |------|-----|------------|
-| `root` | `Field.Root` | Max-width, gap поля |
+| `root` | `Field` | Max-width, gap поля |
 | `label` | `Label` | Типографика |
 | `triggerGroup` | Shell combobox | Border, hover, squeeze target |
 | `value` | `Select.Value` button | Текст значения, muted placeholder |

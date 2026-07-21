@@ -63,7 +63,7 @@ export function ToggleButtonGroupShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Availability">
           <p>
-            Required <code>aria-label</code> in the group. <code>leftIcon</code> on ToggleButton — decorative
+            Required <code>aria-label</code> in the group. <code>icon</code> on ToggleButton — decorative
             icon with <code>aria-hidden</code>.
           </p>
         </ShowcaseDoc.Block>

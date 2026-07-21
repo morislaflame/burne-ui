@@ -14,15 +14,15 @@ export function PopoverShareMenuDemo() {
       <Popover.Content showArrow>
         <Popover.Arrow />
         <Popover.Header className="px-base pt-base">
-          <Popover.Label>Share</Popover.Label>
-          <Popover.Hint>Choose a method</Popover.Hint>
+          <Popover.Title>Share</Popover.Title>
+          <Popover.Description>Choose a method</Popover.Description>
         </Popover.Header>
         <Popover.Body className="flex flex-col gap-xsmall p-base">
           <Button 
           variant="ghost" 
           size="small" 
           type="button" 
-          leftIcon={<IoLinkOutline aria-hidden />}
+          icon={<IoLinkOutline aria-hidden />}
           className="justify-start"
           >
             Copy link
@@ -31,7 +31,7 @@ export function PopoverShareMenuDemo() {
           variant="ghost" 
           size="small" 
           type="button" 
-          leftIcon={<IoMailOutline aria-hidden />}
+          icon={<IoMailOutline aria-hidden />}
           className="justify-start"
           >
             Send email
@@ -40,7 +40,7 @@ export function PopoverShareMenuDemo() {
           variant="ghost" 
           size="small" 
           type="button" 
-          leftIcon={<IoLogoTwitter aria-hidden />}
+          icon={<IoLogoTwitter aria-hidden />}
           className="justify-start"
           >
             Twitter

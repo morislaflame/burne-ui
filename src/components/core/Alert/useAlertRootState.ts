@@ -1,29 +1,10 @@
-import {
-  useId,
-  useMemo,
-  type ReactNode,
-} from "react";
+import { useId, useMemo, type ReactNode } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import {
-  messageBannerSizePreset,
-  resolveMessageBannerSize,
-} from "@/components/core/utils/messageBannerSize";
+import { messageBannerSizePreset, resolveMessageBannerSize } from "@/components/core/utils/messageBannerSize";
 
-import {
-  alertHasAction,
-  alertHasDescription,
-  alertHasTitle,
-  alertShowsIndicator,
-  hasAlertCompoundChildren,
-  resolveAlertStatus,
-  resolveAlertVariant,
-} from "./alertAPI";
-import {
-  resolveAlertAriaDescribedBy,
-  resolveAlertAriaLabelledBy,
-  resolveAlertLiveRole,
-} from "./alertA11y";
+import { alertHasAction, alertHasDescription, alertHasTitle, alertShowsIndicator, hasAlertCompoundChildren, resolveAlertStatus, resolveAlertVariant } from "./alertAPI";
+import { resolveAlertAriaDescribedBy, resolveAlertAriaLabelledBy, resolveAlertLiveRole } from "./alertA11y";
 import type {
   AlertContextValue,
   AlertLiveRole,

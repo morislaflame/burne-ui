@@ -14,10 +14,10 @@ export function ToggleButtonGroupSingleDemo() {
       value={viewMode}
       onValueChange={(v) => setViewMode(v as string)}
     >
-      <ToggleButton variant="default" value="list" leftIcon={<IoListOutline aria-hidden />}>
+      <ToggleButton variant="default" value="list" icon={<IoListOutline aria-hidden />}>
         List
       </ToggleButton>
-      <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
+      <ToggleButton value="grid" icon={<IoGridOutline aria-hidden />}>
         Net
       </ToggleButton>
     </ToggleButtonGroup>

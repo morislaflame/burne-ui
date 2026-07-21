@@ -2,14 +2,7 @@ import { Children, isValidElement, type ReactNode, type Ref, type RefObject } fr
 
 import { Ripple } from "@/components/core/Ripple";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import {
-  EXPANDABLE_ACTION_DISPLAY_NAMES,
-  EXPANDABLE_COMPOUND_SLOT_DISPLAY_NAMES,
-  EXPANDABLE_DESCRIPTION_DISPLAY_NAMES,
-  EXPANDABLE_MESSAGE_DISPLAY_NAMES,
-  EXPANDABLE_TITLE_DISPLAY_NAMES,
-  EXPANDABLE_ICON_DISPLAY_NAMES,
-} from "./expandableA11y";
+import { EXPANDABLE_ACTION_DISPLAY_NAMES, EXPANDABLE_COMPOUND_SLOT_DISPLAY_NAMES, EXPANDABLE_DESCRIPTION_DISPLAY_NAMES, EXPANDABLE_MESSAGE_DISPLAY_NAMES, EXPANDABLE_TITLE_DISPLAY_NAMES, EXPANDABLE_ICON_DISPLAY_NAMES } from "./expandableA11y";
 
 export function mergeExpandableRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T | null) => {

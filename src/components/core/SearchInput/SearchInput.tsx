@@ -7,59 +7,26 @@ import type {
   MouseEvent,
   PointerEvent,
 } from "react";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { IoClose, IoSearch } from "react-icons/io5";
 
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shadowNone,
-  shadowBase,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shadowNone, shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { useGlossFieldShellMotion, animateGlossInteractivePressSqueeze } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
-import {
-  FIELD_SHELL_FOCUS_CLASS,
-  FIELD_SHELL_TRANSITION_CLASS,
-  fieldShellHoverClass,
-} from "@/components/core/utils/useFieldShellHoverLift";
+import { FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { Ripple } from "@/components/core/Ripple";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
-import {
-  buttonGroupRoundingClasses,
-  buttonGroupSegmentSurfaceClasses,
-} from "@/components/composite/ButtonGroup/buttonGroupStyles";
-import {
-  useOptionalButtonGroupLayout,
-  useOptionalButtonGroupSegment,
-} from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { FIELD_SHELL_VARIANT_BG_CLASS, fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { cn } from "@/utils/cn";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import {
-  readSearchExpandedRadiusPx,
-  SEARCH_EXPANDED_ROUNDED_CLASS,
-  SEARCH_INPUT_CLEAR_BUTTON_CLASS,
-  SEARCH_INPUT_CLEAR_ICON_CLASS,
-  SEARCH_INPUT_CONTROL_BASE_CLASS,
-  SEARCH_INPUT_CONTROL_COLLAPSED_CLASS,
-  SEARCH_INPUT_CONTROL_EXPANDED_CLASS,
-  SEARCH_INPUT_ICON_CLASS,
-  SEARCH_INPUT_ICON_WRAP_CLASS,
-} from "./searchInputStyles";
+import { readSearchExpandedRadiusPx, SEARCH_EXPANDED_ROUNDED_CLASS, SEARCH_INPUT_CLEAR_BUTTON_CLASS, SEARCH_INPUT_CLEAR_ICON_CLASS, SEARCH_INPUT_CONTROL_BASE_CLASS, SEARCH_INPUT_CONTROL_COLLAPSED_CLASS, SEARCH_INPUT_CONTROL_EXPANDED_CLASS, SEARCH_INPUT_ICON_CLASS, SEARCH_INPUT_ICON_WRAP_CLASS } from "./searchInputStyles";
 
 export type SearchInputSize = ComponentSize;
 

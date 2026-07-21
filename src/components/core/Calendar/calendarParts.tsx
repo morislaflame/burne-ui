@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  memo,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-} from "react";
+import { forwardRef, memo, useCallback, useLayoutEffect, useRef } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
@@ -18,37 +12,9 @@ import { useToggleButtonFillAnimation, SELECTION_FILL_DATA_ATTR } from "@/compon
 import { cn } from "@/utils/cn";
 
 import { calendarNavBackLabel, calendarNavForwardLabel } from "./calendarA11y";
-import {
-  useCalendarInteractiveCellAnimations,
-  useCalendarNavButtonAnimations,
-} from "./calendarAnimations";
+import { useCalendarInteractiveCellAnimations, useCalendarNavButtonAnimations } from "./calendarAnimations";
 import { useCalendar, useCalendarClassNames } from "./calendarContext";
-import {
-  CALENDAR_CELL_FILL_CLASS,
-  CALENDAR_CELL_TEXT_CLASS,
-  CALENDAR_CELL_TODAY_DOT_CLASS,
-  CALENDAR_DAY_CELL_LAYER_CLASS,
-  CALENDAR_DAY_CELL_WRAPPER_CLASS,
-  CALENDAR_DAYS_CELL_GRID_CLASS,
-  CALENDAR_DAYS_WEEKDAY_GRID_CLASS,
-  CALENDAR_DAY_BTN,
-  CALENDAR_FOOTER_CLASS,
-  CALENDAR_FOOTER_TODAY_BUTTON_CLASS,
-  CALENDAR_GRID_CLASS,
-  CALENDAR_HEADER_CLASS,
-  CALENDAR_NAV_ICON_CLASS,
-  CALENDAR_RANGE_HALF_FILL_CLASS,
-  CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE,
-  calendarHeaderTitleClass,
-  calendarInteractiveCellClass,
-  calendarInteractiveCellTextVariant,
-  calendarMonthsGridClass,
-  calendarNavButtonClass,
-  calendarRangeHalfFillSideClass,
-  calendarWeekdayLabelClass,
-  calendarYearCellClass,
-  calendarYearsGridClass,
-} from "./calendarStyles";
+import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_DAY_BTN, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
 import type {
   CalendarFooterProps,
   CalendarGridProps,
@@ -57,12 +23,7 @@ import type {
   CalendarNavButtonProps,
   CalendarRangeHalfFillProps,
 } from "./calendarTypes";
-import {
-  useCalendarDayCellModels,
-  useCalendarHeaderTitle,
-  useCalendarMonthCellModels,
-  useCalendarYearCellModels,
-} from "./useCalendarViewModels";
+import { useCalendarDayCellModels, useCalendarHeaderTitle, useCalendarMonthCellModels, useCalendarYearCellModels } from "./useCalendarViewModels";
 
 function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
   const slotClassNames = useCalendarClassNames();

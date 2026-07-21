@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Expandable,
-  useExpandableContext,
-  type ExpandableProps,
-  type ExpandableClassNames,
-  type ExpandableVariant,
-  type ExpandableSize,
-} from "burne-ui";
+import { Expandable, useExpandableContext, type ExpandableProps, type ExpandableClassNames, type ExpandableVariant, type ExpandableSize } from "burne-ui";
 ```
 
 ## API

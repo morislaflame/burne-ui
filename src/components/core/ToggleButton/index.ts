@@ -3,8 +3,8 @@ export {
   ToggleButtonContent,
   ToggleButtonFill,
   ToggleButtonLabel,
-  ToggleButtonIcon,
-  ToggleButtonTrailing,
+  ToggleButtonIconStart,
+  ToggleButtonIconEnd,
   ToggleButtonText,
   type ToggleButtonProps,
   type ToggleButtonSize,
@@ -13,27 +13,19 @@ export {
   type ToggleButtonFillProps,
   type ToggleButtonContentProps,
   type ToggleButtonLabelProps,
-  type ToggleButtonIconProps,
-  type ToggleButtonTrailingProps,
+  type ToggleButtonIconStartProps,
+  type ToggleButtonIconEndProps,
   type ToggleButtonTextProps,
 } from "./ToggleButton";
 
-import {
-  ToggleButtonRoot,
-  ToggleButtonContent,
-  ToggleButtonFill,
-  ToggleButtonLabel,
-  ToggleButtonIcon,
-  ToggleButtonTrailing,
-  ToggleButtonText,
-} from "./ToggleButton";
+import { ToggleButtonRoot, ToggleButtonContent, ToggleButtonFill, ToggleButtonLabel, ToggleButtonIconStart, ToggleButtonIconEnd, ToggleButtonText } from "./ToggleButton";
 
 export const ToggleButton = Object.assign(ToggleButtonRoot, {
   Content: ToggleButtonContent,
   Fill: ToggleButtonFill,
   Label: ToggleButtonLabel,
-  Icon: ToggleButtonIcon,
-  Trailing: ToggleButtonTrailing,
+  IconStart: ToggleButtonIconStart,
+  IconEnd: ToggleButtonIconEnd,
   Text: ToggleButtonText,
 });
 

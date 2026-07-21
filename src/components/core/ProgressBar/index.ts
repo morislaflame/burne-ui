@@ -1,12 +1,4 @@
-import {
-  ProgressBarError,
-  ProgressBarHeader,
-  ProgressBarHint,
-  ProgressBarLabel,
-  ProgressBarRoot,
-  ProgressBarTrack,
-  ProgressBarValue,
-} from "./ProgressBar";
+import { ProgressBarError, ProgressBarHeader, ProgressBarHint, ProgressBarLabel, ProgressBarRoot, ProgressBarTrack, ProgressBarValue } from "./ProgressBar";
 
 export const ProgressBar = Object.assign(ProgressBarRoot, {
   Header: ProgressBarHeader,

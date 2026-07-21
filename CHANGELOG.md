@@ -4,6 +4,7 @@
 
 ### Breaking
 
+- Boolean props: `isRequired` → `required`, Toast `isLoading` → `loading`, Pagination.Page `isActive` → `active` (ListBox keyboard `isActive` unchanged).
 - Theme config: `modes.light` / `modes.dark` → flat **`colors.light` / `colors.dark`** (status foregrounds + hover tokens — обычные ключи палитры).
 - Убран `borderCustomized` — `--color-border` всегда задаётся как остальные цвета.
 - Из публичного API убраны named color presets (`OCEAN_*` и др.), `FONT_PRESETS` / `LAYOUT_PRESETS` / `COLOR_PRESET_*` — живут на docs site и в playground.
@@ -50,7 +51,7 @@
 
 ### Fixed
 
-- `RadioGroup` / `CheckboxGroup`: do not forward `onValueChange`, `value`, `defaultValue`, `isRequired`, `hintId`, `errorId` (and `selection` for CheckboxGroup) to the native `<fieldset>`.
+- `RadioGroup` / `CheckboxGroup`: do not forward `onValueChange`, `value`, `defaultValue`, `required`, `hintId`, `errorId` (and `selection` for CheckboxGroup) to the native `<fieldset>`.
 - `Pagination`: no horizontal overflow in narrow parents — `min-w-0` / wrap on root & content, drop `shrink-0` on the controls list, truncate summary.
 - `Popover` / `Dropdown`: apply `matchAnchorWidth` minWidth **before** placement measure so viewport clamp keeps the panel on-screen (esp. trailing triggers on mobile). Drop the hardcoded `12rem` floor — width follows content (or `className` `min-w-*`).
 - `Skeleton.Text`: unique keys per line (was keyed by width class `w-full`, which duplicated).
@@ -67,11 +68,11 @@
 
 - `BurneThemeConfig.customTokens` для проектных CSS-переменных, mode-specific значений и metadata автоматических контролов.
 - Theme runtime preview API (`useBurneThemeRuntime`) для отдельного пакета `burne-ui-devtools`.
-- Публичный примитив **`Field`** (`Field.Root`, `Field.Hint`, `Field.Label`).
+- Публичный примитив **`Field`** (`Field`, `Field.Hint`, `Field.Label`).
 - **Dual API** (simple + compound) для `Input`, `Selector`, `Switch`, `Meter`, `ProgressBar`, `Slider`, **`Avatar`** (`src` + `label` без children; compound — `Avatar.Image` / `Avatar.Fallback`).
 - **`Badge`**: inline-иконки в `children` через `data-icon="inline-start" | "inline-end"`; prop `icon` игнорируется при наличии таких children.
 - **`Breadcrumbs`**: при сжатии кнопка «…» открывает **`Dropdown`** со скрытыми разделами.
-- **`Dropdown.Item`**: опциональный **`href`** — link-пункт (`<a role="menuitem">`); клавиатура ↑↓ / Home / End / Escape в `Dropdown.Content`.
+- **`Dropdown.Item`**: опциональный **`href`** — link-пункт (`<a role="menuitem">`); клавиатура ↑↓ / Home / End / Escape в `Dropdown.Popover`.
 - **`Checkbox`**: dual API — compound `Checkbox.Control` / `Checkbox.Indicator` / `Checkbox.Content` / `Checkbox.Label` / `Checkbox.Hint`.
 - Общие части шкал: `scaleFieldParts` (`ScaleFieldHeader`, `ScaleFieldValue`, `renderScaleSimpleLayout`).
 

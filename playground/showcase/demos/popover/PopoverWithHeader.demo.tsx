@@ -12,8 +12,8 @@ export function PopoverWithHeaderDemo() {
       <Popover.Content showArrow>
         <Popover.Arrow />
         <Popover.Header>
-          <Popover.Label>Export</Popover.Label>
-          <Popover.Hint>Select file format</Popover.Hint>
+          <Popover.Title>Export</Popover.Title>
+          <Popover.Description>Select file format</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-xsmall">

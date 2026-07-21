@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  type RefObject,
-} from "react";
+import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig, motionExpand } from "./motionConfig";

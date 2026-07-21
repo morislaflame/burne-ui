@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useRef,
-  type KeyboardEvent,
-} from "react";
+import { forwardRef, useCallback, useRef, type KeyboardEvent } from "react";
 
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 

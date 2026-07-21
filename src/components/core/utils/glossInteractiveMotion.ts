@@ -3,26 +3,13 @@
  * + gloss box-shadow (elevation, inner glow, press-inset) + decor (shine, conic).
  */
 
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  type RefObject,
-  type Ref,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObject, type Ref } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
 import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
-import {
-  prefersReducedInteractiveHoverLift,
-  resolveAdaptiveHoverLiftScale,
-  resolveAdaptivePressSqueezeScale,
-  shouldSkipInteractiveHoverLift,
-} from "./hoverInteractiveLift";
+import { prefersReducedInteractiveHoverLift, resolveAdaptiveHoverLiftScale, resolveAdaptivePressSqueezeScale, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
 
 const GLOSS_INIT_ATTR = "data-gloss-motion-init";
 

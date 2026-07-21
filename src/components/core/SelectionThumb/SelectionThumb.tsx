@@ -3,13 +3,7 @@ import { useRef, type HTMLAttributes, type ReactNode, type RefObject } from "rea
 import "../utils/glossPanel.css";
 import { cn } from "@/utils/cn";
 
-import {
-  SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS,
-  SELECTION_INDICATOR_ICON_CLASS,
-  SELECTION_INDICATOR_SHELL_CLASS,
-  selectionIndicatorFillClass,
-  type SelectionIndicatorSize,
-} from "../SelectionIndicator/selectionIndicatorTokens";
+import { SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS, SELECTION_INDICATOR_ICON_CLASS, SELECTION_INDICATOR_SHELL_CLASS, selectionIndicatorFillClass, type SelectionIndicatorSize } from "../SelectionIndicator/selectionIndicatorTokens";
 import { useSelectionIndicatorAnimation } from "../SelectionIndicator/useSelectionIndicatorAnimation";
 
 export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {

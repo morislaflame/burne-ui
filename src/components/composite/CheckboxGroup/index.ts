@@ -1,16 +1,7 @@
 import { Label } from "@/components/core/Label";
-import {
-  OptionGroupActions,
-  OptionGroupGroup,
-} from "@/components/composite/utils/optionGroupFieldset";
+import { OptionGroupActions, OptionGroupGroup } from "@/components/composite/utils/optionGroupFieldset";
 
-import {
-  CheckboxGroupError,
-  CheckboxGroupHint,
-  CheckboxGroupLegend,
-  CheckboxGroupList,
-  CheckboxGroupRoot,
-} from "./CheckboxGroup";
+import { CheckboxGroupError, CheckboxGroupHint, CheckboxGroupLegend, CheckboxGroupList, CheckboxGroupRoot } from "./CheckboxGroup";
 
 export const CheckboxGroup = Object.assign(CheckboxGroupRoot, {
   Legend: CheckboxGroupLegend,

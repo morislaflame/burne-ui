@@ -22,9 +22,9 @@ export function ToggleButtonGroupViewToolbarDemo() {
         value={view}
         onValueChange={(v) => setView(v as string)}
       >
-        <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />} aria-label="List" />
-        <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />} aria-label="Net" />
-        <ToggleButton value="tiles" leftIcon={<IoSquareOutline aria-hidden />} aria-label="Tiles" />
+        <ToggleButton value="list" icon={<IoListOutline aria-hidden />} aria-label="List" />
+        <ToggleButton value="grid" icon={<IoGridOutline aria-hidden />} aria-label="Net" />
+        <ToggleButton value="tiles" icon={<IoSquareOutline aria-hidden />} aria-label="Tiles" />
       </ToggleButtonGroup>
     </Surface>
   );

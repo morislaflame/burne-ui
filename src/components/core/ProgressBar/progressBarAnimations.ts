@@ -2,15 +2,9 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  getMotionConfig,
-  motionProgressFill,
-} from "@/components/core/utils/motionConfig";
+import { getMotionConfig, motionProgressFill } from "@/components/core/utils/motionConfig";
 
-import {
-  PROGRESS_INDETERMINATE_EASE,
-  PROGRESS_INDETERMINATE_MS,
-} from "./progressBarAPI";
+import { PROGRESS_INDETERMINATE_EASE, PROGRESS_INDETERMINATE_MS } from "./progressBarAPI";
 import type { UseProgressBarFillAnimationProps } from "./progressBarTypes";
 
 export function useProgressBarFillAnimation({

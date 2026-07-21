@@ -1,21 +1,7 @@
 import "../utils/glossInteractive.css";
 
-import {
-  DialogClassNamesProvider,
-  DialogProvider,
-} from "./dialogContext";
-import {
-  DialogBody,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogHeadingBlock,
-  DialogPanel,
-  DialogTitle,
-  DialogTrigger,
-} from "./dialogParts";
+import { DialogClassNamesProvider, DialogProvider } from "./dialogContext";
+import { DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogHeadingBlock, DialogPanel, DialogTitle, DialogTrigger } from "./dialogParts";
 import type { DialogProps } from "./dialogTypes";
 import { useDialogRootState } from "./useDialogRootState";
 

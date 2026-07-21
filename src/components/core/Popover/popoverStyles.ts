@@ -4,7 +4,7 @@ import { TOOLTIP_ARROW_SHELL_PAD } from "@/components/core/Tooltip/tooltipPositi
 
 import type {
   PopoverContentGap,
-  PopoverHintVariantMap,
+  PopoverDescriptionVariantMap,
   PopoverSide,
   PopoverSize,
   PopoverTitleVariantMap,
@@ -21,7 +21,7 @@ export const POPOVER_TITLE_VARIANT: PopoverTitleVariantMap = {
   large: "mid",
 };
 
-export const POPOVER_HINT_VARIANT: PopoverHintVariantMap = {
+export const POPOVER_DESCRIPTION_VARIANT: PopoverDescriptionVariantMap = {
   small: "tools",
   base: "small",
   mid: "small",
@@ -204,7 +204,7 @@ export function popoverHeaderClass({
   return cn(POPOVER_HEADER_CLASS, slotClass, className);
 }
 
-export function popoverLabelClass({
+export function popoverTitleClass({
   slotClass,
   className,
 }: {
@@ -228,6 +228,6 @@ export function popoverTitleVariant(size: PopoverSize): TextVariant {
   return POPOVER_TITLE_VARIANT[size];
 }
 
-export function popoverHintVariant(size: PopoverSize): TextVariant {
-  return POPOVER_HINT_VARIANT[size];
+export function popoverDescriptionVariant(size: PopoverSize): TextVariant {
+  return POPOVER_DESCRIPTION_VARIANT[size];
 }

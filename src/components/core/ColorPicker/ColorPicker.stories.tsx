@@ -5,14 +5,7 @@ import { expect, screen } from "storybook/test";
 
 import { Text } from "@/components/core/Text";
 
-import {
-  ColorPicker,
-  ColorSlider,
-  ColorSwatch,
-  hsvaToColorString,
-  hsvaToHex,
-  type HSVA,
-} from ".";
+import { ColorPicker, ColorSlider, ColorSwatch, hsvaToColorString, hsvaToHex, type HSVA } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (

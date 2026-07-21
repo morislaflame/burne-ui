@@ -79,15 +79,14 @@ function resolveIconNode(
 }
 
 export function resolveLinkIconPlacement({
-  leftIcon,
-  rightIcon,
+  icon,
   showDefaultIcon = false,
   defaultIconPosition = "end",
 }: Pick<
   UseLinkRootStateProps,
-  "leftIcon" | "rightIcon" | "showDefaultIcon" | "defaultIconPosition"
+  "icon" | "showDefaultIcon" | "defaultIconPosition"
 >): LinkIconPlacement {
-  const usesDefaultIcon = showDefaultIcon && !leftIcon && !rightIcon;
+  const usesDefaultIcon = showDefaultIcon && icon == null;
   const defaultIconAtStart = usesDefaultIcon && defaultIconPosition === "start";
   const defaultIconAtEnd = usesDefaultIcon && defaultIconPosition === "end";
 
@@ -99,8 +98,8 @@ export function resolveLinkIconPlacement({
 }
 
 export function resolveLinkBodyIcons({
-  leftIcon,
-  rightIcon,
+  icon,
+  iconPosition = "start",
   showDefaultIcon,
   defaultIconPosition,
   children,
@@ -132,16 +131,15 @@ export function resolveLinkBodyIcons({
   }
 
   const placement = resolveLinkIconPlacement({
-    leftIcon,
-    rightIcon,
+    icon,
     showDefaultIcon,
     defaultIconPosition,
   });
 
   return {
     textChildren: children ?? null,
-    startIcon: leftIcon ?? null,
-    endIcon: rightIcon ?? null,
+    startIcon: icon != null && iconPosition === "start" ? icon : null,
+    endIcon: icon != null && iconPosition === "end" ? icon : null,
     startIconMuted: placement.defaultIconAtStart,
     endIconMuted: placement.defaultIconAtEnd,
     usesDefaultAtStart: placement.defaultIconAtStart,

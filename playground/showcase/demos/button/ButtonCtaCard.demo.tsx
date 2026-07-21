@@ -15,7 +15,7 @@ export function ButtonCtaCardDemo() {
         </Text>
       </div>
       <div className="flex flex-col gap-small">
-        <Button variant="primary" className="w-full" leftIcon={<IoRocketOutline aria-hidden />}>
+        <Button variant="primary" className="w-full" icon={<IoRocketOutline aria-hidden />}>
           Create workspace
         </Button>
         <Button variant="ghost" className="w-full text-muted hover:text-primary">

@@ -15,7 +15,7 @@ export function useTimeFieldRootState({
   hint,
   error,
   id: idProp,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
   variant = "default",
@@ -42,7 +42,7 @@ export function useTimeFieldRootState({
       errorId,
       hintConnected: hasHint,
       errorConnected: hasError,
-      isRequired,
+      required,
       status,
       size,
       variant,
@@ -56,7 +56,7 @@ export function useTimeFieldRootState({
       hasHint,
       hasLabel,
       hintId,
-      isRequired,
+      required,
       labelId,
       size,
       status,
@@ -65,8 +65,8 @@ export function useTimeFieldRootState({
   );
 
   const fieldLabelCtx = useMemo(
-    () => ({ controlId: fieldId, labelId, isRequired }),
-    [fieldId, isRequired, labelId],
+    () => ({ controlId: fieldId, labelId, required }),
+    [fieldId, required, labelId],
   );
 
   return {

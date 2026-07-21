@@ -4,12 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
 import { IoAdd } from "react-icons/io5";
 
-import {
-  Button,
-  type ButtonAsyncState,
-  type ButtonStatus,
-  type ButtonVariant,
-} from ".";
+import { Button, type ButtonAsyncState, type ButtonStatus, type ButtonVariant } from ".";
 
 const BUTTON_VARIANTS: ButtonVariant[] = [
   "default",
@@ -245,17 +240,17 @@ export const StatusVariantsOnLightTheme: Story = {
   render: () => <StatusVariantsDemo />,
 };
 
-export const WithLeftIcon: Story = {
-  name: "With left icon",
+export const WithIcon: Story = {
+  name: "With icon",
   render: () => (
     <div className="flex flex-wrap items-center gap-plus">
-      <Button size="small" leftIcon={<IoAdd aria-hidden />}>
+      <Button size="small" icon={<IoAdd aria-hidden />}>
         Add
       </Button>
-      <Button size="base" variant="outline" leftIcon={<IoAdd aria-hidden />}>
+      <Button size="base" variant="outline" icon={<IoAdd aria-hidden />} iconPosition="end">
         Create
       </Button>
-      <Button size="large" variant="ghost" leftIcon={<IoAdd aria-hidden />}>
+      <Button size="large" variant="ghost" icon={<IoAdd aria-hidden />}>
         More
       </Button>
     </div>
@@ -381,7 +376,7 @@ function GlossDemo() {
         </Button>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-plus">
-        <Button variant="gloss" leftIcon={<IoAdd aria-hidden />}>
+        <Button variant="gloss" icon={<IoAdd aria-hidden />}>
           With icon
         </Button>
         <Button variant="gloss" iconOnly aria-label="Add">

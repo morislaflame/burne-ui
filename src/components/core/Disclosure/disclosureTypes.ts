@@ -6,6 +6,7 @@ import type {
 } from "react";
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
 
 export type DisclosureVariant =
   | "default"
@@ -16,7 +17,8 @@ export type DisclosureVariant =
   | "gloss";
 
 export type DisclosureSize = ComponentSize;
-export type DisclosureIconPos = "left" | "right";
+/** Alias of shared `IconPosition` (chevron start/end). */
+export type DisclosureIconPos = IconPosition;
 
 export type DisclosureClassNames = {
   root?: string;
@@ -50,7 +52,7 @@ export type DisclosureContextValue = {
   variant: DisclosureVariant;
   size: DisclosureSize;
   disabled: boolean;
-  iconPos: DisclosureIconPos;
+  iconPosition: IconPosition;
   dragHandle: boolean;
   shellRef: RefObject<HTMLDivElement | null>;
   innerRef: RefObject<HTMLDivElement | null>;
@@ -72,7 +74,7 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   variant?: DisclosureVariant;
   size?: DisclosureSize;
   disabled?: boolean;
-  iconPos?: DisclosureIconPos;
+  iconPosition?: IconPosition;
   dragHandle?: boolean;
   classNames?: DisclosureClassNames;
 };

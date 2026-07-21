@@ -4,39 +4,14 @@ import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 
-import {
-  COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL,
-  COLOR_PICKER_AREA_ARIA_LABEL,
-  COLOR_PICKER_CONTENT_ARIA_LABEL,
-  COLOR_PICKER_HEX_INPUT_ARIA_LABEL,
-  colorPickerTriggerAriaLabel,
-} from "./colorPickerA11y";
+import { COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL, COLOR_PICKER_AREA_ARIA_LABEL, COLOR_PICKER_CONTENT_ARIA_LABEL, COLOR_PICKER_HEX_INPUT_ARIA_LABEL, colorPickerTriggerAriaLabel } from "./colorPickerA11y";
 import { useColorPickerAreaDrag } from "./colorPickerAnimations";
 import { COLOR_PICKER_SLIDER_SIZE_MAP, COLOR_PICKER_SWATCH_SIZE_MAP } from "./colorPickerAPI";
 import { useColorPicker, useColorPickerClassNames } from "./colorPickerContext";
-import {
-  colorPickerAreaClass,
-  COLOR_PICKER_ALPHA_FIELD_CLASS,
-  COLOR_PICKER_ALPHA_INPUT_CLASS,
-  COLOR_PICKER_ALPHA_SUFFIX_CLASS,
-  COLOR_PICKER_AREA_THUMB_CLASS,
-  COLOR_PICKER_HEX_FIELD_CLASS,
-  COLOR_PICKER_HEX_INPUT_CLASS,
-  COLOR_PICKER_HEX_PREFIX_CLASS,
-  COLOR_PICKER_INPUTS_ROW_CLASS,
-  COLOR_PICKER_PRESETS_CLASS,
-  COLOR_PICKER_SLIDERS_ROW_CLASS,
-  COLOR_PICKER_SLIDERS_STACK_CLASS,
-  colorPickerContentPanelClass,
-} from "./colorPickerStyles";
+import { colorPickerAreaClass, COLOR_PICKER_ALPHA_FIELD_CLASS, COLOR_PICKER_ALPHA_INPUT_CLASS, COLOR_PICKER_ALPHA_SUFFIX_CLASS, COLOR_PICKER_AREA_THUMB_CLASS, COLOR_PICKER_HEX_FIELD_CLASS, COLOR_PICKER_HEX_INPUT_CLASS, COLOR_PICKER_HEX_PREFIX_CLASS, COLOR_PICKER_INPUTS_ROW_CLASS, COLOR_PICKER_PRESETS_CLASS, COLOR_PICKER_SLIDERS_ROW_CLASS, COLOR_PICKER_SLIDERS_STACK_CLASS, colorPickerContentPanelClass } from "./colorPickerStyles";
 import { ColorSliderTrack } from "./ColorSlider";
 import { ColorSwatch } from "./ColorSwatch";
-import {
-  clampN,
-  hexToHsva,
-  hsvaToColorString,
-  hueToRgbString,
-} from "./colorUtils";
+import { clampN, hexToHsva, hsvaToColorString, hueToRgbString } from "./colorUtils";
 import type {
   ColorPickerAlphaInputProps,
   ColorPickerContentProps,

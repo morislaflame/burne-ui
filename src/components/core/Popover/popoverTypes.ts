@@ -70,9 +70,9 @@ export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement>;
 
 export type PopoverHeaderProps = HTMLAttributes<HTMLDivElement>;
 
-export type PopoverLabelProps = HTMLAttributes<HTMLHeadingElement>;
+export type PopoverTitleProps = HTMLAttributes<HTMLHeadingElement>;
 
-export type PopoverHintProps = Omit<FieldHintProps, "id" | "as">;
+export type PopoverDescriptionProps = Omit<FieldHintProps, "id" | "as">;
 
 export type PopoverBodyProps = HTMLAttributes<HTMLDivElement>;
 
@@ -88,7 +88,7 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
 
 export type PopoverTitleVariantMap = Record<PopoverSize, TextVariant>;
 
-export type PopoverHintVariantMap = Record<PopoverSize, TextVariant>;
+export type PopoverDescriptionVariantMap = Record<PopoverSize, TextVariant>;
 
 export type UsePopoverContentLifecycleProps = {
   open: boolean;

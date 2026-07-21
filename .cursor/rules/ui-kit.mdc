@@ -15,19 +15,19 @@ alwaysApply: true
 Компоненты второго уровня (вроде алерта, бейджа и тд.) (находятся "над" остальными элементами), у них тень должна быть и в обычном состоянии, а при наведении увеличивается
 У всех остальных тень должны появлятся только при наведении
 
-## Структура папки компонента (примеры: `Alert/`, `Badge/`, `Avatar/`, `Breadcrumbs/`)
+## Структура папки компонента (эталон: `Alert/`, `Badge/`, `Avatar/`, `Breadcrumbs/`)
 
 ```
 ComponentName/
-├── ComponentName.tsx           # оркестратор (~100–150 строк)
+├── ComponentName.tsx           # оркестратор (см. примеры Badge, Alert)
 ├── index.ts                    # compound API + публичные экспорты
 ├── ComponentName.stories.tsx
 │
-├── componentNameTypes.ts       # ОБЯЗАТЕЛЬНО: Все типы, которые используюся в файлах компонента, только типы (+ Use*RootStateProps, props подчастей)
-├── componentNameStyles.ts      # ОБЯЗАТЕЛЬНО: все CSS и функции по определению стилей
+├── componentNameTypes.ts       # ОБЯЗАТЕЛЬНО: Все типы, которые используются в файлах компонента (не общие) выносим сюда
+├── componentNameStyles.ts      # ОБЯЗАТЕЛЬНО: все CSS + *Class() / *ViewClass(). ВСЕ СТИЛИ ИЗ ВСЕХ ФАЙЛОВ КОМПОНЕНТА, так же логика по выбору стилей
 │
 ├── useComponentRootState.ts    # props → state, context value, grid/slots
-├── componentNameAnimations.ts  # Все что связано с анимациями
+├── componentNameAnimations.ts  # Все анимации компонента (см. Button, Alert, Calendar)
 ├── componentNameContext.tsx    # только createContext + Provider + use*Context
 │
 ├── componentNameParts.tsx      # DOM-подчасти компонента
@@ -37,22 +37,42 @@ ComponentName/
 
 Префикс файлов: `alert*`, `badge*` — camelCase. Корневой файл: `Alert.tsx` — PascalCase.
 
-`*Utils.ts` — **не создавать** ради `resolve*Variant` / `resolve*Status`: это часть `*API`. Отдельный Utils — только если есть helpers, которые не ложатся в Types / API / A11y.
+`*Utils.ts` —  Отдельный Utils — только если есть helpers, которые не ложатся в Types / API / A11y.
 
-Опциональные файлы создавать только при необходимости, но лучше что выбивается из общей структуры класть в *Utils.ts.
+Опциональные файлы создавать только при необходимости, и то лучше все что не подходит под структуру в *Utils.ts.
+
+## Иконки (simple API)
+
+- Канон: `icon` + `iconPosition: "start" | "end"` (shared `IconPosition` в `core/utils/iconPosition.ts`)
+- Compound: отдельные части (`Button.Icon`, `Link.Icon position`, `ToggleButton.IconStart` / `IconEnd`) когда нужна компоновка
+- Слот `classNames.icon` — обёртка иконки (у Link по позиции: `iconStart` / `iconEnd`)
+- Иконка отмеченного состояния: `icon` (Checkbox, SelectionIndicator). Исключение Switch: `iconOn` / `iconOff` (+ `Switch.Icon when`)
+
+## Словарь имён compound-частей
+
+- Корень — сам компонент (`Alert`, `Tabs`, `Field`, `Link`). **Не** дублировать `Component.Root` в compound-объекте
+- Группы: `Avatar.Group`, `Disclosure.Group`, `Kbd.Group` — не отдельные top-level `AvatarGroup` / `DisclosureGroup`
+- Закрытие / действие: `Close`, `Action` (как `Dialog.Close`, `Alert.Action`, `Toast.Close` / `Toast.Action`) — не `*Button`
+- Заголовок / описание панели: `Title`, `Description` (Dialog, Drawer, Tooltip, Card, Alert, Popover) — не `Label` / `Hint` у оверлеев (у Field `Label`/`Hint` остаются — это form-лейбл)
+- `Indicator` = статус / выбор (`Toast.Indicator`, `Dropdown.ItemIndicator`, `SelectionIndicator`)
+- `Chevron` = раскрытие (`Accordion.Chevron`, `Expandable.Chevron`)
+- `Heading` = семантическая обёртка `<h*>` (a11y); `Title` = видимый текстовый заголовок внутри контента (`Accordion.Heading` vs `Accordion.Title`)
+- Меню-хост: `Dropdown.Popover` / Select·ComboBox `Popover` — плавающая панель меню. `Popover.Content` — тело содержимого внутри Popover. Не смешивать и не плодить алиасы (`Dropdown.Content`)
+- `Table.Content` = `<table>` (доменное исключение имени `Content`; документировать в API Table)
+- Иконки compound: симметрия `IconStart` / `IconEnd` (или `Icon` + `position`), не `Trailing` / `leftIcon`-части
 
 ## variant + status
 
 - `variant` — визуальный стиль: `default` | `outline` | `secondary` | `gloss` (+ `primary` у Button/Badge)
 - `status` — семантика: `default` | `danger` | `success` | `info` | `warning`
+- Доменные исключения `variant` допустимы, только когда они описывают несводимую структуру или уровень поверхности: `Disclosure.card`, `Table.toned`, `Surface.tertiary`, `TimeField.segmented`. Их нужно документировать в API компонента.
 
 ## Стили
 
 - **Все Tailwind/CSS-классы** — только в `*Styles.ts`
-- Статичные строки без `className` и без переиспользования — прямо в `fooClass()`; `const` только для композиции (inner → button) или `Record<...>`
 - В `.tsx` не оставлять сырые строки (`"font-medium"`, `"[&_svg]:icon-mid"`) — только импорт из Styles и `cn(..., className)` пропа пользователя
 - `*Styles.ts` **не импортирует** `*API` и `*Parts`
-- Все публичные `*Props`/`*ContextValue`/`Use*Props` хранить и экспортировать только из `*Types.ts`; в `*API`/`*Parts`/`*Context` и других файлах компонента допустимы только короткие HTMLAttributes<HTMLDivElement>
+
 
 ## Граф зависимостей (без циклов)
 
@@ -69,21 +89,34 @@ Types → A11y → API → Styles → Context → Parts → Animations → use*R
 ## Публичный API
 
 - Compound: `Object.assign(Root, { Part })` в `index.ts`
-- Не дублировать runtime-экспорт подчастей, убирать если такое есть (`Badge.Anchor`, не отдельный `BadgeAnchor`)
+- Не дублировать runtime-экспорт подчастей (`Badge.Anchor`, не отдельный `BadgeAnchor`). Если есть такая проблема в компоненте оставляй только экспорт вида `Badge.Anchor`.
 - Типы подчастей экспортировать можно
 - Сохранять simple и compound API без изменения поведения
-- Кастомизация стилей: `classNames` на `Root` / `List` (слоты) + `className` на `Item` (пер-пункт); `List` переопределяет `Root`
+- Кастомизация стилей: Если не добавлен проп `classNames` в компоненте, добавляй. на `Root` / `List` (слоты) + `className` на `Item` (пер-пункт); `List` переопределяет `Root`. см. примеры Calendar, Breadcrumbs. Если добавил данную кастомизацию в компонент - тогда сделай примеры кастомизации в сторибуке и плейграунде
+Логика такая: есть симпл апи пользователь будет использовать тогда, когда ему просто нужен быстрый компонент, с уже готовой компоновкой, и при этом он может поправить стили через classNames. Compound будет использоватся когда пользователю нужно поменять компоновку (например переставить местами отдельные части компонента, обернуть их в другие блоки и тд.) и при этом он сможет как задавать стили напрямую каждой части компаунд апи, так и пользоватся classNames. 
+
+## State-API (controlled / uncontrolled)
+
+Канон для значения выбора / активного пункта:
+
+- `value` / `defaultValue` / `onValueChange` — Tabs, Accordion, Disclosure.Group, Select, ListBox, RadioGroup, …
+- `open` / `defaultOpen` / `onOpenChange` — бинарное открытие: Expandable, Disclosure, Popover, Dialog, Dropdown, SearchInput (`expanded`/`onExpandedChange` — тот же паттерн с доменным именем)
+- `values` / `defaultValues` / `onValuesChange` — множественная форма (Form: карта полей)
+
+Исключения (не дублировать альтернативными колбеками):
+
+- **Нативные form-controls** (Checkbox, Radio, Switch, Input, TextArea, SearchInput): только HTML-семантика — `checked`/`defaultChecked`/`onChange` или `value`/`defaultValue`/`onChange`. Без `onCheckedChange` / `onValueChange`
+- **Toast**: `onClose` — dismiss-колбэк simple API (нет `open`); стек управляется через Provider/`useToast.dismiss` 
 
 ## Общие утилиты (`core/utils/`)
 
-Если есть обзие паттерны в компонентах - они выносятся в общий слой.
-
-## При рефакторинге
-
-Мы добавляем classNames компоненту, чтобы можно было кастомизировать все его части
-
-симпл апи пользователь будет использовать тогда, когда ему просто нужен быстрый компонент, с уже готовой компоновкой, и при этом он может поправить стили через classNames. Compound будет использоватся когда пользователю нужно поменять компоновку (например переставить местами отдельные части компонента, обернуть их в другие блоки и тд.) и при этом он сможет как задавать стили напрямую каждой части компаунд апи, так и пользоватся classNames. 
 
 ## После изменений
 
 `npm run build` + `npx react-doctor@latest --verbose --scope changed`
+
+
+
+КОГДА НУЖНЫ КАКИЕ ТО ИЗМЕНЕНИЯ В БИБЛИОТЕКЕ, МЫ ИХ ДЕЛАЕМ ВНУТРИ БИБЛИОТЕКИ, А НЕ ЛИНКУЕМ В burne-ui-site локально, это продакшен сайт, и изменения в нем будут связаны с опубликованной библиотекой. ПОСЛЕ ПРАВОК Я САМ ОБНОВЛЯЮ БИБЛИОТЕКУ И СКАЧИВАЮ НОВУЮ ВЕРСИЮ В САЙТ
+
+Нам не нужно оставлять легаси код вообще в пакете для совместимостей, у нас еще нет потребителей, мы просто тестируем и улучшаем его

@@ -1,38 +1,16 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
-import {
-  animatePortalClose,
-  animatePortalOpen,
-  applyReducedPortalMotion,
-  isReducedModalMotion,
-  MODAL_PANEL_SCALE_FROM,
-} from "@/components/core/utils/modalSurfaceMotion";
+import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion, MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
 import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import {
-  TOAST_ENTRY_OFFSET_PX,
-  TOAST_MAX_VISIBLE,
-  TOAST_STACK_PEEK_PX,
-  TOAST_STACK_SCALE_STEP,
-} from "./toastAPI";
+import { TOAST_ENTRY_OFFSET_PX, TOAST_MAX_VISIBLE, TOAST_STACK_PEEK_PX, TOAST_STACK_SCALE_STEP } from "./toastAPI";
 import { toastViewportWidthPx } from "@/components/core/utils/messageBannerSize";
 import { toastViewportAriaLabel } from "./toastA11y";
 import { ToastClassNamesProvider } from "./toastContext";
 import { ToastRoot } from "./Toast";
-import {
-  TOAST_STACK_ITEM_CLASS,
-  toastScrimClass,
-  toastStackClass,
-  toastViewportClass,
-} from "./toastStyles";
+import { TOAST_STACK_ITEM_CLASS, toastScrimClass, toastStackClass, toastViewportClass } from "./toastStyles";
 import type { ToastItemWrapperProps, ToastViewportProps } from "./toastTypes";
 
 export function ToastItemWrapper({
@@ -140,10 +118,10 @@ export function ToastItemWrapper({
   }, [isDismissing, isTop, entry.id, onRemoveFinal]);
 
   useEffect(() => {
-    if (entry.timeout === 0 || isDismissing || entry.isLoading) return;
+    if (entry.timeout === 0 || isDismissing || entry.loading) return;
     const id = setTimeout(() => onDismiss(entry.id), entry.timeout);
     return () => clearTimeout(id);
-  }, [entry.id, entry.timeout, isDismissing, entry.isLoading, onDismiss]);
+  }, [entry.id, entry.timeout, isDismissing, entry.loading, onDismiss]);
 
   const dismiss = useCallback(() => onDismiss(entry.id), [entry.id, onDismiss]);
 
@@ -173,7 +151,7 @@ export function ToastItemWrapper({
             title={entry.title}
             description={entry.description}
             action={entry.action}
-            isLoading={entry.isLoading}
+            loading={entry.loading}
             onClose={dismiss}
           />
         </ToastClassNamesProvider>

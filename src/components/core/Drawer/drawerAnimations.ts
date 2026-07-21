@@ -1,28 +1,10 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
-import {
-  applyReducedModalMotion,
-  captureModalFocusReturn,
-  completeModalDialogClose,
-  isReducedModalMotion,
-  type GsapMotionVars,
-} from "@/components/core/utils/modalSurfaceMotion";
+import { applyReducedModalMotion, captureModalFocusReturn, completeModalDialogClose, isReducedModalMotion, type GsapMotionVars } from "@/components/core/utils/modalSurfaceMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MouseEvent,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
-import {
-  getDrawerSlideCloseTo,
-  getDrawerSlideOpenFrom,
-  getDrawerSlideRest,
-} from "./drawerAPI";
+import { getDrawerSlideCloseTo, getDrawerSlideOpenFrom, getDrawerSlideRest } from "./drawerAPI";
 import type { DrawerPlacement, UseDrawerModalMotionProps } from "./drawerTypes";
 
 function resetDrawerPanelTransform(panel: HTMLElement): void {

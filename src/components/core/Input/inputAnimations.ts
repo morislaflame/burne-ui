@@ -1,9 +1,6 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { gsap } from "@/components/core/utils/gsapMotion";

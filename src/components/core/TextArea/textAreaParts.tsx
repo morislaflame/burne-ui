@@ -1,10 +1,5 @@
 import type { PointerEventHandler } from "react";
-import {
-  forwardRef,
-  useCallback,
-  useId,
-  useRef,
-} from "react";
+import { forwardRef, useCallback, useId, useRef } from "react";
 
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
@@ -15,20 +10,8 @@ import "@/components/core/utils/glossInteractive.css";
 import { TEXTAREA_RESIZE_HANDLE_ARIA_LABEL } from "./textAreaA11y";
 
 import { useTextAreaShellMotion } from "./textAreaAnimations";
-import {
-  useOptionalTextAreaFieldContext,
-  useTextAreaClassNames,
-  useTextAreaFieldContext,
-} from "./textAreaContext";
-import {
-  TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS,
-  TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS,
-  TEXTAREA_RESIZE_GRIP_WRAP_CLASS,
-  textareaControlClassNames,
-  textareaResizeHandleClass,
-  textareaShellClass,
-  textareaShellSurfaceClass,
-} from "./textAreaStyles";
+import { useOptionalTextAreaFieldContext, useTextAreaClassNames, useTextAreaFieldContext } from "./textAreaContext";
+import { TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS, TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS, TEXTAREA_RESIZE_GRIP_WRAP_CLASS, textareaControlClassNames, textareaResizeHandleClass, textareaShellClass, textareaShellSurfaceClass } from "./textAreaStyles";
 import type {
   TextAreaErrorProps,
   TextAreaHintProps,
@@ -96,7 +79,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const id = idProp ?? fieldCtx?.textareaId ?? genId;
     const status = statusProp ?? fieldCtx?.status ?? "default";
     const size = sizeProp ?? fieldCtx?.size ?? "base";
-    const isRequired = fieldCtx?.isRequired ?? false;
+    const required = fieldCtx?.required ?? false;
     const hintConnected = fieldCtx?.hintConnected ?? false;
     const errorConnected = fieldCtx?.errorConnected ?? false;
     const hintId = fieldCtx?.hintId;
@@ -164,7 +147,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           disabled={disabled}
           readOnly={readOnly}
           placeholder={placeholder}
-          aria-required={isRequired || undefined}
+          aria-required={required || undefined}
           aria-invalid={status === "danger" ? true : undefined}
           aria-describedby={ariaDescribedBy}
           className={textareaControlClassNames({

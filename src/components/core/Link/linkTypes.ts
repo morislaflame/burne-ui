@@ -6,19 +6,20 @@ import type {
 } from "react";
 
 import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
 
 export type LinkSize = ComponentSize;
 
-export type LinkIconPosition = "start" | "end";
+export type LinkIconPosition = IconPosition;
 
 export type LinkClassNames = {
   /** Anchor `<a>`. */
   anchor?: string;
   /** Link text (`Text`). */
   text?: string;
-  /** Left icon wrapper. */
+  /** Start icon wrapper. */
   iconStart?: string;
-  /** Right icon wrapper. */
+  /** End icon wrapper. */
   iconEnd?: string;
 };
 
@@ -27,8 +28,9 @@ export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"
   children?: ReactNode;
   size?: LinkSize;
   underline?: boolean;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
+  icon?: ReactNode;
+  /** @default "start" */
+  iconPosition?: IconPosition;
   showDefaultIcon?: boolean;
   defaultIconPosition?: LinkIconPosition;
   classNames?: LinkClassNames;
@@ -54,8 +56,8 @@ export type UseLinkRootStateProps = Pick<
   LinkProps,
   | "size"
   | "underline"
-  | "leftIcon"
-  | "rightIcon"
+  | "icon"
+  | "iconPosition"
   | "showDefaultIcon"
   | "defaultIconPosition"
   | "children"
@@ -82,6 +84,8 @@ export type LinkAnchorBodyProps = {
   endIcon: ReactNode | null;
   startIconMuted: boolean;
   endIconMuted: boolean;
+  usesDefaultAtStart: boolean;
+  usesDefaultAtEnd: boolean;
   className?: string;
   setAnchorRef: (node: HTMLAnchorElement | null) => void;
   handlePointerEnter: (event: PointerEvent<HTMLAnchorElement>) => void;

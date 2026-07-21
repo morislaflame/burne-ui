@@ -9,15 +9,7 @@
 import { useCallback, useLayoutEffect, useMemo, type MutableRefObject, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import {
-  animateInteractiveHoverLift,
-  initElementShadow,
-  shadowMid,
-  shadowBase,
-  shouldSkipInteractiveHoverLift,
-  useInteractiveHoverLiftContainerHandlers,
-  type HoverShadowConfig,
-} from "./hoverInteractiveLift";
+import { animateInteractiveHoverLift, initElementShadow, shadowMid, shadowBase, shouldSkipInteractiveHoverLift, useInteractiveHoverLiftContainerHandlers, type HoverShadowConfig } from "./hoverInteractiveLift";
 
 /** Class for JS-animated shadow and scale-lift. */
 export const SHADOW_LIFT_MOTION_CLASS =

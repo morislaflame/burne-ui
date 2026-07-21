@@ -5,12 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  ToggleButtonGroup,
-  type ToggleButtonGroupProps,
-  type ToggleButtonGroupType,
-  type ToggleButtonGroupOrientation,
-} from "burne-ui";
+import { ToggleButtonGroup, type ToggleButtonGroupProps, type ToggleButtonGroupType, type ToggleButtonGroupOrientation } from "burne-ui";
 import { ToggleButton } from "burne-ui";
 ```
 
@@ -26,7 +21,7 @@ import { ToggleButton } from "burne-ui";
   variant="default"
   size="base"
 >
-  <ToggleButton value="bold" leftIcon={<IoTextOutline aria-hidden />}>
+  <ToggleButton value="bold" icon={<IoTextOutline aria-hidden />}>
     Жирный
   </ToggleButton>
   <ToggleButton value="italic">Курсив</ToggleButton>
@@ -82,7 +77,7 @@ Compound API **нет** — только root + дочерние `ToggleButton`.
 
 | `size` | Прокидывается в каждый `ToggleButton` |
 
-Кастомизация кнопок — `classNames` на `ToggleButton` (`root`, `fill`, `content`, `leftIcon`, `label`).
+Кастомизация кнопок — `classNames` на `ToggleButton` (`root`, `fill`, `content`, `icon`, `label`).
 
 ## Анимации
 
@@ -160,8 +155,8 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
   aria-label="Режим отображения"
   className="w-fit"
 >
-  <ToggleButton value="list" leftIcon={<IoList aria-hidden />}>Список</ToggleButton>
-  <ToggleButton value="grid" leftIcon={<IoGrid aria-hidden />}>Сетка</ToggleButton>
+  <ToggleButton value="list" icon={<IoList aria-hidden />}>Список</ToggleButton>
+  <ToggleButton value="grid" icon={<IoGrid aria-hidden />}>Сетка</ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -199,7 +194,7 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 | `multiple` | `aria-pressed` на кнопках |
 | `single` | `role="radio"`, `aria-checked`; roving `tabIndex` |
 | Стрелки | Arrow Left/Right (horizontal) или Up/Down (vertical) при `single` |
-| Иконки | `aria-hidden` на decorative `leftIcon` |
+| Иконки | `aria-hidden` на decorative `icon` |
 
 ## Структура файлов
 

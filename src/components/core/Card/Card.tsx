@@ -3,15 +3,7 @@ import { forwardRef } from "react";
 import "../utils/glossInteractive.css";
 
 import { useCardAnimations } from "./cardAnimations";
-import {
-  CardBody,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardHeadingBlock,
-  CardRootShell,
-  CardTitle,
-} from "./cardParts";
+import { CardBody, CardDescription, CardFooter, CardHeader, CardHeadingBlock, CardRootShell, CardTitle } from "./cardParts";
 import { CardClassNamesProvider } from "./cardContext";
 import { cardGlossPanelClass, cardRootClass } from "./cardStyles";
 import type { CardProps, CardVariant } from "./cardTypes";

@@ -12,7 +12,7 @@ export function useTextAreaRootState({
   hint,
   error,
   id: idProp,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
 }: UseTextAreaRootStateProps) {
@@ -38,16 +38,16 @@ export function useTextAreaRootState({
       labelId,
       hintConnected: hasHint,
       errorConnected: hasError,
-      isRequired,
+      required,
       status,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, isRequired, labelId, size, status, textareaId],
+    [errorId, hasError, hasHint, hintId, required, labelId, size, status, textareaId],
   );
 
   const fieldLabelCtx = useMemo(
-    () => ({ controlId: textareaId, labelId, isRequired }),
-    [isRequired, labelId, textareaId],
+    () => ({ controlId: textareaId, labelId, required }),
+    [required, labelId, textareaId],
   );
 
   return {

@@ -5,10 +5,7 @@ import { expect } from "storybook/test";
 import { IoTimeOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { TimeField } from "./index";
@@ -25,7 +22,7 @@ function ValidatedTimeCompoundDemo({ initialValue = "25:00" }: { initialValue?: 
   const invalid = value.length > 0 && !isValidTime(value);
 
   return (
-    <TimeField status={invalid ? "danger" : "default"} isRequired>
+    <TimeField status={invalid ? "danger" : "default"} required>
       <TimeField.Label>Shift start</TimeField.Label>
       <TimeField.Control
         value={value}
@@ -48,7 +45,7 @@ function ValidatedTimeSimpleDemo({ initialValue = "25:00" }: { initialValue?: st
       hint="Format: HH:MM (24-hour)"
       error={invalid ? "Enter a valid time." : undefined}
       status={invalid ? "danger" : "default"}
-      isRequired
+      required
       value={value}
       onValueChange={setValue}
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
@@ -269,7 +266,7 @@ export const Warning: Story = {
 
 export const Required: Story = {
   render: () => (
-    <TimeField isRequired>
+    <TimeField required>
       <TimeField.Label>Start</TimeField.Label>
       <TimeField.Control defaultValue="09:00" />
     </TimeField>

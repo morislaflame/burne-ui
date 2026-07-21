@@ -1,9 +1,6 @@
 import { useRef, type RefObject } from "react";
 
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "./hoverInteractiveLift";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "./hoverInteractiveLift";
 
 /**
  * Runs a press-squeeze animation on `triggerRef.current`, then calls `setOpen(true)`.

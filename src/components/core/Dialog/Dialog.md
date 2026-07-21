@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Dialog,
-  type DialogProps,
-  type DialogVariant,
-  type DialogClassNames,
-  type DialogPanelProps,
-  type DialogTriggerProps,
-} from "burne-ui";
+import { Dialog, type DialogProps, type DialogVariant, type DialogClassNames, type DialogPanelProps, type DialogTriggerProps } from "burne-ui";
 ```
 
 ## API

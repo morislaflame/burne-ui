@@ -5,12 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  SelectionThumb,
-  SelectionThumbIcon,
-  type SelectionThumbProps,
-  type SelectionThumbIconProps,
-} from "burne-ui";
+import { SelectionThumb, SelectionThumbIcon, type SelectionThumbProps, type SelectionThumbIconProps } from "burne-ui";
 ```
 
 ## API

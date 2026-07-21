@@ -1,9 +1,6 @@
 import { useMemo } from "react";
 
-import {
-  countGroupSegmentSlots,
-  flattenFragmentChildren,
-} from "./buttonGroupAPI";
+import { countGroupSegmentSlots, flattenFragmentChildren } from "./buttonGroupAPI";
 import type { UseButtonGroupRootStateProps } from "./buttonGroupTypes";
 
 export function useButtonGroupRootState({

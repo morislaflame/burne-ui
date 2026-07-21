@@ -15,13 +15,13 @@ export function ToggleButtonGroupGlossDemo() {
       value={view}
       onValueChange={(v) => setView(v as string)}
     >
-      <ToggleButton value="list" leftIcon={<IoListOutline aria-hidden />}>
+      <ToggleButton value="list" icon={<IoListOutline aria-hidden />}>
         List
       </ToggleButton>
-      <ToggleButton value="grid" leftIcon={<IoGridOutline aria-hidden />}>
+      <ToggleButton value="grid" icon={<IoGridOutline aria-hidden />}>
         Net
       </ToggleButton>
-      <ToggleButton value="tiles" leftIcon={<IoSquareOutline aria-hidden />}>
+      <ToggleButton value="tiles" icon={<IoSquareOutline aria-hidden />}>
         Tiles
       </ToggleButton>
     </ToggleButtonGroup>

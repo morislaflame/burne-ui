@@ -22,14 +22,14 @@ export function AvatarShowcase() {
     <ShowcasePage
       title="Avatar"
       description="User avatars with initials, image and grouping."
-      importPath='import { Avatar, AvatarGroup } from "@/components/core/Avatar";'
+      importPath='import { Avatar } from "@/components/core/Avatar";'
       tags={["core", "media"]}
     >
       <ShowcaseSection title="Dimensions and fallback" description="size, label, src and custom Fallback.">
         <ShowcaseDemoFromFile Demo={AvatarSizesFallbackDemo} source={avatarSizesFallbackSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="AvatarGroup" description="Stack of avatars in one group.">
+      <ShowcaseSection title="Avatar.Group" description="Stack of avatars in one group.">
         <ShowcaseDemoFromFile Demo={AvatarGroupDemo} source={avatarGroupSource} />
       </ShowcaseSection>
 

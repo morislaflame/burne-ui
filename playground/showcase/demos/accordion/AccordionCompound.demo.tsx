@@ -15,7 +15,7 @@ export function AccordionCompoundDemo() {
                 <Accordion.Description>Kit React-components with compound API.</Accordion.Description>
               </Accordion.Content>
             </Accordion.Message>
-            <Accordion.Indicator />
+            <Accordion.Chevron />
           </Accordion.Trigger>
         </Accordion.Heading>
         <Accordion.Panel>
@@ -31,7 +31,7 @@ export function AccordionCompoundDemo() {
                 <Accordion.Description>Local component documentation.</Accordion.Description>
               </Accordion.Content>
             </Accordion.Message>
-            <Accordion.Indicator />
+            <Accordion.Chevron />
           </Accordion.Trigger>
         </Accordion.Heading>
         <Accordion.Panel>

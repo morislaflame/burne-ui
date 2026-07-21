@@ -1,14 +1,8 @@
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
-import {
-  useCollapsibleHeight,
-  useCollapsibleShellRef,
-} from "@/components/core/utils/useCollapsibleHeight";
+import { useCollapsibleHeight, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
 import { useCallback, useRef } from "react";
 
 import type { UseExpandableTriggerMotionProps } from "./expandableTypes";

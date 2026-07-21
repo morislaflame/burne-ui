@@ -1,9 +1,4 @@
-import {
-  createOptionGroupErrorPart,
-  createOptionGroupHintPart,
-  createOptionGroupLegendPart,
-  createOptionGroupListPart,
-} from "@/components/composite/utils/optionGroupParts";
+import { createOptionGroupErrorPart, createOptionGroupHintPart, createOptionGroupLegendPart, createOptionGroupListPart } from "@/components/composite/utils/optionGroupParts";
 
 import { useRadioGroupContext } from "./radioGroupContext";
 

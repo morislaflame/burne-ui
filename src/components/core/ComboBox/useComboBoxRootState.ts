@@ -23,7 +23,7 @@ export function useComboBoxRootState({
   error,
   id: idProp,
   name,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
   options = EMPTY_COMBOBOX_OPTIONS,
@@ -109,12 +109,12 @@ export function useComboBoxRootState({
       labelConnected: hasLabel,
       hintConnected: hasHint,
       errorConnected: hasError,
-      isRequired,
+      required,
       status,
       size,
       errorMessage: error,
     }),
-    [comboBoxId, error, errorId, hasError, hasHint, hasLabel, hintId, isRequired, labelId, size, status],
+    [comboBoxId, error, errorId, hasError, hasHint, hasLabel, hintId, required, labelId, size, status],
   );
 
   const comboCtx: ComboBoxContextValue = useMemo(
@@ -160,8 +160,8 @@ export function useComboBoxRootState({
   );
 
   const fieldLabelCtx = useMemo(
-    () => ({ controlId: comboBoxId, labelId, isRequired }),
-    [comboBoxId, isRequired, labelId],
+    () => ({ controlId: comboBoxId, labelId, required }),
+    [comboBoxId, required, labelId],
   );
 
   return {

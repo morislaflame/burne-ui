@@ -1,8 +1,4 @@
-import {
-  SEMANTIC_STATUS_OUTLINE_BORDER,
-  SEMANTIC_STATUS_SURFACE_TINT,
-  SEMANTIC_STATUS_TEXT,
-} from "@/components/core/utils/semanticStatusSurface";
+import { SEMANTIC_STATUS_OUTLINE_BORDER, SEMANTIC_STATUS_SURFACE_TINT, SEMANTIC_STATUS_TEXT } from "@/components/core/utils/semanticStatusSurface";
 import { cn } from "@/utils/cn";
 
 import type { AlertStatus, AlertVariant } from "./alertTypes";

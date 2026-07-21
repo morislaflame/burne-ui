@@ -1,9 +1,7 @@
 import type { ReactElement } from "react";
 
 import { ToggleButton } from "@/components/core/ToggleButton";
-import {
-  flattenFragmentChildren,
-} from "@/components/composite/ButtonGroup/buttonGroupAPI";
+import { flattenFragmentChildren } from "@/components/composite/ButtonGroup/buttonGroupAPI";
 
 import type { ToggleButtonGroupType } from "./toggleButtonGroupTypes";
 

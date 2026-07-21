@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Pagination,
-  type PaginationProps,
-  type PaginationClassNames,
-  type PaginationSummaryProps,
-  type PaginationContentProps,
-  type PaginationPageProps,
-} from "burne-ui";
+import { Pagination, type PaginationProps, type PaginationClassNames, type PaginationSummaryProps, type PaginationContentProps, type PaginationPageProps } from "burne-ui";
 ```
 
 ## API
@@ -262,7 +255,7 @@ configureMotion({
 
 - Иконки: `react-icons/io5` (`IoChevronBack`, `IoChevronForward`).
 - `children` в `Previous` / `Next` — кастомные labels; `aria-label` для a11y.
-- `Pagination.Page` принимает `isActive` override.
+- `Pagination.Page` принимает `active` override.
 - **Не удаляйте `data-flip-key`** с `<li>` при кастомном range — сломается FLIP.
 - Summary опционален — можно только prev/next/pages.
 - **Не задавайте `transform` на `<li>`** — конфликт с FLIP `x` tween.

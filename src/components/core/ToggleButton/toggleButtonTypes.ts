@@ -8,6 +8,7 @@ import type {
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { IconPosition } from "@/components/core/utils/iconPosition";
 import type { TextVariant } from "@/components/core/Text";
 
 export type ToggleButtonSize = ComponentSize;
@@ -23,8 +24,7 @@ export type ToggleButtonClassNames = {
   fill?: string;
   content?: string;
   label?: string;
-  leftIcon?: string;
-  rightIcon?: string;
+  icon?: string;
   text?: string;
 };
 
@@ -51,8 +51,9 @@ export type ToggleButtonProps = Omit<
   variant?: ToggleButtonVariant;
   fillColor?: string;
   size?: ToggleButtonSize;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
+  icon?: ReactNode;
+  /** @default "start" */
+  iconPosition?: IconPosition;
   animated?: boolean;
   classNames?: ToggleButtonClassNames;
 };
@@ -63,11 +64,11 @@ export type ToggleButtonContentProps = HTMLAttributes<HTMLSpanElement>;
 
 export type ToggleButtonLabelProps = HTMLAttributes<HTMLSpanElement>;
 
-export type ToggleButtonIconProps = HTMLAttributes<HTMLSpanElement> & {
+export type ToggleButtonIconStartProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 
-export type ToggleButtonTrailingProps = HTMLAttributes<HTMLSpanElement> & {
+export type ToggleButtonIconEndProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 
@@ -76,8 +77,8 @@ export type ToggleButtonTextProps = HTMLAttributes<HTMLSpanElement> & {
 };
 
 export type ToggleButtonSimpleContentProps = {
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
+  icon?: ReactNode;
+  iconPosition?: IconPosition;
   children?: ReactNode;
 };
 

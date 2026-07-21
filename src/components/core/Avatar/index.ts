@@ -4,9 +4,8 @@ import { AvatarFallback, AvatarGroup, AvatarImage } from "./avatarParts";
 export const Avatar = Object.assign(AvatarRoot, {
   Image: AvatarImage,
   Fallback: AvatarFallback,
+  Group: AvatarGroup,
 });
-
-export { AvatarGroup };
 
 export type {
   AvatarProps,

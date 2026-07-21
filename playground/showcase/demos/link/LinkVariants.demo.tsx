@@ -13,7 +13,7 @@ export function LinkVariantsDemo() {
       <Link href="https://github.com" target="_blank" rel="noreferrer" showDefaultIcon>
         External link
       </Link>
-      <Link href="#" onClick={preventNav} underline leftIcon={<IoRocketOutline aria-hidden />}>
+      <Link href="#" onClick={preventNav} underline icon={<IoRocketOutline aria-hidden />}>
         With icon
       </Link>
       <Link href="#" onClick={preventNav} underline showDefaultIcon>

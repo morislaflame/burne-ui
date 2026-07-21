@@ -15,12 +15,12 @@ export type RadioGroupOrientation = OptionGroupOrientation;
 export type RadioGroupContextValue = {
   name: string;
   disabled: boolean;
-  isRequired: boolean;
+  required: boolean;
   hintId: string;
   errorId: string;
   selectedValue: string | undefined;
   selectValue: (value: string | undefined) => void;
-  /** First option in the group claims native `required` when `isRequired`. */
+  /** First option in the group claims native `required` when `required`. */
   claimRequiredAnchor: () => boolean;
 };
 
@@ -28,7 +28,7 @@ export type RadioGroupProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children" | "onChange"
 > & {
-  isRequired?: boolean;
+  required?: boolean;
   value?: string | null;
   defaultValue?: string;
   onValueChange?: (value: string | undefined) => void;

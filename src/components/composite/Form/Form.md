@@ -5,17 +5,7 @@ Composite-обёртка над `<form>`: state machine (values, errors, touched
 ## Импорт
 
 ```tsx
-import {
-  Form,
-  useFormField,
-  type FormProps,
-  type FormSectionProps,
-  type FormClassNames,
-  type FormValues,
-  type FormFieldRules,
-  type FormResolver,
-  type FormValidateMode,
-} from "burne-ui";
+import { Form, useFormField, type FormProps, type FormSectionProps, type FormClassNames, type FormValues, type FormFieldRules, type FormResolver, type FormValidateMode } from "burne-ui";
 ```
 
 Расширенный API (для авторов контролов) — из `@/components/composite/Form`: `useFormControlProps`, `useFormFieldBinding`, `useFormBindingContext`.
@@ -38,7 +28,7 @@ import {
   <Form.Description>Обновите данные аккаунта.</Form.Description>
   <Form.Section>
     <Form.Field name="name">
-      <Input name="name" label="Имя" isRequired />
+      <Input name="name" label="Имя" required />
     </Form.Field>
     <Form.Field name="email">
       <Input name="email" label="Email" type="email" />

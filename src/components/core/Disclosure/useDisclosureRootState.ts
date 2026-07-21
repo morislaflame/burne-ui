@@ -18,7 +18,7 @@ export function useDisclosureRootState({
   variant: variantProp,
   size: sizeProp,
   disabled = false,
-  iconPos = "right",
+  iconPosition = "end",
   dragHandle = false,
 }: UseDisclosureRootStateProps) {
   const groupCtx = useDisclosureGroupContext();
@@ -63,14 +63,14 @@ export function useDisclosureRootState({
       variant,
       size,
       disabled,
-      iconPos,
+      iconPosition,
       dragHandle,
       shellRef,
       innerRef,
       chevronRef,
       skipContentAnimRef,
     }),
-    [disabled, dragHandle, iconPos, open, panelId, setOpen, size, triggerId, variant],
+    [disabled, dragHandle, iconPosition, open, panelId, setOpen, size, triggerId, variant],
   );
 
   const orderedChildren =

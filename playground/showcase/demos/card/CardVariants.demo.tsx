@@ -27,7 +27,7 @@ export function CardVariantsDemo() {
           <Button variant="ghost" size="small">
             Cancel
           </Button>
-          <Button size="small" leftIcon={<IoArrowForward aria-hidden />}>
+          <Button size="small" icon={<IoArrowForward aria-hidden />}>
             Next
           </Button>
         </Card.Footer>

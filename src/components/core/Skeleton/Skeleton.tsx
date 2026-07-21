@@ -1,17 +1,8 @@
 import { forwardRef } from "react";
 
 import { skeletonPresentationProps } from "./skeletonA11y";
-import {
-  SkeletonBlock,
-  SkeletonCircle,
-  SkeletonText,
-  SkeletonWave,
-} from "./skeletonParts";
-import {
-  SKELETON_BASE_CLASS,
-  skeletonRadiusClass,
-  skeletonVariantStyle,
-} from "./skeletonStyles";
+import { SkeletonBlock, SkeletonCircle, SkeletonText, SkeletonWave } from "./skeletonParts";
+import { SKELETON_BASE_CLASS, skeletonRadiusClass, skeletonVariantStyle } from "./skeletonStyles";
 import type { SkeletonProps } from "./skeletonTypes";
 import { useSkeletonRootState } from "./useSkeletonRootState";
 

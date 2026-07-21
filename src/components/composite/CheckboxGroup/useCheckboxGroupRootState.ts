@@ -10,7 +10,7 @@ import type {
 } from "./checkboxGroupTypes";
 
 export function useCheckboxGroupRootState({
-  isRequired = false,
+  required = false,
   selection = "multiple",
   value: valueProp,
   defaultValue,
@@ -40,20 +40,20 @@ export function useCheckboxGroupRootState({
   );
 
   const { claimRequiredAnchor: claimAnchor } = useOptionGroupRequiredAnchor([
-    isRequired,
+    required,
     selection,
   ]);
 
   const claimRequiredAnchor = useCallback(() => {
-    if (selection !== "single" || !isRequired) return false;
+    if (selection !== "single" || !required) return false;
     return claimAnchor();
-  }, [claimAnchor, isRequired, selection]);
+  }, [claimAnchor, required, selection]);
 
   const contextValue = useMemo<CheckboxGroupContextValue>(
     () => ({
       selection,
       disabled,
-      isRequired,
+      required,
       hintId,
       errorId,
       selectedValue,
@@ -65,14 +65,14 @@ export function useCheckboxGroupRootState({
       disabled,
       errorId,
       hintId,
-      isRequired,
+      required,
       selectSingleValue,
       selectedValue,
       selection,
     ],
   );
 
-  const fieldLabelCtx = useMemo(() => ({ isRequired }), [isRequired]);
+  const fieldLabelCtx = useMemo(() => ({ required }), [required]);
 
   return { contextValue, fieldLabelCtx, hintId, errorId, disabled };
 }

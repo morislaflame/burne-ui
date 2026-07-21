@@ -47,7 +47,7 @@ export type AddToastOpts = {
   timeout?: number;
   placement?: ToastPlacement;
   id?: string;
-  isLoading?: boolean;
+  loading?: boolean;
   classNames?: ToastClassNames;
 };
 
@@ -71,7 +71,7 @@ export type ToastEntry = {
   timeout: number;
   placement: ToastPlacement;
   createdAt: number;
-  isLoading: boolean;
+  loading: boolean;
   classNames?: ToastClassNames;
 };
 
@@ -90,7 +90,7 @@ export type ToastItemContextValue = {
   sizePreset: MessageBannerSizePreset;
   titleId: string;
   descriptionId: string;
-  isLoading: boolean;
+  loading: boolean;
   dismiss: () => void;
   gridSlots: MessageBannerGridSlots;
 };
@@ -115,14 +115,14 @@ export type ToastRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
-  isLoading?: boolean;
+  loading?: boolean;
   onClose?: () => void;
   classNames?: ToastClassNames;
 };
 
 export type UseToastRootStateProps = Pick<
   ToastRootProps,
-  "status" | "size" | "title" | "description" | "action" | "isLoading" | "onClose" | "children"
+  "status" | "size" | "title" | "description" | "action" | "loading" | "onClose" | "children"
 >;
 
 export type ToastIndicatorProps = HTMLAttributes<HTMLSpanElement>;
@@ -130,8 +130,8 @@ export type ToastMessageProps = HTMLAttributes<HTMLDivElement>;
 export type ToastContentProps = HTMLAttributes<HTMLDivElement>;
 export type ToastTitleProps = HTMLAttributes<HTMLDivElement>;
 export type ToastDescriptionProps = HTMLAttributes<HTMLDivElement>;
-export type ToastActionButtonProps = HTMLAttributes<HTMLDivElement>;
-export type ToastCloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ToastActionProps = HTMLAttributes<HTMLDivElement>;
+export type ToastCloseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   "aria-label"?: string;
 };
 

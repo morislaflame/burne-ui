@@ -32,11 +32,11 @@ export function FormLoginPanelDemo() {
       >
         <Form.Section>
           <Form.Field name="login">
-            <Input isRequired label="Email" name="login" autoComplete="email" />
+            <Input required label="Email" name="login" autoComplete="email" />
           </Form.Field>
           <Form.Field name="password">
             <Input
-              isRequired
+              required
               label="Password"
               name="password"
               inputType="password"

@@ -73,7 +73,7 @@ export type PaginationPageProps = Omit<
   "children"
 > & {
   page: number;
-  isActive?: boolean;
+  active?: boolean;
   children?: ReactNode;
 };
 

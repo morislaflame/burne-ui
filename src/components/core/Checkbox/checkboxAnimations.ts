@@ -1,8 +1,5 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  useLayoutEffect,
-  useRef,
-} from "react";
+import { useLayoutEffect, useRef } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";

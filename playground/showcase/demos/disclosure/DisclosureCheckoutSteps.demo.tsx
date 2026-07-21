@@ -1,6 +1,6 @@
 import { IoCheckmarkCircleOutline, IoCubeOutline, IoWalletOutline } from "react-icons/io5";
 
-import { Disclosure, DisclosureGroup } from "@/components/core/Disclosure";
+import { Disclosure } from "@/components/core/Disclosure";
 import { Text } from "@/components/core/Text";
 
 const STEPS = [
@@ -26,7 +26,7 @@ const STEPS = [
 
 export function DisclosureCheckoutStepsDemo() {
   return (
-    <DisclosureGroup variant="outline" defaultValue="cart" className="w-full max-w-lg">
+    <Disclosure.Group variant="outline" defaultValue="cart" className="w-full max-w-lg">
       {STEPS.map((step) => (
         <Disclosure key={step.value} value={step.value}>
           <Disclosure.Trigger icon={step.icon}>{step.title}</Disclosure.Trigger>
@@ -37,6 +37,6 @@ export function DisclosureCheckoutStepsDemo() {
           </Disclosure.Content>
         </Disclosure>
       ))}
-    </DisclosureGroup>
+    </Disclosure.Group>
   );
 }

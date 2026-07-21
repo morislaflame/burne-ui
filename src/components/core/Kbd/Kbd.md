@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Kbd,
-  type KbdProps,
-  type KbdVariant,
-  type KbdSize,
-  type KbdClassNames,
-  type KbdGroupProps,
-} from "burne-ui";
+import { Kbd, type KbdProps, type KbdVariant, type KbdSize, type KbdClassNames, type KbdGroupProps } from "burne-ui";
 ```
 
 ## API

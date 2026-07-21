@@ -1,38 +1,10 @@
-import {
-  forwardRef,
-  useCallback,
-  useMemo,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import { forwardRef, useCallback, useMemo, type MouseEvent, type ReactNode } from "react";
 
 import { columnAriaSort, rowAriaSelected } from "./tableA11y";
-import {
-  resolveColumnSortDirection,
-  resolveNextSortDescriptor,
-  TONED_ROW_DEFAULT_TONE,
-} from "./tableAPI";
+import { resolveColumnSortDirection, resolveNextSortDescriptor, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
 import { TableSortChevron } from "./tableAnimations";
-import {
-  TableContentProvider,
-  TableRowProvider,
-  useTableClassNames,
-  useTableContent,
-  useTableRow,
-  useTableVariant,
-} from "./tableContext";
-import {
-  TABLE_BODY_EMPTY_CELL_CLASS,
-  TABLE_COLUMN_INNER_CLASS,
-  TABLE_COLUMN_LABEL_CLASS,
-  TABLE_FOOTER_CLASS,
-  TABLE_HEADER_ROW_VARIANT_CLASS,
-  TABLE_SCROLL_CONTAINER_CLASS,
-  tableCellClass,
-  tableColumnClass,
-  tableContentClass,
-  tableRowClass,
-} from "./tableStyles";
+import { TableContentProvider, TableRowProvider, useTableClassNames, useTableContent, useTableRow, useTableVariant } from "./tableContext";
+import { TABLE_BODY_EMPTY_CELL_CLASS, TABLE_COLUMN_INNER_CLASS, TABLE_COLUMN_LABEL_CLASS, TABLE_FOOTER_CLASS, TABLE_HEADER_ROW_VARIANT_CLASS, TABLE_SCROLL_CONTAINER_CLASS, tableCellClass, tableColumnClass, tableContentClass, tableRowClass } from "./tableStyles";
 import type {
   TableBodyProps,
   TableCellProps,

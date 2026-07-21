@@ -29,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Form field primitives: **Field.Root**, **Field.Label**, **Field.Hint**, **Field.Error**, **Field.Set** (+ **Field.Group**, **Field.Actions**). Used inside Input, ComboBox, Meter, etc.; you can also compose fields manually.",
+          "Form field primitives: **Field**, **Field.Label**, **Field.Hint**, **Field.Error**, **Field.Set** (+ **Field.Group**, **Field.Actions**). Used inside Input, ComboBox, Meter, etc.; you can also compose fields manually.",
       },
     },
   },

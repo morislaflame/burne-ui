@@ -5,15 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  ListBox,
-  useListBox,
-  type ListBoxRootProps,
-  type ListBoxItemProps,
-  type ListBoxSize,
-  type ListBoxVariant,
-  type ListBoxClassNames,
-} from "burne-ui";
+import { ListBox, useListBox, type ListBoxRootProps, type ListBoxItemProps, type ListBoxSize, type ListBoxVariant, type ListBoxClassNames } from "burne-ui";
 ```
 
 ## API

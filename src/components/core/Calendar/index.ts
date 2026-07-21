@@ -1,9 +1,4 @@
-import {
-  CalendarFooter,
-  CalendarGrid,
-  CalendarHeader,
-  CalendarRoot,
-} from "./Calendar";
+import { CalendarFooter, CalendarGrid, CalendarHeader, CalendarRoot } from "./Calendar";
 
 export const Calendar = Object.assign(CalendarRoot, {
   Header: CalendarHeader,

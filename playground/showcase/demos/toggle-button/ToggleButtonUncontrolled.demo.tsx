@@ -4,7 +4,7 @@ import { ToggleButton } from "@/components/core/ToggleButton";
 
 export function ToggleButtonUncontrolledDemo() {
   return (
-    <ToggleButton variant="default" defaultPressed leftIcon={<IoBookmarkOutline aria-hidden />}>
+    <ToggleButton variant="default" defaultPressed icon={<IoBookmarkOutline aria-hidden />}>
       Bookmark
     </ToggleButton>
   );

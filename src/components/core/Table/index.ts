@@ -1,14 +1,4 @@
-import {
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableContent,
-  TableFooter,
-  TableHeader,
-  TableRoot,
-  TableRow,
-  TableScrollContainer,
-} from "./Table";
+import { TableBody, TableCell, TableColumn, TableContent, TableFooter, TableHeader, TableRoot, TableRow, TableScrollContainer } from "./Table";
 
 export const Table = Object.assign(TableRoot, {
   ScrollContainer: TableScrollContainer,

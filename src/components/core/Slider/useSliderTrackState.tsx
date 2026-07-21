@@ -1,44 +1,12 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type PointerEvent,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
-import {
-  clampSliderValue,
-  defaultSliderFormatValue,
-  normalizeSliderMarks,
-  partitionSliderTrackChildren,
-  readSliderTrackMetrics,
-  resolveSliderFallbackThumbPx,
-  sliderAdjacentMark,
-  sliderFillSpanForValues,
-  sliderFillStyleFromSpan,
-  sliderPointerToValue,
-  sliderStepDelta,
-  sliderThumbCenterPercent,
-  snapSliderToMarks,
-  snapSliderToStep,
-} from "./sliderAPI";
+import { clampSliderValue, defaultSliderFormatValue, normalizeSliderMarks, partitionSliderTrackChildren, readSliderTrackMetrics, resolveSliderFallbackThumbPx, sliderAdjacentMark, sliderFillSpanForValues, sliderFillStyleFromSpan, sliderPointerToValue, sliderStepDelta, sliderThumbCenterPercent, snapSliderToMarks, snapSliderToStep } from "./sliderAPI";
 import { resolveSliderThumbA11y } from "./sliderA11y";
 import { applySliderFillStyle, useSliderFillCleanup } from "./sliderAnimations";
 import { useOptionalSliderFieldContext, useSliderClassNames } from "./sliderContext";
-import {
-  sliderFillClass,
-  sliderMarkStyle,
-  sliderRailClass,
-  sliderTrackCrossStyle,
-  sliderTrackHitAreaClass,
-  SLIDER_MARK_CLASS,
-} from "./sliderStyles";
+import { sliderFillClass, sliderMarkStyle, sliderRailClass, sliderTrackCrossStyle, sliderTrackHitAreaClass, SLIDER_MARK_CLASS } from "./sliderStyles";
 import { SliderThumbButton } from "./sliderThumbParts";
 import type { SliderThumbKind, SliderTrackContextValue, SliderTrackProps } from "./sliderTypes";
 

@@ -1,17 +1,4 @@
-import {
-  AlertDialogBody,
-  AlertDialogClose,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogHeadingBlock,
-  AlertDialogIndicator,
-  AlertDialogPanel,
-  AlertDialogRoot,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./AlertDialog";
+import { AlertDialogBody, AlertDialogClose, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogHeadingBlock, AlertDialogIndicator, AlertDialogPanel, AlertDialogRoot, AlertDialogTitle, AlertDialogTrigger } from "./AlertDialog";
 
 export const AlertDialog = Object.assign(AlertDialogRoot, {
   Trigger: AlertDialogTrigger,

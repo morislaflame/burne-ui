@@ -55,7 +55,7 @@ export function ToggleButtonShowcase() {
 
       <ShowcaseSection
         title="Full customization classNames"
-        description="Slots root, fill, content, leftIcon, rightIcon, label through classNames."
+        description="Slots root, fill, content, icon, label through classNames."
       >
         <ShowcaseDemoFromFile Demo={ToggleButtonClassNamesFullDemo} source={toggleButtonClassNamesFullSource} />
       </ShowcaseSection>
@@ -75,7 +75,7 @@ export function ToggleButtonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="pressed, defaultPressed, onPressedChange, variant, size, leftIcon, value (in a group)."
+            description="pressed, defaultPressed, onPressedChange, variant, size, icon, value (in a group)."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Groups">

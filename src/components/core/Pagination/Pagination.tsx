@@ -1,9 +1,6 @@
 import { forwardRef } from "react";
 
-import {
-  PaginationClassNamesProvider,
-  PaginationProvider,
-} from "./paginationContext";
+import { PaginationClassNamesProvider, PaginationProvider } from "./paginationContext";
 import { PaginationRootShell } from "./paginationParts";
 import type { PaginationProps } from "./paginationTypes";
 import { usePaginationRootState } from "./usePaginationRootState";

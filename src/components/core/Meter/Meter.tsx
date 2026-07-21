@@ -1,10 +1,7 @@
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import {
-  MeterClassNamesProvider,
-  MeterFieldProvider,
-} from "./meterContext";
+import { MeterClassNamesProvider, MeterFieldProvider } from "./meterContext";
 import { MeterSimpleBody } from "./meterParts";
 import { meterRootClass } from "./meterStyles";
 import type { MeterRootProps } from "./meterTypes";

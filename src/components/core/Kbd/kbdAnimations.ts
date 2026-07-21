@@ -1,10 +1,6 @@
 import { useCallback, useMemo, useRef } from "react";
 
-import {
-  createGlossInteractiveRefCallback,
-  GLOSS_INTERACTIVE_MOTION_CLASS,
-  useGlossInteractiveHandlers,
-} from "@/components/core/utils/glossInteractiveMotion";
+import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 

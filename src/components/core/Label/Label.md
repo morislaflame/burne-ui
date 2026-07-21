@@ -5,15 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Label,
-  LabelSlot,
-  FieldLabelContext,
-  useOptionalFieldLabelContext,
-  type LabelProps,
-  type LabelClassNames,
-  type FieldLabelContextValue,
-} from "burne-ui";
+import { Label, LabelSlot, FieldLabelContext, useOptionalFieldLabelContext, type LabelProps, type LabelClassNames, type FieldLabelContextValue } from "burne-ui";
 ```
 
 ## API
@@ -26,7 +18,7 @@ Simple API + минимальный compound (`Label.Slot` — null-компон
 |------|-----|--------------|----------|
 | `htmlFor` | `string` | из context | ID контрола; при наличии рендерится `<label>` |
 | `id` | `string` | из context | ID подписи (`aria-labelledby`); на `<label>` и на `<span>` |
-| `isRequired` | `boolean` | `false` / context | Показывает `*` (`text-danger`) |
+| `required` | `boolean` | `false` / context | Показывает `*` (`text-danger`) |
 | `className` | `string` | — | На root |
 | `classNames` | `LabelClassNames` | — | Слоты: `root`, `text`, `required` |
 | `children` | `ReactNode` | — | Текст подписи |
@@ -45,7 +37,7 @@ type LabelClassNames = {
 
 ```tsx
 // Явная привязка
-<Label htmlFor="email" isRequired>Email</Label>
+<Label htmlFor="email" required>Email</Label>
 <Input><Input.Control id="email" /></Input>
 
 // Через Input (label prop → внутренний Label + context)
@@ -72,7 +64,7 @@ type LabelClassNames = {
 | `htmlFor` задан | `<label id htmlFor>` | Клик фокусирует контрол; `id` для `aria-labelledby` |
 | только `id` | `<span id>` | Подпись без прямой привязки |
 
-Текст: `Text` variant `base`, `font-medium`. Required: `*` с `aria-hidden` (семантика через `required` на контроле / `isRequired` в форме).
+Текст: `Text` variant `base`, `font-medium`. Required: `*` с `aria-hidden` (семантика через `required` на контроле / `required` в форме).
 
 ## FieldLabelContext
 
@@ -82,11 +74,11 @@ type LabelClassNames = {
 type FieldLabelContextValue = {
   controlId?: string;
   labelId?: string;
-  isRequired?: boolean;
+  required?: boolean;
 };
 ```
 
-`useLabelRootState` мержит props с context: `htmlFor ?? ctx.controlId`, `id ?? ctx.labelId`, `isRequired ?? ctx.isRequired`.
+`useLabelRootState` мержит props с context: `htmlFor ?? ctx.controlId`, `id ?? ctx.labelId`, `required ?? ctx.required`.
 
 `useOptionalFieldLabelContext()` — для Checkbox/Radio label-связки без throw.
 
@@ -99,13 +91,13 @@ type FieldLabelContextValue = {
 ```
 <label|span> (inline-flex, gap-x-xsmall)
   <Text span> подпись
-  <span * aria-hidden>   ← optional isRequired
+  <span * aria-hidden>   ← optional required
 ```
 
 ### Что не анимируется
 
 - Появление маркера `*`
-- Смена `isRequired`
+- Смена `required`
 - Focus на связанном контроле (стили focus — на Input shell, не на Label)
 
 ### Связанная motion у соседей
@@ -162,7 +154,7 @@ Label — leaf-компонент без compound API; используется 
 ```tsx
 <Label
   htmlFor="email"
-  isRequired
+  required
   className="mb-small"
   classNames={{
     root: "rounded-mid border border-primary/30 px-base py-xsmall",

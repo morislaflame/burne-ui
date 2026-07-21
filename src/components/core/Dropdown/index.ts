@@ -1,19 +1,4 @@
-import {
-  DropdownGroup,
-  DropdownItem,
-  DropdownItemHint,
-  DropdownItemIcon,
-  DropdownItemIndicator,
-  DropdownItemLabel,
-  DropdownLabel,
-  DropdownPopover,
-  DropdownRoot,
-  DropdownSeparator,
-  DropdownSub,
-  DropdownSubContent,
-  DropdownSubTrigger,
-  DropdownTrigger,
-} from "./Dropdown";
+import { DropdownGroup, DropdownItem, DropdownItemHint, DropdownItemIcon, DropdownItemIndicator, DropdownItemLabel, DropdownLabel, DropdownPopover, DropdownRoot, DropdownSeparator, DropdownSub, DropdownSubContent, DropdownSubTrigger, DropdownTrigger } from "./Dropdown";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 const DropdownItemIndicatorCompound = Object.assign(DropdownItemIndicator, {
@@ -23,8 +8,8 @@ const DropdownItemIndicatorCompound = Object.assign(DropdownItemIndicator, {
 
 export const Dropdown = Object.assign(DropdownRoot, {
   Trigger: DropdownTrigger,
+  /** Floating menu panel host. Not `Popover.Content` (body inside a Popover). */
   Popover: DropdownPopover,
-  Content: DropdownPopover,
   Group: DropdownGroup,
   Label: DropdownLabel,
   Separator: DropdownSeparator,

@@ -4,20 +4,8 @@ import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractive
 
 import "@/components/core/utils/glossInteractive.css";
 
-import {
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableContent,
-  TableFooter,
-  TableHeader,
-  TableRow,
-  TableScrollContainer,
-} from "./tableParts";
-import {
-  TableClassNamesProvider,
-  TableVariantProvider,
-} from "./tableContext";
+import { TableBody, TableCell, TableColumn, TableContent, TableFooter, TableHeader, TableRow, TableScrollContainer } from "./tableParts";
+import { TableClassNamesProvider, TableVariantProvider } from "./tableContext";
 import { TABLE_GLOSS_CONTENT_CLASS, tableRootClass } from "./tableStyles";
 import type { TableProps } from "./tableTypes";
 import { useTableRootState } from "./useTableRootState";

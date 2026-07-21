@@ -1,9 +1,5 @@
 import { configureMotion } from "@/components/core/utils/motionConfig";
-import {
-  FONT_WEIGHT_CSS_VAR,
-  FONT_WEIGHT_DEFAULTS,
-  type FontWeightStep,
-} from "@/tokens/fontWeights";
+import { FONT_WEIGHT_CSS_VAR, FONT_WEIGHT_DEFAULTS, type FontWeightStep } from "@/tokens/fontWeights";
 
 import { DARK_COLORS, LIGHT_COLORS } from "./themePalettes";
 

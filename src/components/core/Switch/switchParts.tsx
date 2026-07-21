@@ -1,16 +1,4 @@
-import {
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type PointerEvent,
-  type ReactNode,
-} from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useId, useMemo, useRef, useState, type ChangeEvent, type PointerEvent, type ReactNode } from "react";
 
 import { FieldError, FieldHint } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
@@ -23,43 +11,8 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { hasSwitchThumbChild, partitionSwitchControlChildren } from "./switchAPI";
 import { switchFallbackAriaLabel, switchInputId } from "./switchA11y";
 import { useSwitchTrackAnimations } from "./switchAnimations";
-import {
-  useOptionalSwitchFieldContext,
-  useSwitchClassNames,
-  useSwitchFieldContext,
-  useSwitchTrackContext,
-  SwitchTrackProvider,
-} from "./switchContext";
-import {
-  SWITCH_CONTENT_COMPOUND_CLASS,
-  SWITCH_CONTENT_PASS_THROUGH_CLASS,
-  SWITCH_CONTROL_BASE_CLASS,
-  SWITCH_ERROR_DISABLED_CLASS,
-  SWITCH_FILL_BASE_CLASS,
-  SWITCH_FILL_COLOR_CLASS,
-  SWITCH_FILL_GLOSS_CLASS,
-  SWITCH_FILL_GLOSS_TINT_CLASS,
-  SWITCH_HINT_DISABLED_CLASS,
-  SWITCH_ICON_BASE_CLASS,
-  SWITCH_INPUT_VISUALLY_HIDDEN_CLASS,
-  SWITCH_LABEL_CLASS,
-  SWITCH_LABEL_COMPOUND_SECONDARY_CLASS,
-  SWITCH_LABEL_MOTION_CLASS,
-  SWITCH_LABEL_TEXT_CLASS,
-  SWITCH_LABEL_TEXT_DISABLED_CLASS,
-  SWITCH_LAYOUT,
-  SWITCH_SIMPLE_LABEL_TEXT_CLASS,
-  SWITCH_SIMPLE_LABEL_WRAP_CLASS,
-  SWITCH_THUMB_BASE_CLASS,
-  SWITCH_THUMB_GLOSS_CLASS,
-  switchControlCellClass,
-  switchErrorRow,
-  switchFillColorStyle,
-  switchLabelCellClass,
-  switchSecondaryCellClass,
-  switchTrackClass,
-  switchTrackCustomStyle,
-} from "./switchStyles";
+import { useOptionalSwitchFieldContext, useSwitchClassNames, useSwitchFieldContext, useSwitchTrackContext, SwitchTrackProvider } from "./switchContext";
+import { SWITCH_CONTENT_COMPOUND_CLASS, SWITCH_CONTENT_PASS_THROUGH_CLASS, SWITCH_CONTROL_BASE_CLASS, SWITCH_ERROR_DISABLED_CLASS, SWITCH_FILL_BASE_CLASS, SWITCH_FILL_COLOR_CLASS, SWITCH_FILL_GLOSS_CLASS, SWITCH_FILL_GLOSS_TINT_CLASS, SWITCH_HINT_DISABLED_CLASS, SWITCH_ICON_BASE_CLASS, SWITCH_INPUT_VISUALLY_HIDDEN_CLASS, SWITCH_LABEL_CLASS, SWITCH_LABEL_COMPOUND_SECONDARY_CLASS, SWITCH_LABEL_MOTION_CLASS, SWITCH_LABEL_TEXT_CLASS, SWITCH_LABEL_TEXT_DISABLED_CLASS, SWITCH_LAYOUT, SWITCH_SIMPLE_LABEL_TEXT_CLASS, SWITCH_SIMPLE_LABEL_WRAP_CLASS, SWITCH_THUMB_BASE_CLASS, SWITCH_THUMB_GLOSS_CLASS, switchControlCellClass, switchErrorRow, switchFillColorStyle, switchLabelCellClass, switchSecondaryCellClass, switchTrackClass, switchTrackCustomStyle } from "./switchStyles";
 import type {
   SwitchContentProps,
   SwitchControlProps,

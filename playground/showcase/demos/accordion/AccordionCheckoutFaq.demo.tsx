@@ -30,7 +30,7 @@ export function AccordionCheckoutFaqDemo() {
                   <Accordion.Title>{item.title}</Accordion.Title>
                   <Accordion.Description>{item.description}</Accordion.Description>
                 </Accordion.Content>
-                <Accordion.Indicator />
+                <Accordion.Chevron />
               </Accordion.Message>
             </Accordion.Trigger>
           </Accordion.Heading>

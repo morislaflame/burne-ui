@@ -12,7 +12,7 @@ export function TextAreaSupportTicketDemo() {
           Describe the problem - we will respond within one business day.
         </Text>
       </div>
-      <TextArea isRequired>
+      <TextArea required>
         <TextArea.Label>Message</TextArea.Label>
         <TextArea.Control rows={3} placeholder="What went wrong…" />
         <TextArea.Hint>Specify reproduction steps and expected result.</TextArea.Hint>

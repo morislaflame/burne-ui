@@ -1,16 +1,4 @@
-import {
-  ListBoxEmpty,
-  ListBoxHeader,
-  ListBoxHint,
-  ListBoxIcon,
-  ListBoxItem,
-  ListBoxItemIndicator,
-  ListBoxLabel,
-  ListBoxRoot,
-  ListBoxSection,
-  ListBoxSeparator,
-  useListBox,
-} from "./ListBox";
+import { ListBoxEmpty, ListBoxHeader, ListBoxHint, ListBoxIcon, ListBoxItem, ListBoxItemIndicator, ListBoxLabel, ListBoxRoot, ListBoxSection, ListBoxSeparator, useListBox } from "./ListBox";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 const ListBoxItemIndicatorCompound = Object.assign(ListBoxItemIndicator, {

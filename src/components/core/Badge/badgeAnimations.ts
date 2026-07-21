@@ -1,25 +1,11 @@
-import {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  type RefObject,
-} from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
-import {
-  createGlossInteractiveRefCallback,
-  GLOSS_INTERACTIVE_MOTION_CLASS,
-  useGlossInteractiveHandlers,
-} from "@/components/core/utils/glossInteractiveMotion";
+import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { initElementShadow, shadowBase } from "@/components/core/utils/hoverInteractiveLift";
-import {
-  SHADOW_LIFT_MOTION_CLASS,
-  useSecondLevelShadow,
-  useSecondLevelShadowContainer,
-} from "@/components/core/utils/useShadowMotion";
+import { SHADOW_LIFT_MOTION_CLASS, useSecondLevelShadow, useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
 
 import { useBadgeLiftContext } from "./badgeContext";
 import type { UseBadgeAnimationsProps } from "./badgeTypes";

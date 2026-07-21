@@ -18,10 +18,10 @@ export function LinkCardActionsDemo() {
         </Text>
       </div>
       <div className="flex flex-wrap gap-mid">
-        <Link href="#" onClick={preventNav} leftIcon={<IoOpenOutline aria-hidden />} size="small" underline>
+        <Link href="#" onClick={preventNav} icon={<IoOpenOutline aria-hidden />} size="small" underline>
           Changelog
         </Link>
-        <Link href="#" onClick={preventNav} leftIcon={<IoShareSocialOutline aria-hidden />} size="small">
+        <Link href="#" onClick={preventNav} icon={<IoShareSocialOutline aria-hidden />} size="small">
           Share
         </Link>
       </div>

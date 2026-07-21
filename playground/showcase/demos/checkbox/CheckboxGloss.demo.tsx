@@ -20,7 +20,7 @@ export function CheckboxGlossDemo() {
         variant="gloss"
         checked={on}
         onChange={(e) => setOn(e.target.checked)}
-        checkIcon={<IoCheckmark aria-hidden />}
+        icon={<IoCheckmark aria-hidden />}
       />
     </div>
   );

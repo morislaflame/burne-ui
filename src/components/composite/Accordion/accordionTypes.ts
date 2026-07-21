@@ -43,7 +43,7 @@ export type AccordionTitleProps = ExpandableTitleProps;
 
 export type AccordionDescriptionProps = ExpandableDescriptionProps;
 
-export type AccordionIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
+export type AccordionChevronProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 

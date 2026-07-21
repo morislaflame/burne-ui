@@ -4,10 +4,7 @@ import { Ripple } from "@/components/core/Ripple";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
 
 import { useCloseButtonClassNames } from "./closeButtonContext";
-import {
-  closeButtonIconClass,
-  CLOSE_BUTTON_RIPPLE_CLIP_CLASS,
-} from "./closeButtonStyles";
+import { closeButtonIconClass, CLOSE_BUTTON_RIPPLE_CLIP_CLASS } from "./closeButtonStyles";
 import type { CloseButtonSize } from "./closeButtonTypes";
 
 import { cn } from "@/utils/cn";

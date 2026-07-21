@@ -1,30 +1,11 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  type ChangeEvent,
-  type FocusEvent,
-  type ForwardedRef,
-  type KeyboardEvent as ReactKeyboardEvent,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, type ChangeEvent, type FocusEvent, type ForwardedRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
 import { comboBoxActiveOptionId } from "./comboBoxA11y";
-import {
-  runComboBoxOpenAfterSqueeze,
-  useComboBoxOpeningRef,
-} from "./comboBoxAnimations";
-import {
-  comboBoxBumpActiveValue,
-  comboBoxFilteredValues,
-  comboBoxFirstEnabledValue,
-  comboBoxLastEnabledValue,
-  comboBoxOptionDisplayString,
-  comboBoxOptionsByValue,
-} from "./comboBoxAPI";
+import { runComboBoxOpenAfterSqueeze, useComboBoxOpeningRef } from "./comboBoxAnimations";
+import { comboBoxBumpActiveValue, comboBoxFilteredValues, comboBoxFirstEnabledValue, comboBoxLastEnabledValue, comboBoxOptionDisplayString, comboBoxOptionsByValue } from "./comboBoxAPI";
 import { useComboBoxContext } from "./comboBoxContext";
 import type { ComboBoxInputProps } from "./comboBoxTypes";
 
@@ -56,7 +37,7 @@ export function useComboBoxInputState(
     placeholder,
     size,
     status,
-    isRequired,
+    required,
     hintConnected,
     errorConnected,
     hintId,
@@ -250,7 +231,7 @@ export function useComboBoxInputState(
     placeholder,
     size,
     status,
-    isRequired,
+    required,
     activeOptionId,
     ariaDescribedBy,
     inputValue: open ? filterQuery : selectedDisplayString,

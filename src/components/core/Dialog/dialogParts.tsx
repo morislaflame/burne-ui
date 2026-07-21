@@ -1,49 +1,16 @@
-import {
-  Children,
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  type MouseEvent as ReactMouseEvent,
-  type PointerEvent as ReactPointerEvent,
-  type Ref,
-  type ReactElement,
-} from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type Ref, type ReactElement } from "react";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
-import {
-  burneLightThemePortalProps,
-  useBurneLightTheme,
-  usePortalThemeAnchor,
-} from "@/components/core/utils/burneLightTheme";
+import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import {
-  runOpenAfterSqueeze,
-  useOpeningRef,
-} from "@/components/core/utils/runOpenAfterSqueeze";
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { DIALOG_CLOSE_DEFAULT_ARIA_LABEL } from "./dialogA11y";
 import { useDialogModalMotion } from "./dialogAnimations";
 import { useDialog, useDialogClassNames } from "./dialogContext";
-import {
-  DIALOG_CLOSE_CLASS,
-  DIALOG_FOOTER_CLASS,
-  DIALOG_GLOSS_CONTENT_CLASS,
-  DIALOG_HEADER_CLASS,
-  DIALOG_HEADING_BLOCK_CLASS,
-  DIALOG_NATIVE_CLASS,
-  DIALOG_TITLE_CLASS,
-  dialogBodyClass,
-  dialogContentClass,
-  dialogGlossPanelClass,
-  dialogOverlayClass,
-  dialogOverlayEnterStyle,
-  dialogPanelClass,
-} from "./dialogStyles";
+import { DIALOG_CLOSE_CLASS, DIALOG_FOOTER_CLASS, DIALOG_GLOSS_CONTENT_CLASS, DIALOG_HEADER_CLASS, DIALOG_HEADING_BLOCK_CLASS, DIALOG_NATIVE_CLASS, DIALOG_TITLE_CLASS, dialogBodyClass, dialogContentClass, dialogGlossPanelClass, dialogOverlayClass, dialogOverlayEnterStyle, dialogPanelClass } from "./dialogStyles";
 import type {
   DialogBodyProps,
   DialogCloseProps,

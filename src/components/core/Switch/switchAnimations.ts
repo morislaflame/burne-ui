@@ -1,8 +1,5 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { motionInteractive, motionSwitchThumb } from "@/components/core/utils/motionConfig";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";

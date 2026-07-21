@@ -3,18 +3,7 @@ import { forwardRef } from "react";
 import { injectSwitchControlProps } from "./switchAPI";
 import { useSwitchTextMotion } from "./switchAnimations";
 import { SwitchClassNamesProvider, SwitchFieldProvider } from "./switchContext";
-import {
-  SwitchContent,
-  SwitchControl,
-  SwitchError,
-  SwitchFill,
-  SwitchHint,
-  SwitchIcon,
-  SwitchLabel,
-  SwitchSimpleBody,
-  SwitchThumb,
-  SwitchTrack,
-} from "./switchParts";
+import { SwitchContent, SwitchControl, SwitchError, SwitchFill, SwitchHint, SwitchIcon, SwitchLabel, SwitchSimpleBody, SwitchThumb, SwitchTrack } from "./switchParts";
 import { SWITCH_ROOT_DISABLED_CLASS, switchRootGridClass } from "./switchStyles";
 import type { SwitchControlProps, SwitchRootProps } from "./switchTypes";
 import { useSwitchRootState } from "./useSwitchRootState";

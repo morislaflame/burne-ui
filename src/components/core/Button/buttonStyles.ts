@@ -1,14 +1,7 @@
 import type { TextVariant } from "@/components/core/Text";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
-import {
-  SEMANTIC_STATUS_FILL,
-  SEMANTIC_STATUS_FILL_TEXT,
-  SEMANTIC_STATUS_OUTLINE_BORDER,
-  SEMANTIC_STATUS_SURFACE_TINT,
-  SEMANTIC_STATUS_TEXT,
-  type SemanticSurfaceStatus,
-} from "@/components/core/utils/semanticStatusSurface";
+import { SEMANTIC_STATUS_FILL, SEMANTIC_STATUS_FILL_TEXT, SEMANTIC_STATUS_OUTLINE_BORDER, SEMANTIC_STATUS_SURFACE_TINT, SEMANTIC_STATUS_TEXT, type SemanticSurfaceStatus } from "@/components/core/utils/semanticStatusSurface";
 import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";

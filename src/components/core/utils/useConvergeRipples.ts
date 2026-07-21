@@ -1,10 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import type { PointerEvent } from "react";
 
-import {
-  createConvergeRippleAtPointer,
-  type ConvergeRipple,
-} from "./convergeRippleGeometry";
+import { createConvergeRippleAtPointer, type ConvergeRipple } from "./convergeRippleGeometry";
 
 /**
  * State and push new ripples from pointer; read geometry **synchronously** in handler —

@@ -5,17 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Toast,
-  ToastContext,
-  useToast,
-  useToastContext,
-  type ToastStatus,
-  type ToastVariant,
-  type ToastPlacement,
-  type ToastClassNames,
-  type AddToastOpts,
-} from "burne-ui";
+import { Toast, ToastContext, useToast, useToastContext, type ToastStatus, type ToastVariant, type ToastPlacement, type ToastClassNames, type AddToastOpts } from "burne-ui";
 ```
 
 ## API
@@ -60,17 +50,17 @@ toast.dismiss(id);
 | `promise(p, opts)` | loading → success/error |
 | `dismiss(id)` | Запуск dismiss-анимации |
 
-`AddToastOpts`: `status`, `variant`, `title`, `description`, `action`, `timeout` (default 4000 ms, `0` = не закрывать), `placement`, `id`, `isLoading`, `classNames`.
+`AddToastOpts`: `status`, `variant`, `title`, `description`, `action`, `timeout` (default 4000 ms, `0` = не закрывать), `placement`, `id`, `loading`, `classNames`.
 
 ### Toast.Root (карточка)
 
-Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Indicator`, `Toast.ActionButton`, `Toast.CloseButton`.
+Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Indicator`, `Toast.Action`, `Toast.Close`.
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `status` | `default` | Семантический тон поверхности |
 | `variant` | `default` | `default` \| `gloss` |
-| `isLoading` | `false` | Spinner вместо status-иконки |
+| `loading` | `false` | Spinner вместо status-иконки |
 | `onClose` | — | Показывает close-кнопку (simple API). **Исключение state-API:** Toast не controlled по `open` — dismiss через Provider/`useToast`; `onClose` только гейтит кнопку и колбэк dismiss. Не путать с `onOpenChange` оверлеев. |
 | `classNames` | — | Слоты карточки |
 
@@ -161,7 +151,7 @@ Dismiss **220 ms** — не из `configureMotion`.
 
 ### 7. Auto-dismiss
 
-`setTimeout` — не GSAP. `timeout: 0` или `isLoading` — без таймера.
+`setTimeout` — не GSAP. `timeout: 0` или `loading` — без таймера.
 
 #### Кастомизация
 
@@ -206,7 +196,7 @@ configureMotion({
 2. **Per-toast `classNames`** — в `toast.show({ classNames })` / `toast.success(…, { classNames })`; мержится поверх provider.
 3. **`Toast.Root classNames`** — декларативная карточка (simple/compound), как у Alert.
 
-Подчасти (`Toast.Title`, `Toast.CloseButton`, …) принимают **`className`** поверх слота.
+Подчасти (`Toast.Title`, `Toast.Close`, …) принимают **`className`** поверх слота.
 
 ### Слоты `ToastClassNames`
 
@@ -279,7 +269,7 @@ Per-toast `classNames` **перекрывают** одноимённые клю�
       <Toast.Description>Доступна новая версия.</Toast.Description>
     </Toast.Content>
   </Toast.Message>
-  <Toast.CloseButton />
+  <Toast.Close />
 </Toast>
 ```
 

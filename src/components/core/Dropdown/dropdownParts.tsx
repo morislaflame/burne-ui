@@ -1,17 +1,5 @@
 import { IoChevronForward } from "react-icons/io5";
-import {
-  cloneElement,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useLayoutEffect,
-  useId,
-  useState,
-  type HTMLAttributes,
-  type PointerEvent as ReactPointerEvent,
-  type ReactElement,
-  type Ref,
-} from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useId, useState, type HTMLAttributes, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { Popover } from "@/components/core/Popover";
@@ -19,59 +7,16 @@ import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles"
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
-import {
-  runOpenAfterSqueeze,
-  useOpeningRef,
-} from "@/components/core/utils/runOpenAfterSqueeze";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
-import {
-  OptionListItemContextProvider,
-  useOptionListItemContext,
-} from "@/components/core/utils/optionListItemContext";
-import {
-  OptionListItemHint,
-  OptionListItemIcon,
-  OptionListItemIndicatorShell,
-  OptionListItemLabel,
-} from "@/components/core/utils/optionListItemParts";
+import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
+import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 
-import {
-  useDropdownPopoverMenu,
-  useDropdownSubContentPortal,
-} from "./dropdownAnimations";
-import {
-  useDropdown,
-  useDropdownClassNames,
-  useDropdownGroupLabelRegister,
-  useDropdownIndicatorPreference,
-  useDropdownSub,
-  DropdownGroupLabelRegisterProvider,
-  DropdownIndicatorPreferenceProvider,
-  DropdownSubProvider,
-} from "./dropdownContext";
-import {
-  DROPDOWN_GROUP_CLASS,
-  DROPDOWN_LABEL_CLASS,
-  DROPDOWN_LABEL_TEXT_CLASS,
-  DROPDOWN_POPOVER_BODY_CLASS,
-  DROPDOWN_POPOVER_CLASS,
-  DROPDOWN_ROOT_CLASS,
-  DROPDOWN_SUB_CLASS,
-  DROPDOWN_SUB_CONTENT_GLOSS_CONTENT_CLASS,
-  DROPDOWN_SUB_CONTENT_GLOSS_PANEL_CLASS,
-  DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
-  DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS,
-  DROPDOWN_TRIGGER_CLASS,
-  dropdownItemRowClass,
-  resolveDropdownItemIndicatorClassNames,
-  dropdownSubContentClass,
-  dropdownSubTriggerRowClass,
-} from "./dropdownStyles";
+import { useDropdownPopoverMenu, useDropdownSubContentPortal } from "./dropdownAnimations";
+import { useDropdown, useDropdownClassNames, useDropdownGroupLabelRegister, useDropdownIndicatorPreference, useDropdownSub, DropdownGroupLabelRegisterProvider, DropdownIndicatorPreferenceProvider, DropdownSubProvider } from "./dropdownContext";
+import { DROPDOWN_GROUP_CLASS, DROPDOWN_LABEL_CLASS, DROPDOWN_LABEL_TEXT_CLASS, DROPDOWN_POPOVER_BODY_CLASS, DROPDOWN_POPOVER_CLASS, DROPDOWN_ROOT_CLASS, DROPDOWN_SUB_CLASS, DROPDOWN_SUB_CONTENT_GLOSS_CONTENT_CLASS, DROPDOWN_SUB_CONTENT_GLOSS_PANEL_CLASS, DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS, DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS, DROPDOWN_TRIGGER_CLASS, dropdownItemRowClass, resolveDropdownItemIndicatorClassNames, dropdownSubContentClass, dropdownSubTriggerRowClass } from "./dropdownStyles";
 import type {
   DropdownGroupProps,
   DropdownItemHintProps,

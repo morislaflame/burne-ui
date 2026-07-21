@@ -19,7 +19,7 @@ export function AccordionSizesDemo() {
                     <Accordion.Description>Accordion size={size}</Accordion.Description>
                   </Accordion.Content>
                 </Accordion.Message>
-                <Accordion.Indicator />
+                <Accordion.Chevron />
               </Accordion.Trigger>
             </Accordion.Heading>
             <Accordion.Panel>

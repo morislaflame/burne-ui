@@ -12,7 +12,7 @@ export function ToggleButtonGlossDemo() {
       variant="gloss" 
       onPressedChange={setPressed} 
       pressed={pressed} 
-      leftIcon={pressed ? <IoHeart aria-hidden /> : <IoHeartOutline aria-hidden />}
+      icon={pressed ? <IoHeart aria-hidden /> : <IoHeartOutline aria-hidden />}
     >
       Like
     </ToggleButton>

@@ -1,11 +1,5 @@
 import type { TextVariant } from "@/components/core/Text";
-import {
-  optionControlCellClass,
-  optionControlGridClass,
-  optionErrorRow,
-  optionLabelCellClass,
-  optionSecondaryCellClass,
-} from "@/components/core/utils/optionControlGridLayout";
+import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
 import { cn } from "@/utils/cn";
 
 import type { RadioSize } from "./radioTypes";

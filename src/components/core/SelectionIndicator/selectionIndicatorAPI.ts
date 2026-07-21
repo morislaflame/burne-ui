@@ -1,21 +1,10 @@
 import type { ClassValue } from "clsx";
-import {
-  Children,
-  createElement,
-  isValidElement,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { Children, createElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import { IoCheckmarkSharp } from "react-icons/io5";
 
 import { cn } from "@/utils/cn";
 
-import {
-  SELECTION_INDICATOR_DOT_CLASS,
-  selectionIndicatorDotInnerClass,
-  type SelectionIndicatorSize,
-  type SelectionIndicatorVariant,
-} from "./selectionIndicatorTokens";
+import { SELECTION_INDICATOR_DOT_CLASS, selectionIndicatorDotInnerClass, type SelectionIndicatorSize, type SelectionIndicatorVariant } from "./selectionIndicatorTokens";
 
 import type {
   ResolvedSelectionIndicatorClassNames,

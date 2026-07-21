@@ -10,8 +10,8 @@ export function PopoverGlossDemo() {
       </Popover.Trigger>
       <Popover.Content showArrow>
         <Popover.Header>
-          <Popover.Label>Heading</Popover.Label>
-          <Popover.Hint>Glass pop-up panel</Popover.Hint>
+          <Popover.Title>Heading</Popover.Title>
+          <Popover.Description>Glass pop-up panel</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <Text as="p" variant="small" className="text-muted">

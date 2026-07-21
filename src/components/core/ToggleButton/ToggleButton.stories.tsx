@@ -55,14 +55,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Like</ToggleButton>
+    <ToggleButton icon={<IoHeartOutline aria-hidden />}>Like</ToggleButton>
   ),
 };
 
 export const PressInteraction: Story = {
   name: "Interaction: press",
   render: () => (
-    <ToggleButton leftIcon={<IoHeartOutline aria-hidden />}>Like</ToggleButton>
+    <ToggleButton icon={<IoHeartOutline aria-hidden />}>Like</ToggleButton>
   ),
   play: async ({ canvas, userEvent }) => {
     const button = canvas.getByRole("button", { name: "Like" });
@@ -82,7 +82,7 @@ export const Variants: Story = {
         <ToggleButton
           key={variant}
           variant={variant}
-          leftIcon={<IoHeartOutline aria-hidden />}
+          icon={<IoHeartOutline aria-hidden />}
         >
           {variant}
         </ToggleButton>
@@ -94,7 +94,7 @@ export const Variants: Story = {
 export const IconOnly: Story = {
   name: "Icon only",
   render: () => (
-    <ToggleButton aria-label="Add to bookmarks" leftIcon={<IoBookmarkOutline aria-hidden />} />
+    <ToggleButton aria-label="Add to bookmarks" icon={<IoBookmarkOutline aria-hidden />} />
   ),
 };
 
@@ -106,7 +106,7 @@ export const Sizes: Story = {
         <ToggleButton
           key={size}
           size={size}
-          leftIcon={<IoHeartOutline aria-hidden />}
+          icon={<IoHeartOutline aria-hidden />}
         >
           {size}
         </ToggleButton>
@@ -124,7 +124,7 @@ export const Controlled: Story = {
         <ToggleButton
           pressed={pressed}
           onPressedChange={setPressed}
-          leftIcon={<IoHeartOutline aria-hidden />}
+          icon={<IoHeartOutline aria-hidden />}
         >
           {pressed ? "Like" : "Like"}
         </ToggleButton>
@@ -141,7 +141,7 @@ export const DefaultPressed: Story = {
   args: {
     defaultPressed: true,
     children: "In favorites",
-    leftIcon: <IoBookmarkOutline aria-hidden />,
+    icon: <IoBookmarkOutline aria-hidden />,
   },
 };
 
@@ -150,7 +150,7 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     children: "Unavailable",
-    leftIcon: <IoHeartOutline aria-hidden />,
+    icon: <IoHeartOutline aria-hidden />,
   },
 };
 
@@ -166,12 +166,12 @@ export const CustomClassNames: Story = {
   render: () => (
     <ToggleButton
       defaultPressed
-      leftIcon={<IoHeartOutline aria-hidden />}
+      icon={<IoHeartOutline aria-hidden />}
       classNames={{
         root: "rounded-mid ring-1 ring-danger/25",
         fill: "bg-danger/20",
         content: "gap-small",
-        leftIcon: "text-danger",
+        icon: "text-danger",
         text: "font-semibold text-danger",
       }}
     >
@@ -183,7 +183,7 @@ export const CustomClassNames: Story = {
 export const LabelLayout: Story = {
   name: "Label + trailing layout",
   render: () => (
-    <ToggleButton className="w-full max-w-xs justify-between gap-plus" leftIcon={<IoHeartOutline aria-hidden />}>
+    <ToggleButton className="w-full max-w-xs justify-between gap-plus" icon={<IoHeartOutline aria-hidden />}>
       <span>Like</span>
       <span className="text-tools">128</span>
     </ToggleButton>
@@ -195,11 +195,11 @@ export const CompoundLayout: Story = {
   render: () => (
     <ToggleButton className="w-full max-w-xs">
       <ToggleButton.Content className="justify-between gap-plus">
-        <ToggleButton.Icon>
+        <ToggleButton.IconStart>
           <IoHeartOutline aria-hidden />
-        </ToggleButton.Icon>
+        </ToggleButton.IconStart>
         <ToggleButton.Text>Like</ToggleButton.Text>
-        <ToggleButton.Trailing className="text-tools">128</ToggleButton.Trailing>
+        <ToggleButton.IconEnd className="text-tools">128</ToggleButton.IconEnd>
       </ToggleButton.Content>
     </ToggleButton>
   ),

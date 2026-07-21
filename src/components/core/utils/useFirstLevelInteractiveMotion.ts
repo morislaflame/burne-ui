@@ -18,17 +18,8 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { ForwardedRef, PointerEvent } from "react";
 
 import { killMotion } from "./gsapMotion";
-import {
-  animateGlossInteractiveHoverLift,
-  animateGlossInteractivePressSqueeze,
-  createGlossInteractiveRefCallback,
-} from "./glossInteractiveMotion";
-import {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shouldSkipInteractiveHoverLift,
-} from "./hoverInteractiveLift";
+import { animateGlossInteractiveHoverLift, animateGlossInteractivePressSqueeze, createGlossInteractiveRefCallback } from "./glossInteractiveMotion";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
 import { firstLevelHoverShadow } from "./useShadowMotion";
 import { mergeForwardedRef } from "./mergeRefs";
 

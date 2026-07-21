@@ -1,9 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import {
-  createToastId,
-  TOAST_DEFAULT_TIMEOUT_MS,
-} from "./toastAPI";
+import { createToastId, TOAST_DEFAULT_TIMEOUT_MS } from "./toastAPI";
 import type { AddToastOpts, ToastContextValue, ToastEntry, ToastPlacement } from "./toastTypes";
 
 export function useToastProviderState({
@@ -35,7 +32,7 @@ export function useToastProviderState({
         timeout: opts.timeout ?? TOAST_DEFAULT_TIMEOUT_MS,
         placement: opts.placement ?? defaultPlacement,
         createdAt: ++orderRef.current,
-        isLoading: opts.isLoading ?? false,
+        loading: opts.loading ?? false,
         classNames: { ...providerClassNames, ...opts.classNames },
       };
       setToasts((prev) => [...prev, entry]);

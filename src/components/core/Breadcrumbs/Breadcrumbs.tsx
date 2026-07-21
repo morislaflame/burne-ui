@@ -1,14 +1,7 @@
 import { forwardRef } from "react";
 
-import {
-  BreadcrumbsClassNamesProvider,
-  BreadcrumbsCollapseProvider,
-} from "./breadcrumbsContext";
-import {
-  BreadcrumbsItem,
-  BreadcrumbsList,
-  BreadcrumbsSeparator,
-} from "./breadcrumbsParts";
+import { BreadcrumbsClassNamesProvider, BreadcrumbsCollapseProvider } from "./breadcrumbsContext";
+import { BreadcrumbsItem, BreadcrumbsList, BreadcrumbsSeparator } from "./breadcrumbsParts";
 import { BreadcrumbsSimpleContent } from "./breadcrumbsSimpleContent";
 import { resolveBreadcrumbsAriaLabel } from "./breadcrumbsA11y";
 

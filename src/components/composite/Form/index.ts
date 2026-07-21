@@ -1,13 +1,4 @@
-import {
-  FormActions,
-  FormAnnounce,
-  FormDescription,
-  FormErrorSummary,
-  FormField,
-  FormRoot,
-  FormSection,
-  FormTitle,
-} from "./Form";
+import { FormActions, FormAnnounce, FormDescription, FormErrorSummary, FormField, FormRoot, FormSection, FormTitle } from "./Form";
 
 export const Form = Object.assign(FormRoot, {
   Section: FormSection,

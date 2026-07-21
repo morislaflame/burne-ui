@@ -1,13 +1,4 @@
-import {
-  SelectError,
-  SelectHint,
-  SelectLabel,
-  SelectPopover,
-  SelectRoot,
-  SelectTrigger,
-  SelectTriggerGroup,
-  SelectValue,
-} from "./Select";
+import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectRoot, SelectTrigger, SelectTriggerGroup, SelectValue } from "./Select";
 
 export const Select = Object.assign(SelectRoot, {
   Label: SelectLabel,

@@ -1,13 +1,8 @@
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import {
-  TextAreaClassNamesProvider,
-  TextAreaFieldProvider,
-} from "./textAreaContext";
-import {
-  TextAreaSimpleBody,
-} from "./textAreaParts";
+import { TextAreaClassNamesProvider, TextAreaFieldProvider } from "./textAreaContext";
+import { TextAreaSimpleBody } from "./textAreaParts";
 import type { TextAreaSimpleProps } from "./textAreaTypes";
 import { useTextAreaRootState } from "./useTextAreaRootState";
 
@@ -35,7 +30,7 @@ export function TextAreaRoot({
   className,
   classNames,
   id: idProp,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
   ...rest
@@ -46,7 +41,7 @@ export function TextAreaRoot({
     hint,
     error,
     id: idProp,
-    isRequired,
+    required,
     status,
     size,
   });

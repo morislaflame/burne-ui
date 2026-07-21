@@ -5,14 +5,7 @@ Layout-обёртка для склеенных или раздельных се
 ## Импорт
 
 ```tsx
-import {
-  ButtonGroup,
-  ButtonGroupText,
-  type ButtonGroupProps,
-  type ButtonGroupTextProps,
-  type ButtonGroupOrientation,
-  type ButtonGroupSegment,
-} from "burne-ui";
+import { ButtonGroup, ButtonGroupText, type ButtonGroupProps, type ButtonGroupTextProps, type ButtonGroupOrientation, type ButtonGroupSegment } from "burne-ui";
 ```
 
 Style helpers (из модуля): `buttonGroupRoundingClasses`, `buttonGroupSegmentSurfaceClasses`, `buttonGroupTextFrameClass`.

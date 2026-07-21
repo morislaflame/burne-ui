@@ -1,26 +1,13 @@
 import { forwardRef, useContext } from "react";
 
 import { Text } from "@/components/core/Text";
-import {
-  messageBannerActionCellClass,
-  messageBannerDescriptionCellClass,
-  messageBannerIndicatorCellClass,
-  messageBannerTitleCellClass,
-} from "@/components/core/utils/messageBannerGridLayout";
+import { messageBannerActionCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { messageBannerSizePreset } from "@/components/core/utils/messageBannerSize";
 import { cn } from "@/utils/cn";
 
 import { AlertContext, useAlertClassNames } from "./alertContext";
-import {
-  alertDefaultIndicatorIcon,
-  alertShowsDefaultIndicatorIcon,
-} from "./alertAPI";
-import {
-  alertIndicatorClass,
-  ALERT_COMPOUND_CONTENTS_CLASS,
-  ALERT_DESCRIPTION_CLASS,
-  ALERT_TITLE_CLASS,
-} from "./alertStyles";
+import { alertDefaultIndicatorIcon, alertShowsDefaultIndicatorIcon } from "./alertAPI";
+import { alertIndicatorClass, ALERT_COMPOUND_CONTENTS_CLASS, ALERT_DESCRIPTION_CLASS, ALERT_TITLE_CLASS } from "./alertStyles";
 import type {
   AlertActionProps,
   AlertContentProps,

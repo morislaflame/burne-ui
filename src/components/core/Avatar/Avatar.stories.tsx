@@ -3,15 +3,12 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/mockImages";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
-import { Avatar, AvatarGroup } from ".";
+import { Avatar } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -107,7 +104,7 @@ export const BrokenImageUsesFallback: Story = {
 export const AvatarGroupStory: Story = {
   name: "Group (stacking + GSAP lift)",
   render: () => (
-    <AvatarGroup>
+    <Avatar.Group>
       <Avatar size="base" label="One" nickname="echo_north" src={PIN_IMAGE1} alt="" loading="lazy" />
       <Avatar
         size="base"
@@ -137,7 +134,7 @@ export const AvatarGroupStory: Story = {
         loading="lazy"
       />
       <Avatar size="base" label="Plus five" nickname="+5" tooltipStatus="warning" />
-    </AvatarGroup>
+    </Avatar.Group>
   ),
 };
 
@@ -202,11 +199,11 @@ function GlossDemo() {
         <Avatar variant="gloss" size="base" label="Burne Team" />
         <Avatar variant="gloss" size="large" label="北京" />
       </div>
-      <AvatarGroup>
+      <Avatar.Group>
         <Avatar variant="gloss" size="base" label="One" src={PIN_IMAGE1} alt="" loading="lazy" />
         <Avatar variant="gloss" size="base" label="Two" src={PIN_IMAGE2} alt="" loading="lazy" />
         <Avatar variant="gloss" size="base" label="Three" src={PIN_IMAGE3} alt="" loading="lazy" />
-      </AvatarGroup>
+      </Avatar.Group>
     </div>
   );
 }

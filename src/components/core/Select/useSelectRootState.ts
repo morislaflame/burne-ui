@@ -23,7 +23,7 @@ export function useSelectRootState({
   error,
   id: idProp,
   name,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
   options = EMPTY_SELECT_OPTIONS,
@@ -105,12 +105,12 @@ export function useSelectRootState({
       labelConnected: hasLabel,
       hintConnected: hasHint,
       errorConnected: hasError,
-      isRequired,
+      required,
       status,
       size,
       errorMessage: error,
     }),
-    [selectId, error, errorId, hasError, hasHint, hasLabel, hintId, isRequired, labelId, size, status],
+    [selectId, error, errorId, hasError, hasHint, hasLabel, hintId, required, labelId, size, status],
   );
 
   const selectCtx: SelectContextValue = useMemo(
@@ -155,8 +155,8 @@ export function useSelectRootState({
   );
 
   const fieldLabelCtx = useMemo(
-    () => ({ controlId: selectId, labelId, isRequired }),
-    [selectId, isRequired, labelId],
+    () => ({ controlId: selectId, labelId, required }),
+    [selectId, required, labelId],
   );
 
   return {

@@ -15,14 +15,14 @@ export type CheckboxGroupSelection = "multiple" | "single";
 export type CheckboxGroupContextValue = {
   selection: CheckboxGroupSelection;
   disabled: boolean;
-  isRequired: boolean;
+  required: boolean;
   hintId: string;
   errorId: string;
   /** Only for `selection="single"`. */
   selectedValue: string | undefined;
   /** Only for `selection="single"`. */
   selectSingleValue: (value: string, checked: boolean) => void;
-  /** First option claims native `required` when `isRequired` (single selection only). */
+  /** First option claims native `required` when `required` (single selection only). */
   claimRequiredAnchor: () => boolean;
 };
 
@@ -30,7 +30,7 @@ export type CheckboxGroupProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children" | "onChange"
 > & {
-  isRequired?: boolean;
+  required?: boolean;
   selection?: CheckboxGroupSelection;
   value?: string | null;
   defaultValue?: string;

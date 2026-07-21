@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Surface,
-  type SurfaceProps,
-  type SurfaceVariant,
-  type SurfaceShadow,
-  type SurfacePadding,
-  type SurfaceRadius,
-} from "burne-ui";
+import { Surface, type SurfaceProps, type SurfaceVariant, type SurfaceShadow, type SurfacePadding, type SurfaceRadius } from "burne-ui";
 ```
 
 ## API

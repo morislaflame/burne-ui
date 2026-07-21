@@ -5,18 +5,8 @@ import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
 import { useProgressBarFillAnimation } from "./progressBarAnimations";
-import {
-  useProgressBarClassNames,
-  useProgressBarFieldContext,
-} from "./progressBarContext";
-import {
-  progressBarDeterminateFillStyle,
-  progressBarFillClass,
-  progressBarHeaderClass,
-  progressBarIndeterminateFillClass,
-  progressBarTrackClass,
-  progressBarValueClass,
-} from "./progressBarStyles";
+import { useProgressBarClassNames, useProgressBarFieldContext } from "./progressBarContext";
+import { progressBarDeterminateFillStyle, progressBarFillClass, progressBarHeaderClass, progressBarIndeterminateFillClass, progressBarTrackClass, progressBarValueClass } from "./progressBarStyles";
 import type {
   ProgressBarErrorProps,
   ProgressBarHeaderProps,

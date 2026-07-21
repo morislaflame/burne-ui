@@ -3,10 +3,7 @@ import { messageBannerGridClass } from "@/components/core/utils/messageBannerGri
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import type { TextVariant } from "@/components/core/Text";
 
-import {
-  TOOLTIP_ARROW_CLASS,
-  TOOLTIP_ARROW_SHELL_PAD,
-} from "./tooltipPosition";
+import { TOOLTIP_ARROW_CLASS, TOOLTIP_ARROW_SHELL_PAD } from "./tooltipPosition";
 import type { TooltipSize, TooltipVariant } from "./tooltipTypes";
 
 import { cn } from "@/utils/cn";

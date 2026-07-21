@@ -1,9 +1,6 @@
 import type { ComponentType } from "react";
 
-import {
-  formatShowcaseSource,
-  type FormatShowcaseSourceOptions,
-} from "../utils/formatShowcaseSource";
+import { formatShowcaseSource, type FormatShowcaseSourceOptions } from "../utils/formatShowcaseSource";
 
 import { ShowcaseDemo } from "./ShowcaseDemo";
 import type { SurfacePadding } from "@/components/core/Surface";

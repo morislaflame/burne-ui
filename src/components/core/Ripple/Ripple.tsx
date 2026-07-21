@@ -2,10 +2,7 @@ import { useLayoutEffect, useRef } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
-import {
-  ConvergeRippleLayer,
-  type RippleDirection,
-} from "@/components/core/utils/pressRipple";
+import { ConvergeRippleLayer, type RippleDirection } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 import { cn } from "@/utils/cn";
 

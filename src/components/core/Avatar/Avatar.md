@@ -1,20 +1,11 @@
 # Avatar
 
-Аватар пользователя с изображением, fallback-буквой, tooltip по `nickname`, `variant="gloss"` и группировкой через `AvatarGroup`. Есть Simple API (`src`, `label`) и compound API (`Avatar.Image`, `Avatar.Fallback`).
+Аватар пользователя с изображением, fallback-буквой, tooltip по `nickname`, `variant="gloss"` и группировкой через `Avatar.Group`. Есть Simple API (`src`, `label`) и compound API (`Avatar.Image`, `Avatar.Fallback`).
 
 ## Импорт
 
 ```tsx
-import {
-  Avatar,
-  AvatarGroup,
-  type AvatarProps,
-  type AvatarClassNames,
-  type AvatarSize,
-  type AvatarImageProps,
-  type AvatarFallbackProps,
-  type AvatarGroupProps,
-} from "burne-ui";
+import { Avatar, Avatar.Group, type AvatarProps, type AvatarClassNames, type AvatarSize, type AvatarImageProps, type AvatarFallbackProps, type AvatarGroupProps } from "burne-ui";
 ```
 
 ## API
@@ -51,14 +42,14 @@ import {
 </Avatar>
 ```
 
-### AvatarGroup
+### Avatar.Group
 
 ```tsx
-<AvatarGroup>
+<Avatar.Group>
   <Avatar size="base" label="Один" src={one} alt="" />
   <Avatar size="base" label="Два" src={two} alt="" />
   <Avatar size="base" label="Плюс пять" nickname="+5" />
-</AvatarGroup>
+</Avatar.Group>
 ```
 
 ### Props
@@ -149,9 +140,9 @@ configureMotion({
 });
 ```
 
-### 2. AvatarGroup lift
+### 2. Avatar.Group lift
 
-Каждый item в `AvatarGroup` получает wrapper:
+Каждый item в `Avatar.Group` получает wrapper:
 
 ```
 <div style={{ transformOrigin: "center bottom" }}>
@@ -179,7 +170,7 @@ Reduced motion: transform ставится мгновенно.
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
 | Image fade in | `useAvatarImageFade` | `tooltipDuration`, `interactiveEase`, `enableContentFade` | `src` load state |
-| Group hover lift | GSAP в group wrapper | `interactiveDuration`, `interactiveEase` | `AvatarGroup` |
+| Group hover lift | GSAP в group wrapper | `interactiveDuration`, `interactiveEase` | `Avatar.Group` |
 | Gloss depth | CSS `gloss-panel` | — | `variant="gloss"` |
 
 ## Токены и CSS
@@ -190,14 +181,14 @@ Reduced motion: transform ставится мгновенно.
 | `AVATAR_FALLBACK_CLASS` | Initials / placeholder bg |
 | `AVATAR_IMAGE_CLASS` | `object-cover`, start `opacity-0` до fade |
 | gloss wrap layers | Outer ring/shadow в `variant="gloss"` |
-| `groupItem` negative margin | Stack overlap в `AvatarGroup` |
+| `groupItem` negative margin | Stack overlap в `Avatar.Group` |
 
 ## Стилизация и кастомизация
 
 ### Два уровня
 
 1. **`className` на `Avatar`** — root shell. В `variant="gloss"` попадает на внутренний круг.
-2. **`classNames` на root** — слоты root/image/fallback; `AvatarGroup` — `group`/`groupItem`.
+2. **`classNames` на root** — слоты root/image/fallback; `Avatar.Group` — `group`/`groupItem`.
 
 ### Слоты `AvatarClassNames`
 
@@ -206,7 +197,7 @@ Reduced motion: transform ставится мгновенно.
 | `root` | Avatar circle | Ring, border, fallback color |
 | `image` | `img` | Object-fit, filters, opacity helpers |
 | `fallback` | Fallback span | Initials bg/text |
-| `group` | `AvatarGroup` root | Gap, justify stack |
+| `group` | `Avatar.Group` root | Gap, justify stack |
 | `groupItem` | Group item wrapper | Overlap margin, lift target |
 | `glossWrap` | Outer gloss wrapper | Ring/padding вокруг gloss circle |
 
@@ -244,7 +235,7 @@ Reduced motion: transform ставится мгновенно.
 ### Group stack
 
 ```tsx
-<AvatarGroup
+<Avatar.Group
   classNames={{
     group: "justify-center",
     groupItem: "-ml-small",
@@ -252,7 +243,7 @@ Reduced motion: transform ставится мгновенно.
 >
   <Avatar label="A" />
   <Avatar label="B" />
-</AvatarGroup>
+</Avatar.Group>
 ```
 
 ### Практические заметки
@@ -269,13 +260,13 @@ Reduced motion: transform ставится мгновенно.
 |-----------|---------------|
 | `Tooltip` | Автоматически при `nickname` |
 | `Badge.Anchor` | Наложение статуса/счётчика на avatar |
-| `AvatarGroup` | Stack + hover lift |
+| `Avatar.Group` | Stack + hover lift |
 
 ## Доступность
 
 - Root avatar: `role="group"`
 - `aria-label` берётся из trimmed `label`
-- `AvatarGroup`: `role="group"`
+- `Avatar.Group`: `role="group"`
 - Fallback: `aria-hidden`
 - Image `alt` по умолчанию `""`; root label отвечает за имя аватара
 - Tooltip trigger получает тот же root

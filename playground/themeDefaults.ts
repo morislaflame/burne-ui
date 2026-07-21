@@ -43,11 +43,7 @@ export {
   STATUS_FOREGROUND_LABELS,
 } from "./themeEditorChrome";
 
-import {
-  createDefaultThemeState,
-  type ThemeMode,
-  type ThemeTokenState,
-} from "../src/theme/themeDefaults";
+import { createDefaultThemeState, type ThemeMode, type ThemeTokenState } from "../src/theme/themeDefaults";
 
 /** Playground/docs editor state — kit tokens + active named color preset id. */
 export type ThemeEditorState = ThemeTokenState & {

@@ -1,13 +1,8 @@
 import { FieldRoot } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import {
-  TimeFieldClassNamesProvider,
-  TimeFieldFieldProvider,
-} from "./timeFieldContext";
-import {
-  TimeFieldSimpleBody,
-} from "./timeFieldParts";
+import { TimeFieldClassNamesProvider, TimeFieldFieldProvider } from "./timeFieldContext";
+import { TimeFieldSimpleBody } from "./timeFieldParts";
 import { timeFieldRootClass } from "./timeFieldStyles";
 import type { TimeFieldRootProps } from "./timeFieldTypes";
 import { useTimeFieldRootState } from "./useTimeFieldRootState";
@@ -34,7 +29,7 @@ export function TimeFieldRoot({
   className,
   classNames,
   id: idProp,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
   variant = "default",
@@ -54,7 +49,7 @@ export function TimeFieldRoot({
     hint,
     error,
     id: idProp,
-    isRequired,
+    required,
     status,
     size,
     variant,

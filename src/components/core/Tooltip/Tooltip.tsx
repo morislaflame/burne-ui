@@ -1,19 +1,6 @@
-import {
-  TooltipClassNamesProvider,
-  TooltipContext,
-} from "./tooltipContext";
+import { TooltipClassNamesProvider, TooltipContext } from "./tooltipContext";
 import type { TooltipRootProps } from "./tooltipTypes";
-import {
-  TooltipArrow,
-  TooltipContent,
-  TooltipDescription,
-  TooltipIcon,
-  TooltipIndicator,
-  TooltipMessage,
-  TooltipPanel,
-  TooltipTitle,
-  TooltipTrigger,
-} from "./tooltipParts";
+import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIcon, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipTitle, TooltipTrigger } from "./tooltipParts";
 import { useTooltipRootState } from "./useTooltipRootState";
 
 export function TooltipRoot({

@@ -5,13 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Radio,
-  type RadioProps,
-  type RadioVariant,
-  type RadioSize,
-  type RadioClassNames,
-} from "burne-ui";
+import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioClassNames } from "burne-ui";
 ```
 
 ## API
@@ -36,7 +30,7 @@ import {
     <Radio.Indicator />
   </Radio.Control>
   <Radio.Content>
-    <Radio.Label isRequired>Курьер</Radio.Label>
+    <Radio.Label required>Курьер</Radio.Label>
     <Radio.Hint>Доставка в день заказа</Radio.Hint>
     <Radio.Error>Недоступно в регионе</Radio.Error>
   </Radio.Content>
@@ -221,7 +215,7 @@ import {
 
 | Контекст | Поведение |
 |----------|-----------|
-| `RadioGroup` | `selectedValue`, `name`, `disabled`, `isRequired` |
+| `RadioGroup` | `selectedValue`, `name`, `disabled`, `required` |
 | `Form` | `name`, errors → `danger` на label |
 
 ```tsx

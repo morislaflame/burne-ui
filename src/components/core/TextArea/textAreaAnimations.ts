@@ -1,10 +1,7 @@
 import { useCallback, type PointerEvent, type RefObject } from "react";
 
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
 import type { TextAreaVariant } from "./textAreaTypes";

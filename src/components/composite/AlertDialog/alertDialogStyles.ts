@@ -1,9 +1,6 @@
 import { alertSurfaceClass, alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertStyles";
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
-import {
-  dialogOverlayClass,
-  dialogOverlayEnterStyle,
-} from "@/components/core/Dialog/dialogStyles";
+import { dialogOverlayClass, dialogOverlayEnterStyle } from "@/components/core/Dialog/dialogStyles";
 import { cn } from "@/utils/cn";
 
 import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes";

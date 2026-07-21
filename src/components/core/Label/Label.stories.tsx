@@ -24,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Form field label. Supports `htmlFor`, `isRequired`, and `FieldLabelContext` from Input/ComboBox. `Label.Slot` — null component for compound layout.",
+          "Form field label. Supports `htmlFor`, `required`, and `FieldLabelContext` from Input/ComboBox. `Label.Slot` — null component for compound layout.",
       },
     },
   },
@@ -43,7 +43,7 @@ export const Default: Story = {
 export const Required: Story = {
   name: "Required field",
   render: () => (
-    <Label htmlFor="label-required" isRequired>
+    <Label htmlFor="label-required" required>
       Password
     </Label>
   ),
@@ -73,7 +73,7 @@ export const CustomClassNames: Story = {
   render: () => (
     <Label
       htmlFor="label-custom"
-      isRequired
+      required
       classNames={{
         root: "rounded-mid border border-primary/30 px-base py-xsmall",
         text: "text-primary font-semibold",

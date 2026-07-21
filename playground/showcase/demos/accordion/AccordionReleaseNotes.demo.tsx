@@ -38,7 +38,7 @@ export function AccordionReleaseNotesDemo() {
                   </Accordion.Title>
                   <Accordion.Description>{release.title}</Accordion.Description>
                 </Accordion.Content>
-                <Accordion.Indicator />
+                <Accordion.Chevron />
               </Accordion.Message>
             </Accordion.Trigger>
           </Accordion.Heading>

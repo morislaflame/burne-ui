@@ -5,23 +5,17 @@ import { useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/e
 import { messageBannerActionCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { Text } from "@/components/core/Text";
 
-import { useAccordionIndicatorAnimation } from "./accordionAnimations";
+import { useAccordionChevronAnimation } from "./accordionAnimations";
 
 import { useAccordionContext } from "./accordionContext";
-import {
-  ACCORDION_CHEVRON_CLASS,
-  accordionBodyClass,
-  accordionHeadingClass,
-  accordionIndicatorClass,
-  accordionItemClass,
-} from "./accordionStyles";
+import { ACCORDION_CHEVRON_CLASS, accordionBodyClass, accordionHeadingClass, accordionChevronClass, accordionItemClass } from "./accordionStyles";
 import type {
   AccordionBodyProps,
   AccordionContentProps,
   AccordionDescriptionProps,
   AccordionHeadingProps,
   AccordionIconProps,
-  AccordionIndicatorProps,
+  AccordionChevronProps,
   AccordionItemProps,
   AccordionMessageProps,
   AccordionPanelProps,
@@ -127,9 +121,9 @@ export function AccordionDescription(props: AccordionDescriptionProps) {
 
 AccordionDescription.displayName = "Accordion.Description";
 
-export function AccordionIndicator({ className, children, ...rest }: AccordionIndicatorProps) {
+export function AccordionChevron({ className, children, ...rest }: AccordionChevronProps) {
   const { open, hasPanel } = useExpandableContext();
-  const bindChevronRef = useAccordionIndicatorAnimation(open);
+  const bindChevronRef = useAccordionChevronAnimation(open);
   const gridSlots = useOptionalExpandableTriggerGrid();
 
   if (!hasPanel) return null;
@@ -139,7 +133,7 @@ export function AccordionIndicator({ className, children, ...rest }: AccordionIn
       ref={bindChevronRef}
       className={cn(
         gridSlots && messageBannerActionCellClass(gridSlots),
-        accordionIndicatorClass(className),
+        accordionChevronClass(className),
       )}
       aria-hidden
       {...rest}
@@ -149,7 +143,7 @@ export function AccordionIndicator({ className, children, ...rest }: AccordionIn
   );
 }
 
-AccordionIndicator.displayName = "Accordion.Indicator";
+AccordionChevron.displayName = "Accordion.Chevron";
 
 export const AccordionPanel = forwardRef<HTMLDivElement, AccordionPanelProps>(
   function AccordionPanel(props, ref) {

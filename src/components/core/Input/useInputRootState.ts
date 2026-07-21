@@ -12,7 +12,7 @@ export function useInputRootState({
   hint,
   error,
   id: idProp,
-  isRequired = false,
+  required = false,
   status = "default",
   size = "base",
 }: UseInputRootStateProps) {
@@ -38,16 +38,16 @@ export function useInputRootState({
       labelId,
       hintConnected: hasHint,
       errorConnected: hasError,
-      isRequired,
+      required,
       status,
       size,
     }),
-    [errorId, hasError, hasHint, hintId, inputId, isRequired, labelId, size, status],
+    [errorId, hasError, hasHint, hintId, inputId, required, labelId, size, status],
   );
 
   const fieldLabelCtx = useMemo(
-    () => ({ controlId: inputId, labelId, isRequired }),
-    [inputId, isRequired, labelId],
+    () => ({ controlId: inputId, labelId, required }),
+    [inputId, required, labelId],
   );
 
   return {

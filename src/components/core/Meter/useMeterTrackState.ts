@@ -2,22 +2,10 @@ import { useLayoutEffect, useMemo } from "react";
 
 import { clampNumber } from "@/components/core/utils/clampNumber";
 
-import {
-  defaultMeterFormatValue,
-  meterValueToPercent,
-} from "./meterAPI";
-import {
-  meterLabelId,
-  resolveMeterDescribedBy,
-  resolveMeterTrackAria,
-} from "./meterA11y";
+import { defaultMeterFormatValue, meterValueToPercent } from "./meterAPI";
+import { meterLabelId, resolveMeterDescribedBy, resolveMeterTrackAria } from "./meterA11y";
 import { useOptionalMeterFieldContext } from "./meterContext";
-import {
-  meterFillColorStyle,
-  meterFillInitialStyle,
-  meterFillTargetStyle,
-  meterTrackCrossStyle,
-} from "./meterStyles";
+import { meterFillColorStyle, meterFillInitialStyle, meterFillTargetStyle, meterTrackCrossStyle } from "./meterStyles";
 import type { UseMeterTrackStateProps } from "./meterTypes";
 
 export function useMeterTrackState({

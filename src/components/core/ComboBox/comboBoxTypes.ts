@@ -33,7 +33,7 @@ export type ComboBoxRootProps = HTMLAttributes<HTMLDivElement> & {
   error?: ReactNode;
   id?: string;
   name?: string;
-  isRequired?: boolean;
+  required?: boolean;
   status?: InputStatus;
   size?: InputSize;
   options?: ComboBoxOption[];
@@ -62,7 +62,7 @@ export type ComboBoxFieldContextValue = {
   labelConnected: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
-  isRequired: boolean;
+  required: boolean;
   status: InputStatus;
   size: InputSize;
   errorMessage?: ReactNode;

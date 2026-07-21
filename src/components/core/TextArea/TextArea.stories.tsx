@@ -3,10 +3,7 @@ import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 
-import {
-  DualApiStoryPanel,
-  DualApiStoryPanels,
-} from "@/stories-utils/dualApiStoryChrome";
+import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { TextArea } from "./index";
@@ -138,7 +135,7 @@ export const Disabled: Story = {
 
 export const Required: Story = {
   render: () => (
-    <TextArea isRequired label="Biography" placeholder="Tell us about yourself…" />
+    <TextArea required label="Biography" placeholder="Tell us about yourself…" />
   ),
 };
 

@@ -1,12 +1,6 @@
 import type { CSSProperties } from "react";
 
-import {
-  optionControlCellClass,
-  optionControlGridClass,
-  optionErrorRow,
-  optionLabelCellClass,
-  optionSecondaryCellClass,
-} from "@/components/core/utils/optionControlGridLayout";
+import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
 import { sliderThicknessToCss } from "@/components/core/Slider";
 
 import { SWITCH_LAYOUT, type SwitchSize } from "./switchGeometry";

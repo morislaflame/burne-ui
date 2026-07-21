@@ -1,12 +1,4 @@
-import {
-  RadioContent,
-  RadioControl,
-  RadioError,
-  RadioHint,
-  RadioIndicator,
-  RadioLabel,
-  RadioRoot,
-} from "./Radio";
+import { RadioContent, RadioControl, RadioError, RadioHint, RadioIndicator, RadioLabel, RadioRoot } from "./Radio";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 const RadioIndicatorCompound = Object.assign(RadioIndicator, {

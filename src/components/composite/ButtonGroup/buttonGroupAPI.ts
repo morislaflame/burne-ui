@@ -1,10 +1,4 @@
-import {
-  Children,
-  Fragment,
-  isValidElement,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 
 import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";

@@ -1,19 +1,7 @@
 import { forwardRef } from "react";
 
 import { AccordionContext } from "./accordionContext";
-import {
-  AccordionBody,
-  AccordionContent,
-  AccordionDescription,
-  AccordionHeading,
-  AccordionIcon,
-  AccordionIndicator,
-  AccordionItem,
-  AccordionMessage,
-  AccordionPanel,
-  AccordionTitle,
-  AccordionTrigger,
-} from "./accordionParts";
+import { AccordionBody, AccordionContent, AccordionDescription, AccordionHeading, AccordionIcon, AccordionChevron, AccordionItem, AccordionMessage, AccordionPanel, AccordionTitle, AccordionTrigger } from "./accordionParts";
 import { accordionRootClass } from "./accordionStyles";
 import type { AccordionProps } from "./accordionTypes";
 import { useAccordionRootState } from "./useAccordionRootState";
@@ -28,7 +16,7 @@ export type {
   AccordionContentProps,
   AccordionTitleProps,
   AccordionDescriptionProps,
-  AccordionIndicatorProps,
+  AccordionChevronProps,
   AccordionPanelProps,
   AccordionBodyProps,
 } from "./accordionTypes";
@@ -74,7 +62,7 @@ export {
   AccordionContent,
   AccordionTitle,
   AccordionDescription,
-  AccordionIndicator,
+  AccordionChevron,
   AccordionPanel,
   AccordionBody,
 };

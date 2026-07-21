@@ -5,14 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  Breadcrumbs,
-  type BreadcrumbsProps,
-  type BreadcrumbsClassNames,
-  type BreadcrumbItem,
-  type BreadcrumbsListProps,
-  type BreadcrumbsItemProps,
-} from "burne-ui";
+import { Breadcrumbs, type BreadcrumbsProps, type BreadcrumbsClassNames, type BreadcrumbItem, type BreadcrumbsListProps, type BreadcrumbsItemProps } from "burne-ui";
 ```
 
 ## API

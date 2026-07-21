@@ -1,49 +1,15 @@
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
-import {
-  forwardRef,
-  useCallback,
-  useMemo,
-  useRef,
-  type MouseEvent,
-  type Ref,
-} from "react";
+import { forwardRef, useCallback, useMemo, useRef, type MouseEvent, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
-import {
-  PAGINATION_ELLIPSIS_ARIA_HIDDEN,
-  PAGINATION_ICON_ARIA_HIDDEN,
-  PAGINATION_NEXT_DEFAULT_LABEL,
-  PAGINATION_PREVIOUS_DEFAULT_LABEL,
-  resolvePaginationPageAriaLabel,
-} from "./paginationA11y";
-import {
-  getPaginationRange,
-  resolvePaginationNextDisabled,
-  resolvePaginationPreviousDisabled,
-} from "./paginationAPI";
+import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, PAGINATION_NEXT_DEFAULT_LABEL, PAGINATION_PREVIOUS_DEFAULT_LABEL, resolvePaginationPageAriaLabel } from "./paginationA11y";
+import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
 import { usePaginationContentRef } from "./paginationAnimations";
-import {
-  useOptionalPagination,
-  usePagination,
-  usePaginationClassNames,
-} from "./paginationContext";
-import {
-  paginationContentClass,
-  paginationEllipsisClass,
-  paginationInteractiveButtonClass,
-  paginationItemClass,
-  paginationNavTextClass,
-  paginationNextIconClass,
-  paginationPageActiveClass,
-  paginationPageTextClass,
-  paginationPreviousIconClass,
-  paginationRootClass,
-  paginationSummaryClass,
-  paginationSummaryTextClass,
-} from "./paginationStyles";
+import { useOptionalPagination, usePagination, usePaginationClassNames } from "./paginationContext";
+import { paginationContentClass, paginationEllipsisClass, paginationInteractiveButtonClass, paginationItemClass, paginationNavTextClass, paginationNextIconClass, paginationPageActiveClass, paginationPageTextClass, paginationPreviousIconClass, paginationRootClass, paginationSummaryClass, paginationSummaryTextClass } from "./paginationStyles";
 import type {
   PaginationContentProps,
   PaginationEllipsisProps,
@@ -359,7 +325,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
   function PaginationPage(
     {
       page: pageNumber,
-      isActive,
+      active: activeProp,
       children,
       onClick,
       className,
@@ -371,7 +337,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     const ctx = useOptionalPagination();
     const slotClassNames = usePaginationClassNames();
     const active =
-      isActive ?? (ctx?.page != null ? ctx.page === pageNumber : false);
+      activeProp ?? (ctx?.page != null ? ctx.page === pageNumber : false);
 
     const handleClick = useCallback(
       (event: MouseEvent<HTMLButtonElement>) => {

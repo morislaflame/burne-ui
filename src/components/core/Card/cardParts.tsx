@@ -6,18 +6,7 @@ import { cn } from "@/utils/cn";
 import { cardTitleHeadingTag } from "./cardA11y";
 
 import { useCardClassNames } from "./cardContext";
-import {
-  CARD_BODY_CLASS,
-  CARD_BUTTON_SHELL_CLASS,
-  CARD_DESCRIPTION_CLASS,
-  CARD_FOOTER_CLASS,
-  CARD_GLOSS_CONTENT_CLASS,
-  CARD_HEADER_CLASS,
-  CARD_HEADING_BLOCK_CLASS,
-  CARD_PRESSABLE_CONTENT_CLASS,
-  CARD_TITLE_CLASS,
-  cardGlossPressableClass,
-} from "./cardStyles";
+import { CARD_BODY_CLASS, CARD_BUTTON_SHELL_CLASS, CARD_DESCRIPTION_CLASS, CARD_FOOTER_CLASS, CARD_GLOSS_CONTENT_CLASS, CARD_HEADER_CLASS, CARD_HEADING_BLOCK_CLASS, CARD_PRESSABLE_CONTENT_CLASS, CARD_TITLE_CLASS, cardGlossPressableClass } from "./cardStyles";
 import type {
   CardBodyProps,
   CardDescriptionProps,

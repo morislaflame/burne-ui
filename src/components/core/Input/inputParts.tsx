@@ -3,15 +3,7 @@ import type {
   MouseEvent,
   ReactNode,
 } from "react";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { IoClose, IoEye, IoEyeOff, IoFolderOpen } from "react-icons/io5";
 
 import { FieldError, FieldHint } from "@/components/core/Field";
@@ -24,44 +16,11 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { cn } from "@/utils/cn";
 
 import { animateInputFileRowExit, useInputShellMotion } from "./inputAnimations";
-import {
-  INPUT_PASSWORD_HIDE_ARIA_LABEL,
-  INPUT_PASSWORD_SHOW_ARIA_LABEL,
-  INPUT_FILE_REMOVE_ARIA_LABEL,
-} from "./inputA11y";
+import { INPUT_PASSWORD_HIDE_ARIA_LABEL, INPUT_PASSWORD_SHOW_ARIA_LABEL, INPUT_FILE_REMOVE_ARIA_LABEL } from "./inputA11y";
 import { assignInputFiles, inputSizeFromButtonSize } from "./inputAPI";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import {
-  useInputClassNames,
-  useInputFieldContext,
-  useOptionalInputFieldContext,
-} from "./inputContext";
-import {
-  INPUT_CONTROL_BASE_CLASS,
-  INPUT_CONTROL_PAD,
-  INPUT_FILE_EMPTY_ICON_CLASS,
-  INPUT_FILE_EMPTY_TEXT_CLASS,
-  INPUT_FILE_GLYPH_ICON_CLASS,
-  INPUT_FILE_GLYPH_SHELL_CLASS,
-  INPUT_FILE_INPUT_CLASS,
-  INPUT_FILE_NAME_CLASS,
-  INPUT_FILE_PREVIEW_CLASS,
-  INPUT_FILE_REMOVE_ICON_CLASS,
-  INPUT_FILE_ROW_CLASS,
-  INPUT_FILE_ROW_SINGLE_CLASS,
-  INPUT_PASSWORD_TOGGLE_CONTROL,
-  INPUT_PASSWORD_TOGGLE_ICON_CLASS,
-  INPUT_PASSWORD_TOGGLE_WRAP_CLASS,
-  inputAffixSlotClass,
-  inputAffixSurfaceClass,
-  inputFileEmptyAreaClass,
-  inputFileEmptyShellSurfaceClass,
-  inputFileFilledAreaClass,
-  inputFileRemoveButtonClass,
-  inputPasswordToggleButtonClass,
-  inputShellClass,
-  inputShellSurfaceClass,
-} from "./inputStyles";
+import { useInputClassNames, useInputFieldContext, useOptionalInputFieldContext } from "./inputContext";
+import { INPUT_CONTROL_BASE_CLASS, INPUT_CONTROL_PAD, INPUT_FILE_EMPTY_ICON_CLASS, INPUT_FILE_EMPTY_TEXT_CLASS, INPUT_FILE_GLYPH_ICON_CLASS, INPUT_FILE_GLYPH_SHELL_CLASS, INPUT_FILE_INPUT_CLASS, INPUT_FILE_NAME_CLASS, INPUT_FILE_PREVIEW_CLASS, INPUT_FILE_REMOVE_ICON_CLASS, INPUT_FILE_ROW_CLASS, INPUT_FILE_ROW_SINGLE_CLASS, INPUT_PASSWORD_TOGGLE_CONTROL, INPUT_PASSWORD_TOGGLE_ICON_CLASS, INPUT_PASSWORD_TOGGLE_WRAP_CLASS, inputAffixSlotClass, inputAffixSurfaceClass, inputFileEmptyAreaClass, inputFileEmptyShellSurfaceClass, inputFileFilledAreaClass, inputFileRemoveButtonClass, inputPasswordToggleButtonClass, inputShellClass, inputShellSurfaceClass } from "./inputStyles";
 import type {
   InputHintProps,
   InputErrorProps,
@@ -254,7 +213,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
       fieldCtx?.size ??
       formCtx?.size ??
       inputSizeFromButtonSize(groupCtx?.buttonSize ?? "base");
-    const isRequired = fieldCtx?.isRequired ?? false;
+    const required = fieldCtx?.required ?? false;
     const hintConnected = fieldCtx?.hintConnected ?? false;
     const errorConnected = fieldCtx?.errorConnected ?? false;
     const hintId = fieldCtx?.hintId;
@@ -527,7 +486,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
               readOnly={resolvedReadOnly}
               onChange={handleFileChange}
               onBlur={resolvedOnBlur}
-              aria-required={isRequired || undefined}
+              aria-required={required || undefined}
               aria-invalid={formBinding["aria-invalid"] ?? (status === "danger" ? true : undefined)}
               aria-describedby={ariaDescribedBy}
               className={INPUT_FILE_INPUT_CLASS}
@@ -546,7 +505,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputProps>(
             value={resolvedValue as string | number | readonly string[] | undefined}
             onChange={resolvedOnChange}
             onBlur={resolvedOnBlur}
-            aria-required={isRequired || undefined}
+            aria-required={required || undefined}
             aria-invalid={formBinding["aria-invalid"] ?? (status === "danger" ? true : undefined)}
             aria-describedby={ariaDescribedBy}
             className={cn(

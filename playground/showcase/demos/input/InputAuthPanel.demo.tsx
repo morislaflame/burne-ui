@@ -14,7 +14,7 @@ export function InputAuthPanelDemo() {
         </Text>
       </div>
       <div className="flex flex-col gap-mid">
-        <Input isRequired>
+        <Input required>
           <Input.Label>Name</Input.Label>
           <Input.Control placeholder="Production key" autoComplete="off" />
         </Input>

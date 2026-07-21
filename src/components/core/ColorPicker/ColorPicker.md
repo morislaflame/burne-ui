@@ -5,26 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  ColorPicker,
-  ColorSlider,
-  ColorSwatch,
-  useColorPicker,
-  hsvaToHex,
-  hexToHsva,
-  hsvaToRgba,
-  rgbaToHsva,
-  type ColorPickerProps,
-  type ColorPickerTriggerProps,
-  type ColorPickerContentProps,
-  type ColorPickerSize,
-  type ColorPickerVariant,
-  type ColorPickerClassNames,
-  type ColorSliderTrackProps,
-  type ColorSwatchProps,
-  type HSVA,
-  type RGBA,
-} from "burne-ui";
+import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexToHsva, hsvaToRgba, rgbaToHsva, type ColorPickerProps, type ColorPickerTriggerProps, type ColorPickerContentProps, type ColorPickerSize, type ColorPickerVariant, type ColorPickerClassNames, type ColorSliderTrackProps, type ColorSwatchProps, type HSVA, type RGBA } from "burne-ui";
 ```
 
 ## API

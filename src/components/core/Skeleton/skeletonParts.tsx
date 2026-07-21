@@ -1,20 +1,7 @@
 import { forwardRef } from "react";
 
 import { skeletonPresentationProps } from "./skeletonA11y";
-import {
-  SKELETON_BASE_CLASS,
-  SKELETON_BLOCK_CLASS,
-  SKELETON_CIRCLE_RADIUS_CLASS,
-  SKELETON_CIRCLE_SIZE_DEFAULT,
-  SKELETON_TEXT_LINE_CLASS,
-  SKELETON_TEXT_LINE_FULL_CLASS,
-  SKELETON_TEXT_LINE_LAST_SHORT_CLASS,
-  SKELETON_TEXT_ROOT_CLASS,
-  SKELETON_WAVE_OVERLAY_CLASS,
-  skeletonLineAnimationDelay,
-  skeletonVariantStyle,
-  skeletonWaveOverlayStyle,
-} from "./skeletonStyles";
+import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, skeletonLineAnimationDelay, skeletonVariantStyle, skeletonWaveOverlayStyle } from "./skeletonStyles";
 import type {
   SkeletonBlockProps,
   SkeletonCircleProps,

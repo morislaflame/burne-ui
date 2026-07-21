@@ -1,27 +1,11 @@
-import {
-  Children,
-  forwardRef,
-  isValidElement,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Children, forwardRef, isValidElement, useCallback, useMemo, useRef, useState } from "react";
 
 import { cn } from "@/utils/cn";
 
-import {
-  registerBadgeAnchorLiftTarget,
-  useBadgeAnchorAnimations,
-} from "./badgeAnimations";
+import { registerBadgeAnchorLiftTarget, useBadgeAnchorAnimations } from "./badgeAnimations";
 import { isBadgeElement } from "./badgeAPI";
 import { badgeRootA11yProps } from "./badgeA11y";
-import {
-  BadgeClassNamesProvider,
-  BadgeDirectAnchorChildProvider,
-  BadgeLiftTargetProvider,
-  useBadgeClassNames,
-} from "./badgeContext";
+import { BadgeClassNamesProvider, BadgeDirectAnchorChildProvider, BadgeLiftTargetProvider, useBadgeClassNames } from "./badgeContext";
 import type {
   BadgeAnchorProps,
   BadgeDotViewProps,
@@ -29,14 +13,7 @@ import type {
   BadgeShellProps,
   BadgeTextViewProps,
 } from "./badgeTypes";
-import {
-  BADGE_ANCHOR_ROOT_CLASS,
-  BADGE_SHELL_SPLIT_OUTER_CLASS,
-  badgeDotViewClass,
-  badgeIconOnlyViewClass,
-  badgeShellAnchorChildClass,
-  badgeTextViewClass,
-} from "./badgeStyles";
+import { BADGE_ANCHOR_ROOT_CLASS, BADGE_SHELL_SPLIT_OUTER_CLASS, badgeDotViewClass, badgeIconOnlyViewClass, badgeShellAnchorChildClass, badgeTextViewClass } from "./badgeStyles";
 
 
 function BadgeShell({

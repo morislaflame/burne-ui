@@ -32,7 +32,7 @@ export type SelectRootProps = HTMLAttributes<HTMLDivElement> & {
   error?: ReactNode;
   id?: string;
   name?: string;
-  isRequired?: boolean;
+  required?: boolean;
   status?: InputStatus;
   size?: InputSize;
   options?: SelectOption[];
@@ -61,7 +61,7 @@ export type SelectFieldContextValue = {
   labelConnected: boolean;
   hintConnected: boolean;
   errorConnected: boolean;
-  isRequired: boolean;
+  required: boolean;
   status: InputStatus;
   size: InputSize;
   errorMessage?: ReactNode;

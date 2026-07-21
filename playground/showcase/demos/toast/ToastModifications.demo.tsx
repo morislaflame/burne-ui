@@ -99,7 +99,7 @@ export function ToastModificationsDemo() {
             toast.show({
               title: "Saving…",
               description: "Wait for the operation to complete.",
-              isLoading: true,
+              loading: true,
             })
           }
         >

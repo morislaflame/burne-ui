@@ -26,7 +26,7 @@ export function DisclosureShowcase() {
     <ShowcasePage
       title="Disclosure"
       description="Expanding blocks with height animation - for FAQ and single sections."
-      importPath='import { Disclosure, DisclosureGroup } from "@/components/core/Disclosure";'
+      importPath='import { Disclosure } from "@/components/core/Disclosure";'
       tags={["core", "disclosure"]}
     >
       <ShowcaseSection title="Single" description="One Disclosure without a group.">
@@ -37,11 +37,11 @@ export function DisclosureShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureSizesDemo} source={disclosureSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Card group" description="DisclosureGroup variant card — general card.">
+      <ShowcaseSection title="Card group" description="Disclosure.Group variant card — general card.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureCardGroupDemo} source={disclosureCardGroupSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Outline FAQ" description="DisclosureGroup variant outline with icons.">
+      <ShowcaseSection title="Outline FAQ" description="Disclosure.Group variant outline with icons.">
         <ShowcaseDemoFromFile align="stretch" Demo={DisclosureOutlineFaqDemo} source={disclosureOutlineFaqSource} />
       </ShowcaseSection>
 
@@ -76,7 +76,7 @@ export function DisclosureShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Disclosure.Trigger and Disclosure.Content — block slots. DisclosureGroup combines several."
+            description="Disclosure.Trigger and Disclosure.Content — block slots. Disclosure.Group combines several."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
@@ -85,7 +85,7 @@ export function DisclosureShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Groups">
           <p>
-            <code>variant=&quot;card&quot;</code> and <code>variant=&quot;outline&quot;</code> on DisclosureGroup.
+            <code>variant=&quot;card&quot;</code> and <code>variant=&quot;outline&quot;</code> on Disclosure.Group.
             <code>defaultValue</code> — open item by default.
           </p>
         </ShowcaseDoc.Block>

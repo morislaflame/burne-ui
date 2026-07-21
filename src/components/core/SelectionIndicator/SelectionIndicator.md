@@ -5,16 +5,7 @@
 ## Импорт
 
 ```tsx
-import {
-  SelectionIndicator,
-  useSelectionIndicatorAnimation,
-  selectionIndicatorShellClass,
-  selectionIndicatorFallbackPx,
-  type SelectionIndicatorProps,
-  type SelectionIndicatorSize,
-  type SelectionIndicatorVariant,
-  type SelectionIndicatorClassNames,
-} from "burne-ui";
+import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorShellClass, selectionIndicatorFallbackPx, type SelectionIndicatorProps, type SelectionIndicatorSize, type SelectionIndicatorVariant, type SelectionIndicatorClassNames } from "burne-ui";
 ```
 
 ## API

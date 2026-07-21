@@ -7,12 +7,10 @@ export type LinkComponent = ((
   props: LinkProps & RefAttributes<HTMLAnchorElement>,
 ) => ReturnType<typeof Link>) & {
   Icon: typeof LinkIcon;
-  Root: typeof LinkRoot;
 };
 
 const LinkCompound = Object.assign(Link, {
   Icon: LinkIcon,
-  Root: LinkRoot,
 }) as LinkComponent;
 
 export { LinkCompound as Link, LinkRoot, LinkIcon };

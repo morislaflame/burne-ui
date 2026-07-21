@@ -10,17 +10,7 @@
  *
  * @see https://github.com/oframe/ogl/blob/master/examples/fresnel.html
  */
-import {
-  Camera,
-  Color,
-  Mesh,
-  Orbit,
-  Plane,
-  Program,
-  RenderTarget,
-  Renderer,
-  Transform,
-} from "ogl";
+import { Camera, Color, Mesh, Orbit, Plane, Program, RenderTarget, Renderer, Transform } from "ogl";
 import { useEffect, useRef } from "react";
 import { createPlugGeometry } from "./solidTorusGeometry";
 

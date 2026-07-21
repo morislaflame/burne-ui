@@ -72,7 +72,7 @@ export function useSliderRootState({
   );
 
   const fieldLabelCtx = useMemo(
-    () => ({ labelId, isRequired: false as const }),
+    () => ({ labelId, required: false as const }),
     [labelId],
   );
 
