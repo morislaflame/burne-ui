@@ -158,7 +158,7 @@ export const IndicatorShape: Story = {
       <Radio.Control>
         <Radio.Indicator
           classNames={{
-            shell: "rounded-mid",
+            root: "rounded-mid",
             fill: "rounded-[inherit]",
           }}
         />

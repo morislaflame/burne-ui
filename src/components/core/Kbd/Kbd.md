@@ -42,18 +42,20 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `hoverLift` | `true` | Hover shadow/lift (2nd level) |
 | `className` | — | На `<kbd>` |
-| `classNames` | — | `root`, `group`, `separator` |
+| `classNames` | — | `root`, `text`, `group`, `separator` |
 
 ### `Kbd.Group` props
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `separator` | `"+"` | Между keys; `null` — скрыть |
-| `classNames` | — | `group`, `separator` |
+| `classNames` | — | `group`, `separator` (override) |
 
 ### `KbdClassNames`
 
-`root`, `group`, `separator`.
+`root`, `text`, `group`, `separator`.
+
+`separator` — слот для prop `separator` в `Kbd.Group` (compound-части `Separator` нет).
 
 ## variant
 
@@ -168,14 +170,16 @@ Group wrapper **не** анимируется. Separator — static `Text` (`ari
 2. **`classNames.root`** — слот поверх variant surface.
 
 `Kbd.Group`: `className` на group span + `classNames.group` / `separator`.
+`Kbd.Text`: слот `text` (и `className` на части).
 
 ### Слоты `KbdClassNames`
 
 | Слот | DOM | Когда использовать |
 |------|-----|-------------------|
-| `root` | `<kbd>` | Border tint, custom bg, ring |
+| `root` | `<kbd>` | Surface / padding |
+| `text` | `Kbd.Text` | Typography label inside key |
 | `group` | `Kbd.Group` span | Gap, alignment shortcut row |
-| `separator` | `+` между keys | Color/size separator |
+| `separator` | Prop `separator` in Group | Color/size between keys (без compound-части) |
 
 `variant`, `size` — surface и padding из токенов. `hoverLift={false}` отключает только motion.
 

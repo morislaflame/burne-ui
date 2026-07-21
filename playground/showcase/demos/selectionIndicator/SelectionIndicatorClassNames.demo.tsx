@@ -18,7 +18,7 @@ export function SelectionIndicatorClassNamesDemo() {
           selected={selected}
           check
           classNames={{
-            shell: "rounded-mid ring-1 ring-primary/30",
+            root: "rounded-mid ring-1 ring-primary/30",
             fill: "rounded-[inherit] bg-danger",
             mark: "text-danger-foreground",
           }}

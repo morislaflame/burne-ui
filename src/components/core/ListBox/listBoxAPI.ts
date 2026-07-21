@@ -14,9 +14,9 @@ export function resolveListBoxItemIndicatorClassNames({
   classNames?: ListBoxItemIndicatorClassNames;
 }): SelectionIndicatorClassNames {
   return {
-    shell: cn(
+    root: cn(
       slotClassNames.itemIndicatorShell,
-      classNames?.shell,
+      classNames?.root,
       classNames?.itemIndicatorShell,
     ),
     fill: cn(

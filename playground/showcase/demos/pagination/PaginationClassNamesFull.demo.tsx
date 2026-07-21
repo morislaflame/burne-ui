@@ -15,7 +15,9 @@ export function PaginationClassNamesFullDemo() {
         root: "rounded-mid border border-primary/25 p-base",
         summaryText: "text-primary font-medium",
         content: "gap-small",
-        interactive: "text-muted hover:text-primary",
+        previous: "text-muted hover:text-primary",
+        next: "text-muted hover:text-primary",
+        page: "text-muted hover:text-primary",
         pageActive: "text-primary font-semibold",
         ellipsis: "text-warning",
       }}

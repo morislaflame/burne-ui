@@ -176,6 +176,7 @@ export const CustomClassNames: Story = {
       variant="outline"
       classNames={{
         root: "border-primary/40 bg-primary/5",
+        text: "tracking-tight",
       }}
     >
       /

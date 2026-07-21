@@ -253,8 +253,8 @@ Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.e
 
 #### Два уровня
 
-1. **`className` на `<fieldset>`** — мерж с `classNames.set`.
-2. **`classNames`** — `set`, `stack`, `legend`, `legendHeader`, `group`, `actions`.
+1. **`className` на `<fieldset>`** — мерж с `classNames.root`.
+2. **`classNames`** — `root`, `stack`, `legend`, `legendHeader`, `group`, `actions`.
 
 ```tsx
 <Field.Set
@@ -285,8 +285,8 @@ Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.e
 
 | Слот | Элемент | Назначение |
 |------|---------|------------|
-| `set` | `<fieldset>` | Layout на корне (`max-w-*`, gap и т.п.) |
-| `stack` | Внутренний stack | Вертикальный gap между legend/groups/actions |
+| `root` | `<fieldset>` | Layout на корне (`max-w-*`, gap и т.п.) |
+| `stack` | Внутренний layout-div | Gap между Group/Actions (без compound-части) |
 | `legend` | `<legend>` | Заголовок группы |
 | `legendHeader` | Обёртка в legend | Label + hint в одной строке |
 | `group` | `Field.Group` | Gap между полями |
@@ -296,14 +296,14 @@ Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.e
 
 #### Ограничение нативного `<fieldset>`
 
-`Field.Set` — семантическая группировка, не card-like контейнер. У нативного fieldset `<legend>` рендерится **вне** content box: `border` и `padding` на `set`/`className` **не оборачивают legend** и не дают «карточку» вокруг всей группы. Между legend и контентом браузер добавляет свой отступ content box (плюс `mt-*` на stack от `size`).
+`Field.Set` — семантическая группировка, не card-like контейнер. У нативного fieldset `<legend>` рендерится **вне** content box: `border` и `padding` на `root`/`className` **не оборачивают legend** и не дают «карточку» вокруг всей группы. Между legend и контентом браузер добавляет свой отступ content box (плюс `mt-*` на stack от `size`).
 
 Для визуальной рамки вокруг legend + полей оберните `Field.Set` во внешний `div`/`Card` с border и padding — внутри оставьте fieldset без border.
 
 ### Практические заметки
 
 - **Размер Set:** `size` на `Field.Set` влияет на gap токенов — согласуйте с `Form` size.
-- **Border на set:** не используйте `border`/`p-*` на `set`, если ожидаете обёртку legend — см. ограничение выше.
+- **Border на root:** не используйте `border`/`p-*` на `root`, если ожидаете обёртку legend — см. ограничение выше.
 - **Не путать с Input:** `Field.classNames` не стилизует shell input — только layout Field; shell — в `Input.classNames.shell`.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
 

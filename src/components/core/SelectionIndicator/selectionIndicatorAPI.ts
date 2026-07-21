@@ -104,20 +104,20 @@ export function partitionSelectionIndicatorChildren(
 }
 
 export function resolveSelectionIndicatorClassNames({
-  shell,
+  root,
   fill,
   mark,
   classNames,
   className,
 }: {
-  shell?: ClassValue;
+  root?: ClassValue;
   fill?: ClassValue;
   mark?: ClassValue;
   classNames?: SelectionIndicatorClassNames;
   className?: string;
 }): ResolvedSelectionIndicatorClassNames {
   return {
-    shell: cn(shell, classNames?.shell, className),
+    root: cn(root, classNames?.root, className),
     fill: cn(fill, classNames?.fill),
     mark: cn(mark, classNames?.mark),
   };

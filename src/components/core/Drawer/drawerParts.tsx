@@ -291,8 +291,9 @@ DrawerFooter.displayName = "DrawerFooter";
 // ─── Drawer.Trigger ──────────────────────────────────────────────────────────
 
 export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
-  function DrawerTrigger({ children, asChild, onClick, onPointerDown, ...rest }, forwardedRef) {
+  function DrawerTrigger({ children, asChild, className, onClick, onPointerDown, ...rest }, forwardedRef) {
     const { open, onOpenChange } = useDrawer();
+    const slotClassNames = useDrawerClassNames();
     const triggerRef = useRef<HTMLElement | null>(null);
     const openingRef = useOpeningRef();
 
@@ -330,6 +331,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       if (onlyChild) {
         const child = onlyChild as ReactElement<{
           ref?: Ref<HTMLElement>;
+          className?: string;
           onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
           onClick?: (e: ReactMouseEvent<HTMLElement>) => void;
           "aria-haspopup"?: string;
@@ -337,6 +339,11 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
         }>;
         return cloneElement(child, {
           ref: ((node: HTMLElement | null) => { triggerRef.current = node; }) as unknown as Ref<HTMLElement>,
+          className: cn(
+            slotClassNames.trigger,
+            child.props.className,
+            className,
+          ),
           onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
             handlePointerDown(e);
             child.props.onPointerDown?.(e);
@@ -358,6 +365,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
         ref={setRefs}
         aria-haspopup="dialog"
         aria-expanded={open}
+        className={cn(slotClassNames.trigger, className)}
         onPointerDown={(e) => {
           onPointerDown?.(e);
           handlePointerDown(e);

@@ -85,7 +85,7 @@ export function CheckboxShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Checkbox.Indicator.Fill / .Mark; classNames.shell / fill / mark."
+            description="Checkbox.Indicator.Fill / .Mark; classNames.root / fill / mark."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Groups">

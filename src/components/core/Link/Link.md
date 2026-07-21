@@ -22,14 +22,14 @@ import { Link, LinkIcon, type LinkProps, type LinkSize, type LinkIconPosition, t
 | `showDefaultIcon` | `boolean` | `false` | `IoArrowForward` ↗ (только без `icon`) |
 | `defaultIconPosition` | `start` \| `end` | `end` | Позиция дефолтной иконки |
 | `className` | `string` | — | На `<a>` |
-| `classNames` | `LinkClassNames` | — | `anchor`, `text`, `iconStart`, `iconEnd` |
+| `classNames` | `LinkClassNames` | — | `root`, `text`, `iconStart`, `iconEnd` |
 | … | `AnchorHTMLAttributes` | — | `target`, `rel`, `onClick`, … |
 
 ### `LinkClassNames`
 
 ```tsx
 type LinkClassNames = {
-  anchor?: string;
+  root?: string;
   text?: string;
   iconStart?: string;
   iconEnd?: string;
@@ -159,8 +159,8 @@ configureMotion({
 
 ### Два уровня
 
-1. **`className`** — доп. классы на `<a>` (мерж с `classNames.anchor`).
-2. **`classNames`** — слоты `anchor`, `text`, `iconStart`, `iconEnd`.
+1. **`className`** — доп. классы на `<a>` (мерж с `classNames.root`).
+2. **`classNames`** — слоты `root`, `text`, `iconStart`, `iconEnd`.
 
 Link — один компонент; «compound» меняет только разметку иконок внутри якоря.
 
@@ -168,7 +168,7 @@ Link — один компонент; «compound» меняет только р�
 
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
-| `anchor` | `<a>` | Gap, padding, border, hover-lift target |
+| `root` | `<a>` | Gap, padding, border, hover-lift target |
 | `text` | `Text` (children) | Шрифт, underline override |
 | `iconStart` | Обёртка левой иконки | Размер, muted/hover цвет |
 | `iconEnd` | Обёртка end-иконки | Дефолтная ↗ или `icon` при `iconPosition="end"` |
@@ -184,7 +184,7 @@ Link — один компонент; «compound» меняет только р�
   icon={<IoDocument aria-hidden />}
   className="max-w-xs"
   classNames={{
-    anchor: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
+    root: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
     text: "font-semibold",
     iconStart: "opacity-80",
     iconEnd: "text-warning",
@@ -202,7 +202,7 @@ Link — один компонент; «compound» меняет только р�
 <Link
   href="/item"
   classNames={{
-    anchor: "gap-mid",
+    root: "gap-mid",
     text: "text-primary",
     iconStart: "text-muted group-hover:text-foreground",
   }}
@@ -221,7 +221,7 @@ Link — один компонент; «compound» меняет только р�
 
 ### Практические заметки
 
-- **Motion:** hover-lift и squeeze на `anchor` — не переопределяйте `transform` на anchor без нужды.
+- **Motion:** hover-lift и squeeze на `root` — не переопределяйте `transform` на корне без нужды.
 - **External links:** `target="_blank"` + `rel="noopener noreferrer"` — через обычные anchor props.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` на `<Link>`.
 

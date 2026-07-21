@@ -43,6 +43,7 @@ export function TooltipClassNamesGlossDemo() {
       variant="gloss"
       side="bottom"
       classNames={{
+        glossPanel: "ring-1 ring-white/10",
         glossContent: "gap-y-xsmall",
         panel: "ring-1 ring-white/10",
         title: "text-foreground/95",

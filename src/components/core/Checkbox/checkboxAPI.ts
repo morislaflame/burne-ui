@@ -22,9 +22,9 @@ export function resolveCheckboxIndicatorClassNames({
   className?: string;
 }): SelectionIndicatorClassNames {
   return {
-    shell: cn(
+    root: cn(
       slotClassNames.indicator,
-      classNames?.shell,
+      classNames?.root,
       classNames?.indicator,
       className,
     ),

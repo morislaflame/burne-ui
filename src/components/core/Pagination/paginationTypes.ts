@@ -17,16 +17,22 @@ export type PaginationClassNames = {
   content?: string;
   /** `Pagination.Item` (`<li>`). */
   item?: string;
-  /** `PaginationInteractive` button. */
-  interactive?: string;
-  /** Active page (`aria-current="page"`). */
+  /** `Pagination.Previous` button. */
+  previous?: string;
+  /** `Pagination.Next` button. */
+  next?: string;
+  /** `Pagination.Page` button (inactive). */
+  page?: string;
+  /** Active `Pagination.Page` (`aria-current="page"`). */
   pageActive?: string;
-  /** Page number text in button. */
+  /** Page number text in inactive `Pagination.Page`. */
   pageText?: string;
   /** `Pagination.Ellipsis`. */
   ellipsis?: string;
-  /** "Back" / "Forward" text in nav buttons. */
-  navText?: string;
+  /** Default "Back" label text in `Pagination.Previous`. */
+  previousText?: string;
+  /** Default "Forward" label text in `Pagination.Next`. */
+  nextText?: string;
   /** `Pagination.PreviousIcon`. */
   previousIcon?: string;
   /** `Pagination.NextIcon`. */

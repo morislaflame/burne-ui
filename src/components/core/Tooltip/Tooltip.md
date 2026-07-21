@@ -69,7 +69,7 @@ import { Tooltip, type TooltipRootProps, type TooltipVariant, type TooltipSize, 
 
 ### `TooltipClassNames`
 
-`root`, `trigger`, `content`, `arrow`, `panel`, `glossContent`, `message`, `indicator`, `icon`, `title`, `description`.
+`root`, `trigger`, `content`, `arrow`, `panel`, `glossPanel`, `glossContent`, `message`, `indicator`, `icon`, `title`, `description`.
 
 `root` и `trigger` применяются к триггеру (в т.ч. при `cloneElement` единственного child).
 
@@ -207,6 +207,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 | `content` | Portal wrapper | Outer shell, ring |
 | `arrow` | Arrow span | Tint/border стрелки |
 | `panel` | Bubble surface | Background, border, padding |
+| `glossPanel` | Gloss shell | При `variant="gloss"` (вместе с `panel`) |
 | `glossContent` | Inner gloss grid | Content area в gloss |
 | `message` | Grid wrapper (`display:contents`) | Compound layout spacing |
 | `indicator` / `icon` | Icon cell | Semantic icon color/size |

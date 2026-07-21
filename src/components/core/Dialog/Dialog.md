@@ -50,6 +50,7 @@ Root **не рендерит DOM** — только контекст и `classNa
 
 ```tsx
 type DialogClassNames = {
+  trigger?: string;
   dialog?: string;       // <dialog>
   overlay?: string;
   panel?: string;
@@ -238,6 +239,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
+| `trigger` | `Dialog.Trigger` | Слот на кнопке / asChild |
 | `dialog` | Нативный `<dialog>` | Редко — глобальные правки dialog-элемента |
 | `overlay` | Backdrop | Blur, opacity, цвет затемнения |
 | `panel` | Surface панели | Max-width, border, shadow, gloss/default |

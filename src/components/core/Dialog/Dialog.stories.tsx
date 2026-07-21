@@ -543,6 +543,7 @@ export const CustomClassNames: Story = {
           open={open}
           onOpenChange={setOpen}
           classNames={{
+            trigger: "font-medium",
             panel: "border-primary/40 bg-primary/5 shadow-token-large",
             title: "text-primary font-semibold",
             description: "text-foreground/80",

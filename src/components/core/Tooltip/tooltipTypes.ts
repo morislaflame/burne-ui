@@ -21,6 +21,7 @@ export type TooltipClassNames = {
   content?: string;
   arrow?: string;
   panel?: string;
+  glossPanel?: string;
   glossContent?: string;
   message?: string;
   indicator?: string;

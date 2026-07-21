@@ -70,7 +70,7 @@ type BreadcrumbItem = {
 
 ### `BreadcrumbsClassNames`
 
-`root`, `list`, `listItem`, `separator`, `separatorWrapper`, `current`, `link`, `linkWrapper`, `linkText`, `static`, `ellipsisTrigger`, `ellipsisLiftWrapper`, `ellipsisText`, `ellipsisPopover`, `dropdownItem`.
+`root`, `list`, `item`, `separator`, `separatorWrapper`, `itemCurrent`, `itemLink`, `itemLinkWrapper`, `itemLinkText`, `itemStatic`, `ellipsisTrigger`, `ellipsisLiftWrapper`, `ellipsisText`, `ellipsisPopover`, `dropdownItem`.
 
 `Breadcrumbs.List` может переопределять `classNames` локально (merge с root provider).
 
@@ -97,10 +97,10 @@ type BreadcrumbItem = {
 **DOM (link crumb):**
 
 ```
-<li class=listItem>
-  <span class=linkWrapper>
-    <a|button class=link>
-      <Text ref=textRef class=linkText>Каталог</Text>
+<li class=item>
+  <span class=itemLinkWrapper>
+    <a|button class=itemLink>
+      <Text ref=textRef class=itemLinkText>Каталог</Text>
     </a>
   </span>
   <span class=separatorWrapper>
@@ -124,7 +124,7 @@ type BreadcrumbItem = {
 
 `useBreadcrumbInteractiveMotion` на интерактивных `<a>` / `<button>`:
 
-**Pointer down:** `usePressableElementTextMotion` squeeze на `textRef` (`linkText`).
+**Pointer down:** `usePressableElementTextMotion` squeeze на `textRef` (`itemLinkText`).
 
 Применяется к:
 
@@ -132,7 +132,7 @@ type BreadcrumbItem = {
 - button crumbs (SPA navigation)
 - ellipsis trigger `…` (тот же hook, отдельный `textRef`)
 
-**Не анимируется:** `current` segment (`breadcrumbCurrentClass`), `static` segments.
+**Не анимируется:** `itemCurrent` segment (`breadcrumbCurrentClass`), `itemStatic` segments.
 
 #### Кастомизация
 
@@ -203,14 +203,14 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
 |------|-----|-------------------|
 | `root` | `<nav>` | Container border/padding |
 | `list` | `<ol>` | Flex gap, wrap long chains |
-| `listItem` | `<li>` | Item + separator spacing |
+| `item` | `<li>` | Item + separator spacing |
 | `separator` | `IoChevronForward` | Chevron color/size |
 | `separatorWrapper` | Wrapper span | Separator alignment |
-| `current` | Last crumb `Text` | Current page emphasis |
-| `link` | `<a>` / `<button>` | Interactive surface padding |
-| `linkWrapper` | Outer span | Hover hit area |
-| `linkText` | Inner `Text` | Typography + press target |
-| `static` | Non-clickable segment | Muted path without href |
+| `itemCurrent` | Last crumb `Text` | Current page emphasis |
+| `itemLink` | `<a>` / `<button>` | Interactive surface padding |
+| `itemLinkWrapper` | Outer span | Hover hit area |
+| `itemLinkText` | Inner `Text` | Typography + press target |
+| `itemStatic` | Non-clickable segment | Muted path without href |
 | `ellipsisTrigger` | `Dropdown.Trigger` | `…` button surface |
 | `ellipsisLiftWrapper` | Inner span | Press wrapper |
 | `ellipsisText` | `…` Text | Weight/color ellipsis |
@@ -224,8 +224,8 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
   className="rounded-mid border border-token p-small"
   classNames={{
     separator: "text-primary opacity-100",
-    link: "text-info hover:text-info",
-    current: "font-semibold text-success",
+    itemLink: "text-info hover:text-info",
+    itemCurrent: "font-semibold text-success",
   }}
   items={[
     { label: "Главная", href: "/" },
@@ -242,7 +242,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
   collapse
   classNames={{
     list: "gap-small",
-    current: "font-semibold text-success",
+    itemCurrent: "font-semibold text-success",
     ellipsisPopover: "border border-token",
   }}
 >
@@ -262,7 +262,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
 </Breadcrumbs.Item>
 ```
 
-Мержится в `link` / `static` / `current` slot.
+Мержится в `itemLink` / `itemStatic` / `itemCurrent` slot.
 
 ### Практические заметки
 
@@ -271,7 +271,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
 - Separator — `IoChevronForward` (`aria-hidden`).
 - `Breadcrumbs.List` наследует collapse context от root.
 - Hidden items в ellipsis menu — осмысленные `label` для screen readers.
-- **Не задавайте `transform` на `linkText`** — конфликт с press squeeze.
+- **Не задавайте `transform` на `itemLinkText`** — конфликт с press squeeze.
 - **List `classNames` merge** с root provider — локальные слоты перекрывают root.
 
 ## Интеграции

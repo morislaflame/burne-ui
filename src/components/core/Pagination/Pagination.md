@@ -51,7 +51,7 @@ const [page, setPage] = useState(1);
 
 ### `PaginationClassNames`
 
-`root`, `summary`, `summaryText`, `content`, `item`, `interactive`, `pageActive`, `pageText`, `ellipsis`, `navText`, `previousIcon`, `nextIcon`.
+`root`, `summary`, `summaryText`, `content`, `item`, `previous`, `next`, `page`, `pageActive`, `pageText`, `ellipsis`, `previousText`, `nextText`, `previousIcon`, `nextIcon`.
 
 ### Compound-подчасти
 
@@ -206,11 +206,13 @@ configureMotion({
 | `summaryText` | Inner `Text` | Color/size «Страница N из M» |
 | `content` | `<ol>` | Gap между page items |
 | `item` | `<li>` | Per-item spacing |
-| `interactive` | Nav/page `<button>` | Hover color, padding, radius |
-| `pageActive` | Current `<span>` | Active typography (не button) |
+| `previous` | `Pagination.Previous` `<button>` | Prev button surface |
+| `next` | `Pagination.Next` `<button>` | Next button surface |
+| `page` | Inactive `Pagination.Page` `<button>` | Page button surface |
+| `pageActive` | Active `Pagination.Page` `<span>` | Active typography (не button) |
 | `pageText` | Page number in button | Muted → foreground hover |
 | `ellipsis` | `…` span | Ellipsis color/size |
-| `navText` | Back/Forward label | Nav typography |
+| `previousText` / `nextText` | Default Back/Forward labels | Nav typography |
 | `previousIcon` / `nextIcon` | Chevron icons | Icon size/opacity |
 
 ### Full compound с summary
@@ -224,9 +226,12 @@ configureMotion({
     root: "rounded-mid border border-primary/20 p-base",
     summaryText: "text-primary",
     content: "gap-small",
-    interactive: "text-info hover:text-primary",
+    previous: "text-info hover:text-primary",
+    next: "text-info hover:text-primary",
+    page: "text-info hover:text-primary",
     pageActive: "text-primary font-semibold",
-    navText: "font-medium",
+    previousText: "font-medium",
+    nextText: "font-medium",
   }}
 >
   <Pagination.Summary>Страница {page} из 12</Pagination.Summary>
@@ -259,7 +264,7 @@ configureMotion({
 - **Не удаляйте `data-flip-key`** с `<li>` при кастомном range — сломается FLIP.
 - Summary опционален — можно только prev/next/pages.
 - **Не задавайте `transform` на `<li>`** — конфликт с FLIP `x` tween.
-- **Порядок мержа:** base button classes → `classNames.interactive` → per-button `className` (если API).
+- **Порядок мержа:** base button classes → `classNames.previous` / `next` / `page` → per-button `className`.
 
 ## Интеграции
 

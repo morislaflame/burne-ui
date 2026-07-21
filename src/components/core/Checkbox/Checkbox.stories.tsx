@@ -195,14 +195,14 @@ export const IndicatorShape: Story = {
       <Checkbox.Control>
         <Checkbox.Indicator
           classNames={{
-            shell: "rounded-mid",
+            root: "rounded-mid",
             fill: "rounded-[inherit]",
           }}
         />
       </Checkbox.Control>
       <Checkbox.Content>
         <Checkbox.Label>rounded-mid</Checkbox.Label>
-        <Checkbox.Hint>classNames.shell + fill with rounded-[inherit].</Checkbox.Hint>
+        <Checkbox.Hint>classNames.root + fill with rounded-[inherit].</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   ),
@@ -213,7 +213,7 @@ export const IndicatorCompound: Story = {
   render: () => (
     <Checkbox defaultChecked variant="outline">
       <Checkbox.Control>
-        <Checkbox.Indicator classNames={{ shell: "rounded-mid" }}>
+        <Checkbox.Indicator classNames={{ root: "rounded-mid" }}>
           <Checkbox.Indicator.Fill className="rounded-[inherit]" />
           <Checkbox.Indicator.Mark>
             <IoStar aria-hidden className="text-primary" />

@@ -5,22 +5,22 @@ export type BreadcrumbsClassNames = {
   root?: string;
   /** `<ol>` on `Breadcrumbs.List` and simple mode. */
   list?: string;
-  /** `<li>` in `Breadcrumbs.List`. */
-  listItem?: string;
+  /** `<li>` for each `Breadcrumbs.Item` / simple item. */
+  item?: string;
   /** Chevron icon between items. */
   separator?: string;
   /** `<span>` wrapper on `Breadcrumbs.Separator`. */
   separatorWrapper?: string;
-  /** Current page (`aria-current="page"`). */
-  current?: string;
-  /** Link / button inside interactive crumb. */
-  link?: string;
-  /** `<span>` wrapper around crumb link. */
-  linkWrapper?: string;
-  /** Text inside crumb link (`Text`). */
-  linkText?: string;
-  /** Non-clickable segment. */
-  static?: string;
+  /** Current page content (`aria-current="page"`) — Item sub-slot. */
+  itemCurrent?: string;
+  /** Link / button inside interactive crumb — Item sub-slot. */
+  itemLink?: string;
+  /** `<span>` wrapper around crumb link — Item sub-slot. */
+  itemLinkWrapper?: string;
+  /** Text inside crumb link — Item sub-slot. */
+  itemLinkText?: string;
+  /** Non-clickable segment — Item sub-slot. */
+  itemStatic?: string;
   /** "…" button. */
   ellipsisTrigger?: string;
   /** Lift wrapper inside "…" trigger. */

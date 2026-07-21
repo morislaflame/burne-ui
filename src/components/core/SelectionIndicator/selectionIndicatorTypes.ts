@@ -3,7 +3,7 @@ import type { HTMLAttributes, ReactNode, RefObject } from "react";
 import type { SelectionIndicatorSize, SelectionIndicatorVariant } from "./selectionIndicatorTokens";
 
 export type SelectionIndicatorClassNames = {
-  shell?: string;
+  root?: string;
   fill?: string;
   mark?: string;
 };
@@ -26,7 +26,7 @@ export type SelectionIndicatorMarkProps = HTMLAttributes<HTMLSpanElement> & {
 };
 
 export type ResolvedSelectionIndicatorClassNames = {
-  shell: string;
+  root: string;
   fill: string;
   mark: string;
 };

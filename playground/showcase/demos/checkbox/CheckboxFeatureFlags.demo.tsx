@@ -10,7 +10,7 @@ export function CheckboxFeatureFlagsDemo() {
       <Checkbox.Control>
         <Checkbox.Indicator
           classNames={{
-            shell: "rounded-mid",
+            root: "rounded-mid",
             fill: "rounded-mid",
           }}
         />

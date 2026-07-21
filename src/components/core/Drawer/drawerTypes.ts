@@ -7,6 +7,7 @@ export type DrawerExtent = "default" | "mid" | "full";
 export type DrawerVariant = "default" | "gloss";
 
 export type DrawerClassNames = {
+  trigger?: string;
   dialog?: string;
   overlay?: string;
   panel?: string;

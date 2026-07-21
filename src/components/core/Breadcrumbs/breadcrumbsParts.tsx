@@ -81,7 +81,7 @@ function BreadcrumbListItem({
   const slotClassNames = useBreadcrumbsClassNames();
 
   return (
-    <li className={breadcrumbListItemClass(slotClassNames.listItem)}>
+    <li className={breadcrumbListItemClass(slotClassNames.item)}>
       {showSeparator ? <BreadcrumbChevronSeparator /> : null}
       {piece.kind === "ellipsis" ? (
         <BreadcrumbsEllipsisMenu hiddenItems={piece.hiddenItems} />
@@ -129,7 +129,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
         variant="small"
         aria-current="page"
         className={breadcrumbCurrentClass(
-          cn("", slotClassNames.current, item.className),
+          cn("", slotClassNames.itemCurrent, item.className),
         )}
       >
         {item.label}
@@ -142,9 +142,9 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
       <InteractiveCrumb
         href={item.href}
         onClick={item.onClick}
-        className={slotClassNames.linkWrapper}
-        innerClassName={cn("", slotClassNames.link, item.className)}
-        textClassName={slotClassNames.linkText}
+        className={slotClassNames.itemLinkWrapper}
+        innerClassName={cn("", slotClassNames.itemLink, item.className)}
+        textClassName={slotClassNames.itemLinkText}
       >
         {item.label}
       </InteractiveCrumb>
@@ -156,7 +156,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
       as="span"
       variant="small"
       className={breadcrumbStaticClass(
-        cn("", slotClassNames.static, item.className),
+        cn("", slotClassNames.itemStatic, item.className),
       )}
     >
       {item.label}

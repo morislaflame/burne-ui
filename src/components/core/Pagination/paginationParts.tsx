@@ -4,6 +4,7 @@ import { forwardRef, useCallback, useMemo, useRef, type MouseEvent, type Ref } f
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
+import { cn } from "@/utils/cn";
 
 import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, PAGINATION_NEXT_DEFAULT_LABEL, PAGINATION_PREVIOUS_DEFAULT_LABEL, resolvePaginationPageAriaLabel } from "./paginationA11y";
 import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
@@ -67,7 +68,6 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
     },
     ref,
   ) {
-    const slotClassNames = usePaginationClassNames();
     const btnRef = useRef<HTMLButtonElement>(null);
 
     const setRefs = useCallback(
@@ -91,7 +91,6 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
         type="button"
         disabled={disabled}
         className={paginationInteractiveButtonClass({
-          slotClass: slotClassNames.interactive,
           className,
         })}
         onPointerDown={handlePointerDown}
@@ -179,7 +178,7 @@ PaginationItem.displayName = "Pagination.Item";
 
 export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationPrevious(
-    { disabled, onClick, children, "aria-label": ariaLabel, ...rest },
+    { disabled, onClick, children, className, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
     const ctx = useOptionalPagination();
@@ -202,6 +201,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
       <PaginationInteractive
         ref={ref}
         disabled={resolvedDisabled}
+        className={cn(slotClassNames.previous, className)}
         {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
         onClick={handleClick}
         {...rest}
@@ -214,7 +214,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
               inheritColor
               as="span"
               className={paginationNavTextClass({
-                slotClass: slotClassNames.navText,
+                slotClass: slotClassNames.previousText,
               })}
             >
               {PAGINATION_PREVIOUS_DEFAULT_LABEL}
@@ -230,7 +230,7 @@ PaginationPrevious.displayName = "Pagination.Previous";
 
 export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonProps>(
   function PaginationNext(
-    { disabled, onClick, children, "aria-label": ariaLabel, ...rest },
+    { disabled, onClick, children, className, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
     const ctx = useOptionalPagination();
@@ -263,6 +263,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
       <PaginationInteractive
         ref={ref}
         disabled={resolvedDisabled}
+        className={cn(slotClassNames.next, className)}
         {...(ariaLabel != null ? { "aria-label": ariaLabel } : {})}
         onClick={handleClick}
         {...rest}
@@ -274,7 +275,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
               inheritColor
               as="span"
               className={paginationNavTextClass({
-                slotClass: slotClassNames.navText,
+                slotClass: slotClassNames.nextText,
               })}
             >
               {PAGINATION_NEXT_DEFAULT_LABEL}
@@ -381,7 +382,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
         ref={ref}
         {...(pageAriaLabel != null ? { "aria-label": pageAriaLabel } : {})}
         onClick={handleClick}
-        className={className}
+        className={cn(slotClassNames.page, className)}
         {...rest}
       >
         <Text

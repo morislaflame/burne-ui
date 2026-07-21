@@ -236,7 +236,7 @@ export const FieldSetRootInner = forwardRef<
       aria-describedby={joinFieldDescribedBy(hintId, errorId)}
       className={cn(
         FIELD_SET_CLASS,
-        slotClassNames.set,
+        slotClassNames.root,
         className,
       )}
       {...rest}

@@ -23,6 +23,7 @@ export type DialogSizePreset = {
 };
 
 export type DialogClassNames = {
+  trigger?: string;
   dialog?: string;
   overlay?: string;
   panel?: string;

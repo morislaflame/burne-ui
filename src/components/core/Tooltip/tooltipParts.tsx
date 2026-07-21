@@ -250,7 +250,9 @@ export function TooltipPanel({
     status,
     size,
     gridSlots,
-    slotClass: slotClassNames.panel,
+    slotClass: isGloss
+      ? cn(slotClassNames.panel, slotClassNames.glossPanel)
+      : slotClassNames.panel,
     className,
   });
 

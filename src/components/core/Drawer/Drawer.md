@@ -214,6 +214,7 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 
 | Слот | DOM / элемент | Когда использовать |
 |------|---------------|-------------------|
+| `trigger` | `Drawer.Trigger` | Слот на кнопке / asChild |
 | `dialog` | Нативный `<dialog>` | Глобальные правки dialog |
 | `overlay` | Backdrop | Blur, opacity |
 | `panel` | Surface панели | Width/height по `size`, border, shadow |

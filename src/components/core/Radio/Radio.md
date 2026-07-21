@@ -137,7 +137,7 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 1. **`className` на root** — grid `<label>` (мерж с `classNames.root`).
 2. **`classNames`** — `RadioClassNamesProvider`.
 
-Подчасти — **`className`**; `Radio.Indicator` — вложенные `classNames` для shell/fill/mark.
+Подчасти — **`className`**; `Radio.Indicator` — вложенные `classNames` для root/fill/mark.
 
 ### Слоты `RadioClassNames`
 

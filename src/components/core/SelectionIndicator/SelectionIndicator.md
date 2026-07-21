@@ -48,14 +48,14 @@ import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorS
 | `check` | `false` | Дефолтная галочка `IoCheckmarkSharp` |
 | `dot` | `false` | Radio-dot (круг внутри) |
 | `icon` | — | Кастомный mark (приоритет над check/dot) |
-| `className` | — | Мержится в **shell** |
-| `classNames` | — | `shell`, `fill`, `mark` |
+| `className` | — | Мержится в **root** |
+| `classNames` | — | `root`, `fill`, `mark` |
 
 ### `SelectionIndicatorClassNames`
 
 ```tsx
 type SelectionIndicatorClassNames = {
-  shell?: string;
+  root?: string;
   fill?: string;
   mark?: string;
 };
@@ -99,7 +99,7 @@ CSS-переменные: `--selection-indicator-small` … `--selection-indicat
 **DOM-структура:**
 
 ```
-<span shell aria-hidden>              ← rounded-full shell
+<span root aria-hidden>              ← rounded-full root shell
   <span fill ref=fillRef>             ← scale 0→1, z-0
   <span mark ref=markRef>             ← check/dot/icon, z-2
 </span>
@@ -141,8 +141,8 @@ configureMotion({
 
 ### Два уровня
 
-1. **`className`** — мержится в **shell** (вместе с `classNames.shell`).
-2. **`classNames`** — `shell`, `fill`, `mark`.
+1. **`className`** — мержится в **root** (вместе с `classNames.root`).
+2. **`classNames`** — `root`, `fill`, `mark`.
 
 В compound API `SelectionIndicator.Fill` / `.Mark` принимают свой **`className`** поверх слота.
 
@@ -150,7 +150,7 @@ configureMotion({
 
 | Слот | Элемент | Назначение |
 |------|---------|------------|
-| `shell` | Внешний круг | Border, gloss, размер |
+| `root` | Внешний круг | Border, gloss, размер |
 | `fill` | Absolute inset fill | Цвет заливки checked |
 | `mark` | Check/dot/icon | Размер иконки, цвет mark |
 
@@ -163,7 +163,7 @@ configureMotion({
   check
   className="ring-2 ring-primary/30"
   classNames={{
-    shell: "border-primary/50",
+    root: "border-primary/50",
     fill: "bg-primary/30",
     mark: "text-primary",
   }}
@@ -182,7 +182,7 @@ configureMotion({
 // ListBox.ItemIndicator classNames={{ itemIndicatorShell, itemIndicatorFill, … }}
 ```
 
-Маппинг: `indicator` → shell, `indicatorFill` → fill, `indicatorMark` → mark.
+Маппинг: `indicator` → root, `indicatorFill` → fill, `indicatorMark` → mark.
 
 ### Compound кастом mark
 
@@ -198,9 +198,9 @@ configureMotion({
 ### Практические заметки
 
 - **`check` vs `dot` vs `icon`:** взаимоисключающие приоритеты — `icon` > custom Mark child > `check` > `dot`.
-- **outline:** без fill — стилизуйте только shell + mark.
+- **outline:** без fill — стилизуйте только root + mark.
 - **Не интерактивен:** не вешайте pointer-events; клик на родителе.
-- **Порядок мержа:** variant classes → `classNames` → `className` (shell).
+- **Порядок мержа:** variant classes → `classNames` → `className` (root).
 
 ## Встроенное использование
 

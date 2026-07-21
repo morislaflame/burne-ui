@@ -37,7 +37,7 @@ export function LinkAnchorBody({
       ref={setAnchorRef}
       href={href}
       className={linkAnchorClass({
-        slotClass: slotClassNames.anchor,
+        slotClass: slotClassNames.root,
         className,
       })}
       onPointerEnter={handlePointerEnter}

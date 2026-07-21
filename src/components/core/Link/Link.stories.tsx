@@ -189,7 +189,7 @@ export const CustomClassNames: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Slots motion, anchor, text, iconStart, and iconEnd via classNames prop.",
+        story: "Slots root, text, iconStart, and iconEnd via classNames prop.",
       },
     },
   },
@@ -199,7 +199,7 @@ export const CustomClassNames: Story = {
       showDefaultIcon
       underline
       classNames={{
-        anchor: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
+        root: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
         text: "font-semibold",
         iconEnd: "text-warning",
       }}

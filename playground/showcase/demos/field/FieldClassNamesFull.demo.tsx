@@ -26,6 +26,7 @@ export function FieldSetClassNamesFullDemo() {
     <Field.Set
       className="max-w-md"
       classNames={{
+        root: "rounded-mid",
         stack: "gap-xlarge mt-xlarge",
       }}
     >

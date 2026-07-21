@@ -209,6 +209,7 @@ export const CustomClassNames: Story = {
     <Field.Set
       className="max-w-md"
       classNames={{
+        root: "max-w-md",
         legend: "text-primary",
         stack: "gap-xlarge",
         group: "gap-mid",

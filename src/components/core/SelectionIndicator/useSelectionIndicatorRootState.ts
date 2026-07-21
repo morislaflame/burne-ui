@@ -51,7 +51,7 @@ export function useSelectionIndicatorRootState({
   );
 
   const resolvedClassNames = resolveSelectionIndicatorClassNames({
-    shell: selectionIndicatorVariantClass(variant, selected),
+    root: selectionIndicatorVariantClass(variant, selected),
     fill: selectionIndicatorFillClass(variant),
     mark: cn(
       SELECTION_INDICATOR_MARK_CLASS,
@@ -74,7 +74,7 @@ export function useSelectionIndicatorRootState({
     [resolvedClassNames.fill, resolvedClassNames.mark, markContent],
   );
 
-  const shellClassName = selectionIndicatorShellClass(size, resolvedClassNames.shell);
+  const shellClassName = selectionIndicatorShellClass(size, resolvedClassNames.root);
 
   return {
     shellClassName,

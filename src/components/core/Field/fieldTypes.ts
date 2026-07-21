@@ -15,7 +15,7 @@ export type FieldClassNames = {
 };
 
 export type FieldSetClassNames = {
-  set?: string;
+  root?: string;
   stack?: string;
   legend?: string;
   legendHeader?: string;

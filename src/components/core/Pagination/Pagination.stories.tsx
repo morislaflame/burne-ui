@@ -299,7 +299,7 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Slots root, summary, content, interactive, pageActive, and navText via the classNames prop.",
+          "Slots root, summary, content, previous, next, page, pageActive, previousText, and nextText via the classNames prop.",
       },
     },
   },
@@ -316,9 +316,12 @@ export const CustomClassNames: Story = {
           root: "rounded-mid border border-primary/20 p-base",
           summaryText: "text-primary",
           content: "gap-small",
-          interactive: "text-info hover:text-primary",
+          previous: "text-info hover:text-primary",
+          next: "text-info hover:text-primary",
+          page: "text-info hover:text-primary",
           pageActive: "text-primary font-semibold",
-          navText: "font-medium",
+          previousText: "font-medium",
+          nextText: "font-medium",
         }}
       >
         <Pagination.Summary>

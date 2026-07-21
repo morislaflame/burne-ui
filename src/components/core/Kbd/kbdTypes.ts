@@ -11,7 +11,9 @@ export type KbdSize = "small" | "base" | "mid" | "large";
 
 export type KbdClassNames = {
   root?: string;
+  text?: string;
   group?: string;
+  /** Separator between keys in `Kbd.Group` (prop `separator`, not a compound part). */
   separator?: string;
 };
 

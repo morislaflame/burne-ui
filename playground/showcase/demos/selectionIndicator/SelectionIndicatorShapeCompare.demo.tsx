@@ -25,7 +25,7 @@ export function SelectionIndicatorShapeCompareDemo() {
             selected={selected}
             check
             classNames={{
-              shell: "rounded-mid",
+              root: "rounded-mid",
               fill: "rounded-[inherit]",
             }}
           />

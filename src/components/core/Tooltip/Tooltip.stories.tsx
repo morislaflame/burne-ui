@@ -369,7 +369,7 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Slots root (trigger), trigger, content, arrow, panel, glossContent, message, icon, indicator, title, and description via classNames prop on root.",
+          "Slots root (trigger), trigger, content, arrow, panel, glossPanel, glossContent, message, icon, indicator, title, and description via classNames prop on root.",
       },
     },
   },
@@ -382,6 +382,7 @@ export const CustomClassNames: Story = {
         trigger: "rounded-mid",
         content: "ring-1 ring-primary/25",
         panel: "border-primary/30",
+        glossPanel: "ring-1 ring-primary/20",
         title: "text-primary font-semibold",
         description: "text-muted/80",
       }}

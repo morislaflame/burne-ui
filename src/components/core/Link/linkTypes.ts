@@ -13,8 +13,8 @@ export type LinkSize = ComponentSize;
 export type LinkIconPosition = IconPosition;
 
 export type LinkClassNames = {
-  /** Anchor `<a>`. */
-  anchor?: string;
+  /** Root `<a>`. */
+  root?: string;
   /** Link text (`Text`). */
   text?: string;
   /** Start icon wrapper. */
