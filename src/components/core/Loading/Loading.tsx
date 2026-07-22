@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 
 import { cn } from "@/utils/cn";
 
+import { LOADING_DEFAULT_LABEL, loadingStatusProps } from "./loadingA11y";
 import { LoadingDots, LoadingSpinner } from "./loadingParts";
 import { LOADING_ROOT_CLASS } from "./loadingStyles";
 import type { LoadingProps } from "./loadingTypes";
@@ -19,7 +20,7 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
     type = "spinner",
     size = "base",
     color = "primary",
-    label = "Loading",
+    label = LOADING_DEFAULT_LABEL,
     className = "",
     classNames,
     ...rest
@@ -29,9 +30,7 @@ export const Loading = forwardRef<HTMLSpanElement, LoadingProps>(function Loadin
   return (
     <span
       ref={ref}
-      role="status"
-      aria-live="polite"
-      aria-label={label}
+      {...loadingStatusProps(label)}
       className={cn(LOADING_ROOT_CLASS, classNames?.root, className)}
       {...rest}
     >

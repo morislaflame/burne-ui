@@ -1,32 +1,21 @@
-import { forwardRef, type HTMLAttributes } from "react";
+import { forwardRef } from "react";
 
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
-import type { ShadowSize } from "@/tokens/shadows";
 import { cn } from "@/utils/cn";
 
 import "../utils/glossInteractive.css";
+import { surfaceIsLandmark } from "./surfaceA11y";
 import { SURFACE_GLOSS_CONTENT_CLASS, surfaceRootClass } from "./surfaceStyles";
+import type { SurfaceProps } from "./surfaceTypes";
 
-export type SurfaceVariant = "default" | "secondary" | "tertiary" | "gloss";
-
-export type SurfaceShadow = ShadowSize;
-
-export type SurfacePadding = "none" | "small" | "base" | "plus" | "mid";
-
-export type SurfaceRadius = "base" | "mid" | "large";
-
-export type SurfaceClassNames = {
-  root?: string;
-  glossContent?: string;
-};
-
-export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: SurfaceVariant;
-  shadow?: SurfaceShadow;
-  padding?: SurfacePadding;
-  radius?: SurfaceRadius;
-  classNames?: SurfaceClassNames;
-};
+export type {
+  SurfaceClassNames,
+  SurfacePadding,
+  SurfaceProps,
+  SurfaceRadius,
+  SurfaceShadow,
+  SurfaceVariant,
+} from "./surfaceTypes";
 
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
   {
@@ -49,10 +38,11 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
     radius,
     className: cn(classNames?.root, className),
   });
+  const landmarkRole = surfaceIsLandmark() ? ("region" as const) : undefined;
 
   if (variant === "gloss") {
     return (
-      <div ref={setGlossRef} className={rootClass} {...rest}>
+      <div ref={setGlossRef} role={landmarkRole} className={rootClass} {...rest}>
         <div className={cn(SURFACE_GLOSS_CONTENT_CLASS, classNames?.glossContent)}>
           {children}
         </div>
@@ -61,7 +51,7 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
   }
 
   return (
-    <div ref={ref} className={rootClass} {...rest}>
+    <div ref={ref} role={landmarkRole} className={rootClass} {...rest}>
       {children}
     </div>
   );

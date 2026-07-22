@@ -3,6 +3,7 @@ import { forwardRef } from "react";
 import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
 
+import { RADIO_GROUP_USES_NATIVE_FIELDSET } from "./radioGroupA11y";
 import { RadioGroupClassNamesProvider, RadioGroupProvider, useRadioGroupClassNames } from "./radioGroupContext";
 import { RadioGroupError, RadioGroupHint, RadioGroupLegend, RadioGroupList } from "./radioGroupParts";
 import type { RadioGroupProps } from "./radioGroupTypes";
@@ -46,21 +47,25 @@ export const RadioGroupRoot = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
     } = props;
     const { contextValue, fieldLabelCtx, hintId, errorId } = useRadioGroupRootState(props);
 
+    const fieldset = RADIO_GROUP_USES_NATIVE_FIELDSET ? (
+      <RadioGroupFieldsetShell
+        ref={ref}
+        disabled={disabled}
+        hintId={hintId}
+        errorId={errorId}
+        size={size}
+        className={className}
+        {...fieldsetProps}
+      >
+        {children}
+      </RadioGroupFieldsetShell>
+    ) : null;
+
     return (
       <RadioGroupProvider value={contextValue}>
         <RadioGroupClassNamesProvider classNames={classNames}>
           <FieldLabelContext.Provider value={fieldLabelCtx}>
-            <RadioGroupFieldsetShell
-              ref={ref}
-              disabled={disabled}
-              hintId={hintId}
-              errorId={errorId}
-              size={size}
-              className={className}
-              {...fieldsetProps}
-            >
-              {children}
-            </RadioGroupFieldsetShell>
+            {fieldset}
           </FieldLabelContext.Provider>
         </RadioGroupClassNamesProvider>
       </RadioGroupProvider>

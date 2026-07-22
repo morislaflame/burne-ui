@@ -2,15 +2,28 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
-import { clampSliderValue, defaultSliderFormatValue, normalizeSliderMarks, partitionSliderTrackChildren, readSliderTrackMetrics, resolveSliderFallbackThumbPx, sliderAdjacentMark, sliderFillSpanForValues, sliderFillStyleFromSpan, sliderPointerToValue, sliderStepDelta, sliderThumbCenterPercent, snapSliderToMarks, snapSliderToStep } from "./sliderAPI";
+import {
+  clampSliderValue,
+  defaultSliderFormatValue,
+  normalizeSliderMarks,
+  partitionSliderTrackChildren,
+  readSliderTrackMetrics,
+  resolveSliderFallbackThumbPx,
+  resolveSliderThumbIcon,
+  sliderAdjacentMark,
+  sliderFillSpanForValues,
+  sliderFillStyleFromSpan,
+  sliderPointerToValue,
+  sliderStepDelta,
+  sliderThumbCenterPercent,
+  snapSliderToMarks,
+  snapSliderToStep,
+} from "./sliderAPI";
 import { resolveSliderThumbA11y } from "./sliderA11y";
 import { applySliderFillStyle, useSliderFillCleanup } from "./sliderAnimations";
 import { useOptionalSliderFieldContext, useSliderClassNames } from "./sliderContext";
-import { sliderFillClass, sliderMarkStyle, sliderRailClass, sliderTrackCrossStyle, sliderTrackHitAreaClass, SLIDER_MARK_CLASS } from "./sliderStyles";
-import { SliderThumbButton } from "./sliderThumbParts";
+import { sliderFillClass, sliderRailClass, sliderTrackCrossStyle, sliderTrackHitAreaClass } from "./sliderStyles";
 import type { SliderThumbKind, SliderTrackContextValue, SliderTrackProps } from "./sliderTypes";
-
-import { cn } from "@/utils/cn";
 
 export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTMLDivElement>) {
   const {
@@ -45,7 +58,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
   const labelConnected = fieldCtx?.labelConnected ?? false;
   const explicitLabel = ariaLabelProp;
 
-  const thumbA11y = useCallback(
+  const resolveThumbA11y = useCallback(
     (kind: SliderThumbKind) =>
       resolveSliderThumbA11y({
         kind,
@@ -274,7 +287,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     [disabled, pickRangeThumb, range, updateFromPointer],
   );
 
-  const handleThumbPointerDown = useCallback(
+  const onThumbPointerDown = useCallback(
     (thumb: "start" | "end" | "single") => (e: PointerEvent<HTMLButtonElement>) => {
       if (disabled || e.button !== 0) return;
       e.preventDefault();
@@ -299,7 +312,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     [emitRange, emitSingle, range, rangeValue, singleValue],
   );
 
-  const handleThumbKeyDown = useCallback(
+  const onThumbKeyDown = useCallback(
     (thumb: "start" | "end" | "single") => (e: KeyboardEvent<HTMLButtonElement>) => {
       if (disabled) return;
       const action = sliderStepDelta(marks, step, e.key, orientation);
@@ -366,95 +379,22 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     ],
   );
 
-  const renderThumb = useCallback(
-    (kind: SliderThumbKind, iconOverride?: ReactNode) => {
-      const iconNode = iconOverride ?? icon;
-      const percentFor = (value: number) =>
-        sliderThumbCenterPercent(value, min, max, trackSpanPx, thumbSpanPx);
-
-      if (kind === "start") {
-        return (
-          <SliderThumbButton
-            size={size}
-            icon={iconNode}
-            gloss={gloss}
-            thumbClassName={thumbClassName}
-            percent={percentFor(rangeValue[0])}
-            orientation={orientation}
-            disabled={disabled}
-            active={activeThumb === "start"}
-            ariaValueNow={rangeValue[0]}
-            ariaValueMin={min}
-            ariaValueMax={rangeValue[1]}
-            ariaValueText={formatValue(rangeValue[0])}
-            {...thumbA11y("start")}
-            onPointerDown={handleThumbPointerDown("start")}
-            onKeyDown={handleThumbKeyDown("start")}
-          />
-        );
-      }
-
-      if (kind === "end") {
-        return (
-          <SliderThumbButton
-            size={size}
-            icon={iconNode}
-            gloss={gloss}
-            thumbClassName={thumbClassName}
-            percent={percentFor(rangeValue[1])}
-            orientation={orientation}
-            disabled={disabled}
-            active={activeThumb === "end"}
-            ariaValueNow={rangeValue[1]}
-            ariaValueMin={rangeValue[0]}
-            ariaValueMax={max}
-            ariaValueText={formatValue(rangeValue[1])}
-            {...thumbA11y("end")}
-            onPointerDown={handleThumbPointerDown("end")}
-            onKeyDown={handleThumbKeyDown("end")}
-          />
-        );
-      }
-
-      return (
-        <SliderThumbButton
-          size={size}
-          icon={iconNode}
-          gloss={gloss}
-          thumbClassName={thumbClassName}
-          percent={percentFor(singleValue)}
-          orientation={orientation}
-          disabled={disabled}
-          active={activeThumb === "single"}
-          ariaValueNow={singleValue}
-          ariaValueMin={min}
-          ariaValueMax={max}
-          ariaValueText={formatValue(singleValue)}
-          {...thumbA11y("single")}
-          onPointerDown={handleThumbPointerDown("single")}
-          onKeyDown={handleThumbKeyDown("single")}
-        />
-      );
+  const thumbPercent = useCallback(
+    (kind: SliderThumbKind) => {
+      const value =
+        kind === "start"
+          ? rangeValue[0]
+          : kind === "end"
+            ? rangeValue[1]
+            : singleValue;
+      return sliderThumbCenterPercent(value, min, max, trackSpanPx, thumbSpanPx);
     },
-    [
-      activeThumb,
-      disabled,
-      formatValue,
-      gloss,
-      handleThumbKeyDown,
-      handleThumbPointerDown,
-      icon,
-      max,
-      min,
-      orientation,
-      rangeValue,
-      singleValue,
-      size,
-      thumbA11y,
-      thumbClassName,
-      thumbSpanPx,
-      trackSpanPx,
-    ],
+    [max, min, rangeValue, singleValue, thumbSpanPx, trackSpanPx],
+  );
+
+  const resolveThumbIcon = useCallback(
+    (childrenOverride?: ReactNode) => resolveSliderThumbIcon(childrenOverride, icon),
+    [icon],
   );
 
   const valueLabel = useMemo((): string => {
@@ -493,17 +433,14 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     slotClass: slotClassNames.rail,
   });
 
-  const markNodes = marks?.map((mark) => {
-    const percent = sliderThumbCenterPercent(mark, min, max, trackSpanPx, thumbSpanPx);
-    return (
-      <span
-        key={mark}
-        aria-hidden
-        className={cn(SLIDER_MARK_CLASS, slotClassNames.mark)}
-        style={sliderMarkStyle(percent, orientation)}
-      />
-    );
-  });
+  const markItems = useMemo(
+    () =>
+      (marks ?? []).map((value) => ({
+        value,
+        percent: sliderThumbCenterPercent(value, min, max, trackSpanPx, thumbSpanPx),
+      })),
+    [marks, max, min, thumbSpanPx, trackSpanPx],
+  );
 
   const setTrackRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -519,24 +456,50 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       fillRef,
       fillClassResolved,
       railClass,
-      markNodes,
+      markSlotClass: slotClassNames.mark,
+      markItems,
       size,
       orientation,
       disabled,
       icon,
       range,
-      renderThumb,
+      gloss,
+      thumbClassName,
+      activeThumb,
+      singleValue,
+      rangeValue,
+      min,
+      max,
+      formatValue,
+      thumbPercent,
+      resolveThumbIcon,
+      resolveThumbA11y,
+      onThumbPointerDown,
+      onThumbKeyDown,
     }),
     [
+      activeThumb,
       disabled,
       fillClassResolved,
+      formatValue,
+      gloss,
       icon,
-      markNodes,
+      markItems,
+      max,
+      min,
+      onThumbKeyDown,
+      onThumbPointerDown,
       orientation,
       railClass,
       range,
-      renderThumb,
+      rangeValue,
+      resolveThumbA11y,
+      resolveThumbIcon,
+      singleValue,
       size,
+      slotClassNames.mark,
+      thumbClassName,
+      thumbPercent,
     ],
   );
 

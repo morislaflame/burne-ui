@@ -5,6 +5,7 @@ import { useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/e
 import { messageBannerActionCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { Text } from "@/components/core/Text";
 
+import { accordionDecorativeProps, accordionHeadingTag } from "./accordionA11y";
 import { useAccordionChevronAnimation } from "./accordionAnimations";
 import { resolveAccordionItemExpandableClassNames } from "./accordionAPI";
 
@@ -38,7 +39,7 @@ function AccordionChevronSvg({ className = "" }: { className?: string }) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      aria-hidden
+      {...accordionDecorativeProps()}
     >
       <path d="m6 9 6 6 6-6" />
     </svg>
@@ -82,11 +83,12 @@ AccordionItem.displayName = "Accordion.Item";
 
 export function AccordionHeading({ className, children, ...rest }: AccordionHeadingProps) {
   const slotClassNames = useAccordionClassNames();
+  const Heading = accordionHeadingTag();
 
   return (
-    <h3 className={accordionHeadingClass({ className, slotClass: slotClassNames.heading })} {...rest}>
+    <Heading className={accordionHeadingClass({ className, slotClass: slotClassNames.heading })} {...rest}>
       {children}
-    </h3>
+    </Heading>
   );
 }
 
@@ -147,7 +149,7 @@ export function AccordionChevron({ className, children, ...rest }: AccordionChev
         gridSlots && messageBannerActionCellClass(gridSlots),
         accordionChevronClass({ className, slotClass: slotClassNames.chevron }),
       )}
-      aria-hidden
+      {...accordionDecorativeProps()}
       {...rest}
     >
       {children ?? <AccordionChevronSvg />}

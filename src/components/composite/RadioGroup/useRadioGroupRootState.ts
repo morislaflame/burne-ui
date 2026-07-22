@@ -4,6 +4,7 @@ import { useFieldSetErrorId, useFieldSetHintId } from "@/components/core/Field";
 import { useOptionGroupRequiredAnchor } from "@/components/composite/utils/useOptionGroupRequiredAnchor";
 import { useOptionGroupSingleValue } from "@/components/composite/utils/useOptionGroupSingleValue";
 
+import { radioGroupName } from "./radioGroupA11y";
 import type { RadioGroupContextValue, UseRadioGroupRootStateProps } from "./radioGroupTypes";
 
 export function useRadioGroupRootState({
@@ -17,7 +18,7 @@ export function useRadioGroupRootState({
   errorId: errorIdProp,
 }: UseRadioGroupRootStateProps) {
   const autoId = useId();
-  const groupName = nameProp ?? `radio-group-${autoId}`;
+  const groupName = radioGroupName(nameProp, autoId);
   const hintId = useFieldSetHintId(hintIdProp);
   const errorId = useFieldSetErrorId(errorIdProp);
 

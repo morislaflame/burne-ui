@@ -1,6 +1,6 @@
 # SearchInput
 
-Компактное поле поиска с **раскрытием** из круглой кнопки в расширенную строку. Atomic-компонент (один файл) — для форм с label/hint используйте `Input`. Поддержка `gloss`, `ripple`, `ButtonGroup`.
+Компактное поле поиска с **раскрытием** из круглой кнопки в расширенную строку. Atomic-компонент — для форм с label/hint используйте `Input`. Поддержка `gloss`, `ripple`, `ButtonGroup`.
 
 ## Импорт
 
@@ -64,7 +64,7 @@ import {
 
 ## Анимации
 
-Вся motion в `SearchInput.tsx` (GSAP + field shell utils).
+Вся motion в `searchInputAnimations.ts` (GSAP + field shell utils).
 
 **DOM:**
 
@@ -225,9 +225,16 @@ configureMotion({
 
 ```
 SearchInput/
-├── SearchInput.tsx      # component + all motion
+├── SearchInput.tsx              # thin orchestrator
 ├── index.ts
-└── SearchInput.stories.tsx
+├── searchInputTypes.ts
+├── searchInputStyles.ts         # classes + SIZE_LAYOUT / resolveSearchLayout / radius
+├── searchInputA11y.ts
+├── searchInputAnimations.ts     # expand/collapse GSAP, shell/icon binders
+├── useSearchInputRootState.ts
+├── searchInputParts.tsx         # icon, control, clear, ripple
+├── SearchInput.stories.tsx
+└── SearchInput.md
 ```
 
 Утилиты: `readControlHeightPx`, `CONTROL_SIZE_LAYOUT`; радиус expanded — `readSearchExpandedRadiusPx` в `searchInputStyles`.

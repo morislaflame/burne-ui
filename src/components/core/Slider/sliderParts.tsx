@@ -5,22 +5,27 @@ import { Field } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { renderSliderSimpleLayout, SliderScaleFieldHeader, SliderScaleFieldValue } from "./sliderScaleField";
 
-import { resolveSliderThumbIcon } from "./sliderAPI";
-import { SliderTrackProvider, useSliderClassNames, useSliderFieldContext, useSliderTrackContext } from "./sliderContext";
+import { SliderTrackProvider, useSliderClassNames, useSliderFieldContext } from "./sliderContext";
+import {
+  SliderTrackDefaultBody,
+} from "./sliderTrackParts";
 import type {
-  SliderCompoundThumbProps,
   SliderErrorProps,
-  SliderFillProps,
   SliderHeaderProps,
   SliderHintProps,
-  SliderIconProps,
-  SliderRailProps,
   SliderTrackProps,
   SliderValueProps,
 } from "./sliderTypes";
 import { useSliderTrackState } from "./useSliderTrackState";
 
 import { cn } from "@/utils/cn";
+
+export {
+  SliderCompoundThumb,
+  SliderFill,
+  SliderIcon,
+  SliderRail,
+} from "./sliderTrackParts";
 
 export function SliderSimpleBody({
   label,
@@ -159,26 +164,6 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
 ) {
   const state = useSliderTrackState(props, ref);
 
-  const defaultBody = (
-    <>
-      <SliderRail />
-      {state.range ? (
-        <>
-          <SliderCompoundThumb thumb="start">
-            {state.icon != null ? <SliderIcon>{state.icon}</SliderIcon> : null}
-          </SliderCompoundThumb>
-          <SliderCompoundThumb thumb="end">
-            {state.icon != null ? <SliderIcon>{state.icon}</SliderIcon> : null}
-          </SliderCompoundThumb>
-        </>
-      ) : (
-        <SliderCompoundThumb thumb="single">
-          {state.icon != null ? <SliderIcon>{state.icon}</SliderIcon> : null}
-        </SliderCompoundThumb>
-      )}
-    </>
-  );
-
   return (
     <div
       ref={state.setTrackRef}
@@ -188,61 +173,14 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
       onPointerDown={state.handleTrackPointerDown}
     >
       <SliderTrackProvider value={state.trackContextValue}>
-        {state.hasCompoundParts ? state.compoundBody : defaultBody}
+        {state.hasCompoundParts ? (
+          state.compoundBody
+        ) : (
+          <SliderTrackDefaultBody range={state.range} icon={state.icon} />
+        )}
       </SliderTrackProvider>
     </div>
   );
 });
 
 SliderTrack.displayName = "SliderTrack";
-
-export function SliderFill({ className, ...rest }: SliderFillProps) {
-  const ctx = useSliderTrackContext();
-  const slotClassNames = useSliderClassNames();
-
-  return (
-    <span
-      ref={ctx.fillRef}
-      className={cn(ctx.fillClassResolved, slotClassNames.fill, className)}
-      {...rest}
-    />
-  );
-}
-
-SliderFill.displayName = "SliderFill";
-
-export function SliderRail({ className, children, ...rest }: SliderRailProps) {
-  const ctx = useSliderTrackContext();
-  const slotClassNames = useSliderClassNames();
-
-  return (
-    <div
-      className={cn(ctx.railClass, slotClassNames.rail, className)}
-      aria-hidden
-      {...rest}
-    >
-      {children ?? (
-        <>
-          <SliderFill />
-          {ctx.markNodes}
-        </>
-      )}
-    </div>
-  );
-}
-
-SliderRail.displayName = "SliderRail";
-
-export function SliderCompoundThumb({ thumb = "single", children }: SliderCompoundThumbProps) {
-  const ctx = useSliderTrackContext();
-  const icon = resolveSliderThumbIcon(children, ctx.icon);
-  return ctx.renderThumb(thumb, icon);
-}
-
-SliderCompoundThumb.displayName = "SliderThumb";
-
-export function SliderIcon({ children }: SliderIconProps) {
-  return children;
-}
-
-SliderIcon.displayName = "SliderIcon";

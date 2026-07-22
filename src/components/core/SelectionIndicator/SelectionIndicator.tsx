@@ -1,5 +1,6 @@
 import "../utils/glossPanel.css";
 
+import { selectionIndicatorDecorativeProps } from "./selectionIndicatorA11y";
 import { SelectionIndicatorProvider } from "./selectionIndicatorContext";
 import { SelectionIndicatorFill, SelectionIndicatorMark } from "./selectionIndicatorParts";
 import type { SelectionIndicatorProps } from "./selectionIndicatorTypes";
@@ -44,7 +45,7 @@ export function SelectionIndicator({
 
   return (
     <SelectionIndicatorProvider value={contextValue}>
-      <span className={shellClassName} aria-hidden {...rest}>
+      <span className={shellClassName} {...selectionIndicatorDecorativeProps()} {...rest}>
         {body}
       </span>
     </SelectionIndicatorProvider>

@@ -1,6 +1,11 @@
-import { createOptionGroupErrorPart, createOptionGroupHintPart, createOptionGroupLegendPart, createOptionGroupListPart } from "@/components/composite/utils/optionGroupParts";
+import { forwardRef } from "react";
+
+import { createOptionGroupErrorPart, createOptionGroupHintPart, createOptionGroupLegendPart } from "@/components/composite/utils/optionGroupParts";
+import { cn } from "@/utils/cn";
 
 import { useRadioGroupClassNames, useRadioGroupContext } from "./radioGroupContext";
+import { radioGroupListClass } from "./radioGroupStyles";
+import type { RadioGroupListProps } from "./radioGroupTypes";
 
 export const RadioGroupLegend = createOptionGroupLegendPart("RadioGroup.Legend");
 
@@ -16,7 +21,17 @@ export const RadioGroupError = createOptionGroupErrorPart(
   "RadioGroup.Error",
 );
 
-export const RadioGroupList = createOptionGroupListPart(
-  () => useRadioGroupClassNames().list,
-  "RadioGroup.List",
+export const RadioGroupList = forwardRef<HTMLDivElement, RadioGroupListProps>(
+  function RadioGroupList({ className, orientation = "vertical", ...rest }, ref) {
+    const slotClass = useRadioGroupClassNames().list;
+    return (
+      <div
+        ref={ref}
+        className={radioGroupListClass(orientation, cn(slotClass, className))}
+        {...rest}
+      />
+    );
+  },
 );
+
+RadioGroupList.displayName = "RadioGroup.List";

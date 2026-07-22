@@ -5,8 +5,7 @@ import { forwardRef, useCallback, useRef } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import { Label } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -15,13 +14,12 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
-import { comboBoxResolveHintStatus, comboBoxTriggerAriaLabel } from "./comboBoxA11y";
+import { comboBoxTriggerAriaLabel } from "./comboBoxA11y";
 import { runComboBoxOpenAfterSqueeze, useComboBoxOpeningRef } from "./comboBoxAnimations";
-import { useComboBoxClassNames, useComboBoxContext, useComboBoxFieldContext } from "./comboBoxContext";
+import { useComboBoxClassNames, useComboBoxContext } from "./comboBoxContext";
+import { ComboBoxError, ComboBoxHint } from "./comboBoxFieldParts";
 import { COMBOBOX_CHEVRON_ICON, COMBOBOX_LISTBOX_CLASS, COMBOBOX_POPOVER_BODY_CLASS, COMBOBOX_POPOVER_CLASS, comboBoxInputClass, comboBoxInputGroupClass, comboBoxTriggerClass } from "./comboBoxStyles";
 import type {
-  ComboBoxErrorProps,
-  ComboBoxHintProps,
   ComboBoxInputGroupProps,
   ComboBoxInputProps,
   ComboBoxPopoverProps,
@@ -375,69 +373,6 @@ export function ComboBoxPopover({
 
 ComboBoxPopover.displayName = "ComboBoxPopover";
 
-export function ComboBoxLabel({ className, classNames, ...rest }: LabelProps) {
-  const slotClassNames = useComboBoxClassNames();
-
-  return (
-    <Label
-      className={className}
-      classNames={{
-        ...classNames,
-        root: cn(slotClassNames.label, classNames?.root),
-      }}
-      {...rest}
-    />
-  );
-}
-
-ComboBoxLabel.displayName = "ComboBoxLabel";
-
-export function ComboBoxHint({
-  children,
-  status,
-  className,
-  id: idProp,
-  ...rest
-}: ComboBoxHintProps) {
-  const field = useComboBoxFieldContext();
-  const slotClassNames = useComboBoxClassNames();
-  const hintStatus = comboBoxResolveHintStatus(status, field.status);
-
-  return (
-    <Field.Hint
-      id={idProp ?? field.hintId}
-      status={hintStatus}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
-
-ComboBoxHint.displayName = "ComboBoxHint";
-
-export function ComboBoxError({
-  children,
-  className,
-  id: idProp,
-  ...rest
-}: ComboBoxErrorProps) {
-  const field = useComboBoxFieldContext();
-  const slotClassNames = useComboBoxClassNames();
-
-  return (
-    <Field.Error
-      id={idProp ?? field.errorId}
-      className={cn(slotClassNames.error, className)}
-      {...rest}
-    >
-      {children ?? field.errorMessage}
-    </Field.Error>
-  );
-}
-
-ComboBoxError.displayName = "ComboBox.Error";
 
 export function ComboBoxSimpleBody({
   label,
@@ -469,3 +404,5 @@ export function ComboBoxSimpleBody({
     </>
   );
 }
+
+export { ComboBoxError, ComboBoxHint, ComboBoxLabel } from "./comboBoxFieldParts";

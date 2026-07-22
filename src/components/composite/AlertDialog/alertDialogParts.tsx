@@ -8,6 +8,7 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 
+import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogOverlayA11yProps, alertDialogTriggerA11y } from "./alertDialogA11y";
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
 import { useAlertDialogModalMotion } from "./alertDialogAnimations";
 import { AlertDialogHeaderProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useOptionalAlertDialogHeaderContext } from "./alertDialogContext";
@@ -336,6 +337,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
           "aria-haspopup"?: string;
           "aria-expanded"?: boolean;
         }>;
+        const triggerA11y = alertDialogTriggerA11y(open);
         return cloneElement(child, {
           ref: ((node: HTMLElement | null) => {
             triggerRef.current = node;
@@ -354,18 +356,18 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
             child.props.onClick?.(e);
             handleClick(e);
           },
-          "aria-haspopup": "dialog" as const,
-          "aria-expanded": open,
+          ...triggerA11y,
         });
       }
     }
+
+    const triggerA11y = alertDialogTriggerA11y(open);
 
     return (
       <button
         type="button"
         ref={setRefs}
-        aria-haspopup="dialog"
-        aria-expanded={open}
+        {...triggerA11y}
         className={cn(slotClassNames.trigger, className)}
         onPointerDown={(e) => {
           onPointerDown?.(e);
@@ -449,10 +451,10 @@ export function AlertDialogPortalShell({
     <dialog
       {...portalTheme}
       ref={dialogRef}
-      role="alertdialog"
+      role={ALERT_DIALOG_ROLE}
       onCancel={(e) => e.preventDefault()}
       aria-labelledby={titleId}
-      aria-describedby={hasDescription ? descriptionId : undefined}
+      aria-describedby={alertDialogDescribedBy(hasDescription, descriptionId)}
       className={cn(
         ALERT_DIALOG_NATIVE_CLASS,
         slotClassNames.dialog,
@@ -462,7 +464,7 @@ export function AlertDialogPortalShell({
         ref={overlayRef}
         className={alertDialogOverlayClass(lightUi, slotClassNames.overlay)}
         style={alertDialogOverlayEnterStyle()}
-        aria-hidden
+        {...alertDialogOverlayA11yProps()}
       />
       <div
         ref={panelRef}

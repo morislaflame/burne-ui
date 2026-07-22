@@ -1,5 +1,6 @@
 import { useRef } from "react";
 
+import { loadingVisualA11yProps } from "./loadingA11y";
 import { useLoadingDotsAnimation } from "./loadingAnimations";
 import { loadingDotClass, loadingDotsTrackClass, loadingDotsTrackStyle, loadingSpinnerRingClass } from "./loadingStyles";
 import type { LoadingColor, LoadingSize } from "./loadingTypes";
@@ -17,7 +18,7 @@ export function LoadingSpinner({
 }) {
   return (
     <span
-      aria-hidden
+      {...loadingVisualA11yProps()}
       className={loadingSpinnerRingClass(size, color, className)}
     />
   );
@@ -42,7 +43,7 @@ export function LoadingDots({
       ref={trackRef}
       className={loadingDotsTrackClass(size, className)}
       style={loadingDotsTrackStyle(size)}
-      aria-hidden
+      {...loadingVisualA11yProps()}
     >
       {LOADING_DOTS_INDICES.map((index) => (
         <span

@@ -4,6 +4,7 @@ import { Fragment, forwardRef } from "react";
 
 import { cn } from "@/utils/cn";
 
+import { BUTTON_GROUP_ROLE, buttonGroupSeparatorA11yProps } from "./buttonGroupA11y";
 import { buildButtonGroupSegment, isGroupSegmentSlot, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
 import { ButtonGroupClassNamesProvider, ButtonGroupLayoutProvider, ButtonGroupSegmentProvider, useButtonGroupClassNames } from "./buttonGroupContext";
 import { buttonGroupRootClass, buttonGroupSeparatorClass } from "./buttonGroupStyles";
@@ -20,7 +21,7 @@ export type {
 
 function ButtonGroupSeparator({ orientation }: { orientation: ButtonGroupOrientation }) {
   const slotClassNames = useButtonGroupClassNames();
-  return <span aria-hidden className={buttonGroupSeparatorClass(orientation, slotClassNames.separator)} />;
+  return <span {...buttonGroupSeparatorA11yProps()} className={buttonGroupSeparatorClass(orientation, slotClassNames.separator)} />;
 }
 
 export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
@@ -52,7 +53,7 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
         <ButtonGroupClassNamesProvider classNames={classNames}>
           <div
             ref={ref}
-            role="group"
+            role={BUTTON_GROUP_ROLE}
             className={buttonGroupRootClass({
               orientation,
               segmented,

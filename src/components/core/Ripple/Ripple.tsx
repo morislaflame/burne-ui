@@ -2,33 +2,16 @@ import { useLayoutEffect, useRef } from "react";
 
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
-import { ConvergeRippleLayer, type RippleDirection } from "@/components/core/utils/pressRipple";
+import { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 import { cn } from "@/utils/cn";
 
-import { RIPPLE_COLOR, type RippleColor } from "./rippleTokens";
+import { rippleLayerA11yProps } from "./rippleA11y";
+import { resolveRippleEventTarget, resolveRipplePaint } from "./rippleAPI";
+import { RIPPLE_LAYER_CLASS } from "./rippleStyles";
+import type { RippleProps } from "./rippleTypes";
 
-function resolveRipplePaint(input?: string): string {
-  if (input == null || input === "") return RIPPLE_COLOR.neutral;
-  if (Object.hasOwn(RIPPLE_COLOR, input))
-    return RIPPLE_COLOR[input as RippleColor];
-  return input;
-}
-
-function resolveRippleEventTarget(layer: HTMLElement): HTMLElement | null {
-  const interactive = layer.closest(
-    "button,a[href],[role='button']",
-  ) as HTMLElement | null;
-  return interactive ?? layer.parentElement;
-}
-
-export type RippleProps = {
-  color?: RippleColor | string;
-  disabled?: boolean;
-  duration?: number;
-  direction?: RippleDirection;
-  className?: string;
-};
+export type { RippleProps, RippleDirection } from "./rippleTypes";
 
 export function Ripple({
   color,
@@ -62,11 +45,8 @@ export function Ripple({
   return (
     <span
       ref={layerRef}
-      className={cn(
-        "pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]",
-        className,
-      )}
-      aria-hidden
+      className={cn(RIPPLE_LAYER_CLASS, className)}
+      {...rippleLayerA11yProps()}
     >
       <ConvergeRippleLayer
         ripples={ripples}
@@ -79,5 +59,3 @@ export function Ripple({
     </span>
   );
 }
-
-export type { RippleDirection };

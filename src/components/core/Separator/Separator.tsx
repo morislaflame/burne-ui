@@ -1,47 +1,30 @@
-import { forwardRef, type HTMLAttributes, type Ref } from "react";
+import { forwardRef, type Ref } from "react";
 
-import { cn } from "@/utils/cn";
+import { separatorAriaOrientation } from "./separatorA11y";
+import { separatorRootClass } from "./separatorStyles";
+import type { SeparatorProps } from "./separatorTypes";
 
-export type SeparatorOrientation = "horizontal" | "vertical";
+export type { SeparatorOrientation, SeparatorProps } from "./separatorTypes";
 
-export type SeparatorProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  "role"
-> & {
-  orientation?: SeparatorOrientation;
-};
+export const Separator = forwardRef<HTMLElement, SeparatorProps>(function Separator(
+  { orientation = "horizontal", className = "", ...rest },
+  ref,
+) {
+  const sharedClassName = separatorRootClass(orientation, className);
 
-export const Separator = forwardRef<HTMLElement, SeparatorProps>(
-  function Separator(
-    {
-      orientation = "horizontal",
-      className = "",
-      ...rest
-    },
-    ref,
-  ) {
-    const sharedClassName = cn(
-      "box-border shrink-0",
-      orientation === "horizontal"
-        ? "my-xsmall h-0 w-full min-w-0 max-w-full border-t-token"
-        : "mx-xsmall min-h-[1.5rem] w-0 self-stretch border-l-token",
-      className,
-    );
+  if (orientation === "horizontal") {
+    return <hr ref={ref as Ref<HTMLHRElement>} className={sharedClassName} {...rest} />;
+  }
 
-    if (orientation === "horizontal") {
-      return <hr ref={ref as Ref<HTMLHRElement>} className={sharedClassName} {...rest} />;
-    }
-
-    return (
-      <div
-        ref={ref as Ref<HTMLDivElement>}
-        role="separator"
-        aria-orientation="vertical"
-        className={sharedClassName}
-        {...rest}
-      />
-    );
-  },
-);
+  return (
+    <div
+      ref={ref as Ref<HTMLDivElement>}
+      role="separator"
+      aria-orientation={separatorAriaOrientation(orientation)}
+      className={sharedClassName}
+      {...rest}
+    />
+  );
+});
 
 Separator.displayName = "Separator";

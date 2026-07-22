@@ -3,6 +3,7 @@ import { forwardRef } from "react";
 import { FieldLabelContext } from "@/components/core/Label";
 import { OptionGroupFieldset, type OptionGroupFieldsetProps } from "@/components/composite/utils/optionGroupFieldset";
 
+import { CHECKBOX_GROUP_USES_NATIVE_FIELDSET } from "./checkboxGroupA11y";
 import { CheckboxGroupError, CheckboxGroupHint, CheckboxGroupLegend, CheckboxGroupList } from "./checkboxGroupParts";
 import { CheckboxGroupClassNamesProvider, CheckboxGroupProvider, useCheckboxGroupClassNames } from "./checkboxGroupContext";
 import type { CheckboxGroupProps } from "./checkboxGroupTypes";
@@ -47,21 +48,25 @@ export const CheckboxGroupRoot = forwardRef<HTMLFieldSetElement, CheckboxGroupPr
     } = props;
     const { contextValue, fieldLabelCtx, hintId, errorId } = useCheckboxGroupRootState(props);
 
+    const fieldset = CHECKBOX_GROUP_USES_NATIVE_FIELDSET ? (
+      <CheckboxGroupFieldsetShell
+        ref={ref}
+        disabled={disabled}
+        hintId={hintId}
+        errorId={errorId}
+        size={size}
+        className={className}
+        {...fieldsetProps}
+      >
+        {children}
+      </CheckboxGroupFieldsetShell>
+    ) : null;
+
     return (
       <CheckboxGroupProvider value={contextValue}>
         <CheckboxGroupClassNamesProvider classNames={classNames}>
           <FieldLabelContext.Provider value={fieldLabelCtx}>
-            <CheckboxGroupFieldsetShell
-              ref={ref}
-              disabled={disabled}
-              hintId={hintId}
-              errorId={errorId}
-              size={size}
-              className={className}
-              {...fieldsetProps}
-            >
-              {children}
-            </CheckboxGroupFieldsetShell>
+            {fieldset}
           </FieldLabelContext.Provider>
         </CheckboxGroupClassNamesProvider>
       </CheckboxGroupProvider>

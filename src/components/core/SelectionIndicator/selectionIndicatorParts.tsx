@@ -4,6 +4,7 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { cn } from "@/utils/cn";
 
 import { SELECTION_INDICATOR_FILL_DISPLAY_NAME, SELECTION_INDICATOR_MARK_DISPLAY_NAME } from "./selectionIndicatorAPI";
+import { selectionIndicatorDecorativeProps } from "./selectionIndicatorA11y";
 import { useSelectionIndicatorContext } from "./selectionIndicatorContext";
 import type { SelectionIndicatorFillProps, SelectionIndicatorMarkProps } from "./selectionIndicatorTypes";
 
@@ -26,7 +27,7 @@ export const SelectionIndicatorFill = forwardRef<HTMLSpanElement, SelectionIndic
           ctx.fillRef.current = node;
           mergeForwardedRef(forwardedRef, node);
         }}
-        aria-hidden
+        {...selectionIndicatorDecorativeProps()}
         className={cn(ctx.fillClassName, className)}
         style={{ ...SELECTION_INDICATOR_FILL_INITIAL_STYLE, ...style }}
         {...rest}
@@ -50,7 +51,7 @@ export const SelectionIndicatorMark = forwardRef<HTMLSpanElement, SelectionIndic
           ctx.markRef.current = node;
           mergeForwardedRef(forwardedRef, node);
         }}
-        aria-hidden
+        {...selectionIndicatorDecorativeProps()}
         className={cn(ctx.markClassName, className)}
         style={{ ...SELECTION_INDICATOR_MARK_INITIAL_STYLE, ...style }}
         {...rest}

@@ -52,17 +52,45 @@ export type SliderFieldContextValue = {
   setDisplay: (next: SliderDisplayState | null) => void;
 };
 
+export type SliderThumbA11y = {
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+};
+
+export type SliderMarkItem = {
+  value: number;
+  percent: number;
+};
+
 export type SliderTrackContextValue = {
   fillRef: RefObject<HTMLSpanElement | null>;
   fillClassResolved: string;
   railClass: string;
-  markNodes: ReactNode;
+  markSlotClass?: string;
+  markItems: SliderMarkItem[];
   size: SliderSize;
   orientation: SliderOrientation;
   disabled?: boolean;
   icon?: ReactNode;
   range: boolean;
-  renderThumb: (kind: SliderThumbKind, iconOverride?: ReactNode) => ReactNode;
+  gloss: boolean;
+  thumbClassName?: string;
+  activeThumb: SliderThumbKind | null;
+  singleValue: number;
+  rangeValue: [number, number];
+  min: number;
+  max: number;
+  formatValue: (value: number) => string;
+  thumbPercent: (kind: SliderThumbKind) => number;
+  resolveThumbIcon: (children?: ReactNode) => ReactNode;
+  resolveThumbA11y: (kind: SliderThumbKind) => SliderThumbA11y;
+  onThumbPointerDown: (
+    thumb: SliderThumbKind,
+  ) => (e: PointerEvent<HTMLButtonElement>) => void;
+  onThumbKeyDown: (
+    thumb: SliderThumbKind,
+  ) => (e: KeyboardEvent<HTMLButtonElement>) => void;
 };
 
 type SliderCommonProps = {
