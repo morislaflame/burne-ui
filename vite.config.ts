@@ -24,10 +24,14 @@ export default defineConfig({
     /** Readable `ui.css` for npm (not minified to a single line). */
     cssMinify: false,
     lib: {
-      entry: path.resolve(__dirname, "src/index.ts"),
+      entry: {
+        index: path.resolve(__dirname, "src/index.ts"),
+        internal: path.resolve(__dirname, "src/internal.ts"),
+      },
       name: "BurneUI",
       formats: ["es", "cjs"],
-      fileName: (format) => (format === "es" ? "index.js" : "index.cjs"),
+      fileName: (format, entryName) =>
+        format === "es" ? `${entryName}.js` : `${entryName}.cjs`,
     },
     cssCodeSplit: false,
     rollupOptions: {

@@ -8,23 +8,6 @@ export {
 } from "@/components/core/utils/componentSize";
 export type { IconPosition } from "@/components/core/utils/iconPosition";
 export {
-  CONTROL_SIZE_LAYOUT,
-  type ControlSizeLayout,
-} from "@/components/core/utils/controlSizeLayout";
-export { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
-export {
-  affixSlotClass,
-  affixToggleMinWClass,
-} from "@/components/core/utils/inputAffixLayout";
-export {
-  buttonRootClass,
-  buttonSpinnerClass,
-  controlShellClass,
-} from "@/components/core/Button/buttonStyles";
-export {
-  buttonGroupTextFrameClass,
-} from "@/components/composite/ButtonGroup/buttonGroupStyles";
-export {
   Button,
   buttonRippleTone,
   type ButtonProps,
@@ -638,43 +621,6 @@ export {
   getMotionConfig,
   type MotionConfig,
 } from "@/components/core/utils/motionConfig";
-export { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
-export { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
-export {
-  createConvergeRippleAtPointer,
-  createConvergeRippleFromPointer,
-  type ConvergeRipple,
-} from "@/components/core/utils/convergeRippleGeometry";
-export {
-  animateInteractiveHoverLift,
-  animateInteractivePressSqueeze,
-  initElementShadow,
-  prefersReducedInteractiveHoverLift,
-  readShadowSize,
-  shadowLarge,
-  shadowMid,
-  shadowNone,
-  shadowBase,
-  shouldSkipInteractiveHoverLift,
-  useInteractiveHoverLiftContainerHandlers,
-  type AnimateInteractivePressSqueezeOptions,
-  type HoverShadowConfig,
-} from "@/components/core/utils/hoverInteractiveLift";
-export {
-  FIELD_SHELL_FOCUS_CLASS,
-  FIELD_SHELL_TRANSITION_CLASS,
-  fieldShellHoverClass,
-  useFieldShellHoverLift,
-  type FieldShellStatus,
-} from "@/components/core/utils/useFieldShellHoverLift";
-export {
-  SHADOW_LIFT_MOTION_CLASS,
-  firstLevelHoverShadow,
-  secondLevelShadow,
-  usePersistentElShadow,
-  useSecondLevelShadow,
-  useSecondLevelShadowContainer,
-} from "@/components/core/utils/useShadowMotion";
 export {
   colorToken,
   tokensConfig,
@@ -697,7 +643,6 @@ export {
   type FontWeightStep,
   type ToastScrimCssVar,
 } from "@/tokens";
-export { gsap, useGSAP, killMotion, ensureRippleEase } from "@/components/core/utils/gsapMotion";
 export {
   Table,
   TABLE_ROW_TONE_SURFACE,
@@ -810,58 +755,17 @@ export {
 export {
   BurneUIProvider,
   ThemeProvider,
-  applyBurneThemeConfig,
-  applyCustomThemeTokens,
-  applyThemeMode,
-  applyThemeTokens,
-  applyTokens,
-  activateThemeModePalette,
-  clearThemeInlineTokens,
-  clearCustomThemeTokens,
-  createDefaultThemeState,
-  createDefaultBurneThemeConfig,
-  ensureModePalettes,
-  exportBurneThemeConfigSource,
-  exportBurneThemeCss,
-  exportDefaultBurneThemeConfigSource,
-  exportThemeCss,
-  mergeThemeTokenOverrides,
-  patchThemeColor,
-  resolveTheme,
-  resolveCustomThemeTokens,
-  resolveThemeTokenState,
-  themeTokenStateToConfig,
   useBurneTheme,
   useBurneThemeOptional,
-  useBurneThemeRuntime,
-  useBurneThemeRuntimeOptional,
-  COLOR_CSS_VAR,
-  DARK_COLORS,
-  DEFAULT_FONT,
-  DEFAULT_FONT_MONO,
-  LIGHT_COLORS,
-  MOTION_DEFAULTS,
-  SCALE_DEFAULTS,
-  TEXT_SCALE_BASES,
+  type BurneUIProviderProps,
+  type ThemeProviderProps,
+  type BurneThemeContextValue,
   type BurneThemeConfig,
   type BurneThemeMode,
-  type BurneUIProviderProps,
-  type BurneThemeContextValue,
-  type BurneThemeRuntimeContextValue,
-  type ThemeProviderProps,
-  type ThemeModeColorOverrides,
   type ThemeTokenOverrides,
+  type ThemeModeColorOverrides,
   type CustomThemeTokenControl,
   type CustomThemeTokenDefinition,
   type CustomThemeTokens,
   type CustomThemeTokenValue,
-  type ThemeTokenState,
-  type ThemeMode,
-  type ThemeColors,
-  type ThemeColorKey,
-  type ThemeDerivedColorKey,
-  type ThemeStatusForegrounds,
-  type ThemeStatusForegroundKey,
-  type ThemeFontWeights,
-  type ThemeFontWeightKey,
 } from "@/theme";

@@ -26,9 +26,5 @@ export type {
   ButtonErrorProps,
 } from "./Button";
 
+/** Public helper: Ripple tone for Button variant/status. Style class helpers live in `burne-ui/internal`. */
 export { buttonRippleTone } from "./buttonStyles";
-export {
-  buttonRootClass,
-  buttonSpinnerClass,
-  controlShellClass,
-} from "./buttonStyles";
