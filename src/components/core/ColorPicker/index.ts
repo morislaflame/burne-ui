@@ -1,9 +1,21 @@
-import { ColorPickerContent, ColorPickerRoot, ColorPickerTrigger } from "./ColorPicker";
+import {
+  ColorPickerAlphaInput,
+  ColorPickerArea,
+  ColorPickerContent,
+  ColorPickerHexInput,
+  ColorPickerPresets,
+  ColorPickerRoot,
+  ColorPickerTrigger,
+} from "./ColorPicker";
 import { ColorSliderRoot, ColorSliderTrack } from "./ColorSlider";
 
 export const ColorPicker = Object.assign(ColorPickerRoot, {
   Trigger: ColorPickerTrigger,
   Content: ColorPickerContent,
+  Area: ColorPickerArea,
+  HexInput: ColorPickerHexInput,
+  AlphaInput: ColorPickerAlphaInput,
+  Presets: ColorPickerPresets,
 });
 
 export const ColorSlider = Object.assign(ColorSliderRoot, {
@@ -16,6 +28,10 @@ export type {
   ColorPickerProps,
   ColorPickerTriggerProps,
   ColorPickerContentProps,
+  ColorPickerAreaProps,
+  ColorPickerHexInputProps,
+  ColorPickerAlphaInputProps,
+  ColorPickerPresetsProps,
   ColorPickerSize,
   ColorPickerVariant,
   ColorPickerClassNames,

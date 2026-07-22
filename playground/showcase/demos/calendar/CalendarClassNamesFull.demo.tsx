@@ -11,6 +11,7 @@ export function CalendarClassNamesFullDemo() {
         navPrev: "text-info",
         navNext: "text-info",
         weekdayCell: "text-info/70",
+        dayEmpty: "opacity-40",
         dayCell: "rounded-full",
         cellFill: "rounded-full bg-info",
         cellTodayDot: "bg-info",

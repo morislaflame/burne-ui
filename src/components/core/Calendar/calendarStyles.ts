@@ -169,6 +169,14 @@ export function calendarNavButtonClass(size: CalendarSize): string {
   return cn(CALENDAR_NAV_BUTTON_CLASS, CALENDAR_NAV_BTN[size]);
 }
 
+export function calendarDayEmptyClass(
+  size: CalendarSize,
+  slotClass?: string,
+  className?: string,
+): string {
+  return cn(CALENDAR_DAY_BTN[size], slotClass, className);
+}
+
 export function calendarRootClass(
   variant: CalendarVariant,
   size: CalendarSize,

@@ -4,7 +4,7 @@ import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractive
 import "../utils/glossInteractive.css";
 
 import { CalendarClassNamesProvider, CalendarProvider } from "./calendarContext";
-import { CalendarDefaultContent, CalendarFooter, CalendarGrid, CalendarHeader } from "./calendarParts";
+import { CalendarDefaultContent } from "./calendarParts";
 import { CALENDAR_GLOSS_CONTENT_CLASS, calendarRootClass } from "./calendarStyles";
 import type { CalendarProps, UseCalendarRootStateProps } from "./calendarTypes";
 import { useCalendarRootState } from "./useCalendarRootState";
@@ -15,6 +15,12 @@ export type {
   CalendarHeaderProps,
   CalendarGridProps,
   CalendarFooterProps,
+  CalendarNavPrevProps,
+  CalendarNavNextProps,
+  CalendarTitleProps,
+  CalendarDayProps,
+  CalendarDayRenderState,
+  CalendarRenderDay,
   CalendarMode,
   CalendarView,
   CalendarVariant,
@@ -39,6 +45,7 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       maxDate: _maxDate,
       navPrevIcon: _navPrevIcon,
       navNextIcon: _navNextIcon,
+      renderDay: _renderDay,
       value: _value,
       defaultValue: _defaultValue,
       onValueChange: _onValueChange,
@@ -84,4 +91,12 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
 
 CalendarRoot.displayName = "Calendar";
 
-export { CalendarHeader, CalendarGrid, CalendarFooter };
+export {
+  CalendarHeader,
+  CalendarGrid,
+  CalendarFooter,
+  CalendarNavPrev,
+  CalendarNavNext,
+  CalendarTitle,
+  CalendarDay,
+} from "./calendarParts";

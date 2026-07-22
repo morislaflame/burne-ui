@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
 import type { ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
@@ -14,6 +14,8 @@ export type ColorPickerClassNames = {
   area?: string;
   areaThumb?: string;
   slidersRow?: string;
+  /** Hue / alpha slider column wrapper. */
+  slidersStack?: string;
   previewSwatch?: string;
   hueSlider?: string;
   alphaSlider?: string;
@@ -43,13 +45,34 @@ export type ColorPickerProps = {
   classNames?: ColorPickerClassNames;
 };
 
-export type ColorPickerTriggerProps = Omit<HTMLAttributes<HTMLButtonElement>, "children"> & {
+export type ColorPickerTriggerProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "color"
+> & {
   swatchSize?: ColorSwatchSize;
+  /** Pass-through to `Popover.Trigger` (default `true` there). */
+  asChild?: boolean;
+  children?: ReactNode;
 };
 
 export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   showAlpha?: boolean;
   presets?: string[];
+  /**
+   * Custom panel body. Default layout: Area, sliders, hex/alpha inputs, presets.
+   * Compose with `ColorPicker.Area` / `HexInput` / `AlphaInput` / `Presets`.
+   */
+  children?: ReactNode;
+};
+
+export type ColorPickerAreaProps = HTMLAttributes<HTMLDivElement>;
+
+export type ColorPickerHexInputProps = HTMLAttributes<HTMLDivElement>;
+
+export type ColorPickerAlphaInputProps = HTMLAttributes<HTMLDivElement>;
+
+export type ColorPickerPresetsProps = HTMLAttributes<HTMLDivElement> & {
+  presets: string[];
 };
 
 export type ColorPickerContextValue = {
@@ -70,21 +93,4 @@ export type UseColorPickerRootStateProps = ColorPickerProps;
 export type UseColorPickerAreaDragProps = {
   hsva: HSVA;
   setHsva: (next: HSVA) => void;
-};
-
-export type ColorPickerHexInputProps = {
-  hex: string;
-  setHsva: (next: HSVA) => void;
-};
-
-export type ColorPickerAlphaInputProps = {
-  hsva: HSVA;
-  setHsva: (next: HSVA) => void;
-};
-
-export type ColorPickerPresetsProps = {
-  presets: string[];
-  hex: string;
-  setHsva: (next: HSVA) => void;
-  size: ColorPickerSize;
 };

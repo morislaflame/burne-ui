@@ -17,6 +17,7 @@ export function ColorPickerClassNamesFullDemo() {
           hexInput: "border-info/30 bg-info/10",
           hexInputField: "text-info",
           previewSwatch: "ring-2 ring-info/30",
+          slidersStack: "gap-mid",
         }}
       >
         <ColorPicker.Trigger />

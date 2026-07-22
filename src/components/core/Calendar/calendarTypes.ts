@@ -17,6 +17,22 @@ export type CalendarVariant = "default" | "secondary" | "outline" | "gloss";
 export type CalendarSize = "small" | "base" | "mid" | "large";
 export type CalendarRangeValue = { start: Date | null; end: Date | null };
 
+export type CalendarDayRenderState = {
+  day: number;
+  selected: boolean;
+  disabled: boolean;
+  isToday: boolean;
+  isRangeStart: boolean;
+  isRangeEnd: boolean;
+  /** Day circle/fill is active (selected day or range endpoint). */
+  circleActive: boolean;
+};
+
+export type CalendarRenderDay = (
+  date: Date,
+  state: CalendarDayRenderState,
+) => ReactNode;
+
 export type CalendarClassNames = {
   root?: string;
   glossContent?: string;
@@ -31,6 +47,8 @@ export type CalendarClassNames = {
   weekdayCell?: string;
   daysGrid?: string;
   dayCellWrapper?: string;
+  /** Empty padding cell outside the current month. */
+  dayEmpty?: string;
   rangeHalfFill?: string;
   dayCell?: string;
   monthsGrid?: string;
@@ -58,6 +76,11 @@ type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
   navPrevIcon?: ReactNode;
   /** Replaces the default next-month chevron. Pass `null` to hide. */
   navNextIcon?: ReactNode;
+  /**
+   * Custom day cell content. Receives the cell date and selection state.
+   * Default content is the day-of-month number.
+   */
+  renderDay?: CalendarRenderDay;
   classNames?: CalendarClassNames;
 };
 
@@ -85,6 +108,9 @@ export type CalendarHeaderProps = HTMLAttributes<HTMLDivElement>;
 export type CalendarGridProps = HTMLAttributes<HTMLDivElement>;
 export type CalendarFooterProps = HTMLAttributes<HTMLDivElement>;
 
+/** Header month/year drill-up control. `children` replace the default formatted title. */
+export type CalendarTitleProps = ButtonHTMLAttributes<HTMLButtonElement>;
+
 export type CalendarContextValue = {
   mode: CalendarMode;
   view: CalendarView;
@@ -109,6 +135,7 @@ export type CalendarContextValue = {
   today: Date;
   navPrevIcon?: ReactNode;
   navNextIcon?: ReactNode;
+  renderDay?: CalendarRenderDay;
 };
 
 export type CalendarProviderProps = {
@@ -137,6 +164,16 @@ export type CalendarNavButtonProps = Omit<
   children?: ReactNode;
 };
 
+export type CalendarNavPrevProps = Omit<
+  CalendarNavButtonProps,
+  "direction" | "size" | "onClick"
+> & {
+  size?: CalendarSize;
+  onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+};
+
+export type CalendarNavNextProps = CalendarNavPrevProps;
+
 export type CalendarInteractiveCellProps = {
   selected: boolean;
   disabled?: boolean;
@@ -152,6 +189,11 @@ export type CalendarInteractiveCellProps = {
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   children: ReactNode;
+};
+
+/** Public `Calendar.Day` — size defaults from Calendar context. */
+export type CalendarDayProps = Omit<CalendarInteractiveCellProps, "size"> & {
+  size?: CalendarSize;
 };
 
 export type CalendarRangeHalfFillProps = {

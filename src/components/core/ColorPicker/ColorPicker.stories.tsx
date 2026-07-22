@@ -306,6 +306,7 @@ export const CustomClassNames: Story = {
         classNames={{
           contentPanel: "border border-primary/30 bg-primary/5",
           area: "rounded-base ring-1 ring-primary/20",
+          slidersStack: "gap-mid",
           hexInput: "border-primary/30 bg-primary/10",
           hexInputField: "text-primary",
         }}
@@ -313,6 +314,72 @@ export const CustomClassNames: Story = {
         <ColorPicker.Trigger />
         <ColorPicker.Content />
       </ColorPicker>
+    );
+  },
+};
+
+export const CompoundContent: Story = {
+  name: "Compound Content parts",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`ColorPicker.Content` children replace the default layout. Compose with `Area`, `HexInput`, `AlphaInput`, `Presets`.",
+      },
+    },
+  },
+  render: function CompoundContentStory() {
+    const [color, setColor] = useState("#22c55e");
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <ColorPicker value={color} onValueChange={setColor}>
+          <ColorPicker.Trigger />
+          <ColorPicker.Content>
+            <ColorPicker.Area />
+            <ColorPicker.HexInput />
+            <ColorPicker.Presets
+              presets={["#22c55e", "#3b82f6", "#f59e0b", "#ef4444"]}
+            />
+          </ColorPicker.Content>
+        </ColorPicker>
+        <Text as="p" variant="small" className="font-mono text-muted">
+          {color}
+        </Text>
+      </div>
+    );
+  },
+};
+
+export const CustomTrigger: Story = {
+  name: "Custom Trigger (children / asChild)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`ColorPicker.Trigger` accepts `children` and `asChild` (pass-through to Popover.Trigger).",
+      },
+    },
+  },
+  render: function CustomTriggerStory() {
+    const [color, setColor] = useState("#8b5cf6");
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <ColorPicker value={color} onValueChange={setColor}>
+          <ColorPicker.Trigger asChild>
+            <button
+              type="button"
+              className="inline-flex items-center gap-small rounded-base border-token bg-surface px-mid py-small text-small shadow-token-base"
+            >
+              <ColorSwatch color={color} size="small" shape="circle" tabIndex={-1} />
+              Pick brand color
+            </button>
+          </ColorPicker.Trigger>
+          <ColorPicker.Content showAlpha />
+        </ColorPicker>
+        <Text as="p" variant="small" className="font-mono text-muted">
+          {color}
+        </Text>
+      </div>
     );
   },
 };

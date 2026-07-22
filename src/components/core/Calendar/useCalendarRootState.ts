@@ -22,6 +22,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     maxDate,
     navPrevIcon,
     navNextIcon,
+    renderDay,
     value,
     defaultValue,
     onValueChange,
@@ -169,6 +170,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       today,
       navPrevIcon,
       navNextIcon,
+      renderDay,
     }),
     [
       mode,
@@ -192,6 +194,7 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       today,
       navPrevIcon,
       navNextIcon,
+      renderDay,
     ],
   );
 

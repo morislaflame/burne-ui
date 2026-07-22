@@ -1,7 +1,14 @@
 import { Popover } from "@/components/core/Popover";
 
 import { ColorPickerClassNamesProvider, ColorPickerProvider } from "./colorPickerContext";
-import { ColorPickerContent, ColorPickerTrigger } from "./colorPickerParts";
+import {
+  ColorPickerAlphaInput,
+  ColorPickerArea,
+  ColorPickerContent,
+  ColorPickerHexInput,
+  ColorPickerPresets,
+  ColorPickerTrigger,
+} from "./colorPickerParts";
 import type { ColorPickerProps } from "./colorPickerTypes";
 import { useColorPickerRootState } from "./useColorPickerRootState";
 
@@ -9,6 +16,10 @@ export type {
   ColorPickerProps,
   ColorPickerTriggerProps,
   ColorPickerContentProps,
+  ColorPickerAreaProps,
+  ColorPickerHexInputProps,
+  ColorPickerAlphaInputProps,
+  ColorPickerPresetsProps,
   ColorPickerSize,
   ColorPickerVariant,
   ColorPickerClassNames,
@@ -55,6 +66,13 @@ export function ColorPickerRoot({
   );
 }
 
-ColorPickerRoot.displayName = "ColorPickerRoot";
+ColorPickerRoot.displayName = "ColorPicker";
 
-export { ColorPickerTrigger, ColorPickerContent };
+export {
+  ColorPickerTrigger,
+  ColorPickerContent,
+  ColorPickerArea,
+  ColorPickerHexInput,
+  ColorPickerAlphaInput,
+  ColorPickerPresets,
+};

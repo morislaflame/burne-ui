@@ -4,6 +4,8 @@ import { CalendarClassNamesFullDemo } from "../demos/calendar/CalendarClassNames
 import calendarClassNamesFullSource from "../demos/calendar/CalendarClassNamesFull.demo.tsx?raw";
 import { CalendarCompoundLayoutDemo } from "../demos/calendar/CalendarCompoundLayout.demo";
 import calendarCompoundLayoutSource from "../demos/calendar/CalendarCompoundLayout.demo.tsx?raw";
+import { CalendarCustomHeaderNavDemo } from "../demos/calendar/CalendarCustomHeaderNav.demo";
+import calendarCustomHeaderNavSource from "../demos/calendar/CalendarCustomHeaderNav.demo.tsx?raw";
 import { CalendarCustomNavIconsDemo } from "../demos/calendar/CalendarCustomNavIcons.demo";
 import calendarCustomNavIconsSource from "../demos/calendar/CalendarCustomNavIcons.demo.tsx?raw";
 import { CalendarGlossDemo } from "../demos/calendar/CalendarGloss.demo";
@@ -12,6 +14,8 @@ import { CalendarInlineWidgetDemo } from "../demos/calendar/CalendarInlineWidget
 import calendarInlineWidgetSource from "../demos/calendar/CalendarInlineWidget.demo.tsx?raw";
 import { CalendarModesDemo } from "../demos/calendar/CalendarModes.demo";
 import calendarModesSource from "../demos/calendar/CalendarModes.demo.tsx?raw";
+import { CalendarRenderDayDemo } from "../demos/calendar/CalendarRenderDay.demo";
+import calendarRenderDaySource from "../demos/calendar/CalendarRenderDay.demo.tsx?raw";
 import { CalendarSizesDemo } from "../demos/calendar/CalendarSizes.demo";
 import calendarSizesSource from "../demos/calendar/CalendarSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
@@ -51,6 +55,28 @@ export function CalendarShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="renderDay"
+        description="Custom day cell content — event dots via renderDay(date, state)."
+      >
+        <ShowcaseDemoFromFile
+          align="start"
+          Demo={CalendarRenderDayDemo}
+          source={calendarRenderDaySource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Compound Header"
+        description="Header children: Title, NavPrev / NavNext — reorder and custom title format."
+      >
+        <ShowcaseDemoFromFile
+          align="start"
+          Demo={CalendarCustomHeaderNavDemo}
+          source={calendarCustomHeaderNavSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="classNames"
         description="Full customization of slots via classNames on root."
       >
@@ -81,11 +107,11 @@ export function CalendarShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Calendar.Header, Calendar.Grid, Calendar.Footer for custom layout."
+            description="Header, Grid, Footer, Title, NavPrev, NavNext, Day."
           />
           <ShowcaseDoc.ApiRow
-            api="compound"
-            description="root, header, grid, dayCell, cell, cellFill, footer and other slots on root."
+            api="renderDay"
+            description="renderDay(date, state) customizes day cell content; classNames.dayEmpty for padding cells."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>

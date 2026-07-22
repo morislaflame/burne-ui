@@ -14,14 +14,18 @@ import { cn } from "@/utils/cn";
 import { calendarNavBackLabel, calendarNavForwardLabel } from "./calendarA11y";
 import { useCalendarInteractiveCellAnimations, useCalendarNavButtonAnimations } from "./calendarAnimations";
 import { useCalendar, useCalendarClassNames } from "./calendarContext";
-import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_DAY_BTN, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
+import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarDayEmptyClass, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
 import type {
+  CalendarDayProps,
   CalendarFooterProps,
   CalendarGridProps,
   CalendarHeaderProps,
   CalendarInteractiveCellProps,
   CalendarNavButtonProps,
+  CalendarNavNextProps,
+  CalendarNavPrevProps,
   CalendarRangeHalfFillProps,
+  CalendarTitleProps,
 } from "./calendarTypes";
 import { useCalendarDayCellModels, useCalendarHeaderTitle, useCalendarMonthCellModels, useCalendarYearCellModels } from "./useCalendarViewModels";
 
@@ -124,6 +128,46 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
 );
 
 CalendarNavButton.displayName = "Calendar.NavButton";
+
+export const CalendarNavPrev = forwardRef<HTMLButtonElement, CalendarNavPrevProps>(
+  function CalendarNavPrev({ size: sizeProp, onClick, ...rest }, ref) {
+    const { navigate, size } = useCalendar();
+    return (
+      <CalendarNavButton
+        ref={ref}
+        direction="prev"
+        size={sizeProp ?? size}
+        onClick={(e) => {
+          onClick?.(e);
+          if (!e.defaultPrevented) navigate(-1);
+        }}
+        {...rest}
+      />
+    );
+  },
+);
+
+CalendarNavPrev.displayName = "Calendar.NavPrev";
+
+export const CalendarNavNext = forwardRef<HTMLButtonElement, CalendarNavNextProps>(
+  function CalendarNavNext({ size: sizeProp, onClick, ...rest }, ref) {
+    const { navigate, size } = useCalendar();
+    return (
+      <CalendarNavButton
+        ref={ref}
+        direction="next"
+        size={sizeProp ?? size}
+        onClick={(e) => {
+          onClick?.(e);
+          if (!e.defaultPrevented) navigate(1);
+        }}
+        {...rest}
+      />
+    );
+  },
+);
+
+CalendarNavNext.displayName = "Calendar.NavNext";
 
 const CalendarInteractiveCellInner = forwardRef<
   HTMLButtonElement,
@@ -263,6 +307,17 @@ function calendarCellPropsEqual(
 
 const CalendarInteractiveCell = memo(CalendarInteractiveCellInner, calendarCellPropsEqual);
 
+export const CalendarDay = forwardRef<HTMLButtonElement, CalendarDayProps>(
+  function CalendarDay({ size: sizeProp, ...props }, ref) {
+    const { size } = useCalendar();
+    return (
+      <CalendarInteractiveCell ref={ref} size={sizeProp ?? size} {...props} />
+    );
+  },
+);
+
+CalendarDay.displayName = "Calendar.Day";
+
 function CalendarDaysView() {
   const slotClassNames = useCalendarClassNames();
   const {
@@ -271,6 +326,7 @@ function CalendarDaysView() {
     size,
     mode,
     locale,
+    renderDay,
   } = useCalendar();
   const cells = useCalendarDayCellModels();
 
@@ -291,9 +347,28 @@ function CalendarDaysView() {
         {cells.map((cell) => {
           if (cell.day === null) {
             return (
-              <div key={cell.key} className={CALENDAR_DAY_BTN[size]} />
+              <div
+                key={cell.key}
+                className={calendarDayEmptyClass(
+                  size,
+                  slotClassNames.dayEmpty,
+                )}
+              />
             );
           }
+
+          const dayContent =
+            renderDay && cell.date
+              ? renderDay(cell.date, {
+                  day: cell.day,
+                  selected: !!cell.isSelected,
+                  disabled: !!cell.isDisabled,
+                  isToday: !!cell.isToday,
+                  isRangeStart: !!cell.isRangeStart,
+                  isRangeEnd: !!cell.isRangeEnd,
+                  circleActive: !!cell.circleActive,
+                })
+              : cell.day;
 
           return (
             <div
@@ -321,7 +396,7 @@ function CalendarDaysView() {
                 onMouseLeave={() => mode === "range" && setHoverDate(null)}
                 className={CALENDAR_DAY_CELL_LAYER_CLASS}
               >
-                {cell.day}
+                {dayContent}
               </CalendarInteractiveCell>
             </div>
           );
@@ -380,11 +455,41 @@ function CalendarYearsView() {
   );
 }
 
-export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
-  function CalendarHeader({ className = "", ...rest }, ref) {
+export const CalendarTitle = forwardRef<HTMLButtonElement, CalendarTitleProps>(
+  function CalendarTitle({ className = "", children, onClick, ...rest }, ref) {
     const slotClassNames = useCalendarClassNames();
-    const { view, setView, navigate, size } = useCalendar();
+    const { view, setView, size } = useCalendar();
     const title = useCalendarHeaderTitle();
+
+    return (
+      <button
+        ref={ref}
+        type="button"
+        disabled={view === "years"}
+        onClick={(e) => {
+          onClick?.(e);
+          if (e.defaultPrevented) return;
+          if (view === "days") setView("months");
+          else if (view === "months") setView("years");
+        }}
+        className={cn(
+          calendarHeaderTitleClass(size, view),
+          slotClassNames.headerTitle,
+          className,
+        )}
+        {...rest}
+      >
+        {children ?? title}
+      </button>
+    );
+  },
+);
+
+CalendarTitle.displayName = "Calendar.Title";
+
+export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
+  function CalendarHeader({ className = "", children, ...rest }, ref) {
+    const slotClassNames = useCalendarClassNames();
 
     return (
       <div
@@ -392,24 +497,13 @@ export const CalendarHeader = forwardRef<HTMLDivElement, CalendarHeaderProps>(
         className={cn(CALENDAR_HEADER_CLASS, slotClassNames.header, className)}
         {...rest}
       >
-        <CalendarNavButton direction="prev" size={size} onClick={() => navigate(-1)} />
-
-        <button
-          type="button"
-          disabled={view === "years"}
-          onClick={() => {
-            if (view === "days") setView("months");
-            else if (view === "months") setView("years");
-          }}
-          className={cn(
-            calendarHeaderTitleClass(size, view),
-            slotClassNames.headerTitle,
-          )}
-        >
-          {title}
-        </button>
-
-        <CalendarNavButton direction="next" size={size} onClick={() => navigate(1)} />
+        {children ?? (
+          <>
+            <CalendarNavPrev />
+            <CalendarTitle />
+            <CalendarNavNext />
+          </>
+        )}
       </div>
     );
   },

@@ -4,7 +4,27 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor } from "storybook/test";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 
-import { Calendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from ".";
+import { Calendar, useCalendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from ".";
+
+function CustomTitleLabel() {
+  const { viewDate, view } = useCalendar();
+  if (view === "years") {
+    const start = Math.floor(viewDate.getFullYear() / 10) * 10;
+    return (
+      <span>
+        {start}–{start + 9}
+      </span>
+    );
+  }
+  if (view === "months") {
+    return <span>{viewDate.getFullYear()}</span>;
+  }
+  return (
+    <span>
+      {viewDate.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+    </span>
+  );
+}
 
 // ─── decorator ───────────────────────────────────────────────────────────────
 
@@ -275,6 +295,7 @@ export const CustomClassNames: Story = {
         headerTitle: "font-semibold text-primary",
         grid: "mt-small",
         weekdayCell: "text-primary/70 uppercase tracking-wide",
+        dayEmpty: "opacity-30",
         dayCell: "rounded-full",
         cellFill: "rounded-full bg-primary",
         rangeHalfFill: "bg-primary/15",
@@ -307,4 +328,88 @@ export const CustomNavIcons: Story = {
       navNextIcon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}
     />
   ),
+};
+
+export const RenderDay: Story = {
+  name: "renderDay — event badges",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`renderDay(date, state)` customizes day cell content (e.g. event dots). `Calendar.Day` is also exported for compound use.",
+      },
+    },
+  },
+  render: function RenderDayStory() {
+    const eventDays = new Set([3, 12, 18, 25]);
+    return (
+      <Calendar
+        mode="single"
+        renderDay={(date, { day, selected }) => (
+          <span className="relative inline-flex flex-col items-center gap-[2px]">
+            <span>{day}</span>
+            {eventDays.has(date.getDate()) ? (
+              <span
+                aria-hidden
+                className={
+                  selected
+                    ? "h-1 w-1 rounded-full bg-primary-foreground"
+                    : "h-1 w-1 rounded-full bg-primary"
+                }
+              />
+            ) : null}
+          </span>
+        )}
+      />
+    );
+  },
+};
+
+export const CustomHeaderNav: Story = {
+  name: "Compound Header (Title / Nav)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Calendar.Header` accepts children. Rebuild order with `NavPrev` / `Title` / `NavNext`. `Title` children replace the default formatted label.",
+      },
+    },
+  },
+  render: function CustomHeaderNavStory() {
+    return (
+      <Calendar mode="single">
+        <Calendar.Header>
+          <Calendar.NavNext />
+          <Calendar.Title className="font-semibold text-primary" />
+          <Calendar.NavPrev />
+        </Calendar.Header>
+        <Calendar.Grid />
+      </Calendar>
+    );
+  },
+};
+
+export const CustomTitleFormat: Story = {
+  name: "Custom Title format",
+  parameters: {
+    docs: {
+      description: {
+        story: "`Calendar.Title` children override the default month/year label.",
+      },
+    },
+  },
+  render: function CustomTitleFormatStory() {
+    return (
+      <Calendar mode="single">
+        <Calendar.Header>
+          <Calendar.NavPrev />
+          <Calendar.Title>
+            <CustomTitleLabel />
+          </Calendar.Title>
+          <Calendar.NavNext />
+        </Calendar.Header>
+        <Calendar.Grid />
+      </Calendar>
+    );
+  },
 };

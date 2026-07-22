@@ -4,6 +4,10 @@ import { ColorPickerAlphaChannelDemo } from "../demos/colorPicker/ColorPickerAlp
 import colorPickerAlphaChannelSource from "../demos/colorPicker/ColorPickerAlphaChannel.demo.tsx?raw";
 import { ColorPickerBasicDemo } from "../demos/colorPicker/ColorPickerBasic.demo";
 import colorPickerBasicSource from "../demos/colorPicker/ColorPickerBasic.demo.tsx?raw";
+import { ColorPickerCompoundContentDemo } from "../demos/colorPicker/ColorPickerCompoundContent.demo";
+import colorPickerCompoundContentSource from "../demos/colorPicker/ColorPickerCompoundContent.demo.tsx?raw";
+import { ColorPickerCustomTriggerDemo } from "../demos/colorPicker/ColorPickerCustomTrigger.demo";
+import colorPickerCustomTriggerSource from "../demos/colorPicker/ColorPickerCustomTrigger.demo.tsx?raw";
 import { ColorPickerSizesDemo } from "../demos/colorPicker/ColorPickerSizes.demo";
 import colorPickerSizesSource from "../demos/colorPicker/ColorPickerSizes.demo.tsx?raw";
 import { ColorPickerBrandPaletteDemo } from "../demos/colorPicker/ColorPickerBrandPalette.demo";
@@ -33,6 +37,26 @@ export function ColorPickerShowcase() {
         <ShowcaseDemoFromFile Demo={ColorPickerBasicDemo} source={colorPickerBasicSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="Compound Content"
+        description="Content children: Area, HexInput, Presets — custom panel layout."
+      >
+        <ShowcaseDemoFromFile
+          Demo={ColorPickerCompoundContentDemo}
+          source={colorPickerCompoundContentSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom Trigger"
+        description="Trigger children + asChild for a custom opener."
+      >
+        <ShowcaseDemoFromFile
+          Demo={ColorPickerCustomTriggerDemo}
+          source={colorPickerCustomTriggerSource}
+        />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Dimensions" description="size: small, base, mid.">
         <ShowcaseDemoFromFile Demo={ColorPickerSizesDemo} source={colorPickerSizesSource} />
       </ShowcaseSection>
@@ -47,7 +71,7 @@ export function ColorPickerShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Customization of panel slots via classNames on root."
+        description="Customization of panel slots via classNames on root (incl. slidersStack)."
       >
         <ShowcaseDemoFromFile
           Demo={ColorPickerClassNamesFullDemo}
@@ -75,11 +99,11 @@ export function ColorPickerShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="ColorPicker.Trigger and ColorPicker.Content. ColorSlider and ColorSwatch — individual primitives."
+            description="Trigger, Content, Area, HexInput, AlphaInput, Presets. ColorSlider and ColorSwatch — primitives."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="content, contentPanel, trigger, area, slidersRow, hexInput, presets etc.."
+            description="content, contentPanel, trigger, area, slidersRow, slidersStack, hexInput, presets…"
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Format">
