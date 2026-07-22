@@ -37,6 +37,8 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       locale: _locale,
       minDate: _minDate,
       maxDate: _maxDate,
+      navPrevIcon: _navPrevIcon,
+      navNextIcon: _navNextIcon,
       value: _value,
       defaultValue: _defaultValue,
       onValueChange: _onValueChange,

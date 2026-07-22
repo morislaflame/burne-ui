@@ -4,6 +4,8 @@ import { CalendarClassNamesFullDemo } from "../demos/calendar/CalendarClassNames
 import calendarClassNamesFullSource from "../demos/calendar/CalendarClassNamesFull.demo.tsx?raw";
 import { CalendarCompoundLayoutDemo } from "../demos/calendar/CalendarCompoundLayout.demo";
 import calendarCompoundLayoutSource from "../demos/calendar/CalendarCompoundLayout.demo.tsx?raw";
+import { CalendarCustomNavIconsDemo } from "../demos/calendar/CalendarCustomNavIcons.demo";
+import calendarCustomNavIconsSource from "../demos/calendar/CalendarCustomNavIcons.demo.tsx?raw";
 import { CalendarGlossDemo } from "../demos/calendar/CalendarGloss.demo";
 import calendarGlossSource from "../demos/calendar/CalendarGloss.demo.tsx?raw";
 import { CalendarInlineWidgetDemo } from "../demos/calendar/CalendarInlineWidget.demo";
@@ -35,6 +37,17 @@ export function CalendarShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass calendar panel.">
         <ShowcaseDemoFromFile align="start" Demo={CalendarGlossDemo} source={calendarGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom nav icons"
+        description="navPrevIcon / navNextIcon on root replace default chevrons."
+      >
+        <ShowcaseDemoFromFile
+          align="start"
+          Demo={CalendarCustomNavIconsDemo}
+          source={calendarCustomNavIconsSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection

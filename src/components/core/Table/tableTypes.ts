@@ -68,10 +68,21 @@ export type TableColumnRenderProps = {
   sortDirection?: SortDirection;
 };
 
+export type TableColumnSortIconRenderProps = {
+  sortDirection?: SortDirection;
+};
+
 export type TableColumnProps = Omit<ThHTMLAttributes<HTMLTableCellElement>, "children"> & {
   id?: string;
   allowsSorting?: boolean;
   isRowHeader?: boolean;
+  /**
+   * Replaces the default sort chevron. Pass `null` to hide.
+   * Render prop receives the current `sortDirection`.
+   */
+  sortIcon?:
+    | ReactNode
+    | ((props: TableColumnSortIconRenderProps) => ReactNode);
   children?: ReactNode | ((props: TableColumnRenderProps) => ReactNode);
 };
 

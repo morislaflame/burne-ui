@@ -6,6 +6,8 @@ import { DropdownClassNamesFullDemo } from "../demos/dropdown/DropdownClassNames
 import dropdownClassNamesFullSource from "../demos/dropdown/DropdownClassNamesFull.demo.tsx?raw";
 import { DropdownActionMenuDemo } from "../demos/dropdown/DropdownActionMenu.demo";
 import dropdownActionMenuSource from "../demos/dropdown/DropdownActionMenu.demo.tsx?raw";
+import { DropdownCustomSubTriggerIconDemo } from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo";
+import dropdownCustomSubTriggerIconSource from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo.tsx?raw";
 import { DropdownGlossDemo } from "../demos/dropdown/DropdownGloss.demo";
 import dropdownGlossSource from "../demos/dropdown/DropdownGloss.demo.tsx?raw";
 import { DropdownMultipleDemo } from "../demos/dropdown/DropdownMultiple.demo";
@@ -41,6 +43,15 @@ export function DropdownShowcase() {
         <ShowcaseDemoFromFile Demo={DropdownGlossDemo} source={dropdownGlossSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="Custom SubTrigger icon"
+        description="Dropdown.SubTrigger icon replaces the default chevron."
+      >
+        <ShowcaseDemoFromFile
+          Demo={DropdownCustomSubTriggerIconDemo}
+          source={dropdownCustomSubTriggerIconSource}
+        />
+      </ShowcaseSection>
 
       <ShowcaseSection
         title="portalContainer"

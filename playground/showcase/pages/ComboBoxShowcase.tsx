@@ -1,5 +1,7 @@
 import { ComboBoxClassNamesFullDemo } from "../demos/combobox/ComboBoxClassNamesFull.demo";
 import comboBoxClassNamesFullSource from "../demos/combobox/ComboBoxClassNamesFull.demo.tsx?raw";
+import { ComboBoxCustomTriggerIconDemo } from "../demos/combobox/ComboBoxCustomTriggerIcon.demo";
+import comboBoxCustomTriggerIconSource from "../demos/combobox/ComboBoxCustomTriggerIcon.demo.tsx?raw";
 import { ComboBoxDefaultDemo } from "../demos/combobox/ComboBoxDefault.demo";
 import comboBoxDefaultSource from "../demos/combobox/ComboBoxDefault.demo.tsx?raw";
 import { ComboBoxSizesDemo } from "../demos/combobox/ComboBoxSizes.demo";
@@ -27,6 +29,17 @@ export function ComboBoxShowcase() {
     >
       <ShowcaseSection title="Default" description="options, value and onValueChange — controlled mode.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxDefaultDemo} source={comboBoxDefaultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom trigger icon"
+        description="ComboBox.Trigger children replace the default chevron."
+      >
+        <ShowcaseDemoFromFile
+          align="center"
+          Demo={ComboBoxCustomTriggerIconDemo}
+          source={comboBoxCustomTriggerIconSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">

@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
-import { IoChevronForward, IoGlobeOutline, IoLogOutOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoArrowForward, IoChevronForward, IoGlobeOutline, IoLogOutOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 
 import { Avatar } from "@/components/core/Avatar";
 import { Button } from "@/components/core/Button";
@@ -243,6 +243,46 @@ export const WithSubmenu: Story = {
                 <Dropdown.Separator />
                 <Dropdown.Item value="more" selection={false}>
                   <Dropdown.ItemLabel>More…</Dropdown.ItemLabel>
+                </Dropdown.Item>
+              </Dropdown.SubContent>
+            </Dropdown.Sub>
+          </Dropdown.Group>
+        </Dropdown.Popover>
+      </Dropdown>
+    );
+  },
+};
+
+export const CustomSubTriggerIcon: Story = {
+  name: "Custom SubTrigger icon",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Dropdown.SubTrigger` `icon` replaces the default chevron. Pass `null` to hide.",
+      },
+    },
+  },
+  render() {
+    return (
+      <Dropdown>
+        <Dropdown.Trigger asChild>
+          <Button variant="outline">Menu</Button>
+        </Dropdown.Trigger>
+        <Dropdown.Popover>
+          <Dropdown.Group>
+            <Dropdown.Sub>
+              <Dropdown.SubTrigger
+                icon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}
+              >
+                Invite users
+              </Dropdown.SubTrigger>
+              <Dropdown.SubContent>
+                <Dropdown.Item value="email" selection={false}>
+                  <Dropdown.ItemLabel>Email</Dropdown.ItemLabel>
+                </Dropdown.Item>
+                <Dropdown.Item value="msg" selection={false}>
+                  <Dropdown.ItemLabel>Message</Dropdown.ItemLabel>
                 </Dropdown.Item>
               </Dropdown.SubContent>
             </Dropdown.Sub>

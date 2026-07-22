@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
 export type CalendarLocale = {
   /** 7 items: Mon → Sun */
@@ -23,6 +23,8 @@ export type CalendarClassNames = {
   header?: string;
   navPrev?: string;
   navNext?: string;
+  /** Default nav chevron icon (`IoChevronBack` / `IoChevronForward`). */
+  navIcon?: string;
   headerTitle?: string;
   grid?: string;
   weekdayGrid?: string;
@@ -52,6 +54,10 @@ type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
   locale?: CalendarLocale;
   minDate?: Date;
   maxDate?: Date;
+  /** Replaces the default previous-month chevron. Pass `null` to hide. */
+  navPrevIcon?: ReactNode;
+  /** Replaces the default next-month chevron. Pass `null` to hide. */
+  navNextIcon?: ReactNode;
   classNames?: CalendarClassNames;
 };
 
@@ -101,6 +107,8 @@ export type CalendarContextValue = {
   minDate?: Date;
   maxDate?: Date;
   today: Date;
+  navPrevIcon?: ReactNode;
+  navNextIcon?: ReactNode;
 };
 
 export type CalendarProviderProps = {
@@ -120,11 +128,13 @@ export type UseCalendarRootStateProps = CalendarCommonProps & {
   onValueChange?: (v: unknown) => void;
 };
 
-export type CalendarNavButtonProps = {
+export type CalendarNavButtonProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> & {
   direction: "prev" | "next";
   size: CalendarSize;
-  onClick: () => void;
-  disabled?: boolean;
+  children?: ReactNode;
 };
 
 export type CalendarInteractiveCellProps = {

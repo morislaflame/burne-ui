@@ -21,6 +21,7 @@ export type {
   TableHeaderProps,
   TableColumnProps,
   TableColumnRenderProps,
+  TableColumnSortIconRenderProps,
   TableBodyProps,
   TableRowProps,
   TableCellProps,

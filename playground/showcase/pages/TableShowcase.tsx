@@ -4,6 +4,8 @@ import { TableBasicDemo } from "../demos/table/TableBasic.demo";
 import tableBasicSource from "../demos/table/TableBasic.demo.tsx?raw";
 import { TableClassNamesFullDemo } from "../demos/table/TableClassNamesFull.demo";
 import tableClassNamesFullSource from "../demos/table/TableClassNamesFull.demo.tsx?raw";
+import { TableCustomSortIconDemo } from "../demos/table/TableCustomSortIcon.demo";
+import tableCustomSortIconSource from "../demos/table/TableCustomSortIcon.demo.tsx?raw";
 import { TableGlossDemo } from "../demos/table/TableGloss.demo";
 import tableGlossSource from "../demos/table/TableGloss.demo.tsx?raw";
 import { TableGlossSelectionDemo } from "../demos/table/TableGlossSelection.demo";
@@ -33,6 +35,17 @@ export function TableShowcase() {
 
       <ShowcaseSection title="Row selection" description="selectionMode multiple and control selectedKeys.">
         <ShowcaseDemoFromFile align="stretch" Demo={TableRowSelectionDemo} source={tableRowSelectionSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom sort icon"
+        description="Table.Column sortIcon replaces the default chevron; null hides it."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={TableCustomSortIconDemo}
+          source={tableCustomSortIconSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection title="Gloss" description="variant gloss — hover lines primary-tint, hover-lift panels.">

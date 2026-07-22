@@ -2,7 +2,7 @@ import type { ComponentProps, ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen } from "storybook/test";
-import { IoGlobeOutline } from "react-icons/io5";
+import { IoCaretDown, IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
 import { Button } from "@/components/core/Button";
@@ -297,6 +297,30 @@ export const CustomClassNames: Story = {
         popover: "ring-1 ring-primary/15",
       }}
     />
+  ),
+};
+
+export const CustomTriggerIcon: Story = {
+  name: "Custom trigger icon",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Select.Trigger` children replace the default chevron (`children ?? <IoChevronDown />`).",
+      },
+    },
+  },
+  render: () => (
+    <Select options={sampleOptions} defaultValue="ru">
+      <Select.Label>Interface language</Select.Label>
+      <Select.TriggerGroup>
+        <Select.Value placeholder="Select language" />
+        <Select.Trigger>
+          <IoCaretDown aria-hidden className="icon-small text-primary" />
+        </Select.Trigger>
+      </Select.TriggerGroup>
+      <Select.Popover />
+    </Select>
   ),
 };
 

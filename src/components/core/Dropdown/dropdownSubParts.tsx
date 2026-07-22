@@ -60,6 +60,7 @@ export const DropdownSubTrigger = forwardRef<
     className,
     children,
     asChild,
+    icon,
     onPointerEnter,
     onPointerLeave,
     onClick,
@@ -181,13 +182,17 @@ export const DropdownSubTrigger = forwardRef<
       >
         {children}
       </span>
-      <IoChevronForward
-        className={cn(
-          DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
-          slotClassNames.subTriggerChevron,
-        )}
-        aria-hidden
-      />
+      {icon !== undefined ? (
+        icon
+      ) : (
+        <IoChevronForward
+          className={cn(
+            DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
+            slotClassNames.subTriggerChevron,
+          )}
+          aria-hidden
+        />
+      )}
     </div>
   );
 });

@@ -2,7 +2,7 @@ import type { ComponentProps, ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen } from "storybook/test";
-import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
+import { IoCaretDown, IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 
 import { ListBox } from "@/components/core/ListBox";
 import { Button } from "@/components/core/Button";
@@ -338,6 +338,30 @@ export const Validation: Story = {
       <ComboBox.Popover />
       <ComboBox.Hint>Language affects the interface and emails.</ComboBox.Hint>
       <ComboBox.Error>Select a language from the list.</ComboBox.Error>
+    </ComboBox>
+  ),
+};
+
+export const CustomTriggerIcon: Story = {
+  name: "Custom trigger icon",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`ComboBox.Trigger` children replace the default chevron (`children ?? <IoChevronDown />`).",
+      },
+    },
+  },
+  render: () => (
+    <ComboBox options={sampleOptions} defaultValue="ru">
+      <ComboBox.Label>Interface language</ComboBox.Label>
+      <ComboBox.InputGroup>
+        <ComboBox.Input placeholder="Select language" />
+        <ComboBox.Trigger>
+          <IoCaretDown aria-hidden className="icon-small text-primary" />
+        </ComboBox.Trigger>
+      </ComboBox.InputGroup>
+      <ComboBox.Popover />
     </ComboBox>
   ),
 };

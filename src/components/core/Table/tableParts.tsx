@@ -127,6 +127,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       id,
       allowsSorting = false,
       isRowHeader = false,
+      sortIcon,
       children,
       className,
       onClick,
@@ -153,6 +154,18 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       typeof children === "function"
         ? (children as (p: TableColumnRenderProps) => ReactNode)({ sortDirection })
         : children;
+
+    let sortIndicator: ReactNode = null;
+    if (allowsSorting) {
+      if (sortIcon !== undefined) {
+        sortIndicator =
+          typeof sortIcon === "function"
+            ? sortIcon({ sortDirection })
+            : sortIcon;
+      } else {
+        sortIndicator = <TableSortChevron direction={sortDirection} />;
+      }
+    }
 
     return (
       <th
@@ -183,7 +196,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
           >
             {content}
           </span>
-          {allowsSorting ? <TableSortChevron direction={sortDirection} /> : null}
+          {sortIndicator}
         </span>
       </th>
     );

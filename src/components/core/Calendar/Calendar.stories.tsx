@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor } from "storybook/test";
+import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 
 import { Calendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from ".";
 
@@ -270,6 +271,7 @@ export const CustomClassNames: Story = {
         header: "gap-small",
         navPrev: "text-primary",
         navNext: "text-primary",
+        navIcon: "icon-small",
         headerTitle: "font-semibold text-primary",
         grid: "mt-small",
         weekdayCell: "text-primary/70 uppercase tracking-wide",
@@ -285,5 +287,24 @@ export const CustomClassNames: Story = {
       <Calendar.Grid />
       <Calendar.Footer />
     </Calendar>
+  ),
+};
+
+export const CustomNavIcons: Story = {
+  name: "Custom nav icons",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`navPrevIcon` / `navNextIcon` on root replace default chevrons. Pass `null` to hide. Slot `classNames.navIcon` styles the default icons.",
+      },
+    },
+  },
+  render: () => (
+    <Calendar
+      mode="single"
+      navPrevIcon={<IoArrowBack aria-hidden className="icon-xsmall text-primary" />}
+      navNextIcon={<IoArrowForward aria-hidden className="icon-xsmall text-primary" />}
+    />
   ),
 };

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { IoChevronUp } from "react-icons/io5";
 
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
@@ -9,7 +9,13 @@ import type { SortDirection } from "./tableTypes";
 
 import { cn } from "@/utils/cn";
 
-export function TableSortChevron({ direction }: { direction: SortDirection | undefined }) {
+export function TableSortChevron({
+  direction,
+  children,
+}: {
+  direction: SortDirection | undefined;
+  children?: ReactNode;
+}) {
   const slotClassNames = useTableClassNames();
   const chevronRef = useRef<HTMLSpanElement>(null);
   const bindChevronRef = useChevronRotation(direction === "descending", chevronRef, () => true);
@@ -23,7 +29,9 @@ export function TableSortChevron({ direction }: { direction: SortDirection | und
         slotClassNames.columnSortChevron,
       )}
     >
-      <IoChevronUp className={TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS} />
+      {children ?? (
+        <IoChevronUp className={TABLE_COLUMN_SORT_CHEVRON_ICON_CLASS} />
+      )}
     </span>
   );
 }

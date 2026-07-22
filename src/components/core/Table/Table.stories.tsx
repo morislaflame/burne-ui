@@ -2,13 +2,12 @@ import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { IoChevronUp } from "react-icons/io5";
+import { IoCaretUp, IoSwapVertical } from "react-icons/io5";
 
 import { Badge } from "@/components/core/Badge";
 import { Button } from "@/components/core/Button";
 import { Checkbox } from "@/components/core/Checkbox";
 import { Pagination } from "@/components/core/Pagination";
-import { cn } from "@/utils/cn";
 
 import { Table, type Selection, type SortDescriptor, type TableRowTone } from ".";
 
@@ -44,31 +43,6 @@ const statusRowTone: Record<User["status"], TableRowTone> = {
   Inactive:   "danger",
   "On Leave": "warning",
 };
-
-// ─── sortable column header helper ───────────────────────────────────────────
-
-function SortableHeader({
-  children,
-  sortDirection,
-}: {
-  children: React.ReactNode;
-  sortDirection?: "ascending" | "descending";
-}) {
-  return (
-    <span className="inline-flex w-full items-center justify-between gap-xsmall">
-      <span>{children}</span>
-      {sortDirection && (
-        <IoChevronUp
-          aria-hidden
-          className={cn(
-            "icon-xsmall shrink-0",
-            sortDirection === "descending" && "rotate-180",
-          )}
-        />
-      )}
-    </span>
-  );
-}
 
 // ─── decorator ───────────────────────────────────────────────────────────────
 
@@ -192,24 +166,16 @@ export const Sorting: Story = {
           >
             <Table.Header>
               <Table.Column allowsSorting isRowHeader id="name">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Name</SortableHeader>
-                )}
+                Name
               </Table.Column>
               <Table.Column allowsSorting id="role">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Role</SortableHeader>
-                )}
+                Role
               </Table.Column>
               <Table.Column allowsSorting id="status">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Status</SortableHeader>
-                )}
+                Status
               </Table.Column>
               <Table.Column allowsSorting id="email">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Email</SortableHeader>
-                )}
+                Email
               </Table.Column>
             </Table.Header>
             <Table.Body>
@@ -231,6 +197,90 @@ export const Sorting: Story = {
     const nameHeader = canvas.getByRole("rowheader", { name: /Name/ });
     await userEvent.click(nameHeader);
     await expect(nameHeader).toHaveAttribute("aria-sort", "descending");
+  },
+};
+
+export const CustomSortIcon: Story = {
+  name: "Custom sort icon",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Table.Column` `sortIcon` replaces the default chevron. Render prop receives `sortDirection`. Pass `null` to hide.",
+      },
+    },
+  },
+  render: function CustomSortIconStory() {
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+      column: "name",
+      direction: "ascending",
+    });
+
+    const sortedUsers = useMemo(
+      () =>
+        [...users].sort((a, b) => {
+          const col = sortDescriptor.column as keyof User;
+          const cmp = String(a[col]).localeCompare(String(b[col]));
+          return sortDescriptor.direction === "descending" ? -cmp : cmp;
+        }),
+      [sortDescriptor],
+    );
+
+    return (
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content
+            aria-label="Team (custom sort icon)"
+            className="min-w-[600px]"
+            sortDescriptor={sortDescriptor}
+            onSortChange={setSortDescriptor}
+          >
+            <Table.Header>
+              <Table.Column
+                allowsSorting
+                isRowHeader
+                id="name"
+                sortIcon={({ sortDirection }) =>
+                  sortDirection ? (
+                    <IoCaretUp
+                      aria-hidden
+                      className={
+                        sortDirection === "descending"
+                          ? "icon-xsmall rotate-180 text-primary"
+                          : "icon-xsmall text-primary"
+                      }
+                    />
+                  ) : (
+                    <IoSwapVertical aria-hidden className="icon-xsmall text-muted" />
+                  )
+                }
+              >
+                Name
+              </Table.Column>
+              <Table.Column allowsSorting id="role" sortIcon={null}>
+                Role
+              </Table.Column>
+              <Table.Column allowsSorting id="status">
+                Status
+              </Table.Column>
+              <Table.Column allowsSorting id="email">
+                Email
+              </Table.Column>
+            </Table.Header>
+            <Table.Body>
+              {sortedUsers.map((user) => (
+                <Table.Row key={user.id} id={user.id}>
+                  <Table.Cell>{user.name}</Table.Cell>
+                  <Table.Cell>{user.role}</Table.Cell>
+                  <Table.Cell>{user.status}</Table.Cell>
+                  <Table.Cell>{user.email}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+    );
   },
 };
 
@@ -271,24 +321,16 @@ export const UncontrolledSorting: Story = {
           >
             <Table.Header>
               <Table.Column allowsSorting isRowHeader id="name">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Name</SortableHeader>
-                )}
+                Name
               </Table.Column>
               <Table.Column allowsSorting id="role">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Role</SortableHeader>
-                )}
+                Role
               </Table.Column>
               <Table.Column allowsSorting id="status">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Status</SortableHeader>
-                )}
+                Status
               </Table.Column>
               <Table.Column allowsSorting id="email">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Email</SortableHeader>
-                )}
+                Email
               </Table.Column>
             </Table.Header>
             <Table.Body>
@@ -522,19 +564,13 @@ export const CustomCells: Story = {
           >
             <Table.Header>
               <Table.Column allowsSorting isRowHeader id="name">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Name</SortableHeader>
-                )}
+                Name
               </Table.Column>
               <Table.Column allowsSorting id="role">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Role</SortableHeader>
-                )}
+                Role
               </Table.Column>
               <Table.Column allowsSorting id="status">
-                {({ sortDirection }) => (
-                  <SortableHeader sortDirection={sortDirection}>Status</SortableHeader>
-                )}
+                Status
               </Table.Column>
               <Table.Column>Email</Table.Column>
               <Table.Column className="text-end">Actions</Table.Column>

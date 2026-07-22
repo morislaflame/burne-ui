@@ -20,6 +20,8 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
     locale = EN_LOCALE,
     minDate,
     maxDate,
+    navPrevIcon,
+    navNextIcon,
     value,
     defaultValue,
     onValueChange,
@@ -165,6 +167,8 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       minDate,
       maxDate,
       today,
+      navPrevIcon,
+      navNextIcon,
     }),
     [
       mode,
@@ -186,6 +190,8 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       minDate,
       maxDate,
       today,
+      navPrevIcon,
+      navNextIcon,
     ],
   );
 

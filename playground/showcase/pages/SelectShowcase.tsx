@@ -2,6 +2,8 @@ import { SelectClassNamesFullDemo } from "../demos/select/SelectClassNamesFull.d
 import selectClassNamesFullSource from "../demos/select/SelectClassNamesFull.demo.tsx?raw";
 import { SelectCompoundDemo } from "../demos/select/SelectCompound.demo";
 import selectCompoundSource from "../demos/select/SelectCompound.demo.tsx?raw";
+import { SelectCustomTriggerIconDemo } from "../demos/select/SelectCustomTriggerIcon.demo";
+import selectCustomTriggerIconSource from "../demos/select/SelectCustomTriggerIcon.demo.tsx?raw";
 import { SelectDefaultDemo } from "../demos/select/SelectDefault.demo";
 import selectDefaultSource from "../demos/select/SelectDefault.demo.tsx?raw";
 import { SelectGlossDemo } from "../demos/select/SelectGloss.demo";
@@ -27,6 +29,17 @@ export function SelectShowcase() {
 
       <ShowcaseSection title="Compound" description="Label, TriggerGroup, Value, Trigger, Popover.">
         <ShowcaseDemoFromFile align="center" Demo={SelectCompoundDemo} source={selectCompoundSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Custom trigger icon"
+        description="Select.Trigger children replace the default chevron."
+      >
+        <ShowcaseDemoFromFile
+          align="center"
+          Demo={SelectCustomTriggerIconDemo}
+          source={selectCustomTriggerIconSource}
+        />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">

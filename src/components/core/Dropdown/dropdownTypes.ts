@@ -110,6 +110,8 @@ export type DropdownSubProps = HTMLAttributes<HTMLDivElement>;
 
 export type DropdownSubTriggerProps = HTMLAttributes<HTMLDivElement> & {
   asChild?: boolean;
+  /** Replaces the default submenu chevron. Pass `null` to hide. */
+  icon?: ReactNode;
 };
 
 export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {

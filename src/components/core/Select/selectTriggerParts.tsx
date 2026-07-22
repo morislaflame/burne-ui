@@ -359,7 +359,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
 SelectValue.displayName = "SelectValue";
 
 export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  function SelectTrigger({ className, onPointerDown, ...rest }, ref) {
+  function SelectTrigger({ className, onPointerDown, children, ...rest }, ref) {
     const slotClassNames = useSelectClassNames();
     const { open, setOpen, disabled, size, valueRef } = useSelectContext();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -405,13 +405,15 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         onPointerDown={handlePointerDown}
         {...rest}
       >
-        <IoChevronDown
-          className={cn(
-            SELECT_CHEVRON_ICON[size],
-            slotClassNames.triggerIcon,
-          )}
-          aria-hidden
-        />
+        {children ?? (
+          <IoChevronDown
+            className={cn(
+              SELECT_CHEVRON_ICON[size],
+              slotClassNames.triggerIcon,
+            )}
+            aria-hidden
+          />
+        )}
       </button>
     );
   },

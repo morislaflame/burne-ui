@@ -210,7 +210,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
 ComboBoxInput.displayName = "ComboBoxInput";
 
 export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProps>(
-  function ComboBoxTrigger({ className, onPointerDown, ...rest }, ref) {
+  function ComboBoxTrigger({ className, onPointerDown, children, ...rest }, ref) {
     const slotClassNames = useComboBoxClassNames();
     const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -256,13 +256,15 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         onPointerDown={handlePointerDown}
         {...rest}
       >
-        <IoChevronDown
-          className={cn(
-            COMBOBOX_CHEVRON_ICON[size],
-            slotClassNames.triggerIcon,
-          )}
-          aria-hidden
-        />
+        {children ?? (
+          <IoChevronDown
+            className={cn(
+              COMBOBOX_CHEVRON_ICON[size],
+              slotClassNames.triggerIcon,
+            )}
+            aria-hidden
+          />
+        )}
       </button>
     );
   },

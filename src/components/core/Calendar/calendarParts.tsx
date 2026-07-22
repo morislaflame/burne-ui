@@ -72,33 +72,58 @@ function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
   );
 }
 
-function CalendarNavButton({ direction, size, onClick, disabled }: CalendarNavButtonProps) {
-  const slotClassNames = useCalendarClassNames();
-  const motion = useCalendarNavButtonAnimations(disabled);
-  const label = direction === "prev" ? calendarNavBackLabel() : calendarNavForwardLabel();
-  const navSlot =
-    direction === "prev" ? slotClassNames.navPrev : slotClassNames.navNext;
+const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
+  function CalendarNavButton(
+    { direction, size, onClick, disabled, children, className, ...rest },
+    ref,
+  ) {
+    const { navPrevIcon, navNextIcon } = useCalendar();
+    const slotClassNames = useCalendarClassNames();
+    const motion = useCalendarNavButtonAnimations(disabled);
+    const label = direction === "prev" ? calendarNavBackLabel() : calendarNavForwardLabel();
+    const navSlot =
+      direction === "prev" ? slotClassNames.navPrev : slotClassNames.navNext;
+    const contextIcon = direction === "prev" ? navPrevIcon : navNextIcon;
 
-  return (
-    <button
-      ref={motion.ref}
-      type="button"
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      onPointerEnter={motion.handlePointerEnter}
-      onPointerLeave={motion.handlePointerLeave}
-      onPointerDown={motion.handlePointerDown}
-      className={cn(calendarNavButtonClass(size), navSlot)}
-    >
-      {direction === "prev" ? (
-        <IoChevronBack className={CALENDAR_NAV_ICON_CLASS} />
+    const setRef = useCallback(
+      (node: HTMLButtonElement | null) => {
+        motion.ref.current = node;
+        mergeForwardedRef(ref, node);
+      },
+      [motion.ref, ref],
+    );
+
+    const defaultIcon =
+      direction === "prev" ? (
+        <IoChevronBack
+          className={cn(CALENDAR_NAV_ICON_CLASS, slotClassNames.navIcon)}
+        />
       ) : (
-        <IoChevronForward className={CALENDAR_NAV_ICON_CLASS} />
-      )}
-    </button>
-  );
-}
+        <IoChevronForward
+          className={cn(CALENDAR_NAV_ICON_CLASS, slotClassNames.navIcon)}
+        />
+      );
+
+    return (
+      <button
+        ref={setRef}
+        type="button"
+        aria-label={label}
+        disabled={disabled}
+        onClick={onClick}
+        onPointerEnter={motion.handlePointerEnter}
+        onPointerLeave={motion.handlePointerLeave}
+        onPointerDown={motion.handlePointerDown}
+        className={cn(calendarNavButtonClass(size), navSlot, className)}
+        {...rest}
+      >
+        {children ?? (contextIcon !== undefined ? contextIcon : defaultIcon)}
+      </button>
+    );
+  },
+);
+
+CalendarNavButton.displayName = "Calendar.NavButton";
 
 const CalendarInteractiveCellInner = forwardRef<
   HTMLButtonElement,
