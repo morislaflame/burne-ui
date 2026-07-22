@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 import { IoCopyOutline, IoLinkOutline, IoShareSocialOutline, IoTrashOutline } from "react-icons/io5";
@@ -312,6 +312,113 @@ export const Accessibility: Story = {
       </Popover>
     </div>
   ),
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`portalContainer` mounts the popover panel into a custom host instead of `document.body`.",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-mid">
+        <p className="text-sm text-muted">
+          Panel portals into the box below (not <code className="text-foreground">document.body</code>).
+        </p>
+        <div
+          ref={setContainer}
+          className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+        >
+          <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <Popover portalContainer={container}>
+              <Popover.Trigger>
+                <Button variant="outline" type="button">
+                  Open in host
+                </Button>
+              </Popover.Trigger>
+              <Popover.Content>
+                <Popover.Body>
+                  <Text as="p" variant="small">
+                    Portaled into the dashed container.
+                  </Text>
+                </Popover.Body>
+              </Popover.Content>
+            </Popover>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Popover.Trigger` (default `asChild`) merges host `id`, `data-*`, `className`, and `ref` onto the child via `mergeAsChildProps`.",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <Popover>
+          <Popover.Trigger
+            ref={triggerRef}
+            id="story-popover-trigger"
+            data-testid="story-popover-trigger"
+            data-analytics="open-popover"
+            className="ring-2 ring-primary/30"
+          >
+            <Button variant="outline" type="button">
+              Open (merged props)
+            </Button>
+          </Popover.Trigger>
+          <Popover.Content>
+            <Popover.Header>
+              <Popover.Title>Merged trigger</Popover.Title>
+              <Popover.Description>
+                Host props from Trigger land on the Button child.
+              </Popover.Description>
+            </Popover.Header>
+            <Popover.Body>
+              <Text as="p" variant="small">
+                Inspect the trigger for id / data-analytics / ring.
+              </Text>
+            </Popover.Body>
+          </Popover.Content>
+        </Popover>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-popover-trigger");
+    await expect(btn).toHaveAttribute("id", "story-popover-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "open-popover");
+  },
 };
 
 export const CustomClassNames: Story = {

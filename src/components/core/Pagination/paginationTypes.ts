@@ -5,6 +5,7 @@ import type {
   OlHTMLAttributes,
   ReactNode,
 } from "react";
+import type { IconBaseProps } from "react-icons";
 
 export type PaginationClassNames = {
   /** Root `<nav>`. */
@@ -91,6 +92,4 @@ export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement>
   children: ReactNode;
 };
 
-export type PaginationIconProps = {
-  className?: string;
-};
+export type PaginationIconProps = IconBaseProps;

@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 
@@ -476,6 +476,125 @@ export const WithForm: Story = {
         </Drawer>
       </>
     );
+  },
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Custom `portalContainer` uses non-modal `dialog.show()` + `position: absolute`, so the drawer fills the host. Host must be `position: relative`.",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [open, setOpen] = useState(false);
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-mid">
+        <p className="text-sm text-muted">
+          Drawer stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
+        </p>
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open in custom host
+        </Button>
+        <div
+          ref={setContainer}
+          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+        >
+          <p className="text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <Drawer open={open} onOpenChange={setOpen} portalContainer={container} placement="right">
+              <Drawer.Panel extent="default">
+                <Drawer.Header>
+                  <Drawer.HeadingBlock>
+                    <Drawer.Title>Inside host</Drawer.Title>
+                    <Drawer.Description>Panel is a DOM child of the dashed container.</Drawer.Description>
+                  </Drawer.HeadingBlock>
+                  <Drawer.Close />
+                </Drawer.Header>
+                <Drawer.Body>
+                  <p className="text-sm text-muted">Useful for nested shells and scroll regions.</p>
+                </Drawer.Body>
+                <Drawer.Footer>
+                  <Button type="button" size="small" onClick={() => setOpen(false)}>
+                    Close
+                  </Button>
+                </Drawer.Footer>
+              </Drawer.Panel>
+            </Drawer>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Drawer.Trigger asChild` merges host `id`, `data-*`, `className`, and `ref` onto the child via `mergeAsChildProps`.",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <Drawer>
+          <Drawer.Trigger
+            asChild
+            ref={triggerRef}
+            id="story-drawer-trigger"
+            data-testid="story-drawer-trigger"
+            data-analytics="open-drawer"
+            className="ring-2 ring-primary/30"
+          >
+            <Button type="button" variant="outline">
+              Open (merged props)
+            </Button>
+          </Drawer.Trigger>
+          <Drawer.Panel>
+            <Drawer.Header>
+              <Drawer.HeadingBlock>
+                <Drawer.Title>Merged trigger</Drawer.Title>
+                <Drawer.Description>
+                  Host props from Trigger land on the Button child.
+                </Drawer.Description>
+              </Drawer.HeadingBlock>
+              <Drawer.Close />
+            </Drawer.Header>
+            <Drawer.Body>
+              <p className="text-sm text-muted">Opened via asChild trigger with forwarded props.</p>
+            </Drawer.Body>
+          </Drawer.Panel>
+        </Drawer>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-drawer-trigger");
+    await expect(btn).toHaveAttribute("id", "story-drawer-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "open-drawer");
+    await expect(btn).toHaveAttribute("aria-haspopup", "dialog");
   },
 };
 

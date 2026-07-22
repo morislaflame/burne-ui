@@ -4,14 +4,16 @@ import { createPortal } from "react-dom";
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
+import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { drawerHandleAriaLabel, DRAWER_CLOSE_DEFAULT_ARIA_LABEL } from "./drawerA11y";
 import { partitionDrawerChildren } from "./drawerAPI";
 import { useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerProvider, useDrawer, useDrawerClassNames } from "./drawerContext";
-import { DRAWER_CLOSE_CLASS, DRAWER_DESCRIPTION_CLASS, DRAWER_FOOTER_CLASS, DRAWER_FOOTER_PADDING, DRAWER_HEADER_CLASS, DRAWER_HEADER_PADDING, DRAWER_HEADING_BLOCK_CLASS, DRAWER_NATIVE_CLASS, DRAWER_TITLE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
+import { DRAWER_CLOSE_CLASS, DRAWER_DESCRIPTION_CLASS, DRAWER_FOOTER_CLASS, DRAWER_FOOTER_PADDING, DRAWER_HEADER_CLASS, DRAWER_HEADER_PADDING, DRAWER_HEADING_BLOCK_CLASS, DRAWER_TITLE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
 import type {
   DrawerBackdropProps,
   DrawerBodyProps,
@@ -40,18 +42,21 @@ export function DrawerBackdropInner(_props: DrawerBackdropProps) {
 
 DrawerBackdropInner.displayName = "DrawerBackdrop";
 
-export function DrawerContent({ className, ...rest }: DrawerContentProps) {
-  const slotClassNames = useDrawerClassNames();
+export const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
+  function DrawerContent({ className, ...rest }, ref) {
+    const slotClassNames = useDrawerClassNames();
 
-  return (
-    <div
-      className={drawerContentClass(
-        cn(slotClassNames.content, className),
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={drawerContentClass(
+          cn(slotClassNames.content, className),
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 DrawerContent.displayName = "DrawerContent";
 
@@ -128,21 +133,24 @@ export function DrawerHandleInner({
 
 DrawerHandleInner.displayName = "DrawerHandle";
 
-export function DrawerHeader({ className, ...rest }: DrawerHeaderProps) {
-  const slotClassNames = useDrawerClassNames();
+export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
+  function DrawerHeader({ className, ...rest }, ref) {
+    const slotClassNames = useDrawerClassNames();
 
-  return (
-    <div
-      className={cn(
-        DRAWER_HEADER_CLASS,
-        DRAWER_HEADER_PADDING,
-        slotClassNames.header,
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          DRAWER_HEADER_CLASS,
+          DRAWER_HEADER_PADDING,
+          slotClassNames.header,
+          className,
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 DrawerHeader.displayName = "DrawerHeader";
 
@@ -255,36 +263,42 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
 
 DrawerClose.displayName = "DrawerClose";
 
-export function DrawerBody({ className, ...rest }: DrawerBodyProps) {
-  const slotClassNames = useDrawerClassNames();
+export const DrawerBody = forwardRef<HTMLDivElement, DrawerBodyProps>(
+  function DrawerBody({ className, ...rest }, ref) {
+    const slotClassNames = useDrawerClassNames();
 
-  return (
-    <div
-      className={drawerBodyClass(
-        cn(slotClassNames.body, className),
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={drawerBodyClass(
+          cn(slotClassNames.body, className),
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 DrawerBody.displayName = "DrawerBody";
 
-export function DrawerFooter({ className, ...rest }: DrawerFooterProps) {
-  const slotClassNames = useDrawerClassNames();
+export const DrawerFooter = forwardRef<HTMLDivElement, DrawerFooterProps>(
+  function DrawerFooter({ className, ...rest }, ref) {
+    const slotClassNames = useDrawerClassNames();
 
-  return (
-    <div
-      className={cn(
-        DRAWER_FOOTER_CLASS,
-        DRAWER_FOOTER_PADDING,
-        slotClassNames.footer,
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          DRAWER_FOOTER_CLASS,
+          DRAWER_FOOTER_PADDING,
+          slotClassNames.footer,
+          className,
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 DrawerFooter.displayName = "DrawerFooter";
 
@@ -329,33 +343,28 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
     if (asChild && isValidElement(children)) {
       const onlyChild = Children.count(children) === 1 ? children : null;
       if (onlyChild) {
-        const child = onlyChild as ReactElement<{
-          ref?: Ref<HTMLElement>;
-          className?: string;
-          onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
-          onClick?: (e: ReactMouseEvent<HTMLElement>) => void;
-          "aria-haspopup"?: string;
-          "aria-expanded"?: boolean;
-        }>;
-        return cloneElement(child, {
-          ref: ((node: HTMLElement | null) => { triggerRef.current = node; }) as unknown as Ref<HTMLElement>,
-          className: cn(
-            slotClassNames.trigger,
-            child.props.className,
-            className,
+        const child = onlyChild as ReactElement;
+        return cloneElement(
+          child,
+          mergeAsChildProps(
+            child,
+            {
+              ...rest,
+              className: cn(slotClassNames.trigger, className),
+              onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+                handlePointerDown(e);
+                onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+              },
+              onClick: handleClick,
+              "aria-haspopup": "dialog",
+              "aria-expanded": open,
+            },
+            mergeRefs((node: HTMLElement | null) => {
+              triggerRef.current = node;
+            }, forwardedRef),
+            { runBeforeChild: ["onPointerDown"] },
           ),
-          onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
-            handlePointerDown(e);
-            child.props.onPointerDown?.(e);
-            onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
-          },
-          onClick: (e: ReactMouseEvent<HTMLElement>) => {
-            child.props.onClick?.(e);
-            handleClick(e);
-          },
-          "aria-haspopup": "dialog",
-          "aria-expanded": open,
-        });
+        );
       }
     }
 
@@ -383,76 +392,95 @@ DrawerTrigger.displayName = "Drawer.Trigger";
 
 // ─── Drawer.Panel ─────────────────────────────────────────────────────────────
 
-export function DrawerPanel({
-  extent = "default",
-  variant = "default",
-  className,
-  themeAnchor,
-  children,
-}: DrawerPanelProps) {
-  const baseCtx = useDrawer();
-  const { open, onOpenChange, placement } = baseCtx;
+export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
+  function DrawerPanel(
+    {
+      extent = "default",
+      variant = "default",
+      className,
+      style,
+      themeAnchor,
+      portalContainer: portalContainerProp,
+      children,
+      ...rest
+    },
+    forwardedRef,
+  ) {
+    const baseCtx = useDrawer();
+    const { open, onOpenChange, placement, portalContainer: portalContainerFromRoot } =
+      baseCtx;
 
-  const { backdropIsDismissable, panelSegments } = useMemo(
-    () => partitionDrawerChildren(children),
-    [children],
-  );
+    const { backdropIsDismissable, panelSegments } = useMemo(
+      () => partitionDrawerChildren(children),
+      [children],
+    );
 
-  const motion = useDrawerModalMotion({
-    open,
-    onOpenChange,
-    variant,
-    placement,
-    backdropIsDismissable,
-  });
+    const portalHost = resolvePortalContainer(
+      portalContainerProp ?? portalContainerFromRoot,
+    );
+    const contained = isContainedPortal(portalHost);
 
-  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
-  const lightUi = useBurneLightTheme(portalThemeAnchor);
-  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
+    const motion = useDrawerModalMotion({
+      open,
+      onOpenChange,
+      variant,
+      placement,
+      backdropIsDismissable,
+      contained,
+    });
 
-  // Full context with actual motion refs — overrides the placeholder context from DrawerRoot.
-  const fullContextValue: DrawerContextValue = useMemo(
-    () => ({
-      ...baseCtx,
-      overlayRef: motion.overlayRef,
-      panelRef: motion.panelRef,
-      skipCloseAnimRef: motion.skipCloseAnimRef,
-    }),
-    [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef],
-  );
+    const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
+    const lightUi = useBurneLightTheme(portalThemeAnchor);
+    const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
 
-  if (typeof document === "undefined" || !motion.showPortal) return null;
+    // Full context with actual motion refs — overrides the placeholder context from DrawerRoot.
+    const fullContextValue: DrawerContextValue = useMemo(
+      () => ({
+        ...baseCtx,
+        overlayRef: motion.overlayRef,
+        panelRef: motion.panelRef,
+        skipCloseAnimRef: motion.skipCloseAnimRef,
+      }),
+      [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef],
+    );
 
-  return createPortal(
-    // Provide full context (with real motion refs) for children inside the portal.
-    <DrawerProvider value={fullContextValue}>
-      <DrawerPortalShell
-        className={className}
-        variant={variant}
-        placement={placement}
-        extent={extent}
-        portalTheme={portalTheme}
-        lightUi={lightUi}
-        titleId={baseCtx.titleId}
-        descriptionId={baseCtx.descriptionId}
-        hasDescription={baseCtx.hasDescription}
-        backdropIsDismissable={backdropIsDismissable}
-        panelSegments={panelSegments}
-        dialogRef={motion.dialogRef}
-        overlayRef={motion.overlayRef}
-        panelRef={motion.panelRef}
-        bindGlossPanelRef={motion.bindGlossPanelRef}
-        onBackdropMouseDown={motion.handleBackdropMouseDown}
-        onDialogClose={() => onOpenChange(false)}
-        onDialogCancel={(e) => {
-          e.preventDefault();
-          onOpenChange(false);
-        }}
-      />
-    </DrawerProvider>,
-    document.body,
-  );
-}
+    if (typeof document === "undefined" || !motion.showPortal) return null;
+
+    return createPortal(
+      // Provide full context (with real motion refs) for children inside the portal.
+      <DrawerProvider value={fullContextValue}>
+        <DrawerPortalShell
+          className={className}
+          style={style}
+          variant={variant}
+          placement={placement}
+          extent={extent}
+          portalTheme={portalTheme}
+          lightUi={lightUi}
+          titleId={baseCtx.titleId}
+          descriptionId={baseCtx.descriptionId}
+          hasDescription={baseCtx.hasDescription}
+          backdropIsDismissable={backdropIsDismissable}
+          panelSegments={panelSegments}
+          dialogRef={motion.dialogRef}
+          overlayRef={motion.overlayRef}
+          panelRef={motion.panelRef}
+          panelForwardedRef={forwardedRef}
+          panelRest={rest}
+          bindGlossPanelRef={motion.bindGlossPanelRef}
+          onBackdropMouseDown={motion.handleBackdropMouseDown}
+          onDialogClose={() => onOpenChange(false)}
+          onDialogCancel={(e) => {
+            e.preventDefault();
+            onOpenChange(false);
+          }}
+          contained={contained}
+        />
+      </DrawerProvider>,
+      portalHost,
+    );
+  },
+);
 
 DrawerPanel.displayName = "Drawer.Panel";
 
@@ -460,6 +488,7 @@ DrawerPanel.displayName = "Drawer.Panel";
 
 export function DrawerPortalShell({
   className,
+  style,
   variant,
   placement,
   extent,
@@ -473,10 +502,13 @@ export function DrawerPortalShell({
   dialogRef,
   overlayRef,
   panelRef,
+  panelForwardedRef,
+  panelRest,
   bindGlossPanelRef,
   onBackdropMouseDown,
   onDialogClose,
   onDialogCancel,
+  contained = false,
 }: DrawerPortalShellProps) {
   const slotClassNames = useDrawerClassNames();
 
@@ -496,7 +528,7 @@ export function DrawerPortalShell({
       onCancel={onDialogCancel}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
-      className={cn(DRAWER_NATIVE_CLASS, slotClassNames.dialog)}
+      className={cn(drawerNativeClass(contained), slotClassNames.dialog)}
     >
       <div
         ref={overlayRef}
@@ -510,7 +542,7 @@ export function DrawerPortalShell({
         onMouseDown={onBackdropMouseDown}
       />
       <div
-        ref={panelRef}
+        ref={mergeRefs(panelRef, panelForwardedRef)}
         tabIndex={-1}
         className={drawerPanelClass({
           variant,
@@ -519,6 +551,8 @@ export function DrawerPortalShell({
           className,
           slotClass: slotClassNames.panel,
         })}
+        style={style}
+        {...panelRest}
       >
         {variant === "gloss" ? (
           <div

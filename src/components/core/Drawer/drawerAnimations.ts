@@ -2,6 +2,7 @@ import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { applyReducedModalMotion, captureModalFocusReturn, completeModalDialogClose, isReducedModalMotion, type GsapMotionVars } from "@/components/core/utils/modalSurfaceMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { openNativeDialog } from "@/components/core/utils/portalContainer";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { getDrawerSlideCloseTo, getDrawerSlideOpenFrom, getDrawerSlideRest } from "./drawerAPI";
@@ -58,6 +59,7 @@ export function useDrawerModalMotion({
   variant,
   placement,
   backdropIsDismissable,
+  contained = false,
 }: UseDrawerModalMotionProps) {
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -82,13 +84,24 @@ export function useDrawerModalMotion({
   }, [open]);
 
   useEffect(() => {
-    if (!showPortal) return;
+    if (!showPortal || contained) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [showPortal]);
+  }, [showPortal, contained]);
+
+  useEffect(() => {
+    if (!open || !contained) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.preventDefault();
+      onOpenChange(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, contained, onOpenChange]);
 
   useLayoutEffect(() => {
     if (open || !mounted) return;
@@ -141,7 +154,7 @@ export function useDrawerModalMotion({
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) {
       focusReturnRef.current = captureModalFocusReturn(dialog);
-      dialog.showModal();
+      openNativeDialog(dialog, { contained });
     }
 
     const overlay = overlayRef.current;
@@ -159,7 +172,7 @@ export function useDrawerModalMotion({
       placement,
       vars: { ...motionInteractive(), overwrite: "auto" as const },
     });
-  }, [open, placement]);
+  }, [open, placement, contained]);
 
   useLayoutEffect(() => {
     if (!open || !panelRef.current) return;

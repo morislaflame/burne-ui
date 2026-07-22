@@ -52,7 +52,20 @@ export const DRAWER_BODY_PADDING = "px-mid py-base";
 export const DRAWER_FOOTER_PADDING = "px-mid pb-plus";
 
 export const DRAWER_NATIVE_CLASS =
-  "fixed inset-0 z-[100] m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";
+  "m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";
+
+export const DRAWER_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-[100]";
+
+export const DRAWER_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-[100]";
+
+export function drawerNativeClass(contained: boolean): string {
+  return cn(
+    contained
+      ? DRAWER_NATIVE_POSITION_CONTAINED_CLASS
+      : DRAWER_NATIVE_POSITION_FIXED_CLASS,
+    DRAWER_NATIVE_CLASS,
+  );
+}
 
 export const DRAWER_OVERLAY_LIGHT_CLASS =
   "bg-[color-mix(in_oklab,var(--color-foreground)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none";

@@ -5,6 +5,7 @@ import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
+import { applyFloatingPortalPosition, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
@@ -23,6 +24,7 @@ export function usePopoverContentLifecycle({
   contentRef,
   triggerRef,
   anchorRef,
+  portalContainer,
 }: UsePopoverContentLifecycleProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const glossPanelRef = useRef<HTMLDivElement | null>(null);
@@ -32,6 +34,12 @@ export function usePopoverContentLifecycle({
   );
   const [portalMounted, setPortalMounted] = useState(false);
   const [resolvedSide, setResolvedSide] = useState<PopoverSide>(side);
+
+  // Mount portal in the same render as open=true so layout effects can measure
+  // before paint (effect-only mount left the panel unpositioned until scroll).
+  if (open && !portalMounted) {
+    setPortalMounted(true);
+  }
 
   const setPanelRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -65,20 +73,14 @@ export function usePopoverContentLifecycle({
     );
 
     setResolvedSide(placement.resolvedSide);
-    panel.style.position = "fixed";
-    panel.style.left = `${placement.left}px`;
-    panel.style.top = `${placement.top}px`;
+    applyFloatingPortalPosition(panel, placement, portalContainer);
     panel.style.transform = "";
-  }, [align, anchorRef, matchAnchorWidth, offset, side, triggerRef]);
-
-  useLayoutEffect(() => {
-    if (open) setPortalMounted(true);
-  }, [open]);
+  }, [align, anchorRef, matchAnchorWidth, offset, portalContainer, side, triggerRef]);
 
   usePersistentElShadow(panelRef, !isGloss, shadowBase);
 
   useLayoutEffect(() => {
-    if (!open) return;
+    if (!open || !portalMounted) return;
     reposition();
     const raf = window.requestAnimationFrame(() => reposition());
     const onReflow = () => reposition();
@@ -86,11 +88,14 @@ export function usePopoverContentLifecycle({
     window.addEventListener("resize", onReflow);
 
     const panel = panelRef.current;
-    const ro =
-      panel && typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(() => reposition())
+    const host =
+      typeof document !== "undefined"
+        ? resolvePortalContainer(portalContainer)
         : null;
+    const ro =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => reposition()) : null;
     if (panel && ro) ro.observe(panel);
+    if (host && host !== document.body && ro) ro.observe(host);
 
     return () => {
       window.cancelAnimationFrame(raf);
@@ -98,7 +103,7 @@ export function usePopoverContentLifecycle({
       window.removeEventListener("resize", onReflow);
       ro?.disconnect();
     };
-  }, [open, reposition, showArrow, offset, align, matchAnchorWidth]);
+  }, [open, portalMounted, portalContainer, reposition, showArrow, offset, align, matchAnchorWidth]);
 
   useLayoutEffect(() => {
     if (!portalMounted) return undefined;

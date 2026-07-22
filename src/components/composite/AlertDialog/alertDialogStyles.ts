@@ -80,7 +80,21 @@ export const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
 };
 
 export const ALERT_DIALOG_NATIVE_CLASS =
-  "fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
+  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
+
+export const ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-[100]";
+
+export const ALERT_DIALOG_NATIVE_POSITION_CONTAINED_CLASS =
+  "absolute inset-0 z-[100]";
+
+export function alertDialogNativeClass(contained: boolean): string {
+  return cn(
+    contained
+      ? ALERT_DIALOG_NATIVE_POSITION_CONTAINED_CLASS
+      : ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS,
+    ALERT_DIALOG_NATIVE_CLASS,
+  );
+}
 
 export const ALERT_DIALOG_PANEL_SHELL_CLASS = "relative z-10 w-full outline-none";
 

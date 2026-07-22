@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { forwardRef, useCallback } from "react";
 
 import { Label } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
@@ -13,104 +13,110 @@ import type { SelectPopoverProps } from "./selectTypes";
 
 import { cn } from "@/utils/cn";
 
-export function SelectPopover({
-  children,
-  className,
-  offset = POPOVER_DEFAULT_OFFSET,
-  ...rest
-}: SelectPopoverProps) {
-  const slotClassNames = useSelectClassNames();
-  const {
-    open,
-    setOpen,
-    anchorRef,
-    listId,
-    labelId,
-    labelConnected,
-    placeholder,
-    menuMaxHeight,
-    options,
-    optionValues,
-    value,
-    setValue,
-    activeValue,
-    setActiveValue,
-    variant,
-  } = useSelectContext();
-
-  const handleValueChange = useCallback(
-    (next: string | string[]) => {
-      const v = Array.isArray(next) ? (next[0] ?? "") : next;
-      setValue(v);
-      setOpen(false);
+export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
+  function SelectPopover(
+    {
+      children,
+      className,
+      offset = POPOVER_DEFAULT_OFFSET,
+      ...rest
     },
-    [setOpen, setValue],
-  );
+    ref,
+  ) {
+    const slotClassNames = useSelectClassNames();
+    const {
+      open,
+      setOpen,
+      anchorRef,
+      listId,
+      labelId,
+      labelConnected,
+      placeholder,
+      menuMaxHeight,
+      options,
+      optionValues,
+      value,
+      setValue,
+      activeValue,
+      setActiveValue,
+      variant,
+    } = useSelectContext();
 
-  const listContent =
-    children ??
-    (optionValues.length === 0 ? (
-      <ListBox.Empty />
-    ) : (
-      optionValues.map((v) => {
-        const opt = options.find((o) => o.value === v)!;
-        return (
-          <ListBox.Item
-            key={v}
-            value={v}
-            disabled={opt.disabled}
-            label={opt.label}
-            hint={opt.hint}
-            icon={opt.icon}
-          />
-        );
-      })
-    ));
+    const handleValueChange = useCallback(
+      (next: string | string[]) => {
+        const v = Array.isArray(next) ? (next[0] ?? "") : next;
+        setValue(v);
+        setOpen(false);
+      },
+      [setOpen, setValue],
+    );
 
-  return (
-    <Popover
-      open={open}
-      onOpenChange={setOpen}
-      side="bottom"
-      anchorRef={anchorRef}
-      variant={variant === "gloss" ? "gloss" : "default"}
-    >
-      <Popover.Content
-        matchAnchorWidth
-        unstyled
-        contentRole={undefined}
-        offset={offset}
-        className={cn(SELECT_POPOVER_CLASS, slotClassNames.popover, className)}
-        {...rest}
+    const listContent =
+      children ??
+      (optionValues.length === 0 ? (
+        <ListBox.Empty />
+      ) : (
+        optionValues.map((v) => {
+          const opt = options.find((o) => o.value === v)!;
+          return (
+            <ListBox.Item
+              key={v}
+              value={v}
+              disabled={opt.disabled}
+              label={opt.label}
+              hint={opt.hint}
+              icon={opt.icon}
+            />
+          );
+        })
+      ));
+
+    return (
+      <Popover
+        open={open}
+        onOpenChange={setOpen}
+        side="bottom"
+        anchorRef={anchorRef}
+        variant={variant === "gloss" ? "gloss" : "default"}
       >
-        <Popover.Body
-          className={cn(
-            SELECT_POPOVER_BODY_CLASS,
-            slotClassNames.popoverBody,
-          )}
+        <Popover.Content
+          ref={ref}
+          matchAnchorWidth
+          unstyled
+          contentRole={undefined}
+          offset={offset}
+          className={cn(SELECT_POPOVER_CLASS, slotClassNames.popover, className)}
+          {...rest}
         >
-          <ListBox
-            listId={listId}
-            aria-labelledby={labelConnected ? labelId : undefined}
-            aria-label={labelConnected ? undefined : placeholder}
-            value={value}
-            onValueChange={handleValueChange}
-            activeValue={activeValue}
-            onActiveValueChange={setActiveValue}
-            selectionIndicator
+          <Popover.Body
             className={cn(
-              SELECT_LISTBOX_CLASS,
-              slotClassNames.listBox,
+              SELECT_POPOVER_BODY_CLASS,
+              slotClassNames.popoverBody,
             )}
-            style={{ maxHeight: menuMaxHeight }}
           >
-            {listContent}
-          </ListBox>
-        </Popover.Body>
-      </Popover.Content>
-    </Popover>
-  );
-}
+            <ListBox
+              listId={listId}
+              aria-labelledby={labelConnected ? labelId : undefined}
+              aria-label={labelConnected ? undefined : placeholder}
+              value={value}
+              onValueChange={handleValueChange}
+              activeValue={activeValue}
+              onActiveValueChange={setActiveValue}
+              selectionIndicator
+              className={cn(
+                SELECT_LISTBOX_CLASS,
+                slotClassNames.listBox,
+              )}
+              style={{ maxHeight: menuMaxHeight }}
+            >
+              {listContent}
+            </ListBox>
+          </Popover.Body>
+        </Popover.Content>
+      </Popover>
+    );
+  },
+);
 
 SelectPopover.displayName = "SelectPopover";
 

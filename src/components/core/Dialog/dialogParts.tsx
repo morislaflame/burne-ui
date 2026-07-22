@@ -1,16 +1,18 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type Ref, type ReactElement } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } from "@/components/core/utils/burneLightTheme";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
+import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { DIALOG_CLOSE_DEFAULT_ARIA_LABEL } from "./dialogA11y";
 import { useDialogModalMotion } from "./dialogAnimations";
 import { useDialog, useDialogClassNames } from "./dialogContext";
-import { DIALOG_CLOSE_CLASS, DIALOG_FOOTER_CLASS, DIALOG_GLOSS_CONTENT_CLASS, DIALOG_HEADER_CLASS, DIALOG_HEADING_BLOCK_CLASS, DIALOG_NATIVE_CLASS, DIALOG_TITLE_CLASS, dialogBodyClass, dialogContentClass, dialogGlossPanelClass, dialogOverlayClass, dialogOverlayEnterStyle, dialogPanelClass } from "./dialogStyles";
+import { DIALOG_CLOSE_CLASS, DIALOG_FOOTER_CLASS, DIALOG_GLOSS_CONTENT_CLASS, DIALOG_HEADER_CLASS, DIALOG_HEADING_BLOCK_CLASS, DIALOG_TITLE_CLASS, dialogBodyClass, dialogContentClass, dialogGlossPanelClass, dialogNativeClass, dialogOverlayClass, dialogOverlayEnterStyle, dialogPanelClass } from "./dialogStyles";
 import type {
   DialogBodyProps,
   DialogCloseProps,
@@ -28,38 +30,44 @@ import { useDialogFooterState } from "./useDialogFooterState";
 
 import { cn } from "@/utils/cn";
 
-export function DialogContent({ className, ...rest }: DialogContentProps) {
-  const slotClassNames = useDialogClassNames();
+export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
+  function DialogContent({ className, ...rest }, ref) {
+    const slotClassNames = useDialogClassNames();
 
-  return (
-    <div
-      className={dialogContentClass(
-        cn(slotClassNames.content, className),
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={dialogContentClass(
+          cn(slotClassNames.content, className),
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 DialogContent.displayName = "DialogContent";
 
-export function DialogHeader({ className, ...rest }: DialogHeaderProps) {
-  const { sizePreset } = useDialog();
-  const slotClassNames = useDialogClassNames();
+export const DialogHeader = forwardRef<HTMLDivElement, DialogHeaderProps>(
+  function DialogHeader({ className, ...rest }, ref) {
+    const { sizePreset } = useDialog();
+    const slotClassNames = useDialogClassNames();
 
-  return (
-    <div
-      className={cn(
-        DIALOG_HEADER_CLASS,
-        sizePreset.headerGap,
-        sizePreset.headerPadding,
-        slotClassNames.header,
-        className,
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          DIALOG_HEADER_CLASS,
+          sizePreset.headerGap,
+          sizePreset.headerPadding,
+          slotClassNames.header,
+          className,
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 DialogHeader.displayName = "DialogHeader";
 
@@ -87,11 +95,10 @@ export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
 
 DialogTitle.displayName = "DialogTitle";
 
-export function DialogDescription({
-  className,
-  id,
-  ...rest
-}: DialogDescriptionProps) {
+export const DialogDescription = forwardRef<
+  HTMLParagraphElement,
+  DialogDescriptionProps
+>(function DialogDescription({ className, id, ...rest }, ref) {
   const { descriptionId, setHasDescription, sizePreset } = useDialog();
   const slotClassNames = useDialogClassNames();
 
@@ -102,6 +109,7 @@ export function DialogDescription({
 
   return (
     <Text
+      ref={ref as Ref<HTMLElement>}
       as="p"
       variant={sizePreset.descVariant}
       id={id ?? descriptionId}
@@ -113,7 +121,7 @@ export function DialogDescription({
       {...rest}
     />
   );
-}
+});
 
 DialogDescription.displayName = "DialogDescription";
 
@@ -174,42 +182,48 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 
 DialogClose.displayName = "DialogClose";
 
-export function DialogBody({ className, ...rest }: DialogBodyProps) {
-  const { sizePreset } = useDialog();
-  const slotClassNames = useDialogClassNames();
+export const DialogBody = forwardRef<HTMLDivElement, DialogBodyProps>(
+  function DialogBody({ className, ...rest }, ref) {
+    const { sizePreset } = useDialog();
+    const slotClassNames = useDialogClassNames();
 
-  return (
-    <div
-      className={dialogBodyClass(
-        sizePreset.bodyPadding,
-        cn(slotClassNames.body, className),
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={dialogBodyClass(
+          sizePreset.bodyPadding,
+          cn(slotClassNames.body, className),
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 DialogBody.displayName = "DialogBody";
 
-export function DialogFooter({ className, children, ...rest }: DialogFooterProps) {
-  const { sizePreset } = useDialog();
-  const slotClassNames = useDialogClassNames();
-  const footerChildren = useDialogFooterState(children);
+export const DialogFooter = forwardRef<HTMLDivElement, DialogFooterProps>(
+  function DialogFooter({ className, children, ...rest }, ref) {
+    const { sizePreset } = useDialog();
+    const slotClassNames = useDialogClassNames();
+    const footerChildren = useDialogFooterState(children);
 
-  return (
-    <div
-      className={cn(
-        DIALOG_FOOTER_CLASS,
-        sizePreset.footerPadding,
-        slotClassNames.footer,
-        className,
-      )}
-      {...rest}
-    >
-      {footerChildren}
-    </div>
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          DIALOG_FOOTER_CLASS,
+          sizePreset.footerPadding,
+          slotClassNames.footer,
+          className,
+        )}
+        {...rest}
+      >
+        {footerChildren}
+      </div>
+    );
+  },
+);
 
 DialogFooter.displayName = "DialogFooter";
 
@@ -259,34 +273,29 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
     if (asChild && isValidElement(children)) {
       const onlyChild = Children.count(children) === 1 ? children : null;
       if (onlyChild) {
-        const child = onlyChild as ReactElement<{
-          ref?: Ref<HTMLElement>;
-          className?: string;
-          onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
-          onClick?: (e: ReactMouseEvent<HTMLElement>) => void;
-          "aria-haspopup"?: string;
-          "aria-expanded"?: boolean;
-        }>;
-        return cloneElement(child, {
-          ref: ((node: HTMLElement | null) => { triggerRef.current = node; }) as unknown as Ref<HTMLElement>,
-          className: cn(
-            slotClassNames.trigger,
-            child.props.className,
-            className,
+        const child = onlyChild as ReactElement;
+        return cloneElement(
+          child,
+          mergeAsChildProps(
+            child,
+            {
+              ...rest,
+              className: cn(slotClassNames.trigger, className),
+              // Host runs before child so e.preventDefault() suppresses Button animation
+              onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+                handlePointerDown(e);
+                onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+              },
+              onClick: handleClick,
+              "aria-haspopup": "dialog",
+              "aria-expanded": open,
+            },
+            mergeRefs((node: HTMLElement | null) => {
+              triggerRef.current = node;
+            }, forwardedRef),
+            { runBeforeChild: ["onPointerDown"] },
           ),
-          // Trigger runs FIRST so e.preventDefault() suppresses child Button animation
-          onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
-            handlePointerDown(e);
-            child.props.onPointerDown?.(e);
-            onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
-          },
-          onClick: (e: ReactMouseEvent<HTMLElement>) => {
-            child.props.onClick?.(e);
-            handleClick(e);
-          },
-          "aria-haspopup": "dialog",
-          "aria-expanded": open,
-        });
+        );
       }
     }
 
@@ -314,56 +323,82 @@ DialogTrigger.displayName = "Dialog.Trigger";
 
 // ─── Dialog.Panel ─────────────────────────────────────────────────────────────
 
-export function DialogPanel({
-  variant = "default",
-  dismissOnBackdrop = true,
-  className,
-  themeAnchor,
-  children,
-}: DialogPanelProps) {
-  const { open, onOpenChange, titleId, descriptionId, hasDescription, sizePreset } = useDialog();
+export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
+  function DialogPanel(
+    {
+      variant = "default",
+      dismissOnBackdrop = true,
+      className,
+      style,
+      themeAnchor,
+      portalContainer: portalContainerProp,
+      children,
+      ...rest
+    },
+    forwardedRef,
+  ) {
+    const {
+      open,
+      onOpenChange,
+      titleId,
+      descriptionId,
+      hasDescription,
+      sizePreset,
+      portalContainer: portalContainerFromRoot,
+    } = useDialog();
 
-  const motion = useDialogModalMotion({
-    open,
-    onOpenChange,
-    variant,
-    dismissOnBackdrop,
-  });
+    const portalHost = resolvePortalContainer(
+      portalContainerProp ?? portalContainerFromRoot,
+    );
+    const contained = isContainedPortal(portalHost);
 
-  const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
-  const lightUi = useBurneLightTheme(portalThemeAnchor);
-  const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
+    const motion = useDialogModalMotion({
+      open,
+      onOpenChange,
+      variant,
+      dismissOnBackdrop,
+      contained,
+    });
 
-  if (typeof document === "undefined" || !motion.mounted) return null;
+    const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
+    const lightUi = useBurneLightTheme(portalThemeAnchor);
+    const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
 
-  // Context (DialogProvider, DialogClassNamesProvider) flows through the React
-  // component tree, not the DOM tree — so portal children inherit it correctly.
-  return createPortal(
-    <DialogPortalShell
-      className={className}
-      variant={variant}
-      sizePreset={sizePreset}
-      portalTheme={portalTheme}
-      lightUi={lightUi}
-      titleId={titleId}
-      descriptionId={descriptionId}
-      hasDescription={hasDescription}
-      dialogRef={motion.dialogRef}
-      overlayRef={motion.overlayRef}
-      panelRef={motion.panelRef}
-      bindGlossPanelRef={motion.bindGlossPanelRef}
-      onBackdropMouseDown={motion.handleBackdropPointerDown}
-      onDialogClose={() => onOpenChange(false)}
-      onDialogCancel={(e) => {
-        e.preventDefault();
-        onOpenChange(false);
-      }}
-    >
-      {children}
-    </DialogPortalShell>,
-    document.body,
-  );
-}
+    if (typeof document === "undefined" || !motion.mounted) return null;
+
+    // Context (DialogProvider, DialogClassNamesProvider) flows through the React
+    // component tree, not the DOM tree — so portal children inherit it correctly.
+    return createPortal(
+      <DialogPortalShell
+        className={className}
+        style={style}
+        variant={variant}
+        sizePreset={sizePreset}
+        portalTheme={portalTheme}
+        lightUi={lightUi}
+        titleId={titleId}
+        descriptionId={descriptionId}
+        hasDescription={hasDescription}
+        dialogRef={motion.dialogRef}
+        overlayRef={motion.overlayRef}
+        panelRef={motion.panelRef}
+        panelForwardedRef={forwardedRef}
+        panelRest={rest}
+        bindGlossPanelRef={motion.bindGlossPanelRef}
+        onBackdropMouseDown={motion.handleBackdropPointerDown}
+        onDialogClose={() => onOpenChange(false)}
+        onDialogCancel={(e) => {
+          e.preventDefault();
+          onOpenChange(false);
+        }}
+        contained={contained}
+      >
+        {children}
+      </DialogPortalShell>,
+      portalHost,
+    );
+  },
+);
 
 DialogPanel.displayName = "Dialog.Panel";
 
@@ -372,6 +407,7 @@ DialogPanel.displayName = "Dialog.Panel";
 export function DialogPortalShell({
   children,
   className,
+  style,
   variant,
   sizePreset,
   portalTheme,
@@ -382,10 +418,13 @@ export function DialogPortalShell({
   dialogRef,
   overlayRef,
   panelRef,
+  panelForwardedRef,
+  panelRest,
   bindGlossPanelRef,
   onBackdropMouseDown,
   onDialogClose,
   onDialogCancel,
+  contained = false,
 }: DialogPortalShellProps) {
   const isGloss = variant === "gloss";
   const slotClassNames = useDialogClassNames();
@@ -398,7 +437,7 @@ export function DialogPortalShell({
       onCancel={onDialogCancel}
       aria-labelledby={titleId}
       aria-describedby={hasDescription ? descriptionId : undefined}
-      className={cn(DIALOG_NATIVE_CLASS, slotClassNames.dialog)}
+      className={cn(dialogNativeClass(contained), slotClassNames.dialog)}
     >
       <div
         ref={overlayRef}
@@ -408,7 +447,7 @@ export function DialogPortalShell({
         onMouseDown={onBackdropMouseDown}
       />
       <div
-        ref={panelRef}
+        ref={mergeRefs(panelRef, panelForwardedRef)}
         tabIndex={-1}
         className={dialogPanelClass({
           variant,
@@ -416,6 +455,8 @@ export function DialogPortalShell({
           className,
           slotClass: slotClassNames.panel,
         })}
+        style={style}
+        {...panelRest}
       >
         {isGloss ? (
           <div

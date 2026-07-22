@@ -1,3 +1,7 @@
+import { AlertDialogAsChildMergedPropsDemo } from "../demos/alertDialog/AlertDialogAsChildMergedProps.demo";
+import alertDialogAsChildMergedPropsSource from "../demos/alertDialog/AlertDialogAsChildMergedProps.demo.tsx?raw";
+import { AlertDialogPortalContainerDemo } from "../demos/alertDialog/AlertDialogPortalContainer.demo";
+import alertDialogPortalContainerSource from "../demos/alertDialog/AlertDialogPortalContainer.demo.tsx?raw";
 import { AlertDialogClassNamesFullDemo } from "../demos/alertDialog/AlertDialogClassNamesFull.demo";
 import alertDialogClassNamesFullSource from "../demos/alertDialog/AlertDialogClassNamesFull.demo.tsx?raw";
 import { AlertDialogDeleteAccountDemo } from "../demos/alertDialog/AlertDialogDeleteAccount.demo";
@@ -35,6 +39,21 @@ export function AlertDialogShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass confirmation panel.">
         <ShowcaseDemoFromFile Demo={AlertDialogGlossDemo} source={alertDialogGlossSource} />
+      </ShowcaseSection>
+
+
+      <ShowcaseSection
+        title="portalContainer"
+        description="Custom portal host — alert stays inside the container."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertDialogPortalContainerDemo} source={alertDialogPortalContainerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="asChild — merged props"
+        description="Trigger asChild merges id, data-*, className, and ref onto the child."
+      >
+        <ShowcaseDemoFromFile Demo={AlertDialogAsChildMergedPropsDemo} source={alertDialogAsChildMergedPropsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

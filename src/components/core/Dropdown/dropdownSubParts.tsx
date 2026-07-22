@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
 
 import { useDropdownSubContentPortal } from "./dropdownAnimations";
 import { useDropdown, useDropdownClassNames, useDropdownSub, DropdownSubProvider } from "./dropdownContext";
@@ -25,26 +26,29 @@ import { useDropdownSubState } from "./useDropdownSubState";
 
 import { cn } from "@/utils/cn";
 
-export function DropdownSub({ className, children, ...rest }: DropdownSubProps) {
-  const { open: menuOpen } = useDropdown();
-  const slotClassNames = useDropdownClassNames();
-  const { contextValue } = useDropdownSubState(menuOpen);
+export const DropdownSub = forwardRef<HTMLDivElement, DropdownSubProps>(
+  function DropdownSub({ className, children, ...rest }, ref) {
+    const { open: menuOpen } = useDropdown();
+    const slotClassNames = useDropdownClassNames();
+    const { contextValue } = useDropdownSubState(menuOpen);
 
-  return (
-    <DropdownSubProvider value={contextValue}>
-      <div
-        className={cn(
-          DROPDOWN_SUB_CLASS,
-          slotClassNames.sub,
-          className,
-        )}
-        {...rest}
-      >
-        {children}
-      </div>
-    </DropdownSubProvider>
-  );
-}
+    return (
+      <DropdownSubProvider value={contextValue}>
+        <div
+          ref={ref}
+          className={cn(
+            DROPDOWN_SUB_CLASS,
+            slotClassNames.sub,
+            className,
+          )}
+          {...rest}
+        >
+          {children}
+        </div>
+      </DropdownSubProvider>
+    );
+  },
+);
 
 DropdownSub.displayName = "Dropdown.Sub";
 
@@ -200,14 +204,19 @@ export const DropdownSubContent = forwardRef<
     style,
     onPointerEnter: onPointerEnterProp,
     onPointerLeave: onPointerLeaveProp,
+    portalContainer: portalContainerProp,
     ...rest
   },
   forwardedRef,
 ) {
   const { open: subOpen, triggerRef, scheduleClose, cancelClose } =
     useDropdownSub();
-  const { subPanelRootsRef, triggerRef: menuTriggerRef, popoverVariant } =
-    useDropdown();
+  const {
+    subPanelRootsRef,
+    triggerRef: menuTriggerRef,
+    popoverVariant,
+    portalContainer: portalContainerFromRoot,
+  } = useDropdown();
   const slotClassNames = useDropdownClassNames();
 
   const portal = useDropdownSubContentPortal({
@@ -216,6 +225,7 @@ export const DropdownSubContent = forwardRef<
     menuTriggerRef,
     subPanelRootsRef,
     popoverVariant,
+    portalContainer: portalContainerProp ?? portalContainerFromRoot,
   });
 
   const handleEnter = useCallback(
@@ -256,6 +266,7 @@ export const DropdownSubContent = forwardRef<
         slotClass: slotClassNames.subContent,
       })}
       style={{
+        position: portal.contained ? "absolute" : "fixed",
         top: portal.pos.top,
         left: portal.pos.left,
         minWidth: portal.pos.minW,
@@ -288,7 +299,10 @@ export const DropdownSubContent = forwardRef<
   );
 
   return typeof document !== "undefined"
-    ? createPortal(panel, document.body)
+    ? createPortal(
+        panel,
+        resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot),
+      )
     : null;
 });
 

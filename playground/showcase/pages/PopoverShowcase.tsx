@@ -1,3 +1,7 @@
+import { PopoverAsChildMergedPropsDemo } from "../demos/popover/PopoverAsChildMergedProps.demo";
+import popoverAsChildMergedPropsSource from "../demos/popover/PopoverAsChildMergedProps.demo.tsx?raw";
+import { PopoverPortalContainerDemo } from "../demos/popover/PopoverPortalContainer.demo";
+import popoverPortalContainerSource from "../demos/popover/PopoverPortalContainer.demo.tsx?raw";
 import { PopoverClassNamesFullDemo } from "../demos/popover/PopoverClassNamesFull.demo";
 import popoverClassNamesFullSource from "../demos/popover/PopoverClassNamesFull.demo.tsx?raw";
 import { PopoverFilterPanelDemo } from "../demos/popover/PopoverFilterPanel.demo";
@@ -47,6 +51,21 @@ export function PopoverShowcase() {
 
       <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={PopoverSidesDemo} source={popoverSidesSource} />
+      </ShowcaseSection>
+
+
+      <ShowcaseSection
+        title="portalContainer"
+        description="Custom portal host — panel mounts into the container."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={PopoverPortalContainerDemo} source={popoverPortalContainerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="asChild — merged props"
+        description="Trigger merges id, data-*, className, and ref onto the child."
+      >
+        <ShowcaseDemoFromFile Demo={PopoverAsChildMergedPropsDemo} source={popoverAsChildMergedPropsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

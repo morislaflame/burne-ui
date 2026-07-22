@@ -13,6 +13,7 @@ export function TooltipRoot({
   side = "top",
   icon,
   showIcon,
+  portalContainer,
 }: TooltipProps) {
   const { contextValue } = useTooltipRootState({
     size,
@@ -22,6 +23,7 @@ export function TooltipRoot({
     side,
     icon,
     showIcon,
+    portalContainer,
   });
 
   return (

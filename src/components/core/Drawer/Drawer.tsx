@@ -32,8 +32,15 @@ export function DrawerRoot({
   placement = "right",
   children,
   classNames,
+  portalContainer,
 }: DrawerProps) {
-  const state = useDrawerRootState({ open, defaultOpen, onOpenChange, placement });
+  const state = useDrawerRootState({
+    open,
+    defaultOpen,
+    onOpenChange,
+    placement,
+    portalContainer,
+  });
 
   return (
     <DrawerProvider value={state.contextValue}>

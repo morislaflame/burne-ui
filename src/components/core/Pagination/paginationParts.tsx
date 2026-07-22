@@ -1,5 +1,6 @@
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
-import { forwardRef, useCallback, useMemo, useRef, type MouseEvent, type Ref } from "react";
+import type { IconBaseProps } from "react-icons";
+import { forwardRef, useCallback, useMemo, useRef, type ForwardRefExoticComponent, type MouseEvent, type Ref, type RefAttributes } from "react";
 
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
@@ -290,35 +291,50 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
 
 PaginationNext.displayName = "Pagination.Next";
 
-export function PaginationPreviousIcon({ className }: PaginationIconProps) {
-  const slotClassNames = usePaginationClassNames();
+type PaginationChevronIcon = ForwardRefExoticComponent<
+  IconBaseProps & RefAttributes<SVGSVGElement>
+>;
 
-  return (
-    <IoChevronBack
-      aria-hidden={PAGINATION_ICON_ARIA_HIDDEN}
-      className={paginationPreviousIconClass({
-        slotClass: slotClassNames.previousIcon,
-        className,
-      })}
-    />
-  );
-}
+const PaginationBackIcon = IoChevronBack as PaginationChevronIcon;
+const PaginationForwardIcon = IoChevronForward as PaginationChevronIcon;
+
+export const PaginationPreviousIcon = forwardRef<SVGSVGElement, PaginationIconProps>(
+  function PaginationPreviousIcon({ className, ...rest }, ref) {
+    const slotClassNames = usePaginationClassNames();
+
+    return (
+      <PaginationBackIcon
+        ref={ref}
+        aria-hidden={PAGINATION_ICON_ARIA_HIDDEN}
+        className={paginationPreviousIconClass({
+          slotClass: slotClassNames.previousIcon,
+          className,
+        })}
+        {...rest}
+      />
+    );
+  },
+);
 
 PaginationPreviousIcon.displayName = "Pagination.PreviousIcon";
 
-export function PaginationNextIcon({ className }: PaginationIconProps) {
-  const slotClassNames = usePaginationClassNames();
+export const PaginationNextIcon = forwardRef<SVGSVGElement, PaginationIconProps>(
+  function PaginationNextIcon({ className, ...rest }, ref) {
+    const slotClassNames = usePaginationClassNames();
 
-  return (
-    <IoChevronForward
-      aria-hidden={PAGINATION_ICON_ARIA_HIDDEN}
-      className={paginationNextIconClass({
-        slotClass: slotClassNames.nextIcon,
-        className,
-      })}
-    />
-  );
-}
+    return (
+      <PaginationForwardIcon
+        ref={ref}
+        aria-hidden={PAGINATION_ICON_ARIA_HIDDEN}
+        className={paginationNextIconClass({
+          slotClass: slotClassNames.nextIcon,
+          className,
+        })}
+        {...rest}
+      />
+    );
+  },
+);
 
 PaginationNextIcon.displayName = "Pagination.NextIcon";
 

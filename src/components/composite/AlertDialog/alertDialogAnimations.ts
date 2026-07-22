@@ -2,6 +2,7 @@ import { killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { animateModalClose, animateModalOpen, applyReducedModalMotion, captureModalFocusReturn, completeModalDialogClose, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { openNativeDialog } from "@/components/core/utils/portalContainer";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import type { UseAlertDialogModalMotionProps } from "./alertDialogTypes";
@@ -9,6 +10,7 @@ import type { UseAlertDialogModalMotionProps } from "./alertDialogTypes";
 export function useAlertDialogModalMotion({
   open,
   variant,
+  contained = false,
 }: UseAlertDialogModalMotionProps) {
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -27,13 +29,13 @@ export function useAlertDialogModalMotion({
   }, [open]);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || contained) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [mounted]);
+  }, [mounted, contained]);
 
   useLayoutEffect(() => {
     if (open || !mounted) return;
@@ -74,7 +76,7 @@ export function useAlertDialogModalMotion({
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) {
       focusReturnRef.current = captureModalFocusReturn(dialog);
-      dialog.showModal();
+      openNativeDialog(dialog, { contained });
     }
 
     const overlay = overlayRef.current;
@@ -92,7 +94,7 @@ export function useAlertDialogModalMotion({
       vars: { ...motionInteractive(), overwrite: "auto" as const },
     });
     panel.focus();
-  }, [open, mounted]);
+  }, [open, mounted, contained]);
 
   return {
     mounted,

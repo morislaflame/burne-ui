@@ -12,6 +12,7 @@ export function useTooltipRootState({
   side = "top",
   icon,
   showIcon,
+  portalContainer,
 }: UseTooltipRootStateProps) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -62,8 +63,21 @@ export function useTooltipRootState({
       triggerRef,
       scheduleShow,
       hide,
+      portalContainer,
     }),
-    [hide, icon, open, scheduleShow, showIcon, side, size, status, tooltipId, variant],
+    [
+      hide,
+      icon,
+      open,
+      portalContainer,
+      scheduleShow,
+      showIcon,
+      side,
+      size,
+      status,
+      tooltipId,
+      variant,
+    ],
   );
 
   return { contextValue };

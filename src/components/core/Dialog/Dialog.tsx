@@ -29,8 +29,15 @@ export function DialogRoot({
   size = "base",
   children,
   classNames,
+  portalContainer,
 }: DialogProps) {
-  const state = useDialogRootState({ open, defaultOpen, onOpenChange, size });
+  const state = useDialogRootState({
+    open,
+    defaultOpen,
+    onOpenChange,
+    size,
+    portalContainer,
+  });
 
   return (
     <DialogProvider value={state.contextValue}>

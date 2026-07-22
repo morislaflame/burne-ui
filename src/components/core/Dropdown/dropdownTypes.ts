@@ -52,6 +52,8 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   selectionIndicator?: boolean;
   closeOnSelect?: boolean;
   popoverVariant?: PopoverVariant;
+  /** DOM node for menu / submenu portals. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   classNames?: DropdownClassNames;
 };
 
@@ -68,6 +70,8 @@ export type DropdownContextValue = {
   contentRef: React.RefObject<HTMLDivElement | null>;
   contentId: string;
   subPanelRootsRef: React.RefObject<Set<HTMLElement>>;
+  /** Portal mount node from Root; Popover / SubContent may override. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type DropdownSubContextValue = {
@@ -92,6 +96,8 @@ export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   bodyClassName?: string;
   /** Panel alignment relative to trigger (passed to Popover). Default: `start` when matching width. */
   align?: FloatingAlign;
+  /** Overrides Root `portalContainer` for the main menu panel. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
@@ -106,7 +112,10 @@ export type DropdownSubTriggerProps = HTMLAttributes<HTMLDivElement> & {
   asChild?: boolean;
 };
 
-export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement>;
+export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {
+  /** Overrides Root `portalContainer` for the submenu panel. */
+  portalContainer?: HTMLElement | null;
+};
 
 export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement>;
 export type DropdownItemHintProps = HTMLAttributes<HTMLSpanElement>;
@@ -150,6 +159,7 @@ export type UseDropdownRootStateProps = Pick<
   | "onValueChange"
   | "closeOnSelect"
   | "popoverVariant"
+  | "portalContainer"
 >;
 
 export type UseDropdownPopoverMenuProps = {
@@ -160,6 +170,7 @@ export type UseDropdownPopoverMenuProps = {
 };
 
 export type UseDropdownSubContentPortalProps = {
+  portalContainer?: HTMLElement | null;
   subOpen: boolean;
   triggerRef: React.RefObject<HTMLDivElement | null>;
   menuTriggerRef: React.RefObject<HTMLElement | null>;

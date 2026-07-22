@@ -1,5 +1,7 @@
 import { DrawerBottomSheetHandleDemo } from "../demos/drawer/DrawerBottomSheetHandle.demo";
 import drawerBottomSheetHandleSource from "../demos/drawer/DrawerBottomSheetHandle.demo.tsx?raw";
+import { DrawerAsChildMergedPropsDemo } from "../demos/drawer/DrawerAsChildMergedProps.demo";
+import drawerAsChildMergedPropsSource from "../demos/drawer/DrawerAsChildMergedProps.demo.tsx?raw";
 import { DrawerClassNamesFullDemo } from "../demos/drawer/DrawerClassNamesFull.demo";
 import drawerClassNamesFullSource from "../demos/drawer/DrawerClassNamesFull.demo.tsx?raw";
 import { DrawerFilterSheetDemo } from "../demos/drawer/DrawerFilterSheet.demo";
@@ -14,6 +16,8 @@ import { DrawerNotificationPanelDemo } from "../demos/drawer/DrawerNotificationP
 import drawerNotificationPanelSource from "../demos/drawer/DrawerNotificationPanel.demo.tsx?raw";
 import { DrawerPlacementDemo } from "../demos/drawer/DrawerPlacement.demo";
 import drawerPlacementSource from "../demos/drawer/DrawerPlacement.demo.tsx?raw";
+import { DrawerPortalContainerDemo } from "../demos/drawer/DrawerPortalContainer.demo";
+import drawerPortalContainerSource from "../demos/drawer/DrawerPortalContainer.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -47,6 +51,20 @@ export function DrawerShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="portalContainer"
+        description="Custom portal host — drawer stays inside the container."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={DrawerPortalContainerDemo} source={drawerPortalContainerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="asChild — merged props"
+        description="Trigger asChild merges id, data-*, className, and ref onto the child."
+      >
+        <ShowcaseDemoFromFile Demo={DrawerAsChildMergedPropsDemo} source={drawerAsChildMergedPropsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="classNames"
         description="Full customization of slots via classNames on Root."
       >
@@ -76,6 +94,10 @@ export function DrawerShowcase() {
           <ShowcaseDoc.ApiRow
             api="compound"
             description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close, Drawer.Handle — panel structure."
+          />
+          <ShowcaseDoc.ApiRow
+            api="portalContainer"
+            description="Custom HTMLElement host for the portal (contained: show + absolute)."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>

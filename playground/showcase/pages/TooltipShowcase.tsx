@@ -1,3 +1,7 @@
+import { TooltipAsChildMergedPropsDemo } from "../demos/tooltip/TooltipAsChildMergedProps.demo";
+import tooltipAsChildMergedPropsSource from "../demos/tooltip/TooltipAsChildMergedProps.demo.tsx?raw";
+import { TooltipPortalContainerDemo } from "../demos/tooltip/TooltipPortalContainer.demo";
+import tooltipPortalContainerSource from "../demos/tooltip/TooltipPortalContainer.demo.tsx?raw";
 import { TooltipFormHintDemo } from "../demos/tooltip/TooltipFormHint.demo";
 import tooltipFormHintSource from "../demos/tooltip/TooltipFormHint.demo.tsx?raw";
 import { TooltipClassNamesFullDemo, TooltipClassNamesGlossDemo } from "../demos/tooltip/TooltipClassNamesFull.demo";
@@ -41,6 +45,21 @@ export function TooltipShowcase() {
 
       <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">
         <ShowcaseDemoFromFile Demo={TooltipSidesDemo} source={tooltipSidesSource} />
+      </ShowcaseSection>
+
+
+      <ShowcaseSection
+        title="portalContainer"
+        description="Custom portal host — tooltip mounts into the container."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={TooltipPortalContainerDemo} source={tooltipPortalContainerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="asChild — merged props"
+        description="Trigger merges id, data-*, className, and ref onto the child."
+      >
+        <ShowcaseDemoFromFile Demo={TooltipAsChildMergedPropsDemo} source={tooltipAsChildMergedPropsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

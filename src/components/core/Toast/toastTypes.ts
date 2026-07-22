@@ -105,6 +105,8 @@ export type ToastProviderProps = {
   defaultPlacement?: ToastPlacement;
   defaultVariant?: ToastVariant;
   defaultSize?: ToastSize;
+  /** DOM node for viewport portals. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   classNames?: ToastClassNames;
 };
 

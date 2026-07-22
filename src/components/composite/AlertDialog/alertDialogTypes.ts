@@ -49,6 +49,8 @@ export type AlertDialogProps = {
   status?: AlertStatus;
   variant?: AlertVariant;
   size?: AlertDialogSize;
+  /** DOM node for the portal. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   classNames?: AlertDialogClassNames;
 };
 
@@ -64,6 +66,8 @@ export type AlertDialogPanelProps = {
    * By default — `document.activeElement` at the moment of opening.
    */
   themeAnchor?: HTMLElement | null;
+  /** Overrides Root `portalContainer`. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   children?: ReactNode;
 };
 
@@ -86,6 +90,8 @@ export type AlertDialogContextValue = {
   size: AlertDialogSize;
   sizePreset: AlertDialogSizePreset;
   footerButtonSize: ButtonSize;
+  /** Portal mount node from Root; Panel may override via its own prop. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type AlertDialogHeaderContextValue = {
@@ -112,12 +118,14 @@ export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
 export type UseAlertDialogRootStateProps = Pick<
   AlertDialogProps,
-  "open" | "defaultOpen" | "onOpenChange" | "status" | "variant" | "size"
+  "open" | "defaultOpen" | "onOpenChange" | "status" | "variant" | "size" | "portalContainer"
 >;
 
 export type UseAlertDialogModalMotionProps = {
   open: boolean;
   variant: AlertVariant;
+  /** When true, open with `show()` + absolute positioning inside a custom portal host. */
+  contained?: boolean;
 };
 
 export type AlertDialogPortalShellProps = {
@@ -134,4 +142,6 @@ export type AlertDialogPortalShellProps = {
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
   bindGlossPanelRef: (node: HTMLDivElement | null) => void;
+  /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
+  contained?: boolean;
 };

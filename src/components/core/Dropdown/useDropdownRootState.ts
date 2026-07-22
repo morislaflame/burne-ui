@@ -15,6 +15,7 @@ export function useDropdownRootState({
   onValueChange,
   closeOnSelect: closeOnSelectProp,
   popoverVariant = "default",
+  portalContainer,
 }: UseDropdownRootStateProps) {
   const isControlledOpen = openProp !== undefined;
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -85,6 +86,7 @@ export function useDropdownRootState({
       contentRef,
       contentId,
       subPanelRootsRef,
+      portalContainer,
     }),
     [
       open,
@@ -96,6 +98,7 @@ export function useDropdownRootState({
       closeOnSelectProp,
       popoverVariant,
       contentId,
+      portalContainer,
       subPanelRootsRef,
     ],
   );

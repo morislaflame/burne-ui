@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ForwardedRef, type ReactNode } from "react";
 
 import { useSliderClassNames, useSliderTrackContext } from "./sliderContext";
 import { SLIDER_MARK_CLASS, sliderMarkStyle } from "./sliderStyles";
@@ -75,19 +75,27 @@ SliderRail.displayName = "SliderRail";
 function SliderTrackThumb({
   kind,
   icon,
+  className,
+  style,
+  forwardedRef,
+  ...rest
 }: {
   kind: SliderThumbKind;
   icon?: ReactNode;
-}) {
+  forwardedRef?: ForwardedRef<HTMLButtonElement>;
+} & Omit<SliderCompoundThumbProps, "thumb" | "children">) {
   const ctx = useSliderTrackContext();
 
   if (kind === "start") {
     return (
       <SliderThumbButton
+        ref={forwardedRef}
         size={ctx.size}
         icon={icon}
         gloss={ctx.gloss}
         thumbClassName={ctx.thumbClassName}
+        className={className}
+        style={style}
         percent={ctx.thumbPercent("start")}
         orientation={ctx.orientation}
         disabled={ctx.disabled}
@@ -99,6 +107,7 @@ function SliderTrackThumb({
         {...ctx.resolveThumbA11y("start")}
         onPointerDown={ctx.onThumbPointerDown("start")}
         onKeyDown={ctx.onThumbKeyDown("start")}
+        {...rest}
       />
     );
   }
@@ -106,10 +115,13 @@ function SliderTrackThumb({
   if (kind === "end") {
     return (
       <SliderThumbButton
+        ref={forwardedRef}
         size={ctx.size}
         icon={icon}
         gloss={ctx.gloss}
         thumbClassName={ctx.thumbClassName}
+        className={className}
+        style={style}
         percent={ctx.thumbPercent("end")}
         orientation={ctx.orientation}
         disabled={ctx.disabled}
@@ -121,16 +133,20 @@ function SliderTrackThumb({
         {...ctx.resolveThumbA11y("end")}
         onPointerDown={ctx.onThumbPointerDown("end")}
         onKeyDown={ctx.onThumbKeyDown("end")}
+        {...rest}
       />
     );
   }
 
   return (
     <SliderThumbButton
+      ref={forwardedRef}
       size={ctx.size}
       icon={icon}
       gloss={ctx.gloss}
       thumbClassName={ctx.thumbClassName}
+      className={className}
+      style={style}
       percent={ctx.thumbPercent("single")}
       orientation={ctx.orientation}
       disabled={ctx.disabled}
@@ -142,20 +158,41 @@ function SliderTrackThumb({
       {...ctx.resolveThumbA11y("single")}
       onPointerDown={ctx.onThumbPointerDown("single")}
       onKeyDown={ctx.onThumbKeyDown("single")}
+      {...rest}
     />
   );
 }
 
-export function SliderCompoundThumb({ thumb = "single", children }: SliderCompoundThumbProps) {
-  const ctx = useSliderTrackContext();
-  return <SliderTrackThumb kind={thumb} icon={ctx.resolveThumbIcon(children)} />;
-}
+export const SliderCompoundThumb = forwardRef<HTMLButtonElement, SliderCompoundThumbProps>(
+  function SliderCompoundThumb(
+    { thumb = "single", children, className, style, ...rest },
+    ref,
+  ) {
+    const ctx = useSliderTrackContext();
+    return (
+      <SliderTrackThumb
+        kind={thumb}
+        icon={ctx.resolveThumbIcon(children)}
+        className={className}
+        style={style}
+        forwardedRef={ref}
+        {...rest}
+      />
+    );
+  },
+);
 
 SliderCompoundThumb.displayName = "SliderThumb";
 
-export function SliderIcon({ children }: SliderIconProps) {
-  return children;
-}
+export const SliderIcon = forwardRef<HTMLSpanElement, SliderIconProps>(
+  function SliderIcon({ children, className, ...rest }, ref) {
+    return (
+      <span ref={ref} className={className} {...rest}>
+        {children}
+      </span>
+    );
+  },
+);
 
 SliderIcon.displayName = "SliderIcon";
 

@@ -40,6 +40,7 @@ export function DropdownRoot({
   selectionIndicator = false,
   closeOnSelect,
   popoverVariant,
+  portalContainer,
   ...rest
 }: DropdownProps) {
   const { contextValue } = useDropdownRootState({
@@ -52,6 +53,7 @@ export function DropdownRoot({
     onValueChange,
     closeOnSelect,
     popoverVariant,
+    portalContainer,
   });
 
   return (

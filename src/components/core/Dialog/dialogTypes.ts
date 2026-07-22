@@ -45,15 +45,17 @@ export type DialogProps = {
   onOpenChange?: (open: boolean) => void;
   children?: ReactNode;
   size?: DialogSize;
+  /** DOM node for the portal. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   classNames?: DialogClassNames;
 };
 
-export type DialogPanelProps = {
+export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & {
   variant?: DialogVariant;
   dismissOnBackdrop?: boolean;
-  className?: string;
   themeAnchor?: HTMLElement | null;
-  children?: ReactNode;
+  /** Overrides Root `portalContainer`. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type DialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -73,6 +75,8 @@ export type DialogContextValue = {
   size: DialogSize;
   sizePreset: DialogSizePreset;
   footerButtonSize: ButtonSize;
+  /** Portal mount node from Root; Panel may override via its own prop. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type DialogClassNamesProviderProps = {
@@ -91,7 +95,7 @@ export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
 export type UseDialogRootStateProps = Pick<
   DialogProps,
-  "open" | "defaultOpen" | "onOpenChange" | "size"
+  "open" | "defaultOpen" | "onOpenChange" | "size" | "portalContainer"
 >;
 
 export type UseDialogModalMotionProps = {
@@ -99,11 +103,14 @@ export type UseDialogModalMotionProps = {
   onOpenChange: (open: boolean) => void;
   variant: DialogVariant;
   dismissOnBackdrop: boolean;
+  /** When true, open with `show()` + absolute positioning inside a custom portal host. */
+  contained?: boolean;
 };
 
 export type DialogPortalShellProps = {
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
   variant: DialogVariant;
   sizePreset: DialogSizePreset;
   portalTheme: Record<string, string | undefined>;
@@ -114,10 +121,17 @@ export type DialogPortalShellProps = {
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
+  panelForwardedRef?: React.ForwardedRef<HTMLDivElement>;
+  panelRest?: Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "className" | "style" | "children" | "ref"
+  >;
   bindGlossPanelRef: (node: HTMLDivElement | null) => void;
   onBackdropMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDialogClose: () => void;
   onDialogCancel: (e: React.SyntheticEvent<HTMLDialogElement>) => void;
+  /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
+  contained?: boolean;
 };
 
 export type DialogTriggerInternalProps = {

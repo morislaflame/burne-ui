@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 
@@ -234,6 +234,136 @@ export const GlossLight: Story = {
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Custom `portalContainer` uses non-modal `dialog.show()` + `position: absolute`, so the alert stays inside the host. Host must be `position: relative`.",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [open, setOpen] = useState(false);
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-mid">
+        <p className="text-sm text-muted">
+          Overlay stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
+        </p>
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open in custom host
+        </Button>
+        <div
+          ref={setContainer}
+          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+        >
+          <p className="text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <AlertDialog
+              open={open}
+              onOpenChange={setOpen}
+              portalContainer={container}
+              status="warning"
+              size="small"
+            >
+              <AlertDialog.Panel>
+                <AlertDialog.Header>
+                  <AlertDialog.HeadingBlock>
+                    <AlertDialog.Title>Inside host</AlertDialog.Title>
+                    <AlertDialog.Description>
+                      Panel is a DOM child of the dashed container.
+                    </AlertDialog.Description>
+                  </AlertDialog.HeadingBlock>
+                </AlertDialog.Header>
+                <AlertDialog.Footer>
+                  <Button type="button" size="small" variant="outline" onClick={() => setOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="button" size="small" onClick={() => setOpen(false)}>
+                    Continue
+                  </Button>
+                </AlertDialog.Footer>
+              </AlertDialog.Panel>
+            </AlertDialog>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`AlertDialog.Trigger asChild` merges host `id`, `data-*`, `className`, and `ref` onto the child via `mergeAsChildProps`.",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+    const [open, setOpen] = useState(false);
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <AlertDialog open={open} onOpenChange={setOpen} status="danger">
+          <AlertDialog.Trigger
+            asChild
+            ref={triggerRef}
+            id="story-alert-dialog-trigger"
+            data-testid="story-alert-dialog-trigger"
+            data-analytics="open-alert-dialog"
+            className="ring-2 ring-primary/30"
+          >
+            <Button type="button" variant="outline">
+              Open (merged props)
+            </Button>
+          </AlertDialog.Trigger>
+          <AlertDialog.Panel>
+            <AlertDialog.Header>
+              <AlertDialog.HeadingBlock>
+                <AlertDialog.Title>Merged trigger</AlertDialog.Title>
+                <AlertDialog.Description>
+                  Host props from Trigger land on the Button child.
+                </AlertDialog.Description>
+              </AlertDialog.HeadingBlock>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="button" onClick={() => setOpen(false)}>
+                Confirm
+              </Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Panel>
+        </AlertDialog>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-alert-dialog-trigger");
+    await expect(btn).toHaveAttribute("id", "story-alert-dialog-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "open-alert-dialog");
+  },
 };
 
 export const CustomClassNames: Story = {

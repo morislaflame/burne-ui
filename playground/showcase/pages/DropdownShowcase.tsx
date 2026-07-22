@@ -1,3 +1,7 @@
+import { DropdownAsChildMergedPropsDemo } from "../demos/dropdown/DropdownAsChildMergedProps.demo";
+import dropdownAsChildMergedPropsSource from "../demos/dropdown/DropdownAsChildMergedProps.demo.tsx?raw";
+import { DropdownPortalContainerDemo } from "../demos/dropdown/DropdownPortalContainer.demo";
+import dropdownPortalContainerSource from "../demos/dropdown/DropdownPortalContainer.demo.tsx?raw";
 import { DropdownClassNamesFullDemo } from "../demos/dropdown/DropdownClassNamesFull.demo";
 import dropdownClassNamesFullSource from "../demos/dropdown/DropdownClassNamesFull.demo.tsx?raw";
 import { DropdownActionMenuDemo } from "../demos/dropdown/DropdownActionMenu.demo";
@@ -35,6 +39,21 @@ export function DropdownShowcase() {
 
       <ShowcaseSection title="Gloss" description='popoverVariant="gloss" — glass drop down menu.'>
         <ShowcaseDemoFromFile Demo={DropdownGlossDemo} source={dropdownGlossSource} />
+      </ShowcaseSection>
+
+
+      <ShowcaseSection
+        title="portalContainer"
+        description="Custom portal host — menu mounts into the container."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={DropdownPortalContainerDemo} source={dropdownPortalContainerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="asChild — merged props"
+        description="Trigger asChild merges id, data-*, className, and ref onto the child."
+      >
+        <ShowcaseDemoFromFile Demo={DropdownAsChildMergedPropsDemo} source={dropdownAsChildMergedPropsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

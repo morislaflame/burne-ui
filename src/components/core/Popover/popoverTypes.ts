@@ -39,6 +39,8 @@ export type PopoverContextValue = {
   triggerRef: RefObject<HTMLElement | null>;
   anchorRef?: RefObject<HTMLElement | null>;
   contentRef: RefObject<HTMLDivElement | null>;
+  /** Portal mount node from Root; Content may override via its own prop. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type PopoverProps = {
@@ -51,6 +53,8 @@ export type PopoverProps = {
   onOpenChange?: (open: boolean) => void;
   anchorRef?: RefObject<HTMLElement | null>;
   shouldDismiss?: (target: Node) => boolean;
+  /** DOM node for the portal. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   classNames?: PopoverClassNames;
 };
 
@@ -84,6 +88,8 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   align?: FloatingAlign;
   unstyled?: boolean;
   contentRole?: "dialog" | undefined;
+  /** Overrides Root `portalContainer`. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type PopoverTitleVariantMap = Record<PopoverSize, TextVariant>;
@@ -102,4 +108,5 @@ export type UsePopoverContentLifecycleProps = {
   contentRef: RefObject<HTMLDivElement | null>;
   triggerRef: RefObject<HTMLElement | null>;
   anchorRef?: RefObject<HTMLElement | null>;
+  portalContainer?: HTMLElement | null;
 };

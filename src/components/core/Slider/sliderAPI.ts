@@ -1,4 +1,4 @@
-import { Children, isValidElement, type ReactNode } from "react";
+import { Children, createElement, isValidElement, type ReactNode } from "react";
 
 import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
 import type {
@@ -302,7 +302,20 @@ export function resolveSliderThumbIcon(children: ReactNode, fallback?: ReactNode
   if (nodes.length === 1 && isValidElement(nodes[0])) {
     const name = (nodes[0].type as { displayName?: string }).displayName;
     if (name === "SliderIcon") {
-      return (nodes[0].props as { children?: ReactNode }).children ?? fallback;
+      const {
+        children: iconChildren,
+        className,
+        ...rest
+      } = nodes[0].props as {
+        children?: ReactNode;
+        className?: string;
+      } & Record<string, unknown>;
+      const content = iconChildren ?? fallback;
+      if (content == null) return fallback;
+      if (className || Object.keys(rest).length > 0) {
+        return createElement("span", { className, ...rest }, content);
+      }
+      return content;
     }
   }
   return children;

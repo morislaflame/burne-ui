@@ -4,11 +4,13 @@ import { createPortal } from "react-dom";
 import { Field } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
 
 import { resolvePopoverDescribedBy, resolvePopoverLabelledBy } from "./popoverA11y";
-import { mergePopoverRefs, partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
+import { partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
 import { resolvePopoverContentAlign, usePopoverContentLifecycle } from "./popoverAnimations";
 import { PopoverResolvedSideProvider, usePopoverClassNames, usePopoverContext, usePopoverResolvedSide } from "./popoverContext";
 import { POPOVER_DEFAULT_GAP, POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultPanelClass, popoverGlossContentClass, popoverGlossPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
@@ -37,7 +39,8 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
     const mergedRef = useCallback(
       (node: HTMLButtonElement | null) => {
         triggerRef.current = node;
-        mergePopoverRefs(ref)(node);
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
       },
       [ref, triggerRef],
     );
@@ -77,41 +80,34 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       Children.count(children) === 1 && isValidElement(children) ? children : null;
 
     if (asChild && onlyChild) {
-      const child = onlyChild as ReactElement<{
-        className?: string;
-        "aria-expanded"?: boolean;
-        "aria-controls"?: string;
-        onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
-        onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
-        onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
-        ref?: Ref<HTMLElement>;
-      }>;
+      const child = onlyChild as ReactElement;
 
-      return cloneElement(child, {
-        className: cn(
-          slotClassNames.root,
-          slotClassNames.trigger,
-          child.props.className,
-          className,
+      return cloneElement(
+        child,
+        mergeAsChildProps(
+          child,
+          {
+            ...rest,
+            className: cn(
+              slotClassNames.root,
+              slotClassNames.trigger,
+              className,
+            ),
+            onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+              handlePointerDown(e);
+              onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+            },
+            onClick: handleClick,
+            onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
+              handleKeyDown(event as ReactKeyboardEvent<HTMLButtonElement>);
+            },
+            "aria-expanded": open,
+            "aria-controls": open ? popoverId : undefined,
+          },
+          mergedRef,
+          { runBeforeChild: ["onPointerDown"] },
         ),
-        // Trigger's pointerDown runs FIRST to call e.preventDefault() before child
-        onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
-          handlePointerDown(e);
-          child.props.onPointerDown?.(e);
-          onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
-        },
-        onClick: (event: ReactMouseEvent<HTMLElement>) => {
-          child.props.onClick?.(event);
-          handleClick(event);
-        },
-        onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
-          child.props.onKeyDown?.(event);
-          handleKeyDown(event as ReactKeyboardEvent<HTMLButtonElement>);
-        },
-        "aria-expanded": open,
-        "aria-controls": open ? popoverId : undefined,
-        ref: mergePopoverRefs(child.props.ref, mergedRef),
-      });
+      );
     }
 
     return (
@@ -141,44 +137,50 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
 
 PopoverTrigger.displayName = "PopoverTrigger";
 
-export function PopoverArrow({ className, ...rest }: PopoverArrowProps) {
-  const resolvedSide = usePopoverResolvedSide();
-  const { variant } = usePopoverContext("Popover.Arrow");
-  const slotClassNames = usePopoverClassNames();
-  const isGloss = variant === "gloss";
+export const PopoverArrow = forwardRef<HTMLSpanElement, PopoverArrowProps>(
+  function PopoverArrow({ className, ...rest }, ref) {
+    const resolvedSide = usePopoverResolvedSide();
+    const { variant } = usePopoverContext("Popover.Arrow");
+    const slotClassNames = usePopoverClassNames();
+    const isGloss = variant === "gloss";
 
-  return (
-    <span
-      aria-hidden
-      className={popoverArrowClass({
-        isGloss,
-        resolvedSide,
-        arrowSideClass: TOOLTIP_ARROW_CLASS[resolvedSide],
-        slotClass: slotClassNames.arrow,
-        className,
-      })}
-      {...rest}
-    />
-  );
-}
+    return (
+      <span
+        ref={ref}
+        aria-hidden
+        className={popoverArrowClass({
+          isGloss,
+          resolvedSide,
+          arrowSideClass: TOOLTIP_ARROW_CLASS[resolvedSide],
+          slotClass: slotClassNames.arrow,
+          className,
+        })}
+        {...rest}
+      />
+    );
+  },
+);
 
 PopoverArrow.displayName = POPOVER_ARROW_DISPLAY_NAME;
 
-export function PopoverHeader({ className, children, ...rest }: PopoverHeaderProps) {
-  const slotClassNames = usePopoverClassNames();
+export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
+  function PopoverHeader({ className, children, ...rest }, ref) {
+    const slotClassNames = usePopoverClassNames();
 
-  return (
-    <div
-      className={popoverHeaderClass({
-        slotClass: slotClassNames.header,
-        className,
-      })}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={popoverHeaderClass({
+          slotClass: slotClassNames.header,
+          className,
+        })}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  },
+);
 
 PopoverHeader.displayName = "PopoverHeader";
 
@@ -207,45 +209,49 @@ export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
 
 PopoverTitle.displayName = "PopoverTitle";
 
-export function PopoverDescription({
-  className,
-  children,
-  variant,
-  ...rest
-}: PopoverDescriptionProps) {
-  const { hintId, size } = usePopoverContext("Popover.Description");
-  const slotClassNames = usePopoverClassNames();
+export const PopoverDescription = forwardRef<HTMLElement, PopoverDescriptionProps>(
+  function PopoverDescription(
+    { className, children, variant, ...rest },
+    ref,
+  ) {
+    const { hintId, size } = usePopoverContext("Popover.Description");
+    const slotClassNames = usePopoverClassNames();
 
-  return (
-    <Field.Hint
-      as="p"
-      id={hintId}
-      variant={variant ?? popoverDescriptionVariant(size)}
-      className={cn(slotClassNames.hint, className)}
-      {...rest}
-    >
-      {children}
-    </Field.Hint>
-  );
-}
+    return (
+      <Field.Hint
+        ref={ref}
+        as="p"
+        id={hintId}
+        variant={variant ?? popoverDescriptionVariant(size)}
+        className={cn(slotClassNames.hint, className)}
+        {...rest}
+      >
+        {children}
+      </Field.Hint>
+    );
+  },
+);
 
 PopoverDescription.displayName = "PopoverDescription";
 
-export function PopoverBody({ className, children, ...rest }: PopoverBodyProps) {
-  const slotClassNames = usePopoverClassNames();
+export const PopoverBody = forwardRef<HTMLDivElement, PopoverBodyProps>(
+  function PopoverBody({ className, children, ...rest }, ref) {
+    const slotClassNames = usePopoverClassNames();
 
-  return (
-    <div
-      className={popoverBodyClass({
-        slotClass: slotClassNames.body,
-        className,
-      })}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-}
+    return (
+      <div
+        ref={ref}
+        className={popoverBodyClass({
+          slotClass: slotClassNames.body,
+          className,
+        })}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  },
+);
 
 PopoverBody.displayName = "PopoverBody";
 
@@ -261,6 +267,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
       align: alignProp,
       unstyled = false,
       contentRole = "dialog",
+      portalContainer: portalContainerProp,
       ...rest
     },
     forwardedRef,
@@ -278,6 +285,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
       triggerRef,
       anchorRef,
       contentRef,
+      portalContainer: portalContainerFromRoot,
     } = usePopoverContext("Popover.Content");
     const slotClassNames = usePopoverClassNames();
     const isGloss = variant === "gloss";
@@ -304,6 +312,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
       contentRef,
       triggerRef,
       anchorRef,
+      portalContainer: portalContainerProp ?? portalContainerFromRoot,
     });
 
     if (!portalMounted) return null;
@@ -381,7 +390,10 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
       </PopoverResolvedSideProvider>
     );
 
-    return createPortal(node, document.body);
+    return createPortal(
+      node,
+      resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot),
+    );
   },
 );
 

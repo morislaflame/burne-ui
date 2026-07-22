@@ -1,6 +1,7 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { isContainedPortal } from "@/components/core/utils/portalContainer";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { focusDropdownMenuItem, getFocusableDropdownMenuItems } from "./dropdownA11y";
@@ -74,11 +75,16 @@ export function useDropdownSubContentPortal({
   menuTriggerRef,
   subPanelRootsRef,
   popoverVariant,
+  portalContainer,
 }: UseDropdownSubContentPortalProps) {
   const isGlossPanel = popoverVariant === "gloss";
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState({ top: 0, left: 0, minW: 0 });
-  const [portalMounted, setPortalMounted] = useState(subOpen);
+  const [portalMounted, setPortalMounted] = useState(false);
+
+  if (subOpen && !portalMounted) {
+    setPortalMounted(true);
+  }
 
   const updatePosition = useCallback(() => {
     const t = triggerRef.current;
@@ -97,20 +103,29 @@ export function useDropdownSubContentPortal({
     if (ph > 0 && top + ph > window.innerHeight - 8) {
       top = Math.max(8, window.innerHeight - ph - 8);
     }
+
+    if (isContainedPortal(portalContainer) && portalContainer) {
+      const hostRect = portalContainer.getBoundingClientRect();
+      setPos({
+        top: top - hostRect.top + portalContainer.scrollTop,
+        left: left - hostRect.left + portalContainer.scrollLeft,
+        minW,
+      });
+      return;
+    }
+
     setPos({ top, left, minW });
-  }, [triggerRef]);
+  }, [portalContainer, triggerRef]);
 
   useLayoutEffect(() => {
-    if (subOpen) setPortalMounted(true);
-  }, [subOpen]);
-
-  useLayoutEffect(() => {
-    if (!subOpen) return;
+    if (!subOpen || !portalMounted) return;
     updatePosition();
-  }, [subOpen, updatePosition]);
+    const raf = window.requestAnimationFrame(() => updatePosition());
+    return () => window.cancelAnimationFrame(raf);
+  }, [subOpen, portalMounted, updatePosition]);
 
   useEffect(() => {
-    if (!subOpen) return;
+    if (!subOpen || !portalMounted) return;
     const onScroll = () => updatePosition();
     window.addEventListener("scroll", onScroll, true);
     window.addEventListener("resize", onScroll);
@@ -118,7 +133,7 @@ export function useDropdownSubContentPortal({
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onScroll);
     };
-  }, [subOpen, updatePosition]);
+  }, [subOpen, portalMounted, updatePosition]);
 
   useLayoutEffect(() => {
     const el = panelRef.current;
@@ -183,5 +198,6 @@ export function useDropdownSubContentPortal({
     pos,
     portalMounted,
     menuTriggerRef,
+    contained: isContainedPortal(portalContainer),
   };
 }

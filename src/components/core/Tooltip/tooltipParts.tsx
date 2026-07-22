@@ -1,13 +1,15 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactElement, type ReactNode, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactElement, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { Text } from "@/components/core/Text";
 import { SEMANTIC_STATUS_ICONS, type SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
+import { resolvePortalContainer, applyFloatingPortalPosition } from "@/components/core/utils/portalContainer";
 import { messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
-import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import "../utils/glossInteractive.css";
 
@@ -324,32 +326,33 @@ export const TooltipTrigger = forwardRef<HTMLSpanElement, TooltipTriggerProps>(
     const onlyChild = Children.count(children) === 1 && isValidElement(children) ? children : null;
 
     if (asChild && onlyChild) {
-      const child = onlyChild as ReactElement<{
-        className?: string;
-        "aria-describedby"?: string;
-        onPointerEnter?: (e: React.PointerEvent<HTMLElement>) => void;
-        onPointerLeave?: (e: React.PointerEvent<HTMLElement>) => void;
-        onFocus?: (e: React.FocusEvent<HTMLElement>) => void;
-        onBlur?: (e: React.FocusEvent<HTMLElement>) => void;
-        ref?: Ref<HTMLElement>;
-      }>;
+      const child = onlyChild as ReactElement;
+      const childDescribedBy = (child.props as { "aria-describedby"?: string })[
+        "aria-describedby"
+      ];
 
-      return cloneElement(child, {
-        ...bindTriggerEvents(triggerHandlers, {
-          onPointerEnter,
-          onPointerLeave,
-          onFocus,
-          onBlur,
-        }),
-        className: cn(
-          slotClassNames.root,
-          slotClassNames.trigger,
-          child.props.className,
-          className,
+      return cloneElement(
+        child,
+        mergeAsChildProps(
+          child,
+          {
+            ...rest,
+            ...bindTriggerEvents(triggerHandlers, {
+              onPointerEnter,
+              onPointerLeave,
+              onFocus,
+              onBlur,
+            }),
+            className: cn(
+              slotClassNames.root,
+              slotClassNames.trigger,
+              className,
+            ),
+            "aria-describedby": mergeDescribedBy(childDescribedBy, tooltipId, open),
+          },
+          mergedRef,
         ),
-        "aria-describedby": mergeDescribedBy(child.props["aria-describedby"], tooltipId, open),
-        ref: mergeRefs(child.props.ref, mergedRef),
-      });
+      );
     }
 
     return (
@@ -408,6 +411,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       children,
       showArrow = false,
       offset = TOOLTIP_DEFAULT_OFFSET,
+      portalContainer: portalContainerProp,
       ...rest
     },
     forwardedRef,
@@ -423,6 +427,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       icon,
       showIcon,
       triggerRef,
+      portalContainer: portalContainerFromRoot,
     } = useTooltipContext("Tooltip.Content");
 
     const tipRef = useRef<HTMLDivElement | null>(null);
@@ -434,6 +439,10 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
     );
     const [portalMounted, setPortalMounted] = useState(false);
     const [resolvedSide, setResolvedSide] = useState(side);
+
+    if (open && !portalMounted) {
+      setPortalMounted(true);
+    }
 
     const setTipRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -464,31 +473,49 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       );
 
       setResolvedSide(placement.resolvedSide);
-      tip.style.position = "fixed";
-      tip.style.left = `${placement.left}px`;
-      tip.style.top = `${placement.top}px`;
+      applyFloatingPortalPosition(
+        tip,
+        placement,
+        portalContainerProp ?? portalContainerFromRoot,
+      );
       tip.style.transform = "";
-    }, [offset, side, triggerRef]);
-
-    useLayoutEffect(() => {
-      if (open) setPortalMounted(true);
-    }, [open]);
+    }, [offset, portalContainerFromRoot, portalContainerProp, side, triggerRef]);
 
     usePersistentElShadow(tipRef, !isGloss, shadowBase);
 
     useLayoutEffect(() => {
-      if (!open) return;
+      if (!open || !portalMounted) return;
       reposition();
       const raf = window.requestAnimationFrame(() => reposition());
       const onReflow = () => reposition();
       window.addEventListener("scroll", onReflow, true);
       window.addEventListener("resize", onReflow);
+
+      const tip = tipRef.current;
+      const host = resolvePortalContainer(
+        portalContainerProp ?? portalContainerFromRoot,
+      );
+      const ro =
+        typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => reposition()) : null;
+      if (tip && ro) ro.observe(tip);
+      if (host !== document.body && ro) ro.observe(host);
+
       return () => {
         window.cancelAnimationFrame(raf);
         window.removeEventListener("scroll", onReflow, true);
         window.removeEventListener("resize", onReflow);
+        ro?.disconnect();
       };
-    }, [open, reposition, children, showArrow, offset]);
+    }, [
+      open,
+      portalMounted,
+      portalContainerFromRoot,
+      portalContainerProp,
+      reposition,
+      children,
+      showArrow,
+      offset,
+    ]);
 
     useTooltipPortalMotion({
       open,
@@ -539,7 +566,10 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       </TooltipResolvedSideContext.Provider>
     );
 
-    return createPortal(node, document.body);
+    return createPortal(
+      node,
+      resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot),
+    );
   },
 );
 

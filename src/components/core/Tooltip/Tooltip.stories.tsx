@@ -1,4 +1,5 @@
 import type { ComponentType, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen } from "storybook/test";
@@ -400,6 +401,104 @@ export const CustomClassNames: Story = {
       </Tooltip.Content>
     </Tooltip>
   ),
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`portalContainer` mounts the tooltip into a custom host instead of `document.body`.",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-mid">
+        <p className="text-sm text-muted">
+          Tooltip portals into the box below (not <code className="text-foreground">document.body</code>).
+        </p>
+        <div
+          ref={setContainer}
+          className="relative flex h-48 items-center justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          style={{ transform: "translateZ(0)" }}
+        >
+          <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <Tooltip delayShowMs={0} portalContainer={container}>
+              <Tooltip.Trigger>
+                <Button variant="outline" type="button">
+                  Hover in host
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <Tooltip.Title>Inside host</Tooltip.Title>
+                <Tooltip.Description>Portaled into the dashed container.</Tooltip.Description>
+              </Tooltip.Content>
+            </Tooltip>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Tooltip.Trigger` (default `asChild`) merges host `id`, `data-*`, `className`, and `ref` onto the child via `mergeAsChildProps`.",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <Tooltip delayShowMs={0}>
+          <Tooltip.Trigger
+            ref={triggerRef}
+            id="story-tooltip-trigger"
+            data-testid="story-tooltip-trigger"
+            data-analytics="hover-tooltip"
+            className="ring-2 ring-primary/30"
+          >
+            <Button variant="outline" type="button">
+              Hover (merged props)
+            </Button>
+          </Tooltip.Trigger>
+          <Tooltip.Content>
+            <Tooltip.Title>Merged trigger</Tooltip.Title>
+            <Tooltip.Description>
+              Host props from Trigger land on the Button child.
+            </Tooltip.Description>
+          </Tooltip.Content>
+        </Tooltip>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-tooltip-trigger");
+    await expect(btn).toHaveAttribute("id", "story-tooltip-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "hover-tooltip");
+  },
 };
 
 export const GlossWithCompoundLayout: Story = {

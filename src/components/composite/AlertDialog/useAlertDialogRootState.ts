@@ -13,6 +13,7 @@ export function useAlertDialogRootState({
   status,
   variant = "default",
   size = "base",
+  portalContainer,
 }: UseAlertDialogRootStateProps) {
   const [open, setOpen] = useControllableState({
     value: openProp,
@@ -43,6 +44,7 @@ export function useAlertDialogRootState({
     size,
     sizePreset,
     footerButtonSize: footerButtonSizeForAlertDialog(size),
+    portalContainer,
   };
 
   return { contextValue };

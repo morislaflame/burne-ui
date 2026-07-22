@@ -2,6 +2,7 @@ import { killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { animateModalClose, animateModalOpen, applyReducedModalMotion, captureModalFocusReturn, completeModalDialogClose, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { openNativeDialog } from "@/components/core/utils/portalContainer";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import type { UseDialogModalMotionProps } from "./dialogTypes";
@@ -11,6 +12,7 @@ export function useDialogModalMotion({
   onOpenChange,
   variant,
   dismissOnBackdrop = true,
+  contained = false,
 }: UseDialogModalMotionProps) {
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -29,13 +31,25 @@ export function useDialogModalMotion({
   }, [open]);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || contained) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [mounted]);
+  }, [mounted, contained]);
+
+  // Non-modal `show()` does not fire `cancel` on Escape — close manually.
+  useEffect(() => {
+    if (!open || !contained) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.preventDefault();
+      onOpenChange(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, contained, onOpenChange]);
 
   useLayoutEffect(() => {
     if (open || !mounted) return;
@@ -76,7 +90,7 @@ export function useDialogModalMotion({
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) {
       focusReturnRef.current = captureModalFocusReturn(dialog);
-      dialog.showModal();
+      openNativeDialog(dialog, { contained });
     }
 
     const overlay = overlayRef.current;
@@ -94,7 +108,7 @@ export function useDialogModalMotion({
       vars: { ...motionInteractive(), overwrite: "auto" as const },
     });
     panel.focus();
-  }, [open, mounted]);
+  }, [open, mounted, contained]);
 
   const handleBackdropPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {

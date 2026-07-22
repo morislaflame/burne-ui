@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
 
@@ -518,6 +518,128 @@ export const Sizes: Story = {
         ))}
       </div>
     );
+  },
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Custom `portalContainer` uses non-modal `dialog.show()` + `position: absolute`, so the overlay fills the host (not the viewport top layer from `showModal()`). Host must be `position: relative` (or absolute/fixed).",
+      },
+    },
+  },
+  render: function PortalContainerDemo() {
+    const [open, setOpen] = useState(false);
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-mid">
+        <p className="text-sm text-muted">
+          Overlay stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
+        </p>
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open in custom host
+        </Button>
+        <div
+          ref={setContainer}
+          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+        >
+          <p className="text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <Dialog open={open} onOpenChange={setOpen} portalContainer={container} size="small">
+              <Dialog.Panel>
+                <Dialog.Header>
+                  <Dialog.HeadingBlock>
+                    <Dialog.Title>Inside host</Dialog.Title>
+                    <Dialog.Description>
+                      This panel is a child of the dashed container in the DOM.
+                    </Dialog.Description>
+                  </Dialog.HeadingBlock>
+                  <Dialog.Close />
+                </Dialog.Header>
+                <Dialog.Body>
+                  <p className="text-sm text-muted">Useful for shadow roots, iframes, and nested scroll regions.</p>
+                </Dialog.Body>
+                <Dialog.Footer>
+                  <Button type="button" size="small" onClick={() => setOpen(false)}>
+                    Close
+                  </Button>
+                </Dialog.Footer>
+              </Dialog.Panel>
+            </Dialog>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+// ─── asChild merged props (3.3) ───────────────────────────────────────────────
+
+export const AsChildMergedProps: Story = {
+  name: "asChild — merged props & ref",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Dialog.Trigger asChild` merges host `id`, `data-*`, `className`, handlers, and `ref` onto the child via `mergeAsChildProps` (props are no longer dropped).",
+      },
+    },
+  },
+  render: function AsChildMergedPropsDemo() {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [refLabel, setRefLabel] = useState("ref: —");
+
+    useLayoutEffect(() => {
+      const node = triggerRef.current;
+      setRefLabel(node ? `ref → #${node.id} (${node.tagName.toLowerCase()})` : "ref: —");
+    }, []);
+
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <p className="text-sm text-muted">{refLabel}</p>
+        <Dialog>
+          <Dialog.Trigger
+            asChild
+            ref={triggerRef}
+            id="story-dialog-trigger"
+            data-testid="story-dialog-trigger"
+            data-analytics="open-dialog"
+            className="ring-2 ring-primary/30"
+          >
+            <Button type="button" variant="outline">
+              Open (merged props)
+            </Button>
+          </Dialog.Trigger>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Merged trigger</Dialog.Title>
+                <Dialog.Description>
+                  Inspect the trigger: <code className="text-foreground">id</code>,{" "}
+                  <code className="text-foreground">data-analytics</code>, and the ring class live on the Button.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Opened via asChild trigger with forwarded props.</p>
+            </Dialog.Body>
+          </Dialog.Panel>
+        </Dialog>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const btn = canvas.getByTestId("story-dialog-trigger");
+    await expect(btn).toHaveAttribute("id", "story-dialog-trigger");
+    await expect(btn).toHaveAttribute("data-analytics", "open-dialog");
+    await expect(btn).toHaveAttribute("aria-haspopup", "dialog");
   },
 };
 

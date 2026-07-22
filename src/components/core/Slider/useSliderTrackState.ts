@@ -40,10 +40,16 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     thumbClassName,
     disabled = false,
     className,
+    style: styleProp,
     classNames: trackClassNames,
     ariaLabel: ariaLabelProp,
     range = false,
     children,
+    onPointerDown: onPointerDownProp,
+    value: _value,
+    defaultValue: _defaultValue,
+    onValueChange: _onValueChange,
+    ...trackRest
   } = props;
 
   const fieldCtx = useOptionalSliderFieldContext();
@@ -277,6 +283,8 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
 
   const handleTrackPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
+      onPointerDownProp?.(e);
+      if (e.defaultPrevented) return;
       if (disabled || e.button !== 0) return;
       e.preventDefault();
       const thumb = range ? pickRangeThumb(e.clientX, e.clientY) : "single";
@@ -284,7 +292,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
       setActiveThumb(thumb);
       updateFromPointer(e.clientX, e.clientY, thumb);
     },
-    [disabled, pickRangeThumb, range, updateFromPointer],
+    [disabled, onPointerDownProp, pickRangeThumb, range, updateFromPointer],
   );
 
   const onThumbPointerDown = useCallback(
@@ -506,8 +514,8 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
   const { body: compoundBody, hasCompoundParts } = partitionSliderTrackChildren(children);
 
   const trackCrossStyle = useMemo(
-    () => sliderTrackCrossStyle({ isHorizontal, thickness }),
-    [isHorizontal, thickness],
+    () => ({ ...sliderTrackCrossStyle({ isHorizontal, thickness }), ...styleProp }),
+    [isHorizontal, styleProp, thickness],
   );
 
   const trackHitClass = sliderTrackHitAreaClass({
@@ -523,6 +531,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     setTrackRef,
     trackHitClass,
     trackCrossStyle,
+    trackRest,
     handleTrackPointerDown,
     trackContextValue,
     compoundBody,

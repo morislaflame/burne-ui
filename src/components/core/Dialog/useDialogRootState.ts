@@ -10,6 +10,7 @@ export function useDialogRootState({
   defaultOpen = false,
   onOpenChange,
   size = "base",
+  portalContainer,
 }: UseDialogRootStateProps) {
   const [open, setOpen] = useControllableState({
     value: openProp,
@@ -36,6 +37,7 @@ export function useDialogRootState({
     size,
     sizePreset,
     footerButtonSize: footerButtonSizeForDialog(size),
+    portalContainer,
   };
 
   return { contextValue };

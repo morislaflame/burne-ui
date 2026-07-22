@@ -1,5 +1,7 @@
 import { createPortal } from "react-dom";
 
+import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+
 import { ToastContext } from "./toastContext";
 import { ToastViewport } from "./toastAnimations";
 import type { ToastProviderProps } from "./toastTypes";
@@ -10,6 +12,7 @@ export function ToastProviderRoot({
   defaultPlacement = "bottom-center",
   defaultVariant = "default",
   defaultSize = "base",
+  portalContainer,
   classNames,
 }: ToastProviderProps) {
   const state = useToastProviderState({
@@ -34,7 +37,7 @@ export function ToastProviderRoot({
               classNames={classNames}
               defaultSize={state.defaultSize}
             />,
-            document.body,
+            resolvePortalContainer(portalContainer),
             placement,
           ),
         )}

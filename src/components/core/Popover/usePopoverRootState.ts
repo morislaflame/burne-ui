@@ -16,6 +16,7 @@ export function usePopoverRootState({
   onOpenChange,
   anchorRef,
   shouldDismiss,
+  portalContainer,
 }: UsePopoverRootStateProps) {
   const [open, setOpen] = useControllableOpen(openProp, defaultOpen, onOpenChange);
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -66,6 +67,7 @@ export function usePopoverRootState({
       triggerRef,
       anchorRef,
       contentRef,
+      portalContainer,
     }),
     [
       anchorRef,
@@ -75,6 +77,7 @@ export function usePopoverRootState({
       labelId,
       open,
       popoverId,
+      portalContainer,
       setOpen,
       side,
       size,

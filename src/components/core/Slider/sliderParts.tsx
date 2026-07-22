@@ -166,6 +166,7 @@ export const SliderTrack = forwardRef<HTMLDivElement, SliderTrackProps>(function
 
   return (
     <div
+      {...state.trackRest}
       ref={state.setTrackRef}
       role="presentation"
       className={state.trackHitClass}

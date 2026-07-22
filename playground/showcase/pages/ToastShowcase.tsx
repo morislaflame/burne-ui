@@ -1,3 +1,5 @@
+import { ToastPortalContainerDemo } from "../demos/toast/ToastPortalContainer.demo";
+import toastPortalContainerSource from "../demos/toast/ToastPortalContainer.demo.tsx?raw";
 import { ToastClassNamesCompoundDemo, ToastClassNamesFullDemo } from "../demos/toast/ToastClassNamesFull.demo";
 import toastClassNamesFullSource from "../demos/toast/ToastClassNamesFull.demo.tsx?raw";
 import { ToastDefaultDemo } from "../demos/toast/ToastDefault.demo";
@@ -48,6 +50,14 @@ export function ToastShowcase() {
       >
         <ShowcaseDemoFromFile Demo={ToastClassNamesFullDemo} source={toastClassNamesFullSource} />
         <ShowcaseDemoFromFile Demo={ToastClassNamesCompoundDemo} source={toastClassNamesFullSource} />
+      </ShowcaseSection>
+
+
+      <ShowcaseSection
+        title="portalContainer"
+        description="Toast.Provider portalContainer — viewport mounts into a custom host."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={ToastPortalContainerDemo} source={toastPortalContainerSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

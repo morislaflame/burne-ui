@@ -11,6 +11,7 @@ export function useDrawerRootState({
   defaultOpen = false,
   onOpenChange,
   placement = DEFAULT_PLACEMENT,
+  portalContainer,
 }: UseDrawerRootStateProps & { placement?: DrawerPlacement }) {
   const [open, setOpen] = useControllableState({
     value: openProp,
@@ -41,6 +42,7 @@ export function useDrawerRootState({
     overlayRef: placeholderOverlayRef,
     panelRef: placeholderPanelRef,
     skipCloseAnimRef: placeholderSkipCloseAnimRef,
+    portalContainer,
   };
 
   return { contextValue };

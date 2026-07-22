@@ -41,6 +41,7 @@ export function PopoverRoot({
   onOpenChange,
   anchorRef,
   shouldDismiss,
+  portalContainer,
 }: PopoverProps) {
   const { contextValue } = usePopoverRootState({
     children,
@@ -52,6 +53,7 @@ export function PopoverRoot({
     onOpenChange,
     anchorRef,
     shouldDismiss,
+    portalContainer,
   });
 
   return (

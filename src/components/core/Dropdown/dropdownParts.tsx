@@ -1,11 +1,12 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useId, useState, type HTMLAttributes, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useId, useState, type PointerEvent as ReactPointerEvent, type ReactElement } from "react";
 
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
+import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
 import { useDropdownPopoverMenu } from "./dropdownAnimations";
 import {
@@ -66,40 +67,31 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
     );
 
     if (asChild && isValidElement(children)) {
-      const child = children as ReactElement<
-        HTMLAttributes<HTMLElement> & {
-          ref?: Ref<HTMLElement>;
-          onPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
-        }
-      >;
-      return cloneElement(child, {
-        ...rest,
-        ref: (node: HTMLElement | null) => {
-          mergeForwardedRef(forwardedRef, node);
-          mergeForwardedRef(triggerRef, node);
-          if (child.props.ref) mergeForwardedRef(child.props.ref, node);
-        },
-        className: cn(
-          child.props.className,
-          DROPDOWN_TRIGGER_CLASS,
-          slotClassNames.trigger,
-          className,
+      const child = children as ReactElement;
+      return cloneElement(
+        child,
+        mergeAsChildProps(
+          child,
+          {
+            ...rest,
+            className: cn(
+              DROPDOWN_TRIGGER_CLASS,
+              slotClassNames.trigger,
+              className,
+            ),
+            onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+              handlePointerDown(e);
+              onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
+            },
+            onClick: handleClick,
+            "aria-expanded": open,
+            "aria-haspopup": "menu",
+            "aria-controls": open ? contentId : undefined,
+          },
+          mergeRefs(forwardedRef, triggerRef),
+          { runBeforeChild: ["onPointerDown"] },
         ),
-        // Trigger's pointerDown runs FIRST so e.preventDefault() suppresses
-        // the child Button's own animation before it sees the event.
-        onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
-          handlePointerDown(e);
-          child.props.onPointerDown?.(e);
-          onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
-        },
-        onClick: (e: React.MouseEvent<HTMLElement>) => {
-          child.props.onClick?.(e);
-          handleClick(e);
-        },
-        "aria-expanded": open,
-        "aria-haspopup": "menu",
-        "aria-controls": open ? contentId : undefined,
-      });
+      );
     }
 
     return (
@@ -134,7 +126,14 @@ DropdownTrigger.displayName = "Dropdown.Trigger";
 
 export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
   function DropdownPopover(
-    { children, className, bodyClassName, variant: variantProp, ...rest },
+    {
+      children,
+      className,
+      bodyClassName,
+      variant: variantProp,
+      portalContainer: portalContainerProp,
+      ...rest
+    },
     forwardedRef,
   ) {
     const {
@@ -145,6 +144,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       contentId,
       subPanelRootsRef,
       popoverVariant,
+      portalContainer: portalContainerFromRoot,
     } = useDropdown();
     const slotClassNames = useDropdownClassNames();
 
@@ -170,6 +170,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         variant={panelVariant}
         anchorRef={triggerRef}
         shouldDismiss={shouldDismiss}
+        portalContainer={portalContainerProp ?? portalContainerFromRoot}
       >
         <Popover.Content
           ref={(node) => {
@@ -206,80 +207,82 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
 
 DropdownPopover.displayName = "Dropdown.Popover";
 
-export function DropdownGroup({
-  className,
-  children,
-  selectionIndicator,
-  ...rest
-}: DropdownGroupProps) {
-  const parentPreference = useDropdownIndicatorPreference();
-  const slotClassNames = useDropdownClassNames();
-  const resolvedPreference =
-    selectionIndicator !== undefined ? selectionIndicator : parentPreference;
-  const [labelId, setLabelId] = useState<string | undefined>();
+export const DropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>(
+  function DropdownGroup(
+    { className, children, selectionIndicator, ...rest },
+    ref,
+  ) {
+    const parentPreference = useDropdownIndicatorPreference();
+    const slotClassNames = useDropdownClassNames();
+    const resolvedPreference =
+      selectionIndicator !== undefined ? selectionIndicator : parentPreference;
+    const [labelId, setLabelId] = useState<string | undefined>();
 
-  const registerLabel = useCallback((id: string | undefined) => {
-    setLabelId(id);
-  }, []);
+    const registerLabel = useCallback((id: string | undefined) => {
+      setLabelId(id);
+    }, []);
 
-  return (
-    <DropdownIndicatorPreferenceProvider value={resolvedPreference}>
-      <DropdownGroupLabelRegisterProvider value={registerLabel}>
-        <div
-          role="group"
-          aria-labelledby={labelId}
-          className={cn(
-            DROPDOWN_GROUP_CLASS,
-            slotClassNames.group,
-            className,
-          )}
-          {...rest}
-        >
-          {children}
-        </div>
-      </DropdownGroupLabelRegisterProvider>
-    </DropdownIndicatorPreferenceProvider>
-  );
-}
+    return (
+      <DropdownIndicatorPreferenceProvider value={resolvedPreference}>
+        <DropdownGroupLabelRegisterProvider value={registerLabel}>
+          <div
+            ref={ref}
+            role="group"
+            aria-labelledby={labelId}
+            className={cn(
+              DROPDOWN_GROUP_CLASS,
+              slotClassNames.group,
+              className,
+            )}
+            {...rest}
+          >
+            {children}
+          </div>
+        </DropdownGroupLabelRegisterProvider>
+      </DropdownIndicatorPreferenceProvider>
+    );
+  },
+);
 
 DropdownGroup.displayName = "Dropdown.Group";
 
-export function DropdownLabel({
-  className,
-  children,
-  id: idProp,
-  ...rest
-}: DropdownLabelProps) {
-  const autoId = useId();
-  const id = idProp ?? autoId;
-  const registerLabel = useDropdownGroupLabelRegister();
-  const slotClassNames = useDropdownClassNames();
+export const DropdownLabel = forwardRef<HTMLDivElement, DropdownLabelProps>(
+  function DropdownLabel(
+    { className, children, id: idProp, ...rest },
+    ref,
+  ) {
+    const autoId = useId();
+    const id = idProp ?? autoId;
+    const registerLabel = useDropdownGroupLabelRegister();
+    const slotClassNames = useDropdownClassNames();
 
-  useLayoutEffect(() => {
-    registerLabel?.(id);
-    return () => registerLabel?.(undefined);
-  }, [id, registerLabel]);
+    useLayoutEffect(() => {
+      registerLabel?.(id);
+      return () => registerLabel?.(undefined);
+    }, [id, registerLabel]);
 
-  return (
-    <div
-      id={id}
-      className={cn(
-        DROPDOWN_LABEL_CLASS,
-        slotClassNames.label,
-        className,
-      )}
-      {...rest}
-    >
-      <Text
-        as="span"
-        variant="small"
-        className={DROPDOWN_LABEL_TEXT_CLASS}
+    return (
+      <div
+        ref={ref}
+        id={id}
+        className={cn(
+          DROPDOWN_LABEL_CLASS,
+          slotClassNames.label,
+          className,
+        )}
+        {...rest}
       >
-        {children}
-      </Text>
-    </div>
-  );
-}
+        <Text
+          as="span"
+          variant="small"
+          className={DROPDOWN_LABEL_TEXT_CLASS}
+        >
+          {children}
+        </Text>
+      </div>
+    );
+  },
+);
 
 DropdownLabel.displayName = "Dropdown.Label";
 

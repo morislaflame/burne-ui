@@ -50,32 +50,40 @@ export function FieldRoot({ classNames, ...rest }: FieldProps) {
   );
 }
 
-export function FieldHint({
-  children,
-  className,
-  status = "default",
-  as = "p",
-  variant = "small",
-  ...rest
-}: FieldHintProps) {
-  const slotClassNames = useFieldClassNames();
+export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
+  function FieldHint(
+    {
+      children,
+      className,
+      status = "default",
+      as = "p",
+      variant = "small",
+      ...rest
+    },
+    ref,
+  ) {
+    const slotClassNames = useFieldClassNames();
 
-  return (
-    <Text
-      as={as as ElementType}
-      variant={variant}
-      inheritColor={as === "span"}
-      className={fieldHintClass({
-        status,
-        className,
-        slotClass: slotClassNames.hint,
-      })}
-      {...rest}
-    >
-      {children}
-    </Text>
-  );
-}
+    return (
+      <Text
+        ref={ref}
+        as={as as ElementType}
+        variant={variant}
+        inheritColor={as === "span"}
+        className={fieldHintClass({
+          status,
+          className,
+          slotClass: slotClassNames.hint,
+        })}
+        {...rest}
+      >
+        {children}
+      </Text>
+    );
+  },
+);
+
+FieldHint.displayName = "FieldHint";
 
 export const FieldLabel = Label;
 

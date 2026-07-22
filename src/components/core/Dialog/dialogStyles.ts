@@ -75,7 +75,20 @@ export const FOOTER_BUTTON_SIZE: Record<DialogSize, ButtonSize> = {
 };
 
 export const DIALOG_NATIVE_CLASS =
-  "fixed inset-0 z-[100] m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
+  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
+
+export const DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-[100]";
+
+export const DIALOG_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-[100]";
+
+export function dialogNativeClass(contained: boolean): string {
+  return cn(
+    contained
+      ? DIALOG_NATIVE_POSITION_CONTAINED_CLASS
+      : DIALOG_NATIVE_POSITION_FIXED_CLASS,
+    DIALOG_NATIVE_CLASS,
+  );
+}
 
 export const DIALOG_OVERLAY_LIGHT_CLASS =
   "bg-[color-mix(in_oklab,var(--color-foreground)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none";

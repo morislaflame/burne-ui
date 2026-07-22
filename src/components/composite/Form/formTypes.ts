@@ -103,14 +103,14 @@ export type FormTitleProps = HTMLAttributes<HTMLHeadingElement>;
 export type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type FormActionsProps = HTMLAttributes<HTMLDivElement>;
 export type FormErrorSummaryProps = HTMLAttributes<HTMLDivElement>;
-export type FormAnnounceProps = HTMLAttributes<HTMLDivElement>;
+export type FormAnnounceProps = HTMLAttributes<HTMLDivElement> & {
+  message?: string | null;
+};
 
-export type FormFieldProps = {
+export type FormFieldProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
   rules?: FormFieldRules;
-  className?: string;
   classNames?: Pick<FormClassNames, "field">;
-  children?: ReactNode;
 };
 
 export type UseFormRootStateProps = FormProps;

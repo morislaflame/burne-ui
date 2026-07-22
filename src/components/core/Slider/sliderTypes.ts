@@ -1,4 +1,5 @@
 import type {
+  CSSProperties,
   HTMLAttributes,
   KeyboardEvent,
   PointerEvent,
@@ -107,13 +108,22 @@ type SliderCommonProps = {
   thumbClassName?: string;
   disabled?: boolean;
   className?: string;
+  style?: CSSProperties;
   classNames?: Pick<
     SliderClassNames,
     "track" | "rail" | "fill" | "thumb" | "thumbShell" | "mark"
   >;
   ariaLabel?: string;
   children?: ReactNode;
-};
+} & Omit<
+  HTMLAttributes<HTMLDivElement>,
+  | "children"
+  | "className"
+  | "style"
+  | "defaultValue"
+  | "value"
+  | "dangerouslySetInnerHTML"
+>;
 
 export type SliderSingleProps = SliderCommonProps & {
   range?: false;
@@ -171,12 +181,15 @@ export type SliderFillProps = HTMLAttributes<HTMLSpanElement>;
 
 export type SliderRailProps = HTMLAttributes<HTMLDivElement>;
 
-export type SliderCompoundThumbProps = {
+export type SliderCompoundThumbProps = Omit<
+  HTMLAttributes<HTMLButtonElement>,
+  "children"
+> & {
   thumb?: SliderThumbKind;
   children?: ReactNode;
 };
 
-export type SliderIconProps = {
+export type SliderIconProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 
@@ -187,6 +200,8 @@ export type SliderThumbButtonProps = {
   icon?: ReactNode;
   gloss?: boolean;
   thumbClassName?: string;
+  className?: string;
+  style?: CSSProperties;
   percent: number;
   orientation: SliderOrientation;
   disabled?: boolean;
@@ -200,7 +215,17 @@ export type SliderThumbButtonProps = {
   ariaDescribedBy?: string;
   onPointerDown: (e: PointerEvent<HTMLButtonElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
-};
+} & Omit<
+  HTMLAttributes<HTMLButtonElement>,
+  | "children"
+  | "className"
+  | "style"
+  | "disabled"
+  | "onPointerDown"
+  | "onKeyDown"
+  | "role"
+  | "type"
+>;
 
 export type UseSliderRootStateProps = Omit<SliderProps, "className" | "classNames">;
 

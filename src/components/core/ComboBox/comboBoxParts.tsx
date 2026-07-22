@@ -270,106 +270,112 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
 
 ComboBoxTrigger.displayName = "ComboBoxTrigger";
 
-export function ComboBoxPopover({
-  children,
-  className,
-  offset = POPOVER_DEFAULT_OFFSET,
-  ...rest
-}: ComboBoxPopoverProps) {
-  const slotClassNames = useComboBoxClassNames();
-  const {
-    open,
-    setOpen,
-    anchorRef,
-    listId,
-    labelId,
-    labelConnected,
-    placeholder,
-    menuMaxHeight,
-    options,
-    filteredValues,
-    value,
-    setValue,
-    activeValue,
-    setActiveValue,
-    setFilterQuery,
-    variant,
-  } = useComboBoxContext();
-
-  const handleValueChange = useCallback(
-    (next: string | string[]) => {
-      const v = Array.isArray(next) ? (next[0] ?? "") : next;
-      setValue(v);
-      setFilterQuery("");
-      setOpen(false);
+export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
+  function ComboBoxPopover(
+    {
+      children,
+      className,
+      offset = POPOVER_DEFAULT_OFFSET,
+      ...rest
     },
-    [setFilterQuery, setOpen, setValue],
-  );
+    ref,
+  ) {
+    const slotClassNames = useComboBoxClassNames();
+    const {
+      open,
+      setOpen,
+      anchorRef,
+      listId,
+      labelId,
+      labelConnected,
+      placeholder,
+      menuMaxHeight,
+      options,
+      filteredValues,
+      value,
+      setValue,
+      activeValue,
+      setActiveValue,
+      setFilterQuery,
+      variant,
+    } = useComboBoxContext();
 
-  const listContent =
-    children ??
-    (filteredValues.length === 0 ? (
-      <ListBox.Empty />
-    ) : (
-      filteredValues.map((v) => {
-        const opt = options.find((o) => o.value === v)!;
-        return (
-          <ListBox.Item
-            key={v}
-            value={v}
-            disabled={opt.disabled}
-            label={opt.label}
-            hint={opt.hint}
-            icon={opt.icon}
-          />
-        );
-      })
-    ));
+    const handleValueChange = useCallback(
+      (next: string | string[]) => {
+        const v = Array.isArray(next) ? (next[0] ?? "") : next;
+        setValue(v);
+        setFilterQuery("");
+        setOpen(false);
+      },
+      [setFilterQuery, setOpen, setValue],
+    );
 
-  return (
-    <Popover
-      open={open}
-      onOpenChange={setOpen}
-      side="bottom"
-      anchorRef={anchorRef}
-      variant={variant === "gloss" ? "gloss" : "default"}
-    >
-      <Popover.Content
-        matchAnchorWidth
-        unstyled
-        contentRole={undefined}
-        offset={offset}
-        className={cn(COMBOBOX_POPOVER_CLASS, slotClassNames.popover, className)}
-        {...rest}
+    const listContent =
+      children ??
+      (filteredValues.length === 0 ? (
+        <ListBox.Empty />
+      ) : (
+        filteredValues.map((v) => {
+          const opt = options.find((o) => o.value === v)!;
+          return (
+            <ListBox.Item
+              key={v}
+              value={v}
+              disabled={opt.disabled}
+              label={opt.label}
+              hint={opt.hint}
+              icon={opt.icon}
+            />
+          );
+        })
+      ));
+
+    return (
+      <Popover
+        open={open}
+        onOpenChange={setOpen}
+        side="bottom"
+        anchorRef={anchorRef}
+        variant={variant === "gloss" ? "gloss" : "default"}
       >
-        <Popover.Body
-          className={cn(
-            COMBOBOX_POPOVER_BODY_CLASS,
-            slotClassNames.popoverBody,
-          )}
+        <Popover.Content
+          ref={ref}
+          matchAnchorWidth
+          unstyled
+          contentRole={undefined}
+          offset={offset}
+          className={cn(COMBOBOX_POPOVER_CLASS, slotClassNames.popover, className)}
+          {...rest}
         >
-          <ListBox
-            listId={listId}
-            aria-labelledby={labelConnected ? labelId : undefined}
-            aria-label={labelConnected ? undefined : placeholder}
-            value={value}
-            onValueChange={handleValueChange}
-            activeValue={activeValue}
-            onActiveValueChange={setActiveValue}
-            selectionIndicator
+          <Popover.Body
             className={cn(
-              COMBOBOX_LISTBOX_CLASS,
-              slotClassNames.listBox,
+              COMBOBOX_POPOVER_BODY_CLASS,
+              slotClassNames.popoverBody,
             )}
-            style={{ maxHeight: menuMaxHeight }}
           >
-            {listContent}
-          </ListBox>
-        </Popover.Body>
-      </Popover.Content>
-    </Popover>
-  );
-}
+            <ListBox
+              listId={listId}
+              aria-labelledby={labelConnected ? labelId : undefined}
+              aria-label={labelConnected ? undefined : placeholder}
+              value={value}
+              onValueChange={handleValueChange}
+              activeValue={activeValue}
+              onActiveValueChange={setActiveValue}
+              selectionIndicator
+              className={cn(
+                COMBOBOX_LISTBOX_CLASS,
+                slotClassNames.listBox,
+              )}
+              style={{ maxHeight: menuMaxHeight }}
+            >
+              {listContent}
+            </ListBox>
+          </Popover.Body>
+        </Popover.Content>
+      </Popover>
+    );
+  },
+);
 
 ComboBoxPopover.displayName = "ComboBoxPopover";
 

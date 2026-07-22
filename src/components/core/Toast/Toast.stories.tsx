@@ -8,15 +8,19 @@ import { Button } from "@/components/core/Button";
 import { Toast, type ToastPlacement, type ToastSize, type ToastStatus } from ".";
 import { useToast } from "./useToast";
 
+const pageFrame = (Story: ComponentType) => (
+  <div
+    className="box-border flex min-h-[16rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+    style={{ backgroundColor: "var(--color-background)" }}
+  >
+    <Story />
+  </div>
+);
+
 const decorator = [
   (Story: ComponentType) => (
     <Toast.Provider>
-      <div
-        className="box-border flex min-h-[16rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
-        style={{ backgroundColor: "var(--color-background)" }}
-      >
-        <Story />
-      </div>
+      {pageFrame(Story)}
     </Toast.Provider>
   ),
 ] as const;
@@ -415,6 +419,65 @@ export const Sizes: Story = {
             {size}
           </Button>
         ))}
+      </div>
+    );
+  },
+};
+
+// ─── portalContainer (3.1) ────────────────────────────────────────────────────
+
+function ToastPortalContainerInner() {
+  const { toast } = useToast();
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() =>
+        toast.show({
+          status: "success",
+          title: "Inside custom host",
+          description: "This toast is portaled into the dashed container.",
+        })
+      }
+    >
+      Show toast in host
+    </Button>
+  );
+}
+
+export const PortalContainer: Story = {
+  name: "portalContainer",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Toast.Provider portalContainer` mounts the toast viewport into a custom host instead of `document.body`.",
+      },
+    },
+  },
+  decorators: [
+    (Story: ComponentType) => pageFrame(Story),
+  ],
+  render: function PortalContainerDemo() {
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+    return (
+      <div className="flex w-full max-w-lg flex-col gap-mid">
+        <p className="text-sm text-muted">
+          Toasts portal into the box below (not <code className="text-foreground">document.body</code>).
+        </p>
+        <div
+          ref={setContainer}
+          className="relative flex h-64 flex-col items-center justify-center gap-mid overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          style={{ transform: "translateZ(0)" }}
+        >
+          <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+          {container ? (
+            <Toast.Provider portalContainer={container} defaultPlacement="bottom-center">
+              <ToastPortalContainerInner />
+            </Toast.Provider>
+          ) : null}
+        </div>
       </div>
     );
   },

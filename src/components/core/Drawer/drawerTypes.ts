@@ -32,15 +32,17 @@ export type DrawerProps = {
   /** Slide direction (structural, used in context). */
   placement?: DrawerPlacement;
   children?: ReactNode;
+  /** DOM node for the portal. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   classNames?: DrawerClassNames;
 };
 
-export type DrawerPanelProps = {
+export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
   extent?: DrawerExtent;
   variant?: DrawerVariant;
-  className?: string;
   themeAnchor?: HTMLElement | null;
-  children?: ReactNode;
+  /** Overrides Root `portalContainer`. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type DrawerTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -61,6 +63,8 @@ export type DrawerContextValue = {
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
   skipCloseAnimRef: React.RefObject<boolean>;
+  /** Portal mount node from Root; Panel may override via its own prop. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type DrawerClassNamesProviderProps = {
@@ -89,7 +93,7 @@ export type DrawerPanelSegment =
 
 export type UseDrawerRootStateProps = Pick<
   DrawerProps,
-  "open" | "defaultOpen" | "onOpenChange"
+  "open" | "defaultOpen" | "onOpenChange" | "portalContainer"
 >;
 
 export type UseDrawerPanelStateProps = {
@@ -104,10 +108,13 @@ export type UseDrawerModalMotionProps = {
   variant: DrawerVariant;
   placement: DrawerPlacement;
   backdropIsDismissable: boolean;
+  /** When true, open with `show()` + absolute positioning inside a custom portal host. */
+  contained?: boolean;
 };
 
 export type DrawerPortalShellProps = {
   className?: string;
+  style?: React.CSSProperties;
   variant: DrawerVariant;
   placement: DrawerPlacement;
   extent: DrawerExtent;
@@ -121,10 +128,17 @@ export type DrawerPortalShellProps = {
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
+  panelForwardedRef?: React.ForwardedRef<HTMLDivElement>;
+  panelRest?: Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "className" | "style" | "children" | "ref"
+  >;
   bindGlossPanelRef: (node: HTMLDivElement | null) => void;
   onBackdropMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDialogClose: () => void;
   onDialogCancel: (e: React.SyntheticEvent<HTMLDialogElement>) => void;
+  /** Custom portal host — use absolute positioning instead of fixed/top-layer. */
+  contained?: boolean;
 };
 
 export type DrawerTriggerInternalProps = {

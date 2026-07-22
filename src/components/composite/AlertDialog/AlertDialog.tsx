@@ -31,6 +31,7 @@ export function AlertDialogRoot({
   variant = "default",
   size = "base",
   classNames,
+  portalContainer,
 }: AlertDialogProps) {
   const state = useAlertDialogRootState({
     open,
@@ -39,6 +40,7 @@ export function AlertDialogRoot({
     status,
     variant,
     size,
+    portalContainer,
   });
 
   return (

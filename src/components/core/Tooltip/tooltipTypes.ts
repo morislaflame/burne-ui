@@ -39,6 +39,8 @@ export type TooltipProps = {
   side?: TooltipSide;
   icon?: ReactNode;
   showIcon?: boolean;
+  /** DOM node for the portal. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
   classNames?: TooltipClassNames;
 };
 
@@ -50,6 +52,8 @@ export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement> & {
 export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
   showArrow?: boolean;
   offset?: number;
+  /** Overrides Root `portalContainer`. Default: `document.body`. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement>;
@@ -88,6 +92,8 @@ export type TooltipContextValue = {
   triggerRef: React.RefObject<HTMLElement | null>;
   scheduleShow: () => void;
   hide: () => void;
+  /** Portal mount node from Root; Content may override via its own prop. */
+  portalContainer?: HTMLElement | null;
 };
 
 export type TooltipBodyContextValue = {
