@@ -66,6 +66,8 @@ export {
   type ExpandableDescriptionProps,
   type ExpandableChevronProps,
   type ExpandablePanelProps,
+  type ExpandableSize,
+  type ExpandableVariant,
   type ExpandableClassNames,
 } from "@/components/core/Expandable";
 export {
@@ -106,12 +108,21 @@ export {
   Form,
   type FormProps,
   type FormSectionProps,
+  type FormTitleProps,
+  type FormDescriptionProps,
+  type FormActionsProps,
+  type FormErrorSummaryProps,
+  type FormAnnounceProps,
+  type FormFieldProps,
   type FormClassNames,
   useFormField,
   type FormValues,
   type FormFieldRules,
   type FormResolver,
   type FormValidateMode,
+  type UseFormControlPropsOptions,
+  type UseFormFieldBindingOptions,
+  type FormBindingContextValue,
 } from "@/components/composite/Form";
 export {
   CheckboxGroup,
@@ -124,6 +135,7 @@ export {
   type CheckboxGroupLabelProps,
   type CheckboxGroupLegendProps,
   type CheckboxGroupListProps,
+  type CheckboxGroupContextValue,
 } from "@/components/composite/CheckboxGroup";
 export {
   RadioGroup,
@@ -135,6 +147,7 @@ export {
   type RadioGroupLabelProps,
   type RadioGroupLegendProps,
   type RadioGroupListProps,
+  type RadioGroupContextValue,
 } from "@/components/composite/RadioGroup";
 export {
   ButtonGroup,
@@ -150,6 +163,7 @@ export {
   type ToggleButtonGroupType,
   type ToggleButtonGroupOrientation,
   type ToggleButtonGroupClassNames,
+  type ToggleButtonGroupContextValue,
 } from "@/components/composite/ToggleButtonGroup";
 export {
   AlertDialog,
@@ -158,28 +172,37 @@ export {
   primaryButtonStatusForAlertTone,
   useAlertDialog,
   type AlertDialogProps,
+  type AlertDialogPanelProps,
+  type AlertDialogTriggerProps,
   type AlertDialogSize,
   type AlertDialogClassNames,
   type AlertDialogHeaderProps,
   type AlertDialogIndicatorProps,
+  type AlertDialogHeadingBlockProps,
   type AlertDialogTitleProps,
   type AlertDialogDescriptionProps,
   type AlertDialogBodyProps,
   type AlertDialogFooterProps,
   type AlertDialogCloseProps,
+  type AlertDialogContentProps,
+  type AlertDialogContextValue,
 } from "@/components/composite/AlertDialog";
 export {
   Dialog,
   type DialogProps,
+  type DialogPanelProps,
+  type DialogTriggerProps,
   type DialogSize,
   type DialogVariant,
   type DialogClassNames,
   type DialogHeaderProps,
+  type DialogHeadingBlockProps,
   type DialogTitleProps,
   type DialogDescriptionProps,
   type DialogBodyProps,
   type DialogFooterProps,
   type DialogCloseProps,
+  type DialogContentProps,
 } from "@/components/core/Dialog";
 export {
   Toast,
@@ -207,6 +230,8 @@ export {
 export {
   Drawer,
   type DrawerProps,
+  type DrawerPanelProps,
+  type DrawerTriggerProps,
   type DrawerPlacement,
   type DrawerExtent,
   type DrawerVariant,
@@ -220,6 +245,7 @@ export {
   type DrawerBodyProps,
   type DrawerFooterProps,
   type DrawerCloseProps,
+  type DrawerContentProps,
 } from "@/components/core/Drawer";
 export {
   Field,
@@ -246,6 +272,7 @@ export {
   Label,
   type LabelProps,
   type LabelClassNames,
+  type LabelComponent,
   type FieldLabelContextValue,
 } from "@/components/core/Label";
 export {
@@ -255,6 +282,7 @@ export {
   type LinkIconPosition,
   type LinkIconProps,
   type LinkClassNames,
+  type LinkComponent,
 } from "@/components/core/Link";
 export {
   Loading,
@@ -294,6 +322,7 @@ export {
   type ComboBoxProps,
   type ComboBoxSimpleProps,
   type ComboBoxHintProps,
+  type ComboBoxErrorProps,
   type ComboBoxInputGroupProps,
   type ComboBoxInputProps,
   type ComboBoxTriggerProps,
@@ -307,6 +336,7 @@ export {
   type SelectProps,
   type SelectSimpleProps,
   type SelectHintProps,
+  type SelectErrorProps,
   type SelectTriggerGroupProps,
   type SelectValueProps,
   type SelectTriggerProps,
@@ -317,13 +347,28 @@ export {
   ListBox,
   useListBox,
   type ListBoxProps,
+  type ListBoxSectionProps,
+  type ListBoxHeaderProps,
+  type ListBoxSeparatorProps,
+  type ListBoxEmptyProps,
   type ListBoxItemProps,
+  type ListBoxLabelProps,
+  type ListBoxHintProps,
+  type ListBoxIconProps,
+  type ListBoxItemIndicatorProps,
   type ListBoxSize,
+  type ListBoxVariant,
   type ListBoxClassNames,
 } from "@/components/core/ListBox";
 export {
   Checkbox,
   type CheckboxProps,
+  type CheckboxControlProps,
+  type CheckboxIndicatorProps,
+  type CheckboxContentProps,
+  type CheckboxLabelProps,
+  type CheckboxHintProps,
+  type CheckboxErrorProps,
   type CheckboxVariant,
   type CheckboxSize,
   type CheckboxClassNames,
@@ -331,6 +376,9 @@ export {
 export {
   SelectionIndicator,
   type SelectionIndicatorProps,
+  type SelectionIndicatorClassNames,
+  type SelectionIndicatorFillProps,
+  type SelectionIndicatorMarkProps,
   type SelectionIndicatorSize,
   type SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
@@ -349,6 +397,7 @@ export {
   type RadioContentProps,
   type RadioLabelProps,
   type RadioHintProps,
+  type RadioErrorProps,
   type RadioSize,
   type RadioVariant,
   type RadioClassNames,
@@ -356,11 +405,19 @@ export {
 export {
   Switch,
   type SwitchControlProps,
+  type SwitchTrackProps,
+  type SwitchFillProps,
+  type SwitchThumbProps,
+  type SwitchIconProps,
+  type SwitchIconWhen,
   type SwitchSize,
   type SwitchLabelPosition,
+  type SwitchContentProps,
+  type SwitchLabelProps,
+  type SwitchHintProps,
+  type SwitchErrorProps,
   type SwitchProps,
   type SwitchSimpleProps,
-  type SwitchHintProps,
   type SwitchClassNames,
 } from "@/components/core/Switch";
 export {
@@ -406,6 +463,7 @@ export {
   type SliderHeaderProps,
   type SliderValueProps,
   type SliderHintProps,
+  type SliderErrorProps,
   type SliderClassNames,
 } from "@/components/core/Slider";
 export {
@@ -416,7 +474,11 @@ export {
   type MeterProps,
   type MeterHeaderProps,
   type MeterValueProps,
+  type MeterHintProps,
+  type MeterErrorProps,
   type MeterClassNames,
+  type MeterDisplayState,
+  type MeterFieldContextValue,
 } from "@/components/core/Meter";
 export {
   ProgressBar,
@@ -428,6 +490,9 @@ export {
   type ProgressBarHeaderProps,
   type ProgressBarValueProps,
   type ProgressBarHintProps,
+  type ProgressBarErrorProps,
+  type ProgressBarDisplayState,
+  type ProgressBarFieldContextValue,
 } from "@/components/core/ProgressBar";
 export {
   SearchInput,
@@ -454,6 +519,7 @@ export {
   Avatar,
   type AvatarProps,
   type AvatarClassNames,
+  type AvatarVariant,
   type AvatarSize,
   type AvatarImageProps,
   type AvatarFallbackProps,
@@ -489,7 +555,10 @@ export {
   type PopoverArrowProps,
   type PopoverSide,
   type PopoverSize,
+  type PopoverVariant,
   type PopoverContentGap,
+  type FloatingAlign,
+  type PopoverAlign,
 } from "@/components/core/Popover";
 export {
   Breadcrumbs,
@@ -552,6 +621,7 @@ export {
   type BadgeSize,
   type BadgePlacement,
   type BadgeIconPosition,
+  type BadgeInlineIconPosition,
   type BadgeClassNames,
   type BadgeAnchorProps,
 } from "@/components/core/Badge";
@@ -729,6 +799,7 @@ export {
   type DisclosureProps,
   type DisclosureGroupProps,
   type DisclosureTriggerProps,
+  type DisclosureHandleProps,
   type DisclosureContentProps,
   type DisclosureVariant,
   type DisclosureSize,
