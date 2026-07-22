@@ -220,6 +220,57 @@ export const Validation: Story = {
   render: () => <ValidationForm />,
 };
 
+/** Review 3.9: ErrorSummary render prop lists field errors. */
+export const ErrorSummaryRender: Story = {
+  name: "ErrorSummary render prop",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Form` prop `errorSummary` (or `Form.ErrorSummary` children) accepts `(entries) => ReactNode` for a custom error list.",
+      },
+    },
+  },
+  render: () => (
+    <Form
+      aria-label="Form with custom error summary"
+      validateMode="onSubmit"
+      classNames={{ errorSummary: "not-sr-only mb-base rounded-base border border-danger/30 bg-danger/5 p-base text-danger" }}
+      rules={{
+        email: { required: "Email is required" },
+        name: { required: "Name is required" },
+      }}
+      errorSummary={(entries) => (
+        <ul className="list-disc ps-mid">
+          {entries.map(([field, message]) => (
+            <li key={field}>
+              <a href={`#${field}`} className="underline">
+                {message}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      onSubmit={() => undefined}
+    >
+      <Form.Title>Profile</Form.Title>
+      <Form.Section>
+        <Form.Field name="name">
+          <Input required name="name" id="name" label="Name" />
+        </Form.Field>
+        <Form.Field name="email">
+          <Input required name="email" id="email" label="Email" autoComplete="email" />
+        </Form.Field>
+      </Form.Section>
+      <Form.Actions>
+        <Button type="submit" variant="primary">
+          Submit
+        </Button>
+      </Form.Actions>
+    </Form>
+  ),
+};
+
 function LoginForm() {
   return (
     <Surface variant="secondary" padding="mid" className="w-full max-w-sm">

@@ -23,8 +23,10 @@ export type LinkClassNames = {
   iconEnd?: string;
 };
 
-export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"> & {
-  href: string;
+type LinkSharedProps = Omit<
+  AnchorHTMLAttributes<HTMLAnchorElement>,
+  "children" | "href"
+> & {
   children?: ReactNode;
   size?: LinkSize;
   underline?: boolean;
@@ -35,6 +37,17 @@ export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"
   defaultIconPosition?: LinkIconPosition;
   classNames?: LinkClassNames;
 };
+
+export type LinkProps =
+  | (LinkSharedProps & {
+      /** Merge Link styles onto the single child (router `Link`, custom `<a>`). */
+      asChild: true;
+      href?: string;
+    })
+  | (LinkSharedProps & {
+      asChild?: false;
+      href: string;
+    });
 
 export type LinkIconProps = {
   position?: LinkIconPosition;
@@ -53,7 +66,7 @@ export type ResolvedLinkCompoundBody = {
 };
 
 export type UseLinkRootStateProps = Pick<
-  LinkProps,
+  LinkSharedProps,
   | "size"
   | "underline"
   | "icon"
@@ -74,8 +87,7 @@ export type LinkClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type LinkAnchorBodyProps = {
-  href: string;
+export type LinkBodyContentProps = {
   size: LinkSize;
   underline: boolean;
   textVariant: import("@/components/core/Text").TextVariant;
@@ -86,6 +98,10 @@ export type LinkAnchorBodyProps = {
   endIconMuted: boolean;
   usesDefaultAtStart: boolean;
   usesDefaultAtEnd: boolean;
+};
+
+export type LinkAnchorBodyProps = LinkBodyContentProps & {
+  href: string;
   className?: string;
   setAnchorRef: (node: HTMLAnchorElement | null) => void;
   handlePointerEnter: (event: PointerEvent<HTMLAnchorElement>) => void;

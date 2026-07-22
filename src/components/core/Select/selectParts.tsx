@@ -21,6 +21,7 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
       side = "bottom",
       align,
       offset = POPOVER_DEFAULT_OFFSET,
+      listBoxProps,
       ...rest
     },
     ref,
@@ -43,6 +44,13 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
       setActiveValue,
       variant,
     } = useSelectContext();
+
+    const {
+      className: listBoxClassName,
+      classNames: listBoxSlotClassNames,
+      style: listBoxStyle,
+      ...listBoxRest
+    } = listBoxProps ?? {};
 
     const handleValueChange = useCallback(
       (next: string | string[]) => {
@@ -98,6 +106,8 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
             )}
           >
             <ListBox
+              selectionIndicator
+              {...listBoxRest}
               listId={listId}
               aria-labelledby={labelConnected ? labelId : undefined}
               aria-label={labelConnected ? undefined : placeholder}
@@ -105,12 +115,22 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
               onValueChange={handleValueChange}
               activeValue={activeValue}
               onActiveValueChange={setActiveValue}
-              selectionIndicator
+              classNames={{
+                item: slotClassNames.listBoxItem,
+                label: slotClassNames.listBoxLabel,
+                hint: slotClassNames.listBoxHint,
+                icon: slotClassNames.listBoxIcon,
+                empty: slotClassNames.listBoxEmpty,
+                header: slotClassNames.listBoxHeader,
+                headerText: slotClassNames.listBoxHeaderText,
+                ...listBoxSlotClassNames,
+              }}
               className={cn(
                 SELECT_LISTBOX_CLASS,
                 slotClassNames.listBox,
+                listBoxClassName,
               )}
-              style={{ maxHeight: menuMaxHeight }}
+              style={{ maxHeight: menuMaxHeight, ...listBoxStyle }}
             >
               {listContent}
             </ListBox>

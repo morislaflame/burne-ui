@@ -37,6 +37,7 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     disabled,
   onSubmit,
   onSubmitError,
+  errorSummary,
   ...rest
 }, ref,
 ) {
@@ -79,7 +80,7 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
           {...rest}
         >
           <FormAnnounce message={announce} />
-          <FormErrorSummary />
+          <FormErrorSummary>{errorSummary}</FormErrorSummary>
           {children}
         </form>
         </FormShellProvider>

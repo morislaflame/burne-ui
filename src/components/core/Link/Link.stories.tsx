@@ -208,3 +208,26 @@ export const CustomClassNames: Story = {
     </Link>
   ),
 };
+
+/** Review 3.8: Link styles on a custom anchor via asChild. */
+export const AsChild: Story = {
+  name: "asChild — custom anchor",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`asChild` merges Link styles onto a single child (router `Link`, custom `<a>`). `href` is optional — the child owns navigation.",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col items-start gap-mid">
+      <Link asChild underline showDefaultIcon>
+        <a href="#docs">Styled router-ready link</a>
+      </Link>
+      <Link asChild icon={<IoDocumentTextOutline aria-hidden />} iconPosition="start">
+        <a href="#file">With start icon</a>
+      </Link>
+    </div>
+  ),
+};

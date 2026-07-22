@@ -77,7 +77,7 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 
 ### Variant
 
-Semantic variants (`danger`, `success`, `info`, `warning`) автоматически показывают status icon через `SEMANTIC_STATUS_ICONS` (react-icons/io5), если не передан кастомный `icon`.
+Semantic variants (`danger`, `success`, `info`, `warning`) автоматически показывают status icon через `SEMANTIC_STATUS_ICONS` (react-icons/io5), если не передан кастомный `icon`. Дефолтный SVG принимает слот `classNames.icon`.
 
 ### Surface
 

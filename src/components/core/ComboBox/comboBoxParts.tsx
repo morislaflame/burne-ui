@@ -280,6 +280,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       side = "bottom",
       align,
       offset = POPOVER_DEFAULT_OFFSET,
+      listBoxProps,
       ...rest
     },
     ref,
@@ -303,6 +304,13 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       setFilterQuery,
       variant,
     } = useComboBoxContext();
+
+    const {
+      className: listBoxClassName,
+      classNames: listBoxSlotClassNames,
+      style: listBoxStyle,
+      ...listBoxRest
+    } = listBoxProps ?? {};
 
     const handleValueChange = useCallback(
       (next: string | string[]) => {
@@ -359,6 +367,8 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
             )}
           >
             <ListBox
+              selectionIndicator
+              {...listBoxRest}
               listId={listId}
               aria-labelledby={labelConnected ? labelId : undefined}
               aria-label={labelConnected ? undefined : placeholder}
@@ -366,12 +376,22 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
               onValueChange={handleValueChange}
               activeValue={activeValue}
               onActiveValueChange={setActiveValue}
-              selectionIndicator
+              classNames={{
+                item: slotClassNames.listBoxItem,
+                label: slotClassNames.listBoxLabel,
+                hint: slotClassNames.listBoxHint,
+                icon: slotClassNames.listBoxIcon,
+                empty: slotClassNames.listBoxEmpty,
+                header: slotClassNames.listBoxHeader,
+                headerText: slotClassNames.listBoxHeaderText,
+                ...listBoxSlotClassNames,
+              }}
               className={cn(
                 COMBOBOX_LISTBOX_CLASS,
                 slotClassNames.listBox,
+                listBoxClassName,
               )}
-              style={{ maxHeight: menuMaxHeight }}
+              style={{ maxHeight: menuMaxHeight, ...listBoxStyle }}
             >
               {listContent}
             </ListBox>

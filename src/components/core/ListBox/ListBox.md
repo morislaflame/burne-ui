@@ -142,7 +142,7 @@ Reduced motion: skip GSAP.
 1. **`className` на root** — мерж с `classNames.root` на `ListBox`.
 2. **`classNames`** — все слоты через `ListBoxClassNamesProvider`.
 
-Подчасти (`ListBox.Item`, `ListBox.Header`, …) — **`className`** поверх слота.
+Подчасти (`ListBox.Item`, `ListBox.Header`, …) — **`className`** поверх слота. У `ListBox.Header` — также `textClassName` для внутреннего `Text` (мержится после `classNames.headerText`).
 
 ### Слоты `ListBoxClassNames`
 
@@ -154,7 +154,7 @@ Reduced motion: skip GSAP.
 | `headerText` | `Text` в header | Типографика секции |
 | `separator` | Divider | Margin/border |
 | `empty` | Empty state | Центрирование, muted |
-| `item` | Item button | Rounded, active/hover |
+| `item` | Item button | Rounded, active/hover (**мержится после** grid-классов строки — можно перебить раскладку) |
 | `label` | Item label | Font weight, color |
 | `hint` | Item hint | Muted secondary |
 | `icon` | Trailing icon | Размер иконки |

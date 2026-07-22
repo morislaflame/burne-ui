@@ -23,9 +23,11 @@ export type TimeFieldClassNames = {
   root?: string;
   label?: string;
   shell?: string;
+  shellInner?: string;
   prefix?: string;
   suffix?: string;
   segments?: string;
+  segmentGroup?: string;
   segment?: string;
   segmentSeparator?: string;
   keyboardInput?: string;
@@ -68,6 +70,8 @@ export type TimeFieldControlProps = Omit<
   compact?: boolean;
   prefix?: ReactNode;
   suffix?: ReactNode;
+  /** Separator between hour/minute/second segments. Default: `":"`. */
+  segmentSeparator?: ReactNode;
   onPointerDown?: PointerEventHandler<HTMLFieldSetElement>;
 };
 
@@ -89,6 +93,8 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
   compact?: boolean;
   prefix?: ReactNode;
   suffix?: ReactNode;
+  /** Separator between hour/minute/second segments. Default: `":"`. */
+  segmentSeparator?: ReactNode;
   classNames?: TimeFieldClassNames;
 };
 

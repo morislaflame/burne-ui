@@ -64,6 +64,8 @@ export type TableHeaderProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "ch
   children?: ReactNode | ((column: any) => ReactNode);
 };
 
+export type TableHeaderRowProps = HTMLAttributes<HTMLTableRowElement>;
+
 export type TableColumnRenderProps = {
   sortDirection?: SortDirection;
 };
@@ -71,6 +73,8 @@ export type TableColumnRenderProps = {
 export type TableColumnSortIconRenderProps = {
   sortDirection?: SortDirection;
 };
+
+export type TableLabelProps = HTMLAttributes<HTMLSpanElement>;
 
 export type TableColumnProps = Omit<ThHTMLAttributes<HTMLTableCellElement>, "children"> & {
   id?: string;

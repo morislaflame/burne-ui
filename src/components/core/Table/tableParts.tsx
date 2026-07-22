@@ -1,10 +1,10 @@
-import { forwardRef, useCallback, useMemo, type MouseEvent, type ReactNode } from "react";
+import { Children, forwardRef, isValidElement, useCallback, useMemo, type MouseEvent, type ReactNode } from "react";
 
 import { columnAriaSort, rowAriaSelected } from "./tableA11y";
-import { resolveColumnSortDirection, resolveNextSortDescriptor, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
+import { hasTableLabel, resolveColumnSortDirection, resolveNextSortDescriptor, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
 import { TableSortChevron } from "./tableAnimations";
 import { TableContentProvider, TableRowProvider, useTableClassNames, useTableContent, useTableRow, useTableVariant } from "./tableContext";
-import { TABLE_BODY_EMPTY_CELL_CLASS, TABLE_COLUMN_INNER_CLASS, TABLE_COLUMN_LABEL_CLASS, TABLE_FOOTER_CLASS, TABLE_HEADER_ROW_VARIANT_CLASS, TABLE_SCROLL_CONTAINER_CLASS, tableCellClass, tableColumnClass, tableContentClass, tableRowClass } from "./tableStyles";
+import { TABLE_BODY_EMPTY_CELL_CLASS, TABLE_COLUMN_INNER_CLASS, TABLE_FOOTER_CLASS, TABLE_HEADER_ROW_VARIANT_CLASS, TABLE_SCROLL_CONTAINER_CLASS, tableCellClass, tableColumnClass, tableColumnLabelClass, tableContentClass, tableRowClass } from "./tableStyles";
 import type {
   TableBodyProps,
   TableCellProps,
@@ -13,6 +13,8 @@ import type {
   TableContentProps,
   TableFooterProps,
   TableHeaderProps,
+  TableHeaderRowProps,
+  TableLabelProps,
   TableRowContextValue,
   TableRowProps,
   TableScrollContainerProps,
@@ -20,6 +22,14 @@ import type {
 import { useTableContentState } from "./useTableContentState";
 
 import { cn } from "@/utils/cn";
+
+function hasTableHeaderRow(children: ReactNode): boolean {
+  return Children.toArray(children).some(
+    (child) =>
+      isValidElement(child) &&
+      (child.type as { displayName?: string }).displayName === "Table.HeaderRow",
+  );
+}
 
 export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
   function TableScrollContainer({ className, tabIndex = 0, ...rest }, ref) {
@@ -90,9 +100,29 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
 
 TableContent.displayName = "TableContent";
 
+export const TableHeaderRow = forwardRef<HTMLTableRowElement, TableHeaderRowProps>(
+  function TableHeaderRow({ className, ...rest }, ref) {
+    const variant = useTableVariant();
+    const slotClassNames = useTableClassNames();
+
+    return (
+      <tr
+        ref={ref}
+        className={cn(
+          TABLE_HEADER_ROW_VARIANT_CLASS[variant],
+          slotClassNames.headerRow,
+          className,
+        )}
+        {...rest}
+      />
+    );
+  },
+);
+
+TableHeaderRow.displayName = "Table.HeaderRow";
+
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
   function TableHeader({ columns, children, className, ...rest }, ref) {
-    const variant = useTableVariant();
     const slotClassNames = useTableClassNames();
 
     const content =
@@ -100,26 +130,44 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
         ? columns.map((col) => (children as (c: unknown) => ReactNode)(col))
         : (children as ReactNode);
 
+    const rows = hasTableHeaderRow(content) ? (
+      content
+    ) : (
+      <TableHeaderRow>{content}</TableHeaderRow>
+    );
+
     return (
       <thead
         ref={ref}
         className={cn(slotClassNames.header, className)}
         {...rest}
       >
-        <tr
-          className={cn(
-            TABLE_HEADER_ROW_VARIANT_CLASS[variant],
-            slotClassNames.headerRow,
-          )}
-        >
-          {content}
-        </tr>
+        {rows}
       </thead>
     );
   },
 );
 
 TableHeader.displayName = "TableHeader";
+
+export const TableLabel = forwardRef<HTMLSpanElement, TableLabelProps>(
+  function TableLabel({ className, ...rest }, ref) {
+    const slotClassNames = useTableClassNames();
+
+    return (
+      <span
+        ref={ref}
+        className={tableColumnLabelClass({
+          slotClass: slotClassNames.columnLabel,
+          className,
+        })}
+        {...rest}
+      />
+    );
+  },
+);
+
+TableLabel.displayName = "Table.Label";
 
 export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
   function TableColumn(
@@ -155,6 +203,12 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
         ? (children as (p: TableColumnRenderProps) => ReactNode)({ sortDirection })
         : children;
 
+    const labelBody = hasTableLabel(content) ? (
+      content
+    ) : (
+      <TableLabel>{content}</TableLabel>
+    );
+
     let sortIndicator: ReactNode = null;
     if (allowsSorting) {
       if (sortIcon !== undefined) {
@@ -188,14 +242,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
             slotClassNames.columnInner,
           )}
         >
-          <span
-            className={cn(
-              TABLE_COLUMN_LABEL_CLASS,
-              slotClassNames.columnLabel,
-            )}
-          >
-            {content}
-          </span>
+          {labelBody}
           {sortIndicator}
         </span>
       </th>

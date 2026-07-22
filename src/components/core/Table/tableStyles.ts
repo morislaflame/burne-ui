@@ -173,6 +173,16 @@ export function tableColumnClass({
   );
 }
 
+export function tableColumnLabelClass({
+  slotClass,
+  className,
+}: {
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(TABLE_COLUMN_LABEL_CLASS, slotClass, className);
+}
+
 export function tableRowClass({
   variant,
   isToned,

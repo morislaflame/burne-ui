@@ -61,7 +61,9 @@ const options = [
 
 ### `ComboBoxClassNames`
 
-`root`, `label`, `inputGroup`, `input`, `trigger`, `triggerIcon`, `popover`, `popoverBody`, `listBox`, `hint`, `error`.
+`root`, `label`, `inputGroup`, `input`, `trigger`, `triggerIcon`, `popover`, `popoverBody`, `listBox`, `listBoxItem`, `listBoxLabel`, `listBoxHint`, `listBoxIcon`, `listBoxEmpty`, `listBoxHeader`, `listBoxHeaderText`, `hint`, `error`.
+
+`ComboBox.Popover` принимает `listBoxProps` (пропы внутреннего `ListBox`, кроме controlled selection / `listId` / `children`) и мержит вложенные `listBox*` слоты в `ListBox.classNames`.
 
 ### Compound-подчасти
 
@@ -215,6 +217,8 @@ ListBox items — собственные selection animations (см. ListBox.md)
 | `popover` | `Popover.Content` (portal) | z-index, shadow панели |
 | `popoverBody` | `Popover.Body` | Padding внутри popover |
 | `listBox` | `ListBox` root | Scroll, max-height area, gap пунктов |
+| `listBoxItem` / `listBoxLabel` / `listBoxHint` / `listBoxIcon` | Слоты внутреннего ListBox | Стиль пунктов меню |
+| `listBoxEmpty` / `listBoxHeader` / `listBoxHeaderText` | Empty / Header ListBox | Пустое состояние и секции |
 | `hint` / `error` | `Field.Hint` / `Field.Error` | Подсказка / ошибка |
 
 `variant`, `status`, `size` наследуют токены Input. Popover получает `variant="gloss"` автоматически, если combobox gloss.
@@ -277,7 +281,13 @@ Simple рендерит фиксированную разметку: `Label` →
 </ComboBox>
 ```
 
-Кастомный список: передайте `children` в `ComboBox.Popover` вместо дефолтного map по `options` — стили пунктов через `ListBox.Item` и `classNames.listBox`.
+Кастомный список: передайте `children` в `ComboBox.Popover` вместо дефолтного map по `options` — стили пунктов через `classNames.listBoxItem` / `listBoxProps.classNames`, либо `ListBox.Item`.
+
+```tsx
+<ComboBox.Popover
+  listBoxProps={{ classNames: { item: "rounded-lg" } }}
+/>
+```
 
 `ComboBox.Label` — вложенные `classNames` компонента `Label`, как у Input.
 

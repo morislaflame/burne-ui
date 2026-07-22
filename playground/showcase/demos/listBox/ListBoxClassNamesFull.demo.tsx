@@ -14,7 +14,7 @@ export function ListBoxClassNamesFullDemo() {
       }}
     >
       <ListBox.Section>
-        <ListBox.Header>Available languages</ListBox.Header>
+        <ListBox.Header textClassName="tracking-wide">Available languages</ListBox.Header>
         <ListBox.Item value="ru" label="Russian" hint="Cyrillic" />
         <ListBox.Item value="en" label="English" hint="Latin script" />
         <ListBox.Item value="de" label="Deutsch" disabled hint="Soon" />

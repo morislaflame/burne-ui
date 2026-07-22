@@ -4,6 +4,8 @@ import { TableBasicDemo } from "../demos/table/TableBasic.demo";
 import tableBasicSource from "../demos/table/TableBasic.demo.tsx?raw";
 import { TableClassNamesFullDemo } from "../demos/table/TableClassNamesFull.demo";
 import tableClassNamesFullSource from "../demos/table/TableClassNamesFull.demo.tsx?raw";
+import { TableColumnLabelDemo } from "../demos/table/TableColumnLabel.demo";
+import tableColumnLabelSource from "../demos/table/TableColumnLabel.demo.tsx?raw";
 import { TableCustomSortIconDemo } from "../demos/table/TableCustomSortIcon.demo";
 import tableCustomSortIconSource from "../demos/table/TableCustomSortIcon.demo.tsx?raw";
 import { TableGlossDemo } from "../demos/table/TableGloss.demo";
@@ -45,6 +47,17 @@ export function TableShowcase() {
           align="stretch"
           Demo={TableCustomSortIconDemo}
           source={tableCustomSortIconSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Column Label"
+        description="Table.Label styles header text (color, weight). Plain Column children wrap automatically."
+      >
+        <ShowcaseDemoFromFile
+          align="stretch"
+          Demo={TableColumnLabelDemo}
+          source={tableColumnLabelSource}
         />
       </ShowcaseSection>
 
@@ -90,7 +103,7 @@ export function TableShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="ScrollContainer, Content, Header, Column, Body, Row and Cell — table slots."
+            description="ScrollContainer, Content, Header, HeaderRow, Column, Label, Body, Row and Cell — table slots."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Data">

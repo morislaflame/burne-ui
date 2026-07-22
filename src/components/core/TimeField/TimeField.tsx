@@ -41,6 +41,7 @@ export function TimeFieldRoot({
   compact = false,
   prefix,
   suffix,
+  segmentSeparator,
   ...rest
 }: TimeFieldProps) {
   const state = useTimeFieldRootState({
@@ -77,6 +78,7 @@ export function TimeFieldRoot({
         compact: state.compact,
         prefix,
         suffix,
+        segmentSeparator,
       }}
     />
   );

@@ -93,6 +93,8 @@ export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> & 
   size?: ComponentSize;
   onSubmit?: (values: FormValues) => void | Promise<void>;
   onSubmitError?: (errors: Record<string, string>) => void;
+  /** Passed to the auto-rendered `Form.ErrorSummary` (`children` / render prop). */
+  errorSummary?: ReactNode | ((entries: Array<[string, string]>) => ReactNode);
 };
 
 export type FormSectionProps = HTMLAttributes<HTMLDivElement> & {
@@ -102,7 +104,13 @@ export type FormSectionProps = HTMLAttributes<HTMLDivElement> & {
 export type FormTitleProps = HTMLAttributes<HTMLHeadingElement>;
 export type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type FormActionsProps = HTMLAttributes<HTMLDivElement>;
-export type FormErrorSummaryProps = HTMLAttributes<HTMLDivElement>;
+export type FormErrorSummaryProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+  /**
+   * Custom summary body. Function receives `[fieldName, message][]` from form context
+   * (e.g. list with links to fields). Default: messages joined with `". "`.
+   */
+  children?: ReactNode | ((entries: Array<[string, string]>) => ReactNode);
+};
 export type FormAnnounceProps = HTMLAttributes<HTMLDivElement> & {
   message?: string | null;
 };

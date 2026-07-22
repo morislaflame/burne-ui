@@ -1,8 +1,18 @@
-import { forwardRef } from "react";
+import {
+  Children,
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
+
+import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 
 import { useLinkAnimations } from "./linkAnimations";
-import { LinkClassNamesProvider } from "./linkContext";
-import { LinkAnchorBody, LinkIcon } from "./linkParts";
+import { LinkClassNamesProvider, useLinkClassNames } from "./linkContext";
+import { LinkAnchorBody, LinkBodyContent, LinkIcon } from "./linkParts";
+import { linkAnchorClass } from "./linkStyles";
 import type { LinkProps } from "./linkTypes";
 import { useLinkRootState } from "./useLinkRootState";
 
@@ -20,6 +30,7 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
   function LinkRoot(
     {
       href,
+      asChild = false,
       children,
       className = "",
       size: sizeProp,
@@ -35,6 +46,14 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
     },
     forwardedRef,
   ) {
+    const asChildElement =
+      asChild && isValidElement(children) && Children.count(children) === 1
+        ? (children as ReactElement<{ children?: ReactNode; href?: string }>)
+        : null;
+    const contentChildren = asChildElement
+      ? asChildElement.props.children
+      : children;
+
     const state = useLinkRootState({
       size: sizeProp,
       underline: underlineProp,
@@ -42,7 +61,7 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
       iconPosition,
       showDefaultIcon,
       defaultIconPosition,
-      children,
+      children: contentChildren,
     });
 
     const animations = useLinkAnimations({
@@ -52,24 +71,51 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
       onPointerDown,
     });
 
+    const slotClassNames = useLinkClassNames();
+    const bodyProps = {
+      size: state.size,
+      underline: state.underline,
+      textVariant: state.textVariant,
+      textChildren: state.textChildren,
+      startIcon: state.startIcon,
+      endIcon: state.endIcon,
+      startIconMuted: state.startIconMuted,
+      endIconMuted: state.endIconMuted,
+      usesDefaultAtStart: state.usesDefaultAtStart,
+      usesDefaultAtEnd: state.usesDefaultAtEnd,
+    };
+
+    if (asChildElement) {
+      return cloneElement(
+        asChildElement,
+        mergeAsChildProps(
+          asChildElement,
+          {
+            ...rest,
+            ...(href != null ? { href } : {}),
+            className: linkAnchorClass({
+              slotClass: slotClassNames.root,
+              className,
+            }),
+            onPointerEnter: animations.handlePointerEnter,
+            onPointerLeave: animations.handlePointerLeave,
+            onPointerDown: animations.handlePointerDown,
+            children: <LinkBodyContent {...bodyProps} />,
+          },
+          animations.setAnchorRef,
+        ),
+      );
+    }
+
     return (
       <LinkAnchorBody
-        href={href}
-        size={state.size}
-        underline={state.underline}
-        textVariant={state.textVariant}
-        textChildren={state.textChildren}
-        startIcon={state.startIcon}
-        endIcon={state.endIcon}
-        startIconMuted={state.startIconMuted}
-        endIconMuted={state.endIconMuted}
-        usesDefaultAtStart={state.usesDefaultAtStart}
-        usesDefaultAtEnd={state.usesDefaultAtEnd}
+        href={href!}
         className={className}
         setAnchorRef={animations.setAnchorRef}
         handlePointerEnter={animations.handlePointerEnter}
         handlePointerLeave={animations.handlePointerLeave}
         handlePointerDown={animations.handlePointerDown}
+        {...bodyProps}
         {...rest}
       />
     );

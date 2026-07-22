@@ -23,7 +23,7 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 
 ## API
 
-Компонент — **simple API** (один корневой элемент `<button>`).
+Компонент — **simple API** (корневой `<button>`, либо `asChild` — стили на единственном child).
 
 ### Props
 
@@ -43,8 +43,9 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 | `onAsyncClick` | `(e) => Promise<boolean>` | — | Uncontrolled async: `true` → success, `false` → error |
 | `asyncFeedbackMs` | `number` | `2000` | Задержка возврата в `idle` после success/error |
 | `groupSegment` | `ButtonGroupSegment` | — | Сегмент в `ButtonGroup` (скругления, glue) |
-| `className` | `string` | — | Доп. классы на корневой `<button>` |
-| `type` | `button` \| `submit` \| `reset` | `button` | Нативный type |
+| `asChild` | `boolean` | `false` | Стили/поведение на единственный child (`<a>`, Next.js `<Link>`) |
+| `className` | `string` | — | Доп. классы на корневой `<button>` (или child при `asChild`) |
+| `type` | `button` \| `submit` \| `reset` | `button` | Нативный type (не передаётся при `asChild`) |
 | … | `ButtonHTMLAttributes` | — | Остальные атрибуты кнопки |
 
 ### Примеры
@@ -52,6 +53,12 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 ```tsx
 // Базовая
 <Button variant="primary">Сохранить</Button>
+
+// Кнопка-ссылка (Next.js / react-router)
+<Button asChild variant="primary">
+  <a href="/docs">Документация</a>
+</Button>
+```
 
 // С иконкой
 <Button icon={<IoAdd aria-hidden />}>Добавить</Button>

@@ -1,10 +1,12 @@
-import { TableBody, TableCell, TableColumn, TableContent, TableFooter, TableHeader, TableRoot, TableRow, TableScrollContainer } from "./Table";
+import { TableBody, TableCell, TableColumn, TableContent, TableFooter, TableHeader, TableHeaderRow, TableLabel, TableRoot, TableRow, TableScrollContainer } from "./Table";
 
 export const Table = Object.assign(TableRoot, {
   ScrollContainer: TableScrollContainer,
   Content: TableContent,
   Header: TableHeader,
+  HeaderRow: TableHeaderRow,
   Column: TableColumn,
+  Label: TableLabel,
   Body: TableBody,
   Row: TableRow,
   Cell: TableCell,
@@ -20,9 +22,11 @@ export type {
   TableScrollContainerProps,
   TableContentProps,
   TableHeaderProps,
+  TableHeaderRowProps,
   TableColumnProps,
   TableColumnRenderProps,
   TableColumnSortIconRenderProps,
+  TableLabelProps,
   TableBodyProps,
   TableRowProps,
   TableCellProps,

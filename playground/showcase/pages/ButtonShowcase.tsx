@@ -1,3 +1,5 @@
+import { ButtonAsChildDemo } from "../demos/button/ButtonAsChild.demo";
+import buttonAsChildSource from "../demos/button/ButtonAsChild.demo.tsx?raw";
 import { ButtonAsyncClickDemo } from "../demos/button/ButtonAsyncClick.demo";
 import buttonAsyncClickSource from "../demos/button/ButtonAsyncClick.demo.tsx?raw";
 import { ButtonCtaCardDemo } from "../demos/button/ButtonCtaCard.demo";
@@ -45,6 +47,13 @@ export function ButtonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="asChild"
+        description="Button styles on <a> / router Link — asChild merges onto the child."
+      >
+        <ShowcaseDemoFromFile Demo={ButtonAsChildDemo} source={buttonAsChildSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Custom Variations"
         description="Mine layout and palette - one `.demo.tsx` for variation, code from ?raw."
       >
@@ -60,7 +69,7 @@ export function ButtonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="variant, size, status, icon, iconOnly, ripple, onAsyncClick, disabled, variant gloss."
+            description="variant, size, status, icon, iconOnly, ripple, onAsyncClick, disabled, asChild, variant gloss."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Ripple">

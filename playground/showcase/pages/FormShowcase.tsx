@@ -1,5 +1,7 @@
 import { FormInlineSubscribeDemo } from "../demos/form/FormInlineSubscribe.demo";
 import formInlineSubscribeSource from "../demos/form/FormInlineSubscribe.demo.tsx?raw";
+import { FormErrorSummaryDemo } from "../demos/form/FormErrorSummary.demo";
+import formErrorSummarySource from "../demos/form/FormErrorSummary.demo.tsx?raw";
 import { FormLoginPanelDemo } from "../demos/form/FormLoginPanel.demo";
 import formLoginPanelSource from "../demos/form/FormLoginPanel.demo.tsx?raw";
 import { FormMinimalSubscribeDemo } from "../demos/form/FormMinimalSubscribe.demo";
@@ -33,6 +35,13 @@ export function FormShowcase() {
         description="Form accepts onSubmit and aria-label; action buttons are placed inside the form."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FormMinimalSubscribeDemo} source={formMinimalSubscribeSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="ErrorSummary render prop"
+        description="Form errorSummary / Form.ErrorSummary children — custom list of field errors."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={FormErrorSummaryDemo} source={formErrorSummarySource} />
       </ShowcaseSection>
 
       <ShowcaseSection

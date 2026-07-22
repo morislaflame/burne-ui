@@ -985,3 +985,42 @@ export const CustomClassNames: Story = {
     </Table>
   ),
 };
+
+/** Review 3.9: `Table.HeaderRow` accepts className / ref. */
+export const HeaderRow: Story = {
+  name: "HeaderRow + Label",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Table.HeaderRow` is an optional compound part. Style header text via `Table.Label` (or `classNames.columnLabel`). Plain Column children are wrapped in Label automatically.",
+      },
+    },
+  },
+  render: () => (
+    <Table className="max-w-2xl">
+      <Table.ScrollContainer>
+        <Table.Content aria-label="Team with custom header row">
+          <Table.Header>
+            <Table.HeaderRow className="bg-primary/10">
+              <Table.Column isRowHeader className="text-left">
+                <Table.Label className="text-foreground font-semibold text-mid">Name</Table.Label>
+              </Table.Column>
+              <Table.Column className="text-left">
+                <Table.Label className="text-primary text-mid">Role</Table.Label>
+              </Table.Column>
+            </Table.HeaderRow>
+          </Table.Header>
+          <Table.Body>
+            {users.slice(0, 3).map((user) => (
+              <Table.Row key={user.id} id={user.id}>
+                <Table.Cell className="font-medium">{user.name}</Table.Cell>
+                <Table.Cell className="text-muted">{user.role}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
+  ),
+};

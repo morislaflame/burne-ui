@@ -15,6 +15,8 @@ export type PopoverClassNames = {
   root?: string;
   trigger?: string;
   content?: string;
+  /** Inner wrapper between content portal and panel (`relative overflow-visible`). */
+  panelRelative?: string;
   panel?: string;
   glossPanel?: string;
   glossContent?: string;

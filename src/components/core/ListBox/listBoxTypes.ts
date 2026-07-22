@@ -83,7 +83,10 @@ export type UseListBoxRootStateProps = Omit<
 
 export type ListBoxSectionProps = HTMLAttributes<HTMLDivElement>;
 
-export type ListBoxHeaderProps = HTMLAttributes<HTMLDivElement>;
+export type ListBoxHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  /** Classes for the inner `Text` in the header (per-instance; merges after `classNames.headerText`). */
+  textClassName?: string;
+};
 
 export type ListBoxSeparatorProps = HTMLAttributes<HTMLDivElement>;
 

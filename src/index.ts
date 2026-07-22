@@ -652,6 +652,7 @@ export {
   type TableScrollContainerProps,
   type TableContentProps,
   type TableHeaderProps,
+  type TableHeaderRowProps,
   type TableColumnProps,
   type TableColumnRenderProps,
   type TableBodyProps,

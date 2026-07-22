@@ -40,12 +40,14 @@ function resolveTooltipIndicatorInner({
   showIcon,
   icon,
   children,
+  iconClass,
 }: {
   status: SemanticStatus;
   size: TooltipSize;
   showIcon?: boolean;
   icon?: ReactNode;
   children?: ReactNode;
+  iconClass?: string;
 }): ReactNode | null {
   if (children === null) return null;
   if (children !== undefined) return children;
@@ -61,6 +63,7 @@ function resolveTooltipIndicatorInner({
         "shrink-0",
         TOOLTIP_ICON_SIZE[size],
         TOOLTIP_STATUS_ICON_CLASS[status],
+        iconClass,
       )}
     />
   );
@@ -121,6 +124,7 @@ export function TooltipIndicator({
     showIcon: showIconProp ?? showIcon,
     icon,
     children,
+    iconClass: slotClassNames.icon,
   });
 
   if (inner == null) return null;
@@ -133,7 +137,6 @@ export function TooltipIndicator({
         TOOLTIP_STATUS_ICON_CLASS[status],
         messageBannerIndicatorCellClass(gridSlots),
         slotClassNames.indicator,
-        slotClassNames.icon,
         className,
       )}
       {...rest}

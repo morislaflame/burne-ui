@@ -79,7 +79,9 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | `Table.ScrollContainer` | Horizontal scroll + `tabIndex` |
 | `Table.Content` | Элемент `<table>` + selection/sort context. **Доменное исключение имени `Content`:** здесь это не «тело панели» (`Popover.Content` / `Dialog.Content`) и не текстовая колонка (`Toast.Content` / `Alert.Content`), а именно table-host. |
 | `Table.Header` | `<thead>` |
+| `Table.HeaderRow` | `<tr>` в header (`className` / `ref`); если не передан — Header оборачивает колонки сам |
 | `Table.Column` | `<th>` + sort UI |
+| `Table.Label` | Текст заголовка колонки (`className` / `ref`); simple children Column оборачиваются автоматически. Слот `classNames.columnLabel` |
 | `Table.Body` | `<tbody>` + empty state |
 | `Table.Row` | `<tr>` + tone/selection |
 | `Table.Cell` | `<td>` |
@@ -116,7 +118,7 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 ```
 <th class=group/col>
   <span class=columnInner>
-    <span class=columnLabel>Name</span>
+    <Table.Label class=columnLabel>Name</Table.Label>
     <TableSortChevron ref=chevron>   ← IoChevronUp, GSAP rotate
       <IoChevronUp />
 ```
@@ -207,7 +209,13 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 1. **`className` на `Table`** — root wrapper (`max-w-*`, margin).
 2. **`classNames` на root** — все слоты через `TableClassNamesProvider`.
 
-Подчасти: **`className` на `Table.Column` / `Table.Row` / `Table.Cell`** поверх слота.
+Подчасти: **`className` на `Table.Column` / `Table.Label` / `Table.Row` / `Table.Cell`** поверх слота.
+
+```tsx
+<Table.Column isRowHeader>
+  <Table.Label className="text-primary font-semibold">Name</Table.Label>
+</Table.Column>
+```
 
 ### Слоты `TableClassNames`
 
@@ -218,10 +226,10 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 | `scrollContainer` | Scroll div | Scrollbar, horizontal padding |
 | `content` | `<table>` | Border-collapse, width |
 | `header` | `<thead>` | Sticky header helpers |
-| `headerRow` | Header `<tr>` | Bottom border, bg strip |
+| `headerRow` | Header `<tr>` (`Table.HeaderRow`) | Bottom border, bg strip |
 | `column` | `<th>` | Header typography, padding |
 | `columnInner` | Flex row label+chevron | Gap, alignment |
-| `columnLabel` | Label span | Font weight, truncate |
+| `columnLabel` | `Table.Label` | Font weight, color, truncate |
 | `columnSortChevron` | Chevron wrapper | Size/color sort icon |
 | `body` | `<tbody>` | Empty state container |
 | `row` | `<tr>` | Row hover, tone override |

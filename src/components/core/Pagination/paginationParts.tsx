@@ -419,7 +419,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
 PaginationPage.displayName = "Pagination.Page";
 
 export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsisProps>(
-  function PaginationEllipsis({ className, ...rest }, ref) {
+  function PaginationEllipsis({ className, children, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
 
     return (
@@ -434,7 +434,7 @@ export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsis
         })}
         {...rest}
       >
-        …
+        {children ?? "…"}
       </Text>
     );
   },

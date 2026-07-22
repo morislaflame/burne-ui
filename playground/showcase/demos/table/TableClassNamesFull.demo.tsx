@@ -22,8 +22,10 @@ export function TableClassNamesFullDemo() {
       <Table.ScrollContainer>
         <Table.Content aria-label="Team">
           <Table.Header>
-            <Table.Column isRowHeader>Name</Table.Column>
-            <Table.Column>Role</Table.Column>
+            <Table.HeaderRow className="bg-info/15">
+              <Table.Column isRowHeader>Name</Table.Column>
+              <Table.Column>Role</Table.Column>
+            </Table.HeaderRow>
           </Table.Header>
           <Table.Body>
             {rows.map((row) => (

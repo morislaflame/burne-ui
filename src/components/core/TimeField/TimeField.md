@@ -49,13 +49,14 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | `compact` | `false` | `w-fit` вместо `w-full` |
 | `required` | `false` | `aria-required` на сегментах |
 | `prefix` / `suffix` | — | Affix slots в control |
+| `segmentSeparator` | `":"` | Символ/узел между сегментами (класс — слот `classNames.segmentSeparator`) |
 | `id` | auto | Связь label/control |
 | `className` | — | На root |
 | `classNames` | — | Слоты |
 
 ### `TimeFieldClassNames`
 
-`root`, `label`, `shell`, `prefix`, `suffix`, `segments`, `segment`, `segmentSeparator`, `keyboardInput`, `hint`, `error`.
+`root`, `label`, `shell`, `shellInner`, `prefix`, `suffix`, `segments`, `segmentGroup`, `segment`, `segmentSeparator`, `keyboardInput`, `hint`, `error`.
 
 ## variant / status / размеры
 
@@ -170,10 +171,12 @@ React state — `bg-primary text-primary-foreground` на focused segment. Бе�
 | `root` | Field root | Gap label/control |
 | `label` | Label | Typography |
 | `shell` | `<fieldset>` | Border tint, radius |
+| `shellInner` | Flex row внутри fieldset | Раскладка prefix/segments/suffix |
 | `prefix` / `suffix` | Affix spans | Icon slots |
 | `segments` | Segments row | Gap, alignment |
+| `segmentGroup` | Обёртка сегмента + separator | Inline group |
 | `segment` | Spinbutton span | Cell padding |
-| `segmentSeparator` | `:` span | Muted separator |
+| `segmentSeparator` | Separator span | Muted separator **класс** (символ — проп `segmentSeparator`) |
 | `keyboardInput` | Hidden input | iOS font-size hack |
 | `hint` / `error` | FieldHint/Error | Status colors |
 

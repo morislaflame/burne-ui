@@ -90,6 +90,7 @@ ListBoxSection.displayName = "ListBoxSection";
 
 export function ListBoxHeader({
   className,
+  textClassName,
   children,
   id: idProp,
   ...rest
@@ -118,6 +119,7 @@ export function ListBoxHeader({
         variant="small"
         className={listBoxHeaderTextClass({
           slotClass: slotClassNames.headerText,
+          className: textClassName,
         })}
       >
         {children}
@@ -272,7 +274,6 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
             listBoxItemClass({
               disabled,
               isActive,
-              slotClass: slotClassNames.item,
             }),
             optionListItemGridClass(
               hasHint,
@@ -280,6 +281,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
               showIndicatorSlot,
               hasIcon,
             ),
+            slotClassNames.item,
             className,
           )}
           onClick={handleClick}

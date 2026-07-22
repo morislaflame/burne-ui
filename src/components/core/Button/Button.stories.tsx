@@ -431,3 +431,29 @@ export const CompoundLayout: Story = {
     </Button>
   ),
 };
+
+/** Review 3.8: Button as link via asChild. */
+export const AsChildLink: Story = {
+  name: "asChild — link",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`asChild` merges Button styles and motion onto a single child (e.g. `<a>`, Next.js `<Link>`). Child text becomes the label.",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-wrap items-center gap-mid">
+      <Button asChild variant="primary">
+        <a href="#docs">Primary link</a>
+      </Button>
+      <Button asChild variant="outline" icon={<IoAdd aria-hidden />} iconPosition="end">
+        <a href="#new">New page</a>
+      </Button>
+      <Button asChild variant="ghost" size="small">
+        <a href="#ghost">Ghost link</a>
+      </Button>
+    </div>
+  ),
+};

@@ -58,6 +58,7 @@ export type ButtonContextValue = {
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  asChild?: boolean;
   groupSegment?: ButtonGroupSegment;
   variant?: ButtonVariant;
   status?: ButtonStatus;

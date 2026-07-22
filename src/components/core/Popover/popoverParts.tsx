@@ -355,7 +355,12 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
           })}
           {...rest}
         >
-          <div className={POPOVER_PANEL_RELATIVE_CLASS}>
+          <div
+            className={cn(
+              POPOVER_PANEL_RELATIVE_CLASS,
+              slotClassNames.panelRelative,
+            )}
+          >
             {showArrow ? (customArrow ?? <PopoverArrow />) : null}
             {isGloss ? (
               <div

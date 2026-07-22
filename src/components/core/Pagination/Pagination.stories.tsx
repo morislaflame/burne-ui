@@ -231,6 +231,50 @@ export const CustomLabels: Story = {
   },
 };
 
+/** Review 3.9: Ellipsis renders `children ?? "…"`. */
+export const CustomEllipsis: Story = {
+  name: "Custom Ellipsis",
+  parameters: {
+    docs: {
+      description: {
+        story: '`Pagination.Ellipsis` accepts custom children (default `"…"`).',
+      },
+    },
+  },
+  render: function CustomEllipsisStory() {
+    const [page, setPage] = useState(5);
+    const totalPages = 20;
+
+    return (
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
+        <Pagination.Content className="mx-auto">
+          <Pagination.Item>
+            <Pagination.Previous />
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Page page={1} />
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Ellipsis>···</Pagination.Ellipsis>
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Page page={page} />
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Ellipsis>···</Pagination.Ellipsis>
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Page page={totalPages} />
+          </Pagination.Item>
+          <Pagination.Item>
+            <Pagination.Next />
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination>
+    );
+  },
+};
+
 export const Accessibility: Story = {
   name: "Accessibility",
   render: function Accessibility() {

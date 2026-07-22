@@ -427,7 +427,7 @@ export const CustomClassNames: Story = {
     docs: {
       description: {
         story:
-          "Slots root (trigger), trigger, content, panel, label, hint, and body via classNames prop.",
+          "Slots root (trigger), trigger, content, panelRelative, panel, label, hint, and body via classNames prop.",
       },
     },
   },
@@ -437,6 +437,7 @@ export const CustomClassNames: Story = {
         root: "rounded-mid ring-2 ring-primary/40",
         trigger: "rounded-mid",
         content: "ring-1 ring-primary/20",
+        panelRelative: "isolate",
         panel: "border-primary/25",
         label: "text-primary",
         hint: "text-muted/80",

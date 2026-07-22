@@ -9,6 +9,8 @@ export function TimeFieldClassNamesFullDemo() {
       classNames={{
         root: "rounded-mid border border-primary/20 p-base",
         shell: "ring-1 ring-primary/15",
+        shellInner: "gap-xsmall",
+        segmentGroup: "px-px",
         segment: "font-semibold",
         prefix: "text-primary",
         hint: "text-foreground/70",
@@ -19,6 +21,7 @@ export function TimeFieldClassNamesFullDemo() {
       status="danger"
       hint="24-hour format"
       error="Please enter the correct time."
+      segmentSeparator="·"
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
     />
   );
@@ -41,6 +44,7 @@ export function TimeFieldClassNamesCompoundDemo() {
       <TimeField.Control
         defaultValue="14:30"
         variant="segmented"
+        segmentSeparator="·"
         prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
       />
       <TimeField.Hint>Slots shell, segments and segment through classNames.</TimeField.Hint>

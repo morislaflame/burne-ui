@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
@@ -23,6 +24,13 @@ export type SelectClassNames = {
   popover?: string;
   popoverBody?: string;
   listBox?: string;
+  listBoxItem?: string;
+  listBoxLabel?: string;
+  listBoxHint?: string;
+  listBoxIcon?: string;
+  listBoxEmpty?: string;
+  listBoxHeader?: string;
+  listBoxHeaderText?: string;
   hint?: string;
   error?: string;
 };
@@ -111,6 +119,17 @@ export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
   /** Panel alignment relative to the trigger. Default: `start` when matching width. */
   align?: FloatingAlign;
   offset?: number;
+  /** Props forwarded to the inner `ListBox` (controlled selection props are owned by Select). */
+  listBoxProps?: Omit<
+    ListBoxProps,
+    | "children"
+    | "value"
+    | "defaultValue"
+    | "onValueChange"
+    | "activeValue"
+    | "onActiveValueChange"
+    | "listId"
+  >;
 };
 
 export type SelectHintProps = HTMLAttributes<HTMLParagraphElement> & {

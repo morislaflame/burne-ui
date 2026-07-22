@@ -35,6 +35,9 @@ export function ComboBoxClassNamesFullDemo() {
         trigger: "text-info hover:text-info",
         popoverBody: "bg-info/5",
         listBox: "p-xsmall",
+        listBoxItem: "rounded-lg",
+        listBoxLabel: "font-semibold",
+        listBoxHint: "text-muted/80",
       }}
     />
   );

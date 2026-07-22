@@ -64,7 +64,7 @@ const [page, setPage] = useState(1);
 | `Pagination.PreviousIcon` / `NextIcon` | `IoChevronBack` / `Forward` |
 | `Pagination.Page` | Кнопка номера страницы |
 | `Pagination.Pages` | Auto range из context |
-| `Pagination.Ellipsis` | Декоративное `…` |
+| `Pagination.Ellipsis` | Декоративное `…` (`children ?? "…"`) |
 
 `Pagination.Pages` требует `page` (или `defaultPage`) и `totalPages` на root.
 
@@ -260,6 +260,7 @@ configureMotion({
 
 - Иконки: `react-icons/io5` (`IoChevronBack`, `IoChevronForward`).
 - `children` в `Previous` / `Next` — кастомные labels; `aria-label` для a11y.
+- `Pagination.Ellipsis` — `children ?? "…"` (кастомный символ/узел разрыва).
 - `Pagination.Page` принимает `active` override.
 - **Не удаляйте `data-flip-key`** с `<li>` при кастомном range — сломается FLIP.
 - Summary опционален — можно только prev/next/pages.

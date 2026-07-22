@@ -10,7 +10,7 @@ import { timeFieldHintStatus, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y
 
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { useTimeFieldClassNames, useTimeFieldContext } from "./timeFieldContext";
-import { TIME_FIELD_KEYBOARD_INPUT_CLASS, TIME_FIELD_SEGMENT_GROUP_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
+import { TIME_FIELD_KEYBOARD_INPUT_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentGroupClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
 import type {
   TimeFieldControlProps,
   TimeFieldErrorProps,
@@ -55,6 +55,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       compact,
       prefix,
       suffix,
+      segmentSeparator: segmentSeparatorProp,
       className,
       id,
       onPointerDown,
@@ -111,6 +112,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
         <div
           className={timeFieldShellInnerClass({
             variant: state.variant,
+            slotClass: slotClassNames.shellInner,
           })}
           onClick={state.handleShellClick}
         >
@@ -152,7 +154,12 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
             onBlur={state.handleFieldBlur}
           />
           {state.segments.map((seg, i) => (
-            <span key={seg} className={TIME_FIELD_SEGMENT_GROUP_CLASS}>
+            <span
+              key={seg}
+              className={timeFieldSegmentGroupClass({
+                slotClass: slotClassNames.segmentGroup,
+              })}
+            >
               {i > 0 && (
                 <span
                   aria-hidden
@@ -161,7 +168,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
                     slotClass: slotClassNames.segmentSeparator,
                   })}
                 >
-                  :
+                  {segmentSeparatorProp ?? ":"}
                 </span>
               )}
               <span

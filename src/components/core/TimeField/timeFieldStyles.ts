@@ -167,15 +167,26 @@ export function timeFieldShellClass({
 
 export function timeFieldShellInnerClass({
   variant,
+  slotClass,
 }: {
   variant: TimeFieldVariant;
+  slotClass?: string;
 }): string {
   const isGloss = variant === "gloss";
 
   return cn(
     TIME_FIELD_SHELL_INNER_CLASS,
     !isGloss && cn("min-h-full"),
+    slotClass,
   );
+}
+
+export function timeFieldSegmentGroupClass({
+  slotClass,
+}: {
+  slotClass?: string;
+} = {}): string {
+  return cn(TIME_FIELD_SEGMENT_GROUP_CLASS, slotClass);
 }
 
 export function timeFieldSegmentsClass({

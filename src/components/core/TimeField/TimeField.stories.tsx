@@ -333,6 +333,8 @@ export const CustomClassNames: Story = {
       classNames={{
         root: "rounded-mid border border-primary/20 p-base",
         shell: "ring-1 ring-primary/15",
+        shellInner: "gap-xsmall",
+        segmentGroup: "px-px",
         segment: "font-semibold",
         prefix: "text-primary",
         hint: "text-foreground/70",
@@ -343,6 +345,27 @@ export const CustomClassNames: Story = {
       status="danger"
       hint="24-hour format"
       error="Enter a valid time."
+      prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
+    />
+  ),
+};
+
+/** Review 3.9: `segmentSeparator` customizes the glyph between segments. */
+export const SegmentSeparator: Story = {
+  name: "segmentSeparator",
+  parameters: {
+    docs: {
+      description: {
+        story: '`segmentSeparator` replaces the default `":"` between hour/minute/second segments.',
+      },
+    },
+  },
+  render: () => (
+    <TimeField
+      label="Dot separator"
+      defaultValue="09:30:00"
+      format="HH:mm:ss"
+      segmentSeparator="·"
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
     />
   ),

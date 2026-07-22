@@ -72,7 +72,7 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormCla
 | `Form.Description` | `<p>` | Описание |
 | `Form.Field` | `<div>` | Обёртка + регистрация `rules` |
 | `Form.Actions` | `<div>` | Кнопки submit/cancel |
-| `Form.ErrorSummary` | `role="alert"` sr-only | Сводка ошибок (auto в root) |
+| `Form.ErrorSummary` | `role="alert"` sr-only | Сводка ошибок (auto в root). `children` или `Form` prop `errorSummary` — ReactNode / `(entries) => ReactNode` |
 | `Form.Announce` | `role="status"` sr-only | Live region (auto в root) |
 
 ### `FormClassNames`
@@ -285,7 +285,7 @@ type FormFieldRules = {
 | Form label | `aria-labelledby` → `Form.Title` id |
 | Description | `aria-describedby` → `Form.Description` |
 | Errors | `aria-describedby` + `Form.ErrorSummary` при ошибках |
-| `Form.ErrorSummary` | `role="alert"`, `aria-live="polite"`, sr-only |
+| `Form.ErrorSummary` | `role="alert"`, `aria-live="polite"`, sr-only; render-проп `children(entries)` для кастомного списка ошибок |
 | `Form.Announce` | `role="status"`, `aria-live="polite"`, `aria-atomic` |
 | Поля | `aria-invalid` через binding |
 | Focus | `focusFirstInvalid` на submit с ошибками |

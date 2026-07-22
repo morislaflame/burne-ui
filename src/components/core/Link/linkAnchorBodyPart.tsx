@@ -4,10 +4,9 @@ import { useLinkClassNames } from "./linkContext";
 import { LinkDefaultIcon } from "./linkDefaultIconPart";
 import { LinkIconSlot } from "./linkIconSlotPart";
 import { linkAnchorClass, linkTextClass } from "./linkStyles";
-import type { LinkAnchorBodyProps } from "./linkTypes";
+import type { LinkAnchorBodyProps, LinkBodyContentProps } from "./linkTypes";
 
-export function LinkAnchorBody({
-  href,
+export function LinkBodyContent({
   size,
   underline,
   textVariant,
@@ -18,13 +17,7 @@ export function LinkAnchorBody({
   endIconMuted,
   usesDefaultAtStart,
   usesDefaultAtEnd,
-  className = "",
-  setAnchorRef,
-  handlePointerEnter,
-  handlePointerLeave,
-  handlePointerDown,
-  ...rest
-}: LinkAnchorBodyProps) {
+}: LinkBodyContentProps) {
   const slotClassNames = useLinkClassNames();
 
   const resolvedStart =
@@ -33,18 +26,7 @@ export function LinkAnchorBody({
     endIcon ?? (usesDefaultAtEnd ? <LinkDefaultIcon size={size} /> : null);
 
   return (
-    <a
-      ref={setAnchorRef}
-      href={href}
-      className={linkAnchorClass({
-        slotClass: slotClassNames.root,
-        className,
-      })}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
-      onPointerDown={handlePointerDown}
-      {...rest}
-    >
+    <>
       {resolvedStart ? (
         <LinkIconSlot
           size={size}
@@ -74,6 +56,56 @@ export function LinkAnchorBody({
           {resolvedEnd}
         </LinkIconSlot>
       ) : null}
+    </>
+  );
+}
+
+export function LinkAnchorBody({
+  href,
+  size,
+  underline,
+  textVariant,
+  textChildren,
+  startIcon,
+  endIcon,
+  startIconMuted,
+  endIconMuted,
+  usesDefaultAtStart,
+  usesDefaultAtEnd,
+  className = "",
+  setAnchorRef,
+  handlePointerEnter,
+  handlePointerLeave,
+  handlePointerDown,
+  ...rest
+}: LinkAnchorBodyProps) {
+  const slotClassNames = useLinkClassNames();
+
+  return (
+    <a
+      ref={setAnchorRef}
+      href={href}
+      className={linkAnchorClass({
+        slotClass: slotClassNames.root,
+        className,
+      })}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      onPointerDown={handlePointerDown}
+      {...rest}
+    >
+      <LinkBodyContent
+        size={size}
+        underline={underline}
+        textVariant={textVariant}
+        textChildren={textChildren}
+        startIcon={startIcon}
+        endIcon={endIcon}
+        startIconMuted={startIconMuted}
+        endIconMuted={endIconMuted}
+        usesDefaultAtStart={usesDefaultAtStart}
+        usesDefaultAtEnd={usesDefaultAtEnd}
+      />
     </a>
   );
 }

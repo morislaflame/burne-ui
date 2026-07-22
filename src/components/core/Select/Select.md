@@ -61,7 +61,9 @@ const options = [
 
 ### `SelectClassNames`
 
-`root`, `label`, `triggerGroup`, `value`, `trigger`, `triggerIcon`, `popover`, `popoverBody`, `listBox`, `hint`, `error`.
+`root`, `label`, `triggerGroup`, `value`, `trigger`, `triggerIcon`, `popover`, `popoverBody`, `listBox`, `listBoxItem`, `listBoxLabel`, `listBoxHint`, `listBoxIcon`, `listBoxEmpty`, `listBoxHeader`, `listBoxHeaderText`, `hint`, `error`.
+
+`Select.Popover` принимает `listBoxProps` (пропы внутреннего `ListBox`, кроме controlled `value` / `onValueChange` / `activeValue` / `listId` / `children`) и мержит вложенные `listBox*` слоты в `ListBox.classNames`.
 
 ### Compound-подчасти
 
@@ -169,6 +171,8 @@ Selection indicator + label press squeeze — см. ListBox.md.
 | `popover` | `Popover.Content` | Shadow, z-index |
 | `popoverBody` | `Popover.Body` | Padding меню |
 | `listBox` | `ListBox` | Scroll area |
+| `listBoxItem` / `listBoxLabel` / `listBoxHint` / `listBoxIcon` | Слоты внутреннего ListBox | Стиль пунктов меню |
+| `listBoxEmpty` / `listBoxHeader` / `listBoxHeaderText` | Empty / Header ListBox | Пустое состояние и секции |
 | `hint` / `error` | `Field.Hint` / `Field.Error` | Подсказка / ошибка |
 
 ### Simple API
@@ -205,7 +209,20 @@ Selection indicator + label press squeeze — см. ListBox.md.
 </Select>
 ```
 
-Кастомный список: `children` в `Select.Popover` + стили пунктов через `ListBox.Item` / `classNames.listBox`.
+Кастомный список: `children` в `Select.Popover` + стили пунктов через `classNames.listBoxItem` / `listBoxProps.classNames`, либо полная замена пунктов через `ListBox.Item`.
+
+```tsx
+<Select options={options} defaultValue="ru">
+  <Select.Label>Регион</Select.Label>
+  <Select.TriggerGroup>
+    <Select.Value />
+    <Select.Trigger />
+  </Select.TriggerGroup>
+  <Select.Popover
+    listBoxProps={{ classNames: { item: "rounded-lg bg-primary/5" } }}
+  />
+</Select>
+```
 
 ### Практические заметки
 

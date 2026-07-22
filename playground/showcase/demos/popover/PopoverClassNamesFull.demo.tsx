@@ -9,6 +9,7 @@ export function PopoverClassNamesFullDemo() {
         root: "rounded-mid ring-2 ring-primary/40",
         trigger: "rounded-mid",
         content: "ring-1 ring-primary/25",
+        panelRelative: "isolate",
         panel: "border-primary/30 bg-surface/95",
         label: "text-primary font-semibold",
         hint: "text-muted/80",

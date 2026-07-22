@@ -81,7 +81,7 @@ const [open, setOpen] = useState(false);
 
 ### `PopoverClassNames`
 
-`root`, `trigger`, `content`, `panel`, `glossPanel`, `glossContent`, `arrow`, `header`, `label`, `hint`, `body`.
+`root`, `trigger`, `content`, `panelRelative`, `panel`, `glossPanel`, `glossContent`, `arrow`, `header`, `label`, `hint`, `body`.
 
 ## Variant / размеры
 
@@ -226,6 +226,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 | `root` | Wrapper | Outer layout (редко) |
 | `trigger` | Trigger element | Ring, rounding на кнопке |
 | `content` | Portal outer shell | z-index, outer ring |
+| `panelRelative` | Relative wrapper вокруг panel | Positioning host между content и panel |
 | `panel` | Default inner panel | Surface, padding, border |
 | `glossPanel` / `glossContent` | Gloss layers | Glass surface + inner grid |
 | `arrow` | Arrow span | Side tint, size |

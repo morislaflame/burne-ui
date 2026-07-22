@@ -1,5 +1,7 @@
 import { LinkArticleInlineDemo } from "../demos/link/LinkArticleInline.demo";
 import linkArticleInlineSource from "../demos/link/LinkArticleInline.demo.tsx?raw";
+import { LinkAsChildDemo } from "../demos/link/LinkAsChild.demo";
+import linkAsChildSource from "../demos/link/LinkAsChild.demo.tsx?raw";
 import { LinkCompoundApiDemo } from "../demos/link/LinkCompoundApi.demo";
 import linkCompoundApiSource from "../demos/link/LinkCompoundApi.demo.tsx?raw";
 import { LinkCardActionsDemo } from "../demos/link/LinkCardActions.demo";
@@ -33,6 +35,13 @@ export function LinkShowcase() {
         <ShowcaseDemoFromFile Demo={LinkCompoundApiDemo} source={linkCompoundApiSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="asChild"
+        description="Link styles on router Link / custom <a> — href optional when asChild."
+      >
+        <ShowcaseDemoFromFile Demo={LinkAsChildDemo} source={linkAsChildSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile Demo={LinkSizesDemo} source={linkSizesSource} />
       </ShowcaseSection>
@@ -60,7 +69,7 @@ export function LinkShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="href, underline, icon and showDefaultIcon on the root - the main props for links."
+            description="href (required unless asChild), underline, icon, showDefaultIcon, asChild."
           />
           <ShowcaseDoc.ApiRow
             api="compound"

@@ -295,8 +295,41 @@ export const CustomClassNames: Story = {
         triggerGroup: "ring-1 ring-primary/20",
         value: "text-primary",
         popover: "ring-1 ring-primary/15",
+        listBoxItem: "rounded-lg",
+        listBoxLabel: "font-semibold",
       }}
     />
+  ),
+};
+
+/** Review 3.9: nested ListBox slots + listBoxProps on Select.Popover. */
+export const ListBoxItemSlots: Story = {
+  name: "listBox item slots",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`classNames.listBoxItem` / `listBoxLabel` style menu rows; `Select.Popover listBoxProps` merges into the inner ListBox.",
+      },
+    },
+  },
+  render: () => (
+    <Select options={sampleOptions} defaultValue="ru">
+      <Select.Label>Styled list items</Select.Label>
+      <Select.TriggerGroup>
+        <Select.Value placeholder="Select language" />
+        <Select.Trigger />
+      </Select.TriggerGroup>
+      <Select.Popover
+        listBoxProps={{
+          classNames: {
+            item: "rounded-lg bg-primary/5",
+            label: "font-semibold",
+            hint: "text-muted/80",
+          },
+        }}
+      />
+    </Select>
   ),
 };
 

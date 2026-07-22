@@ -8,4 +8,4 @@ LinkIcon.displayName = "Link.Icon";
 
 export { LinkDefaultIcon } from "./linkDefaultIconPart";
 export { LinkIconSlot } from "./linkIconSlotPart";
-export { LinkAnchorBody } from "./linkAnchorBodyPart";
+export { LinkAnchorBody, LinkBodyContent } from "./linkAnchorBodyPart";

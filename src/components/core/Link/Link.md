@@ -14,14 +14,15 @@ import { Link, type LinkProps, type LinkSize, type LinkIconPosition, type LinkCl
 
 | Prop | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
-| `href` | `string` | — | Обязательный URL |
+| `href` | `string` | — | URL; обязателен без `asChild` |
+| `asChild` | `boolean` | `false` | Стили на единственный child (router `Link`, custom `<a>`); `href` опционален |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Текст и иконки |
 | `underline` | `boolean` | `false` | Подчёркивание текста |
 | `icon` | `ReactNode` | — | Simple API иконка |
 | `iconPosition` | `start` \| `end` | `start` | Позиция `icon` |
 | `showDefaultIcon` | `boolean` | `false` | `IoArrowForward` ↗ (только без `icon`) |
 | `defaultIconPosition` | `start` \| `end` | `end` | Позиция дефолтной иконки |
-| `className` | `string` | — | На `<a>` |
+| `className` | `string` | — | На `<a>` (или child при `asChild`) |
 | `classNames` | `LinkClassNames` | — | `root`, `text`, `iconStart`, `iconEnd` |
 | … | `AnchorHTMLAttributes` | — | `target`, `rel`, `onClick`, … |
 
@@ -34,6 +35,16 @@ type LinkClassNames = {
   iconStart?: string;
   iconEnd?: string;
 };
+```
+
+### asChild (роутер)
+
+```tsx
+import NextLink from "next/link";
+
+<Link asChild underline showDefaultIcon>
+  <NextLink href="/docs">Документация</NextLink>
+</Link>
 ```
 
 ### Simple API

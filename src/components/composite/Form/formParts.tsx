@@ -83,7 +83,7 @@ export const FormActions = forwardRef<HTMLDivElement, FormActionsProps>(
 FormActions.displayName = "Form.Actions";
 
 export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps>(
-  function FormErrorSummary({ className = "", id, ...rest }, ref) {
+  function FormErrorSummary({ className = "", id, children, ...rest }, ref) {
     const rootClassNames = useFormClassNames();
     const shellIds = useFormShellIds();
     const form = useOptionalFormBindingContext();
@@ -92,7 +92,10 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
 
     if (entries.length === 0) return null;
 
-    const summaryText = entries.map(([, message]) => message).join(". ");
+    const content =
+      typeof children === "function"
+        ? children(entries)
+        : (children ?? entries.map(([, message]) => message).join(". "));
 
     return (
       <div
@@ -103,7 +106,7 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
         className={formErrorSummaryClass(className, rootClassNames)}
         {...rest}
       >
-        {summaryText}
+        {content}
       </div>
     );
   },

@@ -430,7 +430,39 @@ export const CustomClassNames: Story = {
         input: "text-primary placeholder:text-primary/50",
         trigger: "text-primary hover:text-primary",
         popoverBody: "bg-primary/5",
+        listBoxItem: "rounded-lg",
+        listBoxLabel: "font-semibold",
       }}
     />
+  ),
+};
+
+/** Review 3.9: nested ListBox slots + listBoxProps on ComboBox.Popover. */
+export const ListBoxItemSlots: Story = {
+  name: "listBox item slots",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`classNames.listBoxItem` and `ComboBox.Popover listBoxProps` style the inner ListBox rows.",
+      },
+    },
+  },
+  render: () => (
+    <ComboBox options={sampleOptions} defaultValue="ru">
+      <ComboBox.Label>Styled list items</ComboBox.Label>
+      <ComboBox.InputGroup>
+        <ComboBox.Input placeholder="Select language" />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover
+        listBoxProps={{
+          classNames: {
+            item: "rounded-lg bg-primary/5",
+            label: "font-semibold",
+          },
+        }}
+      />
+    </ComboBox>
   ),
 };

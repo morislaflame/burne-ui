@@ -17,7 +17,21 @@ export function PaginationCustomLabelsDemo() {
             <span className="text-base">Back</span>
           </Pagination.Previous>
         </Pagination.Item>
-        <Pagination.Pages />
+        <Pagination.Item>
+          <Pagination.Page page={1} />
+        </Pagination.Item>
+        <Pagination.Item>
+          <Pagination.Ellipsis>···</Pagination.Ellipsis>
+        </Pagination.Item>
+        <Pagination.Item>
+          <Pagination.Page page={page} />
+        </Pagination.Item>
+        <Pagination.Item>
+          <Pagination.Ellipsis>···</Pagination.Ellipsis>
+        </Pagination.Item>
+        <Pagination.Item>
+          <Pagination.Page page={8} />
+        </Pagination.Item>
         <Pagination.Item>
           <Pagination.Next>
             <span className="text-base">Forward</span>

@@ -275,7 +275,7 @@ Per-toast `classNames` **перекрывают** одноимённые клю�
 
 ### Практические заметки
 
-- **Provider vs toast:** viewport/scrim/stack — только на Provider; карточка — provider defaults + per-toast override.
+- **Provider vs toast:** viewport/scrim/stack — только на Provider через `classNames` (compound `Toast.Viewport` / `Toast.Stack` не добавляем — слотов достаточно); карточка — provider defaults + per-toast override.
 - **Gloss:** `variant="gloss"` на `toast.show` или `Toast.Root`; не ломайте `gloss-panel` без нужды.
 - **2-й уровень:** постоянная `shadow-token-md` на карточке.
 - **Порядок мержа:** provider → per-toast / Root `classNames` → `className` подчасти.
