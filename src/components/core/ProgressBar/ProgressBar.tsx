@@ -4,7 +4,7 @@ import { FieldLabelContext } from "@/components/core/Label";
 import { ProgressBarClassNamesProvider, ProgressBarFieldProvider } from "./progressBarContext";
 import { ProgressBarSimpleBody } from "./progressBarParts";
 import { progressBarRootClass } from "./progressBarStyles";
-import type { ProgressBarRootProps } from "./progressBarTypes";
+import type { ProgressBarProps } from "./progressBarTypes";
 import { useProgressBarRootState } from "./useProgressBarRootState";
 
 export type {
@@ -13,7 +13,7 @@ export type {
   ProgressBarHeaderProps,
   ProgressBarHintProps,
   ProgressBarOrientation,
-  ProgressBarRootProps,
+  ProgressBarProps,
   ProgressBarSize,
   ProgressBarTrackProps,
   ProgressBarValueProps,
@@ -54,7 +54,7 @@ export function ProgressBarRoot({
   color,
   formatValue,
   ...divRest
-}: ProgressBarRootProps) {
+}: ProgressBarProps) {
   const state = useProgressBarRootState({
     children,
     id,

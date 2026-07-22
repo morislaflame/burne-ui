@@ -37,7 +37,7 @@ export {
 };
 
 export type {
-  FieldRootProps,
+  FieldProps,
   FieldHintProps,
   FieldHintStatus,
   FieldLabelProps,

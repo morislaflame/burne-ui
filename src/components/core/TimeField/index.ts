@@ -9,7 +9,7 @@ export const TimeField = Object.assign(TimeFieldRoot, {
 
 export type {
   TimeFieldClassNames,
-  TimeFieldRootProps,
+  TimeFieldProps,
   TimeFieldControlProps,
   TimeFieldHintProps,
   TimeFieldErrorProps,

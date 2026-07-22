@@ -58,7 +58,7 @@ export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> &
   className?: string;
 };
 
-export type MeterRootProps = HTMLAttributes<HTMLDivElement> &
+export type MeterProps = HTMLAttributes<HTMLDivElement> &
   Partial<MeterTrackProps> & {
     children?: ReactNode;
     id?: string;
@@ -93,7 +93,7 @@ export type MeterErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 };
 
 export type UseMeterRootStateProps = Omit<
-  MeterRootProps,
+  MeterProps,
   "className" | "classNames"
 >;
 

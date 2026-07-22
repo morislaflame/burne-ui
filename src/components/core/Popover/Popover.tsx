@@ -1,7 +1,7 @@
 import "../utils/glossInteractive.css";
 
 import { PopoverClassNamesProvider, PopoverProvider } from "./popoverContext";
-import type { PopoverRootProps } from "./popoverTypes";
+import type { PopoverProps } from "./popoverTypes";
 import { usePopoverRootState } from "./usePopoverRootState";
 
 export type {
@@ -13,7 +13,7 @@ export type {
   PopoverHeaderProps,
   PopoverDescriptionProps,
   PopoverTitleProps,
-  PopoverRootProps,
+  PopoverProps,
   PopoverSide,
   PopoverSize,
   PopoverTriggerProps,
@@ -41,7 +41,7 @@ export function PopoverRoot({
   onOpenChange,
   anchorRef,
   shouldDismiss,
-}: PopoverRootProps) {
+}: PopoverProps) {
   const { contextValue } = usePopoverRootState({
     children,
     size,

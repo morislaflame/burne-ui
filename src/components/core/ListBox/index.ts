@@ -21,7 +21,7 @@ export const ListBox = Object.assign(ListBoxRoot, {
 export { useListBox };
 
 export type {
-  ListBoxRootProps,
+  ListBoxProps,
   ListBoxSectionProps,
   ListBoxHeaderProps,
   ListBoxSeparatorProps,

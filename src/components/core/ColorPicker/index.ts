@@ -24,7 +24,7 @@ export type {
 export {
   ColorSliderTrack,
   type ColorSliderTrackProps,
-  type ColorSliderRootProps,
+  type ColorSliderProps,
   type ColorChannel,
   type ColorSliderSize,
   type ColorSliderOrientation,

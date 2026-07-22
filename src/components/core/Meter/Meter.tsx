@@ -4,7 +4,7 @@ import { FieldLabelContext } from "@/components/core/Label";
 import { MeterClassNamesProvider, MeterFieldProvider } from "./meterContext";
 import { MeterSimpleBody } from "./meterParts";
 import { meterRootClass } from "./meterStyles";
-import type { MeterRootProps } from "./meterTypes";
+import type { MeterProps } from "./meterTypes";
 import { useMeterRootState } from "./useMeterRootState";
 
 export type {
@@ -13,7 +13,7 @@ export type {
   MeterHeaderProps,
   MeterHintProps,
   MeterOrientation,
-  MeterRootProps,
+  MeterProps,
   MeterSize,
   MeterTrackProps,
   MeterValueProps,
@@ -53,7 +53,7 @@ export function MeterRoot({
   color,
   formatValue,
   ...divRest
-}: MeterRootProps) {
+}: MeterProps) {
   const state = useMeterRootState({
     children,
     id,

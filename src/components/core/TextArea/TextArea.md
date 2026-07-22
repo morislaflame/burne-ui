@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { TextArea, type TextAreaProps, type TextAreaSimpleProps, type TextAreaVariant, type TextAreaStatus, type TextAreaSize, type TextAreaClassNames } from "burne-ui";
+import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaSimpleProps, type TextAreaVariant, type TextAreaStatus, type TextAreaSize, type TextAreaClassNames } from "burne-ui";
 ```
 
 ## API

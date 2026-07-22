@@ -9,11 +9,11 @@ export const TextArea = Object.assign(TextAreaRoot, {
 
 export type {
   TextAreaClassNames,
-  TextAreaProps,
+  TextAreaControlProps,
   TextAreaSize,
   TextAreaStatus,
   TextAreaVariant,
-  TextAreaRootProps,
+  TextAreaProps,
   TextAreaHintProps,
   TextAreaErrorProps,
   TextAreaSimpleProps,

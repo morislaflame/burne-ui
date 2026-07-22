@@ -3,11 +3,11 @@ import "../utils/glossInteractive.css";
 import { resolveListBoxAriaLabel } from "./listBoxA11y";
 import { ListBoxClassNamesProvider, ListBoxProvider } from "./listBoxContext";
 import { ListBoxRootShell } from "./listBoxParts";
-import type { ListBoxRootProps } from "./listBoxTypes";
+import type { ListBoxProps } from "./listBoxTypes";
 import { useListBoxRootState } from "./useListBoxRootState";
 
 export type {
-  ListBoxRootProps,
+  ListBoxProps,
   ListBoxSectionProps,
   ListBoxHeaderProps,
   ListBoxSeparatorProps,
@@ -55,7 +55,7 @@ export function ListBoxRoot({
   "aria-label": ariaLabelProp,
   "aria-labelledby": ariaLabelledByProp,
   ...rest
-}: ListBoxRootProps) {
+}: ListBoxProps) {
   const { listId, contextValue } = useListBoxRootState({
     size,
     multiple,

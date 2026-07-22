@@ -26,7 +26,7 @@ export type ComboBoxClassNames = {
   error?: string;
 };
 
-export type ComboBoxRootProps = HTMLAttributes<HTMLDivElement> & {
+export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
@@ -50,7 +50,7 @@ export type ComboBoxRootProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: ComboBoxClassNames;
 };
 
-export type ComboBoxSimpleProps = ComboBoxRootProps & {
+export type ComboBoxSimpleProps = ComboBoxProps & {
   options: ComboBoxOption[];
 };
 
@@ -120,7 +120,7 @@ export type ComboBoxErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
 };
 
-export type UseComboBoxRootStateProps = ComboBoxRootProps;
+export type UseComboBoxRootStateProps = ComboBoxProps;
 
 export type RunComboBoxOpenAfterSqueezeOptions = {
   anchorRef: React.RefObject<HTMLDivElement | null>;

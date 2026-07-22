@@ -11,7 +11,7 @@ export const Popover = Object.assign(PopoverRoot, {
 });
 
 export type {
-  PopoverRootProps,
+  PopoverProps,
   PopoverTriggerProps,
   PopoverContentProps,
   PopoverHeaderProps,

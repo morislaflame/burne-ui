@@ -1,5 +1,5 @@
 import { TooltipClassNamesProvider, TooltipContext } from "./tooltipContext";
-import type { TooltipRootProps } from "./tooltipTypes";
+import type { TooltipProps } from "./tooltipTypes";
 import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIcon, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipTitle, TooltipTrigger } from "./tooltipParts";
 import { useTooltipRootState } from "./useTooltipRootState";
 
@@ -13,7 +13,7 @@ export function TooltipRoot({
   side = "top",
   icon,
   showIcon,
-}: TooltipRootProps) {
+}: TooltipProps) {
   const { contextValue } = useTooltipRootState({
     size,
     variant,

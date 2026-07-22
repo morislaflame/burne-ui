@@ -9,7 +9,7 @@ import { cn } from "@/utils/cn";
 import { CHANNEL_A11Y_LABEL, COLOR_SLIDER_LABEL_ROW_CLASS, COLOR_SLIDER_LABEL_TEXT_CLASS, COLOR_SLIDER_ROOT_CLASS, COLOR_SLIDER_VALUE_TEXT_CLASS, colorSliderBackgroundStyle, colorSliderTrackClass } from "./colorSliderStyles";
 import type {
   ColorChannel,
-  ColorSliderRootProps,
+  ColorSliderProps,
   ColorSliderTrackProps,
 } from "./colorSliderTypes";
 import { clampN } from "./colorUtils";
@@ -17,7 +17,7 @@ import { clampN } from "./colorUtils";
 export type {
   ColorChannel,
   ColorSliderOrientation,
-  ColorSliderRootProps,
+  ColorSliderProps,
   ColorSliderSize,
   ColorSliderTrackProps,
 } from "./colorSliderTypes";
@@ -229,7 +229,7 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
 
 ColorSliderTrack.displayName = "ColorSliderTrack";
 
-export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderRootProps>(
+export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
   function ColorSliderRoot(
     { channel, color, label, size = "base", orientation = "horizontal", className = "", children, ...rest },
     ref,

@@ -35,7 +35,7 @@ export type CheckboxClassNames = {
   input?: string;
 };
 
-export type CheckboxRootProps = Omit<
+export type CheckboxProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
 > &
@@ -53,7 +53,6 @@ export type CheckboxRootProps = Omit<
     onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
   };
 
-export type CheckboxProps = CheckboxRootProps;
 
 export type CheckboxControlProps = HTMLAttributes<HTMLSpanElement>;
 
@@ -120,7 +119,7 @@ export type CheckboxClassNamesProviderProps = {
 };
 
 export type UseCheckboxRootStateProps = Omit<
-  CheckboxRootProps,
+  CheckboxProps,
   "children" | "className" | "classNames"
 >;
 

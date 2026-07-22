@@ -19,7 +19,7 @@ export type {
   ToastStatus,
   ToastPlacement,
   ToastProviderProps,
-  ToastRootProps,
+  ToastProps,
   ToastIndicatorProps,
   ToastMessageProps,
   ToastContentProps,

@@ -6,7 +6,7 @@ import type { FieldSetProps } from "./fieldTypes";
 import { useFieldSetRootState } from "./useFieldSetRootState";
 
 export type {
-  FieldRootProps,
+  FieldProps,
   FieldHintProps,
   FieldHintStatus,
   FieldLabelProps,

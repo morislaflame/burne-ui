@@ -23,7 +23,7 @@ export type FieldSetClassNames = {
   actions?: string;
 };
 
-export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
+export type FieldProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   classNames?: FieldClassNames;
 };

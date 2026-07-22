@@ -15,7 +15,7 @@ import { TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS, TEXTAREA_RESIZE_GRIP_LINE_SECO
 import type {
   TextAreaErrorProps,
   TextAreaHintProps,
-  TextAreaProps,
+  TextAreaControlProps,
   TextAreaSimpleBodyProps,
 } from "./textAreaTypes";
 import { useTextAreaResize } from "./useTextAreaResize";
@@ -54,7 +54,7 @@ function TextAreaResizeHandle({
   );
 }
 
-export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaProps>(
+export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlProps>(
   function TextAreaControl(
     {
       variant = "default",

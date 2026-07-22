@@ -24,7 +24,7 @@ import { INPUT_CONTROL_BASE_CLASS, INPUT_CONTROL_PAD, INPUT_FILE_EMPTY_ICON_CLAS
 import type {
   InputHintProps,
   InputErrorProps,
-  InputProps,
+  InputControlProps,
   InputSimpleBodyProps,
   InputSize,
   InputStatus,
@@ -157,7 +157,7 @@ function FileRemoveButton({
   );
 }
 
-export const InputControl = forwardRef<HTMLInputElement, InputProps>(
+export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
   function InputControl(
     {
       variant = "default",

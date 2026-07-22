@@ -3,11 +3,11 @@ import { forwardRef } from "react";
 import { TabsClassNamesProvider, TabsContext } from "./tabsContext";
 import { TabsList, TabsPanel, TabsTab } from "./tabsParts";
 import { tabsRootClass } from "./tabsStyles";
-import type { TabsRootProps } from "./tabsTypes";
+import type { TabsProps } from "./tabsTypes";
 import { useTabsRootState } from "./useTabsRootState";
 
 export type {
-  TabsRootProps,
+  TabsProps,
   TabsListProps,
   TabsTabProps,
   TabsPanelProps,
@@ -17,7 +17,7 @@ export type {
   TabsClassNames,
 } from "./tabsTypes";
 
-export const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>(function TabsRoot(
+export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
   {
     children,
     className,

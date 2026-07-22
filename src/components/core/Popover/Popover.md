@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Popover, type PopoverRootProps, type PopoverVariant, type PopoverSize, type PopoverSide, type PopoverContentGap, type PopoverClassNames, type PopoverAlign } from "burne-ui";
+import { Popover, type PopoverProps, type PopoverVariant, type PopoverSize, type PopoverSide, type PopoverContentGap, type PopoverClassNames, type PopoverAlign } from "burne-ui";
 ```
 
 ## API

@@ -31,7 +31,7 @@ export type InputClassNames = {
   error?: string;
 };
 
-export type InputProps = Omit<
+export type InputControlProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type" | "prefix" | "onPointerDown"
 > & {
@@ -63,7 +63,7 @@ export type InputClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type InputRootProps = HTMLAttributes<HTMLDivElement> & {
+export type InputProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
@@ -75,7 +75,7 @@ export type InputRootProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: InputClassNames;
 };
 
-export type InputSimpleProps = InputRootProps & InputProps;
+export type InputSimpleProps = InputProps & InputControlProps;
 
 export type InputHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
@@ -98,5 +98,5 @@ export type InputSimpleBodyProps = {
   labelId: string;
   size: InputSize;
   status: InputStatus;
-  controlProps: InputProps;
+  controlProps: InputControlProps;
 };

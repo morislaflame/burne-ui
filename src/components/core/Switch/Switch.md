@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Switch, SWITCH_LAYOUT, type SwitchRootProps, type SwitchSimpleProps, type SwitchSize, type SwitchLabelPosition, type SwitchClassNames } from "burne-ui";
+import { Switch, SWITCH_LAYOUT, type SwitchProps, type SwitchSimpleProps, type SwitchSize, type SwitchLabelPosition, type SwitchClassNames } from "burne-ui";
 ```
 
 ## API

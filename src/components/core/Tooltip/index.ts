@@ -17,7 +17,7 @@ export type {
   TooltipSize,
   TooltipSide,
   TooltipClassNames,
-  TooltipRootProps,
+  TooltipProps,
   TooltipTriggerProps,
   TooltipContentProps,
   TooltipArrowProps,

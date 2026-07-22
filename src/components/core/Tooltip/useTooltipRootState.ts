@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
-import type { TooltipContextValue, TooltipRootProps } from "./tooltipTypes";
+import type { TooltipContextValue, TooltipProps } from "./tooltipTypes";
 
-export type UseTooltipRootStateProps = Omit<TooltipRootProps, "classNames" | "children">;
+export type UseTooltipRootStateProps = Omit<TooltipProps, "classNames" | "children">;
 
 export function useTooltipRootState({
   size = "base",

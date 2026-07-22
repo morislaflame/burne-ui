@@ -35,7 +35,7 @@ export type RadioClassNames = {
   input?: string;
 };
 
-export type RadioRootProps = Omit<
+export type RadioProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
 > &
@@ -52,7 +52,6 @@ export type RadioRootProps = Omit<
     onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
   };
 
-export type RadioProps = RadioRootProps;
 
 export type RadioControlProps = HTMLAttributes<HTMLSpanElement>;
 
@@ -116,7 +115,7 @@ export type RadioClassNamesProviderProps = {
 };
 
 export type UseRadioRootStateProps = Omit<
-  RadioRootProps,
+  RadioProps,
   "children" | "className" | "classNames" | "onPointerDown" | "onClick"
 >;
 

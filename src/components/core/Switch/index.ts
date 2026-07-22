@@ -25,7 +25,7 @@ export type {
   SwitchLabelProps,
   SwitchHintProps,
   SwitchErrorProps,
-  SwitchRootProps,
+  SwitchProps,
   SwitchSimpleProps,
   SwitchClassNames,
 } from "./switchTypes";

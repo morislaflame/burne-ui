@@ -17,7 +17,6 @@ export const Checkbox = Object.assign(CheckboxRoot, {
 
 export type {
   CheckboxProps,
-  CheckboxRootProps,
   CheckboxControlProps,
   CheckboxIndicatorProps,
   CheckboxContentProps,

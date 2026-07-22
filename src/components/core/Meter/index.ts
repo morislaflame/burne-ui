@@ -18,7 +18,7 @@ export type {
 } from "./Meter";
 
 export type {
-  MeterRootProps,
+  MeterProps,
   MeterHeaderProps,
   MeterValueProps,
   MeterHintProps,

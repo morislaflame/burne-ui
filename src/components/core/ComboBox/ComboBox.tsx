@@ -4,7 +4,7 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 
 import { ComboBoxClassNamesProvider, ComboBoxFieldProvider, ComboBoxProvider } from "./comboBoxContext";
 import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxSimpleBody, ComboBoxTrigger } from "./comboBoxParts";
-import type { ComboBoxRootProps } from "./comboBoxTypes";
+import type { ComboBoxProps } from "./comboBoxTypes";
 import { useComboBoxRootState } from "./useComboBoxRootState";
 
 import "../utils/glossInteractive.css";
@@ -12,7 +12,7 @@ import "../utils/glossInteractive.css";
 import { cn } from "@/utils/cn";
 
 export type {
-  ComboBoxRootProps,
+  ComboBoxProps,
   ComboBoxSimpleProps,
   ComboBoxHintProps,
   ComboBoxErrorProps,
@@ -24,7 +24,6 @@ export type {
   ComboBoxClassNames,
 } from "./comboBoxTypes";
 
-export type ComboBoxProps = ComboBoxRootProps;
 
 export function ComboBoxRoot({
   children,
@@ -50,7 +49,7 @@ export function ComboBoxRoot({
   menuMaxHeight,
   name,
   ...rest
-}: ComboBoxRootProps) {
+}: ComboBoxProps) {
   const formCtx = useOptionalFormBindingContext();
   const fieldName = typeof name === "string" ? name : undefined;
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;

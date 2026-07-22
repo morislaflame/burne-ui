@@ -6,14 +6,13 @@ import "../utils/glossInteractive.css";
 import { ExpandableClassNamesProvider, ExpandableProvider } from "./expandableContext";
 import { EXPANDABLE_GLOSS_CONTENT_CLASS, ExpandableChevron, ExpandableContent, ExpandableDescription, ExpandableIcon, ExpandableMessage, ExpandablePanel, ExpandableSimpleBody, ExpandableTitle, ExpandableTrigger } from "./expandableParts";
 import { expandableRootClass } from "./expandableStyles";
-import type { ExpandableRootProps } from "./expandableTypes";
+import type { ExpandableProps } from "./expandableTypes";
 import { useExpandableRootState } from "./useExpandableRootState";
 
 import { cn } from "@/utils/cn";
 
 export type {
   ExpandableProps,
-  ExpandableRootProps,
   ExpandableTriggerProps,
   ExpandableMessageProps,
   ExpandableIconProps,
@@ -29,7 +28,7 @@ export type {
 
 export { useExpandableContext } from "./expandableContext";
 
-export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableRootProps>(
+export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
   function ExpandableRoot(
     {
       children,

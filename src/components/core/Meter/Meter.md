@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Meter, useMeterFieldContext, type MeterRootProps, type MeterTrackProps, type MeterSize, type MeterOrientation, type MeterClassNames } from "burne-ui";
+import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, type MeterSize, type MeterOrientation, type MeterClassNames } from "burne-ui";
 ```
 
 ## API

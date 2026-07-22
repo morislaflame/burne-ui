@@ -10,7 +10,7 @@ export { TabsRoot, TabsList, TabsTab, TabsPanel } from "./Tabs";
 export { useTabsContext, useTabsClassNames } from "./tabsContext";
 
 export type {
-  TabsRootProps,
+  TabsProps,
   TabsListProps,
   TabsTabProps,
   TabsPanelProps,

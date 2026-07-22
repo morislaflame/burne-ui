@@ -12,7 +12,7 @@ import type {
   FieldHintProps,
   FieldLegendHeaderProps,
   FieldLegendProps,
-  FieldRootProps,
+  FieldProps,
   FieldSetActionsProps,
   FieldSetGroupProps,
   FieldSetProps,
@@ -25,7 +25,7 @@ export function FieldRootShell({
   className,
   children,
   ...rest
-}: Omit<FieldRootProps, "classNames">) {
+}: Omit<FieldProps, "classNames">) {
   const slotClassNames = useFieldClassNames();
 
   return (
@@ -42,7 +42,7 @@ export function FieldRootShell({
   );
 }
 
-export function FieldRoot({ classNames, ...rest }: FieldRootProps) {
+export function FieldRoot({ classNames, ...rest }: FieldProps) {
   return (
     <FieldClassNamesProvider classNames={classNames}>
       <FieldRootShell {...rest} />

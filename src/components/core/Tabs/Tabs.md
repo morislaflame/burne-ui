@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Tabs, useTabsContext, type TabsRootProps, type TabsListProps, type TabsTabProps, type TabsPanelProps, type TabsSize, type TabsOrientation, type TabsVariant, type TabsClassNames } from "burne-ui";
+import { Tabs, useTabsContext, type TabsProps, type TabsListProps, type TabsTabProps, type TabsPanelProps, type TabsSize, type TabsOrientation, type TabsVariant, type TabsClassNames } from "burne-ui";
 ```
 
 ## API

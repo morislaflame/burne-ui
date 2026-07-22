@@ -15,7 +15,6 @@ export { useExpandableContext } from "./expandableContext";
 
 export type {
   ExpandableProps,
-  ExpandableRootProps,
   ExpandableTriggerProps,
   ExpandableMessageProps,
   ExpandableIconProps,

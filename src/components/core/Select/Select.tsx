@@ -4,7 +4,7 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 
 import { SelectClassNamesProvider, SelectFieldProvider, SelectProvider } from "./selectContext";
 import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectSimpleBody, SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectParts";
-import type { SelectRootProps } from "./selectTypes";
+import type { SelectProps } from "./selectTypes";
 import { useSelectRootState } from "./useSelectRootState";
 
 import "../utils/glossInteractive.css";
@@ -12,7 +12,7 @@ import "../utils/glossInteractive.css";
 import { cn } from "@/utils/cn";
 
 export type {
-  SelectRootProps,
+  SelectProps,
   SelectSimpleProps,
   SelectHintProps,
   SelectErrorProps,
@@ -24,7 +24,6 @@ export type {
   SelectClassNames,
 } from "./selectTypes";
 
-export type SelectProps = SelectRootProps;
 
 export function SelectRoot({
   children,
@@ -50,7 +49,7 @@ export function SelectRoot({
   menuMaxHeight,
   name,
   ...rest
-}: SelectRootProps) {
+}: SelectProps) {
   const formCtx = useOptionalFormBindingContext();
   const fieldName = typeof name === "string" ? name : undefined;
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;

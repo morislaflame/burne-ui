@@ -52,7 +52,7 @@ export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "childr
   className?: string;
 };
 
-export type ProgressBarRootProps = HTMLAttributes<HTMLDivElement> &
+export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
   Partial<ProgressBarTrackProps> & {
     children?: ReactNode;
     id?: string;
@@ -87,7 +87,7 @@ export type ProgressBarErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 };
 
 export type UseProgressBarRootStateProps = Omit<
-  ProgressBarRootProps,
+  ProgressBarProps,
   "className" | "classNames"
 >;
 

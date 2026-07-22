@@ -27,7 +27,7 @@ export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"
   disabled?: boolean;
 };
 
-export type ColorSliderRootProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
+export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   channel: ColorChannel;
   color?: HSVA;
   label?: string;

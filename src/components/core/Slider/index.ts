@@ -27,7 +27,7 @@ export type {
   SliderRailProps,
   SliderThumbProps,
   SliderThumbKind,
-  SliderRootProps,
+  SliderProps,
   SliderHeaderProps,
   SliderValueProps,
   SliderHintProps,

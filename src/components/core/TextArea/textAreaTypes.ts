@@ -24,7 +24,7 @@ export type TextAreaClassNames = {
   error?: string;
 };
 
-export type TextAreaProps = Omit<
+export type TextAreaControlProps = Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
   "size"
 > & {
@@ -53,7 +53,7 @@ export type TextAreaClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type TextAreaRootProps = HTMLAttributes<HTMLDivElement> & {
+export type TextAreaProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
@@ -65,7 +65,7 @@ export type TextAreaRootProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: TextAreaClassNames;
 };
 
-export type TextAreaSimpleProps = TextAreaRootProps & TextAreaProps;
+export type TextAreaSimpleProps = TextAreaProps & TextAreaControlProps;
 
 export type TextAreaHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
@@ -86,5 +86,5 @@ export type TextAreaSimpleBodyProps = {
   labelId: string;
   size: TextAreaSize;
   status: TextAreaStatus;
-  controlProps: TextAreaProps;
+  controlProps: TextAreaControlProps;
 };

@@ -30,7 +30,7 @@ export type TooltipClassNames = {
   description?: string;
 };
 
-export type TooltipRootProps = {
+export type TooltipProps = {
   children?: ReactNode;
   size?: TooltipSize;
   variant?: TooltipVariant;

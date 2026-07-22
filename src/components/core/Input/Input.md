@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Input, type InputProps, type InputSimpleProps, type InputRootProps, type InputVariant, type InputStatus, type InputSize, type InputClassNames } from "burne-ui";
+import { Input, type InputControlProps, type InputSimpleProps, type InputProps, type InputVariant, type InputStatus, type InputSize, type InputClassNames } from "burne-ui";
 ```
 
 ## API

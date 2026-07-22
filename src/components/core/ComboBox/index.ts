@@ -13,7 +13,7 @@ export const ComboBox = Object.assign(ComboBoxRoot, {
 export type { ComboBoxOption } from "./comboBoxTypes";
 
 export type {
-  ComboBoxRootProps,
+  ComboBoxProps,
   ComboBoxSimpleProps,
   ComboBoxHintProps,
   ComboBoxErrorProps,

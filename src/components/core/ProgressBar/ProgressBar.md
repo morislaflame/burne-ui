@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { ProgressBar, useProgressBarFieldContext, type ProgressBarRootProps, type ProgressBarTrackProps, type ProgressBarSize, type ProgressBarOrientation, type ProgressBarClassNames } from "burne-ui";
+import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type ProgressBarTrackProps, type ProgressBarSize, type ProgressBarOrientation, type ProgressBarClassNames } from "burne-ui";
 ```
 
 ## API

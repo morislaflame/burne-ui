@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Slider, sliderThicknessToCss, type SliderRootProps, type SliderSingleProps, type SliderRangeProps, type SliderOrientation, type SliderSize, type SliderClassNames } from "burne-ui";
+import { Slider, sliderThicknessToCss, type SliderProps, type SliderSingleProps, type SliderRangeProps, type SliderOrientation, type SliderSize, type SliderClassNames } from "burne-ui";
 ```
 
 ## API

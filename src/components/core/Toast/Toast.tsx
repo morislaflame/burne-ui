@@ -7,7 +7,7 @@ import "@/components/core/utils/glossInteractive.css";
 import { ToastClassNamesProvider, ToastItemProvider, useToastClassNames } from "./toastContext";
 import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator, ToastMessage, ToastSimpleBody, ToastTitle } from "./toastParts";
 import { toastRootClass } from "./toastStyles";
-import type { ToastRootProps } from "./toastTypes";
+import type { ToastProps } from "./toastTypes";
 import { useToastRootState } from "./useToastRootState";
 
 export type {
@@ -16,7 +16,7 @@ export type {
   ToastVariant,
   ToastPlacement,
   ToastProviderProps,
-  ToastRootProps,
+  ToastProps,
   ToastIndicatorProps,
   ToastMessageProps,
   ToastContentProps,
@@ -31,7 +31,7 @@ export type {
 
 export { ToastProviderRoot } from "./toastProvider";
 
-export const ToastRoot = forwardRef<HTMLDivElement, ToastRootProps>(function ToastRoot(
+export const ToastRoot = forwardRef<HTMLDivElement, ToastProps>(function ToastRoot(
   {
     status = "default",
     variant = "default",

@@ -4,14 +4,13 @@ import { useRadioTextMotion } from "./radioAnimations";
 import { RadioClassNamesProvider, RadioFieldProvider } from "./radioContext";
 import { RadioSimpleBody } from "./radioParts";
 import { RADIO_ROOT_DISABLED_CLASS, radioGridClass } from "./radioStyles";
-import type { RadioRootProps } from "./radioTypes";
+import type { RadioProps } from "./radioTypes";
 import { useRadioRootState } from "./useRadioRootState";
 
 import { cn } from "@/utils/cn";
 
 export type {
   RadioProps,
-  RadioRootProps,
   RadioControlProps,
   RadioIndicatorProps,
   RadioContentProps,
@@ -23,7 +22,7 @@ export type {
   RadioClassNames,
 } from "./radioTypes";
 
-export const RadioRoot = forwardRef<HTMLLabelElement, RadioRootProps>(function RadioRoot(
+export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function RadioRoot(
   {
     children,
     label,

@@ -4,7 +4,7 @@ import { FieldLabelContext } from "@/components/core/Label";
 import { TimeFieldClassNamesProvider, TimeFieldFieldProvider } from "./timeFieldContext";
 import { TimeFieldSimpleBody } from "./timeFieldParts";
 import { timeFieldRootClass } from "./timeFieldStyles";
-import type { TimeFieldRootProps } from "./timeFieldTypes";
+import type { TimeFieldProps } from "./timeFieldTypes";
 import { useTimeFieldRootState } from "./useTimeFieldRootState";
 
 export type {
@@ -13,7 +13,7 @@ export type {
   TimeFieldErrorProps,
   TimeFieldFormat,
   TimeFieldHintProps,
-  TimeFieldRootProps,
+  TimeFieldProps,
   TimeFieldSize,
   TimeFieldStatus,
   TimeFieldVariant,
@@ -42,7 +42,7 @@ export function TimeFieldRoot({
   prefix,
   suffix,
   ...rest
-}: TimeFieldRootProps) {
+}: TimeFieldProps) {
   const state = useTimeFieldRootState({
     children,
     label,

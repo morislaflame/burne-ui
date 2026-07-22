@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Select, type SelectOption, type SelectRootProps, type SelectSimpleProps, type SelectClassNames } from "burne-ui";
+import { Select, type SelectOption, type SelectProps, type SelectSimpleProps, type SelectClassNames } from "burne-ui";
 ```
 
 ## API

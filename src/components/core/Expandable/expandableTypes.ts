@@ -26,7 +26,7 @@ export type ExpandableClassNames = {
   panel?: string;
 };
 
-export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
+export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
   variant?: ExpandableVariant;
   compound?: boolean;
@@ -41,7 +41,6 @@ export type ExpandableRootProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> 
   classNames?: ExpandableClassNames;
 };
 
-export type ExpandableProps = ExpandableRootProps;
 
 export type ExpandableContextValue = {
   open: boolean;
@@ -81,7 +80,7 @@ export type ExpandableSimpleBodyProps = {
 };
 
 export type UseExpandableRootStateProps = Pick<
-  ExpandableRootProps,
+  ExpandableProps,
   | "children"
   | "compound"
   | "defaultOpen"

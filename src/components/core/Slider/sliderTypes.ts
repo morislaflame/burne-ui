@@ -103,7 +103,7 @@ export type SliderRangeProps = SliderCommonProps & {
 
 export type SliderTrackProps = SliderSingleProps | SliderRangeProps;
 
-export type SliderRootProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
+export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
   children?: ReactNode;
   id?: string;
   orientation?: SliderOrientation;
@@ -174,6 +174,6 @@ export type SliderThumbButtonProps = {
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
 };
 
-export type UseSliderRootStateProps = Omit<SliderRootProps, "className" | "classNames">;
+export type UseSliderRootStateProps = Omit<SliderProps, "className" | "classNames">;
 
 export type FillSpan = { start: number; end: number };

@@ -13,7 +13,7 @@ export const Select = Object.assign(SelectRoot, {
 export type { SelectOption } from "./selectTypes";
 
 export type {
-  SelectRootProps,
+  SelectProps,
   SelectSimpleProps,
   SelectHintProps,
   SelectErrorProps,

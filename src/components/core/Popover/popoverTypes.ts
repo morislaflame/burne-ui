@@ -41,7 +41,7 @@ export type PopoverContextValue = {
   contentRef: RefObject<HTMLDivElement | null>;
 };
 
-export type PopoverRootProps = {
+export type PopoverProps = {
   children?: ReactNode;
   size?: PopoverSize;
   variant?: PopoverVariant;
@@ -59,7 +59,7 @@ export type PopoverClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type UsePopoverRootStateProps = Omit<PopoverRootProps, "classNames">;
+export type UsePopoverRootStateProps = Omit<PopoverProps, "classNames">;
 
 export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   /** Merge props onto the single child (Button, etc.) instead of rendering a `<button>` wrapper. */

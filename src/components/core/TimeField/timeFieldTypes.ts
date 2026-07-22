@@ -71,7 +71,7 @@ export type TimeFieldControlProps = Omit<
   onPointerDown?: PointerEventHandler<HTMLFieldSetElement>;
 };
 
-export type TimeFieldRootProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "suffix"> & {
+export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "suffix"> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
@@ -119,4 +119,4 @@ export type TimeFieldSimpleBodyProps = {
   };
 };
 
-export type UseTimeFieldRootStateProps = TimeFieldRootProps;
+export type UseTimeFieldRootStateProps = TimeFieldProps;

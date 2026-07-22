@@ -7,14 +7,13 @@ import { useCheckboxTextMotion } from "./checkboxAnimations";
 import { CheckboxClassNamesProvider, CheckboxFieldProvider } from "./checkboxContext";
 import { CheckboxContent, CheckboxControl, CheckboxError, CheckboxHint, CheckboxIndicator, CheckboxLabel, CheckboxSimpleBody } from "./checkboxParts";
 import { CHECKBOX_COMPOUND_FIELDSET_CLASS, CHECKBOX_ROOT_DISABLED_CLASS, checkboxGridClass } from "./checkboxStyles";
-import type { CheckboxRootProps } from "./checkboxTypes";
+import type { CheckboxProps } from "./checkboxTypes";
 import { useCheckboxRootState } from "./useCheckboxRootState";
 
 import { cn } from "@/utils/cn";
 
 export type {
   CheckboxProps,
-  CheckboxRootProps,
   CheckboxControlProps,
   CheckboxIndicatorProps,
   CheckboxContentProps,
@@ -26,7 +25,7 @@ export type {
   CheckboxClassNames,
 } from "./checkboxTypes";
 
-export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxRootProps>(
+export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
   function CheckboxRoot(
     {
       children,

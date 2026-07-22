@@ -5,7 +5,7 @@ import { useSwitchTextMotion } from "./switchAnimations";
 import { SwitchClassNamesProvider, SwitchFieldProvider } from "./switchContext";
 import { SwitchContent, SwitchControl, SwitchError, SwitchFill, SwitchHint, SwitchIcon, SwitchLabel, SwitchSimpleBody, SwitchThumb, SwitchTrack } from "./switchParts";
 import { SWITCH_ROOT_DISABLED_CLASS, switchRootGridClass } from "./switchStyles";
-import type { SwitchControlProps, SwitchRootProps } from "./switchTypes";
+import type { SwitchControlProps, SwitchProps } from "./switchTypes";
 import { useSwitchRootState } from "./useSwitchRootState";
 
 import { cn } from "@/utils/cn";
@@ -24,13 +24,13 @@ export type {
   SwitchLabelProps,
   SwitchHintProps,
   SwitchErrorProps,
-  SwitchRootProps,
+  SwitchProps,
   SwitchSimpleProps,
 } from "./switchTypes";
 
 export { SWITCH_LAYOUT } from "./switchStyles";
 
-export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchRootProps & Partial<SwitchControlProps>>(
+export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<SwitchControlProps>>(
   function SwitchRoot(
     {
       children,

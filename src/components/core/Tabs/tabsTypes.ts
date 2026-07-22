@@ -22,7 +22,7 @@ export type TabsClassNames = {
   panel?: string;
 };
 
-export type TabsRootProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
+export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
   value?: string;
   defaultValue?: string;
@@ -35,7 +35,7 @@ export type TabsRootProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue">
 };
 
 export type UseTabsRootStateProps = Pick<
-  TabsRootProps,
+  TabsProps,
   | "value"
   | "defaultValue"
   | "onValueChange"

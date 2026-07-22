@@ -52,7 +52,7 @@ export type ListBoxContextValue = {
   disabled?: boolean;
 };
 
-export type ListBoxRootProps = Omit<
+export type ListBoxProps = Omit<
   HTMLAttributes<HTMLDivElement>,
   "children" | "onChange"
 > & {
@@ -77,7 +77,7 @@ export type ListBoxClassNamesProviderProps = {
 };
 
 export type UseListBoxRootStateProps = Omit<
-  ListBoxRootProps,
+  ListBoxProps,
   "classNames" | "className"
 >;
 

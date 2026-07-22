@@ -4,7 +4,7 @@ import { FieldLabelContext } from "@/components/core/Label";
 import { SliderClassNamesProvider, SliderFieldProvider } from "./sliderContext";
 import { SliderSimpleBody } from "./sliderParts";
 import { sliderRootClass } from "./sliderStyles";
-import type { SliderRootProps } from "./sliderTypes";
+import type { SliderProps } from "./sliderTypes";
 import { useSliderRootState } from "./useSliderRootState";
 
 export type {
@@ -14,7 +14,7 @@ export type {
   SliderHintProps,
   SliderOrientation,
   SliderRangeProps,
-  SliderRootProps,
+  SliderProps,
   SliderSingleProps,
   SliderSize,
   SliderThickness,
@@ -68,7 +68,7 @@ export function SliderRoot({
   gloss,
   thumbClassName,
   ...divRest
-}: SliderRootProps) {
+}: SliderProps) {
   const state = useSliderRootState({
     children,
     id,

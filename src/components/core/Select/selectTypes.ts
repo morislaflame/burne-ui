@@ -25,7 +25,7 @@ export type SelectClassNames = {
   error?: string;
 };
 
-export type SelectRootProps = HTMLAttributes<HTMLDivElement> & {
+export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;
@@ -49,7 +49,7 @@ export type SelectRootProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: SelectClassNames;
 };
 
-export type SelectSimpleProps = SelectRootProps & {
+export type SelectSimpleProps = SelectProps & {
   options: SelectOption[];
 };
 
@@ -116,7 +116,7 @@ export type SelectErrorProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;
 };
 
-export type UseSelectRootStateProps = SelectRootProps;
+export type UseSelectRootStateProps = SelectProps;
 
 export type RunSelectOpenAfterSqueezeOptions = {
   anchorRef: React.RefObject<HTMLDivElement | null>;

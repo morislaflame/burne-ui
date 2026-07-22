@@ -111,7 +111,7 @@ export type SwitchIconProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
 };
 
-export type SwitchRootProps = Omit<
+export type SwitchProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
 > & {
@@ -127,7 +127,7 @@ export type SwitchRootProps = Omit<
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
 };
 
-export type SwitchSimpleProps = SwitchRootProps & SwitchControlProps;
+export type SwitchSimpleProps = SwitchProps & SwitchControlProps;
 
 export type SwitchContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
@@ -144,7 +144,7 @@ export type SwitchClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type UseSwitchRootStateProps = Omit<SwitchRootProps, "className" | "classNames" | "onPointerDown"> &
+export type UseSwitchRootStateProps = Omit<SwitchProps, "className" | "classNames" | "onPointerDown"> &
   Partial<SwitchControlProps>;
 
 export type UseSwitchAnimationsProps = {

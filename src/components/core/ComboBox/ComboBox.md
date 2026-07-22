@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { ComboBox, comboBoxFilteredValues, type ComboBoxOption, type ComboBoxRootProps, type ComboBoxSimpleProps, type ComboBoxClassNames } from "burne-ui";
+import { ComboBox, comboBoxFilteredValues, type ComboBoxOption, type ComboBoxProps, type ComboBoxSimpleProps, type ComboBoxClassNames } from "burne-ui";
 ```
 
 ## API
