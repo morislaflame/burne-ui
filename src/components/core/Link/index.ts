@@ -1,6 +1,6 @@
 import type { RefAttributes } from "react";
 
-import { Link, LinkIcon, LinkRoot } from "./Link";
+import { Link, LinkIcon } from "./Link";
 import type { LinkProps } from "./linkTypes";
 
 export type LinkComponent = ((
@@ -13,7 +13,7 @@ const LinkCompound = Object.assign(Link, {
   Icon: LinkIcon,
 }) as LinkComponent;
 
-export { LinkCompound as Link, LinkRoot, LinkIcon };
+export { LinkCompound as Link };
 
 export type {
   LinkProps,

@@ -1,13 +1,15 @@
 import { ButtonGroupRoot } from "./ButtonGroup";
+import { ButtonGroupText } from "./buttonGroupParts";
 
-export const ButtonGroup = ButtonGroupRoot;
+export const ButtonGroup = Object.assign(ButtonGroupRoot, {
+  Text: ButtonGroupText,
+});
 
-export {
-  ButtonGroupText,
-  type ButtonGroupProps,
-  type ButtonGroupTextProps,
-  type ButtonGroupOrientation,
-  type ButtonGroupClassNames,
+export type {
+  ButtonGroupProps,
+  ButtonGroupTextProps,
+  ButtonGroupOrientation,
+  ButtonGroupClassNames,
 } from "./ButtonGroup";
 
 export type { ButtonGroupSegment } from "./buttonGroupTypes";

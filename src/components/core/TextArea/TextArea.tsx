@@ -1,4 +1,4 @@
-import { FieldRoot } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { TextAreaClassNamesProvider, TextAreaFieldProvider } from "./textAreaContext";
@@ -65,9 +65,9 @@ export function TextAreaRoot({
     <TextAreaFieldProvider value={state.fieldCtx}>
       <TextAreaClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot className={cn(classNames?.root, className)}>
+          <Field className={cn(classNames?.root, className)}>
             {body}
-          </FieldRoot>
+          </Field>
         </FieldLabelContext.Provider>
       </TextAreaClassNamesProvider>
     </TextAreaFieldProvider>

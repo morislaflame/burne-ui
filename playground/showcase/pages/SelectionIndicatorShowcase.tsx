@@ -66,7 +66,7 @@ export function SelectionIndicatorShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Related Components">
           <p>
-            <code>SelectionThumb</code> and <code>SelectionThumbIcon</code> — for sliders Slider. Dimensions:{" "}
+            <code>SelectionThumb</code> and <code>SelectionThumb.Icon</code> — for sliders Slider. Dimensions:{" "}
             <code>small</code>, <code>base</code>, <code>mid</code>, <code>large</code>.
           </p>
         </ShowcaseDoc.Block>

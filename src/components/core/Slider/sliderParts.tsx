@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 
 import "@/components/core/utils/glossPanel.css";
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { renderSliderSimpleLayout, SliderScaleFieldHeader, SliderScaleFieldValue } from "./sliderScaleField";
 
@@ -119,13 +119,13 @@ export function SliderHint({
   const slotClassNames = useSliderClassNames();
 
   return (
-    <FieldHint
+    <Field.Hint
       id={idProp ?? ctx.hintId}
       className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -141,13 +141,13 @@ export function SliderError({
   const slotClassNames = useSliderClassNames();
 
   return (
-    <FieldError
+    <Field.Error
       id={idProp ?? ctx.errorId}
       className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}
-    </FieldError>
+    </Field.Error>
   );
 }
 

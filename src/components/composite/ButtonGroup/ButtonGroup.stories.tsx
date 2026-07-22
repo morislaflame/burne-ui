@@ -8,7 +8,7 @@ import { Button } from "@/components/core/Button";
 import { Dropdown } from "@/components/core/Dropdown";
 import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
-import { ButtonGroup, ButtonGroupText } from "./index";
+import { ButtonGroup } from "./index";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -40,7 +40,7 @@ export const Horizontal: Story = {
   render() {
     return (
       <ButtonGroup aria-label="Document actions">
-        <ButtonGroupText>View</ButtonGroupText>
+        <ButtonGroup.Text>View</ButtonGroup.Text>
         <Button variant="secondary" ripple>List</Button>
         <Button variant="primary" groupSegment={{ orientation: "horizontal", position: "middle" }}>Grid</Button>
         <Dropdown>
@@ -106,7 +106,7 @@ export const Vertical: Story = {
   render() {
     return (
       <ButtonGroup orientation="vertical" buttonSize="base" aria-label="Vertical group">
-        <ButtonGroupText>Sorting</ButtonGroupText>
+        <ButtonGroup.Text>Sorting</ButtonGroup.Text>
         <Button variant="outline">By date</Button>
         <Button variant="outline">By name</Button>
         <Button variant="primary" status="danger" icon={<IoTrashOutline />}>
@@ -140,7 +140,7 @@ export const ToolbarWithSearchInputRow: Story = {
       <div className="flex min-w-[min(100%,40rem)] max-w-[min(100%,48rem)] flex-wrap items-center justify-center gap-small">
         <SearchInput defaultExpanded expandedWidth={280} placeholder="Search everywhere…" aria-label="Search sections" />
         <ButtonGroup aria-label="View" buttonSize="base">
-          <ButtonGroupText>Table</ButtonGroupText>
+          <ButtonGroup.Text>Table</ButtonGroup.Text>
           <Button variant="outline">Cards</Button>
           <Button variant="outline">List</Button>
           <Button variant="primary">Save</Button>
@@ -156,7 +156,7 @@ export const MultipleGroupsInRow: Story = {
     return (
       <div className="flex flex-wrap items-center justify-center gap-large">
         <ButtonGroup aria-label="Format" buttonSize="small">
-          <ButtonGroupText>Format</ButtonGroupText>
+          <ButtonGroup.Text>Format</ButtonGroup.Text>
           <Button size="small" variant="outline">
             JSON
           </Button>
@@ -168,7 +168,7 @@ export const MultipleGroupsInRow: Story = {
           </Button>
         </ButtonGroup>
         <ButtonGroup aria-label="View" buttonSize="small">
-          <ButtonGroupText>View</ButtonGroupText>
+          <ButtonGroup.Text>View</ButtonGroup.Text>
           <Button size="small" variant="outline">
             A
           </Button>
@@ -199,7 +199,7 @@ export const CustomClassNames: Story = {
         textLabel: "text-primary font-medium",
       }}
     >
-      <ButtonGroupText>Label</ButtonGroupText>
+      <ButtonGroup.Text>Label</ButtonGroup.Text>
       <Button variant="outline">One</Button>
       <Button variant="outline">Two</Button>
     </ButtonGroup>

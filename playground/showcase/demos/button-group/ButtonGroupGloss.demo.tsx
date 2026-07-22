@@ -1,13 +1,13 @@
 import { IoEllipsisHorizontal } from "react-icons/io5";
 
-import { ButtonGroup, ButtonGroupText } from "@/components/composite/ButtonGroup";
+import { ButtonGroup } from "@/components/composite/ButtonGroup";
 import { Button } from "@/components/core/Button";
 import { Dropdown } from "@/components/core/Dropdown";
 
 export function ButtonGroupGlossDemo() {
   return (
     <ButtonGroup variant="gloss" aria-label="Gloss actions">
-      <ButtonGroupText>View</ButtonGroupText>
+      <ButtonGroup.Text>View</ButtonGroup.Text>
       <Button>List</Button>
       <Button>Net</Button>
       <Dropdown>

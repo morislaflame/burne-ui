@@ -3,7 +3,7 @@ import { Children, Fragment, isValidElement, type ReactElement, type ReactNode }
 import { Button } from "@/components/core/Button";
 import { ComboBox } from "@/components/core/ComboBox";
 import { Dropdown } from "@/components/core/Dropdown";
-import { InputControl } from "@/components/core/Input";
+import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
 import type {
   ButtonGroupOrientation,
@@ -28,7 +28,7 @@ export function flattenFragmentChildren(children: ReactNode): ReactElement[] {
 export function isGroupSegmentSlot(child: ReactElement): boolean {
   return (
     child.type === Button ||
-    child.type === InputControl ||
+    child.type === Input.Control ||
     child.type === ComboBox ||
     child.type === SearchInput ||
     child.type === Dropdown ||

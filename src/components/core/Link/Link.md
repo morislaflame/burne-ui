@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Link, LinkIcon, type LinkProps, type LinkSize, type LinkIconPosition, type LinkClassNames } from "burne-ui";
+import { Link, type LinkProps, type LinkSize, type LinkIconPosition, type LinkClassNames } from "burne-ui";
 ```
 
 ## API

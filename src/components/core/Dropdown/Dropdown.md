@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Dropdown, DropdownTrigger, DropdownPopover, type DropdownProps, type DropdownClassNames, type DropdownItemProps, type DropdownItemVariant } from "burne-ui";
+import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownItemProps, type DropdownItemVariant } from "burne-ui";
 ```
 
 ## API

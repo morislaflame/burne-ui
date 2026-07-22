@@ -1,4 +1,4 @@
-import { FieldRoot } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 
@@ -85,7 +85,7 @@ export function ComboBoxRoot({
       <ComboBoxProvider value={state.comboCtx}>
         <ComboBoxClassNamesProvider classNames={classNames}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-            <FieldRoot
+            <Field
               className={cn(className, classNames?.root)}
               {...rest}
             >
@@ -99,7 +99,7 @@ export function ComboBoxRoot({
                   labelId={state.fieldCtx.labelId}
                 />
               )}
-            </FieldRoot>
+            </Field>
           </FieldLabelContext.Provider>
         </ComboBoxClassNamesProvider>
       </ComboBoxProvider>

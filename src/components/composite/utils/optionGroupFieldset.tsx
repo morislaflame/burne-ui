@@ -1,7 +1,6 @@
 import { forwardRef, type FieldsetHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
 
-import { FieldLegend, FieldLegendHeader, FieldSetRoot, FieldSetActions, FieldSetGroup, type FieldSetProps } from "@/components/core/Field";
-import { FieldHint } from "@/components/core/Field";
+import { Field, type FieldSetProps } from "@/components/core/Field";
 import { cn } from "@/utils/cn";
 
 import { OPTION_GROUP_ORIENTATION_LAYOUT, type OptionGroupOrientation } from "./optionGroupLayout";
@@ -18,7 +17,7 @@ export type OptionGroupFieldsetProps = Omit<
 
 export const OptionGroupFieldset = forwardRef<HTMLFieldSetElement, OptionGroupFieldsetProps>(
   function OptionGroupFieldset({ size = "small", ...props }, ref) {
-    return <FieldSetRoot ref={ref} size={size} {...props} />;
+    return <Field.Set ref={ref} size={size} {...props} />;
   },
 );
 
@@ -27,16 +26,17 @@ export type OptionGroupLegendProps = HTMLAttributes<HTMLLegendElement>;
 export const OptionGroupLegend = forwardRef<HTMLLegendElement, OptionGroupLegendProps>(
   function OptionGroupLegend({ children, ...rest }, ref) {
     return (
-      <FieldLegend ref={ref} {...rest}>
+      <Field.Legend ref={ref} {...rest}>
         {children}
-      </FieldLegend>
+      </Field.Legend>
     );
   },
 );
 
 OptionGroupLegend.displayName = "OptionGroupLegend";
 
-export { FieldSetGroup as OptionGroupGroup, FieldSetActions as OptionGroupActions };
+export const OptionGroupGroup = Field.Set.Group;
+export const OptionGroupActions = Field.Set.Actions;
 
 export type OptionGroupHintProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
@@ -45,9 +45,9 @@ export type OptionGroupHintProps = HTMLAttributes<HTMLSpanElement> & {
 
 export function OptionGroupHint({ children, className, id, ...rest }: OptionGroupHintProps) {
   return (
-    <FieldHint as="span" variant="small" id={id} className={className} {...rest}>
+    <Field.Hint as="span" variant="small" id={id} className={className} {...rest}>
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -58,9 +58,9 @@ export type OptionGroupHeaderProps = HTMLAttributes<HTMLDivElement> & {
 /** Wrapper for `Label` + `Hint` inside `Legend`. */
 export function OptionGroupHeader({ children, className, ...rest }: OptionGroupHeaderProps) {
   return (
-    <FieldLegendHeader className={className} {...rest}>
+    <Field.LegendHeader className={className} {...rest}>
       {children}
-    </FieldLegendHeader>
+    </Field.LegendHeader>
   );
 }
 

@@ -7,7 +7,7 @@ import { forwardRef, useCallback, useMemo, useRef } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { ListBox } from "@/components/core/ListBox";
@@ -557,14 +557,14 @@ export function SelectHint({
   const hintStatus = selectResolveHintStatus(status, field.status);
 
   return (
-    <FieldHint
+    <Field.Hint
       id={idProp ?? field.hintId}
       status={hintStatus}
       className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -580,13 +580,13 @@ export function SelectError({
   const slotClassNames = useSelectClassNames();
 
   return (
-    <FieldError
+    <Field.Error
       id={idProp ?? field.errorId}
       className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children ?? field.errorMessage}
-    </FieldError>
+    </Field.Error>
   );
 }
 

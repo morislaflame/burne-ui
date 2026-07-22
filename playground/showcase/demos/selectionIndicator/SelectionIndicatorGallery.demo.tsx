@@ -3,7 +3,7 @@ import { IoCheckmark } from "react-icons/io5";
 
 import { Checkbox } from "@/components/core/Checkbox";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
-import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
+import { SelectionThumb } from "@/components/core/SelectionThumb";
 import { Text } from "@/components/core/Text";
 
 import { SELECTION_INDICATOR_SIZES } from "../../shared/constants";
@@ -46,9 +46,9 @@ export function SelectionIndicatorGalleryDemo() {
         </Text>
         <div className="selection-indicator-base flex items-center justify-center">
           <SelectionThumb active={selected}>
-            <SelectionThumbIcon size="base">
+            <SelectionThumb.Icon size="base">
               <IoCheckmark aria-hidden />
-            </SelectionThumbIcon>
+            </SelectionThumb.Icon>
           </SelectionThumb>
         </div>
         <div className="selection-indicator-mid flex items-center justify-center">

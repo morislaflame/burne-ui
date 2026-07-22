@@ -17,9 +17,9 @@ export type ButtonGroupClassNames = {
   root?: string;
   /** Separator between glued segments — layout only, no compound part. */
   separator?: string;
-  /** `ButtonGroupText` span wrapper. */
+  /** `ButtonGroup.Text` span wrapper. */
   text?: string;
-  /** Text label inside `ButtonGroupText`. */
+  /** Text label inside `ButtonGroup.Text`. */
   textLabel?: string;
 };
 

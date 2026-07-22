@@ -1,4 +1,4 @@
-import { FieldRoot } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { MeterClassNamesProvider, MeterFieldProvider } from "./meterContext";
@@ -89,7 +89,7 @@ export function MeterRoot({
     <MeterFieldProvider value={state.fieldCtx}>
       <MeterClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot
+          <Field
             id={state.meterId}
             className={meterRootClass({
               orientation: state.fieldCtx.orientation,
@@ -99,7 +99,7 @@ export function MeterRoot({
             {...divRest}
           >
             {body}
-          </FieldRoot>
+          </Field>
         </FieldLabelContext.Provider>
       </MeterClassNamesProvider>
     </MeterFieldProvider>

@@ -19,8 +19,6 @@ export type {
   TextAreaSimpleProps,
 } from "./textAreaTypes";
 
-export { TextAreaControl, TextAreaError, TextAreaHint } from "./TextArea";
-
 export {
   useTextAreaFieldContext,
   useOptionalTextAreaFieldContext,

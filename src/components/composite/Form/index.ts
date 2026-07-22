@@ -10,24 +10,16 @@ export const Form = Object.assign(FormRoot, {
   Field: FormField,
 });
 
-export {
-  FormRoot,
-  FormSection,
-  FormTitle,
-  FormDescription,
-  FormActions,
-  FormErrorSummary,
-  FormAnnounce,
-  FormField,
-  type FormProps,
-  type FormSectionProps,
-  type FormTitleProps,
-  type FormDescriptionProps,
-  type FormActionsProps,
-  type FormErrorSummaryProps,
-  type FormAnnounceProps,
-  type FormFieldProps,
-  type FormClassNames,
+export type {
+  FormProps,
+  FormSectionProps,
+  FormTitleProps,
+  FormDescriptionProps,
+  FormActionsProps,
+  FormErrorSummaryProps,
+  FormAnnounceProps,
+  FormFieldProps,
+  FormClassNames,
 } from "./Form";
 
 export {

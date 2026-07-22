@@ -1,5 +1,5 @@
 import { Button } from "@/components/core/Button";
-import { ButtonGroup, ButtonGroupText } from "@/components/composite/ButtonGroup";
+import { ButtonGroup } from "@/components/composite/ButtonGroup";
 
 export function ButtonGroupClassNamesFullDemo() {
   return (
@@ -13,7 +13,7 @@ export function ButtonGroupClassNamesFullDemo() {
         textLabel: "text-primary font-medium",
       }}
     >
-      <ButtonGroupText>Label</ButtonGroupText>
+      <ButtonGroup.Text>Label</ButtonGroup.Text>
       <Button variant="outline">One</Button>
       <Button variant="outline">Two</Button>
     </ButtonGroup>

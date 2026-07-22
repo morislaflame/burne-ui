@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
@@ -124,13 +124,13 @@ export function MeterHint({
   const slotClassNames = useMeterClassNames();
 
   return (
-    <FieldHint
+    <Field.Hint
       id={idProp ?? ctx.hintId}
       className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -146,13 +146,13 @@ export function MeterError({
   const slotClassNames = useMeterClassNames();
 
   return (
-    <FieldError
+    <Field.Error
       id={idProp ?? ctx.errorId}
       className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}
-    </FieldError>
+    </Field.Error>
   );
 }
 

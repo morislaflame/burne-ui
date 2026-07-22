@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
@@ -105,8 +105,8 @@ export function renderSliderSimpleLayout({
         </Header>
       ) : null}
       {track}
-      {hint != null ? <FieldHint id={hintId}>{hint}</FieldHint> : null}
-      {error != null ? <FieldError id={errorId}>{error}</FieldError> : null}
+      {hint != null ? <Field.Hint id={hintId}>{hint}</Field.Hint> : null}
+      {error != null ? <Field.Error id={errorId}>{error}</Field.Error> : null}
     </>
   );
 }

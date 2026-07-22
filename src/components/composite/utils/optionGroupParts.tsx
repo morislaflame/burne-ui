@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { FieldError, type FieldErrorProps } from "@/components/core/Field";
+import { Field, type FieldErrorProps } from "@/components/core/Field";
 import { cn } from "@/utils/cn";
 
 import { OptionGroupHeader, OptionGroupHint, OptionGroupLegend, OptionGroupList, type OptionGroupHintProps, type OptionGroupLegendProps, type OptionGroupListProps } from "./optionGroupFieldset";
@@ -39,7 +39,7 @@ export function createOptionGroupErrorPart(
   function ErrorPart({ id, className, ...rest }: FieldErrorProps) {
     const errorId = useErrorId();
     const slotClass = useSlotClassName();
-    return <FieldError id={id ?? errorId} className={cn(slotClass, className)} {...rest} />;
+    return <Field.Error id={id ?? errorId} className={cn(slotClass, className)} {...rest} />;
   }
   ErrorPart.displayName = displayName;
   return ErrorPart;

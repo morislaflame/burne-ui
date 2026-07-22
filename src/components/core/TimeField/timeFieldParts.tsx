@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { forwardRef } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
@@ -236,14 +236,14 @@ export function TimeFieldHint({
   const slotClassNames = useTimeFieldClassNames();
 
   return (
-    <FieldHint
+    <Field.Hint
       id={idProp ?? ctx.hintId}
       status={timeFieldHintStatus(ctx.status)}
       className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -259,14 +259,14 @@ export function TimeFieldError({
   const slotClassNames = useTimeFieldClassNames();
 
   return (
-    <FieldError
+    <Field.Error
       id={idProp ?? ctx.errorId}
       role="alert"
       className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}
-    </FieldError>
+    </Field.Error>
   );
 }
 

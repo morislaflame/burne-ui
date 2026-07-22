@@ -20,13 +20,6 @@ export type {
 } from "./timeFieldTypes";
 
 export {
-  TimeFieldControl,
-  TimeFieldHint,
-  TimeFieldError,
-  TimeFieldRoot,
-} from "./TimeField";
-
-export {
   useTimeFieldContext,
   useOptionalTimeFieldContext,
   useTimeFieldClassNames,

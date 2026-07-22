@@ -22,12 +22,12 @@ export function ButtonGroupShowcase() {
     <ShowcasePage
       title="ButtonGroup"
       description="Glued buttons and labels: single stroke, segments and nested controls."
-      importPath='import { ButtonGroup, ButtonGroupText } from "@/components/composite/ButtonGroup";'
+      importPath='import { ButtonGroup } from "@/components/composite/ButtonGroup";'
       tags={["composite", "actions"]}
     >
       <ShowcaseSection
         title="Horizontal group"
-        description="ButtonGroupText, segments groupSegment and Dropdown in the last segment."
+        description="ButtonGroup.Text, segments groupSegment and Dropdown in the last segment."
       >
         <ShowcaseDemoFromFile Demo={ButtonGroupHorizontalDemo} source={buttonGroupHorizontalSource} />
       </ShowcaseSection>
@@ -63,11 +63,11 @@ export function ButtonGroupShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="aria-label, buttonSize, orientation, variant, segmented on the root ButtonGroup. Child Button and ButtonGroupText; groupSegment for buttons is specified by the group context."
+            description="aria-label, buttonSize, orientation, variant, segmented on the root ButtonGroup. Child Button and ButtonGroup.Text; groupSegment for buttons is specified by the group context."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="ButtonGroupText — segment signature; nested Input/ComboBox inherit variant groups."
+            description="ButtonGroup.Text — segment signature; nested Input/ComboBox inherit variant groups."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>

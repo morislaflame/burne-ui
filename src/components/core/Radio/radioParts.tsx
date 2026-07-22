@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
@@ -201,7 +201,7 @@ export function RadioHint({ children, className, variant, ...rest }: RadioHintPr
   const slotClassNames = useRadioClassNames();
 
   return (
-    <FieldHint
+    <Field.Hint
       as="span"
       id={ctx.hintId}
       variant={variant ?? RADIO_SIZE_LAYOUT[ctx.size].desc}
@@ -214,7 +214,7 @@ export function RadioHint({ children, className, variant, ...rest }: RadioHintPr
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -225,7 +225,7 @@ export function RadioError({ children, className, ...rest }: RadioErrorProps) {
   const slotClassNames = useRadioClassNames();
 
   return (
-    <FieldError
+    <Field.Error
       as="span"
       id={ctx.errorId}
       variant={RADIO_SIZE_LAYOUT[ctx.size].desc}
@@ -238,7 +238,7 @@ export function RadioError({ children, className, ...rest }: RadioErrorProps) {
       {...rest}
     >
       {children}
-    </FieldError>
+    </Field.Error>
   );
 }
 
@@ -302,7 +302,7 @@ export function RadioSimpleBody({
         </Text>
       </span>
       {hasHint ? (
-        <FieldHint
+        <Field.Hint
           as="span"
           id={hintId}
           variant={sz.desc}
@@ -313,10 +313,10 @@ export function RadioSimpleBody({
           )}
         >
           {hint}
-        </FieldHint>
+        </Field.Hint>
       ) : null}
       {hasError ? (
-        <FieldError
+        <Field.Error
           as="span"
           id={errorId}
           variant={sz.desc}
@@ -327,7 +327,7 @@ export function RadioSimpleBody({
           )}
         >
           {error}
-        </FieldError>
+        </Field.Error>
       ) : null}
     </>
   );

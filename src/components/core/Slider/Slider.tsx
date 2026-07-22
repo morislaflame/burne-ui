@@ -1,4 +1,4 @@
-import { FieldRoot } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { SliderClassNamesProvider, SliderFieldProvider } from "./sliderContext";
@@ -115,7 +115,7 @@ export function SliderRoot({
     <SliderFieldProvider value={state.fieldCtx}>
       <SliderClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot
+          <Field
             id={state.sliderId}
             className={sliderRootClass({
               orientation: state.fieldCtx.orientation,
@@ -125,7 +125,7 @@ export function SliderRoot({
             {...divRest}
           >
             {body}
-          </FieldRoot>
+          </Field>
         </FieldLabelContext.Provider>
       </SliderClassNamesProvider>
     </SliderFieldProvider>

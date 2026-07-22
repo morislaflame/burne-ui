@@ -1,8 +1,8 @@
 import { cloneElement, forwardRef, isValidElement, useCallback, useId, useMemo, useRef, useState, type ChangeEvent, type PointerEvent, type ReactNode } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
+import { SelectionThumb } from "@/components/core/SelectionThumb";
 import { Text } from "@/components/core/Text";
 
 import "@/components/core/utils/glossPanel.css";
@@ -348,7 +348,7 @@ export function SwitchIcon({ when, children, className, ...rest }: SwitchIconPro
   const visible = when === "off" ? !ctx.checked : ctx.checked;
 
   return (
-    <SelectionThumbIcon
+    <SelectionThumb.Icon
       iconRef={iconRef}
       size={ctx.size}
       highlighted={highlighted}
@@ -358,7 +358,7 @@ export function SwitchIcon({ when, children, className, ...rest }: SwitchIconPro
       {...rest}
     >
       {children}
-    </SelectionThumbIcon>
+    </SelectionThumb.Icon>
   );
 }
 
@@ -435,7 +435,7 @@ export function SwitchHint({ children, className, variant, ...rest }: SwitchHint
   const slotClassNames = useSwitchClassNames();
 
   return (
-    <FieldHint
+    <Field.Hint
       as="span"
       id={ctx.hintId}
       variant={variant ?? SWITCH_LAYOUT[ctx.size].desc}
@@ -448,7 +448,7 @@ export function SwitchHint({ children, className, variant, ...rest }: SwitchHint
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -459,7 +459,7 @@ export function SwitchError({ children, className, ...rest }: SwitchErrorProps) 
   const slotClassNames = useSwitchClassNames();
 
   return (
-    <FieldError
+    <Field.Error
       as="span"
       id={ctx.errorId}
       variant={SWITCH_LAYOUT[ctx.size].desc}
@@ -473,7 +473,7 @@ export function SwitchError({ children, className, ...rest }: SwitchErrorProps) 
       {...rest}
     >
       {children}
-    </FieldError>
+    </Field.Error>
   );
 }
 
@@ -547,7 +547,7 @@ export function SwitchSimpleBody({
             </Text>
           </span>
           {hasHint ? (
-            <FieldHint
+            <Field.Hint
               as="span"
               id={hintId}
               variant={sz.desc}
@@ -558,10 +558,10 @@ export function SwitchSimpleBody({
               )}
             >
               {hint}
-            </FieldHint>
+            </Field.Hint>
           ) : null}
           {hasError ? (
-            <FieldError
+            <Field.Error
               as="span"
               id={errorId}
               variant={sz.desc}
@@ -572,7 +572,7 @@ export function SwitchSimpleBody({
               )}
             >
               {error}
-            </FieldError>
+            </Field.Error>
           ) : null}
         </>
       ) : null}

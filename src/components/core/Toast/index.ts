@@ -33,15 +33,3 @@ export type {
   ToastSize,
   ToastContextValue,
 } from "./toastTypes";
-
-export {
-  ToastAction,
-  ToastClose,
-  ToastContent,
-  ToastDescription,
-  ToastIndicator,
-  ToastMessage,
-  ToastProviderRoot,
-  ToastRoot,
-  ToastTitle,
-} from "./Toast";

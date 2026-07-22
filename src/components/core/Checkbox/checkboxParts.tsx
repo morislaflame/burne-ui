@@ -1,6 +1,6 @@
 import { forwardRef, type LabelHTMLAttributes, type Ref } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useOptionalFieldLabelContext } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
@@ -232,7 +232,7 @@ export function CheckboxHint({ children, className, variant, ...rest }: Checkbox
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   return (
-    <FieldHint
+    <Field.Hint
       as="span"
       id={ctx.hintId}
       variant={variant ?? CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
@@ -245,7 +245,7 @@ export function CheckboxHint({ children, className, variant, ...rest }: Checkbox
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -255,7 +255,7 @@ export function CheckboxError({ children, className, ...rest }: CheckboxErrorPro
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
   return (
-    <FieldError
+    <Field.Error
       as="span"
       id={ctx.errorId}
       variant={CHECKBOX_SIZE_LAYOUT[ctx.size].desc}
@@ -268,7 +268,7 @@ export function CheckboxError({ children, className, ...rest }: CheckboxErrorPro
       {...rest}
     >
       {children}
-    </FieldError>
+    </Field.Error>
   );
 }
 
@@ -332,7 +332,7 @@ export function CheckboxSimpleBody({
         </Text>
       </span>
       {hasHint ? (
-        <FieldHint
+        <Field.Hint
           as="span"
           id={hintId}
           variant={sz.desc as "small"}
@@ -343,10 +343,10 @@ export function CheckboxSimpleBody({
           )}
         >
           {hint}
-        </FieldHint>
+        </Field.Hint>
       ) : null}
       {hasError ? (
-        <FieldError
+        <Field.Error
           as="span"
           id={errorId}
           variant={sz.desc as "small"}
@@ -357,7 +357,7 @@ export function CheckboxSimpleBody({
           )}
         >
           {error}
-        </FieldError>
+        </Field.Error>
       ) : null}
     </>
   );

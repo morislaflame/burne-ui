@@ -1,11 +1,11 @@
 # ButtonGroup
 
-Layout-обёртка для склеенных или раздельных сегментов: `Button`, `Input.Control`, `ComboBox`, `SearchInput`, `Dropdown`, `ButtonGroupText`. **Не compound API** — root + отдельный `ButtonGroupText`.
+Layout-обёртка для склеенных или раздельных сегментов: `Button`, `Input.Control`, `ComboBox`, `SearchInput`, `Dropdown`, `ButtonGroup.Text`. Compound API: `ButtonGroup` + `ButtonGroup.Text`.
 
 ## Импорт
 
 ```tsx
-import { ButtonGroup, ButtonGroupText, type ButtonGroupProps, type ButtonGroupTextProps, type ButtonGroupOrientation, type ButtonGroupSegment } from "burne-ui";
+import { ButtonGroup, type ButtonGroupProps, type ButtonGroupTextProps, type ButtonGroupOrientation, type ButtonGroupSegment } from "burne-ui";
 ```
 
 Style helpers (из модуля): `buttonGroupRoundingClasses`, `buttonGroupSegmentSurfaceClasses`, `buttonGroupTextFrameClass`.
@@ -16,7 +16,7 @@ Style helpers (из модуля): `buttonGroupRoundingClasses`, `buttonGroupSeg
 
 ```tsx
 <ButtonGroup aria-label="Действия с документом" buttonSize="base" variant="default">
-  <ButtonGroupText>Вид</ButtonGroupText>
+  <ButtonGroup.Text>Вид</ButtonGroup.Text>
   <Button variant="secondary">Список</Button>
   <Button variant="primary">Сетка</Button>
   <Dropdown>
@@ -45,7 +45,7 @@ Style helpers (из модуля): `buttonGroupRoundingClasses`, `buttonGroupSeg
 </ButtonGroup>
 ```
 
-Simple API и compound `ButtonGroup.Text` **нет** — только `ButtonGroupText`.
+Compound part: `ButtonGroup.Text`.
 
 ### Root props
 
@@ -66,7 +66,7 @@ Simple API и compound `ButtonGroup.Text` **нет** — только `ButtonGro
 
 `separator` — слот layout-разделителя (compound-части нет).
 
-### `ButtonGroupText` props
+### `ButtonGroup.Text` props
 
 | Prop | Описание |
 |------|----------|
@@ -86,7 +86,7 @@ Simple API и compound `ButtonGroup.Text` **нет** — только `ButtonGro
 | `ComboBox` | да |
 | `SearchInput` | да |
 | `Dropdown` | да (root) |
-| `ButtonGroupText` | да |
+| `ButtonGroup.Text` | да |
 
 Позиция: `first` \| `middle` \| `last` \| `only` — авто или `groupSegment` на child.
 
@@ -99,7 +99,7 @@ Simple API и compound `ButtonGroup.Text` **нет** — только `ButtonGro
 | `variant="gloss"` | `gloss-panel`; separators скрыты |
 | `orientation="vertical"` | `flex-col`, separators `border-b-token` |
 
-| `buttonSize` | `ButtonGroupText` Text variant |
+| `buttonSize` | `ButtonGroup.Text` Text variant |
 |--------------|-------------------------------|
 | `small` | `small` |
 | `base` | `base` |
@@ -129,7 +129,7 @@ Simple API и compound `ButtonGroup.Text` **нет** — только `ButtonGro
 
 При `groupSegment`: отключается standalone shell hover; применяются `buttonGroupRoundingClasses` + `buttonGroupSegmentSurfaceClasses`.
 
-### ButtonGroupText
+### ButtonGroup.Text
 
 Статичный span — **без** GSAP.
 
@@ -155,7 +155,7 @@ configureMotion({
 |----------|---------|---------------------------|----------------|
 | Button squeeze | `useFirstLevelInteractiveMotion` | `pressSqueezeScale` | `groupSegment` |
 | Input shell | field shell utils | hover tokens | `groupSegment` |
-| ButtonGroupText | — | — | static |
+| ButtonGroup.Text | — | — | static |
 
 ## Токены и CSS
 
@@ -180,7 +180,7 @@ Gloss: `glossInteractive.css` на root.
 | Часть | Кастомизация |
 |-------|--------------|
 | root | `ButtonGroup className` |
-| `ButtonGroupText` | `className` |
+| `ButtonGroup.Text` | `className` |
 | сегменты | `Button className`, `groupSegment` override |
 
 ### Toolbar с Input

@@ -138,7 +138,6 @@ export {
 } from "@/components/composite/RadioGroup";
 export {
   ButtonGroup,
-  ButtonGroupText,
   type ButtonGroupProps,
   type ButtonGroupTextProps,
   type ButtonGroupOrientation,
@@ -224,11 +223,6 @@ export {
 } from "@/components/core/Drawer";
 export {
   Field,
-  FieldSet,
-  FieldSetGroup,
-  FieldSetActions,
-  FieldLegend,
-  FieldLegendHeader,
   joinFieldDescribedBy,
   fieldHintId,
   fieldErrorId,
@@ -256,7 +250,6 @@ export {
 } from "@/components/core/Label";
 export {
   Link,
-  LinkIcon,
   type LinkProps,
   type LinkSize,
   type LinkIconPosition,
@@ -343,7 +336,6 @@ export {
 } from "@/components/core/SelectionIndicator";
 export {
   SelectionThumb,
-  SelectionThumbIcon,
   type SelectionThumbProps,
   type SelectionThumbIconProps,
   type SelectionThumbClassNames,
@@ -535,19 +527,6 @@ export {
 } from "@/components/core/Surface";
 export {
   Dropdown,
-  DropdownTrigger,
-  DropdownPopover,
-  DropdownGroup,
-  DropdownLabel,
-  DropdownSeparator,
-  DropdownItem,
-  DropdownItemLabel,
-  DropdownItemHint,
-  DropdownItemIcon,
-  DropdownItemIndicator,
-  DropdownSub,
-  DropdownSubTrigger,
-  DropdownSubContent,
   type DropdownProps,
   type DropdownTriggerProps,
   type DropdownPopoverProps,
@@ -690,7 +669,6 @@ export {
 export {
   ColorPicker,
   ColorSlider,
-  ColorSliderTrack,
   ColorSwatch,
   useColorPicker,
   hsvaToHex,
@@ -721,9 +699,6 @@ export {
 
 export {
   TimeField,
-  TimeFieldControl,
-  TimeFieldHint,
-  TimeFieldError,
   type TimeFieldProps,
   type TimeFieldControlProps,
   type TimeFieldHintProps,

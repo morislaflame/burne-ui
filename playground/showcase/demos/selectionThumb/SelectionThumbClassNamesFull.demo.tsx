@@ -1,6 +1,6 @@
 import { IoCheckmark } from "react-icons/io5";
 
-import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
+import { SelectionThumb } from "@/components/core/SelectionThumb";
 
 export function SelectionThumbClassNamesFullDemo() {
   return (
@@ -14,7 +14,7 @@ export function SelectionThumbClassNamesFullDemo() {
         }}
         className="size-8"
       >
-        <SelectionThumbIcon
+        <SelectionThumb.Icon
           size="mid"
           highlighted
           classNames={{
@@ -23,7 +23,7 @@ export function SelectionThumbClassNamesFullDemo() {
           }}
         >
           <IoCheckmark aria-hidden />
-        </SelectionThumbIcon>
+        </SelectionThumb.Icon>
       </SelectionThumb>
     </div>
   );

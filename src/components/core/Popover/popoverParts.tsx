@@ -1,7 +1,7 @@
 import { Children, cloneElement, forwardRef, isValidElement, useCallback, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
-import { FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
@@ -217,7 +217,7 @@ export function PopoverDescription({
   const slotClassNames = usePopoverClassNames();
 
   return (
-    <FieldHint
+    <Field.Hint
       as="p"
       id={hintId}
       variant={variant ?? popoverDescriptionVariant(size)}
@@ -225,7 +225,7 @@ export function PopoverDescription({
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 

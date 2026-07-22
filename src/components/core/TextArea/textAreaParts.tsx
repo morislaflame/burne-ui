@@ -1,7 +1,7 @@
 import type { PointerEventHandler } from "react";
 import { forwardRef, useCallback, useId, useRef } from "react";
 
-import { FieldError, FieldHint } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Label, type LabelProps } from "@/components/core/Label";
 
@@ -206,14 +206,14 @@ export function TextAreaHint({
         : field.status);
 
   return (
-    <FieldHint
+    <Field.Hint
       id={idProp ?? field.hintId}
       status={hintStatus}
       className={cn(slotClassNames.hint, className)}
       {...rest}
     >
       {children}
-    </FieldHint>
+    </Field.Hint>
   );
 }
 
@@ -229,13 +229,13 @@ export function TextAreaError({
   const slotClassNames = useTextAreaClassNames();
 
   return (
-    <FieldError
+    <Field.Error
       id={idProp ?? field.errorId}
       className={cn(slotClassNames.error, className)}
       {...rest}
     >
       {children}
-    </FieldError>
+    </Field.Error>
   );
 }
 

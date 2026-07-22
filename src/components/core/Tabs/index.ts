@@ -6,7 +6,6 @@ export const Tabs = Object.assign(TabsRoot, {
   Panel: TabsPanel,
 });
 
-export { TabsRoot, TabsList, TabsTab, TabsPanel } from "./Tabs";
 export { useTabsContext, useTabsClassNames } from "./tabsContext";
 
 export type {

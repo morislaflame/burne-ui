@@ -1,11 +1,11 @@
 # SelectionThumb
 
-Упрощённый thumb-индикатор для **Switch** и **Slider**: круглый shell + animating fill (без mark/check). Опционально `SelectionThumbIcon` для иконки поверх thumb. Низкоуровневый примитив — не используется напрямую в формах как самостоятельный контрол.
+Упрощённый thumb-индикатор для **Switch** и **Slider**: круглый shell + animating fill (без mark/check). Опционально `SelectionThumb.Icon` для иконки поверх thumb. Низкоуровневый примитив — не используется напрямую в формах как самостоятельный контрол.
 
 ## Импорт
 
 ```tsx
-import { SelectionThumb, SelectionThumbIcon, type SelectionThumbProps, type SelectionThumbIconProps } from "burne-ui";
+import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps } from "burne-ui";
 ```
 
 ## API
@@ -29,14 +29,14 @@ import { SelectionThumb, SelectionThumbIcon, type SelectionThumbProps, type Sele
 | `shellRef` | — | Ref на shell (для parent slide anim — Switch) |
 | `fillRef` | internal | Ref на fill (можно передать извне) |
 | `className` | — | На shell |
-| `children` | — | Обычно `SelectionThumbIcon` |
+| `children` | — | Обычно `SelectionThumb.Icon` |
 
-### `SelectionThumbIcon`
+### `SelectionThumb.Icon`
 
 ```tsx
-<SelectionThumbIcon size="base" highlighted={isOn} gloss={false}>
+<SelectionThumb.Icon size="base" highlighted={isOn} gloss={false}>
   <IoMoon aria-hidden />
-</SelectionThumbIcon>
+</SelectionThumb.Icon>
 ```
 
 | Prop | По умолчанию | Описание |
@@ -63,7 +63,7 @@ import { SelectionThumb, SelectionThumbIcon, type SelectionThumbProps, type Sele
 ```
 <span shell ref=shellRef>           ← parent may animate position (Switch/Slider)
   <span fill ref=fillRef>           ← scale 0↔1 on active
-  {children}                        ← SelectionThumbIcon (opacity from parent)
+  {children}                        ← SelectionThumb.Icon (opacity from parent)
 </span>
 ```
 
@@ -112,19 +112,19 @@ Thumb: `root`, `fill`. Icon: `root`, `icon`.
 
 Стили fill/shell gloss заданы токенами — override через родительский Switch/Slider `classNames.thumbShell`.
 
-### `SelectionThumbIcon`
+### `SelectionThumb.Icon`
 
 ```tsx
-<SelectionThumbIcon
+<SelectionThumb.Icon
   highlighted={checked}
   gloss={variant === "gloss"}
   className="opacity-90"
 >
   <IoSunny aria-hidden />
-</SelectionThumbIcon>
+</SelectionThumb.Icon>
 ```
 
-В Switch видимость иконок on/off — `style={{ opacity }}` на уровне `Switch.Icon`, не в SelectionThumbIcon.
+В Switch видимость иконок on/off — `style={{ opacity }}` на уровне `Switch.Icon`, не в SelectionThumb.Icon.
 
 ### В Switch / Slider
 
@@ -159,13 +159,13 @@ SelectionThumb получает `className={slotClassNames.thumbShell}` из Swi
 | Компонент | Использование |
 |-----------|---------------|
 | `Switch.Thumb` | `SelectionThumb` + optional `Switch.Icon` |
-| `Slider` thumb button | `SelectionThumb` + `SelectionThumbIcon` |
+| `Slider` thumb button | `SelectionThumb` + `SelectionThumb.Icon` |
 
 ## Структура файлов
 
 ```
 SelectionThumb/
-├── SelectionThumb.tsx    # SelectionThumb + SelectionThumbIcon
+├── SelectionThumb.tsx    # SelectionThumb + SelectionThumb.Icon
 └── index.ts
 ```
 

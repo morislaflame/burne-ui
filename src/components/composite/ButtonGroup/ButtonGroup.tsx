@@ -6,7 +6,6 @@ import { cn } from "@/utils/cn";
 
 import { buildButtonGroupSegment, isGroupSegmentSlot, resolveButtonGroupSegmentPosition } from "./buttonGroupAPI";
 import { ButtonGroupClassNamesProvider, ButtonGroupLayoutProvider, ButtonGroupSegmentProvider, useButtonGroupClassNames } from "./buttonGroupContext";
-import { ButtonGroupText } from "./buttonGroupParts";
 import { buttonGroupRootClass, buttonGroupSeparatorClass } from "./buttonGroupStyles";
 import type { ButtonGroupOrientation, ButtonGroupProps } from "./buttonGroupTypes";
 import { useButtonGroupRootState } from "./useButtonGroupRootState";
@@ -99,4 +98,3 @@ export const ButtonGroupRoot = forwardRef<HTMLDivElement, ButtonGroupProps>(
 
 ButtonGroupRoot.displayName = "ButtonGroup";
 
-export { ButtonGroupText };

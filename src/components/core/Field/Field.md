@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Field, FieldSet, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHintId, useFieldSetErrorId, type FieldProps, type FieldSetProps, type FieldClassNames, type FieldSetClassNames, type FieldHintStatus, type FieldSetSize } from "burne-ui";
+import { Field, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHintId, useFieldSetErrorId, type FieldProps, type FieldSetProps, type FieldClassNames, type FieldSetClassNames, type FieldHintStatus, type FieldSetSize } from "burne-ui";
 ```
 
 ## API

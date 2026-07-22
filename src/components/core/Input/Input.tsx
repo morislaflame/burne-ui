@@ -1,7 +1,7 @@
 import "../utils/glossInteractive.css";
 
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
-import { FieldRoot } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { InputClassNamesProvider, InputFieldProvider } from "./inputContext";
@@ -75,9 +75,9 @@ export function InputRoot({
     <InputFieldProvider value={state.fieldCtx}>
       <InputClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot className={cn(classNames?.root, className)}>
+          <Field className={cn(classNames?.root, className)}>
             {body}
-          </FieldRoot>
+          </Field>
         </FieldLabelContext.Provider>
       </InputClassNamesProvider>
     </InputFieldProvider>

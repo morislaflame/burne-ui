@@ -1,4 +1,4 @@
-import { FieldRoot } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { TimeFieldClassNamesProvider, TimeFieldFieldProvider } from "./timeFieldContext";
@@ -85,7 +85,7 @@ export function TimeFieldRoot({
     <TimeFieldFieldProvider value={state.fieldCtx}>
       <TimeFieldClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot
+          <Field
             className={timeFieldRootClass({
               compact: state.compact,
               slotClass: classNames?.root,
@@ -94,7 +94,7 @@ export function TimeFieldRoot({
             {...rest}
           >
             {body}
-          </FieldRoot>
+          </Field>
         </FieldLabelContext.Provider>
       </TimeFieldClassNamesProvider>
     </TimeFieldFieldProvider>

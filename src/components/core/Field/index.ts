@@ -20,15 +20,6 @@ export const Field = Object.assign(FieldRoot, {
 });
 
 export {
-  FieldRoot,
-  FieldHint,
-  FieldError,
-  FieldSetRoot,
-  FieldSet,
-  FieldSetGroup,
-  FieldSetActions,
-  FieldLegend,
-  FieldLegendHeader,
   useFieldSetHintId,
   useFieldSetErrorId,
   joinFieldDescribedBy,

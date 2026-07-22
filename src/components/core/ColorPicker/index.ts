@@ -21,13 +21,12 @@ export type {
   ColorPickerClassNames,
 } from "./colorPickerTypes";
 
-export {
-  ColorSliderTrack,
-  type ColorSliderTrackProps,
-  type ColorSliderProps,
-  type ColorChannel,
-  type ColorSliderSize,
-  type ColorSliderOrientation,
+export type {
+  ColorSliderTrackProps,
+  ColorSliderProps,
+  ColorChannel,
+  ColorSliderSize,
+  ColorSliderOrientation,
 } from "./ColorSlider";
 
 export {

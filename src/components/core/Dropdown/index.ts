@@ -23,22 +23,6 @@ export const Dropdown = Object.assign(DropdownRoot, {
   SubContent: DropdownSubContent,
 });
 
-export {
-  DropdownTrigger,
-  DropdownPopover,
-  DropdownGroup,
-  DropdownLabel,
-  DropdownSeparator,
-  DropdownItem,
-  DropdownItemLabel,
-  DropdownItemHint,
-  DropdownItemIcon,
-  DropdownItemIndicator,
-  DropdownSub,
-  DropdownSubTrigger,
-  DropdownSubContent,
-} from "./Dropdown";
-
 export type {
   DropdownProps,
   DropdownClassNames,

@@ -1,4 +1,4 @@
-import { FieldRoot } from "@/components/core/Field";
+import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { ProgressBarClassNamesProvider, ProgressBarFieldProvider } from "./progressBarContext";
@@ -91,7 +91,7 @@ export function ProgressBarRoot({
     <ProgressBarFieldProvider value={state.fieldCtx}>
       <ProgressBarClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <FieldRoot
+          <Field
             id={state.progressId}
             className={progressBarRootClass({
               orientation: state.fieldCtx.orientation,
@@ -101,7 +101,7 @@ export function ProgressBarRoot({
             {...divRest}
           >
             {body}
-          </FieldRoot>
+          </Field>
         </FieldLabelContext.Provider>
       </ProgressBarClassNamesProvider>
     </ProgressBarFieldProvider>

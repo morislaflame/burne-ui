@@ -9,7 +9,7 @@ export type MeterSize = "small" | "base" | "mid" | "large";
 export type MeterOrientation = "horizontal" | "vertical";
 
 export type MeterClassNames = {
-  /** Field root (`FieldRoot`). */
+  /** Field root (`Field`). */
   root?: string;
   /** Label in simple API and `Meter.Label`. */
   label?: string;

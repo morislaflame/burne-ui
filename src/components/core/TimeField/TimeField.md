@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { TimeField, TimeFieldControl, TimeFieldHint, TimeFieldError, type TimeFieldProps, type TimeFieldControlProps, type TimeFieldSize, type TimeFieldStatus, type TimeFieldVariant, type TimeFieldFormat, type TimeFieldClassNames } from "burne-ui";
+import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFieldSize, type TimeFieldStatus, type TimeFieldVariant, type TimeFieldFormat, type TimeFieldClassNames } from "burne-ui";
 ```
 
 ## API

@@ -18,5 +18,3 @@ export type {
   InputStatus,
   InputVariant,
 } from "./inputTypes";
-
-export { InputControl, InputError, InputHint } from "./Input";

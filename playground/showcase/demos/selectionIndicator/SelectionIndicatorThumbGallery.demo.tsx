@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoCheckmark, IoEllipse } from "react-icons/io5";
 
-import { SelectionThumb, SelectionThumbIcon } from "@/components/core/SelectionThumb";
+import { SelectionThumb } from "@/components/core/SelectionThumb";
 import { Text } from "@/components/core/Text";
 
 export function SelectionIndicatorThumbGalleryDemo() {
@@ -15,16 +15,16 @@ export function SelectionIndicatorThumbGalleryDemo() {
       <div className="flex flex-wrap items-center gap-xlarge">
         <div className="selection-indicator-base flex items-center justify-center">
           <SelectionThumb active={active}>
-            <SelectionThumbIcon size="base">
+            <SelectionThumb.Icon size="base">
               <IoCheckmark aria-hidden />
-            </SelectionThumbIcon>
+            </SelectionThumb.Icon>
           </SelectionThumb>
         </div>
         <div className="selection-indicator-mid flex items-center justify-center">
           <SelectionThumb active={!active} className="rounded-mid">
-            <SelectionThumbIcon size="mid">
+            <SelectionThumb.Icon size="mid">
               <IoEllipse aria-hidden />
-            </SelectionThumbIcon>
+            </SelectionThumb.Icon>
           </SelectionThumb>
         </div>
       </div>

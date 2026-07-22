@@ -1,13 +1,13 @@
 import { IoEllipsisHorizontal } from "react-icons/io5";
 
-import { ButtonGroup, ButtonGroupText } from "@/components/composite/ButtonGroup";
+import { ButtonGroup } from "@/components/composite/ButtonGroup";
 import { Button } from "@/components/core/Button";
 import { Dropdown } from "@/components/core/Dropdown";
 
 export function ButtonGroupHorizontalDemo() {
   return (
     <ButtonGroup aria-label="Actions with a document">
-      <ButtonGroupText>View</ButtonGroupText>
+      <ButtonGroup.Text>View</ButtonGroup.Text>
       <Button variant="outline">List</Button>
       <Button variant="outline" groupSegment={{ orientation: "horizontal", position: "middle" }}>
         Net

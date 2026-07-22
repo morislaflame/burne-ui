@@ -1,27 +1,3 @@
-export {
-  ButtonRoot,
-  ButtonContent,
-  ButtonLabel,
-  ButtonIcon,
-  ButtonText,
-  ButtonLoader,
-  ButtonSuccess,
-  ButtonError,
-  type ButtonProps,
-  type ButtonAsyncState,
-  type ButtonSize,
-  type ButtonVariant,
-  type ButtonStatus,
-  type ButtonClassNames,
-  type ButtonContentProps,
-  type ButtonLabelProps,
-  type ButtonIconProps,
-  type ButtonTextProps,
-  type ButtonLoaderProps,
-  type ButtonSuccessProps,
-  type ButtonErrorProps,
-} from "./Button";
-
 import { ButtonRoot, ButtonContent, ButtonLabel, ButtonIcon, ButtonText, ButtonLoader, ButtonSuccess, ButtonError } from "./Button";
 
 export const Button = Object.assign(ButtonRoot, {
@@ -33,6 +9,22 @@ export const Button = Object.assign(ButtonRoot, {
   Success: ButtonSuccess,
   Error: ButtonError,
 });
+
+export type {
+  ButtonProps,
+  ButtonAsyncState,
+  ButtonSize,
+  ButtonVariant,
+  ButtonStatus,
+  ButtonClassNames,
+  ButtonContentProps,
+  ButtonLabelProps,
+  ButtonIconProps,
+  ButtonTextProps,
+  ButtonLoaderProps,
+  ButtonSuccessProps,
+  ButtonErrorProps,
+} from "./Button";
 
 export { buttonRippleTone } from "./buttonStyles";
 export {
