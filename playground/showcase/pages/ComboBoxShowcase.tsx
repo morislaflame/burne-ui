@@ -8,6 +8,8 @@ import { ComboBoxSizesDemo } from "../demos/combobox/ComboBoxSizes.demo";
 import comboBoxSizesSource from "../demos/combobox/ComboBoxSizes.demo.tsx?raw";
 import { ComboBoxGlossDemo } from "../demos/combobox/ComboBoxGloss.demo";
 import comboBoxGlossSource from "../demos/combobox/ComboBoxGloss.demo.tsx?raw";
+import { ComboBoxPopoverSideDemo } from "../demos/combobox/ComboBoxPopoverSide.demo";
+import comboBoxPopoverSideSource from "../demos/combobox/ComboBoxPopoverSide.demo.tsx?raw";
 import { ComboBoxStackPickerDemo } from "../demos/combobox/ComboBoxStackPicker.demo";
 import comboBoxStackPickerSource from "../demos/combobox/ComboBoxStackPicker.demo.tsx?raw";
 import { ComboBoxInlineToolbarDemo } from "../demos/combobox/ComboBoxInlineToolbar.demo";
@@ -39,6 +41,17 @@ export function ComboBoxShowcase() {
           align="center"
           Demo={ComboBoxCustomTriggerIconDemo}
           source={comboBoxCustomTriggerIconSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Popover side"
+        description="ComboBox.Popover side / align / offset — open the menu upward."
+      >
+        <ShowcaseDemoFromFile
+          align="center"
+          Demo={ComboBoxPopoverSideDemo}
+          source={comboBoxPopoverSideSource}
         />
       </ShowcaseSection>
 

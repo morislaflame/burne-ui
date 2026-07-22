@@ -18,6 +18,8 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
     {
       children,
       className,
+      side = "bottom",
+      align,
       offset = POPOVER_DEFAULT_OFFSET,
       ...rest
     },
@@ -75,7 +77,7 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
       <Popover
         open={open}
         onOpenChange={setOpen}
-        side="bottom"
+        side={side}
         anchorRef={anchorRef}
         variant={variant === "gloss" ? "gloss" : "default"}
       >
@@ -84,6 +86,7 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
           matchAnchorWidth
           unstyled
           contentRole={undefined}
+          align={align}
           offset={offset}
           className={cn(SELECT_POPOVER_CLASS, slotClassNames.popover, className)}
           {...rest}

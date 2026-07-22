@@ -131,6 +131,9 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       className,
       bodyClassName,
       variant: variantProp,
+      side = "bottom",
+      align,
+      offset = POPOVER_DEFAULT_OFFSET,
       portalContainer: portalContainerProp,
       ...rest
     },
@@ -166,7 +169,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       <Popover
         open={open}
         onOpenChange={setOpen}
-        side="bottom"
+        side={side}
         variant={panelVariant}
         anchorRef={triggerRef}
         shouldDismiss={shouldDismiss}
@@ -180,7 +183,8 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
           matchAnchorWidth
           unstyled
           contentRole={undefined}
-          offset={POPOVER_DEFAULT_OFFSET}
+          align={align}
+          offset={offset}
           id={contentId}
           className={cn(
             DROPDOWN_POPOVER_CLASS,

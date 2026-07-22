@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-import type { PopoverVariant } from "@/components/core/Popover";
+import type { PopoverSide, PopoverVariant } from "@/components/core/Popover";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 import type {
   SelectionIndicatorClassNames,
@@ -94,8 +94,12 @@ export type DropdownTriggerProps = HTMLAttributes<HTMLElement> & {
 export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   variant?: PopoverVariant;
   bodyClassName?: string;
+  /** Preferred side relative to the trigger. Default: `bottom`. */
+  side?: PopoverSide;
   /** Panel alignment relative to trigger (passed to Popover). Default: `start` when matching width. */
   align?: FloatingAlign;
+  /** Distance from the trigger in px. Default: Popover default offset. */
+  offset?: number;
   /** Overrides Root `portalContainer` for the main menu panel. */
   portalContainer?: HTMLElement | null;
 };

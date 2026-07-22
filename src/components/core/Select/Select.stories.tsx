@@ -324,6 +324,29 @@ export const CustomTriggerIcon: Story = {
   ),
 };
 
+/** Review 3.7: Popover `side` / `align` / `offset` are pass-through props. */
+export const PopoverSideTop: Story = {
+  name: "Popover side top",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Select.Popover` accepts `side`, `align`, and `offset` (same as Popover). Default side is `bottom`.",
+      },
+    },
+  },
+  render: () => (
+    <Select options={sampleOptions} defaultValue="ru">
+      <Select.Label>Opens upward</Select.Label>
+      <Select.TriggerGroup>
+        <Select.Value placeholder="Select language" />
+        <Select.Trigger />
+      </Select.TriggerGroup>
+      <Select.Popover side="top" />
+    </Select>
+  ),
+};
+
 export const StatusDanger: Story = {
   name: "status danger",
   render: () => (

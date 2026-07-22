@@ -2,6 +2,8 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
+import type { PopoverSide } from "@/components/core/Popover";
+import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
 export type SelectOption = {
   value: string;
@@ -104,6 +106,10 @@ export type SelectTriggerProps = HTMLAttributes<HTMLButtonElement>;
 
 export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  /** Preferred side relative to the trigger. Default: `bottom`. */
+  side?: PopoverSide;
+  /** Panel alignment relative to the trigger. Default: `start` when matching width. */
+  align?: FloatingAlign;
   offset?: number;
 };
 

@@ -12,6 +12,8 @@ import { DropdownGlossDemo } from "../demos/dropdown/DropdownGloss.demo";
 import dropdownGlossSource from "../demos/dropdown/DropdownGloss.demo.tsx?raw";
 import { DropdownMultipleDemo } from "../demos/dropdown/DropdownMultiple.demo";
 import dropdownMultipleSource from "../demos/dropdown/DropdownMultiple.demo.tsx?raw";
+import { DropdownPopoverSideDemo } from "../demos/dropdown/DropdownPopoverSide.demo";
+import dropdownPopoverSideSource from "../demos/dropdown/DropdownPopoverSide.demo.tsx?raw";
 import { DropdownSingleSelectDemo } from "../demos/dropdown/DropdownSingleSelect.demo";
 import dropdownSingleSelectSource from "../demos/dropdown/DropdownSingleSelect.demo.tsx?raw";
 import { DropdownStatusPickerDemo } from "../demos/dropdown/DropdownStatusPicker.demo";
@@ -51,6 +53,13 @@ export function DropdownShowcase() {
           Demo={DropdownCustomSubTriggerIconDemo}
           source={dropdownCustomSubTriggerIconSource}
         />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Popover side"
+        description="Dropdown.Popover side / align / offset — open the menu upward."
+      >
+        <ShowcaseDemoFromFile Demo={DropdownPopoverSideDemo} source={dropdownPopoverSideSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

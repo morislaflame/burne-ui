@@ -683,3 +683,36 @@ export const CustomClassNames: Story = {
     );
   },
 };
+
+/** Review 3.7: Popover `side` / `align` / `offset` are typed pass-through props. */
+export const PopoverSideTop: Story = {
+  name: "Popover side top",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Dropdown.Popover` accepts `side`, `align`, and `offset` (same as Popover). Default side is `bottom`.",
+      },
+    },
+  },
+  render: () => (
+    <Dropdown selectionIndicator defaultValue="ru">
+      <Dropdown.Trigger asChild>
+        <Button variant="outline">Opens upward</Button>
+      </Dropdown.Trigger>
+      <Dropdown.Popover side="top">
+        <Dropdown.Group>
+          <Dropdown.Label>Select language</Dropdown.Label>
+          <Dropdown.Item value="ru">
+            <Dropdown.ItemIndicator />
+            <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
+          </Dropdown.Item>
+          <Dropdown.Item value="en">
+            <Dropdown.ItemIndicator />
+            <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
+          </Dropdown.Item>
+        </Dropdown.Group>
+      </Dropdown.Popover>
+    </Dropdown>
+  ),
+};

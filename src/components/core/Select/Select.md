@@ -130,6 +130,7 @@ runSelectOpenAfterSqueeze({
 ### 5. Popover enter/leave
 
 `Select.Popover` → `Popover` с `motionTooltip()` — как ComboBox.
+Пропсы позиционирования: `side` (`top` | `right` | `bottom` | `left`, по умолчанию `bottom`), `align`, `offset`.
 
 ### 6. ListBox items
 

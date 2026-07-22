@@ -163,7 +163,7 @@ configureMotion({
 
 - **Open:** `animatePortalOpen` + `motionTooltip()` — `tooltipDuration` (200ms), `interactiveEase`
 - **Close:** `animatePortalClose` с теми же vars
-- **Position:** `computeTooltipPlacement`, `matchAnchorWidth` на Content
+- **Position:** `computeTooltipPlacement`, `matchAnchorWidth` на Content; `side` / `align` / `offset` пробрасываются с `ComboBox.Popover`
 - **Shadow:** `usePersistentElShadow` — sm на panel
 
 ```ts
@@ -285,7 +285,7 @@ Simple рендерит фиксированную разметку: `Label` →
 
 - **inputGroup vs input:** squeeze и shell hover — на `inputGroup`; фильтр и текст — на `input`.
 - **Trigger:** `tabIndex={-1}`; стилизуйте кнопку, не ломая `focus-ring`.
-- **Popover:** `matchAnchorWidth` включён по умолчанию; ширину панели меняйте через `popover` / `popoverBody`, не через anchor.
+- **Popover:** `matchAnchorWidth` включён по умолчанию; `side` / `align` / `offset` — как у Popover; ширину панели меняйте через `popover` / `popoverBody`, не через anchor.
 - **ListBox:** selection-indicator и item motion — в компоненте ListBox; `listBox` слот — обёртка скролла.
 - **ButtonGroup segment:** shell hover на `inputGroup` отключён; rounding задаёт сегмент.
 - **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти.

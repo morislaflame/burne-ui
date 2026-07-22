@@ -277,6 +277,8 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
     {
       children,
       className,
+      side = "bottom",
+      align,
       offset = POPOVER_DEFAULT_OFFSET,
       ...rest
     },
@@ -336,7 +338,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       <Popover
         open={open}
         onOpenChange={setOpen}
-        side="bottom"
+        side={side}
         anchorRef={anchorRef}
         variant={variant === "gloss" ? "gloss" : "default"}
       >
@@ -345,6 +347,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
           matchAnchorWidth
           unstyled
           contentRole={undefined}
+          align={align}
           offset={offset}
           className={cn(COMBOBOX_POPOVER_CLASS, slotClassNames.popover, className)}
           {...rest}

@@ -8,6 +8,8 @@ import { SelectDefaultDemo } from "../demos/select/SelectDefault.demo";
 import selectDefaultSource from "../demos/select/SelectDefault.demo.tsx?raw";
 import { SelectGlossDemo } from "../demos/select/SelectGloss.demo";
 import selectGlossSource from "../demos/select/SelectGloss.demo.tsx?raw";
+import { SelectPopoverSideDemo } from "../demos/select/SelectPopoverSide.demo";
+import selectPopoverSideSource from "../demos/select/SelectPopoverSide.demo.tsx?raw";
 import { SelectSizesDemo } from "../demos/select/SelectSizes.demo";
 import selectSizesSource from "../demos/select/SelectSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
@@ -39,6 +41,17 @@ export function SelectShowcase() {
           align="center"
           Demo={SelectCustomTriggerIconDemo}
           source={selectCustomTriggerIconSource}
+        />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Popover side"
+        description="Select.Popover side / align / offset — open the menu upward."
+      >
+        <ShowcaseDemoFromFile
+          align="center"
+          Demo={SelectPopoverSideDemo}
+          source={selectPopoverSideSource}
         />
       </ShowcaseSection>
 

@@ -366,6 +366,29 @@ export const CustomTriggerIcon: Story = {
   ),
 };
 
+/** Review 3.7: Popover `side` / `align` / `offset` are pass-through props. */
+export const PopoverSideTop: Story = {
+  name: "Popover side top",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`ComboBox.Popover` accepts `side`, `align`, and `offset` (same as Popover). Default side is `bottom`.",
+      },
+    },
+  },
+  render: () => (
+    <ComboBox options={sampleOptions} defaultValue="ru">
+      <ComboBox.Label>Opens upward</ComboBox.Label>
+      <ComboBox.InputGroup>
+        <ComboBox.Input placeholder="Select language" />
+        <ComboBox.Trigger />
+      </ComboBox.InputGroup>
+      <ComboBox.Popover side="top" />
+    </ComboBox>
+  ),
+};
+
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (

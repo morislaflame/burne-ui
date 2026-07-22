@@ -5,7 +5,7 @@ import { expect, screen } from "storybook/test";
 
 import { Text } from "@/components/core/Text";
 
-import { ColorPicker, ColorSlider, ColorSwatch, hsvaToColorString, hsvaToHex, type HSVA } from ".";
+import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToColorString, hsvaToHex, type HSVA } from ".";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -56,6 +56,92 @@ export const Basic: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: /Selected color/ }));
     await expect(screen.getByRole("textbox", { name: "Hex code of the color" })).toBeVisible();
+  },
+};
+
+function CompoundHueSlider() {
+  const { hsva, setHsva } = useColorPicker();
+  return (
+    <ColorSlider.Track
+      channel="hue"
+      color={hsva}
+      value={hsva.h}
+      size="base"
+      onValueChange={(h) => setHsva({ ...hsva, h })}
+    />
+  );
+}
+
+/** Review 3.6: presets above area, no hex. `defaultOpen` so layout is visible immediately. */
+export const CompoundContent: Story = {
+  name: "Compound — presets above, no hex",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Content` children replace the default layout. Here: presets → area → hue only (no hex/alpha inputs).",
+      },
+    },
+  },
+  render: function CompoundContentStory() {
+    const [color, setColor] = useState("#22c55e");
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <Text as="p" variant="small" className="text-muted">
+          Custom layout: presets on top, area, then hue — hex removed.
+        </Text>
+        <ColorPicker value={color} onValueChange={setColor} defaultOpen>
+          <ColorPicker.Trigger />
+          <ColorPicker.Content className="min-w-[16rem]">
+            <ColorPicker.Presets
+              presets={["#22c55e", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"]}
+              className="border-t-0 border-b-token pb-small pt-0"
+            />
+            <ColorPicker.Area />
+            <CompoundHueSlider />
+          </ColorPicker.Content>
+        </ColorPicker>
+        <Text as="p" variant="small" className="font-mono text-muted">
+          {color}
+        </Text>
+      </div>
+    );
+  },
+};
+
+export const CustomTrigger: Story = {
+  name: "Custom Trigger — button with hex label",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`Trigger` `asChild` + custom button (chip + hex + label). Closed state already looks custom.",
+      },
+    },
+  },
+  render: function CustomTriggerStory() {
+    const [color, setColor] = useState("#8b5cf6");
+    return (
+      <div className="flex flex-col items-center gap-mid">
+        <ColorPicker value={color} onValueChange={setColor}>
+          <ColorPicker.Trigger asChild>
+            <button
+              type="button"
+              className="inline-flex items-center gap-small rounded-base border-token bg-surface px-mid py-small text-small font-medium shadow-token-base hover:shadow-token-mid"
+            >
+              <span
+                aria-hidden
+                className="h-5 w-5 shrink-0 rounded-full border-token"
+                style={{ backgroundColor: color }}
+              />
+              <span className="font-mono text-muted">{color}</span>
+              <span>Change</span>
+            </button>
+          </ColorPicker.Trigger>
+          <ColorPicker.Content showAlpha />
+        </ColorPicker>
+      </div>
+    );
   },
 };
 
@@ -303,6 +389,7 @@ export const CustomClassNames: Story = {
       <ColorPicker
         value={color}
         onValueChange={setColor}
+        defaultOpen
         classNames={{
           contentPanel: "border border-primary/30 bg-primary/5",
           area: "rounded-base ring-1 ring-primary/20",
@@ -312,74 +399,8 @@ export const CustomClassNames: Story = {
         }}
       >
         <ColorPicker.Trigger />
-        <ColorPicker.Content />
+        <ColorPicker.Content showAlpha presets={["#3b82f6", "#22c55e", "#ef4444"]} />
       </ColorPicker>
-    );
-  },
-};
-
-export const CompoundContent: Story = {
-  name: "Compound Content parts",
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "`ColorPicker.Content` children replace the default layout. Compose with `Area`, `HexInput`, `AlphaInput`, `Presets`.",
-      },
-    },
-  },
-  render: function CompoundContentStory() {
-    const [color, setColor] = useState("#22c55e");
-    return (
-      <div className="flex flex-col items-center gap-mid">
-        <ColorPicker value={color} onValueChange={setColor}>
-          <ColorPicker.Trigger />
-          <ColorPicker.Content>
-            <ColorPicker.Area />
-            <ColorPicker.HexInput />
-            <ColorPicker.Presets
-              presets={["#22c55e", "#3b82f6", "#f59e0b", "#ef4444"]}
-            />
-          </ColorPicker.Content>
-        </ColorPicker>
-        <Text as="p" variant="small" className="font-mono text-muted">
-          {color}
-        </Text>
-      </div>
-    );
-  },
-};
-
-export const CustomTrigger: Story = {
-  name: "Custom Trigger (children / asChild)",
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "`ColorPicker.Trigger` accepts `children` and `asChild` (pass-through to Popover.Trigger).",
-      },
-    },
-  },
-  render: function CustomTriggerStory() {
-    const [color, setColor] = useState("#8b5cf6");
-    return (
-      <div className="flex flex-col items-center gap-mid">
-        <ColorPicker value={color} onValueChange={setColor}>
-          <ColorPicker.Trigger asChild>
-            <button
-              type="button"
-              className="inline-flex items-center gap-small rounded-base border-token bg-surface px-mid py-small text-small shadow-token-base"
-            >
-              <ColorSwatch color={color} size="small" shape="circle" tabIndex={-1} />
-              Pick brand color
-            </button>
-          </ColorPicker.Trigger>
-          <ColorPicker.Content showAlpha />
-        </ColorPicker>
-        <Text as="p" variant="small" className="font-mono text-muted">
-          {color}
-        </Text>
-      </div>
     );
   },
 };
