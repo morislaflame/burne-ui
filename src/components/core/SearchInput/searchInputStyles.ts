@@ -21,6 +21,9 @@ import type {
   SearchSizeLayout,
 } from "./searchInputTypes";
 
+export const SEARCH_INPUT_EXPAND_TRIGGER_CLASS =
+  "absolute inset-0 z-[2] m-0 cursor-pointer border-0 bg-transparent p-0 outline-none focus-ring-inset rounded-[inherit]";
+
 export const SEARCH_INPUT_ICON_WRAP_CLASS =
   "pointer-events-none absolute inset-y-0 z-[1] flex items-center justify-center text-muted";
 

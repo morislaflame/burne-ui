@@ -6,8 +6,11 @@ import {
   SearchInputIcon,
   SearchInputRipple,
 } from "./searchInputParts";
+import { SEARCH_INPUT_EXPAND_TRIGGER_CLASS } from "./searchInputStyles";
 import type { SearchInputProps } from "./searchInputTypes";
 import { useSearchInputRootState } from "./useSearchInputRootState";
+
+import { cn } from "@/utils/cn";
 
 export type {
   SearchInputProps,
@@ -72,17 +75,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <div
         ref={state.bindRootRef}
-        {...(state.expanded
-          ? { role: "search" as const, tabIndex: -1 as const }
-          : {
-              role: "button" as const,
-              tabIndex: (state.blocked ? -1 : 0) as 0 | -1,
-              onClick: state.handleRootClick,
-              onKeyDown: state.handleRootKeyDown,
-            })}
-        aria-expanded={state.expanded}
-        aria-disabled={state.blocked || undefined}
-        aria-label={state.expanded ? undefined : state.collapseA11yLabel}
+        role="search"
         data-search-expanded={state.expanded ? "" : undefined}
         onFocusCapture={state.onShellFocusIn}
         onBlurCapture={state.onShellFocusOut}
@@ -91,6 +84,23 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         onPointerEnter={state.handlePointerEnter}
         onPointerLeave={state.handlePointerLeave}
       >
+        {!state.expanded ? (
+          <button
+            type="button"
+            data-search-expand=""
+            className={cn(
+              SEARCH_INPUT_EXPAND_TRIGGER_CLASS,
+              state.classNames?.expandTrigger,
+            )}
+            tabIndex={state.blocked ? -1 : 0}
+            disabled={state.blocked}
+            aria-expanded={false}
+            aria-controls={state.inputId}
+            aria-label={state.collapseA11yLabel}
+            onClick={state.handleRootClick}
+            onKeyDown={state.handleRootKeyDown}
+          />
+        ) : null}
         {state.ripple ? <SearchInputRipple disabled={state.blocked} /> : null}
         <SearchInputIcon
           bindIconRef={state.bindIconRef}

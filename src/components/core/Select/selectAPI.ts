@@ -55,6 +55,20 @@ export function selectLastEnabledValue(
   return null;
 }
 
+/** Haystack for typeahead — string label / value only. */
+export function selectOptionTypeaheadLabel(opt: SelectOption | undefined): string {
+  if (!opt) return "";
+  if (typeof opt.label === "string") return opt.label.trim();
+  return opt.value;
+}
+
+export function selectTypeaheadLabels(
+  optionValues: string[],
+  optionsByValue: Map<string, SelectOption>,
+): string[] {
+  return optionValues.map((v) => selectOptionTypeaheadLabel(optionsByValue.get(v)));
+}
+
 export function selectResolveHintStatus(
   status: Exclude<InputStatus, "danger"> | "default" | undefined,
   fieldStatus: InputStatus,

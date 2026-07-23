@@ -176,46 +176,28 @@ export function sliderStepDelta(
   key: string,
   orientation: SliderOrientation,
 ): number | "home" | "end" | "mark-prev" | "mark-next" {
-  const isHoriz = orientation === "horizontal";
+  void orientation;
+  // APG: both axes increase/decrease — horiz uses ←/→ (and ↑/↓ as aliases);
+  // vertical uses ↑/↓ (and →/← as aliases).
+  const increaseKeys = new Set(["ArrowRight", "ArrowUp", "PageUp"]);
+  const decreaseKeys = new Set(["ArrowLeft", "ArrowDown", "PageDown"]);
+
   if (marks?.length) {
-    switch (key) {
-      case "ArrowRight":
-        return isHoriz ? "mark-next" : 0;
-      case "ArrowLeft":
-        return isHoriz ? "mark-prev" : 0;
-      case "ArrowUp":
-        return isHoriz ? 0 : "mark-next";
-      case "ArrowDown":
-        return isHoriz ? 0 : "mark-prev";
-      case "Home":
-        return "home";
-      case "End":
-        return "end";
-      default:
-        return 0;
-    }
+    if (key === "Home") return "home";
+    if (key === "End") return "end";
+    if (increaseKeys.has(key)) return "mark-next";
+    if (decreaseKeys.has(key)) return "mark-prev";
+    return 0;
   }
+
   const big = step > 0 ? step * 10 : 10;
-  switch (key) {
-    case "ArrowRight":
-      return isHoriz ? step : 0;
-    case "ArrowLeft":
-      return isHoriz ? -step : 0;
-    case "ArrowUp":
-      return isHoriz ? 0 : step;
-    case "ArrowDown":
-      return isHoriz ? 0 : -step;
-    case "PageUp":
-      return big;
-    case "PageDown":
-      return -big;
-    case "Home":
-      return "home";
-    case "End":
-      return "end";
-    default:
-      return 0;
-  }
+  if (key === "Home") return "home";
+  if (key === "End") return "end";
+  if (key === "PageUp") return big;
+  if (key === "PageDown") return -big;
+  if (key === "ArrowRight" || key === "ArrowUp") return step;
+  if (key === "ArrowLeft" || key === "ArrowDown") return -step;
+  return 0;
 }
 
 export function defaultSliderFormatValue(value: number): string {

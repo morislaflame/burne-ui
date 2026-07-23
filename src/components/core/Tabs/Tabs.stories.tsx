@@ -47,7 +47,7 @@ function TabsDemo({
       variant={variant}
       className={orientation === "vertical" ? "w-full max-w-2xl" : "w-full max-w-xl"}
     >
-      <Tabs.List>
+      <Tabs.List aria-label="Account">
         {TAB_ITEMS.map(({ value, label, icon: Icon }) => (
           <Tabs.Tab key={value} value={value}>
             <Icon aria-hidden className="icon-base shrink-0" />
@@ -220,7 +220,7 @@ export const CustomClassNames: Story = {
         panel: "rounded-small bg-info/5 p-mid",
       }}
     >
-      <Tabs.List>
+      <Tabs.List aria-label="Account">
         {TAB_ITEMS.map(({ value, label, icon: Icon }) => (
           <Tabs.Tab key={value} value={value}>
             <Icon aria-hidden className="icon-base shrink-0" />

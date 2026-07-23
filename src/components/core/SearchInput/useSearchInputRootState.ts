@@ -175,14 +175,12 @@ export function useSearchInputRootState({
   );
 
   const handleRootClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
+    (e: MouseEvent<HTMLButtonElement>) => {
       if (blocked) return;
-      if (!expanded) {
-        e.preventDefault();
-        void openFromInteraction();
-      }
+      e.preventDefault();
+      void openFromInteraction();
     },
-    [blocked, expanded, openFromInteraction],
+    [blocked, openFromInteraction],
   );
 
   const handleInputBlur = useCallback(
@@ -202,14 +200,14 @@ export function useSearchInputRootState({
   );
 
   const handleRootKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
-      if (expanded || blocked) return;
+    (e: KeyboardEvent<HTMLButtonElement>) => {
+      if (blocked) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         void openFromInteraction();
       }
     },
-    [blocked, expanded, openFromInteraction],
+    [blocked, openFromInteraction],
   );
 
   const handleInputKeyDown = useCallback(
@@ -223,7 +221,11 @@ export function useSearchInputRootState({
       ) {
         e.stopPropagation();
         setExpanded(false);
-        rootRef.current?.focus();
+        requestAnimationFrame(() => {
+          rootRef.current
+            ?.querySelector<HTMLElement>("[data-search-expand]")
+            ?.focus();
+        });
       }
     },
     [collapseOnBlur, onKeyDown, rootRef, setExpanded],

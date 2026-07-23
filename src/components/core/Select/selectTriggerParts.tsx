@@ -12,10 +12,16 @@ import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteracti
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
+import {
+  createTypeaheadBufferState,
+  isTypeaheadPrintableKey,
+  typeaheadMatchIndex,
+  typeaheadPush,
+} from "@/components/core/utils/typeahead";
 
 import { selectActiveOptionId, selectTriggerAriaLabel } from "./selectA11y";
 import { runSelectOpenAfterSqueeze, useSelectOpeningRef } from "./selectAnimations";
-import { selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue } from "./selectAPI";
+import { selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue, selectTypeaheadLabels } from "./selectAPI";
 import { useSelectClassNames, useSelectContext } from "./selectContext";
 import { SELECT_CHEVRON_ICON, selectTriggerClass, selectTriggerGroupClass, selectValueClass } from "./selectStyles";
 import type {
@@ -217,6 +223,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
     } = ctx;
 
     const placeholder = placeholderProp ?? contextPlaceholder;
+    const typeaheadRef = useRef(createTypeaheadBufferState());
 
     const openingRef = useSelectOpeningRef();
     const isGloss = variant === "gloss";
@@ -321,6 +328,22 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
           e.preventDefault();
           const last = selectLastEnabledValue(optionValues, optionsByValue);
           if (last) setActiveValue(last);
+          return;
+        }
+
+        if (isTypeaheadPrintableKey(e.key, e)) {
+          e.preventDefault();
+          const labels = selectTypeaheadLabels(optionValues, optionsByValue);
+          const currentIdx = activeValue ? optionValues.indexOf(activeValue) : -1;
+          const nextIdx = typeaheadMatchIndex(
+            labels,
+            typeaheadPush(typeaheadRef.current, e.key),
+            currentIdx,
+          );
+          if (nextIdx < 0) return;
+          const nextValue = optionValues[nextIdx];
+          const opt = nextValue ? optionsByValue.get(nextValue) : undefined;
+          if (nextValue && opt && !opt.disabled) setActiveValue(nextValue);
         }
       },
       [

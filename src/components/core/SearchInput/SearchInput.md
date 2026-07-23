@@ -50,15 +50,15 @@ import {
 | `groupSegment` | — | Сегмент ButtonGroup |
 | `disabled` / `readOnly` | — | Блокировка |
 | `className` | — | Алиас `classNames.root` (доп. класс на shell) |
-| `classNames` | — | Слоты `root` / `icon` / `input` / `clear` |
+| `classNames` | — | Слоты `root` / `icon` / `input` / `clear` / `expandTrigger` |
 | `aria-label` | — | **Рекомендуется** — collapsed trigger + input |
 
 ## Состояния UI
 
 | Состояние | Вид | Поведение |
 |-----------|-----|-----------|
-| Collapsed | Круглая кнопка с иконкой | `role="button"`, click/Enter/Space → expand |
-| Expanded | Прямоугольное поле | `role="search"`, input focus, clear button |
+| Collapsed | Круглая оболочка с иконкой | shell `role="search"` + overlay `<button>` expand |
+| Expanded | Прямоугольное поле | тот же `role="search"`, input focus, clear button |
 | С query | Expanded + clear | Кнопка `IoClose` |
 | Empty blur | Collapse | Если `collapseOnBlur` и пустое значение |
 
@@ -147,6 +147,7 @@ configureMotion({
 | `icon` | `<span>`-обёртка иконки `IoSearch` |
 | `input` | `<input type="search">` |
 | `clear` | Кнопка очистки (`IoClose`) |
+| `expandTrigger` | Overlay-кнопка expand в collapsed |
 
 ### Что можно настроить
 
@@ -207,8 +208,9 @@ configureMotion({
 
 | Состояние | role | Клавиатура |
 |-----------|------|------------|
-| Collapsed | `button`, `aria-expanded=false` | Enter/Space → open |
-| Expanded | `search`, `aria-expanded=true` | input focus; Esc collapse if empty |
+| Shell | всегда `role="search"` | не меняется при expand |
+| Collapsed trigger | `<button>`, `aria-expanded=false`, `aria-controls` | Enter/Space → open |
+| Expanded | input focus; Esc collapse if empty | роли shell не трогаем |
 | Input | `type="search"` | Native search; `tabIndex` 0 only when expanded |
 
 - Clear: `aria-label="Clear field"`

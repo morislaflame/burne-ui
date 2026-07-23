@@ -380,6 +380,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 - Item: `menuitem` / `menuitemradio` / `menuitemcheckbox`
 - Group: `role="group"` + `aria-labelledby`
 - Keyboard navigation в открытом menu (включая submenu: ArrowRight открыть, ArrowLeft/Escape закрыть)
+- Typeahead по первым буквам (буфер ~500ms) в menu и submenu
 - Закрытие (Escape, выбор пункта, outside click) всегда возвращает focus на trigger
 
 ## Структура файлов

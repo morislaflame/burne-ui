@@ -11,3 +11,7 @@ export function focusDropdownMenuItem(items: HTMLElement[], index: number) {
   const item = items[index];
   if (item) item.focus();
 }
+
+export function dropdownMenuItemTypeaheadLabel(el: HTMLElement): string {
+  return (el.textContent ?? "").trim().replace(/\s+/g, " ");
+}

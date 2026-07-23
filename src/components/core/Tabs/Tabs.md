@@ -230,6 +230,7 @@ Handlers и ARIA merge на child; text motion отключён.
 - Tab: `role="tab"`, `aria-selected`, `aria-controls`, roving `tabIndex` (одна tab-остановка на выбранном табе)
 - Panel: `role="tabpanel"`, `aria-labelledby`, `hidden` когда не selected
 - List: `role="tablist"`, `aria-orientation`, keyboard `Home`/`End`/arrows (без собственного `tabIndex`)
+- **Имя tablist (APG):** задайте `aria-label` или `aria-labelledby` на `Tabs.List` — например `<Tabs.List aria-label="Settings">`
 - Indicator: `aria-hidden`
 - IDs: `{baseId}-tab-{value}`, `{baseId}-panel-{value}`
 

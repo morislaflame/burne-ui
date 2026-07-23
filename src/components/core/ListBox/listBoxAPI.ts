@@ -128,3 +128,19 @@ export function listBoxPreferredInitialActiveValue(
   }
   return listBoxFirstEnabledValue(root);
 }
+
+export function listBoxTypeaheadLabels(root: HTMLElement): {
+  values: string[];
+  labels: string[];
+} {
+  const options = listBoxEnabledOptionElements(root);
+  const values: string[] = [];
+  const labels: string[] = [];
+  for (const el of options) {
+    const value = listBoxOptionValue(el);
+    if (!value) continue;
+    values.push(value);
+    labels.push((el.textContent ?? "").trim().replace(/\s+/g, " "));
+  }
+  return { values, labels };
+}

@@ -102,7 +102,6 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
         ref={ref}
         id={id ?? shellIds?.errorSummaryId}
         role="alert"
-        aria-live="polite"
         className={formErrorSummaryClass(className, rootClassNames)}
         {...rest}
       >

@@ -78,7 +78,7 @@ const options = [
 
 - Закрыт: `Select.Value` показывает `label` выбранной опции или `placeholder` (muted)
 - Открыт: `ListBox` с `activeValue`, keyboard navigation
-- Клавиатура на Value: ArrowDown/Up, Enter, Space — open; в списке — navigate + Enter выбирает; Escape закрывает
+- Клавиатура на Value: ArrowDown/Up, Enter, Space — open; в списке — navigate + Enter выбирает; Escape закрывает; typeahead по первым буквам (string `label` / `value`)
 - Нет type-ahead / filter (см. ComboBox)
 
 ## Анимации

@@ -17,6 +17,8 @@ export type SearchInputClassNames = {
   icon?: string;
   input?: string;
   clear?: string;
+  /** Collapsed expand control (`role=button` overlay). */
+  expandTrigger?: string;
 };
 
 export type SearchSizeLayout = {

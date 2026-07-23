@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useId, useState } from "react";
+import { forwardRef, useCallback, useEffect, useId, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
@@ -13,6 +13,7 @@ import {
   listBoxFirstEnabledValue,
   listBoxLastEnabledValue,
   listBoxPreferredInitialActiveValue,
+  listBoxTypeaheadLabels,
   resolveListBoxItemIndicatorClassNames,
 } from "./listBoxAPI";
 import { useListBoxItemAnimations, useListBoxRootGlossRef } from "./listBoxAnimations";
@@ -33,6 +34,12 @@ import type {
 import { useListBoxItemState } from "./useListBoxItemState";
 
 import { cn } from "@/utils/cn";
+import {
+  createTypeaheadBufferState,
+  isTypeaheadPrintableKey,
+  typeaheadMatchIndex,
+  typeaheadPush,
+} from "@/components/core/utils/typeahead";
 
 export function ListBoxRootShell({
   listId,
@@ -57,6 +64,7 @@ export function ListBoxRootShell({
   } = useListBox("ListBox");
   const isGloss = variant === "gloss";
   const setRootRef = useListBoxRootGlossRef(isGloss);
+  const typeaheadRef = useRef(createTypeaheadBufferState());
 
   const handleKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
@@ -117,6 +125,22 @@ export function ListBoxRootShell({
         }
         event.preventDefault();
         selectItem(activeValue);
+        keepFocusOnList();
+        return;
+      }
+
+      if (isTypeaheadPrintableKey(event.key, event)) {
+        event.preventDefault();
+        const { values, labels } = listBoxTypeaheadLabels(root);
+        const currentIdx = activeValue ? values.indexOf(activeValue) : -1;
+        const nextIdx = typeaheadMatchIndex(
+          labels,
+          typeaheadPush(typeaheadRef.current, event.key),
+          currentIdx,
+        );
+        if (nextIdx < 0) return;
+        const next = values[nextIdx];
+        if (next) setActiveValue(next);
         keepFocusOnList();
       }
     },

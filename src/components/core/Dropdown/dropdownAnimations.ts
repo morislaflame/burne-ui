@@ -1,3 +1,9 @@
+import {
+  createTypeaheadBufferState,
+  isTypeaheadPrintableKey,
+  typeaheadMatchIndex,
+  typeaheadPush,
+} from "@/components/core/utils/typeahead";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
@@ -5,6 +11,7 @@ import { isContainedPortal } from "@/components/core/utils/portalContainer";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import {
+  dropdownMenuItemTypeaheadLabel,
   focusDropdownMenuItem,
   getFocusableDropdownMenuItems,
 } from "./dropdownA11y";
@@ -14,12 +21,29 @@ import type {
   UseDropdownSubmenuKeyboardProps,
 } from "./dropdownTypes";
 
+function handleDropdownTypeaheadKey(
+  e: KeyboardEvent,
+  items: HTMLElement[],
+  buffer: ReturnType<typeof createTypeaheadBufferState>,
+) {
+  if (!isTypeaheadPrintableKey(e.key, e)) return false;
+  e.preventDefault();
+  const labels = items.map(dropdownMenuItemTypeaheadLabel);
+  const active = document.activeElement as HTMLElement | null;
+  const idx = active ? items.indexOf(active) : -1;
+  const next = typeaheadMatchIndex(labels, typeaheadPush(buffer, e.key), idx);
+  if (next >= 0) focusDropdownMenuItem(items, next);
+  return true;
+}
+
 export function useDropdownPopoverMenu({
   open,
   setOpen,
   triggerRef,
   contentRef,
 }: UseDropdownPopoverMenuProps) {
+  const typeaheadRef = useRef(createTypeaheadBufferState());
+
   useLayoutEffect(() => {
     if (!open) return;
     const panel = contentRef.current;
@@ -32,6 +56,7 @@ export function useDropdownPopoverMenu({
     if (!open) return;
     const panel = contentRef.current;
     if (!panel) return;
+    const buffer = typeaheadRef.current;
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -65,7 +90,9 @@ export function useDropdownPopoverMenu({
       if (e.key === "End") {
         e.preventDefault();
         focusDropdownMenuItem(items, items.length - 1);
+        return;
       }
+      handleDropdownTypeaheadKey(e, items, buffer);
     };
 
     panel.addEventListener("keydown", onKeyDown);
@@ -81,6 +108,8 @@ export function useDropdownSubmenuKeyboard({
   triggerRef,
   setOpen,
 }: UseDropdownSubmenuKeyboardProps) {
+  const typeaheadRef = useRef(createTypeaheadBufferState());
+
   useLayoutEffect(() => {
     if (!subOpen || !portalMounted) return;
     const panel = panelRef.current;
@@ -96,6 +125,7 @@ export function useDropdownSubmenuKeyboard({
     if (!subOpen || !portalMounted) return;
     const panel = panelRef.current;
     if (!panel) return;
+    const buffer = typeaheadRef.current;
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" || e.key === "ArrowLeft") {
@@ -130,7 +160,9 @@ export function useDropdownSubmenuKeyboard({
       if (e.key === "End") {
         e.preventDefault();
         focusDropdownMenuItem(items, items.length - 1);
+        return;
       }
+      handleDropdownTypeaheadKey(e, items, buffer);
     };
 
     panel.addEventListener("keydown", onKeyDown);

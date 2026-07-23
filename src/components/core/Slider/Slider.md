@@ -219,7 +219,7 @@ configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
 
 - Thumb: `role="slider"`, `aria-valuemin/max/now`, `aria-valuetext`
 - `aria-labelledby` от `Slider.Label` / `aria-label`
-- Keyboard: arrows, Home/End, PageUp/Down (step)
+- Keyboard: ←/→ и ↑/↓ (симметрия осей по APG), Home/End, PageUp/Down (step×10; при marks — соседняя метка)
 - Marks: visual only; value snap при drag
 
 ## Утилиты

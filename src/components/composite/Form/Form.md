@@ -285,7 +285,7 @@ type FormFieldRules = {
 | Form label | `aria-labelledby` → `Form.Title` id |
 | Description | `aria-describedby` → `Form.Description` |
 | Errors | `aria-describedby` + `Form.ErrorSummary` при ошибках |
-| `Form.ErrorSummary` | `role="alert"`, `aria-live="polite"`, sr-only; render-проп `children(entries)` для кастомного списка ошибок |
+| `Form.ErrorSummary` | `role="alert"` (assertive live), sr-only; render-проп `children(entries)` для кастомного списка ошибок |
 | `Form.Announce` | `role="status"`, `aria-live="polite"`, `aria-atomic` |
 | Поля | `aria-invalid` через binding |
 | Focus | `focusFirstInvalid` на submit с ошибками |
