@@ -6,6 +6,7 @@ export {
   activateThemeModePalette,
   patchThemeColor,
   exportThemeCss,
+  fluidScaleRem,
   COLOR_CSS_VAR,
   DEFAULT_FONT,
   DEFAULT_FONT_MONO,
@@ -41,6 +42,7 @@ export {
   createDefaultBurneThemeConfig,
   exportDefaultBurneThemeConfigSource,
   themeTokenStateToConfig,
+  DEFAULT_THEME_STORAGE_KEY,
   type BurneThemeConfig,
   type BurneThemeMode,
   type CustomThemeTokenControl,
@@ -59,6 +61,13 @@ export {
   type BurneThemeContextValue,
   type ThemeProviderProps,
 } from "./ThemeProvider";
+
+export {
+  ThemeScript,
+  getThemeScript,
+  type ThemeScriptOptions,
+  type ThemeScriptProps,
+} from "./themeScript";
 
 export { BurneUIProvider, type BurneUIProviderProps } from "./BurneUIProvider";
 

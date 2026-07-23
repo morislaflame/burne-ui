@@ -96,18 +96,40 @@ import "burne-ui/styles.css";
 
 ```tsx
 // app/layout.tsx
+import { ThemeScript } from "burne-ui";
 import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" className="min-h-[100dvh] antialiased" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body className="min-h-[100dvh] bg-background text-foreground">{children}</body>
     </html>
   );
 }
 ```
 
-`suppressHydrationWarning` на `<html>` полезен, если тема (`data-theme`) задаётся на клиенте до гидрации.
+`ThemeScript` — блокирующий инлайн-скрипт: читает `localStorage` и ставит `data-theme` **до первой отрисовки**. Без него SSR-HTML всегда тёмный, и у пользователя со светлой темой будет вспышка.
+
+`suppressHydrationWarning` на `<html>` нужен, потому что скрипт меняет `data-theme` до гидрации React.
+
+Параметры должны совпадать с провайдером:
+
+```tsx
+<ThemeScript storageKey="burne-ui-theme" defaultTheme="system" />
+// …
+<BurneUIProvider defaultTheme="system" storageKey="burne-ui-theme">
+```
+
+Альтернатива без JSX — строка для `index.html` / CSP:
+
+```ts
+import { getThemeScript } from "burne-ui";
+
+getThemeScript({ storageKey: "burne-ui-theme", defaultTheme: "dark" });
+```
 
 Первый компонент:
 
@@ -188,11 +210,15 @@ import { ThemeProvider, useBurneTheme } from "burne-ui";
 
 ```tsx
 // app/layout.tsx
+import { ThemeScript } from "burne-ui";
 import { AppProviders } from "@/components/providers/app-providers";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" suppressHydrationWarning>
+      <head>
+        <ThemeScript defaultTheme="system" />
+      </head>
       <body>
         <AppProviders>{children}</AppProviders>
       </body>
@@ -368,6 +394,12 @@ import { THEME_SANS_FONTS_URL, THEME_MONO_FONTS_URL, ensureThemeFontLoaded } fro
 <html data-theme="light">
 ```
 
+### SSR без вспышки темы
+
+На сервере `localStorage` недоступен — HTML уходит с дефолтной (тёмной) темой. `useLayoutEffect` в провайдере ставит `data-theme` слишком поздно: браузер успевает отрисовать неверный кадр.
+
+Решение — `ThemeScript` / `getThemeScript` в корневом layout **до** контента (см. [§4](#4-базовый-layout-nextjs-app-router)). Провайдер потом синхронизирует React-state с уже выставленным атрибутом.
+
 Runtime-переключатель:
 
 ```tsx
@@ -401,7 +433,7 @@ export function ThemeToggle() {
 :root {
   --color-primary: #6366f1;
   --color-surface: #121212;
-  --space: 0.5625rem;
+  --space: 0.5625rem;   /* фиксированный rem — без fluid по viewport */
   --size: 1.0625rem;
   --radius: 0.625rem;
   --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -411,6 +443,10 @@ export function ThemeToggle() {
   --color-primary: #4f46e5;
 }
 ```
+
+Чтобы **сохранить fluid** (адаптацию отступов/размеров к ширине экрана), не пишите fixed rem вручную — задайте knobs в theme config (`tokens.space` / `size` / `radius` / `shadowStrength` / `shadowSize`). `applyThemeTokens` сам пишет scaled `clamp` и тени с `calc(… * var(--shadow-size))`.
+
+`applyThemeTokens` / theme config пишут **инлайн только токены, отличающиеся от дефолтов кита**. Остальные переменные остаются из `styles.css` — точечный CSS-оверрайд (`--color-primary` в файле выше) по-прежнему работает для всего, что не задано в конфиге.
 
 ```css
 /* globals.css */
@@ -562,6 +598,12 @@ import { cn } from "burne-ui";
 
 - `data-theme="light"` должен быть на `<html>` (или на предке портала), не на вложенном `div` без наследования.
 
+### Вспышка светлой/тёмной темы при загрузке (SSR)
+
+- Нет `ThemeScript` (или `getThemeScript`) в root layout — добавьте в `<head>` (см. [§4](#4-базовый-layout-nextjs-app-router)).
+- `storageKey` / `defaultTheme` у скрипта и у `BurneUIProvider` / `ThemeProvider` должны совпадать.
+- На `<html>` нужен `suppressHydrationWarning`.
+
 ### На кнопке сразу видны loader, текст и крестик
 
 - Типично для **SSR** со старым `burne-ui` без правил в `styles.css` (см. [§10](#10-ssr-и-nextjs-async-слои-button-и-selection-fill)) — обновите пакет.
@@ -586,6 +628,7 @@ import { cn } from "burne-ui";
 - [ ] Подключён `burne-ui/styles.css`
 - [ ] Tailwind v4: `@source` на код приложения
 - [ ] `burne-ui` ≥ 1.5.3 (SSR + gloss blur CSS в `styles.css`); для тяжёлых demo можно `ssr: false`
+- [ ] (SSR / Next.js) `ThemeScript` в root layout + `suppressHydrationWarning` на `<html>`
 - [ ] (Опционально) Override-токены в отдельном CSS после импорта пакета
 - [ ] (Опционально) `configureMotion(...)` в client-провайдере через `useLayoutEffect`
 - [ ] (Если нужны toast) `Toast.Provider` в корне

@@ -3,10 +3,10 @@
  * Tailwind utilities — in `src/styles.css` (`@theme`, `@utility`).
  *
  * Customization:
- * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers; fluid `clamp` by viewport.
+ * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers; fluid `clamp` by viewport (theme JS writes scaled `clamp`, not fixed rem).
  * - `--size` — control sizes (icons, indicators, button min-width, modal max-w); fluid `clamp` by viewport.
  * - `--radius` — base radius; `rounded-*` steps via multipliers; fluid `clamp` by viewport.
- * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large`.
+ * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large` (`calc(… * var(--shadow-size))`; do not bake px).
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).
  * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).

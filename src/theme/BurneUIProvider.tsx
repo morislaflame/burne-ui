@@ -6,7 +6,7 @@ import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
 
 import { BurneLabelsProvider } from "./BurneLabelsProvider";
 import type { BurneLabels } from "./burneLabels";
-import { applyBurneThemeConfig, clearCustomThemeTokens, type BurneThemeConfig, type BurneThemeMode, type CustomThemeTokens, type ThemeTokenOverrides } from "./themeConfig";
+import { applyBurneThemeConfig, clearCustomThemeTokens, DEFAULT_THEME_STORAGE_KEY, type BurneThemeConfig, type BurneThemeMode, type CustomThemeTokens, type ThemeTokenOverrides } from "./themeConfig";
 import { applyThemeMode, ThemeProvider, useBurneTheme, type ThemeProviderProps } from "./ThemeProvider";
 import { applyThemeTokens, clearThemeInlineTokens, createDefaultThemeState } from "./themeDefaults";
 import { BurneThemeRuntimeContextProvider, type BurneThemeRuntimeContextValue } from "./themeRuntimeContext";
@@ -43,7 +43,7 @@ function mergeProviderConfig(props: BurneUIProviderProps): BurneThemeConfig {
   const { config, theme, tokens, customTokens, motion, toast, storageKey, labels } = props;
   return {
     theme: theme ?? config?.theme ?? "dark",
-    storageKey: storageKey !== undefined ? storageKey : (config?.storageKey ?? "burne-ui-theme"),
+    storageKey: storageKey !== undefined ? storageKey : (config?.storageKey ?? DEFAULT_THEME_STORAGE_KEY),
     tokens: tokens ?? config?.tokens,
     colors: config?.colors,
     customTokens: customTokens ?? config?.customTokens,
@@ -170,7 +170,7 @@ export function BurneUIProvider(props: BurneUIProviderProps) {
 
   const themeMode = resolvedConfig.theme ?? "dark";
   const resolvedStorageKey =
-    resolvedConfig.storageKey === undefined ? "burne-ui-theme" : resolvedConfig.storageKey;
+    resolvedConfig.storageKey === undefined ? DEFAULT_THEME_STORAGE_KEY : resolvedConfig.storageKey;
 
   let content = (
     <BurneUIRuntime resolvedConfig={resolvedConfig} root={root}>{children}</BurneUIRuntime>

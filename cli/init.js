@@ -213,8 +213,9 @@ function resolveProviderPath(cwd, framework) {
 /**
  * @param {Framework} framework
  * @param {string} importHint
+ * @param {ThemeMode} [theme]
  */
-function layoutSnippet(framework, importHint) {
+function layoutSnippet(framework, importHint, theme = "dark") {
   if (framework === "vite") {
     return `// src/main.tsx
 import { BurneProviders } from "${importHint}";
@@ -228,13 +229,18 @@ createRoot(document.getElementById("root")!).render(
 );
 `;
   }
+  const themeProp = theme === "dark" ? "" : ` defaultTheme="${theme}"`;
   return `// app/layout.tsx
+import { ThemeScript } from "burne-ui";
 import { BurneProviders } from "${importHint}";
 import "./globals.css";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript${themeProp} />
+      </head>
       <body className="min-h-[100dvh] bg-background text-foreground antialiased">
         <BurneProviders>{children}</BurneProviders>
       </body>
@@ -458,7 +464,7 @@ export async function runInit(argv, cliVersion) {
     console.log(`Wrote ${relProvider}`);
   }
 
-  const snippet = layoutSnippet(fw, provider.importHint);
+  const snippet = layoutSnippet(fw, provider.importHint, theme);
   console.log(`\n── Wrap your root layout ──\n\n${snippet}`);
   console.log("Theme: edit burne-theme.ts, or replace via docs site → Copy config.\n");
 }

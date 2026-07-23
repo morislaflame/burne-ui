@@ -277,30 +277,54 @@ const SHADOW_LAYER_GEOM = {
 
 type ShadowLevelKey = keyof typeof SHADOW_LAYER_GEOM;
 
-function shadowLayerPx(
+/**
+ * Fluid curve for `--space` / `--size` / `--radius` in `tokens/styles.css`:
+ * ~93.75% at narrow viewports → 100% from ~800px (preferred mixes rem + vw).
+ * Scale the whole clamp by the knob max (desktop) rem so overrides stay responsive.
+ */
+const FLUID_MIN_RATIO = 0.9375;
+const FLUID_PREFERRED_REM_RATIO = 0.875;
+const FLUID_PREFERRED_VW_RATIO = 0.25;
+
+function formatCssNumber(n: number): string {
+  const rounded = Math.round(n * 1e8) / 1e8;
+  return String(rounded);
+}
+
+/** CSS value for a fluid scale knob — matches default tokens when `maxRem` is the CSS max. */
+export function fluidScaleRem(maxRem: number): string {
+  if (maxRem === 0) return "0rem";
+  const min = formatCssNumber(maxRem * FLUID_MIN_RATIO);
+  const preferredRem = formatCssNumber(maxRem * FLUID_PREFERRED_REM_RATIO);
+  const preferredVw = formatCssNumber(maxRem * FLUID_PREFERRED_VW_RATIO);
+  const max = formatCssNumber(maxRem);
+  return `clamp(${min}rem, ${preferredRem}rem + ${preferredVw}vw, ${max}rem)`;
+}
+
+function shadowDim(value: number): string {
+  if (value === 0) return "0";
+  return `calc(${value}px * var(--shadow-size))`;
+}
+
+/** Shadow layer keeping geometry as `calc(… * var(--shadow-size))` (CSS pattern). */
+function shadowLayerCalc(
   offsetX: number,
   offsetY: number,
   blur: number,
   spread: number,
   opacity: number,
-  size: number,
 ): string {
-  const dim = (value: number) => {
-    if (value === 0) return "0";
-    return `${value * size}px`;
-  };
-  return `${dim(offsetX)} ${dim(offsetY)} ${dim(blur)} ${dim(spread)} rgb(0 0 0 / ${opacity})`;
+  return `${shadowDim(offsetX)} ${shadowDim(offsetY)} ${shadowDim(blur)} ${shadowDim(spread)} rgb(0 0 0 / ${formatCssNumber(opacity)})`;
 }
 
 function buildShadowLevel(
   level: ShadowLevelKey,
   theme: ThemeMode,
   strength: number,
-  size: number,
 ): string {
   const opacity = SHADOW_BASE[theme][level] * strength;
   const [offsetX, offsetY, blur, spread] = SHADOW_LAYER_GEOM[level][0];
-  return shadowLayerPx(offsetX, offsetY, blur, spread, opacity, size);
+  return shadowLayerCalc(offsetX, offsetY, blur, spread, opacity);
 }
 
 function applyShadows(
@@ -310,10 +334,18 @@ function applyShadows(
   size: number,
 ) {
   root.style.setProperty("--shadow-size", String(size));
-  root.style.setProperty("--shadow-none", buildShadowLevel("base", theme, 0, size));
-  root.style.setProperty("--shadow-base", buildShadowLevel("base", theme, strength, size));
-  root.style.setProperty("--shadow-mid", buildShadowLevel("mid", theme, strength, size));
-  root.style.setProperty("--shadow-large", buildShadowLevel("large", theme, strength, size));
+  root.style.setProperty("--shadow-none", buildShadowLevel("base", theme, 0));
+  root.style.setProperty("--shadow-base", buildShadowLevel("base", theme, strength));
+  root.style.setProperty("--shadow-mid", buildShadowLevel("mid", theme, strength));
+  root.style.setProperty("--shadow-large", buildShadowLevel("large", theme, strength));
+}
+
+function clearShadows(root: HTMLElement) {
+  root.style.removeProperty("--shadow-size");
+  root.style.removeProperty("--shadow-none");
+  root.style.removeProperty("--shadow-base");
+  root.style.removeProperty("--shadow-mid");
+  root.style.removeProperty("--shadow-large");
 }
 
 function applyTextScale(root: HTMLElement, textScale: number) {
@@ -329,10 +361,27 @@ function applyTextScale(root: HTMLElement, textScale: number) {
   }
 }
 
-function applyFontWeights(root: HTMLElement, fontWeights: ThemeFontWeights) {
-  for (const [key, cssVar] of Object.entries(FONT_WEIGHT_CSS_VAR) as [ThemeFontWeightKey, string][]) {
-    root.style.setProperty(cssVar, String(fontWeights[key]));
+function clearTextScale(root: HTMLElement) {
+  for (const key of Object.keys(TEXT_SCALE_BASES) as TextScaleToken[]) {
+    root.style.removeProperty(`--text-scale-${key}`);
+    root.style.removeProperty(`--text-scale-${key}--line-height`);
   }
+}
+
+function applyFontWeights(root: HTMLElement, fontWeights: ThemeFontWeights, defaults: ThemeFontWeights) {
+  for (const [key, cssVar] of Object.entries(FONT_WEIGHT_CSS_VAR) as [ThemeFontWeightKey, string][]) {
+    setOrClearInline(root, cssVar, fontWeights[key] !== defaults[key] ? String(fontWeights[key]) : null);
+  }
+}
+
+/** Set inline custom property, or remove it so stylesheet / user CSS can win. */
+function setOrClearInline(root: HTMLElement, name: string, value: string | null) {
+  if (value === null) root.style.removeProperty(name);
+  else root.style.setProperty(name, value);
+}
+
+function borderWidthCss(px: number): string {
+  return px === 0 ? "0px" : `${px}px`;
 }
 
 function createDefaultModePalettes(): Record<ThemeMode, ThemeColors> {
@@ -521,9 +570,16 @@ function applyMotionFromState(state: ThemeTokenState) {
   });
 }
 
+/**
+ * Apply theme tokens as inline CSS variables.
+ * Only values that differ from kit defaults are written — matching values are
+ * cleared so `burne-ui/styles.css` and user override sheets can still win
+ * (inline styles otherwise block all stylesheet redefinitions).
+ */
 export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
   if (typeof document === "undefined") return;
   const target = root ?? document.documentElement;
+  const defaults = createDefaultThemeState(state.theme);
 
   if (state.theme === "light") {
     target.dataset.theme = "light";
@@ -531,61 +587,182 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
     delete target.dataset.theme;
   }
 
-  target.style.setProperty("--space", `${state.space}rem`);
-  target.style.setProperty("--size", `${state.size}rem`);
-  target.style.setProperty("--radius", `${state.radius}rem`);
-  target.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
-  target.style.setProperty(
-    "--focus-ring-width",
-    state.focusRingWidth === 0 ? "0px" : `${state.focusRingWidth}px`,
+  setOrClearInline(
+    target,
+    "--space",
+    state.space !== defaults.space ? fluidScaleRem(state.space) : null,
   );
-  target.style.setProperty("--focus-ring-offset", `${state.focusRingOffset}px`);
-  target.style.setProperty("--font-family-sans", state.fontFamily);
-  target.style.setProperty("--font-family-mono", state.fontFamilyMono);
-  applyFontWeights(target, state.fontWeights);
+  setOrClearInline(
+    target,
+    "--size",
+    state.size !== defaults.size ? fluidScaleRem(state.size) : null,
+  );
+  setOrClearInline(
+    target,
+    "--radius",
+    state.radius !== defaults.radius ? fluidScaleRem(state.radius) : null,
+  );
+  setOrClearInline(
+    target,
+    "--border-width",
+    state.borderWidth !== defaults.borderWidth ? borderWidthCss(state.borderWidth) : null,
+  );
+  setOrClearInline(
+    target,
+    "--focus-ring-width",
+    state.focusRingWidth !== defaults.focusRingWidth
+      ? borderWidthCss(state.focusRingWidth)
+      : null,
+  );
+  setOrClearInline(
+    target,
+    "--focus-ring-offset",
+    state.focusRingOffset !== defaults.focusRingOffset
+      ? `${state.focusRingOffset}px`
+      : null,
+  );
+  setOrClearInline(
+    target,
+    "--font-family-sans",
+    state.fontFamily !== defaults.fontFamily ? state.fontFamily : null,
+  );
+  setOrClearInline(
+    target,
+    "--font-family-mono",
+    state.fontFamilyMono !== defaults.fontFamilyMono ? state.fontFamilyMono : null,
+  );
+  applyFontWeights(target, state.fontWeights, defaults.fontWeights);
 
   applyMotionFromState(state);
 
-  applyTextScale(target, state.textScale);
-  applyShadows(target, state.theme, state.shadowStrength, state.shadowSize);
-  target.style.setProperty("--toast-scrim-size", String(state.toastScrimSize));
-  target.style.setProperty("--toast-scrim-density", String(state.toastScrimDensity));
+  if (state.textScale !== defaults.textScale) {
+    applyTextScale(target, state.textScale);
+  } else {
+    clearTextScale(target);
+  }
+
+  if (
+    state.shadowStrength !== defaults.shadowStrength ||
+    state.shadowSize !== defaults.shadowSize
+  ) {
+    applyShadows(target, state.theme, state.shadowStrength, state.shadowSize);
+  } else {
+    clearShadows(target);
+  }
+
+  setOrClearInline(
+    target,
+    "--toast-scrim-size",
+    state.toastScrimSize !== defaults.toastScrimSize ? String(state.toastScrimSize) : null,
+  );
+  setOrClearInline(
+    target,
+    "--toast-scrim-density",
+    state.toastScrimDensity !== defaults.toastScrimDensity
+      ? String(state.toastScrimDensity)
+      : null,
+  );
 
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
-    target.style.setProperty(cssVar, state.colors[key]);
+    setOrClearInline(
+      target,
+      cssVar,
+      state.colors[key] !== defaults.colors[key] ? state.colors[key] : null,
+    );
   }
 }
 
+/** CSS snapshot of tokens that differ from kit defaults (for override stylesheets). */
 export function exportThemeCss(state: ThemeTokenState): string {
-  const lines = [
-    ":root {",
-    `  --space: ${state.space}rem;`,
-    `  --size: ${state.size}rem;`,
-    `  --radius: ${state.radius}rem;`,
-    `  --border-width: ${state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`};`,
-    `  --focus-ring-width: ${state.focusRingWidth === 0 ? "0px" : `${state.focusRingWidth}px`};`,
-    `  --focus-ring-offset: ${state.focusRingOffset}px;`,
-    `  --font-family-sans: ${state.fontFamily};`,
-    `  --font-family-mono: ${state.fontFamilyMono};`,
-    ...Object.entries(FONT_WEIGHT_CSS_VAR).map(
-      ([key, cssVar]) => `  ${cssVar}: ${state.fontWeights[key as ThemeFontWeightKey]};`,
-    ),
-    `  --shadow-size: ${state.shadowSize};`,
-    `  --toast-scrim-size: ${state.toastScrimSize};`,
-    `  --toast-scrim-density: ${state.toastScrimDensity};`,
-    `  /* textScale: ${state.textScale} — set --text-scale-* manually or via applyThemeTokens */`,
-    `  /* shadowStrength: ${state.shadowStrength}, shadowSize: ${state.shadowSize} */`,
-    `  /* toastScrimSize: ${state.toastScrimSize}, toastScrimDensity: ${state.toastScrimDensity} */`,
-  ];
+  const defaults = createDefaultThemeState(state.theme);
+  const lines: string[] = [":root {"];
+
+  if (state.space !== defaults.space) {
+    lines.push(`  --space: ${fluidScaleRem(state.space)};`);
+  }
+  if (state.size !== defaults.size) {
+    lines.push(`  --size: ${fluidScaleRem(state.size)};`);
+  }
+  if (state.radius !== defaults.radius) {
+    lines.push(`  --radius: ${fluidScaleRem(state.radius)};`);
+  }
+  if (state.borderWidth !== defaults.borderWidth) {
+    lines.push(`  --border-width: ${borderWidthCss(state.borderWidth)};`);
+  }
+  if (state.focusRingWidth !== defaults.focusRingWidth) {
+    lines.push(`  --focus-ring-width: ${borderWidthCss(state.focusRingWidth)};`);
+  }
+  if (state.focusRingOffset !== defaults.focusRingOffset) {
+    lines.push(`  --focus-ring-offset: ${state.focusRingOffset}px;`);
+  }
+  if (state.fontFamily !== defaults.fontFamily) {
+    lines.push(`  --font-family-sans: ${state.fontFamily};`);
+  }
+  if (state.fontFamilyMono !== defaults.fontFamilyMono) {
+    lines.push(`  --font-family-mono: ${state.fontFamilyMono};`);
+  }
+  for (const [key, cssVar] of Object.entries(FONT_WEIGHT_CSS_VAR) as [
+    ThemeFontWeightKey,
+    string,
+  ][]) {
+    if (state.fontWeights[key] !== defaults.fontWeights[key]) {
+      lines.push(`  ${cssVar}: ${state.fontWeights[key]};`);
+    }
+  }
+
+  if (
+    state.shadowStrength !== defaults.shadowStrength ||
+    state.shadowSize !== defaults.shadowSize
+  ) {
+    lines.push(`  --shadow-size: ${state.shadowSize};`);
+    lines.push(`  --shadow-none: ${buildShadowLevel("base", state.theme, 0)};`);
+    lines.push(
+      `  --shadow-base: ${buildShadowLevel("base", state.theme, state.shadowStrength)};`,
+    );
+    lines.push(
+      `  --shadow-mid: ${buildShadowLevel("mid", state.theme, state.shadowStrength)};`,
+    );
+    lines.push(
+      `  --shadow-large: ${buildShadowLevel("large", state.theme, state.shadowStrength)};`,
+    );
+  }
+
+  if (state.toastScrimSize !== defaults.toastScrimSize) {
+    lines.push(`  --toast-scrim-size: ${state.toastScrimSize};`);
+  }
+  if (state.toastScrimDensity !== defaults.toastScrimDensity) {
+    lines.push(`  --toast-scrim-density: ${state.toastScrimDensity};`);
+  }
+
+  if (state.textScale !== defaults.textScale) {
+    lines.push(
+      `  /* textScale: ${state.textScale} — apply via applyThemeTokens or set --text-scale-* */`,
+    );
+    for (const key of Object.keys(TEXT_SCALE_BASES) as TextScaleToken[]) {
+      const { size, line } = TEXT_SCALE_BASES[key];
+      const scaledSize = size * state.textScale;
+      const scaledLine = line * state.textScale;
+      lines.push(`  --text-scale-${key}: ${scaledSize}rem;`);
+      lines.push(
+        `  --text-scale-${key}--line-height: calc(${scaledLine}rem / ${scaledSize}rem);`,
+      );
+    }
+  }
 
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
-    lines.push(`  ${cssVar}: ${state.colors[key]};`);
+    if (state.colors[key] !== defaults.colors[key]) {
+      lines.push(`  ${cssVar}: ${state.colors[key]};`);
+    }
+  }
+
+  if (lines.length === 1) {
+    lines.push("  /* (no overrides vs kit defaults) */");
   }
 
   lines.push("}");
 
   if (state.theme === "light") {
-    lines.push("", '/* Optional: light theme via data-attribute */');
+    lines.push("", "/* Optional: light theme via data-attribute */");
     lines.push('/* <html data-theme="light"> */');
   }
 

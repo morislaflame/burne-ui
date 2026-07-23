@@ -73,6 +73,7 @@ export {
   activateThemeModePalette,
   patchThemeColor,
   exportThemeCss,
+  fluidScaleRem,
   COLOR_CSS_VAR,
   DEFAULT_FONT,
   DEFAULT_FONT_MONO,

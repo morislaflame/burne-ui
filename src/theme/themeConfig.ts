@@ -7,6 +7,9 @@ import { applyThemeTokens, createDefaultThemeState, ensureModePalettes, exportTh
 /** Color mode for ThemeProvider / BurneUIProvider (`system` follows OS). */
 export type BurneThemeMode = ThemeMode | "system";
 
+/** Default `localStorage` key for theme persistence. */
+export const DEFAULT_THEME_STORAGE_KEY = "burne-ui-theme";
+
 /**
  * Shared (mode-independent) token overrides.
  * Colors live only under `BurneThemeConfig.colors`.
@@ -339,7 +342,7 @@ export function createDefaultBurneThemeConfig(options?: {
   const config = themeTokenStateToConfig(createDefaultThemeState(options?.theme ?? "dark"));
   return {
     ...config,
-    storageKey: options?.storageKey === undefined ? "burne-ui-theme" : options.storageKey,
+    storageKey: options?.storageKey === undefined ? DEFAULT_THEME_STORAGE_KEY : options.storageKey,
   };
 }
 

@@ -115,7 +115,7 @@ devtools; в production выбранный face нужно подключить 
 [docs/SETUP.md](./docs/SETUP.md).
 
 
-Только переключение `data-theme`: `ThemeProvider` + `useBurneTheme()`. Подробности — [docs/SETUP.md](./docs/SETUP.md).
+Только переключение `data-theme`: `ThemeProvider` + `useBurneTheme()`. Для SSR без вспышки темы — `ThemeScript` (или `getThemeScript`) в root layout. Подробности — [docs/SETUP.md](./docs/SETUP.md).
 
 ### CSS-переопределения
 
@@ -131,9 +131,9 @@ import "./burne-theme-overrides.css";
 ```css
 :root {
   --color-primary: #6366f1;
-  --space: 0.5625rem;   /* плотнее/просторнее отступы */
-  --size: 1.0625rem;    /* крупнее иконки, индикаторы, кнопки */
-  --radius: 0.625rem;   /* мягче скругления */
+  --space: 0.5625rem;   /* fixed rem — без fluid; для fluid см. theme config ниже */
+  --size: 1.0625rem;
+  --radius: 0.625rem;
   --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --text-scale-small: 0.9375rem; /* UI-текст (роль text-base) */
 }
@@ -143,6 +143,8 @@ import "./burne-theme-overrides.css";
   --color-primary: #4f46e5;
 }
 ```
+
+Theme config / playground (`tokens.space` и т.п.) через `applyThemeTokens` пишут scaled `clamp` и тени с `calc(… * var(--shadow-size))` — оверрайды не ломают fluid. Ручной fixed rem в CSS — да, отключает. Инлайн ставятся **только** токены ≠ дефолтам кита, поэтому CSS-файл оверрайдов может точечно править остальное.
 
 Переменные наследуются по дереву DOM — при необходимости задайте их на обёртке виджета вместо `html`.
 

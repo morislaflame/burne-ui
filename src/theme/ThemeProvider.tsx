@@ -1,6 +1,6 @@
 import { createContext, createElement, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 
-import { resolveTheme, type BurneThemeMode } from "./themeConfig";
+import { resolveTheme, DEFAULT_THEME_STORAGE_KEY, type BurneThemeMode } from "./themeConfig";
 import type { ThemeMode } from "./themeDefaults";
 
 export type BurneThemeContextValue = {
@@ -12,8 +12,6 @@ export type BurneThemeContextValue = {
 };
 
 const BurneThemeContext = createContext<BurneThemeContextValue | null>(null);
-
-const DEFAULT_STORAGE_KEY = "burne-ui-theme";
 
 function readStoredTheme(storageKey: string | null): BurneThemeMode | null {
   if (!storageKey || typeof window === "undefined") return null;
@@ -66,7 +64,7 @@ export function ThemeProvider({
   children,
   theme: themeProp,
   defaultTheme = "dark",
-  storageKey = DEFAULT_STORAGE_KEY,
+  storageKey = DEFAULT_THEME_STORAGE_KEY,
   root = null,
   onThemeChange,
 }: ThemeProviderProps) {
