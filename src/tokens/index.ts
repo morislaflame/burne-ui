@@ -19,12 +19,25 @@ export {
   toastScrimToken,
   type ToastScrimCssVar,
 } from "./toastScrim";
+export {
+  burneZIndexScale,
+  Z_INDEX_CSS_VAR,
+  Z_INDEX_DEFAULTS,
+  zIndexToken,
+  type ZIndexLayer,
+} from "./zIndex";
 
 /** CSS variable names for type-safe access and generators */
 export const designTokenNames = [
   "--border-width",
   "--focus-ring-width",
   "--focus-ring-offset",
+  "--z-dialog",
+  "--z-dropdown",
+  "--z-dropdown-sub",
+  "--z-popover",
+  "--z-toast",
+  "--z-tooltip",
   "--color-background",
   "--color-surface",
   "--color-border",

@@ -56,7 +56,7 @@ const TOAST_LOADING_COLOR: Record<ToastStatus, LoadingColor> = {
   warning: "warning",
 };
 
-export const TOAST_VIEWPORT_BASE_CLASS = "fixed z-[300] pointer-events-none";
+export const TOAST_VIEWPORT_BASE_CLASS = "fixed z-toast pointer-events-none";
 
 export const TOAST_STACK_CONTAINER_CLASS = "relative grid";
 

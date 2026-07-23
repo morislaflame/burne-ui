@@ -208,7 +208,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 | `POPOVER_GLOSS_PANEL_CLASS` | `gloss-panel gloss-deep` |
 | `shadowSm()` via persistent shadow | Rest panel shadow |
 | `burneLightThemePortalProps` | Theme sync в portal |
-| `z-[100]` stacking | Panel above page content |
+| `z-popover` stacking | Panel above page / dialog (`--z-popover`) |
 
 ## Стилизация и кастомизация
 

@@ -40,8 +40,8 @@ export const SELECT_TRIGGER_BASE_CLASS =
 
 export const SELECT_TRIGGER_DISABLED_CLASS = "pointer-events-none";
 
-/** Above Dialog/Drawer (`z-[100]`), aligned with Dropdown submenus. */
-export const SELECT_POPOVER_CLASS = "z-[110]";
+/** Same band as Popover; above Dialog when sharing a stacking context (not `showModal` top layer). */
+export const SELECT_POPOVER_CLASS = "z-popover";
 
 export const SELECT_POPOVER_BODY_CLASS = "gap-0 p-base";
 

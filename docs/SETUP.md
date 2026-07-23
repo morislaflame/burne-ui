@@ -52,8 +52,8 @@ import "burne-ui/styles.css";
 
 Файл `burne-ui/styles.css` (артефакт сборки `dist/ui.css`) содержит:
 
-- **дизайн-токены** — `--color-*`, `--space`, `--size`, `--radius`, `--text-scale-*`, шрифты, тени;
-- **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted`, `gap-mid`, `rounded-base` и т.д.;
+- **дизайн-токены** — `--color-*`, `--space`, `--size`, `--radius`, `--text-scale-*`, `--z-*` (overlay stacking), шрифты, тени;
+- **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted`, `gap-mid`, `rounded-base`, `z-dialog` / `z-popover` / … и т.д.;
 - **кастомные утилиты** — `border-token`, `text-header-1`, `shadow-token-sm` и др.
 
 Полный перечень имён токенов — экспорт **`designTokenNames`** из `burne-ui`. Исходные значения по умолчанию — `src/tokens/styles.css` в репозитории.

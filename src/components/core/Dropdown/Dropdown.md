@@ -138,7 +138,7 @@ Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popov
           <ItemIndicator /> <ItemLabel />
       <Dropdown.Sub>
         <SubTrigger>                     ← hover open, CSS hoverVariant
-        <SubContent portal z-110>        ← separate portal motion
+        <SubContent portal z-dropdown-sub> ← separate portal motion
 ```
 
 Нет hover-lift на root wrapper. Item/sub row — CSS `hoverVariant`, не GSAP shadow.
@@ -213,7 +213,7 @@ animateInteractivePressSqueeze(el);
 
 **Position:** fixed `left/top`, gap 6px справа от trigger; flip влево если не влезает; clamp по viewport height.
 
-**Motion:** отдельный portal `z-[110]` с тем же `animatePortalOpen`/`Close` + `motionTooltip()`.
+**Motion:** отдельный portal `z-dropdown-sub` с тем же `animatePortalOpen`/`Close` + `motionTooltip()`.
 
 **Dismiss coordination:** `subPanelRootsRef` регистрирует submenu roots — main popover не закрывается при клике внутри submenu.
 
@@ -261,7 +261,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 | `optionListItemGridClass` | Grid: indicator, icon, label, hint |
 | `shadow-token-md` | Submenu default surface |
 | `gloss-panel gloss-deep` | Gloss popover/submenu |
-| `z-[100]` / `z-[110]` | Main menu / submenu stacking |
+| `z-dropdown` / `z-dropdown-sub` | Main menu / submenu stacking (`--z-dropdown`) |
 
 ## Стилизация и кастомизация
 

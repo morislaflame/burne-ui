@@ -632,6 +632,10 @@ export {
   fontWeightToken,
   FONT_WEIGHT_CSS_VAR,
   FONT_WEIGHT_DEFAULTS,
+  burneZIndexScale,
+  zIndexToken,
+  Z_INDEX_CSS_VAR,
+  Z_INDEX_DEFAULTS,
   TOAST_SCRIM_CSS_VAR,
   TOAST_SCRIM_DEFAULTS,
   toastScrimToken,
@@ -641,6 +645,7 @@ export {
   type ShadowSize,
   type ShadowLevel,
   type FontWeightStep,
+  type ZIndexLayer,
   type ToastScrimCssVar,
 } from "@/tokens";
 export {

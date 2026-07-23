@@ -223,7 +223,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 | `border-token`, `bg-surface` | Default surface |
 | `max-w-component-mid` | Ширина панели |
 | `rounded-mid` | Скругление |
-| `z-[100]` | Stacking dialog |
+| `z-dialog` | Stacking dialog (`--z-dialog`) |
 | `gloss-panel`, `gloss-deep` | Gloss variant |
 
 ## Стилизация и кастомизация

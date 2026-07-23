@@ -77,9 +77,9 @@ export const FOOTER_BUTTON_SIZE: Record<DialogSize, ButtonSize> = {
 export const DIALOG_NATIVE_CLASS =
   "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
 
-export const DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-[100]";
+export const DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
 
-export const DIALOG_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-[100]";
+export const DIALOG_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-dialog";
 
 export function dialogNativeClass(contained: boolean): string {
   return cn(

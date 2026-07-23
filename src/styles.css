@@ -57,6 +57,14 @@ p {
   --focus-ring-width: var(--focus-ring-width);
   --focus-ring-offset: var(--focus-ring-offset);
 
+  /* Z-INDEX SCALE: overlay stacking → utilities z-dialog, z-dropdown, … */
+  --z-index-dialog: var(--z-dialog);
+  --z-index-dropdown: var(--z-dropdown);
+  --z-index-dropdown-sub: var(--z-dropdown-sub);
+  --z-index-popover: var(--z-popover);
+  --z-index-toast: var(--z-toast);
+  --z-index-tooltip: var(--z-tooltip);
+
   /* PRIMARY TINT: bg-primary-tint (10%), bg-primary-tint-strong (20%) */
   --color-primary-tint: var(--color-primary-tint);
   --color-primary-tint-strong: var(--color-primary-tint-strong);

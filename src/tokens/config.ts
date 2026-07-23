@@ -9,6 +9,7 @@
  * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large`.
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).
+ * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).
  * - `--text-scale-*` — primitive typography (`xsmall` … `3xlarge`, base step `base`); roles `text-base`, `text-large` are aliases.
  * - `--font-w-*` — primitive font-weight scale;
  */

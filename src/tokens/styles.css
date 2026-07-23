@@ -28,6 +28,20 @@
   --focus-ring-offset: 0px;
 
   /**
+   * Z-INDEX SCALE — overlay stacking (low → high) within one stacking context.
+   * Default Dialog/Drawer use `showModal()` (browser top layer) — body-portaled
+   * menus cannot stack above them via z-index; use contained `portalContainer`
+   * (`show()`) or portal into the dialog element for nested overlays.
+   * Utilities: `z-dialog`, `z-dropdown`, `z-dropdown-sub`, `z-popover`, `z-toast`, `z-tooltip`.
+   */
+  --z-dialog: 100;
+  --z-dropdown: 200;
+  --z-dropdown-sub: calc(var(--z-dropdown) + 10);
+  --z-popover: 200;
+  --z-toast: 300;
+  --z-tooltip: 400;
+
+  /**
    * INDICATOR — fill inside selection indicators (Radio, Checkbox, Switch, Slider track,
    * Calendar selected, ProgressBar/Meter fill).
    * Defaults to === primary, but can be overridden independently.

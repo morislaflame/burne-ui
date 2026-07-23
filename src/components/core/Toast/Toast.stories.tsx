@@ -314,7 +314,7 @@ export const CompoundApi: Story = {
       <div className="flex gap-base">
         <Button onClick={() => setShow(true)}>Show compound</Button>
         {show && (
-          <div className="fixed bottom-4 right-4 z-[300] w-[360px]">
+          <div className="fixed bottom-4 right-4 z-toast w-[360px]">
             <Toast status="success" onClose={() => setShow(false)}>
               <Toast.Indicator />
               <Toast.Title>Done!</Toast.Title>

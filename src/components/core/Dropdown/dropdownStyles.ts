@@ -15,7 +15,7 @@ export const DROPDOWN_ROOT_CLASS = "relative inline-flex";
 
 export const DROPDOWN_TRIGGER_CLASS = "inline-flex outline-none focus-ring";
 
-export const DROPDOWN_POPOVER_CLASS = "z-[100]";
+export const DROPDOWN_POPOVER_CLASS = "z-dropdown";
 
 export const DROPDOWN_POPOVER_BODY_CLASS =
   "max-h-[min(24rem,70vh)] gap-xsmall overflow-y-auto overflow-x-hidden p-base text-left outline-none";
@@ -38,7 +38,7 @@ export const DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS =
   "shrink-0 text-muted icon-base";
 
 export const DROPDOWN_SUB_CONTENT_BASE_CLASS =
-  "fixed z-[110] outline-none will-change-transform";
+  "fixed z-dropdown-sub outline-none will-change-transform";
 
 export const DROPDOWN_SUB_CONTENT_SURFACE_CLASS =
   "flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border-token bg-surface p-base text-left shadow-token-mid";

@@ -82,10 +82,10 @@ export const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
 export const ALERT_DIALOG_NATIVE_CLASS =
   "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
 
-export const ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-[100]";
+export const ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
 
 export const ALERT_DIALOG_NATIVE_POSITION_CONTAINED_CLASS =
-  "absolute inset-0 z-[100]";
+  "absolute inset-0 z-dialog";
 
 export function alertDialogNativeClass(contained: boolean): string {
   return cn(

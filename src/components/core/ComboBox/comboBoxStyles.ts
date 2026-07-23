@@ -41,7 +41,7 @@ export const COMBOBOX_TRIGGER_BASE_CLASS =
 
 export const COMBOBOX_TRIGGER_DISABLED_CLASS = "pointer-events-none";
 
-export const COMBOBOX_POPOVER_CLASS = "z-[100]";
+export const COMBOBOX_POPOVER_CLASS = "z-popover";
 
 export const COMBOBOX_POPOVER_BODY_CLASS = "gap-0 p-base";
 

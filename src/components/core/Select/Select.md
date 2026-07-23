@@ -168,7 +168,7 @@ Selection indicator + label press squeeze — см. ListBox.md.
 | `value` | `Select.Value` button | Текст значения, muted placeholder |
 | `trigger` | Chevron button | Hit-area триггера |
 | `triggerIcon` | `IoChevronDown` | Размер/цвет шеврона |
-| `popover` | `Popover.Content` | Shadow, z-index |
+| `popover` | `Popover.Content` | Shadow, `z-popover` |
 | `popoverBody` | `Popover.Body` | Padding меню |
 | `listBox` | `ListBox` | Scroll area |
 | `listBoxItem` / `listBoxLabel` / `listBoxHint` / `listBoxIcon` | Слоты внутреннего ListBox | Стиль пунктов меню |

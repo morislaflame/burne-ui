@@ -199,7 +199,7 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 | Panel | `bg-surface border-token shadow-token-lg` |
 | Gloss | `gloss-panel gloss-deep` |
 | Handle grip | `bg-tertiary`, `rounded-full` |
-| z-index | `z-[100]` |
+| z-index | `z-dialog` (`--z-dialog`) |
 
 ## Стилизация и кастомизация
 

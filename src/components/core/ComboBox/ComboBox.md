@@ -214,7 +214,7 @@ ListBox items — собственные selection animations (см. ListBox.md)
 | `input` | `<input>` внутри группы | Текст, placeholder, muted-состояние |
 | `trigger` | Кнопка chevron | Hit-area, цвет иконки-триггера |
 | `triggerIcon` | `IoChevronDown` | Размер/цвет шеврона |
-| `popover` | `Popover.Content` (portal) | z-index, shadow панели |
+| `popover` | `Popover.Content` (portal) | `z-popover`, shadow панели |
 | `popoverBody` | `Popover.Body` | Padding внутри popover |
 | `listBox` | `ListBox` root | Scroll, max-height area, gap пунктов |
 | `listBoxItem` / `listBoxLabel` / `listBoxHint` / `listBoxIcon` | Слоты внутреннего ListBox | Стиль пунктов меню |

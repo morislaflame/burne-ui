@@ -54,9 +54,9 @@ export const DRAWER_FOOTER_PADDING = "px-mid pb-plus";
 export const DRAWER_NATIVE_CLASS =
   "m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";
 
-export const DRAWER_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-[100]";
+export const DRAWER_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
 
-export const DRAWER_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-[100]";
+export const DRAWER_NATIVE_POSITION_CONTAINED_CLASS = "absolute inset-0 z-dialog";
 
 export function drawerNativeClass(contained: boolean): string {
   return cn(

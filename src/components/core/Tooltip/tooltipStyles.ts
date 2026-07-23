@@ -96,7 +96,7 @@ export const TOOLTIP_ARROW_BASE_CLASS =
 export const TOOLTIP_ARROW_GLOSS_CLASS = "border-0 bg-[var(--color-surface)]";
 
 export const TOOLTIP_CONTENT_BASE_CLASS =
-  "pointer-events-none z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-transform";
+  "pointer-events-none z-tooltip w-max min-w-0 overflow-visible text-left outline-none will-change-transform";
 
 export const TOOLTIP_CONTENT_INNER_CLASS = "relative overflow-visible";
 
