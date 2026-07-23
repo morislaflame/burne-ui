@@ -1,6 +1,6 @@
 # AlertDialog
 
-Модальное окно подтверждения на нативном `<dialog>`. Семантика и иконки как у `Alert`. **Escape и клик по overlay не закрывают** — только явные кнопки.
+Модальное окно подтверждения на нативном `<dialog>`. Семантика и иконки как у `Alert`. **Клик по overlay не закрывает**. Escape закрывает по умолчанию (Cancel / наименее деструктивное действие по APG); блокировка — через `closeOnEscape={false}`.
 
 ## Импорт
 
@@ -48,6 +48,7 @@ Simple API нет — всегда compound.
 | `open` | — | Controlled состояние |
 | `defaultOpen` | `false` | Uncontrolled начальное состояние |
 | `onOpenChange` | — | `(open: boolean) => void` |
+| `closeOnEscape` | `true` | Escape закрывает (Cancel). `false` — Escape заблокирован |
 | `status` | `default` | `default` \| `danger` \| `success` \| `info` \| `warning` |
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
@@ -177,8 +178,7 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 
 ### Чего нет
 
-- Dismiss по Escape (`onCancel` → `preventDefault`)
-- Dismiss по overlay click
+- Dismiss по overlay click (по-прежнему заблокирован)
 - Ripple встроенный
 
 ### Сводка: что настраивается где
@@ -281,8 +281,8 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 - Footer `Button` получает `size` из context автоматически (`injectFooterButtonSize`).
 - `AlertDialog.Description` регистрирует `hasDescription` → `aria-describedby`.
 - `children={null}` на `Indicator` скрывает icon.
-- **Не полагайтесь на Escape/backdrop** — by design для alertdialog.
-- Сравнение с `Dialog`: нет dismiss, есть `status`, `role="alertdialog"`.
+- Escape = Cancel (`closeOnEscape`, default `true`); backdrop по-прежнему не закрывает.
+- Сравнение с `Dialog`: backdrop не dismiss; есть `status`, `role="alertdialog"`.
 
 ## Интеграции
 
@@ -301,13 +301,14 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 | Аспект | Реализация |
 |--------|------------|
 | Role | `role="alertdialog"` на `<dialog>` |
-| Label | `aria-labelledby={titleId}` |
+| Label | `aria-labelledby` только при `AlertDialog.Title` |
 | Description | `aria-describedby` если есть Description |
 | Focus | `panel.focus()` при open; `tabIndex={-1}` на panel |
 | Trigger | `aria-haspopup="dialog"`, `aria-expanded` |
-| Escape / backdrop | **Заблокированы** |
+| Escape | Закрывает (Cancel); opt-out: `closeOnEscape={false}` |
+| Backdrop | Не закрывает |
 | Indicator icons | `aria-hidden` |
-| Close | Только явные кнопки |
+| Close | Явные кнопки + Escape (если не отключён) |
 
 ## Структура файлов
 
@@ -338,7 +339,8 @@ Playground: `playground/showcase/demos/alertDialog/`.
 |---|----------|---------------|
 | `classNames` | ✅ | ✅ |
 | `status` | ❌ | ✅ |
-| Escape / backdrop dismiss | ✅ | ❌ |
+| Escape dismiss | ✅ | ✅ (`closeOnEscape`, default) |
+| Backdrop dismiss | ✅ | ❌ |
 | `role` | `dialog` | `alertdialog` |
 | Header icons | ❌ | ✅ (из Alert) |
 | Footer button size | manual | auto по `size` |

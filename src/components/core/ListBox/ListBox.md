@@ -213,7 +213,9 @@ Reduced motion: skip GSAP.
 ## Доступность
 
 - Root: `role="listbox"`, `aria-label` / `aria-labelledby`
-- Item: `role="option"`, `aria-selected`, `id={listId}-opt-{value}`
+- Standalone (без controlled `activeValue`): `tabIndex={0}`, `aria-activedescendant`, стрелки / Home / End, Enter/Space — выбор
+- Внутри Select / ComboBox: keyboard на combobox; у ListBox нет собственного tab-stop
+- Item: `role="option"`, `aria-selected`, `id={listId}-opt-{value}`, `data-value`
 - Section: `aria-labelledby` от Header id
 - Active option: синхронизация с parent combobox через `aria-activedescendant`
 

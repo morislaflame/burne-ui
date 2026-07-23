@@ -19,7 +19,12 @@ export function useDialogRootState({
   });
   const titleId = useId();
   const descriptionId = useId();
+  const [hasTitle, setHasTitle] = useState(false);
   const [hasDescription, setHasDescription] = useState(false);
+
+  const setHasTitleStable = useCallback((value: boolean) => {
+    setHasTitle(value);
+  }, []);
 
   const setHasDescriptionStable = useCallback((value: boolean) => {
     setHasDescription(value);
@@ -31,6 +36,8 @@ export function useDialogRootState({
     open,
     titleId,
     descriptionId,
+    hasTitle,
+    setHasTitle: setHasTitleStable,
     hasDescription,
     setHasDescription: setHasDescriptionStable,
     onOpenChange: setOpen,

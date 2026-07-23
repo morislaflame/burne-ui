@@ -105,7 +105,7 @@ export function tabsTabClass({
     layout.padX,
     layout.padY,
     isSurface && "rounded-mid",
-    "focus-ring",
+    "focus-ring-inset",
     isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
     isSelected ? "text-primary" : "text-muted hover:text-primary",
     !isSelected && !isDisabled && TEXT_COLOR_TRANSITION,
@@ -134,5 +134,5 @@ export function tabsPanelClass({
   slotClass?: string;
   className?: string;
 }) {
-  return cn("min-w-0 outline-none focus-ring", slotClass, className);
+  return cn("min-w-0 outline-none focus-ring-inset", slotClass, className);
 }

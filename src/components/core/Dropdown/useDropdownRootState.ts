@@ -21,10 +21,21 @@ export function useDropdownRootState({
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const open = isControlledOpen ? openProp! : internalOpen;
 
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const subPanelRootsRef = useRef<Set<HTMLElement>>(null!);
+  if (!subPanelRootsRef.current) subPanelRootsRef.current = new Set();
+  const contentId = useId();
+
   const setOpen = useCallback(
     (next: boolean) => {
       if (!isControlledOpen) setInternalOpen(next);
       onOpenChange?.(next);
+      if (!next) {
+        requestAnimationFrame(() => {
+          triggerRef.current?.focus({ preventScroll: true });
+        });
+      }
     },
     [isControlledOpen, onOpenChange],
   );
@@ -63,12 +74,6 @@ export function useDropdownRootState({
     },
     [closeOnSelectProp, multiple, setOpen, setSelectedArr],
   );
-
-  const triggerRef = useRef<HTMLElement | null>(null);
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const subPanelRootsRef = useRef<Set<HTMLElement>>(null!);
-  if (!subPanelRootsRef.current) subPanelRootsRef.current = new Set();
-  const contentId = useId();
 
   const indicatorMode: "radio" | "multi" = multiple ? "multi" : "radio";
 

@@ -49,6 +49,12 @@ export type AlertDialogProps = {
   status?: AlertStatus;
   variant?: AlertVariant;
   size?: AlertDialogSize;
+  /**
+   * Whether Escape dismisses the dialog (APG: least destructive / Cancel).
+   * Set `false` to keep Escape blocked (opt-in hard confirmations).
+   * @default true
+   */
+  closeOnEscape?: boolean;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: AlertDialogClassNames;
@@ -82,9 +88,13 @@ export type AlertDialogContextValue = {
   open: boolean;
   titleId: string;
   descriptionId: string;
+  hasTitle: boolean;
+  setHasTitle: (v: boolean) => void;
   hasDescription: boolean;
   setHasDescription: (v: boolean) => void;
   onOpenChange: (open: boolean) => void;
+  /** Escape dismisses when true (default). */
+  closeOnEscape: boolean;
   variant: AlertVariant;
   status: AlertStatus;
   size: AlertDialogSize;
@@ -118,7 +128,14 @@ export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
 export type UseAlertDialogRootStateProps = Pick<
   AlertDialogProps,
-  "open" | "defaultOpen" | "onOpenChange" | "status" | "variant" | "size" | "portalContainer"
+  | "open"
+  | "defaultOpen"
+  | "onOpenChange"
+  | "status"
+  | "variant"
+  | "size"
+  | "closeOnEscape"
+  | "portalContainer"
 >;
 
 export type UseAlertDialogModalMotionProps = {
@@ -137,7 +154,10 @@ export type AlertDialogPortalShellProps = {
   lightUi: boolean;
   titleId: string;
   descriptionId: string;
+  hasTitle: boolean;
   hasDescription: boolean;
+  closeOnEscape: boolean;
+  onOpenChange: (open: boolean) => void;
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;

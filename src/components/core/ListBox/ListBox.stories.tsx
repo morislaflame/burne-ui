@@ -67,6 +67,25 @@ export const SelectInteraction: Story = {
   },
 };
 
+export const KeyboardNavigation: Story = {
+  name: "Interaction: keyboard",
+  render: () => (
+    <ListBox defaultValue="ru" aria-label="Interface language">
+      <ListBox.Item value="ru" label="Russian" />
+      <ListBox.Item value="en" label="English" />
+      <ListBox.Item value="de" label="Deutsch" disabled />
+    </ListBox>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const list = canvas.getByRole("listbox", { name: /Interface language/ });
+    list.focus();
+    await userEvent.keyboard("{ArrowDown}");
+    await userEvent.keyboard("{Enter}");
+    const english = canvas.getByRole("option", { name: /English/ });
+    await expect(english).toHaveAttribute("aria-selected", "true");
+  },
+};
+
 export const Compound: Story = {
   name: "Compound",
   render: () => (

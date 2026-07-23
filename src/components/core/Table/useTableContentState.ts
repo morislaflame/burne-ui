@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
@@ -40,6 +40,18 @@ export function useTableContentState({
       : undefined,
   });
 
+  const [focusedRowKey, setFocusedRowKeyState] = useState<string | number | null>(
+    null,
+  );
+
+  const setFocusedRowKey = useCallback((key: string | number) => {
+    setFocusedRowKeyState(key);
+  }, []);
+
+  const claimFocusedRowKey = useCallback((key: string | number) => {
+    setFocusedRowKeyState((prev) => prev ?? key);
+  }, []);
+
   const isRowSelected = useCallback(
     (key: string | number) => isRowInSelection(selectedKeys, key),
     [selectedKeys],
@@ -61,7 +73,20 @@ export function useTableContentState({
       isRowSelected,
       sortDescriptor,
       onSortChange: setSortDescriptor,
+      focusedRowKey: selectionMode === "none" ? null : focusedRowKey,
+      setFocusedRowKey,
+      claimFocusedRowKey,
     }),
-    [isRowSelected, onRowSelect, selectedKeys, selectionMode, setSortDescriptor, sortDescriptor],
+    [
+      claimFocusedRowKey,
+      focusedRowKey,
+      isRowSelected,
+      onRowSelect,
+      selectedKeys,
+      selectionMode,
+      setFocusedRowKey,
+      setSortDescriptor,
+      sortDescriptor,
+    ],
   );
 }

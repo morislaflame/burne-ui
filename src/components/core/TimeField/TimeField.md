@@ -228,7 +228,7 @@ React state — `bg-primary text-primary-foreground` на focused segment. Бе�
 
 ## Доступность
 
-- Shell: `aria-label="Время"` или `aria-labelledby`
+- Shell (`<fieldset>`): `aria-labelledby` при Label / `aria-label` fallback — **без** `label htmlFor` на fieldset (не labelable)
 - Segments: `role="spinbutton"`, `aria-valuemin/max/now/text`
 - `aria-required`, `aria-invalid` при `status="danger"`
 - Separators: `aria-hidden`

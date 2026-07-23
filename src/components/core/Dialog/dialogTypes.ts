@@ -69,6 +69,8 @@ export type DialogContextValue = {
   open: boolean;
   titleId: string;
   descriptionId: string;
+  hasTitle: boolean;
+  setHasTitle: (value: boolean) => void;
   hasDescription: boolean;
   setHasDescription: (value: boolean) => void;
   onOpenChange: (open: boolean) => void;
@@ -117,6 +119,7 @@ export type DialogPortalShellProps = {
   lightUi: boolean;
   titleId: string;
   descriptionId: string;
+  hasTitle: boolean;
   hasDescription: boolean;
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   overlayRef: React.RefObject<HTMLDivElement | null>;

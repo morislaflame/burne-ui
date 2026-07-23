@@ -28,7 +28,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Confirmation modal (`alertdialog`): same semantic statuses and icons as `Alert`; sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `AlertDialog.Footer`, direct `Button` children without `size` inherit the modal button size (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Backdrop and Escape do not close the dialog.",
+          "Confirmation modal (`alertdialog`): same semantic statuses and icons as `Alert`; sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `AlertDialog.Footer`, direct `Button` children without `size` inherit the modal button size (`footerButtonSizeForAlertDialog` / `useAlertDialog().footerButtonSize`). Escape closes (Cancel); backdrop does not. Use `closeOnEscape={false}` to block Escape.",
       },
     },
   },

@@ -10,7 +10,7 @@ import { isContainedPortal, resolvePortalContainer } from "@/components/core/uti
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 
-import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogOverlayA11yProps, alertDialogTriggerA11y } from "./alertDialogA11y";
+import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogOverlayA11yProps, alertDialogTriggerA11y } from "./alertDialogA11y";
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
 import { useAlertDialogModalMotion } from "./alertDialogAnimations";
 import { AlertDialogHeaderProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useOptionalAlertDialogHeaderContext } from "./alertDialogContext";
@@ -165,9 +165,14 @@ AlertDialogHeader.displayName = "AlertDialogHeader";
 
 export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
   function AlertDialogTitle({ className, id, ...rest }, ref) {
-    const { titleId, sizePreset } = useAlertDialog();
+    const { titleId, setHasTitle, sizePreset } = useAlertDialog();
     const headerCtx = useOptionalAlertDialogHeaderContext();
     const slotClassNames = useAlertDialogClassNames();
+
+    useLayoutEffect(() => {
+      setHasTitle(true);
+      return () => setHasTitle(false);
+    }, [setHasTitle]);
 
     return (
       <Text
@@ -390,9 +395,12 @@ export function AlertDialogPanel({
     open,
     titleId,
     descriptionId,
+    hasTitle,
     hasDescription,
     variant,
     sizePreset,
+    closeOnEscape,
+    onOpenChange,
     portalContainer: portalContainerFromRoot,
   } = useAlertDialog();
 
@@ -418,7 +426,10 @@ export function AlertDialogPanel({
       lightUi={lightUi}
       titleId={titleId}
       descriptionId={descriptionId}
+      hasTitle={hasTitle}
       hasDescription={hasDescription}
+      closeOnEscape={closeOnEscape}
+      onOpenChange={onOpenChange}
       dialogRef={motion.dialogRef}
       overlayRef={motion.overlayRef}
       panelRef={motion.panelRef}
@@ -444,7 +455,10 @@ export function AlertDialogPortalShell({
   lightUi,
   titleId,
   descriptionId,
+  hasTitle,
   hasDescription,
+  closeOnEscape,
+  onOpenChange,
   dialogRef,
   overlayRef,
   panelRef,
@@ -459,8 +473,11 @@ export function AlertDialogPortalShell({
       {...portalTheme}
       ref={dialogRef}
       role={ALERT_DIALOG_ROLE}
-      onCancel={(e) => e.preventDefault()}
-      aria-labelledby={titleId}
+      onCancel={(e) => {
+        e.preventDefault();
+        if (closeOnEscape) onOpenChange(false);
+      }}
+      aria-labelledby={alertDialogLabelledBy(hasTitle, titleId)}
       aria-describedby={alertDialogDescribedBy(hasDescription, descriptionId)}
       className={cn(
         alertDialogNativeClass(contained),

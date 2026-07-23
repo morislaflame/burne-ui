@@ -60,13 +60,27 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       errorConnected,
       hintId,
       errorId,
+      labelId,
+      labelConnected,
+      placeholder,
     } = ctx;
+
+    const {
+      "aria-label": ariaLabelProp,
+      "aria-labelledby": ariaLabelledByProp,
+      ...triggerGroupRest
+    } = rest;
 
     const activeOptionId = selectActiveOptionId(listId, open, activeValue);
     const ariaDescribedBy = joinFieldDescribedBy(
       hintConnected ? hintId : undefined,
       errorConnected ? errorId : undefined,
     );
+    const ariaLabelledBy =
+      ariaLabelledByProp ?? (labelConnected ? labelId : undefined);
+    const ariaLabel =
+      ariaLabelProp ??
+      (ariaLabelledBy ? undefined : placeholder || undefined);
 
     const openingRef = useSelectOpeningRef();
     const isGloss = variant === "gloss";
@@ -127,11 +141,13 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
         aria-controls={open ? listId : undefined}
         aria-haspopup="listbox"
         aria-activedescendant={open ? activeOptionId : undefined}
+        aria-labelledby={ariaLabelledBy}
+        aria-label={ariaLabel}
         aria-required={required || undefined}
         aria-invalid={status === "danger" ? true : undefined}
         aria-describedby={ariaDescribedBy}
         aria-disabled={disabled || undefined}
-        tabIndex={disabled ? -1 : 0}
+        tabIndex={-1}
         onPointerDown={handlePointerDown}
         onPointerEnter={(e) => {
           onPointerEnter?.(e);
@@ -166,7 +182,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
           className,
           slotClass: slotClassNames.triggerGroup,
         })}
-        {...rest}
+        {...triggerGroupRest}
       >
         {children}
       </div>

@@ -19,3 +19,24 @@ export function resolveListBoxAriaLabel({
     "aria-labelledby": ariaLabelledBy,
   };
 }
+
+export function listBoxActiveOptionId(
+  listId: string,
+  activeValue: string | null,
+): string | undefined {
+  return activeValue ? listBoxOptionId(listId, activeValue) : undefined;
+}
+
+export function listBoxEnabledOptionElements(
+  root: HTMLElement,
+): HTMLElement[] {
+  return Array.from(
+    root.querySelectorAll<HTMLElement>(
+      '[role="option"]:not([disabled]):not([aria-disabled="true"])',
+    ),
+  );
+}
+
+export function listBoxOptionValue(el: HTMLElement): string | null {
+  return el.dataset.value ?? null;
+}

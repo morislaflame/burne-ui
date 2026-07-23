@@ -9,7 +9,7 @@ import { resolvePortalContainer } from "@/components/core/utils/portalContainer"
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
 
-import { resolvePopoverDescribedBy, resolvePopoverLabelledBy } from "./popoverA11y";
+import { resolvePopoverDescribedBy, resolvePopoverLabelledBy, popoverTriggerA11y } from "./popoverA11y";
 import { partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
 import { resolvePopoverContentAlign, usePopoverContentLifecycle } from "./popoverAnimations";
 import { PopoverResolvedSideProvider, usePopoverClassNames, usePopoverContext, usePopoverResolvedSide } from "./popoverContext";
@@ -81,6 +81,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
 
     if (asChild && onlyChild) {
       const child = onlyChild as ReactElement;
+      const triggerA11y = popoverTriggerA11y(open, popoverId);
 
       return cloneElement(
         child,
@@ -101,14 +102,15 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
             onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
               handleKeyDown(event as ReactKeyboardEvent<HTMLButtonElement>);
             },
-            "aria-expanded": open,
-            "aria-controls": open ? popoverId : undefined,
+            ...triggerA11y,
           },
           mergedRef,
           { runBeforeChild: ["onPointerDown"] },
         ),
       );
     }
+
+    const triggerA11y = popoverTriggerA11y(open, popoverId);
 
     return (
       <button
@@ -119,8 +121,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
           slotClass: slotClassNames.trigger,
           className,
         })}
-        aria-expanded={open}
-        aria-controls={open ? popoverId : undefined}
+        {...triggerA11y}
         onPointerDown={(e) => {
           onPointerDown?.(e);
           handlePointerDown(e);

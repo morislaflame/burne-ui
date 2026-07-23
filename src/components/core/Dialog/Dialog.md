@@ -302,7 +302,8 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 ## Доступность
 
 - Нативный `<dialog>` + `showModal()` — focus trap, Esc закрытие.
-- `aria-labelledby={titleId}`, `aria-describedby` — при наличии `Dialog.Description`.
+- `aria-labelledby` — только при наличии `Dialog.Title`; иначе задайте `aria-label` на `Panel`.
+- `aria-describedby` — при наличии `Dialog.Description`.
 - `Dialog.Trigger`: `aria-haspopup="dialog"`, `aria-expanded={open}`.
 - `Dialog.Close`: дефолтный `aria-label="Закрыть"`.
 - Backdrop: `aria-hidden`, закрытие по `mousedown` на overlay (не на panel).

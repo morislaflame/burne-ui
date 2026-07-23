@@ -114,6 +114,11 @@ export type TableContentContextValue = {
   isRowSelected: (key: string | number) => boolean;
   sortDescriptor: SortDescriptor | undefined;
   onSortChange: ((d: SortDescriptor) => void) | undefined;
+  /** Roving focus key for selectable grid rows. */
+  focusedRowKey: string | number | null;
+  setFocusedRowKey: (key: string | number) => void;
+  /** First selectable row claims initial tab stop. */
+  claimFocusedRowKey: (key: string | number) => void;
 };
 
 export type TableRowContextValue = {

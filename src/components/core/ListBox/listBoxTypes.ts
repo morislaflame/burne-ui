@@ -50,6 +50,11 @@ export type ListBoxContextValue = {
   showIndicator: boolean;
   indicatorMode: "radio" | "multi";
   disabled?: boolean;
+  /**
+   * Own keyboard / tab stop when ListBox is not driven by Select/ComboBox
+   * (`activeValue` uncontrolled).
+   */
+  standaloneKeyboard: boolean;
 };
 
 export type ListBoxProps = Omit<

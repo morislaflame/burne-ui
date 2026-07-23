@@ -1,3 +1,13 @@
+export const POPOVER_TRIGGER_HASPOPUP = "dialog" as const;
+
+export function popoverTriggerA11y(open: boolean, popoverId: string) {
+  return {
+    "aria-haspopup": POPOVER_TRIGGER_HASPOPUP,
+    "aria-expanded": open,
+    "aria-controls": open ? popoverId : undefined,
+  } as const;
+}
+
 export function popoverLabelId(popoverId: string): string {
   return `${popoverId}-label`;
 }

@@ -1,4 +1,4 @@
-import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 
 import { cn } from "@/utils/cn";
 
@@ -26,7 +26,7 @@ export const LISTBOX_ITEM_INTERACTIVE_CLASS =
   "cursor-pointer text-foreground focus-ring";
 
 export const LISTBOX_ITEM_DISABLED_CLASS =
-  "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent";
+  "cursor-not-allowed bg-transparent text-muted opacity-45";
 
 export const LISTBOX_ITEM_ACTIVE_CLASS = "bg-default-hover";
 
@@ -110,7 +110,10 @@ export function listBoxItemClass({
 }): string {
   return cn(
     LISTBOX_ITEM_BASE_CLASS,
-    !disabled && cn(LISTBOX_ITEM_INTERACTIVE_CLASS, hoverVariant()),
+    // Active highlight only via `isActive` (pointerenter / keyboard) — CSS :hover
+    // would stick under the cursor and fight aria-activedescendant navigation.
+    !disabled &&
+      cn(LISTBOX_ITEM_INTERACTIVE_CLASS, SURFACE_COLOR_TRANSITION),
     disabled && LISTBOX_ITEM_DISABLED_CLASS,
     isActive && !disabled && LISTBOX_ITEM_ACTIVE_CLASS,
     slotClass,

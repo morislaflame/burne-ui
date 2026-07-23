@@ -75,6 +75,13 @@ export type ToastEntry = {
   classNames?: ToastClassNames;
 };
 
+export type ToastLiveAnnouncement = {
+  text: string;
+  assertive: boolean;
+  /** Bumps on each announce so identical messages still fire. */
+  nonce: number;
+};
+
 export type ToastContextValue = {
   add: (opts: AddToastOpts) => string;
   update: (

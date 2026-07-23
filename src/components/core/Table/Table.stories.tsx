@@ -194,8 +194,9 @@ export const Sorting: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
+    const nameSort = canvas.getByRole("button", { name: /Name/ });
+    await userEvent.click(nameSort);
     const nameHeader = canvas.getByRole("rowheader", { name: /Name/ });
-    await userEvent.click(nameHeader);
     await expect(nameHeader).toHaveAttribute("aria-sort", "descending");
   },
 };

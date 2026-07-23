@@ -58,3 +58,45 @@ export function resolveNextSortDescriptor(
         : "ascending",
   };
 }
+
+export const TABLE_ROW_KEY_ATTR = "data-table-row-key";
+
+export function tableSelectableRows(table: HTMLElement): HTMLElement[] {
+  return Array.from(
+    table.querySelectorAll<HTMLElement>(`tbody tr[${TABLE_ROW_KEY_ATTR}]`),
+  );
+}
+
+export function tableSortButtons(from: HTMLElement): HTMLButtonElement[] {
+  const root = from.closest("table") ?? from.closest("[role='grid']");
+  if (!root) return [];
+  return Array.from(
+    root.querySelectorAll<HTMLButtonElement>("thead button[type='button']"),
+  );
+}
+
+export function tableBumpRow(
+  rows: HTMLElement[],
+  current: HTMLElement,
+  delta: number,
+): HTMLElement | null {
+  if (rows.length === 0) return null;
+  const idx = rows.indexOf(current);
+  if (idx < 0) return rows[0] ?? null;
+  const next = idx + delta;
+  if (next < 0 || next >= rows.length) return rows[idx] ?? null;
+  return rows[next] ?? null;
+}
+
+export function tableBumpSortButton(
+  buttons: HTMLButtonElement[],
+  current: HTMLButtonElement,
+  delta: number,
+): HTMLButtonElement | null {
+  if (buttons.length === 0) return null;
+  const idx = buttons.indexOf(current);
+  if (idx < 0) return buttons[0] ?? null;
+  const next = idx + delta;
+  if (next < 0 || next >= buttons.length) return buttons[idx] ?? null;
+  return buttons[next] ?? null;
+}

@@ -99,7 +99,6 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     <div
       ref={setRefs}
       role="tablist"
-      tabIndex={disabled ? -1 : 0}
       aria-orientation={orientation}
       aria-disabled={disabled || undefined}
       className={tabsListClass({

@@ -42,8 +42,10 @@ export const TABLE_COLUMN_VARIANT_CLASS: Record<TableVariant, string> = {
   gloss: "bg-transparent px-mid py-plus text-muted whitespace-nowrap",
 };
 
-export const TABLE_COLUMN_SORTABLE_CLASS =
-  "cursor-pointer select-none hover:text-foreground";
+export const TABLE_COLUMN_SORTABLE_CLASS = "select-none";
+
+export const TABLE_COLUMN_SORT_BUTTON_CLASS =
+  "inline-flex w-full min-w-0 items-center gap-xsmall border-0 bg-transparent text-inherit cursor-pointer outline-none focus-ring-inset rounded-small hover:text-foreground -mx-mid -my-plus px-mid py-plus box-border";
 
 export const TABLE_COLUMN_INNER_CLASS = "inline-flex items-center gap-xsmall";
 
@@ -168,6 +170,22 @@ export function tableColumnClass({
     TABLE_COLUMN_BASE_CLASS,
     TABLE_COLUMN_VARIANT_CLASS[variant],
     allowsSorting && cn(TABLE_COLUMN_SORTABLE_CLASS, TEXT_COLOR_TRANSITION),
+    slotClass,
+    className,
+  );
+}
+
+export function tableColumnSortButtonClass({
+  slotClass,
+  className,
+}: {
+  slotClass?: string;
+  className?: string;
+}): string {
+  return cn(
+    TABLE_COLUMN_SORT_BUTTON_CLASS,
+    TABLE_COLUMN_INNER_CLASS,
+    TEXT_COLOR_TRANSITION,
     slotClass,
     className,
   );

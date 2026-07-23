@@ -17,6 +17,9 @@ const TableContentContext = createContext<TableContentContextValue>({
   isRowSelected: () => false,
   sortDescriptor: undefined,
   onSortChange: undefined,
+  focusedRowKey: null,
+  setFocusedRowKey: () => {},
+  claimFocusedRowKey: () => {},
 });
 const TableRowContext = createContext<TableRowContextValue | null>(null);
 

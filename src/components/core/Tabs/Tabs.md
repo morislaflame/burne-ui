@@ -154,7 +154,7 @@ Selected tab — без motion (статичный primary text).
 | `INDICATOR_VARIANT_CLASS` | Indicator color/shape |
 | `CONTROL_SIZE_LAYOUT` | Tab height/padding per size |
 | `TEXT_COLOR_TRANSITION` | Muted → primary hover |
-| `focus-ring` | Keyboard focus на tab/panel |
+| `focus-ring-inset` | Keyboard focus на tab/panel |
 
 ## Стилизация и кастомизация
 
@@ -227,9 +227,9 @@ Handlers и ARIA merge на child; text motion отключён.
 
 ## Доступность
 
-- Tab: `role="tab"`, `aria-selected`, `aria-controls`, roving `tabIndex`
+- Tab: `role="tab"`, `aria-selected`, `aria-controls`, roving `tabIndex` (одна tab-остановка на выбранном табе)
 - Panel: `role="tabpanel"`, `aria-labelledby`, `hidden` когда не selected
-- List: `aria-orientation`, keyboard `Home`/`End`/arrows
+- List: `role="tablist"`, `aria-orientation`, keyboard `Home`/`End`/arrows (без собственного `tabIndex`)
 - Indicator: `aria-hidden`
 - IDs: `{baseId}-tab-{value}`, `{baseId}-panel-{value}`
 

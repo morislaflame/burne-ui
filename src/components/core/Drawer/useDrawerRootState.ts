@@ -20,12 +20,17 @@ export function useDrawerRootState({
   });
   const titleId = useId();
   const descriptionId = useId();
+  const [hasTitle, setHasTitle] = useState(false);
   const [hasDescription, setHasDescription] = useState(false);
 
   // Placeholder refs — overridden by DrawerPanel's context inside the portal.
   const placeholderOverlayRef = useRef<HTMLDivElement | null>(null);
   const placeholderPanelRef = useRef<HTMLDivElement | null>(null);
   const placeholderSkipCloseAnimRef = useRef(false);
+
+  const setHasTitleStable = useCallback((value: boolean) => {
+    setHasTitle(value);
+  }, []);
 
   const setHasDescriptionStable = useCallback((value: boolean) => {
     setHasDescription(value);
@@ -35,6 +40,8 @@ export function useDrawerRootState({
     open,
     titleId,
     descriptionId,
+    hasTitle,
+    setHasTitle: setHasTitleStable,
     hasDescription,
     setHasDescription: setHasDescriptionStable,
     onOpenChange: setOpen,

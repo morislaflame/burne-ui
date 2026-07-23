@@ -240,8 +240,8 @@ Selection indicator + label press squeeze — см. ListBox.md.
 
 ## Доступность
 
-- `TriggerGroup`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`
-- `Select.Value`: `aria-activedescendant` при open, `aria-invalid`, `aria-required`
+- `TriggerGroup`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`, `aria-activedescendant` при open, `aria-labelledby` (при Label) / `aria-label` (placeholder)
+- `Select.Value`: `aria-invalid`, `aria-required` через combobox; клавиатура open/navigate
 - `Select.Trigger`: `aria-label`, `tabIndex={-1}`
 - `ListBox`: `aria-labelledby` / `aria-label`
 

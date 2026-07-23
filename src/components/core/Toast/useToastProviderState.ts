@@ -1,7 +1,14 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { createToastId, TOAST_DEFAULT_TIMEOUT_MS } from "./toastAPI";
-import type { AddToastOpts, ToastContextValue, ToastEntry, ToastPlacement } from "./toastTypes";
+import { resolveToastLiveRole, toastAnnouncementText } from "./toastA11y";
+import type {
+  AddToastOpts,
+  ToastContextValue,
+  ToastEntry,
+  ToastLiveAnnouncement,
+  ToastPlacement,
+} from "./toastTypes";
 
 export function useToastProviderState({
   defaultPlacement = "bottom-center",
@@ -16,7 +23,30 @@ export function useToastProviderState({
 }) {
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const [dismissingIds, setDismissingIds] = useState<Set<string>>(new Set());
+  const [liveAnnouncement, setLiveAnnouncement] = useState<ToastLiveAnnouncement>({
+    text: "",
+    assertive: false,
+    nonce: 0,
+  });
   const orderRef = useRef(0);
+  const announceNonceRef = useRef(0);
+  const toastsRef = useRef(toasts);
+  toastsRef.current = toasts;
+
+  const announce = useCallback((entry: ToastEntry) => {
+    const text = toastAnnouncementText(entry.title, entry.description);
+    if (!text) return;
+    const assertive = resolveToastLiveRole(entry.status) === "alert";
+    // Clear first so identical messages still get announced by SRs.
+    setLiveAnnouncement({ text: "", assertive, nonce: ++announceNonceRef.current });
+    requestAnimationFrame(() => {
+      setLiveAnnouncement({
+        text,
+        assertive,
+        nonce: ++announceNonceRef.current,
+      });
+    });
+  }, []);
 
   const add = useCallback(
     (opts: AddToastOpts): string => {
@@ -36,16 +66,28 @@ export function useToastProviderState({
         classNames: { ...providerClassNames, ...opts.classNames },
       };
       setToasts((prev) => [...prev, entry]);
+      announce(entry);
       return id;
     },
-    [defaultPlacement, defaultSize, defaultVariant, providerClassNames],
+    [announce, defaultPlacement, defaultSize, defaultVariant, providerClassNames],
   );
 
   const update = useCallback(
     (id: string, patch: Partial<Omit<ToastEntry, "id" | "createdAt">>) => {
-      setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+      const current = toastsRef.current.find((t) => t.id === id);
+      if (!current) return;
+      const updated: ToastEntry = { ...current, ...patch };
+      setToasts((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      if (
+        patch.title !== undefined ||
+        patch.description !== undefined ||
+        patch.status !== undefined ||
+        patch.loading === false
+      ) {
+        announce(updated);
+      }
     },
-    [],
+    [announce],
   );
 
   const dismiss = useCallback((id: string) => {
@@ -89,5 +131,6 @@ export function useToastProviderState({
     removeFinal,
     providerClassNames,
     defaultSize,
+    liveAnnouncement,
   };
 }

@@ -119,8 +119,68 @@ export function ToastItemWrapper({
 
   useEffect(() => {
     if (entry.timeout === 0 || isDismissing || entry.loading) return;
-    const id = setTimeout(() => onDismiss(entry.id), entry.timeout);
-    return () => clearTimeout(id);
+
+    let remaining = entry.timeout;
+    let startedAt: number | null = Date.now();
+    let timerId: number | undefined;
+    let paused = false;
+
+    const clear = () => {
+      if (timerId != null) {
+        window.clearTimeout(timerId);
+        timerId = undefined;
+      }
+    };
+
+    const arm = () => {
+      clear();
+      startedAt = Date.now();
+      timerId = window.setTimeout(() => onDismiss(entry.id), remaining);
+    };
+
+    const pause = () => {
+      if (paused || startedAt == null) return;
+      paused = true;
+      remaining = Math.max(0, remaining - (Date.now() - startedAt));
+      startedAt = null;
+      clear();
+    };
+
+    const resume = () => {
+      if (!paused) return;
+      paused = false;
+      if (remaining <= 0) {
+        onDismiss(entry.id);
+        return;
+      }
+      arm();
+    };
+
+    arm();
+
+    const node = stackRef.current;
+    const onPointerEnter = () => pause();
+    const onPointerLeave = () => resume();
+    const onFocusIn = () => pause();
+    const onFocusOut = (e: FocusEvent) => {
+      if (node && e.relatedTarget instanceof Node && node.contains(e.relatedTarget)) {
+        return;
+      }
+      resume();
+    };
+
+    node?.addEventListener("pointerenter", onPointerEnter);
+    node?.addEventListener("pointerleave", onPointerLeave);
+    node?.addEventListener("focusin", onFocusIn);
+    node?.addEventListener("focusout", onFocusOut);
+
+    return () => {
+      clear();
+      node?.removeEventListener("pointerenter", onPointerEnter);
+      node?.removeEventListener("pointerleave", onPointerLeave);
+      node?.removeEventListener("focusin", onFocusIn);
+      node?.removeEventListener("focusout", onFocusOut);
+    };
   }, [entry.id, entry.timeout, isDismissing, entry.loading, onDismiss]);
 
   const dismiss = useCallback(() => onDismiss(entry.id), [entry.id, onDismiss]);

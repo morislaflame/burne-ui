@@ -304,9 +304,11 @@ const anchorRef = useRef<HTMLDivElement>(null);
 
 ## Доступность
 
-- Trigger: `aria-expanded`, `aria-controls={popoverId}` when open
+- Trigger: `aria-expanded`, `aria-haspopup="dialog"`, `aria-controls={popoverId}` when open
 - Content: `role="dialog"` (default), `aria-labelledby`, `aria-describedby`
 - `Popover.Title` / `Hint` связываются через `labelId` / `hintId`
+- При open — фокус на первый focusable внутри панели
+- При close — возврат фокуса на trigger / `anchorRef`
 - `Escape` закрывает
 - Outside `pointerdown` dismiss (с учётом `shouldDismiss`)
 - Portal theme sync через `burneLightThemePortalProps`

@@ -13,6 +13,7 @@ export function useAlertDialogRootState({
   status,
   variant = "default",
   size = "base",
+  closeOnEscape = true,
   portalContainer,
 }: UseAlertDialogRootStateProps) {
   const [open, setOpen] = useControllableState({
@@ -22,7 +23,12 @@ export function useAlertDialogRootState({
   });
   const titleId = useId();
   const descriptionId = useId();
+  const [hasTitle, setHasTitle] = useState(false);
   const [hasDescription, setHasDescription] = useState(false);
+
+  const setHasTitleStable = useCallback((value: boolean) => {
+    setHasTitle(value);
+  }, []);
 
   const setHasDescriptionStable = useCallback((value: boolean) => {
     setHasDescription(value);
@@ -36,9 +42,12 @@ export function useAlertDialogRootState({
     open,
     titleId,
     descriptionId,
+    hasTitle,
+    setHasTitle: setHasTitleStable,
     hasDescription,
     setHasDescription: setHasDescriptionStable,
     onOpenChange: setOpen,
+    closeOnEscape,
     variant: resolvedVariant,
     status: resolvedStatus,
     size,

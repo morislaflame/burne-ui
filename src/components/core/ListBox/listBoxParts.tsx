@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useEffect, useId, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
@@ -6,10 +7,16 @@ import { optionListItemGridClass } from "@/components/core/utils/optionControlGr
 import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 
-import { LISTBOX_EMPTY_DEFAULT_CHILDREN } from "./listBoxA11y";
-import { resolveListBoxItemIndicatorClassNames } from "./listBoxAPI";
+import { LISTBOX_EMPTY_DEFAULT_CHILDREN, listBoxActiveOptionId } from "./listBoxA11y";
+import {
+  listBoxBumpActiveValue,
+  listBoxFirstEnabledValue,
+  listBoxLastEnabledValue,
+  listBoxPreferredInitialActiveValue,
+  resolveListBoxItemIndicatorClassNames,
+} from "./listBoxAPI";
 import { useListBoxItemAnimations, useListBoxRootGlossRef } from "./listBoxAnimations";
-import { useListBoxClassNames, useListBoxSectionLabelRegister, ListBoxSectionLabelProvider } from "./listBoxContext";
+import { useListBox, useListBoxClassNames, useListBoxSectionLabelRegister, ListBoxSectionLabelProvider } from "./listBoxContext";
 import { listBoxEmptyClass, listBoxHeaderClass, listBoxHeaderTextClass, listBoxItemClass, listBoxRootClass, listBoxSectionClass, listBoxSeparatorClass } from "./listBoxStyles";
 import type {
   ListBoxEmptyProps,
@@ -34,11 +41,108 @@ export function ListBoxRootShell({
   ariaLabel,
   ariaLabelledBy,
   children,
+  tabIndex: tabIndexProp,
+  onKeyDown,
+  onFocus,
   ...rest
 }: ListBoxRootShellProps) {
   const slotClassNames = useListBoxClassNames();
+  const {
+    activeValue,
+    setActiveValue,
+    selectItem,
+    multiple,
+    disabled,
+    standaloneKeyboard,
+  } = useListBox("ListBox");
   const isGloss = variant === "gloss";
   const setRootRef = useListBoxRootGlossRef(isGloss);
+
+  const handleKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(event);
+      if (event.defaultPrevented || !standaloneKeyboard || disabled) return;
+
+      const root = event.currentTarget;
+      const keepFocusOnList = () => {
+        if (document.activeElement !== root) root.focus();
+      };
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        const next = listBoxBumpActiveValue({
+          root,
+          activeValue,
+          delta: 1,
+        });
+        if (next) setActiveValue(next);
+        keepFocusOnList();
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        const next = listBoxBumpActiveValue({
+          root,
+          activeValue,
+          delta: -1,
+        });
+        if (next) setActiveValue(next);
+        keepFocusOnList();
+        return;
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        const first = listBoxFirstEnabledValue(root);
+        if (first) setActiveValue(first);
+        keepFocusOnList();
+        return;
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        const last = listBoxLastEnabledValue(root);
+        if (last) setActiveValue(last);
+        keepFocusOnList();
+        return;
+      }
+      if (event.key === "Enter" || event.key === " ") {
+        if (!activeValue) {
+          const initial = listBoxPreferredInitialActiveValue(root);
+          if (initial) {
+            event.preventDefault();
+            setActiveValue(initial);
+            selectItem(initial);
+            keepFocusOnList();
+          }
+          return;
+        }
+        event.preventDefault();
+        selectItem(activeValue);
+        keepFocusOnList();
+      }
+    },
+    [
+      activeValue,
+      disabled,
+      onKeyDown,
+      selectItem,
+      setActiveValue,
+      standaloneKeyboard,
+    ],
+  );
+
+  const handleFocus = useCallback(
+    (event: React.FocusEvent<HTMLDivElement>) => {
+      onFocus?.(event);
+      if (event.defaultPrevented || !standaloneKeyboard || disabled) return;
+      if (activeValue) return;
+      const initial = listBoxPreferredInitialActiveValue(event.currentTarget);
+      if (initial) setActiveValue(initial);
+    },
+    [activeValue, disabled, onFocus, setActiveValue, standaloneKeyboard],
+  );
+
+  const tabIndex =
+    tabIndexProp ?? (standaloneKeyboard && !disabled ? 0 : undefined);
 
   return (
     <div
@@ -47,6 +151,16 @@ export function ListBoxRootShell({
       role="listbox"
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
+      aria-multiselectable={multiple || undefined}
+      aria-activedescendant={
+        standaloneKeyboard
+          ? listBoxActiveOptionId(listId, activeValue)
+          : undefined
+      }
+      aria-disabled={disabled || undefined}
+      tabIndex={tabIndex}
+      onKeyDown={handleKeyDown}
+      onFocus={handleFocus}
       className={listBoxRootClass({
         isGloss,
         slotClass: slotClassNames.root,
@@ -267,6 +381,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
           type="button"
           id={optionId}
           role="option"
+          data-value={value}
           aria-selected={isSelected}
           disabled={disabled}
           tabIndex={-1}

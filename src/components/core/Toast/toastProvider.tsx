@@ -2,10 +2,37 @@ import { createPortal } from "react-dom";
 
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
 
-import { ToastContext } from "./toastContext";
+import { TOAST_LIVE_REGION_CLASS } from "./toastA11y";
 import { ToastViewport } from "./toastAnimations";
-import type { ToastProviderProps } from "./toastTypes";
+import { ToastContext } from "./toastContext";
+import type { ToastLiveAnnouncement, ToastProviderProps } from "./toastTypes";
 import { useToastProviderState } from "./useToastProviderState";
+
+function ToastLiveRegion({ announcement }: { announcement: ToastLiveAnnouncement }) {
+  const polite = announcement.assertive ? "" : announcement.text;
+  const assertive = announcement.assertive ? announcement.text : "";
+
+  return (
+    <>
+      <div
+        className={TOAST_LIVE_REGION_CLASS}
+        aria-live="polite"
+        aria-atomic="true"
+        aria-relevant="additions text"
+      >
+        {polite}
+      </div>
+      <div
+        className={TOAST_LIVE_REGION_CLASS}
+        aria-live="assertive"
+        aria-atomic="true"
+        aria-relevant="additions text"
+      >
+        {assertive}
+      </div>
+    </>
+  );
+}
 
 export function ToastProviderRoot({
   children,
@@ -25,6 +52,7 @@ export function ToastProviderRoot({
   return (
     <ToastContext.Provider value={state.ctx}>
       {children}
+      <ToastLiveRegion announcement={state.liveAnnouncement} />
       {typeof document !== "undefined" &&
         state.placements.map((placement) => {
           const portalHost = resolvePortalContainer(portalContainer);

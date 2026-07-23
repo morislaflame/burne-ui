@@ -380,7 +380,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 - Item: `menuitem` / `menuitemradio` / `menuitemcheckbox`
 - Group: `role="group"` + `aria-labelledby`
 - Keyboard navigation в открытом menu (включая submenu: ArrowRight открыть, ArrowLeft/Escape закрыть)
-- `Escape` закрывает и возвращает focus на trigger
+- Закрытие (Escape, выбор пункта, outside click) всегда возвращает focus на trigger
 
 ## Структура файлов
 

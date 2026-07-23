@@ -76,10 +76,12 @@ export function useListBoxRootState({
       showIndicator: selectionIndicator,
       indicatorMode: multiple ? "multi" : "radio",
       disabled,
+      standaloneKeyboard: !isControlledActive,
     }),
     [
       activeValue,
       disabled,
+      isControlledActive,
       listId,
       multiple,
       selectItem,

@@ -280,9 +280,10 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 ## Доступность
 
 - `<dialog>` + `showModal()`, Esc → `onClose`
-- `aria-labelledby` / `aria-describedby`
-- Handle: `aria-label` по placement («Потяните вниз, чтобы закрыть»)
-- `Drawer.Close` → `aria-label="Закрыть"`
+- `aria-labelledby` — только при `Drawer.Title`; иначе `aria-label` на panel
+- `aria-describedby` — при `Drawer.Description`
+- Handle: `role="button"`, `tabIndex={0}`, Enter/Space закрывают; swipe — pointer; `aria-label` по placement
+- `Drawer.Close` → `aria-label="Close"`
 
 ## Структура файлов
 

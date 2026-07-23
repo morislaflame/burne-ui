@@ -30,6 +30,7 @@ export function AlertDialogRoot({
   status,
   variant = "default",
   size = "base",
+  closeOnEscape = true,
   classNames,
   portalContainer,
 }: AlertDialogProps) {
@@ -40,6 +41,7 @@ export function AlertDialogRoot({
     status,
     variant,
     size,
+    closeOnEscape,
     portalContainer,
   });
 

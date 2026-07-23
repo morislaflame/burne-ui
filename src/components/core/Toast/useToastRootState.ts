@@ -3,7 +3,6 @@ import { useId, useMemo } from "react";
 import { messageBannerSizePreset, resolveMessageBannerSize } from "@/components/core/utils/messageBannerSize";
 
 import { resolveToastGridSlots } from "./toastAPI";
-import { resolveToastLiveRole } from "./toastA11y";
 import type { ToastItemContextValue, UseToastRootStateProps } from "./toastTypes";
 
 export function useToastRootState({
@@ -38,8 +37,6 @@ export function useToastRootState({
     [action, children, description, isCompound, loading, onClose, status, title],
   );
 
-  const liveRole = resolveToastLiveRole(status);
-
   const itemCtx: ToastItemContextValue = useMemo(
     () => ({
       status,
@@ -56,7 +53,6 @@ export function useToastRootState({
 
   return {
     isCompound,
-    liveRole,
     titleId,
     size,
     itemCtx,

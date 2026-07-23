@@ -65,8 +65,8 @@ export function useTimeFieldRootState({
   );
 
   const fieldLabelCtx = useMemo(
-    () => ({ controlId: fieldId, labelId, required }),
-    [fieldId, required, labelId],
+    () => ({ labelId, required }),
+    [labelId, required],
   );
 
   return {

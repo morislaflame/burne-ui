@@ -56,6 +56,8 @@ export type DrawerContextValue = {
   open: boolean;
   titleId: string;
   descriptionId: string;
+  hasTitle: boolean;
+  setHasTitle: (value: boolean) => void;
   hasDescription: boolean;
   setHasDescription: (value: boolean) => void;
   onOpenChange: (open: boolean) => void;
@@ -122,6 +124,7 @@ export type DrawerPortalShellProps = {
   lightUi: boolean;
   titleId: string;
   descriptionId: string;
+  hasTitle: boolean;
   hasDescription: boolean;
   backdropIsDismissable: boolean;
   panelSegments: DrawerPanelSegment[];

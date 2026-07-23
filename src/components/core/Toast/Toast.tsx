@@ -4,6 +4,7 @@ import { createGlossInteractiveRefCallback, useGlossInteractiveHandlers } from "
 
 import "@/components/core/utils/glossInteractive.css";
 
+import { toastFallbackAriaLabel } from "./toastA11y";
 import { ToastClassNamesProvider, ToastItemProvider, useToastClassNames } from "./toastContext";
 import { ToastAction, ToastClose, ToastContent, ToastDescription, ToastIndicator, ToastMessage, ToastSimpleBody, ToastTitle } from "./toastParts";
 import { toastRootClass } from "./toastStyles";
@@ -81,15 +82,25 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastProps>(function ToastRo
 
   const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, isGloss);
   const slotClassNames = useToastClassNames();
+  const hasTitle = state.gridSlots.hasTitle;
+  const {
+    "aria-label": restAriaLabel,
+    "aria-labelledby": _restLabelledBy,
+    ...domRest
+  } = rest;
+  const labelledBy = hasTitle ? state.titleId : undefined;
+  const ariaLabel = hasTitle
+    ? undefined
+    : (restAriaLabel ?? toastFallbackAriaLabel(title, description));
 
   return (
     <ToastItemProvider value={state.itemCtx}>
       <ToastClassNamesProvider classNames={classNames}>
         <div
           ref={setRootRef}
-          role={state.liveRole}
-          aria-labelledby={state.titleId}
-          aria-live={state.liveRole === "alert" ? "assertive" : "polite"}
+          role="group"
+          aria-labelledby={labelledBy}
+          aria-label={ariaLabel}
           className={toastRootClass({
             variant,
             status,
@@ -107,7 +118,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastProps>(function ToastRo
             onPointerOutProp?.(e);
             if (isGloss) glossPointerHandlers.onPointerOut(e);
           }}
-          {...rest}
+          {...domRest}
         >
           {state.isCompound ? (
             children

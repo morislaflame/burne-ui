@@ -9,7 +9,11 @@ import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs"
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
-import { drawerHandleAriaLabel, DRAWER_CLOSE_DEFAULT_ARIA_LABEL } from "./drawerA11y";
+import {
+  drawerHandleAriaLabel,
+  DRAWER_CLOSE_DEFAULT_ARIA_LABEL,
+  isDrawerHandleActivateKey,
+} from "./drawerA11y";
 import { partitionDrawerChildren } from "./drawerAPI";
 import { useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerProvider, useDrawer, useDrawerClassNames } from "./drawerContext";
@@ -87,6 +91,7 @@ function DrawerPanelSegment({
 export function DrawerHandleInner({
   className,
   onPointerDown,
+  onKeyDown,
   ...rest
 }: DrawerHandleProps) {
   const {
@@ -97,17 +102,20 @@ export function DrawerHandleInner({
     skipCloseAnimRef,
   } = useDrawer();
   const slotClassNames = useDrawerClassNames();
+  const close = () => onOpenChange(false);
   const { onPointerDown: dragPD } = useDrawerHandleDrag(
     panelRef,
     overlayRef,
     placement,
-    () => onOpenChange(false),
+    close,
     false,
     skipCloseAnimRef,
   );
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       aria-label={drawerHandleAriaLabel(placement)}
       className={drawerHandleClass({
         placement,
@@ -117,6 +125,13 @@ export function DrawerHandleInner({
       onPointerDown={(e) => {
         onPointerDown?.(e);
         dragPD(e);
+      }}
+      onKeyDown={(e) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented) return;
+        if (!isDrawerHandleActivateKey(e.key)) return;
+        e.preventDefault();
+        close();
       }}
       {...rest}
     >
@@ -176,8 +191,13 @@ DrawerHeadingBlock.displayName = "DrawerHeadingBlock";
 
 export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
   function DrawerTitle({ className, id, ...rest }, ref) {
-    const { titleId } = useDrawer();
+    const { titleId, setHasTitle } = useDrawer();
     const slotClassNames = useDrawerClassNames();
+
+    useLayoutEffect(() => {
+      setHasTitle(true);
+      return () => setHasTitle(false);
+    }, [setHasTitle]);
 
     return (
       <Text
@@ -459,6 +479,7 @@ export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
           lightUi={lightUi}
           titleId={baseCtx.titleId}
           descriptionId={baseCtx.descriptionId}
+          hasTitle={baseCtx.hasTitle}
           hasDescription={baseCtx.hasDescription}
           backdropIsDismissable={backdropIsDismissable}
           panelSegments={panelSegments}
@@ -496,6 +517,7 @@ export function DrawerPortalShell({
   lightUi,
   titleId,
   descriptionId,
+  hasTitle,
   hasDescription,
   backdropIsDismissable,
   panelSegments,
@@ -526,7 +548,7 @@ export function DrawerPortalShell({
       ref={dialogRef}
       onClose={onDialogClose}
       onCancel={onDialogCancel}
-      aria-labelledby={titleId}
+      aria-labelledby={hasTitle ? titleId : undefined}
       aria-describedby={hasDescription ? descriptionId : undefined}
       className={cn(drawerNativeClass(contained), slotClassNames.dialog)}
     >

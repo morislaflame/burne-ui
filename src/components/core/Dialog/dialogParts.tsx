@@ -73,8 +73,13 @@ DialogHeader.displayName = "DialogHeader";
 
 export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
   function DialogTitle({ className, id, ...rest }, ref) {
-    const { titleId, sizePreset } = useDialog();
+    const { titleId, setHasTitle, sizePreset } = useDialog();
     const slotClassNames = useDialogClassNames();
+
+    useLayoutEffect(() => {
+      setHasTitle(true);
+      return () => setHasTitle(false);
+    }, [setHasTitle]);
 
     return (
       <Text
@@ -342,6 +347,7 @@ export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
       onOpenChange,
       titleId,
       descriptionId,
+      hasTitle,
       hasDescription,
       sizePreset,
       portalContainer: portalContainerFromRoot,
@@ -378,6 +384,7 @@ export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
         lightUi={lightUi}
         titleId={titleId}
         descriptionId={descriptionId}
+        hasTitle={hasTitle}
         hasDescription={hasDescription}
         dialogRef={motion.dialogRef}
         overlayRef={motion.overlayRef}
@@ -414,6 +421,7 @@ export function DialogPortalShell({
   lightUi,
   titleId,
   descriptionId,
+  hasTitle,
   hasDescription,
   dialogRef,
   overlayRef,
@@ -435,7 +443,7 @@ export function DialogPortalShell({
       ref={dialogRef}
       onClose={onDialogClose}
       onCancel={onDialogCancel}
-      aria-labelledby={titleId}
+      aria-labelledby={hasTitle ? titleId : undefined}
       aria-describedby={hasDescription ? descriptionId : undefined}
       className={cn(dialogNativeClass(contained), slotClassNames.dialog)}
     >

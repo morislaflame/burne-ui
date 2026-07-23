@@ -152,6 +152,7 @@ Dismiss **220 ms** — не из `configureMotion`.
 ### 7. Auto-dismiss
 
 `setTimeout` — не GSAP. `timeout: 0` или `loading` — без таймера.
+Пауза при `pointerenter` / `focusin`, возобновление при выходе (WCAG 2.2.1).
 
 #### Кастомизация
 
@@ -283,7 +284,8 @@ Per-toast `classNames` **перекрывают** одноимённые клю�
 ## Доступность
 
 - Viewport: `role="region"`, `aria-label` по placement.
-- Карточка: `role` = `status` / `alert`, `aria-live` polite/assertive.
+- Карточка: `role="group"`; `aria-labelledby` при Title, иначе `aria-label` из title/description string.
+- Анонсы SR: постоянно смонтированный `aria-live` (polite / assertive) в `ToastProvider`, текст вставляется при add/update.
 - Скрытые в стеке (idx ≥ 3): `aria-hidden` на wrapper.
 - Только передний toast: `pointer-events: auto`.
 

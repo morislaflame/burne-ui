@@ -76,7 +76,7 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 | Часть | Назначение |
 |-------|------------|
-| `Table.ScrollContainer` | Horizontal scroll + `tabIndex` |
+| `Table.ScrollContainer` | Horizontal scroll; `tabIndex` только по необходимости |
 | `Table.Content` | Элемент `<table>` + selection/sort context. **Доменное исключение имени `Content`:** здесь это не «тело панели» (`Popover.Content` / `Dialog.Content`) и не текстовая колонка (`Toast.Content` / `Alert.Content`), а именно table-host. |
 | `Table.Header` | `<thead>` |
 | `Table.HeaderRow` | `<tr>` в header (`className` / `ref`); если не передан — Header оборачивает колонки сам |
@@ -116,18 +116,18 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 **DOM (sortable column):**
 
 ```
-<th class=group/col>
-  <span class=columnInner>
-    <Table.Label class=columnLabel>Name</Table.Label>
-    <TableSortChevron ref=chevron>   ← IoChevronUp, GSAP rotate
-      <IoChevronUp />
+<th aria-sort class=group/col>
+  <button type=button class=sortButton>   ← APG: focusable control
+    <Table.Label>Name</Table.Label>
+    <TableSortChevron />
 ```
 
 **DOM (selectable row):**
 
 ```
-<tr aria-selected class=row>         ← React state, CSS bg
-  <td class=cell>                    ← ring-primary при selected (toned)
+<table role=grid aria-multiselectable?>   ← при selectionMode ≠ none
+  <tr role=row aria-selected tabIndex=0>
+    <td role=gridcell>
 ```
 
 Нет portal, нет press squeeze на rows, нет FLIP при сортировке данных.
@@ -171,7 +171,7 @@ configureMotion({
 
 Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKeys`, `onSelectionChange`):
 
-- Row: `aria-selected`, `bg-default-hover` или gloss tint
+- Row: `aria-selected` (в `role="grid"`), `bg-default-hover` или gloss tint
 - Cell (toned): `ring-2 ring-inset ring-primary` при selected
 - Checkbox column — через `selectionMode`, без fill animation
 
@@ -304,7 +304,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 
 ### Практические заметки
 
-- **`Table.ScrollContainer` обязателен** для horizontal overflow на узких экранах (`tabIndex={0}`).
+- **`Table.ScrollContainer`** — для horizontal overflow; не ставьте `tabIndex={0}` по умолчанию (перехватывает Tab). Нужен keyboard-scroll без интерактива внутри — передайте `tabIndex={0}` явно.
 - **Sort:** `allowsSorting` + `sortDescriptor` / `defaultSortDescriptor` / `onSortChange`; без `allowsSorting` chevron decorative.
 - **`isRowHeader`** на первой колонке — screen reader row headers.
 - **`renderEmptyState` на `Table.Body`** — кастом empty UI (`emptyCell` слот).
@@ -323,10 +323,11 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 ## Доступность
 
 - `Table.Content`: `aria-label` на `<table>`
-- Sortable columns: `aria-sort`
-- Selected rows: `aria-selected`
+- Sortable columns: `aria-sort` на `<th>` + `<button>` (Tab / Enter/Space; ←/→ между кнопками сортировки)
+- Selection: `role="grid"` (+ `aria-multiselectable` при multiple); rows — `role="row"` + `aria-selected`; roving `tabIndex` (одна tab-остановка) + ↑/↓ / Home/End; Enter/Space — выбор
+- Cells: `role="gridcell"` при selection
 - Row header column: `isRowHeader`
-- Scroll container: `tabIndex={0}` для keyboard scroll
+- Scroll container: без tab-stop по умолчанию (опционально `tabIndex={0}` для scroll-only)
 
 ## Структура файлов
 

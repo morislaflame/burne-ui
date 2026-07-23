@@ -4,6 +4,10 @@ import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIn
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
 import { cn } from "@/utils/cn";
 
+import {
+  listBoxEnabledOptionElements,
+  listBoxOptionValue,
+} from "./listBoxA11y";
 import type { ListBoxClassNames, ListBoxItemIndicatorClassNames, UseListBoxItemStateProps } from "./listBoxTypes";
 
 export function resolveListBoxItemIndicatorClassNames({
@@ -72,4 +76,55 @@ export function resolveListBoxItemLayout({
     hasLabel,
     showIndicatorSlot,
   };
+}
+
+/** Next/prev enabled option value inside a listbox root (DOM walk). */
+export function listBoxBumpActiveValue({
+  root,
+  activeValue,
+  delta,
+}: {
+  root: HTMLElement;
+  activeValue: string | null;
+  delta: number;
+}): string | null {
+  const options = listBoxEnabledOptionElements(root);
+  if (options.length === 0) return activeValue;
+
+  const idx = activeValue
+    ? options.findIndex((el) => listBoxOptionValue(el) === activeValue)
+    : -1;
+
+  let nextIdx: number;
+  if (idx < 0) {
+    nextIdx = delta > 0 ? 0 : options.length - 1;
+  } else {
+    nextIdx = (idx + delta + options.length) % options.length;
+  }
+
+  return listBoxOptionValue(options[nextIdx]!) ?? activeValue;
+}
+
+export function listBoxFirstEnabledValue(root: HTMLElement): string | null {
+  const first = listBoxEnabledOptionElements(root)[0];
+  return first ? listBoxOptionValue(first) : null;
+}
+
+export function listBoxLastEnabledValue(root: HTMLElement): string | null {
+  const options = listBoxEnabledOptionElements(root);
+  const last = options[options.length - 1];
+  return last ? listBoxOptionValue(last) : null;
+}
+
+export function listBoxPreferredInitialActiveValue(
+  root: HTMLElement,
+): string | null {
+  const selected = root.querySelector<HTMLElement>(
+    '[role="option"][aria-selected="true"]:not([disabled]):not([aria-disabled="true"])',
+  );
+  if (selected) {
+    const value = listBoxOptionValue(selected);
+    if (value) return value;
+  }
+  return listBoxFirstEnabledValue(root);
 }

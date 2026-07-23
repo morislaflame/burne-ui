@@ -9,6 +9,13 @@ export function alertDialogDescribedBy(
   return hasDescription ? descriptionId : undefined;
 }
 
+export function alertDialogLabelledBy(
+  hasTitle: boolean,
+  titleId: string,
+): string | undefined {
+  return hasTitle ? titleId : undefined;
+}
+
 export function alertDialogTriggerA11y(open: boolean) {
   return {
     "aria-haspopup": ALERT_DIALOG_TRIGGER_HASPOPUP,
