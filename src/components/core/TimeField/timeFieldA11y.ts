@@ -1,24 +1,34 @@
 import type { TimeFieldSegId, TimeFieldStatus } from "./timeFieldTypes";
 
-export const TIME_FIELD_FALLBACK_ARIA_LABEL = "Time";
-
-export const TIME_FIELD_SEG_LABEL: Record<TimeFieldSegId, string> = {
-  h: "hours",
-  m: "minutes",
-  s: "seconds",
-};
+import { DEFAULT_BURNE_LABELS, type BurneLabels } from "@/theme/burneLabels";
 
 export function timeFieldShellAria({
   labelConnected,
   labelId,
+  timeLabel = DEFAULT_BURNE_LABELS.time,
 }: {
   labelConnected: boolean;
   labelId: string;
+  timeLabel?: string;
 }) {
   return {
-    "aria-label": labelConnected ? undefined : TIME_FIELD_FALLBACK_ARIA_LABEL,
+    "aria-label": labelConnected ? undefined : timeLabel,
     "aria-labelledby": labelConnected ? labelId : undefined,
   } as const;
+}
+
+export function timeFieldSegLabel(
+  seg: TimeFieldSegId,
+  labels: Pick<BurneLabels, "timeHours" | "timeMinutes" | "timeSeconds"> = DEFAULT_BURNE_LABELS,
+): string {
+  switch (seg) {
+    case "h":
+      return labels.timeHours;
+    case "m":
+      return labels.timeMinutes;
+    case "s":
+      return labels.timeSeconds;
+  }
 }
 
 export function timeFieldSegSpinbuttonA11y({
@@ -28,6 +38,7 @@ export function timeFieldSegSpinbuttonA11y({
   isDanger,
   isFirstSegment,
   disabled,
+  segLabel,
 }: {
   seg: TimeFieldSegId;
   value: number;
@@ -35,10 +46,11 @@ export function timeFieldSegSpinbuttonA11y({
   isDanger: boolean;
   isFirstSegment: boolean;
   disabled: boolean;
+  segLabel: string;
 }) {
   return {
     role: "spinbutton" as const,
-    "aria-label": TIME_FIELD_SEG_LABEL[seg],
+    "aria-label": segLabel,
     "aria-valuemin": 0,
     "aria-valuemax": seg === "h" ? 23 : 59,
     "aria-valuenow": value,

@@ -5,9 +5,10 @@ import { forwardRef, useCallback, useMemo, useRef, type ForwardRefExoticComponen
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 import { cn } from "@/utils/cn";
 
-import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, PAGINATION_NEXT_DEFAULT_LABEL, PAGINATION_PREVIOUS_DEFAULT_LABEL, resolvePaginationPageAriaLabel } from "./paginationA11y";
+import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, resolvePaginationPageAriaLabel } from "./paginationA11y";
 import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
 import { usePaginationContentRef } from "./paginationAnimations";
 import { useOptionalPagination, usePagination, usePaginationClassNames } from "./paginationContext";
@@ -182,6 +183,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
     { disabled, onClick, children, className, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
+    const labels = useBurneLabels();
     const ctx = useOptionalPagination();
     const slotClassNames = usePaginationClassNames();
     const page = ctx?.page;
@@ -218,7 +220,7 @@ export const PaginationPrevious = forwardRef<HTMLButtonElement, PaginationNavBut
                 slotClass: slotClassNames.previousText,
               })}
             >
-              {PAGINATION_PREVIOUS_DEFAULT_LABEL}
+              {labels.paginationPrevious}
             </Text>
           </>
         )}
@@ -234,6 +236,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
     { disabled, onClick, children, className, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
+    const labels = useBurneLabels();
     const ctx = useOptionalPagination();
     const slotClassNames = usePaginationClassNames();
     const page = ctx?.page;
@@ -279,7 +282,7 @@ export const PaginationNext = forwardRef<HTMLButtonElement, PaginationNavButtonP
                 slotClass: slotClassNames.nextText,
               })}
             >
-              {PAGINATION_NEXT_DEFAULT_LABEL}
+              {labels.paginationNext}
             </Text>
             <PaginationNextIcon />
           </>
@@ -351,6 +354,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
     },
     ref,
   ) {
+    const labels = useBurneLabels();
     const ctx = useOptionalPagination();
     const slotClassNames = usePaginationClassNames();
     const active =
@@ -391,6 +395,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
       ariaLabel,
       children,
       pageNumber,
+      pageTemplate: labels.paginationPage,
     });
 
     return (

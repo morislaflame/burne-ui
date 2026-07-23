@@ -1,3 +1,19 @@
-export const INPUT_PASSWORD_SHOW_ARIA_LABEL = "Show password";
-export const INPUT_PASSWORD_HIDE_ARIA_LABEL = "Hide password";
-export const INPUT_FILE_REMOVE_ARIA_LABEL = "Remove file";
+import { DEFAULT_BURNE_LABELS } from "@/theme/burneLabels";
+
+export function inputPasswordShowAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.showPassword,
+): string {
+  return label;
+}
+
+export function inputPasswordHideAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.hidePassword,
+): string {
+  return label;
+}
+
+export function inputFileRemoveAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.removeFile,
+): string {
+  return label;
+}

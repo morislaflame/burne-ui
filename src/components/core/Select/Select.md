@@ -240,9 +240,9 @@ Selection indicator + label press squeeze — см. ListBox.md.
 
 ## Доступность
 
-- `TriggerGroup`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`, `aria-activedescendant` при open, `aria-labelledby` (при Label) / `aria-label` (placeholder)
-- `Select.Value`: `aria-invalid`, `aria-required` через combobox; клавиатура open/navigate
-- `Select.Trigger`: `aria-label`, `tabIndex={-1}`
+- `TriggerGroup`: `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-haspopup="listbox"`, `aria-activedescendant` при open, `aria-labelledby` (при Label) / `aria-label` (placeholder), `tabIndex={-1}`, `focus-within-ring` на shell
+- `Select.Value`: единственный tab-stop; без собственного `focus-ring` (ring через shell)
+- `Select.Trigger`: `aria-label`, `tabIndex={-1}`, `focus-ring-inset`
 - `ListBox`: `aria-labelledby` / `aria-label`
 
 ## Структура файлов

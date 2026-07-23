@@ -27,7 +27,7 @@ import type {
 | `animated` | `boolean` | `true` | Hover lift + press squeeze |
 | `ripple` | `boolean` | `false` | Converge-ripple при нажатии |
 | `disabled` | `boolean` | `false` | `opacity-50`, `cursor-not-allowed` |
-| `aria-label` | `string` | `"Закрыть"` | Доступное имя (обязательно переопределять в контексте) |
+| `aria-label` | `string` | `"Close"` (из `BurneLabels`, см. ниже) | Доступное имя; без пропа — дефолт из `BurneUIProvider` `labels` |
 | `className` | `string` | — | Классы на корневой `<button>` |
 | `classNames` | `CloseButtonClassNames` | — | Слоты: `root`, `icon`, `ripple` |
 | `type` | `button` \| `submit` \| `reset` | `button` | Нативный type |
@@ -192,7 +192,7 @@ configureMotion({
 
 - База: `INTERACTIVE_VARIANT_ROOT[variant]` (из Button)
 - Hover: `hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant])`
-- Focus: `focus-visible:outline-primary`
+- Focus: `focus-ring` (цвет `--color-focus-ring`, ширина/offset — `--focus-ring-width` / `--focus-ring-offset`)
 - Disabled: `opacity-50`, `cursor-not-allowed`
 
 ### Размерные токены
@@ -240,15 +240,15 @@ CloseButton — leaf-компонент (без compound/simple split): один
 
 ### Практические заметки
 
-- **aria-label** обязателен (дефолт «Закрыть» — уточняйте контекст: «Закрыть диалог»).
+- **aria-label:** без пропа — `"Close"` из `DEFAULT_BURNE_LABELS` (или `labels` на `BurneUIProvider`, напр. `BURNE_LABELS_RU`). Явный `aria-label` побеждает. В UI лучше уточнять контекст: «Закрыть диалог».
 - **Порядок мержа:** `closeButtonRootClass` → `classNames.root` → `className`.
 
 ## Доступность
 
-- Только иконка — **всегда** нужен `aria-label` (дефолт `"Закрыть"` подходит для generic close, в UI лучше уточнять: «Закрыть диалог», «Скрыть панель»).
+- Только иконка — **всегда** есть accessible name: дефолт из `BurneLabels.close` или ваш `aria-label`.
 - Иконка `IoClose` — `aria-hidden`.
 - Нативный `disabled` на `<button>`.
-- Focus ring: `outline-none` + `focus-visible:outline-primary`.
+- Focus ring: `outline-none` + `focus-ring`.
 
 ## Отличия от Button
 
@@ -270,7 +270,7 @@ CloseButton/
 ├── index.ts
 ├── closeButtonTypes.ts
 ├── closeButtonStyles.ts
-├── closeButtonA11y.ts         # дефолтный aria-label
+├── closeButtonA11y.ts         # resolve aria-label (+ BurneLabels.close)
 ├── closeButtonContext.tsx     # classNames provider
 ├── closeButtonParts.tsx       # Icon, Ripple
 ├── closeButtonAnimations.ts

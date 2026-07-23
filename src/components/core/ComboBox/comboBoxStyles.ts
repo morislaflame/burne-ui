@@ -37,7 +37,7 @@ export const COMBOBOX_INPUT_BASE_CLASS =
 export const COMBOBOX_INPUT_MUTED_CLASS = "text-muted";
 
 export const COMBOBOX_TRIGGER_BASE_CLASS =
-  "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring";
+  "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring-inset";
 
 export const COMBOBOX_TRIGGER_DISABLED_CLASS = "pointer-events-none";
 

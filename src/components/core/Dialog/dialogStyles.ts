@@ -119,6 +119,8 @@ export const DIALOG_FOOTER_CLASS =
 
 export const DIALOG_CLOSE_CLASS = "shrink-0";
 
+export const DIALOG_TRIGGER_BASE_CLASS = "outline-none focus-ring";
+
 export const DIALOG_GLOSS_CONTENT_CLASS = "gloss-content";
 
 export function dialogOverlayEnterStyle() {

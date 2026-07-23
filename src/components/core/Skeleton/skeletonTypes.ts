@@ -25,6 +25,10 @@ export type SkeletonBlockClassNames = {
   wave?: string;
 };
 
+export type SkeletonRegionClassNames = {
+  root?: string;
+};
+
 export type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   radius?: SkeletonRadius;
@@ -49,6 +53,13 @@ export type SkeletonTextProps = HTMLAttributes<HTMLDivElement> & {
 export type SkeletonBlockProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   classNames?: SkeletonBlockClassNames;
+};
+
+/** Semantic parent for loading placeholders — sets `aria-busy` / `aria-live`. */
+export type SkeletonRegionProps = HTMLAttributes<HTMLDivElement> & {
+  /** When true, region is loading (`aria-busy`). Default `true`. */
+  busy?: boolean;
+  classNames?: SkeletonRegionClassNames;
 };
 
 export type SkeletonWaveProps = {

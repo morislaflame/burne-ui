@@ -10,8 +10,9 @@ import type {
 import { IoClose, IoSearch } from "react-icons/io5";
 
 import { Ripple } from "@/components/core/Ripple";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
-import { SEARCH_INPUT_CLEAR_A11Y_LABEL } from "./searchInputA11y";
+import { searchInputClearA11yLabel } from "./searchInputA11y";
 import {
   searchInputClearClass,
   searchInputClearIconClass,
@@ -131,10 +132,11 @@ export function SearchInputClear({
   onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 }) {
+  const clearLabel = useBurneLabel("clearField");
   return (
     <button
       type="button"
-      aria-label={SEARCH_INPUT_CLEAR_A11Y_LABEL}
+      aria-label={searchInputClearA11yLabel(clearLabel)}
       onClick={onClick}
       onPointerDown={(e) => e.stopPropagation()}
       className={searchInputClearClass(className)}

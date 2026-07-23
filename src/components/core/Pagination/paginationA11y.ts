@@ -1,25 +1,30 @@
 import type { ReactNode } from "react";
 
-export const PAGINATION_DEFAULT_ARIA_LABEL = "Pagination";
+import { DEFAULT_BURNE_LABELS, formatBurneLabel } from "@/theme/burneLabels";
 
 export const PAGINATION_ELLIPSIS_ARIA_HIDDEN = true as const;
 
 export const PAGINATION_ICON_ARIA_HIDDEN = true as const;
 
-export const PAGINATION_PREVIOUS_DEFAULT_LABEL = "Back";
-
-export const PAGINATION_NEXT_DEFAULT_LABEL = "Forward";
+export function resolvePaginationAriaLabel(
+  ariaLabel?: string,
+  paginationLabel: string = DEFAULT_BURNE_LABELS.pagination,
+): string {
+  return ariaLabel ?? paginationLabel;
+}
 
 export function resolvePaginationPageAriaLabel({
   ariaLabel,
   children,
   pageNumber,
+  pageTemplate = DEFAULT_BURNE_LABELS.paginationPage,
 }: {
   ariaLabel?: string;
   children?: ReactNode;
   pageNumber: number;
+  pageTemplate?: string;
 }): string | undefined {
   if (ariaLabel != null) return ariaLabel;
-  if (children != null) return `Page ${pageNumber}`;
+  if (children != null) return formatBurneLabel(pageTemplate, { n: pageNumber });
   return undefined;
 }

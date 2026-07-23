@@ -9,6 +9,7 @@ import { breadcrumbsRootClass } from "./breadcrumbsStyles";
 import type { BreadcrumbsProps } from "./breadcrumbsTypes";
 import { useBreadcrumbsRootState } from "./useBreadcrumbsRootState";
 
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { cn } from "@/utils/cn";
 
 export type {
@@ -34,13 +35,14 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
     ref,
   ) {
     const { isCompound } = useBreadcrumbsRootState({ children });
+    const breadcrumbsLabel = useBurneLabel("breadcrumbs");
 
     return (
       <BreadcrumbsCollapseProvider collapse={collapse}>
         <BreadcrumbsClassNamesProvider classNames={classNames}>
           <nav
             ref={ref}
-            aria-label={resolveBreadcrumbsAriaLabel(ariaLabel)}
+            aria-label={resolveBreadcrumbsAriaLabel(ariaLabel, breadcrumbsLabel)}
             className={breadcrumbsRootClass(
               cn("", classNames?.root, className),
             )}

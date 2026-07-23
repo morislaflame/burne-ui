@@ -732,12 +732,14 @@ export {
   type SkeletonCircleProps,
   type SkeletonTextProps,
   type SkeletonBlockProps,
+  type SkeletonRegionProps,
   type SkeletonAnimation,
   type SkeletonRadius,
   type SkeletonClassNames,
   type SkeletonCircleClassNames,
   type SkeletonTextClassNames,
   type SkeletonBlockClassNames,
+  type SkeletonRegionClassNames,
 } from "@/components/core/Skeleton";
 
 export {
@@ -755,10 +757,20 @@ export {
 
 export {
   BurneUIProvider,
+  BurneLabelsProvider,
   ThemeProvider,
   useBurneTheme,
   useBurneThemeOptional,
+  useBurneLabel,
+  useBurneLabels,
+  BURNE_LABELS_RU,
+  DEFAULT_BURNE_LABELS,
+  formatBurneLabel,
+  mergeBurneLabels,
   type BurneUIProviderProps,
+  type BurneLabelsProviderProps,
+  type BurneLabels,
+  type BurneLabelsKey,
   type ThemeProviderProps,
   type BurneThemeContextValue,
   type BurneThemeConfig,

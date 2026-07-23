@@ -1,11 +1,11 @@
 # Skeleton
 
-Плейсхолдер загрузки: pulse, wave, shimmer или static (`none`). Compound API: `Skeleton.Circle`, `Skeleton.Text`, `Skeleton.Block`. **Только CSS-анимации** — без GSAP.
+Плейсхолдер загрузки: pulse, wave, shimmer или static (`none`). Compound API: `Skeleton.Circle`, `Skeleton.Text`, `Skeleton.Block`, `Skeleton.Region`. **Только CSS-анимации** — без GSAP.
 
 ## Импорт
 
 ```tsx
-import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTextProps, type SkeletonBlockProps, type SkeletonVariant, type SkeletonRadius, type SkeletonClassNames, type SkeletonCircleClassNames, type SkeletonTextClassNames, type SkeletonBlockClassNames } from "burne-ui";
+import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTextProps, type SkeletonBlockProps, type SkeletonRegionProps, type SkeletonVariant, type SkeletonRadius, type SkeletonClassNames, type SkeletonCircleClassNames, type SkeletonTextClassNames, type SkeletonBlockClassNames, type SkeletonRegionClassNames } from "burne-ui";
 ```
 
 ## API
@@ -21,14 +21,16 @@ import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTe
 ### Compound API
 
 ```tsx
-<Skeleton.Block animation="wave">
-  <div className="flex gap-base">
-    <Skeleton.Circle size="h-control-mid w-control-mid" />
-    <div className="flex-1">
-      <Skeleton.Text lines={3} animation="wave" />
+<Skeleton.Region busy aria-label="Profile">
+  <Skeleton.Block animation="wave">
+    <div className="flex gap-base">
+      <Skeleton.Circle size="h-control-mid w-control-mid" />
+      <div className="flex-1">
+        <Skeleton.Text lines={3} animation="wave" />
+      </div>
     </div>
-  </div>
-</Skeleton.Block>
+  </Skeleton.Block>
+</Skeleton.Region>
 ```
 
 ### Root props (`Skeleton`)
@@ -66,6 +68,32 @@ import { Skeleton, type SkeletonProps, type SkeletonCircleProps, type SkeletonTe
 | `variant` | Animation variant |
 | `classNames` | `root`, `wave` |
 | `children` | Card/list layout inside |
+
+### `Skeleton.Region` props
+
+| Prop | По умолчанию | Описание |
+|------|--------------|----------|
+| `busy` | `true` | `aria-busy` на контейнере-родителе |
+| `className` / `classNames.root` | — | Layout обёртки (без декоративного surface) |
+| `aria-label` / `aria-labelledby` | — | Имя региона для AT (рекомендуется) |
+| `children` | — | Skeleton-плейсхолдеры или загруженный контент |
+
+`Skeleton.Region` — **не** декоративный: без `aria-hidden` / `role="presentation"`. Плейсхолдеры внутри остаются presentation.
+
+```tsx
+const [busy, setBusy] = useState(true);
+
+<Skeleton.Region busy={busy} aria-label="Profile">
+  {busy ? (
+    <>
+      <Skeleton.Circle size="h-12 w-12" />
+      <Skeleton.Text lines={2} />
+    </>
+  ) : (
+    <ProfileCard />
+  )}
+</Skeleton.Region>
+```
 
 ## variant и radius
 
@@ -169,6 +197,7 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 | `Skeleton.Circle` | `root`, `wave` | Avatar placeholder ring |
 | `Skeleton.Text` | `root`, `line`, `wave` | Per-line height/gap |
 | `Skeleton.Block` | `root`, `wave` | Card chrome padding |
+| `Skeleton.Region` | `root` | Layout wrapper (a11y parent) |
 
 ### Card loading layout
 
@@ -212,8 +241,8 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 
 ### Практические заметки
 
-- Skeleton **декоративный** — `aria-hidden`, `role="presentation"`.
-- Родитель должен объявить loading (`aria-busy`, live region) отдельно.
+- Skeleton (Root / Circle / Text / Block) **декоративный** — `aria-hidden`, `role="presentation"`.
+- Объявляйте loading через `Skeleton.Region` (`aria-busy` + `aria-live="polite"`) или свой контейнер с теми же атрибутами.
 - `animation="none"` — static placeholder без motion (reduced motion friendly).
 - Для списков — `Skeleton.Text` с wave + естественный stagger.
 - Размеры задавайте Tailwind на `className` (`h-8`, `w-3/4`), не через size enum.
@@ -229,10 +258,10 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 
 ## Доступность
 
-- Все части: `aria-hidden={true}`, `role="presentation"`
+- Декоративные части: `aria-hidden={true}`, `role="presentation"`
 - Wave overlay: `aria-hidden`
-- Нет встроенного loading announcement
-- Рекомендация: `aria-busy="true"` на контейнере + `aria-live="polite"` при завершении загрузки
+- **`Skeleton.Region`:** `aria-busy={busy}`, `aria-live="polite"` — родительский контейнер для announcement; задайте `aria-label` / `aria-labelledby`
+- При `busy={false}` AT получает сигнал, что обновление региона завершено
 
 ## Структура файлов
 
@@ -250,4 +279,4 @@ Skeleton/
 
 ## Storybook
 
-`Core Components/Skeleton` — all variants, text lines, circles, card layout, list, block, custom sizes, `CustomClassNames`.
+`Core Components/Skeleton` — all variants, text lines, circles, card layout, list, block, `Skeleton.Region`, custom sizes, `CustomClassNames`.

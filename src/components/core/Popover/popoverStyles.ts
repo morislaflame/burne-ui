@@ -64,7 +64,7 @@ export const POPOVER_DEFAULT_GAP: Record<PopoverSize, PopoverContentGap> = {
 };
 
 export const POPOVER_TRIGGER_CLASS =
-  "inline-flex shrink-0 border-0 bg-transparent p-0";
+  "inline-flex shrink-0 border-0 bg-transparent p-0 outline-none focus-ring";
 
 export const POPOVER_CONTENT_CLASS =
   "pointer-events-auto z-[10000] w-max min-w-0 overflow-visible text-left outline-none will-change-transform";

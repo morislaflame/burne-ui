@@ -14,7 +14,7 @@ export const TABLE_ROOT_VARIANT_CLASS: Record<TableVariant, string> = {
 
 export const TABLE_GLOSS_CONTENT_CLASS = "gloss-content w-full min-w-0";
 
-export const TABLE_SCROLL_CONTAINER_CLASS = "w-full overflow-x-auto";
+export const TABLE_SCROLL_CONTAINER_CLASS = "w-full overflow-x-auto outline-none focus-ring";
 
 export const TABLE_CONTENT_BASE_CLASS = "w-full";
 

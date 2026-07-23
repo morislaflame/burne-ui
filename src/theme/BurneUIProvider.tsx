@@ -4,6 +4,8 @@ import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import { Toast } from "@/components/core/Toast";
 import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
 
+import { BurneLabelsProvider } from "./BurneLabelsProvider";
+import type { BurneLabels } from "./burneLabels";
 import { applyBurneThemeConfig, clearCustomThemeTokens, type BurneThemeConfig, type BurneThemeMode, type CustomThemeTokens, type ThemeTokenOverrides } from "./themeConfig";
 import { applyThemeMode, ThemeProvider, useBurneTheme, type ThemeProviderProps } from "./ThemeProvider";
 import { applyThemeTokens, clearThemeInlineTokens, createDefaultThemeState } from "./themeDefaults";
@@ -23,6 +25,11 @@ export type BurneUIProviderProps = {
   customTokens?: CustomThemeTokens;
   motion?: Partial<MotionConfig>;
   /**
+   * Override default accessible / UI strings (Close, Search, Pagination, …).
+   * Merged over English defaults. Prop wins over `config.labels`.
+   */
+  labels?: Partial<BurneLabels>;
+  /**
    * Wrap with `Toast.Provider`.
    * Pass `false` to skip, or an options object for Toast defaults.
    * @default true
@@ -33,7 +40,7 @@ export type BurneUIProviderProps = {
 };
 
 function mergeProviderConfig(props: BurneUIProviderProps): BurneThemeConfig {
-  const { config, theme, tokens, customTokens, motion, toast, storageKey } = props;
+  const { config, theme, tokens, customTokens, motion, toast, storageKey, labels } = props;
   return {
     theme: theme ?? config?.theme ?? "dark",
     storageKey: storageKey !== undefined ? storageKey : (config?.storageKey ?? "burne-ui-theme"),
@@ -42,6 +49,7 @@ function mergeProviderConfig(props: BurneUIProviderProps): BurneThemeConfig {
     customTokens: customTokens ?? config?.customTokens,
     motion: motion ?? config?.motion,
     toast: toast !== undefined ? toast : (config?.toast ?? true),
+    labels: labels ?? config?.labels,
   };
 }
 
@@ -116,14 +124,16 @@ function BurneUIRuntime({
 }
 
 /**
- * App-level provider: theme (`data-theme`), design tokens, motion, and Toast.
+ * App-level provider: theme (`data-theme`), design tokens, motion, labels, and Toast.
  *
  * @example
  * ```tsx
- * import { BurneUIProvider } from "burne-ui";
+ * import { BurneUIProvider, BURNE_LABELS_RU } from "burne-ui";
  * import burneTheme from "./burne-theme";
  *
- * <BurneUIProvider config={burneTheme}>{children}</BurneUIProvider>
+ * <BurneUIProvider config={burneTheme} labels={BURNE_LABELS_RU}>
+ *   {children}
+ * </BurneUIProvider>
  * ```
  */
 export function BurneUIProvider(props: BurneUIProviderProps) {
@@ -134,6 +144,7 @@ export function BurneUIProvider(props: BurneUIProviderProps) {
     tokens,
     customTokens,
     motion,
+    labels,
     toast,
     storageKey,
     defaultTheme,
@@ -150,10 +161,11 @@ export function BurneUIProvider(props: BurneUIProviderProps) {
         tokens,
         customTokens,
         motion,
+        labels,
         toast,
         storageKey,
       }),
-    [config, theme, tokens, customTokens, motion, toast, storageKey],
+    [config, theme, tokens, customTokens, motion, labels, toast, storageKey],
   );
 
   const themeMode = resolvedConfig.theme ?? "dark";
@@ -169,6 +181,10 @@ export function BurneUIProvider(props: BurneUIProviderProps) {
     const toastProps = typeof toastOpt === "object" ? toastOpt : {};
     content = <Toast.Provider {...toastProps}>{content}</Toast.Provider>;
   }
+
+  content = (
+    <BurneLabelsProvider labels={resolvedConfig.labels}>{content}</BurneLabelsProvider>
+  );
 
   return (
     <ThemeProvider

@@ -52,8 +52,10 @@ p {
   --color-indicator: var(--color-indicator);
   --color-indicator-foreground: var(--color-indicator-foreground);
 
-  /* FOCUS RING: outline color for focused interactive elements */
+  /* FOCUS RING: color + geometry for focused interactive elements */
   --color-focus-ring: var(--color-focus-ring);
+  --focus-ring-width: var(--focus-ring-width);
+  --focus-ring-offset: var(--focus-ring-offset);
 
   /* PRIMARY TINT: bg-primary-tint (10%), bg-primary-tint-strong (20%) */
   --color-primary-tint: var(--color-primary-tint);
@@ -223,26 +225,33 @@ p {
  * focus-within-ring — same, triggers on focus inside (Input, TextArea, ComboBox shells).
  * focus-ring-inset — ring inward (buttons inside fields, Table cells).
  *
- * Outer rings: fixed 2px width without offset; only outline-color animates smoothly
- * (animating outline-width caused a jump at the end).
+ * Geometry: `--focus-ring-width` / `--focus-ring-offset` (color: `--color-focus-ring`).
+ * On `:focus-visible` / `:focus-within` re-assert outline-style/width so the ring wins over
+ * co-located `outline-none` (Tailwind emits `outline-none` later in the stylesheet).
  */
 @utility focus-ring {
   outline-style: solid;
-  outline-width: 2px;
+  outline-width: var(--focus-ring-width, 2px);
   outline-color: transparent;
-  outline-offset: 0;
+  outline-offset: var(--focus-ring-offset, 0px);
   &:focus-visible {
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: var(--focus-ring-offset, 0px);
     outline-color: var(--color-focus-ring);
   }
 }
 
 @utility focus-within-ring {
   outline-style: solid;
-  outline-width: 2px;
+  outline-width: var(--focus-ring-width, 2px);
   outline-color: transparent;
-  outline-offset: 0;
+  outline-offset: var(--focus-ring-offset, 0px);
   &:focus-visible,
   &:focus-within {
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: var(--focus-ring-offset, 0px);
     outline-color: var(--color-focus-ring);
   }
 }
@@ -250,7 +259,7 @@ p {
 @utility focus-ring-inset {
   outline: none;
   &:focus-visible {
-    box-shadow: inset 0 0 0 2px var(--color-focus-ring);
+    box-shadow: inset 0 0 0 var(--focus-ring-width, 2px) var(--color-focus-ring);
   }
 }
 

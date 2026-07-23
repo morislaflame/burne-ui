@@ -1,10 +1,11 @@
 import { forwardRef } from "react";
 
-import { skeletonPresentationProps } from "./skeletonA11y";
+import { skeletonPresentationProps, skeletonRegionA11yProps } from "./skeletonA11y";
 import { SKELETON_BASE_CLASS, SKELETON_BLOCK_CLASS, SKELETON_CIRCLE_RADIUS_CLASS, SKELETON_CIRCLE_SIZE_DEFAULT, SKELETON_TEXT_LINE_CLASS, SKELETON_TEXT_LINE_FULL_CLASS, SKELETON_TEXT_LINE_LAST_SHORT_CLASS, SKELETON_TEXT_ROOT_CLASS, SKELETON_WAVE_OVERLAY_CLASS, skeletonLineAnimationDelay, skeletonVariantStyle, skeletonWaveOverlayStyle } from "./skeletonStyles";
 import type {
   SkeletonBlockProps,
   SkeletonCircleProps,
+  SkeletonRegionProps,
   SkeletonTextProps,
   SkeletonWaveProps,
 } from "./skeletonTypes";
@@ -127,3 +128,23 @@ export const SkeletonBlock = forwardRef<HTMLDivElement, SkeletonBlockProps>(func
 });
 
 SkeletonBlock.displayName = "SkeletonBlock";
+
+export const SkeletonRegion = forwardRef<HTMLDivElement, SkeletonRegionProps>(
+  function SkeletonRegion(
+    { busy = true, className, classNames, children, ...rest },
+    ref,
+  ) {
+    return (
+      <div
+        ref={ref}
+        className={cn(classNames?.root, className)}
+        {...skeletonRegionA11yProps(busy)}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  },
+);
+
+SkeletonRegion.displayName = "SkeletonRegion";

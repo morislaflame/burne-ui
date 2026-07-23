@@ -1,5 +1,6 @@
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
 import type { InputStatus } from "@/components/core/Input";
+import { DEFAULT_BURNE_LABELS } from "@/theme/burneLabels";
 
 export function comboBoxLabelId(comboBoxId: string): string {
   return `${comboBoxId}-label`;
@@ -26,8 +27,14 @@ export function comboBoxActiveOptionId(
   return open && activeValue ? `${listId}-opt-${activeValue}` : undefined;
 }
 
-export function comboBoxTriggerAriaLabel(open: boolean): string {
-  return open ? "Close list" : "Open list";
+export function comboBoxTriggerAriaLabel(
+  open: boolean,
+  labels: { openList: string; closeList: string } = {
+    openList: DEFAULT_BURNE_LABELS.openList,
+    closeList: DEFAULT_BURNE_LABELS.closeList,
+  },
+): string {
+  return open ? labels.closeList : labels.openList;
 }
 
 export function comboBoxResolveHintStatus(

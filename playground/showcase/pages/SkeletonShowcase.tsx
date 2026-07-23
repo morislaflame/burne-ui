@@ -8,6 +8,8 @@ import { SkeletonBasicShapesDemo } from "../demos/skeleton/SkeletonBasicShapes.d
 import skeletonBasicShapesSource from "../demos/skeleton/SkeletonBasicShapes.demo.tsx?raw";
 import { SkeletonProfileCardDemo } from "../demos/skeleton/SkeletonProfileCard.demo";
 import skeletonProfileCardSource from "../demos/skeleton/SkeletonProfileCard.demo.tsx?raw";
+import { SkeletonRegionDemo } from "../demos/skeleton/SkeletonRegion.demo";
+import skeletonRegionSource from "../demos/skeleton/SkeletonRegion.demo.tsx?raw";
 import { SkeletonTableRowsDemo } from "../demos/skeleton/SkeletonTableRows.demo";
 import skeletonTableRowsSource from "../demos/skeleton/SkeletonTableRows.demo.tsx?raw";
 import { SkeletonTextBlockDemo } from "../demos/skeleton/SkeletonTextBlock.demo";
@@ -49,6 +51,13 @@ export function SkeletonShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="Skeleton.Region"
+        description="Parent container with `aria-busy` / `aria-live` — decorative skeletons stay hidden from AT."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={SkeletonRegionDemo} source={skeletonRegionSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="Custom Variations"
         description="Profile, table rows and article preview — `demos/skeleton/`."
       >
@@ -64,7 +73,7 @@ export function SkeletonShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Skeleton.Circle, Skeleton.Text and Skeleton.Block — ready-made forms. classNames on each subcomponent."
+            description="Skeleton.Circle, Skeleton.Text, Skeleton.Block, Skeleton.Region — ready-made forms and a11y parent. classNames on each subcomponent."
           />
           <ShowcaseDoc.ApiRow
             api="simple"
@@ -73,8 +82,14 @@ export function SkeletonShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Animations">
           <p>
-            <code>pulse</code>, <code>wave</code>, <code>shimmer</code> — prop <code>variant</code> on any
+            <code>pulse</code>, <code>wave</code>, <code>shimmer</code> — prop <code>animation</code> on any
             subcomponent Skeleton.
+          </p>
+        </ShowcaseDoc.Block>
+        <ShowcaseDoc.Block title="Accessibility">
+          <p>
+            Wrap placeholders in <code>Skeleton.Region</code> (<code>busy</code> → <code>aria-busy</code>,
+            always <code>aria-live=&quot;polite&quot;</code>). Add <code>aria-label</code> for the region name.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization />

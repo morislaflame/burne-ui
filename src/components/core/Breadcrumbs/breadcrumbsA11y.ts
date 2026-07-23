@@ -1,11 +1,21 @@
-export const DEFAULT_BREADCRUMBS_ARIA_LABEL = "Breadcrumbs";
+import { DEFAULT_BURNE_LABELS, formatBurneLabel } from "@/theme/burneLabels";
 
-export function resolveBreadcrumbsAriaLabel(ariaLabel?: string): string {
-  return ariaLabel ?? DEFAULT_BREADCRUMBS_ARIA_LABEL;
+export function resolveBreadcrumbsAriaLabel(
+  ariaLabel?: string,
+  breadcrumbsLabel: string = DEFAULT_BURNE_LABELS.breadcrumbs,
+): string {
+  return ariaLabel ?? breadcrumbsLabel;
 }
 
-export function ellipsisTriggerAriaLabel(count: number): string {
-  return `Show ${count} hidden sections`;
+export function ellipsisTriggerAriaLabel(
+  count: number,
+  template: string = DEFAULT_BURNE_LABELS.breadcrumbsShowHidden,
+): string {
+  return formatBurneLabel(template, { count });
 }
 
-export const BREADCRUMBS_ELLIPSIS_POPOVER_ARIA_LABEL = "Hidden sections";
+export function breadcrumbsEllipsisPopoverAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.breadcrumbsHiddenSections,
+): string {
+  return label;
+}

@@ -553,6 +553,24 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           onChange={(v) => setScale("borderWidth", v)}
         />
         <ScaleControl
+          label="--focus-ring-width"
+          value={state.focusRingWidth}
+          min={0}
+          max={3}
+          step={0.5}
+          unit="px"
+          onChange={(v) => setScale("focusRingWidth", v)}
+        />
+        <ScaleControl
+          label="--focus-ring-offset"
+          value={state.focusRingOffset}
+          min={0}
+          max={6}
+          step={1}
+          unit="px"
+          onChange={(v) => setScale("focusRingOffset", v)}
+        />
+        <ScaleControl
           label="--text-scale (multiplier)"
           value={state.textScale}
           min={0.85}
@@ -571,6 +589,8 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             setScale("size", SCALE_DEFAULTS.size);
             setScale("radius", SCALE_DEFAULTS.radius);
             setScale("borderWidth", SCALE_DEFAULTS.borderWidth);
+            setScale("focusRingWidth", SCALE_DEFAULTS.focusRingWidth);
+            setScale("focusRingOffset", SCALE_DEFAULTS.focusRingOffset);
             setScale("textScale", SCALE_DEFAULTS.textScale);
           }}
         >

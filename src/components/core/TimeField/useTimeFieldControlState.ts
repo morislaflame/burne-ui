@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState, type FocusEvent, type FormEvent
 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { useControllableState } from "@/components/core/utils/useControllableState";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
 import { timeFieldShellAria } from "./timeFieldA11y";
 import { formatTime, parseTime, segmentsForFormat, segValue, TIME_FIELD_SEG_MAX, withSeg } from "./timeFieldAPI";
@@ -31,6 +32,7 @@ export function useTimeFieldControlState({
 }: TimeFieldControlProps & {
   ref: React.Ref<HTMLFieldSetElement>;
 }) {
+  const timeLabel = useBurneLabel("time");
   const ctx = useOptionalTimeFieldContext();
   const size = sizeProp ?? ctx?.size ?? "base";
   const status = statusProp ?? ctx?.status ?? "default";
@@ -263,7 +265,11 @@ export function useTimeFieldControlState({
 
   const shellSurface = timeFieldShellSurfaceClass({ variant, status, statusTinted });
 
-  const shellAria = timeFieldShellAria({ labelConnected, labelId });
+  const shellAria = timeFieldShellAria({
+    labelConnected,
+    labelId,
+    timeLabel,
+  });
 
   const ariaDescribedBy = joinFieldDescribedBy(
     ctx?.hintConnected ? ctx.hintId : undefined,

@@ -1,22 +1,54 @@
-export const COLOR_PICKER_AREA_ARIA_LABEL = "Saturation and brightness";
+import { DEFAULT_BURNE_LABELS, formatBurneLabel, type BurneLabels } from "@/theme/burneLabels";
 
 export const COLOR_PICKER_AREA_KEYBOARD_STEP = 1;
 
 export const COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE = 10;
 
+export function colorPickerAreaAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.colorPickerArea,
+): string {
+  return label;
+}
+
 export function colorPickerAreaValueText(
   saturation: number,
   brightness: number,
+  template: string = DEFAULT_BURNE_LABELS.colorPickerAreaValue,
 ): string {
-  return `${saturation}% saturation, ${brightness}% brightness`;
+  return formatBurneLabel(template, { saturation, brightness });
 }
 
-export const COLOR_PICKER_CONTENT_ARIA_LABEL = "Color selection";
-
-export const COLOR_PICKER_HEX_INPUT_ARIA_LABEL = "Hex code of the color";
-
-export const COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL = "Transparency (%)";
-
-export function colorPickerTriggerAriaLabel(hex: string): string {
-  return `Selected color: ${hex}`;
+export function colorPickerContentAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.colorPickerContent,
+): string {
+  return label;
 }
+
+export function colorPickerHexInputAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.colorPickerHex,
+): string {
+  return label;
+}
+
+export function colorPickerAlphaInputAriaLabel(
+  label: string = DEFAULT_BURNE_LABELS.colorPickerAlpha,
+): string {
+  return label;
+}
+
+export function colorPickerTriggerAriaLabel(
+  hex: string,
+  template: string = DEFAULT_BURNE_LABELS.colorPickerSelected,
+): string {
+  return formatBurneLabel(template, { hex });
+}
+
+export type ColorPickerLabelSource = Pick<
+  BurneLabels,
+  | "colorPickerArea"
+  | "colorPickerAreaValue"
+  | "colorPickerContent"
+  | "colorPickerHex"
+  | "colorPickerAlpha"
+  | "colorPickerSelected"
+>;

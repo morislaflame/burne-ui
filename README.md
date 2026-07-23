@@ -67,6 +67,16 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 }
 ```
 
+Для русской локали дефолтных aria-строк:
+
+```tsx
+import { BurneUIProvider, BURNE_LABELS_RU } from "burne-ui";
+
+<BurneUIProvider config={burneTheme} labels={BURNE_LABELS_RU} defaultTheme="system">
+  {children}
+</BurneUIProvider>
+```
+
 Scaffold (`create-burne-app` / `burne-ui init`) уже кладёт `burne-theme.ts` с **`tokens`** (shared), **`colors.light` / `colors.dark`** и **`motion`**.
 
 Проектные CSS-переменные можно описать в том же конфиге. Они применяются Provider и автоматически

@@ -31,12 +31,12 @@ export const SELECT_TRIGGER_GROUP_BASE_CLASS =
   "relative z-0 flex min-w-0 items-stretch border-1 text-left overflow-hidden motion-reduce:transition-none";
 
 export const SELECT_VALUE_BASE_CLASS =
-  "min-w-0 flex-1 truncate bg-transparent text-left text-foreground outline-none focus-ring";
+  "min-w-0 flex-1 truncate bg-transparent text-left text-foreground outline-none";
 
 export const SELECT_VALUE_MUTED_CLASS = "text-muted";
 
 export const SELECT_TRIGGER_BASE_CLASS =
-  "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring";
+  "flex shrink-0 origin-center items-center justify-center self-stretch px-small outline-none text-muted hover:text-foreground focus-ring-inset";
 
 export const SELECT_TRIGGER_DISABLED_CLASS = "pointer-events-none";
 

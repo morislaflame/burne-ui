@@ -15,6 +15,7 @@ import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/c
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useControllableState } from "@/components/core/utils/useControllableState";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { useSearchInputAnimations } from "./searchInputAnimations";
 import {
@@ -51,6 +52,7 @@ export function useSearchInputRootState({
   classNames,
   forwardedRef,
 }: UseSearchInputRootStateProps) {
+  const labels = useBurneLabels();
   const layoutCtx = useOptionalButtonGroupLayout();
   const groupCtx = useOptionalButtonGroupSegment();
   const groupSegment = layoutCtx?.segmented
@@ -267,8 +269,8 @@ export function useSearchInputRootState({
     classNames,
     showClear,
     rootClass,
-    collapseA11yLabel: searchInputCollapseA11yLabel(ariaLabelProp),
-    inputAriaLabel: searchInputControlAriaLabel(ariaLabelProp, placeholder),
+    collapseA11yLabel: searchInputCollapseA11yLabel(ariaLabelProp, labels.openSearch),
+    inputAriaLabel: searchInputControlAriaLabel(ariaLabelProp, placeholder, labels.search),
     inputPaddingStyle: expanded
       ? {
           paddingLeft: paddingInputLeft,

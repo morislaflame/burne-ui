@@ -18,6 +18,7 @@ import {
   typeaheadMatchIndex,
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { selectActiveOptionId, selectTriggerAriaLabel } from "./selectA11y";
 import { runSelectOpenAfterSqueeze, useSelectOpeningRef } from "./selectAnimations";
@@ -399,6 +400,7 @@ SelectValue.displayName = "SelectValue";
 
 export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
   function SelectTrigger({ className, onPointerDown, children, ...rest }, ref) {
+    const labels = useBurneLabels();
     const slotClassNames = useSelectClassNames();
     const { open, setOpen, disabled, size, valueRef } = useSelectContext();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -435,7 +437,7 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         ref={setTriggerRef}
         tabIndex={-1}
         disabled={disabled}
-        aria-label={selectTriggerAriaLabel(open)}
+        aria-label={selectTriggerAriaLabel(open, labels)}
         className={selectTriggerClass({
           disabled,
           className,

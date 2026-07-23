@@ -84,7 +84,7 @@ export const TOOLTIP_GRID_GAP: Record<TooltipSize, string> = {
   large: "gap-x-plus gap-y-small",
 };
 
-export const TOOLTIP_TRIGGER_BASE_CLASS = "inline-flex shrink-0";
+export const TOOLTIP_TRIGGER_BASE_CLASS = "inline-flex shrink-0 outline-none focus-ring";
 
 export const TOOLTIP_INDICATOR_BASE_CLASS = "inline-flex shrink-0 [&_svg]:shrink-0";
 

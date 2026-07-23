@@ -1,3 +1,5 @@
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
+
 import { closeButtonAriaLabel } from "./closeButtonA11y";
 import { closeButtonRootClass, closeButtonVariantVisual } from "./closeButtonStyles";
 import type { UseCloseButtonRootStateProps } from "./closeButtonTypes";
@@ -13,6 +15,7 @@ export function useCloseButtonRootState({
   "aria-label": ariaLabel,
   classNames,
 }: UseCloseButtonRootStateProps) {
+  const closeLabel = useBurneLabel("close");
   const isDisabled = Boolean(disabled);
   const vn = closeButtonVariantVisual(variant);
 
@@ -31,7 +34,7 @@ export function useCloseButtonRootState({
     ripple,
     disabled: isDisabled,
     type,
-    ariaLabel: closeButtonAriaLabel(ariaLabel),
+    ariaLabel: closeButtonAriaLabel(ariaLabel, closeLabel),
     buttonClass,
     convergeRippleColor: vn.convergeBg,
     classNames,

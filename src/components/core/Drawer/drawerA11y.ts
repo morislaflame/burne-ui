@@ -1,17 +1,26 @@
+import { DEFAULT_BURNE_LABELS, type BurneLabels } from "@/theme/burneLabels";
+
 import type { DrawerPlacement } from "./drawerTypes";
 
-export const DRAWER_CLOSE_DEFAULT_ARIA_LABEL = "Close";
-
-export function drawerHandleAriaLabel(placement: DrawerPlacement): string {
+export function drawerHandleAriaLabel(
+  placement: DrawerPlacement,
+  labels: Pick<
+    BurneLabels,
+    | "drawerDragDownToClose"
+    | "drawerDragUpToClose"
+    | "drawerDragLeftToClose"
+    | "drawerDragRightToClose"
+  > = DEFAULT_BURNE_LABELS,
+): string {
   switch (placement) {
     case "bottom":
-      return "Drag down to close";
+      return labels.drawerDragDownToClose;
     case "top":
-      return "Drag up to close";
+      return labels.drawerDragUpToClose;
     case "left":
-      return "Drag left to close";
+      return labels.drawerDragLeftToClose;
     case "right":
-      return "Drag right to close";
+      return labels.drawerDragRightToClose;
   }
 }
 

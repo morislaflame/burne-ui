@@ -7,7 +7,9 @@ import { Label, type LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
 
-import { TEXTAREA_RESIZE_HANDLE_ARIA_LABEL } from "./textAreaA11y";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
+
+import { textAreaResizeHandleAriaLabel } from "./textAreaA11y";
 
 import { useTextAreaShellMotion } from "./textAreaAnimations";
 import { useOptionalTextAreaFieldContext, useTextAreaClassNames, useTextAreaFieldContext } from "./textAreaContext";
@@ -35,18 +37,22 @@ function TextAreaResizeHandle({
   disabled,
   className,
   onPointerDown,
+  onKeyDown,
 }: {
   disabled?: boolean;
   className?: string;
   onPointerDown: PointerEventHandler<HTMLButtonElement>;
+  onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 }) {
+  const resizeLabel = textAreaResizeHandleAriaLabel(useBurneLabel("resizeHeight"));
   return (
     <button
       type="button"
       data-textarea-resize-handle
-      aria-label={TEXTAREA_RESIZE_HANDLE_ARIA_LABEL}
+      aria-label={resizeLabel}
       disabled={disabled}
       onPointerDown={onPointerDown}
+      onKeyDown={onKeyDown}
       className={textareaResizeHandleClass({ disabled, slotClass: className })}
     >
       <TextAreaResizeGrip />
@@ -117,7 +123,12 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
       onPointerDown,
     });
 
-    const { onResizePointerDown } = useTextAreaResize(shellRef, resizable, blocked, size);
+    const { onResizePointerDown, onResizeKeyDown } = useTextAreaResize(
+      shellRef,
+      resizable,
+      blocked,
+      size,
+    );
 
     return (
       <div
@@ -162,6 +173,7 @@ export const TextAreaControl = forwardRef<HTMLTextAreaElement, TextAreaControlPr
             disabled={blocked}
             className={slotClassNames.resizeHandle}
             onPointerDown={onResizePointerDown}
+            onKeyDown={onResizeKeyDown}
           />
         ) : null}
       </div>

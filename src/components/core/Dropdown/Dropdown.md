@@ -382,6 +382,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 - Keyboard navigation в открытом menu (включая submenu: ArrowRight открыть, ArrowLeft/Escape закрыть)
 - Typeahead по первым буквам (буфер ~500ms) в menu и submenu
 - Закрытие (Escape, выбор пункта, outside click) всегда возвращает focus на trigger
+- **`asChild`:** child должен быть фокусируемым (`Button` / `Link` / `<button>`). Нефокусируемый child не попадёт в Tab sequence — не используйте Avatar/иконку без `tabIndex` как единственный trigger.
 
 ## Структура файлов
 

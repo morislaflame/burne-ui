@@ -8,6 +8,7 @@
  * - `--radius` — base radius; `rounded-*` steps via multipliers; fluid `clamp` by viewport.
  * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large`.
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
+ * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).
  * - `--text-scale-*` — primitive typography (`xsmall` … `3xlarge`, base step `base`); roles `text-base`, `text-large` are aliases.
  * - `--font-w-*` — primitive font-weight scale;
  */

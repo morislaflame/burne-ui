@@ -1,7 +1,9 @@
 import type { ComponentType } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 
+import { Button } from "@/components/core/Button";
 import { Skeleton } from ".";
 
 const framedDecorator = [
@@ -24,7 +26,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Loading placeholder component. **Four animations**: `pulse` (blink), `wave` (sliding bar), `shimmer` (gradient), `none` (no animation). Composition: `<Skeleton>` — arbitrary block, `<Skeleton.Circle>` — circle, `<Skeleton.Text>` — text lines, `<Skeleton.Block>` — card.",
+          "Loading placeholder component. **Four animations**: `pulse` (blink), `wave` (sliding bar), `shimmer` (gradient), `none` (no animation). Composition: `<Skeleton>` — arbitrary block, `<Skeleton.Circle>` — circle, `<Skeleton.Text>` — text lines, `<Skeleton.Block>` — card, `<Skeleton.Region>` — parent with `aria-busy`.",
       },
     },
   },
@@ -97,8 +99,11 @@ export const CardLayout: Story = {
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <p className="text-small text-muted">{variant}</p>
-          <div className="flex flex-col gap-plus rounded-mid border-token p-plus">
-            {/* avatar + name row */}
+          <Skeleton.Region
+            busy
+            aria-label="Loading card"
+            className="flex flex-col gap-plus rounded-mid border-token p-plus"
+          >
             <div className="flex items-center gap-plus">
               <Skeleton.Circle animation={variant} size="h-10 w-10" />
               <div className="flex flex-1 flex-col gap-xsmall">
@@ -106,16 +111,13 @@ export const CardLayout: Story = {
                 <Skeleton animation={variant} className="h-3 w-20 rounded-full" />
               </div>
             </div>
-            {/* cover image */}
             <Skeleton animation={variant} className="h-40 w-full rounded-small" />
-            {/* text lines */}
             <Skeleton.Text animation={variant} lines={2} />
-            {/* action row */}
             <div className="flex gap-small">
               <Skeleton animation={variant} className="h-control-base w-20 rounded-small" />
               <Skeleton animation={variant} className="h-control-base w-20 rounded-small" />
             </div>
-          </div>
+          </Skeleton.Region>
         </div>
       ))}
     </div>
@@ -127,7 +129,7 @@ export const CardLayout: Story = {
 export const ListLayout: Story = {
   name: "List",
   render: () => (
-    <div className="flex w-full max-w-sm flex-col gap-xsmall">
+    <Skeleton.Region busy aria-label="Loading list" className="flex w-full max-w-sm flex-col gap-xsmall">
       {Array.from({ length: 5 }, (_, i) => (
         <div key={i} className="flex items-center gap-plus py-small">
           <Skeleton.Circle animation="wave" size="h-9 w-9" />
@@ -145,7 +147,7 @@ export const ListLayout: Story = {
           </div>
         </div>
       ))}
-    </div>
+    </Skeleton.Region>
   ),
 };
 
@@ -160,6 +162,48 @@ export const BlockSkeleton: Story = {
       ))}
     </div>
   ),
+};
+
+// ─── Region (aria-busy) ───────────────────────────────────────────────────────
+
+export const LoadingRegion: Story = {
+  name: "Skeleton.Region (aria-busy)",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Wrap placeholders in `Skeleton.Region` so the parent announces `aria-busy` / `aria-live`. Decorative skeletons stay `aria-hidden`.",
+      },
+    },
+  },
+  render: function LoadingRegionStory() {
+    const [busy, setBusy] = useState(true);
+    return (
+      <div className="flex w-full max-w-sm flex-col gap-mid">
+        <Button size="small" onClick={() => setBusy((v) => !v)}>
+          {busy ? "Show content" : "Show skeleton"}
+        </Button>
+        <Skeleton.Region busy={busy} aria-label="Profile">
+          {busy ? (
+            <div className="flex gap-mid">
+              <Skeleton.Circle size="h-12 w-12" animation="shimmer" />
+              <div className="flex min-w-0 flex-1 flex-col gap-small">
+                <Skeleton className="h-4 w-32 rounded-small" animation="shimmer" />
+                <Skeleton.Text lines={2} animation="shimmer" />
+              </div>
+            </div>
+          ) : (
+            <p className="text-base text-foreground">Alex Rivera — product designer</p>
+          )}
+        </Skeleton.Region>
+      </div>
+    );
+  },
+  play: async ({ canvas }) => {
+    const region = canvas.getByLabelText("Profile");
+    await expect(region).toHaveAttribute("aria-busy", "true");
+    await expect(region).toHaveAttribute("aria-live", "polite");
+  },
 };
 
 // ─── Sizes ────────────────────────────────────────────────────────────────────

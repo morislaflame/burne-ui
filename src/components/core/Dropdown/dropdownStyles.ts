@@ -13,7 +13,7 @@ import { cn } from "@/utils/cn";
 
 export const DROPDOWN_ROOT_CLASS = "relative inline-flex";
 
-export const DROPDOWN_TRIGGER_CLASS = "inline-flex";
+export const DROPDOWN_TRIGGER_CLASS = "inline-flex outline-none focus-ring";
 
 export const DROPDOWN_POPOVER_CLASS = "z-[100]";
 

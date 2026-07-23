@@ -6,8 +6,6 @@ import { Text } from "@/components/core/Text";
 import { messageBannerActionCellClass, messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIcons";
 
-import { TOAST_CLOSE_ARIA_LABEL } from "./toastA11y";
-
 import { useToastClassNames, useToastItem } from "./toastContext";
 import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, TOAST_TITLE_CLASS, toastIndicatorClass, toastLoadingColor } from "./toastStyles";
 import type {
@@ -190,7 +188,7 @@ ToastAction.displayName = "ToastAction";
 
 export const ToastClose = forwardRef<HTMLButtonElement, ToastCloseProps>(
   function ToastClose(
-    { className, onClick, "aria-label": ariaLabel = TOAST_CLOSE_ARIA_LABEL, ...rest },
+    { className, onClick, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
     const { dismiss, gridSlots } = useToastItem();

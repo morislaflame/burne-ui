@@ -9,10 +9,9 @@ import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs"
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
-import { DIALOG_CLOSE_DEFAULT_ARIA_LABEL } from "./dialogA11y";
 import { useDialogModalMotion } from "./dialogAnimations";
 import { useDialog, useDialogClassNames } from "./dialogContext";
-import { DIALOG_CLOSE_CLASS, DIALOG_FOOTER_CLASS, DIALOG_GLOSS_CONTENT_CLASS, DIALOG_HEADER_CLASS, DIALOG_HEADING_BLOCK_CLASS, DIALOG_TITLE_CLASS, dialogBodyClass, dialogContentClass, dialogGlossPanelClass, dialogNativeClass, dialogOverlayClass, dialogOverlayEnterStyle, dialogPanelClass } from "./dialogStyles";
+import { DIALOG_CLOSE_CLASS, DIALOG_FOOTER_CLASS, DIALOG_GLOSS_CONTENT_CLASS, DIALOG_HEADER_CLASS, DIALOG_HEADING_BLOCK_CLASS, DIALOG_TITLE_CLASS, DIALOG_TRIGGER_BASE_CLASS, dialogBodyClass, dialogContentClass, dialogGlossPanelClass, dialogNativeClass, dialogOverlayClass, dialogOverlayEnterStyle, dialogPanelClass } from "./dialogStyles";
 import type {
   DialogBodyProps,
   DialogCloseProps,
@@ -157,7 +156,7 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
     {
       className,
       onClick,
-      "aria-label": ariaLabel = DIALOG_CLOSE_DEFAULT_ARIA_LABEL,
+      "aria-label": ariaLabel,
       ...rest
     },
     ref,
@@ -285,7 +284,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
             child,
             {
               ...rest,
-              className: cn(slotClassNames.trigger, className),
+              className: cn(DIALOG_TRIGGER_BASE_CLASS, slotClassNames.trigger, className),
               // Host runs before child so e.preventDefault() suppresses Button animation
               onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
                 handlePointerDown(e);
@@ -310,7 +309,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         ref={setRefs}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={cn(slotClassNames.trigger, className)}
+        className={cn(DIALOG_TRIGGER_BASE_CLASS, slotClassNames.trigger, className)}
         onPointerDown={(e) => {
           onPointerDown?.(e);
           handlePointerDown(e);

@@ -153,6 +153,7 @@ configureMotion({
 | Shell squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | — |
 | Gloss shell | `useGlossFieldShellMotion` | interactive | variant=gloss |
 | Drag resize | `useTextAreaResize` | — | `MAX_HEIGHT_PX=640` |
+| Keyboard resize | ArrowUp/Down (±16px), Home/End | — | focus on resize handle |
 | Content growth | CSS `field-sizing: content` | — | — |
 
 ## Стилизация и кастомизация
@@ -241,7 +242,7 @@ configureMotion({
 ## Доступность
 
 - `aria-describedby` через hint/error ids
-- Resize handle: `aria-label` («Изменить высоту»)
+- Resize handle: `aria-label` («Изменить высоту»); ArrowUp/Down (±16px), Home/End при фокусе на handle
 - `aria-invalid`, `aria-required` как у Input
 
 ## Структура файлов
@@ -253,7 +254,7 @@ TextArea/
 ├── textAreaTypes.ts
 ├── textAreaStyles.ts
 ├── textAreaAnimations.ts    # useTextAreaShellMotion
-├── useTextAreaResize.ts     # pointer resize
+├── useTextAreaResize.ts     # pointer + keyboard resize
 ├── textAreaParts.tsx
 ├── useTextAreaRootState.ts
 └── TextArea.stories.tsx

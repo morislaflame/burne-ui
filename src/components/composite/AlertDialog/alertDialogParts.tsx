@@ -14,7 +14,7 @@ import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alert
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
 import { useAlertDialogModalMotion } from "./alertDialogAnimations";
 import { AlertDialogHeaderProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useOptionalAlertDialogHeaderContext } from "./alertDialogContext";
-import { ALERT_DIALOG_CLOSE_CLASS, ALERT_DIALOG_FOOTER_CLASS, ALERT_DIALOG_GLOSS_CONTENT_CLASS, ALERT_DIALOG_HEADER_CLASS, alertDialogHeaderIconWrapperClass, ALERT_DIALOG_HEADING_BLOCK_CLASS, ALERT_DIALOG_TITLE_CLASS, ALERT_DIALOG_INDICATOR_CLASS, alertDialogBodyClass, alertDialogContentClass, alertDialogGlossPanelClass, alertDialogNativeClass, alertDialogOverlayClass, alertDialogOverlayEnterStyle, alertDialogPanelClass } from "./alertDialogStyles";
+import { ALERT_DIALOG_CLOSE_CLASS, ALERT_DIALOG_FOOTER_CLASS, ALERT_DIALOG_GLOSS_CONTENT_CLASS, ALERT_DIALOG_HEADER_CLASS, alertDialogHeaderIconWrapperClass, ALERT_DIALOG_HEADING_BLOCK_CLASS, ALERT_DIALOG_TITLE_CLASS, ALERT_DIALOG_INDICATOR_CLASS, ALERT_DIALOG_TRIGGER_BASE_CLASS, alertDialogBodyClass, alertDialogContentClass, alertDialogGlossPanelClass, alertDialogNativeClass, alertDialogOverlayClass, alertDialogOverlayEnterStyle, alertDialogPanelClass } from "./alertDialogStyles";
 import type {
   AlertDialogBodyProps,
   AlertDialogCloseProps,
@@ -343,7 +343,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
             child,
             {
               ...rest,
-              className: cn(slotClassNames.trigger, className),
+              className: cn(ALERT_DIALOG_TRIGGER_BASE_CLASS, slotClassNames.trigger, className),
               onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
                 handlePointerDown(e);
                 onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
@@ -367,7 +367,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
         type="button"
         ref={setRefs}
         {...triggerA11y}
-        className={cn(slotClassNames.trigger, className)}
+        className={cn(ALERT_DIALOG_TRIGGER_BASE_CLASS, slotClassNames.trigger, className)}
         onPointerDown={(e) => {
           onPointerDown?.(e);
           handlePointerDown(e);

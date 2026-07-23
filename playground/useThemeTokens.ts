@@ -37,7 +37,7 @@ function useThemeTokensState() {
     setState((prev) => applyThemeModeToState(prev, theme));
   }, []);
 
-  const setScale = useCallback((key: "space" | "size" | "radius" | "textScale" | "borderWidth", value: number) => {
+  const setScale = useCallback((key: "space" | "size" | "radius" | "textScale" | "borderWidth" | "focusRingWidth" | "focusRingOffset", value: number) => {
     setState((prev) => ({ ...prev, [key]: value }));
   }, []);
 

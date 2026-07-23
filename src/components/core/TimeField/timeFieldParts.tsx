@@ -6,9 +6,10 @@ import { Label, type LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
 
-import { timeFieldHintStatus, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
-
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
+
+import { timeFieldHintStatus, timeFieldSegLabel, timeFieldSegSpinbuttonA11y } from "./timeFieldA11y";
 import { useTimeFieldClassNames, useTimeFieldContext } from "./timeFieldContext";
 import { TIME_FIELD_KEYBOARD_INPUT_CLASS, timeFieldAffixSlotClass, timeFieldSegmentClass, timeFieldSegmentGroupClass, timeFieldSegmentSeparatorClass, timeFieldSegmentsClass, timeFieldShellClass, timeFieldShellInnerClass } from "./timeFieldStyles";
 import type {
@@ -63,6 +64,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
       onPointerLeave,
       ...rest
     } = props;
+    const labels = useBurneLabels();
     const slotClassNames = useTimeFieldClassNames();
     const state = useTimeFieldControlState({
       value,
@@ -180,6 +182,7 @@ export const TimeFieldControl = forwardRef<HTMLFieldSetElement, TimeFieldControl
                   isDanger: state.status === "danger",
                   isFirstSegment: seg === state.segments[0],
                   disabled: state.disabled,
+                  segLabel: timeFieldSegLabel(seg, labels),
                 })}
                 className={timeFieldSegmentClass({
                   variant: state.variant,

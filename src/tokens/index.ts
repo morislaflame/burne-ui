@@ -23,6 +23,8 @@ export {
 /** CSS variable names for type-safe access and generators */
 export const designTokenNames = [
   "--border-width",
+  "--focus-ring-width",
+  "--focus-ring-offset",
   "--color-background",
   "--color-surface",
   "--color-border",

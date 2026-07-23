@@ -102,8 +102,10 @@ export const DRAWER_FOOTER_CLASS =
 
 export const DRAWER_CLOSE_CLASS = "shrink-0";
 
+export const DRAWER_TRIGGER_BASE_CLASS = "outline-none focus-ring";
+
 export const DRAWER_HANDLE_BASE_CLASS =
-  "flex touch-none select-none shrink-0 items-center justify-center cursor-grab active:cursor-grabbing box-content";
+  "flex touch-none select-none shrink-0 items-center justify-center cursor-grab active:cursor-grabbing box-content outline-none focus-ring";
 
 export const DRAWER_HANDLE_GRIP_HORIZONTAL_CLASS = "h-1 w-10";
 

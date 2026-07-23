@@ -3,6 +3,7 @@ import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hove
 import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion, MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
 import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { TOAST_ENTRY_OFFSET_PX, TOAST_MAX_VISIBLE, TOAST_STACK_PEEK_PX, TOAST_STACK_SCALE_STEP } from "./toastAPI";
@@ -230,6 +231,7 @@ export function ToastViewport({
   defaultSize = "base",
 }: ToastViewportProps) {
   const isTop = placement.startsWith("top");
+  const toastNotificationsLabel = useBurneLabel("toastNotifications");
   const [heights, setHeights] = useState<Map<string, number>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
@@ -301,7 +303,7 @@ export function ToastViewport({
   return (
     <div
       role="region"
-      aria-label={toastViewportAriaLabel(placement)}
+      aria-label={toastViewportAriaLabel(placement, toastNotificationsLabel)}
       className={toastViewportClass({ placement, slotClass: classNames?.viewport })}
       style={{ width: toastViewportWidthPx(sorted, defaultSize) }}
     >

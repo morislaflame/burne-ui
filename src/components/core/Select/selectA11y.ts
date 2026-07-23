@@ -1,4 +1,5 @@
 import { fieldErrorId, fieldHintId } from "@/components/core/Field/fieldA11y";
+import { DEFAULT_BURNE_LABELS } from "@/theme/burneLabels";
 
 export function selectLabelId(selectId: string): string {
   return `${selectId}-label`;
@@ -25,6 +26,12 @@ export function selectActiveOptionId(
   return open && activeValue ? `${listId}-opt-${activeValue}` : undefined;
 }
 
-export function selectTriggerAriaLabel(open: boolean): string {
-  return open ? "Close list" : "Open list";
+export function selectTriggerAriaLabel(
+  open: boolean,
+  labels: { openList: string; closeList: string } = {
+    openList: DEFAULT_BURNE_LABELS.openList,
+    closeList: DEFAULT_BURNE_LABELS.closeList,
+  },
+): string {
+  return open ? labels.closeList : labels.openList;
 }

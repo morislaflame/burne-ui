@@ -13,6 +13,7 @@ import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteracti
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { comboBoxTriggerAriaLabel } from "./comboBoxA11y";
 import { runComboBoxOpenAfterSqueeze, useComboBoxOpeningRef } from "./comboBoxAnimations";
@@ -211,6 +212,7 @@ ComboBoxInput.displayName = "ComboBoxInput";
 
 export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProps>(
   function ComboBoxTrigger({ className, onPointerDown, children, ...rest }, ref) {
+    const labels = useBurneLabels();
     const slotClassNames = useComboBoxClassNames();
     const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -247,7 +249,7 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         ref={setTriggerRef}
         tabIndex={-1}
         disabled={disabled}
-        aria-label={comboBoxTriggerAriaLabel(open)}
+        aria-label={comboBoxTriggerAriaLabel(open, labels)}
         className={comboBoxTriggerClass({
           disabled,
           className,

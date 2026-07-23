@@ -9,13 +9,14 @@ import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import {
-  COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL,
-  COLOR_PICKER_AREA_ARIA_LABEL,
-  COLOR_PICKER_CONTENT_ARIA_LABEL,
-  COLOR_PICKER_HEX_INPUT_ARIA_LABEL,
+  colorPickerAlphaInputAriaLabel,
+  colorPickerAreaAriaLabel,
   colorPickerAreaValueText,
+  colorPickerContentAriaLabel,
+  colorPickerHexInputAriaLabel,
   colorPickerTriggerAriaLabel,
 } from "./colorPickerA11y";
 import { useColorPickerAreaDrag } from "./colorPickerAnimations";
@@ -52,6 +53,7 @@ import { cn } from "@/utils/cn";
 
 export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
   function ColorPickerArea({ className, onPointerDown, style, ...rest }, ref) {
+    const labels = useBurneLabels();
     const { hsva, setHsva, size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
     const { areaRef, thumbRef, handlePointerDown, handleThumbKeyDown } =
@@ -91,11 +93,15 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
           type="button"
           role="slider"
           tabIndex={0}
-          aria-label={COLOR_PICKER_AREA_ARIA_LABEL}
+          aria-label={colorPickerAreaAriaLabel(labels.colorPickerArea)}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={hsva.s}
-          aria-valuetext={colorPickerAreaValueText(hsva.s, hsva.v)}
+          aria-valuetext={colorPickerAreaValueText(
+            hsva.s,
+            hsva.v,
+            labels.colorPickerAreaValue,
+          )}
           className={cn(
             COLOR_PICKER_AREA_THUMB_CLASS,
             slotClassNames.areaThumb,
@@ -122,6 +128,7 @@ ColorPickerArea.displayName = "ColorPicker.Area";
 
 export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInputProps>(
   function ColorPickerHexInput({ className, ...rest }, ref) {
+    const labels = useBurneLabels();
     const { hex, setHsva } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
     const [isEditing, setIsEditing] = useState(false);
@@ -161,7 +168,7 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
           value={displayValue}
           maxLength={8}
           spellCheck={false}
-          aria-label={COLOR_PICKER_HEX_INPUT_ARIA_LABEL}
+          aria-label={colorPickerHexInputAriaLabel(labels.colorPickerHex)}
           className={cn(
             COLOR_PICKER_HEX_FIELD_CLASS,
             slotClassNames.hexInputField,
@@ -194,6 +201,7 @@ ColorPickerHexInput.displayName = "ColorPicker.HexInput";
 
 export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlphaInputProps>(
   function ColorPickerAlphaInput({ className, ...rest }, ref) {
+    const labels = useBurneLabels();
     const { hsva, setHsva } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
 
@@ -210,7 +218,7 @@ export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlpha
         <input
           type="text"
           value={Math.round(hsva.a)}
-          aria-label={COLOR_PICKER_ALPHA_INPUT_ARIA_LABEL}
+          aria-label={colorPickerAlphaInputAriaLabel(labels.colorPickerAlpha)}
           className={cn(
             COLOR_PICKER_ALPHA_FIELD_CLASS,
             slotClassNames.alphaInputField,
@@ -350,6 +358,7 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
     { swatchSize, className, children, asChild, ...rest },
     ref,
   ) {
+    const labels = useBurneLabels();
     const { hex, disabled, size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
 
@@ -366,7 +375,7 @@ export const ColorPickerTrigger = forwardRef<HTMLButtonElement, ColorPickerTrigg
             size={swatchSize ?? COLOR_PICKER_SWATCH_SIZE_MAP[size]}
             shape="rounded"
             disabled={disabled}
-            aria-label={colorPickerTriggerAriaLabel(hex)}
+            aria-label={colorPickerTriggerAriaLabel(hex, labels.colorPickerSelected)}
           />
         )}
       </Popover.Trigger>
@@ -381,6 +390,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
     { showAlpha = false, presets, className, children, ...rest },
     ref,
   ) {
+    const labels = useBurneLabels();
     const { size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
 
@@ -390,7 +400,7 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
         unstyled
         offset={POPOVER_DEFAULT_OFFSET}
         align="start"
-        aria-label={COLOR_PICKER_CONTENT_ARIA_LABEL}
+        aria-label={colorPickerContentAriaLabel(labels.colorPickerContent)}
         className={cn(slotClassNames.content, className)}
         {...rest}
       >

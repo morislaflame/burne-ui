@@ -39,7 +39,7 @@ export const TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS =
 export const TEXTAREA_RESIZE_GRIP_WRAP_CLASS = "relative block size-3 shrink-0";
 
 export const TEXTAREA_RESIZE_HANDLE_BASE_CLASS =
-  "absolute bottom-0 right-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end p-xsmall";
+  "absolute bottom-0 right-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end p-xsmall outline-none focus-ring-inset";
 
 export const TEXTAREA_RESIZE_HANDLE_DISABLED_CLASS = "cursor-not-allowed opacity-45";
 

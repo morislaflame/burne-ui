@@ -156,7 +156,25 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 - **ThemeProvider** — `data-theme` (`light` | `dark` | `system`), опционально `localStorage`
 - **токены** — shared `config.tokens` + цвета `config.colors.light` / `colors.dark` (или проп `tokens`)
 - **motion** — `configureMotion` из `config.motion`
+- **labels** — дефолтные accessible / UI-строки (`Close`, `Search`, Pagination…); проп `labels` или `config.labels`
 - **Toast.Provider** — по умолчанию включён (`toast={false}` чтобы отключить)
+
+Локализация дефолтных aria-строк:
+
+```tsx
+import { BurneUIProvider, BURNE_LABELS_RU } from "burne-ui";
+
+<BurneUIProvider config={burneTheme} labels={BURNE_LABELS_RU}>
+  {children}
+</BurneUIProvider>
+
+// или точечно:
+<BurneUIProvider labels={{ close: "Закрыть", openSearch: "Открыть поиск" }}>
+  {children}
+</BurneUIProvider>
+```
+
+Пресет `BURNE_LABELS_RU`, словарь `DEFAULT_BURNE_LABELS`, хуки `useBurneLabels` / `useBurneLabel`. Явный `aria-label` на компоненте всегда побеждает дефолт.
 
 Только тема без тостов/токенов:
 

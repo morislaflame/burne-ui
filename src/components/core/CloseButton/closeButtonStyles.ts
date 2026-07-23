@@ -9,7 +9,6 @@ import { INTERACTIVE_VARIANT_ROOT } from "@/components/core/Button/buttonStyles"
 import type { CloseButtonSize, CloseButtonVariant } from "./closeButtonTypes";
 
 type VariantVisual = {
-  focusOutline: string;
   convergeBg: string;
 };
 
@@ -32,27 +31,21 @@ const CLOSE_BUTTON_HOVER_VARIANT: Record<CloseButtonVariant, HoverVariant> = {
 
 const CLOSE_BUTTON_VARIANT: Record<CloseButtonVariant, VariantVisual> = {
   default: {
-    focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   primary: {
-    focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-primary-fill"),
   },
   outline: {
-    focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   secondary: {
-    focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   ghost: {
-    focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
   gloss: {
-    focusOutline: "focus-visible:outline-primary",
     convergeBg: colorToken("converge-ripple-neutral"),
   },
 };
@@ -80,7 +73,7 @@ const CLOSE_BUTTON_SIZE: Record<
 };
 
 export const CLOSE_BUTTON_ROOT_BASE_CLASS =
-  "relative z-0 flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none overflow-hidden";
+  "relative z-0 flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none focus-ring overflow-hidden";
 
 export const CLOSE_BUTTON_DISABLED_CLASS = "cursor-not-allowed opacity-50";
 
@@ -107,7 +100,6 @@ export function closeButtonRootClass({
   slotRoot?: string;
 }): string {
   const isGloss = variant === "gloss";
-  const vn = CLOSE_BUTTON_VARIANT[variant];
   const sizeClasses = CLOSE_BUTTON_SIZE[size];
 
   return cn(
@@ -117,7 +109,6 @@ export function closeButtonRootClass({
       : SHADOW_LIFT_MOTION_CLASS,
     !disabled && !isGloss && hoverVariant(CLOSE_BUTTON_HOVER_VARIANT[variant]),
     !isGloss && INTERACTIVE_VARIANT_ROOT[variant],
-    vn.focusOutline,
     sizeClasses.root,
     disabled && CLOSE_BUTTON_DISABLED_CLASS,
     className,

@@ -9,6 +9,8 @@ export const SCALE_TOKEN_LABELS = {
   size: "Control size",
   radius: "Radius",
   borderWidth: "Border width",
+  focusRingWidth: "Focus ring width",
+  focusRingOffset: "Focus ring offset",
   textScale: "Type scale",
   shadowStrength: "Shadow intensity",
   shadowSize: "Shadow blur scale",

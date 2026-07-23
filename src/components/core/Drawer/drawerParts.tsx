@@ -8,16 +8,16 @@ import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import {
   drawerHandleAriaLabel,
-  DRAWER_CLOSE_DEFAULT_ARIA_LABEL,
   isDrawerHandleActivateKey,
 } from "./drawerA11y";
 import { partitionDrawerChildren } from "./drawerAPI";
 import { useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerProvider, useDrawer, useDrawerClassNames } from "./drawerContext";
-import { DRAWER_CLOSE_CLASS, DRAWER_DESCRIPTION_CLASS, DRAWER_FOOTER_CLASS, DRAWER_FOOTER_PADDING, DRAWER_HEADER_CLASS, DRAWER_HEADER_PADDING, DRAWER_HEADING_BLOCK_CLASS, DRAWER_TITLE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
+import { DRAWER_CLOSE_CLASS, DRAWER_DESCRIPTION_CLASS, DRAWER_FOOTER_CLASS, DRAWER_FOOTER_PADDING, DRAWER_HEADER_CLASS, DRAWER_HEADER_PADDING, DRAWER_HEADING_BLOCK_CLASS, DRAWER_TITLE_CLASS, DRAWER_TRIGGER_BASE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
 import type {
   DrawerBackdropProps,
   DrawerBodyProps,
@@ -102,6 +102,7 @@ export function DrawerHandleInner({
     skipCloseAnimRef,
   } = useDrawer();
   const slotClassNames = useDrawerClassNames();
+  const labels = useBurneLabels();
   const close = () => onOpenChange(false);
   const { onPointerDown: dragPD } = useDrawerHandleDrag(
     panelRef,
@@ -116,7 +117,7 @@ export function DrawerHandleInner({
     <div
       role="button"
       tabIndex={0}
-      aria-label={drawerHandleAriaLabel(placement)}
+      aria-label={drawerHandleAriaLabel(placement, labels)}
       className={drawerHandleClass({
         placement,
         slotClass: slotClassNames.handle,
@@ -253,7 +254,7 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
     {
       className,
       onClick,
-      "aria-label": ariaLabel = DRAWER_CLOSE_DEFAULT_ARIA_LABEL,
+      "aria-label": ariaLabel,
       ...rest
     },
     ref,
@@ -370,7 +371,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
             child,
             {
               ...rest,
-              className: cn(slotClassNames.trigger, className),
+              className: cn(DRAWER_TRIGGER_BASE_CLASS, slotClassNames.trigger, className),
               onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
                 handlePointerDown(e);
                 onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
@@ -394,7 +395,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
         ref={setRefs}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={cn(slotClassNames.trigger, className)}
+        className={cn(DRAWER_TRIGGER_BASE_CLASS, slotClassNames.trigger, className)}
         onPointerDown={(e) => {
           onPointerDown?.(e);
           handlePointerDown(e);

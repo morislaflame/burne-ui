@@ -20,10 +20,12 @@
   --color-primary-foreground: #0c0c0e;
 
   /**
-   * FOCUS RING — outline color on focus (focus-ring, focus-ring-inset utilities).
-   * Defaults to === primary; can be overridden independently.
+   * FOCUS RING — color / width / offset for focus-ring, focus-within-ring, focus-ring-inset.
+   * Color defaults to === primary; can be overridden independently.
    */
   --color-focus-ring: var(--color-primary);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 0px;
 
   /**
    * INDICATOR — fill inside selection indicators (Radio, Checkbox, Switch, Slider track,
@@ -517,6 +519,7 @@
    * the already computed dark-theme value is inherited (nested data-theme).
    */
   --color-focus-ring: var(--color-primary);
+  /* width / offset are mode-independent; kept on :root only */
   --color-indicator: var(--color-primary);
   --color-indicator-foreground: var(--color-primary-foreground);
 

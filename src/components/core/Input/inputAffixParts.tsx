@@ -1,7 +1,13 @@
 import type { MouseEvent, ReactNode } from "react";
 import { IoClose, IoEye, IoEyeOff, IoFolderOpen } from "react-icons/io5";
 
-import { INPUT_PASSWORD_HIDE_ARIA_LABEL, INPUT_PASSWORD_SHOW_ARIA_LABEL, INPUT_FILE_REMOVE_ARIA_LABEL } from "./inputA11y";
+import { useBurneLabel, useBurneLabels } from "@/theme/BurneLabelsProvider";
+
+import {
+  inputFileRemoveAriaLabel,
+  inputPasswordHideAriaLabel,
+  inputPasswordShowAriaLabel,
+} from "./inputA11y";
 import { useInputClassNames } from "./inputContext";
 import {
   INPUT_FILE_GLYPH_ICON_CLASS,
@@ -59,6 +65,7 @@ export function PasswordVisibilityAffix({
   disabled?: boolean;
   onToggle: () => void;
 }) {
+  const labels = useBurneLabels();
   const slotClassNames = useInputClassNames();
   const pwd = INPUT_PASSWORD_TOGGLE_CONTROL[controlSize];
 
@@ -72,7 +79,11 @@ export function PasswordVisibilityAffix({
       <button
         type="button"
         disabled={disabled}
-        aria-label={visible ? INPUT_PASSWORD_HIDE_ARIA_LABEL : INPUT_PASSWORD_SHOW_ARIA_LABEL}
+        aria-label={
+          visible
+            ? inputPasswordHideAriaLabel(labels.hidePassword)
+            : inputPasswordShowAriaLabel(labels.showPassword)
+        }
         aria-pressed={visible}
         onClick={(e) => {
           e.preventDefault();
@@ -120,14 +131,15 @@ export function FileRemoveButton({
   disabled?: boolean;
   onRemove: (e: MouseEvent<HTMLButtonElement>) => void;
 }) {
+  const removeLabel = inputFileRemoveAriaLabel(useBurneLabel("removeFile"));
   const slotClassNames = useInputClassNames();
 
   return (
     <button
       type="button"
       disabled={disabled}
-      title={INPUT_FILE_REMOVE_ARIA_LABEL}
-      aria-label={INPUT_FILE_REMOVE_ARIA_LABEL}
+      title={removeLabel}
+      aria-label={removeLabel}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

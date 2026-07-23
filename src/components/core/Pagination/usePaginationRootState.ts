@@ -1,8 +1,9 @@
 import { useCallback, useMemo } from "react";
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
+import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
-import { PAGINATION_DEFAULT_ARIA_LABEL } from "./paginationA11y";
+import { resolvePaginationAriaLabel } from "./paginationA11y";
 import type {
   PaginationContextValue,
   UsePaginationRootStateProps,
@@ -14,8 +15,9 @@ export function usePaginationRootState({
   totalPages,
   onPageChange,
   siblingCount = 1,
-  "aria-label": ariaLabel = PAGINATION_DEFAULT_ARIA_LABEL,
+  "aria-label": ariaLabel,
 }: UsePaginationRootStateProps & { "aria-label"?: string }) {
+  const paginationLabel = useBurneLabel("pagination");
   const [page, setPageRaw] = useControllableState<number | undefined>({
     value: pageProp,
     defaultValue: defaultPage,
@@ -45,6 +47,6 @@ export function usePaginationRootState({
 
   return {
     contextValue,
-    ariaLabel,
+    ariaLabel: resolvePaginationAriaLabel(ariaLabel, paginationLabel),
   };
 }

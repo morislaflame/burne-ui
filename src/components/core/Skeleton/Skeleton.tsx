@@ -1,7 +1,13 @@
 import { forwardRef } from "react";
 
 import { skeletonPresentationProps } from "./skeletonA11y";
-import { SkeletonBlock, SkeletonCircle, SkeletonText, SkeletonWave } from "./skeletonParts";
+import {
+  SkeletonBlock,
+  SkeletonCircle,
+  SkeletonRegion,
+  SkeletonText,
+  SkeletonWave,
+} from "./skeletonParts";
 import { SKELETON_BASE_CLASS, skeletonRadiusClass, skeletonVariantStyle } from "./skeletonStyles";
 import type { SkeletonProps } from "./skeletonTypes";
 import { useSkeletonRootState } from "./useSkeletonRootState";
@@ -13,12 +19,14 @@ export type {
   SkeletonCircleProps,
   SkeletonTextProps,
   SkeletonBlockProps,
+  SkeletonRegionProps,
   SkeletonAnimation,
   SkeletonRadius,
   SkeletonClassNames,
   SkeletonCircleClassNames,
   SkeletonTextClassNames,
   SkeletonBlockClassNames,
+  SkeletonRegionClassNames,
 } from "./skeletonTypes";
 
 export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function SkeletonRoot(
@@ -59,4 +67,4 @@ export const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(function S
 
 SkeletonRoot.displayName = "Skeleton";
 
-export { SkeletonCircle, SkeletonText, SkeletonBlock };
+export { SkeletonCircle, SkeletonText, SkeletonBlock, SkeletonRegion };

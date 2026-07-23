@@ -38,7 +38,7 @@ export const COLOR_PICKER_SLIDERS_STACK_CLASS = "flex min-w-0 flex-1 flex-col ga
 export const COLOR_PICKER_INPUTS_ROW_CLASS = "flex min-w-0 items-center gap-small";
 
 export const COLOR_PICKER_HEX_INPUT_CLASS =
-  "flex min-w-0 shrink items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall";
+  "flex min-w-0 shrink items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall focus-within-ring";
 
 export const COLOR_PICKER_HEX_PREFIX_CLASS = "text-small text-muted select-none";
 
@@ -46,7 +46,7 @@ export const COLOR_PICKER_HEX_FIELD_CLASS =
   `w-[8ch] bg-transparent text-small font-mono uppercase text-foreground outline-none ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
 export const COLOR_PICKER_ALPHA_INPUT_CLASS =
-  "flex shrink-0 items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall";
+  "flex shrink-0 items-center gap-xsmall rounded-small border-token bg-secondary px-small py-xsmall focus-within-ring";
 
 export const COLOR_PICKER_ALPHA_FIELD_CLASS =
   `w-8 bg-transparent text-right text-small font-mono text-foreground outline-none ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;

@@ -312,6 +312,7 @@ const anchorRef = useRef<HTMLDivElement>(null);
 - `Escape` закрывает
 - Outside `pointerdown` dismiss (с учётом `shouldDismiss`)
 - Portal theme sync через `burneLightThemePortalProps`
+- **`asChild`:** child должен быть фокусируемым интерактивным элементом (`Button`, `Link`, native `<button>`). Нефокусируемый child (например `Avatar` без `tabIndex`) не получит keyboard focus / ring — используйте default Trigger или явно задайте `tabIndex={0}` + `focus-ring` на child.
 
 ## Структура файлов
 

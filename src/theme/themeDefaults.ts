@@ -76,6 +76,10 @@ export type ThemeTokenState = {
   size: number;
   radius: number;
   borderWidth: number;
+  /** Keyboard focus ring outline width (`--focus-ring-width`), px. */
+  focusRingWidth: number;
+  /** Keyboard focus ring outline offset (`--focus-ring-offset`), px. */
+  focusRingOffset: number;
   textScale: number;
   fontFamily: string;
   fontFamilyMono: string;
@@ -184,6 +188,8 @@ export const SCALE_DEFAULTS = {
   size: 1,
   radius: 0.5,
   borderWidth: 1,
+  focusRingWidth: 2,
+  focusRingOffset: 0,
   textScale: 1,
   shadowStrength: 1,
   shadowSize: 1,
@@ -404,6 +410,8 @@ const INLINE_TOKEN_VARS = [
   "--size",
   "--radius",
   "--border-width",
+  "--focus-ring-width",
+  "--focus-ring-offset",
   "--font-family-sans",
   "--font-family-mono",
   ...Object.values(FONT_WEIGHT_CSS_VAR),
@@ -527,6 +535,11 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
   target.style.setProperty("--size", `${state.size}rem`);
   target.style.setProperty("--radius", `${state.radius}rem`);
   target.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
+  target.style.setProperty(
+    "--focus-ring-width",
+    state.focusRingWidth === 0 ? "0px" : `${state.focusRingWidth}px`,
+  );
+  target.style.setProperty("--focus-ring-offset", `${state.focusRingOffset}px`);
   target.style.setProperty("--font-family-sans", state.fontFamily);
   target.style.setProperty("--font-family-mono", state.fontFamilyMono);
   applyFontWeights(target, state.fontWeights);
@@ -550,6 +563,8 @@ export function exportThemeCss(state: ThemeTokenState): string {
     `  --size: ${state.size}rem;`,
     `  --radius: ${state.radius}rem;`,
     `  --border-width: ${state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`};`,
+    `  --focus-ring-width: ${state.focusRingWidth === 0 ? "0px" : `${state.focusRingWidth}px`};`,
+    `  --focus-ring-offset: ${state.focusRingOffset}px;`,
     `  --font-family-sans: ${state.fontFamily};`,
     `  --font-family-mono: ${state.fontFamilyMono};`,
     ...Object.entries(FONT_WEIGHT_CSS_VAR).map(

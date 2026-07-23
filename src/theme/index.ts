@@ -63,6 +63,22 @@ export {
 export { BurneUIProvider, type BurneUIProviderProps } from "./BurneUIProvider";
 
 export {
+  BurneLabelsProvider,
+  useBurneLabel,
+  useBurneLabels,
+  type BurneLabelsProviderProps,
+} from "./BurneLabelsProvider";
+
+export {
+  BURNE_LABELS_RU,
+  DEFAULT_BURNE_LABELS,
+  formatBurneLabel,
+  mergeBurneLabels,
+  type BurneLabels,
+  type BurneLabelsKey,
+} from "./burneLabels";
+
+export {
   useBurneThemeRuntime,
   useBurneThemeRuntimeOptional,
   type BurneThemeRuntimeContextValue,

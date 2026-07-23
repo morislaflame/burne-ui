@@ -1,6 +1,7 @@
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
 import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
 
+import type { BurneLabels } from "./burneLabels";
 import { applyThemeTokens, createDefaultThemeState, ensureModePalettes, exportThemeCss, type ThemeColors, type ThemeFontWeights, type ThemeMode, type ThemeTokenState } from "./themeDefaults";
 
 /** Color mode for ThemeProvider / BurneUIProvider (`system` follows OS). */
@@ -15,6 +16,8 @@ export type ThemeTokenOverrides = {
   size?: number;
   radius?: number;
   borderWidth?: number;
+  focusRingWidth?: number;
+  focusRingOffset?: number;
   textScale?: number;
   fontFamily?: string;
   fontFamilyMono?: string;
@@ -80,6 +83,11 @@ export type BurneThemeConfig = {
   motion?: Partial<MotionConfig>;
   /** Wrap children with `Toast.Provider`. @default true */
   toast?: boolean | Omit<ToastProviderProps, "children">;
+  /**
+   * Override default accessible / UI strings (Close, Search, Pagination, …).
+   * Merged over English defaults. See `DEFAULT_BURNE_LABELS` / `BURNE_LABELS_RU`.
+   */
+  labels?: Partial<BurneLabels>;
 };
 
 const MOTION_STATE_KEYS = [
@@ -140,6 +148,8 @@ export function resolveThemeTokenState(
       size: shared.size,
       radius: shared.radius,
       borderWidth: shared.borderWidth,
+      focusRingWidth: shared.focusRingWidth,
+      focusRingOffset: shared.focusRingOffset,
       textScale: shared.textScale,
       fontFamily: shared.fontFamily,
       fontFamilyMono: shared.fontFamilyMono,
@@ -206,6 +216,8 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     size: withPalettes.size,
     radius: withPalettes.radius,
     borderWidth: withPalettes.borderWidth,
+    focusRingWidth: withPalettes.focusRingWidth,
+    focusRingOffset: withPalettes.focusRingOffset,
     textScale: withPalettes.textScale,
     fontFamily: withPalettes.fontFamily,
     fontFamilyMono: withPalettes.fontFamilyMono,
@@ -372,6 +384,8 @@ export function mergeThemeTokenOverrides(
       size: overrides.size,
       radius: overrides.radius,
       borderWidth: overrides.borderWidth,
+      focusRingWidth: overrides.focusRingWidth,
+      focusRingOffset: overrides.focusRingOffset,
       textScale: overrides.textScale,
       fontFamily: overrides.fontFamily,
       fontFamilyMono: overrides.fontFamilyMono,

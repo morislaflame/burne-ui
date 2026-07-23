@@ -5,8 +5,9 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
 import { Dropdown } from "@/components/core/Dropdown";
 import { Text } from "@/components/core/Text";
+import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
-import { BREADCRUMBS_ELLIPSIS_POPOVER_ARIA_LABEL, ellipsisTriggerAriaLabel } from "./breadcrumbsA11y";
+import { breadcrumbsEllipsisPopoverAriaLabel, ellipsisTriggerAriaLabel } from "./breadcrumbsA11y";
 import { breadcrumbListItemKey } from "./breadcrumbsAPI";
 import { useBreadcrumbInteractiveMotion } from "./breadcrumbsAnimations";
 import { BreadcrumbsClassNamesProvider, useBreadcrumbsClassNames } from "./breadcrumbsContext";
@@ -250,6 +251,7 @@ InteractiveCrumb.displayName = "BreadcrumbsInteractiveCrumb";
 
 export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenuProps) {
   const slotClassNames = useBreadcrumbsClassNames();
+  const labels = useBurneLabels();
   const count = hiddenItems.length;
   const { textRef: liftRef, handlePointerDown } = useBreadcrumbInteractiveMotion();
 
@@ -258,7 +260,7 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
   return (
     <Dropdown>
       <Dropdown.Trigger
-        aria-label={ellipsisTriggerAriaLabel(count)}
+        aria-label={ellipsisTriggerAriaLabel(count, labels.breadcrumbsShowHidden)}
         className={breadcrumbsEllipsisTriggerClass(slotClassNames.ellipsisTrigger)}
         onPointerDown={handlePointerDown}
       >
@@ -276,7 +278,7 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
         </span>
       </Dropdown.Trigger>
       <Dropdown.Popover
-        aria-label={BREADCRUMBS_ELLIPSIS_POPOVER_ARIA_LABEL}
+        aria-label={breadcrumbsEllipsisPopoverAriaLabel(labels.breadcrumbsHiddenSections)}
         bodyClassName={breadcrumbsEllipsisPopoverBodyClass(slotClassNames.ellipsisPopover)}
       >
         {hiddenItems.map((item) => {

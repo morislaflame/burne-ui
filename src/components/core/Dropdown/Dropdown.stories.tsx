@@ -383,7 +383,7 @@ export const CustomAvatarTrigger: Story = {
         <Dropdown.Trigger asChild>
           <button
             type="button"
-            className="rounded-full outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-full outline-none focus-ring"
             aria-label="Jane Doe user menu"
           >
             <Avatar size="base" label="Jane Doe">

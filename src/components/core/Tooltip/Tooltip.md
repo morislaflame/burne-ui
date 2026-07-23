@@ -278,7 +278,8 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 - Trigger: `aria-describedby={tooltipId}` когда `open`
 - Content: `role="tooltip"`, `id={tooltipId}`
 - Keyboard: `Escape` закрывает
-- Focus: trigger получает `tabIndex={0}` если рендерится как `<span>` wrapper
+- Focus: trigger получает `tabIndex={0}` + `focus-ring` если рендерится как `<span>` wrapper (`asChild={false}`)
+- **`asChild` (default):** child должен быть фокусируемым интерактивным элементом; ring управляет child (Button/Link). Avatar без `tabIndex` — невалидный trigger
 - Arrow / icons: `aria-hidden`
 
 ## Структура файлов

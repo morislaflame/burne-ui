@@ -108,6 +108,8 @@ export const ALERT_DIALOG_GLOSS_CONTENT_CLASS = "gloss-content";
 
 export const ALERT_DIALOG_CLOSE_CLASS = "shrink-0";
 
+export const ALERT_DIALOG_TRIGGER_BASE_CLASS = "outline-none focus-ring";
+
 export const ALERT_DIALOG_INDICATOR_CLASS = "shrink-0 [&_svg]:block";
 
 export const ALERT_DIALOG_HEADER_CLASS = "shrink-0";
