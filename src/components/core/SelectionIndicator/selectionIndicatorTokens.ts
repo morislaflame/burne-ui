@@ -15,7 +15,7 @@ export const SELECTION_INDICATOR_ICON_CLASS: Record<SelectionIndicatorSize, stri
   small: "icon-xsmall",
   base: "icon-xsmall",
   mid: "icon-base",
-  large: "icon-plus",
+  large: "icon-mid",
 };
 
 export const SELECTION_INDICATOR_MARK_CLASS =
@@ -70,10 +70,10 @@ const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
 };
 
 const INDICATOR_SSR_REM: Record<SelectionIndicatorSize, number> = {
-  small: 1,
+  small: 0.875,
   base: 1.125,
-  mid: 1.5,
-  large: 1.75,
+  mid: 1.375,
+  large: 1.5,
 };
 
 export function selectionIndicatorFallbackPx(

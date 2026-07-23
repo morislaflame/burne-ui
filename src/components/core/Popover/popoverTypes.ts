@@ -9,7 +9,7 @@ import type { HTMLAttributes, ReactNode, RefObject } from "react";
 export type PopoverSide = TooltipSide;
 export type PopoverSize = "small" | "base" | "mid" | "large";
 export type PopoverVariant = "default" | "gloss";
-export type PopoverContentGap = "small" | "base" | "plus" | "mid";
+export type PopoverContentGap = "small" | "base" | "mid" | "large";
 
 export type PopoverClassNames = {
   root?: string;

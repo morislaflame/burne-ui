@@ -10,7 +10,7 @@
  * | Radius | `--radius` | `--radius-*` | `--radius-*` (identity) | `rounded-*` |
  * | Control box | — | `--control-height-*` | — | `h-control-*`, `min-h-control-*` |
  * | Control square | — | `--control-size-*` (= height) | — | `w-control-*`, `min/max-w-control-*` |
- * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-xlarge` (incl. `plus`) |
+ * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
  *
  * ## Typography
  *
@@ -44,10 +44,11 @@ export const tokensConfig = {
     "spacing-xsmall": "space-xsmall",
     "spacing-small": "space-small",
     "spacing-base": "space-base",
-    "spacing-plus": "space-plus",
     "spacing-mid": "space-mid",
     "spacing-large": "space-large",
     "spacing-xlarge": "space-xlarge",
+    "spacing-2xlarge": "space-2xlarge",
+    "spacing-3xlarge": "space-3xlarge",
     "radius-xsmall": "radius-xsmall",
     "radius-small": "radius-small",
     "radius-base": "radius-base",
@@ -104,10 +105,11 @@ export const tokensConfig = {
     "icon-xsmall": "icon-size-xsmall",
     "icon-small": "icon-size-small",
     "icon-base": "icon-size-base",
-    "icon-plus": "icon-size-plus",
     "icon-mid": "icon-size-mid",
     "icon-large": "icon-size-large",
     "icon-xlarge": "icon-size-xlarge",
+    "icon-2xlarge": "icon-size-2xlarge",
+    "icon-3xlarge": "icon-size-3xlarge",
   },
 } as const;
 
@@ -116,10 +118,11 @@ export const burneSpacingScale = [
   "xsmall",
   "small",
   "base",
-  "plus",
   "mid",
   "large",
   "xlarge",
+  "2xlarge",
+  "3xlarge",
 ] as const;
 
 /** `--radius-*` steps → `rounded-*` utilities */
@@ -138,10 +141,11 @@ export const burneIconScale = [
   "xsmall",
   "small",
   "base",
-  "plus",
   "mid",
   "large",
   "xlarge",
+  "2xlarge",
+  "3xlarge",
 ] as const;
 
 /**

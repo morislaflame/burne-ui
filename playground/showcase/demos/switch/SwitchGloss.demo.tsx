@@ -7,7 +7,7 @@ export function SwitchGlossDemo() {
   const [enabled, setEnabled] = useState(false);
 
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Switch
         gloss
         checked={enabled}

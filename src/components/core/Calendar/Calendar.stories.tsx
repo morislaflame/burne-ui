@@ -31,7 +31,7 @@ function CustomTitleLabel() {
 const decorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[24rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[24rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -79,7 +79,7 @@ export const Single: Story = {
   render: function SingleStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar mode="single" value={date} onValueChange={setDate} />
         <p className="text-small text-muted">
           Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
@@ -94,7 +94,7 @@ export const Range: Story = {
   render: function RangeStory() {
     const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null });
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar mode="range" value={range} onValueChange={setRange} />
         <p className="text-small text-muted">
           From{" "}
@@ -112,7 +112,7 @@ export const Multiple: Story = {
   render: function MultipleStory() {
     const [dates, setDates] = useState<Date[]>([]);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar mode="multiple" value={dates} onValueChange={setDates} />
         <p className="text-small text-muted">
           Selected:{" "}
@@ -130,7 +130,7 @@ export const WithFooter: Story = {
   render: function WithFooterStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar mode="single" value={date} onValueChange={setDate}>
           <Calendar.Header />
           <Calendar.Grid />
@@ -158,7 +158,7 @@ export const RangeWithFooter: Story = {
   render: function RangeWithFooterStory() {
     const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null });
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar mode="range" value={range} onValueChange={setRange}>
           <Calendar.Header />
           <Calendar.Grid />
@@ -180,7 +180,7 @@ export const StartFromMonthView: Story = {
   render: function MonthViewStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar mode="single" value={date} onValueChange={setDate} initialView="months" />
         <p className="text-small text-muted">
           Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
@@ -195,7 +195,7 @@ export const StartFromYearView: Story = {
   render: function YearViewStory() {
     const [date, setDate] = useState<Date | null>(null);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar mode="single" value={date} onValueChange={setDate} initialView="years" />
         <p className="text-small text-muted">
           Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
@@ -213,7 +213,7 @@ export const WithMinMax: Story = {
     const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 10);
     const [date, setDate] = useState<Date | null>(null);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Calendar
           mode="single"
           value={date}
@@ -234,7 +234,7 @@ export const Variants: Story = {
   render: function VariantsStory() {
     const variants: CalendarVariant[] = ["default", "secondary", "outline"];
     return (
-      <div className="flex flex-wrap items-start justify-center gap-large">
+      <div className="flex flex-wrap items-start justify-center gap-xlarge">
         {variants.map((variant) => (
           <div key={variant} className="flex flex-col items-center gap-small">
             <span className="text-small text-muted">{variant}</span>
@@ -251,7 +251,7 @@ export const Sizes: Story = {
   render: function SizesStory() {
     const sizes: CalendarSize[] = ["small", "base", "mid", "large"];
     return (
-      <div className="flex flex-wrap items-start justify-center gap-large">
+      <div className="flex flex-wrap items-start justify-center gap-xlarge">
         {sizes.map((size) => (
           <div key={size} className="flex flex-col items-center gap-small">
             <span className="text-small text-muted">{size}</span>

@@ -10,15 +10,15 @@ import { cn } from "@/utils/cn";
 export const PROGRESS_BAR_RAIL_HEIGHT_CLASS: Record<ProgressBarSize, string> = {
   small: "h-small",
   base: "h-base",
-  mid: "h-plus",
-  large: "h-mid",
+  mid: "h-mid",
+  large: "h-large",
 };
 
 export const PROGRESS_BAR_RAIL_WIDTH_CLASS: Record<ProgressBarSize, string> = {
   small: "w-small",
   base: "w-base",
-  mid: "w-plus",
-  large: "w-mid",
+  mid: "w-mid",
+  large: "w-large",
 };
 
 export const PROGRESS_BAR_TRACK_BASE_CLASS =

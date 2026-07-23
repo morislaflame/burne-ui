@@ -102,9 +102,9 @@ Compound определяется автоматически при наличи
 | size | min-h триггера | padX триггера | pad панели | chevron / icon |
 |------|----------------|---------------|------------|----------------|
 | `small` | `min-h-control-small` | `px-base` | `px-base pb-base pt-small` | `icon-small` |
-| `base` | `min-h-control-base` | `px-plus` | `px-plus pb-plus pt-small` | `icon-base` |
-| `mid` | `min-h-control-mid` | `px-mid` | `px-mid pb-mid pt-base` | `icon-mid` |
-| `large` | `min-h-control-large` | `px-large` | `px-large pb-large pt-base` | `icon-mid` |
+| `base` | `min-h-control-base` | `px-mid` | `px-mid pb-mid pt-small` | `icon-base` |
+| `mid` | `min-h-control-mid` | `px-large` | `px-large pb-large pt-base` | `icon-large` |
+| `large` | `min-h-control-large` | `px-xlarge` | `px-xlarge pb-xlarge pt-base` | `icon-large` |
 
 Текст: title — `controlText` размера; description — `small` / `base` по size.
 
@@ -217,7 +217,7 @@ configureMotion({
 | `shadow-token-sm` | Тень корня (default) |
 | `border-token`, `bg-surface` | Поверхность |
 | `gloss-panel`, `gloss-deep`, `gloss-content` | Gloss variant |
-| `h-control-*`, `px-plus`, `py-base` | Размеры |
+| `h-control-*`, `px-mid`, `py-base` | Размеры |
 | `focus-visible:outline-primary` | Focus на триггере |
 
 ## Стилизация и кастомизация
@@ -276,11 +276,11 @@ configureMotion({
   variant="gloss"
   classNames={{
     root: "max-w-lg",
-    trigger: "px-large",
+    trigger: "px-xlarge",
     panelShell: "border-t border-token",
   }}
 >
-  <Expandable.Trigger className="gap-mid">
+  <Expandable.Trigger className="gap-large">
     <Expandable.Icon><IoSettings aria-hidden /></Expandable.Icon>
     <Expandable.Content>
       <Expandable.Title className="text-mid">Настройки</Expandable.Title>
@@ -288,7 +288,7 @@ configureMotion({
     </Expandable.Content>
     <Expandable.Chevron className="text-muted" />
   </Expandable.Trigger>
-  <Expandable.Panel className="p-large">
+  <Expandable.Panel className="p-xlarge">
     Контент панели
   </Expandable.Panel>
 </Expandable>

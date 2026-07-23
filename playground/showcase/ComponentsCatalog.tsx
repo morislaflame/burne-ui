@@ -25,7 +25,7 @@ function ShowcaseNavButton({
       type="button"
       variant={active ? "secondary" : "ghost"}
       className={cn(
-        "justify-start text-left font-normal h-9 px-mid",
+        "justify-start text-left font-normal h-9 px-large",
         !active && "text-muted hover:text-foreground",
         className,
       )}
@@ -46,7 +46,7 @@ function ShowcaseSidebar({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-mid overflow-y-auto min-h-0 flex-1 p-mid", className)}>
+    <div className={cn("flex flex-col gap-large overflow-y-auto min-h-0 flex-1 p-large", className)}>
       {SHOWCASE_GROUPS.map((group: ShowcaseGroup) => (
         <div key={group.id} className="flex flex-col gap-xsmall">
           <Text
@@ -88,7 +88,7 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
       </aside>
 
       <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} placement="left">
-        <div className="lg:hidden fixed top-12 left-0 right-0 z-10 flex items-center justify-between border-b border-token bg-surface/90 px-mid py-xsmall backdrop-blur-md">
+        <div className="lg:hidden fixed top-12 left-0 right-0 z-10 flex items-center justify-between border-b border-token bg-surface/90 px-large py-xsmall backdrop-blur-md">
           <Text as="span" variant="base" className="font-semibold text-foreground">
             {currentPage.label}
           </Text>
@@ -104,9 +104,9 @@ function ComponentsCatalogBody({ embedded = false }: { embedded?: boolean }) {
         </div>
 
         <div className="flex-1 flex flex-col overflow-hidden min-h-0 min-w-0">
-          <div className="flex-1 overflow-y-auto px-mid py-xlarge lg:py-xlarge max-lg:pt-24">
+          <div className="flex-1 overflow-y-auto px-large py-2xlarge lg:py-2xlarge max-lg:pt-24">
             {!embedded && (
-              <header className="flex flex-col gap-xsmall mb-large max-lg:hidden">
+              <header className="flex flex-col gap-xsmall mb-xlarge max-lg:hidden">
                 <Text as="h1" variant="header-1">
                   Burne UI
                 </Text>

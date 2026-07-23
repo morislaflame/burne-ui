@@ -7,7 +7,7 @@ export function SearchInputGlossHeroDemo() {
   const [query, setQuery] = useState("");
 
   return (
-    <div className="flex w-full max-w-lg flex-col items-center gap-mid rounded-large border border-primary/20 bg-gradient-to-b from-primary/10 to-surface px-mid py-large text-center">
+    <div className="flex w-full max-w-lg flex-col items-center gap-large rounded-large border border-primary/20 bg-gradient-to-b from-primary/10 to-surface px-large py-xlarge text-center">
       <Text as="h3" variant="header-2">
         Catalog Burne UI
       </Text>

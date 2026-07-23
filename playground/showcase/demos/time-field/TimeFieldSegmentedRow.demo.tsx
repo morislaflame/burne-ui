@@ -8,11 +8,11 @@ export function TimeFieldSegmentedRowDemo() {
   const [end, setEnd] = useState("17:30");
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Delivery interval
       </Text>
-      <div className="flex flex-wrap items-end gap-mid">
+      <div className="flex flex-wrap items-end gap-large">
         <TimeField compact>
           <TimeField.Label>From</TimeField.Label>
           <TimeField.Control variant="segmented" value={start} onValueChange={setStart} />

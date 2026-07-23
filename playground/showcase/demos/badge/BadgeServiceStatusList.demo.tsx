@@ -13,7 +13,7 @@ export function BadgeServiceStatusListDemo() {
       {ROWS.map((row) => (
         <li
           key={row.name}
-          className="flex items-center justify-between gap-mid rounded-mid border-token bg-secondary px-mid py-small"
+          className="flex items-center justify-between gap-large rounded-mid border-token bg-secondary px-large py-small"
         >
           <Text as="span" variant="small" className="font-medium">
             {row.name}

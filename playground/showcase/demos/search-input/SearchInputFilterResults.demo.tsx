@@ -15,7 +15,7 @@ export function SearchInputFilterResultsDemo() {
   );
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-mid">
+    <div className="flex w-full max-w-md flex-col gap-large">
       <SearchInput
         aria-label="Component filter"
         placeholder="Filter by name…"

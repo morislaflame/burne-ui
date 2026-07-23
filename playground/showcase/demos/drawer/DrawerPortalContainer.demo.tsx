@@ -8,7 +8,7 @@ export function DrawerPortalContainerDemo() {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       <p className="text-sm text-muted">
         Custom <code className="text-foreground">portalContainer</code> — drawer stays inside the host.
       </p>
@@ -17,7 +17,7 @@ export function DrawerPortalContainerDemo() {
       </Button>
       <div
         ref={setContainer}
-        className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+        className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
       >
         <p className="text-xs text-muted">Custom portal host</p>
         {container ? (

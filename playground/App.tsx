@@ -28,10 +28,10 @@ function AppHeader({
 
   return (
     <header className="sticky top-0 z-20 border-b-token bg-surface/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-4xl items-center justify-between gap-small sm:gap-mid px-small sm:px-mid py-small">
+      <div className="mx-auto flex max-w-4xl items-center justify-between gap-small sm:gap-large px-small sm:px-large py-small">
         <span className="text-sm font-w-mid max-sm:hidden">Burne UI Playground</span>
         <span className="text-sm font-w-mid sm:hidden">Burne UI</span>
-        <div className="flex items-center gap-small sm:gap-plus">
+        <div className="flex items-center gap-small sm:gap-mid">
           <Switch
             size="small"
             checked={state.theme === "light"}
@@ -72,7 +72,7 @@ function AppBody() {
         <ThemePlayground />
       ) : (
         <div className="relative min-h-[calc(100dvh-3rem)]">
-          <div className="pointer-events-none absolute left-4 top-4 z-10 max-w-[min(90vw,28rem)] rounded-small border-token/60 bg-surface/85 px-mid py-plus text-sm shadow-mid backdrop-blur-md">
+          <div className="pointer-events-none absolute left-4 top-4 z-10 max-w-[min(90vw,28rem)] rounded-small border-token/60 bg-surface/85 px-large py-mid text-sm shadow-mid backdrop-blur-md">
             <p className="font-w-mid text-foreground">Simple Fresnel Shader</p>
             <p className="mt-1 text-muted">
               As in{" "}

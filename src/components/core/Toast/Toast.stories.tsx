@@ -10,7 +10,7 @@ import { useToast } from "./useToast";
 
 const pageFrame = (Story: ComponentType) => (
   <div
-    className="box-border flex min-h-[16rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+    className="box-border flex min-h-[16rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
     style={{ backgroundColor: "var(--color-background)" }}
   >
     <Story />
@@ -99,7 +99,7 @@ const TOAST_VARIANT_ITEMS: Array<{
 
 function ToastVariantsDemo() {
   return (
-    <div className="mx-auto flex w-full max-w-[360px] flex-col gap-plus">
+    <div className="mx-auto flex w-full max-w-[360px] flex-col gap-mid">
       {TOAST_VARIANT_ITEMS.map((item) => (
         <Toast
           key={`${item.status}-${item.title}`}
@@ -401,7 +401,7 @@ export const Sizes: Story = {
   render: function ToastSizesDemo() {
     const { toast } = useToast();
     return (
-      <div className="flex flex-wrap items-center justify-center gap-mid">
+      <div className="flex flex-wrap items-center justify-center gap-large">
         {TOAST_SIZES.map((size) => (
           <Button
             key={size}
@@ -462,16 +462,16 @@ export const PortalContainer: Story = {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     return (
-      <div className="flex w-full max-w-lg flex-col gap-mid">
+      <div className="flex w-full max-w-lg flex-col gap-large">
         <p className="text-sm text-muted">
           Toasts portal into the box below (not <code className="text-foreground">document.body</code>).
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-64 flex-col items-center justify-center gap-mid overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          className="relative flex h-64 flex-col items-center justify-center gap-large overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
           style={{ transform: "translateZ(0)" }}
         >
-          <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+          <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
           {container ? (
             <Toast.Provider portalContainer={container} defaultPlacement="bottom-center">
               <ToastPortalContainerInner />

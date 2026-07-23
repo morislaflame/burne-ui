@@ -8,7 +8,7 @@ export function ListBoxCompoundDemo() {
   const [listBoxValue, setListBoxValue] = useState("ru");
 
   return (
-    <Surface variant="default" padding="plus" className="max-w-sm">
+    <Surface variant="default" padding="mid" className="max-w-sm">
       <ListBox value={listBoxValue} onValueChange={(v) => setListBoxValue(v as string)}>
         <ListBox.Section>
           <ListBox.Header>Languages</ListBox.Header>

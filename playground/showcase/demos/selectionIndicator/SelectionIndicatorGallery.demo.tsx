@@ -12,13 +12,13 @@ export function SelectionIndicatorGalleryDemo() {
   const [selected, setSelected] = useState(true);
 
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Checkbox
         checked={selected}
         onChange={(e) => setSelected(e.target.checked)}
         label="Selected (for all indicators below)"
       />
-      <div className="flex flex-wrap items-end gap-mid">
+      <div className="flex flex-wrap items-end gap-large">
         {SELECTION_INDICATOR_SIZES.map((size) => (
           <div key={size} className="flex flex-col items-center gap-xsmall">
             <SelectionIndicator size={size} variant="default" selected={selected} />
@@ -40,7 +40,7 @@ export function SelectionIndicatorGalleryDemo() {
           </Text>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-mid">
+      <div className="flex flex-wrap items-center gap-large">
         <Text as="span" variant="small" className="text-muted">
           SelectionThumb:
         </Text>

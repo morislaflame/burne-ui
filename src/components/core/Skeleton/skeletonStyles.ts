@@ -19,7 +19,7 @@ export const SKELETON_TEXT_LINE_LAST_SHORT_CLASS = "w-3/5";
 
 export const SKELETON_TEXT_LINE_FULL_CLASS = "w-full";
 
-export const SKELETON_BLOCK_CLASS = "rounded-mid px-mid py-plus";
+export const SKELETON_BLOCK_CLASS = "rounded-mid px-large py-mid";
 
 export const SKELETON_RADIUS_CLASS: Record<SkeletonRadius, string> = {
   none: "rounded-none",

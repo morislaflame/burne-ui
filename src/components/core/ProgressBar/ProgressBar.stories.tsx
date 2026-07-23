@@ -11,7 +11,7 @@ import { ProgressBar } from "@/components/core/ProgressBar";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -25,7 +25,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -94,7 +94,7 @@ export const Indeterminate: Story = {
 export const Colors: Story = {
   name: "Colors",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <ProgressBar label="Accent (default)" showValue value={65} />
       <ProgressBar label="Success" showValue value={80} color="var(--color-success)" />
       <ProgressBar label="Danger" showValue value={35} color="var(--color-danger)" />
@@ -113,7 +113,7 @@ export const Colors: Story = {
 export const Thickness: Story = {
   name: "Thickness",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <ProgressBar label="6px" showValue thickness={6} value={40} />
       <ProgressBar label="1rem" showValue thickness="1rem" value={60} />
       <ProgressBar label="size=small + thickness=16" showValue size="small" thickness={16} value={75} />
@@ -124,7 +124,7 @@ export const Thickness: Story = {
 export const CustomValueText: Story = {
   name: "Custom value text",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <ProgressBar label="Battery" valueText="Charging" value={72} />
       <ProgressBar label="Network" valueText="Excellent connection" value={92} color="var(--color-success)" />
       <ProgressBar
@@ -140,7 +140,7 @@ export const CustomValueText: Story = {
 export const Vertical: Story = {
   name: "Vertical",
   render: () => (
-    <div className="flex gap-xlarge">
+    <div className="flex gap-2xlarge">
       <ProgressBar orientation="vertical" label="CPU" showValue value={45} />
       <ProgressBar orientation="vertical" label="RAM" showValue value={72} color="var(--color-info)" />
       <ProgressBar orientation="vertical" label="Disk" valueText="High" value={88} color="var(--color-warning)" />
@@ -175,7 +175,7 @@ export const OnLightTheme: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex flex-col gap-plus text-left">
+    <div className="flex flex-col gap-mid text-left">
       <p className="text-sm text-muted">
         Scale — <code className="text-primary">role=&quot;progressbar&quot;</code> with{" "}
         <code className="text-primary">aria-valuenow</code> /{" "}

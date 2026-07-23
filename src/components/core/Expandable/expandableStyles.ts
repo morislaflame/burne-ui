@@ -14,9 +14,9 @@ export const EXPANDABLE_DESCRIPTION_VARIANT = {
 
 const EXPANDABLE_PANEL_PAD: Record<ExpandableSize, string> = {
   small: "px-base pb-base pt-small",
-  base: "px-plus pb-plus pt-small",
-  mid: "px-mid pb-mid pt-base",
-  large: "px-large pb-large pt-base",
+  base: "px-mid pb-mid pt-small",
+  mid: "px-large pb-large pt-base",
+  large: "px-xlarge pb-xlarge pt-base",
 };
 
 export const EXPANDABLE_ROOT_BASE_CLASS = "rounded-mid text-left text-foreground";

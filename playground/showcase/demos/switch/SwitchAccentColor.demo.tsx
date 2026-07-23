@@ -7,7 +7,7 @@ export function SwitchAccentColorDemo() {
   const [enabled, setEnabled] = useState(true);
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Accent color
       </Text>

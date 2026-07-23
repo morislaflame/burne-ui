@@ -24,8 +24,8 @@ export function TableInvoiceToolbarDemo() {
   const count = selected === "all" ? INVOICES.length : (selected as Set<number>).size;
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-mid">
-      <div className="flex items-center justify-between gap-mid">
+    <div className="flex w-full max-w-xl flex-col gap-large">
+      <div className="flex items-center justify-between gap-large">
         <Text as="span" variant="small" className="text-muted">
           Selected: <span className="font-medium text-foreground">{count}</span>
         </Text>

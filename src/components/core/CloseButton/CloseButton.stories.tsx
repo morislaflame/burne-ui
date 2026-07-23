@@ -7,7 +7,7 @@ import { CloseButton } from "./index";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -19,7 +19,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -82,7 +82,7 @@ export const ClickInteraction: Story = {
 export const Sizes: Story = {
   name: "Sizes (small — large)",
   render: () => (
-    <div className="flex items-center gap-plus">
+    <div className="flex items-center gap-mid">
       <CloseButton size="small" aria-label="Close small" />
       <CloseButton size="base" aria-label="Close base" />
       <CloseButton size="mid" aria-label="Close mid" />
@@ -94,7 +94,7 @@ export const Sizes: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex flex-wrap items-center gap-plus">
+    <div className="flex flex-wrap items-center gap-mid">
       <CloseButton variant="default" aria-label="Close default" />
       <CloseButton aria-label="Close (default)" />
       <CloseButton variant="primary" aria-label="Close primary" />
@@ -110,7 +110,7 @@ export const VariantsOnLightTheme: Story = {
   name: "Variants — light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex flex-wrap items-center gap-plus">
+    <div className="flex flex-wrap items-center gap-mid">
       <CloseButton variant="default" aria-label="Close default" />
       <CloseButton aria-label="Close (default)" />
       <CloseButton variant="primary" aria-label="Close primary" />
@@ -125,9 +125,9 @@ export const VariantsOnLightTheme: Story = {
 export const VariantSizesMatrix: Story = {
   name: "variant × size matrix",
   render: () => (
-    <div className="flex flex-col gap-plus">
+    <div className="flex flex-col gap-mid">
       {(["default", "primary", "outline", "secondary", "ghost"] as const).map((variant) => (
-        <div key={variant} className="flex items-center gap-plus">
+        <div key={variant} className="flex items-center gap-mid">
           <span className="text-muted text-small w-20 shrink-0">{variant}</span>
           <CloseButton variant={variant} size="small" aria-label={`${variant} small`} />
           <CloseButton variant={variant} size="base" aria-label={`${variant} base`} />

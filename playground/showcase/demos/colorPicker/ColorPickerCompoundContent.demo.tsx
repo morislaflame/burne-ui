@@ -21,7 +21,7 @@ export function ColorPickerCompoundContentDemo() {
   const [color, setColor] = useState("#22c55e");
 
   return (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <Text as="p" variant="small" className="text-muted">
         Custom layout: presets → area → hue (hex removed).
       </Text>

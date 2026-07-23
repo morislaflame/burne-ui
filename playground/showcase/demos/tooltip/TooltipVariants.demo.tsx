@@ -3,7 +3,7 @@ import { Tooltip } from "@/components/core/Tooltip";
 
 export function TooltipVariantsDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Tooltip variant="default">
         <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">

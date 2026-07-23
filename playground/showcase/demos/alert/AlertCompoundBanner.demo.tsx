@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 
 export function AlertCompoundBannerDemo() {
   return (
-    <Alert className="max-w-lg rounded-large p-mid" variant="gloss">
+    <Alert className="max-w-lg rounded-large p-large" variant="gloss">
       <Alert.Message>
         <Alert.Content>
           <Alert.Title className="text-large">Early access to gloss theme</Alert.Title>

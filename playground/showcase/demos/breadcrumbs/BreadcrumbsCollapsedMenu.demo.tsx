@@ -5,7 +5,7 @@ import { preventNav } from "../../shared/utils";
 
 export function BreadcrumbsCollapsedMenuDemo() {
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       <Text as="p" variant="small" className="text-muted">
         More than three points are compressed: first · … · last two.
       </Text>

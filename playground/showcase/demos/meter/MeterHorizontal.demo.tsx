@@ -2,7 +2,7 @@ import { Meter } from "@/components/core/Meter";
 
 export function MeterHorizontalDemo() {
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Meter label="Disk" value={78} min={0} max={100} showValue className="w-120" />
       <Meter
         label="Memory"

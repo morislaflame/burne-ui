@@ -13,7 +13,7 @@ export function DrawerAsChildMergedPropsDemo() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <p className="text-sm text-muted">{refLabel}</p>
       <Drawer>
         <Drawer.Trigger

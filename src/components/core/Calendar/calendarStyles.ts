@@ -5,10 +5,10 @@ import { cn } from "@/utils/cn";
 import type { CalendarSize, CalendarVariant } from "./calendarTypes";
 
 export const CALENDAR_WEEKDAY_CELL: Record<CalendarSize, string> = {
-  small: "mx-auto flex aspect-square w-full max-w-control-small items-center justify-center text-xs",
+  small: "mx-auto flex aspect-square w-full max-w-control-small items-center justify-center text-xsmall",
   base: "mx-auto flex aspect-square w-full max-w-control-base items-center justify-center text-small",
-  mid: "mx-auto flex aspect-square w-full max-w-control-mid items-center justify-center text-small",
-  large: "mx-auto flex aspect-square w-full max-w-control-large items-center justify-center text-base",
+  mid: "mx-auto flex aspect-square w-full max-w-control-mid items-center justify-center text-base",
+  large: "mx-auto flex aspect-square w-full max-w-control-large items-center justify-center text-mid",
 };
 
 export const CALENDAR_NAV_BTN: Record<CalendarSize, string> = {
@@ -20,9 +20,9 @@ export const CALENDAR_NAV_BTN: Record<CalendarSize, string> = {
 
 export const CALENDAR_ROOT_PAD: Record<CalendarSize, string> = {
   small: "p-small gap-xsmall",
-  base: "p-mid gap-small",
-  mid: "p-mid gap-small",
-  large: "p-large gap-base",
+  base: "p-large gap-small",
+  mid: "p-large gap-small",
+  large: "p-xlarge gap-base",
 };
 
 export const CALENDAR_ROOT_MIN_W: Record<CalendarSize, string> = {
@@ -36,7 +36,7 @@ export const CALENDAR_HEADER_TEXT: Record<CalendarSize, string> = {
   small: "text-small",
   base: "text-base",
   mid: "text-mid",
-  large: "text-mid",
+  large: "text-large",
 };
 
 export const CALENDAR_ROOT_SURFACE: Record<CalendarVariant, string> = {
@@ -57,7 +57,7 @@ export const CALENDAR_DAY_TEXT: Record<CalendarSize, TextVariant> = {
   small: "small",
   base: "base",
   mid: "mid",
-  large: "mid",
+  large: "large",
 };
 
 export const CALENDAR_DAY_BTN: Record<CalendarSize, string> = {
@@ -71,14 +71,14 @@ export const CALENDAR_PICKER_TEXT: Record<CalendarSize, TextVariant> = {
   small: "small",
   base: "base",
   mid: "mid",
-  large: "mid",
+  large: "large",
 };
 
 export const CALENDAR_PICKER_BTN: Record<CalendarSize, string> = {
   small: "min-h-control-small w-full px-small py-xsmall",
-  base: "min-h-control-base w-full px-plus py-small",
-  mid: "min-h-control-mid w-full px-mid py-plus",
-  large: "min-h-control-large w-full px-mid py-plus",
+  base: "min-h-control-base w-full px-mid py-small",
+  mid: "min-h-control-mid w-full px-large py-mid",
+  large: "min-h-control-large w-full px-large py-mid",
 };
 
 export const CALENDAR_ROOT_SHELL_CLASS =

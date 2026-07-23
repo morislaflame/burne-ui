@@ -102,10 +102,11 @@ p {
   --spacing-xsmall: var(--space-xsmall);
   --spacing-small: var(--space-small);
   --spacing-base: var(--space-base);
-  --spacing-plus: var(--space-plus);
   --spacing-mid: var(--space-mid);
   --spacing-large: var(--space-large);
   --spacing-xlarge: var(--space-xlarge);
+  --spacing-2xlarge: var(--space-2xlarge);
+  --spacing-3xlarge: var(--space-3xlarge);
 
   /* Identity bridge: design steps are already `--radius-*` (knob remains `--radius`). */
   --radius-xsmall: var(--radius-xsmall);
@@ -611,10 +612,6 @@ p {
   width: var(--icon-size-base);
   height: var(--icon-size-base);
 }
-@utility icon-plus {
-  width: var(--icon-size-plus);
-  height: var(--icon-size-plus);
-}
 @utility icon-mid {
   width: var(--icon-size-mid);
   height: var(--icon-size-mid);
@@ -626,6 +623,14 @@ p {
 @utility icon-xlarge {
   width: var(--icon-size-xlarge);
   height: var(--icon-size-xlarge);
+}
+@utility icon-2xlarge {
+  width: var(--icon-size-2xlarge);
+  height: var(--icon-size-2xlarge);
+}
+@utility icon-3xlarge {
+  width: var(--icon-size-3xlarge);
+  height: var(--icon-size-3xlarge);
 }
 
 /*

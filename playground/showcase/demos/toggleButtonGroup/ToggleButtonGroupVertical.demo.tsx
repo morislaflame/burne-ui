@@ -9,7 +9,7 @@ export function ToggleButtonGroupVerticalDemo() {
   const [view, setView] = useState("list");
 
   return (
-    <div className="flex w-full max-w-xs flex-col gap-mid">
+    <div className="flex w-full max-w-xs flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Vertical group
       </Text>

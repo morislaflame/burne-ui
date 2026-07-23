@@ -14,7 +14,7 @@ export function ColorPickerSizesDemo() {
   const setters = { small: setSmall, base: setBase, mid: setMid } as const;
 
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       {SIZES.map((size) => (
         <div key={size} className="flex flex-col items-center gap-xsmall">
           <ColorPicker size={size} value={values[size]} onValueChange={setters[size]}>

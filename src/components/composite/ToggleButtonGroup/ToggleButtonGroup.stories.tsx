@@ -12,7 +12,7 @@ import { ToggleButtonGroup } from "./index";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -83,7 +83,7 @@ export const SingleSelection: Story = {
   render: function SingleSelectDemo() {
     const [value, setValue] = useState("list");
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <ToggleButtonGroup
           type="single"
           value={value}
@@ -137,7 +137,7 @@ export const Disabled: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex flex-col items-center gap-large">
+    <div className="flex flex-col items-center gap-xlarge">
       {(["default", "outline", "ghost"] as const).map((variant) => (
         <ToggleButtonGroup key={variant} variant={variant} defaultValue={["one"]} aria-label={variant}>
           <ToggleButton value="one">{variant} 1</ToggleButton>

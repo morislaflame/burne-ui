@@ -4,11 +4,11 @@ import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 
 export function AvatarProjectMembersDemo() {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Project participants
       </Text>
-      <div className="flex items-center gap-mid">
+      <div className="flex items-center gap-large">
         <Avatar.Group>
           <Avatar size="base" label="Kate" src={PIN_IMAGE1} alt="" loading="lazy" />
           <Avatar size="base" label="John" src={PIN_IMAGE2} alt="" loading="lazy" />

@@ -44,7 +44,7 @@ export function AccordionReleaseNotesDemo() {
           </Accordion.Heading>
           <Accordion.Panel>
             <Accordion.Body>
-              <ul className="list-disc space-y-xsmall pl-mid text-sm text-muted">
+              <ul className="list-disc space-y-xsmall pl-large text-sm text-muted">
                 {release.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}

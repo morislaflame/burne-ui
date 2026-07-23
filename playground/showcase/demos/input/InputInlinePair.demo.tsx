@@ -7,7 +7,7 @@ export function InputInlinePairDemo() {
       <Text as="p" variant="small" className="font-medium">
         Contact person
       </Text>
-      <div className="grid grid-cols-1 gap-mid sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-large sm:grid-cols-2">
         <Input label="Name" name="firstName" placeholder="Ivan" autoComplete="given-name" />
         <Input label="Surname" name="lastName" placeholder="Ivanov" autoComplete="family-name" />
       </div>

@@ -15,7 +15,7 @@ import { Surface, type SurfaceVariant } from "./Surface";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -27,7 +27,7 @@ const lightDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -54,7 +54,7 @@ const meta = {
   argTypes: {
     variant: { control: "select", options: VARIANTS },
     shadow: { control: "select", options: ["none", "base", "mid", "large"] },
-    padding: { control: "select", options: ["none", "small", "base", "plus", "mid"] },
+    padding: { control: "select", options: ["none", "small", "base", "mid", "large"] },
     radius: { control: "select", options: ["base", "mid", "large"] },
   },
 } satisfies Meta<typeof Surface>;
@@ -65,7 +65,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    padding: "plus",
+    padding: "mid",
     children: "Content on surface",
   },
 };
@@ -73,9 +73,9 @@ export const Default: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex flex-wrap items-start justify-center gap-large">
+    <div className="flex flex-wrap items-start justify-center gap-xlarge">
       {VARIANTS.map((variant) => (
-        <Surface key={variant} variant={variant} padding="plus" className="w-48">
+        <Surface key={variant} variant={variant} padding="mid" className="w-48">
           <Text as="p" variant="base" className="font-medium capitalize">
             {variant}
           </Text>
@@ -91,9 +91,9 @@ export const Variants: Story = {
 export const WithShadow: Story = {
   name: "Shadow",
   render: () => (
-    <div className="flex flex-wrap items-start justify-center gap-large">
+    <div className="flex flex-wrap items-start justify-center gap-xlarge">
       {(["none", "base", "mid", "large"] as const).map((shadow) => (
-        <Surface key={shadow} shadow={shadow} padding="plus" className="w-44">
+        <Surface key={shadow} shadow={shadow} padding="mid" className="w-44">
           <Text as="p" variant="base" className="font-medium">
             shadow=&quot;{shadow}&quot;
           </Text>
@@ -157,7 +157,7 @@ export const MenuInteraction: Story = {
 export const NestedSections: Story = {
   name: "Nested sections",
   render: () => (
-    <Surface padding="plus" shadow="base" className="flex w-full max-w-sm flex-col gap-plus">
+    <Surface padding="mid" shadow="base" className="flex w-full max-w-sm flex-col gap-mid">
       <Text as="p" variant="base" className="font-medium">
         Outer panel (default)
       </Text>
@@ -180,7 +180,7 @@ export const LightTheme: Story = {
   decorators: [...lightDecorator],
   args: {
     shadow: "base",
-    padding: "plus",
+    padding: "mid",
     children: "Surface on light background",
   },
 };
@@ -193,8 +193,8 @@ const dottedGridStyle = {
 
 function GlossPanels() {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-xlarge">
-      <Surface variant="gloss" padding="plus" radius="large" className="w-56">
+    <div className="flex flex-wrap items-center justify-center gap-2xlarge">
+      <Surface variant="gloss" padding="mid" radius="large" className="w-56">
         <Text as="p" variant="base" className="font-medium">
           Gloss surface
         </Text>
@@ -202,7 +202,7 @@ function GlossPanels() {
           variant=&quot;gloss&quot;
         </Text>
       </Surface>
-      <Surface variant="gloss" padding="mid" radius="mid" className="w-40">
+      <Surface variant="gloss" padding="large" radius="mid" className="w-40">
         <Text as="p" variant="small" className="font-medium">
           Compact
         </Text>
@@ -213,7 +213,7 @@ function GlossPanels() {
 
 function GlossUnderlay() {
   return (
-    <Surface variant="default" padding="plus" radius="mid" className="w-full max-w-md">
+    <Surface variant="default" padding="mid" radius="mid" className="w-full max-w-md">
       <div className="flex flex-wrap items-center gap-base">
         <Button variant="primary" size="base">
           Generate
@@ -231,7 +231,7 @@ function GlossUnderlay() {
 
 function GlossStoryLayout() {
   return (
-    <div className="flex w-full max-w-lg flex-col items-center gap-xlarge">
+    <div className="flex w-full max-w-lg flex-col items-center gap-2xlarge">
       <GlossPanels />
       <GlossUnderlay />
     </div>
@@ -243,7 +243,7 @@ export const Gloss: Story = {
   decorators: [
     (Story: ComponentType) => (
       <div
-        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
         style={{
           backgroundColor: "var(--color-background)",
           ...dottedGridStyle,
@@ -262,7 +262,7 @@ export const GlossLight: Story = {
     (Story: ComponentType) => (
       <div
         data-theme="light"
-        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+        className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
         style={{
           backgroundColor: "var(--color-background)",
           ...dottedGridStyle,
@@ -278,7 +278,7 @@ export const GlossLight: Story = {
 export const CustomClassNames: Story = {
   name: "Full classNames customization",
   render: () => (
-    <div className="flex flex-col gap-large">
+    <div className="flex flex-col gap-xlarge">
       <Surface
         padding="base"
         classNames={{ root: "border border-primary/30 ring-1 ring-primary/10" }}

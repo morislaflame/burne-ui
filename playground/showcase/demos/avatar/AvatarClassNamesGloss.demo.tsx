@@ -3,7 +3,7 @@ import { PIN_IMAGE1, PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 export function AvatarClassNamesGlossDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Avatar
         variant="gloss"
         size="base"

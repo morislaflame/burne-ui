@@ -11,7 +11,7 @@ import { Radio } from ".";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -87,7 +87,7 @@ export const SelectInteraction: Story = {
     hint: "Delivery in 1–2 days",
   },
   render: (args) => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Radio {...args} />
       <Radio name="delivery" value="pickup" label="Pickup" />
     </div>
@@ -102,7 +102,7 @@ export const SelectInteraction: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Radio
           key={size}
@@ -128,7 +128,7 @@ export const Disabled: Story = {
 export const CustomIndicator: Story = {
   name: "Custom indicator",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Radio name="custom-indicator" value="plain">
         <Radio.Control />
         <Radio.Content>
@@ -174,7 +174,7 @@ export const IndicatorShape: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Simple and compound — native <code className="text-primary">&lt;label&gt;</code> around input and
         text. Hint and error — via{" "}
@@ -223,7 +223,7 @@ export const CustomClassNames: Story = {
       defaultChecked
       variant="gloss"
       classNames={{
-        root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-mid",
+        root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-mid",
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
         indicator: "rounded-mid",

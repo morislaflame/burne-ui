@@ -11,13 +11,13 @@ const USERS = [
 
 export function AvatarPresenceRowDemo() {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Online status
       </Text>
       <ul className="flex flex-col gap-small">
         {USERS.map((user) => (
-          <li key={user.label} className="flex items-center gap-mid">
+          <li key={user.label} className="flex items-center gap-large">
             <Badge.Anchor>
               <Avatar size="base" label={user.label} src={user.src} alt="" loading="lazy" />
               <Badge

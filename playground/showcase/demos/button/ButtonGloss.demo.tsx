@@ -4,7 +4,7 @@ import { Button } from "@/components/core/Button";
 
 export function ButtonGlossDemo() {
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <div className="flex flex-wrap items-center gap-small">
         <Button variant="gloss">Gloss</Button>
         <Button variant="gloss">Click</Button>

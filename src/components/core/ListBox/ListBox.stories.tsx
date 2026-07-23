@@ -11,7 +11,7 @@ import { ListBox } from "@/components/core/ListBox";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[16rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[16rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-sm">

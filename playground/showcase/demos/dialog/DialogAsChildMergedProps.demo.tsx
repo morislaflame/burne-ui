@@ -13,7 +13,7 @@ export function DialogAsChildMergedPropsDemo() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <p className="text-sm text-muted">{refLabel}</p>
       <p className="max-w-md text-center text-sm text-muted">
         <code className="text-foreground">Dialog.Trigger asChild</code> merges{" "}

@@ -38,7 +38,7 @@ export function TableTeamRosterDemo() {
   }, [sort]);
 
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-xl">
+    <Surface variant="secondary" padding="large" className="w-full max-w-xl">
       <Table>
         <Table.ScrollContainer>
           <Table.Content

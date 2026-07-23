@@ -11,7 +11,7 @@ const SHORTCUTS = [
 
 export function TooltipShortcutGridDemo() {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Hotkeys
       </Text>

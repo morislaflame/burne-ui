@@ -7,7 +7,7 @@ import { Text } from "@/components/core/Text";
 
 export function DropdownActionMenuDemo() {
   return (
-    <Surface variant="secondary" padding="mid" className="flex w-full max-w-sm items-center justify-between gap-mid">
+    <Surface variant="secondary" padding="large" className="flex w-full max-w-sm items-center justify-between gap-large">
       <div className="flex min-w-0 flex-col gap-xsmall">
         <Text as="span" variant="small" className="font-medium">
           Design system

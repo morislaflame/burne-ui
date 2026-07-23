@@ -190,7 +190,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
   defaultChecked
   variant="outline"
   classNames={{
-    root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-md",
+    root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-md",
     control: "ring-primary/30",
     controlTrack: "border-primary/50",
     indicator: "rounded-mid",

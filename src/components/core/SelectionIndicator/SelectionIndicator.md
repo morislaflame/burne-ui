@@ -88,7 +88,7 @@ CSS-переменные: `--selection-indicator-small` … `--selection-indicat
 | `small` | `selection-indicator-small` | `icon-xsmall` |
 | `base` | `selection-indicator-base` | `icon-xsmall` |
 | `mid` | `selection-indicator-mid` | `icon-base` |
-| `large` | `selection-indicator-large` | `icon-plus` |
+| `large` | `selection-indicator-large` | `icon-mid` |
 
 Утилита `selectionIndicatorFallbackPx(size)` — px для layout без DOM.
 

@@ -4,8 +4,8 @@ import { Text } from "@/components/core/Text";
 
 export function InputAuthPanelDemo() {
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-sm">
-      <div className="mb-mid flex flex-col gap-xsmall">
+    <Surface variant="secondary" padding="large" className="w-full max-w-sm">
+      <div className="mb-large flex flex-col gap-xsmall">
         <Text as="h3" variant="header-2">
           API-key
         </Text>
@@ -13,7 +13,7 @@ export function InputAuthPanelDemo() {
           Compound Input in the settings panel
         </Text>
       </div>
-      <div className="flex flex-col gap-mid">
+      <div className="flex flex-col gap-large">
         <Input required>
           <Input.Label>Name</Input.Label>
           <Input.Control placeholder="Production key" autoComplete="off" />

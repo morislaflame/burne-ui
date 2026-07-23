@@ -5,7 +5,7 @@ import { Card } from "@/components/core/Card";
 
 export function CardVariantsDemo() {
   return (
-    <div className="grid gap-mid sm:grid-cols-2">
+    <div className="grid gap-large sm:grid-cols-2">
       <Card>
         <Card.Header>
           <Card.Title>Default</Card.Title>

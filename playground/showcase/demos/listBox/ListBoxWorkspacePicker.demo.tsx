@@ -14,7 +14,7 @@ export function ListBoxWorkspacePickerDemo() {
   const [value, setValue] = useState("acme");
 
   return (
-    <Surface variant="secondary" padding="plus" className="w-full max-w-sm">
+    <Surface variant="secondary" padding="mid" className="w-full max-w-sm">
       <ListBox value={value} onValueChange={(v) => setValue(v as string)}>
         <ListBox.Section>
           <ListBox.Header>Workspaces</ListBox.Header>

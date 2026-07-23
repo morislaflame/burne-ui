@@ -17,7 +17,7 @@ export function TabsClassNamesFullDemo() {
         indicator: "bg-info/30",
         tab: "font-medium",
         tabText: "gap-small",
-        panel: "rounded-small bg-info/5 p-mid",
+        panel: "rounded-small bg-info/5 p-large",
       }}
     >
       <Tabs.List>

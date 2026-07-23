@@ -49,7 +49,7 @@ const statusRowTone: Record<User["status"], TableRowTone> = {
 const decorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex w-full flex-col items-start p-xlarge text-foreground"
+      className="box-border flex w-full flex-col items-start p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-4xl">
@@ -692,7 +692,7 @@ export const EmptyState: Story = {
           <Table.Body
             items={[]}
             renderEmptyState={() => (
-              <div className="flex flex-col items-center justify-center gap-small py-xlarge text-center">
+              <div className="flex flex-col items-center justify-center gap-small py-2xlarge text-center">
                 <span className="text-2xl">📭</span>
                 <span className="text-small text-muted">No data found</span>
               </div>

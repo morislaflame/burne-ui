@@ -2,8 +2,8 @@ import { Skeleton } from "@/components/core/Skeleton";
 
 export function SkeletonClassNamesFullDemo() {
   return (
-    <div className="flex w-full max-w-xs flex-col gap-plus rounded-mid border border-info/25 p-plus">
-      <div className="flex items-center gap-plus">
+    <div className="flex w-full max-w-xs flex-col gap-mid rounded-mid border border-info/25 p-mid">
+      <div className="flex items-center gap-mid">
         <Skeleton.Circle
           animation="wave"
           size="h-10 w-10"

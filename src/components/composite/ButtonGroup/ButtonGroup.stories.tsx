@@ -13,7 +13,7 @@ import { ButtonGroup } from "./index";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -154,7 +154,7 @@ export const ToolbarWithSearchInputRow: Story = {
 export const MultipleGroupsInRow: Story = {
   render() {
     return (
-      <div className="flex flex-wrap items-center justify-center gap-large">
+      <div className="flex flex-wrap items-center justify-center gap-xlarge">
         <ButtonGroup aria-label="Format" buttonSize="small">
           <ButtonGroup.Text>Format</ButtonGroup.Text>
           <Button size="small" variant="outline">

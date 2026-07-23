@@ -235,7 +235,7 @@ Simple рендерит фиксированную разметку: `Label` →
     inputGroup: "border-primary/40 bg-primary/5",
     input: "text-primary placeholder:text-primary/50",
     trigger: "text-primary hover:text-primary",
-    triggerIcon: "icon-plus",
+    triggerIcon: "icon-mid",
     popoverBody: "bg-primary/5",
     listBox: "p-small",
     hint: "text-foreground/70",
@@ -270,7 +270,7 @@ Simple рендерит фиксированную разметку: `Label` →
 
   <ComboBox.InputGroup className="shadow-token-sm">
     <ComboBox.Input className="font-medium" placeholder="Поиск…" />
-    <ComboBox.Trigger className="px-mid" />
+    <ComboBox.Trigger className="px-large" />
   </ComboBox.InputGroup>
 
   <ComboBox.Popover className="shadow-token-lg">

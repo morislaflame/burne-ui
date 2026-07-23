@@ -108,8 +108,8 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 |------|--------|--------------------|----------------|----------------|
 | `small` | `h-control-small` | `min-w-button-small` | `small` | `icon-small` |
 | `base` | `h-control-base` | `min-w-button-base` | `base` | `icon-base` |
-| `mid` | `h-control-mid` | `min-w-button-mid` | `mid` | `icon-mid` |
-| `large` | `h-control-large` | `min-w-button-large` | `mid` | `icon-mid` |
+| `mid` | `h-control-mid` | `min-w-button-mid` | `mid` | `icon-large` |
+| `large` | `h-control-large` | `min-w-button-large` | `mid` | `icon-large` |
 
 При `iconOnly` минимальная ширина не применяется (`min-w-fit`).
 
@@ -275,7 +275,7 @@ configureMotion({
 
 ### Размерные токены
 
-`--control-height-*`, `min-w-button-*`, spacing (`px-plus`, `py-small`, …), `icon-small` / `icon-base` / `icon-mid`.
+`--control-height-*`, `min-w-button-*`, spacing (`px-mid`, `py-small`, …), `icon-small` / `icon-base` / `icon-large`.
 
 ## Стилизация и кастомизация
 
@@ -311,7 +311,7 @@ Button — leaf-компонент: **только `className` на `<button>`**
 Для нестандартной разметки внутри кнопки используйте children, стилизуя обёртки сами:
 
 ```tsx
-<Button variant="ghost" className="justify-between gap-large px-large">
+<Button variant="ghost" className="justify-between gap-xlarge px-xlarge">
   <span className="flex flex-col items-start text-left">
     <span className="font-semibold">Заголовок</span>
     <span className="text-small text-muted">Подпись</span>

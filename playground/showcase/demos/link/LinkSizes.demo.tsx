@@ -4,7 +4,7 @@ import { preventNav } from "../../shared/utils";
 
 export function LinkSizesDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Link href="#" onClick={preventNav} size="small">
         Small
       </Link>

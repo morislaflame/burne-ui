@@ -6,7 +6,7 @@ const SIZES = ["small", "base", "mid", "large"] as const;
 
 export function AccordionSizesDemo() {
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       {SIZES.map((size) => (
         <Accordion key={size} size={size} defaultOpenIndex={0}>
           <Accordion.Item>

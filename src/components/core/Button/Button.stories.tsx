@@ -27,7 +27,7 @@ const BUTTON_STATUSES: ButtonStatus[] = [
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -39,7 +39,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -119,7 +119,7 @@ export const ClickInteraction: Story = {
 export const Sizes: Story = {
   name: "Sizes (small — large)",
   render: () => (
-    <div className="flex items-start gap-plus">
+    <div className="flex items-start gap-mid">
       <Button size="small">
         Small
       </Button>
@@ -139,7 +139,7 @@ export const Sizes: Story = {
 export const IconOnlySizes: Story = {
   name: "Icon only (iconOnly)",
   render: () => (
-    <div className="flex flex-wrap items-center gap-plus">
+    <div className="flex flex-wrap items-center gap-mid">
       <Button size="small" variant="outline" iconOnly aria-label="Add">
         <IoAdd aria-hidden className="icon-small" />
       </Button>
@@ -147,10 +147,10 @@ export const IconOnlySizes: Story = {
         <IoAdd aria-hidden className="icon-base" />
       </Button>
       <Button size="mid" variant="outline" iconOnly aria-label="Add">
-        <IoAdd aria-hidden className="icon-mid" />
+        <IoAdd aria-hidden className="icon-large" />
       </Button>
       <Button size="large" variant="outline" iconOnly aria-label="Add">
-        <IoAdd aria-hidden className="icon-mid" />
+        <IoAdd aria-hidden className="icon-large" />
       </Button>
     </div>
   ),
@@ -159,7 +159,7 @@ export const IconOnlySizes: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex flex-wrap items-start gap-plus">
+    <div className="flex flex-wrap items-start gap-mid">
       <Button>
         Default
       </Button>
@@ -183,7 +183,7 @@ export const VariantsOnLightTheme: Story = {
   name: "Variants — light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex flex-wrap items-start gap-plus">
+    <div className="flex flex-wrap items-start gap-mid">
       <Button>
         Default
       </Button>
@@ -205,7 +205,7 @@ export const VariantsOnLightTheme: Story = {
 
 function StatusVariantsDemo() {
   return (
-    <div className="flex w-full max-w-4xl flex-col gap-xlarge py-mid">
+    <div className="flex w-full max-w-4xl flex-col gap-2xlarge py-large">
       {BUTTON_STATUSES.map((status) => (
         <div key={status} className="flex flex-col gap-base">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -243,7 +243,7 @@ export const StatusVariantsOnLightTheme: Story = {
 export const WithIcon: Story = {
   name: "With icon",
   render: () => (
-    <div className="flex flex-wrap items-center gap-plus">
+    <div className="flex flex-wrap items-center gap-mid">
       <Button size="small" icon={<IoAdd aria-hidden />}>
         Add
       </Button>
@@ -311,7 +311,7 @@ function ControlledAsyncDemo() {
   }, [state]);
 
   return (
-    <div className="flex flex-col items-center gap-plus">
+    <div className="flex flex-col items-center gap-mid">
       <Button asyncState={state} onClick={run} disabled={state !== "idle"} ripple>
         Controlled
       </Button>
@@ -343,7 +343,7 @@ function glossDottedDecorator(light = false) {
   return (Story: ComponentType) => (
     <div
       data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[20rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[20rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
     >
       <Story />
@@ -353,15 +353,15 @@ function glossDottedDecorator(light = false) {
 
 function GlossDemo() {
   return (
-    <div className="flex flex-col items-center gap-xlarge">
-      <div className="flex flex-wrap items-center justify-center gap-plus">
+    <div className="flex flex-col items-center gap-2xlarge">
+      <div className="flex flex-wrap items-center justify-center gap-mid">
         {BUTTON_STATUSES.map((status) => (
           <Button key={status} variant="gloss" status={status} className="capitalize">
             {status}
           </Button>
         ))}
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-plus">
+      <div className="flex flex-wrap items-center justify-center gap-mid">
         <Button variant="gloss" size="small">
           Small
         </Button>
@@ -375,7 +375,7 @@ function GlossDemo() {
           Generate
         </Button>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-plus">
+      <div className="flex flex-wrap items-center justify-center gap-mid">
         <Button variant="gloss" icon={<IoAdd aria-hidden />}>
           With icon
         </Button>
@@ -407,7 +407,7 @@ export const GlossLight: Story = {
 export const LabelLayout: Story = {
   name: "Label + shortcut layout",
   render: () => (
-    <Button variant="gloss" type="button" className="w-full max-w-xs justify-between gap-plus">
+    <Button variant="gloss" type="button" className="w-full max-w-xs justify-between gap-mid">
       <span>Command palette</span>
       <span className="inline-flex gap-xsmall">
         <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-xsmall">⌘</span>
@@ -421,7 +421,7 @@ export const CompoundLayout: Story = {
   name: "Compound API",
   render: () => (
     <Button variant="outline" type="button" className="w-full max-w-xs">
-      <Button.Label className="justify-between gap-plus">
+      <Button.Label className="justify-between gap-mid">
         <Button.Text>Command palette</Button.Text>
         <span className="inline-flex gap-xsmall font-mono text-xsmall">
           <span>⌘</span>
@@ -444,7 +444,7 @@ export const AsChildLink: Story = {
     },
   },
   render: () => (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Button asChild variant="primary">
         <a href="#docs">Primary link</a>
       </Button>

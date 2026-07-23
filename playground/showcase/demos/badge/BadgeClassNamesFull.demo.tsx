@@ -5,8 +5,8 @@ import { Badge } from "@/components/core/Badge";
 
 export function BadgeClassNamesFullDemo() {
   return (
-    <div className="flex flex-col items-start gap-mid">
-      <div className="flex flex-wrap items-center gap-plus">
+    <div className="flex flex-col items-start gap-large">
+      <div className="flex flex-wrap items-center gap-mid">
         <Badge
           status="info"
           classNames={{

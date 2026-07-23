@@ -14,7 +14,7 @@ const PIN_IMAGE =
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
@@ -28,7 +28,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
@@ -180,7 +180,7 @@ export const PressRipple: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex flex-col gap-mid text-left">
+    <div className="flex flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Trigger — native <code className="text-primary">&lt;button type=&quot;button&quot;&gt;</code> with{" "}
         <code className="text-primary">aria-expanded</code> and{" "}
@@ -207,7 +207,7 @@ export const AllVariationsLight: Story = {
   name: "All variants — light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Expandable title="Title only">
         <p className="text-sm">Content without description in the trigger.</p>
       </Expandable>

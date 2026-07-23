@@ -114,7 +114,7 @@ export function GlossComponentsDemo() {
 
   return (
     <div
-      className="flex flex-col gap-xlarge rounded-mid p-mid"
+      className="flex flex-col gap-2xlarge rounded-mid p-large"
       style={{ backgroundColor: "var(--color-background)", ...glossDottedGridStyle }}
     >
       <div className="flex flex-col gap-xsmall">
@@ -269,18 +269,18 @@ export function GlossComponentsDemo() {
             <Tabs.Tab value="overview">Review</Tabs.Tab>
             <Tabs.Tab value="details">Details</Tabs.Tab>
           </Tabs.List>
-          <Tabs.Panel value="overview" className="pt-mid">
+          <Tabs.Panel value="overview" className="pt-large">
             <Text as="p" variant="small" className="text-muted">
               Gloss Tabs — glass tab list with indicator.
             </Text>
           </Tabs.Panel>
-          <Tabs.Panel value="details" className="pt-mid">
+          <Tabs.Panel value="details" className="pt-large">
             <Text as="p" variant="small" className="text-muted">
               Active tab: {glossTab}
             </Text>
           </Tabs.Panel>
         </Tabs>
-        <div className="flex flex-wrap items-start gap-mid">
+        <div className="flex flex-wrap items-start gap-large">
           <Calendar
             variant="gloss"
             mode="single"
@@ -319,7 +319,7 @@ export function GlossComponentsDemo() {
           <ColorPicker.Trigger />
           <ColorPicker.Content presets={["#3b82f6", "#22c55e", "#ef4444", "#eab308"]} />
         </ColorPicker>
-        <div className="grid gap-mid xl:grid-cols-2">
+        <div className="grid gap-large xl:grid-cols-2">
           <div className="flex min-w-0 flex-col gap-xsmall">
             <Text as="p" variant="small" className="text-muted">
               Base table
@@ -449,7 +449,7 @@ export function GlossComponentsDemo() {
         <Text as="h3" variant="base" className="font-medium">
           Indicators
         </Text>
-        <div className="flex flex-wrap items-center gap-mid">
+        <div className="flex flex-wrap items-center gap-large">
           <Checkbox
             label="Checkbox gloss (off)"
             variant="gloss"
@@ -476,7 +476,7 @@ export function GlossComponentsDemo() {
             onChange={() => setGlossRadio(false)}
           />
         </div>
-        <div className="flex flex-wrap items-center gap-mid">
+        <div className="flex flex-wrap items-center gap-large">
           <Switch
             gloss
             onChange={(e: ChangeEvent<HTMLInputElement>) => setGlossSwitch(e.target.checked)}
@@ -533,8 +533,8 @@ export function GlossComponentsDemo() {
         <Text as="h3" variant="base" className="font-medium">
           Surfaces
         </Text>
-        <div className="grid gap-mid lg:grid-cols-2">
-          <Surface variant="gloss" padding="plus" radius="mid">
+        <div className="grid gap-large lg:grid-cols-2">
+          <Surface variant="gloss" padding="mid" radius="mid">
             <Text as="p" variant="base" className="font-medium">
               Surface gloss
             </Text>
@@ -565,7 +565,7 @@ export function GlossComponentsDemo() {
         <Text as="h3" variant="base" className="font-medium">
           Avatars
         </Text>
-        <div className="flex flex-wrap items-center gap-mid">
+        <div className="flex flex-wrap items-center gap-large">
           <Avatar variant="gloss" size="small" label="Ada" src={PIN_IMAGE1} alt="" loading="lazy" />
           <Avatar variant="gloss" size="base" label="Grace" src={PIN_IMAGE2} alt="" loading="lazy" />
           <Avatar variant="gloss" size="mid" label="Alan" src={PIN_IMAGE3} alt="" loading="lazy" />
@@ -599,7 +599,7 @@ export function GlossComponentsDemo() {
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
-        <Dialog.Body className="flex flex-col gap-plus">
+        <Dialog.Body className="flex flex-col gap-mid">
           <Input>
             <Input.Label>Name</Input.Label>
             <Input.Control variant="gloss" name="name" placeholder="Ivan" autoComplete="name" />
@@ -655,7 +655,7 @@ export function GlossComponentsDemo() {
           </Drawer.HeadingBlock>
           <Drawer.Close />
         </Drawer.Header>
-        <Drawer.Body className="flex flex-col gap-plus">
+        <Drawer.Body className="flex flex-col gap-mid">
           <Input>
             <Input.Label>Note</Input.Label>
             <Input.Control variant="gloss" placeholder="Text…" />

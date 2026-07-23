@@ -7,7 +7,7 @@ export function ColorPickerClassNamesFullDemo() {
   const [color, setColor] = useState("#3b82f6");
 
   return (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <ColorPicker
         value={color}
         onValueChange={setColor}
@@ -17,7 +17,7 @@ export function ColorPickerClassNamesFullDemo() {
           hexInput: "border-info/30 bg-info/10",
           hexInputField: "text-info",
           previewSwatch: "ring-2 ring-info/30",
-          slidersStack: "gap-mid",
+          slidersStack: "gap-large",
         }}
       >
         <ColorPicker.Trigger />

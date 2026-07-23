@@ -30,7 +30,7 @@ const countryOptions: ComboBoxOption[] = [
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -241,7 +241,7 @@ export const ErrorSummaryRender: Story = {
         name: { required: "Name is required" },
       }}
       errorSummary={(entries) => (
-        <ul className="list-disc ps-mid">
+        <ul className="list-disc ps-large">
           {entries.map(([field, message]) => (
             <li key={field}>
               <a href={`#${field}`} className="underline">
@@ -273,7 +273,7 @@ export const ErrorSummaryRender: Story = {
 
 function LoginForm() {
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-sm">
+    <Surface variant="secondary" padding="large" className="w-full max-w-sm">
       <Form
         aria-label="Sign in"
         size="mid"
@@ -319,7 +319,7 @@ function ControlledForm() {
   const [values, setValues] = useState<FormValues>({ name: "Anna", email: "" });
 
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Text as="p" variant="small" className="text-muted">
         Current values: {JSON.stringify(values)}
       </Text>
@@ -388,7 +388,7 @@ function AsyncSubmitForm() {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       {submitted ? (
         <Text as="p" variant="small" className="text-success">
           Submitted (demo)
@@ -542,11 +542,11 @@ function ClassNamesForm() {
     <Form
       aria-label="classNames customization"
       classNames={{
-        root: "rounded-mid border border-primary/20 bg-tertiary/50 p-mid",
+        root: "rounded-mid border border-primary/20 bg-tertiary/50 p-large",
         title: "text-primary",
         description: "text-info",
         section: "gap-small",
-        actions: "justify-start border-t border-token pt-mid",
+        actions: "justify-start border-t border-token pt-large",
         field: "rounded-base bg-background/40 p-small",
       }}
       onSubmit={(values) => {

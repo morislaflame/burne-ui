@@ -11,7 +11,7 @@ import { Link } from "@/components/core/Link";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -23,7 +23,7 @@ const lightDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -81,7 +81,7 @@ export const ClickInteraction: Story = {
 export const WithDefaultIcon: Story = {
   name: "Default icon",
   render: () => (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <Link href="#" showDefaultIcon defaultIconPosition="end">
         Next
       </Link>
@@ -95,7 +95,7 @@ export const WithDefaultIcon: Story = {
 export const Underline: Story = {
   name: "With underline",
   render: () => (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <Link href="#" underline>
         Underlined link
       </Link>
@@ -109,7 +109,7 @@ export const Underline: Story = {
 export const CustomIcons: Story = {
   name: "Custom icons",
   render: () => (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <Link href="#" icon={<IoDocumentTextOutline aria-hidden className="icon-base" />}>
         Documentation
       </Link>
@@ -165,7 +165,7 @@ export const LightTheme: Story = {
 export const CompoundApi: Story = {
   name: "Compound API",
   render: () => (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <Link href="#">
         Icon at end (default)
         <Link.Icon />
@@ -221,7 +221,7 @@ export const AsChild: Story = {
     },
   },
   render: () => (
-    <div className="flex flex-col items-start gap-mid">
+    <div className="flex flex-col items-start gap-large">
       <Link asChild underline showDefaultIcon>
         <a href="#docs">Styled router-ready link</a>
       </Link>

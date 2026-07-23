@@ -12,7 +12,7 @@ import type { AlertStatus } from "@/components/core/Alert";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[24rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[24rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -197,7 +197,7 @@ export const Sizes: Story = {
   name: "Sizes small · base · mid · large",
   render: function SizesDemo() {
     return (
-      <div className="flex max-w-2xl flex-col flex-wrap gap-xlarge sm:flex-row sm:items-start">
+      <div className="flex max-w-2xl flex-col flex-wrap gap-2xlarge sm:flex-row sm:items-start">
         {(["small", "base", "mid", "large"] as const).map((size) => (
           <div key={size} className="flex flex-col items-start gap-base">
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -213,7 +213,7 @@ export const Sizes: Story = {
 
 function GlossDemo() {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-plus">
+    <div className="flex flex-wrap items-center justify-center gap-mid">
       <ConfirmTemplate variant="gloss" status="danger" label="Gloss danger" />
       <ConfirmTemplate variant="gloss" status="success" label="Gloss success" />
       <ConfirmTemplate variant="gloss" status="info" label="Gloss info" />
@@ -253,7 +253,7 @@ export const PortalContainer: Story = {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     return (
-      <div className="flex w-full max-w-lg flex-col gap-mid">
+      <div className="flex w-full max-w-lg flex-col gap-large">
         <p className="text-sm text-muted">
           Overlay stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
         </p>
@@ -262,7 +262,7 @@ export const PortalContainer: Story = {
         </Button>
         <div
           ref={setContainer}
-          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
           <p className="text-xs text-muted">Custom portal host</p>
           {container ? (
@@ -322,7 +322,7 @@ export const AsChildMergedProps: Story = {
     }, []);
 
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
         <AlertDialog open={open} onOpenChange={setOpen} status="danger">
           <AlertDialog.Trigger

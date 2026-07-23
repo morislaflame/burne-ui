@@ -8,12 +8,12 @@ export function TabsSecondaryDemo() {
         <Tabs.Tab value="x">Secondary X</Tabs.Tab>
         <Tabs.Tab value="y">Secondary Y</Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="x" className="pt-mid">
+      <Tabs.Panel value="x" className="pt-large">
         <Text as="p" variant="small" className="text-muted">
           variant secondary
         </Text>
       </Tabs.Panel>
-      <Tabs.Panel value="y" className="pt-mid">
+      <Tabs.Panel value="y" className="pt-large">
         <Text as="p" variant="small" className="text-muted">
           surface-secondary container
         </Text>

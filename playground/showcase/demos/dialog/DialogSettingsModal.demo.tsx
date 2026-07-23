@@ -24,7 +24,7 @@ export function DialogSettingsModalDemo() {
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
-        <Dialog.Body className="flex flex-col gap-mid">
+        <Dialog.Body className="flex flex-col gap-large">
           <Switch
             checked={analytics}
             onChange={(e) => setAnalytics(e.target.checked)}

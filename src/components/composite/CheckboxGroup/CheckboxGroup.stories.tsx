@@ -12,7 +12,7 @@ import { CheckboxGroup } from ".";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -159,7 +159,7 @@ export const CustomClassNames: Story = {
         hint: "text-foreground/70",
         error: "font-medium",
         list: "gap-base",
-        group: "gap-mid",
+        group: "gap-large",
         actions: "pt-small",
       }}
     >
@@ -186,7 +186,7 @@ export const CustomClassNames: Story = {
 export const Sizes: Story = {
   name: "Sizes small · base · mid · large",
   render: () => (
-    <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
+    <div className="grid w-full max-w-5xl gap-2xlarge md:grid-cols-2">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col gap-base">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>

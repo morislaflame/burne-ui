@@ -8,11 +8,11 @@ export function SelectionIndicatorThumbGalleryDemo() {
   const [active, setActive] = useState(true);
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-mid">
+    <div className="flex w-full max-w-md flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         SelectionThumb
       </Text>
-      <div className="flex flex-wrap items-center gap-xlarge">
+      <div className="flex flex-wrap items-center gap-2xlarge">
         <div className="selection-indicator-base flex items-center justify-center">
           <SelectionThumb active={active}>
             <SelectionThumb.Icon size="base">

@@ -8,7 +8,7 @@ import { Pagination } from "@/components/core/Pagination";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
@@ -22,7 +22,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
@@ -128,7 +128,7 @@ export const Uncontrolled: Story = {
   render: function UncontrolledPages() {
     const [lastPage, setLastPage] = useState(5);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Pagination
           defaultPage={5}
           totalPages={20}
@@ -183,7 +183,7 @@ export const NarrowContainer: Story = {
     const totalPages = 20;
 
     return (
-      <div className="w-full max-w-[16rem] rounded-mid border-token p-mid">
+      <div className="w-full max-w-[16rem] rounded-mid border-token p-large">
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage}>
           <Pagination.Summary>
             Page {page} of {totalPages}
@@ -282,7 +282,7 @@ export const Accessibility: Story = {
     const totalPages = 10;
 
     return (
-      <div className="flex flex-col gap-mid text-left">
+      <div className="flex flex-col gap-large text-left">
         <p className="text-sm text-muted">
           Root — <code className="text-primary">&lt;nav aria-label&gt;</code>. List —{" "}
           <code className="text-primary">&lt;ol&gt;</code> /{" "}

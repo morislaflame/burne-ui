@@ -6,7 +6,7 @@ import { STATUS_BADGE, TABLE_ROWS, type TableRow } from "../../shared/constants"
 
 export function TableGlossDemo() {
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Table variant="gloss" className="w-full">
         <Table.ScrollContainer>
           <Table.Content aria-label="Gloss team" className="min-w-[28rem]">

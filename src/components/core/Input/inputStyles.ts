@@ -52,9 +52,9 @@ export const INPUT_FILE_EMPTY_ICON_CLASS =
 export const INPUT_FILE_GLYPH_SHELL_CLASS =
   "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token";
 
-export const INPUT_FILE_GLYPH_ICON_CLASS = "icon-plus shrink-0";
+export const INPUT_FILE_GLYPH_ICON_CLASS = "icon-mid shrink-0";
 
-export const INPUT_FILE_REMOVE_ICON_CLASS = "icon-plus shrink-0";
+export const INPUT_FILE_REMOVE_ICON_CLASS = "icon-mid shrink-0";
 
 export const INPUT_PASSWORD_TOGGLE_ICON_CLASS = "shrink-0";
 
@@ -110,11 +110,11 @@ export const INPUT_PASSWORD_TOGGLE_CONTROL: Record<
     pad: "px-small",
   },
   mid: {
-    icon: "icon-plus",
+    icon: "icon-mid",
     pad: "px-base",
   },
   large: {
-    icon: "icon-mid",
+    icon: "icon-large",
     pad: "px-base",
   },
 };
@@ -237,7 +237,7 @@ export function inputShellClass({
 
 export function inputFileEmptyAreaClass(slotClass?: string): string {
   return cn(
-    "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-plus px-large py-xlarge",
+    "relative flex min-h-[6.5rem] min-w-0 flex-1 flex-col items-center justify-center gap-mid px-xlarge py-2xlarge",
     slotClass,
   );
 }
@@ -250,10 +250,10 @@ export function inputFileFilledAreaClass({
   slotClass?: string;
 }): string {
   return cn(
-    "relative min-w-0 flex-1 px-large py-base",
+    "relative min-w-0 flex-1 px-xlarge py-base",
     multipleFiles
       ? "flex flex-col gap-base"
-      : "flex h-full items-center gap-plus",
+      : "flex h-full items-center gap-mid",
     slotClass,
   );
 }

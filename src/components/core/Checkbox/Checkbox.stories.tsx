@@ -13,7 +13,7 @@ import { Checkbox } from "./index";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -25,7 +25,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -127,7 +127,7 @@ export const ToggleInteraction: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid">
+    <div className="flex max-w-md flex-col gap-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Checkbox
           key={size}
@@ -144,7 +144,7 @@ export const Sizes: Story = {
 export const Variants: Story = {
   name: "Dot variants",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid">
+    <div className="flex max-w-md flex-col gap-large">
       <Checkbox variant="default" defaultChecked label="default" />
       <Checkbox variant="secondary" label="secondary" />
       <Checkbox variant="outline" defaultChecked label="outline (o)" />
@@ -155,7 +155,7 @@ export const Variants: Story = {
 export const States: Story = {
   name: "States",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid">
+    <div className="flex max-w-md flex-col gap-large">
       <Checkbox label="Regular" hint="Without status" />
       <Checkbox status="danger" label="With error" hint="Subtitle stays muted" />
       <Checkbox disabled label="Disabled" hint="Cannot toggle" />
@@ -231,7 +231,7 @@ export const IndicatorCompound: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Simple: native <code className="text-primary">&lt;label&gt;</code> + hidden input. Compound:{" "}
         <code className="text-primary">role=&quot;group&quot;</code>,{" "}
@@ -257,7 +257,7 @@ export const Accessibility: Story = {
 function ControlledDemo() {
   const [on, setOn] = useState(false);
   return (
-    <div className="flex max-w-md flex-col gap-plus">
+    <div className="flex max-w-md flex-col gap-mid">
       <Checkbox
         checked={on}
         onChange={(e) => setOn(e.target.checked)}
@@ -277,7 +277,7 @@ export const OnLightTheme: Story = {
   name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid">
+    <div className="flex max-w-md flex-col gap-large">
       <Checkbox defaultChecked label="Light theme" hint="primary / primary-foreground" />
       <Checkbox variant="outline" label="Outline" />
     </div>
@@ -298,7 +298,7 @@ export const CustomClassNames: Story = {
       defaultChecked
       variant="outline"
       classNames={{
-        root: "rounded-large border-primary/40 bg-primary/5 p-mid shadow-token-mid",
+        root: "rounded-large border-primary/40 bg-primary/5 p-large shadow-token-mid",
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
         indicator: "rounded-mid",

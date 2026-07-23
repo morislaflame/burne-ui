@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/core/Checkbox";
 
 export function CheckboxSizesDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Checkbox size="small" defaultChecked label="Small" />
       <Checkbox size="base" defaultChecked label="Base" />
       <Checkbox size="mid" defaultChecked label="Mid" />

@@ -90,9 +90,9 @@ Hook из context: `view`, `viewDate`, `selectedDates`, `rangeStart`/`rangeEnd`,
 | size | `min-w` | root padding | day cell |
 |------|---------|--------------|----------|
 | `small` | `15.5rem` | `p-small` | `max-w-control-small` |
-| `base` | `18rem` | `p-mid` | `max-w-control-base` |
-| `mid` | `21rem` | `p-mid` | `max-w-control-mid` |
-| `large` | `24rem` | `p-large` | `max-w-control-large` |
+| `base` | `18rem` | `p-large` | `max-w-control-base` |
+| `mid` | `21rem` | `p-large` | `max-w-control-mid` |
+| `large` | `24rem` | `p-xlarge` | `max-w-control-large` |
 
 Nav buttons: `CALENDAR_NAV_BTN` per size. Weekday labels — uppercase muted `weekdayCell`.
 

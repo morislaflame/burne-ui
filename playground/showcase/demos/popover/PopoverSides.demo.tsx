@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 
 export function PopoverSidesDemo() {
   return (
-    <div className="flex flex-col items-center gap-mid py-mid">
+    <div className="flex flex-col items-center gap-large py-large">
       <Popover side="top">
         <Popover.Trigger asChild>
           <Button variant="outline" type="button">
@@ -20,7 +20,7 @@ export function PopoverSidesDemo() {
         </Popover.Content>
       </Popover>
 
-      <div className="flex items-center gap-mid">
+      <div className="flex items-center gap-large">
         <Popover side="left">
           <Popover.Trigger asChild>
             <Button variant="outline" type="button">

@@ -5,7 +5,7 @@ import { Text } from "@/components/core/Text";
 
 export function SwitchCompoundThemeDemo() {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Theme
       </Text>

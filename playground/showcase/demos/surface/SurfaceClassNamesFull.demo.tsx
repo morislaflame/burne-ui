@@ -2,7 +2,7 @@ import { Surface } from "@/components/core/Surface";
 
 export function SurfaceClassNamesFullDemo() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-large">
+    <div className="flex w-full max-w-md flex-col gap-xlarge">
       <Surface
         padding="base"
         classNames={{ root: "border border-primary/30 ring-1 ring-primary/10" }}

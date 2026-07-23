@@ -10,7 +10,7 @@ export function ToggleButtonGroupViewToolbarDemo() {
   const [view, setView] = useState("list");
 
   return (
-    <Surface variant="secondary" padding="mid" className="flex w-full max-w-md items-center justify-between gap-mid">
+    <Surface variant="secondary" padding="large" className="flex w-full max-w-md items-center justify-between gap-large">
       <Text as="span" variant="small" className="font-medium">
         Catalog view
       </Text>

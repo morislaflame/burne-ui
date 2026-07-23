@@ -115,7 +115,7 @@ export function textareaControlClassNames({
 }) {
   return cn(
     TEXTAREA_CONTROL_BASE_CLASS,
-    resizable && "pr-mid",
+    resizable && "pr-large",
     textareaControlClass(size),
     slotClass,
     FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS,

@@ -22,7 +22,7 @@ const ALERT_STATUSES: AlertStatus[] = [
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -36,7 +36,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -126,7 +126,7 @@ function AlertMatrixItem({
 
 function VariantsOnlyDemo() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-plus py-mid">
+    <div className="flex w-full max-w-md flex-col gap-mid py-large">
       {ALERT_VARIANTS.map((variant) => (
         <AlertMatrixItem key={variant} variant={variant} status="default" />
       ))}
@@ -136,13 +136,13 @@ function VariantsOnlyDemo() {
 
 function StatusVariantsDemo() {
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-xlarge py-mid">
+    <div className="flex w-full max-w-2xl flex-col gap-2xlarge py-large">
       {ALERT_STATUSES.map((status) => (
         <div key={status} className="flex flex-col gap-base">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">
             status: {status}
           </span>
-          <div className="flex flex-col gap-plus">
+          <div className="flex flex-col gap-mid">
             {ALERT_VARIANTS.map((variant) => (
               <AlertMatrixItem
                 key={`${status}-${variant}`}
@@ -202,7 +202,7 @@ function AlertAllVariantsDemo({ simple = false }: { simple?: boolean }) {
 
   if (simple) {
     return (
-      <div className="flex flex-col gap-plus">
+      <div className="flex flex-col gap-mid">
         {items.map((item) => (
           <Alert
             key={`${item.variant ?? "default"}-${item.status ?? "default"}`}
@@ -218,7 +218,7 @@ function AlertAllVariantsDemo({ simple = false }: { simple?: boolean }) {
   }
 
   return (
-    <div className="flex flex-col gap-plus">
+    <div className="flex flex-col gap-mid">
       {items.map((item) => (
         <Alert
           key={`${item.variant ?? "default"}-${item.status ?? "default"}`}
@@ -307,7 +307,7 @@ export const Variants: Story = {
 export const VariantsSimple: Story = {
   name: "Variants — simple API",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-plus py-mid">
+    <div className="flex w-full max-w-md flex-col gap-mid py-large">
       {ALERT_VARIANTS.map((variant) => (
         <Alert
           key={variant}
@@ -357,7 +357,7 @@ export const OverviewOnLightTheme: Story = {
 export const Accessibility: Story = {
   name: "Accessibility (auto id + role)",
   render: () => (
-    <div className="flex flex-col gap-plus">
+    <div className="flex flex-col gap-mid">
       <Alert
         status="danger"
         title="Failed to save"
@@ -376,7 +376,7 @@ const GLOSS_ALERT_STATUSES = ["danger", "success", "info", "warning"] as const;
 
 function GlossDemo() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-plus">
+    <div className="flex w-full max-w-md flex-col gap-mid">
       {GLOSS_ALERT_STATUSES.map((status) => (
         <Alert key={status} variant="gloss" status={status}>
           <Alert.Message>
@@ -462,7 +462,7 @@ const ALERT_SIZES: AlertSize[] = ["small", "base", "mid", "large"];
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-plus">
+    <div className="flex w-full max-w-md flex-col gap-mid">
       {ALERT_SIZES.map((size) => (
         <Alert key={size} status="info" size={size} className="w-full">
           <Alert.Message>

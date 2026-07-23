@@ -9,7 +9,7 @@ import { Skeleton } from ".";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-start justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-start justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -41,7 +41,7 @@ type Story = StoryObj<typeof meta>;
 export const AllVariants: Story = {
   name: "All animation variants",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       {(["wave", "pulse", "shimmer", "none"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <p className="text-small font-medium text-muted capitalize">{variant}</p>
@@ -63,7 +63,7 @@ export const AllVariants: Story = {
 export const TextLines: Story = {
   name: "Text lines",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <p className="text-small text-muted">{variant}</p>
@@ -79,7 +79,7 @@ export const TextLines: Story = {
 export const Circles: Story = {
   name: "Circles",
   render: () => (
-    <div className="flex flex-wrap gap-mid">
+    <div className="flex flex-wrap gap-large">
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
         <div key={variant} className="flex flex-col items-center gap-small">
           <p className="text-small text-muted">{variant}</p>
@@ -95,16 +95,16 @@ export const Circles: Story = {
 export const CardLayout: Story = {
   name: "Card (all variants)",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       {(["wave", "pulse", "shimmer"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <p className="text-small text-muted">{variant}</p>
           <Skeleton.Region
             busy
             aria-label="Loading card"
-            className="flex flex-col gap-plus rounded-mid border-token p-plus"
+            className="flex flex-col gap-mid rounded-mid border-token p-mid"
           >
-            <div className="flex items-center gap-plus">
+            <div className="flex items-center gap-mid">
               <Skeleton.Circle animation={variant} size="h-10 w-10" />
               <div className="flex flex-1 flex-col gap-xsmall">
                 <Skeleton animation={variant} className="h-3 w-32 rounded-full" />
@@ -131,7 +131,7 @@ export const ListLayout: Story = {
   render: () => (
     <Skeleton.Region busy aria-label="Loading list" className="flex w-full max-w-sm flex-col gap-xsmall">
       {Array.from({ length: 5 }, (_, i) => (
-        <div key={i} className="flex items-center gap-plus py-small">
+        <div key={i} className="flex items-center gap-mid py-small">
           <Skeleton.Circle animation="wave" size="h-9 w-9" />
           <div className="flex flex-1 flex-col gap-xsmall">
             <Skeleton
@@ -156,7 +156,7 @@ export const ListLayout: Story = {
 export const BlockSkeleton: Story = {
   name: "Skeleton.Block",
   render: () => (
-    <div className="flex gap-mid">
+    <div className="flex gap-large">
       {(["wave", "pulse", "shimmer"] as const).map((v) => (
         <Skeleton.Block key={v} animation={v} className="h-32 w-40" />
       ))}
@@ -179,13 +179,13 @@ export const LoadingRegion: Story = {
   render: function LoadingRegionStory() {
     const [busy, setBusy] = useState(true);
     return (
-      <div className="flex w-full max-w-sm flex-col gap-mid">
+      <div className="flex w-full max-w-sm flex-col gap-large">
         <Button size="small" onClick={() => setBusy((v) => !v)}>
           {busy ? "Show content" : "Show skeleton"}
         </Button>
         <Skeleton.Region busy={busy} aria-label="Profile">
           {busy ? (
-            <div className="flex gap-mid">
+            <div className="flex gap-large">
               <Skeleton.Circle size="h-12 w-12" animation="shimmer" />
               <div className="flex min-w-0 flex-1 flex-col gap-small">
                 <Skeleton className="h-4 w-32 rounded-small" animation="shimmer" />
@@ -233,7 +233,7 @@ export const CustomClassNames: Story = {
     },
   },
   render: () => (
-    <div className="flex w-full max-w-sm flex-col gap-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large">
       <Skeleton
         animation="wave"
         className="h-4 w-full"

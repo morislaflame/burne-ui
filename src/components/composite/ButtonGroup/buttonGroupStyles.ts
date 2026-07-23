@@ -13,7 +13,7 @@ export const BUTTON_GROUP_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {
   small: "small",
   base: "base",
   mid: "mid",
-  large: "mid",
+  large: "large",
 };
 
 const BUTTON_GROUP_CONTROL_HEIGHT_CLASS: Record<ComponentSize, string> = {

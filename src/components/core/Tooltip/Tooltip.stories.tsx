@@ -18,7 +18,7 @@ const VARIANTS: TooltipVariant[] = [
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -31,7 +31,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border w-full p-xlarge text-foreground"
+      className="box-border w-full p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -124,7 +124,7 @@ const TOOLTIP_VARIANT_ITEMS: Array<{
 
 function TooltipVariantsDemo() {
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-plus">
+    <div className="mx-auto flex w-full max-w-md flex-col gap-mid">
       {TOOLTIP_VARIANT_ITEMS.map((item) => (
         <Tooltip.Panel
           key={`${item.variant}-${item.title}`}
@@ -149,7 +149,7 @@ export const Variants: Story = {
 export const OnButtonSizes: Story = {
   name: "Sizes on button",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-mid">
+    <div className="flex flex-wrap items-center justify-center gap-large">
       <Tooltip size="small" variant="default">
         <Tooltip.Trigger>
           <Button size="small" variant="outline" type="button">
@@ -188,7 +188,7 @@ export const OnButtonSizes: Story = {
 
 function SemanticVariantsDemo() {
   return (
-    <div className="flex min-h-[14rem] max-w-xl flex-row flex-wrap items-center justify-center gap-mid py-xlarge">
+    <div className="flex min-h-[14rem] max-w-xl flex-row flex-wrap items-center justify-center gap-large py-2xlarge">
       {VARIANTS.map((variant) => (
         <Tooltip key={variant} variant={variant}>
           <Tooltip.Trigger>
@@ -248,7 +248,7 @@ export const SemanticIconHidden: Story = {
 export const WithArrow: Story = {
   name: "With arrow",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-mid">
+    <div className="flex flex-wrap items-center justify-center gap-large">
       <Tooltip delayShowMs={0} side="top">
         <Tooltip.Trigger>
           <Button variant="secondary" type="button">
@@ -299,7 +299,7 @@ export const CustomOffset: Story = {
 export const Placements: Story = {
   name: "Placement (4 sides)",
   render: () => (
-    <div className="grid grid-cols-2 gap-xlarge py-xlarge">
+    <div className="grid grid-cols-2 gap-2xlarge py-2xlarge">
       {(["top", "right", "bottom", "left"] as const).map((side) => (
         <div key={side} className="flex items-center justify-center">
           <Tooltip delayShowMs={0} side={side}>
@@ -336,7 +336,7 @@ export const KeyboardFocus: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Content: <code className="text-primary">role=&quot;tooltip&quot;</code>. Link to trigger —{" "}
         <code className="text-primary">aria-describedby</code> only while the tooltip is open. Hover and
@@ -419,16 +419,16 @@ export const PortalContainer: Story = {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     return (
-      <div className="flex w-full max-w-lg flex-col gap-mid">
+      <div className="flex w-full max-w-lg flex-col gap-large">
         <p className="text-sm text-muted">
           Tooltip portals into the box below (not <code className="text-foreground">document.body</code>).
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-48 items-center justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          className="relative flex h-48 items-center justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
           style={{ transform: "translateZ(0)" }}
         >
-          <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+          <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
           {container ? (
             <Tooltip delayShowMs={0} portalContainer={container}>
               <Tooltip.Trigger>
@@ -470,7 +470,7 @@ export const AsChildMergedProps: Story = {
     }, []);
 
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
         <Tooltip delayShowMs={0}>
           <Tooltip.Trigger

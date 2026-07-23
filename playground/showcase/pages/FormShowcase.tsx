@@ -60,7 +60,7 @@ export function FormShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="Section — group of fields with dense gap-small inside; Form sets gap-mid between sections."
+            description="Section — group of fields with dense gap-small inside; Form sets gap-large between sections."
           />
           <ShowcaseDoc.ApiRow
             api="simple"

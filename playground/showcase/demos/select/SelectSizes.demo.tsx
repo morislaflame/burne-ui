@@ -8,7 +8,7 @@ const options = [
 
 export function SelectSizesDemo() {
   return (
-    <div className="flex w-64 flex-col gap-mid">
+    <div className="flex w-64 flex-col gap-large">
       <Select size="small" label="small" options={options} defaultValue="ru" />
       <Select size="base" label="base" options={options} defaultValue="ru" />
       <Select size="mid" label="mid" options={options} defaultValue="ru" />

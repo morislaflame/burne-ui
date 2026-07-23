@@ -3,15 +3,15 @@ import { Text } from "@/components/core/Text";
 
 export function SurfaceNestedPanelsDemo() {
   return (
-    <Surface variant="default" padding="plus" shadow="base" className="w-full max-w-md flex flex-col gap-mid p-mid">
-      <Text as="p" variant="small" className="mb-mid font-medium">
+    <Surface variant="default" padding="mid" shadow="base" className="w-full max-w-md flex flex-col gap-large p-large">
+      <Text as="p" variant="small" className="mb-large font-medium">
         Project panel
       </Text>
-      <Surface variant="secondary" padding="base" radius="base" className="flex flex-col gap-mid p-mid">
+      <Surface variant="secondary" padding="base" radius="base" className="flex flex-col gap-large p-large">
         <Text as="p" variant="small" className="text-secondary-foreground">
           Nested secondary-surface
         </Text>
-        <Surface variant="tertiary" padding="small" radius="base" className="flex p-mid">
+        <Surface variant="tertiary" padding="small" radius="base" className="flex p-large">
           <Text as="span" variant="small">
             tertiary — details inside the section
           </Text>

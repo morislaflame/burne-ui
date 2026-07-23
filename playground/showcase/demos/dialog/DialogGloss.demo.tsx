@@ -23,7 +23,7 @@ export function DialogGlossDemo() {
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
-        <Dialog.Body className="flex flex-col gap-plus">
+        <Dialog.Body className="flex flex-col gap-mid">
           <Input>
             <Input.Label>Name</Input.Label>
             <Input.Control variant="gloss" name="gloss-name" placeholder="Ivan" autoComplete="name" />

@@ -17,7 +17,7 @@ import { Separator, type SeparatorProps, type SeparatorOrientation } from "burne
 
 <Separator orientation="vertical" />
 
-<Separator className="my-mid border-primary/30" />
+<Separator className="my-large border-primary/30" />
 ```
 
 Compound API нет.
@@ -60,7 +60,7 @@ Compound API нет.
 
 <Separator
   orientation="vertical"
-  className="mx-plus min-h-[2rem] border-l-2 border-info/40"
+  className="mx-mid min-h-[2rem] border-l-2 border-info/40"
 />
 ```
 

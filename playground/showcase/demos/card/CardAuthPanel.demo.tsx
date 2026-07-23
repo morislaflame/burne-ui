@@ -33,7 +33,7 @@ export function CardAuthPanelDemo() {
           </Tabs.List>
 
           <Tabs.Panel value="login" className="">
-            <Form onSubmit={onSubmit} aria-label="Login" className="gap-large">
+            <Form onSubmit={onSubmit} aria-label="Login" className="gap-xlarge">
               <Form.Section>
                 <Input required label="Email" name="login-email" autoComplete="email" placeholder="you@example.com" />
                 <Input
@@ -57,7 +57,7 @@ export function CardAuthPanelDemo() {
           </Tabs.Panel>
 
           <Tabs.Panel value="register">
-            <Form onSubmit={onSubmit} aria-label="Registration" className="gap-large">
+            <Form onSubmit={onSubmit} aria-label="Registration" className="gap-xlarge">
               <Form.Section>
                 <Input required label="Name" name="register-name" autoComplete="name" placeholder="Ivan"/>
                 <Input required label="Email" name="register-email" autoComplete="email" placeholder="you@example.com" />

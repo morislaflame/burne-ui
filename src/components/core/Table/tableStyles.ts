@@ -36,16 +36,16 @@ export const TABLE_COLUMN_BASE_CLASS = "group/col";
 
 export const TABLE_COLUMN_VARIANT_CLASS: Record<TableVariant, string> = {
   default:
-    "bg-secondary px-mid py-plus text-secondary-foreground whitespace-nowrap",
-  secondary: "px-mid py-plus text-secondary-foreground whitespace-nowrap",
-  toned: "px-mid py-plus text-muted whitespace-nowrap bg-transparent",
-  gloss: "bg-transparent px-mid py-plus text-muted whitespace-nowrap",
+    "bg-secondary px-large py-mid text-secondary-foreground whitespace-nowrap",
+  secondary: "px-large py-mid text-secondary-foreground whitespace-nowrap",
+  toned: "px-large py-mid text-muted whitespace-nowrap bg-transparent",
+  gloss: "bg-transparent px-large py-mid text-muted whitespace-nowrap",
 };
 
 export const TABLE_COLUMN_SORTABLE_CLASS = "select-none";
 
 export const TABLE_COLUMN_SORT_BUTTON_CLASS =
-  "inline-flex w-full min-w-0 items-center gap-xsmall border-0 bg-transparent text-inherit cursor-pointer outline-none focus-ring-inset rounded-small hover:text-foreground -mx-mid -my-plus px-mid py-plus box-border";
+  "inline-flex w-full min-w-0 items-center gap-xsmall border-0 bg-transparent text-inherit cursor-pointer outline-none focus-ring-inset rounded-small hover:text-foreground -mx-large -my-mid px-large py-mid box-border";
 
 export const TABLE_COLUMN_INNER_CLASS = "inline-flex items-center gap-xsmall";
 
@@ -60,7 +60,7 @@ export const TABLE_COLUMN_SORT_CHEVRON_ACTIVE_CLASS = "text-primary opacity-100"
 export const TABLE_COLUMN_SORT_CHEVRON_IDLE_CLASS =
   "opacity-0 group-hover/col:opacity-40 text-muted";
 
-export const TABLE_BODY_EMPTY_CELL_CLASS = "px-mid py-mid text-center";
+export const TABLE_BODY_EMPTY_CELL_CLASS = "px-large py-large text-center";
 
 export const TABLE_ROW_BASE_CLASS = "outline-none";
 
@@ -88,10 +88,10 @@ export const TABLE_ROW_FOCUS_CLASS = "focus-ring-inset";
 export const TABLE_CELL_BASE_CLASS = "text-small";
 
 export const TABLE_CELL_VARIANT_CLASS: Record<TableVariant, string> = {
-  default: "px-mid py-plus",
-  secondary: "px-mid py-plus",
-  toned: "px-mid py-plus first:rounded-l-mid last:rounded-r-mid",
-  gloss: "px-mid py-plus",
+  default: "px-large py-mid",
+  secondary: "px-large py-mid",
+  toned: "px-large py-mid first:rounded-l-mid last:rounded-r-mid",
+  gloss: "px-large py-mid",
 };
 
 export const TABLE_CELL_SELECTED_RING_CLASS = "ring-2 ring-inset ring-primary";
@@ -100,7 +100,7 @@ export const TABLE_CELL_TONED_HOVER_CLASS =
   "hover:brightness-[0.97] motion-reduce:hover:brightness-100";
 
 export const TABLE_FOOTER_CLASS =
-  "flex flex-wrap items-center justify-between gap-base border-t-token px-mid py-plus";
+  "flex flex-wrap items-center justify-between gap-base border-t-token px-large py-mid";
 
 export type TableRowTone =
   | "default"

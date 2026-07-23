@@ -8,7 +8,7 @@ export function DisclosureSettingsGroupDemo() {
       <Disclosure value="notifications">
         <Disclosure.Trigger>Notifications</Disclosure.Trigger>
         <Disclosure.Content>
-          <div className="flex flex-col gap-mid">
+          <div className="flex flex-col gap-large">
             <Switch defaultChecked label="Email-digest" />
             <Switch label="Push on mobile" />
           </div>

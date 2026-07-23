@@ -4,8 +4,8 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 import { useToggleButtonClassNames, useOptionalToggleButtonContext } from "./toggleButtonContext";
-import { toggleButtonContentClass, toggleButtonFillClass, toggleButtonIconClass, toggleButtonLabelClass, toggleButtonTextClass } from "./toggleButtonStyles";
-import { TOGGLE_BUTTON_TEXT_VARIANT, type ToggleButtonContentProps, type ToggleButtonFillProps, type ToggleButtonIconStartProps, type ToggleButtonLabelProps, type ToggleButtonTextProps, type ToggleButtonIconEndProps } from "./toggleButtonTypes";
+import { toggleButtonContentClass, toggleButtonFillClass, toggleButtonIconClass, toggleButtonLabelClass, toggleButtonTextClass, TOGGLE_BUTTON_TEXT_VARIANT } from "./toggleButtonStyles";
+import { type ToggleButtonContentProps, type ToggleButtonFillProps, type ToggleButtonIconStartProps, type ToggleButtonLabelProps, type ToggleButtonTextProps, type ToggleButtonIconEndProps } from "./toggleButtonTypes";
 import { SELECTION_FILL_DATA_ATTR } from "./useToggleButtonFillAnimation";
 
 export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProps>(

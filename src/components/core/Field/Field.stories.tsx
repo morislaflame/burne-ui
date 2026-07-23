@@ -12,7 +12,7 @@ import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -121,7 +121,7 @@ function FieldSetSizeDemo({ size }: { size: (typeof COMPONENT_SIZES)[number] }) 
 export const FieldSetSizes: Story = {
   name: "FieldSet — sizes",
   render: () => (
-    <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
+    <div className="grid w-full max-w-5xl gap-2xlarge md:grid-cols-2">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col gap-base">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
@@ -135,7 +135,7 @@ export const FieldSetSizes: Story = {
 export const HintStatuses: Story = {
   name: "Hint — statuses",
   render: () => (
-    <div className="flex w-full max-w-sm flex-col gap-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large">
       <Field>
         <Field.Label>Default</Field.Label>
         <Field.Hint>Neutral hint (muted).</Field.Hint>
@@ -168,7 +168,7 @@ export const WithForm: Story = {
 
     return (
       <form
-        className="flex w-full max-w-sm flex-col gap-mid text-left"
+        className="flex w-full max-w-sm flex-col gap-large text-left"
         aria-label="Demo form"
         onSubmit={(e) => e.preventDefault()}
       >
@@ -211,8 +211,8 @@ export const CustomClassNames: Story = {
       classNames={{
         root: "max-w-md",
         legend: "text-primary",
-        stack: "gap-xlarge",
-        group: "gap-mid",
+        stack: "gap-2xlarge",
+        group: "gap-large",
         actions: "pt-small",
       }}
     >

@@ -17,13 +17,13 @@ export function CardPressableDemo() {
           <Card pressable className="max-w-sm">
           <Ripple color="neutral" />
           <div className="relative z-[1]">
-            <Card.Body className="px-large pb-0 pt-plus">
+            <Card.Body className="px-xlarge pb-0 pt-mid">
               <div
                 className="h-24 w-full overflow-hidden rounded-small bg-cover bg-center"
                 style={{ backgroundImage: `url(${PIN_IMAGE4})` }}
               />
             </Card.Body>
-            <Card.Header className="pt-plus gap-xsmall">
+            <Card.Header className="pt-mid gap-xsmall">
               <Card.Title>Pressable</Card.Title>
               <Card.Description>Click - it will open Dialog.</Card.Description>
             </Card.Header>

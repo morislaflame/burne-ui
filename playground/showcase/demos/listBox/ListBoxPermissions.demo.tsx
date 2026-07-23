@@ -15,8 +15,8 @@ export function ListBoxPermissionsDemo() {
   const [selected, setSelected] = useState<string[]>(["read", "write"]);
 
   return (
-    <Surface variant="secondary" padding="plus" className="w-full max-w-sm flex flex-col gap-mid p-mid">
-      <Text as="p" variant="small" className="mb-mid font-medium">
+    <Surface variant="secondary" padding="mid" className="w-full max-w-sm flex flex-col gap-large p-large">
+      <Text as="p" variant="small" className="mb-large font-medium">
         Access rights
       </Text>
       <ListBox multiple value={selected} onValueChange={(v) => setSelected(v as string[])}>
@@ -24,7 +24,7 @@ export function ListBoxPermissionsDemo() {
           <ListBox.Item key={perm.value} value={perm.value} label={perm.label} />
         ))}
       </ListBox>
-      <Text as="p" variant="xsmall" className="mt-mid text-muted">
+      <Text as="p" variant="xsmall" className="mt-large text-muted">
         Selected: {selected.length > 0 ? selected.join(", ") : "—"}
       </Text>
     </Surface>

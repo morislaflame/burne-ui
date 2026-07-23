@@ -14,8 +14,8 @@ export function CalendarModesDemo() {
   const [dates, setDates] = useState<Date[]>([]);
 
   return (
-    <div className="flex flex-col gap-xlarge">
-      <div className="flex flex-col items-start gap-mid">
+    <div className="flex flex-col gap-2xlarge">
+      <div className="flex flex-col items-start gap-large">
         <Text as="span" variant="small" className="font-medium">
           One date
         </Text>
@@ -24,7 +24,7 @@ export function CalendarModesDemo() {
           Selected: <span className="font-medium text-foreground">{formatDate(date)}</span>
         </Text>
       </div>
-      <div className="flex flex-col items-start gap-mid">
+      <div className="flex flex-col items-start gap-large">
         <Text as="span" variant="small" className="font-medium">
           Range
         </Text>
@@ -34,7 +34,7 @@ export function CalendarModesDemo() {
           <span className="font-medium text-foreground">{formatDate(range.end)}</span>
         </Text>
       </div>
-      <div className="flex flex-col items-start gap-mid">
+      <div className="flex flex-col items-start gap-large">
         <Text as="span" variant="small" className="font-medium">
           Multiple dates
         </Text>
@@ -46,7 +46,7 @@ export function CalendarModesDemo() {
           </span>
         </Text>
       </div>
-      <div className="flex flex-col items-start gap-mid">
+      <div className="flex flex-col items-start gap-large">
         <Text as="span" variant="small" className="font-medium">
           With footer
         </Text>

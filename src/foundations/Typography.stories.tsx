@@ -4,10 +4,10 @@ import { expect } from "storybook/test";
 function TypographySamples() {
   return (
     <div
-      className="box-border w-full max-w-3xl rounded-base border-token p-mid text-foreground shadow-sm"
+      className="box-border w-full max-w-3xl rounded-base border-token p-large text-foreground shadow-sm"
       style={{ backgroundColor: "var(--color-surface)" }}
     >
-      <div className="flex flex-col gap-mid">
+      <div className="flex flex-col gap-large">
         <p className="text-accent-header">accent-header — scale 4xl</p>
         <p className="text-header-1">header-1 — scale 3xl</p>
         <p className="text-header-2">header-2 — scale 2xl</p>
@@ -50,7 +50,7 @@ export const OnDarkCanvas: Story = {
   decorators: [
     (Story) => (
       <div
-        className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+        className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
         style={{ backgroundColor: "var(--color-background)" }}
       >
         <Story />

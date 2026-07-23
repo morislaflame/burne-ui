@@ -6,8 +6,8 @@ import { EXPANDABLE_INFO_ICON } from "../../shared/constants";
 
 export function ExpandableOrderDetailsDemo() {
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-md">
-      <Text as="p" variant="small" className="mb-mid font-medium">
+    <Surface variant="secondary" padding="large" className="w-full max-w-md">
+      <Text as="p" variant="small" className="mb-large font-medium">
         Order #1042
       </Text>
       <Expandable defaultOpen title="Order contents" icon={EXPANDABLE_INFO_ICON} description="3 positions">

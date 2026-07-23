@@ -7,7 +7,7 @@ export function ListBoxSimpleApiDemo() {
   const [listBoxMulti, setListBoxMulti] = useState<string[]>(["ru"]);
 
   return (
-    <Surface variant="default" padding="plus" className="max-w-sm">
+    <Surface variant="default" padding="mid" className="max-w-sm">
       <ListBox multiple value={listBoxMulti} onValueChange={(v) => setListBoxMulti(v as string[])}>
         <ListBox.Item value="ru" label="Russian" />
         <ListBox.Item value="en" label="English" />

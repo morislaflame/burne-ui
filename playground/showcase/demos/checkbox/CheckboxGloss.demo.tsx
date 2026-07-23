@@ -8,7 +8,7 @@ export function CheckboxGlossDemo() {
   const [on, setOn] = useState(true);
 
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Checkbox
         label="Checkbox gloss (off)"
         variant="gloss"

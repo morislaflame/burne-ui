@@ -18,10 +18,10 @@ const RIPPLE_COLOR_KEYS = Object.keys(RIPPLE_COLOR).join(", ");
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
-      <div className="mx-auto flex w-full max-w-lg flex-col gap-xlarge">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-2xlarge">
         <Story />
       </div>
     </div>
@@ -32,10 +32,10 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
-      <div className="mx-auto flex w-full max-w-lg flex-col gap-xlarge">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-2xlarge">
         <Story />
       </div>
     </div>
@@ -96,7 +96,7 @@ export const Playground: Story = {
       role="presentation"
     >
       <Ripple {...args} className="rounded-[inherit]" />
-      <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-plus py-plus">
+      <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-mid py-mid">
         <Text variant="mid" className="font-medium">
           Ripple area
         </Text>
@@ -121,7 +121,7 @@ export const ClickInteraction: Story = {
       role="presentation"
     >
       <Ripple {...args} className="rounded-[inherit]" />
-      <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-plus py-plus">
+      <div className="relative z-[1] flex min-h-[7rem] flex-col justify-center gap-small px-mid py-mid">
         <Text variant="mid" className="font-medium">
           Ripple area
         </Text>
@@ -177,13 +177,13 @@ export const WithButton: Story = {
 export const DirectionCompare: Story = {
   name: "Direction in / out",
   render: () => (
-    <div className="flex flex-wrap gap-mid">
+    <div className="flex flex-wrap gap-large">
       <div
         className="relative min-h-[6rem] min-w-[10rem] cursor-pointer overflow-hidden rounded-mid border-token bg-surface"
         role="presentation"
       >
         <Ripple color="neutral" direction="in" />
-        <div className="relative z-[1] flex h-full items-center justify-center px-plus">
+        <div className="relative z-[1] flex h-full items-center justify-center px-mid">
           <Text variant="small">direction=&quot;in&quot;</Text>
         </div>
       </div>
@@ -192,7 +192,7 @@ export const DirectionCompare: Story = {
         role="presentation"
       >
         <Ripple color="neutral" direction="out" />
-        <div className="relative z-[1] flex h-full items-center justify-center px-plus">
+        <div className="relative z-[1] flex h-full items-center justify-center px-mid">
           <Text variant="small">direction=&quot;out&quot;</Text>
         </div>
       </div>
@@ -260,7 +260,7 @@ export const WithInputShell: Story = {
       <Text variant="base" className="text-muted">
         Shared interactive card around the field
       </Text>
-      <div className="relative overflow-hidden rounded-base border-token bg-surface p-mid shadow-token-base">
+      <div className="relative overflow-hidden rounded-base border-token bg-surface p-large shadow-token-base">
         <Ripple color="neutral" />
         <div className="relative z-[1] flex flex-col gap-small">
           <Text variant="small" className="font-medium text-muted">
@@ -279,7 +279,7 @@ export const ArbitraryCssColor: Story = {
   name: "Arbitrary CSS color",
   render: () => (
     <div
-      className="relative max-w-xs cursor-pointer overflow-hidden rounded-mid border-token bg-surface p-plus"
+      className="relative max-w-xs cursor-pointer overflow-hidden rounded-mid border-token bg-surface p-mid"
       role="presentation"
     >
       <Ripple color="oklch(0.72 0.14 250 / 0.55)" duration={550} />
@@ -299,7 +299,7 @@ export const OnLightTheme: Story = {
       role="presentation"
     >
       <Ripple color="neutral" />
-      <div className="relative z-[1] flex min-h-[6rem] items-center justify-center px-plus">
+      <div className="relative z-[1] flex min-h-[6rem] items-center justify-center px-mid">
         <Text variant="base">Ripple on light background</Text>
       </div>
     </div>

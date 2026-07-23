@@ -10,7 +10,7 @@ import { SearchInput } from "./SearchInput";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -22,7 +22,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -76,7 +76,7 @@ export const WithRipple: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-xlarge">
+    <div className="flex flex-wrap items-center justify-center gap-2xlarge">
       <SearchInput size="small" placeholder="Search" />
       <SearchInput size="base" placeholder="Search" />
       <SearchInput size="mid" placeholder="Search" />
@@ -95,7 +95,7 @@ export const Controlled: Story = {
   render: function Controlled() {
     const [open, setOpen] = useState(false);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <SearchInput
           expanded={open}
           onExpandedChange={setOpen}
@@ -117,7 +117,7 @@ export const Controlled: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Collapsed — <code className="text-primary">role=&quot;button&quot;</code>,{" "}
         <code className="text-primary">aria-expanded</code>, Enter/Space opens. Expanded —{" "}
@@ -225,7 +225,7 @@ export const FilterList: Story = {
     );
 
     return (
-      <div className="mx-auto flex w-full max-w-lg flex-col gap-mid">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-large">
         <div className="flex w-full justify-end">
           <SearchInput
             placeholder="Title or description…"
@@ -239,9 +239,9 @@ export const FilterList: Story = {
         <p className="text-center text-xs text-muted">
           Found: {filtered.length} of {DEMO_EVENTS.length}
         </p>
-        <ul className="flex list-none flex-col gap-plus p-0">
+        <ul className="flex list-none flex-col gap-mid p-0">
           {filtered.length === 0 ? (
-            <li className="rounded-mid border-token border-dashed px-mid py-xlarge text-center text-sm text-muted">
+            <li className="rounded-mid border-token border-dashed px-large py-2xlarge text-center text-sm text-muted">
               Nothing matched «{query.trim() || "…"}». Try another
               query.
             </li>

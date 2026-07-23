@@ -17,7 +17,7 @@ export function ShowcaseSection({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("flex flex-col gap-mid scroll-mt-24", className)}>
+    <section id={id} className={cn("flex flex-col gap-large scroll-mt-24", className)}>
       <div>
         <Text as="h2" variant="header-2">
           {title}

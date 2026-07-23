@@ -102,9 +102,9 @@ Simple API нет.
 | size | Trigger | Content padding |
 |------|---------|-----------------|
 | `small` | `CONTROL_SIZE_LAYOUT.small` | `p-base` |
-| `base` | `CONTROL_SIZE_LAYOUT.base` | `p-plus` |
-| `mid` | `CONTROL_SIZE_LAYOUT.mid` | `p-mid` |
-| `large` | `CONTROL_SIZE_LAYOUT.large` | `p-large` |
+| `base` | `CONTROL_SIZE_LAYOUT.base` | `p-mid` |
+| `mid` | `CONTROL_SIZE_LAYOUT.mid` | `p-large` |
+| `large` | `CONTROL_SIZE_LAYOUT.large` | `p-xlarge` |
 
 ## Анимации
 
@@ -251,7 +251,7 @@ configureMotion({
 ### Group separated cards
 
 ```tsx
-<Disclosure.Group separated variant="card" classNames={{ group: "gap-mid" }}>
+<Disclosure.Group separated variant="card" classNames={{ group: "gap-large" }}>
   <Disclosure value="a" dragHandle>
     <Disclosure.Trigger>Шаг 1</Disclosure.Trigger>
     <Disclosure.Content>...</Disclosure.Content>

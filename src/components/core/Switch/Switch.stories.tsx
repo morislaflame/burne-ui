@@ -12,7 +12,7 @@ import { Switch } from ".";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -26,7 +26,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -110,7 +110,7 @@ export const ToggleInteraction: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Switch key={size} size={size} label={`Size ${size}`} defaultChecked={size === "base"} />
       ))}
@@ -121,7 +121,7 @@ export const Sizes: Story = {
 export const CustomThickness: Story = {
   name: "Custom thickness",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Switch label="10px" thickness={10} defaultChecked />
       <Switch label="1.25rem" thickness="1.25rem" defaultChecked />
       <Switch label="size=small + thickness=20" size="small" thickness={20} defaultChecked />
@@ -178,7 +178,7 @@ export const CompoundTrack: Story = {
 export const CustomColor: Story = {
   name: "Custom color",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Switch label="Primary (default)" hint="Primary track" defaultChecked />
       <Switch
         label="Success"
@@ -227,7 +227,7 @@ export const CustomColor: Story = {
 export const WithoutLabel: Story = {
   name: "Without label",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Switch defaultChecked />
       <Switch aria-label="Dark theme" defaultChecked />
     </div>
@@ -265,7 +265,7 @@ export const OnLightTheme: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Simple and compound — native <code className="text-primary">&lt;label&gt;</code> around input and
         text. Hint and error are linked via{" "}

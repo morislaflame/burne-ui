@@ -11,7 +11,7 @@ import { Disclosure } from ".";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-start gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-start gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-lg">
@@ -80,7 +80,7 @@ export const Basic: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       {(["default", "outline", "secondary", "card", "ghost"] as const).map((variant) => (
         <div key={variant} className="flex flex-col gap-xsmall">
           <Text as="p" variant="small" className="text-muted capitalize">{variant}</Text>
@@ -101,7 +101,7 @@ export const Variants: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Disclosure key={size} variant="outline" size={size}>
           <Disclosure.Trigger>Size: {size}</Disclosure.Trigger>
@@ -157,7 +157,7 @@ export const Controlled: Story = {
   render: () => {
     const [open, setOpen] = useState(false);
     return (
-      <div className="flex flex-col gap-mid">
+      <div className="flex flex-col gap-large">
         <div className="flex gap-small">
           <button
             type="button"
@@ -271,7 +271,7 @@ export const GroupCard: Story = {
 export const FramedVariantsClosed: Story = {
   name: "Outline / Secondary — closed",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Disclosure variant="outline">
         <Disclosure.Trigger>Outline — title outside border</Disclosure.Trigger>
         <Disclosure.Content>
@@ -362,7 +362,7 @@ export const GroupControlled: Story = {
   render: () => {
     const [value, setValue] = useState<string | null>("a");
     return (
-      <div className="flex flex-col gap-mid">
+      <div className="flex flex-col gap-large">
         <div className="flex gap-small">
           {["a", "b", "c"].map((v) => (
             <button

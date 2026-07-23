@@ -3,7 +3,7 @@ import { Text } from "@/components/core/Text";
 
 export function LoadingInlineStatusDemo() {
   return (
-    <div className="flex w-full max-w-sm items-center gap-mid rounded-mid border-token bg-secondary px-mid py-small">
+    <div className="flex w-full max-w-sm items-center gap-large rounded-mid border-token bg-secondary px-large py-small">
       <Loading size="small" color="info" />
       <div className="min-w-0">
         <Text as="p" variant="small" className="font-medium">

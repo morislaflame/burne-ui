@@ -8,7 +8,7 @@ const STATS = [
 
 export function TextStatsGridDemo() {
   return (
-    <div className="grid w-full max-w-md grid-cols-3 gap-small rounded-mid bg-secondary p-mid">
+    <div className="grid w-full max-w-md grid-cols-3 gap-small rounded-mid bg-secondary p-large">
       {STATS.map((stat) => (
         <div key={stat.label} className="flex flex-col gap-xsmall text-center">
           <Text as="span" variant="header-2" className="tabular-nums text-primary">

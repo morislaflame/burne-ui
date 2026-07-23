@@ -14,7 +14,7 @@ import { Popover } from "@/components/core/Popover";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -103,7 +103,7 @@ export const WithHeader: Story = {
 export const Placements: Story = {
   name: "Placement (4 sides)",
   render: () => (
-    <div className="grid grid-cols-2 gap-xlarge py-xlarge">
+    <div className="grid grid-cols-2 gap-2xlarge py-2xlarge">
       {(["top", "right", "bottom", "left"] as const).map((side) => (
         <div key={side} className="flex items-center justify-center">
           <Popover side={side}>
@@ -153,7 +153,7 @@ function TagColorPopoverDemo() {
           <Popover.Description>Color is visible in the list and on the kanban board</Popover.Description>
         </Popover.Header>
         <Popover.Body>
-          <div className="flex flex-col gap-plus">
+          <div className="flex flex-col gap-mid">
             <div className="flex flex-wrap gap-small">
               {TAG_COLORS.map((color) => (
                 <button
@@ -208,7 +208,7 @@ function ShareLinkPopoverDemo() {
           <Popover.Description>Link access — read only</Popover.Description>
         </Popover.Header>
         <Popover.Body>
-          <div className="flex flex-col gap-plus">
+          <div className="flex flex-col gap-mid">
             <Input
               readOnly
               size="small"
@@ -258,7 +258,7 @@ export const Controlled: Story = {
   render: function ControlledPopover() {
     const [open, setOpen] = useState(false);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Popover open={open} onOpenChange={setOpen}>
           <Popover.Trigger>
             <Button variant="outline" type="button">
@@ -284,7 +284,7 @@ export const Controlled: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Panel: <code className="text-primary">role=&quot;dialog&quot;</code>,{" "}
         <code className="text-primary">aria-labelledby</code> /{" "}
@@ -330,15 +330,15 @@ export const PortalContainer: Story = {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     return (
-      <div className="flex w-full max-w-lg flex-col gap-mid">
+      <div className="flex w-full max-w-lg flex-col gap-large">
         <p className="text-sm text-muted">
           Panel portals into the box below (not <code className="text-foreground">document.body</code>).
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
-          <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+          <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
           {container ? (
             <Popover portalContainer={container}>
               <Popover.Trigger>
@@ -383,7 +383,7 @@ export const AsChildMergedProps: Story = {
     }, []);
 
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
         <Popover>
           <Popover.Trigger

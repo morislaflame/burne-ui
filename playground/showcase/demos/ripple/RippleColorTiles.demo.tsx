@@ -14,7 +14,7 @@ export function RippleColorTilesDemo() {
         <button
           key={tile.label}
           type="button"
-          className={`relative overflow-hidden rounded-mid border-token p-mid ${tile.bg}`}
+          className={`relative overflow-hidden rounded-mid border-token p-large ${tile.bg}`}
         >
           <Ripple color={tile.ripple} />
           <Text as="span" variant="small" className="relative z-[1] font-medium">

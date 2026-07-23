@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 
 export function KbdGlossDemo() {
   return (
-    <div className="flex flex-col items-start gap-mid">
+    <div className="flex flex-col items-start gap-large">
       <Kbd variant="gloss" size="mid">
         ⌘ K
       </Kbd>
@@ -20,7 +20,7 @@ export function KbdGlossDemo() {
         </Kbd>{" "}
         to close
       </Text>
-      <Button variant="gloss" type="button" className="justify-between gap-plus">
+      <Button variant="gloss" type="button" className="justify-between gap-mid">
         <span>Command Palette</span>
         <Kbd.Group>
           <Kbd variant="gloss" size="small">

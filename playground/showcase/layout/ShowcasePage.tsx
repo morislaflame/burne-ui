@@ -20,7 +20,7 @@ export function ShowcasePage({
   className?: string;
 }) {
   return (
-    <article className={cn("flex flex-col gap-xlarge", className)}>
+    <article className={cn("flex flex-col gap-2xlarge", className)}>
       <header className="flex flex-col gap-small">
         <div className="flex flex-wrap items-center gap-small">
           <Text as="h1" variant="header-1">

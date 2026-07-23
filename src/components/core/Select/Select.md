@@ -203,7 +203,7 @@ Selection indicator + label press squeeze — см. ListBox.md.
   <Select.Label className="font-semibold">Регион</Select.Label>
   <Select.TriggerGroup className="shadow-token-sm">
     <Select.Value className="text-left" placeholder="—" />
-    <Select.Trigger className="px-mid" />
+    <Select.Trigger className="px-large" />
   </Select.TriggerGroup>
   <Select.Popover className="shadow-token-lg" />
 </Select>

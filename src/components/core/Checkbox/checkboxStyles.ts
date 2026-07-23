@@ -25,12 +25,12 @@ export const CHECKBOX_SIZE_LAYOUT: Record<
   mid: {
     title: "mid",
     desc: "small",
-    gridGap: "gap-x-plus gap-y-xsmall",
+    gridGap: "gap-x-mid gap-y-xsmall",
   },
   large: {
     title: "large",
     desc: "base",
-    gridGap: "gap-x-plus gap-y-xsmall",
+    gridGap: "gap-x-mid gap-y-xsmall",
   },
 };
 

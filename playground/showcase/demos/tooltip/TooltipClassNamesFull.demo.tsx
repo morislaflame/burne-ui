@@ -22,7 +22,7 @@ export function TooltipClassNamesFullDemo() {
     >
       <Tooltip.Trigger asChild>
         <Button variant="outline" type="button" aria-label="Reference">
-          <IoHelpCircleOutline aria-hidden className="icon-plus" />
+          <IoHelpCircleOutline aria-hidden className="icon-mid" />
         </Button>
       </Tooltip.Trigger>
       <Tooltip.Content showArrow>

@@ -3,7 +3,7 @@ import { Tooltip } from "@/components/core/Tooltip";
 
 export function TooltipSidesDemo() {
   return (
-    <div className="flex flex-col items-center gap-mid py-mid">
+    <div className="flex flex-col items-center gap-large py-large">
       <Tooltip side="top">
         <Tooltip.Trigger asChild>
           <Button variant="outline" type="button">
@@ -13,7 +13,7 @@ export function TooltipSidesDemo() {
         <Tooltip.Content>side=top</Tooltip.Content>
       </Tooltip>
 
-      <div className="flex items-center gap-mid">
+      <div className="flex items-center gap-large">
         <Tooltip side="left">
           <Tooltip.Trigger asChild>
             <Button variant="outline" type="button">

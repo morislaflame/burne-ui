@@ -115,7 +115,7 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `small` | `xsmall` | `icon-small` |
 | `base` | `small` | `icon-small` |
 | `mid` | `small` | `icon-base` |
-| `large` | `base` | `icon-mid` |
+| `large` | `base` | `icon-large` |
 
 ## Анимации
 

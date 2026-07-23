@@ -6,8 +6,8 @@ export function MeterQuotaBannerDemo() {
   const value = 94.2
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-plus rounded-mid border border-warning/30 bg-warning/5 p-mid">
-      <div className="flex items-baseline justify-between gap-mid">
+    <div className="flex w-full max-w-md flex-col gap-mid rounded-mid border border-warning/30 bg-warning/5 p-large">
+      <div className="flex items-baseline justify-between gap-large">
         <Text as="p" variant="small" className="text-warning">
           API quota almost exhausted
         </Text>

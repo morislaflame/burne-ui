@@ -12,7 +12,7 @@ import { Slider } from ".";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -26,7 +26,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -93,7 +93,7 @@ export const Default: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Slider
           key={size}
@@ -140,7 +140,7 @@ export const WithMarks: Story = {
 export const WithIcon: Story = {
   name: "With icon",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       <Slider
         label="Volume"
         showValue
@@ -184,7 +184,7 @@ export const CompoundTrack: Story = {
 export const CustomThickness: Story = {
   name: "Custom thickness",
   render: () => (
-    <div className="flex w-full max-w-md flex-col gap-xlarge">
+    <div className="flex w-full max-w-md flex-col gap-2xlarge">
       <Slider label="10px" showValue thickness={10} defaultValue={35} />
       <Slider label="1.25rem" showValue thickness="1.25rem" defaultValue={55} />
       <Slider label="size=small + thickness=20" showValue size="small" thickness={20} defaultValue={70} />
@@ -202,7 +202,7 @@ export const Disabled: Story = {
 export const Vertical: Story = {
   name: "Vertical",
   render: () => (
-    <div className="flex h-64 items-center gap-xlarge">
+    <div className="flex h-64 items-center gap-2xlarge">
       <Slider orientation="vertical" label="Brightness" showValue defaultValue={65} />
       <Slider orientation="vertical" range={true} label="Range" showValue defaultValue={[20, 80]} />
     </div>
@@ -239,7 +239,7 @@ export const OnLightTheme: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex flex-col gap-plus text-left">
+    <div className="flex flex-col gap-mid text-left">
       <p className="text-sm text-muted">
         Slider — <code className="text-primary">role=&quot;slider&quot;</code> on{" "}
         <code className="text-primary">&lt;button&gt;</code> with{" "}

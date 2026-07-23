@@ -7,7 +7,7 @@ export function SearchInputCommandBarDemo() {
   const [query, setQuery] = useState("");
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-small rounded-mid border-token bg-secondary p-mid shadow-sm">
+    <div className="flex w-full max-w-xl flex-col gap-small rounded-mid border-token bg-secondary p-large shadow-sm">
       <Text as="p" variant="xsmall" className="uppercase tracking-wide text-muted">
         Command palette
       </Text>

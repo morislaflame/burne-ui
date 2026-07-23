@@ -5,7 +5,7 @@ export function ToastModificationsDemo() {
   const { toast } = useToast();
 
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <div className="flex flex-wrap gap-small">
         <Button
           variant="outline"

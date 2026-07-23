@@ -16,7 +16,7 @@ import { Dropdown } from ".";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -28,7 +28,7 @@ const lightDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -393,7 +393,7 @@ export const CustomAvatarTrigger: Story = {
           </button>
         </Dropdown.Trigger>
         <Dropdown.Popover className="min-w-[14rem]">
-          <div role="presentation" className="pb-plus">
+          <div role="presentation" className="pb-mid">
             <div className="flex items-center gap-small">
               <Avatar size="small" label="Jane Doe">
                 <Avatar.Image src={PIN_IMAGE2} alt="" loading="lazy" />
@@ -497,7 +497,7 @@ export const Accessibility: Story = {
   name: "Accessibility",
   render() {
     return (
-      <div className="flex max-w-md flex-col gap-mid text-left">
+      <div className="flex max-w-md flex-col gap-large text-left">
         <p className="text-sm text-muted">
           Trigger: <code className="text-primary">aria-expanded</code>,{" "}
           <code className="text-primary">aria-controls</code>. Menu: arrows, Home/End, Escape
@@ -543,16 +543,16 @@ export const PortalContainer: Story = {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     return (
-      <div className="flex w-full max-w-lg flex-col gap-mid">
+      <div className="flex w-full max-w-lg flex-col gap-large">
         <p className="text-sm text-muted">
           Menu portals into the box below (not <code className="text-foreground">document.body</code>).
         </p>
         <div
           ref={setContainer}
-          className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
           style={{ transform: "translateZ(0)" }}
         >
-          <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+          <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
           {container ? (
             <Dropdown portalContainer={container} selectionIndicator defaultValue="ru">
               <Dropdown.Trigger asChild>
@@ -603,7 +603,7 @@ export const AsChildMergedProps: Story = {
     }, []);
 
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
         <Dropdown selectionIndicator defaultValue="ru">
           <Dropdown.Trigger

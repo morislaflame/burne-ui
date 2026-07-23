@@ -47,7 +47,7 @@ export function ThemePlayground() {
       </main>
 
       <aside className="hidden md:flex h-full w-96 shrink-0 flex-col overflow-hidden border-l-token bg-surface">
-        <div className="min-h-0 flex-1 overflow-y-auto p-mid">
+        <div className="min-h-0 flex-1 overflow-y-auto p-large">
           <ThemeControls tokens={tokens} />
         </div>
       </aside>
@@ -72,7 +72,7 @@ export function ThemePlayground() {
             </Drawer.HeadingBlock>
             <Drawer.Close />
           </Drawer.Header>
-          <Drawer.Body className="p-mid">
+          <Drawer.Body className="p-large">
             <DeferredThemeControls open={drawerOpen} tokens={tokens} />
           </Drawer.Body>
         </Drawer.Panel>

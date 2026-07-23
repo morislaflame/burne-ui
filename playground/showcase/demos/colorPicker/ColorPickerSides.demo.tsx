@@ -9,7 +9,7 @@ export function ColorPickerSidesDemo() {
   const [color, setColor] = useState("#6366f1");
 
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       {SIDES.map((side) => (
         <div key={side} className="flex flex-col items-center gap-small">
           <ColorPicker value={color} onValueChange={setColor} side={side}>

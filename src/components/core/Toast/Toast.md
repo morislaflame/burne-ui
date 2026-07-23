@@ -186,7 +186,7 @@ configureMotion({
 
 | Элемент | Классы / токены |
 |---------|-----------------|
-| Карточка | `rounded-mid py-base px-plus`, `shadow-token-md` |
+| Карточка | `rounded-mid py-base px-mid`, `shadow-token-md` |
 | Viewport | `fixed z-toast` (`--z-toast`), placement offsets (`top-4`, …) |
 | Scrim | `toastScrimToken(gradientTop/Bottom, mask, …)` |
 | Ширина | `360px` (`TOAST_WIDTH_PX`) |

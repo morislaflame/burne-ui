@@ -5,7 +5,7 @@ import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 export function AvatarSizesFallbackDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Avatar size="small" label="S" />
       <Avatar size="base" label="B" />
       <Avatar size="mid" label="M" />

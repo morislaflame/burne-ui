@@ -25,7 +25,7 @@ export function DrawerBottomSheetHandleDemo() {
             </Drawer.HeadingBlock>
             <Drawer.Close />
           </Drawer.Header>
-          <Drawer.Body className="flex flex-col gap-mid">
+          <Drawer.Body className="flex flex-col gap-large">
             <Checkbox
               checked={draft}
               onChange={(e) => setDraft(e.target.checked)}

@@ -22,7 +22,7 @@ export function DialogInviteTeamDemo() {
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
-        <Dialog.Body className="flex flex-col gap-plus">
+        <Dialog.Body className="flex flex-col gap-mid">
           <Input>
             <Input.Label>Email</Input.Label>
             <Input.Control name="invite-email" placeholder="colleague@company.com" autoComplete="email" />

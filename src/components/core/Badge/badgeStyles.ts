@@ -28,8 +28,8 @@ export const BADGE_ANCHOR_PLACEMENT: Record<BadgePlacement, string> = {
 export const BADGE_TEXT_ROW: Record<BadgeSize, string> = {
   small: "gap-xsmall px-small py-xsmall",
   base: "gap-xsmall px-base py-xsmall",
-  mid: "gap-xsmall px-plus py-xsmall",
-  large: "gap-small px-plus py-xsmall",
+  mid: "gap-xsmall px-mid py-xsmall",
+  large: "gap-small px-mid py-xsmall",
 };
 
 export const BADGE_SQUARE_MIN: Record<BadgeSize, string> = {
@@ -50,21 +50,21 @@ export const BADGE_ICON_ONLY: Record<BadgeSize, string> = {
   small: "shrink-0 p-xsmall [&_svg]:icon-small",
   base: "shrink-0 p-small [&_svg]:icon-base",
   mid: "shrink-0 p-base [&_svg]:icon-base",
-  large: "shrink-0 p-plus [&_svg]:icon-mid",
+  large: "shrink-0 p-mid [&_svg]:icon-large",
 };
 
 export const BADGE_DOT_DIM: Record<BadgeSize, string> = {
   small: "icon-small shrink-0 p-0",
   base: "icon-small shrink-0 p-0",
   mid: "icon-base shrink-0 p-0",
-  large: "icon-mid shrink-0 p-0",
+  large: "icon-large shrink-0 p-0",
 };
 
 export const BADGE_INLINE_SVG_SIZE: Record<BadgeSize, string> = {
   small: "[&_svg]:icon-small",
   base: "[&_svg]:icon-small",
   mid: "[&_svg]:icon-base",
-  large: "[&_svg]:icon-mid",
+  large: "[&_svg]:icon-large",
 };
 
 export const BADGE_TEXT_ROW_BASE =

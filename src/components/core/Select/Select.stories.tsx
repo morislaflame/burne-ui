@@ -16,7 +16,7 @@ import { Select } from ".";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -170,7 +170,7 @@ export const ControlledOpen: Story = {
   render: function ControlledOpenStory() {
     const [open, setOpen] = useState(false);
     return (
-      <div className="flex w-full flex-col gap-mid">
+      <div className="flex w-full flex-col gap-large">
         <Button type="button" variant="outline" onClick={() => setOpen(true)}>
           Open menu
         </Button>
@@ -210,7 +210,7 @@ export const DefaultOpen: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex w-full flex-col gap-mid">
+    <div className="flex w-full flex-col gap-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <Select
           key={size}
@@ -226,7 +226,7 @@ export const Sizes: Story = {
 
 function SelectGlossDemo() {
   return (
-    <div className="flex w-full flex-col gap-plus">
+    <div className="flex w-full flex-col gap-mid">
       <Select
         variant="gloss"
         label="Interface language"

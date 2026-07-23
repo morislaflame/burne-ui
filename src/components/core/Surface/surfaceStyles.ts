@@ -17,8 +17,8 @@ export const SURFACE_PADDING_CLASS = {
   none: "",
   small: "p-small",
   base: "p-base",
-  plus: "p-plus",
   mid: "p-mid",
+  large: "p-large",
 } as const;
 
 export const SURFACE_RADIUS_CLASS = {

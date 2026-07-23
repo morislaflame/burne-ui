@@ -4,7 +4,7 @@ import { PIN_IMAGE1, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 
 export function BadgeAnchorDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Badge.Anchor>
         <Avatar size="large" label="Jordan Doe" src={PIN_IMAGE1} alt="" loading="lazy" />
         <Badge status="danger" variant="primary" size="small">

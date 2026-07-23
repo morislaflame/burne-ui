@@ -8,7 +8,7 @@ import { Text } from "./Text";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -20,7 +20,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -70,7 +70,7 @@ export const Default: Story = {
 export const AllVariants: Story = {
   name: "All variants",
   render: () => (
-    <div className="flex flex-col gap-plus">
+    <div className="flex flex-col gap-mid">
       <Text variant="accent-header">accent-header</Text>
       <Text variant="header-1">header-1</Text>
       <Text variant="header-2">header-2</Text>
@@ -108,10 +108,10 @@ export const OnSurface: Story = {
   name: "On surface panel",
   render: () => (
     <div
-      className="box-border w-full max-w-xl rounded-base border-token p-mid text-foreground"
+      className="box-border w-full max-w-xl rounded-base border-token p-large text-foreground"
       style={{ backgroundColor: "var(--color-surface)" }}
     >
-      <div className="flex flex-col gap-plus">
+      <div className="flex flex-col gap-mid">
         <Text variant="accent-header">accent-header</Text>
         <Text variant="header-1">header-1</Text>
         <Text variant="header-2">header-2</Text>

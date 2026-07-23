@@ -11,7 +11,7 @@ import { Loading, type LoadingColor, type LoadingType } from "./Loading";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -78,7 +78,7 @@ export const Dots: Story = {
 export const DotsColors: Story = {
   name: "Dots — colors",
   render: () => (
-    <div className="flex flex-wrap items-end justify-center gap-xlarge">
+    <div className="flex flex-wrap items-end justify-center gap-2xlarge">
       {COLORS.map((color) => (
         <div key={color} className="flex flex-col items-center gap-small">
           <Loading type="dots" color={color} size="mid" />
@@ -94,7 +94,7 @@ export const DotsColors: Story = {
 export const DotsSizes: Story = {
   name: "Dots — sizes",
   render: () => (
-    <div className="flex flex-wrap items-end justify-center gap-xlarge">
+    <div className="flex flex-wrap items-end justify-center gap-2xlarge">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col items-center gap-small">
           <Loading type="dots" size={size} />
@@ -110,7 +110,7 @@ export const DotsSizes: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex flex-wrap items-end justify-center gap-xlarge">
+    <div className="flex flex-wrap items-end justify-center gap-2xlarge">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col items-center gap-small">
           <Loading size={size} />
@@ -126,7 +126,7 @@ export const Sizes: Story = {
 export const Colors: Story = {
   name: "Colors",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-xlarge">
+    <div className="flex flex-wrap items-center justify-center gap-2xlarge">
       {COLORS.map((color) => (
         <div key={color} className="flex flex-col items-center gap-small">
           <Loading color={color} size="mid" />
@@ -163,7 +163,7 @@ export const Centered: Story = {
 export const CustomClassNames: Story = {
   name: "Full classNames customization",
   render: () => (
-    <div className="flex flex-wrap items-center gap-xlarge">
+    <div className="flex flex-wrap items-center gap-2xlarge">
       <Loading
         type="spinner"
         size="mid"

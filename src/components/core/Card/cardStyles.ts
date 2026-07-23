@@ -30,19 +30,19 @@ export const CARD_PRESSABLE_CONTENT_CLASS =
   "relative flex min-w-0 flex-1 flex-col";
 
 export const CARD_HEADER_CLASS =
-  "flex shrink-0 flex-col gap-small py-plus px-mid text-left";
+  "flex shrink-0 flex-col gap-small py-mid px-large text-left";
 
 export const CARD_HEADING_BLOCK_CLASS =
   "flex min-w-0 flex-1 flex-col gap-xsmall text-left";
 
-export const CARD_BODY_CLASS = "min-w-0 px-mid pb-mid";
+export const CARD_BODY_CLASS = "min-w-0 px-large pb-large";
 
 export const CARD_TITLE_CLASS = "min-w-0";
 
 export const CARD_DESCRIPTION_CLASS = "min-w-0 text-muted";
 
 export const CARD_FOOTER_CLASS =
-  "mt-auto border-t-token py-plus px-mid text-muted";
+  "mt-auto border-t-token py-mid px-large text-muted";
 
 export function cardGlossPanelClass(className?: string): string {
   return cn(CARD_GLOSS_PANEL_CLASS, SURFACE_COLOR_TRANSITION, className);

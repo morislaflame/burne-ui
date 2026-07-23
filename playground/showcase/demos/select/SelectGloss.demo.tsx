@@ -22,7 +22,7 @@ export function SelectGlossDemo() {
   const [value, setValue] = useState("ru");
 
   return (
-    <div className="flex w-64 flex-col gap-mid">
+    <div className="flex w-64 flex-col gap-large">
       <Select
         label="Gloss Select"
         variant="gloss"

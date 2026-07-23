@@ -5,7 +5,7 @@ import { Text } from "@/components/core/Text";
 
 export function ButtonCtaCardDemo() {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-mid rounded-mid border-token bg-secondary p-mid">
+    <div className="flex w-full max-w-sm flex-col gap-large rounded-mid border-token bg-secondary p-large">
       <div className="flex flex-col gap-xsmall">
         <Text as="p" variant="header-2">
           Launch the project

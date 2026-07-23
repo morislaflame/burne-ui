@@ -9,7 +9,7 @@ const METRICS = [
 
 export function CardMetricTilesDemo() {
   return (
-    <div className="grid w-full max-w-2xl gap-mid sm:grid-cols-3">
+    <div className="grid w-full max-w-2xl gap-large sm:grid-cols-3">
       {METRICS.map((metric) => (
         <Card key={metric.label} variant="secondary">
           <Card.Header>

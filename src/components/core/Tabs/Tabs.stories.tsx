@@ -12,7 +12,7 @@ import { Tabs, type TabsOrientation, type TabsVariant } from ".";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -120,7 +120,7 @@ export const Vertical: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex w-full max-w-3xl flex-col gap-xlarge">
+    <div className="flex w-full max-w-3xl flex-col gap-2xlarge">
       {VARIANTS.map((variant) => (
         <div key={variant} className="flex flex-col gap-small">
           <Text as="span" variant="small" className="font-medium capitalize text-muted">
@@ -136,7 +136,7 @@ export const Variants: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex w-full max-w-3xl flex-col gap-xlarge">
+    <div className="flex w-full max-w-3xl flex-col gap-2xlarge">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col gap-small">
           <Text as="span" variant="small" className="font-medium capitalize text-muted">
@@ -154,7 +154,7 @@ export const Controlled: Story = {
   render: function ControlledTabs() {
     const [value, setValue] = useState("documents");
     return (
-      <div className="flex w-full max-w-xl flex-col gap-mid">
+      <div className="flex w-full max-w-xl flex-col gap-large">
         <Tabs value={value} onValueChange={setValue}>
           <Tabs.List>
             {TAB_ITEMS.map(({ value: tabValue, label }) => (
@@ -217,7 +217,7 @@ export const CustomClassNames: Story = {
         indicator: "bg-info/30",
         tab: "font-medium",
         tabText: "gap-small",
-        panel: "rounded-small bg-info/5 p-mid",
+        panel: "rounded-small bg-info/5 p-large",
       }}
     >
       <Tabs.List aria-label="Account">

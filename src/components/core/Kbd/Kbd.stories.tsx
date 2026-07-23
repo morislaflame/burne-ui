@@ -11,7 +11,7 @@ import { Kbd, type KbdVariant } from ".";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -85,7 +85,7 @@ export const Sizes: Story = {
 export const Group: Story = {
   name: "Kbd.Group",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Kbd.Group>
         <Kbd>⌘</Kbd>
         <Kbd>K</Kbd>
@@ -105,7 +105,7 @@ export const Group: Story = {
 export const InContext: Story = {
   name: "In context",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <Text as="p" variant="small" className="text-muted">
         Press <Kbd>Esc</Kbd> to close. Save —{" "}
         <Kbd.Group>
@@ -131,7 +131,7 @@ export const InContext: Story = {
 
 function KbdGlossDemo() {
   return (
-    <div className="flex flex-col items-center gap-plus">
+    <div className="flex flex-col items-center gap-mid">
       <Kbd variant="gloss" size="mid">
         ⌘ K
       </Kbd>
@@ -140,7 +140,7 @@ function KbdGlossDemo() {
         <Kbd variant="gloss">Shift</Kbd>
         <Kbd variant="gloss">P</Kbd>
       </Kbd.Group>
-      <Button variant="gloss" type="button" className="gap-plus">
+      <Button variant="gloss" type="button" className="gap-mid">
         <span>Save</span>
         <Kbd.Group>
           <Kbd variant="gloss" size="small">

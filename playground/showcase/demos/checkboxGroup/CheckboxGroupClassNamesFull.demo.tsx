@@ -14,7 +14,7 @@ export function CheckboxGroupClassNamesFullDemo() {
         hint: "text-foreground/70",
         error: "font-medium",
         list: "gap-base",
-        group: "gap-mid",
+        group: "gap-large",
         actions: "pt-small",
       }}
     >

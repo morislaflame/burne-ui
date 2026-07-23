@@ -7,12 +7,12 @@ export function ColorPickerCustomTriggerDemo() {
   const [color, setColor] = useState("#8b5cf6");
 
   return (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <ColorPicker value={color} onValueChange={setColor}>
         <ColorPicker.Trigger asChild>
           <button
             type="button"
-            className="inline-flex items-center gap-small rounded-base border-token bg-surface px-mid py-small text-small font-medium shadow-token-base"
+            className="inline-flex items-center gap-small rounded-base border-token bg-surface px-large py-small text-small font-medium shadow-token-base"
           >
             <span
               aria-hidden

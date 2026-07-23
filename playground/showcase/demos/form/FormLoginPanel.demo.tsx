@@ -12,8 +12,8 @@ export function FormLoginPanelDemo() {
   }, []);
 
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-sm">
-      <div className="mb-mid flex flex-col gap-xsmall">
+    <Surface variant="secondary" padding="large" className="w-full max-w-sm">
+      <div className="mb-large flex flex-col gap-xsmall">
         <Text as="h3" variant="header-2">
           Entrance
         </Text>
@@ -24,7 +24,7 @@ export function FormLoginPanelDemo() {
       <Form
         onSubmit={onSubmit}
         aria-label="Login"
-        className="gap-xlarge"
+        className="gap-2xlarge"
         rules={{
           login: { required: "Specify email" },
           password: { required: "Enter your password" },

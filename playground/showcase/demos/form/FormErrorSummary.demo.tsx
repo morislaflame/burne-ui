@@ -17,7 +17,7 @@ export function FormErrorSummaryDemo() {
         name: { required: "Name is required" },
       }}
       errorSummary={(entries) => (
-        <ul className="list-disc ps-mid">
+        <ul className="list-disc ps-large">
           {entries.map(([field, message]) => (
             <li key={field}>
               <a href={`#${field}`} className="underline">

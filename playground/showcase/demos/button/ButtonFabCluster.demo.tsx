@@ -14,7 +14,7 @@ export function ButtonFabClusterDemo() {
       >
         <IoAdd aria-hidden className="size-4" />
       </Button>
-      <Button variant="outline" size="small" className="rounded-full border-dashed px-mid">
+      <Button variant="outline" size="small" className="rounded-full border-dashed px-large">
         Invite
       </Button>
     </div>

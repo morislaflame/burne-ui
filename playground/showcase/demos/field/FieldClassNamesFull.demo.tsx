@@ -27,7 +27,7 @@ export function FieldSetClassNamesFullDemo() {
       className="max-w-md"
       classNames={{
         root: "rounded-mid",
-        stack: "gap-xlarge mt-xlarge",
+        stack: "gap-2xlarge mt-2xlarge",
       }}
     >
       <Field.Legend>

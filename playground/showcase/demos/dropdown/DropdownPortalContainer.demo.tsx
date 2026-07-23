@@ -7,15 +7,15 @@ export function DropdownPortalContainerDemo() {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       <p className="text-sm text-muted">
         Custom <code className="text-foreground">portalContainer</code> — menu mounts into the host.
       </p>
       <div
         ref={setContainer}
-        className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+        className="relative flex h-64 items-start justify-center overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
       >
-        <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+        <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
         {container ? (
           <Dropdown portalContainer={container} selectionIndicator defaultValue="ru">
             <Dropdown.Trigger asChild>

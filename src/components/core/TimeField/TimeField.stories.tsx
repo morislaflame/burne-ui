@@ -56,7 +56,7 @@ function ValidatedTimeSimpleDemo({ initialValue = "25:00" }: { initialValue?: st
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -184,7 +184,7 @@ export const WithAffixes: Story = {
 export const Compact: Story = {
   name: "Compact",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <TimeField label="Compact" compact defaultValue="09:30" />
       <TimeField
         compact
@@ -220,7 +220,7 @@ export const WithSeconds: Story = {
 export const Validation: Story = {
   name: "Validation (hint + error)",
   render: () => (
-    <div className="flex w-full flex-col gap-plus">
+    <div className="flex w-full flex-col gap-mid">
       <p className="text-sm text-muted">
         Hint — <code className="text-primary">TimeField.Hint</code>; error —{" "}
         <code className="text-primary">TimeField.Error</code> (
@@ -275,7 +275,7 @@ export const Required: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex w-full flex-col gap-plus">
+    <div className="flex w-full flex-col gap-mid">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <TimeField key={size} size={size}>
           <TimeField.Label>{size}</TimeField.Label>
@@ -290,13 +290,13 @@ export const Sizes: Story = {
 };
 
 function cnIcon(size: "small" | "base" | "mid" | "large") {
-  return size === "small" ? "icon-small shrink-0" : size === "mid" || size === "large" ? "icon-mid shrink-0" : "icon-base shrink-0";
+  return size === "small" ? "icon-small shrink-0" : size === "mid" || size === "large" ? "icon-large shrink-0" : "icon-base shrink-0";
 }
 
 export const VariantsComparison: Story = {
   name: "All variants",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       {(["default", "outline", "segmented"] as const).map((variant) => (
         <TimeField key={variant}>
           <TimeField.Label>{variant}</TimeField.Label>

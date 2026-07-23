@@ -7,7 +7,7 @@ export function ToastDeployPanelDemo() {
   const { toast } = useToast();
 
   return (
-    <Surface variant="secondary" padding="mid" className="flex w-full max-w-sm flex-col gap-mid">
+    <Surface variant="secondary" padding="large" className="flex w-full max-w-sm flex-col gap-large">
       <div className="flex flex-col gap-small">
         <Text as="p" variant="base" className="font-medium">
           Production deploy

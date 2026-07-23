@@ -14,7 +14,7 @@ export function LoadingColorGridDemo() {
       {SWATCHES.map((item) => (
         <div
           key={item.color}
-          className="flex flex-col items-center gap-small rounded-mid border-token bg-tertiary p-mid"
+          className="flex flex-col items-center gap-small rounded-mid border-token bg-tertiary p-large"
         >
           <Loading size="base" color={item.color} label={item.label} />
           <Text as="span" variant="xsmall" className="text-muted">

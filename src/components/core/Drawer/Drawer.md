@@ -28,7 +28,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | `Drawer.Panel` | Портал + overlay + slide motion |
 | `Drawer.Backdrop` | Маркер `isDismissable={false}` (рендерит `null`) |
 | `Drawer.Handle` | Drag-handle для swipe-dismiss |
-| `Drawer.Content` | Layout-обёртка (`p-large`, `gap-mid`) |
+| `Drawer.Content` | Layout-обёртка (`p-xlarge`, `gap-large`) |
 | `Drawer.Header` / `HeadingBlock` / `Title` / `Description` | Шапка |
 | `Drawer.Body` | Скроллируемая область |
 | `Drawer.Footer` | Кнопки |
@@ -243,11 +243,11 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
   classNames={{
     overlay: "backdrop-blur-2xl",
     panel: "max-h-[85vh] border-primary/40 shadow-token-lg",
-    handle: "py-plus",
+    handle: "py-mid",
     header: "border-b border-primary/20 pb-small",
     title: "text-primary font-semibold",
     description: "text-foreground/75",
-    body: "px-large",
+    body: "px-xlarge",
     footer: "border-t border-primary/20 pt-small",
   }}
 >

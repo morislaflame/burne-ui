@@ -178,7 +178,7 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 | Circle default | `rounded-full h-control-base w-control-base` |
 | Text line | `h-[1em] rounded-small` |
 | Last line | `w-3/5` при `lastShort` |
-| Block | `rounded-mid px-mid py-plus` |
+| Block | `rounded-mid px-large py-mid` |
 
 ## Стилизация и кастомизация
 
@@ -202,7 +202,7 @@ Animated `background-position` на gradient (`primary-tint` → `primary-tint-s
 ### Card loading layout
 
 ```tsx
-<Skeleton.Block animation="wave" classNames={{ root: "rounded-large p-mid" }}>
+<Skeleton.Block animation="wave" classNames={{ root: "rounded-large p-large" }}>
   <div className="flex gap-base">
     <Skeleton.Circle size="h-control-large w-control-large" />
     <div className="flex flex-1 flex-col gap-small">

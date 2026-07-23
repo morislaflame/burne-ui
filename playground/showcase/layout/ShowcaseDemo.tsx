@@ -28,7 +28,7 @@ function ShowcaseCodePanel({ code }: { code: string }) {
       size="small"
       className="border-t-token bg-surface"
     >
-      <div className="flex items-center justify-between gap-small p-mid">
+      <div className="flex items-center justify-between gap-small p-large">
         <Disclosure.Trigger asChild icon={null}>
           <Button
             type="button"
@@ -53,7 +53,7 @@ function ShowcaseCodePanel({ code }: { code: string }) {
         ) : null}
       </div>
       <Disclosure.Content className="text-foreground p-0">
-        <pre className="max-h-80 overflow-auto p-mid text-xs leading-relaxed">
+        <pre className="max-h-80 overflow-auto p-large text-xs leading-relaxed">
           <code className="block whitespace-pre font-mono text-foreground/90">{code.trim()}</code>
         </pre>
       </Disclosure.Content>
@@ -93,7 +93,7 @@ export function ShowcaseDemo({
         variant="default"
         padding={padding}
         className={cn(
-          "rounded-none border-0 shadow-none bg-transparent flex items-center justify-center min-h-72 p-mid",
+          "rounded-none border-0 shadow-none bg-transparent flex items-center justify-center min-h-72 p-large",
           alignClass,
         )}
       >

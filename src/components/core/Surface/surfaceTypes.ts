@@ -6,7 +6,7 @@ export type SurfaceVariant = "default" | "secondary" | "tertiary" | "gloss";
 
 export type SurfaceShadow = ShadowSize;
 
-export type SurfacePadding = "none" | "small" | "base" | "plus" | "mid";
+export type SurfacePadding = "none" | "small" | "base" | "mid" | "large";
 
 export type SurfaceRadius = "base" | "mid" | "large";
 

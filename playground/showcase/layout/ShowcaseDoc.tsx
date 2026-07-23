@@ -6,12 +6,12 @@ import { cn } from "@/utils/cn";
 
 function ShowcaseDocRoot({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <Card variant="outline" className={cn("flex flex-col gap-mid", className)}>
+    <Card variant="outline" className={cn("flex flex-col gap-large", className)}>
       <Card.Header>
         <Card.Title>Documentation</Card.Title>
         <Card.Description>Import, API and customization rules.</Card.Description>
       </Card.Header>
-      <Card.Body className="flex flex-col gap-mid pt-0">{children}</Card.Body>
+      <Card.Body className="flex flex-col gap-large pt-0">{children}</Card.Body>
     </Card>
   );
 }

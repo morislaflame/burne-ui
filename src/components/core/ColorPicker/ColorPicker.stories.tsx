@@ -10,7 +10,7 @@ import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToColorStrin
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[26rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[26rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -44,7 +44,7 @@ export const Basic: Story = {
   render: () => {
     const [color, setColor] = useState("#3b82f6");
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <ColorPicker value={color} onValueChange={setColor}>
           <ColorPicker.Trigger />
           <ColorPicker.Content />
@@ -86,7 +86,7 @@ export const CompoundContent: Story = {
   render: function CompoundContentStory() {
     const [color, setColor] = useState("#22c55e");
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <Text as="p" variant="small" className="text-muted">
           Custom layout: presets on top, area, then hue — hex removed.
         </Text>
@@ -122,12 +122,12 @@ export const CustomTrigger: Story = {
   render: function CustomTriggerStory() {
     const [color, setColor] = useState("#8b5cf6");
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <ColorPicker value={color} onValueChange={setColor}>
           <ColorPicker.Trigger asChild>
             <button
               type="button"
-              className="inline-flex items-center gap-small rounded-base border-token bg-surface px-mid py-small text-small font-medium shadow-token-base hover:shadow-token-mid"
+              className="inline-flex items-center gap-small rounded-base border-token bg-surface px-large py-small text-small font-medium shadow-token-base hover:shadow-token-mid"
             >
               <span
                 aria-hidden
@@ -150,7 +150,7 @@ export const WithAlpha: Story = {
   render: () => {
     const [color, setColor] = useState("#3b82f6");
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <ColorPicker value={color} onValueChange={setColor}>
           <ColorPicker.Trigger />
           <ColorPicker.Content showAlpha />
@@ -171,7 +171,7 @@ export const WithPresets: Story = {
       "#6b7280", "#000000",
     ];
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <ColorPicker value={color} onValueChange={setColor}>
           <ColorPicker.Trigger swatchSize="large" />
           <ColorPicker.Content presets={presets} />
@@ -191,7 +191,7 @@ export const FullFeatured: Story = {
       "#3b82f6", "#8b5cf6", "#ec4899",
     ];
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <ColorPicker value={color} onValueChange={setColor} size="mid">
           <ColorPicker.Trigger swatchSize="large" />
           <ColorPicker.Content showAlpha presets={presets} />
@@ -209,7 +209,7 @@ export const Sizes: Story = {
     const [c2, setC2] = useState("#22c55e");
     const [c3, setC3] = useState("#ec4899");
     return (
-      <div className="flex items-end gap-xlarge">
+      <div className="flex items-end gap-2xlarge">
         <div className="flex flex-col items-center gap-small">
           <Text as="span" variant="small" className="text-muted">small</Text>
           <ColorPicker value={c1} onValueChange={setC1} size="small">
@@ -254,7 +254,7 @@ export const SliderChannels: Story = {
     const [hsva, setHsva] = useState<HSVA>({ h: 217, s: 90, v: 96, a: 80 });
 
     return (
-      <div className="flex w-64 flex-col gap-mid">
+      <div className="flex w-64 flex-col gap-large">
         <ColorSlider
           channel="hue"
           color={hsva}
@@ -303,9 +303,9 @@ export const SliderSizes: Story = {
     const hsva: HSVA = { h: 290, s: 75, v: 90, a: 100 };
     const sizes = ["small", "base", "mid", "large"] as Array<"small" | "base" | "mid" | "large">;
     return (
-      <div className="flex w-72 flex-col gap-mid">
+      <div className="flex w-72 flex-col gap-large">
         {sizes.map((size) => (
-          <div key={size} className="flex items-center gap-mid">
+          <div key={size} className="flex items-center gap-large">
             <Text as="span" variant="small" className="w-12 text-right text-muted">{size}</Text>
             <div className="flex-1">
               <ColorSlider.Track channel="hue" color={hsva} defaultValue={hsva.h} size={size} />
@@ -326,10 +326,10 @@ export const Swatches: Story = {
     const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899"];
 
     return (
-      <div className="flex flex-col gap-large">
+      <div className="flex flex-col gap-xlarge">
         {/* Sizes */}
         {(["small", "base", "mid", "large"] as const).map((size) => (
-          <div key={size} className="flex items-center gap-mid">
+          <div key={size} className="flex items-center gap-large">
             <Text as="span" variant="small" className="w-16 text-right text-muted">{size}</Text>
             <div className="flex gap-small">
               {colors.map((c) => (
@@ -340,7 +340,7 @@ export const Swatches: Story = {
         ))}
 
         {/* Shapes */}
-        <div className="flex flex-wrap gap-mid">
+        <div className="flex flex-wrap gap-large">
           {(["square", "rounded", "circle"] as const).map((shape) => (
             <div key={shape} className="flex flex-col items-center gap-xsmall">
               <Text as="span" variant="small" className="text-muted">{shape}</Text>
@@ -393,7 +393,7 @@ export const CustomClassNames: Story = {
         classNames={{
           contentPanel: "border border-primary/30 bg-primary/5",
           area: "rounded-base ring-1 ring-primary/20",
-          slidersStack: "gap-mid",
+          slidersStack: "gap-large",
           hexInput: "border-primary/30 bg-primary/10",
           hexInputField: "text-primary",
         }}

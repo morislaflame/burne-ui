@@ -2,7 +2,7 @@ import { Link } from "@/components/core/Link";
 
 export function LinkAsChildDemo() {
   return (
-    <div className="flex flex-col items-start gap-mid">
+    <div className="flex flex-col items-start gap-large">
       <Link asChild underline showDefaultIcon>
         <a href="#docs">Router-ready styled link</a>
       </Link>

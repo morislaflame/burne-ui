@@ -86,8 +86,8 @@ Simple API нет.
 
 | `orientation` | Layout |
 |---------------|--------|
-| `vertical` | `flex flex-col gap-plus` |
-| `horizontal` | `flex flex-row flex-wrap gap-x-mid gap-y-plus` |
+| `vertical` | `flex flex-col gap-mid` |
+| `horizontal` | `flex flex-row flex-wrap gap-x-large gap-y-mid` |
 
 Визуал опций — через `Radio` (`variant`, `danger` на отдельной опции).
 
@@ -174,7 +174,7 @@ configureMotion({
     hint: "text-foreground/70",
     error: "font-medium",
     list: "gap-base",
-    group: "gap-mid",
+    group: "gap-large",
     actions: "pt-small",
   }}
 >

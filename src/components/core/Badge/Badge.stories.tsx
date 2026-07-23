@@ -21,7 +21,7 @@ const BLUE_AVATAR_URL = PIN_IMAGE3;
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -34,7 +34,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -107,7 +107,7 @@ type Story = StoryObj<typeof meta>;
 
 function SizesAndVariantsDemo() {
   return (
-    <div className="flex flex-col gap-xlarge py-mid">
+    <div className="flex flex-col gap-2xlarge py-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <div key={size} className="flex flex-col gap-base">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -139,7 +139,7 @@ export const SizesAndVariantsOnLightTheme: Story = {
 
 function StatusVariantsDemo() {
   return (
-    <div className="flex w-full max-w-4xl flex-col gap-xlarge py-mid">
+    <div className="flex w-full max-w-4xl flex-col gap-2xlarge py-large">
       {BADGE_STATUSES.map((status) => (
         <div key={status} className="flex flex-col gap-base">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -177,12 +177,12 @@ export const StatusVariantsOnLightTheme: Story = {
 export const BadgeAnchorComposition: Story = {
   name: "Badge.Anchor + Avatar (as in API)",
   render: () => (
-    <div className="flex flex-col gap-xlarge">
+    <div className="flex flex-col gap-2xlarge">
       <p className="max-w-xl text-center text-sm text-muted">
         Hover the avatar: the badge scales up slightly (like&nbsp;
         <code className="text-primary">Button</code>).
       </p>
-      <div className="flex flex-wrap items-start justify-center gap-xlarge">
+      <div className="flex flex-wrap items-start justify-center gap-2xlarge">
         <Badge.Anchor>
           <Avatar size="large" label="Jordan Doe" src={GREEN_AVATAR_URL} alt="" loading="lazy" />
           <Badge status="danger" size="small">
@@ -269,14 +269,14 @@ export const VisibilityInteraction: Story = {
 export const IconStartEnd: Story = {
   name: "Simple: icon + iconPosition",
   render: () => (
-    <div className="flex flex-col items-start gap-mid">
+    <div className="flex flex-col items-start gap-large">
       <p className="text-sm text-muted">
         Prop <code className="text-primary">icon</code> +{" "}
         <code className="text-primary">iconPosition</code> — root gets{" "}
         <code className="text-primary">data-icon=&quot;start&quot;</code> /{" "}
         <code className="text-primary">end</code>.
       </p>
-      <div className="flex flex-wrap items-center gap-plus">
+      <div className="flex flex-wrap items-center gap-mid">
         <Badge
           status="info"
           size="base"
@@ -301,7 +301,7 @@ export const IconStartEnd: Story = {
 export const IconOnly: Story = {
   name: "Icon only",
   render: () => (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <Badge status="danger" icon={<IoHeartOutline aria-hidden />} aria-label="Favorites" />
       <Badge variant="secondary" iconOnly icon={<IoMoonOutline aria-hidden />} aria-label="Secondary" />
       <Badge status="warning" size="small" icon={<IoNotificationsOutline aria-hidden />} aria-label="Notifications" />
@@ -311,9 +311,9 @@ export const IconOnly: Story = {
 
 function DotsVariantsDemo() {
   return (
-    <div className="flex flex-col gap-mid py-mid">
+    <div className="flex flex-col gap-large py-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (
-        <div key={size} className="flex flex-wrap items-center gap-xlarge">
+        <div key={size} className="flex flex-wrap items-center gap-2xlarge">
           {BADGE_STATUSES.map((status) => (
             <div key={status} className="flex flex-col items-center gap-xsmall">
               <Badge status={status} dot size={size} aria-label={`${status}`} />
@@ -342,12 +342,12 @@ export const DotsVariantsOnLightTheme: Story = {
 export const CornersViaAnchorPlacement: Story = {
   name: "Corners via Badge.Anchor placement",
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <p className="max-w-lg text-sm text-muted">
         Inside the anchor, badge defaults to <code>top-right</code>; corner is set via prop{" "}
         <code>placement</code>.
       </p>
-      <div className="grid grid-cols-2 gap-xlarge sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2xlarge sm:grid-cols-4">
         {CORNER_LABELS.map(([placement, label]) => (
           <div key={placement} className="flex flex-col items-center gap-base">
             <Badge.Anchor className="box-border h-24 w-24 rounded-2xl border-token border-dashed bg-surface/40 shadow-none">
@@ -375,7 +375,7 @@ export const WithCard: Story = {
               Badge support, notifications, and counters on product interfaces.
             </Card.Description>
           </Card.Header>
-          <Card.Footer className="flex flex-wrap items-center gap-plus">
+          <Card.Footer className="flex flex-wrap items-center gap-mid">
             <Badge status="success" size="small" icon={<IoCheckmarkCircleOutline aria-hidden />}>
               Done
             </Badge>
@@ -396,13 +396,13 @@ export const WithCard: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-lg flex-col gap-mid text-left">
+    <div className="flex max-w-lg flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Text badge is read as a label; inline icons are decorative (
         <code className="text-primary">aria-hidden</code>). Icon-only and dot without label require{" "}
         <code className="text-primary">aria-label</code>.
       </p>
-      <div className="flex flex-wrap items-center gap-plus">
+      <div className="flex flex-wrap items-center gap-mid">
         <Badge status="success">
           <IoCheckmarkCircleOutline data-icon="inline-start" />
           Published
@@ -421,9 +421,9 @@ export const Accessibility: Story = {
 export const CustomColors: Story = {
   name: "Custom badges",
   render: () => (
-    <div className="flex flex-col gap-xlarge">
+    <div className="flex flex-col gap-2xlarge">
       <div className="flex flex-col gap-base">
-        <div className="flex flex-wrap items-center gap-plus">
+        <div className="flex flex-wrap items-center gap-mid">
           <Badge
             size="base"
             className="border-transparent bg-[oklch(58%_0.24_300)] text-white shadow-base"
@@ -454,7 +454,7 @@ export const CustomColors: Story = {
       </div>
 
       <div className="flex flex-col gap-base">
-        <div className="flex flex-wrap items-center gap-xlarge">
+        <div className="flex flex-wrap items-center gap-2xlarge">
           <Badge
             dot
             size="base"
@@ -497,7 +497,7 @@ export const CustomClassNames: Story = {
     },
   },
   render: () => (
-    <div className="flex flex-col items-center gap-xlarge">
+    <div className="flex flex-col items-center gap-2xlarge">
       <Badge
         status="info"
         classNames={{
@@ -532,8 +532,8 @@ export const CustomClassNames: Story = {
 
 function GlossDemo() {
   return (
-    <div className="flex flex-col items-center gap-xlarge">
-      <div className="flex flex-wrap items-center justify-center gap-plus">
+    <div className="flex flex-col items-center gap-2xlarge">
+      <div className="flex flex-wrap items-center justify-center gap-mid">
         <Badge variant="gloss">Gloss</Badge>
         {BADGE_STATUSES.filter((s) => s !== "default").map((status) => (
           <Badge key={status} variant="gloss" status={status} className="capitalize">
@@ -541,7 +541,7 @@ function GlossDemo() {
           </Badge>
         ))}
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-plus">
+      <div className="flex flex-wrap items-center justify-center gap-mid">
         <Badge variant="gloss" icon={<IoCheckmarkCircleOutline aria-hidden />}>
           Verified
         </Badge>

@@ -11,7 +11,7 @@ import { Breadcrumbs } from ".";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -23,7 +23,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex h-full min-h-[14rem] w-full flex-col items-center justify-center p-xlarge text-foreground"
+      className="box-border flex h-full min-h-[14rem] w-full flex-col items-center justify-center p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -89,7 +89,7 @@ export const Default: Story = {
 export const Collapsed: Story = {
   name: "Collapse + «…» menu",
   render: () => (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <p className="max-w-md text-center text-sm text-muted">
         With more than three items: first · … · last two. Click «…» — list of hidden
         sections.
@@ -168,7 +168,7 @@ export const SingleCurrent: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-lg flex-col gap-mid text-left">
+    <div className="flex max-w-lg flex-col gap-large text-left">
       <p className="text-sm text-muted">
         <code className="text-primary">&lt;nav aria-label&gt;</code>, current page —{" "}
         <code className="text-primary">aria-current=&quot;page&quot;</code> on the last item,

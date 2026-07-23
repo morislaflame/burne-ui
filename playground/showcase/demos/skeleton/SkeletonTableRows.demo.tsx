@@ -5,9 +5,9 @@ const ROWS = 4;
 
 export function SkeletonTableRowsDemo() {
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-lg">
+    <Surface variant="secondary" padding="large" className="w-full max-w-lg">
       <div className="flex flex-col gap-small">
-        <div className="flex gap-mid pb-small">
+        <div className="flex gap-large pb-small">
           <Skeleton className="h-4 w-1/3 rounded-small" />
           <Skeleton className="h-4 w-1/4 rounded-small" />
           <Skeleton className="h-4 w-1/5 rounded-small" />

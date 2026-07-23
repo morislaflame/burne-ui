@@ -18,7 +18,7 @@ export const POPOVER_TITLE_VARIANT: PopoverTitleVariantMap = {
   small: "small",
   base: "base",
   mid: "mid",
-  large: "mid",
+  large: "large",
 };
 
 export const POPOVER_DESCRIPTION_VARIANT: PopoverDescriptionVariantMap = {
@@ -44,23 +44,23 @@ export const POPOVER_MAX_WIDTH_CLASS: Record<PopoverSize, string> = {
 
 export const POPOVER_PADDING_CLASS: Record<PopoverSize, string> = {
   small: "px-small py-xsmall",
-  base: "px-plus py-base",
-  mid: "px-mid py-plus",
-  large: "px-large py-mid",
+  base: "px-mid py-base",
+  mid: "px-large py-mid",
+  large: "px-xlarge py-large",
 };
 
 export const POPOVER_GAP_CLASS: Record<PopoverContentGap, string> = {
   small: "gap-small",
   base: "gap-base",
-  plus: "gap-plus",
   mid: "gap-mid",
+  large: "gap-large",
 };
 
 export const POPOVER_DEFAULT_GAP: Record<PopoverSize, PopoverContentGap> = {
   small: "small",
   base: "base",
-  mid: "plus",
-  large: "mid",
+  mid: "mid",
+  large: "large",
 };
 
 export const POPOVER_TRIGGER_CLASS =

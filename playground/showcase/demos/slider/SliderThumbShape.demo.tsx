@@ -8,7 +8,7 @@ export function SliderThumbShapeDemo() {
   const [square, setSquare] = useState(70);
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-mid">
+    <div className="flex w-full max-w-md flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Form thumb
       </Text>

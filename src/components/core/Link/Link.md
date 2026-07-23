@@ -77,8 +77,8 @@ import NextLink from "next/link";
 |------|--------------|--------|
 | `small` | `small` | `icon-small` |
 | `base` | `base` | `icon-base` |
-| `mid` | `mid` | `icon-plus` |
-| `large` | `large` | `icon-mid` |
+| `mid` | `mid` | `icon-mid` |
+| `large` | `large` | `icon-large` |
 
 ## Иконки и цвет
 
@@ -213,7 +213,7 @@ Link — один компонент; «compound» меняет только р�
 <Link
   href="/item"
   classNames={{
-    root: "gap-mid",
+    root: "gap-large",
     text: "text-primary",
     iconStart: "text-muted group-hover:text-foreground",
   }}

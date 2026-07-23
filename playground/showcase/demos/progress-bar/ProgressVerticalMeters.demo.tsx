@@ -3,7 +3,7 @@ import { Text } from "@/components/core/Text";
 
 export function ProgressVerticalMetersDemo() {
   return (
-    <div className="flex items-end gap-mid rounded-mid border-token bg-tertiary p-mid">
+    <div className="flex items-end gap-large rounded-mid border-token bg-tertiary p-large">
       <div className="flex flex-col items-center gap-xsmall">
         <ProgressBar
           orientation="vertical"

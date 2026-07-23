@@ -66,7 +66,7 @@ function ZIndexScaleTable() {
         {[...burneZIndexScale].reverse().map((layer) => (
           <li
             key={layer}
-            className={`flex items-center justify-between gap-mid rounded-mid border-token px-base py-small ${LAYER_SWATCH[layer]}`}
+            className={`flex items-center justify-between gap-large rounded-mid border-token px-base py-small ${LAYER_SWATCH[layer]}`}
           >
             <div className="min-w-0">
               <p className="font-w-mid text-foreground">
@@ -87,7 +87,7 @@ function ZIndexScaleTable() {
 
 function LayeredCardsDemo() {
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       <p className="text-small text-muted">
         Overlapping siblings in one parent — z-index utilities decide paint order.
       </p>
@@ -123,7 +123,7 @@ function ContainedOverlayStackDemo() {
   const [dialogOpen, setDialogOpen] = useState(true);
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-mid">
+    <div className="flex w-full max-w-xl flex-col gap-large">
       <p className="text-small text-muted">
         Dialog mounts into a custom host via{" "}
         <code className="text-foreground">portalContainer</code> → non-modal{" "}
@@ -157,7 +157,7 @@ function ContainedOverlayStackDemo() {
         ref={setHost}
         className="relative h-[28rem] overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/50"
       >
-        <p className="absolute left-mid top-mid z-0 text-xsmall text-muted">
+        <p className="absolute left-large top-large z-0 text-xsmall text-muted">
           Contained dialog host (show, not showModal)
         </p>
 
@@ -180,7 +180,7 @@ function ContainedOverlayStackDemo() {
                 <Dialog.Close />
               </Dialog.Header>
               <Dialog.Body>
-                <div className="flex flex-col gap-mid">
+                <div className="flex flex-col gap-large">
                   <Select
                     label="Language"
                     placeholder="Choose…"
@@ -280,7 +280,7 @@ function ContainedOverlayStackDemo() {
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -292,7 +292,7 @@ const toastDecorator = [
   (Story: ComponentType) => (
     <Toast.Provider>
       <div
-        className="box-border flex min-h-[32rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+        className="box-border flex min-h-[32rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
         style={{ backgroundColor: "var(--color-background)" }}
       >
         <Story />

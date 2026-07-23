@@ -7,18 +7,18 @@ import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes"
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 
 export const ALERT_DIALOG_CONTENT_CLASS =
-  "flex min-h-0 flex-1 flex-col gap-mid text-left";
+  "flex min-h-0 flex-1 flex-col gap-large text-left";
 
 const ALERT_DIALOG_SECTION_PADDING_COMPACT = {
-  headerPadding: "px-plus pt-base",
-  bodyPadding: "px-plus py-small",
-  footerPadding: "px-plus pb-base",
+  headerPadding: "px-mid pt-base",
+  bodyPadding: "px-mid py-small",
+  footerPadding: "px-mid pb-base",
 } as const;
 
 const ALERT_DIALOG_SECTION_PADDING_DEFAULT = {
-  headerPadding: "px-mid pt-plus",
-  bodyPadding: "px-mid py-small",
-  footerPadding: "px-mid pb-plus",
+  headerPadding: "px-large pt-mid",
+  bodyPadding: "px-large py-small",
+  footerPadding: "px-large pb-mid",
 } as const;
 
 export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> = {
@@ -28,7 +28,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     headerGap: "gap-x-base",
     ...ALERT_DIALOG_SECTION_PADDING_COMPACT,
     headingBlockGap: "flex min-w-0 flex-col gap-xsmall",
-    iconClass: "icon-plus",
+    iconClass: "icon-mid",
     titleVariant: "base",
     descVariant: "small",
     descClassName: "text-muted",
@@ -37,10 +37,10 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
   base: {
     panelMax: "max-w-component-base",
     maxHeight: "max-h-[min(90dvh,36rem)]",
-    headerGap: "gap-x-plus gap-y-xsmall",
+    headerGap: "gap-x-mid gap-y-xsmall",
     ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-mid",
+    iconClass: "icon-large",
     titleVariant: "mid",
     descVariant: "base",
     descClassName: "text-muted",
@@ -49,10 +49,10 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
   mid: {
     panelMax: "max-w-component-mid",
     maxHeight: "max-h-[min(90dvh,40rem)]",
-    headerGap: "gap-x-plus gap-y-small",
+    headerGap: "gap-x-mid gap-y-small",
     ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-mid",
+    iconClass: "icon-large",
     titleVariant: "mid",
     descVariant: "base",
     descClassName: "text-muted",
@@ -61,10 +61,10 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
   large: {
     panelMax: "max-w-component-large",
     maxHeight: "max-h-[min(90dvh,44rem)]",
-    headerGap: "gap-x-plus gap-y-small",
+    headerGap: "gap-x-mid gap-y-small",
     ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
     headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-mid",
+    iconClass: "icon-large",
     titleVariant: "mid",
     descVariant: "base",
     descClassName: "text-muted",
@@ -80,7 +80,7 @@ export const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
 };
 
 export const ALERT_DIALOG_NATIVE_CLASS =
-  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-mid open:flex [&::backdrop]:bg-transparent";
+  "m-0 flex h-full w-full max-h-none max-w-none items-center justify-center border-0 bg-transparent p-large open:flex [&::backdrop]:bg-transparent";
 
 export const ALERT_DIALOG_NATIVE_POSITION_FIXED_CLASS = "fixed inset-0 z-dialog";
 

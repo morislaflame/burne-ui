@@ -7,7 +7,7 @@ export function ColorPickerBasicDemo() {
   const [color, setColor] = useState("#3b82f6");
 
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <ColorPicker value={color} onValueChange={setColor}>
         <ColorPicker.Trigger />
         <ColorPicker.Content />

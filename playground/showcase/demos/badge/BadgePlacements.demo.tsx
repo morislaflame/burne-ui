@@ -10,7 +10,7 @@ const PLACEMENTS: BadgePlacement[] = [
 
 export function BadgePlacementsDemo() {
   return (
-    <div className="grid grid-cols-2 gap-xlarge sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2xlarge sm:grid-cols-4">
       {PLACEMENTS.map((placement) => (
         <div key={placement} className="flex flex-col items-center gap-base">
           <Badge.Anchor className="box-border h-24 w-24 rounded-mid border-token border-dashed bg-secondary">

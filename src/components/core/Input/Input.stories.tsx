@@ -51,7 +51,7 @@ function ValidatedEmailSimpleDemo({ initialValue = "bad@" }: { initialValue?: st
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto min-w-sm">
@@ -65,7 +65,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto min-w-sm">
@@ -179,7 +179,7 @@ export const Danger: Story = {
 export const Validation: Story = {
   name: "Validation (hint + error)",
   render: () => (
-    <div className="flex w-full flex-col gap-plus">
+    <div className="flex w-full flex-col gap-mid">
       <p className="text-sm text-muted">
         Hint — <code className="text-primary">Input.Hint</code> (muted); error message —{" "}
         <code className="text-primary">Input.Error</code> (danger, <code className="text-primary">role=&quot;alert&quot;</code>
@@ -242,7 +242,7 @@ export const File: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex w-full flex-col gap-plus">
+    <div className="flex w-full flex-col gap-mid">
       <Input size="small">
         <Input.Label>Small</Input.Label>
         <Input.Control placeholder="small" />
@@ -276,7 +276,7 @@ export const LightTheme: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex flex-col gap-plus text-left">
+    <div className="flex flex-col gap-mid text-left">
       <p className="text-sm text-muted">
         <code className="text-primary">&lt;Label htmlFor&gt;</code> via{" "}
         <code className="text-primary">FieldLabelContext</code>. Hint and error — via{" "}
@@ -302,7 +302,7 @@ function glossDottedDecorator(light = false) {
   return (Story: ComponentType) => (
     <div
       data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -314,7 +314,7 @@ function glossDottedDecorator(light = false) {
 
 function GlossDemo() {
   return (
-    <div className="flex w-full flex-col gap-plus">
+    <div className="flex w-full flex-col gap-mid">
       <Input>
         <Input.Label>Email</Input.Label>
         <Input.Control variant="gloss" placeholder="you@example.com" autoComplete="email" />

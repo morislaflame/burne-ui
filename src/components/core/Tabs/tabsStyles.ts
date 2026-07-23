@@ -29,7 +29,7 @@ export function tabsRootClass({
 }) {
   return cn(
     "flex min-w-0 text-left",
-    orientation === "horizontal" ? "flex-col gap-mid" : "flex-row gap-mid",
+    orientation === "horizontal" ? "flex-col gap-large" : "flex-row gap-large",
     slotClass,
     className,
   );

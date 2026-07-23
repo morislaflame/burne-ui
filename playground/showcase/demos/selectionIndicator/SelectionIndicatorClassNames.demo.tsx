@@ -7,11 +7,11 @@ export function SelectionIndicatorClassNamesDemo() {
   const [selected, setSelected] = useState(true);
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         classNames: shell / fill / mark
       </Text>
-      <div className="flex flex-wrap items-end gap-xlarge">
+      <div className="flex flex-wrap items-end gap-2xlarge">
         <SelectionIndicator
           size="large"
           variant="default"

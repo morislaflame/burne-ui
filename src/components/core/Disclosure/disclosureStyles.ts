@@ -7,9 +7,9 @@ import type { DisclosureGroupContextValue, DisclosureSize, DisclosureVariant } f
 
 export const DISCLOSURE_CONTENT_PAD: Record<DisclosureSize, string> = {
   small: "p-base",
-  base: "p-plus",
-  mid: "p-mid",
-  large: "p-large",
+  base: "p-mid",
+  mid: "p-large",
+  large: "p-xlarge",
 };
 
 const VARIANT_ROOT: Record<DisclosureVariant, string> = {
@@ -183,7 +183,7 @@ export function disclosureGroupClass({
 }): string {
   return cn(
     "flex w-full flex-col",
-    separated && "gap-mid",
+    separated && "gap-large",
     !separated && variant === "default" && "divide-y-token border-t-token border-b-token",
     !separated &&
       variant === "card" &&

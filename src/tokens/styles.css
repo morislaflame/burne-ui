@@ -294,7 +294,7 @@
 
   /**
    * Base spacing step (gap, padding, margin).
-   * Design tokens: `--space` (knob) + `--space-*` (steps).
+   * Design tokens: `--space` (knob) + `--space-*` (steps: xsmall…3xlarge).
    * Tailwind bridge (`@theme`): `--spacing-*` → utilities `gap-*`, `p-*`, `m-*`, `space-*`
    * (Tailwind’s spacing namespace is `spacing`, so names differ by design).
    * Fluid: ~93.75% at narrow viewports → 100% from ~800px.
@@ -304,10 +304,11 @@
   --space-xsmall: calc(var(--space) * 0.5);
   --space-small: calc(var(--space) * 0.75);
   --space-base: calc(var(--space) * 1);
-  --space-plus: calc(var(--space) * 1.5);
-  --space-mid: calc(var(--space) * 2);
-  --space-large: calc(var(--space) * 2.5);
-  --space-xlarge: calc(var(--space) * 3);
+  --space-mid: calc(var(--space) * 1.5);
+  --space-large: calc(var(--space) * 2);
+  --space-xlarge: calc(var(--space) * 2.5);
+  --space-2xlarge: calc(var(--space) * 3);
+  --space-3xlarge: calc(var(--space) * 3.875);
 
   /**
    * Base border radius knob + step tokens.
@@ -408,14 +409,15 @@
    */
   --size: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
 
-  /** Primitive control size scale (`--size-scale-*`) — same as `--space-*`. */
+  /** Primitive control size scale (`--size-scale-*`) */
   --size-scale-xsmall: calc(var(--size) * 0.65);
   --size-scale-small: calc(var(--size) * 0.875);
   --size-scale-base: calc(var(--size) * 1);
-  --size-scale-plus: calc(var(--size) * 1.125);
-  --size-scale-mid: calc(var(--size) * 1.375);
-  --size-scale-large: calc(var(--size) * 1.5);
-  --size-scale-xlarge: calc(var(--size) * 1.75);
+  --size-scale-mid: calc(var(--size) * 1.125);
+  --size-scale-large: calc(var(--size) * 1.375);
+  --size-scale-xlarge: calc(var(--size) * 1.5);
+  --size-scale-2xlarge: calc(var(--size) * 1.75);
+  --size-scale-3xlarge: calc(var(--size) * 2);
 
   /** Container scale (modals, panels, layouts) — max-w-component-* */
   --max-component-small: calc(var(--size) * 20);
@@ -438,7 +440,7 @@
   --control-height-small: calc(var(--text-small-size) * var(--text-small-line-height) + var(--space-xsmall) * 2 + var(--border-width) * 2);
   --control-height-base: calc(var(--text-base-size) * var(--text-base-line-height) + var(--space-small) * 2 + var(--border-width) * 2);
   --control-height-mid: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-base) * 2 + var(--border-width) * 2);
-  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-plus) * 2 + var(--border-width) * 2);
+  --control-height-large: calc(var(--text-mid-size) * var(--text-mid-line-height) + var(--space-mid) * 2 + var(--border-width) * 2);
 
   --control-size-xsmall: var(--control-height-xsmall);
   --control-size-small: var(--control-height-small);
@@ -453,24 +455,25 @@
   --avatar-size-large: calc(var(--size) * 3.5);
 
   /**
-   * Icons (react-icons, etc.) — 1:1 with `--size-scale-*` (incl. `plus`); utilities `icon-xsmall` … `icon-xlarge`.
+   * Icons (react-icons, etc.) — 1:1 with `--size-scale-*`; utilities `icon-xsmall` … `icon-3xlarge`.
    */
   --icon-size-xsmall: var(--size-scale-xsmall);
   --icon-size-small: var(--size-scale-small);
   --icon-size-base: var(--size-scale-base);
-  --icon-size-plus: var(--size-scale-plus);
   --icon-size-mid: var(--size-scale-mid);
   --icon-size-large: var(--size-scale-large);
   --icon-size-xlarge: var(--size-scale-xlarge);
+  --icon-size-2xlarge: var(--size-scale-2xlarge);
+  --icon-size-3xlarge: var(--size-scale-3xlarge);
 
   /**
    * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
    * Outer ring diameter; fill uses inset 1px.
    */
-  --selection-indicator-small: var(--size-scale-base);
-  --selection-indicator-base: var(--size-scale-plus);
-  --selection-indicator-mid: var(--size-scale-mid);
-  --selection-indicator-large: var(--size-scale-large);
+  --selection-indicator-small: var(--size-scale-small);
+  --selection-indicator-base: var(--size-scale-mid);
+  --selection-indicator-mid: var(--size-scale-large);
+  --selection-indicator-large: var(--size-scale-xlarge);
 
   /**
    * Component shadows — single layer, bottom only.

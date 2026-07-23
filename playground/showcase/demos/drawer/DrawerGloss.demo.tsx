@@ -21,7 +21,7 @@ export function DrawerGlossDemo() {
           </Drawer.HeadingBlock>
           <Drawer.Close />
         </Drawer.Header>
-        <Drawer.Body className="flex flex-col gap-plus">
+        <Drawer.Body className="flex flex-col gap-mid">
           <Input>
             <Input.Label>Note</Input.Label>
             <Input.Control variant="gloss" placeholder="Text…" />

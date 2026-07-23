@@ -13,7 +13,7 @@ import { Avatar } from ".";
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -69,7 +69,7 @@ export const Default: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex flex-row flex-wrap items-center gap-xlarge">
+    <div className="flex flex-row flex-wrap items-center gap-2xlarge">
       <Avatar size="small" label="Ada Lovelace" src={PIN_IMAGE1} alt="" loading="lazy" />
       <Avatar size="base" label="Grace Hopper" src={PIN_IMAGE2} alt="" loading="lazy" />
       <Avatar size="mid" label="Alan Turing" src={PIN_IMAGE4} alt="" loading="lazy" />
@@ -81,7 +81,7 @@ export const Sizes: Story = {
 export const FallbackOnly: Story = {
   name: "Letter from label only",
   render: () => (
-    <div className="flex flex-row flex-wrap items-center gap-large">
+    <div className="flex flex-row flex-wrap items-center gap-xlarge">
       <Avatar size="small" label="Burne Team" />
       <Avatar size="base" label="Anna Karenina" />
       <Avatar size="large" label="北京" />
@@ -188,14 +188,14 @@ export const CompoundCustomFallback: Story = {
 
 function GlossDemo() {
   return (
-    <div className="flex flex-col items-center gap-xlarge">
-      <div className="flex flex-row flex-wrap items-center justify-center gap-xlarge">
+    <div className="flex flex-col items-center gap-2xlarge">
+      <div className="flex flex-row flex-wrap items-center justify-center gap-2xlarge">
         <Avatar variant="gloss" size="small" label="Ada Lovelace" src={PIN_IMAGE1} alt="" loading="lazy" />
         <Avatar variant="gloss" size="base" label="Grace Hopper" src={PIN_IMAGE2} alt="" loading="lazy" />
         <Avatar variant="gloss" size="mid" label="Alan Turing" src={PIN_IMAGE4} alt="" loading="lazy" />
         <Avatar variant="gloss" size="large" label="Katherine Johnson" src={PIN_IMAGE3} alt="" loading="lazy" />
       </div>
-      <div className="flex flex-row flex-wrap items-center justify-center gap-large">
+      <div className="flex flex-row flex-wrap items-center justify-center gap-xlarge">
         <Avatar variant="gloss" size="base" label="Burne Team" />
         <Avatar variant="gloss" size="large" label="北京" />
       </div>
@@ -234,7 +234,7 @@ export const CustomClassNames: Story = {
   },
   decorators: [glossDottedDecorator(false)],
   render: () => (
-    <div className="flex flex-wrap items-center gap-xlarge">
+    <div className="flex flex-wrap items-center gap-2xlarge">
       <Avatar
         variant="gloss"
         size="base"

@@ -6,7 +6,7 @@ import { preventNav } from "../../shared/utils";
 
 export function LinkVariantsDemo() {
   return (
-    <div className="flex flex-wrap gap-mid">
+    <div className="flex flex-wrap gap-large">
       <Link href="#" onClick={preventNav}>
         Internal link
       </Link>

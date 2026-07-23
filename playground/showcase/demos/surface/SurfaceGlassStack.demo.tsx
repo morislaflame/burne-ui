@@ -3,8 +3,8 @@ import { Text } from "@/components/core/Text";
 
 export function SurfaceGlassStackDemo() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-mid rounded-mid bg-gradient-to-br from-primary/10 to-info/10 p-mid">
-      <Surface variant="gloss" padding="mid" radius="mid">
+    <div className="flex w-full max-w-md flex-col gap-large rounded-mid bg-gradient-to-br from-primary/10 to-info/10 p-large">
+      <Surface variant="gloss" padding="large" radius="mid">
         <Text as="p" variant="small">
           Gloss Surface on a gradient background - glass card.
         </Text>

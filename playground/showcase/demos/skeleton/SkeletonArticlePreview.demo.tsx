@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/core/Skeleton";
 
 export function SkeletonArticlePreviewDemo() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-mid">
+    <div className="flex w-full max-w-md flex-col gap-large">
       <Skeleton.Block animation="shimmer" className="h-36 w-full rounded-mid" />
       <Skeleton className="h-6 w-3/4 rounded-small" animation="shimmer" />
       <Skeleton.Text lines={3} animation="shimmer" />

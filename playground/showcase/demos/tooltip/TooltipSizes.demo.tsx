@@ -5,7 +5,7 @@ const SIZES = ["small", "base", "mid", "large"] as const;
 
 export function TooltipSizesDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       {SIZES.map((size) => (
         <Tooltip key={size} size={size}>
           <Tooltip.Trigger asChild>

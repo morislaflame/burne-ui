@@ -12,7 +12,7 @@ import { useDrawer } from "./drawerContext";
 const decorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -425,7 +425,7 @@ export const ScrollableBody: Story = {
             </Drawer.Header>
             <Drawer.Body>
               {Array.from({ length: 18 }).map((_, i) => (
-                <p key={i} className="mb-mid text-sm leading-normal text-muted last:mb-0">
+                <p key={i} className="mb-large text-sm leading-normal text-muted last:mb-0">
                   Row {i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 </p>
               ))}
@@ -458,7 +458,7 @@ export const WithForm: Story = {
               </Drawer.HeadingBlock>
               <Drawer.Close />
             </Drawer.Header>
-            <Drawer.Body className="flex flex-col gap-mid">
+            <Drawer.Body className="flex flex-col gap-large">
               <Input>
                 <Input.Label>Name</Input.Label>
                 <Input.Control name="name" placeholder="Ivan" />
@@ -496,7 +496,7 @@ export const PortalContainer: Story = {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     return (
-      <div className="flex w-full max-w-lg flex-col gap-mid">
+      <div className="flex w-full max-w-lg flex-col gap-large">
         <p className="text-sm text-muted">
           Drawer stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
         </p>
@@ -505,7 +505,7 @@ export const PortalContainer: Story = {
         </Button>
         <div
           ref={setContainer}
-          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
           <p className="text-xs text-muted">Custom portal host</p>
           {container ? (
@@ -557,7 +557,7 @@ export const AsChildMergedProps: Story = {
     }, []);
 
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
         <Drawer>
           <Drawer.Trigger

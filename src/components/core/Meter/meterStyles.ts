@@ -10,15 +10,15 @@ import { cn } from "@/utils/cn";
 export const METER_RAIL_HEIGHT_CLASS: Record<MeterSize, string> = {
   small: "h-small",
   base: "h-base",
-  mid: "h-plus",
-  large: "h-mid",
+  mid: "h-mid",
+  large: "h-large",
 };
 
 export const METER_RAIL_WIDTH_CLASS: Record<MeterSize, string> = {
   small: "w-small",
   base: "w-base",
-  mid: "w-plus",
-  large: "w-mid",
+  mid: "w-mid",
+  large: "w-large",
 };
 
 export const METER_TRACK_BASE_CLASS =

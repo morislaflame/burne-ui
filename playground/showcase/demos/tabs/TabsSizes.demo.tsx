@@ -19,7 +19,7 @@ function TabsSizeRow({ size }: { size: "small" | "base" | "mid" | "large" }) {
 
 export function TabsSizesDemo() {
   return (
-    <div className="flex w-full flex-col gap-mid">
+    <div className="flex w-full flex-col gap-large">
       <TabsSizeRow size="small" />
       <TabsSizeRow size="base" />
       <TabsSizeRow size="mid" />

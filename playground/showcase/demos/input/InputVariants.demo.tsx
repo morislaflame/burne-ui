@@ -2,7 +2,7 @@ import { Input } from "@/components/core/Input";
 
 export function InputVariantsDemo() {
   return (
-    <div className="flex flex-col gap-mid items-center w-full">
+    <div className="flex flex-col gap-large items-center w-full">
       <Input
         label="Email"
         placeholder="you@example.com"

@@ -25,7 +25,7 @@ export function AlertDialogDeleteAccountDemo() {
             </AlertDialog.Description>
           </AlertDialog.HeadingBlock>
         </AlertDialog.Header>
-        <AlertDialog.Body className="flex flex-col gap-plus">
+        <AlertDialog.Body className="flex flex-col gap-mid">
           <Input>
             <Input.Label>Confirm email</Input.Label>
             <Input.Control name="confirm-email" placeholder="you@example.com" autoComplete="email" />

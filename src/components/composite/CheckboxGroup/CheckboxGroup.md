@@ -96,8 +96,8 @@ Simple API нет.
 
 | `orientation` | Layout (`optionGroupLayout`) |
 |---------------|------------------------------|
-| `vertical` | `flex flex-col gap-plus` |
-| `horizontal` | `flex flex-row flex-wrap gap-x-mid gap-y-plus` |
+| `vertical` | `flex flex-col gap-mid` |
+| `horizontal` | `flex flex-row flex-wrap gap-x-large gap-y-mid` |
 
 `status` на группе нет — ошибки через `CheckboxGroup.Error` или поле в Form.
 
@@ -190,7 +190,7 @@ configureMotion({
     hint: "text-foreground/70",
     error: "font-medium",
     list: "gap-base",
-    group: "gap-mid",
+    group: "gap-large",
     actions: "pt-small",
   }}
 >
@@ -230,7 +230,7 @@ configureMotion({
 ### Multiple + hint
 
 ```tsx
-<CheckboxGroup size="base" className="rounded-mid border border-token p-mid">
+<CheckboxGroup size="base" className="rounded-mid border border-token p-large">
   <CheckboxGroup.Legend>
     <CheckboxGroup.Label>Теги</CheckboxGroup.Label>
     <CheckboxGroup.Hint>Выберите один или несколько.</CheckboxGroup.Hint>

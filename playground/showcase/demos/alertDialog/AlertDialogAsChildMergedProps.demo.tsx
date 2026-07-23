@@ -14,7 +14,7 @@ export function AlertDialogAsChildMergedPropsDemo() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-mid">
+    <div className="flex flex-col items-center gap-large">
       <p className="text-sm text-muted">{refLabel}</p>
       <AlertDialog open={open} onOpenChange={setOpen} status="danger">
         <AlertDialog.Trigger

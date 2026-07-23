@@ -7,7 +7,7 @@ export function ToastSizesDemo() {
   const { toast } = useToast();
 
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       {SIZES.map((size) => (
         <Button
           key={size}

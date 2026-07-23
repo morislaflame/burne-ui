@@ -43,21 +43,23 @@ import "burne-ui/styles.css";
 В нём:
 
 - **Дизайн-токены** как CSS-переменные: `--color-*`, `--space` / `--space-*`, `--size` / `--size-*`, `--radius`, `--text-scale-*`, и др. Полный перечень имён — экспорт **`designTokenNames`** из `burne-ui`; исходные значения по умолчанию смотрите в репозитории в `src/tokens/styles.css`.
-- **Мост Tailwind** (`@theme inline`): цвета в утилитах вида `bg-background`, `text-foreground`, `border-border`, отступы `gap-mid`, `p-plus`, радиусы `rounded-base` и т.д.
+- **Мост Tailwind** (`@theme inline`): цвета в утилитах вида `bg-background`, `text-foreground`, `border-border`, отступы `gap-large`, `p-mid`, радиусы `rounded-base` и т.д.
 - **Кастомные утилиты** (`@utility`): например `border-token`, `border-t-token`, `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
 
-Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-mid` и т.п.
+Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-large` и т.п.
 
 ### Слои имён токенов
 
 | Домен | Knob | Шаги (design) | Мост Tailwind | Утилиты |
 |-------|------|---------------|---------------|---------|
-| Spacing | `--space` | `--space-*` | `--spacing-*` | `gap-*`, `p-*`, `m-*` |
+| Spacing | `--space` | `--space-*` (`xsmall`…`3xlarge`) | `--spacing-*` | `gap-*`, `p-*`, `m-*` |
 | Radius | `--radius` | `--radius-*` | `--radius-*` (identity) | `rounded-*` |
 | Control | — | `--control-height-*` / `--control-size-*` (= height) | — | `h-control-*`, `w-control-*` |
-| Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1, есть `plus`) | — | `icon-xsmall` … `icon-xlarge` |
+| Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
 
 `--space-*` и `--spacing-*` — разные имена **намеренно**: у Tailwind namespace отступов — `spacing`.
+
+Шкала spacing: `xsmall` 0.5 · `small` 0.75 · `base` 1 · `mid` 1.5 · `large` 2 · `xlarge` 2.5 · `2xlarge` 3 · `3xlarge` 3.875 (× `--space`).
 
 ### Типографика
 
@@ -186,7 +188,7 @@ const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ri
 
 ## Tailwind в приложении-потребителе
 
-Компоненты используют классы Tailwind, сопоставленные с токенами пакета (`bg-surface`, `text-muted`, `gap-plus`, …). Чтобы **ваши** классы в `className` и классы из prebuilt-бандла библиотеки попали в итоговый CSS, Tailwind должен сканировать артефакты пакета. Добавьте путь к сборке (пример для Tailwind v4 / Vite):
+Компоненты используют классы Tailwind, сопоставленные с токенами пакета (`bg-surface`, `text-muted`, `gap-mid`, …). Чтобы **ваши** классы в `className` и классы из prebuilt-бандла библиотеки попали в итоговый CSS, Tailwind должен сканировать артефакты пакета. Добавьте путь к сборке (пример для Tailwind v4 / Vite):
 
 ```ts
 // @source в глобальном CSS приложения или content — см. документацию Tailwind v4

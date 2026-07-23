@@ -8,8 +8,8 @@ export function ColorPickerSettingsRowDemo() {
   const [accent, setAccent] = useState("#7c3aed");
 
   return (
-    <Surface variant="secondary" padding="mid" className="w-full max-w-md">
-      <div className="flex items-center justify-between gap-mid">
+    <Surface variant="secondary" padding="large" className="w-full max-w-md">
+      <div className="flex items-center justify-between gap-large">
         <div className="flex min-w-0 flex-col gap-xsmall">
           <Text as="span" variant="small" className="font-medium">
             Accent color

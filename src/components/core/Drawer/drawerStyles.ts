@@ -36,20 +36,20 @@ const PANEL_ROUNDING_CLASS: Record<DrawerPlacement, string> = {
 };
 
 export const HANDLE_EDGE_PADDING_CLASS: Record<DrawerPlacement, string> = {
-  bottom: "pt-plus",
-  top: "pb-plus",
-  left: "pr-plus",
-  right: "pl-plus",
+  bottom: "pt-mid",
+  top: "pb-mid",
+  left: "pr-mid",
+  right: "pl-mid",
 };
 
 export const DRAWER_CONTENT_CLASS =
-  "flex min-h-0 flex-1 flex-col gap-mid text-left";
+  "flex min-h-0 flex-1 flex-col gap-large text-left";
 
-export const DRAWER_HEADER_PADDING = "px-mid pt-plus";
+export const DRAWER_HEADER_PADDING = "px-large pt-mid";
 
-export const DRAWER_BODY_PADDING = "px-mid py-base";
+export const DRAWER_BODY_PADDING = "px-large py-base";
 
-export const DRAWER_FOOTER_PADDING = "px-mid pb-plus";
+export const DRAWER_FOOTER_PADDING = "px-large pb-mid";
 
 export const DRAWER_NATIVE_CLASS =
   "m-0 h-full w-full max-h-none max-w-none border-0 bg-transparent p-0 open:block [&::backdrop]:bg-transparent";
@@ -84,7 +84,7 @@ export const DRAWER_GLOSS_CONTENT_WRAP_CLASS =
   "gloss-content flex min-h-0 min-w-0 flex-1 flex-col";
 
 export const DRAWER_HEADER_CLASS =
-  "flex shrink-0 items-start gap-plus text-left";
+  "flex shrink-0 items-start gap-mid text-left";
 
 export const DRAWER_HEADING_BLOCK_CLASS =
   "flex min-w-0 flex-1 flex-col gap-xsmall text-left";

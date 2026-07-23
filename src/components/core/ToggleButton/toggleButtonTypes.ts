@@ -9,7 +9,7 @@ import type {
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/componentSize";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
-import type { TextVariant } from "@/components/core/Text";
+
 
 export type ToggleButtonSize = ComponentSize;
 
@@ -124,9 +124,4 @@ export type UseToggleButtonAnimationsProps = {
   onPointerDown?: PointerEventHandler<HTMLButtonElement>;
 };
 
-export const TOGGLE_BUTTON_TEXT_VARIANT: Record<ToggleButtonSize, TextVariant> = {
-  small: "small",
-  base: "base",
-  mid: "mid",
-  large: "mid",
-};
+

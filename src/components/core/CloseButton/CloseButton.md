@@ -92,8 +92,8 @@ type CloseButtonClassNames = {
 |------|--------|--------|
 | `small` | `h-control-xsmall w-control-xsmall` | `icon-small` |
 | `base` | `h-control-small w-control-small` | `icon-base` |
-| `mid` | `h-control-base w-control-base` | `icon-plus` |
-| `large` | `h-control-mid w-control-mid` | `icon-mid` |
+| `mid` | `h-control-base w-control-base` | `icon-mid` |
+| `large` | `h-control-mid w-control-mid` | `icon-large` |
 
 Форма всегда `rounded-full`.
 
@@ -197,7 +197,7 @@ configureMotion({
 
 ### Размерные токены
 
-`h-control-*`, `w-control-*` (квадрат), `icon-small` / `icon-base` / `icon-plus` / `icon-mid`.
+`h-control-*`, `w-control-*` (квадрат), `icon-small` / `icon-base` / `icon-mid` / `icon-large`.
 
 ## Стилизация и кастомизация
 

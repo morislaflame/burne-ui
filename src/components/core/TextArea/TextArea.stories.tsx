@@ -11,7 +11,7 @@ import { TextArea } from "./index";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -90,7 +90,7 @@ export const Outline: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex w-full flex-col gap-large">
+    <div className="flex w-full flex-col gap-xlarge">
       <TextArea label="Default" variant="default" placeholder="default" />
       <TextArea label="Outline" variant="outline" placeholder="outline" />
       <TextArea label="Secondary" variant="secondary" placeholder="secondary" />
@@ -101,7 +101,7 @@ export const Variants: Story = {
 export const Statuses: Story = {
   name: "Statuses",
   render: () => (
-    <div className="flex w-full flex-col gap-large">
+    <div className="flex w-full flex-col gap-xlarge">
       <TextArea status="danger" label="Danger" error="Text is too short." defaultValue="OK" />
       <TextArea status="success" label="Success" hint="Text saved." defaultValue="Done" />
       <TextArea status="warning" label="Warning" hint="Review the wording." defaultValue="Draft" />
@@ -112,7 +112,7 @@ export const Statuses: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex w-full flex-col gap-large">
+    <div className="flex w-full flex-col gap-xlarge">
       {(["small", "base", "mid", "large"] as const).map((size) => (
         <TextArea key={size} size={size} label={size} placeholder={`size="${size}"`} />
       ))}

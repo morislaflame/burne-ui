@@ -10,7 +10,7 @@ export function ToggleButtonReactionBarDemo() {
   const [bookmarked, setBookmarked] = useState(false);
 
   return (
-    <div className="flex max-w-sm flex-col gap-plus rounded-mid border-token bg-surface p-mid">
+    <div className="flex max-w-sm flex-col gap-mid rounded-mid border-token bg-surface p-large">
       <div className="flex flex-col gap-small">
         <Text as="p" variant="base" className="font-medium">
           How to create a new project

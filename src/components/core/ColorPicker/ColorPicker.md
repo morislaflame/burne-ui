@@ -165,7 +165,7 @@ configureMotion({
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| Panel | `rounded-mid shadow-token-md p-plus` |
+| Panel | `rounded-mid shadow-token-md p-mid` |
 | Area | `rounded-small bg-secondary` |
 | Inputs | `font-mono`, `border-token` |
 | Presets row | `gap-xsmall` flex |

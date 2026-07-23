@@ -17,7 +17,7 @@ export function CheckboxTaskListDemo() {
   });
 
   return (
-    <div className="flex w-full max-w-xs flex-col gap-plus">
+    <div className="flex w-full max-w-xs flex-col gap-mid">
       <Text as="p" variant="small" className="font-medium">
         Access rights
       </Text>

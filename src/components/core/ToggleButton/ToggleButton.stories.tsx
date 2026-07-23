@@ -14,7 +14,7 @@ const VARIANTS: ToggleButtonVariant[] = ["default", "outline", "ghost"];
 const framedDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <Story />
@@ -77,7 +77,7 @@ export const PressInteraction: Story = {
 export const Variants: Story = {
   name: "Variants",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-mid">
+    <div className="flex flex-wrap items-center justify-center gap-large">
       {VARIANTS.map((variant) => (
         <ToggleButton
           key={variant}
@@ -101,7 +101,7 @@ export const IconOnly: Story = {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (
-    <div className="flex flex-wrap items-center justify-center gap-mid">
+    <div className="flex flex-wrap items-center justify-center gap-large">
       {COMPONENT_SIZES.map((size) => (
         <ToggleButton
           key={size}
@@ -120,7 +120,7 @@ export const Controlled: Story = {
   render: function ControlledToggle() {
     const [pressed, setPressed] = useState(false);
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <ToggleButton
           pressed={pressed}
           onPressedChange={setPressed}
@@ -183,7 +183,7 @@ export const CustomClassNames: Story = {
 export const LabelLayout: Story = {
   name: "Label + trailing layout",
   render: () => (
-    <ToggleButton className="w-full max-w-xs justify-between gap-plus" icon={<IoHeartOutline aria-hidden />}>
+    <ToggleButton className="w-full max-w-xs justify-between gap-mid" icon={<IoHeartOutline aria-hidden />}>
       <span>Like</span>
       <span className="text-xsmall">128</span>
     </ToggleButton>
@@ -194,7 +194,7 @@ export const CompoundLayout: Story = {
   name: "Compound API",
   render: () => (
     <ToggleButton className="w-full max-w-xs">
-      <ToggleButton.Content className="justify-between gap-plus">
+      <ToggleButton.Content className="justify-between gap-mid">
         <ToggleButton.IconStart>
           <IoHeartOutline aria-hidden />
         </ToggleButton.IconStart>

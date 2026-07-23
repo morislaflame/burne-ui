@@ -17,7 +17,7 @@ export function GlossShowcase() {
         title="Components with gloss"
         description="Unified visual language of glass panels with conic-stroke and hover-lift."
       >
-        <ShowcaseDemoFromFile padding="plus" align="stretch" Demo={GlossComponentsDemo} source={glossComponentsSource} />
+        <ShowcaseDemoFromFile padding="mid" align="stretch" Demo={GlossComponentsDemo} source={glossComponentsSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

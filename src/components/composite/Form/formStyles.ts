@@ -4,7 +4,7 @@ import type { FormClassNames } from "./formTypes";
 
 export function formRootClass(className?: string, classNames?: FormClassNames): string {
   return cn(
-    "flex w-full max-w-full flex-col gap-mid text-left",
+    "flex w-full max-w-full flex-col gap-large text-left",
     classNames?.root,
     className,
   );

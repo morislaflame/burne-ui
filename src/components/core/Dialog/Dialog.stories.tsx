@@ -12,7 +12,7 @@ import { useDialog } from "./dialogContext";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
@@ -26,7 +26,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto max-w-xl">
@@ -44,7 +44,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Modal dialog (portal to `document.body`). Panel: shared `p-large` and `gap-mid` between `Header` / `Body` / `Footer`; scroll lives in `Body`. Sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `Dialog.Footer`, direct `Button` children without `size` inherit the modal button size.\n\n`Dialog.Trigger` — built-in trigger that opens the dialog after the press animation.",
+          "Modal dialog (portal to `document.body`). Panel: shared `p-xlarge` and `gap-large` between `Header` / `Body` / `Footer`; scroll lives in `Body`. Sizes `small`–`large`. `variant=\"gloss\"` — glass panel. In `Dialog.Footer`, direct `Button` children without `size` inherit the modal button size.\n\n`Dialog.Trigger` — built-in trigger that opens the dialog after the press animation.",
       },
     },
   },
@@ -88,7 +88,7 @@ export const Default: Story = {
                 Arbitrary content: form fields, lists, preview. Here only
                 an illustration of scroll with a large amount of text.
               </p>
-              <p className="mt-plus text-sm leading-relaxed text-muted">
+              <p className="mt-mid text-sm leading-relaxed text-muted">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
@@ -349,7 +349,7 @@ export const ScrollableContent: Story = {
             </Dialog.Header>
             <Dialog.Body>
               {Array.from({ length: 10 }).map((_, index) => (
-                <p key={index} className="mb-mid text-sm leading-normal text-muted last:mb-0">
+                <p key={index} className="mb-large text-sm leading-normal text-muted last:mb-0">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
                   incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
                   nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -392,7 +392,7 @@ function glossDottedDecorator(light = false) {
   return (Story: ComponentType) => (
     <div
       data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
     >
       <div className="mx-auto max-w-xl">
@@ -419,7 +419,7 @@ function GlossDemo() {
           </Dialog.HeadingBlock>
           <Dialog.Close />
         </Dialog.Header>
-        <Dialog.Body className="flex flex-col gap-mid">
+        <Dialog.Body className="flex flex-col gap-large">
           <Input>
             <Input.Label>Name</Input.Label>
             <Input.Control variant="gloss" name="name" placeholder="Ivan" autoComplete="name" />
@@ -507,7 +507,7 @@ export const Sizes: Story = {
   name: "Sizes small · base · mid · large",
   render: function SizesDemo() {
     return (
-      <div className="flex max-w-2xl flex-col flex-wrap gap-xlarge sm:flex-row sm:items-start">
+      <div className="flex max-w-2xl flex-col flex-wrap gap-2xlarge sm:flex-row sm:items-start">
         {(["small", "base", "mid", "large"] as const).map((size) => (
           <div key={size} className="flex flex-col items-start gap-base">
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -538,7 +538,7 @@ export const PortalContainer: Story = {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     return (
-      <div className="flex w-full max-w-lg flex-col gap-mid">
+      <div className="flex w-full max-w-lg flex-col gap-large">
         <p className="text-sm text-muted">
           Overlay stays inside the dashed host (not <code className="text-foreground">document.body</code> / top layer).
         </p>
@@ -547,7 +547,7 @@ export const PortalContainer: Story = {
         </Button>
         <div
           ref={setContainer}
-          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+          className="relative h-72 overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
         >
           <p className="text-xs text-muted">Custom portal host</p>
           {container ? (
@@ -601,7 +601,7 @@ export const AsChildMergedProps: Story = {
     }, []);
 
     return (
-      <div className="flex flex-col items-center gap-mid">
+      <div className="flex flex-col items-center gap-large">
         <p className="text-sm text-muted">{refLabel}</p>
         <Dialog>
           <Dialog.Trigger

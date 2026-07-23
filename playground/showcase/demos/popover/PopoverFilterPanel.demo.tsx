@@ -16,7 +16,7 @@ export function PopoverFilterPanelDemo() {
         </Button>
       </Popover.Trigger>
       <Popover.Content className="w-56">
-        <Popover.Body className="flex flex-col gap-mid p-base">
+        <Popover.Body className="flex flex-col gap-large p-base">
           <CheckboxGroup 
             selection="single"
           >

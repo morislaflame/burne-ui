@@ -24,7 +24,7 @@ const CARD_RIPPLE_COLOR: Record<CardVariant, "neutral"> = {
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-md">
@@ -38,7 +38,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-md">
@@ -52,7 +52,7 @@ const lightThemeDecorator = [
 const wideDarkDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="w-full max-w-6xl px-small">
@@ -146,7 +146,7 @@ export const Pressable: Story = {
   render: function PressableDemo() {
     const [n, setN] = useState(0);
     return (
-      <div className="flex flex-col gap-mid">
+      <div className="flex flex-col gap-large">
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
           Presses (any card below): {n}
         </p>
@@ -190,7 +190,7 @@ export const PressInteraction: Story = {
   render: function PressInteractionDemo() {
     const [n, setN] = useState(0);
     return (
-      <div className="flex flex-col gap-mid">
+      <div className="flex flex-col gap-large">
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
           Presses: {n}
         </p>
@@ -216,7 +216,7 @@ export const PressableWithNestedCard: Story = {
   render: function PressableNestedDemo() {
     const [n, setN] = useState(0);
     return (
-      <div className="flex flex-col gap-mid">
+      <div className="flex flex-col gap-large">
         <p className="text-center text-small tabular-nums text-muted" aria-live="polite">
           Presses on outer card: {n}
         </p>
@@ -231,8 +231,8 @@ export const PressableWithNestedCard: Story = {
               </Card.Description>
             </Card.Header>
             <Card.Body>
-              <Card className="mt-plus">
-                <p className="px-mid py-plus text-base leading-normal text-foreground">
+              <Card className="mt-mid">
+                <p className="px-large py-mid text-base leading-normal text-foreground">
                   Nested plain card without title or description — only this paragraph to
                   verify nested surface and spacing.
                 </p>
@@ -280,7 +280,7 @@ function QuickSubscribeCard() {
           Short form inside Card.Body with the Form component.
         </Card.Description>
       </Card.Header>
-      <Card.Body className="border-t-token pt-mid">
+      <Card.Body className="border-t-token pt-large">
         <Form onSubmit={onSubmit} aria-label="Newsletter subscription">
           <Form.Section>
             <Input>
@@ -401,7 +401,7 @@ export const BodyImageGrid: Story = {
           <code className="text-xs">mockImages</code>.
         </Card.Description>
       </Card.Header>
-      <Card.Body className="border-t-token px-mid pb-mid pt-mid">
+      <Card.Body className="border-t-token px-large pb-large pt-large">
         <div className="grid grid-cols-1 gap-small min-[480px]:grid-cols-2">
           <figure className="min-w-0 overflow-hidden rounded-base border-token flex flex-col gap-xsmall">
             <img
@@ -470,7 +470,7 @@ export const MetricHighlight: Story = {
   name: "Metric (KPI)",
   render: () => (
     <Card variant="secondary" className="max-w-xs">
-      <Card.Body className="gap-mid">
+      <Card.Body className="gap-large">
         <div>
           <Text as="span" variant="xsmall" className="font-medium uppercase tracking-wide text-muted">
             Conversion
@@ -502,7 +502,7 @@ export const StepsWithSeparators: Story = {
         <Card.Title>Publication checklist</Card.Title>
         <Card.Description>Three steps and <code className="text-xs">Separator</code> between blocks.</Card.Description>
       </Card.Header>
-      <Card.Body className="px-mid pb-mid pt-0">
+      <Card.Body className="px-large pb-large pt-0">
         <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
           <p className="text-small font-medium text-foreground">1. Draft</p>
           <p className="mt-xsmall text-xsmall text-muted">Text and media collected.</p>
@@ -593,7 +593,7 @@ export const MosaicFourCards: Story = {
       },
     ];
     return (
-      <div className="grid grid-cols-1 gap-mid sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-large sm:grid-cols-2">
         {tiles.map((t) => (
           <Card key={t.title + t.variant} variant={t.variant}>
             <div className="relative aspect-[5/3] w-full shrink-0">
@@ -674,7 +674,7 @@ export const LightThemeVariants: Story = {
   name: "Light theme (all variants)",
   decorators: [...lightThemeDecorator],
   render: () => (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Card variant="default">
         <Card.Header>
           <Card.Title>Default</Card.Title>
@@ -715,7 +715,7 @@ function glossDottedDecorator(light = false) {
   return (Story: ComponentType) => (
     <div
       data-theme={light ? "light" : undefined}
-      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[22rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)", ...dottedGridStyle }}
     >
       <div className="w-full max-w-md">
@@ -728,7 +728,7 @@ function glossDottedDecorator(light = false) {
 function GlossDemo() {
   const [n, setN] = useState(0);
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Card variant="gloss">
         <Card.Header>
           <Card.Title>Glass card</Card.Title>

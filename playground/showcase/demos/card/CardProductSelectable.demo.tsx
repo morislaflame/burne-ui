@@ -17,7 +17,7 @@ export function CardProductSelectableDemo() {
     >
       <Ripple color="neutral" />
       <div className="relative z-[1]">
-        <Card.Body className="px-large pb-0 pt-plus">
+        <Card.Body className="px-xlarge pb-0 pt-mid">
           <div
             className="relative h-28 w-full overflow-hidden rounded-small bg-cover bg-center"
             style={{ backgroundImage: `url(${PIN_IMAGE4})` }}
@@ -29,7 +29,7 @@ export function CardProductSelectableDemo() {
             ) : null}
           </div>
         </Card.Body>
-        <Card.Header className="pt-plus gap-xsmall">
+        <Card.Header className="pt-mid gap-xsmall">
           <Card.Title>Parka Arctic</Card.Title>
           <Card.Description>Click to select option.</Card.Description>
         </Card.Header>

@@ -9,11 +9,11 @@ const METRICS = [
 
 export function MeterStorageGridDemo() {
   return (
-    <div className="grid w-full max-w-lg grid-cols-1 gap-mid sm:grid-cols-3">
+    <div className="grid w-full max-w-lg grid-cols-1 gap-large sm:grid-cols-3">
       {METRICS.map((metric) => (
         <Meter
           key={metric.label}
-          className="flex flex-col gap-small rounded-mid border-token bg-secondary p-mid"
+          className="flex flex-col gap-small rounded-mid border-token bg-secondary p-large"
         >
           <Meter.Header className="flex-col items-start gap-0">
             <Meter.Label>

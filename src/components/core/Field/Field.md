@@ -52,7 +52,7 @@ Compound через `Object.assign`:
 | `Field.Set.Actions` | Кнопки / actions справа |
 
 ```tsx
-<Field.Set size="base" disabled={isPending} classNames={{ stack: "gap-xlarge" }}>
+<Field.Set size="base" disabled={isPending} classNames={{ stack: "gap-2xlarge" }}>
   <Field.Set.Legend>
     <Field.Set.LegendHeader>Контактные данные</Field.Set.LegendHeader>
   </Field.Set.Legend>
@@ -166,10 +166,10 @@ configureMotion({
 
 | size | stack gap | group gap | actions gap | отступ после legend |
 |------|-----------|-----------|-------------|---------------------|
-| `small` | `gap-mid` | `gap-base` | `gap-base` | `mt-mid` |
-| `base` | `gap-large` | `gap-plus` | `gap-plus` | `mt-large` |
-| `mid` | `gap-xlarge` | `gap-mid` | `gap-mid` | `mt-xlarge` |
-| `large` | `gap-xlarge` | `gap-large` | `gap-large` | `mt-xlarge` |
+| `small` | `gap-large` | `gap-base` | `gap-base` | `mt-large` |
+| `base` | `gap-xlarge` | `gap-mid` | `gap-mid` | `mt-xlarge` |
+| `mid` | `gap-2xlarge` | `gap-large` | `gap-large` | `mt-2xlarge` |
+| `large` | `gap-2xlarge` | `gap-xlarge` | `gap-xlarge` | `mt-2xlarge` |
 
 `Field` (одиночный) — фиксированный `gap-xsmall` между label / control / hint.
 
@@ -227,7 +227,7 @@ Field — layout-примитив: два независимых набора с
 <Field
   className="max-w-sm"
   classNames={{
-    root: "rounded-mid border-token p-plus gap-small",
+    root: "rounded-mid border-token p-mid gap-small",
     hint: "text-xs text-muted",
     error: "font-medium",
   }}
@@ -263,8 +263,8 @@ Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.e
   classNames={{
     legend: "text-primary font-semibold",
     legendHeader: "gap-xsmall",
-    stack: "gap-xlarge",
-    group: "gap-mid",
+    stack: "gap-2xlarge",
+    group: "gap-large",
     actions: "justify-start pt-small",
   }}
 >

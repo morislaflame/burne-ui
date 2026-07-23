@@ -11,13 +11,13 @@ export function CheckboxConsentCardDemo() {
   return (
     <label
       htmlFor={inputId}
-      className="block w-full max-w-sm cursor-pointer rounded-mid border-token bg-secondary p-mid"
+      className="block w-full max-w-sm cursor-pointer rounded-mid border-token bg-secondary p-large"
     >
       <Checkbox
         id={inputId}
         checked={favorite}
         onChange={(e) => setFavorite(e.target.checked)}
-        className="w-full gap-x-mid gap-y-xsmall"
+        className="w-full gap-x-large gap-y-xsmall"
       >
         <Checkbox.Control>
           <Checkbox.Indicator>

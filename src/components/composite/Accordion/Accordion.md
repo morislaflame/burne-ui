@@ -102,9 +102,9 @@ const [value, setValue] = useState<string | null>("shipping");
 | size | min-h триггера | pad панели |
 |------|----------------|------------|
 | `small` | `min-h-control-small` | `px-base pb-base pt-small` |
-| `base` | `min-h-control-base` | `px-plus pb-plus pt-small` |
-| `mid` | `min-h-control-mid` | `px-mid pb-mid pt-base` |
-| `large` | `min-h-control-large` | `px-large pb-large pt-base` |
+| `base` | `min-h-control-base` | `px-mid pb-mid pt-small` |
+| `mid` | `min-h-control-mid` | `px-large pb-large pt-base` |
+| `large` | `min-h-control-large` | `px-xlarge pb-xlarge pt-base` |
 
 `variant` и `status` **нет** — каждый Item использует `Expandable` с `variant="default"`.
 

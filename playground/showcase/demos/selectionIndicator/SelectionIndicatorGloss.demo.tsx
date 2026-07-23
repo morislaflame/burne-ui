@@ -5,7 +5,7 @@ import { Text } from "@/components/core/Text";
 
 export function SelectionIndicatorGlossDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <div className="flex flex-col items-center gap-xsmall">
         <SelectionIndicator size="base" variant="gloss" selected={false} />
         <Text as="span" variant="xsmall" className="text-muted">

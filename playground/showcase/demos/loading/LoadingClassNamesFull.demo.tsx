@@ -2,7 +2,7 @@ import { Loading } from "@/components/core/Loading";
 
 export function LoadingClassNamesFullDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-xlarge">
+    <div className="flex flex-wrap items-center gap-2xlarge">
       <Loading
         type="spinner"
         size="mid"

@@ -6,21 +6,21 @@ export const LISTBOX_ROOT_CLASS =
   "flex min-h-0 flex-col gap-xsmall text-left outline-none";
 
 export const LISTBOX_ROOT_GLOSS_CLASS =
-  "gloss-panel gloss-deep rounded-mid p-plus text-foreground";
+  "gloss-panel gloss-deep rounded-mid p-mid text-foreground";
 
 export const LISTBOX_SECTION_CLASS = "flex min-w-0 flex-col gap-xsmall";
 
-export const LISTBOX_HEADER_CLASS = "px-plus text-left";
+export const LISTBOX_HEADER_CLASS = "px-mid text-left";
 
 export const LISTBOX_HEADER_TEXT_CLASS = "text-muted";
 
 export const LISTBOX_SEPARATOR_CLASS =
   "my-xsmall h-0 w-full shrink-0 border-t-token";
 
-export const LISTBOX_EMPTY_CLASS = "px-mid py-small text-center text-muted";
+export const LISTBOX_EMPTY_CLASS = "px-large py-small text-center text-muted";
 
 export const LISTBOX_ITEM_BASE_CLASS =
-  "w-full min-w-0 rounded-mid px-plus py-base text-left outline-none";
+  "w-full min-w-0 rounded-mid px-mid py-base text-left outline-none";
 
 export const LISTBOX_ITEM_INTERACTIVE_CLASS =
   "cursor-pointer text-foreground focus-ring";

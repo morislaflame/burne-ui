@@ -14,7 +14,7 @@ import { RadioGroup } from ".";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[14rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-xl">
@@ -47,7 +47,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const CARD_RADIO_CLASS = cn(
-  "group relative flex flex-col gap-plus rounded-mid border-token bg-surface px-plus py-mid transition-colors",
+  "group relative flex flex-col gap-mid rounded-mid border-token bg-surface px-mid py-large transition-colors",
   "data-[selected=true]:border-primary data-[selected=true]:bg-default-hover",
   "has-[:focus-visible]:border-primary has-[:focus-visible]:bg-default-hover",
 );
@@ -107,11 +107,11 @@ export const CardLayout: Story = {
           <RadioGroup.Label>Participation format</RadioGroup.Label>
           <RadioGroup.Hint>Choose how you want to join the event.</RadioGroup.Hint>
         </RadioGroup.Legend>
-        <div className="grid gap-mid md:grid-cols-3">
+        <div className="grid gap-large md:grid-cols-3">
           {formats.map((option) => (
             <Radio key={option.value} value={option.value} className={CARD_RADIO_CLASS}>
-              <Radio.Control className="absolute top-plus right-plus size-5" />
-              <Radio.Content className="flex flex-col gap-plus pr-xlarge">
+              <Radio.Control className="absolute top-mid right-mid size-5" />
+              <Radio.Content className="flex flex-col gap-mid pr-2xlarge">
                 <span className="inline-flex size-10 items-center justify-center rounded-base border-token bg-secondary text-foreground">
                   <option.icon className="size-5" aria-hidden />
                 </span>
@@ -238,7 +238,7 @@ export const WithoutDescription: Story = {
 export const Sizes: Story = {
   name: "Sizes small · base · mid · large",
   render: () => (
-    <div className="grid w-full max-w-5xl gap-xlarge md:grid-cols-2">
+    <div className="grid w-full max-w-5xl gap-2xlarge md:grid-cols-2">
       {COMPONENT_SIZES.map((size) => (
         <div key={size} className="flex flex-col gap-base">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
@@ -280,7 +280,7 @@ export const CustomClassNames: Story = {
         hint: "text-foreground/70",
         error: "font-medium",
         list: "gap-base",
-        group: "gap-mid",
+        group: "gap-large",
         actions: "pt-small",
       }}
     >
@@ -307,7 +307,7 @@ export const CustomClassNames: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex max-w-md flex-col gap-mid text-left">
+    <div className="flex max-w-md flex-col gap-large text-left">
       <p className="text-sm text-muted">
         Group — native <code className="text-primary">&lt;fieldset&gt;</code> +{" "}
         <code className="text-primary">&lt;legend&gt;</code>. Hint and error —{" "}

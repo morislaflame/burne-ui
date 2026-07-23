@@ -20,9 +20,9 @@ export const COLOR_PICKER_AREA_HEIGHT: Record<ColorPickerSize, string> = {
 
 export const COLOR_PICKER_PAD: Record<ColorPickerSize, string> = {
   small: "p-small gap-small",
-  base: "p-plus gap-plus",
-  mid: "p-mid gap-mid",
-  large: "p-large gap-large",
+  base: "p-mid gap-mid",
+  mid: "p-large gap-large",
+  large: "p-xlarge gap-xlarge",
 };
 
 export const COLOR_PICKER_AREA_CLASS =

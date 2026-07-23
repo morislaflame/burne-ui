@@ -74,13 +74,13 @@ export const SWITCH_LAYOUT: Record<
     travelPx: selectionIndicatorFallbackPx("mid"),
     title: "mid",
     desc: "small",
-    gap: "gap-x-plus gap-y-xsmall",
+    gap: "gap-x-mid gap-y-xsmall",
   },
   large: {
     track: SWITCH_TRACK.large,
     travelPx: selectionIndicatorFallbackPx("large"),
     title: "large",
     desc: "base",
-    gap: "gap-x-plus gap-y-xsmall",
+    gap: "gap-x-mid gap-y-xsmall",
   },
 };

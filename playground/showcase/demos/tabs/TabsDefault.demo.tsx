@@ -15,12 +15,12 @@ export function TabsDefaultDemo() {
           Soon
         </Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="overview" className="pt-mid">
+      <Tabs.Panel value="overview" className="pt-large">
         <Text as="p" variant="small" className="text-muted">
           Active tab: {tab} (variant default)
         </Text>
       </Tabs.Panel>
-      <Tabs.Panel value="details" className="pt-mid">
+      <Tabs.Panel value="details" className="pt-large">
         <Text as="p" variant="small">
           Second panel with other content.
         </Text>

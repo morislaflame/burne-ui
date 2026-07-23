@@ -10,11 +10,11 @@ export function ColorPickerBrandPaletteDemo() {
   const [color, setColor] = useState(BRAND_PRESETS[0]);
 
   return (
-    <Surface variant="secondary" padding="mid" className="flex w-full max-w-sm flex-col gap-mid">
+    <Surface variant="secondary" padding="large" className="flex w-full max-w-sm flex-col gap-large">
       <Text as="p" variant="small" className="font-medium">
         Brand palette
       </Text>
-      <div className="flex items-center gap-mid">
+      <div className="flex items-center gap-large">
         <ColorPicker value={color} onValueChange={setColor}>
           <ColorPicker.Trigger />
           <ColorPicker.Content presets={BRAND_PRESETS} />

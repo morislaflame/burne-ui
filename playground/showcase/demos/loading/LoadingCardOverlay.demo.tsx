@@ -6,7 +6,7 @@ export function LoadingCardOverlayDemo() {
   return (
     <Surface
       variant="secondary"
-      padding="mid"
+      padding="large"
       className="relative w-full max-w-xs overflow-hidden"
     >
       <div className="flex flex-col gap-xsmall opacity-40">

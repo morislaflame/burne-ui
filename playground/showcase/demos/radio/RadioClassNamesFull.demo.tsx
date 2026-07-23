@@ -8,7 +8,7 @@ export function RadioClassNamesFullDemo() {
       defaultChecked
       variant="gloss"
       classNames={{
-        root: "rounded-large border-info/40 p-mid shadow-token-base",
+        root: "rounded-large border-info/40 p-large shadow-token-base",
         control: "ring-info/30",
         controlTrack: "border-info/50",
         indicator: "text-info",

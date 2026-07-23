@@ -6,6 +6,7 @@ import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInt
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import type { TextVariant } from "@/components/core/Text";
 
 import type { ToggleButtonSize, ToggleButtonVariant } from "./toggleButtonTypes";
 
@@ -45,6 +46,13 @@ export const TOGGLE_BUTTON_LABEL_LAYER_CLASS =
   "inline-flex w-full min-w-0 items-center gap-xsmall";
 
 export const TOGGLE_BUTTON_TEXT_CLASS = "min-w-0 shrink";
+
+export const TOGGLE_BUTTON_TEXT_VARIANT: Record<ToggleButtonSize, TextVariant> = {
+  small: "small",
+  base: "base",
+  mid: "mid",
+  large: "large",
+};
 
 export function toggleButtonLabelClass({
   slotClass,

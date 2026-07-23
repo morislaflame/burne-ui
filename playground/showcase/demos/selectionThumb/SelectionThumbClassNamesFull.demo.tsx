@@ -4,7 +4,7 @@ import { SelectionThumb } from "@/components/core/SelectionThumb";
 
 export function SelectionThumbClassNamesFullDemo() {
   return (
-    <div className="flex items-center gap-xlarge">
+    <div className="flex items-center gap-2xlarge">
       <SelectionThumb
         active
         size="mid"

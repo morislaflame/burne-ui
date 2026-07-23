@@ -16,7 +16,7 @@ export function TableRowSelectionDemo() {
         : "No";
 
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Table>
         <Table.ScrollContainer>
           <Table.Content

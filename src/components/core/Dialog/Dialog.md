@@ -28,7 +28,7 @@ Root **не рендерит DOM** — только контекст и `classNa
 |-------|------------|
 | `Dialog.Trigger` | Открытие после press-squeeze; `asChild` |
 | `Dialog.Panel` | Портал + overlay + анимации; props ниже |
-| `Dialog.Content` | Обёртка контента (`p-large`, `gap-mid`) |
+| `Dialog.Content` | Обёртка контента (`p-xlarge`, `gap-large`) |
 | `Dialog.Header` | Шапка: heading + close |
 | `Dialog.HeadingBlock` | Блок title + description |
 | `Dialog.Title` | `<h2>`, `Text` mid |
@@ -221,7 +221,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 
 Из `modalPanelLayout`:
 
-- `Dialog.Content` — `MODAL_CONTENT_CLASS` (`p-large`, `gap-mid` между Header/Body/Footer)
+- `Dialog.Content` — `MODAL_CONTENT_CLASS` (`p-xlarge`, `gap-large` между Header/Body/Footer)
 - `Dialog.Body` — `MODAL_BODY_SCROLL_CLASS` (скролл только в body)
 
 ## Токены и CSS
@@ -277,7 +277,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
     panel: "max-w-lg border-primary/40 bg-primary/5 shadow-token-lg",
     title: "text-primary font-semibold",
     description: "text-foreground/80",
-    body: "px-large",
+    body: "px-xlarge",
     footer: "border-t border-primary/20 pt-small",
     close: "opacity-80",
   }}

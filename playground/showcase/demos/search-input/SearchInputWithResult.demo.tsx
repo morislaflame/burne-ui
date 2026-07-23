@@ -15,7 +15,7 @@ export function SearchInputWithResultDemo() {
         className="w-64"
       />
       {search ? (
-        <p className="mt-mid text-sm text-muted">
+        <p className="mt-large text-sm text-muted">
           Request: <span className="font-medium text-foreground">{search}</span>
         </p>
       ) : null}

@@ -2,7 +2,7 @@ import { Kbd } from "@/components/core/Kbd";
 
 export function KbdGroupDemo() {
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <Kbd.Group>
         <Kbd>⌘</Kbd>
         <Kbd>K</Kbd>

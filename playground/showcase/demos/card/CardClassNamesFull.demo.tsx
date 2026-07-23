@@ -8,7 +8,7 @@ export function CardClassNamesFullDemo() {
       variant="secondary"
       classNames={{
         root: "rounded-large border-info/40 shadow-token-mid",
-        header: "gap-mid",
+        header: "gap-large",
         title: "text-info font-semibold",
         description: "text-foreground/75",
         body: "pt-small",

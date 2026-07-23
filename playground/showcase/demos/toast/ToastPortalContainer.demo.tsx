@@ -27,15 +27,15 @@ export function ToastPortalContainerDemo() {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-mid">
+    <div className="flex w-full max-w-lg flex-col gap-large">
       <p className="text-sm text-muted">
         <code className="text-foreground">Toast.Provider portalContainer</code> — viewport mounts into the host.
       </p>
       <div
         ref={setContainer}
-        className="relative flex h-64 flex-col items-center justify-center gap-mid overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-mid"
+        className="relative flex h-64 flex-col items-center justify-center gap-large overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/40 p-large"
       >
-        <p className="absolute left-mid top-mid text-xs text-muted">Custom portal host</p>
+        <p className="absolute left-large top-large text-xs text-muted">Custom portal host</p>
         {container ? (
           <Toast.Provider portalContainer={container} defaultPlacement="bottom-center">
             <ToastPortalContainerInner />

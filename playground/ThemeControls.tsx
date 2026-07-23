@@ -422,7 +422,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
   };
 
   return (
-    <div className="flex flex-col gap-mid">
+    <div className="flex flex-col gap-large">
       <div>
         <Text as="h2" variant="header-2">
           Theme tokens

@@ -169,7 +169,7 @@ type FormFieldRules = {
 
 | Слот | Базовые классы (`formStyles.ts`) |
 |------|----------------------------------|
-| `root` | `flex flex-col gap-mid w-full text-left` |
+| `root` | `flex flex-col gap-large w-full text-left` |
 | `section` | `flex flex-col gap-base` |
 | `title` | `text-header-3 font-semibold text-foreground` |
 | `description` | `text-base text-muted` |
@@ -206,11 +206,11 @@ type FormFieldRules = {
 ```tsx
 <Form
   classNames={{
-    root: "rounded-mid border border-primary/20 bg-tertiary/50 p-mid",
+    root: "rounded-mid border border-primary/20 bg-tertiary/50 p-large",
     title: "text-primary",
     description: "text-info",
     section: "gap-small",
-    actions: "justify-start border-t border-token pt-mid",
+    actions: "justify-start border-t border-token pt-large",
     field: "rounded-base bg-background/40 p-small",
   }}
   onSubmit={handleSubmit}

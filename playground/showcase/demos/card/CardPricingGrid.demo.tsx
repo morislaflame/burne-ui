@@ -25,14 +25,14 @@ const PLANS = [
 
 export function CardPricingGridDemo() {
   return (
-    <div className="grid w-full max-w-2xl gap-mid sm:grid-cols-2">
+    <div className="grid w-full max-w-2xl gap-large sm:grid-cols-2">
       {PLANS.map((plan) => (
         <Card key={plan.id} variant={plan.highlighted ? "secondary" : "outline"}>
           <Card.Header className="gap-0">
             <Card.Title className="text-xl font-bold">{plan.title}</Card.Title>
             <Card.Description>{plan.description}</Card.Description>
           </Card.Header>
-          <Card.Body className="flex flex-col gap-mid">
+          <Card.Body className="flex flex-col gap-large">
             <Text as="p" variant="large" className="font-semibold">
               {plan.price}
               <Text as="span" variant="xsmall" className="font-normal text-muted">
@@ -40,7 +40,7 @@ export function CardPricingGridDemo() {
                 / months
               </Text>
             </Text>
-            <ul className="mt-mid flex flex-col gap-xsmall">
+            <ul className="mt-large flex flex-col gap-xsmall">
               {plan.features.map((feature) => (
                 <li key={feature} className="flex items-center gap-xsmall text-sm text-muted">
                   <IoCheckmark aria-hidden className="size-4 shrink-0 text-primary" />

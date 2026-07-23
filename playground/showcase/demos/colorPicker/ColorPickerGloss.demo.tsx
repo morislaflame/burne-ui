@@ -7,7 +7,7 @@ export function ColorPickerGlossDemo() {
   const [color, setColor] = useState("#3b82f6");
 
   return (
-    <div className="flex flex-wrap items-center gap-mid">
+    <div className="flex flex-wrap items-center gap-large">
       <ColorPicker variant="gloss" value={color} onValueChange={setColor}>
         <ColorPicker.Trigger />
         <ColorPicker.Content presets={["#3b82f6", "#22c55e", "#ef4444", "#eab308"]} />

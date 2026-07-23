@@ -16,7 +16,7 @@ import { ComboBox } from ".";
 const darkThemeDecorator = [
   (Story: ComponentType) => (
     <div
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -30,7 +30,7 @@ const lightThemeDecorator = [
   (Story: ComponentType) => (
     <div
       data-theme="light"
-      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-xlarge p-xlarge text-foreground"
+      className="box-border flex min-h-[18rem] w-full flex-col items-center justify-center gap-2xlarge p-2xlarge text-foreground"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       <div className="mx-auto w-full max-w-md">
@@ -226,7 +226,7 @@ export const ControlledOpen: Story = {
   render: function ControlledOpenStory() {
     const [open, setOpen] = useState(false);
     return (
-      <div className="flex w-full flex-col gap-mid">
+      <div className="flex w-full flex-col gap-large">
         <Button type="button" variant="outline" onClick={() => setOpen(true)}>
           Open list
         </Button>
@@ -392,7 +392,7 @@ export const PopoverSideTop: Story = {
 export const Accessibility: Story = {
   name: "Accessibility",
   render: () => (
-    <div className="flex flex-col gap-plus text-left">
+    <div className="flex flex-col gap-mid text-left">
       <p className="text-sm text-muted">
         Combobox — <code className="text-primary">aria-expanded</code>,{" "}
         <code className="text-primary">aria-controls</code>,{" "}
