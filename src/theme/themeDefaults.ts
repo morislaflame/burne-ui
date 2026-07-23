@@ -421,11 +421,13 @@ const INLINE_TOKEN_VARS = [
   ...Object.values(COLOR_CSS_VAR),
 ] as const;
 
-export function clearThemeInlineTokens(root: HTMLElement = document.documentElement) {
+export function clearThemeInlineTokens(root?: HTMLElement) {
+  if (typeof document === "undefined") return;
+  const target = root ?? document.documentElement;
   for (const name of INLINE_TOKEN_VARS) {
-    root.style.removeProperty(name as string);
+    target.style.removeProperty(name as string);
   }
-  delete root.dataset.theme;
+  delete target.dataset.theme;
 }
 
 let lastMotionSnapshot = "";
@@ -511,30 +513,33 @@ function applyMotionFromState(state: ThemeTokenState) {
   });
 }
 
-export function applyThemeTokens(state: ThemeTokenState, root: HTMLElement = document.documentElement) {
+export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
+  if (typeof document === "undefined") return;
+  const target = root ?? document.documentElement;
+
   if (state.theme === "light") {
-    root.dataset.theme = "light";
+    target.dataset.theme = "light";
   } else {
-    delete root.dataset.theme;
+    delete target.dataset.theme;
   }
 
-  root.style.setProperty("--space", `${state.space}rem`);
-  root.style.setProperty("--size", `${state.size}rem`);
-  root.style.setProperty("--radius", `${state.radius}rem`);
-  root.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
-  root.style.setProperty("--font-family-sans", state.fontFamily);
-  root.style.setProperty("--font-family-mono", state.fontFamilyMono);
-  applyFontWeights(root, state.fontWeights);
+  target.style.setProperty("--space", `${state.space}rem`);
+  target.style.setProperty("--size", `${state.size}rem`);
+  target.style.setProperty("--radius", `${state.radius}rem`);
+  target.style.setProperty("--border-width", state.borderWidth === 0 ? "0px" : `${state.borderWidth}px`);
+  target.style.setProperty("--font-family-sans", state.fontFamily);
+  target.style.setProperty("--font-family-mono", state.fontFamilyMono);
+  applyFontWeights(target, state.fontWeights);
 
   applyMotionFromState(state);
 
-  applyTextScale(root, state.textScale);
-  applyShadows(root, state.theme, state.shadowStrength, state.shadowSize);
-  root.style.setProperty("--toast-scrim-size", String(state.toastScrimSize));
-  root.style.setProperty("--toast-scrim-density", String(state.toastScrimDensity));
+  applyTextScale(target, state.textScale);
+  applyShadows(target, state.theme, state.shadowStrength, state.shadowSize);
+  target.style.setProperty("--toast-scrim-size", String(state.toastScrimSize));
+  target.style.setProperty("--toast-scrim-density", String(state.toastScrimDensity));
 
   for (const [key, cssVar] of Object.entries(COLOR_CSS_VAR) as [ThemeColorKey, string][]) {
-    root.style.setProperty(cssVar, state.colors[key]);
+    target.style.setProperty(cssVar, state.colors[key]);
   }
 }
 

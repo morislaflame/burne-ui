@@ -6,7 +6,7 @@ import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTh
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
 
-import { useDropdownSubContentPortal } from "./dropdownAnimations";
+import { useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
 import { useDropdown, useDropdownClassNames, useDropdownSub, DropdownSubProvider } from "./dropdownContext";
 import {
   DROPDOWN_SUB_CLASS,
@@ -106,13 +106,18 @@ export const DropdownSubTrigger = forwardRef<
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);
       if (e.defaultPrevented) return;
-      if (e.key === "Enter" || e.key === " ") {
+      if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") {
         e.preventDefault();
         cancelClose();
         setOpen(true);
+        return;
+      }
+      if (e.key === "ArrowLeft" && open) {
+        e.preventDefault();
+        setOpen(false);
       }
     },
-    [cancelClose, onKeyDown, setOpen],
+    [cancelClose, onKeyDown, open, setOpen],
   );
 
   const rowClass = dropdownSubTriggerRowClass({
@@ -214,7 +219,7 @@ export const DropdownSubContent = forwardRef<
   },
   forwardedRef,
 ) {
-  const { open: subOpen, triggerRef, scheduleClose, cancelClose } =
+  const { open: subOpen, triggerRef, scheduleClose, cancelClose, setOpen } =
     useDropdownSub();
   const {
     subPanelRootsRef,
@@ -231,6 +236,14 @@ export const DropdownSubContent = forwardRef<
     subPanelRootsRef,
     popoverVariant,
     portalContainer: portalContainerProp ?? portalContainerFromRoot,
+  });
+
+  useDropdownSubmenuKeyboard({
+    subOpen,
+    portalMounted: portal.portalMounted,
+    panelRef: portal.panelRef,
+    triggerRef,
+    setOpen,
   });
 
   const handleEnter = useCallback(
@@ -303,12 +316,12 @@ export const DropdownSubContent = forwardRef<
     </div>
   );
 
-  return typeof document !== "undefined"
-    ? createPortal(
-        panel,
-        resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot),
-      )
-    : null;
+  const portalHost =
+    typeof document !== "undefined"
+      ? resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot)
+      : null;
+
+  return portalHost ? createPortal(panel, portalHost) : null;
 });
 
 DropdownSubContent.displayName = "Dropdown.SubContent";

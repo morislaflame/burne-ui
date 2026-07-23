@@ -36,11 +36,13 @@ function writeStoredTheme(storageKey: string | null, theme: BurneThemeMode) {
 }
 
 /** Apply `data-theme` on the root element (light → attribute, dark → remove). */
-export function applyThemeMode(theme: ThemeMode, root: HTMLElement = document.documentElement) {
+export function applyThemeMode(theme: ThemeMode, root?: HTMLElement) {
+  if (typeof document === "undefined") return;
+  const target = root ?? document.documentElement;
   if (theme === "light") {
-    root.dataset.theme = "light";
+    target.dataset.theme = "light";
   } else {
-    delete root.dataset.theme;
+    delete target.dataset.theme;
   }
 }
 

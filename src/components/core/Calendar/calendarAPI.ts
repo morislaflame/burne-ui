@@ -244,3 +244,201 @@ export function createDefaultCalendarValue(
   return null;
 }
 
+export function addCalendarDays(date: Date, delta: number): Date {
+  const next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + delta);
+  return startOfDay(next);
+}
+
+export function addCalendarMonths(date: Date, delta: number): Date {
+  const targetMonth = new Date(date.getFullYear(), date.getMonth() + delta, 1);
+  const maxDay = getDaysInMonth(targetMonth.getFullYear(), targetMonth.getMonth());
+  return startOfDay(
+    new Date(
+      targetMonth.getFullYear(),
+      targetMonth.getMonth(),
+      Math.min(date.getDate(), maxDay),
+    ),
+  );
+}
+
+export function addCalendarYears(date: Date, delta: number): Date {
+  const target = new Date(date.getFullYear() + delta, date.getMonth(), 1);
+  const maxDay = getDaysInMonth(target.getFullYear(), target.getMonth());
+  return startOfDay(
+    new Date(target.getFullYear(), target.getMonth(), Math.min(date.getDate(), maxDay)),
+  );
+}
+
+export function isCalendarDateDisabled(
+  date: Date,
+  minDate?: Date,
+  maxDate?: Date,
+): boolean {
+  return (!!minDate && date < minDate) || (!!maxDate && date > maxDate);
+}
+
+export function clampCalendarDate(
+  date: Date,
+  minDate?: Date,
+  maxDate?: Date,
+): Date {
+  let next = startOfDay(date);
+  if (minDate && next < minDate) next = startOfDay(minDate);
+  if (maxDate && next > maxDate) next = startOfDay(maxDate);
+  return next;
+}
+
+export function resolveInitialFocusDate({
+  mode,
+  resolvedValue,
+  today,
+  minDate,
+  maxDate,
+}: {
+  mode: CalendarMode;
+  resolvedValue: unknown;
+  today: Date;
+  minDate?: Date;
+  maxDate?: Date;
+}): Date {
+  const selected = resolveSelectedDates(mode, resolvedValue)[0];
+  if (selected) return clampCalendarDate(selected, minDate, maxDate);
+
+  if (mode === "range") {
+    const start = resolveRangeStart(mode, null, resolvedValue);
+    if (start) return clampCalendarDate(start, minDate, maxDate);
+  }
+
+  return clampCalendarDate(today, minDate, maxDate);
+}
+
+/**
+ * APG Date Picker day-grid keyboard move.
+ * Arrow ±day / ±week, Home/End week bounds, PageUp/Down ±month (Shift = ±year).
+ */
+export function moveCalendarFocusDate(
+  current: Date,
+  key: string,
+  shiftKey: boolean,
+  minDate?: Date,
+  maxDate?: Date,
+): Date | null {
+  let next: Date | null = null;
+
+  switch (key) {
+    case "ArrowLeft":
+      next = addCalendarDays(current, -1);
+      break;
+    case "ArrowRight":
+      next = addCalendarDays(current, 1);
+      break;
+    case "ArrowUp":
+      next = addCalendarDays(current, -7);
+      break;
+    case "ArrowDown":
+      next = addCalendarDays(current, 7);
+      break;
+    case "Home": {
+      const weekday = (current.getDay() + 6) % 7;
+      next = addCalendarDays(current, -weekday);
+      break;
+    }
+    case "End": {
+      const weekday = (current.getDay() + 6) % 7;
+      next = addCalendarDays(current, 6 - weekday);
+      break;
+    }
+    case "PageUp":
+      next = shiftKey
+        ? addCalendarYears(current, -1)
+        : addCalendarMonths(current, -1);
+      break;
+    case "PageDown":
+      next = shiftKey
+        ? addCalendarYears(current, 1)
+        : addCalendarMonths(current, 1);
+      break;
+    default:
+      return null;
+  }
+
+  next = clampCalendarDate(next, minDate, maxDate);
+
+  if (isCalendarDateDisabled(next, minDate, maxDate)) {
+    const direction =
+      key === "ArrowLeft" || key === "ArrowUp" || key === "Home" || key === "PageUp"
+        ? -1
+        : 1;
+    let cursor = next;
+    for (let i = 0; i < 366; i++) {
+      cursor = addCalendarDays(cursor, direction);
+      cursor = clampCalendarDate(cursor, minDate, maxDate);
+      if (!isCalendarDateDisabled(cursor, minDate, maxDate)) return cursor;
+      if (
+        (direction < 0 && minDate && isSameDay(cursor, minDate)) ||
+        (direction > 0 && maxDate && isSameDay(cursor, maxDate))
+      ) {
+        break;
+      }
+    }
+    return current;
+  }
+
+  return next;
+}
+
+/** Month picker (3×4): arrows move selection index. */
+export function moveCalendarMonthFocusIndex(
+  current: number,
+  key: string,
+): number | null {
+  switch (key) {
+    case "ArrowLeft":
+      return current > 0 ? current - 1 : 11;
+    case "ArrowRight":
+      return current < 11 ? current + 1 : 0;
+    case "ArrowUp":
+      return (current - 3 + 12) % 12;
+    case "ArrowDown":
+      return (current + 3) % 12;
+    case "Home":
+      return 0;
+    case "End":
+      return 11;
+    default:
+      return null;
+  }
+}
+
+/** Year picker (3×4 of 12 cells): arrows move selection index. */
+export function moveCalendarYearFocusIndex(
+  current: number,
+  key: string,
+): number | null {
+  switch (key) {
+    case "ArrowLeft":
+      return current > 0 ? current - 1 : 11;
+    case "ArrowRight":
+      return current < 11 ? current + 1 : 0;
+    case "ArrowUp":
+      return (current - 4 + 12) % 12;
+    case "ArrowDown":
+      return (current + 4) % 12;
+    case "Home":
+      return 0;
+    case "End":
+      return 11;
+    default:
+      return null;
+  }
+}
+
+export function chunkCalendarCells<T>(cells: T[], size: number): T[][] {
+  const rows: T[][] = [];
+  for (let i = 0; i < cells.length; i += size) {
+    rows.push(cells.slice(i, i + size));
+  }
+  return rows;
+}
+
+

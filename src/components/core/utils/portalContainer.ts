@@ -1,12 +1,14 @@
 /**
  * Resolve the DOM node for overlay portals (`createPortal`).
  * Defaults to `document.body` when `container` is omitted.
- * Call only after an SSR `typeof document !== "undefined"` guard.
+ * Returns `null` during SSR (no `document`) — callers must skip the portal.
  */
 export function resolvePortalContainer(
   container?: HTMLElement | null,
-): HTMLElement {
-  return container ?? document.body;
+): HTMLElement | null {
+  if (container) return container;
+  if (typeof document === "undefined") return null;
+  return document.body;
 }
 
 /**

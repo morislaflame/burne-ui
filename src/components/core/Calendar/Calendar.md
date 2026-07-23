@@ -329,10 +329,13 @@ const [range, setRange] = useState<CalendarRangeValue>({ start: null, end: null 
 ## Доступность
 
 - Nav buttons: `aria-label` (back/forward)
-- Cells: `aria-label` с полной датой, `aria-selected`
+- Day grid: `role="grid"` / `row` / `columnheader` / `gridcell` (APG Date Picker)
+- Cells: `aria-label` с полной датой; `aria-selected` на `gridcell`
+- Roving `tabIndex`: одна tab-остановка в сетке дней
+- Keyboard (days): ←/→ ±день, ↑/↓ ±неделя, Home/End — границы недели, PageUp/Down ±месяц (Shift — ±год), Enter/Space — выбор
+- Months / years: тот же grid-паттерн + стрелки по ячейкам
 - Disabled cells: не focusable
 - Footer: Today / Clear как buttons
-- Keyboard: focusable day cells
 
 ## Структура файлов
 

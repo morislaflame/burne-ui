@@ -303,15 +303,17 @@ export function applyCustomThemeTokens(
 }
 
 /** Remove all custom variables last applied by Burne UI on this root. */
-export function clearCustomThemeTokens(root: HTMLElement = document.documentElement) {
-  appliedCustomTokens.get(root)?.forEach((previous, name) => {
+export function clearCustomThemeTokens(root?: HTMLElement) {
+  if (typeof document === "undefined") return;
+  const target = root ?? document.documentElement;
+  appliedCustomTokens.get(target)?.forEach((previous, name) => {
     if (previous.value) {
-      root.style.setProperty(name, previous.value, previous.priority);
+      target.style.setProperty(name, previous.value, previous.priority);
     } else {
-      root.style.removeProperty(name);
+      target.style.removeProperty(name);
     }
   });
-  appliedCustomTokens.delete(root);
+  appliedCustomTokens.delete(target);
 }
 
 /**
@@ -395,12 +397,15 @@ function pickDefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
 /**
  * Apply a `BurneThemeConfig` to the document.
  * Colors for the resolved mode come from `colors[mode]`.
+ * No-op during SSR (no `document`).
  */
 export function applyBurneThemeConfig(
   config: BurneThemeConfig,
-  root: HTMLElement = document.documentElement,
+  root?: HTMLElement,
   resolvedTheme: ThemeMode = resolveTheme(config.theme),
 ) {
+  if (typeof document === "undefined") return;
+  const target = root ?? document.documentElement;
   const state = resolveThemeTokenState(config, resolvedTheme);
 
   if (config.motion) {
@@ -452,8 +457,8 @@ export function applyBurneThemeConfig(
     if (m.enableLoadingDots !== undefined) state.enableLoadingDots = m.enableLoadingDots;
   }
 
-  applyThemeTokens(state, root);
-  applyCustomThemeTokens(config.customTokens, root, resolvedTheme);
+  applyThemeTokens(state, target);
+  applyCustomThemeTokens(config.customTokens, target, resolvedTheme);
 }
 
 export function resolveTheme(theme: BurneThemeMode | undefined = "system"): ThemeMode {
@@ -467,7 +472,7 @@ export function resolveTheme(theme: BurneThemeMode | undefined = "system"): Them
 /** Alias: apply shared token overrides without mode colors. */
 export function applyTokens(
   overrides: ThemeTokenOverrides,
-  root: HTMLElement = document.documentElement,
+  root?: HTMLElement,
   theme: ThemeMode = "dark",
 ) {
   applyBurneThemeConfig({ theme, tokens: overrides }, root, theme);

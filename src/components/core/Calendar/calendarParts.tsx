@@ -1,4 +1,4 @@
-import { forwardRef, memo, useCallback, useLayoutEffect, useRef } from "react";
+import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
@@ -11,7 +11,21 @@ import { Text } from "@/components/core/Text";
 import { useToggleButtonFillAnimation, SELECTION_FILL_DATA_ATTR } from "@/components/core/ToggleButton/useToggleButtonFillAnimation";
 import { cn } from "@/utils/cn";
 
-import { calendarNavBackLabel, calendarNavForwardLabel } from "./calendarA11y";
+import {
+  calendarDaysGridLabel,
+  calendarFocusDayKey,
+  calendarMonthsGridLabel,
+  calendarNavBackLabel,
+  calendarNavForwardLabel,
+  calendarYearsGridLabel,
+} from "./calendarA11y";
+import {
+  chunkCalendarCells,
+  isSameDay,
+  moveCalendarFocusDate,
+  moveCalendarMonthFocusIndex,
+  moveCalendarYearFocusIndex,
+} from "./calendarAPI";
 import { useCalendarInteractiveCellAnimations, useCalendarNavButtonAnimations } from "./calendarAnimations";
 import { useCalendar, useCalendarClassNames } from "./calendarContext";
 import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarDayEmptyClass, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
@@ -178,7 +192,8 @@ const CalendarInteractiveCellInner = forwardRef<
     disabled = false,
     size,
     ariaLabel,
-    ariaSelected,
+    tabIndex,
+    rovingKey,
     rounded = "day",
     cellKind = "day",
     isToday = false,
@@ -244,9 +259,10 @@ const CalendarInteractiveCellInner = forwardRef<
       ref={setRefs}
       type="button"
       aria-label={ariaLabel}
-      aria-pressed={ariaSelected}
-      aria-disabled={disabled}
+      aria-disabled={disabled || undefined}
       disabled={disabled}
+      tabIndex={disabled ? -1 : tabIndex}
+      data-calendar-roving={rovingKey}
       onClick={handleClick}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -299,7 +315,8 @@ function calendarCellPropsEqual(
     prev.isToday === next.isToday &&
     prev.isCurrent === next.isCurrent &&
     prev.ariaLabel === next.ariaLabel &&
-    prev.ariaSelected === next.ariaSelected &&
+    prev.tabIndex === next.tabIndex &&
+    prev.rovingKey === next.rovingKey &&
     prev.className === next.className &&
     prev.children === next.children
   );
@@ -327,15 +344,97 @@ function CalendarDaysView() {
     mode,
     locale,
     renderDay,
+    focusedDate,
+    moveDayFocus,
+    viewDate,
+    minDate,
+    maxDate,
   } = useCalendar();
   const cells = useCalendarDayCellModels();
+  const gridRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef(false);
+  const focusedKey = calendarFocusDayKey(focusedDate);
+  const rows = useMemo(() => chunkCalendarCells(cells, 7), [cells]);
+  const gridLabel = calendarDaysGridLabel(
+    viewDate.getMonth(),
+    viewDate.getFullYear(),
+    locale,
+  );
+  const hasFocusedInView = cells.some(
+    (c) => !!c.date && !c.isDisabled && isSameDay(c.date, focusedDate),
+  );
+  const fallbackRovingDate = hasFocusedInView
+    ? null
+    : (cells.find((c) => c.date && !c.isDisabled)?.date ?? null);
+
+  useLayoutEffect(() => {
+    if (restoreFocusRef.current) {
+      restoreFocusRef.current = false;
+      const el = gridRef.current?.querySelector<HTMLElement>(
+        `[data-calendar-roving="${focusedKey}"]`,
+      );
+      el?.focus({ preventScroll: true });
+      return;
+    }
+
+    // After month/year drill-down the previous cell unmounts and focus falls to
+    // body — reclaim the roving day so keyboard users stay in the grid.
+    const grid = gridRef.current;
+    if (!grid) return;
+    const active = document.activeElement;
+    if (
+      active &&
+      active !== document.body &&
+      active !== document.documentElement &&
+      grid.contains(active)
+    ) {
+      return;
+    }
+    if (
+      active &&
+      active !== document.body &&
+      active !== document.documentElement
+    ) {
+      return;
+    }
+    const el = grid.querySelector<HTMLElement>(
+      `[data-calendar-roving="${focusedKey}"]`,
+    );
+    el?.focus({ preventScroll: true });
+  }, [focusedKey, viewDate]);
+
+  const handleGridKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const next = moveCalendarFocusDate(
+        focusedDate,
+        e.key,
+        e.shiftKey,
+        minDate,
+        maxDate,
+      );
+      if (!next) return;
+      e.preventDefault();
+      restoreFocusRef.current = true;
+      moveDayFocus(next);
+    },
+    [focusedDate, minDate, maxDate, moveDayFocus],
+  );
 
   return (
-    <div>
-      <div className={cn(CALENDAR_DAYS_WEEKDAY_GRID_CLASS, slotClassNames.weekdayGrid)}>
+    <div
+      ref={gridRef}
+      role="grid"
+      aria-label={gridLabel}
+      onKeyDown={handleGridKeyDown}
+    >
+      <div
+        role="row"
+        className={cn(CALENDAR_DAYS_WEEKDAY_GRID_CLASS, slotClassNames.weekdayGrid)}
+      >
         {locale.weekDays.map((wd) => (
           <div
             key={wd}
+            role="columnheader"
             className={cn(calendarWeekdayLabelClass(size), slotClassNames.weekdayCell)}
           >
             {wd}
@@ -344,63 +443,88 @@ function CalendarDaysView() {
       </div>
 
       <div className={cn(CALENDAR_DAYS_CELL_GRID_CLASS, slotClassNames.daysGrid)}>
-        {cells.map((cell) => {
-          if (cell.day === null) {
-            return (
-              <div
-                key={cell.key}
-                className={calendarDayEmptyClass(
-                  size,
-                  slotClassNames.dayEmpty,
-                )}
-              />
-            );
-          }
+        {rows.map((row, rowIndex) => (
+          <div key={`week-${rowIndex}`} role="row" className="contents">
+            {row.map((cell) => {
+              if (cell.day === null) {
+                return (
+                  <div
+                    key={cell.key}
+                    role="gridcell"
+                    className={calendarDayEmptyClass(
+                      size,
+                      slotClassNames.dayEmpty,
+                    )}
+                  />
+                );
+              }
 
-          const dayContent =
-            renderDay && cell.date
-              ? renderDay(cell.date, {
-                  day: cell.day,
-                  selected: !!cell.isSelected,
-                  disabled: !!cell.isDisabled,
-                  isToday: !!cell.isToday,
-                  isRangeStart: !!cell.isRangeStart,
-                  isRangeEnd: !!cell.isRangeEnd,
-                  circleActive: !!cell.circleActive,
-                })
-              : cell.day;
+              const dayContent =
+                renderDay && cell.date
+                  ? renderDay(cell.date, {
+                      day: cell.day,
+                      selected: !!cell.isSelected,
+                      disabled: !!cell.isDisabled,
+                      isToday: !!cell.isToday,
+                      isRangeStart: !!cell.isRangeStart,
+                      isRangeEnd: !!cell.isRangeEnd,
+                      circleActive: !!cell.circleActive,
+                    })
+                  : cell.day;
 
-          return (
-            <div
-              key={cell.key}
-              className={cn(
-                CALENDAR_DAY_CELL_WRAPPER_CLASS,
-                slotClassNames.dayCellWrapper,
-              )}
-            >
-              {cell.showLeftBg ? <CalendarRangeHalfFill visible side="left" /> : null}
-              {cell.showRightBg ? <CalendarRangeHalfFill visible side="right" /> : null}
+              const isFocused =
+                !!cell.date && isSameDay(cell.date, focusedDate);
+              const isRovingTarget =
+                isFocused ||
+                (!!fallbackRovingDate &&
+                  !!cell.date &&
+                  isSameDay(cell.date, fallbackRovingDate));
 
-              <CalendarInteractiveCell
-                selected={!!cell.circleActive}
-                disabled={cell.isDisabled}
-                isToday={cell.isToday}
-                size={size}
-                cellKind="day"
-                ariaLabel={cell.ariaLabel}
-                ariaSelected={cell.circleActive}
-                onPress={() => cell.date && onDayPress(cell.date)}
-                onMouseEnter={() =>
-                  mode === "range" && !cell.isDisabled && cell.date && setHoverDate(cell.date)
-                }
-                onMouseLeave={() => mode === "range" && setHoverDate(null)}
-                className={CALENDAR_DAY_CELL_LAYER_CLASS}
-              >
-                {dayContent}
-              </CalendarInteractiveCell>
-            </div>
-          );
-        })}
+              return (
+                <div
+                  key={cell.key}
+                  role="gridcell"
+                  aria-selected={cell.circleActive ? true : undefined}
+                  className={cn(
+                    CALENDAR_DAY_CELL_WRAPPER_CLASS,
+                    slotClassNames.dayCellWrapper,
+                  )}
+                >
+                  {cell.showLeftBg ? (
+                    <CalendarRangeHalfFill visible side="left" />
+                  ) : null}
+                  {cell.showRightBg ? (
+                    <CalendarRangeHalfFill visible side="right" />
+                  ) : null}
+
+                  <CalendarInteractiveCell
+                    selected={!!cell.circleActive}
+                    disabled={cell.isDisabled}
+                    isToday={cell.isToday}
+                    size={size}
+                    cellKind="day"
+                    ariaLabel={cell.ariaLabel}
+                    tabIndex={isRovingTarget ? 0 : -1}
+                    rovingKey={
+                      cell.date ? calendarFocusDayKey(cell.date) : undefined
+                    }
+                    onPress={() => cell.date && onDayPress(cell.date)}
+                    onMouseEnter={() =>
+                      mode === "range" &&
+                      !cell.isDisabled &&
+                      cell.date &&
+                      setHoverDate(cell.date)
+                    }
+                    onMouseLeave={() => mode === "range" && setHoverDate(null)}
+                    className={CALENDAR_DAY_CELL_LAYER_CLASS}
+                  >
+                    {dayContent}
+                  </CalendarInteractiveCell>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -408,23 +532,76 @@ function CalendarDaysView() {
 
 function CalendarMonthsView() {
   const slotClassNames = useCalendarClassNames();
-  const { onMonthPress, size } = useCalendar();
+  const { onMonthPress, size, viewDate, focusedDate } = useCalendar();
   const months = useCalendarMonthCellModels();
+  const gridRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef(false);
+  const [focusedMonth, setFocusedMonth] = useState(() =>
+    Math.min(11, Math.max(0, focusedDate.getMonth())),
+  );
+  const rows = useMemo(() => chunkCalendarCells(months, 3), [months]);
+
+  useLayoutEffect(() => {
+    if (!restoreFocusRef.current) return;
+    restoreFocusRef.current = false;
+    const el = gridRef.current?.querySelector<HTMLElement>(
+      `[data-calendar-roving="${focusedMonth}"]`,
+    );
+    el?.focus({ preventScroll: true });
+  }, [focusedMonth]);
+
+  const handleGridKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onMonthPress(focusedMonth);
+        return;
+      }
+      const next = moveCalendarMonthFocusIndex(focusedMonth, e.key);
+      if (next == null) return;
+      e.preventDefault();
+      restoreFocusRef.current = true;
+      setFocusedMonth(next);
+    },
+    [focusedMonth, onMonthPress],
+  );
 
   return (
-    <div className={cn(calendarMonthsGridClass(size), slotClassNames.monthsGrid)}>
-      {months.map((cell) => (
-        <CalendarInteractiveCell
-          key={cell.month}
-          selected={cell.isSelected}
-          isCurrent={cell.isCurrentMonth}
-          size={size}
-          cellKind="month"
-          rounded="picker"
-          onPress={() => onMonthPress(cell.month)}
-        >
-          {cell.name}
-        </CalendarInteractiveCell>
+    <div
+      ref={gridRef}
+      role="grid"
+      aria-label={calendarMonthsGridLabel(viewDate.getFullYear())}
+      className={cn(calendarMonthsGridClass(size), slotClassNames.monthsGrid)}
+      onKeyDown={handleGridKeyDown}
+    >
+      {rows.map((row, rowIndex) => (
+        <div key={`months-${rowIndex}`} role="row" className="contents">
+          {row.map((cell) => (
+            <div
+              key={cell.month}
+              role="gridcell"
+              aria-selected={cell.isSelected ? true : undefined}
+              className="contents"
+            >
+              <CalendarInteractiveCell
+                selected={cell.isSelected}
+                isCurrent={cell.isCurrentMonth}
+                size={size}
+                cellKind="month"
+                rounded="picker"
+                tabIndex={focusedMonth === cell.month ? 0 : -1}
+                rovingKey={String(cell.month)}
+                ariaLabel={cell.name}
+                onPress={() => {
+                  setFocusedMonth(cell.month);
+                  onMonthPress(cell.month);
+                }}
+              >
+                {cell.name}
+              </CalendarInteractiveCell>
+            </div>
+          ))}
+        </div>
       ))}
     </div>
   );
@@ -432,24 +609,88 @@ function CalendarMonthsView() {
 
 function CalendarYearsView() {
   const slotClassNames = useCalendarClassNames();
-  const { onYearPress, size } = useCalendar();
+  const { onYearPress, size, viewDate, focusedDate } = useCalendar();
   const years = useCalendarYearCellModels();
+  const gridRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef(false);
+  const initialIndex = Math.max(
+    0,
+    years.findIndex((y) => y.year === focusedDate.getFullYear()),
+  );
+  const [focusedIndex, setFocusedIndex] = useState(
+    initialIndex >= 0 ? initialIndex : 1,
+  );
+  const rows = useMemo(() => chunkCalendarCells(years, 4), [years]);
+  const decadeStart = Math.floor(viewDate.getFullYear() / 10) * 10;
+
+  useLayoutEffect(() => {
+    if (!restoreFocusRef.current) return;
+    restoreFocusRef.current = false;
+    const year = years[focusedIndex]?.year;
+    if (year == null) return;
+    const el = gridRef.current?.querySelector<HTMLElement>(
+      `[data-calendar-roving="${year}"]`,
+    );
+    el?.focus({ preventScroll: true });
+  }, [focusedIndex, years]);
+
+  const handleGridKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const year = years[focusedIndex]?.year;
+      if ((e.key === "Enter" || e.key === " ") && year != null) {
+        e.preventDefault();
+        onYearPress(year);
+        return;
+      }
+      const next = moveCalendarYearFocusIndex(focusedIndex, e.key);
+      if (next == null) return;
+      e.preventDefault();
+      restoreFocusRef.current = true;
+      setFocusedIndex(next);
+    },
+    [focusedIndex, onYearPress, years],
+  );
 
   return (
-    <div className={cn(calendarYearsGridClass(size), slotClassNames.yearsGrid)}>
-      {years.map((cell) => (
-        <CalendarInteractiveCell
-          key={cell.year}
-          selected={cell.isSelected}
-          isCurrent={cell.isCurrentYear}
-          size={size}
-          cellKind="year"
-          rounded="picker"
-          onPress={() => onYearPress(cell.year)}
-          className={calendarYearCellClass(cell.outOfDecade, cell.isSelected)}
-        >
-          {cell.year}
-        </CalendarInteractiveCell>
+    <div
+      ref={gridRef}
+      role="grid"
+      aria-label={calendarYearsGridLabel(decadeStart)}
+      className={cn(calendarYearsGridClass(size), slotClassNames.yearsGrid)}
+      onKeyDown={handleGridKeyDown}
+    >
+      {rows.map((row, rowIndex) => (
+        <div key={`years-${rowIndex}`} role="row" className="contents">
+          {row.map((cell, cellIndex) => {
+            const index = rowIndex * 4 + cellIndex;
+            return (
+              <div
+                key={cell.year}
+                role="gridcell"
+                aria-selected={cell.isSelected ? true : undefined}
+                className="contents"
+              >
+                <CalendarInteractiveCell
+                  selected={cell.isSelected}
+                  isCurrent={cell.isCurrentYear}
+                  size={size}
+                  cellKind="year"
+                  rounded="picker"
+                  tabIndex={focusedIndex === index ? 0 : -1}
+                  rovingKey={String(cell.year)}
+                  ariaLabel={String(cell.year)}
+                  onPress={() => {
+                    setFocusedIndex(index);
+                    onYearPress(cell.year);
+                  }}
+                  className={calendarYearCellClass(cell.outOfDecade, cell.isSelected)}
+                >
+                  {cell.year}
+                </CalendarInteractiveCell>
+              </div>
+            );
+          })}
+        </div>
       ))}
     </div>
   );

@@ -146,9 +146,10 @@ function refreshGlossInteractiveState(element: HTMLElement) {
 }
 
 /** Refreshes all gloss interactives with `data-gloss-motion-init` (after theme change). */
-export function refreshAllGlossInteractiveSurfaces(root: ParentNode = document) {
+export function refreshAllGlossInteractiveSurfaces(root?: ParentNode) {
   if (typeof document === "undefined") return;
-  root.querySelectorAll<HTMLElement>(`[${GLOSS_INIT_ATTR}]`).forEach(refreshGlossInteractiveState);
+  const target = root ?? document;
+  target.querySelectorAll<HTMLElement>(`[${GLOSS_INIT_ATTR}]`).forEach(refreshGlossInteractiveState);
 }
 
 function ensureGlossThemeRefreshObserver() {

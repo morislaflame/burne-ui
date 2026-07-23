@@ -117,6 +117,11 @@ export type CalendarContextValue = {
   setView: (v: CalendarView) => void;
   viewDate: Date;
   navigate: (delta: number) => void;
+  /** Roving focus date in the day grid (APG Date Picker). */
+  focusedDate: Date;
+  setFocusedDate: (d: Date) => void;
+  /** Move day-grid focus (and visible month) to a date. */
+  moveDayFocus: (d: Date) => void;
   selectedDates: Date[];
   rangeStart: Date | null;
   rangeEnd: Date | null;
@@ -180,7 +185,10 @@ export type CalendarInteractiveCellProps = {
   size: CalendarSize;
   cellKind?: "day" | "month" | "year";
   ariaLabel?: string;
-  ariaSelected?: boolean;
+  /** Roving tabindex: only the focused cell is in the tab order. */
+  tabIndex?: number;
+  /** Focus restore key (`data-calendar-roving`). */
+  rovingKey?: string;
   rounded?: "day" | "picker";
   isToday?: boolean;
   isCurrent?: boolean;

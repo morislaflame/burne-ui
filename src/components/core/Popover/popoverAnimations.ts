@@ -9,6 +9,7 @@ import { applyFloatingPortalPosition, resolvePortalContainer } from "@/component
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
+import { getFirstFocusableInPopover } from "./popoverA11y";
 import { mergePopoverRefs } from "./popoverAPI";
 import type { PopoverSide, UsePopoverContentLifecycleProps } from "./popoverTypes";
 
@@ -104,6 +105,18 @@ export function usePopoverContentLifecycle({
       ro?.disconnect();
     };
   }, [open, portalMounted, portalContainer, reposition, showArrow, offset, align, matchAnchorWidth]);
+
+  // Move focus into the panel on open so Tab continues inside the portal
+  // (portaled content is outside the trigger's DOM tab order).
+  useLayoutEffect(() => {
+    if (!open || !portalMounted) return;
+    const panel = panelRef.current;
+    const trigger = triggerRef.current;
+    if (!panel || !trigger) return;
+    const active = document.activeElement;
+    if (active !== trigger && !trigger.contains(active)) return;
+    getFirstFocusableInPopover(panel)?.focus({ preventScroll: true });
+  }, [open, portalMounted, triggerRef]);
 
   useLayoutEffect(() => {
     if (!portalMounted) return undefined;

@@ -444,7 +444,7 @@ export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
       [baseCtx, motion.overlayRef, motion.panelRef, motion.skipCloseAnimRef],
     );
 
-    if (typeof document === "undefined" || !motion.showPortal) return null;
+    if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
 
     return createPortal(
       // Provide full context (with real motion refs) for children inside the portal.

@@ -2,9 +2,14 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { clampN } from "./colorUtils";
 import type { UseColorPickerAreaDragProps } from "./colorPickerTypes";
+import {
+  COLOR_PICKER_AREA_KEYBOARD_STEP,
+  COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE,
+} from "./colorPickerA11y";
 
 export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDragProps) {
   const areaRef = useRef<HTMLDivElement>(null);
+  const thumbRef = useRef<HTMLButtonElement>(null);
   const dragging = useRef(false);
 
   const update = useCallback(
@@ -37,16 +42,67 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
   }, [update]);
 
   const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
+    (e: React.PointerEvent<HTMLElement>) => {
       e.preventDefault();
       dragging.current = true;
       update(e.clientX, e.clientY);
+      thumbRef.current?.focus({ preventScroll: true });
     },
     [update],
   );
 
+  const handleThumbKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      const large = e.shiftKey;
+      const step = large
+        ? COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE
+        : COLOR_PICKER_AREA_KEYBOARD_STEP;
+      let nextS = hsva.s;
+      let nextV = hsva.v;
+
+      switch (e.key) {
+        case "ArrowLeft":
+          nextS = hsva.s - step;
+          break;
+        case "ArrowRight":
+          nextS = hsva.s + step;
+          break;
+        case "ArrowUp":
+          nextV = hsva.v + step;
+          break;
+        case "ArrowDown":
+          nextV = hsva.v - step;
+          break;
+        case "Home":
+          nextS = 0;
+          break;
+        case "End":
+          nextS = 100;
+          break;
+        case "PageUp":
+          nextV = hsva.v + COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE;
+          break;
+        case "PageDown":
+          nextV = hsva.v - COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE;
+          break;
+        default:
+          return;
+      }
+
+      e.preventDefault();
+      setHsva({
+        ...hsva,
+        s: Math.round(clampN(nextS, 0, 100)),
+        v: Math.round(clampN(nextV, 0, 100)),
+      });
+    },
+    [hsva, setHsva],
+  );
+
   return {
     areaRef,
+    thumbRef,
     handlePointerDown,
+    handleThumbKeyDown,
   };
 }

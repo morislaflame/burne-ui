@@ -4,10 +4,14 @@ import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isRedu
 import { isContainedPortal } from "@/components/core/utils/portalContainer";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { focusDropdownMenuItem, getFocusableDropdownMenuItems } from "./dropdownA11y";
+import {
+  focusDropdownMenuItem,
+  getFocusableDropdownMenuItems,
+} from "./dropdownA11y";
 import type {
   UseDropdownPopoverMenuProps,
   UseDropdownSubContentPortalProps,
+  UseDropdownSubmenuKeyboardProps,
 } from "./dropdownTypes";
 
 export function useDropdownPopoverMenu({
@@ -67,6 +71,71 @@ export function useDropdownPopoverMenu({
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
   }, [contentRef, open, setOpen, triggerRef]);
+}
+
+/** Keyboard nav inside an open submenu panel (APG menu). */
+export function useDropdownSubmenuKeyboard({
+  subOpen,
+  portalMounted,
+  panelRef,
+  triggerRef,
+  setOpen,
+}: UseDropdownSubmenuKeyboardProps) {
+  useLayoutEffect(() => {
+    if (!subOpen || !portalMounted) return;
+    const panel = panelRef.current;
+    const trigger = triggerRef.current;
+    if (!panel || !trigger) return;
+    // Focus first item only when opened from the focused trigger (keyboard).
+    if (document.activeElement !== trigger) return;
+    const items = getFocusableDropdownMenuItems(panel);
+    items[0]?.focus();
+  }, [panelRef, portalMounted, subOpen, triggerRef]);
+
+  useEffect(() => {
+    if (!subOpen || !portalMounted) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+
+      const items = getFocusableDropdownMenuItems(panel);
+      if (items.length === 0) return;
+
+      const active = document.activeElement as HTMLElement | null;
+      const idx = active ? items.indexOf(active) : -1;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        focusDropdownMenuItem(items, idx < items.length - 1 ? idx + 1 : 0);
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        focusDropdownMenuItem(items, idx > 0 ? idx - 1 : items.length - 1);
+        return;
+      }
+      if (e.key === "Home") {
+        e.preventDefault();
+        focusDropdownMenuItem(items, 0);
+        return;
+      }
+      if (e.key === "End") {
+        e.preventDefault();
+        focusDropdownMenuItem(items, items.length - 1);
+      }
+    };
+
+    panel.addEventListener("keydown", onKeyDown);
+    return () => panel.removeEventListener("keydown", onKeyDown);
+  }, [panelRef, portalMounted, setOpen, subOpen, triggerRef]);
 }
 
 export function useDropdownSubContentPortal({

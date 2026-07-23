@@ -1,6 +1,6 @@
 {
   "name": "burne-ui",
-  "version": "1.6.2",
+  "version": "1.6.4",
   "description": "React UI kit (Burne UI)",
   "type": "module",
   "sideEffects": [

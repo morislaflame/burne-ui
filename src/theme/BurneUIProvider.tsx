@@ -69,7 +69,8 @@ function BurneUIRuntime({
       !effectiveConfig.customTokens
     ) {
       if (didApplyOverrides.current) {
-        const target = root ?? document.documentElement;
+        const target = root ?? (typeof document !== "undefined" ? document.documentElement : null);
+        if (!target) return;
         applyThemeTokens(createDefaultThemeState(resolvedTheme), target);
         clearThemeInlineTokens(target);
         clearCustomThemeTokens(target);
@@ -78,15 +79,16 @@ function BurneUIRuntime({
       }
       return;
     }
-    const target = root ?? document.documentElement;
+    const target = root ?? (typeof document !== "undefined" ? document.documentElement : null);
+    if (!target) return;
     applyBurneThemeConfig(effectiveConfig, target, resolvedTheme);
     didApplyOverrides.current = true;
   }, [effectiveConfig, resolvedTheme, root]);
 
   useLayoutEffect(() => {
-    const target = root ?? document.documentElement;
+    const target = root ?? (typeof document !== "undefined" ? document.documentElement : null);
     return () => {
-      if (!didApplyOverrides.current) return;
+      if (!didApplyOverrides.current || !target) return;
       applyThemeTokens(createDefaultThemeState(resolvedTheme), target);
       clearThemeInlineTokens(target);
       clearCustomThemeTokens(target);

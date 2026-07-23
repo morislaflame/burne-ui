@@ -318,6 +318,11 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
     if (!portalMounted) return null;
     if (typeof document === "undefined") return null;
 
+    const portalHost = resolvePortalContainer(
+      portalContainerProp ?? portalContainerFromRoot,
+    );
+    if (!portalHost) return null;
+
     const portalTheme = burneLightThemePortalProps(
       anchorRef?.current ?? triggerRef.current,
     );
@@ -395,10 +400,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
       </PopoverResolvedSideProvider>
     );
 
-    return createPortal(
-      node,
-      resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot),
-    );
+    return createPortal(node, portalHost);
   },
 );
 

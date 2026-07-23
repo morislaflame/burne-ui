@@ -1,7 +1,21 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { EN_LOCALE } from "./calendarLocale";
-import { createDefaultCalendarValue, createInitialViewDate, isSameDay, navigateViewDate, resolveRangeEnd, resolveRangeStart, resolveSelectedDates, startOfDay } from "./calendarAPI";
+import {
+  addCalendarMonths,
+  addCalendarYears,
+  clampCalendarDate,
+  createDefaultCalendarValue,
+  createInitialViewDate,
+  getDaysInMonth,
+  isSameDay,
+  navigateViewDate,
+  resolveInitialFocusDate,
+  resolveRangeEnd,
+  resolveRangeStart,
+  resolveSelectedDates,
+  startOfDay,
+} from "./calendarAPI";
 import type {
   CalendarContextValue,
   CalendarMode,
@@ -61,6 +75,31 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
 
   const [rangePending, setRangePending] = useState<Date | null>(null);
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
+  const [focusedDate, setFocusedDateRaw] = useState<Date>(() =>
+    resolveInitialFocusDate({
+      mode: mode as CalendarMode,
+      resolvedValue,
+      today,
+      minDate,
+      maxDate,
+    }),
+  );
+
+  const setFocusedDate = useCallback(
+    (d: Date) => {
+      setFocusedDateRaw(clampCalendarDate(d, minDate, maxDate));
+    },
+    [minDate, maxDate],
+  );
+
+  const moveDayFocus = useCallback(
+    (d: Date) => {
+      const next = clampCalendarDate(d, minDate, maxDate);
+      setFocusedDateRaw(next);
+      setViewDateRaw(new Date(next.getFullYear(), next.getMonth(), 1));
+    },
+    [minDate, maxDate],
+  );
 
   const selectedDates = useMemo(
     () => resolveSelectedDates(mode as CalendarMode, resolvedValue),
@@ -80,13 +119,23 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
   const navigate = useCallback(
     (delta: number) => {
       setViewDateRaw((prev) => navigateViewDate(prev, view, delta));
+      setFocusedDateRaw((fd) => {
+        if (view === "days") {
+          return clampCalendarDate(addCalendarMonths(fd, delta), minDate, maxDate);
+        }
+        if (view === "months") {
+          return clampCalendarDate(addCalendarYears(fd, delta), minDate, maxDate);
+        }
+        return clampCalendarDate(addCalendarYears(fd, delta * 10), minDate, maxDate);
+      });
     },
-    [view],
+    [view, minDate, maxDate],
   );
 
   const onDayPress = useCallback(
     (d: Date) => {
       const day = startOfDay(d);
+      setFocusedDateRaw(day);
       if (mode === "single") {
         setValue((current: unknown) => {
           const prev = current instanceof Date ? current : null;
@@ -118,18 +167,34 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
 
   const onMonthPress = useCallback(
     (month: number) => {
-      setViewDateRaw(new Date(viewDate.getFullYear(), month, 1));
+      const year = viewDate.getFullYear();
+      setViewDateRaw(new Date(year, month, 1));
+      setFocusedDateRaw((fd) => {
+        const maxDay = getDaysInMonth(year, month);
+        return clampCalendarDate(
+          new Date(year, month, Math.min(fd.getDate(), maxDay)),
+          minDate,
+          maxDate,
+        );
+      });
       setView("days");
     },
-    [viewDate],
+    [viewDate, minDate, maxDate],
   );
 
   const onYearPress = useCallback(
     (year: number) => {
       setViewDateRaw(new Date(year, viewDate.getMonth(), 1));
+      setFocusedDateRaw((fd) =>
+        clampCalendarDate(
+          new Date(year, fd.getMonth(), fd.getDate()),
+          minDate,
+          maxDate,
+        ),
+      );
       setView("months");
     },
-    [viewDate],
+    [viewDate, minDate, maxDate],
   );
 
   const onClear = useCallback(() => {
@@ -142,8 +207,9 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
 
   const onToday = useCallback(() => {
     setViewDateRaw(new Date(today.getFullYear(), today.getMonth(), 1));
+    setFocusedDateRaw(clampCalendarDate(today, minDate, maxDate));
     setView("days");
-  }, [today]);
+  }, [today, minDate, maxDate]);
 
   const contextValue: CalendarContextValue = useMemo(
     () => ({
@@ -152,6 +218,9 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       setView,
       viewDate,
       navigate,
+      focusedDate,
+      setFocusedDate,
+      moveDayFocus,
       selectedDates,
       rangeStart,
       rangeEnd,
@@ -177,6 +246,9 @@ export function useCalendarRootState(rawProps: UseCalendarRootStateProps) {
       view,
       viewDate,
       navigate,
+      focusedDate,
+      setFocusedDate,
+      moveDayFocus,
       selectedDates,
       rangeStart,
       rangeEnd,

@@ -407,7 +407,7 @@ export function AlertDialogPanel({
   const lightUi = useBurneLightTheme(portalThemeAnchor);
   const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
 
-  if (typeof document === "undefined" || !motion.mounted) return null;
+  if (typeof document === "undefined" || !motion.mounted || !portalHost) return null;
 
   return createPortal(
     <AlertDialogPortalShell

@@ -38,7 +38,7 @@ import { cn } from "@/utils/cn";
 
 export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
   function DropdownTrigger(
-    { children, className, asChild, onClick, onPointerDown, ...rest },
+    { children, className, asChild, onClick, onPointerDown, onKeyDown, ...rest },
     forwardedRef,
   ) {
     const { open, setOpen, triggerRef, contentId } = useDropdown();
@@ -66,6 +66,19 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
       [onClick, open, setOpen],
     );
 
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLElement>) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (open) setOpen(false);
+          else if (!openingRef.current) setOpen(true);
+        }
+      },
+      [onKeyDown, open, openingRef, setOpen],
+    );
+
     if (asChild && isValidElement(children)) {
       const child = children as ReactElement;
       return cloneElement(
@@ -84,6 +97,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
               onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
             },
             onClick: handleClick,
+            onKeyDown: handleKeyDown,
             "aria-expanded": open,
             "aria-haspopup": "menu",
             "aria-controls": open ? contentId : undefined,
@@ -114,6 +128,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
           handlePointerDown(e as ReactPointerEvent<HTMLElement>);
         }}
         onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
+        onKeyDown={handleKeyDown as React.KeyboardEventHandler<HTMLButtonElement>}
         {...rest}
       >
         {children}

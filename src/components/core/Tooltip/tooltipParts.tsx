@@ -501,7 +501,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       const ro =
         typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => reposition()) : null;
       if (tip && ro) ro.observe(tip);
-      if (host !== document.body && ro) ro.observe(host);
+      if (host && host !== document.body && ro) ro.observe(host);
 
       return () => {
         window.cancelAnimationFrame(raf);
@@ -529,6 +529,11 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
 
     if (!portalMounted) return null;
     if (typeof document === "undefined") return null;
+
+    const portalHost = resolvePortalContainer(
+      portalContainerProp ?? portalContainerFromRoot,
+    );
+    if (!portalHost) return null;
 
     const portalTheme = burneLightThemePortalProps(triggerRef.current);
 
@@ -569,10 +574,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       </TooltipResolvedSideContext.Provider>
     );
 
-    return createPortal(
-      node,
-      resolvePortalContainer(portalContainerProp ?? portalContainerFromRoot),
-    );
+    return createPortal(node, portalHost);
   },
 );
 

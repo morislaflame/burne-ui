@@ -183,3 +183,12 @@ export type UseDropdownSubContentPortalProps = {
   subPanelRootsRef: React.RefObject<Set<HTMLElement>>;
   popoverVariant: PopoverVariant;
 };
+
+export type UseDropdownSubmenuKeyboardProps = {
+  subOpen: boolean;
+  /** Panel must be mounted in the portal before focusing items. */
+  portalMounted: boolean;
+  panelRef: React.RefObject<HTMLDivElement | null>;
+  triggerRef: React.RefObject<HTMLDivElement | null>;
+  setOpen: (next: boolean) => void;
+};

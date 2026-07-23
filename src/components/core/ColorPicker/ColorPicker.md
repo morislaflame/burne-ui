@@ -234,12 +234,12 @@ configureMotion({
 
 - Trigger: `aria-label="Выбранный цвет: {hex}"`
 - Content: `aria-label="Color selection"`
-- 2D area: `role="group"`, `aria-label="Saturation and brightness"`
+- 2D area: focusable thumb (`role="slider"`, `aria-valuetext` для saturation×brightness), стрелки по осям (Shift/Page — крупный шаг)
 - Hex input: `aria-label="Hex code of the color"`
 - Alpha input: `aria-label="Transparency (%)"`
-- ColorSlider thumb: spinbutton semantics + channel labels
+- ColorSlider thumb: `role="slider"` + channel labels
 - ColorSwatch: `aria-label` при interactive; иначе `aria-hidden`
-- Focus: `focus-visible:ring-2 ring-primary`
+- Focus: `focus-ring` / `focus-visible`
 
 ## Структура файлов
 

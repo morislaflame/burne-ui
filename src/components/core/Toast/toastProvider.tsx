@@ -26,8 +26,10 @@ export function ToastProviderRoot({
     <ToastContext.Provider value={state.ctx}>
       {children}
       {typeof document !== "undefined" &&
-        state.placements.map((placement) =>
-          createPortal(
+        state.placements.map((placement) => {
+          const portalHost = resolvePortalContainer(portalContainer);
+          if (!portalHost) return null;
+          return createPortal(
             <ToastViewport
               placement={placement}
               sorted={state.sortedByPlacement(placement)}
@@ -37,10 +39,10 @@ export function ToastProviderRoot({
               classNames={classNames}
               defaultSize={state.defaultSize}
             />,
-            resolvePortalContainer(portalContainer),
+            portalHost,
             placement,
-          ),
-        )}
+          );
+        })}
     </ToastContext.Provider>
   );
 }

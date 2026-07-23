@@ -229,7 +229,9 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 |-----|----------|
 | `ArrowDown` / `ArrowUp` | Следующий/предыдущий focusable item |
 | `Home` / `End` | Первый/последний item |
-| `Escape` | Close + focus trigger |
+| `ArrowRight` / `Enter` / `Space` на `SubTrigger` | Открыть submenu + фокус на первый пункт |
+| `ArrowLeft` / `Escape` в submenu | Закрыть submenu + фокус на `SubTrigger` |
+| `Escape` в main menu | Close + focus trigger |
 
 При open — autofocus на первый focusable item в panel.
 
@@ -377,7 +379,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 - Popover body: `role="menu"`
 - Item: `menuitem` / `menuitemradio` / `menuitemcheckbox`
 - Group: `role="group"` + `aria-labelledby`
-- Keyboard navigation в открытом menu
+- Keyboard navigation в открытом menu (включая submenu: ArrowRight открыть, ArrowLeft/Escape закрыть)
 - `Escape` закрывает и возвращает focus на trigger
 
 ## Структура файлов

@@ -15,6 +15,7 @@ import {
   COLOR_PICKER_AREA_ARIA_LABEL,
   COLOR_PICKER_CONTENT_ARIA_LABEL,
   COLOR_PICKER_HEX_INPUT_ARIA_LABEL,
+  colorPickerAreaValueText,
   colorPickerTriggerAriaLabel,
 } from "./colorPickerA11y";
 import { useColorPickerAreaDrag } from "./colorPickerAnimations";
@@ -53,7 +54,8 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
   function ColorPickerArea({ className, onPointerDown, style, ...rest }, ref) {
     const { hsva, setHsva, size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
-    const { areaRef, handlePointerDown } = useColorPickerAreaDrag({ hsva, setHsva });
+    const { areaRef, thumbRef, handlePointerDown, handleThumbKeyDown } =
+      useColorPickerAreaDrag({ hsva, setHsva });
 
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
@@ -70,7 +72,6 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
       <div
         ref={setRefs}
         role="group"
-        aria-label={COLOR_PICKER_AREA_ARIA_LABEL}
         className={colorPickerAreaClass(
           size,
           cn(slotClassNames.area, className),
@@ -85,8 +86,16 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
         }}
         {...rest}
       >
-        <div
-          aria-hidden
+        <button
+          ref={thumbRef}
+          type="button"
+          role="slider"
+          tabIndex={0}
+          aria-label={COLOR_PICKER_AREA_ARIA_LABEL}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={hsva.s}
+          aria-valuetext={colorPickerAreaValueText(hsva.s, hsva.v)}
           className={cn(
             COLOR_PICKER_AREA_THUMB_CLASS,
             slotClassNames.areaThumb,
@@ -97,6 +106,11 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
             width: "14px",
             height: "14px",
             backgroundColor: thumbColor,
+          }}
+          onKeyDown={handleThumbKeyDown}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            handlePointerDown(e);
           }}
         />
       </div>
