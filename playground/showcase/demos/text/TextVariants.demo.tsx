@@ -24,8 +24,8 @@ export function TextVariantsDemo() {
       <Text as="p" variant="small" className="text-muted">
         text-small muted
       </Text>
-      <Text as="p" variant="tools" className="text-muted">
-        text-tools
+      <Text as="p" variant="xsmall" className="text-muted">
+        text-xsmall
       </Text>
     </div>
   );

@@ -30,8 +30,8 @@ export const LINK_TEXT_VARIANT: Record<LinkSize, TextVariant> = {
 export const LINK_ICON_SIZE_CLASS: Record<LinkSize, string> = {
   small: "icon-small",
   base: "icon-base",
-  mid: "icon-mid",
-  large: "icon-large",
+  mid: "icon-plus",
+  large: "icon-mid",
 };
 
 export function linkAnchorClass({

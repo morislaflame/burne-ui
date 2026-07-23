@@ -14,7 +14,7 @@ export const RADIO_SIZE_LAYOUT: Record<
 > = {
   small: {
     title: "small",
-    desc: "tools",
+    desc: "xsmall",
     gridGap: "gap-x-small gap-y-xsmall",
   },
   base: {

@@ -16,7 +16,7 @@ export function SelectionIndicatorVariantMixDemo() {
               <SelectionIndicator size="base" variant={variant} selected={false} check />
               <SelectionIndicator size="base" variant={variant} selected check />
             </div>
-            <Text as="span" variant="tools" className="text-muted">
+            <Text as="span" variant="xsmall" className="text-muted">
               {variant}
             </Text>
           </div>

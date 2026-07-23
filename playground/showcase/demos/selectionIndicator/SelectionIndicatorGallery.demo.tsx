@@ -22,20 +22,20 @@ export function SelectionIndicatorGalleryDemo() {
         {SELECTION_INDICATOR_SIZES.map((size) => (
           <div key={size} className="flex flex-col items-center gap-xsmall">
             <SelectionIndicator size={size} variant="default" selected={selected} />
-            <Text as="span" variant="tools" className="text-muted">
+            <Text as="span" variant="xsmall" className="text-muted">
               {size}
             </Text>
           </div>
         ))}
         <div className="flex flex-col items-center gap-xsmall">
           <SelectionIndicator size="base" variant="default" selected={selected} check />
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             check
           </Text>
         </div>
         <div className="flex flex-col items-center gap-xsmall">
           <SelectionIndicator size="base" variant="outline" selected={selected} check />
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             outline
           </Text>
         </div>

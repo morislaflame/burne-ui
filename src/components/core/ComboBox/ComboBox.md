@@ -235,7 +235,7 @@ Simple рендерит фиксированную разметку: `Label` →
     inputGroup: "border-primary/40 bg-primary/5",
     input: "text-primary placeholder:text-primary/50",
     trigger: "text-primary hover:text-primary",
-    triggerIcon: "icon-mid",
+    triggerIcon: "icon-plus",
     popoverBody: "bg-primary/5",
     listBox: "p-small",
     hint: "text-foreground/70",

@@ -20,7 +20,7 @@ export function SwitchSettingsPanelDemo() {
             <Text as="span" variant="small" className="font-medium">
               Push
             </Text>
-            <Text as="span" variant="tools" className="text-muted">
+            <Text as="span" variant="xsmall" className="text-muted">
               Instant notifications on device
             </Text>
           </div>
@@ -35,7 +35,7 @@ export function SwitchSettingsPanelDemo() {
             <Text as="span" variant="small" className="font-medium">
               Email
             </Text>
-            <Text as="span" variant="tools" className="text-muted">
+            <Text as="span" variant="xsmall" className="text-muted">
               Digest once a week
             </Text>
           </div>
@@ -51,7 +51,7 @@ export function SwitchSettingsPanelDemo() {
             <Text as="span" variant="small" className="font-medium">
               Summary
             </Text>
-            <Text as="span" variant="tools" className="text-muted">
+            <Text as="span" variant="xsmall" className="text-muted">
               Brief activity report
             </Text>
           </div>

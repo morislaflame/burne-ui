@@ -185,7 +185,7 @@ export const LabelLayout: Story = {
   render: () => (
     <ToggleButton className="w-full max-w-xs justify-between gap-plus" icon={<IoHeartOutline aria-hidden />}>
       <span>Like</span>
-      <span className="text-tools">128</span>
+      <span className="text-xsmall">128</span>
     </ToggleButton>
   ),
 };
@@ -199,7 +199,7 @@ export const CompoundLayout: Story = {
           <IoHeartOutline aria-hidden />
         </ToggleButton.IconStart>
         <ToggleButton.Text>Like</ToggleButton.Text>
-        <ToggleButton.IconEnd className="text-tools">128</ToggleButton.IconEnd>
+        <ToggleButton.IconEnd className="text-xsmall">128</ToggleButton.IconEnd>
       </ToggleButton.Content>
     </ToggleButton>
   ),

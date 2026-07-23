@@ -17,7 +17,7 @@ export function LoadingColorGridDemo() {
           className="flex flex-col items-center gap-small rounded-mid border-token bg-tertiary p-mid"
         >
           <Loading size="base" color={item.color} label={item.label} />
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             {item.label}
           </Text>
         </div>

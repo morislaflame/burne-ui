@@ -75,7 +75,7 @@ function ZIndexScaleTable() {
               </p>
               <p className="text-small text-muted">{LAYER_NOTE[layer]}</p>
             </div>
-            <code className="shrink-0 text-tools text-foreground">
+            <code className="shrink-0 text-xsmall text-foreground">
               {Z_INDEX_DEFAULTS[layer]}
             </code>
           </li>
@@ -102,7 +102,7 @@ function LayeredCardsDemo() {
             }}
           >
             <span className="font-w-mid text-foreground">z-{layer}</span>
-            <span className="text-tools text-muted">
+            <span className="text-xsmall text-muted">
               {Z_INDEX_CSS_VAR[layer]} = {Z_INDEX_DEFAULTS[layer]}
             </span>
           </div>
@@ -157,7 +157,7 @@ function ContainedOverlayStackDemo() {
         ref={setHost}
         className="relative h-[28rem] overflow-hidden rounded-mid border-2 border-dashed border-primary/40 bg-surface/50"
       >
-        <p className="absolute left-mid top-mid z-0 text-tools text-muted">
+        <p className="absolute left-mid top-mid z-0 text-xsmall text-muted">
           Contained dialog host (show, not showModal)
         </p>
 

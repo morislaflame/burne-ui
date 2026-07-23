@@ -18,7 +18,7 @@ export function CalendarBookingPanelDemo() {
         <Text as="p" variant="small" className="font-medium">
           Booking
         </Text>
-        <Text as="p" variant="tools" className="text-muted">
+        <Text as="p" variant="xsmall" className="text-muted">
           {formatDate(range.start)} — {formatDate(range.end)}
         </Text>
       </div>

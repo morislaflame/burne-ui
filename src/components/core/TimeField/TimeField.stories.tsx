@@ -290,7 +290,7 @@ export const Sizes: Story = {
 };
 
 function cnIcon(size: "small" | "base" | "mid" | "large") {
-  return size === "small" ? "icon-small shrink-0" : size === "mid" || size === "large" ? "icon-large shrink-0" : "icon-base shrink-0";
+  return size === "small" ? "icon-small shrink-0" : size === "mid" || size === "large" ? "icon-mid shrink-0" : "icon-base shrink-0";
 }
 
 export const VariantsComparison: Story = {

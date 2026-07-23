@@ -15,7 +15,7 @@ export function AvatarProjectMembersDemo() {
           <Avatar size="base" label="Sara" src={PIN_IMAGE3} alt="" loading="lazy" />
           <Avatar size="base" label="+2" />
         </Avatar.Group>
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           5 participants
         </Text>
       </div>

@@ -15,7 +15,7 @@ export const SELECTION_INDICATOR_ICON_CLASS: Record<SelectionIndicatorSize, stri
   small: "icon-xsmall",
   base: "icon-xsmall",
   mid: "icon-base",
-  large: "icon-mid",
+  large: "icon-plus",
 };
 
 export const SELECTION_INDICATOR_MARK_CLASS =

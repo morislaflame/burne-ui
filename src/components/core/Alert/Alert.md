@@ -190,7 +190,7 @@ Shell: `w-fit max-w-component-base rounded-mid py-base px-plus`.
 
 ### Индикатор
 
-`[&_svg]:icon-mid`; цвет: `text-primary` (default) или semantic text.
+`[&_svg]:icon-plus`; цвет: `text-primary` (default) или semantic text.
 
 ## Стилизация и кастомизация
 

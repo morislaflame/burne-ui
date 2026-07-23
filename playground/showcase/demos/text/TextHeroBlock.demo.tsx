@@ -3,7 +3,7 @@ import { Text } from "@/components/core/Text";
 export function TextHeroBlockDemo() {
   return (
     <div className="flex w-full max-w-lg flex-col gap-small rounded-mid border border-primary/20 bg-gradient-to-br from-primary/10 via-surface to-surface p-mid">
-      <Text as="span" variant="tools" className="uppercase tracking-widest text-primary">
+      <Text as="span" variant="xsmall" className="uppercase tracking-widest text-primary">
         Burne UI · Showcase
       </Text>
       <Text

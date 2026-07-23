@@ -16,7 +16,7 @@ export function ProgressPipelineDemo() {
             <Text as="span" variant="small" className="font-medium">
               {step.label}
             </Text>
-            <Text as="span" variant="tools" className="tabular-nums text-muted">
+            <Text as="span" variant="xsmall" className="tabular-nums text-muted">
               {step.value}%
             </Text>
           </div>

@@ -51,7 +51,7 @@ function ShowcaseSidebar({
         <div key={group.id} className="flex flex-col gap-xsmall">
           <Text
             as="span"
-            variant="tools"
+            variant="xsmall"
             className="px-small font-semibold uppercase tracking-wider mb-small underline-offset-4 underline"
           >
             {group.label}

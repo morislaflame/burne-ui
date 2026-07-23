@@ -19,7 +19,7 @@ export function DropdownUserMenuDemo() {
       <Dropdown.Popover className="min-w-52">
         <Dropdown.Group>
           <Dropdown.Label>
-            <Text as="span" variant="tools" className="text-muted">
+            <Text as="span" variant="xsmall" className="text-muted">
               Maria Ivanova
             </Text>
           </Dropdown.Label>

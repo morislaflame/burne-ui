@@ -22,7 +22,7 @@ export const POPOVER_TITLE_VARIANT: PopoverTitleVariantMap = {
 };
 
 export const POPOVER_DESCRIPTION_VARIANT: PopoverDescriptionVariantMap = {
-  small: "tools",
+  small: "xsmall",
   base: "small",
   mid: "small",
   large: "base",

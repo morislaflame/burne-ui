@@ -8,13 +8,13 @@ export function SelectionIndicatorGlossDemo() {
     <div className="flex flex-wrap items-center gap-mid">
       <div className="flex flex-col items-center gap-xsmall">
         <SelectionIndicator size="base" variant="gloss" selected={false} />
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           off
         </Text>
       </div>
       <div className="flex flex-col items-center gap-xsmall">
         <SelectionIndicator size="base" variant="gloss" selected check />
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           on
         </Text>
       </div>
@@ -26,7 +26,7 @@ export function SelectionIndicatorGlossDemo() {
           check
           icon={<IoCheckmark aria-hidden />}
         />
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           custom icon
         </Text>
       </div>

@@ -22,7 +22,7 @@ export function TextAreaReleaseNotesDemo() {
       </TextArea>
       <Text
         as="p"
-        variant="tools"
+        variant="xsmall"
         className={`text-right tabular-nums ${value.length > MAX ? "text-danger" : "text-muted"}`}
       >
         {value.length} / {MAX}

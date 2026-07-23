@@ -8,7 +8,7 @@ export type TextVariant =
   | "mid"
   | "base"
   | "small"
-  | "tools";
+  | "xsmall";
 
 export type TextProps = Omit<HTMLAttributes<HTMLElement>, "className"> & {
   variant: TextVariant;

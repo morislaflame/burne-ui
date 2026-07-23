@@ -97,8 +97,8 @@ export const BUTTON_PRIMARY_STATUS_RIPPLE: Record<SemanticSurfaceStatus, string>
 export const BUTTON_ICON_SLOT_SVG_SIZE: Record<ButtonSize, string> = {
   small: "[&_svg]:icon-small",
   base: "[&_svg]:icon-base",
-  mid: "[&_svg]:icon-large",
-  large: "[&_svg]:icon-large",
+  mid: "[&_svg]:icon-mid",
+  large: "[&_svg]:icon-mid",
 };
 
 export const BUTTON_SIZE_TEXT_VARIANT: Record<ButtonSize, TextVariant> = {

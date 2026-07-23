@@ -48,6 +48,34 @@ import "burne-ui/styles.css";
 
 Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-mid` и т.п.
 
+### Слои имён токенов
+
+| Домен | Knob | Шаги (design) | Мост Tailwind | Утилиты |
+|-------|------|---------------|---------------|---------|
+| Spacing | `--space` | `--space-*` | `--spacing-*` | `gap-*`, `p-*`, `m-*` |
+| Radius | `--radius` | `--radius-*` | `--radius-*` (identity) | `rounded-*` |
+| Control | — | `--control-height-*` / `--control-size-*` (= height) | — | `h-control-*`, `w-control-*` |
+| Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1, есть `plus`) | — | `icon-xsmall` … `icon-xlarge` |
+
+`--space-*` и `--spacing-*` — разные имена **намеренно**: у Tailwind namespace отступов — `spacing`.
+
+### Типографика
+
+Примитивы `--text-scale-*` и UI-роли/`text-*` утилиты совпадают по имени:
+
+| Шаг / утилита | rem |
+|---------------|-----|
+| `xsmall` / `text-xsmall` | 0.6875 |
+| `small` / `text-small` | 0.75 |
+| `base` / `text-base` | 0.875 |
+| `mid` / `text-mid` | 1 |
+| `large` / `text-large` | 1.25 |
+| `xlarge` → `text-header-2` | 1.5 |
+| `2xlarge` → `text-header-1` | 1.875 |
+| `3xlarge` → `text-accent-header` | 2.25 |
+
+Чтобы увеличить «обычный» текст в компонентах, переопределяйте `--text-scale-base`.
+
 ## Кастомизация темы
 
 ### BurneUIProvider (рекомендуется)
@@ -135,7 +163,7 @@ import "./burne-theme-overrides.css";
   --size: 1.0625rem;
   --radius: 0.625rem;
   --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --text-scale-small: 0.9375rem; /* UI-текст (роль text-base) */
+  --text-scale-base: 0.9375rem; /* UI-текст (роль text-base) */
 }
 
 /* Светлая тема: те же ветки, что и в пакете */

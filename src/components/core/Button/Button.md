@@ -108,8 +108,8 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 |------|--------|--------------------|----------------|----------------|
 | `small` | `h-control-small` | `min-w-button-small` | `small` | `icon-small` |
 | `base` | `h-control-base` | `min-w-button-base` | `base` | `icon-base` |
-| `mid` | `h-control-mid` | `min-w-button-mid` | `mid` | `icon-large` |
-| `large` | `h-control-large` | `min-w-button-large` | `mid` | `icon-large` |
+| `mid` | `h-control-mid` | `min-w-button-mid` | `mid` | `icon-mid` |
+| `large` | `h-control-large` | `min-w-button-large` | `mid` | `icon-mid` |
 
 При `iconOnly` минимальная ширина не применяется (`min-w-fit`).
 
@@ -275,7 +275,7 @@ configureMotion({
 
 ### Размерные токены
 
-`--control-height-*`, `min-w-button-*`, spacing (`px-plus`, `py-small`, …), `icon-small` / `icon-base` / `icon-large`.
+`--control-height-*`, `min-w-button-*`, spacing (`px-plus`, `py-small`, …), `icon-small` / `icon-base` / `icon-mid`.
 
 ## Стилизация и кастомизация
 

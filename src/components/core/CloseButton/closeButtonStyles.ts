@@ -64,11 +64,11 @@ const CLOSE_BUTTON_SIZE: Record<
   },
   mid: {
     root: "h-control-base w-control-base",
-    icon: "icon-mid",
+    icon: "icon-plus",
   },
   large: {
     root: "h-control-mid w-control-mid",
-    icon: "icon-large",
+    icon: "icon-mid",
   },
 };
 

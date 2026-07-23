@@ -16,7 +16,7 @@ export function ColorPickerSidesDemo() {
             <ColorPicker.Trigger />
             <ColorPicker.Content />
           </ColorPicker>
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             {side}
           </Text>
         </div>

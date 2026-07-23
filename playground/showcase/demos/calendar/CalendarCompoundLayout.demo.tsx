@@ -21,7 +21,7 @@ export function CalendarCompoundLayoutDemo() {
         <Calendar.Grid />
         <Calendar.Footer />
       </Calendar>
-      <Text as="p" variant="tools" className="text-muted">
+      <Text as="p" variant="xsmall" className="text-muted">
         {formatDate(date)}
       </Text>
     </div>

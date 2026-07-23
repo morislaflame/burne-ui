@@ -325,7 +325,7 @@ export const ImageCoverOnTop: Story = {
           <Badge status="info" size="small">
             Editorial
           </Badge>
-          <span className="inline-flex items-center gap-xsmall text-muted text-tools">
+          <span className="inline-flex items-center gap-xsmall text-muted text-xsmall">
             <IoTimeOutline className="icon-small shrink-0" aria-hidden />
             8 min
           </span>
@@ -337,7 +337,7 @@ export const ImageCoverOnTop: Story = {
         </Card.Description>
       </Card.Header>
       <Card.Footer className="flex items-center justify-between gap-base">
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           Author: studio
         </Text>
         <Button variant="ghost" size="base" ripple>
@@ -410,7 +410,7 @@ export const BodyImageGrid: Story = {
               className="aspect-[4/3] w-full object-cover"
               loading="lazy"
             />
-            <figcaption className="px-base py-xsmall text-tools text-muted">Frame A</figcaption>
+            <figcaption className="px-base py-xsmall text-xsmall text-muted">Frame A</figcaption>
           </figure>
           <figure className="min-w-0 overflow-hidden rounded-base border-token flex flex-col gap-xsmall">
             <img
@@ -419,7 +419,7 @@ export const BodyImageGrid: Story = {
               className="aspect-[4/3] w-full object-cover"
               loading="lazy"
             />
-            <figcaption className="px-base py-xsmall text-tools text-muted">Frame B</figcaption>
+            <figcaption className="px-base py-xsmall text-xsmall text-muted">Frame B</figcaption>
           </figure>
         </div>
       </Card.Body>
@@ -451,7 +451,7 @@ export const WithBadgesAndMeta: Story = {
         </Card.Description>
       </Card.Header>
       <Card.Footer className="flex flex-wrap items-center justify-between gap-base">
-        <span className="text-tools text-muted">Last deploy: today</span>
+        <span className="text-xsmall text-muted">Last deploy: today</span>
         <div className="flex flex-wrap gap-xsmall">
           <Button variant="ghost" size="small" ripple>
             Logs
@@ -472,7 +472,7 @@ export const MetricHighlight: Story = {
     <Card variant="secondary" className="max-w-xs">
       <Card.Body className="gap-mid">
         <div>
-          <Text as="span" variant="tools" className="font-medium uppercase tracking-wide text-muted">
+          <Text as="span" variant="xsmall" className="font-medium uppercase tracking-wide text-muted">
             Conversion
           </Text>
           <div className="mt-xsmall flex items-baseline gap-xsmall">
@@ -505,17 +505,17 @@ export const StepsWithSeparators: Story = {
       <Card.Body className="px-mid pb-mid pt-0">
         <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
           <p className="text-small font-medium text-foreground">1. Draft</p>
-          <p className="mt-xsmall text-tools text-muted">Text and media collected.</p>
+          <p className="mt-xsmall text-xsmall text-muted">Text and media collected.</p>
         </div>
         <Separator className="my-small" />
         <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
           <p className="text-small font-medium text-foreground">2. Editorial</p>
-          <p className="mt-xsmall text-tools text-muted">Edits and approval.</p>
+          <p className="mt-xsmall text-xsmall text-muted">Edits and approval.</p>
         </div>
         <Separator className="my-small" />
         <div className="rounded-base border-token px-base py-small flex flex-col gap-xsmall">
           <p className="text-small font-medium text-foreground">3. Launch</p>
-          <p className="mt-xsmall text-tools text-muted">Publication and newsletter.</p>
+          <p className="mt-xsmall text-xsmall text-muted">Publication and newsletter.</p>
         </div>
       </Card.Body>
     </Card>

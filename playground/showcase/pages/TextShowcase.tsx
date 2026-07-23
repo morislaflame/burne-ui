@@ -51,7 +51,7 @@ export function TextShowcase() {
         <ShowcaseDoc.Block title="Options">
           <p>
             <code>accent-header</code>, <code>header-1</code>, <code>header-2</code>,{" "}
-            <code>large</code>, <code>mid</code>, <code>base</code>, <code>small</code>, <code>tools</code>.
+            <code>large</code>, <code>mid</code>, <code>base</code>, <code>small</code>, <code>xsmall</code>.
             Additional colors - via <code>className</code> (For example, <code>text-muted</code>).
           </p>
         </ShowcaseDoc.Block>

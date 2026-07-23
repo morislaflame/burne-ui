@@ -11,7 +11,7 @@ export function ToggleButtonGroupEditorBarDemo() {
   return (
     <Surface variant="secondary" padding="small" className="w-full max-w-md">
       <div className="flex flex-col gap-small">
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           Format panel
         </Text>
         <ToggleButtonGroup

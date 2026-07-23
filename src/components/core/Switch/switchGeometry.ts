@@ -59,7 +59,7 @@ export const SWITCH_LAYOUT: Record<
     track: SWITCH_TRACK.small,
     travelPx: selectionIndicatorFallbackPx("small"),
     title: "small",
-    desc: "tools",
+    desc: "xsmall",
     gap: "gap-x-small gap-y-xsmall",
   },
   base: {

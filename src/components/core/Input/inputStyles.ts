@@ -52,9 +52,9 @@ export const INPUT_FILE_EMPTY_ICON_CLASS =
 export const INPUT_FILE_GLYPH_SHELL_CLASS =
   "flex size-9 shrink-0 items-center justify-center rounded-base bg-surface text-muted border-token";
 
-export const INPUT_FILE_GLYPH_ICON_CLASS = "icon-mid shrink-0";
+export const INPUT_FILE_GLYPH_ICON_CLASS = "icon-plus shrink-0";
 
-export const INPUT_FILE_REMOVE_ICON_CLASS = "icon-mid shrink-0";
+export const INPUT_FILE_REMOVE_ICON_CLASS = "icon-plus shrink-0";
 
 export const INPUT_PASSWORD_TOGGLE_ICON_CLASS = "shrink-0";
 
@@ -110,11 +110,11 @@ export const INPUT_PASSWORD_TOGGLE_CONTROL: Record<
     pad: "px-small",
   },
   mid: {
-    icon: "icon-mid",
+    icon: "icon-plus",
     pad: "px-base",
   },
   large: {
-    icon: "icon-large",
+    icon: "icon-mid",
     pad: "px-base",
   },
 };

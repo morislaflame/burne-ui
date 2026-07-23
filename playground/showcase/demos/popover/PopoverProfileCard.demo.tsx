@@ -24,7 +24,7 @@ export function PopoverProfileCardDemo() {
               <Text as="span" variant="small" className="font-medium">
                 Andrey K.
               </Text>
-              <Text as="span" variant="tools" className="truncate text-muted">
+              <Text as="span" variant="xsmall" className="truncate text-muted">
                 andrey@example.com
               </Text>
             </div>

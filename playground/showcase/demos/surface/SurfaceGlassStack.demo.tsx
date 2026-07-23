@@ -10,7 +10,7 @@ export function SurfaceGlassStackDemo() {
         </Text>
       </Surface>
       <Surface variant="gloss" padding="small" radius="base" className="w-3/4 self-end">
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           Second layer with less padding
         </Text>
       </Surface>

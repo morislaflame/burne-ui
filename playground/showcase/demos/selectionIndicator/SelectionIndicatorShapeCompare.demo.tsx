@@ -14,7 +14,7 @@ export function SelectionIndicatorShapeCompareDemo() {
       <div className="flex flex-wrap items-end gap-xlarge">
         <div className="flex flex-col items-center gap-xsmall">
           <SelectionIndicator size="large" variant="default" selected={selected} check />
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             rounded-full
           </Text>
         </div>
@@ -29,7 +29,7 @@ export function SelectionIndicatorShapeCompareDemo() {
               fill: "rounded-[inherit]",
             }}
           />
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             rounded-mid
           </Text>
         </div>

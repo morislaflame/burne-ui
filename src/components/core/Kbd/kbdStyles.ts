@@ -11,8 +11,8 @@ export const KBD_VARIANT_SURFACE: Record<Exclude<KbdVariant, "gloss">, string> =
 };
 
 export const KBD_TEXT_VARIANT: Record<KbdSize, TextVariant> = {
-  small: "tools",
-  base: "tools",
+  small: "xsmall",
+  base: "xsmall",
   mid: "small",
   large: "base",
 };
@@ -29,7 +29,7 @@ export const KBD_ROOT_BASE_CLASS =
 
 export const KBD_GROUP_BASE_CLASS = "inline-flex items-center gap-xsmall";
 
-export const KBD_GROUP_SEPARATOR_CLASS = "select-none text-muted text-tools";
+export const KBD_GROUP_SEPARATOR_CLASS = "select-none text-muted text-xsmall";
 
 export function kbdSurfaceClass(variant: KbdVariant): string {
   if (variant === "gloss") {

@@ -112,10 +112,10 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 | Size | Text variant | Icon size |
 |------|--------------|-----------|
-| `small` | `tools` | `icon-small` |
+| `small` | `xsmall` | `icon-small` |
 | `base` | `small` | `icon-small` |
 | `mid` | `small` | `icon-base` |
-| `large` | `base` | `icon-large` |
+| `large` | `base` | `icon-mid` |
 
 ## Анимации
 

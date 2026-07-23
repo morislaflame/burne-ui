@@ -21,7 +21,7 @@ export function ColorPickerSizesDemo() {
             <ColorPicker.Trigger />
             <ColorPicker.Content />
           </ColorPicker>
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             {size}
           </Text>
         </div>

@@ -237,7 +237,7 @@ function ShareLinkPopoverDemo() {
               </Button>
             </div>
             {copied ? (
-              <Text as="p" variant="tools" className="text-success">
+              <Text as="p" variant="xsmall" className="text-success">
                 Copied
               </Text>
             ) : null}
@@ -291,7 +291,7 @@ export const Accessibility: Story = {
         <code className="text-primary">aria-describedby</code> from Header. Trigger —{" "}
         <code className="text-primary">aria-expanded</code> and{" "}
         <code className="text-primary">aria-controls</code>. Dismiss: click outside the panel,{" "}
-        <kbd className="rounded-small border-token px-xsmall py-0.5 text-tools">Escape</kbd>.
+        <kbd className="rounded-small border-token px-xsmall py-0.5 text-xsmall">Escape</kbd>.
       </p>
       <Popover>
         <Popover.Trigger>

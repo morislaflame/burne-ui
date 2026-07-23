@@ -52,7 +52,7 @@ import "burne-ui/styles.css";
 
 Файл `burne-ui/styles.css` (артефакт сборки `dist/ui.css`) содержит:
 
-- **дизайн-токены** — `--color-*`, `--space`, `--size`, `--radius`, `--text-scale-*`, `--z-*` (overlay stacking), `--overlay-backdrop-*` (modal scrim), шрифты, тени;
+- **дизайн-токены** — `--color-*`, `--space` / `--space-*` (Tailwind-мост `--spacing-*`), `--size`, `--radius` / `--radius-*`, `--text-scale-*` (роли `text-base`/`text-mid`/… — 1:1 по имени), `--control-height-*` / `--control-size-*`, `--icon-size-*`, `--z-*`, `--overlay-backdrop-*`, шрифты, тени;
 - **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted`, `gap-mid`, `rounded-base`, `z-dialog` / `z-popover` / … и т.д.;
 - **кастомные утилиты** — `border-token`, `text-header-1`, `shadow-token-sm` и др.
 

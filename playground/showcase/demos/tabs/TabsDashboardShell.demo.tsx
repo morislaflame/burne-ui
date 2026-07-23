@@ -22,18 +22,18 @@ export function TabsDashboardShellDemo() {
         </Tabs.List>
         <Tabs.Panel value="traffic" className="pt-mid">
           <div className="flex h-24 items-center justify-center rounded-base border border-dashed border-token text-muted">
-            <Text as="span" variant="tools">
+            <Text as="span" variant="xsmall">
               Visiting schedule
             </Text>
           </div>
         </Tabs.Panel>
         <Tabs.Panel value="conversion" className="pt-mid">
-          <Text as="p" variant="tools" className="text-muted">
+          <Text as="p" variant="xsmall" className="text-muted">
             Funnel and goals.
           </Text>
         </Tabs.Panel>
         <Tabs.Panel value="retention" className="pt-mid">
-          <Text as="p" variant="tools" className="text-muted">
+          <Text as="p" variant="xsmall" className="text-muted">
             Cohorts in 30 days.
           </Text>
         </Tabs.Panel>

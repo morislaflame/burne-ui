@@ -40,7 +40,7 @@ export function DrawerNotificationPanelDemo() {
               <Text as="span" variant="small" className="font-medium">
                 {item.title}
               </Text>
-              <Text as="span" variant="tools" className="text-muted">
+              <Text as="span" variant="xsmall" className="text-muted">
                 {item.time}
               </Text>
             </div>

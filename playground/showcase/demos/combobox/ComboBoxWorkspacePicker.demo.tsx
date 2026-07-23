@@ -65,7 +65,7 @@ function MemberListItems() {
                 <Avatar size="small" label={member.label} src={member.src} alt="" loading="lazy" />
                 <span className="flex min-w-0 flex-col gap-px">
                   <span className="truncate font-medium">{member.label}</span>
-                  <span className="truncate text-tools text-muted">{member.role}</span>
+                  <span className="truncate text-xsmall text-muted">{member.role}</span>
                 </span>
               </span>
             </ListBox.Label>

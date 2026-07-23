@@ -30,7 +30,7 @@ export function SliderOpacityStripDemo() {
           </Slider.Thumb>
         </Slider.Track>
       </Slider>
-      <Text as="p" variant="tools" className="text-center tabular-nums text-muted">
+      <Text as="p" variant="xsmall" className="text-center tabular-nums text-muted">
         Gloss + thickness 1rem · {value}%
       </Text>
     </div>

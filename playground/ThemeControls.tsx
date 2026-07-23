@@ -121,7 +121,7 @@ function ScaleControl({
     <div className="flex flex-col gap-small">
       <div className="flex items-center justify-between gap-small">
         <Label className="text-small text-muted">{label}</Label>
-        <Text as="span" variant="tools" className="tabular-nums text-muted">
+        <Text as="span" variant="xsmall" className="tabular-nums text-muted">
           {value.toFixed(step < 0.05 ? 2 : step < 1 ? 1 : 0)}
           {unit}
         </Text>
@@ -179,7 +179,7 @@ function ColorControl({
           onChange={(e) => onChange(e.target.value)}
           aria-label={`${label} — CSS`}
           className={cn(
-            "min-w-0 flex-1 rounded-base border-token bg-surface px-small py-xsmall font-mono text-tools text-foreground outline-none",
+            "min-w-0 flex-1 rounded-base border-token bg-surface px-small py-xsmall font-mono text-xsmall text-foreground outline-none",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
           )}
         />
@@ -242,8 +242,8 @@ function TintColorControl({
         <>
           <div className="flex flex-col gap-small">
             <div className="flex items-center justify-between gap-small">
-              <Text as="span" variant="tools" className="text-muted">mix %</Text>
-              <Text as="span" variant="tools" className="tabular-nums text-muted">
+              <Text as="span" variant="xsmall" className="text-muted">mix %</Text>
+              <Text as="span" variant="xsmall" className="tabular-nums text-muted">
                 {parsed.percent}%
               </Text>
             </div>
@@ -268,7 +268,7 @@ function TintColorControl({
                 aria-label={`${label} — mix color`}
                 className="size-8 shrink-0 cursor-pointer rounded-small bg-transparent p-0.5"
               />
-              <Text as="span" variant="tools" className="font-mono text-muted">
+              <Text as="span" variant="xsmall" className="font-mono text-muted">
                 {parsed.mixColor}
               </Text>
             </div>
@@ -281,13 +281,13 @@ function TintColorControl({
           onChange={(e) => apply({ custom: e.target.value })}
           aria-label={`${label} — custom CSS`}
           className={cn(
-            "w-full rounded-base border-token bg-surface px-small py-xsmall font-mono text-tools text-foreground outline-none",
+            "w-full rounded-base border-token bg-surface px-small py-xsmall font-mono text-xsmall text-foreground outline-none",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
           )}
         />
       )}
 
-      <Text as="span" variant="tools" className="truncate font-mono text-muted" title={value}>
+      <Text as="span" variant="xsmall" className="truncate font-mono text-muted" title={value}>
         {value}
       </Text>
     </div>
@@ -383,7 +383,7 @@ function SpacingPreview({ space }: { space: number }) {
             style={{ height: `${space * mult * 16}px` }}
             title={`--space-${name}`}
           />
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             {name}
           </Text>
         </div>
@@ -616,7 +616,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           presets={MONO_FONT_PRESETS}
           onChange={setFontFamilyMono}
         />
-        <Text as="p" variant="tools" className="rounded-small border-token bg-background p-small text-muted">
+        <Text as="p" variant="xsmall" className="rounded-small border-token bg-background p-small text-muted">
           <span className="font-sans">Aa Bb 123 — sans</span>
           <br />
           <span className="font-mono">{`{ code: true }`}</span>
@@ -634,7 +634,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             onChange={(value) => setFontWeight(key, value)}
           />
         ))}
-        <Text as="p" variant="tools" className="rounded-small border-token bg-background p-small text-muted">
+        <Text as="p" variant="xsmall" className="rounded-small border-token bg-background p-small text-muted">
           <span className="font-w-small">Small — small and official text</span>
           <br />
           <span className="font-w-base">Base — main text</span>
@@ -793,7 +793,7 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
               className="flex flex-1 flex-col items-center gap-xsmall rounded-small border-token bg-surface p-small"
               style={{ boxShadow: `var(--shadow-${level})` }}
             >
-              <Text as="span" variant="tools" className="text-muted">
+              <Text as="span" variant="xsmall" className="text-muted">
                 {level}
               </Text>
             </div>

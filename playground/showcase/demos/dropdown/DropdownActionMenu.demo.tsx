@@ -12,7 +12,7 @@ export function DropdownActionMenuDemo() {
         <Text as="span" variant="small" className="font-medium">
           Design system
         </Text>
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           Updated 2 hours ago
         </Text>
       </div>

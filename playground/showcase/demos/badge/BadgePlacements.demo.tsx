@@ -18,7 +18,7 @@ export function BadgePlacementsDemo() {
               3
             </Badge>
           </Badge.Anchor>
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             {placement}
           </Text>
         </div>

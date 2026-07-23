@@ -77,8 +77,8 @@ import NextLink from "next/link";
 |------|--------------|--------|
 | `small` | `small` | `icon-small` |
 | `base` | `base` | `icon-base` |
-| `mid` | `mid` | `icon-mid` |
-| `large` | `large` | `icon-large` |
+| `mid` | `mid` | `icon-plus` |
+| `large` | `large` | `icon-mid` |
 
 ## Иконки и цвет
 

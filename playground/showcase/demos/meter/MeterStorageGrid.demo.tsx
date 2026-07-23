@@ -17,7 +17,7 @@ export function MeterStorageGridDemo() {
         >
           <Meter.Header className="flex-col items-start gap-0">
             <Meter.Label>
-              <Text as="span" variant="tools" className="uppercase tracking-wide text-muted">
+              <Text as="span" variant="xsmall" className="uppercase tracking-wide text-muted">
                 {metric.label}
               </Text>
             </Meter.Label>

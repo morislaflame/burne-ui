@@ -2,6 +2,23 @@
  * Token layer metadata. Values are defined in `./styles.css`,
  * Tailwind utilities — in `src/styles.css` (`@theme`, `@utility`).
  *
+ * ## Naming layers (knob → steps → Tailwind)
+ *
+ * | Domain | Knob | Design steps | Tailwind `@theme` bridge | Utilities |
+ * |---|---|---|---|---|
+ * | Spacing | `--space` | `--space-*` | `--spacing-*` (Tailwind spacing ns) | `gap-*`, `p-*`, `m-*` |
+ * | Radius | `--radius` | `--radius-*` | `--radius-*` (identity) | `rounded-*` |
+ * | Control box | — | `--control-height-*` | — | `h-control-*`, `min-h-control-*` |
+ * | Control square | — | `--control-size-*` (= height) | — | `w-control-*`, `min/max-w-control-*` |
+ * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-xlarge` (incl. `plus`) |
+ *
+ * ## Typography
+ *
+ * `--text-scale-*` steps (rem) align with semantic roles / utilities of the same name:
+ * `xsmall` 0.6875 · `small` 0.75 · `base` 0.875 · `mid` 1 · `large` 1.25 ·
+ * `xlarge` 1.5 · `2xlarge` 1.875 · `3xlarge` 2.25.
+ * Headers: `text-header-2` → `xlarge`, `text-header-1` → `2xlarge`, `text-accent-header` → `3xlarge`.
+ *
  * Customization:
  * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers; fluid `clamp` by viewport (theme JS writes scaled `clamp`, not fixed rem).
  * - `--size` — control sizes (icons, indicators, button min-width, modal max-w); fluid `clamp` by viewport.
@@ -12,7 +29,7 @@
  * - `--motion-surface-duration` — CSS transitions for `surface-color-transition` / `animate-shadow` / field shells (from `surfaceTransitionDuration` in motion config).
  * - `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate` — frosted modal scrim (`overlay-backdrop`); `--overlay-backdrop-scrim` — solid dark-UI scrim.
  * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).
- * - `--text-scale-*` — primitive typography (`xsmall` … `3xlarge`, base step `base`); roles `text-base`, `text-large` are aliases.
+ * - `--text-scale-*` — primitive typography; roles `text-base` / `text-mid` / … map 1:1 by name.
  * - `--font-w-*` — primitive font-weight scale;
  *
  * Fonts / text-scale / shadow geometry defaults: `tokenPrimitives.json` → TS modules + generated CSS
@@ -31,11 +48,11 @@ export const tokensConfig = {
     "spacing-mid": "space-mid",
     "spacing-large": "space-large",
     "spacing-xlarge": "space-xlarge",
-    "radius-xsmall": "radius-value-xsmall",
-    "radius-small": "radius-value-small",
-    "radius-base": "radius-value-base",
-    "radius-mid": "radius-value-mid",
-    "radius-large": "radius-value-large",
+    "radius-xsmall": "radius-xsmall",
+    "radius-small": "radius-small",
+    "radius-base": "radius-base",
+    "radius-mid": "radius-mid",
+    "radius-large": "radius-large",
     "color-background": "color-background",
     "color-foreground": "color-foreground",
     "color-muted": "color-muted",
@@ -87,10 +104,10 @@ export const tokensConfig = {
     "icon-xsmall": "icon-size-xsmall",
     "icon-small": "icon-size-small",
     "icon-base": "icon-size-base",
+    "icon-plus": "icon-size-plus",
     "icon-mid": "icon-size-mid",
     "icon-large": "icon-size-large",
     "icon-xlarge": "icon-size-xlarge",
-    "icon-2xlarge": "icon-size-2xlarge",
   },
 } as const;
 
@@ -115,13 +132,26 @@ export const burneRadiusScale = [
 ] as const;
 
 /**
+ * Icon utilities `icon-*` — 1:1 with `--size-scale-*` / `--icon-size-*`.
+ */
+export const burneIconScale = [
+  "xsmall",
+  "small",
+  "base",
+  "plus",
+  "mid",
+  "large",
+  "xlarge",
+] as const;
+
+/**
  * `@utility text-*` roles (size/weight); not to be confused with `text-foreground` and other colors.
- * `text-base` — Tailwind default override; no separate entry needed in merge.
+ * `text-base` — Tailwind default override; maps 1:1 to `--text-scale-base` (0.875rem).
  */
 export const burneTextScale = [
   "small",
   "mid",
-  "tools",
+  "xsmall",
   "accent-header",
   "header-1",
   "header-2",

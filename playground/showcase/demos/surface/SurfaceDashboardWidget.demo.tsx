@@ -11,7 +11,7 @@ export function SurfaceDashboardWidgetDemo() {
           <Text as="p" variant="base" className="font-medium">
             Deploys
           </Text>
-          <Text as="p" variant="tools" className="text-muted">
+          <Text as="p" variant="xsmall" className="text-muted">
             Last 24 hours
           </Text>
         </div>

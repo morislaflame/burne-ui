@@ -46,7 +46,7 @@ export function OptionListItemHint({ className, children, ...rest }: OptionListI
   return (
     <Text
       as="span"
-      variant="tools"
+      variant="xsmall"
       inheritColor
       className={cn(
         optionListItemHintCellClass(ctx.showIndicatorSlot),

@@ -6,12 +6,12 @@ export function TextEditorialArticleDemo() {
       <div className="flex flex-wrap items-center gap-small">
         <Text
           as="span"
-          variant="tools"
+          variant="xsmall"
           className="rounded-full bg-danger/15 px-small py-xsmall font-medium text-danger"
         >
           Draft
         </Text>
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           12 min reading
         </Text>
       </div>

@@ -13,7 +13,7 @@ export function ProgressVerticalMetersDemo() {
           color="var(--color-primary)"
           className="h-32"
         />
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           CI
         </Text>
       </div>
@@ -26,7 +26,7 @@ export function ProgressVerticalMetersDemo() {
           color="var(--color-success)"
           className="h-32"
         />
-        <Text as="span" variant="tools" className="text-muted">
+        <Text as="span" variant="xsmall" className="text-muted">
           QA
         </Text>
       </div>

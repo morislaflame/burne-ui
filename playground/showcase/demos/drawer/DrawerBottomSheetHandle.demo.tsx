@@ -31,7 +31,7 @@ export function DrawerBottomSheetHandleDemo() {
               onChange={(e) => setDraft(e.target.checked)}
               label="Drafts only"
             />
-            <Text as="p" variant="tools" className="text-muted">
+            <Text as="p" variant="xsmall" className="text-muted">
               Typical mobile sheet: handle on top, form in the body.
             </Text>
           </Drawer.Body>

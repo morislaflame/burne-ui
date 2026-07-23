@@ -33,7 +33,7 @@ export function CheckboxTaskListDemo() {
           </li>
         ))}
       </ul>
-      <Text as="p" variant="tools" className="text-muted">
+      <Text as="p" variant="xsmall" className="text-muted">
         variant secondary / default / outline on one screen.
       </Text>
     </div>

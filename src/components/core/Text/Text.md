@@ -36,7 +36,7 @@ Compound API нет: компонент leaf-level и не имеет подча
 
 ### `TextVariant`
 
-`accent-header`, `header-1`, `header-2`, `large`, `mid`, `base`, `small`, `tools`.
+`accent-header`, `header-1`, `header-2`, `large`, `mid`, `base`, `small`, `xsmall`.
 
 ### Теги по умолчанию
 
@@ -45,7 +45,7 @@ Compound API нет: компонент leaf-level и не имеет подча
 | `accent-header` | `h1` |
 | `header-1` | `h2` |
 | `header-2` | `h3` |
-| `large` / `mid` / `base` / `small` / `tools` | `p` |
+| `large` / `mid` / `base` / `small` / `xsmall` | `p` |
 
 ## Размеры и варианты
 
@@ -60,7 +60,7 @@ Compound API нет: компонент leaf-level и не имеет подча
 | `mid` | `text-mid` |
 | `base` | `text-base` |
 | `small` | `text-small` |
-| `tools` | `text-tools` |
+| `xsmall` | `text-xsmall` |
 
 `variant` не задаёт semantic status и не меняет цвет, кроме default `text-foreground`.
 

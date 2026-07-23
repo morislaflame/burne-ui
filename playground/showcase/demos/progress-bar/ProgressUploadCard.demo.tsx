@@ -19,7 +19,7 @@ export function ProgressUploadCardDemo() {
         <Text as="p" variant="small" className="font-medium">
           assets.zip
         </Text>
-        <Text as="span" variant="tools" className="tabular-nums text-muted">
+        <Text as="span" variant="xsmall" className="tabular-nums text-muted">
           {value}%
         </Text>
       </div>

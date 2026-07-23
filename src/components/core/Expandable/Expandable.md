@@ -103,8 +103,8 @@ Compound определяется автоматически при наличи
 |------|----------------|---------------|------------|----------------|
 | `small` | `min-h-control-small` | `px-base` | `px-base pb-base pt-small` | `icon-small` |
 | `base` | `min-h-control-base` | `px-plus` | `px-plus pb-plus pt-small` | `icon-base` |
-| `mid` | `min-h-control-mid` | `px-mid` | `px-mid pb-mid pt-base` | `icon-large` |
-| `large` | `min-h-control-large` | `px-large` | `px-large pb-large pt-base` | `icon-large` |
+| `mid` | `min-h-control-mid` | `px-mid` | `px-mid pb-mid pt-base` | `icon-mid` |
+| `large` | `min-h-control-large` | `px-large` | `px-large pb-large pt-base` | `icon-mid` |
 
 Текст: title — `controlText` размера; description — `small` / `base` по size.
 

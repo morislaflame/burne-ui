@@ -35,15 +35,15 @@ export const TOOLTIP_TEXT_LAYOUT: Record<TooltipSize, string> = {
 };
 
 export const TOOLTIP_CONTENT_VARIANT: Record<TooltipSize, TextVariant> = {
-  small: "tools",
+  small: "xsmall",
   base: "small",
   mid: "base",
   large: "mid",
 };
 
 export const TOOLTIP_DESC_VARIANT: Record<TooltipSize, TextVariant> = {
-  small: "tools",
-  base: "tools",
+  small: "xsmall",
+  base: "xsmall",
   mid: "small",
   large: "base",
 };
@@ -51,15 +51,15 @@ export const TOOLTIP_DESC_VARIANT: Record<TooltipSize, TextVariant> = {
 export const TOOLTIP_ICON_SIZE: Record<TooltipSize, string> = {
   small: "icon-small",
   base: "icon-base",
-  mid: "icon-mid",
-  large: "icon-large",
+  mid: "icon-plus",
+  large: "icon-mid",
 };
 
 export const TOOLTIP_ICON_SLOT_SVG: Record<TooltipSize, string> = {
   small: "[&_svg]:icon-small",
   base: "[&_svg]:icon-base",
-  mid: "[&_svg]:icon-mid",
-  large: "[&_svg]:icon-large",
+  mid: "[&_svg]:icon-plus",
+  large: "[&_svg]:icon-mid",
 };
 
 export const TOOLTIP_ICON_TEXT_CLASS: Record<TooltipVariant, string> = {

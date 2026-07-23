@@ -61,7 +61,7 @@ function ShowcaseDocApiRow({
     <div className="flex flex-col gap-xsmall sm:flex-row sm:items-start sm:gap-small">
       <Text
         as="span"
-        variant="tools"
+        variant="xsmall"
         className="inline-flex w-fit shrink-0 rounded-small bg-surface-secondary px-small py-0.5 font-medium text-foreground"
       >
         {label}

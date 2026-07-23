@@ -24,7 +24,7 @@ export function ListBoxPermissionsDemo() {
           <ListBox.Item key={perm.value} value={perm.value} label={perm.label} />
         ))}
       </ListBox>
-      <Text as="p" variant="tools" className="mt-mid text-muted">
+      <Text as="p" variant="xsmall" className="mt-mid text-muted">
         Selected: {selected.length > 0 ? selected.join(", ") : "—"}
       </Text>
     </Surface>

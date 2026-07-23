@@ -14,7 +14,7 @@ export function TextStatsGridDemo() {
           <Text as="span" variant="header-2" className="tabular-nums text-primary">
             {stat.value}
           </Text>
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             {stat.label}
           </Text>
         </div>

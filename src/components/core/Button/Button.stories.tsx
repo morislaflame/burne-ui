@@ -147,10 +147,10 @@ export const IconOnlySizes: Story = {
         <IoAdd aria-hidden className="icon-base" />
       </Button>
       <Button size="mid" variant="outline" iconOnly aria-label="Add">
-        <IoAdd aria-hidden className="icon-large" />
+        <IoAdd aria-hidden className="icon-mid" />
       </Button>
       <Button size="large" variant="outline" iconOnly aria-label="Add">
-        <IoAdd aria-hidden className="icon-large" />
+        <IoAdd aria-hidden className="icon-mid" />
       </Button>
     </div>
   ),
@@ -410,8 +410,8 @@ export const LabelLayout: Story = {
     <Button variant="gloss" type="button" className="w-full max-w-xs justify-between gap-plus">
       <span>Command palette</span>
       <span className="inline-flex gap-xsmall">
-        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-tools">⌘</span>
-        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-tools">K</span>
+        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-xsmall">⌘</span>
+        <span className="rounded-small bg-surface px-xsmall py-0.5 font-mono text-xsmall">K</span>
       </span>
     </Button>
   ),
@@ -423,7 +423,7 @@ export const CompoundLayout: Story = {
     <Button variant="outline" type="button" className="w-full max-w-xs">
       <Button.Label className="justify-between gap-plus">
         <Button.Text>Command palette</Button.Text>
-        <span className="inline-flex gap-xsmall font-mono text-tools">
+        <span className="inline-flex gap-xsmall font-mono text-xsmall">
           <span>⌘</span>
           <span>K</span>
         </span>

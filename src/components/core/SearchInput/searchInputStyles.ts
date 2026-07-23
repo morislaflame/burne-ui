@@ -60,10 +60,10 @@ export const SEARCH_INPUT_BLOCKED_CLASS = "pointer-events-none opacity-55";
 type SearchExpandedRadiusStep = "small" | "base" | "mid" | "large";
 
 const SEARCH_EXPANDED_RADIUS_VALUE_VAR: Record<SearchExpandedRadiusStep, string> = {
-  small: "--radius-value-small",
-  base: "--radius-value-base",
-  mid: "--radius-value-mid",
-  large: "--radius-value-large",
+  small: "--radius-small",
+  base: "--radius-base",
+  mid: "--radius-mid",
+  large: "--radius-large",
 };
 
 const SEARCH_EXPANDED_RADIUS_STEP: Record<ComponentSize, SearchExpandedRadiusStep> = {
@@ -156,7 +156,7 @@ function parseCssLengthPx(raw: string, rootPx: number): number | undefined {
   return undefined;
 }
 
-/** Border radius in px for expanded SearchInput — reads `--radius-value-*` from `:root`. */
+/** Border radius in px for expanded SearchInput — reads `--radius-*` from `:root`. */
 export function readSearchExpandedRadiusPx(size: ComponentSize, rootPx = 16): number {
   const step = SEARCH_EXPANDED_RADIUS_STEP[size];
   if (typeof document !== "undefined") {

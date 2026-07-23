@@ -9,7 +9,7 @@ export function LoadingInlineStatusDemo() {
         <Text as="p" variant="small" className="font-medium">
           Sync Theme
         </Text>
-        <Text as="p" variant="tools" className="text-muted">
+        <Text as="p" variant="xsmall" className="text-muted">
           Usually takes a few seconds
         </Text>
       </div>

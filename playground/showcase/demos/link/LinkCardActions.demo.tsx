@@ -13,7 +13,7 @@ export function LinkCardActionsDemo() {
         <Text as="p" variant="base" className="font-medium">
           Release 1.2.0
         </Text>
-        <Text as="p" variant="tools" className="text-muted">
+        <Text as="p" variant="xsmall" className="text-muted">
           Updating form components and gloss-options.
         </Text>
       </div>

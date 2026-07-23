@@ -403,7 +403,7 @@ export const CustomAvatarTrigger: Story = {
                 <Text as="p" variant="base" className="font-medium leading-tight">
                   Jane Doe
                 </Text>
-                <Text as="p" variant="tools" className="text-muted leading-tight">
+                <Text as="p" variant="xsmall" className="text-muted leading-tight">
                   jane@example.com
                 </Text>
               </div>

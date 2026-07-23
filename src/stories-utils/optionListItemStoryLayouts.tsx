@@ -60,7 +60,7 @@ export function OptionListItemLayoutShowcase({
             <Avatar size="small" label="Anya Ivanova" src={PIN_IMAGE1} alt="" loading="lazy" />
             <span className="flex min-w-0 flex-col gap-px">
               <span className="truncate font-medium">Anya Ivanova</span>
-              <span className="truncate text-tools text-muted">Product Design</span>
+              <span className="truncate text-xsmall text-muted">Product Design</span>
             </span>
           </span>
         </ItemLabel>

@@ -12,7 +12,7 @@ export function TextSemanticsDemo() {
       <Text as="p" variant="base">
         Body paragraph (as=&quot;p&quot;)
       </Text>
-      <Text as="span" variant="tools" className="text-muted">
+      <Text as="span" variant="xsmall" className="text-muted">
         Label or signature (as=&quot;span&quot;)
       </Text>
     </div>

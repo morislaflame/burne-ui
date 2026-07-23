@@ -11,7 +11,7 @@ export function AvatarCommentRowDemo() {
           <Text as="span" variant="small" className="font-medium">
             Grace Hopper
           </Text>
-          <Text as="span" variant="tools" className="text-muted">
+          <Text as="span" variant="xsmall" className="text-muted">
             2 hours ago
           </Text>
         </div>

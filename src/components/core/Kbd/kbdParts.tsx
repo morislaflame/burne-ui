@@ -28,7 +28,7 @@ export function KbdGroup({
           {index > 0 && separator != null ? (
             <Text
               as="span"
-              variant="tools"
+              variant="xsmall"
               aria-hidden={KBD_GROUP_SEPARATOR_ARIA_HIDDEN}
               className={kbdGroupSeparatorClass(
                 classNames?.separator ?? slotClassNames.separator,

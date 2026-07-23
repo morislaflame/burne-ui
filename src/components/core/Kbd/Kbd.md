@@ -73,8 +73,8 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 | size | layout (`KBD_LAYOUT`) | Text variant |
 |------|------------------------|--------------|
-| `small` | `min-h-4 px-xsmall py-0.5` | `tools` |
-| `base` | `min-h-4 px-small py-xsmall` | `tools` |
+| `small` | `min-h-4 px-xsmall py-0.5` | `xsmall` |
+| `base` | `min-h-4 px-small py-xsmall` | `xsmall` |
 | `mid` | `min-h-5 px-base py-xsmall` | `small` |
 | `large` | `min-h-5 px-base py-xsmall` | `small` |
 
@@ -159,7 +159,7 @@ Group wrapper **не** анимируется. Separator — static `Text` (`ari
 | `KBD_ROOT_BASE_CLASS` | `rounded-small font-mono isolate` |
 | `shadow-token-sm` / `md` | Через `--el-shadow` при hover lift |
 | `gloss-panel gloss-deep` | Gloss keycap surface |
-| `KBD_GROUP_SEPARATOR_CLASS` | `text-muted text-tools` |
+| `KBD_GROUP_SEPARATOR_CLASS` | `text-muted text-xsmall` |
 | `motion-reduce:transition-none` | На root |
 
 ## Стилизация и кастомизация

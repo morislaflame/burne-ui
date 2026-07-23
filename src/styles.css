@@ -107,11 +107,12 @@ p {
   --spacing-large: var(--space-large);
   --spacing-xlarge: var(--space-xlarge);
 
-  --radius-xsmall: var(--radius-value-xsmall);
-  --radius-small: var(--radius-value-small);
-  --radius-base: var(--radius-value-base);
-  --radius-mid: var(--radius-value-mid);
-  --radius-large: var(--radius-value-large);
+  /* Identity bridge: design steps are already `--radius-*` (knob remains `--radius`). */
+  --radius-xsmall: var(--radius-xsmall);
+  --radius-small: var(--radius-small);
+  --radius-base: var(--radius-base);
+  --radius-mid: var(--radius-mid);
+  --radius-large: var(--radius-large);
 
   --shadow-token-base: var(--shadow-base);
   --shadow-token-mid: var(--shadow-mid);
@@ -119,7 +120,7 @@ p {
 
   /**
    * Single source of truth for the `text-base` utility (no duplicate with @utility).
-   * Overrides Tailwind default (1rem) with semantic `text-base` (= scale sm).
+   * Overrides Tailwind default (1rem) with kit `text-base` (= `--text-scale-base`, 0.875rem).
    */
   --text-base: var(--text-base-size);
   --text-base--line-height: var(--text-base-line-height);
@@ -396,10 +397,10 @@ p {
   font-weight: var(--text-mid-weight);
 }
 
-@utility text-tools {
-  font-size: var(--text-tools-size);
-  line-height: var(--text-tools-line-height);
-  font-weight: var(--text-tools-weight);
+@utility text-xsmall {
+  font-size: var(--text-xsmall-size);
+  line-height: var(--text-xsmall-line-height);
+  font-weight: var(--text-xsmall-weight);
 }
 
 /** Font weight from `--font-w-*` tokens (not Tailwind `font-medium`). */
@@ -492,63 +493,63 @@ p {
 }
 
 @utility w-control-xsmall {
-  width: var(--control-height-xsmall);
+  width: var(--control-size-xsmall);
 }
 
 @utility w-control-small {
-  width: var(--control-height-small);
+  width: var(--control-size-small);
 }
 
 @utility w-control-base {
-  width: var(--control-height-base);
+  width: var(--control-size-base);
 }
 
 @utility w-control-mid {
-  width: var(--control-height-mid);
+  width: var(--control-size-mid);
 }
 
 @utility w-control-large {
-  width: var(--control-height-large);
+  width: var(--control-size-large);
 }
 
 @utility min-w-control-xsmall {
-  min-width: var(--control-height-xsmall);
+  min-width: var(--control-size-xsmall);
 }
 
 @utility min-w-control-small {
-  min-width: var(--control-height-small);
+  min-width: var(--control-size-small);
 }
 
 @utility min-w-control-base {
-  min-width: var(--control-height-base);
+  min-width: var(--control-size-base);
 }
 
 @utility min-w-control-mid {
-  min-width: var(--control-height-mid);
+  min-width: var(--control-size-mid);
 }
 
 @utility min-w-control-large {
-  min-width: var(--control-height-large);
+  min-width: var(--control-size-large);
 }
 
 @utility max-w-control-xsmall {
-  max-width: var(--control-height-xsmall);
+  max-width: var(--control-size-xsmall);
 }
 
 @utility max-w-control-small {
-  max-width: var(--control-height-small);
+  max-width: var(--control-size-small);
 }
 
 @utility max-w-control-base {
-  max-width: var(--control-height-base);
+  max-width: var(--control-size-base);
 }
 
 @utility max-w-control-mid {
-  max-width: var(--control-height-mid);
+  max-width: var(--control-size-mid);
 }
 
 @utility max-w-control-large {
-  max-width: var(--control-height-large);
+  max-width: var(--control-size-large);
 }
 
 @utility avatar-size-small {
@@ -597,7 +598,7 @@ p {
   min-height: var(--selection-indicator-large);
 }
 
-/** Icons: width and height from `--icon-size-*` (see `tokens/styles.css`). */
+/** Icons: width and height from `--icon-size-*` (1:1 with `--size-scale-*`; see `tokens/styles.css`). */
 @utility icon-xsmall {
   width: var(--icon-size-xsmall);
   height: var(--icon-size-xsmall);
@@ -610,6 +611,10 @@ p {
   width: var(--icon-size-base);
   height: var(--icon-size-base);
 }
+@utility icon-plus {
+  width: var(--icon-size-plus);
+  height: var(--icon-size-plus);
+}
 @utility icon-mid {
   width: var(--icon-size-mid);
   height: var(--icon-size-mid);
@@ -621,10 +626,6 @@ p {
 @utility icon-xlarge {
   width: var(--icon-size-xlarge);
   height: var(--icon-size-xlarge);
-}
-@utility icon-2xlarge {
-  width: var(--icon-size-2xlarge);
-  height: var(--icon-size-2xlarge);
 }
 
 /*

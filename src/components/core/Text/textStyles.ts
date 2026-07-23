@@ -12,7 +12,7 @@ export const TEXT_VARIANT_CLASS: Record<TextVariant, string> = {
   mid: "text-mid",
   base: "text-base",
   small: "text-small",
-  tools: "text-tools",
+  xsmall: "text-xsmall",
 };
 
 export const TEXT_VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
@@ -23,7 +23,7 @@ export const TEXT_VARIANT_DEFAULT_AS: Record<TextVariant, ElementType> = {
   mid: "p",
   base: "p",
   small: "p",
-  tools: "p",
+  xsmall: "p",
 };
 
 export const TEXT_FOREGROUND_CLASS = "text-foreground";

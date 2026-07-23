@@ -51,7 +51,7 @@ const meta = {
         "mid",
         "base",
         "small",
-        "tools",
+        "xsmall",
       ],
     },
   },
@@ -80,8 +80,8 @@ export const AllVariants: Story = {
       <Text variant="small" className="text-muted">
         text-small
       </Text>
-      <Text variant="tools" className="text-muted">
-        text-tools
+      <Text variant="xsmall" className="text-muted">
+        text-xsmall
       </Text>
     </div>
   ),
@@ -121,8 +121,8 @@ export const OnSurface: Story = {
         <Text variant="small" className="text-muted">
           text-small
         </Text>
-        <Text variant="tools" className="text-muted">
-          tools
+        <Text variant="xsmall" className="text-muted">
+          text-xsmall
         </Text>
       </div>
     </div>

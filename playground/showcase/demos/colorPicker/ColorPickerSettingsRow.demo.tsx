@@ -14,7 +14,7 @@ export function ColorPickerSettingsRowDemo() {
           <Text as="span" variant="small" className="font-medium">
             Accent color
           </Text>
-          <Text as="span" variant="tools" className="font-mono text-muted">
+          <Text as="span" variant="xsmall" className="font-mono text-muted">
             {accent}
           </Text>
         </div>

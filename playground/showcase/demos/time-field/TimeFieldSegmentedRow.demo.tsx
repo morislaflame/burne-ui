@@ -17,7 +17,7 @@ export function TimeFieldSegmentedRowDemo() {
           <TimeField.Label>From</TimeField.Label>
           <TimeField.Control variant="segmented" value={start} onValueChange={setStart} />
         </TimeField>
-        <Text as="span" variant="tools" className="pb-small text-muted">
+        <Text as="span" variant="xsmall" className="pb-small text-muted">
           —
         </Text>
         <TimeField compact>
@@ -25,7 +25,7 @@ export function TimeFieldSegmentedRowDemo() {
           <TimeField.Control variant="segmented" value={end} onValueChange={setEnd} />
         </TimeField>
       </div>
-      <Text as="p" variant="tools" className="text-muted">
+      <Text as="p" variant="xsmall" className="text-muted">
         Two compact compound TimeField with segmented variant.
       </Text>
     </div>

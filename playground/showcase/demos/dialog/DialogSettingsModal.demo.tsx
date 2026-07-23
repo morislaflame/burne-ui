@@ -31,7 +31,7 @@ export function DialogSettingsModalDemo() {
             label="Usage analytics"
             hint="Anonymous statistics to improve the product"
           />
-          <Text as="p" variant="tools" className="text-muted">
+          <Text as="p" variant="xsmall" className="text-muted">
             Dialog with settings form inside Body.
           </Text>
         </Dialog.Body>

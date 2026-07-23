@@ -340,7 +340,7 @@ export const Accessibility: Story = {
       <p className="text-sm text-muted">
         Content: <code className="text-primary">role=&quot;tooltip&quot;</code>. Link to trigger —{" "}
         <code className="text-primary">aria-describedby</code> only while the tooltip is open. Hover and
-        focus; <kbd className="rounded-small border-token px-xsmall py-0.5 text-tools">Escape</kbd>{" "}
+        focus; <kbd className="rounded-small border-token px-xsmall py-0.5 text-xsmall">Escape</kbd>{" "}
         closes. A single <code className="text-primary">Trigger</code> child receives handlers without
         an extra tab stop.
       </p>
