@@ -64,6 +64,16 @@ export {
   useSecondLevelShadowContainer,
 } from "@/components/core/utils/useShadowMotion";
 export { gsap, useGSAP, killMotion, ensureRippleEase } from "@/components/core/utils/gsapMotion";
+export {
+  MOTION_CONFIG_DEFAULTS,
+  MOTION_CSS_VAR,
+  applyMotionCssTokens,
+} from "@/components/core/utils/motionConfig";
+export {
+  SHADOW_LAYER_GEOM,
+  SHADOW_OPACITY_BASE,
+  SHADOW_SIZE_CSS_DEFAULT,
+} from "@/tokens/shadows";
 
 export {
   applyThemeTokens,

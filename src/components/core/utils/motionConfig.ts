@@ -1,5 +1,5 @@
 /**
- * Centralized animation configuration for Burne UI (GSAP).
+ * Centralized animation configuration for Burne UI (GSAP + CSS motion tokens).
  *
  * Call `configureMotion()` once before your app renders to override defaults.
  *
@@ -8,12 +8,18 @@
  *
  * configureMotion({
  *   interactiveDuration: 350,
+ *   surfaceTransitionDuration: 450,
+ *   toastDismissDuration: 220,
  *   selectionFillDuration: 400,
  *   selectionFillEase: "back.out(1.25)",
  *   switchThumbEase: "back.out(1.6)",
  * });
  */
 
+/** CSS custom properties written by `applyMotionCssTokens` / theme apply. */
+export const MOTION_CSS_VAR = {
+  surfaceDuration: "--motion-surface-duration",
+} as const;
 
 export interface MotionConfig {
   /**
@@ -61,11 +67,11 @@ export interface MotionConfig {
   /**
    * Duration (ms) for selection fill scale animations:
    * ToggleButton, Calendar cell, Checkbox/Radio/ListBox indicator fill, Switch thumb fill.
-   * @default 280
+   * @default 200
    */
   selectionFillDuration: number;
 
-  /** Scale applied when a hoverable element lifts. @default 1.015 */
+  /** Scale applied when a hoverable element lifts. @default 1.025 */
   hoverLiftScale: number;
 
   /** Stronger lift scale for `Badge.Anchor` children. @default 1.052 */
@@ -77,7 +83,7 @@ export interface MotionConfig {
    */
   pressSqueezeScale: readonly [number, number, number];
 
-  /** Duration (ms) of converge-ripple expansion. @default 540 */
+  /** Duration (ms) of converge-ripple expansion. @default 700 */
   rippleDefaultDuration: number;
 
   /** Starting opacity of converge-ripple. @default 0.42 */
@@ -101,15 +107,35 @@ export interface MotionConfig {
 
   /**
    * Duration (ms) for Expandable / Accordion panel height animation.
-   * @default 500
+   * @default 200
    */
   expandDuration: number;
 
   /**
    * GSAP easing for opening collapsible panels (Expandable, Accordion).
-   * @default "power1.inOut"
+   * @default "sine.inOut"
    */
   expandOpenEase: string;
+
+  /**
+   * Duration (ms) for CSS surface / text / shadow / focus-ring transitions
+   * (`--motion-surface-duration` → `surface-color-transition`, `animate-shadow`, …).
+   * Independent from GSAP `interactiveDuration`.
+   * @default 600
+   */
+  surfaceTransitionDuration: number;
+
+  /**
+   * Duration (ms) for Toast dismiss slide + last-scrim fade-out.
+   * @default 220
+   */
+  toastDismissDuration: number;
+
+  /**
+   * GSAP easing for Toast dismiss / scrim out.
+   * @default "power2.in"
+   */
+  toastDismissEase: string;
 
   /** Whether to enable hover-lift animations globally. @default true */
   enableHoverLift: boolean;
@@ -167,8 +193,8 @@ export interface MotionConfig {
   enableLoadingDots: boolean;
 }
 
-
-const DEFAULTS: MotionConfig = {
+/** Canonical motion defaults — imported by theme `MOTION_DEFAULTS` (single source). */
+export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   interactiveDuration: 280,
   interactiveEase: "power2.out",
   hoverLiftEase: "sine.inOut",
@@ -188,6 +214,9 @@ const DEFAULTS: MotionConfig = {
   feedbackExpandDuration: 720,
   expandDuration: 200,
   expandOpenEase: "sine.inOut",
+  surfaceTransitionDuration: 600,
+  toastDismissDuration: 220,
+  toastDismissEase: "power2.in",
   enableHoverLift: true,
   enablePressSqueeze: true,
   enableToggleButtonFill: true,
@@ -206,8 +235,7 @@ const DEFAULTS: MotionConfig = {
   enableLoadingDots: true,
 };
 
-
-let _config: MotionConfig = { ...DEFAULTS };
+let _config: MotionConfig = { ...MOTION_CONFIG_DEFAULTS };
 
 let _motionConfigRevision = 0;
 const _motionConfigListeners = new Set<() => void>();
@@ -225,14 +253,33 @@ export function getMotionConfigRevision(): number {
   return _motionConfigRevision;
 }
 
+/**
+ * Write / clear `--motion-surface-duration` on a root (diff vs kit defaults).
+ * Called from `configureMotion` (documentElement) and theme `applyMotionFromState`.
+ */
+export function applyMotionCssTokens(
+  root: HTMLElement | null | undefined,
+  config: Pick<MotionConfig, "surfaceTransitionDuration"> = _config,
+): void {
+  if (typeof document === "undefined") return;
+  const target = root ?? document.documentElement;
+  const name = MOTION_CSS_VAR.surfaceDuration;
+  if (config.surfaceTransitionDuration === MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration) {
+    target.style.removeProperty(name);
+  } else {
+    target.style.setProperty(name, `${config.surfaceTransitionDuration}ms`);
+  }
+}
 
 /**
  * Override any subset of the global motion config.
  * Call this once before your app renders.
+ * Also syncs CSS motion tokens onto `document.documentElement` (unless overridden by theme root).
  */
 export function configureMotion(overrides: Partial<MotionConfig>): void {
   _config = { ..._config, ...overrides };
   _motionConfigRevision += 1;
+  applyMotionCssTokens(document.documentElement, _config);
   for (const listener of _motionConfigListeners) {
     listener();
   }
@@ -242,7 +289,6 @@ export function configureMotion(overrides: Partial<MotionConfig>): void {
 export function getMotionConfig(): Readonly<MotionConfig> {
   return _config;
 }
-
 
 /** Returns `{ duration, ease }` for standard interactive GSAP tweens (duration in seconds). */
 export function motionInteractive() {
@@ -312,6 +358,14 @@ export function motionProgressFill() {
   return {
     duration: _config.progressFillDuration / 1000,
     ease: _config.progressFillEase,
+  } as const;
+}
+
+/** Toast dismiss slide + last-scrim fade-out. */
+export function motionToastDismiss() {
+  return {
+    duration: _config.toastDismissDuration / 1000,
+    ease: _config.toastDismissEase,
   } as const;
 }
 

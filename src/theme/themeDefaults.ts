@@ -1,5 +1,16 @@
-import { configureMotion } from "@/components/core/utils/motionConfig";
+import {
+  applyMotionCssTokens,
+  configureMotion,
+  MOTION_CONFIG_DEFAULTS,
+} from "@/components/core/utils/motionConfig";
 import { FONT_WEIGHT_CSS_VAR, FONT_WEIGHT_DEFAULTS, type FontWeightStep } from "@/tokens/fontWeights";
+import {
+  SHADOW_LAYER_GEOM,
+  SHADOW_OPACITY_BASE,
+  type ShadowLevel,
+} from "@/tokens/shadows";
+import { TEXT_SCALE_BASES, type TextScaleStep } from "@/tokens/textScale";
+import tokenPrimitives from "@/tokens/tokenPrimitives.json" with { type: "json" };
 
 import { DARK_COLORS, LIGHT_COLORS } from "./themePalettes";
 
@@ -8,6 +19,8 @@ export type ThemeMode = "dark" | "light";
 export { FONT_WEIGHT_DEFAULTS, FONT_WEIGHT_CSS_VAR };
 
 export { DARK_COLORS, LIGHT_COLORS };
+
+export { TEXT_SCALE_BASES };
 
 export type ThemeStatusForegroundKey =
   | "dangerForeground"
@@ -116,6 +129,11 @@ export type ThemeTokenState = {
   loadingDotsDuration: number;
   loadingDotsEaseUp: string;
   loadingDotsEaseDown: string;
+  /** CSS `--motion-surface-duration` (surface / text / shadow transitions), ms. */
+  surfaceTransitionDuration: number;
+  /** Toast dismiss + last-scrim out, ms. */
+  toastDismissDuration: number;
+  toastDismissEase: string;
   enableHoverLift: boolean;
   enablePressSqueeze: boolean;
   enableToggleButtonFill: boolean;
@@ -197,85 +215,21 @@ export const SCALE_DEFAULTS = {
   toastScrimDensity: 1,
 } as const;
 
-export const MOTION_DEFAULTS = {
-  interactiveDuration: 280,
-  interactiveEase: "power2.out",
-  hoverLiftEase: "sine.inOut",
-  tooltipDuration: 200,
-  switchThumbDuration: 340,
-  switchThumbEase: "back.out(1.4)",
-  selectionFillDuration: 200,
-  selectionFillEase: "back.out(1.25)",
-  hoverLiftScale: 1.025,
-  badgeAnchorHoverLiftScale: 1.052,
-  pressSqueezeMid: 0.98,
-  rippleDefaultDuration: 700,
-  rippleDefaultOpacityFrom: 0.42,
-  rippleExpandableDuration: 700,
-  rippleExpandableOpacityFrom: 0.34,
-  rippleEaseCss: "cubic-bezier(0.25, 0.55, 0.35, 0.95)",
-  feedbackExpandDuration: 720,
-  expandDuration: 200,
-  expandOpenEase: "sine.inOut",
-  progressFillDuration: 600,
-  progressFillEase: "power2.out",
-  loadingDotsDuration: 900,
-  loadingDotsEaseUp: "power2.out",
-  loadingDotsEaseDown: "power2.in",
-  enableHoverLift: true,
-  enablePressSqueeze: true,
-  enableToggleButtonFill: true,
-  enableRipple: true,
-  enableExpandable: true,
-  enableToastStack: true,
-  enableAsyncButtonCrossfade: true,
-  enableContentFade: true,
-  enableFeedbackExpand: true,
-  enableProgressFill: true,
-  enableLoadingDots: true,
-} as const;
+export const MOTION_DEFAULTS = (() => {
+  const { pressSqueezeScale, ...rest } = MOTION_CONFIG_DEFAULTS;
+  return {
+    ...rest,
+    pressSqueezeMid: pressSqueezeScale[1],
+  };
+})();
 
-export const DEFAULT_FONT =
-  'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+export const DEFAULT_FONT = tokenPrimitives.fontFamilySans;
 
-export const DEFAULT_FONT_MONO = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+export const DEFAULT_FONT_MONO = tokenPrimitives.fontFamilyMono;
 
-/** Basic typography sizes from `src/tokens/styles.css` (rem). */
-export const TEXT_SCALE_BASES = {
-  tools: { size: 0.6875, line: 0.875 },
-  xsmall: { size: 0.75, line: 1 },
-  small: { size: 0.875, line: 1.25 },
-  base: { size: 1, line: 1.5 },
-  mid: { size: 1.125, line: 1.75 },
-  large: { size: 1.25, line: 1.75 },
-  xlarge: { size: 1.5, line: 2 },
-  "2xlarge": { size: 1.875, line: 2.25 },
-  "3xlarge": { size: 2.25, line: 2.5 },
-} as const;
+type TextScaleToken = TextScaleStep;
 
-type TextScaleToken = keyof typeof TEXT_SCALE_BASES;
-
-const SHADOW_BASE = {
-  dark: {
-    base: 0.15,
-    mid: 0.2,
-    large: 0.24,
-  },
-  light: {
-    base: 0.08,
-    mid: 0.12,
-    large: 0.16,
-  },
-} as const;
-
-/** One layer, offset-x: 0, negative spread — shadow only from below. [offsetX, offsetY, blur, spread] */
-const SHADOW_LAYER_GEOM = {
-  base: [[0, 2, 4, -2]],
-  mid: [[0, 4, 10, -6]],
-  large: [[0, 8, 20, -12]],
-} as const;
-
-type ShadowLevelKey = keyof typeof SHADOW_LAYER_GEOM;
+type ShadowLevelKey = ShadowLevel;
 
 /**
  * Fluid curve for `--space` / `--size` / `--radius` in `tokens/styles.css`:
@@ -322,7 +276,7 @@ function buildShadowLevel(
   theme: ThemeMode,
   strength: number,
 ): string {
-  const opacity = SHADOW_BASE[theme][level] * strength;
+  const opacity = SHADOW_OPACITY_BASE[theme][level] * strength;
   const [offsetX, offsetY, blur, spread] = SHADOW_LAYER_GEOM[level][0];
   return shadowLayerCalc(offsetX, offsetY, blur, spread, opacity);
 }
@@ -461,6 +415,7 @@ const INLINE_TOKEN_VARS = [
   "--border-width",
   "--focus-ring-width",
   "--focus-ring-offset",
+  "--motion-surface-duration",
   "--font-family-sans",
   "--font-family-mono",
   ...Object.values(FONT_WEIGHT_CSS_VAR),
@@ -489,7 +444,7 @@ export function clearThemeInlineTokens(root?: HTMLElement) {
 
 let lastMotionSnapshot = "";
 
-function applyMotionFromState(state: ThemeTokenState) {
+function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
   const snapshot = JSON.stringify({
     interactiveDuration: state.interactiveDuration,
     interactiveEase: state.interactiveEase,
@@ -510,6 +465,9 @@ function applyMotionFromState(state: ThemeTokenState) {
     feedbackExpandDuration: state.feedbackExpandDuration,
     expandDuration: state.expandDuration,
     expandOpenEase: state.expandOpenEase,
+    surfaceTransitionDuration: state.surfaceTransitionDuration,
+    toastDismissDuration: state.toastDismissDuration,
+    toastDismissEase: state.toastDismissEase,
     progressFillDuration: state.progressFillDuration,
     progressFillEase: state.progressFillEase,
     loadingDotsDuration: state.loadingDotsDuration,
@@ -551,6 +509,9 @@ function applyMotionFromState(state: ThemeTokenState) {
     feedbackExpandDuration: state.feedbackExpandDuration,
     expandDuration: state.expandDuration,
     expandOpenEase: state.expandOpenEase,
+    surfaceTransitionDuration: state.surfaceTransitionDuration,
+    toastDismissDuration: state.toastDismissDuration,
+    toastDismissEase: state.toastDismissEase,
     progressFillDuration: state.progressFillDuration,
     progressFillEase: state.progressFillEase,
     loadingDotsDuration: state.loadingDotsDuration,
@@ -567,6 +528,11 @@ function applyMotionFromState(state: ThemeTokenState) {
     enableFeedbackExpand: state.enableFeedbackExpand,
     enableProgressFill: state.enableProgressFill,
     enableLoadingDots: state.enableLoadingDots,
+  });
+
+  // Theme root may differ from documentElement — re-apply CSS tokens onto the themed root.
+  applyMotionCssTokens(root, {
+    surfaceTransitionDuration: state.surfaceTransitionDuration,
   });
 }
 
@@ -633,7 +599,7 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
   );
   applyFontWeights(target, state.fontWeights, defaults.fontWeights);
 
-  applyMotionFromState(state);
+  applyMotionFromState(state, target);
 
   if (state.textScale !== defaults.textScale) {
     applyTextScale(target, state.textScale);
@@ -732,6 +698,10 @@ export function exportThemeCss(state: ThemeTokenState): string {
   }
   if (state.toastScrimDensity !== defaults.toastScrimDensity) {
     lines.push(`  --toast-scrim-density: ${state.toastScrimDensity};`);
+  }
+
+  if (state.surfaceTransitionDuration !== defaults.surfaceTransitionDuration) {
+    lines.push(`  --motion-surface-duration: ${state.surfaceTransitionDuration}ms;`);
   }
 
   if (state.textScale !== defaults.textScale) {

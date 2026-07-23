@@ -1,6 +1,6 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { getMotionConfig, motionInteractive } from "@/components/core/utils/motionConfig";
+import { getMotionConfig, motionInteractive, motionToastDismiss } from "@/components/core/utils/motionConfig";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion, MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
 import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
@@ -112,7 +112,7 @@ export function ToastItemWrapper({
     killMotion(el);
     animatePortalClose({
       surface: el,
-      vars: { duration: 0.22, ease: "power2.in", overwrite: "auto" },
+      vars: { ...motionToastDismiss(), overwrite: "auto" },
       exit: { y: slideDir },
       onComplete: () => onRemoveFinal(entry.id),
     });
@@ -294,7 +294,7 @@ export function ToastViewport({
     }
 
     if (isLastDismissing) {
-      gsap.to(el, { opacity: 0, duration: 0.22, ease: "power2.in", overwrite: "auto" });
+      gsap.to(el, { opacity: 0, ...motionToastDismiss(), overwrite: "auto" });
     } else {
       gsap.to(el, { opacity: 1, ...motionInteractive(), overwrite: "auto" });
     }

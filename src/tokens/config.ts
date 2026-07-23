@@ -9,9 +9,14 @@
  * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large` (`calc(… * var(--shadow-size))`; do not bake px).
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).
+ * - `--motion-surface-duration` — CSS transitions for `surface-color-transition` / `animate-shadow` / field shells (from `surfaceTransitionDuration` in motion config).
+ * - `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate` — frosted modal scrim (`overlay-backdrop`); `--overlay-backdrop-scrim` — solid dark-UI scrim.
  * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).
  * - `--text-scale-*` — primitive typography (`xsmall` … `3xlarge`, base step `base`); roles `text-base`, `text-large` are aliases.
  * - `--font-w-*` — primitive font-weight scale;
+ *
+ * Fonts / text-scale / shadow geometry defaults: `tokenPrimitives.json` → TS modules + generated CSS
+ * (`npm run sync:tokens` / `scripts/sync-generated-tokens.mjs`).
  */
 export const tokensConfig = {
   /** Namespace for documentation */

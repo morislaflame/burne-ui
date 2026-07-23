@@ -33,11 +33,12 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "node scripts/sync-generated-tokens.mjs && vite build",
     "dev": "vite build --watch",
     "playground": "vite --config vite.playground.config.ts",
     "playground:tunnel": "tuna http 5173 --subdomain=drus",
-    "lint": "tsc -p tsconfig.json --noEmit && node scripts/check-package-export-parity.mjs",
+    "lint": "node scripts/sync-generated-tokens.mjs --check && tsc -p tsconfig.json --noEmit && node scripts/check-package-export-parity.mjs",
+    "sync:tokens": "node scripts/sync-generated-tokens.mjs",
     "check:exports": "node scripts/check-package-export-parity.mjs",
     "storybook": "bash scripts/storybook.sh",
     "build-storybook": "storybook build -o storybook-static",

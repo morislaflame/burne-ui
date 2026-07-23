@@ -112,6 +112,9 @@ const MOTION_STATE_KEYS = [
   "feedbackExpandDuration",
   "expandDuration",
   "expandOpenEase",
+  "surfaceTransitionDuration",
+  "toastDismissDuration",
+  "toastDismissEase",
   "progressFillDuration",
   "progressFillEase",
   "loadingDotsDuration",
@@ -196,6 +199,9 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     feedbackExpandDuration: withPalettes.feedbackExpandDuration,
     expandDuration: withPalettes.expandDuration,
     expandOpenEase: withPalettes.expandOpenEase,
+    surfaceTransitionDuration: withPalettes.surfaceTransitionDuration,
+    toastDismissDuration: withPalettes.toastDismissDuration,
+    toastDismissEase: withPalettes.toastDismissEase,
     progressFillDuration: withPalettes.progressFillDuration,
     progressFillEase: withPalettes.progressFillEase,
     loadingDotsDuration: withPalettes.loadingDotsDuration,
@@ -454,6 +460,11 @@ export function applyBurneThemeConfig(
     if (m.feedbackExpandDuration !== undefined) state.feedbackExpandDuration = m.feedbackExpandDuration;
     if (m.expandDuration !== undefined) state.expandDuration = m.expandDuration;
     if (m.expandOpenEase !== undefined) state.expandOpenEase = m.expandOpenEase;
+    if (m.surfaceTransitionDuration !== undefined) {
+      state.surfaceTransitionDuration = m.surfaceTransitionDuration;
+    }
+    if (m.toastDismissDuration !== undefined) state.toastDismissDuration = m.toastDismissDuration;
+    if (m.toastDismissEase !== undefined) state.toastDismissEase = m.toastDismissEase;
     if (m.progressFillDuration !== undefined) state.progressFillDuration = m.progressFillDuration;
     if (m.progressFillEase !== undefined) state.progressFillEase = m.progressFillEase;
     if (m.loadingDotsDuration !== undefined) state.loadingDotsDuration = m.loadingDotsDuration;

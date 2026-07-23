@@ -194,8 +194,8 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 
 | Элемент | Классы |
 |---------|--------|
-| Overlay light | `foreground 14%` + blur |
-| Overlay dark | `black 55%` |
+| Overlay light | `overlay-backdrop` (`--overlay-backdrop-color` + blur) |
+| Overlay dark | `overlay-backdrop-scrim` (`--overlay-backdrop-scrim`) |
 | Panel | `bg-surface border-token shadow-token-lg` |
 | Gloss | `gloss-panel gloss-deep` |
 | Handle grip | `bg-tertiary`, `rounded-full` |

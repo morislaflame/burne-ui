@@ -90,11 +90,9 @@ export function dialogNativeClass(contained: boolean): string {
   );
 }
 
-export const DIALOG_OVERLAY_LIGHT_CLASS =
-  "bg-[color-mix(in_oklab,var(--color-foreground)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none";
+export const DIALOG_OVERLAY_LIGHT_CLASS = "overlay-backdrop";
 
-export const DIALOG_OVERLAY_DARK_CLASS =
-  "bg-[color-mix(in_oklab,black_58%,transparent)]";
+export const DIALOG_OVERLAY_DARK_CLASS = "overlay-backdrop-scrim";
 
 export const DIALOG_PANEL_BASE_CLASS =
   "relative z-10 w-full outline-none";

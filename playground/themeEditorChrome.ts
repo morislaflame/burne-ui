@@ -29,6 +29,8 @@ export const MOTION_DURATION_LABELS = {
   rippleExpandableDuration: "Expandable ripple duration",
   progressFillDuration: "Progress fill duration",
   loadingDotsDuration: "Loading dots duration",
+  surfaceTransitionDuration: "CSS surface transition",
+  toastDismissDuration: "Toast dismiss duration",
 } as const;
 
 export const MOTION_SCALE_LABELS = {
@@ -48,12 +50,16 @@ export const MOTION_EASE_LABELS = {
   progressFillEase: "Progress fill easing",
   loadingDotsEaseUp: "Loading dots up",
   loadingDotsEaseDown: "Loading dots down",
+  toastDismissEase: "Toast dismiss easing",
 } as const;
 
 export const GSAP_EASE_OPTIONS = [
   "power1.out",
   "power2.out",
   "power3.out",
+  "power1.in",
+  "power2.in",
+  "power3.in",
   "power1.inOut",
   "power2.inOut",
   "power3.inOut",

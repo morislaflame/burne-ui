@@ -203,10 +203,19 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 
 | Тема UI | Overlay |
 |---------|---------|
-| Light | `foreground 14%` + `backdrop-blur` |
-| Dark | `black 58%` |
+| Light | `overlay-backdrop` → `--overlay-backdrop-color` + blur/saturate |
+| Dark | `overlay-backdrop-scrim` → `--overlay-backdrop-scrim` |
 
 Тема портала: `usePortalThemeAnchor`, `useBurneLightTheme`, `burneLightThemePortalProps` — overlay подстраивается под якорь (например, `[data-theme="light"]` в приложении).
+
+Переопределение:
+
+```css
+:root {
+  --overlay-backdrop-color: color-mix(in oklab, var(--color-foreground) 20%, transparent);
+  --overlay-backdrop-blur: 20px;
+}
+```
 
 ## Layout
 
@@ -224,6 +233,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 | `max-w-component-mid` | Ширина панели |
 | `rounded-mid` | Скругление |
 | `z-dialog` | Stacking dialog (`--z-dialog`) |
+| `overlay-backdrop` / `overlay-backdrop-scrim` | Подложка (light frosted / dark solid) |
 | `gloss-panel`, `gloss-deep` | Gloss variant |
 
 ## Стилизация и кастомизация

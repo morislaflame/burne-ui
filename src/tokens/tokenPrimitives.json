@@ -1,0 +1,25 @@
+{
+  "fontFamilySans": "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+  "fontFamilyMono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+  "shadowSize": 0.5,
+  "textScale": {
+    "tools": { "size": 0.6875, "line": 0.875 },
+    "xsmall": { "size": 0.75, "line": 1 },
+    "small": { "size": 0.875, "line": 1.25 },
+    "base": { "size": 1, "line": 1.5 },
+    "mid": { "size": 1.125, "line": 1.75 },
+    "large": { "size": 1.25, "line": 1.75 },
+    "xlarge": { "size": 1.5, "line": 2 },
+    "2xlarge": { "size": 1.875, "line": 2.25 },
+    "3xlarge": { "size": 2.25, "line": 2.5 }
+  },
+  "shadowOpacity": {
+    "dark": { "base": 0.15, "mid": 0.2, "large": 0.24 },
+    "light": { "base": 0.08, "mid": 0.12, "large": 0.16 }
+  },
+  "shadowGeom": {
+    "base": [0, 2, 4, -2],
+    "mid": [0, 4, 10, -6],
+    "large": [0, 8, 20, -12]
+  }
+}

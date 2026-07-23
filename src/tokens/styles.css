@@ -28,6 +28,26 @@
   --focus-ring-offset: 0px;
 
   /**
+   * MOTION (CSS transitions) — surface / text / shadow / focus-ring utilities in `styles.css`.
+   * Written by `applyMotionFromState` / `configureMotion` when `surfaceTransitionDuration` differs from default.
+   * GSAP timings live in `motionConfig` (`interactiveDuration`, …) — separate from these CSS transitions.
+   */
+  --motion-surface-duration: 600ms;
+  --motion-surface-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-shadow-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-text-ease: var(--motion-shadow-ease);
+  --motion-focus-ring-ease: var(--motion-shadow-ease);
+
+  /**
+   * OVERLAY BACKDROP — frosted scrim behind Dialog / Drawer / AlertDialog (light UI).
+   * Utility: `overlay-backdrop`. Dark UI uses a solid scrim (`--overlay-backdrop-scrim`) without blur.
+   */
+  --overlay-backdrop-color: color-mix(in oklab, var(--color-foreground) 14%, transparent);
+  --overlay-backdrop-blur: 14px;
+  --overlay-backdrop-saturate: 1.5;
+  --overlay-backdrop-scrim: color-mix(in oklab, black 58%, transparent);
+
+  /**
    * Z-INDEX SCALE — overlay stacking (low → high) within one stacking context.
    * Default Dialog/Drawer use `showModal()` (browser top layer) — body-portaled
    * menus cannot stack above them via z-index; use contained `portalContainer`
@@ -267,8 +287,10 @@
   );
 
 
-  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-family-mono: ui-monospace, monospace;
+  /* BEGIN GENERATED:fonts */
+  --font-family-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* END GENERATED:fonts */
 
   /**
    * Base spacing step (gap, padding, margin).
@@ -302,6 +324,7 @@
    * Steps: `tools`, `xsmall` … `3xlarge` — same as `--space-*` / `--radius-value-*`.
    * line-height = calc(line_height / font-size) — unitless, like Tailwind v4.
    */
+  /* BEGIN GENERATED:text-scale */
   --text-scale-tools: 0.6875rem;
   --text-scale-tools--line-height: calc(0.875rem / 0.6875rem);
 
@@ -328,6 +351,7 @@
 
   --text-scale-3xlarge: 2.25rem;
   --text-scale-3xlarge--line-height: calc(2.5rem / 2.25rem);
+  /* END GENERATED:text-scale */
 
   /**
    * Primitive font-weight scale (`--font-w-*`).
@@ -441,6 +465,7 @@
    * Geometry always uses `calc(… * var(--shadow-size))`; theme overrides rewrite opacity
    * (strength) but keep the multiplier — do not bake blur/offset into fixed px.
    */
+  /* BEGIN GENERATED:shadows-dark */
   --shadow-size: 0.5;
   --shadow-none:
     0 calc(2px * var(--shadow-size)) calc(4px * var(--shadow-size))
@@ -454,6 +479,7 @@
   --shadow-large:
     0 calc(8px * var(--shadow-size)) calc(20px * var(--shadow-size))
       calc(-12px * var(--shadow-size)) rgb(0 0 0 / 0.24);
+  /* END GENERATED:shadows-dark */
 
   /**
    * Toast scrim — soft backdrop behind the notification stack (gradient to transparency).
@@ -725,6 +751,7 @@
   --gloss-press-inset: rgba(0, 0, 0, 0.026);
 
   /* In light theme shadows are slightly more visible (less background/component contrast) */
+  /* BEGIN GENERATED:shadows-light */
   --shadow-none:
     0 calc(2px * var(--shadow-size)) calc(4px * var(--shadow-size))
       calc(-2px * var(--shadow-size)) rgb(0 0 0 / 0);
@@ -737,4 +764,5 @@
   --shadow-large:
     0 calc(8px * var(--shadow-size)) calc(20px * var(--shadow-size))
       calc(-12px * var(--shadow-size)) rgb(0 0 0 / 0.16);
+  /* END GENERATED:shadows-light */
 }

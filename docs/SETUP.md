@@ -52,7 +52,7 @@ import "burne-ui/styles.css";
 
 Файл `burne-ui/styles.css` (артефакт сборки `dist/ui.css`) содержит:
 
-- **дизайн-токены** — `--color-*`, `--space`, `--size`, `--radius`, `--text-scale-*`, `--z-*` (overlay stacking), шрифты, тени;
+- **дизайн-токены** — `--color-*`, `--space`, `--size`, `--radius`, `--text-scale-*`, `--z-*` (overlay stacking), `--overlay-backdrop-*` (modal scrim), шрифты, тени;
 - **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted`, `gap-mid`, `rounded-base`, `z-dialog` / `z-popover` / … и т.д.;
 - **кастомные утилиты** — `border-token`, `text-header-1`, `shadow-token-sm` и др.
 
@@ -512,10 +512,13 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 
 | Группа | Ключи |
 |--------|--------|
-| Тайминги / easing | `interactiveDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `loadingDotsDuration`, `*Ease` |
+| Тайминги / easing (GSAP) | `interactiveDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
+| CSS surface transitions | `surfaceTransitionDuration` → пишет `--motion-surface-duration` (утилиты `surface-color-transition`, `animate-shadow`, …) |
 | Hover / press | `hoverLiftScale`, `pressSqueezeScale`, `badgeAnchorHoverLiftScale` |
 | Ripple | `rippleDefaultDuration`, `rippleExpandableDuration`, `rippleEaseCss`, … |
 | Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableAsyncButtonCrossfade`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableFeedbackExpand`, `enableProgressFill`, `enableLoadingDots` |
+
+Дефолты: **`MOTION_CONFIG_DEFAULTS`** (`motionConfig.ts`) — единственный источник; theme `MOTION_DEFAULTS` импортирует их (с `pressSqueezeMid` вместо кортежа).
 
 Библиотека учитывает **`prefers-reduced-motion: reduce`**.
 

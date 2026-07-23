@@ -619,6 +619,7 @@ export {
 export {
   configureMotion,
   getMotionConfig,
+  MOTION_CONFIG_DEFAULTS,
   type MotionConfig,
 } from "@/components/core/utils/motionConfig";
 export {
@@ -639,6 +640,9 @@ export {
   TOAST_SCRIM_CSS_VAR,
   TOAST_SCRIM_DEFAULTS,
   toastScrimToken,
+  OVERLAY_BACKDROP_CSS_VAR,
+  OVERLAY_BACKDROP_DEFAULTS,
+  overlayBackdropToken,
   type ColorTokenSuffix,
   type TokensConfig,
   type DesignCssVar,
@@ -647,6 +651,7 @@ export {
   type FontWeightStep,
   type ZIndexLayer,
   type ToastScrimCssVar,
+  type OverlayBackdropCssVar,
 } from "@/tokens";
 export {
   Table,

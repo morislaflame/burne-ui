@@ -67,11 +67,9 @@ export function drawerNativeClass(contained: boolean): string {
   );
 }
 
-export const DRAWER_OVERLAY_LIGHT_CLASS =
-  "bg-[color-mix(in_oklab,var(--color-foreground)_14%,transparent)] backdrop-blur-[14px] backdrop-saturate-150 motion-reduce:backdrop-blur-none";
+export const DRAWER_OVERLAY_LIGHT_CLASS = "overlay-backdrop";
 
-export const DRAWER_OVERLAY_DARK_CLASS =
-  "bg-[color-mix(in_oklab,black_55%,transparent)]";
+export const DRAWER_OVERLAY_DARK_CLASS = "overlay-backdrop-scrim";
 
 export const DRAWER_PANEL_BASE_CLASS =
   "absolute z-10 flex flex-col outline-none overflow-hidden";

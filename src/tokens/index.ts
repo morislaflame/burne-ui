@@ -11,14 +11,27 @@ export {
   type ShadowSize,
   type ShadowLevel,
   SHADOW_CSS_VAR,
+  SHADOW_LAYER_GEOM,
+  SHADOW_OPACITY_BASE,
+  SHADOW_SIZE_CSS_DEFAULT,
   shadowToken,
 } from "./shadows";
+export {
+  TEXT_SCALE_BASES,
+  type TextScaleStep,
+} from "./textScale";
 export {
   TOAST_SCRIM_CSS_VAR,
   TOAST_SCRIM_DEFAULTS,
   toastScrimToken,
   type ToastScrimCssVar,
 } from "./toastScrim";
+export {
+  OVERLAY_BACKDROP_CSS_VAR,
+  OVERLAY_BACKDROP_DEFAULTS,
+  overlayBackdropToken,
+  type OverlayBackdropCssVar,
+} from "./overlayBackdrop";
 export {
   burneZIndexScale,
   Z_INDEX_CSS_VAR,
@@ -32,6 +45,13 @@ export const designTokenNames = [
   "--border-width",
   "--focus-ring-width",
   "--focus-ring-offset",
+  "--motion-surface-duration",
+  "--motion-surface-ease",
+  "--motion-shadow-ease",
+  "--overlay-backdrop-color",
+  "--overlay-backdrop-blur",
+  "--overlay-backdrop-saturate",
+  "--overlay-backdrop-scrim",
   "--z-dialog",
   "--z-dropdown",
   "--z-dropdown-sub",

@@ -709,6 +709,24 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           unit="ms"
           onChange={(v) => setMotionDuration("loadingDotsDuration", v)}
         />
+        <ScaleControl
+          label="surfaceTransitionDuration (CSS)"
+          value={state.surfaceTransitionDuration}
+          min={120}
+          max={1200}
+          step={20}
+          unit="ms"
+          onChange={(v) => setMotionDuration("surfaceTransitionDuration", v)}
+        />
+        <ScaleControl
+          label="toastDismissDuration"
+          value={state.toastDismissDuration}
+          min={80}
+          max={600}
+          step={10}
+          unit="ms"
+          onChange={(v) => setMotionDuration("toastDismissDuration", v)}
+        />
         <Button
           type="button"
           size="small"
@@ -720,6 +738,8 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             setMotionDuration("expandDuration", MOTION_DEFAULTS.expandDuration);
             setMotionDuration("progressFillDuration", MOTION_DEFAULTS.progressFillDuration);
             setMotionDuration("loadingDotsDuration", MOTION_DEFAULTS.loadingDotsDuration);
+            setMotionDuration("surfaceTransitionDuration", MOTION_DEFAULTS.surfaceTransitionDuration);
+            setMotionDuration("toastDismissDuration", MOTION_DEFAULTS.toastDismissDuration);
           }}
         >
           Motion default

@@ -79,7 +79,9 @@ function useThemeTokensState() {
         | "tooltipDuration"
         | "expandDuration"
         | "progressFillDuration"
-        | "loadingDotsDuration",
+        | "loadingDotsDuration"
+        | "surfaceTransitionDuration"
+        | "toastDismissDuration",
       value: number,
     ) => {
       setState((prev) => ({ ...prev, [key]: value }));

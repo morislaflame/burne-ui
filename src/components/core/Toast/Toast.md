@@ -110,13 +110,13 @@ Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Ind
 ```ts
 animatePortalClose({
   surface: animRef,
-  vars: { duration: 0.22, ease: "power2.in" }, // фиксировано
+  vars: { ...motionToastDismiss() }, // toastDismissDuration / toastDismissEase
   exit: { y: slideDir },
   onComplete: () => removeFromDOM,
 });
 ```
 
-Dismiss **220 ms** — не из `configureMotion`.
+Dismiss — из `configureMotion` (`toastDismissDuration`, по умолчанию 220 ms).
 
 ### 3. Стек — reposition (peek + scale)
 
@@ -141,7 +141,7 @@ Dismiss **220 ms** — не из `configureMotion`.
 
 ### 5. Scrim (градиент)
 
-`scrimRef`: fade `opacity 0↔1`. Последний toast dismiss → `0.22s power2.in` (как exit карточки).
+`scrimRef`: fade `opacity 0↔1`. Последний toast dismiss → `motionToastDismiss()` (как exit карточки).
 
 Токены: `--toast-scrim-*` (`tokens/toastScrim.ts`).
 
@@ -163,6 +163,8 @@ configureMotion({
   enableToastStack: true,       // peek/scale/height — мгновенно если false
   interactiveDuration: 320,     // enter slide, stack reposition, container height, scrim in
   interactiveEase: "power2.out",
+  toastDismissDuration: 220,    // dismiss slide + last scrim out
+  toastDismissEase: "power2.in",
 });
 ```
 
@@ -173,10 +175,10 @@ configureMotion({
 | Анимация | Элемент | `configureMotion` | Константы / hardcode |
 |----------|---------|-------------------|----------------------|
 | Enter slide | `animRef` | `interactiveDuration`, `interactiveEase` | `ENTRY_OFFSET_PX=24`, `SCALE_FROM=0.97` |
-| Dismiss slide | `animRef` | — | `0.22s`, `power2.in` |
+| Dismiss slide | `animRef` | `toastDismissDuration`, `toastDismissEase` | — |
 | Stack peek/scale | `stackRef` | `enableToastStack`, `interactiveDuration` | `PEEK`, `SCALE_STEP`, `MAX_VISIBLE` |
 | Container height | `containerRef` | `enableToastStack`, `interactiveDuration` | — |
-| Scrim | `scrimRef` | `interactiveDuration` (in) | `0.22s` (out) |
+| Scrim | `scrimRef` | `interactiveDuration` (in), `toastDismissDuration` (out) | — |
 | Gloss hover | `ToastRoot` | interactive | `variant="gloss"` |
 | Auto-close | — | — | `timeout` prop (default 4000) |
 

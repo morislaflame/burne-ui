@@ -145,6 +145,31 @@ p {
 }
 
 /**
+ * Modal frosted scrim (Dialog / Drawer / AlertDialog — light UI).
+ * Tokens: `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate`.
+ * Webkit-first `backdrop-filter` — same constraint as gloss panels.
+ */
+@utility overlay-backdrop {
+  background-color: var(--overlay-backdrop-color);
+  -webkit-backdrop-filter: blur(var(--overlay-backdrop-blur))
+    saturate(var(--overlay-backdrop-saturate));
+  backdrop-filter: blur(var(--overlay-backdrop-blur))
+    saturate(var(--overlay-backdrop-saturate));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-backdrop {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/** Solid dark-UI modal scrim (no blur). */
+@utility overlay-backdrop-scrim {
+  background-color: var(--overlay-backdrop-scrim);
+}
+
+/**
  * Shadow via local `--el-shadow` (toggled from JS) + smooth `box-shadow` transition.
  * Explicit reset on the element — otherwise `--el-shadow` is inherited from an ancestor (Popover, Alert)
  * and child buttons get a foreign shadow until first hover.
@@ -154,8 +179,8 @@ p {
   --el-shadow: var(--shadow-none);
   box-shadow: var(--el-shadow);
   transition-property: box-shadow;
-  transition-duration: var(--shadow-transition-duration, 600ms);
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-duration: var(--motion-surface-duration);
+  transition-timing-function: var(--motion-shadow-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -169,9 +194,9 @@ p {
  */
 @utility text-color-transition {
   transition:
-    color 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    fill 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    stroke 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    color var(--motion-surface-duration) var(--motion-text-ease),
+    fill var(--motion-surface-duration) var(--motion-text-ease),
+    stroke var(--motion-surface-duration) var(--motion-text-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -186,13 +211,13 @@ p {
  */
 @utility surface-color-transition {
   transition:
-    background-color 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    fill 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    stroke 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    outline-color var(--focus-ring-transition-duration, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -204,10 +229,10 @@ p {
 /** Field shells: background, border, shadow, and focus-ring — one shorthand without conflicts. */
 @utility field-shell-transition {
   transition:
-    background-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    outline-color var(--focus-ring-transition-duration, 600ms) cubic-bezier(0.16, 1, 0.3, 1);
+    background-color var(--motion-surface-duration) var(--motion-shadow-ease),
+    border-color var(--motion-surface-duration) var(--motion-shadow-ease),
+    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
