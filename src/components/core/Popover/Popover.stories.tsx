@@ -125,6 +125,47 @@ export const Placements: Story = {
   ),
 };
 
+const POPOVER_SIZES = ["small", "base", "mid", "large"] as const;
+
+export const Sizes: Story = {
+  name: "Sizes small · base · mid · large",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`size` scales panel padding, `Title` / `Description` typography, default `gap`, and min/max width (`min-w-component-*` / `max-w-component-*`). Open each trigger to compare.",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-wrap items-center justify-center gap-2xlarge py-2xlarge">
+      {POPOVER_SIZES.map((size) => (
+        <Popover key={size} size={size} side="bottom">
+          <Popover.Trigger>
+            <Button variant="outline" type="button" size={size} className="capitalize">
+              {size}
+            </Button>
+          </Popover.Trigger>
+          <Popover.Content showArrow>
+            <Popover.Arrow />
+            <Popover.Header>
+              <Popover.Title>Size {size}</Popover.Title>
+              <Popover.Description>
+                Padding, type scale, and panel width for this size.
+              </Popover.Description>
+            </Popover.Header>
+            <Popover.Body>
+              <Text as="p" variant="small" className="text-muted">
+                Body text follows the size preset; long lines wrap within max-w-component.
+              </Text>
+            </Popover.Body>
+          </Popover.Content>
+        </Popover>
+      ))}
+    </div>
+  ),
+};
+
 const TAG_COLORS = [
   { id: "primary", label: "Primary", className: "bg-primary" },
   { id: "danger", label: "Danger", className: "bg-danger" },

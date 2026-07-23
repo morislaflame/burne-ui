@@ -246,7 +246,7 @@ p {
 /** Prevent iOS Safari auto-zoom on focused inputs with font-size below 16px. */
 @utility field-control-mobile-no-zoom {
   /**
-   * Touch / narrow viewports (aligned with hoverInteractiveLift).
+   * Touch / narrow viewports (aligned with `NARROW_VIEWPORT_MAX_PX` / `TOUCH_OR_NARROW_VIEWPORT_MQL_ANY_POINTER` in `tokens/breakpoints.ts`).
    * `any-pointer: coarse` covers iPad with pointer devices attached.
    * `!important` beats `text-base` / `text-small` on the same element.
    */
@@ -421,6 +421,10 @@ p {
   font-weight: var(--font-w-bold);
 }
 
+@utility max-w-component-xsmall {
+  max-width: var(--max-component-xsmall);
+}
+
 @utility max-w-component-small {
   max-width: var(--max-component-small);
 }
@@ -435,6 +439,46 @@ p {
 
 @utility max-w-component-large {
   max-width: var(--max-component-large);
+}
+
+@utility max-w-component-xlarge {
+  max-width: var(--max-component-xlarge);
+}
+
+@utility max-w-component-2xlarge {
+  max-width: var(--max-component-2xlarge);
+}
+
+@utility min-w-component-xsmall {
+  min-width: var(--max-component-xsmall);
+}
+
+@utility min-w-component-small {
+  min-width: var(--max-component-small);
+}
+
+@utility min-w-component-base {
+  min-width: var(--max-component-base);
+}
+
+@utility min-w-component-mid {
+  min-width: var(--max-component-mid);
+}
+
+@utility min-w-component-large {
+  min-width: var(--max-component-large);
+}
+
+@utility min-w-component-xlarge {
+  min-width: var(--max-component-xlarge);
+}
+
+@utility min-w-component-2xlarge {
+  min-width: var(--max-component-2xlarge);
+}
+
+@utility basis-component-xsmall {
+  flex-basis: var(--max-component-xsmall);
 }
 
 @utility min-w-button-small {
@@ -574,6 +618,12 @@ p {
 }
 
 /** Round selection indicators — diameter from `--selection-indicator-*` (→ space tokens). */
+@utility selection-indicator-xsmall {
+  width: var(--selection-indicator-xsmall);
+  height: var(--selection-indicator-xsmall);
+  min-width: var(--selection-indicator-xsmall);
+  min-height: var(--selection-indicator-xsmall);
+}
 @utility selection-indicator-small {
   width: var(--selection-indicator-small);
   height: var(--selection-indicator-small);

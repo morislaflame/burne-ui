@@ -22,7 +22,7 @@ const DIALOG_SECTION_PADDING_DEFAULT = {
 
 export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
   small: {
-    panelMax: "max-w-component-small",
+    panelMax: "max-w-component-base",
     maxHeight: "max-h-[min(85dvh,26rem)]",
     headerGap: "gap-base",
     ...DIALOG_SECTION_PADDING_COMPACT,
@@ -33,7 +33,7 @@ export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
     bodyVariant: "small",
   },
   base: {
-    panelMax: "max-w-component-base",
+    panelMax: "max-w-component-large",
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-mid",
     ...DIALOG_SECTION_PADDING_DEFAULT,
@@ -44,7 +44,7 @@ export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
     bodyVariant: "base",
   },
   mid: {
-    panelMax: "max-w-component-mid",
+    panelMax: "max-w-component-xlarge",
     maxHeight: "max-h-[min(90dvh,40rem)]",
     headerGap: "gap-mid",
     ...DIALOG_SECTION_PADDING_DEFAULT,
@@ -55,7 +55,7 @@ export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
     bodyVariant: "base",
   },
   large: {
-    panelMax: "max-w-component-large",
+    panelMax: "max-w-component-2xlarge",
     maxHeight: "max-h-[min(90dvh,44rem)]",
     headerGap: "gap-mid",
     ...DIALOG_SECTION_PADDING_DEFAULT,

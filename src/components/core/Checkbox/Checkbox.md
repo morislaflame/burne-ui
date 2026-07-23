@@ -83,7 +83,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 
 ## Размеры
 
-`CHECKBOX_SIZE_LAYOUT`: grid gap, title/desc text variants, indicator size per `size`.
+`CHECKBOX_SIZE_LAYOUT` (= shared `OPTION_CONTROL_SIZE_LAYOUT`): grid gap, title/desc text variants per `size`.
 
 ## Анимации
 

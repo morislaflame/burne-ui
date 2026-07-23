@@ -18,7 +18,7 @@ export type MessageBannerSizePreset = {
 
 export const MESSAGE_BANNER_SIZE: Record<MessageBannerSize, MessageBannerSizePreset> = {
   small: {
-    maxWidthClass: "max-w-component-small",
+    maxWidthClass: "max-w-component-base",
     shellPadding: "rounded-mid py-small px-base",
     gridGap: "gap-x-base gap-y-xsmall",
     iconSvgClass: "[&_svg]:icon-small",
@@ -28,7 +28,7 @@ export const MESSAGE_BANNER_SIZE: Record<MessageBannerSize, MessageBannerSizePre
     toastWidthPx: 280,
   },
   base: {
-    maxWidthClass: "max-w-component-base",
+    maxWidthClass: "max-w-component-large",
     shellPadding: "rounded-mid py-base px-mid",
     gridGap: "gap-x-base gap-y-xsmall",
     iconSvgClass: "[&_svg]:icon-mid",
@@ -38,7 +38,7 @@ export const MESSAGE_BANNER_SIZE: Record<MessageBannerSize, MessageBannerSizePre
     toastWidthPx: 360,
   },
   mid: {
-    maxWidthClass: "max-w-component-mid",
+    maxWidthClass: "max-w-component-xlarge",
     shellPadding: "rounded-mid py-base px-mid",
     gridGap: "gap-x-base gap-y-xsmall",
     iconSvgClass: "[&_svg]:icon-large",
@@ -48,8 +48,8 @@ export const MESSAGE_BANNER_SIZE: Record<MessageBannerSize, MessageBannerSizePre
     toastWidthPx: 400,
   },
   large: {
-    maxWidthClass: "max-w-component-large",
-    shellPadding: "rounded-mid py-mid px-mid",
+    maxWidthClass: "max-w-component-2xlarge",
+    shellPadding: "rounded-mid py-mid px-large",
     gridGap: "gap-x-base gap-y-xsmall",
     iconSvgClass: "[&_svg]:icon-large",
     titleVariant: "large",

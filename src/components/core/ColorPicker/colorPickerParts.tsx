@@ -79,6 +79,7 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
           cn(slotClassNames.area, className),
         )}
         style={{
+          /* HSV area physics: fixed #000/#fff endpoints (not theme tokens). */
           background: `linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, ${hueColor})`,
           ...style,
         }}

@@ -1,4 +1,7 @@
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+
+import type { ListBoxSize } from "./listBoxTypes";
 
 import { cn } from "@/utils/cn";
 
@@ -20,7 +23,14 @@ export const LISTBOX_SEPARATOR_CLASS =
 export const LISTBOX_EMPTY_CLASS = "px-large py-small text-center text-muted";
 
 export const LISTBOX_ITEM_BASE_CLASS =
-  "w-full min-w-0 rounded-mid px-mid py-base text-left outline-none";
+  "w-full min-w-0 rounded-mid text-left outline-none";
+
+export const LISTBOX_ITEM_PAD: Record<ListBoxSize, string> = {
+  small: cn(CONTROL_SIZE_LAYOUT.small.padX, CONTROL_SIZE_LAYOUT.small.padY),
+  base: cn(CONTROL_SIZE_LAYOUT.base.padX, CONTROL_SIZE_LAYOUT.base.padY),
+  mid: cn(CONTROL_SIZE_LAYOUT.mid.padX, CONTROL_SIZE_LAYOUT.mid.padY),
+  large: cn(CONTROL_SIZE_LAYOUT.large.padX, CONTROL_SIZE_LAYOUT.large.padY),
+};
 
 export const LISTBOX_ITEM_INTERACTIVE_CLASS =
   "cursor-pointer text-foreground focus-ring";
@@ -98,11 +108,13 @@ export function listBoxEmptyClass({
 }
 
 export function listBoxItemClass({
+  size,
   disabled,
   isActive,
   slotClass,
   className,
 }: {
+  size: ListBoxSize;
   disabled: boolean;
   isActive: boolean;
   slotClass?: string;
@@ -110,6 +122,7 @@ export function listBoxItemClass({
 }): string {
   return cn(
     LISTBOX_ITEM_BASE_CLASS,
+    LISTBOX_ITEM_PAD[size],
     // Active highlight only via `isActive` (pointerenter / keyboard) — CSS :hover
     // would stick under the cursor and fight aria-activedescendant navigation.
     !disabled &&

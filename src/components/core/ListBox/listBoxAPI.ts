@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 
-import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
+import type {
+  SelectionIndicatorClassNames,
+  SelectionIndicatorSize,
+} from "@/components/core/SelectionIndicator";
 import { partitionOptionListItemChildren } from "@/components/core/utils/optionListItemChildren";
 import { cn } from "@/utils/cn";
 
@@ -8,7 +11,27 @@ import {
   listBoxEnabledOptionElements,
   listBoxOptionValue,
 } from "./listBoxA11y";
-import type { ListBoxClassNames, ListBoxItemIndicatorClassNames, UseListBoxItemStateProps } from "./listBoxTypes";
+import type {
+  ListBoxClassNames,
+  ListBoxItemIndicatorClassNames,
+  ListBoxSize,
+  UseListBoxItemStateProps,
+} from "./listBoxTypes";
+
+/** List size → indicator: one step smaller than the list (dense menus). */
+export const LISTBOX_INDICATOR_SIZE: Record<ListBoxSize, SelectionIndicatorSize> = {
+  small: "xsmall",
+  base: "small",
+  mid: "base",
+  large: "large",
+};
+
+export function resolveListBoxIndicatorSize(
+  listSize: ListBoxSize,
+  sizeProp?: SelectionIndicatorSize,
+): SelectionIndicatorSize {
+  return sizeProp ?? LISTBOX_INDICATOR_SIZE[listSize];
+}
 
 export function resolveListBoxItemIndicatorClassNames({
   slotClassNames,

@@ -50,10 +50,11 @@ export const TIME_FIELD_KEYBOARD_INPUT_CLASS =
 export const TIME_FIELD_SEGMENT_BASE_CLASS =
   "inline-flex min-w-[2ch] select-none items-center justify-center outline-none";
 
+/** Segment chrome: em/ch track the mono digit metrics; pad/radius use tokens. */
 export const TIME_FIELD_SEGMENT_SEGMENTED_CLASS =
-  "h-[1.65em] min-w-[2.25ch] rounded-small px-[3px] bg-default-hover";
+  "h-[1.65em] min-w-[2.25ch] rounded-xsmall px-xsmall bg-default-hover";
 
-export const TIME_FIELD_SEGMENT_DEFAULT_CLASS = "rounded-[3px] px-[2px]";
+export const TIME_FIELD_SEGMENT_DEFAULT_CLASS = "rounded-xsmall px-[length:calc(var(--border-width)*2)]";
 
 export const TIME_FIELD_SEGMENT_FOCUSED_CLASS = "bg-primary text-primary-foreground";
 
@@ -63,7 +64,8 @@ export const TIME_FIELD_SEGMENT_ENABLED_CLASS = "cursor-default";
 export const TIME_FIELD_SEGMENT_SEPARATOR_BASE_CLASS =
   "inline-flex w-[0.45em] shrink-0 select-none items-center justify-center self-center text-muted";
 
-export const TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS = "mx-[1px]";
+export const TIME_FIELD_SEGMENT_SEPARATOR_SEGMENTED_CLASS =
+  "mx-[length:var(--border-width)]";
 
 export const TIME_FIELD_SEGMENT_GROUP_CLASS = "inline-flex items-center";
 

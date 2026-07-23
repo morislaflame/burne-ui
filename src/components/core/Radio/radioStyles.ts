@@ -1,38 +1,8 @@
-import type { TextVariant } from "@/components/core/Text";
 import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
+import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/optionControlSizeLayout";
 import { cn } from "@/utils/cn";
 
-import type { RadioSize } from "./radioTypes";
-
-export const RADIO_SIZE_LAYOUT: Record<
-  RadioSize,
-  {
-    title: TextVariant;
-    desc: TextVariant;
-    gridGap: string;
-  }
-> = {
-  small: {
-    title: "small",
-    desc: "xsmall",
-    gridGap: "gap-x-small gap-y-xsmall",
-  },
-  base: {
-    title: "base",
-    desc: "small",
-    gridGap: "gap-x-base gap-y-xsmall",
-  },
-  mid: {
-    title: "mid",
-    desc: "small",
-    gridGap: "gap-x-mid gap-y-xsmall",
-  },
-  large: {
-    title: "large",
-    desc: "base",
-    gridGap: "gap-x-mid gap-y-xsmall",
-  },
-};
+export const RADIO_SIZE_LAYOUT = OPTION_CONTROL_SIZE_LAYOUT;
 
 export const RADIO_INPUT_VISUALLY_HIDDEN_CLASS =
   "absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 opacity-0 [clip:rect(0,0,0,0)]";

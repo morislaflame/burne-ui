@@ -39,6 +39,11 @@ export {
   zIndexToken,
   type ZIndexLayer,
 } from "./zIndex";
+export {
+  NARROW_VIEWPORT_MAX_PX,
+  TOUCH_OR_NARROW_VIEWPORT_MQL,
+  TOUCH_OR_NARROW_VIEWPORT_MQL_ANY_POINTER,
+} from "./breakpoints";
 
 /** CSS variable names for type-safe access and generators */
 export const designTokenNames = [
@@ -131,6 +136,7 @@ export const designTokenNames = [
   "--size-scale-xlarge",
   "--size-scale-2xlarge",
   "--size-scale-3xlarge",
+  "--selection-indicator-xsmall",
   "--selection-indicator-small",
   "--selection-indicator-base",
   "--selection-indicator-mid",
@@ -181,10 +187,13 @@ export const designTokenNames = [
   "--text-xsmall-size",
   "--text-xsmall-line-height",
   "--text-xsmall-weight",
+  "--max-component-xsmall",
   "--max-component-small",
   "--max-component-base",
   "--max-component-mid",
   "--max-component-large",
+  "--max-component-xlarge",
+  "--max-component-2xlarge",
   "--button-min-width-small",
   "--button-min-width-base",
   "--button-min-width-mid",

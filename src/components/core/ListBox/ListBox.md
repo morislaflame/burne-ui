@@ -82,7 +82,7 @@ import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type Lis
 
 ## Размеры
 
-`size` влияет на padding items и размер `SelectionIndicator` в item.
+`size` влияет на padding items, типографику label, gap indicator↔label (`OPTION_CONTROL_SIZE_LAYOUT.listItemGapX`) и размер `SelectionIndicator` (`small` list → `xsmall` indicator, далее на шаг меньше списка).
 
 ## Анимации
 

@@ -305,12 +305,14 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
       setActiveValue,
       setFilterQuery,
       variant,
+      size,
     } = useComboBoxContext();
 
     const {
       className: listBoxClassName,
       classNames: listBoxSlotClassNames,
       style: listBoxStyle,
+      size: listBoxSize,
       ...listBoxRest
     } = listBoxProps ?? {};
 
@@ -370,6 +372,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
           >
             <ListBox
               selectionIndicator
+              size={listBoxSize ?? size}
               {...listBoxRest}
               listId={listId}
               aria-labelledby={labelConnected ? labelId : undefined}

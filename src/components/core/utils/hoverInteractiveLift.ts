@@ -10,6 +10,7 @@ import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
 import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
+import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
 
 /**
  * `box-shadow` values for hover animation.
@@ -63,12 +64,9 @@ export function prefersReducedInteractiveHoverLift(): boolean {
 }
 
 /** Viewport ≤ tablet (Tailwind `lg`), touch without hover or coarse pointer — no hover-lift. */
-const HOVER_LIFT_TOUCH_VIEWPORT_MQL =
-  "(max-width: 1024px), (hover: none), (pointer: coarse)";
-
 function isTouchOrNarrowViewport(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
-  return window.matchMedia(HOVER_LIFT_TOUCH_VIEWPORT_MQL).matches;
+  return window.matchMedia(TOUCH_OR_NARROW_VIEWPORT_MQL).matches;
 }
 
 /** Hover lift and shadow change: off for reduced-motion, touch and viewport ≤ tablet. */

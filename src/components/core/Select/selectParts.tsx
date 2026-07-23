@@ -43,12 +43,14 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
       activeValue,
       setActiveValue,
       variant,
+      size,
     } = useSelectContext();
 
     const {
       className: listBoxClassName,
       classNames: listBoxSlotClassNames,
       style: listBoxStyle,
+      size: listBoxSize,
       ...listBoxRest
     } = listBoxProps ?? {};
 
@@ -107,6 +109,7 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
           >
             <ListBox
               selectionIndicator
+              size={listBoxSize ?? size}
               {...listBoxRest}
               listId={listId}
               aria-labelledby={labelConnected ? labelId : undefined}

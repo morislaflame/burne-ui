@@ -85,7 +85,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 
 ## Размеры
 
-Из `SWITCH_LAYOUT` / `switchGeometry` — track `2×` thumb diameter (`--selection-indicator-*`).
+Из `SWITCH_LAYOUT` / `switchGeometry` — track `2×` thumb diameter (`--selection-indicator-*`); title/desc/gap — из shared `OPTION_CONTROL_SIZE_LAYOUT`.
 
 | size | Track proportion |
 |------|------------------|

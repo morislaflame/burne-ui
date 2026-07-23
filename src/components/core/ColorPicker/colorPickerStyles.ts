@@ -28,8 +28,9 @@ export const COLOR_PICKER_PAD: Record<ColorPickerSize, string> = {
 export const COLOR_PICKER_AREA_CLASS =
   "relative w-full touch-none select-none rounded-small cursor-crosshair overflow-hidden";
 
+/** Dual ring: light inner + theme foreground outer — readable on any swatch hue. */
 export const COLOR_PICKER_AREA_THUMB_CLASS =
-  "absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-token-mid focus-ring";
+  "absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white [box-shadow:0_0_0_1px_var(--color-foreground),var(--shadow-mid)] focus-ring";
 
 export const COLOR_PICKER_SLIDERS_ROW_CLASS = "flex items-center gap-small";
 

@@ -66,7 +66,7 @@ function CompoundHueSlider() {
       channel="hue"
       color={hsva}
       value={hsva.h}
-      size="base"
+      size="small"
       onValueChange={(h) => setHsva({ ...hsva, h })}
     />
   );
@@ -203,34 +203,45 @@ export const FullFeatured: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Sizes",
+  name: "Sizes small · base · mid · large",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`size` scales the picker panel (width, area height, padding) inside the Popover. Open each swatch to compare.",
+      },
+    },
+  },
   render: () => {
-    const [c1, setC1] = useState("#3b82f6");
-    const [c2, setC2] = useState("#22c55e");
-    const [c3, setC3] = useState("#ec4899");
+    const [small, setSmall] = useState("#3b82f6");
+    const [base, setBase] = useState("#22c55e");
+    const [mid, setMid] = useState("#ec4899");
+    const [large, setLarge] = useState("#f59e0b");
+    const values = { small, base, mid, large } as const;
+    const setters = {
+      small: setSmall,
+      base: setBase,
+      mid: setMid,
+      large: setLarge,
+    } as const;
+
     return (
-      <div className="flex items-end gap-2xlarge">
-        <div className="flex flex-col items-center gap-small">
-          <Text as="span" variant="small" className="text-muted">small</Text>
-          <ColorPicker value={c1} onValueChange={setC1} size="small">
-            <ColorPicker.Trigger />
-            <ColorPicker.Content />
-          </ColorPicker>
-        </div>
-        <div className="flex flex-col items-center gap-small">
-          <Text as="span" variant="small" className="text-muted">base</Text>
-          <ColorPicker value={c2} onValueChange={setC2} size="base">
-            <ColorPicker.Trigger />
-            <ColorPicker.Content />
-          </ColorPicker>
-        </div>
-        <div className="flex flex-col items-center gap-small">
-          <Text as="span" variant="small" className="text-muted">mid</Text>
-          <ColorPicker value={c3} onValueChange={setC3} size="mid">
-            <ColorPicker.Trigger />
-            <ColorPicker.Content />
-          </ColorPicker>
-        </div>
+      <div className="flex flex-wrap items-end justify-center gap-2xlarge py-2xlarge">
+        {(["small", "base", "mid", "large"] as const).map((size) => (
+          <div key={size} className="flex flex-col items-center gap-small">
+            <Text as="span" variant="small" className="capitalize text-muted">
+              {size}
+            </Text>
+            <ColorPicker
+              value={values[size]}
+              onValueChange={setters[size]}
+              size={size}
+            >
+              <ColorPicker.Trigger />
+              <ColorPicker.Content />
+            </ColorPicker>
+          </div>
+        ))}
       </div>
     );
   },

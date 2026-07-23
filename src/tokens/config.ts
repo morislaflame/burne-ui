@@ -11,6 +11,7 @@
  * | Control box | — | `--control-height-*` | — | `h-control-*`, `min-h-control-*` |
  * | Control square | — | `--control-size-*` (= height) | — | `w-control-*`, `min/max-w-control-*` |
  * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
+ * | Panels | `--size` | `--max-component-*` | — | `min/max-w-component-*` |
  *
  * ## Typography
  *
@@ -29,6 +30,8 @@
  * - `--motion-surface-duration` — CSS transitions for `surface-color-transition` / `animate-shadow` / field shells (from `surfaceTransitionDuration` in motion config).
  * - `--overlay-backdrop-color` / `--overlay-backdrop-blur` / `--overlay-backdrop-saturate` — frosted modal scrim (`overlay-backdrop`); `--overlay-backdrop-scrim` — solid dark-UI scrim.
  * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).
+ * - `--max-component-*` — panel/container widths (`min/max-w-component-*`); Dialog size props map onto base…2xlarge.
+ * - `NARROW_VIEWPORT_MAX_PX` (1024) — shared with CSS `field-control-mobile-no-zoom` media query.
  * - `--text-scale-*` — primitive typography; roles `text-base` / `text-mid` / … map 1:1 by name.
  * - `--font-w-*` — primitive font-weight scale;
  *

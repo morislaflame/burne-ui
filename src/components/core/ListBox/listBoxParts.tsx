@@ -3,7 +3,9 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
+import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/optionControlSizeLayout";
 import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 
@@ -14,6 +16,7 @@ import {
   listBoxLastEnabledValue,
   listBoxPreferredInitialActiveValue,
   listBoxTypeaheadLabels,
+  resolveListBoxIndicatorSize,
   resolveListBoxItemIndicatorClassNames,
 } from "./listBoxAPI";
 import { useListBoxItemAnimations, useListBoxRootGlossRef } from "./listBoxAnimations";
@@ -329,6 +332,7 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
   ) {
     const slotClassNames = useListBoxClassNames();
     const {
+      size,
       disabled,
       isSelected,
       isActive,
@@ -411,12 +415,13 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
           tabIndex={-1}
           className={cn(
             listBoxItemClass({
+              size,
               disabled,
               isActive,
             }),
             optionListItemGridClass(
               hasHint,
-              "gap-x-base",
+              OPTION_CONTROL_SIZE_LAYOUT[size].listItemGapX,
               showIndicatorSlot,
               hasIcon,
             ),
@@ -438,10 +443,12 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
 ListBoxItem.displayName = "ListBoxItem";
 
 export function ListBoxLabel({ className, ...props }: ListBoxLabelProps) {
+  const { size } = useListBox("ListBox.Label");
   const slotClassNames = useListBoxClassNames();
 
   return (
     <OptionListItemLabel
+      textVariant={CONTROL_SIZE_LAYOUT[size].controlText}
       className={cn(slotClassNames.label, className)}
       {...props}
     />
@@ -464,11 +471,16 @@ export function ListBoxHint({ className, ...props }: ListBoxHintProps) {
 ListBoxHint.displayName = "ListBoxHint";
 
 export function ListBoxIcon({ className, ...props }: ListBoxIconProps) {
+  const { size } = useListBox("ListBox.Icon");
   const slotClassNames = useListBoxClassNames();
 
   return (
     <OptionListItemIcon
-      className={cn(slotClassNames.icon, className)}
+      className={cn(
+        `[&_svg]:${CONTROL_SIZE_LAYOUT[size].icon}`,
+        slotClassNames.icon,
+        className,
+      )}
       {...props}
     />
   );
@@ -478,7 +490,7 @@ ListBoxIcon.displayName = "ListBoxIcon";
 
 export function ListBoxItemIndicator({
   variant = "default",
-  size = "small",
+  size: sizeProp,
   check,
   children,
   className,
@@ -486,7 +498,9 @@ export function ListBoxItemIndicator({
   ...rest
 }: ListBoxItemIndicatorProps) {
   const ctx = useOptionListItemContext("ListBox.ItemIndicator");
+  const { size: listSize } = useListBox("ListBox.ItemIndicator");
   const slotClassNames = useListBoxClassNames();
+  const size = resolveListBoxIndicatorSize(listSize, sizeProp);
 
   if (!ctx.showIndicatorSlot) return null;
 

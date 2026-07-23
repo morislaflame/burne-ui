@@ -28,10 +28,10 @@ export const TOOLTIP_VARIANT_SURFACE_CLASS: Record<TooltipVariant, string> = {
 };
 
 export const TOOLTIP_TEXT_LAYOUT: Record<TooltipSize, string> = {
-  small: "max-w-[12rem] p-small",
-  base: "max-w-[16rem] p-base",
-  mid: "max-w-xs p-mid",
-  large: "max-w-sm p-large",
+  small: "max-w-component-xsmall p-small",
+  base: "max-w-component-small p-base",
+  mid: "max-w-component-base p-mid",
+  large: "max-w-component-mid p-large",
 };
 
 export const TOOLTIP_CONTENT_VARIANT: Record<TooltipSize, TextVariant> = {

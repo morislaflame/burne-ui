@@ -43,7 +43,7 @@ import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorS
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `selected` | — | **Обязательный.** Активное состояние → анимация fill/mark |
-| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `size` | `base` | `xsmall` \| `small` \| `base` \| `mid` \| `large` |
 | `variant` | `base` | `base` \| `secondary` \| `outline` \| `gloss` |
 | `check` | `false` | Дефолтная галочка `IoCheckmarkSharp` |
 | `dot` | `false` | Radio-dot (круг внутри) |
@@ -81,10 +81,11 @@ type SelectionIndicatorClassNames = {
 
 ## Размеры
 
-CSS-переменные: `--selection-indicator-small` … `--selection-indicator-large`.
+CSS-переменные: `--selection-indicator-xsmall` … `--selection-indicator-large`.
 
 | size | CSS class | Icon class |
 |------|-----------|------------|
+| `xsmall` | `selection-indicator-xsmall` | `icon-xsmall` |
 | `small` | `selection-indicator-small` | `icon-xsmall` |
 | `base` | `selection-indicator-base` | `icon-xsmall` |
 | `mid` | `selection-indicator-mid` | `icon-base` |

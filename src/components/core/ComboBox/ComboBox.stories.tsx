@@ -265,6 +265,32 @@ export const DefaultOpen: Story = {
   ),
 };
 
+export const Sizes: Story = {
+  name: "Sizes small · base · mid · large",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`size` scales the field shell and the ListBox rows inside the Popover menu. Open each combobox to compare.",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex w-full flex-col gap-large">
+      {(["small", "base", "mid", "large"] as const).map((size) => (
+        <ComboBox
+          key={size}
+          size={size}
+          label={`size="${size}"`}
+          options={sampleOptions}
+          defaultValue="ru"
+          placeholder="Select language"
+        />
+      ))}
+    </div>
+  ),
+};
+
 export const SelectInteraction: Story = {
   name: "Interaction: selection",
   render: () => (

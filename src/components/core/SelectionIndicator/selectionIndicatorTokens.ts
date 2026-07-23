@@ -1,10 +1,11 @@
 import { cn } from "@/utils/cn";
 
-export type SelectionIndicatorSize = "small" | "base" | "mid" | "large";
+export type SelectionIndicatorSize = "xsmall" | "small" | "base" | "mid" | "large";
 
 export type SelectionIndicatorVariant = "default" | "secondary" | "outline" | "gloss";
 
 export const SELECTION_INDICATOR_SIZE_CLASS: Record<SelectionIndicatorSize, string> = {
+  xsmall: "selection-indicator-xsmall",
   small: "selection-indicator-small",
   base: "selection-indicator-base",
   mid: "selection-indicator-mid",
@@ -12,6 +13,7 @@ export const SELECTION_INDICATOR_SIZE_CLASS: Record<SelectionIndicatorSize, stri
 };
 
 export const SELECTION_INDICATOR_ICON_CLASS: Record<SelectionIndicatorSize, string> = {
+  xsmall: "icon-xsmall",
   small: "icon-xsmall",
   base: "icon-xsmall",
   mid: "icon-base",
@@ -31,6 +33,7 @@ export function selectionIndicatorMarkCustomIconClass(size: SelectionIndicatorSi
 }
 
 export const SELECTION_INDICATOR_DOT_CLASS: Record<SelectionIndicatorSize, string> = {
+  xsmall: "size-[calc(var(--selection-indicator-xsmall)*0.333333)]",
   small: "size-[calc(var(--selection-indicator-small)*0.333333)]",
   base: "size-[calc(var(--selection-indicator-base)*0.333333)]",
   mid: "size-[calc(var(--selection-indicator-mid)*0.333333)]",
@@ -63,6 +66,7 @@ export const SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS = cn(
 );
 
 const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
+  xsmall: "--selection-indicator-xsmall",
   small: "--selection-indicator-small",
   base: "--selection-indicator-base",
   mid: "--selection-indicator-mid",
@@ -70,9 +74,10 @@ const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
 };
 
 const INDICATOR_SSR_REM: Record<SelectionIndicatorSize, number> = {
-  small: 0.875,
+  xsmall: 0.875,
+  small: 1,
   base: 1.125,
-  mid: 1.375,
+  mid: 1.25,
   large: 1.5,
 };
 

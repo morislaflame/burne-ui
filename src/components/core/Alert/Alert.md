@@ -174,7 +174,7 @@ Gloss lift — отдельная кривая (`glossInteractiveMotion`), не 
 - `hasIndicator`, `hasTitle`, `hasDescription`, `hasAction`
 - Слоты вычисляются в `useAlertRootState` по props / compound children
 
-Shell: `w-fit max-w-component-base rounded-mid py-base px-mid`.
+Shell: `w-fit max-w-component-large rounded-mid py-base px-mid`.
 
 ## Токены и CSS
 

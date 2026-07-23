@@ -410,20 +410,28 @@
   --size: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
 
   /** Primitive control size scale (`--size-scale-*`) */
-  --size-scale-xsmall: calc(var(--size) * 0.65);
-  --size-scale-small: calc(var(--size) * 0.875);
-  --size-scale-base: calc(var(--size) * 1);
-  --size-scale-mid: calc(var(--size) * 1.125);
-  --size-scale-large: calc(var(--size) * 1.375);
-  --size-scale-xlarge: calc(var(--size) * 1.5);
-  --size-scale-2xlarge: calc(var(--size) * 1.75);
-  --size-scale-3xlarge: calc(var(--size) * 2);
+  --size-scale-xsmall: calc(var(--size) * 0.875);
+  --size-scale-small: calc(var(--size) * 1);
+  --size-scale-base: calc(var(--size) * 1.125);
+  --size-scale-mid: calc(var(--size) * 1.25);
+  --size-scale-large: calc(var(--size) * 1.5);
+  --size-scale-xlarge: calc(var(--size) * 1.75);
+  --size-scale-2xlarge: calc(var(--size) * 2);
+  --size-scale-3xlarge: calc(var(--size) * 2.25);
 
-  /** Container scale (modals, panels, layouts) — max-w-component-* */
-  --max-component-small: calc(var(--size) * 20);
-  --max-component-base: calc(var(--size) * 28);
-  --max-component-mid: calc(var(--size) * 32);
-  --max-component-large: calc(var(--size) * 36);
+  /**
+   * Container / panel width scale — `min-w-component-*` / `max-w-component-*`.
+   * Steps (× `--size` ≈ rem): xsmall 12 · small 16 · base 20 · mid 24 ·
+   * large 28 · xlarge 32 · 2xlarge 36.
+   * Dialog/Alert size props map to base→2xlarge (not 1:1 with step names).
+   */
+  --max-component-xsmall: calc(var(--size) * 12);
+  --max-component-small: calc(var(--size) * 16);
+  --max-component-base: calc(var(--size) * 20);
+  --max-component-mid: calc(var(--size) * 24);
+  --max-component-large: calc(var(--size) * 28);
+  --max-component-xlarge: calc(var(--size) * 32);
+  --max-component-2xlarge: calc(var(--size) * 36);
 
   --button-min-width-small: calc(var(--control-height-small) * 2.5);
   --button-min-width-base: calc(var(--control-height-base) * 2.5);
@@ -470,10 +478,11 @@
    * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
    * Outer ring diameter; fill uses inset 1px.
    */
+  --selection-indicator-xsmall: var(--size-scale-xsmall);
   --selection-indicator-small: var(--size-scale-small);
-  --selection-indicator-base: var(--size-scale-mid);
-  --selection-indicator-mid: var(--size-scale-large);
-  --selection-indicator-large: var(--size-scale-xlarge);
+  --selection-indicator-base: var(--size-scale-base);
+  --selection-indicator-mid: var(--size-scale-mid);
+  --selection-indicator-large: var(--size-scale-large);
 
   /**
    * Component shadows — single layer, bottom only.

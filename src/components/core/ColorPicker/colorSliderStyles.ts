@@ -68,6 +68,7 @@ export function colorSliderBackgroundStyle(
 
   switch (channel) {
     case "hue":
+      /* Channel gradients use fixed RGB endpoints — picker physics, not theme. */
       return {
         background: `linear-gradient(${dir}, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)`,
       };
@@ -80,6 +81,7 @@ export function colorSliderBackgroundStyle(
     }
     case "value": {
       const pure = hueToRgbString(color.h);
+      /* Fixed #000 black endpoint — value channel physics. */
       return { background: `linear-gradient(${dir}, #000, ${pure})` };
     }
     case "red":

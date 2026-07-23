@@ -29,17 +29,17 @@ export const POPOVER_DESCRIPTION_VARIANT: PopoverDescriptionVariantMap = {
 };
 
 export const POPOVER_MIN_WIDTH_CLASS: Record<PopoverSize, string> = {
-  small: "min-w-[12rem]",
-  base: "min-w-[14rem]",
-  mid: "min-w-[16rem]",
-  large: "min-w-[18rem]",
+  small: "min-w-component-xsmall",
+  base: "min-w-component-small",
+  mid: "min-w-component-small",
+  large: "min-w-component-base",
 };
 
 export const POPOVER_MAX_WIDTH_CLASS: Record<PopoverSize, string> = {
-  small: "max-w-[16rem]",
-  base: "max-w-xs",
-  mid: "max-w-sm",
-  large: "max-w-md",
+  small: "max-w-component-small",
+  base: "max-w-component-base",
+  mid: "max-w-component-mid",
+  large: "max-w-component-large",
 };
 
 export const POPOVER_PADDING_CLASS: Record<PopoverSize, string> = {

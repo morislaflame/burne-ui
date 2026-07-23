@@ -78,7 +78,7 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 
 ## Размеры
 
-`RADIO_SIZE_LAYOUT`: grid gap, title/desc variants, indicator size.
+`RADIO_SIZE_LAYOUT` (= shared `OPTION_CONTROL_SIZE_LAYOUT`): grid gap, title/desc variants.
 
 ## Анимации
 

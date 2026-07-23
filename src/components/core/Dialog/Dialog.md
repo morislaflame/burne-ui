@@ -110,7 +110,7 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 | `default` | `bg-surface border-token shadow-token-lg rounded-mid` |
 | `gloss` | `gloss-panel gloss-deep` + `gloss-content` |
 
-`max-w-component-mid`, `max-h-[min(90dvh,36rem)]`.
+`max-w-component-large`, `max-h-[min(90dvh,36rem)]`.
 
 ## Анимации
 
@@ -230,7 +230,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 |-------|------------|
 | `shadow-token-lg` | Тень панели |
 | `border-token`, `bg-surface` | Default surface |
-| `max-w-component-mid` | Ширина панели |
+| `max-w-component-large` | Ширина панели |
 | `rounded-mid` | Скругление |
 | `z-dialog` | Stacking dialog (`--z-dialog`) |
 | `overlay-backdrop` / `overlay-backdrop-scrim` | Подложка (light frosted / dark solid) |

@@ -52,7 +52,7 @@ const options = [
 | `onOpenChange` | — | `(open: boolean) => void` |
 | `variant` | `default` / gloss из ButtonGroup | как Input |
 | `status` | `default` | danger/success/warning tint |
-| `size` | `base` | размер trigger shell |
+| `size` | `base` | размер trigger shell и пунктов ListBox в Popover |
 | `disabled` | `false` | |
 | `placeholder` | `"Выберите значение"` | muted-текст без выбора |
 | `menuMaxHeight` | `min(24rem, 70vh)` | scroll ListBox |

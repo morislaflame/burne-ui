@@ -35,7 +35,7 @@ import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexTo
 | `value` / `defaultValue` | `#3b82f6` | Hex string |
 | `onValueChange` | — | `(hex: string) => void` |
 | `open` / `defaultOpen` / `onOpenChange` | — | Popover state |
-| `size` | `base` | `small` \| `base` \| `mid` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `variant` | `default` | `default` \| `gloss` (→ `Popover`) |
 | `side` | `bottom` | Popover side |
 | `disabled` | `false` | Блокирует trigger |
@@ -83,6 +83,7 @@ Channels: `hue`, `saturation`, `value`, `alpha`, `red`, `green`, `blue`.
 | `small` | `w-52` | `h-32` |
 | `base` | `w-64` | `h-40` |
 | `mid` | `w-72` | `h-48` |
+| `large` | `w-80` | `h-56` |
 
 | `ColorPicker` variant | Поведение |
 |-----------------------|-----------|

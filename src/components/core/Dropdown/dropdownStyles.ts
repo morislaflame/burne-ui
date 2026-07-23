@@ -1,5 +1,6 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
+import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/optionControlSizeLayout";
 
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
 
@@ -102,7 +103,12 @@ export function dropdownItemRowClass({
 }): string {
   return cn(
     DROPDOWN_ITEM_BASE_CLASS,
-    optionListItemGridClass(hasHint, "gap-x-base", showIndicatorSlot, hasIcon),
+    optionListItemGridClass(
+      hasHint,
+      OPTION_CONTROL_SIZE_LAYOUT.base.listItemGapX,
+      showIndicatorSlot,
+      hasIcon,
+    ),
     !disabled &&
       cn("cursor-pointer", DROPDOWN_ITEM_STATUS_CLASS[status]),
     disabled && DROPDOWN_ITEM_DISABLED_CLASS,

@@ -23,7 +23,7 @@ const ALERT_DIALOG_SECTION_PADDING_DEFAULT = {
 
 export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> = {
   small: {
-    panelMax: "max-w-component-small",
+    panelMax: "max-w-component-base",
     maxHeight: "max-h-[min(85dvh,26rem)]",
     headerGap: "gap-x-base",
     ...ALERT_DIALOG_SECTION_PADDING_COMPACT,
@@ -35,7 +35,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     bodyVariant: "small",
   },
   base: {
-    panelMax: "max-w-component-base",
+    panelMax: "max-w-component-large",
     maxHeight: "max-h-[min(90dvh,36rem)]",
     headerGap: "gap-x-mid gap-y-xsmall",
     ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
@@ -47,7 +47,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     bodyVariant: "base",
   },
   mid: {
-    panelMax: "max-w-component-mid",
+    panelMax: "max-w-component-xlarge",
     maxHeight: "max-h-[min(90dvh,40rem)]",
     headerGap: "gap-x-mid gap-y-small",
     ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
@@ -59,7 +59,7 @@ export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> =
     bodyVariant: "base",
   },
   large: {
-    panelMax: "max-w-component-large",
+    panelMax: "max-w-component-2xlarge",
     maxHeight: "max-h-[min(90dvh,44rem)]",
     headerGap: "gap-x-mid gap-y-small",
     ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,

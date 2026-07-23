@@ -30,13 +30,15 @@ export const TEXTAREA_SHELL_LAYOUT_CLASS = "flex flex-col items-stretch";
 export const TEXTAREA_CONTROL_BASE_CLASS =
   `box-border block min-h-0 w-full flex-1 resize-none overflow-auto bg-transparent font-inherit text-foreground outline-none placeholder:text-muted appearance-none [field-sizing:content] ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
+/** Resize grip strokes — micro-geometry for the affordance (not spacing scale). */
 export const TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS =
-  "absolute bottom-[2px] right-0 block h-px w-[9px] origin-bottom-right rotate-[135deg] bg-muted";
+  "absolute bottom-[length:calc(var(--border-width)*2)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*9)] origin-bottom-right rotate-[135deg] bg-muted";
 
 export const TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS =
-  "absolute bottom-[6px] right-0 block h-px w-[6px] origin-bottom-right rotate-[135deg] bg-muted";
+  "absolute bottom-[length:calc(var(--border-width)*6)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*6)] origin-bottom-right rotate-[135deg] bg-muted";
 
-export const TEXTAREA_RESIZE_GRIP_WRAP_CLASS = "relative block size-3 shrink-0";
+export const TEXTAREA_RESIZE_GRIP_WRAP_CLASS =
+  "relative block size-[length:var(--size-scale-small)] shrink-0";
 
 export const TEXTAREA_RESIZE_HANDLE_BASE_CLASS =
   "absolute bottom-0 right-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end p-xsmall outline-none focus-ring-inset";

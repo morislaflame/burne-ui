@@ -208,7 +208,15 @@ export const DefaultOpen: Story = {
 };
 
 export const Sizes: Story = {
-  name: "Sizes",
+  name: "Sizes small · base · mid · large",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`size` scales the field shell and the ListBox rows inside the Popover menu. Open each select to compare.",
+      },
+    },
+  },
   render: () => (
     <div className="flex w-full flex-col gap-large">
       {(["small", "base", "mid", "large"] as const).map((size) => (

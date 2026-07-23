@@ -26,10 +26,10 @@ export const CALENDAR_ROOT_PAD: Record<CalendarSize, string> = {
 };
 
 export const CALENDAR_ROOT_MIN_W: Record<CalendarSize, string> = {
-  small: "min-w-[15.5rem]",
-  base: "min-w-[18rem]",
-  mid: "min-w-[21rem]",
-  large: "min-w-[24rem]",
+  small: "min-w-component-small",
+  base: "min-w-component-base",
+  mid: "min-w-component-mid",
+  large: "min-w-component-large",
 };
 
 export const CALENDAR_HEADER_TEXT: Record<CalendarSize, string> = {
@@ -143,8 +143,9 @@ export const CALENDAR_HEADER_TITLE_BASE_CLASS = cn(
 
 export const CALENDAR_CELL_TEXT_CLASS = "relative z-[1] min-w-0 shrink-0 leading-none";
 
+/** Today marker — 3× border-width so it stays a hairline dot on the size scale. */
 export const CALENDAR_CELL_TODAY_DOT_CLASS =
-  "absolute bottom-[3px] left-1/2 z-[1] h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-primary";
+  "absolute bottom-[length:calc(var(--border-width)*3)] left-1/2 z-[1] h-[length:calc(var(--border-width)*3)] w-[length:calc(var(--border-width)*3)] -translate-x-1/2 rounded-full bg-primary";
 
 export const CALENDAR_NAV_ICON_CLASS = "icon-xsmall";
 

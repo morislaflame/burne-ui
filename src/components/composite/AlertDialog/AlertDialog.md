@@ -118,10 +118,10 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 
 | size | max-width | title / body Text |
 |------|-----------|-------------------|
-| `small` | `max-w-component-small` | `base` / `small` |
-| `base` | `max-w-component-mid` | `mid` / `base` |
-| `mid` | `max-w-component-mid` | `mid` / `base` |
-| `large` | `max-w-component-large` | `large` / `mid` |
+| `small` | `max-w-component-base` | `base` / `small` |
+| `base` | `max-w-component-large` | `mid` / `base` |
+| `mid` | `max-w-component-xlarge` | `mid` / `base` |
+| `large` | `max-w-component-2xlarge` | `large` / `mid` |
 
 ## Анимации
 

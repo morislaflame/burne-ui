@@ -1,5 +1,5 @@
-import { type TextVariant } from "@/components/core/Text";
 import { selectionIndicatorFallbackPx } from "@/components/core/SelectionIndicator";
+import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/optionControlSizeLayout";
 
 export type SwitchSize = "small" | "base" | "mid" | "large";
 
@@ -50,37 +50,37 @@ export const SWITCH_LAYOUT: Record<
   {
     track: string;
     travelPx: number;
-    title: TextVariant;
-    desc: TextVariant;
+    title: (typeof OPTION_CONTROL_SIZE_LAYOUT)[SwitchSize]["title"];
+    desc: (typeof OPTION_CONTROL_SIZE_LAYOUT)[SwitchSize]["desc"];
     gap: string;
   }
 > = {
   small: {
     track: SWITCH_TRACK.small,
     travelPx: selectionIndicatorFallbackPx("small"),
-    title: "small",
-    desc: "xsmall",
-    gap: "gap-x-small gap-y-xsmall",
+    title: OPTION_CONTROL_SIZE_LAYOUT.small.title,
+    desc: OPTION_CONTROL_SIZE_LAYOUT.small.desc,
+    gap: OPTION_CONTROL_SIZE_LAYOUT.small.gridGap,
   },
   base: {
     track: SWITCH_TRACK.base,
     travelPx: selectionIndicatorFallbackPx("base"),
-    title: "base",
-    desc: "small",
-    gap: "gap-x-base gap-y-xsmall",
+    title: OPTION_CONTROL_SIZE_LAYOUT.base.title,
+    desc: OPTION_CONTROL_SIZE_LAYOUT.base.desc,
+    gap: OPTION_CONTROL_SIZE_LAYOUT.base.gridGap,
   },
   mid: {
     track: SWITCH_TRACK.mid,
     travelPx: selectionIndicatorFallbackPx("mid"),
-    title: "mid",
-    desc: "small",
-    gap: "gap-x-mid gap-y-xsmall",
+    title: OPTION_CONTROL_SIZE_LAYOUT.mid.title,
+    desc: OPTION_CONTROL_SIZE_LAYOUT.mid.desc,
+    gap: OPTION_CONTROL_SIZE_LAYOUT.mid.gridGap,
   },
   large: {
     track: SWITCH_TRACK.large,
     travelPx: selectionIndicatorFallbackPx("large"),
-    title: "large",
-    desc: "base",
-    gap: "gap-x-mid gap-y-xsmall",
+    title: OPTION_CONTROL_SIZE_LAYOUT.large.title,
+    desc: OPTION_CONTROL_SIZE_LAYOUT.large.desc,
+    gap: OPTION_CONTROL_SIZE_LAYOUT.large.gridGap,
   },
 };

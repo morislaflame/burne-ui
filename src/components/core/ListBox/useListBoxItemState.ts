@@ -13,6 +13,7 @@ export function useListBoxItemState({
 }: UseListBoxItemStateProps) {
   const {
     listId,
+    size,
     selected,
     activeValue,
     showIndicator,
@@ -36,6 +37,7 @@ export function useListBoxItemState({
   });
 
   return {
+    size,
     disabled,
     isSelected,
     isActive,
