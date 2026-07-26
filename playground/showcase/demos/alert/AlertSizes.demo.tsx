@@ -12,7 +12,7 @@ export function AlertSizesDemo() {
             <Alert.Content>
               <Alert.Title>size={size}</Alert.Title>
               <Alert.Description>
-                Padding, icon and typography are scaled according to the dimensional grid.
+                Padding, icon, typography and radius follow the size grid (same rounded-* as Button).
               </Alert.Description>
             </Alert.Content>
           </Alert.Message>

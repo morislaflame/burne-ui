@@ -1,4 +1,4 @@
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import type { LoadingColor, LoadingDotsLayout, LoadingSize } from "./loadingTypes";

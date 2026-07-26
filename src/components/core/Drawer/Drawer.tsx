@@ -11,6 +11,7 @@ export type {
   DrawerTriggerProps,
   DrawerPlacement,
   DrawerExtent,
+  DrawerSize,
   DrawerVariant,
   DrawerClassNames,
   DrawerBackdropProps,
@@ -30,6 +31,7 @@ export function DrawerRoot({
   defaultOpen = false,
   onOpenChange,
   placement = "right",
+  size = "base",
   children,
   classNames,
   portalContainer,
@@ -39,6 +41,7 @@ export function DrawerRoot({
     defaultOpen,
     onOpenChange,
     placement,
+    size,
     portalContainer,
   });
 

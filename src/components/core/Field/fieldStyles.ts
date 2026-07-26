@@ -1,4 +1,4 @@
-import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
 import type { FieldHintStatus } from "./fieldTypes";
 

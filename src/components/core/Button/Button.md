@@ -102,7 +102,7 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 
 ## Размеры
 
-Размеры берутся из `CONTROL_SIZE_LAYOUT` (`controlSizeLayout.ts`):
+Размеры берутся из `CONTROL_SIZE_LAYOUT` (`utils/sizeLayout`):
 
 | size | Высота | min-width (кнопка) | Текст (`Text`) | Иконка в слоте | Радиус |
 |------|--------|--------------------|----------------|----------------|--------|

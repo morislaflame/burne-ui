@@ -470,7 +470,7 @@ export const Sizes: Story = {
             <Alert.Content>
               <Alert.Title>size={size}</Alert.Title>
               <Alert.Description>
-                Padding, icon, and typography scale with the size grid.
+                Padding, icon, typography and radius scale with the size grid.
               </Alert.Description>
             </Alert.Content>
           </Alert.Message>

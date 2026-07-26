@@ -27,12 +27,6 @@ export function DialogBasicDemo() {
             Modal window content. Close by Escape or button.
           </Text>
         </Dialog.Body>
-        <Dialog.Footer>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={() => setOpen(false)}>Ready</Button>
-        </Dialog.Footer>
         </Dialog.Panel>
       </Dialog>
     </>

@@ -16,6 +16,7 @@ import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, t
 |------|-----|--------------|----------|
 | `variant` | `default` \| `outline` \| `secondary` \| `gloss` | `default` | Визуальный стиль |
 | `status` | `default` \| `danger` \| `success` \| `info` \| `warning` | `default` | Семантический тон |
+| `size` | `small` \| `base` \| `mid` \| `large` | `base` | Padding, icon, type и **radius** (`CONTROL_SIZE_LAYOUT.rounded`) |
 | `role` | `status` \| `alert` | auto | Live region; danger/warning → `alert` |
 | `title` | `ReactNode` | — | Simple API |
 | `description` | `ReactNode` | — | Simple API |
@@ -174,7 +175,7 @@ Gloss lift — отдельная кривая (`glossInteractiveMotion`), не 
 - `hasIndicator`, `hasTitle`, `hasDescription`, `hasAction`
 - Слоты вычисляются в `useAlertRootState` по props / compound children
 
-Shell: `w-fit max-w-component-large rounded-mid py-base px-mid`.
+Shell: `w-fit` + `max-w-component-*` + padding/radius из `MESSAGE_BANNER_SIZE` (radius = `CONTROL_SIZE_LAYOUT[size].rounded`, как у Button).
 
 ## Токены и CSS
 

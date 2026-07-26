@@ -1,6 +1,6 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
-import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/optionControlSizeLayout";
+import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
 

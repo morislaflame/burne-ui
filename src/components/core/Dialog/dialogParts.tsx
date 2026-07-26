@@ -140,7 +140,7 @@ export function DialogHeadingBlock({
     <div
       className={cn(
         DIALOG_HEADING_BLOCK_CLASS,
-        sizePreset.headingBlockGap,
+        sizePreset.headingGap,
         slotClassNames.headingBlock,
         className,
       )}
@@ -156,18 +156,20 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
     {
       className,
       onClick,
+      size,
       "aria-label": ariaLabel,
       ...rest
     },
     ref,
   ) {
-    const { onOpenChange } = useDialog();
+    const { onOpenChange, sizePreset } = useDialog();
     const slotClassNames = useDialogClassNames();
 
     return (
       <CloseButton
         ref={ref}
         variant="secondary"
+        size={size ?? sizePreset.closeButtonSize}
         aria-label={ariaLabel}
         className={cn(
           DIALOG_CLOSE_CLASS,
@@ -468,10 +470,11 @@ export function DialogPortalShell({
         {isGloss ? (
           <div
             ref={bindGlossPanelRef}
-            className={dialogGlossPanelClass(
-              sizePreset.maxHeight,
-              slotClassNames.glossPanel,
-            )}
+            className={dialogGlossPanelClass({
+              maxHeight: sizePreset.maxHeight,
+              rounded: sizePreset.rounded,
+              slotClass: slotClassNames.glossPanel,
+            })}
           >
             <div
               className={dialogContentClass(

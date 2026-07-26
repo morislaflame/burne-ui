@@ -5,7 +5,7 @@ import { expect } from "storybook/test";
 import { IoDocumentTextOutline, IoSettingsOutline, IoPersonOutline } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
-import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { Tabs, type TabsOrientation, type TabsVariant } from ".";
 

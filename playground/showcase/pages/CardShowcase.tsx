@@ -12,6 +12,8 @@ import { CardPricingGridDemo } from "../demos/card/CardPricingGrid.demo";
 import cardPricingGridSource from "../demos/card/CardPricingGrid.demo.tsx?raw";
 import { CardProductSelectableDemo } from "../demos/card/CardProductSelectable.demo";
 import cardProductSelectableSource from "../demos/card/CardProductSelectable.demo.tsx?raw";
+import { CardSizesDemo } from "../demos/card/CardSizes.demo";
+import cardSizesSource from "../demos/card/CardSizes.demo.tsx?raw";
 import { CardVariantsDemo } from "../demos/card/CardVariants.demo";
 import cardVariantsSource from "../demos/card/CardVariants.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
@@ -29,6 +31,13 @@ export function CardShowcase() {
     >
       <ShowcaseSection title="Options" description="default, outline and secondary.">
         <ShowcaseDemoFromFile align="stretch" Demo={CardVariantsDemo} source={cardVariantsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Sizes"
+        description="small → large: radius matches Button; padding and type scale with size."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={CardSizesDemo} source={cardSizesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Pressable" description="Clickable card with ripple and preview.">
@@ -82,6 +91,10 @@ export function CardShowcase() {
           <p>
             <code>default</code>, <code>outline</code>, <code>secondary</code>, <code>gloss</code> — prop{" "}
             <code>variant</code> on the root Card.
+          </p>
+          <p>
+            <code>size</code>: <code>small</code> \| <code>base</code> \| <code>mid</code> \|{" "}
+            <code>large</code> — radius (same as Button), section padding, Title/Description type scale.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

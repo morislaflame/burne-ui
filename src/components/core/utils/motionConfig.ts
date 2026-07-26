@@ -67,7 +67,7 @@ export interface MotionConfig {
   /**
    * Duration (ms) for selection fill scale animations:
    * ToggleButton, Calendar cell, Checkbox/Radio/ListBox indicator fill, Switch thumb fill.
-   * @default 200
+   * @default 280
    */
   selectionFillDuration: number;
 
@@ -202,7 +202,7 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   switchThumbDuration: 340,
   switchThumbEase: "back.out(1.4)",
   selectionFillEase: "back.out(1.25)",
-  selectionFillDuration: 200,
+  selectionFillDuration: 280,
   hoverLiftScale: 1.025,
   badgeAnchorHoverLiftScale: 1.052,
   pressSqueezeScale: [1, 0.98, 1],

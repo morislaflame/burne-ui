@@ -7,7 +7,7 @@ import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { TOAST_ENTRY_OFFSET_PX, TOAST_MAX_VISIBLE, TOAST_STACK_PEEK_PX, TOAST_STACK_SCALE_STEP } from "./toastAPI";
-import { toastViewportWidthPx } from "@/components/core/utils/messageBannerSize";
+import { toastViewportWidthPx } from "@/components/core/utils/sizeLayout";
 import { toastViewportAriaLabel } from "./toastA11y";
 import { ToastClassNamesProvider } from "./toastContext";
 import { ToastRoot } from "./Toast";

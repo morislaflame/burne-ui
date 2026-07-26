@@ -1,82 +1,44 @@
 import { alertSurfaceClass, alertIndicatorWrapperTextClass } from "@/components/core/Alert/alertStyles";
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import { dialogOverlayClass, dialogOverlayEnterStyle } from "@/components/core/Dialog/dialogStyles";
+import {
+  PANEL_SIZE_LAYOUT,
+  panelSizeLayout,
+  type PanelSize,
+} from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import type { AlertDialogSize, AlertDialogSizePreset } from "./alertDialogTypes";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 
 export const ALERT_DIALOG_CONTENT_CLASS =
-  "flex min-h-0 flex-1 flex-col gap-large text-left";
+  "flex min-h-0 flex-1 flex-col text-left";
 
-const ALERT_DIALOG_SECTION_PADDING_COMPACT = {
-  headerPadding: "px-mid pt-base",
-  bodyPadding: "px-mid py-small",
-  footerPadding: "px-mid pb-base",
-} as const;
-
-const ALERT_DIALOG_SECTION_PADDING_DEFAULT = {
-  headerPadding: "px-large pt-mid",
-  bodyPadding: "px-large py-small",
-  footerPadding: "px-large pb-mid",
-} as const;
+function toAlertDialogSizePreset(size: PanelSize): AlertDialogSizePreset {
+  const panel = PANEL_SIZE_LAYOUT[size];
+  return {
+    rounded: panel.rounded,
+    panelMax: panel.panelMax,
+    maxHeight: panel.maxHeight,
+    headerGap: panel.alertHeaderGap,
+    headerPadding: panel.headerPadding,
+    bodyPadding: panel.bodyPadding,
+    footerPadding: panel.footerPadding,
+    iconClass: panel.iconClass,
+    titleVariant: panel.alertTitleVariant,
+    descVariant: panel.descVariant,
+    descClassName: panel.descClassName,
+    bodyVariant: panel.bodyVariant,
+    footerButtonSize: panel.footerButtonSize,
+    closeButtonSize: panel.closeButtonSize,
+  };
+}
 
 export const ALERT_DIALOG_SIZE: Record<AlertDialogSize, AlertDialogSizePreset> = {
-  small: {
-    panelMax: "max-w-component-base",
-    maxHeight: "max-h-[min(85dvh,26rem)]",
-    headerGap: "gap-x-base",
-    ...ALERT_DIALOG_SECTION_PADDING_COMPACT,
-    headingBlockGap: "flex min-w-0 flex-col gap-xsmall",
-    iconClass: "icon-mid",
-    titleVariant: "base",
-    descVariant: "small",
-    descClassName: "text-muted",
-    bodyVariant: "small",
-  },
-  base: {
-    panelMax: "max-w-component-large",
-    maxHeight: "max-h-[min(90dvh,36rem)]",
-    headerGap: "gap-x-mid gap-y-xsmall",
-    ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
-    headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-large",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "base",
-  },
-  mid: {
-    panelMax: "max-w-component-xlarge",
-    maxHeight: "max-h-[min(90dvh,40rem)]",
-    headerGap: "gap-x-mid gap-y-small",
-    ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
-    headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-large",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "base",
-  },
-  large: {
-    panelMax: "max-w-component-2xlarge",
-    maxHeight: "max-h-[min(90dvh,44rem)]",
-    headerGap: "gap-x-mid gap-y-small",
-    ...ALERT_DIALOG_SECTION_PADDING_DEFAULT,
-    headingBlockGap: "flex min-w-0 flex-col gap-base",
-    iconClass: "icon-large",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "mid",
-  },
-};
-
-export const FOOTER_BUTTON_SIZE: Record<AlertDialogSize, ButtonSize> = {
-  small: "small",
-  base: "base",
-  mid: "base",
-  large: "base",
+  small: toAlertDialogSizePreset("small"),
+  base: toAlertDialogSizePreset("base"),
+  mid: toAlertDialogSizePreset("mid"),
+  large: toAlertDialogSizePreset("large"),
 };
 
 export const ALERT_DIALOG_NATIVE_CLASS =
@@ -99,10 +61,10 @@ export function alertDialogNativeClass(contained: boolean): string {
 export const ALERT_DIALOG_PANEL_SHELL_CLASS = "relative z-10 w-full outline-none";
 
 export const ALERT_DIALOG_PANEL_SURFACE_CLASS =
-  "flex min-h-0 flex-col overflow-hidden rounded-mid text-left";
+  "flex min-h-0 flex-col overflow-hidden text-left";
 
 export const ALERT_DIALOG_GLOSS_PANEL_CLASS =
-  "gloss-panel gloss-deep flex min-h-0 w-full flex-col rounded-mid text-left text-foreground";
+  "gloss-panel gloss-deep flex min-h-0 w-full flex-col text-left text-foreground";
 
 export const ALERT_DIALOG_GLOSS_CONTENT_CLASS = "gloss-content";
 
@@ -157,7 +119,7 @@ export function alertDialogPanelClass({
   slotClass,
 }: {
   variant: AlertVariant;
-  sizePreset: Pick<AlertDialogSizePreset, "panelMax" | "maxHeight">;
+  sizePreset: Pick<AlertDialogSizePreset, "panelMax" | "maxHeight" | "rounded">;
   className?: string;
   slotClass?: string;
 }): string {
@@ -165,6 +127,7 @@ export function alertDialogPanelClass({
   return cn(
     ALERT_DIALOG_PANEL_SHELL_CLASS,
     sizePreset.panelMax,
+    sizePreset.rounded,
     !isGloss && ALERT_DIALOG_PANEL_SURFACE_CLASS,
     !isGloss && sizePreset.maxHeight,
     !isGloss && alertDialogPanelSurfaceClass(variant),
@@ -173,8 +136,16 @@ export function alertDialogPanelClass({
   );
 }
 
-export function alertDialogGlossPanelClass(maxHeight: string, slotClass?: string): string {
-  return cn(ALERT_DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
+export function alertDialogGlossPanelClass({
+  maxHeight,
+  rounded,
+  slotClass,
+}: {
+  maxHeight: string;
+  rounded: string;
+  slotClass?: string;
+}): string {
+  return cn(ALERT_DIALOG_GLOSS_PANEL_CLASS, rounded, maxHeight, slotClass);
 }
 
 export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {
@@ -184,5 +155,11 @@ export function alertDialogHeaderIconWrapperClass(status: AlertStatus): string {
 export function footerButtonSizeForAlertDialog(
   dialogSize: AlertDialogSize,
 ): ButtonSize {
-  return FOOTER_BUTTON_SIZE[dialogSize];
+  return panelSizeLayout(dialogSize).footerButtonSize;
+}
+
+export function closeButtonSizeForAlertDialog(
+  dialogSize: AlertDialogSize,
+): ButtonSize {
+  return panelSizeLayout(dialogSize).closeButtonSize;
 }

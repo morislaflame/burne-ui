@@ -48,8 +48,8 @@ export function AlertDialogContent({ className, ...rest }: AlertDialogContentPro
 AlertDialogContent.displayName = "AlertDialogContent";
 
 export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogCloseProps>(
-  function AlertDialogClose({ className, onClick, ...rest }, ref) {
-    const { onOpenChange } = useAlertDialog();
+  function AlertDialogClose({ className, onClick, size, ...rest }, ref) {
+    const { onOpenChange, sizePreset } = useAlertDialog();
     const headerCtx = useOptionalAlertDialogHeaderContext();
     const slotClassNames = useAlertDialogClassNames();
 
@@ -57,6 +57,7 @@ export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogClosePr
       <CloseButton
         ref={ref}
         variant="secondary"
+        size={size ?? sizePreset.closeButtonSize}
         className={cn(
           ALERT_DIALOG_CLOSE_CLASS,
           headerCtx && messageBannerCloseCellClass(headerCtx.gridSlots),
@@ -503,10 +504,11 @@ export function AlertDialogPortalShell({
         {isGloss ? (
           <div
             ref={bindGlossPanelRef}
-            className={alertDialogGlossPanelClass(
-              sizePreset.maxHeight,
-              slotClassNames.glossPanel,
-            )}
+            className={alertDialogGlossPanelClass({
+              maxHeight: sizePreset.maxHeight,
+              rounded: sizePreset.rounded,
+              slotClass: slotClassNames.glossPanel,
+            })}
           >
             <div
               className={alertDialogContentClass(

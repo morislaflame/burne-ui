@@ -1,4 +1,5 @@
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
+import { panelSizeLayout } from "@/components/core/utils/sizeLayout";
 
 import type { ColorPickerSize } from "./colorPickerTypes";
 
@@ -57,7 +58,7 @@ export const COLOR_PICKER_ALPHA_SUFFIX_CLASS = "text-small text-muted select-non
 export const COLOR_PICKER_PRESETS_CLASS =
   "flex flex-wrap gap-xsmall border-t-token pt-small";
 
-export const COLOR_PICKER_CONTENT_PANEL_CLASS = "flex flex-col rounded-mid text-foreground";
+export const COLOR_PICKER_CONTENT_PANEL_CLASS = "flex flex-col text-foreground";
 
 export function colorPickerContentPanelClass(
   size: ColorPickerSize,
@@ -65,6 +66,7 @@ export function colorPickerContentPanelClass(
 ): string {
   return cn(
     COLOR_PICKER_CONTENT_PANEL_CLASS,
+    panelSizeLayout(size).rounded,
     COLOR_PICKER_WIDTH[size],
     COLOR_PICKER_PAD[size],
     slotPanel,

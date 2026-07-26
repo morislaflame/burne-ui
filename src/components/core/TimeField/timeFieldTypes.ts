@@ -4,7 +4,7 @@ import type {
   ReactNode,
 } from "react";
 
-import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type TimeFieldSize = ComponentSize;

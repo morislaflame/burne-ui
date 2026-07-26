@@ -7,7 +7,7 @@ import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
-import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (

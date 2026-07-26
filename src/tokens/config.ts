@@ -24,7 +24,8 @@
  * Customization:
  * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers; fluid `clamp` by viewport (theme JS writes scaled `clamp`, not fixed rem).
  * - `--size` — control sizes (icons, indicators, button min-width, modal max-w); fluid `clamp` by viewport.
- * - `--radius` — base radius; `rounded-*` steps via multipliers; fluid `clamp` by viewport.
+ * - `--radius` — base radius; `rounded-*` steps via tight multipliers
+ *   (`0.75 / 0.875 / 1 / 1.125 / 1.25`); fluid `clamp` by viewport.
  * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large` (`calc(… * var(--shadow-size))`; do not bake px).
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).

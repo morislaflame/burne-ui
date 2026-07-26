@@ -1,5 +1,5 @@
-import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 import type { TextVariant } from "@/components/core/Text";
 import { cn } from "@/utils/cn";

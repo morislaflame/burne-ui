@@ -1,4 +1,4 @@
-import type { ComponentSize } from "./componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
 const CONTROL_HEIGHT_VAR: Record<ComponentSize, string> = {
   small: "--control-height-small",

@@ -1,7 +1,7 @@
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import { messageBannerSizePreset } from "@/components/core/utils/messageBannerSize";
+import { messageBannerSizePreset } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import type { LoadingColor } from "@/components/core/Loading";

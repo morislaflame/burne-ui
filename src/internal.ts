@@ -6,7 +6,7 @@
 export {
   CONTROL_SIZE_LAYOUT,
   type ControlSizeLayout,
-} from "@/components/core/utils/controlSizeLayout";
+} from "@/components/core/utils/sizeLayout";
 export { readControlHeightPx } from "@/components/core/utils/controlHeightMeasure";
 export {
   affixSlotClass,

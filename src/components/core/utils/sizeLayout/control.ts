@@ -17,6 +17,7 @@ export type ControlSizeLayout = {
   rounded: string;
 };
 
+/** Shared size presets for interactive controls (Button, Input, Tabs, …). */
 export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
   small: {
     minWButton: "min-w-button-small",

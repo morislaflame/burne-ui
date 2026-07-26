@@ -7,7 +7,7 @@ import type {
 } from "react";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
-import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 
 

@@ -3,8 +3,7 @@ import {
   buttonGroupRoundingClasses,
   buttonGroupSegmentSurfaceClasses,
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
-import type { ComponentSize } from "@/components/core/utils/componentSize";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT, type ComponentSize } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { FIELD_SHELL_VARIANT_BG_CLASS, type FieldShellFilledVariant } from "@/components/core/utils/fieldShellVariant";
 import { hoverVariant, TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
@@ -74,10 +73,10 @@ const SEARCH_EXPANDED_RADIUS_STEP: Record<ComponentSize, SearchExpandedRadiusSte
 };
 
 const SEARCH_EXPANDED_RADIUS_FALLBACK_MULT: Record<SearchExpandedRadiusStep, number> = {
-  small: 0.75,
+  small: 0.875,
   base: 1,
-  mid: 1.25,
-  large: 1.5,
+  mid: 1.125,
+  large: 1.25,
 };
 
 export const SEARCH_EXPANDED_ROUNDED_CLASS: Record<ComponentSize, string> = {

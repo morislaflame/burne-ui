@@ -2,7 +2,12 @@ import { useCallback, useId, useRef, useState } from "react";
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
-import type { DrawerContextValue, DrawerPlacement, UseDrawerRootStateProps } from "./drawerTypes";
+import { DRAWER_SIZE, footerButtonSizeForDrawer } from "./drawerStyles";
+import type {
+  DrawerContextValue,
+  DrawerPlacement,
+  UseDrawerRootStateProps,
+} from "./drawerTypes";
 
 const DEFAULT_PLACEMENT: DrawerPlacement = "right";
 
@@ -11,6 +16,7 @@ export function useDrawerRootState({
   defaultOpen = false,
   onOpenChange,
   placement = DEFAULT_PLACEMENT,
+  size = "base",
   portalContainer,
 }: UseDrawerRootStateProps & { placement?: DrawerPlacement }) {
   const [open, setOpen] = useControllableState({
@@ -36,6 +42,8 @@ export function useDrawerRootState({
     setHasDescription(value);
   }, []);
 
+  const sizePreset = DRAWER_SIZE[size];
+
   const contextValue: DrawerContextValue = {
     open,
     titleId,
@@ -46,6 +54,9 @@ export function useDrawerRootState({
     setHasDescription: setHasDescriptionStable,
     onOpenChange: setOpen,
     placement,
+    size,
+    sizePreset,
+    footerButtonSize: footerButtonSizeForDrawer(size),
     overlayRef: placeholderOverlayRef,
     panelRef: placeholderPanelRef,
     skipCloseAnimRef: placeholderSkipCloseAnimRef,

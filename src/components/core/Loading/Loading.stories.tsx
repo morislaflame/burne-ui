@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 
 import { Text } from "@/components/core/Text";
-import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { Loading, type LoadingColor, type LoadingType } from "./Loading";
 

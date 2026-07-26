@@ -36,7 +36,7 @@ export const CALENDAR_HEADER_TEXT: Record<CalendarSize, string> = {
   small: "text-small",
   base: "text-base",
   mid: "text-mid",
-  large: "text-large",
+  large: "text-mid",
 };
 
 export const CALENDAR_ROOT_SURFACE: Record<CalendarVariant, string> = {
@@ -57,7 +57,7 @@ export const CALENDAR_DAY_TEXT: Record<CalendarSize, TextVariant> = {
   small: "small",
   base: "base",
   mid: "mid",
-  large: "large",
+  large: "mid",
 };
 
 export const CALENDAR_DAY_BTN: Record<CalendarSize, string> = {
@@ -71,7 +71,7 @@ export const CALENDAR_PICKER_TEXT: Record<CalendarSize, TextVariant> = {
   small: "small",
   base: "base",
   mid: "mid",
-  large: "large",
+  large: "mid",
 };
 
 export const CALENDAR_PICKER_BTN: Record<CalendarSize, string> = {

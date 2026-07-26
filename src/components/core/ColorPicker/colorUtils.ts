@@ -93,6 +93,15 @@ export function hsvaToHex(hsva: HSVA): string {
   return rgbaToHex(hsvaToRgba(hsva));
 }
 
+/** Lowercase `#rrggbb` / `#rrggbbaa` for equality checks (hue 360 vs 0 share RGB). */
+export function normalizeHex(hex: string): string {
+  const s = hex.trim().replace(/^#/, "").toLowerCase();
+  if (s.length === 3) {
+    return `#${s[0]}${s[0]}${s[1]}${s[1]}${s[2]}${s[2]}`;
+  }
+  return `#${s}`;
+}
+
 export function hexToHsva(hex: string): HSVA | null {
   const rgba = hexToRgba(hex);
   return rgba ? rgbaToHsva(rgba) : null;

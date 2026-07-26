@@ -64,7 +64,7 @@ const [open, setOpen] = useState(false);
 | `gap` | per size | Внутренний gap panel |
 | `matchAnchorWidth` | `false` | `minWidth` = ширина anchor |
 | `align` | `center` / `start` | Выравнивание (`FloatingAlign`) |
-| `unstyled` | `false` | Без default panel surface |
+| `unstyled` | `false` | Без default padding/gap/minmax; radius + surface остаются |
 | `contentRole` | `dialog` | `dialog` \| `undefined` |
 
 ### Compound-подчасти
@@ -90,13 +90,16 @@ const [open, setOpen] = useState(false);
 | `default` | `bg-surface border-token` + persistent `shadowSm` |
 | `gloss` | `gloss-panel` + gloss interactive handlers |
 
-Sizes влияют на padding, typography (`Popover.Title` / `Hint`) и default `gap`.
+Sizes влияют на padding, typography (`Popover.Title` / `Hint`), radius и default `gap` — общий пресет `PANEL_SIZE_LAYOUT` (с Dialog / AlertDialog / Card).
 
-| size | Типичный padding panel |
-|------|------------------------|
-| `small` | compact header/body |
-| `base` | default |
-| `mid` / `large` | увеличенные отступы и Text variants |
+| size | padding panel | title / desc |
+|------|---------------|--------------|
+| `small` | `px-mid py-base` | `small` / `xsmall` |
+| `base` | `px-mid py-base` | `base` / `small` |
+| `mid` | `px-large py-mid` | `mid` / `base` |
+| `large` | `px-xlarge py-large` | `large` / `base` |
+
+Title/Description — отдельная шкала Popover (компактнее Dialog `titleVariant` / `descVariant`). Gap Header↔Body — `panel.contentGap` (`gap-base` на `base`).
 
 ## Анимации
 
@@ -204,7 +207,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `POPOVER_PANEL_CLASS` | `bg-surface border-token rounded-mid` |
+| `POPOVER_DEFAULT_PANEL_CLASS` | `bg-surface border-token` + radius из `PANEL_SIZE_LAYOUT` |
 | `POPOVER_GLOSS_PANEL_CLASS` | `gloss-panel gloss-deep` |
 | `shadowSm()` via persistent shadow | Rest panel shadow |
 | `burneLightThemePortalProps` | Theme sync в portal |
@@ -217,7 +220,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 1. **`className` на подчастях** — `Trigger`, `Content`, `Label`, `Body` merge в слот.
 2. **`classNames` на root `Popover`** — все слоты через provider.
 
-`unstyled` на `Content` — без default `panel` surface; стилизуйте `Body` или children.
+`unstyled` на `Content` — без default padding/gap/minmax; surface (border/bg/shadow) и **size radius** остаются на panel shell. Свой padding — через `Body` / children.
 
 ### Слоты `PopoverClassNames`
 

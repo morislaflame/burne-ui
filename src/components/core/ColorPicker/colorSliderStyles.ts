@@ -1,12 +1,14 @@
 import type { CSSProperties } from "react";
 
+import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorTokens";
 import { sliderTrackHitAreaClass } from "@/components/core/Slider/sliderStyles";
 import { cn } from "@/utils/cn";
 
 import { alphaSliderGradientStyle, hsvaToRgba, hueToRgbString, type HSVA } from "./colorUtils";
 import type { ColorChannel, ColorSliderOrientation, ColorSliderSize } from "./colorSliderTypes";
 
-export const COLOR_SLIDER_TRACK_SHAPE_CLASS = "overflow-hidden rounded-full";
+/** Clip channel gradient — same radius token as Slider rail / SelectionIndicator. */
+export const COLOR_SLIDER_TRACK_OVERFLOW_CLASS = "overflow-hidden";
 
 export const COLOR_SLIDER_DISABLED_CLASS = "opacity-48";
 
@@ -47,7 +49,8 @@ export function colorSliderTrackClass({
       size,
       className,
     }),
-    COLOR_SLIDER_TRACK_SHAPE_CLASS,
+    COLOR_SLIDER_TRACK_OVERFLOW_CLASS,
+    SELECTION_INDICATOR_RADIUS_CLASS[size],
     disabled && COLOR_SLIDER_DISABLED_CLASS,
   );
 }

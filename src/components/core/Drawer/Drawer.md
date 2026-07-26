@@ -18,6 +18,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | `defaultOpen` | `false` | Uncontrolled начальное состояние |
 | `onOpenChange` | — | `(open: boolean) => void` |
 | `placement` | `right` | `left` \| `right` \| `top` \| `bottom` |
+| `size` | `base` | Chrome density (`PANEL_SIZE_LAYOUT`): padding, typography, close/footer buttons |
 | `classNames` | — | Слоты портала и панели |
 
 ### Compound-подчасти
@@ -32,7 +33,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | `Drawer.Header` / `HeadingBlock` / `Title` / `Description` | Шапка |
 | `Drawer.Body` | Скроллируемая область |
 | `Drawer.Footer` | Кнопки |
-| `Drawer.Close` | `CloseButton` |
+| `Drawer.Close` | `CloseButton`; size из `PANEL_SIZE_LAYOUT.closeButtonSize` |
 
 ### `Drawer.Panel`
 
@@ -67,7 +68,7 @@ const [open, setOpen] = useState(false);
 
 `Drawer.Backdrop isDismissable={false}` — отключить закрытие по клику на overlay.
 
-## placement и size
+## placement, extent и size
 
 | placement | Slide axis | Позиция панели |
 |-----------|------------|----------------|
@@ -76,13 +77,15 @@ const [open, setOpen] = useState(false);
 | `top` | `yPercent: -100 → 0` | `top-0 inset-x-0` |
 | `bottom` | `yPercent: 100 → 0` | `bottom-0 inset-x-0` |
 
-| size | horizontal drawer | vertical drawer |
+`extent` на `Drawer.Panel` — доля экрана (viewport). `size` на `Drawer` — chrome из `PANEL_SIZE_LAYOUT` (как Dialog / Card).
+
+| extent | horizontal drawer | vertical drawer |
 |------|-------------------|-----------------|
 | `default` | `max-w-[min(100vw,24rem)]` | `max-h-[90dvh]` |
 | `mid` | `50vw` | `max-h-[50dvh]` |
 | `full` | `w-screen` | `h-dvh` |
 
-Скругление: `rounded-*-mid` на стороне, противоположной краю экрана (`size="full"` — без rounding).
+Скругление края: `rounded-*-{size}` (`extent="full"` — без rounding). Close / footer buttons — `closeButtonSize` / `footerButtonSize` из panel.
 
 ## Анимации
 
@@ -231,7 +234,7 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 | `footer` | `Drawer.Footer` | Actions row |
 | `close` | `Drawer.Close` | CloseButton styles |
 
-`Drawer.Panel`: `size` (`default` | `mid` | `full`), `variant` (`default` | `gloss`), `placement` на `<Drawer>`.
+`Drawer.Panel`: `extent` (`default` | `mid` | `full`), `variant` (`default` | `gloss`); `placement` / `size` на `<Drawer>`.
 
 ### Compound API
 

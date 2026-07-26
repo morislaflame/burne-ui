@@ -5,6 +5,10 @@ import type {
   ReactNode,
 } from "react";
 
+import type { CardSize } from "./cardStyles";
+
+export type { CardSize } from "./cardStyles";
+
 export type CardVariant = "default" | "outline" | "secondary" | "gloss";
 
 export type CardPressEvent =
@@ -28,6 +32,8 @@ export type CardProps = Omit<
   "onClick" | "onKeyDown"
 > & {
   variant?: CardVariant;
+  /** Radius, padding and title/description type scale. @default "base" */
+  size?: CardSize;
   /**
    * Interactive card: hover-lift, shadow and squeeze on press (like a button).
    * Ripple is not built-in — if needed, pass `<Ripple />` as the first child and wrap the rest of the content in a layer with `relative z-[1]`.
@@ -54,14 +60,16 @@ export type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
 export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
 
-export type CardClassNamesProviderProps = {
+export type CardProviderProps = {
   classNames?: CardClassNames;
+  size: CardSize;
   children: ReactNode;
 };
 
 export type UseCardRootStateProps = Pick<
   CardProps,
   | "variant"
+  | "size"
   | "pressable"
   | "className"
   | "onClick"

@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 import { ensureRippleEase, gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { getMotionConfig, motionFeedbackExpand } from "@/components/core/utils/motionConfig";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import { useButtonClassNames, useOptionalButtonContext } from "./buttonContext";

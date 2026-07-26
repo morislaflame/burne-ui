@@ -186,7 +186,7 @@ configureMotion({
 
 | Элемент | Классы / токены |
 |---------|-----------------|
-| Карточка | `rounded-mid py-base px-mid`, `shadow-token-md` |
+| Карточка | padding/radius из `MESSAGE_BANNER_SIZE` (radius как у Button), `shadow-token-mid` |
 | Viewport | `fixed z-toast` (`--z-toast`), placement offsets (`top-4`, …) |
 | Scrim | `toastScrimToken(gradientTop/Bottom, mask, …)` |
 | Ширина | `360px` (`TOAST_WIDTH_PX`) |

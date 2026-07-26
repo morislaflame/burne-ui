@@ -13,7 +13,7 @@ import { resolvePopoverDescribedBy, resolvePopoverLabelledBy, popoverTriggerA11y
 import { partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
 import { resolvePopoverContentAlign, usePopoverContentLifecycle } from "./popoverAnimations";
 import { PopoverResolvedSideProvider, usePopoverClassNames, usePopoverContext, usePopoverResolvedSide } from "./popoverContext";
-import { POPOVER_DEFAULT_GAP, POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultPanelClass, popoverGlossContentClass, popoverGlossPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
+import { POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultContentGap, popoverDefaultPanelClass, popoverGlossContentClass, popoverGlossPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
 import type {
   PopoverArrowProps,
   PopoverBodyProps,
@@ -166,12 +166,14 @@ PopoverArrow.displayName = POPOVER_ARROW_DISPLAY_NAME;
 
 export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
   function PopoverHeader({ className, children, ...rest }, ref) {
+    const { size } = usePopoverContext("Popover.Header");
     const slotClassNames = usePopoverClassNames();
 
     return (
       <div
         ref={ref}
         className={popoverHeaderClass({
+          size,
           slotClass: slotClassNames.header,
           className,
         })}
@@ -291,7 +293,8 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
     const slotClassNames = usePopoverClassNames();
     const isGloss = variant === "gloss";
     const align = resolvePopoverContentAlign({ alignProp, matchAnchorWidth });
-    const contentGap = gapProp ?? POPOVER_DEFAULT_GAP[size];
+    const contentGap = gapProp ?? popoverDefaultContentGap(size);
+    const gapPropSet = gapProp !== undefined;
 
     const { customArrow, panelChildren } =
       partitionPopoverContentChildren(children);
@@ -374,12 +377,17 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
                 className={popoverGlossPanelClass({
                   size,
                   unstyled,
-                  contentGap,
                   slotClass: slotClassNames.glossPanel,
                 })}
               >
                 <div
-                  className={popoverGlossContentClass(slotClassNames.glossContent)}
+                  className={popoverGlossContentClass({
+                    size,
+                    unstyled,
+                    contentGap,
+                    gapPropSet,
+                    slotClass: slotClassNames.glossContent,
+                  })}
                 >
                   {panelChildren}
                 </div>
@@ -390,6 +398,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
                   size,
                   unstyled,
                   contentGap,
+                  gapPropSet,
                   slotClass: slotClassNames.panel,
                 })}
               >

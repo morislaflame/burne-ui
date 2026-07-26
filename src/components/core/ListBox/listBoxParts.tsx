@@ -3,9 +3,8 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT, OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
-import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/optionControlSizeLayout";
 import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 

@@ -1,5 +1,5 @@
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 
 import type { ListBoxSize } from "./listBoxTypes";
 

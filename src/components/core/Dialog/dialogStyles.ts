@@ -1,4 +1,9 @@
 import { modalOverlayEnterStyle } from "@/components/core/utils/modalSurfaceMotion";
+import {
+  PANEL_SIZE_LAYOUT,
+  panelSizeLayout,
+  type PanelSize,
+} from "@/components/core/utils/sizeLayout";
 
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 import type { DialogSize, DialogSizePreset, DialogVariant } from "./dialogTypes";
@@ -6,72 +11,33 @@ import type { DialogSize, DialogSizePreset, DialogVariant } from "./dialogTypes"
 import { cn } from "@/utils/cn";
 
 export const DIALOG_CONTENT_CLASS =
-  "flex min-h-0 flex-1 flex-col gap-large text-left";
+  "flex min-h-0 flex-1 flex-col text-left";
 
-const DIALOG_SECTION_PADDING_COMPACT = {
-  headerPadding: "px-mid pt-base",
-  bodyPadding: "px-mid py-small",
-  footerPadding: "px-mid pb-base",
-} as const;
-
-const DIALOG_SECTION_PADDING_DEFAULT = {
-  headerPadding: "px-large pt-mid",
-  bodyPadding: "px-large py-small",
-  footerPadding: "px-large pb-mid",
-} as const;
+function toDialogSizePreset(size: PanelSize): DialogSizePreset {
+  const panel = PANEL_SIZE_LAYOUT[size];
+  return {
+    rounded: panel.rounded,
+    panelMax: panel.panelMax,
+    maxHeight: panel.maxHeight,
+    headerGap: panel.headerGap,
+    headerPadding: panel.headerPadding,
+    bodyPadding: panel.bodyPadding,
+    footerPadding: panel.footerPadding,
+    headingGap: panel.headingGap,
+    titleVariant: panel.titleVariant,
+    descVariant: panel.descVariant,
+    descClassName: panel.descClassName,
+    bodyVariant: panel.bodyVariant,
+    footerButtonSize: panel.footerButtonSize,
+    closeButtonSize: panel.closeButtonSize,
+  };
+}
 
 export const DIALOG_SIZE: Record<DialogSize, DialogSizePreset> = {
-  small: {
-    panelMax: "max-w-component-base",
-    maxHeight: "max-h-[min(85dvh,26rem)]",
-    headerGap: "gap-base",
-    ...DIALOG_SECTION_PADDING_COMPACT,
-    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-xsmall text-left",
-    titleVariant: "base",
-    descVariant: "small",
-    descClassName: "text-muted",
-    bodyVariant: "small",
-  },
-  base: {
-    panelMax: "max-w-component-large",
-    maxHeight: "max-h-[min(90dvh,36rem)]",
-    headerGap: "gap-mid",
-    ...DIALOG_SECTION_PADDING_DEFAULT,
-    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "base",
-  },
-  mid: {
-    panelMax: "max-w-component-xlarge",
-    maxHeight: "max-h-[min(90dvh,40rem)]",
-    headerGap: "gap-mid",
-    ...DIALOG_SECTION_PADDING_DEFAULT,
-    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "base",
-  },
-  large: {
-    panelMax: "max-w-component-2xlarge",
-    maxHeight: "max-h-[min(90dvh,44rem)]",
-    headerGap: "gap-mid",
-    ...DIALOG_SECTION_PADDING_DEFAULT,
-    headingBlockGap: "flex min-w-0 flex-1 flex-col gap-base text-left",
-    titleVariant: "mid",
-    descVariant: "base",
-    descClassName: "text-muted",
-    bodyVariant: "mid",
-  },
-};
-
-export const FOOTER_BUTTON_SIZE: Record<DialogSize, ButtonSize> = {
-  small: "small",
-  base: "base",
-  mid: "base",
-  large: "base",
+  small: toDialogSizePreset("small"),
+  base: toDialogSizePreset("base"),
+  mid: toDialogSizePreset("mid"),
+  large: toDialogSizePreset("large"),
 };
 
 export const DIALOG_NATIVE_CLASS =
@@ -98,14 +64,15 @@ export const DIALOG_PANEL_BASE_CLASS =
   "relative z-10 w-full outline-none";
 
 export const DIALOG_PANEL_SURFACE_CLASS =
-  "flex min-h-0 flex-col overflow-hidden rounded-mid border-token bg-surface text-left text-foreground shadow-token-large";
+  "flex min-h-0 flex-col overflow-hidden border-token bg-surface text-left text-foreground shadow-token-large";
 
 export const DIALOG_GLOSS_PANEL_CLASS =
-  "gloss-panel gloss-deep flex min-h-0 w-full flex-col rounded-mid text-foreground";
+  "gloss-panel gloss-deep flex min-h-0 w-full flex-col text-foreground";
 
 export const DIALOG_HEADER_CLASS = "flex shrink-0 items-start";
 
-export const DIALOG_HEADING_BLOCK_CLASS = "min-w-0";
+export const DIALOG_HEADING_BLOCK_CLASS =
+  "flex min-w-0 flex-1 flex-col text-left";
 
 export const DIALOG_TITLE_CLASS = "min-w-0";
 
@@ -140,7 +107,7 @@ export function dialogPanelClass({
   slotClass,
 }: {
   variant: DialogVariant;
-  sizePreset: Pick<DialogSizePreset, "panelMax" | "maxHeight">;
+  sizePreset: Pick<DialogSizePreset, "panelMax" | "maxHeight" | "rounded">;
   className?: string;
   slotClass?: string;
 }): string {
@@ -148,6 +115,7 @@ export function dialogPanelClass({
   return cn(
     DIALOG_PANEL_BASE_CLASS,
     sizePreset.panelMax,
+    sizePreset.rounded,
     !isGloss && DIALOG_PANEL_SURFACE_CLASS,
     !isGloss && sizePreset.maxHeight,
     slotClass,
@@ -155,8 +123,16 @@ export function dialogPanelClass({
   );
 }
 
-export function dialogGlossPanelClass(maxHeight: string, slotClass?: string): string {
-  return cn(DIALOG_GLOSS_PANEL_CLASS, maxHeight, slotClass);
+export function dialogGlossPanelClass({
+  maxHeight,
+  rounded,
+  slotClass,
+}: {
+  maxHeight: string;
+  rounded: string;
+  slotClass?: string;
+}): string {
+  return cn(DIALOG_GLOSS_PANEL_CLASS, rounded, maxHeight, slotClass);
 }
 
 export function dialogContentClass(slotClass?: string, gloss = false): string {
@@ -172,5 +148,9 @@ export function dialogBodyClass(bodyPadding: string, slotClass?: string): string
 }
 
 export function footerButtonSizeForDialog(dialogSize: DialogSize): ButtonSize {
-  return FOOTER_BUTTON_SIZE[dialogSize];
+  return panelSizeLayout(dialogSize).footerButtonSize;
+}
+
+export function closeButtonSizeForDialog(dialogSize: DialogSize): ButtonSize {
+  return panelSizeLayout(dialogSize).closeButtonSize;
 }

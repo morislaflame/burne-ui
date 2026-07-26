@@ -10,9 +10,11 @@ import { Input } from "@/components/core/Input";
 import { Ripple } from "@/components/core/Ripple";
 import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
-import { Card, type CardVariant } from ".";
+import { Card, type CardSize, type CardVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/mockImages";
 import { IoArrowForward, IoTimeOutline } from "react-icons/io5";
+
+const CARD_SIZES: CardSize[] = ["small", "base", "mid", "large"];
 
 const CARD_RIPPLE_COLOR: Record<CardVariant, "neutral"> = {
   default: "neutral",
@@ -71,6 +73,11 @@ const meta = {
   },
   decorators: [...darkThemeDecorator],
   argTypes: {
+    size: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+      description: "Radius (matches Button), padding, and title/description type scale.",
+    },
     pressable: {
       control: "boolean",
       description:
@@ -94,6 +101,28 @@ export const Default: Story = {
         </Card.Description>
       </Card.Header>
     </Card>
+  ),
+};
+
+export const Sizes: Story = {
+  name: "Sizes",
+  decorators: [...wideDarkDecorator],
+  render: () => (
+    <div className="grid w-full gap-mid sm:grid-cols-2 lg:grid-cols-4">
+      {CARD_SIZES.map((size) => (
+        <Card key={size} size={size}>
+          <Card.Header>
+            <Card.Title>size={size}</Card.Title>
+            <Card.Description>
+              Radius matches Button; padding and type scale with size.
+            </Card.Description>
+          </Card.Header>
+          <Card.Body>
+            <Text variant="small">Body content</Text>
+          </Card.Body>
+        </Card>
+      ))}
+    </div>
   ),
 };
 

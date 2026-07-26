@@ -56,6 +56,7 @@ export function ColorPickerRoot({
           open={openProp}
           defaultOpen={defaultOpen}
           onOpenChange={onOpenChange}
+          size={size}
           side={side}
           variant={variant === "gloss" ? "gloss" : "default"}
         >

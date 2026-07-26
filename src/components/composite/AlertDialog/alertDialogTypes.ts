@@ -3,10 +3,13 @@ import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 import type { ButtonSize } from "@/components/core/Button";
-import type { TextVariant } from "@/components/core/Text";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type {
+  PanelSize,
+  PanelSizeLayout,
+} from "@/components/core/utils/sizeLayout";
 
-export type AlertDialogSize = "small" | "base" | "mid" | "large";
+export type AlertDialogSize = PanelSize;
 
 export type AlertDialogClassNames = {
   dialog?: string;
@@ -26,19 +29,25 @@ export type AlertDialogClassNames = {
   close?: string;
 };
 
-export type AlertDialogSizePreset = {
-  panelMax: string;
-  maxHeight: string;
+/** Size tokens from shared `PANEL_SIZE_LAYOUT` (AlertDialog slice). */
+export type AlertDialogSizePreset = Pick<
+  PanelSizeLayout,
+  | "rounded"
+  | "panelMax"
+  | "maxHeight"
+  | "headerPadding"
+  | "bodyPadding"
+  | "footerPadding"
+  | "titleVariant"
+  | "descVariant"
+  | "descClassName"
+  | "bodyVariant"
+  | "iconClass"
+  | "footerButtonSize"
+  | "closeButtonSize"
+> & {
+  /** Alert header grid gap (`alertHeaderGap` in panel layout). */
   headerGap: string;
-  headerPadding: string;
-  bodyPadding: string;
-  footerPadding: string;
-  headingBlockGap: string;
-  iconClass: string;
-  titleVariant: TextVariant;
-  descVariant: TextVariant;
-  descClassName: string;
-  bodyVariant: TextVariant;
 };
 
 export type AlertDialogProps = {

@@ -4,7 +4,7 @@ import { buttonRootClass } from "@/components/core/Button/buttonStyles";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import type { TextVariant } from "@/components/core/Text";
 

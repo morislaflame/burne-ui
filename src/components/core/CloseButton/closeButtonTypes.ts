@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, PointerEvent } from "react";
 
-import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
 export type CloseButtonVariant =
   | "default"

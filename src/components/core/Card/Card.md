@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Card, type CardProps, type CardVariant, type CardPressEvent, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps } from "burne-ui";
+import { Card, type CardProps, type CardVariant, type CardSize, type CardPressEvent, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps } from "burne-ui";
 ```
 
 ## API
@@ -55,6 +55,7 @@ Simple API (props `title` на root) нет — только compound children.
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` — radius (как у Button), padding секций, type scale Title/Description |
 | `pressable` | `false` | Интерактивная карточка (`<button>` root) |
 | `animated` | `true` | GSAP hover/squeeze (при `pressable`) |
 | `onPress` | — | Активация click / Enter / Space |
@@ -76,6 +77,27 @@ Simple API (props `title` на root) нет — только compound children.
 | `Card.Description` | Muted subtitle |
 | `Card.Body` | Основной контент |
 | `Card.Footer` | Нижняя зона с border-top |
+
+## Size
+
+Радиус / padding / title+description — общий `PANEL_SIZE_LAYOUT` (Dialog / AlertDialog / Popover / Card).
+
+| size | Radius | Header | Body | Footer | Title | Description |
+|------|--------|--------|------|--------|-------|-------------|
+| `small` | `rounded-small` | `px-mid pt-base` + `gap-xsmall` | `px-mid py-small` | `px-mid pb-base` | `small` | `xsmall` |
+| `base` | `rounded-base` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `base` | `small` |
+| `mid` | `rounded-mid` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `mid` | `base` |
+| `large` | `rounded-large` | `px-large pt-mid` + `gap-base` | `px-large py-small` | `px-large pb-mid` | `large` | `base` |
+
+```tsx
+<Card size="mid">
+  <Card.Header>
+    <Card.Title>Mid card</Card.Title>
+    <Card.Description>Matches Button mid radius</Card.Description>
+  </Card.Header>
+  <Card.Body>Content</Card.Body>
+</Card>
+```
 
 ## Variant
 
@@ -212,12 +234,13 @@ Squeeze анимирует **весь** pressable shell, ripple — отдель
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `CARD_ROOT_BASE_CLASS` | `rounded-mid overflow-hidden flex-col` |
-| `CARD_STATIC_SHADOW_CLASS` | Passive `shadow-token-sm` |
+| `CARD_ROOT_BASE_CLASS` | `overflow-hidden flex-col` (+ size `rounded-*`) |
+| `PANEL_SIZE_LAYOUT` | Radius / padding / title+description (shared panel grid) |
+| `CARD_STATIC_SHADOW_CLASS` | Passive `shadow-token-base` |
 | `CARD_PRESSABLE_ROOT_CLASS` | `cursor-pointer focus-ring` |
 | `CARD_BUTTON_SHELL_CLASS` | `w-full border-0 p-0 text-left` на `<button>` |
-| `CARD_HEADER_CLASS` / `BODY` / `FOOTER` | Padding + `border-t-token` footer |
-| `CARD_GLOSS_PANEL_CLASS` | `gloss-panel rounded-mid` |
+| `cardHeaderClass` / `cardBodyClass` / `cardFooterClass` | Padding из size layout; footer + `border-t-token` |
+| `CARD_GLOSS_PANEL_BASE_CLASS` | `gloss-panel` (+ size `rounded-*`) |
 | `GLOSS_INTERACTIVE_MOTION_CLASS` | Gloss pressable motion |
 | `SHADOW_LIFT_MOTION_CLASS` | GSAP shadow transition |
 

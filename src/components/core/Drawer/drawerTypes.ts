@@ -1,10 +1,34 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
+import type { ButtonSize } from "@/components/core/Button";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
+import type {
+  PanelSize,
+  PanelSizeLayout,
+} from "@/components/core/utils/sizeLayout";
 
 export type DrawerPlacement = "left" | "right" | "top" | "bottom";
+/** Viewport extent of the panel (orthogonal to chrome `size`). */
 export type DrawerExtent = "default" | "mid" | "full";
 export type DrawerVariant = "default" | "gloss";
+export type DrawerSize = PanelSize;
+
+/** Chrome tokens from shared `PANEL_SIZE_LAYOUT` (Drawer slice). */
+export type DrawerSizePreset = Pick<
+  PanelSizeLayout,
+  | "rounded"
+  | "headerGap"
+  | "headerPadding"
+  | "bodyPadding"
+  | "footerPadding"
+  | "headingGap"
+  | "titleVariant"
+  | "descVariant"
+  | "descClassName"
+  | "bodyVariant"
+  | "footerButtonSize"
+  | "closeButtonSize"
+>;
 
 export type DrawerClassNames = {
   trigger?: string;
@@ -31,6 +55,8 @@ export type DrawerProps = {
   onOpenChange?: (open: boolean) => void;
   /** Slide direction (structural, used in context). */
   placement?: DrawerPlacement;
+  /** Chrome density — padding, type, close/footer button sizes (`PANEL_SIZE_LAYOUT`). */
+  size?: DrawerSize;
   children?: ReactNode;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
@@ -62,6 +88,9 @@ export type DrawerContextValue = {
   setHasDescription: (value: boolean) => void;
   onOpenChange: (open: boolean) => void;
   placement: DrawerPlacement;
+  size: DrawerSize;
+  sizePreset: DrawerSizePreset;
+  footerButtonSize: ButtonSize;
   overlayRef: React.RefObject<HTMLDivElement | null>;
   panelRef: React.RefObject<HTMLDivElement | null>;
   skipCloseAnimRef: React.RefObject<boolean>;
@@ -95,7 +124,7 @@ export type DrawerPanelSegment =
 
 export type UseDrawerRootStateProps = Pick<
   DrawerProps,
-  "open" | "defaultOpen" | "onOpenChange" | "portalContainer"
+  "open" | "defaultOpen" | "onOpenChange" | "size" | "portalContainer"
 >;
 
 export type UseDrawerPanelStateProps = {

@@ -4,7 +4,7 @@ import "../utils/glossInteractive.css";
 
 import { useCardAnimations } from "./cardAnimations";
 import { CardBody, CardDescription, CardFooter, CardHeader, CardHeadingBlock, CardRootShell, CardTitle } from "./cardParts";
-import { CardClassNamesProvider } from "./cardContext";
+import { CardProvider } from "./cardContext";
 import { cardGlossPanelClass, cardRootClass } from "./cardStyles";
 import type { CardProps, CardVariant } from "./cardTypes";
 import { useCardRootState } from "./useCardRootState";
@@ -14,6 +14,7 @@ import { cn } from "@/utils/cn";
 export type {
   CardPressEvent,
   CardProps,
+  CardSize,
   CardVariant,
   CardHeaderProps,
   CardHeadingBlockProps,
@@ -28,6 +29,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   {
     className = "",
     variant = "default",
+    size = "base",
     pressable = false,
     animated = true,
     classNames,
@@ -44,6 +46,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
 ) {
   const state = useCardRootState({
     variant,
+    size,
     pressable,
     onClick: onClickProp,
     onKeyDown: onKeyDownProp,
@@ -64,6 +67,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   });
 
   const glossPanelClass = cardGlossPanelClass(
+    state.size,
     cn(classNames?.root, className),
   );
 
@@ -73,11 +77,12 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         state.variant as Exclude<CardVariant, "gloss">,
         pressable,
         animations.pressableLiftMotionClass,
+        state.size,
         cn(classNames?.root, className),
       );
 
   return (
-    <CardClassNamesProvider classNames={classNames}>
+    <CardProvider classNames={classNames} size={state.size}>
       <CardRootShell
         pressable={pressable}
         isGloss={state.isGloss}
@@ -94,7 +99,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
       >
         {children}
       </CardRootShell>
-    </CardClassNamesProvider>
+    </CardProvider>
   );
 });
 

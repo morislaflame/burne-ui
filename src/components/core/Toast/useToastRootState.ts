@@ -1,6 +1,6 @@
 import { useId, useMemo } from "react";
 
-import { messageBannerSizePreset, resolveMessageBannerSize } from "@/components/core/utils/messageBannerSize";
+import { messageBannerSizePreset, resolveMessageBannerSize } from "@/components/core/utils/sizeLayout";
 
 import { resolveToastGridSlots } from "./toastAPI";
 import type { ToastItemContextValue, UseToastRootStateProps } from "./toastTypes";

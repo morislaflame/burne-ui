@@ -86,7 +86,7 @@ Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content
 
 - pressed: `fromTo { scale:0, autoAlpha:0 } → { scale:1, autoAlpha:1 }`
 - unpressed: `to { scale:0, autoAlpha:0 }`
-- vars: `motionSelectionFill()` — `interactiveDuration * 1.15`, `selectionFillEase`
+- vars: `motionSelectionFill()` — `selectionFillDuration`, `selectionFillEase`
 - `enableToggleButtonFill: false` → instant
 
 **Координация с press:** при `animated` fill стартует в **release-фазе squeeze** (`onPressReleaseStart`), не на pointerdown — чтобы заливка совпала с отпусканием кнопки.

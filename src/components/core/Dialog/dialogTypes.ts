@@ -2,25 +2,33 @@ import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
 import type { ButtonSize } from "@/components/core/Button";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
-import type { TextVariant } from "@/components/core/Text";
+import type {
+  PanelSize,
+  PanelSizeLayout,
+} from "@/components/core/utils/sizeLayout";
 
 export type DialogVariant = "default" | "gloss";
 
-export type DialogSize = "small" | "base" | "mid" | "large";
+export type DialogSize = PanelSize;
 
-export type DialogSizePreset = {
-  panelMax: string;
-  maxHeight: string;
-  headerGap: string;
-  headerPadding: string;
-  bodyPadding: string;
-  footerPadding: string;
-  headingBlockGap: string;
-  titleVariant: TextVariant;
-  descVariant: TextVariant;
-  descClassName: string;
-  bodyVariant: TextVariant;
-};
+/** Size tokens from shared `PANEL_SIZE_LAYOUT` (Dialog slice). */
+export type DialogSizePreset = Pick<
+  PanelSizeLayout,
+  | "rounded"
+  | "panelMax"
+  | "maxHeight"
+  | "headerGap"
+  | "headerPadding"
+  | "bodyPadding"
+  | "footerPadding"
+  | "headingGap"
+  | "titleVariant"
+  | "descVariant"
+  | "descClassName"
+  | "bodyVariant"
+  | "footerButtonSize"
+  | "closeButtonSize"
+>;
 
 export type DialogClassNames = {
   trigger?: string;

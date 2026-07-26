@@ -314,14 +314,15 @@
    * Base border radius knob + step tokens.
    * Layers: `--radius` (knob) → `--radius-*` (steps) → `@theme` `--radius-*` (Tailwind `rounded-*`).
    * Utilities: `rounded-xsmall` … `rounded-large`.
+   * Steps stay close (±12.5% around base) so size variants don’t jump in roundness.
    * Fluid: same curve as `--space` (preserved by `applyThemeTokens` via scaled `clamp`).
    */
   --radius: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
-  --radius-xsmall: calc(var(--radius) * 0.5);
-  --radius-small: calc(var(--radius) * 0.75);
+  --radius-xsmall: calc(var(--radius) * 0.75);
+  --radius-small: calc(var(--radius) * 0.875);
   --radius-base: calc(var(--radius) * 1);
-  --radius-mid: calc(var(--radius) * 1.25);
-  --radius-large: calc(var(--radius) * 1.5);
+  --radius-mid: calc(var(--radius) * 1.125);
+  --radius-large: calc(var(--radius) * 1.25);
 
   /**
    * Primitive typographic scale (`--text-scale-*`).

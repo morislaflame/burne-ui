@@ -33,7 +33,7 @@ Root **не рендерит DOM** — только контекст и `classNa
 | `Dialog.HeadingBlock` | Блок title + description |
 | `Dialog.Title` | `<h2>`, `Text` mid |
 | `Dialog.Description` | `<p>`, `text-muted` |
-| `Dialog.Close` | `CloseButton` small secondary |
+| `Dialog.Close` | `CloseButton` secondary; size из `PANEL_SIZE_LAYOUT.closeButtonSize` |
 | `Dialog.Body` | Скроллируемая область |
 | `Dialog.Footer` | Кнопки, `justify-end` |
 
@@ -107,10 +107,17 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 
 | variant | Панель |
 |---------|--------|
-| `default` | `bg-surface border-token shadow-token-lg rounded-mid` |
+| `default` | `bg-surface border-token shadow-token-large` + radius из `PANEL_SIZE_LAYOUT` |
 | `gloss` | `gloss-panel gloss-deep` + `gloss-content` |
 
-`max-w-component-large`, `max-h-[min(90dvh,36rem)]`.
+Размеры (`size`) — общий пресет `PANEL_SIZE_LAYOUT` (вместе с AlertDialog / Popover / Card): max-width, max-height, section padding, title/desc/body, radius.
+
+| size | max-width | title / body | close |
+|------|-----------|--------------|-------|
+| `small` | `max-w-component-base` | `small` / `small` | `small` |
+| `base` | `max-w-component-large` | `base` / `base` | `small` |
+| `mid` | `max-w-component-xlarge` | `mid` / `base` | `base` |
+| `large` | `max-w-component-2xlarge` | `large` / `mid` | `base` |
 
 ## Анимации
 
@@ -228,10 +235,10 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 
 | Класс | Назначение |
 |-------|------------|
-| `shadow-token-lg` | Тень панели |
+| `shadow-token-large` | Тень панели |
 | `border-token`, `bg-surface` | Default surface |
-| `max-w-component-large` | Ширина панели |
-| `rounded-mid` | Скругление |
+| `max-w-component-*` | Ширина панели (`PANEL_SIZE_LAYOUT`) |
+| `rounded-*` | Скругление по `size` (как Button / Card) |
 | `z-dialog` | Stacking dialog (`--z-dialog`) |
 | `overlay-backdrop` / `overlay-backdrop-scrim` | Подложка (light frosted / dark solid) |
 | `gloss-panel`, `gloss-deep` | Gloss variant |
@@ -305,7 +312,7 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 ### Практические заметки
 
 - **Panel vs Dialog:** `classNames` задаются на `<Dialog>`, рендерятся в портале внутри `Dialog.Panel`.
-- **Close:** `Dialog.Close` — обёртка `CloseButton`; принимает `variant`, `size`, `classNames` CloseButton.
+- **Close:** `Dialog.Close` — обёртка `CloseButton`; `size` по умолчанию из `PANEL_SIZE_LAYOUT.closeButtonSize` (можно переопределить пропом).
 - **Scroll:** только `Dialog.Body` скроллится — min-height/max-height задавайте на `body` слот. У Body есть `py-xsmall`, чтобы focus-ring / hover-shadow полей не обрезались футером и краем scrollport.
 - **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти / `Dialog.Panel`.
 

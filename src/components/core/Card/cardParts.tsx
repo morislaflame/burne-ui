@@ -5,8 +5,20 @@ import { cn } from "@/utils/cn";
 
 import { cardTitleHeadingTag } from "./cardA11y";
 
-import { useCardClassNames } from "./cardContext";
-import { CARD_BODY_CLASS, CARD_BUTTON_SHELL_CLASS, CARD_DESCRIPTION_CLASS, CARD_FOOTER_CLASS, CARD_GLOSS_CONTENT_CLASS, CARD_HEADER_CLASS, CARD_HEADING_BLOCK_CLASS, CARD_PRESSABLE_CONTENT_CLASS, CARD_TITLE_CLASS, cardGlossPressableClass } from "./cardStyles";
+import { useCardClassNames, useCardSize } from "./cardContext";
+import {
+  CARD_BUTTON_SHELL_CLASS,
+  CARD_DESCRIPTION_CLASS,
+  CARD_GLOSS_CONTENT_CLASS,
+  CARD_PRESSABLE_CONTENT_CLASS,
+  CARD_TITLE_CLASS,
+  cardBodyClass,
+  cardFooterClass,
+  cardGlossPressableClass,
+  cardHeaderClass,
+  cardHeadingBlockClass,
+  panelSizeLayout,
+} from "./cardStyles";
 import type {
   CardBodyProps,
   CardDescriptionProps,
@@ -19,9 +31,10 @@ import type {
 
 export function CardHeader({ className = "", ...rest }: CardHeaderProps) {
   const slotClassNames = useCardClassNames();
+  const size = useCardSize();
   return (
     <div
-      className={cn(CARD_HEADER_CLASS, slotClassNames.header, className)}
+      className={cardHeaderClass(size, cn(slotClassNames.header, className))}
       {...rest}
     />
   );
@@ -29,12 +42,12 @@ export function CardHeader({ className = "", ...rest }: CardHeaderProps) {
 
 export function CardHeadingBlock({ className = "", ...rest }: CardHeadingBlockProps) {
   const slotClassNames = useCardClassNames();
+  const size = useCardSize();
   return (
     <div
-      className={cn(
-        CARD_HEADING_BLOCK_CLASS,
-        slotClassNames.headingBlock,
-        className,
+      className={cardHeadingBlockClass(
+        size,
+        cn(slotClassNames.headingBlock, className),
       )}
       {...rest}
     />
@@ -43,9 +56,10 @@ export function CardHeadingBlock({ className = "", ...rest }: CardHeadingBlockPr
 
 export function CardBody({ className = "", ...rest }: CardBodyProps) {
   const slotClassNames = useCardClassNames();
+  const size = useCardSize();
   return (
     <div
-      className={cn(CARD_BODY_CLASS, slotClassNames.body, className)}
+      className={cardBodyClass(size, cn(slotClassNames.body, className))}
       {...rest}
     />
   );
@@ -54,11 +68,12 @@ export function CardBody({ className = "", ...rest }: CardBodyProps) {
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   function CardTitle({ className = "", ...rest }, ref) {
     const slotClassNames = useCardClassNames();
+    const size = useCardSize();
     return (
       <Text
         ref={ref as Ref<HTMLElement>}
         as={cardTitleHeadingTag()}
-        variant="base"
+        variant={panelSizeLayout(size).titleVariant}
         className={cn(CARD_TITLE_CLASS, slotClassNames.title, className)}
         {...rest}
       />
@@ -69,11 +84,12 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
 export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
   function CardDescription({ className = "", ...rest }, ref) {
     const slotClassNames = useCardClassNames();
+    const size = useCardSize();
     return (
       <Text
         ref={ref as Ref<HTMLElement>}
         as="p"
-        variant="base"
+        variant={panelSizeLayout(size).descVariant}
         className={cn(
           CARD_DESCRIPTION_CLASS,
           slotClassNames.description,
@@ -87,9 +103,10 @@ export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionP
 
 export function CardFooter({ className = "", ...rest }: CardFooterProps) {
   const slotClassNames = useCardClassNames();
+  const size = useCardSize();
   return (
     <div
-      className={cn(CARD_FOOTER_CLASS, slotClassNames.footer, className)}
+      className={cardFooterClass(size, cn(slotClassNames.footer, className))}
       {...rest}
     />
   );

@@ -6,7 +6,7 @@ import { IoGlobeOutline, IoPeopleOutline, IoVideocamOutline } from "react-icons/
 
 import { Radio } from "@/components/core/Radio";
 import { Text } from "@/components/core/Text";
-import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
 import { RadioGroup } from ".";

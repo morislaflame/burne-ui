@@ -5,7 +5,7 @@ export { cn } from "@/utils/cn";
 export {
   type ComponentSize,
   COMPONENT_SIZES,
-} from "@/components/core/utils/componentSize";
+} from "@/components/core/utils/sizeLayout";
 export type { IconPosition } from "@/components/core/utils/iconPosition";
 export {
   Button,
@@ -489,6 +489,7 @@ export {
   Card,
   type CardPressEvent,
   type CardProps,
+  type CardSize,
   type CardVariant,
   type CardHeaderProps,
   type CardBodyProps,

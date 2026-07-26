@@ -1,10 +1,36 @@
-import { Children, isValidElement, type ReactNode } from "react";
+import { Children, cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
+import { Button, type ButtonProps } from "@/components/core/Button";
+import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 
 import type { GsapMotionVars } from "@/components/core/utils/modalSurfaceMotion";
 import type { DrawerBackdropProps, DrawerPanelSegment, DrawerPlacement } from "./drawerTypes";
 
 export function readDrawerPartDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;
+}
+
+export function injectFooterButtonSize(
+  children: ReactNode,
+  buttonSize: ButtonSize,
+): ReactNode {
+  return Children.map(children, (child) => {
+    if (!isValidElement(child)) return child;
+    if (child.type === Button) {
+      const props = child.props as ButtonProps;
+      return cloneElement(child as ReactElement<ButtonProps>, {
+        size: props.size ?? buttonSize,
+      });
+    }
+    if (child.type === Fragment) {
+      const f = child as ReactElement<{ children?: ReactNode }>;
+      return cloneElement(
+        f,
+        { key: f.key ?? undefined },
+        injectFooterButtonSize(f.props.children, buttonSize),
+      );
+    }
+    return child;
+  });
 }
 
 export function partitionDrawerChildren(children: ReactNode): {

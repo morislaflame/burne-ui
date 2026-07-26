@@ -14,10 +14,10 @@ import {
   drawerHandleAriaLabel,
   isDrawerHandleActivateKey,
 } from "./drawerA11y";
-import { partitionDrawerChildren } from "./drawerAPI";
+import { partitionDrawerChildren, injectFooterButtonSize } from "./drawerAPI";
 import { useDrawerModalMotion } from "./drawerAnimations";
 import { DrawerProvider, useDrawer, useDrawerClassNames } from "./drawerContext";
-import { DRAWER_CLOSE_CLASS, DRAWER_DESCRIPTION_CLASS, DRAWER_FOOTER_CLASS, DRAWER_FOOTER_PADDING, DRAWER_HEADER_CLASS, DRAWER_HEADER_PADDING, DRAWER_HEADING_BLOCK_CLASS, DRAWER_TITLE_CLASS, DRAWER_TRIGGER_BASE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
+import { DRAWER_CLOSE_CLASS, DRAWER_FOOTER_CLASS, DRAWER_HEADER_CLASS, DRAWER_HEADING_BLOCK_CLASS, DRAWER_TITLE_CLASS, DRAWER_TRIGGER_BASE_CLASS, drawerBodyClass, drawerContentClass, drawerGlossContentWrapClass, drawerGlossPanelClass, drawerHandleClass, drawerHandleGripClass, drawerNativeClass, drawerOverlayClass, drawerOverlayEnterStyle, drawerPanelClass } from "./drawerStyles";
 import type {
   DrawerBackdropProps,
   DrawerBodyProps,
@@ -151,6 +151,7 @@ DrawerHandleInner.displayName = "DrawerHandle";
 
 export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
   function DrawerHeader({ className, ...rest }, ref) {
+    const { sizePreset } = useDrawer();
     const slotClassNames = useDrawerClassNames();
 
     return (
@@ -158,7 +159,8 @@ export const DrawerHeader = forwardRef<HTMLDivElement, DrawerHeaderProps>(
         ref={ref}
         className={cn(
           DRAWER_HEADER_CLASS,
-          DRAWER_HEADER_PADDING,
+          sizePreset.headerGap,
+          sizePreset.headerPadding,
           slotClassNames.header,
           className,
         )}
@@ -174,12 +176,14 @@ export function DrawerHeadingBlock({
   className,
   ...rest
 }: DrawerHeadingBlockProps) {
+  const { sizePreset } = useDrawer();
   const slotClassNames = useDrawerClassNames();
 
   return (
     <div
       className={cn(
         DRAWER_HEADING_BLOCK_CLASS,
+        sizePreset.headingGap,
         slotClassNames.headingBlock,
         className,
       )}
@@ -192,7 +196,7 @@ DrawerHeadingBlock.displayName = "DrawerHeadingBlock";
 
 export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
   function DrawerTitle({ className, id, ...rest }, ref) {
-    const { titleId, setHasTitle } = useDrawer();
+    const { titleId, setHasTitle, sizePreset } = useDrawer();
     const slotClassNames = useDrawerClassNames();
 
     useLayoutEffect(() => {
@@ -204,7 +208,7 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
       <Text
         ref={ref as Ref<HTMLElement>}
         as="h2"
-        variant="mid"
+        variant={sizePreset.titleVariant}
         id={id ?? titleId}
         className={cn(
           DRAWER_TITLE_CLASS,
@@ -224,7 +228,7 @@ export function DrawerDescription({
   id,
   ...rest
 }: DrawerDescriptionProps) {
-  const { descriptionId, setHasDescription } = useDrawer();
+  const { descriptionId, setHasDescription, sizePreset } = useDrawer();
   const slotClassNames = useDrawerClassNames();
 
   useLayoutEffect(() => {
@@ -235,10 +239,10 @@ export function DrawerDescription({
   return (
     <Text
       as="p"
-      variant="base"
+      variant={sizePreset.descVariant}
       id={id ?? descriptionId}
       className={cn(
-        DRAWER_DESCRIPTION_CLASS,
+        sizePreset.descClassName,
         slotClassNames.description,
         className,
       )}
@@ -254,18 +258,20 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
     {
       className,
       onClick,
+      size,
       "aria-label": ariaLabel,
       ...rest
     },
     ref,
   ) {
-    const { onOpenChange } = useDrawer();
+    const { onOpenChange, sizePreset } = useDrawer();
     const slotClassNames = useDrawerClassNames();
 
     return (
       <CloseButton
         ref={ref}
         variant="secondary"
+        size={size ?? sizePreset.closeButtonSize}
         aria-label={ariaLabel}
         className={cn(
           DRAWER_CLOSE_CLASS,
@@ -286,12 +292,14 @@ DrawerClose.displayName = "DrawerClose";
 
 export const DrawerBody = forwardRef<HTMLDivElement, DrawerBodyProps>(
   function DrawerBody({ className, ...rest }, ref) {
+    const { sizePreset } = useDrawer();
     const slotClassNames = useDrawerClassNames();
 
     return (
       <div
         ref={ref}
         className={drawerBodyClass(
+          sizePreset.bodyPadding,
           cn(slotClassNames.body, className),
         )}
         {...rest}
@@ -303,20 +311,27 @@ export const DrawerBody = forwardRef<HTMLDivElement, DrawerBodyProps>(
 DrawerBody.displayName = "DrawerBody";
 
 export const DrawerFooter = forwardRef<HTMLDivElement, DrawerFooterProps>(
-  function DrawerFooter({ className, ...rest }, ref) {
+  function DrawerFooter({ className, children, ...rest }, ref) {
+    const { sizePreset, footerButtonSize } = useDrawer();
     const slotClassNames = useDrawerClassNames();
+    const sizedChildren = useMemo(
+      () => injectFooterButtonSize(children, footerButtonSize),
+      [children, footerButtonSize],
+    );
 
     return (
       <div
         ref={ref}
         className={cn(
           DRAWER_FOOTER_CLASS,
-          DRAWER_FOOTER_PADDING,
+          sizePreset.footerPadding,
           slotClassNames.footer,
           className,
         )}
         {...rest}
-      />
+      >
+        {sizedChildren}
+      </div>
     );
   },
 );
@@ -428,8 +443,12 @@ export const DrawerPanel = forwardRef<HTMLDivElement, DrawerPanelProps>(
     forwardedRef,
   ) {
     const baseCtx = useDrawer();
-    const { open, onOpenChange, placement, portalContainer: portalContainerFromRoot } =
-      baseCtx;
+    const {
+      open,
+      onOpenChange,
+      placement,
+      portalContainer: portalContainerFromRoot,
+    } = baseCtx;
 
     const { backdropIsDismissable, panelSegments } = useMemo(
       () => partitionDrawerChildren(children),
@@ -534,6 +553,7 @@ export function DrawerPortalShell({
   contained = false,
 }: DrawerPortalShellProps) {
   const slotClassNames = useDrawerClassNames();
+  const { size } = useDrawer();
 
   const panelNodes = panelSegments.map((segment, index) => (
     <DrawerPanelSegment
@@ -571,6 +591,7 @@ export function DrawerPortalShell({
           variant,
           placement,
           extent,
+          size,
           className,
           slotClass: slotClassNames.panel,
         })}
@@ -583,6 +604,7 @@ export function DrawerPortalShell({
             className={drawerGlossPanelClass({
               placement,
               extent,
+              size,
               slotClass: slotClassNames.glossPanel,
             })}
           >

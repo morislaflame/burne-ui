@@ -1,7 +1,6 @@
 import { cn } from "@/utils/cn";
 
-import type { ComponentSize } from "./componentSize";
-import { CONTROL_SIZE_LAYOUT } from "./controlSizeLayout";
+import { CONTROL_SIZE_LAYOUT, type ComponentSize } from "@/components/core/utils/sizeLayout";
 
 /** Prefix/suffix slot root — stretches to full shell height (flex + min-height). */
 export function affixSlotClass(size: ComponentSize): string {

@@ -1,6 +1,6 @@
 import type { FormHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
-import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
 export type FormValues = Record<string, unknown>;
 

@@ -4,7 +4,7 @@ import { messageBannerGridClass } from "@/components/core/utils/messageBannerGri
 import { cn } from "@/utils/cn";
 
 import { AlertClassNamesProvider, AlertContext } from "./alertContext";
-import { alertRootShellClass } from "@/components/core/utils/messageBannerSize";
+import { alertRootShellClass } from "@/components/core/utils/sizeLayout";
 import type { AlertProps } from "./alertTypes";
 import { AlertSimpleContent } from "./alertSimpleContent";
 import { useAlertAnimations } from "./alertAnimations";

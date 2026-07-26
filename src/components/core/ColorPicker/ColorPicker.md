@@ -122,7 +122,7 @@ Motion разбит: pointer drag (без GSAP) + Popover portal + optional swat
 `colorPickerAnimations.ts` — **без GSAP**:
 
 - `pointerdown` / `pointermove` на saturation×value canvas
-- Обновляет HSVA → `onValueChange` hex
+- Обновляет HSVA → `onValueChange` hex (HSVA — source of truth; hex round-trip не сбрасывает hue 360→0)
 - Thumb position — CSS left/top %
 
 ### 3. ColorSlider drag
@@ -166,10 +166,11 @@ configureMotion({
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| Panel | `rounded-mid shadow-token-md p-mid` |
+| Panel | size radius (`panelSizeLayout`) + pad; Popover shell keeps radius even with `unstyled` |
 | Area | `rounded-small bg-secondary` |
 | Inputs | `font-mono`, `border-token` |
 | Presets row | `gap-xsmall` flex |
+| ColorSlider track | `SELECTION_INDICATOR_RADIUS_CLASS` + `overflow-hidden` (как Slider rail) |
 | `sliderTrackHitAreaClass` | Shared с `Slider` |
 
 ## Стилизация и кастомизация

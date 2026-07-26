@@ -5,7 +5,7 @@ import { expect } from "storybook/test";
 
 import { Checkbox } from "@/components/core/Checkbox";
 import { Text } from "@/components/core/Text";
-import { COMPONENT_SIZES } from "@/components/core/utils/componentSize";
+import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { CheckboxGroup } from ".";
 

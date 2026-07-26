@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/messageBannerSize";
+import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
 
 export type AlertSize = MessageBannerSize;
 

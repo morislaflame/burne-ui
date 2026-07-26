@@ -2,7 +2,7 @@ import type { FieldsetHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
 import type { LabelProps } from "@/components/core/Label";
 import type { TextVariant } from "@/components/core/Text";
-import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type FieldHintStatus = SemanticStatus;

@@ -2,7 +2,7 @@ import type { FieldsetHTMLAttributes, ReactNode } from "react";
 
 import type { FieldErrorProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
-import type { ComponentSize } from "@/components/core/utils/componentSize";
+import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type {
   OptionGroupHintProps,
   OptionGroupLegendProps,

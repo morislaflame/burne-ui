@@ -1,15 +1,15 @@
 import type { FieldHintProps } from "@/components/core/Field";
-import type { TextVariant } from "@/components/core/Text";
 import type {
   FloatingAlign,
   TooltipSide,
 } from "@/components/core/Tooltip/tooltipPosition";
+import type { PanelSize } from "@/components/core/utils/sizeLayout";
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
 
 export type PopoverSide = TooltipSide;
-export type PopoverSize = "small" | "base" | "mid" | "large";
+export type PopoverSize = PanelSize;
 export type PopoverVariant = "default" | "gloss";
-export type PopoverContentGap = "small" | "base" | "mid" | "large";
+export type PopoverContentGap = PanelSize;
 
 export type PopoverClassNames = {
   root?: string;
@@ -93,10 +93,6 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
 };
-
-export type PopoverTitleVariantMap = Record<PopoverSize, TextVariant>;
-
-export type PopoverDescriptionVariantMap = Record<PopoverSize, TextVariant>;
 
 export type UsePopoverContentLifecycleProps = {
   open: boolean;
