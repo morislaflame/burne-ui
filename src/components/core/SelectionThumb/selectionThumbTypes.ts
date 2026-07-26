@@ -4,7 +4,6 @@ import type { SelectionIndicatorSize } from "../SelectionIndicator/selectionIndi
 
 export type SelectionThumbClassNames = {
   root?: string;
-  fill?: string;
 };
 
 export type SelectionThumbIconClassNames = {
@@ -13,10 +12,8 @@ export type SelectionThumbIconClassNames = {
 };
 
 export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
-  active: boolean;
   size?: SelectionIndicatorSize;
   shellRef?: RefObject<HTMLSpanElement | null>;
-  fillRef?: RefObject<HTMLSpanElement | null>;
   gloss?: boolean;
   children?: ReactNode;
   classNames?: SelectionThumbClassNames;
@@ -24,7 +21,6 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
 
 export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   size?: SelectionIndicatorSize;
-  highlighted?: boolean;
   gloss?: boolean;
   iconRef?: RefObject<HTMLSpanElement | null>;
   children?: ReactNode;

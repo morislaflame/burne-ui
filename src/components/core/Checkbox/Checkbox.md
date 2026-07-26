@@ -194,7 +194,6 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
     control: "ring-primary/30",
     controlTrack: "border-primary/50",
     indicator: "rounded-mid",
-    indicatorFill: "rounded-[inherit]",
     labelText: "text-primary font-semibold",
     hint: "text-foreground/80",
   }}

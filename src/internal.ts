@@ -39,6 +39,8 @@ export {
   initElementShadow,
   prefersReducedInteractiveHoverLift,
   readShadowSize,
+  readShadowVar,
+  shadowCssVar,
   shadowLarge,
   shadowMid,
   shadowNone,

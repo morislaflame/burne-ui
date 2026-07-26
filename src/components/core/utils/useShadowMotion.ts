@@ -1,9 +1,11 @@
 /**
  * Unified shadow + hover-lift patterns via `--el-shadow` and `animate-shadow`.
  *
- * Level 1 (Button): `firstLevelHoverShadow()` — none → small.
- * Level 2 interactive (Alert, Badge, fields): `secondLevelShadow()` — small → mid.
- * Level 2 static (Tooltip, Popover): `usePersistentElShadow` — small without hover.
+ * Level 1 (Button): `firstLevelHoverShadow()` — none → base.
+ * Level 2 interactive (Alert, Badge, fields): `secondLevelShadow()` — base → mid.
+ * Level 2 static (Tooltip, Popover): `usePersistentElShadow` — base without hover.
+ *
+ * Values are live `var(--shadow-*)` refs — theme / nested-root updates apply without re-hover.
  */
 
 import { useCallback, useLayoutEffect, useMemo, type MutableRefObject, type RefObject } from "react";

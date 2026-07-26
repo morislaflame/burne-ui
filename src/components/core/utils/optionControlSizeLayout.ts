@@ -34,8 +34,8 @@ export const OPTION_CONTROL_SIZE_LAYOUT: Record<
   mid: {
     title: "mid",
     desc: "small",
-    gridGap: "gap-x-mid gap-y-xsmall",
-    listItemGapX: "gap-x-mid",
+    gridGap: "gap-x-base gap-y-xsmall",
+    listItemGapX: "gap-x-base",
   },
   large: {
     title: "large",

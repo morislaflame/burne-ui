@@ -436,6 +436,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
   });
 
   const railClass = sliderRailClass({
+    size,
     disabled,
     gloss,
     slotClass: slotClassNames.rail,

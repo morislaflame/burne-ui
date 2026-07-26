@@ -13,10 +13,9 @@ import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
 import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
 
 /**
- * `box-shadow` values for hover animation.
- * `null` means "do not animate shadow" (for outline / ghost variants).
- * Read from CSS variables (theme-aware), but GSAP needs a concrete string —
- * so pass them explicitly via `getComputedStyle` at call time.
+ * `box-shadow` values for hover / persistent `--el-shadow`.
+ * Prefer live `var(--shadow-*)` refs (`shadowNone` / `shadowBase` / …) so nested
+ * theme roots and mid-hover theme switches stay correct (CSS cascade + transition).
  */
 export interface HoverShadowConfig {
   /**
@@ -28,23 +27,47 @@ export interface HoverShadowConfig {
   hover: string;
 }
 
-/** Reads shadow CSS variable from document root. */
-function readShadowVar(varName: string): string {
+/**
+ * Style root for resolving computed `--shadow-*`.
+ * Pass the animated element (or any descendant of the themed root) — cascade
+ * picks up tokens on a custom `ThemeProvider`/`applyThemeTokens` root.
+ * Without `from`, falls back to `document.documentElement`.
+ */
+function resolveShadowReadRoot(from?: Element | null): Element {
+  if (from) return from;
+  return document.documentElement;
+}
+
+/** Reads a computed shadow CSS variable from `from`'s cascade (or document root). */
+export function readShadowVar(varName: string, from?: Element | null): string {
   if (typeof window === "undefined") return "none";
-  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "none";
+  return (
+    getComputedStyle(resolveShadowReadRoot(from)).getPropertyValue(varName).trim() ||
+    "none"
+  );
+}
+
+/** Live CSS `var(--shadow-*)` for `--el-shadow` (theme-reactive; no freeze on pointerenter). */
+export function shadowCssVar(size: ShadowSize): string {
+  if (size === "none") return "var(--shadow-none)";
+  return `var(${SHADOW_CSS_VAR[size]})`;
 }
 
 /** "Empty" shadow: visually shadowless, but interpolates with `--shadow-base`. */
-export const shadowNone = () => readShadowVar("--shadow-none");
+export const shadowNone = () => shadowCssVar("none");
 
-export const shadowBase = () => readShadowVar(SHADOW_CSS_VAR.base);
-export const shadowMid = () => readShadowVar(SHADOW_CSS_VAR.mid);
-export const shadowLarge = () => readShadowVar(SHADOW_CSS_VAR.large);
+export const shadowBase = () => shadowCssVar("base");
+export const shadowMid = () => shadowCssVar("mid");
+export const shadowLarge = () => shadowCssVar("large");
 
-/** `box-shadow` value for a shadow tier from the current theme. */
-export function readShadowSize(size: ShadowSize): string {
-  if (size === "none") return shadowNone();
-  return readShadowVar(SHADOW_CSS_VAR[size]);
+/**
+ * Computed `box-shadow` string for a tier (resolved from `from`'s cascade).
+ * Prefer `shadowCssVar` / `shadowBase` for `--el-shadow`; use this when a concrete
+ * value is required (measurements, non-CSS consumers).
+ */
+export function readShadowSize(size: ShadowSize, from?: Element | null): string {
+  if (size === "none") return readShadowVar("--shadow-none", from);
+  return readShadowVar(SHADOW_CSS_VAR[size], from);
 }
 
 /**

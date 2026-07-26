@@ -45,14 +45,14 @@ export function SelectionIndicatorGalleryDemo() {
           SelectionThumb:
         </Text>
         <div className="selection-indicator-base flex items-center justify-center">
-          <SelectionThumb active={selected}>
+          <SelectionThumb size="base">
             <SelectionThumb.Icon size="base">
               <IoCheckmark aria-hidden />
             </SelectionThumb.Icon>
           </SelectionThumb>
         </div>
         <div className="selection-indicator-mid flex items-center justify-center">
-          <SelectionThumb active={!selected} />
+          <SelectionThumb size="mid" />
         </div>
       </div>
     </div>

@@ -31,7 +31,6 @@ export function useSwitchTrackAnimations({
   trackFillRef,
   thumbRef,
   thumbShellRef,
-  thumbFillRef,
   iconOffRef,
   iconOnRef,
 }: UseSwitchTrackAnimationsProps) {
@@ -88,7 +87,6 @@ export function useSwitchTrackAnimations({
       trackFillRef.current,
       thumbRef.current,
       thumbShellRef.current,
-      thumbFillRef.current,
       iconOffRef.current,
       iconOnRef.current,
       trackRef.current,
@@ -98,7 +96,7 @@ export function useSwitchTrackAnimations({
         if (el) killMotion(el);
       }
     };
-  }, [iconOffRef, iconOnRef, thumbFillRef, thumbRef, thumbShellRef, trackFillRef, trackRef]);
+  }, [iconOffRef, iconOnRef, thumbRef, thumbShellRef, trackFillRef, trackRef]);
 
   useLayoutEffect(() => {
     const trackFill = trackFillRef.current;

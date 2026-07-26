@@ -61,7 +61,6 @@ export type SwitchTrackContextValue = {
   trackFillRef: RefObject<HTMLSpanElement | null>;
   thumbRef: RefObject<HTMLSpanElement | null>;
   thumbShellRef: RefObject<HTMLSpanElement | null>;
-  thumbFillRef: RefObject<HTMLSpanElement | null>;
   iconOffRef: RefObject<HTMLSpanElement | null>;
   iconOnRef: RefObject<HTMLSpanElement | null>;
 };
@@ -164,7 +163,6 @@ export type UseSwitchTrackAnimationsProps = {
   trackFillRef: RefObject<HTMLSpanElement | null>;
   thumbRef: RefObject<HTMLSpanElement | null>;
   thumbShellRef: RefObject<HTMLSpanElement | null>;
-  thumbFillRef: RefObject<HTMLSpanElement | null>;
   iconOffRef: RefObject<HTMLSpanElement | null>;
   iconOnRef: RefObject<HTMLSpanElement | null>;
 };

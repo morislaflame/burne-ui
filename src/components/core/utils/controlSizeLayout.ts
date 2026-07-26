@@ -14,6 +14,7 @@ export type ControlSizeLayout = {
   chevronIcon: string;
   spinnerIcon: string;
   spinnerBorder: string;
+  rounded: string;
 };
 
 export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
@@ -29,6 +30,7 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-small",
     spinnerIcon: "icon-small",
     spinnerBorder: "border-2",
+    rounded: "rounded-small",
   },
   base: {
     minWButton: "min-w-button-base",
@@ -42,6 +44,7 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-base",
     spinnerIcon: "icon-base",
     spinnerBorder: "border-2",
+    rounded: "rounded-base",
   },
   mid: {
     minWButton: "min-w-button-mid",
@@ -55,6 +58,7 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-mid",
     spinnerIcon: "icon-mid",
     spinnerBorder: "border-2",
+    rounded: "rounded-mid",
   },
   large: {
     minWButton: "min-w-button-large",
@@ -68,5 +72,6 @@ export const CONTROL_SIZE_LAYOUT: Record<ComponentSize, ControlSizeLayout> = {
     chevronIcon: "icon-large",
     spinnerIcon: "icon-large",
     spinnerBorder: "border-[2.5px]",
+    rounded: "rounded-large",
   },
 };

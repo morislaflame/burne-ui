@@ -42,7 +42,7 @@ import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type Toggl
 | `onPressedChange` | — | `(pressed: boolean) => void` |
 | `onFillStart` | — | Колбэк в начале fill-анимации |
 | `variant` | `default` | `default` \| `outline` \| `ghost` \| `gloss` |
-| `size` | `base` | `small` \| `base` \| `mid` \| `large` |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` — height/pad/icon + `rounded-{size}` |
 | `fillColor` | auto | CSS color заливки |
 | `value` | — | Для ToggleButtonGroup |
 | `groupSegment` | — | Сегмент ButtonGroup |

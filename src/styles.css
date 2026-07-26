@@ -617,36 +617,41 @@ p {
   height: var(--avatar-size-large);
 }
 
-/** Round selection indicators — diameter from `--selection-indicator-*` (→ space tokens). */
+/** Selection indicators — diameter + corner radius from `--selection-indicator-*` / `--selection-indicator-radius-*`. */
 @utility selection-indicator-xsmall {
   width: var(--selection-indicator-xsmall);
   height: var(--selection-indicator-xsmall);
   min-width: var(--selection-indicator-xsmall);
   min-height: var(--selection-indicator-xsmall);
+  border-radius: var(--selection-indicator-radius-xsmall);
 }
 @utility selection-indicator-small {
   width: var(--selection-indicator-small);
   height: var(--selection-indicator-small);
   min-width: var(--selection-indicator-small);
   min-height: var(--selection-indicator-small);
+  border-radius: var(--selection-indicator-radius-small);
 }
 @utility selection-indicator-base {
   width: var(--selection-indicator-base);
   height: var(--selection-indicator-base);
   min-width: var(--selection-indicator-base);
   min-height: var(--selection-indicator-base);
+  border-radius: var(--selection-indicator-radius-base);
 }
 @utility selection-indicator-mid {
   width: var(--selection-indicator-mid);
   height: var(--selection-indicator-mid);
   min-width: var(--selection-indicator-mid);
   min-height: var(--selection-indicator-mid);
+  border-radius: var(--selection-indicator-radius-mid);
 }
 @utility selection-indicator-large {
   width: var(--selection-indicator-large);
   height: var(--selection-indicator-large);
   min-width: var(--selection-indicator-large);
   min-height: var(--selection-indicator-large);
+  border-radius: var(--selection-indicator-radius-large);
 }
 
 /** Icons: width and height from `--icon-size-*` (1:1 with `--size-scale-*`; see `tokens/styles.css`). */

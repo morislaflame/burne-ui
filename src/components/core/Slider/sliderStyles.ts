@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorTokens";
 import { scaleFieldRootClassName } from "@/components/core/utils/scaleFieldRootClassName";
 
 import { sliderThicknessToCss } from "./sliderAPI";
@@ -30,17 +31,18 @@ export const SLIDER_RAIL_WIDTH: Record<SliderSize, string> = {
 };
 
 export const SLIDER_RAIL_LAYOUT_CLASS =
-  "pointer-events-none absolute inset-0 overflow-hidden rounded-full";
+  "pointer-events-none absolute inset-0 overflow-hidden";
 
 export const SLIDER_RAIL_DEFAULT_CLASS = "bg-primary-tint";
 
 export const SLIDER_RAIL_GLOSS_CLASS = "gloss-indicator border-0";
 
-export const SLIDER_RAIL_GLOSS_SHAPE_CLASS = "overflow-hidden rounded-full";
+export const SLIDER_RAIL_GLOSS_SHAPE_CLASS = "overflow-hidden";
 
 export const SLIDER_RAIL_DISABLED_CLASS = "opacity-48";
 
-export const SLIDER_FILL_LAYOUT_CLASS = "absolute rounded-full";
+/** Rail fill — clipped by rail `overflow-hidden` (same radius as thumb). */
+export const SLIDER_FILL_LAYOUT_CLASS = "absolute rounded-[inherit]";
 
 export const SLIDER_FILL_DEFAULT_CLASS = "bg-primary";
 
@@ -59,7 +61,7 @@ export const SLIDER_TRACK_HIT_HORIZONTAL_CLASS = "w-full";
 export const SLIDER_TRACK_HIT_VERTICAL_CLASS = "h-48";
 
 export const SLIDER_MARK_CLASS =
-  "pointer-events-none absolute z-[1] size-1 rounded-full bg-primary/30";
+  "pointer-events-none absolute z-[1] size-1 rounded-[var(--selection-indicator-radius-xsmall)] bg-primary/30";
 
 export const SLIDER_THUMB_BUTTON_BASE_CLASS =
   "absolute z-[2] box-border flex shrink-0 origin-center items-center justify-center m-0 appearance-none border-0 bg-transparent p-0 focus-ring";
@@ -87,11 +89,13 @@ export function sliderRootClass({
 }
 
 export function sliderRailClass({
+  size,
   disabled,
   gloss = false,
   slotClass,
   className,
 }: {
+  size: SliderSize;
   disabled?: boolean;
   gloss?: boolean;
   slotClass?: string;
@@ -99,6 +103,7 @@ export function sliderRailClass({
 }): string {
   return cn(
     SLIDER_RAIL_LAYOUT_CLASS,
+    SELECTION_INDICATOR_RADIUS_CLASS[size],
     !gloss && SLIDER_RAIL_DEFAULT_CLASS,
     disabled && SLIDER_RAIL_DISABLED_CLASS,
     slotClass,
@@ -146,6 +151,7 @@ export function sliderTrackHitAreaClass({
     SLIDER_TRACK_HIT_BASE_CLASS,
     isHorizontal ? SLIDER_TRACK_HIT_HORIZONTAL_CLASS : SLIDER_TRACK_HIT_VERTICAL_CLASS,
     thickness == null && (isHorizontal ? SLIDER_RAIL_HEIGHT[size] : SLIDER_RAIL_WIDTH[size]),
+    gloss && SELECTION_INDICATOR_RADIUS_CLASS[size],
     gloss && SLIDER_RAIL_GLOSS_SHAPE_CLASS,
     gloss && SLIDER_RAIL_GLOSS_CLASS,
     slotClass,

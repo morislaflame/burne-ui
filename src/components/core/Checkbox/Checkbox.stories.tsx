@@ -196,13 +196,12 @@ export const IndicatorShape: Story = {
         <Checkbox.Indicator
           classNames={{
             root: "rounded-mid",
-            fill: "rounded-[inherit]",
           }}
         />
       </Checkbox.Control>
       <Checkbox.Content>
         <Checkbox.Label>rounded-mid</Checkbox.Label>
-        <Checkbox.Hint>classNames.root + fill with rounded-[inherit].</Checkbox.Hint>
+        <Checkbox.Hint>Fill follows shell radius automatically.</Checkbox.Hint>
       </Checkbox.Content>
     </Checkbox>
   ),
@@ -214,7 +213,7 @@ export const IndicatorCompound: Story = {
     <Checkbox defaultChecked variant="outline">
       <Checkbox.Control>
         <Checkbox.Indicator classNames={{ root: "rounded-mid" }}>
-          <Checkbox.Indicator.Fill className="rounded-[inherit]" />
+          <Checkbox.Indicator.Fill />
           <Checkbox.Indicator.Mark>
             <IoStar aria-hidden className="text-primary" />
           </Checkbox.Indicator.Mark>
@@ -302,7 +301,6 @@ export const CustomClassNames: Story = {
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
         indicator: "rounded-mid",
-        indicatorFill: "rounded-[inherit]",
         labelText: "text-primary font-semibold",
         hint: "text-foreground/80",
       }}

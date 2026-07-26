@@ -1,6 +1,6 @@
 # SelectionThumb
 
-Упрощённый thumb-индикатор для **Switch** и **Slider**: круглый shell + animating fill (без mark/check). Опционально `SelectionThumb.Icon` для иконки поверх thumb. Низкоуровневый примитив — не используется напрямую в формах как самостоятельный контрол.
+Упрощённый thumb-индикатор для **Switch** и **Slider**: shell с `--selection-indicator-radius-*` (без внутреннего fill). Опционально `SelectionThumb.Icon` — цвет стабильный (`text-primary` / gloss `text-foreground`). Низкоуровневый примитив — не используется напрямую в формах как самостоятельный контрол.
 
 ## Импорт
 
@@ -14,7 +14,6 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 
 ```tsx
 <SelectionThumb
-  active={checked}
   size="base"
   gloss={false}
   className="shadow-token-sm"
@@ -23,58 +22,45 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `active` | — | **Обязательный.** Fill scale in/out (как `selected` у SelectionIndicator) |
-| `size` | `base` | `SelectionIndicatorSize` |
-| `gloss` | `false` | `gloss-indicator` shell + gloss tint fill |
+| `size` | `base` | `SelectionIndicatorSize` → radius + icon scale |
+| `gloss` | `false` | `gloss-indicator` shell |
 | `shellRef` | — | Ref на shell (для parent slide anim — Switch) |
-| `fillRef` | internal | Ref на fill (можно передать извне) |
 | `className` | — | На shell |
 | `children` | — | Обычно `SelectionThumb.Icon` |
 
 ### `SelectionThumb.Icon`
 
 ```tsx
-<SelectionThumb.Icon size="base" highlighted={isOn} gloss={false}>
+<SelectionThumb.Icon size="base" gloss={false}>
   <IoMoon aria-hidden />
 </SelectionThumb.Icon>
 ```
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `highlighted` | `false` | `text-indicator-foreground` vs `text-primary` |
-| `gloss` | `false` | `text-foreground` в gloss mode |
+| `gloss` | `false` | `text-foreground` в gloss mode, иначе `text-primary` |
 | `iconRef` | — | Ref для parent icon crossfade (Switch) |
 | `className` | — | На wrapper иконки |
 | `size` | `base` | Размер SVG через `SELECTION_INDICATOR_ICON_CLASS` |
 
 ## variant / surface
 
-| `gloss` | Shell | Fill |
+| `gloss` | Shell | Icon |
 |---------|-------|------|
-| `false` | `border border-primary bg-surface` | `selectionIndicatorFillClass("base")` |
-| `true` | `gloss-indicator border-0` | `bg-primary-tint` (`FILL_GLOSS_TINT_CLASS`) |
+| `false` | `border border-primary bg-surface` | `text-primary` |
+| `true` | `gloss-indicator border-0` | `text-foreground` |
 
 ## Анимации
 
-Переиспользует `useSelectionIndicatorAnimation(active, fillRef)` — **только fill**, без mark.
+Внутри SelectionThumb motion нет (fill убран).
 
 **DOM:**
 
 ```
 <span shell ref=shellRef>           ← parent may animate position (Switch/Slider)
-  <span fill ref=fillRef>           ← scale 0↔1 on active
   {children}                        ← SelectionThumb.Icon (opacity from parent)
 </span>
 ```
-
-### Fill animation
-
-Идентично SelectionIndicator fill:
-
-- active: `scale 0→1`, `autoAlpha 0→1`
-- inactive: `scale→0`, fade out
-- `motionInteractive()` — `interactiveDuration`, `interactiveEase`
-- Reduced motion: instant
 
 ### Parent animations (не в SelectionThumb)
 
@@ -83,53 +69,17 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 | `Switch` | thumb slide по track, icon opacity, shell ref |
 | `Slider` | thumb position по `percent`, press squeeze на button |
 
-SelectionThumb отвечает только за **fill pulse** внутри thumb.
-
-### Кастомизация
-
-```ts
-configureMotion({ interactiveDuration: 280 });
-```
-
 ## Стилизация и кастомизация
 
 ### `SelectionThumbClassNames` / `SelectionThumbIconClassNames`
 
-Thumb: `root`, `fill`. Icon: `root`, `icon`.
+Thumb: `root`. Icon: `root`, `icon`.
 
 `className` мержится в `root`.
-
-### `SelectionThumb`
-
-```tsx
-<SelectionThumb
-  active={value > 0}
-  size="mid"
-  gloss
-  className="ring-1 ring-primary/20"
-/>
-```
-
-Стили fill/shell gloss заданы токенами — override через родительский Switch/Slider `classNames.thumbShell`.
-
-### `SelectionThumb.Icon`
-
-```tsx
-<SelectionThumb.Icon
-  highlighted={checked}
-  gloss={variant === "gloss"}
-  className="opacity-90"
->
-  <IoSunny aria-hidden />
-</SelectionThumb.Icon>
-```
-
-В Switch видимость иконок on/off — `style={{ opacity }}` на уровне `Switch.Icon`, не в SelectionThumb.Icon.
 
 ### В Switch / Slider
 
 ```tsx
-// Switch — слоты thumbShell, icon на Switch root:
 <Switch
   classNames={{
     thumb: "…",
@@ -141,16 +91,17 @@ Thumb: `root`, `fill`. Icon: `root`, `icon`.
 
 SelectionThumb получает `className={slotClassNames.thumbShell}` из Switch internals.
 
+Track/rail скругление — тот же `--selection-indicator-radius-*`, что и у thumb.
+
 ### Практические заметки
 
 - **Не standalone control** — нет role, label, keyboard; оборачивайте в Switch/Slider.
-- **active vs checked** — семантика родителя; thumb только визуал fill.
-- **shellRef / fillRef** — для координации GSAP в Switch track animations.
+- **shellRef** — для координации GSAP в Switch track animations.
 - **Тёмная/светлая тема** — gloss CSS из `glossPanel.css`.
 
 ## Доступность
 
-- `aria-hidden` на shell и fill
+- `aria-hidden` на shell
 - Иконки: `aria-hidden` на SVG
 - A11y — на родительском `Switch` / `role="slider"`
 
@@ -169,8 +120,7 @@ SelectionThumb/
 └── index.ts
 ```
 
-Анимация fill: `../SelectionIndicator/useSelectionIndicatorAnimation.ts`  
-Токены shell/size: `../SelectionIndicator/selectionIndicatorTokens.ts`
+Токены shell/radius: `../SelectionIndicator/selectionIndicatorTokens.ts`
 
 ## Storybook
 

@@ -11,6 +11,7 @@
  * | Control box | — | `--control-height-*` | — | `h-control-*`, `min-h-control-*` |
  * | Control square | — | `--control-size-*` (= height) | — | `w-control-*`, `min/max-w-control-*` |
  * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
+ * | Indicators | `--size` / `--radius` | `--selection-indicator-*` + `--selection-indicator-radius-*` (`--radius-*` × 0.75) | — | `selection-indicator-*` |
  * | Panels | `--size` | `--max-component-*` | — | `min/max-w-component-*` |
  *
  * ## Typography
@@ -139,6 +140,7 @@ export const burneRadiusScale = [
 
 /**
  * Icon utilities `icon-*` — 1:1 with `--size-scale-*` / `--icon-size-*`.
+ * SelectionIndicator marks use `--icon-size-*` × 0.75 in component tokens.
  */
 export const burneIconScale = [
   "xsmall",

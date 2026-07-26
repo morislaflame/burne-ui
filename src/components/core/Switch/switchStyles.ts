@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorTokens";
 import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
 import { sliderThicknessToCss } from "@/components/core/Slider";
 
@@ -48,13 +49,15 @@ export const SWITCH_ROOT_FOCUS_CLASS =
 
 export const SWITCH_ROOT_CONTROL_ONLY_CLASS = "inline-grid grid-cols-[auto] grid-rows-[auto]";
 
-export const SWITCH_TRACK_BASE_CLASS = "relative box-border inline-flex shrink-0 rounded-full";
+export const SWITCH_TRACK_BASE_CLASS =
+  "relative box-border inline-flex shrink-0";
 
 export const SWITCH_TRACK_GLOSS_CLASS = "gloss-indicator border-0";
 
 export const SWITCH_TRACK_DEFAULT_CLASS = "bg-primary-tint";
 
-export const SWITCH_FILL_BASE_CLASS = "pointer-events-none absolute inset-0 rounded-full";
+/** Track fill — clipped by track `overflow-hidden` (same radius as thumb). */
+export const SWITCH_FILL_BASE_CLASS = "pointer-events-none absolute inset-0 rounded-[inherit]" ;
 
 export const SWITCH_FILL_GLOSS_CLASS = "z-[1]";
 
@@ -138,6 +141,7 @@ export function switchTrackClass({
 }): string {
   return cn(
     SWITCH_TRACK_BASE_CLASS,
+    SELECTION_INDICATOR_RADIUS_CLASS[size],
     thickness == null && SWITCH_LAYOUT[size].track,
     gloss ? SWITCH_TRACK_GLOSS_CLASS : SWITCH_TRACK_DEFAULT_CLASS,
     slotClass,

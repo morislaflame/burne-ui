@@ -51,7 +51,7 @@ export function useToggleButtonRootState({
       ? Boolean(pressedProp)
       : localPressed;
 
-  const roundingClass = toggleButtonRoundingClass(groupSegment);
+  const roundingClass = toggleButtonRoundingClass(groupSegment, size);
 
   const isCompound = hasToggleButtonCompoundChildren(children);
   const contentLayoutClass = !isCompound ? className : undefined;

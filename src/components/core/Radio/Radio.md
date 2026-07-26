@@ -189,7 +189,6 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
     control: "ring-primary/30",
     controlTrack: "border-primary/50",
     indicator: "rounded-mid",
-    indicatorFill: "rounded-[inherit]",
     labelText: "text-primary font-semibold",
     hint: "text-foreground/80",
   }}

@@ -410,8 +410,8 @@
   --size: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
 
   /** Primitive control size scale (`--size-scale-*`) */
-  --size-scale-xsmall: calc(var(--size) * 0.875);
-  --size-scale-small: calc(var(--size) * 1);
+  --size-scale-xsmall: calc(var(--size) * 0.675);
+  --size-scale-small: calc(var(--size) * 0.875);
   --size-scale-base: calc(var(--size) * 1.125);
   --size-scale-mid: calc(var(--size) * 1.25);
   --size-scale-large: calc(var(--size) * 1.5);
@@ -464,6 +464,7 @@
 
   /**
    * Icons (react-icons, etc.) — 1:1 with `--size-scale-*`; utilities `icon-xsmall` … `icon-3xlarge`.
+   * SelectionIndicator / SelectionThumb marks scale icons further (×0.75) in component tokens.
    */
   --icon-size-xsmall: var(--size-scale-xsmall);
   --icon-size-small: var(--size-scale-small);
@@ -476,13 +477,23 @@
 
   /**
    * Round selection indicators (Radio, Checkbox, Slider thumb, Dropdown).
-   * Outer ring diameter; fill uses inset 1px.
+   * Outer ring diameter (= `--size-scale-*`); fill paints under the border
+   * (`-inset` by `--border-width`) with `rounded-[inherit]` so custom shell radius
+   * needs no extra public API.
+   * Mark icons: `--icon-size-*` × 0.75 (see `SELECTION_INDICATOR_ICON_CLASS`).
+   * Corner radius follows `--radius-*` at 0.75× (not `rounded-full`).
    */
   --selection-indicator-xsmall: var(--size-scale-xsmall);
   --selection-indicator-small: var(--size-scale-small);
   --selection-indicator-base: var(--size-scale-base);
   --selection-indicator-mid: var(--size-scale-mid);
   --selection-indicator-large: var(--size-scale-large);
+
+  --selection-indicator-radius-xsmall: calc(var(--radius-xsmall) * 0.75);
+  --selection-indicator-radius-small: calc(var(--radius-small) * 0.75);
+  --selection-indicator-radius-base: calc(var(--radius-base) * 0.75);
+  --selection-indicator-radius-mid: calc(var(--radius-mid) * 0.75);
+  --selection-indicator-radius-large: calc(var(--radius-large) * 0.75);
 
   /**
    * Component shadows — single layer, bottom only.

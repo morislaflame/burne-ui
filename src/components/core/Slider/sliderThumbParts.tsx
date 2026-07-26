@@ -21,7 +21,6 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       percent,
       orientation,
       disabled,
-      active,
       ariaValueNow,
       ariaValueMin,
       ariaValueMax,
@@ -71,14 +70,13 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
         {...rest}
       >
         <SelectionThumb
-          active={active}
           size={size}
           gloss={gloss}
           shellRef={shellRef}
           className={cn(slotClassNames.thumbShell, thumbClassName)}
         >
           {icon != null ? (
-            <SelectionThumb.Icon size={size} highlighted={active} gloss={gloss}>
+            <SelectionThumb.Icon size={size} gloss={gloss}>
               {icon}
             </SelectionThumb.Icon>
           ) : null}

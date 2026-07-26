@@ -12,12 +12,22 @@ export const SELECTION_INDICATOR_SIZE_CLASS: Record<SelectionIndicatorSize, stri
   large: "selection-indicator-large",
 };
 
+/** Corner radius from `--selection-indicator-radius-*` (`--radius-*` × 0.75). */
+export const SELECTION_INDICATOR_RADIUS_CLASS: Record<SelectionIndicatorSize, string> = {
+  xsmall: "rounded-[var(--selection-indicator-radius-xsmall)]",
+  small: "rounded-[var(--selection-indicator-radius-small)]",
+  base: "rounded-[var(--selection-indicator-radius-base)]",
+  mid: "rounded-[var(--selection-indicator-radius-mid)]",
+  large: "rounded-[var(--selection-indicator-radius-large)]",
+};
+
+/** Mark icon box — `--icon-size-*` × 0.75 so marks fit inside the indicator ring. */
 export const SELECTION_INDICATOR_ICON_CLASS: Record<SelectionIndicatorSize, string> = {
-  xsmall: "icon-xsmall",
-  small: "icon-xsmall",
-  base: "icon-xsmall",
-  mid: "icon-base",
-  large: "icon-mid",
+  xsmall: "size-[length:calc(var(--icon-size-xsmall)*0.75)]",
+  small: "size-[length:calc(var(--icon-size-small)*0.75)]",
+  base: "size-[length:calc(var(--icon-size-base)*0.75)]",
+  mid: "size-[length:calc(var(--icon-size-mid)*0.75)]",
+  large: "size-[length:calc(var(--icon-size-large)*0.75)]",
 };
 
 export const SELECTION_INDICATOR_MARK_CLASS =
@@ -33,22 +43,27 @@ export function selectionIndicatorMarkCustomIconClass(size: SelectionIndicatorSi
 }
 
 export const SELECTION_INDICATOR_DOT_CLASS: Record<SelectionIndicatorSize, string> = {
-  xsmall: "size-[calc(var(--selection-indicator-xsmall)*0.333333)]",
-  small: "size-[calc(var(--selection-indicator-small)*0.333333)]",
-  base: "size-[calc(var(--selection-indicator-base)*0.333333)]",
-  mid: "size-[calc(var(--selection-indicator-mid)*0.333333)]",
-  large: "size-[calc(var(--selection-indicator-large)*0.333333)]",
+  xsmall:
+    "size-[calc(var(--selection-indicator-xsmall)*0.333333)] rounded-[var(--selection-indicator-radius-xsmall)]",
+  small:
+    "size-[calc(var(--selection-indicator-small)*0.333333)] rounded-[var(--selection-indicator-radius-small)]",
+  base:
+    "size-[calc(var(--selection-indicator-base)*0.333333)] rounded-[var(--selection-indicator-radius-base)]",
+  mid:
+    "size-[calc(var(--selection-indicator-mid)*0.333333)] rounded-[var(--selection-indicator-radius-mid)]",
+  large:
+    "size-[calc(var(--selection-indicator-large)*0.333333)] rounded-[var(--selection-indicator-radius-large)]",
 };
 
-export const SELECTION_INDICATOR_DOT_INNER_CLASS = "shrink-0 rounded-full bg-indicator-foreground";
+export const SELECTION_INDICATOR_DOT_INNER_CLASS = "shrink-0 bg-indicator-foreground";
 
-export const SELECTION_INDICATOR_DOT_INNER_GLOSS_CLASS = "shrink-0 rounded-full bg-foreground";
+export const SELECTION_INDICATOR_DOT_INNER_GLOSS_CLASS = "shrink-0 bg-foreground";
 
 export const SELECTION_INDICATOR_SHELL_CLASS =
-  "relative box-border inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full";
+  "relative box-border inline-flex shrink-0 items-center justify-center overflow-hidden";
 
 export const SELECTION_INDICATOR_FILL_BASE_CLASS =
-  "pointer-events-none absolute inset-px z-[0] flex origin-center items-center justify-center rounded-[inherit]";
+  "pointer-events-none absolute -inset-[var(--border-width)] z-[0] flex origin-center items-center justify-center rounded-[inherit]";
 
 export const SELECTION_INDICATOR_FILL_CLASS =
   "bg-indicator text-indicator-foreground";
@@ -56,13 +71,15 @@ export const SELECTION_INDICATOR_FILL_CLASS =
 export const SELECTION_INDICATOR_FILL_SECONDARY_CLASS =
   "bg-secondary text-secondary-foreground";
 
-export const SELECTION_INDICATOR_FILL_GLOSS_CLASS =
-  "pointer-events-none absolute inset-px z-[1] flex origin-center items-center justify-center rounded-[inherit] gloss-indicator-fill text-foreground";
+export const SELECTION_INDICATOR_FILL_GLOSS_CLASS = cn(
+  SELECTION_INDICATOR_FILL_BASE_CLASS,
+  "z-[1] gloss-indicator-fill text-foreground",
+);
 
 /** Gloss fill for Switch/Slider thumb — primary-tint like ToggleButton, without gloss-indicator-fill. */
 export const SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS = cn(
   SELECTION_INDICATOR_FILL_BASE_CLASS,
-  "z-[1] rounded-[inherit] bg-primary-tint",
+  "z-[1] bg-primary-tint",
 );
 
 const INDICATOR_CSS_VAR: Record<SelectionIndicatorSize, string> = {
@@ -105,7 +122,7 @@ export function selectionIndicatorDotInnerClass(
     case "outline":
       return SELECTION_INDICATOR_DOT_INNER_GLOSS_CLASS;
     case "secondary":
-      return "shrink-0 rounded-full bg-secondary-foreground";
+      return "shrink-0 bg-secondary-foreground";
     default:
       return SELECTION_INDICATOR_DOT_INNER_CLASS;
   }
@@ -144,7 +161,12 @@ export function selectionIndicatorShellClass(
   size: SelectionIndicatorSize,
   className?: string,
 ): string {
-  return cn(SELECTION_INDICATOR_SHELL_CLASS, SELECTION_INDICATOR_SIZE_CLASS[size], className);
+  return cn(
+    SELECTION_INDICATOR_SHELL_CLASS,
+    SELECTION_INDICATOR_SIZE_CLASS[size],
+    SELECTION_INDICATOR_RADIUS_CLASS[size],
+    className,
+  );
 }
 
 export function selectionIndicatorVariantClass(
@@ -159,6 +181,7 @@ export function selectionIndicatorVariantClass(
     case "outline":
       return "border border-primary bg-surface";
     case "gloss":
-      return "gloss-indicator border-0";
+      /* Local --border-width:0 → fill `-inset` collapses to 0 (no border to paint under). */
+      return "gloss-indicator border-0 [--border-width:0px]";
   }
 }

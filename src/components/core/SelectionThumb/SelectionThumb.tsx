@@ -1,11 +1,7 @@
-import { useRef } from "react";
-
 import "../utils/glossPanel.css";
 
-import { useSelectionIndicatorAnimation } from "../SelectionIndicator/useSelectionIndicatorAnimation";
 import { selectionThumbDecorativeProps } from "./selectionThumbA11y";
 import {
-  selectionThumbFillClass,
   selectionThumbIconInnerClass,
   selectionThumbIconRootClass,
   selectionThumbShellClass,
@@ -20,38 +16,26 @@ export type {
 } from "./selectionThumbTypes";
 
 export function SelectionThumb({
-  active,
   size = "base",
   gloss = false,
   shellRef,
-  fillRef: fillRefProp,
   className,
   classNames,
   children,
   ...rest
 }: SelectionThumbProps) {
-  const internalFillRef = useRef<HTMLSpanElement>(null);
-  const fillRef = fillRefProp ?? internalFillRef;
-
-  useSelectionIndicatorAnimation(active, fillRef);
-
   return (
     <span
       ref={shellRef}
       className={selectionThumbShellClass({
         gloss,
+        size,
         className,
         slotRoot: classNames?.root,
       })}
       {...selectionThumbDecorativeProps()}
       {...rest}
     >
-      <span
-        ref={fillRef}
-        {...selectionThumbDecorativeProps()}
-        className={selectionThumbFillClass({ gloss, slotFill: classNames?.fill })}
-        style={{ transform: "scale(0)", opacity: 0 }}
-      />
       {children}
     </span>
   );
@@ -61,7 +45,6 @@ SelectionThumb.displayName = "SelectionThumb";
 
 export function SelectionThumbIcon({
   size = "base",
-  highlighted = false,
   gloss = false,
   iconRef,
   className,
@@ -76,7 +59,6 @@ export function SelectionThumbIcon({
       {...selectionThumbDecorativeProps()}
       className={selectionThumbIconRootClass({
         gloss,
-        highlighted,
         className,
         slotRoot: classNames?.root,
       })}

@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
+import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/controlSizeLayout";
 import { cn } from "@/utils/cn";
 
 import { buttonAriaBusy } from "./buttonA11y";
@@ -66,15 +67,16 @@ export function useButtonRootState({
     asyncState === "error";
   const blocked = userDisabled || busy;
 
+  const sizeRounded = CONTROL_SIZE_LAYOUT[size].rounded;
   const roundingClass = groupSegment
     ? buttonGroupRoundingClasses(groupSegment)
-    : "rounded-base";
+    : sizeRounded;
 
   const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
 
   const clipClass = groupSegment
     ? buttonGroupRoundingClasses(groupSegment)
-    : "rounded-base";
+    : sizeRounded;
 
   const isCompound = hasButtonCompoundChildren(children);
   const labelLayoutClass = !isCompound ? className : undefined;

@@ -104,12 +104,12 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 
 Размеры берутся из `CONTROL_SIZE_LAYOUT` (`controlSizeLayout.ts`):
 
-| size | Высота | min-width (кнопка) | Текст (`Text`) | Иконка в слоте |
-|------|--------|--------------------|----------------|----------------|
-| `small` | `h-control-small` | `min-w-button-small` | `small` | `icon-small` |
-| `base` | `h-control-base` | `min-w-button-base` | `base` | `icon-base` |
-| `mid` | `h-control-mid` | `min-w-button-mid` | `mid` | `icon-large` |
-| `large` | `h-control-large` | `min-w-button-large` | `mid` | `icon-large` |
+| size | Высота | min-width (кнопка) | Текст (`Text`) | Иконка в слоте | Радиус |
+|------|--------|--------------------|----------------|----------------|--------|
+| `small` | `h-control-small` | `min-w-button-small` | `small` | `icon-small` | `rounded-small` |
+| `base` | `h-control-base` | `min-w-button-base` | `base` | `icon-base` | `rounded-base` |
+| `mid` | `h-control-mid` | `min-w-button-mid` | `mid` | `icon-mid` | `rounded-mid` |
+| `large` | `h-control-large` | `min-w-button-large` | `mid` | `icon-large` | `rounded-large` |
 
 При `iconOnly` минимальная ширина не применяется (`min-w-fit`).
 

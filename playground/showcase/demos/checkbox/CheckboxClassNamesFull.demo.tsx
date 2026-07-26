@@ -10,7 +10,6 @@ export function CheckboxClassNamesFullDemo() {
         control: "ring-info/30",
         controlTrack: "border-info/50",
         indicator: "text-info rounded-mid",
-        indicatorFill: "rounded-[inherit]",
         content: "gap-xsmall",
         label: "gap-xsmall",
         labelText: "text-info font-semibold",

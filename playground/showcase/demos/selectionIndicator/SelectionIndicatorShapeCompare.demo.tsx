@@ -26,7 +26,6 @@ export function SelectionIndicatorShapeCompareDemo() {
             check
             classNames={{
               root: "rounded-mid",
-              fill: "rounded-[inherit]",
             }}
           />
           <Text as="span" variant="xsmall" className="text-muted">

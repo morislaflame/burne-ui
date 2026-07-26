@@ -119,7 +119,9 @@ export function toggleButtonRootClass({
   className?: string;
 }) {
   const isGloss = variant === "gloss";
-  const roundingClass = groupSegment ? buttonGroupRoundingClasses(groupSegment) : "rounded-base";
+  const roundingClass = groupSegment
+    ? buttonGroupRoundingClasses(groupSegment)
+    : CONTROL_SIZE_LAYOUT[size].rounded;
   const groupGlue = groupSegment ? buttonGroupSegmentSurfaceClasses(groupSegment) : "";
 
   return cn(
@@ -156,6 +158,11 @@ export function toggleButtonContentClass({
   );
 }
 
-export function toggleButtonRoundingClass(groupSegment: ButtonGroupSegment | undefined) {
-  return groupSegment ? buttonGroupRoundingClasses(groupSegment) : "rounded-base";
+export function toggleButtonRoundingClass(
+  groupSegment: ButtonGroupSegment | undefined,
+  size: ToggleButtonSize,
+) {
+  return groupSegment
+    ? buttonGroupRoundingClasses(groupSegment)
+    : CONTROL_SIZE_LAYOUT[size].rounded;
 }

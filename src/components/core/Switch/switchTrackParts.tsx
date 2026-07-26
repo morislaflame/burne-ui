@@ -53,7 +53,6 @@ export function SwitchTrack({
   const trackFillRef = useRef<HTMLSpanElement>(null);
   const thumbRef = useRef<HTMLSpanElement>(null);
   const thumbShellRef = useRef<HTMLSpanElement>(null);
-  const thumbFillRef = useRef<HTMLSpanElement>(null);
   const iconOffRef = useRef<HTMLSpanElement>(null);
   const iconOnRef = useRef<HTMLSpanElement>(null);
 
@@ -67,7 +66,6 @@ export function SwitchTrack({
     trackFillRef,
     thumbRef,
     thumbShellRef,
-    thumbFillRef,
     iconOffRef,
     iconOnRef,
   });
@@ -82,7 +80,6 @@ export function SwitchTrack({
       trackFillRef,
       thumbRef,
       thumbShellRef,
-      thumbFillRef,
       iconOffRef,
       iconOnRef,
     }),
@@ -162,11 +159,9 @@ export function SwitchThumb({ className, children, ...rest }: SwitchThumbProps) 
       {...rest}
     >
       <SelectionThumb
-        active={ctx.checked}
         size={ctx.size}
         gloss={ctx.gloss}
         shellRef={ctx.thumbShellRef}
-        fillRef={ctx.thumbFillRef}
         className={slotClassNames.thumbShell}
       >
         {children}
@@ -181,14 +176,12 @@ export function SwitchIcon({ when, children, className, ...rest }: SwitchIconPro
   const ctx = useSwitchTrackContext();
   const slotClassNames = useSwitchClassNames();
   const iconRef = when === "off" ? ctx.iconOffRef : ctx.iconOnRef;
-  const highlighted = when === "on";
   const visible = when === "off" ? !ctx.checked : ctx.checked;
 
   return (
     <SelectionThumb.Icon
       iconRef={iconRef}
       size={ctx.size}
-      highlighted={highlighted}
       gloss={ctx.gloss}
       className={cn(SWITCH_ICON_BASE_CLASS, slotClassNames.icon, className)}
       style={{ opacity: visible ? 1 : 0 }}

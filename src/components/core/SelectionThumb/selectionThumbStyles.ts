@@ -1,10 +1,9 @@
 import { cn } from "@/utils/cn";
 
 import {
-  SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS,
   SELECTION_INDICATOR_ICON_CLASS,
+  SELECTION_INDICATOR_RADIUS_CLASS,
   SELECTION_INDICATOR_SHELL_CLASS,
-  selectionIndicatorFillClass,
   type SelectionIndicatorSize,
 } from "../SelectionIndicator/selectionIndicatorTokens";
 
@@ -22,65 +21,49 @@ export const SELECTION_THUMB_ICON_INNER_CLASS =
 
 export function selectionThumbShellClass({
   gloss,
+  size,
   className,
   slotRoot,
 }: {
   gloss: boolean;
+  size: SelectionIndicatorSize;
   className?: string;
   slotRoot?: string;
 }): string {
   return gloss
     ? cn(
         SELECTION_INDICATOR_SHELL_CLASS,
+        SELECTION_INDICATOR_RADIUS_CLASS[size],
         SELECTION_THUMB_SHELL_GLOSS_CLASS,
         slotRoot,
         className,
       )
     : cn(
         SELECTION_INDICATOR_SHELL_CLASS,
+        SELECTION_INDICATOR_RADIUS_CLASS[size],
         SELECTION_THUMB_SHELL_DEFAULT_CLASS,
         slotRoot,
         className,
       );
 }
 
-export function selectionThumbFillClass({
-  gloss,
-  slotFill,
-}: {
-  gloss: boolean;
-  slotFill?: string;
-}): string {
-  return gloss
-    ? cn(SELECTION_INDICATOR_FILL_GLOSS_TINT_CLASS, slotFill)
-    : cn(selectionIndicatorFillClass("default"), slotFill);
-}
-
-export function selectionThumbIconColorClass({
-  gloss,
-  highlighted,
-}: {
-  gloss: boolean;
-  highlighted: boolean;
-}): string {
-  if (gloss) return "text-foreground";
-  return highlighted ? "text-indicator-foreground" : "text-primary";
+/** Icon color is stable (no on/off / active tint swap). */
+export function selectionThumbIconColorClass(gloss: boolean): string {
+  return gloss ? "text-foreground" : "text-primary";
 }
 
 export function selectionThumbIconRootClass({
   gloss,
-  highlighted,
   className,
   slotRoot,
 }: {
   gloss: boolean;
-  highlighted: boolean;
   className?: string;
   slotRoot?: string;
 }): string {
   return cn(
     SELECTION_THUMB_ICON_WRAP_CLASS,
-    selectionThumbIconColorClass({ gloss, highlighted }),
+    selectionThumbIconColorClass(gloss),
     slotRoot,
     className,
   );

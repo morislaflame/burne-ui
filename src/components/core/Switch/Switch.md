@@ -85,7 +85,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 
 ## Размеры
 
-Из `SWITCH_LAYOUT` / `switchGeometry` — track `2×` thumb diameter (`--selection-indicator-*`); title/desc/gap — из shared `OPTION_CONTROL_SIZE_LAYOUT`.
+Из `SWITCH_LAYOUT` / `switchGeometry` — track `2×` thumb diameter (`--selection-indicator-*`); скругление track/thumb — `--selection-indicator-radius-*`; title/desc/gap — из shared `OPTION_CONTROL_SIZE_LAYOUT`.
 
 | size | Track proportion |
 |------|------------------|
@@ -104,7 +104,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
     <span track ref=trackRef>
       <span trackFill ref=trackFillRef>     ← opacity fade
       <span thumb ref=thumbRef>             ← translateX slide
-        SelectionThumb (thumbShell, thumbFill)
+        SelectionThumb (thumbShell)
         Switch.Icon off/on refs
 ```
 
@@ -152,9 +152,8 @@ Track opacity `0.48` instant на `trackRef`.
 | Анимация | `configureMotion` |
 |----------|-------------------|
 | Thumb slide | `switchThumbDuration`, `switchThumbEase` |
-| Fill/icons | `interactiveDuration`, `interactiveEase` |
+| Track fill / icons | `interactiveDuration`, `interactiveEase` |
 | Press squeeze | `pressSqueezeScale`, `enablePressSqueeze` |
-| SelectionThumb fill | interactive (внутри thumb) |
 
 ## Стилизация и кастомизация
 

@@ -705,9 +705,6 @@ export function exportThemeCss(state: ThemeTokenState): string {
   }
 
   if (state.textScale !== defaults.textScale) {
-    lines.push(
-      `  /* textScale: ${state.textScale} — apply via applyThemeTokens or set --text-scale-* */`,
-    );
     for (const key of Object.keys(TEXT_SCALE_BASES) as TextScaleToken[]) {
       const { size, line } = TEXT_SCALE_BASES[key];
       const scaledSize = size * state.textScale;

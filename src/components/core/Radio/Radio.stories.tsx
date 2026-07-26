@@ -159,13 +159,12 @@ export const IndicatorShape: Story = {
         <Radio.Indicator
           classNames={{
             root: "rounded-mid",
-            fill: "rounded-[inherit]",
           }}
         />
       </Radio.Control>
       <Radio.Content>
         <Radio.Label>rounded-mid</Radio.Label>
-        <Radio.Hint>Dot inherits shape via rounded-[inherit].</Radio.Hint>
+        <Radio.Hint>Fill follows shell radius automatically.</Radio.Hint>
       </Radio.Content>
     </Radio>
   ),
@@ -227,7 +226,6 @@ export const CustomClassNames: Story = {
         control: "ring-primary/30",
         controlTrack: "border-primary/50",
         indicator: "rounded-mid",
-        indicatorFill: "rounded-[inherit]",
         labelText: "text-primary font-semibold",
         hint: "text-foreground/80",
       }}

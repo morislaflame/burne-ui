@@ -81,15 +81,16 @@ type SelectionIndicatorClassNames = {
 
 ## Размеры
 
-CSS-переменные: `--selection-indicator-xsmall` … `--selection-indicator-large`.
+CSS-переменные: `--selection-indicator-xsmall` … `--selection-indicator-large` (диаметр),
+`--selection-indicator-radius-*` = `--radius-*` × 0.75 (углы shell/dot — не `rounded-full`; fill — `rounded-[inherit]` + `-inset` под бордер, без отдельного радиуса в API).
 
-| size | CSS class | Icon class |
-|------|-----------|------------|
-| `xsmall` | `selection-indicator-xsmall` | `icon-xsmall` |
-| `small` | `selection-indicator-small` | `icon-xsmall` |
-| `base` | `selection-indicator-base` | `icon-xsmall` |
-| `mid` | `selection-indicator-mid` | `icon-base` |
-| `large` | `selection-indicator-large` | `icon-mid` |
+| size | CSS class | Mark icon |
+|------|-----------|-----------|
+| `xsmall` | `selection-indicator-xsmall` | `--icon-size-xsmall` × 0.75 |
+| `small` | `selection-indicator-small` | `--icon-size-small` × 0.75 |
+| `base` | `selection-indicator-base` | `--icon-size-base` × 0.75 |
+| `mid` | `selection-indicator-mid` | `--icon-size-mid` × 0.75 |
+| `large` | `selection-indicator-large` | `--icon-size-large` × 0.75 |
 
 Утилита `selectionIndicatorFallbackPx(size)` — px для layout без DOM.
 
@@ -100,8 +101,8 @@ CSS-переменные: `--selection-indicator-xsmall` … `--selection-indica
 **DOM-структура:**
 
 ```
-<span root aria-hidden>              ← rounded-full root shell
-  <span fill ref=fillRef>             ← scale 0→1, z-0
+<span root aria-hidden>              ← shell: size + radius token
+  <span fill ref=fillRef>             ← scale 0→1, z-0, -inset border, rounded-[inherit]
   <span mark ref=markRef>             ← check/dot/icon, z-2
 </span>
 ```
@@ -200,6 +201,7 @@ configureMotion({
 
 - **`check` vs `dot` vs `icon`:** взаимоисключающие приоритеты — `icon` > custom Mark child > `check` > `dot`.
 - **outline:** без fill — стилизуйте только root + mark.
+- **Кастомный radius shell:** достаточно `classNames.root` / `rounded-*` — fill подхватывает через `rounded-[inherit]`.
 - **Не интерактивен:** не вешайте pointer-events; клик на родителе.
 - **Порядок мержа:** variant classes → `classNames` → `className` (root).
 
