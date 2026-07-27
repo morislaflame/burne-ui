@@ -276,7 +276,7 @@ function runCommand(pmBin, args, cwd) {
  * @param {string} cwd
  */
 async function installDeps(pm, cwd) {
-  const pkgs = ["burne-ui", "react-icons"];
+  const pkgs = ["burne-ui", "react-icons", "gsap"];
   if (pm === "npm") await runCommand("npm", ["install", ...pkgs], cwd);
   else if (pm === "pnpm") await runCommand("pnpm", ["add", ...pkgs], cwd);
   else if (pm === "bun") await runCommand("bun", ["add", ...pkgs], cwd);
@@ -416,7 +416,7 @@ export async function runInit(argv, cliVersion) {
   const provider = resolveProviderPath(cwd, fw);
 
   if (!args.skipInstall) {
-    console.log(`\nInstalling burne-ui + react-icons with ${pm}…\n`);
+    console.log(`\nInstalling burne-ui + react-icons + gsap with ${pm}…\n`);
     await installDeps(pm, cwd);
   }
 

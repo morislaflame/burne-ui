@@ -5,7 +5,7 @@ React-компоненты с Tailwind CSS v4, анимациями на **GSAP*
 ## Установка
 
 ```bash
-npm install burne-ui
+npm install burne-ui react-icons gsap
 # или: pnpm / yarn / bun
 ```
 
@@ -31,10 +31,11 @@ npx burne-ui@latest init
 
 - `react`, `react-dom` (18 или 19)
 - `react-icons` (^5)
+- `gsap` (^3.12)
 
 ## Стили
 
-Подключите собранный CSS пакета **один раз** в точке входа (или в корневом layout):
+Стили **не** идут вместе с JS-импортом. Подключите CSS пакета **один раз** в точке входа (или в корневом layout):
 
 ```ts
 import "burne-ui/styles.css";
@@ -81,6 +82,8 @@ import "burne-ui/styles.css";
 ## Кастомизация темы
 
 ### BurneUIProvider (рекомендуется)
+
+Entry `burne-ui` поставляется с `"use client";` (Next.js App Router). Client-файл провайдера нужен, если рядом вызываете хуки / `configureMotion`:
 
 ```tsx
 "use client";

@@ -2,8 +2,8 @@
  * GSAP setup and shared motion helpers for Burne UI.
  *
  * Kit motion is event/state-driven (`killMotion` + `useEffect`/`useLayoutEffect`),
- * not `@gsap/react` / `useGSAP`. Packaging (external vs bundled GSAP) is still open —
- * see SETUP.md «GSAP» and CODE_REVIEW §8.
+ * not `@gsap/react` / `useGSAP`. `gsap` is a peer dependency (external in the lib build).
+ * `CustomEase` is registered lazily inside `ensureRippleEase` (no top-level side effect).
  */
 
 import gsap from "gsap";
@@ -11,14 +11,20 @@ import { CustomEase } from "gsap/CustomEase";
 
 import { getMotionConfig } from "./motionConfig";
 
-gsap.registerPlugin(CustomEase);
-
 const RIPPLE_EASE_ID = "brn-ripple";
 
+let customEaseRegistered = false;
 let cachedRippleCss = "";
+
+function ensureCustomEasePlugin(): void {
+  if (customEaseRegistered) return;
+  gsap.registerPlugin(CustomEase);
+  customEaseRegistered = true;
+}
 
 /** Ensures CustomEase for ripple is registered from current motion config. */
 export function ensureRippleEase(): string {
+  ensureCustomEasePlugin();
   const css = getMotionConfig().rippleEaseCss;
   if (cachedRippleCss !== css) {
     const m = /cubic-bezier\(\s*([\d.]+),\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\s*\)/.exec(css);

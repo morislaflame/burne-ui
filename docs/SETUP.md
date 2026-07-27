@@ -25,7 +25,7 @@ npx burne-ui@latest init
 ## 1. Установка
 
 ```bash
-npm install burne-ui react-icons
+npm install burne-ui react-icons gsap
 # или: pnpm / yarn / bun
 ```
 
@@ -37,19 +37,24 @@ npm install burne-ui react-icons
 |-------|--------|
 | `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
 | `react-icons` | `^5.0.0` |
+| `gsap` | `^3.12.0` |
 
-`gsap` входит в `burne-ui` как dependency (сейчас бандлится в `dist`). `@gsap/react` / `useGSAP` **не** часть кита — motion в компонентах через `killMotion` + React effects; для своих экранов ставьте `@gsap/react` отдельно при необходимости.
+`gsap` — **peer** (не бандлится в `dist`): одно инстанс в приложении, tree-shaking у потребителя. `@gsap/react` / `useGSAP` **не** часть кита — motion в компонентах через `killMotion` + React effects; для своих экранов ставьте `@gsap/react` отдельно при необходимости.
 
-**TODO (разобрать отдельно):** упаковка GSAP — peer/external vs инлайн в бандл, `sideEffects` / lazy `registerPlugin`, см. CODE_REVIEW этап 8.
+`CustomEase` регистрируется лениво при первом `ensureRippleEase()` (нет top-level `registerPlugin` — безопасно при `sideEffects: ["**/*.css"]`).
 
 ---
 
 ## 2. Подключение стилей
 
-Импортируйте собранный CSS **один раз** в глобальной точке входа (корневой layout, `main.tsx`, `_app`):
+Стили **не** подтягиваются из JS-barrel (`import { Button } from "burne-ui"`). Подключите собранный CSS **один раз** явно в глобальной точке входа (корневой layout, `main.tsx`, `_app`, или через `@import` в CSS):
 
 ```ts
 import "burne-ui/styles.css";
+```
+
+```css
+@import "burne-ui/styles.css";
 ```
 
 Файл `burne-ui/styles.css` (артефакт сборки `dist/ui.css`) содержит:
@@ -113,7 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-`ThemeScript` — блокирующий инлайн-скрипт: читает `localStorage` и ставит `data-theme` **до первой отрисовки**. Без него SSR-HTML всегда тёмный, и у пользователя со светлой темой будет вспышка.
+`ThemeScript` — блокирующий инлайн-скрипт: читает `localStorage` и ставит `data-theme` **до первой отрисовки**. Без него SSR-HTML всегда тёмный, и у пользователя со светлой темой будет вспышка. Компонент без хуков: SSR всё равно отдаёт `<script>` в HTML (даже через client-entry пакета).
 
 `suppressHydrationWarning` на `<html>` нужен, потому что скрипт меняет `data-theme` до гидрации React.
 
@@ -133,17 +138,20 @@ import { getThemeScript } from "burne-ui";
 getThemeScript({ storageKey: "burne-ui-theme", defaultTheme: "dark" });
 ```
 
-Первый компонент:
+### `"use client"` в пакете
+
+Собранные entry (`burne-ui`, `burne-ui/internal`) начинаются с `"use client";`. Импорт компонентов из Server Component (например `app/page.tsx`) создаёт client boundary автоматически — локальная обёртка не обязательна:
 
 ```tsx
-"use client";
-
+// app/page.tsx — можно без "use client"
 import { Button } from "burne-ui";
 
-export function Demo() {
+export default function Page() {
   return <Button variant="primary">Нажми меня</Button>;
 }
 ```
+
+`"use client"` в **вашем** файле нужен только если там же есть хуки / браузерные API (`useState`, `configureMotion` в `useLayoutEffect`, и т.п.) — как в client-провайдере ниже.
 
 ---
 
@@ -658,7 +666,7 @@ import { cn } from "burne-ui";
 
 ## 13. Checklist первой настройки
 
-- [ ] Установлены `burne-ui` и `react-icons`
+- [ ] Установлены `burne-ui`, `react-icons` и `gsap` (peers)
 - [ ] Подключён `burne-ui/styles.css`
 - [ ] Tailwind v4: `@source` на код приложения
 - [ ] `burne-ui` ≥ 1.5.3 (SSR + gloss blur CSS в `styles.css`); для тяжёлых demo можно `ssr: false`

@@ -34,7 +34,8 @@ export function getThemeScript(options: ThemeScriptOptions = {}): string {
 
 /**
  * Renders the no-flash theme bootstrap `<script>`.
- * Safe in Server Components (no hooks) — e.g. Next.js App Router `layout.tsx`.
+ * No hooks — SSR still emits the inline script in initial HTML (Next.js App Router
+ * `layout.tsx`). Package entry is `"use client"`, but this stays safe for no-flash.
  */
 export function ThemeScript({
   storageKey,

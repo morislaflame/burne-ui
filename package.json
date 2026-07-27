@@ -51,14 +51,13 @@
     "test-storybook:coverage": "PLAYWRIGHT_BROWSERS_PATH=0 vitest run --project=storybook --coverage"
   },
   "peerDependencies": {
+    "gsap": "^3.12.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
     "react-icons": "^5.0.0"
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "gsap": "^3.15.0",
-    "ogl": "^1.0.11",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
@@ -74,6 +73,8 @@
     "@vitest/browser-playwright": "^4.1.9",
     "@vitest/coverage-v8": "^4.1.9",
     "chromatic": "^17.7.2",
+    "gsap": "^3.15.0",
+    "ogl": "^1.0.11",
     "playwright": "^1.61.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
