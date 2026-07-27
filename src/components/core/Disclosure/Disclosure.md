@@ -99,12 +99,14 @@ Simple API нет.
 
 `status` нет.
 
-| size | Trigger | Content padding |
-|------|---------|-----------------|
-| `small` | `CONTROL_SIZE_LAYOUT.small` | `p-base` |
-| `base` | `CONTROL_SIZE_LAYOUT.base` | `p-mid` |
-| `mid` | `CONTROL_SIZE_LAYOUT.mid` | `p-large` |
-| `large` | `CONTROL_SIZE_LAYOUT.large` | `p-xlarge` |
+| size | Trigger / content padding | Title |
+|------|---------------------------|-------|
+| `small` | `COLLAPSIBLE_SIZE_LAYOUT` (`triggerPadding` / `contentPadding`) | `leading-none` + `titleVariant` |
+| `base` | same | same |
+| `mid` | same | same |
+| `large` | same | same |
+
+Отступы — отдельный `COLLAPSIBLE_SIZE_LAYOUT` (ритм как у panel header/body, не через `PANEL_SIZE_LAYOUT`). Chevron/icon — из `CONTROL_SIZE_LAYOUT`.
 
 ## Анимации
 

@@ -6,7 +6,7 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { toggleButtonAriaChecked, toggleButtonAriaPressed, toggleButtonRole } from "./toggleButtonA11y";
 import { hasToggleButtonCompoundChildren } from "./toggleButtonAPI";
 import { useOptionalToggleButtonGroupContext } from "./toggleButtonContext";
-import { toggleButtonRootClass, toggleButtonRoundingClass } from "./toggleButtonStyles";
+import { toggleButtonRoundingClass } from "./toggleButtonStyles";
 import type { UseToggleButtonRootStateProps } from "./toggleButtonTypes";
 
 export function useToggleButtonRootState({
@@ -56,23 +56,17 @@ export function useToggleButtonRootState({
   const isCompound = hasToggleButtonCompoundChildren(children);
   const contentLayoutClass = !isCompound ? className : undefined;
 
-  const buttonClass = toggleButtonRootClass({
-    variant,
-    pressed,
-    disabled,
-    size,
-    groupSegment,
-    slotClass: classNames?.root,
-    className,
-  });
-
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>, queueFillOnClick: (next: boolean) => void) => {
       onClick?.(e);
       if (e.defaultPrevented || disabled) return;
 
       if (inGroup && itemValue != null) {
+        // Single: clicked item ends selected (re-click is no-op). Multiple: toggle.
+        const nextPressed =
+          groupCtx!.type === "single" ? true : !groupCtx!.isSelected(itemValue);
         groupCtx!.select(itemValue);
+        queueFillOnClick(nextPressed);
         return;
       }
 
@@ -108,7 +102,6 @@ export function useToggleButtonRootState({
     animated,
     classNames,
     roundingClass,
-    buttonClass,
     role: toggleButtonRole({ inGroup, isSingleGroup }),
     ariaPressed: toggleButtonAriaPressed({ inGroup, isSingleGroup, pressed }),
     ariaChecked: toggleButtonAriaChecked({ inGroup, isSingleGroup, pressed }),

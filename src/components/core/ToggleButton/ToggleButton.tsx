@@ -7,6 +7,7 @@ import { toggleButtonHasCompoundPart } from "./toggleButtonAPI";
 import { ToggleButtonClassNamesProvider, ToggleButtonContextProvider } from "./toggleButtonContext";
 import { ToggleButtonContent, ToggleButtonFill } from "./toggleButtonParts";
 import { ToggleButtonSimpleContent } from "./toggleButtonSimpleContent";
+import { toggleButtonRootClass } from "./toggleButtonStyles";
 import type { ToggleButtonProps } from "./toggleButtonTypes";
 import { cn } from "@/utils/cn";
 import { useToggleButtonRootState } from "./useToggleButtonRootState";
@@ -92,13 +93,23 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       onPointerDown,
     });
 
+    const buttonClass = toggleButtonRootClass({
+      variant: state.variant,
+      pressed: animations.displayPressed,
+      disabled: state.disabled,
+      size: state.size,
+      groupSegment: state.groupSegment,
+      slotClass: state.classNames?.root,
+      className,
+    });
+
     const contextValue = {
       size: state.size,
       groupSegment: state.groupSegment,
       contentMotionRef: animations.contentMotionRef,
       bindFillRef: animations.bindFillRef,
       fillColor: state.fillColor,
-      pressed: state.pressed,
+      pressed: animations.displayPressed,
       roundingClass: state.roundingClass,
     };
 
@@ -117,7 +128,7 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
             aria-pressed={state.ariaPressed}
             aria-checked={state.ariaChecked}
             tabIndex={state.tabIndex}
-            className={state.buttonClass}
+            className={buttonClass}
             onPointerEnter={animations.handlePointerEnter}
             onPointerLeave={animations.handlePointerLeave}
             onPointerDown={animations.handlePointerDown}

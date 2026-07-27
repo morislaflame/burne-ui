@@ -21,6 +21,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       percent,
       orientation,
       disabled,
+      active,
       ariaValueNow,
       ariaValueMin,
       ariaValueMax,
@@ -62,6 +63,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
         className={sliderThumbButtonClass({
           orientation,
           disabled,
+          active,
           slotClass: cn(slotClassNames.thumb, className),
         })}
         style={{ ...sliderThumbPositionStyle(percent, orientation), ...style }}

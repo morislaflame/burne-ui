@@ -88,6 +88,7 @@ export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
         id={id ?? titleId}
         className={cn(
           DIALOG_TITLE_CLASS,
+          sizePreset.titleClassName,
           slotClassNames.title,
           className,
         )}

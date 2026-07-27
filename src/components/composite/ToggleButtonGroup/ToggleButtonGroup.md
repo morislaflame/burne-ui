@@ -1,6 +1,6 @@
 # ToggleButtonGroup
 
-Группа кнопок-переключателей на базе `ToggleButton`. Склеенная (`separated={false}`) как `ButtonGroup` или с зазором. Режимы **multiple** и **single** (radio-like).
+Группа кнопок-переключателей на базе `ToggleButton`. Склеенная (`segmented={false}`) как `ButtonGroup` или с зазором. Режимы **multiple** и **single** (radio-like).
 
 ## Импорт
 
@@ -51,7 +51,7 @@ Compound API **нет** — только root + дочерние `ToggleButton`.
 |------|--------------|----------|
 | `type` | `multiple` | `multiple` \| `single` |
 | `orientation` | `horizontal` | `horizontal` \| `vertical` |
-| `separated` | `false` | `true` — зазор между кнопками |
+| `segmented` | `false` | `true` — зазор между кнопками |
 | `disabled` | `false` | Блокирует группу и все `ToggleButton` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` → context |
 | `variant` | `default` | `default` \| `outline` \| `ghost` \| `gloss` |
@@ -135,7 +135,7 @@ configureMotion({
 |----------|---------|---------------------------|----------------|
 | Toggle fill | `useToggleButtonFillAnimation` | `enableToggleButtonFill` | `pressed` |
 | Press squeeze | first-level motion | `pressSqueezeScale` | `disabled` |
-| Segment glue | CSS only | — | `separated` |
+| Segment glue | CSS only | — | `segmented` |
 
 ## Токены и CSS
 
@@ -166,10 +166,10 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 </ToggleButtonGroup>
 ```
 
-### Separated variants
+### Segmented variants
 
 ```tsx
-<ToggleButtonGroup separated type="single" variant="outline" aria-label="Тема">
+<ToggleButtonGroup segmented type="single" variant="outline" aria-label="Тема">
   <ToggleButton value="light">Светлая</ToggleButton>
   <ToggleButton value="dark">Тёмная</ToggleButton>
 </ToggleButtonGroup>
@@ -181,7 +181,7 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 - `type="single"`: кнопки `role="radio"`, `aria-checked`; стрелки на root.
 - `type="multiple"`: `aria-pressed` на кнопках.
 - `data-toggle-button-value` на кнопках — для keyboard navigation.
-- `separated` — когда нужны независимые borders/shadows.
+- `segmented` — когда нужны независимые borders/shadows.
 - `disabled` на группе блокирует все toggle buttons.
 
 ## Интеграции
@@ -218,6 +218,6 @@ ToggleButtonGroup/
 
 ## Storybook
 
-`Composite Components/ToggleButtonGroup` — connected H/V, separated, single, single separated, disabled, variants.
+`Composite Components/ToggleButtonGroup` — connected H/V, segmented, single, single segmented, disabled, variants.
 
 Playground: `playground/showcase/demos/toggleButtonGroup/`.

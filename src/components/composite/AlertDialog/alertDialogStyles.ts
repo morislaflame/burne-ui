@@ -26,6 +26,7 @@ function toAlertDialogSizePreset(size: PanelSize): AlertDialogSizePreset {
     footerPadding: panel.footerPadding,
     iconClass: panel.iconClass,
     titleVariant: panel.alertTitleVariant,
+    titleClassName: panel.titleClassName,
     descVariant: panel.descVariant,
     descClassName: panel.descClassName,
     bodyVariant: panel.bodyVariant,

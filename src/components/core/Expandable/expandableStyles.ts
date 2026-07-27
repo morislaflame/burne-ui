@@ -1,23 +1,9 @@
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { CONTROL_SIZE_LAYOUT, collapsibleSizeLayout } from "@/components/core/utils/sizeLayout";
 import { messageBannerGridClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 
 import type { ExpandableSize, ExpandableVariant } from "./expandableTypes";
 
 import { cn } from "@/utils/cn";
-
-export const EXPANDABLE_DESCRIPTION_VARIANT = {
-  small: "small",
-  base: "small",
-  mid: "base",
-  large: "base",
-} as const satisfies Record<ExpandableSize, "small" | "base">;
-
-const EXPANDABLE_PANEL_PAD: Record<ExpandableSize, string> = {
-  small: "px-base pb-base pt-small",
-  base: "px-mid pb-mid pt-small",
-  mid: "px-large pb-large pt-base",
-  large: "px-xlarge pb-xlarge pt-base",
-};
 
 export const EXPANDABLE_ROOT_BASE_CLASS = "rounded-mid text-left text-foreground";
 
@@ -30,7 +16,7 @@ export const EXPANDABLE_GLOSS_CONTENT_CLASS =
   "gloss-content flex min-w-0 flex-col";
 
 export const EXPANDABLE_TRIGGER_BASE_CLASS =
-  "relative w-full overflow-hidden py-base text-left outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2";
+  "relative w-full overflow-hidden text-left outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2";
 
 export const EXPANDABLE_TRIGGER_DISABLED_CLASS =
   "cursor-not-allowed opacity-50";
@@ -92,11 +78,9 @@ export function expandableTriggerClass({
   className?: string;
   slotClass?: string;
 }): string {
-  const layout = CONTROL_SIZE_LAYOUT[size];
-
   return cn(
     EXPANDABLE_TRIGGER_BASE_CLASS,
-    layout.padX,
+    collapsibleSizeLayout(size).triggerPadding,
     disabled ? EXPANDABLE_TRIGGER_DISABLED_CLASS : EXPANDABLE_TRIGGER_ENABLED_CLASS,
     slotClass,
     className,
@@ -144,7 +128,7 @@ export function expandablePanelClass({
   slotClass?: string;
 }): string {
   return cn(
-    EXPANDABLE_PANEL_PAD[size],
+    collapsibleSizeLayout(size).contentPadding,
     "text-left",
     slotClass,
     className,
@@ -160,5 +144,13 @@ export function expandableTriggerChevronIconClass(size: ExpandableSize): string 
 }
 
 export function expandableTitleVariant(size: ExpandableSize) {
-  return CONTROL_SIZE_LAYOUT[size].controlText;
+  return collapsibleSizeLayout(size).titleVariant;
+}
+
+export function expandableTitleClassName(size: ExpandableSize): string {
+  return collapsibleSizeLayout(size).titleClassName;
+}
+
+export function expandableDescriptionVariant(size: ExpandableSize) {
+  return collapsibleSizeLayout(size).descVariant;
 }

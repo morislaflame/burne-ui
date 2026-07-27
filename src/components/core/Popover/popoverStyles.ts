@@ -71,12 +71,12 @@ export const POPOVER_LABEL_CLASS = "min-w-0 font-w-mid";
 export const POPOVER_BODY_CLASS = "min-h-0 min-w-0 text-left";
 
 function resolvePopoverGapClass(
-  size: PopoverSize,
   contentGap: PopoverContentGap,
   gapPropSet: boolean,
-): string {
-  // Explicit `gap` prop → size-key map; default → panel `contentGap` token.
-  return gapPropSet ? POPOVER_GAP_CLASS[contentGap] : panelSizeLayout(size).contentGap;
+): string | false {
+  // Gap only when `gap` is set — default spacing matches Dialog/Card via
+  // Header/Body paddings (no shell gap).
+  return gapPropSet ? POPOVER_GAP_CLASS[contentGap] : false;
 }
 
 function popoverSizedPanelClasses({
@@ -91,7 +91,8 @@ function popoverSizedPanelClasses({
   gapPropSet: boolean;
 }): string | false {
   const panel = panelSizeLayout(size);
-  // `unstyled` skips padding/gap/minmax — surface (border/bg) stays on the shell.
+  // `unstyled` skips gap/minmax — surface (border/bg) stays on the shell.
+  // Padding lives on Header/Body (same tokens as Dialog/Card), not the shell.
   // Always keep size radius so overflow-hidden + border don't square the corners
   // (Dropdown / Select / ComboBox / ColorPicker use unstyled + own padding).
   if (unstyled) return panel.rounded;
@@ -99,8 +100,7 @@ function popoverSizedPanelClasses({
     panel.rounded,
     panel.panelMin,
     panel.popoverMax,
-    panel.contentPadding,
-    resolvePopoverGapClass(size, contentGap, gapPropSet),
+    resolvePopoverGapClass(contentGap, gapPropSet),
   );
 }
 
@@ -151,19 +151,17 @@ export function popoverGlossPanelClass({
     // Gap lives on gloss content (Header/Body siblings) — not on this shell.
     unstyled
       ? panel.rounded
-      : cn(panel.rounded, panel.panelMin, panel.popoverMax, panel.contentPadding),
+      : cn(panel.rounded, panel.panelMin, panel.popoverMax),
     slotClass,
   );
 }
 
 export function popoverGlossContentClass({
-  size,
   unstyled,
   contentGap,
   gapPropSet,
   slotClass,
 }: {
-  size: PopoverSize;
   unstyled: boolean;
   contentGap: PopoverContentGap;
   gapPropSet: boolean;
@@ -171,7 +169,7 @@ export function popoverGlossContentClass({
 }): string {
   return cn(
     POPOVER_GLOSS_CONTENT_CLASS,
-    !unstyled && resolvePopoverGapClass(size, contentGap, gapPropSet),
+    !unstyled && resolvePopoverGapClass(contentGap, gapPropSet),
     slotClass,
   );
 }
@@ -219,6 +217,27 @@ export function popoverArrowClass({
 
 export function popoverHeaderClass({
   size,
+  unstyled,
+  slotClass,
+  className,
+}: {
+  size: PopoverSize;
+  unstyled?: boolean;
+  slotClass?: string;
+  className?: string;
+}): string {
+  const panel = panelSizeLayout(size);
+  return cn(
+    POPOVER_HEADER_CLASS,
+    !unstyled && panel.headerPadding,
+    panel.headingGap,
+    slotClass,
+    className,
+  );
+}
+
+export function popoverTitleClass({
+  size,
   slotClass,
   className,
 }: {
@@ -227,31 +246,30 @@ export function popoverHeaderClass({
   className?: string;
 }): string {
   return cn(
-    POPOVER_HEADER_CLASS,
-    panelSizeLayout(size).headingGap,
+    POPOVER_LABEL_CLASS,
+    panelSizeLayout(size).titleClassName,
     slotClass,
     className,
   );
 }
 
-export function popoverTitleClass({
-  slotClass,
-  className,
-}: {
-  slotClass?: string;
-  className?: string;
-}): string {
-  return cn(POPOVER_LABEL_CLASS, slotClass, className);
-}
-
 export function popoverBodyClass({
+  size,
+  unstyled,
   slotClass,
   className,
 }: {
+  size: PopoverSize;
+  unstyled?: boolean;
   slotClass?: string;
   className?: string;
 }): string {
-  return cn(POPOVER_BODY_CLASS, slotClass, className);
+  return cn(
+    POPOVER_BODY_CLASS,
+    !unstyled && panelSizeLayout(size).bodyPadding,
+    slotClass,
+    className,
+  );
 }
 
 export function popoverTitleVariant(size: PopoverSize): TextVariant {
@@ -260,9 +278,4 @@ export function popoverTitleVariant(size: PopoverSize): TextVariant {
 
 export function popoverDescriptionVariant(size: PopoverSize): TextVariant {
   return POPOVER_DESCRIPTION_VARIANT[size];
-}
-
-/** Default content gap matches panel size step (`small`→`large`). */
-export function popoverDefaultContentGap(size: PopoverSize): PopoverContentGap {
-  return size;
 }

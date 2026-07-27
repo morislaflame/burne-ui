@@ -23,6 +23,7 @@ export type DrawerSizePreset = Pick<
   | "footerPadding"
   | "headingGap"
   | "titleVariant"
+  | "titleClassName"
   | "descVariant"
   | "descClassName"
   | "bodyVariant"

@@ -183,6 +183,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
         id={id ?? titleId}
         className={cn(
           ALERT_DIALOG_TITLE_CLASS,
+          sizePreset.titleClassName,
           headerCtx && messageBannerTitleCellClass(headerCtx.gridSlots),
           slotClassNames.title,
           className,

@@ -23,6 +23,7 @@ export type DialogSizePreset = Pick<
   | "footerPadding"
   | "headingGap"
   | "titleVariant"
+  | "titleClassName"
   | "descVariant"
   | "descClassName"
   | "bodyVariant"

@@ -29,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "`ToggleButton` group: attached like `ButtonGroup` by default; `separated` — with gap. `type=\"single\"` — only one selected (radiogroup). Horizontal and vertical orientation, `disabled` on the group.",
+          "`ToggleButton` group: attached like `ButtonGroup` by default; `segmented` — with gap (same as `ButtonGroup`). `type=\"single\"` — only one selected (radiogroup). Horizontal and vertical orientation, `disabled` on the group.",
       },
     },
   },
@@ -67,10 +67,10 @@ export const ConnectedVertical: Story = {
   ),
 };
 
-export const Separated: Story = {
-  name: "Separated",
+export const Segmented: Story = {
+  name: "Segmented",
   render: () => (
-    <ToggleButtonGroup separated aria-label="Tags" defaultValue={["design"]}>
+    <ToggleButtonGroup segmented aria-label="Tags" defaultValue={["design"]}>
       <ToggleButton value="design">Design</ToggleButton>
       <ToggleButton value="dev">Dev</ToggleButton>
       <ToggleButton value="qa">QA</ToggleButton>
@@ -109,10 +109,10 @@ export const SingleSelection: Story = {
   },
 };
 
-export const SingleSeparated: Story = {
-  name: "Single + separated",
+export const SingleSegmented: Story = {
+  name: "Single + segmented",
   render: () => (
-    <ToggleButtonGroup type="single" separated defaultValue="like" aria-label="Reactions">
+    <ToggleButtonGroup type="single" segmented defaultValue="like" aria-label="Reactions">
       <ToggleButton value="like" icon={<IoHeartOutline aria-hidden />}>
         Like
       </ToggleButton>

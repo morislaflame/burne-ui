@@ -74,7 +74,12 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
         ref={ref as Ref<HTMLElement>}
         as={cardTitleHeadingTag()}
         variant={panelSizeLayout(size).titleVariant}
-        className={cn(CARD_TITLE_CLASS, slotClassNames.title, className)}
+        className={cn(
+          CARD_TITLE_CLASS,
+          panelSizeLayout(size).titleClassName,
+          slotClassNames.title,
+          className,
+        )}
         {...rest}
       />
     );

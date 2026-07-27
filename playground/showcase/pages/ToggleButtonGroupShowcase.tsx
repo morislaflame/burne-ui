@@ -6,6 +6,8 @@ import { ToggleButtonGroupGlossDemo } from "../demos/toggleButtonGroup/ToggleBut
 import toggleButtonGroupGlossSource from "../demos/toggleButtonGroup/ToggleButtonGroupGloss.demo.tsx?raw";
 import { ToggleButtonGroupMultipleDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupMultiple.demo";
 import toggleButtonGroupMultipleSource from "../demos/toggleButtonGroup/ToggleButtonGroupMultiple.demo.tsx?raw";
+import { ToggleButtonGroupSegmentedDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupSegmented.demo";
+import toggleButtonGroupSegmentedSource from "../demos/toggleButtonGroup/ToggleButtonGroupSegmented.demo.tsx?raw";
 import { ToggleButtonGroupSingleDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupSingle.demo";
 import toggleButtonGroupSingleSource from "../demos/toggleButtonGroup/ToggleButtonGroupSingle.demo.tsx?raw";
 import { ToggleButtonGroupSizesDemo } from "../demos/toggleButtonGroup/ToggleButtonGroupSizes.demo";
@@ -39,6 +41,13 @@ export function ToggleButtonGroupShowcase() {
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupMultipleDemo} source={toggleButtonGroupMultipleSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="Segmented"
+        description="segmented — gap between buttons, each with own radius (like ButtonGroup)."
+      >
+        <ShowcaseDemoFromFile Demo={ToggleButtonGroupSegmentedDemo} source={toggleButtonGroupSegmentedSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass switch group.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGroupGlossDemo} source={toggleButtonGroupGlossSource} />
       </ShowcaseSection>
@@ -67,7 +76,7 @@ export function ToggleButtonGroupShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="type (single | multiple, default multiple), value, onValueChange, variant, size, separated, orientation, aria-label on the root. Child ToggleButton with value."
+            description="type (single | multiple, default multiple), value, onValueChange, variant, size, segmented, orientation, aria-label on the root. Child ToggleButton with value."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Availability">

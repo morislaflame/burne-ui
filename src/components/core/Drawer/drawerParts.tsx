@@ -212,6 +212,7 @@ export const DrawerTitle = forwardRef<HTMLHeadingElement, DrawerTitleProps>(
         id={id ?? titleId}
         className={cn(
           DRAWER_TITLE_CLASS,
+          sizePreset.titleClassName,
           slotClassNames.title,
           className,
         )}

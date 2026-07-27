@@ -31,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Popover panel on trigger **click**. Compound: `<Popover.Trigger>`, `<Popover.Content>`, optional `<Popover.Header>` with `<Popover.Title>` / `<Popover.Description>`, `<Popover.Body>`, `<Popover.Arrow />`. Padding on the whole panel; gap between header and body — `gap` prop on `<Popover.Content>`. Placement and flip — like `Tooltip`; dismiss — click outside or `Escape`.",
+          "Popover panel on trigger **click**. Compound: `<Popover.Trigger>`, `<Popover.Content>`, optional `<Popover.Header>` with `<Popover.Title>` / `<Popover.Description>`, `<Popover.Body>`, `<Popover.Arrow />`. Padding on `Header` / `Body` matches Dialog/Card (`headerPadding` / `bodyPadding`). Optional `gap` on `<Popover.Content>` adds flex gap between parts. Placement and flip — like `Tooltip`; dismiss — click outside or `Escape`.",
       },
     },
   },
@@ -133,7 +133,7 @@ export const Sizes: Story = {
     docs: {
       description: {
         story:
-          "`size` scales panel padding, `Title` / `Description` typography, default `gap`, and min/max width (`min-w-component-*` / `max-w-component-*`). Open each trigger to compare.",
+          "`size` scales `Header` / `Body` padding, `Title` / `Description` typography, and min/max width (`min-w-component-*` / `max-w-component-*`). Open each trigger to compare.",
       },
     },
   },

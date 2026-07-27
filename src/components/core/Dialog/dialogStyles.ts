@@ -25,6 +25,7 @@ function toDialogSizePreset(size: PanelSize): DialogSizePreset {
     footerPadding: panel.footerPadding,
     headingGap: panel.headingGap,
     titleVariant: panel.titleVariant,
+    titleClassName: panel.titleClassName,
     descVariant: panel.descVariant,
     descClassName: panel.descClassName,
     bodyVariant: panel.bodyVariant,

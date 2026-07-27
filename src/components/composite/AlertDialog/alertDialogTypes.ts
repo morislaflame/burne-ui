@@ -39,6 +39,7 @@ export type AlertDialogSizePreset = Pick<
   | "bodyPadding"
   | "footerPadding"
   | "titleVariant"
+  | "titleClassName"
   | "descVariant"
   | "descClassName"
   | "bodyVariant"

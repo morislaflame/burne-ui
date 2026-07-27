@@ -17,7 +17,7 @@ export function PopoverShareMenuDemo() {
           <Popover.Title>Share</Popover.Title>
           <Popover.Description>Choose a method</Popover.Description>
         </Popover.Header>
-        <Popover.Body className="flex flex-col gap-xsmall p-base">
+        <Popover.Body className="flex flex-col gap-xsmall">
           <Button 
           variant="ghost" 
           size="small" 

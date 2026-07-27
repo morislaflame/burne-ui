@@ -1,16 +1,9 @@
-import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { CONTROL_SIZE_LAYOUT, collapsibleSizeLayout } from "@/components/core/utils/sizeLayout";
 import { TEXT_COLOR_TRANSITION, hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import { isFramedVariant } from "./disclosureAPI";
 import type { DisclosureGroupContextValue, DisclosureSize, DisclosureVariant } from "./disclosureTypes";
-
-export const DISCLOSURE_CONTENT_PAD: Record<DisclosureSize, string> = {
-  small: "p-base",
-  base: "p-mid",
-  mid: "p-large",
-  large: "p-xlarge",
-};
 
 const VARIANT_ROOT: Record<DisclosureVariant, string> = {
   default: "flex flex-col",
@@ -42,7 +35,7 @@ const VARIANT_TRIGGER: Record<DisclosureVariant, string> = {
 };
 
 export const DISCLOSURE_TRIGGER_BASE_CLASS =
-  "flex w-full select-none items-center gap-small text-left outline-none focus-ring py-base";
+  "flex w-full select-none items-center gap-small text-left outline-none focus-ring";
 
 export const DISCLOSURE_TRIGGER_DISABLED_CLASS = "cursor-not-allowed opacity-48";
 
@@ -75,11 +68,12 @@ export const DISCLOSURE_GLOSS_PANEL_CLASS =
 export const DISCLOSURE_GLOSS_CONTENT_CLASS = "gloss-content text-muted";
 
 export function disclosureTriggerShell(size: DisclosureSize) {
-  const layout = CONTROL_SIZE_LAYOUT[size];
+  const collapsible = collapsibleSizeLayout(size);
   return {
-    padX: layout.padX,
-    text: layout.controlText,
-    chevron: layout.chevronIcon,
+    pad: collapsible.triggerPadding,
+    text: collapsible.titleVariant,
+    titleClassName: collapsible.titleClassName,
+    chevron: CONTROL_SIZE_LAYOUT[size].chevronIcon,
   };
 }
 
@@ -117,7 +111,7 @@ export function disclosureTriggerClass({
 
   return cn(
     DISCLOSURE_TRIGGER_BASE_CLASS,
-    shell.padX,
+    shell.pad,
     VARIANT_TRIGGER[variant],
     disabled
       ? DISCLOSURE_TRIGGER_DISABLED_CLASS
@@ -148,7 +142,7 @@ export function disclosureContentPanelClass({
   const framed = isFramedVariant(variant);
 
   return cn(
-    DISCLOSURE_CONTENT_PAD[size],
+    collapsibleSizeLayout(size).contentPadding,
     framed && variant === "outline" && FRAMED_PANEL.outline,
     framed && variant === "secondary" && FRAMED_PANEL.secondary,
     variant === "card" && "border-t-token",
@@ -165,7 +159,7 @@ export function disclosureGlossContentClass(
 ): string {
   return cn(
     DISCLOSURE_GLOSS_CONTENT_CLASS,
-    DISCLOSURE_CONTENT_PAD[size],
+    collapsibleSizeLayout(size).contentPadding,
     slotClass,
   );
 }

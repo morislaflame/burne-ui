@@ -61,10 +61,10 @@ const [open, setOpen] = useState(false);
 |------|--------------|----------|
 | `showArrow` | `false` | Стрелка к anchor |
 | `offset` | token default | Отступ от anchor |
-| `gap` | per size | Внутренний gap panel |
+| `gap` | — | Опциональный flex-gap между Header/Body (по умолчанию отступы частей как у Dialog/Card) |
 | `matchAnchorWidth` | `false` | `minWidth` = ширина anchor |
 | `align` | `center` / `start` | Выравнивание (`FloatingAlign`) |
-| `unstyled` | `false` | Без default padding/gap/minmax; radius + surface остаются |
+| `unstyled` | `false` | Без padding частей / gap / minmax; radius + surface остаются |
 | `contentRole` | `dialog` | `dialog` \| `undefined` |
 
 ### Compound-подчасти
@@ -90,16 +90,16 @@ const [open, setOpen] = useState(false);
 | `default` | `bg-surface border-token` + persistent `shadowSm` |
 | `gloss` | `gloss-panel` + gloss interactive handlers |
 
-Sizes влияют на padding, typography (`Popover.Title` / `Hint`), radius и default `gap` — общий пресет `PANEL_SIZE_LAYOUT` (с Dialog / AlertDialog / Card).
+Sizes влияют на padding частей (`Header` / `Body`), typography (`Popover.Title` / `Hint`), radius и min/max width — общий пресет `PANEL_SIZE_LAYOUT` (с Dialog / AlertDialog / Card).
 
-| size | padding panel | title / desc |
-|------|---------------|--------------|
-| `small` | `px-mid py-base` | `small` / `xsmall` |
-| `base` | `px-mid py-base` | `base` / `small` |
-| `mid` | `px-large py-mid` | `mid` / `base` |
-| `large` | `px-xlarge py-large` | `large` / `base` |
+| size | header / body padding | title / desc |
+|------|----------------------|--------------|
+| `small` | `headerPadding` / `bodyPadding` | `small` / `xsmall` |
+| `base` | same tokens as Dialog/Card | `base` / `small` |
+| `mid` | same tokens as Dialog/Card | `mid` / `base` |
+| `large` | same tokens as Dialog/Card | `large` / `base` |
 
-Title/Description — отдельная шкала Popover (компактнее Dialog `titleVariant` / `descVariant`). Gap Header↔Body — `panel.contentGap` (`gap-base` на `base`).
+Title/Description — отдельная шкала Popover (компактнее Dialog `titleVariant` / `descVariant`). Отступы Header/Body — те же `headerPadding` / `bodyPadding`, что у Dialog и Card. Опциональный `gap` на `Content` добавляет flex-gap между частями.
 
 ## Анимации
 
@@ -220,7 +220,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 1. **`className` на подчастях** — `Trigger`, `Content`, `Label`, `Body` merge в слот.
 2. **`classNames` на root `Popover`** — все слоты через provider.
 
-`unstyled` на `Content` — без default padding/gap/minmax; surface (border/bg/shadow) и **size radius** остаются на panel shell. Свой padding — через `Body` / children.
+`unstyled` на `Content` — без padding `Header`/`Body`, gap и minmax; surface (border/bg/shadow) и **size radius** остаются на panel shell. Свой padding — через `Body` / children.
 
 ### Слоты `PopoverClassNames`
 
@@ -230,7 +230,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 | `trigger` | Trigger element | Ring, rounding на кнопке |
 | `content` | Portal outer shell | z-index, outer ring |
 | `panelRelative` | Relative wrapper вокруг panel | Positioning host между content и panel |
-| `panel` | Default inner panel | Surface, padding, border |
+| `panel` | Default inner panel | Surface, border, radius |
 | `glossPanel` / `glossContent` | Gloss layers | Glass surface + inner grid |
 | `arrow` | Arrow span | Side tint, size |
 | `header` | Header row | Label + hint layout |

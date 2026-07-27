@@ -2,9 +2,9 @@ import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 const CRUMB_INTERACTIVE_INNER_CLASS = cn(
-  "inline-flex max-w-[min(12rem,46vw)] min-w-0 cursor-pointer truncate rounded-mid px-xsmall py-xsmall text-muted no-underline outline-none",
+  "inline-flex max-w-[min(12rem,46vw)] min-w-0 cursor-pointer truncate rounded-mid px-xsmall py-xsmall text-muted no-underline outline-none focus-ring",
   TEXT_COLOR_TRANSITION,
-  "hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+  "hover:text-foreground",
 );
 
 const CRUMB_INTERACTIVE_BUTTON_CLASS = cn(
@@ -13,9 +13,9 @@ const CRUMB_INTERACTIVE_BUTTON_CLASS = cn(
 );
 
 const BREADCRUMBS_ELLIPSIS_TRIGGER_CLASS = cn(
-  "inline-flex min-w-0 cursor-pointer rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted outline-none",
+  "inline-flex min-w-0 cursor-pointer rounded-mid border-0 bg-transparent px-xsmall py-xsmall font-[inherit] text-muted outline-none focus-ring",
   TEXT_COLOR_TRANSITION,
-  "hover:text-foreground aria-expanded:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+  "hover:text-foreground aria-expanded:text-foreground",
 );
 
 export function breadcrumbsListClass(className?: string): string {

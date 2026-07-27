@@ -6,6 +6,7 @@
  * - `option` — Checkbox, Radio, Switch, ListBox rows
  * - `banner` — Alert, Toast
  * - `panel` — Dialog, AlertDialog, Popover, Card, Drawer
+ * - `collapsible` — Disclosure, Expandable (Accordion)
  */
 
 export {
@@ -46,3 +47,11 @@ export {
   panelSizeLayout,
   cardSizeLayout,
 } from "./panel";
+
+export {
+  type CollapsibleSize,
+  type CollapsibleSizeLayout,
+  COLLAPSIBLE_SIZE_LAYOUT,
+  resolveCollapsibleSize,
+  collapsibleSizeLayout,
+} from "./collapsible";

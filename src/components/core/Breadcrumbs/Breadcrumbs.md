@@ -186,7 +186,7 @@ configureMotion({
 | `breadcrumbCurrentClass` | `font-medium text-foreground` last segment |
 | `breadcrumbChevronClass` | `IoChevronForward icon-small opacity-75` |
 | `TEXT_COLOR_TRANSITION` | Color transition на interactive |
-| `focus-visible:outline-primary` | Keyboard focus ring |
+| `focus-ring` | Keyboard focus ring (`--color-focus-ring`) |
 
 ## Стилизация и кастомизация
 

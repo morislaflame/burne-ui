@@ -10,6 +10,8 @@ import type {
 const PopoverContext = createContext<PopoverContextValue | null>(null);
 const PopoverClassNamesContext = createContext<PopoverClassNames>({});
 const PopoverResolvedSideContext = createContext<PopoverSide>("bottom");
+/** Content chrome — Header/Body skip panel paddings when `unstyled`. */
+const PopoverContentChromeContext = createContext({ unstyled: false });
 
 export function PopoverProvider({
   value,
@@ -68,4 +70,23 @@ export function PopoverResolvedSideProvider({
 
 export function usePopoverResolvedSide(): PopoverSide {
   return useContext(PopoverResolvedSideContext);
+}
+
+export function PopoverContentChromeProvider({
+  unstyled,
+  children,
+}: {
+  unstyled: boolean;
+  children: ReactNode;
+}) {
+  const value = useMemo(() => ({ unstyled }), [unstyled]);
+  return (
+    <PopoverContentChromeContext.Provider value={value}>
+      {children}
+    </PopoverContentChromeContext.Provider>
+  );
+}
+
+export function usePopoverContentChrome(): { unstyled: boolean } {
+  return useContext(PopoverContentChromeContext);
 }

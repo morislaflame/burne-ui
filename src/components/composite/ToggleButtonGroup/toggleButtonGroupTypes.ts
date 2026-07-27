@@ -25,7 +25,8 @@ export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defau
   /** `multiple` — independent toggle; `single` — only one selected (radio). By default `multiple`. */
   type?: ToggleButtonGroupType;
   orientation?: ToggleButtonGroupOrientation;
-  separated?: boolean;
+  /** `true` — gap between buttons (like `ButtonGroup` `segmented`), no glue. */
+  segmented?: boolean;
   disabled?: boolean;
   size?: ToggleButtonSize;
   variant?: ToggleButtonVariant;

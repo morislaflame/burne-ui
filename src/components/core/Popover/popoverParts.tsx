@@ -12,8 +12,8 @@ import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
 import { resolvePopoverDescribedBy, resolvePopoverLabelledBy, popoverTriggerA11y } from "./popoverA11y";
 import { partitionPopoverContentChildren, POPOVER_ARROW_DISPLAY_NAME } from "./popoverAPI";
 import { resolvePopoverContentAlign, usePopoverContentLifecycle } from "./popoverAnimations";
-import { PopoverResolvedSideProvider, usePopoverClassNames, usePopoverContext, usePopoverResolvedSide } from "./popoverContext";
-import { POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultContentGap, popoverDefaultPanelClass, popoverGlossContentClass, popoverGlossPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
+import { PopoverResolvedSideProvider, PopoverContentChromeProvider, usePopoverClassNames, usePopoverContext, usePopoverContentChrome, usePopoverResolvedSide } from "./popoverContext";
+import { POPOVER_DEFAULT_OFFSET, popoverArrowClass, popoverBodyClass, popoverContentClass, popoverDefaultPanelClass, popoverGlossContentClass, popoverGlossPanelClass, popoverHeaderClass, popoverDescriptionVariant, popoverTitleClass, popoverTitleVariant, popoverTriggerClass, POPOVER_PANEL_RELATIVE_CLASS } from "./popoverStyles";
 import type {
   PopoverArrowProps,
   PopoverBodyProps,
@@ -167,6 +167,7 @@ PopoverArrow.displayName = POPOVER_ARROW_DISPLAY_NAME;
 export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
   function PopoverHeader({ className, children, ...rest }, ref) {
     const { size } = usePopoverContext("Popover.Header");
+    const { unstyled } = usePopoverContentChrome();
     const slotClassNames = usePopoverClassNames();
 
     return (
@@ -174,6 +175,7 @@ export const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
         ref={ref}
         className={popoverHeaderClass({
           size,
+          unstyled,
           slotClass: slotClassNames.header,
           className,
         })}
@@ -199,6 +201,7 @@ export const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
         variant={popoverTitleVariant(size)}
         id={idProp ?? labelId}
         className={popoverTitleClass({
+          size,
           slotClass: slotClassNames.label,
           className,
         })}
@@ -239,12 +242,16 @@ PopoverDescription.displayName = "PopoverDescription";
 
 export const PopoverBody = forwardRef<HTMLDivElement, PopoverBodyProps>(
   function PopoverBody({ className, children, ...rest }, ref) {
+    const { size } = usePopoverContext("Popover.Body");
+    const { unstyled } = usePopoverContentChrome();
     const slotClassNames = usePopoverClassNames();
 
     return (
       <div
         ref={ref}
         className={popoverBodyClass({
+          size,
+          unstyled,
           slotClass: slotClassNames.body,
           className,
         })}
@@ -293,8 +300,8 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
     const slotClassNames = usePopoverClassNames();
     const isGloss = variant === "gloss";
     const align = resolvePopoverContentAlign({ alignProp, matchAnchorWidth });
-    const contentGap = gapProp ?? popoverDefaultContentGap(size);
     const gapPropSet = gapProp !== undefined;
+    const contentGap = gapProp ?? "base";
 
     const { customArrow, panelChildren } =
       partitionPopoverContentChildren(children);
@@ -347,66 +354,67 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
 
     const node = (
       <PopoverResolvedSideProvider value={resolvedSide}>
-        <div
-          ref={setPanelRef}
-          {...portalTheme}
-          id={popoverId}
-          role={contentRole}
-          aria-modal={contentRole === "dialog" ? "false" : undefined}
-          aria-labelledby={labelledBy}
-          aria-describedby={describedBy}
-          data-side={resolvedSide}
-          className={popoverContentClass({
-            resolvedSide,
-            showArrow,
-            slotClass: slotClassNames.content,
-            className,
-          })}
-          {...rest}
-        >
+        <PopoverContentChromeProvider unstyled={unstyled}>
           <div
-            className={cn(
-              POPOVER_PANEL_RELATIVE_CLASS,
-              slotClassNames.panelRelative,
-            )}
+            ref={setPanelRef}
+            {...portalTheme}
+            id={popoverId}
+            role={contentRole}
+            aria-modal={contentRole === "dialog" ? "false" : undefined}
+            aria-labelledby={labelledBy}
+            aria-describedby={describedBy}
+            data-side={resolvedSide}
+            className={popoverContentClass({
+              resolvedSide,
+              showArrow,
+              slotClass: slotClassNames.content,
+              className,
+            })}
+            {...rest}
           >
-            {showArrow ? (customArrow ?? <PopoverArrow />) : null}
-            {isGloss ? (
-              <div
-                ref={bindGlossPanelRef}
-                className={popoverGlossPanelClass({
-                  size,
-                  unstyled,
-                  slotClass: slotClassNames.glossPanel,
-                })}
-              >
+            <div
+              className={cn(
+                POPOVER_PANEL_RELATIVE_CLASS,
+                slotClassNames.panelRelative,
+              )}
+            >
+              {showArrow ? (customArrow ?? <PopoverArrow />) : null}
+              {isGloss ? (
                 <div
-                  className={popoverGlossContentClass({
+                  ref={bindGlossPanelRef}
+                  className={popoverGlossPanelClass({
+                    size,
+                    unstyled,
+                    slotClass: slotClassNames.glossPanel,
+                  })}
+                >
+                  <div
+                    className={popoverGlossContentClass({
+                      unstyled,
+                      contentGap,
+                      gapPropSet,
+                      slotClass: slotClassNames.glossContent,
+                    })}
+                  >
+                    {panelChildren}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={popoverDefaultPanelClass({
                     size,
                     unstyled,
                     contentGap,
                     gapPropSet,
-                    slotClass: slotClassNames.glossContent,
+                    slotClass: slotClassNames.panel,
                   })}
                 >
                   {panelChildren}
                 </div>
-              </div>
-            ) : (
-              <div
-                className={popoverDefaultPanelClass({
-                  size,
-                  unstyled,
-                  contentGap,
-                  gapPropSet,
-                  slotClass: slotClassNames.panel,
-                })}
-              >
-                {panelChildren}
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        </PopoverContentChromeProvider>
       </PopoverResolvedSideProvider>
     );
 

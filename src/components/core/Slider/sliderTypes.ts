@@ -225,6 +225,7 @@ export type SliderThumbButtonProps = {
   | "onKeyDown"
   | "role"
   | "type"
+  | "active"
 >;
 
 export type UseSliderRootStateProps = Omit<SliderProps, "className" | "classNames">;

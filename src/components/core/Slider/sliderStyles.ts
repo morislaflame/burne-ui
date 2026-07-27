@@ -64,7 +64,7 @@ export const SLIDER_MARK_CLASS =
   "pointer-events-none absolute z-[1] size-1 rounded-[var(--selection-indicator-radius-xsmall)] bg-primary/30";
 
 export const SLIDER_THUMB_BUTTON_BASE_CLASS =
-  "absolute z-[2] box-border flex shrink-0 origin-center items-center justify-center m-0 appearance-none border-0 bg-transparent p-0 focus-ring";
+  "absolute box-border flex shrink-0 origin-center items-center justify-center m-0 appearance-none border-0 bg-transparent p-0 focus-ring";
 
 export const SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS =
   "top-0 h-full w-auto -translate-x-1/2 aspect-square";
@@ -75,6 +75,10 @@ export const SLIDER_THUMB_BUTTON_VERTICAL_CLASS =
 export const SLIDER_THUMB_BUTTON_DISABLED_CLASS = "cursor-not-allowed";
 
 export const SLIDER_THUMB_BUTTON_ENABLED_CLASS = "cursor-grab active:cursor-grabbing";
+
+export const SLIDER_THUMB_BUTTON_Z_CLASS = "z-[2]";
+
+export const SLIDER_THUMB_BUTTON_Z_ACTIVE_CLASS = "z-[3]";
 
 export function sliderRootClass({
   orientation,
@@ -162,11 +166,13 @@ export function sliderTrackHitAreaClass({
 export function sliderThumbButtonClass({
   orientation,
   disabled,
+  active,
   slotClass,
   className,
 }: {
   orientation: SliderOrientation;
   disabled?: boolean;
+  active?: boolean;
   slotClass?: string;
   className?: string;
 }): string {
@@ -176,6 +182,7 @@ export function sliderThumbButtonClass({
       ? SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS
       : SLIDER_THUMB_BUTTON_VERTICAL_CLASS,
     disabled ? SLIDER_THUMB_BUTTON_DISABLED_CLASS : SLIDER_THUMB_BUTTON_ENABLED_CLASS,
+    active ? SLIDER_THUMB_BUTTON_Z_ACTIVE_CLASS : SLIDER_THUMB_BUTTON_Z_CLASS,
     slotClass,
     className,
   );

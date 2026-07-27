@@ -28,7 +28,7 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
       className = "",
       classNames,
       orientation = "horizontal",
-      separated = false,
+      segmented = false,
       disabled = false,
       size = "base",
       variant = "default",
@@ -56,7 +56,7 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
             aria-disabled={disabled || undefined}
             className={buttonGroupRootClass({
               orientation,
-              segmented: separated,
+              segmented,
               variant,
               className: cn(classNames?.root, className),
             })}
@@ -68,7 +68,7 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
                 return <Fragment key={child.key ?? `tbg-wrap-${i}`}>{child}</Fragment>;
               }
 
-              if (separated) {
+              if (segmented) {
                 return <Fragment key={child.key ?? `tbg-item-${i}`}>{child}</Fragment>;
               }
 

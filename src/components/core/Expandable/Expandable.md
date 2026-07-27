@@ -97,16 +97,14 @@ Compound определяется автоматически при наличи
 
 ## Размеры
 
-Из `CONTROL_SIZE_LAYOUT`:
+Из `COLLAPSIBLE_SIZE_LAYOUT` (отступы в ритме panel header/body; chevron/icon — `CONTROL_SIZE_LAYOUT`):
 
-| size | min-h триггера | padX триггера | pad панели | chevron / icon |
-|------|----------------|---------------|------------|----------------|
-| `small` | `min-h-control-small` | `px-base` | `px-base pb-base pt-small` | `icon-small` |
-| `base` | `min-h-control-base` | `px-mid` | `px-mid pb-mid pt-small` | `icon-base` |
-| `mid` | `min-h-control-mid` | `px-large` | `px-large pb-large pt-base` | `icon-large` |
-| `large` | `min-h-control-large` | `px-xlarge` | `px-xlarge pb-xlarge pt-base` | `icon-large` |
-
-Текст: title — `controlText` размера; description — `small` / `base` по size.
+| size | trigger padding | content padding | title / desc |
+|------|-----------------|-----------------|--------------|
+| `small` | `px-mid pt-mid pb-base` | `p-mid` | `base` / `small` + `leading-none` |
+| `base` | `px-mid pt-mid pb-base` | `p-mid` | `mid` / `small` + `leading-none` |
+| `mid` | `px-large pt-large pb-mid` | `p-large` | `large` / `base` + `leading-none` |
+| `large` | `px-large pt-large pb-mid` | `p-large` | `large` / `base` + `leading-none` |
 
 ## Анимации
 
@@ -247,7 +245,7 @@ configureMotion({
 | `panelShell` | Обёртка panel height anim | Overflow clip |
 | `panel` | `Expandable.Panel` section | Padding контента, typography |
 
-`variant`, `size` — высота trigger, иконки, panel padding из токенов.
+`variant`, `size` — trigger/content padding и title из `COLLAPSIBLE_SIZE_LAYOUT`; иконки — `CONTROL_SIZE_LAYOUT`.
 
 ### Simple API
 

@@ -133,6 +133,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
             variant={triggerShell.text}
             className={cn(
               DISCLOSURE_TRIGGER_TITLE_CLASS,
+              triggerShell.titleClassName,
               open ? "text-primary" : "text-foreground",
               slotClassNames.triggerTitle,
             )}

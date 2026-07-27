@@ -7,7 +7,8 @@ import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
 import type { UseToggleButtonAnimationsProps } from "./toggleButtonTypes";
 
 /**
- * Interactive motion + fill: fill starts at the beginning of the squeeze release phase.
+ * Interactive motion + fill: fill starts at the beginning of the squeeze release phase,
+ * after click has confirmed the next pressed value (on and off share this timing).
  */
 export function useToggleButtonAnimations({
   animated,
@@ -26,10 +27,14 @@ export function useToggleButtonAnimations({
   const pendingFillRef = useRef<boolean | null>(null);
   const pressReleaseStartedRef = useRef(false);
 
-  const { animateTo, bindFillRef } = useToggleButtonFillAnimation(pressed, fillRef, {
-    deferFillFromPressRef,
-    onFillStart,
-  });
+  const { animateTo, bindFillRef, displayPressed } = useToggleButtonFillAnimation(
+    pressed,
+    fillRef,
+    {
+      deferFillFromPressRef,
+      onFillStart,
+    },
+  );
 
   const clearPressFillCoordination = useCallback(() => {
     deferFillFromPressRef.current = false;
@@ -69,13 +74,15 @@ export function useToggleButtonAnimations({
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       if (shouldCoordinateFill) {
+        // Defer until click confirms the next value; do not predict `!pressed` here
+        // (single-select re-click would wrongly start an unfill).
         deferFillFromPressRef.current = true;
         pressReleaseStartedRef.current = false;
-        pendingFillRef.current = !pressed;
+        pendingFillRef.current = null;
       }
       motion.handlePointerDown(e);
     },
-    [motion, pressed, shouldCoordinateFill],
+    [motion, shouldCoordinateFill],
   );
 
   const handlePointerLeave = useCallback(
@@ -110,5 +117,6 @@ export function useToggleButtonAnimations({
     handlePointerDown,
     bindFillRef,
     queueFillOnClick,
+    displayPressed,
   };
 }

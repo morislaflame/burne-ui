@@ -8,7 +8,7 @@ import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
 import { expandableTriggerHasActionSlot, hasExpandableMessage, mergeExpandableRefs, partitionExpandableTriggerRipple, resolveExpandableTriggerGridSlots } from "./expandableAPI";
 import { ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableTriggerGrid, useOptionalExpandableTriggerGrid } from "./expandableContext";
-import { EXPANDABLE_CHEVRON_WRAP_CLASS, EXPANDABLE_CONTENT_CLASS, EXPANDABLE_DESCRIPTION_CLASS, EXPANDABLE_DESCRIPTION_VARIANT, EXPANDABLE_GLOSS_CONTENT_CLASS, EXPANDABLE_MESSAGE_CLASS, EXPANDABLE_PANEL_SHELL_CLASS, EXPANDABLE_TITLE_CLASS, EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS, EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS, expandableChevronIconClass, expandableIconClass, expandablePanelClass, expandableTitleVariant, expandableTriggerChevronIconClass, expandableTriggerClass, expandableTriggerLiftClass } from "./expandableStyles";
+import { EXPANDABLE_CHEVRON_WRAP_CLASS, EXPANDABLE_CONTENT_CLASS, EXPANDABLE_DESCRIPTION_CLASS, EXPANDABLE_GLOSS_CONTENT_CLASS, EXPANDABLE_MESSAGE_CLASS, EXPANDABLE_PANEL_SHELL_CLASS, EXPANDABLE_TITLE_CLASS, EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS, EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS, expandableChevronIconClass, expandableDescriptionVariant, expandableIconClass, expandablePanelClass, expandableTitleClassName, expandableTitleVariant, expandableTriggerChevronIconClass, expandableTriggerClass, expandableTriggerLiftClass } from "./expandableStyles";
 import type {
   ExpandableChevronProps,
   ExpandableContentProps,
@@ -271,6 +271,7 @@ export function ExpandableTitle({ className, ...props }: ExpandableTitleProps) {
       variant={expandableTitleVariant(size)}
       className={cn(
         EXPANDABLE_TITLE_CLASS,
+        expandableTitleClassName(size),
         gridSlots && messageBannerTitleCellClass(gridSlots),
         slotClassNames.title,
         className,
@@ -293,7 +294,7 @@ export function ExpandableDescription({
   return (
     <Text
       as="div"
-      variant={EXPANDABLE_DESCRIPTION_VARIANT[size]}
+      variant={expandableDescriptionVariant(size)}
       className={cn(
         EXPANDABLE_DESCRIPTION_CLASS,
         gridSlots && messageBannerDescriptionCellClass(gridSlots),

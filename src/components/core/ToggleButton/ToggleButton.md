@@ -86,17 +86,20 @@ Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content
 
 - pressed: `fromTo { scale:0, autoAlpha:0 } → { scale:1, autoAlpha:1 }`
 - unpressed: `to { scale:0, autoAlpha:0 }`
-- vars: `motionSelectionFill()` — `selectionFillDuration`, `selectionFillEase`
+- vars: `motionSelectionFill()` — один `selectionFillEase` / `selectionFillDuration` в обе стороны
 - `enableToggleButtonFill: false` → instant
 
-**Координация с press:** при `animated` fill стартует в **release-фазе squeeze** (`onPressReleaseStart`), не на pointerdown — чтобы заливка совпала с отпусканием кнопки.
+**Координация с press:** fill стартует в **release-фазе squeeze** (`onPressReleaseStart`), после того как `click` подтвердил next pressed — и появление, и снятие.
 
 Flow:
 
-1. `pointerdown` → `deferFillFromPressRef = true`, `pendingFill = !pressed`
-2. squeeze release → `runPendingFill()` → `animateTo(next)`
-3. `click` → `queueFillOnClick` если release уже прошёл
-4. `pointerleave` → сброс coordination
+1. `pointerdown` → `deferFillFromPressRef = true` (pending ещё нет)
+2. `click` → `queueFillOnClick(next)` — подтверждает значение
+3. squeeze release → `runPendingFill()` → `animateTo(next)` (+ `displayPressed`)
+4. если release уже прошёл к моменту click — fill стартует сразу из `queueFillOnClick`
+5. `pointerleave` → сброс coordination
+
+Визуальный pressed (`bg-transparent`, fill classNames) идёт от `displayPressed`, не от aria/`pressed`, чтобы поверхность не сбрасывалась раньше анимации снятия.
 
 ### 2. Hover lift + squeeze (1-й уровень)
 
