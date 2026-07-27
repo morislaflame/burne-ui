@@ -8,11 +8,14 @@
  *
  * configureMotion({
  *   interactiveDuration: 350,
+ *   modalDuration: 280,
  *   surfaceTransitionDuration: 450,
  *   toastDismissDuration: 220,
+ *   progressIndeterminateDuration: 1500,
  *   selectionFillDuration: 400,
  *   selectionFillEase: "back.out(1.25)",
  *   switchThumbEase: "back.out(1.6)",
+ *   enableAnimations: false, // global kill-switch
  * });
  */
 
@@ -21,11 +24,30 @@ export const MOTION_CSS_VAR = {
   surfaceDuration: "--motion-surface-duration",
 } as const;
 
+/** Per-feature enable flags (AND with `enableAnimations`). */
+export type MotionFeatureFlag =
+  | "enableHoverLift"
+  | "enablePressSqueeze"
+  | "enableToggleButtonFill"
+  | "enableRipple"
+  | "enableExpandable"
+  | "enableToastStack"
+  | "enableAsyncButtonCrossfade"
+  | "enableContentFade"
+  | "enableFeedbackExpand"
+  | "enableProgressFill"
+  | "enableLoadingDots"
+  | "enableModalMotion"
+  | "enableSwitchThumb"
+  | "enableTabsIndicator"
+  | "enablePaginationFlip"
+  | "enableSelectionFill";
+
 export interface MotionConfig {
   /**
    * Duration (ms) for most interactive UI animations:
-   * hover-lift, press-squeeze, dialogs, drawer slide,
-   * checkbox, radio, accordion, tab indicator, etc.
+   * hover-lift, press-squeeze, checkbox, radio, accordion, tab indicator, etc.
+   * Modals use `modalDuration`.
    * @default 280
    */
   interactiveDuration: number;
@@ -48,6 +70,12 @@ export interface MotionConfig {
    * @default 200
    */
   tooltipDuration: number;
+
+  /**
+   * Duration (ms) for Dialog / AlertDialog / Drawer open/close.
+   * @default 280
+   */
+  modalDuration: number;
 
   /** Switch thumb — how long the travel animation takes (ms). @default 340 */
   switchThumbDuration: number;
@@ -137,6 +165,13 @@ export interface MotionConfig {
    */
   toastDismissEase: string;
 
+  /**
+   * Master kill-switch for all GSAP feature flags.
+   * When `false`, every `enable*` feature is treated as off (flags keep their values).
+   * @default true
+   */
+  enableAnimations: boolean;
+
   /** Whether to enable hover-lift animations globally. @default true */
   enableHoverLift: boolean;
 
@@ -177,6 +212,18 @@ export interface MotionConfig {
   enableProgressFill: boolean;
 
   /**
+   * Duration (ms) of one ProgressBar indeterminate loop (translate across track).
+   * @default 1500
+   */
+  progressIndeterminateDuration: number;
+
+  /**
+   * GSAP easing for ProgressBar indeterminate loop.
+   * @default "expo.inOut"
+   */
+  progressIndeterminateEase: string;
+
+  /**
    * Duration (ms) of one full Loading dots bounce (up + down).
    * Delay between dots = duration / 3 (wave 1 → 2 → 3).
    * @default 900
@@ -191,6 +238,21 @@ export interface MotionConfig {
 
   /** Bouncing Loading dots animation (`variant="dots"`). @default true */
   enableLoadingDots: boolean;
+
+  /** Dialog / AlertDialog / Drawer enter/leave. @default true */
+  enableModalMotion: boolean;
+
+  /** Switch thumb travel (+ related track fill / icon crossfade). @default true */
+  enableSwitchThumb: boolean;
+
+  /** Tabs sliding indicator. @default true */
+  enableTabsIndicator: boolean;
+
+  /** Pagination FLIP layout transitions. @default true */
+  enablePaginationFlip: boolean;
+
+  /** SelectionIndicator fill / mark (Checkbox, Radio, ListBox, …). @default true */
+  enableSelectionFill: boolean;
 }
 
 /** Canonical motion defaults — imported by theme `MOTION_DEFAULTS` (single source). */
@@ -199,6 +261,7 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   interactiveEase: "power2.out",
   hoverLiftEase: "sine.inOut",
   tooltipDuration: 200,
+  modalDuration: 280,
   switchThumbDuration: 340,
   switchThumbEase: "back.out(1.4)",
   selectionFillEase: "back.out(1.25)",
@@ -217,6 +280,7 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   surfaceTransitionDuration: 600,
   toastDismissDuration: 220,
   toastDismissEase: "power2.in",
+  enableAnimations: true,
   enableHoverLift: true,
   enablePressSqueeze: true,
   enableToggleButtonFill: true,
@@ -229,10 +293,17 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   progressFillDuration: 600,
   progressFillEase: "power2.out",
   enableProgressFill: true,
+  progressIndeterminateDuration: 1500,
+  progressIndeterminateEase: "expo.inOut",
   loadingDotsDuration: 900,
   loadingDotsEaseUp: "power2.out",
   loadingDotsEaseDown: "power2.in",
   enableLoadingDots: true,
+  enableModalMotion: true,
+  enableSwitchThumb: true,
+  enableTabsIndicator: true,
+  enablePaginationFlip: true,
+  enableSelectionFill: true,
 };
 
 let _config: MotionConfig = { ...MOTION_CONFIG_DEFAULTS };
@@ -290,10 +361,31 @@ export function getMotionConfig(): Readonly<MotionConfig> {
   return _config;
 }
 
+/** Master kill-switch — `false` disables all GSAP feature flags. */
+export function isMotionEnabled(): boolean {
+  return _config.enableAnimations;
+}
+
+/**
+ * Whether a feature flag is on under the current master kill-switch.
+ * Equivalent to `enableAnimations && config[flag]`.
+ */
+export function isMotionFeatureEnabled(flag: MotionFeatureFlag): boolean {
+  return _config.enableAnimations && _config[flag];
+}
+
 /** Returns `{ duration, ease }` for standard interactive GSAP tweens (duration in seconds). */
 export function motionInteractive() {
   return {
     duration: _config.interactiveDuration / 1000,
+    ease: _config.interactiveEase,
+  } as const;
+}
+
+/** Dialog / AlertDialog / Drawer enter/leave. */
+export function motionModal() {
+  return {
+    duration: _config.modalDuration / 1000,
     ease: _config.interactiveEase,
   } as const;
 }
@@ -361,6 +453,14 @@ export function motionProgressFill() {
   } as const;
 }
 
+/** ProgressBar indeterminate translate loop. */
+export function motionProgressIndeterminate() {
+  return {
+    duration: _config.progressIndeterminateDuration / 1000,
+    ease: _config.progressIndeterminateEase,
+  } as const;
+}
+
 /** Toast dismiss slide + last-scrim fade-out. */
 export function motionToastDismiss() {
   return {
@@ -380,6 +480,6 @@ export function motionLoadingDots() {
     halfCycleSec: cycleSec / 2,
     easeUp: _config.loadingDotsEaseUp,
     easeDown: _config.loadingDotsEaseDown,
-    enabled: _config.enableLoadingDots,
+    enabled: isMotionFeatureEnabled("enableLoadingDots"),
   } as const;
 }

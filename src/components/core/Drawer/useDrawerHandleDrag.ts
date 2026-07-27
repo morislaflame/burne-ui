@@ -1,6 +1,6 @@
 import { useCallback, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
 
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 
@@ -45,7 +45,7 @@ export function useDrawerHandleDrag(
       const panel = panelRef.current;
       const overlay = overlayRef.current;
       if (!panel) return;
-      if (prefersReducedInteractiveHoverLift()) return;
+      if (prefersReducedMotion()) return;
 
       const axis = getTranslateAxis(placement);
       const isX = axis === "x";

@@ -1,7 +1,7 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { applyReducedModalMotion, captureModalFocusReturn, completeModalDialogClose, isReducedModalMotion, type GsapMotionVars } from "@/components/core/utils/modalSurfaceMotion";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { motionModal } from "@/components/core/utils/motionConfig";
 import { openNativeDialog } from "@/components/core/utils/portalContainer";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
@@ -132,7 +132,7 @@ export function useDrawerModalMotion({
     }
 
     killMotion(overlay, panel);
-    const vars = { ...motionInteractive(), overwrite: "auto" as const };
+    const vars = { ...motionModal(), overwrite: "auto" as const };
     const tl = animateDrawerClose({
       overlay,
       panel,
@@ -170,7 +170,7 @@ export function useDrawerModalMotion({
       overlay,
       panel,
       placement,
-      vars: { ...motionInteractive(), overwrite: "auto" as const },
+      vars: { ...motionModal(), overwrite: "auto" as const },
     });
   }, [open, placement, contained]);
 

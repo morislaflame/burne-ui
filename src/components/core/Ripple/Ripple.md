@@ -104,7 +104,7 @@ Ripple **не** создаётся, если:
 | Условие | Причина |
 |---------|---------|
 | `disabled={true}` | нет listener |
-| `prefers-reduced-motion` | `prefersReducedInteractiveHoverLift()` |
+| `prefers-reduced-motion` | `prefersReducedMotion()` |
 | `enableRipple: false` | глобальный выключатель |
 | `event.defaultPrevented` | например, Dialog.Trigger suppress |
 | мышь, `button !== 0` | не левый клик |

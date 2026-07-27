@@ -620,8 +620,11 @@ export {
 export {
   configureMotion,
   getMotionConfig,
+  isMotionEnabled,
+  isMotionFeatureEnabled,
   MOTION_CONFIG_DEFAULTS,
   type MotionConfig,
+  type MotionFeatureFlag,
 } from "@/components/core/utils/motionConfig";
 export {
   colorToken,

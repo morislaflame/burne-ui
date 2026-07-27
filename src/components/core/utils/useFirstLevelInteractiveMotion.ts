@@ -19,7 +19,8 @@ import type { ForwardedRef, PointerEvent } from "react";
 
 import { killMotion } from "./gsapMotion";
 import { animateGlossInteractiveHoverLift, animateGlossInteractivePressSqueeze, createGlossInteractiveRefCallback } from "./glossInteractiveMotion";
-import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import { prefersReducedMotion } from "./reducedMotion";
 import { firstLevelHoverShadow } from "./useShadowMotion";
 import { mergeForwardedRef } from "./mergeRefs";
 
@@ -146,7 +147,7 @@ export function useFirstLevelInteractiveMotion({
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDownProp?.(e);
       if (!animated || !enabled || e.defaultPrevented) return;
-      if (prefersReducedInteractiveHoverLift()) return;
+      if (prefersReducedMotion()) return;
       const el = motionTarget();
       if (!el) return;
 

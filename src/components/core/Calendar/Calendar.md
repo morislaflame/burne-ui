@@ -154,7 +154,7 @@ configureMotion({
 });
 ```
 
-**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `prefersReducedInteractiveHoverLift()` — без lift/squeeze.
+**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `prefersReducedMotion()` — без lift/squeeze.
 
 ### 2. Day / month / year cells (`useCalendarInteractiveCellAnimations`)
 

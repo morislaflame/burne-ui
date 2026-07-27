@@ -1,7 +1,8 @@
 import { forwardRef, useCallback, type HTMLAttributes, type Ref } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
@@ -166,7 +167,7 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
         onPointerDown?.(e);
         if (e.defaultPrevented || disabled) return;
         const el = e.currentTarget;
-        if (!el || prefersReducedInteractiveHoverLift()) return;
+        if (!el || prefersReducedMotion()) return;
         void animateInteractivePressSqueeze(el);
       },
       [disabled, onPointerDown],

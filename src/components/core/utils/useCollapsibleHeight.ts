@@ -1,8 +1,8 @@
 import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig, motionExpand } from "./motionConfig";
-import { prefersReducedInteractiveHoverLift } from "./hoverInteractiveLift";
+import { isMotionFeatureEnabled, motionExpand } from "./motionConfig";
+import { usePrefersReducedMotion } from "./reducedMotion";
 
 /** Content wrapper height (padding + child borders; no margin collapse). */
 export function measureCollapsibleContentHeight(inner: HTMLElement): number {
@@ -79,7 +79,7 @@ export function useCollapsibleShellRef(
 }
 
 export type UseCollapsibleHeightOptions = {
-  /** @default () => getMotionConfig().enableExpandable */
+  /** @default () => isMotionFeatureEnabled("enableExpandable") */
   enabled?: () => boolean;
   /** Skip GSAP (Disclosure drag-handle): set height instantly. */
   skipAnimRef?: RefObject<boolean>;
@@ -94,17 +94,18 @@ export function useCollapsibleHeight(
   innerRef: RefObject<HTMLElement | null>,
   options?: UseCollapsibleHeightOptions,
 ) {
-  const enabledRef = useRef(options?.enabled ?? (() => getMotionConfig().enableExpandable));
-  enabledRef.current = options?.enabled ?? (() => getMotionConfig().enableExpandable);
+  const enabledRef = useRef(options?.enabled ?? (() => isMotionFeatureEnabled("enableExpandable")));
+  enabledRef.current = options?.enabled ?? (() => isMotionFeatureEnabled("enableExpandable"));
   const skipAnimRef = options?.skipAnimRef;
   const prevOpenRef = useRef<boolean | undefined>(undefined);
+  const reduceMotionPreferred = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const inner = innerRef.current;
     if (!shell || !inner) return;
 
-    const reduceMotion = prefersReducedInteractiveHoverLift() || !enabledRef.current();
+    const reduceMotion = reduceMotionPreferred || !enabledRef.current();
 
     if (prevOpenRef.current === undefined) {
       prevOpenRef.current = open;
@@ -155,5 +156,5 @@ export function useCollapsibleHeight(
         },
       });
     }
-  }, [open, shellRef, innerRef, skipAnimRef]);
+  }, [open, shellRef, innerRef, skipAnimRef, reduceMotionPreferred]);
 }

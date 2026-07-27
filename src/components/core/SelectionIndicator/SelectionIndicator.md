@@ -128,6 +128,7 @@ import { configureMotion } from "burne-ui";
 configureMotion({
   selectionFillDuration: 280,
   selectionFillEase: "back.out(1.25)",
+  enableSelectionFill: true,
 });
 ```
 
@@ -135,7 +136,7 @@ configureMotion({
 
 | Слой | Анимируется | `configureMotion` |
 |------|-------------|-------------------|
-| Fill | scale + autoAlpha | `selectionFillDuration`, `selectionFillEase` |
+| Fill | scale + autoAlpha | `selectionFillDuration`, `selectionFillEase`, `enableSelectionFill` |
 | Mark | scale + autoAlpha | те же |
 | Shell | CSS only | — |
 

@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 
 import type { UseMeterFillAnimationProps } from "./meterTypes";
@@ -12,7 +12,7 @@ export function useMeterFillAnimation({
 }: UseMeterFillAnimationProps) {
   const fillRef = useRef<HTMLSpanElement>(null);
   const firstLayoutRef = useRef(true);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
     const fill = fillRef.current;

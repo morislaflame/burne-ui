@@ -153,8 +153,9 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,    // overlay + panel scale
+  modalDuration: 280,          // overlay + panel scale
   interactiveEase: "power2.out",
+  enableModalMotion: true,
 });
 ```
 
@@ -199,11 +200,11 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 
 | Анимация | Утилита | Ключи `configureMotion` | Примечание |
 |----------|---------|---------------------------|------------|
-| Open overlay | `animateModalOpen` | `interactiveDuration`, `interactiveEase` | opacity fade |
+| Open overlay | `animateModalOpen` | `modalDuration`, `interactiveEase`, `enableModalMotion` | opacity fade |
 | Open panel | `animateModalOpen` | те же | scale 0.97→1 |
 | Close | `animateModalClose` | те же | autoAlpha + scale out |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | Dialog.Trigger |
-| Reduced motion | `isReducedModalMotion` | — | системная настройка |
+| Reduced motion | `isReducedModalMotion` | `enableModalMotion` / `enableAnimations` | системная настройка + флаги |
 | Scale from | `MODAL_PANEL_SCALE_FROM` | — | константа 0.97 |
 
 ## Overlay и тема

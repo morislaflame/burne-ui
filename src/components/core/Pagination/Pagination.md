@@ -129,10 +129,11 @@ import { configureMotion } from "burne-ui";
 configureMotion({
   interactiveDuration: 280,
   interactiveEase: "power2.out",
+  enablePaginationFlip: true,
 });
 ```
 
-**Reduced motion:** `prefersReducedInteractiveHoverLift()` — мгновенный layout без GSAP.
+**Reduced motion / `enablePaginationFlip: false`:** мгновенный layout без GSAP.
 
 ### 2. Button press text motion
 
@@ -171,7 +172,7 @@ configureMotion({
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| FLIP shift items | `usePaginationFlip` | `interactiveDuration`, `interactiveEase` | `data-flip-key` на Item |
+| FLIP shift items | `usePaginationFlip` | `interactiveDuration`, `interactiveEase`, `enablePaginationFlip` | `data-flip-key` на Item |
 | New item fade+scale | `usePaginationFlip` | `interactiveDuration` | — |
 | Press text squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` | `disabled` на button |
 | Active page | React render | — | `page` |

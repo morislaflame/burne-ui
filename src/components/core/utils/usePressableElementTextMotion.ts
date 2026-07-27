@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, type PointerEvent, type RefObject } from "react";
 
 import { killMotion } from "./gsapMotion";
-import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import { usePrefersReducedMotion } from "./reducedMotion";
 import { getMotionConfig } from "./motionConfig";
 
 export type UsePressableElementTextMotionProps<
@@ -51,7 +52,7 @@ export function usePressableElementTextMotion<
   onPointerLeave,
   onPointerDown,
 }: UsePressableElementTextMotionProps<EventTarget, RefTarget>) {
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
   const hoverInsideRef = useRef(false);
 
   useEffect(() => {

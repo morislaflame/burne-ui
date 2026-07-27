@@ -21,6 +21,7 @@ export const SCALE_TOKEN_LABELS = {
 export const MOTION_DURATION_LABELS = {
   interactiveDuration: "Interactive duration",
   tooltipDuration: "Tooltip duration",
+  modalDuration: "Modal duration",
   switchThumbDuration: "Switch thumb duration",
   selectionFillDuration: "Selection fill duration",
   expandDuration: "Expand duration",
@@ -28,6 +29,7 @@ export const MOTION_DURATION_LABELS = {
   rippleDefaultDuration: "Ripple duration",
   rippleExpandableDuration: "Expandable ripple duration",
   progressFillDuration: "Progress fill duration",
+  progressIndeterminateDuration: "Progress indeterminate duration",
   loadingDotsDuration: "Loading dots duration",
   surfaceTransitionDuration: "CSS surface transition",
   toastDismissDuration: "Toast dismiss duration",
@@ -48,6 +50,7 @@ export const MOTION_EASE_LABELS = {
   selectionFillEase: "Selection fill easing",
   expandOpenEase: "Expand open easing",
   progressFillEase: "Progress fill easing",
+  progressIndeterminateEase: "Progress indeterminate easing",
   loadingDotsEaseUp: "Loading dots up",
   loadingDotsEaseDown: "Loading dots down",
   toastDismissEase: "Toast dismiss easing",
@@ -64,6 +67,7 @@ export const GSAP_EASE_OPTIONS = [
   "power2.inOut",
   "power3.inOut",
   "sine.inOut",
+  "expo.inOut",
   "back.out(1.4)",
   "back.out(1.25)",
   "elastic.out(1, 0.5)",
@@ -88,6 +92,11 @@ export const ANIMATION_FLAG_LABELS = {
   enableFeedbackExpand: "Button feedback ring",
   enableProgressFill: "Progress bar fill",
   enableLoadingDots: "Loading dots wave",
+  enableModalMotion: "Modal / drawer",
+  enableSwitchThumb: "Switch thumb",
+  enableTabsIndicator: "Tabs indicator",
+  enablePaginationFlip: "Pagination FLIP",
+  enableSelectionFill: "Selection indicator fill",
 } as const;
 
 export const FONT_WEIGHT_LABELS: Record<ThemeFontWeightKey, string> = {

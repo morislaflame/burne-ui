@@ -1,10 +1,10 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import {
-  getMotionConfig,
+  isMotionFeatureEnabled,
   motionContentFade,
   motionInteractive,
 } from "@/components/core/utils/motionConfig";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   useCallback,
   useEffect,
@@ -16,12 +16,14 @@ export const AVATAR_GROUP_HOVER_TRANSLATE_Y = -10;
 export const AVATAR_GROUP_HOVER_SCALE = 1.08;
 
 export function useAvatarImageFade(visible: boolean, imgRef: RefObject<HTMLImageElement | null>) {
+  const reduceMotionPreferred = usePrefersReducedMotion();
+
   useLayoutEffect(() => {
     const el = imgRef.current;
     if (!el) return;
 
     const reduceMotion =
-      prefersReducedInteractiveHoverLift() || !getMotionConfig().enableContentFade;
+      reduceMotionPreferred || !isMotionFeatureEnabled("enableContentFade");
 
     killMotion(el);
 
@@ -35,11 +37,11 @@ export function useAvatarImageFade(visible: boolean, imgRef: RefObject<HTMLImage
       ...motionContentFade(),
       overwrite: "auto",
     });
-  }, [imgRef, visible]);
+  }, [imgRef, reduceMotionPreferred, visible]);
 }
 
 export function useAvatarGroupItemMotion(wrapRef: RefObject<HTMLDivElement | null>) {
-  const reduced = prefersReducedInteractiveHoverLift();
+  const reduced = usePrefersReducedMotion();
 
   const applyRest = useCallback(() => {
     const el = wrapRef.current;

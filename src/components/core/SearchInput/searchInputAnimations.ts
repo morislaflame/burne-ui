@@ -1,12 +1,8 @@
 import { useCallback, useLayoutEffect, useRef } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import {
-  animateInteractivePressSqueeze,
-  prefersReducedInteractiveHoverLift,
-  shadowBase,
-  shadowNone,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze, shadowBase, shadowNone } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   animateGlossInteractivePressSqueeze,
   useGlossFieldShellMotion,
@@ -114,7 +110,7 @@ export function useSearchInputAnimations({
       const iconEl = iconRef.current;
       if (!el || !iconEl) return;
 
-      if (prefersReducedInteractiveHoverLift()) {
+      if (prefersReducedMotion()) {
         applyShellMetrics(open);
         return;
       }
@@ -221,7 +217,7 @@ export function useSearchInputAnimations({
   const beginPressSqueeze = useCallback(() => {
     if (blocked || expanded) return;
     const shell = rootRef.current;
-    if (!shell || prefersReducedInteractiveHoverLift()) {
+    if (!shell || prefersReducedMotion()) {
       squeezePromiseRef.current = Promise.resolve();
       return;
     }

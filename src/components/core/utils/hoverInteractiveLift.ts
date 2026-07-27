@@ -8,7 +8,8 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig } from "./motionConfig";
+import { getMotionConfig, isMotionFeatureEnabled } from "./motionConfig";
+import { prefersReducedMotion } from "./reducedMotion";
 import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
 import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
 
@@ -80,12 +81,6 @@ export function initElementShadow(element: HTMLElement | null, shadow: string): 
   element.style.setProperty("--el-shadow", shadow);
 }
 
-
-export function prefersReducedInteractiveHoverLift(): boolean {
-  if (typeof window === "undefined" || !window.matchMedia) return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 /** Viewport ≤ tablet (Tailwind `lg`), touch without hover or coarse pointer — no hover-lift. */
 function isTouchOrNarrowViewport(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -94,7 +89,11 @@ function isTouchOrNarrowViewport(): boolean {
 
 /** Hover lift and shadow change: off for reduced-motion, touch and viewport ≤ tablet. */
 export function shouldSkipInteractiveHoverLift(): boolean {
-  return prefersReducedInteractiveHoverLift() || isTouchOrNarrowViewport() || !getMotionConfig().enableHoverLift;
+  return (
+    prefersReducedMotion() ||
+    isTouchOrNarrowViewport() ||
+    !isMotionFeatureEnabled("enableHoverLift")
+  );
 }
 
 //
@@ -216,7 +215,7 @@ export function animateInteractivePressSqueeze(
   element: HTMLElement,
   options?: AnimateInteractivePressSqueezeOptions,
 ): Promise<void> {
-  if (!getMotionConfig().enablePressSqueeze) {
+  if (!isMotionFeatureEnabled("enablePressSqueeze")) {
     options?.onReleaseStart?.();
     return Promise.resolve();
   }

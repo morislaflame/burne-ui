@@ -98,6 +98,7 @@ const MOTION_STATE_KEYS = [
   "interactiveEase",
   "hoverLiftEase",
   "tooltipDuration",
+  "modalDuration",
   "switchThumbDuration",
   "switchThumbEase",
   "selectionFillDuration",
@@ -117,9 +118,12 @@ const MOTION_STATE_KEYS = [
   "toastDismissEase",
   "progressFillDuration",
   "progressFillEase",
+  "progressIndeterminateDuration",
+  "progressIndeterminateEase",
   "loadingDotsDuration",
   "loadingDotsEaseUp",
   "loadingDotsEaseDown",
+  "enableAnimations",
   "enableHoverLift",
   "enablePressSqueeze",
   "enableToggleButtonFill",
@@ -131,6 +135,11 @@ const MOTION_STATE_KEYS = [
   "enableFeedbackExpand",
   "enableProgressFill",
   "enableLoadingDots",
+  "enableModalMotion",
+  "enableSwitchThumb",
+  "enableTabsIndicator",
+  "enablePaginationFlip",
+  "enableSelectionFill",
 ] as const satisfies ReadonlyArray<keyof ThemeTokenState>;
 
 /** Merge shared `tokens` with `colors[mode]` into a full `ThemeTokenState`. */
@@ -184,6 +193,7 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     interactiveEase: withPalettes.interactiveEase,
     hoverLiftEase: withPalettes.hoverLiftEase,
     tooltipDuration: withPalettes.tooltipDuration,
+    modalDuration: withPalettes.modalDuration,
     switchThumbDuration: withPalettes.switchThumbDuration,
     switchThumbEase: withPalettes.switchThumbEase,
     selectionFillDuration: withPalettes.selectionFillDuration,
@@ -204,9 +214,12 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     toastDismissEase: withPalettes.toastDismissEase,
     progressFillDuration: withPalettes.progressFillDuration,
     progressFillEase: withPalettes.progressFillEase,
+    progressIndeterminateDuration: withPalettes.progressIndeterminateDuration,
+    progressIndeterminateEase: withPalettes.progressIndeterminateEase,
     loadingDotsDuration: withPalettes.loadingDotsDuration,
     loadingDotsEaseUp: withPalettes.loadingDotsEaseUp,
     loadingDotsEaseDown: withPalettes.loadingDotsEaseDown,
+    enableAnimations: withPalettes.enableAnimations,
     enableHoverLift: withPalettes.enableHoverLift,
     enablePressSqueeze: withPalettes.enablePressSqueeze,
     enableToggleButtonFill: withPalettes.enableToggleButtonFill,
@@ -218,6 +231,11 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     enableFeedbackExpand: withPalettes.enableFeedbackExpand,
     enableProgressFill: withPalettes.enableProgressFill,
     enableLoadingDots: withPalettes.enableLoadingDots,
+    enableModalMotion: withPalettes.enableModalMotion,
+    enableSwitchThumb: withPalettes.enableSwitchThumb,
+    enableTabsIndicator: withPalettes.enableTabsIndicator,
+    enablePaginationFlip: withPalettes.enablePaginationFlip,
+    enableSelectionFill: withPalettes.enableSelectionFill,
   };
 
   const tokens: ThemeTokenOverrides = {
@@ -437,6 +455,7 @@ export function applyBurneThemeConfig(
     if (m.interactiveEase !== undefined) state.interactiveEase = m.interactiveEase;
     if (m.hoverLiftEase !== undefined) state.hoverLiftEase = m.hoverLiftEase;
     if (m.tooltipDuration !== undefined) state.tooltipDuration = m.tooltipDuration;
+    if (m.modalDuration !== undefined) state.modalDuration = m.modalDuration;
     if (m.switchThumbDuration !== undefined) state.switchThumbDuration = m.switchThumbDuration;
     if (m.switchThumbEase !== undefined) state.switchThumbEase = m.switchThumbEase;
     if (m.selectionFillDuration !== undefined) state.selectionFillDuration = m.selectionFillDuration;
@@ -467,9 +486,16 @@ export function applyBurneThemeConfig(
     if (m.toastDismissEase !== undefined) state.toastDismissEase = m.toastDismissEase;
     if (m.progressFillDuration !== undefined) state.progressFillDuration = m.progressFillDuration;
     if (m.progressFillEase !== undefined) state.progressFillEase = m.progressFillEase;
+    if (m.progressIndeterminateDuration !== undefined) {
+      state.progressIndeterminateDuration = m.progressIndeterminateDuration;
+    }
+    if (m.progressIndeterminateEase !== undefined) {
+      state.progressIndeterminateEase = m.progressIndeterminateEase;
+    }
     if (m.loadingDotsDuration !== undefined) state.loadingDotsDuration = m.loadingDotsDuration;
     if (m.loadingDotsEaseUp !== undefined) state.loadingDotsEaseUp = m.loadingDotsEaseUp;
     if (m.loadingDotsEaseDown !== undefined) state.loadingDotsEaseDown = m.loadingDotsEaseDown;
+    if (m.enableAnimations !== undefined) state.enableAnimations = m.enableAnimations;
     if (m.enableHoverLift !== undefined) state.enableHoverLift = m.enableHoverLift;
     if (m.enablePressSqueeze !== undefined) state.enablePressSqueeze = m.enablePressSqueeze;
     if (m.enableToggleButtonFill !== undefined) state.enableToggleButtonFill = m.enableToggleButtonFill;
@@ -483,6 +509,11 @@ export function applyBurneThemeConfig(
     if (m.enableFeedbackExpand !== undefined) state.enableFeedbackExpand = m.enableFeedbackExpand;
     if (m.enableProgressFill !== undefined) state.enableProgressFill = m.enableProgressFill;
     if (m.enableLoadingDots !== undefined) state.enableLoadingDots = m.enableLoadingDots;
+    if (m.enableModalMotion !== undefined) state.enableModalMotion = m.enableModalMotion;
+    if (m.enableSwitchThumb !== undefined) state.enableSwitchThumb = m.enableSwitchThumb;
+    if (m.enableTabsIndicator !== undefined) state.enableTabsIndicator = m.enableTabsIndicator;
+    if (m.enablePaginationFlip !== undefined) state.enablePaginationFlip = m.enablePaginationFlip;
+    if (m.enableSelectionFill !== undefined) state.enableSelectionFill = m.enableSelectionFill;
   }
 
   applyThemeTokens(state, target);

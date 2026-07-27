@@ -117,7 +117,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 - unchecked: `x: 0`
 - First layout / reduced motion: instant `translate(x, 0)`
 
-`motionSwitchThumb()` — `switchThumbDuration`, `switchThumbEase` в `configureMotion`.
+`motionSwitchThumb()` — `switchThumbDuration`, `switchThumbEase`, `enableSwitchThumb` в `configureMotion`.
 
 ### 2. Track fill opacity
 
@@ -151,8 +151,8 @@ Track opacity `0.48` instant на `trackRef`.
 
 | Анимация | `configureMotion` |
 |----------|-------------------|
-| Thumb slide | `switchThumbDuration`, `switchThumbEase` |
-| Track fill / icons | `interactiveDuration`, `interactiveEase` |
+| Thumb slide | `switchThumbDuration`, `switchThumbEase`, `enableSwitchThumb` |
+| Track fill / icons | `interactiveDuration`, `interactiveEase`, `enableSwitchThumb` |
 | Press squeeze | `pressSqueezeScale`, `enablePressSqueeze` |
 
 ## Стилизация и кастомизация

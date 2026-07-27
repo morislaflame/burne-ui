@@ -171,7 +171,8 @@ portal → document.body
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,
+  modalDuration: 280,
+  enableModalMotion: true,
   pressSqueezeScale: [1, 0.98, 1],
 });
 ```
@@ -187,7 +188,7 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Modal open/close | `useAlertDialogModalMotion` | `interactiveDuration`, `interactiveEase` | `open` |
+| Modal open/close | `useAlertDialogModalMotion` | `modalDuration`, `interactiveEase`, `enableModalMotion` | `open` |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | `asChild` |
 | Gloss ref | gloss utils | gloss tokens | `variant="gloss"` |
 | Body scroll lock | useEffect | — | `open` |

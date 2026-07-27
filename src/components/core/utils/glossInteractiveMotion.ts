@@ -7,9 +7,10 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObjec
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig } from "./motionConfig";
+import { getMotionConfig, isMotionFeatureEnabled } from "./motionConfig";
 import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
-import { prefersReducedInteractiveHoverLift, resolveAdaptiveHoverLiftScale, resolveAdaptivePressSqueezeScale, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import { resolveAdaptiveHoverLiftScale, resolveAdaptivePressSqueezeScale, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import { prefersReducedMotion } from "./reducedMotion";
 
 const GLOSS_INIT_ATTR = "data-gloss-motion-init";
 
@@ -245,12 +246,12 @@ export function animateGlossInteractivePressSqueeze(
   liftScale?: number,
   onReleaseStart?: () => void,
 ): Promise<void> {
-  if (prefersReducedInteractiveHoverLift()) {
+  if (prefersReducedMotion()) {
     return Promise.resolve();
   }
 
   const cfg = getMotionConfig();
-  if (!cfg.enablePressSqueeze) {
+  if (!isMotionFeatureEnabled("enablePressSqueeze")) {
     onReleaseStart?.();
     if (!shouldSkipInteractiveHoverLift()) {
       animateGlossInteractiveHoverLift(element, pointerInside, liftScale);
@@ -423,7 +424,7 @@ export function useGlossFieldShellMotion(
   const onShellPointerDown = useCallback(() => {
     if (!enabled) return;
     const el = shellRef.current;
-    if (!el || prefersReducedInteractiveHoverLift()) return;
+    if (!el || prefersReducedMotion()) return;
     pointerInsideRef.current = true;
     pressingRef.current = true;
     void animateGlossInteractivePressSqueeze(el, true).finally(() => {

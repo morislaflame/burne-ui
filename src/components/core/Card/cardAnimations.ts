@@ -1,7 +1,8 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useMemo, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { animateGlossInteractivePressSqueeze, createGlossInteractiveRefCallback, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
 import { useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
@@ -60,7 +61,7 @@ export function useCardAnimations({
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLElement>) => {
       onPointerDownProp?.(e);
-      if (!pressable || !animated || e.defaultPrevented || prefersReducedInteractiveHoverLift()) {
+      if (!pressable || !animated || e.defaultPrevented || prefersReducedMotion()) {
         return;
       }
       const shell = rootRef.current;

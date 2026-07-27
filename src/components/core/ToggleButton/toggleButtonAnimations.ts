@@ -1,7 +1,7 @@
 import { useCallback, useRef, type PointerEvent } from "react";
 
 import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
 import type { UseToggleButtonAnimationsProps } from "./toggleButtonTypes";
@@ -55,8 +55,8 @@ export function useToggleButtonAnimations({
     runPendingFill();
   }, [runPendingFill]);
 
-  const shouldCoordinateFill =
-    animated && !disabled && !prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
+  const shouldCoordinateFill = animated && !disabled && !reduceMotion;
 
   const motion = useFirstLevelInteractiveMotion({
     isGloss: variant === "gloss",

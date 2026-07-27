@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { getMotionConfig, isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 import { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 import { cn } from "@/utils/cn";
@@ -32,7 +32,7 @@ export function Ripple({
     if (!target) return;
 
     const handler = (ev: PointerEvent) => {
-      if (disabled || prefersReducedInteractiveHoverLift() || !getMotionConfig().enableRipple) return;
+      if (disabled || prefersReducedMotion() || !isMotionFeatureEnabled("enableRipple")) return;
       if (ev.defaultPrevented) return;
       if (ev.pointerType === "mouse" && ev.button !== 0) return;
       pushAtClientCoords(target, ev.clientX, ev.clientY);

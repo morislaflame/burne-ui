@@ -1,7 +1,8 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
-import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -35,7 +36,7 @@ export function useDisclosureTriggerMotion({
   const bindChevronRef = useChevronRotation(
     open,
     chevronRef,
-    () => getMotionConfig().enableExpandable,
+    () => isMotionFeatureEnabled("enableExpandable"),
     skipContentAnimRef,
   );
 
@@ -101,7 +102,7 @@ export function useDisclosureTriggerMotion({
       onPointerDown?.(e);
       if (e.defaultPrevented || disabled) return;
       const el = titleLiftRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || prefersReducedMotion()) return;
       void animateInteractivePressSqueeze(el, {
         pointerInside: hoverInsideRef.current,
       });

@@ -1,5 +1,5 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 import { useLayoutEffect, useRef } from "react";
@@ -11,7 +11,7 @@ export function useRadioControlTrackAnimation() {
   const ctx = useRadioFieldContext();
   const trackRef = useRef<HTMLSpanElement>(null);
   const trackFirstLayoutRef = useRef(true);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
     const track = trackRef.current;

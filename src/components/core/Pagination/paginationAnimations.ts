@@ -1,9 +1,9 @@
 import { useCallback, useLayoutEffect, useRef, type ForwardedRef } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
 
 export function usePaginationFlip(
   olRef: React.RefObject<HTMLOListElement | null>,
@@ -11,6 +11,7 @@ export function usePaginationFlip(
   const prevRectsRef = useRef<Map<string, { x: number; y: number }>>(null!);
   if (!prevRectsRef.current) prevRectsRef.current = new Map();
   const firstRunRef = useRef(true);
+  const reduceMotionPreferred = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
     const ol = olRef.current;
@@ -24,7 +25,8 @@ export function usePaginationFlip(
     const keyFor = (el: HTMLElement) =>
       el.dataset.flipKey ?? `__keyless_${keylessIndex++}`;
 
-    const reduceMotion = prefersReducedInteractiveHoverLift();
+    const reduceMotion =
+      reduceMotionPreferred || !isMotionFeatureEnabled("enablePaginationFlip");
     const nextRects = new Map<string, { x: number; y: number }>();
     const prevRects = prevRectsRef.current;
 

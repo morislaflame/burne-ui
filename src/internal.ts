@@ -37,7 +37,6 @@ export {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
   initElementShadow,
-  prefersReducedInteractiveHoverLift,
   readShadowSize,
   readShadowVar,
   shadowCssVar,
@@ -50,6 +49,10 @@ export {
   type AnimateInteractivePressSqueezeOptions,
   type HoverShadowConfig,
 } from "@/components/core/utils/hoverInteractiveLift";
+export {
+  prefersReducedMotion,
+  usePrefersReducedMotion,
+} from "@/components/core/utils/reducedMotion";
 export {
   FIELD_SHELL_FOCUS_CLASS,
   FIELD_SHELL_TRANSITION_CLASS,

@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef, type RefObject } from "react";
 
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionSelectionFill } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabled, motionSelectionFill } from "@/components/core/utils/motionConfig";
 
 export function useSelectionIndicatorAnimation(
   active: boolean,
@@ -10,7 +10,8 @@ export function useSelectionIndicatorAnimation(
   iconRef?: RefObject<HTMLElement | null>,
 ) {
   const firstLayoutRef = useRef(true);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion =
+    usePrefersReducedMotion() || !isMotionFeatureEnabled("enableSelectionFill");
 
   useLayoutEffect(() => {
     const fill = fillRef?.current;

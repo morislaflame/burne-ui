@@ -190,7 +190,7 @@ configureMotion({
 
 `animated={false}` отключает squeeze/hover, но `onPress` и button semantics остаются.
 
-**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `prefersReducedInteractiveHoverLift()` — без lift и squeeze.
+**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `prefersReducedMotion()` — без lift и squeeze.
 
 ### 4. Passive card
 

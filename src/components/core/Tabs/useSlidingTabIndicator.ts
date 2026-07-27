@@ -1,8 +1,8 @@
 import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
 
 import type { TabsOrientation, TabsVariant } from "./tabsTypes";
 
@@ -77,6 +77,7 @@ export function useSlidingTabIndicator(
   layoutEpoch: number,
 ) {
   const firstLayoutRef = useRef(true);
+  const reduceMotionPreferred = usePrefersReducedMotion();
 
   const updateIndicator = useCallback(() => {
     const list = listRef.current;
@@ -89,7 +90,8 @@ export function useSlidingTabIndicator(
     }
 
     const metrics = readIndicatorMetrics(list, activeTab, orientation, variant);
-    const reduceMotion = prefersReducedInteractiveHoverLift();
+    const reduceMotion =
+      reduceMotionPreferred || !isMotionFeatureEnabled("enableTabsIndicator");
 
     indicator.style.opacity = "1";
 
@@ -115,6 +117,7 @@ export function useSlidingTabIndicator(
     indicatorRef,
     listRef,
     orientation,
+    reduceMotionPreferred,
     tabElementsRef,
     variant,
   ]);

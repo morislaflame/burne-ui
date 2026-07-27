@@ -1,6 +1,7 @@
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useCollapsibleHeight, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
 import { useCallback, useRef } from "react";
@@ -22,7 +23,7 @@ export function useExpandableTriggerMotion({
   const bindChevronRef = useChevronRotation(
     open,
     chevronRef,
-    () => getMotionConfig().enableExpandable,
+    () => isMotionFeatureEnabled("enableExpandable"),
   );
 
   const setTriggerRef = useCallback(
@@ -57,7 +58,7 @@ export function useExpandableTriggerMotion({
     (e: React.PointerEvent<HTMLButtonElement>) => {
       if (!disabled) {
         const span = liftSpanRef.current;
-        if (span && !prefersReducedInteractiveHoverLift()) {
+        if (span && !prefersReducedMotion()) {
           void animateInteractivePressSqueeze(span);
         }
       }

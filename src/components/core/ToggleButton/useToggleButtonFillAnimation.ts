@@ -1,8 +1,8 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion, usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionSelectionFill, getMotionConfig } from "@/components/core/utils/motionConfig";
+import { motionSelectionFill, isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 
 /** Marks ToggleButton / Calendar cell fill for SSR CSS in `styles.css`. */
 export const SELECTION_FILL_DATA_ATTR = "data-selection-fill";
@@ -40,7 +40,7 @@ export function createToggleButtonFillRefCallback(
 export function animateToggleButtonFill(
   fill: HTMLElement,
   pressed: boolean,
-  reduceMotion = prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToggleButtonFill,
+  reduceMotion = prefersReducedMotion() || !isMotionFeatureEnabled("enableToggleButtonFill"),
 ): void {
   killMotion(fill);
   fill.setAttribute(SELECTION_FILL_READY_ATTR, "");
@@ -76,7 +76,7 @@ export function useToggleButtonFillAnimation(
   const onFillStart = options?.onFillStart;
   const initialPressedRef = useRef(pressed);
   const prevPressedRef = useRef<boolean | undefined>(undefined);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
   /** Visual pressed — updates when fill actually starts, not on raw selection click. */
   const [displayPressed, setDisplayPressed] = useState(pressed);
 

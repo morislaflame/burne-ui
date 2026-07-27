@@ -1,6 +1,6 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { getMotionConfig, motionInteractive, motionToastDismiss } from "@/components/core/utils/motionConfig";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { isMotionFeatureEnabled, motionInteractive, motionToastDismiss } from "@/components/core/utils/motionConfig";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion, MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
 import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
@@ -29,6 +29,7 @@ export function ToastItemWrapper({
   const cardRef = useRef<HTMLDivElement>(null);
   const stackRef = useRef<HTMLDivElement>(null);
   const isMountedRef = useRef(false);
+  const reduceMotionPreferred = usePrefersReducedMotion();
 
   const capped = Math.min(reverseIdx, TOAST_MAX_VISIBLE - 1);
   const stackScale = 1 - capped * TOAST_STACK_SCALE_STEP;
@@ -40,7 +41,7 @@ export function ToastItemWrapper({
     if (!el) return;
 
     const reduceMotion =
-      prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToastStack;
+      reduceMotionPreferred || !isMotionFeatureEnabled("enableToastStack");
 
     const isFirstMount = !isMountedRef.current;
     isMountedRef.current = true;
@@ -71,7 +72,7 @@ export function ToastItemWrapper({
         overwrite: "auto",
       });
     }
-  }, [entry.variant, peekY, stackOpacity, stackScale]);
+  }, [entry.variant, peekY, reduceMotionPreferred, stackOpacity, stackScale]);
 
   useLayoutEffect(() => {
     const el = cardRef.current;
@@ -236,6 +237,7 @@ export function ToastViewport({
   const containerRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
   const prevContainerHRef = useRef(0);
+  const reduceMotionPreferred = usePrefersReducedMotion();
 
   const onHeightChange = useCallback((id: string, h: number) => {
     setHeights((prev) => {
@@ -256,7 +258,7 @@ export function ToastViewport({
     if (!el || containerH <= 0) return;
 
     const reduceMotion =
-      prefersReducedInteractiveHoverLift() || !getMotionConfig().enableToastStack;
+      reduceMotionPreferred || !isMotionFeatureEnabled("enableToastStack");
 
     killMotion(el);
 
@@ -270,7 +272,7 @@ export function ToastViewport({
       ...motionInteractive(),
       overwrite: "auto",
     });
-  }, [containerH]);
+  }, [containerH, reduceMotionPreferred]);
 
   useLayoutEffect(() => {
     const el = scrimRef.current;
@@ -281,7 +283,7 @@ export function ToastViewport({
     const el = scrimRef.current;
     if (!el) return;
 
-    const reduceMotion = prefersReducedInteractiveHoverLift();
+    const reduceMotion = reduceMotionPreferred;
 
     const isLastDismissing =
       sorted.length === 1 && dismissingIds.has(sorted[0]?.id ?? "");
@@ -298,7 +300,7 @@ export function ToastViewport({
     } else {
       gsap.to(el, { opacity: 1, ...motionInteractive(), overwrite: "auto" });
     }
-  }, [sorted, dismissingIds]);
+  }, [sorted, dismissingIds, reduceMotionPreferred]);
 
   return (
     <div

@@ -683,6 +683,15 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           onChange={(v) => setMotionDuration("interactiveDuration", v)}
         />
         <ScaleControl
+          label="modalDuration"
+          value={state.modalDuration}
+          min={120}
+          max={600}
+          step={10}
+          unit="ms"
+          onChange={(v) => setMotionDuration("modalDuration", v)}
+        />
+        <ScaleControl
           label="tooltipDuration"
           value={state.tooltipDuration}
           min={80}
@@ -708,6 +717,15 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           step={10}
           unit="ms"
           onChange={(v) => setMotionDuration("progressFillDuration", v)}
+        />
+        <ScaleControl
+          label="progressIndeterminateDuration"
+          value={state.progressIndeterminateDuration}
+          min={400}
+          max={3000}
+          step={50}
+          unit="ms"
+          onChange={(v) => setMotionDuration("progressIndeterminateDuration", v)}
         />
         <ScaleControl
           label="loadingDotsDuration"
@@ -743,9 +761,14 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           className="self-start text-muted"
           onClick={() => {
             setMotionDuration("interactiveDuration", MOTION_DEFAULTS.interactiveDuration);
+            setMotionDuration("modalDuration", MOTION_DEFAULTS.modalDuration);
             setMotionDuration("tooltipDuration", MOTION_DEFAULTS.tooltipDuration);
             setMotionDuration("expandDuration", MOTION_DEFAULTS.expandDuration);
             setMotionDuration("progressFillDuration", MOTION_DEFAULTS.progressFillDuration);
+            setMotionDuration(
+              "progressIndeterminateDuration",
+              MOTION_DEFAULTS.progressIndeterminateDuration,
+            );
             setMotionDuration("loadingDotsDuration", MOTION_DEFAULTS.loadingDotsDuration);
             setMotionDuration("surfaceTransitionDuration", MOTION_DEFAULTS.surfaceTransitionDuration);
             setMotionDuration("toastDismissDuration", MOTION_DEFAULTS.toastDismissDuration);
@@ -830,34 +853,9 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
         <SectionTitle>Animations</SectionTitle>
         <div className="flex flex-col gap-small rounded-base border-token bg-secondary p-small">
           <Switch
-            checked={
-              state.enableHoverLift &&
-              state.enablePressSqueeze &&
-              state.enableToggleButtonFill &&
-              state.enableRipple &&
-              state.enableExpandable &&
-              state.enableToastStack &&
-              state.enableAsyncButtonCrossfade &&
-              state.enableContentFade &&
-              state.enableFeedbackExpand &&
-              state.enableProgressFill &&
-              state.enableLoadingDots
-            }
-            onChange={(e) => {
-              const checked = e.target.checked;
-              setAnimationFlag("enableHoverLift", checked);
-              setAnimationFlag("enablePressSqueeze", checked);
-              setAnimationFlag("enableToggleButtonFill", checked);
-              setAnimationFlag("enableRipple", checked);
-              setAnimationFlag("enableExpandable", checked);
-              setAnimationFlag("enableToastStack", checked);
-              setAnimationFlag("enableAsyncButtonCrossfade", checked);
-              setAnimationFlag("enableContentFade", checked);
-              setAnimationFlag("enableFeedbackExpand", checked);
-              setAnimationFlag("enableProgressFill", checked);
-              setAnimationFlag("enableLoadingDots", checked);
-            }}
-            label="All animations included"
+            checked={state.enableAnimations}
+            onChange={(e) => setAnimationFlag("enableAnimations", e.target.checked)}
+            label="Enable all animations (master)"
           />
           <Separator className="my-xsmall opacity-50" />
           <Switch
@@ -914,6 +912,31 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
             checked={state.enableLoadingDots}
             onChange={(e) => setAnimationFlag("enableLoadingDots", e.target.checked)}
             label="Loading dots wave"
+          />
+          <Switch
+            checked={state.enableModalMotion}
+            onChange={(e) => setAnimationFlag("enableModalMotion", e.target.checked)}
+            label="Modal / Drawer"
+          />
+          <Switch
+            checked={state.enableSwitchThumb}
+            onChange={(e) => setAnimationFlag("enableSwitchThumb", e.target.checked)}
+            label="Switch thumb"
+          />
+          <Switch
+            checked={state.enableTabsIndicator}
+            onChange={(e) => setAnimationFlag("enableTabsIndicator", e.target.checked)}
+            label="Tabs indicator"
+          />
+          <Switch
+            checked={state.enablePaginationFlip}
+            onChange={(e) => setAnimationFlag("enablePaginationFlip", e.target.checked)}
+            label="Pagination FLIP"
+          />
+          <Switch
+            checked={state.enableSelectionFill}
+            onChange={(e) => setAnimationFlag("enableSelectionFill", e.target.checked)}
+            label="Selection indicator fill"
           />
         </div>
       </div>

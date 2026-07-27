@@ -1,8 +1,5 @@
 import type { ProgressBarDisplayState } from "./progressBarTypes";
 
-export const PROGRESS_INDETERMINATE_MS = 1500;
-export const PROGRESS_INDETERMINATE_EASE = "expo.inOut" as const;
-
 export function progressBarValueToPercent(
   value: number,
   min: number,

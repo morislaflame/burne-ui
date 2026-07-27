@@ -165,8 +165,9 @@ Slide на `panelRef`; `bindGlossPanelRef` на gloss-обёртке — surface
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 350,
+  modalDuration: 350,
   interactiveEase: "power3.out",
+  enableModalMotion: true,
   pressSqueezeScale: [1, 0.98, 1],
   enablePressSqueeze: true,
 });
@@ -178,8 +179,8 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 
 | Анимация | Утилита | `configureMotion` | Hardcode |
 |----------|---------|-------------------|----------|
-| Open slide | `animateModalOpen` | `interactiveDuration`, `interactiveEase` | slide % в `drawerAPI` |
-| Close slide | `animateModalClose` | те же | `getDrawerSlideOutTo` |
+| Open slide | `animateDrawerOpen` | `modalDuration`, `interactiveEase`, `enableModalMotion` | slide % в `drawerAPI` |
+| Close slide | `animateDrawerClose` | те же | `getDrawerSlideOutTo` |
 | Drag dismiss | `useDrawerHandleDrag` | interactive (finish) | ratio 0.38, velocity 0.45 |
 | Drag snap-back | `useDrawerHandleDrag` | interactive | — |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | — |

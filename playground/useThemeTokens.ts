@@ -76,9 +76,11 @@ function useThemeTokensState() {
     (
       key:
         | "interactiveDuration"
+        | "modalDuration"
         | "tooltipDuration"
         | "expandDuration"
         | "progressFillDuration"
+        | "progressIndeterminateDuration"
         | "loadingDotsDuration"
         | "surfaceTransitionDuration"
         | "toastDismissDuration",
@@ -92,6 +94,7 @@ function useThemeTokensState() {
   const setAnimationFlag = useCallback(
     (
       key:
+        | "enableAnimations"
         | "enableHoverLift"
         | "enablePressSqueeze"
         | "enableToggleButtonFill"
@@ -102,7 +105,12 @@ function useThemeTokensState() {
         | "enableContentFade"
         | "enableFeedbackExpand"
         | "enableProgressFill"
-        | "enableLoadingDots",
+        | "enableLoadingDots"
+        | "enableModalMotion"
+        | "enableSwitchThumb"
+        | "enableTabsIndicator"
+        | "enablePaginationFlip"
+        | "enableSelectionFill",
       value: boolean,
     ) => {
       setState((prev) => ({ ...prev, [key]: value }));

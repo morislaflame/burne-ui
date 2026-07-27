@@ -119,11 +119,11 @@ gsap.fromTo(fill,
 );
 ```
 
-Константы: `PROGRESS_INDETERMINATE_MS = 1500`, `PROGRESS_INDETERMINATE_EASE = "expo.inOut"`.
+Константы вынесены в `configureMotion`: `progressIndeterminateDuration` (1500), `progressIndeterminateEase` (`expo.inOut`).
 
 ResizeObserver на track/fill — перезапуск при resize.
 
-Reduced motion: без translate loop.
+Reduced motion / `enableProgressFill: false` / `enableAnimations: false`: без translate loop.
 
 ### Кастомизация
 
@@ -131,6 +131,8 @@ Reduced motion: без translate loop.
 configureMotion({
   progressFillDuration: 400,
   progressFillEase: "power2.out",
+  progressIndeterminateDuration: 1500,
+  progressIndeterminateEase: "expo.inOut",
   enableProgressFill: true,
 });
 ```
@@ -140,7 +142,7 @@ configureMotion({
 | Режим | Анимация | Настройка |
 |-------|----------|-----------|
 | Determinate | GSAP width/height | `progressFillDuration`, `enableProgressFill` |
-| Indeterminate | GSAP translate loop | hardcode 1500ms, expo.inOut |
+| Indeterminate | GSAP translate loop | `progressIndeterminateDuration`, `progressIndeterminateEase`, `enableProgressFill` |
 | Value text | React re-render | `formatValue` |
 
 ## Стилизация и кастомизация

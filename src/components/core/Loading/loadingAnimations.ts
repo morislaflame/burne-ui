@@ -1,7 +1,7 @@
 import { useLayoutEffect, useSyncExternalStore, type RefObject } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { getMotionConfigRevision, motionLoadingDots, subscribeMotionConfig } from "@/components/core/utils/motionConfig";
 
 import { LOADING_DOTS_LAYOUT } from "./loadingStyles";
@@ -46,6 +46,7 @@ export function useLoadingDotsAnimation(
     getMotionConfigRevision,
     getMotionConfigRevision,
   );
+  const reduceMotion = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -57,7 +58,6 @@ export function useLoadingDotsAnimation(
 
     if (dots.length === 0) return;
 
-    const reduceMotion = prefersReducedInteractiveHoverLift();
     let tweens: ReturnType<typeof gsap.to>[] = [];
 
     if (!reduceMotion) {
@@ -68,5 +68,5 @@ export function useLoadingDotsAnimation(
       for (const tween of tweens) tween.kill();
       for (const dot of dots) killMotion(dot);
     };
-  }, [size, trackRef, motionRevision]);
+  }, [size, trackRef, motionRevision, reduceMotion]);
 }

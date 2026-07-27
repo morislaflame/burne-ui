@@ -112,6 +112,7 @@ export type ThemeTokenState = {
   interactiveEase: string;
   hoverLiftEase: string;
   tooltipDuration: number;
+  modalDuration: number;
   switchThumbDuration: number;
   switchThumbEase: string;
   selectionFillDuration: number;
@@ -130,6 +131,8 @@ export type ThemeTokenState = {
   expandOpenEase: string;
   progressFillDuration: number;
   progressFillEase: string;
+  progressIndeterminateDuration: number;
+  progressIndeterminateEase: string;
   loadingDotsDuration: number;
   loadingDotsEaseUp: string;
   loadingDotsEaseDown: string;
@@ -138,6 +141,7 @@ export type ThemeTokenState = {
   /** Toast dismiss + last-scrim out, ms. */
   toastDismissDuration: number;
   toastDismissEase: string;
+  enableAnimations: boolean;
   enableHoverLift: boolean;
   enablePressSqueeze: boolean;
   enableToggleButtonFill: boolean;
@@ -149,6 +153,11 @@ export type ThemeTokenState = {
   enableFeedbackExpand: boolean;
   enableProgressFill: boolean;
   enableLoadingDots: boolean;
+  enableModalMotion: boolean;
+  enableSwitchThumb: boolean;
+  enableTabsIndicator: boolean;
+  enablePaginationFlip: boolean;
+  enableSelectionFill: boolean;
   colors: ThemeColors;
   /** Light/dark palettes — shared tokens stay on the root state; mode switch reads from here. */
   modePalettes: Record<ThemeMode, ThemeColors>;
@@ -458,6 +467,7 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     interactiveEase: state.interactiveEase,
     hoverLiftEase: state.hoverLiftEase,
     tooltipDuration: state.tooltipDuration,
+    modalDuration: state.modalDuration,
     switchThumbDuration: state.switchThumbDuration,
     switchThumbEase: state.switchThumbEase,
     selectionFillDuration: state.selectionFillDuration,
@@ -478,9 +488,12 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     toastDismissEase: state.toastDismissEase,
     progressFillDuration: state.progressFillDuration,
     progressFillEase: state.progressFillEase,
+    progressIndeterminateDuration: state.progressIndeterminateDuration,
+    progressIndeterminateEase: state.progressIndeterminateEase,
     loadingDotsDuration: state.loadingDotsDuration,
     loadingDotsEaseUp: state.loadingDotsEaseUp,
     loadingDotsEaseDown: state.loadingDotsEaseDown,
+    enableAnimations: state.enableAnimations,
     enableHoverLift: state.enableHoverLift,
     enablePressSqueeze: state.enablePressSqueeze,
     enableToggleButtonFill: state.enableToggleButtonFill,
@@ -492,6 +505,11 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     enableFeedbackExpand: state.enableFeedbackExpand,
     enableProgressFill: state.enableProgressFill,
     enableLoadingDots: state.enableLoadingDots,
+    enableModalMotion: state.enableModalMotion,
+    enableSwitchThumb: state.enableSwitchThumb,
+    enableTabsIndicator: state.enableTabsIndicator,
+    enablePaginationFlip: state.enablePaginationFlip,
+    enableSelectionFill: state.enableSelectionFill,
   });
 
   if (snapshot === lastMotionSnapshot) return;
@@ -502,6 +520,7 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     interactiveEase: state.interactiveEase,
     hoverLiftEase: state.hoverLiftEase,
     tooltipDuration: state.tooltipDuration,
+    modalDuration: state.modalDuration,
     switchThumbDuration: state.switchThumbDuration,
     switchThumbEase: state.switchThumbEase,
     selectionFillDuration: state.selectionFillDuration,
@@ -522,9 +541,12 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     toastDismissEase: state.toastDismissEase,
     progressFillDuration: state.progressFillDuration,
     progressFillEase: state.progressFillEase,
+    progressIndeterminateDuration: state.progressIndeterminateDuration,
+    progressIndeterminateEase: state.progressIndeterminateEase,
     loadingDotsDuration: state.loadingDotsDuration,
     loadingDotsEaseUp: state.loadingDotsEaseUp,
     loadingDotsEaseDown: state.loadingDotsEaseDown,
+    enableAnimations: state.enableAnimations,
     enableHoverLift: state.enableHoverLift,
     enablePressSqueeze: state.enablePressSqueeze,
     enableToggleButtonFill: state.enableToggleButtonFill,
@@ -536,6 +558,11 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     enableFeedbackExpand: state.enableFeedbackExpand,
     enableProgressFill: state.enableProgressFill,
     enableLoadingDots: state.enableLoadingDots,
+    enableModalMotion: state.enableModalMotion,
+    enableSwitchThumb: state.enableSwitchThumb,
+    enableTabsIndicator: state.enableTabsIndicator,
+    enablePaginationFlip: state.enablePaginationFlip,
+    enableSelectionFill: state.enableSelectionFill,
   });
 
   // Theme root may differ from documentElement — re-apply CSS tokens onto the themed root.

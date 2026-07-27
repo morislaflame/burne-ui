@@ -112,6 +112,7 @@ import { configureMotion } from "burne-ui";
 configureMotion({
   interactiveDuration: 280,
   interactiveEase: "power2.out",
+  enableTabsIndicator: true,
 });
 ```
 
@@ -141,7 +142,7 @@ Selected tab — без motion (статичный primary text).
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Indicator slide | `useSlidingTabIndicator` | `interactiveDuration`, `interactiveEase` | `variant`, `orientation` |
+| Indicator slide | `useSlidingTabIndicator` | `interactiveDuration`, `interactiveEase`, `enableTabsIndicator` | `variant`, `orientation` |
 | Tab text hover/squeeze | `useTabPointerMotion` | `hoverLiftScale`, `pressSqueezeScale` | `disabled`, selected |
 | Gloss list | gloss utils | gloss tokens | `variant="gloss"` |
 

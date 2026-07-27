@@ -2,7 +2,7 @@ import { cloneElement, forwardRef, isValidElement, useCallback, useMemo, useLayo
 
 import { Text } from "@/components/core/Text";
 import { messageBannerActionCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
@@ -316,7 +316,7 @@ export function ExpandableChevron({ className, ...props }: ExpandableChevronProp
   const bindChevronRef = useChevronRotation(
     open,
     chevronRef,
-    () => getMotionConfig().enableExpandable,
+    () => isMotionFeatureEnabled("enableExpandable"),
   );
 
   if (!hasPanel) return null;

@@ -7,14 +7,15 @@
  */
 
 import { gsap as gsapInstance, killMotion } from "./gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "./hoverInteractiveLift";
+import { prefersReducedMotion } from "./reducedMotion";
+import { isMotionFeatureEnabled } from "./motionConfig";
 
 export const MODAL_PANEL_SCALE_FROM = 0.97;
 
 export type GsapMotionVars = NonNullable<Parameters<typeof gsapInstance.to>[1]>;
 
 export function isReducedModalMotion(): boolean {
-  return prefersReducedInteractiveHoverLift();
+  return prefersReducedMotion() || !isMotionFeatureEnabled("enableModalMotion");
 }
 
 /** Initial inline style for modal backdrop overlay before enter animation. */

@@ -495,12 +495,15 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
       interactiveDuration: 280,
       tooltipDuration: 200,
       expandDuration: 320,
+      modalDuration: 280,
+      enableAnimations: true, // master kill-switch
       enableHoverLift: true,
       enablePressSqueeze: true,
       enableRipple: true,
       enableAsyncButtonCrossfade: true,
       enableProgressFill: true,
       enableLoadingDots: true,
+      enableModalMotion: true,
     });
   }, []);
 
@@ -512,11 +515,12 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 
 | Группа | Ключи |
 |--------|--------|
-| Тайминги / easing (GSAP) | `interactiveDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
+| Тайминги / easing (GSAP) | `interactiveDuration`, `modalDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `progressIndeterminateDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
 | CSS surface transitions | `surfaceTransitionDuration` → пишет `--motion-surface-duration` (утилиты `surface-color-transition`, `animate-shadow`, …) |
 | Hover / press | `hoverLiftScale`, `pressSqueezeScale`, `badgeAnchorHoverLiftScale` |
 | Ripple | `rippleDefaultDuration`, `rippleExpandableDuration`, `rippleEaseCss`, … |
-| Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableAsyncButtonCrossfade`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableFeedbackExpand`, `enableProgressFill`, `enableLoadingDots` |
+| Master kill-switch | `enableAnimations` — `false` отключает все feature-флаги одним ключом (`isMotionFeatureEnabled`) |
+| Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableAsyncButtonCrossfade`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableFeedbackExpand`, `enableProgressFill`, `enableLoadingDots`, `enableModalMotion`, `enableSwitchThumb`, `enableTabsIndicator`, `enablePaginationFlip`, `enableSelectionFill` |
 
 Дефолты: **`MOTION_CONFIG_DEFAULTS`** (`motionConfig.ts`) — единственный источник; theme `MOTION_DEFAULTS` импортирует их (с `pressSqueezeMid` вместо кортежа).
 

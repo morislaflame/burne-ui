@@ -1,7 +1,8 @@
 import { useCallback, type PointerEvent, type RefObject } from "react";
 
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
 import type { TimeFieldVariant } from "./timeFieldTypes";
@@ -38,7 +39,7 @@ export function useTimeFieldShellMotion({
       onPointerDown?.(e);
       if (e.defaultPrevented || disabled || isGloss) return;
       const shell = shellRef.current;
-      if (!shell || prefersReducedInteractiveHoverLift()) return;
+      if (!shell || prefersReducedMotion()) return;
       void animateInteractivePressSqueeze(shell);
     },
     [disabled, isGloss, onPointerDown, shellRef],

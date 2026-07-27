@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
 import { motionInteractive } from "./motionConfig";
-import { prefersReducedInteractiveHoverLift } from "./hoverInteractiveLift";
+import { usePrefersReducedMotion } from "./reducedMotion";
 
 const CHEVRON_INIT_ATTR = "data-chevron-init";
 
@@ -34,6 +34,7 @@ export function useChevronRotation(
 ) {
   const initialOpenRef = useRef(open);
   const prevOpenRef = useRef<boolean | undefined>(undefined);
+  const reduceMotionPreferred = usePrefersReducedMotion();
 
   const bindChevronRef = useMemo(
     () => createChevronRotationRefCallback(chevronRef, initialOpenRef.current),
@@ -51,7 +52,7 @@ export function useChevronRotation(
       return;
     }
 
-    const reduceMotion = prefersReducedInteractiveHoverLift() || !enabled();
+    const reduceMotion = reduceMotionPreferred || !enabled();
 
     if (prevOpenRef.current === undefined) {
       prevOpenRef.current = open;
@@ -74,7 +75,7 @@ export function useChevronRotation(
       ...motionInteractive(),
       overwrite: "auto",
     });
-  }, [open, chevronRef, enabled, skipAnimRef]);
+  }, [open, chevronRef, enabled, skipAnimRef, reduceMotionPreferred]);
 
   return bindChevronRef;
 }

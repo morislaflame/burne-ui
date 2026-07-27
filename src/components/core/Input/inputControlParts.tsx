@@ -8,7 +8,7 @@ import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/c
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 import { animateInputFileRowExit, useInputShellMotion } from "./inputAnimations";
 import { assignInputFiles, inputSizeFromButtonSize } from "./inputAPI";
@@ -194,7 +194,7 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
           });
         };
 
-        if (!rowEl || prefersReducedInteractiveHoverLift()) {
+        if (!rowEl || prefersReducedMotion()) {
           commit();
           return;
         }

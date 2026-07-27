@@ -1,6 +1,11 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { motionInteractive, motionSwitchThumb } from "@/components/core/utils/motionConfig";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import {
+  isMotionFeatureEnabled,
+  motionInteractive,
+  motionSwitchThumb,
+} from "@/components/core/utils/motionConfig";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
@@ -34,7 +39,8 @@ export function useSwitchTrackAnimations({
   iconOffRef,
   iconOnRef,
 }: UseSwitchTrackAnimationsProps) {
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
+  const switchMotionOff = reduceMotion || !isMotionFeatureEnabled("enableSwitchThumb");
   const fallbackTravelPx = resolveFallbackThumbPx(thickness, size);
   const travelPxRef = useRef(fallbackTravelPx);
   const trackFillFirstLayoutRef = useRef(true);
@@ -47,7 +53,7 @@ export function useSwitchTrackAnimations({
 
       const targetX = nextChecked ? travelPx : 0;
 
-      if (reduceMotion || thumbFirstLayoutRef.current) {
+      if (switchMotionOff || thumbFirstLayoutRef.current) {
         thumbFirstLayoutRef.current = false;
         killMotion(thumb);
         thumb.style.transform = `translate(${targetX}px, 0)`;
@@ -57,7 +63,7 @@ export function useSwitchTrackAnimations({
       killMotion(thumb);
       void gsap.to(thumb, { x: targetX, ...motionSwitchThumb(), overwrite: "auto" });
     },
-    [reduceMotion, thumbRef],
+    [switchMotionOff, thumbRef],
   );
 
   useLayoutEffect(() => {
@@ -102,7 +108,7 @@ export function useSwitchTrackAnimations({
     const trackFill = trackFillRef.current;
     if (!trackFill) return;
 
-    if (reduceMotion) {
+    if (switchMotionOff) {
       killMotion(trackFill);
       trackFill.style.opacity = checked ? "1" : "0";
       return;
@@ -125,12 +131,12 @@ export function useSwitchTrackAnimations({
     } else {
       void gsap.to(trackFill, { autoAlpha: 0, ...motionInteractive(), overwrite: "auto" });
     }
-  }, [checked, reduceMotion, trackFillRef]);
+  }, [checked, switchMotionOff, trackFillRef]);
 
   useLayoutEffect(() => {
     if (!iconOffRef.current && !iconOnRef.current) return;
 
-    if (reduceMotion) {
+    if (switchMotionOff) {
       if (iconOffRef.current) {
         killMotion(iconOffRef.current);
         iconOffRef.current.style.opacity = checked ? "0" : "1";
@@ -176,7 +182,7 @@ export function useSwitchTrackAnimations({
         });
       }
     }
-  }, [checked, iconOffRef, iconOnRef, reduceMotion]);
+  }, [checked, iconOffRef, iconOnRef, switchMotionOff]);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -186,9 +192,9 @@ export function useSwitchTrackAnimations({
   }, [disabled, trackRef]);
 
   useLayoutEffect(() => {
-    if (squeezeToken === 0 || reduceMotion) return;
+    if (squeezeToken === 0 || switchMotionOff) return;
     const shell = thumbShellRef.current;
     if (!shell) return;
     void animateInteractivePressSqueeze(shell);
-  }, [reduceMotion, squeezeToken, thumbShellRef]);
+  }, [switchMotionOff, squeezeToken, thumbShellRef]);
 }

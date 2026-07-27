@@ -1,6 +1,7 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { gsap } from "@/components/core/utils/gsapMotion";
@@ -61,7 +62,7 @@ export function useInputShellMotion({
       onPointerDown?.(e);
       if (e.defaultPrevented || blocked || isGloss || groupSegment != null) return;
       const shell = shellRef.current;
-      if (!shell || prefersReducedInteractiveHoverLift()) return;
+      if (!shell || prefersReducedMotion()) return;
       void animateInteractivePressSqueeze(shell);
     },
     [blocked, groupSegment, isGloss, onPointerDown, shellRef],

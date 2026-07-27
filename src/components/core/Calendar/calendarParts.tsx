@@ -2,7 +2,7 @@ import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useRef, useSta
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { motionContentFade } from "@/components/core/utils/motionConfig";
 
@@ -56,7 +56,7 @@ function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
       el.style.opacity = on ? "1" : "0";
     };
 
-    if (prefersReducedInteractiveHoverLift()) {
+    if (prefersReducedMotion()) {
       killMotion(el);
       applyInstant(visible);
       return;

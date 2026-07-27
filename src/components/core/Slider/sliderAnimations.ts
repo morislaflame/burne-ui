@@ -1,7 +1,8 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 export function useSliderThumbShellAnimation(disabled?: boolean) {
   const shellRef = useRef<HTMLSpanElement>(null);
@@ -24,7 +25,7 @@ export function useSliderThumbPressAnimation({
   onPointerDown: (e: React.PointerEvent<HTMLButtonElement>) => void;
 }) {
   const squeezeRef = useRef<HTMLButtonElement>(null);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const squeeze = squeezeRef.current;

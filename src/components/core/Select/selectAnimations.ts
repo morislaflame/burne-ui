@@ -1,7 +1,8 @@
 import { useRef } from "react";
 
 import { animateGlossInteractivePressSqueeze } from "@/components/core/utils/glossInteractiveMotion";
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 import type { RunSelectOpenAfterSqueezeOptions } from "./selectTypes";
 
@@ -23,7 +24,7 @@ export function runSelectOpenAfterSqueeze({
     openingRef.current = false;
     return;
   }
-  if (prefersReducedInteractiveHoverLift()) {
+  if (prefersReducedMotion()) {
     openingRef.current = false;
     setOpen(true);
     onOpened?.();

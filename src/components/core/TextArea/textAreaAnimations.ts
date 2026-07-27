@@ -1,7 +1,8 @@
 import { useCallback, type PointerEvent, type RefObject } from "react";
 
 import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
-import { animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 
 import type { TextAreaVariant } from "./textAreaTypes";
@@ -41,7 +42,7 @@ export function useTextAreaShellMotion({
         return;
       }
       const shell = shellRef.current;
-      if (!shell || prefersReducedInteractiveHoverLift()) return;
+      if (!shell || prefersReducedMotion()) return;
       if (isGloss) {
         glossShellMotion.onShellPointerDown();
         return;

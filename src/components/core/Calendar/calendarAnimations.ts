@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react";
 
-import { animateInteractiveHoverLift, animateInteractivePressSqueeze, prefersReducedInteractiveHoverLift, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 export function useCalendarNavButtonAnimations(disabled = false) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -28,7 +29,7 @@ export function useCalendarNavButtonAnimations(disabled = false) {
     (e: React.PointerEvent<HTMLButtonElement>) => {
       if (disabled || e.defaultPrevented) return;
       const el = ref.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || prefersReducedMotion()) return;
       void animateInteractivePressSqueeze(el, {
         pointerInside: hoverInsideRef.current,
       });
@@ -70,7 +71,7 @@ export function useCalendarInteractiveCellAnimations(disabled = false) {
     (e: React.PointerEvent<HTMLButtonElement>) => {
       if (disabled || e.defaultPrevented) return;
       const el = btnRef.current;
-      if (!el || prefersReducedInteractiveHoverLift()) return;
+      if (!el || prefersReducedMotion()) return;
       void animateInteractivePressSqueeze(el, {
         pointerInside: hoverInsideRef.current,
       });

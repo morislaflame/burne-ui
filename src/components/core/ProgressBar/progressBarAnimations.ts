@@ -1,10 +1,13 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { prefersReducedInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { getMotionConfig, motionProgressFill } from "@/components/core/utils/motionConfig";
+import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import {
+  isMotionFeatureEnabled,
+  motionProgressFill,
+  motionProgressIndeterminate,
+} from "@/components/core/utils/motionConfig";
 
-import { PROGRESS_INDETERMINATE_EASE, PROGRESS_INDETERMINATE_MS } from "./progressBarAPI";
 import type { UseProgressBarFillAnimationProps } from "./progressBarTypes";
 
 export function useProgressBarFillAnimation({
@@ -14,14 +17,13 @@ export function useProgressBarFillAnimation({
 }: UseProgressBarFillAnimationProps) {
   const fillRef = useRef<HTMLSpanElement>(null);
   const firstLayoutRef = useRef(true);
-  const reduceMotion = prefersReducedInteractiveHoverLift();
+  const reduceMotion = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
     if (indeterminate) return;
     const fill = fillRef.current;
     if (!fill) return;
 
-    const cfg = getMotionConfig();
     const axisProp = isHorizontal ? "width" : "height";
     const axisValue =
       fillTargetStyle[axisProp] != null ? String(fillTargetStyle[axisProp]) : "";
@@ -38,7 +40,11 @@ export function useProgressBarFillAnimation({
       }
     };
 
-    if (reduceMotion || !cfg.enableProgressFill || firstLayoutRef.current) {
+    if (
+      reduceMotion ||
+      !isMotionFeatureEnabled("enableProgressFill") ||
+      firstLayoutRef.current
+    ) {
       firstLayoutRef.current = false;
       applyInstant();
       return;
@@ -68,7 +74,7 @@ export function useProgressBarFillAnimation({
 
     killMotion(fill);
 
-    if (reduceMotion) {
+    if (reduceMotion || !isMotionFeatureEnabled("enableProgressFill")) {
       gsap.set(fill, { clearProps: "transform" });
       return;
     }
@@ -85,8 +91,7 @@ export function useProgressBarFillAnimation({
         isHorizontal ? { x: -fillSize } : { y: fillSize },
         {
           ...(isHorizontal ? { x: trackSize } : { y: -trackSize }),
-          duration: PROGRESS_INDETERMINATE_MS / 1000,
-          ease: PROGRESS_INDETERMINATE_EASE,
+          ...motionProgressIndeterminate(),
           repeat: -1,
           overwrite: "auto",
         },
