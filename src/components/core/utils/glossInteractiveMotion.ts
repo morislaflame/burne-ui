@@ -7,7 +7,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObjec
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig, isMotionFeatureEnabled } from "./motionConfig";
+import { getMotionConfig, isMotionFeatureEnabled, motionPressSqueezeTotal } from "./motionConfig";
 import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { resolveAdaptiveHoverLiftScale, resolveAdaptivePressSqueezeScale, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
 import { prefersReducedMotion } from "./reducedMotion";
@@ -19,6 +19,7 @@ export const GLOSS_INTERACTIVE_MOTION_CLASS = "will-change-transform origin-cent
 
 export type GlossDecorState = "rest" | "hover" | "press";
 
+/** Shine / conic angles per state — intentional gloss trajectories (not in `configureMotion`). */
 const GLOSS_DECOR: Record<
   GlossDecorState,
   { angle1: number; angle2: number; shineX: number; shineY: number }
@@ -28,9 +29,9 @@ const GLOSS_DECOR: Record<
   press: { angle1: -75, angle2: -15, shineX: 15, shineY: 15 },
 };
 
-/** Reference size (≈ gloss button base) — only hover/press travel is scaled. */
+/** Reference size (≈ gloss button base) — only hover/press travel is scaled. Intentional constant. */
 const GLOSS_SHINE_REFERENCE_DIM = 120;
-/** Minimum travel fraction on very large surfaces. */
+/** Minimum travel fraction on very large surfaces. Intentional constant. */
 const GLOSS_SHINE_MIN_TRAVEL = 0.35;
 
 function resolveAdaptiveGlossShineTravel(element: HTMLElement): number {
@@ -261,7 +262,9 @@ export function animateGlossInteractivePressSqueeze(
 
   killMotion(element);
   const squeeze = resolveAdaptivePressSqueezeScale(element);
-  const total = (cfg.interactiveDuration * 1.15) / 1000;
+  const total = motionPressSqueezeTotal();
+  // Intentional timeline split (not in motionConfig): press-in 30%; release = full total.
+  // See SETUP.md «Intentional motion constants».
   const pressIn = total * 0.3;
   const releaseOut = total * 1;
 

@@ -32,7 +32,6 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 | `variant` | `default` \| `primary` \| `outline` \| `secondary` \| `ghost` \| `gloss` | `default` | Визуальный стиль поверхности |
 | `status` | `default` \| `danger` \| `success` \| `info` \| `warning` | `default` | Семантический тон (цвет, hover, focus, ripple) |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер; наследуется из `ButtonGroup` / `Form` |
-| `animated` | `boolean` | `true` | Hover lift + press squeeze (GSAP) |
 | `ripple` | `boolean` | `false` | Converge-ripple от точки нажатия (`<Ripple />`) |
 | `icon` | `ReactNode` | — | Иконка рядом с текстом |
 | `iconPosition` | `start` \| `end` | `start` | Позиция `icon` |
@@ -137,7 +136,7 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 
 **Pointer enter (hover lift):**
 
-1. Проверки: `animated && !blocked`, не `defaultPrevented`, `shouldSkipInteractiveHoverLift()`
+1. Проверки: `!blocked`, не `defaultPrevented`, `shouldSkipInteractiveHoverLift()`
 2. `animateInteractiveHoverLift` — адаптивный `scale` (от размера элемента, cap = `hoverLiftScale`, default `1.025`)
 3. Тень: `firstLevelHoverShadow()` — покой `--shadow-none`, hover `--shadow-sm` через `--el-shadow` + класс `animate-shadow`
 
@@ -169,7 +168,7 @@ configureMotion({
 });
 ```
 
-**Локально:** `animated={false}` — отключает lift/squeeze на этой кнопке.
+**Глобально:** `enableAnimations: false` — отключает lift/squeeze глобально.
 
 **Reduced motion / touch:** `prefers-reduced-motion`, viewport ≤ tablet, `hover: none` — через `shouldSkipInteractiveHoverLift()`.
 
@@ -239,10 +238,10 @@ configureMotion({
 
 ### Сводка: что настраивается где
 
-| Анимация | Файл / утилита | Ключи `configureMotion` | Локальный prop |
-|----------|----------------|---------------------------|----------------|
-| Hover lift | `useFirstLevelInteractiveMotion` | `hoverLiftScale`, `hoverLiftEase`, `enableHoverLift` | `animated` |
-| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `animated` |
+| Анимация | Файл / утилита | Ключи `configureMotion` | Условие |
+|----------|----------------|---------------------------|---------|
+| Hover lift | `useFirstLevelInteractiveMotion` | `hoverLiftScale`, `hoverLiftEase`, `enableHoverLift` | `!blocked` |
+| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `!blocked` |
 | Ripple | `<Ripple />` | `rippleDefaultDuration`, `rippleDefaultOpacityFrom`, `enableRipple` | `ripple` |
 | Async crossfade | `buttonAnimations` layoutEffect | `enableAsyncButtonCrossfade`, `interactiveDuration` | `asyncState` |
 | Expand ring | `ButtonFeedbackExpandRipple` | `enableFeedbackExpand`, `feedbackExpandDuration` | — |
@@ -334,11 +333,15 @@ const rippleColor = buttonRippleTone("primary", "danger");
 
 ### Отключение анимаций
 
-```tsx
-<Button animated={false}>Без motion</Button>
+Глобально:
+
+```ts
+configureMotion({ enableAnimations: false });
+// или точечно:
+configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
 ```
 
-Или глобально: `configureMotion({ enableHoverLift: false, enablePressSqueeze: false })`.
+Локального пропа на кнопке нет — только `configureMotion` / `prefers-reduced-motion`.
 
 ## Доступность
 

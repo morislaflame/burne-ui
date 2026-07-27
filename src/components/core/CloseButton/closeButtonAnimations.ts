@@ -5,7 +5,6 @@ import type { UseCloseButtonAnimationsProps } from "./closeButtonTypes";
 
 export function useCloseButtonAnimations({
   variant,
-  animated,
   disabled,
   forwardedRef,
   onPointerDown,
@@ -14,7 +13,6 @@ export function useCloseButtonAnimations({
 }: UseCloseButtonAnimationsProps) {
   const motion = useFirstLevelInteractiveMotion({
     isGloss: variant === "gloss",
-    animated,
     enabled: !disabled,
     hasHoverShadow: CLOSE_BUTTON_HAS_HOVER_SHADOW.has(variant),
     useContentRef: false,

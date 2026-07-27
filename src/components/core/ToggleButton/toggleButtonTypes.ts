@@ -54,7 +54,6 @@ export type ToggleButtonProps = Omit<
   icon?: ReactNode;
   /** @default "start" */
   iconPosition?: IconPosition;
-  animated?: boolean;
   classNames?: ToggleButtonClassNames;
 };
 
@@ -103,7 +102,6 @@ export type UseToggleButtonRootStateProps = Pick<
   | "variant"
   | "fillColor"
   | "size"
-  | "animated"
   | "disabled"
   | "className"
   | "classNames"
@@ -112,7 +110,6 @@ export type UseToggleButtonRootStateProps = Pick<
 >;
 
 export type UseToggleButtonAnimationsProps = {
-  animated: boolean;
   disabled: boolean;
   variant: ToggleButtonVariant;
   groupSegment: ButtonGroupSegment | undefined;

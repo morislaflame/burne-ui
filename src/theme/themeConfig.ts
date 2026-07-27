@@ -105,6 +105,7 @@ const MOTION_STATE_KEYS = [
   "selectionFillEase",
   "hoverLiftScale",
   "badgeAnchorHoverLiftScale",
+  "pressSqueezeDurationFactor",
   "rippleDefaultDuration",
   "rippleDefaultOpacityFrom",
   "rippleExpandableDuration",
@@ -201,6 +202,7 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     hoverLiftScale: withPalettes.hoverLiftScale,
     badgeAnchorHoverLiftScale: withPalettes.badgeAnchorHoverLiftScale,
     pressSqueezeScale: [1, withPalettes.pressSqueezeMid, 1],
+    pressSqueezeDurationFactor: withPalettes.pressSqueezeDurationFactor,
     rippleDefaultDuration: withPalettes.rippleDefaultDuration,
     rippleDefaultOpacityFrom: withPalettes.rippleDefaultOpacityFrom,
     rippleExpandableDuration: withPalettes.rippleExpandableDuration,
@@ -465,6 +467,9 @@ export function applyBurneThemeConfig(
       state.badgeAnchorHoverLiftScale = m.badgeAnchorHoverLiftScale;
     }
     if (m.pressSqueezeScale !== undefined) state.pressSqueezeMid = m.pressSqueezeScale[1];
+    if (m.pressSqueezeDurationFactor !== undefined) {
+      state.pressSqueezeDurationFactor = m.pressSqueezeDurationFactor;
+    }
     if (m.rippleDefaultDuration !== undefined) state.rippleDefaultDuration = m.rippleDefaultDuration;
     if (m.rippleDefaultOpacityFrom !== undefined) {
       state.rippleDefaultOpacityFrom = m.rippleDefaultOpacityFrom;

@@ -47,7 +47,6 @@ import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type Toggl
 | `value` | — | Для ToggleButtonGroup |
 | `groupSegment` | — | Сегмент ButtonGroup |
 | `icon` / `iconPosition` | — | Simple API: одна иконка (`start` \| `end`, default `start`) |
-| `animated` | `true` | Hover lift + squeeze + fill |
 | `disabled` | `false` | |
 | `classNames` | — | см. стилизацию |
 
@@ -111,13 +110,13 @@ Flow:
 
 ### 3. Отключение
 
-```tsx
-<ToggleButton animated={false}>Без motion</ToggleButton>
-```
-
 ```ts
+configureMotion({ enableAnimations: false });
+// или точечно:
 configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggleButtonFill: false });
 ```
+
+Локального пропа `animated` нет.
 
 ### Сводка
 

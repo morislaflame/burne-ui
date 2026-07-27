@@ -515,7 +515,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 
 | Группа | Ключи |
 |--------|--------|
-| Тайминги / easing (GSAP) | `interactiveDuration`, `modalDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `progressIndeterminateDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
+| Тайминги / easing (GSAP) | `interactiveDuration`, `pressSqueezeDurationFactor`, `modalDuration`, `tooltipDuration`, `expandDuration`, `progressFillDuration`, `progressIndeterminateDuration`, `loadingDotsDuration`, `toastDismissDuration`, `*Ease` |
 | CSS surface transitions | `surfaceTransitionDuration` → пишет `--motion-surface-duration` (утилиты `surface-color-transition`, `animate-shadow`, …) |
 | Hover / press | `hoverLiftScale`, `pressSqueezeScale`, `badgeAnchorHoverLiftScale` |
 | Ripple | `rippleDefaultDuration`, `rippleExpandableDuration`, `rippleEaseCss`, … |
@@ -525,6 +525,31 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 Дефолты: **`MOTION_CONFIG_DEFAULTS`** (`motionConfig.ts`) — единственный источник; theme `MOTION_DEFAULTS` импортирует их (с `pressSqueezeMid` вместо кортежа).
 
 Библиотека учитывает **`prefers-reduced-motion: reduce`**.
+
+### Open-after-squeeze
+
+`runOpenAfterSqueeze` (Popover / Dropdown / Dialog / Drawer / Select / ComboBox / AlertDialog) ждёт окончания press-squeeze, затем открывает. Длительность = `interactiveDuration × pressSqueezeDurationFactor` (`motionPressSqueezeTotal()`, дефолт 280 × 1.15 ≈ 322 ms).
+
+```ts
+configureMotion({
+  interactiveDuration: 280,
+  pressSqueezeDurationFactor: 1.15, // быстрее open → меньше factor
+});
+```
+
+### Intentional motion constants
+
+Эти значения **намеренно не** вынесены в `configureMotion` — это feel/layout-константы кита. Менять только вместе с редизайном motion:
+
+| Константа | Где | Назначение |
+|-----------|-----|------------|
+| Squeeze timeline split (`pressIn = total×0.3`, release `total` / `total×0.5`) | `hoverInteractiveLift.ts`, `glossInteractiveMotion.ts` | Форма press-in / release внутри squeeze |
+| `ADAPTIVE_SQUEEZE_TARGET_PX` / `MIN_DELTA`, `ADAPTIVE_LIFT_TARGET_PX` / `MIN_DELTA` | `hoverInteractiveLift.ts` | Адаптивная амплитуда squeeze/lift в px |
+| `MODAL_PANEL_SCALE_FROM` (`0.97`) | `modalSurfaceMotion.ts` | Стартовый scale панели модалки |
+| `RIPPLE_MIN_SCALE` (`0.12`) | `pressRipple.tsx` | Минимальный «core» converge-ripple |
+| `TOAST_STACK_PEEK_PX` / `SCALE_STEP` / `ENTRY_OFFSET_PX` | `toastAPI.ts` | Геометрия стека тостов |
+| `BUTTON_ASYNC_LAYER_SCALE` (0.92 / 0.85) | `buttonAnimations.ts` | Scale async-слоёв label/loader/success/error |
+| `GLOSS_DECOR` + `GLOSS_SHINE_*` | `glossInteractiveMotion.ts` | Траектории shine/conic gloss |
 
 ### Важно при live-theme builder
 

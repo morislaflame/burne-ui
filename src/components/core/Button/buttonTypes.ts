@@ -64,7 +64,6 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   status?: ButtonStatus;
   size?: ButtonSize;
   iconOnly?: boolean;
-  animated?: boolean;
   asyncState?: ButtonAsyncState;
   onAsyncStateChange?: (state: ButtonAsyncState) => void;
   onAsyncClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<boolean>;
@@ -124,7 +123,6 @@ export type UseButtonRootStateProps = Pick<
   | "disabled"
   | "className"
   | "classNames"
-  | "animated"
   | "ripple"
   | "icon"
   | "iconPosition"
@@ -137,7 +135,6 @@ export type UseButtonAnimationsProps = {
   variant: ButtonVariant;
   status: ButtonStatus;
   size: ButtonSize;
-  animated: boolean;
   asyncState: ButtonAsyncState;
   isControlled: boolean;
   blocked: boolean;

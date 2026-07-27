@@ -372,7 +372,7 @@ export const DialogPanel = forwardRef<HTMLDivElement, DialogPanelProps>(
     const lightUi = useBurneLightTheme(portalThemeAnchor);
     const portalTheme = burneLightThemePortalProps(portalThemeAnchor);
 
-    if (typeof document === "undefined" || !motion.mounted || !portalHost) return null;
+    if (typeof document === "undefined" || !motion.showPortal || !portalHost) return null;
 
     // Context (DialogProvider, DialogClassNamesProvider) flows through the React
     // component tree, not the DOM tree — so portal children inherit it correctly.

@@ -11,6 +11,7 @@ import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
 
 const BUTTON_ASYNC_LAYER_INIT_ATTR = "data-button-async-layer-init";
 
+/** Async layer enter/exit scales — intentional feel constants (not in `configureMotion`). */
 const BUTTON_ASYNC_LAYER_SCALE: Record<
   ButtonAsyncLayerKind,
   { in: number; out: number }
@@ -50,7 +51,6 @@ export function createButtonAsyncLayerRefCallback(
 
 export function useButtonAnimations({
   variant,
-  animated,
   asyncState,
   isControlled,
   blocked,
@@ -104,7 +104,6 @@ export function useButtonAnimations({
   // Shared interactive motion (hover lift, press squeeze, refs merge)
   const motionRefs = useFirstLevelInteractiveMotion({
     isGloss: variant === "gloss",
-    animated,
     enabled: !blocked,
     hasHoverShadow: BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant),
     useContentRef: !!groupSegment,

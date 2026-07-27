@@ -24,7 +24,6 @@ export type CloseButtonProps = Omit<
 > & {
   variant?: CloseButtonVariant;
   size?: CloseButtonSize;
-  animated?: boolean;
   ripple?: boolean;
   classNames?: CloseButtonClassNames;
 };
@@ -41,7 +40,6 @@ export type UseCloseButtonRootStateProps = Omit<
 
 export type UseCloseButtonAnimationsProps = {
   variant: CloseButtonVariant;
-  animated: boolean;
   disabled: boolean;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   onPointerDown?: (e: PointerEvent<HTMLButtonElement>) => void;

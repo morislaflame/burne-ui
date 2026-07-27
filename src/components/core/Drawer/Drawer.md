@@ -89,7 +89,7 @@ const [open, setOpen] = useState(false);
 
 ## Анимации
 
-`drawerAnimations.ts` (`useDrawerModalMotion`) + `useDrawerHandleDrag.ts` + `runOpenAfterSqueeze` на Trigger.
+`drawerAnimations.ts` (`useDrawerModalMotion` → `useModalMotion` + slide resolvers из `drawerAPI`) + `useDrawerHandleDrag.ts` + `runOpenAfterSqueeze` на Trigger.
 
 **DOM-структура (портал):**
 
@@ -179,8 +179,8 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 
 | Анимация | Утилита | `configureMotion` | Hardcode |
 |----------|---------|-------------------|----------|
-| Open slide | `animateDrawerOpen` | `modalDuration`, `interactiveEase`, `enableModalMotion` | slide % в `drawerAPI` |
-| Close slide | `animateDrawerClose` | те же | `getDrawerSlideOutTo` |
+| Open slide | `animateModalOpen` + `getDrawerSlideOpenFrom` | `modalDuration`, `interactiveEase`, `enableModalMotion` | slide px в `drawerAPI` |
+| Close slide | `animateModalClose` + `getDrawerSlideCloseTo` | те же | `getDrawerSlideCloseTo` |
 | Drag dismiss | `useDrawerHandleDrag` | interactive (finish) | ratio 0.38, velocity 0.45 |
 | Drag snap-back | `useDrawerHandleDrag` | interactive | — |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | — |
@@ -294,7 +294,7 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 ```
 Drawer/
 ├── Drawer.tsx
-├── drawerAnimations.ts      # slide open/close
+├── drawerAnimations.ts      # facade → useModalMotion + slide
 ├── useDrawerHandleDrag.ts   # swipe dismiss
 ├── drawerAPI.ts             # slide keyframes
 ├── drawerParts.tsx

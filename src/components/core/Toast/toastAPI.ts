@@ -3,10 +3,13 @@ import { Children, isValidElement, type ReactNode } from "react";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { ToastStatus } from "./toastTypes";
 
+/** Toast stack peek above the next card — intentional layout constant. */
 export const TOAST_STACK_PEEK_PX = 8;
+/** Per-depth scale step in the toast stack — intentional layout constant. */
 export const TOAST_STACK_SCALE_STEP = 0.04;
 export const TOAST_MAX_VISIBLE = 3;
 export const TOAST_DEFAULT_TIMEOUT_MS = 4000;
+/** Enter slide offset — intentional motion constant (not in `configureMotion`). */
 export const TOAST_ENTRY_OFFSET_PX = 24;
 
 export function createToastId(): string {

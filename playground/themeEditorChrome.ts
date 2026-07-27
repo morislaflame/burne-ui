@@ -39,6 +39,7 @@ export const MOTION_SCALE_LABELS = {
   hoverLiftScale: "Hover lift scale",
   badgeAnchorHoverLiftScale: "Badge anchor lift scale",
   pressSqueezeMid: "Press squeeze depth",
+  pressSqueezeDurationFactor: "Press squeeze duration factor",
   rippleDefaultOpacityFrom: "Ripple opacity",
   rippleExpandableOpacityFrom: "Expandable ripple opacity",
 } as const;

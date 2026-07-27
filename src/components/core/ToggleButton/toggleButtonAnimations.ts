@@ -11,7 +11,6 @@ import type { UseToggleButtonAnimationsProps } from "./toggleButtonTypes";
  * after click has confirmed the next pressed value (on and off share this timing).
  */
 export function useToggleButtonAnimations({
-  animated,
   disabled,
   variant,
   groupSegment,
@@ -56,11 +55,10 @@ export function useToggleButtonAnimations({
   }, [runPendingFill]);
 
   const reduceMotion = usePrefersReducedMotion();
-  const shouldCoordinateFill = animated && !disabled && !reduceMotion;
+  const shouldCoordinateFill = !disabled && !reduceMotion;
 
   const motion = useFirstLevelInteractiveMotion({
     isGloss: variant === "gloss",
-    animated,
     enabled: !disabled,
     hasHoverShadow: variant !== "gloss",
     useContentRef: !!groupSegment,

@@ -24,7 +24,6 @@ import type {
 |------|-----|--------------|----------|
 | `variant` | `default` \| `primary` \| `outline` \| `secondary` \| `ghost` \| `gloss` | `default` | Визуальный стиль (общий с Button) |
 | `size` | `small` \| `base` \| `mid` \| `large` | `base` | Размер квадратной области и иконки |
-| `animated` | `boolean` | `true` | Hover lift + press squeeze |
 | `ripple` | `boolean` | `false` | Converge-ripple при нажатии |
 | `disabled` | `boolean` | `false` | `opacity-50`, `cursor-not-allowed` |
 | `aria-label` | `string` | `"Close"` (из `BurneLabels`, см. ниже) | Доступное имя; без пропа — дефолт из `BurneUIProvider` `labels` |
@@ -145,7 +144,7 @@ configureMotion({
 });
 ```
 
-**Локально:** `animated={false}`.
+**Глобально:** `enableAnimations: false`.
 
 **Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — без lift и squeeze.
 
@@ -174,8 +173,8 @@ configureMotion({
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Hover lift | `useFirstLevelInteractiveMotion` | `hoverLiftScale`, `enableHoverLift` | `animated` |
-| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | `animated` |
+| Hover lift | `useFirstLevelInteractiveMotion` | `hoverLiftScale`, `enableHoverLift` | — |
+| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | — |
 | Ripple | `<Ripple />` | `rippleDefaultDuration`, `enableRipple` | `ripple` |
 | Gloss | `glossInteractiveMotion` | interactive-токены | `variant="gloss"` |
 
@@ -234,9 +233,13 @@ CloseButton — leaf-компонент (без compound/simple split): один
 
 ### Отключение анимаций
 
-```tsx
-<CloseButton animated={false} aria-label="Закрыть" />
+```ts
+configureMotion({ enableAnimations: false });
+// или точечно:
+configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
 ```
+
+Локального пропа `animated` нет.
 
 ### Практические заметки
 

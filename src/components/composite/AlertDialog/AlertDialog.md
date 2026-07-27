@@ -127,7 +127,7 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 
 ## Анимации
 
-`alertDialogAnimations.ts` → `useAlertDialogModalMotion`.
+`alertDialogAnimations.ts` → `useAlertDialogModalMotion` (`useModalMotion`, без backdrop-dismiss).
 
 **DOM:**
 

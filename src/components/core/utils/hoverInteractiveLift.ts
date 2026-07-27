@@ -8,7 +8,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig, isMotionFeatureEnabled } from "./motionConfig";
+import { getMotionConfig, isMotionFeatureEnabled, motionPressSqueezeTotal } from "./motionConfig";
 import { prefersReducedMotion } from "./reducedMotion";
 import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
 import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
@@ -110,14 +110,14 @@ export function shouldSkipInteractiveHoverLift(): boolean {
 // Upper bound = original fixed default (preserves small-button behavior).
 // Lower bound = always noticeable but non-zero motion.
 
-/** Absolute pixel offset — squeeze "feel" in px from each side. */
+/** Absolute pixel offset — squeeze "feel" in px from each side. Intentional constant. */
 const ADAPTIVE_SQUEEZE_TARGET_PX = 2.4;
-/** Minimally noticeable squeeze (very large elements). */
+/** Minimally noticeable squeeze (very large elements). Intentional constant. */
 const ADAPTIVE_SQUEEZE_MIN_DELTA = 0.003;
 
-/** Absolute pixel offset for hover lift. */
+/** Absolute pixel offset for hover lift. Intentional constant. */
 const ADAPTIVE_LIFT_TARGET_PX = 1.8;
-/** Minimally noticeable lift. */
+/** Minimally noticeable lift. Intentional constant. */
 const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
 
 function adaptiveSqueezeScale(element: HTMLElement): number {
@@ -222,7 +222,9 @@ export function animateInteractivePressSqueeze(
   killMotion(element);
   const s = adaptiveSqueezeScale(element);
   const cfg = getMotionConfig();
-  const total = (cfg.interactiveDuration * 1.15) / 1000;
+  const total = motionPressSqueezeTotal();
+  // Intentional timeline split (not in motionConfig): press-in 30%; release = full total when
+  // restoring hover, else 50% of total. See SETUP.md «Intentional motion constants».
   const pressIn = total * 0.3;
 
   const canHoverLift = !shouldSkipInteractiveHoverLift();

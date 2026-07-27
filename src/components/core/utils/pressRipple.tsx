@@ -4,7 +4,7 @@ import type { ConvergeRipple } from "./convergeRippleGeometry";
 import { ensureRippleEase, gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig } from "./motionConfig";
 
-/** Minimum ripple "core" scale — visual constant, not configurable. */
+/** Minimum ripple "core" scale — intentional visual constant, not in `configureMotion`. */
 const RIPPLE_MIN_SCALE = 0.12;
 
 export type RippleDirection = "in" | "out";

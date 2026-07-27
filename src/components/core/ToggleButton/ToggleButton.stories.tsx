@@ -39,7 +39,6 @@ const meta = {
   args: {
     variant: "default",
     size: "base",
-    animated: true,
     defaultPressed: false,
     disabled: false,
   },

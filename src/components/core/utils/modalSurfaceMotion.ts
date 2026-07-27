@@ -10,6 +10,7 @@ import { gsap as gsapInstance, killMotion } from "./gsapMotion";
 import { prefersReducedMotion } from "./reducedMotion";
 import { isMotionFeatureEnabled } from "./motionConfig";
 
+/** Panel enter scale — intentional visual constant (not in `configureMotion`). */
 export const MODAL_PANEL_SCALE_FROM = 0.97;
 
 export type GsapMotionVars = NonNullable<Parameters<typeof gsapInstance.to>[1]>;

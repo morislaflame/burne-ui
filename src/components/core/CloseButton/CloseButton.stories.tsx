@@ -38,7 +38,6 @@ const meta = {
   args: {
     variant: "default",
     size: "base",
-    animated: true,
     disabled: false,
     ripple: false,
     "aria-label": "Close",
@@ -52,7 +51,6 @@ const meta = {
       control: "select",
       options: ["small", "base", "mid", "large"],
     },
-    animated: { control: "boolean" },
     ripple: {
       control: "boolean",
       description:
@@ -141,11 +139,6 @@ export const VariantSizesMatrix: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true },
-};
-
-export const WithoutAnimation: Story = {
-  name: "Without press animation",
-  args: { animated: false },
 };
 
 export const WithRipple: Story = {

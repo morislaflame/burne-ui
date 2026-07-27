@@ -20,7 +20,6 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
     {
       variant,
       size,
-      animated,
       ripple,
       className,
       classNames,
@@ -37,7 +36,6 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
     const state = useCloseButtonRootState({
       variant,
       size,
-      animated,
       ripple,
       className,
       classNames,
@@ -48,7 +46,6 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
 
     const animations = useCloseButtonAnimations({
       variant: state.variant,
-      animated: state.animated,
       disabled: state.disabled,
       forwardedRef: ref,
       onPointerDown,

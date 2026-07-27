@@ -28,7 +28,7 @@ import { Card, type CardProps, type CardVariant, type CardSize, type CardPressEv
 ### Pressable card
 
 ```tsx
-<Card pressable animated onPress={(e) => console.log(e)}>
+<Card pressable onPress={(e) => console.log(e)}>
   <Card.Header>
     <Card.Title>Открыть</Card.Title>
   </Card.Header>
@@ -57,7 +57,6 @@ Simple API (props `title` на root) нет — только compound children.
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — radius (как у Button), padding секций, type scale Title/Description |
 | `pressable` | `false` | Интерактивная карточка (`<button>` root) |
-| `animated` | `true` | GSAP hover/squeeze (при `pressable`) |
 | `onPress` | — | Активация click / Enter / Space |
 | `onClick` / `onKeyDown` / `onPointerDown` | — | Низкоуровневые handlers |
 | `className` | — | Root / gloss panel |
@@ -160,7 +159,7 @@ Simple API (props `title` на root) нет — только compound children.
 
 ### 2. Press squeeze
 
-`pointerdown` на pressable root (`animated={true}`):
+`pointerdown` на pressable root (enabled motion):
 
 - **default/outline/secondary:** `animateInteractivePressSqueeze(shell, { pointerInside, shadow })`
 - **gloss:** `animateGlossInteractivePressSqueeze(shell, pointerInside)`
@@ -188,7 +187,7 @@ configureMotion({
 - `useGlossInteractiveHandlers`
 - class `GLOSS_INTERACTIVE_MOTION_CLASS`
 
-`animated={false}` отключает squeeze/hover, но `onPress` и button semantics остаются.
+`enableAnimations: false` отключает squeeze/hover глобально; `onPress` и button semantics остаются.
 
 **Reduced motion:** `shouldSkipInteractiveHoverLift()` / `prefersReducedMotion()` — без lift и squeeze.
 
@@ -225,8 +224,8 @@ Squeeze анимирует **весь** pressable shell, ripple — отдель
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
 | Static shadow | CSS `shadow-token-sm` | — | `pressable={false}` |
-| Hover lift sm→md | `useSecondLevelShadowContainer` | `hoverLiftScale`, `enableHoverLift` | `pressable`, `animated`, `!gloss` |
-| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | `animated` |
+| Hover lift sm→md | `useSecondLevelShadowContainer` | `hoverLiftScale`, `enableHoverLift` | `pressable`, `!gloss` |
+| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | — |
 | Gloss hover/squeeze | gloss utils | gloss interactive tokens | `variant="gloss"` |
 | Ripple overlay | `<Ripple />` child | `rippleDefaultDuration` | вручную в children |
 
@@ -311,7 +310,7 @@ Compound-подчасти не принимают отдельный `classNames
 </Card>
 ```
 
-`animated={false}` — статичная pressable card без GSAP (для nested controls).
+`enableAnimations: false` — отключить motion глобально через `enableAnimations`.
 
 ### Практические заметки
 

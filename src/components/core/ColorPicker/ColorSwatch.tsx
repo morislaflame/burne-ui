@@ -63,7 +63,6 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       handlePointerDown,
     } = useFirstLevelInteractiveMotion({
       isGloss: false,
-      animated: true,
       enabled: !disabled,
       hasHoverShadow: true,
       forwardedRef: ref,

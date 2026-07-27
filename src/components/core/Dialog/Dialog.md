@@ -121,7 +121,7 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 
 ## Анимации
 
-Портал + нативный `<dialog>`. Motion: `dialogAnimations.ts` (`useDialogModalMotion`) + `modalSurfaceMotion.ts`. Trigger: `runOpenAfterSqueeze`.
+Портал + нативный `<dialog>`. Motion: `dialogAnimations.ts` (`useDialogModalMotion` → `useModalMotion`) + `modalSurfaceMotion.ts`. Trigger: `runOpenAfterSqueeze`.
 
 **DOM-структура (портал):**
 

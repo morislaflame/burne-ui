@@ -5,8 +5,8 @@
  * - gloss ref init (createGlossInteractiveRefCallback)
  * - forwarded ref merge
  * - cleanup on !enabled (killMotion + clear --el-shadow)
- * - hover lift / gloss lift on enter / leave  (guarded by `animated && enabled`)
- * - press squeeze + restore hover on pointer down  (guarded by `animated && enabled`)
+ * - hover lift / gloss lift on enter / leave  (guarded by `enabled` + motion config / reduced motion)
+ * - press squeeze + restore hover on pointer down  (guarded by `enabled` + motion config / reduced motion)
  *
  * What stays in the component animations file:
  * - async crossfade layers (Button)
@@ -26,10 +26,6 @@ import { mergeForwardedRef } from "./mergeRefs";
 
 export type UseFirstLevelInteractiveMotionProps = {
   isGloss: boolean;
-  /**
-   * When `false`, all GSAP interactions (hover lift, press squeeze) are skipped.
-   */
-  animated: boolean;
   /**
    * Whether the element is interactive (true = !disabled / !blocked).
    * Changing to `false` kills all in-flight animations and clears the hover shadow.
@@ -57,7 +53,6 @@ export type UseFirstLevelInteractiveMotionProps = {
 
 export function useFirstLevelInteractiveMotion({
   isGloss,
-  animated,
   enabled,
   hasHoverShadow,
   useContentRef = false,
@@ -113,7 +108,7 @@ export function useFirstLevelInteractiveMotion({
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerEnterProp?.(e);
-      if (!animated || !enabled || e.defaultPrevented) return;
+      if (!enabled || e.defaultPrevented) return;
       if (shouldSkipInteractiveHoverLift()) return;
       const el = motionTarget();
       if (!el) return;
@@ -124,14 +119,14 @@ export function useFirstLevelInteractiveMotion({
         animateInteractiveHoverLift(el, true, undefined, useContentRef ? undefined : btnShadow);
       }
     },
-    [animated, btnShadow, enabled, isGloss, motionTarget, onPointerEnterProp, useContentRef],
+    [btnShadow, enabled, isGloss, motionTarget, onPointerEnterProp, useContentRef],
   );
 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeaveProp?.(e);
       hoverPointerInsideRef.current = false;
-      if (!animated || !enabled || shouldSkipInteractiveHoverLift()) return;
+      if (!enabled || shouldSkipInteractiveHoverLift()) return;
       const el = motionTarget();
       if (!el) return;
       if (isGloss && !useContentRef) {
@@ -140,13 +135,13 @@ export function useFirstLevelInteractiveMotion({
         animateInteractiveHoverLift(el, false, undefined, useContentRef ? undefined : btnShadow);
       }
     },
-    [animated, btnShadow, enabled, isGloss, motionTarget, onPointerLeaveProp, useContentRef],
+    [btnShadow, enabled, isGloss, motionTarget, onPointerLeaveProp, useContentRef],
   );
 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDownProp?.(e);
-      if (!animated || !enabled || e.defaultPrevented) return;
+      if (!enabled || e.defaultPrevented) return;
       if (prefersReducedMotion()) return;
       const el = motionTarget();
       if (!el) return;
@@ -167,7 +162,7 @@ export function useFirstLevelInteractiveMotion({
         onReleaseStart: onPressReleaseStart,
       });
     },
-    [animated, btnShadow, enabled, isGloss, motionTarget, onPointerDownProp, onPressReleaseStart, useContentRef],
+    [btnShadow, enabled, isGloss, motionTarget, onPointerDownProp, onPressReleaseStart, useContentRef],
   );
 
   return {

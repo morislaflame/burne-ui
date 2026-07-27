@@ -31,7 +31,6 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     variant = "default",
     size = "base",
     pressable = false,
-    animated = true,
     classNames,
     onPress,
     onPointerOver: onPointerOverProp,
@@ -56,7 +55,6 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const animations = useCardAnimations({
     pressable,
     isGloss: state.isGloss,
-    animated,
     onPress,
     onClick: onClickProp,
     onKeyDown: onKeyDownProp,

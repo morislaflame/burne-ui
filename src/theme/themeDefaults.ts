@@ -121,6 +121,11 @@ export type ThemeTokenState = {
   badgeAnchorHoverLiftScale: number;
   /** Middle keyframe of `pressSqueezeScale` ([1, mid, 1]). */
   pressSqueezeMid: number;
+  /**
+   * Multiplier on `interactiveDuration` for press-squeeze total
+   * (and open-after-squeeze delay). @default 1.15
+   */
+  pressSqueezeDurationFactor: number;
   rippleDefaultDuration: number;
   rippleDefaultOpacityFrom: number;
   rippleExpandableDuration: number;
@@ -475,6 +480,7 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     hoverLiftScale: state.hoverLiftScale,
     badgeAnchorHoverLiftScale: state.badgeAnchorHoverLiftScale,
     pressSqueezeMid: state.pressSqueezeMid,
+    pressSqueezeDurationFactor: state.pressSqueezeDurationFactor,
     rippleDefaultDuration: state.rippleDefaultDuration,
     rippleDefaultOpacityFrom: state.rippleDefaultOpacityFrom,
     rippleExpandableDuration: state.rippleExpandableDuration,
@@ -528,6 +534,7 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     hoverLiftScale: state.hoverLiftScale,
     badgeAnchorHoverLiftScale: state.badgeAnchorHoverLiftScale,
     pressSqueezeScale: [1, state.pressSqueezeMid, 1],
+    pressSqueezeDurationFactor: state.pressSqueezeDurationFactor,
     rippleDefaultDuration: state.rippleDefaultDuration,
     rippleDefaultOpacityFrom: state.rippleDefaultOpacityFrom,
     rippleExpandableDuration: state.rippleExpandableDuration,

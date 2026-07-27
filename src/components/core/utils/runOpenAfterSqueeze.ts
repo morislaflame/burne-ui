@@ -6,6 +6,9 @@ import { prefersReducedMotion } from "./reducedMotion";
 /**
  * Runs a press-squeeze animation on `triggerRef.current`, then calls `setOpen(true)`.
  *
+ * Delay equals the squeeze timeline (`interactiveDuration × pressSqueezeDurationFactor`,
+ * see `motionPressSqueezeTotal()`), so open waits for the press feel to finish.
+ *
  * - Respects `prefers-reduced-motion` (opens immediately when reduced motion is on).
  * - Guards against double-trigger via `openingRef`.
  * - Falls back to immediate open when element is missing.

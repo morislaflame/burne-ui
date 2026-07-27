@@ -83,7 +83,8 @@ function useThemeTokensState() {
         | "progressIndeterminateDuration"
         | "loadingDotsDuration"
         | "surfaceTransitionDuration"
-        | "toastDismissDuration",
+        | "toastDismissDuration"
+        | "pressSqueezeDurationFactor",
       value: number,
     ) => {
       setState((prev) => ({ ...prev, [key]: value }));

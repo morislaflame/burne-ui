@@ -7,7 +7,6 @@ import type { UseCloseButtonRootStateProps } from "./closeButtonTypes";
 export function useCloseButtonRootState({
   variant = "default",
   size = "base",
-  animated = true,
   ripple = false,
   className,
   disabled,
@@ -30,7 +29,6 @@ export function useCloseButtonRootState({
   return {
     variant,
     size,
-    animated,
     ripple,
     disabled: isDisabled,
     type,

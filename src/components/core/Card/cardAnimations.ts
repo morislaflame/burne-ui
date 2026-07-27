@@ -12,7 +12,6 @@ import type { UseCardAnimationsProps } from "./cardTypes";
 export function useCardAnimations({
   pressable,
   isGloss,
-  animated,
   onPress,
   onClick: onClickProp,
   onKeyDown: onKeyDownProp,
@@ -61,7 +60,7 @@ export function useCardAnimations({
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLElement>) => {
       onPointerDownProp?.(e);
-      if (!pressable || !animated || e.defaultPrevented || prefersReducedMotion()) {
+      if (!pressable || e.defaultPrevented || prefersReducedMotion()) {
         return;
       }
       const shell = rootRef.current;
@@ -77,7 +76,7 @@ export function useCardAnimations({
         shadow: pressableLift.shadow,
       });
     },
-    [animated, isGloss, onPointerDownProp, pressable, pressableLift.shadow],
+    [isGloss, onPointerDownProp, pressable, pressableLift.shadow],
   );
 
   const handleClick = useCallback(
@@ -101,21 +100,21 @@ export function useCardAnimations({
   const onPointerOver = useCallback(
     (e: PointerEvent<HTMLElement>) => {
       onPointerOverProp?.(e);
-      if (!pressable || e.defaultPrevented || !animated) return;
+      if (!pressable || e.defaultPrevented) return;
       if (isGloss) glossPointerHandlers.onPointerOver(e);
       else pressableLift.onPointerOver(e);
     },
-    [animated, glossPointerHandlers, isGloss, onPointerOverProp, pressable, pressableLift],
+    [glossPointerHandlers, isGloss, onPointerOverProp, pressable, pressableLift],
   );
 
   const onPointerOut = useCallback(
     (e: PointerEvent<HTMLElement>) => {
       onPointerOutProp?.(e);
-      if (!pressable || !animated) return;
+      if (!pressable) return;
       if (isGloss) glossPointerHandlers.onPointerOut(e);
       else pressableLift.onPointerOut(e);
     },
-    [animated, glossPointerHandlers, isGloss, onPointerOutProp, pressable, pressableLift],
+    [glossPointerHandlers, isGloss, onPointerOutProp, pressable, pressableLift],
   );
 
   return {

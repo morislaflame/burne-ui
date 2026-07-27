@@ -51,7 +51,6 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       type = "button",
       icon,
       iconPosition,
-      animated,
       disabled,
       children,
       onClick,
@@ -72,7 +71,6 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       variant,
       fillColor,
       size,
-      animated,
       disabled,
       className,
       classNames,
@@ -81,7 +79,6 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
     });
 
     const animations = useToggleButtonAnimations({
-      animated: state.animated,
       disabled: state.disabled,
       variant: state.variant,
       groupSegment: state.groupSegment,

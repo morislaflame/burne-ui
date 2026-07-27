@@ -8,6 +8,7 @@
  *
  * configureMotion({
  *   interactiveDuration: 350,
+ *   pressSqueezeDurationFactor: 1.15,
  *   modalDuration: 280,
  *   surfaceTransitionDuration: 450,
  *   toastDismissDuration: 220,
@@ -110,6 +111,15 @@ export interface MotionConfig {
    * @default [1, 0.98, 1]
    */
   pressSqueezeScale: readonly [number, number, number];
+
+  /**
+   * Multiplier on `interactiveDuration` for the full press-squeeze timeline.
+   * Also sets the open delay in `runOpenAfterSqueeze` (Popover / Dropdown / Dialog /
+   * Drawer / Select / ComboBox / AlertDialog) because open waits for squeeze to finish
+   * (~322 ms at defaults: 280 × 1.15).
+   * @default 1.15
+   */
+  pressSqueezeDurationFactor: number;
 
   /** Duration (ms) of converge-ripple expansion. @default 700 */
   rippleDefaultDuration: number;
@@ -269,6 +279,7 @@ export const MOTION_CONFIG_DEFAULTS: MotionConfig = {
   hoverLiftScale: 1.025,
   badgeAnchorHoverLiftScale: 1.052,
   pressSqueezeScale: [1, 0.98, 1],
+  pressSqueezeDurationFactor: 1.15,
   rippleDefaultDuration: 700,
   rippleDefaultOpacityFrom: 0.42,
   rippleExpandableDuration: 700,
@@ -396,6 +407,15 @@ export function motionHoverLift() {
     duration: _config.interactiveDuration / 1000,
     ease: _config.hoverLiftEase,
   } as const;
+}
+
+/**
+ * Full press-squeeze timeline duration in seconds
+ * (`interactiveDuration × pressSqueezeDurationFactor`).
+ * Used by squeeze animations and as the open-after-squeeze delay.
+ */
+export function motionPressSqueezeTotal() {
+  return (_config.interactiveDuration * _config.pressSqueezeDurationFactor) / 1000;
 }
 
 /** Selection fill (ToggleButton, Calendar, Checkbox/Radio indicator fill). */

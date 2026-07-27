@@ -60,7 +60,6 @@ const meta = {
     variant: "default",
     status: "default",
     size: "base",
-    animated: true,
     disabled: false,
     iconOnly: false,
   },
@@ -84,7 +83,6 @@ const meta = {
       control: "select",
       options: ["small", "base", "mid", "large"],
     },
-    animated: { control: "boolean" },
     iconOnly: {
       control: "boolean",
       description: "Icon only: `min-w-fit` instead of `min-w-button-*`. Set `aria-label`.",
@@ -259,10 +257,6 @@ export const WithIcon: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true },
-};
-
-export const WithoutAnimation: Story = {
-  args: { animated: false },
 };
 
 export const WithoutRipple: Story = {

@@ -683,6 +683,15 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           onChange={(v) => setMotionDuration("interactiveDuration", v)}
         />
         <ScaleControl
+          label="pressSqueezeDurationFactor"
+          value={state.pressSqueezeDurationFactor}
+          min={1}
+          max={2}
+          step={0.05}
+          unit="×"
+          onChange={(v) => setMotionDuration("pressSqueezeDurationFactor", v)}
+        />
+        <ScaleControl
           label="modalDuration"
           value={state.modalDuration}
           min={120}
@@ -761,6 +770,10 @@ export function ThemeControls({ tokens }: { tokens: ThemeTokensApi }) {
           className="self-start text-muted"
           onClick={() => {
             setMotionDuration("interactiveDuration", MOTION_DEFAULTS.interactiveDuration);
+            setMotionDuration(
+              "pressSqueezeDurationFactor",
+              MOTION_DEFAULTS.pressSqueezeDurationFactor,
+            );
             setMotionDuration("modalDuration", MOTION_DEFAULTS.modalDuration);
             setMotionDuration("tooltipDuration", MOTION_DEFAULTS.tooltipDuration);
             setMotionDuration("expandDuration", MOTION_DEFAULTS.expandDuration);
