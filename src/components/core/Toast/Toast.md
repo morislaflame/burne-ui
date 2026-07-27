@@ -68,13 +68,13 @@ Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Ind
 
 | variant | Поверхность |
 |---------|-------------|
-| `default` | `TOAST_SURFACE_CLASS[status]` + `shadow-token-md` |
+| `default` | `TOAST_SURFACE_CLASS` + `shadow-token-md` |
 | `gloss` | `gloss-panel gloss-deep` + `GLOSS_INTERACTIVE_MOTION_CLASS` |
 
 | status | Фон / иконка |
 |--------|--------------|
 | `default` | `bg-surface`, `text-primary` |
-| `success` / `danger` / `info` / `warning` | `bg-surface-tint-*`, semantic icon color |
+| `success` / `danger` / `info` / `warning` | тот же `bg-surface`; semantic icon + title color |
 
 ## Анимации
 

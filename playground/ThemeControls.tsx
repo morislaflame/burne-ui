@@ -44,9 +44,18 @@ const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
       "primaryForeground",
       "primaryTint",
       "primaryTintStrong",
-      "focusRing",
       "indicator",
       "indicatorForeground",
+    ],
+  },
+  {
+    label: "focus ring tokens",
+    keys: [
+      "focusRing",
+      "focusRingDanger",
+      "focusRingSuccess",
+      "focusRingInfo",
+      "focusRingWarning",
     ],
   },
   {

@@ -54,6 +54,10 @@ p {
 
   /* FOCUS RING: color + geometry for focused interactive elements */
   --color-focus-ring: var(--color-focus-ring);
+  --color-focus-ring-danger: var(--color-focus-ring-danger);
+  --color-focus-ring-success: var(--color-focus-ring-success);
+  --color-focus-ring-info: var(--color-focus-ring-info);
+  --color-focus-ring-warning: var(--color-focus-ring-warning);
   --focus-ring-width: var(--focus-ring-width);
   --focus-ring-offset: var(--focus-ring-offset);
 
@@ -210,6 +214,8 @@ p {
 /**
  * Interactive surfaces: background, border, text, shadow, focus-ring.
  * Single shorthand — otherwise Tailwind classes conflict in the cascade.
+ * Keep this list identical to the transition on `focus-ring*` / `has-focus-ring`
+ * so either class winning the cascade still animates hover + ring.
  */
 @utility surface-color-transition {
   transition:
@@ -259,16 +265,29 @@ p {
  * focus-ring — standard outline focus ring for interactive elements.
  * focus-within-ring — same, triggers on focus inside (Input, TextArea, ComboBox shells).
  * focus-ring-inset — ring inward (buttons inside fields, Table cells).
+ * has-focus-ring — ring on this node when a descendant is `:focus-visible`
+ * (Checkbox controlTrack, Radio/Switch control — not the field root with label).
  *
- * Geometry: `--focus-ring-width` / `--focus-ring-offset` (color: `--color-focus-ring`).
+ * Geometry: `--focus-ring-width` / `--focus-ring-offset`.
+ * Color: `--color-focus-ring` (soft token). Status: retarget via
+ * `[--color-focus-ring:var(--color-focus-ring-danger)]` or paint `--color-focus-ring-*` directly.
  * On `:focus-visible` / `:focus-within` re-assert outline-style/width so the ring wins over
  * co-located `outline-none` (Tailwind emits `outline-none` later in the stylesheet).
+ * Transition list matches `surface-color-transition` (cascade-safe when both are present).
  */
 @utility focus-ring {
   outline-style: solid;
   outline-width: var(--focus-ring-width, 2px);
   outline-color: transparent;
   outline-offset: var(--focus-ring-offset, 0px);
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   &:focus-visible {
     outline-style: solid;
     outline-width: var(--focus-ring-width, 2px);
@@ -282,6 +301,14 @@ p {
   outline-width: var(--focus-ring-width, 2px);
   outline-color: transparent;
   outline-offset: var(--focus-ring-offset, 0px);
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   &:focus-visible,
   &:focus-within {
     outline-style: solid;
@@ -293,8 +320,48 @@ p {
 
 @utility focus-ring-inset {
   outline: none;
+  box-shadow: inset 0 0 0 var(--focus-ring-width, 2px) transparent;
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
   &:focus-visible {
     box-shadow: inset 0 0 0 var(--focus-ring-width, 2px) var(--color-focus-ring);
+  }
+}
+
+/** Parent paints the ring when a descendant is keyboard-focused (hidden native inputs). */
+@utility has-focus-ring {
+  outline-style: solid;
+  outline-width: var(--focus-ring-width, 2px);
+  outline-color: transparent;
+  outline-offset: var(--focus-ring-offset, 0px);
+  transition:
+    background-color var(--motion-surface-duration) var(--motion-surface-ease),
+    border-color var(--motion-surface-duration) var(--motion-surface-ease),
+    color var(--motion-surface-duration) var(--motion-surface-ease),
+    fill var(--motion-surface-duration) var(--motion-surface-ease),
+    stroke var(--motion-surface-duration) var(--motion-surface-ease),
+    box-shadow var(--motion-surface-duration) var(--motion-shadow-ease),
+    outline-color var(--motion-surface-duration) var(--motion-focus-ring-ease);
+  &:has(:focus-visible) {
+    outline-style: solid;
+    outline-width: var(--focus-ring-width, 2px);
+    outline-offset: var(--focus-ring-offset, 0px);
+    outline-color: var(--color-focus-ring);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-ring,
+  .focus-within-ring,
+  .focus-ring-inset,
+  .has-focus-ring {
+    transition: none;
   }
 }
 

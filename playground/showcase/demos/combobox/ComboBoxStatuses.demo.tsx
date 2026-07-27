@@ -1,12 +1,20 @@
-import {
-  Input,
-  type InputStatus,
-  type InputVariant,
-} from "@/components/core/Input";
+import { ComboBox } from "@/components/core/ComboBox";
+import { type InputStatus, type InputVariant } from "@/components/core/Input";
 
-const INPUT_VARIANTS: InputVariant[] = ["default", "outline", "secondary", "gloss"];
+const options = [
+  { value: "react", label: "React" },
+  { value: "svelte", label: "Svelte" },
+  { value: "vue", label: "Vue" },
+];
 
-const INPUT_STATUSES: InputStatus[] = [
+const COMBOBOX_VARIANTS: InputVariant[] = [
+  "default",
+  "outline",
+  "secondary",
+  "gloss",
+];
+
+const COMBOBOX_STATUSES: InputStatus[] = [
   "default",
   "danger",
   "success",
@@ -14,22 +22,23 @@ const INPUT_STATUSES: InputStatus[] = [
   "warning",
 ];
 
-export function InputStatusesDemo() {
+export function ComboBoxStatusesDemo() {
   return (
     <div className="flex w-full flex-col gap-2xlarge">
-      {INPUT_STATUSES.map((status) => (
+      {COMBOBOX_STATUSES.map((status) => (
         <div key={status} className="flex flex-col gap-base">
           <span className="text-xsmall font-w-mid uppercase tracking-wide text-muted">
             status: {status}
           </span>
           <div className="flex flex-wrap items-start gap-base">
-            {INPUT_VARIANTS.map((variant) => (
-              <Input
+            {COMBOBOX_VARIANTS.map((variant) => (
+              <ComboBox
                 key={`${status}-${variant}`}
                 label={variant}
                 variant={variant}
                 status={status}
-                defaultValue={variant}
+                options={options}
+                defaultValue="react"
                 className="min-w-[11rem] flex-1 capitalize"
               />
             ))}

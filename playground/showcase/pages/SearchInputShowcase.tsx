@@ -1,5 +1,7 @@
 import { SearchInputBasicDemo } from "../demos/search-input/SearchInputBasic.demo";
 import searchInputBasicSource from "../demos/search-input/SearchInputBasic.demo.tsx?raw";
+import { SearchInputVariantsDemo } from "../demos/search-input/SearchInputVariants.demo";
+import searchInputVariantsSource from "../demos/search-input/SearchInputVariants.demo.tsx?raw";
 import { SearchInputClassNamesFullDemo } from "../demos/search-input/SearchInputClassNamesFull.demo";
 import searchInputClassNamesFullSource from "../demos/search-input/SearchInputClassNamesFull.demo.tsx?raw";
 import { SearchInputSizesDemo } from "../demos/search-input/SearchInputSizes.demo";
@@ -29,6 +31,10 @@ export function SearchInputShowcase() {
     >
       <ShowcaseSection title="Search" description="Controlled through value and onChange.">
         <ShowcaseDemoFromFile align="center" Demo={SearchInputBasicDemo} source={searchInputBasicSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SearchInputVariantsDemo} source={searchInputVariantsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">

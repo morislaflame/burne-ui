@@ -7,7 +7,7 @@ import { cn } from "@/utils/cn";
 
 import { AlertContext, useAlertClassNames } from "./alertContext";
 import { alertDefaultIndicatorIcon, alertShowsDefaultIndicatorIcon } from "./alertAPI";
-import { alertIndicatorClass, ALERT_COMPOUND_CONTENTS_CLASS, ALERT_DESCRIPTION_CLASS, ALERT_TITLE_CLASS } from "./alertStyles";
+import { alertIndicatorClass, ALERT_COMPOUND_CONTENTS_CLASS, ALERT_DESCRIPTION_CLASS, alertTitleClass } from "./alertStyles";
 import type {
   AlertActionProps,
   AlertContentProps,
@@ -86,13 +86,14 @@ export function AlertTitle({ className = "", id: idProp, ...rest }: AlertTitlePr
   const ctx = useContext(AlertContext);
   const slotClassNames = useAlertClassNames();
   const sizePreset = ctx?.sizePreset ?? messageBannerSizePreset("base");
+  const status = ctx?.status ?? "default";
   return (
     <Text
       as="div"
       id={idProp ?? ctx?.titleId}
       variant={sizePreset.titleVariant}
       className={cn(
-        ALERT_TITLE_CLASS,
+        alertTitleClass(status),
         ctx?.gridSlots && messageBannerTitleCellClass(ctx.gridSlots),
         slotClassNames.title,
         className,

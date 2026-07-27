@@ -1,10 +1,13 @@
 import type { ButtonVariant } from "@/components/core/Button/buttonTypes";
+import type { SemanticSurfaceStatus } from "@/components/core/utils/semanticStatusSurface";
 import { cn } from "@/utils/cn";
 
 /** Shared visual variants for field shells (Input, TextArea, Select, ComboBox, TimeField, SearchInput). */
 export type FieldShellVariant = "default" | "outline" | "secondary" | "gloss";
 
 export type FieldShellFilledVariant = Exclude<FieldShellVariant, "gloss">;
+
+export type FieldShellStatus = "default" | SemanticSurfaceStatus;
 
 export const FIELD_SHELL_VARIANT_BG_CLASS: Record<FieldShellFilledVariant, string> = {
   default: "bg-surface",
@@ -27,20 +30,16 @@ export function fieldShellVariantFromButtonGroup(
   return "default";
 }
 
+/**
+ * Neutral variant surface + `border-token`.
+ * Status accents live on the permanent status ring (`fieldShellFocusRingClass`), not the border.
+ */
 export function resolveFieldShellSurfaceClass({
   variant,
-  statusTinted,
-  statusTintClass,
 }: {
   variant: FieldShellVariant;
-  statusTinted: boolean;
-  statusTintClass: string;
 }): string {
   if (variant === "gloss") return "gloss-control";
-
-  if (statusTinted) {
-    return cn(statusTintClass, "border-token");
-  }
 
   if (variant === "outline") {
     return "bg-transparent border-token";

@@ -13,10 +13,10 @@ export function TooltipClassNamesFullDemo() {
         root: "rounded-full ring-2 ring-primary/35",
         trigger: "rounded-full",
         content: "ring-1 ring-primary/25",
-        arrow: "bg-surface-tint-info",
+        arrow: "bg-surface border-token-info",
         panel: "border-primary/30",
-        indicator: "text-primary",
-        title: "text-primary font-semibold",
+        indicator: "text-info",
+        title: "text-info font-semibold",
         description: "text-muted/80",
       }}
     >

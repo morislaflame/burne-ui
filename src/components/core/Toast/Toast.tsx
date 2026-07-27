@@ -103,7 +103,6 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastProps>(function ToastRo
           aria-label={ariaLabel}
           className={toastRootClass({
             variant,
-            status,
             size: state.size,
             gridSlots: state.gridSlots,
             slotClass: slotClassNames.root,

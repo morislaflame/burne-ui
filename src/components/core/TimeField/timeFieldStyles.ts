@@ -1,4 +1,4 @@
-import { FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
+import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { affixSlotClass } from "@/components/core/utils/inputAffixLayout";
@@ -18,26 +18,6 @@ function timeFieldShellHoverVariant(variant: TimeFieldVariant): FieldShellFilled
   if (variant === "segmented" || variant === "gloss") return "default";
   return variant;
 }
-
-export const TIME_FIELD_STATUS_TINT_SHELL_CLASS: Record<
-  Exclude<TimeFieldStatus, "default">,
-  string
-> = {
-  danger: "bg-surface-tint-danger",
-  success: "bg-surface-tint-success",
-  info: "bg-surface-tint-info",
-  warning: "bg-surface-tint-warning",
-};
-
-export const TIME_FIELD_STATUS_TINT_AFFIX_CLASS: Record<
-  Exclude<TimeFieldStatus, "default">,
-  string
-> = {
-  danger: "bg-surface-tint-danger",
-  success: "bg-surface-tint-success",
-  info: "bg-surface-tint-info",
-  warning: "bg-surface-tint-warning",
-};
 
 export const TIME_FIELD_AFFIX_SURFACE_CLASS = "bg-primary-tint";
 
@@ -85,10 +65,8 @@ const AFFIX_PADDING: Record<TimeFieldSize, string> = {
   large: affixSlotClass("large"),
 };
 
-export function timeFieldAffixSurfaceClass(status: TimeFieldStatus): string {
-  return status === "default"
-    ? TIME_FIELD_AFFIX_SURFACE_CLASS
-    : TIME_FIELD_STATUS_TINT_AFFIX_CLASS[status];
+export function timeFieldAffixSurfaceClass(_status: TimeFieldStatus = "default"): string {
+  return TIME_FIELD_AFFIX_SURFACE_CLASS;
 }
 
 export function timeFieldAffixSlotClass({
@@ -114,17 +92,12 @@ export function timeFieldAffixSlotClass({
 
 export function timeFieldShellSurfaceClass({
   variant,
-  status,
-  statusTinted,
 }: {
   variant: TimeFieldVariant;
-  status: TimeFieldStatus;
-  statusTinted: boolean;
+  status?: TimeFieldStatus;
 }): string {
   return resolveFieldShellSurfaceClass({
     variant: variant === "segmented" ? "default" : variant,
-    statusTinted: statusTinted && status !== "default",
-    statusTintClass: status !== "default" ? TIME_FIELD_STATUS_TINT_SHELL_CLASS[status] : "",
   });
 }
 
@@ -158,7 +131,7 @@ export function timeFieldShellClass({
     compact ? "w-fit shrink-0" : "w-full min-w-0",
     shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
-    FIELD_SHELL_FOCUS_CLASS,
+    fieldShellFocusRingClass(status),
     isGloss ? "" : fieldShellHoverClass(!disabled, status, timeFieldShellHoverVariant(variant)),
     isGloss ? glossShellHoverMotionClass : standardShellHoverMotionClass,
     disabled ? "cursor-not-allowed opacity-55 shadow-token-base" : "",

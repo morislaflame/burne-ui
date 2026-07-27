@@ -6,7 +6,7 @@ import { useControllableState } from "@/components/core/utils/useControllableSta
 import { hasSwitchThumbChild, partitionSwitchControlChildren } from "./switchAPI";
 import { switchFallbackAriaLabel, switchInputId } from "./switchA11y";
 import { useOptionalSwitchFieldContext, useSwitchClassNames } from "./switchContext";
-import { SWITCH_CONTROL_BASE_CLASS, SWITCH_INPUT_VISUALLY_HIDDEN_CLASS, switchControlCellClass } from "./switchStyles";
+import { SWITCH_INPUT_VISUALLY_HIDDEN_CLASS, switchControlCellClass, switchControlClass } from "./switchStyles";
 import type { SwitchControlProps } from "./switchTypes";
 import { SwitchFill, SwitchTrack } from "./switchTrackParts";
 
@@ -124,7 +124,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
     return (
       <span
         className={cn(
-          SWITCH_CONTROL_BASE_CLASS,
+          switchControlClass(size),
           fieldCtx != null
             ? switchControlCellClass(fieldCtx.labelPosition)
             : undefined,

@@ -1,6 +1,9 @@
 import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
 import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorTokens";
 import { cn } from "@/utils/cn";
+
+import type { RadioSize } from "./radioTypes";
 
 export const RADIO_SIZE_LAYOUT = OPTION_CONTROL_SIZE_LAYOUT;
 
@@ -8,7 +11,11 @@ export const RADIO_INPUT_VISUALLY_HIDDEN_CLASS =
   "absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 opacity-0 [clip:rect(0,0,0,0)]";
 
 export const RADIO_CONTROL_CLASS =
-  "relative inline-flex shrink-0 items-center justify-center";
+  "relative inline-flex shrink-0 items-center justify-center has-focus-ring";
+
+export function radioControlClass(size: RadioSize): string {
+  return cn(RADIO_CONTROL_CLASS, SELECTION_INDICATOR_RADIUS_CLASS[size]);
+}
 
 export const RADIO_CONTROL_TRACK_CLASS =
   "relative inline-flex items-center justify-center";
@@ -40,9 +47,6 @@ export const RADIO_ROOT_BASE_CLASS =
 
 export const RADIO_ROOT_DISABLED_CLASS = "cursor-not-allowed";
 
-export const RADIO_ROOT_FOCUS_CLASS =
-  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary";
-
 export const RADIO_CONTENT_PASS_THROUGH_CLASS = "contents";
 
 export function radioControlCellClass(): string {
@@ -57,7 +61,6 @@ export function radioGridClass(
   return cn(
     RADIO_ROOT_BASE_CLASS,
     optionControlGridClass(secondaryLines, gridGap),
-    RADIO_ROOT_FOCUS_CLASS,
     className,
   );
 }

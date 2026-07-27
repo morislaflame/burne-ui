@@ -16,7 +16,7 @@ export const EXPANDABLE_GLOSS_CONTENT_CLASS =
   "gloss-content flex min-w-0 flex-col";
 
 export const EXPANDABLE_TRIGGER_BASE_CLASS =
-  "relative w-full overflow-hidden text-left outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2";
+  "relative w-full overflow-hidden rounded-[inherit] text-left outline-none focus-ring";
 
 export const EXPANDABLE_TRIGGER_DISABLED_CLASS =
   "cursor-not-allowed opacity-50";

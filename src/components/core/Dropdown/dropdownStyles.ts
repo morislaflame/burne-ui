@@ -65,22 +65,22 @@ const DROPDOWN_ITEM_STATUS_CLASS: Record<DropdownItemStatus, string> = {
   danger: cn(
     "text-danger",
     hoverVariant("danger"),
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger",
+    "focus-ring [--color-focus-ring:var(--color-focus-ring-danger)]",
   ),
   warning: cn(
     "text-warning",
     hoverVariant("warning"),
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning",
+    "focus-ring [--color-focus-ring:var(--color-focus-ring-warning)]",
   ),
   info: cn(
     "text-info",
     hoverVariant("info"),
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info",
+    "focus-ring [--color-focus-ring:var(--color-focus-ring-info)]",
   ),
   success: cn(
     "text-success",
     hoverVariant("success"),
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success",
+    "focus-ring [--color-focus-ring:var(--color-focus-ring-success)]",
   ),
 };
 

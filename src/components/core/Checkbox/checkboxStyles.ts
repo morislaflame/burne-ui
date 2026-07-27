@@ -1,6 +1,9 @@
 import { optionControlCellClass, optionControlGridClass, optionErrorRow, optionLabelCellClass, optionSecondaryCellClass } from "@/components/core/utils/optionControlGridLayout";
 import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { SELECTION_INDICATOR_RADIUS_CLASS } from "@/components/core/SelectionIndicator/selectionIndicatorTokens";
 import { cn } from "@/utils/cn";
+
+import type { CheckboxSize } from "./checkboxTypes";
 
 export const CHECKBOX_SIZE_LAYOUT = OPTION_CONTROL_SIZE_LAYOUT;
 
@@ -14,7 +17,11 @@ export const CHECKBOX_CONTROL_CLASS =
   "relative inline-flex shrink-0 items-center justify-center";
 
 export const CHECKBOX_CONTROL_TRACK_CLASS =
-  "relative inline-flex items-center justify-center";
+  "relative inline-flex items-center justify-center has-focus-ring";
+
+export function checkboxControlTrackClass(size: CheckboxSize): string {
+  return cn(CHECKBOX_CONTROL_TRACK_CLASS, SELECTION_INDICATOR_RADIUS_CLASS[size]);
+}
 
 export const CHECKBOX_CONTENT_COMPOUND_CLASS = "min-w-0";
 
@@ -45,9 +52,6 @@ export const CHECKBOX_ROOT_BASE_CLASS =
 
 export const CHECKBOX_ROOT_DISABLED_CLASS = "cursor-not-allowed";
 
-export const CHECKBOX_ROOT_FOCUS_CLASS =
-  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary";
-
 export const CHECKBOX_COMPOUND_FIELDSET_CLASS = "m-0 min-w-0 border-0 p-0";
 
 export const CHECKBOX_CONTENT_PASS_THROUGH_CLASS = "contents";
@@ -64,7 +68,6 @@ export function checkboxGridClass(
   return cn(
     CHECKBOX_ROOT_BASE_CLASS,
     optionControlGridClass(secondaryLines, gridGap),
-    CHECKBOX_ROOT_FOCUS_CLASS,
     className,
   );
 }

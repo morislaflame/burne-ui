@@ -75,15 +75,16 @@ import { Tooltip, type TooltipProps, type TooltipVariant, type TooltipSize, type
 
 ## Variant / status / размеры
 
-### Variant
+### Status
 
-Semantic variants (`danger`, `success`, `info`, `warning`) автоматически показывают status icon через `SEMANTIC_STATUS_ICONS` (react-icons/io5), если не передан кастомный `icon`. Дефолтный SVG принимает слот `classNames.icon`.
+Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral panel** (by `variant`) and accent **title + icon** only — same pattern as Alert / Toast. Auto icon via `SEMANTIC_STATUS_ICONS` (react-icons/io5) unless custom `icon` is passed.
 
-### Surface
+### Surface / variant
 
 | Surface | Поведение |
 |---------|-----------|
 | `default` | `bg-surface` + persistent `shadowSm` |
+| `outline` / `secondary` | transparent / secondary shell |
 | `gloss` | `gloss-panel` + gloss interactive ref на panel |
 
 Размер влияет на padding panel, typography (`Text` variants) и icon box.
@@ -186,7 +187,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 |---------------|------------|
 | `TOOLTIP_PANEL_CLASS` | Bubble surface, border, padding per size |
 | `TOOLTIP_MESSAGE_GRID` | Alert-like grid для Icon/Title/Description |
-| semantic status surfaces | `danger`/`success`/… tint на panel |
+| status accents | `text-*` on title + indicator only (neutral shell) |
 | `gloss-panel` + `gloss-content` | Gloss surface |
 | `burneLightThemePortalProps` | Light theme inheritance в portal |
 
@@ -205,7 +206,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 |------|-----|-------------------|
 | `root` / `trigger` | Trigger element | Ring, focus outline helpers |
 | `content` | Portal wrapper | Outer shell, ring |
-| `arrow` | Arrow span | Tint/border стрелки |
+| `arrow` | Arrow span | Fill/border стрелки (matches panel, not status) |
 | `panel` | Bubble surface | Background, border, padding |
 | `glossPanel` | Gloss shell | При `variant="gloss"` (вместе с `panel`) |
 | `glossContent` | Inner gloss grid | Content area в gloss |

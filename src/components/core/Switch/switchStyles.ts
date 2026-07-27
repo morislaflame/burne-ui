@@ -15,7 +15,11 @@ export const SWITCH_INPUT_VISUALLY_HIDDEN_CLASS =
   "absolute m-[-1px] h-px w-px overflow-hidden border-0 p-0 opacity-0 [clip:rect(0,0,0,0)]";
 
 export const SWITCH_CONTROL_BASE_CLASS =
-  "relative inline-flex shrink-0 items-center justify-center";
+  "relative inline-flex shrink-0 items-center justify-center has-focus-ring";
+
+export function switchControlClass(size: SwitchSize): string {
+  return cn(SWITCH_CONTROL_BASE_CLASS, SELECTION_INDICATOR_RADIUS_CLASS[size]);
+}
 
 export const SWITCH_CONTENT_COMPOUND_CLASS = "min-w-0";
 
@@ -43,9 +47,6 @@ export const SWITCH_ROOT_BASE_CLASS =
   "relative cursor-pointer select-none rounded-small text-left";
 
 export const SWITCH_ROOT_DISABLED_CLASS = "cursor-not-allowed";
-
-export const SWITCH_ROOT_FOCUS_CLASS =
-  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary";
 
 export const SWITCH_ROOT_CONTROL_ONLY_CLASS = "inline-grid grid-cols-[auto] grid-rows-[auto]";
 
@@ -120,7 +121,6 @@ export function switchRootGridClass({
           "inline-grid",
         )
       : SWITCH_ROOT_CONTROL_ONLY_CLASS,
-    SWITCH_ROOT_FOCUS_CLASS,
     slotClass,
     className,
   );

@@ -6,6 +6,10 @@ import { SelectCustomTriggerIconDemo } from "../demos/select/SelectCustomTrigger
 import selectCustomTriggerIconSource from "../demos/select/SelectCustomTriggerIcon.demo.tsx?raw";
 import { SelectDefaultDemo } from "../demos/select/SelectDefault.demo";
 import selectDefaultSource from "../demos/select/SelectDefault.demo.tsx?raw";
+import { SelectVariantsDemo } from "../demos/select/SelectVariants.demo";
+import selectVariantsSource from "../demos/select/SelectVariants.demo.tsx?raw";
+import { SelectStatusesDemo } from "../demos/select/SelectStatuses.demo";
+import selectStatusesSource from "../demos/select/SelectStatuses.demo.tsx?raw";
 import { SelectGlossDemo } from "../demos/select/SelectGloss.demo";
 import selectGlossSource from "../demos/select/SelectGloss.demo.tsx?raw";
 import { SelectPopoverSideDemo } from "../demos/select/SelectPopoverSide.demo";
@@ -27,6 +31,13 @@ export function SelectShowcase() {
     >
       <ShowcaseSection title="Default" description="options, value and onValueChange — controlled mode.">
         <ShowcaseDemoFromFile align="center" Demo={SelectDefaultDemo} source={selectDefaultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectVariantsDemo} source={selectVariantsSource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectStatusesDemo} source={selectStatusesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Compound" description="Label, TriggerGroup, Value, Trigger, Popover.">

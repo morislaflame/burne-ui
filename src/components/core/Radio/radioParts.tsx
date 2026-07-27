@@ -10,7 +10,7 @@ import { radioInputAriaLabel } from "./radioA11y";
 import { radioVariantToIndicator, resolveRadioIndicatorClassNames } from "./radioAPI";
 import { useRadioControlTrackAnimation } from "./radioAnimations";
 import { useRadioClassNames, useRadioFieldContext } from "./radioContext";
-import { RADIO_CONTENT_COMPOUND_CLASS, RADIO_CONTENT_PASS_THROUGH_CLASS, RADIO_CONTROL_CLASS, RADIO_CONTROL_TRACK_CLASS, RADIO_ERROR_DISABLED_CLASS, RADIO_HINT_DISABLED_CLASS, RADIO_INPUT_VISUALLY_HIDDEN_CLASS, RADIO_LABEL_CLASS, RADIO_LABEL_COMPOUND_SECONDARY_CLASS, RADIO_LABEL_MOTION_CLASS, RADIO_LABEL_TEXT_DANGER_CLASS, RADIO_LABEL_TEXT_DISABLED_CLASS, RADIO_REQUIRED_MARK_CLASS, RADIO_SIMPLE_LABEL_TEXT_CLASS, RADIO_SIMPLE_LABEL_WRAP_CLASS, RADIO_SIZE_LAYOUT, radioControlCellClass, radioErrorRow, radioLabelCellClass, radioSecondaryCellClass } from "./radioStyles";
+import { RADIO_CONTENT_COMPOUND_CLASS, RADIO_CONTENT_PASS_THROUGH_CLASS, RADIO_CONTROL_TRACK_CLASS, RADIO_ERROR_DISABLED_CLASS, RADIO_HINT_DISABLED_CLASS, RADIO_INPUT_VISUALLY_HIDDEN_CLASS, RADIO_LABEL_CLASS, RADIO_LABEL_COMPOUND_SECONDARY_CLASS, RADIO_LABEL_MOTION_CLASS, RADIO_LABEL_TEXT_DANGER_CLASS, RADIO_LABEL_TEXT_DISABLED_CLASS, RADIO_REQUIRED_MARK_CLASS, RADIO_SIMPLE_LABEL_TEXT_CLASS, RADIO_SIMPLE_LABEL_WRAP_CLASS, RADIO_SIZE_LAYOUT, radioControlCellClass, radioControlClass, radioErrorRow, radioLabelCellClass, radioSecondaryCellClass } from "./radioStyles";
 import type {
   RadioContentProps,
   RadioControlProps,
@@ -33,7 +33,7 @@ export const RadioControl = forwardRef<HTMLSpanElement, RadioControlProps>(
       <span
         ref={ref}
         className={cn(
-          RADIO_CONTROL_CLASS,
+          radioControlClass(ctx.size),
           radioControlCellClass(),
           slotClassNames.control,
           className,

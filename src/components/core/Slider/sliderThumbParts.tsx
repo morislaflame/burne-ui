@@ -61,6 +61,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
         disabled={disabled}
         tabIndex={disabled ? -1 : 0}
         className={sliderThumbButtonClass({
+          size,
           orientation,
           disabled,
           active,

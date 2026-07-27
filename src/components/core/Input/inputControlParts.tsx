@@ -25,7 +25,6 @@ import {
   INPUT_FILE_ROW_CLASS,
   INPUT_FILE_ROW_SINGLE_CLASS,
   inputFileEmptyAreaClass,
-  inputFileEmptyShellSurfaceClass,
   inputFileFilledAreaClass,
   inputShellClass,
   inputShellSurfaceClass,
@@ -118,8 +117,6 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     );
 
     const blocked = Boolean(resolvedDisabled || resolvedReadOnly);
-    const statusTinted =
-      status === "danger" || status === "success" || status === "info" || status === "warning";
     const isGloss = variant === "gloss";
 
     const shellMotion = useInputShellMotion({
@@ -217,12 +214,9 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     const fileListEmpty = isFile && pickedFiles.length === 0;
     const showAffixes = !isFile;
 
-    const shellSurface = inputShellSurfaceClass({ variant, status, statusTinted });
+    const shellSurface = inputShellSurfaceClass({ variant, status });
     const shellFileEmptySurface = fileListEmpty
-      ? cn(
-          inputFileEmptyShellSurfaceClass({ variant, status, statusTinted }),
-          !isGloss && "border-2 border-dashed border-token",
-        )
+      ? cn(shellSurface, !isGloss && "border-2 border-dashed")
       : null;
 
     return (

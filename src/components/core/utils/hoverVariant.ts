@@ -10,7 +10,7 @@ export const TEXT_COLOR_TRANSITION =
  * Hover background for interactive surfaces.
  * - `default` / `primary` / `secondary` — neutral and brand fills.
  * - `danger` … `warning` — tint on transparent/neutral background (Dropdown, ListBox).
- * - `danger-tint-hover` … — hover over `bg-surface-tint-*` (fields with status).
+ * - `danger-tint-hover` … — stronger hover over an existing `bg-surface-tint-*` surface.
  * - `danger-fill` … `warning-fill` — hover over filled status surface (Button danger, etc.).
  */
 export type HoverVariant =

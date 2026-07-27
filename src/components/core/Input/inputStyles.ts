@@ -1,4 +1,4 @@
-import { FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
+import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
@@ -7,32 +7,11 @@ import { affixSlotClass, affixToggleMinWClass } from "@/components/core/utils/in
 import { TEXT_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 
-import type { FieldShellFilledVariant } from "@/components/core/utils/fieldShellVariant";
-import { FIELD_SHELL_VARIANT_BG_CLASS, resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
+import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 
 import type { InputSize, InputStatus, InputVariant } from "./inputTypes";
 
 import { cn } from "@/utils/cn";
-
-export const INPUT_STATUS_TINT_SHELL_CLASS: Record<
-  Exclude<InputStatus, "default">,
-  string
-> = {
-  danger: "bg-surface-tint-danger",
-  success: "bg-surface-tint-success",
-  info: "bg-surface-tint-info",
-  warning: "bg-surface-tint-warning",
-};
-
-export const INPUT_STATUS_TINT_AFFIX_CLASS: Record<
-  Exclude<InputStatus, "default">,
-  string
-> = {
-  danger: "bg-surface-tint-danger",
-  success: "bg-surface-tint-success",
-  info: "bg-surface-tint-info",
-  warning: "bg-surface-tint-warning",
-};
 
 export const INPUT_AFFIX_SURFACE_CLASS = "bg-primary-tint";
 
@@ -119,10 +98,8 @@ export const INPUT_PASSWORD_TOGGLE_CONTROL: Record<
   },
 };
 
-export function inputAffixSurfaceClass(status: InputStatus): string {
-  return status === "default"
-    ? INPUT_AFFIX_SURFACE_CLASS
-    : INPUT_STATUS_TINT_AFFIX_CLASS[status];
+export function inputAffixSurfaceClass(_status: InputStatus = "default"): string {
+  return INPUT_AFFIX_SURFACE_CLASS;
 }
 
 export function inputAffixSlotClass({
@@ -146,34 +123,11 @@ export function inputAffixSlotClass({
 
 export function inputShellSurfaceClass({
   variant,
-  status,
-  statusTinted,
 }: {
   variant: InputVariant;
-  status: InputStatus;
-  statusTinted: boolean;
+  status?: InputStatus;
 }): string {
-  return resolveFieldShellSurfaceClass({
-    variant,
-    statusTinted: statusTinted && status !== "default",
-    statusTintClass: status !== "default" ? INPUT_STATUS_TINT_SHELL_CLASS[status] : "",
-  });
-}
-
-export function inputFileEmptyShellSurfaceClass({
-  variant,
-  status,
-  statusTinted,
-}: {
-  variant: InputVariant;
-  status: InputStatus;
-  statusTinted: boolean;
-}): string {
-  if (variant === "gloss") return "gloss-control";
-
-  if (statusTinted && status !== "default") return INPUT_STATUS_TINT_SHELL_CLASS[status];
-
-  return FIELD_SHELL_VARIANT_BG_CLASS[variant as FieldShellFilledVariant];
+  return resolveFieldShellSurfaceClass({ variant });
 }
 
 export function inputShellRoundingClass(
@@ -226,7 +180,7 @@ export function inputShellClass({
     inputShellRoundingClass(groupSegment),
     shellFileEmptySurface ?? shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
-    FIELD_SHELL_FOCUS_CLASS,
+    fieldShellFocusRingClass(status),
     !isGloss && fieldShellHoverClass(!blocked, status, variant),
     shellHoverMotionClass,
     blocked && "cursor-not-allowed opacity-55 shadow-token-base",

@@ -7,7 +7,7 @@ import { messageBannerActionCellClass, messageBannerCloseCellClass, messageBanne
 import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIcons";
 
 import { useToastClassNames, useToastItem } from "./toastContext";
-import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, TOAST_TITLE_CLASS, toastIndicatorClass, toastLoadingColor } from "./toastStyles";
+import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, toastIndicatorClass, toastLoadingColor, toastTitleClass } from "./toastStyles";
 import type {
   ToastActionProps,
   ToastCloseProps,
@@ -117,7 +117,7 @@ ToastContent.displayName = "ToastContent";
 
 export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
   function ToastTitle({ className, id: idProp, ...rest }, ref) {
-    const { titleId, gridSlots, sizePreset } = useToastItem();
+    const { titleId, gridSlots, sizePreset, status } = useToastItem();
     const slotClassNames = useToastClassNames();
 
     return (
@@ -127,7 +127,7 @@ export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
         variant={sizePreset.titleVariant}
         id={idProp ?? titleId}
         className={cn(
-          TOAST_TITLE_CLASS,
+          toastTitleClass(status),
           messageBannerTitleCellClass(gridSlots),
           slotClassNames.title,
           className,

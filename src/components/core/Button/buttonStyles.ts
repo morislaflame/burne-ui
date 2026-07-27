@@ -71,12 +71,13 @@ export const BUTTON_GLOSS_STATUS: Record<ButtonStatus, string> = {
   warning: "gloss-btn-warning",
 };
 
+/** Retarget `--color-focus-ring` for `focus-ring` (status soft tokens). */
 export const BUTTON_STATUS_FOCUS_OUTLINE: Record<ButtonStatus, string> = {
-  default: "focus-visible:outline-primary",
-  danger: "focus-visible:outline-danger",
-  success: "focus-visible:outline-success",
-  info: "focus-visible:outline-info",
-  warning: "focus-visible:outline-warning",
+  default: "",
+  danger: "[--color-focus-ring:var(--color-focus-ring-danger)]",
+  success: "[--color-focus-ring:var(--color-focus-ring-success)]",
+  info: "[--color-focus-ring:var(--color-focus-ring-info)]",
+  warning: "[--color-focus-ring:var(--color-focus-ring-warning)]",
 };
 
 export const BUTTON_STATUS_RIPPLE: Record<ButtonStatus, string> = {

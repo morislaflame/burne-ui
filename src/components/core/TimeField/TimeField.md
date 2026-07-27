@@ -70,7 +70,7 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | status | Эффект |
 |--------|--------|
 | `default` | Standard surface |
-| `danger` / `success` / `warning` | `bg-surface-tint-*` на shell/affix |
+| `danger` / `success` / `info` / `warning` | нейтральный фон/border + постоянный статусный ring |
 
 | size | Shell height | Segment text |
 |------|--------------|--------------|

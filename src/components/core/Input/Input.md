@@ -76,7 +76,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 | `outline` | прозрачный + `border-token` |
 | `gloss` | `gloss-control` |
 
-При `status` danger/success/warning — tint-фон (`bg-surface-tint-*`). Affix: `bg-primary-tint` или status-tint.
+При `status` danger/success/info/warning — нейтральный фон и border; постоянный внешний статусный ring (геометрия `--focus-ring-*`). Affix: `bg-primary-tint`.
 
 ## Размеры
 

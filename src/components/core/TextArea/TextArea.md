@@ -43,7 +43,7 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `outline` \| `gloss` |
-| `status` | `default` | семантический tint |
+| `status` | `default` | постоянный статусный ring |
 | `size` | `base` | размер padding / min-height |
 | `rows` | `1` | Нативные rows |
 | `resizable` | `true` | Drag-handle в углу |
@@ -55,7 +55,7 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 
 ## variant и status
 
-Аналогично Input: `default` / `outline` / `gloss`; status tint для danger/success/warning.
+Аналогично Input: `default` / `outline` / `gloss`; при status — нейтральный фон/border + постоянный статусный ring.
 
 ## Размеры
 
@@ -84,7 +84,7 @@ Field
 
 - Покой: `shadow-token-sm`
 - Hover: sm → md + scale lift
-- `fieldShellHoverClass(status)` — CSS tint на hover/focus-within
+- `fieldShellHoverClass` — CSS hover по variant (не status tint)
 - Класс: `standardShellHoverMotionClass` → `animate-shadow`
 
 ### 2. Shell press squeeze

@@ -8,13 +8,8 @@ import type { LoadingColor } from "@/components/core/Loading";
 
 import type { ToastPlacement, ToastSize, ToastStatus, ToastVariant } from "./toastTypes";
 
-export const TOAST_SURFACE_CLASS: Record<ToastStatus, string> = {
-  default: "bg-surface border-token text-foreground",
-  success: "bg-surface-tint-success border-token text-foreground",
-  danger: "bg-surface-tint-danger border-token text-foreground",
-  info: "bg-surface-tint-info border-token text-foreground",
-  warning: "bg-surface-tint-warning border-token text-foreground",
-};
+/** Neutral shell for every status — accents live on the indicator icon. */
+export const TOAST_SURFACE_CLASS = "bg-surface border-token text-foreground";
 
 export const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
   default: "text-primary",
@@ -27,6 +22,13 @@ export const TOAST_ICON_CLASS: Record<ToastStatus, string> = {
 export const TOAST_COMPOUND_CONTENTS_CLASS = "contents";
 
 export const TOAST_TITLE_CLASS = "font-w-mid";
+
+export function toastTitleClass(status: ToastStatus): string {
+  return cn(
+    TOAST_TITLE_CLASS,
+    status !== "default" ? TOAST_ICON_CLASS[status] : "",
+  );
+}
 
 export const TOAST_DESCRIPTION_CLASS = "text-muted";
 
@@ -83,14 +85,12 @@ export function toastLoadingColor(status: ToastStatus): LoadingColor {
 
 export function toastRootClass({
   variant,
-  status,
   size,
   gridSlots,
   slotClass,
   className,
 }: {
   variant: ToastVariant;
-  status: ToastStatus;
   size?: ToastSize;
   gridSlots: MessageBannerGridSlots;
   slotClass?: string;
@@ -104,7 +104,7 @@ export function toastRootClass({
     `w-full ${preset.shellPadding}`,
     isGloss
       ? cn("gloss-panel gloss-deep border-0 text-foreground", GLOSS_INTERACTIVE_MOTION_CLASS)
-      : cn("shadow-token-mid", TOAST_SURFACE_CLASS[status]),
+      : cn("shadow-token-mid", TOAST_SURFACE_CLASS),
     slotClass,
     className,
   );

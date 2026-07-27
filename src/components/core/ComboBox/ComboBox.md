@@ -51,7 +51,7 @@ const options = [
 | `open` / `defaultOpen` | `false` | Controlled / uncontrolled попап |
 | `onOpenChange` | — | `(open: boolean) => void` |
 | `variant` | `default` / gloss из ButtonGroup | как Input |
-| `status` | `default` | danger/success/warning tint |
+| `status` | `default` | danger/success/warning/info — постоянный статусный ring |
 | `size` | `base` | размер shell, текста и пунктов ListBox в Popover |
 | `disabled` | `false` | |
 | `placeholder` | `"Выберите значение"` | |
@@ -102,7 +102,7 @@ Field
 `useFieldShellHoverLift(anchorRef, !disabled && !isGloss && !groupSegment)`:
 
 - sm → md + lift на `InputGroup`
-- `fieldShellHoverClass(status)` — CSS tint
+- `fieldShellHoverClass` — CSS hover по variant (не status tint)
 - Отключено в `ButtonGroup` segment и для gloss (отдельный путь)
 
 ### 2. Gloss shell

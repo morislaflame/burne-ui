@@ -68,6 +68,10 @@ export type ThemeColorKey =
   | "primaryTint"
   | "primaryTintStrong"
   | "focusRing"
+  | "focusRingDanger"
+  | "focusRingSuccess"
+  | "focusRingInfo"
+  | "focusRingWarning"
   | "indicator"
   | "indicatorForeground"
   | "danger"
@@ -165,6 +169,10 @@ export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   primaryTint: "--color-primary-tint",
   primaryTintStrong: "--color-primary-tint-strong",
   focusRing: "--color-focus-ring",
+  focusRingDanger: "--color-focus-ring-danger",
+  focusRingSuccess: "--color-focus-ring-success",
+  focusRingInfo: "--color-focus-ring-info",
+  focusRingWarning: "--color-focus-ring-warning",
   indicator: "--color-indicator",
   indicatorForeground: "--color-indicator-foreground",
   danger: "--color-danger",

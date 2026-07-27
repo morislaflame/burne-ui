@@ -81,10 +81,10 @@ Compound включается автоматически при наличии �
 
 | variant | default status | status ≠ default |
 |---------|----------------|------------------|
-| `default` | `bg-surface border-token` | tint + semantic text |
-| `outline` | прозрачный + `border-token` | semantic border + text |
-| `secondary` | `bg-secondary` | semantic text на secondary |
-| `gloss` | `gloss-panel border-0` | semantic text |
+| `default` | `bg-surface border-token` | тот же surface; status на индикаторе и title |
+| `outline` | прозрачный + `border-token` | тот же surface; status на индикаторе и title |
+| `secondary` | `bg-secondary` | тот же surface; status на индикаторе и title |
+| `gloss` | `gloss-panel border-0` | тот же surface; status на индикаторе и title |
 
 ### Индикатор по умолчанию
 
@@ -181,7 +181,7 @@ Shell: `w-fit` + `max-w-component-*` + padding/radius из `MESSAGE_BANNER_SIZE`
 
 ### Семантика
 
-`SEMANTIC_STATUS_SURFACE_TINT`, `SEMANTIC_STATUS_OUTLINE_BORDER`, `SEMANTIC_STATUS_TEXT` из `semanticStatusSurface`.
+Surface всегда по `variant` (как у `AlertDialog`). Status красит индикатор и заголовок (`SEMANTIC_STATUS_TEXT`).
 
 ### Тени
 
@@ -214,7 +214,7 @@ Shell: `w-fit` + `max-w-component-*` + padding/radius из `MESSAGE_BANNER_SIZE`
 | `description` | `Alert.Description` | Подзаголовок, muted-тон |
 | `action` | `Alert.Action` | Выравнивание кнопки справа |
 
-`variant`, `status` задают поверхность и semantic colors. `hoverLift={false}` отключает только motion, не стили.
+`variant` задаёт поверхность; `status` — индикатор и заголовок (как у `AlertDialog` для иконки). `hoverLift={false}` отключает только motion, не стили.
 
 ### Simple API
 

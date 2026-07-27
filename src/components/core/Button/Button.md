@@ -267,7 +267,7 @@ configureMotion({
 
 ### Focus
 
-`BUTTON_STATUS_FOCUS_OUTLINE`: `focus-visible:outline-primary` (default) или outline по status.
+`BUTTON_STATUS_FOCUS_OUTLINE`: retarget `--color-focus-ring` на `--color-focus-ring-{status}` (default — soft primary token).
 
 ### Gloss
 

@@ -260,10 +260,7 @@ export function useTimeFieldControlState({
     return String(hms[seg]).padStart(2, "0");
   };
 
-  const statusTinted =
-    status === "danger" || status === "success" || status === "info" || status === "warning";
-
-  const shellSurface = timeFieldShellSurfaceClass({ variant, status, statusTinted });
+  const shellSurface = timeFieldShellSurfaceClass({ variant, status });
 
   const shellAria = timeFieldShellAria({
     labelConnected,

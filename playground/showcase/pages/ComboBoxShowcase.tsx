@@ -4,6 +4,10 @@ import { ComboBoxCustomTriggerIconDemo } from "../demos/combobox/ComboBoxCustomT
 import comboBoxCustomTriggerIconSource from "../demos/combobox/ComboBoxCustomTriggerIcon.demo.tsx?raw";
 import { ComboBoxDefaultDemo } from "../demos/combobox/ComboBoxDefault.demo";
 import comboBoxDefaultSource from "../demos/combobox/ComboBoxDefault.demo.tsx?raw";
+import { ComboBoxVariantsDemo } from "../demos/combobox/ComboBoxVariants.demo";
+import comboBoxVariantsSource from "../demos/combobox/ComboBoxVariants.demo.tsx?raw";
+import { ComboBoxStatusesDemo } from "../demos/combobox/ComboBoxStatuses.demo";
+import comboBoxStatusesSource from "../demos/combobox/ComboBoxStatuses.demo.tsx?raw";
 import { ComboBoxSizesDemo } from "../demos/combobox/ComboBoxSizes.demo";
 import comboBoxSizesSource from "../demos/combobox/ComboBoxSizes.demo.tsx?raw";
 import { ComboBoxGlossDemo } from "../demos/combobox/ComboBoxGloss.demo";
@@ -31,6 +35,13 @@ export function ComboBoxShowcase() {
     >
       <ShowcaseSection title="Default" description="options, value and onValueChange — controlled mode.">
         <ShowcaseDemoFromFile align="center" Demo={ComboBoxDefaultDemo} source={comboBoxDefaultSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxVariantsDemo} source={comboBoxVariantsSource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxStatusesDemo} source={comboBoxStatusesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

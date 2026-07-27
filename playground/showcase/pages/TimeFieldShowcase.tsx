@@ -12,6 +12,10 @@ import { TimeFieldShiftWindowDemo } from "../demos/time-field/TimeFieldShiftWind
 import timeFieldShiftWindowSource from "../demos/time-field/TimeFieldShiftWindow.demo.tsx?raw";
 import { TimeFieldSimpleDemo } from "../demos/time-field/TimeFieldSimple.demo";
 import timeFieldSimpleSource from "../demos/time-field/TimeFieldSimple.demo.tsx?raw";
+import { TimeFieldVariantsDemo } from "../demos/time-field/TimeFieldVariants.demo";
+import timeFieldVariantsSource from "../demos/time-field/TimeFieldVariants.demo.tsx?raw";
+import { TimeFieldStatusesDemo } from "../demos/time-field/TimeFieldStatuses.demo";
+import timeFieldStatusesSource from "../demos/time-field/TimeFieldStatuses.demo.tsx?raw";
 import { TimeFieldSizesDemo } from "../demos/time-field/TimeFieldSizes.demo";
 import timeFieldSizesSource from "../demos/time-field/TimeFieldSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
@@ -29,6 +33,13 @@ export function TimeFieldShowcase() {
     >
       <ShowcaseSection title="Simple API" description="Controlled value in 24 hour format.">
         <ShowcaseDemoFromFile align="center" Demo={TimeFieldSimpleDemo} source={timeFieldSimpleSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Variants" description="default, outline, secondary, segmented and gloss — all field shells side by side.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldVariantsDemo} source={timeFieldVariantsSource} />
+      </ShowcaseSection>
+      <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldStatusesDemo} source={timeFieldStatusesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">

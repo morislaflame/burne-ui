@@ -1,4 +1,4 @@
-import { FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
+import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 
@@ -7,16 +7,6 @@ import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShel
 import type { TextAreaSize, TextAreaStatus, TextAreaVariant } from "./textAreaTypes";
 
 import { cn } from "@/utils/cn";
-
-export const TEXTAREA_STATUS_TINT_SHELL_CLASS: Record<
-  Exclude<TextAreaStatus, "default">,
-  string
-> = {
-  danger: "bg-surface-tint-danger",
-  success: "bg-surface-tint-success",
-  info: "bg-surface-tint-info",
-  warning: "bg-surface-tint-warning",
-};
 
 export const TEXTAREA_MIN_H: Record<TextAreaSize, string> = {
   small: "min-h-control-small",
@@ -53,18 +43,11 @@ export function textareaControlClass(size: TextAreaSize): string {
 
 export function textareaShellSurfaceClass({
   variant,
-  status,
-  statusTinted,
 }: {
   variant: TextAreaVariant;
-  status: TextAreaStatus;
-  statusTinted: boolean;
+  status?: TextAreaStatus;
 }): string {
-  return resolveFieldShellSurfaceClass({
-    variant,
-    statusTinted: statusTinted && status !== "default",
-    statusTintClass: status !== "default" ? TEXTAREA_STATUS_TINT_SHELL_CLASS[status] : "",
-  });
+  return resolveFieldShellSurfaceClass({ variant });
 }
 
 export function textareaShellClass({
@@ -97,7 +80,7 @@ export function textareaShellClass({
     TEXTAREA_MIN_H[size],
     shellSurface,
     FIELD_SHELL_TRANSITION_CLASS,
-    FIELD_SHELL_FOCUS_CLASS,
+    fieldShellFocusRingClass(status),
     isGloss ? glossShellHoverMotionClass : fieldShellHoverClass(!blocked, status, variant),
     !isGloss && standardShellHoverMotionClass,
     blocked ? "cursor-not-allowed opacity-55 shadow-token-base" : "",

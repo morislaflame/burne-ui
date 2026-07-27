@@ -164,12 +164,14 @@ export function sliderTrackHitAreaClass({
 }
 
 export function sliderThumbButtonClass({
+  size,
   orientation,
   disabled,
   active,
   slotClass,
   className,
 }: {
+  size: SliderSize;
   orientation: SliderOrientation;
   disabled?: boolean;
   active?: boolean;
@@ -178,6 +180,7 @@ export function sliderThumbButtonClass({
 }): string {
   return cn(
     SLIDER_THUMB_BUTTON_BASE_CLASS,
+    SELECTION_INDICATOR_RADIUS_CLASS[size],
     orientation === "horizontal"
       ? SLIDER_THUMB_BUTTON_HORIZONTAL_CLASS
       : SLIDER_THUMB_BUTTON_VERTICAL_CLASS,

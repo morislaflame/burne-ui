@@ -216,7 +216,7 @@ configureMotion({
 | `border-token`, `bg-surface` | Поверхность |
 | `gloss-panel`, `gloss-deep`, `gloss-content` | Gloss variant |
 | `h-control-*`, `px-mid`, `py-base` | Размеры |
-| `focus-visible:outline-primary` | Focus на триггере |
+| `focus-ring` + `rounded-[inherit]` | Focus на триггере (скругление как у root) |
 
 ## Стилизация и кастомизация
 

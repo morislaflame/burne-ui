@@ -1,18 +1,11 @@
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
-import { FIELD_SHELL_FOCUS_CLASS, FIELD_SHELL_TRANSITION_CLASS, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
+import { FIELD_SHELL_TRANSITION_CLASS, fieldShellFocusRingClass, fieldShellHoverClass } from "@/components/core/utils/useFieldShellHoverLift";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
 import { resolveFieldShellSurfaceClass } from "@/components/core/utils/fieldShellVariant";
 import { cn } from "@/utils/cn";
-
-const STATUS_TINT_SHELL: Record<Exclude<InputStatus, "default">, string> = {
-  danger: "bg-surface-tint-danger",
-  success: "bg-surface-tint-success",
-  info: "bg-surface-tint-info",
-  warning: "bg-surface-tint-warning",
-};
 
 export const COMBOBOX_INPUT_CONTROL: Record<InputSize, string> = {
   small: CONTROL_SIZE_LAYOUT.small.controlPad,
@@ -54,19 +47,11 @@ export const COMBOBOX_INPUT_GROUP_ENABLED_CLASS = "cursor-pointer";
 
 export function comboBoxShellSurface({
   variant,
-  status,
 }: {
   variant: InputVariant;
-  status: InputStatus;
+  status?: InputStatus;
 }): string {
-  const statusTinted =
-    status === "danger" || status === "success" || status === "warning";
-
-  return resolveFieldShellSurfaceClass({
-    variant,
-    statusTinted,
-    statusTintClass: statusTinted ? STATUS_TINT_SHELL[status] : "",
-  });
+  return resolveFieldShellSurfaceClass({ variant });
 }
 
 export function comboBoxGroupShellClass(groupSegment?: ButtonGroupSegment): string {
@@ -105,7 +90,7 @@ export function comboBoxInputGroupClass({
     comboBoxGroupShellClass(groupSegment),
     comboBoxShellSurface({ variant, status }),
     FIELD_SHELL_TRANSITION_CLASS,
-    FIELD_SHELL_FOCUS_CLASS,
+    fieldShellFocusRingClass(status),
     isGloss ? "" : fieldShellHoverClass(!disabled, status, variant),
     shellHoverMotionClass,
     disabled

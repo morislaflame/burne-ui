@@ -20,10 +20,15 @@
   --color-primary-foreground: #0c0c0e;
 
   /**
-   * FOCUS RING — color / width / offset for focus-ring, focus-within-ring, focus-ring-inset.
-   * Color defaults to === primary; can be overridden independently.
+   * FOCUS RING — final paint color / width / offset for focus-ring* utilities.
+   * Soft by default (60% source + transparent). Status variants for field shells / status controls.
+   * Override independently, or retarget via `[--color-focus-ring:var(--color-focus-ring-danger)]`.
    */
-  --color-focus-ring: var(--color-primary);
+  --color-focus-ring: color-mix(in oklab, var(--color-primary) 60%, transparent);
+  --color-focus-ring-danger: color-mix(in oklab, var(--color-danger) 60%, transparent);
+  --color-focus-ring-success: color-mix(in oklab, var(--color-success) 60%, transparent);
+  --color-focus-ring-info: color-mix(in oklab, var(--color-info) 60%, transparent);
+  --color-focus-ring-warning: color-mix(in oklab, var(--color-warning) 60%, transparent);
   --focus-ring-width: 2px;
   --focus-ring-offset: 0px;
 
@@ -78,25 +83,25 @@
    * 3) --color-surface-tint-danger-hover  (hover over surface-tint-danger)
    * 4) --color-danger-fill-hover          (hover over bg-danger)
    *
-   * surface-tint-* — opaque mix of status with black (dark) / white (light),
-   * so panels do not show through when stacked.
+   * surface-tint-* / *-fill-hover — status mix with transparent
+   * (15% tint, 25% tint hover, 80% fill hover).
    */
-  --color-danger: #e34848;
+  --color-danger: #d73737;
   --color-danger-foreground: #fafafa;
   --color-surface-tint-danger: color-mix(
     in oklab,
-    var(--color-danger) 30%,
-    black
+    var(--color-danger) 15%,
+    transparent
   );
   --color-surface-tint-danger-hover: color-mix(
     in oklab,
-    var(--color-danger) 40%,
-    black
+    var(--color-danger) 25%,
+    transparent
   );
   --color-danger-fill-hover: color-mix(
     in oklab,
-    var(--color-danger) 90%,
-    black
+    var(--color-danger) 80%,
+    transparent
   );
 
   /*
@@ -106,22 +111,22 @@
    * 3) --color-surface-tint-success-hover  (hover over surface-tint-success)
    * 4) --color-success-fill-hover          (hover over bg-success)
    */
-  --color-success: #22c55e;
+  --color-success: #35b664;
   --color-success-foreground: #fafafa;
   --color-surface-tint-success: color-mix(
     in oklab,
-    var(--color-success) 30%,
-    black
+    var(--color-success) 15%,
+    transparent
   );
   --color-surface-tint-success-hover: color-mix(
     in oklab,
-    var(--color-success) 40%,
-    black
+    var(--color-success) 25%,
+    transparent
   );
   --color-success-fill-hover: color-mix(
     in oklab,
-    var(--color-success) 90%,
-    black
+    var(--color-success) 80%,
+    transparent
   );
 
   /*
@@ -131,22 +136,22 @@
    * 3) --color-surface-tint-info-hover  (hover over surface-tint-info)
    * 4) --color-info-fill-hover          (hover over bg-info)
    */
-  --color-info: #0ea5e9;
+  --color-info: #389dcc;
   --color-info-foreground: #fafafa;
   --color-surface-tint-info: color-mix(
     in oklab,
-    var(--color-info) 30%,
-    black
+    var(--color-info) 15%,
+    transparent
   );
   --color-surface-tint-info-hover: color-mix(
     in oklab,
-    var(--color-info) 40%,
-    black
+    var(--color-info) 25%,
+    transparent
   );
   --color-info-fill-hover: color-mix(
     in oklab,
-    var(--color-info) 90%,
-    black
+    var(--color-info) 80%,
+    transparent
   );
 
   /*
@@ -156,22 +161,22 @@
    * 3) --color-surface-tint-warning-hover  (hover over surface-tint-warning)
    * 4) --color-warning-fill-hover          (hover over bg-warning)
    */
-  --color-warning: #f59e0b;
+  --color-warning: #daa13e;
   --color-warning-foreground: #0c0c0e;
   --color-surface-tint-warning: color-mix(
     in oklab,
-    var(--color-warning) 30%,
-    black
+    var(--color-warning) 15%,
+    transparent
   );
   --color-surface-tint-warning-hover: color-mix(
     in oklab,
-    var(--color-warning) 40%,
-    black
+    var(--color-warning) 25%,
+    transparent
   );
   --color-warning-fill-hover: color-mix(
     in oklab,
-    var(--color-warning) 90%,
-    black
+    var(--color-warning) 80%,
+    transparent
   );
 
   /**
@@ -600,7 +605,11 @@
    * Re-define var()-dependent tokens on this same element; otherwise from :root
    * the already computed dark-theme value is inherited (nested data-theme).
    */
-  --color-focus-ring: var(--color-primary);
+  --color-focus-ring: color-mix(in oklab, var(--color-primary) 60%, transparent);
+  --color-focus-ring-danger: color-mix(in oklab, var(--color-danger) 60%, transparent);
+  --color-focus-ring-success: color-mix(in oklab, var(--color-success) 60%, transparent);
+  --color-focus-ring-info: color-mix(in oklab, var(--color-info) 60%, transparent);
+  --color-focus-ring-warning: color-mix(in oklab, var(--color-warning) 60%, transparent);
   /* width / offset are mode-independent; kept on :root only */
   --color-indicator: var(--color-primary);
   --color-indicator-foreground: var(--color-primary-foreground);
@@ -616,74 +625,74 @@
     transparent
   );
 
-  --color-danger: #dc2626;
+  --color-danger: #df4e4e;
   --color-danger-foreground: #ffffff;
-  --color-success: #22c55e;
+  --color-success: #2ebd62;
   --color-success-foreground: #ffffff;
-  --color-info: #0ea5e9;
+  --color-info: #31a0d3;
   --color-info-foreground: #ffffff;
-  --color-warning: #f59e0b;
+  --color-warning: #e1a53d;
   --color-warning-foreground: #0c0c0e;
 
   --color-surface-tint-danger: color-mix(
     in oklab,
-    var(--color-danger) 14%,
-    white
+    var(--color-danger) 15%,
+    transparent
   );
   --color-surface-tint-danger-hover: color-mix(
     in oklab,
-    var(--color-danger) 22%,
-    white
+    var(--color-danger) 25%,
+    transparent
   );
   --color-danger-fill-hover: color-mix(
     in oklab,
-    var(--color-danger) 90%,
-    black
+    var(--color-danger) 80%,
+    transparent
   );
   --color-surface-tint-success: color-mix(
     in oklab,
-    var(--color-success) 14%,
-    white
+    var(--color-success) 15%,
+    transparent
   );
   --color-surface-tint-success-hover: color-mix(
     in oklab,
-    var(--color-success) 22%,
-    white
+    var(--color-success) 25%,
+    transparent
   );
   --color-success-fill-hover: color-mix(
     in oklab,
-    var(--color-success) 90%,
-    black
+    var(--color-success) 80%,
+    transparent
   );
   --color-surface-tint-info: color-mix(
     in oklab,
     var(--color-info) 15%,
-    white
+    transparent
   );
   --color-surface-tint-info-hover: color-mix(
     in oklab,
-    var(--color-info) 22%,
-    white
+    var(--color-info) 25%,
+    transparent
   );
   --color-info-fill-hover: color-mix(
     in oklab,
-    var(--color-info) 90%,
-    black
+    var(--color-info) 80%,
+    transparent
   );
   --color-surface-tint-warning: color-mix(
     in oklab,
-    var(--color-warning) 14%,
-    white
+    var(--color-warning) 15%,
+    transparent
   );
   --color-surface-tint-warning-hover: color-mix(
     in oklab,
-    var(--color-warning) 22%,
-    white
+    var(--color-warning) 25%,
+    transparent
   );
   --color-warning-fill-hover: color-mix(
     in oklab,
-    var(--color-warning) 90%,
-    black
+    var(--color-warning) 80%,
+    transparent
   );
 
   --color-primary-hover: color-mix(

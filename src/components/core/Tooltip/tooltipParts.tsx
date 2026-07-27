@@ -18,7 +18,7 @@ import { hasTooltipCompoundChildren, isTooltipArrowElement, resolveTooltipGridSl
 import { useTooltipPortalMotion } from "./tooltipAnimations";
 import { TooltipBodyContext, TooltipResolvedSideContext, useTooltipBodyContext, useTooltipClassNames, useTooltipContext, useTooltipResolvedSide } from "./tooltipContext";
 import { computeTooltipPlacement } from "./tooltipPosition";
-import { TOOLTIP_COMPOUND_CONTENTS_CLASS, TOOLTIP_CONTENT_INNER_CLASS, TOOLTIP_CONTENT_VARIANT, TOOLTIP_DEFAULT_OFFSET, TOOLTIP_DESC_VARIANT, TOOLTIP_DESCRIPTION_MUTED_CLASS, TOOLTIP_ICON_SIZE, TOOLTIP_ICON_SLOT_SVG, TOOLTIP_STATUS_ICON_CLASS, TOOLTIP_INDICATOR_BASE_CLASS, TOOLTIP_TRIGGER_BASE_CLASS, tooltipArrowClass, tooltipContentClass, tooltipGlossContentClass, tooltipPanelClass } from "./tooltipStyles";
+import { TOOLTIP_COMPOUND_CONTENTS_CLASS, TOOLTIP_CONTENT_INNER_CLASS, TOOLTIP_CONTENT_VARIANT, TOOLTIP_DEFAULT_OFFSET, TOOLTIP_DESC_VARIANT, TOOLTIP_DESCRIPTION_MUTED_CLASS, TOOLTIP_ICON_SIZE, TOOLTIP_ICON_SLOT_SVG, TOOLTIP_STATUS_ACCENT_CLASS, TOOLTIP_TRIGGER_BASE_CLASS, tooltipArrowClass, tooltipContentClass, tooltipGlossContentClass, tooltipIndicatorClass, tooltipPanelClass, tooltipTitleClass } from "./tooltipStyles";
 import type {
   TooltipArrowProps,
   TooltipContentProps,
@@ -62,7 +62,7 @@ function resolveTooltipIndicatorInner({
       className={cn(
         "shrink-0",
         TOOLTIP_ICON_SIZE[size],
-        TOOLTIP_STATUS_ICON_CLASS[status],
+        TOOLTIP_STATUS_ACCENT_CLASS[status],
         iconClass,
       )}
     />
@@ -132,12 +132,9 @@ export function TooltipIndicator({
   return (
     <span
       className={cn(
-        TOOLTIP_INDICATOR_BASE_CLASS,
+        tooltipIndicatorClass(status, slotClassNames.indicator, className),
         TOOLTIP_ICON_SLOT_SVG[size],
-        TOOLTIP_STATUS_ICON_CLASS[status],
         messageBannerIndicatorCellClass(gridSlots),
-        slotClassNames.indicator,
-        className,
       )}
       {...rest}
     >
@@ -172,13 +169,14 @@ TooltipMessage.displayName = "TooltipMessage";
 
 export function TooltipTitle({ className, ...rest }: TooltipTitleProps) {
   const slotClassNames = useTooltipClassNames();
-  const { size, gridSlots } = useTooltipBodyContext("Tooltip.Title");
+  const { size, status, gridSlots } = useTooltipBodyContext("Tooltip.Title");
 
   return (
     <Text
       as="div"
       variant={TOOLTIP_CONTENT_VARIANT[size]}
       className={cn(
+        tooltipTitleClass(status),
         messageBannerTitleCellClass(gridSlots),
         slotClassNames.title,
         className,
@@ -252,7 +250,6 @@ export function TooltipPanel({
 
   const panelClass = tooltipPanelClass({
     variant,
-    status,
     size,
     gridSlots,
     slotClass: isGloss
@@ -388,14 +385,13 @@ TooltipTrigger.displayName = "TooltipTrigger";
 export function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
   const slotClassNames = useTooltipClassNames();
   const resolvedSide = useTooltipResolvedSide();
-  const { variant, status } = useTooltipContext("Tooltip.Arrow");
+  const { variant } = useTooltipContext("Tooltip.Arrow");
 
   return (
     <span
       aria-hidden
       className={tooltipArrowClass({
         variant,
-        status,
         resolvedSide,
         slotClass: slotClassNames.arrow,
         className,

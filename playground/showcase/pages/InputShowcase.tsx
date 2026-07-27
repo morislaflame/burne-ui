@@ -31,16 +31,16 @@ export function InputShowcase() {
       importPath='import { Input } from "@/components/core/Input";'
       tags={["core", "forms"]}
     >
-      <ShowcaseSection title="Options" description="default and variant outline — alternative field shells.">
-        <ShowcaseDemoFromFile align="center" Demo={InputVariantsDemo} source={inputVariantsSource} />
+      <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
+        <ShowcaseDemoFromFile align="stretch" Demo={InputVariantsDemo} source={inputVariantsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="center" Demo={InputSizesDemo} source={inputSizesSource} />
       </ShowcaseSection>
 
-      <ShowcaseSection title="Statuses" description="status changes the color of the stroke and error text.">
-        <ShowcaseDemoFromFile align="center" Demo={InputStatusesDemo} source={inputStatusesSource} />
+      <ShowcaseSection title="Statuses × variants" description="Every status with every variant — same matrix as Button.">
+        <ShowcaseDemoFromFile align="stretch" Demo={InputStatusesDemo} source={inputStatusesSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Compound API" description="Input.Label, Input.Control, Input.Hint — explicit markup.">
@@ -85,8 +85,8 @@ export function InputShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Options">
           <p>
-            <code>variant</code>: default, gloss, outline. <code>status</code>: default, danger, success,
-            warning. Field tips — prop <code>hint</code>, not <code>description</code>.
+            <code>variant</code>: default, outline, secondary, gloss. <code>status</code>: default, danger,
+            success, warning, info. Field tips — prop <code>hint</code>, not <code>description</code>.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />
