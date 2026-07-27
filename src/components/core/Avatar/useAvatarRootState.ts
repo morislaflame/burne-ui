@@ -42,7 +42,7 @@ export function useAvatarRootState({
     [size, label, imageStatus, onImageLoad, onImageError],
   );
 
-  const isCompound = hasCompoundChildren(children);
+  const isCompound = useMemo(() => hasCompoundChildren(children), [children]);
   const hasLabel = avatarHasLabel(label);
   const nick = resolveAvatarNickname(nickname);
   const isGloss = variant === "gloss";

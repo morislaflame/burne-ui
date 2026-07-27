@@ -41,11 +41,14 @@ export function useProgressBarRootState({
     setDisplayState((prev) => (progressBarDisplayEqual(prev, next) ? prev : next));
   }, []);
 
-  const isCompound = hasCompoundChildren(children);
-  const hasHint =
-    hint != null || (isCompound && hasCompoundChild(children, "ProgressBar.Hint"));
-  const hasError =
-    error != null || (isCompound && hasCompoundChild(children, "ProgressBar.Error"));
+  const { isCompound, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasHint: hint != null || (compound && hasCompoundChild(children, "ProgressBar.Hint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "ProgressBar.Error")),
+    };
+  }, [children, error, hint]);
 
   const fieldCtx = useMemo<ProgressBarFieldContextValue>(
     () => ({

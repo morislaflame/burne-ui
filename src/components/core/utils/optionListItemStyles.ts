@@ -4,7 +4,7 @@ export const OPTION_LIST_ITEM_LABEL_WRAP_CLASS = "inline-flex min-w-0 items-cent
 
 export const OPTION_LIST_ITEM_LABEL_MIN_WIDTH_CLASS = "min-w-0";
 
-export const OPTION_LIST_ITEM_LABEL_MOTION_CLASS = "origin-center will-change-transform";
+export const OPTION_LIST_ITEM_LABEL_MOTION_CLASS = "origin-center";
 
 export const OPTION_LIST_ITEM_LABEL_TEXT_CLASS = "font-w-mid";
 

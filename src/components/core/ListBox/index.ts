@@ -1,4 +1,4 @@
-import { ListBoxEmpty, ListBoxHeader, ListBoxHint, ListBoxIcon, ListBoxItem, ListBoxItemIndicator, ListBoxLabel, ListBoxRoot, ListBoxSection, ListBoxSeparator, useListBox } from "./ListBox";
+import { ListBoxEmpty, ListBoxHeader, ListBoxHint, ListBoxIcon, ListBoxItem, ListBoxItemIndicator, ListBoxLabel, ListBoxRoot, ListBoxSection, ListBoxSeparator, useListBox, useListBoxActiveValue } from "./ListBox";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 const ListBoxItemIndicatorCompound = Object.assign(ListBoxItemIndicator, {
@@ -18,7 +18,7 @@ export const ListBox = Object.assign(ListBoxRoot, {
   ItemIndicator: ListBoxItemIndicatorCompound,
 });
 
-export { useListBox };
+export { useListBox, useListBoxActiveValue };
 
 export type {
   ListBoxProps,

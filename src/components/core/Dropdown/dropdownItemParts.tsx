@@ -1,4 +1,10 @@
-import { forwardRef, useCallback, type HTMLAttributes, type Ref } from "react";
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  type HTMLAttributes,
+  type Ref,
+} from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
@@ -108,7 +114,7 @@ export function DropdownItemIndicator({
 
 DropdownItemIndicator.displayName = "DropdownItemIndicator";
 
-export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
+const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
   function DropdownItem(
     {
       children,
@@ -128,7 +134,6 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
     const {
       parts,
       selectItem,
-      indicatorMode,
       setOpen,
       hasItemIndicator,
       hasHint,
@@ -138,11 +143,14 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
       showIndicatorSlot,
       itemRole,
       isSelected,
+      itemCtx,
     } = useDropdownItemState({
       children,
       href,
       selection: selectionProp,
       value,
+      disabled,
+      status,
     });
 
     const setRefs = useCallback(
@@ -153,7 +161,7 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
     );
 
     const rowClass = dropdownItemRowClass({
-        status,
+      status,
       disabled,
       hasHint,
       showIndicatorSlot,
@@ -198,16 +206,6 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
       </>
     );
 
-    const itemCtx = {
-      showIndicatorSlot,
-      hasHint,
-      hasIcon,
-      selected: isSelected,
-      indicatorMode,
-      disabled,
-      mutedHint: disabled || status === "default",
-    };
-
     if (isLink) {
       return (
         <OptionListItemContextProvider value={itemCtx}>
@@ -249,5 +247,6 @@ export const DropdownItem = forwardRef<HTMLElement, DropdownItemProps>(
   },
 );
 
-DropdownItem.displayName = "Dropdown.Item";
+export const DropdownItem = memo(DropdownItemInner);
 
+DropdownItem.displayName = "Dropdown.Item";

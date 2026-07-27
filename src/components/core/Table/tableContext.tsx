@@ -1,25 +1,37 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 
+import { EMPTY_TABLE_SELECTION } from "./tableAPI";
 import type {
   TableClassNames,
   TableClassNamesProviderProps,
   TableContentContextValue,
   TableRowContextValue,
+  TableRowSelectionStore,
   TableVariant,
 } from "./tableTypes";
+
+const noopStore: TableRowSelectionStore = {
+  subscribeSelection: () => () => {},
+  subscribeFocus: () => () => {},
+  getSelectedKeys: () => EMPTY_TABLE_SELECTION,
+  isSelected: () => false,
+  getFocusedRowKey: () => null,
+  isFocusTarget: () => false,
+  setSelectedKeys: () => {},
+  setFocusedRowKey: () => {},
+  claimFocusedRowKey: () => {},
+};
 
 const TableVariantContext = createContext<TableVariant>("default");
 const TableClassNamesContext = createContext<TableClassNames>({});
 const TableContentContext = createContext<TableContentContextValue>({
   selectionMode: "none",
-  selectedKeys: new Set(),
   onRowSelect: () => {},
-  isRowSelected: () => false,
   sortDescriptor: undefined,
   onSortChange: undefined,
-  focusedRowKey: null,
   setFocusedRowKey: () => {},
   claimFocusedRowKey: () => {},
+  rowStore: noopStore,
 });
 const TableRowContext = createContext<TableRowContextValue | null>(null);
 
@@ -90,6 +102,29 @@ export function useTableContent(): TableContentContextValue {
 
 export function useTableRow(): TableRowContextValue | null {
   return useContext(TableRowContext);
+}
+
+/** Per-row selected boolean — re-renders only when *this* row's selection flips. */
+export function useTableRowIsSelected(id: string | number | undefined): boolean {
+  const { rowStore } = useTableContent();
+  return useSyncExternalStore(
+    rowStore.subscribeSelection,
+    () => (id === undefined ? false : rowStore.isSelected(id)),
+    () => false,
+  );
+}
+
+/** Per-row roving tab-stop — re-renders only when *this* row's focus target flips. */
+export function useTableRowIsFocusTarget(id: string | number | undefined): boolean {
+  const { rowStore, selectionMode } = useTableContent();
+  return useSyncExternalStore(
+    rowStore.subscribeFocus,
+    () =>
+      selectionMode === "none" || id === undefined
+        ? false
+        : rowStore.isFocusTarget(id),
+    () => false,
+  );
 }
 
 export { TableVariantContext, TableContentContext, TableRowContext };

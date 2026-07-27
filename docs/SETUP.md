@@ -38,7 +38,9 @@ npm install burne-ui react-icons
 | `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
 | `react-icons` | `^5.0.0` |
 
-GSAP и `@gsap/react` уже входят в `burne-ui` — отдельно ставить их не нужно.
+`gsap` входит в `burne-ui` как dependency (сейчас бандлится в `dist`). `@gsap/react` / `useGSAP` **не** часть кита — motion в компонентах через `killMotion` + React effects; для своих экранов ставьте `@gsap/react` отдельно при необходимости.
+
+**TODO (разобрать отдельно):** упаковка GSAP — peer/external vs инлайн в бандл, `sideEffects` / lazy `registerPlugin`, см. CODE_REVIEW этап 8.
 
 ---
 
@@ -528,7 +530,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 
 ### Open-after-squeeze
 
-`runOpenAfterSqueeze` (Popover / Dropdown / Dialog / Drawer / Select / ComboBox / AlertDialog) ждёт окончания press-squeeze, затем открывает. Длительность = `interactiveDuration × pressSqueezeDurationFactor` (`motionPressSqueezeTotal()`, дефолт 280 × 1.15 ≈ 322 ms).
+`runOpenAfterSqueeze` (Popover / Dropdown / Dialog / Drawer / Select / ComboBox / AlertDialog) ждёт окончания press-squeeze, затем открывает. Длительность = `interactiveDuration × pressSqueezeDurationFactor` (`motionPressSqueezeTotal()`, дефолт 280 × 1.15 ≈ 322 ms). Механика variant-agnostic (дефолт — standard squeeze); опциональный `runSqueeze` — точка для surface-плагинов (будущий gloss), без ветвления `isGloss` в ядре.
 
 ```ts
 configureMotion({

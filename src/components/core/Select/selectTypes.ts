@@ -142,12 +142,3 @@ export type SelectErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 };
 
 export type UseSelectRootStateProps = SelectProps;
-
-export type RunSelectOpenAfterSqueezeOptions = {
-  anchorRef: React.RefObject<HTMLDivElement | null>;
-  disabled: boolean;
-  isGloss: boolean;
-  groupSegment?: ButtonGroupSegment;
-  setOpen: (open: boolean) => void;
-  onOpened?: () => void;
-};

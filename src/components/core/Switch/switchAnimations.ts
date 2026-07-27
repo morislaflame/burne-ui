@@ -1,4 +1,4 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
@@ -61,7 +61,13 @@ export function useSwitchTrackAnimations({
       }
 
       killMotion(thumb);
-      void gsap.to(thumb, { x: targetX, ...motionSwitchThumb(), overwrite: "auto" });
+      setWillChangeTransform(thumb, true);
+      void gsap.to(thumb, {
+        x: targetX,
+        ...motionSwitchThumb(),
+        overwrite: "auto",
+        onComplete: clearWillChangeOnComplete(thumb),
+      });
     },
     [switchMotionOff, thumbRef],
   );

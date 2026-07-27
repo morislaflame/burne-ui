@@ -98,8 +98,10 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
       onPointerDown: onPointerDownProp,
     });
 
-    const { ripples, rest: triggerChildren } =
-      partitionExpandableTriggerRipple(children);
+    const { ripples, rest: triggerChildren } = useMemo(
+      () => partitionExpandableTriggerRipple(children),
+      [children],
+    );
 
     const gridSlots = useMemo(
       () =>

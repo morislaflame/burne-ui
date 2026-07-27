@@ -64,6 +64,8 @@ export function useListBoxRootState({
     [multiple, setSelectedArr],
   );
 
+  // `activeValue` lives in a separate context so arrow/hover highlight does not
+  // invalidate this value (and re-render every item + layout walk).
   const contextValue = useMemo<ListBoxContextValue>(
     () => ({
       listId,
@@ -71,7 +73,6 @@ export function useListBoxRootState({
       multiple,
       selected,
       selectItem,
-      activeValue,
       setActiveValue,
       showIndicator: selectionIndicator,
       indicatorMode: multiple ? "multi" : "radio",
@@ -79,7 +80,6 @@ export function useListBoxRootState({
       standaloneKeyboard: !isControlledActive,
     }),
     [
-      activeValue,
       disabled,
       isControlledActive,
       listId,
@@ -92,5 +92,5 @@ export function useListBoxRootState({
     ],
   );
 
-  return { listId, contextValue };
+  return { listId, contextValue, activeValue };
 }

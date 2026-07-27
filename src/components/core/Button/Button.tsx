@@ -3,6 +3,7 @@ import {
   cloneElement,
   forwardRef,
   isValidElement,
+  useMemo,
   type MouseEvent,
   type ReactElement,
   type ReactNode,
@@ -193,11 +194,21 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     contentMotionRef: animations.contentMotionRef,
   };
 
-  const hasCompoundContent = buttonHasCompoundPart(contentChildren, "ButtonContent");
-  const hasCompoundLoader = buttonHasCompoundPart(contentChildren, "ButtonLoader");
-  const hasCompoundSuccess = buttonHasCompoundPart(contentChildren, "ButtonSuccess");
-  const hasCompoundError = buttonHasCompoundPart(contentChildren, "ButtonError");
-  const isCompound = hasButtonCompoundChildren(contentChildren);
+  const {
+    hasCompoundContent,
+    hasCompoundLoader,
+    hasCompoundSuccess,
+    hasCompoundError,
+    isCompound,
+  } = useMemo(() => {
+    return {
+      hasCompoundContent: buttonHasCompoundPart(contentChildren, "ButtonContent"),
+      hasCompoundLoader: buttonHasCompoundPart(contentChildren, "ButtonLoader"),
+      hasCompoundSuccess: buttonHasCompoundPart(contentChildren, "ButtonSuccess"),
+      hasCompoundError: buttonHasCompoundPart(contentChildren, "ButtonError"),
+      isCompound: hasButtonCompoundChildren(contentChildren),
+    };
+  }, [contentChildren]);
 
   const inner = (
     <>
@@ -210,9 +221,8 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
         />
       ) : null}
       <ButtonExpandRippleLayer
+        ref={animations.expandRippleLayerRef}
         clipClass={state.clipClass}
-        expandRipples={animations.expandRipples}
-        onDismiss={animations.dismissExpand}
       />
       {resolveButtonInner({
         children: contentChildren,

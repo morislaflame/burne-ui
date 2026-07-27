@@ -5,7 +5,7 @@ import { clampNumber } from "@/components/core/utils/clampNumber";
 import { defaultProgressBarFormatValue, progressBarValueToPercent } from "./progressBarAPI";
 import { PROGRESS_BAR_INDETERMINATE_STATUS_TEXT, progressBarLabelId, resolveProgressBarDescribedBy, resolveProgressBarTrackAria } from "./progressBarA11y";
 import { useOptionalProgressBarFieldContext } from "./progressBarContext";
-import { progressBarFillColorStyle, progressBarFillTargetStyle, progressBarTrackCrossStyle } from "./progressBarStyles";
+import { progressBarFillColorStyle, progressBarTrackCrossStyle } from "./progressBarStyles";
 import type { UseProgressBarTrackStateProps } from "./progressBarTypes";
 
 export function useProgressBarTrackState({
@@ -67,11 +67,6 @@ export function useProgressBarTrackState({
 
   const fillColorStyle = useMemo(() => progressBarFillColorStyle(color), [color]);
 
-  const fillTargetStyle = useMemo(
-    () => progressBarFillTargetStyle({ isHorizontal, percent }),
-    [isHorizontal, percent],
-  );
-
   const setDisplay = fieldCtx?.setDisplay;
 
   useLayoutEffect(() => {
@@ -90,9 +85,9 @@ export function useProgressBarTrackState({
     color,
     indeterminate,
     isHorizontal,
+    percent,
     aria,
     trackCrossStyle,
     fillColorStyle,
-    fillTargetStyle,
   };
 }

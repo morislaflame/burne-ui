@@ -329,6 +329,7 @@ export {
 export {
   ListBox,
   useListBox,
+  useListBoxActiveValue,
   type ListBoxProps,
   type ListBoxSectionProps,
   type ListBoxHeaderProps,

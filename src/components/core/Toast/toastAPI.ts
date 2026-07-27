@@ -12,6 +12,17 @@ export const TOAST_DEFAULT_TIMEOUT_MS = 4000;
 /** Enter slide offset — intentional motion constant (not in `configureMotion`). */
 export const TOAST_ENTRY_OFFSET_PX = 24;
 
+/** Stack container height: front card + peek for visible depth (capped). */
+export function resolveToastStackContainerHeight(
+  frontHeight: number,
+  stackCount: number,
+): number {
+  if (frontHeight <= 0 || stackCount <= 0) return 0;
+  const extraPeek =
+    Math.min(stackCount - 1, TOAST_MAX_VISIBLE - 1) * TOAST_STACK_PEEK_PX;
+  return frontHeight + extraPeek;
+}
+
 export function createToastId(): string {
   return `toast-${Math.random().toString(36).slice(2)}`;
 }

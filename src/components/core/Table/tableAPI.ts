@@ -20,6 +20,16 @@ export function isRowInSelection(selectedKeys: Selection, key: string | number):
   return selectedKeys.has(key);
 }
 
+export function selectionEquals(a: Selection, b: Selection): boolean {
+  if (Object.is(a, b)) return true;
+  if (a === "all" || b === "all") return a === b;
+  if (a.size !== b.size) return false;
+  for (const key of a) {
+    if (!b.has(key)) return false;
+  }
+  return true;
+}
+
 export function toggleSelectionKey({
   selectionMode,
   selectedKeys,

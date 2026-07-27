@@ -37,7 +37,7 @@ export const PROGRESS_BAR_FILL_VERTICAL_CLASS = "inset-x-0 bottom-0";
 export const PROGRESS_BAR_FILL_DEFAULT_COLOR_CLASS = "bg-primary";
 
 export const PROGRESS_BAR_INDETERMINATE_FILL_BASE_CLASS =
-  "absolute rounded-full will-change-transform";
+  "absolute rounded-full";
 
 export const PROGRESS_BAR_INDETERMINATE_FILL_HORIZONTAL_CLASS =
   "inset-y-0 left-0 w-1/4";
@@ -193,19 +193,6 @@ export function progressBarFillColorStyle(color?: string): CSSProperties | undef
   return { background: color };
 }
 
-export function progressBarFillTargetStyle({
-  isHorizontal,
-  percent,
-}: {
-  isHorizontal: boolean;
-  percent: number;
-}): CSSProperties {
-  if (isHorizontal) {
-    return { width: `${percent}%`, height: "100%" };
-  }
-  return { width: "100%", height: `${percent}%` };
-}
-
 export function progressBarDeterminateFillStyle({
   isHorizontal,
   fillColorStyle,
@@ -214,7 +201,9 @@ export function progressBarDeterminateFillStyle({
   fillColorStyle?: CSSProperties;
 }): CSSProperties {
   return {
-    ...(isHorizontal ? { height: "100%" } : { width: "100%" }),
+    width: "100%",
+    height: "100%",
+    transformOrigin: isHorizontal ? "left center" : "bottom center",
     ...fillColorStyle,
   };
 }

@@ -1,4 +1,4 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useMemo, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { Field } from "@/components/core/Field";
@@ -303,8 +303,10 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
     const gapPropSet = gapProp !== undefined;
     const contentGap = gapProp ?? "base";
 
-    const { customArrow, panelChildren } =
-      partitionPopoverContentChildren(children);
+    const { customArrow, panelChildren } = useMemo(
+      () => partitionPopoverContentChildren(children),
+      [children],
+    );
 
     const {
       setPanelRef,

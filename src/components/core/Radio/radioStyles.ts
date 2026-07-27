@@ -26,7 +26,7 @@ export const RADIO_LABEL_CLASS = "inline-flex flex-wrap items-center gap-x-xsmal
 
 export const RADIO_LABEL_COMPOUND_SECONDARY_CLASS = "min-w-0";
 
-export const RADIO_LABEL_MOTION_CLASS = "origin-center will-change-transform";
+export const RADIO_LABEL_MOTION_CLASS = "origin-center";
 
 export const RADIO_LABEL_TEXT_DISABLED_CLASS = "text-muted";
 
@@ -38,7 +38,7 @@ export const RADIO_HINT_DISABLED_CLASS = "text-muted";
 
 export const RADIO_ERROR_DISABLED_CLASS = "text-muted";
 
-export const RADIO_SIMPLE_LABEL_WRAP_CLASS = "origin-center will-change-transform";
+export const RADIO_SIMPLE_LABEL_WRAP_CLASS = "origin-center";
 
 export const RADIO_SIMPLE_LABEL_TEXT_CLASS = "min-w-0";
 

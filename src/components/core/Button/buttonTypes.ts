@@ -103,10 +103,12 @@ export type ButtonSimpleContentProps = {
   children?: ReactNode;
 };
 
+export type ButtonExpandRippleHandle = {
+  push: (tone: "success" | "error", size: number) => void;
+};
+
 export type ButtonExpandRippleLayerProps = {
   clipClass: string;
-  expandRipples: ExpandRipple[];
-  onDismiss: (id: number) => void;
 };
 
 export type UseButtonRootStateProps = Pick<

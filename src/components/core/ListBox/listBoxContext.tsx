@@ -7,6 +7,8 @@ import type {
 } from "./listBoxTypes";
 
 const ListBoxContext = createContext<ListBoxContextValue | null>(null);
+/** Keyboard / pointer "active" option — separate from selection so Items do not all re-render on arrow keys. */
+const ListBoxActiveValueContext = createContext<string | null>(null);
 const ListBoxClassNamesContext = createContext<ListBoxClassNames>({});
 const ListBoxSectionLabelContext = createContext<
   ((id: string | undefined) => void) | null
@@ -24,10 +26,29 @@ export function ListBoxProvider({
   );
 }
 
+export function ListBoxActiveValueProvider({
+  value,
+  children,
+}: {
+  value: string | null;
+  children: ReactNode;
+}) {
+  return (
+    <ListBoxActiveValueContext.Provider value={value}>
+      {children}
+    </ListBoxActiveValueContext.Provider>
+  );
+}
+
 export function useListBox(who: string): ListBoxContextValue {
   const ctx = useContext(ListBoxContext);
   if (!ctx) throw new Error(`${who} must be inside <ListBox>.`);
   return ctx;
+}
+
+/** Active (keyboard/hover) option value. Prefer this over putting `activeValue` in `useListBox`. */
+export function useListBoxActiveValue(): string | null {
+  return useContext(ListBoxActiveValueContext);
 }
 
 export function ListBoxClassNamesProvider({

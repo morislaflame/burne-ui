@@ -62,8 +62,6 @@ export const TOAST_VIEWPORT_BASE_CLASS = "fixed z-toast pointer-events-none";
 
 export const TOAST_STACK_CONTAINER_CLASS = "relative grid";
 
-export const TOAST_STACK_ITEM_CLASS = "will-change-transform";
-
 export const TOAST_SCRIM_BASE_CLASS = "pointer-events-none absolute";
 
 const PLACEMENT_CLASS: Record<ToastPlacement, string> = {

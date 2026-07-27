@@ -105,7 +105,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         onPointerDown={handlePointerDown}
         aria-label={ariaLabel}
         className={cn(
-          "relative shrink-0 origin-center overflow-hidden will-change-transform",
+          "relative shrink-0 origin-center overflow-hidden",
           "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
           SHADOW_LIFT_MOTION_CLASS,
           SIZE_CLASS[size],

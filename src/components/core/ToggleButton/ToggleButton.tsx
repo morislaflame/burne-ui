@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import "@/components/core/utils/glossInteractive.css";
 
@@ -110,8 +110,13 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       roundingClass: state.roundingClass,
     };
 
-    const hasCompoundFill = toggleButtonHasCompoundPart(children, "ToggleButtonFill");
-    const hasCompoundContent = toggleButtonHasCompoundPart(children, "ToggleButtonContent");
+    const { hasCompoundFill, hasCompoundContent } = useMemo(
+      () => ({
+        hasCompoundFill: toggleButtonHasCompoundPart(children, "ToggleButtonFill"),
+        hasCompoundContent: toggleButtonHasCompoundPart(children, "ToggleButtonContent"),
+      }),
+      [children],
+    );
 
     return (
       <ToggleButtonContextProvider value={contextValue}>

@@ -1,11 +1,11 @@
-import { forwardRef, useCallback, useEffect, useId, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
 import { CONTROL_SIZE_LAYOUT, OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
-import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
+import { OptionListItemContextProvider, useOptionListItemContext, type OptionListItemContextValue } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 
 import { LISTBOX_EMPTY_DEFAULT_CHILDREN, listBoxActiveOptionId } from "./listBoxA11y";
@@ -18,8 +18,18 @@ import {
   resolveListBoxIndicatorSize,
   resolveListBoxItemIndicatorClassNames,
 } from "./listBoxAPI";
-import { useListBoxItemAnimations, useListBoxRootGlossRef } from "./listBoxAnimations";
-import { useListBox, useListBoxClassNames, useListBoxSectionLabelRegister, ListBoxSectionLabelProvider } from "./listBoxContext";
+import {
+  useListBoxActiveOptionHighlight,
+  useListBoxItemAnimations,
+  useListBoxRootGlossRef,
+} from "./listBoxAnimations";
+import {
+  useListBox,
+  useListBoxActiveValue,
+  useListBoxClassNames,
+  useListBoxSectionLabelRegister,
+  ListBoxSectionLabelProvider,
+} from "./listBoxContext";
 import { listBoxEmptyClass, listBoxHeaderClass, listBoxHeaderTextClass, listBoxItemClass, listBoxRootClass, listBoxSectionClass, listBoxSeparatorClass } from "./listBoxStyles";
 import type {
   ListBoxEmptyProps,
@@ -57,15 +67,24 @@ export function ListBoxRootShell({
 }: ListBoxRootShellProps) {
   const slotClassNames = useListBoxClassNames();
   const {
-    activeValue,
     setActiveValue,
     selectItem,
     multiple,
     disabled,
     standaloneKeyboard,
   } = useListBox("ListBox");
+  const activeValue = useListBoxActiveValue();
   const isGloss = variant === "gloss";
-  const setRootRef = useListBoxRootGlossRef(isGloss);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const setGlossRef = useListBoxRootGlossRef(isGloss);
+  const setRootRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      rootRef.current = node;
+      setGlossRef(node);
+    },
+    [setGlossRef],
+  );
+  useListBoxActiveOptionHighlight({ listId, activeValue, rootRef });
   const typeaheadRef = useRef(createTypeaheadBufferState());
 
   const handleKeyDown = useCallback(
@@ -312,7 +331,7 @@ export function ListBoxEmpty({
 
 ListBoxEmpty.displayName = "ListBoxEmpty";
 
-export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
+const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
   function ListBoxItem(
     {
       children,
@@ -334,7 +353,6 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       size,
       disabled,
       isSelected,
-      isActive,
       optionId,
       indicatorMode,
       isCompound,
@@ -378,17 +396,29 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       [disabled, onPointerEnter, setActiveValue, value],
     );
 
-    const itemCtx = {
-      showIndicatorSlot,
-      hasHint,
-      hasIcon,
-      selected: isSelected,
-      indicatorMode,
-      disabled,
-      mutedHint: disabled,
-      enableLabelMotion,
-      labelMotionRef,
-    };
+    const itemCtx: OptionListItemContextValue = useMemo(
+      () => ({
+        showIndicatorSlot,
+        hasHint,
+        hasIcon,
+        selected: isSelected,
+        indicatorMode,
+        disabled,
+        mutedHint: disabled,
+        enableLabelMotion,
+        labelMotionRef,
+      }),
+      [
+        disabled,
+        enableLabelMotion,
+        hasHint,
+        hasIcon,
+        indicatorMode,
+        isSelected,
+        labelMotionRef,
+        showIndicatorSlot,
+      ],
+    );
 
     const itemBody = isCompound ? (
       <>{children}</>
@@ -416,7 +446,6 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
             listBoxItemClass({
               size,
               disabled,
-              isActive,
             }),
             optionListItemGridClass(
               hasHint,
@@ -438,6 +467,8 @@ export const ListBoxItem = forwardRef<HTMLButtonElement, ListBoxItemProps>(
     );
   },
 );
+
+export const ListBoxItem = memo(ListBoxItemInner);
 
 ListBoxItem.displayName = "ListBoxItem";
 

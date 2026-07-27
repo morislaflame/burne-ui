@@ -126,13 +126,23 @@ export function AlertDialogHeader({
 }: AlertDialogHeaderProps) {
   const { variant, status, sizePreset } = useAlertDialog();
   const slotClassNames = useAlertDialogClassNames();
-  const compoundHasIndicator = alertDialogHasIndicator(children);
-  const compoundHasClose = alertDialogHasClose(children);
-
-  const gridSlots = useMemo(
-    () => resolveAlertDialogHeaderGridSlots(variant, status, icon, showClose, children),
-    [children, icon, showClose, status, variant],
-  );
+  const { gridSlots, compoundHasIndicator, compoundHasClose } = useMemo(() => {
+    const compoundHasIndicator = alertDialogHasIndicator(children);
+    const compoundHasClose = alertDialogHasClose(children);
+    return {
+      compoundHasIndicator,
+      compoundHasClose,
+      gridSlots: resolveAlertDialogHeaderGridSlots(
+        variant,
+        status,
+        icon,
+        showClose,
+        children,
+        compoundHasIndicator,
+        compoundHasClose,
+      ),
+    };
+  }, [children, icon, showClose, status, variant]);
 
   const headerCtx = useMemo(
     () => ({ variant, status, sizePreset, gridSlots, headerIcon: icon }),

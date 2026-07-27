@@ -171,6 +171,8 @@ configureMotion({
 
 Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKeys`, `onSelectionChange`):
 
+- Per-row `isSelected` / roving focus — через external store + `useSyncExternalStore` (ре-рендер только строк, у которых изменился флаг), не через общий context value с `selectedKeys`
+- `Table.Row` / `Table.Cell` — `memo`
 - Row: `aria-selected` (в `role="grid"`), `bg-default-hover` или gloss tint
 - Cell (toned): `ring-2 ring-inset ring-primary` при selected
 - Checkbox column — через `selectionMode`, без fill animation
@@ -188,7 +190,7 @@ Controlled / uncontrolled через React (`selectedKeys` / `defaultSelectedKey
 |----------|---------|---------------------------|----------------|
 | Chevron rotate | `useChevronRotation` | `interactiveDuration`, `interactiveEase` | `allowsSorting` на Column |
 | Row hover tint | CSS `hoverVariant` / brightness | — | `variant`, `tone` |
-| Selection highlight | React + CSS | — | `selectionMode`, `selectedKeys` |
+| Selection highlight | Store + CSS | — | `selectionMode`, `selectedKeys` |
 
 ## Токены и CSS
 

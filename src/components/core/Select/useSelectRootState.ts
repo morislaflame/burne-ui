@@ -55,12 +55,15 @@ export function useSelectRootState({
   const selectId = idProp ?? `select-${autoId}`;
   const { hintId, errorId, labelId, listId } = selectFieldIds(selectId);
 
-  const isCompound = hasCompoundChildren(children);
-  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
-  const hasHint =
-    hint != null || (isCompound && hasCompoundChild(children, "SelectHint"));
-  const hasError =
-    error != null || (isCompound && hasCompoundChild(children, "SelectError"));
+  const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasHint: hint != null || (compound && hasCompoundChild(children, "SelectHint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "SelectError")),
+    };
+  }, [children, error, hint, label]);
 
   const isControlled = valueProp !== undefined || formBound;
   const [internalValue, setInternalValue] = useState(defaultValue ?? "");

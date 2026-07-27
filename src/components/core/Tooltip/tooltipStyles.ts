@@ -93,7 +93,7 @@ export const TOOLTIP_ARROW_FILL_CLASS: Record<Exclude<TooltipVariant, "gloss">, 
 };
 
 export const TOOLTIP_CONTENT_BASE_CLASS =
-  "pointer-events-none z-tooltip w-max min-w-0 overflow-visible text-left outline-none will-change-transform";
+  "pointer-events-none z-tooltip w-max min-w-0 overflow-visible text-left outline-none";
 
 export const TOOLTIP_CONTENT_INNER_CLASS = "relative overflow-visible";
 

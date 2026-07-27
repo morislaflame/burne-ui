@@ -13,10 +13,10 @@ import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteracti
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { comboBoxTriggerAriaLabel } from "./comboBoxA11y";
-import { runComboBoxOpenAfterSqueeze, useComboBoxOpeningRef } from "./comboBoxAnimations";
 import { useComboBoxClassNames, useComboBoxContext } from "./comboBoxContext";
 import { ComboBoxError, ComboBoxHint } from "./comboBoxFieldParts";
 import { COMBOBOX_CHEVRON_ICON, COMBOBOX_LISTBOX_CLASS, COMBOBOX_POPOVER_BODY_CLASS, COMBOBOX_POPOVER_CLASS, comboBoxInputClass, comboBoxInputGroupClass, comboBoxTriggerClass } from "./comboBoxStyles";
@@ -57,7 +57,7 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
       listId,
     } = ctx;
 
-    const openingRef = useComboBoxOpeningRef();
+    const openingRef = useOpeningRef();
     const isGloss = variant === "gloss";
     const groupSegment = layoutCtx?.segmented
       ? undefined
@@ -81,15 +81,13 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
     );
 
     const openAfterSqueeze = useCallback(() => {
-      runComboBoxOpenAfterSqueeze({
-        anchorRef,
+      runOpenAfterSqueeze({
+        triggerRef: anchorRef,
         disabled,
-        isGloss,
-        groupSegment,
         setOpen,
         openingRef,
       });
-    }, [anchorRef, disabled, groupSegment, isGloss, setOpen, openingRef]);
+    }, [anchorRef, disabled, setOpen, openingRef]);
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLDivElement>) => {

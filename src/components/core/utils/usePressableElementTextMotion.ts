@@ -5,6 +5,14 @@ import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkip
 import { usePrefersReducedMotion } from "./reducedMotion";
 import { getMotionConfig } from "./motionConfig";
 
+/**
+ * Press squeeze (+ optional hover lift) for text-based interactive elements.
+ *
+ * - `hoverLift: false` (default) — only squeezes on press. Used by Checkbox, Radio, Switch, ListBox.
+ * - `hoverLift: true` — lifts on hover and squeezes on press, then restores lift. Used by Link, Tabs.
+ * - `hoverLiftScale: "adaptive"` — size-based lift (Calendar cells/nav); default uses `configureMotion().hoverLiftScale`.
+ */
+
 export type UsePressableElementTextMotionProps<
   EventTarget extends HTMLElement = HTMLElement,
   RefTarget extends HTMLElement = HTMLElement,
@@ -29,17 +37,17 @@ export type UsePressableElementTextMotionProps<
    * Default: `false` (press-only).
    */
   hoverLift?: boolean;
+  /**
+   * Hover lift amplitude when `hoverLift` is true.
+   * - omit / `undefined` — `getMotionConfig().hoverLiftScale`
+   * - `"adaptive"` — size-based (same as bare `animateInteractiveHoverLift`)
+   * - `number` — explicit scale
+   */
+  hoverLiftScale?: number | "adaptive";
   onPointerEnter?: (e: PointerEvent<EventTarget>) => void;
   onPointerLeave?: (e: PointerEvent<EventTarget>) => void;
   onPointerDown?: (e: PointerEvent<EventTarget>) => void;
 };
-
-/**
- * Press squeeze (+ optional hover lift) for text-based interactive elements.
- *
- * - `hoverLift: false` (default) — only squeezes on press. Used by Checkbox, Radio, Switch, ListBox.
- * - `hoverLift: true` — lifts on hover and squeezes on press, then restores lift. Used by Link, Tabs.
- */
 export function usePressableElementTextMotion<
   EventTarget extends HTMLElement = HTMLElement,
   RefTarget extends HTMLElement = HTMLElement,
@@ -48,12 +56,19 @@ export function usePressableElementTextMotion<
   enabled,
   textMotionRef,
   hoverLift = false,
+  hoverLiftScale,
   onPointerEnter,
   onPointerLeave,
   onPointerDown,
 }: UsePressableElementTextMotionProps<EventTarget, RefTarget>) {
   const reduceMotion = usePrefersReducedMotion();
   const hoverInsideRef = useRef(false);
+
+  const resolveLiftScale = useCallback((): number | undefined => {
+    if (hoverLiftScale === "adaptive") return undefined;
+    if (typeof hoverLiftScale === "number") return hoverLiftScale;
+    return getMotionConfig().hoverLiftScale;
+  }, [hoverLiftScale]);
 
   useEffect(() => {
     const el = textMotionRef.current;
@@ -80,9 +95,9 @@ export function usePressableElementTextMotion<
       hoverInsideRef.current = true;
       const el = textMotionRef.current;
       if (!el) return;
-      animateInteractiveHoverLift(el, true, getMotionConfig().hoverLiftScale);
+      animateInteractiveHoverLift(el, true, resolveLiftScale());
     },
-    [enabled, hoverLift, isDisabled, onPointerEnter, textMotionRef],
+    [enabled, hoverLift, isDisabled, onPointerEnter, resolveLiftScale, textMotionRef],
   );
 
   const handlePointerLeave = useCallback(
@@ -93,9 +108,9 @@ export function usePressableElementTextMotion<
       if (shouldSkipInteractiveHoverLift()) return;
       const el = textMotionRef.current;
       if (!el) return;
-      animateInteractiveHoverLift(el, false, getMotionConfig().hoverLiftScale);
+      animateInteractiveHoverLift(el, false, resolveLiftScale());
     },
-    [hoverLift, onPointerLeave, textMotionRef],
+    [hoverLift, onPointerLeave, resolveLiftScale, textMotionRef],
   );
 
   const handlePointerDown = useCallback(
@@ -108,13 +123,13 @@ export function usePressableElementTextMotion<
       if (hoverLift) {
         void animateInteractivePressSqueeze(el, {
           pointerInside: hoverInsideRef.current,
-          liftScale: getMotionConfig().hoverLiftScale,
+          liftScale: resolveLiftScale(),
         });
       } else {
         void animateInteractivePressSqueeze(el);
       }
     },
-    [enabled, hoverLift, isDisabled, onPointerDown, reduceMotion, textMotionRef],
+    [enabled, hoverLift, isDisabled, onPointerDown, reduceMotion, resolveLiftScale, textMotionRef],
   );
 
   return { handlePointerEnter, handlePointerLeave, handlePointerDown };

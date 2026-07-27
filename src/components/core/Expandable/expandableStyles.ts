@@ -24,7 +24,7 @@ export const EXPANDABLE_TRIGGER_DISABLED_CLASS =
 export const EXPANDABLE_TRIGGER_ENABLED_CLASS = "cursor-pointer";
 
 export const EXPANDABLE_TRIGGER_LIFT_BASE_CLASS =
-  "relative z-[1] w-full min-w-0 origin-center will-change-transform";
+  "relative z-[1] w-full min-w-0 origin-center";
 
 /** Compound slots (`Expandable.Content`, `Expandable.Message`) — pass-through grid children. */
 export const EXPANDABLE_COMPOUND_CONTENTS_CLASS = "contents";

@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
 
 import type { TabsOrientation, TabsVariant } from "./tabsTypes";
@@ -60,11 +60,39 @@ function readIndicatorMetrics(
   return readSurfaceIndicatorMetrics(list, tab);
 }
 
-function applyIndicatorStyle(indicator: HTMLElement, metrics: IndicatorMetrics) {
+/** Instant layout box — motion uses compositor transforms only. */
+function applyIndicatorLayout(indicator: HTMLElement, metrics: IndicatorMetrics) {
   indicator.style.left = `${metrics.left}px`;
   indicator.style.top = `${metrics.top}px`;
   indicator.style.width = `${metrics.width}px`;
   indicator.style.height = `${metrics.height}px`;
+}
+
+function clearIndicatorTransform(indicator: HTMLElement) {
+  gsap.set(indicator, {
+    x: 0,
+    y: 0,
+    scaleX: 1,
+    scaleY: 1,
+    transformOrigin: "0 0",
+  });
+}
+
+/** Visual box while a FLIP tween may still be in flight. */
+function readVisualMetrics(
+  indicator: HTMLElement,
+  layout: IndicatorMetrics,
+): IndicatorMetrics {
+  const x = Number(gsap.getProperty(indicator, "x")) || 0;
+  const y = Number(gsap.getProperty(indicator, "y")) || 0;
+  const scaleX = Number(gsap.getProperty(indicator, "scaleX")) || 1;
+  const scaleY = Number(gsap.getProperty(indicator, "scaleY")) || 1;
+  return {
+    left: layout.left + x,
+    top: layout.top + y,
+    width: layout.width * scaleX,
+    height: layout.height * scaleY,
+  };
 }
 
 export function useSlidingTabIndicator(
@@ -77,6 +105,7 @@ export function useSlidingTabIndicator(
   layoutEpoch: number,
 ) {
   const firstLayoutRef = useRef(true);
+  const layoutMetricsRef = useRef<IndicatorMetrics | null>(null);
   const reduceMotionPreferred = usePrefersReducedMotion();
 
   const updateIndicator = useCallback(() => {
@@ -89,28 +118,42 @@ export function useSlidingTabIndicator(
       return;
     }
 
-    const metrics = readIndicatorMetrics(list, activeTab, orientation, variant);
+    const to = readIndicatorMetrics(list, activeTab, orientation, variant);
     const reduceMotion =
       reduceMotionPreferred || !isMotionFeatureEnabled("enableTabsIndicator");
 
     indicator.style.opacity = "1";
 
+    const layout = layoutMetricsRef.current;
+    const from = layout ? readVisualMetrics(indicator, layout) : to;
+
+    killMotion(indicator);
+    applyIndicatorLayout(indicator, to);
+    layoutMetricsRef.current = to;
+
     if (reduceMotion || firstLayoutRef.current) {
-      killMotion(indicator);
-      applyIndicatorStyle(indicator, metrics);
+      clearIndicatorTransform(indicator);
       return;
     }
 
-    const fromLeft = indicator.offsetLeft;
-    const fromTop = indicator.offsetTop;
-    const fromWidth = indicator.offsetWidth;
-    const fromHeight = indicator.offsetHeight;
+    const dx = from.left - to.left;
+    const dy = from.top - to.top;
+    const sx = to.width > 0 ? from.width / to.width : 1;
+    const sy = to.height > 0 ? from.height / to.height : 1;
 
-    killMotion(indicator);
+    setWillChangeTransform(indicator, true);
     gsap.fromTo(
       indicator,
-      { left: fromLeft, top: fromTop, width: fromWidth, height: fromHeight },
-      { ...metrics, ...motionInteractive(), overwrite: "auto" },
+      { x: dx, y: dy, scaleX: sx, scaleY: sy, transformOrigin: "0 0" },
+      {
+        x: 0,
+        y: 0,
+        scaleX: 1,
+        scaleY: 1,
+        ...motionInteractive(),
+        overwrite: "auto",
+        onComplete: clearWillChangeOnComplete(indicator),
+      },
     );
   }, [
     activeValue,

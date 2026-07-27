@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useControllableState } from "@/components/core/utils/useControllableState";
@@ -52,7 +52,7 @@ export function useToggleButtonRootState({
 
   const roundingClass = toggleButtonRoundingClass(groupSegment, size);
 
-  const isCompound = hasToggleButtonCompoundChildren(children);
+  const isCompound = useMemo(() => hasToggleButtonCompoundChildren(children), [children]);
   const contentLayoutClass = !isCompound ? className : undefined;
 
   const handleClick = useCallback(

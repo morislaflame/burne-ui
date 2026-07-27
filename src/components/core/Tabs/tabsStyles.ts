@@ -118,7 +118,7 @@ export const TABS_TAB_AS_CHILD_CLASS = "relative z-[1] shrink-0";
 
 export function tabsTabTextClass(slotClass?: string) {
   return cn(
-    "inline-flex origin-center items-center gap-xsmall will-change-transform",
+    "inline-flex origin-center items-center gap-xsmall",
     slotClass,
   );
 }

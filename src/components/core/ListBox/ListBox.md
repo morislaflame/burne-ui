@@ -71,7 +71,12 @@ import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type Lis
 
 ### `useListBox()`
 
-Контекст внутри `ListBox`: `selected`, `selectItem`, `activeValue`, `showIndicator`, `indicatorMode` (`radio` | `multi`).
+Контекст выбора внутри `ListBox`: `selected`, `selectItem`, `setActiveValue`, `showIndicator`, `indicatorMode` (`radio` | `multi`).  
+`activeValue` вынесен в отдельный контекст (`useListBoxActiveValue`) + подсветка через DOM-атрибут `data-active`, чтобы стрелки/hover не перерендеривали все опции.
+
+### `useListBoxActiveValue()`
+
+Текущее keyboard/hover значение активной опции (`string | null`).
 
 ## variant
 
@@ -124,7 +129,7 @@ Reduced motion: skip GSAP.
 
 ### 4. Active highlight (CSS)
 
-`isActive` (keyboard focus option) → `bg-default-hover` — без GSAP.
+Root синхронизирует атрибут `data-active` на активной опции (`useListBoxActiveOptionHighlight`). Стиль — статический класс `data-active:bg-default-hover` на item (без React `isActive`, без GSAP).
 
 ### Сводка
 

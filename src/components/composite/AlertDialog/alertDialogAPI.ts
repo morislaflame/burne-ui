@@ -110,10 +110,9 @@ export function resolveAlertDialogHeaderGridSlots(
   icon: ReactNode | null | undefined,
   showClose: boolean,
   children: ReactNode,
+  compoundHasIndicator = alertDialogHasIndicator(children),
+  compoundHasClose = alertDialogHasClose(children),
 ): MessageBannerGridSlots {
-  const compoundHasIndicator = alertDialogHasIndicator(children);
-  const compoundHasClose = alertDialogHasClose(children);
-
   return {
     hasIndicator: alertDialogShowsIndicator(variant, status, icon, compoundHasIndicator),
     hasTitle: alertDialogHasTitle(children),

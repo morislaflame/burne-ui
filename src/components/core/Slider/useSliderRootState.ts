@@ -50,10 +50,15 @@ export function useSliderRootState({
     setDisplayState((prev) => (sliderDisplayEqual(prev, next) ? prev : next));
   }, []);
 
-  const isCompound = hasCompoundChildren(children);
-  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
-  const hasHint = hint != null || (isCompound && hasCompoundChild(children, "Slider.Hint"));
-  const hasError = error != null || (isCompound && hasCompoundChild(children, "Slider.Error"));
+  const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasHint: hint != null || (compound && hasCompoundChild(children, "Slider.Hint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "Slider.Error")),
+    };
+  }, [children, error, hint, label]);
 
   const fieldCtx = useMemo<SliderFieldContextValue>(
     () => ({

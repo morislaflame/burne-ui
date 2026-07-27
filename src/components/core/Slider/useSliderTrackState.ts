@@ -512,7 +512,10 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     ],
   );
 
-  const { body: compoundBody, hasCompoundParts } = partitionSliderTrackChildren(children);
+  const { body: compoundBody, hasCompoundParts } = useMemo(
+    () => partitionSliderTrackChildren(children),
+    [children],
+  );
 
   const trackCrossStyle = useMemo(
     () => ({ ...sliderTrackCrossStyle({ isHorizontal, thickness }), ...styleProp }),

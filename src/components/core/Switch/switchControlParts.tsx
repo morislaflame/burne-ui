@@ -101,14 +101,20 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       },
     };
 
-    const { track: compoundTrack } = partitionSwitchControlChildren(children);
+    const { compoundTrack, hasThumbChild } = useMemo(() => {
+      const { track } = partitionSwitchControlChildren(children);
+      return {
+        compoundTrack: track,
+        hasThumbChild: children != null && hasSwitchThumbChild(children),
+      };
+    }, [children]);
     let trackVisual: ReactNode;
 
     if (compoundTrack != null) {
       trackVisual = isValidElement(compoundTrack)
         ? cloneElement(compoundTrack, trackDefaults)
         : compoundTrack;
-    } else if (children != null && hasSwitchThumbChild(children)) {
+    } else if (hasThumbChild) {
       trackVisual = (
         <SwitchTrack {...trackDefaults}>
           <SwitchFill />

@@ -1,7 +1,7 @@
-import { forwardRef, useLayoutEffect, useRef } from "react";
+import { forwardRef, memo, useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 
 import { Text } from "@/components/core/Text";
-import { ensureRippleEase, gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, ensureRippleEase, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { isMotionFeatureEnabled, motionFeedbackExpand } from "@/components/core/utils/motionConfig";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
@@ -12,6 +12,7 @@ import { buttonContentClass, buttonErrorLayerClass, buttonFeedbackExpandRippleCl
 import type {
   ButtonContentProps,
   ButtonErrorProps,
+  ButtonExpandRippleHandle,
   ButtonExpandRippleLayerProps,
   ButtonFeedbackExpandRippleProps,
   ButtonIconCheckProps,
@@ -22,6 +23,7 @@ import type {
   ButtonSpinnerProps,
   ButtonSuccessProps,
   ButtonTextProps,
+  ExpandRipple,
 } from "./buttonTypes";
 
 export function ButtonSpinner({ className }: ButtonSpinnerProps) {
@@ -91,6 +93,7 @@ export function ButtonFeedbackExpandRipple({
       return;
     }
 
+    setWillChangeTransform(el, true);
     const tween = gsap.fromTo(
       el,
       { scale: 0, autoAlpha: 0.5 },
@@ -100,9 +103,9 @@ export function ButtonFeedbackExpandRipple({
         ...motionFeedbackExpand(),
         ease: ensureRippleEase(),
         overwrite: "auto",
-        onComplete: () => {
+        onComplete: clearWillChangeOnComplete(el, () => {
           if (!finished) onDoneRef.current();
-        },
+        }),
       },
     );
 
@@ -293,21 +296,41 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
 
 ButtonError.displayName = "ButtonError";
 
-export function ButtonExpandRippleLayer({
-  clipClass,
-  expandRipples,
-  onDismiss,
-}: ButtonExpandRippleLayerProps) {
-  return (
-    <span className={cn(BUTTON_CLIP_LAYER_CLASS, clipClass)} aria-hidden>
-      {expandRipples.map((rp) => (
-        <ButtonFeedbackExpandRipple
-          key={rp.id}
-          size={rp.size}
-          tone={rp.tone}
-          onDone={() => onDismiss(rp.id)}
-        />
-      ))}
-    </span>
-  );
-}
+export const ButtonExpandRippleLayer = memo(
+  forwardRef<ButtonExpandRippleHandle, ButtonExpandRippleLayerProps>(
+    function ButtonExpandRippleLayer({ clipClass }, ref) {
+      const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
+      const expandId = useRef(0);
+
+      useImperativeHandle(
+        ref,
+        () => ({
+          push(tone, size) {
+            const id = ++expandId.current;
+            setExpandRipples((prev) => [...prev, { id, size, tone }]);
+          },
+        }),
+        [],
+      );
+
+      const onDismiss = useCallback((id: number) => {
+        setExpandRipples((prev) => prev.filter((rp) => rp.id !== id));
+      }, []);
+
+      return (
+        <span className={cn(BUTTON_CLIP_LAYER_CLASS, clipClass)} aria-hidden>
+          {expandRipples.map((rp) => (
+            <ButtonFeedbackExpandRipple
+              key={rp.id}
+              size={rp.size}
+              tone={rp.tone}
+              onDone={() => onDismiss(rp.id)}
+            />
+          ))}
+        </span>
+      );
+    },
+  ),
+);
+
+ButtonExpandRippleLayer.displayName = "ButtonExpandRippleLayer";

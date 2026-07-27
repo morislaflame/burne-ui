@@ -1,7 +1,11 @@
 import "../utils/glossInteractive.css";
 
 import { resolveListBoxAriaLabel } from "./listBoxA11y";
-import { ListBoxClassNamesProvider, ListBoxProvider } from "./listBoxContext";
+import {
+  ListBoxActiveValueProvider,
+  ListBoxClassNamesProvider,
+  ListBoxProvider,
+} from "./listBoxContext";
 import { ListBoxRootShell } from "./listBoxParts";
 import type { ListBoxProps } from "./listBoxTypes";
 import { useListBoxRootState } from "./useListBoxRootState";
@@ -35,7 +39,7 @@ export {
   ListBoxItemIndicator,
 } from "./listBoxParts";
 
-export { useListBox } from "./listBoxContext";
+export { useListBox, useListBoxActiveValue } from "./listBoxContext";
 
 export function ListBoxRoot({
   classNames,
@@ -56,18 +60,19 @@ export function ListBoxRoot({
   "aria-labelledby": ariaLabelledByProp,
   ...rest
 }: ListBoxProps) {
-  const { listId, contextValue } = useListBoxRootState({
-    size,
-    multiple,
-    value,
-    defaultValue,
-    onValueChange,
-    selectionIndicator,
-    disabled,
-    activeValue,
-    onActiveValueChange,
-    listId: listIdProp,
-  });
+  const { listId, contextValue, activeValue: resolvedActiveValue } =
+    useListBoxRootState({
+      size,
+      multiple,
+      value,
+      defaultValue,
+      onValueChange,
+      selectionIndicator,
+      disabled,
+      activeValue,
+      onActiveValueChange,
+      listId: listIdProp,
+    });
 
   const aria = resolveListBoxAriaLabel({
     ariaLabel: ariaLabelProp,
@@ -76,18 +81,20 @@ export function ListBoxRoot({
 
   return (
     <ListBoxProvider value={contextValue}>
-      <ListBoxClassNamesProvider classNames={classNames}>
-        <ListBoxRootShell
-          listId={listId}
-          variant={variant}
-          className={className}
-          ariaLabel={aria["aria-label"]}
-          ariaLabelledBy={aria["aria-labelledby"]}
-          {...rest}
-        >
-          {children}
-        </ListBoxRootShell>
-      </ListBoxClassNamesProvider>
+      <ListBoxActiveValueProvider value={resolvedActiveValue}>
+        <ListBoxClassNamesProvider classNames={classNames}>
+          <ListBoxRootShell
+            listId={listId}
+            variant={variant}
+            className={className}
+            ariaLabel={aria["aria-label"]}
+            ariaLabelledBy={aria["aria-labelledby"]}
+            {...rest}
+          >
+            {children}
+          </ListBoxRootShell>
+        </ListBoxClassNamesProvider>
+      </ListBoxActiveValueProvider>
     </ListBoxProvider>
   );
 }

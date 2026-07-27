@@ -105,7 +105,7 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 **Pointer leave:** scale `1`, тень обратно `sm`.
 
-Класс: `SHADOW_LIFT_MOTION_CLASS` (`animate-shadow will-change-transform`).
+Класс: `SHADOW_LIFT_MOTION_CLASS` (`animate-shadow origin-center`; `will-change` — динамически на время твина).
 
 **Локально:** `hoverLift={false}` — без handlers и `motionClass`.
 

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   isMotionFeatureEnabled,
@@ -10,9 +10,14 @@ import {
 
 import type { UseProgressBarFillAnimationProps } from "./progressBarTypes";
 
+function clampUnit(value: number) {
+  if (Number.isNaN(value)) return 0;
+  return Math.min(1, Math.max(0, value));
+}
+
 export function useProgressBarFillAnimation({
   indeterminate,
-  fillTargetStyle,
+  percent,
   isHorizontal,
 }: UseProgressBarFillAnimationProps) {
   const fillRef = useRef<HTMLSpanElement>(null);
@@ -24,20 +29,19 @@ export function useProgressBarFillAnimation({
     const fill = fillRef.current;
     if (!fill) return;
 
-    const axisProp = isHorizontal ? "width" : "height";
-    const axisValue =
-      fillTargetStyle[axisProp] != null ? String(fillTargetStyle[axisProp]) : "";
+    const targetScale = clampUnit(percent / 100);
+    const origin = isHorizontal ? "left center" : "bottom center";
+    const scaleVars = isHorizontal
+      ? { scaleX: targetScale, scaleY: 1, x: 0, y: 0 }
+      : { scaleX: 1, scaleY: targetScale, x: 0, y: 0 };
+
+    // Full track box; progress is compositor scale only.
+    fill.style.width = "100%";
+    fill.style.height = "100%";
 
     const applyInstant = () => {
       killMotion(fill);
-      fill.style.transform = "";
-      if (isHorizontal) {
-        fill.style.width = axisValue;
-        fill.style.height = "100%";
-      } else {
-        fill.style.width = "100%";
-        fill.style.height = axisValue;
-      }
+      gsap.set(fill, { ...scaleVars, transformOrigin: origin });
     };
 
     if (
@@ -52,19 +56,15 @@ export function useProgressBarFillAnimation({
 
     firstLayoutRef.current = false;
     killMotion(fill);
-    fill.style.transform = "";
+    setWillChangeTransform(fill, true);
     void gsap.to(fill, {
-      [axisProp]: axisValue,
+      ...scaleVars,
+      transformOrigin: origin,
       ...motionProgressFill(),
       overwrite: "auto",
+      onComplete: clearWillChangeOnComplete(fill),
     });
-  }, [
-    fillTargetStyle.height,
-    fillTargetStyle.width,
-    indeterminate,
-    isHorizontal,
-    reduceMotion,
-  ]);
+  }, [indeterminate, isHorizontal, percent, reduceMotion]);
 
   useLayoutEffect(() => {
     if (!indeterminate) return;
@@ -85,6 +85,7 @@ export function useProgressBarFillAnimation({
       if (trackSize <= 0 || fillSize <= 0) return;
 
       killMotion(fill);
+      setWillChangeTransform(fill, true);
 
       void gsap.fromTo(
         fill,

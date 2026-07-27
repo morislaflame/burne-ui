@@ -40,13 +40,15 @@ export function useMeterRootState({
     setDisplayState((prev) => (meterDisplayEqual(prev, next) ? prev : next));
   }, []);
 
-  const isCompound = hasCompoundChildren(children);
-  const hasLabel =
-    label != null || (isCompound && hasCompoundChild(children, "Label"));
-  const hasHint =
-    hint != null || (isCompound && hasCompoundChild(children, "Meter.Hint"));
-  const hasError =
-    error != null || (isCompound && hasCompoundChild(children, "Meter.Error"));
+  const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasHint: hint != null || (compound && hasCompoundChild(children, "Meter.Hint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "Meter.Error")),
+    };
+  }, [children, error, hint, label]);
 
   const fieldCtx = useMemo<MeterFieldContextValue>(
     () => ({

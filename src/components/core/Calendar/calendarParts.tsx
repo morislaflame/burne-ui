@@ -26,7 +26,7 @@ import {
   moveCalendarMonthFocusIndex,
   moveCalendarYearFocusIndex,
 } from "./calendarAPI";
-import { useCalendarInteractiveCellAnimations, useCalendarNavButtonAnimations } from "./calendarAnimations";
+import { useCalendarPressableAnimations } from "./calendarAnimations";
 import { useCalendar, useCalendarClassNames } from "./calendarContext";
 import { CALENDAR_CELL_FILL_CLASS, CALENDAR_CELL_TEXT_CLASS, CALENDAR_CELL_TODAY_DOT_CLASS, CALENDAR_DAY_CELL_LAYER_CLASS, CALENDAR_DAY_CELL_WRAPPER_CLASS, CALENDAR_DAYS_CELL_GRID_CLASS, CALENDAR_DAYS_WEEKDAY_GRID_CLASS, CALENDAR_FOOTER_CLASS, CALENDAR_FOOTER_TODAY_BUTTON_CLASS, CALENDAR_GRID_CLASS, CALENDAR_HEADER_CLASS, CALENDAR_NAV_ICON_CLASS, CALENDAR_RANGE_HALF_FILL_CLASS, CALENDAR_RANGE_HALF_FILL_INITIAL_STYLE, calendarDayEmptyClass, calendarHeaderTitleClass, calendarInteractiveCellClass, calendarInteractiveCellTextVariant, calendarMonthsGridClass, calendarNavButtonClass, calendarRangeHalfFillSideClass, calendarWeekdayLabelClass, calendarYearCellClass, calendarYearsGridClass } from "./calendarStyles";
 import type {
@@ -97,7 +97,7 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
   ) {
     const { navPrevIcon, navNextIcon } = useCalendar();
     const slotClassNames = useCalendarClassNames();
-    const motion = useCalendarNavButtonAnimations(disabled);
+    const motion = useCalendarPressableAnimations(disabled);
     const label = direction === "prev" ? calendarNavBackLabel() : calendarNavForwardLabel();
     const navSlot =
       direction === "prev" ? slotClassNames.navPrev : slotClassNames.navNext;
@@ -105,10 +105,10 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
 
     const setRef = useCallback(
       (node: HTMLButtonElement | null) => {
-        motion.ref.current = node;
+        motion.buttonRef.current = node;
         mergeForwardedRef(ref, node);
       },
-      [motion.ref, ref],
+      [motion.buttonRef, ref],
     );
 
     const defaultIcon =
@@ -216,7 +216,7 @@ const CalendarInteractiveCellInner = forwardRef<
   onMouseLeaveRef.current = onMouseLeave;
 
   const { bindFillRef } = useToggleButtonFillAnimation(selected, fillRef);
-  const motion = useCalendarInteractiveCellAnimations(disabled);
+  const motion = useCalendarPressableAnimations(disabled);
   const slotClassNames = useCalendarClassNames();
 
   const kindSlot =
@@ -230,10 +230,10 @@ const CalendarInteractiveCellInner = forwardRef<
 
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
-      motion.btnRef.current = node;
+      motion.buttonRef.current = node;
       mergeForwardedRef(ref, node);
     },
-    [motion.btnRef, ref],
+    [motion.buttonRef, ref],
   );
 
   const handleClick = useCallback(() => {
@@ -249,10 +249,13 @@ const CalendarInteractiveCellInner = forwardRef<
     [motion],
   );
 
-  const handlePointerLeave = useCallback(() => {
-    onMouseLeaveRef.current?.();
-    motion.handlePointerLeave();
-  }, [motion]);
+  const handlePointerLeave = useCallback(
+    (e: React.PointerEvent<HTMLButtonElement>) => {
+      onMouseLeaveRef.current?.();
+      motion.handlePointerLeave(e);
+    },
+    [motion],
+  );
 
   return (
     <button

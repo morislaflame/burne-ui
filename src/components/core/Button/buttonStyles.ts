@@ -117,7 +117,7 @@ export const BUTTON_CLIP_LAYER_CLASS = "pointer-events-none absolute inset-0 z-0
 export const BUTTON_CONTENT_MOTION_CLASS =
   "relative z-[1] grid w-full min-w-0 place-items-center";
 
-export const BUTTON_CONTENT_MOTION_GROUP_CLASS = "origin-center will-change-transform";
+export const BUTTON_CONTENT_MOTION_GROUP_CLASS = "origin-center";
 
 export const BUTTON_LABEL_LAYER_CLASS =
   "col-start-1 row-start-1 inline-flex w-full min-w-0 items-center justify-center gap-xsmall";
@@ -266,7 +266,7 @@ export function buttonSpinnerClass(size: ComponentSize): string {
 }
 
 export function buttonFeedbackExpandRippleClass(): string {
-  return "pointer-events-none absolute left-1/2 top-1/2 z-0 rounded-full will-change-[transform,opacity]";
+  return "pointer-events-none absolute left-1/2 top-1/2 z-0 rounded-full";
 }
 
 export function buttonSpinnerInnerClass(): string {

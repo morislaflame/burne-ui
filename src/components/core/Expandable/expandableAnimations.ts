@@ -1,10 +1,11 @@
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useCollapsibleHeight, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import type { UseExpandableTriggerMotionProps } from "./expandableTypes";
 
@@ -25,6 +26,19 @@ export function useExpandableTriggerMotion({
     chevronRef,
     () => isMotionFeatureEnabled("enableExpandable"),
   );
+
+  useEffect(() => {
+    const el = liftSpanRef.current;
+    return () => {
+      if (el) killMotion(el);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!disabled) return;
+    const el = liftSpanRef.current;
+    if (el) killMotion(el);
+  }, [disabled]);
 
   const setTriggerRef = useCallback(
     (node: HTMLButtonElement | null) => {

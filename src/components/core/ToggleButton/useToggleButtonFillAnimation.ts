@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 import { prefersReducedMotion, usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { motionSelectionFill, isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 
 /** Marks ToggleButton / Calendar cell fill for SSR CSS in `styles.css`. */
@@ -53,13 +53,27 @@ export function animateToggleButtonFill(
   const fillVars = motionSelectionFill();
 
   if (pressed) {
+    setWillChangeTransform(fill, true);
     gsap.fromTo(
       fill,
       { scale: 0, autoAlpha: 0 },
-      { scale: 1, autoAlpha: 1, ...fillVars, overwrite: "auto" },
+      {
+        scale: 1,
+        autoAlpha: 1,
+        ...fillVars,
+        overwrite: "auto",
+        onComplete: clearWillChangeOnComplete(fill),
+      },
     );
   } else {
-    gsap.to(fill, { scale: 0, autoAlpha: 0, ...fillVars, overwrite: "auto" });
+    setWillChangeTransform(fill, true);
+    gsap.to(fill, {
+      scale: 0,
+      autoAlpha: 0,
+      ...fillVars,
+      overwrite: "auto",
+      onComplete: clearWillChangeOnComplete(fill),
+    });
   }
 }
 

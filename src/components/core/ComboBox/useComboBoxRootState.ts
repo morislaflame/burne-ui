@@ -55,12 +55,15 @@ export function useComboBoxRootState({
   const comboBoxId = idProp ?? `combobox-${autoId}`;
   const { hintId, errorId, labelId, listId } = comboBoxFieldIds(comboBoxId);
 
-  const isCompound = hasCompoundChildren(children);
-  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
-  const hasHint =
-    hint != null || (isCompound && hasCompoundChild(children, "ComboBoxHint"));
-  const hasError =
-    error != null || (isCompound && hasCompoundChild(children, "ComboBoxError"));
+  const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasHint: hint != null || (compound && hasCompoundChild(children, "ComboBoxHint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "ComboBoxError")),
+    };
+  }, [children, error, hint, label]);
 
   const isControlled = valueProp !== undefined || formBound;
   const [internalValue, setInternalValue] = useState(defaultValue ?? "");

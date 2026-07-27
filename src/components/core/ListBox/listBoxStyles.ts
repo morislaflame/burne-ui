@@ -38,7 +38,7 @@ export const LISTBOX_ITEM_INTERACTIVE_CLASS =
 export const LISTBOX_ITEM_DISABLED_CLASS =
   "cursor-not-allowed bg-transparent text-muted opacity-45";
 
-export const LISTBOX_ITEM_ACTIVE_CLASS = "bg-default-hover";
+export const LISTBOX_ITEM_ACTIVE_CLASS = "data-active:bg-default-hover";
 
 export function listBoxRootClass({
   isGloss,
@@ -110,25 +110,28 @@ export function listBoxEmptyClass({
 export function listBoxItemClass({
   size,
   disabled,
-  isActive,
   slotClass,
   className,
 }: {
   size: ListBoxSize;
   disabled: boolean;
-  isActive: boolean;
   slotClass?: string;
   className?: string;
 }): string {
   return cn(
     LISTBOX_ITEM_BASE_CLASS,
     LISTBOX_ITEM_PAD[size],
-    // Active highlight only via `isActive` (pointerenter / keyboard) — CSS :hover
-    // would stick under the cursor and fight aria-activedescendant navigation.
+    // Active highlight: static `data-active:` variant + imperative `data-active`
+    // attribute on the option (root layout effect). Avoids React `isActive` so
+    // arrow/hover does not re-render every item. CSS :hover would stick under
+    // the cursor and fight aria-activedescendant navigation.
     !disabled &&
-      cn(LISTBOX_ITEM_INTERACTIVE_CLASS, SURFACE_COLOR_TRANSITION),
+      cn(
+        LISTBOX_ITEM_INTERACTIVE_CLASS,
+        SURFACE_COLOR_TRANSITION,
+        LISTBOX_ITEM_ACTIVE_CLASS,
+      ),
     disabled && LISTBOX_ITEM_DISABLED_CLASS,
-    isActive && !disabled && LISTBOX_ITEM_ACTIVE_CLASS,
     slotClass,
     className,
   );

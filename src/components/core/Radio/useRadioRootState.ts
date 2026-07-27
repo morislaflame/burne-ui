@@ -60,10 +60,15 @@ export function useRadioRootState(
 
   const inputName = name ?? group?.name;
   const isDisabled = Boolean(disabled ?? group?.disabled);
-  const isCompound = hasCompoundChildren(children);
-  const hasCompoundLabel = isCompound ? hasCompoundChild(children, "RadioLabel") : false;
-  const hasCompoundHint = isCompound ? hasCompoundChild(children, "RadioHint") : false;
-  const hasCompoundError = isCompound ? hasCompoundChild(children, "RadioError") : false;
+  const { isCompound, hasCompoundLabel, hasCompoundHint, hasCompoundError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasCompoundLabel: compound ? hasCompoundChild(children, "RadioLabel") : false,
+      hasCompoundHint: compound ? hasCompoundChild(children, "RadioHint") : false,
+      hasCompoundError: compound ? hasCompoundChild(children, "RadioError") : false,
+    };
+  }, [children]);
   const hasLabel = isCompound ? hasCompoundLabel : Boolean(label);
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
   const enableTextMotion = !isDisabled && (!isCompound || useInlineCompoundMotion);

@@ -27,8 +27,13 @@ export function usePopoverRootState({
   const labelId = popoverLabelId(popoverId);
   const hintId = popoverHintId(popoverId);
 
-  const labelConnected = hasCompoundChild(children, "PopoverTitle");
-  const hintConnected = hasCompoundChild(children, "PopoverDescription");
+  const { labelConnected, hintConnected } = useMemo(
+    () => ({
+      labelConnected: hasCompoundChild(children, "PopoverTitle"),
+      hintConnected: hasCompoundChild(children, "PopoverDescription"),
+    }),
+    [children],
+  );
 
   useEffect(() => {
     if (!open) return;

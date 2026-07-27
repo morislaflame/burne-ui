@@ -20,8 +20,9 @@ import {
 } from "@/components/core/utils/typeahead";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
+
 import { selectActiveOptionId, selectTriggerAriaLabel } from "./selectA11y";
-import { runSelectOpenAfterSqueeze, useSelectOpeningRef } from "./selectAnimations";
 import { selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue, selectTypeaheadLabels } from "./selectAPI";
 import { useSelectClassNames, useSelectContext } from "./selectContext";
 import { SELECT_CHEVRON_ICON, selectTriggerClass, selectTriggerGroupClass, selectValueClass } from "./selectStyles";
@@ -89,7 +90,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       ariaLabelProp ??
       (ariaLabelledBy ? undefined : placeholder || undefined);
 
-    const openingRef = useSelectOpeningRef();
+    const openingRef = useOpeningRef();
     const isGloss = variant === "gloss";
     const groupSegment = layoutCtx?.segmented
       ? undefined
@@ -119,16 +120,14 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
     }, [optionValues, setActiveValue, value, valueRef]);
 
     const openAfterSqueeze = useCallback(() => {
-      runSelectOpenAfterSqueeze({
-        anchorRef,
+      runOpenAfterSqueeze({
+        triggerRef: anchorRef,
         disabled,
-        isGloss,
-        groupSegment,
         setOpen,
         onOpened: finishOpen,
         openingRef,
       });
-    }, [anchorRef, disabled, finishOpen, groupSegment, isGloss, setOpen, openingRef]);
+    }, [anchorRef, disabled, finishOpen, setOpen, openingRef]);
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -218,7 +217,6 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       disabled,
       placeholder: contextPlaceholder,
       size,
-      variant,
       formValueRef,
       formOnBlur,
     } = ctx;
@@ -226,8 +224,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
     const placeholder = placeholderProp ?? contextPlaceholder;
     const typeaheadRef = useRef(createTypeaheadBufferState());
 
-    const openingRef = useSelectOpeningRef();
-    const isGloss = variant === "gloss";
+    const openingRef = useOpeningRef();
 
     const optionsByValue = useMemo(
       () => selectOptionsByValue(options),
@@ -246,15 +243,14 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
     }, [optionValues, setActiveValue, value, valueRef]);
 
     const openAfterSqueeze = useCallback(() => {
-      runSelectOpenAfterSqueeze({
-        anchorRef,
+      runOpenAfterSqueeze({
+        triggerRef: anchorRef,
         disabled,
-        isGloss,
         setOpen,
         onOpened: finishOpen,
         openingRef,
       });
-    }, [anchorRef, disabled, finishOpen, isGloss, setOpen, openingRef]);
+    }, [anchorRef, disabled, finishOpen, setOpen, openingRef]);
 
     const bumpActive = useCallback(
       (delta: number) => {

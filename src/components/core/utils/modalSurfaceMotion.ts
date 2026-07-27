@@ -6,7 +6,7 @@
  * Close: backdrop fades with opacity; panel/surface fades out (autoAlpha) + exit transform.
  */
 
-import { gsap as gsapInstance, killMotion } from "./gsapMotion";
+import { clearWillChangeOnComplete, gsap as gsapInstance, killMotion, setWillChangeTransform } from "./gsapMotion";
 import { prefersReducedMotion } from "./reducedMotion";
 import { isMotionFeatureEnabled } from "./motionConfig";
 
@@ -54,7 +54,12 @@ export function animateModalOpen({
 }): void {
   killMotion(overlay, panel);
   gsapInstance.fromTo(overlay, { opacity: 0 }, { opacity: 1, ...vars });
-  gsapInstance.fromTo(panel, panelFrom, { ...panelTo, ...vars });
+  setWillChangeTransform(panel, true);
+  gsapInstance.fromTo(panel, panelFrom, {
+    ...panelTo,
+    ...vars,
+    onComplete: clearWillChangeOnComplete(panel, vars.onComplete),
+  });
 }
 
 export function animateModalClose({
@@ -71,7 +76,13 @@ export function animateModalClose({
   panelExit?: GsapMotionVars;
 }) {
   killMotion(overlay, panel);
-  const tl = gsapInstance.timeline({ onComplete });
+  setWillChangeTransform(panel, true);
+  const tl = gsapInstance.timeline({
+    onComplete: () => {
+      setWillChangeTransform(panel, false);
+      onComplete();
+    },
+  });
   // opacity, not autoAlpha — visibility:hidden on blur backdrop causes flicker at the end
   tl.to(overlay, { opacity: 0, ...vars }, 0);
   tl.to(panel, { ...panelExit, ...vars }, 0);
@@ -105,7 +116,12 @@ export function animatePortalOpen({
 }): void {
   killMotion(surface);
   preparePortalSurfaceForEnter(surface);
-  gsapInstance.fromTo(surface, from, { ...to, ...vars });
+  setWillChangeTransform(surface, true);
+  gsapInstance.fromTo(surface, from, {
+    ...to,
+    ...vars,
+    onComplete: clearWillChangeOnComplete(surface, vars.onComplete),
+  });
 }
 
 export function animatePortalClose({
@@ -120,12 +136,18 @@ export function animatePortalClose({
   exit?: GsapMotionVars;
 }) {
   killMotion(surface);
+  setWillChangeTransform(surface, true);
   const startOpacity = Number.parseFloat(getComputedStyle(surface).opacity);
   const fromAlpha = Number.isFinite(startOpacity) && startOpacity > 0 ? startOpacity : 1;
   return gsapInstance.fromTo(
     surface,
     { autoAlpha: fromAlpha },
-    { autoAlpha: 0, ...exit, ...vars, onComplete },
+    {
+      autoAlpha: 0,
+      ...exit,
+      ...vars,
+      onComplete: clearWillChangeOnComplete(surface, onComplete ?? vars.onComplete),
+    },
   );
 }
 

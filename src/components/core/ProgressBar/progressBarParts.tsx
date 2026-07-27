@@ -190,7 +190,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       aria,
       trackCrossStyle,
       fillColorStyle,
-      fillTargetStyle,
+      percent,
     } = useProgressBarTrackState({
       value,
       indeterminate,
@@ -206,7 +206,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
 
     const { fillRef, reduceMotion } = useProgressBarFillAnimation({
       indeterminate: isIndeterminate,
-      fillTargetStyle,
+      percent,
       isHorizontal,
     });
 

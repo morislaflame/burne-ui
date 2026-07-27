@@ -128,17 +128,17 @@ Nav buttons: `CALENDAR_NAV_BTN` per size. Weekday labels — uppercase muted `we
   <button class=navNext ref>
 ```
 
-### 1. Nav buttons (`useCalendarNavButtonAnimations`)
+### 1. Nav buttons & cells (`useCalendarPressableAnimations`)
 
-**Pointer enter:** `animateInteractiveHoverLift(el, true)` — scale lift без second-level shadow (1st level).
+Общий хук для nav и day/month/year cells → `usePressableElementTextMotion` с `hoverLift: true` и `hoverLiftScale: "adaptive"` (размер элемента, не фиксированный `hoverLiftScale` из config).
 
-**Pointer leave:** lift reverse.
+**Pointer enter/leave:** `animateInteractiveHoverLift` — scale lift без second-level shadow; динамический `will-change` на время твина (`setWillChangeTransform` / без постоянного `will-change-transform` на ячейках).
 
 **Pointer down:** `animateInteractivePressSqueeze(el, { pointerInside })`.
 
-**Disabled:** handlers no-op.
+**Disabled:** handlers no-op. **Unmount:** `killMotion` из shared hook.
 
-Слоты: `classNames.navPrev`, `navNext`.
+Слоты nav: `classNames.navPrev`, `navNext`.
 
 #### Кастомизация nav/cell interactive
 
@@ -146,7 +146,7 @@ Nav buttons: `CALENDAR_NAV_BTN` per size. Weekday labels — uppercase muted `we
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  hoverLiftScale: 1.03,
+  hoverLiftScale: 1.03, // не влияет на Calendar adaptive lift; для Link/Tabs
   pressSqueezeScale: [1, 0.96, 1],
   interactiveDuration: 280,
   enableHoverLift: true,
@@ -154,11 +154,11 @@ configureMotion({
 });
 ```
 
-**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `prefersReducedMotion()` — без lift/squeeze.
+**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `usePrefersReducedMotion()` — без lift/squeeze.
 
-### 2. Day / month / year cells (`useCalendarInteractiveCellAnimations`)
+### 2. Day / month / year cells
 
-Тот же pipeline что nav: hover lift + press squeeze на `<button>`.
+Тот же `useCalendarPressableAnimations`, что и nav.
 
 `CalendarInteractiveCellInner` объединяет:
 
@@ -170,7 +170,7 @@ configureMotion({
 
 ### 3. Selection fill (`useToggleButtonFillAnimation`)
 
-`cellFill` span — GSAP scale/opacity fill при `selected` / `aria-pressed`:
+`cellFill` span — GSAP scale/opacity fill при `selected` / `aria-pressed` (+ динамический `will-change` на время fill-твина):
 
 - Аналогично `ToggleButton` / `Switch` fill
 - **Не переопределяйте `transform` на `cellFill` в CSS**
@@ -211,8 +211,7 @@ Click title → `days` → `months` → `years`. Только CSS `hover:text-pr
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Nav hover/squeeze | `useCalendarNavButtonAnimations` | `hoverLiftScale`, `pressSqueezeScale` | `disabled` на nav |
-| Cell hover/squeeze | `useCalendarInteractiveCellAnimations` | interactive tokens | `disabled` на day |
+| Nav / cell hover/squeeze | `useCalendarPressableAnimations` | `pressSqueezeScale`, `enableHoverLift` (lift adaptive) | `disabled` |
 | Selected fill | `useToggleButtonFillAnimation` | `enableToggleButtonFill` | `selected` state |
 | Range band fade | `motionContentFade` | `tooltipDuration`, `interactiveEase` | `mode="range"` |
 | Today dot | CSS static | — | `isToday` |

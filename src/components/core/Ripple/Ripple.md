@@ -74,14 +74,15 @@ Simple API — один самозакрывающийся слой без compo
 
 ## Анимации
 
-Реализация: `useConvergeRipples` (state точек) + `ConvergeRippleLayer` / `ConvergeRippleDot` в `utils/pressRipple.tsx`. Easing: `ensureRippleEase()` из `rippleEaseCss`.
+Реализация: host `Ripple` без state + memo `ConvergeRipplePaint` (`useConvergeRipples`) + `ConvergeRippleLayer` / `ConvergeRippleDot` в `utils/pressRipple.tsx`. Push/dismiss ре-рендерят только paint-слой. Easing: `ensureRippleEase()` из `rippleEaseCss`.
 
 **DOM-структура:**
 
 ```
 интерактивный предок (button / a / role=button)
-  └── <span layerRef>           ← pointer-events-none, overflow-hidden
-        └── ConvergeRippleDot[] ← absolute, rounded-full, per click
+  └── <span layerRef>              ← host, pointerdown на предке
+        └── ConvergeRipplePaint    ← useState точек (изолирован)
+              └── ConvergeRippleDot[]
 ```
 
 Слушатель `pointerdown` на **предке**, не на span — координаты через `clientX/Y` относительно области.

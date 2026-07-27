@@ -21,14 +21,14 @@ export function useInputRootState({
   const hintId = fieldHintId(inputId);
   const errorId = fieldErrorId(inputId);
   const labelId = `${inputId}-label`;
-  const isCompound = hasCompoundChildren(children);
-
-  const hasHint =
-    hint != null ||
-    (isCompound && hasCompoundChild(children, "InputHint"));
-  const hasError =
-    error != null ||
-    (isCompound && hasCompoundChild(children, "InputError"));
+  const { isCompound, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasHint: hint != null || (compound && hasCompoundChild(children, "InputHint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "InputError")),
+    };
+  }, [children, error, hint]);
 
   const fieldCtx: InputFieldContextValue = useMemo(
     () => ({

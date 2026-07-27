@@ -1,5 +1,4 @@
 import type {
-  CSSProperties,
   HTMLAttributes,
   ReactNode,
 } from "react";
@@ -118,7 +117,8 @@ export type ProgressBarTrackAriaProps = {
 
 export type UseProgressBarFillAnimationProps = {
   indeterminate: boolean;
-  fillTargetStyle: CSSProperties;
+  /** 0–100 progress for determinate fill scale. */
+  percent: number;
   isHorizontal: boolean;
 };
 

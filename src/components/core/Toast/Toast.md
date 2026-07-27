@@ -137,7 +137,7 @@ Dismiss — из `configureMotion` (`toastDismissDuration`, по умолчан�
 
 ### 4. Высота контейнера стека
 
-`frontHeight` (ResizeObserver на card) + `extraPeek` → GSAP `to(container, { height })` с `motionInteractive()`.
+`ResizeObserver` на card пишет высоту в **ref-`Map`** (без React state). При изменении front card / глубины стека — сразу `GSAP.to(container, { height })` / `style.height` при reduced motion. Viewport не ре-рендерится от RO.
 
 ### 5. Scrim (градиент)
 

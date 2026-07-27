@@ -146,13 +146,3 @@ export type ComboBoxErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 };
 
 export type UseComboBoxRootStateProps = ComboBoxProps;
-
-export type RunComboBoxOpenAfterSqueezeOptions = {
-  anchorRef: React.RefObject<HTMLDivElement | null>;
-  disabled: boolean;
-  isGloss: boolean;
-  groupSegment?: ButtonGroupSegment;
-  setOpen: (open: boolean) => void;
-  onOpened?: () => void;
-  preferStandardSqueeze?: boolean;
-};

@@ -42,7 +42,7 @@ export const DISCLOSURE_TRIGGER_DISABLED_CLASS = "cursor-not-allowed opacity-48"
 export const DISCLOSURE_TRIGGER_ENABLED_CLASS = "cursor-pointer";
 
 export const DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS =
-  "min-w-0 flex-1 origin-center will-change-transform";
+  "min-w-0 flex-1 origin-center";
 
 export const DISCLOSURE_TRIGGER_TITLE_CLASS = "block";
 

@@ -50,6 +50,10 @@ export {
   type HoverShadowConfig,
 } from "@/components/core/utils/hoverInteractiveLift";
 export {
+  useContainerPointerHoverHandlers,
+  type UseContainerPointerHoverHandlersOptions,
+} from "@/components/core/utils/useContainerPointerHoverHandlers";
+export {
   prefersReducedMotion,
   usePrefersReducedMotion,
 } from "@/components/core/utils/reducedMotion";
@@ -68,7 +72,7 @@ export {
   useSecondLevelShadow,
   useSecondLevelShadowContainer,
 } from "@/components/core/utils/useShadowMotion";
-export { gsap, useGSAP, killMotion, ensureRippleEase } from "@/components/core/utils/gsapMotion";
+export { gsap, killMotion, ensureRippleEase } from "@/components/core/utils/gsapMotion";
 export {
   MOTION_CONFIG_DEFAULTS,
   MOTION_CSS_VAR,

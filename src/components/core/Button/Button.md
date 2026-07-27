@@ -222,7 +222,7 @@ configureMotion({
 
 ### 4. Feedback expand ring
 
-После `loading → success|error` — `ButtonFeedbackExpandRipple` из центра кнопки:
+После `loading → success|error` — `ButtonExpandRippleLayer` (свой `useState`, imperative `push`) рендерит `ButtonFeedbackExpandRipple` из центра кнопки; dismiss не ре-рендерит корень Button:
 
 - `fromTo`: `scale: 0, autoAlpha: 0.5` → `scale: 1, autoAlpha: 0`
 - Размер: `centerCoverDiameter(w, h)` — покрывает всю кнопку

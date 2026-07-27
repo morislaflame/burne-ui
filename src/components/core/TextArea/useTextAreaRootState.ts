@@ -21,14 +21,14 @@ export function useTextAreaRootState({
   const hintId = fieldHintId(textareaId);
   const errorId = fieldErrorId(textareaId);
   const labelId = `${textareaId}-label`;
-  const isCompound = hasCompoundChildren(children);
-
-  const hasHint =
-    hint != null ||
-    (isCompound && hasCompoundChild(children, "TextAreaHint"));
-  const hasError =
-    error != null ||
-    (isCompound && hasCompoundChild(children, "TextAreaError"));
+  const { isCompound, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasHint: hint != null || (compound && hasCompoundChild(children, "TextAreaHint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "TextAreaError")),
+    };
+  }, [children, error, hint]);
 
   const fieldCtx: TextAreaFieldContextValue = useMemo(
     () => ({

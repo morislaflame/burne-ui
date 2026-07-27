@@ -70,13 +70,13 @@ const [page, setPage] = useState(1);
 
 ## Layout / responsive
 
-Root — `flex-wrap` + `min-w-0`. На широком контейнере `Summary` слева, `Content` справа (`ms-auto` / `justify-start`). Если ряд не влезает:
+Root — `flex-wrap` + `min-w-0`. На широком контейнере `Summary` слева, `Content` справа (`ms-auto` / `justify-start`). Если ряд Summary+Content не влезает:
 
-1. `Summary` сжимается (`flex-1`, `basis-[12rem]`, текст с `truncate`)
-2. `Content` уходит на следующую строку и/или переносит кнопки внутри `<ol>` (`min-w-0 max-w-full flex-wrap`)
-3. `Item` — `shrink-0`, чтобы переносились целыми контролами
+1. `Summary` сжимается (`flex-1`, `basis-component-xsmall`, текст с `truncate`)
+2. `Content` может уйти на следующую строку; внутри `<ol>` кнопки **не переносятся** — `flex-nowrap` + `overflow-x-auto` (горизонтальный скролл)
+3. `Item` — `shrink-0`, чтобы контролы оставались целыми при скролле
 
-Горизонтальный overflow родителя не должен появляться; отдельно сужать `siblingCount` API не нужно — достаточно CSS wrap.
+Отдельно сужать `siblingCount` API не нужно — на узких контейнерах хватает scroll у Content.
 
 ## Поведение range
 
@@ -110,7 +110,7 @@ Root — `flex-wrap` + `min-w-0`. На широком контейнере `Summ
 
 ### 1. Page flip (`usePaginationFlip`)
 
-На каждый layout pass `Pagination.Content` (`useLayoutEffect`):
+`useLayoutEffect` с зависимостями `page` / `totalPages` / `siblingCount` / `children` (не на каждый рендер Content):
 
 1. Собирает `data-flip-key` у `<li>` children (или `__keyless_N` fallback)
 2. Сравнивает `getBoundingClientRect()` с предыдущим кадром

@@ -112,16 +112,14 @@ Field
 - pointer + focus lift (`onShellPointerEnter/Leave`, `onShellFocusIn/Out`)
 - `data-gloss-disabled` когда disabled
 
-### 3. Open after squeeze (`runComboBoxOpenAfterSqueeze`)
+### 3. Open after squeeze (`runOpenAfterSqueeze`)
 
 **InputGroup `pointerdown`** (когда `!open`, button 0):
 
 ```ts
-runComboBoxOpenAfterSqueeze({
-  anchorRef,
+runOpenAfterSqueeze({
+  triggerRef: anchorRef,
   disabled,
-  isGloss,
-  groupSegment,
   setOpen,
   openingRef,
 });
@@ -129,15 +127,16 @@ runComboBoxOpenAfterSqueeze({
 
 **Input keyboard** (ArrowDown, Enter, Space, printable char):
 
-- Тот же helper с `preferStandardSqueeze: true` для gloss input (стандартный squeeze вместо gloss)
-- `onOpened` → focus input, установка filter/active option
+- Тот же helper + `onOpened` → focus input, установка filter/active option
 
 **Алгоритм:**
 
-1. `openingRef` guard от double-trigger
+1. `openingRef` / `disabled` guard от double-trigger
 2. Reduced motion → `setOpen(true)` сразу
-3. Иначе `animateInteractivePressSqueeze(anchor)` или `animateGlossInteractivePressSqueeze` (только InputGroup click без `preferStandardSqueeze`)
+3. Иначе standard `animateInteractivePressSqueeze(anchor)` (variant-agnostic; gloss surface hover — отдельно)
 4. После Promise → `setOpen(true)`, `onOpened?.()`
+
+Опциональный `runSqueeze` — точка расширения для будущего gloss-плагина.
 
 **Trigger button:** открывает **без** squeeze — `setOpen(true)` + focus (toggle close если уже open).
 
@@ -183,7 +182,7 @@ ListBox items — собственные selection animations (см. ListBox.md)
 |----------|-----|-------------------|------------|
 | Shell hover | `InputGroup` | `enableHoverLift`, `hoverLiftScale` | !gloss, !segment |
 | Gloss shell | `InputGroup` | interactive | variant=gloss |
-| Open squeeze | `runComboBoxOpenAfterSqueeze` | `pressSqueezeScale` | click shell / keyboard |
+| Open squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | click shell / keyboard |
 | Chevron | `ComboBox.Trigger` | `interactiveDuration` | rotate |
 | Popover | `Popover.Content` | `tooltipDuration` | enter/leave |
 | Trigger click open | `ComboBox.Trigger` | — | без squeeze |
@@ -315,9 +314,9 @@ ComboBox/
 ├── index.ts
 ├── comboBoxTypes.ts
 ├── comboBoxStyles.ts
-├── comboBoxAnimations.ts     # runComboBoxOpenAfterSqueeze
 ├── comboBoxParts.tsx         # InputGroup, Input, Trigger, Popover
 ├── useComboBoxRootState.ts
+├── useComboBoxInputState.ts
 ├── comboBoxAPI.ts
 ├── comboBoxA11y.ts
 └── ComboBox.stories.tsx

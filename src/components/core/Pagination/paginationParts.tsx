@@ -138,7 +138,13 @@ PaginationSummary.displayName = "Pagination.Summary";
 export const PaginationContent = forwardRef<HTMLOListElement, PaginationContentProps>(
   function PaginationContent({ className, children, ...rest }, ref) {
     const slotClassNames = usePaginationClassNames();
-    const { setRefs } = usePaginationContentRef(ref);
+    const ctx = useOptionalPagination();
+    const { setRefs } = usePaginationContentRef(ref, {
+      page: ctx?.page,
+      totalPages: ctx?.totalPages,
+      siblingCount: ctx?.siblingCount,
+      children,
+    });
 
     return (
       <ol

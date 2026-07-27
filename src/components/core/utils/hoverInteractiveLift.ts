@@ -3,13 +3,13 @@
  * Hover lift registry matches `Button` (`animateInteractiveHoverLift`, `shouldSkipInteractiveHoverLift`).
  */
 
-import { useEffect, useMemo, type MutableRefObject, type RefObject } from "react";
+import { useCallback, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
-import { gsap, killMotion } from "./gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "./gsapMotion";
 import { getMotionConfig, isMotionFeatureEnabled, motionPressSqueezeTotal } from "./motionConfig";
 import { prefersReducedMotion } from "./reducedMotion";
+import { useContainerPointerHoverHandlers } from "./useContainerPointerHoverHandlers";
 import { SHADOW_CSS_VAR, type ShadowSize } from "@/tokens/shadows";
 import { TOUCH_OR_NARROW_VIEWPORT_MQL } from "@/tokens/breakpoints";
 
@@ -183,11 +183,13 @@ export function animateInteractiveHoverLift(
     ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element))
     : 1;
   const cfg = getMotionConfig();
+  setWillChangeTransform(element, true);
   gsap.to(element, {
     scale: resolvedScale,
     duration: cfg.interactiveDuration / 1000,
     ease: cfg.hoverLiftEase,
     overwrite: "auto",
+    onComplete: clearWillChangeOnComplete(element),
   });
   if (shadow) {
     const idle = shadow.idle ?? shadowNone();
@@ -242,10 +244,14 @@ export function animateInteractivePressSqueeze(
   }
 
   return new Promise((resolve) => {
+    // No `gsap.set(scale)` here: after press→leave, killTweensOf can empty this
+    // timeline so onComplete still fires and would snap over the leave tween
+    // (`scale → 1`). The final `.to` already lands on `releaseScale` when natural.
+    setWillChangeTransform(element, true);
     gsap
       .timeline({
         onComplete: () => {
-          gsap.set(element, { scale: releaseScale });
+          setWillChangeTransform(element, false);
           resolve();
         },
       })
@@ -272,7 +278,7 @@ export function useInteractiveHoverLiftContainerHandlers<
 >(
   liftedRef: RefObject<HTMLElement | null>,
   enabled: boolean,
-  pointerInsideRef?: MutableRefObject<boolean>,
+  pointerInsideRef?: RefObject<boolean>,
   /** Explicit lift scale; `undefined` (default) — adaptive by element size. */
   liftScale?: number,
   shadow?: HoverShadowConfig,
@@ -280,41 +286,27 @@ export function useInteractiveHoverLiftContainerHandlers<
   onPointerOver: (e: ReactPointerEvent<Element>) => void;
   onPointerOut: (e: ReactPointerEvent<Element>) => void;
 } {
-  useEffect(() => {
-    const t = liftedRef.current;
-    return () => {
-      if (t) killMotion(t);
-    };
-  }, [liftedRef]);
+  const onEnter = useCallback(
+    (el: HTMLElement) => {
+      animateInteractiveHoverLift(el, true, liftScale, shadow);
+    },
+    [liftScale, shadow],
+  );
 
-  return useMemo(() => {
-    const onPointerOver = (e: ReactPointerEvent<Element>) => {
-      if (!enabled) return;
-      if (e.defaultPrevented) return;
-      const c = e.currentTarget;
-      if (!(e.target instanceof Node) || !c.contains(e.target)) return;
-      if (!cameFromOutsideContainer(c, e.relatedTarget)) return;
-      if (shouldSkipInteractiveHoverLift()) return;
-      const t = liftedRef.current;
-      if (!t) return;
-      if (pointerInsideRef) pointerInsideRef.current = true;
-      animateInteractiveHoverLift(t, true, liftScale, shadow);
-    };
+  const onLeave = useCallback(
+    (el: HTMLElement) => {
+      animateInteractiveHoverLift(el, false, liftScale, shadow);
+    },
+    [liftScale, shadow],
+  );
 
-    const onPointerOut = (e: ReactPointerEvent<Element>) => {
-      const c = e.currentTarget;
-      const rt = e.relatedTarget;
-      if (rt instanceof Node && c.contains(rt)) return;
-
-      if (pointerInsideRef) pointerInsideRef.current = false;
-      if (!enabled) return;
-      if (shouldSkipInteractiveHoverLift()) return;
-      const t = liftedRef.current;
-      if (!t) return;
-      animateInteractiveHoverLift(t, false, liftScale, shadow);
-    };
-
-    return { onPointerOver, onPointerOut };
-  }, [liftedRef, enabled, pointerInsideRef, liftScale, shadow]);
+  return useContainerPointerHoverHandlers<Element>({
+    enabled,
+    targetRef: liftedRef,
+    pointerInsideRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onEnter,
+    onLeave,
+  });
 }
 

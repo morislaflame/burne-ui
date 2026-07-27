@@ -122,16 +122,16 @@ export const CALENDAR_FOOTER_CLASS =
 
 export const CALENDAR_NAV_BUTTON_CLASS = cn(
   hoverVariant(),
-  "flex shrink-0 origin-center items-center justify-center rounded-base will-change-transform",
+  "flex shrink-0 origin-center items-center justify-center rounded-base",
   "text-muted focus-ring",
   "disabled:cursor-not-allowed disabled:opacity-40",
 );
 
 export const CALENDAR_CELL_BUTTON_CLASS =
-  "group/calendar-cell relative inline-flex origin-center items-center justify-center overflow-hidden outline-none will-change-transform focus-ring rounded-mid";
+  "group/calendar-cell relative inline-flex origin-center items-center justify-center overflow-hidden outline-none focus-ring rounded-mid";
 
 export const CALENDAR_CELL_FILL_CLASS = cn(
-  "pointer-events-none absolute -inset-px z-0 origin-center will-change-transform bg-primary",
+  "pointer-events-none absolute -inset-px z-0 origin-center bg-primary",
   SURFACE_COLOR_TRANSITION,
   "motion-reduce:transition-none group-hover/calendar-cell:bg-primary-hover rounded-mid",
 );

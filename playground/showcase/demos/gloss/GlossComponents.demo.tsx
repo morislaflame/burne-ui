@@ -229,10 +229,10 @@ export function GlossComponentsDemo() {
             </Dropdown.Trigger>
             <Dropdown.Popover>
               <Dropdown.Item value="ru" selection={false}>
-                <Dropdown.Label>Russian</Dropdown.Label>
+                <Dropdown.ItemLabel>Russian</Dropdown.ItemLabel>
               </Dropdown.Item>
               <Dropdown.Item value="en" selection={false}>
-                <Dropdown.Label>English</Dropdown.Label>
+                <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
               </Dropdown.Item>
             </Dropdown.Popover>
           </Dropdown>
@@ -549,14 +549,6 @@ export function GlossComponentsDemo() {
                 Clicks: {cardPressCount}. Hover-lift and squeeze like a button.
               </Card.Description>
             </Card.Header>
-            <Card.Footer className="flex justify-end gap-small">
-              <Button variant="gloss" size="small">
-                Gloss
-              </Button>
-              <Button variant="primary" size="small">
-                Primary
-              </Button>
-            </Card.Footer>
           </Card>
         </div>
       </div>

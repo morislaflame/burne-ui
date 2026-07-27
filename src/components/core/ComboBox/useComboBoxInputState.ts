@@ -3,8 +3,9 @@ import { useCallback, useEffect, useMemo, useRef, type ChangeEvent, type FocusEv
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
+import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
+
 import { comboBoxActiveOptionId } from "./comboBoxA11y";
-import { runComboBoxOpenAfterSqueeze, useComboBoxOpeningRef } from "./comboBoxAnimations";
 import { comboBoxBumpActiveValue, comboBoxFilteredValues, comboBoxFirstEnabledValue, comboBoxLastEnabledValue, comboBoxOptionDisplayString, comboBoxOptionsByValue } from "./comboBoxAPI";
 import { useComboBoxContext } from "./comboBoxContext";
 import type { ComboBoxInputProps } from "./comboBoxTypes";
@@ -42,14 +43,12 @@ export function useComboBoxInputState(
     errorConnected,
     hintId,
     errorId,
-    variant,
     formInputRef,
     formOnBlur,
   } = ctx;
 
-  const openingRef = useComboBoxOpeningRef();
+  const openingRef = useOpeningRef();
   const queuedFilterCharRef = useRef<string | null>(null);
-  const isGloss = variant === "gloss";
   const optionsByValue = useMemo(() => comboBoxOptionsByValue(options), [options]);
   const selectedOption = useMemo(
     () => optionsByValue.get(value),
@@ -85,16 +84,14 @@ export function useComboBoxInputState(
   }, [inputRef, options, setActiveValue, setFilterQuery, value]);
 
   const openAfterSqueeze = useCallback(() => {
-    runComboBoxOpenAfterSqueeze({
-      anchorRef,
+    runOpenAfterSqueeze({
+      triggerRef: anchorRef,
       disabled,
-      isGloss,
       setOpen,
       onOpened: finishOpen,
       openingRef,
-      preferStandardSqueeze: true,
     });
-  }, [anchorRef, disabled, finishOpen, isGloss, openingRef, setOpen]);
+  }, [anchorRef, disabled, finishOpen, openingRef, setOpen]);
 
   const bumpActive = useCallback(
     (delta: number) => {

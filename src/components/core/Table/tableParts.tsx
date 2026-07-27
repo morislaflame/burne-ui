@@ -1,4 +1,4 @@
-import { Children, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+import { Children, forwardRef, isValidElement, memo, useCallback, useLayoutEffect, useMemo, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 
 import {
   columnAriaSort,
@@ -12,7 +12,16 @@ import {
 } from "./tableA11y";
 import { hasTableLabel, resolveColumnSortDirection, resolveNextSortDescriptor, TABLE_ROW_KEY_ATTR, tableBumpRow, tableBumpSortButton, tableSelectableRows, tableSortButtons, TONED_ROW_DEFAULT_TONE } from "./tableAPI";
 import { TableSortChevron } from "./tableAnimations";
-import { TableContentProvider, TableRowProvider, useTableClassNames, useTableContent, useTableRow, useTableVariant } from "./tableContext";
+import {
+  TableContentProvider,
+  TableRowProvider,
+  useTableClassNames,
+  useTableContent,
+  useTableRow,
+  useTableRowIsFocusTarget,
+  useTableRowIsSelected,
+  useTableVariant,
+} from "./tableContext";
 import { TABLE_BODY_EMPTY_CELL_CLASS, TABLE_COLUMN_INNER_CLASS, TABLE_FOOTER_CLASS, TABLE_HEADER_ROW_VARIANT_CLASS, TABLE_SCROLL_CONTAINER_CLASS, tableCellClass, tableColumnClass, tableColumnLabelClass, tableColumnSortButtonClass, tableContentClass, tableRowClass } from "./tableStyles";
 import type {
   TableBodyProps,
@@ -355,7 +364,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 
 TableBody.displayName = "TableBody";
 
-export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
+const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
   { id, tone, children, className, onClick, onKeyDown, ...rest },
   ref,
 ) {
@@ -363,23 +372,17 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function 
   const slotClassNames = useTableClassNames();
   const {
     selectionMode,
-    isRowSelected,
     onRowSelect,
-    focusedRowKey,
     setFocusedRowKey,
     claimFocusedRowKey,
   } = useTableContent();
 
-  const isSelected = id !== undefined ? isRowSelected(id) : false;
+  const isSelected = useTableRowIsSelected(id);
+  const isRovingTarget = useTableRowIsFocusTarget(id);
   const isSelectable = selectionMode !== "none" && id !== undefined;
   const isGrid = tableIsSelectableGrid(selectionMode);
   const isToned = variant === "toned";
   const resolvedTone = tone ?? (isToned ? TONED_ROW_DEFAULT_TONE : undefined);
-  const isRovingTarget =
-    isSelectable &&
-    id !== undefined &&
-    focusedRowKey != null &&
-    String(focusedRowKey) === String(id);
 
   useLayoutEffect(() => {
     if (!isSelectable || id === undefined) return;
@@ -487,9 +490,11 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function 
   );
 });
 
+export const TableRow = memo(TableRowInner);
+
 TableRow.displayName = "TableRow";
 
-export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(function TableCell(
+const TableCellInner = forwardRef<HTMLTableCellElement, TableCellProps>(function TableCell(
   { className, ...rest },
   ref,
 ) {
@@ -514,6 +519,8 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(functi
     />
   );
 });
+
+export const TableCell = memo(TableCellInner);
 
 TableCell.displayName = "TableCell";
 

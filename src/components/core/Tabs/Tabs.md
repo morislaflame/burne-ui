@@ -87,7 +87,7 @@ const [tab, setTab] = useState("profile");
 ```
 <div class=root>
   <div role=tablist class=list ref=listRef>
-    <span class=indicator />              ← GSAP left/top/width/height
+    <span class=indicator />              ← layout left/top/w/h; GSAP x/y/scaleX/scaleY (FLIP)
     <button role=tab>
       <Text ref=motionRef class=tabText>  ← hover squeeze (не selected)
   <div role=tabpanel hidden=...>
@@ -99,10 +99,10 @@ const [tab, setTab] = useState("profile");
 
 1. Находит selected tab в list
 2. Считает metrics (bbox или линия 2px для `default`)
-3. GSAP `fromTo(indicator, metrics, { ...motionInteractive() })`
+3. Ставит layout `left/top/width/height` мгновенно; FLIP через GSAP `x/y/scaleX/scaleY` (`transform-origin: 0 0`) + `motionInteractive()`
 4. `ResizeObserver` на list + tabs → пересчёт
 
-**First layout / reduced motion:** мгновенное позиционирование без tween.
+**First layout / reduced motion:** мгновенный layout + сброс transform, без tween.
 
 #### Кастомизация
 
@@ -215,7 +215,7 @@ Handlers и ARIA merge на child; text motion отключён.
 - Каждый `Tabs.Tab` и `Tabs.Panel` должен иметь уникальный `value`.
 - `disabled` на root блокирует все табы; per-tab — `disabled` на `Tabs.Tab`.
 - Vertical: `orientation="vertical"` + keyboard `ArrowUp`/`ArrowDown`.
-- **Не задавайте `transform` на `indicator`** — GSAP анимирует position/size.
+- **Не задавайте `transform` на `indicator`** — GSAP владеет `x/y/scaleX/scaleY` (FLIP); layout `left/top/width/height` ставится мгновенно.
 - **Порядок мержа:** variant/size → `classNames.slot` → `className` tab/panel.
 
 ## Интеграции

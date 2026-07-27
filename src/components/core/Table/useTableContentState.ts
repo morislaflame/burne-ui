@@ -1,9 +1,66 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
-import { EMPTY_TABLE_SELECTION, isRowInSelection, toggleSelectionKey } from "./tableAPI";
-import type { Selection, SelectionMode, SortDescriptor, TableContentContextValue } from "./tableTypes";
+import { EMPTY_TABLE_SELECTION, selectionEquals, toggleSelectionKey } from "./tableAPI";
+import type {
+  Selection,
+  SelectionMode,
+  SortDescriptor,
+  TableContentContextValue,
+  TableRowSelectionStore,
+} from "./tableTypes";
+
+function createRowSelectionStore(
+  initialSelected: Selection,
+): TableRowSelectionStore {
+  let selectedKeys = initialSelected;
+  let focusedRowKey: string | number | null = null;
+  const selectionListeners = new Set<() => void>();
+  const focusListeners = new Set<() => void>();
+
+  return {
+    subscribeSelection(onStoreChange) {
+      selectionListeners.add(onStoreChange);
+      return () => {
+        selectionListeners.delete(onStoreChange);
+      };
+    },
+    subscribeFocus(onStoreChange) {
+      focusListeners.add(onStoreChange);
+      return () => {
+        focusListeners.delete(onStoreChange);
+      };
+    },
+    getSelectedKeys() {
+      return selectedKeys;
+    },
+    isSelected(key) {
+      return selectedKeys === "all" || selectedKeys.has(key);
+    },
+    getFocusedRowKey() {
+      return focusedRowKey;
+    },
+    isFocusTarget(key) {
+      return focusedRowKey != null && String(focusedRowKey) === String(key);
+    },
+    setSelectedKeys(next) {
+      if (selectionEquals(selectedKeys, next)) return;
+      selectedKeys = next;
+      selectionListeners.forEach((listener) => listener());
+    },
+    setFocusedRowKey(key) {
+      if (focusedRowKey != null && String(focusedRowKey) === String(key)) return;
+      focusedRowKey = key;
+      focusListeners.forEach((listener) => listener());
+    },
+    claimFocusedRowKey(key) {
+      if (focusedRowKey != null) return;
+      focusedRowKey = key;
+      focusListeners.forEach((listener) => listener());
+    },
+  };
+}
 
 export function useTableContentState({
   selectionMode = "none",
@@ -22,11 +79,26 @@ export function useTableContentState({
   defaultSortDescriptor?: SortDescriptor;
   onSortChange?: (descriptor: SortDescriptor) => void;
 }): TableContentContextValue {
-  const [selectedKeys, setSelectedKeys] = useControllableState<Selection>({
-    value: selectedKeysProp,
-    defaultValue: defaultSelectedKeys ?? EMPTY_TABLE_SELECTION,
-    onChange: onSelectionChange,
-  });
+  const storeRef = useRef<TableRowSelectionStore | null>(null);
+  if (storeRef.current == null) {
+    storeRef.current = createRowSelectionStore(
+      selectedKeysProp ?? defaultSelectedKeys ?? EMPTY_TABLE_SELECTION,
+    );
+  }
+  const store = storeRef.current;
+
+  const isControlledSelection = selectedKeysProp !== undefined;
+  const onSelectionChangeRef = useRef(onSelectionChange);
+  onSelectionChangeRef.current = onSelectionChange;
+  const selectionModeRef = useRef(selectionMode);
+  selectionModeRef.current = selectionMode;
+
+  // Controlled: keep the external store in sync without putting `selectedKeys`
+  // into React context (which would re-render every row).
+  useLayoutEffect(() => {
+    if (selectedKeysProp === undefined) return;
+    store.setSelectedKeys(selectedKeysProp);
+  }, [selectedKeysProp, store]);
 
   const [sortDescriptor, setSortDescriptor] = useControllableState<
     SortDescriptor | undefined
@@ -40,53 +112,54 @@ export function useTableContentState({
       : undefined,
   });
 
-  const [focusedRowKey, setFocusedRowKeyState] = useState<string | number | null>(
-    null,
-  );
-
-  const setFocusedRowKey = useCallback((key: string | number) => {
-    setFocusedRowKeyState(key);
-  }, []);
-
-  const claimFocusedRowKey = useCallback((key: string | number) => {
-    setFocusedRowKeyState((prev) => prev ?? key);
-  }, []);
-
-  const isRowSelected = useCallback(
-    (key: string | number) => isRowInSelection(selectedKeys, key),
-    [selectedKeys],
-  );
-
   const onRowSelect = useCallback(
     (key: string | number) => {
-      const next = toggleSelectionKey({ selectionMode, selectedKeys, key });
-      if (next) setSelectedKeys(next);
+      const next = toggleSelectionKey({
+        selectionMode: selectionModeRef.current,
+        selectedKeys: store.getSelectedKeys(),
+        key,
+      });
+      if (!next) return;
+      if (!isControlledSelection) {
+        store.setSelectedKeys(next);
+      }
+      onSelectionChangeRef.current?.(next);
     },
-    [selectedKeys, selectionMode, setSelectedKeys],
+    [isControlledSelection, store],
+  );
+
+  const setFocusedRowKey = useCallback(
+    (key: string | number) => {
+      store.setFocusedRowKey(key);
+    },
+    [store],
+  );
+
+  const claimFocusedRowKey = useCallback(
+    (key: string | number) => {
+      store.claimFocusedRowKey(key);
+    },
+    [store],
   );
 
   return useMemo(
     () => ({
       selectionMode,
-      selectedKeys,
       onRowSelect,
-      isRowSelected,
       sortDescriptor,
       onSortChange: setSortDescriptor,
-      focusedRowKey: selectionMode === "none" ? null : focusedRowKey,
       setFocusedRowKey,
       claimFocusedRowKey,
+      rowStore: store,
     }),
     [
       claimFocusedRowKey,
-      focusedRowKey,
-      isRowSelected,
       onRowSelect,
-      selectedKeys,
       selectionMode,
       setFocusedRowKey,
       setSortDescriptor,
       sortDescriptor,
+      store,
     ],
   );
 }

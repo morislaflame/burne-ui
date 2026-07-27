@@ -109,15 +109,25 @@ export type TableFooterProps = HTMLAttributes<HTMLDivElement>;
 
 export type TableContentContextValue = {
   selectionMode: SelectionMode;
-  selectedKeys: Selection;
   onRowSelect: (key: string | number) => void;
-  isRowSelected: (key: string | number) => boolean;
   sortDescriptor: SortDescriptor | undefined;
   onSortChange: ((d: SortDescriptor) => void) | undefined;
-  /** Roving focus key for selectable grid rows. */
-  focusedRowKey: string | number | null;
   setFocusedRowKey: (key: string | number) => void;
   /** First selectable row claims initial tab stop. */
+  claimFocusedRowKey: (key: string | number) => void;
+  /** External store for per-row selection / roving focus (avoids N-row context churn). */
+  rowStore: TableRowSelectionStore;
+};
+
+export type TableRowSelectionStore = {
+  subscribeSelection: (onStoreChange: () => void) => () => void;
+  subscribeFocus: (onStoreChange: () => void) => () => void;
+  getSelectedKeys: () => Selection;
+  isSelected: (key: string | number) => boolean;
+  getFocusedRowKey: () => string | number | null;
+  isFocusTarget: (key: string | number) => boolean;
+  setSelectedKeys: (next: Selection) => void;
+  setFocusedRowKey: (key: string | number) => void;
   claimFocusedRowKey: (key: string | number) => void;
 };
 

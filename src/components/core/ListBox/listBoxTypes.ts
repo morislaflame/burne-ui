@@ -45,7 +45,6 @@ export type ListBoxContextValue = {
   multiple: boolean;
   selected: Set<string>;
   selectItem: (value: string) => void;
-  activeValue: string | null;
   setActiveValue: (value: string | null) => void;
   showIndicator: boolean;
   indicatorMode: "radio" | "multi";

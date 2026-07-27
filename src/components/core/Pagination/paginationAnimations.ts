@@ -1,12 +1,33 @@
-import { useCallback, useLayoutEffect, useRef, type ForwardedRef } from "react";
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  type ForwardedRef,
+  type ReactNode,
+  type RefObject,
+} from "react";
 
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
 
+export type PaginationFlipIdentity = {
+  /** Current page — primary trigger for FLIP when using `Pagination.Pages`. */
+  page?: number;
+  totalPages?: number;
+  siblingCount?: number;
+  /** Custom Content children — covers compound ranges without `Pagination.Pages`. */
+  children?: ReactNode;
+};
+
+/**
+ * FLIP page-list items when the visible range changes.
+ * Runs only when `page` / list identity changes — not on every Content re-render.
+ */
 export function usePaginationFlip(
-  olRef: React.RefObject<HTMLOListElement | null>,
+  olRef: RefObject<HTMLOListElement | null>,
+  { page, totalPages, siblingCount, children }: PaginationFlipIdentity,
 ) {
   const prevRectsRef = useRef<Map<string, { x: number; y: number }>>(null!);
   if (!prevRectsRef.current) prevRectsRef.current = new Map();
@@ -43,7 +64,7 @@ export function usePaginationFlip(
         const dx = prev.x - pos.x;
         if (Math.abs(dx) > 0.5) {
           killMotion(el);
-          el.style.willChange = "transform";
+          setWillChangeTransform(el, true);
           void gsap.fromTo(
             el,
             { x: dx },
@@ -51,14 +72,13 @@ export function usePaginationFlip(
               x: 0,
               ...motionInteractive(),
               overwrite: "auto",
-              onComplete: () => {
-                el.style.willChange = "";
-              },
+              onComplete: clearWillChangeOnComplete(el),
             },
           );
         }
       } else {
         killMotion(el);
+        setWillChangeTransform(el, true);
         void gsap.fromTo(
           el,
           { autoAlpha: 0, scale: 0.82 },
@@ -67,6 +87,7 @@ export function usePaginationFlip(
             scale: 1,
             ...motionInteractive(),
             overwrite: "auto",
+            onComplete: clearWillChangeOnComplete(el),
           },
         );
       }
@@ -74,7 +95,7 @@ export function usePaginationFlip(
 
     prevRectsRef.current = nextRects;
     firstRunRef.current = false;
-  });
+  }, [olRef, reduceMotionPreferred, page, totalPages, siblingCount, children]);
 
   useLayoutEffect(() => {
     const ol = olRef.current;
@@ -89,6 +110,7 @@ export function usePaginationFlip(
 
 export function usePaginationContentRef(
   forwardedRef: ForwardedRef<HTMLOListElement>,
+  flipIdentity: PaginationFlipIdentity,
 ) {
   const olRef = useRef<HTMLOListElement>(null);
 
@@ -100,7 +122,7 @@ export function usePaginationContentRef(
     [forwardedRef],
   );
 
-  usePaginationFlip(olRef);
+  usePaginationFlip(olRef, flipIdentity);
 
   return { olRef, setRefs };
 }

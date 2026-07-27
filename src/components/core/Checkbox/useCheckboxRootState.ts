@@ -79,10 +79,15 @@ export function useCheckboxRootState(
   });
 
   const isDisabled = Boolean(disabled ?? group?.disabled ?? formBinding.disabled);
-  const isCompound = hasCompoundChildren(children);
-  const hasCompoundLabel = isCompound && hasCompoundChild(children, "Label");
-  const hasCompoundHint = isCompound ? hasCompoundChild(children, "CheckboxHint") : false;
-  const hasCompoundError = isCompound ? hasCompoundChild(children, "CheckboxError") : false;
+  const { isCompound, hasCompoundLabel, hasCompoundHint, hasCompoundError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasCompoundLabel: compound && hasCompoundChild(children, "Label"),
+      hasCompoundHint: compound ? hasCompoundChild(children, "CheckboxHint") : false,
+      hasCompoundError: compound ? hasCompoundChild(children, "CheckboxError") : false,
+    };
+  }, [children]);
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
   const enableTextMotion = !isDisabled && (!isCompound || useInlineCompoundMotion);
   const sz = CHECKBOX_SIZE_LAYOUT[size];

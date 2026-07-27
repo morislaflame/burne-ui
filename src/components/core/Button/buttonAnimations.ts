@@ -1,12 +1,17 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, type MouseEvent } from "react";
 
 import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
 import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
-import { centerCoverDiameter, isButtonAsyncLayerActive } from "./buttonAPI";
-import type { ButtonAsyncLayerKind, ButtonAsyncState, ExpandRipple, UseButtonAnimationsProps } from "./buttonTypes";
+import { isButtonAsyncLayerActive, centerCoverDiameter } from "./buttonAPI";
+import type {
+  ButtonAsyncLayerKind,
+  ButtonAsyncState,
+  ButtonExpandRippleHandle,
+  UseButtonAnimationsProps,
+} from "./buttonTypes";
 import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
 
 const BUTTON_ASYNC_LAYER_INIT_ATTR = "data-button-async-layer-init";
@@ -65,12 +70,10 @@ export function useButtonAnimations({
   const successRef = useRef<HTMLSpanElement>(null);
   const errorRef = useRef<HTMLSpanElement>(null);
 
-  const expandId = useRef(0);
   const prevAsyncRef = useRef<ButtonAsyncState>("idle");
   const prevCrossfadeAsyncRef = useRef<ButtonAsyncState | undefined>(undefined);
   const asyncInFlight = useRef(false);
-
-  const [expandRipples, setExpandRipples] = useState<ExpandRipple[]>([]);
+  const expandRippleLayerRef = useRef<ButtonExpandRippleHandle>(null);
 
   const initialAsyncRef = useRef(asyncState);
 
@@ -91,16 +94,6 @@ export function useButtonAnimations({
     [],
   );
 
-  const pushExpandRipple = useCallback((tone: "success" | "error") => {
-    const el = motionRefs.btnRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const size = centerCoverDiameter(r.width, r.height);
-    const id = ++expandId.current;
-    setExpandRipples((prev) => [...prev, { id, size, tone }]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Shared interactive motion (hover lift, press squeeze, refs merge)
   const motionRefs = useFirstLevelInteractiveMotion({
     isGloss: variant === "gloss",
@@ -112,6 +105,13 @@ export function useButtonAnimations({
     onPointerLeave,
     onPointerDown,
   });
+
+  const pushExpandRipple = useCallback((tone: "success" | "error") => {
+    const el = motionRefs.btnRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    expandRippleLayerRef.current?.push(tone, centerCoverDiameter(r.width, r.height));
+  }, [motionRefs.btnRef]);
 
   // Sync expand ripples push with async state transitions
   useLayoutEffect(() => {
@@ -178,10 +178,6 @@ export function useButtonAnimations({
     }
   }, [asyncState]);
 
-  const dismissExpand = useCallback((id: number) => {
-    setExpandRipples((prev) => prev.filter((rp) => rp.id !== id));
-  }, []);
-
   const createAsyncClickHandler = useCallback(
     (
       onClick: ((e: MouseEvent<HTMLButtonElement>) => void) | undefined,
@@ -223,8 +219,7 @@ export function useButtonAnimations({
     bindLoaderRef,
     bindSuccessRef,
     bindErrorRef,
-    expandRipples,
-    dismissExpand,
+    expandRippleLayerRef,
     pushExpandRipple,
     handlePointerEnter: motionRefs.handlePointerEnter,
     handlePointerLeave: motionRefs.handlePointerLeave,

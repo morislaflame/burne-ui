@@ -66,7 +66,7 @@ export function avatarGroupClass(className?: string): string {
 }
 
 export function avatarGroupItemClass(stackIndex: number, className?: string): string {
-  return cn("relative inline-flex will-change-transform", stackIndex > 0 && "-ml-mid", className);
+  return cn("relative inline-flex", stackIndex > 0 && "-ml-mid", className);
 }
 
 export const AVATAR_GROUP_ITEM_TRANSFORM_ORIGIN = "center bottom";

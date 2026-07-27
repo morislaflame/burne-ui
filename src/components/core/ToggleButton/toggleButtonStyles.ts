@@ -37,7 +37,7 @@ export const TOGGLE_BUTTON_CONTENT_BASE_CLASS =
   "relative z-[1] inline-flex w-full min-w-0 items-center justify-center gap-xsmall";
 
 export const TOGGLE_BUTTON_CONTENT_GROUP_MOTION_CLASS =
-  "origin-center will-change-transform";
+  "origin-center";
 
 export const TOGGLE_BUTTON_ICON_SLOT_CLASS =
   "inline-flex shrink-0 items-center justify-center [&_svg]:size-full";

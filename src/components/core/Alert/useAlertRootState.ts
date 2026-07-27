@@ -65,7 +65,7 @@ export function useAlertRootState({
   const titleId = `${autoId}-title`;
   const descriptionId = `${autoId}-description`;
 
-  const isCompound = hasAlertCompoundChildren(children);
+  const isCompound = useMemo(() => hasAlertCompoundChildren(children), [children]);
   const hasTitle = useMemo(
     () => title != null || alertHasTitle(children),
     [children, title],

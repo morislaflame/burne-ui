@@ -15,7 +15,7 @@ import { animateInteractiveHoverLift, initElementShadow, shadowMid, shadowBase, 
 
 /** Class for JS-animated shadow and scale-lift. */
 export const SHADOW_LIFT_MOTION_CLASS =
-  "animate-shadow will-change-transform origin-center";
+  "animate-shadow origin-center";
 
 /** Hover-only: idle `--shadow-none`, hover `--shadow-base` (Button, ToggleButton). */
 export function firstLevelHoverShadow(): HoverShadowConfig {

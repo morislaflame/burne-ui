@@ -29,7 +29,7 @@ export const SWITCH_LABEL_CLASS = "inline-flex flex-wrap items-center gap-x-xsma
 
 export const SWITCH_LABEL_COMPOUND_SECONDARY_CLASS = "min-w-0";
 
-export const SWITCH_LABEL_MOTION_CLASS = "origin-center will-change-transform";
+export const SWITCH_LABEL_MOTION_CLASS = "origin-center";
 
 export const SWITCH_LABEL_TEXT_CLASS = "font-w-mid";
 
@@ -39,7 +39,7 @@ export const SWITCH_HINT_DISABLED_CLASS = "text-muted";
 
 export const SWITCH_ERROR_DISABLED_CLASS = "text-muted";
 
-export const SWITCH_SIMPLE_LABEL_WRAP_CLASS = "origin-center will-change-transform";
+export const SWITCH_SIMPLE_LABEL_WRAP_CLASS = "origin-center";
 
 export const SWITCH_SIMPLE_LABEL_TEXT_CLASS = "min-w-0 font-w-mid";
 
@@ -67,7 +67,7 @@ export const SWITCH_FILL_COLOR_CLASS = "bg-primary";
 export const SWITCH_FILL_GLOSS_TINT_CLASS = "bg-primary-tint";
 
 export const SWITCH_THUMB_BASE_CLASS =
-  "absolute inset-y-0 left-0 aspect-square h-full w-auto will-change-transform flex";
+  "absolute inset-y-0 left-0 aspect-square h-full w-auto flex";
 
 export const SWITCH_THUMB_GLOSS_CLASS = "z-[2]";
 

@@ -108,22 +108,22 @@ Field
 
 `useGlossFieldShellMotion` — pointer + focus lift на `TriggerGroup`.
 
-### 3. Open after squeeze (`runSelectOpenAfterSqueeze`)
+### 3. Open after squeeze (`runOpenAfterSqueeze`)
 
 **TriggerGroup `pointerdown`** (когда `!open`):
 
 ```ts
-runSelectOpenAfterSqueeze({
-  anchorRef, disabled, isGloss, groupSegment,
+runOpenAfterSqueeze({
+  triggerRef: anchorRef, disabled,
   setOpen, onOpened: finishOpen, openingRef,
 });
 ```
 
-**Select.Value keyboard** (ArrowDown/Up, Enter, Space) — тот же helper без `groupSegment` в squeeze path для gloss (gloss squeeze если gloss && !segment).
+**Select.Value keyboard** (ArrowDown/Up, Enter, Space) — тот же helper.
 
 **Select.Trigger:** открывает **без** squeeze — `setOpen(true)` + focus Value.
 
-Алгоритм: `openingRef` guard → reduced motion → instant open → иначе `animateGlossInteractivePressSqueeze` или `animateInteractivePressSqueeze` → `setOpen(true)` → `onOpened` (focus Value, set active option).
+Алгоритм: `openingRef` / `disabled` guard → reduced motion → instant open → иначе standard `animateInteractivePressSqueeze` → `setOpen(true)` → `onOpened` (focus Value, set active option). Gloss не ветвится здесь (surface hover остаётся в `useGlossFieldShellMotion`); будущий gloss-плагин может передать `runSqueeze`.
 
 ### 4. Chevron rotation
 
@@ -144,7 +144,7 @@ Selection indicator + label press squeeze — см. ListBox.md.
 |----------|-----|-------------------|
 | Shell hover | `TriggerGroup` | `enableHoverLift`, `hoverLiftScale` |
 | Gloss shell | `TriggerGroup` | interactive |
-| Open squeeze | `runSelectOpenAfterSqueeze` | `pressSqueezeScale` |
+| Open squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` |
 | Chevron | `Select.Trigger` | `interactiveDuration` |
 | Popover | `Popover.Content` | `tooltipDuration` |
 | List items | `ListBox.Item` | `pressSqueezeScale` |
@@ -253,8 +253,8 @@ Select/
 ├── index.ts
 ├── selectTypes.ts
 ├── selectStyles.ts
-├── selectAnimations.ts      # runSelectOpenAfterSqueeze
 ├── selectParts.tsx
+├── selectTriggerParts.tsx
 ├── useSelectRootState.ts
 ├── selectAPI.ts
 ├── selectA11y.ts

@@ -10,7 +10,7 @@ export const PAGINATION_SUMMARY_CLASS = "flex min-w-0 flex-1 basis-component-xsm
 export const PAGINATION_SUMMARY_TEXT_CLASS = "min-w-0 truncate text-muted";
 
 export const PAGINATION_CONTENT_CLASS =
-  "m-0 ms-auto flex max-w-full min-w-0 list-none flex-wrap items-center justify-start gap-xsmall p-0";
+  "m-0 ms-auto flex max-w-full min-w-0 list-none flex-nowrap items-center justify-start gap-xsmall overflow-x-auto overscroll-x-contain p-0";
 
 export const PAGINATION_ITEM_CLASS = "flex shrink-0 items-center";
 

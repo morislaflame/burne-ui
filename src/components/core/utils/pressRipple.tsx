@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { memo, useLayoutEffect, useRef } from "react";
 import { PRESS_RIPPLE_DOT_CLASS } from "./pressRippleStyles";
 import type { ConvergeRipple } from "./convergeRippleGeometry";
 import { ensureRippleEase, gsap, killMotion } from "./gsapMotion";
@@ -75,7 +75,7 @@ function ConvergeRippleDot({
   );
 }
 
-export function ConvergeRippleLayer({
+export const ConvergeRippleLayer = memo(function ConvergeRippleLayer({
   ripples,
   tone,
   onDone,
@@ -105,4 +105,4 @@ export function ConvergeRippleLayer({
       ))}
     </>
   );
-}
+});

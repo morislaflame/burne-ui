@@ -1,4 +1,4 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import {
   isMotionFeatureEnabled,
   motionContentFade,
@@ -51,7 +51,14 @@ export function useAvatarGroupItemMotion(wrapRef: RefObject<HTMLDivElement | nul
       el.style.transform = "";
       return;
     }
-    gsap.to(el, { y: 0, scale: 1, ...motionInteractive(), overwrite: "auto" });
+    setWillChangeTransform(el, true);
+    gsap.to(el, {
+      y: 0,
+      scale: 1,
+      ...motionInteractive(),
+      overwrite: "auto",
+      onComplete: clearWillChangeOnComplete(el),
+    });
   }, [reduced, wrapRef]);
 
   const applyLift = useCallback(() => {
@@ -62,11 +69,13 @@ export function useAvatarGroupItemMotion(wrapRef: RefObject<HTMLDivElement | nul
       el.style.transform = `translateY(${AVATAR_GROUP_HOVER_TRANSLATE_Y}px) scale(${AVATAR_GROUP_HOVER_SCALE})`;
       return;
     }
+    setWillChangeTransform(el, true);
     gsap.to(el, {
       y: AVATAR_GROUP_HOVER_TRANSLATE_Y,
       scale: AVATAR_GROUP_HOVER_SCALE,
       ...motionInteractive(),
       overwrite: "auto",
+      onComplete: clearWillChangeOnComplete(el),
     });
   }, [reduced, wrapRef]);
 

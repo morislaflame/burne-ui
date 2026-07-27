@@ -26,12 +26,15 @@ export function useTimeFieldRootState({
   const hintId = fieldHintId(fieldId);
   const errorId = fieldErrorId(fieldId);
   const labelId = `${fieldId}-label`;
-  const isCompound = hasCompoundChildren(children);
-  const hasLabel = label != null || (isCompound && hasCompoundChild(children, "Label"));
-  const hasHint =
-    hint != null || (isCompound && hasCompoundChild(children, "TimeFieldHint"));
-  const hasError =
-    error != null || (isCompound && hasCompoundChild(children, "TimeFieldError"));
+  const { isCompound, hasLabel, hasHint, hasError } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasLabel: label != null || (compound && hasCompoundChild(children, "Label")),
+      hasHint: hint != null || (compound && hasCompoundChild(children, "TimeFieldHint")),
+      hasError: error != null || (compound && hasCompoundChild(children, "TimeFieldError")),
+    };
+  }, [children, error, hint, label]);
 
   const fieldCtx: TimeFieldFieldContextValue = useMemo(
     () => ({

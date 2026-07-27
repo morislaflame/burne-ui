@@ -39,7 +39,7 @@ export const DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS =
   "shrink-0 text-muted icon-base";
 
 export const DROPDOWN_SUB_CONTENT_BASE_CLASS =
-  "fixed z-dropdown-sub outline-none will-change-transform";
+  "fixed z-dropdown-sub outline-none";
 
 export const DROPDOWN_SUB_CONTENT_SURFACE_CLASS =
   "flex max-h-[min(22rem,65vh)] flex-col overflow-y-auto overflow-x-hidden rounded-mid border-token bg-surface p-base text-left shadow-token-mid";

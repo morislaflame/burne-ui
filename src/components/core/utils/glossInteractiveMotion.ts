@@ -3,19 +3,19 @@
  * + gloss box-shadow (elevation, inner glow, press-inset) + decor (shine, conic).
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObject, type Ref } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject, type Ref } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import { gsap, killMotion } from "./gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "./gsapMotion";
 import { getMotionConfig, isMotionFeatureEnabled, motionPressSqueezeTotal } from "./motionConfig";
-import { cameFromOutsideContainer } from "./cameFromOutsideContainer";
 import { resolveAdaptiveHoverLiftScale, resolveAdaptivePressSqueezeScale, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
 import { prefersReducedMotion } from "./reducedMotion";
+import { useContainerPointerHoverHandlers } from "./useContainerPointerHoverHandlers";
 
 const GLOSS_INIT_ATTR = "data-gloss-motion-init";
 
 /** Motion classes without `animate-shadow` — gloss shadows are animated by GSAP, not `--el-shadow`. */
-export const GLOSS_INTERACTIVE_MOTION_CLASS = "will-change-transform origin-center";
+export const GLOSS_INTERACTIVE_MOTION_CLASS = "origin-center";
 
 export type GlossDecorState = "rest" | "hover" | "press";
 
@@ -124,7 +124,13 @@ export function applyGlossInteractiveInstant(element: HTMLElement) {
   });
 }
 
+/**
+ * Document-level singleton: watches `data-theme` on `<html>` and refreshes gloss
+ * inline shadows. Connected only while ≥1 gloss interactive is registered;
+ * disconnected when the last one unmounts (avoids eternal observer + full-doc scans).
+ */
 let glossThemeRefreshObserver: MutationObserver | null = null;
+let glossInteractiveCount = 0;
 
 /** Recalculates inline gloss shadows/decor with current theme CSS tokens. */
 function refreshGlossInteractiveState(element: HTMLElement) {
@@ -172,18 +178,51 @@ function ensureGlossThemeRefreshObserver() {
   });
 }
 
+function disconnectGlossThemeRefreshObserver() {
+  glossThemeRefreshObserver?.disconnect();
+  glossThemeRefreshObserver = null;
+}
+
+function registerGlossInteractive(element: HTMLElement) {
+  if (element.hasAttribute(GLOSS_INIT_ATTR)) return;
+  element.setAttribute(GLOSS_INIT_ATTR, "");
+  glossInteractiveCount += 1;
+  ensureGlossThemeRefreshObserver();
+  applyGlossInteractiveInstant(element);
+}
+
+function unregisterGlossInteractive(element: HTMLElement) {
+  if (!element.hasAttribute(GLOSS_INIT_ATTR)) return;
+  element.removeAttribute(GLOSS_INIT_ATTR);
+  glossInteractiveCount = Math.max(0, glossInteractiveCount - 1);
+  if (glossInteractiveCount === 0) {
+    disconnectGlossThemeRefreshObserver();
+  }
+}
+
 export function createGlossInteractiveRefCallback(
   ref: RefObject<HTMLElement | null>,
   enabled = true,
 ) {
+  let bound: HTMLElement | null = null;
+
   return (node: HTMLElement | null) => {
+    if (bound && bound !== node) {
+      unregisterGlossInteractive(bound);
+      bound = null;
+    }
+
     ref.current = node;
+
     if (node && enabled) {
-      ensureGlossThemeRefreshObserver();
-      if (!node.hasAttribute(GLOSS_INIT_ATTR)) {
-        node.setAttribute(GLOSS_INIT_ATTR, "");
-        applyGlossInteractiveInstant(node);
-      }
+      registerGlossInteractive(node);
+      bound = node;
+      return;
+    }
+
+    if (bound) {
+      unregisterGlossInteractive(bound);
+      bound = null;
     }
   };
 }
@@ -231,12 +270,14 @@ export function animateGlossInteractiveHoverLift(
     ? (liftScale !== undefined ? liftScale : resolveAdaptiveHoverLiftScale(element))
     : 1;
 
+  setWillChangeTransform(element, true);
   gsap.to(element, {
     scale: resolvedScale,
     ...glossSurfaceProps(element, state),
     duration: cfg.interactiveDuration / 1000,
     ease: cfg.hoverLiftEase,
     overwrite: "auto",
+    onComplete: clearWillChangeOnComplete(element),
   });
 }
 
@@ -276,8 +317,14 @@ export function animateGlossInteractivePressSqueeze(
     : 1;
 
   return new Promise<void>((resolve) => {
+    setWillChangeTransform(element, true);
     gsap
-      .timeline({ onComplete: () => resolve() })
+      .timeline({
+        onComplete: () => {
+          setWillChangeTransform(element, false);
+          resolve();
+        },
+      })
       .to(element, {
         ...glossSurfaceProps(element, "press"),
         scale: squeeze,
@@ -315,39 +362,28 @@ export function useGlossInteractiveHandlers(
     if (el) applyGlossInteractiveInstant(el);
   }, [enabled, ref]);
 
-  useEffect(() => {
-    const el = ref.current;
-    return () => {
-      if (el) killMotion(el);
-    };
-  }, [ref]);
-
-  return useMemo(() => {
-    const onPointerOver = (e: ReactPointerEvent<HTMLElement>) => {
-      if (!enabled || e.defaultPrevented) return;
-      const c = e.currentTarget;
-      if (!(e.target instanceof Node) || !c.contains(e.target)) return;
-      if (!cameFromOutsideContainer(c, e.relatedTarget)) return;
-      if (shouldSkipInteractiveHoverLift()) return;
-      const el = ref.current;
-      if (!el) return;
-      if (pointerInsideRef) pointerInsideRef.current = true;
+  const onEnter = useCallback(
+    (el: HTMLElement) => {
       animateGlossInteractiveHoverLift(el, true, liftScale);
-    };
+    },
+    [liftScale],
+  );
 
-    const onPointerOut = (e: ReactPointerEvent<HTMLElement>) => {
-      const c = e.currentTarget;
-      const rt = e.relatedTarget;
-      if (rt instanceof Node && c.contains(rt)) return;
-      if (pointerInsideRef) pointerInsideRef.current = false;
-      if (!enabled || shouldSkipInteractiveHoverLift()) return;
-      const el = ref.current;
-      if (!el) return;
+  const onLeave = useCallback(
+    (el: HTMLElement) => {
       animateGlossInteractiveHoverLift(el, false, liftScale);
-    };
+    },
+    [liftScale],
+  );
 
-    return { onPointerOver, onPointerOut };
-  }, [enabled, liftScale, pointerInsideRef, ref]);
+  return useContainerPointerHoverHandlers({
+    enabled,
+    targetRef: ref,
+    pointerInsideRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onEnter,
+    onLeave,
+  });
 }
 
 /** Field gloss shell: hover + focus-within lift equally. */

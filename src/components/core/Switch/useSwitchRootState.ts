@@ -27,10 +27,15 @@ export function useSwitchRootState(
   const errorId = switchErrorId(switchId);
   const [, setSqueezeToken] = useState(0);
 
-  const isCompound = hasCompoundChildren(children);
-  const hasCompoundHint = isCompound ? hasCompoundChild(children, "Switch.Hint") : false;
-  const hasCompoundError = isCompound ? hasCompoundChild(children, "Switch.Error") : false;
-  const hasCompoundLabel = isCompound ? compoundHasLabel(children) : false;
+  const { isCompound, hasCompoundHint, hasCompoundError, hasCompoundLabel } = useMemo(() => {
+    const compound = hasCompoundChildren(children);
+    return {
+      isCompound: compound,
+      hasCompoundHint: compound ? hasCompoundChild(children, "Switch.Hint") : false,
+      hasCompoundError: compound ? hasCompoundChild(children, "Switch.Error") : false,
+      hasCompoundLabel: compound ? compoundHasLabel(children) : false,
+    };
+  }, [children]);
   const useInlineCompoundMotion = isCompound && compoundUsesInlineMotion(className);
   const hasHint = hint != null;
   const hasError = error != null;

@@ -1,86 +1,25 @@
-import { useCallback, useRef } from "react";
+import { useRef } from "react";
 
-import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
-export function useCalendarNavButtonAnimations(disabled = false) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const hoverInsideRef = useRef(false);
-
-  const handlePointerEnter = useCallback(
-    (e: React.PointerEvent<HTMLButtonElement>) => {
-      if (disabled || e.defaultPrevented) return;
-      hoverInsideRef.current = true;
-      const el = ref.current;
-      if (!el || shouldSkipInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, true);
-    },
-    [disabled],
-  );
-
-  const handlePointerLeave = useCallback(() => {
-    hoverInsideRef.current = false;
-    const el = ref.current;
-    if (!el || shouldSkipInteractiveHoverLift()) return;
-    animateInteractiveHoverLift(el, false);
-  }, []);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLButtonElement>) => {
-      if (disabled || e.defaultPrevented) return;
-      const el = ref.current;
-      if (!el || prefersReducedMotion()) return;
-      void animateInteractivePressSqueeze(el, {
-        pointerInside: hoverInsideRef.current,
-      });
-    },
-    [disabled],
-  );
+/**
+ * Hover lift + press squeeze for Calendar nav buttons and day/month/year cells.
+ * Adaptive lift (element size), shared via `usePressableElementTextMotion`
+ * (includes `killMotion` cleanup on unmount).
+ */
+export function useCalendarPressableAnimations(disabled = false) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { handlePointerEnter, handlePointerLeave, handlePointerDown } =
+    usePressableElementTextMotion<HTMLButtonElement>({
+      isDisabled: disabled,
+      enabled: !disabled,
+      textMotionRef: buttonRef,
+      hoverLift: true,
+      hoverLiftScale: "adaptive",
+    });
 
   return {
-    ref,
-    handlePointerEnter,
-    handlePointerLeave,
-    handlePointerDown,
-  };
-}
-
-export function useCalendarInteractiveCellAnimations(disabled = false) {
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const hoverInsideRef = useRef(false);
-
-  const handlePointerEnter = useCallback(
-    (e: React.PointerEvent<HTMLButtonElement>) => {
-      if (disabled || e.defaultPrevented) return;
-      hoverInsideRef.current = true;
-      const el = btnRef.current;
-      if (!el || shouldSkipInteractiveHoverLift()) return;
-      animateInteractiveHoverLift(el, true);
-    },
-    [disabled],
-  );
-
-  const handlePointerLeave = useCallback(() => {
-    hoverInsideRef.current = false;
-    const el = btnRef.current;
-    if (!el || shouldSkipInteractiveHoverLift()) return;
-    animateInteractiveHoverLift(el, false);
-  }, []);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLButtonElement>) => {
-      if (disabled || e.defaultPrevented) return;
-      const el = btnRef.current;
-      if (!el || prefersReducedMotion()) return;
-      void animateInteractivePressSqueeze(el, {
-        pointerInside: hoverInsideRef.current,
-      });
-    },
-    [disabled],
-  );
-
-  return {
-    btnRef,
+    buttonRef,
     handlePointerEnter,
     handlePointerLeave,
     handlePointerDown,

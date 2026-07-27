@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
@@ -77,7 +77,7 @@ export function useButtonRootState({
     ? buttonGroupRoundingClasses(groupSegment)
     : sizeRounded;
 
-  const isCompound = hasButtonCompoundChildren(children);
+  const isCompound = useMemo(() => hasButtonCompoundChildren(children), [children]);
   const labelLayoutClass = !isCompound ? className : undefined;
 
   const buttonClass = cn(
