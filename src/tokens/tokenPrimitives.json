@@ -7,7 +7,7 @@
     "small": { "size": 0.75, "line": 1 },
     "base": { "size": 0.875, "line": 1.25 },
     "mid": { "size": 1, "line": 1.5 },
-    "large": { "size": 1.25, "line": 1.75 },
+    "large": { "size": 1.15, "line": 1.75 },
     "xlarge": { "size": 1.5, "line": 2 },
     "2xlarge": { "size": 1.875, "line": 2.25 },
     "3xlarge": { "size": 2.25, "line": 2.5 }

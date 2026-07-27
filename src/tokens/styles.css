@@ -348,8 +348,8 @@
   --text-scale-mid: 1rem;
   --text-scale-mid--line-height: calc(1.5rem / 1rem);
 
-  --text-scale-large: 1.25rem;
-  --text-scale-large--line-height: calc(1.75rem / 1.25rem);
+  --text-scale-large: 1.15rem;
+  --text-scale-large--line-height: calc(1.75rem / 1.15rem);
 
   --text-scale-xlarge: 1.5rem;
   --text-scale-xlarge--line-height: calc(2rem / 1.5rem);
