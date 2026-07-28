@@ -78,9 +78,9 @@ type CloseButtonClassNames = {
 |---------|-------------|--------------|-------------|
 | `default` | `bg-surface`, `border-token` | да | `converge-ripple-neutral` |
 | `primary` | `bg-primary` | да | `converge-ripple-primary-fill` |
-| `outline` | прозрачный + `border-token` | да | neutral |
+| `outline` | прозрачный + `border-token` | да | neutral; hover `bg-transparent-hover` |
 | `secondary` | `bg-secondary` | да | neutral |
-| `ghost` | прозрачный | да | neutral |
+| `ghost` | прозрачный | да | neutral; hover `bg-transparent-hover` |
 | `gloss` | `gloss-btn` | нет (gloss-motion) | neutral |
 
 У CloseButton **нет** prop `status` — только variant.

@@ -8,13 +8,16 @@ export const TEXT_COLOR_TRANSITION =
 
 /**
  * Hover background for interactive surfaces.
- * - `default` / `primary` / `secondary` — neutral and brand fills.
+ * - `default` — foreground wash on surface (menus, default Button).
+ * - `transparent-hover` — muted wash on transparent (outline/ghost).
+ * - `primary` / `secondary` — brand / secondary fills.
  * - `danger` … `warning` — tint on transparent/neutral background (Dropdown, ListBox).
  * - `danger-tint-hover` … — stronger hover over an existing `bg-surface-tint-*` surface.
  * - `danger-fill` … `warning-fill` — hover over filled status surface (Button danger, etc.).
  */
 export type HoverVariant =
   | "default"
+  | "transparent-hover"
   | "primary"
   | "secondary"
   | "danger"
@@ -41,6 +44,12 @@ const HOVER_VARIANT_BG: Record<
       "hover:bg-default-hover focus-visible:bg-default-hover",
     "focus-within":
       "hover:bg-default-hover focus-within:bg-default-hover",
+  },
+  "transparent-hover": {
+    "focus-visible":
+      "hover:bg-transparent-hover focus-visible:bg-transparent-hover",
+    "focus-within":
+      "hover:bg-transparent-hover focus-within:bg-transparent-hover",
   },
   primary: {
     "focus-visible":

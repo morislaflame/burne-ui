@@ -1,7 +1,24 @@
 import "../utils/glossInteractive.css";
 
+import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
+
 import { DropdownClassNamesProvider, DropdownIndicatorPreferenceProvider, DropdownProvider } from "./dropdownContext";
-import { DROPDOWN_ROOT_CLASS, DropdownGroup, DropdownItem, DropdownItemHint, DropdownItemIcon, DropdownItemIndicator, DropdownItemLabel, DropdownLabel, DropdownPopover, DropdownSeparator, DropdownSub, DropdownSubContent, DropdownSubTrigger, DropdownTrigger } from "./dropdownParts";
+import {
+  DropdownGroup,
+  DropdownItem,
+  DropdownItemHint,
+  DropdownItemIcon,
+  DropdownItemIndicator,
+  DropdownItemLabel,
+  DropdownLabel,
+  DropdownPopover,
+  DropdownSeparator,
+  DropdownSub,
+  DropdownSubContent,
+  DropdownSubTrigger,
+  DropdownTrigger,
+} from "./dropdownParts";
+import { dropdownRootClass } from "./dropdownStyles";
 import type { DropdownProps } from "./dropdownTypes";
 import { useDropdownRootState } from "./useDropdownRootState";
 
@@ -55,17 +72,17 @@ export function DropdownRoot({
     popoverVariant,
     portalContainer,
   });
+  const inJoinedButtonGroup = useInJoinedButtonGroup();
 
   return (
     <DropdownProvider value={contextValue}>
       <DropdownClassNamesProvider classNames={classNames}>
         <DropdownIndicatorPreferenceProvider value={selectionIndicator}>
           <div
-            className={cn(
-              DROPDOWN_ROOT_CLASS,
-              classNames?.root,
-              className,
-            )}
+            className={dropdownRootClass({
+              inJoinedButtonGroup,
+              className: cn(classNames?.root, className),
+            })}
             {...rest}
           >
             {children}

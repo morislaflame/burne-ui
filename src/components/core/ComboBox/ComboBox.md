@@ -296,7 +296,7 @@ Simple рендерит фиксированную разметку: `Label` →
 - **Trigger:** `tabIndex={-1}`; стилизуйте кнопку, не ломая `focus-ring`.
 - **Popover:** `matchAnchorWidth` включён по умолчанию; `side` / `align` / `offset` — как у Popover; ширину панели меняйте через `popover` / `popoverBody`, не через anchor.
 - **ListBox:** selection-indicator и item motion — в компоненте ListBox; `listBox` слот — обёртка скролла.
-- **ButtonGroup segment:** shell hover на `inputGroup` отключён; rounding задаёт сегмент.
+- **ButtonGroup segment:** shell hover на `inputGroup` отключён; rounding на `InputGroup`, radius bridge на `Field` root (`rounded-[inherit]`).
 - **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти.
 
 ## Доступность

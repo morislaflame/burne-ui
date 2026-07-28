@@ -27,6 +27,7 @@ const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
     keys: [
       "background",
       "surface",
+      "muted",
       "secondary",
       "secondaryForeground",
       "tertiary",
@@ -35,7 +36,7 @@ const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
   },
   {
     label: "content tokens",
-    keys: ["foreground", "muted", "border"],
+    keys: ["foreground", "mutedForeground", "border"],
   },
   {
     label: "primary tokens",
@@ -67,6 +68,7 @@ const COLOR_GROUPS: { label: string; keys: ThemeColorKey[] }[] = [
     keys: [
       "primaryHover",
       "defaultHover",
+      "transparentHover",
       "secondaryHover",
       "tertiaryHover",
       "surfaceTintDanger",

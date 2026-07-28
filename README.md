@@ -224,6 +224,21 @@ import { cn } from "burne-ui";
 
 Функция реэкспортируется из корня пакета; зависимости уже входят в `burne-ui`, отдельно ставить их не обязательно.
 
+## `classNames` и тип `Prettify`
+
+Почти у всех компонентов есть проп **`classNames`** — объект слотов стилей (`root`, `icon`, `label`, …; набор зависит от компонента). Имена слотов совпадают с compound-частями (camelCase); корень — всегда `root`.
+
+В типах слоты описаны именованным алиасом (`BadgeClassNames`, `ButtonClassNames`, …), а на **пропе** обёрнуты в **`Prettify<…>`**, чтобы IDE при наведении показывала развёрнутый объект слотов, а не только имя алиаса:
+
+```ts
+import type { Prettify, BadgeClassNames } from "burne-ui";
+
+// Hover на classNames у <Badge> → { root?: string; text?: string; iconOnly?: string; … }
+<Badge classNames={{ root: "rounded-large", text: "bg-primary/10" }}>Label</Badge>
+```
+
+`Prettify` экспортируется из корня пакета (`src/utils/prettify.ts`). В коде кита на пропах пишите `classNames?: Prettify<XxxClassNames>` (или `Prettify<Pick<XxxClassNames, …>>`); локальные копии `Expand` / `Prettify` не заводить.
+
 ## Поля формы: `Field`, `Hint`, dual API
 
 ### Примитив `Field`
@@ -273,6 +288,8 @@ bun run build    # dist: JS/CJS + ui.css (как burne-ui/styles.css) + типы
 bun run lint
 bun run storybook
 ```
+
+Конвенции компонентов (структура папки, `classNames` + `Prettify`, focus ring, dual API) — в `.cursor/rules/ui-kit.mdc` в корне монорепо.
 
 ## Лицензия
 

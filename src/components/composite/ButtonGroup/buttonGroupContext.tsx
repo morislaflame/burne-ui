@@ -65,6 +65,13 @@ export function useOptionalButtonGroupLayout() {
   return useContext(ButtonGroupLayoutContext);
 }
 
+/** True when this tree is a joined (non-`segmented`) ButtonGroup segment slot. */
+export function useInJoinedButtonGroup(): boolean {
+  const layoutCtx = useOptionalButtonGroupLayout();
+  const groupCtx = useOptionalButtonGroupSegment();
+  return Boolean(groupCtx && !layoutCtx?.segmented);
+}
+
 export function ButtonGroupClassNamesProvider({
   classNames,
   children,

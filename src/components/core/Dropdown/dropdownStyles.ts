@@ -1,6 +1,7 @@
 import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
 import { OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
+import { BUTTON_GROUP_RADIUS_BRIDGE_CLASS } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { Prettify } from "@/utils/prettify";
 
 import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
@@ -14,6 +15,20 @@ import type {
 import { cn } from "@/utils/cn";
 
 export const DROPDOWN_ROOT_CLASS = "relative inline-flex";
+
+export function dropdownRootClass({
+  inJoinedButtonGroup,
+  className,
+}: {
+  inJoinedButtonGroup?: boolean;
+  className?: string;
+} = {}): string {
+  return cn(
+    DROPDOWN_ROOT_CLASS,
+    inJoinedButtonGroup && BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
+    className,
+  );
+}
 
 export const DROPDOWN_TRIGGER_CLASS = "inline-flex outline-none focus-ring";
 

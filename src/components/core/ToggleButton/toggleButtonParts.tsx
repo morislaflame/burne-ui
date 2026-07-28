@@ -22,6 +22,7 @@ export const ToggleButtonFill = forwardRef<HTMLSpanElement, ToggleButtonFillProp
         className={toggleButtonFillClass({
           fillColor: ctx.fillColor,
           pressed: ctx.pressed,
+          variant: ctx.variant,
           roundingClass: ctx.roundingClass,
           slotClass: cn(slotClassNames.fill, className),
         })}

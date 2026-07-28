@@ -22,5 +22,6 @@ export {
   ButtonGroupClassNamesProvider,
   useOptionalButtonGroupLayout,
   useOptionalButtonGroupSegment,
+  useInJoinedButtonGroup,
   useButtonGroupClassNames,
 } from "./buttonGroupContext";

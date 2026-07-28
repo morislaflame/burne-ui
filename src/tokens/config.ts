@@ -69,6 +69,7 @@ export const tokensConfig = {
     "color-primary-foreground": "color-primary-foreground",
     "color-primary-hover": "color-primary-hover",
     "color-default-hover": "color-default-hover",
+    "color-transparent-hover": "color-transparent-hover",
     "color-primary-tint": "color-primary-tint",
     "color-primary-tint-strong": "color-primary-tint-strong",
     "color-indicator": "color-indicator",
@@ -164,6 +165,7 @@ export const burneIconScale = [
  */
 export const burneTextScale = [
   "small",
+  "base",
   "mid",
   "xsmall",
   "accent-header",

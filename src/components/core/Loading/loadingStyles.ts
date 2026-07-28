@@ -79,7 +79,7 @@ export const LOADING_DOTS_LAYOUT: Record<LoadingSize, LoadingDotsLayout> = {
 export const LOADING_DOTS_COLOR: Record<LoadingColor, string> = {
   primary: "bg-primary",
   foreground: "bg-foreground",
-  muted: "bg-muted",
+  muted: "bg-muted-foreground",
   secondary: "bg-primary",
   danger: "bg-danger",
   success: "bg-success",

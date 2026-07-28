@@ -161,11 +161,11 @@ export function buttonHoverVariant(variant: ButtonVariant, status: ButtonStatus)
       case "primary":
         return "primary";
       case "outline":
-        return "default";
+        return "transparent-hover";
       case "secondary":
         return "secondary";
       case "ghost":
-        return "default";
+        return "transparent-hover";
       case "gloss":
         return "default";
     }

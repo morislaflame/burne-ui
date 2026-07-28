@@ -31,6 +31,7 @@ export type ToggleButtonClassNames = {
 
 export type ToggleButtonContextValue = {
   size: ToggleButtonSize;
+  variant: ToggleButtonVariant;
   groupSegment: ButtonGroupSegment | undefined;
   contentMotionRef: RefObject<HTMLSpanElement | null>;
   bindFillRef: (node: HTMLSpanElement | null) => void;

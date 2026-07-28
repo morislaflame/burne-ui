@@ -66,6 +66,10 @@
 
 ### Added
 
+- Публичный тип **`Prettify<T>`** (`burne-ui`) — на пропах `classNames?: Prettify<XxxClassNames>`, чтобы IDE hover показывал слоты, а не только алиас.
+- Токен **`--color-transparent-hover`** / `bg-transparent-hover` — hover для `outline` / `ghost` (Button, CloseButton, ToggleButton); `default-hover` остаётся для surface/menus.
+- Токен **`--color-muted-foreground`** — текст на muted-поверхностях; утилита **`text-muted`** читает его (а не `--color-muted`). `--color-muted` — muted surface (`bg-muted`).
+- `Text`: `variant` мапится на утилиты `text-*` (не `[font-size:…]`), чтобы `className` / `classNames` с `text-large` и т.п. корректно twMerge’ились; `@utility text-*` уважают `--tw-leading` / `--tw-font-weight`.
 - `BurneThemeConfig.customTokens` для проектных CSS-переменных, mode-specific значений и metadata автоматических контролов.
 - Theme runtime preview API (`useBurneThemeRuntime`) для отдельного пакета `burne-ui-devtools`.
 - Публичный примитив **`Field`** (`Field`, `Field.Hint`, `Field.Label`).
@@ -78,7 +82,11 @@
 
 ### Changed
 
+- **`--color-muted`** — теперь muted surface (`bg-muted`); прежние серые значения текста переехали в **`--color-muted-foreground`**. Класс **`text-muted`** → `color: var(--color-muted-foreground)`. Light muted surface: `12%` foreground (dark: `6%`).
+- Hover outline/ghost: **`--color-surface-transparent`** → **`--color-transparent-hover`** (`bg-transparent-hover`, theme key `transparentHover`; mix `muted 70%` + transparent).
 - Единое имя подсказки поля: **`Hint`** вместо `Description` / `description` в field API.
+- `Dropdown` в joined `ButtonGroup`: root получает `rounded-[inherit]`, чтобы скругление last/first сегмента на trigger Button наследовалось от группы.
+- `ComboBox` / `Select` в joined `ButtonGroup`: `Field` root — тот же radius bridge (`BUTTON_GROUP_RADIUS_BRIDGE_CLASS`); `Select` добавлен в segment slots.
 - `Switch.Description` → `Switch.Hint`.
 - `CheckboxGroup.Description` / `RadioGroup.Description` → `*.Hint`.
 - `description` prop у `Checkbox` / `Radio` → **`hint`**.
@@ -92,6 +100,9 @@
 
 | Было | Стало |
 |------|-------|
+| `--color-muted` как цвет текста / `text-muted` → muted hex | `--color-muted-foreground` для текста; `text-muted` уже мапится; в палитре ключ `mutedForeground` |
+| `--color-surface-transparent` / `bg-surface-transparent` / `surfaceTransparent` | `--color-transparent-hover` / `bg-transparent-hover` / `transparentHover` |
+| `bg-muted` для spinner / grip (Loading, TextArea) | `bg-muted-foreground` (kit уже обновлён) |
 | `<Switch.Description>…</Switch.Description>` | `<Switch.Hint>…</Switch.Hint>` или prop `hint` на `<Switch>` |
 | `<CheckboxGroup.Description>…</CheckboxGroup.Description>` | `<CheckboxGroup.Hint>…</CheckboxGroup.Hint>` |
 | `<RadioGroup.Description>…</RadioGroup.Description>` | `<RadioGroup.Hint>…</RadioGroup.Hint>` |

@@ -228,7 +228,7 @@ Selection indicator + label press squeeze — см. ListBox.md.
 
 - **Value vs TriggerGroup:** squeeze на group; текст значения — `value`.
 - **Select vs ComboBox:** нет `input` слота; не используйте Input-стили.
-- **ButtonGroup segment:** shell hover отключён на segment.
+- **ButtonGroup segment:** shell hover отключён на segment; rounding на `TriggerGroup`, radius bridge на `Field` root. `Select` — segment slot группы.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
 
 ## Интеграция

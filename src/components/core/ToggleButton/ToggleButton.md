@@ -61,8 +61,8 @@ Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content
 | variant | Поведение |
 |---------|-----------|
 | `default` | Surface + hover shadow lift |
-| `outline` | Border, hover lift |
-| `ghost` | Transparent |
+| `outline` | Border; hover `bg-transparent-hover` |
+| `ghost` | Transparent; hover `bg-transparent-hover` |
 | `gloss` | `gloss-btn` + gloss squeeze (без hover shadow) |
 
 ## Анимации

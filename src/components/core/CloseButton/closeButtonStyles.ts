@@ -23,9 +23,9 @@ export const CLOSE_BUTTON_HAS_HOVER_SHADOW = new Set<CloseButtonVariant>([
 const CLOSE_BUTTON_HOVER_VARIANT: Record<CloseButtonVariant, HoverVariant> = {
   default: "default",
   primary: "primary",
-  outline: "default",
+  outline: "transparent-hover",
   secondary: "secondary",
-  ghost: "default",
+  ghost: "transparent-hover",
   gloss: "default",
 };
 

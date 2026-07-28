@@ -22,10 +22,10 @@ export const TEXTAREA_CONTROL_BASE_CLASS =
 
 /** Resize grip strokes — micro-geometry for the affordance (not spacing scale). */
 export const TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS =
-  "absolute bottom-[length:calc(var(--border-width)*2)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*9)] origin-bottom-right rotate-[135deg] bg-muted";
+  "absolute bottom-[length:calc(var(--border-width)*2)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*9)] origin-bottom-right rotate-[135deg] bg-muted-foreground";
 
 export const TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS =
-  "absolute bottom-[length:calc(var(--border-width)*6)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*6)] origin-bottom-right rotate-[135deg] bg-muted";
+  "absolute bottom-[length:calc(var(--border-width)*6)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*6)] origin-bottom-right rotate-[135deg] bg-muted-foreground";
 
 export const TEXTAREA_RESIZE_GRIP_WRAP_CLASS =
   "relative block size-[length:var(--size-scale-small)] shrink-0";

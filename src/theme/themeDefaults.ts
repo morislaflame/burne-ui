@@ -31,6 +31,7 @@ export type ThemeStatusForegroundKey =
 export type ThemeDerivedColorKey =
   | "primaryHover"
   | "defaultHover"
+  | "transparentHover"
   | "secondaryHover"
   | "tertiaryHover"
   | "surfaceTintDanger"
@@ -63,6 +64,7 @@ export type ThemeColorKey =
   | "border"
   | "foreground"
   | "muted"
+  | "mutedForeground"
   | "primary"
   | "primaryForeground"
   | "primaryTint"
@@ -178,6 +180,7 @@ export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   border: "--color-border",
   foreground: "--color-foreground",
   muted: "--color-muted",
+  mutedForeground: "--color-muted-foreground",
   primary: "--color-primary",
   primaryForeground: "--color-primary-foreground",
   primaryTint: "--color-primary-tint",
@@ -199,6 +202,7 @@ export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   warningForeground: "--color-warning-foreground",
   primaryHover: "--color-primary-hover",
   defaultHover: "--color-default-hover",
+  transparentHover: "--color-transparent-hover",
   secondaryHover: "--color-secondary-hover",
   tertiaryHover: "--color-tertiary-hover",
   surfaceTintDanger: "--color-surface-tint-danger",

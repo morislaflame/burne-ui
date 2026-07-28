@@ -35,7 +35,9 @@ p {
 
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
+  /* MUTED surface (`bg-muted`); text via muted-foreground — see `@utility text-muted` */
   --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
   --color-surface: var(--color-surface);
   --color-border: var(--color-border);
 
@@ -45,8 +47,11 @@ p {
   --color-primary-foreground: var(--color-primary-foreground);
   --color-primary-hover: var(--color-primary-hover);
 
-  /* DEFAULT HOVER: neutral interactive hovers */
+  /* DEFAULT HOVER: opaque wash on surface (menus, default Button) */
   --color-default-hover: var(--color-default-hover);
+
+  /* TRANSPARENT HOVER: outline/ghost hover (muted wash over transparent) */
+  --color-transparent-hover: var(--color-transparent-hover);
 
   /* INDICATOR (selection fill): Radio, Checkbox, Switch, Slider, Calendar, Progress */
   --color-indicator: var(--color-indicator);
@@ -429,46 +434,46 @@ p {
 
 @utility text-accent-header {
   font-size: var(--text-accent-header-size);
-  line-height: var(--text-accent-header-line-height);
-  font-weight: var(--text-accent-header-weight);
+  line-height: var(--tw-leading, var(--text-accent-header-line-height));
+  font-weight: var(--tw-font-weight, var(--text-accent-header-weight));
 }
 
 @utility text-header-1 {
   font-size: var(--text-header-1-size);
-  line-height: var(--text-header-1-line-height);
-  font-weight: var(--text-header-1-weight);
+  line-height: var(--tw-leading, var(--text-header-1-line-height));
+  font-weight: var(--tw-font-weight, var(--text-header-1-weight));
 }
 
 @utility text-header-2 {
   font-size: var(--text-header-2-size);
-  line-height: var(--text-header-2-line-height);
-  font-weight: var(--text-header-2-weight);
+  line-height: var(--tw-leading, var(--text-header-2-line-height));
+  font-weight: var(--tw-font-weight, var(--text-header-2-weight));
 }
 
 @utility text-large {
   font-size: var(--text-large-size);
-  line-height: var(--text-large-line-height);
-  font-weight: var(--text-large-weight);
+  line-height: var(--tw-leading, var(--text-large-line-height));
+  font-weight: var(--tw-font-weight, var(--text-large-weight));
 }
 
 /** Small UI text: scale xs */
 @utility text-small {
   font-size: var(--text-small-size);
-  line-height: var(--text-small-line-height);
-  font-weight: var(--text-small-weight);
+  line-height: var(--tw-leading, var(--text-small-line-height));
+  font-weight: var(--tw-font-weight, var(--text-small-weight));
 }
 
 /** Medium UI text: scale md */
 @utility text-mid {
   font-size: var(--text-mid-size);
-  line-height: var(--text-mid-line-height);
-  font-weight: var(--text-mid-weight);
+  line-height: var(--tw-leading, var(--text-mid-line-height));
+  font-weight: var(--tw-font-weight, var(--text-mid-weight));
 }
 
 @utility text-xsmall {
   font-size: var(--text-xsmall-size);
-  line-height: var(--text-xsmall-line-height);
-  font-weight: var(--text-xsmall-weight);
+  line-height: var(--tw-leading, var(--text-xsmall-line-height));
+  font-weight: var(--tw-font-weight, var(--text-xsmall-weight));
 }
 
 /** Font weight from `--font-w-*` tokens (not Tailwind `font-medium`). */
@@ -786,4 +791,31 @@ button [data-button-async-layer][aria-hidden="true"] {
 :is(.gloss-panel, .gloss-control, .gloss-btn, .gloss-indicator) {
   -webkit-backdrop-filter: blur(var(--gloss-blur));
   backdrop-filter: blur(var(--gloss-blur));
+}
+
+/**
+ * Secondary copy / icons: `text-muted` → muted-foreground (`bg-muted` stays surface).
+ * `@layer utilities` at file end so it wins over theme-generated `text-muted`
+ * (`@utility text-muted` conflicts with `--color-muted` and is dropped).
+ */
+@layer utilities {
+  .text-muted {
+    color: var(--color-muted-foreground);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-muted\/80 {
+      color: color-mix(in oklab, var(--color-muted-foreground) 80%, transparent);
+    }
+  }
+
+  .placeholder\:text-muted::placeholder {
+    color: var(--color-muted-foreground);
+  }
+
+  @media (hover: hover) {
+    .disabled\:hover\:text-muted:disabled:hover {
+      color: var(--color-muted-foreground);
+    }
+  }
 }

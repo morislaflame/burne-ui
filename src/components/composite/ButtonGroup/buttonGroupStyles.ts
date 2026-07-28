@@ -48,6 +48,13 @@ export function buttonGroupRoundingClasses(seg: ButtonGroupSegment | undefined):
   return "rounded-b-[inherit] rounded-t-none";
 }
 
+/**
+ * Outer shell for wrappers between ButtonGroup and the rounded segment
+ * (Dropdown root, ComboBox/Select `Field`) so `rounded-*- [inherit]` resolves.
+ */
+export const BUTTON_GROUP_RADIUS_BRIDGE_CLASS =
+  "min-h-0 min-w-0 self-stretch rounded-[inherit]";
+
 /** Remove the double line at the internal joints. */
 export function buttonGroupOverlapBorderClasses(
   seg: ButtonGroupSegment | undefined,

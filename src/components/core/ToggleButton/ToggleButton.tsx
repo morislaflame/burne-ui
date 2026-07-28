@@ -102,6 +102,7 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
 
     const contextValue = {
       size: state.size,
+      variant: state.variant,
       groupSegment: state.groupSegment,
       contentMotionRef: animations.contentMotionRef,
       bindFillRef: animations.bindFillRef,

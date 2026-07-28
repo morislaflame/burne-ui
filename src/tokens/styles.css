@@ -10,7 +10,18 @@
   --color-surface: #171717;
   --color-foreground: #f4f5f7;
   --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
-  --color-muted: #858994;
+
+  /**
+   * MUTED surface — soft panel / placeholder (`bg-muted`).
+   * Text on muted surfaces and secondary copy: `--color-muted-foreground`
+   * (utility `text-muted` maps here, not to `--color-muted`).
+   */
+  --color-muted: color-mix(
+    in oklab,
+    var(--color-foreground) 6%,
+    var(--color-surface)
+  );
+  --color-muted-foreground: #858994;
 
   /**
    * PRIMARY (brand) — primary button fill, links, active text states.
@@ -204,13 +215,23 @@
   );
 
   /**
-   * DEFAULT HOVER — neutral hover for outline/ghost, menu rows, etc. (no fill).
-   * Uniform foreground wash on a transparent background.
+   * DEFAULT HOVER — opaque-ish wash for surfaces that already sit on `bg-surface`
+   * (menu rows, default Button, table hover). Foreground tint over surface.
    */
   --color-default-hover: color-mix(
     in oklab,
     var(--color-foreground) 8%,
     var(--color-surface)
+  );
+
+  /**
+   * TRANSPARENT HOVER — hover for outline/ghost (transparent idle).
+   * Muted wash over transparent so the page shows through.
+   */
+  --color-transparent-hover: color-mix(
+    in oklab,
+    var(--color-muted) 70%,
+    transparent
   );
 
   /**
@@ -597,7 +618,12 @@
   --color-surface: #ffffff;
   --color-foreground: #18181b;
   --color-border: color-mix(in oklab, var(--color-foreground) 12%, transparent);
-  --color-muted: #646467;
+  --color-muted: color-mix(
+    in oklab,
+    var(--color-foreground) 12%,
+    var(--color-surface)
+  );
+  --color-muted-foreground: #646467;
   --color-primary: #18181b;
   --color-primary-foreground: #fafafa;
 
@@ -705,6 +731,12 @@
     in oklab,
     var(--color-foreground) 8%,
     var(--color-surface)
+  );
+
+  --color-transparent-hover: color-mix(
+    in oklab,
+    var(--color-muted) 70%,
+    transparent
   );
 
   --color-secondary: color-mix(

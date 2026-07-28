@@ -5,6 +5,7 @@ import { ComboBox } from "@/components/core/ComboBox";
 import { Dropdown } from "@/components/core/Dropdown";
 import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
+import { Select } from "@/components/core/Select";
 import type {
   ButtonGroupOrientation,
   ButtonGroupSegment,
@@ -30,6 +31,7 @@ export function isGroupSegmentSlot(child: ReactElement): boolean {
     child.type === Button ||
     child.type === Input.Control ||
     child.type === ComboBox ||
+    child.type === Select ||
     child.type === SearchInput ||
     child.type === Dropdown ||
     (child.type as { displayName?: string }).displayName === "ButtonGroupText"

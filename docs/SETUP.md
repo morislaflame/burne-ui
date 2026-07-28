@@ -60,7 +60,7 @@ import "burne-ui/styles.css";
 Файл `burne-ui/styles.css` (артефакт сборки `dist/ui.css`) содержит:
 
 - **дизайн-токены** — `--color-*`, `--space` / `--space-*` (Tailwind-мост `--spacing-*`), `--size`, `--radius` / `--radius-*`, `--text-scale-*` (роли `text-base`/`text-mid`/… — 1:1 по имени), `--control-height-*` / `--control-size-*`, `--icon-size-*`, `--z-*`, `--overlay-backdrop-*`, шрифты, тени;
-- **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted`, `gap-large`, `rounded-base`, `z-dialog` / `z-popover` / … и т.д.;
+- **мост Tailwind** (`@theme inline`) — утилиты `bg-background`, `text-muted` (→ `--color-muted-foreground`), `bg-muted` (surface), `gap-large`, `rounded-base`, `z-dialog` / `z-popover` / … и т.д.;
 - **кастомные утилиты** — `border-token`, `text-header-1`, `shadow-token-sm` и др.
 
 Полный перечень имён токенов — экспорт **`designTokenNames`** из `burne-ui`. Исходные значения по умолчанию — `src/tokens/styles.css` в репозитории.
@@ -681,6 +681,6 @@ import { cn } from "burne-ui";
 
 ## 14. Связанные материалы
 
-- [README.md](../README.md) — обзор API, dual API полей, миграция `hint`
+- [README.md](../README.md) — обзор API, dual API полей, миграция `hint`, **`classNames` / `Prettify`**
 - [CHANGELOG.md](../CHANGELOG.md) — breaking changes между версиями
 - `playground/` в репозитории — theme builder и каталог компонентов (Vite, client-only)

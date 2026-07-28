@@ -1,7 +1,7 @@
 import { buttonGroupRoundingClasses, buttonGroupSegmentSurfaceClasses } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import { buttonRootClass } from "@/components/core/Button/buttonStyles";
-import { hoverVariant } from "@/components/core/utils/hoverVariant";
+import { hoverVariant, type HoverVariant } from "@/components/core/utils/hoverVariant";
 import { GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { SHADOW_LIFT_MOTION_CLASS } from "@/components/core/utils/useShadowMotion";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
@@ -18,6 +18,17 @@ const TOGGLE_BUTTON_VARIANT_IDLE: Record<ToggleButtonVariant, string> = {
   ghost: "bg-transparent border-token border-transparent text-foreground",
   gloss: "border-0 bg-transparent text-foreground",
 };
+
+function toggleButtonHoverVariant(variant: ToggleButtonVariant): HoverVariant {
+  if (variant === "outline" || variant === "ghost") return "transparent-hover";
+  return "default";
+}
+
+function toggleButtonIdleFillHoverClass(variant: ToggleButtonVariant): string {
+  return variant === "outline" || variant === "ghost"
+    ? "group-hover/toggle:bg-transparent-hover"
+    : "group-hover/toggle:bg-default-hover";
+}
 
 export const TOGGLE_BUTTON_ROOT_BASE_CLASS =
   "group/toggle relative inline-flex origin-center items-center justify-center overflow-hidden outline-none text-foreground focus-ring";
@@ -75,11 +86,13 @@ export function toggleButtonVariantIdleClass(variant: ToggleButtonVariant): stri
 export function toggleButtonFillClass({
   fillColor,
   pressed,
+  variant,
   roundingClass,
   slotClass,
 }: {
   fillColor: string;
   pressed: boolean;
+  variant: ToggleButtonVariant;
   roundingClass: string;
   slotClass?: string;
 }) {
@@ -87,7 +100,7 @@ export function toggleButtonFillClass({
     TOGGLE_BUTTON_FILL_BASE_CLASS,
     fillColor,
     SURFACE_COLOR_TRANSITION,
-    pressed ? `group-hover/toggle:${fillColor}/80` : "group-hover/toggle:bg-default-hover",
+    pressed ? `group-hover/toggle:${fillColor}/80` : toggleButtonIdleFillHoverClass(variant),
     roundingClass,
     slotClass,
   );
@@ -132,7 +145,7 @@ export function toggleButtonRootClass({
           !groupSegment && GLOSS_INTERACTIVE_MOTION_CLASS,
         )
       : cn(!groupSegment && SHADOW_LIFT_MOTION_CLASS),
-    !isGloss && !pressed && !disabled && hoverVariant(),
+    !isGloss && !pressed && !disabled && hoverVariant(toggleButtonHoverVariant(variant)),
     !isGloss && toggleButtonVariantIdleClass(variant),
     pressed && TOGGLE_BUTTON_PRESSED_SURFACE_CLASS,
     disabled ? TOGGLE_BUTTON_DISABLED_CLASS : TOGGLE_BUTTON_ENABLED_CLASS,

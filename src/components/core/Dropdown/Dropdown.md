@@ -175,6 +175,7 @@ configureMotion({
 - `side` — `top` | `right` | `bottom` | `left` (по умолчанию `bottom`)
 - `matchAnchorWidth` — ширина panel = trigger
 - `align` — `start` | `center` | `end` (по умолчанию `start` при match width); для trailing «⋯» в ButtonGroup удобен `align="end"`
+- В joined **`ButtonGroup`** корень Dropdown получает `rounded-[inherit]`, чтобы `groupSegment` на trigger Button скруглял край группы (иначе inherit обрывается на корне Dropdown).
 - `offset` — отступ от триггера в px
 - `unstyled` — surface задаётся `popoverBody`
 - `contentRole={undefined}` — dialog semantics отключены; `role="menu"` на `Popover.Body`

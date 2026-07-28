@@ -72,9 +72,11 @@ Compound API нет: компонент leaf-level и не имеет подча
 
 ```tsx
 createElement(as ?? defaultTag, {
-  className: cn(VARIANT_CLASS[variant], !inheritColor && "text-foreground", className),
+  className: cn(TEXT_VARIANT_CLASS[variant], !inheritColor && "text-foreground", className),
 })
 ```
+
+`variant` → утилита `text-*` (size + line-height + weight). Перекрытие через `className`: `text-large`, `leading-none`, `font-semibold` — через `cn` / twMerge (`--tw-leading` / `--tw-font-weight`).
 
 ### Сводка
 

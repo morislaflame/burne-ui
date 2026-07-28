@@ -1,6 +1,10 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
+import {
+  BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
+} from "@/components/composite/ButtonGroup/buttonGroupStyles";
+import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
 
 import { ComboBoxClassNamesProvider, ComboBoxFieldProvider, ComboBoxProvider } from "./comboBoxContext";
 import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxSimpleBody, ComboBoxTrigger } from "./comboBoxParts";
@@ -56,6 +60,7 @@ export function ComboBoxRoot({
   const resolvedError = error ?? formError;
   const resolvedStatus = status === "default" && formError ? "danger" : status;
   const resolvedSize = size ?? formCtx?.size ?? "base";
+  const inJoinedButtonGroup = useInJoinedButtonGroup();
 
   const state = useComboBoxRootState({
     children,
@@ -86,7 +91,11 @@ export function ComboBoxRoot({
         <ComboBoxClassNamesProvider classNames={classNames}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
-              className={cn(className, classNames?.root)}
+              className={cn(
+                inJoinedButtonGroup && BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
+                className,
+                classNames?.root,
+              )}
               {...rest}
             >
               {state.isCompound ? (

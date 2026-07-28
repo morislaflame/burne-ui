@@ -1,6 +1,6 @@
 # ButtonGroup
 
-Layout-обёртка для склеенных или раздельных сегментов: `Button`, `Input.Control`, `ComboBox`, `SearchInput`, `Dropdown`, `ButtonGroup.Text`. Compound API: `ButtonGroup` + `ButtonGroup.Text`.
+Layout-обёртка для склеенных или раздельных сегментов: `Button`, `Input.Control`, `ComboBox`, `Select`, `SearchInput`, `Dropdown`, `ButtonGroup.Text`. Compound API: `ButtonGroup` + `ButtonGroup.Text`.
 
 ## Импорт
 
@@ -87,6 +87,7 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 | `Button` | да |
 | `Input.Control` | да |
 | `ComboBox` | да |
+| `Select` | да |
 | `SearchInput` | да |
 | `Dropdown` | да (root) |
 | `ButtonGroup.Text` | да |
@@ -229,7 +230,7 @@ Gloss: `glossInteractive.css` на root.
 
 - **Обязателен** `aria-label` или `aria-labelledby` на группе.
 - `segmented` — когда нужны независимые тени/hover на кнопках.
-- `groupSegment` на внутреннем `Button` при `Dropdown` как child.
+- `groupSegment` на внутреннем `Button` при `Dropdown` как child (корень `Dropdown` сам прокидывает `rounded-[inherit]` из группы).
 - `SearchInput` в одной строке с группой — см. story `ToolbarWithSearchInputRow`.
 - Separators: `aria-hidden`.
 - Focus: `focus-visible:z-[2]` на сегментах.
@@ -240,8 +241,8 @@ Gloss: `glossInteractive.css` на root.
 |-----------|-----------|
 | `Button` | `groupSegment` из context |
 | `Input.Control` | Fused shell, `flex-1` horizontal |
-| `ComboBox` / `Select` / `SearchInput` | Glue shell |
-| `Dropdown` | Segment slot; trigger Button с `groupSegment` |
+| `ComboBox` / `Select` / `SearchInput` | Glue shell; ComboBox/Select — radius bridge на `Field` |
+| `Dropdown` | Segment slot; root → radius bridge; trigger Button с `groupSegment` |
 | `ToggleButtonGroup` | Переиспользует `buttonGroupStyles` |
 | `Ripple` | На Button внутри группы |
 

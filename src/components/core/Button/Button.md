@@ -92,9 +92,9 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 |---------|-------------|----------------|------------|
 | `default` | `bg-surface`, `border-token` | да | Базовая кнопка |
 | `primary` | `bg-primary` | да | Акцентная |
-| `outline` | прозрачный фон, `border-token` | да | При status ≠ default бордер/текст по статусу |
+| `outline` | прозрачный фон, `border-token` | да | Hover: `bg-transparent-hover`; при status ≠ default бордер/текст по статусу |
 | `secondary` | `bg-secondary` | да | Вторичная |
-| `ghost` | прозрачный, без бордера | да | Минимальная |
+| `ghost` | прозрачный, без бордера | да | Hover: `bg-transparent-hover` |
 | `gloss` | CSS-класс `gloss-btn` | нет (gloss-motion) | Статус через `gloss-btn-*` |
 
 При `status !== "default"` hover-вариант пересчитывается (например, `primary` + `danger` → fill-danger).
