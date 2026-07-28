@@ -1,6 +1,7 @@
 import type {
   ButtonHTMLAttributes,
   HTMLAttributes,
+  KeyboardEventHandler,
   PointerEventHandler,
   ReactNode,
   RefObject,
@@ -90,7 +91,9 @@ export type ToggleButtonGroupContextValue = {
   variant: ToggleButtonVariant;
   isSelected: (value: string) => boolean;
   select: (value: string) => void;
-  tabIndexFor: (value: string) => 0 | -1 | undefined;
+  tabIndexFor: (value: string) => 0 | -1;
+  /** Updates the roving tab stop (arrow keys / focus). Does not change selection. */
+  setRovingValue: (value: string) => void;
 };
 
 export type UseToggleButtonRootStateProps = Pick<
@@ -109,6 +112,7 @@ export type UseToggleButtonRootStateProps = Pick<
   | "classNames"
   | "children"
   | "onClick"
+  | "onFocus"
 >;
 
 export type UseToggleButtonAnimationsProps = {
@@ -121,6 +125,7 @@ export type UseToggleButtonAnimationsProps = {
   onPointerEnter?: PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: PointerEventHandler<HTMLButtonElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
 };
 
 

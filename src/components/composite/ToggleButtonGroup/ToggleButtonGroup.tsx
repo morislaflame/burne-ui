@@ -6,7 +6,6 @@ import { buttonGroupRootClass } from "@/components/composite/ButtonGroup/buttonG
 import { ToggleButtonGroupProvider } from "@/components/core/ToggleButton/toggleButtonContext";
 import { cn } from "@/utils/cn";
 
-import { toggleButtonGroupRootTabIndex } from "./toggleButtonGroupA11y";
 import { isToggleButtonChild } from "./toggleButtonGroupAPI";
 import { ToggleButtonGroupClassNamesProvider } from "./toggleButtonGroupContext";
 import { ToggleButtonGroupSeparator } from "./toggleButtonGroupParts";
@@ -40,7 +39,7 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
       ...rest
     } = props;
 
-    const { flat, segmentCount, contextValue, handleKeyDown, isSingle } =
+    const { flat, segmentCount, contextValue, handleKeyDown } =
       useToggleButtonGroupRootState(props);
 
     let segmentIndex = -1;
@@ -51,7 +50,6 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
           <div
             ref={ref}
             role="toolbar"
-            tabIndex={toggleButtonGroupRootTabIndex(disabled)}
             aria-orientation={orientation}
             aria-disabled={disabled || undefined}
             className={buttonGroupRootClass({
@@ -60,7 +58,7 @@ export const ToggleButtonGroupRoot = forwardRef<HTMLDivElement, ToggleButtonGrou
               variant,
               className: cn(classNames?.root, className),
             })}
-            {...(isSingle ? { onKeyDown: handleKeyDown } : {})}
+            onKeyDown={handleKeyDown}
             {...rest}
           >
             {flat.map((child, i) => {

@@ -2,6 +2,7 @@ import type {
   ChangeEvent,
   HTMLAttributes,
   InputHTMLAttributes,
+  KeyboardEvent,
   LabelHTMLAttributes,
   PointerEvent,
   ReactNode,
@@ -129,4 +130,5 @@ export type UseCheckboxAnimationsProps = {
   enableTextMotion: boolean;
   textMotionRef: RefObject<HTMLElement | null>;
   onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLElement>) => void;
 };

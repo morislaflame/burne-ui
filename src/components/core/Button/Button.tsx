@@ -123,6 +123,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
+    onKeyDown,
     onMouseDown,
     ...rest
   },
@@ -169,6 +170,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
+    onKeyDown,
   });
 
   const handleClick = animations.createAsyncClickHandler(
@@ -258,6 +260,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
                 onPointerDown: animations.handlePointerDown,
                 onPointerEnter: animations.handlePointerEnter,
                 onPointerLeave: animations.handlePointerLeave,
+                onKeyDown: animations.handleKeyDown,
                 onMouseDown,
                 onClick: (event: MouseEvent<HTMLElement>) => {
                   if (state.blocked) {
@@ -282,6 +285,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
             onPointerDown={animations.handlePointerDown}
             onPointerEnter={animations.handlePointerEnter}
             onPointerLeave={animations.handlePointerLeave}
+            onKeyDown={animations.handleKeyDown}
             onMouseDown={onMouseDown}
             onClick={handleClick}
           >

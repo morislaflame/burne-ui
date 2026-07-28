@@ -52,6 +52,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
+      onKeyDown,
       ...rest
     },
     ref,
@@ -61,6 +62,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       handlePointerEnter,
       handlePointerLeave,
       handlePointerDown,
+      handleKeyDown,
     } = useFirstLevelInteractiveMotion({
       isGloss: false,
       enabled: !disabled,
@@ -69,6 +71,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
+      onKeyDown,
     });
 
     const { "aria-label": ariaLabelProp, ...buttonRest } = rest;
@@ -103,6 +106,7 @@ export const ColorSwatch = forwardRef<HTMLButtonElement, ColorSwatchProps>(
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         onPointerDown={handlePointerDown}
+        onKeyDown={handleKeyDown}
         aria-label={ariaLabel}
         className={cn(
           "relative shrink-0 origin-center overflow-hidden",

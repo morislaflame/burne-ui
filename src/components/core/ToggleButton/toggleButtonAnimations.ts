@@ -1,6 +1,7 @@
-import { useCallback, useRef, type PointerEvent } from "react";
+import { useCallback, useRef, type KeyboardEvent, type PointerEvent } from "react";
 
 import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
+import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
 import { useToggleButtonFillAnimation } from "./useToggleButtonFillAnimation";
@@ -20,6 +21,7 @@ export function useToggleButtonAnimations({
   onPointerEnter,
   onPointerLeave,
   onPointerDown,
+  onKeyDown,
 }: UseToggleButtonAnimationsProps) {
   const fillRef = useRef<HTMLSpanElement>(null);
   const deferFillFromPressRef = useRef(false);
@@ -66,21 +68,35 @@ export function useToggleButtonAnimations({
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
+    onKeyDown,
     onPressReleaseStart: shouldCoordinateFill ? onPressReleaseStart : undefined,
   });
 
+  const beginPressFillCoordination = useCallback(() => {
+    if (!shouldCoordinateFill) return;
+    // Defer until click confirms the next value; do not predict `!pressed` here
+    // (single-select re-click would wrongly start an unfill).
+    deferFillFromPressRef.current = true;
+    pressReleaseStartedRef.current = false;
+    pendingFillRef.current = null;
+  }, [shouldCoordinateFill]);
+
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
-      if (shouldCoordinateFill) {
-        // Defer until click confirms the next value; do not predict `!pressed` here
-        // (single-select re-click would wrongly start an unfill).
-        deferFillFromPressRef.current = true;
-        pressReleaseStartedRef.current = false;
-        pendingFillRef.current = null;
-      }
+      beginPressFillCoordination();
       motion.handlePointerDown(e);
     },
-    [motion, shouldCoordinateFill],
+    [beginPressFillCoordination, motion],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>) => {
+      if (isInteractivePressKey(e) && !e.defaultPrevented) {
+        beginPressFillCoordination();
+      }
+      motion.handleKeyDown(e);
+    },
+    [beginPressFillCoordination, motion],
   );
 
   const handlePointerLeave = useCallback(
@@ -113,6 +129,7 @@ export function useToggleButtonAnimations({
     handlePointerEnter: motion.handlePointerEnter,
     handlePointerLeave,
     handlePointerDown,
+    handleKeyDown,
     bindFillRef,
     queueFillOnClick,
     displayPressed,

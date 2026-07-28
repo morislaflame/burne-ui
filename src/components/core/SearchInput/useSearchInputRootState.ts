@@ -12,6 +12,7 @@ import {
 } from "react";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
+import { focusElement } from "@/components/core/utils/focusElement";
 import { fieldShellVariantFromButtonGroup } from "@/components/core/utils/fieldShellVariant";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useControllableState } from "@/components/core/utils/useControllableState";
@@ -153,13 +154,13 @@ export function useSearchInputRootState({
         target: el,
         currentTarget: el,
       } as ChangeEvent<HTMLInputElement>);
-      requestAnimationFrame(() => el.focus());
+      requestAnimationFrame(() => focusElement(el));
     },
     [blocked, isValueControlled, onChange],
   );
 
   const focusInput = useCallback(() => {
-    requestAnimationFrame(() => inputRef.current?.focus());
+    requestAnimationFrame(() => focusElement(inputRef.current));
   }, []);
 
   const openFromInteraction = useCallback(async () => {
@@ -224,9 +225,9 @@ export function useSearchInputRootState({
         e.stopPropagation();
         setExpanded(false);
         requestAnimationFrame(() => {
-          rootRef.current
-            ?.querySelector<HTMLElement>("[data-search-expand]")
-            ?.focus();
+          focusElement(
+            rootRef.current?.querySelector<HTMLElement>("[data-search-expand]"),
+          );
         });
       }
     },

@@ -70,10 +70,12 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           if (open) setOpen(false);
-          else if (!openingRef.current) setOpen(true);
+          else {
+            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+          }
         }
       },
-      [onKeyDown, open, openingRef, setOpen],
+      [onKeyDown, open, openingRef, setOpen, triggerRef],
     );
 
     const onlyChild =
@@ -105,7 +107,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
             ...triggerA11y,
           },
           mergedRef,
-          { runBeforeChild: ["onPointerDown"] },
+          { runBeforeChild: ["onPointerDown", "onKeyDown"] },
         ),
       );
     }

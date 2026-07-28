@@ -10,6 +10,7 @@ export function useCloseButtonAnimations({
   onPointerDown,
   onPointerEnter,
   onPointerLeave,
+  onKeyDown,
 }: UseCloseButtonAnimationsProps) {
   const motion = useFirstLevelInteractiveMotion({
     isGloss: variant === "gloss",
@@ -20,6 +21,7 @@ export function useCloseButtonAnimations({
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
+    onKeyDown,
   });
 
   return {
@@ -27,5 +29,6 @@ export function useCloseButtonAnimations({
     handlePointerEnter: motion.handlePointerEnter,
     handlePointerLeave: motion.handlePointerLeave,
     handlePointerDown: motion.handlePointerDown,
+    handleKeyDown: motion.handleKeyDown,
   };
 }

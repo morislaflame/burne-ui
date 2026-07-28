@@ -1,3 +1,5 @@
+import { focusElement } from "@/components/core/utils/focusElement";
+
 export function formFieldAriaInvalid(error?: string): boolean | undefined {
   return error ? true : undefined;
 }
@@ -36,5 +38,5 @@ export function focusFirstFormInvalidField(
   const firstName = Object.keys(errors)[0];
   if (firstName == null) return;
   const node = refs.get(firstName);
-  node?.focus();
+  focusElement(node);
 }

@@ -1,4 +1,4 @@
-import { type PointerEvent, type RefObject } from "react";
+import { type KeyboardEvent, type PointerEvent, type RefObject } from "react";
 
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
@@ -9,6 +9,7 @@ export function useTabPointerMotion({
   onPointerEnter,
   onPointerLeave,
   onPointerDown,
+  onKeyDown,
 }: {
   motionRef: RefObject<HTMLSpanElement | null>;
   isDisabled: boolean | undefined;
@@ -16,6 +17,7 @@ export function useTabPointerMotion({
   onPointerEnter?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerLeave?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerDown?: (e: PointerEvent<HTMLButtonElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
 }) {
   return usePressableElementTextMotion<HTMLButtonElement, HTMLSpanElement>({
     isDisabled: !!isDisabled,
@@ -25,5 +27,6 @@ export function useTabPointerMotion({
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
+    onKeyDown,
   });
 }

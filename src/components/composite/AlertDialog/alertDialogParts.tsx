@@ -1,4 +1,4 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
@@ -7,6 +7,7 @@ import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } 
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { focusElement } from "@/components/core/utils/focusElement";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 
@@ -308,7 +309,7 @@ AlertDialogFooter.displayName = "AlertDialogFooter";
 
 export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTriggerProps>(
   function AlertDialogTrigger(
-    { children, asChild, className, onClick, onPointerDown, ...rest },
+    { children, asChild, className, onClick, onPointerDown, onKeyDown, ...rest },
     forwardedRef,
   ) {
     const { open, onOpenChange } = useAlertDialog();
@@ -328,10 +329,21 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
-        triggerRef.current?.focus({ preventScroll: true });
+        focusElement(triggerRef.current);
         runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
       },
       [open, openingRef, onOpenChange],
+    );
+
+    const handleKeyDown = useCallback(
+      (e: ReactKeyboardEvent<HTMLElement>) => {
+        onKeyDown?.(e as ReactKeyboardEvent<HTMLButtonElement>);
+        if (e.defaultPrevented || open || openingRef.current) return;
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+      },
+      [onKeyDown, open, openingRef, onOpenChange],
     );
 
     const handleClick = useCallback(
@@ -360,13 +372,14 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
                 handlePointerDown(e);
                 onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
               },
+              onKeyDown: handleKeyDown,
               onClick: handleClick,
               ...alertDialogTriggerA11y(open),
             },
             mergeRefs((node: HTMLElement | null) => {
               triggerRef.current = node;
             }, forwardedRef),
-            { runBeforeChild: ["onPointerDown"] },
+            { runBeforeChild: ["onPointerDown", "onKeyDown"] },
           ),
         );
       }
@@ -384,6 +397,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
           onPointerDown?.(e);
           handlePointerDown(e);
         }}
+        onKeyDown={handleKeyDown}
         onClick={handleClick}
         {...rest}
       >

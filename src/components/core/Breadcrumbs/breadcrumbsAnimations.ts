@@ -5,11 +5,14 @@ import { usePressableElementTextMotion } from "@/components/core/utils/usePressa
 export function useBreadcrumbInteractiveMotion() {
   const textRef = useRef<HTMLSpanElement | null>(null);
 
-  const { handlePointerDown } = usePressableElementTextMotion<HTMLElement, HTMLSpanElement>({
+  const { handlePointerDown, handleKeyDown } = usePressableElementTextMotion<
+    HTMLElement,
+    HTMLSpanElement
+  >({
     isDisabled: false,
     enabled: true,
     textMotionRef: textRef,
   });
 
-  return { textRef, handlePointerDown };
+  return { textRef, handlePointerDown, handleKeyDown };
 }

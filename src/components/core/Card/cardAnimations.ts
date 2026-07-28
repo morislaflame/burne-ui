@@ -1,7 +1,10 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useMemo, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 
-import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  animateInteractivePressSqueeze,
+  isInteractivePressKey,
+} from "@/components/core/utils/hoverInteractiveLift";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { animateGlossInteractivePressSqueeze, createGlossInteractiveRefCallback, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
 import { useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
@@ -57,26 +60,31 @@ export function useCardAnimations({
     pointerInsideRef.current = false;
   }, [pressable]);
 
+  const runPressSqueeze = useCallback(() => {
+    if (prefersReducedMotion()) return;
+    const shell = rootRef.current;
+    if (!shell) return;
+
+    if (isGloss) {
+      void animateGlossInteractivePressSqueeze(shell, pointerInsideRef.current);
+      return;
+    }
+
+    void animateInteractivePressSqueeze(shell, {
+      pointerInside: pointerInsideRef.current,
+      shadow: pressableLift.shadow,
+    });
+  }, [isGloss, pressableLift.shadow]);
+
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLElement>) => {
       onPointerDownProp?.(e);
-      if (!pressable || e.defaultPrevented || prefersReducedMotion()) {
+      if (!pressable || e.defaultPrevented) {
         return;
       }
-      const shell = rootRef.current;
-      if (!shell) return;
-
-      if (isGloss) {
-        void animateGlossInteractivePressSqueeze(shell, pointerInsideRef.current);
-        return;
-      }
-
-      void animateInteractivePressSqueeze(shell, {
-        pointerInside: pointerInsideRef.current,
-        shadow: pressableLift.shadow,
-      });
+      runPressSqueeze();
     },
-    [isGloss, onPointerDownProp, pressable, pressableLift.shadow],
+    [onPointerDownProp, pressable, runPressSqueeze],
   );
 
   const handleClick = useCallback(
@@ -91,8 +99,10 @@ export function useCardAnimations({
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLElement>) => {
       onKeyDownProp?.(e);
+      if (!pressable || e.defaultPrevented || !isInteractivePressKey(e)) return;
+      runPressSqueeze();
     },
-    [onKeyDownProp],
+    [onKeyDownProp, pressable, runPressSqueeze],
   );
 
   // Merged pointer handlers — safe to use in all CardRootShell branches.

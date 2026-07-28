@@ -119,7 +119,7 @@ const [open, setOpen] = useState(false);
 
 **vars:** `motionInteractive()`. Без scale (в отличие от Dialog).
 
-**Focus:** `panelRef.focus()`. **Scroll lock:** `body.overflow = hidden`.
+**Focus:** `focusPanelOnOpen` (первый focusable / panel). **Scroll lock:** `body.overflow = hidden`.
 
 ### 2. Close — slide out + overlay fade
 
@@ -225,8 +225,8 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 | `glossPanel` | Gloss-обёртка | При `variant="gloss"` |
 | `glossContent` | Gloss inner wrap | Внутренний gloss-слой |
 | `content` | `Drawer.Content` | Padding внутри панели |
-| `handle` | Drag handle | Hit-area, padding (top/bottom placement) |
-| `handleGrip` | Grip lines | Визуал «ручки» |
+| `handle` | Drag handle | Hit-area, padding (не focusable) |
+| `handleGrip` | Grip / тамб | Визуал + keyboard focus ring |
 | `header` | `Drawer.Header` | Title row + close |
 | `headingBlock` | Title + description | Stack заголовка |
 | `title` | `Drawer.Title` | Типографика |
@@ -286,7 +286,7 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 - `<dialog>` + `showModal()`, Esc → `onClose`
 - `aria-labelledby` — только при `Drawer.Title`; иначе `aria-label` на panel
 - `aria-describedby` — при `Drawer.Description`
-- Handle: `role="button"`, `tabIndex={0}`, Enter/Space закрывают; swipe — pointer; `aria-label` по placement
+- Handle: hit-area (drag) + grip `role="button"` / `tabIndex={0}` / `focus-ring` на тамбе; Enter/Space закрывают; `aria-label` по placement
 - `Drawer.Close` → `aria-label="Close"`
 
 ## Структура файлов

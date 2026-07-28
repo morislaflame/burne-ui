@@ -77,6 +77,7 @@ export function LinkAnchorBody({
   handlePointerEnter,
   handlePointerLeave,
   handlePointerDown,
+  handleKeyDown,
   ...rest
 }: LinkAnchorBodyProps) {
   const slotClassNames = useLinkClassNames();
@@ -92,6 +93,7 @@ export function LinkAnchorBody({
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
+      onKeyDown={handleKeyDown}
       {...rest}
     >
       <LinkBodyContent

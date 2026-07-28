@@ -147,7 +147,7 @@ portal → document.body
 1. `open=true` → `setMounted(true)`
 2. `dialog.showModal()`
 3. `animateModalOpen` — overlay fade + panel scale (`motionInteractive()`)
-4. `panel.focus()`
+4. `focusPanelOnOpen` — первый focusable / panel; ring после keyboard open
 5. `document.body.overflow = hidden`
 
 ### 2. Close pipeline
@@ -306,7 +306,7 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 | Role | `role="alertdialog"` на `<dialog>` |
 | Label | `aria-labelledby` только при `AlertDialog.Title` |
 | Description | `aria-describedby` если есть Description |
-| Focus | `panel.focus()` при open; `tabIndex={-1}` на panel |
+| Focus | `focusPanelOnOpen` при open; `tabIndex={-1}` на panel (fallback) |
 | Trigger | `aria-haspopup="dialog"`, `aria-expanded` |
 | Escape | Закрывает (Cancel); opt-out: `closeOnEscape={false}` |
 | Backdrop | Не закрывает |

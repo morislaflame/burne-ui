@@ -1,6 +1,7 @@
 import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
+import { focusKeyboard } from "@/components/core/utils/focusElement";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
@@ -132,6 +133,7 @@ const CalendarNavButton = forwardRef<HTMLButtonElement, CalendarNavButtonProps>(
         onPointerEnter={motion.handlePointerEnter}
         onPointerLeave={motion.handlePointerLeave}
         onPointerDown={motion.handlePointerDown}
+        onKeyDown={motion.handleKeyDown}
         className={cn(calendarNavButtonClass(size), navSlot, className)}
         {...rest}
       >
@@ -270,6 +272,7 @@ const CalendarInteractiveCellInner = forwardRef<
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       onPointerDown={motion.handlePointerDown}
+      onKeyDown={motion.handleKeyDown}
       className={calendarInteractiveCellClass(
         size,
         rounded,
@@ -376,7 +379,7 @@ function CalendarDaysView() {
       const el = gridRef.current?.querySelector<HTMLElement>(
         `[data-calendar-roving="${focusedKey}"]`,
       );
-      el?.focus({ preventScroll: true });
+      focusKeyboard(el);
       return;
     }
 
@@ -403,7 +406,7 @@ function CalendarDaysView() {
     const el = grid.querySelector<HTMLElement>(
       `[data-calendar-roving="${focusedKey}"]`,
     );
-    el?.focus({ preventScroll: true });
+    focusKeyboard(el);
   }, [focusedKey, viewDate]);
 
   const handleGridKeyDown = useCallback(
@@ -550,7 +553,7 @@ function CalendarMonthsView() {
     const el = gridRef.current?.querySelector<HTMLElement>(
       `[data-calendar-roving="${focusedMonth}"]`,
     );
-    el?.focus({ preventScroll: true });
+    focusKeyboard(el);
   }, [focusedMonth]);
 
   const handleGridKeyDown = useCallback(
@@ -634,7 +637,7 @@ function CalendarYearsView() {
     const el = gridRef.current?.querySelector<HTMLElement>(
       `[data-calendar-roving="${year}"]`,
     );
-    el?.focus({ preventScroll: true });
+    focusKeyboard(el);
   }, [focusedIndex, years]);
 
   const handleGridKeyDown = useCallback(

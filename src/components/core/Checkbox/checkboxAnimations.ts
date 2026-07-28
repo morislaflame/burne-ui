@@ -51,11 +51,13 @@ export function useCheckboxTextMotion({
   enableTextMotion,
   textMotionRef,
   onPointerDown,
+  onKeyDown,
 }: UseCheckboxAnimationsProps) {
   return usePressableElementTextMotion({
     isDisabled,
     enabled: enableTextMotion,
     textMotionRef,
     onPointerDown,
+    onKeyDown,
   });
 }

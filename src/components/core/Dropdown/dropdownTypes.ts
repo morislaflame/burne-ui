@@ -172,7 +172,6 @@ export type UseDropdownRootStateProps = Pick<
 export type UseDropdownPopoverMenuProps = {
   open: boolean;
   setOpen: (next: boolean) => void;
-  triggerRef: React.RefObject<HTMLElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
 };
 

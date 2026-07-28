@@ -47,7 +47,7 @@ export const DROPDOWN_LABEL_TEXT_CLASS = "text-muted";
 export const DROPDOWN_SUB_CLASS = "relative min-w-0";
 
 export const DROPDOWN_SUB_TRIGGER_CLASS =
-  "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none text-base text-foreground focus-ring";
+  "flex w-full min-w-0 cursor-pointer items-center gap-base rounded-mid px-base py-small text-left outline-none text-base text-foreground";
 
 export const DROPDOWN_SUB_TRIGGER_LABEL_WRAP_CLASS = "min-w-0 flex-1";
 
@@ -73,31 +73,11 @@ export const DROPDOWN_ITEM_DISABLED_CLASS =
   "cursor-not-allowed bg-transparent text-muted opacity-45 hover:bg-transparent";
 
 const DROPDOWN_ITEM_STATUS_CLASS: Record<DropdownItemStatus, string> = {
-  default: cn(
-    "text-foreground",
-    hoverVariant(),
-    "focus-ring",
-  ),
-  danger: cn(
-    "text-danger",
-    hoverVariant("danger"),
-    "focus-ring [--color-focus-ring:var(--color-focus-ring-danger)]",
-  ),
-  warning: cn(
-    "text-warning",
-    hoverVariant("warning"),
-    "focus-ring [--color-focus-ring:var(--color-focus-ring-warning)]",
-  ),
-  info: cn(
-    "text-info",
-    hoverVariant("info"),
-    "focus-ring [--color-focus-ring:var(--color-focus-ring-info)]",
-  ),
-  success: cn(
-    "text-success",
-    hoverVariant("success"),
-    "focus-ring [--color-focus-ring:var(--color-focus-ring-success)]",
-  ),
+  default: cn("text-foreground", hoverVariant()),
+  danger: cn("text-danger", hoverVariant("danger")),
+  warning: cn("text-warning", hoverVariant("warning")),
+  info: cn("text-info", hoverVariant("info")),
+  success: cn("text-success", hoverVariant("success")),
 };
 
 export function dropdownItemRowClass({

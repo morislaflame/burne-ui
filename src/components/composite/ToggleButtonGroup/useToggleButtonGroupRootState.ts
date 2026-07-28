@@ -49,6 +49,15 @@ export function useToggleButtonGroupRootState({
   const latestMultipleRef = useRef(multipleValues);
   latestMultipleRef.current = multipleValues;
 
+  const flat = useMemo(() => flattenFragmentChildren(children), [children]);
+  const segmentCount = useMemo(() => countToggleButtonChildren(flat), [flat]);
+  const firstToggleValue = useMemo(() => extractToggleItemValues(flat)[0], [flat]);
+
+  // Roving tab stop — independent of selection (arrows move focus only).
+  const [rovingValue, setRovingValue] = useState<string | undefined>(undefined);
+  const resolvedRovingValue =
+    rovingValue ?? (isSingle ? singleValue : undefined) ?? firstToggleValue;
+
   const isSelected = useCallback(
     (itemValue: string) =>
       isToggleButtonGroupItemSelected(type, itemValue, singleValue, multipleValues),
@@ -80,14 +89,10 @@ export function useToggleButtonGroupRootState({
     [disabled, isControlled, isSingle, multipleValues, onValueChange, singleValue, type],
   );
 
-  const flat = useMemo(() => flattenFragmentChildren(children), [children]);
-  const segmentCount = useMemo(() => countToggleButtonChildren(flat), [flat]);
-  const firstToggleValue = useMemo(() => extractToggleItemValues(flat)[0], [flat]);
-
   const tabIndexFor = useCallback(
     (itemValue: string) =>
-      resolveToggleButtonTabIndex(isSingle, itemValue, singleValue, firstToggleValue),
-    [firstToggleValue, isSingle, singleValue],
+      resolveToggleButtonTabIndex(itemValue, resolvedRovingValue, firstToggleValue),
+    [firstToggleValue, resolvedRovingValue],
   );
 
   const contextValue = useMemo<ToggleButtonGroupContextValue>(
@@ -99,20 +104,20 @@ export function useToggleButtonGroupRootState({
       isSelected,
       select,
       tabIndexFor,
+      setRovingValue,
     }),
-    [disabled, isSelected, select, size, tabIndexFor, type, variant],
+    [disabled, isSelected, select, setRovingValue, size, tabIndexFor, type, variant],
   );
 
   const handleKeyDown = useMemo(
     () =>
       createToggleButtonGroupKeyDownHandler({
         disabled,
-        isSingle,
         orientation,
         onKeyDown,
-        select,
+        setRovingValue,
       }),
-    [disabled, isSingle, onKeyDown, orientation, select],
+    [disabled, onKeyDown, orientation],
   );
 
   return {
@@ -120,6 +125,5 @@ export function useToggleButtonGroupRootState({
     segmentCount,
     contextValue,
     handleKeyDown,
-    isSingle,
   };
 }

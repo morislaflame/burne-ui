@@ -48,23 +48,4 @@ export function resolvePopoverLabelledBy({
   return undefined;
 }
 
-const POPOVER_FOCUSABLE_SELECTOR = [
-  "button:not([disabled])",
-  "[href]",
-  "input:not([disabled])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  '[tabindex]:not([tabindex="-1"])',
-].join(",");
-
-/** First keyboard-focusable control inside a popover panel. */
-export function getFirstFocusableInPopover(
-  root: HTMLElement,
-): HTMLElement | null {
-  const nodes = root.querySelectorAll<HTMLElement>(POPOVER_FOCUSABLE_SELECTOR);
-  for (const el of nodes) {
-    if (el.closest("[aria-hidden='true']")) continue;
-    return el;
-  }
-  return null;
-}
+export { getFirstFocusable as getFirstFocusableInPopover } from "@/components/core/utils/focusElement";

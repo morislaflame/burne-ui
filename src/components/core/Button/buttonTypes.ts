@@ -146,6 +146,7 @@ export type UseButtonAnimationsProps = {
   onPointerEnter?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: React.PointerEventHandler<HTMLButtonElement>;
+  onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
 };
 
 export type ButtonFeedbackExpandRippleProps = {

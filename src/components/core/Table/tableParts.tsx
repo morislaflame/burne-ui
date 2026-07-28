@@ -1,5 +1,7 @@
 import { Children, forwardRef, isValidElement, memo, useCallback, useLayoutEffect, useMemo, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 
+import { focusKeyboard } from "@/components/core/utils/focusElement";
+
 import {
   columnAriaSort,
   rowAriaSelected,
@@ -233,7 +235,7 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
         );
         if (!next || next === e.currentTarget) return;
         e.preventDefault();
-        next.focus();
+        focusKeyboard(next);
       },
       [],
     );
@@ -434,7 +436,7 @@ const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function Ta
         const nextKey = next.getAttribute(TABLE_ROW_KEY_ATTR);
         if (nextKey == null) return;
         setFocusedRowKey(nextKey);
-        next.focus();
+        focusKeyboard(next);
         return;
       }
 
@@ -445,7 +447,7 @@ const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function Ta
         const key = first.getAttribute(TABLE_ROW_KEY_ATTR);
         if (key == null) return;
         setFocusedRowKey(key);
-        first.focus();
+        focusKeyboard(first);
         return;
       }
 
@@ -456,7 +458,7 @@ const TableRowInner = forwardRef<HTMLTableRowElement, TableRowProps>(function Ta
         const key = last.getAttribute(TABLE_ROW_KEY_ATTR);
         if (key == null) return;
         setFocusedRowKey(key);
-        last.focus();
+        focusKeyboard(last);
       }
     },
     [id, isSelectable, onKeyDown, onRowSelect, setFocusedRowKey],

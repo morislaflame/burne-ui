@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, PointerEvent } from "react";
+import type { ButtonHTMLAttributes, KeyboardEvent, PointerEvent } from "react";
 import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
@@ -36,7 +36,7 @@ export type CloseButtonClassNamesProviderProps = {
 
 export type UseCloseButtonRootStateProps = Omit<
   CloseButtonProps,
-  "onPointerDown" | "onPointerEnter" | "onPointerLeave"
+  "onPointerDown" | "onPointerEnter" | "onPointerLeave" | "onKeyDown"
 >;
 
 export type UseCloseButtonAnimationsProps = {
@@ -46,4 +46,5 @@ export type UseCloseButtonAnimationsProps = {
   onPointerDown?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerEnter?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerLeave?: (e: PointerEvent<HTMLButtonElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
 };

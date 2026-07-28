@@ -1,4 +1,4 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { CloseButton } from "@/components/core/CloseButton";
@@ -7,6 +7,7 @@ import { burneLightThemePortalProps, useBurneLightTheme, usePortalThemeAnchor } 
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { focusElement } from "@/components/core/utils/focusElement";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
@@ -115,9 +116,6 @@ export function DrawerHandleInner({
 
   return (
     <div
-      role="button"
-      tabIndex={0}
-      aria-label={drawerHandleAriaLabel(placement, labels)}
       className={drawerHandleClass({
         placement,
         slotClass: slotClassNames.handle,
@@ -127,21 +125,23 @@ export function DrawerHandleInner({
         onPointerDown?.(e);
         dragPD(e);
       }}
-      onKeyDown={(e) => {
-        onKeyDown?.(e);
-        if (e.defaultPrevented) return;
-        if (!isDrawerHandleActivateKey(e.key)) return;
-        e.preventDefault();
-        close();
-      }}
       {...rest}
     >
       <span
-        aria-hidden
+        role="button"
+        tabIndex={0}
+        aria-label={drawerHandleAriaLabel(placement, labels)}
         className={drawerHandleGripClass({
           placement,
           slotClass: slotClassNames.handleGrip,
         })}
+        onKeyDown={(e) => {
+          onKeyDown?.(e);
+          if (e.defaultPrevented) return;
+          if (!isDrawerHandleActivateKey(e.key)) return;
+          e.preventDefault();
+          close();
+        }}
       />
     </div>
   );
@@ -342,7 +342,7 @@ DrawerFooter.displayName = "DrawerFooter";
 // ─── Drawer.Trigger ──────────────────────────────────────────────────────────
 
 export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
-  function DrawerTrigger({ children, asChild, className, onClick, onPointerDown, ...rest }, forwardedRef) {
+  function DrawerTrigger({ children, asChild, className, onClick, onPointerDown, onKeyDown, ...rest }, forwardedRef) {
     const { open, onOpenChange } = useDrawer();
     const slotClassNames = useDrawerClassNames();
     const triggerRef = useRef<HTMLElement | null>(null);
@@ -360,10 +360,21 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
-        triggerRef.current?.focus({ preventScroll: true });
+        focusElement(triggerRef.current);
         runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
       },
       [open, openingRef, triggerRef, onOpenChange],
+    );
+
+    const handleKeyDown = useCallback(
+      (e: ReactKeyboardEvent<HTMLElement>) => {
+        onKeyDown?.(e as ReactKeyboardEvent<HTMLButtonElement>);
+        if (e.defaultPrevented || open || openingRef.current) return;
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+      },
+      [onKeyDown, open, openingRef, onOpenChange, triggerRef],
     );
 
     const handleClick = useCallback(
@@ -392,6 +403,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
                 handlePointerDown(e);
                 onPointerDown?.(e as ReactPointerEvent<HTMLButtonElement>);
               },
+              onKeyDown: handleKeyDown,
               onClick: handleClick,
               "aria-haspopup": "dialog",
               "aria-expanded": open,
@@ -399,7 +411,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
             mergeRefs((node: HTMLElement | null) => {
               triggerRef.current = node;
             }, forwardedRef),
-            { runBeforeChild: ["onPointerDown"] },
+            { runBeforeChild: ["onPointerDown", "onKeyDown"] },
           ),
         );
       }
@@ -416,6 +428,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
           onPointerDown?.(e);
           handlePointerDown(e);
         }}
+        onKeyDown={handleKeyDown}
         onClick={handleClick}
         {...rest}
       >

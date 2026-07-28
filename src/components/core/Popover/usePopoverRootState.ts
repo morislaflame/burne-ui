@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef } from "react";
 
+import { focusElement } from "@/components/core/utils/focusElement";
 import { hasCompoundChild } from "@/components/core/utils/hasCompoundChild";
 
 import { popoverHintId, popoverLabelId } from "./popoverA11y";
@@ -64,7 +65,7 @@ export function usePopoverRootState({
   useEffect(() => {
     if (wasOpenRef.current && !open) {
       const el = anchorRef?.current ?? triggerRef.current;
-      el?.focus({ preventScroll: true });
+      focusElement(el);
     }
     wasOpenRef.current = open;
   }, [anchorRef, open, triggerRef]);

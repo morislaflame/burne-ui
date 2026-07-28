@@ -2,6 +2,7 @@ import type {
   ChangeEvent,
   HTMLAttributes,
   InputHTMLAttributes,
+  KeyboardEvent,
   LabelHTMLAttributes,
   MouseEvent,
   PointerEvent,
@@ -125,4 +126,5 @@ export type UseRadioAnimationsProps = {
   enableTextMotion: boolean;
   textMotionRef: RefObject<HTMLElement | null>;
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLLabelElement>) => void;
 };

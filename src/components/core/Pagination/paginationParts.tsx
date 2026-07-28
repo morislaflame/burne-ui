@@ -80,7 +80,7 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       [ref],
     );
 
-    const { handlePointerDown } = usePressableElementTextMotion({
+    const { handlePointerDown, handleKeyDown } = usePressableElementTextMotion({
       isDisabled: !!disabled,
       enabled: !disabled,
       textMotionRef: btnRef,
@@ -95,8 +95,9 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
         className={paginationInteractiveButtonClass({
           className,
         })}
-        onPointerDown={handlePointerDown}
         {...rest}
+        onPointerDown={handlePointerDown}
+        onKeyDown={handleKeyDown}
       >
         {children}
       </button>

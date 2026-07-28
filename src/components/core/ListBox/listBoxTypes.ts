@@ -150,4 +150,5 @@ export type UseListBoxItemAnimationsProps = {
   disabled: boolean;
   hasLabel: boolean;
   onPointerDown?: HTMLAttributes<HTMLButtonElement>["onPointerDown"];
+  onKeyDown?: HTMLAttributes<HTMLButtonElement>["onKeyDown"];
 };

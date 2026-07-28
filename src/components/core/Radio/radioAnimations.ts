@@ -50,11 +50,13 @@ export function useRadioTextMotion({
   enableTextMotion,
   textMotionRef,
   onPointerDown,
+  onKeyDown,
 }: UseRadioAnimationsProps) {
   return usePressableElementTextMotion<HTMLLabelElement>({
     isDisabled,
     enabled: enableTextMotion,
     textMotionRef,
     onPointerDown,
+    onKeyDown,
   });
 }

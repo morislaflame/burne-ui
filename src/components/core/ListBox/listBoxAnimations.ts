@@ -45,20 +45,26 @@ export function useListBoxItemAnimations({
   disabled,
   hasLabel,
   onPointerDown,
+  onKeyDown,
 }: UseListBoxItemAnimationsProps) {
   const labelMotionRef = useRef<HTMLElement>(null);
   const enableLabelMotion = !disabled && hasLabel;
 
-  const { handlePointerDown } = usePressableElementTextMotion<HTMLButtonElement, HTMLElement>({
+  const { handlePointerDown, handleKeyDown } = usePressableElementTextMotion<
+    HTMLButtonElement,
+    HTMLElement
+  >({
     isDisabled: disabled,
     enabled: enableLabelMotion,
     textMotionRef: labelMotionRef,
     onPointerDown,
+    onKeyDown,
   });
 
   return {
     labelMotionRef,
     enableLabelMotion,
     handlePointerDown,
+    handleKeyDown,
   };
 }

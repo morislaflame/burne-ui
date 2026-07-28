@@ -85,6 +85,9 @@
 - **`--color-muted`** — теперь muted surface (`bg-muted`); прежние серые значения текста переехали в **`--color-muted-foreground`**. Класс **`text-muted`** → `color: var(--color-muted-foreground)`. Light muted surface: `12%` foreground (dark: `6%`).
 - Hover outline/ghost: **`--color-surface-transparent`** → **`--color-transparent-hover`** (`bg-transparent-hover`, theme key `transparentHover`; mix `muted 70%` + transparent).
 - Единое имя подсказки поля: **`Hint`** вместо `Description` / `description` в field API.
+- `Dropdown`: programmatic focus — `focusKeyboard` for menu arrows; `focusElement` for open/restore (UA `:focus-visible` from last input).
+- Shared **`focusElement`** / **`focusKeyboard`** / **`focusPanelOnOpen`**: roving uses `focusKeyboard`; menu rows tint via `hoverVariant` (no item `focus-ring`); modals focus first control on open with ring only after keyboard.
+- **`ToggleButtonGroup`**: root removed from Tab sequence; roving tabindex for `single` and `multiple`; arrows / Home / End move focus only; Enter/Space activate selection on the focused button.
 - `Dropdown` в joined `ButtonGroup`: root получает `rounded-[inherit]`, чтобы скругление last/first сегмента на trigger Button наследовалось от группы.
 - `ComboBox` / `Select` в joined `ButtonGroup`: `Field` root — тот же radius bridge (`BUTTON_GROUP_RADIUS_BRIDGE_CLASS`); `Select` добавлен в segment slots.
 - `Switch.Description` → `Switch.Hint`.

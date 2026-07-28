@@ -1,6 +1,7 @@
 import type {
   HTMLAttributes,
   InputHTMLAttributes,
+  KeyboardEvent,
   LabelHTMLAttributes,
   PointerEvent,
   ReactNode,
@@ -156,6 +157,7 @@ export type UseSwitchAnimationsProps = {
   enableTextMotion: boolean;
   textMotionRef: RefObject<HTMLElement | null>;
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLLabelElement>) => void;
 };
 
 export type UseSwitchTrackAnimationsProps = {

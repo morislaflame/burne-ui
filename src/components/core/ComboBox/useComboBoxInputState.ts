@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, type ChangeEvent, type FocusEv
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 
+import { focusElement } from "@/components/core/utils/focusElement";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { comboBoxActiveOptionId } from "./comboBoxA11y";
@@ -77,7 +78,7 @@ export function useComboBoxInputState(
     requestAnimationFrame(() => {
       const el = inputRef.current;
       if (!el) return;
-      el.focus();
+      focusElement(el);
       const len = nextQ.length;
       el.setSelectionRange(len, len);
     });
@@ -113,7 +114,7 @@ export function useComboBoxInputState(
       setValue(next);
       setOpen(false);
       setFilterQuery("");
-      inputRef.current?.focus();
+      focusElement(inputRef.current);
     },
     [inputRef, optionsByValue, setFilterQuery, setOpen, setValue],
   );

@@ -1,6 +1,7 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useId, useMemo, useState, type ChangeEvent, type PointerEvent, type ReactNode } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useId, useMemo, useState, type ChangeEvent, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 
 import { hasSwitchThumbChild, partitionSwitchControlChildren } from "./switchAPI";
@@ -38,6 +39,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
       onBlur,
       onFocus,
       onPointerDown,
+      onKeyDown,
       children,
       ...rest
     },
@@ -78,6 +80,16 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
         fieldCtx?.setSqueezeToken((t) => t + 1);
       },
       [disabled, fieldCtx, onPointerDown],
+    );
+
+    const handleKeyDown = useCallback(
+      (e: KeyboardEvent<HTMLInputElement>) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented || disabled || !isInteractivePressKey(e)) return;
+        setSqueezeToken((t) => t + 1);
+        fieldCtx?.setSqueezeToken((t) => t + 1);
+      },
+      [disabled, fieldCtx, onKeyDown],
     );
 
     const { "aria-label": ariaLabelProp, ...inputRest } = rest;
@@ -167,6 +179,7 @@ export const SwitchControl = forwardRef<HTMLInputElement, SwitchControlProps>(
             switchFallbackAriaLabel(fieldCtx?.hasTextColumn ?? false)
           }
           onPointerDown={handlePointerDown}
+          onKeyDown={handleKeyDown}
           {...(isControlled
             ? { checked: mergedChecked, onChange: handleChange }
             : { defaultChecked, onChange: handleChange })}

@@ -48,6 +48,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     className,
     classNames,
     onPointerDown,
+    onKeyDown,
     onClick,
     ...rest
   },
@@ -81,11 +82,12 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     onClick,
   );
 
-  const { handlePointerDown } = useRadioTextMotion({
+  const { handlePointerDown, handleKeyDown } = useRadioTextMotion({
     isDisabled: state.isDisabled,
     enableTextMotion: state.enableTextMotion,
     textMotionRef: state.textColRef,
     onPointerDown,
+    onKeyDown,
   });
 
   const gridClass = cn(
@@ -103,6 +105,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
           className={gridClass}
           {...rest}
           onPointerDown={handlePointerDown}
+          onKeyDown={handleKeyDown}
         >
           {state.isCompound ? (
             children

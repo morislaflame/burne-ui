@@ -189,7 +189,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
     },
     forwardedRef,
   ) {
-    const { textRef, handlePointerDown } = useBreadcrumbInteractiveMotion();
+    const { textRef, handlePointerDown, handleKeyDown } = useBreadcrumbInteractiveMotion();
 
     const setRefs = useCallback(
       (node: HTMLSpanElement | null) => {
@@ -212,6 +212,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
             aria-current={ariaCurrent}
             className={innerCls}
             onPointerDown={handlePointerDown}
+            onKeyDown={handleKeyDown}
           >
             <Text
               ref={setRefs}
@@ -230,6 +231,7 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
             aria-current={ariaCurrent}
             className={innerCls}
             onPointerDown={handlePointerDown}
+            onKeyDown={handleKeyDown}
           >
             <Text
               ref={setRefs}

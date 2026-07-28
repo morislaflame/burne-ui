@@ -1,3 +1,5 @@
+import { focusKeyboard } from "@/components/core/utils/focusElement";
+
 export function tabsTabId(baseId: string, tabValue: string): string {
   return `${baseId}-tab-${tabValue}`;
 }
@@ -47,6 +49,6 @@ export function focusTabAt(list: HTMLElement, index: number) {
   const tabs = collectTabButtons(list);
   if (tabs.length === 0) return null;
   const next = tabs[Math.max(0, Math.min(index, tabs.length - 1))]!;
-  next.focus();
+  focusKeyboard(next);
   return next;
 }

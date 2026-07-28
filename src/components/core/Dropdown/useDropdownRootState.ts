@@ -1,5 +1,6 @@
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 
+import { focusElement } from "@/components/core/utils/focusElement";
 import { toggleOptionListSelection } from "@/components/core/utils/optionListSelection";
 
 import { normalizeDropdownValues } from "./dropdownAPI";
@@ -33,7 +34,7 @@ export function useDropdownRootState({
       onOpenChange?.(next);
       if (!next) {
         requestAnimationFrame(() => {
-          triggerRef.current?.focus({ preventScroll: true });
+          focusElement(triggerRef.current);
         });
       }
     },

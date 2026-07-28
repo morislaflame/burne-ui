@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState, type FocusEvent, type FormEvent, type KeyboardEvent, type MouseEvent, type RefObject } from "react";
 
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
+import { focusElement } from "@/components/core/utils/focusElement";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
@@ -99,7 +100,7 @@ export function useTimeFieldControlState({
     pendingRef.current = null;
     setFocusedSeg(seg);
     shellRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
-    keyboardInputRef.current?.focus({ preventScroll: true });
+    focusElement(keyboardInputRef.current);
   }, []);
 
   const navigate = useCallback(

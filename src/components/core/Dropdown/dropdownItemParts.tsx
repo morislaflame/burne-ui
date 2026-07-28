@@ -7,7 +7,7 @@ import {
 } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
-import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze, isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
@@ -126,6 +126,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       status = "default",
       onClick,
       onPointerDown,
+      onKeyDown,
       ...rest
     },
     ref,
@@ -181,6 +182,17 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       [disabled, onPointerDown],
     );
 
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLElement>) => {
+        onKeyDown?.(e);
+        if (e.defaultPrevented || disabled || !isInteractivePressKey(e)) return;
+        const el = e.currentTarget;
+        if (!el || prefersReducedMotion()) return;
+        void animateInteractivePressSqueeze(el);
+      },
+      [disabled, onKeyDown],
+    );
+
     const handleClick = useCallback(
       (e: React.MouseEvent<HTMLElement>) => {
         onClick?.(e);
@@ -218,6 +230,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
             className={rowClass}
             onClick={handleClick}
             onPointerDown={handlePointerDown}
+            onKeyDown={handleKeyDown}
             {...(rest as HTMLAttributes<HTMLAnchorElement>)}
           >
             {itemBody}
@@ -238,6 +251,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
           className={rowClass}
           onClick={handleClick}
           onPointerDown={handlePointerDown}
+          onKeyDown={handleKeyDown}
           {...(rest as HTMLAttributes<HTMLButtonElement>)}
         >
           {itemBody}

@@ -1,6 +1,7 @@
 import type {
   AnchorHTMLAttributes,
   ForwardedRef,
+  KeyboardEvent,
   PointerEvent,
   ReactNode,
 } from "react";
@@ -108,6 +109,7 @@ export type LinkAnchorBodyProps = LinkBodyContentProps & {
   handlePointerEnter: (event: PointerEvent<HTMLAnchorElement>) => void;
   handlePointerLeave: (event: PointerEvent<HTMLAnchorElement>) => void;
   handlePointerDown: (event: PointerEvent<HTMLAnchorElement>) => void;
+  handleKeyDown: (event: KeyboardEvent<HTMLAnchorElement>) => void;
 } & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "href" | "className">;
 
 export type LinkIconSlotProps = {
@@ -122,4 +124,5 @@ export type UseLinkAnimationsProps = {
   onPointerEnter?: (event: PointerEvent<HTMLAnchorElement>) => void;
   onPointerLeave?: (event: PointerEvent<HTMLAnchorElement>) => void;
   onPointerDown?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLAnchorElement>) => void;
 };

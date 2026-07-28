@@ -114,7 +114,7 @@ Joined-рамка как у `ButtonGroup`: на `classNames.root` — `rounded-*
 
 `variant="gloss"` на группе → gloss handlers на кнопках.
 
-Группа добавляет: сегментацию (`ButtonGroupSegmentProvider`), keyboard nav при `type="single"`.
+Группа добавляет: сегментацию (`ButtonGroupSegmentProvider`), roving keyboard (стрелки / Home / End) в обоих `type`.
 
 #### Кастомизация
 
@@ -182,8 +182,9 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 ### Практические заметки
 
 - **`aria-label` обязателен** на toolbar (не валидируется кодом).
-- `type="single"`: кнопки `role="radio"`, `aria-checked`; стрелки на root.
-- `type="multiple"`: `aria-pressed` на кнопках.
+- `type="single"`: кнопки `role="radio"`, `aria-checked`.
+- `type="multiple"`: `aria-pressed`.
+- Стрелки / Home / End: только roving focus; Enter/Space на кнопке — select/toggle.
 - `data-toggle-button-value` на кнопках — для keyboard navigation.
 - `segmented` — когда нужны независимые borders/shadows.
 - `disabled` на группе блокирует все toggle buttons.
@@ -200,10 +201,11 @@ Root: `role="toolbar"`, `aria-orientation`, `aria-disabled`. Не fieldset: Lege
 
 | Режим | Поведение |
 |-------|-----------|
-| Root | `role="toolbar"`, `tabIndex={0\|-1}`, **`aria-label` required** |
-| `multiple` | `aria-pressed` на кнопках |
-| `single` | `role="radio"`, `aria-checked`; roving `tabIndex` |
-| Стрелки | Arrow Left/Right (horizontal) или Up/Down (vertical) при `single` |
+| Root | `role="toolbar"`, **не** в Tab sequence; **`aria-label` required** |
+| Кнопки | Roving `tabIndex` (один tab stop на группу) |
+| `multiple` | `aria-pressed`; стрелки двигают фокус; Enter/Space — toggle |
+| `single` | `role="radio"`, `aria-checked`; стрелки двигают фокус; Enter/Space — select |
+| Стрелки | Arrow Left/Right (horizontal) или Up/Down (vertical); Home/End — крайние |
 | Иконки | `aria-hidden` на decorative `icon` |
 
 ## Структура файлов

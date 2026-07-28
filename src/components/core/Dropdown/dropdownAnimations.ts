@@ -4,6 +4,7 @@ import {
   typeaheadMatchIndex,
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
+import { focusElement, focusKeyboard } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
@@ -39,7 +40,6 @@ function handleDropdownTypeaheadKey(
 export function useDropdownPopoverMenu({
   open,
   setOpen,
-  triggerRef,
   contentRef,
 }: UseDropdownPopoverMenuProps) {
   const typeaheadRef = useRef(createTypeaheadBufferState());
@@ -49,7 +49,7 @@ export function useDropdownPopoverMenu({
     const panel = contentRef.current;
     if (!panel) return;
     const items = getFocusableDropdownMenuItems(panel);
-    items[0]?.focus();
+    focusElement(items[0]);
   }, [contentRef, open]);
 
   useEffect(() => {
@@ -61,8 +61,8 @@ export function useDropdownPopoverMenu({
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
+        // setOpen restores focus on the trigger (browser decides ring from last input).
         setOpen(false);
-        triggerRef.current?.focus();
         return;
       }
 
@@ -97,7 +97,7 @@ export function useDropdownPopoverMenu({
 
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
-  }, [contentRef, open, setOpen, triggerRef]);
+  }, [contentRef, open, setOpen]);
 }
 
 /** Keyboard nav inside an open submenu panel (APG menu). */
@@ -118,7 +118,7 @@ export function useDropdownSubmenuKeyboard({
     // Focus first item only when opened from the focused trigger (keyboard).
     if (document.activeElement !== trigger) return;
     const items = getFocusableDropdownMenuItems(panel);
-    items[0]?.focus();
+    focusElement(items[0]);
   }, [panelRef, portalMounted, subOpen, triggerRef]);
 
   useEffect(() => {
@@ -132,7 +132,7 @@ export function useDropdownSubmenuKeyboard({
         e.preventDefault();
         e.stopPropagation();
         setOpen(false);
-        triggerRef.current?.focus();
+        focusKeyboard(triggerRef.current);
         return;
       }
 

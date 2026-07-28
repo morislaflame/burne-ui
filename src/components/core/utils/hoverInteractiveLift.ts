@@ -198,7 +198,19 @@ export function animateInteractiveHoverLift(
 }
 
 /**
- * Short squeeze impulse on pointer down.
+ * Enter / Space activation (ignores key-repeat).
+ * Used so press-squeeze can run on keyboard the same way as on pointer down
+ * (native activation does not synthesize `pointerdown`).
+ */
+export function isInteractivePressKey(e: {
+  key: string;
+  repeat?: boolean;
+}): boolean {
+  return !e.repeat && (e.key === "Enter" || e.key === " ");
+}
+
+/**
+ * Short squeeze impulse on pointer down / keyboard activation.
  * Squeeze amount adapts automatically to element size.
  * Returns a promise that resolves when the animation ends.
  *

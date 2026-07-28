@@ -17,12 +17,14 @@ export function useSwitchTextMotion({
   enableTextMotion,
   textMotionRef,
   onPointerDown,
+  onKeyDown,
 }: UseSwitchAnimationsProps) {
   return usePressableElementTextMotion<HTMLLabelElement>({
     isDisabled: !!isDisabled,
     enabled: enableTextMotion,
     textMotionRef,
     onPointerDown,
+    onKeyDown,
   });
 }
 

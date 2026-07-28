@@ -9,7 +9,7 @@ import { usePressableElementTextMotion } from "@/components/core/utils/usePressa
  */
 export function useCalendarPressableAnimations(disabled = false) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const { handlePointerEnter, handlePointerLeave, handlePointerDown } =
+  const { handlePointerEnter, handlePointerLeave, handlePointerDown, handleKeyDown } =
     usePressableElementTextMotion<HTMLButtonElement>({
       isDisabled: disabled,
       enabled: !disabled,
@@ -23,5 +23,6 @@ export function useCalendarPressableAnimations(disabled = false) {
     handlePointerEnter,
     handlePointerLeave,
     handlePointerDown,
+    handleKeyDown,
   };
 }

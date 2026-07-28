@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
+import { focusElement } from "@/components/core/utils/focusElement";
+
 import { clampN } from "./colorUtils";
 import type { UseColorPickerAreaDragProps } from "./colorPickerTypes";
 import {
@@ -46,7 +48,7 @@ export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDrag
       e.preventDefault();
       dragging.current = true;
       update(e.clientX, e.clientY);
-      thumbRef.current?.focus({ preventScroll: true });
+      focusElement(thumbRef.current);
     },
     [update],
   );

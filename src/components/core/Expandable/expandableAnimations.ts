@@ -62,6 +62,10 @@ export function useExpandableTriggerMotion({
       if (e.defaultPrevented || disabled) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
+        const span = liftSpanRef.current;
+        if (span && !prefersReducedMotion()) {
+          void animateInteractivePressSqueeze(span);
+        }
         toggle();
       }
     },

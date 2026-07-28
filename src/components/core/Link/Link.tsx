@@ -42,6 +42,7 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
+      onKeyDown,
       ...rest
     },
     forwardedRef,
@@ -69,6 +70,7 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
+      onKeyDown,
     });
 
     const slotClassNames = useLinkClassNames();
@@ -100,6 +102,7 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
             onPointerEnter: animations.handlePointerEnter,
             onPointerLeave: animations.handlePointerLeave,
             onPointerDown: animations.handlePointerDown,
+            onKeyDown: animations.handleKeyDown,
             children: <LinkBodyContent {...bodyProps} />,
           },
           animations.setAnchorRef,
@@ -115,6 +118,7 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
         handlePointerEnter={animations.handlePointerEnter}
         handlePointerLeave={animations.handlePointerLeave}
         handlePointerDown={animations.handlePointerDown}
+        handleKeyDown={animations.handleKeyDown}
         {...bodyProps}
         {...rest}
       />

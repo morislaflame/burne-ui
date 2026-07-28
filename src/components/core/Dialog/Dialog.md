@@ -141,7 +141,7 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 2. `animateModalOpen({ overlay, panel, vars: motionInteractive() })`:
    - **overlay:** `opacity: 0 → 1`
    - **panel:** `scale: 0.97` (`MODAL_PANEL_SCALE_FROM`) → `scale: 1`
-3. `panel.focus()` — focus trap
+3. `focusPanelOnOpen` — первый focusable (иначе panel); ring если trigger был `:focus-visible`
 
 **Важно:** scale только на panel, **не** `autoAlpha` на panel при open — gloss `backdrop-filter` на детях не ломается.
 

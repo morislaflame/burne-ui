@@ -66,9 +66,16 @@ export function useDisclosureTriggerMotion({
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       onKeyDown?.(e);
+      if (e.defaultPrevented || disabled) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        if (!disabled) setOpen(!open);
+        const el = titleLiftRef.current;
+        if (el && !prefersReducedMotion()) {
+          void animateInteractivePressSqueeze(el, {
+            pointerInside: hoverInsideRef.current,
+          });
+        }
+        setOpen(!open);
       }
     },
     [disabled, onKeyDown, open, setOpen],

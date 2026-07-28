@@ -1,5 +1,7 @@
 import type { KeyboardEvent } from "react";
 
+import { focusKeyboard } from "@/components/core/utils/focusElement";
+
 import type { ToggleButtonGroupOrientation } from "./toggleButtonGroupTypes";
 
 export function collectToggleButtons(root: HTMLElement): HTMLButtonElement[] {
@@ -8,15 +10,17 @@ export function collectToggleButtons(root: HTMLElement): HTMLButtonElement[] {
   );
 }
 
+/**
+ * Roving tabindex: one tab stop in the group (focused / last-roved item).
+ * Falls back to `firstItemValue` before any focus interaction.
+ */
 export function resolveToggleButtonTabIndex(
-  isSingle: boolean,
   itemValue: string,
-  selectedValue: string | undefined,
+  rovingValue: string | undefined,
   firstItemValue: string | undefined,
-): 0 | -1 | undefined {
-  if (!isSingle) return undefined;
-  if (selectedValue != null) return selectedValue === itemValue ? 0 : -1;
-  return itemValue === firstItemValue ? 0 : -1;
+): 0 | -1 {
+  const active = rovingValue ?? firstItemValue;
+  return itemValue === active ? 0 : -1;
 }
 
 export function resolveToggleButtonArrowTargetIndex(
@@ -46,31 +50,33 @@ export function resolveToggleButtonArrowTargetIndex(
           ? itemCount - 1
           : (currentIndex - 1 + itemCount) % itemCount
         : null;
+    case "Home":
+      return 0;
+    case "End":
+      return itemCount - 1;
     default:
       return null;
   }
 }
 
-export function toggleButtonGroupRootTabIndex(disabled: boolean): 0 | -1 {
-  return disabled ? -1 : 0;
-}
-
+/**
+ * Arrows / Home / End move focus only (roving). Enter / Space stay on the
+ * focused `<button>` and toggle/select via native activation + click handler.
+ */
 export function createToggleButtonGroupKeyDownHandler({
   disabled,
-  isSingle,
   orientation,
   onKeyDown,
-  select,
+  setRovingValue,
 }: {
   disabled: boolean;
-  isSingle: boolean;
   orientation: ToggleButtonGroupOrientation;
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
-  select: (value: string) => void;
+  setRovingValue: (value: string) => void;
 }): (event: KeyboardEvent<HTMLDivElement>) => void {
   return (event) => {
     onKeyDown?.(event);
-    if (event.defaultPrevented || disabled || !isSingle) return;
+    if (event.defaultPrevented || disabled) return;
 
     const items = collectToggleButtons(event.currentTarget);
     if (items.length === 0) return;
@@ -87,8 +93,8 @@ export function createToggleButtonGroupKeyDownHandler({
 
     event.preventDefault();
     const next = items[nextIndex]!;
-    next.focus();
     const nextValue = next.dataset.toggleButtonValue;
-    if (nextValue) select(nextValue);
+    if (nextValue) setRovingValue(nextValue);
+    focusKeyboard(next);
   };
 }

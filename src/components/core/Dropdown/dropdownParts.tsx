@@ -73,10 +73,12 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           if (open) setOpen(false);
-          else if (!openingRef.current) setOpen(true);
+          else {
+            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+          }
         }
       },
-      [onKeyDown, open, openingRef, setOpen],
+      [onKeyDown, open, openingRef, setOpen, triggerRef],
     );
 
     if (asChild && isValidElement(children)) {
@@ -103,7 +105,7 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
             "aria-controls": open ? contentId : undefined,
           },
           mergeRefs(forwardedRef, triggerRef),
-          { runBeforeChild: ["onPointerDown"] },
+          { runBeforeChild: ["onPointerDown", "onKeyDown"] },
         ),
       );
     }
@@ -178,7 +180,11 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       [subPanelRootsRef],
     );
 
-    useDropdownPopoverMenu({ open, setOpen, triggerRef, contentRef });
+    useDropdownPopoverMenu({
+      open,
+      setOpen,
+      contentRef,
+    });
 
     return (
       <Popover

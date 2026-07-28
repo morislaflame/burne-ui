@@ -235,6 +235,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 | `Escape` в main menu | Close + focus trigger |
 
 При open — autofocus на первый focusable item в panel.
+Пункты меню без `focus-ring`: активный ряд подсвечивается поверхностью через `hoverVariant()` (`focus-visible:bg-*`), как active option в Select/ComboBox. Стрелки — `focusKeyboard` ( Dom-фокус + surface). Open/restore trigger — `focusElement` (ring на trigger по последнему вводу).
 
 ### Чего нет
 
@@ -382,7 +383,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 - Group: `role="group"` + `aria-labelledby`
 - Keyboard navigation в открытом menu (включая submenu: ArrowRight открыть, ArrowLeft/Escape закрыть)
 - Typeahead по первым буквам (буфер ~500ms) в menu и submenu
-- Закрытие (Escape, выбор пункта, outside click) всегда возвращает focus на trigger
+- Закрытие (Escape, выбор пункта, outside click) всегда возвращает focus на trigger; ring только если закрытие/открытие было с клавиатуры
 - **`asChild`:** child должен быть фокусируемым (`Button` / `Link` / `<button>`). Нефокусируемый child не попадёт в Tab sequence — не используйте Avatar/иконку без `tabIndex` как единственный trigger.
 
 ## Структура файлов

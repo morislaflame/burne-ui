@@ -185,7 +185,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
 
 - `role="button"` standalone; в group — `role` по `type` (`group` radiogroup-like)
 - `aria-pressed` (multiple) / `aria-checked` (single)
-- `tabIndex` в group: roving `0` / `-1`
+- `tabIndex` в group: roving `0` / `-1` (и `single`, и `multiple`)
 - Focus ring: `focus-ring`
 
 ## Интеграция

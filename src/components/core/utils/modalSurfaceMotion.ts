@@ -7,6 +7,7 @@
  */
 
 import { clearWillChangeOnComplete, gsap as gsapInstance, killMotion, setWillChangeTransform } from "./gsapMotion";
+import { focusElement, focusPanelOnOpen } from "./focusElement";
 import { prefersReducedMotion } from "./reducedMotion";
 import { isMotionFeatureEnabled } from "./motionConfig";
 
@@ -28,14 +29,16 @@ export function modalOverlayEnterStyle(): { opacity: number } {
 export function applyReducedModalMotion(
   overlay: HTMLElement | null,
   panel: HTMLElement | null,
-  options?: { focusPanel?: boolean },
+  options?: { focusPanel?: boolean; focusVisible?: boolean },
 ): void {
   if (overlay) overlay.style.opacity = "1";
   if (panel) {
     panel.style.opacity = "1";
     panel.style.visibility = "visible";
     gsapInstance.set(panel, { scale: 1, clearProps: "transform" });
-    if (options?.focusPanel) panel.focus();
+    if (options?.focusPanel) {
+      focusPanelOnOpen(panel, { focusVisible: options.focusVisible ?? false });
+    }
   }
 }
 
@@ -183,6 +186,6 @@ export function completeModalDialogClose({
   }
   unmount();
   if (focusReturn && document.contains(focusReturn)) {
-    focusReturn.focus({ preventScroll: true });
+    focusElement(focusReturn);
   }
 }

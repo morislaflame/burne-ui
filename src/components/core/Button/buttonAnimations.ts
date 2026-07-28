@@ -64,6 +64,7 @@ export function useButtonAnimations({
   onPointerEnter,
   onPointerLeave,
   onPointerDown,
+  onKeyDown,
 }: UseButtonAnimationsProps) {
   const labelRef = useRef<HTMLSpanElement>(null);
   const loaderRef = useRef<HTMLSpanElement>(null);
@@ -104,6 +105,7 @@ export function useButtonAnimations({
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
+    onKeyDown,
   });
 
   const pushExpandRipple = useCallback((tone: "success" | "error") => {
@@ -224,6 +226,7 @@ export function useButtonAnimations({
     handlePointerEnter: motionRefs.handlePointerEnter,
     handlePointerLeave: motionRefs.handlePointerLeave,
     handlePointerDown: motionRefs.handlePointerDown,
+    handleKeyDown: motionRefs.handleKeyDown,
     createAsyncClickHandler,
     asyncInFlight,
   };

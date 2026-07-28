@@ -10,6 +10,7 @@ export function useLinkAnimations({
   onPointerEnter,
   onPointerLeave,
   onPointerDown,
+  onKeyDown,
 }: UseLinkAnimationsProps) {
   const anchorRef = useRef<HTMLAnchorElement | null>(null);
 
@@ -21,7 +22,7 @@ export function useLinkAnimations({
     [forwardedRef],
   );
 
-  const { handlePointerEnter, handlePointerLeave, handlePointerDown } =
+  const { handlePointerEnter, handlePointerLeave, handlePointerDown, handleKeyDown } =
     usePressableElementTextMotion<HTMLAnchorElement>({
       isDisabled: false,
       enabled: true,
@@ -30,6 +31,7 @@ export function useLinkAnimations({
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
+      onKeyDown,
     });
 
   return {
@@ -37,5 +39,6 @@ export function useLinkAnimations({
     handlePointerEnter,
     handlePointerLeave,
     handlePointerDown,
+    handleKeyDown,
   };
 }

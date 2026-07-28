@@ -36,6 +36,7 @@ export {
 export {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
+  isInteractivePressKey,
   initElementShadow,
   readShadowSize,
   readShadowVar,

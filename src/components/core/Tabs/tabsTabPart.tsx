@@ -1,4 +1,4 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type ButtonHTMLAttributes, type MouseEvent, type PointerEvent, type ReactElement, type Ref } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type ButtonHTMLAttributes, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactElement, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
@@ -22,6 +22,7 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     onPointerDown,
     onPointerEnter,
     onPointerLeave,
+    onKeyDown,
     ...rest
   },
   ref,
@@ -73,13 +74,14 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     [isDisabled, onClick, setValue, tabValue],
   );
 
-  const { handlePointerEnter, handlePointerLeave, handlePointerDown } = useTabPointerMotion({
+  const { handlePointerEnter, handlePointerLeave, handlePointerDown, handleKeyDown } = useTabPointerMotion({
     motionRef,
     isDisabled,
     isSelected,
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
+    onKeyDown,
   });
 
   const tabButtonClassName = tabsTabClass({
@@ -129,6 +131,10 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
         child.props.onPointerDown?.(e);
         handlePointerDown(e);
       },
+      onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {
+        child.props.onKeyDown?.(e);
+        handleKeyDown(e);
+      },
     });
   }
 
@@ -145,10 +151,11 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       disabled={a11y.disabled}
       className={tabButtonClassName}
       onClick={handleClick}
+      {...rest}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
-      {...rest}
+      onKeyDown={handleKeyDown}
     >
       <Text
         as="span"

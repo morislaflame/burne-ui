@@ -54,9 +54,11 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       disabled,
       children,
       onClick,
+      onFocus,
       onPointerDown,
       onPointerEnter,
       onPointerLeave,
+      onKeyDown,
       ...rest
     },
     ref,
@@ -76,6 +78,7 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       classNames,
       children,
       onClick,
+      onFocus,
     });
 
     const animations = useToggleButtonAnimations({
@@ -88,6 +91,7 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
+      onKeyDown,
     });
 
     const buttonClass = toggleButtonRootClass({
@@ -132,11 +136,13 @@ export const ToggleButtonRoot = forwardRef<HTMLButtonElement, ToggleButtonProps>
             aria-checked={state.ariaChecked}
             tabIndex={state.tabIndex}
             className={buttonClass}
+            {...rest}
             onPointerEnter={animations.handlePointerEnter}
             onPointerLeave={animations.handlePointerLeave}
             onPointerDown={animations.handlePointerDown}
+            onKeyDown={animations.handleKeyDown}
             onClick={(e) => state.handleClick(e, animations.queueFillOnClick)}
-            {...rest}
+            onFocus={state.handleFocus}
           >
             {!hasCompoundFill ? <ToggleButtonFill /> : null}
             {state.isCompound ? (

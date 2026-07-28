@@ -13,6 +13,7 @@ import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteracti
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
+import { focusElement } from "@/components/core/utils/focusElement";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
@@ -236,7 +237,7 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         }
         if (e.button !== 0) return;
         setOpen(true);
-        requestAnimationFrame(() => inputRef.current?.focus());
+        requestAnimationFrame(() => focusElement(inputRef.current));
       },
       [disabled, inputRef, onPointerDown, open, setFilterQuery, setOpen],
     );

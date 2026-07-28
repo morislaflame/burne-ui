@@ -43,6 +43,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
       className,
       classNames,
       onPointerDown,
+      onKeyDown,
       ...rest
     },
     ref,
@@ -59,11 +60,12 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
       ...rest,
     });
 
-    const { handlePointerDown } = useSwitchTextMotion({
+    const { handlePointerDown, handleKeyDown } = useSwitchTextMotion({
       isDisabled: state.disabled,
       enableTextMotion: state.enableTextMotion,
       textMotionRef: state.textColRef,
       onPointerDown,
+      onKeyDown,
     });
 
     const gridClass = cn(
@@ -81,7 +83,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
     return (
       <SwitchFieldProvider value={state.fieldCtx}>
         <SwitchClassNamesProvider classNames={classNames}>
-          <label ref={ref} className={gridClass} onPointerDown={handlePointerDown}>
+          <label ref={ref} className={gridClass} onPointerDown={handlePointerDown} onKeyDown={handleKeyDown}>
             {state.isCompound ? (
               injectSwitchControlProps(children, state.controlRest)
             ) : (

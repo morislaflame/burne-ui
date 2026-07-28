@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, type FocusEvent } from "react";
 
 import { useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useControllableState } from "@/components/core/utils/useControllableState";
@@ -24,6 +24,7 @@ export function useToggleButtonRootState({
   classNames,
   children,
   onClick,
+  onFocus,
 }: UseToggleButtonRootStateProps) {
   const groupCtx = useOptionalToggleButtonGroupContext();
   const segmentCtx = useOptionalButtonGroupSegment();
@@ -86,6 +87,15 @@ export function useToggleButtonRootState({
     ],
   );
 
+  const handleFocus = useCallback(
+    (e: FocusEvent<HTMLButtonElement>) => {
+      onFocus?.(e);
+      if (e.defaultPrevented || !inGroup || itemValue == null) return;
+      groupCtx!.setRovingValue(itemValue);
+    },
+    [groupCtx, inGroup, itemValue, onFocus],
+  );
+
   return {
     itemValue,
     groupCtx,
@@ -103,11 +113,11 @@ export function useToggleButtonRootState({
     role: toggleButtonRole({ inGroup, isSingleGroup }),
     ariaPressed: toggleButtonAriaPressed({ inGroup, isSingleGroup, pressed }),
     ariaChecked: toggleButtonAriaChecked({ inGroup, isSingleGroup, pressed }),
-    tabIndex:
-      inGroup && isSingleGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined,
+    tabIndex: inGroup ? groupCtx!.tabIndexFor(itemValue!) : undefined,
     isCompound,
     contentLayoutClass,
     children,
     handleClick,
+    handleFocus,
   };
 }

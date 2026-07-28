@@ -1,5 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { focusPanelOnOpen, isFocusVisibleElement } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
@@ -9,7 +10,6 @@ import { applyFloatingPortalPosition, resolvePortalContainer } from "@/component
 import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
-import { getFirstFocusableInPopover } from "./popoverA11y";
 import { mergePopoverRefs } from "./popoverAPI";
 import type { PopoverSide, UsePopoverContentLifecycleProps } from "./popoverTypes";
 
@@ -115,7 +115,9 @@ export function usePopoverContentLifecycle({
     if (!panel || !trigger) return;
     const active = document.activeElement;
     if (active !== trigger && !trigger.contains(active)) return;
-    getFirstFocusableInPopover(panel)?.focus({ preventScroll: true });
+    // Read before moving focus — trigger loses :focus-visible once we leave it.
+    const fromKeyboard = isFocusVisibleElement(trigger);
+    focusPanelOnOpen(panel, { focusVisible: fromKeyboard });
   }, [open, portalMounted, triggerRef]);
 
   useLayoutEffect(() => {

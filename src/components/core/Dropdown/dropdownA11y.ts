@@ -1,3 +1,5 @@
+import { focusKeyboard } from "@/components/core/utils/focusElement";
+
 export const DROPDOWN_MENU_ITEM_SELECTOR =
   '[role="menuitem"]:not([aria-disabled="true"]), [role="menuitemcheckbox"]:not([disabled]), [role="menuitemradio"]:not([disabled])';
 
@@ -8,8 +10,7 @@ export function getFocusableDropdownMenuItems(root: HTMLElement): HTMLElement[] 
 }
 
 export function focusDropdownMenuItem(items: HTMLElement[], index: number) {
-  const item = items[index];
-  if (item) item.focus();
+  focusKeyboard(items[index]);
 }
 
 export function dropdownMenuItemTypeaheadLabel(el: HTMLElement): string {

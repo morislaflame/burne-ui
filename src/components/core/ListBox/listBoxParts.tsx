@@ -3,12 +3,15 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
+import { focusElement } from "@/components/core/utils/focusElement";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { CONTROL_SIZE_LAYOUT, OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
 import { OptionListItemContextProvider, useOptionListItemContext, type OptionListItemContextValue } from "@/components/core/utils/optionListItemContext";
 import { OptionListItemHint, OptionListItemIcon, OptionListItemIndicatorShell, OptionListItemLabel } from "@/components/core/utils/optionListItemParts";
 
-import { LISTBOX_EMPTY_DEFAULT_CHILDREN, listBoxActiveOptionId } from "./listBoxA11y";
+import { LISTBOX_EMPTY_DEFAULT_CHILDREN, listBoxActiveOptionId, listBoxOptionId } from "./listBoxA11y";
 import {
   listBoxBumpActiveValue,
   listBoxFirstEnabledValue,
@@ -94,7 +97,7 @@ export function ListBoxRootShell({
 
       const root = event.currentTarget;
       const keepFocusOnList = () => {
-        if (document.activeElement !== root) root.focus();
+        if (document.activeElement !== root) focusElement(root);
       };
 
       if (event.key === "ArrowDown") {
@@ -139,12 +142,20 @@ export function ListBoxRootShell({
           if (initial) {
             event.preventDefault();
             setActiveValue(initial);
+            const option = document.getElementById(listBoxOptionId(listId, initial));
+            if (option && !prefersReducedMotion()) {
+              void animateInteractivePressSqueeze(option);
+            }
             selectItem(initial);
             keepFocusOnList();
           }
           return;
         }
         event.preventDefault();
+        const option = document.getElementById(listBoxOptionId(listId, activeValue));
+        if (option && !prefersReducedMotion()) {
+          void animateInteractivePressSqueeze(option);
+        }
         selectItem(activeValue);
         keepFocusOnList();
         return;
@@ -168,6 +179,7 @@ export function ListBoxRootShell({
     [
       activeValue,
       disabled,
+      listId,
       onKeyDown,
       selectItem,
       setActiveValue,
@@ -344,6 +356,7 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       onClick,
       onPointerDown,
       onPointerEnter,
+      onKeyDown,
       ...rest
     },
     ref,
@@ -371,11 +384,12 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       disabled: disabledProp,
     });
 
-    const { labelMotionRef, enableLabelMotion, handlePointerDown } =
+    const { labelMotionRef, enableLabelMotion, handlePointerDown, handleKeyDown } =
       useListBoxItemAnimations({
         disabled,
         hasLabel,
         onPointerDown,
+        onKeyDown,
       });
 
     const handleClick = useCallback(
@@ -458,6 +472,7 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
           )}
           onClick={handleClick}
           onPointerDown={handlePointerDown}
+          onKeyDown={handleKeyDown}
           onPointerEnter={handleEnter}
           {...rest}
         >

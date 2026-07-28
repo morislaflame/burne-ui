@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes, type Ref } from "react";
+import { forwardRef, type HTMLAttributes, type KeyboardEvent, type Ref } from "react";
 
 import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FieldLabelContext } from "@/components/core/Label";
@@ -53,6 +53,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       className,
       classNames,
       onPointerDown,
+      onKeyDown,
       "aria-label": ariaLabel,
       ...rest
     },
@@ -93,11 +94,12 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       className,
     );
 
-    const { handlePointerDown } = useCheckboxTextMotion({
+    const { handlePointerDown, handleKeyDown } = useCheckboxTextMotion({
       isDisabled: state.isDisabled,
       enableTextMotion: state.enableTextMotion,
       textMotionRef: state.textColRef,
       onPointerDown,
+      onKeyDown: onKeyDown as ((e: KeyboardEvent<HTMLElement>) => void) | undefined,
     });
 
     const gridClass = cn(
@@ -122,6 +124,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
                   CHECKBOX_COMPOUND_FIELDSET_CLASS,
                 )}
                 onPointerDown={handlePointerDown}
+                onKeyDown={handleKeyDown}
                 {...(rest as HTMLAttributes<HTMLFieldSetElement>)}
               >
                 {children}
@@ -142,6 +145,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
             className={gridClass}
             {...rest}
             onPointerDown={handlePointerDown}
+            onKeyDown={handleKeyDown}
           >
             <CheckboxSimpleBody
               label={state.label}

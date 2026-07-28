@@ -5,6 +5,7 @@
  */
 
 import { killMotion } from "./gsapMotion";
+import { focusPanelOnOpen, isFocusVisibleElement } from "./focusElement";
 import { createGlossInteractiveRefCallback } from "./glossInteractiveMotion";
 import {
   animateModalClose,
@@ -91,6 +92,7 @@ export function useModalMotion({
   const panelRef = useRef<HTMLDivElement>(null);
   const glossPanelRef = useRef<HTMLDivElement>(null);
   const focusReturnRef = useRef<HTMLElement | null>(null);
+  const openFromKeyboardRef = useRef(false);
   const skipCloseAnimRef = useRef(false);
 
   // Keep motion resolvers fresh without retriggering effects on identity churn.
@@ -186,7 +188,9 @@ export function useModalMotion({
 
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) {
+      // Snapshot before showModal — focus moves into the dialog afterwards.
       focusReturnRef.current = captureModalFocusReturn(dialog);
+      openFromKeyboardRef.current = isFocusVisibleElement(focusReturnRef.current);
       openNativeDialog(dialog, { contained });
     }
 
@@ -195,7 +199,10 @@ export function useModalMotion({
     if (!overlay || !panel) return;
 
     if (isReducedModalMotion()) {
-      applyReducedModalMotion(overlay, panel, { focusPanel: focusOnOpen });
+      applyReducedModalMotion(overlay, panel, {
+        focusPanel: focusOnOpen,
+        focusVisible: openFromKeyboardRef.current,
+      });
       return;
     }
 
@@ -209,7 +216,9 @@ export function useModalMotion({
         ? { panelFrom: openMotion.from, panelTo: openMotion.to }
         : {}),
     });
-    if (focusOnOpen) panel.focus();
+    if (focusOnOpen) {
+      focusPanelOnOpen(panel, { focusVisible: openFromKeyboardRef.current });
+    }
   }, [open, contained, focusOnOpen, panelMotionKey]);
 
   const handleBackdropPointerDown = useCallback(

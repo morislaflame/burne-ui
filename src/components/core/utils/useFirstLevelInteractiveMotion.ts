@@ -6,7 +6,8 @@
  * - forwarded ref merge
  * - cleanup on !enabled (killMotion + clear --el-shadow)
  * - hover lift / gloss lift on enter / leave  (guarded by `enabled` + motion config / reduced motion)
- * - press squeeze + restore hover on pointer down  (guarded by `enabled` + motion config / reduced motion)
+ * - press squeeze + restore hover on pointer down / Enter / Space
+ *   (guarded by `enabled` + motion config / reduced motion)
  *
  * What stays in the component animations file:
  * - async crossfade layers (Button)
@@ -15,11 +16,16 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import type { ForwardedRef, PointerEvent } from "react";
+import type { ForwardedRef, KeyboardEvent, PointerEvent } from "react";
 
 import { killMotion } from "./gsapMotion";
 import { animateGlossInteractiveHoverLift, animateGlossInteractivePressSqueeze, createGlossInteractiveRefCallback } from "./glossInteractiveMotion";
-import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import {
+  animateInteractiveHoverLift,
+  animateInteractivePressSqueeze,
+  isInteractivePressKey,
+  shouldSkipInteractiveHoverLift,
+} from "./hoverInteractiveLift";
 import { prefersReducedMotion } from "./reducedMotion";
 import { firstLevelHoverShadow } from "./useShadowMotion";
 import { mergeForwardedRef } from "./mergeRefs";
@@ -45,6 +51,7 @@ export type UseFirstLevelInteractiveMotionProps = {
   onPointerEnter?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerLeave?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerDown?: (e: PointerEvent<HTMLButtonElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
   /**
    * Called at the start of press-squeeze release phase (before restoring hover).
    */
@@ -60,6 +67,7 @@ export function useFirstLevelInteractiveMotion({
   onPointerEnter: onPointerEnterProp,
   onPointerLeave: onPointerLeaveProp,
   onPointerDown: onPointerDownProp,
+  onKeyDown: onKeyDownProp,
   onPressReleaseStart,
 }: UseFirstLevelInteractiveMotionProps) {
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -105,6 +113,28 @@ export function useFirstLevelInteractiveMotion({
     [hasHoverShadow, isGloss],
   );
 
+  const runPressSqueeze = useCallback(() => {
+    if (prefersReducedMotion()) return;
+    const el = motionTarget();
+    if (!el) return;
+
+    if (isGloss && !useContentRef) {
+      void animateGlossInteractivePressSqueeze(
+        el,
+        hoverPointerInsideRef.current,
+        undefined,
+        onPressReleaseStart,
+      );
+      return;
+    }
+
+    void animateInteractivePressSqueeze(el, {
+      pointerInside: hoverPointerInsideRef.current,
+      shadow: useContentRef ? undefined : btnShadow,
+      onReleaseStart: onPressReleaseStart,
+    });
+  }, [btnShadow, isGloss, motionTarget, onPressReleaseStart, useContentRef]);
+
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerEnterProp?.(e);
@@ -142,27 +172,18 @@ export function useFirstLevelInteractiveMotion({
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerDownProp?.(e);
       if (!enabled || e.defaultPrevented) return;
-      if (prefersReducedMotion()) return;
-      const el = motionTarget();
-      if (!el) return;
-
-      if (isGloss && !useContentRef) {
-        void animateGlossInteractivePressSqueeze(
-          el,
-          hoverPointerInsideRef.current,
-          undefined,
-          onPressReleaseStart,
-        );
-        return;
-      }
-
-      void animateInteractivePressSqueeze(el, {
-        pointerInside: hoverPointerInsideRef.current,
-        shadow: useContentRef ? undefined : btnShadow,
-        onReleaseStart: onPressReleaseStart,
-      });
+      runPressSqueeze();
     },
-    [btnShadow, enabled, isGloss, motionTarget, onPointerDownProp, onPressReleaseStart, useContentRef],
+    [enabled, onPointerDownProp, runPressSqueeze],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>) => {
+      onKeyDownProp?.(e);
+      if (!enabled || e.defaultPrevented || !isInteractivePressKey(e)) return;
+      runPressSqueeze();
+    },
+    [enabled, onKeyDownProp, runPressSqueeze],
   );
 
   return {
@@ -173,5 +194,6 @@ export function useFirstLevelInteractiveMotion({
     handlePointerEnter,
     handlePointerLeave,
     handlePointerDown,
+    handleKeyDown,
   };
 }

@@ -1,4 +1,9 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  ReactNode,
+} from "react";
 import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonSize } from "@/components/core/Button";
@@ -110,7 +115,13 @@ export type DrawerBackdropProps = HTMLAttributes<HTMLDivElement> & {
   isDismissable?: boolean;
 };
 
-export type DrawerHandleProps = HTMLAttributes<HTMLDivElement>;
+export type DrawerHandleProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "onKeyDown"
+> & {
+  /** Keyboard activate on the grip thumb (`role="button"`). */
+  onKeyDown?: KeyboardEventHandler<HTMLElement>;
+};
 export type DrawerHeaderProps = HTMLAttributes<HTMLDivElement>;
 export type DrawerHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 export type DrawerTitleProps = HTMLAttributes<HTMLHeadingElement>;

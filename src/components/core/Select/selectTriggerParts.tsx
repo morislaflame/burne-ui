@@ -21,6 +21,7 @@ import {
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
+import { focusElement } from "@/components/core/utils/focusElement";
 
 import { selectActiveOptionId, selectTriggerAriaLabel } from "./selectA11y";
 import { selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue, selectTypeaheadLabels } from "./selectAPI";
@@ -116,7 +117,7 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
     const finishOpen = useCallback(() => {
       const selectedIdx = optionValues.indexOf(value);
       setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
-      requestAnimationFrame(() => valueRef.current?.focus());
+      requestAnimationFrame(() => focusElement(valueRef.current));
     }, [optionValues, setActiveValue, value, valueRef]);
 
     const openAfterSqueeze = useCallback(() => {
@@ -239,7 +240,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
     const finishOpen = useCallback(() => {
       const selectedIdx = optionValues.indexOf(value);
       setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
-      requestAnimationFrame(() => valueRef.current?.focus());
+      requestAnimationFrame(() => focusElement(valueRef.current));
     }, [optionValues, setActiveValue, value, valueRef]);
 
     const openAfterSqueeze = useCallback(() => {
@@ -271,7 +272,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         if (!opt || opt.disabled) return;
         setValue(next);
         setOpen(false);
-        valueRef.current?.focus();
+        focusElement(valueRef.current);
       },
       [optionsByValue, setOpen, setValue, valueRef],
     );
@@ -422,7 +423,7 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         }
         if (e.button !== 0) return;
         setOpen(true);
-        requestAnimationFrame(() => valueRef.current?.focus());
+        requestAnimationFrame(() => focusElement(valueRef.current));
       },
       [disabled, onPointerDown, open, setOpen, valueRef],
     );

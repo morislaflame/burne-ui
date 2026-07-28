@@ -29,6 +29,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       onPointerDown,
       onPointerEnter,
       onPointerLeave,
+      onKeyDown,
       ...rest
     },
     ref,
@@ -51,6 +52,7 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
       onPointerDown,
       onPointerEnter,
       onPointerLeave,
+      onKeyDown,
     });
 
     return (
@@ -61,10 +63,11 @@ export const CloseButton = forwardRef<HTMLButtonElement, CloseButtonProps>(
           disabled={state.disabled}
           aria-label={state.ariaLabel}
           className={state.buttonClass}
+          {...rest}
           onPointerEnter={animations.handlePointerEnter}
           onPointerLeave={animations.handlePointerLeave}
           onPointerDown={animations.handlePointerDown}
-          {...rest}
+          onKeyDown={animations.handleKeyDown}
         >
           {state.ripple ? (
             <CloseButtonRipple

@@ -1,7 +1,12 @@
-import { useCallback, useEffect, useRef, type PointerEvent, type RefObject } from "react";
+import { useCallback, useEffect, useRef, type KeyboardEvent, type PointerEvent, type RefObject } from "react";
 
 import { killMotion } from "./gsapMotion";
-import { animateInteractiveHoverLift, animateInteractivePressSqueeze, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
+import {
+  animateInteractiveHoverLift,
+  animateInteractivePressSqueeze,
+  isInteractivePressKey,
+  shouldSkipInteractiveHoverLift,
+} from "./hoverInteractiveLift";
 import { usePrefersReducedMotion } from "./reducedMotion";
 import { getMotionConfig } from "./motionConfig";
 
@@ -11,6 +16,8 @@ import { getMotionConfig } from "./motionConfig";
  * - `hoverLift: false` (default) — only squeezes on press. Used by Checkbox, Radio, Switch, ListBox.
  * - `hoverLift: true` — lifts on hover and squeezes on press, then restores lift. Used by Link, Tabs.
  * - `hoverLiftScale: "adaptive"` — size-based lift (Calendar cells/nav); default uses `configureMotion().hoverLiftScale`.
+ *
+ * Press = pointer down **or** Enter / Space (native activation does not fire `pointerdown`).
  */
 
 export type UsePressableElementTextMotionProps<
@@ -47,6 +54,7 @@ export type UsePressableElementTextMotionProps<
   onPointerEnter?: (e: PointerEvent<EventTarget>) => void;
   onPointerLeave?: (e: PointerEvent<EventTarget>) => void;
   onPointerDown?: (e: PointerEvent<EventTarget>) => void;
+  onKeyDown?: (e: KeyboardEvent<EventTarget>) => void;
 };
 export function usePressableElementTextMotion<
   EventTarget extends HTMLElement = HTMLElement,
@@ -60,6 +68,7 @@ export function usePressableElementTextMotion<
   onPointerEnter,
   onPointerLeave,
   onPointerDown,
+  onKeyDown,
 }: UsePressableElementTextMotionProps<EventTarget, RefTarget>) {
   const reduceMotion = usePrefersReducedMotion();
   const hoverInsideRef = useRef(false);
@@ -86,6 +95,20 @@ export function usePressableElementTextMotion<
     killMotion(el);
     el.style.transform = "";
   }, [isDisabled, textMotionRef]);
+
+  const runPressSqueeze = useCallback(() => {
+    if (reduceMotion) return;
+    const el = textMotionRef.current;
+    if (!el) return;
+    if (hoverLift) {
+      void animateInteractivePressSqueeze(el, {
+        pointerInside: hoverInsideRef.current,
+        liftScale: resolveLiftScale(),
+      });
+    } else {
+      void animateInteractivePressSqueeze(el);
+    }
+  }, [hoverLift, reduceMotion, resolveLiftScale, textMotionRef]);
 
   const handlePointerEnter = useCallback(
     (e: PointerEvent<EventTarget>) => {
@@ -117,20 +140,19 @@ export function usePressableElementTextMotion<
     (e: PointerEvent<EventTarget>) => {
       onPointerDown?.(e);
       if (e.defaultPrevented || isDisabled || !enabled) return;
-      if (reduceMotion) return;
-      const el = textMotionRef.current;
-      if (!el) return;
-      if (hoverLift) {
-        void animateInteractivePressSqueeze(el, {
-          pointerInside: hoverInsideRef.current,
-          liftScale: resolveLiftScale(),
-        });
-      } else {
-        void animateInteractivePressSqueeze(el);
-      }
+      runPressSqueeze();
     },
-    [enabled, hoverLift, isDisabled, onPointerDown, reduceMotion, resolveLiftScale, textMotionRef],
+    [enabled, isDisabled, onPointerDown, runPressSqueeze],
   );
 
-  return { handlePointerEnter, handlePointerLeave, handlePointerDown };
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<EventTarget>) => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented || isDisabled || !enabled || !isInteractivePressKey(e)) return;
+      runPressSqueeze();
+    },
+    [enabled, isDisabled, onKeyDown, runPressSqueeze],
+  );
+
+  return { handlePointerEnter, handlePointerLeave, handlePointerDown, handleKeyDown };
 }
