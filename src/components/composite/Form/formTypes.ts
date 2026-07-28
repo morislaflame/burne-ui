@@ -1,11 +1,13 @@
 import type { FormHTMLAttributes, HTMLAttributes, ReactNode } from "react";
-import type { Prettify } from "@/utils/prettify";
-
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import type { Prettify } from "@/utils/prettify";
 
 export type FormValues = Record<string, unknown>;
 
 export type FormValidateMode = "onSubmit" | "onBlur" | "onChange";
+
+/** Form chrome size — Header / Title / Description / Section / Actions. Not cascaded to fields. */
+export type FormSize = ComponentSize;
 
 export type FormFieldRules = {
   required?: boolean | string;
@@ -27,7 +29,6 @@ export type FormResolver<TValues extends FormValues = FormValues> = (
 export type FormBindingContextValue = {
   disabled: boolean;
   readOnly: boolean;
-  size?: ComponentSize;
   validateMode: FormValidateMode;
   isSubmitting: boolean;
   submitCount: number;
@@ -71,6 +72,7 @@ export type UseFormFieldBindingOptions = {
 
 export type FormClassNames = {
   root?: string;
+  header?: string;
   section?: string;
   title?: string;
   description?: string;
@@ -91,7 +93,11 @@ export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> & 
   validateMode?: FormValidateMode;
   readOnly?: boolean;
   disabled?: boolean;
-  size?: ComponentSize;
+  /**
+   * Scales Form chrome only (`Header`, `Title`, `Description`, `Section`, `Actions`).
+   * Does not cascade into embedded controls (`Input`, `Button`, …) — set their `size` explicitly.
+   */
+  size?: FormSize;
   onSubmit?: (values: FormValues) => void | Promise<void>;
   onSubmitError?: (errors: Record<string, string>) => void;
   /** Passed to the auto-rendered `Form.ErrorSummary` (`children` / render prop). */
@@ -100,6 +106,10 @@ export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> & 
 
 export type FormSectionProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<Pick<FormClassNames, "section">>;
+};
+
+export type FormHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  classNames?: Prettify<Pick<FormClassNames, "header">>;
 };
 
 export type FormTitleProps = HTMLAttributes<HTMLHeadingElement>;
@@ -129,4 +139,9 @@ export type FormShellIds = {
   descriptionId: string;
   errorSummaryId: string;
   announceId: string;
+};
+
+export type FormShellValue = {
+  shellIds: FormShellIds;
+  size: FormSize;
 };

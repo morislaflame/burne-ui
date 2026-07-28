@@ -43,7 +43,7 @@ export function InputRoot({
   const formError = fieldName ? formCtx?.getError(fieldName) : undefined;
   const resolvedError = error ?? formError;
   const resolvedStatus = status === "default" && formError ? "danger" : status;
-  const resolvedSize = size ?? formCtx?.size ?? "base";
+  const resolvedSize = size ?? "base";
 
   const state = useInputRootState({
     children,

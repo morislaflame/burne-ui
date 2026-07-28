@@ -29,7 +29,9 @@ export function FormErrorSummaryDemo() {
       )}
       onSubmit={() => undefined}
     >
-      <Form.Title>Profile</Form.Title>
+      <Form.Header>
+        <Form.Title>Profile</Form.Title>
+      </Form.Header>
       <Form.Section>
         <Form.Field name="name">
           <Input required name="name" id="name" label="Name" />

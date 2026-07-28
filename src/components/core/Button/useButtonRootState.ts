@@ -37,7 +37,7 @@ export function useButtonRootState({
   const groupSegment = layoutCtx?.segmented
     ? undefined
     : (groupSegmentProp ?? groupCtx?.segment);
-  const size = sizeProp ?? groupCtx?.buttonSize ?? formCtx?.size ?? "base";
+  const size = sizeProp ?? groupCtx?.buttonSize ?? "base";
   const variant = variantProp ?? groupCtx?.variant ?? "default";
   const userDisabled = Boolean(disabledProp ?? formCtx?.disabled ?? formCtx?.isSubmitting);
   const isGloss = variant === "gloss";

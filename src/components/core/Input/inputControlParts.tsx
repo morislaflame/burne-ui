@@ -6,7 +6,6 @@ import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
 import { Text } from "@/components/core/Text";
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { useFormControlProps } from "@/components/composite/Form/useFormControlProps";
-import { useOptionalFormBindingContext } from "@/components/composite/Form/formContext";
 import { FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS } from "@/components/core/utils/fieldControlMobileNoZoom";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 
@@ -77,7 +76,6 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     const resolvedRef = formBinding.ref;
 
     const fieldCtx = useOptionalInputFieldContext();
-    const formCtx = useOptionalFormBindingContext();
     const slotClassNames = useInputClassNames();
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
@@ -87,7 +85,6 @@ export const InputControl = forwardRef<HTMLInputElement, InputControlProps>(
     const size =
       sizeProp ??
       fieldCtx?.size ??
-      formCtx?.size ??
       inputSizeFromButtonSize(groupCtx?.buttonSize ?? "base");
     const required = fieldCtx?.required ?? false;
     const hintConnected = fieldCtx?.hintConnected ?? false;

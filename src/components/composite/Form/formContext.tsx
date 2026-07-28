@@ -1,10 +1,10 @@
 import { createContext, useContext, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 
-import type { FormBindingContextValue, FormClassNames, FormShellIds } from "./formTypes";
+import type { FormBindingContextValue, FormClassNames, FormShellValue, FormSize } from "./formTypes";
 
 const FormClassNamesContext = createContext<FormClassNames>({});
-const FormShellContext = createContext<FormShellIds | null>(null);
+const FormShellContext = createContext<FormShellValue | null>(null);
 const FormBindingContext = createContext<FormBindingContextValue | null>(null);
 
 export function FormClassNamesProvider({
@@ -23,20 +23,31 @@ export function FormClassNamesProvider({
 
 export function FormShellProvider({
   shellIds,
+  size = "base",
   children,
 }: {
-  shellIds: FormShellIds;
+  shellIds: FormShellValue["shellIds"];
+  size?: FormSize;
   children: ReactNode;
 }) {
-  return <FormShellContext.Provider value={shellIds}>{children}</FormShellContext.Provider>;
+  const value: FormShellValue = { shellIds, size };
+  return <FormShellContext.Provider value={value}>{children}</FormShellContext.Provider>;
 }
 
 export function useFormClassNames(): FormClassNames {
   return useContext(FormClassNamesContext);
 }
 
-export function useFormShellIds(): FormShellIds | null {
+export function useFormShell(): FormShellValue | null {
   return useContext(FormShellContext);
+}
+
+export function useFormShellIds() {
+  return useContext(FormShellContext)?.shellIds ?? null;
+}
+
+export function useFormSize(): FormSize {
+  return useContext(FormShellContext)?.size ?? "base";
 }
 
 export function useOptionalFormBindingContext() {

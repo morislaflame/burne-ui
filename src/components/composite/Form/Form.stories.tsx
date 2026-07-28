@@ -77,8 +77,10 @@ function ProfileForm() {
         },
       }}
     >
-      <Form.Title>Profile</Form.Title>
-      <Form.Description>Account details and notifications.</Form.Description>
+      <Form.Header>
+        <Form.Title>Profile</Form.Title>
+        <Form.Description>Account details and notifications.</Form.Description>
+      </Form.Header>
       <Form.Section>
         <Form.Field name="locale">
           <ComboBox name="locale" options={localeOptions}>
@@ -177,7 +179,9 @@ function ValidationForm() {
         locale: { required: "Select a language from the list." },
       }}
     >
-      <Form.Title>Contact</Form.Title>
+      <Form.Header>
+        <Form.Title>Contact</Form.Title>
+      </Form.Header>
       <Form.Section>
         <Form.Field name="email">
           <Input
@@ -253,7 +257,9 @@ export const ErrorSummaryRender: Story = {
       )}
       onSubmit={() => undefined}
     >
-      <Form.Title>Profile</Form.Title>
+      <Form.Header>
+        <Form.Title>Profile</Form.Title>
+      </Form.Header>
       <Form.Section>
         <Form.Field name="name">
           <Input required name="name" id="name" label="Name" />
@@ -285,7 +291,9 @@ function LoginForm() {
           void values;
         }}
       >
-        <Form.Title>Sign in</Form.Title>
+        <Form.Header>
+          <Form.Title>Sign in</Form.Title>
+        </Form.Header>
         <Form.Section>
           <Form.Field name="login">
             <Input required name="login" label="Email" autoComplete="email" />
@@ -331,7 +339,9 @@ function ControlledForm() {
           void next;
         }}
       >
-        <Form.Title>Controlled</Form.Title>
+        <Form.Header>
+          <Form.Title>Controlled</Form.Title>
+        </Form.Header>
         <Form.Section>
           <Input name="name" label="Name" />
           <Input name="email" label="Email" placeholder="you@example.com" />
@@ -365,8 +375,10 @@ function ValidateOnChangeForm() {
         void values;
       }}
     >
-      <Form.Title>Promo code</Form.Title>
-      <Form.Description>Error appears while typing.</Form.Description>
+      <Form.Header>
+        <Form.Title>Promo code</Form.Title>
+        <Form.Description>Error appears while typing.</Form.Description>
+      </Form.Header>
       <Form.Section>
         <Form.Field name="promo">
           <Input name="promo" label="Code" placeholder="SALE2026" />
@@ -402,7 +414,9 @@ function AsyncSubmitForm() {
           setSubmitted(true);
         }}
       >
-        <Form.Title>Feedback</Form.Title>
+        <Form.Header>
+          <Form.Title>Feedback</Form.Title>
+        </Form.Header>
         <Form.Section>
           <Form.Field name="message">
             <Input name="message" label="Message" placeholder="Text…" />
@@ -464,8 +478,10 @@ function BillingForm() {
         void values;
       }}
     >
-      <Form.Title>Payment</Form.Title>
-      <Form.Description>Card details and address.</Form.Description>
+      <Form.Header>
+        <Form.Title>Payment</Form.Title>
+        <Form.Description>Card details and address.</Form.Description>
+      </Form.Header>
       <Form.Section>
         <Text as="h3" variant="mid" className="font-medium">
           Card
@@ -522,8 +538,10 @@ function ReadOnlyForm() {
         void values;
       }}
     >
-      <Form.Title>Profile view</Form.Title>
-      <Form.Description>readOnly mode — fields cannot be edited.</Form.Description>
+      <Form.Header>
+        <Form.Title>Profile view</Form.Title>
+        <Form.Description>readOnly mode — fields cannot be edited.</Form.Description>
+      </Form.Header>
       <Form.Section>
         <Input name="name" label="Name" readOnly />
         <Input name="role" label="Role" readOnly />
@@ -543,6 +561,7 @@ function ClassNamesForm() {
       aria-label="classNames customization"
       classNames={{
         root: "rounded-mid border border-primary/20 bg-tertiary/50 p-large",
+        header: "gap-xsmall",
         title: "text-primary",
         description: "text-info",
         section: "gap-small",
@@ -553,8 +572,10 @@ function ClassNamesForm() {
         void values;
       }}
     >
-      <Form.Title>classNames</Form.Title>
-      <Form.Description>Slots root, section, field, actions.</Form.Description>
+      <Form.Header>
+        <Form.Title>classNames</Form.Title>
+        <Form.Description>Slots root, header, section, field, actions.</Form.Description>
+      </Form.Header>
       <Form.Section>
         <Form.Field name="topic">
           <Input name="topic" label="Topic" />
@@ -588,7 +609,9 @@ function ResolverForm() {
         void values;
       }}
     >
-      <Form.Title>Resolver</Form.Title>
+      <Form.Header>
+        <Form.Title>Resolver</Form.Title>
+      </Form.Header>
       <Form.Field name="login">
         <Input name="login" label="Login" placeholder="user" />
       </Form.Field>
@@ -671,4 +694,46 @@ function InlineSubscribeForm() {
 export const InlineSubscribe: Story = {
   name: "Inline subscription",
   render: () => <InlineSubscribeForm />,
+};
+
+function FormSizesStory() {
+  const sizes = ["small", "base", "mid", "large"] as const;
+
+  return (
+    <div className="grid w-full gap-2xlarge lg:grid-cols-2">
+      {sizes.map((size) => (
+        <Form
+          key={size}
+          size={size}
+          aria-label={`Form size ${size}`}
+          className="rounded-mid border-token bg-tertiary/40 p-large"
+          onSubmit={() => undefined}
+        >
+          <Form.Header>
+            <Form.Title>size="{size}"</Form.Title>
+            <Form.Description>
+              Chrome scales; Input and Button stay at their own size.
+            </Form.Description>
+          </Form.Header>
+          <Form.Section>
+            <Input name={`name-${size}`} label="Name" placeholder="Ivan" />
+            <Input name={`email-${size}`} label="Email" placeholder="you@example.com" />
+          </Form.Section>
+          <Form.Actions>
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              Save
+            </Button>
+          </Form.Actions>
+        </Form>
+      ))}
+    </div>
+  );
+}
+
+export const Sizes: Story = {
+  name: "Sizes",
+  render: () => <FormSizesStory />,
 };

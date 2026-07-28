@@ -1,7 +1,8 @@
-import { FormActions, FormAnnounce, FormDescription, FormErrorSummary, FormField, FormRoot, FormSection, FormTitle } from "./Form";
+import { FormActions, FormAnnounce, FormDescription, FormErrorSummary, FormField, FormHeader, FormRoot, FormSection, FormTitle } from "./Form";
 
 export const Form = Object.assign(FormRoot, {
   Section: FormSection,
+  Header: FormHeader,
   Title: FormTitle,
   Description: FormDescription,
   Actions: FormActions,
@@ -13,6 +14,7 @@ export const Form = Object.assign(FormRoot, {
 export type {
   FormProps,
   FormSectionProps,
+  FormHeaderProps,
   FormTitleProps,
   FormDescriptionProps,
   FormActionsProps,
@@ -20,6 +22,7 @@ export type {
   FormAnnounceProps,
   FormFieldProps,
   FormClassNames,
+  FormSize,
 } from "./Form";
 
 export {

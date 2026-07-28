@@ -1,11 +1,12 @@
 # Form
 
-Composite-обёртка над `<form>`: state machine (values, errors, touched, submit), привязка полей по `name`, валидация и a11y announce. **Только compound API** — layout из `Title`, `Section`, `Field`, `Actions`.
+Composite-обёртка над `<form>`: state machine (values, errors, touched, submit), привязка полей по `name`, валидация и a11y announce. **Только compound API** — layout из `Header`, `Title`, `Description`, `Section`, `Field`, `Actions`.
 
 ## Импорт
 
 ```tsx
-import { Form, useFormField, type FormProps, type FormSectionProps, type FormClassNames, type FormValues, type FormFieldRules, type FormResolver, type FormValidateMode } from "burne-ui";
+import { Form, useFormField, type FormProps, type FormSectionProps, type FormHeaderProps, type FormClassNames,
+  type FormSize, type FormValues, type FormFieldRules, type FormResolver, type FormValidateMode } from "burne-ui";
 ```
 
 Расширенный API (для авторов контролов) — из `@/components/composite/Form`: `useFormControlProps`, `useFormFieldBinding`, `useFormBindingContext`.
@@ -24,8 +25,10 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormCla
   }}
   onSubmit={(values) => console.log(values)}
 >
-  <Form.Title>Профиль</Form.Title>
-  <Form.Description>Обновите данные аккаунта.</Form.Description>
+  <Form.Header>
+    <Form.Title>Профиль</Form.Title>
+    <Form.Description>Обновите данные аккаунта.</Form.Description>
+  </Form.Header>
   <Form.Section>
     <Form.Field name="name">
       <Input name="name" label="Имя" required />
@@ -52,7 +55,7 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormCla
 | `rules` | — | `Record<string, FormFieldRules>` на уровне формы |
 | `resolver` | — | Async/sync валидация после rules |
 | `validateMode` | `onSubmit` | `onSubmit` \| `onBlur` \| `onChange` |
-| `size` | — | `small` \| `base` \| `mid` \| `large` → контекст для полей |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` — только chrome формы (`Header` / `Title` / `Description` / `Section` / `Actions`). Не каскадируется в `Input` / `Button` |
 | `disabled` / `readOnly` | `false` | Пробрасываются в контекст |
 | `onSubmit` | — | `(values) => void \| Promise<void>` |
 | `onSubmitError` | — | `(errors) => void` при ошибках валидации |
@@ -67,6 +70,7 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormCla
 | Часть | DOM | Назначение |
 |-------|-----|------------|
 | `Form` | `<form>` | Root + state machine |
+| `Form.Header` | `<div>` | Обёртка `Title` + `Description` (`headingGap`) |
 | `Form.Section` | `<div>` | Группа полей |
 | `Form.Title` | `Text as="h2"` | Заголовок формы |
 | `Form.Description` | `<p>` | Описание |
@@ -77,7 +81,7 @@ import { Form, useFormField, type FormProps, type FormSectionProps, type FormCla
 
 ### `FormClassNames`
 
-`root`, `section`, `title`, `description`, `actions`, `errorSummary`, `announce`, `field`.
+`root`, `header`, `section`, `title`, `description`, `actions`, `errorSummary`, `announce`, `field`.
 
 ### `useFormField(name, rules?)`
 
@@ -144,7 +148,7 @@ type FormFieldRules = {
 |-----|------|
 | `variant` | Нет |
 | `status` | Нет (ошибки на полях через `status="danger"`) |
-| `size` | Да — контекст для `Input`, `Button`, … |
+| `size` | Да — chrome формы; поля задают `size` сами |
 | `disabled` / `readOnly` | Да — контекст |
 
 ## Анимации
@@ -169,15 +173,16 @@ type FormFieldRules = {
 
 | Слот | Базовые классы (`formStyles.ts`) |
 |------|----------------------------------|
-| `root` | `flex flex-col gap-large w-full text-left` |
-| `section` | `flex flex-col gap-base` |
-| `title` | `text-header-3 font-semibold text-foreground` |
-| `description` | `text-base text-muted` |
-| `actions` | `flex flex-wrap justify-end gap-small pt-small` |
+| `root` | `flex flex-col text-left` + `rootGap` |
+| `header` | `flex flex-col` + `headingGap` |
+| `section` | `flex flex-col` + `sectionGap` |
+| `title` | `titleVariant` + `titleClassName` |
+| `description` | `descClassName` |
+| `actions` | `actionsGap` + `actionsPaddingTop` |
 | `errorSummary` / `announce` | `sr-only` |
 | `field` | только user classes |
 
-`Form.Title` — `Text variant="mid" as="h2"` поверх `formTitleClass`.
+`Form.Title` — `Text` с `formTitleVariant(size)` поверх `formTitleClass`.
 
 ## Стилизация и кастомизация
 
@@ -186,14 +191,15 @@ type FormFieldRules = {
 1. **`className` на `Form`** — layout (horizontal toolbar, max-width).
 2. **`classNames` на root** — все layout-слоты.
 
-`Form.Section` / `Form.Field` могут переопределить локальный слот (`section`, `field`).
+`Form.Header` / `Form.Section` / `Form.Field` могут переопределить локальный слот (`header`, `section`, `field`).
 
 ### Слоты `FormClassNames`
 
 | Слот | DOM | Когда использовать |
 |------|-----|-------------------|
 | `root` | `<form>` | Border, padding, bg panel |
-| `section` | Section div | Gap между полями |
+| `header` | Header div | Gap между Title и Description |
+| `section` | Gap между полями |
 | `title` | `h2` Text | Heading color/size |
 | `description` | `<p>` | Muted intro |
 | `actions` | Actions row | Align buttons, border-top |
@@ -215,7 +221,9 @@ type FormFieldRules = {
   }}
   onSubmit={handleSubmit}
 >
-  <Form.Title>Обратная связь</Form.Title>
+  <Form.Header>
+    <Form.Title>Обратная связь</Form.Title>
+  </Form.Header>
   <Form.Section>
     <Form.Field name="topic">
       <Input name="topic" label="Тема" />
@@ -273,7 +281,7 @@ type FormFieldRules = {
 | `Input` | `useFormControlProps` — event-based |
 | `Checkbox` | `useFormControlProps` (`type="checkbox"`) |
 | `ComboBox` / `Select` | `useFormFieldBinding` — value-based |
-| `Button` | `size`, `disabled`, `isSubmitting` из контекста |
+| `Button` | `disabled` / `isSubmitting` из контекста (не `size`) |
 | `CheckboxGroup` | Без прямого binding; single selection — отдельный `name`/`value` pattern |
 | `Card` / `Dialog` / `Surface` | Layout wrappers в stories |
 

@@ -16,7 +16,6 @@ export function useFormRootState({
   validateMode = "onSubmit",
   disabled = false,
   readOnly = false,
-  size,
   onSubmit,
   onSubmitError,
 }: UseFormRootStateProps) {
@@ -148,7 +147,6 @@ export function useFormRootState({
     () => ({
       disabled,
       readOnly,
-      size,
       validateMode,
       isSubmitting,
       submitCount,
@@ -185,7 +183,6 @@ export function useFormRootState({
       unregisterFieldRules,
       setTouched,
       setValue,
-      size,
       submitCount,
       validateField,
       validateForm,

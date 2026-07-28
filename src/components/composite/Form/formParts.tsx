@@ -4,14 +4,25 @@ import { Text } from "@/components/core/Text";
 import { useOptionalFormBindingContext } from "./formContext";
 
 import { formErrorEntries } from "./formAPI";
-import { useFormClassNames, useFormShellIds } from "./formContext";
-import { formActionsClass, formAnnounceClass, formDescriptionClass, formErrorSummaryClass, formFieldClass, formSectionClass, formTitleClass } from "./formStyles";
+import { useFormClassNames, useFormShellIds, useFormSize } from "./formContext";
+import {
+  formActionsClass,
+  formAnnounceClass,
+  formDescriptionClass,
+  formErrorSummaryClass,
+  formFieldClass,
+  formHeaderClass,
+  formSectionClass,
+  formTitleClass,
+  formTitleVariant,
+} from "./formStyles";
 import type {
   FormActionsProps,
   FormAnnounceProps,
   FormDescriptionProps,
   FormErrorSummaryProps,
   FormFieldProps,
+  FormHeaderProps,
   FormSectionProps,
   FormTitleProps,
 } from "./formTypes";
@@ -19,10 +30,14 @@ import type {
 export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
   function FormSection({ className = "", classNames, ...rest }, ref) {
     const rootClassNames = useFormClassNames();
+    const size = useFormSize();
     return (
       <div
         ref={ref}
-        className={formSectionClass(className, { ...rootClassNames, section: classNames?.section })}
+        className={formSectionClass(size, className, {
+          ...rootClassNames,
+          section: classNames?.section,
+        })}
         {...rest}
       />
     );
@@ -31,17 +46,37 @@ export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
 
 FormSection.displayName = "Form.Section";
 
+export const FormHeader = forwardRef<HTMLDivElement, FormHeaderProps>(
+  function FormHeader({ className = "", classNames, ...rest }, ref) {
+    const rootClassNames = useFormClassNames();
+    const size = useFormSize();
+    return (
+      <div
+        ref={ref}
+        className={formHeaderClass(size, className, {
+          ...rootClassNames,
+          header: classNames?.header,
+        })}
+        {...rest}
+      />
+    );
+  },
+);
+
+FormHeader.displayName = "Form.Header";
+
 export const FormTitle = forwardRef<HTMLHeadingElement, FormTitleProps>(
   function FormTitle({ className = "", id, ...rest }, ref) {
     const rootClassNames = useFormClassNames();
     const shellIds = useFormShellIds();
+    const size = useFormSize();
     return (
       <Text
         ref={ref as Ref<HTMLElement>}
         as="h2"
-        variant="mid"
+        variant={formTitleVariant(size)}
         id={id ?? shellIds?.titleId}
-        className={formTitleClass(className, rootClassNames)}
+        className={formTitleClass(size, className, rootClassNames)}
         {...rest}
       />
     );
@@ -54,11 +89,12 @@ export const FormDescription = forwardRef<HTMLParagraphElement, FormDescriptionP
   function FormDescription({ className = "", id, ...rest }, ref) {
     const rootClassNames = useFormClassNames();
     const shellIds = useFormShellIds();
+    const size = useFormSize();
     return (
       <p
         ref={ref}
         id={id ?? shellIds?.descriptionId}
-        className={formDescriptionClass(className, rootClassNames)}
+        className={formDescriptionClass(size, className, rootClassNames)}
         {...rest}
       />
     );
@@ -70,10 +106,11 @@ FormDescription.displayName = "Form.Description";
 export const FormActions = forwardRef<HTMLDivElement, FormActionsProps>(
   function FormActions({ className = "", ...rest }, ref) {
     const rootClassNames = useFormClassNames();
+    const size = useFormSize();
     return (
       <div
         ref={ref}
-        className={formActionsClass(className, rootClassNames)}
+        className={formActionsClass(size, className, rootClassNames)}
         {...rest}
       />
     );
