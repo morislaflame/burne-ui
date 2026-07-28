@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type {
   SelectionIndicatorSize,
@@ -72,11 +73,11 @@ export type ListBoxProps = Omit<
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;
   listId?: string;
-  classNames?: ListBoxClassNames;
+  classNames?: Prettify<ListBoxClassNames>;
 };
 
 export type ListBoxClassNamesProviderProps = {
-  classNames?: ListBoxClassNames;
+  classNames?: Prettify<ListBoxClassNames>;
   children: ReactNode;
 };
 
@@ -126,7 +127,7 @@ export type ListBoxItemIndicatorProps = Omit<
   size?: SelectionIndicatorSize;
   check?: boolean;
   children?: ReactNode;
-  classNames?: ListBoxItemIndicatorClassNames;
+  classNames?: Prettify<ListBoxItemIndicatorClassNames>;
 };
 
 export type ListBoxRootShellProps = Omit<

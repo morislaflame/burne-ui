@@ -1,4 +1,5 @@
 import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
@@ -57,7 +58,7 @@ export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
   disabled?: boolean;
   placeholder?: string;
   menuMaxHeight?: string;
-  classNames?: ComboBoxClassNames;
+  classNames?: Prettify<ComboBoxClassNames>;
 };
 
 export type ComboBoxSimpleProps = ComboBoxProps & {
@@ -101,7 +102,7 @@ export type ComboBoxContextValue = ComboBoxFieldContextValue & {
 };
 
 export type ComboBoxClassNamesProviderProps = {
-  classNames?: ComboBoxClassNames;
+  classNames?: Prettify<ComboBoxClassNames>;
   children: ReactNode;
 };
 

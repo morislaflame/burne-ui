@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { AlertClassNames, AlertContextValue } from "./alertTypes";
 
@@ -21,7 +22,7 @@ export function AlertClassNamesProvider({
   classNames,
   children,
 }: {
-  classNames?: AlertClassNames;
+  classNames?: Prettify<AlertClassNames>;
   children: ReactNode;
 }) {
   const parent = useContext(AlertClassNamesContext);

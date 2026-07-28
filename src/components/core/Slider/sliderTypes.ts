@@ -6,6 +6,7 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type SliderOrientation = "horizontal" | "vertical";
 
@@ -109,9 +110,8 @@ type SliderCommonProps = {
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
-  classNames?: Pick<
-    SliderClassNames,
-    "track" | "rail" | "fill" | "thumb" | "thumbShell" | "mark"
+  classNames?: Prettify<
+    Pick<SliderClassNames, "track" | "rail" | "fill" | "thumb" | "thumbShell" | "mark">
   >;
   ariaLabel?: string;
   children?: ReactNode;
@@ -150,14 +150,14 @@ export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | 
   valueText?: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
-  classNames?: SliderClassNames;
+  classNames?: Prettify<SliderClassNames>;
 } & (
     | Partial<Omit<SliderSingleProps, "orientation" | "className" | "classNames">>
     | Partial<Omit<SliderRangeProps, "orientation" | "className" | "classNames">>
   );
 
 export type SliderClassNamesProviderProps = {
-  classNames?: SliderClassNames;
+  classNames?: Prettify<SliderClassNames>;
   children: ReactNode;
 };
 

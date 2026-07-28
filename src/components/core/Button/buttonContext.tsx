@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup";
 
@@ -11,7 +12,7 @@ export function ButtonClassNamesProvider({
   classNames,
   children,
 }: {
-  classNames?: ButtonClassNames;
+  classNames?: Prettify<ButtonClassNames>;
   children: ReactNode;
 }) {
   const parent = useContext(ButtonClassNamesContext);

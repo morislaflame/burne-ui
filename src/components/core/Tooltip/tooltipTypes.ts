@@ -3,6 +3,7 @@ import type {
   ReactNode,
   Ref,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
@@ -41,7 +42,7 @@ export type TooltipProps = {
   showIcon?: boolean;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  classNames?: TooltipClassNames;
+  classNames?: Prettify<TooltipClassNames>;
 };
 
 export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement> & {
@@ -106,6 +107,6 @@ export type TooltipBodyContextValue = {
 };
 
 export type TooltipClassNamesProviderProps = {
-  classNames?: TooltipClassNames;
+  classNames?: Prettify<TooltipClassNames>;
   children: ReactNode;
 };

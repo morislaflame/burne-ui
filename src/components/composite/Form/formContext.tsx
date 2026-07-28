@@ -1,4 +1,5 @@
 import { createContext, useContext, type ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { FormBindingContextValue, FormClassNames, FormShellIds } from "./formTypes";
 
@@ -10,7 +11,7 @@ export function FormClassNamesProvider({
   classNames,
   children,
 }: {
-  classNames?: FormClassNames;
+  classNames?: Prettify<FormClassNames>;
   children: ReactNode;
 }) {
   const parent = useContext(FormClassNamesContext);

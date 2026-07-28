@@ -2,6 +2,7 @@ import type {
   HTMLAttributes,
   ReactNode,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type ProgressBarSize = "small" | "base" | "mid" | "large";
 
@@ -61,11 +62,11 @@ export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
     valueText?: ReactNode;
     hint?: ReactNode;
     error?: ReactNode;
-    classNames?: ProgressBarClassNames;
+    classNames?: Prettify<ProgressBarClassNames>;
   };
 
 export type ProgressBarClassNamesProviderProps = {
-  classNames?: ProgressBarClassNames;
+  classNames?: Prettify<ProgressBarClassNames>;
   children: ReactNode;
 };
 

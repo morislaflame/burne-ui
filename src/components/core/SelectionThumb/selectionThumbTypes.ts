@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { SelectionIndicatorSize } from "../SelectionIndicator/selectionIndicatorTokens";
 
@@ -16,7 +17,7 @@ export type SelectionThumbProps = Omit<HTMLAttributes<HTMLSpanElement>, "childre
   shellRef?: RefObject<HTMLSpanElement | null>;
   gloss?: boolean;
   children?: ReactNode;
-  classNames?: SelectionThumbClassNames;
+  classNames?: Prettify<SelectionThumbClassNames>;
 };
 
 export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
@@ -24,5 +25,5 @@ export type SelectionThumbIconProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
   gloss?: boolean;
   iconRef?: RefObject<HTMLSpanElement | null>;
   children?: ReactNode;
-  classNames?: SelectionThumbIconClassNames;
+  classNames?: Prettify<SelectionThumbIconClassNames>;
 };

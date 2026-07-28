@@ -5,6 +5,7 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
@@ -71,7 +72,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: ReactNode;
   /** @default "start" */
   iconPosition?: IconPosition;
-  classNames?: ButtonClassNames;
+  classNames?: Prettify<ButtonClassNames>;
   /**
    * Enable converge-ripple from the press point (`<Ripple />` inside the button, tone under `variant`).
    * @default false

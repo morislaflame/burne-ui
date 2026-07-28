@@ -6,6 +6,7 @@ import type {
   Ref,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 
@@ -120,7 +121,7 @@ export type ResolvedBadgeBody = {
 
 export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children?: ReactNode;
-  classNames?: BadgeClassNames;
+  classNames?: Prettify<BadgeClassNames>;
   /**
    * Slightly increase (GSAP) the direct child `Badge` on hover.
    * @default true
@@ -137,7 +138,7 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   iconOnly?: boolean;
   dot?: boolean;
   placement?: BadgePlacement;
-  classNames?: BadgeClassNames;
+  classNames?: Prettify<BadgeClassNames>;
   children?: ReactNode;
   /**
    * Lift and shadow enhancement on hover (like `Alert`): `sm` at rest, `md` on hover.
@@ -193,6 +194,6 @@ export type BadgeDirectAnchorChildProviderProps = {
 };
 
 export type BadgeClassNamesProviderProps = {
-  classNames?: BadgeClassNames;
+  classNames?: Prettify<BadgeClassNames>;
   children: ReactNode;
 };

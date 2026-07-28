@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import type { Prettify } from "@/utils/prettify";
+
 /** Shared slot shape for `RadioGroup` / `CheckboxGroup` — mirrors `Field.Set`. */
 export type OptionGroupClassNames = {
   root?: string;
@@ -13,7 +15,7 @@ export type OptionGroupClassNames = {
 };
 
 export type OptionGroupClassNamesProviderProps<T extends OptionGroupClassNames> = {
-  classNames?: T;
+  classNames?: Prettify<T>;
   children: ReactNode;
 };
 

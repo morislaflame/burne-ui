@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ShadowSize } from "@/tokens/shadows";
 
@@ -20,5 +21,5 @@ export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
   shadow?: SurfaceShadow;
   padding?: SurfacePadding;
   radius?: SurfaceRadius;
-  classNames?: SurfaceClassNames;
+  classNames?: Prettify<SurfaceClassNames>;
 };

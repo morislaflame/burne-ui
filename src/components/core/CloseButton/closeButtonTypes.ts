@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, PointerEvent } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -25,11 +26,11 @@ export type CloseButtonProps = Omit<
   variant?: CloseButtonVariant;
   size?: CloseButtonSize;
   ripple?: boolean;
-  classNames?: CloseButtonClassNames;
+  classNames?: Prettify<CloseButtonClassNames>;
 };
 
 export type CloseButtonClassNamesProviderProps = {
-  classNames?: CloseButtonClassNames;
+  classNames?: Prettify<CloseButtonClassNames>;
   children: React.ReactNode;
 };
 

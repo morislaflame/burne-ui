@@ -8,6 +8,7 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
@@ -48,7 +49,7 @@ export type RadioProps = Omit<
     variant?: RadioVariant;
     danger?: boolean;
     className?: string;
-    classNames?: RadioClassNames;
+    classNames?: Prettify<RadioClassNames>;
     onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
   };
 
@@ -61,7 +62,7 @@ export type RadioIndicatorClassNames = SelectionIndicatorClassNames &
 export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   size?: RadioSize;
-  classNames?: RadioIndicatorClassNames;
+  classNames?: Prettify<RadioIndicatorClassNames>;
 };
 
 export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {
@@ -110,7 +111,7 @@ export type RadioFieldContextValue = {
 };
 
 export type RadioClassNamesProviderProps = {
-  classNames?: RadioClassNames;
+  classNames?: Prettify<RadioClassNames>;
   children: ReactNode;
 };
 

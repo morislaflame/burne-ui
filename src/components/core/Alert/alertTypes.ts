@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
@@ -33,7 +34,7 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   icon?: ReactNode | null;
   /** Simple API: action slot on the right. In compound is `<Alert.Action>`. */
   action?: ReactNode;
-  classNames?: AlertClassNames;
+  classNames?: Prettify<AlertClassNames>;
   /**
    * Lift and shadow enhancement on hover: `sm` at rest, `md` on hover.
    * @default true

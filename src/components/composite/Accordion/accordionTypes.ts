@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type {
   ExpandableContentProps,
@@ -36,7 +37,7 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "
   defaultOpenIndex?: number | null;
   onValueChange?: (value: string | null) => void;
   size?: ExpandableSize;
-  classNames?: AccordionClassNames;
+  classNames?: Prettify<AccordionClassNames>;
   children?: ReactNode;
 };
 
@@ -45,7 +46,7 @@ export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"
   value?: string;
   disabled?: boolean;
   /** Locally overrides slots inherited from the root (merged like `Breadcrumbs.List`). */
-  classNames?: AccordionClassNames;
+  classNames?: Prettify<AccordionClassNames>;
   children?: ReactNode;
 };
 
@@ -79,7 +80,7 @@ export type AccordionContextValue = {
 };
 
 export type AccordionClassNamesProviderProps = {
-  classNames?: AccordionClassNames;
+  classNames?: Prettify<AccordionClassNames>;
   children: ReactNode;
 };
 

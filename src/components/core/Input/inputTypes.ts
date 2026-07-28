@@ -4,6 +4,7 @@ import type {
   PointerEventHandler,
   ReactNode,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
@@ -43,7 +44,7 @@ export type InputControlProps = Omit<
   prefix?: ReactNode;
   suffix?: ReactNode;
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
-  classNames?: InputClassNames;
+  classNames?: Prettify<InputClassNames>;
 };
 
 export type InputFieldContextValue = {
@@ -59,7 +60,7 @@ export type InputFieldContextValue = {
 };
 
 export type InputClassNamesProviderProps = {
-  classNames?: InputClassNames;
+  classNames?: Prettify<InputClassNames>;
   children: ReactNode;
 };
 
@@ -72,7 +73,7 @@ export type InputProps = HTMLAttributes<HTMLDivElement> & {
   required?: boolean;
   status?: InputStatus;
   size?: InputSize;
-  classNames?: InputClassNames;
+  classNames?: Prettify<InputClassNames>;
 };
 
 export type InputSimpleProps = InputProps & InputControlProps;

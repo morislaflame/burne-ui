@@ -1,6 +1,7 @@
 import type { ClassValue } from "clsx";
 import { Children, createElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import { IoCheckmarkSharp } from "react-icons/io5";
+import type { Prettify } from "@/utils/prettify";
 
 import { cn } from "@/utils/cn";
 
@@ -113,7 +114,7 @@ export function resolveSelectionIndicatorClassNames({
   root?: ClassValue;
   fill?: ClassValue;
   mark?: ClassValue;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: Prettify<SelectionIndicatorClassNames>;
   className?: string;
 }): ResolvedSelectionIndicatorClassNames {
   return {

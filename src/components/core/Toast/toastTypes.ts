@@ -3,6 +3,7 @@ import type {
   HTMLAttributes,
   ReactNode,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
@@ -48,7 +49,7 @@ export type AddToastOpts = {
   placement?: ToastPlacement;
   id?: string;
   loading?: boolean;
-  classNames?: ToastClassNames;
+  classNames?: Prettify<ToastClassNames>;
 };
 
 export type PromiseToastOpts<T> = {
@@ -57,7 +58,7 @@ export type PromiseToastOpts<T> = {
   error?: ReactNode | ((err: unknown) => ReactNode);
   placement?: ToastPlacement;
   timeout?: number;
-  classNames?: ToastClassNames;
+  classNames?: Prettify<ToastClassNames>;
 };
 
 export type ToastEntry = {
@@ -72,7 +73,7 @@ export type ToastEntry = {
   placement: ToastPlacement;
   createdAt: number;
   loading: boolean;
-  classNames?: ToastClassNames;
+  classNames?: Prettify<ToastClassNames>;
 };
 
 export type ToastLiveAnnouncement = {
@@ -103,7 +104,7 @@ export type ToastItemContextValue = {
 };
 
 export type ToastClassNamesProviderProps = {
-  classNames?: ToastClassNames;
+  classNames?: Prettify<ToastClassNames>;
   children: ReactNode;
 };
 
@@ -114,7 +115,7 @@ export type ToastProviderProps = {
   defaultSize?: ToastSize;
   /** DOM node for viewport portals. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  classNames?: ToastClassNames;
+  classNames?: Prettify<ToastClassNames>;
 };
 
 export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -126,7 +127,7 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   action?: ReactNode;
   loading?: boolean;
   onClose?: () => void;
-  classNames?: ToastClassNames;
+  classNames?: Prettify<ToastClassNames>;
 };
 
 export type UseToastRootStateProps = Pick<
@@ -170,6 +171,6 @@ export type ToastViewportProps = {
   dismissingIds: Set<string>;
   onDismiss: (id: string) => void;
   onRemoveFinal: (id: string) => void;
-  classNames?: ToastClassNames;
+  classNames?: Prettify<ToastClassNames>;
   defaultSize?: ToastSize;
 };

@@ -4,6 +4,7 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -31,7 +32,7 @@ export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   size?: TabsSize;
   variant?: TabsVariant;
   disabled?: boolean;
-  classNames?: TabsClassNames;
+  classNames?: Prettify<TabsClassNames>;
 };
 
 export type UseTabsRootStateProps = Pick<
@@ -72,6 +73,6 @@ export type TabsContextValue = {
 };
 
 export type TabsClassNamesProviderProps = {
-  classNames?: TabsClassNames;
+  classNames?: Prettify<TabsClassNames>;
   children: ReactNode;
 };

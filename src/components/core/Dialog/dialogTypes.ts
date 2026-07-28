@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonSize } from "@/components/core/Button";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
@@ -56,7 +57,7 @@ export type DialogProps = {
   size?: DialogSize;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  classNames?: DialogClassNames;
+  classNames?: Prettify<DialogClassNames>;
 };
 
 export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -91,7 +92,7 @@ export type DialogContextValue = {
 };
 
 export type DialogClassNamesProviderProps = {
-  classNames?: DialogClassNames;
+  classNames?: Prettify<DialogClassNames>;
   children: ReactNode;
 };
 

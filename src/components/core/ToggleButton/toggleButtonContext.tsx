@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type {
   ToggleButtonClassNames,
@@ -40,7 +41,7 @@ export function ToggleButtonClassNamesProvider({
   classNames,
   children,
 }: {
-  classNames?: ToggleButtonClassNames;
+  classNames?: Prettify<ToggleButtonClassNames>;
   children: ReactNode;
 }) {
   const parent = useContext(ToggleButtonClassNamesContext);

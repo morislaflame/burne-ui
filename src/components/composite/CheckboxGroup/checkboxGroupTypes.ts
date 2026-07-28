@@ -1,4 +1,5 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
@@ -45,7 +46,7 @@ export type CheckboxGroupProps = Omit<
   /** Fieldset padding scale. By default `small`. */
   size?: ComponentSize;
   children?: ReactNode;
-  classNames?: CheckboxGroupClassNames;
+  classNames?: Prettify<CheckboxGroupClassNames>;
 };
 
 export type UseCheckboxGroupRootStateProps = CheckboxGroupProps;

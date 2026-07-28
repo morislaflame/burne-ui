@@ -4,6 +4,7 @@ import type {
   InputHTMLAttributes,
   KeyboardEvent,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
@@ -47,7 +48,7 @@ export type SearchInputProps = Omit<
   ripple?: boolean;
   groupSegment?: ButtonGroupSegment;
   "aria-label"?: string;
-  classNames?: SearchInputClassNames;
+  classNames?: Prettify<SearchInputClassNames>;
 };
 
 export type UseSearchInputRootStateProps = {
@@ -71,7 +72,7 @@ export type UseSearchInputRootStateProps = {
   ripple?: boolean;
   groupSegment?: ButtonGroupSegment;
   className?: string;
-  classNames?: SearchInputClassNames;
+  classNames?: Prettify<SearchInputClassNames>;
   forwardedRef: React.ForwardedRef<HTMLInputElement>;
 };
 

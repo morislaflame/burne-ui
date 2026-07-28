@@ -1,4 +1,5 @@
 import type { LabelHTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type LabelClassNames = {
   root?: string;
@@ -9,11 +10,11 @@ export type LabelClassNames = {
 export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children"> & {
   children?: ReactNode;
   required?: boolean;
-  classNames?: LabelClassNames;
+  classNames?: Prettify<LabelClassNames>;
 };
 
 export type LabelClassNamesProviderProps = {
-  classNames?: LabelClassNames;
+  classNames?: Prettify<LabelClassNames>;
   children: ReactNode;
 };
 

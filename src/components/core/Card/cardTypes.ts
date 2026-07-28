@@ -4,6 +4,7 @@ import type {
   MouseEvent,
   ReactNode,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { CardSize } from "./cardStyles";
 
@@ -44,7 +45,7 @@ export type CardProps = Omit<
   onPress?: (event: CardPressEvent) => void;
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
-  classNames?: CardClassNames;
+  classNames?: Prettify<CardClassNames>;
 };
 
 export type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
@@ -55,7 +56,7 @@ export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
 
 export type CardProviderProps = {
-  classNames?: CardClassNames;
+  classNames?: Prettify<CardClassNames>;
   size: CardSize;
   children: ReactNode;
 };

@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonSize } from "@/components/core/Button";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
@@ -61,7 +62,7 @@ export type DrawerProps = {
   children?: ReactNode;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  classNames?: DrawerClassNames;
+  classNames?: Prettify<DrawerClassNames>;
 };
 
 export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -100,7 +101,7 @@ export type DrawerContextValue = {
 };
 
 export type DrawerClassNamesProviderProps = {
-  classNames?: DrawerClassNames;
+  classNames?: Prettify<DrawerClassNames>;
   children: ReactNode;
 };
 

@@ -4,6 +4,7 @@ import type {
   PointerEvent,
   ReactNode,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
@@ -35,7 +36,7 @@ type LinkSharedProps = Omit<
   iconPosition?: IconPosition;
   showDefaultIcon?: boolean;
   defaultIconPosition?: LinkIconPosition;
-  classNames?: LinkClassNames;
+  classNames?: Prettify<LinkClassNames>;
 };
 
 export type LinkProps =
@@ -83,7 +84,7 @@ export type LinkIconPlacement = {
 };
 
 export type LinkClassNamesProviderProps = {
-  classNames?: LinkClassNames;
+  classNames?: Prettify<LinkClassNames>;
   children: ReactNode;
 };
 

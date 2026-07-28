@@ -1,4 +1,5 @@
 import type { FieldsetHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { LabelProps } from "@/components/core/Label";
 import type { TextVariant } from "@/components/core/Text";
@@ -25,16 +26,16 @@ export type FieldSetClassNames = {
 
 export type FieldProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
-  classNames?: FieldClassNames;
+  classNames?: Prettify<FieldClassNames>;
 };
 
 export type FieldClassNamesProviderProps = {
-  classNames?: FieldClassNames;
+  classNames?: Prettify<FieldClassNames>;
   children: ReactNode;
 };
 
 export type FieldSetClassNamesProviderProps = {
-  classNames?: FieldSetClassNames;
+  classNames?: Prettify<FieldSetClassNames>;
   children: ReactNode;
 };
 
@@ -69,7 +70,7 @@ export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "c
   hintId?: string;
   errorId?: string;
   size?: FieldSetSize;
-  classNames?: FieldSetClassNames;
+  classNames?: Prettify<FieldSetClassNames>;
 };
 
 export type UseFieldSetRootStateResult = {

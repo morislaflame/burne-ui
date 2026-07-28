@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTypes";
 import type { CloseButtonProps } from "@/components/core/CloseButton";
@@ -67,11 +68,11 @@ export type AlertDialogProps = {
   closeOnEscape?: boolean;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  classNames?: AlertDialogClassNames;
+  classNames?: Prettify<AlertDialogClassNames>;
 };
 
 export type AlertDialogClassNamesProviderProps = {
-  classNames?: AlertDialogClassNames;
+  classNames?: Prettify<AlertDialogClassNames>;
   children?: ReactNode;
 };
 

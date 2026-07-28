@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
@@ -42,7 +43,7 @@ export type ColorPickerProps = {
   variant?: ColorPickerVariant;
   side?: "top" | "bottom" | "left" | "right";
   disabled?: boolean;
-  classNames?: ColorPickerClassNames;
+  classNames?: Prettify<ColorPickerClassNames>;
 };
 
 export type ColorPickerTriggerProps = Omit<
@@ -84,7 +85,7 @@ export type ColorPickerContextValue = {
 };
 
 export type ColorPickerClassNamesProviderProps = {
-  classNames?: ColorPickerClassNames;
+  classNames?: Prettify<ColorPickerClassNames>;
   children: ReactNode;
 };
 

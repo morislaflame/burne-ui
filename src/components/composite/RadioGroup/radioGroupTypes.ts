@@ -1,4 +1,5 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
@@ -41,7 +42,7 @@ export type RadioGroupProps = Omit<
   errorId?: string;
   size?: ComponentSize;
   children?: ReactNode;
-  classNames?: RadioGroupClassNames;
+  classNames?: Prettify<RadioGroupClassNames>;
 };
 
 export type UseRadioGroupRootStateProps = RadioGroupProps;

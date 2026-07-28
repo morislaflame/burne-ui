@@ -3,6 +3,7 @@ import type {
   HTMLAttributes,
   ReactNode,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type MeterSize = "small" | "base" | "mid" | "large";
 
@@ -68,11 +69,11 @@ export type MeterProps = HTMLAttributes<HTMLDivElement> &
     valueText?: ReactNode;
     hint?: ReactNode;
     error?: ReactNode;
-    classNames?: MeterClassNames;
+    classNames?: Prettify<MeterClassNames>;
   };
 
 export type MeterClassNamesProviderProps = {
-  classNames?: MeterClassNames;
+  classNames?: Prettify<MeterClassNames>;
   children: ReactNode;
 };
 

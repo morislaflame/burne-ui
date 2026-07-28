@@ -5,6 +5,7 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
@@ -54,7 +55,7 @@ export type ToggleButtonProps = Omit<
   icon?: ReactNode;
   /** @default "start" */
   iconPosition?: IconPosition;
-  classNames?: ToggleButtonClassNames;
+  classNames?: Prettify<ToggleButtonClassNames>;
 };
 
 export type ToggleButtonFillProps = HTMLAttributes<HTMLSpanElement>;

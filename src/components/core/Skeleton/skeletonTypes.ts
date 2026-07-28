@@ -1,4 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type SkeletonAnimation = "pulse" | "wave" | "shimmer" | "none";
 
@@ -32,7 +33,7 @@ export type SkeletonRegionClassNames = {
 export type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   radius?: SkeletonRadius;
-  classNames?: SkeletonClassNames;
+  classNames?: Prettify<SkeletonClassNames>;
 };
 
 export type UseSkeletonRootStateProps = Pick<SkeletonProps, "animation" | "radius">;
@@ -40,26 +41,26 @@ export type UseSkeletonRootStateProps = Pick<SkeletonProps, "animation" | "radiu
 export type SkeletonCircleProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   size?: string;
-  classNames?: SkeletonCircleClassNames;
+  classNames?: Prettify<SkeletonCircleClassNames>;
 };
 
 export type SkeletonTextProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
   lines?: number;
   lastShort?: boolean;
-  classNames?: SkeletonTextClassNames;
+  classNames?: Prettify<SkeletonTextClassNames>;
 };
 
 export type SkeletonBlockProps = HTMLAttributes<HTMLDivElement> & {
   animation?: SkeletonAnimation;
-  classNames?: SkeletonBlockClassNames;
+  classNames?: Prettify<SkeletonBlockClassNames>;
 };
 
 /** Semantic parent for loading placeholders — sets `aria-busy` / `aria-live`. */
 export type SkeletonRegionProps = HTMLAttributes<HTMLDivElement> & {
   /** When true, region is loading (`aria-busy`). Default `true`. */
   busy?: boolean;
-  classNames?: SkeletonRegionClassNames;
+  classNames?: Prettify<SkeletonRegionClassNames>;
 };
 
 export type SkeletonWaveProps = {

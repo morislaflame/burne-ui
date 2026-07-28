@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { PopoverSide, PopoverVariant } from "@/components/core/Popover";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
@@ -54,7 +55,7 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   popoverVariant?: PopoverVariant;
   /** DOM node for menu / submenu portals. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  classNames?: DropdownClassNames;
+  classNames?: Prettify<DropdownClassNames>;
 };
 
 export type DropdownContextValue = {
@@ -83,7 +84,7 @@ export type DropdownSubContextValue = {
 };
 
 export type DropdownClassNamesProviderProps = {
-  classNames?: DropdownClassNames;
+  classNames?: Prettify<DropdownClassNames>;
   children: ReactNode;
 };
 
@@ -143,7 +144,7 @@ export type DropdownItemIndicatorProps = Omit<
   size?: SelectionIndicatorSize;
   check?: boolean;
   children?: ReactNode;
-  classNames?: DropdownItemIndicatorClassNames;
+  classNames?: Prettify<DropdownItemIndicatorClassNames>;
 };
 
 export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {

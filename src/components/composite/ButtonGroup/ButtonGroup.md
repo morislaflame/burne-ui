@@ -56,6 +56,7 @@ Compound part: `ButtonGroup.Text`.
 | `buttonSize` | `base` | Каскад в сегменты: `small` \| `base` \| `mid` \| `large` |
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` \| `primary` |
 | `className` | — | На root `<div role="group">` |
+| `classNames` | — | Слоты: `root`, `separator`, `text`, `textLabel` |
 | `children` | — | Сегменты |
 
 `status` на группе нет — на дочерних `Button`.
@@ -65,6 +66,8 @@ Compound part: `ButtonGroup.Text`.
 `root`, `separator`, `text`, `textLabel`.
 
 `separator` — слот layout-разделителя (compound-части нет).
+
+Joined-рамка рисуется через `::after`: цвет — `border-color` root (`border-border` по умолчанию), скругление — `border-radius` root (`rounded-base`). Поэтому на `classNames.root` достаточно `rounded-*` и `border-primary` (только цвет, без ширины `border` — иначе будет двойная рамка).
 
 ### `ButtonGroup.Text` props
 
@@ -163,11 +166,11 @@ configureMotion({
 
 | Функция / константа | Назначение |
 |---------------------|------------|
-| `buttonGroupRootClass` | `inline-flex w-fit`, orientation, gloss border |
+| `buttonGroupRootClass` | `inline-flex w-fit`, orientation; joined frame via `::after` (`rounded-[inherit]`, `border-inherit`) |
 | `buttonGroupSeparatorClass` | `border-r-token` / `border-b-token` |
-| `buttonGroupRoundingClasses` | Скругления по `segment.position` |
+| `buttonGroupRoundingClasses` | Скругления сегмента через `rounded-[inherit]` от root |
 | `buttonGroupOverlapBorderClasses` | `border-l-0` на стыках |
-| `buttonGroupSegmentSurfaceClasses` | `!border-0 !shadow-none`, z-index focus |
+| `buttonGroupSegmentSurfaceClasses` | `!border-0 !shadow-none`, z-index focus (без rounding — его даёт `buttonGroupRoundingClasses`) |
 | `buttonGroupTextFrameClass` | Высота из `CONTROL_SIZE_LAYOUT` |
 | `BUTTON_GROUP_TEXT_LABEL_CLASS` | `truncate font-medium` |
 
@@ -175,13 +178,32 @@ Gloss: `glossInteractive.css` на root.
 
 ## Стилизация и кастомизация
 
-### Один уровень — `className`
+### `className` и `classNames`
 
 | Часть | Кастомизация |
 |-------|--------------|
-| root | `ButtonGroup className` |
-| `ButtonGroup.Text` | `className` |
+| root | `className` / `classNames.root` |
+| separator | `classNames.separator` |
+| `ButtonGroup.Text` | `className` / `classNames.text` / `classNames.textLabel` |
 | сегменты | `Button className`, `groupSegment` override |
+
+```tsx
+<ButtonGroup
+  aria-label="Custom"
+  classNames={{
+    root: "rounded-mid border-primary/25 p-xsmall",
+    separator: "border-primary/40",
+    text: "bg-primary/5",
+    textLabel: "text-primary font-w-mid",
+  }}
+>
+  <ButtonGroup.Text>Label</ButtonGroup.Text>
+  <Button variant="outline">One</Button>
+  <Button variant="outline">Two</Button>
+</ButtonGroup>
+```
+
+На joined-root: `rounded-*` и `border-*` (цвет) перекрашивают/скругляют видимую рамку. Не задавайте ширину `border` на root — она на `::after`.
 
 ### Toolbar с Input
 

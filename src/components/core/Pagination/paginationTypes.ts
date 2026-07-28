@@ -6,6 +6,7 @@ import type {
   ReactNode,
 } from "react";
 import type { IconBaseProps } from "react-icons";
+import type { Prettify } from "@/utils/prettify";
 
 export type PaginationClassNames = {
   /** Root `<nav>`. */
@@ -54,11 +55,11 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   totalPages?: number;
   onPageChange?: (page: number) => void;
   siblingCount?: number;
-  classNames?: PaginationClassNames;
+  classNames?: Prettify<PaginationClassNames>;
 };
 
 export type PaginationClassNamesProviderProps = {
-  classNames?: PaginationClassNames;
+  classNames?: Prettify<PaginationClassNames>;
   children: ReactNode;
 };
 

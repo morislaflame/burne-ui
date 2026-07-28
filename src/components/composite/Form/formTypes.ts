@@ -1,4 +1,5 @@
 import type { FormHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -81,7 +82,7 @@ export type FormClassNames = {
 
 export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> & {
   children?: ReactNode;
-  classNames?: FormClassNames;
+  classNames?: Prettify<FormClassNames>;
   defaultValues?: FormValues;
   values?: FormValues;
   onValuesChange?: (values: FormValues) => void;
@@ -98,7 +99,7 @@ export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> & 
 };
 
 export type FormSectionProps = HTMLAttributes<HTMLDivElement> & {
-  classNames?: Pick<FormClassNames, "section">;
+  classNames?: Prettify<Pick<FormClassNames, "section">>;
 };
 
 export type FormTitleProps = HTMLAttributes<HTMLHeadingElement>;
@@ -118,7 +119,7 @@ export type FormAnnounceProps = HTMLAttributes<HTMLDivElement> & {
 export type FormFieldProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
   rules?: FormFieldRules;
-  classNames?: Pick<FormClassNames, "field">;
+  classNames?: Prettify<Pick<FormClassNames, "field">>;
 };
 
 export type UseFormRootStateProps = FormProps;

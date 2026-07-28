@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type {
   ToggleButtonGroupOrientation,
@@ -34,11 +35,11 @@ export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defau
   value?: string | string[];
   defaultValue?: string | string[];
   onValueChange?: (value: string | string[]) => void;
-  classNames?: ToggleButtonGroupClassNames;
+  classNames?: Prettify<ToggleButtonGroupClassNames>;
 };
 
 export type ToggleButtonGroupClassNamesProviderProps = {
-  classNames?: ToggleButtonGroupClassNames;
+  classNames?: Prettify<ToggleButtonGroupClassNames>;
   children: ReactNode;
 };
 

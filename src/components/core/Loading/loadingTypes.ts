@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -28,7 +29,7 @@ export type LoadingProps = HTMLAttributes<HTMLSpanElement> & {
   size?: LoadingSize;
   color?: LoadingColor;
   label?: string;
-  classNames?: LoadingClassNames;
+  classNames?: Prettify<LoadingClassNames>;
 };
 
 export type LoadingDotsLayout = {

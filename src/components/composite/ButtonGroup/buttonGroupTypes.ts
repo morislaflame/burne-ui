@@ -1,4 +1,5 @@
 import type { ComponentPropsWithoutRef, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 
@@ -28,7 +29,7 @@ export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "ch
   segmented?: boolean;
   buttonSize?: ButtonSize;
   variant?: ButtonVariant;
-  classNames?: ButtonGroupClassNames;
+  classNames?: Prettify<ButtonGroupClassNames>;
   children: ReactNode;
 };
 
@@ -38,7 +39,7 @@ export type ButtonGroupTextProps = ComponentPropsWithoutRef<"span"> & {
 };
 
 export type ButtonGroupClassNamesProviderProps = {
-  classNames?: ButtonGroupClassNames;
+  classNames?: Prettify<ButtonGroupClassNames>;
   children: ReactNode;
 };
 

@@ -4,6 +4,7 @@ import type {
   Ref,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
@@ -61,7 +62,7 @@ export type DisclosureContextValue = {
 };
 
 export type DisclosureClassNamesProviderProps = {
-  classNames?: DisclosureClassNames;
+  classNames?: Prettify<DisclosureClassNames>;
   children: ReactNode;
 };
 
@@ -76,7 +77,7 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   disabled?: boolean;
   iconPosition?: IconPosition;
   dragHandle?: boolean;
-  classNames?: DisclosureClassNames;
+  classNames?: Prettify<DisclosureClassNames>;
 };
 
 export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
@@ -88,7 +89,7 @@ export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
   value?: string | null;
   defaultValue?: string | null;
   onValueChange?: (value: string | null) => void;
-  classNames?: DisclosureClassNames;
+  classNames?: Prettify<DisclosureClassNames>;
 };
 
 export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {

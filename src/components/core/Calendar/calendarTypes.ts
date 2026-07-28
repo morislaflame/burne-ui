@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type CalendarLocale = {
   /** 7 items: Mon → Sun */
@@ -81,7 +82,7 @@ type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
    * Default content is the day-of-month number.
    */
   renderDay?: CalendarRenderDay;
-  classNames?: CalendarClassNames;
+  classNames?: Prettify<CalendarClassNames>;
 };
 
 export type CalendarProps =
@@ -149,7 +150,7 @@ export type CalendarProviderProps = {
 };
 
 export type CalendarClassNamesProviderProps = {
-  classNames?: CalendarClassNames;
+  classNames?: Prettify<CalendarClassNames>;
   children: ReactNode;
 };
 

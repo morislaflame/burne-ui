@@ -1,4 +1,5 @@
 export { cn } from "@/utils/cn";
+export type { Prettify } from "@/utils/prettify";
 
 export {
   type ComponentSize,

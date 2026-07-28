@@ -4,6 +4,7 @@ import type {
   TdHTMLAttributes,
   ThHTMLAttributes,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { TableRowTone } from "./tableStyles";
 
@@ -39,7 +40,7 @@ export type TableClassNames = {
 
 export type TableProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TableVariant;
-  classNames?: TableClassNames;
+  classNames?: Prettify<TableClassNames>;
 };
 
 export type UseTableRootStateProps = Pick<TableProps, "variant">;
@@ -137,6 +138,6 @@ export type TableRowContextValue = {
 };
 
 export type TableClassNamesProviderProps = {
-  classNames?: TableClassNames;
+  classNames?: Prettify<TableClassNames>;
   children: ReactNode;
 };

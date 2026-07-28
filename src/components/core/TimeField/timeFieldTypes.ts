@@ -3,6 +3,7 @@ import type {
   PointerEventHandler,
   ReactNode,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
@@ -51,7 +52,7 @@ export type TimeFieldFieldContextValue = {
 };
 
 export type TimeFieldClassNamesProviderProps = {
-  classNames?: TimeFieldClassNames;
+  classNames?: Prettify<TimeFieldClassNames>;
   children: ReactNode;
 };
 
@@ -95,7 +96,7 @@ export type TimeFieldProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix" | "su
   suffix?: ReactNode;
   /** Separator between hour/minute/second segments. Default: `":"`. */
   segmentSeparator?: ReactNode;
-  classNames?: TimeFieldClassNames;
+  classNames?: Prettify<TimeFieldClassNames>;
 };
 
 export type TimeFieldHintProps = HTMLAttributes<HTMLParagraphElement> & {

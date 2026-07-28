@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type {
   SelectionIndicatorClassNames,
@@ -38,7 +39,7 @@ export function resolveListBoxItemIndicatorClassNames({
   classNames,
 }: {
   slotClassNames: ListBoxClassNames;
-  classNames?: ListBoxItemIndicatorClassNames;
+  classNames?: Prettify<ListBoxItemIndicatorClassNames>;
 }): SelectionIndicatorClassNames {
   return {
     root: cn(

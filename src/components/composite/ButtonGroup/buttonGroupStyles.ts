@@ -29,32 +29,23 @@ export function buttonGroupTextFrameClass(size: ComponentSize): string {
   return cn(BUTTON_GROUP_CONTROL_HEIGHT_CLASS[size], padX, padY);
 }
 
-/** Ripple rounding / overflow radius — matches the button edge. */
+/**
+ * Ripple / segment corner radius — inherits from ButtonGroup root so
+ * `classNames.root` / `rounded-*` on the group retargets corners + frame (::after).
+ * No `!` — consumer `className` must be able to override via `cn` / twMerge.
+ */
 export function buttonGroupRoundingClasses(seg: ButtonGroupSegment | undefined): string {
   if (seg == null) return "";
   const { orientation, position } = seg;
-  if (position === "only") return "rounded-base";
+  if (position === "only") return "rounded-[inherit]";
   if (orientation === "horizontal") {
-    if (position === "first") return "rounded-l-base rounded-r-none";
+    if (position === "first") return "rounded-l-[inherit] rounded-r-none";
     if (position === "middle") return "rounded-none";
-    return "rounded-r-base rounded-l-none";
+    return "rounded-r-[inherit] rounded-l-none";
   }
-  if (position === "first") return "rounded-t-base rounded-b-none";
+  if (position === "first") return "rounded-t-[inherit] rounded-b-none";
   if (position === "middle") return "rounded-none";
-  return "rounded-b-base rounded-t-none";
-}
-
-function buttonGroupRoundingOverrideClasses(seg: ButtonGroupSegment): string {
-  const { orientation, position } = seg;
-  if (position === "only") return "!rounded-base";
-  if (orientation === "horizontal") {
-    if (position === "first") return "!rounded-l-base !rounded-r-none";
-    if (position === "middle") return "!rounded-none";
-    return "!rounded-r-base !rounded-l-none";
-  }
-  if (position === "first") return "!rounded-t-base !rounded-b-none";
-  if (position === "middle") return "!rounded-none";
-  return "!rounded-b-base !rounded-t-none";
+  return "rounded-b-[inherit] rounded-t-none";
 }
 
 /** Remove the double line at the internal joints. */
@@ -73,8 +64,6 @@ export function buttonGroupOverlapBorderClasses(
 export function buttonGroupSegmentSurfaceClasses(seg: ButtonGroupSegment | undefined): string {
   if (seg == null) return "";
   return cn(
-    buttonGroupRoundingClasses(seg),
-    buttonGroupRoundingOverrideClasses(seg),
     "!border-0 [border:0!important] !shadow-none [box-shadow:none!important]",
     "z-0 focus-visible:z-[2]",
   );
@@ -104,10 +93,13 @@ export function buttonGroupRootClass({
     "inline-flex text-left w-fit",
     !segmented &&
       cn(
-        "relative rounded-base",
+        // Frame lives on ::after (keeps separators / focus paint clean). Radius +
+        // border-color come from the root so `rounded-*` / `border-primary` on
+        // classNames.root retarget the visible frame without `after:*` overrides.
+        "relative rounded-base border-border",
         variant === "gloss"
           ? "gloss-panel gloss-deep border-0 text-foreground"
-          : "after:pointer-events-none after:absolute after:inset-0 after:rounded-base after:border-token after:content-['']",
+          : "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border-solid after:[border-width:var(--border-width,1px)] after:border-inherit after:content-['']",
       ),
     orientation === "horizontal"
       ? cn("flex-row flex-nowrap items-stretch", segmented && "gap-xsmall")

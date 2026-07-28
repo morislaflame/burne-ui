@@ -87,9 +87,10 @@ export function useButtonRootState({
     buttonSurfaceMotionClass(isGloss, status, variant, !!groupSegment, blocked),
     userDisabled ? BUTTON_DISABLED_OPACITY_CLASS : "",
     roundingClass,
-    className,
     groupGlue,
     BUTTON_CURSOR_CLASS,
+    classNames?.root,
+    className,
   );
 
   const convergeRippleColor = buttonConvergeRippleColor(variant, status);

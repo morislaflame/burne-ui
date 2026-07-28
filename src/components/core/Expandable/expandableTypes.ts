@@ -4,6 +4,7 @@ import type {
   ReactNode,
   Ref,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -38,7 +39,7 @@ export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
-  classNames?: ExpandableClassNames;
+  classNames?: Prettify<ExpandableClassNames>;
 };
 
 
@@ -55,7 +56,7 @@ export type ExpandableContextValue = {
 };
 
 export type ExpandableClassNamesProviderProps = {
-  classNames?: ExpandableClassNames;
+  classNames?: Prettify<ExpandableClassNames>;
   children: ReactNode;
 };
 

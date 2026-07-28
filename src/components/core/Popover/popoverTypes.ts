@@ -5,6 +5,7 @@ import type {
 } from "@/components/core/Tooltip/tooltipPosition";
 import type { PanelSize } from "@/components/core/utils/sizeLayout";
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type PopoverSide = TooltipSide;
 export type PopoverSize = PanelSize;
@@ -57,11 +58,11 @@ export type PopoverProps = {
   shouldDismiss?: (target: Node) => boolean;
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
-  classNames?: PopoverClassNames;
+  classNames?: Prettify<PopoverClassNames>;
 };
 
 export type PopoverClassNamesProviderProps = {
-  classNames?: PopoverClassNames;
+  classNames?: Prettify<PopoverClassNames>;
   children: ReactNode;
 };
 

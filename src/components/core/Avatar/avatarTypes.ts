@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ImgHTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type {
   TooltipSide,
@@ -43,7 +44,7 @@ export type AvatarProps = HTMLAttributes<HTMLDivElement> & {
   tooltipVariant?: TooltipVariant;
   tooltipStatus?: SemanticStatus;
   tooltipSide?: TooltipSide;
-  classNames?: AvatarClassNames;
+  classNames?: Prettify<AvatarClassNames>;
 };
 
 export type UseAvatarRootStateProps = Pick<
@@ -67,11 +68,11 @@ export type AvatarImageProps = ImgHTMLAttributes<HTMLImageElement>;
 export type AvatarFallbackProps = HTMLAttributes<HTMLSpanElement>;
 
 export type AvatarGroupProps = HTMLAttributes<HTMLDivElement> & {
-  classNames?: AvatarClassNames;
+  classNames?: Prettify<AvatarClassNames>;
 };
 
 export type AvatarClassNamesProviderProps = {
-  classNames?: AvatarClassNames;
+  classNames?: Prettify<AvatarClassNames>;
   children: ReactNode;
 };
 

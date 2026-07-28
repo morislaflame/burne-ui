@@ -4,6 +4,7 @@ import type {
   ReactNode,
   TextareaHTMLAttributes,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
@@ -49,7 +50,7 @@ export type TextAreaFieldContextValue = {
 };
 
 export type TextAreaClassNamesProviderProps = {
-  classNames?: TextAreaClassNames;
+  classNames?: Prettify<TextAreaClassNames>;
   children: ReactNode;
 };
 
@@ -62,7 +63,7 @@ export type TextAreaProps = HTMLAttributes<HTMLDivElement> & {
   required?: boolean;
   status?: TextAreaStatus;
   size?: TextAreaSize;
-  classNames?: TextAreaClassNames;
+  classNames?: Prettify<TextAreaClassNames>;
 };
 
 export type TextAreaSimpleProps = TextAreaProps & TextAreaControlProps;

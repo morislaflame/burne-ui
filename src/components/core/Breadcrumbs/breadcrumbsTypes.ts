@@ -1,4 +1,5 @@
 import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 export type BreadcrumbsClassNames = {
   /** Root `<nav>`. */
@@ -52,14 +53,14 @@ export type BreadcrumbSegmentPiece = Extract<DisplayPiece, { kind: "segment" }>;
 
 export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   collapse?: boolean;
-  classNames?: BreadcrumbsClassNames;
+  classNames?: Prettify<BreadcrumbsClassNames>;
   /** Simple API: chain items. Ignored in compound mode (`Breadcrumbs.List`). */
   items?: BreadcrumbItem[];
   children?: ReactNode;
 };
 
 export type BreadcrumbsListProps = OlHTMLAttributes<HTMLOListElement> & {
-  classNames?: BreadcrumbsClassNames;
+  classNames?: Prettify<BreadcrumbsClassNames>;
   children?: ReactNode;
 };
 
@@ -120,6 +121,6 @@ export type BreadcrumbsCollapseProviderProps = {
 };
 
 export type BreadcrumbsClassNamesProviderProps = {
-  classNames?: BreadcrumbsClassNames;
+  classNames?: Prettify<BreadcrumbsClassNames>;
   children: ReactNode;
 };

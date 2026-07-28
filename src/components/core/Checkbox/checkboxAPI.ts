@@ -1,4 +1,5 @@
 import { Children, isValidElement, type ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 import { cn } from "@/utils/cn";
@@ -18,7 +19,7 @@ export function resolveCheckboxIndicatorClassNames({
   className,
 }: {
   slotClassNames: CheckboxClassNames;
-  classNames?: CheckboxIndicatorClassNames;
+  classNames?: Prettify<CheckboxIndicatorClassNames>;
   className?: string;
 }): SelectionIndicatorClassNames {
   return {

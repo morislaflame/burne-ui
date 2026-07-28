@@ -6,6 +6,7 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
@@ -77,9 +78,11 @@ export type SwitchControlProps = Omit<
     color?: string;
     gloss?: boolean;
     className?: string;
-    classNames?: Pick<
-      SwitchClassNames,
-      "control" | "input" | "track" | "fill" | "thumb" | "thumbShell" | "icon"
+    classNames?: Prettify<
+      Pick<
+        SwitchClassNames,
+        "control" | "input" | "track" | "fill" | "thumb" | "thumbShell" | "icon"
+      >
     >;
     children?: ReactNode;
   };
@@ -94,7 +97,9 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   iconOff?: ReactNode;
   iconOn?: ReactNode;
   gloss?: boolean;
-  classNames?: Pick<SwitchClassNames, "track" | "fill" | "thumb" | "thumbShell" | "icon">;
+  classNames?: Prettify<
+    Pick<SwitchClassNames, "track" | "fill" | "thumb" | "thumbShell" | "icon">
+  >;
 };
 
 export type SwitchFillProps = HTMLAttributes<HTMLSpanElement>;
@@ -122,7 +127,7 @@ export type SwitchProps = Omit<
   size?: SwitchSize;
   disabled?: boolean;
   className?: string;
-  classNames?: SwitchClassNames;
+  classNames?: Prettify<SwitchClassNames>;
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
 };
 
@@ -139,7 +144,7 @@ export type SwitchHintProps = Omit<FieldHintProps, "id" | "as">;
 export type SwitchErrorProps = Omit<FieldErrorProps, "id" | "as">;
 
 export type SwitchClassNamesProviderProps = {
-  classNames?: SwitchClassNames;
+  classNames?: Prettify<SwitchClassNames>;
   children: ReactNode;
 };
 

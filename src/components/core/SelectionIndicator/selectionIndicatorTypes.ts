@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { SelectionIndicatorSize, SelectionIndicatorVariant } from "./selectionIndicatorTokens";
 
@@ -16,7 +17,7 @@ export type SelectionIndicatorProps = Omit<HTMLAttributes<HTMLSpanElement>, "chi
   dot?: boolean;
   icon?: ReactNode;
   children?: ReactNode;
-  classNames?: SelectionIndicatorClassNames;
+  classNames?: Prettify<SelectionIndicatorClassNames>;
 };
 
 export type SelectionIndicatorFillProps = HTMLAttributes<HTMLSpanElement>;

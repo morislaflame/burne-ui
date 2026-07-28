@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
@@ -56,7 +57,7 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   disabled?: boolean;
   placeholder?: string;
   menuMaxHeight?: string;
-  classNames?: SelectClassNames;
+  classNames?: Prettify<SelectClassNames>;
 };
 
 export type SelectSimpleProps = SelectProps & {
@@ -98,7 +99,7 @@ export type SelectContextValue = SelectFieldContextValue & {
 };
 
 export type SelectClassNamesProviderProps = {
-  classNames?: SelectClassNames;
+  classNames?: Prettify<SelectClassNames>;
   children: ReactNode;
 };
 

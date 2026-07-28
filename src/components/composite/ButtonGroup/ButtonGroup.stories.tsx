@@ -193,7 +193,7 @@ export const CustomClassNames: Story = {
       aria-label="Custom slots"
       buttonSize="base"
       classNames={{
-        root: "rounded-mid border border-primary/25 p-xsmall",
+        root: "rounded-mid border-primary/25 p-xsmall",
         separator: "border-primary/40",
         text: "bg-primary/5",
         textLabel: "text-primary font-medium",

@@ -1,5 +1,6 @@
 import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 import { cn } from "@/utils/cn";
+import type { Prettify } from "@/utils/prettify";
 
 import type { RadioClassNames, RadioIndicatorClassNames, RadioVariant } from "./radioTypes";
 
@@ -13,7 +14,7 @@ export function resolveRadioIndicatorClassNames({
   className,
 }: {
   slotClassNames: RadioClassNames;
-  classNames?: RadioIndicatorClassNames;
+  classNames?: Prettify<RadioIndicatorClassNames>;
   className?: string;
 }): SelectionIndicatorClassNames {
   return {

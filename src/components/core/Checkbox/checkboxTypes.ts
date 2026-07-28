@@ -7,6 +7,7 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
@@ -49,7 +50,7 @@ export type CheckboxProps = Omit<
     status?: SemanticStatus;
     icon?: ReactNode;
     className?: string;
-    classNames?: CheckboxClassNames;
+    classNames?: Prettify<CheckboxClassNames>;
     onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
   };
 
@@ -62,7 +63,7 @@ export type CheckboxIndicatorClassNames = SelectionIndicatorClassNames &
 export type CheckboxIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   size?: CheckboxSize;
-  classNames?: CheckboxIndicatorClassNames;
+  classNames?: Prettify<CheckboxIndicatorClassNames>;
 };
 
 export type CheckboxContentProps = HTMLAttributes<HTMLDivElement> & {
@@ -114,7 +115,7 @@ export type CheckboxFieldContextValue = {
 };
 
 export type CheckboxClassNamesProviderProps = {
-  classNames?: CheckboxClassNames;
+  classNames?: Prettify<CheckboxClassNames>;
   children: ReactNode;
 };
 
