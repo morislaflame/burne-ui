@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Field, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHintId, useFieldSetErrorId, type FieldProps, type FieldSetProps, type FieldClassNames, type FieldSetClassNames, type FieldHintStatus, type FieldSetSize } from "burne-ui";
+import { Field, joinFieldDescribedBy, fieldHintId, fieldErrorId, useFieldSetHintId, useFieldSetErrorId, type FieldProps, type FieldSetProps, type FieldClassNames, type FieldSetClassNames, type FieldHintStatus, type FieldSize, type FieldSetSize } from "burne-ui";
 ```
 
 ## API
@@ -70,10 +70,12 @@ Compound через `Object.assign`:
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `size` | `base` | `small` \| `base` \| `mid` \| `large` — отступы stack/group/actions |
+| `size` | `base` | `small` \| `base` \| `mid` \| `large` — gaps + Label/Hint type (chrome only) |
 | `disabled` | — | На `<fieldset>` |
 | `hintId` / `errorId` | auto | Для `aria-describedby` у дочерних контролов |
-| `classNames` | — | Слоты set, stack, legend, group, actions |
+| `classNames` | — | Слоты root, stack, legend, group, actions |
+
+> **Не стилизуйте поверхность на `Field.Set`:** у нативного `<fieldset>` `<legend>` рендерится **вне** content box. `border` / `rounded` / `padding` / `bg-*` на `className` / `classNames.root` **не оборачивают** legend — «карточки» вокруг всей группы так не сделать. Для рамки оберните Set во внешний `div` / `Card`. Подробнее — [ограничение fieldset](#ограничение-нативного-fieldset).
 
 **Авто-раскладка:** `useFieldSetRootState` парсит children — выносит `Legend`, собирает `Group`, `Actions`, остальное в `loose`.
 
@@ -160,24 +162,28 @@ configureMotion({
 | Switch thumb | Switch | `switchThumbDuration` | child в Field |
 | Hint/Error appear | — | — | только CSS вручную |
 
-## Размеры (`Field.Set`)
+## Размеры (`Field` / `Field.Set`)
 
-`FIELD_SET_SIZE_LAYOUT`:
+`size` масштабирует **только chrome** (отступы + типографика Label / Hint / Error). Не каскадируется в `Input` / `Button` — у контролов свой `size`.
 
-| size | stack gap | group gap | actions gap | отступ после legend |
-|------|-----------|-----------|-------------|---------------------|
-| `small` | `gap-large` | `gap-base` | `gap-base` | `mt-large` |
-| `base` | `gap-xlarge` | `gap-mid` | `gap-mid` | `mt-xlarge` |
-| `mid` | `gap-2xlarge` | `gap-large` | `gap-large` | `mt-2xlarge` |
-| `large` | `gap-2xlarge` | `gap-xlarge` | `gap-xlarge` | `mt-2xlarge` |
+`FIELD_SIZE_LAYOUT`:
 
-`Field` (одиночный) — фиксированный `gap-xsmall` между label / control / hint.
+| size | field gap | label | hint | stack | group | actions | legend mt | legendHeader |
+|------|-----------|-------|------|-------|-------|---------|-----------|--------------|
+| `small` | `gap-xsmall` | `small` | `xsmall` | `gap-large` | `gap-base` | `gap-base` | `mt-large` | `gap-xsmall` |
+| `base` | `gap-xsmall` | `base` | `small` | `gap-xlarge` | `gap-mid` | `gap-mid` | `mt-xlarge` | `gap-xsmall` |
+| `mid` | `gap-small` | `mid` | `small` | `gap-2xlarge` | `gap-large` | `gap-large` | `mt-2xlarge` | `gap-small` |
+| `large` | `gap-small` | `mid` | `base` | `gap-2xlarge` | `gap-xlarge` | `gap-xlarge` | `mt-2xlarge` | `gap-small` |
+
+- `Field size` — gap Label↔control↔Hint + варианты текста; внутри Set наследует `Field.Set size`, если не задан явно.
+- `Field.Set size` — stack / group / actions / legend + контекст для `Field.Label` / `Field.Hint` в legend.
+- Legend title: используйте `Field.Label` (не голый `Label`), чтобы типографика шла от size.
 
 ## Токены и CSS
 
 | Элемент | Классы |
 |---------|--------|
-| Field root | `flex w-full flex-col gap-xsmall` |
+| Field root | `flex w-full flex-col` + `fieldGap` |
 | Fieldset | `m-0 min-w-0 border-0 p-0`, `disabled:opacity-55` |
 | Hint default | `text-muted` |
 | Hint danger/success/warning | `text-danger` / `text-success` / `text-warning` |
@@ -270,7 +276,7 @@ Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.e
 >
   <Field.Legend>
     <Field.LegendHeader>
-      <Label>Контактные данные</Label>
+      <Field.Label>Контактные данные</Field.Label>
       <Field.Hint as="span">Слоты через classNames</Field.Hint>
     </Field.LegendHeader>
   </Field.Legend>
@@ -285,7 +291,7 @@ Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.e
 
 | Слот | Элемент | Назначение |
 |------|---------|------------|
-| `root` | `<fieldset>` | Layout на корне (`max-w-*`, gap и т.п.) |
+| `root` | `<fieldset>` | Только layout (`max-w-*` и т.п.) — **не** surface (`border` / `p-*` / `bg-*`) |
 | `stack` | Внутренний layout-div | Gap между Group/Actions (без compound-части) |
 | `legend` | `<legend>` | Заголовок группы |
 | `legendHeader` | Обёртка в legend | Label + hint в одной строке |
@@ -296,20 +302,20 @@ Input/TextArea/ComboBox прокидывают `classNames.hint` / `classNames.e
 
 #### Ограничение нативного `<fieldset>`
 
-`Field.Set` — семантическая группировка, не card-like контейнер. У нативного fieldset `<legend>` рендерится **вне** content box: `border` и `padding` на `root`/`className` **не оборачивают legend** и не дают «карточку» вокруг всей группы. Между legend и контентом браузер добавляет свой отступ content box (плюс `mt-*` на stack от `size`).
+`Field.Set` — семантическая группировка, не card-like контейнер. У нативного fieldset `<legend>` рендерится **вне** content box: `border`, `rounded`, `padding`, `background` на `root` / `className` **не оборачивают legend** и не дают «карточку» вокруг всей группы. Между legend и контентом браузер добавляет свой отступ content box (плюс `mt-*` на stack от `size`).
 
-Для визуальной рамки вокруг legend + полей оберните `Field.Set` во внешний `div`/`Card` с border и padding — внутри оставьте fieldset без border.
+Для визуальной рамки вокруг legend + полей оберните `Field.Set` во внешний `div` / `Card` с border и padding — внутри оставьте fieldset без surface-стилей.
 
 ### Практические заметки
 
-- **Размер Set:** `size` на `Field.Set` влияет на gap токенов — согласуйте с `Form` size.
-- **Border на root:** не используйте `border`/`p-*` на `root`, если ожидаете обёртку legend — см. ограничение выше.
+- **Размер:** `size` на `Field` / `Field.Set` — chrome (gaps + Label/Hint). Контролы — свой `size`.
+- **Surface на Set:** не используйте `border` / `p-*` / `bg-*` на `root`, если ожидаете обёртку legend — см. ограничение выше.
 - **Не путать с Input:** `Field.classNames` не стилизует shell input — только layout Field; shell — в `Input.classNames.shell`.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
 
 ## Интеграция с Form
 
-`Form` передаёт `size`, `disabled`, `isSubmitting` в контекст — дочерние `Input`/`Button` наследуют. `Field.Set` размер задавайте явно или согласуйте с `Form` size.
+`Form` / `Field` `size` **не** каскадируется в `Input`/`Button`. `disabled` / `isSubmitting` — да (через Form binding).
 
 ## Структура файлов
 

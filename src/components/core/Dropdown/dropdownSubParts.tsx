@@ -193,7 +193,7 @@ export const DropdownSubTrigger = forwardRef<
         <IoChevronForward
           className={cn(
             DROPDOWN_SUB_TRIGGER_CHEVRON_CLASS,
-            slotClassNames.subTriggerChevron,
+            slotClassNames.subTriggerIcon,
           )}
           aria-hidden
         />
@@ -281,7 +281,10 @@ export const DropdownSubContent = forwardRef<
         subOpen,
         portalMounted: portal.portalMounted,
         className,
-        slotClass: slotClassNames.subContent,
+        slotClass: cn(
+          slotClassNames.subPopover,
+          !portal.isGlossPanel && slotClassNames.subPopoverBody,
+        ),
       })}
       style={{
         position: portal.contained ? "absolute" : "fixed",
@@ -298,13 +301,13 @@ export const DropdownSubContent = forwardRef<
         <div
           className={cn(
             DROPDOWN_SUB_CONTENT_GLOSS_PANEL_CLASS,
-            slotClassNames.subContentGlossPanel,
+            slotClassNames.subPopoverGlossPanel,
           )}
         >
           <div
             className={cn(
               DROPDOWN_SUB_CONTENT_GLOSS_CONTENT_CLASS,
-              slotClassNames.subContentGlossContent,
+              slotClassNames.subPopoverBody,
             )}
           >
             {children}

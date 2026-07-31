@@ -31,7 +31,7 @@ export function LinkBodyContent({
         <LinkIconSlot
           size={size}
           muted={startIconMuted}
-          slotClass={slotClassNames.iconStart}
+          slotClass={slotClassNames.icon}
         >
           {resolvedStart}
         </LinkIconSlot>
@@ -51,7 +51,7 @@ export function LinkBodyContent({
         <LinkIconSlot
           size={size}
           muted={endIconMuted}
-          slotClass={slotClassNames.iconEnd}
+          slotClass={slotClassNames.icon}
         >
           {resolvedEnd}
         </LinkIconSlot>

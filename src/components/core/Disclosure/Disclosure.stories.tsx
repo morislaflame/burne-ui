@@ -114,34 +114,44 @@ export const Sizes: Story = {
   ),
 };
 
-// ─── Icon position ────────────────────────────────────────────────────────────
+// ─── Chevron position & icons ─────────────────────────────────────────────────
 
-export const IconPosition: Story = {
-  name: "Icon position",
+export const ChevronAndIcon: Story = {
+  name: "Chevron & icon",
   render: () => (
     <div className="flex flex-col gap-small">
-      <Disclosure variant="outline" iconPosition="end" defaultOpen>
-        <Disclosure.Trigger>Icon on the right (default)</Disclosure.Trigger>
+      <Disclosure variant="outline" chevronPosition="end" defaultOpen>
+        <Disclosure.Trigger>Chevron on the right (default)</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
-      <Disclosure variant="outline" iconPosition="start">
-        <Disclosure.Trigger>Icon on the left</Disclosure.Trigger>
+      <Disclosure variant="outline" chevronPosition="start">
+        <Disclosure.Trigger>Chevron on the left</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
-      <Disclosure variant="outline" iconPosition="end">
-        <Disclosure.Trigger icon={<IoInformationCircleOutline className="size-full" />}>
-          Custom icon
+      <Disclosure variant="outline" chevronPosition="end">
+        <Disclosure.Trigger
+          icon={<IoInformationCircleOutline aria-hidden className="size-full" />}
+        >
+          Leading icon + default chevron
         </Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
       </Disclosure>
-      <Disclosure variant="outline" iconPosition="end">
-        <Disclosure.Trigger icon={null}>No icon</Disclosure.Trigger>
+      <Disclosure variant="outline" chevronPosition="end">
+        <Disclosure.Trigger chevron={<IoInformationCircleOutline className="size-full" />}>
+          Custom chevron
+        </Disclosure.Trigger>
+        <Disclosure.Content>
+          <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
+        </Disclosure.Content>
+      </Disclosure>
+      <Disclosure variant="outline" chevronPosition="end">
+        <Disclosure.Trigger chevron={null}>No chevron</Disclosure.Trigger>
         <Disclosure.Content>
           <Text as="p" variant="small" className="text-muted">{bodyText}</Text>
         </Disclosure.Content>
@@ -405,7 +415,7 @@ export const CustomClassNames: Story = {
       defaultOpen
       classNames={{
         trigger: "border border-primary/30 rounded-mid",
-        triggerTitle: "text-primary font-semibold",
+        title: "text-primary font-semibold",
         contentPanel: "border border-primary/20 bg-primary/5",
       }}
     >

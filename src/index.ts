@@ -249,6 +249,7 @@ export {
   type FieldLegendProps,
   type FieldLegendHeaderProps,
   type FieldSetSize,
+  type FieldSize,
   type FieldClassNames,
   type FieldSetClassNames,
 } from "@/components/core/Field";
@@ -263,7 +264,7 @@ export {
   Link,
   type LinkProps,
   type LinkSize,
-  type LinkIconPosition,
+  type LinkIconPos,
   type LinkIconProps,
   type LinkClassNames,
   type LinkComponent,
@@ -768,9 +769,11 @@ export {
   type DisclosureTriggerProps,
   type DisclosureHandleProps,
   type DisclosureContentProps,
+  type DisclosureIconProps,
+  type DisclosureChevronProps,
   type DisclosureVariant,
   type DisclosureSize,
-  type DisclosureIconPos,
+  type DisclosureChevronPos,
   type DisclosureClassNames,
 } from "@/components/core/Disclosure";
 

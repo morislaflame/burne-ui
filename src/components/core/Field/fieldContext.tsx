@@ -1,17 +1,16 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
-import type { ComponentSize } from "@/components/core/utils/sizeLayout";
-
 import type {
   FieldClassNames,
   FieldClassNamesProviderProps,
   FieldSetClassNames,
   FieldSetClassNamesProviderProps,
+  FieldSize,
 } from "./fieldTypes";
 
 const FieldClassNamesContext = createContext<FieldClassNames>({});
 const FieldSetClassNamesContext = createContext<FieldSetClassNames>({});
-const FieldSetSizeContext = createContext<ComponentSize>("base");
+const FieldSizeContext = createContext<FieldSize | null>(null);
 
 export function FieldClassNamesProvider({
   classNames,
@@ -59,14 +58,18 @@ export function FieldSetSizeProvider({
   size,
   children,
 }: {
-  size: ComponentSize;
+  size: FieldSize;
   children: ReactNode;
 }) {
   return (
-    <FieldSetSizeContext.Provider value={size}>{children}</FieldSetSizeContext.Provider>
+    <FieldSizeContext.Provider value={size}>{children}</FieldSizeContext.Provider>
   );
 }
 
-export function useFieldSetSize(): ComponentSize {
-  return useContext(FieldSetSizeContext);
+export function useOptionalFieldSize(): FieldSize | null {
+  return useContext(FieldSizeContext);
+}
+
+export function useFieldSetSize(): FieldSize {
+  return useContext(FieldSizeContext) ?? "base";
 }

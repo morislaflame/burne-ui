@@ -1,13 +1,12 @@
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
-import { Label } from "@/components/core/Label";
 
 export function FieldHorizontalPairDemo() {
   return (
     <Field.Set className="w-full max-w-lg">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Report period</Label>
+          <Field.Label>Report period</Field.Label>
         </Field.LegendHeader>
       </Field.Legend>
       <Field.Group className="grid grid-cols-1 gap-large sm:grid-cols-2">

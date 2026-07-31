@@ -1,5 +1,5 @@
 import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import type { LabelProps } from "@/components/core/Label";
 
 import { selectResolveHintStatus } from "./selectAPI";
 import { useSelectClassNames, useSelectFieldContext } from "./selectContext";
@@ -11,7 +11,7 @@ export function SelectLabel({ className, classNames, ...rest }: LabelProps) {
   const slotClassNames = useSelectClassNames();
 
   return (
-    <Label
+    <Field.Label
       className={className}
       classNames={{
         ...classNames,

@@ -659,6 +659,7 @@ export const CustomClassNames: Story = {
         defaultValue="ru"
         classNames={{
           popoverBody: "border border-primary/20",
+          subPopoverBody: "rounded-mid border border-primary/20 bg-surface",
           label: "text-primary",
           item: "rounded-lg",
         }}
@@ -677,6 +678,15 @@ export const CustomClassNames: Story = {
               <Dropdown.ItemIndicator />
               <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
             </Dropdown.Item>
+            <Dropdown.Sub>
+              <Dropdown.SubTrigger>More</Dropdown.SubTrigger>
+              <Dropdown.SubContent>
+                <Dropdown.Item value="de">
+                  <Dropdown.ItemIndicator />
+                  <Dropdown.ItemLabel>Deutsch</Dropdown.ItemLabel>
+                </Dropdown.Item>
+              </Dropdown.SubContent>
+            </Dropdown.Sub>
           </Dropdown.Group>
         </Dropdown.Popover>
       </Dropdown>

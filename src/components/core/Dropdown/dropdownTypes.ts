@@ -35,10 +35,10 @@ export type DropdownClassNames = {
   sub?: string;
   subTrigger?: string;
   subTriggerLabelWrap?: string;
-  subTriggerChevron?: string;
-  subContent?: string;
-  subContentGlossPanel?: string;
-  subContentGlossContent?: string;
+  subTriggerIcon?: string;
+  subPopover?: string;
+  subPopoverGlossPanel?: string;
+  subPopoverBody?: string;
 };
 
 export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {

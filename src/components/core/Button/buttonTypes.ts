@@ -49,6 +49,11 @@ export type ButtonContextValue = {
   variant: ButtonVariant;
   status: ButtonStatus;
   asyncState: ButtonAsyncState;
+  /**
+   * After first GSAP sync, motion owns layer visibility (inline autoAlpha).
+   * Before that, parts hide inactive layers via Tailwind for SSR / first paint.
+   */
+  asyncMotionReady: boolean;
   groupSegment: ButtonGroupSegment | undefined;
   loaderTextClass: string;
   bindLabelRef: (node: HTMLSpanElement | null) => void;

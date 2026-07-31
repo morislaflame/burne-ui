@@ -40,7 +40,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Text link: defaults to `text-primary`; color can be overridden via `className` (e.g. `text-muted`). Default ↗ icon — `text-muted` until hover. Hover-lift and squeeze on press. Simple API: `underline`, `icon`/`iconPosition`, `showDefaultIcon`. Compound API: `<Link.Icon />` in children.",
+          "Text link: defaults to `text-foreground`; color can be overridden via `className` (e.g. `text-muted` / `text-primary`). Default ↗ icon — `text-muted` until hover. Hover-lift and squeeze on press. Simple API: `underline`, `icon`/`iconPosition`, `showDefaultIcon`. Compound API: `<Link.Icon />` in children.",
       },
     },
   },
@@ -171,7 +171,7 @@ export const CompoundApi: Story = {
         <Link.Icon />
       </Link>
       <Link href="#">
-        <Link.Icon position="start" />
+        <Link.Icon iconPosition="start" />
         Icon at start
       </Link>
       <Link href="#">
@@ -189,7 +189,7 @@ export const CustomClassNames: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Slots root, text, iconStart, and iconEnd via classNames prop.",
+        story: "Slots root, text and icon via classNames prop.",
       },
     },
   },
@@ -201,7 +201,7 @@ export const CustomClassNames: Story = {
       classNames={{
         root: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
         text: "font-semibold",
-        iconEnd: "text-warning",
+        icon: "text-warning",
       }}
     >
       Custom link

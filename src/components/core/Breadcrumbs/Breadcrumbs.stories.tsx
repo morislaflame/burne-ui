@@ -218,7 +218,7 @@ export const CustomClassNames: Story = {
         itemLinkWrapper: "rounded-small",
         itemLinkText: "tracking-tight",
         itemStatic: "text-warning",
-        itemCurrent: "font-semibold text-success",
+        itemActive: "font-semibold text-success",
         ellipsisLiftWrapper: "rounded-small",
         ellipsisText: "font-semibold",
         ellipsisPopover: "border border-token",

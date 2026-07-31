@@ -9,7 +9,7 @@ export function LinkClassNamesFullDemo() {
       classNames={{
         root: "gap-small rounded-mid border border-primary/25 p-xsmall text-primary",
         text: "font-semibold tracking-wide",
-        iconEnd: "text-warning",
+        icon: "text-warning",
       }}
     >
       Documentation

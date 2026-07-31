@@ -1,14 +1,13 @@
 import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
-import { Label } from "@/components/core/Label";
 
 export function FieldContactSetDemo() {
   return (
     <Field.Set className="max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Contact details</Label>
+          <Field.Label>Contact details</Field.Label>
           <Field.Hint as="span">All fields are required</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>

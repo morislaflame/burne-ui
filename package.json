@@ -1,6 +1,6 @@
 {
   "name": "burne-ui",
-  "version": "1.7.5",
+  "version": "1.7.9",
   "description": "React UI kit (Burne UI)",
   "type": "module",
   "sideEffects": [
@@ -30,6 +30,7 @@
       "default": "./dist/internal.js"
     },
     "./styles.css": "./dist/ui.css",
+    "./theme-bridge.css": "./cli/theme-bridge.css",
     "./package.json": "./package.json"
   },
   "scripts": {

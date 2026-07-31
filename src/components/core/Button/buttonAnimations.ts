@@ -1,5 +1,5 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { useCallback, useLayoutEffect, useMemo, useRef, type MouseEvent } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
 import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
@@ -77,6 +77,8 @@ export function useButtonAnimations({
   const expandRippleLayerRef = useRef<ButtonExpandRippleHandle>(null);
 
   const initialAsyncRef = useRef(asyncState);
+  /** First paint uses Tailwind hide; after sync GSAP owns visibility. */
+  const [asyncMotionReady, setAsyncMotionReady] = useState(false);
 
   const bindLabelRef = useMemo(
     () => createButtonAsyncLayerRefCallback(labelRef, initialAsyncRef.current, "label"),
@@ -128,7 +130,7 @@ export function useButtonAnimations({
     prevAsyncRef.current = asyncState;
   }, [asyncState, isControlled, pushExpandRipple]);
 
-  // Async crossfade between label / loader / success / error layers
+  // Async layers: CSS hides inactive until ready; GSAP crossfades on state change only
   useLayoutEffect(() => {
     const label = labelRef.current;
     const loader = loaderRef.current;
@@ -156,6 +158,7 @@ export function useButtonAnimations({
           scale: active ? scaleIn : scaleOut,
         });
       }
+      setAsyncMotionReady(true);
       return;
     }
 
@@ -229,5 +232,6 @@ export function useButtonAnimations({
     handleKeyDown: motionRefs.handleKeyDown,
     createAsyncClickHandler,
     asyncInFlight,
+    asyncMotionReady,
   };
 }

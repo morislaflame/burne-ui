@@ -9,7 +9,7 @@ export function LinkCompoundApiDemo() {
         <Link.Icon />
       </Link>
       <Link href="#" onClick={(e) => e.preventDefault()}>
-        <Link.Icon position="start" />
+        <Link.Icon iconPosition="start" />
         Icon at start
       </Link>
       <Link href="#" onClick={(e) => e.preventDefault()}>

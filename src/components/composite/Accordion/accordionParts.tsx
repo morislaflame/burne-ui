@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useMemo, useRef } from "react";
 
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
 import { useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
@@ -27,6 +27,18 @@ import type {
 
 import { cn } from "@/utils/cn";
 
+/** Resolve item id once per mount when `value` is omitted (SSR / Strict Mode safe). */
+function useAccordionItemId(explicitValue: string | undefined): string {
+  const { allocateAutoItemId } = useAccordionContext();
+  const autoIdRef = useRef<string | null>(null);
+
+  if (explicitValue != null) return explicitValue;
+  if (autoIdRef.current == null) {
+    autoIdRef.current = allocateAutoItemId();
+  }
+  return autoIdRef.current;
+}
+
 function AccordionChevronSvg({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -50,13 +62,13 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
   { value, disabled, classNames, className, children, ...rest },
   ref,
 ) {
-  const { value: openValue, setValue, getItemId, size } = useAccordionContext();
+  const { value: openValue, setValue, size } = useAccordionContext();
   const parentClassNames = useAccordionClassNames();
   const mergedClassNames = useMemo(
     () => ({ ...parentClassNames, ...classNames }),
     [parentClassNames, classNames],
   );
-  const itemId = getItemId(value);
+  const itemId = useAccordionItemId(value);
   const isOpen = openValue === itemId;
 
   return (

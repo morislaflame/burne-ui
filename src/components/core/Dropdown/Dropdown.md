@@ -81,7 +81,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 
 ### `DropdownClassNames`
 
-`root`, `trigger`, `popover`, `popoverBody`, `group`, `label`, `separator`, `item`, `itemLabel`, `itemHint`, `itemIcon`, `itemIndicator`, `itemIndicatorShell`, `itemIndicatorFill`, `itemIndicatorMark`, `sub`, `subTrigger`, `subTriggerLabelWrap`, `subTriggerChevron`, `subContent`, `subContentGlossPanel`, `subContentGlossContent`.
+`root`, `trigger`, `popover`, `popoverBody`, `group`, `label`, `separator`, `item`, `itemLabel`, `itemHint`, `itemIcon`, `itemIndicator`, `itemIndicatorShell`, `itemIndicatorFill`, `itemIndicatorMark`, `sub`, `subTrigger`, `subTriggerLabelWrap`, `subTriggerIcon`, `subPopover`, `subPopoverGlossPanel`, `subPopoverBody`.
 
 ### Compound-подчасти
 
@@ -220,7 +220,7 @@ animateInteractivePressSqueeze(el);
 
 **Close delay:** `scheduleClose` на `pointerleave` sub row (hover bridge).
 
-Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `bg-surface shadow-mid`.
+Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surface shadow-mid`.
 
 ### 5. Keyboard navigation
 
@@ -296,9 +296,9 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 | `sub` | `Dropdown.Sub` wrapper | Submenu container |
 | `subTrigger` | Sub trigger row | Hover row стили |
 | `subTriggerLabelWrap` | Label flex area | Truncate длинных label |
-| `subTriggerChevron` | `IoChevronForward` | Muted chevron |
-| `subContent` | Submenu portal panel | Flyout surface |
-| `subContentGlossPanel` / `GlossContent` | Gloss submenu layers | Gloss variant |
+| `subTriggerIcon` | `IoChevronForward` | Muted chevron |
+| `subPopover` | Submenu portal panel | Flyout surface |
+| `subPopoverGlossPanel` / `subPopoverBody` | Gloss submenu layers | Gloss variant |
 
 ### Simple-подобный selection menu
 
@@ -336,7 +336,7 @@ Gloss submenu: `subContentGlossPanel` + `subContentGlossContent` вместо `b
 ### Compound с submenu и semantic items
 
 ```tsx
-<Dropdown classNames={{ item: "rounded-mid", subContent: "shadow-token-lg" }}>
+<Dropdown classNames={{ item: "rounded-mid", subPopover: "shadow-token-lg" }}>
   <Dropdown.Trigger>Меню</Dropdown.Trigger>
   <Dropdown.Popover bodyClassName="p-small">
     <Dropdown.Item status="danger">

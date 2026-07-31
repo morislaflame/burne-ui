@@ -1,6 +1,6 @@
 import { forwardRef, useCallback } from "react";
 
-import { Label } from "@/components/core/Label";
+import { Field } from "@/components/core/Field";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -163,9 +163,9 @@ export function SelectSimpleBody({
   return (
     <>
       {label != null ? (
-        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Label>
+        </Field.Label>
       ) : null}
       <SelectTriggerGroup>
         <SelectValue />

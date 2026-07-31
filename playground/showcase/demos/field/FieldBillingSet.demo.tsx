@@ -1,14 +1,13 @@
 import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
-import { Label } from "@/components/core/Label";
 
 export function FieldBillingSetDemo() {
   return (
     <Field.Set className="w-full max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Payment</Label>
+          <Field.Label>Payment</Field.Label>
           <Field.Hint as="span">Data protected</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>

@@ -1,5 +1,5 @@
 import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import type { LabelProps } from "@/components/core/Label";
 
 import { useInputClassNames, useInputFieldContext } from "./inputContext";
 import type { InputErrorProps, InputHintProps } from "./inputTypes";
@@ -10,7 +10,7 @@ export function InputLabel({ className, classNames, ...rest }: LabelProps) {
   const slotClassNames = useInputClassNames();
 
   return (
-    <Label
+    <Field.Label
       className={className}
       classNames={{
         ...classNames,
@@ -75,4 +75,3 @@ export function InputError({
 }
 
 InputError.displayName = "InputError";
-

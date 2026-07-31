@@ -12,7 +12,7 @@ export const SELECTION_INDICATOR_SIZE_CLASS: Record<SelectionIndicatorSize, stri
   large: "selection-indicator-large",
 };
 
-/** Corner radius from `--selection-indicator-radius-*` (`--radius-*` × 0.75). */
+/** Corner radius from `--selection-indicator-radius-*` (`--radius-*` × 0.618). */
 export const SELECTION_INDICATOR_RADIUS_CLASS: Record<SelectionIndicatorSize, string> = {
   xsmall: "rounded-[var(--selection-indicator-radius-xsmall)]",
   small: "rounded-[var(--selection-indicator-radius-small)]",

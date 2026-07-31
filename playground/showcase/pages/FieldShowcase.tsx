@@ -10,6 +10,8 @@ import { FieldHorizontalPairDemo } from "../demos/field/FieldHorizontalPair.demo
 import fieldHorizontalPairSource from "../demos/field/FieldHorizontalPair.demo.tsx?raw";
 import { FieldSettingsPanelDemo } from "../demos/field/FieldSettingsPanel.demo";
 import fieldSettingsPanelSource from "../demos/field/FieldSettingsPanel.demo.tsx?raw";
+import { FieldSizesDemo } from "../demos/field/FieldSizes.demo";
+import fieldSizesSource from "../demos/field/FieldSizes.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -27,13 +29,20 @@ export function FieldShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={FieldContactSetDemo} source={fieldContactSetSource} />
       </ShowcaseSection>
 
+      <ShowcaseSection
+        title="Sizes"
+        description="size scales Field.Set chrome (gaps + Label / Hint type). No surface on Set — legend is outside the fieldset content box."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={FieldSizesDemo} source={fieldSizesSource} />
+      </ShowcaseSection>
+
       <ShowcaseSection title="Legend and Hint" description="Field.LegendHeader combines title and tooltip.">
         <ShowcaseDemoFromFile align="stretch" Demo={FieldAddressSetDemo} source={fieldAddressSetSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
         title="classNames"
-        description="Field and Field.Set — slot customization via classNames."
+        description="Field: surface on root OK. Field.Set: layout slots only — no surface on fieldset (legend is outside content box)."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={FieldClassNamesFullDemo} source={fieldClassNamesFullSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={FieldSetClassNamesFullDemo} source={fieldClassNamesFullSource} />
@@ -56,6 +65,10 @@ export function FieldShowcase() {
           <ShowcaseDoc.ApiRow
             api="compound"
             description="Field, Field.Label, Field.Hint, Field.Error — field wrapper primitive. Field.Set, Field.Legend, Field.Group, Field.Actions — set of form fields."
+          />
+          <ShowcaseDoc.ApiRow
+            api="size"
+            description="small | base | mid | large — Field / Set chrome only (gaps + Label / Hint type)."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Compound">

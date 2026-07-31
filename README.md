@@ -44,7 +44,7 @@ import "burne-ui/styles.css";
 В нём:
 
 - **Дизайн-токены** как CSS-переменные: `--color-*`, `--space` / `--space-*`, `--size` / `--size-*`, `--radius`, `--text-scale-*`, и др. Полный перечень имён — экспорт **`designTokenNames`** из `burne-ui`; исходные значения по умолчанию смотрите в репозитории в `src/tokens/styles.css`.
-- **Мост Tailwind** (`@theme inline`): цвета в утилитах вида `bg-background`, `text-foreground`, `border-border`, отступы `gap-large`, `p-mid`, радиусы `rounded-base` и т.д.
+- **Мост Tailwind** (`@theme inline` в ките + consumer-файл **`burne-ui/theme-bridge.css`**): цвета `bg-background`, отступы `gap-large` / `px-2xlarge`, радиусы `rounded-base` и т.д. Prebuilt `ui.css` содержит только классы, встретившиеся при сборке кита — мост нужен, чтобы Tailwind приложения догенерировал остальные.
 - **Кастомные утилиты** (`@utility`): например `border-token`, `border-t-token`, `text-header-1`, `text-mid`, `max-w-component-base`, `min-w-button-base`.
 
 Имена переменных **не** с префиксом `brn-`; это обычные `--color-background`, `--space-large` и т.п.
@@ -60,7 +60,7 @@ import "burne-ui/styles.css";
 
 `--space-*` и `--spacing-*` — разные имена **намеренно**: у Tailwind namespace отступов — `spacing`.
 
-Шкала spacing: `xsmall` 0.5 · `small` 0.75 · `base` 1 · `mid` 1.5 · `large` 2 · `xlarge` 2.5 · `2xlarge` 3 · `3xlarge` 3.875 (× `--space`).
+Шкала spacing: `xsmall` 0.618 · `small` 0.875 · `base` 1 · `mid` 1.5 · `large` 2 · `xlarge` 2.5 · `2xlarge` 4 · `3xlarge` 6 (× `--space`).
 
 ### Типографика
 
@@ -72,7 +72,7 @@ import "burne-ui/styles.css";
 | `small` / `text-small` | 0.75 |
 | `base` / `text-base` | 0.875 |
 | `mid` / `text-mid` | 1 |
-| `large` / `text-large` | 1.25 |
+| `large` / `text-large` | 1.15 |
 | `xlarge` → `text-header-2` | 1.5 |
 | `2xlarge` → `text-header-1` | 1.875 |
 | `3xlarge` → `text-accent-header` | 2.25 |

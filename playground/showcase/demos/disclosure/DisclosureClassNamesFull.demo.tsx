@@ -8,12 +8,13 @@ export function DisclosureClassNamesFullDemo() {
       defaultOpen
       classNames={{
         trigger: "border border-info/30 rounded-mid",
-        triggerTitle: "text-info font-semibold",
-        triggerChevron: "text-info",
+        title: "text-info font-semibold",
+        icon: "text-info",
+        chevron: "text-info",
         contentPanel: "border border-info/20 bg-info/5",
       }}
     >
-      <Disclosure.Trigger>Delivery and payment</Disclosure.Trigger>
+      <Disclosure.Trigger icon={<span aria-hidden>📦</span>}>Delivery and payment</Disclosure.Trigger>
       <Disclosure.Content>
         <Text as="p" variant="small" className="text-muted">
           Customization trigger, title, chevron and content through classNames.

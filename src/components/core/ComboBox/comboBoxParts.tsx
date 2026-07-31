@@ -5,7 +5,7 @@ import { forwardRef, useCallback, useRef } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
-import { Label } from "@/components/core/Label";
+import { Field } from "@/components/core/Field";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -425,9 +425,9 @@ export function ComboBoxSimpleBody({
   return (
     <>
       {label != null ? (
-        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Label>
+        </Field.Label>
       ) : null}
       <ComboBoxInputGroup>
         <ComboBoxInput />

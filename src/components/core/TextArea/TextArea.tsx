@@ -65,7 +65,7 @@ export function TextAreaRoot({
     <TextAreaFieldProvider value={state.fieldCtx}>
       <TextAreaClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <Field className={cn(classNames?.root, className)}>
+          <Field className={cn(classNames?.root, className)} size={state.size}>
             {body}
           </Field>
         </FieldLabelContext.Provider>

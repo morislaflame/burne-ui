@@ -82,7 +82,7 @@ type SelectionIndicatorClassNames = {
 ## Размеры
 
 CSS-переменные: `--selection-indicator-xsmall` … `--selection-indicator-large` (диаметр),
-`--selection-indicator-radius-*` = `--radius-*` × 0.75 (углы shell/dot — не `rounded-full`; fill — `rounded-[inherit]` + `-inset` под бордер, без отдельного радиуса в API).
+`--selection-indicator-radius-*` = `--radius-*` × 0.618 (углы shell/dot — не `rounded-full`; fill — `rounded-[inherit]` + `-inset` под бордер, без отдельного радиуса в API).
 
 | size | CSS class | Mark icon |
 |------|-----------|-----------|

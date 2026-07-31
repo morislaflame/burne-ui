@@ -327,24 +327,24 @@
    * Theme overrides (`applyThemeTokens` / playground) rewrite the same `clamp` curve scaled by the knob max — not a fixed rem.
    */
   --space: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
-  --space-xsmall: calc(var(--space) * 0.5);
-  --space-small: calc(var(--space) * 0.75);
+  --space-xsmall: calc(var(--space) * 0.618);
+  --space-small: calc(var(--space) * 0.875);
   --space-base: calc(var(--space) * 1);
   --space-mid: calc(var(--space) * 1.5);
   --space-large: calc(var(--space) * 2);
   --space-xlarge: calc(var(--space) * 2.5);
-  --space-2xlarge: calc(var(--space) * 3);
-  --space-3xlarge: calc(var(--space) * 3.875);
+  --space-2xlarge: calc(var(--space) * 4);
+  --space-3xlarge: calc(var(--space) * 6);
 
   /**
    * Base border radius knob + step tokens.
    * Layers: `--radius` (knob) → `--radius-*` (steps) → `@theme` `--radius-*` (Tailwind `rounded-*`).
    * Utilities: `rounded-xsmall` … `rounded-large`.
-   * Steps stay close (±12.5% around base) so size variants don’t jump in roundness.
+   * Steps: `0.618 / 0.875 / 1 / 1.125 / 1.25` so size variants don’t jump in roundness.
    * Fluid: same curve as `--space` (preserved by `applyThemeTokens` via scaled `clamp`).
    */
   --radius: clamp(0.46875rem, 0.4375rem + 0.125vw, 0.5rem);
-  --radius-xsmall: calc(var(--radius) * 0.75);
+  --radius-xsmall: calc(var(--radius) * 0.618);
   --radius-small: calc(var(--radius) * 0.875);
   --radius-base: calc(var(--radius) * 1);
   --radius-mid: calc(var(--radius) * 1.125);
@@ -508,7 +508,7 @@
    * (`-inset` by `--border-width`) with `rounded-[inherit]` so custom shell radius
    * needs no extra public API.
    * Mark icons: `--icon-size-*` × 0.75 (see `SELECTION_INDICATOR_ICON_CLASS`).
-   * Corner radius follows `--radius-*` at 0.75× (not `rounded-full`).
+   * Corner radius follows `--radius-*` at 0.618× (not `rounded-full`).
    */
   --selection-indicator-xsmall: var(--size-scale-xsmall);
   --selection-indicator-small: var(--size-scale-small);
@@ -516,11 +516,11 @@
   --selection-indicator-mid: var(--size-scale-mid);
   --selection-indicator-large: var(--size-scale-large);
 
-  --selection-indicator-radius-xsmall: calc(var(--radius-xsmall) * 0.75);
-  --selection-indicator-radius-small: calc(var(--radius-small) * 0.75);
-  --selection-indicator-radius-base: calc(var(--radius-base) * 0.75);
-  --selection-indicator-radius-mid: calc(var(--radius-mid) * 0.75);
-  --selection-indicator-radius-large: calc(var(--radius-large) * 0.75);
+  --selection-indicator-radius-xsmall: calc(var(--radius-xsmall) * 0.618);
+  --selection-indicator-radius-small: calc(var(--radius-small) * 0.618);
+  --selection-indicator-radius-base: calc(var(--radius-base) * 0.618);
+  --selection-indicator-radius-mid: calc(var(--radius-mid) * 0.618);
+  --selection-indicator-radius-large: calc(var(--radius-large) * 0.618);
 
   /**
    * Component shadows — single layer, bottom only.

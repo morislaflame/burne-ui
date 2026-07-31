@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Link, type LinkProps, type LinkSize, type LinkIconPosition, type LinkClassNames } from "burne-ui";
+import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNames } from "burne-ui";
 ```
 
 ## API
@@ -23,7 +23,7 @@ import { Link, type LinkProps, type LinkSize, type LinkIconPosition, type LinkCl
 | `showDefaultIcon` | `boolean` | `false` | `IoArrowForward` ↗ (только без `icon`) |
 | `defaultIconPosition` | `start` \| `end` | `end` | Позиция дефолтной иконки |
 | `className` | `string` | — | На `<a>` (или child при `asChild`) |
-| `classNames` | `LinkClassNames` | — | `root`, `text`, `iconStart`, `iconEnd` |
+| `classNames` | `LinkClassNames` | — | `root`, `text`, `icon` |
 | … | `AnchorHTMLAttributes` | — | `target`, `rel`, `onClick`, … |
 
 ### `LinkClassNames`
@@ -32,8 +32,7 @@ import { Link, type LinkProps, type LinkSize, type LinkIconPosition, type LinkCl
 type LinkClassNames = {
   root?: string;
   text?: string;
-  iconStart?: string;
-  iconEnd?: string;
+  icon?: string;
 };
 ```
 
@@ -63,9 +62,9 @@ import NextLink from "next/link";
 
 ```tsx
 <Link href="/item">
-  <Link.Icon position="start"><IoDocument aria-hidden /></Link.Icon>
+  <Link.Icon iconPosition="start"><IoDocument aria-hidden /></Link.Icon>
   Открыть файл
-  <Link.Icon position="end" />
+  <Link.Icon iconPosition="end" />
 </Link>
 ```
 
@@ -82,9 +81,9 @@ import NextLink from "next/link";
 
 ## Иконки и цвет
 
-- Текст и якорь: `text-primary`, `focus-ring`
-- Кастомная иконка: `text-primary`
-- Дефолтная / compound без children: `text-muted` → `text-primary` на `group-hover/link` и `group-focus-visible/link`
+- Текст и якорь: `text-foreground`, `focus-ring`
+- Кастомная иконка: `text-foreground`
+- Дефолтная / compound без children: `text-muted` → `text-foreground` на `group-hover/link` и `group-focus-visible/link`
 - Дефолтная ↗: `rotate-[-45deg]`
 
 Цвет ссылки можно переопределить: `className="text-muted"`.
@@ -160,7 +159,7 @@ configureMotion({
 
 | Класс | Назначение |
 |-------|------------|
-| `text-primary` | цвет ссылки |
+| `text-foreground` | цвет ссылки |
 | `focus-ring` | focus visible |
 | `rounded-mid` | hit area |
 | `underline decoration-current/70` | при `underline` |
@@ -171,7 +170,7 @@ configureMotion({
 ### Два уровня
 
 1. **`className`** — доп. классы на `<a>` (мерж с `classNames.root`).
-2. **`classNames`** — слоты `root`, `text`, `iconStart`, `iconEnd`.
+2. **`classNames`** — слоты `root`, `text`, `icon`.
 
 Link — один компонент; «compound» меняет только разметку иконок внутри якоря.
 
@@ -181,8 +180,7 @@ Link — один компонент; «compound» меняет только р�
 |------|---------------|-------------------|
 | `root` | `<a>` | Gap, padding, border, hover-lift target |
 | `text` | `Text` (children) | Шрифт, underline override |
-| `iconStart` | Обёртка левой иконки | Размер, muted/hover цвет |
-| `iconEnd` | Обёртка end-иконки | Дефолтная ↗ или `icon` при `iconPosition="end"` |
+| `icon` | Обёртка иконки (start/end) | Размер, muted/hover цвет |
 
 `size`, `underline` — базовая типографика и подчёркивание из `linkStyles.ts`.
 
@@ -197,15 +195,14 @@ Link — один компонент; «compound» меняет только р�
   classNames={{
     root: "gap-small rounded-mid border border-primary/20 p-xsmall text-info",
     text: "font-semibold",
-    iconStart: "opacity-80",
-    iconEnd: "text-warning",
+    icon: "text-warning",
   }}
 >
   Документация
 </Link>
 ```
 
-Иконки через props `icon` / `iconPosition` / `showDefaultIcon` — стили обёрток через `iconStart` / `iconEnd`.
+Иконки через props `icon` / `iconPosition` / `showDefaultIcon` — стили обёрток через `icon`.
 
 ### Compound API
 
@@ -215,20 +212,20 @@ Link — один компонент; «compound» меняет только р�
   classNames={{
     root: "gap-large",
     text: "text-primary",
-    iconStart: "text-muted group-hover:text-foreground",
+    icon: "text-muted group-hover:text-foreground",
   }}
 >
-  <Link.Icon position="start">
+  <Link.Icon iconPosition="start">
     <IoFolder aria-hidden />
   </Link.Icon>
   Открыть файл
-  <Link.Icon position="end" />
+  <Link.Icon iconPosition="end" />
 </Link>
 ```
 
-Пустой `<Link.Icon position="end" />` — дефолтная ↗; `muted` до hover задаётся стилями `iconEnd`.
+Пустой `<Link.Icon iconPosition="end" />` — дефолтная ↗; `muted` до hover задаётся стилями `icon`.
 
-`Link.Icon` не имеет отдельного слота в `LinkClassNames` — стилизуйте иконку через `iconStart` / `iconEnd` или оберните children.
+`Link.Icon` не имеет отдельного слота в `LinkClassNames` — стилизуйте иконку через `icon` или оберните children.
 
 ### Практические заметки
 

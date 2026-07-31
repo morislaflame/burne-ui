@@ -7,18 +7,15 @@ import * as prompts from "./prompts.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const THEME_BRIDGE_CSS = `
-/*
- * Tailwind v4 can regenerate theme tokens — bind them back to burne runtime vars.
- */
-@theme {
-  --text-base: var(--text-base-size);
-  --text-base--line-height: var(--text-base-line-height);
-  --text-base--font-weight: var(--text-base-weight);
-  --font-sans: var(--font-family-sans);
-  --font-mono: var(--font-family-mono);
+const THEME_BRIDGE_IMPORT = `@import "burne-ui/theme-bridge.css";`;
+
+/** @param {string} css */
+function hasThemeBridge(css) {
+  return (
+    css.includes("burne-ui/theme-bridge.css") ||
+    css.includes("--text-base: var(--text-base-size)")
+  );
 }
-`;
 
 /**
  * @returns {Promise<string>}
@@ -113,7 +110,7 @@ export function patchCssFile(cssPath) {
   let css = fs.readFileSync(cssPath, "utf8");
   const hadBurne = css.includes("burne-ui/styles.css");
   const hadTailwind = /@import\s+["']tailwindcss["']/.test(css);
-  const hadThemeBridge = css.includes("--text-base: var(--text-base-size)");
+  const hadThemeBridge = hasThemeBridge(css);
 
   if (!hadBurne) {
     if (hadTailwind) {
@@ -141,13 +138,16 @@ export function patchCssFile(cssPath) {
     css += `\n@import "burne-ui/styles.css";\n`;
   }
 
-  if (!hadThemeBridge) {
+  if (!css.includes("burne-ui/theme-bridge.css")) {
     const burneImport = css.match(/@import\s+["']burne-ui\/styles\.css["']\s*;/);
     if (burneImport && burneImport.index != null) {
       const insertAt = burneImport.index + burneImport[0].length;
-      css = css.slice(0, insertAt) + "\n" + THEME_BRIDGE_CSS + css.slice(insertAt);
+      css =
+        css.slice(0, insertAt) +
+        `\n${THEME_BRIDGE_IMPORT}\n` +
+        css.slice(insertAt);
     } else {
-      css += "\n" + THEME_BRIDGE_CSS;
+      css += `\n${THEME_BRIDGE_IMPORT}\n`;
     }
   }
 
@@ -425,7 +425,7 @@ export async function runInit(argv, cliVersion) {
     if (!fs.existsSync(abs)) throw new Error(`CSS not found: ${cssRel}`);
     const { hadBurne, hadTailwind, hadThemeBridge } = patchCssFile(abs);
     console.log(hadBurne ? `CSS OK (already linked): ${cssRel}` : `Patched CSS: ${cssRel}`);
-    if (!hadThemeBridge) console.log("Added @theme bridge (text-base / font-sans).");
+    if (!hadThemeBridge) console.log("Added @theme bridge (burne-ui/theme-bridge.css).");
     if (!hadTailwind) {
       console.log('Note: no @import "tailwindcss" — add Tailwind v4 for className utilities.');
     }

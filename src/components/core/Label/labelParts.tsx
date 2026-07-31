@@ -11,14 +11,14 @@ export function LabelSlot(_props: LabelProps) {
 
 LabelSlot.displayName = "Label";
 
-export function LabelContent({ children, required }: LabelContentProps) {
+export function LabelContent({ children, required, variant = "base" }: LabelContentProps) {
   const slotClassNames = useLabelClassNames();
 
   return (
     <>
       <Text
         as="span"
-        variant="base"
+        variant={variant}
         className={labelTextClass(slotClassNames.text)}
       >
         {children}

@@ -6,7 +6,7 @@ import type { LinkSize } from "./linkTypes";
 import { cn } from "@/utils/cn";
 
 export const LINK_ANCHOR_CLASS =
-  "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit text-primary focus-ring";
+  "group/link inline-flex max-w-full min-w-0 items-center gap-xsmall rounded-mid no-underline outline-none w-fit text-foreground focus-ring";
 
 export const LINK_TEXT_BASE_CLASS = "min-w-0 truncate font-w-mid";
 
@@ -14,9 +14,9 @@ export const LINK_TEXT_UNDERLINE_CLASS =
   "underline decoration-current/70 underline-offset-[0.2em]";
 
 export const LINK_ICON_MUTED_CLASS =
-  "text-muted group-hover/link:text-primary group-focus-visible/link:text-primary";
+  "text-muted group-hover/link:text-foreground group-focus-visible/link:text-foreground";
 
-export const LINK_ICON_PRIMARY_CLASS = "text-primary";
+export const LINK_ICON_FOREGROUND_CLASS = "text-foreground";
 
 export const LINK_DEFAULT_ICON_ROTATE_CLASS = "rotate-[-45deg]";
 
@@ -71,7 +71,7 @@ export function linkIconSlotClass({
     TEXT_COLOR_TRANSITION,
     LINK_ICON_SIZE_CLASS[size],
     "[&_svg]:size-full",
-    muted ? LINK_ICON_MUTED_CLASS : LINK_ICON_PRIMARY_CLASS,
+    muted ? LINK_ICON_MUTED_CLASS : LINK_ICON_FOREGROUND_CLASS,
     slotClass,
   );
 }

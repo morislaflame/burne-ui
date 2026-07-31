@@ -8,6 +8,7 @@ export function DropdownClassNamesFullDemo() {
       defaultValue="ru"
       classNames={{
         popoverBody: "border border-primary/20",
+        subPopoverBody: "rounded-mid border border-primary/20 bg-tertiary",
         label: "text-primary",
         item: "rounded-lg",
       }}
@@ -28,6 +29,15 @@ export function DropdownClassNamesFullDemo() {
             <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
             <Dropdown.ItemHint>Latin</Dropdown.ItemHint>
           </Dropdown.Item>
+          <Dropdown.Sub>
+            <Dropdown.SubTrigger>More</Dropdown.SubTrigger>
+            <Dropdown.SubContent>
+              <Dropdown.Item value="de">
+                <Dropdown.ItemIndicator />
+                <Dropdown.ItemLabel>Deutsch</Dropdown.ItemLabel>
+              </Dropdown.Item>
+            </Dropdown.SubContent>
+          </Dropdown.Sub>
         </Dropdown.Group>
       </Dropdown.Popover>
     </Dropdown>

@@ -9,6 +9,8 @@ import {
   DisclosureContent,
   DisclosureHandleInner,
   DisclosureTrigger,
+  DisclosureIcon,
+  DisclosureChevron,
 } from "./disclosureParts";
 import type { DisclosureProps } from "./disclosureTypes";
 import { useDisclosureRootState } from "./useDisclosureRootState";
@@ -19,9 +21,11 @@ export type {
   DisclosureTriggerProps,
   DisclosureHandleProps,
   DisclosureContentProps,
+  DisclosureIconProps,
+  DisclosureChevronProps,
   DisclosureVariant,
   DisclosureSize,
-  DisclosureIconPos,
+  DisclosureChevronPos,
   DisclosureClassNames,
 } from "./disclosureTypes";
 
@@ -38,7 +42,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       variant,
       size,
       disabled,
-      iconPosition,
+      chevronPosition,
       dragHandle,
       ...rest
     },
@@ -53,7 +57,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       variant,
       size,
       disabled,
-      iconPosition,
+      chevronPosition,
       dragHandle,
     });
 
@@ -84,4 +88,6 @@ export {
   DisclosureTrigger,
   DisclosureHandleInner,
   DisclosureContent,
+  DisclosureIcon,
+  DisclosureChevron,
 };

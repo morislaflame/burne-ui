@@ -29,7 +29,7 @@ function ShowcaseCodePanel({ code }: { code: string }) {
       className="border-t-token bg-surface"
     >
       <div className="flex items-center justify-between gap-small p-large">
-        <Disclosure.Trigger asChild icon={null}>
+        <Disclosure.Trigger asChild chevron={null}>
           <Button
             type="button"
             variant="outline"

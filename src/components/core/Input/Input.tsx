@@ -75,7 +75,7 @@ export function InputRoot({
     <InputFieldProvider value={state.fieldCtx}>
       <InputClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <Field className={cn(classNames?.root, className)}>
+          <Field className={cn(classNames?.root, className)} size={resolvedSize}>
             {body}
           </Field>
         </FieldLabelContext.Provider>

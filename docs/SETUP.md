@@ -648,7 +648,7 @@ import { cn } from "burne-ui";
 
 ### На кнопке сразу видны loader, текст и крестик
 
-- Типично для **SSR** со старым `burne-ui` без правил в `styles.css` (см. [§10](#10-ssr-и-nextjs-async-слои-button-и-selection-fill)) — обновите пакет.
+- Типично для **SSR** со старым `burne-ui` без first-paint hide async-слоёв (Tailwind `invisible opacity-0` до `asyncMotionReady`) — обновите пакет.
 - Проверьте, что `enableAsyncButtonCrossfade` не отключён без альтернативного скрытия слоёв.
 
 ### Анимации не меняются после `configureMotion`
@@ -669,7 +669,7 @@ import { cn } from "burne-ui";
 - [ ] Установлены `burne-ui`, `react-icons` и `gsap` (peers)
 - [ ] Подключён `burne-ui/styles.css`
 - [ ] Tailwind v4: `@source` на код приложения
-- [ ] `burne-ui` ≥ 1.5.3 (SSR + gloss blur CSS в `styles.css`); для тяжёлых demo можно `ssr: false`
+- [ ] Актуальный `burne-ui` (gloss blur CSS + Button async first-paint hide); для тяжёлых demo можно `ssr: false`
 - [ ] (SSR / Next.js) `ThemeScript` в root layout + `suppressHydrationWarning` на `<html>`
 - [ ] (Опционально) Override-токены в отдельном CSS после импорта пакета
 - [ ] (Опционально) `configureMotion(...)` в client-провайдере через `useLayoutEffect`

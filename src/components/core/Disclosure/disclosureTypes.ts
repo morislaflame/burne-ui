@@ -19,14 +19,15 @@ export type DisclosureVariant =
 
 export type DisclosureSize = ComponentSize;
 /** Alias of shared `IconPosition` (chevron start/end). */
-export type DisclosureIconPos = IconPosition;
+export type DisclosureChevronPos = IconPosition;
 
 export type DisclosureClassNames = {
   root?: string;
   trigger?: string;
-  triggerTitleLift?: string;
-  triggerTitle?: string;
-  triggerChevron?: string;
+  titleLift?: string;
+  title?: string;
+  icon?: string;
+  chevron?: string;
   contentShell?: string;
   contentWrap?: string;
   contentPanel?: string;
@@ -53,7 +54,7 @@ export type DisclosureContextValue = {
   variant: DisclosureVariant;
   size: DisclosureSize;
   disabled: boolean;
-  iconPosition: IconPosition;
+  chevronPosition: IconPosition;
   dragHandle: boolean;
   shellRef: RefObject<HTMLDivElement | null>;
   innerRef: RefObject<HTMLDivElement | null>;
@@ -75,7 +76,7 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   variant?: DisclosureVariant;
   size?: DisclosureSize;
   disabled?: boolean;
-  iconPosition?: IconPosition;
+  chevronPosition?: IconPosition;
   dragHandle?: boolean;
   classNames?: Prettify<DisclosureClassNames>;
 };
@@ -94,9 +95,15 @@ export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
 
 export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
-  icon?: ReactNode | null;
+  /** Leading indicator icon (left of title). */
+  icon?: ReactNode;
+  /** Expand chevron; `null` hides the default chevron. */
+  chevron?: ReactNode | null;
   asChild?: boolean;
 };
+
+export type DisclosureIconProps = HTMLAttributes<HTMLSpanElement>;
+export type DisclosureChevronProps = HTMLAttributes<HTMLSpanElement>;
 
 export type DisclosureHandleProps = HTMLAttributes<HTMLDivElement>;
 export type DisclosureContentProps = HTMLAttributes<HTMLDivElement> & {

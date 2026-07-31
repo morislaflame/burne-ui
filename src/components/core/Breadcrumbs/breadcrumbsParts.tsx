@@ -130,7 +130,7 @@ function BreadcrumbSegment({ piece }: BreadcrumbSegmentProps) {
         variant="small"
         aria-current="page"
         className={breadcrumbCurrentClass(
-          cn("", slotClassNames.itemCurrent, item.className),
+          cn("", slotClassNames.itemActive, item.className),
         )}
       >
         {item.label}

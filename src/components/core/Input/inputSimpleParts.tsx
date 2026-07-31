@@ -1,4 +1,4 @@
-import { Label } from "@/components/core/Label";
+import { Field } from "@/components/core/Field";
 
 import { InputControl } from "./inputControlParts";
 import { useInputClassNames } from "./inputContext";
@@ -20,9 +20,9 @@ export function InputSimpleBody({
   return (
     <>
       {label != null ? (
-        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Label>
+        </Field.Label>
       ) : null}
       <InputControl id={inputId} size={size} status={status} {...controlProps} />
       {hint != null ? <InputHint>{hint}</InputHint> : null}

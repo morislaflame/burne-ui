@@ -48,7 +48,7 @@ export function LinkShowcase() {
 
       <ShowcaseSection
         title="classNames"
-        description="Slots motion, anchor, text, iconStart and iconEnd — through prop classNames."
+        description="Slots anchor, text and icon — through prop classNames."
       >
         <ShowcaseDemoFromFile align="center" Demo={LinkClassNamesFullDemo} source={linkClassNamesFullSource} />
       </ShowcaseSection>

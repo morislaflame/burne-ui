@@ -6,7 +6,6 @@ import { expect } from "storybook/test";
 import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
-import { Label } from "@/components/core/Label";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 const darkThemeDecorator = [
@@ -58,7 +57,7 @@ export const FieldSetGroup: Story = {
     <Field.Set className="max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Contact details</Label>
+          <Field.Label>Contact details</Field.Label>
           <Field.Hint as="span">All fields are required</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
@@ -91,7 +90,7 @@ function FieldSetSizeDemo({ size }: { size: (typeof COMPONENT_SIZES)[number] }) 
     <Field.Set size={size} className="max-w-md">
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Contact details</Label>
+          <Field.Label>Contact details</Field.Label>
           <Field.Hint as="span">size={size}</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>
@@ -127,6 +126,21 @@ export const FieldSetSizes: Story = {
           <span className="text-xs font-medium uppercase tracking-wide text-muted">{size}</span>
           <FieldSetSizeDemo size={size} />
         </div>
+      ))}
+    </div>
+  ),
+};
+
+export const FieldSizes: Story = {
+  name: "Field — sizes",
+  render: () => (
+    <div className="grid w-full max-w-3xl gap-2xlarge sm:grid-cols-2">
+      {COMPONENT_SIZES.map((size) => (
+        <Field key={size} size={size} className="max-w-sm">
+          <Field.Label htmlFor={`field-size-${size}`}>size="{size}"</Field.Label>
+          <Input.Control id={`field-size-${size}`} placeholder="Value" />
+          <Field.Hint>Label / hint type and field gap scale with size.</Field.Hint>
+        </Field>
       ))}
     </div>
   ),
@@ -218,7 +232,7 @@ export const CustomClassNames: Story = {
     >
       <Field.Legend>
         <Field.LegendHeader>
-          <Label>Contact details</Label>
+          <Field.Label>Contact details</Field.Label>
           <Field.Hint as="span">Slots via classNames</Field.Hint>
         </Field.LegendHeader>
       </Field.Legend>

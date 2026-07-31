@@ -1,21 +1,101 @@
-import { cloneElement, forwardRef, isValidElement, type HTMLAttributes, type KeyboardEvent, type ReactElement, type Ref } from "react";
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  type HTMLAttributes,
+  type KeyboardEvent,
+  type ReactElement,
+  type Ref,
+} from "react";
 import { IoChevronDown } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
+import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
+import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
 import { useDisclosureTriggerMotion } from "./disclosureAnimations";
-
+import { resolveDisclosureTriggerBody } from "./disclosureAPI";
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
-import { DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS, DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS, DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS, DISCLOSURE_TRIGGER_TITLE_CLASS, DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS, TEXT_COLOR_TRANSITION, disclosureTriggerClass, disclosureTriggerShell } from "./disclosureStyles";
-import type { DisclosureTriggerProps } from "./disclosureTypes";
+import {
+  DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
+  DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS,
+  DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS,
+  DISCLOSURE_TRIGGER_TITLE_CLASS,
+  DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS,
+  TEXT_COLOR_TRANSITION,
+  disclosureTriggerClass,
+  disclosureTriggerIconClass,
+  disclosureTriggerShell,
+} from "./disclosureStyles";
+import type {
+  DisclosureChevronProps,
+  DisclosureIconProps,
+  DisclosureTriggerProps,
+} from "./disclosureTypes";
 
 import { cn } from "@/utils/cn";
+
+export function DisclosureIcon({ className, children, ...props }: DisclosureIconProps) {
+  const { size } = useDisclosureContext();
+  const slotClassNames = useDisclosureClassNames();
+
+  if (children == null) return null;
+
+  return (
+    <span
+      aria-hidden
+      className={disclosureTriggerIconClass({
+        size,
+        className,
+        slotClass: slotClassNames.icon,
+      })}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+}
+
+DisclosureIcon.displayName = "DisclosureIcon";
+
+export function DisclosureChevron({ className, children, ...props }: DisclosureChevronProps) {
+  const { open, size, chevronRef, skipContentAnimRef } = useDisclosureContext();
+  const slotClassNames = useDisclosureClassNames();
+  const triggerShell = disclosureTriggerShell(size);
+  const bindChevronRef = useChevronRotation(
+    open,
+    chevronRef,
+    () => isMotionFeatureEnabled("enableExpandable"),
+    skipContentAnimRef,
+  );
+
+  return (
+    <span
+      ref={bindChevronRef}
+      aria-hidden
+      className={cn(
+        DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
+        triggerShell.chevron,
+        TEXT_COLOR_TRANSITION,
+        open && DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS,
+        slotClassNames.chevron,
+        className,
+      )}
+      {...props}
+    >
+      {children ?? <IoChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
+    </span>
+  );
+}
+
+DisclosureChevron.displayName = "DisclosureChevron";
 
 export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTriggerProps>(
   function DisclosureTrigger(
     {
       children,
       icon,
+      chevron,
       asChild,
       className,
       onKeyDown,
@@ -36,12 +116,13 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       variant,
       size,
       disabled,
-      iconPosition,
+      chevronPosition,
       chevronRef,
       skipContentAnimRef,
     } = useDisclosureContext();
 
     const triggerShell = disclosureTriggerShell(size);
+    const body = resolveDisclosureTriggerBody(children);
 
     const motion = useDisclosureTriggerMotion({
       open,
@@ -57,22 +138,33 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       onPointerDown,
     });
 
-    const chevronNode =
-      icon !== null ? (
-        <span
-          ref={motion.bindChevronRef}
-          aria-hidden
-          className={cn(
-            DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
-            triggerShell.chevron,
-            TEXT_COLOR_TRANSITION,
-            open && DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS,
-            slotClassNames.triggerChevron,
-          )}
-        >
-          {icon ?? <IoChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
-        </span>
-      ) : null;
+    const resolvedIcon =
+      icon != null ? (
+        <DisclosureIcon>{icon}</DisclosureIcon>
+      ) : (
+        body.icon
+      );
+
+    const hideChevron = chevron === null && !body.hasChevronPart;
+    const chevronNode = hideChevron ? null : body.hasChevronPart ? (
+      body.chevron
+    ) : (
+      <span
+        ref={motion.bindChevronRef}
+        aria-hidden
+        className={cn(
+          DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
+          triggerShell.chevron,
+          TEXT_COLOR_TRANSITION,
+          open && DISCLOSURE_TRIGGER_CHEVRON_OPEN_CLASS,
+          slotClassNames.chevron,
+        )}
+      >
+        {chevron ?? <IoChevronDown className={DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS} />}
+      </span>
+    );
+
+    const titleNode = body.title ?? children;
 
     if (asChild && isValidElement(children)) {
       const child = children as ReactElement<
@@ -120,12 +212,13 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
         onPointerDown={motion.handlePointerDown}
         {...rest}
       >
-        {iconPosition === "start" && chevronNode}
+        {resolvedIcon}
+        {chevronPosition === "start" && chevronNode}
         <span
           ref={motion.titleLiftRef}
           className={cn(
             DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS,
-            slotClassNames.triggerTitleLift,
+            slotClassNames.titleLift,
           )}
         >
           <Text
@@ -135,13 +228,13 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
               DISCLOSURE_TRIGGER_TITLE_CLASS,
               triggerShell.titleClassName,
               open ? "text-primary" : "text-foreground",
-              slotClassNames.triggerTitle,
+              slotClassNames.title,
             )}
           >
-            {children}
+            {titleNode}
           </Text>
         </span>
-        {iconPosition === "end" && chevronNode}
+        {chevronPosition === "end" && chevronNode}
       </button>
     );
   },

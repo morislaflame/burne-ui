@@ -18,7 +18,7 @@ export { LinkCompound as Link };
 export type {
   LinkProps,
   LinkSize,
-  LinkIconPosition,
+  LinkIconPos,
   LinkIconProps,
   LinkClassNames,
 } from "./linkTypes";

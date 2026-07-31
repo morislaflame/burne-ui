@@ -88,6 +88,7 @@ export function TimeFieldRoot({
       <TimeFieldClassNamesProvider classNames={classNames}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
           <Field
+            size={state.size}
             className={timeFieldRootClass({
               compact: state.compact,
               slotClass: classNames?.root,

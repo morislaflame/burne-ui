@@ -80,7 +80,7 @@ export function DisclosureShowcase() {
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="root, trigger, triggerTitle, contentPanel, glossPanel, handle, group."
+            description="root, trigger, title, contentPanel, glossPanel, handle, group."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Groups">

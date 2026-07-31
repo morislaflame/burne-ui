@@ -3,7 +3,7 @@ import { forwardRef, useCallback, useId, useRef } from "react";
 
 import { Field } from "@/components/core/Field";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { Label, type LabelProps } from "@/components/core/Label";
+import type { LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
 
@@ -184,7 +184,7 @@ export function TextAreaLabel({ className, classNames, ...rest }: LabelProps) {
   const slotClassNames = useTextAreaClassNames();
 
   return (
-    <Label
+    <Field.Label
       className={className}
       classNames={{
         ...classNames,
@@ -265,9 +265,9 @@ export function TextAreaSimpleBody({
   return (
     <>
       {label != null ? (
-        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Label>
+        </Field.Label>
       ) : null}
       <TextAreaControl id={textareaId} size={size} status={status} {...controlProps} />
       {hint != null ? <TextAreaHint>{hint}</TextAreaHint> : null}

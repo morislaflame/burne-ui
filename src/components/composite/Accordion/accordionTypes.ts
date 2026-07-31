@@ -75,7 +75,8 @@ export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
 export type AccordionContextValue = {
   value: string | null;
   setValue: (value: string | null) => void;
-  getItemId: (explicit?: string) => string;
+  /** Stable auto-id for an Item without explicit `value` (call once per Item mount). */
+  allocateAutoItemId: () => string;
   size: ExpandableSize;
 };
 

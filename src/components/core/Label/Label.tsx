@@ -18,6 +18,7 @@ export function LabelRoot({
   required: requiredProp,
   htmlFor: htmlForProp,
   id: idProp,
+  variant = "base",
   ...rest
 }: Omit<LabelProps, "classNames">) {
   const { htmlFor, id, required } = useLabelRootState({
@@ -34,7 +35,9 @@ export function LabelRoot({
   if (htmlFor != null) {
     return (
       <label id={id} htmlFor={htmlFor} className={rootClass} {...rest}>
-        <LabelContent required={required}>{children}</LabelContent>
+        <LabelContent required={required} variant={variant}>
+          {children}
+        </LabelContent>
       </label>
     );
   }
@@ -43,7 +46,9 @@ export function LabelRoot({
 
   return (
     <span id={id} className={rootClass} {...spanRest}>
-      <LabelContent required={required}>{children}</LabelContent>
+      <LabelContent required={required} variant={variant}>
+        {children}
+      </LabelContent>
     </span>
   );
 }

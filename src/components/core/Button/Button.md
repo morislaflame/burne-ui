@@ -205,9 +205,13 @@ configureMotion({
 | success | `success` | 1 | 0.85 |
 | error | `error` | 1 | 0.85 |
 
+**Первый paint (SSR / до motion):** неактивные слои скрыты Tailwind-классом `invisible opacity-0` по `asyncState` (`asyncMotionReady === false`).
+
+**После sync:** `asyncMotionReady` → GSAP владеет `autoAlpha` (классы hide снимаются, чтобы crossfade не снэпился).
+
 **Переход:** GSAP `to` на каждом слое — `autoAlpha` + `scale`, vars = `motionInteractive()`.
 
-**Первый mount:** мгновенный `gsap.set` без анимации.
+**Первый mount:** мгновенный `gsap.set` без анимации, затем `asyncMotionReady`.
 
 **Uncontrolled `onAsyncClick`:** loading → then success/error + `pushExpandRipple`.
 

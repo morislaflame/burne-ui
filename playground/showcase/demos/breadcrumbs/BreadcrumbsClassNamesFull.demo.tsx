@@ -15,7 +15,7 @@ export function BreadcrumbsClassNamesFullDemo() {
         itemLinkWrapper: "rounded-small",
         itemLinkText: "tracking-tight",
         itemStatic: "text-warning",
-        itemCurrent: "font-semibold text-success",
+        itemActive: "font-semibold text-success",
         ellipsisTrigger: "text-warning",
         ellipsisLiftWrapper: "rounded-small",
         ellipsisText: "font-semibold",

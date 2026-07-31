@@ -41,8 +41,8 @@ export function resolveLinkCompoundBody(children: ReactNode): ResolvedLinkCompou
     if (isValidElement(child) && elementDisplayName(child) === LINK_ICON_DISPLAY_NAME) {
       const props = child.props as LinkIconProps;
       const slot = resolveIconSlot(props);
-      const position = props.position ?? "end";
-      if (position === "start") startIcon = slot;
+      const iconPosition = props.iconPosition ?? "end";
+      if (iconPosition === "start") startIcon = slot;
       else endIcon = slot;
       return;
     }

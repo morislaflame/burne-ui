@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Disclosure, Disclosure.Group, type DisclosureProps, type DisclosureGroupProps, type DisclosureTriggerProps, type DisclosureContentProps, type DisclosureVariant, type DisclosureSize, type IconPosition, type DisclosureClassNames } from "burne-ui";
+import { Disclosure, Disclosure.Group, type DisclosureProps, type DisclosureGroupProps, type DisclosureTriggerProps, type DisclosureContentProps, type DisclosureVariant, type DisclosureSize, type DisclosureChevronPos, type DisclosureClassNames } from "burne-ui";
 ```
 
 ## API
@@ -56,18 +56,43 @@ Simple API нет.
 | `variant` | `default` | Визуальный стиль (наследуется от группы) |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `disabled` | `false` | Блокирует trigger |
-| `iconPosition` | `end` | `start` \| `end` |
+| `chevronPosition` | `end` | `start` \| `end` — позиция chevron |
 | `dragHandle` | `false` | Drag-to-expand (`variant="card"` only) |
 | `className` | — | На root |
 | `classNames` | — | Слоты |
+
+### Compound parts
+
+| Part | Описание |
+|------|----------|
+| `Disclosure.Trigger` | Кнопка заголовка |
+| `Disclosure.Icon` | Leading icon слева от title |
+| `Disclosure.Chevron` | Кастомный chevron (compound) |
+| `Disclosure.Content` | Панель контента |
+| `Disclosure.Handle` | Drag handle (`variant="card"`) |
+| `Disclosure.Group` | Аккордеон-контейнер |
 
 ### `Disclosure.Trigger` props
 
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
-| `icon` | `IoChevronDown` | Кастомная иконка; `null` — без chevron |
+| `icon` | — | Leading icon слева от title |
+| `chevron` | `IoChevronDown` | Кастомный chevron; `null` — без chevron |
 | `asChild` | `false` | Clone child с ARIA/handlers |
 | `className` | — | На `<button>` |
+
+```tsx
+<Disclosure.Trigger icon={<IoHelp aria-hidden />}>
+  Заголовок с иконкой
+</Disclosure.Trigger>
+
+<Disclosure.Trigger chevron={null}>Без chevron</Disclosure.Trigger>
+
+<Disclosure.Trigger>
+  <Disclosure.Icon><IoHelp aria-hidden /></Disclosure.Icon>
+  Compound icon
+</Disclosure.Trigger>
+```
 
 ### `Disclosure.Group` props
 
@@ -84,7 +109,7 @@ Simple API нет.
 
 ### `DisclosureClassNames`
 
-`root`, `trigger`, `triggerTitleLift`, `triggerTitle`, `triggerChevron`, `contentShell`, `contentWrap`, `contentPanel`, `glossPanel`, `glossContent`, `handle`, `group`.
+`root`, `trigger`, `titleLift`, `title`, `icon`, `chevron`, `contentShell`, `contentWrap`, `contentPanel`, `glossPanel`, `glossContent`, `handle`, `group`.
 
 ## variant и размеры
 
@@ -225,9 +250,9 @@ configureMotion({
 |------|-----|-------------------|
 | `root` | Root div | Outer spacing |
 | `trigger` | `<button>` | Padding, hover bg |
-| `triggerTitleLift` | Lift wrapper | Motion target area |
-| `triggerTitle` | Title Text | Typography |
-| `triggerChevron` | Chevron span | Icon color/size |
+| `titleLift` | Lift wrapper | Motion target area |
+| `title` | Title Text | Typography |
+| `chevron` | Chevron span | Icon color/size |
 | `contentShell` | Collapsible shell | Max-height helpers |
 | `contentWrap` | Inner wrap | Padding framed variants |
 | `contentPanel` | `<section>` | Content typography |
@@ -265,7 +290,7 @@ configureMotion({
 ### Практические заметки
 
 - `accordion={false}` — несколько открытых одновременно.
-- `icon={null}` — trigger без chevron.
+- `chevron={null}` — trigger без chevron.
 - `asChild` на Trigger — merge ARIA на child button/link.
 - Card в группе без `separated`: shell карточки на `Disclosure.Group`.
 - **Не override `height` на `contentShell`** — GSAP collapsible.
@@ -310,4 +335,4 @@ Disclosure/
 
 ## Storybook
 
-`Core Components/Disclosure` — variants, sizes, icon position, controlled, disabled, group modes, card drag, `CustomClassNames`.
+`Core Components/Disclosure` — variants, sizes, chevron position, icon, controlled, disabled, group modes, card drag, `CustomClassNames`.

@@ -163,6 +163,8 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
   function ButtonLabel({ className = "", children, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
+    const asyncState = ctx?.asyncState ?? "idle";
+    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "idle";
 
     return (
       <span
@@ -170,6 +172,7 @@ export const ButtonLabel = forwardRef<HTMLSpanElement, ButtonLabelProps>(
         className={buttonLabelClass({
           slotClass: slotClassNames.label,
           className,
+          cssHidden,
         })}
         {...rest}
       >
@@ -226,14 +229,15 @@ export const ButtonLoader = forwardRef<HTMLSpanElement, ButtonLoaderProps>(
     const size = ctx?.size ?? "base";
     const asyncState = ctx?.asyncState ?? "idle";
     const loaderTextClass = ctx?.loaderTextClass ?? "";
+    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "loading";
 
     return (
       <span
         ref={ref ?? ctx?.bindLoaderRef}
-        data-button-async-layer
         className={buttonLoaderLayerClass(
           loaderTextClass,
           cn(slotClassNames.loader, className),
+          cssHidden,
         )}
         aria-hidden={asyncState !== "loading"}
         {...rest}
@@ -255,12 +259,15 @@ export const ButtonSuccess = forwardRef<HTMLSpanElement, ButtonSuccessProps>(
     const size = ctx?.size ?? "base";
     const asyncState = ctx?.asyncState ?? "idle";
     const layout = CONTROL_SIZE_LAYOUT[size];
+    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "success";
 
     return (
       <span
         ref={ref ?? ctx?.bindSuccessRef}
-        data-button-async-layer
-        className={buttonSuccessLayerClass(cn(slotClassNames.success, className))}
+        className={buttonSuccessLayerClass(
+          cn(slotClassNames.success, className),
+          cssHidden,
+        )}
         aria-hidden={asyncState !== "success"}
         {...rest}
       >
@@ -279,12 +286,15 @@ export const ButtonError = forwardRef<HTMLSpanElement, ButtonErrorProps>(
     const size = ctx?.size ?? "base";
     const asyncState = ctx?.asyncState ?? "idle";
     const layout = CONTROL_SIZE_LAYOUT[size];
+    const cssHidden = !ctx?.asyncMotionReady && asyncState !== "error";
 
     return (
       <span
         ref={ref ?? ctx?.bindErrorRef}
-        data-button-async-layer
-        className={buttonErrorLayerClass(cn(slotClassNames.error, className))}
+        className={buttonErrorLayerClass(
+          cn(slotClassNames.error, className),
+          cssHidden,
+        )}
         aria-hidden={asyncState !== "error"}
         {...rest}
       >

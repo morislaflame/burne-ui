@@ -13,7 +13,7 @@ export type BreadcrumbsClassNames = {
   /** `<span>` wrapper on `Breadcrumbs.Separator`. */
   separatorWrapper?: string;
   /** Current page content (`aria-current="page"`) — Item sub-slot. */
-  itemCurrent?: string;
+  itemActive?: string;
   /** Link / button inside interactive crumb — Item sub-slot. */
   itemLink?: string;
   /** `<span>` wrapper around crumb link — Item sub-slot. */

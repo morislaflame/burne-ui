@@ -19,7 +19,7 @@ import { useLinkRootState } from "./useLinkRootState";
 export type {
   LinkProps,
   LinkSize,
-  LinkIconPosition,
+  LinkIconPos,
   LinkIconProps,
   LinkClassNames,
 } from "./linkTypes";

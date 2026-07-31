@@ -187,6 +187,7 @@ export const ButtonRoot = forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     variant: state.variant,
     status: state.status,
     asyncState: state.asyncState,
+    asyncMotionReady: animations.asyncMotionReady,
     groupSegment: state.groupSegment,
     loaderTextClass: state.loaderTextClass,
     bindLabelRef: animations.bindLabelRef,

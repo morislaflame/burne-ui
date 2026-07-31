@@ -12,17 +12,15 @@ import type { IconPosition } from "@/components/core/utils/iconPosition";
 
 export type LinkSize = ComponentSize;
 
-export type LinkIconPosition = IconPosition;
+export type LinkIconPos = IconPosition;
 
 export type LinkClassNames = {
   /** Root `<a>`. */
   root?: string;
   /** Link text (`Text`). */
   text?: string;
-  /** Start icon wrapper. */
-  iconStart?: string;
-  /** End icon wrapper. */
-  iconEnd?: string;
+  /** Icon wrapper (both start and end positions). */
+  icon?: string;
 };
 
 type LinkSharedProps = Omit<
@@ -36,7 +34,7 @@ type LinkSharedProps = Omit<
   /** @default "start" */
   iconPosition?: IconPosition;
   showDefaultIcon?: boolean;
-  defaultIconPosition?: LinkIconPosition;
+  defaultIconPosition?: LinkIconPos;
   classNames?: Prettify<LinkClassNames>;
 };
 
@@ -52,7 +50,7 @@ export type LinkProps =
     });
 
 export type LinkIconProps = {
-  position?: LinkIconPosition;
+  iconPosition?: LinkIconPos;
   children?: ReactNode;
 };
 

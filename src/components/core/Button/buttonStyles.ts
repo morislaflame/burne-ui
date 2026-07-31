@@ -128,8 +128,13 @@ export const BUTTON_LABEL_TEXT_CLASS = "min-w-0 shrink";
 
 export const BUTTON_ASYNC_GRID_LAYER_CLASS = "col-start-1 row-start-1 flex items-center justify-center";
 
-/** SSR: inactive layers hidden in `styles.css` via `[data-button-async-layer][aria-hidden="true"]` */
-export const BUTTON_ASYNC_LAYER_DATA_ATTR = "data-button-async-layer";
+/**
+ * First paint / pre-motion: hide inactive async layers via Tailwind.
+ * After `asyncMotionReady`, GSAP owns visibility (inline autoAlpha) — do not keep this class
+ * on inactive layers or crossfade will snap.
+ */
+export const BUTTON_ASYNC_LAYER_INACTIVE_CLASS =
+  "invisible opacity-0 pointer-events-none";
 
 export const BUTTON_SUCCESS_LAYER_CLASS = "text-success";
 
@@ -294,12 +299,21 @@ export function buttonLabelClass({
   slotClass,
   className,
   layoutClass,
+  cssHidden,
 }: {
   slotClass?: string;
   className?: string;
   layoutClass?: string;
+  /** Pre-motion hide when label is not the active async layer. */
+  cssHidden?: boolean;
 }): string {
-  return cn(BUTTON_LABEL_LAYER_CLASS, slotClass, layoutClass, className);
+  return cn(
+    BUTTON_LABEL_LAYER_CLASS,
+    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
+    slotClass,
+    layoutClass,
+    className,
+  );
 }
 
 export function buttonIconClass(size: ComponentSize, slotClass?: string): string {
@@ -310,16 +324,35 @@ export function buttonTextClass(slotClass?: string, className?: string): string 
   return cn(BUTTON_LABEL_TEXT_CLASS, slotClass, className);
 }
 
-export function buttonLoaderLayerClass(loaderTextClass: string, slotClass?: string): string {
-  return cn(BUTTON_ASYNC_GRID_LAYER_CLASS, loaderTextClass, slotClass);
+export function buttonLoaderLayerClass(
+  loaderTextClass: string,
+  slotClass?: string,
+  cssHidden?: boolean,
+): string {
+  return cn(
+    BUTTON_ASYNC_GRID_LAYER_CLASS,
+    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
+    loaderTextClass,
+    slotClass,
+  );
 }
 
-export function buttonSuccessLayerClass(slotClass?: string): string {
-  return cn(BUTTON_ASYNC_GRID_LAYER_CLASS, BUTTON_SUCCESS_LAYER_CLASS, slotClass);
+export function buttonSuccessLayerClass(slotClass?: string, cssHidden?: boolean): string {
+  return cn(
+    BUTTON_ASYNC_GRID_LAYER_CLASS,
+    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
+    BUTTON_SUCCESS_LAYER_CLASS,
+    slotClass,
+  );
 }
 
-export function buttonErrorLayerClass(slotClass?: string): string {
-  return cn(BUTTON_ASYNC_GRID_LAYER_CLASS, BUTTON_ERROR_LAYER_CLASS, slotClass);
+export function buttonErrorLayerClass(slotClass?: string, cssHidden?: boolean): string {
+  return cn(
+    BUTTON_ASYNC_GRID_LAYER_CLASS,
+    cssHidden && BUTTON_ASYNC_LAYER_INACTIVE_CLASS,
+    BUTTON_ERROR_LAYER_CLASS,
+    slotClass,
+  );
 }
 
 export function buttonIconSvgClass(): string {

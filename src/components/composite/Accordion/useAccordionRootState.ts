@@ -14,12 +14,10 @@ export function useAccordionRootState({
   const defaultValue = accordionDefaultValue(defaultValueProp, defaultOpenIndex);
   const [internalValue, setInternalValue] = useState<string | null>(defaultValue);
   const value = controlled ? valueProp : internalValue;
+  /** Auto-ids for items without `value`. Never reset during render (Strict Mode / concurrent). */
   const itemIndexRef = useRef(0);
 
-  itemIndexRef.current = 0;
-
-  const getItemId = useCallback((explicit?: string) => {
-    if (explicit != null) return explicit;
+  const allocateAutoItemId = useCallback(() => {
     const id = String(itemIndexRef.current);
     itemIndexRef.current += 1;
     return id;
@@ -37,10 +35,10 @@ export function useAccordionRootState({
     () => ({
       value,
       setValue,
-      getItemId,
+      allocateAutoItemId,
       size,
     }),
-    [getItemId, value, setValue, size],
+    [allocateAutoItemId, value, setValue, size],
   );
 
   return { contextValue };

@@ -91,6 +91,7 @@ export function ComboBoxRoot({
         <ComboBoxClassNamesProvider classNames={classNames}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
+              size={resolvedSize}
               className={cn(
                 inJoinedButtonGroup && BUTTON_GROUP_RADIUS_BRIDGE_CLASS,
                 className,

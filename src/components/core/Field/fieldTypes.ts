@@ -7,7 +7,8 @@ import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type FieldHintStatus = SemanticStatus;
-export type FieldSetSize = ComponentSize;
+export type FieldSize = ComponentSize;
+export type FieldSetSize = FieldSize;
 
 export type FieldClassNames = {
   root?: string;
@@ -27,6 +28,12 @@ export type FieldSetClassNames = {
 export type FieldProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   classNames?: Prettify<FieldClassNames>;
+  /**
+   * Scales Field chrome (gap, Label / Hint / Error type).
+   * Inside `Field.Set`, inherits Set size unless overridden.
+   * Does not cascade into embedded controls.
+   */
+  size?: FieldSize;
 };
 
 export type FieldClassNamesProviderProps = {
@@ -69,6 +76,10 @@ export type FieldSetProps = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "c
   children?: ReactNode;
   hintId?: string;
   errorId?: string;
+  /**
+   * Scales Set chrome (stack / group / actions gaps, legend header, Label / Hint type via context).
+   * Does not cascade into embedded controls (`Input`, `Button`, …).
+   */
   size?: FieldSetSize;
   classNames?: Prettify<FieldSetClassNames>;
 };

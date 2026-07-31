@@ -1,5 +1,5 @@
 import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import type { LabelProps } from "@/components/core/Label";
 
 import { comboBoxResolveHintStatus } from "./comboBoxA11y";
 import { useComboBoxClassNames, useComboBoxFieldContext } from "./comboBoxContext";
@@ -11,7 +11,7 @@ export function ComboBoxLabel({ className, classNames, ...rest }: LabelProps) {
   const slotClassNames = useComboBoxClassNames();
 
   return (
-    <Label
+    <Field.Label
       className={className}
       classNames={{
         ...classNames,

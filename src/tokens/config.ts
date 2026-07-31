@@ -11,21 +11,22 @@
  * | Control box | — | `--control-height-*` | — | `h-control-*`, `min-h-control-*` |
  * | Control square | — | `--control-size-*` (= height) | — | `w-control-*`, `min/max-w-control-*` |
  * | Icons | `--size` | `--size-scale-*` → `--icon-size-*` (1:1) | — | `icon-xsmall` … `icon-3xlarge` |
- * | Indicators | `--size` / `--radius` | `--selection-indicator-*` + `--selection-indicator-radius-*` (`--radius-*` × 0.75) | — | `selection-indicator-*` |
+ * | Indicators | `--size` / `--radius` | `--selection-indicator-*` + `--selection-indicator-radius-*` (`--radius-*` × 0.618) | — | `selection-indicator-*` |
  * | Panels | `--size` | `--max-component-*` | — | `min/max-w-component-*` |
  *
  * ## Typography
  *
  * `--text-scale-*` steps (rem) align with semantic roles / utilities of the same name:
- * `xsmall` 0.6875 · `small` 0.75 · `base` 0.875 · `mid` 1 · `large` 1.25 ·
+ * `xsmall` 0.6875 · `small` 0.75 · `base` 0.875 · `mid` 1 · `large` 1.15 ·
  * `xlarge` 1.5 · `2xlarge` 1.875 · `3xlarge` 2.25.
  * Headers: `text-header-2` → `xlarge`, `text-header-1` → `2xlarge`, `text-accent-header` → `3xlarge`.
  *
  * Customization:
- * - `--space` — spacing (gap, padding); steps `gap-*`, `p-*` via multipliers; fluid `clamp` by viewport (theme JS writes scaled `clamp`, not fixed rem).
+ * - `--space` — spacing (gap, padding); steps × `--space`:
+ *   `0.618 / 0.875 / 1 / 1.5 / 2 / 2.5 / 4 / 6`; fluid `clamp` by viewport (theme JS writes scaled `clamp`, not fixed rem).
  * - `--size` — control sizes (icons, indicators, button min-width, modal max-w); fluid `clamp` by viewport.
- * - `--radius` — base radius; `rounded-*` steps via tight multipliers
- *   (`0.75 / 0.875 / 1 / 1.125 / 1.25`); fluid `clamp` by viewport.
+ * - `--radius` — base radius; `rounded-*` steps via multipliers
+ *   (`0.618 / 0.875 / 1 / 1.125 / 1.25`); fluid `clamp` by viewport.
  * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large` (`calc(… * var(--shadow-size))`; do not bake px).
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).

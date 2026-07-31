@@ -26,7 +26,7 @@ export function TableSortChevron({
       aria-hidden
       className={cn(
         tableSortChevronClass(Boolean(direction)),
-        slotClassNames.columnSortChevron,
+        slotClassNames.columnSortIcon,
       )}
     >
       {children ?? (

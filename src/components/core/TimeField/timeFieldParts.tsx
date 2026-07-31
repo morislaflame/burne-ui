@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { forwardRef } from "react";
 
 import { Field } from "@/components/core/Field";
-import { Label, type LabelProps } from "@/components/core/Label";
+import type { LabelProps } from "@/components/core/Label";
 
 import "@/components/core/utils/glossInteractive.css";
 
@@ -223,7 +223,7 @@ export function TimeFieldLabel({ className, classNames, ...rest }: LabelProps) {
   const slotClassNames = useTimeFieldClassNames();
 
   return (
-    <Label
+    <Field.Label
       className={className}
       classNames={{
         ...classNames,
@@ -294,9 +294,9 @@ export function TimeFieldSimpleBody({
   return (
     <>
       {label != null ? (
-        <Label id={labelId} classNames={{ root: slotClassNames.label }}>
+        <Field.Label id={labelId} classNames={{ root: slotClassNames.label }}>
           {label}
-        </Label>
+        </Field.Label>
       ) : null}
       <TimeFieldControl {...controlProps} />
       {hint != null && <TimeFieldHint>{hint}</TimeFieldHint>}

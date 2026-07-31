@@ -30,7 +30,7 @@ export type TableClassNames = {
   column?: string;
   columnInner?: string;
   columnLabel?: string;
-  columnSortChevron?: string;
+  columnSortIcon?: string;
   body?: string;
   row?: string;
   cell?: string;

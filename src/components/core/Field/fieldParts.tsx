@@ -5,36 +5,59 @@ import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
 import { joinFieldDescribedBy } from "./fieldA11y";
-import { FieldClassNamesProvider, useFieldClassNames, useFieldSetClassNames, useFieldSetSize } from "./fieldContext";
-import { FIELD_LEGEND_CLASS, FIELD_LEGEND_HEADER_CLASS, FIELD_ROOT_CLASS, FIELD_SET_CLASS, fieldHintClass, fieldSetActionsClass, fieldSetGroupClass, fieldSetStackClass } from "./fieldStyles";
+import {
+  FieldClassNamesProvider,
+  FieldSetSizeProvider,
+  useFieldClassNames,
+  useFieldSetClassNames,
+  useFieldSetSize,
+  useOptionalFieldSize,
+} from "./fieldContext";
+import {
+  FIELD_LEGEND_CLASS,
+  FIELD_SET_CLASS,
+  fieldHintClass,
+  fieldHintVariant,
+  fieldLabelVariant,
+  fieldLegendHeaderClass,
+  fieldRootClass,
+  fieldSetActionsClass,
+  fieldSetGroupClass,
+  fieldSetStackClass,
+  resolveFieldSize,
+} from "./fieldStyles";
 import type {
   FieldErrorProps,
   FieldHintProps,
+  FieldLabelProps,
   FieldLegendHeaderProps,
   FieldLegendProps,
   FieldProps,
   FieldSetActionsProps,
   FieldSetGroupProps,
   FieldSetProps,
+  UseFieldSetRootStateResult,
 } from "./fieldTypes";
-import type { UseFieldSetRootStateResult } from "./fieldTypes";
 
 import { cn } from "@/utils/cn";
 
 export function FieldRootShell({
   className,
+  size: sizeProp,
   children,
   ...rest
 }: Omit<FieldProps, "classNames">) {
   const slotClassNames = useFieldClassNames();
+  const inheritedSize = useOptionalFieldSize();
+  const size = resolveFieldSize(sizeProp ?? inheritedSize ?? undefined);
 
   return (
     <div
-      className={cn(
-        FIELD_ROOT_CLASS,
-        slotClassNames.root,
+      className={fieldRootClass({
+        size,
         className,
-      )}
+        slotClass: slotClassNames.root,
+      })}
       {...rest}
     >
       {children}
@@ -42,11 +65,19 @@ export function FieldRootShell({
   );
 }
 
-export function FieldRoot({ classNames, ...rest }: FieldProps) {
-  return (
+export function FieldRoot({ classNames, size, children, ...rest }: FieldProps) {
+  const content = (
     <FieldClassNamesProvider classNames={classNames}>
-      <FieldRootShell {...rest} />
+      <FieldRootShell size={size} {...rest}>
+        {children}
+      </FieldRootShell>
     </FieldClassNamesProvider>
+  );
+
+  if (size == null) return content;
+
+  return (
+    <FieldSetSizeProvider size={resolveFieldSize(size)}>{content}</FieldSetSizeProvider>
   );
 }
 
@@ -57,12 +88,14 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
       className,
       status = "default",
       as = "p",
-      variant = "small",
+      variant: variantProp,
       ...rest
     },
     ref,
   ) {
     const slotClassNames = useFieldClassNames();
+    const size = useFieldSetSize();
+    const variant = variantProp ?? fieldHintVariant(size);
 
     return (
       <Text
@@ -85,7 +118,13 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
 
 FieldHint.displayName = "FieldHint";
 
-export const FieldLabel = Label;
+export function FieldLabel({ variant: variantProp, ...rest }: FieldLabelProps) {
+  const size = useFieldSetSize();
+  const variant = variantProp ?? fieldLabelVariant(size);
+  return <Label variant={variant} {...rest} />;
+}
+
+FieldLabel.displayName = "Field.Label";
 
 export function FieldError({ role = "alert", className, ...props }: FieldErrorProps) {
   const slotClassNames = useFieldClassNames();
@@ -127,15 +166,16 @@ export function FieldLegendHeader({
   className,
   ...rest
 }: FieldLegendHeaderProps) {
+  const size = useFieldSetSize();
   const slotClassNames = useFieldSetClassNames();
 
   return (
     <span
-      className={cn(
-        FIELD_LEGEND_HEADER_CLASS,
-        slotClassNames.legendHeader,
+      className={fieldLegendHeaderClass({
+        size,
         className,
-      )}
+        slotClass: slotClassNames.legendHeader,
+      })}
       {...rest}
     >
       {children}

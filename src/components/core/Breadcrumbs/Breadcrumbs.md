@@ -70,7 +70,7 @@ type BreadcrumbItem = {
 
 ### `BreadcrumbsClassNames`
 
-`root`, `list`, `item`, `separator`, `separatorWrapper`, `itemCurrent`, `itemLink`, `itemLinkWrapper`, `itemLinkText`, `itemStatic`, `ellipsisTrigger`, `ellipsisLiftWrapper`, `ellipsisText`, `ellipsisPopover`, `dropdownItem`.
+`root`, `list`, `item`, `separator`, `separatorWrapper`, `itemActive`, `itemLink`, `itemLinkWrapper`, `itemLinkText`, `itemStatic`, `ellipsisTrigger`, `ellipsisLiftWrapper`, `ellipsisText`, `ellipsisPopover`, `dropdownItem`.
 
 `Breadcrumbs.List` может переопределять `classNames` локально (merge с root provider).
 
@@ -132,7 +132,7 @@ type BreadcrumbItem = {
 - button crumbs (SPA navigation)
 - ellipsis trigger `…` (тот же hook, отдельный `textRef`)
 
-**Не анимируется:** `itemCurrent` segment (`breadcrumbCurrentClass`), `itemStatic` segments.
+**Не анимируется:** `itemActive` segment (`breadcrumbCurrentClass`), `itemStatic` segments.
 
 #### Кастомизация
 
@@ -206,7 +206,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
 | `item` | `<li>` | Item + separator spacing |
 | `separator` | `IoChevronForward` | Chevron color/size |
 | `separatorWrapper` | Wrapper span | Separator alignment |
-| `itemCurrent` | Last crumb `Text` | Current page emphasis |
+| `itemActive` | Last crumb `Text` | Current page emphasis |
 | `itemLink` | `<a>` / `<button>` | Interactive surface padding |
 | `itemLinkWrapper` | Outer span | Hover hit area |
 | `itemLinkText` | Inner `Text` | Typography + press target |
@@ -225,7 +225,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
   classNames={{
     separator: "text-primary opacity-100",
     itemLink: "text-info hover:text-info",
-    itemCurrent: "font-semibold text-success",
+    itemActive: "font-semibold text-success",
   }}
   items={[
     { label: "Главная", href: "/" },
@@ -242,7 +242,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
   collapse
   classNames={{
     list: "gap-small",
-    itemCurrent: "font-semibold text-success",
+    itemActive: "font-semibold text-success",
     ellipsisPopover: "border border-token",
   }}
 >
@@ -262,7 +262,7 @@ Per-item: **`className` на `Breadcrumbs.Item`** (compound) или `BreadcrumbI
 </Breadcrumbs.Item>
 ```
 
-Мержится в `itemLink` / `itemStatic` / `itemCurrent` slot.
+Мержится в `itemLink` / `itemStatic` / `itemActive` slot.
 
 ### Практические заметки
 

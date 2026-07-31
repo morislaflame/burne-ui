@@ -39,6 +39,7 @@ export type {
   FieldLegendProps,
   FieldLegendHeaderProps,
   FieldSetSize,
+  FieldSize,
   FieldClassNames,
   FieldSetClassNames,
 } from "./fieldTypes";

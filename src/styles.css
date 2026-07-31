@@ -761,18 +761,6 @@ p {
 }
 
 /*
- * SSR / pre-hydration visibility — GSAP owns these after mount (Next.js flash).
- * Consumers no longer need to copy this into app globals.css.
- */
-
-/* Button: inactive async layers (loader / success / error) share one grid cell */
-button [data-button-async-layer][aria-hidden="true"] {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/*
  * ToggleButton / Calendar cell fill: hide until GSAP marks ready when not pressed.
  * Pressed + not ready stays visible (correct SSR for selected / pressed).
  */

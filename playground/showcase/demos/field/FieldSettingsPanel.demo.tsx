@@ -1,5 +1,4 @@
 import { Field } from "@/components/core/Field";
-import { Label } from "@/components/core/Label";
 import { Switch } from "@/components/core/Switch";
 
 export function FieldSettingsPanelDemo() {
@@ -8,7 +7,7 @@ export function FieldSettingsPanelDemo() {
       <div className="flex flex-col gap-large p-large">
         <Field.Legend>
           <Field.LegendHeader>
-            <Label>Notifications</Label>
+            <Field.Label>Notifications</Field.Label>
             <Field.Hint as="span">Email and push</Field.Hint>
           </Field.LegendHeader>
         </Field.Legend>

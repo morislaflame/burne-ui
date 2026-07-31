@@ -46,6 +46,9 @@ export const DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS =
 
 export const DISCLOSURE_TRIGGER_TITLE_CLASS = "block";
 
+export const DISCLOSURE_TRIGGER_ICON_BASE_CLASS =
+  "inline-flex shrink-0 text-primary [&_svg]:size-full";
+
 export const DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS =
   "inline-flex shrink-0 origin-center items-center justify-center text-muted";
 
@@ -73,8 +76,26 @@ export function disclosureTriggerShell(size: DisclosureSize) {
     pad: collapsible.triggerPadding,
     text: collapsible.titleVariant,
     titleClassName: collapsible.titleClassName,
+    icon: CONTROL_SIZE_LAYOUT[size].icon,
     chevron: CONTROL_SIZE_LAYOUT[size].chevronIcon,
   };
+}
+
+export function disclosureTriggerIconClass({
+  size,
+  className,
+  slotClass,
+}: {
+  size: DisclosureSize;
+  className?: string;
+  slotClass?: string;
+}): string {
+  return cn(
+    DISCLOSURE_TRIGGER_ICON_BASE_CLASS,
+    disclosureTriggerShell(size).icon,
+    slotClass,
+    className,
+  );
 }
 
 export function disclosureRootClass({
