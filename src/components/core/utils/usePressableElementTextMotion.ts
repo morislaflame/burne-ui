@@ -102,7 +102,7 @@ export function usePressableElementTextMotion<
     if (!el) return;
     if (hoverLift) {
       void animateInteractivePressSqueeze(el, {
-        pointerInside: hoverInsideRef.current,
+        pointerInside: hoverInsideRef,
         liftScale: resolveLiftScale(),
       });
     } else {

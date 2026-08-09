@@ -14,7 +14,7 @@ import { cn } from "@/utils/cn";
 
 const TOGGLE_BUTTON_VARIANT_IDLE: Record<ToggleButtonVariant, string> = {
   default: "border-token bg-surface text-foreground",
-  outline: "bg-transparent border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
   ghost: "bg-transparent border-token border-transparent text-foreground",
   gloss: "border-0 bg-transparent text-foreground",
 };

@@ -40,7 +40,10 @@ export function useBadgeAnimations({
     selfLiftEnabled && isGloss,
   );
 
-  const selfLiftShadow = useSecondLevelShadow(rootRef, selfLiftEnabled && !isGloss);
+  // Rest elevation when self-lifting (non-gloss); hoverLift only toggles interactive motion.
+  const selfLiftShadow = useSecondLevelShadow(rootRef, !splitLift && !isGloss, {
+    interactive: hoverLift,
+  });
 
   const pointerHandlers = useMemo(
     () => ({
@@ -48,14 +51,14 @@ export function useBadgeAnimations({
         onPointerOverProp?.(e);
         if (!e.defaultPrevented && selfLiftEnabled) {
           if (isGloss) glossLiftPointerHandlers.onPointerOver(e);
-          else selfLiftShadow.onPointerEnter(e);
+          else selfLiftShadow.onPointerOver(e);
         }
       },
       onPointerOut: (e: React.PointerEvent<HTMLSpanElement>) => {
         onPointerOutProp?.(e);
         if (selfLiftEnabled) {
           if (isGloss) glossLiftPointerHandlers.onPointerOut(e);
-          else selfLiftShadow.onPointerLeave(e);
+          else selfLiftShadow.onPointerOut(e);
         }
       },
     }),
@@ -66,16 +69,16 @@ export function useBadgeAnimations({
       onPointerOutProp,
       onPointerOverProp,
       selfLiftEnabled,
-      selfLiftShadow.onPointerEnter,
-      selfLiftShadow.onPointerLeave,
+      selfLiftShadow.onPointerOut,
+      selfLiftShadow.onPointerOver,
     ],
   );
 
-  const selfLiftMotionCls = selfLiftEnabled
-    ? isGloss
+  const selfLiftMotionCls = !splitLift && !isGloss
+    ? selfLiftShadow.motionClass
+    : selfLiftEnabled && isGloss
       ? GLOSS_INTERACTIVE_MOTION_CLASS
-      : selfLiftShadow.motionClass
-    : "";
+      : "";
 
   const splitLiftMotionCls = splitLift && !isGloss ? SHADOW_LIFT_MOTION_CLASS : "";
 
@@ -136,14 +139,15 @@ export function useBadgeAnchorAnimations(
   liftedRef: RefObject<HTMLElement | null>,
   hoverLift: boolean,
 ) {
-  return useSecondLevelShadowContainer(liftedRef, hoverLift, {
+  return useSecondLevelShadowContainer(liftedRef, true, {
+    interactive: hoverLift,
     liftScale: getMotionConfig().badgeAnchorHoverLiftScale,
   });
 }
 
 export function registerBadgeAnchorLiftTarget(
   el: HTMLElement | null,
-  hoverLift: boolean,
+  _hoverLift: boolean,
 ): void {
-  if (el && hoverLift) initElementShadow(el, shadowBase());
+  if (el) initElementShadow(el, shadowBase());
 }

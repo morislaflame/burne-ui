@@ -1,6 +1,6 @@
 import type { TextVariant } from "@/components/core/Text";
 
-import { SEMANTIC_STATUS_FILL, SEMANTIC_STATUS_OUTLINE_BORDER, SEMANTIC_STATUS_SURFACE_TINT, SEMANTIC_STATUS_TEXT, type SemanticSurfaceStatus } from "@/components/core/utils/semanticStatusSurface";
+import { SEMANTIC_STATUS_TEXT, type SemanticSurfaceStatus } from "@/components/core/utils/semanticStatusSurface";
 import { cn } from "@/utils/cn";
 
 import type { BadgePlacement, BadgeSize, BadgeStatus, BadgeVariant } from "./badgeTypes";
@@ -10,7 +10,7 @@ export type { BadgePlacement, BadgeSize, BadgeStatus, BadgeVariant } from "./bad
 export const BADGE_VARIANT_SURFACE: Record<Exclude<BadgeVariant, "gloss">, string> = {
   default: "bg-surface border-token text-foreground",
   primary: "bg-primary border-token text-primary-foreground",
-  outline: "bg-transparent border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
 };
 
@@ -26,17 +26,34 @@ export const BADGE_ANCHOR_PLACEMENT: Record<BadgePlacement, string> = {
 };
 
 export const BADGE_TEXT_ROW: Record<BadgeSize, string> = {
-  small: "gap-xsmall px-small py-xsmall",
-  base: "gap-xsmall px-base py-xsmall",
-  mid: "gap-xsmall px-mid py-xsmall",
-  large: "gap-small px-mid py-xsmall",
+  /** Pads from internal `--chip-*` (shared with Kbd). */
+  small:
+    "gap-[length:var(--chip-gap-small)] px-[length:var(--chip-px-small)] py-[length:var(--chip-py-small)]",
+  base:
+    "gap-[length:var(--chip-gap-base)] px-[length:var(--chip-px-base)] py-[length:var(--chip-py-base)]",
+  mid:
+    "gap-[length:var(--chip-gap-mid)] px-[length:var(--chip-px-mid)] py-[length:var(--chip-py-mid)]",
+  large:
+    "gap-[length:var(--chip-gap-large)] px-[length:var(--chip-px-large)] py-[length:var(--chip-py-large)]",
 };
 
-export const BADGE_SQUARE_MIN: Record<BadgeSize, string> = {
-  small: "min-h-3 min-w-3",
-  base: "min-h-4 min-w-4",
-  mid: "min-h-4 min-w-4",
-  large: "min-h-5 min-w-5",
+/** Equal box for icon-only / single-digit — fixed square → circle with `rounded-full`. */
+export const BADGE_CIRCLE: Record<BadgeSize, string> = {
+  small:
+    "size-[length:var(--chip-size-small)] shrink-0 p-0 leading-none [&_svg]:icon-small",
+  base:
+    "size-[length:var(--chip-size-base)] shrink-0 p-0 leading-none [&_svg]:icon-base",
+  mid:
+    "size-[length:var(--chip-size-mid)] shrink-0 p-0 leading-none [&_svg]:icon-base",
+  large:
+    "size-[length:var(--chip-size-large)] shrink-0 p-0 leading-none [&_svg]:icon-large",
+};
+
+export const BADGE_DOT_DIM: Record<BadgeSize, string> = {
+  small: "size-[length:var(--icon-size-small)] shrink-0 p-0",
+  base: "size-[length:var(--icon-size-small)] shrink-0 p-0",
+  mid: "size-[length:var(--icon-size-base)] shrink-0 p-0",
+  large: "size-[length:var(--icon-size-large)] shrink-0 p-0",
 };
 
 export const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
@@ -46,25 +63,14 @@ export const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
   large: "mid",
 };
 
-export const BADGE_ICON_ONLY: Record<BadgeSize, string> = {
-  small: "shrink-0 p-xsmall [&_svg]:icon-small",
-  base: "shrink-0 p-small [&_svg]:icon-base",
-  mid: "shrink-0 p-base [&_svg]:icon-base",
-  large: "shrink-0 p-mid [&_svg]:icon-large",
-};
-
-export const BADGE_DOT_DIM: Record<BadgeSize, string> = {
-  small: "icon-small shrink-0 p-0",
-  base: "icon-small shrink-0 p-0",
-  mid: "icon-base shrink-0 p-0",
-  large: "icon-large shrink-0 p-0",
-};
+/** Same tight line-box as panel titles (`Card.Title` → `leading-none`). */
+export const BADGE_TEXT_CLASS = "leading-none";
 
 export const BADGE_INLINE_SVG_SIZE: Record<BadgeSize, string> = {
   small: "[&_svg]:icon-small",
   base: "[&_svg]:icon-small",
   mid: "[&_svg]:icon-base",
-  large: "[&_svg]:icon-large",
+  large: "[&_svg]:icon-mid",
 };
 
 export const BADGE_TEXT_ROW_BASE =
@@ -79,7 +85,7 @@ export const BADGE_DOT_RING =
 const BADGE_DOT_FILL: Record<Exclude<BadgeVariant, "gloss"> | SemanticSurfaceStatus, string> = {
   default: "bg-foreground",
   primary: "bg-primary",
-  outline: "bg-transparent border-token",
+  outline: "bg-transparent border-token-outline",
   secondary: "bg-secondary",
   danger: "bg-danger",
   success: "bg-success",
@@ -96,29 +102,20 @@ export function dotFillClass(variant: BadgeVariant, status: BadgeStatus): string
   return BADGE_DOT_FILL[variant];
 }
 
-export function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus): string {
-  if (variant === "gloss") {
-    return cn(
-      "gloss-panel border-0 text-foreground",
-      status !== "default" ? SEMANTIC_STATUS_TEXT[status] : "",
-    );
-  }
+/**
+ * Panel surface follows `variant` only (Alert pattern).
+ * `status` tints text/icons via `SEMANTIC_STATUS_TEXT` — not the shell fill.
+ */
+export function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus = "default"): string {
+  const surface =
+    variant === "gloss"
+      ? "gloss-panel border-0 text-foreground"
+      : BADGE_VARIANT_SURFACE[variant];
 
-  if (status === "default") return BADGE_VARIANT_SURFACE[variant];
-
-  switch (variant) {
-    case "default":
-      return cn(SEMANTIC_STATUS_SURFACE_TINT[status], SEMANTIC_STATUS_TEXT[status]);
-    case "primary":
-      return SEMANTIC_STATUS_FILL[status];
-    case "outline":
-      return cn("bg-transparent", SEMANTIC_STATUS_OUTLINE_BORDER[status], SEMANTIC_STATUS_TEXT[status]);
-    case "secondary":
-      return cn("bg-secondary border-token", SEMANTIC_STATUS_TEXT[status]);
-  }
+  return cn(surface, status !== "default" ? SEMANTIC_STATUS_TEXT[status] : "");
 }
 
-export function badgeGlossStatusTextClass(status: BadgeStatus): string {
+export function badgeStatusTextClass(status: BadgeStatus): string {
   return status !== "default" ? SEMANTIC_STATUS_TEXT[status] : "";
 }
 
@@ -128,7 +125,7 @@ export function badgeDotSurfaceClass(
   isGloss: boolean,
 ): string {
   return isGloss
-    ? cn("gloss-panel border-0", badgeGlossStatusTextClass(status))
+    ? cn("gloss-panel border-0", badgeStatusTextClass(status))
     : dotFillClass(variant, status);
 }
 
@@ -159,7 +156,6 @@ export function badgeDotViewClass(
   return cn(
     BADGE_DOT_RING,
     BADGE_DOT_DIM[size],
-    BADGE_SQUARE_MIN[size],
     badgeDotSurfaceClass(variant, status, isGloss),
     className,
   );
@@ -173,8 +169,7 @@ export function badgeIconOnlyViewClass(
   return cn(
     BADGE_ICON_ONLY_BASE,
     surfaceClass,
-    BADGE_ICON_ONLY[size],
-    BADGE_SQUARE_MIN[size],
+    BADGE_CIRCLE[size],
     className,
   );
 }
@@ -188,7 +183,6 @@ export function badgeTextViewClass(
     BADGE_TEXT_ROW_BASE,
     surfaceClass,
     BADGE_TEXT_ROW[size],
-    BADGE_SQUARE_MIN[size],
     className,
   );
 }

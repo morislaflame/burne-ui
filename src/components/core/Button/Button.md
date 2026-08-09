@@ -92,7 +92,7 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 |---------|-------------|----------------|------------|
 | `default` | `bg-surface`, `border-token` | да | Базовая кнопка |
 | `primary` | `bg-primary` | да | Акцентная |
-| `outline` | прозрачный фон, `border-token` | да | Hover: `bg-transparent-hover`; при status ≠ default бордер/текст по статусу |
+| `outline` | прозрачный фон, `border-token-outline` | да | Hover: `bg-transparent-hover`; при status ≠ default бордер/текст по статусу |
 | `secondary` | `bg-secondary` | да | Вторичная |
 | `ghost` | прозрачный, без бордера | да | Hover: `bg-transparent-hover` |
 | `gloss` | CSS-класс `gloss-btn` | нет (gloss-motion) | Статус через `gloss-btn-*` |
@@ -137,8 +137,8 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 **Pointer enter (hover lift):**
 
 1. Проверки: `!blocked`, не `defaultPrevented`, `shouldSkipInteractiveHoverLift()`
-2. `animateInteractiveHoverLift` — адаптивный `scale` (от размера элемента, cap = `hoverLiftScale`, default `1.025`)
-3. Тень: `firstLevelHoverShadow()` — покой `--shadow-none`, hover `--shadow-sm` через `--el-shadow` + класс `animate-shadow`
+2. `animateInteractiveHoverLift` — адаптивный `scale` (от размера элемента, cap = `hoverLiftScale`, default `1.025`); `force3D: false` (без `will-change` — иначе субпиксельный snap высоты/текста на дробных токенах)
+3. Тень: `shadowMotionFor("none")` — `initElementShadow(--shadow-none)` на mount; hover → `--shadow-lift` (отдельный токен, не `--shadow-base`). GSAP твинит used `box-shadow` вместе со scale; класс `animate-shadow`
 
 **Pointer down (press squeeze):**
 

@@ -101,7 +101,7 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 | tone | Фон строки |
 |------|------------|
 | `default` | `bg-surface` |
-| `outline` | `bg-transparent border-token` |
+| `outline` | `bg-transparent border-token-outline` |
 | `secondary` | `bg-secondary` |
 | `danger` / `success` / `info` / `warning` | semantic `bg-surface-tint-*` |
 

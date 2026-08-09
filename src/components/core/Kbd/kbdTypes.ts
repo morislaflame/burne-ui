@@ -24,7 +24,7 @@ export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   classNames?: Prettify<KbdClassNames>;
   children?: ReactNode;
   /**
-   * Lift and shadow on hover (2nd level: sm → md), like `Badge`.
+   * Hover lift + stronger shadow in the same family (like `Badge`). Rest elevation stays when `false`.
    * @default true
    */
   hoverLift?: boolean;

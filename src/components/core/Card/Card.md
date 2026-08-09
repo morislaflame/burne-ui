@@ -56,6 +56,7 @@ Simple API (props `title` на root) нет — только compound children.
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — radius (как у Button), padding секций, type scale Title/Description |
+| `shadow` | `base` | `small` \| `base` \| `mid` \| `large` — rest elevation (passive CSS или pressable family) |
 | `pressable` | `false` | Интерактивная карточка (`<button>` root) |
 | `onPress` | — | Активация click / Enter / Space |
 | `onClick` / `onKeyDown` / `onPointerDown` | — | Низкоуровневые handlers |
@@ -111,8 +112,8 @@ Simple API (props `title` на root) нет — только compound children.
 
 | Режим | Тень |
 |-------|------|
-| Passive (`pressable={false}`) | `shadow-token-sm` всегда |
-| Pressable `default/outline/secondary` | `shadowSm` → `shadowMd` на hover |
+| Passive (`pressable={false}`) | `shadow-token-{shadow}` всегда |
+| Pressable `default/outline/secondary` | rest → `{shadow}-hover` на hover; press → `{shadow}-press` |
 | Pressable `gloss` | gloss interactive motion |
 
 ## Анимации
@@ -145,13 +146,13 @@ Simple API (props `title` на root) нет — только compound children.
 
 ### 1. Hover lift (pressable, не gloss)
 
-`useSecondLevelShadowContainer(rootRef, pressable && !isGloss)`:
+`useSecondLevelShadowContainer(rootRef, pressable && !isGloss, { shadowSize: shadow })`:
 
-**Init:** `initElementShadow(el, shadowSm())` — покой `shadow-token-sm`.
+**Init:** `initElementShadow(el, var(--shadow-{shadow}))` — покой по `shadow` (default `base`).
 
-**Pointer enter:** `animateInteractiveHoverLift` + тень `sm` → `md` (`secondLevelShadow()`).
+**Pointer enter:** `animateInteractiveHoverLift` + тень rest → `{shadow}-hover` (`shadowMotionFor(shadow)`).
 
-**Pointer leave:** scale `1`, тень обратно `sm`.
+**Pointer leave:** scale `1`, тень обратно к rest.
 
 `pointerInsideRef` синхронизирует squeeze с hover state.
 
@@ -195,7 +196,7 @@ configureMotion({
 
 `pressable={false}`:
 
-- `CARD_STATIC_SHADOW_CLASS` — постоянная `shadow-token-sm`
+- `CARD_STATIC_SHADOW_CLASS[shadow]` — постоянная `shadow-token-{shadow}`
 - `killMotion` на root при переключении в passive
 - Нет pointer handlers
 
@@ -223,8 +224,8 @@ Squeeze анимирует **весь** pressable shell, ripple — отдель
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Static shadow | CSS `shadow-token-sm` | — | `pressable={false}` |
-| Hover lift sm→md | `useSecondLevelShadowContainer` | `hoverLiftScale`, `enableHoverLift` | `pressable`, `!gloss` |
+| Static shadow | CSS `shadow-token-{shadow}` | — | `pressable={false}` |
+| Hover lift rest→hover | `useSecondLevelShadowContainer` | `hoverLiftScale`, `enableHoverLift` | `pressable`, `shadow`, `!gloss` |
 | Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | — |
 | Gloss hover/squeeze | gloss utils | gloss interactive tokens | `variant="gloss"` |
 | Ripple overlay | `<Ripple />` child | `rippleDefaultDuration` | вручную в children |
@@ -235,7 +236,7 @@ Squeeze анимирует **весь** pressable shell, ripple — отдель
 |---------------|------------|
 | `CARD_ROOT_BASE_CLASS` | `overflow-hidden flex-col` (+ size `rounded-*`) |
 | `PANEL_SIZE_LAYOUT` | Radius / padding / title+description (shared panel grid) |
-| `CARD_STATIC_SHADOW_CLASS` | Passive `shadow-token-base` |
+| `CARD_STATIC_SHADOW_CLASS` | Map `shadow` → `shadow-token-*` |
 | `CARD_PRESSABLE_ROOT_CLASS` | `cursor-pointer focus-ring` |
 | `CARD_BUTTON_SHELL_CLASS` | `w-full border-0 p-0 text-left` на `<button>` |
 | `cardHeaderClass` / `cardBodyClass` / `cardFooterClass` | Padding из size layout; footer + `border-t-token` |
@@ -317,7 +318,7 @@ Compound-подчасти не принимают отдельный `classNames
 - Внутри pressable card не кладите кнопки/ссылки без `stopPropagation` — сработает `onPress` root.
 - Ripple не встроен: первый child `<Ripple />`, контент в `relative z-[1]` внутри `content`.
 - `Card.Title` всегда `h3` — не меняйте heading level через classNames без замены семантики.
-- Passive: `pressable={false}` → постоянная `shadow-sm`, без hover lift.
+- Passive: `pressable={false}` → постоянная `shadow-token-{shadow}`, без hover lift.
 - Gloss: `className` / `classNames.root` на `gloss-panel`; children в `glossContent`.
 - **Не задавайте `transform` на root при `pressable`** — конфликт с lift/squeeze GSAP.
 - **Порядок мержа:** variant surface → motionClass → `classNames.slot` → `className` root.

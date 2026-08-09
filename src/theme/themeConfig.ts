@@ -22,11 +22,15 @@ export type ThemeTokenOverrides = {
   focusRingWidth?: number;
   focusRingOffset?: number;
   textScale?: number;
+  letterSpacing?: number;
   fontFamily?: string;
   fontFamilyMono?: string;
   fontWeights?: ThemeFontWeights;
-  shadowStrength?: number;
-  shadowSize?: number;
+  shadowOpacity?: number;
+  shadowBlur?: number;
+  shadowSpread?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
   toastScrimSize?: number;
   toastScrimDensity?: number;
 };
@@ -155,7 +159,6 @@ export function resolveThemeTokenState(
   const colors: ThemeColors = modeOverrides
     ? { ...base.colors, ...modeOverrides }
     : base.colors;
-  const shadowStrength = shared.shadowStrength ?? base.shadowStrength;
 
   return {
     ...base,
@@ -169,11 +172,15 @@ export function resolveThemeTokenState(
       textScale: shared.textScale,
       fontFamily: shared.fontFamily,
       fontFamilyMono: shared.fontFamilyMono,
-      shadowSize: shared.shadowSize,
+      letterSpacing: shared.letterSpacing,
+      shadowOpacity: shared.shadowOpacity,
+      shadowBlur: shared.shadowBlur,
+      shadowSpread: shared.shadowSpread,
+      shadowOffsetX: shared.shadowOffsetX,
+      shadowOffsetY: shared.shadowOffsetY,
       toastScrimSize: shared.toastScrimSize,
       toastScrimDensity: shared.toastScrimDensity,
     }),
-    shadowStrength,
     fontWeights: shared.fontWeights
       ? { ...base.fontWeights, ...shared.fontWeights }
       : base.fontWeights,
@@ -250,9 +257,13 @@ export function themeTokenStateToConfig(state: ThemeTokenState): BurneThemeConfi
     textScale: withPalettes.textScale,
     fontFamily: withPalettes.fontFamily,
     fontFamilyMono: withPalettes.fontFamilyMono,
+    letterSpacing: withPalettes.letterSpacing,
     fontWeights: { ...withPalettes.fontWeights },
-    shadowStrength: withPalettes.shadowStrength,
-    shadowSize: withPalettes.shadowSize,
+    shadowOpacity: withPalettes.shadowOpacity,
+    shadowBlur: withPalettes.shadowBlur,
+    shadowSpread: withPalettes.shadowSpread,
+    shadowOffsetX: withPalettes.shadowOffsetX,
+    shadowOffsetY: withPalettes.shadowOffsetY,
     toastScrimSize: withPalettes.toastScrimSize,
     toastScrimDensity: withPalettes.toastScrimDensity,
   };
@@ -418,8 +429,12 @@ export function mergeThemeTokenOverrides(
       textScale: overrides.textScale,
       fontFamily: overrides.fontFamily,
       fontFamilyMono: overrides.fontFamilyMono,
-      shadowStrength: overrides.shadowStrength,
-      shadowSize: overrides.shadowSize,
+      letterSpacing: overrides.letterSpacing,
+      shadowOpacity: overrides.shadowOpacity,
+      shadowBlur: overrides.shadowBlur,
+      shadowSpread: overrides.shadowSpread,
+      shadowOffsetX: overrides.shadowOffsetX,
+      shadowOffsetY: overrides.shadowOffsetY,
       toastScrimSize: overrides.toastScrimSize,
       toastScrimDensity: overrides.toastScrimDensity,
     }),

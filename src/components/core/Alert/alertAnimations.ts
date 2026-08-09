@@ -6,6 +6,7 @@ import { cn } from "@/utils/cn";
 
 import { alertSurfaceClass } from "./alertStyles";
 import type { AlertStatus, AlertVariant } from "./alertTypes";
+import type { ShadowLevel } from "@/tokens/shadows";
 
 import "../utils/glossInteractive.css";
 
@@ -13,6 +14,7 @@ export function useAlertAnimations({
   variant,
   status,
   hoverLift = true,
+  shadow = "base",
   ref,
   onPointerOver: onPointerOverProp,
   onPointerOut: onPointerOutProp,
@@ -20,17 +22,17 @@ export function useAlertAnimations({
   variant: AlertVariant;
   status: AlertStatus;
   hoverLift?: boolean;
+  shadow?: ShadowLevel;
   ref: ForwardedRef<HTMLDivElement>;
   onPointerOver?: (e: ReactPointerEvent<HTMLDivElement>) => void;
   onPointerOut?: (e: ReactPointerEvent<HTMLDivElement>) => void;
 }) {
   const isGloss = variant === "gloss";
-  const liftEnabled = hoverLift;
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, liftEnabled && isGloss),
-    [isGloss, liftEnabled],
+    () => createGlossInteractiveRefCallback(rootRef, hoverLift && isGloss),
+    [isGloss, hoverLift],
   );
 
   const setRootRef = useCallback(
@@ -43,14 +45,18 @@ export function useAlertAnimations({
     [bindGlossRef, ref],
   );
 
-  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, liftEnabled && isGloss);
-  const secondLevelLift = useSecondLevelShadow(rootRef, liftEnabled && !isGloss);
+  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, hoverLift && isGloss);
+  // Rest elevation always on (non-gloss); hoverLift only toggles interactive motion.
+  const secondLevelLift = useSecondLevelShadow(rootRef, !isGloss, {
+    shadowSize: shadow,
+    interactive: hoverLift,
+  });
 
-  const motionClass = liftEnabled
-    ? isGloss
+  const motionClass = isGloss
+    ? hoverLift
       ? GLOSS_INTERACTIVE_MOTION_CLASS
-      : secondLevelLift.motionClass
-    : "";
+      : ""
+    : secondLevelLift.motionClass;
 
   const surfaceClass = cn(alertSurfaceClass(variant, status), motionClass);
 
@@ -58,26 +64,26 @@ export function useAlertAnimations({
     () => ({
       onPointerOver: (e: ReactPointerEvent<HTMLDivElement>) => {
         onPointerOverProp?.(e);
-        if (e.defaultPrevented || !liftEnabled) return;
+        if (e.defaultPrevented || !hoverLift) return;
         if (isGloss) glossPointerHandlers.onPointerOver(e);
-        else secondLevelLift.onPointerEnter(e);
+        else secondLevelLift.onPointerOver(e);
       },
       onPointerOut: (e: ReactPointerEvent<HTMLDivElement>) => {
         onPointerOutProp?.(e);
-        if (!liftEnabled) return;
+        if (!hoverLift) return;
         if (isGloss) glossPointerHandlers.onPointerOut(e);
-        else secondLevelLift.onPointerLeave(e);
+        else secondLevelLift.onPointerOut(e);
       },
     }),
     [
       glossPointerHandlers.onPointerOut,
       glossPointerHandlers.onPointerOver,
+      hoverLift,
       isGloss,
-      liftEnabled,
       onPointerOutProp,
       onPointerOverProp,
-      secondLevelLift.onPointerEnter,
-      secondLevelLift.onPointerLeave,
+      secondLevelLift.onPointerOut,
+      secondLevelLift.onPointerOver,
     ],
   );
 

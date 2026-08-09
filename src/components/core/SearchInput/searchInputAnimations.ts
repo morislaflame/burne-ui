@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useRef } from "react";
 
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { animateInteractivePressSqueeze, shadowBase, shadowNone } from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   animateGlossInteractivePressSqueeze,
@@ -34,16 +34,11 @@ export function useSearchInputAnimations({
 
   const collapsedDim = readControlHeightPx(size);
 
-  const resolveSearchIdleShadow = useCallback(
-    () => (expanded ? shadowBase() : shadowNone()),
-    [expanded],
-  );
-
   const standardShellHover = useSecondLevelShadow(
     rootRef,
     !blocked && !isGloss && groupSegment == null,
     {
-      resolveIdle: resolveSearchIdleShadow,
+      shadowSize: expanded ? "base" : "none",
       idleSyncKey: expanded,
     },
   );

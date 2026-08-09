@@ -12,6 +12,11 @@ p {
   line-height: 1.2;
 }
 
+/** Global tracking — theme knob `--letter-spacing` (inherits into the tree). */
+html {
+  letter-spacing: var(--letter-spacing);
+}
+
 /* ─── Skeleton animations ─────────────────────────────────────────────────── */
 
 @keyframes skeleton-pulse {
@@ -40,6 +45,8 @@ p {
   --color-muted-foreground: var(--color-muted-foreground);
   --color-surface: var(--color-surface);
   --color-border: var(--color-border);
+  --color-shadow: var(--color-shadow);
+  --color-shadow-secondary: var(--color-shadow-secondary);
 
   /* OVERLAY — modal, popover, dropdown backgrounds (usually = surface or slightly lighter) */
   /* PRIMARY (brand): bg-primary, text-primary, border-primary … */
@@ -124,6 +131,7 @@ p {
   --radius-mid: var(--radius-mid);
   --radius-large: var(--radius-large);
 
+  --shadow-token-small: var(--shadow-small);
   --shadow-token-base: var(--shadow-base);
   --shadow-token-mid: var(--shadow-mid);
   --shadow-token-large: var(--shadow-large);
@@ -138,13 +146,16 @@ p {
 
   /**
    * Border width — make Tailwind's `border` and `border-1` utilities use our token.
-   * Setting --border-width to 0 gives a fully flat/borderless appearance.
+   * Flat themes keep a hairline width + `--border-color: transparent` (see themeDefaults).
    */
   --border-width-DEFAULT: var(--border-width, 1px);
   --border-width-1: var(--border-width, 1px);
 }
 
 /** Token-based shadows — independent of Tailwind defaults. */
+@utility shadow-token-small {
+  box-shadow: var(--shadow-small);
+}
 @utility shadow-token-base {
   box-shadow: var(--shadow-base);
 }
@@ -181,23 +192,14 @@ p {
 }
 
 /**
- * Shadow via local `--el-shadow` (toggled from JS) + smooth `box-shadow` transition.
- * Explicit reset on the element — otherwise `--el-shadow` is inherited from an ancestor (Popover, Alert)
- * and child buttons get a foreign shadow until first hover.
- * Persistent shadow: `usePersistentElShadow` / `useSecondLevelShadow` (see useShadowMotion.ts).
+ * Shadow via local `--el-shadow` + `box-shadow: var(--el-shadow)`.
+ * At rest / after tween: CSS paints the token (theme knobs apply live).
+ * During lift/press: GSAP temporarily sets inline `boxShadow`, then clears it on commit
+ * — no CSS transition on box-shadow (it fought / lagged behind GSAP).
  */
 @utility animate-shadow {
   --el-shadow: var(--shadow-none);
   box-shadow: var(--el-shadow);
-  transition-property: box-shadow;
-  transition-duration: var(--motion-surface-duration);
-  transition-timing-function: var(--motion-shadow-ease);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-shadow {
-    transition: none;
-  }
 }
 
 /**
@@ -371,48 +373,54 @@ p {
 }
 
 /**
- * border-token-* — directional and full borders with width from the --border-width token.
+ * border-token-* — directional and full borders with width from `--border-width`.
+ * Color: `--border-color` when set (flat theme → transparent), else `--color-border`.
+ * Outline surfaces/variants: `border-token-outline` (+ status) → `--border-width-outline`.
  * Preflight already sets border-style:solid on all elements — style is not needed.
  */
 @utility border-token {
   border-width: var(--border-width, 1px);
+  border-color: var(--border-color, var(--color-border));
+}
+@utility border-token-outline {
+  border-width: var(--border-width-outline, 1px);
   border-color: var(--color-border);
 }
 @utility border-token-primary {
-  border-width: var(--border-width, 1px);
+  border-width: var(--border-width-outline, 1px);
   border-color: var(--color-primary);
 }
 @utility border-token-danger {
-  border-width: var(--border-width, 1px);
+  border-width: var(--border-width-outline, 1px);
   border-color: var(--color-danger);
 }
 @utility border-token-success {
-  border-width: var(--border-width, 1px);
+  border-width: var(--border-width-outline, 1px);
   border-color: var(--color-success);
 }
 @utility border-token-info {
-  border-width: var(--border-width, 1px);
+  border-width: var(--border-width-outline, 1px);
   border-color: var(--color-info);
 }
 @utility border-token-warning {
-  border-width: var(--border-width, 1px);
+  border-width: var(--border-width-outline, 1px);
   border-color: var(--color-warning);
 }
 @utility border-t-token {
   border-top-width: var(--border-width, 1px);
-  border-top-color: var(--color-border);
+  border-top-color: var(--border-color, var(--color-border));
 }
 @utility border-b-token {
   border-bottom-width: var(--border-width, 1px);
-  border-bottom-color: var(--color-border);
+  border-bottom-color: var(--border-color, var(--color-border));
 }
 @utility border-l-token {
   border-left-width: var(--border-width, 1px);
-  border-left-color: var(--color-border);
+  border-left-color: var(--border-color, var(--color-border));
 }
 @utility border-r-token {
   border-right-width: var(--border-width, 1px);
-  border-right-color: var(--color-border);
+  border-right-color: var(--border-color, var(--color-border));
 }
 
 /**
@@ -422,13 +430,13 @@ p {
 @utility divide-x-token {
   & > * + * {
     border-left-width: var(--border-width, 1px);
-    border-left-color: var(--color-border);
+    border-left-color: var(--border-color, var(--color-border));
   }
 }
 @utility divide-y-token {
   & > * + * {
     border-top-width: var(--border-width, 1px);
-    border-top-color: var(--color-border);
+    border-top-color: var(--border-color, var(--color-border));
   }
 }
 

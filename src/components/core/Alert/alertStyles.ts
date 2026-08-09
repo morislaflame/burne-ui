@@ -5,7 +5,7 @@ import type { AlertStatus, AlertVariant } from "./alertTypes";
 
 export const ALERT_VARIANT_SURFACE: Record<Exclude<AlertVariant, "gloss">, string> = {
   default: "bg-surface border-token text-foreground",
-  outline: "bg-transparent border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
 };
 

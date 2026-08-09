@@ -454,7 +454,7 @@ export function ThemeToggle() {
 }
 ```
 
-Чтобы **сохранить fluid** (адаптацию отступов/размеров к ширине экрана), не пишите fixed rem вручную — задайте knobs в theme config (`tokens.space` / `size` / `radius` / `shadowStrength` / `shadowSize`). `applyThemeTokens` сам пишет scaled `clamp` и тени с `calc(… * var(--shadow-size))`.
+Чтобы **сохранить fluid** (адаптацию отступов/размеров к ширине экрана), не пишите fixed rem вручную — задайте knobs в theme config (`tokens.space` / `size` / `radius` / `shadowOpacity` / `shadowBlur` / `shadowSpread` / `shadowOffsetX` / `shadowOffsetY`). `applyThemeTokens` сам пишет scaled `clamp` и shadow-knobs (`--shadow-opacity|blur|spread|offset-*`).
 
 `applyThemeTokens` / theme config пишут **инлайн только токены, отличающиеся от дефолтов кита**. Остальные переменные остаются из `styles.css` — точечный CSS-оверрайд (`--color-primary` в файле выше) по-прежнему работает для всего, что не задано в конфиге.
 

@@ -103,19 +103,29 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 ### Status
 
-`status !== "default"` переопределяет смысловой цвет:
+Как у `Alert`: поверхность остаётся от `variant`, `status` красит только текст/иконки (`SEMANTIC_STATUS_TEXT`).
 
-- `default`: variant surface
-- `danger`, `success`, `info`, `warning`: semantic tint/fill/border/text через `semanticStatusSurface`
+`dot` — исключение: заливка точки следует status/variant (индикатор).
 
 ### Размеры
 
-| Size | Text variant | Icon size |
-|------|--------------|-----------|
-| `small` | `xsmall` | `icon-small` |
-| `base` | `small` | `icon-small` |
-| `mid` | `small` | `icon-base` |
-| `large` | `base` | `icon-large` |
+| Size | Text variant | Icon size | Chip pad | Circle size |
+|------|--------------|-----------|----------|-------------|
+| `small` | `xsmall` | `icon-small` | `--chip-px/py-small` | `--chip-size-small` |
+| `base` | `small` | `icon-base` | `--chip-px/py-base` | `--chip-size-base` |
+| `mid` | `base` | `icon-base` | `--chip-px/py-mid` | `--chip-size-mid` |
+| `large` | `mid` | `icon-large` | `--chip-px/py-large` | `--chip-size-large` |
+
+`--chip-*` — внутренние CSS-переменные (доля `--space-*`), общие с `Kbd`. Не входят в публичный token API.
+
+### Круглый layout
+
+`rounded-full` + явный `--chip-size-*` (равные width/height), когда:
+
+- **icon-only** — только `icon` / `iconOnly` / inline-icon без текста
+- **одна цифра** `0`–`9` в `children` (например счётчик на `Badge.Anchor`)
+
+Многосимвольный текст (`12`, `New`) остаётся pill с `--chip-px/py-*`.
 
 ## Анимации
 
@@ -145,11 +155,11 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 Для обычного badge:
 
 - `variant="gloss"` → `useGlossInteractiveHandlers`
-- не gloss → `useSecondLevelShadow`
-- rest shadow: `shadowSm`
-- hover shadow/lift: second-level shadow motion
+- не gloss → `useSecondLevelShadow` (`interactive: hoverLift`)
+- rest shadow: `--shadow-base` (всегда, независимо от `hoverLift`)
+- hover shadow/lift: same-family `--shadow-base-hover`
 
-`hoverLift={false}` отключает self-lift.
+`hoverLift={false}` отключает self-lift, но оставляет rest elevation.
 
 ### 2. Split lift внутри `Badge.Anchor`
 
@@ -206,10 +216,8 @@ Gloss lift — отдельная кривая, не sm→md shadow tokens.
 | Класс / токен | Назначение |
 |---------------|------------|
 | `semanticStatusSurface` | Status tint per `status` |
-| `BADGE_TEXT_CLASS` | Inline-flex row, gap icons |
-| `BADGE_DOT_CLASS` | Ring + fill dot |
-| `BADGE_ICON_ONLY_CLASS` | Square icon badge |
-| `shadow-token-sm` / `md` | Через `--el-shadow` при hover lift |
+| `--chip-px/py-*`, `--chip-gap-*`, `--chip-box-*`, `--chip-size-*` | Internal chip inset / circle diameter (Badge + Kbd; not public API) |
+| `shadow-token-base` + `-hover` | Через `--el-shadow` (rest всегда; hover при lift) |
 | `gloss-panel gloss-deep` | Gloss badge surface |
 | `data-badge-anchor` | Anchor grid positioning |
 
@@ -226,7 +234,7 @@ Gloss lift — отдельная кривая, не sm→md shadow tokens.
 |------|-----|-------------------|
 | `root` | Все layouts | Общий radius/border |
 | `text` | Text badge row | Surface/text, inline icons |
-| `iconOnly` | Icon-only layout | Square padding, icon color |
+| `iconOnly` | Icon-only / single-digit layout | Fixed `--chip-size-*` square → circle |
 | `dot` | Dot layout | Ring/fill online indicator |
 | `anchor` | `Badge.Anchor` root | Overlay grid на Avatar/Card |
 

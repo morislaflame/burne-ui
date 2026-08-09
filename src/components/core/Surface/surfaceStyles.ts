@@ -8,6 +8,7 @@ export const SURFACE_VARIANT_CLASS = {
 
 export const SURFACE_SHADOW_CLASS = {
   none: "",
+  small: "shadow-token-small",
   base: "shadow-token-base",
   mid: "shadow-token-mid",
   large: "shadow-token-large",

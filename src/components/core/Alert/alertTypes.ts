@@ -3,6 +3,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
+import type { ShadowLevel } from "@/tokens/shadows";
 
 export type AlertSize = MessageBannerSize;
 
@@ -36,10 +37,16 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   action?: ReactNode;
   classNames?: Prettify<AlertClassNames>;
   /**
-   * Lift and shadow enhancement on hover: `sm` at rest, `md` on hover.
+   * Hover lift + stronger shadow in the same `shadow` family (`--shadow-{shadow}-hover`).
+   * Rest elevation stays when `false`.
    * @default true
    */
   hoverLift?: boolean;
+  /**
+   * Rest shadow size. Hover uses the same family (`--shadow-{size}-hover`), not the next tier.
+   * @default "base"
+   */
+  shadow?: ShadowLevel;
 };
 
 export type AlertContextValue = {

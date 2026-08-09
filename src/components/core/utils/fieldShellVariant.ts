@@ -31,7 +31,8 @@ export function fieldShellVariantFromButtonGroup(
 }
 
 /**
- * Neutral variant surface + `border-token`.
+ * Neutral variant surface + border token.
+ * Outline shells use `border-token-outline` (hairline floor when theme border is 0).
  * Status accents live on the permanent status ring (`fieldShellFocusRingClass`), not the border.
  */
 export function resolveFieldShellSurfaceClass({
@@ -42,7 +43,7 @@ export function resolveFieldShellSurfaceClass({
   if (variant === "gloss") return "gloss-control";
 
   if (variant === "outline") {
-    return "bg-transparent border-token";
+    return "bg-transparent border-token-outline";
   }
 
   return cn(FIELD_SHELL_VARIANT_BG_CLASS[variant], "border-token");

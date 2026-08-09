@@ -15,6 +15,7 @@ import type { UseCardAnimationsProps } from "./cardTypes";
 export function useCardAnimations({
   pressable,
   isGloss,
+  shadow = "base",
   onPress,
   onClick: onClickProp,
   onKeyDown: onKeyDownProp,
@@ -50,7 +51,7 @@ export function useCardAnimations({
   const pressableLift = useSecondLevelShadowContainer(
     rootRef,
     pressable && !isGloss,
-    { pointerInsideRef },
+    { pointerInsideRef, shadowSize: shadow },
   );
 
   useEffect(() => {
@@ -66,12 +67,12 @@ export function useCardAnimations({
     if (!shell) return;
 
     if (isGloss) {
-      void animateGlossInteractivePressSqueeze(shell, pointerInsideRef.current);
+      void animateGlossInteractivePressSqueeze(shell, pointerInsideRef);
       return;
     }
 
     void animateInteractivePressSqueeze(shell, {
-      pointerInside: pointerInsideRef.current,
+      pointerInside: pointerInsideRef,
       shadow: pressableLift.shadow,
     });
   }, [isGloss, pressableLift.shadow]);

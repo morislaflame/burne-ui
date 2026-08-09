@@ -141,7 +141,7 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   classNames?: Prettify<BadgeClassNames>;
   children?: ReactNode;
   /**
-   * Lift and shadow enhancement on hover (like `Alert`): `sm` at rest, `md` on hover.
+   * Hover lift + stronger shadow in the same family. Rest elevation stays when `false`.
    * Does not duplicate if the badge is a direct child of `Badge.Anchor` with `hoverLift`: there is a lift on the anchor.
    * @default true
    */

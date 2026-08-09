@@ -52,6 +52,9 @@ export function killMotion(...targets: gsap.TweenTarget[]): void {
 /**
  * Dynamic compositor hint for transform tweens.
  * Prefer over permanent Tailwind `will-change-transform` (avoids idle layer promotion).
+ * Do not use for short interactive scale/x tweens (hover-lift, press-squeeze, Switch thumb) —
+ * with fractional control sizes, promoting a layer causes a visible 1px snap. Those paths use
+ * GSAP `force3D: false` instead.
  */
 export function setWillChangeTransform(el: HTMLElement, active: boolean): void {
   el.style.willChange = active ? "transform" : "";

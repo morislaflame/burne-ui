@@ -27,7 +27,10 @@
  * - `--size` — control sizes (icons, indicators, button min-width, modal max-w); fluid `clamp` by viewport.
  * - `--radius` — base radius; `rounded-*` steps via multipliers
  *   (`0.618 / 0.875 / 1 / 1.125 / 1.25`); fluid `clamp` by viewport.
- * - `--shadow-size` — blur/offset multiplier for `--shadow-base|mid|large` (`calc(… * var(--shadow-size))`; do not bake px).
+ * - `--shadow-opacity` / `--shadow-blur` / `--shadow-spread` — multipliers for `--shadow-small|base|mid|large`
+ *   (opacity × theme base; blur/spread × primitive px). `--shadow-offset-x` / `--shadow-offset-y` — px nudge
+ *   added to primitive offsets (`calc(Npx + var(--shadow-offset-*))`).
+ * - `--color-shadow` / `--color-shadow-secondary` — key + ambient shadow colors (theme palette).
  * - `--toast-scrim-size` / `--toast-scrim-density` — Toast scrim backdrop size and density.
  * - `--focus-ring-width` / `--focus-ring-offset` — keyboard focus ring geometry (`focus-ring*` utilities).
  * - `--motion-surface-duration` — CSS transitions for `surface-color-transition` / `animate-shadow` / field shells (from `surfaceTransitionDuration` in motion config).
@@ -35,6 +38,7 @@
  * - `--z-dialog` / `--z-dropdown` / `--z-popover` / `--z-toast` / `--z-tooltip` — overlay stacking (`z-*` utilities).
  * - `--max-component-*` — panel/container widths (`min/max-w-component-*`); Dialog size props map onto base…2xlarge.
  * - `NARROW_VIEWPORT_MAX_PX` (1024) — shared with CSS `field-control-mobile-no-zoom` media query.
+ * - `--letter-spacing` — global tracking (em); apply on `html`/`body` as `letter-spacing: var(--letter-spacing)`.
  * - `--text-scale-*` — primitive typography; roles `text-base` / `text-mid` / … map 1:1 by name.
  * - `--font-w-*` — primitive font-weight scale;
  *
@@ -66,6 +70,8 @@ export const tokensConfig = {
     "color-surface": "color-surface",
     "color-border": "color-border",
     "border-token": "color-border",
+    "color-shadow": "color-shadow",
+    "color-shadow-secondary": "color-shadow-secondary",
     "color-primary": "color-primary",
     "color-primary-foreground": "color-primary-foreground",
     "color-primary-hover": "color-primary-hover",

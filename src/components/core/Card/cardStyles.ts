@@ -4,6 +4,7 @@ import {
   panelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
 import { SURFACE_COLOR_TRANSITION } from "@/components/core/utils/hoverVariant";
+import type { ShadowLevel } from "@/tokens/shadows";
 import { cn } from "@/utils/cn";
 
 import type { CardVariant } from "./cardTypes";
@@ -19,12 +20,17 @@ export {
 
 const CARD_SURFACE: Record<Exclude<CardVariant, "gloss">, string> = {
   default: "bg-surface border-token",
-  outline: "bg-transparent border-token",
+  outline: "bg-transparent border-token-outline",
   secondary: "bg-secondary border-token",
 };
 
-/** Passive 2nd level — static sm-shadow without hover-lift. */
-export const CARD_STATIC_SHADOW_CLASS = "shadow-token-base";
+/** Passive 2nd level — static shadow without hover-lift. */
+export const CARD_STATIC_SHADOW_CLASS: Record<ShadowLevel, string> = {
+  small: "shadow-token-small",
+  base: "shadow-token-base",
+  mid: "shadow-token-mid",
+  large: "shadow-token-large",
+};
 
 export const CARD_GLOSS_PANEL_BASE_CLASS =
   "gloss-panel flex min-w-0 flex-col text-foreground outline-none";
@@ -75,6 +81,7 @@ export function cardRootClass(
   pressable: boolean,
   pressableMotionClass: string,
   size: CardSize,
+  shadow: ShadowLevel = "base",
   className?: string,
 ): string {
   return cn(
@@ -83,7 +90,7 @@ export function cardRootClass(
     pressable && cn(CARD_PRESSABLE_ROOT_CLASS, pressableMotionClass),
     SURFACE_COLOR_TRANSITION,
     CARD_SURFACE[variant],
-    !pressable && CARD_STATIC_SHADOW_CLASS,
+    !pressable && CARD_STATIC_SHADOW_CLASS[shadow],
     className,
   );
 }

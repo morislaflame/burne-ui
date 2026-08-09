@@ -78,6 +78,12 @@ const meta = {
       options: ["small", "base", "mid", "large"],
       description: "Radius (matches Button), padding, and title/description type scale.",
     },
+    shadow: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+      description: "Rest shadow size (passive CSS or pressable family).",
+      table: { defaultValue: { summary: "base" } },
+    },
     pressable: {
       control: "boolean",
       description:

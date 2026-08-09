@@ -78,7 +78,7 @@ type CloseButtonClassNames = {
 |---------|-------------|--------------|-------------|
 | `default` | `bg-surface`, `border-token` | да | `converge-ripple-neutral` |
 | `primary` | `bg-primary` | да | `converge-ripple-primary-fill` |
-| `outline` | прозрачный + `border-token` | да | neutral; hover `bg-transparent-hover` |
+| `outline` | прозрачный + `border-token-outline` | да | neutral; hover `bg-transparent-hover` |
 | `secondary` | `bg-secondary` | да | neutral |
 | `ghost` | прозрачный | да | neutral; hover `bg-transparent-hover` |
 | `gloss` | `gloss-btn` | нет (gloss-motion) | neutral |
@@ -117,7 +117,7 @@ type CloseButtonClassNames = {
 **Pointer enter:**
 
 - `animateInteractiveHoverLift` на корне `<button>`
-- Тень при variant ∈ `CLOSE_BUTTON_HAS_HOVER_SHADOW` (все кроме gloss): `firstLevelHoverShadow()` — hover `--shadow-sm`
+- Тень при variant ∈ `CLOSE_BUTTON_HAS_HOVER_SHADOW` (все кроме gloss): `shadowMotionFor("none")` — hover `--shadow-lift`
 - Адаптивный scale от размера квадрата (`hoverLiftScale` cap)
 
 **Pointer down:**

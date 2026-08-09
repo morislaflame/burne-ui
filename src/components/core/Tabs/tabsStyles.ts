@@ -6,7 +6,7 @@ import type { TabsOrientation, TabsSize, TabsVariant } from "./tabsTypes";
 
 const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "",
-  outline: "bg-transparent border-token rounded-mid p-xsmall",
+  outline: "bg-transparent border-token-outline rounded-mid p-xsmall",
   secondary: "bg-secondary border-token rounded-mid p-xsmall",
   gloss: "border-0 p-small",
 };

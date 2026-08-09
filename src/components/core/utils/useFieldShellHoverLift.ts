@@ -67,13 +67,16 @@ export function fieldShellFocusRingClass(status: FieldShellStatus = "default"): 
 }
 
 /**
- * Hover lift and sm → md shadow for input-like field shells (`Input`, `TextArea`, `TimeField`, `ComboBox`).
+ * Hover lift and same-family shadow for input-like field shells (`Input`, `TextArea`, `TimeField`, `ComboBox`).
+ * Rest elevation is always applied while `enabled`; disable only turns off interactive motion.
  */
 export function useFieldShellHoverLift(
   shellRef: RefObject<HTMLElement | null>,
   enabled: boolean,
 ) {
-  const lift = useSecondLevelShadow(shellRef, enabled);
+  const lift = useSecondLevelShadow(shellRef, enabled, {
+    interactive: enabled,
+  });
 
   return {
     shellHoverMotionClass: lift.motionClass,

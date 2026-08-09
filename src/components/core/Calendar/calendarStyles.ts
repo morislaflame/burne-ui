@@ -42,7 +42,7 @@ export const CALENDAR_HEADER_TEXT: Record<CalendarSize, string> = {
 export const CALENDAR_ROOT_SURFACE: Record<CalendarVariant, string> = {
   default: "rounded-large border-token bg-surface shadow-token-base",
   secondary: "rounded-large border-token bg-secondary shadow-token-base",
-  outline: "rounded-large bg-transparent border-token shadow-token-base",
+  outline: "rounded-large bg-transparent border-token-outline shadow-token-base",
   gloss: "rounded-large border-0",
 };
 

@@ -113,7 +113,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 `useSwitchTrackAnimations` → `syncThumbPosition`:
 
 - `travelPx = measureSwitchTravel(track, thumbShell)` (+ ResizeObserver)
-- checked: `gsap.to(thumb, { x: travelPx, ...motionSwitchThumb() })`
+- checked: `gsap.to(thumb, { x: travelPx, ...motionSwitchThumb(), force3D: false })`
 - unchecked: `x: 0`
 - First layout / reduced motion: instant `translate(x, 0)`
 

@@ -1,11 +1,12 @@
 import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 
 import { Text } from "@/components/core/Text";
+import { cn } from "@/utils/cn";
 
 import { ensureDecorativeIcon } from "./badgeA11y";
 import { BadgeInlineChild } from "./badgeInlineChild";
 import { isInlineIconChild, readBadgeInlineIconPosition } from "./badgeInlineIcon";
-import { badgeIconSlotClass, BADGE_TEXT_VARIANT } from "./badgeStyles";
+import { badgeIconSlotClass, BADGE_TEXT_CLASS, BADGE_TEXT_VARIANT } from "./badgeStyles";
 import type {
   ResolvedBadgeBody,
   ResolveBadgeBodyProps,
@@ -35,6 +36,32 @@ export function hasMeaningfulContent(node: ReactNode): boolean {
   if (typeof node === "number") return true;
   if (Array.isArray(node)) return node.some(hasMeaningfulContent);
   return isValidElement(node);
+}
+
+/** Single digit `0`–`9` → circular badge (same layout as icon-only). */
+export function isBadgeSingleDigitContent(children: ReactNode): boolean {
+  const parts = Children.toArray(children).filter(
+    (node) => !(typeof node === "string" && node.trim() === ""),
+  );
+  if (parts.length !== 1) return false;
+  const only = parts[0];
+  if (typeof only === "number") {
+    return Number.isInteger(only) && only >= 0 && only <= 9;
+  }
+  if (typeof only === "string") {
+    return /^\d$/.test(only.trim());
+  }
+  return false;
+}
+
+function badgeSingleDigitLabel(children: ReactNode): string | number {
+  const parts = Children.toArray(children).filter(
+    (node) => !(typeof node === "string" && node.trim() === ""),
+  );
+  const only = parts[0];
+  if (typeof only === "number") return only;
+  if (typeof only === "string") return only.trim();
+  return "";
 }
 
 export function renderBadgeInlineChildren(children: ReactNode, size: BadgeSize): ReactNode {
@@ -77,6 +104,13 @@ export function resolveBadgeBody({
     !meaningChild &&
     (implicitIconOnly || Boolean(iconOnly && resolvedIcon) || inlineIconOnly);
 
+  const singleDigit =
+    !inlineIconMode &&
+    !resolvedIcon &&
+    !iconOnly &&
+    meaningChild &&
+    isBadgeSingleDigitContent(children);
+
   const iconSlot = resolvedIcon ? (
     <span className={badgeIconSlotClass(size)}>
       {isValidElement(resolvedIcon)
@@ -87,7 +121,7 @@ export function resolveBadgeBody({
 
   const textSlot =
     meaningChild && !inlineIconMode ? (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor>
+      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
         {children}
       </Text>
     ) : null;
@@ -104,30 +138,43 @@ export function resolveBadgeBody({
     </>
   );
 
-  const iconOnlyBody = inlineIconOnly
-    ? inlineBody
-    : resolvedIcon
-      ? isValidElement(resolvedIcon)
-        ? ensureDecorativeIcon(resolvedIcon)
-        : resolvedIcon
-      : children;
+  if (onlyIconLayout || singleDigit) {
+    const iconOnlyBody = singleDigit ? (
+      <Text
+        as="span"
+        variant={BADGE_TEXT_VARIANT[size]}
+        inheritColor
+        className={cn(BADGE_TEXT_CLASS, "tabular-nums")}
+      >
+        {badgeSingleDigitLabel(children)}
+      </Text>
+    ) : inlineIconOnly ? (
+      inlineBody
+    ) : resolvedIcon ? (
+      isValidElement(resolvedIcon) ? (
+        ensureDecorativeIcon(resolvedIcon)
+      ) : (
+        resolvedIcon
+      )
+    ) : (
+      children
+    );
 
-  const showIconWithText = Boolean(!inlineIconMode && iconSlot && textSlot);
-  const dataIcon = showIconWithText ? iconPosition : undefined;
-
-  if (onlyIconLayout) {
     return {
       layoutKind: "iconOnly",
       bodyContent,
       iconOnlyBody,
-      dataIcon,
+      dataIcon: undefined,
     };
   }
+
+  const showIconWithText = Boolean(!inlineIconMode && iconSlot && textSlot);
+  const dataIcon = showIconWithText ? iconPosition : undefined;
 
   return {
     layoutKind: "text",
     bodyContent,
-    iconOnlyBody,
+    iconOnlyBody: null,
     dataIcon,
   };
 }

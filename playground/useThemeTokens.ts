@@ -2,8 +2,9 @@ import { createContext, createElement, useCallback, useContext, useEffect, useSt
 
 import { applyColorPresetToState, applyThemeModeToState } from "./colorPresets";
 import { applyThemeTokens, clearThemeInlineTokens, createDefaultEditorState, exportThemeCss, MOTION_DEFAULTS, SCALE_DEFAULTS, type ThemeColorKey, type ThemeEditorState, type ThemeFontWeightKey, type ThemeMode, type ThemeStatusForegroundKey } from "./themeDefaults";
-import { LAYOUT_PRESETS, type LayoutPresetKey } from "./themePresets";
+import { applyThemePresetToState, LAYOUT_PRESETS, type LayoutPresetKey, type ThemePresetKey } from "./themePresets";
 import type { ColorPresetKey } from "./colorPresets";
+import { shuffleThemeState } from "./shuffleThemeState";
 
 const ThemeTokensContext = createContext<ThemeTokensApi | null>(null);
 
@@ -37,39 +38,52 @@ function useThemeTokensState() {
     setState((prev) => applyThemeModeToState(prev, theme));
   }, []);
 
-  const setScale = useCallback((key: "space" | "size" | "radius" | "textScale" | "borderWidth" | "focusRingWidth" | "focusRingOffset", value: number) => {
-    setState((prev) => ({ ...prev, [key]: value }));
+  const setScale = useCallback((key: "space" | "size" | "radius" | "textScale" | "letterSpacing" | "borderWidth" | "focusRingWidth" | "focusRingOffset", value: number) => {
+    setState((prev) => ({ ...prev, [key]: value, themePreset: null }));
   }, []);
 
   const setFontFamily = useCallback((fontFamily: string) => {
-    setState((prev) => ({ ...prev, fontFamily }));
+    setState((prev) => ({ ...prev, fontFamily, themePreset: null }));
   }, []);
 
   const setFontFamilyMono = useCallback((fontFamilyMono: string) => {
-    setState((prev) => ({ ...prev, fontFamilyMono }));
+    setState((prev) => ({ ...prev, fontFamilyMono, themePreset: null }));
   }, []);
 
   const setFontWeight = useCallback((key: ThemeFontWeightKey, value: number) => {
     setState((prev) => ({
       ...prev,
+      themePreset: null,
       fontWeights: { ...prev.fontWeights, [key]: value },
     }));
   }, []);
 
-  const setShadowStrength = useCallback((shadowStrength: number) => {
-    setState((prev) => ({ ...prev, shadowStrength }));
+  const setShadowOpacity = useCallback((shadowOpacity: number) => {
+    setState((prev) => ({ ...prev, shadowOpacity, themePreset: null }));
   }, []);
 
-  const setShadowSize = useCallback((shadowSize: number) => {
-    setState((prev) => ({ ...prev, shadowSize }));
+  const setShadowBlur = useCallback((shadowBlur: number) => {
+    setState((prev) => ({ ...prev, shadowBlur, themePreset: null }));
+  }, []);
+
+  const setShadowSpread = useCallback((shadowSpread: number) => {
+    setState((prev) => ({ ...prev, shadowSpread, themePreset: null }));
+  }, []);
+
+  const setShadowOffsetX = useCallback((shadowOffsetX: number) => {
+    setState((prev) => ({ ...prev, shadowOffsetX, themePreset: null }));
+  }, []);
+
+  const setShadowOffsetY = useCallback((shadowOffsetY: number) => {
+    setState((prev) => ({ ...prev, shadowOffsetY, themePreset: null }));
   }, []);
 
   const setToastScrimSize = useCallback((toastScrimSize: number) => {
-    setState((prev) => ({ ...prev, toastScrimSize }));
+    setState((prev) => ({ ...prev, toastScrimSize, themePreset: null }));
   }, []);
 
   const setToastScrimDensity = useCallback((toastScrimDensity: number) => {
-    setState((prev) => ({ ...prev, toastScrimDensity }));
+    setState((prev) => ({ ...prev, toastScrimDensity, themePreset: null }));
   }, []);
 
   const setMotionDuration = useCallback(
@@ -87,7 +101,7 @@ function useThemeTokensState() {
         | "pressSqueezeDurationFactor",
       value: number,
     ) => {
-      setState((prev) => ({ ...prev, [key]: value }));
+      setState((prev) => ({ ...prev, [key]: value, themePreset: null }));
     },
     [],
   );
@@ -114,7 +128,7 @@ function useThemeTokensState() {
         | "enableSelectionFill",
       value: boolean,
     ) => {
-      setState((prev) => ({ ...prev, [key]: value }));
+      setState((prev) => ({ ...prev, [key]: value, themePreset: null }));
     },
     [],
   );
@@ -123,6 +137,7 @@ function useThemeTokensState() {
     setState((prev) => ({
       ...prev,
       colorPreset: null,
+      themePreset: null,
       colors: { ...prev.colors, [key]: value },
       modePalettes: {
         ...prev.modePalettes,
@@ -145,14 +160,23 @@ function useThemeTokensState() {
     setState((prev) => applyColorPresetToState(prev, preset));
   }, []);
 
+  /** Full theme preset — colors + all non-color knobs (scale/fonts/shadows/motion/flags). */
+  const applyThemePreset = useCallback((preset: ThemePresetKey) => {
+    setState((prev) => applyThemePresetToState(prev, preset));
+  }, []);
+
   const applyLayoutPreset = useCallback((preset: LayoutPresetKey) => {
     const p = LAYOUT_PRESETS[preset];
-    setState((prev) => ({ ...prev, ...p }));
+    setState((prev) => ({ ...prev, ...p, themePreset: null }));
   }, []);
 
   const reset = useCallback(() => {
     setState(createDefaultEditorState("dark"));
     clearThemeInlineTokens();
+  }, []);
+
+  const shuffle = useCallback(() => {
+    setState((prev) => shuffleThemeState(prev));
   }, []);
 
   const copyCss = useCallback(async () => {
@@ -168,8 +192,11 @@ function useThemeTokensState() {
     setFontFamily,
     setFontFamilyMono,
     setFontWeight,
-    setShadowStrength,
-    setShadowSize,
+    setShadowOpacity,
+    setShadowBlur,
+    setShadowSpread,
+    setShadowOffsetX,
+    setShadowOffsetY,
     setToastScrimSize,
     setToastScrimDensity,
     setMotionDuration,
@@ -178,8 +205,10 @@ function useThemeTokensState() {
     setStatusForeground,
     applyPreset,
     applyColorPreset,
+    applyThemePreset,
     applyLayoutPreset,
     reset,
+    shuffle,
     copyCss,
     defaults: { ...SCALE_DEFAULTS, ...MOTION_DEFAULTS },
   };

@@ -16,7 +16,7 @@ export const TOOLTIP_DEFAULT_OFFSET = 8;
 /** Neutral shell by variant — status accents live on indicator + title (Alert / Toast). */
 export const TOOLTIP_VARIANT_SURFACE_CLASS: Record<TooltipVariant, string> = {
   default: "border-token bg-surface text-foreground",
-  outline: "bg-transparent border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
   gloss: "",
 };

@@ -7,6 +7,8 @@ export {
   patchThemeColor,
   exportThemeCss,
   fluidScaleRem,
+  resolveBorderTokenCss,
+  OUTLINE_BORDER_WIDTH_MIN_PX,
   COLOR_CSS_VAR,
   DEFAULT_FONT,
   DEFAULT_FONT_MONO,
@@ -24,6 +26,7 @@ export {
   type ThemeStatusForegroundKey,
   type ThemeStatusForegrounds,
   type ThemeTokenState,
+  type ResolvedBorderTokenCss,
 } from "./themeDefaults";
 
 export { DARK_COLORS, LIGHT_COLORS } from "./themePalettes";

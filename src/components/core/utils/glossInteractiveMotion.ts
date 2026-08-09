@@ -6,7 +6,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject, type Ref } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "./gsapMotion";
+import { gsap, killMotion } from "./gsapMotion";
 import { getMotionConfig, isMotionFeatureEnabled, motionPressSqueezeTotal } from "./motionConfig";
 import { resolveAdaptiveHoverLiftScale, resolveAdaptivePressSqueezeScale, shouldSkipInteractiveHoverLift } from "./hoverInteractiveLift";
 import { prefersReducedMotion } from "./reducedMotion";
@@ -270,21 +270,21 @@ export function animateGlossInteractiveHoverLift(
     ? (liftScale !== undefined ? liftScale : resolveAdaptiveHoverLiftScale(element))
     : 1;
 
-  setWillChangeTransform(element, true);
+  // 2D transform — avoid will-change / force3D layer snap on fractional control sizes.
   gsap.to(element, {
     scale: resolvedScale,
     ...glossSurfaceProps(element, state),
     duration: cfg.interactiveDuration / 1000,
     ease: cfg.hoverLiftEase,
     overwrite: "auto",
-    onComplete: clearWillChangeOnComplete(element),
+    force3D: false,
   });
 }
 
 /** Press-squeeze + press gloss-shadow; immediate return to hover/rest in one timeline. */
 export function animateGlossInteractivePressSqueeze(
   element: HTMLElement,
-  pointerInside = false,
+  pointerInside: boolean | RefObject<boolean | null> | (() => boolean) = false,
   liftScale?: number,
   onReleaseStart?: () => void,
 ): Promise<void> {
@@ -296,7 +296,11 @@ export function animateGlossInteractivePressSqueeze(
   if (!isMotionFeatureEnabled("enablePressSqueeze")) {
     onReleaseStart?.();
     if (!shouldSkipInteractiveHoverLift()) {
-      animateGlossInteractiveHoverLift(element, pointerInside, liftScale);
+      animateGlossInteractiveHoverLift(
+        element,
+        resolveGlossPointerInside(pointerInside),
+        liftScale,
+      );
     }
     return Promise.resolve();
   }
@@ -307,42 +311,54 @@ export function animateGlossInteractivePressSqueeze(
   // Intentional timeline split (not in motionConfig): press-in 30%; release = full total.
   // See SETUP.md «Intentional motion constants».
   const pressIn = total * 0.3;
-  const releaseOut = total * 1;
 
   const canHoverLift = !shouldSkipInteractiveHoverLift();
-  const releaseToHover = pointerInside && canHoverLift;
-  const releaseState = releaseToHover ? "hover" : "rest";
-  const releaseScale = releaseToHover
-    ? (liftScale !== undefined ? liftScale : resolveAdaptiveHoverLiftScale(element))
-    : 1;
 
   return new Promise<void>((resolve) => {
-    setWillChangeTransform(element, true);
-    gsap
-      .timeline({
-        onComplete: () => {
-          setWillChangeTransform(element, false);
-          resolve();
-        },
-      })
-      .to(element, {
-        ...glossSurfaceProps(element, "press"),
-        scale: squeeze,
-        duration: pressIn,
-        ease: "power1.out",
-        overwrite: "auto",
-      })
-      .add(() => {
-        onReleaseStart?.();
-      })
-      .to(element, {
+    const tl = gsap.timeline({
+      onComplete: () => {
+        resolve();
+      },
+    });
+    tl.to(element, {
+      ...glossSurfaceProps(element, "press"),
+      scale: squeeze,
+      duration: pressIn,
+      ease: "power1.out",
+      overwrite: "auto",
+      force3D: false,
+    }).add(() => {
+      // Re-read pointerInside: leave-during-press must not restore hover gloss/scale.
+      const releaseToHover =
+        resolveGlossPointerInside(pointerInside) && canHoverLift;
+      const releaseState = releaseToHover ? "hover" : "rest";
+      const releaseScale = releaseToHover
+        ? liftScale !== undefined
+          ? liftScale
+          : resolveAdaptiveHoverLiftScale(element)
+        : 1;
+      const releaseOut = total * 1;
+      onReleaseStart?.();
+      tl.to(element, {
         ...glossSurfaceProps(element, releaseState),
+        force3D: false,
         scale: releaseScale,
         duration: releaseOut,
         ease: cfg.hoverLiftEase,
         overwrite: "auto",
       });
+    });
   });
+}
+
+function resolveGlossPointerInside(
+  value: boolean | RefObject<boolean | null> | (() => boolean),
+): boolean {
+  if (typeof value === "function") return Boolean(value());
+  if (typeof value === "object" && value !== null && "current" in value) {
+    return Boolean(value.current);
+  }
+  return Boolean(value);
 }
 
 export function useGlossInteractiveHandlers(

@@ -177,7 +177,7 @@ import "./burne-theme-overrides.css";
 }
 ```
 
-Theme config / playground (`tokens.space` и т.п.) через `applyThemeTokens` пишут scaled `clamp` и тени с `calc(… * var(--shadow-size))` — оверрайды не ломают fluid. Ручной fixed rem в CSS — да, отключает. Инлайн ставятся **только** токены ≠ дефолтам кита, поэтому CSS-файл оверрайдов может точечно править остальное.
+Theme config / playground (`tokens.space` и т.п.) через `applyThemeTokens` пишут scaled `clamp` и shadow-knobs (`--shadow-opacity|blur|spread|offset-x|y`) — оверрайды не ломают fluid. Ручной fixed rem в CSS — да, отключает. Инлайн ставятся **только** токены ≠ дефолтам кита, поэтому CSS-файл оверрайдов может точечно править остальное.
 
 Переменные наследуются по дереву DOM — при необходимости задайте их на обёртке виджета вместо `html`.
 

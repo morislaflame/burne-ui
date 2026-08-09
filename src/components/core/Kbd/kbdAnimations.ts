@@ -17,15 +17,17 @@ export function useKbdAnimations({
 }: UseKbdAnimationsProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const isGloss = variant === "gloss";
-  const liftEnabled = hoverLift;
 
   const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, liftEnabled && isGloss),
-    [isGloss, liftEnabled],
+    () => createGlossInteractiveRefCallback(rootRef, hoverLift && isGloss),
+    [isGloss, hoverLift],
   );
 
-  const glossHandlers = useGlossInteractiveHandlers(rootRef, liftEnabled && isGloss);
-  const shadow = useSecondLevelShadow(rootRef, liftEnabled && !isGloss);
+  const glossHandlers = useGlossInteractiveHandlers(rootRef, hoverLift && isGloss);
+  // Rest elevation always on (non-gloss); hoverLift only toggles interactive motion.
+  const shadow = useSecondLevelShadow(rootRef, !isGloss, {
+    interactive: hoverLift,
+  });
 
   const setMergedRef = useCallback(
     (node: HTMLElement | null) => {
@@ -40,34 +42,33 @@ export function useKbdAnimations({
     () => ({
       onPointerOver: (e: React.PointerEvent<HTMLElement>) => {
         onPointerOverProp?.(e);
-        if (!liftEnabled || e.defaultPrevented) return;
+        if (!hoverLift || e.defaultPrevented) return;
         if (isGloss) glossHandlers.onPointerOver(e);
-        else shadow.onPointerEnter(e);
+        else shadow.onPointerOver(e);
       },
       onPointerOut: (e: React.PointerEvent<HTMLElement>) => {
         onPointerOutProp?.(e);
-        if (!liftEnabled) return;
+        if (!hoverLift) return;
         if (isGloss) glossHandlers.onPointerOut(e);
-        else shadow.onPointerLeave(e);
+        else shadow.onPointerOut(e);
       },
     }),
     [
       glossHandlers.onPointerOut,
       glossHandlers.onPointerOver,
+      hoverLift,
       isGloss,
-      liftEnabled,
       onPointerOutProp,
       onPointerOverProp,
-      shadow.onPointerEnter,
-      shadow.onPointerLeave,
+      shadow.onPointerOut,
+      shadow.onPointerOver,
     ],
   );
 
-  const motionClass =
-    liftEnabled && !isGloss ? shadow.motionClass : "";
+  const motionClass = !isGloss ? shadow.motionClass : "";
 
   const glossMotionClass =
-    liftEnabled && isGloss ? GLOSS_INTERACTIVE_MOTION_CLASS : "";
+    hoverLift && isGloss ? GLOSS_INTERACTIVE_MOTION_CLASS : "";
 
   return {
     setMergedRef,

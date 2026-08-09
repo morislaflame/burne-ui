@@ -13,7 +13,7 @@ import { Surface, type SurfaceProps, type SurfaceVariant, type SurfaceShadow, ty
 ### Базовое использование
 
 ```tsx
-<Surface variant="default" shadow="md" padding="mid" radius="mid">
+<Surface variant="default" shadow="mid" padding="mid" radius="mid">
   <Text variant="base">Контент панели</Text>
 </Surface>
 
@@ -29,7 +29,7 @@ Compound API нет.
 | Prop | По умолчанию | Описание |
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `secondary` \| `tertiary` \| `gloss` |
-| `shadow` | `none` | `none` \| `sm` \| `md` \| `lg` |
+| `shadow` | `none` | `none` \| `small` \| `base` \| `mid` \| `large` |
 | `padding` | `none` | `none` \| `small` \| `base` \| `mid` \| `large` |
 | `radius` | `mid` | `base` \| `mid` \| `large` |
 | `className` | — | Дополнительные классы |
@@ -50,7 +50,7 @@ Compound API нет.
 
 ### Shadow
 
-`shadow-token-sm` / `md` / `lg` или пусто при `none`.
+`shadow-token-small` / `base` / `mid` / `large` или пусто при `none`.
 
 ### Padding
 
@@ -104,7 +104,7 @@ Compound API нет.
 
 Чистый CSS через props — **не анимируются** при смене prop (instant re-render).
 
-`shadow="sm"|"md"|"lg"` → `shadow-token-*` классы.
+`shadow="small"|"base"|"mid"|"large"` → `shadow-token-*` классы.
 
 ### Чего нет
 
@@ -133,7 +133,7 @@ Compound API нет.
 | `variant="secondary"` | `bg-secondary` |
 | `variant="tertiary"` | `bg-tertiary` |
 | `variant="gloss"` | `gloss-panel` + inner `gloss-content` |
-| `shadow="sm"` | `shadow-token-sm` |
+| `shadow="small"` | `shadow-token-small` |
 | `padding="mid"` | `p-mid` |
 | `padding="large"` | `p-large` |
 | `radius="mid"` | `rounded-mid` |
@@ -154,7 +154,7 @@ Compound API нет.
 ### Базовые панели
 
 ```tsx
-<Surface variant="default" shadow="md" padding="mid" radius="mid" className="w-full max-w-sm">
+<Surface variant="default" shadow="mid" padding="mid" radius="mid" className="w-full max-w-sm">
   <Text variant="base">Контент панели</Text>
 </Surface>
 
@@ -166,7 +166,7 @@ Compound API нет.
 ### Вложенные surface (nested panels)
 
 ```tsx
-<Surface padding="mid" shadow="sm" className="max-w-sm">
+<Surface padding="mid" shadow="small" className="max-w-sm">
   <Text variant="base" className="font-medium">Outer</Text>
   <Surface variant="tertiary" padding="small" radius="base" className="mt-small">
     <Text variant="small" className="text-muted">Inner panel</Text>
@@ -179,7 +179,7 @@ Compound API нет.
 Hover на **children**, не на Surface root:
 
 ```tsx
-<Surface variant="default" shadow="md" padding="small" className="w-64">
+<Surface variant="default" shadow="mid" padding="small" className="w-64">
   <ul className="m-0 flex list-none flex-col gap-xsmall p-0">
     {items.map((item) => (
       <li key={item.id}>

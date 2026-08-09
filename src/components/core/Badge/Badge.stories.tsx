@@ -309,6 +309,39 @@ export const IconOnly: Story = {
   ),
 };
 
+export const CircularCounts: Story = {
+  name: "Circular — digit / icon",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Single digit `0`–`9` and icon-only badges use fixed `--chip-size-*` (equal width/height). Multi-digit counts stay pill-shaped.",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col items-center gap-2xlarge py-large">
+      <div className="flex flex-wrap items-center gap-large">
+        {(["small", "base", "mid", "large"] as const).map((size) => (
+          <Badge key={size} size={size} status="danger" variant="primary">
+            3
+          </Badge>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center gap-large">
+        <Badge status="info" variant="primary">
+          9
+        </Badge>
+        <Badge status="info" variant="primary">
+          12
+        </Badge>
+        <Badge status="success" icon={<IoCheckmarkCircleOutline aria-hidden />} aria-label="Done" />
+        <Badge status="warning">New</Badge>
+      </div>
+    </div>
+  ),
+};
+
 function DotsVariantsDemo() {
   return (
     <div className="flex flex-col gap-large py-large">

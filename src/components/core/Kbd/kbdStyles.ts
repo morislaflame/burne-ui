@@ -6,22 +6,25 @@ import type { KbdSize, KbdVariant } from "./kbdTypes";
 export const KBD_VARIANT_SURFACE: Record<Exclude<KbdVariant, "gloss">, string> = {
   default: "bg-surface border-token text-foreground",
   primary: "bg-primary border border-transparent text-primary-foreground",
-  outline: "bg-transparent border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary border-token text-secondary-foreground",
 };
 
 export const KBD_TEXT_VARIANT: Record<KbdSize, TextVariant> = {
   small: "xsmall",
-  base: "xsmall",
-  mid: "small",
-  large: "base",
+  base: "small",
+  mid: "base",
+  large: "mid",
 };
 
+/** Same tight line-box as Badge / panel titles (`leading-none`). */
+export const KBD_TEXT_CLASS = "leading-none";
+
 export const KBD_LAYOUT: Record<KbdSize, string> = {
-  small: "min-h-4 px-xsmall py-0.5",
-  base: "min-h-4 px-small py-xsmall",
-  mid: "min-h-5 px-base py-xsmall",
-  large: "min-h-5 px-base py-xsmall",
+  small: "px-[length:var(--chip-px-small)] py-[length:var(--chip-py-small)]",
+  base: "px-[length:var(--chip-px-base)] py-[length:var(--chip-py-base)]",
+  mid: "px-[length:var(--chip-px-mid)] py-[length:var(--chip-py-mid)]",
+  large: "px-[length:var(--chip-px-large)] py-[length:var(--chip-py-large)]",
 };
 
 export const KBD_ROOT_BASE_CLASS =
@@ -29,7 +32,7 @@ export const KBD_ROOT_BASE_CLASS =
 
 export const KBD_GROUP_BASE_CLASS = "inline-flex items-center gap-xsmall";
 
-export const KBD_GROUP_SEPARATOR_CLASS = "select-none text-muted text-xsmall";
+export const KBD_GROUP_SEPARATOR_CLASS = "select-none text-muted text-xsmall leading-none";
 
 export function kbdSurfaceClass(variant: KbdVariant): string {
   if (variant === "gloss") {

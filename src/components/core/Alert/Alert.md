@@ -1,6 +1,6 @@
 # Alert
 
-Баннер уведомления с семантическими статусами, grid-компоновкой и hover-lift (компонент **второго уровня** — тень в покое и усиление при наведении). Simple и compound API.
+Баннер уведомления с семантическими статусами, grid-компоновкой и hover-lift (компонент **второго уровня** — тень в покое и усиление **в том же размере** при наведении). Simple и compound API.
 
 ## Импорт
 
@@ -22,7 +22,8 @@ import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, t
 | `description` | `ReactNode` | — | Simple API |
 | `icon` | `ReactNode` \| `null` | auto | Simple: иконка; `null` скрывает индикатор |
 | `action` | `ReactNode` | — | Simple: слот справа |
-| `hoverLift` | `boolean` | `true` | Тень sm→md и lift при hover |
+| `hoverLift` | `boolean` | `true` | Hover lift + stronger shadow in семье `shadow`; rest elevation остаётся |
+| `shadow` | `small` \| `base` \| `mid` \| `large` | `base` | Размер тени покоя; hover — `--shadow-{size}-hover` |
 | `className` | `string` | — | Доп. классы на root |
 | `classNames` | `AlertClassNames` | — | Слоты подчастей |
 
@@ -82,7 +83,7 @@ Compound включается автоматически при наличии �
 | variant | default status | status ≠ default |
 |---------|----------------|------------------|
 | `default` | `bg-surface border-token` | тот же surface; status на индикаторе и title |
-| `outline` | прозрачный + `border-token` | тот же surface; status на индикаторе и title |
+| `outline` | прозрачный + `border-token-outline` | тот же surface; status на индикаторе и title |
 | `secondary` | `bg-secondary` | тот же surface; status на индикаторе и title |
 | `gloss` | `gloss-panel border-0` | тот же surface; status на индикаторе и title |
 
@@ -98,7 +99,7 @@ Compound включается автоматически при наличии �
 
 ## Анимации
 
-Компонент **2-го уровня** — тень в покое (`sm`), усиление при hover (`md`). Логика: `alertAnimations.ts` → `useSecondLevelShadow` или gloss-handlers.
+Компонент **2-го уровня** — тень в покое по `shadow` (default `base`), усиление при hover в той же семье (`--shadow-{size}-hover`). Логика: `alertAnimations.ts` → `useSecondLevelShadow` или gloss-handlers.
 
 **DOM-структура:**
 
@@ -107,25 +108,25 @@ Compound включается автоматически при наличии �
   grid: indicator | title | description | action
 ```
 
-Нет collapse, portal, ripple. Только hover lift на корне.
+Нет collapse, portal, ripple. Только hover lift на корне (press squeeze нет — Alert не pressable).
 
 ### 1. Hover lift — default / outline / secondary (`hoverLift={true}`)
 
-`useSecondLevelShadow(rootRef, liftEnabled && !isGloss)`:
+`useSecondLevelShadow(rootRef, !isGloss, { shadowSize: shadow, interactive: hoverLift })`:
 
-**Init (mount):** `initElementShadow(el, shadowSm())` — покой `--el-shadow: var(--shadow-sm)`.
+**Init (mount):** `initElementShadow(el, var(--shadow-{shadow}))` — покой всегда (независимо от `hoverLift`).
 
-**Pointer enter:**
+**Pointer enter** (только при `hoverLift`):
 
-1. `animateInteractiveHoverLift(el, true, undefined, secondLevelShadow())`
+1. `animateInteractiveHoverLift(el, true, undefined, shadowMotionFor(shadow))`
 2. Scale: адаптивный подъём (~1.8px cap, `hoverLiftScale`)
-3. Тень: `idle sm` → `hover md` через CSS-переменную `--el-shadow`
+3. Тень: rest → `--shadow-{size}-hover` (та же семья, не переход base→mid)
 
-**Pointer leave:** обратно к `sm`, scale `1`.
+**Pointer leave:** обратно к rest, scale `1`.
 
-Класс на root: `animate-shadow origin-center` (`SHADOW_LIFT_MOTION_CLASS`). `will-change` ставится динамически на время GSAP-твина.
+Класс на root: `animate-shadow origin-center` (`SHADOW_LIFT_MOTION_CLASS`) — пока elevation включена (не gloss).
 
-**Отличие от Button (1-й уровень):** Alert **всегда** имеет тень в покое; Button — только при hover.
+**Отличие от Button (1-й уровень):** Alert **всегда** имеет тень в покое; Button — `none` → `--shadow-lift` при hover.
 
 #### Кастомизация hover lift
 
@@ -140,23 +141,23 @@ configureMotion({
 });
 ```
 
-**Локально:** `hoverLift={false}` — без handlers и без `motionClass`.
+**Локально:** `hoverLift={false}` — без handlers и scale; rest shadow и `animate-shadow` остаются.
 
-**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень остаётся `sm`, без scale.
+**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень остаётся на rest, без scale.
 
 ### 2. Gloss variant (`variant="gloss"`)
 
 Вместо `useSecondLevelShadow`:
 
-- `createGlossInteractiveRefCallback(rootRef, liftEnabled && isGloss)`
+- `createGlossInteractiveRefCallback(rootRef, hoverLift && isGloss)`
 - `useGlossInteractiveHandlers` на `onPointerOver` / `onPointerOut`
 - Класс: `GLOSS_INTERACTIVE_MOTION_CLASS` + `glossInteractive.css`
 
-Gloss lift — отдельная кривая (`glossInteractiveMotion`), не sm→md shadow.
+Gloss lift — отдельная кривая (`glossInteractiveMotion`), не token shadow families.
 
 ### 3. Чего нет
 
-- Press squeeze при клике (Alert не pressable)
+- Press squeeze при клике (Alert не pressable; `--shadow-*-press` не используется)
 - Enter/leave при монтировании
 - Ripple (можно добавить вручную как child + `relative overflow-hidden`)
 
@@ -164,9 +165,9 @@ Gloss lift — отдельная кривая (`glossInteractiveMotion`), не 
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Shadow sm→md + lift | `useSecondLevelShadow` | `hoverLiftScale`, `enableHoverLift`, `interactiveDuration` | `hoverLift` |
+| Shadow rest→hover + lift | `useSecondLevelShadow` + `shadow` | `hoverLiftScale`, `enableHoverLift`, `interactiveDuration` | `hoverLift`, `shadow` |
 | Gloss hover | `useGlossInteractiveHandlers` | interactive-токены | `variant="gloss"` |
-| Постоянная тень покоя | `initElementShadow` + `shadowSm()` | — | всегда при `hoverLift` |
+| Тень покоя | `initElementShadow` + `--shadow-{shadow}` | — | всегда (non-gloss) |
 
 ## Grid-layout
 
@@ -185,8 +186,8 @@ Surface всегда по `variant` (как у `AlertDialog`). Status краси
 
 ### Тени
 
-- Покой: `shadow-token-sm` (через `--el-shadow`)
-- Hover: `shadow-token-md`
+- Покой: `--shadow-{shadow}` через `--el-shadow` (default `base`)
+- Hover: `--shadow-{shadow}-hover` (та же семья)
 - Класс motion: `animate-shadow origin-center` (+ динамический `will-change` на время твина)
 
 ### Индикатор
@@ -267,7 +268,7 @@ Surface всегда по `variant` (как у `AlertDialog`). Status краси
 ### Практические заметки
 
 - **Ripple:** для press-эффекта оберните root в `relative overflow-hidden` и добавьте `<Ripple />` первым ребёнком (см. Ripple stories).
-- **2-й уровень:** постоянная тень `shadow-token-md`; `hoverLift` усиливает до `md` при hover.
+- **2-й уровень:** тень покоя по `shadow` (default `base`); `hoverLift` усиливает до `--shadow-{size}-hover`. `hoverLift={false}` сохраняет rest elevation.
 - **Порядок мержа:** базовые стили → `classNames.slot` → `className` подчасти.
 
 ## Доступность

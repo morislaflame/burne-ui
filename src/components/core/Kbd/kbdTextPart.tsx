@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 import { useKbdClassNames } from "./kbdContext";
-import { KBD_TEXT_VARIANT } from "./kbdStyles";
+import { KBD_TEXT_CLASS, KBD_TEXT_VARIANT } from "./kbdStyles";
 import type { KbdSize } from "./kbdTypes";
 
 export function KbdText({
@@ -23,7 +23,7 @@ export function KbdText({
       as="span"
       variant={KBD_TEXT_VARIANT[size]}
       inheritColor
-      className={cn(slotClassNames.text, className)}
+      className={cn(KBD_TEXT_CLASS, slotClassNames.text, className)}
     >
       {children}
     </Text>

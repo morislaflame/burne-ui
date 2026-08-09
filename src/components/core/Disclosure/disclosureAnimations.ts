@@ -72,7 +72,7 @@ export function useDisclosureTriggerMotion({
         const el = titleLiftRef.current;
         if (el && !prefersReducedMotion()) {
           void animateInteractivePressSqueeze(el, {
-            pointerInside: hoverInsideRef.current,
+            pointerInside: hoverInsideRef,
           });
         }
         setOpen(!open);
@@ -111,7 +111,7 @@ export function useDisclosureTriggerMotion({
       const el = titleLiftRef.current;
       if (!el || prefersReducedMotion()) return;
       void animateInteractivePressSqueeze(el, {
-        pointerInside: hoverInsideRef.current,
+        pointerInside: hoverInsideRef,
       });
     },
     [disabled, onPointerDown],

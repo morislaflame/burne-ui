@@ -15,19 +15,21 @@
  * - fill animation (ToggleButton)
  */
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import type { ForwardedRef, KeyboardEvent, PointerEvent } from "react";
 
-import { killMotion } from "./gsapMotion";
+import { gsap, killMotion } from "./gsapMotion";
 import { animateGlossInteractiveHoverLift, animateGlossInteractivePressSqueeze, createGlossInteractiveRefCallback } from "./glossInteractiveMotion";
 import {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
+  initElementShadow,
   isInteractivePressKey,
+  shadowNone,
   shouldSkipInteractiveHoverLift,
 } from "./hoverInteractiveLift";
 import { prefersReducedMotion } from "./reducedMotion";
-import { firstLevelHoverShadow } from "./useShadowMotion";
+import { shadowMotionFor } from "./useShadowMotion";
 import { mergeForwardedRef } from "./mergeRefs";
 
 export type UseFirstLevelInteractiveMotionProps = {
@@ -38,7 +40,7 @@ export type UseFirstLevelInteractiveMotionProps = {
    */
   enabled: boolean;
   /**
-   * Whether this variant shows a hover shadow (`firstLevelHoverShadow`).
+   * Whether this variant shows a hover shadow (`shadowMotionFor("none")` → `--shadow-lift`).
    * `false` for ghost/gloss or any variant without hover shadow.
    */
   hasHoverShadow: boolean;
@@ -93,6 +95,21 @@ export function useFirstLevelInteractiveMotion({
     [useContentRef],
   );
 
+  const btnShadow = useMemo(
+    () => (hasHoverShadow && !isGloss ? shadowMotionFor("none") : undefined),
+    [hasHoverShadow, isGloss],
+  );
+
+  /**
+   * Level 1 idle = `--shadow-none` with a concrete GSAP from-value (same as
+   * `useSecondLevelShadow` + `initElementShadow` for base). Skip when motion
+   * targets the segmented content span (no root shadow tween).
+   */
+  useLayoutEffect(() => {
+    if (!enabled || !btnShadow || useContentRef) return;
+    initElementShadow(btnRef.current, shadowNone());
+  }, [btnShadow, enabled, useContentRef]);
+
   useEffect(() => {
     if (enabled) return;
     const el = btnRef.current;
@@ -101,17 +118,14 @@ export function useFirstLevelInteractiveMotion({
     if (el) {
       killMotion(el);
       el.style.removeProperty("--el-shadow");
+      el.style.removeProperty("box-shadow");
+      gsap.set(el, { clearProps: "boxShadow,scale,transform" });
     }
     if (content) {
       killMotion(content);
       content.style.transform = "";
     }
   }, [enabled]);
-
-  const btnShadow = useMemo(
-    () => (hasHoverShadow && !isGloss ? firstLevelHoverShadow() : undefined),
-    [hasHoverShadow, isGloss],
-  );
 
   const runPressSqueeze = useCallback(() => {
     if (prefersReducedMotion()) return;
@@ -121,7 +135,7 @@ export function useFirstLevelInteractiveMotion({
     if (isGloss && !useContentRef) {
       void animateGlossInteractivePressSqueeze(
         el,
-        hoverPointerInsideRef.current,
+        hoverPointerInsideRef,
         undefined,
         onPressReleaseStart,
       );
@@ -129,7 +143,7 @@ export function useFirstLevelInteractiveMotion({
     }
 
     void animateInteractivePressSqueeze(el, {
-      pointerInside: hoverPointerInsideRef.current,
+      pointerInside: hoverPointerInsideRef,
       shadow: useContentRef ? undefined : btnShadow,
       onReleaseStart: onPressReleaseStart,
     });

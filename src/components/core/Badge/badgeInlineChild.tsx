@@ -4,7 +4,7 @@ import { Text } from "@/components/core/Text";
 
 import { ensureDecorativeIcon } from "./badgeA11y";
 import { readBadgeInlineIconPosition } from "./badgeInlineIcon";
-import { badgeIconSlotClass, BADGE_TEXT_VARIANT } from "./badgeStyles";
+import { badgeIconSlotClass, BADGE_TEXT_CLASS, BADGE_TEXT_VARIANT } from "./badgeStyles";
 import type { BadgeInlineChildProps } from "./badgeTypes";
 
 export function BadgeInlineChild({ node, size }: BadgeInlineChildProps) {
@@ -14,7 +14,7 @@ export function BadgeInlineChild({ node, size }: BadgeInlineChildProps) {
     const trimmed = node.trim();
     if (!trimmed) return null;
     return (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor>
+      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
         {node}
       </Text>
     );
@@ -22,7 +22,7 @@ export function BadgeInlineChild({ node, size }: BadgeInlineChildProps) {
 
   if (typeof node === "number") {
     return (
-      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor>
+      <Text as="span" variant={BADGE_TEXT_VARIANT[size]} inheritColor className={BADGE_TEXT_CLASS}>
         {node}
       </Text>
     );

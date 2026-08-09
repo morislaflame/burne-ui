@@ -22,7 +22,7 @@ type VariantVisual = {
 export const INTERACTIVE_VARIANT_ROOT: Record<ButtonVariant, string> = {
   default: "bg-surface text-foreground border-token",
   primary: "bg-primary text-primary-foreground border border-transparent",
-  outline: "bg-transparent border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary text-secondary-foreground border border-token",
   ghost: "bg-transparent text-foreground border border-transparent",
   gloss: "",

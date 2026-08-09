@@ -63,7 +63,7 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 |---------|-------------|
 | `default` | `bg-surface border-token text-foreground` |
 | `primary` | `bg-primary border-transparent text-primary-foreground` |
-| `outline` | `bg-transparent border-token` |
+| `outline` | `bg-transparent border-token-outline` |
 | `secondary` | `bg-secondary border-token text-secondary-foreground` |
 | `gloss` | `gloss-panel gloss-deep border-0` |
 
@@ -71,12 +71,16 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 ## Размеры
 
-| size | layout (`KBD_LAYOUT`) | Text variant |
-|------|------------------------|--------------|
-| `small` | `min-h-4 px-xsmall py-0.5` | `xsmall` |
-| `base` | `min-h-4 px-small py-xsmall` | `xsmall` |
-| `mid` | `min-h-5 px-base py-xsmall` | `small` |
-| `large` | `min-h-5 px-base py-xsmall` | `small` |
+| size | Chip pad (`--chip-px/py-*`) | Text variant |
+|------|----------------------------|--------------|
+| `small` | `--chip-*-small` | `xsmall` |
+| `base` | `--chip-*-base` | `small` |
+| `mid` | `--chip-*-mid` | `base` |
+| `large` | `--chip-*-large` | `mid` |
+
+`--chip-*` — внутренние inset-токены (общие с `Badge`), не публичный API.
+
+Текст ключа (`Kbd.Text`) и separator группы — `leading-none`; размеры текста совпадают с `Badge` (`xsmall` → `mid`).
 
 Общий shell: `rounded-small font-mono inline-flex items-center justify-center`.
 
@@ -94,22 +98,22 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 ### 1. Hover lift — default / primary / outline / secondary
 
-`useSecondLevelShadow(rootRef, hoverLift && !isGloss)`:
+`useSecondLevelShadow(rootRef, !isGloss, { interactive: hoverLift })`:
 
-**Init (mount):** `initElementShadow(el, shadowSm())` — покой `--el-shadow: var(--shadow-sm)`.
+**Init (mount):** `initElementShadow(el, shadowBase())` — покой `--el-shadow: var(--shadow-base)` всегда.
 
-**Pointer enter:**
+**Pointer enter** (только при `hoverLift`):
 
-1. `animateInteractiveHoverLift(el, true, …, secondLevelShadow())`
-2. Scale ~`hoverLiftScale`, тень `sm` → `md`
+1. `animateInteractiveHoverLift(el, true, …, shadowMotionFor("base"))`
+2. Scale ~`hoverLiftScale`, тень rest → `--shadow-base-hover`
 
-**Pointer leave:** scale `1`, тень обратно `sm`.
+**Pointer leave:** scale `1`, тень обратно к rest.
 
 Класс: `SHADOW_LIFT_MOTION_CLASS` (`animate-shadow origin-center`; `will-change` — динамически на время твина).
 
-**Локально:** `hoverLift={false}` — без handlers и `motionClass`.
+**Локально:** `hoverLift={false}` — без handlers и scale; rest shadow остаётся.
 
-**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень остаётся `sm`, без scale.
+**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень остаётся на rest, без scale.
 
 #### Кастомизация
 
@@ -148,16 +152,16 @@ Group wrapper **не** анимируется. Separator — static `Text` (`ari
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Shadow sm→md + lift | `useSecondLevelShadow` | `hoverLiftScale`, `enableHoverLift`, `interactiveDuration` | `hoverLift` |
+| Shadow rest→hover + lift | `useSecondLevelShadow` | `hoverLiftScale`, `enableHoverLift`, `interactiveDuration` | `hoverLift` |
 | Gloss hover | `useGlossInteractiveHandlers` | interactive-токены | `variant="gloss"` |
-| Постоянная тень покоя | `initElementShadow` + `shadowSm()` | — | `hoverLift={true}` |
+| Постоянная тень покоя | `initElementShadow` + `shadowBase()` | — | всегда (non-gloss) |
 
 ## Токены и CSS
 
 | Класс / токен | Назначение |
 |---------------|------------|
 | `KBD_ROOT_BASE_CLASS` | `rounded-small font-mono isolate` |
-| `shadow-token-sm` / `md` | Через `--el-shadow` при hover lift |
+| `shadow-token-base` + `-hover` | Через `--el-shadow` (rest всегда; hover при lift) |
 | `gloss-panel gloss-deep` | Gloss keycap surface |
 | `KBD_GROUP_SEPARATOR_CLASS` | `text-muted text-xsmall` |
 | `motion-reduce:transition-none` | На root |

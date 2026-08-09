@@ -113,7 +113,7 @@ export type TableRowTone =
 
 export const TABLE_ROW_TONE_SURFACE: Record<TableRowTone, string> = {
   default: "bg-surface text-foreground",
-  outline: "bg-transparent border-token text-foreground",
+  outline: "bg-transparent border-token-outline text-foreground",
   secondary: "bg-secondary text-secondary-foreground",
   danger: "bg-surface-tint-danger text-foreground",
   success: "bg-surface-tint-success text-foreground",

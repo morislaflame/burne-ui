@@ -1,4 +1,4 @@
-import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
@@ -63,12 +63,12 @@ export function useSwitchTrackAnimations({
       }
 
       killMotion(thumb);
-      setWillChangeTransform(thumb, true);
       void gsap.to(thumb, {
         x: targetX,
         ...motionSwitchThumb(),
         overwrite: "auto",
-        onComplete: clearWillChangeOnComplete(thumb),
+        // 2D path — avoid will-change / force3D layer snap on fractional sizes.
+        force3D: false,
       });
     },
     [switchMotionOff, thumbRef],
@@ -164,12 +164,13 @@ export function useSwitchTrackAnimations({
           scale: 0.88,
           ...motionInteractive(),
           overwrite: "auto",
+          force3D: false,
         });
       } else {
         void gsap.fromTo(
           iconOffRef.current,
           { autoAlpha: 0, scale: 0.88 },
-          { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto" },
+          { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto", force3D: false },
         );
       }
     }
@@ -179,7 +180,7 @@ export function useSwitchTrackAnimations({
         void gsap.fromTo(
           iconOnRef.current,
           { autoAlpha: 0, scale: 0.88 },
-          { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto" },
+          { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto", force3D: false },
         );
       } else {
         void gsap.to(iconOnRef.current, {
@@ -187,6 +188,7 @@ export function useSwitchTrackAnimations({
           scale: 0.88,
           ...motionInteractive(),
           overwrite: "auto",
+          force3D: false,
         });
       }
     }

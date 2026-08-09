@@ -53,7 +53,7 @@ const meta = {
   decorators: [...framedDecorator],
   argTypes: {
     variant: { control: "select", options: VARIANTS },
-    shadow: { control: "select", options: ["none", "base", "mid", "large"] },
+    shadow: { control: "select", options: ["none", "small", "base", "mid", "large"] },
     padding: { control: "select", options: ["none", "small", "base", "mid", "large"] },
     radius: { control: "select", options: ["base", "mid", "large"] },
   },

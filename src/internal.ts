@@ -36,14 +36,18 @@ export {
 export {
   animateInteractiveHoverLift,
   animateInteractivePressSqueeze,
+  buildTokenBoxShadow,
   isInteractivePressKey,
   initElementShadow,
   readShadowSize,
   readShadowVar,
+  resolveConcreteBoxShadow,
   shadowCssVar,
   shadowLarge,
+  shadowLift,
   shadowMid,
   shadowNone,
+  shadowSmall,
   shadowBase,
   shouldSkipInteractiveHoverLift,
   useInteractiveHoverLiftContainerHandlers,
@@ -69,6 +73,7 @@ export {
   SHADOW_LIFT_MOTION_CLASS,
   firstLevelHoverShadow,
   secondLevelShadow,
+  shadowMotionFor,
   usePersistentElShadow,
   useSecondLevelShadow,
   useSecondLevelShadowContainer,
@@ -80,9 +85,11 @@ export {
   applyMotionCssTokens,
 } from "@/components/core/utils/motionConfig";
 export {
+  SHADOW_INTERACTION_GEOM,
+  SHADOW_KNOB_CSS_DEFAULTS,
   SHADOW_LAYER_GEOM,
+  SHADOW_LIFT_CSS_VAR,
   SHADOW_OPACITY_BASE,
-  SHADOW_SIZE_CSS_DEFAULT,
 } from "@/tokens/shadows";
 
 export {
@@ -94,6 +101,8 @@ export {
   patchThemeColor,
   exportThemeCss,
   fluidScaleRem,
+  resolveBorderTokenCss,
+  OUTLINE_BORDER_WIDTH_MIN_PX,
   COLOR_CSS_VAR,
   DEFAULT_FONT,
   DEFAULT_FONT_MONO,
@@ -111,6 +120,7 @@ export {
   type ThemeStatusForegroundKey,
   type ThemeStatusForegrounds,
   type ThemeTokenState,
+  type ResolvedBorderTokenCss,
   DARK_COLORS,
   LIGHT_COLORS,
   applyBurneThemeConfig,

@@ -6,6 +6,7 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 
+import type { ShadowLevel } from "@/tokens/shadows";
 import type { CardSize } from "./cardStyles";
 
 export type { CardSize } from "./cardStyles";
@@ -35,6 +36,11 @@ export type CardProps = Omit<
   variant?: CardVariant;
   /** Radius, padding and title/description type scale. @default "base" */
   size?: CardSize;
+  /**
+   * Rest shadow size (passive CSS or pressable `--el-shadow` family).
+   * @default "base"
+   */
+  shadow?: ShadowLevel;
   /**
    * Interactive card: hover-lift, shadow and squeeze on press (like a button).
    * Ripple is not built-in — if needed, pass `<Ripple />` as the first child and wrap the rest of the content in a layer with `relative z-[1]`.
@@ -75,6 +81,7 @@ export type UseCardRootStateProps = Pick<
 export type UseCardAnimationsProps = {
   pressable: boolean;
   isGloss: boolean;
+  shadow?: ShadowLevel;
   onPress?: (event: CardPressEvent) => void;
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];

@@ -28,7 +28,7 @@ export type ColorPresetKey =
 
 export type ColorPresetSlice = {
   colors: ThemeColors;
-  shadowStrength?: number;
+  shadowOpacity?: number;
 };
 
 export type ColorPresetDefinition = Record<ThemeMode, ColorPresetSlice>;
@@ -40,8 +40,8 @@ function def(dark: ColorPresetSlice, light: ColorPresetSlice): ColorPresetDefini
 export const COLOR_PRESET_DEFINITIONS: Record<ColorPresetKey, ColorPresetDefinition> = {
   default: def({ colors: DARK_COLORS }, { colors: LIGHT_COLORS }),
   contrast: def(
-    { colors: CONTRAST_DARK_COLORS, shadowStrength: 1.25 },
-    { colors: CONTRAST_LIGHT_COLORS, shadowStrength: 1.25 },
+    { colors: CONTRAST_DARK_COLORS, shadowOpacity: 1.25 },
+    { colors: CONTRAST_LIGHT_COLORS, shadowOpacity: 1.25 },
   ),
   ocean: def({ colors: OCEAN_DARK_COLORS }, { colors: OCEAN_LIGHT_COLORS }),
   violet: def({ colors: VIOLET_DARK_COLORS }, { colors: VIOLET_LIGHT_COLORS }),
@@ -83,14 +83,15 @@ export function applyColorPresetToState(
     ...base,
     theme: prev.theme,
     colorPreset: preset,
+    themePreset: null,
     modePalettes: {
       dark: { ...dark.colors },
       light: { ...light.colors },
     },
-    ...(activeSlice.shadowStrength !== undefined ? { shadowStrength: activeSlice.shadowStrength } : {}),
+    ...(activeSlice.shadowOpacity !== undefined ? { shadowOpacity: activeSlice.shadowOpacity } : {}),
   };
 
-  return { ...activateThemeModePalette(next, prev.theme), colorPreset: preset };
+  return { ...activateThemeModePalette(next, prev.theme), colorPreset: preset, themePreset: null };
 }
 
 export function applyThemeModeToState(prev: ThemeEditorState, theme: ThemeMode): ThemeEditorState {
@@ -110,12 +111,17 @@ export function applyThemeModeToState(prev: ThemeEditorState, theme: ThemeMode):
       theme,
     );
     return {
-      ...(slice.shadowStrength !== undefined
-        ? { ...next, shadowStrength: slice.shadowStrength }
+      ...(slice.shadowOpacity !== undefined
+        ? { ...next, shadowOpacity: slice.shadowOpacity }
         : next),
       colorPreset: prev.colorPreset,
+      themePreset: prev.themePreset,
     };
   }
 
-  return { ...activateThemeModePalette(state, theme), colorPreset: prev.colorPreset };
+  return {
+    ...activateThemeModePalette(state, theme),
+    colorPreset: prev.colorPreset,
+    themePreset: prev.themePreset,
+  };
 }

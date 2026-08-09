@@ -4,11 +4,6 @@ import {
   MOTION_CONFIG_DEFAULTS,
 } from "@/components/core/utils/motionConfig";
 import { FONT_WEIGHT_CSS_VAR, FONT_WEIGHT_DEFAULTS, type FontWeightStep } from "@/tokens/fontWeights";
-import {
-  SHADOW_LAYER_GEOM,
-  SHADOW_OPACITY_BASE,
-  type ShadowLevel,
-} from "@/tokens/shadows";
 import { TEXT_SCALE_BASES, type TextScaleStep } from "@/tokens/textScale";
 import tokenPrimitives from "@/tokens/tokenPrimitives.json" with { type: "json" };
 
@@ -62,6 +57,8 @@ export type ThemeColorKey =
   | "tertiary"
   | "tertiaryForeground"
   | "border"
+  | "shadow"
+  | "shadowSecondary"
   | "foreground"
   | "muted"
   | "mutedForeground"
@@ -100,12 +97,21 @@ export type ThemeTokenState = {
   /** Keyboard focus ring outline offset (`--focus-ring-offset`), px. */
   focusRingOffset: number;
   textScale: number;
+  /** Global letter-spacing in em (`--letter-spacing`). @default 0 */
+  letterSpacing: number;
   fontFamily: string;
   fontFamilyMono: string;
   fontWeights: ThemeFontWeights;
-  shadowStrength: number;
-  /** Factor blur/offset shadows (`--shadow-size`). */
-  shadowSize: number;
+  /** Opacity multiplier for `--shadow-small|base|mid|large` (`--shadow-opacity`). */
+  shadowOpacity: number;
+  /** Blur multiplier (`--shadow-blur`). */
+  shadowBlur: number;
+  /** Spread multiplier (`--shadow-spread`). */
+  shadowSpread: number;
+  /** Horizontal shadow nudge in px (`--shadow-offset-x`). */
+  shadowOffsetX: number;
+  /** Vertical shadow nudge in px (`--shadow-offset-y`). */
+  shadowOffsetY: number;
   /** Substrate size multiplier Toast (`--toast-scrim-size`). */
   toastScrimSize: number;
   /** Substrate Density Multiplier Toast (`--toast-scrim-density`). */
@@ -178,6 +184,8 @@ export const COLOR_CSS_VAR: Record<ThemeColorKey, string> = {
   tertiary: "--color-tertiary",
   tertiaryForeground: "--color-tertiary-foreground",
   border: "--color-border",
+  shadow: "--color-shadow",
+  shadowSecondary: "--color-shadow-secondary",
   foreground: "--color-foreground",
   muted: "--color-muted",
   mutedForeground: "--color-muted-foreground",
@@ -235,8 +243,12 @@ export const SCALE_DEFAULTS = {
   focusRingWidth: 2,
   focusRingOffset: 0,
   textScale: 1,
-  shadowStrength: 1,
-  shadowSize: 1,
+  letterSpacing: 0,
+  shadowOpacity: 1,
+  shadowBlur: 1,
+  shadowSpread: 1,
+  shadowOffsetX: 0,
+  shadowOffsetY: 0,
   toastScrimSize: 1,
   toastScrimDensity: 1,
 } as const;
@@ -254,8 +266,6 @@ export const DEFAULT_FONT = tokenPrimitives.fontFamilySans;
 export const DEFAULT_FONT_MONO = tokenPrimitives.fontFamilyMono;
 
 type TextScaleToken = TextScaleStep;
-
-type ShadowLevelKey = ShadowLevel;
 
 /**
  * Fluid curve for `--space` / `--size` / `--radius` in `tokens/styles.css`:
@@ -281,51 +291,41 @@ export function fluidScaleRem(maxRem: number): string {
   return `clamp(${min}rem, ${preferredRem}rem + ${preferredVw}vw, ${max}rem)`;
 }
 
-function shadowDim(value: number): string {
-  if (value === 0) return "0";
-  return `calc(${value}px * var(--shadow-size))`;
-}
-
-/** Shadow layer keeping geometry as `calc(… * var(--shadow-size))` (CSS pattern). */
-function shadowLayerCalc(
-  offsetX: number,
-  offsetY: number,
-  blur: number,
-  spread: number,
-  opacity: number,
-): string {
-  return `${shadowDim(offsetX)} ${shadowDim(offsetY)} ${shadowDim(blur)} ${shadowDim(spread)} rgb(0 0 0 / ${formatCssNumber(opacity)})`;
-}
-
-function buildShadowLevel(
-  level: ShadowLevelKey,
-  theme: ThemeMode,
-  strength: number,
-): string {
-  const opacity = SHADOW_OPACITY_BASE[theme][level] * strength;
-  const [offsetX, offsetY, blur, spread] = SHADOW_LAYER_GEOM[level][0];
-  return shadowLayerCalc(offsetX, offsetY, blur, spread, opacity);
-}
-
-function applyShadows(
+/**
+ * Write shadow knobs as CSS vars; geometry stays in stylesheet `calc(…)`.
+ * Interactive GSAP reads the used `box-shadow` from this cascade (probe) —
+ * do not duplicate opacity/geom formulas in TS motion code.
+ */
+function applyShadowKnobs(
   root: HTMLElement,
-  theme: ThemeMode,
-  strength: number,
-  size: number,
+  state: ThemeTokenState,
+  defaults: ThemeTokenState,
 ) {
-  root.style.setProperty("--shadow-size", String(size));
-  root.style.setProperty("--shadow-none", buildShadowLevel("base", theme, 0));
-  root.style.setProperty("--shadow-base", buildShadowLevel("base", theme, strength));
-  root.style.setProperty("--shadow-mid", buildShadowLevel("mid", theme, strength));
-  root.style.setProperty("--shadow-large", buildShadowLevel("large", theme, strength));
-}
-
-function clearShadows(root: HTMLElement) {
-  root.style.removeProperty("--shadow-size");
-  root.style.removeProperty("--shadow-none");
-  root.style.removeProperty("--shadow-base");
-  root.style.removeProperty("--shadow-mid");
-  root.style.removeProperty("--shadow-large");
+  setOrClearInline(
+    root,
+    "--shadow-opacity",
+    state.shadowOpacity !== defaults.shadowOpacity ? String(state.shadowOpacity) : null,
+  );
+  setOrClearInline(
+    root,
+    "--shadow-blur",
+    state.shadowBlur !== defaults.shadowBlur ? String(state.shadowBlur) : null,
+  );
+  setOrClearInline(
+    root,
+    "--shadow-spread",
+    state.shadowSpread !== defaults.shadowSpread ? String(state.shadowSpread) : null,
+  );
+  setOrClearInline(
+    root,
+    "--shadow-offset-x",
+    state.shadowOffsetX !== defaults.shadowOffsetX ? `${state.shadowOffsetX}px` : null,
+  );
+  setOrClearInline(
+    root,
+    "--shadow-offset-y",
+    state.shadowOffsetY !== defaults.shadowOffsetY ? `${state.shadowOffsetY}px` : null,
+  );
 }
 
 function applyTextScale(root: HTMLElement, textScale: number) {
@@ -364,6 +364,51 @@ function borderWidthCss(px: number): string {
   return px === 0 ? "0px" : `${px}px`;
 }
 
+/** Outline surfaces keep at least a hairline when the theme knob is 0. */
+export const OUTLINE_BORDER_WIDTH_MIN_PX = 0.5;
+
+export type ResolvedBorderTokenCss = {
+  /** `--border-width` — layout width for non-outline borders. */
+  borderWidth: string;
+  /** `--border-width-outline` — always ≥ {@link OUTLINE_BORDER_WIDTH_MIN_PX}. */
+  borderWidthOutline: string;
+  /**
+   * `--border-color` override. When the knob is 0, non-outline borders stay
+   * hairline-wide but transparent so control heights stay aligned with outline.
+   */
+  borderColor: string | null;
+};
+
+/** Map the single `borderWidth` theme knob onto the two CSS border tokens. */
+export function resolveBorderTokenCss(borderWidth: number): ResolvedBorderTokenCss {
+  const outlinePx = Math.max(borderWidth, OUTLINE_BORDER_WIDTH_MIN_PX);
+  if (borderWidth <= 0) {
+    return {
+      borderWidth: borderWidthCss(outlinePx),
+      borderWidthOutline: borderWidthCss(outlinePx),
+      borderColor: "transparent",
+    };
+  }
+  return {
+    borderWidth: borderWidthCss(borderWidth),
+    borderWidthOutline: borderWidthCss(outlinePx),
+    borderColor: null,
+  };
+}
+
+function applyBorderTokenCss(target: HTMLElement, borderWidth: number, defaultBorderWidth: number) {
+  if (borderWidth === defaultBorderWidth) {
+    setOrClearInline(target, "--border-width", null);
+    setOrClearInline(target, "--border-width-outline", null);
+    setOrClearInline(target, "--border-color", null);
+    return;
+  }
+  const resolved = resolveBorderTokenCss(borderWidth);
+  setOrClearInline(target, "--border-width", resolved.borderWidth);
+  setOrClearInline(target, "--border-width-outline", resolved.borderWidthOutline);
+  setOrClearInline(target, "--border-color", resolved.borderColor);
+}
+
 function createDefaultModePalettes(): Record<ThemeMode, ThemeColors> {
   return {
     dark: { ...DARK_COLORS },
@@ -371,17 +416,27 @@ function createDefaultModePalettes(): Record<ThemeMode, ThemeColors> {
   };
 }
 
-/** Ensure `modePalettes` exists (migration for older playground state snapshots). */
+/** Ensure `modePalettes` exists and every palette has the full color key set. */
 export function ensureModePalettes(state: ThemeTokenState): ThemeTokenState {
-  if (state.modePalettes?.dark && state.modePalettes?.light) return state;
   const defaults = createDefaultModePalettes();
-  const current: ThemeColors = { ...state.colors };
+  if (!state.modePalettes?.dark || !state.modePalettes?.light) {
+    const current: ThemeColors = { ...defaults[state.theme], ...state.colors };
+    return {
+      ...state,
+      colors: current,
+      modePalettes: {
+        dark: state.theme === "dark" ? current : { ...defaults.dark },
+        light: state.theme === "light" ? current : { ...defaults.light },
+      },
+    };
+  }
+  const dark = { ...defaults.dark, ...state.modePalettes.dark };
+  const light = { ...defaults.light, ...state.modePalettes.light };
+  const colors = { ...(state.theme === "dark" ? dark : light), ...state.colors };
   return {
     ...state,
-    modePalettes: {
-      dark: state.theme === "dark" ? current : defaults.dark,
-      light: state.theme === "light" ? current : defaults.light,
-    },
+    colors: { ...defaults[state.theme], ...colors },
+    modePalettes: { dark, light },
   };
 }
 
@@ -439,17 +494,20 @@ const INLINE_TOKEN_VARS = [
   "--size",
   "--radius",
   "--border-width",
+  "--border-width-outline",
+  "--border-color",
   "--focus-ring-width",
   "--focus-ring-offset",
   "--motion-surface-duration",
   "--font-family-sans",
   "--font-family-mono",
+  "--letter-spacing",
   ...Object.values(FONT_WEIGHT_CSS_VAR),
-  "--shadow-size",
-  "--shadow-none",
-  "--shadow-base",
-  "--shadow-mid",
-  "--shadow-large",
+  "--shadow-opacity",
+  "--shadow-blur",
+  "--shadow-spread",
+  "--shadow-offset-x",
+  "--shadow-offset-y",
   "--toast-scrim-size",
   "--toast-scrim-density",
   ...Object.keys(TEXT_SCALE_BASES).flatMap((key) => [
@@ -614,11 +672,7 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
     "--radius",
     state.radius !== defaults.radius ? fluidScaleRem(state.radius) : null,
   );
-  setOrClearInline(
-    target,
-    "--border-width",
-    state.borderWidth !== defaults.borderWidth ? borderWidthCss(state.borderWidth) : null,
-  );
+  applyBorderTokenCss(target, state.borderWidth, defaults.borderWidth);
   setOrClearInline(
     target,
     "--focus-ring-width",
@@ -643,6 +697,11 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
     "--font-family-mono",
     state.fontFamilyMono !== defaults.fontFamilyMono ? state.fontFamilyMono : null,
   );
+  setOrClearInline(
+    target,
+    "--letter-spacing",
+    state.letterSpacing !== defaults.letterSpacing ? `${state.letterSpacing}em` : null,
+  );
   applyFontWeights(target, state.fontWeights, defaults.fontWeights);
 
   applyMotionFromState(state, target);
@@ -653,14 +712,7 @@ export function applyThemeTokens(state: ThemeTokenState, root?: HTMLElement) {
     clearTextScale(target);
   }
 
-  if (
-    state.shadowStrength !== defaults.shadowStrength ||
-    state.shadowSize !== defaults.shadowSize
-  ) {
-    applyShadows(target, state.theme, state.shadowStrength, state.shadowSize);
-  } else {
-    clearShadows(target);
-  }
+  applyShadowKnobs(target, state, defaults);
 
   setOrClearInline(
     target,
@@ -699,7 +751,12 @@ export function exportThemeCss(state: ThemeTokenState): string {
     lines.push(`  --radius: ${fluidScaleRem(state.radius)};`);
   }
   if (state.borderWidth !== defaults.borderWidth) {
-    lines.push(`  --border-width: ${borderWidthCss(state.borderWidth)};`);
+    const border = resolveBorderTokenCss(state.borderWidth);
+    lines.push(`  --border-width: ${border.borderWidth};`);
+    lines.push(`  --border-width-outline: ${border.borderWidthOutline};`);
+    if (border.borderColor != null) {
+      lines.push(`  --border-color: ${border.borderColor};`);
+    }
   }
   if (state.focusRingWidth !== defaults.focusRingWidth) {
     lines.push(`  --focus-ring-width: ${borderWidthCss(state.focusRingWidth)};`);
@@ -713,6 +770,9 @@ export function exportThemeCss(state: ThemeTokenState): string {
   if (state.fontFamilyMono !== defaults.fontFamilyMono) {
     lines.push(`  --font-family-mono: ${state.fontFamilyMono};`);
   }
+  if (state.letterSpacing !== defaults.letterSpacing) {
+    lines.push(`  --letter-spacing: ${state.letterSpacing}em;`);
+  }
   for (const [key, cssVar] of Object.entries(FONT_WEIGHT_CSS_VAR) as [
     ThemeFontWeightKey,
     string,
@@ -722,21 +782,20 @@ export function exportThemeCss(state: ThemeTokenState): string {
     }
   }
 
-  if (
-    state.shadowStrength !== defaults.shadowStrength ||
-    state.shadowSize !== defaults.shadowSize
-  ) {
-    lines.push(`  --shadow-size: ${state.shadowSize};`);
-    lines.push(`  --shadow-none: ${buildShadowLevel("base", state.theme, 0)};`);
-    lines.push(
-      `  --shadow-base: ${buildShadowLevel("base", state.theme, state.shadowStrength)};`,
-    );
-    lines.push(
-      `  --shadow-mid: ${buildShadowLevel("mid", state.theme, state.shadowStrength)};`,
-    );
-    lines.push(
-      `  --shadow-large: ${buildShadowLevel("large", state.theme, state.shadowStrength)};`,
-    );
+  if (state.shadowOpacity !== defaults.shadowOpacity) {
+    lines.push(`  --shadow-opacity: ${state.shadowOpacity};`);
+  }
+  if (state.shadowBlur !== defaults.shadowBlur) {
+    lines.push(`  --shadow-blur: ${state.shadowBlur};`);
+  }
+  if (state.shadowSpread !== defaults.shadowSpread) {
+    lines.push(`  --shadow-spread: ${state.shadowSpread};`);
+  }
+  if (state.shadowOffsetX !== defaults.shadowOffsetX) {
+    lines.push(`  --shadow-offset-x: ${state.shadowOffsetX}px;`);
+  }
+  if (state.shadowOffsetY !== defaults.shadowOffsetY) {
+    lines.push(`  --shadow-offset-y: ${state.shadowOffsetY}px;`);
   }
 
   if (state.toastScrimSize !== defaults.toastScrimSize) {

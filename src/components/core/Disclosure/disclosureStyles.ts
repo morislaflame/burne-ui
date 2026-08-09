@@ -16,7 +16,7 @@ const VARIANT_ROOT: Record<DisclosureVariant, string> = {
 
 const FRAMED_PANEL: Record<DisclosureVariant, string> = {
   default: "bg-surface border-token rounded-mid text-foreground",
-  outline: "bg-transparent border-token rounded-mid text-foreground",
+  outline: "bg-transparent border-token-outline rounded-mid text-foreground",
   secondary: "bg-secondary border-token rounded-mid text-secondary-foreground",
   card: "bg-surface border-token rounded-mid text-foreground",
   ghost: "bg-transparent border-token rounded-mid text-foreground",

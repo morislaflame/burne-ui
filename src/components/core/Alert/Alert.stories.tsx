@@ -88,8 +88,14 @@ const meta = {
     },
     hoverLift: {
       control: "boolean",
-      description: "Lift and shadow on hover (like Badge).",
+      description: "Hover lift + stronger shadow; rest elevation stays when false.",
       table: { defaultValue: { summary: "true" } },
+    },
+    shadow: {
+      control: "select",
+      options: ["small", "base", "mid", "large"],
+      description: "Rest shadow size; hover stays in the same family.",
+      table: { defaultValue: { summary: "base" } },
     },
   },
 } satisfies Meta<typeof Alert>;
@@ -414,9 +420,31 @@ export const NoHoverLift: Story = {
   args: {
     status: "info",
     title: "Static alert",
-    description: "hoverLift={false} — no lift or stronger shadow on hover.",
+    description: "hoverLift={false} — rest shadow stays; no scale or stronger hover shadow.",
     hoverLift: false,
   },
+};
+
+export const ShadowSizes: Story = {
+  name: "Shadow sizes",
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div className="flex w-full max-w-md flex-col gap-mid">
+      {(["small", "base", "mid", "large"] as const).map((shadow) => (
+        <Alert key={shadow} status="info" shadow={shadow} className="w-full">
+          <Alert.Message>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>shadow={shadow}</Alert.Title>
+              <Alert.Description>
+                Hover uses --shadow-{shadow}-hover (same family).
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Message>
+        </Alert>
+      ))}
+    </div>
+  ),
 };
 
 export const CustomClassNames: Story = {

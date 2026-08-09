@@ -73,7 +73,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 | variant | Shell |
 |---------|-------|
 | `default` | `bg-surface border-token` |
-| `outline` | прозрачный + `border-token` |
+| `outline` | прозрачный + `border-token-outline` |
 | `gloss` | `gloss-control` |
 
 При `status` danger/success/info/warning — нейтральный фон и border; постоянный внешний статусный ring (геометрия `--focus-ring-*`). Affix: `bg-primary-tint`.

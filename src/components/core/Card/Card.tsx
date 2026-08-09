@@ -30,6 +30,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
     className = "",
     variant = "default",
     size = "base",
+    shadow = "base",
     pressable = false,
     classNames,
     onPress,
@@ -55,6 +56,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
   const animations = useCardAnimations({
     pressable,
     isGloss: state.isGloss,
+    shadow,
     onPress,
     onClick: onClickProp,
     onKeyDown: onKeyDownProp,
@@ -76,6 +78,7 @@ export const CardRoot = forwardRef<HTMLElement, CardProps>(function Card(
         pressable,
         animations.pressableLiftMotionClass,
         state.size,
+        shadow,
         cn(classNames?.root, className),
       );
 
