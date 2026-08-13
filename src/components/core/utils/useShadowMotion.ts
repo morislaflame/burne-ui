@@ -8,7 +8,7 @@
  * Each rest size has its own hover/press tokens (not cross-tier base→mid):
  * - Level 1 (Button): `shadowMotionFor("none")` — none → `--shadow-lift` → none
  * - Level 2 (Alert, Badge, fields): `shadowMotionFor("small"|"base"|"mid"|"large")`
- * - Static (Tooltip, Popover): `usePersistentElShadow` — rest only
+ * - Static overlays (Dialog, Drawer, Popover, Tooltip): CSS `shadow-token-large`
  *
  * At rest CSS paints `var(--el-shadow)` (knobs live). Lift/press probe used
  * shadows and GSAP-tween inline `boxShadow`, then release back to CSS.

@@ -165,7 +165,7 @@ configureMotion({
 - **Open:** `animatePortalOpen` + `motionTooltip()` — `tooltipDuration` (200ms), `interactiveEase`
 - **Close:** `animatePortalClose` с теми же vars
 - **Position:** `computeTooltipPlacement`, `matchAnchorWidth` на Content; `side` / `align` / `offset` пробрасываются с `ComboBox.Popover`
-- **Shadow:** `usePersistentElShadow` — sm на panel
+- **Shadow:** `shadow-token-large` на panel (через Popover)
 
 ```ts
 configureMotion({

@@ -6,9 +6,9 @@ import type { TabsOrientation, TabsSize, TabsVariant } from "./tabsTypes";
 
 const LIST_VARIANT_CLASS: Record<TabsVariant, string> = {
   default: "",
-  outline: "bg-transparent border-token-outline rounded-mid p-xsmall",
-  secondary: "bg-secondary border-token rounded-mid p-xsmall",
-  gloss: "border-0 p-small",
+  outline: "bg-transparent border-token-outline rounded-mid",
+  secondary: "bg-secondary border-token rounded-mid",
+  gloss: "border-0",
 };
 
 const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
@@ -17,6 +17,23 @@ const INDICATOR_VARIANT_CLASS: Record<TabsVariant, string> = {
   secondary: "bg-tertiary",
   gloss: "bg-tertiary",
 };
+
+/**
+ * Inner radius = list radius − frame thickness, so the indicator seats flush in corners.
+ * Gloss uses `--_bw` from `.gloss-panel` (inherits to the indicator).
+ */
+const SURFACE_INNER_RADIUS_CLASS: Record<"outline" | "secondary" | "gloss", string> = {
+  outline: "rounded-[length:calc(max(0px,var(--radius-mid)-var(--border-width-outline)))]",
+  secondary: "rounded-[length:calc(max(0px,var(--radius-mid)-var(--border-width)))]",
+  gloss: "rounded-[length:calc(max(0px,var(--radius-mid)-var(--_bw,1px)))]",
+};
+
+function tabsSurfaceRadiusClass(variant: TabsVariant): string {
+  if (variant === "outline" || variant === "secondary" || variant === "gloss") {
+    return SURFACE_INNER_RADIUS_CLASS[variant];
+  }
+  return "";
+}
 
 export function tabsRootClass({
   orientation,
@@ -76,7 +93,7 @@ export function tabsIndicatorClass({
 }) {
   return cn(
     "pointer-events-none absolute z-0 motion-reduce:transition-none",
-    variant === "default" ? "rounded-full" : "rounded-mid",
+    variant === "default" ? "rounded-full" : tabsSurfaceRadiusClass(variant),
     INDICATOR_VARIANT_CLASS[variant],
     slotClass,
   );
@@ -104,7 +121,7 @@ export function tabsTabClass({
     "relative z-[1] m-0 inline-flex shrink-0 appearance-none items-center justify-center border-0 bg-transparent outline-none",
     layout.padX,
     layout.padY,
-    isSurface && "rounded-mid",
+    isSurface && tabsSurfaceRadiusClass(variant),
     "focus-ring-inset",
     isDisabled ? "cursor-not-allowed opacity-45" : "cursor-pointer",
     isSelected ? "text-primary" : "text-muted hover:text-primary",

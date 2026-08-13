@@ -73,7 +73,7 @@ export function OptionListItemLayoutShowcase({
         <span
           className={cn(
             "col-start-1 row-start-3 flex flex-wrap gap-small",
-            "min-w-0 max-w-full justify-self-start [width:fit-content]",
+            "min-w-0 max-w-full justify-self-start w-fit",
           )}
         >
           <Badge variant="secondary" size="small">

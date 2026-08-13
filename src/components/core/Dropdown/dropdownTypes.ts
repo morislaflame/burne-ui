@@ -153,6 +153,8 @@ export type DropdownItemProps = Omit<HTMLAttributes<HTMLElement>, "value"> & {
   disabled?: boolean;
   selection?: boolean;
   status?: DropdownItemStatus;
+  /** Render selection indicator (same as `<Dropdown.ItemIndicator />`). */
+  indicator?: boolean;
 };
 
 export type UseDropdownRootStateProps = Pick<

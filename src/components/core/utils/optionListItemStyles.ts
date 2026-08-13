@@ -1,6 +1,10 @@
 import { cn } from "@/utils/cn";
 
-export const OPTION_LIST_ITEM_LABEL_WRAP_CLASS = "inline-flex min-w-0 items-center";
+/** Shell for label; default width comes from cell (`w-fit`). Override with `w-full`. */
+export const OPTION_LIST_ITEM_LABEL_WRAP_CLASS = "flex min-w-0 items-center";
+
+/** Inner Text fills the label shell so `w-full` on the shell stretches rich content. */
+export const OPTION_LIST_ITEM_LABEL_TEXT_FILL_CLASS = "block min-w-0 w-full";
 
 export const OPTION_LIST_ITEM_LABEL_MIN_WIDTH_CLASS = "min-w-0";
 

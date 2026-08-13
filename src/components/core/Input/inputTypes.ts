@@ -64,7 +64,7 @@ export type InputClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type InputProps = HTMLAttributes<HTMLDivElement> & {
+export type InputProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix"> & {
   children?: ReactNode;
   label?: ReactNode;
   hint?: ReactNode;

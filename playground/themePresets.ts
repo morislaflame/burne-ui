@@ -87,7 +87,7 @@ export const THEME_PRESETS = {
       toastScrimSize: 0.9,
       toastScrimDensity: 1.05,
       fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
-      fontWeights: { small: 400, base: 500, mid: 600, strong: 700, bold: 800 },
+      fontWeights: { small: 500, base: 500, mid: 600, strong: 700, bold: 800 },
       interactiveDuration: 220,
       tooltipDuration: 160,
       modalDuration: 240,

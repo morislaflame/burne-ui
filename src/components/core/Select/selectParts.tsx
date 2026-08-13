@@ -78,6 +78,7 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
               label={opt.label}
               hint={opt.hint}
               icon={opt.icon}
+              indicator
             />
           );
         })
@@ -108,7 +109,6 @@ export const SelectPopover = forwardRef<HTMLDivElement, SelectPopoverProps>(
             )}
           >
             <ListBox
-              selectionIndicator
               size={listBoxSize ?? size}
               {...listBoxRest}
               listId={listId}

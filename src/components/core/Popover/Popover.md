@@ -87,7 +87,7 @@ const [open, setOpen] = useState(false);
 
 | Variant | Поверхность |
 |---------|-------------|
-| `default` | `bg-surface border-token` + persistent `shadowSm` |
+| `default` | `bg-surface border-token` + `shadow-token-large` |
 | `gloss` | `gloss-panel` + gloss interactive handlers |
 
 Sizes влияют на padding частей (`Header` / `Body`), typography (`Popover.Title` / `Hint`), radius и min/max width — общий пресет `PANEL_SIZE_LAYOUT` (с Dialog / AlertDialog / Card).
@@ -128,7 +128,7 @@ Title/Description — отдельная шкала Popover (компактне�
 1. `open=true` → `setPortalMounted(true)`
 2. `reposition()` — `computeTooltipPlacement`, `position: fixed`, `left`/`top`
 3. `animatePortalOpen({ surface: panel, vars: motionTooltip() })` — scale `0.97→1`, fade in
-4. `usePersistentElShadow(panelRef, !isGloss, shadowSm)` — rest shadow на default
+4. Default panel: CSS `shadow-token-large` (как Dialog / Drawer)
 
 **Close sequence:**
 
@@ -175,7 +175,7 @@ configureMotion({
 
 | variant | Поведение |
 |---------|-----------|
-| `default` | `usePersistentElShadow` — `shadowSm` в покое (2nd level panel) |
+| `default` | CSS `shadow-token-large` в покое (floating overlay, как Dialog) |
 | `gloss` | `createGlossInteractiveRefCallback` на gloss panel; gloss pointer handlers |
 
 Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
@@ -199,7 +199,7 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 |----------|---------|---------------------------|----------------|
 | Portal enter/exit | `animatePortalOpen/Close` | `tooltipDuration`, `interactiveEase` | `variant` |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | `asChild` |
-| Persistent shadow | `usePersistentElShadow` | — | `variant="default"` |
+| Rest shadow | `shadow-token-large` | — | `variant="default"` |
 | Gloss interactive | gloss utils | gloss tokens | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side`, `align`, `offset` |
 
@@ -207,9 +207,9 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `POPOVER_DEFAULT_PANEL_CLASS` | `bg-surface border-token` + radius из `PANEL_SIZE_LAYOUT` |
+| `POPOVER_DEFAULT_PANEL_CLASS` | `bg-surface border-token shadow-token-large` + radius из `PANEL_SIZE_LAYOUT` |
 | `POPOVER_GLOSS_PANEL_CLASS` | `gloss-panel gloss-deep` |
-| `shadowSm()` via persistent shadow | Rest panel shadow |
+| `shadow-token-large` | Rest panel shadow (default variant) |
 | `burneLightThemePortalProps` | Theme sync в portal |
 | `z-popover` stacking | Panel above page / dialog (`--z-popover`) |
 

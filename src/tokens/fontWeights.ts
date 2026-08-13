@@ -12,7 +12,7 @@ export const FONT_WEIGHT_CSS_VAR: Record<FontWeightStep, `--font-w-${FontWeightS
 };
 
 export const FONT_WEIGHT_DEFAULTS: Record<FontWeightStep, number> = {
-  small: 400,
+  small: 500,
   base: 500,
   mid: 600,
   strong: 700,

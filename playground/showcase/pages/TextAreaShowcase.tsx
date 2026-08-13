@@ -8,6 +8,8 @@ import { TextAreaStatusesDemo } from "../demos/textarea/TextAreaStatuses.demo";
 import textAreaStatusesSource from "../demos/textarea/TextAreaStatuses.demo.tsx?raw";
 import { TextAreaSizesDemo } from "../demos/textarea/TextAreaSizes.demo";
 import textAreaSizesSource from "../demos/textarea/TextAreaSizes.demo.tsx?raw";
+import { TextAreaNotResizableDemo } from "../demos/textarea/TextAreaNotResizable.demo";
+import textAreaNotResizableSource from "../demos/textarea/TextAreaNotResizable.demo.tsx?raw";
 import { TextAreaCommentThreadDemo } from "../demos/textarea/TextAreaCommentThread.demo";
 import textAreaCommentThreadSource from "../demos/textarea/TextAreaCommentThread.demo.tsx?raw";
 import { TextAreaGlossDemo } from "../demos/textarea/TextAreaGloss.demo";
@@ -33,6 +35,13 @@ export function TextAreaShowcase() {
     >
       <ShowcaseSection title="Base" description="label, hint and rows at the root of the component.">
         <ShowcaseDemoFromFile align="center" Demo={TextAreaBasicDemo} source={textAreaBasicSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Without resize"
+        description="resizable={false} — drag handle is not rendered; height stays fixed (aside from content field-sizing)."
+      >
+        <ShowcaseDemoFromFile align="center" Demo={TextAreaNotResizableDemo} source={textAreaNotResizableSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Variants" description="default, outline, secondary and gloss — all field shells side by side.">
@@ -78,17 +87,18 @@ export function TextAreaShowcase() {
         <ShowcaseDoc.Block title="API">
           <ShowcaseDoc.ApiRow
             api="simple"
-            description="label, hint, error, rows, placeholder, variant, status — on the root TextArea without children."
+            description="label, hint, error, rows, placeholder, variant, status, resizable — on the root TextArea without children."
           />
           <ShowcaseDoc.ApiRow
             api="compound"
-            description="TextArea.Label, TextArea.Control, TextArea.Hint, TextArea.Error — custom markup."
+            description="TextArea.Label, TextArea.Control, TextArea.Hint, TextArea.Error — custom markup. resizable on Control."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Block title="Behavior">
           <p>
             Inherits visual variant and status from Input. Hints — <code>hint</code>, not{" "}
-            <code>description</code>. Controlled/uncontrolled through value/defaultValue.
+            <code>description</code>. Controlled/uncontrolled through value/defaultValue. Drag resize —
+            default on; <code>resizable=&#123;false&#125;</code> removes the corner handle.
           </p>
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss />

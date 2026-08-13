@@ -16,18 +16,19 @@ import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type Lis
 <ListBox
   aria-label="Язык"
   defaultValue="ru"
-  selectionIndicator
   onValueChange={setLang}
 >
-  <ListBox.Item value="ru" label="Русский" hint="Кириллица" />
-  <ListBox.Item value="en" label="English" />
+  <ListBox.Item value="ru" label="Русский" hint="Кириллица" indicator />
+  <ListBox.Item value="en" label="English" indicator />
 </ListBox>
 ```
+
+`indicator` на Item — то же, что явный `<ListBox.ItemIndicator />` в compound.
 
 ### Compound API (секции)
 
 ```tsx
-<ListBox multiple defaultValue={["ru"]} selectionIndicator>
+<ListBox multiple defaultValue={["ru"]}>
   <ListBox.Section>
     <ListBox.Header>Доступные языки</ListBox.Header>
     <ListBox.Item value="ru">
@@ -41,6 +42,21 @@ import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type Lis
 </ListBox>
 ```
 
+### Freeform children
+
+Произвольная разметка в `Item` (как `Dropdown.Item` `parts.rest`) — без обязательного `Label`:
+
+```tsx
+<ListBox.Item value="maya" className="flex items-start gap-mid">
+  <Avatar … />
+  <div className="min-w-0 flex-1">…</div>
+</ListBox.Item>
+```
+
+Option-grid (indicator | label | icon) включается только когда есть слоты `ItemIndicator` / `Label` / `Hint` / `Icon` или simple props. Freeform — layout через `className` / `classNames.item`.
+
+`ItemIndicator` **не** инжектится автоматически — только явный `<ListBox.ItemIndicator />`.
+
 ### Root props
 
 | Prop | По умолчанию | Описание |
@@ -50,7 +66,6 @@ import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type Lis
 | `multiple` | `false` | Multi-select (`string[]`) |
 | `value` / `defaultValue` | — | Controlled / uncontrolled |
 | `onValueChange` | — | `(string \| string[]) => void` |
-| `selectionIndicator` | `false` | Radio/check indicator слева |
 | `activeValue` / `onActiveValueChange` | — | Keyboard hover option (Select/ComboBox) |
 | `disabled` | `false` | Блокирует все items |
 | `listId` | auto | id для `aria-*` |
@@ -65,13 +80,13 @@ import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type Lis
 | `ListBox.Header` | Заголовок секции |
 | `ListBox.Separator` | Разделитель |
 | `ListBox.Empty` | Пустое состояние |
-| `ListBox.Item` | `role="option"` button |
+| `ListBox.Item` | `role="option"` button; simple: `label` / `hint` / `icon` / `indicator` |
 | `ListBox.Label` / `Hint` / `Icon` | Слоты grid item |
 | `ListBox.ItemIndicator` | `SelectionIndicator` (compound: `.Fill`, `.Mark`) |
 
 ### `useListBox()`
 
-Контекст выбора внутри `ListBox`: `selected`, `selectItem`, `setActiveValue`, `showIndicator`, `indicatorMode` (`radio` | `multi`).  
+Контекст выбора внутри `ListBox`: `selected`, `selectItem`, `setActiveValue`, `indicatorMode` (`radio` | `multi`).  
 `activeValue` вынесен в отдельный контекст (`useListBoxActiveValue`) + подсветка через DOM-атрибут `data-active`, чтобы стрелки/hover не перерендеривали все опции.
 
 ### `useListBoxActiveValue()`
@@ -174,7 +189,6 @@ Root синхронизирует атрибут `data-active` на активн
 <ListBox
   defaultValue="ru"
   aria-label="Язык интерфейса"
-  selectionIndicator
   classNames={{
     root: "rounded-mid border border-primary/20 p-base",
     headerText: "text-primary",
@@ -186,8 +200,15 @@ Root синхронизирует атрибут `data-active` на активн
 >
   <ListBox.Section>
     <ListBox.Header>Доступные языки</ListBox.Header>
-    <ListBox.Item value="ru" label="Русский" hint="Кириллица" />
-    <ListBox.Item value="en" label="English" />
+    <ListBox.Item value="ru">
+      <ListBox.ItemIndicator />
+      <ListBox.Label>Русский</ListBox.Label>
+      <ListBox.Hint>Кириллица</ListBox.Hint>
+    </ListBox.Item>
+    <ListBox.Item value="en">
+      <ListBox.ItemIndicator />
+      <ListBox.Label>English</ListBox.Label>
+    </ListBox.Item>
   </ListBox.Section>
 </ListBox>
 ```
@@ -210,10 +231,11 @@ Root синхронизирует атрибут `data-active` на активн
 
 ### Практические заметки
 
-- **`selectionIndicator`:** без него слот indicator не рендерится в simple API.
-- **Active vs selected:** active — keyboard hover (`bg-default-hover`); selected — `aria-selected` + indicator.
+- **`ItemIndicator`:** явный слот в children **или** simple prop `indicator` на Item.
+- **Active vs selected:** active — keyboard hover (`bg-default-hover`); selected — `aria-selected` + optional indicator.
 - **Gloss:** root gloss не наследуется в Popover автоматически — `variant` на `ListBox` внутри popover body.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
+- **Full-width label:** при слоте `Label` дефолт `w-fit`; для растягивания: `classNames={{ label: "w-full justify-self-stretch" }}`. Для rich freeform предпочитайте children без `Label` + `className` на Item.
 
 ## Доступность
 

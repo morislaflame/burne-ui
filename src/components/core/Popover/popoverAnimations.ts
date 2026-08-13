@@ -2,12 +2,10 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { focusPanelOnOpen, isFocusVisibleElement } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
-import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { motionTooltip } from "@/components/core/utils/motionConfig";
 import { applyFloatingPortalPosition, resolvePortalContainer } from "@/components/core/utils/portalContainer";
-import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
 import { mergePopoverRefs } from "./popoverAPI";
@@ -77,8 +75,6 @@ export function usePopoverContentLifecycle({
     applyFloatingPortalPosition(panel, placement, portalContainer);
     panel.style.transform = "";
   }, [align, anchorRef, matchAnchorWidth, offset, portalContainer, side, triggerRef]);
-
-  usePersistentElShadow(panelRef, !isGloss, shadowBase);
 
   useLayoutEffect(() => {
     if (!open || !portalMounted) return;

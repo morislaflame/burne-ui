@@ -53,7 +53,7 @@ export const POPOVER_GLOSS_CONTENT_CLASS =
   "gloss-content flex min-w-0 flex-col";
 
 export const POPOVER_DEFAULT_PANEL_CLASS =
-  "relative z-[1] flex min-w-0 flex-col overflow-hidden border-token bg-surface text-foreground animate-shadow";
+  "relative z-[1] flex min-w-0 flex-col overflow-hidden border-token bg-surface text-foreground shadow-token-large";
 
 export const POPOVER_ARROW_BASE_CLASS =
   "pointer-events-none absolute z-0 size-2 rotate-45";

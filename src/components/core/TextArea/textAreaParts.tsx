@@ -13,7 +13,7 @@ import { textAreaResizeHandleAriaLabel } from "./textAreaA11y";
 
 import { useTextAreaShellMotion } from "./textAreaAnimations";
 import { useOptionalTextAreaFieldContext, useTextAreaClassNames, useTextAreaFieldContext } from "./textAreaContext";
-import { TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS, TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS, TEXTAREA_RESIZE_GRIP_WRAP_CLASS, textareaControlClassNames, textareaResizeHandleClass, textareaShellClass, textareaShellSurfaceClass } from "./textAreaStyles";
+import { TEXTAREA_RESIZE_GRIP_STROKE, TEXTAREA_RESIZE_GRIP_WRAP_CLASS, textareaControlClassNames, textareaResizeHandleClass, textareaShellClass, textareaShellSurfaceClass } from "./textAreaStyles";
 import type {
   TextAreaErrorProps,
   TextAreaHintProps,
@@ -24,12 +24,21 @@ import { useTextAreaResize } from "./useTextAreaResize";
 
 import { cn } from "@/utils/cn";
 
+/** Two 1px diagonals: right edge → bottom edge, inside the corner box. */
 function TextAreaResizeGrip() {
   return (
-    <span aria-hidden className={TEXTAREA_RESIZE_GRIP_WRAP_CLASS}>
-      <span className={TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS} />
-      <span className={TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS} />
-    </span>
+    <svg
+      aria-hidden
+      className={TEXTAREA_RESIZE_GRIP_WRAP_CLASS}
+      width={10}
+      height={10}
+      viewBox="0 0 10 10"
+      fill="none"
+    >
+      {/* Diagonals right→bottom; shorter line kept away from the corner so radius doesn’t hide it. */}
+      <path d="M9.5 2.5 L2.5 9.5" stroke={TEXTAREA_RESIZE_GRIP_STROKE} strokeWidth={1} />
+      <path d="M9.5 5 L5 9.5" stroke={TEXTAREA_RESIZE_GRIP_STROKE} strokeWidth={1} />
+    </svg>
   );
 }
 

@@ -443,7 +443,7 @@
    * Primitive font-weight scale (`--font-w-*`).
    * Semantic text roles reference these tokens.
    */
-  --font-w-small: 400;
+  --font-w-small: 500;
   --font-w-base: 500;
   --font-w-mid: 600;
   --font-w-strong: 700;
@@ -498,7 +498,7 @@
   --size-scale-small: calc(var(--size) * 0.875);
   --size-scale-base: calc(var(--size) * 1.125);
   --size-scale-mid: calc(var(--size) * 1.25);
-  --size-scale-large: calc(var(--size) * 1.5);
+  --size-scale-large: calc(var(--size) * 1.375);
   --size-scale-xlarge: calc(var(--size) * 1.75);
   --size-scale-2xlarge: calc(var(--size) * 2);
   --size-scale-3xlarge: calc(var(--size) * 2.25);

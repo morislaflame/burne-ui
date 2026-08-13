@@ -340,6 +340,7 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
               label={opt.label}
               hint={opt.hint}
               icon={opt.icon}
+              indicator
             />
           );
         })
@@ -370,7 +371,6 @@ export const ComboBoxPopover = forwardRef<HTMLDivElement, ComboBoxPopoverProps>(
             )}
           >
             <ListBox
-              selectionIndicator
               size={listBoxSize ?? size}
               {...listBoxRest}
               listId={listId}

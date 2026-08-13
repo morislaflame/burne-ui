@@ -83,7 +83,7 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 
 | Surface | Поведение |
 |---------|-----------|
-| `default` | `bg-surface` + persistent `shadowSm` |
+| `default` | `bg-surface` + `shadow-token-large` |
 | `outline` / `secondary` | transparent / secondary shell |
 | `gloss` | `gloss-panel` + gloss interactive ref на panel |
 
@@ -149,10 +149,10 @@ configureMotion({
 
 | surface | Поведение |
 |---------|-----------|
-| `default` | `usePersistentElShadow(tipRef, shadowSm)` — persistent sm на bubble |
+| `default` | `shadow-token-large` — large elevation на bubble |
 | `gloss` | `createGlossInteractiveRefCallback` на gloss panel |
 
-Tooltip — **2nd level** floating surface с постоянной тенью в rest (как Popover default).
+Tooltip — floating overlay с постоянной large-тенью (как Popover / Dialog).
 
 ### 3. Reposition on reflow
 
@@ -177,7 +177,7 @@ Status variants auto-inject icon (`SEMANTIC_STATUS_ICONS`, io5). Icon cell не 
 |----------|---------|---------------------------|----------------|
 | Portal enter/exit | `animatePortalOpen/Close` | `tooltipDuration`, `interactiveEase` | `surface` |
 | Show delay | `setTimeout` | — | `delayShowMs` |
-| Persistent shadow | `usePersistentElShadow` | — | `variant="default"` |
+| Rest shadow | `shadow-token-large` | — | `variant="default"` |
 | Gloss ref | gloss utils | — | `variant="gloss"` |
 | Reposition | `computeTooltipPlacement` | — | `side` |
 

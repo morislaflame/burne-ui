@@ -74,7 +74,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 | `multiple` | `false` | Multi-select |
 | `value` / `defaultValue` | — | `string` или `string[]` |
 | `onValueChange` | — | Колбэк выбора |
-| `selectionIndicator` | `false` | Показывать radio/check indicators |
+| `selectionIndicator` | `false` | Legacy group preference (auto-inject снят). Indicator — только явный `<Dropdown.ItemIndicator />` |
 | `closeOnSelect` | `!multiple` | Закрывать после выбора |
 | `popoverVariant` | `default` | `default` \| `gloss` для panel |
 | `classNames` | — | Слоты |
@@ -106,7 +106,8 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 | `href` | Link item (закрывает меню) |
 | `disabled` | Блокировка |
 | `selection` | `false` — action item без indicator |
-| `variant` | `default` \| `danger` \| `warning` \| `info` \| `success` |
+| `indicator` | Simple: то же, что `<Dropdown.ItemIndicator />` |
+| `status` | `default` \| `danger` \| `warning` \| `info` \| `success` |
 
 ## variant (item) и popover
 
@@ -183,7 +184,7 @@ configureMotion({
 
 Enter/exit: `animatePortalOpen` / `animatePortalClose` + `motionTooltip()` (scale 0.97→1, fade).
 
-Persistent shadow на default panel — из `Popover` (`usePersistentElShadow`).
+Rest shadow на default panel — из `Popover` (`shadow-token-large`).
 
 #### Кастомизация portal
 
@@ -320,12 +321,10 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
   <Dropdown.Popover>
     <Dropdown.Group>
       <Dropdown.Label>Выберите язык</Dropdown.Label>
-      <Dropdown.Item value="ru">
-        <Dropdown.ItemIndicator />
+      <Dropdown.Item value="ru" indicator>
         <Dropdown.ItemLabel>Русский</Dropdown.ItemLabel>
       </Dropdown.Item>
-      <Dropdown.Item value="en">
-        <Dropdown.ItemIndicator />
+      <Dropdown.Item value="en" indicator>
         <Dropdown.ItemLabel>English</Dropdown.ItemLabel>
       </Dropdown.Item>
     </Dropdown.Group>
@@ -354,7 +353,7 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 </Dropdown>
 ```
 
-`Dropdown.Group selectionIndicator={false}` — локально скрыть indicators в одной секции.
+`indicator` на Item или явный `<Dropdown.ItemIndicator />`. `Dropdown.Group selectionIndicator` — legacy preference, на рендер слота не влияет.
 
 ### Практические заметки
 

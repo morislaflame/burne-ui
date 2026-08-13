@@ -47,7 +47,6 @@ export type ListBoxContextValue = {
   selected: Set<string>;
   selectItem: (value: string) => void;
   setActiveValue: (value: string | null) => void;
-  showIndicator: boolean;
   indicatorMode: "radio" | "multi";
   disabled?: boolean;
   /**
@@ -68,7 +67,6 @@ export type ListBoxProps = Omit<
   value?: string | string[];
   defaultValue?: string | string[];
   onValueChange?: (value: string | string[]) => void;
-  selectionIndicator?: boolean;
   disabled?: boolean;
   activeValue?: string | null;
   onActiveValueChange?: (value: string | null) => void;
@@ -103,6 +101,8 @@ export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> 
   label?: ReactNode;
   hint?: ReactNode;
   icon?: ReactNode;
+  /** Simple API: render selection indicator (same as `<ListBox.ItemIndicator />`). */
+  indicator?: boolean;
 };
 
 export type ListBoxLabelProps = HTMLAttributes<HTMLSpanElement>;
@@ -143,7 +143,7 @@ export type ListBoxRootShellProps = Omit<
 
 export type UseListBoxItemStateProps = Pick<
   ListBoxItemProps,
-  "children" | "label" | "hint" | "icon" | "value" | "disabled"
+  "children" | "label" | "hint" | "icon" | "indicator" | "value" | "disabled"
 >;
 
 export type UseListBoxItemAnimationsProps = {

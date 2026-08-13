@@ -5,7 +5,7 @@ import { cn } from "@/utils/cn";
 
 import { optionListItemHintCellClass, optionListItemIconCellClass, optionListItemIndicatorCellClass, optionListItemLabelCellClass } from "./optionControlGridLayout";
 import { useOptionListItemContext } from "./optionListItemContext";
-import { OPTION_LIST_ITEM_ICON_WRAP_CLASS, OPTION_LIST_ITEM_INDICATOR_SHELL_CLASS, OPTION_LIST_ITEM_LABEL_MIN_WIDTH_CLASS, OPTION_LIST_ITEM_LABEL_MOTION_CLASS, OPTION_LIST_ITEM_LABEL_WRAP_CLASS, OPTION_LIST_ITEM_STRING_LABEL_CLASS, optionListItemHintToneClass, optionListItemLabelTextClass } from "./optionListItemStyles";
+import { OPTION_LIST_ITEM_ICON_WRAP_CLASS, OPTION_LIST_ITEM_INDICATOR_SHELL_CLASS, OPTION_LIST_ITEM_LABEL_MIN_WIDTH_CLASS, OPTION_LIST_ITEM_LABEL_MOTION_CLASS, OPTION_LIST_ITEM_LABEL_TEXT_FILL_CLASS, OPTION_LIST_ITEM_LABEL_WRAP_CLASS, OPTION_LIST_ITEM_STRING_LABEL_CLASS, optionListItemHintToneClass, optionListItemLabelTextClass } from "./optionListItemStyles";
 
 export type OptionListItemLabelProps = HTMLAttributes<HTMLSpanElement> & {
   /** Typography for the label text. @default "base" */
@@ -39,7 +39,10 @@ export function OptionListItemLabel({
         as="span"
         variant={textVariant}
         inheritColor
-        className={optionListItemLabelTextClass(Boolean(ctx.disabled))}
+        className={cn(
+          OPTION_LIST_ITEM_LABEL_TEXT_FILL_CLASS,
+          optionListItemLabelTextClass(Boolean(ctx.disabled)),
+        )}
       >
         {children}
       </Text>

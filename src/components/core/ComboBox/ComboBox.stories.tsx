@@ -174,7 +174,7 @@ export const CustomItemParts: Story = {
         <ComboBox.Trigger />
       </ComboBox.InputGroup>
       <ComboBox.Popover>
-        <ListBox selectionIndicator={false}>
+        <ListBox>
           <ListBox.Section>
             <ListBox.Header>How the grid changes</ListBox.Header>
             <OptionListItemLayoutShowcase

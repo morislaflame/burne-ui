@@ -7,10 +7,8 @@ import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTh
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { resolvePortalContainer, applyFloatingPortalPosition } from "@/components/core/utils/portalContainer";
 import { messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
-import { shadowBase } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { usePersistentElShadow } from "@/components/core/utils/useShadowMotion";
 import "../utils/glossInteractive.css";
 
 import { bindTriggerEvents, mergeDescribedBy } from "./tooltipA11y";
@@ -479,8 +477,6 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       );
       tip.style.transform = "";
     }, [offset, portalContainerFromRoot, portalContainerProp, side, triggerRef]);
-
-    usePersistentElShadow(tipRef, !isGloss, shadowBase);
 
     useLayoutEffect(() => {
       if (!open || !portalMounted) return;

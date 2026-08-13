@@ -124,6 +124,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       disabled = false,
       selection: selectionProp,
       status = "default",
+      indicator = false,
       onClick,
       onPointerDown,
       onKeyDown,
@@ -152,6 +153,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
       value,
       disabled,
       status,
+      indicator,
     });
 
     const setRefs = useCallback(
@@ -209,8 +211,8 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
 
     const itemBody = (
       <>
-        {showIndicatorSlot && !hasItemIndicator ? <DropdownItemIndicator /> : null}
         {parts.indicator}
+        {showIndicatorSlot && !hasItemIndicator ? <DropdownItemIndicator /> : null}
         {parts.label}
         {parts.hint}
         {parts.icon}

@@ -106,7 +106,7 @@ export const TOOLTIP_GLOSS_CONTENT_CLASS = "gloss-content";
 export const TOOLTIP_COMPOUND_CONTENTS_CLASS = "contents";
 
 export const TOOLTIP_PANEL_BASE_CLASS =
-  "relative z-[1] w-max min-w-0 rounded-mid text-left animate-shadow";
+  "relative z-[1] w-max min-w-0 rounded-mid text-left shadow-token-large";
 
 export function tooltipTitleClass(status: SemanticStatus): string {
   return cn(

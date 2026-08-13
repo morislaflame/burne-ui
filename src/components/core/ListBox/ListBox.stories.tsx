@@ -127,9 +127,9 @@ export const Multiple: Story = {
     const [value, setValue] = useState<string[]>(["a", "c"]);
     return (
       <ListBox multiple value={value} onValueChange={(v) => setValue(v as string[])} aria-label="Profile fields">
-        <ListBox.Item value="a" label="User" hint="Name and avatar" />
-        <ListBox.Item value="b" label="Country" hint="ISO code" />
-        <ListBox.Item value="c" label="Status" />
+        <ListBox.Item value="a" label="User" hint="Name and avatar" indicator />
+        <ListBox.Item value="b" label="Country" hint="ISO code" indicator />
+        <ListBox.Item value="c" label="Status" indicator />
       </ListBox>
     );
   },
@@ -172,7 +172,7 @@ export const WithIcons: Story = {
 export const CustomItemParts: Story = {
   name: "Compound — slot layout",
   render: () => (
-    <ListBox selectionIndicator={false} defaultValue="full-grid" aria-label="Variants layout">
+    <ListBox defaultValue="full-grid" aria-label="Variants layout">
       <ListBox.Section>
         <ListBox.Header>How the grid changes</ListBox.Header>
         <OptionListItemLayoutShowcase

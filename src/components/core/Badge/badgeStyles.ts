@@ -1,17 +1,32 @@
 import type { TextVariant } from "@/components/core/Text";
 
-import { SEMANTIC_STATUS_TEXT, type SemanticSurfaceStatus } from "@/components/core/utils/semanticStatusSurface";
+import {
+  SEMANTIC_STATUS_FILL,
+  SEMANTIC_STATUS_OUTLINE_BORDER,
+  SEMANTIC_STATUS_SURFACE_TINT,
+  SEMANTIC_STATUS_TEXT,
+  type SemanticSurfaceStatus,
+} from "@/components/core/utils/semanticStatusSurface";
 import { cn } from "@/utils/cn";
 
 import type { BadgePlacement, BadgeSize, BadgeStatus, BadgeVariant } from "./badgeTypes";
 
 export type { BadgePlacement, BadgeSize, BadgeStatus, BadgeVariant } from "./badgeTypes";
 
+/** Same surface roots as Button (`INTERACTIVE_VARIANT_ROOT`) for shared variants. */
 export const BADGE_VARIANT_SURFACE: Record<Exclude<BadgeVariant, "gloss">, string> = {
   default: "bg-surface border-token text-foreground",
-  primary: "bg-primary border-token text-primary-foreground",
+  primary: "bg-primary text-primary-foreground border border-transparent",
   outline: "bg-transparent border-token-outline text-foreground",
-  secondary: "bg-secondary border-token text-secondary-foreground",
+  secondary: "bg-secondary text-secondary-foreground border border-token",
+};
+
+/** Gloss panel status tint (panel counterpart of Button `gloss-btn-*`). */
+export const BADGE_GLOSS_STATUS: Record<Exclude<BadgeStatus, "default">, string> = {
+  danger: "gloss-text-danger",
+  success: "gloss-text-success",
+  info: "gloss-text-info",
+  warning: "gloss-text-warning",
 };
 
 export const BADGE_ANCHOR_PLACEMENT: Record<BadgePlacement, string> = {
@@ -50,10 +65,10 @@ export const BADGE_CIRCLE: Record<BadgeSize, string> = {
 };
 
 export const BADGE_DOT_DIM: Record<BadgeSize, string> = {
-  small: "size-[length:var(--icon-size-small)] shrink-0 p-0",
+  small: "size-[length:var(--icon-size-xsmall)] shrink-0 p-0",
   base: "size-[length:var(--icon-size-small)] shrink-0 p-0",
   mid: "size-[length:var(--icon-size-base)] shrink-0 p-0",
-  large: "size-[length:var(--icon-size-large)] shrink-0 p-0",
+  large: "size-[length:var(--icon-size-mid)] shrink-0 p-0",
 };
 
 export const BADGE_TEXT_VARIANT: Record<BadgeSize, TextVariant> = {
@@ -102,21 +117,38 @@ export function dotFillClass(variant: BadgeVariant, status: BadgeStatus): string
   return BADGE_DOT_FILL[variant];
 }
 
-/**
- * Panel surface follows `variant` only (Alert pattern).
- * `status` tints text/icons via `SEMANTIC_STATUS_TEXT` — not the shell fill.
- */
-export function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus = "default"): string {
-  const surface =
-    variant === "gloss"
-      ? "gloss-panel border-0 text-foreground"
-      : BADGE_VARIANT_SURFACE[variant];
-
-  return cn(surface, status !== "default" ? SEMANTIC_STATUS_TEXT[status] : "");
+/** Variant root — mirrors `buttonVariantRootClass` (outline drops border when status paints it). */
+export function badgeVariantRootClass(variant: BadgeVariant, status: BadgeStatus): string {
+  if (variant === "gloss") {
+    return "gloss-panel border-0 text-foreground";
+  }
+  if (variant === "outline" && status !== "default") {
+    return "bg-transparent text-foreground";
+  }
+  return BADGE_VARIANT_SURFACE[variant];
 }
 
-export function badgeStatusTextClass(status: BadgeStatus): string {
-  return status !== "default" ? SEMANTIC_STATUS_TEXT[status] : "";
+/** Status overlay — same matrix as `buttonStatusClass` (+ gloss-text-* for panels). */
+export function badgeStatusClass(variant: BadgeVariant, status: BadgeStatus): string {
+  if (status === "default") return "";
+
+  switch (variant) {
+    case "default":
+      return cn(SEMANTIC_STATUS_SURFACE_TINT[status], SEMANTIC_STATUS_TEXT[status]);
+    case "primary":
+      return SEMANTIC_STATUS_FILL[status];
+    case "outline":
+      return cn(SEMANTIC_STATUS_OUTLINE_BORDER[status], SEMANTIC_STATUS_TEXT[status]);
+    case "secondary":
+      return SEMANTIC_STATUS_TEXT[status];
+    case "gloss":
+      return BADGE_GLOSS_STATUS[status];
+  }
+}
+
+/** Surface = variant root + status overlay (Button pattern). */
+export function badgeSurfaceClass(variant: BadgeVariant, status: BadgeStatus = "default"): string {
+  return cn(badgeVariantRootClass(variant, status), badgeStatusClass(variant, status));
 }
 
 export function badgeDotSurfaceClass(
@@ -125,7 +157,10 @@ export function badgeDotSurfaceClass(
   isGloss: boolean,
 ): string {
   return isGloss
-    ? cn("gloss-panel border-0", badgeStatusTextClass(status))
+    ? cn(
+        "gloss-panel border-0",
+        status !== "default" ? BADGE_GLOSS_STATUS[status] : "",
+      )
     : dotFillClass(variant, status);
 }
 

@@ -353,6 +353,7 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       label,
       hint,
       icon,
+      indicator = false,
       onClick,
       onPointerDown,
       onPointerEnter,
@@ -369,6 +370,8 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       optionId,
       indicatorMode,
       isCompound,
+      parts,
+      hasCompoundIndicator,
       hasHint,
       hasIcon,
       hasLabel,
@@ -380,6 +383,7 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       label,
       hint,
       icon,
+      indicator,
       value,
       disabled: disabledProp,
     });
@@ -434,16 +438,29 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       ],
     );
 
+    const autoIndicator =
+      showIndicatorSlot && !hasCompoundIndicator ? <ListBoxItemIndicator /> : null;
+
+    // Compound: slots + freeform rest (Dropdown.Item pattern).
     const itemBody = isCompound ? (
-      <>{children}</>
+      <>
+        {parts.indicator}
+        {autoIndicator}
+        {parts.label}
+        {parts.hint}
+        {parts.icon}
+        {parts.rest}
+      </>
     ) : (
       <>
-        {showIndicatorSlot ? <ListBoxItemIndicator /> : null}
+        {autoIndicator}
         {label != null ? <ListBoxLabel>{label}</ListBoxLabel> : null}
         {hint != null ? <ListBoxHint>{hint}</ListBoxHint> : null}
         {icon != null ? <ListBoxIcon>{icon}</ListBoxIcon> : null}
       </>
     );
+
+    const useItemGrid = showIndicatorSlot || hasHint || hasIcon || hasLabel;
 
     return (
       <OptionListItemContextProvider value={itemCtx}>
@@ -461,12 +478,14 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
               size,
               disabled,
             }),
-            optionListItemGridClass(
-              hasHint,
-              OPTION_CONTROL_SIZE_LAYOUT[size].listItemGapX,
-              showIndicatorSlot,
-              hasIcon,
-            ),
+            useItemGrid
+              ? optionListItemGridClass(
+                  hasHint,
+                  OPTION_CONTROL_SIZE_LAYOUT[size].listItemGapX,
+                  showIndicatorSlot,
+                  hasIcon,
+                )
+              : undefined,
             slotClassNames.item,
             className,
           )}

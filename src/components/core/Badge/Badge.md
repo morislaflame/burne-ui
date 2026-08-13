@@ -103,18 +103,26 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 ### Status
 
-Как у `Alert`: поверхность остаётся от `variant`, `status` красит только текст/иконки (`SEMANTIC_STATUS_TEXT`).
+Как у `Button`: `status` накладывается поверх `variant` через `semanticStatusSurface`.
 
-`dot` — исключение: заливка точки следует status/variant (индикатор).
+| variant | status = default | status ≠ default |
+|---------|------------------|------------------|
+| `default` | surface + border | tint (`bg-surface-tint-*`) + `text-*` |
+| `primary` | `bg-primary` | fill (`bg-danger` / … + `*-foreground`) |
+| `outline` | transparent + outline border | `border-token-*` + `text-*` |
+| `secondary` | `bg-secondary` | тот же surface; `text-*` |
+| `gloss` | `gloss-panel` | `gloss-text-*` |
+
+`dot` — заливка точки следует status/variant (индикатор).
 
 ### Размеры
 
-| Size | Text variant | Icon size | Chip pad | Circle size |
-|------|--------------|-----------|----------|-------------|
-| `small` | `xsmall` | `icon-small` | `--chip-px/py-small` | `--chip-size-small` |
-| `base` | `small` | `icon-base` | `--chip-px/py-base` | `--chip-size-base` |
-| `mid` | `base` | `icon-base` | `--chip-px/py-mid` | `--chip-size-mid` |
-| `large` | `mid` | `icon-large` | `--chip-px/py-large` | `--chip-size-large` |
+| Size | Text variant | Icon size | Dot size | Chip pad | Circle size |
+|------|--------------|-----------|----------|----------|-------------|
+| `small` | `xsmall` | `icon-small` | `icon-xsmall` | `--chip-px/py-small` | `--chip-size-small` |
+| `base` | `small` | `icon-base` | `icon-small` | `--chip-px/py-base` | `--chip-size-base` |
+| `mid` | `base` | `icon-base` | `icon-bse` | `--chip-px/py-mid` | `--chip-size-mid` |
+| `large` | `mid` | `icon-mid` | `icon-mid` | `--chip-px/py-large` | `--chip-size-large` |
 
 `--chip-*` — внутренние CSS-переменные (доля `--space-*`), общие с `Kbd`. Не входят в публичный token API.
 
@@ -215,7 +223,7 @@ Gloss lift — отдельная кривая, не sm→md shadow tokens.
 
 | Класс / токен | Назначение |
 |---------------|------------|
-| `semanticStatusSurface` | Status tint per `status` |
+| `semanticStatusSurface` | Status overlay per variant (tint / fill / outline / text) |
 | `--chip-px/py-*`, `--chip-gap-*`, `--chip-box-*`, `--chip-size-*` | Internal chip inset / circle diameter (Badge + Kbd; not public API) |
 | `shadow-token-base` + `-hover` | Через `--el-shadow` (rest всегда; hover при lift) |
 | `gloss-panel gloss-deep` | Gloss badge surface |

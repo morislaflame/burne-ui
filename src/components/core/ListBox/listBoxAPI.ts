@@ -76,26 +76,30 @@ export function resolveListBoxItemLayout({
   label,
   hint,
   icon,
-  showIndicator,
-}: Pick<UseListBoxItemStateProps, "children" | "label" | "hint" | "icon"> & {
-  showIndicator: boolean;
-}) {
+  indicator = false,
+}: Pick<UseListBoxItemStateProps, "children" | "label" | "hint" | "icon" | "indicator">) {
   const parts = partitionListBoxItemChildren(children);
   const hasCompoundIndicator = parts.indicator != null;
   const hasHint = parts.hint != null || hint != null;
   const hasIcon = parts.icon != null || icon != null;
+  const hasRest = parts.rest.length > 0;
+  /** Compound body: slots and/or freeform `rest` (like Dropdown.Item). */
   const isCompound =
-    parts.label != null || parts.hint != null || parts.icon != null;
+    parts.label != null ||
+    parts.hint != null ||
+    parts.icon != null ||
+    hasCompoundIndicator ||
+    hasRest;
   const hasLabel = label != null || parts.label != null;
-  const showIndicatorSlot = isCompound
-    ? showIndicator && hasCompoundIndicator
-    : showIndicator;
+  /** Explicit `<ListBox.ItemIndicator />` or simple `indicator` prop. */
+  const showIndicatorSlot = hasCompoundIndicator || indicator;
 
   return {
     parts,
     hasCompoundIndicator,
     hasHint,
     hasIcon,
+    hasRest,
     isCompound,
     hasLabel,
     showIndicatorSlot,

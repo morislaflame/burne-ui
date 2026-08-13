@@ -3,7 +3,7 @@ import { useMemo, type ReactNode } from "react";
 import type { OptionListItemContextValue } from "@/components/core/utils/optionListItemContext";
 
 import { partitionDropdownItemChildren } from "./dropdownAPI";
-import { useDropdown, useDropdownIndicatorPreference } from "./dropdownContext";
+import { useDropdown } from "./dropdownContext";
 import type { DropdownItemStatus } from "./dropdownTypes";
 
 export function useDropdownItemState({
@@ -13,6 +13,7 @@ export function useDropdownItemState({
   value,
   disabled = false,
   status = "default",
+  indicator = false,
 }: {
   children: ReactNode;
   href?: string;
@@ -20,9 +21,9 @@ export function useDropdownItemState({
   value?: string;
   disabled?: boolean;
   status?: DropdownItemStatus;
+  indicator?: boolean;
 }) {
-  const { selected, selectItem, multiple, indicatorMode, setOpen } = useDropdown();
-  const indicatorPreference = useDropdownIndicatorPreference();
+  const { selected, selectItem, indicatorMode, setOpen } = useDropdown();
   const parts = useMemo(
     () => partitionDropdownItemChildren(children),
     [children],
@@ -32,8 +33,8 @@ export function useDropdownItemState({
   const hasIcon = parts.icon != null;
   const isLink = Boolean(href);
   const isSelectionItem = !isLink && selection !== false;
-  const showIndicatorSlot =
-    isSelectionItem && (multiple || indicatorPreference || hasItemIndicator);
+  /** Explicit `<Dropdown.ItemIndicator />` or `indicator` prop. */
+  const showIndicatorSlot = isSelectionItem && (hasItemIndicator || indicator);
   const itemRole = !showIndicatorSlot
     ? "menuitem"
     : indicatorMode === "multi"

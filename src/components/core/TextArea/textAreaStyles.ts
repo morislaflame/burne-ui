@@ -20,18 +20,18 @@ export const TEXTAREA_SHELL_LAYOUT_CLASS = "flex flex-col items-stretch";
 export const TEXTAREA_CONTROL_BASE_CLASS =
   `box-border block min-h-0 w-full flex-1 resize-none overflow-auto bg-transparent font-inherit text-foreground outline-none placeholder:text-muted appearance-none [field-sizing:content] ${FIELD_CONTROL_MOBILE_NO_ZOOM_CLASS}`;
 
-/** Resize grip strokes — micro-geometry for the affordance (not spacing scale). */
-export const TEXTAREA_RESIZE_GRIP_LINE_PRIMARY_CLASS =
-  "absolute bottom-[length:calc(var(--border-width)*2)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*9)] origin-bottom-right rotate-[135deg] bg-muted-foreground";
-
-export const TEXTAREA_RESIZE_GRIP_LINE_SECONDARY_CLASS =
-  "absolute bottom-[length:calc(var(--border-width)*6)] right-0 block h-[length:var(--border-width)] w-[length:calc(var(--border-width)*6)] origin-bottom-right rotate-[135deg] bg-muted-foreground";
+/**
+ * Resize grip — hardcoded SVG geometry (not theme border/size tokens).
+ * Two 1px diagonals from the right edge to the bottom edge, fully inside the corner.
+ */
+export const TEXTAREA_RESIZE_GRIP_STROKE = "#9a9aa3";
 
 export const TEXTAREA_RESIZE_GRIP_WRAP_CLASS =
-  "relative block size-[length:var(--size-scale-small)] shrink-0";
+  "pointer-events-none block size-[10px] shrink-0 overflow-hidden";
 
+/** Hit area extends up/left; grip sits flush in the bottom-right corner. */
 export const TEXTAREA_RESIZE_HANDLE_BASE_CLASS =
-  "absolute bottom-0 right-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end p-xsmall outline-none focus-ring-inset";
+  "absolute bottom-0 right-0 z-[2] m-0 flex touch-none select-none appearance-none border-0 bg-transparent items-end justify-end pr-0 pb-0 outline-none focus-ring-inset";
 
 export const TEXTAREA_RESIZE_HANDLE_DISABLED_CLASS = "cursor-not-allowed opacity-45";
 

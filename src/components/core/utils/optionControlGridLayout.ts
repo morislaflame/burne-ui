@@ -37,7 +37,8 @@ export function optionControlCellClass(labelSide: OptionControlLabelSide = "righ
 
 export function optionLabelCellClass(labelSide: OptionControlLabelSide = "right") {
   return cn(
-    "row-start-1 inline-flex min-w-0 max-w-full items-center justify-self-start [width:fit-content]",
+    // `w-fit` (not `[width:fit-content]`) so `classNames.label: "w-full"` twMerges cleanly.
+    "row-start-1 flex min-w-0 max-w-full items-center justify-self-start w-fit",
     labelSide === "left" ? "col-start-1" : "col-start-2",
   );
 }
@@ -49,7 +50,7 @@ export function optionSecondaryCellClass(
 ) {
   return cn(
     row === 2 ? "row-start-2" : "row-start-3",
-    "min-w-0 max-w-full justify-self-start [width:fit-content]",
+    "min-w-0 max-w-full justify-self-start w-fit",
     labelSide === "left" ? "col-start-1" : "col-start-2",
   );
 }
@@ -86,14 +87,14 @@ export function optionListItemIndicatorCellClass() {
 export function optionListItemLabelCellClass(hasIndicator: boolean) {
   if (hasIndicator) return optionLabelCellClass();
   return cn(
-    "row-start-1 col-start-1 inline-flex min-w-0 max-w-full items-center justify-self-start [width:fit-content]",
+    "row-start-1 col-start-1 flex min-w-0 max-w-full items-center justify-self-start w-fit",
   );
 }
 
 export function optionListItemHintCellClass(hasIndicator: boolean) {
   if (hasIndicator) return optionSecondaryCellClass(2);
   return cn(
-    "row-start-2 col-start-1 min-w-0 max-w-full justify-self-start [width:fit-content]",
+    "row-start-2 col-start-1 min-w-0 max-w-full justify-self-start w-fit",
   );
 }
 

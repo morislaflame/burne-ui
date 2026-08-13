@@ -10,6 +10,7 @@ export function useListBoxItemState({
   label,
   hint,
   icon,
+  indicator = false,
   value,
   disabled: disabledProp = false,
 }: UseListBoxItemStateProps) {
@@ -17,7 +18,6 @@ export function useListBoxItemState({
     listId,
     size,
     selected,
-    showIndicator,
     indicatorMode,
     disabled: listDisabled,
     selectItem,
@@ -35,9 +35,9 @@ export function useListBoxItemState({
         label,
         hint,
         icon,
-        showIndicator,
+        indicator,
       }),
-    [children, hint, icon, label, showIndicator],
+    [children, hint, icon, indicator, label],
   );
 
   return {
