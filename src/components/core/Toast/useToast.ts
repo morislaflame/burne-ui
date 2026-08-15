@@ -35,6 +35,7 @@ export function useToast(): { toast: ToastAPI } {
         loading: true,
         placement: opts.placement,
         classNames: opts.classNames,
+        motion: opts.motion,
       });
 
       void p.then(

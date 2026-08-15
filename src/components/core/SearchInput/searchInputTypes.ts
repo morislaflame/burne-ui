@@ -1,8 +1,12 @@
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type {
   ChangeEvent,
   FocusEvent,
+  ForwardedRef,
   InputHTMLAttributes,
   KeyboardEvent,
+  MutableRefObject,
+  RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 
@@ -20,6 +24,23 @@ export type SearchInputClassNames = {
   clear?: string;
   /** Collapsed expand control (`role=button` overlay). */
   expandTrigger?: string;
+};
+
+export type SearchInputPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type SearchInputMotion = {
+  root?: SearchInputPartMotion;
+  icon?: Pick<SearchInputPartMotion, "enter" | "leave" | "hoverIn" | "hoverOut">;
+  clear?: SearchInputPartMotion;
+  input?: SearchInputPartMotion;
+  expandTrigger?: SearchInputPartMotion;
 };
 
 export type SearchSizeLayout = {
@@ -49,6 +70,11 @@ export type SearchInputProps = Omit<
   groupSegment?: ButtonGroupSegment;
   "aria-label"?: string;
   classNames?: Prettify<SearchInputClassNames>;
+  /**
+   * Per-slot motion (`root`, `icon`, `clear`, `input`, `expandTrigger`).
+   * Expand/collapse: `root` / `icon` `enter` / `leave` (`searchExpand` / `searchIconShift`).
+   */
+  motion?: Prettify<SearchInputMotion>;
 };
 
 export type UseSearchInputRootStateProps = {
@@ -73,7 +99,7 @@ export type UseSearchInputRootStateProps = {
   groupSegment?: ButtonGroupSegment;
   className?: string;
   classNames?: Prettify<SearchInputClassNames>;
-  forwardedRef: React.ForwardedRef<HTMLInputElement>;
+  forwardedRef: ForwardedRef<HTMLInputElement>;
 };
 
 export type UseSearchInputAnimationsProps = {
@@ -84,4 +110,8 @@ export type UseSearchInputAnimationsProps = {
   groupSegment?: ButtonGroupSegment;
   layout: SearchSizeLayout;
   targetW: number;
+  motion?: SearchInputMotion;
+  rootRef: RefObject<HTMLDivElement | null>;
+  iconRef: RefObject<HTMLSpanElement | null>;
+  pointerInsideRef: MutableRefObject<boolean>;
 };

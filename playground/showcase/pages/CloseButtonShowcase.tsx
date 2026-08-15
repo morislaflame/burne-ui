@@ -12,6 +12,12 @@ import { CloseButtonSizesDemo } from "../demos/close-button/CloseButtonSizes.dem
 import closeButtonSizesSource from "../demos/close-button/CloseButtonSizes.demo.tsx?raw";
 import { CloseButtonVariantsDemo } from "../demos/close-button/CloseButtonVariants.demo";
 import closeButtonVariantsSource from "../demos/close-button/CloseButtonVariants.demo.tsx?raw";
+import { CloseButtonMotionInstantHoverDemo } from "../demos/close-button/CloseButtonMotionInstantHover.demo";
+import closeButtonMotionInstantHoverSource from "../demos/close-button/CloseButtonMotionInstantHover.demo.tsx?raw";
+import { CloseButtonMotionIconWaveDemo } from "../demos/close-button/CloseButtonMotionIconWave.demo";
+import closeButtonMotionIconWaveSource from "../demos/close-button/CloseButtonMotionIconWave.demo.tsx?raw";
+import { CloseButtonMotionIconTintDemo } from "../demos/close-button/CloseButtonMotionIconTint.demo";
+import closeButtonMotionIconTintSource from "../demos/close-button/CloseButtonMotionIconTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -54,6 +60,12 @@ export function CloseButtonShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={CloseButtonInfoBannerDemo} source={closeButtonInfoBannerSource} />
         <ShowcaseDemoFromFile Demo={CloseButtonPreviewCardDemo} source={closeButtonPreviewCardSource} />
         <ShowcaseDemoFromFile Demo={CloseButtonFilterChipDemo} source={closeButtonFilterChipSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline root→icon, icon tint + press rotate.">
+        <ShowcaseDemoFromFile Demo={CloseButtonMotionInstantHoverDemo} source={closeButtonMotionInstantHoverSource} />
+        <ShowcaseDemoFromFile Demo={CloseButtonMotionIconWaveDemo} source={closeButtonMotionIconWaveSource} />
+        <ShowcaseDemoFromFile Demo={CloseButtonMotionIconTintDemo} source={closeButtonMotionIconTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

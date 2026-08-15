@@ -8,7 +8,6 @@ import type {
   SelectionIndicatorContextValue,
   SelectionIndicatorProps,
 } from "./selectionIndicatorTypes";
-import { useSelectionIndicatorAnimation } from "./useSelectionIndicatorAnimation";
 
 export function useSelectionIndicatorRootState({
   size = "base",
@@ -48,12 +47,6 @@ export function useSelectionIndicatorRootState({
 
   const hasMark = hasMarkSlot || markContent != null;
   const showsFill = selectionIndicatorShowsFill(variant);
-
-  useSelectionIndicatorAnimation(
-    selected,
-    showsFill ? fillRef : undefined,
-    hasMark ? markRef : undefined,
-  );
 
   const resolvedClassNames = resolveSelectionIndicatorClassNames({
     root: selectionIndicatorVariantClass(variant, selected),

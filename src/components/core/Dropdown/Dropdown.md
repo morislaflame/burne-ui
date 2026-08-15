@@ -78,6 +78,7 @@ import { Dropdown, type DropdownProps, type DropdownClassNames, type DropdownIte
 | `closeOnSelect` | `!multiple` | Закрывать после выбора |
 | `popoverVariant` | `default` | `default` \| `gloss` для panel |
 | `classNames` | — | Слоты |
+| `motion` | — | Главное меню: `content` / `title` / `description` / `body` (в Popover). Submenu: `subContent` |
 
 ### `DropdownClassNames`
 
@@ -132,14 +133,14 @@ Motion разбит: `dropdownAnimations.ts` (keyboard, submenu portal) + `Popov
 ```
 <div class=root>                         ← inline-flex wrapper
   <button|asChild> Trigger               ← squeeze target
-  <Popover.Content unstyled>             ← portal, motionTooltip
-    <Popover.Body role=menu>             ← scrollable list
+  <Popover.Content unstyled>             ← slot `content` (Popover host)
+    <Popover.Body role=menu>             ← slot `body`
       <Dropdown.Group>
         <Dropdown.Item>                  ← press squeeze on pointerdown
           <ItemIndicator /> <ItemLabel />
       <Dropdown.Sub>
         <SubTrigger>                     ← hover open, CSS hoverVariant
-        <SubContent portal z-dropdown-sub> ← separate portal motion
+        <SubContent portal z-dropdown-sub> ← slot `subContent`
 ```
 
 Нет hover-lift на root wrapper. Item/sub row — CSS `hoverVariant`, не GSAP shadow.
@@ -182,7 +183,13 @@ configureMotion({
 - `contentRole={undefined}` — dialog semantics отключены; `role="menu"` на `Popover.Body`
 - `shouldDismiss` — игнорирует клики внутри `subPanelRootsRef`
 
-Enter/exit: `animatePortalOpen` / `animatePortalClose` + `motionTooltip()` (scale 0.97→1, fade).
+Enter/exit: слот `content` → Popover (`portalSurfaceEnter` / `Leave`). Карта с Root / `Dropdown.Popover`.
+
+```tsx
+<Dropdown motion={{ content: { leave: false } }}>…</Dropdown>
+```
+
+`leave: false` — панель сразу unmount. Factory leave должна скрыть поверхность (`autoAlpha: 0`).
 
 Rest shadow на default panel — из `Popover` (`shadow-token-large`).
 
@@ -215,7 +222,11 @@ animateInteractivePressSqueeze(el);
 
 **Position:** fixed `left/top`, gap 6px справа от trigger; flip влево если не влезает; clamp по viewport height.
 
-**Motion:** отдельный portal `z-dropdown-sub` с тем же `animatePortalOpen`/`Close` + `motionTooltip()`.
+**Motion:** слот `subContent` (`portalSurfaceEnter` / `Leave`) на `Dropdown.SubContent`. Nested provider с `DROPDOWN_SUB_MOTION_DEFAULTS`.
+
+```tsx
+<Dropdown.SubContent motion={{ enter: false, leave: false }}>…</Dropdown.SubContent>
+```
 
 **Dismiss coordination:** `subPanelRootsRef` регистрирует submenu roots — main popover не закрывается при клике внутри submenu.
 
@@ -235,8 +246,8 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 | `ArrowLeft` / `Escape` в submenu | Закрыть submenu + фокус на `SubTrigger` |
 | `Escape` в main menu | Close + focus trigger |
 
-При open — autofocus на первый focusable item в panel.
-Пункты меню без `focus-ring`: активный ряд подсвечивается поверхностью через `hoverVariant()` (`focus-visible:bg-*`), как active option в Select/ComboBox. Стрелки — `focusKeyboard` ( Dom-фокус + surface). Open/restore trigger — `focusElement` (ring на trigger по последнему вводу).
+При open — `focusOnOpen` на первый item, `{ from: trigger }`: keyboard → `:focus-visible` / `hoverVariant()` tint, pointer → фокус без кольца. Не `focusElement` без флага: enter с `autoAlpha: 0` прячет `visibility`, и tint не появляется.
+Пункты меню без `focus-ring`: активный ряд подсвечивается поверхностью через `hoverVariant()` (`focus-visible:bg-*`), как active option в Select/ComboBox. Стрелки — `focusKeyboard` (DOM-фокус + surface). Restore trigger — `focusElement` (ring по последнему вводу).
 
 ### Чего нет
 
@@ -249,9 +260,9 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | — |
-| Main panel portal | `Popover` + `motionTooltip` | `tooltipDuration`, `interactiveEase` | `popoverVariant` |
+| Main panel portal | `content` → Popover `portalSurface*` | `tooltipDuration`, `interactiveEase` | `motion` на Root / Popover |
 | Item squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | `disabled` |
-| Submenu portal | `useDropdownSubContentPortal` | `tooltipDuration` | `popoverVariant` |
+| Submenu portal | `subContent` → `portalSurface*` | `tooltipDuration` | `motion` на SubContent |
 | Item hover tint | `hoverVariant()` CSS | — | `variant` на Item |
 
 ## Токены и CSS
@@ -389,15 +400,16 @@ Gloss submenu: `subPopoverGlossPanel` + `subPopoverBody` вместо `bg-surfac
 
 ```
 Dropdown/
-├── Dropdown.tsx
+├── Dropdown.tsx                 # карта motion в context
 ├── index.ts
-├── dropdownTypes.ts
+├── dropdownTypes.ts             # DropdownMotion / PopoverMotion pick / Lifecycle
 ├── dropdownStyles.ts
-├── dropdownAnimations.ts
-├── dropdownParts.tsx
+├── dropdownAnimations.ts        # resolveDropdownPopoverMotion + subContent host
+├── dropdownParts.tsx            # Popover embedder
+├── dropdownSubParts.tsx         # SubContent nested provider + useMotionPart
 ├── useDropdownRootState.ts
 ├── useDropdownSubState.ts
-├── dropdownContext.tsx
+├── dropdownContext.tsx          # createMotionScope (без defaults/play)
 ├── dropdownAPI.ts
 ├── dropdownA11y.ts
 └── Dropdown.stories.tsx

@@ -1,9 +1,13 @@
+import { useMemo } from "react";
+
 import "../utils/glossInteractive.css";
 
 import { resolveListBoxAriaLabel } from "./listBoxA11y";
+import { resolveListBoxMotionDefaults } from "./listBoxAnimations";
 import {
   ListBoxActiveValueProvider,
   ListBoxClassNamesProvider,
+  ListBoxMotionProvider,
   ListBoxProvider,
 } from "./listBoxContext";
 import { ListBoxRootShell } from "./listBoxParts";
@@ -24,6 +28,8 @@ export type {
   ListBoxSize,
   ListBoxVariant,
   ListBoxClassNames,
+  ListBoxMotion,
+  ListBoxPartMotion,
 } from "./listBoxTypes";
 
 export {
@@ -57,6 +63,7 @@ export function ListBoxRoot({
   listId: listIdProp,
   "aria-label": ariaLabelProp,
   "aria-labelledby": ariaLabelledByProp,
+  motion,
   ...rest
 }: ListBoxProps) {
   const { listId, contextValue, activeValue: resolvedActiveValue } =
@@ -77,10 +84,13 @@ export function ListBoxRoot({
     ariaLabelledBy: ariaLabelledByProp,
   });
 
+  const motionDefaults = useMemo(() => resolveListBoxMotionDefaults(), []);
+
   return (
     <ListBoxProvider value={contextValue}>
       <ListBoxActiveValueProvider value={resolvedActiveValue}>
         <ListBoxClassNamesProvider classNames={classNames}>
+          <ListBoxMotionProvider motion={motion} defaults={motionDefaults}>
           <ListBoxRootShell
             listId={listId}
             variant={variant}
@@ -91,6 +101,7 @@ export function ListBoxRoot({
           >
             {children}
           </ListBoxRootShell>
+          </ListBoxMotionProvider>
         </ListBoxClassNamesProvider>
       </ListBoxActiveValueProvider>
     </ListBoxProvider>

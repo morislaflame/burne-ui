@@ -7,6 +7,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Input } from "./index";
+import { InputMotionDemo } from "../../../../playground/showcase/demos/input/InputMotion.demo";
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -404,4 +405,9 @@ export const CustomClassNames: Story = {
       error="Enter a valid email."
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <InputMotionDemo />,
 };

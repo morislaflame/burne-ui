@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Calendar, RU_LOCALE, useCalendar, type CalendarProps, type CalendarMode, type CalendarView, type CalendarVariant, type CalendarSize, type CalendarRangeValue, type CalendarLocale, type CalendarClassNames } from "burne-ui";
+import { Calendar, RU_LOCALE, useCalendar, type CalendarProps, type CalendarMode, type CalendarView, type CalendarVariant, type CalendarSize, type CalendarRangeValue, type CalendarLocale, type CalendarClassNames, type CalendarMotion, type CalendarPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -106,115 +106,22 @@ Nav buttons: `CALENDAR_NAV_BTN` per size. Weekday labels — uppercase muted `we
 
 ## Анимации
 
-`calendarAnimations.ts` + `useToggleButtonFillAnimation` из ToggleButton utils.
+Публичный slot motion. Root — Provider с defaults для `navPrev` / `navNext`. Ячейки — nested scope слота `cell`. Fill выбранного дня (`useToggleButtonFillAnimation`) и range half-fill GSAP — kit-internal.
 
-**DOM (day cell):**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `navPrev` / `navNext` | hover/press | `hoverLiftFirstLevel` (без тени) + `pressSqueeze` (`pressOut: false`) |
+| `cell` | hover/press | то же |
+
+`false` на hover — skip без kill. Compound: `motion` на `Calendar.NavPrev` / `Calendar.NavNext`.
+
+**Где в коде:** типы — `calendarTypes.ts`; scope — `calendarContext.tsx`; defaults — `calendarAnimations.ts`; слоты — `calendarParts.tsx`; Provider — `Calendar.tsx`.
+
+```tsx
+<Calendar motion={{ cell: { hoverIn: false, hoverOut: false } }} />
 ```
-<div class=dayCellWrapper>             ← range half-fill bands (absolute)
-  <CalendarRangeHalfFill side=left|right />
-  <button class=dayCell ref=btn>       ← hover lift + squeeze
-    <span class=cellFill ref=fill />   ← GSAP fill при selected
-    <Text class=cellText>12</Text>
-    <span class=cellTodayDot />        ← today marker
-```
-
-**DOM (nav):**
-
-```
-<Calendar.Header>
-  <button class=navPrev ref>           ← hover lift + squeeze
-  <button class=headerTitle>           ← drill-up view (CSS hover only)
-  <button class=navNext ref>
-```
-
-### 1. Nav buttons & cells (`useCalendarPressableAnimations`)
-
-Общий хук для nav и day/month/year cells → `usePressableElementTextMotion` с `hoverLift: true` и `hoverLiftScale: "adaptive"` (размер элемента, не фиксированный `hoverLiftScale` из config).
-
-**Pointer enter/leave:** `animateInteractiveHoverLift` — scale lift без second-level shadow; динамический `will-change` на время твина (`setWillChangeTransform` / без постоянного `will-change-transform` на ячейках).
-
-**Pointer down:** `animateInteractivePressSqueeze(el, { pointerInside })`.
-
-**Disabled:** handlers no-op. **Unmount:** `killMotion` из shared hook.
-
-Слоты nav: `classNames.navPrev`, `navNext`.
-
-#### Кастомизация nav/cell interactive
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  hoverLiftScale: 1.03, // не влияет на Calendar adaptive lift; для Link/Tabs
-  pressSqueezeScale: [1, 0.96, 1],
-  interactiveDuration: 280,
-  enableHoverLift: true,
-  enablePressSqueeze: true,
-});
-```
-
-**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `usePrefersReducedMotion()` — без lift/squeeze.
-
-### 2. Day / month / year cells
-
-Тот же `useCalendarPressableAnimations`, что и nav.
-
-`CalendarInteractiveCellInner` объединяет:
-
-- motion handlers
-- `useToggleButtonFillAnimation(selected, fillRef)` на `cellFill`
-- today dot при `isToday && !selected`
-
-`cellKind`: `day` | `month` | `year` → разные слоты (`dayCell`, `monthCell`, `yearCell`).
-
-### 3. Selection fill (`useToggleButtonFillAnimation`)
-
-`cellFill` span — GSAP scale/opacity fill при `selected` / `aria-pressed` (+ динамический `will-change` на время fill-твина):
-
-- Аналогично `ToggleButton` / `Switch` fill
-- **Не переопределяйте `transform` на `cellFill` в CSS**
-
-```ts
-configureMotion({
-  enableToggleButtonFill: true,
-  // selection fill ease/duration — shared toggle tokens
-});
-```
-
-### 4. Range half-fill (`CalendarRangeHalfFill`)
-
-В `mode="range"` между `rangeStart` и hover/current day:
-
-**DOM:** absolute band `rangeHalfFill` (`bg-default-hover`) слева/справа от cell.
-
-**Visible toggle:** `motionContentFade()` → `autoAlpha` 0↔1.
-
-**First layout:** instant opacity (без fade на mount).
-
-**Reduced motion:** instant show/hide.
-
-Использует `tooltipDuration` + `interactiveEase` из `motionContentFade()` (не отдельные `contentFade*` ключи).
-
-### 5. Header title drill-up
-
-Click title → `days` → `months` → `years`. Только CSS `hover:text-primary` — без GSAP.
-
-### Чего нет
-
-- Portal motion (inline panel)
-- Ripple
-- FLIP при смене month grid
-- Second-level persistent shadow на root (есть `shadow-token-sm` в CSS)
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Nav / cell hover/squeeze | `useCalendarPressableAnimations` | `pressSqueezeScale`, `enableHoverLift` (lift adaptive) | `disabled` |
-| Selected fill | `useToggleButtonFillAnimation` | `enableToggleButtonFill` | `selected` state |
-| Range band fade | `motionContentFade` | `tooltipDuration`, `interactiveEase` | `mode="range"` |
-| Today dot | CSS static | — | `isToday` |
 
 ## Токены и CSS
 

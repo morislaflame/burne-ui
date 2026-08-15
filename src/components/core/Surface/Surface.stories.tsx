@@ -11,6 +11,7 @@ import { hoverVariant } from "@/components/core/utils/hoverVariant";
 import { cn } from "@/utils/cn";
 
 import { Surface, type SurfaceVariant } from "./Surface";
+import { SurfaceMotionDemo } from "../../../../playground/showcase/demos/surface/SurfaceMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -297,4 +298,9 @@ export const CustomClassNames: Story = {
       </Surface>
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <SurfaceMotionDemo />,
 };

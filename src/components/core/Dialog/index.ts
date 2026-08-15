@@ -28,6 +28,9 @@ export type {
   DialogContentProps,
   DialogHeadingBlockProps,
   DialogClassNames,
+  DialogMotion,
+  DialogLifecycleMotion,
+  DialogPartMotion,
 } from "./dialogTypes";
 
 export { DialogContent };

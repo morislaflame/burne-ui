@@ -49,6 +49,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     value: _value,
     defaultValue: _defaultValue,
     onValueChange: _onValueChange,
+    motion: _motion,
     ...trackRest
   } = props;
 

@@ -11,6 +11,8 @@ import type {
   CloseButtonVariant,
   CloseButtonSize,
   CloseButtonClassNames,
+  CloseButtonMotion,
+  CloseButtonPartMotion,
 } from "burne-ui";
 ```
 
@@ -98,85 +100,22 @@ type CloseButtonClassNames = {
 
 ## Анимации
 
-Все motion — **GSAP**. Тонкая обёртка: `closeButtonAnimations.ts` → `useFirstLevelInteractiveMotion` (тот же хук, что у `Button`).
+Публичный slot motion. Свой scope: Root — Provider с defaults + params + `useCloseButtonAnimations`. Ripple остаётся kit-internal.
 
-**DOM-структура:**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | first-level lift + squeeze; gloss → `hoverLiftGloss` / `pressSqueezeGloss` (`pressOut: false`) |
+| `icon` | hover/press | нет |
+
+`false` на фазе — skip без kill.
+
+**Где в коде:** типы — `closeButtonTypes.ts`; scope — `closeButtonContext.tsx`; defaults + host — `closeButtonAnimations.ts`; слот `icon` — `closeButtonParts.tsx`; Provider — `CloseButton.tsx`.
+
+```tsx
+<CloseButton aria-label="Close" motion={{ root: { hoverIn: false, hoverOut: false } }} />
 ```
-<button>                    ← motion target (всегда корень, не contentRef)
-  <Ripple />                ← опционально, rounded-full clip
-  <IoClose />               ← z-[1], иконка
-```
-
-У CloseButton **нет** async-слоёв, expand ring и `groupSegment`.
-
-### 1. Hover lift + press squeeze
-
-Идентичная модель Button (1-й уровень), но `useContentRef: false` всегда.
-
-**Pointer enter:**
-
-- `animateInteractiveHoverLift` на корне `<button>`
-- Тень при variant ∈ `CLOSE_BUTTON_HAS_HOVER_SHADOW` (все кроме gloss): `shadowMotionFor("none")` — hover `--shadow-lift`
-- Адаптивный scale от размера квадрата (`hoverLiftScale` cap)
-
-**Pointer down:**
-
-- `animateInteractivePressSqueeze` — adaptive squeeze ~2.4px, cap `pressSqueezeScale[1]`
-- Release → restore hover, если pointer inside
-
-**Pointer leave:** scale `1`, сброс `--el-shadow`.
-
-**Gloss:** `animateGlossInteractiveHoverLift` / `PressSqueeze`, без shadow lift.
-
-#### Кастомизация
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  interactiveDuration: 280,
-  hoverLiftScale: 1.025,
-  hoverLiftEase: "sine.inOut",
-  pressSqueezeScale: [1, 0.98, 1],
-  enableHoverLift: true,
-  enablePressSqueeze: true,
-});
-```
-
-**Глобально:** `enableAnimations: false`.
-
-**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — без lift и squeeze.
-
-### 2. Converge ripple (`ripple={true}`)
-
-`<CloseButtonRipple>` → `<Ripple color={convergeBg} className="rounded-full" />`.
-
-**Анимация:** см. Ripple.md — `ConvergeRippleDot`, default `direction="out"`.
-
-| variant | Тон |
-|---------|-----|
-| `primary` | `converge-ripple-primary-fill` |
-| остальные | `converge-ripple-neutral` |
-
-```ts
-configureMotion({
-  rippleDefaultDuration: 700,
-  rippleDefaultOpacityFrom: 0.42,
-  enableRipple: true,
-});
-```
-
-Проп `duration` на Ripple переопределяет глобальную длительность. Отключено при `disabled`.
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Hover lift | `useFirstLevelInteractiveMotion` | `hoverLiftScale`, `enableHoverLift` | — |
-| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | — |
-| Ripple | `<Ripple />` | `rippleDefaultDuration`, `enableRipple` | `ripple` |
-| Gloss | `glossInteractiveMotion` | interactive-токены | `variant="gloss"` |
 
 ## Токены и CSS-классы
 

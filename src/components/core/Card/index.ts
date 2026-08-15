@@ -21,4 +21,6 @@ export type {
   CardDescriptionProps,
   CardFooterProps,
   CardClassNames,
+  CardMotion,
+  CardPartMotion,
 } from "./cardTypes";

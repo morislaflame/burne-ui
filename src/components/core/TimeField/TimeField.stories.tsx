@@ -9,6 +9,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { TimeField } from "./index";
+import { TimeFieldMotionDemo } from "../../../../playground/showcase/demos/time-field/TimeFieldMotion.demo";
 
 function isValidTime(value: string) {
   const parts = value.split(":").map(Number);
@@ -369,4 +370,9 @@ export const SegmentSeparator: Story = {
       prefix={<IoTimeOutline className="icon-base shrink-0" aria-hidden />}
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TimeFieldMotionDemo />,
 };

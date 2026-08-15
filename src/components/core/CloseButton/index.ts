@@ -5,4 +5,6 @@ export type {
   CloseButtonSize,
   CloseButtonVariant,
   CloseButtonClassNames,
+  CloseButtonMotion,
+  CloseButtonPartMotion,
 } from "./closeButtonTypes";

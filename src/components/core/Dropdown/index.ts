@@ -40,4 +40,8 @@ export type {
   DropdownSubProps,
   DropdownSubTriggerProps,
   DropdownSubContentProps,
+  DropdownMotion,
+  DropdownLifecycleMotion,
+  DropdownPartMotion,
+  DropdownPopoverMotion,
 } from "./dropdownTypes";

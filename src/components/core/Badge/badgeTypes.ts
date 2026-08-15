@@ -9,6 +9,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 
 import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type BadgeVariant = "default" | "primary" | "outline" | "secondary" | "gloss";
 
@@ -32,6 +33,16 @@ export type BadgeClassNames = {
   iconOnly?: string;
   dot?: string;
   anchor?: string;
+};
+
+export type BadgePartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type BadgeMotion = {
+  root?: BadgePartMotion;
+  anchor?: BadgePartMotion;
 };
 
 export type BadgeLayoutKind = "dot" | "iconOnly" | "text";
@@ -124,9 +135,11 @@ export type BadgeAnchorProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
   classNames?: Prettify<BadgeClassNames>;
   /**
    * Slightly increase (GSAP) the direct child `Badge` on hover.
+   * Shorthand for `motion.anchor.hoverIn/Out: false`. An explicit `motion.anchor.hoverIn` wins.
    * @default true
    */
   hoverLift?: boolean;
+  motion?: Prettify<BadgeMotion>;
 };
 
 export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
@@ -143,9 +156,14 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   /**
    * Hover lift + stronger shadow in the same family. Rest elevation stays when `false`.
    * Does not duplicate if the badge is a direct child of `Badge.Anchor` with `hoverLift`: there is a lift on the anchor.
+   * Shorthand for `motion.root.hoverIn/Out: false`. An explicit `motion.root.hoverIn` wins.
    * @default true
    */
   hoverLift?: boolean;
+  /**
+   * Per-slot motion (`root` on Badge, `anchor` on `Badge.Anchor`).
+   */
+  motion?: Prettify<BadgeMotion>;
 };
 
 export type BadgeInlineChildProps = {
@@ -176,6 +194,7 @@ export type BadgeAnimationsSyncDeps = {
 export type UseBadgeAnimationsProps = {
   variant: BadgeVariant;
   hoverLift?: boolean;
+  motion?: BadgeMotion;
   forwardedRef: ForwardedRef<HTMLSpanElement>;
   isDirectAnchorChild: boolean;
   placement?: BadgePlacement;

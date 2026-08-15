@@ -7,6 +7,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type ToastSize = MessageBannerSize;
 
@@ -21,6 +22,25 @@ export type ToastPlacement =
   | "bottom-left"
   | "bottom-center"
   | "bottom-right";
+
+export type ToastLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type ToastPartMotion = ToastLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type ToastMotion = {
+  root?: ToastLifecycleMotion;
+  indicator?: ToastLifecycleMotion;
+  title?: ToastPartMotion;
+  description?: ToastPartMotion;
+  action?: ToastLifecycleMotion;
+  close?: ToastLifecycleMotion;
+};
 
 export type ToastClassNames = {
   root?: string;
@@ -50,6 +70,7 @@ export type AddToastOpts = {
   id?: string;
   loading?: boolean;
   classNames?: Prettify<ToastClassNames>;
+  motion?: Prettify<ToastMotion>;
 };
 
 export type PromiseToastOpts<T> = {
@@ -59,6 +80,7 @@ export type PromiseToastOpts<T> = {
   placement?: ToastPlacement;
   timeout?: number;
   classNames?: Prettify<ToastClassNames>;
+  motion?: Prettify<ToastMotion>;
 };
 
 export type ToastEntry = {
@@ -74,6 +96,7 @@ export type ToastEntry = {
   createdAt: number;
   loading: boolean;
   classNames?: Prettify<ToastClassNames>;
+  motion?: Prettify<ToastMotion>;
 };
 
 export type ToastLiveAnnouncement = {
@@ -116,6 +139,7 @@ export type ToastProviderProps = {
   /** DOM node for viewport portals. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<ToastClassNames>;
+  motion?: Prettify<ToastMotion>;
 };
 
 export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
@@ -128,6 +152,7 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   loading?: boolean;
   onClose?: () => void;
   classNames?: Prettify<ToastClassNames>;
+  motion?: Prettify<ToastMotion>;
 };
 
 export type UseToastRootStateProps = Pick<
@@ -135,14 +160,23 @@ export type UseToastRootStateProps = Pick<
   "status" | "size" | "title" | "description" | "action" | "loading" | "onClose" | "children"
 >;
 
-export type ToastIndicatorProps = HTMLAttributes<HTMLSpanElement>;
+export type ToastIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ToastLifecycleMotion>;
+};
 export type ToastMessageProps = HTMLAttributes<HTMLDivElement>;
 export type ToastContentProps = HTMLAttributes<HTMLDivElement>;
-export type ToastTitleProps = HTMLAttributes<HTMLDivElement>;
-export type ToastDescriptionProps = HTMLAttributes<HTMLDivElement>;
-export type ToastActionProps = HTMLAttributes<HTMLDivElement>;
+export type ToastTitleProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ToastPartMotion>;
+};
+export type ToastDescriptionProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ToastPartMotion>;
+};
+export type ToastActionProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ToastLifecycleMotion>;
+};
 export type ToastCloseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   "aria-label"?: string;
+  motion?: Prettify<ToastLifecycleMotion>;
 };
 
 export type ToastSimpleBodyProps = {
@@ -163,6 +197,7 @@ export type ToastItemWrapperProps = {
   onRemoveFinal: (id: string) => void;
   onHeightChange: (id: string, h: number) => void;
   providerClassNames?: ToastClassNames;
+  providerMotion?: ToastMotion;
 };
 
 export type ToastViewportProps = {
@@ -172,5 +207,6 @@ export type ToastViewportProps = {
   onDismiss: (id: string) => void;
   onRemoveFinal: (id: string) => void;
   classNames?: Prettify<ToastClassNames>;
+  motion?: Prettify<ToastMotion>;
   defaultSize?: ToastSize;
 };

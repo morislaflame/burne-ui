@@ -28,4 +28,6 @@ export type {
   SwitchProps,
   SwitchSimpleProps,
   SwitchClassNames,
+  SwitchMotion,
+  SwitchCheckMotion,
 } from "./switchTypes";

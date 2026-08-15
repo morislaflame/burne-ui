@@ -36,4 +36,7 @@ export type {
   AlertDialogTitleProps,
   AlertDialogContentProps,
   AlertDialogHeadingBlockProps,
+  AlertDialogMotion,
+  AlertDialogLifecycleMotion,
+  AlertDialogPartMotion,
 } from "./alertDialogTypes";

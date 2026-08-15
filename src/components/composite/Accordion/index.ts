@@ -28,4 +28,7 @@ export type {
   AccordionPanelProps,
   AccordionBodyProps,
   AccordionClassNames,
+  AccordionMotion,
+  AccordionLifecycleMotion,
+  AccordionTriggerLiftMotion,
 } from "./Accordion";

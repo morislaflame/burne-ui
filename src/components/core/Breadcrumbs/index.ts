@@ -12,4 +12,6 @@ export type {
   BreadcrumbsItemProps,
   BreadcrumbsClassNames,
   BreadcrumbItem,
+  BreadcrumbsMotion,
+  BreadcrumbsPartMotion,
 } from "./Breadcrumbs";

@@ -8,6 +8,7 @@ import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { Tabs, type TabsOrientation, type TabsVariant } from ".";
+import { TabsMotionDemo } from "../../../../playground/showcase/demos/tabs/TabsMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -237,4 +238,9 @@ export const CustomClassNames: Story = {
       ))}
     </Tabs>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TabsMotionDemo />,
 };

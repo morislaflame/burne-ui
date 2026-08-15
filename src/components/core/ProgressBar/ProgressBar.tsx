@@ -1,7 +1,9 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
+import { useMemo } from "react";
 
-import { ProgressBarClassNamesProvider, ProgressBarFieldProvider } from "./progressBarContext";
+import { resolveProgressBarMotionDefaults } from "./progressBarAnimations";
+import { ProgressBarClassNamesProvider, ProgressBarFieldProvider, ProgressBarMotionProvider } from "./progressBarContext";
 import { ProgressBarSimpleBody } from "./progressBarParts";
 import { progressBarRootClass } from "./progressBarStyles";
 import type { ProgressBarProps } from "./progressBarTypes";
@@ -17,6 +19,8 @@ export type {
   ProgressBarSize,
   ProgressBarTrackProps,
   ProgressBarValueProps,
+  ProgressBarMotion,
+  ProgressBarPartMotion,
 } from "./progressBarTypes";
 
 export {
@@ -53,6 +57,7 @@ export function ProgressBarRoot({
   thickness,
   color,
   formatValue,
+  motion,
   ...divRest
 }: ProgressBarProps) {
   const state = useProgressBarRootState({
@@ -87,22 +92,26 @@ export function ProgressBarRoot({
     />
   );
 
+  const motionDefaults = useMemo(() => resolveProgressBarMotionDefaults(), []);
+
   return (
     <ProgressBarFieldProvider value={state.fieldCtx}>
       <ProgressBarClassNamesProvider classNames={classNames}>
-        <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <Field
-            id={state.progressId}
-            className={progressBarRootClass({
-              orientation: state.fieldCtx.orientation,
-              slotClass: classNames?.root,
-              className,
-            })}
-            {...divRest}
-          >
-            {body}
-          </Field>
-        </FieldLabelContext.Provider>
+        <ProgressBarMotionProvider motion={motion} defaults={motionDefaults}>
+          <FieldLabelContext.Provider value={state.fieldLabelCtx}>
+            <Field
+              id={state.progressId}
+              className={progressBarRootClass({
+                orientation: state.fieldCtx.orientation,
+                slotClass: classNames?.root,
+                className,
+              })}
+              {...divRest}
+            >
+              {body}
+            </Field>
+          </FieldLabelContext.Provider>
+        </ProgressBarMotionProvider>
       </ProgressBarClassNamesProvider>
     </ProgressBarFieldProvider>
   );

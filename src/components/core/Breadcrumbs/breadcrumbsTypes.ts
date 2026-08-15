@@ -1,5 +1,6 @@
 import type { HTMLAttributes, MouseEvent, OlHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type BreadcrumbsClassNames = {
   /** Root `<nav>`. */
@@ -34,6 +35,19 @@ export type BreadcrumbsClassNames = {
   dropdownItem?: string;
 };
 
+export type BreadcrumbsPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type BreadcrumbsMotion = {
+  itemLink?: BreadcrumbsPartMotion;
+  itemLinkText?: BreadcrumbsPartMotion;
+  ellipsisLiftWrapper?: BreadcrumbsPartMotion;
+};
+
 export type BreadcrumbItem = {
   label: ReactNode;
   href?: string;
@@ -57,6 +71,7 @@ export type BreadcrumbsProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   /** Simple API: chain items. Ignored in compound mode (`Breadcrumbs.List`). */
   items?: BreadcrumbItem[];
   children?: ReactNode;
+  motion?: Prettify<BreadcrumbsMotion>;
 };
 
 export type BreadcrumbsListProps = OlHTMLAttributes<HTMLOListElement> & {

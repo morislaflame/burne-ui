@@ -26,4 +26,7 @@ export type {
   ExpandableSize,
   ExpandableVariant,
   ExpandableClassNames,
+  ExpandableMotion,
+  ExpandableLifecycleMotion,
+  ExpandableTriggerLiftMotion,
 } from "./expandableTypes";

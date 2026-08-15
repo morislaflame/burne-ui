@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Kbd, type KbdProps, type KbdVariant, type KbdSize, type KbdClassNames, type KbdGroupProps } from "burne-ui";
+import { Kbd, type KbdProps, type KbdVariant, type KbdSize, type KbdClassNames, type KbdGroupProps, type KbdMotion, type KbdPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -40,7 +40,8 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 |------|--------------|----------|
 | `variant` | `default` | `default` \| `primary` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
-| `hoverLift` | `true` | Hover shadow/lift (2nd level) |
+| `hoverLift` | `true` | Hover shadow/lift (2nd level). Shorthand for `motion.root.hoverIn/Out: false` |
+| `motion` | — | Карта слотов `root` / `text` |
 | `className` | — | На `<kbd>` |
 | `classNames` | — | `root`, `text`, `group`, `separator` |
 
@@ -86,75 +87,36 @@ Compound API только через `Kbd.Group` — root leaf-компонен�
 
 ## Анимации
 
-`kbdAnimations.ts` → `useKbdAnimations`. Только hover motion — **нет** press squeeze и portal.
+Публичный slot motion. Компонент 2-го уровня: rest-тень всегда, hover-lift на `root`. Press squeeze и portal нет.
 
-**DOM:**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss`; `false` при `hoverLift={false}` |
+| `text` | `hoverIn` / `hoverOut` | нет |
+
+`hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). Явный `motion.root.hoverIn` важнее `hoverLift`.
+
+**Где в коде:** типы — `kbdTypes.ts`; scope — `kbdContext.tsx`; defaults + host — `kbdAnimations.ts`; `Kbd.Text` — `kbdTextPart.tsx`; Provider — `Kbd.tsx`.
+
+```tsx
+<Kbd motion={{ root: { hoverIn: false, hoverOut: false } }}>Esc</Kbd>
+
+<Kbd>
+  <Kbd.Text size="base" motion={{ hoverIn: { scale: 1.18 }, hoverOut: { scale: 1 } }}>
+    Shift
+  </Kbd.Text>
+</Kbd>
 ```
-<kbd ref=rootRef>              ← motion target, pointer handlers
-  <Text inheritColor>Esc</Text>
-</kbd>
-```
 
-### 1. Hover lift — default / primary / outline / secondary
-
-`useSecondLevelShadow(rootRef, !isGloss, { interactive: hoverLift })`:
-
-**Init (mount):** `initElementShadow(el, shadowBase())` — покой `--el-shadow: var(--shadow-base)` всегда.
-
-**Pointer enter** (только при `hoverLift`):
-
-1. `animateInteractiveHoverLift(el, true, …, shadowMotionFor("base"))`
-2. Scale ~`hoverLiftScale`, тень rest → `--shadow-base-hover`
-
-**Pointer leave:** scale `1`, тень обратно к rest.
-
-Класс: `SHADOW_LIFT_MOTION_CLASS` (`animate-shadow origin-center`; `will-change` — динамически на время твина).
-
-**Локально:** `hoverLift={false}` — без handlers и scale; rest shadow остаётся.
-
-**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` — тень остаётся на rest, без scale.
-
-#### Кастомизация
+### Отключение
 
 ```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  hoverLiftScale: 1.025,
-  hoverLiftEase: "sine.inOut",
-  interactiveDuration: 280,
-  enableHoverLift: true,
-});
+configureMotion({ enableHoverLift: false });
 ```
 
-### 2. Gloss variant (`variant="gloss"`)
-
-Вместо shadow lift:
-
-- `createGlossInteractiveRefCallback(rootRef, hoverLift && isGloss)`
-- `useGlossInteractiveHandlers` на `onPointerOver` / `onPointerOut`
-- Класс: `GLOSS_INTERACTIVE_MOTION_CLASS` + `glossInteractive.css`
-
-Gloss lift — отдельная кривая, не sm→md shadow tokens.
-
-### 3. `Kbd.Group`
-
-Group wrapper **не** анимируется. Separator — static `Text` (`aria-hidden`).
-
-### Чего нет
-
-- Press squeeze (Kbd не pressable)
-- Ripple
-- Selection/fill animations
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Shadow rest→hover + lift | `useSecondLevelShadow` | `hoverLiftScale`, `enableHoverLift`, `interactiveDuration` | `hoverLift` |
-| Gloss hover | `useGlossInteractiveHandlers` | interactive-токены | `variant="gloss"` |
-| Постоянная тень покоя | `initElementShadow` + `shadowBase()` | — | всегда (non-gloss) |
+`Kbd.Group` wrapper не анимируется. Separator — static `Text` (`aria-hidden`).
 
 ## Токены и CSS
 
@@ -255,10 +217,11 @@ Kbd/
 ├── index.ts
 ├── kbdTypes.ts
 ├── kbdStyles.ts
-├── kbdAnimations.ts
+├── kbdAnimations.ts             # defaults + host play
 ├── kbdParts.tsx
+├── kbdTextPart.tsx              # useMotionPart
 ├── useKbdRootState.ts
-├── kbdContext.tsx
+├── kbdContext.tsx               # createMotionScope
 ├── kbdAPI.ts
 ├── kbdA11y.ts
 └── Kbd.stories.tsx
@@ -266,4 +229,4 @@ Kbd/
 
 ## Storybook
 
-`Core Components/Kbd` — variants, sizes, group, gloss, `hoverLift={false}`, `classNames`.
+`Core Components/Kbd` — variants, sizes, group, gloss, `hoverLift={false}`, `classNames`, slot motion gallery.

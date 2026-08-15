@@ -2,8 +2,12 @@ import { IoClose } from "react-icons/io5";
 
 import { Ripple } from "@/components/core/Ripple";
 import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 
-import { useCloseButtonClassNames } from "./closeButtonContext";
+import {
+  useCloseButtonClassNames,
+  useOptionalCloseButtonMotionScope,
+} from "./closeButtonContext";
 import { closeButtonIconClass, CLOSE_BUTTON_RIPPLE_CLIP_CLASS } from "./closeButtonStyles";
 import type { CloseButtonSize } from "./closeButtonTypes";
 
@@ -36,11 +40,18 @@ export function CloseButtonRipple({
 
 export function CloseButtonIcon({ size }: { size: CloseButtonSize }) {
   const slotClassNames = useCloseButtonClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalCloseButtonMotionScope(),
+    slot: "icon",
+    pointerPhases: true,
+  });
 
   return (
-    <IoClose
-      aria-hidden
-      className={closeButtonIconClass(size, slotClassNames.icon)}
-    />
+    <span ref={setRef} {...pointerHandlers}>
+      <IoClose
+        aria-hidden
+        className={closeButtonIconClass(size, slotClassNames.icon)}
+      />
+    </span>
   );
 }

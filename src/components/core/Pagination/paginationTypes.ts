@@ -7,6 +7,7 @@ import type {
 } from "react";
 import type { IconBaseProps } from "react-icons";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type PaginationClassNames = {
   /** Root `<nav>`. */
@@ -41,6 +42,17 @@ export type PaginationClassNames = {
   nextIcon?: string;
 };
 
+export type PaginationPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type PaginationMotion = {
+  control?: PaginationPartMotion;
+};
+
 export type PaginationContextValue = {
   page?: number;
   totalPages?: number;
@@ -56,6 +68,7 @@ export type PaginationProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   onPageChange?: (page: number) => void;
   siblingCount?: number;
   classNames?: Prettify<PaginationClassNames>;
+  motion?: Prettify<PaginationMotion>;
 };
 
 export type PaginationClassNamesProviderProps = {
@@ -74,7 +87,9 @@ export type PaginationContentProps = OlHTMLAttributes<HTMLOListElement>;
 
 export type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
 
-export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+export type PaginationNavButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  motion?: Prettify<PaginationPartMotion>;
+};
 
 export type PaginationPageProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -83,6 +98,7 @@ export type PaginationPageProps = Omit<
   page: number;
   active?: boolean;
   children?: ReactNode;
+  motion?: Prettify<PaginationPartMotion>;
 };
 
 export type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement>;
@@ -91,6 +107,7 @@ export type PaginationPagesProps = Record<string, never>;
 
 export type PaginationInteractiveProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
+  motion?: Prettify<PaginationPartMotion>;
 };
 
 export type PaginationIconProps = IconBaseProps;

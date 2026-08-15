@@ -16,6 +16,12 @@ import { SelectPopoverSideDemo } from "../demos/select/SelectPopoverSide.demo";
 import selectPopoverSideSource from "../demos/select/SelectPopoverSide.demo.tsx?raw";
 import { SelectSizesDemo } from "../demos/select/SelectSizes.demo";
 import selectSizesSource from "../demos/select/SelectSizes.demo.tsx?raw";
+import { SelectMotionInstantHoverDemo } from "../demos/select/SelectMotionInstantHover.demo";
+import selectMotionInstantHoverSource from "../demos/select/SelectMotionInstantHover.demo.tsx?raw";
+import { SelectMotionTriggerWaveDemo } from "../demos/select/SelectMotionTriggerWave.demo";
+import selectMotionTriggerWaveSource from "../demos/select/SelectMotionTriggerWave.demo.tsx?raw";
+import { SelectMotionValueTintDemo } from "../demos/select/SelectMotionValueTint.demo";
+import selectMotionValueTintSource from "../demos/select/SelectMotionValueTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -80,6 +86,12 @@ export function SelectShowcase() {
           Demo={SelectClassNamesFullDemo}
           source={selectClassNamesFullSource}
         />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound part motion.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectMotionInstantHoverDemo} source={selectMotionInstantHoverSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectMotionTriggerWaveDemo} source={selectMotionTriggerWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SelectMotionValueTintDemo} source={selectMotionValueTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

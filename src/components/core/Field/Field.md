@@ -102,18 +102,13 @@ Field.Set (fieldset)
 
 ### 2. Shell hover у дочерних контролов (2-й уровень)
 
-`Input`, `TextArea`, `Select`, `ComboBox`, `TimeField` используют **`useFieldShellHoverLift`** (`utils/useFieldShellHoverLift.ts`):
+`Input`, `TextArea`, `Select`, `ComboBox`, `TimeField` — публичный slot motion на shell (`hoverLiftSecondLevel` / `pressSqueeze`); rest-тень — `useSecondLevelShadow`. Gloss hover/press — `useGlossFieldShellMotion`. CSS-классы оболочки по-прежнему из `useFieldShellHoverLift.ts`.
 
-**На оболочке поля (shell ref):**
+Для Select / ComboBox / TimeField (как у Input / TextArea): Root передаёт карту `motion`; хост — `Select.TriggerGroup` / `ComboBox.InputGroup` / `TimeField.Control` (defaults + `play`). Non-gloss: `useSecondLevelShadow` + `hoverLiftSecondLevel` + `pressSqueeze`. Gloss hover/press — `useGlossFieldShellMotion`.
 
-1. **Init:** `initElementShadow(shell, shadowSm())` — покой `shadow-token-sm`
-2. **Pointer enter на shell:** `animateInteractiveHoverLift` — sm → md + адаптивный scale
-3. **Pointer leave:** обратно к sm, scale 1
-4. Классы: `animate-shadow`, `field-shell-transition`, `focus-within-ring`
+**Hover-фон:** `fieldShellHoverClass` — CSS `hoverVariantBg` по status, не GSAP.
 
-**Hover-фон:** `fieldShellHoverClass` — CSS `hoverVariantBg` по status (`danger-tint-hover`, …), не GSAP.
-
-Field **не передаёт** props в контрол для motion — контрол сам подключает hook при `!disabled`.
+Field **не передаёт** props в контрол для motion — контрол сам читает `motion` на root.
 
 #### Кастомизация shell hover (глобально)
 
@@ -156,7 +151,7 @@ configureMotion({
 
 | Анимация | Где живёт | `configureMotion` | Связь с Field |
 |----------|-----------|-------------------|---------------|
-| Shell hover sm→md | `useFieldShellHoverLift` | `enableHoverLift`, `hoverLiftScale` | обёртка Input и др. |
+| Shell hover sm→md | slot motion (`Input` / `TextArea` / `Select` / `ComboBox` / `TimeField`) | `enableHoverLift`, `hoverLiftScale` | оболочка поля |
 | Shell hover bg | `fieldShellHoverClass` | — | CSS, status tint |
 | Checkbox/Radio fill | контрол | `selectionFillEase` | child в Field |
 | Switch thumb | Switch | `switchThumbDuration` | child в Field |

@@ -10,6 +10,8 @@ export type {
   ButtonGroupTextProps,
   ButtonGroupOrientation,
   ButtonGroupClassNames,
+  ButtonGroupMotion,
+  ButtonGroupPartMotion,
 } from "./ButtonGroup";
 
 export type { ButtonGroupSegment } from "./buttonGroupTypes";

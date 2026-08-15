@@ -8,6 +8,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Switch } from ".";
+import { SwitchMotionDemo } from "../../../../playground/showcase/demos/switch/SwitchMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -348,4 +349,9 @@ export const SimpleLabelClassNames: Story = {
       className="max-w-md"
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <SwitchMotionDemo />,
 };

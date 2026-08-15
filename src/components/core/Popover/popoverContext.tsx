@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   PopoverClassNames,
   PopoverClassNamesProviderProps,
@@ -90,3 +92,10 @@ export function PopoverContentChromeProvider({
 export function usePopoverContentChrome(): { unstyled: boolean } {
   return useContext(PopoverContentChromeContext);
 }
+
+/** Scope only. Defaults and host play live in `popoverAnimations.ts`. */
+export const {
+  MotionScopeProvider: PopoverMotionProvider,
+  useMotionScope: usePopoverMotionScope,
+  useOptionalMotionScope: useOptionalPopoverMotionScope,
+} = createMotionScope("Popover");

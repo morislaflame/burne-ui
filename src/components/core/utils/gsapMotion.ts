@@ -49,6 +49,75 @@ export function killMotion(...targets: gsap.TweenTarget[]): void {
   for (const target of targets) clearWillChangeTransformDeep(target);
 }
 
+/** Geometry props kit fill / thumb loops tween — not opacity / autoAlpha (slot enter). */
+const MOTION_GEOMETRY_PROPS =
+  "width,height,x,y,scale,scaleX,scaleY,rotation,rotate,transform";
+
+/**
+ * Stops geometry tweens on a target without killing opacity/autoAlpha enter.
+ * Not a public `burne-ui` / `internal` export.
+ */
+export function killMotionGeometry(target: object): void {
+  gsap.killTweensOf(target, MOTION_GEOMETRY_PROPS);
+  if (typeof HTMLElement !== "undefined" && target instanceof HTMLElement) {
+    setWillChangeTransform(target, false);
+  }
+}
+
+/**
+ * Resolve a CSS color (token, `var(--color-*)`, named, hex) to a computed
+ * rgb/oklch string in `el`'s theme context. GSAP cannot interpolate
+ * `var(--color-primary)` → `rgb(...)` — that snaps and flashes.
+ */
+export function resolveCssColor(el: HTMLElement, color: string): string {
+  const probe = document.createElement("span");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText =
+    "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;visibility:hidden";
+  probe.style.color = color;
+  el.appendChild(probe);
+  const resolved = getComputedStyle(probe).color;
+  probe.remove();
+  return resolved || color;
+}
+
+export type TweenCssColorOptions = {
+  duration?: number;
+  ease?: string;
+  /** After the tween, drop the inline color so the CSS class owns it again. */
+  clearOnComplete?: boolean;
+  onComplete?: () => void;
+};
+
+/**
+ * Tween `color` via computed rgb values so CSS variables don't flash on reverse.
+ */
+export function tweenCssColor(
+  el: HTMLElement,
+  to: string,
+  options: TweenCssColorOptions = {},
+) {
+  const from = getComputedStyle(el).color;
+  const end = resolveCssColor(el, to);
+  return gsap.fromTo(
+    el,
+    { color: from },
+    {
+      color: end,
+      duration: options.duration ?? 0.25,
+      ease: options.ease,
+      overwrite: "auto",
+      force3D: false,
+      onComplete: () => {
+        if (options.clearOnComplete) {
+          gsap.set(el, { clearProps: "color" });
+        }
+        options.onComplete?.();
+      },
+    },
+  );
+}
+
 /**
  * Dynamic compositor hint for transform tweens.
  * Prefer over permanent Tailwind `will-change-transform` (avoids idle layer promotion).
@@ -61,7 +130,7 @@ export function setWillChangeTransform(el: HTMLElement, active: boolean): void {
 }
 
 function clearWillChangeTransformDeep(target: unknown): void {
-  if (target instanceof HTMLElement) {
+  if (typeof HTMLElement !== "undefined" && target instanceof HTMLElement) {
     setWillChangeTransform(target, false);
     return;
   }

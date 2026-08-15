@@ -7,6 +7,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { ProgressBar } from "@/components/core/ProgressBar";
+import { ProgressBarMotionDemo } from "../../../../playground/showcase/demos/progressBar/ProgressBarMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -228,4 +229,9 @@ export const CustomClassNames: Story = {
       }}
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ProgressBarMotionDemo />,
 };

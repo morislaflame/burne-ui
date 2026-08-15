@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   MeterClassNames,
   MeterClassNamesProviderProps,
@@ -53,5 +55,12 @@ export function useOptionalMeterFieldContext() {
 export function useMeterClassNames(): MeterClassNames {
   return useContext(MeterClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `meterAnimations.ts`. */
+export const {
+  MotionScopeProvider: MeterMotionProvider,
+  useMotionScope: useMeterMotionScope,
+  useOptionalMotionScope: useOptionalMeterMotionScope,
+} = createMotionScope("Meter");
 
 export { MeterFieldContext };

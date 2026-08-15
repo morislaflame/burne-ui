@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Breadcrumbs, type BreadcrumbsProps, type BreadcrumbsClassNames, type BreadcrumbItem, type BreadcrumbsListProps, type BreadcrumbsItemProps } from "burne-ui";
+import { Breadcrumbs, type BreadcrumbsProps, type BreadcrumbsClassNames, type BreadcrumbItem, type BreadcrumbsListProps, type BreadcrumbsItemProps, type BreadcrumbsMotion, type BreadcrumbsPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -92,90 +92,23 @@ type BreadcrumbItem = {
 
 ## Анимации
 
-`breadcrumbsAnimations.ts` → `useBreadcrumbInteractiveMotion` + motion из `Dropdown` (ellipsis).
+Публичный slot motion. Root — map-only Provider. Каждый интерактивный crumb / ellipsis — nested scope. Dropdown меню «…» — slot motion Dropdown/Popover.
 
-**DOM (link crumb):**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `itemLink` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
+| `itemLinkText` | hover/press | нет |
+| `ellipsisLiftWrapper` | press | `pressSqueeze` (`pressOut: false`) |
+
+`false` на `itemLink.pressIn` — skip без kill. Current/static сегменты не анимируются.
+
+**Где в коде:** типы — `breadcrumbsTypes.ts`; scope — `breadcrumbsContext.tsx`; defaults — `breadcrumbsAnimations.ts`; слоты — `breadcrumbsParts.tsx`; карта на Root — `Breadcrumbs.tsx`.
+
+```tsx
+<Breadcrumbs motion={{ itemLink: { pressIn: false } }} items={items} />
 ```
-<li class=item>
-  <span class=itemLinkWrapper>
-    <a|button class=itemLink>
-      <Text ref=textRef class=itemLinkText>Каталог</Text>
-    </a>
-  </span>
-  <span class=separatorWrapper>
-    <IoChevronForward class=separator />
-```
-
-**DOM (collapse ellipsis):**
-
-```
-<Dropdown>
-  <Dropdown.Trigger class=ellipsisTrigger>
-    <span class=ellipsisLiftWrapper>
-      <Text ref=textRef class=ellipsisText>…</Text>
-  <Dropdown.Popover class=ellipsisPopover>
-    <Dropdown.Item class=dropdownItem>скрытый сегмент</Dropdown.Item>
-```
-
-Нет hover lift на crumbs — только CSS `hover:text-foreground` + press text squeeze.
-
-### 1. Crumb press text motion
-
-`useBreadcrumbInteractiveMotion` на интерактивных `<a>` / `<button>`:
-
-**Pointer down:** `usePressableElementTextMotion` squeeze на `textRef` (`itemLinkText`).
-
-Применяется к:
-
-- link crumbs (`href` + `onClick`)
-- button crumbs (SPA navigation)
-- ellipsis trigger `…` (тот же hook, отдельный `textRef`)
-
-**Не анимируется:** `itemActive` segment (`breadcrumbCurrentClass`), `itemStatic` segments.
-
-#### Кастомизация
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  pressSqueezeScale: [1, 0.98, 1],
-  interactiveDuration: 280,
-});
-```
-
-**Reduced motion:** squeeze пропускается внутри `usePressableElementTextMotion`.
-
-### 2. Ellipsis dropdown menu
-
-Скрытые middle items → `Dropdown` compound:
-
-- Trigger squeeze: `runOpenAfterSqueeze` (см. Dropdown.md)
-- Popover portal: `motionTooltip()`
-- Item press squeeze на menu rows
-
-Слоты: `ellipsisPopover`, `dropdownItem`, `ellipsisTrigger`.
-
-### 3. Collapse layout
-
-При смене `items` / route — React re-render цепочки. **Нет** FLIP/GSAP на list items.
-
-### Чего нет
-
-- Hover shadow lift на crumbs
-- Portal motion на самих crumbs (только ellipsis menu)
-- Ripple
-- Анимация separator chevron
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Link text press | `useBreadcrumbInteractiveMotion` | `pressSqueezeScale` | `href` / `onClick` |
-| Ellipsis `…` press | тот же hook | `pressSqueezeScale` | `collapse={true}` |
-| Dropdown menu | `Dropdown` | `tooltipDuration`, `pressSqueezeScale` | hidden items count |
-| Collapse layout | React | — | `collapse`, items length |
 
 ## Токены и CSS
 
@@ -299,7 +232,7 @@ Breadcrumbs/
 ├── index.ts
 ├── breadcrumbsTypes.ts
 ├── breadcrumbsStyles.ts
-├── breadcrumbsAnimations.ts    # useBreadcrumbInteractiveMotion
+├── breadcrumbsAnimations.ts    # slot defaults
 ├── breadcrumbsParts.tsx
 ├── breadcrumbsSimpleContent.tsx
 ├── useBreadcrumbsRootState.ts

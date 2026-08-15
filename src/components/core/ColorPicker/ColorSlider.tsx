@@ -1,10 +1,21 @@
-import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type KeyboardEvent, type PointerEvent } from "react";
 
 import { Text } from "@/components/core/Text";
 import { readSliderTrackMetrics, resolveSliderFallbackThumbPx, sliderPointerToValue, sliderThumbCenterPercent } from "@/components/core/Slider/sliderAPI";
 import { SliderThumbButton } from "@/components/core/Slider/sliderThumbParts";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { cn } from "@/utils/cn";
+
+import {
+  mergeMotionSlotMaps,
+  resolveColorSliderMotionDefaults,
+  useColorSliderRootMotion,
+  useColorSliderTrackMotion,
+} from "./colorSliderAnimations";
+import {
+  ColorSliderMotionProvider,
+  useOptionalColorSliderMotionScope,
+} from "./colorSliderContext";
 
 import { CHANNEL_A11Y_LABEL, COLOR_SLIDER_LABEL_ROW_CLASS, COLOR_SLIDER_LABEL_TEXT_CLASS, COLOR_SLIDER_ROOT_CLASS, COLOR_SLIDER_VALUE_TEXT_CLASS, colorSliderBackgroundStyle, colorSliderTrackClass } from "./colorSliderStyles";
 import type {
@@ -20,6 +31,8 @@ export type {
   ColorSliderProps,
   ColorSliderSize,
   ColorSliderTrackProps,
+  ColorSliderMotion,
+  ColorSliderPartMotion,
 } from "./colorSliderTypes";
 
 const CHANNEL_RANGE: Record<ColorChannel, { min: number; max: number; step: number }> = {
@@ -37,21 +50,49 @@ const CHANNEL_DEFAULT: Record<ColorChannel, number> = {
 };
 
 export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps>(
-  function ColorSliderTrack(
-    {
-      channel,
-      color = { h: 0, s: 100, v: 100, a: 100 },
-      value: valueProp,
-      defaultValue,
-      onValueChange,
-      size = "base",
-      orientation = "horizontal",
-      disabled = false,
-      className = "",
-      ...rest
-    },
-    ref,
-  ) {
+  function ColorSliderTrack({ motion, ...rest }, ref) {
+    const parent = useOptionalColorSliderMotionScope();
+    const mergedMotion = mergeMotionSlotMaps(
+      parent?.getRootMotion(),
+      motion ? { track: motion } : undefined,
+    );
+    const motionDefaults = useMemo(() => resolveColorSliderMotionDefaults(), []);
+
+    return (
+      <ColorSliderMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+        <ColorSliderTrackSurface forwardedRef={ref} itemMotion={motion} {...rest} />
+      </ColorSliderMotionProvider>
+    );
+  },
+);
+
+const ColorSliderTrackSurface = forwardRef<
+  HTMLDivElement,
+  ColorSliderTrackProps & {
+    forwardedRef: ForwardedRef<HTMLDivElement>;
+    itemMotion?: ColorSliderTrackProps["motion"];
+  }
+>(function ColorSliderTrackSurface(
+  {
+    channel,
+    color = { h: 0, s: 100, v: 100, a: 100 },
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    size = "base",
+    orientation = "horizontal",
+    disabled = false,
+    className = "",
+    forwardedRef,
+    itemMotion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
+  _ref,
+) {
     const { min, max, step } = CHANNEL_RANGE[channel];
     const [value, setValueInternal] = useControllableState({
       value: valueProp,
@@ -88,15 +129,6 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
       observer.observe(el);
       return () => observer.disconnect();
     }, [orientation]);
-
-    const setRefs = useCallback(
-      (node: HTMLDivElement | null) => {
-        trackRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
-    );
 
     const emit = useCallback(
       (raw: number) => {
@@ -159,6 +191,27 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
       [disabled, updateFromPointer],
     );
 
+    const part = useColorSliderTrackMotion({
+      motion: itemMotion,
+      forwardedRef,
+      valueIdentity: value,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown: (e) => {
+        onPointerDown?.(e);
+        handleTrackDown(e);
+      },
+      onPointerUp,
+    });
+
+    const setRefs = useCallback(
+      (node: HTMLDivElement | null) => {
+        trackRef.current = node;
+        part.setRef(node);
+      },
+      [part.setRef],
+    );
+
     const handleThumbDown = useCallback(
       (e: PointerEvent<HTMLButtonElement>) => {
         if (disabled || e.button !== 0) return;
@@ -206,7 +259,7 @@ export const ColorSliderTrack = forwardRef<HTMLDivElement, ColorSliderTrackProps
         role="presentation"
         className={colorSliderTrackClass({ size, orientation, disabled, className })}
         style={colorSliderBackgroundStyle(channel, color, orientation)}
-        onPointerDown={handleTrackDown}
+        {...part.pointerHandlers}
         {...rest}
       >
         <SliderThumbButton
@@ -231,30 +284,86 @@ ColorSliderTrack.displayName = "ColorSliderTrack";
 
 export const ColorSliderRoot = forwardRef<HTMLDivElement, ColorSliderProps>(
   function ColorSliderRoot(
-    { channel, color, label, size = "base", orientation = "horizontal", className = "", children, ...rest },
+    {
+      channel,
+      color,
+      label,
+      size = "base",
+      orientation = "horizontal",
+      className = "",
+      children,
+      motion,
+      ...rest
+    },
     ref,
   ) {
-    if (!children) {
-      return (
-        <div ref={ref} className={cn(COLOR_SLIDER_ROOT_CLASS, className)}>
-          {label ? (
-            <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
-              <Text as="span" variant="small" className={COLOR_SLIDER_LABEL_TEXT_CLASS}>{label}</Text>
-              <Text as="span" variant="small" className={COLOR_SLIDER_VALUE_TEXT_CLASS}>
-                {rest.value ?? rest.defaultValue ?? CHANNEL_DEFAULT[channel]}
-              </Text>
-            </div>
-          ) : null}
-          <ColorSliderTrack channel={channel} color={color} size={size} orientation={orientation} {...rest} />
-        </div>
-      );
-    }
+    const motionDefaults = useMemo(() => resolveColorSliderMotionDefaults(), []);
+
     return (
-      <div ref={ref} className={cn(COLOR_SLIDER_ROOT_CLASS, className)}>
-        {children}
-      </div>
+      <ColorSliderMotionProvider motion={motion} defaults={motionDefaults}>
+        <ColorSliderRootSurface
+          forwardedRef={ref}
+          channel={channel}
+          color={color}
+          label={label}
+          size={size}
+          orientation={orientation}
+          className={className}
+          rest={rest}
+        >
+          {children}
+        </ColorSliderRootSurface>
+      </ColorSliderMotionProvider>
     );
   },
 );
+
+function ColorSliderRootSurface({
+  forwardedRef,
+  channel,
+  color,
+  label,
+  size,
+  orientation,
+  className,
+  children,
+  rest,
+}: {
+  forwardedRef: ForwardedRef<HTMLDivElement>;
+  channel: ColorSliderProps["channel"];
+  color: ColorSliderProps["color"];
+  label: ColorSliderProps["label"];
+  size: NonNullable<ColorSliderProps["size"]>;
+  orientation: NonNullable<ColorSliderProps["orientation"]>;
+  className: string;
+  children: ColorSliderProps["children"];
+  rest: Omit<
+    ColorSliderProps,
+    "channel" | "color" | "label" | "size" | "orientation" | "className" | "children" | "motion"
+  >;
+}) {
+  const part = useColorSliderRootMotion({ forwardedRef });
+
+  if (!children) {
+    return (
+      <div ref={part.setRef} className={cn(COLOR_SLIDER_ROOT_CLASS, className)} {...part.pointerHandlers}>
+        {label ? (
+          <div className={COLOR_SLIDER_LABEL_ROW_CLASS}>
+            <Text as="span" variant="small" className={COLOR_SLIDER_LABEL_TEXT_CLASS}>{label}</Text>
+            <Text as="span" variant="small" className={COLOR_SLIDER_VALUE_TEXT_CLASS}>
+              {rest.value ?? rest.defaultValue ?? CHANNEL_DEFAULT[channel]}
+            </Text>
+          </div>
+        ) : null}
+        <ColorSliderTrack channel={channel} color={color} size={size} orientation={orientation} {...rest} />
+      </div>
+    );
+  }
+  return (
+    <div ref={part.setRef} className={cn(COLOR_SLIDER_ROOT_CLASS, className)} {...part.pointerHandlers}>
+      {children}
+    </div>
+  );
+}
 
 ColorSliderRoot.displayName = "ColorSliderRoot";

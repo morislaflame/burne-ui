@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   BreadcrumbsClassNames,
   BreadcrumbsClassNamesProviderProps,
@@ -45,3 +47,10 @@ export function BreadcrumbsClassNamesProvider({
 export function useBreadcrumbsClassNames(): BreadcrumbsClassNames {
   return useContext(BreadcrumbsClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `breadcrumbsAnimations.ts`. */
+export const {
+  MotionScopeProvider: BreadcrumbsMotionProvider,
+  useMotionScope: useBreadcrumbsMotionScope,
+  useOptionalMotionScope: useOptionalBreadcrumbsMotionScope,
+} = createMotionScope("Breadcrumbs");

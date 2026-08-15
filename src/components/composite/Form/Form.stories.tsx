@@ -14,6 +14,7 @@ import { Surface } from "@/components/core/Surface";
 import { Text } from "@/components/core/Text";
 import type { FormValues } from "./formTypes";
 import { Form } from "./index";
+import { FormMotionDemo } from "../../../../playground/showcase/demos/form/FormMotion.demo";
 
 const localeOptions: ComboBoxOption[] = [
   { value: "ru", label: "Russian", hint: "UI and emails in Russian" },
@@ -736,4 +737,9 @@ function FormSizesStory() {
 export const Sizes: Story = {
   name: "Sizes",
   render: () => <FormSizesStory />,
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <FormMotionDemo />,
 };

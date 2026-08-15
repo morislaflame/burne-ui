@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type { TooltipSide } from "./tooltipPosition";
 import type {
   TooltipBodyContextValue,
@@ -12,6 +14,13 @@ const TooltipContext = createContext<TooltipContextValue | null>(null);
 const TooltipResolvedSideContext = createContext<TooltipSide>("top");
 const TooltipBodyContext = createContext<TooltipBodyContextValue | null>(null);
 const TooltipClassNamesContext = createContext<TooltipClassNames>({});
+
+/** Scope only. Defaults and host play live in `tooltipAnimations.ts`. */
+export const {
+  MotionScopeProvider: TooltipMotionProvider,
+  useMotionScope: useTooltipMotionScope,
+  useOptionalMotionScope: useOptionalTooltipMotionScope,
+} = createMotionScope("Tooltip");
 
 export function TooltipClassNamesProvider({
   classNames,

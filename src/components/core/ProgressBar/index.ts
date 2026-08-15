@@ -17,6 +17,11 @@ export type {
 } from "./ProgressBar";
 
 export type {
+  ProgressBarMotion,
+  ProgressBarPartMotion,
+} from "./progressBarTypes";
+
+export type {
   ProgressBarProps,
   ProgressBarHeaderProps,
   ProgressBarValueProps,

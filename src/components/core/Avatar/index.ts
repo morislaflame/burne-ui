@@ -15,4 +15,6 @@ export type {
   AvatarImageProps,
   AvatarFallbackProps,
   AvatarGroupProps,
+  AvatarMotion,
+  AvatarPartMotion,
 } from "./avatarTypes";

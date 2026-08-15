@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 
 import type {
@@ -92,5 +94,12 @@ export function ButtonGroupClassNamesProvider({
 export function useButtonGroupClassNames(): ButtonGroupClassNames {
   return useContext(ButtonGroupClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `buttonGroupAnimations.ts`. */
+export const {
+  MotionScopeProvider: ButtonGroupMotionProvider,
+  useMotionScope: useButtonGroupMotionScope,
+  useOptionalMotionScope: useOptionalButtonGroupMotionScope,
+} = createMotionScope("ButtonGroup");
 
 export { ButtonGroupLayoutContext, ButtonGroupSegmentContext };

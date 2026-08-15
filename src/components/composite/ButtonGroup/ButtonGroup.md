@@ -112,6 +112,17 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `text` | `enter` (opt-in) | empty |
+
+Не оборачивает хосты item Button. Separator не слот.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 У `ButtonGroup` **нет** `*Animations.ts`. Motion делегирован сегментам.
 
 **DOM (joined horizontal):**

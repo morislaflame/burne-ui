@@ -10,6 +10,12 @@ import { MeterStorageGridDemo } from "../demos/meter/MeterStorageGrid.demo";
 import meterStorageGridSource from "../demos/meter/MeterStorageGrid.demo.tsx?raw";
 import { MeterVerticalDemo } from "../demos/meter/MeterVertical.demo";
 import meterVerticalSource from "../demos/meter/MeterVertical.demo.tsx?raw";
+import { MeterMotionInstantEnterDemo } from "../demos/meter/MeterMotionInstantEnter.demo";
+import meterMotionInstantEnterSource from "../demos/meter/MeterMotionInstantEnter.demo.tsx?raw";
+import { MeterMotionTrackWaveDemo } from "../demos/meter/MeterMotionTrackWave.demo";
+import meterMotionTrackWaveSource from "../demos/meter/MeterMotionTrackWave.demo.tsx?raw";
+import { MeterMotionChangeTintDemo } from "../demos/meter/MeterMotionChangeTint.demo";
+import meterMotionChangeTintSource from "../demos/meter/MeterMotionChangeTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -48,6 +54,12 @@ export function MeterShowcase() {
       >
         <ShowcaseDemoFromFile align="stretch" Demo={MeterStorageGridDemo} source={meterStorageGridSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={MeterQuotaBannerDemo} source={meterQuotaBannerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, track timeline, change-phase tint. Fill width stays kit-internal.">
+        <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionInstantEnterDemo} source={meterMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionTrackWaveDemo} source={meterMotionTrackWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={MeterMotionChangeTintDemo} source={meterMotionChangeTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

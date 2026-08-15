@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Input, type InputControlProps, type InputSimpleProps, type InputProps, type InputVariant, type InputStatus, type InputSize, type InputClassNames } from "burne-ui";
+import { Input, type InputControlProps, type InputSimpleProps, type InputProps, type InputVariant, type InputStatus, type InputSize, type InputClassNames, type InputMotion, type InputPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -54,6 +54,7 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 | `prefix` / `suffix` | — | Affix-слоты (не для `file`) |
 | `groupSegment` | — | Сегмент `ButtonGroup` |
 | `classNames` | — | См. ниже |
+| `motion` | — | Карта слотов на Root / simple API; на `Input.Control` — part motion `shell` |
 
 ### `InputClassNames`
 
@@ -84,33 +85,34 @@ import { Input, type InputControlProps, type InputSimpleProps, type InputProps, 
 
 ## Анимации
 
-Motion: `inputAnimations.ts` → `useInputShellMotion` + `animateInputFileRowExit`.
+Публичный slot motion. Root передаёт карту `motion`; хост — `Input.Control` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. File row leave — рецепт `fileRowExit` (scale / y / autoAlpha).
 
-**DOM-структура (text/password):**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
+| `control` / `prefix` / `suffix` / `passwordToggle` / `fileRemove` | hover/press | нет |
+| `fileRow` | `leave` | `fileRowExit` |
+
+`false` на `fileRow.leave` — строка снимается сразу, без tween. `false` на `shell.hoverIn/Out` — rest-тень остаётся, lift не играет. Не анимируйте layout в публичных MotionVars.
+
+**Где в коде:** типы — `inputTypes.ts`; scope — `inputContext.tsx`; defaults + host — `inputAnimations.ts`; слоты — `inputControlParts.tsx` / `inputAffixParts.tsx`; карта на Root — `Input.tsx`.
+
+```tsx
+<Input
+  label="Email"
+  motion={{
+    shell: { hoverIn: false, hoverOut: false },
+  }}
+/>
 ```
-Field
-  Label
-  <div data-slot="input-shell" ref=shellRef>   ← motion target
-    [prefix affix]
-    <input class="control" />
-    [suffix / password toggle]
-  Hint / Error
-```
 
-### 1. Shell hover lift (2-й уровень, `variant !== "gloss"`)
+Compound: `motion` на `Input.Control` — part motion слота `shell`.
 
-`useFieldShellHoverLift(shellRef, enabled)`:
+**ButtonGroup:** при `groupSegment` shell hover/press выключены.
 
-- **enabled** когда `!blocked && !isGloss && groupSegment == null`
-- **Init:** `shadow-token-sm` на shell (`--el-shadow`)
-- **Pointer enter/leave:** sm → md + адаптивный scale lift
-- Классы: `animate-shadow`, `field-shell-transition`, `focus-within-ring`
-- CSS hover-фон: `fieldShellHoverClass(status)` — tint при hover/focus-within
-
-**ButtonGroup:** при `groupSegment` shell hover **отключён** — glue с соседними сегментами.
-
-#### Кастомизация hover
+### Кастомизация
 
 ```ts
 import { configureMotion } from "burne-ui";
@@ -120,67 +122,13 @@ configureMotion({
   hoverLiftEase: "sine.inOut",
   interactiveDuration: 280,
   enableHoverLift: true,
+  enablePressSqueeze: true,
 });
 ```
 
 **Reduced motion / touch:** `shouldSkipInteractiveHoverLift()`.
 
-### 2. Shell press squeeze (standard)
-
-На `pointerdown` shell (не на affix-кнопках — они `stopPropagation`):
-
-1. Проверки: `!blocked`, `!isGloss`, `groupSegment == null`, не `defaultPrevented`
-2. `animateInteractivePressSqueeze(shell)` — adaptive squeeze на всей оболочке
-
-Не срабатывает для `gloss` (отдельный путь) и в `ButtonGroup`.
-
-### 3. Gloss shell (`variant="gloss"`)
-
-`useGlossFieldShellMotion(shellRef, enabled)`:
-
-| Событие | Действие |
-|---------|----------|
-| pointer enter/leave | `animateGlossInteractiveHoverLift` |
-| pointer down | gloss press squeeze (`onShellPointerDown`) |
-| focus in/out (capture) | sync lift при focus внутри shell |
-| ResizeObserver | `refreshGlossInteractiveState` |
-
-Класс: gloss-control motion из `glossInteractive.css`.  
-`data-gloss-disabled` при `blocked && gloss`.
-
-**ButtonGroup + gloss:** hover/squeeze на shell отключены при `groupSegment`.
-
-### 4. File row exit (`inputType="file"`)
-
-При удалении файла из списка:
-
-```ts
-animateInputFileRowExit(rowEl):
-  gsap.to(rowEl, {
-    scale: 0.94,
-    y: "-0.5rem",
-    autoAlpha: 0,
-    ...motionInteractive(),
-  });
-```
-
-**Reduced motion:** удаление мгновенное без GSAP.
-
-После complete — обновление `files` через `DataTransfer`.
-
-### 5. Password / file кнопки
-
-Toggle password и remove file — **CSS** `hoverVariant`, `TEXT_COLOR_TRANSITION`, без GSAP на shell.
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | `configureMotion` | Условия |
-|----------|---------|-------------------|---------|
-| Shell hover sm→md | `useFieldShellHoverLift` | `enableHoverLift`, `hoverLiftScale` | !gloss, !groupSegment |
-| Shell squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | !gloss, !groupSegment |
-| Gloss shell | `useGlossFieldShellMotion` | interactive | variant=gloss |
-| File row exit | `animateInputFileRowExit` | `interactiveDuration` | inputType=file |
-| Affix hover | CSS | — | — |
+Resize/file geometry не в публичных vars. Password toggle и file remove — публичные слоты (можно factory на hover).
 
 ## Интеграция
 
@@ -299,14 +247,17 @@ Toggle password и remove file — **CSS** `hoverVariant`, `TEXT_COLOR_TRANSITIO
 
 ```
 Input/
-├── Input.tsx
+├── Input.tsx                 # Root: карта motion (без defaults)
 ├── index.ts
 ├── inputTypes.ts
 ├── inputStyles.ts
-├── inputAnimations.ts       # shell motion + file exit
-├── inputParts.tsx           # InputControl, file UI
+├── inputAnimations.ts        # defaults + host play (hover / press / fileRow leave)
+├── inputContext.tsx          # field + classNames + createMotionScope
+├── inputControlParts.tsx     # Control host + nested Provider
+├── inputAffixParts.tsx       # prefix/suffix/passwordToggle/fileRow/fileRemove
+├── inputFieldParts.tsx
+├── inputSimpleParts.tsx
 ├── useInputRootState.ts
-├── inputContext.tsx
 ├── inputAPI.ts
 ├── inputA11y.ts
 └── Input.stories.tsx
@@ -314,4 +265,4 @@ Input/
 
 ## Storybook
 
-`Core Components/Input` — simple/compound, variant, status, password, file, gloss, ButtonGroup segment, `classNames`.
+`Core Components/Input` — simple/compound, variant, status, password, file, gloss, ButtonGroup segment, `classNames`, slot motion gallery.

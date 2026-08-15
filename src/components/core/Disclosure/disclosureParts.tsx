@@ -2,6 +2,9 @@ import {
   cloneElement,
   forwardRef,
   isValidElement,
+  useCallback,
+  useMemo,
+  useRef,
   type HTMLAttributes,
   type KeyboardEvent,
   type ReactElement,
@@ -10,12 +13,12 @@ import {
 import { IoChevronDown } from "react-icons/io5";
 
 import { Text } from "@/components/core/Text";
-import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
-import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
+import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { useDisclosureTriggerMotion } from "./disclosureAnimations";
 import { resolveDisclosureTriggerBody } from "./disclosureAPI";
-import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
+import { useDisclosureClassNames, useDisclosureContext, useDisclosureMotionScope } from "./disclosureContext";
 import {
   DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
   DISCLOSURE_TRIGGER_CHEVRON_ICON_CLASS,
@@ -58,20 +61,32 @@ export function DisclosureIcon({ className, children, ...props }: DisclosureIcon
 
 DisclosureIcon.displayName = "DisclosureIcon";
 
-export function DisclosureChevron({ className, children, ...props }: DisclosureChevronProps) {
-  const { open, size, chevronRef, skipContentAnimRef } = useDisclosureContext();
+export function DisclosureChevron({ className, children, motion, ...props }: DisclosureChevronProps) {
+  const { open, size, chevronRef } = useDisclosureContext();
   const slotClassNames = useDisclosureClassNames();
   const triggerShell = disclosureTriggerShell(size);
-  const bindChevronRef = useChevronRotation(
-    open,
-    chevronRef,
-    () => isMotionFeatureEnabled("enableExpandable"),
-    skipContentAnimRef,
+  const scope = useDisclosureMotionScope();
+  const initialOpenRef = useRef(open);
+  const bindChevronInit = useMemo(
+    () => createChevronRotationRefCallback(chevronRef, initialOpenRef.current),
+    [chevronRef],
+  );
+  const { setRef: setChevronPartRef } = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "chevron",
+    motion,
+  });
+  const setChevronRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      bindChevronInit(node);
+      setChevronPartRef(node);
+    },
+    [bindChevronInit, setChevronPartRef],
   );
 
   return (
     <span
-      ref={bindChevronRef}
+      ref={setChevronRef}
       aria-hidden
       className={cn(
         DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
@@ -103,6 +118,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       onPointerEnter,
       onPointerLeave,
       onPointerDown,
+      motion,
       ...rest
     },
     ref,
@@ -124,13 +140,14 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
     const triggerShell = disclosureTriggerShell(size);
     const body = resolveDisclosureTriggerBody(children);
 
-    const motion = useDisclosureTriggerMotion({
+    const triggerMotion = useDisclosureTriggerMotion({
       open,
       disabled,
       setOpen,
       chevronRef,
       skipContentAnimRef,
       forwardedRef: ref,
+      motion,
       onClick,
       onKeyDown,
       onPointerEnter,
@@ -150,7 +167,7 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       body.chevron
     ) : (
       <span
-        ref={motion.bindChevronRef}
+        ref={triggerMotion.bindChevronRef}
         aria-hidden
         className={cn(
           DISCLOSURE_TRIGGER_CHEVRON_BASE_CLASS,
@@ -174,25 +191,25 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
       return cloneElement(child, {
         ...rest,
         id: triggerId,
-        ref: motion.mergeRefs(ref, motion.setRefs, child.props.ref),
+        ref: triggerMotion.mergeRefs(ref, triggerMotion.setRefs, child.props.ref),
         className: cn(child.props.className, className),
         disabled: disabled || child.props.disabled,
         "aria-expanded": open,
         "aria-controls": panelId,
         onClick: (e: React.MouseEvent<HTMLElement>) => {
           child.props.onClick?.(e);
-          motion.handleClick(e as React.MouseEvent<HTMLButtonElement>);
+          triggerMotion.handleClick(e as React.MouseEvent<HTMLButtonElement>);
         },
         onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
           child.props.onKeyDown?.(e);
-          motion.handleKeyDown(e as KeyboardEvent<HTMLButtonElement>);
+          triggerMotion.handleKeyDown(e as KeyboardEvent<HTMLButtonElement>);
         },
       });
     }
 
     return (
       <button
-        ref={motion.setRefs}
+        ref={triggerMotion.setRefs}
         id={triggerId}
         type="button"
         aria-expanded={open}
@@ -205,17 +222,17 @@ export const DisclosureTrigger = forwardRef<HTMLButtonElement, DisclosureTrigger
           className,
           slotClass: slotClassNames.trigger,
         })}
-        onClick={motion.handleClick}
-        onKeyDown={motion.handleKeyDown}
-        onPointerEnter={motion.handlePointerEnter}
-        onPointerLeave={motion.handlePointerLeave}
-        onPointerDown={motion.handlePointerDown}
+        onClick={triggerMotion.handleClick}
+        onKeyDown={triggerMotion.handleKeyDown}
+        onPointerEnter={triggerMotion.handlePointerEnter}
+        onPointerLeave={triggerMotion.handlePointerLeave}
+        onPointerDown={triggerMotion.handlePointerDown}
         {...rest}
       >
         {resolvedIcon}
         {chevronPosition === "start" && chevronNode}
         <span
-          ref={motion.titleLiftRef}
+          ref={triggerMotion.titleLiftRef}
           className={cn(
             DISCLOSURE_TRIGGER_TITLE_LIFT_CLASS,
             slotClassNames.titleLift,

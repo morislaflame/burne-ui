@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import { EMPTY_TABLE_SELECTION } from "./tableAPI";
 import type {
   TableClassNames,
@@ -128,3 +130,10 @@ export function useTableRowIsFocusTarget(id: string | number | undefined): boole
 }
 
 export { TableVariantContext, TableContentContext, TableRowContext };
+
+/** Scope only. Defaults and host play live in `tableSlotMotion.ts` via `tableAnimations.tsx` helpers. */
+export const {
+  MotionScopeProvider: TableMotionProvider,
+  useMotionScope: useTableMotionScope,
+  useOptionalMotionScope: useOptionalTableMotionScope,
+} = createMotionScope("Table");

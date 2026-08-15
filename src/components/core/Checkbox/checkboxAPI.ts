@@ -1,10 +1,9 @@
 import { Children, isValidElement, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
-
-import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 import { cn } from "@/utils/cn";
 
 import type { CheckboxClassNames, CheckboxIndicatorClassNames, CheckboxVariant } from "./checkboxTypes";
+import type { SelectionIndicatorClassNames, SelectionIndicatorVariant } from "@/components/core/SelectionIndicator";
 
 export function checkboxVariantToIndicator(
   variant: CheckboxVariant,

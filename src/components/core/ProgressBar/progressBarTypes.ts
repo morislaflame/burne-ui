@@ -3,6 +3,7 @@ import type {
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type ProgressBarSize = "small" | "base" | "mid" | "large";
 
@@ -18,6 +19,24 @@ export type ProgressBarClassNames = {
   indeterminateFill?: string;
   hint?: string;
   error?: string;
+};
+
+export type ProgressBarPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  /** Plays when `value` / indeterminate identity changes. Fill scale stays kit-internal. */
+  change?: MotionValue;
+};
+
+export type ProgressBarMotion = {
+  track?: ProgressBarPartMotion;
+  fill?: ProgressBarPartMotion;
+  header?: ProgressBarPartMotion;
+  value?: ProgressBarPartMotion;
 };
 
 export type ProgressBarDisplayState = {
@@ -50,10 +69,11 @@ export type ProgressBarTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "childr
   formatValue?: (value: number) => string;
   orientation?: ProgressBarOrientation;
   className?: string;
+  motion?: Prettify<ProgressBarPartMotion>;
 };
 
 export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
-  Partial<ProgressBarTrackProps> & {
+  Partial<Omit<ProgressBarTrackProps, "motion">> & {
     children?: ReactNode;
     id?: string;
     orientation?: ProgressBarOrientation;
@@ -63,6 +83,11 @@ export type ProgressBarProps = HTMLAttributes<HTMLDivElement> &
     hint?: ReactNode;
     error?: ReactNode;
     classNames?: Prettify<ProgressBarClassNames>;
+    /**
+     * Per-slot motion (`track`, `fill`, `header`, `value`).
+     * Fill scale / indeterminate travel is kit-internal. Phase `change` plays on `track`.
+     */
+    motion?: Prettify<ProgressBarMotion>;
   };
 
 export type ProgressBarClassNamesProviderProps = {
@@ -72,10 +97,12 @@ export type ProgressBarClassNamesProviderProps = {
 
 export type ProgressBarHeaderProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  motion?: Prettify<ProgressBarPartMotion>;
 };
 
 export type ProgressBarValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<ProgressBarPartMotion>;
 };
 
 export type ProgressBarHintProps = HTMLAttributes<HTMLParagraphElement> & {
@@ -88,7 +115,7 @@ export type ProgressBarErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 
 export type UseProgressBarRootStateProps = Omit<
   ProgressBarProps,
-  "className" | "classNames"
+  "className" | "classNames" | "motion"
 >;
 
 export type UseProgressBarTrackStateProps = Pick<

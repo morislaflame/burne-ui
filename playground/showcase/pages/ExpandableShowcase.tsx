@@ -4,6 +4,20 @@ import { ExpandableCompoundDemo } from "../demos/expandable/ExpandableCompound.d
 import expandableCompoundSource from "../demos/expandable/ExpandableCompound.demo.tsx?raw";
 import { ExpandableGlossDemo } from "../demos/expandable/ExpandableGloss.demo";
 import expandableGlossSource from "../demos/expandable/ExpandableGloss.demo.tsx?raw";
+import { ExpandableMotionChevronDemo } from "../demos/expandable/ExpandableMotionChevron.demo";
+import expandableMotionChevronSource from "../demos/expandable/ExpandableMotionChevron.demo.tsx?raw";
+import { ExpandableMotionDefaultDemo } from "../demos/expandable/ExpandableMotionDefault.demo";
+import expandableMotionDefaultSource from "../demos/expandable/ExpandableMotionDefault.demo.tsx?raw";
+import { ExpandableMotionInstantPanelDemo } from "../demos/expandable/ExpandableMotionInstantPanel.demo";
+import expandableMotionInstantPanelSource from "../demos/expandable/ExpandableMotionInstantPanel.demo.tsx?raw";
+import { ExpandableMotionBounceHeightDemo } from "../demos/expandable/ExpandableMotionBounceHeight.demo";
+import expandableMotionBounceHeightSource from "../demos/expandable/ExpandableMotionBounceHeight.demo.tsx?raw";
+import { ExpandableMotionClipWipeDemo } from "../demos/expandable/ExpandableMotionClipWipe.demo";
+import expandableMotionClipWipeSource from "../demos/expandable/ExpandableMotionClipWipe.demo.tsx?raw";
+import { ExpandableMotionPanelInnerDemo } from "../demos/expandable/ExpandableMotionPanelInner.demo";
+import expandableMotionPanelInnerSource from "../demos/expandable/ExpandableMotionPanelInner.demo.tsx?raw";
+import { ExpandableMotionTitleColorDemo } from "../demos/expandable/ExpandableMotionTitleColor.demo";
+import expandableMotionTitleColorSource from "../demos/expandable/ExpandableMotionTitleColor.demo.tsx?raw";
 import { ExpandableOrderDetailsDemo } from "../demos/expandable/ExpandableOrderDetails.demo";
 import expandableOrderDetailsSource from "../demos/expandable/ExpandableOrderDetails.demo.tsx?raw";
 import { ExpandableSettingsStackDemo } from "../demos/expandable/ExpandableSettingsStack.demo";
@@ -41,6 +55,19 @@ export function ExpandableShowcase() {
 
       <ShowcaseSection title="Compound API" description="Trigger, Message, Icon, Title, Description and Panel.">
         <ShowcaseDemoFromFile align="stretch" Demo={ExpandableCompoundDemo} source={expandableCompoundSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — default recipes, instant panel, custom panelShell expand, chevron factory, classNames."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionDefaultDemo} source={expandableMotionDefaultSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionInstantPanelDemo} source={expandableMotionInstantPanelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionChevronDemo} source={expandableMotionChevronSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionBounceHeightDemo} source={expandableMotionBounceHeightSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionClipWipeDemo} source={expandableMotionClipWipeSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionPanelInnerDemo} source={expandableMotionPanelInnerSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ExpandableMotionTitleColorDemo} source={expandableMotionTitleColorSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

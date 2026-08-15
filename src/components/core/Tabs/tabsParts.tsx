@@ -1,17 +1,23 @@
 import { forwardRef, useCallback, useRef, type KeyboardEvent } from "react";
 
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 
 import "@/components/core/utils/glossInteractive.css";
 
 import { collectTabButtons, focusTabAt } from "./tabsA11y";
-import { useTabsClassNames, useTabsContext } from "./tabsContext";
+import { useTabsListEnter } from "./tabsAnimations";
+import {
+  useOptionalTabsMotionScope,
+  useTabsClassNames,
+  useTabsContext,
+} from "./tabsContext";
 import { tabsIndicatorClass, tabsListClass } from "./tabsStyles";
 import type { TabsListProps } from "./tabsTypes";
 import { useSlidingTabIndicator } from "./useSlidingTabIndicator";
 
 export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
-  { className, children, onKeyDown, ...rest },
+  { className, children, onKeyDown, motion, ...rest },
   ref,
 ) {
   const { value, setValue, orientation, variant, disabled, tabElementsRef, layoutEpoch } =
@@ -20,6 +26,13 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
   const listRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const isGloss = variant === "gloss";
+  const scope = useOptionalTabsMotionScope();
+  const listPart = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "list",
+    motion,
+    pointerPhases: false,
+  });
 
   const bindGlossRef = useMergedGlossPanelRef(ref, isGloss);
 
@@ -27,9 +40,12 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
     (node: HTMLDivElement | null) => {
       bindGlossRef(node);
       listRef.current = node;
+      listPart.setRef(node);
     },
-    [bindGlossRef],
+    [bindGlossRef, listPart.setRef],
   );
+
+  useTabsListEnter(scope);
 
   useSlidingTabIndicator(
     listRef,

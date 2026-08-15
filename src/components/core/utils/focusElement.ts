@@ -1,13 +1,18 @@
 /**
  * Programmatic focus helpers.
  *
- * Kit `focus-ring` paints on `:focus-visible`. Use:
+ * Kit `focus-ring` / menu `hoverVariant()` (`focus-visible:bg-*`) paint on
+ * `:focus-visible`. Use:
  * - `focusKeyboard(el)` — roving / in-widget keyboard moves (always show ring)
- * - `focusElement(el)` — open, restore, misc (browser decides from last input)
+ * - `focusOnOpen(el, { from: trigger })` — first focus after overlay/menu open
+ * - `focusElement(el)` — restore, misc (browser decides from last input)
  * - `focusElement(el, { focusVisible: false })` — force ring off (rare)
  *
- * Menu / listbox rows often omit `focus-ring` and use surface tint via
- * `hoverVariant()` (`focus-visible:bg-*`) instead.
+ * Never use bare `focusElement(el)` to move focus into a panel that is still
+ * entering. GSAP `autoAlpha: 0` sets `visibility: hidden`; without an explicit
+ * `focusVisible` the UA then skips `:focus-visible`, so the kit ring / row
+ * tint never appears. Read intent from the trigger (`from`) **before** focus
+ * moves.
  *
  * `FocusOptions.focusVisible` is supported in Chromium / WebKit; engines that
  * ignore unknown options still receive a normal focus without throwing.
@@ -17,7 +22,7 @@ export type FocusElementOptions = {
   preventScroll?: boolean;
   /**
    * Force `:focus-visible`.
-   * Prefer `focusKeyboard` over `{ focusVisible: true }` at call sites.
+   * Prefer `focusKeyboard` / `focusOnOpen` over `{ focusVisible: true }` at call sites.
    */
   focusVisible?: boolean;
 };
@@ -56,7 +61,7 @@ export function focusKeyboard(
 
 /** Whether `el` currently matches `:focus-visible` (keyboard-styled focus). */
 export function isFocusVisibleElement(el: Element | null | undefined): boolean {
-  return el instanceof Element && el.matches(":focus-visible");
+  return !!el && typeof el.matches === "function" && el.matches(":focus-visible");
 }
 
 /**
@@ -72,33 +77,54 @@ export function getFirstFocusable(root: HTMLElement): HTMLElement | null {
   return null;
 }
 
+export type FocusOnOpenOptions = {
+  /** Element that had focus before open (usually the trigger). */
+  from?: Element | null;
+  /** Explicit ring intent — wins over reading `from`. */
+  focusVisible?: boolean;
+};
+
 /**
- * Move focus into a panel on open.
- * Keyboard-opened → first focusable (or panel) with visible ring.
+ * Move focus into a newly opened overlay / menu item.
+ * Keyboard-opened (`from` is `:focus-visible`) → visible ring / row tint.
  * Pointer-opened → same target, no ring.
  *
- * Pass `focusVisible` when the opener already lost `:focus-visible`
- * (e.g. after `showModal()`); otherwise pass `from` to read it live.
+ * Always passes an explicit `focusVisible` into `focus()`. Heuristics on
+ * `el.focus()` fail when the target or an ancestor is `visibility: hidden`
+ * from an enter tween (`autoAlpha: 0`).
  */
-export function focusPanelOnOpen(
-  panel: HTMLElement,
-  options: {
-    /** Element that had focus before open (usually the trigger). */
-    from?: Element | null;
-    /** Explicit ring intent — wins over reading `from`. */
-    focusVisible?: boolean;
-    preferFirstFocusable?: boolean;
-  } = {},
+export function focusOnOpen(
+  target: HTMLElement | null | undefined,
+  options: FocusOnOpenOptions = {},
 ): void {
-  const { from = null, preferFirstFocusable = true } = options;
-  const first = preferFirstFocusable ? getFirstFocusable(panel) : null;
-  // Panel fallback only when it is programmatically focusable (`tabIndex={-1}`).
-  const target =
-    first ?? (panel.hasAttribute("tabindex") ? panel : null);
   if (!target) return;
+  const from =
+    options.from !== undefined
+      ? options.from
+      : typeof document !== "undefined"
+        ? document.activeElement
+        : null;
   const focusVisible =
     options.focusVisible !== undefined
       ? options.focusVisible
       : isFocusVisibleElement(from);
   focusElement(target, { focusVisible });
+}
+
+/**
+ * Move focus into a panel on open (first Tab-reachable, else the panel).
+ * Pass `focusVisible` when the opener already lost `:focus-visible`
+ * (e.g. after `showModal()`); otherwise pass `from` to read it live.
+ */
+export function focusPanelOnOpen(
+  panel: HTMLElement,
+  options: FocusOnOpenOptions & { preferFirstFocusable?: boolean } = {},
+): void {
+  const { preferFirstFocusable = true, ...openOptions } = options;
+  const first = preferFirstFocusable ? getFirstFocusable(panel) : null;
+  // Panel fallback only when it is programmatically focusable (`tabIndex={-1}`).
+  const target =
+    first ?? (panel.hasAttribute("tabindex") ? panel : null);
+  if (!target) return;
+  focusOnOpen(target, openOptions);
 }

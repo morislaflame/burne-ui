@@ -1,14 +1,18 @@
 import type {
   HTMLAttributes,
   InputHTMLAttributes,
+  MutableRefObject,
+  PointerEvent,
   PointerEventHandler,
   ReactNode,
+  RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type InputVariant = "default" | "outline" | "secondary" | "gloss";
 export type InputStatus = SemanticStatus;
@@ -32,6 +36,25 @@ export type InputClassNames = {
   error?: string;
 };
 
+export type InputPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type InputMotion = {
+  shell?: InputPartMotion;
+  control?: InputPartMotion;
+  prefix?: InputPartMotion;
+  suffix?: InputPartMotion;
+  passwordToggle?: InputPartMotion;
+  fileRow?: Pick<InputPartMotion, "leave" | "hoverIn" | "hoverOut">;
+  fileRemove?: InputPartMotion;
+};
+
 export type InputControlProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type" | "prefix" | "onPointerDown"
@@ -45,6 +68,8 @@ export type InputControlProps = Omit<
   suffix?: ReactNode;
   onPointerDown?: PointerEventHandler<HTMLDivElement>;
   classNames?: Prettify<InputClassNames>;
+  /** Shell part motion. Root `motion.shell` still applies; this wins on the Control host. */
+  motion?: Prettify<InputPartMotion>;
 };
 
 export type InputFieldContextValue = {
@@ -74,9 +99,24 @@ export type InputProps = Omit<HTMLAttributes<HTMLDivElement>, "prefix"> & {
   status?: InputStatus;
   size?: InputSize;
   classNames?: Prettify<InputClassNames>;
+  /**
+   * Per-slot motion (`shell`, `control`, `prefix`, `suffix`, `passwordToggle`, `fileRow`, `fileRemove`).
+   * File remove leave: `fileRow.leave` (`fileRowExit`).
+   */
+  motion?: Prettify<InputMotion>;
 };
 
-export type InputSimpleProps = InputProps & InputControlProps;
+export type InputSimpleProps = InputProps & Omit<InputControlProps, "motion">;
+
+export type UseInputShellAnimationsProps = {
+  shellRef: RefObject<HTMLDivElement | null>;
+  blocked: boolean;
+  variant: InputVariant;
+  groupSegment: unknown;
+  motion?: InputPartMotion;
+  pointerInsideRef: MutableRefObject<boolean>;
+  onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
+};
 
 export type InputHintProps = HTMLAttributes<HTMLParagraphElement> & {
   children?: ReactNode;

@@ -1,8 +1,9 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ForwardedRef, HTMLAttributes, PointerEvent, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { MessageBannerSize, MessageBannerSizePreset } from "@/components/core/utils/sizeLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type { ShadowLevel } from "@/tokens/shadows";
 
 export type AlertSize = MessageBannerSize;
@@ -23,6 +24,20 @@ export type AlertClassNames = {
   action?: string;
 };
 
+/** Pointer phases for an Alert DOM slot. Trigger = that slot's element. */
+export type AlertPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type AlertMotion = {
+  root?: AlertPartMotion;
+  indicator?: AlertPartMotion;
+  title?: AlertPartMotion;
+  description?: AlertPartMotion;
+  action?: AlertPartMotion;
+};
+
 export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   variant?: AlertVariant;
   status?: AlertStatus;
@@ -37,8 +52,14 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "role"> & {
   action?: ReactNode;
   classNames?: Prettify<AlertClassNames>;
   /**
+   * Per-slot motion (`root`, `indicator`, `title`, `description`, `action`).
+   * `Alert.Message` / `Alert.Content` are `display: contents` and are not targets.
+   */
+  motion?: Prettify<AlertMotion>;
+  /**
    * Hover lift + stronger shadow in the same `shadow` family (`--shadow-{shadow}-hover`).
-   * Rest elevation stays when `false`.
+   * Rest elevation stays when `false`. Shorthand for `motion.root.hoverIn/Out: false`.
+   * An explicit `motion.root.hoverIn` wins.
    * @default true
    */
   hoverLift?: boolean;
@@ -61,17 +82,24 @@ export type AlertContextValue = {
 
 export type AlertIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   status?: AlertStatus;
+  motion?: Prettify<AlertPartMotion>;
 };
 
 export type AlertContentProps = HTMLAttributes<HTMLDivElement>;
 
 export type AlertMessageProps = HTMLAttributes<HTMLDivElement>;
 
-export type AlertTitleProps = HTMLAttributes<HTMLDivElement>;
+export type AlertTitleProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertPartMotion>;
+};
 
-export type AlertDescriptionProps = HTMLAttributes<HTMLDivElement>;
+export type AlertDescriptionProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertPartMotion>;
+};
 
-export type AlertActionProps = HTMLAttributes<HTMLDivElement>;
+export type AlertActionProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertPartMotion>;
+};
 
 export type AlertSimpleContentProps = {
   gridSlots: MessageBannerGridSlots;
@@ -80,4 +108,15 @@ export type AlertSimpleContentProps = {
   icon?: ReactNode | null;
   action?: ReactNode;
   children?: ReactNode;
+};
+
+export type UseAlertAnimationsProps = {
+  variant: AlertVariant;
+  status: AlertStatus;
+  hoverLift?: boolean;
+  shadow?: ShadowLevel;
+  motion?: AlertMotion;
+  ref: ForwardedRef<HTMLDivElement>;
+  onPointerOver?: (e: PointerEvent<HTMLDivElement>) => void;
+  onPointerOut?: (e: PointerEvent<HTMLDivElement>) => void;
 };

@@ -9,6 +9,7 @@ export function useAccordionRootState({
   value: valueProp,
   onValueChange,
   size = "base",
+  motion,
 }: UseAccordionRootStateProps) {
   const controlled = valueProp !== undefined;
   const defaultValue = accordionDefaultValue(defaultValueProp, defaultOpenIndex);
@@ -37,8 +38,9 @@ export function useAccordionRootState({
       setValue,
       allocateAutoItemId,
       size,
+      motion,
     }),
-    [allocateAutoItemId, value, setValue, size],
+    [allocateAutoItemId, motion, value, setValue, size],
   );
 
   return { contextValue };

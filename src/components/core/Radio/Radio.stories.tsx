@@ -7,6 +7,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Radio } from ".";
+import { RadioMotionDemo } from "../../../../playground/showcase/demos/radio/RadioMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -265,4 +266,9 @@ export const SimpleLabelClassNames: Story = {
       className="max-w-md"
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (fill, mark, stagger)",
+  render: () => <RadioMotionDemo />,
 };

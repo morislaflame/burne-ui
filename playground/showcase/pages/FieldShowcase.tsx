@@ -67,7 +67,7 @@ export function FieldShowcase() {
             description="Field, Field.Label, Field.Hint, Field.Error — field wrapper primitive. Field.Set, Field.Legend, Field.Group, Field.Actions — set of form fields."
           />
           <ShowcaseDoc.ApiRow
-            api="size"
+            api="compound"
             description="small | base | mid | large — Field / Set chrome only (gaps + Label / Hint type)."
           />
         </ShowcaseDoc.Block>

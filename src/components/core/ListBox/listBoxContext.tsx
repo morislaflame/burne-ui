@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   ListBoxClassNames,
   ListBoxClassNamesProviderProps,
@@ -89,3 +91,10 @@ export function ListBoxSectionLabelProvider({
 export function useListBoxSectionLabelRegister() {
   return useContext(ListBoxSectionLabelContext);
 }
+
+/** Scope only. Defaults and host play live in `listBoxAnimations.ts`. */
+export const {
+  MotionScopeProvider: ListBoxMotionProvider,
+  useMotionScope: useListBoxMotionScope,
+  useOptionalMotionScope: useOptionalListBoxMotionScope,
+} = createMotionScope("ListBox");

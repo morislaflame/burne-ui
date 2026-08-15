@@ -7,6 +7,7 @@ import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { Loading, type LoadingColor, type LoadingType } from "./Loading";
+import { LoadingMotionDemo } from "../../../../playground/showcase/demos/loading/LoadingMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -183,4 +184,9 @@ export const CustomClassNames: Story = {
       />
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <LoadingMotionDemo />,
 };

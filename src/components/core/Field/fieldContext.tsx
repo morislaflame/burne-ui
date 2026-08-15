@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   FieldClassNames,
   FieldClassNamesProviderProps,
@@ -73,3 +75,16 @@ export function useOptionalFieldSize(): FieldSize | null {
 export function useFieldSetSize(): FieldSize {
   return useContext(FieldSizeContext) ?? "base";
 }
+
+/** Scope only. Defaults and host play live in `fieldAnimations.ts`. */
+export const {
+  MotionScopeProvider: FieldMotionProvider,
+  useMotionScope: useFieldMotionScope,
+  useOptionalMotionScope: useOptionalFieldMotionScope,
+} = createMotionScope("Field");
+
+export const {
+  MotionScopeProvider: FieldSetMotionProvider,
+  useMotionScope: useFieldSetMotionScope,
+  useOptionalMotionScope: useOptionalFieldSetMotionScope,
+} = createMotionScope("FieldSet");

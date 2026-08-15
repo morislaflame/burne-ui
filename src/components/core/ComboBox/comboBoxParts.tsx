@@ -1,7 +1,7 @@
 import type {
   PointerEvent as ReactPointerEvent,
 } from "react";
-import { forwardRef, useCallback, useRef } from "react";
+import { forwardRef, useCallback, useMemo, useRef } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
@@ -9,16 +9,24 @@ import { Field } from "@/components/core/Field";
 import { ListBox } from "@/components/core/ListBox";
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
-import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
-import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
 import { focusElement } from "@/components/core/utils/focusElement";
-import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
+import {
+  resolveComboBoxMotionDefaults,
+  resolveComboBoxMotionParams,
+  useComboBoxShellAnimations,
+} from "./comboBoxAnimations";
 import { comboBoxTriggerAriaLabel } from "./comboBoxA11y";
-import { useComboBoxClassNames, useComboBoxContext } from "./comboBoxContext";
+import {
+  ComboBoxMotionProvider,
+  useComboBoxClassNames,
+  useComboBoxContext,
+  useOptionalComboBoxMotionScope,
+} from "./comboBoxContext";
 import { ComboBoxError, ComboBoxHint } from "./comboBoxFieldParts";
 import { COMBOBOX_CHEVRON_ICON, COMBOBOX_LISTBOX_CLASS, COMBOBOX_POPOVER_BODY_CLASS, COMBOBOX_POPOVER_CLASS, comboBoxInputClass, comboBoxInputGroupClass, comboBoxTriggerClass } from "./comboBoxStyles";
 import type {
@@ -39,125 +47,177 @@ export const ComboBoxInputGroup = forwardRef<HTMLDivElement, ComboBoxInputGroupP
       groupSegment: groupSegmentProp,
       onPointerEnter,
       onPointerLeave,
+      motion,
       ...rest
     },
     ref,
   ) {
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
-    const slotClassNames = useComboBoxClassNames();
     const ctx = useComboBoxContext();
-    const {
-      open,
-      setOpen,
-      disabled,
-      variant,
-      status,
-      size,
-      anchorRef,
-      listId,
-    } = ctx;
-
-    const openingRef = useOpeningRef();
-    const isGloss = variant === "gloss";
+    const { disabled, variant } = ctx;
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
-
-    const shellHoverLift = useFieldShellHoverLift(
-      anchorRef,
-      !disabled && !isGloss && groupSegment == null,
+    const isGloss = variant === "gloss";
+    const pointerInsideRef = useRef(false);
+    const parentScope = useOptionalComboBoxMotionScope();
+    const motionDefaults = useMemo(
+      () => resolveComboBoxMotionDefaults({ isGloss, disabled, groupSegment }),
+      [disabled, groupSegment, isGloss],
     );
-    const glossShellMotion = useGlossFieldShellMotion(
-      anchorRef,
-      !disabled && isGloss && groupSegment == null,
+    const motionParams = useMemo(
+      () =>
+        resolveComboBoxMotionParams({
+          disabled,
+          isGloss,
+          groupSegment,
+          pointerInside: pointerInsideRef,
+        }),
+      [disabled, groupSegment, isGloss],
     );
-
-    const setAnchorRef = useCallback(
-      (node: HTMLDivElement | null) => {
-        anchorRef.current = node;
-        if (!disabled && isGloss) glossShellMotion.bindShellRef(node);
-      },
-      [anchorRef, disabled, glossShellMotion, isGloss],
-    );
-
-    const openAfterSqueeze = useCallback(() => {
-      runOpenAfterSqueeze({
-        triggerRef: anchorRef,
-        disabled,
-        setOpen,
-        openingRef,
-      });
-    }, [anchorRef, disabled, setOpen, openingRef]);
-
-    const handlePointerDown = useCallback(
-      (e: ReactPointerEvent<HTMLDivElement>) => {
-        if (disabled) return;
-        if (open) return;
-        if (e.button !== 0) return;
-        openAfterSqueeze();
-      },
-      [disabled, open, openAfterSqueeze],
+    const mergedMotion = mergeMotionSlotMaps(
+      parentScope?.getRootMotion(),
+      motion ? { inputGroup: motion } : undefined,
     );
 
     return (
-      <div
-        ref={(node) => {
-          mergeForwardedRef(ref, node);
-          setAnchorRef(node);
-        }}
-        role="combobox"
-        aria-expanded={open}
-        aria-controls={open ? listId : undefined}
-        aria-haspopup="listbox"
-        aria-disabled={disabled || undefined}
-        onPointerDown={handlePointerDown}
-        onPointerEnter={(e) => {
-          onPointerEnter?.(e);
-          if (e.defaultPrevented) return;
-          if (isGloss && groupSegment == null) glossShellMotion.onShellPointerEnter(e);
-          else shellHoverLift.onShellPointerEnter(e);
-        }}
-        onPointerLeave={(e) => {
-          onPointerLeave?.(e);
-          if (isGloss && groupSegment == null) glossShellMotion.onShellPointerLeave(e);
-          else shellHoverLift.onShellPointerLeave(e);
-        }}
-        onFocusCapture={
-          isGloss && !disabled && groupSegment == null
-            ? glossShellMotion.onShellFocusIn
-            : undefined
-        }
-        onBlurCapture={
-          isGloss && !disabled && groupSegment == null
-            ? glossShellMotion.onShellFocusOut
-            : undefined
-        }
-        {...(disabled && isGloss ? { "data-gloss-disabled": "" } : {})}
-        className={comboBoxInputGroupClass({
-          size,
-          variant,
-          status,
-          disabled,
-          groupSegment,
-          shellHoverMotionClass: isGloss
-            ? glossShellMotion.shellHoverMotionClass
-            : shellHoverLift.shellHoverMotionClass,
-          className,
-          slotClass: slotClassNames.inputGroup,
-        })}
-        {...rest}
-      >
-        {children}
-      </div>
+      <ComboBoxMotionProvider motion={mergedMotion} defaults={motionDefaults} params={motionParams}>
+        <ComboBoxInputGroupSurface
+          forwardedRef={ref}
+          className={className}
+          groupSegment={groupSegment}
+          pointerInsideRef={pointerInsideRef}
+          shellPartMotion={motion}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          rest={rest}
+        >
+          {children}
+        </ComboBoxInputGroupSurface>
+      </ComboBoxMotionProvider>
     );
   },
 );
 
 ComboBoxInputGroup.displayName = "ComboBoxInputGroup";
 
+function ComboBoxInputGroupSurface({
+  forwardedRef,
+  className,
+  children,
+  groupSegment,
+  pointerInsideRef,
+  shellPartMotion,
+  onPointerEnter,
+  onPointerLeave,
+  rest,
+}: {
+  forwardedRef: React.ForwardedRef<HTMLDivElement>;
+  className?: string;
+  children?: React.ReactNode;
+  groupSegment: ComboBoxInputGroupProps["groupSegment"];
+  pointerInsideRef: React.MutableRefObject<boolean>;
+  shellPartMotion?: ComboBoxInputGroupProps["motion"];
+  onPointerEnter?: ComboBoxInputGroupProps["onPointerEnter"];
+  onPointerLeave?: ComboBoxInputGroupProps["onPointerLeave"];
+  rest: Omit<
+    ComboBoxInputGroupProps,
+    | "className"
+    | "children"
+    | "groupSegment"
+    | "onPointerEnter"
+    | "onPointerLeave"
+    | "motion"
+  >;
+}) {
+  const slotClassNames = useComboBoxClassNames();
+  const ctx = useComboBoxContext();
+  const {
+    open,
+    setOpen,
+    disabled,
+    variant,
+    status,
+    size,
+    anchorRef,
+    listId,
+  } = ctx;
+
+  const {
+    bindShellRef,
+    squeezeThenOpen,
+    shellPointerUp,
+    shellPointerEnter,
+    shellPointerLeave,
+    shellFocusCapture,
+    shellBlurCapture,
+    shellHoverMotionClass,
+    glossDisabledAttr,
+  } = useComboBoxShellAnimations({
+    shellRef: anchorRef,
+    disabled,
+    variant,
+    groupSegment,
+    motion: shellPartMotion,
+    pointerInsideRef,
+  });
+
+  const handlePointerDown = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      if (disabled) return;
+      if (open) return;
+      if (e.button !== 0) return;
+      squeezeThenOpen({ setOpen });
+    },
+    [disabled, open, setOpen, squeezeThenOpen],
+  );
+
+  return (
+    <div
+      ref={(node) => {
+        mergeForwardedRef(forwardedRef, node);
+        bindShellRef(node);
+      }}
+      role="combobox"
+      aria-expanded={open}
+      aria-controls={open ? listId : undefined}
+      aria-haspopup="listbox"
+      aria-disabled={disabled || undefined}
+      onPointerDown={handlePointerDown}
+      onPointerUp={shellPointerUp}
+      onPointerEnter={(e) => {
+        onPointerEnter?.(e);
+        if (e.defaultPrevented) return;
+        shellPointerEnter?.(e);
+      }}
+      onPointerLeave={(e) => {
+        onPointerLeave?.(e);
+        if (e.defaultPrevented) return;
+        shellPointerLeave?.(e);
+      }}
+      onFocusCapture={shellFocusCapture}
+      onBlurCapture={shellBlurCapture}
+      {...glossDisabledAttr}
+      className={comboBoxInputGroupClass({
+        size,
+        variant,
+        status,
+        disabled,
+        groupSegment,
+        shellHoverMotionClass,
+        className,
+        slotClass: slotClassNames.inputGroup,
+      })}
+      {...rest}
+    >
+      {children}
+    </div>
+  );
+}
+
 export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
-  function ComboBoxInput({ className, onKeyDown, onChange, onBlur, ...rest }, ref) {
+  function ComboBoxInput({ className, onKeyDown, onChange, onBlur, motion, ...rest }, ref) {
     const slotClassNames = useComboBoxClassNames();
     const {
       comboBoxId,
@@ -177,9 +237,17 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
       handleBlur,
     } = useComboBoxInputState({ onKeyDown, onChange, onBlur }, ref);
 
+    const { setRef, pointerHandlers } = useMotionPart<HTMLInputElement>({
+      scope: useOptionalComboBoxMotionScope(),
+      slot: "input",
+      motion,
+      forwardedRef: setRefs,
+      pointerPhases: true,
+    });
+
     return (
       <input
-        ref={setRefs}
+        ref={setRef}
         id={comboBoxId}
         type="text"
         aria-autocomplete="list"
@@ -202,6 +270,7 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
           slotClass: slotClassNames.input,
         })}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -209,24 +278,41 @@ export const ComboBoxInput = forwardRef<HTMLInputElement, ComboBoxInputProps>(
 
 ComboBoxInput.displayName = "ComboBoxInput";
 
+function ComboBoxTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large" }) {
+  const slotClassNames = useComboBoxClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalComboBoxMotionScope(),
+    slot: "triggerIcon",
+    pointerPhases: true,
+  });
+
+  return (
+    <span ref={setRef} {...pointerHandlers}>
+      <IoChevronDown
+        className={cn(
+          COMBOBOX_CHEVRON_ICON[size],
+          slotClassNames.triggerIcon,
+        )}
+        aria-hidden
+      />
+    </span>
+  );
+}
+
 export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProps>(
-  function ComboBoxTrigger({ className, onPointerDown, children, ...rest }, ref) {
+  function ComboBoxTrigger({ className, onPointerDown, children, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const slotClassNames = useComboBoxClassNames();
     const { open, setOpen, setFilterQuery, disabled, size, inputRef } = useComboBoxContext();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const bindChevronRef = useChevronRotation(open, triggerRef);
-
-    const setTriggerRef = useCallback(
-      (node: HTMLButtonElement | null) => {
-        bindChevronRef(node);
-        mergeForwardedRef(ref, node);
-      },
-      [bindChevronRef, ref],
-    );
-
-    const handlePointerDown = useCallback(
-      (e: ReactPointerEvent<HTMLButtonElement>) => {
+    const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalComboBoxMotionScope(),
+      slot: "trigger",
+      motion,
+      pointerPhases: true,
+      pressPhases: true,
+      onPointerDown: (e) => {
         onPointerDown?.(e);
         e.stopPropagation();
         if (disabled) return;
@@ -239,7 +325,16 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
         setOpen(true);
         requestAnimationFrame(() => focusElement(inputRef.current));
       },
-      [disabled, inputRef, onPointerDown, open, setFilterQuery, setOpen],
+    });
+
+    const setTriggerRef = useCallback(
+      (node: HTMLButtonElement | null) => {
+        bindChevronRef(node);
+        triggerRef.current = node;
+        setRef(node);
+        mergeForwardedRef(ref, node);
+      },
+      [bindChevronRef, ref, setRef],
     );
 
     return (
@@ -254,18 +349,10 @@ export const ComboBoxTrigger = forwardRef<HTMLButtonElement, ComboBoxTriggerProp
           className,
           slotClass: slotClassNames.trigger,
         })}
-        onPointerDown={handlePointerDown}
         {...rest}
+        {...pointerHandlers}
       >
-        {children ?? (
-          <IoChevronDown
-            className={cn(
-              COMBOBOX_CHEVRON_ICON[size],
-              slotClassNames.triggerIcon,
-            )}
-            aria-hidden
-          />
-        )}
+        {children ?? <ComboBoxTriggerIcon size={size} />}
       </button>
     );
   },

@@ -1,95 +1,219 @@
-import { killMotion } from "@/components/core/utils/gsapMotion";
-import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
-import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
+/**
+ * Slot motion for Input — look here first.
+ *
+ * DOM slots: `shell` (host), `control`, `prefix`, `suffix`, `passwordToggle`,
+ * `fileRow`, `fileRemove`
+ *
+ * Root passes the `motion` map. Host is `Input.Control` (defaults + `play`).
+ * Gloss hover/press stay on `useGlossFieldShellMotion`.
+ * File row leave: `scope.play("fileRow", "leave", { el })` — `false` unmounts instantly.
+ *
+ * Not slots: Field `root` / `label` / `hint` / `error`; `fileArea` / `fileEmpty` /
+ * `fileGlyph` / `filePreview` (layout).
+ */
+import { useCallback, useMemo, useRef, type MutableRefObject, type PointerEvent } from "react";
+
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
-import { gsap } from "@/components/core/utils/gsapMotion";
-import { useCallback, type PointerEvent, type RefObject } from "react";
+import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
+import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  mergeMotionPointerHandlers,
+  useMotionPointerPhases,
+  type MotionValue,
+} from "@/components/core/utils/slotMotion";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import type { InputVariant } from "./inputTypes";
+import { useInputMotionScope } from "./inputContext";
+import type {
+  InputMotion,
+  InputVariant,
+  UseInputShellAnimationsProps,
+} from "./inputTypes";
 
-export function animateInputFileRowExit(rowEl: HTMLElement): Promise<void> {
-  killMotion(rowEl);
-  return new Promise((resolve) => {
-    gsap.to(rowEl, {
-      scale: 0.94,
-      y: "-0.5rem",
-      autoAlpha: 0,
-      ...motionInteractive(),
-      overwrite: "auto",
-      onComplete: () => {
-        killMotion(rowEl);
-        resolve();
-      },
-    });
-  });
+import "../utils/glossInteractive.css";
+
+function isKitPressSqueeze(value: MotionValue | undefined): boolean {
+  if (typeof value === "string") {
+    return value === "pressSqueeze" || value === "pressSqueezeGloss";
+  }
+  if (value && typeof value === "object" && "recipe" in value) {
+    const recipe = (value as { recipe?: unknown }).recipe;
+    return recipe === "pressSqueeze" || recipe === "pressSqueezeGloss";
+  }
+  return false;
 }
 
-export function useInputShellMotion({
+export function resolveInputMotionDefaults({
+  isGloss,
+  blocked,
+  groupSegment,
+}: {
+  isGloss: boolean;
+  blocked: boolean;
+  groupSegment?: unknown;
+}): InputMotion {
+  const hover = !blocked && !isGloss && groupSegment == null;
+  const press = !blocked && !isGloss && groupSegment == null;
+  return {
+    shell: {
+      hoverIn: hover ? "hoverLiftSecondLevel" : false,
+      hoverOut: hover ? "hoverLiftSecondLevel" : false,
+      pressIn: press ? "pressSqueeze" : false,
+      pressOut: false,
+    },
+    fileRow: {
+      leave: "fileRowExit",
+    },
+  };
+}
+
+export function resolveInputMotionParams({
+  blocked,
+  isGloss,
+  groupSegment,
+  pointerInside,
+}: {
+  blocked: boolean;
+  isGloss: boolean;
+  groupSegment?: unknown;
+  pointerInside: MutableRefObject<boolean>;
+}) {
+  return {
+    shadowSize: "base" as const,
+    hasHoverShadow: !blocked && !isGloss && groupSegment == null,
+    isGloss,
+    pointerInside,
+  };
+}
+
+export function useInputShellAnimations({
   shellRef,
   blocked,
   variant,
   groupSegment,
+  motion,
+  pointerInsideRef,
   onPointerDown,
-}: {
-  shellRef: RefObject<HTMLDivElement | null>;
-  blocked: boolean;
-  variant: InputVariant;
-  groupSegment: unknown;
-  onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
-}) {
+}: UseInputShellAnimationsProps) {
+  const scope = useInputMotionScope();
+  const shellMotionRef = useRef(motion);
+  shellMotionRef.current = motion;
   const isGloss = variant === "gloss";
-  const standardShellHover = useFieldShellHoverLift(
+
+  const standardShellHover = useSecondLevelShadow(
     shellRef,
     !blocked && !isGloss && groupSegment == null,
+    {
+      interactive: false,
+      pointerInsideRef,
+    },
   );
   const glossShellMotion = useGlossFieldShellMotion(
     shellRef,
     !blocked && isGloss && groupSegment == null,
   );
 
-  const setShellRef = useCallback(
+  const bindShellRef = useCallback(
     (node: HTMLDivElement | null) => {
       shellRef.current = node;
-      if (!blocked && isGloss) glossShellMotion.bindShellRef(node);
+      scope.registerTarget("shell", node);
+      if (!blocked && isGloss && groupSegment == null) {
+        glossShellMotion.bindShellRef(node);
+      }
     },
-    [blocked, glossShellMotion, isGloss, shellRef],
+    [blocked, glossShellMotion, groupSegment, isGloss, scope, shellRef],
+  );
+
+  const playShell = useCallback(
+    (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
+      if (blocked || isGloss) return;
+      const el = shellRef.current;
+      if (!el) return;
+      const value = scope.resolve("shell", phase, shellMotionRef.current);
+      if (value === undefined) return;
+      scope.play("shell", phase, { partMotion: shellMotionRef.current, el });
+    },
+    [blocked, isGloss, scope, shellRef],
+  );
+
+  const motionPointer = useMotionPointerPhases<HTMLDivElement>({
+    enabled: !blocked && !isGloss && groupSegment == null,
+    targetRef: shellRef,
+    pointerInsideRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onHoverIn: () => playShell("hoverIn"),
+    onHoverOut: () => playShell("hoverOut"),
+  });
+
+  const hoverHandlers = useMemo(
+    () =>
+      mergeMotionPointerHandlers(
+        undefined,
+        undefined,
+        motionPointer.onPointerOver,
+        motionPointer.onPointerOut,
+      ),
+    [motionPointer.onPointerOut, motionPointer.onPointerOver],
   );
 
   const handleShellPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       onPointerDown?.(e);
-      if (e.defaultPrevented || blocked || isGloss || groupSegment != null) return;
+      if (e.defaultPrevented || blocked || groupSegment != null) return;
       const shell = shellRef.current;
       if (!shell || prefersReducedMotion()) return;
-      void animateInteractivePressSqueeze(shell);
+      if (isGloss) {
+        glossShellMotion.onShellPointerDown();
+        return;
+      }
+      const pressIn = scope.resolve("shell", "pressIn", shellMotionRef.current);
+      if (pressIn === false || pressIn === undefined) return;
+      if (isKitPressSqueeze(pressIn) || pressIn) {
+        void scope.play("shell", "pressIn", {
+          partMotion: shellMotionRef.current,
+          el: shell,
+        }).finished;
+      }
     },
-    [blocked, groupSegment, isGloss, onPointerDown, shellRef],
+    [blocked, glossShellMotion, groupSegment, isGloss, onPointerDown, scope, shellRef],
   );
+
+  const playFileRowLeave = useCallback(
+    async (rowEl: HTMLElement | null) => {
+      if (!rowEl || prefersReducedMotion()) return;
+      const value = scope.resolve("fileRow", "leave");
+      if (value === false || value === undefined) return;
+      await scope.play("fileRow", "leave", { el: rowEl, waitForComplete: true }).finished;
+    },
+    [scope],
+  );
+
+  const handlePointerEnter =
+    isGloss && groupSegment == null
+      ? glossShellMotion.onShellPointerEnter
+      : hoverHandlers.onPointerOver;
+  const handlePointerLeave =
+    isGloss && groupSegment == null
+      ? glossShellMotion.onShellPointerLeave
+      : hoverHandlers.onPointerOut;
 
   return {
     isGloss,
-    setShellRef,
-    handleShellPointerDown,
-    shellPointerDown: isGloss && !blocked
-      ? glossShellMotion.onShellPointerDown
-      : handleShellPointerDown,
-    shellPointerEnter:
-      isGloss && !blocked
-        ? glossShellMotion.onShellPointerEnter
-        : standardShellHover.onShellPointerEnter,
-    shellPointerLeave:
-      isGloss && !blocked
-        ? glossShellMotion.onShellPointerLeave
-        : standardShellHover.onShellPointerLeave,
+    bindShellRef,
+    playFileRowLeave,
+    shellPointerDown: handleShellPointerDown,
+    shellPointerUp: () => playShell("pressOut"),
+    shellPointerEnter: handlePointerEnter,
+    shellPointerLeave: handlePointerLeave,
     shellFocusCapture:
       isGloss && !blocked ? glossShellMotion.onShellFocusIn : undefined,
     shellBlurCapture:
       isGloss && !blocked ? glossShellMotion.onShellFocusOut : undefined,
     shellHoverMotionClass: isGloss
       ? glossShellMotion.shellHoverMotionClass
-      : standardShellHover.shellHoverMotionClass,
+      : standardShellHover.motionClass,
     glossDisabledAttr: blocked && isGloss ? { "data-gloss-disabled": "" } : {},
   };
 }
+
+export type { InputVariant };

@@ -1,6 +1,7 @@
 import type { MouseEvent, ReactNode } from "react";
 import { IoClose, IoEye, IoEyeOff, IoFolderOpen } from "react-icons/io5";
 
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabel, useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import {
@@ -8,7 +9,7 @@ import {
   inputPasswordHideAriaLabel,
   inputPasswordShowAriaLabel,
 } from "./inputA11y";
-import { useInputClassNames } from "./inputContext";
+import { useInputClassNames, useOptionalInputMotionScope } from "./inputContext";
 import {
   INPUT_FILE_GLYPH_ICON_CLASS,
   INPUT_FILE_GLYPH_SHELL_CLASS,
@@ -37,15 +38,22 @@ export function AffixSlot({
   children: ReactNode;
 }) {
   const slotClassNames = useInputClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalInputMotionScope(),
+    slot: side,
+    pointerPhases: true,
+  });
 
   return (
     <span
+      ref={setRef}
       className={inputAffixSlotClass({
         side,
         status,
         size: controlSize,
         slotClass: side === "prefix" ? slotClassNames.prefix : slotClassNames.suffix,
       })}
+      {...pointerHandlers}
     >
       {children}
     </span>
@@ -68,6 +76,12 @@ export function PasswordVisibilityAffix({
   const labels = useBurneLabels();
   const slotClassNames = useInputClassNames();
   const pwd = INPUT_PASSWORD_TOGGLE_CONTROL[controlSize];
+  const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+    scope: useOptionalInputMotionScope(),
+    slot: "passwordToggle",
+    pointerPhases: true,
+    onPointerDown: (e) => e.stopPropagation(),
+  });
 
   return (
     <span
@@ -77,6 +91,7 @@ export function PasswordVisibilityAffix({
       )}
     >
       <button
+        ref={setRef}
         type="button"
         disabled={disabled}
         aria-label={
@@ -90,12 +105,12 @@ export function PasswordVisibilityAffix({
           e.stopPropagation();
           onToggle();
         }}
-        onPointerDown={(e) => e.stopPropagation()}
         className={inputPasswordToggleButtonClass({
           size: controlSize,
           disabled,
           slotClass: slotClassNames.passwordToggle,
         })}
+        {...pointerHandlers}
       >
         {visible ? (
           <IoEyeOff className={cn(INPUT_PASSWORD_TOGGLE_ICON_CLASS, pwd.icon)} aria-hidden />
@@ -133,9 +148,16 @@ export function FileRemoveButton({
 }) {
   const removeLabel = inputFileRemoveAriaLabel(useBurneLabel("removeFile"));
   const slotClassNames = useInputClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+    scope: useOptionalInputMotionScope(),
+    slot: "fileRemove",
+    pointerPhases: true,
+    onPointerDown: (e) => e.stopPropagation(),
+  });
 
   return (
     <button
+      ref={setRef}
       type="button"
       disabled={disabled}
       title={removeLabel}
@@ -145,14 +167,34 @@ export function FileRemoveButton({
         e.stopPropagation();
         onRemove(e);
       }}
-      onPointerDown={(e) => e.stopPropagation()}
       className={inputFileRemoveButtonClass({
         disabled,
         slotClass: slotClassNames.fileRemove,
       })}
+      {...pointerHandlers}
     >
       <IoClose className={INPUT_FILE_REMOVE_ICON_CLASS} aria-hidden />
     </button>
+  );
+}
+
+export function InputFileRow({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalInputMotionScope(),
+    slot: "fileRow",
+    pointerPhases: true,
+  });
+
+  return (
+    <div ref={setRef} data-file-row="" className={className} {...pointerHandlers}>
+      {children}
+    </div>
   );
 }
 

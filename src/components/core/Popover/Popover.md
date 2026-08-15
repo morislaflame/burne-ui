@@ -54,6 +54,7 @@ const [open, setOpen] = useState(false);
 | `anchorRef` | trigger | Внешний anchor для positioning |
 | `shouldDismiss` | — | `(target) => boolean` — veto outside dismiss |
 | `classNames` | — | Слоты |
+| `motion` | — | Карта слотов. Root без portal DOM — хост `Popover.Content` |
 
 ### `Popover.Content` props
 
@@ -66,6 +67,7 @@ const [open, setOpen] = useState(false);
 | `align` | `center` / `start` | Выравнивание (`FloatingAlign`) |
 | `unstyled` | `false` | Без padding частей / gap / minmax; radius + surface остаются |
 | `contentRole` | `dialog` | `dialog` \| `undefined` |
+| `motion` | — | Мерж с картой Root; defaults на Content |
 
 ### Compound-подчасти
 
@@ -103,41 +105,55 @@ Title/Description — отдельная шкала Popover (компактне�
 
 ## Анимации
 
-`popoverAnimations.ts` → `usePopoverContentLifecycle` + trigger squeeze в `popoverParts`.
+`popoverAnimations.ts` → slot motion на портале (`POPOVER_MOTION_DEFAULTS`). Root без DOM портала передаёт карту `motion` в context; хост — `Popover.Content`. Nested Provider **не** наследует defaults — их ставят на Content.
 
 **DOM:**
 
 ```
 <div class=root>                         ← inline wrapper
-  <button|asChild> Trigger               ← squeeze + aria-expanded
+  <button|asChild> Trigger               ← squeeze (не публичный слот)
   portal → document.body
-    <div ref=panelRef role=dialog>       ← fixed position target
+    <div ref=panelRef role=dialog>       ← слот `content`
       [Popover.Arrow]
-      <div class=panel | glossPanel>     ← surface + persistent shadow
+      <div class=panel | glossPanel>
         <Popover.Header>
-          <h2 Label> <FieldHint>
-        <Popover.Body>
+          <h2 Title>                     ← слот `title` (classNames.label)
+          <FieldHint Description>        ← слот `description` (classNames.hint)
+        <Popover.Body>                   ← слот `body`
 ```
 
-### 1. Open / close portal
+### Slot motion
 
-`usePopoverContentLifecycle` (`useLayoutEffect` на `open` + `portalMounted`):
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` (`motionTooltip()`) |
+| `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
+| `body` | `enter` / `leave` | нет; хост **рассылает**, если задана |
 
-**Open sequence:**
+`leave: false` — портал размонтируется сразу. Factory на `leave` должна вернуть tween (кит ждёт `onComplete`). Motion-слот Title — `title`, хотя `classNames` зовут его `label`.
 
-1. `open=true` → `setPortalMounted(true)`
-2. `reposition()` — `computeTooltipPlacement`, `position: fixed`, `left`/`top`
-3. `animatePortalOpen({ surface: panel, vars: motionTooltip() })` — scale `0.97→1`, fade in
-4. Default panel: CSS `shadow-token-large` (как Dialog / Drawer)
+**Где в коде:** типы — `popoverTypes.ts`; scope — `popoverContext.tsx`; defaults + host — `popoverAnimations.ts`; Content-provider — `popoverParts.tsx`; карта на корне — `Popover.tsx`.
 
-**Close sequence:**
+```tsx
+<Popover motion={{ content: { leave: false } }}>…</Popover>
 
-1. `open=false` → `animatePortalClose({ autoAlpha: 0, ...motionTooltip() })`
-2. `onComplete` → `setPortalMounted(false)` — unmount portal
+<Popover
+  motion={{
+    content: {
+      enter: (ctx) => gsap.fromTo(ctx.el, { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.22 }),
+      leave: (ctx) => gsap.to(ctx.el, { y: 8, autoAlpha: 0, duration: 0.16 }),
+    },
+    title: {
+      enter: (ctx) => gsap.fromTo(ctx.el, { y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.28, delay: 0.06 }),
+      leave: (ctx) => gsap.to(ctx.el, { y: -6, autoAlpha: 0, duration: 0.16 }),
+    },
+  }}
+>
+```
 
 **Reduced motion:** `isReducedModalMotion()` → `applyReducedPortalMotion` / instant unmount.
 
-#### Кастомизация portal
+#### Кастомизация timing
 
 ```ts
 import { configureMotion } from "burne-ui";
@@ -148,7 +164,7 @@ configureMotion({
 });
 ```
 
-### 2. Trigger squeeze (`runOpenAfterSqueeze`)
+### Trigger squeeze (`runOpenAfterSqueeze`)
 
 `Popover.Trigger` на `pointerdown` (если закрыт):
 
@@ -157,7 +173,7 @@ configureMotion({
 
 **Close:** `click` при `open=true` → immediate close; `Enter`/`Space` toggle.
 
-### 3. Positioning + reflow
+### Positioning + reflow
 
 `reposition()` на:
 
@@ -171,7 +187,7 @@ configureMotion({
 
 `resolvedSide` — фактическая сторона после flip.
 
-### 4. Shadow / gloss
+### Shadow / gloss
 
 | variant | Поведение |
 |---------|-----------|
@@ -180,7 +196,7 @@ configureMotion({
 
 Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
-### 5. Outside dismiss
+### Outside dismiss
 
 `pointerdown` на document → close, если target не в trigger/panel и `shouldDismiss(target)` !== false.
 
@@ -197,7 +213,8 @@ Gloss panel ref: `bindGlossPanelRef` на inner gloss layer.
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Portal enter/exit | `animatePortalOpen/Close` | `tooltipDuration`, `interactiveEase` | `variant` |
+| Portal enter/exit | `portalSurfaceEnter` / `Leave` | `tooltipDuration`, `interactiveEase` | `motion.content` |
+| Nested title / body | slot broadcast | — | `motion.title` / `description` / `body` |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | `asChild` |
 | Rest shadow | `shadow-token-large` | — | `variant="default"` |
 | Gloss interactive | gloss utils | gloss tokens | `variant="gloss"` |
@@ -321,19 +338,19 @@ const anchorRef = useRef<HTMLDivElement>(null);
 
 ```
 Popover/
-├── Popover.tsx
+├── Popover.tsx               # карта motion через Provider (Root без портала)
 ├── index.ts
-├── popoverTypes.ts
+├── popoverTypes.ts           # PopoverMotion / PopoverLifecycleMotion / PopoverPartMotion
 ├── popoverStyles.ts
-├── popoverAnimations.ts       # lifecycle + positioning
-├── popoverParts.tsx
+├── popoverAnimations.ts      # POPOVER_MOTION_DEFAULTS, usePopoverContentLifecycle
+├── popoverParts.tsx          # Content — хост + useMotionPart
 ├── usePopoverRootState.ts
 ├── popoverAPI.ts
 ├── popoverA11y.ts
-├── popoverContext.tsx
+├── popoverContext.tsx        # createMotionScope("Popover")
 └── Popover.stories.tsx
 ```
 
 ## Storybook
 
-`Core Components/Popover` — default/gloss, controlled, anchorRef, matchAnchorWidth, arrow, light theme, `classNames`.
+`Core Components/Popover` — default/gloss, controlled, anchorRef, matchAnchorWidth, arrow, light theme, `classNames`, slot motion gallery.

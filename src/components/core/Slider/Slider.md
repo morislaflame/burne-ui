@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Slider, sliderThicknessToCss, type SliderProps, type SliderSingleProps, type SliderRangeProps, type SliderOrientation, type SliderSize, type SliderClassNames } from "burne-ui";
+import { Slider, sliderThicknessToCss, type SliderProps, type SliderSingleProps, type SliderRangeProps, type SliderOrientation, type SliderSize, type SliderClassNames, type SliderMotion, type SliderPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -78,6 +78,7 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 | `disabled` | `false` | |
 | `showValue` | simple | Показать value в header |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | Карта слотов. Compound: `motion` на `Slider.Thumb` — part motion этого thumb |
 
 ### `SliderClassNames`
 
@@ -87,48 +88,28 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 
 ## Анимации
 
-`sliderAnimations.ts` + pointer drag в `useSliderTrackState` (без GSAP на position).
+Публичный slot motion. Defaults на Root. Thumb press — `pressSqueeze` (`pressOut: false`). Fill `left` / `width` / `bottom` / `height` — kit-internal (`applySliderFillStyle`), не публичные MotionVars. Disabled opacity на `thumbShell` — внутренний GSAP.
 
-**DOM (horizontal):**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `thumb` | `pressIn` / `pressOut` | `pressSqueeze` (`pressOut: false`); `disabled` → `false` |
+| `track` / `rail` / `fill` / `icon` / `header` / `value` | hover/press | нет |
+
+`false` на `thumb.pressIn` — squeeze не играет. Compound: `motion` на `Slider.Thumb` — part motion этого thumb (range start/end независимо).
+
+**Где в коде:** типы — `sliderTypes.ts`; scope — `sliderContext.tsx`; defaults — `sliderAnimations.ts`; слоты — `sliderParts.tsx` / `sliderThumbParts.tsx` / `sliderTrackParts.tsx`; Provider — `Slider.tsx`. Drag позиции — `useSliderTrackState.ts`.
+
+```tsx
+<Slider
+  label="Volume"
+  showValue
+  motion={{
+    thumb: { pressIn: false },
+  }}
+/>
 ```
-Field
-  Slider.Track ref=trackRef
-    <Slider.Rail />
-    <span fill ref=fillRef style=left/width>    ← instant CSS updates
-    <button role=slider thumb>                  ← left % position
-      SelectionThumb
-```
-
-### 1. Thumb position (CSS, не GSAP)
-
-При drag / keyboard / value change:
-
-- `percent = sliderThumbCenterPercent(value, min, max, …)`
-- thumb `style.left` или `bottom` (vertical)
-- fill span via `sliderFillStyleFromSpan` → `applySliderFillStyle` (killMotion + inline styles)
-
-Перетаскивание: `pointerdown` на thumb → capture → `pointermove` → snap step/marks → `onValueChange`.
-
-### 2. Thumb press squeeze
-
-`useSliderThumbPressAnimation` → `animateInteractivePressSqueeze` на thumb `<button>` при pointerdown.
-
-### 3. Thumb shell disabled opacity
-
-`useSliderThumbShellAnimation` — opacity `0.48` when disabled.
-
-### 4. Fill cleanup
-
-`useSliderFillCleanup` — `killMotion` on unmount.
-
-### Сводка
-
-| Что | GSAP? | `configureMotion` |
-|-----|-------|-------------------|
-| Thumb/fill position | Нет — CSS % | — |
-| Press squeeze | Да | `pressSqueezeScale` |
-| Marks | CSS position | — |
 
 ```ts
 configureMotion({ pressSqueezeScale: [1, 0.98, 1], interactiveDuration: 280 });
@@ -227,15 +208,17 @@ sliderThicknessToCss(thickness)  // number | string → CSS
 
 ```
 Slider/
-├── Slider.tsx
+├── Slider.tsx                  # Root: карта + defaults
 ├── index.ts
 ├── sliderTypes.ts
 ├── sliderStyles.ts
-├── sliderAnimations.ts        # squeeze, fill apply
-├── sliderParts.tsx
-├── sliderThumbParts.tsx       # SliderThumbButton + SelectionThumb
+├── sliderAnimations.ts         # defaults, fill apply, thumbShell opacity
+├── sliderContext.tsx           # createMotionScope
+├── sliderParts.tsx             # Header/Value/Track slots
+├── sliderThumbParts.tsx        # thumb pressPhases
+├── sliderTrackParts.tsx        # rail/fill/icon
 ├── useSliderRootState.ts
-├── useSliderTrackState.tsx    # drag, fill geometry
+├── useSliderTrackState.ts      # drag, fill geometry
 ├── sliderAPI.ts
 ├── sliderA11y.ts
 └── Slider.stories.tsx
@@ -243,4 +226,4 @@ Slider/
 
 ## Storybook
 
-`Core Components/Slider` — single/range, vertical, marks, gloss, compound, `classNames`.
+`Core Components/Slider` — single/range, vertical, marks, gloss, compound, `classNames`, slot motion gallery.

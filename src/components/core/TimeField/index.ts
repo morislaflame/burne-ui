@@ -17,6 +17,8 @@ export type {
   TimeFieldStatus,
   TimeFieldVariant,
   TimeFieldFormat,
+  TimeFieldMotion,
+  TimeFieldPartMotion,
 } from "./timeFieldTypes";
 
 export {

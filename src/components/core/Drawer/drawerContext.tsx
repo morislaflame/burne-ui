@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   DrawerClassNames,
   DrawerClassNamesProviderProps,
@@ -49,3 +51,10 @@ export function useDrawer(): DrawerContextValue {
 export function useDrawerClassNames(): DrawerClassNames {
   return useContext(DrawerClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `drawerAnimations.ts`. */
+export const {
+  MotionScopeProvider: DrawerMotionProvider,
+  useMotionScope: useDrawerMotionScope,
+  useOptionalMotionScope: useOptionalDrawerMotionScope,
+} = createMotionScope("Drawer");

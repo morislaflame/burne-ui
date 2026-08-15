@@ -8,6 +8,7 @@ import { Text } from "@/components/core/Text";
 import { ToggleButton } from "@/components/core/ToggleButton";
 
 import { ToggleButtonGroup } from "./index";
+import { ToggleButtonGroupMotionDemo } from "../../../../playground/showcase/demos/toggleButtonGroup/ToggleButtonGroupMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -165,4 +166,9 @@ export const CustomClassNames: Story = {
       <ToggleButton value="c">C</ToggleButton>
     </ToggleButtonGroup>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ToggleButtonGroupMotionDemo />,
 };

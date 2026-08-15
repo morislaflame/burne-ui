@@ -1,13 +1,14 @@
 import { IoChevronForward } from "react-icons/io5";
-import { cloneElement, forwardRef, isValidElement, useCallback, type HTMLAttributes, type ReactElement, type Ref } from "react";
+import { cloneElement, forwardRef, isValidElement, useCallback, type ForwardedRef, type HTMLAttributes, type ReactElement, type Ref } from "react";
 import { createPortal } from "react-dom";
 
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
-import { useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
-import { useDropdown, useDropdownClassNames, useDropdownSub, DropdownSubProvider } from "./dropdownContext";
+import { DROPDOWN_SUB_MOTION_DEFAULTS, useDropdownSubContentPortal, useDropdownSubmenuKeyboard } from "./dropdownAnimations";
+import { DropdownMotionProvider, useDropdown, useDropdownClassNames, useDropdownMotionScope, useDropdownSub, useOptionalDropdownMotionScope, DropdownSubProvider } from "./dropdownContext";
 import {
   DROPDOWN_SUB_CLASS,
   DROPDOWN_SUB_CONTENT_GLOSS_CONTENT_CLASS,
@@ -207,18 +208,33 @@ DropdownSubTrigger.displayName = "Dropdown.SubTrigger";
 export const DropdownSubContent = forwardRef<
   HTMLDivElement,
   DropdownSubContentProps
->(function DropdownSubContent(
-  {
-    children,
-    className,
-    style,
-    onPointerEnter: onPointerEnterProp,
-    onPointerLeave: onPointerLeaveProp,
-    portalContainer: portalContainerProp,
-    ...rest
-  },
+>(function DropdownSubContent({ motion, ...props }, forwardedRef) {
+  const parentScope = useOptionalDropdownMotionScope();
+  const merged = mergeMotionSlotMaps(
+    parentScope?.getRootMotion(),
+    motion ? { subContent: motion } : undefined,
+  );
+  return (
+    <DropdownMotionProvider motion={merged} defaults={DROPDOWN_SUB_MOTION_DEFAULTS}>
+      <DropdownSubContentHost {...props} forwardedRef={forwardedRef} />
+    </DropdownMotionProvider>
+  );
+});
+
+DropdownSubContent.displayName = "Dropdown.SubContent";
+
+function DropdownSubContentHost({
+  children,
+  className,
+  style,
+  onPointerEnter: onPointerEnterProp,
+  onPointerLeave: onPointerLeaveProp,
+  portalContainer: portalContainerProp,
   forwardedRef,
-) {
+  ...rest
+}: Omit<DropdownSubContentProps, "motion"> & {
+  forwardedRef?: ForwardedRef<HTMLDivElement>;
+}) {
   const { open: subOpen, triggerRef, scheduleClose, cancelClose, setOpen } =
     useDropdownSub();
   const {
@@ -228,6 +244,11 @@ export const DropdownSubContent = forwardRef<
     portalContainer: portalContainerFromRoot,
   } = useDropdown();
   const slotClassNames = useDropdownClassNames();
+  const motionScope = useDropdownMotionScope();
+  const { setRef: setSubContentPartRef } = useMotionPart<HTMLDivElement>({
+    scope: motionScope,
+    slot: "subContent",
+  });
 
   const portal = useDropdownSubContentPortal({
     subOpen,
@@ -236,6 +257,7 @@ export const DropdownSubContent = forwardRef<
     subPanelRootsRef,
     popoverVariant,
     portalContainer: portalContainerProp ?? portalContainerFromRoot,
+    motionScope,
   });
 
   useDropdownSubmenuKeyboard({
@@ -271,8 +293,9 @@ export const DropdownSubContent = forwardRef<
   const panel = (
     <div
       ref={(node) => {
-        mergeForwardedRef(forwardedRef, node);
+        mergeForwardedRef(forwardedRef ?? null, node);
         mergeForwardedRef(portal.panelRef, node);
+        setSubContentPartRef(node);
       }}
       {...portalTheme}
       role="menu"
@@ -325,7 +348,5 @@ export const DropdownSubContent = forwardRef<
       : null;
 
   return portalHost ? createPortal(panel, portalHost) : null;
-});
-
-DropdownSubContent.displayName = "Dropdown.SubContent";
+}
 

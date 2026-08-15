@@ -42,4 +42,7 @@ export type {
   FieldSize,
   FieldClassNames,
   FieldSetClassNames,
+  FieldMotion,
+  FieldPartMotion,
+  FieldSetMotion,
 } from "./fieldTypes";

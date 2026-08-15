@@ -5,4 +5,6 @@ export {
   type LoadingColor,
   type LoadingType,
   type LoadingClassNames,
+  type LoadingMotion,
+  type LoadingPartMotion,
 } from "./Loading";

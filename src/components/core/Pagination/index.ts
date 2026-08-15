@@ -23,4 +23,6 @@ export type {
   PaginationPageProps,
   PaginationEllipsisProps,
   PaginationPagesProps,
+  PaginationMotion,
+  PaginationPartMotion,
 } from "./Pagination";

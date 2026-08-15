@@ -11,6 +11,7 @@ import type { Prettify } from "@/utils/prettify";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 
 export type ToggleButtonSize = ComponentSize;
@@ -28,6 +29,29 @@ export type ToggleButtonClassNames = {
   label?: string;
   icon?: string;
   text?: string;
+};
+
+export type ToggleButtonPointerMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type ToggleButtonCheckMotion = {
+  check?: MotionValue;
+  uncheck?: MotionValue;
+};
+
+export type ToggleButtonPartMotion = ToggleButtonPointerMotion & ToggleButtonCheckMotion;
+
+export type ToggleButtonMotion = {
+  root?: ToggleButtonPointerMotion;
+  fill?: ToggleButtonCheckMotion;
+  content?: ToggleButtonPartMotion;
+  label?: ToggleButtonPartMotion;
+  icon?: ToggleButtonPartMotion;
+  text?: ToggleButtonPartMotion;
 };
 
 export type ToggleButtonContextValue = {
@@ -58,24 +82,39 @@ export type ToggleButtonProps = Omit<
   /** @default "start" */
   iconPosition?: IconPosition;
   classNames?: Prettify<ToggleButtonClassNames>;
+  /**
+   * Per-slot motion (`root`, `fill`, `content`, `label`, `icon`, `text`).
+   * Root defaults: first-level lift + squeeze (gloss recipes when gloss).
+   * Fill defaults: `selectionFill` on `check` / `uncheck`.
+   */
+  motion?: Prettify<ToggleButtonMotion>;
 };
 
-export type ToggleButtonFillProps = HTMLAttributes<HTMLSpanElement>;
+export type ToggleButtonFillProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ToggleButtonCheckMotion>;
+};
 
-export type ToggleButtonContentProps = HTMLAttributes<HTMLSpanElement>;
+export type ToggleButtonContentProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ToggleButtonPartMotion>;
+};
 
-export type ToggleButtonLabelProps = HTMLAttributes<HTMLSpanElement>;
+export type ToggleButtonLabelProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ToggleButtonPartMotion>;
+};
 
 export type ToggleButtonIconStartProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<ToggleButtonPartMotion>;
 };
 
 export type ToggleButtonIconEndProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<ToggleButtonPartMotion>;
 };
 
 export type ToggleButtonTextProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<ToggleButtonPartMotion>;
 };
 
 export type ToggleButtonSimpleContentProps = {
@@ -121,10 +160,16 @@ export type UseToggleButtonAnimationsProps = {
   groupSegment: ButtonGroupSegment | undefined;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   pressed: boolean;
+  motion?: ToggleButtonMotion;
+  hoverPointerInsideRef: RefObject<boolean>;
+  onReleaseStartRef: RefObject<(() => void) | undefined>;
   onFillStart?: (pressed: boolean) => void;
   onPointerEnter?: PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: PointerEventHandler<HTMLButtonElement>;
+  onPointerOver?: PointerEventHandler<HTMLButtonElement>;
+  onPointerOut?: PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: PointerEventHandler<HTMLButtonElement>;
+  onPointerUp?: PointerEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
 };
 

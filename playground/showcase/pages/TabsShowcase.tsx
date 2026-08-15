@@ -16,6 +16,12 @@ import { TabsSettingsPanelDemo } from "../demos/tabs/TabsSettingsPanel.demo";
 import tabsSettingsPanelSource from "../demos/tabs/TabsSettingsPanel.demo.tsx?raw";
 import { TabsVerticalSidebarDemo } from "../demos/tabs/TabsVerticalSidebar.demo";
 import tabsVerticalSidebarSource from "../demos/tabs/TabsVerticalSidebar.demo.tsx?raw";
+import { TabsMotionInstantEnterDemo } from "../demos/tabs/TabsMotionInstantEnter.demo";
+import tabsMotionInstantEnterSource from "../demos/tabs/TabsMotionInstantEnter.demo.tsx?raw";
+import { TabsMotionPanelWaveDemo } from "../demos/tabs/TabsMotionPanelWave.demo";
+import tabsMotionPanelWaveSource from "../demos/tabs/TabsMotionPanelWave.demo.tsx?raw";
+import { TabsMotionSelectionTintDemo } from "../demos/tabs/TabsMotionSelectionTint.demo";
+import tabsMotionSelectionTintSource from "../demos/tabs/TabsMotionSelectionTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -63,6 +69,12 @@ export function TabsShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TabsSettingsPanelDemo} source={tabsSettingsPanelSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TabsVerticalSidebarDemo} source={tabsVerticalSidebarSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TabsDashboardShellDemo} source={tabsDashboardShellSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Skip default tab hover, panel enter timeline, check/uncheck tint. Indicator FLIP is kit-internal.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TabsMotionInstantEnterDemo} source={tabsMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TabsMotionPanelWaveDemo} source={tabsMotionPanelWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TabsMotionSelectionTintDemo} source={tabsMotionSelectionTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

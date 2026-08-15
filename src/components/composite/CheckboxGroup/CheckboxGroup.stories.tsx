@@ -8,6 +8,7 @@ import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { CheckboxGroup } from ".";
+import { CheckboxGroupMotionDemo } from "../../../../playground/showcase/demos/checkboxGroup/CheckboxGroupMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -205,4 +206,9 @@ export const Sizes: Story = {
       ))}
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <CheckboxGroupMotionDemo />,
 };

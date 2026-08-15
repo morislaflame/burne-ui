@@ -7,6 +7,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Breadcrumbs } from ".";
+import { BreadcrumbsMotionDemo } from "../../../../playground/showcase/demos/breadcrumbs/BreadcrumbsMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -292,4 +293,9 @@ export const CompoundWrappedItems: Story = {
       </Breadcrumbs.List>
     </Breadcrumbs>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <BreadcrumbsMotionDemo />,
 };

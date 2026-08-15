@@ -12,7 +12,8 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
-import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { SelectionIndicatorClassNames, SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
 export type CheckboxVariant = "default" | "secondary" | "outline" | "gloss";
@@ -37,6 +38,18 @@ export type CheckboxClassNames = {
   input?: string;
 };
 
+export type CheckboxCheckMotion = {
+  check?: MotionValue;
+  uncheck?: MotionValue;
+};
+
+/** Root map. Keys → SelectionIndicator slots in `checkboxAnimations.ts`. */
+export type CheckboxMotion = {
+  indicator?: CheckboxCheckMotion;
+  indicatorFill?: CheckboxCheckMotion;
+  indicatorMark?: CheckboxCheckMotion;
+};
+
 export type CheckboxProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
@@ -52,6 +65,7 @@ export type CheckboxProps = Omit<
     icon?: ReactNode;
     className?: string;
     classNames?: Prettify<CheckboxClassNames>;
+    motion?: Prettify<CheckboxMotion>;
     onPointerDown?: (e: PointerEvent<HTMLElement>) => void;
   };
 
@@ -65,6 +79,7 @@ export type CheckboxIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   size?: CheckboxSize;
   classNames?: Prettify<CheckboxIndicatorClassNames>;
+  motion?: Prettify<SelectionIndicatorMotion>;
 };
 
 export type CheckboxContentProps = HTMLAttributes<HTMLDivElement> & {
@@ -117,6 +132,11 @@ export type CheckboxFieldContextValue = {
 
 export type CheckboxClassNamesProviderProps = {
   classNames?: Prettify<CheckboxClassNames>;
+  children: ReactNode;
+};
+
+export type CheckboxMotionProviderProps = {
+  motion?: Prettify<CheckboxMotion>;
   children: ReactNode;
 };
 

@@ -7,8 +7,8 @@ import { Text } from "@/components/core/Text";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 
 import { checkboxVariantToIndicator, compoundContentHasExternalLabel, resolveCheckboxIndicatorClassNames } from "./checkboxAPI";
-import { useCheckboxControlTrackAnimation } from "./checkboxAnimations";
-import { useCheckboxFieldContext, useCheckboxClassNames } from "./checkboxContext";
+import { resolveCheckboxIndicatorMotion, useCheckboxControlTrackAnimation } from "./checkboxAnimations";
+import { useCheckboxClassNames, useCheckboxFieldContext, useCheckboxMotion } from "./checkboxContext";
 import { CHECKBOX_CONTENT_COMPOUND_CLASS, CHECKBOX_CONTENT_PASS_THROUGH_CLASS, CHECKBOX_CONTENT_POINTER_CLASS, CHECKBOX_CONTROL_CLASS, CHECKBOX_ERROR_DISABLED_CLASS, CHECKBOX_HINT_DISABLED_CLASS, CHECKBOX_INPUT_TRACK_OVERLAY_CLASS, CHECKBOX_INPUT_VISUALLY_HIDDEN_CLASS, CHECKBOX_LABEL_CLASS, CHECKBOX_LABEL_COMPOUND_SECONDARY_CLASS, CHECKBOX_LABEL_MOTION_CLASS, CHECKBOX_LABEL_TEXT_DANGER_CLASS, CHECKBOX_LABEL_TEXT_DISABLED_CLASS, CHECKBOX_REQUIRED_MARK_CLASS, CHECKBOX_SIMPLE_LABEL_TEXT_CLASS, CHECKBOX_SIMPLE_LABEL_WRAP_CLASS, CHECKBOX_SIZE_LAYOUT, checkboxControlCellClass, checkboxControlTrackClass, checkboxErrorRow, checkboxLabelCellClass, checkboxSecondaryCellClass } from "./checkboxStyles";
 import type {
   CheckboxContentProps,
@@ -99,10 +99,16 @@ export function CheckboxIndicator({
   className,
   classNames: classNamesProp,
   size: sizeProp,
+  motion: motionProp,
   ...rest
 }: CheckboxIndicatorProps) {
   const ctx = useCheckboxFieldContext();
   const slotClassNames = useCheckboxClassNames();
+  const rootMotion = useCheckboxMotion();
+  const motion = resolveCheckboxIndicatorMotion({
+    rootMotion,
+    indicatorMotion: motionProp,
+  });
 
   return (
     <SelectionIndicator
@@ -116,6 +122,7 @@ export function CheckboxIndicator({
         classNames: classNamesProp,
         className,
       })}
+      motion={motion}
       {...rest}
     >
       {children}

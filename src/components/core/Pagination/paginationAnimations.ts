@@ -12,6 +12,8 @@ import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
 
+import type { PaginationMotion } from "./paginationTypes";
+
 export type PaginationFlipIdentity = {
   /** Current page — primary trigger for FLIP when using `Pagination.Pages`. */
   page?: number;
@@ -81,9 +83,9 @@ export function usePaginationFlip(
         setWillChangeTransform(el, true);
         void gsap.fromTo(
           el,
-          { autoAlpha: 0, scale: 0.82 },
+          { opacity: 0, scale: 0.82 },
           {
-            autoAlpha: 1,
+            opacity: 1,
             scale: 1,
             ...motionInteractive(),
             overwrite: "auto",
@@ -125,4 +127,13 @@ export function usePaginationContentRef(
   usePaginationFlip(olRef, flipIdentity);
 
   return { olRef, setRefs };
+}
+
+export function resolvePaginationControlMotionDefaults(): PaginationMotion {
+  return {
+    control: {
+      pressIn: "pressSqueeze",
+      pressOut: false,
+    },
+  };
 }

@@ -1,9 +1,9 @@
 import { SelectionThumb } from "@/components/core/SelectionThumb";
-import { mergeRefs } from "@/components/core/utils/mergeRefs";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { forwardRef } from "react";
 
-import { useSliderThumbPressAnimation, useSliderThumbShellAnimation } from "./sliderAnimations";
-import { useSliderClassNames } from "./sliderContext";
+import { useSliderThumbShellAnimation } from "./sliderAnimations";
+import { useOptionalSliderMotionScope, useSliderClassNames } from "./sliderContext";
 import { sliderThumbButtonClass, sliderThumbPositionStyle } from "./sliderStyles";
 import type { SliderThumbButtonProps } from "./sliderTypes";
 
@@ -29,6 +29,7 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
       ariaLabel,
       ariaLabelledBy,
       ariaDescribedBy,
+      motion,
       onPointerDown,
       onKeyDown,
       ...rest
@@ -37,14 +38,19 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
   ) {
     const slotClassNames = useSliderClassNames();
     const shellRef = useSliderThumbShellAnimation(disabled);
-    const { squeezeRef, handlePointerDown } = useSliderThumbPressAnimation({
-      disabled,
+    const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalSliderMotionScope(),
+      slot: "thumb",
+      motion,
+      forwardedRef,
+      pointerPhases: true,
+      pressPhases: !disabled,
       onPointerDown,
     });
 
     return (
       <button
-        ref={mergeRefs(squeezeRef, forwardedRef)}
+        ref={setRef}
         type="button"
         role="slider"
         {...(ariaLabelledBy != null
@@ -68,9 +74,9 @@ export const SliderThumbButton = forwardRef<HTMLButtonElement, SliderThumbButton
           slotClass: cn(slotClassNames.thumb, className),
         })}
         style={{ ...sliderThumbPositionStyle(percent, orientation), ...style }}
-        onPointerDown={handlePointerDown}
         onKeyDown={onKeyDown}
         {...rest}
+        {...pointerHandlers}
       >
         <SelectionThumb
           size={size}

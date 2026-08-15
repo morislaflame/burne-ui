@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   AlertDialogClassNames,
   AlertDialogClassNamesProviderProps,
@@ -79,3 +81,10 @@ export function useAlertDialogHeaderContext(who: string): AlertDialogHeaderConte
 export function useOptionalAlertDialogHeaderContext() {
   return useContext(AlertDialogHeaderContext);
 }
+
+/** Scope only. Defaults and host play live in `alertDialogAnimations.ts`. */
+export const {
+  MotionScopeProvider: AlertDialogMotionProvider,
+  useMotionScope: useAlertDialogMotionScope,
+  useOptionalMotionScope: useOptionalAlertDialogMotionScope,
+} = createMotionScope("AlertDialog");

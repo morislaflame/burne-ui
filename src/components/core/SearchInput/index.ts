@@ -5,4 +5,6 @@ export type {
   SearchInputSize,
   SearchInputVariant,
   SearchInputClassNames,
+  SearchInputMotion,
+  SearchInputPartMotion,
 } from "./searchInputTypes";

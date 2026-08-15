@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Select, type SelectOption, type SelectProps, type SelectSimpleProps, type SelectClassNames } from "burne-ui";
+import { Select, type SelectOption, type SelectProps, type SelectSimpleProps, type SelectClassNames, type SelectMotion } from "burne-ui";
 ```
 
 ## API
@@ -83,71 +83,38 @@ const options = [
 
 ## Анимации
 
-Слои: shell (как Input), open squeeze, chevron, popover, ListBox items.
+Публичный slot motion. Root передаёт карту `motion`; хост — `Select.TriggerGroup` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Open-after-squeeze играет `triggerGroup.pressIn` (non-gloss) или kit gloss squeeze. Chevron rotation — kit-internal. Menu enter — на Popover, не дублируется.
 
-**DOM-структура:**
+### Slot motion
 
-```
-Field
-  Label
-  <div TriggerGroup ref=anchorRef role=combobox>
-    <button Select.Value />      ← focus + keyboard
-    <button Select.Trigger> chevron
-  <Popover.Content>
-    <ListBox> …
-```
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `triggerGroup` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
+| `value` / `trigger` / `triggerIcon` | hover/press | нет |
 
-### 1. Shell hover (standard)
+`false` на `triggerGroup.hoverIn/Out` — rest-тень остаётся, lift не играет. `false` на `pressIn` — open без squeeze. Не анимируйте layout в публичных MotionVars.
 
-`useFieldShellHoverLift(anchorRef, !disabled && !isGloss && !groupSegment)` на `TriggerGroup`:
+**Где в коде:** типы — `selectTypes.ts`; scope — `selectContext.tsx`; defaults + host — `selectAnimations.ts`; слоты — `selectTriggerParts.tsx`; карта на Root — `Select.tsx`.
 
-- sm → md + lift
-- `fieldShellHoverClass` — CSS hover по variant (не status tint)
-
-### 2. Gloss shell
-
-`useGlossFieldShellMotion` — pointer + focus lift на `TriggerGroup`.
-
-### 3. Open after squeeze (`runOpenAfterSqueeze`)
-
-**TriggerGroup `pointerdown`** (когда `!open`):
-
-```ts
-runOpenAfterSqueeze({
-  triggerRef: anchorRef, disabled,
-  setOpen, onOpened: finishOpen, openingRef,
-});
+```tsx
+<Select
+  label="Language"
+  options={options}
+  motion={{
+    triggerGroup: { hoverIn: false, hoverOut: false },
+  }}
+/>
 ```
 
-**Select.Value keyboard** (ArrowDown/Up, Enter, Space) — тот же helper.
+Compound: `motion` на `Select.TriggerGroup` — part motion слота `triggerGroup`; на `Select.Value` / `Select.Trigger` — свои слоты.
 
-**Select.Trigger:** открывает **без** squeeze — `setOpen(true)` + focus Value.
+**ButtonGroup:** при `groupSegment` shell hover/press выключены.
 
-Алгоритм: `openingRef` / `disabled` guard → reduced motion → instant open → иначе standard `animateInteractivePressSqueeze` → `setOpen(true)` → `onOpened` (focus Value, set active option). Gloss не ветвится здесь (surface hover остаётся в `useGlossFieldShellMotion`); будущий gloss-плагин может передать `runSqueeze`.
+### Chevron / Popover / ListBox
 
-### 4. Chevron rotation
-
-`Select.Trigger` → `useChevronRotation(open)` — GSAP `rotation: 0|180`, `motionInteractive()`.
-
-### 5. Popover enter/leave
-
-`Select.Popover` → `Popover` с `motionTooltip()` — как ComboBox.
-Пропсы позиционирования: `side` (`top` | `right` | `bottom` | `left`, по умолчанию `bottom`), `align`, `offset`.
-
-### 6. ListBox items
-
-Selection indicator + label press squeeze — см. ListBox.md.
-
-### Сводка
-
-| Анимация | Где | `configureMotion` |
-|----------|-----|-------------------|
-| Shell hover | `TriggerGroup` | `enableHoverLift`, `hoverLiftScale` |
-| Gloss shell | `TriggerGroup` | interactive |
-| Open squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` |
-| Chevron | `Select.Trigger` | `interactiveDuration` |
-| Popover | `Popover.Content` | `tooltipDuration` |
-| List items | `ListBox.Item` | `pressSqueezeScale` |
+- Chevron: `useChevronRotation` — kit-internal
+- Popover enter/leave — публичный slot motion Popover
+- ListBox items — slot motion ListBox (если подключён)
 
 ## Стилизация и кастомизация
 
@@ -255,6 +222,8 @@ Select/
 ├── selectStyles.ts
 ├── selectParts.tsx
 ├── selectTriggerParts.tsx
+├── selectAnimations.ts          # slot table, defaults, host play
+├── selectContext.tsx            # createMotionScope
 ├── useSelectRootState.ts
 ├── selectAPI.ts
 ├── selectA11y.ts
@@ -263,4 +232,4 @@ Select/
 
 ## Storybook
 
-`Core Components/Select` — simple/compound, status, gloss, Form, `classNames`, keyboard.
+`Core Components/Select` — simple/compound, status, gloss, Form, `classNames`, keyboard, slot motion gallery.

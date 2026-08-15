@@ -1,36 +1,145 @@
-import { useCallback, type PointerEvent, type RefObject } from "react";
+/**
+ * Slot motion for TextArea — look here first.
+ *
+ * DOM slots: `shell` (host), `control`, `resizeHandle`
+ *
+ * Root passes the `motion` map. Host is `TextArea.Control` (defaults + `play`).
+ * Gloss hover/press stay on `useGlossFieldShellMotion`.
+ * Resize drag height is kit-internal (`useTextAreaResize`), not public MotionVars.
+ *
+ * Not slots: Field `root` / `label` / `hint` / `error`.
+ */
+import { useCallback, useMemo, useRef, type MutableRefObject, type PointerEvent } from "react";
 
-import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
-import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
+import {
+  animateGlossInteractivePressSqueeze,
+  useGlossFieldShellMotion,
+} from "@/components/core/utils/glossInteractiveMotion";
+import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import {
+  mergeMotionPointerHandlers,
+  useMotionPointerPhases,
+  type MotionValue,
+} from "@/components/core/utils/slotMotion";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import type { TextAreaVariant } from "./textAreaTypes";
+import { useTextAreaMotionScope } from "./textAreaContext";
+import type {
+  TextAreaMotion,
+  TextAreaPartMotion,
+  UseTextAreaShellAnimationsProps,
+} from "./textAreaTypes";
 
-export function useTextAreaShellMotion({
+import "../utils/glossInteractive.css";
+
+function isKitPressSqueeze(value: MotionValue | undefined): boolean {
+  if (typeof value === "string") {
+    return value === "pressSqueeze" || value === "pressSqueezeGloss";
+  }
+  if (value && typeof value === "object" && "recipe" in value) {
+    const recipe = (value as { recipe?: unknown }).recipe;
+    return recipe === "pressSqueeze" || recipe === "pressSqueezeGloss";
+  }
+  return false;
+}
+
+export function resolveTextAreaMotionDefaults({
+  isGloss,
+  blocked,
+}: {
+  isGloss: boolean;
+  blocked: boolean;
+}): TextAreaMotion {
+  const hover = !blocked && !isGloss;
+  const press = !blocked && !isGloss;
+  return {
+    shell: {
+      hoverIn: hover ? "hoverLiftSecondLevel" : false,
+      hoverOut: hover ? "hoverLiftSecondLevel" : false,
+      pressIn: press ? "pressSqueeze" : false,
+      pressOut: false,
+    },
+  };
+}
+
+export function resolveTextAreaMotionParams({
+  blocked,
+  isGloss,
+  pointerInside,
+}: {
+  blocked: boolean;
+  isGloss: boolean;
+  pointerInside: MutableRefObject<boolean>;
+}) {
+  return {
+    shadowSize: "base" as const,
+    hasHoverShadow: !blocked && !isGloss,
+    isGloss,
+    pointerInside,
+  };
+}
+
+export function useTextAreaShellAnimations({
   shellRef,
   blocked,
   variant,
   resizable,
+  motion,
+  pointerInsideRef,
   onPointerDown,
-}: {
-  shellRef: RefObject<HTMLDivElement | null>;
-  blocked: boolean;
-  variant: TextAreaVariant;
-  resizable: boolean;
-  onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void;
-}) {
+}: UseTextAreaShellAnimationsProps) {
+  const scope = useTextAreaMotionScope();
+  const shellMotionRef = useRef(motion);
+  shellMotionRef.current = motion;
   const isGloss = variant === "gloss";
-  const standardShellHover = useFieldShellHoverLift(shellRef, !blocked && !isGloss);
+
+  const standardShellHover = useSecondLevelShadow(shellRef, !blocked && !isGloss, {
+    interactive: false,
+    pointerInsideRef,
+  });
   const glossShellMotion = useGlossFieldShellMotion(shellRef, !blocked && isGloss);
 
-  const setShellRef = useCallback(
+  const bindShellRef = useCallback(
     (node: HTMLDivElement | null) => {
       shellRef.current = node;
+      scope.registerTarget("shell", node);
       if (node && !resizable) node.style.removeProperty("height");
       if (!blocked && isGloss) glossShellMotion.bindShellRef(node);
     },
-    [blocked, glossShellMotion, isGloss, resizable, shellRef],
+    [blocked, glossShellMotion, isGloss, resizable, scope, shellRef],
+  );
+
+  const playShell = useCallback(
+    (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
+      if (blocked || isGloss) return;
+      const el = shellRef.current;
+      if (!el) return;
+      const value = scope.resolve("shell", phase, shellMotionRef.current);
+      if (value === undefined) return;
+      scope.play("shell", phase, { partMotion: shellMotionRef.current, el });
+    },
+    [blocked, isGloss, scope, shellRef],
+  );
+
+  const motionPointer = useMotionPointerPhases<HTMLDivElement>({
+    enabled: !blocked && !isGloss,
+    targetRef: shellRef,
+    pointerInsideRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onHoverIn: () => playShell("hoverIn"),
+    onHoverOut: () => playShell("hoverOut"),
+  });
+
+  const hoverHandlers = useMemo(
+    () =>
+      mergeMotionPointerHandlers(
+        undefined,
+        undefined,
+        motionPointer.onPointerOver,
+        motionPointer.onPointerOut,
+      ),
+    [motionPointer.onPointerOut, motionPointer.onPointerOver],
   );
 
   const handleShellPointerDown = useCallback(
@@ -44,27 +153,33 @@ export function useTextAreaShellMotion({
       const shell = shellRef.current;
       if (!shell || prefersReducedMotion()) return;
       if (isGloss) {
-        glossShellMotion.onShellPointerDown();
+        void animateGlossInteractivePressSqueeze(shell).then(() => {});
         return;
       }
-      void animateInteractivePressSqueeze(shell);
+      const pressIn = scope.resolve("shell", "pressIn", shellMotionRef.current);
+      if (pressIn === false || pressIn === undefined) return;
+      if (isKitPressSqueeze(pressIn) || pressIn) {
+        void scope.play("shell", "pressIn", {
+          partMotion: shellMotionRef.current,
+          el: shell,
+        }).finished;
+      }
     },
-    [blocked, glossShellMotion, isGloss, onPointerDown, shellRef],
+    [blocked, isGloss, onPointerDown, scope, shellRef],
   );
 
   return {
     isGloss,
-    setShellRef,
+    bindShellRef,
     shellPointerDown: handleShellPointerDown,
-    shellPointerEnter: isGloss
-      ? glossShellMotion.onShellPointerEnter
-      : standardShellHover.onShellPointerEnter,
-    shellPointerLeave: isGloss
-      ? glossShellMotion.onShellPointerLeave
-      : standardShellHover.onShellPointerLeave,
+    shellPointerUp: () => playShell("pressOut"),
+    shellPointerEnter: isGloss ? glossShellMotion.onShellPointerEnter : hoverHandlers.onPointerOver,
+    shellPointerLeave: isGloss ? glossShellMotion.onShellPointerLeave : hoverHandlers.onPointerOut,
     shellFocusCapture: isGloss ? glossShellMotion.onShellFocusIn : undefined,
     shellBlurCapture: isGloss ? glossShellMotion.onShellFocusOut : undefined,
     glossShellHoverMotionClass: glossShellMotion.shellHoverMotionClass,
-    standardShellHoverMotionClass: standardShellHover.shellHoverMotionClass,
+    standardShellHoverMotionClass: standardShellHover.motionClass,
   };
 }
+
+export type { TextAreaPartMotion };

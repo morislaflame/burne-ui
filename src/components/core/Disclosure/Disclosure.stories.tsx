@@ -7,6 +7,7 @@ import { IoInformationCircleOutline, IoLockClosedOutline, IoNotificationsOutline
 import { Text } from "@/components/core/Text";
 
 import { Disclosure } from ".";
+import { DisclosureMotionDemo } from "../../../../playground/showcase/demos/disclosure/DisclosureMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -427,4 +428,9 @@ export const CustomClassNames: Story = {
       </Disclosure.Content>
     </Disclosure>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, title lift, quiet hover, group)",
+  render: () => <DisclosureMotionDemo />,
 };

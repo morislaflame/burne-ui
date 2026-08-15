@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 
 import { useRadioTextMotion } from "./radioAnimations";
-import { RadioClassNamesProvider, RadioFieldProvider } from "./radioContext";
+import { RadioClassNamesProvider, RadioFieldProvider, RadioMotionProvider } from "./radioContext";
 import { RadioSimpleBody } from "./radioParts";
 import { RADIO_ROOT_DISABLED_CLASS, radioGridClass } from "./radioStyles";
 import type { RadioProps } from "./radioTypes";
@@ -20,6 +20,8 @@ export type {
   RadioSize,
   RadioVariant,
   RadioClassNames,
+  RadioMotion,
+  RadioCheckMotion,
 } from "./radioTypes";
 
 export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function RadioRoot(
@@ -47,6 +49,7 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
     onFocus,
     className,
     classNames,
+    motion,
     onPointerDown,
     onKeyDown,
     onClick,
@@ -99,33 +102,35 @@ export const RadioRoot = forwardRef<HTMLLabelElement, RadioProps>(function Radio
   return (
     <RadioFieldProvider value={state.contextValue}>
       <RadioClassNamesProvider classNames={classNames}>
-        <label
-          ref={ref}
-          data-selected={state.mergedChecked ? true : undefined}
-          className={gridClass}
-          {...rest}
-          onPointerDown={handlePointerDown}
-          onKeyDown={handleKeyDown}
-        >
-          {state.isCompound ? (
-            children
-          ) : (
-            <RadioSimpleBody
-              label={state.label}
-              hint={state.hint}
-              error={state.error}
-              hasHint={state.hasHint}
-              hasError={state.hasError}
-              secondaryLines={state.secondaryLines}
-              textColRef={state.textColRef}
-              size={state.contextValue.size}
-              isDisabled={state.isDisabled}
-              danger={state.danger}
-              hintId={state.hintId}
-              errorId={state.errorId}
-            />
-          )}
-        </label>
+        <RadioMotionProvider motion={motion}>
+          <label
+            ref={ref}
+            data-selected={state.mergedChecked ? true : undefined}
+            className={gridClass}
+            {...rest}
+            onPointerDown={handlePointerDown}
+            onKeyDown={handleKeyDown}
+          >
+            {state.isCompound ? (
+              children
+            ) : (
+              <RadioSimpleBody
+                label={state.label}
+                hint={state.hint}
+                error={state.error}
+                hasHint={state.hasHint}
+                hasError={state.hasError}
+                secondaryLines={state.secondaryLines}
+                textColRef={state.textColRef}
+                size={state.contextValue.size}
+                isDisabled={state.isDisabled}
+                danger={state.danger}
+                hintId={state.hintId}
+                errorId={state.errorId}
+              />
+            )}
+          </label>
+        </RadioMotionProvider>
       </RadioClassNamesProvider>
     </RadioFieldProvider>
   );

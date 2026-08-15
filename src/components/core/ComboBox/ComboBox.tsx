@@ -6,7 +6,7 @@ import {
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
 
-import { ComboBoxClassNamesProvider, ComboBoxFieldProvider, ComboBoxProvider } from "./comboBoxContext";
+import { ComboBoxClassNamesProvider, ComboBoxFieldProvider, ComboBoxMotionProvider, ComboBoxProvider } from "./comboBoxContext";
 import { ComboBoxError, ComboBoxHint, ComboBoxLabel, ComboBoxInput, ComboBoxInputGroup, ComboBoxPopover, ComboBoxSimpleBody, ComboBoxTrigger } from "./comboBoxParts";
 import type { ComboBoxProps } from "./comboBoxTypes";
 import { useComboBoxRootState } from "./useComboBoxRootState";
@@ -26,6 +26,8 @@ export type {
   ComboBoxPopoverProps,
   ComboBoxOption,
   ComboBoxClassNames,
+  ComboBoxMotion,
+  ComboBoxPartMotion,
 } from "./comboBoxTypes";
 
 
@@ -52,6 +54,7 @@ export function ComboBoxRoot({
   placeholder,
   menuMaxHeight,
   name,
+  motion,
   ...rest
 }: ComboBoxProps) {
   const formCtx = useOptionalFormBindingContext();
@@ -89,6 +92,7 @@ export function ComboBoxRoot({
     <ComboBoxFieldProvider value={state.fieldCtx}>
       <ComboBoxProvider value={state.comboCtx}>
         <ComboBoxClassNamesProvider classNames={classNames}>
+          <ComboBoxMotionProvider motion={motion}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               size={resolvedSize}
@@ -111,6 +115,7 @@ export function ComboBoxRoot({
               )}
             </Field>
           </FieldLabelContext.Provider>
+          </ComboBoxMotionProvider>
         </ComboBoxClassNamesProvider>
       </ComboBoxProvider>
     </ComboBoxFieldProvider>

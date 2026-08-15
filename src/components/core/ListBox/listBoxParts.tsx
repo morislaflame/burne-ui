@@ -4,8 +4,8 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { Text } from "@/components/core/Text";
 import { focusElement } from "@/components/core/utils/focusElement";
-import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
-import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { CONTROL_SIZE_LAYOUT, OPTION_CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { optionListItemGridClass } from "@/components/core/utils/optionControlGridLayout";
 import { OptionListItemContextProvider, useOptionListItemContext, type OptionListItemContextValue } from "@/components/core/utils/optionListItemContext";
@@ -22,15 +22,19 @@ import {
   resolveListBoxItemIndicatorClassNames,
 } from "./listBoxAPI";
 import {
+  playListBoxItemPress,
+  resolveListBoxMotionDefaults,
   useListBoxActiveOptionHighlight,
-  useListBoxItemAnimations,
   useListBoxRootGlossRef,
 } from "./listBoxAnimations";
 import {
   useListBox,
   useListBoxActiveValue,
   useListBoxClassNames,
+  useListBoxMotionScope,
   useListBoxSectionLabelRegister,
+  useOptionalListBoxMotionScope,
+  ListBoxMotionProvider,
   ListBoxSectionLabelProvider,
 } from "./listBoxContext";
 import { listBoxEmptyClass, listBoxHeaderClass, listBoxHeaderTextClass, listBoxItemClass, listBoxRootClass, listBoxSectionClass, listBoxSeparatorClass } from "./listBoxStyles";
@@ -69,6 +73,7 @@ export function ListBoxRootShell({
   ...rest
 }: ListBoxRootShellProps) {
   const slotClassNames = useListBoxClassNames();
+  const motionScope = useListBoxMotionScope();
   const {
     setActiveValue,
     selectItem,
@@ -143,9 +148,7 @@ export function ListBoxRootShell({
             event.preventDefault();
             setActiveValue(initial);
             const option = document.getElementById(listBoxOptionId(listId, initial));
-            if (option && !prefersReducedMotion()) {
-              void animateInteractivePressSqueeze(option);
-            }
+            if (option) playListBoxItemPress(motionScope, option);
             selectItem(initial);
             keepFocusOnList();
           }
@@ -153,9 +156,7 @@ export function ListBoxRootShell({
         }
         event.preventDefault();
         const option = document.getElementById(listBoxOptionId(listId, activeValue));
-        if (option && !prefersReducedMotion()) {
-          void animateInteractivePressSqueeze(option);
-        }
+        if (option) playListBoxItemPress(motionScope, option);
         selectItem(activeValue);
         keepFocusOnList();
         return;
@@ -180,6 +181,7 @@ export function ListBoxRootShell({
       activeValue,
       disabled,
       listId,
+      motionScope,
       onKeyDown,
       selectItem,
       setActiveValue,
@@ -358,10 +360,91 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       onPointerDown,
       onPointerEnter,
       onKeyDown,
+      motion,
       ...rest
     },
     ref,
   ) {
+    const parentScope = useOptionalListBoxMotionScope();
+    const motionDefaults = useMemo(() => resolveListBoxMotionDefaults(), []);
+    const mergedMotion = mergeMotionSlotMaps(
+      parentScope?.getRootMotion(),
+      motion ? { item: motion } : undefined,
+    );
+
+    return (
+      <ListBoxMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+        <ListBoxItemSurface
+          forwardedRef={ref}
+          className={className}
+          value={value}
+          disabled={disabledProp}
+          label={label}
+          hint={hint}
+          icon={icon}
+          indicator={indicator}
+          onClick={onClick}
+          onPointerDown={onPointerDown}
+          onPointerEnter={onPointerEnter}
+          onKeyDown={onKeyDown}
+          itemPartMotion={motion}
+          rest={rest}
+        >
+          {children}
+        </ListBoxItemSurface>
+      </ListBoxMotionProvider>
+    );
+  },
+);
+
+function ListBoxItemSurface({
+  forwardedRef,
+  children,
+  className,
+  value,
+  disabled: disabledProp,
+  label,
+  hint,
+  icon,
+  indicator,
+  onClick,
+  onPointerDown,
+  onPointerEnter,
+  onKeyDown,
+  itemPartMotion,
+  rest,
+}: {
+  forwardedRef: React.ForwardedRef<HTMLButtonElement>;
+  children?: ListBoxItemProps["children"];
+  className?: string;
+  value: string;
+  disabled?: boolean;
+  label?: ListBoxItemProps["label"];
+  hint?: ListBoxItemProps["hint"];
+  icon?: ListBoxItemProps["icon"];
+  indicator?: boolean;
+  onClick?: ListBoxItemProps["onClick"];
+  onPointerDown?: ListBoxItemProps["onPointerDown"];
+  onPointerEnter?: ListBoxItemProps["onPointerEnter"];
+  onKeyDown?: ListBoxItemProps["onKeyDown"];
+  itemPartMotion?: ListBoxItemProps["motion"];
+  rest: Omit<
+    ListBoxItemProps,
+    | "children"
+    | "className"
+    | "value"
+    | "disabled"
+    | "label"
+    | "hint"
+    | "icon"
+    | "indicator"
+    | "onClick"
+    | "onPointerDown"
+    | "onPointerEnter"
+    | "onKeyDown"
+    | "motion"
+  >;
+}) {
     const slotClassNames = useListBoxClassNames();
     const {
       size,
@@ -388,13 +471,14 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
       disabled: disabledProp,
     });
 
-    const { labelMotionRef, enableLabelMotion, handlePointerDown, handleKeyDown } =
-      useListBoxItemAnimations({
-        disabled,
-        hasLabel,
-        onPointerDown,
-        onKeyDown,
-      });
+    const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalListBoxMotionScope(),
+      slot: "item",
+      motion: itemPartMotion,
+      pointerPhases: true,
+      pressPhases: true,
+      onPointerDown,
+    });
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -423,19 +507,9 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
         indicatorMode,
         disabled,
         mutedHint: disabled,
-        enableLabelMotion,
-        labelMotionRef,
+        enableLabelMotion: false,
       }),
-      [
-        disabled,
-        enableLabelMotion,
-        hasHint,
-        hasIcon,
-        indicatorMode,
-        isSelected,
-        labelMotionRef,
-        showIndicatorSlot,
-      ],
+      [disabled, hasHint, hasIcon, indicatorMode, isSelected, showIndicatorSlot],
     );
 
     const autoIndicator =
@@ -465,7 +539,10 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
     return (
       <OptionListItemContextProvider value={itemCtx}>
         <button
-          ref={ref}
+          ref={(node) => {
+            mergeForwardedRef(forwardedRef, node);
+            setRef(node);
+          }}
           type="button"
           id={optionId}
           role="option"
@@ -490,30 +567,38 @@ const ListBoxItemInner = forwardRef<HTMLButtonElement, ListBoxItemProps>(
             className,
           )}
           onClick={handleClick}
-          onPointerDown={handlePointerDown}
-          onKeyDown={handleKeyDown}
           onPointerEnter={handleEnter}
+          onKeyDown={onKeyDown}
           {...rest}
+          {...pointerHandlers}
         >
           {itemBody}
         </button>
       </OptionListItemContextProvider>
     );
-  },
-);
+}
 
 export const ListBoxItem = memo(ListBoxItemInner);
 
 ListBoxItem.displayName = "ListBoxItem";
 
-export function ListBoxLabel({ className, ...props }: ListBoxLabelProps) {
+export function ListBoxLabel({ className, motion, ...props }: ListBoxLabelProps) {
   const { size } = useListBox("ListBox.Label");
   const slotClassNames = useListBoxClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalListBoxMotionScope(),
+    slot: "label",
+    motion,
+    pointerPhases: true,
+    pressPhases: true,
+  });
 
   return (
     <OptionListItemLabel
+      ref={setRef}
       textVariant={CONTROL_SIZE_LAYOUT[size].controlText}
       className={cn(slotClassNames.label, className)}
+      {...pointerHandlers}
       {...props}
     />
   );
@@ -534,17 +619,26 @@ export function ListBoxHint({ className, ...props }: ListBoxHintProps) {
 
 ListBoxHint.displayName = "ListBoxHint";
 
-export function ListBoxIcon({ className, ...props }: ListBoxIconProps) {
+export function ListBoxIcon({ className, motion, ...props }: ListBoxIconProps) {
   const { size } = useListBox("ListBox.Icon");
   const slotClassNames = useListBoxClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalListBoxMotionScope(),
+    slot: "icon",
+    motion,
+    pointerPhases: true,
+    pressPhases: true,
+  });
 
   return (
     <OptionListItemIcon
+      ref={setRef}
       className={cn(
         `[&_svg]:${CONTROL_SIZE_LAYOUT[size].icon}`,
         slotClassNames.icon,
         className,
       )}
+      {...pointerHandlers}
       {...props}
     />
   );

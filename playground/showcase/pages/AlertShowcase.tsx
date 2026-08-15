@@ -12,6 +12,18 @@ import { AlertStatusesDemo } from "../demos/alert/AlertStatuses.demo";
 import alertStatusesSource from "../demos/alert/AlertStatuses.demo.tsx?raw";
 import { AlertWithActionDemo } from "../demos/alert/AlertWithAction.demo";
 import alertWithActionSource from "../demos/alert/AlertWithAction.demo.tsx?raw";
+import { AlertMotionCompoundTitleDemo } from "../demos/alert/AlertMotionCompoundTitle.demo";
+import alertMotionCompoundTitleSource from "../demos/alert/AlertMotionCompoundTitle.demo.tsx?raw";
+import { AlertMotionOrchestratedDemo } from "../demos/alert/AlertMotionOrchestrated.demo";
+import alertMotionOrchestratedSource from "../demos/alert/AlertMotionOrchestrated.demo.tsx?raw";
+import { AlertMotionPerPartDemo } from "../demos/alert/AlertMotionPerPart.demo";
+import alertMotionPerPartSource from "../demos/alert/AlertMotionPerPart.demo.tsx?raw";
+import { AlertMotionTimelineDemo } from "../demos/alert/AlertMotionTimeline.demo";
+import alertMotionTimelineSource from "../demos/alert/AlertMotionTimeline.demo.tsx?raw";
+import { AlertMotionTitleColorDemo } from "../demos/alert/AlertMotionTitleColor.demo";
+import alertMotionTitleColorSource from "../demos/alert/AlertMotionTitleColor.demo.tsx?raw";
+import { AlertMotionTitleLiftDemo } from "../demos/alert/AlertMotionTitleLift.demo";
+import alertMotionTitleLiftSource from "../demos/alert/AlertMotionTitleLift.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -35,6 +47,18 @@ export function AlertShowcase() {
 
       <ShowcaseSection title="Gloss" description="Glass panel with hover-lift.">
         <ShowcaseDemoFromFile align="stretch" Demo={AlertGlossDemo} source={alertGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — vars, part props, root orchestration, color, per-part hover, timeline."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionTitleLiftDemo} source={alertMotionTitleLiftSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionCompoundTitleDemo} source={alertMotionCompoundTitleSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionOrchestratedDemo} source={alertMotionOrchestratedSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionTitleColorDemo} source={alertMotionTitleColorSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionPerPartDemo} source={alertMotionPerPartSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AlertMotionTimelineDemo} source={alertMotionTimelineSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

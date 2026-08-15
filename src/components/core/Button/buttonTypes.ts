@@ -9,6 +9,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup";
 
 export type ButtonVariant =
@@ -63,6 +64,17 @@ export type ButtonContextValue = {
   contentMotionRef: RefObject<HTMLSpanElement | null>;
 };
 
+export type ButtonPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type ButtonMotion = {
+  root?: ButtonPartMotion;
+};
+
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   asChild?: boolean;
   groupSegment?: ButtonGroupSegment;
@@ -78,6 +90,11 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** @default "start" */
   iconPosition?: IconPosition;
   classNames?: Prettify<ButtonClassNames>;
+  /**
+   * Per-slot motion (`root` = the button, or the inner content span in a ButtonGroup segment).
+   * Hover/press defaults: `hoverLiftFirstLevel` / `pressSqueeze` (gloss → `hoverLiftGloss` / `pressSqueezeGloss`).
+   */
+  motion?: Prettify<ButtonMotion>;
   /**
    * Enable converge-ripple from the press point (`<Ripple />` inside the button, tone under `variant`).
    * @default false
@@ -147,10 +164,15 @@ export type UseButtonAnimationsProps = {
   isControlled: boolean;
   blocked: boolean;
   groupSegment: ButtonGroupSegment | undefined;
+  motion?: ButtonMotion;
+  hoverPointerInsideRef: RefObject<boolean>;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
   onPointerEnter?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: React.PointerEventHandler<HTMLButtonElement>;
+  onPointerOver?: React.PointerEventHandler<HTMLButtonElement>;
+  onPointerOut?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: React.PointerEventHandler<HTMLButtonElement>;
+  onPointerUp?: React.PointerEventHandler<HTMLButtonElement>;
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
 };
 

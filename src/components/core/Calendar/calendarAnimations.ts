@@ -1,28 +1,29 @@
-import { useRef } from "react";
-
-import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
-
 /**
- * Hover lift + press squeeze for Calendar nav buttons and day/month/year cells.
- * Adaptive lift (element size), shared via `usePressableElementTextMotion`
- * (includes `killMotion` cleanup on unmount).
+ * Slot motion for Calendar — look here first.
+ *
+ * DOM slots: `navPrev` / `navNext` (unique on root scope), `cell` (nested per cell)
+ *
+ * Range half-fill GSAP and ToggleButton fill stay kit-internal.
+ * Hover lift is first-level without shadow (adaptive scale via unset `liftScale`).
  */
-export function useCalendarPressableAnimations(disabled = false) {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const { handlePointerEnter, handlePointerLeave, handlePointerDown, handleKeyDown } =
-    usePressableElementTextMotion<HTMLButtonElement>({
-      isDisabled: disabled,
-      enabled: !disabled,
-      textMotionRef: buttonRef,
-      hoverLift: true,
-      hoverLiftScale: "adaptive",
-    });
+import type { CalendarMotion } from "./calendarTypes";
 
+const NAV_OR_CELL = {
+  hoverIn: "hoverLiftFirstLevel" as const,
+  hoverOut: "hoverLiftFirstLevel" as const,
+  pressIn: "pressSqueeze" as const,
+  pressOut: false as const,
+};
+
+export function resolveCalendarMotionDefaults(): CalendarMotion {
   return {
-    buttonRef,
-    handlePointerEnter,
-    handlePointerLeave,
-    handlePointerDown,
-    handleKeyDown,
+    navPrev: { ...NAV_OR_CELL },
+    navNext: { ...NAV_OR_CELL },
+  };
+}
+
+export function resolveCalendarCellMotionDefaults(): CalendarMotion {
+  return {
+    cell: { ...NAV_OR_CELL },
   };
 }

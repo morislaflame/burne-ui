@@ -8,6 +8,7 @@ import { Input } from "@/components/core/Input";
 
 import { Drawer, type DrawerPlacement, type DrawerExtent } from ".";
 import { useDrawer } from "./drawerContext";
+import { DrawerMotionDemo } from "../../../../playground/showcase/demos/drawer/DrawerMotion.demo";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -649,4 +650,9 @@ export const CustomClassNames: Story = {
       </>
     );
   },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <DrawerMotionDemo />,
 };

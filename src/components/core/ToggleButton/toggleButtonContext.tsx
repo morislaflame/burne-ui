@@ -1,11 +1,20 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   ToggleButtonClassNames,
   ToggleButtonContextValue,
   ToggleButtonGroupContextValue,
 } from "./toggleButtonTypes";
+
+/** Scope only. Defaults and host play live in `toggleButtonAnimations.ts`. */
+export const {
+  MotionScopeProvider: ToggleButtonMotionProvider,
+  useMotionScope: useToggleButtonMotionScope,
+  useOptionalMotionScope: useOptionalToggleButtonMotionScope,
+} = createMotionScope("ToggleButton");
 
 const ToggleButtonGroupContext = createContext<ToggleButtonGroupContextValue | null>(null);
 const ToggleButtonContext = createContext<ToggleButtonContextValue | null>(null);

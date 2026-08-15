@@ -1,7 +1,7 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import { TextAreaClassNamesProvider, TextAreaFieldProvider } from "./textAreaContext";
+import { TextAreaClassNamesProvider, TextAreaFieldProvider, TextAreaMotionProvider } from "./textAreaContext";
 import { TextAreaSimpleBody } from "./textAreaParts";
 import type { TextAreaSimpleProps } from "./textAreaTypes";
 import { useTextAreaRootState } from "./useTextAreaRootState";
@@ -18,6 +18,8 @@ export type {
   TextAreaSize,
   TextAreaStatus,
   TextAreaVariant,
+  TextAreaMotion,
+  TextAreaPartMotion,
 } from "./textAreaTypes";
 
 export { TextAreaControl, TextAreaError, TextAreaHint, TextAreaLabel } from "./textAreaParts";
@@ -33,6 +35,7 @@ export function TextAreaRoot({
   required = false,
   status = "default",
   size = "base",
+  motion,
   ...rest
 }: TextAreaSimpleProps) {
   const state = useTextAreaRootState({
@@ -64,11 +67,13 @@ export function TextAreaRoot({
   return (
     <TextAreaFieldProvider value={state.fieldCtx}>
       <TextAreaClassNamesProvider classNames={classNames}>
-        <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <Field className={cn(classNames?.root, className)} size={state.size}>
-            {body}
-          </Field>
-        </FieldLabelContext.Provider>
+        <TextAreaMotionProvider motion={motion}>
+          <FieldLabelContext.Provider value={state.fieldLabelCtx}>
+            <Field className={cn(classNames?.root, className)} size={state.size}>
+              {body}
+            </Field>
+          </FieldLabelContext.Provider>
+        </TextAreaMotionProvider>
       </TextAreaClassNamesProvider>
     </TextAreaFieldProvider>
   );

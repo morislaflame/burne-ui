@@ -1,12 +1,18 @@
 import type { ElementType, ReactNode } from "react";
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { Label } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
 
 import { joinFieldDescribedBy } from "./fieldA11y";
 import {
+  resolveFieldMotionDefaults,
+  useFieldSetSlotMotion,
+  useFieldSlotMotion,
+} from "./fieldAnimations";
+import {
   FieldClassNamesProvider,
+  FieldMotionProvider,
   FieldSetSizeProvider,
   useFieldClassNames,
   useFieldSetClassNames,
@@ -45,19 +51,31 @@ export function FieldRootShell({
   className,
   size: sizeProp,
   children,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...rest
-}: Omit<FieldProps, "classNames">) {
+}: Omit<FieldProps, "classNames" | "motion">) {
   const slotClassNames = useFieldClassNames();
   const inheritedSize = useOptionalFieldSize();
   const size = resolveFieldSize(sizeProp ?? inheritedSize ?? undefined);
+  const part = useFieldSlotMotion<HTMLDivElement>("root", {
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <div
+      ref={part.setRef}
       className={fieldRootClass({
         size,
         className,
         slotClass: slotClassNames.root,
       })}
+      {...part.pointerHandlers}
       {...rest}
     >
       {children}
@@ -65,12 +83,15 @@ export function FieldRootShell({
   );
 }
 
-export function FieldRoot({ classNames, size, children, ...rest }: FieldProps) {
+export function FieldRoot({ classNames, size, children, motion, ...rest }: FieldProps) {
+  const motionDefaults = useMemo(() => resolveFieldMotionDefaults(), []);
   const content = (
     <FieldClassNamesProvider classNames={classNames}>
-      <FieldRootShell size={size} {...rest}>
-        {children}
-      </FieldRootShell>
+      <FieldMotionProvider motion={motion} defaults={motionDefaults}>
+        <FieldRootShell size={size} {...rest}>
+          {children}
+        </FieldRootShell>
+      </FieldMotionProvider>
     </FieldClassNamesProvider>
   );
 
@@ -89,6 +110,11 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
       status = "default",
       as = "p",
       variant: variantProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
       ...rest
     },
     ref,
@@ -96,10 +122,18 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
     const slotClassNames = useFieldClassNames();
     const size = useFieldSetSize();
     const variant = variantProp ?? fieldHintVariant(size);
+    const part = useFieldSlotMotion<HTMLElement>("hint", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <Text
-        ref={ref}
+        ref={part.setRef}
         as={as as ElementType}
         variant={variant}
         inheritColor={as === "span"}
@@ -108,6 +142,7 @@ export const FieldHint = forwardRef<HTMLElement, FieldHintProps>(
           className,
           slotClass: slotClassNames.hint,
         })}
+        {...part.pointerHandlers}
         {...rest}
       >
         {children}
@@ -126,31 +161,75 @@ export function FieldLabel({ variant: variantProp, ...rest }: FieldLabelProps) {
 
 FieldLabel.displayName = "Field.Label";
 
-export function FieldError({ role = "alert", className, ...props }: FieldErrorProps) {
+export function FieldError({
+  role = "alert",
+  className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  ...props
+}: FieldErrorProps) {
   const slotClassNames = useFieldClassNames();
+  const size = useFieldSetSize();
+  const part = useFieldSlotMotion<HTMLElement>("error", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
-    <FieldHint
-      status="danger"
+    <Text
+      ref={part.setRef}
+      as="p"
+      variant={fieldHintVariant(size)}
       role={role}
-      className={cn(slotClassNames.error, className)}
+      className={fieldHintClass({
+        status: "danger",
+        className: cn(slotClassNames.error, className),
+      })}
+      {...part.pointerHandlers}
       {...props}
     />
   );
 }
 
 export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
-  function FieldLegend({ className, children, ...rest }, ref) {
+  function FieldLegend(
+    {
+      className,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClassNames = useFieldSetClassNames();
+    const part = useFieldSetSlotMotion<HTMLLegendElement>("legend", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <legend
-        ref={ref}
+        ref={part.setRef}
         className={cn(
           FIELD_LEGEND_CLASS,
           slotClassNames.legend,
           className,
         )}
+        {...part.pointerHandlers}
         {...rest}
       >
         {children}
@@ -164,18 +243,32 @@ FieldLegend.displayName = "FieldLegend";
 export function FieldLegendHeader({
   children,
   className,
+  motion,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
   ...rest
 }: FieldLegendHeaderProps) {
   const size = useFieldSetSize();
   const slotClassNames = useFieldSetClassNames();
+  const part = useFieldSetSlotMotion<HTMLSpanElement>("legendHeader", {
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <span
+      ref={part.setRef}
       className={fieldLegendHeaderClass({
         size,
         className,
         slotClass: slotClassNames.legendHeader,
       })}
+      {...part.pointerHandlers}
       {...rest}
     >
       {children}
@@ -184,18 +277,39 @@ export function FieldLegendHeader({
 }
 
 export const FieldSetGroup = forwardRef<HTMLDivElement, FieldSetGroupProps>(
-  function FieldSetGroup({ className, children, ...rest }, ref) {
+  function FieldSetGroup(
+    {
+      className,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const size = useFieldSetSize();
     const slotClassNames = useFieldSetClassNames();
+    const part = useFieldSetSlotMotion<HTMLDivElement>("group", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={part.setRef}
         className={fieldSetGroupClass({
           size,
           className,
           slotClass: slotClassNames.group,
         })}
+        {...part.pointerHandlers}
         {...rest}
       >
         {children}
@@ -207,18 +321,39 @@ export const FieldSetGroup = forwardRef<HTMLDivElement, FieldSetGroupProps>(
 FieldSetGroup.displayName = "FieldSetGroup";
 
 export const FieldSetActions = forwardRef<HTMLDivElement, FieldSetActionsProps>(
-  function FieldSetActions({ className, children, ...rest }, ref) {
+  function FieldSetActions(
+    {
+      className,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const size = useFieldSetSize();
     const slotClassNames = useFieldSetClassNames();
+    const part = useFieldSetSlotMotion<HTMLDivElement>("actions", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={part.setRef}
         className={fieldSetActionsClass({
           size,
           className,
           slotClass: slotClassNames.actions,
         })}
+        {...part.pointerHandlers}
         {...rest}
       >
         {children}
@@ -237,6 +372,7 @@ export function FieldSetStack({
 }: UseFieldSetRootStateResult) {
   const size = useFieldSetSize();
   const slotClassNames = useFieldSetClassNames();
+  const part = useFieldSetSlotMotion<HTMLDivElement>("stack");
   const stack: ReactNode[] = [];
 
   if (groups.length > 0) {
@@ -255,11 +391,13 @@ export function FieldSetStack({
 
   return (
     <div
+      ref={part.setRef}
       className={fieldSetStackClass({
         size,
         hasLegend: legend != null,
         slotClass: slotClassNames.stack,
       })}
+      {...part.pointerHandlers}
     >
       {stack}
     </div>
@@ -268,18 +406,36 @@ export function FieldSetStack({
 
 export const FieldSetRootInner = forwardRef<
   HTMLFieldSetElement,
-  Omit<FieldSetProps, "classNames" | "size" | "children"> & {
+  Omit<FieldSetProps, "classNames" | "size" | "children" | "motion"> & {
     state: UseFieldSetRootStateResult;
   }
 >(function FieldSetRootInner(
-  { className, hintId, errorId, disabled, state, ...rest },
+  {
+    className,
+    hintId,
+    errorId,
+    disabled,
+    state,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
   ref,
 ) {
   const slotClassNames = useFieldSetClassNames();
+  const part = useFieldSetSlotMotion<HTMLFieldSetElement>("root", {
+    forwardedRef: ref,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
 
   return (
     <fieldset
-      ref={ref}
+      ref={part.setRef}
       disabled={disabled}
       aria-describedby={joinFieldDescribedBy(hintId, errorId)}
       className={cn(
@@ -287,6 +443,7 @@ export const FieldSetRootInner = forwardRef<
         slotClassNames.root,
         className,
       )}
+      {...part.pointerHandlers}
       {...rest}
     >
       {state.legend}

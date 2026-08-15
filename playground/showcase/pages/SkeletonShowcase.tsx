@@ -14,6 +14,12 @@ import { SkeletonTableRowsDemo } from "../demos/skeleton/SkeletonTableRows.demo"
 import skeletonTableRowsSource from "../demos/skeleton/SkeletonTableRows.demo.tsx?raw";
 import { SkeletonTextBlockDemo } from "../demos/skeleton/SkeletonTextBlock.demo";
 import skeletonTextBlockSource from "../demos/skeleton/SkeletonTextBlock.demo.tsx?raw";
+import { SkeletonMotionInstantEnterDemo } from "../demos/skeleton/SkeletonMotionInstantEnter.demo";
+import skeletonMotionInstantEnterSource from "../demos/skeleton/SkeletonMotionInstantEnter.demo.tsx?raw";
+import { SkeletonMotionRootWaveDemo } from "../demos/skeleton/SkeletonMotionRootWave.demo";
+import skeletonMotionRootWaveSource from "../demos/skeleton/SkeletonMotionRootWave.demo.tsx?raw";
+import { SkeletonMotionRegionEnterDemo } from "../demos/skeleton/SkeletonMotionRegionEnter.demo";
+import skeletonMotionRegionEnterSource from "../demos/skeleton/SkeletonMotionRegionEnter.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -64,6 +70,12 @@ export function SkeletonShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonProfileCardDemo} source={skeletonProfileCardSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonTableRowsDemo} source={skeletonTableRowsSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SkeletonArticlePreviewDemo} source={skeletonArticlePreviewSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root enter, Region enter factory.">
+        <ShowcaseDemoFromFile align="stretch" Demo={SkeletonMotionInstantEnterDemo} source={skeletonMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SkeletonMotionRootWaveDemo} source={skeletonMotionRootWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SkeletonMotionRegionEnterDemo} source={skeletonMotionRegionEnterSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

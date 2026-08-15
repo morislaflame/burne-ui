@@ -14,5 +14,7 @@ export type {
   BadgeIconPosition,
   BadgeInlineIconPosition,
   BadgeClassNames,
+  BadgeMotion,
+  BadgePartMotion,
 } from "./Badge";
 export type { BadgeAnchorProps } from "./badgeTypes";

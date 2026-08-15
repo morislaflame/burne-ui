@@ -1,8 +1,17 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type { CardSize } from "./cardStyles";
 import { resolveCardSize } from "./cardStyles";
 import type { CardClassNames, CardProviderProps } from "./cardTypes";
+
+/** Scope only. Defaults and host play live in `cardAnimations.ts`. */
+export const {
+  MotionScopeProvider: CardMotionProvider,
+  useMotionScope: useCardMotionScope,
+  useOptionalMotionScope: useOptionalCardMotionScope,
+} = createMotionScope("Card");
 
 export type CardContextValue = {
   classNames: CardClassNames;

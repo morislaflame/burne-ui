@@ -1,18 +1,28 @@
-import { useRef } from "react";
+/**
+ * Slot motion for Breadcrumbs — look here first.
+ *
+ * DOM slots: `itemLink` (interactive `<a>` / `<button>`), `itemLinkText`,
+ * `ellipsisLiftWrapper`
+ *
+ * Each interactive crumb / ellipsis nests a scope. Defaults: `pressSqueeze`
+ * on `itemLink` / `ellipsisLiftWrapper` (`pressOut: false`).
+ */
+import type { BreadcrumbsMotion } from "./breadcrumbsTypes";
 
-import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
+export function resolveBreadcrumbsItemMotionDefaults(): BreadcrumbsMotion {
+  return {
+    itemLink: {
+      pressIn: "pressSqueeze",
+      pressOut: false,
+    },
+  };
+}
 
-export function useBreadcrumbInteractiveMotion() {
-  const textRef = useRef<HTMLSpanElement | null>(null);
-
-  const { handlePointerDown, handleKeyDown } = usePressableElementTextMotion<
-    HTMLElement,
-    HTMLSpanElement
-  >({
-    isDisabled: false,
-    enabled: true,
-    textMotionRef: textRef,
-  });
-
-  return { textRef, handlePointerDown, handleKeyDown };
+export function resolveBreadcrumbsEllipsisMotionDefaults(): BreadcrumbsMotion {
+  return {
+    ellipsisLiftWrapper: {
+      pressIn: "pressSqueeze",
+      pressOut: false,
+    },
+  };
 }

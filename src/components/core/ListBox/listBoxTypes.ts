@@ -6,6 +6,7 @@ import type {
   SelectionIndicatorVariant,
   SelectionIndicatorClassNames,
 } from "@/components/core/SelectionIndicator";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type ListBoxSize = "small" | "base" | "mid" | "large";
 
@@ -40,6 +41,19 @@ export type ListBoxClassNames = {
   itemIndicatorMark?: string;
 };
 
+export type ListBoxPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type ListBoxMotion = {
+  item?: ListBoxPartMotion;
+  label?: ListBoxPartMotion;
+  icon?: ListBoxPartMotion;
+};
+
 export type ListBoxContextValue = {
   listId: string;
   size: ListBoxSize;
@@ -72,6 +86,7 @@ export type ListBoxProps = Omit<
   onActiveValueChange?: (value: string | null) => void;
   listId?: string;
   classNames?: Prettify<ListBoxClassNames>;
+  motion?: Prettify<ListBoxMotion>;
 };
 
 export type ListBoxClassNamesProviderProps = {
@@ -103,13 +118,18 @@ export type ListBoxItemProps = Omit<HTMLAttributes<HTMLButtonElement>, "value"> 
   icon?: ReactNode;
   /** Simple API: render selection indicator (same as `<ListBox.ItemIndicator />`). */
   indicator?: boolean;
+  motion?: Prettify<ListBoxPartMotion>;
 };
 
-export type ListBoxLabelProps = HTMLAttributes<HTMLSpanElement>;
+export type ListBoxLabelProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ListBoxPartMotion>;
+};
 
 export type ListBoxHintProps = HTMLAttributes<HTMLSpanElement>;
 
-export type ListBoxIconProps = HTMLAttributes<HTMLSpanElement>;
+export type ListBoxIconProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ListBoxPartMotion>;
+};
 
 export type ListBoxItemIndicatorClassNames = SelectionIndicatorClassNames &
   Partial<
@@ -145,10 +165,3 @@ export type UseListBoxItemStateProps = Pick<
   ListBoxItemProps,
   "children" | "label" | "hint" | "icon" | "indicator" | "value" | "disabled"
 >;
-
-export type UseListBoxItemAnimationsProps = {
-  disabled: boolean;
-  hasLabel: boolean;
-  onPointerDown?: HTMLAttributes<HTMLButtonElement>["onPointerDown"];
-  onKeyDown?: HTMLAttributes<HTMLButtonElement>["onKeyDown"];
-};

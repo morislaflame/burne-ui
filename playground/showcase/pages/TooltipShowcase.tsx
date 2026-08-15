@@ -8,6 +8,16 @@ import { TooltipClassNamesFullDemo, TooltipClassNamesGlossDemo } from "../demos/
 import tooltipClassNamesFullSource from "../demos/tooltip/TooltipClassNamesFull.demo.tsx?raw";
 import { TooltipGlossDemo } from "../demos/tooltip/TooltipGloss.demo";
 import tooltipGlossSource from "../demos/tooltip/TooltipGloss.demo.tsx?raw";
+import { TooltipMotionDefaultDemo } from "../demos/tooltip/TooltipMotionDefault.demo";
+import tooltipMotionDefaultSource from "../demos/tooltip/TooltipMotionDefault.demo.tsx?raw";
+import { TooltipMotionInstantLeaveDemo } from "../demos/tooltip/TooltipMotionInstantLeave.demo";
+import tooltipMotionInstantLeaveSource from "../demos/tooltip/TooltipMotionInstantLeave.demo.tsx?raw";
+import { TooltipMotionSideSlideDemo } from "../demos/tooltip/TooltipMotionSideSlide.demo";
+import tooltipMotionSideSlideSource from "../demos/tooltip/TooltipMotionSideSlide.demo.tsx?raw";
+import { TooltipMotionSlideYDemo } from "../demos/tooltip/TooltipMotionSlideY.demo";
+import tooltipMotionSlideYSource from "../demos/tooltip/TooltipMotionSlideY.demo.tsx?raw";
+import { TooltipMotionStaggerDemo } from "../demos/tooltip/TooltipMotionStagger.demo";
+import tooltipMotionStaggerSource from "../demos/tooltip/TooltipMotionStagger.demo.tsx?raw";
 import { TooltipIconToolbarDemo } from "../demos/tooltip/TooltipIconToolbar.demo";
 import tooltipIconToolbarSource from "../demos/tooltip/TooltipIconToolbar.demo.tsx?raw";
 import { TooltipShortcutGridDemo } from "../demos/tooltip/TooltipShortcutGrid.demo";
@@ -41,6 +51,17 @@ export function TooltipShowcase() {
 
       <ShowcaseSection title="Gloss" description='variant="gloss" — glass tip with hover-lift.'>
         <ShowcaseDemoFromFile Demo={TooltipGlossDemo} source={tooltipGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — default recipe, instant leave, slide factory, stagger + classNames."
+      >
+        <ShowcaseDemoFromFile Demo={TooltipMotionDefaultDemo} source={tooltipMotionDefaultSource} />
+        <ShowcaseDemoFromFile Demo={TooltipMotionInstantLeaveDemo} source={tooltipMotionInstantLeaveSource} />
+        <ShowcaseDemoFromFile Demo={TooltipMotionSlideYDemo} source={tooltipMotionSlideYSource} />
+        <ShowcaseDemoFromFile Demo={TooltipMotionStaggerDemo} source={tooltipMotionStaggerSource} />
+        <ShowcaseDemoFromFile Demo={TooltipMotionSideSlideDemo} source={tooltipMotionSideSlideSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">

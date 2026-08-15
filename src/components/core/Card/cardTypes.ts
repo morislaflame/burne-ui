@@ -7,6 +7,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 
 import type { ShadowLevel } from "@/tokens/shadows";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type { CardSize } from "./cardStyles";
 
 export type { CardSize } from "./cardStyles";
@@ -27,6 +28,28 @@ export type CardClassNames = {
   description?: string;
   body?: string;
   footer?: string;
+};
+
+export type CardPointerMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type CardRootMotion = CardPointerMotion & {
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type CardPartMotion = CardPointerMotion;
+
+export type CardMotion = {
+  root?: CardRootMotion;
+  title?: CardPartMotion;
+  description?: CardPartMotion;
+  header?: CardPartMotion;
+  headingBlock?: CardPartMotion;
+  body?: CardPartMotion;
+  footer?: CardPartMotion;
 };
 
 export type CardProps = Omit<
@@ -52,14 +75,31 @@ export type CardProps = Omit<
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
   classNames?: Prettify<CardClassNames>;
+  /**
+   * Per-slot motion (`root`, `title`, `description`, `header`, `headingBlock`, `body`, `footer`).
+   * Pressable defaults: second-level hover lift + squeeze (gloss recipes when gloss).
+   */
+  motion?: Prettify<CardMotion>;
 };
 
-export type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
-export type CardHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
-export type CardBodyProps = HTMLAttributes<HTMLDivElement>;
-export type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
-export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
-export type CardFooterProps = HTMLAttributes<HTMLDivElement>;
+export type CardHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardHeadingBlockProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
+export type CardFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<CardPartMotion>;
+};
 
 export type CardProviderProps = {
   classNames?: Prettify<CardClassNames>;
@@ -82,12 +122,15 @@ export type UseCardAnimationsProps = {
   pressable: boolean;
   isGloss: boolean;
   shadow?: ShadowLevel;
+  motion?: CardMotion;
   onPress?: (event: CardPressEvent) => void;
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
   onPointerDown?: HTMLAttributes<HTMLElement>["onPointerDown"];
+  onPointerUp?: HTMLAttributes<HTMLElement>["onPointerUp"];
   onPointerOver?: HTMLAttributes<HTMLElement>["onPointerOver"];
   onPointerOut?: HTMLAttributes<HTMLElement>["onPointerOut"];
+  hoverPointerInsideRef: React.RefObject<boolean>;
   forwardedRef: React.ForwardedRef<HTMLElement>;
 };
 
@@ -104,6 +147,7 @@ export type CardRootShellProps = {
   onPointerOver?: HTMLAttributes<HTMLElement>["onPointerOver"];
   onPointerOut?: HTMLAttributes<HTMLElement>["onPointerOut"];
   onPointerDown?: HTMLAttributes<HTMLElement>["onPointerDown"];
+  onPointerUp?: HTMLAttributes<HTMLElement>["onPointerUp"];
   onClick?: HTMLAttributes<HTMLElement>["onClick"];
   onKeyDown?: HTMLAttributes<HTMLElement>["onKeyDown"];
 };

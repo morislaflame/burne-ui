@@ -22,4 +22,6 @@ export type {
   SelectTriggerProps,
   SelectPopoverProps,
   SelectClassNames,
+  SelectMotion,
+  SelectPartMotion,
 } from "./selectTypes";

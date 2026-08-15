@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   SelectClassNames,
   SelectClassNamesProviderProps,
@@ -67,3 +69,10 @@ export function SelectClassNamesProvider({
 export function useSelectClassNames(): SelectClassNames {
   return useContext(SelectClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `selectAnimations.ts`. */
+export const {
+  MotionScopeProvider: SelectMotionProvider,
+  useMotionScope: useSelectMotionScope,
+  useOptionalMotionScope: useOptionalSelectMotionScope,
+} = createMotionScope("Select");

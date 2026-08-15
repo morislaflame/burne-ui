@@ -20,6 +20,12 @@ import { ComboBoxInlineToolbarDemo } from "../demos/combobox/ComboBoxInlineToolb
 import comboBoxInlineToolbarSource from "../demos/combobox/ComboBoxInlineToolbar.demo.tsx?raw";
 import { ComboBoxWorkspacePickerDemo } from "../demos/combobox/ComboBoxWorkspacePicker.demo";
 import comboBoxWorkspacePickerSource from "../demos/combobox/ComboBoxWorkspacePicker.demo.tsx?raw";
+import { ComboBoxMotionInstantHoverDemo } from "../demos/combobox/ComboBoxMotionInstantHover.demo";
+import comboBoxMotionInstantHoverSource from "../demos/combobox/ComboBoxMotionInstantHover.demo.tsx?raw";
+import { ComboBoxMotionInputWaveDemo } from "../demos/combobox/ComboBoxMotionInputWave.demo";
+import comboBoxMotionInputWaveSource from "../demos/combobox/ComboBoxMotionInputWave.demo.tsx?raw";
+import { ComboBoxMotionInputTintDemo } from "../demos/combobox/ComboBoxMotionInputTint.demo";
+import comboBoxMotionInputTintSource from "../demos/combobox/ComboBoxMotionInputTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -92,6 +98,12 @@ export function ComboBoxShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxWorkspacePickerDemo} source={comboBoxWorkspacePickerSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxInlineToolbarDemo} source={comboBoxInlineToolbarSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxStackPickerDemo} source={comboBoxStackPickerSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound part motion.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxMotionInstantHoverDemo} source={comboBoxMotionInstantHoverSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxMotionInputWaveDemo} source={comboBoxMotionInputWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ComboBoxMotionInputTintDemo} source={comboBoxMotionInputTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

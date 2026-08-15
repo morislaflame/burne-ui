@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type BadgeStatus, type BadgeSize, type BadgePlacement, type BadgeIconPosition, type BadgeInlineIconPosition, type BadgeClassNames } from "burne-ui";
+import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type BadgeStatus, type BadgeSize, type BadgePlacement, type BadgeIconPosition, type BadgeInlineIconPosition, type BadgeClassNames, type BadgeMotion, type BadgePartMotion } from "burne-ui";
 ```
 
 ## API
@@ -73,7 +73,8 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 | `iconOnly` | `false` | Принудительный icon-only layout |
 | `dot` | `false` | Только круглый индикатор |
 | `placement` | `top-right` внутри anchor | Позиция overlay |
-| `hoverLift` | `true` | Hover shadow/lift |
+| `hoverLift` | `true` | Hover shadow/lift. Shorthand for `motion.root.hoverIn/Out: false` |
+| `motion` | — | Карта слотов `root` / `anchor` |
 | `className` | — | Root layout class |
 | `classNames` | — | Слоты |
 
@@ -137,87 +138,35 @@ import { Badge, type BadgeProps, type BadgeAnchorProps, type BadgeVariant, type 
 
 ## Анимации
 
-`badgeAnimations.ts`.
+`badgeAnimations.ts` — публичный slot motion. Компонент **2-го уровня**: rest-тень всегда, hover через слот `root` / `anchor`.
 
-**DOM (text):**
+### Slot motion
 
-```
-<span data-badge-root data-icon=start|end>
-  <Text as="span" inheritColor>...</Text>
-</span>
-```
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss`; `false` внутри `Badge.Anchor` split-lift |
+| `anchor` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` с `params.liftScale` = `badgeAnchorHoverLiftScale` |
 
-**DOM (Badge.Anchor split-lift):**
+`hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). На `Badge.Anchor` то же для `motion.anchor`. Явный `motion.root.hoverIn` важнее `hoverLift`.
 
-```
-<div data-badge-anchor>
+**Где в коде:** типы — `badgeTypes.ts`; scope — `badgeContext.tsx`; defaults + host — `badgeAnimations.ts`; `Badge.Anchor` — `badgeParts.tsx`; Provider — `Badge.tsx` / Anchor.
+
+```tsx
+<Badge motion={{ root: { hoverIn: false, hoverOut: false } }}>Instant hover</Badge>
+
+<Badge.Anchor motion={{ anchor: { hoverIn: { scale: 1.18, y: -6 }, hoverOut: { scale: 1, y: 0 } } }}>
   <Avatar />
-  <span data-badge-root class=placement>
-    <span data-badge-lift-target>Badge content</span>
-  </span>
-</div>
+  <Badge size="small">8</Badge>
+</Badge.Anchor>
 ```
 
-### 1. Self hover lift
+Split-lift: pointer на Anchor, цель — `data-badge-lift-target`. Кастомизируйте `motion.anchor`, не `motion.root` у вложенного Badge.
 
-Для обычного badge:
-
-- `variant="gloss"` → `useGlossInteractiveHandlers`
-- не gloss → `useSecondLevelShadow` (`interactive: hoverLift`)
-- rest shadow: `--shadow-base` (всегда, независимо от `hoverLift`)
-- hover shadow/lift: same-family `--shadow-base-hover`
-
-`hoverLift={false}` отключает self-lift, но оставляет rest elevation.
-
-### 2. Split lift внутри `Badge.Anchor`
-
-Если `Badge` — direct child `Badge.Anchor`, не gloss и `hoverLift=true`:
-
-1. Badge регистрирует `innerLiftRef` в anchor context.
-2. Pointer events обрабатывает `Badge.Anchor`.
-3. Anchor применяет `useSecondLevelShadowContainer` к `data-badge-lift-target`.
-4. Сам badge получает `pointer-events-none`, чтобы не дублировать hover.
-
-Для `variant="gloss"` split-lift не включается: используется gloss self motion.
-
-### 3. Gloss interaction
-
-`variant="gloss"`:
-
-- ref биндинг через `createGlossInteractiveRefCallback`
-- pointer handlers из `useGlossInteractiveHandlers`
-- motion class `GLOSS_INTERACTIVE_MOTION_CLASS`
-
-#### Кастомизация
+### Отключение
 
 ```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  badgeAnchorHoverLiftScale: 1.04,
-  hoverLiftScale: 1.025,
-  hoverLiftEase: "sine.inOut",
-  enableHoverLift: true,
-});
+configureMotion({ enableHoverLift: false, badgeAnchorHoverLiftScale: 1.04 });
 ```
-
-Gloss lift — отдельная кривая, не sm→md shadow tokens.
-
-### Чего нет
-
-- Press squeeze
-- Ripple (можно рядом с anchor child)
-- Portal motion на самом badge
-- FLIP при смене layout
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Self shadow/lift | `useSecondLevelShadow` | `hoverLiftScale`, `enableHoverLift` | `hoverLift`, `!gloss` |
-| Anchor split-lift | `useSecondLevelShadowContainer` | `badgeAnchorHoverLiftScale` | `Badge.Anchor` child |
-| Gloss hover | `useGlossInteractiveHandlers` | gloss tokens | `variant="gloss"` |
-| Layout switch | React render | — | `dot` / `iconOnly` / text |
 
 ## Токены и CSS
 
@@ -330,9 +279,9 @@ Badge/
 ├── index.ts
 ├── badgeTypes.ts
 ├── badgeStyles.ts
-├── badgeAnimations.ts
-├── badgeContext.tsx
-├── badgeParts.tsx
+├── badgeAnimations.ts             # defaults + host play
+├── badgeContext.tsx               # createMotionScope
+├── badgeParts.tsx                 # views + Anchor
 ├── useBadgeRootState.ts
 ├── badgeAPI.tsx
 ├── badgeA11y.ts

@@ -84,10 +84,13 @@ export function useToggleButtonFillAnimation(
     /** While true — `useLayoutEffect` does not start fill (waiting for press-release). */
     deferFillFromPressRef?: RefObject<boolean>;
     onFillStart?: (pressed: boolean) => void;
+    /** Host slot-motion play. Calendar keeps the default GSAP fill. */
+    playFill?: (fill: HTMLElement, next: boolean, reduceMotion: boolean) => void;
   },
 ) {
   const deferFillFromPressRef = options?.deferFillFromPressRef;
   const onFillStart = options?.onFillStart;
+  const playFill = options?.playFill;
   const initialPressedRef = useRef(pressed);
   const prevPressedRef = useRef<boolean | undefined>(undefined);
   const reduceMotion = usePrefersReducedMotion();
@@ -107,9 +110,10 @@ export function useToggleButtonFillAnimation(
       prevPressedRef.current = next;
       setDisplayPressed(next);
       onFillStart?.(next);
-      animateToggleButtonFill(fill, next, reduceMotion);
+      if (playFill) playFill(fill, next, reduceMotion);
+      else animateToggleButtonFill(fill, next, reduceMotion);
     },
-    [fillRef, onFillStart, reduceMotion],
+    [fillRef, onFillStart, playFill, reduceMotion],
   );
 
   useLayoutEffect(() => {
@@ -132,8 +136,9 @@ export function useToggleButtonFillAnimation(
     prevPressedRef.current = pressed;
     setDisplayPressed(pressed);
     onFillStart?.(pressed);
-    animateToggleButtonFill(fill, pressed, reduceMotion);
-  }, [deferFillFromPressRef, onFillStart, pressed, fillRef, reduceMotion]);
+    if (playFill) playFill(fill, pressed, reduceMotion);
+    else animateToggleButtonFill(fill, pressed, reduceMotion);
+  }, [deferFillFromPressRef, onFillStart, playFill, pressed, fillRef, reduceMotion]);
 
   return { animateTo, bindFillRef, displayPressed };
 }

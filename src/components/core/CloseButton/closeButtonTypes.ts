@@ -1,7 +1,8 @@
-import type { ButtonHTMLAttributes, KeyboardEvent, PointerEvent } from "react";
+import type { ButtonHTMLAttributes, KeyboardEvent, MutableRefObject, PointerEvent } from "react";
 import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type CloseButtonVariant =
   | "default"
@@ -19,6 +20,18 @@ export type CloseButtonClassNames = {
   ripple?: string;
 };
 
+export type CloseButtonPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type CloseButtonMotion = {
+  root?: CloseButtonPartMotion;
+  icon?: CloseButtonPartMotion;
+};
+
 export type CloseButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children"
@@ -27,6 +40,7 @@ export type CloseButtonProps = Omit<
   size?: CloseButtonSize;
   ripple?: boolean;
   classNames?: Prettify<CloseButtonClassNames>;
+  motion?: Prettify<CloseButtonMotion>;
 };
 
 export type CloseButtonClassNamesProviderProps = {
@@ -36,15 +50,27 @@ export type CloseButtonClassNamesProviderProps = {
 
 export type UseCloseButtonRootStateProps = Omit<
   CloseButtonProps,
-  "onPointerDown" | "onPointerEnter" | "onPointerLeave" | "onKeyDown"
+  | "onPointerDown"
+  | "onPointerUp"
+  | "onPointerEnter"
+  | "onPointerLeave"
+  | "onPointerOver"
+  | "onPointerOut"
+  | "onKeyDown"
+  | "motion"
 >;
 
 export type UseCloseButtonAnimationsProps = {
   variant: CloseButtonVariant;
   disabled: boolean;
   forwardedRef: React.ForwardedRef<HTMLButtonElement>;
+  motion?: CloseButtonMotion;
+  hoverPointerInsideRef: MutableRefObject<boolean>;
   onPointerDown?: (e: PointerEvent<HTMLButtonElement>) => void;
+  onPointerUp?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerEnter?: (e: PointerEvent<HTMLButtonElement>) => void;
   onPointerLeave?: (e: PointerEvent<HTMLButtonElement>) => void;
+  onPointerOver?: (e: PointerEvent<HTMLButtonElement>) => void;
+  onPointerOut?: (e: PointerEvent<HTMLButtonElement>) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
 };

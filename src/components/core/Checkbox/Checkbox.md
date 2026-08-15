@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Checkbox, type CheckboxProps, type CheckboxVariant, type CheckboxSize, type CheckboxClassNames } from "burne-ui";
+import { Checkbox, type CheckboxProps, type CheckboxVariant, type CheckboxSize, type CheckboxClassNames, type CheckboxMotion } from "burne-ui";
 ```
 
 ## API
@@ -55,6 +55,7 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 | `label` / `hint` / `error` | — | Simple API |
 | `name` / `value` | — | Form / CheckboxGroup |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` (`check` / `uncheck`) |
 
 ### `CheckboxClassNames`
 
@@ -123,11 +124,82 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 
 ### 3. Check indicator
 
-`Checkbox.Indicator` → `SelectionIndicator` + `useSelectionIndicatorAnimation`:
+`Checkbox.Indicator` → `SelectionIndicator` + slot motion (`selectionFill` / `selectionMark`). Карта на корне Checkbox прокидывается как `indicator` / `indicatorFill` / `indicatorMark`. Compound: `motion` на `Checkbox.Indicator` / `.Fill` / `.Mark`.
 
-- checked: fill + check mark scale in
-- unchecked: scale out
-- `motionInteractive()` duration/ease
+**Где в коде:** карта слотов — `checkboxAnimations.ts` (`CHECKBOX_MOTION_SLOT_MAP`, `resolveCheckboxIndicatorMotion`); тонкий context — `checkboxContext.tsx`; host — `selectionIndicatorAnimations.ts`.
+
+```tsx
+import gsap from "gsap";
+import { Checkbox, tweenCssColor } from "burne-ui";
+
+<Checkbox
+  label="Custom fill"
+  motion={{
+    indicatorFill: {
+      check: (ctx) =>
+        gsap.fromTo(
+          ctx.el,
+          { scale: 0, autoAlpha: 0, transformOrigin: "top right" },
+          { scale: 1, autoAlpha: 1, duration: 0.4, ease: "power3.out", transformOrigin: "top right" },
+        ),
+      uncheck: (ctx) =>
+        gsap.to(ctx.el, { scale: 0, autoAlpha: 0, duration: 0.22, transformOrigin: "top right" }),
+    },
+  }}
+/>
+```
+
+Цвет и таймлайн — только factory (`color` нет в `MotionVars`). Fill может оркестрировать `ctx.targets.mark`; чтобы не было двойного play, выключите рецепт mark: `indicatorMark: { check: false, uncheck: false }`.
+
+```tsx
+<Checkbox
+  label="Accent label"
+  motion={{
+    indicatorFill: {
+      check: (ctx) => {
+        const tl = gsap.timeline();
+        tl.fromTo(ctx.el, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.32 }, 0);
+        const text = ctx.el.closest("label, fieldset");
+        if (text instanceof HTMLElement) {
+          tl.add(tweenCssColor(text, "var(--color-primary)", { duration: 0.28 }), 0);
+        }
+        return tl;
+      },
+      uncheck: (ctx) => {
+        const tl = gsap.timeline();
+        tl.to(ctx.el, { scale: 0, autoAlpha: 0, duration: 0.2 }, 0);
+        const text = ctx.el.closest("label, fieldset");
+        if (text instanceof HTMLElement) {
+          tl.add(
+            tweenCssColor(text, "var(--color-foreground)", {
+              duration: 0.22,
+              clearOnComplete: true,
+            }),
+            0,
+          );
+        }
+        return tl;
+      },
+    },
+  }}
+/>
+
+<Checkbox.Indicator.Mark
+  motion={{
+    check: (ctx) =>
+      gsap.fromTo(
+        ctx.el,
+        { rotate: -90, scale: 0.4, autoAlpha: 0 },
+        { rotate: 0, scale: 1, autoAlpha: 1, duration: 0.4, ease: "back.out(2.2)" },
+      ),
+    uncheck: (ctx) => gsap.to(ctx.el, { rotate: 45, autoAlpha: 0, duration: 0.18 }),
+  }}
+/>
+```
+
+ListBox в этом срезе публичный `motion` не получает, но идёт через тот же хук SelectionIndicator — дефолт совпадает. Radio — тот же embedder, что Checkbox (`indicator` / `indicatorFill` / `indicatorMark`).
+
+См. [Motion](/docs/motion) и `SelectionIndicator`.
 
 ### Сводка
 
@@ -238,9 +310,10 @@ Compound → `<fieldset>` + grid; `Checkbox.Content` может рендерит
 Checkbox/
 ├── Checkbox.tsx
 ├── index.ts
-├── checkboxTypes.ts
+├── checkboxTypes.ts             # CheckboxMotion
 ├── checkboxStyles.ts
-├── checkboxAnimations.ts    # track opacity + text motion
+├── checkboxContext.tsx          # тонкий motion context (embedder, без createMotionScope)
+├── checkboxAnimations.ts        # CHECKBOX_MOTION_SLOT_MAP + track/label motion
 ├── checkboxParts.tsx
 ├── useCheckboxRootState.ts
 ├── checkboxAPI.ts
@@ -250,4 +323,4 @@ Checkbox/
 
 ## Storybook
 
-`Core Components/Checkbox` — simple/compound, variants, sizes, gloss, CheckboxGroup, `classNames`, status.
+`Core Components/Checkbox` — simple/compound, variants, sizes, gloss, CheckboxGroup, `classNames`, status, slot motion gallery.

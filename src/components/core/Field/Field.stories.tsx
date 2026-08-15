@@ -7,6 +7,7 @@ import { Button } from "@/components/core/Button";
 import { Field } from "@/components/core/Field";
 import { Input } from "@/components/core/Input";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
+import { FieldMotionDemo } from "../../../../playground/showcase/demos/field/FieldMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -249,4 +250,9 @@ export const CustomClassNames: Story = {
       </Field.Actions>
     </Field.Set>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <FieldMotionDemo />,
 };

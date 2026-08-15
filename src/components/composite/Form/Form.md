@@ -153,6 +153,17 @@ type FormFieldRules = {
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `header`, `title`, `description`, `actions`, `errorSummary`, `announce`; nested `section` / `field` | `enter` (opt-in); `change` on `root` when `hasErrors` flips | empty |
+
+Не крадёт motion дочерних Input.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 `Form` **не содержит GSAP** и motion pipeline. Анимации полностью делегированы дочерним контролам (`Input`, `Button`, `Checkbox`, `ComboBox`).
 
 ### Сводка

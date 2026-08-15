@@ -14,6 +14,12 @@ import { ListBoxSizesDemo } from "../demos/listBox/ListBoxSizes.demo";
 import listBoxSizesSource from "../demos/listBox/ListBoxSizes.demo.tsx?raw";
 import { ListBoxWorkspacePickerDemo } from "../demos/listBox/ListBoxWorkspacePicker.demo";
 import listBoxWorkspacePickerSource from "../demos/listBox/ListBoxWorkspacePicker.demo.tsx?raw";
+import { ListBoxMotionInstantPressDemo } from "../demos/listBox/ListBoxMotionInstantPress.demo";
+import listBoxMotionInstantPressSource from "../demos/listBox/ListBoxMotionInstantPress.demo.tsx?raw";
+import { ListBoxMotionItemWaveDemo } from "../demos/listBox/ListBoxMotionItemWave.demo";
+import listBoxMotionItemWaveSource from "../demos/listBox/ListBoxMotionItemWave.demo.tsx?raw";
+import { ListBoxMotionLabelTintDemo } from "../demos/listBox/ListBoxMotionLabelTint.demo";
+import listBoxMotionLabelTintSource from "../demos/listBox/ListBoxMotionLabelTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -57,6 +63,12 @@ export function ListBoxShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxWorkspacePickerDemo} source={listBoxWorkspacePickerSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxPermissionsDemo} source={listBoxPermissionsSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ListBoxCommandPaletteDemo} source={listBoxCommandPaletteSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across item/label/icon, compound Label + Icon motion.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionInstantPressDemo} source={listBoxMotionInstantPressSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionItemWaveDemo} source={listBoxMotionItemWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ListBoxMotionLabelTintDemo} source={listBoxMotionLabelTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

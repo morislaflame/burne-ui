@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   TextAreaClassNames,
   TextAreaClassNamesProviderProps,
@@ -53,5 +55,12 @@ export function useOptionalTextAreaFieldContext() {
 export function useTextAreaClassNames(): TextAreaClassNames {
   return useContext(TextAreaClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `textAreaAnimations.ts`. */
+export const {
+  MotionScopeProvider: TextAreaMotionProvider,
+  useMotionScope: useTextAreaMotionScope,
+  useOptionalMotionScope: useOptionalTextAreaMotionScope,
+} = createMotionScope("TextArea");
 
 export { TextAreaFieldContext };

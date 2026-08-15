@@ -8,6 +8,12 @@ import { ToastDeployPanelDemo } from "../demos/toast/ToastDeployPanel.demo";
 import toastDeployPanelSource from "../demos/toast/ToastDeployPanel.demo.tsx?raw";
 import { ToastModificationsDemo } from "../demos/toast/ToastModifications.demo";
 import toastModificationsSource from "../demos/toast/ToastModifications.demo.tsx?raw";
+import { ToastMotionBounceDemo } from "../demos/toast/ToastMotionBounce.demo";
+import toastMotionBounceSource from "../demos/toast/ToastMotionBounce.demo.tsx?raw";
+import { ToastMotionInstantLeaveDemo } from "../demos/toast/ToastMotionInstantLeave.demo";
+import toastMotionInstantLeaveSource from "../demos/toast/ToastMotionInstantLeave.demo.tsx?raw";
+import { ToastMotionTitleStaggerDemo } from "../demos/toast/ToastMotionTitleStagger.demo";
+import toastMotionTitleStaggerSource from "../demos/toast/ToastMotionTitleStagger.demo.tsx?raw";
 import { ToastPlacementsDemo } from "../demos/toast/ToastPlacements.demo";
 import toastPlacementsSource from "../demos/toast/ToastPlacements.demo.tsx?raw";
 import { ToastPromiseFlowDemo } from "../demos/toast/ToastPromiseFlow.demo";
@@ -42,6 +48,15 @@ export function ToastShowcase() {
         description="status, variant gloss, action, loading and timeout: 0."
       >
         <ShowcaseDemoFromFile Demo={ToastModificationsDemo} source={toastModificationsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant leave, bounce factory, title stagger."
+      >
+        <ShowcaseDemoFromFile Demo={ToastMotionInstantLeaveDemo} source={toastMotionInstantLeaveSource} />
+        <ShowcaseDemoFromFile Demo={ToastMotionBounceDemo} source={toastMotionBounceSource} />
+        <ShowcaseDemoFromFile Demo={ToastMotionTitleStaggerDemo} source={toastMotionTitleStaggerSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -96,8 +111,10 @@ export function ToastShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
-            Stack and reposition — <code>configureMotion()</code> (<code>enableToastStack</code>). Scrim
-            density - tokens <code>--toast-scrim-size</code>, <code>--toast-scrim-density</code>.
+            Stack and reposition — <code>configureMotion()</code> (<code>enableToastStack</code>).
+            Card enter/leave — <code>motion</code> on <code>Toast.Provider</code> or{" "}
+            <code>toast.show({"{ motion }"})</code> (<code>root</code> / <code>title</code> / …).
+            Scrim density - tokens <code>--toast-scrim-size</code>, <code>--toast-scrim-density</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

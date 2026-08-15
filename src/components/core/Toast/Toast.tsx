@@ -28,6 +28,9 @@ export type {
   AddToastOpts,
   PromiseToastOpts,
   ToastContextValue,
+  ToastMotion,
+  ToastLifecycleMotion,
+  ToastPartMotion,
 } from "./toastTypes";
 
 export { ToastProviderRoot } from "./toastProvider";
@@ -44,6 +47,7 @@ export const ToastRoot = forwardRef<HTMLDivElement, ToastProps>(function ToastRo
     onClose,
     className,
     classNames,
+    motion: _motion,
     children,
     onPointerOver: onPointerOverProp,
     onPointerOut: onPointerOutProp,

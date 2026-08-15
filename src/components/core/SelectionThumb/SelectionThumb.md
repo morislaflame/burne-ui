@@ -52,6 +52,17 @@ import { SelectionThumb, type SelectionThumbProps, type SelectionThumbIconProps 
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `icon` | `enter` / hover / press (opt-in) | empty |
+
+Switch/Slider не передают `motion` — pointer-фазы выключены.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 Внутри SelectionThumb motion нет (fill убран).
 
 **DOM:**

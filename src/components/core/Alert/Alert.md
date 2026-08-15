@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, type AlertProps, type AlertVariant, type AlertStatus, type AlertLiveRole, type AlertClassNames } from "burne-ui";
+import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, type AlertProps, type AlertVariant, type AlertStatus, type AlertLiveRole, type AlertClassNames, type AlertMotion, type AlertPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -26,6 +26,7 @@ import { Alert, resolveAlertStatus, resolveAlertVariant, resolveAlertLiveRole, t
 | `shadow` | `small` \| `base` \| `mid` \| `large` | `base` | Размер тени покоя; hover — `--shadow-{size}-hover` |
 | `className` | `string` | — | Доп. классы на root |
 | `classNames` | `AlertClassNames` | — | Слоты подчастей |
+| `motion` | `AlertMotion` | — | Карта слотов `root` / `indicator` / `title` / `description` / `action` (`hoverIn` / `hoverOut`). Части принимают `AlertPartMotion` |
 
 ### Compound-подчасти
 
@@ -99,7 +100,88 @@ Compound включается автоматически при наличии �
 
 ## Анимации
 
-Компонент **2-го уровня** — тень в покое по `shadow` (default `base`), усиление при hover в той же семье (`--shadow-{size}-hover`). Логика: `alertAnimations.ts` → `useSecondLevelShadow` или gloss-handlers.
+Компонент **2-го уровня** — тень в покое по `shadow` (default `base`), усиление при hover в той же семье (`--shadow-{size}-hover`). Логика: `alertAnimations.ts` → slot motion (`hoverLiftSecondLevel` / `hoverLiftGloss`) + rest-тень через `useSecondLevelShadow(..., { interactive: false })`.
+
+### Slot motion
+
+Слоты (DOM, не `display: contents`): `root`, `indicator`, `title`, `description`, `action`. `Alert.Message` / `Alert.Content` — не цели.
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftSecondLevel` или `hoverLiftGloss` по `variant`; `params.shadowSize` из `shadow` |
+| `indicator` / `title` / `description` / `action` | `hoverIn` / `hoverOut` | нет (локально, если задать) |
+
+`hoverLift={false}` = `motion.root.hoverIn/Out: false` (rest-тень остаётся). Явный `motion.root.hoverIn` важнее `hoverLift`. Simple API монтирует те же части — `motion.title` работает без compound.
+
+**Где в коде:** типы — `alertTypes.ts`; scope — `alertContext.tsx`; defaults + host — `alertAnimations.ts` (`resolveAlertMotionDefaults`, `useAlertAnimations`); слоты — `alertParts.tsx` (`useMotionPart`); Provider — `Alert.tsx`.
+
+```tsx
+import gsap from "gsap";
+import { Alert, killMotion, tweenCssColor } from "burne-ui";
+
+<Alert title="Saved" motion={{ title: { hoverIn: { y: -2 }, hoverOut: { y: 0 } } }} />
+
+<Alert.Title motion={{ hoverIn: { y: -2, duration: 0.2 }, hoverOut: { y: 0 } }} />
+
+<Alert
+  title="Deploy"
+  motion={{
+    root: {
+      hoverIn: (ctx) => gsap.to(ctx.targets.title, { x: 8, repeat: -1, yoyo: true, duration: 0.35 }),
+      hoverOut: (ctx) => {
+        killMotion(ctx.targets.title);
+        gsap.set(ctx.targets.title, { x: 0 });
+      },
+    },
+  }}
+/>
+```
+
+Цвет текста не входит в `MotionVars` — **`tweenCssColor`**, не сырой `gsap.to({ color: "var(--…)" })` (иначе обратный ход мигает). Таймлайн возвращайте из factory; чужие слоты — `ctx.targets`.
+
+```tsx
+<Alert
+  title="Primary on hover"
+  motion={{
+    title: {
+      hoverIn: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)"),
+      hoverOut: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-foreground)", { clearOnComplete: true }),
+    },
+  }}
+/>
+
+<Alert.Indicator
+  motion={{
+    hoverIn: (ctx) => gsap.to(ctx.el, { rotate: 15, scale: 1.12, duration: 0.28, ease: "back.out(2)" }),
+    hoverOut: (ctx) => gsap.to(ctx.el, { rotate: 0, scale: 1, duration: 0.2 }),
+  }}
+/>
+
+<Alert
+  status="danger"
+  title="Timeline"
+  description="Root stagger"
+  motion={{
+    root: {
+      hoverIn: (ctx) => {
+        const tl = gsap.timeline();
+        if (ctx.targets.indicator) tl.to(ctx.targets.indicator, { rotate: -8, duration: 0.28 }, 0);
+        if (ctx.targets.title) tl.to(ctx.targets.title, { y: -3, duration: 0.28 }, 0.05);
+        return tl;
+      },
+      hoverOut: (ctx) => {
+        const tl = gsap.timeline();
+        if (ctx.targets.indicator) tl.to(ctx.targets.indicator, { rotate: 0, duration: 0.22 }, 0);
+        if (ctx.targets.title) tl.to(ctx.targets.title, { y: 0, duration: 0.22 }, 0);
+        return tl;
+      },
+    },
+  }}
+/>
+```
+
+См. [Motion](/docs/motion): приоритет part → root slot → рецепт; `false` отключает дефолт; factory + `ctx.targets` / `killMotion`.
 
 **DOM-структура:**
 
@@ -289,20 +371,20 @@ resolveAlertLiveRole(status, role?) // → "status" | "alert"
 
 ```
 Alert/
-├── Alert.tsx
+├── Alert.tsx                 # Provider: motion + resolveAlertMotionDefaults + params
 ├── index.ts
-├── alertTypes.ts
+├── alertTypes.ts             # AlertMotion / AlertPartMotion
 ├── alertStyles.ts
 ├── alertAPI.ts
 ├── alertA11y.ts
-├── alertContext.tsx
-├── alertParts.tsx
+├── alertContext.tsx          # createMotionScope("Alert")
+├── alertParts.tsx            # useMotionPart на DOM-слотах
 ├── alertSimpleContent.tsx
-├── alertAnimations.ts
+├── alertAnimations.ts        # слоты, defaults, host play
 ├── useAlertRootState.ts
 └── Alert.stories.tsx
 ```
 
 ## Storybook
 
-`Core Components/Alert` — варианты × статусы, compound, gloss, hoverLift, кастомизация `classNames`, светлая/тёмная тема.
+`Core Components/Alert` — варианты × статусы, compound, gloss, hoverLift, кастомизация `classNames`, slot motion gallery, светлая/тёмная тема.

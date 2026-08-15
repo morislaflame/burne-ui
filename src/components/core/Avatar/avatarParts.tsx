@@ -3,20 +3,29 @@ import {
   forwardRef,
   isValidElement,
   useCallback,
+  useMemo,
   useRef,
   type ReactElement,
 } from "react";
 
 import { Text } from "@/components/core/Text";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
 
 import { letterFromLabel } from "./avatarAPI";
 import { AVATAR_FALLBACK_ARIA_HIDDEN, avatarGroupRole } from "./avatarA11y";
-import { useAvatarImageFade, useAvatarGroupItemMotion } from "./avatarAnimations";
+import {
+  resolveAvatarGroupItemMotionDefaults,
+  useAvatarImageMotion,
+} from "./avatarAnimations";
 import {
   AvatarClassNamesProvider,
+  AvatarGroupMotionProvider,
+  AvatarMotionProvider,
   useAvatarClassNames,
   useAvatarContext,
+  useAvatarGroupMotion,
+  useOptionalAvatarMotionScope,
 } from "./avatarContext";
 import {
   AVATAR_FALLBACK_TEXT,
@@ -39,18 +48,24 @@ import type {
 } from "./avatarTypes";
 
 export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
-  function AvatarImage({ className = "", onLoad, onError, ...rest }, ref) {
+  function AvatarImage({ className = "", motion, onLoad, onError, ...rest }, ref) {
     const { imageStatus, onImageLoad, onImageError } = useAvatarContext("Avatar.Image");
     const slotClassNames = useAvatarClassNames();
+    const scope = useOptionalAvatarMotionScope();
     const imgRef = useRef<HTMLImageElement | null>(null);
+    const { setRef } = useMotionPart<HTMLImageElement>({
+      scope,
+      slot: "image",
+      motion,
+      forwardedRef: ref,
+    });
 
-    const setImgRef = useCallback(
+    const bindRef = useCallback(
       (node: HTMLImageElement | null) => {
         imgRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
+        setRef(node);
       },
-      [ref],
+      [setRef],
     );
 
     const mergedOnLoad = useCallback(
@@ -70,11 +85,11 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
     );
 
     const visible = imageStatus === "loaded";
-    useAvatarImageFade(visible, imgRef);
+    useAvatarImageMotion(scope, visible, imgRef);
 
     return (
       <img
-        ref={setImgRef}
+        ref={bindRef}
         className={avatarImageClass(visible, cn(slotClassNames.image, className))}
         alt={rest.alt ?? ""}
         onLoad={mergedOnLoad}
@@ -88,9 +103,18 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
 AvatarImage.displayName = "AvatarImage";
 
 export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
-  function AvatarFallback({ className = "", children, ...rest }, ref) {
+  function AvatarFallback({ className = "", children, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { label, imageStatus, size } = useAvatarContext("Avatar.Fallback");
     const slotClassNames = useAvatarClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalAvatarMotionScope(),
+      slot: "fallback",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
 
     const show = imageStatus !== "loaded";
 
@@ -103,10 +127,11 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
 
     return (
       <span
-        ref={ref}
+        ref={setRef}
         className={avatarFallbackClass(show, cn(slotClassNames.fallback, className))}
         aria-hidden={AVATAR_FALLBACK_ARIA_HIDDEN}
         {...rest}
+        {...pointerHandlers}
       >
         <Text as="span" variant={fb.variant} inheritColor className={fb.className}>
           {text}
@@ -128,24 +153,26 @@ export function AvatarSimpleContent({ src, alt = "", loading }: AvatarSimpleCont
 }
 
 export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
-  function AvatarGroup({ className = "", classNames, children, ...rest }, ref) {
+  function AvatarGroup({ className = "", classNames, children, motion, ...rest }, ref) {
     const slotClassNames = useAvatarClassNames();
     const mapped = Children.toArray(children).filter(isValidElement) as ReactElement[];
 
     return (
       <AvatarClassNamesProvider classNames={classNames}>
-        <div
-          ref={ref}
-          role={avatarGroupRole()}
-          className={avatarGroupClass(cn(slotClassNames.group, className))}
-          {...rest}
-        >
-          {mapped.map((child, index) => (
-            <AvatarGroupItem key={child.key ?? index} stackIndex={index}>
-              {child}
-            </AvatarGroupItem>
-          ))}
-        </div>
+        <AvatarGroupMotionProvider motion={motion}>
+          <div
+            ref={ref}
+            role={avatarGroupRole()}
+            className={avatarGroupClass(cn(slotClassNames.group, className))}
+            {...rest}
+          >
+            {mapped.map((child, index) => (
+              <AvatarGroupItem key={child.key ?? index} stackIndex={index}>
+                {child}
+              </AvatarGroupItem>
+            ))}
+          </div>
+        </AvatarGroupMotionProvider>
       </AvatarClassNamesProvider>
     );
   },
@@ -157,17 +184,33 @@ function AvatarGroupItem({
   stackIndex,
   children,
 }: AvatarGroupItemProps) {
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const groupMotion = useAvatarGroupMotion();
+  const defaults = useMemo(() => resolveAvatarGroupItemMotionDefaults(), []);
+
+  return (
+    <AvatarMotionProvider motion={groupMotion} defaults={defaults}>
+      <AvatarGroupItemSurface stackIndex={stackIndex}>{children}</AvatarGroupItemSurface>
+    </AvatarMotionProvider>
+  );
+}
+
+function AvatarGroupItemSurface({
+  stackIndex,
+  children,
+}: AvatarGroupItemProps) {
   const slotClassNames = useAvatarClassNames();
-  const { applyLift, applyRest } = useAvatarGroupItemMotion(wrapRef);
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalAvatarMotionScope(),
+    slot: "groupItem",
+    pointerPhases: true,
+  });
 
   return (
     <div
-      ref={wrapRef}
+      ref={setRef}
       style={{ transformOrigin: AVATAR_GROUP_ITEM_TRANSFORM_ORIGIN }}
       className={avatarGroupItemClass(stackIndex, slotClassNames.groupItem)}
-      onPointerEnter={applyLift}
-      onPointerLeave={applyRest}
+      {...pointerHandlers}
     >
       {children}
     </div>
@@ -175,14 +218,23 @@ function AvatarGroupItem({
 }
 
 export const AvatarDefaultShell = forwardRef<HTMLDivElement, AvatarShellProps>(
-  function AvatarDefaultShell({ size, className, role, children, ...rest }, ref) {
+  function AvatarDefaultShell({ size, className, role, children, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useAvatarClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalAvatarMotionScope(),
+      slot: "root",
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
     return (
       <div
-        ref={ref}
+        ref={setRef}
         role={role}
         className={avatarRootClass(size, false, cn(slotClassNames.root, className))}
         {...rest}
+        {...pointerHandlers}
       >
         {children}
       </div>
@@ -193,15 +245,24 @@ export const AvatarDefaultShell = forwardRef<HTMLDivElement, AvatarShellProps>(
 AvatarDefaultShell.displayName = "AvatarDefaultShell";
 
 export const AvatarGlossShell = forwardRef<HTMLDivElement, AvatarShellProps>(
-  function AvatarGlossShell({ size, className, role, children, ...rest }, ref) {
+  function AvatarGlossShell({ size, className, role, children, onPointerOver, onPointerOut, ...rest }, ref) {
     const slotClassNames = useAvatarClassNames();
     const { "aria-label": ariaLabel, ...outerRest } = rest;
+    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalAvatarMotionScope(),
+      slot: "root",
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={avatarGlossWrapClass(size, slotClassNames.glossWrap)}
         {...outerRest}
+        {...pointerHandlers}
       >
         <div className={AVATAR_GLOSS_SHADOW_CLASS} aria-hidden />
         <div

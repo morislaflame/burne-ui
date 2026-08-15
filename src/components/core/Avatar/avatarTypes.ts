@@ -7,6 +7,7 @@ import type {
   TooltipVariant,
 } from "@/components/core/Tooltip";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type AvatarSize = "small" | "base" | "mid" | "large";
 
@@ -31,6 +32,20 @@ export type AvatarClassNames = {
   glossWrap?: string;
 };
 
+export type AvatarPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type AvatarMotion = {
+  root?: AvatarPartMotion;
+  image?: Pick<AvatarPartMotion, "enter" | "leave">;
+  fallback?: AvatarPartMotion;
+  groupItem?: Pick<AvatarPartMotion, "hoverIn" | "hoverOut">;
+};
+
 export type AvatarProps = HTMLAttributes<HTMLDivElement> & {
   variant?: AvatarVariant;
   size?: AvatarSize;
@@ -45,6 +60,11 @@ export type AvatarProps = HTMLAttributes<HTMLDivElement> & {
   tooltipStatus?: SemanticStatus;
   tooltipSide?: TooltipSide;
   classNames?: Prettify<AvatarClassNames>;
+  /**
+   * Per-slot motion (`root`, `image`, `fallback`). Image fade: `enter` / `leave`.
+   * Group item hover is `motion.groupItem` on `Avatar.Group`.
+   */
+  motion?: Prettify<AvatarMotion>;
 };
 
 export type UseAvatarRootStateProps = Pick<
@@ -63,16 +83,29 @@ export type UseAvatarRootStateProps = Pick<
   "aria-label"?: string;
 };
 
-export type AvatarImageProps = ImgHTMLAttributes<HTMLImageElement>;
+export type AvatarImageProps = ImgHTMLAttributes<HTMLImageElement> & {
+  motion?: Prettify<Pick<AvatarPartMotion, "enter" | "leave">>;
+};
 
-export type AvatarFallbackProps = HTMLAttributes<HTMLSpanElement>;
+export type AvatarFallbackProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<AvatarPartMotion>;
+};
 
 export type AvatarGroupProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<AvatarClassNames>;
+  /**
+   * Per-item hover on the group wrap (`groupItem`).
+   */
+  motion?: Prettify<Pick<AvatarMotion, "groupItem">>;
 };
 
 export type AvatarClassNamesProviderProps = {
   classNames?: Prettify<AvatarClassNames>;
+  children: ReactNode;
+};
+
+export type AvatarGroupMotionProviderProps = {
+  motion?: Prettify<Pick<AvatarMotion, "groupItem">>;
   children: ReactNode;
 };
 

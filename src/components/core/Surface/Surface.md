@@ -72,7 +72,18 @@ Compound API нет.
 
 ## Анимации
 
-`Surface` **не использует GSAP** для hover/press — пассивный layout primitive.
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root` | `enter` / hover / press (opt-in) | empty |
+
+`glossContent` не публичный слот.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
+Без пропа `motion` hover/press GSAP не играет — пассивный layout primitive плюс opt-in slot motion.
 
 **DOM (default):**
 

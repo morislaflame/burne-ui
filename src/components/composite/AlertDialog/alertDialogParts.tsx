@@ -10,11 +10,12 @@ import { isContainedPortal, resolvePortalContainer } from "@/components/core/uti
 import { focusElement } from "@/components/core/utils/focusElement";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { ALERT_DIALOG_ROLE, alertDialogDescribedBy, alertDialogLabelledBy, alertDialogOverlayA11yProps, alertDialogTriggerA11y } from "./alertDialogA11y";
 import { alertDialogDefaultHeaderIcon, alertDialogHasClose, alertDialogHasIndicator, alertDialogShowsDefaultHeaderIcon, injectFooterButtonSize, resolveAlertDialogHeaderGridSlots } from "./alertDialogAPI";
-import { useAlertDialogModalMotion } from "./alertDialogAnimations";
-import { AlertDialogHeaderProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useOptionalAlertDialogHeaderContext } from "./alertDialogContext";
+import { ALERT_DIALOG_MOTION_DEFAULTS, useAlertDialogModalMotion } from "./alertDialogAnimations";
+import { AlertDialogHeaderProvider, AlertDialogMotionProvider, useAlertDialog, useAlertDialogClassNames, useAlertDialogHeaderContext, useAlertDialogMotionScope, useOptionalAlertDialogHeaderContext, useOptionalAlertDialogMotionScope } from "./alertDialogContext";
 import { ALERT_DIALOG_CLOSE_CLASS, ALERT_DIALOG_FOOTER_CLASS, ALERT_DIALOG_GLOSS_CONTENT_CLASS, ALERT_DIALOG_HEADER_CLASS, alertDialogHeaderIconWrapperClass, ALERT_DIALOG_HEADING_BLOCK_CLASS, ALERT_DIALOG_TITLE_CLASS, ALERT_DIALOG_INDICATOR_CLASS, ALERT_DIALOG_TRIGGER_BASE_CLASS, alertDialogBodyClass, alertDialogContentClass, alertDialogGlossPanelClass, alertDialogNativeClass, alertDialogOverlayClass, alertDialogOverlayEnterStyle, alertDialogPanelClass } from "./alertDialogStyles";
 import type {
   AlertDialogBodyProps,
@@ -33,30 +34,45 @@ import type {
 
 import { cn } from "@/utils/cn";
 
-export function AlertDialogContent({ className, ...rest }: AlertDialogContentProps) {
-  const slotClassNames = useAlertDialogClassNames();
+export const AlertDialogContent = forwardRef<HTMLDivElement, AlertDialogContentProps>(
+  function AlertDialogContent({ className, motion, ...rest }, ref) {
+    const slotClassNames = useAlertDialogClassNames();
+    const { setRef } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalAlertDialogMotionScope(),
+      slot: "content",
+      motion,
+      forwardedRef: ref,
+    });
 
-  return (
-    <div
-      className={alertDialogContentClass(
-        cn(slotClassNames.content, className),
-      )}
-      {...rest}
-    />
-  );
-}
+    return (
+      <div
+        ref={setRef}
+        className={alertDialogContentClass(
+          cn(slotClassNames.content, className),
+        )}
+        {...rest}
+      />
+    );
+  },
+);
 
 AlertDialogContent.displayName = "AlertDialogContent";
 
 export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogCloseProps>(
-  function AlertDialogClose({ className, onClick, size, ...rest }, ref) {
+  function AlertDialogClose({ className, onClick, size, motion, ...rest }, ref) {
     const { onOpenChange, sizePreset } = useAlertDialog();
     const headerCtx = useOptionalAlertDialogHeaderContext();
     const slotClassNames = useAlertDialogClassNames();
+    const { setRef } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalAlertDialogMotionScope(),
+      slot: "close",
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <CloseButton
-        ref={ref}
+        ref={setRef}
         variant="secondary"
         size={size ?? sizePreset.closeButtonSize}
         className={cn(
@@ -77,14 +93,17 @@ export const AlertDialogClose = forwardRef<HTMLButtonElement, AlertDialogClosePr
 
 AlertDialogClose.displayName = "AlertDialogClose";
 
-export function AlertDialogIndicator({
-  className,
-  children,
-  ...rest
-}: AlertDialogIndicatorProps) {
+export const AlertDialogIndicator = forwardRef<HTMLSpanElement, AlertDialogIndicatorProps>(
+  function AlertDialogIndicator({ className, children, motion, ...rest }, ref) {
   const { variant, status, sizePreset, gridSlots, headerIcon } =
     useAlertDialogHeaderContext("AlertDialog.Indicator");
   const slotClassNames = useAlertDialogClassNames();
+  const { setRef } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalAlertDialogMotionScope(),
+    slot: "indicator",
+    motion,
+    forwardedRef: ref,
+  });
 
   if (children === null) return null;
 
@@ -102,6 +121,7 @@ export function AlertDialogIndicator({
 
   return (
     <span
+      ref={setRef}
       className={cn(
         ALERT_DIALOG_INDICATOR_CLASS,
         alertDialogHeaderIconWrapperClass(status),
@@ -114,19 +134,28 @@ export function AlertDialogIndicator({
       {inner}
     </span>
   );
-}
+  },
+);
 
 AlertDialogIndicator.displayName = "AlertDialogIndicator";
 
-export function AlertDialogHeader({
+export const AlertDialogHeader = forwardRef<HTMLDivElement, AlertDialogHeaderProps>(
+  function AlertDialogHeader({
   icon,
   showClose = true,
   className,
   children,
+  motion,
   ...rest
-}: AlertDialogHeaderProps) {
+}, ref) {
   const { variant, status, sizePreset } = useAlertDialog();
   const slotClassNames = useAlertDialogClassNames();
+  const { setRef } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalAlertDialogMotionScope(),
+    slot: "header",
+    motion,
+    forwardedRef: ref,
+  });
   const { gridSlots, compoundHasIndicator, compoundHasClose } = useMemo(() => {
     const compoundHasIndicator = alertDialogHasIndicator(children);
     const compoundHasClose = alertDialogHasClose(children);
@@ -156,6 +185,7 @@ export function AlertDialogHeader({
   return (
     <AlertDialogHeaderProvider value={headerCtx}>
       <div
+        ref={setRef}
         className={cn(
           ALERT_DIALOG_HEADER_CLASS,
           sizePreset.headerPadding,
@@ -171,15 +201,28 @@ export function AlertDialogHeader({
       </div>
     </AlertDialogHeaderProvider>
   );
-}
+  },
+);
 
 AlertDialogHeader.displayName = "AlertDialogHeader";
 
 export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
-  function AlertDialogTitle({ className, id, ...rest }, ref) {
+  function AlertDialogTitle(
+    { className, id, motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
     const { titleId, setHasTitle, sizePreset } = useAlertDialog();
     const headerCtx = useOptionalAlertDialogHeaderContext();
     const slotClassNames = useAlertDialogClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLHeadingElement>({
+      scope: useOptionalAlertDialogMotionScope(),
+      slot: "title",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
 
     useLayoutEffect(() => {
       setHasTitle(true);
@@ -188,7 +231,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
 
     return (
       <Text
-        ref={ref as Ref<HTMLElement>}
+        ref={setRef as Ref<HTMLElement>}
         as="h2"
         variant={sizePreset.titleVariant}
         id={id ?? titleId}
@@ -200,6 +243,7 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
           className,
         )}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -207,14 +251,25 @@ export const AlertDialogTitle = forwardRef<HTMLHeadingElement, AlertDialogTitleP
 
 AlertDialogTitle.displayName = "AlertDialogTitle";
 
-export function AlertDialogDescription({
-  className,
-  id,
-  ...rest
-}: AlertDialogDescriptionProps) {
+export const AlertDialogDescription = forwardRef<
+  HTMLParagraphElement,
+  AlertDialogDescriptionProps
+>(function AlertDialogDescription(
+  { className, id, motion, onPointerOver, onPointerOut, ...rest },
+  ref,
+) {
   const { descriptionId, setHasDescription, sizePreset } = useAlertDialog();
   const headerCtx = useOptionalAlertDialogHeaderContext();
   const slotClassNames = useAlertDialogClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLParagraphElement>({
+    scope: useOptionalAlertDialogMotionScope(),
+    slot: "description",
+    motion,
+    forwardedRef: ref,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
 
   useLayoutEffect(() => {
     setHasDescription(true);
@@ -223,6 +278,7 @@ export function AlertDialogDescription({
 
   return (
     <Text
+      ref={setRef as Ref<HTMLElement>}
       as="p"
       variant={sizePreset.descVariant}
       id={id ?? descriptionId}
@@ -233,9 +289,10 @@ export function AlertDialogDescription({
         className,
       )}
       {...rest}
+      {...pointerHandlers}
     />
   );
-}
+});
 
 AlertDialogDescription.displayName = "AlertDialogDescription";
 
@@ -280,16 +337,24 @@ export function AlertDialogBody({ className, children, ...rest }: AlertDialogBod
 
 AlertDialogBody.displayName = "AlertDialogBody";
 
-export function AlertDialogFooter({ className, children, ...rest }: AlertDialogFooterProps) {
+export const AlertDialogFooter = forwardRef<HTMLDivElement, AlertDialogFooterProps>(
+  function AlertDialogFooter({ className, children, motion, ...rest }, ref) {
   const { footerButtonSize, sizePreset } = useAlertDialog();
   const slotClassNames = useAlertDialogClassNames();
   const footerChildren = useMemo(
     () => injectFooterButtonSize(children, footerButtonSize),
     [children, footerButtonSize],
   );
+  const { setRef } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalAlertDialogMotionScope(),
+    slot: "footer",
+    motion,
+    forwardedRef: ref,
+  });
 
   return (
     <div
+      ref={setRef}
       className={cn(
         ALERT_DIALOG_FOOTER_CLASS,
         sizePreset.footerPadding,
@@ -301,7 +366,8 @@ export function AlertDialogFooter({ className, children, ...rest }: AlertDialogF
       {footerChildren}
     </div>
   );
-}
+  },
+);
 
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
@@ -411,12 +477,24 @@ AlertDialogTrigger.displayName = "AlertDialog.Trigger";
 
 // ─── AlertDialog.Panel ────────────────────────────────────────────────────────
 
-export function AlertDialogPanel({
+export function AlertDialogPanel({ motion, ...props }: AlertDialogPanelProps) {
+  const parentScope = useOptionalAlertDialogMotionScope();
+  const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+  return (
+    <AlertDialogMotionProvider motion={merged} defaults={ALERT_DIALOG_MOTION_DEFAULTS}>
+      <AlertDialogPanelHost {...props} />
+    </AlertDialogMotionProvider>
+  );
+}
+
+AlertDialogPanel.displayName = "AlertDialog.Panel";
+
+function AlertDialogPanelHost({
   className,
   themeAnchor,
   portalContainer: portalContainerProp,
   children,
-}: AlertDialogPanelProps) {
+}: Omit<AlertDialogPanelProps, "motion">) {
   const {
     open,
     titleId,
@@ -429,13 +507,14 @@ export function AlertDialogPanel({
     onOpenChange,
     portalContainer: portalContainerFromRoot,
   } = useAlertDialog();
+  const motionScope = useAlertDialogMotionScope();
 
   const portalHost = resolvePortalContainer(
     portalContainerProp ?? portalContainerFromRoot,
   );
   const contained = isContainedPortal(portalHost);
 
-  const motion = useAlertDialogModalMotion({ open, variant, contained });
+  const motion = useAlertDialogModalMotion({ open, variant, contained, motionScope });
 
   const portalThemeAnchor = usePortalThemeAnchor(open, themeAnchor ?? null);
   const lightUi = useBurneLightTheme(portalThemeAnchor);
@@ -468,8 +547,6 @@ export function AlertDialogPanel({
   );
 }
 
-AlertDialogPanel.displayName = "AlertDialog.Panel";
-
 // ─── AlertDialogPortalShell ───────────────────────────────────────────────────
 
 export function AlertDialogPortalShell({
@@ -493,6 +570,7 @@ export function AlertDialogPortalShell({
 }: AlertDialogPortalShellProps) {
   const isGloss = variant === "gloss";
   const slotClassNames = useAlertDialogClassNames();
+  const motionScope = useOptionalAlertDialogMotionScope();
 
   return (
     <dialog
@@ -511,13 +589,13 @@ export function AlertDialogPortalShell({
       )}
     >
       <div
-        ref={overlayRef}
+        ref={mergeRefs(overlayRef, (node) => motionScope?.registerTarget("overlay", node))}
         className={alertDialogOverlayClass(lightUi, slotClassNames.overlay)}
         style={alertDialogOverlayEnterStyle()}
         {...alertDialogOverlayA11yProps()}
       />
       <div
-        ref={panelRef}
+        ref={mergeRefs(panelRef, (node) => motionScope?.registerTarget("panel", node))}
         tabIndex={-1}
         className={alertDialogPanelClass({
           variant,

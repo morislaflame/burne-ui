@@ -7,7 +7,6 @@ import { useBurneLabel } from "@/theme/BurneLabelsProvider";
 
 import { timeFieldShellAria } from "./timeFieldA11y";
 import { formatTime, parseTime, segmentsForFormat, segValue, TIME_FIELD_SEG_MAX, withSeg } from "./timeFieldAPI";
-import { useTimeFieldShellMotion } from "./timeFieldAnimations";
 import { useOptionalTimeFieldContext } from "./timeFieldContext";
 import { timeFieldShellSurfaceClass } from "./timeFieldStyles";
 import type {
@@ -26,13 +25,7 @@ export function useTimeFieldControlState({
   variant: variantProp,
   compact: compactProp,
   id,
-  onPointerDown,
-  onPointerEnter: onPointerEnterProp,
-  onPointerLeave: onPointerLeaveProp,
-  ref,
-}: TimeFieldControlProps & {
-  ref: React.Ref<HTMLFieldSetElement>;
-}) {
+}: TimeFieldControlProps) {
   const timeLabel = useBurneLabel("time");
   const ctx = useOptionalTimeFieldContext();
   const size = sizeProp ?? ctx?.size ?? "base";
@@ -74,26 +67,8 @@ export function useTimeFieldControlState({
   const setShellRef = useCallback(
     (node: HTMLFieldSetElement | null) => {
       shellRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
     },
-    [ref],
-  );
-
-  const shellMotion = useTimeFieldShellMotion({
-    shellRef,
-    disabled,
-    variant,
-    onPointerDown,
-    onPointerEnter: onPointerEnterProp,
-    onPointerLeave: onPointerLeaveProp,
-  });
-
-  const bindShellRef = useCallback(
-    (node: HTMLFieldSetElement | null) => {
-      shellMotion.bindShellRef(node, setShellRef);
-    },
-    [setShellRef, shellMotion],
+    [],
   );
 
   const focusSeg = useCallback((seg: TimeFieldSegId) => {
@@ -291,8 +266,8 @@ export function useTimeFieldControlState({
     segments,
     segRefById,
     keyboardInputRef,
-    bindShellRef,
-    shellMotion,
+    shellRef,
+    bindShellRef: setShellRef,
     shellSurface,
     focusedSeg,
     handleSegKeyDown,

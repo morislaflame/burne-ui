@@ -7,6 +7,7 @@ import { IoDocumentTextOutline, IoOpenOutline } from "react-icons/io5";
 import { Text } from "@/components/core/Text";
 
 import { Link } from "@/components/core/Link";
+import { LinkMotionDemo } from "../../../../playground/showcase/demos/link/LinkMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -230,4 +231,9 @@ export const AsChild: Story = {
       </Link>
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <LinkMotionDemo />,
 };

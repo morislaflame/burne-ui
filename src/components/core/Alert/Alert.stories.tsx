@@ -1,13 +1,16 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
+import gsap from "gsap";
 
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { Button } from "@/components/core/Button";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 
 import { Alert, type AlertSize, type AlertStatus, type AlertVariant } from ".";
+import { AlertMotionDemo } from "../../../../playground/showcase/demos/alert/AlertMotion.demo";
 
 const ALERT_VARIANTS: AlertVariant[] = ["default", "outline", "secondary", "gloss"];
 
@@ -506,4 +509,93 @@ export const Sizes: Story = {
       ))}
     </div>
   ),
+};
+
+export const SlotMotion: Story = {
+  name: "Slot motion",
+  ...dualApiStorySource,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Simple: `motion.title` on the root. Compound: `motion` on `Alert.Title`.",
+      },
+    },
+  },
+  render: () => (
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — motion map on &lt;Alert&gt;">
+        <Alert
+          status="info"
+          title="Simple map"
+          description="Hover the banner — the title lifts."
+          motion={{
+            title: {
+              hoverIn: { y: -2, duration: 0.2 },
+              hoverOut: { y: 0 },
+            },
+          }}
+        />
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — motion on Title">
+        <Alert status="success">
+          <Alert.Message>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title
+                motion={{
+                  hoverIn: { y: -2, duration: 0.2 },
+                  hoverOut: { y: 0 },
+                }}
+              >
+                Compound Title
+              </Alert.Title>
+              <Alert.Description>Hover the title itself.</Alert.Description>
+            </Alert.Content>
+          </Alert.Message>
+        </Alert>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
+  ),
+};
+
+export const SlotMotionOrchestration: Story = {
+  name: "Slot motion — root orchestrates title",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`motion.root.hoverIn` tweens `ctx.targets.title`; `hoverOut` interrupts with `killMotion`.",
+      },
+    },
+  },
+  render: () => (
+    <Alert
+      status="warning"
+      title="Orchestrated title"
+      description="Hover the banner — the title yoyos until you leave."
+      className="max-w-lg"
+      motion={{
+        root: {
+          hoverIn: (ctx) =>
+            gsap.to(ctx.targets.title, {
+              x: 8,
+              repeat: -1,
+              yoyo: true,
+              duration: 0.35,
+              ease: "sine.inOut",
+            }),
+          hoverOut: (ctx) => {
+            killMotion(ctx.targets.title);
+            gsap.set(ctx.targets.title, { x: 0 });
+          },
+        },
+      }}
+    />
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (color, parts, timeline)",
+  render: () => <AlertMotionDemo />,
 };

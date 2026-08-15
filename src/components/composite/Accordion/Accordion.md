@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Accordion, type AccordionProps, type AccordionItemProps, type AccordionHeadingProps, type AccordionTriggerProps, type AccordionMessageProps, type AccordionIconProps, type AccordionContentProps, type AccordionTitleProps, type AccordionDescriptionProps, type AccordionChevronProps, type AccordionPanelProps, type AccordionBodyProps, type AccordionClassNames } from "burne-ui";
+import { Accordion, type AccordionProps, type AccordionItemProps, type AccordionHeadingProps, type AccordionTriggerProps, type AccordionMessageProps, type AccordionIconProps, type AccordionContentProps, type AccordionTitleProps, type AccordionDescriptionProps, type AccordionChevronProps, type AccordionPanelProps, type AccordionBodyProps, type AccordionClassNames, type AccordionMotion } from "burne-ui";
 ```
 
 ## API
@@ -47,6 +47,7 @@ Simple API нет.
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` — для всех Item |
 | `className` | — | На root `<div>` |
 | `classNames` | — | `AccordionClassNames` — слоты root + все Item (наследуются через `AccordionClassNamesProvider`) |
+| `motion` | — | `AccordionMotion` — те же слоты, что у Expandable (`triggerLift` / `chevron` / `panelShell`). Item перекрывает root |
 | `children` | — | `Accordion.Item` |
 
 `variant` на root **нет**.
@@ -59,6 +60,7 @@ Simple API нет.
 | `disabled` | `false` | Блокирует toggle |
 | `className` | — | Мерж с `accordionItemClass` |
 | `classNames` | — | `AccordionClassNames` — локально переопределяет слоты, унаследованные от root (мерж как `Breadcrumbs.List`: `{...parent, ...classNames}`) |
+| `motion` | — | Локально перекрывает root `motion` (мерж по слотам) |
 
 Каждый Item — обёртка над `Expandable` (`compound={true}`, controlled `open`). Слоты `trigger`, `triggerLift`, `message`, `icon`, `content`, `title`, `description`, `chevron`, `panelShell`, `panel`, `glossContent` прокидываются в `classNames` вложенного `Expandable`; `item` прокидывается в `Expandable`'s `classNames.root`.
 
@@ -74,7 +76,7 @@ Simple API нет.
 | `Accordion.Content` | `Expandable.Content` | Title + Description group |
 | `Accordion.Title` | `Expandable.Title` | Заголовок |
 | `Accordion.Description` | `Expandable.Description` | Подзаголовок muted |
-| `Accordion.Chevron` | Custom chevron span | Шеврон вместо `Expandable.Chevron` |
+| `Accordion.Chevron` | Custom chevron span | Шеврон вместо `Expandable.Chevron`; регистрирует слот `chevron` Expandable |
 | `Accordion.Panel` | `Expandable.Panel` | Раскрываемая `<section>` |
 | `Accordion.Body` | `Text as="div"` | Тело панели (`text-muted`) |
 
@@ -110,7 +112,24 @@ const [value, setValue] = useState<string | null>("shipping");
 
 ## Анимации
 
-Accordion добавляет только **Chevron rotation**; остальное — из `Expandable` + shared utils.
+Accordion — **embedder** в Expandable: своего `createMotionScope` нет. Root/Item `motion` мержится и передаётся в `Expandable`. Хост play и дефолты — `expandableAnimations.ts` (`pressSqueeze`, `chevronRotate`, `collapsibleHeight`). `Accordion.Chevron` регистрирует слот `chevron` (Trigger по умолчанию `hideChevron`).
+
+```tsx
+<Accordion motion={{ panelShell: { enter: false, leave: false } }}>…</Accordion>
+
+<Accordion.Chevron
+  motion={{
+    enter: (ctx) => gsap.to(ctx.el, { rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.28 }),
+  }}
+/>
+```
+
+`leave: false` на `panelShell` — хост сразу ставит closed height (как Expandable). Factory leave должна свернуть высоту в `0`.
+
+**Где в коде:** карта — `accordionAnimations.ts` (`resolveAccordionItemMotion`); Chevron — `accordionParts.tsx` (`useMotionPart` на scope Expandable).
+
+См. [Motion](/docs/motion) и `Expandable.md`.
 
 **DOM (один Item):**
 
@@ -119,15 +138,15 @@ Accordion добавляет только **Chevron rotation**; остально
   <h3>
     <button class=trigger>             ← squeeze на liftSpan
       <Accordion.Message grid>
-        <Icon /> <Title/> <Chevron/>  ← GSAP rotate chevron
-  <div class=panelShell>               ← useCollapsibleHeight
+        <Icon /> <Title/> <Chevron/>  ← slot `chevron`
+  <div class=panelShell>               ← slot `panelShell` / collapsibleHeight
     <section class=panel>
       <Accordion.Body />
 ```
 
 ### 1. Panel height (`Expandable.Panel`)
 
-`useCollapsibleHeight` — open/close height GSAP. См. `Expandable.md`.
+Дефолт — рецепт `collapsibleHeight`. См. `Expandable.md`.
 
 ```ts
 import { configureMotion } from "burne-ui";
@@ -143,14 +162,14 @@ configureMotion({
 
 ### 2. Trigger press squeeze
 
-`Expandable.Trigger` → `animateInteractivePressSqueeze` на `triggerLift` span.
+`Expandable.Trigger` → слот `triggerLift` (`pressSqueeze`).
 
-### 3. Chevron rotation (`accordionAnimations.ts`)
+### 3. Chevron rotation
 
-`useAccordionChevronAnimation(open)` → `useChevronRotation` на `Accordion.Chevron`.
+`Accordion.Chevron` регистрирует target; play — хост Expandable Trigger (`chevronRotate`).
 
 - `Accordion.Trigger` по умолчанию `hideChevron={true}`
-- Rotation: `motionInteractive()`; off при `enableExpandable: false`
+- First paint: `createChevronRotationRefCallback`
 
 ### 4. Ripple (опционально)
 
@@ -160,15 +179,15 @@ configureMotion({
 
 - Group-level FLIP при смене `value`
 - `variant="gloss"` на Accordion
-- Анимация `Accordion.Body` / `Heading`
+- Анимация `Accordion.Body` / `Heading` как публичные слоты
 
 ### Сводка: что настраивается где
 
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Panel height | `useCollapsibleHeight` | `expandDuration`, `enableExpandable` | `open` на Item |
-| Trigger squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | `disabled` |
-| Chevron rotate | `useChevronRotation` | `interactiveDuration`, `enableExpandable` | `open` |
+| Анимация | Слот / рецепт | Ключи `configureMotion` | Локальный prop |
+|----------|---------------|---------------------------|----------------|
+| Panel height | `panelShell` → `collapsibleHeight` | `expandDuration`, `enableExpandable` | `motion` на Root / Item / Panel |
+| Trigger squeeze | `triggerLift` → `pressSqueeze` | `pressSqueezeScale` | `motion` на Trigger |
+| Chevron rotate | `chevron` → `chevronRotate` | `interactiveDuration`, `enableExpandable` | `motion` на Chevron |
 | Ripple | `<Ripple />` | `rippleExpandableDuration` | в Trigger children |
 
 ## Токены и CSS
@@ -316,7 +335,7 @@ Accordion/
 ├── index.ts
 ├── accordionTypes.ts
 ├── accordionStyles.ts
-├── accordionAnimations.ts       # useAccordionChevronAnimation
+├── accordionAnimations.ts       # resolveAccordionItemMotion (embedder → Expandable)
 ├── accordionParts.tsx
 ├── accordionAPI.ts
 ├── accordionContext.tsx
@@ -328,6 +347,6 @@ A11y — в `Expandable/expandableA11y.ts` (display names Accordion зареги
 
 ## Storybook
 
-`Composite Components/Accordion` — default FAQ, interaction test, trigger ripple.
+`Composite Components/Accordion` — default FAQ, interaction test, trigger ripple, slot motion gallery.
 
-Playground: `playground/showcase/demos/accordion/` — sizes, checkout FAQ, release notes.
+Playground: `playground/showcase/demos/accordion/` — sizes, checkout FAQ, release notes, slot motion.

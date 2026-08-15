@@ -17,6 +17,8 @@ export type {
   ButtonVariant,
   ButtonStatus,
   ButtonClassNames,
+  ButtonMotion,
+  ButtonPartMotion,
   ButtonContentProps,
   ButtonLabelProps,
   ButtonIconProps,

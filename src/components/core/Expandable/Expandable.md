@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Expandable, useExpandableContext, type ExpandableProps, type ExpandableClassNames, type ExpandableVariant, type ExpandableSize } from "burne-ui";
+import { Expandable, useExpandableContext, type ExpandableProps, type ExpandableClassNames, type ExpandableMotion, type ExpandableVariant, type ExpandableSize } from "burne-ui";
 ```
 
 ## API
@@ -26,6 +26,7 @@ import { Expandable, useExpandableContext, type ExpandableProps, type Expandable
 | `icon` | `ReactNode` | — | Simple API: иконка слева |
 | `className` | `string` | — | Классы на корневой `<div>` |
 | `classNames` | `ExpandableClassNames` | — | Слоты (см. ниже) |
+| `motion` | `ExpandableMotion` | — | Слоты `triggerLift` / `chevron` / `panelShell` |
 
 ### Compound-подчасти
 
@@ -108,93 +109,162 @@ Compound определяется автоматически при наличи
 
 ## Анимации
 
-Все motion — **GSAP**. Логика разбита: `expandableAnimations.ts` (триггер, шеврон, панель) + общие утилиты в `utils/`.
+Все motion — **GSAP**. Раскрытие, шеврон и press на lift-span — **slot motion** (`expandableAnimations.ts`). Accordion / Disclosure пока на `useCollapsibleHeight` / `useChevronRotation` (та же `animateCollapsibleHeight` / `animateChevronRotation` внутри рецептов).
 
-### 1. Раскрытие панели (height collapse)
+### Slot motion
 
-Главная анимация контента — `useCollapsibleHeight` в `utils/useCollapsibleHeight.ts`, вызывается из `Expandable.Panel`.
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `triggerLift` | `pressIn` (`pressOut` = `false`) | `pressSqueeze` на внутреннем lift-span, не на `<button>` |
+| `chevron` | `enter` / `leave` | `chevronRotate` (0° ↔ 180°) |
+| `panelShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target, не публичный слот) |
 
-**DOM-структура:**
+`false` на фазе → мгновенное состояние (height/rotation), без твина. Первый paint: `useCollapsibleShellRef` / `data-chevron-init`.
+
+Своё раскрытие — factory на `panelShell`. Закрытое состояние кита всё равно `height: 0`; factory должна вернуть tween 0 ↔ измеренная высота (`ctx.targets.panelInner.scrollHeight`) и на `enter` complete снять inline `height` (`clearProps`), иначе панель залипнет.
+
+```tsx
+<Expandable
+  title="Bounce"
+  motion={{
+    panelShell: {
+      enter: (ctx) => {
+        ctx.el.style.overflow = "hidden";
+        return gsap.fromTo(
+          ctx.el,
+          { height: 0 },
+          {
+            height: () => ctx.targets.panelInner?.scrollHeight ?? 0,
+            duration: 0.55,
+            ease: "back.out(1.4)",
+            onComplete: () => {
+              gsap.set(ctx.el, { clearProps: "height" });
+              ctx.el.style.removeProperty("overflow");
+            },
+          },
+        );
+      },
+      leave: (ctx) => {
+        ctx.el.style.overflow = "hidden";
+        return gsap.to(ctx.el, {
+          height: 0,
+          duration: 0.28,
+          ease: "power2.in",
+          onComplete: () => {
+            ctx.el.style.height = "0px";
+          },
+        });
+      },
+    },
+  }}
+>
+  …
+</Expandable>
+```
+
+**Где в коде:** типы — `expandableTypes.ts`; scope — `expandableContext.tsx`; defaults + host play — `expandableAnimations.ts`; слоты — `expandableParts.tsx`; Provider — `Expandable.tsx`.
+
+```tsx
+<Expandable motion={{ panelShell: { enter: false, leave: false } }} title="Instant panel">
+  …
+</Expandable>
+
+<Expandable.Chevron
+  motion={{
+    enter: (ctx) => gsap.to(ctx.el, { rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.28 }),
+  }}
+/>
+```
+
+`classNames` / `className` на частях сочетаются с factory. `panelInner` — внутренний target рецепта высоты, его можно трогать из factory шеврона через `ctx.targets.panelInner` (высота панели остаётся `collapsibleHeight`).
+
+```tsx
+<Expandable
+  title="FAQ"
+  classNames={{
+    root: "border-token-primary",
+    trigger: "bg-primary/5",
+    title: "text-primary font-w-strong",
+    chevron: "text-primary",
+    panel: "border-t border-primary/20 bg-primary/5",
+  }}
+  motion={{
+    chevron: {
+      enter: (ctx) => {
+        const tl = gsap.timeline();
+        tl.to(ctx.el, { rotation: 180, duration: 0.48, ease: "back.out(1.8)" }, 0);
+        if (ctx.targets.panelInner) {
+          tl.fromTo(ctx.targets.panelInner, { y: -8, autoAlpha: 0.25 }, { y: 0, autoAlpha: 1, duration: 0.32 }, 0.06);
+        }
+        return tl;
+      },
+      leave: (ctx) => {
+        const tl = gsap.timeline();
+        tl.to(ctx.el, { rotation: 0, duration: 0.28 }, 0);
+        if (ctx.targets.panelInner) tl.to(ctx.targets.panelInner, { y: -6, autoAlpha: 0.25, duration: 0.18 }, 0);
+        return tl;
+      },
+    },
+  }}
+>
+  …
+</Expandable>
+
+<Expandable classNames={{ root: "border-token-info", trigger: "bg-info/5" }}>
+  <Expandable.Trigger>
+    <Expandable.Title data-part="title" className="font-w-strong text-info">…</Expandable.Title>
+    <Expandable.Chevron
+      className="text-info"
+      motion={{
+        enter: (ctx) => {
+          const title = ctx.el.closest("button")?.querySelector("[data-part=title]");
+          const tl = gsap.timeline();
+          tl.to(ctx.el, { rotation: 180, duration: 0.42, ease: "back.out(1.6)" }, 0);
+          if (title) tl.add(tweenCssColor(title, "var(--color-info)"), 0);
+          return tl;
+        },
+        leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.22 }),
+      }}
+    />
+  </Expandable.Trigger>
+  <Expandable.Panel className="border-t border-info/20 bg-info/5">…</Expandable.Panel>
+</Expandable>
+```
+
+**DOM панели:**
 
 ```
 panelShell (overflow-hidden, анимируемая height)
-  └── innerRef
+  └── panelInner (внутренний target рецепта)
         └── <section> …контент…
 ```
 
-**Открытие (`open: false → true`):**
-
-1. `shell.style.overflow = "hidden"`
-2. GSAP `fromTo`: `height: 0` → `height: measureCollapsibleContentHeight(inner)` (динамически по `scrollHeight`)
-3. `onComplete` → `releaseExpandedShellHeight`: снимает фиксированную height, возвращает `height: auto` без скачка
-
-**Закрытие (`open: true → false`):**
-
-1. Фиксирует текущую высоту в px
-2. GSAP `to`: `height: 0`
-3. `onComplete` → `height: 0px`, `overflow: hidden`
-
-**Первый paint:** `useCollapsibleShellRef` синхронно выставляет начальное состояние до отрисовки (чтобы `defaultOpen` не мигал).
-
 #### Кастомизация раскрытия
 
-Глобально через `configureMotion()` **до** рендера приложения:
-
 ```ts
-import { configureMotion } from "burne-ui";
-
 configureMotion({
-  // Длительность open/close панели (мс). По умолчанию 200.
   expandDuration: 320,
-  // GSAP easing. По умолчанию "sine.inOut".
   expandOpenEase: "power2.inOut",
-  // Полный выключатель collapsible-анимаций (Expandable, Accordion, Disclosure).
   enableExpandable: true,
 });
 ```
 
-Параметры попадают в твин через `motionExpand()` → `{ duration: expandDuration/1000, ease: expandOpenEase }`.
+**Reduced motion / `enableExpandable: false`:** мгновенный `applyCollapsibleInstantState` / `applyChevronRotationInstant`.
 
-**Reduced motion:** при `prefers-reduced-motion` или `enableExpandable: false` — мгновенный `applyCollapsibleInstantState` без GSAP.
+Не задавайте фиксированную `height` на `panelShell` — ломает `collapsibleHeight`.
 
-**Программный skip:** в Disclosure доступен `skipAnimRef` у `useCollapsibleHeight`; у Expandable напрямую не экспортируется — только глобальный флаг.
+### Gloss-корень
 
-### 2. Триггер — press squeeze
-
-`useExpandableTriggerMotion` → на `pointerdown` сжимает **внутренний** `liftSpan` (`animateInteractivePressSqueeze`), не весь `<button>`. Так ripple-overlay и шеврон не «ломаются» при нажатии.
-
-Кастомизация — общие interactive-токены:
-
-```ts
-configureMotion({
-  interactiveDuration: 280,       // длительность squeeze
-  pressSqueezeScale: [1, 0.98, 1], // rest → compressed → rest
-  enablePressSqueeze: true,
-});
-```
-
-Отключается при `prefers-reduced-motion` или `disabled`.
-
-### 3. Шеврон — rotation
-
-`useChevronRotation(open, ref, () => getMotionConfig().enableExpandable)` — поворот SVG при toggle.
-
-- Easing/duration: `motionInteractive()` (`interactiveDuration`, `interactiveEase`)
-- Выключение: `enableExpandable: false` или reduced motion
-
-Кастомный шеврон: `<Expandable.Chevron />` — та же rotation-логика на своём ref.
-
-### 4. Gloss-корень
-
-`variant="gloss"` → `useMergedGlossPanelRef` на root + `glossInteractive.css`. Отдельного height-motion у gloss нет — панель анимируется так же, поверхность gloss статична до hover на триггере (если добавите интерактив отдельно).
+`variant="gloss"` → `useMergedGlossPanelRef` на root + `glossInteractive.css`. Панель по высоте — тот же `collapsibleHeight`.
 
 ### Сводка: что настраивается где
 
-| Анимация | Утилита | Ключи `configureMotion` |
-|----------|---------|-------------------------|
-| Раскрытие панели | `useCollapsibleHeight` | `expandDuration`, `expandOpenEase`, `enableExpandable` |
-| Press squeeze | `animateInteractivePressSqueeze` | `interactiveDuration`, `pressSqueezeScale`, `enablePressSqueeze` |
-| Поворот шеврона | `useChevronRotation` | `interactiveDuration`, `interactiveEase`, `enableExpandable` |
+| Анимация | Рецепт / утилита | Ключи `configureMotion` |
+|----------|------------------|-------------------------|
+| Раскрытие панели | `collapsibleHeight` | `expandDuration`, `expandOpenEase`, `enableExpandable` |
+| Press squeeze | `pressSqueeze` на `triggerLift` | `interactiveDuration`, `pressSqueezeScale`, `enablePressSqueeze` |
+| Поворот шеврона | `chevronRotate` | `interactiveDuration`, `interactiveEase`, `enableExpandable` |
 | Ripple на триггере | `<Ripple />` | `rippleDefaultDuration`, `enableRipple` (см. Ripple.md) |
 
 ## Ripple на триггере
@@ -296,7 +366,7 @@ configureMotion({
 
 ### Практические заметки
 
-- **Panel height anim:** не задавайте фиксированную `height` на `panelShell` — ломает `useCollapsibleHeight`.
+- **Panel height anim:** не задавайте фиксированную `height` на `panelShell` — ломает `collapsibleHeight`.
 - **Ripple:** `<Ripple />` внутри Trigger; стили clip — `triggerRippleOverlay`.
 - **Gloss:** `variant="gloss"` — не переопределяйте gloss-классы на trigger без нужды.
 - **Порядок мержа:** базовые → `classNames.slot` → `className` подчасти.
@@ -317,15 +387,15 @@ configureMotion({
 
 ```
 Expandable/
-├── Expandable.tsx
+├── Expandable.tsx              # Provider: motion + EXPANDABLE_MOTION_DEFAULTS
 ├── index.ts
-├── expandableTypes.ts
+├── expandableTypes.ts          # ExpandableMotion
 ├── expandableStyles.ts
 ├── expandableAPI.ts
 ├── expandableA11y.ts
-├── expandableContext.tsx
-├── expandableParts.tsx
-├── expandableAnimations.ts
+├── expandableContext.tsx       # createMotionScope("Expandable")
+├── expandableParts.tsx         # useMotionPart на слотах
+├── expandableAnimations.ts     # defaults, host play
 ├── useExpandableRootState.ts
 └── Expandable.stories.tsx
 ```

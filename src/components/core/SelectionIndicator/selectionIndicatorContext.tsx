@@ -1,8 +1,17 @@
 import { createContext, useContext, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type { SelectionIndicatorContextValue } from "./selectionIndicatorTypes";
 
 const SelectionIndicatorContext = createContext<SelectionIndicatorContextValue | null>(null);
+
+/** Scope only. Defaults and host play live in `selectionIndicatorAnimations.ts`. */
+export const {
+  MotionScopeProvider: SelectionIndicatorMotionProvider,
+  useMotionScope: useSelectionIndicatorMotionScope,
+  useOptionalMotionScope: useOptionalSelectionIndicatorMotionScope,
+} = createMotionScope("SelectionIndicator");
 
 export function SelectionIndicatorProvider({
   value,

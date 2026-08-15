@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 
 import { Text } from "./Text";
+import { TextMotionDemo } from "../../../../playground/showcase/demos/text/TextMotion.demo";
 
 /** Dark theme — tokens from `:root`, explicit background for stories. */
 const darkThemeDecorator = [
@@ -132,4 +133,9 @@ export const OnSurface: Story = {
 export const OnLightTheme: Story = {
   name: "Light theme (data-theme)",
   decorators: [...lightThemeDecorator],
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TextMotionDemo />,
 };

@@ -1,4 +1,4 @@
-import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactElement, type ReactNode } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type ReactElement, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { Text } from "@/components/core/Text";
@@ -9,12 +9,13 @@ import { resolvePortalContainer, applyFloatingPortalPosition } from "@/component
 import { messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import "../utils/glossInteractive.css";
 
 import { bindTriggerEvents, mergeDescribedBy } from "./tooltipA11y";
 import { hasTooltipCompoundChildren, isTooltipArrowElement, resolveTooltipGridSlots } from "./tooltipAPI";
-import { useTooltipPortalMotion } from "./tooltipAnimations";
-import { TooltipBodyContext, TooltipResolvedSideContext, useTooltipBodyContext, useTooltipClassNames, useTooltipContext, useTooltipResolvedSide } from "./tooltipContext";
+import { TOOLTIP_MOTION_DEFAULTS, useTooltipPortalMotion } from "./tooltipAnimations";
+import { TooltipBodyContext, TooltipMotionProvider, TooltipResolvedSideContext, useOptionalTooltipMotionScope, useTooltipBodyContext, useTooltipClassNames, useTooltipContext, useTooltipMotionScope, useTooltipResolvedSide } from "./tooltipContext";
 import { computeTooltipPlacement } from "./tooltipPosition";
 import { TOOLTIP_COMPOUND_CONTENTS_CLASS, TOOLTIP_CONTENT_INNER_CLASS, TOOLTIP_CONTENT_VARIANT, TOOLTIP_DEFAULT_OFFSET, TOOLTIP_DESC_VARIANT, TOOLTIP_DESCRIPTION_MUTED_CLASS, TOOLTIP_ICON_SIZE, TOOLTIP_ICON_SLOT_SVG, TOOLTIP_STATUS_ACCENT_CLASS, TOOLTIP_TRIGGER_BASE_CLASS, tooltipArrowClass, tooltipContentClass, tooltipGlossContentClass, tooltipIndicatorClass, tooltipPanelClass, tooltipTitleClass } from "./tooltipStyles";
 import type {
@@ -402,17 +403,30 @@ export function TooltipArrow({ className, ...rest }: TooltipArrowProps) {
 TooltipArrow.displayName = "TooltipArrow";
 
 export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
-  function TooltipContent(
-    {
+  function TooltipContent({ motion, ...props }, forwardedRef) {
+    const parentScope = useOptionalTooltipMotionScope();
+    const merged = mergeMotionSlotMaps(parentScope?.getRootMotion(), motion);
+    return (
+      <TooltipMotionProvider motion={merged} defaults={TOOLTIP_MOTION_DEFAULTS}>
+        <TooltipContentHost {...props} forwardedRef={forwardedRef} />
+      </TooltipMotionProvider>
+    );
+  },
+);
+
+TooltipContent.displayName = "TooltipContent";
+
+function TooltipContentHost({
       className,
       children,
       showArrow = false,
       offset = TOOLTIP_DEFAULT_OFFSET,
       portalContainer: portalContainerProp,
+      forwardedRef,
       ...rest
-    },
-    forwardedRef,
-  ) {
+    }: Omit<TooltipContentProps, "motion"> & {
+      forwardedRef?: ForwardedRef<HTMLDivElement>;
+    }) {
     const slotClassNames = useTooltipClassNames();
     const {
       open,
@@ -441,12 +455,19 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       setPortalMounted(true);
     }
 
+    const motionScope = useTooltipMotionScope();
+    const { setRef: setContentPartRef } = useMotionPart<HTMLDivElement>({
+      scope: motionScope,
+      slot: "content",
+    });
+
     const setTipRef = useCallback(
       (node: HTMLDivElement | null) => {
         tipRef.current = node;
-        mergeForwardedRef(forwardedRef, node);
+        setContentPartRef(node);
+        if (forwardedRef != null) mergeForwardedRef(forwardedRef, node);
       },
-      [forwardedRef],
+      [forwardedRef, setContentPartRef],
     );
 
     const parts = Children.toArray(children);
@@ -517,6 +538,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
       portalMounted,
       setPortalMounted,
       tipRef,
+      scope: motionScope,
     });
 
     if (!portalMounted) return null;
@@ -567,7 +589,4 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
     );
 
     return createPortal(node, portalHost);
-  },
-);
-
-TooltipContent.displayName = "TooltipContent";
+}

@@ -4,6 +4,12 @@ import { AccordionClassNamesFullDemo } from "../demos/accordion/AccordionClassNa
 import accordionClassNamesFullSource from "../demos/accordion/AccordionClassNamesFull.demo.tsx?raw";
 import { AccordionCompoundDemo } from "../demos/accordion/AccordionCompound.demo";
 import accordionCompoundSource from "../demos/accordion/AccordionCompound.demo.tsx?raw";
+import { AccordionMotionBounceHeightDemo } from "../demos/accordion/AccordionMotionBounceHeight.demo";
+import accordionMotionBounceHeightSource from "../demos/accordion/AccordionMotionBounceHeight.demo.tsx?raw";
+import { AccordionMotionChevronDemo } from "../demos/accordion/AccordionMotionChevron.demo";
+import accordionMotionChevronSource from "../demos/accordion/AccordionMotionChevron.demo.tsx?raw";
+import { AccordionMotionInstantPanelDemo } from "../demos/accordion/AccordionMotionInstantPanel.demo";
+import accordionMotionInstantPanelSource from "../demos/accordion/AccordionMotionInstantPanel.demo.tsx?raw";
 import { AccordionSizesDemo } from "../demos/accordion/AccordionSizes.demo";
 import accordionSizesSource from "../demos/accordion/AccordionSizes.demo.tsx?raw";
 import { AccordionDocsSectionsDemo } from "../demos/accordion/AccordionDocsSections.demo";
@@ -29,6 +35,15 @@ export function AccordionShowcase() {
 
       <ShowcaseSection title="Dimensions" description="size: small, base, mid, large.">
         <ShowcaseDemoFromFile align="stretch" Demo={AccordionSizesDemo} source={accordionSizesSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant panel, custom chevron, bounce height."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionInstantPanelDemo} source={accordionMotionInstantPanelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionChevronDemo} source={accordionMotionChevronSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={AccordionMotionBounceHeightDemo} source={accordionMotionBounceHeightSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -69,8 +84,9 @@ export function AccordionShowcase() {
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization>
           <p>
-            Panel opening — <code>configureMotion()</code> (<code>expandDuration</code>,{" "}
-            <code>enableExpandable</code>). <code>classNames</code> on Root (root, item, heading, trigger,
+            Panel opening — <code>motion</code> on Root / Item (same slots as Expandable:
+            <code>triggerLift</code>, <code>chevron</code>, <code>panelShell</code>).{" "}
+            <code>classNames</code> on Root (root, item, heading, trigger,
             triggerLift, message, icon, content, title, description, chevron, panelShell, panel,
             glossContent) — locally overridable on <code>Accordion.Item</code>.
           </p>

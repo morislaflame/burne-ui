@@ -17,6 +17,8 @@ export type {
   TextAreaHintProps,
   TextAreaErrorProps,
   TextAreaSimpleProps,
+  TextAreaMotion,
+  TextAreaPartMotion,
 } from "./textAreaTypes";
 
 export {

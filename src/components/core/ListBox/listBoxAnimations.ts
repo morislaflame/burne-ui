@@ -1,13 +1,40 @@
-import { useLayoutEffect, useRef, type RefObject } from "react";
-
+/**
+ * Slot motion for ListBox — look here first.
+ *
+ * DOM slots: `item` (option button), `label`, `icon`
+ *
+ * Root Provider carries defaults so keyboard `play("item", "pressIn", { el })`
+ * works from `ListBoxRootShell`. Each Item nests its own Provider + `useMotionPart`.
+ *
+ * Not slots: `root` / `section` / `header` / `empty` / `separator` (layout).
+ * Gloss panel ref stays kit-internal.
+ */
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
-import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
+import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import type { MotionScopeValue } from "@/components/core/utils/slotMotion";
 
 import { listBoxOptionId } from "./listBoxA11y";
-import type { UseListBoxItemAnimationsProps } from "./listBoxTypes";
+import type { ListBoxMotion } from "./listBoxTypes";
+import { useLayoutEffect, type RefObject } from "react";
 
 export function useListBoxRootGlossRef(isGloss: boolean) {
   return useMergedGlossPanelRef(undefined, isGloss);
+}
+
+export function resolveListBoxMotionDefaults(): ListBoxMotion {
+  return {
+    item: {
+      pressIn: "pressSqueeze",
+      pressOut: false,
+    },
+  };
+}
+
+export function playListBoxItemPress(scope: MotionScopeValue, el: HTMLElement | null) {
+  if (!el || prefersReducedMotion()) return;
+  const value = scope.resolve("item", "pressIn");
+  if (value === false || value === undefined) return;
+  scope.play("item", "pressIn", { el });
 }
 
 /**
@@ -39,32 +66,4 @@ export function useListBoxActiveOptionHighlight({
       option.setAttribute("data-active", "");
     }
   }, [activeValue, listId, rootRef]);
-}
-
-export function useListBoxItemAnimations({
-  disabled,
-  hasLabel,
-  onPointerDown,
-  onKeyDown,
-}: UseListBoxItemAnimationsProps) {
-  const labelMotionRef = useRef<HTMLElement>(null);
-  const enableLabelMotion = !disabled && hasLabel;
-
-  const { handlePointerDown, handleKeyDown } = usePressableElementTextMotion<
-    HTMLButtonElement,
-    HTMLElement
-  >({
-    isDisabled: disabled,
-    enabled: enableLabelMotion,
-    textMotionRef: labelMotionRef,
-    onPointerDown,
-    onKeyDown,
-  });
-
-  return {
-    labelMotionRef,
-    enableLabelMotion,
-    handlePointerDown,
-    handleKeyDown,
-  };
 }

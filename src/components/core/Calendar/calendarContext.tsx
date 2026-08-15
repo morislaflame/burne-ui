@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   CalendarClassNames,
   CalendarClassNamesProviderProps,
@@ -42,3 +44,10 @@ export function useCalendar(): CalendarContextValue {
 export function useCalendarClassNames(): CalendarClassNames {
   return useContext(CalendarClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `calendarAnimations.ts`. */
+export const {
+  MotionScopeProvider: CalendarMotionProvider,
+  useMotionScope: useCalendarMotionScope,
+  useOptionalMotionScope: useOptionalCalendarMotionScope,
+} = createMotionScope("Calendar");

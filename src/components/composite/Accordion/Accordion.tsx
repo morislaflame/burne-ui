@@ -20,6 +20,9 @@ export type {
   AccordionPanelProps,
   AccordionBodyProps,
   AccordionClassNames,
+  AccordionMotion,
+  AccordionLifecycleMotion,
+  AccordionTriggerLiftMotion,
 } from "./accordionTypes";
 
 export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function AccordionRoot(
@@ -31,6 +34,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function
     size = "base",
     className,
     classNames,
+    motion,
     children,
     ...rest
   },
@@ -42,6 +46,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function
     value,
     onValueChange,
     size,
+    motion,
   });
 
   return (

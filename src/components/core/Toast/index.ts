@@ -32,4 +32,7 @@ export type {
   ToastVariant,
   ToastSize,
   ToastContextValue,
+  ToastMotion,
+  ToastLifecycleMotion,
+  ToastPartMotion,
 } from "./toastTypes";

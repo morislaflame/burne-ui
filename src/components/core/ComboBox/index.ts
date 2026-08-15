@@ -22,6 +22,8 @@ export type {
   ComboBoxTriggerProps,
   ComboBoxPopoverProps,
   ComboBoxClassNames,
+  ComboBoxMotion,
+  ComboBoxPartMotion,
 } from "./comboBoxTypes";
 
 export { comboBoxFilteredValues } from "./comboBoxAPI";

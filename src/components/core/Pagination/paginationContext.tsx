@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   PaginationClassNames,
   PaginationClassNamesProviderProps,
@@ -55,3 +57,10 @@ export function useOptionalPagination() {
 export function usePaginationClassNames(): PaginationClassNames {
   return useContext(PaginationClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `paginationAnimations.ts`. */
+export const {
+  MotionScopeProvider: PaginationMotionProvider,
+  useMotionScope: usePaginationMotionScope,
+  useOptionalMotionScope: useOptionalPaginationMotionScope,
+} = createMotionScope("Pagination");

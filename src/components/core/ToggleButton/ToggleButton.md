@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type ToggleButtonVariant, type ToggleButtonClassNames } from "burne-ui";
+import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type ToggleButtonVariant, type ToggleButtonClassNames, type ToggleButtonMotion, type ToggleButtonPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -49,6 +49,7 @@ import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type Toggl
 | `icon` / `iconPosition` | — | Simple API: одна иконка (`start` \| `end`, default `start`) |
 | `disabled` | `false` | |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | Карта слотов `root` / `fill` / `content` / `label` / `icon` / `text` |
 
 ### `ToggleButtonClassNames`
 
@@ -67,64 +68,63 @@ Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content
 
 ## Анимации
 
-`toggleButtonAnimations.ts` + `useToggleButtonFillAnimation.ts` + `useFirstLevelInteractiveMotion`.
+`toggleButtonAnimations.ts` + `useToggleButtonFillAnimation.ts`. Публичный slot motion.
 
 **DOM:**
 
 ```
-<button ref=setRefs>
-  <span fill ref=fillRef>          ← scale fill (pressed)
-  <span content ref=contentMotionRef>
-    icon | label | (IconStart / IconEnd compound)
+<button ref=setRefs>                 ← слот `root` (в ButtonGroup — content span)
+  <span fill>                        ← слот `fill` (check / uncheck)
+  <span content>
+    icon | label | Text
 </button>
 ```
 
-### 1. Fill (pressed state)
+### Slot motion
 
-`animateToggleButtonFill(fill, pressed)`:
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` или `hoverLiftGloss` |
+| `root` | `pressIn` | `pressSqueeze` / `pressSqueezeGloss` (`pressOut` по умолчанию `false`) |
+| `fill` | `check` / `uncheck` | `selectionFill` |
+| `content` / `label` / `icon` / `text` | hover; `check` / `uncheck` с хоста | нет |
 
-- pressed: `fromTo { scale:0, autoAlpha:0 } → { scale:1, autoAlpha:1 }`
-- unpressed: `to { scale:0, autoAlpha:0 }`
-- vars: `motionSelectionFill()` — один `selectionFillEase` / `selectionFillDuration` в обе стороны
-- `enableToggleButtonFill: false` → instant
+Fill стартует в **release-фазе squeeze** (`params.onReleaseStart`), после `click`. `fill: { check: false, uncheck: false }` — хост ставит instant (`applyToggleButtonFillInstant`), без kill. Если `pressIn` не kit-squeeze — fill на click сразу.
 
-**Координация с press:** fill стартует в **release-фазе squeeze** (`onPressReleaseStart`), после того как `click` подтвердил next pressed — и появление, и снятие.
+**Где в коде:** типы — `toggleButtonTypes.ts`; scope — `toggleButtonContext.tsx`; defaults + host — `toggleButtonAnimations.ts`; слоты — `toggleButtonParts.tsx`; Provider — `ToggleButton.tsx`.
 
-Flow:
+```tsx
+<ToggleButton motion={{ fill: { check: false, uncheck: false } }}>Instant fill</ToggleButton>
 
-1. `pointerdown` → `deferFillFromPressRef = true` (pending ещё нет)
-2. `click` → `queueFillOnClick(next)` — подтверждает значение
-3. squeeze release → `runPendingFill()` → `animateTo(next)` (+ `displayPressed`)
-4. если release уже прошёл к моменту click — fill стартует сразу из `queueFillOnClick`
-5. `pointerleave` → сброс coordination
+<ToggleButton
+  motion={{
+    fill: {
+      check: (ctx) => gsap.fromTo(ctx.el, { scale: 0, transformOrigin: "50% 100%" }, { scale: 1 }),
+      uncheck: (ctx) => gsap.to(ctx.el, { scale: 0, transformOrigin: "50% 100%" }),
+    },
+  }}
+>
+  Fill from bottom
+</ToggleButton>
+```
 
-Визуальный pressed (`bg-transparent`, fill classNames) идёт от `displayPressed`, не от aria/`pressed`, чтобы поверхность не сбрасывалась раньше анимации снятия.
+Цвет текста — **`tweenCssColor`**, не сырой `gsap.to({ color: "var(--…)" })`.
 
-### 2. Hover lift + squeeze (1-й уровень)
+### Координация fill с press
 
-`useFirstLevelInteractiveMotion`:
+1. `pointerdown` → если `pressIn` = kit squeeze, `deferFillFromPressRef = true`
+2. `click` → `queueFillOnClick(next)`
+3. squeeze release → `runPendingFill()` → `play("fill", check|uncheck)` + broadcast на `icon` / `text` / `label`
+4. `pointerleave` → сброс coordination
 
-- **default/outline/ghost:** sm→md shadow + hover lift + press squeeze
-- **gloss:** gloss squeeze, без hover shadow
-- **ButtonGroup segment:** squeeze на `contentMotionRef` вместо root
+Визуальный pressed (`displayPressed`) обновляется когда fill реально стартует.
 
-### 3. Отключение
+### Отключение
 
 ```ts
 configureMotion({ enableAnimations: false });
-// или точечно:
 configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggleButtonFill: false });
 ```
-
-Локального пропа `animated` нет.
-
-### Сводка
-
-| Анимация | `configureMotion` |
-|----------|-------------------|
-| Fill scale | `selectionFillEase`, `interactiveDuration`, `enableToggleButtonFill` |
-| Hover/squeeze | `enableHoverLift`, `pressSqueezeScale` |
-| Gloss squeeze | gloss interactive tokens |
 
 ## Стилизация и кастомизация
 
@@ -203,9 +203,10 @@ ToggleButton/
 ├── index.ts
 ├── toggleButtonTypes.ts
 ├── toggleButtonStyles.ts
-├── toggleButtonAnimations.ts      # motion + fill coordination
+├── toggleButtonAnimations.ts      # defaults + host play
 ├── useToggleButtonFillAnimation.ts
-├── toggleButtonParts.tsx          # Fill, Content
+├── toggleButtonContext.tsx        # createMotionScope
+├── toggleButtonParts.tsx          # useMotionPart
 ├── useToggleButtonRootState.ts
 ├── toggleButtonAPI.ts
 ├── toggleButtonA11y.ts
@@ -214,4 +215,4 @@ ToggleButton/
 
 ## Storybook
 
-`Core Components/ToggleButton` — variants, sizes, gloss, group, icons, `classNames`, fill coordination.
+`Core Components/ToggleButton` — variants, sizes, gloss, group, icons, `classNames`, fill coordination, slot motion gallery.

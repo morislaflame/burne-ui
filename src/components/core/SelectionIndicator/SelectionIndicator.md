@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorShellClass, selectionIndicatorFallbackPx, type SelectionIndicatorProps, type SelectionIndicatorSize, type SelectionIndicatorVariant, type SelectionIndicatorClassNames } from "burne-ui";
+import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorShellClass, selectionIndicatorFallbackPx, type SelectionIndicatorProps, type SelectionIndicatorSize, type SelectionIndicatorVariant, type SelectionIndicatorClassNames, type SelectionIndicatorMotion } from "burne-ui";
 ```
 
 ## API
@@ -50,6 +50,7 @@ import { SelectionIndicator, useSelectionIndicatorAnimation, selectionIndicatorS
 | `icon` | — | Кастомный mark (приоритет над check/dot) |
 | `className` | — | Мержится в **root** |
 | `classNames` | — | `root`, `fill`, `mark` |
+| `motion` | — | `root` / `fill` / `mark` (`check` / `uncheck`) |
 
 ### `SelectionIndicatorClassNames`
 
@@ -96,7 +97,35 @@ CSS-переменные: `--selection-indicator-xsmall` … `--selection-indica
 
 ## Анимации
 
-`useSelectionIndicatorAnimation.ts` — единственный motion-хук.
+`selectionIndicatorAnimations.ts` — lifecycle `check` / `uncheck` через slot motion. Первый кадр instant (`firstLayoutRef`), чтобы не было FOUC.
+
+**Где в коде:** defaults + host — `selectionIndicatorAnimations.ts` (`SELECTION_INDICATOR_MOTION_DEFAULTS`, `useSelectionIndicatorAnimation`, `SelectionIndicatorMotionSync`); scope — `selectionIndicatorContext.tsx`; Fill/Mark — `selectionIndicatorParts.tsx`.
+
+**DOM-структура:**
+
+```
+<span root aria-hidden>              ← shell: size + radius token
+  <span fill ref=fillRef>             ← selectionFill
+  <span mark ref=markRef>             ← selectionMark
+</span>
+```
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `fill` | `check` / `uncheck` | `selectionFill` |
+| `mark` | `check` / `uncheck` | `selectionMark` |
+
+Часть побеждает слот корня. `false` отключает дефолт. Factory: `(ctx) => gsap.to(ctx.el, …)`.
+
+```tsx
+<SelectionIndicator
+  selected={on}
+  check
+  motion={{ fill: { check: "selectionFill", uncheck: false } }}
+/>
+
+<SelectionIndicator.Fill motion={{ check: (ctx) => gsap.to(ctx.el, { scale: 1, duration: 0.4 }) }} />
+```
 
 **DOM-структура:**
 
@@ -233,15 +262,16 @@ useSelectionIndicatorAnimation(active, fillRef?, iconRef?)
 
 ```
 SelectionIndicator/
-├── SelectionIndicator.tsx
+├── SelectionIndicator.tsx              # Provider + defaults
 ├── index.ts
-├── selectionIndicatorTypes.ts
-├── selectionIndicatorTokens.ts    # размеры, variant CSS
-├── selectionIndicatorAPI.ts       # compound partition, mark resolve
-├── selectionIndicatorParts.tsx    # Fill, Mark
-├── selectionIndicatorContext.tsx
-├── useSelectionIndicatorRootState.ts
-└── useSelectionIndicatorAnimation.ts
+├── selectionIndicatorTypes.ts          # SelectionIndicatorMotion
+├── selectionIndicatorTokens.ts         # размеры, variant CSS
+├── selectionIndicatorAPI.ts            # compound partition, mark resolve
+├── selectionIndicatorA11y.ts
+├── selectionIndicatorParts.tsx         # Fill, Mark + first-paint
+├── selectionIndicatorContext.tsx       # createMotionScope
+├── selectionIndicatorAnimations.ts     # defaults, host play, MotionSync
+└── useSelectionIndicatorRootState.ts
 ```
 
 ## Storybook

@@ -12,6 +12,7 @@ import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStor
 
 import type { ComboBoxOption } from "./comboBoxTypes";
 import { ComboBox } from ".";
+import { ComboBoxMotionDemo } from "../../../../playground/showcase/demos/combobox/ComboBoxMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -491,4 +492,9 @@ export const ListBoxItemSlots: Story = {
       />
     </ComboBox>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ComboBoxMotionDemo />,
 };

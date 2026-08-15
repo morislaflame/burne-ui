@@ -104,15 +104,15 @@ Joined-рамка как у `ButtonGroup`: на `classNames.root` — `rounded-*
 
 ### 1. Toggle fill
 
-`useToggleButtonFillAnimation` — GSAP fill при `pressed` / selected.
+`useToggleButtonFillAnimation` + slot `fill` (`selectionFill` / `motion.fill`). Fill стартует на release squeeze, если `pressIn` — kit-рецепт.
 
 ### 2. Press squeeze
 
-`useFirstLevelInteractiveMotion` на content ref.
+Slot motion на `root` (в `ButtonGroup` сегменте — inner content span): `pressSqueeze` / `pressSqueezeGloss`.
 
 ### 3. Gloss
 
-`variant="gloss"` на группе → gloss handlers на кнопках.
+`variant="gloss"` на группе → gloss-рецепты на кнопках (`hoverLiftGloss` / `pressSqueezeGloss`).
 
 Группа добавляет: сегментацию (`ButtonGroupSegmentProvider`), roving keyboard (стрелки / Home / End) в обоих `type`.
 
@@ -130,14 +130,14 @@ configureMotion({
 ### Чего нет
 
 - Group-level FLIP при смене selection
-- Собственный GSAP на root
+- Отдельный motion-scope у группы — карта `motion` на каждом `ToggleButton`
 
 ### Сводка: что настраивается где
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Toggle fill | `useToggleButtonFillAnimation` | `enableToggleButtonFill` | `pressed` |
-| Press squeeze | first-level motion | `pressSqueezeScale` | `disabled` |
+| Toggle fill | slot `fill` / `useToggleButtonFillAnimation` | `enableToggleButtonFill` | `motion.fill` |
+| Press squeeze | slot `root` | `pressSqueezeScale` | `motion.root` |
 | Segment glue | CSS only | — | `segmented` |
 
 ## Токены и CSS

@@ -8,7 +8,6 @@ import {
   type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
-  type PointerEvent,
 } from "react";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
@@ -18,12 +17,11 @@ import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { useControllableState } from "@/components/core/utils/useControllableState";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
-import { useSearchInputAnimations } from "./searchInputAnimations";
 import {
   searchInputCollapseA11yLabel,
   searchInputControlAriaLabel,
 } from "./searchInputA11y";
-import { resolveSearchLayout, searchInputRootClass } from "./searchInputStyles";
+import { resolveSearchLayout } from "./searchInputStyles";
 import type {
   SearchInputVariant,
   UseSearchInputRootStateProps,
@@ -75,6 +73,8 @@ export function useSearchInputRootState({
   });
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const iconRef = useRef<HTMLSpanElement>(null);
 
   const isValueControlled = valueProp !== undefined;
   const [hasQuery, setHasQuery] = useState(
@@ -101,28 +101,6 @@ export function useSearchInputRootState({
   const layout = resolveSearchLayout(sizeProp);
   const targetW = expandedWidth ?? layout.defaultExpandedW;
   const isGloss = variant === "gloss";
-
-  const {
-    rootRef,
-    bindRootRef,
-    bindIconRef,
-    beginPressSqueeze,
-    awaitPressSqueeze,
-    handlePointerEnter,
-    handlePointerLeave,
-    onShellFocusIn,
-    onShellFocusOut,
-    shellHoverMotionClass,
-    standardMotionClass,
-  } = useSearchInputAnimations({
-    size: sizeProp,
-    expanded,
-    blocked,
-    isGloss,
-    groupSegment,
-    layout,
-    targetW,
-  });
 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -163,25 +141,18 @@ export function useSearchInputRootState({
     requestAnimationFrame(() => focusElement(inputRef.current));
   }, []);
 
-  const openFromInteraction = useCallback(async () => {
+  const openFromInteraction = useCallback(async (awaitPressSqueeze: () => Promise<void>) => {
     if (blocked || expanded) return;
     await awaitPressSqueeze();
     setExpanded(true);
     focusInput();
-  }, [awaitPressSqueeze, blocked, expanded, focusInput, setExpanded]);
-
-  const handleRootPointerDown = useCallback(
-    (_e: PointerEvent<HTMLDivElement>) => {
-      beginPressSqueeze();
-    },
-    [beginPressSqueeze],
-  );
+  }, [blocked, expanded, focusInput, setExpanded]);
 
   const handleRootClick = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
+    (e: MouseEvent<HTMLButtonElement>, awaitPressSqueeze: () => Promise<void>) => {
       if (blocked) return;
       e.preventDefault();
-      void openFromInteraction();
+      void openFromInteraction(awaitPressSqueeze);
     },
     [blocked, openFromInteraction],
   );
@@ -203,11 +174,11 @@ export function useSearchInputRootState({
   );
 
   const handleRootKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLButtonElement>) => {
+    (e: KeyboardEvent<HTMLButtonElement>, awaitPressSqueeze: () => Promise<void>) => {
       if (blocked) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        void openFromInteraction();
+        void openFromInteraction(awaitPressSqueeze);
       }
     },
     [blocked, openFromInteraction],
@@ -239,19 +210,6 @@ export function useSearchInputRootState({
   const paddingInputRight =
     layout.padX + (showClear ? layout.clearTap + layout.textGapClear : 0);
 
-  const rootClass = searchInputRootClass({
-    size: sizeProp,
-    variant,
-    expanded,
-    blocked,
-    isGloss,
-    groupSegment,
-    shellHoverMotionClass,
-    standardMotionClass,
-    className,
-    slotRoot: classNames?.root,
-  });
-
   return {
     size: sizeProp,
     variant,
@@ -260,6 +218,7 @@ export function useSearchInputRootState({
     isGloss,
     groupSegment,
     layout,
+    targetW,
     ripple,
     inputId,
     placeholder,
@@ -268,8 +227,8 @@ export function useSearchInputRootState({
     disabled,
     readOnly,
     classNames,
+    className,
     showClear,
-    rootClass,
     collapseA11yLabel: searchInputCollapseA11yLabel(ariaLabelProp, labels.openSearch),
     inputAriaLabel: searchInputControlAriaLabel(ariaLabelProp, placeholder, labels.search),
     inputPaddingStyle: expanded
@@ -281,16 +240,11 @@ export function useSearchInputRootState({
     setInputRef,
     handleInputChange,
     handleClearClick,
-    handleRootPointerDown,
     handleRootClick,
     handleInputBlur,
     handleRootKeyDown,
     handleInputKeyDown,
-    bindRootRef,
-    bindIconRef,
-    handlePointerEnter,
-    handlePointerLeave,
-    onShellFocusIn,
-    onShellFocusOut,
+    rootRef,
+    iconRef,
   };
 }

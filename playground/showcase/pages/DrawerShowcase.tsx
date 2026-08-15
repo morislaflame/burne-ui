@@ -8,6 +8,14 @@ import { DrawerFilterSheetDemo } from "../demos/drawer/DrawerFilterSheet.demo";
 import drawerFilterSheetSource from "../demos/drawer/DrawerFilterSheet.demo.tsx?raw";
 import { DrawerGlossDemo } from "../demos/drawer/DrawerGloss.demo";
 import drawerGlossSource from "../demos/drawer/DrawerGloss.demo.tsx?raw";
+import { DrawerMotionDefaultDemo } from "../demos/drawer/DrawerMotionDefault.demo";
+import drawerMotionDefaultSource from "../demos/drawer/DrawerMotionDefault.demo.tsx?raw";
+import { DrawerMotionInstantPanelDemo } from "../demos/drawer/DrawerMotionInstantPanel.demo";
+import drawerMotionInstantPanelSource from "../demos/drawer/DrawerMotionInstantPanel.demo.tsx?raw";
+import { DrawerMotionTitleStaggerDemo } from "../demos/drawer/DrawerMotionTitleStagger.demo";
+import drawerMotionTitleStaggerSource from "../demos/drawer/DrawerMotionTitleStagger.demo.tsx?raw";
+import { DrawerMotionBounceSlideDemo } from "../demos/drawer/DrawerMotionBounceSlide.demo";
+import drawerMotionBounceSlideSource from "../demos/drawer/DrawerMotionBounceSlide.demo.tsx?raw";
 import { DrawerHandleDemo } from "../demos/drawer/DrawerHandle.demo";
 import drawerHandleSource from "../demos/drawer/DrawerHandle.demo.tsx?raw";
 import { DrawerMobileNavDemo } from "../demos/drawer/DrawerMobileNav.demo";
@@ -48,6 +56,16 @@ export function DrawerShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass side panel.">
         <ShowcaseDemoFromFile Demo={DrawerGlossDemo} source={drawerGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — default slide, instant panel, title stagger, bounce factory."
+      >
+        <ShowcaseDemoFromFile Demo={DrawerMotionDefaultDemo} source={drawerMotionDefaultSource} />
+        <ShowcaseDemoFromFile Demo={DrawerMotionInstantPanelDemo} source={drawerMotionInstantPanelSource} />
+        <ShowcaseDemoFromFile Demo={DrawerMotionTitleStaggerDemo} source={drawerMotionTitleStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DrawerMotionBounceSlideDemo} source={drawerMotionBounceSlideSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -96,15 +114,15 @@ export function DrawerShowcase() {
             description="Drawer.Header, Drawer.Body, Drawer.Footer, Drawer.Close, Drawer.Handle — panel structure."
           />
           <ShowcaseDoc.ApiRow
-            api="portalContainer"
+            api="compound"
             description="Custom HTMLElement host for the portal (contained: show + absolute)."
           />
         </ShowcaseDoc.Block>
         <ShowcaseDoc.Customization gloss>
           <p>
             <code>placement</code>: left, right, top, bottom. <code>size</code> — width or height
-            panels. <code>Drawer.Handle</code> — swipe dismiss. Slide-animation —{" "}
-            <code>configureMotion()</code> (<code>interactiveDuration</code>).
+            panels.             <code>Drawer.Handle</code> — swipe dismiss. Slot motion —{" "}
+            <code>drawerSlideEnter</code> / <code>Leave</code> via <code>motion.panel</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

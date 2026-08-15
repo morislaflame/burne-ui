@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   DialogClassNames,
   DialogClassNamesProviderProps,
@@ -49,3 +51,10 @@ export function useDialog(): DialogContextValue {
 export function useDialogClassNames(): DialogClassNames {
   return useContext(DialogClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `dialogAnimations.ts`. */
+export const {
+  MotionScopeProvider: DialogMotionProvider,
+  useMotionScope: useDialogMotionScope,
+  useOptionalMotionScope: useOptionalDialogMotionScope,
+} = createMotionScope("Dialog");

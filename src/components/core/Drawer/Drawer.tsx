@@ -1,6 +1,6 @@
 import "../utils/glossInteractive.css";
 
-import { DrawerClassNamesProvider, DrawerProvider } from "./drawerContext";
+import { DrawerClassNamesProvider, DrawerMotionProvider, DrawerProvider } from "./drawerContext";
 import { DrawerBackdropInner, DrawerBody, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHandleInner, DrawerHeader, DrawerHeadingBlock, DrawerPanel, DrawerTitle, DrawerTrigger } from "./drawerParts";
 import type { DrawerProps } from "./drawerTypes";
 import { useDrawerRootState } from "./useDrawerRootState";
@@ -24,6 +24,9 @@ export type {
   DrawerFooterProps,
   DrawerCloseProps,
   DrawerContentProps,
+  DrawerMotion,
+  DrawerLifecycleMotion,
+  DrawerPartMotion,
 } from "./drawerTypes";
 
 export function DrawerRoot({
@@ -34,6 +37,7 @@ export function DrawerRoot({
   size = "base",
   children,
   classNames,
+  motion,
   portalContainer,
 }: DrawerProps) {
   const state = useDrawerRootState({
@@ -48,7 +52,9 @@ export function DrawerRoot({
   return (
     <DrawerProvider value={state.contextValue}>
       <DrawerClassNamesProvider classNames={classNames}>
+        <DrawerMotionProvider motion={motion}>
         {children}
+        </DrawerMotionProvider>
       </DrawerClassNamesProvider>
     </DrawerProvider>
   );

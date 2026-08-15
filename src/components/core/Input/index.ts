@@ -17,4 +17,6 @@ export type {
   InputSize,
   InputStatus,
   InputVariant,
+  InputMotion,
+  InputPartMotion,
 } from "./inputTypes";

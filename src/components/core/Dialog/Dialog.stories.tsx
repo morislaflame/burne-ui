@@ -2,12 +2,14 @@ import type { ComponentType } from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, waitFor } from "storybook/test";
+import gsap from "gsap";
 
 import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 import { Dialog, type DialogSize } from ".";
 import { useDialog } from "./dialogContext";
+import { DialogMotionDemo } from "../../../../playground/showcase/demos/dialog/DialogMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -693,4 +695,66 @@ export const CustomClassNames: Story = {
       </>
     );
   },
+};
+
+export const SlotMotion: Story = {
+  name: "Slot motion — title enter stagger",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`motion.title.enter` staggers after the panel. `leave` returns a tween so the portal unmounts.",
+      },
+    },
+  },
+  render: function DialogSlotMotion() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+          Open staggered title
+        </Button>
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          motion={{
+            title: {
+              enter: (ctx) =>
+                gsap.fromTo(
+                  ctx.el,
+                  { y: 12, autoAlpha: 0 },
+                  { y: 0, autoAlpha: 1, duration: 0.35, delay: 0.08 },
+                ),
+              leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.2 }),
+            },
+          }}
+        >
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Staggered title</Dialog.Title>
+                <Dialog.Description>
+                  Title enters after the panel. Overlay and panel keep kit recipes.
+                </Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-small text-muted">Modal content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="small" onClick={() => setOpen(false)}>
+                Close
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, bounce, color, parts, timeline)",
+  render: () => <DialogMotionDemo />,
 };

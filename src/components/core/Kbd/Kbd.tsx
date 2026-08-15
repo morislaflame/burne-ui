@@ -1,9 +1,9 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo, type HTMLAttributes } from "react";
 
-import { useKbdAnimations } from "./kbdAnimations";
+import { resolveKbdMotionDefaults, useKbdAnimations } from "./kbdAnimations";
 import { KbdBody } from "./kbdBodyPart";
-import { KbdClassNamesProvider } from "./kbdContext";
-import type { KbdProps } from "./kbdTypes";
+import { KbdClassNamesProvider, KbdMotionProvider } from "./kbdContext";
+import type { KbdMotion, KbdProps } from "./kbdTypes";
 import { useKbdRootState } from "./useKbdRootState";
 
 import { cn } from "@/utils/cn";
@@ -14,6 +14,9 @@ export type {
   KbdSize,
   KbdClassNames,
   KbdGroupProps,
+  KbdMotion,
+  KbdPartMotion,
+  KbdTextProps,
 } from "./kbdTypes";
 
 export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
@@ -24,6 +27,7 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     className = "",
     children,
     hoverLift = true,
+    motion,
     onPointerOver,
     onPointerOut,
     ...rest
@@ -36,31 +40,78 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     className,
     classNames,
   });
-
-  const animations = useKbdAnimations({
-    variant: state.variant,
-    hoverLift,
-    forwardedRef: ref,
-    onPointerOver,
-    onPointerOut,
-  });
+  const motionDefaults = useMemo(
+    () => resolveKbdMotionDefaults({ variant: state.variant, hoverLift }),
+    [hoverLift, state.variant],
+  );
+  const motionParams = useMemo(
+    () => ({ shadowSize: "base", variant: state.variant }),
+    [state.variant],
+  );
 
   return (
     <KbdClassNamesProvider classNames={classNames}>
-      <kbd
-        ref={animations.setMergedRef}
-        className={cn(
-          state.rootClass,
-          animations.motionClass,
-          animations.glossMotionClass,
-        )}
-        {...animations.pointerHandlers}
-        {...rest}
-      >
-        <KbdBody size={state.size}>{children}</KbdBody>
-      </kbd>
+      <KbdMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+        <KbdSurface
+          rootClass={state.rootClass}
+          size={state.size}
+          variant={state.variant}
+          hoverLift={hoverLift}
+          motion={motion}
+          forwardedRef={ref}
+          onPointerOver={onPointerOver}
+          onPointerOut={onPointerOut}
+          rest={rest}
+        >
+          {children}
+        </KbdSurface>
+      </KbdMotionProvider>
     </KbdClassNamesProvider>
   );
 });
 
 KbdRoot.displayName = "KbdRoot";
+
+function KbdSurface({
+  rootClass,
+  size,
+  variant,
+  hoverLift,
+  motion,
+  forwardedRef,
+  onPointerOver,
+  onPointerOut,
+  rest,
+  children,
+}: {
+  rootClass: string;
+  size: NonNullable<KbdProps["size"]>;
+  variant: NonNullable<KbdProps["variant"]>;
+  hoverLift: boolean;
+  motion?: KbdMotion;
+  forwardedRef: React.ForwardedRef<HTMLElement>;
+  onPointerOver: KbdProps["onPointerOver"];
+  onPointerOut: KbdProps["onPointerOut"];
+  rest: HTMLAttributes<HTMLElement>;
+  children: KbdProps["children"];
+}) {
+  const animations = useKbdAnimations({
+    variant,
+    hoverLift,
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+  });
+
+  return (
+    <kbd
+      ref={animations.setMergedRef}
+      className={cn(rootClass, animations.motionClass)}
+      {...animations.pointerHandlers}
+      {...rest}
+    >
+      <KbdBody size={size}>{children}</KbdBody>
+    </kbd>
+  );
+}

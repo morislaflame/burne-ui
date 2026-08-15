@@ -1,4 +1,6 @@
 import type { HTMLAttributes } from "react";
+import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type { SliderOrientation, SliderSize } from "@/components/core/Slider/sliderTypes";
 
@@ -16,6 +18,21 @@ export type ColorChannel =
 export type ColorSliderSize = SliderSize;
 export type ColorSliderOrientation = SliderOrientation;
 
+export type ColorSliderPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  change?: MotionValue;
+};
+
+export type ColorSliderMotion = {
+  root?: ColorSliderPartMotion;
+  track?: ColorSliderPartMotion;
+};
+
 export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   channel: ColorChannel;
   color?: HSVA;
@@ -25,6 +42,11 @@ export type ColorSliderTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "color"
   size?: ColorSliderSize;
   orientation?: ColorSliderOrientation;
   disabled?: boolean;
+  /**
+   * Per-slot motion for the track (`enter` / `change`). Thumb geometry stays kit-internal.
+   * Defaults are empty.
+   */
+  motion?: Prettify<ColorSliderPartMotion>;
 };
 
 export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
@@ -37,4 +59,9 @@ export type ColorSliderProps = Omit<HTMLAttributes<HTMLDivElement>, "color"> & {
   size?: ColorSliderSize;
   orientation?: ColorSliderOrientation;
   disabled?: boolean;
+  /**
+   * Per-slot motion (`root`, `track`). Nested ColorSlider.Track does not inherit defaults.
+   * Pass `motion.track` through to Track. Defaults are empty.
+   */
+  motion?: Prettify<ColorSliderMotion>;
 };

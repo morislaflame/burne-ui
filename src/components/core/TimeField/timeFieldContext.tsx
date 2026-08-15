@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   TimeFieldClassNames,
   TimeFieldClassNamesProviderProps,
@@ -51,5 +53,12 @@ export function useOptionalTimeFieldContext() {
 export function useTimeFieldClassNames(): TimeFieldClassNames {
   return useContext(TimeFieldClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `timeFieldAnimations.ts`. */
+export const {
+  MotionScopeProvider: TimeFieldMotionProvider,
+  useMotionScope: useTimeFieldMotionScope,
+  useOptionalMotionScope: useOptionalTimeFieldMotionScope,
+} = createMotionScope("TimeField");
 
 export { TimeFieldContext };

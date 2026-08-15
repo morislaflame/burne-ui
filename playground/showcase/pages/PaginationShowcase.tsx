@@ -10,6 +10,12 @@ import { PaginationTableFooterDemo } from "../demos/pagination/PaginationTableFo
 import paginationTableFooterSource from "../demos/pagination/PaginationTableFooter.demo.tsx?raw";
 import { PaginationWithPagesDemo } from "../demos/pagination/PaginationWithPages.demo";
 import paginationWithPagesSource from "../demos/pagination/PaginationWithPages.demo.tsx?raw";
+import { PaginationMotionInstantPressDemo } from "../demos/pagination/PaginationMotionInstantPress.demo";
+import paginationMotionInstantPressSource from "../demos/pagination/PaginationMotionInstantPress.demo.tsx?raw";
+import { PaginationMotionControlWaveDemo } from "../demos/pagination/PaginationMotionControlWave.demo";
+import paginationMotionControlWaveSource from "../demos/pagination/PaginationMotionControlWave.demo.tsx?raw";
+import { PaginationMotionNavTintDemo } from "../demos/pagination/PaginationMotionNavTint.demo";
+import paginationMotionNavTintSource from "../demos/pagination/PaginationMotionNavTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -48,6 +54,12 @@ export function PaginationShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationTableFooterDemo} source={paginationTableFooterSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationCompactCenteredDemo} source={paginationCompactCenteredSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={PaginationCustomLabelsDemo} source={paginationCustomLabelsSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant skip, press timeline + stagger children, compound Previous/Next.">
+        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionInstantPressDemo} source={paginationMotionInstantPressSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionControlWaveDemo} source={paginationMotionControlWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={PaginationMotionNavTintDemo} source={paginationMotionNavTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

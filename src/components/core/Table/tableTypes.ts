@@ -5,6 +5,7 @@ import type {
   ThHTMLAttributes,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type { TableRowTone } from "./tableStyles";
 
@@ -38,14 +39,44 @@ export type TableClassNames = {
   emptyCell?: string;
 };
 
+export type TablePartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  check?: MotionValue;
+  uncheck?: MotionValue;
+  change?: MotionValue;
+};
+
+export type TableMotion = {
+  root?: TablePartMotion;
+  scrollContainer?: TablePartMotion;
+  content?: TablePartMotion;
+  header?: TablePartMotion;
+  footer?: TablePartMotion;
+  row?: TablePartMotion;
+  column?: TablePartMotion;
+  cell?: TablePartMotion;
+};
+
 export type TableProps = HTMLAttributes<HTMLDivElement> & {
   variant?: TableVariant;
   classNames?: Prettify<TableClassNames>;
+  /**
+   * Per-slot motion (`root`, `scrollContainer`, `content`, `header`, `footer`, `row`, `column`, `cell`).
+   * `glossContent` is not a slot. Sort chevron rotation is kit-internal. Defaults are empty.
+   */
+  motion?: Prettify<TableMotion>;
 };
 
 export type UseTableRootStateProps = Pick<TableProps, "variant">;
 
-export type TableScrollContainerProps = HTMLAttributes<HTMLDivElement>;
+export type TableScrollContainerProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<TablePartMotion>;
+};
 
 export type TableContentProps = HTMLAttributes<HTMLTableElement> & {
   "aria-label"?: string;
@@ -56,6 +87,7 @@ export type TableContentProps = HTMLAttributes<HTMLTableElement> & {
   sortDescriptor?: SortDescriptor;
   defaultSortDescriptor?: SortDescriptor;
   onSortChange?: (descriptor: SortDescriptor) => void;
+  motion?: Prettify<TablePartMotion>;
 };
 
 export type TableHeaderProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "children"> & {
@@ -63,6 +95,7 @@ export type TableHeaderProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "ch
   columns?: any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children?: ReactNode | ((column: any) => ReactNode);
+  motion?: Prettify<TablePartMotion>;
 };
 
 export type TableHeaderRowProps = HTMLAttributes<HTMLTableRowElement>;
@@ -89,6 +122,7 @@ export type TableColumnProps = Omit<ThHTMLAttributes<HTMLTableCellElement>, "chi
     | ReactNode
     | ((props: TableColumnSortIconRenderProps) => ReactNode);
   children?: ReactNode | ((props: TableColumnRenderProps) => ReactNode);
+  motion?: Prettify<TablePartMotion>;
 };
 
 export type TableBodyProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "children"> & {
@@ -102,11 +136,16 @@ export type TableBodyProps = Omit<HTMLAttributes<HTMLTableSectionElement>, "chil
 export type TableRowProps = Omit<HTMLAttributes<HTMLTableRowElement>, "id"> & {
   id?: string | number;
   tone?: TableRowTone;
+  motion?: Prettify<TablePartMotion>;
 };
 
-export type TableCellProps = TdHTMLAttributes<HTMLTableCellElement>;
+export type TableCellProps = TdHTMLAttributes<HTMLTableCellElement> & {
+  motion?: Prettify<TablePartMotion>;
+};
 
-export type TableFooterProps = HTMLAttributes<HTMLDivElement>;
+export type TableFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<TablePartMotion>;
+};
 
 export type TableContentContextValue = {
   selectionMode: SelectionMode;

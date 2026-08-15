@@ -1,14 +1,45 @@
+/**
+ * Slot motion for ProgressBar — look here first.
+ *
+ * DOM slots: `track`, `fill`, `header`, `value`
+ *
+ * Host: Track plays opt-in `enter` and `change` when value / indeterminate flips.
+ * Fill scale and indeterminate travel stay kit-internal.
+ * Defaults: empty.
+ */
 import { useEffect, useLayoutEffect, useRef } from "react";
 
-import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
+import { clearWillChangeOnComplete, gsap, killMotion, killMotionGeometry, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   isMotionFeatureEnabled,
   motionProgressFill,
   motionProgressIndeterminate,
 } from "@/components/core/utils/motionConfig";
+import {
+  useOptionalEnterOnMount,
+  useSlotPhaseOnChange,
+  type MotionScopeValue,
+} from "@/components/core/utils/slotMotion";
 
-import type { UseProgressBarFillAnimationProps } from "./progressBarTypes";
+import type { ProgressBarMotion, UseProgressBarFillAnimationProps } from "./progressBarTypes";
+
+export function resolveProgressBarMotionDefaults(): ProgressBarMotion {
+  return {};
+}
+
+export function useProgressBarTrackSlotMotion(
+  scope: MotionScopeValue | null,
+  identity: string,
+) {
+  useOptionalEnterOnMount(scope, "track");
+  useSlotPhaseOnChange(scope, "track", identity, {
+    phase: "change",
+    skipFirst: true,
+    broadcast: true,
+    exclude: ["fill"],
+  });
+}
 
 function clampUnit(value: number) {
   if (Number.isNaN(value)) return 0;
@@ -40,7 +71,7 @@ export function useProgressBarFillAnimation({
     fill.style.height = "100%";
 
     const applyInstant = () => {
-      killMotion(fill);
+      killMotionGeometry(fill);
       gsap.set(fill, { ...scaleVars, transformOrigin: origin });
     };
 
@@ -55,7 +86,7 @@ export function useProgressBarFillAnimation({
     }
 
     firstLayoutRef.current = false;
-    killMotion(fill);
+    killMotionGeometry(fill);
     setWillChangeTransform(fill, true);
     void gsap.to(fill, {
       ...scaleVars,
@@ -72,7 +103,7 @@ export function useProgressBarFillAnimation({
     const track = fill?.parentElement;
     if (!fill || !track) return;
 
-    killMotion(fill);
+    killMotionGeometry(fill);
 
     if (reduceMotion || !isMotionFeatureEnabled("enableProgressFill")) {
       gsap.set(fill, { clearProps: "transform" });
@@ -84,7 +115,7 @@ export function useProgressBarFillAnimation({
       const fillSize = isHorizontal ? fill.offsetWidth : fill.offsetHeight;
       if (trackSize <= 0 || fillSize <= 0) return;
 
-      killMotion(fill);
+      killMotionGeometry(fill);
       setWillChangeTransform(fill, true);
 
       void gsap.fromTo(

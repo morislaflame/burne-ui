@@ -1,6 +1,8 @@
 import { Text } from "@/components/core/Text";
 
-import { useLinkClassNames } from "./linkContext";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
+
+import { useLinkClassNames, useOptionalLinkMotionScope } from "./linkContext";
 import { LinkDefaultIcon } from "./linkDefaultIconPart";
 import { LinkIconSlot } from "./linkIconSlotPart";
 import { linkAnchorClass, linkTextClass } from "./linkStyles";
@@ -19,6 +21,11 @@ export function LinkBodyContent({
   usesDefaultAtEnd,
 }: LinkBodyContentProps) {
   const slotClassNames = useLinkClassNames();
+  const { setRef: setTextRef, pointerHandlers: textPointer } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalLinkMotionScope(),
+    slot: "text",
+    pointerPhases: true,
+  });
 
   const resolvedStart =
     startIcon ?? (usesDefaultAtStart ? <LinkDefaultIcon size={size} /> : null);
@@ -36,17 +43,19 @@ export function LinkBodyContent({
           {resolvedStart}
         </LinkIconSlot>
       ) : null}
-      <Text
-        as="span"
-        variant={textVariant}
-        inheritColor
-        className={linkTextClass({
-          underline,
-          slotClass: slotClassNames.text,
-        })}
-      >
-        {textChildren}
-      </Text>
+      <span ref={setTextRef} {...textPointer}>
+        <Text
+          as="span"
+          variant={textVariant}
+          inheritColor
+          className={linkTextClass({
+            underline,
+            slotClass: slotClassNames.text,
+          })}
+        >
+          {textChildren}
+        </Text>
+      </span>
       {resolvedEnd ? (
         <LinkIconSlot
           size={size}
@@ -76,7 +85,7 @@ export function LinkAnchorBody({
   setAnchorRef,
   handlePointerEnter,
   handlePointerLeave,
-  handlePointerDown,
+  pointerHandlers,
   handleKeyDown,
   ...rest
 }: LinkAnchorBodyProps) {
@@ -92,9 +101,9 @@ export function LinkAnchorBody({
       })}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      onPointerDown={handlePointerDown}
       onKeyDown={handleKeyDown}
       {...rest}
+      {...pointerHandlers}
     >
       <LinkBodyContent
         size={size}

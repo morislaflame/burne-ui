@@ -7,6 +7,7 @@ import type {
 import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type ExpandableSize = ComponentSize;
 export type ExpandableVariant = "default" | "gloss";
@@ -27,6 +28,24 @@ export type ExpandableClassNames = {
   panel?: string;
 };
 
+export type ExpandableLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type ExpandableTriggerLiftMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type ExpandableMotion = {
+  triggerLift?: ExpandableTriggerLiftMotion;
+  chevron?: ExpandableLifecycleMotion;
+  panelShell?: ExpandableLifecycleMotion;
+};
+
 export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children?: ReactNode;
   variant?: ExpandableVariant;
@@ -40,6 +59,10 @@ export type ExpandableProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
   classNames?: Prettify<ExpandableClassNames>;
+  /**
+   * Per-slot motion: `triggerLift` (press), `chevron` (enter/leave rotate), `panelShell` (height).
+   */
+  motion?: Prettify<ExpandableMotion>;
 };
 
 
@@ -63,6 +86,7 @@ export type ExpandableClassNamesProviderProps = {
 export type ExpandableTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   hideChevron?: boolean;
   asChild?: boolean;
+  motion?: Prettify<ExpandableTriggerLiftMotion>;
 };
 
 export type ExpandableIconProps = HTMLAttributes<HTMLSpanElement>;
@@ -70,8 +94,12 @@ export type ExpandableMessageProps = HTMLAttributes<HTMLDivElement>;
 export type ExpandableContentProps = HTMLAttributes<HTMLDivElement>;
 export type ExpandableTitleProps = HTMLAttributes<HTMLDivElement>;
 export type ExpandableDescriptionProps = HTMLAttributes<HTMLDivElement>;
-export type ExpandableChevronProps = HTMLAttributes<HTMLSpanElement>;
-export type ExpandablePanelProps = HTMLAttributes<HTMLDivElement>;
+export type ExpandableChevronProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<ExpandableLifecycleMotion>;
+};
+export type ExpandablePanelProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ExpandableLifecycleMotion>;
+};
 
 export type ExpandableSimpleBodyProps = {
   title?: ReactNode;
@@ -97,7 +125,14 @@ export type UseExpandableTriggerMotionProps = {
   disabled: boolean;
   toggle: () => void;
   forwardedRef: Ref<HTMLButtonElement>;
+  motion?: ExpandableTriggerLiftMotion;
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
   onKeyDown?: ButtonHTMLAttributes<HTMLButtonElement>["onKeyDown"];
   onPointerDown?: ButtonHTMLAttributes<HTMLButtonElement>["onPointerDown"];
+  onPointerUp?: ButtonHTMLAttributes<HTMLButtonElement>["onPointerUp"];
+};
+
+export type UseExpandablePanelMotionProps = {
+  open: boolean;
+  motion?: ExpandableLifecycleMotion;
 };

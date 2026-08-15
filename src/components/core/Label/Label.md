@@ -84,6 +84,17 @@ type FieldLabelContextValue = {
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `text`, `required` | `enter` (opt-in); hover/press if you set them | empty |
+
+Не крадёт motion Input.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 **В Label нет GSAP и hover motion** — статичная типографика.
 
 **DOM-структура:**

@@ -64,6 +64,7 @@ export function useToastProviderState({
         createdAt: ++orderRef.current,
         loading: opts.loading ?? false,
         classNames: { ...providerClassNames, ...opts.classNames },
+        motion: opts.motion,
       };
       setToasts((prev) => [...prev, entry]);
       announce(entry);

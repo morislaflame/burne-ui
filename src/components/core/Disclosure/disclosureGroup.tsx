@@ -18,6 +18,7 @@ export const DisclosureGroup = forwardRef<HTMLDivElement, DisclosureGroupProps>(
       onValueChange,
       className,
       classNames,
+      motion,
       ...rest
     },
     ref,
@@ -30,6 +31,7 @@ export const DisclosureGroup = forwardRef<HTMLDivElement, DisclosureGroupProps>(
       value,
       defaultValue,
       onValueChange,
+      motion,
     });
 
     return (

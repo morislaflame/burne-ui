@@ -80,6 +80,17 @@ import { ProgressBar, useProgressBarFieldContext, type ProgressBarProps, type Pr
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `track`, `fill`, `header`, `value` | `enter` (opt-in); `change` on `track` (`identity` = percent or `"indeterminate"`) | empty |
+
+Scale fill / indeterminate travel остаются kit-internal. Не играйте публичный `change` на `fill`.
+
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 `progressBarAnimations.ts` → `useProgressBarFillAnimation`.
 
 **DOM (determinate):**

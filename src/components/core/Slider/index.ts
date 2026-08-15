@@ -33,6 +33,8 @@ export type {
   SliderHintProps,
   SliderErrorProps,
   SliderClassNames,
+  SliderMotion,
+  SliderPartMotion,
 } from "./sliderTypes";
 
 export { sliderThicknessToCss };

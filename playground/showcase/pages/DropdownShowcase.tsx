@@ -10,6 +10,14 @@ import { DropdownCustomSubTriggerIconDemo } from "../demos/dropdown/DropdownCust
 import dropdownCustomSubTriggerIconSource from "../demos/dropdown/DropdownCustomSubTriggerIcon.demo.tsx?raw";
 import { DropdownGlossDemo } from "../demos/dropdown/DropdownGloss.demo";
 import dropdownGlossSource from "../demos/dropdown/DropdownGloss.demo.tsx?raw";
+import { DropdownMotionBodyStaggerDemo } from "../demos/dropdown/DropdownMotionBodyStagger.demo";
+import dropdownMotionBodyStaggerSource from "../demos/dropdown/DropdownMotionBodyStagger.demo.tsx?raw";
+import { DropdownMotionInstantLeaveDemo } from "../demos/dropdown/DropdownMotionInstantLeave.demo";
+import dropdownMotionInstantLeaveSource from "../demos/dropdown/DropdownMotionInstantLeave.demo.tsx?raw";
+import { DropdownMotionOriginScaleDemo } from "../demos/dropdown/DropdownMotionOriginScale.demo";
+import dropdownMotionOriginScaleSource from "../demos/dropdown/DropdownMotionOriginScale.demo.tsx?raw";
+import { DropdownMotionSubSlideXDemo } from "../demos/dropdown/DropdownMotionSubSlideX.demo";
+import dropdownMotionSubSlideXSource from "../demos/dropdown/DropdownMotionSubSlideX.demo.tsx?raw";
 import { DropdownMultipleDemo } from "../demos/dropdown/DropdownMultiple.demo";
 import dropdownMultipleSource from "../demos/dropdown/DropdownMultiple.demo.tsx?raw";
 import { DropdownPopoverSideDemo } from "../demos/dropdown/DropdownPopoverSide.demo";
@@ -43,6 +51,16 @@ export function DropdownShowcase() {
 
       <ShowcaseSection title="Gloss" description='popoverVariant="gloss" — glass drop down menu.'>
         <ShowcaseDemoFromFile Demo={DropdownGlossDemo} source={dropdownGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant leave, body stagger, submenu slide, origin scale."
+      >
+        <ShowcaseDemoFromFile Demo={DropdownMotionInstantLeaveDemo} source={dropdownMotionInstantLeaveSource} />
+        <ShowcaseDemoFromFile Demo={DropdownMotionBodyStaggerDemo} source={dropdownMotionBodyStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DropdownMotionSubSlideXDemo} source={dropdownMotionSubSlideXSource} />
+        <ShowcaseDemoFromFile Demo={DropdownMotionOriginScaleDemo} source={dropdownMotionOriginScaleSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -114,7 +132,9 @@ export function DropdownShowcase() {
         <ShowcaseDoc.Customization gloss>
           <p>
             <code>variant=&quot;gloss&quot;</code> on <code>Dropdown.Popover</code>. Items with{" "}
-            <code>href</code> rendered as links with a role menuitem.
+            <code>href</code> rendered as links with a role menuitem. Slot motion —{" "}
+            <code>motion.content</code> forwarded to Popover; <code>subContent</code> on{" "}
+            <code>Dropdown.SubContent</code>.
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

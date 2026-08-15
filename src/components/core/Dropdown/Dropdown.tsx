@@ -2,7 +2,7 @@ import "../utils/glossInteractive.css";
 
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
 
-import { DropdownClassNamesProvider, DropdownIndicatorPreferenceProvider, DropdownProvider } from "./dropdownContext";
+import { DropdownClassNamesProvider, DropdownIndicatorPreferenceProvider, DropdownMotionProvider, DropdownProvider } from "./dropdownContext";
 import {
   DropdownGroup,
   DropdownItem,
@@ -41,6 +41,10 @@ export type {
   DropdownSubProps,
   DropdownSubTriggerProps,
   DropdownSubContentProps,
+  DropdownMotion,
+  DropdownLifecycleMotion,
+  DropdownPartMotion,
+  DropdownPopoverMotion,
 } from "./dropdownTypes";
 
 export function DropdownRoot({
@@ -58,6 +62,7 @@ export function DropdownRoot({
   closeOnSelect,
   popoverVariant,
   portalContainer,
+  motion,
   ...rest
 }: DropdownProps) {
   const { contextValue } = useDropdownRootState({
@@ -78,6 +83,7 @@ export function DropdownRoot({
     <DropdownProvider value={contextValue}>
       <DropdownClassNamesProvider classNames={classNames}>
         <DropdownIndicatorPreferenceProvider value={selectionIndicator}>
+          <DropdownMotionProvider motion={motion}>
           <div
             className={dropdownRootClass({
               inJoinedButtonGroup,
@@ -87,6 +93,7 @@ export function DropdownRoot({
           >
             {children}
           </div>
+          </DropdownMotionProvider>
         </DropdownIndicatorPreferenceProvider>
       </DropdownClassNamesProvider>
     </DropdownProvider>

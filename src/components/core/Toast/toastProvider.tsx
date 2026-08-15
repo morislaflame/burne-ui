@@ -41,6 +41,7 @@ export function ToastProviderRoot({
   defaultSize = "base",
   portalContainer,
   classNames,
+  motion,
 }: ToastProviderProps) {
   const state = useToastProviderState({
     defaultPlacement,
@@ -65,6 +66,7 @@ export function ToastProviderRoot({
               onDismiss={state.dismiss}
               onRemoveFinal={state.removeFinal}
               classNames={classNames}
+              motion={motion}
               defaultSize={state.defaultSize}
             />,
             portalHost,

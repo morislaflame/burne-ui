@@ -1,91 +1,132 @@
+/**
+ * Slot motion for Card — look here first.
+ *
+ * DOM slots: `root`, `title`, `description`, `header`, `headingBlock`, `body`, `footer`
+ * (`content` / `glossContent` are layout wrappers, not public motion slots)
+ *
+ * Host: root (`useCardAnimations`) plays `hoverIn` / `hoverOut` / `pressIn` / `pressOut`
+ * when pressable (or when `motion.root` is set).
+ * Defaults: `resolveCardMotionDefaults` (second-level lift + squeeze; gloss recipes when gloss).
+ */
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useCallback, useEffect, useMemo, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 
-import {
-  animateInteractivePressSqueeze,
-  isInteractivePressKey,
-} from "@/components/core/utils/hoverInteractiveLift";
-import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { animateGlossInteractivePressSqueeze, createGlossInteractiveRefCallback, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
-import { useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
+import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
+import { isInteractivePressKey, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
+import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 
-import type { UseCardAnimationsProps } from "./cardTypes";
+import { useCardMotionScope } from "./cardContext";
+import type { CardMotion, CardVariant, UseCardAnimationsProps } from "./cardTypes";
+
+export function resolveCardMotionDefaults({
+  variant,
+  pressable,
+}: {
+  variant: CardVariant;
+  pressable: boolean;
+}): CardMotion {
+  if (!pressable) return {};
+  const isGloss = variant === "gloss";
+  const hover = isGloss ? "hoverLiftGloss" : "hoverLiftSecondLevel";
+  return {
+    root: {
+      hoverIn: hover,
+      hoverOut: hover,
+      pressIn: isGloss ? "pressSqueezeGloss" : "pressSqueeze",
+      pressOut: false,
+    },
+  };
+}
 
 export function useCardAnimations({
   pressable,
   isGloss,
   shadow = "base",
+  motion,
   onPress,
   onClick: onClickProp,
   onKeyDown: onKeyDownProp,
   onPointerDown: onPointerDownProp,
+  onPointerUp: onPointerUpProp,
   onPointerOver: onPointerOverProp,
   onPointerOut: onPointerOutProp,
+  hoverPointerInsideRef,
   forwardedRef,
 }: UseCardAnimationsProps) {
   const rootRef = useRef<HTMLElement | null>(null);
-  const pointerInsideRef = useRef(false);
-  const glossPressable = pressable && isGloss;
+  const scope = useCardMotionScope();
+  const rootMotionRef = useRef(motion?.root);
+  rootMotionRef.current = motion?.root;
 
+  const glossEnabled = isGloss && (pressable || motion?.root != null);
   const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, isGloss),
-    [isGloss],
+    () => createGlossInteractiveRefCallback(rootRef, glossEnabled),
+    [glossEnabled],
   );
 
   const setRootRef = useCallback(
     (node: HTMLElement | null) => {
       bindGlossRef(node);
       rootRef.current = node;
+      scope.registerTarget("root", node);
       mergeForwardedRef(forwardedRef, node);
     },
-    [bindGlossRef, forwardedRef],
+    [bindGlossRef, forwardedRef, scope],
   );
 
-  const glossPointerHandlers = useGlossInteractiveHandlers(
-    rootRef,
-    glossPressable,
-    { pointerInsideRef },
+  const secondLevelLift = useSecondLevelShadow(rootRef, pressable && !isGloss, {
+    interactive: false,
+    shadowSize: shadow,
+    pointerInsideRef: hoverPointerInsideRef,
+  });
+
+  const hoverEnabled = pressable || motion?.root != null;
+
+  const playRoot = useCallback(
+    (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
+      const el = rootRef.current;
+      if (!el) return;
+      const value = scope.resolve("root", phase, rootMotionRef.current);
+      if (value === undefined) return;
+      scope.play("root", phase, { partMotion: rootMotionRef.current, el });
+    },
+    [scope],
   );
 
-  const pressableLift = useSecondLevelShadowContainer(
-    rootRef,
-    pressable && !isGloss,
-    { pointerInsideRef, shadowSize: shadow },
-  );
+  const motionPointer = useMotionPointerPhases<HTMLElement>({
+    enabled: hoverEnabled,
+    targetRef: rootRef,
+    pointerInsideRef: hoverPointerInsideRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onHoverIn: () => playRoot("hoverIn"),
+    onHoverOut: () => playRoot("hoverOut"),
+  });
 
   useEffect(() => {
     if (pressable) return;
     const el = rootRef.current;
     if (el) killMotion(el);
-    pointerInsideRef.current = false;
-  }, [pressable]);
-
-  const runPressSqueeze = useCallback(() => {
-    if (prefersReducedMotion()) return;
-    const shell = rootRef.current;
-    if (!shell) return;
-
-    if (isGloss) {
-      void animateGlossInteractivePressSqueeze(shell, pointerInsideRef);
-      return;
-    }
-
-    void animateInteractivePressSqueeze(shell, {
-      pointerInside: pointerInsideRef,
-      shadow: pressableLift.shadow,
-    });
-  }, [isGloss, pressableLift.shadow]);
+    hoverPointerInsideRef.current = false;
+  }, [hoverPointerInsideRef, pressable]);
 
   const handlePointerDown = useCallback(
     (e: PointerEvent<HTMLElement>) => {
       onPointerDownProp?.(e);
-      if (!pressable || e.defaultPrevented) {
-        return;
-      }
-      runPressSqueeze();
+      if (!pressable || e.defaultPrevented) return;
+      playRoot("pressIn");
     },
-    [onPointerDownProp, pressable, runPressSqueeze],
+    [onPointerDownProp, playRoot, pressable],
+  );
+
+  const handlePointerUp = useCallback(
+    (e: PointerEvent<HTMLElement>) => {
+      onPointerUpProp?.(e);
+      if (!pressable || e.defaultPrevented) return;
+      playRoot("pressOut");
+    },
+    [onPointerUpProp, playRoot, pressable],
   );
 
   const handleClick = useCallback(
@@ -101,43 +142,41 @@ export function useCardAnimations({
     (e: KeyboardEvent<HTMLElement>) => {
       onKeyDownProp?.(e);
       if (!pressable || e.defaultPrevented || !isInteractivePressKey(e)) return;
-      runPressSqueeze();
+      playRoot("pressIn");
     },
-    [onKeyDownProp, pressable, runPressSqueeze],
+    [onKeyDownProp, playRoot, pressable],
   );
 
-  // Merged pointer handlers — safe to use in all CardRootShell branches.
-  // When pressable=false, animation handlers are no-ops (checked inside hooks).
-  const onPointerOver = useCallback(
-    (e: PointerEvent<HTMLElement>) => {
-      onPointerOverProp?.(e);
-      if (!pressable || e.defaultPrevented) return;
-      if (isGloss) glossPointerHandlers.onPointerOver(e);
-      else pressableLift.onPointerOver(e);
-    },
-    [glossPointerHandlers, isGloss, onPointerOverProp, pressable, pressableLift],
+  const pointerHandlers = useMemo(
+    () =>
+      mergeMotionPointerHandlers(
+        onPointerOverProp,
+        onPointerOutProp,
+        motionPointer.onPointerOver,
+        motionPointer.onPointerOut,
+      ),
+    [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOutProp, onPointerOverProp],
   );
 
-  const onPointerOut = useCallback(
-    (e: PointerEvent<HTMLElement>) => {
-      onPointerOutProp?.(e);
-      if (!pressable) return;
-      if (isGloss) glossPointerHandlers.onPointerOut(e);
-      else pressableLift.onPointerOut(e);
-    },
-    [glossPointerHandlers, isGloss, onPointerOutProp, pressable, pressableLift],
-  );
+  const pressableLiftMotionClass = pressable
+    ? isGloss
+      ? glossEnabled
+        ? GLOSS_INTERACTIVE_MOTION_CLASS
+        : ""
+      : secondLevelLift.motionClass
+    : "";
 
   return {
     setRootRef,
-    pressableLiftMotionClass: pressableLift.motionClass,
+    pressableLiftMotionClass,
     handlePointerDown,
+    handlePointerUp,
     handleClick,
     handleKeyDown,
-    onPointerOver,
-    onPointerOut,
-    // Raw passthrough handlers for non-pressable shell branches
+    onPointerOver: pointerHandlers.onPointerOver,
+    onPointerOut: pointerHandlers.onPointerOut,
     onPointerDownProp,
+    onPointerUpProp,
     onClickProp,
     onKeyDownProp,
   };

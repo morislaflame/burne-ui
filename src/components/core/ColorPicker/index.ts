@@ -35,6 +35,8 @@ export type {
   ColorPickerSize,
   ColorPickerVariant,
   ColorPickerClassNames,
+  ColorPickerMotion,
+  ColorPickerPartMotion,
 } from "./colorPickerTypes";
 
 export type {
@@ -43,6 +45,8 @@ export type {
   ColorChannel,
   ColorSliderSize,
   ColorSliderOrientation,
+  ColorSliderMotion,
+  ColorSliderPartMotion,
 } from "./ColorSlider";
 
 export {
@@ -50,6 +54,8 @@ export {
   type ColorSwatchProps,
   type ColorSwatchSize,
   type ColorSwatchShape,
+  type ColorSwatchMotion,
+  type ColorSwatchPartMotion,
 } from "./ColorSwatch";
 
 export {

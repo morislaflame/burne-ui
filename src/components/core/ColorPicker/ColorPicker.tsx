@@ -1,6 +1,8 @@
 import { Popover } from "@/components/core/Popover";
+import { useMemo } from "react";
 
-import { ColorPickerClassNamesProvider, ColorPickerProvider } from "./colorPickerContext";
+import { resolveColorPickerMotionDefaults } from "./colorPickerAnimations";
+import { ColorPickerClassNamesProvider, ColorPickerMotionProvider, ColorPickerProvider } from "./colorPickerContext";
 import {
   ColorPickerAlphaInput,
   ColorPickerArea,
@@ -23,6 +25,8 @@ export type {
   ColorPickerSize,
   ColorPickerVariant,
   ColorPickerClassNames,
+  ColorPickerMotion,
+  ColorPickerPartMotion,
 } from "./colorPickerTypes";
 
 export { useColorPicker } from "./colorPickerContext";
@@ -40,6 +44,7 @@ export function ColorPickerRoot({
   side = "bottom",
   disabled = false,
   classNames,
+  motion,
 }: ColorPickerProps) {
   const { contextValue } = useColorPickerRootState({
     value,
@@ -48,20 +53,23 @@ export function ColorPickerRoot({
     size,
     disabled,
   });
+  const motionDefaults = useMemo(() => resolveColorPickerMotionDefaults(), []);
 
   return (
     <ColorPickerProvider value={contextValue}>
       <ColorPickerClassNamesProvider classNames={classNames}>
-        <Popover
-          open={openProp}
-          defaultOpen={defaultOpen}
-          onOpenChange={onOpenChange}
-          size={size}
-          side={side}
-          variant={variant === "gloss" ? "gloss" : "default"}
-        >
-          {children}
-        </Popover>
+        <ColorPickerMotionProvider motion={motion} defaults={motionDefaults}>
+          <Popover
+            open={openProp}
+            defaultOpen={defaultOpen}
+            onOpenChange={onOpenChange}
+            size={size}
+            side={side}
+            variant={variant === "gloss" ? "gloss" : "default"}
+          >
+            {children}
+          </Popover>
+        </ColorPickerMotionProvider>
       </ColorPickerClassNamesProvider>
     </ColorPickerProvider>
   );

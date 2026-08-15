@@ -1,7 +1,9 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
+import { useMemo } from "react";
 
-import { MeterClassNamesProvider, MeterFieldProvider } from "./meterContext";
+import { resolveMeterMotionDefaults } from "./meterAnimations";
+import { MeterClassNamesProvider, MeterFieldProvider, MeterMotionProvider } from "./meterContext";
 import { MeterSimpleBody } from "./meterParts";
 import { meterRootClass } from "./meterStyles";
 import type { MeterProps } from "./meterTypes";
@@ -17,6 +19,8 @@ export type {
   MeterSize,
   MeterTrackProps,
   MeterValueProps,
+  MeterMotion,
+  MeterPartMotion,
 } from "./meterTypes";
 
 export {
@@ -52,6 +56,7 @@ export function MeterRoot({
   thickness,
   color,
   formatValue,
+  motion,
   ...divRest
 }: MeterProps) {
   const state = useMeterRootState({
@@ -85,22 +90,26 @@ export function MeterRoot({
     />
   );
 
+  const motionDefaults = useMemo(() => resolveMeterMotionDefaults(), []);
+
   return (
     <MeterFieldProvider value={state.fieldCtx}>
       <MeterClassNamesProvider classNames={classNames}>
-        <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <Field
-            id={state.meterId}
-            className={meterRootClass({
-              orientation: state.fieldCtx.orientation,
-              slotClass: classNames?.root,
-              className,
-            })}
-            {...divRest}
-          >
-            {body}
-          </Field>
-        </FieldLabelContext.Provider>
+        <MeterMotionProvider motion={motion} defaults={motionDefaults}>
+          <FieldLabelContext.Provider value={state.fieldLabelCtx}>
+            <Field
+              id={state.meterId}
+              className={meterRootClass({
+                orientation: state.fieldCtx.orientation,
+                slotClass: classNames?.root,
+                className,
+              })}
+              {...divRest}
+            >
+              {body}
+            </Field>
+          </FieldLabelContext.Provider>
+        </MeterMotionProvider>
       </MeterClassNamesProvider>
     </MeterFieldProvider>
   );

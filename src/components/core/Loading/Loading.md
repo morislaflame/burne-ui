@@ -65,6 +65,17 @@ Simple API — один `<span role="status">`.
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `spinner`, `dots` | `enter` (opt-in) | empty |
+
+Волна точек остаётся kit-internal GSAP, не публичный layout-tween.
+
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет индикатор видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 ### 1. Spinner (`type="spinner"`)
 
 **DOM:**

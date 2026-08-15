@@ -9,6 +9,7 @@ import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3, PIN_IMAGE4 } from "@/stories-utils/
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Avatar } from ".";
+import { AvatarMotionDemo } from "../../../../playground/showcase/demos/avatar/AvatarMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -271,4 +272,9 @@ export const CustomClassNames: Story = {
       />
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <AvatarMotionDemo />,
 };

@@ -3,9 +3,14 @@ import { forwardRef } from "react";
 import { Field } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 
-import { useProgressBarFillAnimation } from "./progressBarAnimations";
-import { useProgressBarClassNames, useProgressBarFieldContext } from "./progressBarContext";
+import { useProgressBarFillAnimation, useProgressBarTrackSlotMotion } from "./progressBarAnimations";
+import {
+  useOptionalProgressBarMotionScope,
+  useProgressBarClassNames,
+  useProgressBarFieldContext,
+} from "./progressBarContext";
 import { progressBarDeterminateFillStyle, progressBarFillClass, progressBarHeaderClass, progressBarIndeterminateFillClass, progressBarTrackClass, progressBarValueClass } from "./progressBarStyles";
 import type {
   ProgressBarErrorProps,
@@ -71,13 +76,21 @@ ProgressBarLabel.displayName = "ProgressBarLabel";
 export function ProgressBarHeader({
   children,
   className,
+  motion,
   ...rest
 }: ProgressBarHeaderProps) {
   const { orientation } = useProgressBarFieldContext();
   const slotClassNames = useProgressBarClassNames();
+  const part = useMotionPart<HTMLDivElement>({
+    scope: useOptionalProgressBarMotionScope(),
+    slot: "header",
+    motion,
+    pointerPhases: false,
+  });
 
   return (
     <div
+      ref={part.setRef}
       className={progressBarHeaderClass({
         orientation,
         slotClass: slotClassNames.header,
@@ -95,11 +108,18 @@ ProgressBarHeader.displayName = "ProgressBar.Header";
 export function ProgressBarValue({
   children,
   className,
+  motion,
   ...rest
 }: ProgressBarValueProps) {
   const { display } = useProgressBarFieldContext();
   const slotClassNames = useProgressBarClassNames();
   const text = children ?? display?.statusText;
+  const part = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalProgressBarMotionScope(),
+    slot: "value",
+    motion,
+    pointerPhases: false,
+  });
 
   if (text == null) return null;
 
@@ -107,6 +127,7 @@ export function ProgressBarValue({
     <Text
       as="span"
       variant="base"
+      ref={part.setRef}
       className={progressBarValueClass({
         slotClass: slotClassNames.value,
         className,
@@ -177,6 +198,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       formatValue,
       orientation,
       className,
+      motion,
       "aria-describedby": ariaDescribedByProp,
       ...rest
     },
@@ -204,15 +226,36 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       "aria-describedby": ariaDescribedByProp,
     });
 
+    const scope = useOptionalProgressBarMotionScope();
+    const trackPart = useMotionPart<HTMLDivElement>({
+      scope,
+      slot: "track",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: false,
+    });
+    const fillPart = useMotionPart<HTMLSpanElement>({
+      scope,
+      slot: "fill",
+      pointerPhases: false,
+    });
     const { fillRef, reduceMotion } = useProgressBarFillAnimation({
       indeterminate: isIndeterminate,
       percent,
       isHorizontal,
     });
+    useProgressBarTrackSlotMotion(
+      scope,
+      isIndeterminate ? "indeterminate" : String(percent),
+    );
+    const setFillRef = (node: HTMLSpanElement | null) => {
+      fillRef.current = node;
+      fillPart.setRef(node);
+    };
 
     return (
       <div
-        ref={ref}
+        ref={trackPart.setRef}
         role="progressbar"
         aria-valuenow={aria["aria-valuenow"]}
         aria-valuemin={aria["aria-valuemin"]}
@@ -234,7 +277,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
       >
         {isIndeterminate ? (
           <span
-            ref={fillRef}
+            ref={setFillRef}
             aria-hidden
             className={progressBarIndeterminateFillClass({
               isHorizontal,
@@ -246,7 +289,7 @@ export const ProgressBarTrack = forwardRef<HTMLDivElement, ProgressBarTrackProps
           />
         ) : (
           <span
-            ref={fillRef}
+            ref={setFillRef}
             aria-hidden
             className={progressBarFillClass({
               isHorizontal,

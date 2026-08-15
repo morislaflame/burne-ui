@@ -10,6 +10,7 @@ import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
 import { Popover } from "@/components/core/Popover";
+import { PopoverMotionDemo } from "../../../../playground/showcase/demos/popover/PopoverMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -503,4 +504,9 @@ export const CustomClassNames: Story = {
       </Popover.Content>
     </Popover>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <PopoverMotionDemo />,
 };

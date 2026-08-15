@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   ProgressBarClassNames,
   ProgressBarClassNamesProviderProps,
@@ -57,5 +59,12 @@ export function useOptionalProgressBarFieldContext() {
 export function useProgressBarClassNames(): ProgressBarClassNames {
   return useContext(ProgressBarClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `progressBarAnimations.ts`. */
+export const {
+  MotionScopeProvider: ProgressBarMotionProvider,
+  useMotionScope: useProgressBarMotionScope,
+  useOptionalMotionScope: useOptionalProgressBarMotionScope,
+} = createMotionScope("ProgressBar");
 
 export { ProgressBarFieldContext };

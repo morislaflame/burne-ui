@@ -4,6 +4,7 @@ import type {
   ReactNode,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type MeterSize = "small" | "base" | "mid" | "large";
 
@@ -26,6 +27,24 @@ export type MeterClassNames = {
   hint?: string;
   /** `Meter.Error`. */
   error?: string;
+};
+
+export type MeterPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  /** Plays when `value` changes. Fill width/height stays kit-internal. */
+  change?: MotionValue;
+};
+
+export type MeterMotion = {
+  track?: MeterPartMotion;
+  fill?: MeterPartMotion;
+  header?: MeterPartMotion;
+  value?: MeterPartMotion;
 };
 
 export type MeterDisplayState = {
@@ -57,10 +76,11 @@ export type MeterTrackProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> &
   formatValue?: (value: number) => string;
   orientation?: MeterOrientation;
   className?: string;
+  motion?: Prettify<MeterPartMotion>;
 };
 
 export type MeterProps = HTMLAttributes<HTMLDivElement> &
-  Partial<MeterTrackProps> & {
+  Partial<Omit<MeterTrackProps, "motion">> & {
     children?: ReactNode;
     id?: string;
     orientation?: MeterOrientation;
@@ -70,6 +90,12 @@ export type MeterProps = HTMLAttributes<HTMLDivElement> &
     hint?: ReactNode;
     error?: ReactNode;
     classNames?: Prettify<MeterClassNames>;
+    /**
+     * Per-slot motion (`track`, `fill`, `header`, `value`).
+     * Fill geometry (`width`/`height`) is kit-internal. Phase `change` plays on `track`
+     * when value updates (not on `fill`, so the kit tween is not killed).
+     */
+    motion?: Prettify<MeterMotion>;
   };
 
 export type MeterClassNamesProviderProps = {
@@ -79,10 +105,12 @@ export type MeterClassNamesProviderProps = {
 
 export type MeterHeaderProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  motion?: Prettify<MeterPartMotion>;
 };
 
 export type MeterValueProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<MeterPartMotion>;
 };
 
 export type MeterHintProps = HTMLAttributes<HTMLParagraphElement> & {
@@ -95,7 +123,7 @@ export type MeterErrorProps = HTMLAttributes<HTMLParagraphElement> & {
 
 export type UseMeterRootStateProps = Omit<
   MeterProps,
-  "className" | "classNames"
+  "className" | "classNames" | "motion"
 >;
 
 export type UseMeterTrackStateProps = Pick<

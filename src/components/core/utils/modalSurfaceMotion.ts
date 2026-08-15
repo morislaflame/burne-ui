@@ -100,7 +100,14 @@ export function applyReducedPortalMotion(surface: HTMLElement | null): void {
   gsapInstance.set(surface, { scale: 1, clearProps: "transform" });
 }
 
-/** Wrapper stays opaque so gloss backdrop-filter works during enter. */
+/**
+ * Wrapper stays opaque so gloss backdrop-filter works during enter.
+ * Also keeps `visibility` visible so keyboard focus (`:focus-visible`) can
+ * paint on controls inside the surface. Do not start enter with `autoAlpha: 0`
+ * on a surface that contains the focused control — that sets `visibility:
+ * hidden` and UA heuristics skip the ring. Fade with `opacity` instead, or
+ * call this then tween only transform (kit `portalSurfaceEnter`).
+ */
 export function preparePortalSurfaceForEnter(surface: HTMLElement): void {
   surface.style.opacity = "1";
   surface.style.visibility = "visible";
@@ -116,11 +123,11 @@ export function animatePortalOpen({
   vars: GsapMotionVars;
   from?: GsapMotionVars;
   to?: GsapMotionVars;
-}): void {
+}) {
   killMotion(surface);
   preparePortalSurfaceForEnter(surface);
   setWillChangeTransform(surface, true);
-  gsapInstance.fromTo(surface, from, {
+  return gsapInstance.fromTo(surface, from, {
     ...to,
     ...vars,
     onComplete: clearWillChangeOnComplete(surface, vars.onComplete),

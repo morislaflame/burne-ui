@@ -8,6 +8,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type DisclosureVariant =
   | "default"
@@ -37,6 +38,29 @@ export type DisclosureClassNames = {
   group?: string;
 };
 
+export type DisclosureLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type DisclosureTitleLiftMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+/**
+ * Per-slot motion. DOM slots: `titleLift` (`classNames.titleLift`), `chevron`,
+ * `contentShell`. `panelInner` is an internal height-recipe target, not a public slot.
+ * Handle-drag is kit-internal (not a slot).
+ */
+export type DisclosureMotion = {
+  titleLift?: DisclosureTitleLiftMotion;
+  chevron?: DisclosureLifecycleMotion;
+  contentShell?: DisclosureLifecycleMotion;
+};
+
 export type DisclosureGroupContextValue = {
   openValue: string | null;
   setOpenValue: (val: string | null) => void;
@@ -44,6 +68,7 @@ export type DisclosureGroupContextValue = {
   size: DisclosureSize;
   separated: boolean;
   accordion: boolean;
+  motion?: DisclosureMotion;
 };
 
 export type DisclosureContextValue = {
@@ -79,6 +104,11 @@ export type DisclosureProps = HTMLAttributes<HTMLDivElement> & {
   chevronPosition?: IconPosition;
   dragHandle?: boolean;
   classNames?: Prettify<DisclosureClassNames>;
+  /**
+   * Per-slot motion: `titleLift` (hover/press), `chevron` (enter/leave rotate),
+   * `contentShell` (height). Group `motion` is merged into each item.
+   */
+  motion?: Prettify<DisclosureMotion>;
 };
 
 export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
@@ -91,6 +121,8 @@ export type DisclosureGroupProps = HTMLAttributes<HTMLDivElement> & {
   defaultValue?: string | null;
   onValueChange?: (value: string | null) => void;
   classNames?: Prettify<DisclosureClassNames>;
+  /** Merged into each item’s slot map (same as Accordion). */
+  motion?: Prettify<DisclosureMotion>;
 };
 
 export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
@@ -100,14 +132,18 @@ export type DisclosureTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   /** Expand chevron; `null` hides the default chevron. */
   chevron?: ReactNode | null;
   asChild?: boolean;
+  motion?: Prettify<DisclosureTitleLiftMotion>;
 };
 
 export type DisclosureIconProps = HTMLAttributes<HTMLSpanElement>;
-export type DisclosureChevronProps = HTMLAttributes<HTMLSpanElement>;
+export type DisclosureChevronProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<DisclosureLifecycleMotion>;
+};
 
 export type DisclosureHandleProps = HTMLAttributes<HTMLDivElement>;
 export type DisclosureContentProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  motion?: Prettify<DisclosureLifecycleMotion>;
 };
 
 export type UseDisclosureRootStateProps = Omit<
@@ -127,9 +163,18 @@ export type UseDisclosureTriggerMotionProps = {
   chevronRef: RefObject<HTMLSpanElement | null>;
   skipContentAnimRef: RefObject<boolean>;
   forwardedRef: Ref<HTMLButtonElement>;
+  motion?: DisclosureTitleLiftMotion;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
   onPointerEnter?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerLeave?: React.PointerEventHandler<HTMLButtonElement>;
   onPointerDown?: React.PointerEventHandler<HTMLButtonElement>;
+};
+
+export type UseDisclosureContentMotionProps = {
+  open: boolean;
+  motion?: DisclosureLifecycleMotion;
+  skipContentAnimRef: RefObject<boolean>;
+  shellRef: RefObject<HTMLDivElement | null>;
+  innerRef: RefObject<HTMLDivElement | null>;
 };

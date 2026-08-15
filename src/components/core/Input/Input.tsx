@@ -4,7 +4,7 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import { InputClassNamesProvider, InputFieldProvider } from "./inputContext";
+import { InputClassNamesProvider, InputFieldProvider, InputMotionProvider } from "./inputContext";
 import { InputSimpleBody } from "./inputParts";
 import type { InputSimpleProps } from "./inputTypes";
 import { useInputRootState } from "./useInputRootState";
@@ -21,6 +21,8 @@ export type {
   InputSize,
   InputStatus,
   InputVariant,
+  InputMotion,
+  InputPartMotion,
 } from "./inputTypes";
 
 export { InputControl, InputError, InputHint, InputLabel } from "./inputParts";
@@ -36,6 +38,7 @@ export function InputRoot({
   required = false,
   status = "default",
   size = "base",
+  motion,
   ...rest
 }: InputSimpleProps) {
   const formCtx = useOptionalFormBindingContext();
@@ -74,11 +77,13 @@ export function InputRoot({
   return (
     <InputFieldProvider value={state.fieldCtx}>
       <InputClassNamesProvider classNames={classNames}>
-        <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <Field className={cn(classNames?.root, className)} size={resolvedSize}>
-            {body}
-          </Field>
-        </FieldLabelContext.Provider>
+        <InputMotionProvider motion={motion}>
+          <FieldLabelContext.Provider value={state.fieldLabelCtx}>
+            <Field className={cn(classNames?.root, className)} size={resolvedSize}>
+              {body}
+            </Field>
+          </FieldLabelContext.Provider>
+        </InputMotionProvider>
       </InputClassNamesProvider>
     </InputFieldProvider>
   );

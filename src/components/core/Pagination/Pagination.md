@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Pagination, type PaginationProps, type PaginationClassNames, type PaginationSummaryProps, type PaginationContentProps, type PaginationPageProps } from "burne-ui";
+import { Pagination, type PaginationProps, type PaginationClassNames, type PaginationSummaryProps, type PaginationContentProps, type PaginationPageProps, type PaginationMotion, type PaginationPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -115,7 +115,7 @@ Root — `flex-wrap` + `min-w-0`. На широком контейнере `Summ
 1. Собирает `data-flip-key` у `<li>` children (или `__keyless_N` fallback)
 2. Сравнивает `getBoundingClientRect()` с предыдущим кадром
 3. **Existing item** (key был): GSAP `fromTo({ x: dx }, { x: 0, ...motionInteractive() })`
-4. **New item** (key новый): `fromTo({ autoAlpha: 0, scale: 0.82 }, { autoAlpha: 1, scale: 1 })`
+4. **New item** (key новый): `fromTo({ opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1 })`
 5. **First run:** skip animation (инициализация `prevRects`)
 6. **Unmount cleanup:** `killMotion` на всех children
 
@@ -135,47 +135,25 @@ configureMotion({
 
 **Reduced motion / `enablePaginationFlip: false`:** мгновенный layout без GSAP.
 
-### 2. Button press text motion
+### 2. Slot motion (кнопки)
 
-`PaginationInteractive` → `usePressableElementTextMotion`:
+Публичный slot motion. Root — map-only Provider. Каждый Previous / Next / Page — nested scope слота `control`. FLIP на `<ol>` остаётся kit-internal (`usePaginationFlip`).
 
-**Pointer down** на Previous / Next / Page buttons:
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `control` | press (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
 
-- squeeze внутреннего `Text` ref (`textMotionRef`)
-- `origin-center` на button (`PAGINATION_INTERACTIVE_BUTTON_CLASS`)
+`false` на `control.pressIn` — skip без kill. Active page — `<span>`, без squeeze.
 
-Disabled state: `disabled:opacity-48`, motion skipped через `isDisabled`.
+Compound: `motion` на `Pagination.Previous` / `Pagination.Next` / `Pagination.Page`.
 
-#### Кастомизация press
+**Где в коде:** типы — `paginationTypes.ts`; scope — `paginationContext.tsx`; defaults — `paginationAnimations.ts`; слот — `paginationParts.tsx`; карта на Root — `Pagination.tsx`.
 
-```ts
-configureMotion({
-  pressSqueezeScale: [1, 0.98, 1],
-  interactiveDuration: 280,
-});
+```tsx
+<Pagination motion={{ control: { pressIn: false } }} page={page} totalPages={12} onPageChange={setPage}>
+  …
+</Pagination>
 ```
-
-### 3. Active page switch
-
-Смена `page` → React re-render → `Pagination.Pages` пересобирает range → FLIP анимирует сдвиг.
-
-Сам active span **не** squeeze — это `<span aria-current="page">`.
-
-### Чего нет
-
-- Hover lift / second-level shadow
-- Portal animations
-- Ripple
-- Chevron rotation (static icons)
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| FLIP shift items | `usePaginationFlip` | `interactiveDuration`, `interactiveEase`, `enablePaginationFlip` | `data-flip-key` на Item |
-| New item fade+scale | `usePaginationFlip` | `interactiveDuration` | — |
-| Press text squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` | `disabled` на button |
-| Active page | React render | — | `page` |
 
 ## Токены и CSS
 
@@ -291,7 +269,7 @@ Pagination/
 ├── index.ts
 ├── paginationTypes.ts
 ├── paginationStyles.ts
-├── paginationAnimations.ts    # usePaginationFlip
+├── paginationAnimations.ts    # FLIP + slot defaults
 ├── paginationParts.tsx
 ├── usePaginationRootState.ts
 ├── paginationContext.tsx

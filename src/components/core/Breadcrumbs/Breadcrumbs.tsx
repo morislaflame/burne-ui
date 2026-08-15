@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { BreadcrumbsClassNamesProvider, BreadcrumbsCollapseProvider } from "./breadcrumbsContext";
+import { BreadcrumbsClassNamesProvider, BreadcrumbsCollapseProvider, BreadcrumbsMotionProvider } from "./breadcrumbsContext";
 import { BreadcrumbsItem, BreadcrumbsList, BreadcrumbsSeparator } from "./breadcrumbsParts";
 import { BreadcrumbsSimpleContent } from "./breadcrumbsSimpleContent";
 import { resolveBreadcrumbsAriaLabel } from "./breadcrumbsA11y";
@@ -18,6 +18,8 @@ export type {
   BreadcrumbsSimpleContentProps,
   BreadcrumbsProps,
   BreadcrumbsClassNames,
+  BreadcrumbsMotion,
+  BreadcrumbsPartMotion,
   BreadcrumbItem,
 } from "./breadcrumbsTypes";
 
@@ -30,6 +32,7 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
       items,
       children,
       "aria-label": ariaLabel,
+      motion,
       ...rest
     },
     ref,
@@ -40,6 +43,7 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
     return (
       <BreadcrumbsCollapseProvider collapse={collapse}>
         <BreadcrumbsClassNamesProvider classNames={classNames}>
+          <BreadcrumbsMotionProvider motion={motion}>
           <nav
             ref={ref}
             aria-label={resolveBreadcrumbsAriaLabel(ariaLabel, breadcrumbsLabel)}
@@ -56,6 +60,7 @@ export const BreadcrumbsRoot = forwardRef<HTMLElement, BreadcrumbsProps>(
               children
             )}
           </nav>
+          </BreadcrumbsMotionProvider>
         </BreadcrumbsClassNamesProvider>
       </BreadcrumbsCollapseProvider>
     );

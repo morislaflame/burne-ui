@@ -1,6 +1,7 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, ReactNode, Ref } from "react";
 
 import { Text, type TextVariant } from "@/components/core/Text";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { cn } from "@/utils/cn";
 
 import { optionListItemHintCellClass, optionListItemIconCellClass, optionListItemIndicatorCellClass, optionListItemLabelCellClass } from "./optionControlGridLayout";
@@ -10,12 +11,14 @@ import { OPTION_LIST_ITEM_ICON_WRAP_CLASS, OPTION_LIST_ITEM_INDICATOR_SHELL_CLAS
 export type OptionListItemLabelProps = HTMLAttributes<HTMLSpanElement> & {
   /** Typography for the label text. @default "base" */
   textVariant?: TextVariant;
+  ref?: Ref<HTMLSpanElement>;
 };
 
 export function OptionListItemLabel({
   className,
   children,
   textVariant = "base",
+  ref,
   ...rest
 }: OptionListItemLabelProps) {
   const ctx = useOptionListItemContext("ItemLabel");
@@ -25,6 +28,7 @@ export function OptionListItemLabel({
         if (ctx.enableLabelMotion && ctx.labelMotionRef) {
           ctx.labelMotionRef.current = node;
         }
+        if (ref != null) mergeForwardedRef(ref, node);
       }}
       className={cn(
         OPTION_LIST_ITEM_LABEL_WRAP_CLASS,
@@ -79,16 +83,19 @@ function OptionListItemStringLabel({ children }: { children: string }) {
   );
 }
 
-export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement>;
+export type OptionListItemIconProps = HTMLAttributes<HTMLSpanElement> & {
+  ref?: Ref<HTMLSpanElement>;
+};
 
 export function OptionListItemIconText({ children }: { children: string }) {
   return <OptionListItemStringLabel>{children}</OptionListItemStringLabel>;
 }
 
-export function OptionListItemIcon({ className, children, ...rest }: OptionListItemIconProps) {
+export function OptionListItemIcon({ className, children, ref, ...rest }: OptionListItemIconProps) {
   const ctx = useOptionListItemContext("ItemIcon");
   return (
     <span
+      ref={ref}
       className={cn(
         OPTION_LIST_ITEM_ICON_WRAP_CLASS,
         optionListItemIconCellClass(ctx.showIndicatorSlot),

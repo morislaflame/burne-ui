@@ -2,6 +2,14 @@ import { KbdClassNamesFullDemo } from "../demos/kbd/KbdClassNamesFull.demo";
 import kbdClassNamesFullSource from "../demos/kbd/KbdClassNamesFull.demo.tsx?raw";
 import { KbdGlossDemo } from "../demos/kbd/KbdGloss.demo";
 import kbdGlossSource from "../demos/kbd/KbdGloss.demo.tsx?raw";
+import { KbdMotionInstantHoverDemo } from "../demos/kbd/KbdMotionInstantHover.demo";
+import kbdMotionInstantHoverSource from "../demos/kbd/KbdMotionInstantHover.demo.tsx?raw";
+import { KbdMotionKeyBounceDemo } from "../demos/kbd/KbdMotionKeyBounce.demo";
+import kbdMotionKeyBounceSource from "../demos/kbd/KbdMotionKeyBounce.demo.tsx?raw";
+import { KbdMotionRootTiltDemo } from "../demos/kbd/KbdMotionRootTilt.demo";
+import kbdMotionRootTiltSource from "../demos/kbd/KbdMotionRootTilt.demo.tsx?raw";
+import { KbdMotionTextPopDemo } from "../demos/kbd/KbdMotionTextPop.demo";
+import kbdMotionTextPopSource from "../demos/kbd/KbdMotionTextPop.demo.tsx?raw";
 import { KbdVariantsDemo } from "../demos/kbd/KbdVariants.demo";
 import kbdVariantsSource from "../demos/kbd/KbdVariants.demo.tsx?raw";
 import { KbdSizesDemo } from "../demos/kbd/KbdSizes.demo";
@@ -33,6 +41,16 @@ export function KbdShowcase() {
 
       <ShowcaseSection title="Gloss" description='variant="gloss" — glass key with hover-lift.'>
         <ShowcaseDemoFromFile Demo={KbdGlossDemo} source={kbdGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant hover, root tilt, text pop, key bounce."
+      >
+        <ShowcaseDemoFromFile Demo={KbdMotionInstantHoverDemo} source={kbdMotionInstantHoverSource} />
+        <ShowcaseDemoFromFile Demo={KbdMotionRootTiltDemo} source={kbdMotionRootTiltSource} />
+        <ShowcaseDemoFromFile Demo={KbdMotionTextPopDemo} source={kbdMotionTextPopSource} />
+        <ShowcaseDemoFromFile Demo={KbdMotionKeyBounceDemo} source={kbdMotionKeyBounceSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Kbd.Group" description="Multiple keys with separator «+».">

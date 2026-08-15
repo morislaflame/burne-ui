@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNames } from "burne-ui";
+import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNames, type LinkMotion, type LinkPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -24,6 +24,7 @@ import { Link, type LinkProps, type LinkSize, type LinkIconPos, type LinkClassNa
 | `defaultIconPosition` | `start` \| `end` | `end` | Позиция дефолтной иконки |
 | `className` | `string` | — | На `<a>` (или child при `asChild`) |
 | `classNames` | `LinkClassNames` | — | `root`, `text`, `icon` |
+| `motion` | `LinkMotion` | — | Slot map `root` / `text` / `icon` |
 | … | `AnchorHTMLAttributes` | — | `target`, `rel`, `onClick`, … |
 
 ### `LinkClassNames`
@@ -90,70 +91,24 @@ import NextLink from "next/link";
 
 ## Анимации
 
-Motion: `linkAnimations.ts` → `usePressableElementTextMotion` с **`hoverLift: true`**.
+Публичный slot motion. Свой scope: Root — Provider с defaults + `useLinkAnimations` (`play` hover/press на `root`). Без hover-тени.
 
-**DOM-структура:**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | `hoverLiftFirstLevel`, `pressSqueeze` (`pressOut: false`) |
+| `text` / `icon` | hover/press | нет |
+
+`false` на фазе — skip без kill. Не анимируйте layout в публичных MotionVars.
+
+**Где в коде:** типы — `linkTypes.ts`; scope — `linkContext.tsx`; defaults + host — `linkAnimations.ts`; слоты — `linkAnchorBodyPart.tsx` / `linkIconSlotPart.tsx`; Provider — `Link.tsx`.
+
+```tsx
+<Link href="#" motion={{ root: { hoverIn: false, hoverOut: false } }}>
+  Instant hover
+</Link>
 ```
-<a ref=anchorRef>              ← pointer handlers; transform target = сам <a>
-  [LinkIconSlot start]
-  <Text> текст
-  [LinkIconSlot end]
-```
-
-Весь якорь (`inline-flex`) получает scale transform — текст и иконки двигаются вместе.
-
-### 1. Hover lift
-
-**Pointer enter** (если не `defaultPrevented`):
-
-1. `shouldSkipInteractiveHoverLift()` — skip на reduced-motion / touch / tablet
-2. `animateInteractiveHoverLift(anchor, true, hoverLiftScale)` — фиксированный scale из config (не adaptive как Button)
-
-**Pointer leave:** `animateInteractiveHoverLift(anchor, false, hoverLiftScale)`.
-
-**Без тени** — Link не использует `--el-shadow` / `useShadowMotion` (в отличие от Button/Alert).
-
-### 2. Press squeeze
-
-**Pointer down:**
-
-1. `animateInteractivePressSqueeze(anchor, { pointerInside, liftScale })`
-2. Трёхфазный scale: rest → compressed → rest
-3. После release: если pointer inside — восстанавливает hover lift
-
-Adaptive squeeze по размеру элемента (~2.4px cap) — как у Button.
-
-### 3. Иконки — CSS-only
-
-Цвет иконок: `TEXT_COLOR_TRANSITION` + `group-hover/link` — **не GSAP**.
-
-### Кастомизация
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  hoverLiftScale: 1.025,        // lift на hover (фиксированный для Link)
-  hoverLiftEase: "sine.inOut",
-  interactiveDuration: 280,     // squeeze duration
-  pressSqueezeScale: [1, 0.98, 1],
-  enableHoverLift: true,
-  enablePressSqueeze: true,
-});
-```
-
-**Reduced motion / touch:** lift и squeeze отключены (`prefersReducedMotion`, viewport ≤ tablet).
-
-**Локально:** motion всегда enabled в `useLinkAnimations`; disabled-состояния у Link нет — для неактивной ссылки используйте стили + `aria-disabled` / `pointer-events-none` вручную.
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | `configureMotion` | Примечание |
-|----------|---------|-------------------|------------|
-| Hover lift | `usePressableElementTextMotion` | `hoverLiftScale`, `enableHoverLift` | без shadow |
-| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `interactiveDuration` | на `<a>` |
-| Icon color | CSS `group-hover/link` | — | не GSAP |
 
 ## Токены и CSS
 
@@ -250,9 +205,9 @@ Link/
 ├── linkStyles.ts
 ├── linkAPI.ts              # compound icon resolve
 ├── linkParts.tsx
-├── linkAnimations.ts
+├── linkAnimations.ts       # slot defaults + host play
+├── linkContext.tsx         # createMotionScope
 ├── useLinkRootState.ts
-├── linkContext.tsx
 ├── linkA11y.ts
 └── Link.stories.tsx
 ```

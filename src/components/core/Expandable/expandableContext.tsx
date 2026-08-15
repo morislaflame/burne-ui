@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import { createMotionScope } from "@/components/core/utils/slotMotion";
 
 import type {
   ExpandableClassNames,
@@ -11,6 +12,13 @@ import type {
 const ExpandableContext = createContext<ExpandableContextValue | null>(null);
 const ExpandableClassNamesContext = createContext<ExpandableClassNames>({});
 const ExpandableTriggerGridContext = createContext<MessageBannerGridSlots | null>(null);
+
+/** Scope only. Defaults and host play live in `expandableAnimations.ts`. */
+export const {
+  MotionScopeProvider: ExpandableMotionProvider,
+  useMotionScope: useExpandableMotionScope,
+  useOptionalMotionScope: useOptionalExpandableMotionScope,
+} = createMotionScope("Expandable");
 
 export function ExpandableProvider({
   value,

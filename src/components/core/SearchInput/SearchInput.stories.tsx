@@ -6,6 +6,7 @@ import { expect } from "storybook/test";
 import { Card } from "@/components/core/Card";
 
 import { SearchInput } from "./SearchInput";
+import { SearchInputMotionDemo } from "../../../../playground/showcase/demos/search-input/SearchInputMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -261,4 +262,9 @@ export const FilterList: Story = {
       </div>
     );
   },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <SearchInputMotionDemo />,
 };

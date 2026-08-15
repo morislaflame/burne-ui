@@ -1,64 +1,59 @@
+/**
+ * Slot motion for Tooltip — look here first.
+ *
+ * DOM slots: `content` (portal surface)
+ * Host: `Tooltip.Content` (`useTooltipPortalMotion`) plays `enter` / `leave`.
+ * Root has no portal DOM — it only passes the `motion` map through context.
+ * Defaults wrap the portal host (`TOOLTIP_MOTION_DEFAULTS` on the Content provider).
+ */
 import { useLayoutEffect, type RefObject } from "react";
 
-import { killMotion } from "@/components/core/utils/gsapMotion";
-import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
-import { motionTooltip } from "@/components/core/utils/motionConfig";
+import { killStoredMotion, type MotionScopeValue } from "@/components/core/utils/slotMotion";
+
+import type { TooltipMotion } from "./tooltipTypes";
+
+export const TOOLTIP_MOTION_DEFAULTS: TooltipMotion = {
+  content: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
+};
 
 export function useTooltipPortalMotion({
   open,
   portalMounted,
   setPortalMounted,
   tipRef,
+  scope,
 }: {
   open: boolean;
   portalMounted: boolean;
   setPortalMounted: (mounted: boolean) => void;
   tipRef: RefObject<HTMLDivElement | null>;
+  scope: MotionScopeValue;
 }) {
   useLayoutEffect(() => {
     if (!portalMounted) return undefined;
     const el = tipRef.current;
     if (!el) return undefined;
 
-    const reduced = isReducedModalMotion();
     let cancelled = false;
 
-    if (reduced) {
-      killMotion(el);
-      if (open) {
-        applyReducedPortalMotion(el);
-      } else {
-        setPortalMounted(false);
-      }
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    killMotion(el);
-
     if (open) {
-      animatePortalOpen({
-        surface: el,
-        vars: { ...motionTooltip(), overwrite: "auto" },
-      });
+      scope.play("content", "enter", { el });
       return () => {
         cancelled = true;
-        killMotion(el);
       };
     }
 
-    const anim = animatePortalClose({
-      surface: el,
-      vars: { ...motionTooltip(), overwrite: "auto" },
-      onComplete: () => {
-        if (!cancelled) setPortalMounted(false);
-      },
+    const run = scope.play("content", "leave", {
+      el,
+      waitForComplete: true,
+    });
+    void run.finished.then(() => {
+      if (!cancelled) setPortalMounted(false);
     });
     return () => {
       cancelled = true;
-      killMotion(el);
-      anim.kill();
+      run.animation?.kill();
+      killStoredMotion(el);
     };
-  }, [open, portalMounted, setPortalMounted, tipRef]);
+  }, [open, portalMounted, scope, setPortalMounted, tipRef]);
 }

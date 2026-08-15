@@ -29,4 +29,7 @@ export type {
   DisclosureSize,
   DisclosureChevronPos,
   DisclosureClassNames,
+  DisclosureMotion,
+  DisclosureLifecycleMotion,
+  DisclosureTitleLiftMotion,
 } from "./disclosureTypes";

@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Dialog, type DialogProps, type DialogVariant, type DialogClassNames, type DialogPanelProps, type DialogTriggerProps } from "burne-ui";
+import { Dialog, type DialogProps, type DialogVariant, type DialogClassNames, type DialogPanelProps, type DialogTriggerProps, type DialogMotion, type DialogPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -19,6 +19,7 @@ import { Dialog, type DialogProps, type DialogVariant, type DialogClassNames, ty
 | `onOpenChange` | `(open: boolean) => void` | нет | Смена состояния |
 | `children` | `ReactNode` | — | `Dialog.Panel`, `Dialog.Trigger`, … |
 | `classNames` | `DialogClassNames` | — | Слоты всех подчастей |
+| `motion` | `DialogMotion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`; у `title` / `description` ещё `hoverIn` / `hoverOut`). Root без DOM — как `classNames` |
 
 Root **не рендерит DOM** — только контекст и `classNames` provider.
 
@@ -121,7 +122,98 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 
 ## Анимации
 
-Портал + нативный `<dialog>`. Motion: `dialogAnimations.ts` (`useDialogModalMotion` → `useModalMotion`) + `modalSurfaceMotion.ts`. Trigger: `runOpenAfterSqueeze`.
+Портал + нативный `<dialog>`. Хост — `Dialog.Panel` (`useDialogModalMotion` → `useModalMotion` + slot motion). AlertDialog — тот же паттерн на `AlertDialog.Panel` (backdrop не закрывает). Drawer — свой slot motion (`drawerSlideEnter` / `Leave`).
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
+| `panel` | `enter` / `leave` | `modalPanelEnter` / `modalPanelLeave` |
+| `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
+| `close`, `header`, `footer`, `content` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
+
+`leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется (dev warn + ~500ms fallback). Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0` или полный slide) — иначе после твина `dialog.close()` выглядит как рывок.
+
+`leave: false` на хосте (`overlay` / `panel`) — хост сразу ставит закрытое состояние (панель не висит, пока фейдится сосед). `enter: false` — сразу открытое.
+
+```tsx
+<Dialog motion={{ panel: { enter: false, leave: false } }}>…</Dialog>
+
+<Dialog
+  motion={{
+    panel: {
+      enter: (ctx) =>
+        gsap.fromTo(
+          ctx.el,
+          { y: 28, scale: 0.92, autoAlpha: 0 },
+          { y: 0, scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(1.4)" },
+        ),
+      leave: (ctx) =>
+        gsap.to(ctx.el, {
+          y: 24,
+          scale: 0.94,
+          autoAlpha: 0,
+          duration: 0.22,
+          ease: "power2.in",
+        }),
+    },
+  }}
+>
+```
+
+**Где в коде:** типы — `dialogTypes.ts`; scope — `dialogContext.tsx`; defaults + host play — `dialogAnimations.ts` (`DIALOG_MOTION_DEFAULTS`, `useDialogModalMotion`); слоты и Panel-provider — `dialogParts.tsx`; карта `motion` на корне — `Dialog.tsx`.
+
+```tsx
+import gsap from "gsap";
+import { Dialog, tweenCssColor } from "burne-ui";
+
+<Dialog
+  open={open}
+  onOpenChange={setOpen}
+  motion={{
+    title: {
+      enter: (ctx) =>
+        gsap.fromTo(ctx.el, { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35 }),
+      leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.2 }),
+    },
+  }}
+>
+  <Dialog.Panel>…</Dialog.Panel>
+</Dialog>
+```
+
+Цвет — factory и токены, не `MotionVars`. Nested `enter` стартует на следующем кадре после `showModal()`. `leave: false` на части, если хост (`panel`) оркестрирует `ctx.targets` одним таймлайном.
+
+```tsx
+<Dialog
+  motion={{
+    title: {
+      hoverIn: (ctx) => tweenCssColor(ctx.el, "var(--color-primary)"),
+      hoverOut: (ctx) =>
+        tweenCssColor(ctx.el, "var(--color-foreground)", { clearOnComplete: true }),
+    },
+  }}
+>
+  …
+</Dialog>
+
+<Dialog
+  motion={{
+    panel: {
+      leave: (ctx) => {
+        const tl = gsap.timeline();
+        if (ctx.targets.title) tl.to(ctx.targets.title, { x: -12, autoAlpha: 0, duration: 0.16 }, 0);
+        tl.to(ctx.el, { scale: 0.94, autoAlpha: 0, duration: 0.22 }, 0.08);
+        return tl;
+      },
+    },
+    title: { leave: false },
+  }}
+>
+```
+
+См. [Motion](/docs/motion).
 
 **DOM-структура (портал):**
 
@@ -338,19 +430,19 @@ Kill tweens при unmount через `killMotion(overlay, panel)`.
 
 ```
 Dialog/
-├── Dialog.tsx
+├── Dialog.tsx               # карта motion в context (Root без DOM)
 ├── index.ts
-├── dialogTypes.ts
+├── dialogTypes.ts           # DialogMotion / DialogLifecycleMotion / DialogPartMotion
 ├── dialogStyles.ts
 ├── dialogAPI.ts
-├── dialogA11y.ts
-├── dialogContext.tsx
-├── dialogParts.tsx      # Panel, Trigger, portal shell
-├── dialogAnimations.ts
+├── dialogContext.tsx        # createMotionScope("Dialog")
+├── dialogParts.tsx          # Panel-хост + useMotionPart
+├── dialogAnimations.ts      # DIALOG_MOTION_DEFAULTS, useDialogModalMotion
 ├── useDialogRootState.ts
+├── useDialogFooterState.ts
 └── Dialog.stories.tsx
 ```
 
 ## Storybook
 
-`Core Components/Dialog` — default, `Dialog.Trigger`, gloss, `classNames`, форма в body, светлая/тёмная тема, `dismissOnBackdrop={false}`.
+`Core Components/Dialog` — default, `Dialog.Trigger`, gloss, `classNames`, форма в body, светлая/тёмная тема, `dismissOnBackdrop={false}`, slot motion gallery.

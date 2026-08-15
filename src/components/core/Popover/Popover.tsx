@@ -1,6 +1,6 @@
 import "../utils/glossInteractive.css";
 
-import { PopoverClassNamesProvider, PopoverProvider } from "./popoverContext";
+import { PopoverClassNamesProvider, PopoverMotionProvider, PopoverProvider } from "./popoverContext";
 import type { PopoverProps } from "./popoverTypes";
 import { usePopoverRootState } from "./usePopoverRootState";
 
@@ -18,6 +18,9 @@ export type {
   PopoverSize,
   PopoverTriggerProps,
   PopoverVariant,
+  PopoverMotion,
+  PopoverLifecycleMotion,
+  PopoverPartMotion,
 } from "./popoverTypes";
 
 export {
@@ -42,6 +45,7 @@ export function PopoverRoot({
   anchorRef,
   shouldDismiss,
   portalContainer,
+  motion,
 }: PopoverProps) {
   const { contextValue } = usePopoverRootState({
     children,
@@ -59,7 +63,9 @@ export function PopoverRoot({
   return (
     <PopoverProvider value={contextValue}>
       <PopoverClassNamesProvider classNames={classNames}>
+        <PopoverMotionProvider motion={motion}>
         {children}
+        </PopoverMotionProvider>
       </PopoverClassNamesProvider>
     </PopoverProvider>
   );

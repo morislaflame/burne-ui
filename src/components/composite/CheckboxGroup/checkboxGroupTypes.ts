@@ -1,5 +1,6 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type { FieldErrorProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
@@ -30,6 +31,21 @@ export type CheckboxGroupContextValue = {
   claimRequiredAnchor: () => boolean;
 };
 
+export type CheckboxGroupPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  change?: MotionValue;
+};
+
+export type CheckboxGroupMotion = {
+  root?: CheckboxGroupPartMotion;
+  list?: CheckboxGroupPartMotion;
+};
+
 export type CheckboxGroupProps = Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   "children" | "onChange"
@@ -47,13 +63,20 @@ export type CheckboxGroupProps = Omit<
   size?: ComponentSize;
   children?: ReactNode;
   classNames?: Prettify<CheckboxGroupClassNames>;
+  /**
+   * Per-slot motion (`root`, `list`). Items keep Checkbox motion.
+   * `change` plays on `root` when `selection="single"` value updates. Defaults are empty.
+   */
+  motion?: Prettify<CheckboxGroupMotion>;
 };
 
 export type UseCheckboxGroupRootStateProps = CheckboxGroupProps;
 
 export type CheckboxGroupHintProps = OptionGroupHintProps;
 export type CheckboxGroupLegendProps = OptionGroupLegendProps;
-export type CheckboxGroupListProps = OptionGroupListProps;
+export type CheckboxGroupListProps = OptionGroupListProps & {
+  motion?: Prettify<CheckboxGroupPartMotion>;
+};
 export type CheckboxGroupOrientation = OptionGroupOrientation;
 export type CheckboxGroupErrorProps = FieldErrorProps;
 export type CheckboxGroupLabelProps = LabelProps;

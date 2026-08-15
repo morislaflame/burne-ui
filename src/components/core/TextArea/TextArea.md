@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaSimpleProps, type TextAreaVariant, type TextAreaStatus, type TextAreaSize, type TextAreaClassNames } from "burne-ui";
+import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaSimpleProps, type TextAreaVariant, type TextAreaStatus, type TextAreaSize, type TextAreaClassNames, type TextAreaMotion, type TextAreaPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -48,6 +48,7 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 | `rows` | `1` | Нативные rows |
 | `resizable` | `true` | Drag-handle в углу |
 | `classNames` | — | `root`, `shell`, `control`, `resizeHandle`, … |
+| `motion` | — | Карта слотов на Root / simple API; на `TextArea.Control` — part motion `shell` |
 
 ### `TextAreaClassNames`
 
@@ -65,71 +66,31 @@ import { TextArea, type TextAreaProps, type TextAreaControlProps, type TextAreaS
 
 ## Анимации
 
-`textAreaAnimations.ts` + `useTextAreaResize.ts`.
+Публичный slot motion. Root передаёт карту `motion`; хост — `TextArea.Control` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Drag-resize высоты — kit-internal (`useTextAreaResize`), не публичные MotionVars.
 
-**DOM-структура:**
+### Slot motion
 
-```
-Field
-  Label
-  <div data-slot="textarea-shell" ref=shellRef>
-    <textarea ref=textareaRef />
-    [button data-textarea-resize-handle]   ← optional
-  Hint / Error
-```
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` |
+| `control` / `resizeHandle` | hover/press | нет |
 
-### 1. Shell hover lift (standard, `variant !== "gloss"`)
+Press на shell не стартует, если target внутри `[data-textarea-resize-handle]`. `false` на `shell.hoverIn/Out` — rest-тень остаётся.
 
-`useFieldShellHoverLift(shellRef, !blocked && !isGloss)`:
+**Где в коде:** типы — `textAreaTypes.ts`; scope — `textAreaContext.tsx`; defaults + host — `textAreaAnimations.ts`; слоты — `textAreaParts.tsx`; карта на Root — `TextArea.tsx`. Resize drag — `useTextAreaResize.ts` (max 640px).
 
-- Покой: `shadow-token-sm`
-- Hover: sm → md + scale lift
-- `fieldShellHoverClass` — CSS hover по variant (не status tint)
-- Класс: `standardShellHoverMotionClass` → `animate-shadow`
-
-### 2. Shell press squeeze
-
-`useTextAreaShellMotion` → `handleShellPointerDown`:
-
-1. Игнор если target внутри `[data-textarea-resize-handle]`
-2. **Gloss:** `glossShellMotion.onShellPointerDown()` (gloss squeeze)
-3. **Standard:** `animateInteractivePressSqueeze(shell)`
-
-### 3. Gloss shell (`variant="gloss"`)
-
-`useGlossFieldShellMotion`:
-
-- pointer enter/leave → gloss hover lift
-- focus capture in/out → lift при фокусе в textarea
-- `glossShellHoverMotionClass` на shell
-- ResizeObserver для gloss state refresh
-
-### 4. Resize handle (не GSAP)
-
-`useTextAreaResize(shellRef, resizable, blocked, size)`:
-
-**pointerdown** на handle → `setPointerCapture`
-
-**pointermove:**
-
-```ts
-nextHeight = clamp(
-  minHeight,                          // readControlHeightPx(size)
-  startHeight + (clientY - startY),
-  MAX_HEIGHT_PX,                      // 640
-);
-shell.style.height = `${nextHeight}px`;
+```tsx
+<TextArea
+  label="Note"
+  motion={{
+    shell: { hoverIn: false, hoverOut: false },
+  }}
+/>
 ```
 
-**pointerup:** release capture, listeners off.
+Compound: `motion` на `TextArea.Control` — part motion слота `shell`.
 
-- Минимум — высота контрола размера из токенов
-- Максимум — **640px** (константа, не в `configureMotion`)
-- При `resizable={false}` — inline `height` снимается в `setShellRef`
-
-**Важно:** resize не анимируется — мгновенное следование за курсором.
-
-### Кастомизация shell motion
+### Кастомизация
 
 ```ts
 import { configureMotion } from "burne-ui";
@@ -144,17 +105,6 @@ configureMotion({
 ```
 
 **Локально:** `resizable={false}` — без handle; `disabled` / `readOnly` → `blocked`, без hover/squeeze.
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | `configureMotion` | Hardcode |
-|----------|---------|-------------------|----------|
-| Shell hover | `useFieldShellHoverLift` | `enableHoverLift`, `hoverLiftScale` | — |
-| Shell squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | — |
-| Gloss shell | `useGlossFieldShellMotion` | interactive | variant=gloss |
-| Drag resize | `useTextAreaResize` | — | `MAX_HEIGHT_PX=640` |
-| Keyboard resize | ArrowUp/Down (±16px), Home/End | — | focus on resize handle |
-| Content growth | CSS `field-sizing: content` | — | — |
 
 ## Стилизация и кастомизация
 
@@ -249,17 +199,18 @@ configureMotion({
 
 ```
 TextArea/
-├── TextArea.tsx
+├── TextArea.tsx                 # Root: карта motion
 ├── index.ts
 ├── textAreaTypes.ts
 ├── textAreaStyles.ts
-├── textAreaAnimations.ts    # useTextAreaShellMotion
-├── useTextAreaResize.ts     # pointer + keyboard resize
-├── textAreaParts.tsx
+├── textAreaAnimations.ts        # defaults + host play
+├── textAreaContext.tsx          # createMotionScope
+├── useTextAreaResize.ts         # pointer + keyboard resize (kit-internal height)
+├── textAreaParts.tsx            # Control host + resizeHandle slot
 ├── useTextAreaRootState.ts
 └── TextArea.stories.tsx
 ```
 
 ## Storybook
 
-`Core Components/TextArea` — simple/compound, resizable, gloss, status, `classNames`.
+`Core Components/TextArea` — simple/compound, resizable, gloss, status, `classNames`, slot motion gallery.

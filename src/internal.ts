@@ -78,7 +78,7 @@ export {
   useSecondLevelShadow,
   useSecondLevelShadowContainer,
 } from "@/components/core/utils/useShadowMotion";
-export { gsap, killMotion, ensureRippleEase } from "@/components/core/utils/gsapMotion";
+export { gsap, killMotion, tweenCssColor, resolveCssColor, ensureRippleEase } from "@/components/core/utils/gsapMotion";
 export {
   MOTION_CONFIG_DEFAULTS,
   MOTION_CSS_VAR,

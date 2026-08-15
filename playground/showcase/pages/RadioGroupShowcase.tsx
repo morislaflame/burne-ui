@@ -6,6 +6,12 @@ import { RadioClassNamesFullDemo } from "../demos/radio/RadioClassNamesFull.demo
 import radioClassNamesFullSource from "../demos/radio/RadioClassNamesFull.demo.tsx?raw";
 import { RadioClassNamesSimpleLabelDemo } from "../demos/radio/RadioClassNamesSimpleLabel.demo";
 import radioClassNamesSimpleLabelSource from "../demos/radio/RadioClassNamesSimpleLabel.demo.tsx?raw";
+import { RadioMotionCornerFillDemo } from "../demos/radio/RadioMotionCornerFill.demo";
+import radioMotionCornerFillSource from "../demos/radio/RadioMotionCornerFill.demo.tsx?raw";
+import { RadioMotionFillMarkStaggerDemo } from "../demos/radio/RadioMotionFillMarkStagger.demo";
+import radioMotionFillMarkStaggerSource from "../demos/radio/RadioMotionFillMarkStagger.demo.tsx?raw";
+import { RadioMotionSpinningMarkDemo } from "../demos/radio/RadioMotionSpinningMark.demo";
+import radioMotionSpinningMarkSource from "../demos/radio/RadioMotionSpinningMark.demo.tsx?raw";
 import { RadioSizesDemo } from "../demos/radioGroup/RadioSizes.demo";
 import radioSizesSource from "../demos/radioGroup/RadioSizes.demo.tsx?raw";
 import { RadioGroupCustomIndicatorDemo } from "../demos/radioGroup/RadioGroupCustomIndicator.demo";
@@ -39,6 +45,15 @@ export function RadioGroupShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss on Radio — glass indicator.">
         <ShowcaseDemoFromFile align="stretch" Demo={RadioGroupGlossDemo} source={radioGroupGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — corner fill, spinning mark, fill→mark timeline."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionCornerFillDemo} source={radioMotionCornerFillSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionSpinningMarkDemo} source={radioMotionSpinningMarkSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={RadioMotionFillMarkStaggerDemo} source={radioMotionFillMarkStaggerSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

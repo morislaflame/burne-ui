@@ -1,6 +1,8 @@
 import { createContext, useContext, type ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type { FormBindingContextValue, FormClassNames, FormShellValue, FormSize } from "./formTypes";
 
 const FormClassNamesContext = createContext<FormClassNames>({});
@@ -61,5 +63,12 @@ export function useFormBindingContext() {
   }
   return ctx;
 }
+
+/** Scope only. Defaults and host play live in `formAnimations.ts`. */
+export const {
+  MotionScopeProvider: FormMotionProvider,
+  useMotionScope: useFormMotionScope,
+  useOptionalMotionScope: useOptionalFormMotionScope,
+} = createMotionScope("Form");
 
 export { FormBindingContext };

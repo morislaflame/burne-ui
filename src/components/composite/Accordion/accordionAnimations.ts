@@ -1,9 +1,27 @@
-import { useRef } from "react";
+/**
+ * Slot motion for Accordion — look here first.
+ *
+ * Accordion is an embedder: it has no `createMotionScope`. Each Item is
+ * `Expandable`; root/item `motion` maps are merged and passed through.
+ * Host play and kit defaults live in `expandableAnimations.ts`.
+ *
+ * DOM slots (per Item, same as Expandable): `triggerLift`, `chevron`, `panelShell`
+ * (`panelInner` is an internal height-recipe target, not a public slot).
+ *
+ * `Accordion.Chevron` registers the Expandable `chevron` target (Trigger
+ * defaults to `hideChevron`). Play is still the Expandable trigger host.
+ */
+import type { ExpandableMotion } from "@/components/core/Expandable";
+import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
 
-import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
-import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
+import type { AccordionMotion } from "./accordionTypes";
 
-export function useAccordionChevronAnimation(open: boolean) {
-  const chevronRef = useRef<HTMLSpanElement | null>(null);
-  return useChevronRotation(open, chevronRef, () => isMotionFeatureEnabled("enableExpandable"));
+export function resolveAccordionItemMotion({
+  rootMotion,
+  itemMotion,
+}: {
+  rootMotion?: AccordionMotion;
+  itemMotion?: AccordionMotion;
+}): ExpandableMotion | undefined {
+  return mergeMotionSlotMaps(rootMotion, itemMotion) as ExpandableMotion | undefined;
 }

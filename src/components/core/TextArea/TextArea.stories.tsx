@@ -7,6 +7,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { TextArea } from "./index";
+import { TextAreaMotionDemo } from "../../../../playground/showcase/demos/textarea/TextAreaMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -166,4 +167,9 @@ export const CustomClassNames: Story = {
       error="Text is too short."
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TextAreaMotionDemo />,
 };

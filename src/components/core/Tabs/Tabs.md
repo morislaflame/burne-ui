@@ -116,16 +116,22 @@ configureMotion({
 });
 ```
 
-### 2. Tab text hover/press (`useTabPointerMotion`)
+### Slot motion
 
-Только **неактивные** табы (`!isSelected`):
+Публичные слоты = compound / `classNames` DOM: `root`, `list`, `tab`, `tabText`, `panel`.
 
-- **Hover:** `animateInteractiveHoverLift` на `tabText` span
-- **Press:** `animateInteractivePressSqueeze`
+**Indicator не публичный слот.** FLIP (`left` / `top` / `width` / `height` + GSAP `x` / `y` / `scaleX` / `scaleY`) остаётся kit-internal в `useSlidingTabIndicator.ts` (`killMotion` + FLIP как раньше). Не анимируйте геометрию индикатора в публичных MotionVars.
 
-Selected tab — без motion (статичный primary text).
+| Слот | Фазы | Дефолт |
+|------|------|--------|
+| `root` / `list` | `enter` / hover / press | empty |
+| `tab` | `enter`; `check` / `uncheck` на selection | empty |
+| `tabText` | hover / press | неактивный: `hoverLiftFirstLevel` + `pressSqueeze` (`pressOut: false`); selected / disabled → эти фазы `false` |
+| `panel` | `enter` / `leave` | empty (opt-in) |
 
-`asChild` — motion не применяется (нет внутреннего `Text` ref).
+Каждый Tab / Panel — nested Provider. `false` на фазе — skip без kill. Кастомный `motion.panel.enter` / `motion.tab.check` — opt-in.
+
+`asChild` на Tab — нет внутреннего `tabText` слота.
 
 ### 3. Gloss list (`variant="gloss"`)
 
@@ -143,7 +149,7 @@ Selected tab — без motion (статичный primary text).
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
 | Indicator slide | `useSlidingTabIndicator` | `interactiveDuration`, `interactiveEase`, `enableTabsIndicator` | `variant`, `orientation` |
-| Tab text hover/squeeze | `useTabPointerMotion` | `hoverLiftScale`, `pressSqueezeScale` | `disabled`, selected |
+| Tab text hover/squeeze | slot motion `tabText` | `hoverLiftScale`, `pressSqueezeScale` | `motion.tabText`, selected |
 | Gloss list | gloss utils | gloss tokens | `variant="gloss"` |
 
 ## Токены и CSS

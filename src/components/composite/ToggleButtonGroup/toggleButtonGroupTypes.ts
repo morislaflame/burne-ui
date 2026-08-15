@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type {
   ToggleButtonGroupOrientation,
@@ -21,6 +22,20 @@ export type ToggleButtonGroupClassNames = {
   separator?: string;
 };
 
+export type ToggleButtonGroupPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  change?: MotionValue;
+};
+
+export type ToggleButtonGroupMotion = {
+  root?: ToggleButtonGroupPartMotion;
+};
+
 export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
   /** `multiple` — independent toggle; `single` — only one selected (radio). By default `multiple`. */
@@ -36,6 +51,11 @@ export type ToggleButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defau
   defaultValue?: string | string[];
   onValueChange?: (value: string | string[]) => void;
   classNames?: Prettify<ToggleButtonGroupClassNames>;
+  /**
+   * Per-slot motion (`root`). Items keep ToggleButton motion — group does not wrap item hosts.
+   * `change` plays when selection identity updates. Defaults are empty.
+   */
+  motion?: Prettify<ToggleButtonGroupMotion>;
 };
 
 export type ToggleButtonGroupClassNamesProviderProps = {

@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   ColorPickerClassNames,
   ColorPickerClassNamesProviderProps,
@@ -49,3 +51,10 @@ export function useColorPicker(): ColorPickerContextValue {
 export function useColorPickerClassNames(): ColorPickerClassNames {
   return useContext(ColorPickerClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `colorPickerAnimations.ts`. */
+export const {
+  MotionScopeProvider: ColorPickerMotionProvider,
+  useMotionScope: useColorPickerMotionScope,
+  useOptionalMotionScope: useOptionalColorPickerMotionScope,
+} = createMotionScope("ColorPicker");

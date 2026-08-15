@@ -117,7 +117,18 @@ const [busy, setBusy] = useState(true);
 
 ## Анимации
 
-**Только CSS** (`styles.css` keyframes). Нет `*Animations.ts`, нет GSAP, нет `configureMotion`.
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root` (Root/Circle/Text/Block), `region` | `enter` (opt-in) | empty |
+
+Nested Provider на compound-частях.
+
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет скелетон видимым). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
+Волна шиммера — **CSS** (`styles.css` keyframes). Opt-in `enter` — `skeletonAnimations.ts` (GSAP).
 
 **DOM (wave):**
 

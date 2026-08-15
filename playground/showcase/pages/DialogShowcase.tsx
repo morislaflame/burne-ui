@@ -1,5 +1,17 @@
 import { DialogClassNamesFullDemo } from "../demos/dialog/DialogClassNamesFull.demo";
 import dialogClassNamesFullSource from "../demos/dialog/DialogClassNamesFull.demo.tsx?raw";
+import { DialogMotionBouncePanelDemo } from "../demos/dialog/DialogMotionBouncePanel.demo";
+import dialogMotionBouncePanelSource from "../demos/dialog/DialogMotionBouncePanel.demo.tsx?raw";
+import { DialogMotionInstantPanelDemo } from "../demos/dialog/DialogMotionInstantPanel.demo";
+import dialogMotionInstantPanelSource from "../demos/dialog/DialogMotionInstantPanel.demo.tsx?raw";
+import { DialogMotionPanelTimelineDemo } from "../demos/dialog/DialogMotionPanelTimeline.demo";
+import dialogMotionPanelTimelineSource from "../demos/dialog/DialogMotionPanelTimeline.demo.tsx?raw";
+import { DialogMotionPerPartDemo } from "../demos/dialog/DialogMotionPerPart.demo";
+import dialogMotionPerPartSource from "../demos/dialog/DialogMotionPerPart.demo.tsx?raw";
+import { DialogMotionTitleHoverColorDemo } from "../demos/dialog/DialogMotionTitleHoverColor.demo";
+import dialogMotionTitleHoverColorSource from "../demos/dialog/DialogMotionTitleHoverColor.demo.tsx?raw";
+import { DialogMotionTitleStaggerDemo } from "../demos/dialog/DialogMotionTitleStagger.demo";
+import dialogMotionTitleStaggerSource from "../demos/dialog/DialogMotionTitleStagger.demo.tsx?raw";
 import { DialogAsChildMergedPropsDemo } from "../demos/dialog/DialogAsChildMergedProps.demo";
 import dialogAsChildMergedPropsSource from "../demos/dialog/DialogAsChildMergedProps.demo.tsx?raw";
 import { DialogBasicDemo } from "../demos/dialog/DialogBasic.demo";
@@ -56,6 +68,18 @@ export function DialogShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant panel, bounce factory, title stagger, per-part enter/leave, hover color, panel timeline."
+      >
+        <ShowcaseDemoFromFile Demo={DialogMotionInstantPanelDemo} source={dialogMotionInstantPanelSource} />
+        <ShowcaseDemoFromFile Demo={DialogMotionBouncePanelDemo} source={dialogMotionBouncePanelSource} />
+        <ShowcaseDemoFromFile Demo={DialogMotionTitleStaggerDemo} source={dialogMotionTitleStaggerSource} />
+        <ShowcaseDemoFromFile Demo={DialogMotionPerPartDemo} source={dialogMotionPerPartSource} />
+        <ShowcaseDemoFromFile Demo={DialogMotionTitleHoverColorDemo} source={dialogMotionTitleHoverColorSource} />
+        <ShowcaseDemoFromFile Demo={DialogMotionPanelTimelineDemo} source={dialogMotionPanelTimelineSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="classNames"
         description="Slot customization panel, header, title, body, footer through classNames."
       >
@@ -88,7 +112,7 @@ export function DialogShowcase() {
             description="dialog, overlay, panel, content, header, title, description, body, footer, close."
           />
           <ShowcaseDoc.ApiRow
-            api="portalContainer"
+            api="compound"
             description="Custom HTMLElement host. Contained portals use show() + absolute (not showModal top layer)."
           />
         </ShowcaseDoc.Block>

@@ -5,6 +5,7 @@ import type { AlertStatus, AlertVariant } from "@/components/core/Alert/alertTyp
 import type { CloseButtonProps } from "@/components/core/CloseButton";
 import type { ButtonSize } from "@/components/core/Button";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type {
   PanelSize,
   PanelSizeLayout,
@@ -28,6 +29,33 @@ export type AlertDialogClassNames = {
   body?: string;
   footer?: string;
   close?: string;
+};
+
+export type AlertDialogLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+/** Nested text slots also listen for local pointer phases. */
+export type AlertDialogPartMotion = AlertDialogLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+/**
+ * Overlay / panel / chrome. Overlay+panel defaults: `modalOverlay*` / `modalPanel*`.
+ * Nested chrome enter/leave is broadcast from the panel host.
+ */
+export type AlertDialogMotion = {
+  overlay?: AlertDialogLifecycleMotion;
+  panel?: AlertDialogLifecycleMotion;
+  title?: AlertDialogPartMotion;
+  description?: AlertDialogPartMotion;
+  close?: AlertDialogLifecycleMotion;
+  header?: AlertDialogLifecycleMotion;
+  footer?: AlertDialogLifecycleMotion;
+  content?: AlertDialogLifecycleMotion;
+  indicator?: AlertDialogLifecycleMotion;
 };
 
 /** Size tokens from shared `PANEL_SIZE_LAYOUT` (AlertDialog slice). */
@@ -69,6 +97,8 @@ export type AlertDialogProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<AlertDialogClassNames>;
+  /** Per-slot enter/leave. Overlay/panel defaults are kit modal recipes. */
+  motion?: Prettify<AlertDialogMotion>;
 };
 
 export type AlertDialogClassNamesProviderProps = {
@@ -86,6 +116,7 @@ export type AlertDialogPanelProps = {
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   children?: ReactNode;
+  motion?: Prettify<AlertDialogMotion>;
 };
 
 export type AlertDialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -126,15 +157,28 @@ export type AlertDialogHeaderContextValue = {
 export type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
   icon?: ReactNode | null;
   showClose?: boolean;
+  motion?: Prettify<AlertDialogLifecycleMotion>;
 };
 
-export type AlertDialogIndicatorProps = HTMLAttributes<HTMLSpanElement>;
-export type AlertDialogTitleProps = HTMLAttributes<HTMLHeadingElement>;
-export type AlertDialogDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+export type AlertDialogIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+export type AlertDialogTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<AlertDialogPartMotion>;
+};
+export type AlertDialogDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<AlertDialogPartMotion>;
+};
 export type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement>;
-export type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement>;
-export type AlertDialogCloseProps = CloseButtonProps;
-export type AlertDialogContentProps = HTMLAttributes<HTMLDivElement>;
+export type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+export type AlertDialogCloseProps = CloseButtonProps & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
+export type AlertDialogContentProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AlertDialogLifecycleMotion>;
+};
 export type AlertDialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
 export type UseAlertDialogRootStateProps = Pick<

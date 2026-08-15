@@ -13,6 +13,7 @@ export function useDisclosureGroupRootState({
   value: valueProp,
   defaultValue,
   onValueChange,
+  motion,
 }: UseDisclosureGroupRootStateProps) {
   const isControlled = valueProp !== undefined;
   const [internal, setInternal] = useState<string | null>(defaultValue ?? null);
@@ -28,8 +29,8 @@ export function useDisclosureGroupRootState({
   );
 
   const contextValue: DisclosureGroupContextValue = useMemo(
-    () => ({ openValue, setOpenValue, variant, size, separated, accordion }),
-    [accordion, openValue, setOpenValue, variant, size, separated],
+    () => ({ openValue, setOpenValue, variant, size, separated, accordion, motion }),
+    [accordion, motion, openValue, setOpenValue, variant, size, separated],
   );
 
   return {

@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Card, type CardProps, type CardVariant, type CardSize, type CardPressEvent, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps } from "burne-ui";
+import { Card, type CardProps, type CardVariant, type CardSize, type CardPressEvent, type CardClassNames, type CardHeaderProps, type CardBodyProps, type CardTitleProps, type CardMotion, type CardPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -62,6 +62,7 @@ Simple API (props `title` на root) нет — только compound children.
 | `onClick` / `onKeyDown` / `onPointerDown` | — | Низкоуровневые handlers |
 | `className` | — | Root / gloss panel |
 | `classNames` | — | Слоты |
+| `motion` | — | Карта слотов `root` / `title` / `description` / `header` / `headingBlock` / `body` / `footer` |
 
 ### `CardClassNames`
 
@@ -118,117 +119,34 @@ Simple API (props `title` на root) нет — только compound children.
 
 ## Анимации
 
-`cardAnimations.ts` → `useCardAnimations`.
+`cardAnimations.ts` — публичный slot motion. Pressable — 2-й уровень (rest-тень + hover/press на `root`). Passive — без дефолтного hover.
 
-**DOM (passive):**
+### Slot motion
 
-```
-<div class=cardRoot shadow-sm>
-  Header / Body / Footer
-</div>
-```
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | при `pressable`: `hoverLiftSecondLevel` или gloss; `pressSqueeze` / `pressSqueezeGloss` (`pressOut: false`) |
+| `title` / `description` / `header` / `headingBlock` / `body` / `footer` | `hoverIn` / `hoverOut` | нет |
 
-**DOM (pressable default):**
+`content` / `glossContent` — layout-обёртки, не публичные motion-слоты.
 
-```
-<button class=cardRoot + liftMotion>
-  <div class=content>children</div>
-</button>
-```
+**Где в коде:** типы — `cardTypes.ts`; scope — `cardContext.tsx`; defaults + host — `cardAnimations.ts`; слоты — `cardParts.tsx`; Provider — `Card.tsx`.
 
-**DOM (gloss pressable):**
+```tsx
+<Card pressable motion={{ root: { hoverIn: false, hoverOut: false } }}>
+  <Card.Title>Instant hover</Card.Title>
+</Card>
 
-```
-<button class=gloss-panel>
-  <div class=gloss-content>children</div>
-</button>
+<Card.Title motion={{ hoverIn: { scale: 1.06, y: -2 }, hoverOut: { scale: 1, y: 0 } }} />
 ```
 
-### 1. Hover lift (pressable, не gloss)
-
-`useSecondLevelShadowContainer(rootRef, pressable && !isGloss, { shadowSize: shadow })`:
-
-**Init:** `initElementShadow(el, var(--shadow-{shadow}))` — покой по `shadow` (default `base`).
-
-**Pointer enter:** `animateInteractiveHoverLift` + тень rest → `{shadow}-hover` (`shadowMotionFor(shadow)`).
-
-**Pointer leave:** scale `1`, тень обратно к rest.
-
-`pointerInsideRef` синхронизирует squeeze с hover state.
-
-Класс: `pressableLift.motionClass` (`SHADOW_LIFT_MOTION_CLASS`).
-
-### 2. Press squeeze
-
-`pointerdown` на pressable root (enabled motion):
-
-- **default/outline/secondary:** `animateInteractivePressSqueeze(shell, { pointerInside, shadow })`
-- **gloss:** `animateGlossInteractivePressSqueeze(shell, pointerInside)`
-
-`onPress` срабатывает на `click` / keyboard activation отдельно.
-
-#### Кастомизация
+### Отключение
 
 ```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  hoverLiftScale: 1.025,
-  pressSqueezeScale: [1, 0.98, 1],
-  enableHoverLift: true,
-  enablePressSqueeze: true,
-});
+configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
 ```
 
-### 3. Gloss interactive
-
-`variant="gloss"` + `pressable`:
-
-- `createGlossInteractiveRefCallback`
-- `useGlossInteractiveHandlers`
-- class `GLOSS_INTERACTIVE_MOTION_CLASS`
-
-`enableAnimations: false` отключает squeeze/hover глобально; `onPress` и button semantics остаются.
-
-**Reduced motion:** `shouldSkipInteractiveHoverLift()` / `prefersReducedMotion()` — без lift и squeeze.
-
-### 4. Passive card
-
-`pressable={false}`:
-
-- `CARD_STATIC_SHADOW_CLASS[shadow]` — постоянная `shadow-token-{shadow}`
-- `killMotion` на root при переключении в passive
-- Нет pointer handlers
-
-### 5. Ripple (опционально)
-
-Ripple **не встроен**. Паттерн из stories:
-
-```
-<button pressable>
-  <Ripple />                    ← overlay layer
-  <div class=content z-[1]>     ← CARD_PRESSABLE_CONTENT_CLASS
-    Card.Header / Body
-```
-
-Squeeze анимирует **весь** pressable shell, ripple — отдельный слой.
-
-### Чего нет
-
-- Portal / popover motion
-- Height collapse
-- Встроенный Ripple
-- Hover lift на passive card
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Static shadow | CSS `shadow-token-{shadow}` | — | `pressable={false}` |
-| Hover lift rest→hover | `useSecondLevelShadowContainer` | `hoverLiftScale`, `enableHoverLift` | `pressable`, `shadow`, `!gloss` |
-| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `enablePressSqueeze` | — |
-| Gloss hover/squeeze | gloss utils | gloss interactive tokens | `variant="gloss"` |
-| Ripple overlay | `<Ripple />` child | `rippleDefaultDuration` | вручную в children |
+Ripple **не встроен** — передайте `<Ripple />` первым ребёнком и оберните контент в слой `relative z-[1]`. Squeeze анимирует pressable shell.
 
 ## Токены и CSS
 
@@ -347,10 +265,10 @@ Card/
 ├── index.ts
 ├── cardTypes.ts
 ├── cardStyles.ts
-├── cardAnimations.ts
-├── cardParts.tsx
+├── cardAnimations.ts              # defaults + host play
+├── cardParts.tsx                  # useMotionPart
 ├── useCardRootState.ts
-├── cardContext.tsx
+├── cardContext.tsx                # createMotionScope
 ├── cardAPI.ts
 ├── cardA11y.ts
 └── Card.stories.tsx

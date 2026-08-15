@@ -4,7 +4,7 @@ import { useOptionalFormBindingContext } from "@/components/composite/Form/formC
 import { FieldLabelContext } from "@/components/core/Label";
 
 import { useCheckboxTextMotion } from "./checkboxAnimations";
-import { CheckboxClassNamesProvider, CheckboxFieldProvider } from "./checkboxContext";
+import { CheckboxClassNamesProvider, CheckboxFieldProvider, CheckboxMotionProvider } from "./checkboxContext";
 import { CheckboxContent, CheckboxControl, CheckboxError, CheckboxHint, CheckboxIndicator, CheckboxLabel, CheckboxSimpleBody } from "./checkboxParts";
 import { CHECKBOX_COMPOUND_FIELDSET_CLASS, CHECKBOX_ROOT_DISABLED_CLASS, checkboxGridClass } from "./checkboxStyles";
 import type { CheckboxProps } from "./checkboxTypes";
@@ -23,6 +23,8 @@ export type {
   CheckboxSize,
   CheckboxVariant,
   CheckboxClassNames,
+  CheckboxMotion,
+  CheckboxCheckMotion,
 } from "./checkboxTypes";
 
 export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
@@ -52,6 +54,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       onFocus,
       className,
       classNames,
+      motion,
       onPointerDown,
       onKeyDown,
       "aria-label": ariaLabel,
@@ -112,6 +115,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
       return (
         <CheckboxFieldProvider value={state.contextValue}>
           <CheckboxClassNamesProvider classNames={classNames}>
+            <CheckboxMotionProvider motion={motion}>
             <FieldLabelContext.Provider value={state.fieldLabelContext}>
               <fieldset
                 ref={ref as Ref<HTMLFieldSetElement>}
@@ -130,6 +134,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
                 {children}
               </fieldset>
             </FieldLabelContext.Provider>
+            </CheckboxMotionProvider>
           </CheckboxClassNamesProvider>
         </CheckboxFieldProvider>
       );
@@ -138,6 +143,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
     return (
       <CheckboxFieldProvider value={state.contextValue}>
         <CheckboxClassNamesProvider classNames={classNames}>
+          <CheckboxMotionProvider motion={motion}>
           <label
             ref={ref}
             htmlFor={state.contextValue.inputId}
@@ -162,6 +168,7 @@ export const CheckboxRoot = forwardRef<HTMLLabelElement, CheckboxProps>(
               errorId={state.errorId}
             />
           </label>
+          </CheckboxMotionProvider>
         </CheckboxClassNamesProvider>
       </CheckboxFieldProvider>
     );

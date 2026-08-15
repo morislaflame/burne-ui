@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/core/Checkbox";
 import { Pagination } from "@/components/core/Pagination";
 
 import { Table, type Selection, type SortDescriptor, type TableRowTone } from ".";
+import { TableMotionDemo } from "../../../../playground/showcase/demos/table/TableMotion.demo";
 
 // ─── shared data ─────────────────────────────────────────────────────────────
 
@@ -1024,4 +1025,9 @@ export const HeaderRow: Story = {
       </Table.ScrollContainer>
     </Table>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TableMotionDemo />,
 };

@@ -23,6 +23,8 @@ export type {
   CheckboxGroupLegendProps,
   CheckboxGroupListProps,
   CheckboxGroupErrorProps,
+  CheckboxGroupMotion,
+  CheckboxGroupPartMotion,
 } from "./checkboxGroupTypes";
 
 export type { CheckboxGroupContextValue } from "./checkboxGroupTypes";

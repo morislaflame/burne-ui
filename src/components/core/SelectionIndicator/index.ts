@@ -11,6 +11,8 @@ export type {
   SelectionIndicatorClassNames,
   SelectionIndicatorFillProps,
   SelectionIndicatorMarkProps,
+  SelectionIndicatorMotion,
+  SelectionIndicatorCheckMotion,
 } from "./selectionIndicatorTypes";
 
 export {
@@ -31,4 +33,4 @@ export {
   SELECTION_INDICATOR_MARK_DISPLAY_NAME,
 } from "./selectionIndicatorAPI";
 
-export { useSelectionIndicatorAnimation } from "./useSelectionIndicatorAnimation";
+export { useSelectionIndicatorAnimation } from "./selectionIndicatorAnimations";

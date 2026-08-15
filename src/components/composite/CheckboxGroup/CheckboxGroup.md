@@ -103,6 +103,17 @@ Simple API нет.
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root` (fieldset), `list` | `enter` (opt-in); `change` on `root` when `selection="single"` | empty |
+
+Motion item Checkbox остаётся на пункте. `OptionGroupFieldset` / Field.Set — отдельный scope.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 У `CheckboxGroup` **нет собственных** анимаций. Motion от вложенного `Checkbox`:
 
 **DOM:**

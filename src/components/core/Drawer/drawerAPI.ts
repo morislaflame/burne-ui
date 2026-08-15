@@ -2,8 +2,14 @@ import { Children, cloneElement, Fragment, isValidElement, type ReactElement, ty
 import { Button, type ButtonProps } from "@/components/core/Button";
 import type { ButtonSize } from "@/components/core/Button/buttonTypes";
 
-import type { GsapMotionVars } from "@/components/core/utils/modalSurfaceMotion";
-import type { DrawerBackdropProps, DrawerPanelSegment, DrawerPlacement } from "./drawerTypes";
+import type { DrawerBackdropProps, DrawerPanelSegment } from "./drawerTypes";
+
+export {
+  getDrawerSlideCloseTo,
+  getDrawerSlideOpenFrom,
+  getDrawerSlideRest,
+  measureDrawerSlideDistance,
+} from "@/components/core/utils/drawerSlide";
 
 export function readDrawerPartDisplayName(type: unknown): string | undefined {
   return (type as { displayName?: string }).displayName;
@@ -73,42 +79,4 @@ export function partitionDrawerChildren(children: ReactNode): {
   flushContent();
 
   return { backdropIsDismissable, panelSegments };
-}
-
-/** Slide distance in px — stable for vertical drawers whose height grows after mount. */
-export function measureDrawerSlideDistance(
-  panel: HTMLElement,
-  placement: DrawerPlacement,
-): number {
-  return placement === "left" || placement === "right"
-    ? panel.offsetWidth
-    : panel.offsetHeight;
-}
-
-export function getDrawerSlideOpenFrom(
-  panel: HTMLElement,
-  placement: DrawerPlacement,
-): GsapMotionVars {
-  const distance = measureDrawerSlideDistance(panel, placement);
-  switch (placement) {
-    case "left":
-      return { x: -distance, y: 0 };
-    case "right":
-      return { x: distance, y: 0 };
-    case "top":
-      return { x: 0, y: -distance };
-    case "bottom":
-      return { x: 0, y: distance };
-  }
-}
-
-export function getDrawerSlideRest(): GsapMotionVars {
-  return { x: 0, y: 0 };
-}
-
-export function getDrawerSlideCloseTo(
-  panel: HTMLElement,
-  placement: DrawerPlacement,
-): GsapMotionVars {
-  return getDrawerSlideOpenFrom(panel, placement);
 }

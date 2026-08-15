@@ -8,6 +8,8 @@ import type { Prettify } from "@/utils/prettify";
 import type { MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import type { SemanticStatus } from "@/components/core/utils/semanticStatusIcons";
 
+import type { MotionValue } from "@/components/core/utils/slotMotion";
+
 import type { TooltipSide } from "./tooltipPosition";
 
 export type { TooltipSide };
@@ -31,6 +33,15 @@ export type TooltipClassNames = {
   description?: string;
 };
 
+export type TooltipLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type TooltipMotion = {
+  content?: TooltipLifecycleMotion;
+};
+
 export type TooltipProps = {
   children?: ReactNode;
   size?: TooltipSize;
@@ -43,6 +54,11 @@ export type TooltipProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<TooltipClassNames>;
+  /**
+   * Per-slot motion. Root has no portal DOM — the host is `Tooltip.Content`.
+   * Default: `content.enter/leave` → `portalSurfaceEnter` / `portalSurfaceLeave`.
+   */
+  motion?: Prettify<TooltipMotion>;
 };
 
 export type TooltipTriggerProps = HTMLAttributes<HTMLSpanElement> & {
@@ -55,6 +71,7 @@ export type TooltipContentProps = HTMLAttributes<HTMLDivElement> & {
   offset?: number;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
+  motion?: Prettify<TooltipMotion>;
 };
 
 export type TooltipArrowProps = HTMLAttributes<HTMLSpanElement>;

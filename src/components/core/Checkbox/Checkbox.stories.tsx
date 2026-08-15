@@ -3,12 +3,14 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 import { IoStar } from "react-icons/io5";
+import gsap from "gsap";
 
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 import { Label } from "@/components/core/Label";
 
 import { Checkbox } from "./index";
+import { CheckboxMotionDemo } from "../../../../playground/showcase/demos/checkbox/CheckboxMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -338,4 +340,88 @@ export const SimpleLabelClassNames: Story = {
       className="max-w-md"
     />
   ),
+};
+
+const FILL_CORNER = "top right";
+
+function fillFromTopRightCheck(el: HTMLElement) {
+  return gsap.fromTo(
+    el,
+    { scale: 0, autoAlpha: 0, transformOrigin: FILL_CORNER },
+    {
+      scale: 1,
+      autoAlpha: 1,
+      duration: 0.4,
+      ease: "power3.out",
+      transformOrigin: FILL_CORNER,
+      overwrite: "auto",
+      force3D: false,
+    },
+  );
+}
+
+function fillFromTopRightUncheck(el: HTMLElement) {
+  return gsap.to(el, {
+    scale: 0,
+    autoAlpha: 0,
+    duration: 0.22,
+    ease: "power2.in",
+    transformOrigin: FILL_CORNER,
+    overwrite: "auto",
+    force3D: false,
+  });
+}
+
+export const SlotMotion: Story = {
+  name: "Slot motion",
+  ...dualApiStorySource,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Simple: `motion.indicatorFill` on the root. Compound: `motion` on `Checkbox.Indicator.Fill`. Fill grows in from the top-right corner.",
+      },
+    },
+  },
+  render: () => (
+    <DualApiStoryPanels>
+      <DualApiStoryPanel title="Simple — motion map on &lt;Checkbox&gt;">
+        <Checkbox
+          defaultChecked
+          label="Custom fill"
+          hint="Fill grows in from the top-right corner."
+          motion={{
+            indicatorFill: {
+              check: (ctx) => fillFromTopRightCheck(ctx.el),
+              uncheck: (ctx) => fillFromTopRightUncheck(ctx.el),
+            },
+          }}
+        />
+      </DualApiStoryPanel>
+      <DualApiStoryPanel title="Compound — motion on Fill">
+        <Checkbox defaultChecked>
+          <Checkbox.Control>
+            <Checkbox.Indicator>
+              <Checkbox.Indicator.Fill
+                motion={{
+                  check: (ctx) => fillFromTopRightCheck(ctx.el),
+                  uncheck: (ctx) => fillFromTopRightUncheck(ctx.el),
+                }}
+              />
+              <Checkbox.Indicator.Mark />
+            </Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Content>
+            <Checkbox.Label>Custom fill</Checkbox.Label>
+            <Checkbox.Hint>motion on Checkbox.Indicator.Fill — same corner origin.</Checkbox.Hint>
+          </Checkbox.Content>
+        </Checkbox>
+      </DualApiStoryPanel>
+    </DualApiStoryPanels>
+  ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (color, parts, timeline)",
+  render: () => <CheckboxMotionDemo />,
 };

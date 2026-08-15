@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { ComboBox, comboBoxFilteredValues, type ComboBoxOption, type ComboBoxProps, type ComboBoxSimpleProps, type ComboBoxClassNames } from "burne-ui";
+import { ComboBox, comboBoxFilteredValues, type ComboBoxOption, type ComboBoxProps, type ComboBoxSimpleProps, type ComboBoxClassNames, type ComboBoxMotion, type ComboBoxPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -58,6 +58,7 @@ const options = [
 | `menuMaxHeight` | `min(24rem, 70vh)` | ListBox scroll |
 | `name` | — | Form binding |
 | `classNames` | — | см. ниже |
+| `motion` | — | per-slot motion (`inputGroup`, `input`, `trigger`, `triggerIcon`) |
 
 ### `ComboBoxClassNames`
 
@@ -83,109 +84,38 @@ const options = [
 
 ## Анимации
 
-Несколько независимых слоёв: shell (как Input), open squeeze, chevron, popover (Popover/Tooltip motion).
+Публичный slot motion. Root передаёт карту `motion`; хост — `ComboBox.InputGroup` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Open-after-squeeze играет `inputGroup.pressIn` (non-gloss) или kit gloss squeeze. Chevron rotation — kit-internal. Menu enter — на Popover, не дублируется.
 
-**DOM-структура:**
+### Slot motion
 
-```
-Field
-  Label
-  <div InputGroup ref=anchorRef role=combobox>   ← shell + open squeeze
-    <input ComboBox.Input />
-    <button ComboBox.Trigger> chevron
-  <Popover.Content>                              ← portal
-    <ListBox> …
-```
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `inputGroup` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
+| `input` / `trigger` / `triggerIcon` | hover/press | нет |
 
-### 1. Shell hover (standard)
+`false` на `inputGroup.hoverIn/Out` — rest-тень остаётся, lift не играет. `false` на `pressIn` — open без squeeze. Не анимируйте layout в публичных MotionVars.
 
-`useFieldShellHoverLift(anchorRef, !disabled && !isGloss && !groupSegment)`:
+**Где в коде:** типы — `comboBoxTypes.ts`; scope — `comboBoxContext.tsx`; defaults + host — `comboBoxAnimations.ts`; слоты — `comboBoxParts.tsx`; карта на Root — `ComboBox.tsx`.
 
-- sm → md + lift на `InputGroup`
-- `fieldShellHoverClass` — CSS hover по variant (не status tint)
-- Отключено в `ButtonGroup` segment и для gloss (отдельный путь)
-
-### 2. Gloss shell
-
-`useGlossFieldShellMotion(anchorRef, !disabled && isGloss && !groupSegment)`:
-
-- pointer + focus lift (`onShellPointerEnter/Leave`, `onShellFocusIn/Out`)
-- `data-gloss-disabled` когда disabled
-
-### 3. Open after squeeze (`runOpenAfterSqueeze`)
-
-**InputGroup `pointerdown`** (когда `!open`, button 0):
-
-```ts
-runOpenAfterSqueeze({
-  triggerRef: anchorRef,
-  disabled,
-  setOpen,
-  openingRef,
-});
+```tsx
+<ComboBox
+  label="Framework"
+  options={options}
+  motion={{
+    inputGroup: { hoverIn: false, hoverOut: false },
+  }}
+/>
 ```
 
-**Input keyboard** (ArrowDown, Enter, Space, printable char):
+Compound: `motion` на `ComboBox.InputGroup` — part motion слота `inputGroup`; на `ComboBox.Input` / `ComboBox.Trigger` — свои слоты.
 
-- Тот же helper + `onOpened` → focus input, установка filter/active option
+**ButtonGroup:** при `groupSegment` shell hover/press выключены.
 
-**Алгоритм:**
+### Chevron / Popover / ListBox
 
-1. `openingRef` / `disabled` guard от double-trigger
-2. Reduced motion → `setOpen(true)` сразу
-3. Иначе standard `animateInteractivePressSqueeze(anchor)` (variant-agnostic; gloss surface hover — отдельно)
-4. После Promise → `setOpen(true)`, `onOpened?.()`
-
-Опциональный `runSqueeze` — точка расширения для будущего gloss-плагина.
-
-**Trigger button:** открывает **без** squeeze — `setOpen(true)` + focus (toggle close если уже open).
-
-#### Кастомизация open squeeze
-
-```ts
-configureMotion({
-  interactiveDuration: 280,
-  pressSqueezeScale: [1, 0.98, 1],
-  enablePressSqueeze: true,
-});
-```
-
-### 4. Chevron rotation
-
-`ComboBox.Trigger` → `useChevronRotation(open, triggerRef)`:
-
-- GSAP `rotation: 0 | 180` при open/close
-- `motionInteractive()` — `interactiveDuration`, `interactiveEase`
-- Reduced motion: мгновенный поворот (`applyChevronRotationInstant`)
-
-### 5. Popover enter/leave
-
-`ComboBox.Popover` → `<Popover variant={gloss|default}>`:
-
-- **Open:** `animatePortalOpen` + `motionTooltip()` — `tooltipDuration` (200ms), `interactiveEase`
-- **Close:** `animatePortalClose` с теми же vars
-- **Position:** `computeTooltipPlacement`, `matchAnchorWidth` на Content; `side` / `align` / `offset` пробрасываются с `ComboBox.Popover`
-- **Shadow:** `shadow-token-large` на panel (через Popover)
-
-```ts
-configureMotion({
-  tooltipDuration: 200,
-  interactiveEase: "power2.out",
-});
-```
-
-ListBox items — собственные selection animations (см. ListBox.md).
-
-### Сводка: что настраивается где
-
-| Анимация | Где | `configureMotion` | Примечание |
-|----------|-----|-------------------|------------|
-| Shell hover | `InputGroup` | `enableHoverLift`, `hoverLiftScale` | !gloss, !segment |
-| Gloss shell | `InputGroup` | interactive | variant=gloss |
-| Open squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | click shell / keyboard |
-| Chevron | `ComboBox.Trigger` | `interactiveDuration` | rotate |
-| Popover | `Popover.Content` | `tooltipDuration` | enter/leave |
-| Trigger click open | `ComboBox.Trigger` | — | без squeeze |
+- Chevron: `useChevronRotation` — kit-internal
+- Popover enter/leave — публичный slot motion Popover
+- ListBox items — slot motion ListBox (если подключён)
 
 ## Интеграция
 
@@ -314,6 +244,8 @@ ComboBox/
 ├── index.ts
 ├── comboBoxTypes.ts
 ├── comboBoxStyles.ts
+├── comboBoxContext.tsx       # createMotionScope
+├── comboBoxAnimations.ts     # slot table, defaults, host play
 ├── comboBoxParts.tsx         # InputGroup, Input, Trigger, Popover
 ├── useComboBoxRootState.ts
 ├── useComboBoxInputState.ts
@@ -324,4 +256,4 @@ ComboBox/
 
 ## Storybook
 
-`Core Components/ComboBox` — simple/compound, filter, gloss, status, Form, `classNames`.
+`Core Components/ComboBox` — simple/compound, filter, gloss, status, Form, `classNames`, slot motion gallery.

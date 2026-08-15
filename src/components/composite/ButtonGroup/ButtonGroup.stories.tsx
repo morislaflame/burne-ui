@@ -9,6 +9,7 @@ import { Dropdown } from "@/components/core/Dropdown";
 import { Input } from "@/components/core/Input";
 import { SearchInput } from "@/components/core/SearchInput";
 import { ButtonGroup } from "./index";
+import { ButtonGroupMotionDemo } from "../../../../playground/showcase/demos/buttonGroup/ButtonGroupMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -204,4 +205,9 @@ export const CustomClassNames: Story = {
       <Button variant="outline">Two</Button>
     </ButtonGroup>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ButtonGroupMotionDemo />,
 };

@@ -9,6 +9,8 @@ export {
   type ToggleButtonGroupOrientation,
   type ToggleButtonGroupContextValue,
   type ToggleButtonGroupClassNames,
+  type ToggleButtonGroupMotion,
+  type ToggleButtonGroupPartMotion,
 } from "./ToggleButtonGroup";
 
 export {

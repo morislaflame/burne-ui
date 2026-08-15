@@ -26,4 +26,6 @@ export type {
   CheckboxSize,
   CheckboxVariant,
   CheckboxClassNames,
+  CheckboxMotion,
+  CheckboxCheckMotion,
 } from "./checkboxTypes";

@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
 import { isMotionFeatureEnabled, motionExpand } from "./motionConfig";
-import { usePrefersReducedMotion } from "./reducedMotion";
+import { prefersReducedMotion, usePrefersReducedMotion } from "./reducedMotion";
 
 /** Content wrapper height (padding + child borders; no margin collapse). */
 export function measureCollapsibleContentHeight(inner: HTMLElement): number {
@@ -123,38 +123,64 @@ export function useCollapsibleHeight(
     if (prevOpenRef.current === open) return;
     prevOpenRef.current = open;
 
-    killMotion(shell);
-
-    if (reduceMotion) {
-      applyCollapsibleInstantState(shell, open);
-      return;
-    }
-
-    if (open) {
-      shell.style.overflow = "hidden";
-      gsap.fromTo(
-        shell,
-        { height: 0 },
-        {
-          height: () => measureCollapsibleContentHeight(inner),
-          ...motionExpand(),
-          overwrite: "auto",
-          onComplete: () => releaseExpandedShellHeight(shell, inner),
-        },
-      );
-    } else {
-      const current = shell.getBoundingClientRect().height || measureCollapsibleContentHeight(inner);
-      shell.style.height = `${current}px`;
-      shell.style.overflow = "hidden";
-      gsap.to(shell, {
-        height: 0,
-        ...motionExpand(),
-        overwrite: "auto",
-        onComplete: () => {
-          shell.style.height = "0px";
-          shell.style.overflow = "hidden";
-        },
-      });
-    }
+    animateCollapsibleHeight(shell, inner, open, { reduced: reduceMotion });
   }, [open, shellRef, innerRef, skipAnimRef, reduceMotionPreferred]);
+}
+
+export type AnimateCollapsibleHeightOptions = {
+  reduced?: boolean;
+  duration?: number;
+  ease?: string;
+};
+
+/** Height tween for a collapsible shell. Used by `useCollapsibleHeight` and the `collapsibleHeight` recipe. */
+export function animateCollapsibleHeight(
+  shell: HTMLElement,
+  inner: HTMLElement,
+  open: boolean,
+  options?: AnimateCollapsibleHeightOptions,
+) {
+  const reduced =
+    options?.reduced ??
+    (prefersReducedMotion() || !isMotionFeatureEnabled("enableExpandable"));
+
+  killMotion(shell);
+
+  if (reduced) {
+    applyCollapsibleInstantState(shell, open);
+    return undefined;
+  }
+
+  const expand = motionExpand();
+  const vars = {
+    duration: options?.duration ?? expand.duration,
+    ease: options?.ease ?? expand.ease,
+    overwrite: "auto" as const,
+  };
+
+  if (open) {
+    shell.style.overflow = "hidden";
+    return gsap.fromTo(
+      shell,
+      { height: 0 },
+      {
+        height: () => measureCollapsibleContentHeight(inner),
+        ...vars,
+        onComplete: () => releaseExpandedShellHeight(shell, inner),
+      },
+    );
+  }
+
+  const current =
+    shell.getBoundingClientRect().height || measureCollapsibleContentHeight(inner);
+  shell.style.height = `${current}px`;
+  shell.style.overflow = "hidden";
+  return gsap.to(shell, {
+    height: 0,
+    ...vars,
+    onComplete: () => {
+      shell.style.height = "0px";
+      shell.style.overflow = "hidden";
+    },
+  });
 }

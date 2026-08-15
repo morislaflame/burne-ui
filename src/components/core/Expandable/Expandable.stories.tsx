@@ -7,6 +7,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Expandable } from ".";
+import { ExpandableMotionDemo } from "../../../../playground/showcase/demos/expandable/ExpandableMotion.demo";
 
 const PIN_IMAGE =
   "https://i.pinimg.com/736x/89/e2/85/89e285ca1fc973db199bf395f7c89669.jpg";
@@ -264,4 +265,9 @@ export const CustomClassNames: Story = {
       <p className="text-small text-muted">Panel content.</p>
     </Expandable>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ExpandableMotionDemo />,
 };

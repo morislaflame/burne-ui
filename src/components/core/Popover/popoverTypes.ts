@@ -4,6 +4,7 @@ import type {
   TooltipSide,
 } from "@/components/core/Tooltip/tooltipPosition";
 import type { PanelSize } from "@/components/core/utils/sizeLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type { HTMLAttributes, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
 
@@ -26,6 +27,23 @@ export type PopoverClassNames = {
   label?: string;
   hint?: string;
   body?: string;
+};
+
+export type PopoverLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type PopoverPartMotion = PopoverLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type PopoverMotion = {
+  content?: PopoverLifecycleMotion;
+  title?: PopoverPartMotion;
+  description?: PopoverPartMotion;
+  body?: PopoverLifecycleMotion;
 };
 
 export type PopoverContextValue = {
@@ -59,6 +77,11 @@ export type PopoverProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<PopoverClassNames>;
+  /**
+   * Per-slot motion. Root has no portal DOM — the host is `Popover.Content`.
+   * Default: `content.enter/leave` → `portalSurfaceEnter` / `portalSurfaceLeave`.
+   */
+  motion?: Prettify<PopoverMotion>;
 };
 
 export type PopoverClassNamesProviderProps = {
@@ -66,7 +89,7 @@ export type PopoverClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type UsePopoverRootStateProps = Omit<PopoverProps, "classNames">;
+export type UsePopoverRootStateProps = Omit<PopoverProps, "classNames" | "motion">;
 
 export type PopoverTriggerProps = HTMLAttributes<HTMLButtonElement> & {
   /** Merge props onto the single child (Button, etc.) instead of rendering a `<button>` wrapper. */
@@ -77,11 +100,17 @@ export type PopoverArrowProps = HTMLAttributes<HTMLSpanElement>;
 
 export type PopoverHeaderProps = HTMLAttributes<HTMLDivElement>;
 
-export type PopoverTitleProps = HTMLAttributes<HTMLHeadingElement>;
+export type PopoverTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<PopoverPartMotion>;
+};
 
-export type PopoverDescriptionProps = Omit<FieldHintProps, "id" | "as">;
+export type PopoverDescriptionProps = Omit<FieldHintProps, "id" | "as"> & {
+  motion?: Prettify<PopoverPartMotion>;
+};
 
-export type PopoverBodyProps = HTMLAttributes<HTMLDivElement>;
+export type PopoverBodyProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<PopoverLifecycleMotion>;
+};
 
 export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   showArrow?: boolean;
@@ -93,6 +122,7 @@ export type PopoverContentProps = HTMLAttributes<HTMLDivElement> & {
   contentRole?: "dialog" | undefined;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
+  motion?: Prettify<PopoverMotion>;
 };
 
 export type UsePopoverContentLifecycleProps = {

@@ -1,1 +1,7 @@
-export { Text, type TextProps, type TextVariant } from "./Text";
+export {
+  Text,
+  type TextProps,
+  type TextVariant,
+  type TextMotion,
+  type TextPartMotion,
+} from "./Text";

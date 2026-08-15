@@ -6,7 +6,7 @@ import {
 } from "@/components/composite/ButtonGroup/buttonGroupStyles";
 import { useInJoinedButtonGroup } from "@/components/composite/ButtonGroup/buttonGroupContext";
 
-import { SelectClassNamesProvider, SelectFieldProvider, SelectProvider } from "./selectContext";
+import { SelectClassNamesProvider, SelectFieldProvider, SelectMotionProvider, SelectProvider } from "./selectContext";
 import { SelectError, SelectHint, SelectLabel, SelectPopover, SelectSimpleBody, SelectTrigger, SelectTriggerGroup, SelectValue } from "./selectParts";
 import type { SelectProps } from "./selectTypes";
 import { useSelectRootState } from "./useSelectRootState";
@@ -26,6 +26,8 @@ export type {
   SelectPopoverProps,
   SelectOption,
   SelectClassNames,
+  SelectMotion,
+  SelectPartMotion,
 } from "./selectTypes";
 
 
@@ -52,6 +54,7 @@ export function SelectRoot({
   placeholder,
   menuMaxHeight,
   name,
+  motion,
   ...rest
 }: SelectProps) {
   const formCtx = useOptionalFormBindingContext();
@@ -89,6 +92,7 @@ export function SelectRoot({
     <SelectFieldProvider value={state.fieldCtx}>
       <SelectProvider value={state.selectCtx}>
         <SelectClassNamesProvider classNames={classNames}>
+          <SelectMotionProvider motion={motion}>
           <FieldLabelContext.Provider value={state.fieldLabelCtx}>
             <Field
               size={resolvedSize}
@@ -111,6 +115,7 @@ export function SelectRoot({
               )}
             </Field>
           </FieldLabelContext.Provider>
+          </SelectMotionProvider>
         </SelectClassNamesProvider>
       </SelectProvider>
     </SelectFieldProvider>

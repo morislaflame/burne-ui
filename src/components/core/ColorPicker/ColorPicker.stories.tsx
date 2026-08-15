@@ -6,6 +6,9 @@ import { expect, screen } from "storybook/test";
 import { Text } from "@/components/core/Text";
 
 import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToColorString, hsvaToHex, type HSVA } from ".";
+import { ColorSwatchMotionDemo } from "../../../../playground/showcase/demos/colorPicker/ColorSwatchMotion.demo";
+import { ColorPickerMotionDemo } from "../../../../playground/showcase/demos/colorPicker/ColorPickerMotion.demo";
+import { ColorSliderMotionDemo } from "../../../../playground/showcase/demos/colorSlider/ColorSliderMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -414,4 +417,19 @@ export const CustomClassNames: Story = {
       </ColorPicker>
     );
   },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ColorSwatchMotionDemo />,
+};
+
+export const ColorPickerSlotMotionGallery: Story = {
+  name: "ColorPicker slot motion gallery",
+  render: () => <ColorPickerMotionDemo />,
+};
+
+export const ColorSliderSlotMotionGallery: Story = {
+  name: "ColorSlider slot motion gallery",
+  render: () => <ColorSliderMotionDemo />,
 };

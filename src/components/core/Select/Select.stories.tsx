@@ -12,6 +12,7 @@ import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import type { SelectOption } from "./selectTypes";
 import { Select } from ".";
+import { SelectMotionDemo } from "../../../../playground/showcase/demos/select/SelectMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -399,6 +400,11 @@ export const StatusDanger: Story = {
       required
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <SelectMotionDemo />,
 };
 
 export const Playground: Story = {

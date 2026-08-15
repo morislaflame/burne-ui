@@ -18,6 +18,12 @@ import { TimeFieldStatusesDemo } from "../demos/time-field/TimeFieldStatuses.dem
 import timeFieldStatusesSource from "../demos/time-field/TimeFieldStatuses.demo.tsx?raw";
 import { TimeFieldSizesDemo } from "../demos/time-field/TimeFieldSizes.demo";
 import timeFieldSizesSource from "../demos/time-field/TimeFieldSizes.demo.tsx?raw";
+import { TimeFieldMotionInstantHoverDemo } from "../demos/time-field/TimeFieldMotionInstantHover.demo";
+import timeFieldMotionInstantHoverSource from "../demos/time-field/TimeFieldMotionInstantHover.demo.tsx?raw";
+import { TimeFieldMotionAffixWaveDemo } from "../demos/time-field/TimeFieldMotionAffixWave.demo";
+import timeFieldMotionAffixWaveSource from "../demos/time-field/TimeFieldMotionAffixWave.demo.tsx?raw";
+import { TimeFieldMotionPrefixTintDemo } from "../demos/time-field/TimeFieldMotionPrefixTint.demo";
+import timeFieldMotionPrefixTintSource from "../demos/time-field/TimeFieldMotionPrefixTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -69,6 +75,12 @@ export function TimeFieldShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldShiftWindowDemo} source={timeFieldShiftWindowSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldReminderCardDemo} source={timeFieldReminderCardSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldSegmentedRowDemo} source={timeFieldSegmentedRowSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline across sibling slots, compound Control press.">
+        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionInstantHoverDemo} source={timeFieldMotionInstantHoverSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionAffixWaveDemo} source={timeFieldMotionAffixWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TimeFieldMotionPrefixTintDemo} source={timeFieldMotionPrefixTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

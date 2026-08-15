@@ -1,11 +1,27 @@
 import type { LabelHTMLAttributes, ReactNode } from "react";
 import type { TextVariant } from "@/components/core/Text";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type LabelClassNames = {
   root?: string;
   text?: string;
   required?: string;
+};
+
+export type LabelPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type LabelMotion = {
+  root?: LabelPartMotion;
+  text?: LabelPartMotion;
+  required?: LabelPartMotion;
 };
 
 export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children"> & {
@@ -14,6 +30,10 @@ export type LabelProps = Omit<LabelHTMLAttributes<HTMLLabelElement>, "children">
   /** Text size for the label copy. Default `base`. */
   variant?: TextVariant;
   classNames?: Prettify<LabelClassNames>;
+  /**
+   * Per-slot motion (`root`, `text`, `required`). Defaults are empty — custom factories are opt-in.
+   */
+  motion?: Prettify<LabelMotion>;
 };
 
 export type LabelClassNamesProviderProps = {

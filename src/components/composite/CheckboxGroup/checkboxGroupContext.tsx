@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
 import { createOptionGroupClassNamesContext } from "@/components/composite/utils/optionGroupClassNames";
 
 import type { CheckboxGroupClassNames, CheckboxGroupContextValue } from "./checkboxGroupTypes";
@@ -36,5 +37,12 @@ export function useCheckboxGroupContext() {
 export function useOptionalCheckboxGroupContext() {
   return useContext(CheckboxGroupContext);
 }
+
+/** Scope only. Defaults and host play live in `checkboxGroupAnimations.ts`. */
+export const {
+  MotionScopeProvider: CheckboxGroupMotionProvider,
+  useMotionScope: useCheckboxGroupMotionScope,
+  useOptionalMotionScope: useOptionalCheckboxGroupMotionScope,
+} = createMotionScope("CheckboxGroup");
 
 export { CheckboxGroupContext };

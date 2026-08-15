@@ -1,6 +1,7 @@
 import type { FormHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type FormValues = Record<string, unknown>;
 
@@ -70,6 +71,28 @@ export type UseFormFieldBindingOptions = {
   rules?: FormFieldRules;
 };
 
+export type FormPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  change?: MotionValue;
+};
+
+export type FormMotion = {
+  root?: FormPartMotion;
+  header?: FormPartMotion;
+  title?: FormPartMotion;
+  description?: FormPartMotion;
+  actions?: FormPartMotion;
+  errorSummary?: FormPartMotion;
+  announce?: FormPartMotion;
+  section?: FormPartMotion;
+  field?: FormPartMotion;
+};
+
 export type FormClassNames = {
   root?: string;
   header?: string;
@@ -102,34 +125,50 @@ export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> & 
   onSubmitError?: (errors: Record<string, string>) => void;
   /** Passed to the auto-rendered `Form.ErrorSummary` (`children` / render prop). */
   errorSummary?: ReactNode | ((entries: Array<[string, string]>) => ReactNode);
+  /**
+   * Per-slot motion (`root`, `header`, `title`, `description`, `actions`, `errorSummary`,
+   * `announce`, `section`, `field`). Does not steal child Input motion. Defaults are empty.
+   */
+  motion?: Prettify<FormMotion>;
 };
 
 export type FormSectionProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<Pick<FormClassNames, "section">>;
+  motion?: Prettify<FormPartMotion>;
 };
 
 export type FormHeaderProps = HTMLAttributes<HTMLDivElement> & {
   classNames?: Prettify<Pick<FormClassNames, "header">>;
+  motion?: Prettify<FormPartMotion>;
 };
 
-export type FormTitleProps = HTMLAttributes<HTMLHeadingElement>;
-export type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
-export type FormActionsProps = HTMLAttributes<HTMLDivElement>;
+export type FormTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<FormPartMotion>;
+};
+export type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<FormPartMotion>;
+};
+export type FormActionsProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<FormPartMotion>;
+};
 export type FormErrorSummaryProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /**
    * Custom summary body. Function receives `[fieldName, message][]` from form context
    * (e.g. list with links to fields). Default: messages joined with `". "`.
    */
   children?: ReactNode | ((entries: Array<[string, string]>) => ReactNode);
+  motion?: Prettify<FormPartMotion>;
 };
 export type FormAnnounceProps = HTMLAttributes<HTMLDivElement> & {
   message?: string | null;
+  motion?: Prettify<FormPartMotion>;
 };
 
 export type FormFieldProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
   rules?: FormFieldRules;
   classNames?: Prettify<Pick<FormClassNames, "field">>;
+  motion?: Prettify<FormPartMotion>;
 };
 
 export type UseFormRootStateProps = FormProps;

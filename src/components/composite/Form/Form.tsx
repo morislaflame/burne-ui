@@ -1,12 +1,13 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo, type FormEventHandler, type ForwardedRef, type ReactNode } from "react";
 
 import { FormBindingContext } from "./formContext";
 
 import { formRootDescribedBy, formRootLabelledBy } from "./formA11y";
-import { FormClassNamesProvider, FormShellProvider } from "./formContext";
+import { resolveFormMotionDefaults, useFormSlotMotion } from "./formAnimations";
+import { FormClassNamesProvider, FormMotionProvider, FormShellProvider } from "./formContext";
 import { FormActions, FormAnnounce, FormDescription, FormErrorSummary, FormField, FormHeader, FormSection, FormTitle } from "./formParts";
 import { formRootClass, resolveFormSize } from "./formStyles";
-import type { FormProps } from "./formTypes";
+import type { FormProps, FormSize } from "./formTypes";
 import { useFormRootState } from "./useFormRootState";
 
 export type {
@@ -21,6 +22,8 @@ export type {
   FormFieldProps,
   FormClassNames,
   FormSize,
+  FormMotion,
+  FormPartMotion,
 } from "./formTypes";
 
 export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot(
@@ -40,6 +43,11 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     onSubmit,
     onSubmitError,
     errorSummary,
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
     ...rest
   },
   ref,
@@ -64,28 +72,34 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
     onSubmitError,
     classNames,
   });
+  const motionDefaults = useMemo(() => resolveFormMotionDefaults(), []);
 
   return (
     <FormClassNamesProvider classNames={classNames}>
       <FormBindingContext.Provider value={bindingValue}>
         <FormShellProvider shellIds={shellIds} size={resolvedSize}>
-          <form
-            ref={ref}
-            noValidate
-            onSubmit={handleSubmit}
-            aria-labelledby={formRootLabelledBy(shellIds.titleId)}
-            aria-describedby={formRootDescribedBy({
-              descriptionId: shellIds.descriptionId,
-              errorSummaryId: shellIds.errorSummaryId,
-              hasErrors,
-            })}
-            className={formRootClass(resolvedSize, className, classNames)}
-            {...rest}
-          >
-            <FormAnnounce message={announce} />
-            <FormErrorSummary>{errorSummary}</FormErrorSummary>
-            {children}
-          </form>
+          <FormMotionProvider motion={motion} defaults={motionDefaults}>
+            <FormRootSurface
+              forwardedRef={ref}
+              handleSubmit={handleSubmit}
+              titleId={shellIds.titleId}
+              descriptionId={shellIds.descriptionId}
+              errorSummaryId={shellIds.errorSummaryId}
+              hasErrors={hasErrors}
+              resolvedSize={resolvedSize}
+              className={className}
+              classNames={classNames}
+              announce={announce}
+              errorSummary={errorSummary}
+              onPointerOver={onPointerOver}
+              onPointerOut={onPointerOut}
+              onPointerDown={onPointerDown}
+              onPointerUp={onPointerUp}
+              rest={rest}
+            >
+              {children}
+            </FormRootSurface>
+          </FormMotionProvider>
         </FormShellProvider>
       </FormBindingContext.Provider>
     </FormClassNamesProvider>
@@ -93,6 +107,96 @@ export const FormRoot = forwardRef<HTMLFormElement, FormProps>(function FormRoot
 });
 
 FormRoot.displayName = "Form";
+
+function FormRootSurface({
+  forwardedRef,
+  handleSubmit,
+  titleId,
+  descriptionId,
+  errorSummaryId,
+  hasErrors,
+  resolvedSize,
+  className,
+  classNames,
+  announce,
+  errorSummary,
+  onPointerOver,
+  onPointerOut,
+  onPointerDown,
+  onPointerUp,
+  rest,
+  children,
+}: {
+  forwardedRef: ForwardedRef<HTMLFormElement>;
+  handleSubmit: FormEventHandler<HTMLFormElement>;
+  titleId: string;
+  descriptionId: string;
+  errorSummaryId: string;
+  hasErrors: boolean;
+  resolvedSize: FormSize;
+  className: string;
+  classNames: FormProps["classNames"];
+  announce: string | null;
+  errorSummary: FormProps["errorSummary"];
+  onPointerOver: FormProps["onPointerOver"];
+  onPointerOut: FormProps["onPointerOut"];
+  onPointerDown: FormProps["onPointerDown"];
+  onPointerUp: FormProps["onPointerUp"];
+  rest: Omit<
+    FormProps,
+    | "children"
+    | "className"
+    | "classNames"
+    | "defaultValues"
+    | "values"
+    | "onValuesChange"
+    | "rules"
+    | "resolver"
+    | "validateMode"
+    | "readOnly"
+    | "size"
+    | "disabled"
+    | "onSubmit"
+    | "onSubmitError"
+    | "errorSummary"
+    | "motion"
+    | "onPointerOver"
+    | "onPointerOut"
+    | "onPointerDown"
+    | "onPointerUp"
+  >;
+  children: ReactNode;
+}) {
+  const part = useFormSlotMotion<HTMLFormElement>("root", {
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    changeIdentity: hasErrors,
+  });
+
+  return (
+    <form
+      ref={part.setRef}
+      noValidate
+      onSubmit={handleSubmit}
+      aria-labelledby={formRootLabelledBy(titleId)}
+      aria-describedby={formRootDescribedBy({
+        descriptionId,
+        errorSummaryId,
+        hasErrors,
+      })}
+      className={formRootClass(resolvedSize, className, classNames)}
+      {...part.pointerHandlers}
+      {...rest}
+    >
+      <FormAnnounce message={announce} />
+      <FormErrorSummary>{errorSummary}</FormErrorSummary>
+      {children}
+    </form>
+  );
+}
 
 export {
   FormSection,

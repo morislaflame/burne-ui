@@ -1,6 +1,6 @@
 # Separator
 
-Визуальный разделитель горизонтальный или вертикальный. Leaf-компонент на border-токенах темы — без анимаций и без `classNames`.
+Визуальный разделитель горизонтальный или вертикальный. Leaf-компонент на border-токенах темы. Публичный slot motion — opt-in (пустые defaults).
 
 ## Импорт
 
@@ -41,7 +41,18 @@ Compound API нет.
 
 ## Анимации
 
-`Separator` не использует GSAP и не имеет motion pipeline.
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root` | `enter` / hover / press (opt-in) | empty |
+
+Свой scope на корне.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
+Без пропа `motion` GSAP не играет — opt-in slot motion с пустыми defaults.
 
 ### Сводка
 

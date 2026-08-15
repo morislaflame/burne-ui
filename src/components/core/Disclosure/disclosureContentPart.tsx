@@ -1,7 +1,6 @@
 import { forwardRef, useCallback } from "react";
 
-import { useCollapsibleHeight, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
-
+import { useDisclosureContentMotion } from "./disclosureAnimations";
 import { useDisclosureClassNames, useDisclosureContext } from "./disclosureContext";
 import { DISCLOSURE_CONTENT_SHELL_CLASS, DISCLOSURE_GLOSS_PANEL_CLASS, disclosureContentPanelClass, disclosureContentWrapClass, disclosureGlossContentClass } from "./disclosureStyles";
 import type { DisclosureContentProps } from "./disclosureTypes";
@@ -9,7 +8,7 @@ import type { DisclosureContentProps } from "./disclosureTypes";
 import { cn } from "@/utils/cn";
 
 export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentProps>(
-  function DisclosureContent({ children, className, ...rest }, ref) {
+  function DisclosureContent({ children, className, motion, ...rest }, ref) {
     const slotClassNames = useDisclosureClassNames();
     const {
       open,
@@ -22,9 +21,13 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
       skipContentAnimRef,
     } = useDisclosureContext();
 
-    useCollapsibleHeight(open, shellRef, innerRef, { skipAnimRef: skipContentAnimRef });
-
-    const bindShellRef = useCollapsibleShellRef(shellRef, open);
+    const { setShellRef: bindShellRef, setInnerRef } = useDisclosureContentMotion({
+      open,
+      motion,
+      skipContentAnimRef,
+      shellRef,
+      innerRef,
+    });
 
     const setShellRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -48,7 +51,7 @@ export const DisclosureContent = forwardRef<HTMLDivElement, DisclosureContentPro
         )}
       >
         <div
-          ref={innerRef}
+          ref={setInnerRef}
           className={cn(
             contentWrapCls,
             slotClassNames.contentWrap,

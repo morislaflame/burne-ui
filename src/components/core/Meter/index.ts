@@ -18,6 +18,11 @@ export type {
 } from "./Meter";
 
 export type {
+  MeterMotion,
+  MeterPartMotion,
+} from "./meterTypes";
+
+export type {
   MeterProps,
   MeterHeaderProps,
   MeterValueProps,

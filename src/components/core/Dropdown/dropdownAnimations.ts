@@ -4,11 +4,16 @@ import {
   typeaheadMatchIndex,
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
-import { focusElement, focusKeyboard } from "@/components/core/utils/focusElement";
+import { focusKeyboard, focusOnOpen } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
-import { motionTooltip } from "@/components/core/utils/motionConfig";
-import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { isContainedPortal } from "@/components/core/utils/portalContainer";
+import type { PopoverMotion } from "@/components/core/Popover";
+import {
+  killMotionTargets,
+  killStoredMotion,
+  mergeMotionSlotMaps,
+} from "@/components/core/utils/slotMotion";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import {
@@ -17,10 +22,42 @@ import {
   getFocusableDropdownMenuItems,
 } from "./dropdownA11y";
 import type {
+  DropdownMotion,
+  DropdownPopoverMotion,
   UseDropdownPopoverMenuProps,
   UseDropdownSubContentPortalProps,
   UseDropdownSubmenuKeyboardProps,
 } from "./dropdownTypes";
+
+/**
+ * Slot motion for Dropdown — look here first.
+ *
+ * Main menu is an embedder: `content` / `title` / `description` / `body` are
+ * forwarded to Popover (`resolveDropdownPopoverMotion`). Host play lives in
+ * `popoverAnimations.ts`. Trigger squeeze stays `runOpenAfterSqueeze`.
+ *
+ * Submenu is a portal host: `subContent` (`useDropdownSubContentPortal` +
+ * `DROPDOWN_SUB_MOTION_DEFAULTS` on `Dropdown.SubContent`).
+ */
+export const DROPDOWN_SUB_MOTION_DEFAULTS: DropdownMotion = {
+  subContent: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
+};
+
+export function resolveDropdownPopoverMotion({
+  rootMotion,
+  popoverMotion,
+}: {
+  rootMotion?: DropdownMotion;
+  popoverMotion?: DropdownPopoverMotion;
+}): PopoverMotion | undefined {
+  const fromRoot: DropdownPopoverMotion = {};
+  if (rootMotion?.content) fromRoot.content = rootMotion.content;
+  if (rootMotion?.title) fromRoot.title = rootMotion.title;
+  if (rootMotion?.description) fromRoot.description = rootMotion.description;
+  if (rootMotion?.body) fromRoot.body = rootMotion.body;
+  const pickedRoot = Object.keys(fromRoot).length ? fromRoot : undefined;
+  return mergeMotionSlotMaps(pickedRoot, popoverMotion) as PopoverMotion | undefined;
+}
 
 function handleDropdownTypeaheadKey(
   e: KeyboardEvent,
@@ -41,6 +78,7 @@ export function useDropdownPopoverMenu({
   open,
   setOpen,
   contentRef,
+  triggerRef,
 }: UseDropdownPopoverMenuProps) {
   const typeaheadRef = useRef(createTypeaheadBufferState());
 
@@ -49,8 +87,8 @@ export function useDropdownPopoverMenu({
     const panel = contentRef.current;
     if (!panel) return;
     const items = getFocusableDropdownMenuItems(panel);
-    focusElement(items[0]);
-  }, [contentRef, open]);
+    focusOnOpen(items[0], { from: triggerRef.current });
+  }, [contentRef, open, triggerRef]);
 
   useEffect(() => {
     if (!open) return;
@@ -118,7 +156,7 @@ export function useDropdownSubmenuKeyboard({
     // Focus first item only when opened from the focused trigger (keyboard).
     if (document.activeElement !== trigger) return;
     const items = getFocusableDropdownMenuItems(panel);
-    focusElement(items[0]);
+    focusOnOpen(items[0], { from: trigger });
   }, [panelRef, portalMounted, subOpen, triggerRef]);
 
   useEffect(() => {
@@ -177,6 +215,7 @@ export function useDropdownSubContentPortal({
   subPanelRootsRef,
   popoverVariant,
   portalContainer,
+  motionScope,
 }: UseDropdownSubContentPortalProps) {
   const isGlossPanel = popoverVariant === "gloss";
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -251,10 +290,9 @@ export function useDropdownSubContentPortal({
     const el = panelRef.current;
     if (!el) return undefined;
 
-    const reduced = isReducedModalMotion();
     let cancelled = false;
 
-    if (reduced) {
+    if (isReducedModalMotion()) {
       killMotion(el);
       if (subOpen) {
         applyReducedPortalMotion(el);
@@ -266,32 +304,35 @@ export function useDropdownSubContentPortal({
       };
     }
 
-    killMotion(el);
-
-    if (subOpen) {
-      animatePortalOpen({
-        surface: el,
-        vars: { ...motionTooltip(), overwrite: "auto" },
-      });
+    if (!motionScope) {
+      if (!subOpen) setPortalMounted(false);
       return () => {
         cancelled = true;
-        killMotion(el);
       };
     }
 
-    const anim = animatePortalClose({
-      surface: el,
-      vars: { ...motionTooltip(), overwrite: "auto" },
-      onComplete: () => {
-        if (!cancelled) setPortalMounted(false);
-      },
+    if (subOpen) {
+      motionScope.play("subContent", "enter", { el });
+      return () => {
+        cancelled = true;
+        killStoredMotion(el);
+      };
+    }
+
+    const leaveRun = motionScope.play("subContent", "leave", {
+      el,
+      waitForComplete: true,
+    });
+    void leaveRun.finished.then(() => {
+      if (!cancelled) setPortalMounted(false);
     });
     return () => {
       cancelled = true;
-      killMotion(el);
-      anim.kill();
+      leaveRun.animation?.kill();
+      killMotionTargets(motionScope.getTargets());
+      killStoredMotion(el);
     };
-  }, [subOpen, portalMounted]);
+  }, [subOpen, portalMounted, motionScope]);
 
   return {
     isGlossPanel,

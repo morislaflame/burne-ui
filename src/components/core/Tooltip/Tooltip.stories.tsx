@@ -8,6 +8,7 @@ import { IoHelpCircleOutline } from "react-icons/io5";
 import { Button } from "@/components/core/Button";
 
 import { Tooltip, type TooltipVariant } from ".";
+import { TooltipMotionDemo } from "../../../../playground/showcase/demos/tooltip/TooltipMotion.demo";
 
 const VARIANTS: TooltipVariant[] = [
   "default",
@@ -538,4 +539,9 @@ export const CompoundCustomIcon: Story = {
       </Tooltip.Content>
     </Tooltip>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <TooltipMotionDemo />,
 };

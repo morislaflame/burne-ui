@@ -64,6 +64,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 | `iconOff` / `iconOn` | — | Иконки в thumb для off/on. **Исключение словаря иконок:** у Checkbox / SelectionIndicator одна иконка отмеченного состояния — `icon`; у Switch две независимые иконки состояний — `iconOn` / `iconOff` (+ `Switch.Icon when`). |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | Карта слотов. Хост — `Switch.Track` |
 
 ### `SwitchClassNames`
 
@@ -93,7 +94,7 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 
 ## Анимации
 
-`switchAnimations.ts` — track bundle + text squeeze.
+`switchAnimations.ts` → slot motion (`SWITCH_MOTION_DEFAULTS`). Root передаёт карту `motion`; хост — `Switch.Track` (defaults + `params.getTravelPx`). Squeeze `thumbShell` и opacity disabled track — внутренний GSAP, не публичные фазы.
 
 **DOM:**
 
@@ -101,59 +102,62 @@ Props control (`checked`, `iconOff`, `color`, `gloss`, …) можно пере�
 <label root>
   Switch.Control (label htmlFor)
     <input type=checkbox hidden />
-    <span track ref=trackRef>
-      <span trackFill ref=trackFillRef>     ← opacity fade
-      <span thumb ref=thumbRef>             ← translateX slide
-        SelectionThumb (thumbShell)
-        Switch.Icon off/on refs
+    <span track>                         ← хост play check/uncheck
+      <span fill>                        ← слот `fill`
+      <span thumb>                       ← слот `thumb` (translateX)
+        SelectionThumb (thumbShell)      ← press squeeze, не слот
+        Switch.Icon off/on               ← слоты `iconOff` / `iconOn`
 ```
 
-### 1. Thumb slide
+### Slot motion
 
-`useSwitchTrackAnimations` → `syncThumbPosition`:
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `thumb` | `check` / `uncheck` | `switchThumb` (`params.getTravelPx`) |
+| `fill` | `check` / `uncheck` | `switchFill` |
+| `iconOn` | `check` / `uncheck` | `switchIconOn` |
+| `iconOff` | `check` / `uncheck` | `switchIconOff` |
 
-- `travelPx = measureSwitchTravel(track, thumbShell)` (+ ResizeObserver)
-- checked: `gsap.to(thumb, { x: travelPx, ...motionSwitchThumb(), force3D: false })`
-- unchecked: `x: 0`
-- First layout / reduced motion: instant `translate(x, 0)`
+Travel thumb — `measureSwitchTravel(track, thumbShell)` (+ ResizeObserver). Factory на `thumb` читает `ctx.params.getTravelPx()`. `false` на фазе **не** ставит состояние — хост сам делает instant (`applySwitchThumbInstant` / fill / icon). First layout / reduced / `enableSwitchThumb: false` — тоже instant.
 
-`motionSwitchThumb()` — `switchThumbDuration`, `switchThumbEase`, `enableSwitchThumb` в `configureMotion`.
+**Где в коде:** типы — `switchTypes.ts`; scope — `switchContext.tsx`; defaults + host play — `switchAnimations.ts`; Track-provider — `switchParts.tsx`; карта на корне — `Switch.tsx`.
 
-### 2. Track fill opacity
+```tsx
+<Switch motion={{ thumb: { check: false, uncheck: false } }} />
 
-При `checked` toggle:
+<Switch
+  motion={{
+    thumb: {
+      check: (ctx) => {
+        const travel =
+          typeof ctx.params.getTravelPx === "function" ? Number(ctx.params.getTravelPx()) || 0 : 0;
+        return gsap.to(ctx.el, { x: travel, duration: 0.45, ease: "back.out(1.6)", force3D: false });
+      },
+      uncheck: (ctx) => gsap.to(ctx.el, { x: 0, duration: 0.22, force3D: false }),
+    },
+  }}
+/>
+```
 
-- on: `fromTo trackFill { autoAlpha:0 } → { autoAlpha:1 }`
-- off: `to { autoAlpha:0 }`
-- `motionInteractive()`
-
-### 3. Icon crossfade
-
-`iconOffRef` / `iconOnRef`:
-
-- checked: off fade out + scale 0.88; on fade in from 0.88
-- unchecked: обратно
-- `motionInteractive()`
-
-### 4. Thumb press squeeze
+### Thumb press squeeze
 
 `squeezeToken` инкремент на `pointerdown` input → `animateInteractivePressSqueeze(thumbShell)`.
 
-### 5. Label text squeeze
+### Label text squeeze
 
 `useSwitchTextMotion` → `usePressableElementTextMotion` на root label (как Checkbox).
 
-### 6. Disabled
+### Disabled
 
 Track opacity `0.48` instant на `trackRef`.
 
 ### Сводка
 
-| Анимация | `configureMotion` |
-|----------|-------------------|
-| Thumb slide | `switchThumbDuration`, `switchThumbEase`, `enableSwitchThumb` |
-| Track fill / icons | `interactiveDuration`, `interactiveEase`, `enableSwitchThumb` |
-| Press squeeze | `pressSqueezeScale`, `enablePressSqueeze` |
+| Анимация | `configureMotion` | Проп |
+|----------|-------------------|------|
+| Thumb slide | `switchThumbDuration`, `switchThumbEase`, `enableSwitchThumb` | `motion.thumb` |
+| Track fill / icons | `interactiveDuration`, `interactiveEase`, `enableSwitchThumb` | `motion.fill` / `iconOn` / `iconOff` |
+| Press squeeze | `pressSqueezeScale`, `enablePressSqueeze` | внутренний `thumbShell` |
 
 ## Стилизация и кастомизация
 
@@ -236,19 +240,20 @@ Track opacity `0.48` instant на `trackRef`.
 
 ```
 Switch/
-├── Switch.tsx
+├── Switch.tsx               # карта motion через Provider (Root без defaults)
 ├── index.ts
-├── switchTypes.ts
+├── switchTypes.ts           # SwitchMotion / SwitchCheckMotion
 ├── switchStyles.ts
-├── switchGeometry.ts          # travel measure, SWITCH_LAYOUT
-├── switchAnimations.ts        # track + text motion
-├── switchParts.tsx
+├── switchGeometry.ts        # travel measure, SWITCH_LAYOUT
+├── switchAnimations.ts      # SWITCH_MOTION_DEFAULTS, useSwitchTrackAnimations
+├── switchParts.tsx          # Track-хост + useMotionPart
 ├── useSwitchRootState.ts
 ├── switchAPI.ts
 ├── switchA11y.ts
+├── switchContext.tsx        # createMotionScope("Switch")
 └── Switch.stories.tsx
 ```
 
 ## Storybook
 
-`Core Components/Switch` — simple/compound, gloss, icons, color, `labelPosition`, `classNames`.
+`Core Components/Switch` — simple/compound, gloss, icons, color, `labelPosition`, `classNames`, slot motion gallery.

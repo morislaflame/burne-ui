@@ -53,6 +53,7 @@ Simple API нет — всегда compound.
 | `variant` | `default` | `default` \| `outline` \| `secondary` \| `gloss` |
 | `size` | `base` | `small` \| `base` \| `mid` \| `large` |
 | `classNames` | — | Слоты кастомизации (см. ниже) |
+| `motion` | — | Карта `overlay` / `panel` / `title` / … (`enter` / `leave`). Root без DOM — как `classNames` |
 | `children` | — | `Trigger` + `Panel` |
 
 ### `AlertDialogClassNames`
@@ -127,57 +128,49 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 
 ## Анимации
 
-`alertDialogAnimations.ts` → `useAlertDialogModalMotion` (`useModalMotion`, без backdrop-dismiss).
+Портал + нативный `<dialog role="alertdialog">`. Хост — `AlertDialog.Panel` (`useAlertDialogModalMotion` → `useModalMotion` + slot motion). Backdrop не закрывает (APG). Escape — `closeOnEscape` на `<dialog cancel>`.
 
-**DOM:**
+### Slot motion
 
-```
-<Trigger>                              ← runOpenAfterSqueeze
-portal → document.body
-  <dialog ref=dialogRef role=alertdialog>
-    <div ref=overlayRef />             ← fade overlay
-    <div ref=panelRef tabIndex=-1>     ← scale 0.97→1
-      <Header grid> Indicator Title Close
-      <Body scroll>
-      <Footer>
-```
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
+| `panel` | `enter` / `leave` | `modalPanelEnter` / `modalPanelLeave` |
+| `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
+| `close`, `header`, `footer`, `content`, `indicator` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
 
-### 1. Open pipeline
+`leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется. Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0`) — иначе после твина `dialog.close()` выглядит как рывок.
 
-1. `open=true` → `setMounted(true)`
-2. `dialog.showModal()`
-3. `animateModalOpen` — overlay fade + panel scale (`motionInteractive()`)
-4. `focusPanelOnOpen` — первый focusable / panel; ring после keyboard open
-5. `document.body.overflow = hidden`
+`leave: false` на хосте (`overlay` / `panel`) — хост сразу ставит закрытое состояние. `enter: false` — сразу открытое.
 
-### 2. Close pipeline
+```tsx
+<AlertDialog motion={{ panel: { enter: false, leave: false } }}>…</AlertDialog>
 
-1. `animateModalClose` — fade + scale out
-2. `setMounted(false)` → unmount portal
-
-**Reduced motion:** `isReducedModalMotion()` → `applyReducedModalMotion`.
-
-### 3. Trigger squeeze
-
-`AlertDialog.Trigger` → `runOpenAfterSqueeze` (как `Dialog` / `Popover`).
-
-### 4. Gloss panel
-
-`variant="gloss"` → `createGlossInteractiveRefCallback` на gloss shell.
-
-#### Кастомизация
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  modalDuration: 280,
-  enableModalMotion: true,
-  pressSqueezeScale: [1, 0.98, 1],
-});
+<AlertDialog
+  motion={{
+    panel: {
+      enter: (ctx) =>
+        gsap.fromTo(
+          ctx.el,
+          { y: 28, scale: 0.92, autoAlpha: 0 },
+          { y: 0, scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(1.4)" },
+        ),
+      leave: (ctx) =>
+        gsap.to(ctx.el, {
+          y: 24,
+          scale: 0.94,
+          autoAlpha: 0,
+          duration: 0.22,
+          ease: "power2.in",
+        }),
+    },
+  }}
+>
 ```
 
-Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
+**Где в коде:** типы — `alertDialogTypes.ts`; scope — `alertDialogContext.tsx`; defaults + host play — `alertDialogAnimations.ts` (`ALERT_DIALOG_MOTION_DEFAULTS`, `useAlertDialogModalMotion`); слоты и Panel-provider — `alertDialogParts.tsx`; карта `motion` на корне — `AlertDialog.tsx`.
+
+Trigger squeeze остаётся `runOpenAfterSqueeze` (не слот).
 
 ### Чего нет
 
@@ -186,12 +179,12 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 
 ### Сводка: что настраивается где
 
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Modal open/close | `useAlertDialogModalMotion` | `modalDuration`, `interactiveEase`, `enableModalMotion` | `open` |
+| Анимация | Слот / рецепт | Ключи `configureMotion` | Локальный prop |
+|----------|---------------|---------------------------|----------------|
+| Overlay fade | `overlay` → `modalOverlay*` | `modalDuration`, `enableModalMotion` | `motion` на Root / Panel |
+| Panel scale | `panel` → `modalPanel*` | `modalDuration`, `enableModalMotion` | `motion` на Root / Panel |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | `asChild` |
 | Gloss ref | gloss utils | gloss tokens | `variant="gloss"` |
-| Body scroll lock | useEffect | — | `open` |
 
 ## Токены и CSS
 
@@ -317,14 +310,14 @@ Portal motion: `modalSurfaceMotion.ts` (`animateModalOpen/Close`).
 
 ```
 AlertDialog/
-├── AlertDialog.tsx
+├── AlertDialog.tsx              # карта motion в context (Root без DOM)
 ├── index.ts
-├── alertDialogTypes.ts
+├── alertDialogTypes.ts          # AlertDialogMotion / Lifecycle / Part
 ├── alertDialogStyles.ts
 ├── alertDialogAPI.ts
-├── alertDialogAnimations.ts
-├── alertDialogContext.tsx
-├── alertDialogParts.tsx
+├── alertDialogAnimations.ts     # ALERT_DIALOG_MOTION_DEFAULTS + host play
+├── alertDialogContext.tsx       # createMotionScope (без defaults/play)
+├── alertDialogParts.tsx         # useMotionPart + Panel nested provider
 ├── useAlertDialogRootState.ts
 ├── useAlertDialog.ts
 └── AlertDialog.stories.tsx

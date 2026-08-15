@@ -3,7 +3,8 @@ import { forwardRef } from "react";
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
 
-import { ExpandableClassNamesProvider, ExpandableProvider } from "./expandableContext";
+import { ExpandableClassNamesProvider, ExpandableMotionProvider, ExpandableProvider } from "./expandableContext";
+import { EXPANDABLE_MOTION_DEFAULTS } from "./expandableAnimations";
 import { EXPANDABLE_GLOSS_CONTENT_CLASS, ExpandableChevron, ExpandableContent, ExpandableDescription, ExpandableIcon, ExpandableMessage, ExpandablePanel, ExpandableSimpleBody, ExpandableTitle, ExpandableTrigger } from "./expandableParts";
 import { expandableRootClass } from "./expandableStyles";
 import type { ExpandableProps } from "./expandableTypes";
@@ -24,6 +25,9 @@ export type {
   ExpandableSize,
   ExpandableVariant,
   ExpandableClassNames,
+  ExpandableMotion,
+  ExpandableLifecycleMotion,
+  ExpandableTriggerLiftMotion,
 } from "./expandableTypes";
 
 export { useExpandableContext } from "./expandableContext";
@@ -44,6 +48,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
       disabled = false,
       className,
       classNames,
+      motion,
       ...rest
     },
     ref,
@@ -75,6 +80,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
     return (
       <ExpandableProvider value={state.contextValue}>
         <ExpandableClassNamesProvider classNames={classNames}>
+          <ExpandableMotionProvider motion={motion} defaults={EXPANDABLE_MOTION_DEFAULTS}>
           <div
             ref={setRootRef}
             className={expandableRootClass({
@@ -97,6 +103,7 @@ export const ExpandableRoot = forwardRef<HTMLDivElement, ExpandableProps>(
               body
             )}
           </div>
+          </ExpandableMotionProvider>
         </ExpandableClassNamesProvider>
       </ExpandableProvider>
     );

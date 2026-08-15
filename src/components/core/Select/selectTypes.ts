@@ -1,10 +1,11 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, RefObject, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
 import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
 export type SelectOption = {
@@ -36,6 +37,22 @@ export type SelectClassNames = {
   error?: string;
 };
 
+export type SelectPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type SelectMotion = {
+  triggerGroup?: SelectPartMotion;
+  value?: SelectPartMotion;
+  trigger?: SelectPartMotion;
+  triggerIcon?: SelectPartMotion;
+};
+
 export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
@@ -58,6 +75,11 @@ export type SelectProps = HTMLAttributes<HTMLDivElement> & {
   placeholder?: string;
   menuMaxHeight?: string;
   classNames?: Prettify<SelectClassNames>;
+  /**
+   * Per-slot motion (`triggerGroup`, `value`, `trigger`, `triggerIcon`).
+   * Menu enter lives on Popover — not duplicated here.
+   */
+  motion?: Prettify<SelectMotion>;
 };
 
 export type SelectSimpleProps = SelectProps & {
@@ -105,13 +127,27 @@ export type SelectClassNamesProviderProps = {
 
 export type SelectTriggerGroupProps = HTMLAttributes<HTMLDivElement> & {
   groupSegment?: ButtonGroupSegment;
+  /** Part motion for the `triggerGroup` host slot. Root `motion.triggerGroup` still applies. */
+  motion?: Prettify<SelectPartMotion>;
 };
 
 export type SelectValueProps = HTMLAttributes<HTMLButtonElement> & {
   placeholder?: string;
+  motion?: Prettify<SelectPartMotion>;
 };
 
-export type SelectTriggerProps = HTMLAttributes<HTMLButtonElement>;
+export type SelectTriggerProps = HTMLAttributes<HTMLButtonElement> & {
+  motion?: Prettify<SelectPartMotion>;
+};
+
+export type UseSelectShellAnimationsProps = {
+  shellRef: RefObject<HTMLDivElement | null>;
+  disabled: boolean;
+  variant: InputVariant;
+  groupSegment: unknown;
+  motion?: SelectPartMotion;
+  pointerInsideRef: RefObject<boolean>;
+};
 
 export type SelectPopoverProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;

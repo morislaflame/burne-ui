@@ -72,7 +72,7 @@ export function FormShowcase() {
             description="Header wraps Title + Description; Section groups fields; Actions for submit/cancel."
           />
           <ShowcaseDoc.ApiRow
-            api="size"
+            api="compound"
             description="small | base | mid | large — Form chrome only. Set size on Input / Button explicitly."
           />
           <ShowcaseDoc.ApiRow

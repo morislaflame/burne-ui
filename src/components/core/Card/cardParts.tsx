@@ -1,11 +1,12 @@
 import { forwardRef, type Ref } from "react";
 
 import { Text } from "@/components/core/Text";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
 
 import { cardTitleHeadingTag } from "./cardA11y";
 
-import { useCardClassNames, useCardSize } from "./cardContext";
+import { useCardClassNames, useCardSize, useOptionalCardMotionScope } from "./cardContext";
 import {
   CARD_BUTTON_SHELL_CLASS,
   CARD_DESCRIPTION_CLASS,
@@ -29,49 +30,109 @@ import type {
   CardTitleProps,
 } from "./cardTypes";
 
-export function CardHeader({ className = "", ...rest }: CardHeaderProps) {
+export function CardHeader({
+  className = "",
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...rest
+}: CardHeaderProps) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalCardMotionScope(),
+    slot: "header",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
   return (
     <div
+      ref={setRef}
       className={cardHeaderClass(size, cn(slotClassNames.header, className))}
       {...rest}
+      {...pointerHandlers}
     />
   );
 }
 
-export function CardHeadingBlock({ className = "", ...rest }: CardHeadingBlockProps) {
+export function CardHeadingBlock({
+  className = "",
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...rest
+}: CardHeadingBlockProps) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalCardMotionScope(),
+    slot: "headingBlock",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
   return (
     <div
+      ref={setRef}
       className={cardHeadingBlockClass(
         size,
         cn(slotClassNames.headingBlock, className),
       )}
       {...rest}
+      {...pointerHandlers}
     />
   );
 }
 
-export function CardBody({ className = "", ...rest }: CardBodyProps) {
+export function CardBody({
+  className = "",
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...rest
+}: CardBodyProps) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalCardMotionScope(),
+    slot: "body",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
   return (
     <div
+      ref={setRef}
       className={cardBodyClass(size, cn(slotClassNames.body, className))}
       {...rest}
+      {...pointerHandlers}
     />
   );
 }
 
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
-  function CardTitle({ className = "", ...rest }, ref) {
+  function CardTitle(
+    { className = "", motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
     const slotClassNames = useCardClassNames();
     const size = useCardSize();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLHeadingElement>({
+      scope: useOptionalCardMotionScope(),
+      slot: "title",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
     return (
       <Text
-        ref={ref as Ref<HTMLElement>}
+        ref={setRef as Ref<HTMLElement>}
         as={cardTitleHeadingTag()}
         variant={panelSizeLayout(size).titleVariant}
         className={cn(
@@ -81,18 +142,31 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
           className,
         )}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
 );
 
 export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
-  function CardDescription({ className = "", ...rest }, ref) {
+  function CardDescription(
+    { className = "", motion, onPointerOver, onPointerOut, ...rest },
+    ref,
+  ) {
     const slotClassNames = useCardClassNames();
     const size = useCardSize();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLParagraphElement>({
+      scope: useOptionalCardMotionScope(),
+      slot: "description",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
     return (
       <Text
-        ref={ref as Ref<HTMLElement>}
+        ref={setRef as Ref<HTMLElement>}
         as="p"
         variant={panelSizeLayout(size).descVariant}
         className={cn(
@@ -101,18 +175,35 @@ export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionP
           className,
         )}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
 );
 
-export function CardFooter({ className = "", ...rest }: CardFooterProps) {
+export function CardFooter({
+  className = "",
+  motion,
+  onPointerOver,
+  onPointerOut,
+  ...rest
+}: CardFooterProps) {
   const slotClassNames = useCardClassNames();
   const size = useCardSize();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalCardMotionScope(),
+    slot: "footer",
+    motion,
+    pointerPhases: true,
+    onPointerOver,
+    onPointerOut,
+  });
   return (
     <div
+      ref={setRef}
       className={cardFooterClass(size, cn(slotClassNames.footer, className))}
       {...rest}
+      {...pointerHandlers}
     />
   );
 }
@@ -129,6 +220,7 @@ export function CardRootShell({
   onPointerOver,
   onPointerOut,
   onPointerDown,
+  onPointerUp,
   onClick,
   onKeyDown,
 }: CardRootShellProps) {
@@ -155,6 +247,7 @@ export function CardRootShell({
           onPointerOver={onPointerOver}
           onPointerOut={onPointerOut}
           onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
           onClick={onClick}
           onKeyDown={onKeyDown}
         >
@@ -173,6 +266,7 @@ export function CardRootShell({
           onPointerOver={onPointerOver}
           onPointerOut={onPointerOut}
           onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
           onClick={onClick}
           onKeyDown={onKeyDown}
         >
@@ -204,6 +298,7 @@ export function CardRootShell({
         onPointerOver={onPointerOver}
         onPointerOut={onPointerOut}
         onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
         onClick={onClick}
         onKeyDown={onKeyDown}
       >
@@ -229,6 +324,7 @@ export function CardRootShell({
         onPointerOver={onPointerOver}
         onPointerOut={onPointerOut}
         onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
         onClick={onClick}
         onKeyDown={onKeyDown}
       >

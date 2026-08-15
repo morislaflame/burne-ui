@@ -7,6 +7,7 @@ import type {
 } from "react";
 import type { Prettify } from "@/utils/prettify";
 
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 import type { IconPosition } from "@/components/core/utils/iconPosition";
 
@@ -23,6 +24,19 @@ export type LinkClassNames = {
   icon?: string;
 };
 
+export type LinkPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type LinkMotion = {
+  root?: LinkPartMotion;
+  text?: LinkPartMotion;
+  icon?: LinkPartMotion;
+};
+
 type LinkSharedProps = Omit<
   AnchorHTMLAttributes<HTMLAnchorElement>,
   "children" | "href"
@@ -36,6 +50,8 @@ type LinkSharedProps = Omit<
   showDefaultIcon?: boolean;
   defaultIconPosition?: LinkIconPos;
   classNames?: Prettify<LinkClassNames>;
+  /** Per-slot motion (`root`, `text`, `icon`). No hover shadow. */
+  motion?: Prettify<LinkMotion>;
 };
 
 export type LinkProps =
@@ -106,7 +122,12 @@ export type LinkAnchorBodyProps = LinkBodyContentProps & {
   setAnchorRef: (node: HTMLAnchorElement | null) => void;
   handlePointerEnter: (event: PointerEvent<HTMLAnchorElement>) => void;
   handlePointerLeave: (event: PointerEvent<HTMLAnchorElement>) => void;
-  handlePointerDown: (event: PointerEvent<HTMLAnchorElement>) => void;
+  pointerHandlers: {
+    onPointerOver: (event: PointerEvent<HTMLAnchorElement>) => void;
+    onPointerOut: (event: PointerEvent<HTMLAnchorElement>) => void;
+    onPointerDown: (event: PointerEvent<HTMLAnchorElement>) => void;
+    onPointerUp: (event: PointerEvent<HTMLAnchorElement>) => void;
+  };
   handleKeyDown: (event: KeyboardEvent<HTMLAnchorElement>) => void;
 } & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "href" | "className">;
 
@@ -121,6 +142,9 @@ export type UseLinkAnimationsProps = {
   forwardedRef: ForwardedRef<HTMLAnchorElement>;
   onPointerEnter?: (event: PointerEvent<HTMLAnchorElement>) => void;
   onPointerLeave?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerOver?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerOut?: (event: PointerEvent<HTMLAnchorElement>) => void;
   onPointerDown?: (event: PointerEvent<HTMLAnchorElement>) => void;
+  onPointerUp?: (event: PointerEvent<HTMLAnchorElement>) => void;
   onKeyDown?: (event: KeyboardEvent<HTMLAnchorElement>) => void;
 };

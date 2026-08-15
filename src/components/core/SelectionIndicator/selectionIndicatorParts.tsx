@@ -1,35 +1,51 @@
-import { forwardRef } from "react";
+import { forwardRef, useCallback } from "react";
 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
 
 import { SELECTION_INDICATOR_FILL_DISPLAY_NAME, SELECTION_INDICATOR_MARK_DISPLAY_NAME } from "./selectionIndicatorAPI";
 import { selectionIndicatorDecorativeProps } from "./selectionIndicatorA11y";
-import { useSelectionIndicatorContext } from "./selectionIndicatorContext";
+import { useOptionalSelectionIndicatorMotionScope, useSelectionIndicatorContext } from "./selectionIndicatorContext";
 import type { SelectionIndicatorFillProps, SelectionIndicatorMarkProps } from "./selectionIndicatorTypes";
 
-const SELECTION_INDICATOR_FILL_INITIAL_STYLE = {
-  transform: "scale(0)",
-  opacity: 0,
-} as const;
+function initFillNode(node: HTMLSpanElement) {
+  if (node.dataset.motionInit === "1") return;
+  node.dataset.motionInit = "1";
+  node.style.transform = "scale(0)";
+  node.style.opacity = "0";
+}
 
-const SELECTION_INDICATOR_MARK_INITIAL_STYLE = {
-  opacity: 0,
-} as const;
+function initMarkNode(node: HTMLSpanElement) {
+  if (node.dataset.motionInit === "1") return;
+  node.dataset.motionInit = "1";
+  node.style.opacity = "0";
+}
 
 export const SelectionIndicatorFill = forwardRef<HTMLSpanElement, SelectionIndicatorFillProps>(
-  function SelectionIndicatorFill({ className, style, ...rest }, forwardedRef) {
+  function SelectionIndicatorFill({ className, style, motion, ...rest }, forwardedRef) {
     const ctx = useSelectionIndicatorContext();
+    const bindFillRef = useCallback(
+      (node: HTMLSpanElement | null) => {
+        if (node) initFillNode(node);
+        ctx.fillRef.current = node;
+        mergeForwardedRef(forwardedRef, node);
+      },
+      [ctx.fillRef, forwardedRef],
+    );
+    const { setRef } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalSelectionIndicatorMotionScope(),
+      slot: "fill",
+      motion,
+      forwardedRef: bindFillRef,
+    });
 
     return (
       <span
-        ref={(node) => {
-          ctx.fillRef.current = node;
-          mergeForwardedRef(forwardedRef, node);
-        }}
+        ref={setRef}
         {...selectionIndicatorDecorativeProps()}
         className={cn(ctx.fillClassName, className)}
-        style={{ ...SELECTION_INDICATOR_FILL_INITIAL_STYLE, ...style }}
+        style={style}
         {...rest}
       />
     );
@@ -39,21 +55,32 @@ export const SelectionIndicatorFill = forwardRef<HTMLSpanElement, SelectionIndic
 SelectionIndicatorFill.displayName = SELECTION_INDICATOR_FILL_DISPLAY_NAME;
 
 export const SelectionIndicatorMark = forwardRef<HTMLSpanElement, SelectionIndicatorMarkProps>(
-  function SelectionIndicatorMark({ className, children, style, ...rest }, forwardedRef) {
+  function SelectionIndicatorMark({ className, children, style, motion, ...rest }, forwardedRef) {
     const ctx = useSelectionIndicatorContext();
     const content = children ?? ctx.markContent;
+    const bindMarkRef = useCallback(
+      (node: HTMLSpanElement | null) => {
+        if (node) initMarkNode(node);
+        ctx.markRef.current = node;
+        mergeForwardedRef(forwardedRef, node);
+      },
+      [ctx.markRef, forwardedRef],
+    );
+    const { setRef } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalSelectionIndicatorMotionScope(),
+      slot: "mark",
+      motion,
+      forwardedRef: bindMarkRef,
+    });
 
     if (content == null) return null;
 
     return (
       <span
-        ref={(node) => {
-          ctx.markRef.current = node;
-          mergeForwardedRef(forwardedRef, node);
-        }}
+        ref={setRef}
         {...selectionIndicatorDecorativeProps()}
         className={cn(ctx.markClassName, className)}
-        style={{ ...SELECTION_INDICATOR_MARK_INITIAL_STYLE, ...style }}
+        style={style}
         {...rest}
       >
         {content}

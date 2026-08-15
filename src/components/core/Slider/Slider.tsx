@@ -1,7 +1,9 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
+import { useMemo } from "react";
 
-import { SliderClassNamesProvider, SliderFieldProvider } from "./sliderContext";
+import { resolveSliderMotionDefaults } from "./sliderAnimations";
+import { SliderClassNamesProvider, SliderFieldProvider, SliderMotionProvider } from "./sliderContext";
 import { SliderSimpleBody } from "./sliderParts";
 import { sliderRootClass } from "./sliderStyles";
 import type { SliderProps } from "./sliderTypes";
@@ -25,6 +27,8 @@ export type {
   SliderRailProps,
   SliderThumbProps,
   SliderThumbKind,
+  SliderMotion,
+  SliderPartMotion,
 } from "./sliderTypes";
 
 export {
@@ -67,6 +71,7 @@ export function SliderRoot({
   ariaLabel,
   gloss,
   thumbClassName,
+  motion,
   ...divRest
 }: SliderProps) {
   const state = useSliderRootState({
@@ -111,22 +116,29 @@ export function SliderRoot({
     />
   );
 
+  const motionDefaults = useMemo(
+    () => resolveSliderMotionDefaults({ disabled }),
+    [disabled],
+  );
+
   return (
     <SliderFieldProvider value={state.fieldCtx}>
       <SliderClassNamesProvider classNames={classNames}>
-        <FieldLabelContext.Provider value={state.fieldLabelCtx}>
-          <Field
-            id={state.sliderId}
-            className={sliderRootClass({
-              orientation: state.fieldCtx.orientation,
-              slotClass: classNames?.root,
-              className,
-            })}
-            {...divRest}
-          >
-            {body}
-          </Field>
-        </FieldLabelContext.Provider>
+        <SliderMotionProvider motion={motion} defaults={motionDefaults}>
+          <FieldLabelContext.Provider value={state.fieldLabelCtx}>
+            <Field
+              id={state.sliderId}
+              className={sliderRootClass({
+                orientation: state.fieldCtx.orientation,
+                slotClass: classNames?.root,
+                className,
+              })}
+              {...divRest}
+            >
+              {body}
+            </Field>
+          </FieldLabelContext.Provider>
+        </SliderMotionProvider>
       </SliderClassNamesProvider>
     </SliderFieldProvider>
   );

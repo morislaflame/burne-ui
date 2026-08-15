@@ -7,6 +7,7 @@ import { IoCheckmarkCircle, IoGlobeOutline } from "react-icons/io5";
 import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStoryLayouts";
 
 import { ListBox } from "@/components/core/ListBox";
+import { ListBoxMotionDemo } from "../../../../playground/showcase/demos/listBox/ListBoxMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -215,4 +216,9 @@ export const CustomClassNames: Story = {
       </ListBox.Section>
     </ListBox>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ListBoxMotionDemo />,
 };

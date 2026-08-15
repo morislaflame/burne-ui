@@ -5,6 +5,7 @@ import { expect } from "storybook/test";
 import { Ripple } from "@/components/core/Ripple";
 
 import { Accordion } from ".";
+import { AccordionMotionDemo } from "../../../../playground/showcase/demos/accordion/AccordionMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -190,4 +191,9 @@ export const PressRipple: Story = {
       ))}
     </Accordion>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, chevron, bounce)",
+  render: () => <AccordionMotionDemo />,
 };

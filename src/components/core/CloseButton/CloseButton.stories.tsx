@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
 
 import { CloseButton } from "./index";
+import { CloseButtonMotionDemo } from "../../../../playground/showcase/demos/close-button/CloseButtonMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -170,4 +171,9 @@ export const CustomClassNames: Story = {
       aria-label="Close with custom slots"
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <CloseButtonMotionDemo />,
 };

@@ -1,3 +1,13 @@
+/**
+ * Slot motion for Checkbox — look here first.
+ *
+ * Checkbox is an embedder: it has no `createMotionScope`. Root `motion` keys
+ * map onto SelectionIndicator slots (`CHECKBOX_MOTION_SLOT_MAP`).
+ * Host play and kit defaults live in `selectionIndicatorAnimations.ts`.
+ *
+ * Also: track opacity (`useCheckboxControlTrackAnimation`) and label squeeze
+ * (`useCheckboxTextMotion`).
+ */
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { useLayoutEffect, useRef } from "react";
 
@@ -5,8 +15,39 @@ import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { motionInteractive } from "@/components/core/utils/motionConfig";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
+import type { SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
+
 import { useCheckboxFieldContext } from "./checkboxContext";
-import type { UseCheckboxAnimationsProps } from "./checkboxTypes";
+import type { CheckboxMotion, UseCheckboxAnimationsProps } from "./checkboxTypes";
+
+/** Root Checkbox `motion` keys → SelectionIndicator slots. */
+export const CHECKBOX_MOTION_SLOT_MAP = {
+  indicator: "root",
+  indicatorFill: "fill",
+  indicatorMark: "mark",
+} as const;
+
+export function resolveCheckboxIndicatorMotion({
+  rootMotion,
+  indicatorMotion,
+}: {
+  rootMotion?: CheckboxMotion;
+  indicatorMotion?: SelectionIndicatorMotion;
+}): SelectionIndicatorMotion | undefined {
+  const fromRoot: SelectionIndicatorMotion | undefined = rootMotion
+    ? {
+        [CHECKBOX_MOTION_SLOT_MAP.indicator]: rootMotion.indicator,
+        [CHECKBOX_MOTION_SLOT_MAP.indicatorFill]: rootMotion.indicatorFill,
+        [CHECKBOX_MOTION_SLOT_MAP.indicatorMark]: rootMotion.indicatorMark,
+      }
+    : undefined;
+  if (!fromRoot && !indicatorMotion) return undefined;
+  return {
+    root: { ...fromRoot?.root, ...indicatorMotion?.root },
+    fill: { ...fromRoot?.fill, ...indicatorMotion?.fill },
+    mark: { ...fromRoot?.mark, ...indicatorMotion?.mark },
+  };
+}
 
 export function useCheckboxControlTrackAnimation() {
   const ctx = useCheckboxFieldContext();

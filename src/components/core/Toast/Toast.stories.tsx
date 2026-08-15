@@ -7,6 +7,7 @@ import { Button } from "@/components/core/Button";
 
 import { Toast, type ToastPlacement, type ToastSize, type ToastStatus } from ".";
 import { useToast } from "./useToast";
+import { ToastMotionDemo } from "../../../../playground/showcase/demos/toast/ToastMotion.demo";
 
 const pageFrame = (Story: ComponentType) => (
   <div
@@ -481,4 +482,9 @@ export const PortalContainer: Story = {
       </div>
     );
   },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, bounce, title stagger)",
+  render: () => <ToastMotionDemo />,
 };

@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   BadgeClassNames,
   BadgeClassNamesProviderProps,
@@ -7,6 +9,13 @@ import type {
   BadgeLiftContextValue,
   BadgeLiftTargetProviderProps,
 } from "./badgeTypes";
+
+/** Scope only. Defaults and host play live in `badgeAnimations.ts`. */
+export const {
+  MotionScopeProvider: BadgeMotionProvider,
+  useMotionScope: useBadgeMotionScope,
+  useOptionalMotionScope: useOptionalBadgeMotionScope,
+} = createMotionScope("Badge");
 
 const BadgeLiftTargetContext = createContext<BadgeLiftContextValue | null>(null);
 const BadgeDirectAnchorChildContext = createContext(false);

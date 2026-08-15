@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor } from "storybook/test";
 
 import { Pagination } from "@/components/core/Pagination";
+import { PaginationMotionDemo } from "../../../../playground/showcase/demos/pagination/PaginationMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -383,4 +384,9 @@ export const CustomClassNames: Story = {
       </Pagination>
     );
   },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <PaginationMotionDemo />,
 };

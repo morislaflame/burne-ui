@@ -15,6 +15,8 @@ export {
   type ButtonVariant,
   type ButtonStatus,
   type ButtonClassNames,
+  type ButtonMotion,
+  type ButtonPartMotion,
   type ButtonContentProps,
   type ButtonLabelProps,
   type ButtonIconProps,
@@ -29,6 +31,8 @@ export {
   type CloseButtonSize,
   type CloseButtonVariant,
   type CloseButtonClassNames,
+  type CloseButtonMotion,
+  type CloseButtonPartMotion,
 } from "@/components/core/CloseButton";
 export {
   Ripple,
@@ -51,6 +55,9 @@ export {
   type ExpandableSize,
   type ExpandableVariant,
   type ExpandableClassNames,
+  type ExpandableMotion,
+  type ExpandableLifecycleMotion,
+  type ExpandableTriggerLiftMotion,
 } from "@/components/core/Expandable";
 export {
   Alert,
@@ -63,6 +70,8 @@ export {
   type AlertSize,
   type AlertLiveRole,
   type AlertClassNames,
+  type AlertMotion,
+  type AlertPartMotion,
   type AlertIndicatorProps,
   type AlertContentProps,
   type AlertMessageProps,
@@ -85,6 +94,9 @@ export {
   type AccordionPanelProps,
   type AccordionBodyProps,
   type AccordionClassNames,
+  type AccordionMotion,
+  type AccordionLifecycleMotion,
+  type AccordionTriggerLiftMotion,
 } from "@/components/composite/Accordion";
 export {
   Form,
@@ -170,6 +182,9 @@ export {
   type AlertDialogCloseProps,
   type AlertDialogContentProps,
   type AlertDialogContextValue,
+  type AlertDialogMotion,
+  type AlertDialogLifecycleMotion,
+  type AlertDialogPartMotion,
 } from "@/components/composite/AlertDialog";
 export {
   Dialog,
@@ -179,6 +194,9 @@ export {
   type DialogSize,
   type DialogVariant,
   type DialogClassNames,
+  type DialogMotion,
+  type DialogLifecycleMotion,
+  type DialogPartMotion,
   type DialogHeaderProps,
   type DialogHeadingBlockProps,
   type DialogTitleProps,
@@ -210,6 +228,9 @@ export {
   type ToastVariant,
   type ToastSize,
   type ToastClassNames,
+  type ToastMotion,
+  type ToastLifecycleMotion,
+  type ToastPartMotion,
 } from "@/components/core/Toast";
 export {
   Drawer,
@@ -230,6 +251,9 @@ export {
   type DrawerFooterProps,
   type DrawerCloseProps,
   type DrawerContentProps,
+  type DrawerMotion,
+  type DrawerLifecycleMotion,
+  type DrawerPartMotion,
 } from "@/components/core/Drawer";
 export {
   Field,
@@ -267,6 +291,8 @@ export {
   type LinkIconPos,
   type LinkIconProps,
   type LinkClassNames,
+  type LinkMotion,
+  type LinkPartMotion,
   type LinkComponent,
 } from "@/components/core/Link";
 export {
@@ -288,6 +314,8 @@ export {
   type InputHintProps,
   type InputErrorProps,
   type InputClassNames,
+  type InputMotion,
+  type InputPartMotion,
 } from "@/components/core/Input";
 export {
   TextArea,
@@ -300,6 +328,8 @@ export {
   type TextAreaHintProps,
   type TextAreaErrorProps,
   type TextAreaClassNames,
+  type TextAreaMotion,
+  type TextAreaPartMotion,
 } from "@/components/core/TextArea";
 export {
   ComboBox,
@@ -313,6 +343,8 @@ export {
   type ComboBoxTriggerProps,
   type ComboBoxPopoverProps,
   type ComboBoxClassNames,
+  type ComboBoxMotion,
+  type ComboBoxPartMotion,
 } from "@/components/core/ComboBox";
 export { useComboBoxContext } from "@/components/core/ComboBox/comboBoxContext";
 export {
@@ -327,6 +359,8 @@ export {
   type SelectTriggerProps,
   type SelectPopoverProps,
   type SelectClassNames,
+  type SelectMotion,
+  type SelectPartMotion,
 } from "@/components/core/Select";
 export {
   ListBox,
@@ -345,6 +379,8 @@ export {
   type ListBoxSize,
   type ListBoxVariant,
   type ListBoxClassNames,
+  type ListBoxMotion,
+  type ListBoxPartMotion,
 } from "@/components/core/ListBox";
 export {
   Checkbox,
@@ -358,6 +394,8 @@ export {
   type CheckboxVariant,
   type CheckboxSize,
   type CheckboxClassNames,
+  type CheckboxMotion,
+  type CheckboxCheckMotion,
 } from "@/components/core/Checkbox";
 export {
   SelectionIndicator,
@@ -365,6 +403,8 @@ export {
   type SelectionIndicatorClassNames,
   type SelectionIndicatorFillProps,
   type SelectionIndicatorMarkProps,
+  type SelectionIndicatorMotion,
+  type SelectionIndicatorCheckMotion,
   type SelectionIndicatorSize,
   type SelectionIndicatorVariant,
 } from "@/components/core/SelectionIndicator";
@@ -387,6 +427,8 @@ export {
   type RadioSize,
   type RadioVariant,
   type RadioClassNames,
+  type RadioMotion,
+  type RadioCheckMotion,
 } from "@/components/core/Radio";
 export {
   Switch,
@@ -405,6 +447,8 @@ export {
   type SwitchProps,
   type SwitchSimpleProps,
   type SwitchClassNames,
+  type SwitchMotion,
+  type SwitchCheckMotion,
 } from "@/components/core/Switch";
 export {
   Tabs,
@@ -430,6 +474,8 @@ export {
   type ToggleButtonIconStartProps,
   type ToggleButtonIconEndProps,
   type ToggleButtonTextProps,
+  type ToggleButtonMotion,
+  type ToggleButtonPartMotion,
 } from "@/components/core/ToggleButton";
 export {
   Slider,
@@ -451,6 +497,8 @@ export {
   type SliderHintProps,
   type SliderErrorProps,
   type SliderClassNames,
+  type SliderMotion,
+  type SliderPartMotion,
 } from "@/components/core/Slider";
 export {
   Meter,
@@ -486,6 +534,8 @@ export {
   type SearchInputSize,
   type SearchInputVariant,
   type SearchInputClassNames,
+  type SearchInputMotion,
+  type SearchInputPartMotion,
 } from "@/components/core/SearchInput";
 export { Text, type TextProps, type TextVariant } from "@/components/core/Text";
 export {
@@ -501,6 +551,8 @@ export {
   type CardFooterProps,
   type CardClassNames,
   type CardHeadingBlockProps,
+  type CardMotion,
+  type CardPartMotion,
 } from "@/components/core/Card";
 export {
   Avatar,
@@ -511,6 +563,8 @@ export {
   type AvatarImageProps,
   type AvatarFallbackProps,
   type AvatarGroupProps,
+  type AvatarMotion,
+  type AvatarPartMotion,
 } from "@/components/core/Avatar";
 export {
   Tooltip,
@@ -528,6 +582,8 @@ export {
   type TooltipTitleProps,
   type TooltipDescriptionProps,
   type TooltipClassNames,
+  type TooltipMotion,
+  type TooltipLifecycleMotion,
 } from "@/components/core/Tooltip";
 export {
   Popover,
@@ -546,6 +602,9 @@ export {
   type PopoverContentGap,
   type FloatingAlign,
   type PopoverAlign,
+  type PopoverMotion,
+  type PopoverLifecycleMotion,
+  type PopoverPartMotion,
 } from "@/components/core/Popover";
 export {
   Breadcrumbs,
@@ -554,6 +613,8 @@ export {
   type BreadcrumbsItemProps,
   type BreadcrumbsClassNames,
   type BreadcrumbItem,
+  type BreadcrumbsMotion,
+  type BreadcrumbsPartMotion,
 } from "@/components/core/Breadcrumbs";
 export {
   Pagination,
@@ -566,6 +627,8 @@ export {
   type PaginationPageProps,
   type PaginationEllipsisProps,
   type PaginationPagesProps,
+  type PaginationMotion,
+  type PaginationPartMotion,
 } from "@/components/core/Pagination";
 export {
   Separator,
@@ -599,6 +662,10 @@ export {
   type DropdownSubTriggerProps,
   type DropdownSubContentProps,
   type DropdownClassNames,
+  type DropdownMotion,
+  type DropdownLifecycleMotion,
+  type DropdownPartMotion,
+  type DropdownPopoverMotion,
 } from "@/components/core/Dropdown";
 export {
   Badge,
@@ -611,6 +678,8 @@ export {
   type BadgeInlineIconPosition,
   type BadgeClassNames,
   type BadgeAnchorProps,
+  type BadgeMotion,
+  type BadgePartMotion,
 } from "@/components/core/Badge";
 export {
   Kbd,
@@ -619,6 +688,8 @@ export {
   type KbdSize,
   type KbdClassNames,
   type KbdGroupProps,
+  type KbdMotion,
+  type KbdPartMotion,
 } from "@/components/core/Kbd";
 export {
   configureMotion,
@@ -629,6 +700,27 @@ export {
   type MotionConfig,
   type MotionFeatureFlag,
 } from "@/components/core/utils/motionConfig";
+export {
+  killMotion,
+  tweenCssColor,
+  resolveCssColor,
+  type TweenCssColorOptions,
+} from "@/components/core/utils/gsapMotion";
+export {
+  KIT_MOTION_RECIPES,
+  registerMotionRecipe,
+  type KitRecipeName,
+  type MotionAnimation,
+  type MotionContext,
+  type MotionFactory,
+  type MotionPartPhases,
+  type MotionPhaseName,
+  type MotionRecipe,
+  type MotionRecipeName,
+  type MotionSlotMap,
+  type MotionValue,
+  type MotionVars,
+} from "@/components/core/utils/slotMotion";
 export {
   colorToken,
   tokensConfig,
@@ -700,6 +792,8 @@ export {
   type CalendarRangeValue,
   type CalendarLocale,
   type CalendarClassNames,
+  type CalendarMotion,
+  type CalendarPartMotion,
 } from "@/components/core/Calendar";
 
 export {
@@ -729,6 +823,8 @@ export {
   type ColorSwatchProps,
   type ColorSwatchSize,
   type ColorSwatchShape,
+  type ColorSwatchMotion,
+  type ColorSwatchPartMotion,
   type HSVA,
   type RGBA,
 } from "@/components/core/ColorPicker";
@@ -744,6 +840,8 @@ export {
   type TimeFieldVariant,
   type TimeFieldFormat,
   type TimeFieldClassNames,
+  type TimeFieldMotion,
+  type TimeFieldPartMotion,
 } from "@/components/core/TimeField";
 
 export {
@@ -775,6 +873,9 @@ export {
   type DisclosureSize,
   type DisclosureChevronPos,
   type DisclosureClassNames,
+  type DisclosureMotion,
+  type DisclosureLifecycleMotion,
+  type DisclosureTitleLiftMotion,
 } from "@/components/core/Disclosure";
 
 export {

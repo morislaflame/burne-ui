@@ -12,6 +12,7 @@ import type {
   PanelSize,
   PanelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type DrawerPlacement = "left" | "right" | "top" | "bottom";
 /** Viewport extent of the panel (orthogonal to chrome `size`). */
@@ -56,6 +57,28 @@ export type DrawerClassNames = {
   close?: string;
 };
 
+export type DrawerLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type DrawerPartMotion = DrawerLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type DrawerMotion = {
+  overlay?: DrawerLifecycleMotion;
+  panel?: DrawerLifecycleMotion;
+  title?: DrawerPartMotion;
+  description?: DrawerPartMotion;
+  close?: DrawerLifecycleMotion;
+  header?: DrawerLifecycleMotion;
+  footer?: DrawerLifecycleMotion;
+  content?: DrawerLifecycleMotion;
+  handle?: DrawerLifecycleMotion;
+};
+
 export type DrawerProps = {
   open?: boolean;
   defaultOpen?: boolean;
@@ -68,6 +91,8 @@ export type DrawerProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DrawerClassNames>;
+  /** Per-slot enter/leave. Overlay/panel defaults are kit overlay + drawer slide recipes. */
+  motion?: Prettify<DrawerMotion>;
 };
 
 export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -76,6 +101,7 @@ export type DrawerPanelProps = HTMLAttributes<HTMLDivElement> & {
   themeAnchor?: HTMLElement | null;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
+  motion?: Prettify<DrawerMotion>;
 };
 
 export type DrawerTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -121,15 +147,28 @@ export type DrawerHandleProps = Omit<
 > & {
   /** Keyboard activate on the grip thumb (`role="button"`). */
   onKeyDown?: KeyboardEventHandler<HTMLElement>;
+  motion?: Prettify<DrawerLifecycleMotion>;
 };
-export type DrawerHeaderProps = HTMLAttributes<HTMLDivElement>;
+export type DrawerHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DrawerLifecycleMotion>;
+};
 export type DrawerHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
-export type DrawerTitleProps = HTMLAttributes<HTMLHeadingElement>;
-export type DrawerDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+export type DrawerTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<DrawerPartMotion>;
+};
+export type DrawerDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<DrawerPartMotion>;
+};
 export type DrawerBodyProps = HTMLAttributes<HTMLDivElement>;
-export type DrawerFooterProps = HTMLAttributes<HTMLDivElement>;
-export type DrawerCloseProps = CloseButtonProps;
-export type DrawerContentProps = HTMLAttributes<HTMLDivElement>;
+export type DrawerFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DrawerLifecycleMotion>;
+};
+export type DrawerCloseProps = CloseButtonProps & {
+  motion?: Prettify<DrawerLifecycleMotion>;
+};
+export type DrawerContentProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DrawerLifecycleMotion>;
+};
 
 export type DrawerPanelSegment =
   | { kind: "handle"; node: ReactNode }

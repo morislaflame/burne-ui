@@ -1,8 +1,13 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
+import { mergeMotionSlotMaps } from "@/components/core/utils/slotMotion";
+
+import { resolveDisclosureMotionDefaults } from "./disclosureAnimations";
 import {
   DisclosureClassNamesProvider,
+  DisclosureMotionProvider,
   DisclosureProvider,
+  useDisclosureGroupContext,
 } from "./disclosureContext";
 import { disclosureRootClass } from "./disclosureStyles";
 import {
@@ -27,6 +32,9 @@ export type {
   DisclosureSize,
   DisclosureChevronPos,
   DisclosureClassNames,
+  DisclosureMotion,
+  DisclosureLifecycleMotion,
+  DisclosureTitleLiftMotion,
 } from "./disclosureTypes";
 
 export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
@@ -44,10 +52,12 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       disabled,
       chevronPosition,
       dragHandle,
+      motion,
       ...rest
     },
     ref,
   ) {
+    const groupCtx = useDisclosureGroupContext();
     const state = useDisclosureRootState({
       children,
       open,
@@ -61,9 +71,19 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
       dragHandle,
     });
 
+    const mergedMotion = useMemo(
+      () => mergeMotionSlotMaps(groupCtx?.motion, motion),
+      [groupCtx?.motion, motion],
+    );
+    const defaults = useMemo(
+      () => resolveDisclosureMotionDefaults(state.variant),
+      [state.variant],
+    );
+
     return (
       <DisclosureProvider value={state.contextValue}>
         <DisclosureClassNamesProvider classNames={classNames}>
+          <DisclosureMotionProvider motion={mergedMotion} defaults={defaults}>
           <div
             ref={ref}
             className={disclosureRootClass({
@@ -76,6 +96,7 @@ export const DisclosureRoot = forwardRef<HTMLDivElement, DisclosureProps>(
           >
             {state.orderedChildren}
           </div>
+          </DisclosureMotionProvider>
         </DisclosureClassNamesProvider>
       </DisclosureProvider>
     );

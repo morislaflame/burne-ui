@@ -19,9 +19,13 @@ import {
   colorPickerHexInputAriaLabel,
   colorPickerTriggerAriaLabel,
 } from "./colorPickerA11y";
-import { useColorPickerAreaDrag } from "./colorPickerAnimations";
+import {
+  useColorPickerAreaChange,
+  useColorPickerAreaDrag,
+  useColorPickerSlotMotion,
+} from "./colorPickerAnimations";
 import { COLOR_PICKER_SLIDER_SIZE_MAP, COLOR_PICKER_SWATCH_SIZE_MAP } from "./colorPickerAPI";
-import { useColorPicker, useColorPickerClassNames } from "./colorPickerContext";
+import { useColorPicker, useColorPickerClassNames, useOptionalColorPickerMotionScope } from "./colorPickerContext";
 import {
   COLOR_PICKER_ALPHA_FIELD_CLASS,
   COLOR_PICKER_ALPHA_INPUT_CLASS,
@@ -52,19 +56,35 @@ import type {
 import { cn } from "@/utils/cn";
 
 export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
-  function ColorPickerArea({ className, onPointerDown, style, ...rest }, ref) {
+  function ColorPickerArea({ className, onPointerDown, style, motion, ...rest }, ref) {
     const labels = useBurneLabels();
-    const { hsva, setHsva, size } = useColorPicker();
+    const { hsva, setHsva, hex, size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
     const { areaRef, thumbRef, handlePointerDown, handleThumbKeyDown } =
       useColorPickerAreaDrag({ hsva, setHsva });
+    const areaPart = useColorPickerSlotMotion<HTMLDivElement>("area", {
+      motion,
+      playEnter: false,
+    });
+    const thumbPart = useColorPickerSlotMotion<HTMLButtonElement>("areaThumb", {
+      playEnter: false,
+    });
+    useColorPickerAreaChange(hex);
 
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
         areaRef.current = node;
+        areaPart.setRef(node);
         mergeForwardedRef(ref, node);
       },
-      [areaRef, ref],
+      [areaPart.setRef, areaRef, ref],
+    );
+    const setThumbRef = useCallback(
+      (node: HTMLButtonElement | null) => {
+        thumbRef.current = node;
+        thumbPart.setRef(node);
+      },
+      [thumbPart.setRef, thumbRef],
     );
 
     const hueColor = hueToRgbString(hsva.h);
@@ -90,7 +110,7 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
         {...rest}
       >
         <button
-          ref={thumbRef}
+          ref={setThumbRef}
           type="button"
           role="slider"
           tabIndex={0}
@@ -128,10 +148,14 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
 ColorPickerArea.displayName = "ColorPicker.Area";
 
 export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInputProps>(
-  function ColorPickerHexInput({ className, ...rest }, ref) {
+  function ColorPickerHexInput({ className, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const { hex, setHsva } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
+    const part = useColorPickerSlotMotion<HTMLDivElement>("hexInput", {
+      motion,
+      forwardedRef: ref,
+    });
     const [isEditing, setIsEditing] = useState(false);
     const [editDraft, setEditDraft] = useState("");
 
@@ -148,12 +172,13 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
 
     return (
       <div
-        ref={ref}
+        ref={part.setRef}
         className={cn(
           COLOR_PICKER_HEX_INPUT_CLASS,
           slotClassNames.hexInput,
           className,
         )}
+        {...part.pointerHandlers}
         {...rest}
       >
         <span
@@ -246,18 +271,23 @@ export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlpha
 ColorPickerAlphaInput.displayName = "ColorPicker.AlphaInput";
 
 export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsProps>(
-  function ColorPickerPresets({ presets, className, ...rest }, ref) {
+  function ColorPickerPresets({ presets, className, motion, ...rest }, ref) {
     const { hex, setHsva, size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
+    const part = useColorPickerSlotMotion<HTMLDivElement>("presets", {
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={part.setRef}
         className={cn(
           COLOR_PICKER_PRESETS_CLASS,
           slotClassNames.presets,
           className,
         )}
+        {...part.pointerHandlers}
         {...rest}
       >
         {presets.map((preset) => (
@@ -291,6 +321,7 @@ function ColorPickerDefaultLayout({
   const { hsva, setHsva, hex, size } = useColorPicker();
   const slotClassNames = useColorPickerClassNames();
   const sliderSize = COLOR_PICKER_SLIDER_SIZE_MAP[size];
+  const pickerMotion = useOptionalColorPickerMotionScope()?.getRootMotion();
 
   return (
     <>
@@ -321,6 +352,7 @@ function ColorPickerDefaultLayout({
             value={hsva.h}
             size={sliderSize}
             className={slotClassNames.hueSlider}
+            motion={pickerMotion?.hueSlider}
             onValueChange={(h) => setHsva({ ...hsva, h })}
           />
 
@@ -331,6 +363,7 @@ function ColorPickerDefaultLayout({
               value={hsva.a}
               size={sliderSize}
               className={slotClassNames.alphaSlider}
+              motion={pickerMotion?.alphaSlider}
               onValueChange={(a) => setHsva({ ...hsva, a })}
             />
           ) : null}
@@ -388,12 +421,15 @@ ColorPickerTrigger.displayName = "ColorPicker.Trigger";
 
 export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentProps>(
   function ColorPickerContent(
-    { showAlpha = false, presets, className, children, ...rest },
+    { showAlpha = false, presets, className, children, motion, ...rest },
     ref,
   ) {
     const labels = useBurneLabels();
     const { size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
+    const panelPart = useColorPickerSlotMotion<HTMLDivElement>("contentPanel", {
+      motion,
+    });
 
     return (
       <Popover.Content
@@ -406,10 +442,12 @@ export const ColorPickerContent = forwardRef<HTMLDivElement, ColorPickerContentP
         {...rest}
       >
         <div
+          ref={panelPart.setRef}
           className={colorPickerContentPanelClass(
             size,
             slotClassNames.contentPanel,
           )}
+          {...panelPart.pointerHandlers}
         >
           {children ?? (
             <ColorPickerDefaultLayout showAlpha={showAlpha} presets={presets} />

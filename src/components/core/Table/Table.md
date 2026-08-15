@@ -111,6 +111,17 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root`, `scrollContainer`, `content`, `header`, `footer`; nested `row`; `column` / `cell` in root scope (last-wins) | `enter` (opt-in); row `check` / `uncheck` on selection | empty |
+
+`glossContent` не слот. Поворот sort chevron — kit-internal.
+
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет таблицу видимой). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 `tableAnimations.tsx` — единственный GSAP-слой. Остальное — CSS hover/selection.
 
 **DOM (sortable column):**

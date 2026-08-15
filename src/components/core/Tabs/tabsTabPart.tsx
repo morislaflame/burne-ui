@@ -1,44 +1,105 @@
-import { cloneElement, forwardRef, isValidElement, useCallback, useLayoutEffect, useRef, type ButtonHTMLAttributes, type KeyboardEvent, type MouseEvent, type PointerEvent, type ReactElement, type Ref } from "react";
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  type ButtonHTMLAttributes,
+  type ForwardedRef,
+  type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
+  type ReactElement,
+  type Ref,
+} from "react";
 
 import { Text } from "@/components/core/Text";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { tabsPanelId, tabsTabA11y, tabsTabId } from "./tabsA11y";
-import { useTabPointerMotion } from "./tabsAnimations";
-import { useTabsClassNames, useTabsContext } from "./tabsContext";
+import {
+  resolveTabsTabMotionDefaults,
+  useTabsTabPointerMotion,
+  useTabsTabSelectionMotion,
+} from "./tabsAnimations";
+import {
+  TabsMotionProvider,
+  useOptionalTabsMotionScope,
+  useTabsClassNames,
+  useTabsContext,
+  useTabsMotionScope,
+} from "./tabsContext";
 import { TABS_TAB_AS_CHILD_CLASS, tabsTabClass, tabsTabTextClass, tabTextVariant } from "./tabsStyles";
 import type { TabsTabProps } from "./tabsTypes";
 
 import { cn } from "@/utils/cn";
 
 export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function TabsTab(
-  {
-    value: tabValue,
-    children,
-    asChild,
-    className,
-    disabled: tabDisabled,
-    onClick,
-    onPointerDown,
-    onPointerEnter,
-    onPointerLeave,
-    onKeyDown,
-    ...rest
-  },
+  { motion, ...rest },
   ref,
 ) {
   const {
     value,
-    setValue,
     size,
     variant,
+    disabled: rootDisabled,
+  } = useTabsContext();
+  const tabValue = rest.value;
+  const tabDisabled = rest.disabled;
+  const isSelected = value === tabValue;
+  const isDisabled = rootDisabled || tabDisabled;
+  const parentScope = useOptionalTabsMotionScope();
+  const motionDefaults = useMemo(
+    () => resolveTabsTabMotionDefaults({ selected: isSelected, disabled: !!isDisabled }),
+    [isDisabled, isSelected],
+  );
+  const mergedMotion = mergeMotionSlotMaps(
+    parentScope?.getRootMotion(),
+    motion ? { tab: motion } : undefined,
+  );
+
+  return (
+    <TabsMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <TabsTabSurface forwardedRef={ref} itemMotion={motion} size={size} variant={variant} {...rest} />
+    </TabsMotionProvider>
+  );
+});
+
+function TabsTabSurface({
+  value: tabValue,
+  children,
+  asChild,
+  className,
+  disabled: tabDisabled,
+  onClick,
+  onPointerDown,
+  onPointerUp,
+  onPointerEnter,
+  onPointerLeave,
+  onKeyDown,
+  itemMotion,
+  forwardedRef,
+  size,
+  variant,
+  ...rest
+}: TabsTabProps & {
+  itemMotion?: TabsTabProps["motion"];
+  forwardedRef: ForwardedRef<HTMLButtonElement>;
+  size: ReturnType<typeof useTabsContext>["size"];
+  variant: ReturnType<typeof useTabsContext>["variant"];
+}) {
+  const {
+    value,
+    setValue,
     baseId,
     disabled: rootDisabled,
     tabElementsRef,
     notifyTabLayout,
   } = useTabsContext();
   const slotClassNames = useTabsClassNames();
-  const motionRef = useRef<HTMLSpanElement>(null);
+  const scope = useTabsMotionScope();
 
   const isSelected = value === tabValue;
   const isDisabled = rootDisabled || tabDisabled;
@@ -46,15 +107,29 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
   const panelId = tabsPanelId(baseId, tabValue);
   const a11y = tabsTabA11y({ isSelected, isDisabled, panelId });
 
+  const tabPart = useMotionPart<HTMLButtonElement>({
+    scope,
+    slot: "tab",
+    motion: itemMotion,
+    pointerPhases: false,
+  });
+  const textPart = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "tabText",
+    pointerPhases: false,
+  });
+  useTabsTabSelectionMotion(scope, isSelected);
+
   const setRefs = useCallback(
     (node: HTMLButtonElement | null) => {
+      tabPart.setRef(node);
       if (node) tabElementsRef.current.set(tabValue, node);
       else tabElementsRef.current.delete(tabValue);
       notifyTabLayout();
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
     },
-    [notifyTabLayout, ref, tabElementsRef, tabValue],
+    [forwardedRef, notifyTabLayout, tabElementsRef, tabPart.setRef, tabValue],
   );
 
   useLayoutEffect(() => {
@@ -74,13 +149,13 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
     [isDisabled, onClick, setValue, tabValue],
   );
 
-  const { handlePointerEnter, handlePointerLeave, handlePointerDown, handleKeyDown } = useTabPointerMotion({
-    motionRef,
+  const pointer = useTabsTabPointerMotion({
+    scope,
     isDisabled,
-    isSelected,
     onPointerEnter,
     onPointerLeave,
     onPointerDown,
+    onPointerUp,
     onKeyDown,
   });
 
@@ -121,19 +196,23 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       },
       onPointerEnter: (e: PointerEvent<HTMLButtonElement>) => {
         child.props.onPointerEnter?.(e);
-        handlePointerEnter(e);
+        pointer.handlePointerEnter(e);
       },
       onPointerLeave: (e: PointerEvent<HTMLButtonElement>) => {
         child.props.onPointerLeave?.(e);
-        handlePointerLeave(e);
+        pointer.handlePointerLeave(e);
       },
       onPointerDown: (e: PointerEvent<HTMLButtonElement>) => {
         child.props.onPointerDown?.(e);
-        handlePointerDown(e);
+        pointer.handlePointerDown(e);
+      },
+      onPointerUp: (e: PointerEvent<HTMLButtonElement>) => {
+        child.props.onPointerUp?.(e);
+        pointer.handlePointerUp(e);
       },
       onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {
         child.props.onKeyDown?.(e);
-        handleKeyDown(e);
+        pointer.handleKeyDown(e);
       },
     });
   }
@@ -152,15 +231,16 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       className={tabButtonClassName}
       onClick={handleClick}
       {...rest}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
-      onPointerDown={handlePointerDown}
-      onKeyDown={handleKeyDown}
+      onPointerEnter={pointer.handlePointerEnter}
+      onPointerLeave={pointer.handlePointerLeave}
+      onPointerDown={pointer.handlePointerDown}
+      onPointerUp={pointer.handlePointerUp}
+      onKeyDown={pointer.handleKeyDown}
     >
       <Text
         as="span"
         inheritColor
-        ref={motionRef}
+        ref={textPart.setRef}
         variant={tabTextVariant(size)}
         className={tabsTabTextClass(slotClassNames.tabText)}
       >
@@ -168,6 +248,6 @@ export const TabsTab = forwardRef<HTMLButtonElement, TabsTabProps>(function Tabs
       </Text>
     </button>
   );
-});
+}
 
 TabsTab.displayName = "TabsTab";

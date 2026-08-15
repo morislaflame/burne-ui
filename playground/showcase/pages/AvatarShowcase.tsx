@@ -6,6 +6,14 @@ import { AvatarGlossDemo } from "../demos/avatar/AvatarGloss.demo";
 import avatarGlossSource from "../demos/avatar/AvatarGloss.demo.tsx?raw";
 import { AvatarGroupDemo } from "../demos/avatar/AvatarGroup.demo";
 import avatarGroupSource from "../demos/avatar/AvatarGroup.demo.tsx?raw";
+import { AvatarMotionGroupRotateDemo } from "../demos/avatar/AvatarMotionGroupRotate.demo";
+import avatarMotionGroupRotateSource from "../demos/avatar/AvatarMotionGroupRotate.demo.tsx?raw";
+import { AvatarMotionImageScaleDemo } from "../demos/avatar/AvatarMotionImageScale.demo";
+import avatarMotionImageScaleSource from "../demos/avatar/AvatarMotionImageScale.demo.tsx?raw";
+import { AvatarMotionInstantFadeDemo } from "../demos/avatar/AvatarMotionInstantFade.demo";
+import avatarMotionInstantFadeSource from "../demos/avatar/AvatarMotionInstantFade.demo.tsx?raw";
+import { AvatarMotionInstantGroupDemo } from "../demos/avatar/AvatarMotionInstantGroup.demo";
+import avatarMotionInstantGroupSource from "../demos/avatar/AvatarMotionInstantGroup.demo.tsx?raw";
 import { AvatarPresenceRowDemo } from "../demos/avatar/AvatarPresenceRow.demo";
 import avatarPresenceRowSource from "../demos/avatar/AvatarPresenceRow.demo.tsx?raw";
 import { AvatarProjectMembersDemo } from "../demos/avatar/AvatarProjectMembers.demo";
@@ -35,6 +43,16 @@ export function AvatarShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass surface.">
         <ShowcaseDemoFromFile Demo={AvatarGlossDemo} source={avatarGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Image enter (Replay) — instant vs scale-in. Group hover — instant vs rotate."
+      >
+        <ShowcaseDemoFromFile Demo={AvatarMotionInstantFadeDemo} source={avatarMotionInstantFadeSource} />
+        <ShowcaseDemoFromFile Demo={AvatarMotionImageScaleDemo} source={avatarMotionImageScaleSource} />
+        <ShowcaseDemoFromFile Demo={AvatarMotionInstantGroupDemo} source={avatarMotionInstantGroupSource} />
+        <ShowcaseDemoFromFile Demo={AvatarMotionGroupRotateDemo} source={avatarMotionGroupRotateSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

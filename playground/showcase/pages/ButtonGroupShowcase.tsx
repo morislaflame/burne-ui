@@ -12,6 +12,12 @@ import { ButtonGroupSizesDemo } from "../demos/button-group/ButtonGroupSizes.dem
 import buttonGroupSizesSource from "../demos/button-group/ButtonGroupSizes.demo.tsx?raw";
 import { ButtonGroupVerticalMenuDemo } from "../demos/button-group/ButtonGroupVerticalMenu.demo";
 import buttonGroupVerticalMenuSource from "../demos/button-group/ButtonGroupVerticalMenu.demo.tsx?raw";
+import { ButtonGroupMotionInstantEnterDemo } from "../demos/buttonGroup/ButtonGroupMotionInstantEnter.demo";
+import buttonGroupMotionInstantEnterSource from "../demos/buttonGroup/ButtonGroupMotionInstantEnter.demo.tsx?raw";
+import { ButtonGroupMotionRootWaveDemo } from "../demos/buttonGroup/ButtonGroupMotionRootWave.demo";
+import buttonGroupMotionRootWaveSource from "../demos/buttonGroup/ButtonGroupMotionRootWave.demo.tsx?raw";
+import { ButtonGroupMotionTextTintDemo } from "../demos/buttonGroup/ButtonGroupMotionTextTint.demo";
+import buttonGroupMotionTextTintSource from "../demos/buttonGroup/ButtonGroupMotionTextTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -54,6 +60,12 @@ export function ButtonGroupShowcase() {
       >
         <ShowcaseDemoFromFile align="stretch" Demo={ButtonGroupVerticalMenuDemo} source={buttonGroupVerticalMenuSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ButtonGroupPricingTierDemo} source={buttonGroupPricingTierSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root/text timeline, Text enter tint. Item Button motion is separate.">
+        <ShowcaseDemoFromFile align="center" Demo={ButtonGroupMotionInstantEnterDemo} source={buttonGroupMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="center" Demo={ButtonGroupMotionRootWaveDemo} source={buttonGroupMotionRootWaveSource} />
+        <ShowcaseDemoFromFile align="center" Demo={ButtonGroupMotionTextTintDemo} source={buttonGroupMotionTextTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

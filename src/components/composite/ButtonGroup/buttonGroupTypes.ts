@@ -1,5 +1,6 @@
 import type { ComponentPropsWithoutRef, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type { ButtonSize, ButtonVariant } from "@/components/core/Button";
 
@@ -24,6 +25,20 @@ export type ButtonGroupClassNames = {
   textLabel?: string;
 };
 
+export type ButtonGroupPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type ButtonGroupMotion = {
+  root?: ButtonGroupPartMotion;
+  text?: ButtonGroupPartMotion;
+};
+
 export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "children"> & {
   orientation?: ButtonGroupOrientation;
   segmented?: boolean;
@@ -31,11 +46,17 @@ export type ButtonGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "role" | "ch
   variant?: ButtonVariant;
   classNames?: Prettify<ButtonGroupClassNames>;
   children: ReactNode;
+  /**
+   * Per-slot motion (`root`, `text`). Items keep Button motion — group does not wrap item hosts.
+   * Defaults are empty.
+   */
+  motion?: Prettify<ButtonGroupMotion>;
 };
 
 export type ButtonGroupTextProps = ComponentPropsWithoutRef<"span"> & {
   groupSegment?: ButtonGroupSegment;
   buttonSize?: ButtonSize;
+  motion?: Prettify<ButtonGroupPartMotion>;
 };
 
 export type ButtonGroupClassNamesProviderProps = {

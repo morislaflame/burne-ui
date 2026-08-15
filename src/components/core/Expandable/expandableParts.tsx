@@ -2,12 +2,12 @@ import { cloneElement, forwardRef, isValidElement, useCallback, useMemo, useLayo
 
 import { Text } from "@/components/core/Text";
 import { messageBannerActionCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
-import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
-import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
+import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 
 import { useExpandablePanelMotion, useExpandableTriggerMotion } from "./expandableAnimations";
 import { expandableTriggerHasActionSlot, hasExpandableMessage, mergeExpandableRefs, partitionExpandableTriggerRipple, resolveExpandableTriggerGridSlots } from "./expandableAPI";
-import { ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableTriggerGrid, useOptionalExpandableTriggerGrid } from "./expandableContext";
+import { ExpandableTriggerGridProvider, useExpandable, useExpandableClassNames, useExpandableMotionScope, useExpandableTriggerGrid, useOptionalExpandableTriggerGrid } from "./expandableContext";
 import { EXPANDABLE_CHEVRON_WRAP_CLASS, EXPANDABLE_CONTENT_CLASS, EXPANDABLE_DESCRIPTION_CLASS, EXPANDABLE_GLOSS_CONTENT_CLASS, EXPANDABLE_MESSAGE_CLASS, EXPANDABLE_PANEL_SHELL_CLASS, EXPANDABLE_TITLE_CLASS, EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS, EXPANDABLE_TRIGGER_RIPPLE_OVERLAY_CLASS, expandableChevronIconClass, expandableDescriptionVariant, expandableIconClass, expandablePanelClass, expandableTitleClassName, expandableTitleVariant, expandableTriggerChevronIconClass, expandableTriggerClass, expandableTriggerLiftClass } from "./expandableStyles";
 import type {
   ExpandableChevronProps,
@@ -71,6 +71,8 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
       onClick,
       onKeyDown,
       onPointerDown: onPointerDownProp,
+      onPointerUp: onPointerUpProp,
+      motion,
       children,
       type = "button",
       ...props
@@ -88,14 +90,16 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
     } = useExpandable();
     const slotClassNames = useExpandableClassNames();
 
-    const motion = useExpandableTriggerMotion({
+    const triggerMotion = useExpandableTriggerMotion({
       open,
       disabled,
       toggle,
       forwardedRef: ref,
+      motion,
       onClick,
       onKeyDown,
       onPointerDown: onPointerDownProp,
+      onPointerUp: onPointerUpProp,
     });
 
     const { ripples, rest: triggerChildren } = useMemo(
@@ -140,7 +144,7 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         {mainChildren}
         {showsDefaultChevron ? (
           <span
-            ref={motion.bindChevronRef}
+            ref={triggerMotion.bindChevronRef}
             className={cn(
               messageBannerActionCellClass(gridSlots),
               EXPANDABLE_TRIGGER_CHEVRON_WRAP_CLASS,
@@ -171,18 +175,18 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         "aria-controls": hasPanel ? panelId : undefined,
         onClick: (e: React.MouseEvent<HTMLElement>) => {
           child.props.onClick?.(e);
-          motion.handleClick(e as React.MouseEvent<HTMLButtonElement>);
+          triggerMotion.handleClick(e as React.MouseEvent<HTMLButtonElement>);
         },
         onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
           child.props.onKeyDown?.(e);
-          motion.handleKeyDown(e as React.KeyboardEvent<HTMLButtonElement>);
+          triggerMotion.handleKeyDown(e as React.KeyboardEvent<HTMLButtonElement>);
         },
       });
     }
 
     return (
       <button
-        ref={motion.setTriggerRef}
+        ref={triggerMotion.setTriggerRef}
         type={type}
         id={headerId}
         className={expandableTriggerClass({
@@ -194,15 +198,16 @@ export const ExpandableTrigger = forwardRef<HTMLButtonElement, ExpandableTrigger
         aria-expanded={hasPanel ? open : undefined}
         aria-controls={hasPanel ? panelId : undefined}
         disabled={disabled}
-        onPointerDown={motion.handlePointerDown}
-        onClick={motion.handleClick}
-        onKeyDown={motion.handleKeyDown}
+        onPointerDown={triggerMotion.handlePointerDown}
+        onPointerUp={triggerMotion.handlePointerUp}
+        onClick={triggerMotion.handleClick}
+        onKeyDown={triggerMotion.handleKeyDown}
         {...props}
       >
         {rippleOverlay}
         <ExpandableTriggerGridProvider gridSlots={gridSlots}>
           <span
-            ref={motion.liftSpanRef}
+            ref={triggerMotion.setLiftRef}
             className={expandableTriggerLiftClass({
               gridSlots,
               slotClass: slotClassNames.triggerLift,
@@ -310,22 +315,35 @@ export function ExpandableDescription({
 
 ExpandableDescription.displayName = "ExpandableDescription";
 
-export function ExpandableChevron({ className, ...props }: ExpandableChevronProps) {
+export function ExpandableChevron({ className, motion, ...props }: ExpandableChevronProps) {
   const { open, hasPanel, size } = useExpandable();
   const slotClassNames = useExpandableClassNames();
   const gridSlots = useExpandableTriggerGrid();
+  const scope = useExpandableMotionScope();
   const chevronRef = useRef<HTMLSpanElement | null>(null);
-  const bindChevronRef = useChevronRotation(
-    open,
-    chevronRef,
-    () => isMotionFeatureEnabled("enableExpandable"),
+  const initialOpenRef = useRef(open);
+  const bindChevronInit = useMemo(
+    () => createChevronRotationRefCallback(chevronRef, initialOpenRef.current),
+    [],
+  );
+  const { setRef: setChevronPartRef } = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "chevron",
+    motion,
+  });
+  const setChevronRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      bindChevronInit(node);
+      setChevronPartRef(node);
+    },
+    [bindChevronInit, setChevronPartRef],
   );
 
   if (!hasPanel) return null;
 
   return (
     <span
-      ref={bindChevronRef}
+      ref={setChevronRef}
       className={cn(
         messageBannerActionCellClass(gridSlots),
         EXPANDABLE_CHEVRON_WRAP_CLASS,
@@ -343,10 +361,10 @@ export function ExpandableChevron({ className, ...props }: ExpandableChevronProp
 ExpandableChevron.displayName = "ExpandableChevron";
 
 export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
-  function ExpandablePanel({ className, children, ...props }, ref) {
+  function ExpandablePanel({ className, children, motion, ...props }, ref) {
     const { open, headerId, panelId, size, setHasPanel } = useExpandable();
     const slotClassNames = useExpandableClassNames();
-    const panelMotion = useExpandablePanelMotion(open);
+    const panelMotion = useExpandablePanelMotion({ open, motion });
 
     useLayoutEffect(() => {
       setHasPanel(true);
@@ -363,13 +381,13 @@ export const ExpandablePanel = forwardRef<HTMLDivElement, ExpandablePanelProps>(
 
     return (
       <div
-        ref={panelMotion.bindShellRef}
+        ref={panelMotion.setShellRef}
         className={cn(
           EXPANDABLE_PANEL_SHELL_CLASS,
           slotClassNames.panelShell,
         )}
       >
-        <div ref={panelMotion.innerRef}>
+        <div ref={panelMotion.setInnerRef}>
           <section
             ref={setSectionRef}
             id={panelId}

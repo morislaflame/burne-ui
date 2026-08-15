@@ -3,9 +3,14 @@ import { forwardRef } from "react";
 import { Field } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { Text } from "@/components/core/Text";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 
-import { useMeterFillAnimation } from "./meterAnimations";
-import { useMeterClassNames, useMeterFieldContext } from "./meterContext";
+import { useMeterFillAnimation, useMeterTrackSlotMotion } from "./meterAnimations";
+import {
+  useMeterClassNames,
+  useMeterFieldContext,
+  useOptionalMeterMotionScope,
+} from "./meterContext";
 import { meterFillClass, meterHeaderClass, meterTrackClass, meterValueClass } from "./meterStyles";
 import type {
   MeterErrorProps,
@@ -70,12 +75,19 @@ export function MeterLabel({ className, classNames, ...rest }: LabelProps) {
 
 MeterLabel.displayName = "MeterLabel";
 
-export function MeterHeader({ children, className, ...rest }: MeterHeaderProps) {
+export function MeterHeader({ children, className, motion, ...rest }: MeterHeaderProps) {
   const { orientation } = useMeterFieldContext();
   const slotClassNames = useMeterClassNames();
+  const part = useMotionPart<HTMLDivElement>({
+    scope: useOptionalMeterMotionScope(),
+    slot: "header",
+    motion,
+    pointerPhases: false,
+  });
 
   return (
     <div
+      ref={part.setRef}
       className={meterHeaderClass({
         orientation,
         slotClass: slotClassNames.header,
@@ -90,10 +102,16 @@ export function MeterHeader({ children, className, ...rest }: MeterHeaderProps) 
 
 MeterHeader.displayName = "Meter.Header";
 
-export function MeterValue({ children, className, ...rest }: MeterValueProps) {
+export function MeterValue({ children, className, motion, ...rest }: MeterValueProps) {
   const { display } = useMeterFieldContext();
   const slotClassNames = useMeterClassNames();
   const text = children ?? display?.statusText;
+  const part = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalMeterMotionScope(),
+    slot: "value",
+    motion,
+    pointerPhases: false,
+  });
 
   if (text == null) return null;
 
@@ -101,6 +119,7 @@ export function MeterValue({ children, className, ...rest }: MeterValueProps) {
     <Text
       as="span"
       variant="base"
+      ref={part.setRef}
       className={meterValueClass({
         slotClass: slotClassNames.value,
         className,
@@ -170,6 +189,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
       formatValue,
       orientation,
       className,
+      motion,
       "aria-describedby": ariaDescribedByProp,
       ...rest
     },
@@ -195,14 +215,32 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
       "aria-describedby": ariaDescribedByProp,
     });
 
+    const scope = useOptionalMeterMotionScope();
+    const trackPart = useMotionPart<HTMLDivElement>({
+      scope,
+      slot: "track",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: false,
+    });
+    const fillPart = useMotionPart<HTMLSpanElement>({
+      scope,
+      slot: "fill",
+      pointerPhases: false,
+    });
     const { fillRef } = useMeterFillAnimation({
       fillTargetStyle,
       isHorizontal,
     });
+    useMeterTrackSlotMotion(scope, value);
+    const setFillRef = (node: HTMLSpanElement | null) => {
+      fillRef.current = node;
+      fillPart.setRef(node);
+    };
 
     return (
       <div
-        ref={ref}
+        ref={trackPart.setRef}
         role="meter"
         aria-valuenow={aria["aria-valuenow"]}
         aria-valuemin={aria["aria-valuemin"]}
@@ -222,7 +260,7 @@ export const MeterTrack = forwardRef<HTMLDivElement, MeterTrackProps>(
         {...rest}
       >
         <span
-          ref={fillRef}
+          ref={setFillRef}
           aria-hidden
           className={meterFillClass({
             isHorizontal,

@@ -7,6 +7,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Meter } from "@/components/core/Meter";
+import { MeterMotionDemo } from "../../../../playground/showcase/demos/meter/MeterMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -237,4 +238,9 @@ export const CustomClassNames: Story = {
       }}
     />
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <MeterMotionDemo />,
 };

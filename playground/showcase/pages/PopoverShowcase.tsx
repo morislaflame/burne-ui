@@ -8,6 +8,14 @@ import { PopoverFilterPanelDemo } from "../demos/popover/PopoverFilterPanel.demo
 import popoverFilterPanelSource from "../demos/popover/PopoverFilterPanel.demo.tsx?raw";
 import { PopoverGlossDemo } from "../demos/popover/PopoverGloss.demo";
 import popoverGlossSource from "../demos/popover/PopoverGloss.demo.tsx?raw";
+import { PopoverMotionDefaultDemo } from "../demos/popover/PopoverMotionDefault.demo";
+import popoverMotionDefaultSource from "../demos/popover/PopoverMotionDefault.demo.tsx?raw";
+import { PopoverMotionInstantLeaveDemo } from "../demos/popover/PopoverMotionInstantLeave.demo";
+import popoverMotionInstantLeaveSource from "../demos/popover/PopoverMotionInstantLeave.demo.tsx?raw";
+import { PopoverMotionSlideYDemo } from "../demos/popover/PopoverMotionSlideY.demo";
+import popoverMotionSlideYSource from "../demos/popover/PopoverMotionSlideY.demo.tsx?raw";
+import { PopoverMotionTitleStaggerDemo } from "../demos/popover/PopoverMotionTitleStagger.demo";
+import popoverMotionTitleStaggerSource from "../demos/popover/PopoverMotionTitleStagger.demo.tsx?raw";
 import { PopoverProfileCardDemo } from "../demos/popover/PopoverProfileCard.demo";
 import popoverProfileCardSource from "../demos/popover/PopoverProfileCard.demo.tsx?raw";
 import { PopoverShareMenuDemo } from "../demos/popover/PopoverShareMenu.demo";
@@ -47,6 +55,16 @@ export function PopoverShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass pop-up panel.">
         <ShowcaseDemoFromFile Demo={PopoverGlossDemo} source={popoverGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — default recipe, instant leave, slide factory, title stagger."
+      >
+        <ShowcaseDemoFromFile Demo={PopoverMotionDefaultDemo} source={popoverMotionDefaultSource} />
+        <ShowcaseDemoFromFile Demo={PopoverMotionInstantLeaveDemo} source={popoverMotionInstantLeaveSource} />
+        <ShowcaseDemoFromFile Demo={PopoverMotionSlideYDemo} source={popoverMotionSlideYSource} />
+        <ShowcaseDemoFromFile Demo={PopoverMotionTitleStaggerDemo} source={popoverMotionTitleStaggerSource} />
       </ShowcaseSection>
 
       <ShowcaseSection title="Accommodation" description="side: top, right, bottom, left.">

@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   FieldLabelContextValue,
   LabelClassNames,
@@ -55,6 +57,13 @@ export function useOptionalFieldLabelContext() {
 export function useLabelClassNames(): LabelClassNames {
   return useContext(LabelClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `labelAnimations.ts`. */
+export const {
+  MotionScopeProvider: LabelMotionProvider,
+  useMotionScope: useLabelMotionScope,
+  useOptionalMotionScope: useOptionalLabelMotionScope,
+} = createMotionScope("Label");
 
 export { FieldLabelContext };
 

@@ -36,4 +36,6 @@ export type {
   SelectionMode,
   Selection,
   TableClassNames,
+  TableMotion,
+  TablePartMotion,
 } from "./tableTypes";

@@ -3,6 +3,7 @@ import { forwardRef } from "react";
 import { createOptionGroupErrorPart, createOptionGroupHintPart, createOptionGroupLegendPart } from "@/components/composite/utils/optionGroupParts";
 import { cn } from "@/utils/cn";
 
+import { useCheckboxGroupListMotion } from "./checkboxGroupAnimations";
 import { useCheckboxGroupClassNames, useCheckboxGroupContext } from "./checkboxGroupContext";
 import { checkboxGroupListClass } from "./checkboxGroupStyles";
 import type { CheckboxGroupListProps } from "./checkboxGroupTypes";
@@ -22,12 +23,33 @@ export const CheckboxGroupError = createOptionGroupErrorPart(
 );
 
 export const CheckboxGroupList = forwardRef<HTMLDivElement, CheckboxGroupListProps>(
-  function CheckboxGroupList({ className, orientation = "vertical", ...rest }, ref) {
+  function CheckboxGroupList(
+    {
+      className,
+      orientation = "vertical",
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClass = useCheckboxGroupClassNames().list;
+    const part = useCheckboxGroupListMotion({
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
     return (
       <div
-        ref={ref}
+        ref={part.setRef}
         className={checkboxGroupListClass(orientation, cn(slotClass, className))}
+        {...part.pointerHandlers}
         {...rest}
       />
     );

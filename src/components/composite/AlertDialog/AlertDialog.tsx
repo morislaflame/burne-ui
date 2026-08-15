@@ -1,6 +1,6 @@
 import "@/components/core/utils/glossInteractive.css";
 
-import { AlertDialogClassNamesProvider, AlertDialogProvider } from "./alertDialogContext";
+import { AlertDialogClassNamesProvider, AlertDialogMotionProvider, AlertDialogProvider } from "./alertDialogContext";
 import { AlertDialogBody, AlertDialogClose, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogHeadingBlock, AlertDialogIndicator, AlertDialogPanel, AlertDialogTitle, AlertDialogTrigger } from "./alertDialogParts";
 import type { AlertDialogProps } from "./alertDialogTypes";
 import { useAlertDialogRootState } from "./useAlertDialogRootState";
@@ -20,6 +20,9 @@ export type {
   AlertDialogContentProps,
   AlertDialogHeadingBlockProps,
   AlertDialogClassNames,
+  AlertDialogMotion,
+  AlertDialogLifecycleMotion,
+  AlertDialogPartMotion,
 } from "./alertDialogTypes";
 
 export function AlertDialogRoot({
@@ -32,6 +35,7 @@ export function AlertDialogRoot({
   size = "base",
   closeOnEscape = true,
   classNames,
+  motion,
   portalContainer,
 }: AlertDialogProps) {
   const state = useAlertDialogRootState({
@@ -47,7 +51,12 @@ export function AlertDialogRoot({
 
   return (
     <AlertDialogClassNamesProvider classNames={classNames}>
-      <AlertDialogProvider value={state.contextValue}>{children}</AlertDialogProvider>
+      <AlertDialogProvider value={state.contextValue}>
+        {/* Root has no DOM. Defaults + host play wrap AlertDialog.Panel. */}
+        <AlertDialogMotionProvider motion={motion}>
+        {children}
+        </AlertDialogMotionProvider>
+      </AlertDialogProvider>
     </AlertDialogClassNamesProvider>
   );
 }

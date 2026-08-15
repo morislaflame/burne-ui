@@ -11,6 +11,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type { SwitchSize } from "./switchGeometry";
 
@@ -34,6 +35,18 @@ export type SwitchClassNames = {
   error?: string;
   simpleLabelWrap?: string;
   simpleLabelText?: string;
+};
+
+export type SwitchCheckMotion = {
+  check?: MotionValue;
+  uncheck?: MotionValue;
+};
+
+export type SwitchMotion = {
+  fill?: SwitchCheckMotion;
+  thumb?: SwitchCheckMotion;
+  iconOff?: SwitchCheckMotion;
+  iconOn?: SwitchCheckMotion;
 };
 
 export type SwitchFieldContextValue = {
@@ -101,12 +114,16 @@ export type SwitchTrackProps = HTMLAttributes<HTMLSpanElement> & {
   classNames?: Prettify<
     Pick<SwitchClassNames, "track" | "fill" | "thumb" | "thumbShell" | "icon">
   >;
+  motion?: Prettify<SwitchMotion>;
 };
 
-export type SwitchFillProps = HTMLAttributes<HTMLSpanElement>;
+export type SwitchFillProps = HTMLAttributes<HTMLSpanElement> & {
+  motion?: Prettify<SwitchCheckMotion>;
+};
 
 export type SwitchThumbProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<SwitchCheckMotion>;
 };
 
 export type SwitchIconWhen = "off" | "on";
@@ -114,6 +131,7 @@ export type SwitchIconWhen = "off" | "on";
 export type SwitchIconProps = HTMLAttributes<HTMLSpanElement> & {
   when: SwitchIconWhen;
   children?: ReactNode;
+  motion?: Prettify<SwitchCheckMotion>;
 };
 
 export type SwitchProps = Omit<
@@ -129,6 +147,7 @@ export type SwitchProps = Omit<
   disabled?: boolean;
   className?: string;
   classNames?: Prettify<SwitchClassNames>;
+  motion?: Prettify<SwitchMotion>;
   onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
 };
 
@@ -149,7 +168,7 @@ export type SwitchClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type UseSwitchRootStateProps = Omit<SwitchProps, "className" | "classNames" | "onPointerDown"> &
+export type UseSwitchRootStateProps = Omit<SwitchProps, "className" | "classNames" | "onPointerDown" | "motion"> &
   Partial<SwitchControlProps>;
 
 export type UseSwitchAnimationsProps = {
@@ -166,6 +185,7 @@ export type UseSwitchTrackAnimationsProps = {
   size: SwitchSize;
   thickness?: number | string;
   squeezeToken: number;
+  travelPxRef: RefObject<number>;
   trackRef: RefObject<HTMLSpanElement | null>;
   trackFillRef: RefObject<HTMLSpanElement | null>;
   thumbRef: RefObject<HTMLSpanElement | null>;

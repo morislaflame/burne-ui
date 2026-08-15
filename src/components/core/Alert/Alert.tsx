@@ -1,14 +1,23 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo, type HTMLAttributes, type ReactNode } from "react";
 
-import { messageBannerGridClass } from "@/components/core/utils/messageBannerGridLayout";
-import { cn } from "@/utils/cn";
-
-import { AlertClassNamesProvider, AlertContext } from "./alertContext";
+import { messageBannerGridClass, type MessageBannerGridSlots } from "@/components/core/utils/messageBannerGridLayout";
 import { alertRootShellClass } from "@/components/core/utils/sizeLayout";
-import type { AlertProps } from "./alertTypes";
+import { cn } from "@/utils/cn";
+import type { ShadowLevel } from "@/tokens/shadows";
+
+import { AlertClassNamesProvider, AlertContext, AlertMotionProvider } from "./alertContext";
 import { AlertSimpleContent } from "./alertSimpleContent";
-import { useAlertAnimations } from "./alertAnimations";
+import { resolveAlertMotionDefaults, useAlertAnimations } from "./alertAnimations";
 import { useAlertRootState } from "./useAlertRootState";
+import type {
+  AlertClassNames,
+  AlertLiveRole,
+  AlertMotion,
+  AlertProps,
+  AlertSize,
+  AlertStatus,
+  AlertVariant,
+} from "./alertTypes";
 
 export type {
   AlertActionProps,
@@ -16,15 +25,113 @@ export type {
   AlertDescriptionProps,
   AlertIndicatorProps,
   AlertMessageProps,
-  AlertTitleProps,
   AlertSimpleContentProps,
   AlertVariant,
   AlertStatus,
   AlertLiveRole,
   AlertClassNames,
+  AlertMotion,
+  AlertPartMotion,
   AlertSize,
   AlertProps,
+  AlertTitleProps,
 } from "./alertTypes";
+
+type AlertSurfaceProps = {
+  variant: AlertVariant;
+  status: AlertStatus;
+  hoverLift: boolean;
+  shadow: ShadowLevel;
+  motion?: AlertMotion;
+  classNames?: AlertClassNames;
+  className: string;
+  sizePresetGridGap: string;
+  gridSlots: MessageBannerGridSlots;
+  size: AlertSize;
+  liveRole: AlertLiveRole;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  isCompound: boolean;
+  title?: ReactNode;
+  description?: ReactNode;
+  icon?: ReactNode | null;
+  action?: ReactNode;
+  onPointerOver?: HTMLAttributes<HTMLDivElement>["onPointerOver"];
+  onPointerOut?: HTMLAttributes<HTMLDivElement>["onPointerOut"];
+  rest: HTMLAttributes<HTMLDivElement>;
+  children?: ReactNode;
+};
+
+const AlertSurface = forwardRef<HTMLDivElement, AlertSurfaceProps>(function AlertSurface(
+  {
+    variant,
+    status,
+    hoverLift,
+    shadow,
+    motion,
+    classNames,
+    className,
+    sizePresetGridGap,
+    gridSlots,
+    size,
+    liveRole,
+    ariaLabelledBy,
+    ariaDescribedBy,
+    isCompound,
+    title,
+    description,
+    icon,
+    action,
+    onPointerOver,
+    onPointerOut,
+    rest,
+    children,
+  },
+  ref,
+) {
+  const { setRootRef, surfaceClass, pointerHandlers } = useAlertAnimations({
+    variant,
+    status,
+    hoverLift,
+    shadow,
+    motion,
+    ref,
+    onPointerOver,
+    onPointerOut,
+  });
+
+  return (
+    <div
+      ref={setRootRef}
+      role={liveRole}
+      aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
+      className={cn(
+        messageBannerGridClass(gridSlots, sizePresetGridGap),
+        alertRootShellClass(size),
+        surfaceClass,
+        classNames?.root,
+        className,
+      )}
+      {...pointerHandlers}
+      {...rest}
+    >
+      {isCompound ? (
+        children
+      ) : (
+        <AlertSimpleContent
+          gridSlots={gridSlots}
+          title={title}
+          description={description}
+          icon={icon}
+          action={action}
+        >
+          {children}
+        </AlertSimpleContent>
+      )}
+    </div>
+  );
+});
 
 export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   {
@@ -37,6 +144,7 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     icon,
     action,
     classNames,
+    motion,
     hoverLift = true,
     shadow = "base",
     className = "",
@@ -71,48 +179,47 @@ export const AlertRoot = forwardRef<HTMLDivElement, AlertProps>(function Alert(
     ariaDescribedByProp,
   });
 
-  const { setRootRef, surfaceClass, pointerHandlers } = useAlertAnimations({
-    variant: contextValue.variant,
-    status: contextValue.status,
-    hoverLift,
-    shadow,
-    ref,
-    onPointerOver,
-    onPointerOut,
-  });
+  const motionDefaults = useMemo(
+    () => resolveAlertMotionDefaults({ variant: contextValue.variant, hoverLift }),
+    [contextValue.variant, hoverLift],
+  );
+
+  const motionParams = useMemo(
+    () => ({ shadowSize: shadow, variant: contextValue.variant }),
+    [contextValue.variant, shadow],
+  );
 
   return (
     <AlertContext.Provider value={contextValue}>
       <AlertClassNamesProvider classNames={classNames}>
-        <div
-          ref={setRootRef}
-          role={liveRole}
-          aria-labelledby={ariaLabelledBy}
-          aria-describedby={ariaDescribedBy}
-          className={cn(
-            messageBannerGridClass(gridSlots, sizePreset.gridGap),
-            alertRootShellClass(size),
-            surfaceClass,
-            classNames?.root,
-            className,
-          )}
-          {...pointerHandlers}
-          {...rest}
-        >
-          {isCompound ? (
-            children
-          ) : (
-            <AlertSimpleContent
-              gridSlots={gridSlots}
-              title={title}
-              description={description}
-              icon={icon}
-              action={action}
-            >
-              {children}
-            </AlertSimpleContent>
-          )}
-        </div>
+        <AlertMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+          <AlertSurface
+            ref={ref}
+            variant={contextValue.variant}
+            status={contextValue.status}
+            hoverLift={hoverLift}
+            shadow={shadow}
+            motion={motion}
+            classNames={classNames}
+            className={className}
+            sizePresetGridGap={sizePreset.gridGap}
+            gridSlots={gridSlots}
+            size={size}
+            liveRole={liveRole}
+            ariaLabelledBy={ariaLabelledBy}
+            ariaDescribedBy={ariaDescribedBy}
+            isCompound={isCompound}
+            title={title}
+            description={description}
+            icon={icon}
+            action={action}
+            onPointerOver={onPointerOver}
+            onPointerOut={onPointerOut}
+            rest={rest}
+          >
+            {children}
+          </AlertSurface>
+        </AlertMotionProvider>
       </AlertClassNamesProvider>
     </AlertContext.Provider>
   );

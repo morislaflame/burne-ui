@@ -5,6 +5,7 @@ import { expect, fn } from "storybook/test";
 import { IoAdd } from "react-icons/io5";
 
 import { Button, type ButtonAsyncState, type ButtonStatus, type ButtonVariant } from ".";
+import { ButtonMotionDemo } from "../../../../playground/showcase/demos/button/ButtonMotion.demo";
 
 const BUTTON_VARIANTS: ButtonVariant[] = [
   "default",
@@ -450,4 +451,9 @@ export const AsChildLink: Story = {
       </Button>
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ButtonMotionDemo />,
 };

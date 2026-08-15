@@ -1,7 +1,8 @@
-import { forwardRef, useId } from "react";
+import { forwardRef, useId, useMemo } from "react";
 
+import { resolveFieldSetMotionDefaults } from "./fieldAnimations";
 import { FieldError, FieldHint, FieldLabel, FieldLegend, FieldLegendHeader, FieldRoot, FieldSetActions, FieldSetGroup, FieldSetRootInner } from "./fieldParts";
-import { FieldSetClassNamesProvider, FieldSetSizeProvider } from "./fieldContext";
+import { FieldSetClassNamesProvider, FieldSetMotionProvider, FieldSetSizeProvider } from "./fieldContext";
 import type { FieldSetProps } from "./fieldTypes";
 import { useFieldSetRootState } from "./useFieldSetRootState";
 
@@ -20,6 +21,9 @@ export type {
   FieldSize,
   FieldClassNames,
   FieldSetClassNames,
+  FieldMotion,
+  FieldPartMotion,
+  FieldSetMotion,
 } from "./fieldTypes";
 
 export { FieldRoot };
@@ -34,24 +38,28 @@ export const FieldSetRoot = forwardRef<HTMLFieldSetElement, FieldSetProps>(
       errorId,
       disabled,
       size = "base",
+      motion,
       ...rest
     },
     ref,
   ) {
     const state = useFieldSetRootState(children);
+    const motionDefaults = useMemo(() => resolveFieldSetMotionDefaults(), []);
 
     return (
       <FieldSetSizeProvider size={size}>
         <FieldSetClassNamesProvider classNames={classNames}>
-          <FieldSetRootInner
-            ref={ref}
-            className={className}
-            hintId={hintId}
-            errorId={errorId}
-            disabled={disabled}
-            state={state}
-            {...rest}
-          />
+          <FieldSetMotionProvider motion={motion} defaults={motionDefaults}>
+            <FieldSetRootInner
+              ref={ref}
+              className={className}
+              hintId={hintId}
+              errorId={errorId}
+              disabled={disabled}
+              state={state}
+              {...rest}
+            />
+          </FieldSetMotionProvider>
         </FieldSetClassNamesProvider>
       </FieldSetSizeProvider>
     );

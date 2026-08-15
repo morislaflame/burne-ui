@@ -1,13 +1,87 @@
+/**
+ * Slot motion for ColorPicker — look here first.
+ *
+ * DOM slots: `contentPanel`, `area`, `areaThumb`, `hexInput`, `presets`
+ * (`hueSlider` / `alphaSlider` are passed through to ColorSlider).
+ *
+ * Not slots: area thumb `left`/`top` drag geometry (kit-internal).
+ * Root is a portal-host map. Host `ColorPicker.Content` plays optional `enter`
+ * on `contentPanel`; `change` plays on `area` when hex updates (excludes `areaThumb`).
+ * Defaults: empty.
+ */
 import { useCallback, useEffect, useRef } from "react";
+import type { ForwardedRef } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { focusElement } from "@/components/core/utils/focusElement";
+import {
+  hasPointerPhases,
+  useMotionPart,
+  useOptionalEnterOnMount,
+  useSlotPhaseOnChange,
+} from "@/components/core/utils/slotMotion";
 
 import { clampN } from "./colorUtils";
-import type { UseColorPickerAreaDragProps } from "./colorPickerTypes";
+import { useOptionalColorPickerMotionScope } from "./colorPickerContext";
+import type {
+  ColorPickerMotion,
+  ColorPickerPartMotion,
+  UseColorPickerAreaDragProps,
+} from "./colorPickerTypes";
 import {
   COLOR_PICKER_AREA_KEYBOARD_STEP,
   COLOR_PICKER_AREA_KEYBOARD_STEP_LARGE,
 } from "./colorPickerA11y";
+
+export function resolveColorPickerMotionDefaults(): ColorPickerMotion {
+  return {};
+}
+
+export function useColorPickerSlotMotion<T extends HTMLElement>(
+  slot: keyof ColorPickerMotion,
+  {
+    motion,
+    forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    playEnter = true,
+  }: {
+    motion?: ColorPickerPartMotion;
+    forwardedRef?: ForwardedRef<T>;
+    onPointerOver?: (e: ReactPointerEvent<T>) => void;
+    onPointerOut?: (e: ReactPointerEvent<T>) => void;
+    onPointerDown?: (e: ReactPointerEvent<T>) => void;
+    onPointerUp?: (e: ReactPointerEvent<T>) => void;
+    playEnter?: boolean;
+  } = {},
+) {
+  const scope = useOptionalColorPickerMotionScope();
+  const pointer = hasPointerPhases(motion ?? scope?.getRootMotion()?.[slot]);
+  const part = useMotionPart<T>({
+    scope,
+    slot,
+    motion,
+    forwardedRef,
+    pointerPhases: pointer,
+    pressPhases: pointer,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
+  useOptionalEnterOnMount(playEnter ? scope : null, slot);
+  return part;
+}
+
+export function useColorPickerAreaChange(hex: string) {
+  const scope = useOptionalColorPickerMotionScope();
+  useSlotPhaseOnChange(scope, "area", hex, {
+    phase: "change",
+    exclude: ["areaThumb"],
+  });
+}
 
 export function useColorPickerAreaDrag({ hsva, setHsva }: UseColorPickerAreaDragProps) {
   const areaRef = useRef<HTMLDivElement>(null);

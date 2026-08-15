@@ -10,6 +10,18 @@ import { ButtonFabClusterDemo } from "../demos/button/ButtonFabCluster.demo";
 import buttonFabClusterSource from "../demos/button/ButtonFabCluster.demo.tsx?raw";
 import { ButtonGlossDemo } from "../demos/button/ButtonGloss.demo";
 import buttonGlossSource from "../demos/button/ButtonGloss.demo.tsx?raw";
+import { ButtonMotionCompoundPartsDemo } from "../demos/button/ButtonMotionCompoundParts.demo";
+import buttonMotionCompoundPartsSource from "../demos/button/ButtonMotionCompoundParts.demo.tsx?raw";
+import { ButtonMotionDefaultDemo } from "../demos/button/ButtonMotionDefault.demo";
+import buttonMotionDefaultSource from "../demos/button/ButtonMotionDefault.demo.tsx?raw";
+import { ButtonMotionHoverYDemo } from "../demos/button/ButtonMotionHoverY.demo";
+import buttonMotionHoverYSource from "../demos/button/ButtonMotionHoverY.demo.tsx?raw";
+import { ButtonMotionIconColorDemo } from "../demos/button/ButtonMotionIconColor.demo";
+import buttonMotionIconColorSource from "../demos/button/ButtonMotionIconColor.demo.tsx?raw";
+import { ButtonMotionNoPressDemo } from "../demos/button/ButtonMotionNoPress.demo";
+import buttonMotionNoPressSource from "../demos/button/ButtonMotionNoPress.demo.tsx?raw";
+import { ButtonMotionWiggleDemo } from "../demos/button/ButtonMotionWiggle.demo";
+import buttonMotionWiggleSource from "../demos/button/ButtonMotionWiggle.demo.tsx?raw";
 import { ButtonSizesDemo } from "../demos/button/ButtonSizes.demo";
 import buttonSizesSource from "../demos/button/ButtonSizes.demo.tsx?raw";
 import { ButtonStatusesDemo } from "../demos/button/ButtonStatuses.demo";
@@ -46,6 +58,18 @@ export function ButtonShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion and optional ripple.">
         <ShowcaseDemoFromFile Demo={ButtonGlossDemo} source={buttonGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — disable a phase, vars, factory, or motion + classNames."
+      >
+        <ShowcaseDemoFromFile Demo={ButtonMotionDefaultDemo} source={buttonMotionDefaultSource} />
+        <ShowcaseDemoFromFile Demo={ButtonMotionNoPressDemo} source={buttonMotionNoPressSource} />
+        <ShowcaseDemoFromFile Demo={ButtonMotionHoverYDemo} source={buttonMotionHoverYSource} />
+        <ShowcaseDemoFromFile Demo={ButtonMotionWiggleDemo} source={buttonMotionWiggleSource} />
+        <ShowcaseDemoFromFile Demo={ButtonMotionIconColorDemo} source={buttonMotionIconColorSource} />
+        <ShowcaseDemoFromFile Demo={ButtonMotionCompoundPartsDemo} source={buttonMotionCompoundPartsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

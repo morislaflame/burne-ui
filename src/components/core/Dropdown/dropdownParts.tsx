@@ -8,12 +8,13 @@ import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
-import { useDropdownPopoverMenu } from "./dropdownAnimations";
+import { useDropdownPopoverMenu, resolveDropdownPopoverMotion } from "./dropdownAnimations";
 import {
   useDropdown,
   useDropdownClassNames,
   useDropdownGroupLabelRegister,
   useDropdownIndicatorPreference,
+  useOptionalDropdownMotionScope,
   DropdownGroupLabelRegisterProvider,
   DropdownIndicatorPreferenceProvider,
 } from "./dropdownContext";
@@ -152,6 +153,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       align,
       offset = POPOVER_DEFAULT_OFFSET,
       portalContainer: portalContainerProp,
+      motion,
       ...rest
     },
     forwardedRef,
@@ -167,6 +169,11 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       portalContainer: portalContainerFromRoot,
     } = useDropdown();
     const slotClassNames = useDropdownClassNames();
+    const parentScope = useOptionalDropdownMotionScope();
+    const popoverMotion = resolveDropdownPopoverMotion({
+      rootMotion: parentScope?.getRootMotion(),
+      popoverMotion: motion,
+    });
 
     const panelVariant = variantProp ?? popoverVariant;
 
@@ -184,6 +191,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
       open,
       setOpen,
       contentRef,
+      triggerRef,
     });
 
     return (
@@ -195,6 +203,7 @@ export const DropdownPopover = forwardRef<HTMLDivElement, DropdownPopoverProps>(
         anchorRef={triggerRef}
         shouldDismiss={shouldDismiss}
         portalContainer={portalContainerProp ?? portalContainerFromRoot}
+        motion={popoverMotion}
       >
         <Popover.Content
           ref={(node) => {

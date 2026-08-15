@@ -1,7 +1,10 @@
 import { useRef } from "react";
 
+import { useMotionPart, useOptionalEnterOnMount } from "@/components/core/utils/slotMotion";
+
 import { loadingVisualA11yProps } from "./loadingA11y";
 import { useLoadingDotsAnimation } from "./loadingAnimations";
+import { useOptionalLoadingMotionScope } from "./loadingContext";
 import { loadingDotClass, loadingDotsTrackClass, loadingDotsTrackStyle, loadingSpinnerRingClass } from "./loadingStyles";
 import type { LoadingColor, LoadingSize } from "./loadingTypes";
 
@@ -16,8 +19,17 @@ export function LoadingSpinner({
   color: LoadingColor;
   className?: string;
 }) {
+  const scope = useOptionalLoadingMotionScope();
+  const part = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "spinner",
+    pointerPhases: false,
+  });
+  useOptionalEnterOnMount(scope, "spinner");
+
   return (
     <span
+      ref={part.setRef}
       {...loadingVisualA11yProps()}
       className={loadingSpinnerRingClass(size, color, className)}
     />
@@ -36,11 +48,23 @@ export function LoadingDots({
   dotClassName?: string;
 }) {
   const trackRef = useRef<HTMLSpanElement>(null);
+  const scope = useOptionalLoadingMotionScope();
+  const part = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "dots",
+    pointerPhases: false,
+  });
   useLoadingDotsAnimation(trackRef, size);
+  useOptionalEnterOnMount(scope, "dots");
+
+  const setRef = (node: HTMLSpanElement | null) => {
+    trackRef.current = node;
+    part.setRef(node);
+  };
 
   return (
     <span
-      ref={trackRef}
+      ref={setRef}
       className={loadingDotsTrackClass(size, className)}
       style={loadingDotsTrackStyle(size)}
       {...loadingVisualA11yProps()}

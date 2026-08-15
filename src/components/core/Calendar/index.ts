@@ -40,4 +40,6 @@ export type {
   CalendarRangeValue,
   CalendarLocale,
   CalendarClassNames,
+  CalendarMotion,
+  CalendarPartMotion,
 } from "./calendarTypes";

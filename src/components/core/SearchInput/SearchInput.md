@@ -11,6 +11,8 @@ import {
   type SearchInputSize,
   type SearchInputVariant,
   type SearchInputClassNames,
+  type SearchInputMotion,
+  type SearchInputPartMotion,
 } from "burne-ui";
 ```
 
@@ -51,6 +53,7 @@ import {
 | `disabled` / `readOnly` | — | Блокировка |
 | `className` | — | Алиас `classNames.root` (доп. класс на shell) |
 | `classNames` | — | Слоты `root` / `icon` / `input` / `clear` / `expandTrigger` |
+| `motion` | — | Карта слотов; expand — `root` / `icon` `enter` / `leave` |
 | `aria-label` | — | **Рекомендуется** — collapsed trigger + input |
 
 ## Состояния UI
@@ -64,76 +67,37 @@ import {
 
 ## Анимации
 
-Вся motion в `searchInputAnimations.ts` (GSAP + field shell utils).
+Публичный slot motion. Expand/collapse — рецепты `searchExpand` (width/radius, только в рецепте) и `searchIconShift` (`left` иконки). Gloss hover/press остаются на `useGlossFieldShellMotion`.
 
-**DOM:**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` / `enter` / `leave` | non-gloss: `hoverLiftSecondLevel`, collapsed `pressSqueeze` (`pressOut: false`); `enter`/`leave` → `searchExpand`. Gloss hover/press — `false` (field-shell) |
+| `icon` | `enter` / `leave` | `searchIconShift` |
+| `clear` / `input` / `expandTrigger` | hover/press | нет |
+
+`false` на `root`/`icon` `enter`/`leave` — хост `applySearchExpandInstant`. Не анимируйте `width` в публичных MotionVars.
+
+**Где в коде:** типы — `searchInputTypes.ts`; scope — `searchInputContext.tsx`; defaults + host — `searchInputAnimations.ts`; слоты — `searchInputParts.tsx`; Provider — `SearchInput.tsx`. Утилита expand — `core/utils/searchInputExpandMotion.ts`.
+
+```tsx
+<SearchInput
+  aria-label="Search"
+  motion={{
+    root: { enter: false, leave: false },
+    icon: { enter: false, leave: false },
+  }}
+/>
 ```
-<div ref=rootRef shell>              ← width, borderRadius, shadow
-  [Ripple?]
-  <span ref=iconRef> IoSearch         ← left position animated
-  <input type=search tabIndex=0|-1>
-  [button clear]
-</div>
-```
 
-### 1. Expand / collapse (`runExpandMotion`)
-
-**Expand:**
-
-- Timeline parallel: shell `width` collapsed→targetW, `borderRadius` circle→expanded
-- Icon `left`: center → `padX`
-- vars: `motionInteractive()`
-
-**Collapse:**
-
-- shell → `collapsedDim` px width, full border-radius
-- icon → centered
-- onComplete: remove inline width/radius
-
-**Reduced motion:** `applyShellMetrics` instant.
-
-### 2. Shell hover shadow
-
-Collapsed: `shadowNone()`; expanded: `shadowSm()`.
-
-`useSecondLevelShadow` — idle shadow sync по `expanded` key; hover sm→md когда expanded.
-
-Gloss: `useGlossFieldShellMotion` вместо standard hover.
-
-### 3. Press squeeze (collapsed)
-
-`pointerdown` на shell (если !expanded):
-
-- `animateInteractivePressSqueeze` или `animateGlossInteractivePressSqueeze`
-- Promise в `squeezePromiseRef` — expand ждёт завершения squeeze
-
-### 4. Icon slide
-
-Синхронно с expand timeline — отдельный tween `iconEl.left`.
-
-### Кастомизация
+### Отключение
 
 ```ts
-configureMotion({
-  interactiveDuration: 280,
-  interactiveEase: "power2.out",
-  hoverLiftScale: 1.025,
-  pressSqueezeScale: [1, 0.98, 1],
-});
+configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
 ```
 
-Размеры expand width — hardcode `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (не в configureMotion).
-
-### Сводка
-
-| Анимация | `configureMotion` | Hardcode |
-|----------|-------------------|----------|
-| Expand width/radius | `interactiveDuration` | `expandedWidth` prop |
-| Icon slide | interactive | padX per size |
-| Hover shadow | `enableHoverLift` | shadow tokens |
-| Squeeze | `pressSqueezeScale` | — |
-| Ripple | — | `ripple` prop |
+Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (не в `configureMotion`).
 
 ## Стилизация и кастомизация
 
@@ -232,9 +196,10 @@ SearchInput/
 ├── searchInputTypes.ts
 ├── searchInputStyles.ts         # classes + SIZE_LAYOUT / resolveSearchLayout / radius
 ├── searchInputA11y.ts
-├── searchInputAnimations.ts     # expand/collapse GSAP, shell/icon binders
+├── searchInputAnimations.ts     # defaults + host play (expand / hover / press)
+├── searchInputContext.tsx       # createMotionScope
 ├── useSearchInputRootState.ts
-├── searchInputParts.tsx         # icon, control, clear, ripple
+├── searchInputParts.tsx         # icon, control, clear, expandTrigger, ripple
 ├── SearchInput.stories.tsx
 └── SearchInput.md
 ```
@@ -243,4 +208,4 @@ SearchInput/
 
 ## Storybook
 
-`Core Components/SearchInput` — collapsed/expanded, controlled, gloss, ripple, ButtonGroup, light theme, a11y, classNames.
+`Core Components/SearchInput` — collapsed/expanded, controlled, gloss, ripple, ButtonGroup, light theme, a11y, classNames, slot motion gallery.

@@ -34,4 +34,7 @@ export type {
   DrawerFooterProps,
   DrawerCloseProps,
   DrawerContentProps,
+  DrawerMotion,
+  DrawerLifecycleMotion,
+  DrawerPartMotion,
 } from "./drawerTypes";

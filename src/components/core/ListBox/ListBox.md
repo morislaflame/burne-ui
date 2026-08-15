@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type ListBoxSize, type ListBoxVariant, type ListBoxClassNames } from "burne-ui";
+import { ListBox, useListBox, type ListBoxProps, type ListBoxItemProps, type ListBoxSize, type ListBoxVariant, type ListBoxClassNames, type ListBoxMotion, type ListBoxPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -106,54 +106,26 @@ Option-grid (indicator | label | icon) включается только ког�
 
 ## Анимации
 
-`listBoxAnimations.ts` + `SelectionIndicator` + shared `usePressableElementTextMotion`.
+Публичный slot motion. Root Provider несёт defaults (keyboard `play("item", "pressIn", { el })`). Каждый `ListBox.Item` — nested scope + `useMotionPart`. Gloss panel ref и `data-active` highlight — kit-internal. SelectionIndicator fill — публичный motion SelectionIndicator.
 
-**DOM item (simple):**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `item` | `pressIn` / `pressOut` (+ hover если задать factory) | `pressSqueeze` (`pressOut: false`) |
+| `label` / `icon` | hover/press | нет |
+
+`false` на `item.pressIn` — skip без kill.
+
+**Где в коде:** типы — `listBoxTypes.ts`; scope — `listBoxContext.tsx`; defaults + keyboard play — `listBoxAnimations.ts`; слоты — `listBoxParts.tsx`; Provider — `ListBox.tsx`.
+
+```tsx
+<ListBox motion={{ item: { pressIn: false } }} aria-label="Lang">
+  <ListBox.Item value="en" label="English" />
+</ListBox>
 ```
-<button role=option>
-  [ItemIndicator]
-  ListBox.Label   ← labelMotionRef (squeeze target)
-  ListBox.Hint
-  ListBox.Icon
-</button>
-```
 
-### 1. Gloss root
-
-`useListBoxRootGlossRef(isGloss)` → `useMergedGlossPanelRef` — refresh gloss state на root при `variant="gloss"`.
-
-### 2. Item label press squeeze
-
-`useListBoxItemAnimations` → `usePressableElementTextMotion`:
-
-- **enabled** когда `!disabled && hasLabel`
-- **hoverLift: false** — только press squeeze на label ref
-- `onPointerDown` на item → squeeze label text
-
-Reduced motion: skip GSAP.
-
-### 3. Selection indicator (check / radio)
-
-`ListBox.ItemIndicator` → `SelectionIndicator` → `useSelectionIndicatorAnimation`:
-
-- **select:** `fill` scale 0→1, `mark` (check icon) scale in
-- **deselect:** reverse с `motionInteractive()`
-
-Режим: `radio` (single) или `multi` (multiple) из context.
-
-### 4. Active highlight (CSS)
-
-Root синхронизирует атрибут `data-active` на активной опции (`useListBoxActiveOptionHighlight`). Стиль — статический класс `data-active:bg-default-hover` на item (без React `isActive`, без GSAP).
-
-### Сводка
-
-| Анимация | Утилита | `configureMotion` |
-|----------|---------|-------------------|
-| Gloss root | `useMergedGlossPanelRef` | gloss CSS |
-| Label squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` |
-| Indicator | `useSelectionIndicatorAnimation` | `selectionFillDuration` |
-| Active row | CSS `LISTBOX_ITEM_ACTIVE_CLASS` | — |
+Compound: `motion` на `ListBox.Item` — part motion слота `item`; на `ListBox.Label` / `ListBox.Icon` — свои слоты.
 
 ## Стилизация и кастомизация
 

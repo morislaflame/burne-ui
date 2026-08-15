@@ -8,6 +8,7 @@ import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiSt
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
 import { Slider } from ".";
+import { SliderMotionDemo } from "../../../../playground/showcase/demos/slider/SliderMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -285,4 +286,9 @@ export const CustomClassNames: Story = {
       <Slider.Hint>All slots configured via classNames.</Slider.Hint>
     </Slider>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <SliderMotionDemo />,
 };

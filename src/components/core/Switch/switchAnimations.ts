@@ -1,16 +1,33 @@
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+/**
+ * Slot motion for Switch — look here first.
+ *
+ * DOM slots: `fill`, `thumb`, `iconOff`, `iconOn`
+ * Host: `Switch.Track` (`useSwitchTrackAnimations`) plays `check` / `uncheck`.
+ * Root passes the `motion` map; Track wraps defaults + `params.getTravelPx`.
+ * Thumb shell squeeze and track disabled-opacity stay internal GSAP.
+ */
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import {
-  isMotionFeatureEnabled,
-  motionInteractive,
-  motionSwitchThumb,
-} from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
+import {
+  applySwitchFillInstant,
+  applySwitchIconInstant,
+  applySwitchThumbInstant,
+} from "@/components/core/utils/slotMotion/recipes/switchThumb";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 import { measureSwitchTravel, resolveFallbackThumbPx } from "./switchGeometry";
-import type { UseSwitchAnimationsProps, UseSwitchTrackAnimationsProps } from "./switchTypes";
+import { useSwitchMotionScope } from "./switchContext";
+import type { SwitchMotion, UseSwitchAnimationsProps, UseSwitchTrackAnimationsProps } from "./switchTypes";
+
+export const SWITCH_MOTION_DEFAULTS: SwitchMotion = {
+  thumb: { check: "switchThumb", uncheck: "switchThumb" },
+  fill: { check: "switchFill", uncheck: "switchFill" },
+  iconOn: { check: "switchIconOn", uncheck: "switchIconOn" },
+  iconOff: { check: "switchIconOff", uncheck: "switchIconOff" },
+};
 
 export function useSwitchTextMotion({
   isDisabled,
@@ -34,6 +51,7 @@ export function useSwitchTrackAnimations({
   size,
   thickness,
   squeezeToken,
+  travelPxRef,
   trackRef,
   trackFillRef,
   thumbRef,
@@ -41,60 +59,96 @@ export function useSwitchTrackAnimations({
   iconOffRef,
   iconOnRef,
 }: UseSwitchTrackAnimationsProps) {
+  const scope = useSwitchMotionScope();
   const reduceMotion = usePrefersReducedMotion();
   const switchMotionOff = reduceMotion || !isMotionFeatureEnabled("enableSwitchThumb");
   const fallbackTravelPx = resolveFallbackThumbPx(thickness, size);
-  const travelPxRef = useRef(fallbackTravelPx);
-  const trackFillFirstLayoutRef = useRef(true);
-  const thumbFirstLayoutRef = useRef(true);
+  const firstLayoutRef = useRef(true);
+
+  const applyInstant = useCallback(
+    (nextChecked: boolean, travelPx: number) => {
+      if (thumbRef.current) applySwitchThumbInstant(thumbRef.current, nextChecked, travelPx);
+      if (trackFillRef.current) applySwitchFillInstant(trackFillRef.current, nextChecked);
+      if (iconOffRef.current) applySwitchIconInstant(iconOffRef.current, !nextChecked);
+      if (iconOnRef.current) applySwitchIconInstant(iconOnRef.current, nextChecked);
+    },
+    [iconOffRef, iconOnRef, thumbRef, trackFillRef],
+  );
+
+  const playPhase = useCallback(
+    (nextChecked: boolean, travelPx: number) => {
+      const phase = nextChecked ? "check" : "uncheck";
+      const playSlot = (
+        slot: "thumb" | "fill" | "iconOff" | "iconOn",
+        el: HTMLElement | null,
+        onSkip: () => void,
+      ) => {
+        if (!el) return;
+        const value = scope.resolve(slot, phase);
+        if (value === false || value === undefined) {
+          onSkip();
+          return;
+        }
+        scope.play(slot, phase, { el });
+      };
+
+      playSlot("thumb", thumbRef.current, () => {
+        if (thumbRef.current) applySwitchThumbInstant(thumbRef.current, nextChecked, travelPx);
+      });
+      playSlot("fill", trackFillRef.current, () => {
+        if (trackFillRef.current) applySwitchFillInstant(trackFillRef.current, nextChecked);
+      });
+      playSlot("iconOff", iconOffRef.current, () => {
+        if (iconOffRef.current) applySwitchIconInstant(iconOffRef.current, !nextChecked);
+      });
+      playSlot("iconOn", iconOnRef.current, () => {
+        if (iconOnRef.current) applySwitchIconInstant(iconOnRef.current, nextChecked);
+      });
+    },
+    [iconOffRef, iconOnRef, scope, thumbRef, trackFillRef],
+  );
 
   const syncThumbPosition = useCallback(
     (nextChecked: boolean, travelPx: number) => {
-      const thumb = thumbRef.current;
-      if (!thumb) return;
-
-      const targetX = nextChecked ? travelPx : 0;
-
-      if (switchMotionOff || thumbFirstLayoutRef.current) {
-        thumbFirstLayoutRef.current = false;
-        killMotion(thumb);
-        thumb.style.transform = `translate(${targetX}px, 0)`;
+      travelPxRef.current = travelPx;
+      if (!thumbRef.current && !trackFillRef.current && !iconOffRef.current && !iconOnRef.current) {
         return;
       }
 
-      killMotion(thumb);
-      void gsap.to(thumb, {
-        x: targetX,
-        ...motionSwitchThumb(),
-        overwrite: "auto",
-        // 2D path — avoid will-change / force3D layer snap on fractional sizes.
-        force3D: false,
-      });
+      if (firstLayoutRef.current || switchMotionOff) {
+        firstLayoutRef.current = false;
+        applyInstant(nextChecked, travelPx);
+        return;
+      }
+
+      playPhase(nextChecked, travelPx);
     },
-    [switchMotionOff, thumbRef],
+    [applyInstant, iconOffRef, iconOnRef, playPhase, switchMotionOff, thumbRef, trackFillRef, travelPxRef],
   );
 
   useLayoutEffect(() => {
-    travelPxRef.current = fallbackTravelPx;
-    syncThumbPosition(checked, travelPxRef.current);
-  }, [checked, fallbackTravelPx, syncThumbPosition]);
-
-  useLayoutEffect(() => {
     const track = trackRef.current;
-    const thumb = thumbShellRef.current;
-    if (!track || !thumb) return;
-
-    const update = () => {
-      travelPxRef.current = measureSwitchTravel(track, thumb);
-      syncThumbPosition(checked, travelPxRef.current);
+    const shell = thumbShellRef.current;
+    const measure = () => {
+      if (track && shell) {
+        travelPxRef.current = measureSwitchTravel(track, shell);
+      } else {
+        travelPxRef.current = fallbackTravelPx;
+      }
     };
 
-    update();
-    const ro = new ResizeObserver(update);
+    measure();
+    syncThumbPosition(checked, travelPxRef.current);
+
+    if (!track || !shell) return undefined;
+    const ro = new ResizeObserver(() => {
+      measure();
+      syncThumbPosition(checked, travelPxRef.current);
+    });
     ro.observe(track);
-    ro.observe(thumb);
+    ro.observe(shell);
     return () => ro.disconnect();
-  }, [checked, size, syncThumbPosition, thickness, fallbackTravelPx, trackRef, thumbShellRef]);
+  }, [checked, fallbackTravelPx, syncThumbPosition, thickness, size, trackRef, thumbShellRef, travelPxRef]);
 
   useEffect(() => {
     const nodes = [
@@ -111,88 +165,6 @@ export function useSwitchTrackAnimations({
       }
     };
   }, [iconOffRef, iconOnRef, thumbRef, thumbShellRef, trackFillRef, trackRef]);
-
-  useLayoutEffect(() => {
-    const trackFill = trackFillRef.current;
-    if (!trackFill) return;
-
-    if (switchMotionOff) {
-      killMotion(trackFill);
-      trackFill.style.opacity = checked ? "1" : "0";
-      return;
-    }
-
-    if (trackFillFirstLayoutRef.current) {
-      trackFillFirstLayoutRef.current = false;
-      killMotion(trackFill);
-      trackFill.style.opacity = checked ? "1" : "0";
-      return;
-    }
-
-    killMotion(trackFill);
-    if (checked) {
-      void gsap.fromTo(
-        trackFill,
-        { autoAlpha: 0 },
-        { autoAlpha: 1, ...motionInteractive(), overwrite: "auto" },
-      );
-    } else {
-      void gsap.to(trackFill, { autoAlpha: 0, ...motionInteractive(), overwrite: "auto" });
-    }
-  }, [checked, switchMotionOff, trackFillRef]);
-
-  useLayoutEffect(() => {
-    if (!iconOffRef.current && !iconOnRef.current) return;
-
-    if (switchMotionOff) {
-      if (iconOffRef.current) {
-        killMotion(iconOffRef.current);
-        iconOffRef.current.style.opacity = checked ? "0" : "1";
-      }
-      if (iconOnRef.current) {
-        killMotion(iconOnRef.current);
-        iconOnRef.current.style.opacity = checked ? "1" : "0";
-      }
-      return;
-    }
-
-    if (iconOffRef.current) {
-      killMotion(iconOffRef.current);
-      if (checked) {
-        void gsap.to(iconOffRef.current, {
-          autoAlpha: 0,
-          scale: 0.88,
-          ...motionInteractive(),
-          overwrite: "auto",
-          force3D: false,
-        });
-      } else {
-        void gsap.fromTo(
-          iconOffRef.current,
-          { autoAlpha: 0, scale: 0.88 },
-          { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto", force3D: false },
-        );
-      }
-    }
-    if (iconOnRef.current) {
-      killMotion(iconOnRef.current);
-      if (checked) {
-        void gsap.fromTo(
-          iconOnRef.current,
-          { autoAlpha: 0, scale: 0.88 },
-          { autoAlpha: 1, scale: 1, ...motionInteractive(), overwrite: "auto", force3D: false },
-        );
-      } else {
-        void gsap.to(iconOnRef.current, {
-          autoAlpha: 0,
-          scale: 0.88,
-          ...motionInteractive(),
-          overwrite: "auto",
-          force3D: false,
-        });
-      }
-    }
-  }, [checked, iconOffRef, iconOnRef, switchMotionOff]);
 
   useLayoutEffect(() => {
     const track = trackRef.current;

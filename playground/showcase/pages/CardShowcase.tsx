@@ -4,6 +4,14 @@ import { CardClassNamesFullDemo } from "../demos/card/CardClassNamesFull.demo";
 import cardClassNamesFullSource from "../demos/card/CardClassNamesFull.demo.tsx?raw";
 import { CardGlossDemo } from "../demos/card/CardGloss.demo";
 import cardGlossSource from "../demos/card/CardGloss.demo.tsx?raw";
+import { CardMotionChromeSplitDemo } from "../demos/card/CardMotionChromeSplit.demo";
+import cardMotionChromeSplitSource from "../demos/card/CardMotionChromeSplit.demo.tsx?raw";
+import { CardMotionInstantHoverDemo } from "../demos/card/CardMotionInstantHover.demo";
+import cardMotionInstantHoverSource from "../demos/card/CardMotionInstantHover.demo.tsx?raw";
+import { CardMotionPressBounceDemo } from "../demos/card/CardMotionPressBounce.demo";
+import cardMotionPressBounceSource from "../demos/card/CardMotionPressBounce.demo.tsx?raw";
+import { CardMotionTitlePopDemo } from "../demos/card/CardMotionTitlePop.demo";
+import cardMotionTitlePopSource from "../demos/card/CardMotionTitlePop.demo.tsx?raw";
 import { CardMetricTilesDemo } from "../demos/card/CardMetricTiles.demo";
 import cardMetricTilesSource from "../demos/card/CardMetricTiles.demo.tsx?raw";
 import { CardPressableDemo } from "../demos/card/CardPressable.demo";
@@ -46,6 +54,16 @@ export function CardShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass surface with motion.">
         <ShowcaseDemoFromFile align="stretch" Demo={CardGlossDemo} source={cardGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant hover, press bounce, title pop, header/footer split."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionInstantHoverDemo} source={cardMotionInstantHoverSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionPressBounceDemo} source={cardMotionPressBounceSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionTitlePopDemo} source={cardMotionTitlePopSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CardMotionChromeSplitDemo} source={cardMotionChromeSplitSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

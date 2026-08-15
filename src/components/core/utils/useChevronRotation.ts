@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
 import { motionInteractive } from "./motionConfig";
-import { usePrefersReducedMotion } from "./reducedMotion";
+import { prefersReducedMotion, usePrefersReducedMotion } from "./reducedMotion";
 
 const CHEVRON_INIT_ATTR = "data-chevron-init";
 
@@ -63,19 +63,35 @@ export function useChevronRotation(
     if (prevOpenRef.current === open) return;
     prevOpenRef.current = open;
 
-    killMotion(el);
-
-    if (reduceMotion) {
-      applyChevronRotationInstant(el, open);
-      return;
-    }
-
-    gsap.to(el, {
-      rotation: open ? 180 : 0,
-      ...motionInteractive(),
-      overwrite: "auto",
-    });
+    animateChevronRotation(el, open, { reduced: reduceMotion });
   }, [open, chevronRef, enabled, skipAnimRef, reduceMotionPreferred]);
 
   return bindChevronRef;
+}
+
+export type AnimateChevronRotationOptions = {
+  reduced?: boolean;
+  duration?: number;
+  ease?: string;
+};
+
+/** Rotation tween for a chevron. Used by `useChevronRotation` and the `chevronRotate` recipe. */
+export function animateChevronRotation(
+  el: HTMLElement,
+  open: boolean,
+  options?: AnimateChevronRotationOptions,
+) {
+  const reduced = options?.reduced ?? prefersReducedMotion();
+  killMotion(el);
+  if (reduced) {
+    applyChevronRotationInstant(el, open);
+    return undefined;
+  }
+  const vars = motionInteractive();
+  return gsap.to(el, {
+    rotation: open ? 180 : 0,
+    duration: options?.duration ?? vars.duration,
+    ease: options?.ease ?? vars.ease,
+    overwrite: "auto",
+  });
 }

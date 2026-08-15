@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Input } from "@/components/core/Input";
 import { Label } from "@/components/core/Label";
+import { LabelMotionDemo } from "../../../../playground/showcase/demos/label/LabelMotion.demo";
 
 const decorator = [
   (Story: ComponentType) => (
@@ -83,4 +84,9 @@ export const CustomClassNames: Story = {
       Email
     </Label>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <LabelMotionDemo />,
 };

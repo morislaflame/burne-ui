@@ -75,6 +75,17 @@ import { Meter, useMeterFieldContext, type MeterProps, type MeterTrackProps, typ
 
 ## Анимации
 
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `track`, `fill`, `header`, `value` | `enter` (opt-in); `change` on `track` when value updates | empty |
+
+Хост = Track. Root — Field, не слот Meter. Геометрия fill (`width`/`height`) остаётся kit-internal (`useMeterFillAnimation`). Не играйте `change` на `fill` — это убьёт fill-tween. Кастомные factory могут твинить цвет / opacity / `y` на `track` / `value`.
+
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет track видимым). Enter factory — `opacity` + transform, не `autoAlpha` (`visibility: hidden` прячет и fill). Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
 `meterAnimations.ts` → `useMeterFillAnimation`.
 
 **DOM:**

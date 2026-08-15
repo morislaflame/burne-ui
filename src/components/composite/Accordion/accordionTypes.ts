@@ -5,9 +5,12 @@ import type {
   ExpandableContentProps,
   ExpandableDescriptionProps,
   ExpandableIconProps,
+  ExpandableLifecycleMotion,
   ExpandableMessageProps,
+  ExpandableMotion,
   ExpandableSize,
   ExpandableTitleProps,
+  ExpandableTriggerLiftMotion,
   ExpandableTriggerProps,
 } from "@/components/core/Expandable";
 
@@ -28,6 +31,10 @@ export type AccordionClassNames = {
   glossContent?: string;
 };
 
+export type AccordionMotion = ExpandableMotion;
+export type AccordionLifecycleMotion = ExpandableLifecycleMotion;
+export type AccordionTriggerLiftMotion = ExpandableTriggerLiftMotion;
+
 export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "defaultValue"> & {
   /** Controlled: id of the open item (`null` = all closed). */
   value?: string | null;
@@ -38,6 +45,11 @@ export type AccordionProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "
   onValueChange?: (value: string | null) => void;
   size?: ExpandableSize;
   classNames?: Prettify<AccordionClassNames>;
+  /**
+   * Per-slot motion forwarded to each Item's Expandable.
+   * Item `motion` overrides the same slots.
+   */
+  motion?: Prettify<AccordionMotion>;
   children?: ReactNode;
 };
 
@@ -47,6 +59,8 @@ export type AccordionItemProps = Omit<HTMLAttributes<HTMLDivElement>, "children"
   disabled?: boolean;
   /** Locally overrides slots inherited from the root (merged like `Breadcrumbs.List`). */
   classNames?: Prettify<AccordionClassNames>;
+  /** Overrides root `motion` for this item (merged like `classNames`). */
+  motion?: Prettify<AccordionMotion>;
   children?: ReactNode;
 };
 
@@ -66,9 +80,12 @@ export type AccordionDescriptionProps = ExpandableDescriptionProps;
 
 export type AccordionChevronProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
+  motion?: Prettify<AccordionLifecycleMotion>;
 };
 
-export type AccordionPanelProps = HTMLAttributes<HTMLDivElement>;
+export type AccordionPanelProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<AccordionLifecycleMotion>;
+};
 
 export type AccordionBodyProps = HTMLAttributes<HTMLDivElement>;
 
@@ -78,6 +95,7 @@ export type AccordionContextValue = {
   /** Stable auto-id for an Item without explicit `value` (call once per Item mount). */
   allocateAutoItemId: () => string;
   size: ExpandableSize;
+  motion?: AccordionMotion;
 };
 
 export type AccordionClassNamesProviderProps = {

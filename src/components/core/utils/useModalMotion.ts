@@ -59,6 +59,18 @@ export type UseModalMotionOptions = {
    * motion resolvers re-run when direction changes while mounted.
    */
   panelMotionKey?: string | number;
+  /**
+   * When set, enter/leave use this controller instead of `animateModalOpen/Close`.
+   * AlertDialog omits it and keeps the existing path.
+   */
+  slotMotion?: {
+    playEnter: (overlay: HTMLElement, panel: HTMLElement) => void;
+    playLeave: (
+      overlay: HTMLElement,
+      panel: HTMLElement,
+      onComplete: () => void,
+    ) => { kill: () => void };
+  };
 };
 
 export type UseModalMotionResult = {
@@ -85,6 +97,7 @@ export function useModalMotion({
   getPanelExit,
   preparePanel,
   panelMotionKey,
+  slotMotion,
 }: UseModalMotionOptions): UseModalMotionResult {
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -94,14 +107,17 @@ export function useModalMotion({
   const focusReturnRef = useRef<HTMLElement | null>(null);
   const openFromKeyboardRef = useRef(false);
   const skipCloseAnimRef = useRef(false);
+  const enterPlayedKeyRef = useRef<string | null>(null);
 
   // Keep motion resolvers fresh without retriggering effects on identity churn.
   const getPanelOpenRef = useRef(getPanelOpen);
   const getPanelExitRef = useRef(getPanelExit);
   const preparePanelRef = useRef(preparePanel);
+  const slotMotionRef = useRef(slotMotion);
   getPanelOpenRef.current = getPanelOpen;
   getPanelExitRef.current = getPanelExit;
   preparePanelRef.current = preparePanel;
+  slotMotionRef.current = slotMotion;
 
   const showPortal = open || mounted;
 
@@ -165,6 +181,16 @@ export function useModalMotion({
       return undefined;
     }
 
+    const customLeave = slotMotionRef.current;
+    if (customLeave) {
+      const handle = customLeave.playLeave(overlay, panel, finishClose);
+      return () => {
+        cancelled = true;
+        handle.kill();
+        killMotion(overlay, panel);
+      };
+    }
+
     killMotion(overlay, panel);
     const vars = { ...motionModal(), overwrite: "auto" as const };
     const panelExit = getPanelExitRef.current?.(panel);
@@ -184,7 +210,10 @@ export function useModalMotion({
   }, [open, mounted, panelMotionKey]);
 
   useLayoutEffect(() => {
-    if (!open) return;
+    if (!open) {
+      enterPlayedKeyRef.current = null;
+      return;
+    }
 
     const dialog = dialogRef.current;
     if (dialog && !dialog.open) {
@@ -192,34 +221,47 @@ export function useModalMotion({
       focusReturnRef.current = captureModalFocusReturn(dialog);
       openFromKeyboardRef.current = isFocusVisibleElement(focusReturnRef.current);
       openNativeDialog(dialog, { contained });
+      // Flush UA `display: none` → `[open]` so GSAP fromTo isn't recorded while hidden.
+      void dialog.offsetHeight;
     }
 
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     if (!overlay || !panel) return;
 
+    const enterKey = `${contained ? "c" : "m"}:${String(panelMotionKey ?? "")}`;
+    if (enterPlayedKeyRef.current === enterKey) return;
+
     if (isReducedModalMotion()) {
       applyReducedModalMotion(overlay, panel, {
         focusPanel: focusOnOpen,
         focusVisible: openFromKeyboardRef.current,
       });
+      enterPlayedKeyRef.current = enterKey;
       return;
     }
 
+    enterPlayedKeyRef.current = enterKey;
+
     preparePanelRef.current?.(panel);
-    const openMotion = getPanelOpenRef.current?.(panel);
-    animateModalOpen({
-      overlay,
-      panel,
-      vars: { ...motionModal(), overwrite: "auto" as const },
-      ...(openMotion
-        ? { panelFrom: openMotion.from, panelTo: openMotion.to }
-        : {}),
-    });
+    const customEnter = slotMotionRef.current;
+    if (customEnter) {
+      customEnter.playEnter(overlay, panel);
+    } else {
+      const openMotion = getPanelOpenRef.current?.(panel);
+      animateModalOpen({
+        overlay,
+        panel,
+        vars: { ...motionModal(), overwrite: "auto" as const },
+        ...(openMotion
+          ? { panelFrom: openMotion.from, panelTo: openMotion.to }
+          : {}),
+      });
+    }
     if (focusOnOpen) {
       focusPanelOnOpen(panel, { focusVisible: openFromKeyboardRef.current });
     }
-  }, [open, contained, focusOnOpen, panelMotionKey]);
+  }, [open, mounted, contained, focusOnOpen, panelMotionKey]);
 
   const handleBackdropPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {

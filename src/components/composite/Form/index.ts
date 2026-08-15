@@ -23,6 +23,8 @@ export type {
   FormFieldProps,
   FormClassNames,
   FormSize,
+  FormMotion,
+  FormPartMotion,
 } from "./Form";
 
 export {

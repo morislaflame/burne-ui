@@ -66,7 +66,18 @@ Compound API нет: компонент leaf-level и не имеет подча
 
 ## Анимации
 
-`Text` не использует GSAP и не имеет animation pipeline.
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root` | `enter` / hover / press (opt-in) | empty |
+
+Свой scope на корне. Без пропа `motion` GSAP не играет.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
+Без пропа `motion` визуал прежний: публичный slot motion — opt-in, defaults пустые.
 
 **DOM:**
 

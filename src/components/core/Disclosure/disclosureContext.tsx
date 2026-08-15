@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   DisclosureClassNames,
   DisclosureClassNamesProviderProps,
@@ -67,3 +69,10 @@ export function DisclosureClassNamesProvider({
 export function useDisclosureClassNames(): DisclosureClassNames {
   return useContext(DisclosureClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `disclosureAnimations.ts`. */
+export const {
+  MotionScopeProvider: DisclosureMotionProvider,
+  useMotionScope: useDisclosureMotionScope,
+  useOptionalMotionScope: useOptionalDisclosureMotionScope,
+} = createMotionScope("Disclosure");

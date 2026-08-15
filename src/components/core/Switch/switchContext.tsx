@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   SwitchClassNames,
   SwitchClassNamesProviderProps,
@@ -79,3 +81,10 @@ export function useSwitchTrackContext(): SwitchTrackContextValue {
   }
   return ctx;
 }
+
+/** Scope only. Defaults and host play live in `switchAnimations.ts`. */
+export const {
+  MotionScopeProvider: SwitchMotionProvider,
+  useMotionScope: useSwitchMotionScope,
+  useOptionalMotionScope: useOptionalSwitchMotionScope,
+} = createMotionScope("Switch");

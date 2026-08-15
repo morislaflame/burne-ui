@@ -8,6 +8,7 @@ import { Text } from "@/components/core/Text";
 import { COMPONENT_SIZES } from "@/components/core/utils/sizeLayout";
 
 import { ToggleButton, type ToggleButtonVariant } from ".";
+import { ToggleButtonMotionDemo } from "../../../../playground/showcase/demos/toggle-button/ToggleButtonMotion.demo";
 
 const VARIANTS: ToggleButtonVariant[] = ["default", "outline", "ghost"];
 
@@ -202,4 +203,9 @@ export const CompoundLayout: Story = {
       </ToggleButton.Content>
     </ToggleButton>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <ToggleButtonMotionDemo />,
 };

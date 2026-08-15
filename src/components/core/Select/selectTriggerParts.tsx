@@ -8,10 +8,8 @@ import { IoChevronDown } from "react-icons/io5";
 
 import { useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupContext";
 import { joinFieldDescribedBy } from "@/components/core/Field/fieldA11y";
-import { useGlossFieldShellMotion } from "@/components/core/utils/glossInteractiveMotion";
 import { mergeRefs } from "@/components/core/utils/mergeRefs";
-import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
-import { useFieldShellHoverLift } from "@/components/core/utils/useFieldShellHoverLift";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import {
   createTypeaheadBufferState,
   isTypeaheadPrintableKey,
@@ -19,13 +17,24 @@ import {
   typeaheadPush,
 } from "@/components/core/utils/typeahead";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
+import { useChevronRotation } from "@/components/core/utils/useChevronRotation";
 
-import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { focusElement } from "@/components/core/utils/focusElement";
 
+import {
+  resolveSelectMotionDefaults,
+  resolveSelectMotionParams,
+  useSelectOpenAfterSqueeze,
+  useSelectShellAnimations,
+} from "./selectAnimations";
 import { selectActiveOptionId, selectTriggerAriaLabel } from "./selectA11y";
 import { selectBumpActiveValue, selectFirstEnabledValue, selectLastEnabledValue, selectOptionsByValue, selectTypeaheadLabels } from "./selectAPI";
-import { useSelectClassNames, useSelectContext } from "./selectContext";
+import {
+  SelectMotionProvider,
+  useOptionalSelectMotionScope,
+  useSelectClassNames,
+  useSelectContext,
+} from "./selectContext";
 import { SELECT_CHEVRON_ICON, selectTriggerClass, selectTriggerGroupClass, selectValueClass } from "./selectStyles";
 import type {
   SelectTriggerGroupProps,
@@ -43,164 +52,215 @@ export const SelectTriggerGroup = forwardRef<HTMLDivElement, SelectTriggerGroupP
       groupSegment: groupSegmentProp,
       onPointerEnter,
       onPointerLeave,
+      motion,
       ...rest
     },
     ref,
   ) {
     const layoutCtx = useOptionalButtonGroupLayout();
     const groupCtx = useOptionalButtonGroupSegment();
-    const slotClassNames = useSelectClassNames();
     const ctx = useSelectContext();
-    const {
-      open,
-      setOpen,
-      disabled,
-      variant,
-      status,
-      anchorRef,
-      listId,
-      valueRef,
-      value,
-      optionValues,
-      setActiveValue,
-      activeValue,
-      required,
-      hintConnected,
-      errorConnected,
-      hintId,
-      errorId,
-      labelId,
-      labelConnected,
-      placeholder,
-    } = ctx;
-
-    const {
-      "aria-label": ariaLabelProp,
-      "aria-labelledby": ariaLabelledByProp,
-      ...triggerGroupRest
-    } = rest;
-
-    const activeOptionId = selectActiveOptionId(listId, open, activeValue);
-    const ariaDescribedBy = joinFieldDescribedBy(
-      hintConnected ? hintId : undefined,
-      errorConnected ? errorId : undefined,
-    );
-    const ariaLabelledBy =
-      ariaLabelledByProp ?? (labelConnected ? labelId : undefined);
-    const ariaLabel =
-      ariaLabelProp ??
-      (ariaLabelledBy ? undefined : placeholder || undefined);
-
-    const openingRef = useOpeningRef();
-    const isGloss = variant === "gloss";
+    const { disabled, variant } = ctx;
     const groupSegment = layoutCtx?.segmented
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
-
-    const shellHoverLift = useFieldShellHoverLift(
-      anchorRef,
-      !disabled && !isGloss && groupSegment == null,
+    const isGloss = variant === "gloss";
+    const pointerInsideRef = useRef(false);
+    const parentScope = useOptionalSelectMotionScope();
+    const motionDefaults = useMemo(
+      () => resolveSelectMotionDefaults({ isGloss, disabled, groupSegment }),
+      [disabled, groupSegment, isGloss],
     );
-    const glossShellMotion = useGlossFieldShellMotion(
-      anchorRef,
-      !disabled && isGloss && groupSegment == null,
+    const motionParams = useMemo(
+      () =>
+        resolveSelectMotionParams({
+          disabled,
+          isGloss,
+          groupSegment,
+          pointerInside: pointerInsideRef,
+        }),
+      [disabled, groupSegment, isGloss],
     );
-
-    const setAnchorRef = useCallback(
-      (node: HTMLDivElement | null) => {
-        anchorRef.current = node;
-        if (!disabled && isGloss) glossShellMotion.bindShellRef(node);
-      },
-      [anchorRef, disabled, glossShellMotion, isGloss],
-    );
-
-    const finishOpen = useCallback(() => {
-      const selectedIdx = optionValues.indexOf(value);
-      setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
-      requestAnimationFrame(() => focusElement(valueRef.current));
-    }, [optionValues, setActiveValue, value, valueRef]);
-
-    const openAfterSqueeze = useCallback(() => {
-      runOpenAfterSqueeze({
-        triggerRef: anchorRef,
-        disabled,
-        setOpen,
-        onOpened: finishOpen,
-        openingRef,
-      });
-    }, [anchorRef, disabled, finishOpen, setOpen, openingRef]);
-
-    const handlePointerDown = useCallback(
-      (e: ReactPointerEvent<HTMLDivElement>) => {
-        if (disabled) return;
-        if (open) return;
-        if (e.button !== 0) return;
-        openAfterSqueeze();
-      },
-      [disabled, open, openAfterSqueeze],
+    const mergedMotion = mergeMotionSlotMaps(
+      parentScope?.getRootMotion(),
+      motion ? { triggerGroup: motion } : undefined,
     );
 
     return (
-      <div
-        ref={mergeRefs(ref, setAnchorRef)}
-        role="combobox"
-        aria-expanded={open}
-        aria-controls={open ? listId : undefined}
-        aria-haspopup="listbox"
-        aria-activedescendant={open ? activeOptionId : undefined}
-        aria-labelledby={ariaLabelledBy}
-        aria-label={ariaLabel}
-        aria-required={required || undefined}
-        aria-invalid={status === "danger" ? true : undefined}
-        aria-describedby={ariaDescribedBy}
-        aria-disabled={disabled || undefined}
-        tabIndex={-1}
-        onPointerDown={handlePointerDown}
-        onPointerEnter={(e) => {
-          onPointerEnter?.(e);
-          if (e.defaultPrevented) return;
-          if (isGloss && groupSegment == null) glossShellMotion.onShellPointerEnter(e);
-          else shellHoverLift.onShellPointerEnter(e);
-        }}
-        onPointerLeave={(e) => {
-          onPointerLeave?.(e);
-          if (isGloss && groupSegment == null) glossShellMotion.onShellPointerLeave(e);
-          else shellHoverLift.onShellPointerLeave(e);
-        }}
-        onFocusCapture={
-          isGloss && !disabled && groupSegment == null
-            ? glossShellMotion.onShellFocusIn
-            : undefined
-        }
-        onBlurCapture={
-          isGloss && !disabled && groupSegment == null
-            ? glossShellMotion.onShellFocusOut
-            : undefined
-        }
-        {...(disabled && isGloss ? { "data-gloss-disabled": "" } : {})}
-        className={selectTriggerGroupClass({
-          variant,
-          status,
-          disabled,
-          groupSegment,
-          shellHoverMotionClass: isGloss
-            ? glossShellMotion.shellHoverMotionClass
-            : shellHoverLift.shellHoverMotionClass,
-          className,
-          slotClass: slotClassNames.triggerGroup,
-        })}
-        {...triggerGroupRest}
-      >
-        {children}
-      </div>
+      <SelectMotionProvider motion={mergedMotion} defaults={motionDefaults} params={motionParams}>
+        <SelectTriggerGroupSurface
+          forwardedRef={ref}
+          className={className}
+          groupSegment={groupSegment}
+          pointerInsideRef={pointerInsideRef}
+          shellPartMotion={motion}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          rest={rest}
+        >
+          {children}
+        </SelectTriggerGroupSurface>
+      </SelectMotionProvider>
     );
   },
 );
 
 SelectTriggerGroup.displayName = "SelectTriggerGroup";
 
+function SelectTriggerGroupSurface({
+  forwardedRef,
+  className,
+  children,
+  groupSegment,
+  pointerInsideRef,
+  shellPartMotion,
+  onPointerEnter,
+  onPointerLeave,
+  rest,
+}: {
+  forwardedRef: React.ForwardedRef<HTMLDivElement>;
+  className?: string;
+  children?: React.ReactNode;
+  groupSegment: SelectTriggerGroupProps["groupSegment"];
+  pointerInsideRef: React.MutableRefObject<boolean>;
+  shellPartMotion?: SelectTriggerGroupProps["motion"];
+  onPointerEnter?: SelectTriggerGroupProps["onPointerEnter"];
+  onPointerLeave?: SelectTriggerGroupProps["onPointerLeave"];
+  rest: Omit<
+    SelectTriggerGroupProps,
+    | "className"
+    | "children"
+    | "groupSegment"
+    | "onPointerEnter"
+    | "onPointerLeave"
+    | "motion"
+  >;
+}) {
+  const slotClassNames = useSelectClassNames();
+  const ctx = useSelectContext();
+  const {
+    open,
+    setOpen,
+    disabled,
+    variant,
+    status,
+    anchorRef,
+    listId,
+    valueRef,
+    value,
+    optionValues,
+    setActiveValue,
+    activeValue,
+    required,
+    hintConnected,
+    errorConnected,
+    hintId,
+    errorId,
+    labelId,
+    labelConnected,
+    placeholder,
+  } = ctx;
+
+  const {
+    "aria-label": ariaLabelProp,
+    "aria-labelledby": ariaLabelledByProp,
+    ...triggerGroupRest
+  } = rest;
+
+  const activeOptionId = selectActiveOptionId(listId, open, activeValue);
+  const ariaDescribedBy = joinFieldDescribedBy(
+    hintConnected ? hintId : undefined,
+    errorConnected ? errorId : undefined,
+  );
+  const ariaLabelledBy =
+    ariaLabelledByProp ?? (labelConnected ? labelId : undefined);
+  const ariaLabel =
+    ariaLabelProp ??
+    (ariaLabelledBy ? undefined : placeholder || undefined);
+
+  const {
+    bindShellRef,
+    squeezeThenOpen,
+    shellPointerUp,
+    shellPointerEnter,
+    shellPointerLeave,
+    shellFocusCapture,
+    shellBlurCapture,
+    shellHoverMotionClass,
+    glossDisabledAttr,
+  } = useSelectShellAnimations({
+    shellRef: anchorRef,
+    disabled,
+    variant,
+    groupSegment,
+    motion: shellPartMotion,
+    pointerInsideRef,
+  });
+
+  const finishOpen = useCallback(() => {
+    const selectedIdx = optionValues.indexOf(value);
+    setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
+    requestAnimationFrame(() => focusElement(valueRef.current));
+  }, [optionValues, setActiveValue, value, valueRef]);
+
+  const handlePointerDown = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      if (disabled) return;
+      if (open) return;
+      if (e.button !== 0) return;
+      squeezeThenOpen({ setOpen, onOpened: finishOpen });
+    },
+    [disabled, finishOpen, open, setOpen, squeezeThenOpen],
+  );
+
+  return (
+    <div
+      ref={mergeRefs(forwardedRef, bindShellRef)}
+      role="combobox"
+      aria-expanded={open}
+      aria-controls={open ? listId : undefined}
+      aria-haspopup="listbox"
+      aria-activedescendant={open ? activeOptionId : undefined}
+      aria-labelledby={ariaLabelledBy}
+      aria-label={ariaLabel}
+      aria-required={required || undefined}
+      aria-invalid={status === "danger" ? true : undefined}
+      aria-describedby={ariaDescribedBy}
+      aria-disabled={disabled || undefined}
+      tabIndex={-1}
+      onPointerDown={handlePointerDown}
+      onPointerUp={shellPointerUp}
+      onPointerEnter={(e) => {
+        onPointerEnter?.(e);
+        if (e.defaultPrevented) return;
+        shellPointerEnter?.(e);
+      }}
+      onPointerLeave={(e) => {
+        onPointerLeave?.(e);
+        if (e.defaultPrevented) return;
+        shellPointerLeave?.(e);
+      }}
+      onFocusCapture={shellFocusCapture}
+      onBlurCapture={shellBlurCapture}
+      {...glossDisabledAttr}
+      className={selectTriggerGroupClass({
+        variant,
+        status,
+        disabled,
+        groupSegment,
+        shellHoverMotionClass,
+        className,
+        slotClass: slotClassNames.triggerGroup,
+      })}
+      {...triggerGroupRest}
+    >
+      {children}
+    </div>
+  );
+}
+
 export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
-  function SelectValue({ className, onKeyDown, onBlur, children, placeholder: placeholderProp, ...rest }, ref) {
+  function SelectValue({ className, onKeyDown, onBlur, children, placeholder: placeholderProp, motion, ...rest }, ref) {
     const slotClassNames = useSelectClassNames();
     const ctx = useSelectContext();
     const {
@@ -218,14 +278,32 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       disabled,
       placeholder: contextPlaceholder,
       size,
+      variant,
       formValueRef,
       formOnBlur,
     } = ctx;
 
     const placeholder = placeholderProp ?? contextPlaceholder;
     const typeaheadRef = useRef(createTypeaheadBufferState());
+    const isGloss = variant === "gloss";
+    const partMotionRef = useRef(motion);
+    partMotionRef.current = motion;
 
-    const openingRef = useOpeningRef();
+    const squeezeThenOpen = useSelectOpenAfterSqueeze({
+      triggerRef: anchorRef,
+      disabled,
+      isGloss,
+      partMotionRef,
+    });
+
+    const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalSelectMotionScope(),
+      slot: "value",
+      motion,
+      forwardedRef: mergeRefs(ref, valueRef, formValueRef),
+      pointerPhases: true,
+      pressPhases: true,
+    });
 
     const optionsByValue = useMemo(
       () => selectOptionsByValue(options),
@@ -242,16 +320,6 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
       setActiveValue(selectedIdx >= 0 ? value : optionValues[0] ?? null);
       requestAnimationFrame(() => focusElement(valueRef.current));
     }, [optionValues, setActiveValue, value, valueRef]);
-
-    const openAfterSqueeze = useCallback(() => {
-      runOpenAfterSqueeze({
-        triggerRef: anchorRef,
-        disabled,
-        setOpen,
-        onOpened: finishOpen,
-        openingRef,
-      });
-    }, [anchorRef, disabled, finishOpen, setOpen, openingRef]);
 
     const bumpActive = useCallback(
       (delta: number) => {
@@ -285,12 +353,12 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         if (!open) {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
-            openAfterSqueeze();
+            squeezeThenOpen({ setOpen, onOpened: finishOpen });
             return;
           }
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            openAfterSqueeze();
+            squeezeThenOpen({ setOpen, onOpened: finishOpen });
             return;
           }
           return;
@@ -348,14 +416,15 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         activeValue,
         bumpActive,
         disabled,
+        finishOpen,
         onKeyDown,
         open,
-        openAfterSqueeze,
         optionValues,
         optionsByValue,
         selectOption,
         setActiveValue,
         setOpen,
+        squeezeThenOpen,
       ],
     );
 
@@ -373,7 +442,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
 
     return (
       <button
-        ref={mergeRefs(ref, valueRef, formValueRef)}
+        ref={setRef}
         id={selectId}
         type="button"
         disabled={disabled}
@@ -386,6 +455,7 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
         {...rest}
+        {...pointerHandlers}
       >
         {display}
       </button>
@@ -395,25 +465,41 @@ export const SelectValue = forwardRef<HTMLButtonElement, SelectValueProps>(
 
 SelectValue.displayName = "SelectValue";
 
+function SelectTriggerIcon({ size }: { size: "small" | "base" | "mid" | "large" }) {
+  const slotClassNames = useSelectClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalSelectMotionScope(),
+    slot: "triggerIcon",
+    pointerPhases: true,
+  });
+
+  return (
+    <span ref={setRef} {...pointerHandlers}>
+      <IoChevronDown
+        className={cn(
+          SELECT_CHEVRON_ICON[size],
+          slotClassNames.triggerIcon,
+        )}
+        aria-hidden
+      />
+    </span>
+  );
+}
+
 export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  function SelectTrigger({ className, onPointerDown, children, ...rest }, ref) {
+  function SelectTrigger({ className, onPointerDown, children, motion, ...rest }, ref) {
     const labels = useBurneLabels();
     const slotClassNames = useSelectClassNames();
     const { open, setOpen, disabled, size, valueRef } = useSelectContext();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const bindChevronRef = useChevronRotation(open, triggerRef);
-
-    const setTriggerRef = useCallback(
-      (node: HTMLButtonElement | null) => {
-        bindChevronRef(node);
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [bindChevronRef, ref],
-    );
-
-    const handlePointerDown = useCallback(
-      (e: ReactPointerEvent<HTMLButtonElement>) => {
+    const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalSelectMotionScope(),
+      slot: "trigger",
+      motion,
+      pointerPhases: true,
+      pressPhases: true,
+      onPointerDown: (e) => {
         onPointerDown?.(e);
         e.stopPropagation();
         if (disabled) return;
@@ -425,7 +511,17 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         setOpen(true);
         requestAnimationFrame(() => focusElement(valueRef.current));
       },
-      [disabled, onPointerDown, open, setOpen, valueRef],
+    });
+
+    const setTriggerRef = useCallback(
+      (node: HTMLButtonElement | null) => {
+        bindChevronRef(node);
+        triggerRef.current = node;
+        setRef(node);
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [bindChevronRef, ref, setRef],
     );
 
     return (
@@ -440,22 +536,13 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
           className,
           slotClass: slotClassNames.trigger,
         })}
-        onPointerDown={handlePointerDown}
         {...rest}
+        {...pointerHandlers}
       >
-        {children ?? (
-          <IoChevronDown
-            className={cn(
-              SELECT_CHEVRON_ICON[size],
-              slotClassNames.triggerIcon,
-            )}
-            aria-hidden
-          />
-        )}
+        {children ?? <SelectTriggerIcon size={size} />}
       </button>
     );
   },
 );
 
 SelectTrigger.displayName = "SelectTrigger";
-

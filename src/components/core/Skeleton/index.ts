@@ -26,4 +26,6 @@ export type {
   SkeletonTextClassNames,
   SkeletonBlockClassNames,
   SkeletonRegionClassNames,
+  SkeletonMotion,
+  SkeletonPartMotion,
 } from "./skeletonTypes";

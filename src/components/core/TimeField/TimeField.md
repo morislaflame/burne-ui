@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFieldSize, type TimeFieldStatus, type TimeFieldVariant, type TimeFieldFormat, type TimeFieldClassNames } from "burne-ui";
+import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFieldSize, type TimeFieldStatus, type TimeFieldVariant, type TimeFieldFormat, type TimeFieldClassNames, type TimeFieldMotion, type TimeFieldPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -53,6 +53,7 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 | `id` | auto | Связь label/control |
 | `className` | — | На root |
 | `classNames` | — | Слоты |
+| `motion` | — | per-slot motion (`shell`, `prefix`, `suffix`, `segments`) |
 
 ### `TimeFieldClassNames`
 
@@ -83,65 +84,30 @@ import { TimeField, type TimeFieldProps, type TimeFieldControlProps, type TimeFi
 
 ## Анимации
 
-`timeFieldAnimations.ts` → `useTimeFieldShellMotion`. Сегменты — без GSAP.
+Публичный slot motion. Root передаёт карту `motion`; хост — `TimeField.Control` (defaults + `play`). Gloss hover/press остаются на `useGlossFieldShellMotion`. Фокус сегмента — CSS, без GSAP.
 
-**DOM:**
+### Slot motion
 
-```
-<Field root>
-  <Label />
-  <fieldset class=shell ref=shellRef>     ← hover lift / squeeze / gloss
-    <span class=prefix />
-    <div class=segments>
-      <span role=spinbutton class=segment>  ← focus: bg-primary
-      <span class=segmentSeparator aria-hidden>:</span>
-    <input class=keyboardInput aria-hidden />  <!-- iOS keyboard -->
-    <span class=suffix />
-  <Hint /> <Error role=alert />
-```
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `shell` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | non-gloss: `hoverLiftSecondLevel`, `pressSqueeze` (`pressOut: false`). Gloss hover/press — `false` (field-shell) |
+| `prefix` / `suffix` / `segments` | hover/press | нет |
 
-### 1. Shell motion (`useTimeFieldShellMotion`)
+`false` на `shell.hoverIn/Out` — rest-тень остаётся, lift не играет. Не анимируйте layout в публичных MotionVars.
 
-| variant | Поведение |
-|---------|-----------|
-| `gloss` | `useGlossFieldShellMotion` — gloss scale/surface |
-| остальные | `useFieldShellHoverLift` + `animateInteractivePressSqueeze` на `pointerdown` |
+**Где в коде:** типы — `timeFieldTypes.ts`; scope — `timeFieldContext.tsx`; defaults + host — `timeFieldAnimations.ts`; слоты — `timeFieldParts.tsx`; карта на Root — `TimeField.tsx`.
 
-Shared с `Input` / `TextArea` field shell utils.
-
-#### Кастомизация
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  hoverLiftScale: 1.02,
-  pressSqueezeScale: [1, 0.99, 1],
-  enableHoverLift: true,
-});
+```tsx
+<TimeField
+  label="Start"
+  defaultValue="09:30"
+  motion={{
+    shell: { hoverIn: false, hoverOut: false },
+  }}
+/>
 ```
 
-**Reduced motion:** `prefersReducedMotion()` — без squeeze.
-
-### 2. Segment focus
-
-React state — `bg-primary text-primary-foreground` на focused segment. Без GSAP.
-
-### Чего нет
-
-- Portal / popover
-- Ripple встроенный
-- Анимация смены цифр (instant value update)
-- Second-level persistent shadow
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Shell hover lift | `useFieldShellHoverLift` | `hoverLiftScale`, `enableHoverLift` | `variant`, `disabled` |
-| Shell press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale` | `disabled` |
-| Gloss shell | `useGlossFieldShellMotion` | gloss tokens | `variant="gloss"` |
-| Segment focus | CSS | — | keyboard focus |
+Compound: `motion` на `TimeField.Control` — part motion слота `shell`.
 
 ## Токены и CSS
 
@@ -256,4 +222,4 @@ TimeField/
 
 ## Storybook
 
-`Core Components/TimeField` — dual API, segmented, outline, affixes, compact, seconds, validation, statuses, sizes, variants, disabled, `CustomClassNames`.
+`Core Components/TimeField` — dual API, segmented, outline, affixes, compact, seconds, validation, statuses, sizes, variants, disabled, `CustomClassNames`, slot motion gallery.

@@ -10,6 +10,12 @@ import { BreadcrumbsProductHeaderDemo } from "../demos/breadcrumbs/BreadcrumbsPr
 import breadcrumbsProductHeaderSource from "../demos/breadcrumbs/BreadcrumbsProductHeader.demo.tsx?raw";
 import { BreadcrumbsShortPathDemo } from "../demos/breadcrumbs/BreadcrumbsShortPath.demo";
 import breadcrumbsShortPathSource from "../demos/breadcrumbs/BreadcrumbsShortPath.demo.tsx?raw";
+import { BreadcrumbsMotionInstantPressDemo } from "../demos/breadcrumbs/BreadcrumbsMotionInstantPress.demo";
+import breadcrumbsMotionInstantPressSource from "../demos/breadcrumbs/BreadcrumbsMotionInstantPress.demo.tsx?raw";
+import { BreadcrumbsMotionCrumbWaveDemo } from "../demos/breadcrumbs/BreadcrumbsMotionCrumbWave.demo";
+import breadcrumbsMotionCrumbWaveSource from "../demos/breadcrumbs/BreadcrumbsMotionCrumbWave.demo.tsx?raw";
+import { BreadcrumbsMotionTextTintDemo } from "../demos/breadcrumbs/BreadcrumbsMotionTextTint.demo";
+import breadcrumbsMotionTextTintSource from "../demos/breadcrumbs/BreadcrumbsMotionTextTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -39,6 +45,12 @@ export function BreadcrumbsShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsCollapsedMenuDemo} source={breadcrumbsCollapsedMenuSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsProductHeaderDemo} source={breadcrumbsProductHeaderSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsDocTrailDemo} source={breadcrumbsDocTrailSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant skip, timeline itemLink→text, tint + ellipsis press.">
+        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionInstantPressDemo} source={breadcrumbsMotionInstantPressSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionCrumbWaveDemo} source={breadcrumbsMotionCrumbWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={BreadcrumbsMotionTextTintDemo} source={breadcrumbsMotionTextTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

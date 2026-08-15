@@ -1,7 +1,7 @@
 import { Field } from "@/components/core/Field";
 import { FieldLabelContext } from "@/components/core/Label";
 
-import { TimeFieldClassNamesProvider, TimeFieldFieldProvider } from "./timeFieldContext";
+import { TimeFieldClassNamesProvider, TimeFieldFieldProvider, TimeFieldMotionProvider } from "./timeFieldContext";
 import { TimeFieldSimpleBody } from "./timeFieldParts";
 import { timeFieldRootClass } from "./timeFieldStyles";
 import type { TimeFieldProps } from "./timeFieldTypes";
@@ -17,6 +17,8 @@ export type {
   TimeFieldSize,
   TimeFieldStatus,
   TimeFieldVariant,
+  TimeFieldMotion,
+  TimeFieldPartMotion,
 } from "./timeFieldTypes";
 
 export { TimeFieldControl, TimeFieldError, TimeFieldHint, TimeFieldLabel } from "./timeFieldParts";
@@ -42,6 +44,7 @@ export function TimeFieldRoot({
   prefix,
   suffix,
   segmentSeparator,
+  motion,
   ...rest
 }: TimeFieldProps) {
   const state = useTimeFieldRootState({
@@ -86,6 +89,7 @@ export function TimeFieldRoot({
   return (
     <TimeFieldFieldProvider value={state.fieldCtx}>
       <TimeFieldClassNamesProvider classNames={classNames}>
+        <TimeFieldMotionProvider motion={motion}>
         <FieldLabelContext.Provider value={state.fieldLabelCtx}>
           <Field
             size={state.size}
@@ -99,6 +103,7 @@ export function TimeFieldRoot({
             {body}
           </Field>
         </FieldLabelContext.Provider>
+        </TimeFieldMotionProvider>
       </TimeFieldClassNamesProvider>
     </TimeFieldFieldProvider>
   );

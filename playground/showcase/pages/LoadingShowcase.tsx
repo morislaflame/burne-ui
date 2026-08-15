@@ -10,6 +10,12 @@ import { LoadingInlineStatusDemo } from "../demos/loading/LoadingInlineStatus.de
 import loadingInlineStatusSource from "../demos/loading/LoadingInlineStatus.demo.tsx?raw";
 import { LoadingSizesColorsDemo } from "../demos/loading/LoadingSizesColors.demo";
 import loadingSizesColorsSource from "../demos/loading/LoadingSizesColors.demo.tsx?raw";
+import { LoadingMotionInstantEnterDemo } from "../demos/loading/LoadingMotionInstantEnter.demo";
+import loadingMotionInstantEnterSource from "../demos/loading/LoadingMotionInstantEnter.demo.tsx?raw";
+import { LoadingMotionRootWaveDemo } from "../demos/loading/LoadingMotionRootWave.demo";
+import loadingMotionRootWaveSource from "../demos/loading/LoadingMotionRootWave.demo.tsx?raw";
+import { LoadingMotionEnterTintDemo } from "../demos/loading/LoadingMotionEnterTint.demo";
+import loadingMotionEnterTintSource from "../demos/loading/LoadingMotionEnterTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -45,6 +51,12 @@ export function LoadingShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={LoadingCardOverlayDemo} source={loadingCardOverlaySource} />
         <ShowcaseDemoFromFile align="stretch" Demo={LoadingInlineStatusDemo} source={loadingInlineStatusSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={LoadingColorGridDemo} source={loadingColorGridSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, root→dots timeline, spinner enter tint. Dots wave stays kit-internal.">
+        <ShowcaseDemoFromFile align="center" Demo={LoadingMotionInstantEnterDemo} source={loadingMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="center" Demo={LoadingMotionRootWaveDemo} source={loadingMotionRootWaveSource} />
+        <ShowcaseDemoFromFile align="center" Demo={LoadingMotionEnterTintDemo} source={loadingMotionEnterTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

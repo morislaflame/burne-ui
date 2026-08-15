@@ -17,6 +17,8 @@ export type {
   AlertStatus,
   AlertSize,
   AlertClassNames,
+  AlertMotion,
+  AlertPartMotion,
   AlertIndicatorProps,
   AlertContentProps,
   AlertMessageProps,

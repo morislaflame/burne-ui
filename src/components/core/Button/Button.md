@@ -12,6 +12,8 @@ import type {
   ButtonStatus,
   ButtonSize,
   ButtonAsyncState,
+  ButtonClassNames,
+  ButtonMotion,
 } from "burne-ui";
 ```
 
@@ -44,6 +46,8 @@ import { buttonRootClass, buttonSpinnerClass, controlShellClass, buttonRippleTon
 | `groupSegment` | `ButtonGroupSegment` | — | Сегмент в `ButtonGroup` (скругления, glue) |
 | `asChild` | `boolean` | `false` | Стили/поведение на единственный child (`<a>`, Next.js `<Link>`) |
 | `className` | `string` | — | Доп. классы на корневой `<button>` (или child при `asChild`) |
+| `classNames` | `ButtonClassNames` | — | Слоты подчастей |
+| `motion` | `ButtonMotion` | — | Карта слотов (`root`: `hoverIn` / `hoverOut` / `pressIn` / `pressOut`) |
 | `type` | `button` \| `submit` \| `reset` | `button` | Нативный type (не передаётся при `asChild`) |
 | … | `ButtonHTMLAttributes` | — | Остальные атрибуты кнопки |
 
@@ -118,7 +122,7 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 
 ## Анимации
 
-Все motion — **GSAP**. Оркестрация: `buttonAnimations.ts` + общий хук `useFirstLevelInteractiveMotion` (1-й уровень интерактива).
+Все motion — **GSAP**. Hover/press на корне — **slot motion** (`buttonAnimations.ts`). Async-слои и expand-ripple остаются внутренней GSAP-логикой, не публичными фазами.
 
 **DOM-структура (упрощённо):**
 
@@ -126,31 +130,79 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 <button>                          ← refs, pointer handlers, shadow (если не groupSegment)
   <Ripple />                      ← опционально, z-0
   <span clipLayer>                ← expand ripples async
-  <span contentMotionRef>         ← squeeze target при groupSegment
+  <span contentMotionRef>         ← squeeze target при groupSegment (`motion.root` целится сюда)
     grid: label | loader | success | error
 ```
 
-### 1. Hover lift + press squeeze
+### Slot motion
 
-`useFirstLevelInteractiveMotion` — целевой элемент: корень `<button>` или `contentMotionRef` при `groupSegment`.
+Слот: `root` (кнопка; в `ButtonGroup` сегменте — внутренний content span).
 
-**Pointer enter (hover lift):**
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` или `hoverLiftGloss` |
+| `root` | `pressIn` | `pressSqueeze` или `pressSqueezeGloss` (полный in+release; `pressOut` по умолчанию `false`) |
 
-1. Проверки: `!blocked`, не `defaultPrevented`, `shouldSkipInteractiveHoverLift()`
-2. `animateInteractiveHoverLift` — адаптивный `scale` (от размера элемента, cap = `hoverLiftScale`, default `1.025`); `force3D: false` (без `will-change` — иначе субпиксельный snap высоты/текста на дробных токенах)
-3. Тень: `shadowMotionFor("none")` — `initElementShadow(--shadow-none)` на mount; hover → `--shadow-lift` (отдельный токен, не `--shadow-base`). GSAP твинит used `box-shadow` вместе со scale; класс `animate-shadow`
+`pressOut: false` — kit squeeze сам отпускает. Клавиатура `Enter`/`Space` играет `pressIn`.
 
-**Pointer down (press squeeze):**
+**Где в коде:** типы — `buttonTypes.ts`; scope — `buttonContext.tsx`; defaults + host — `buttonAnimations.ts` (`resolveButtonMotionDefaults`, `useButtonAnimations`); Provider — `Button.tsx`.
 
-1. `animateInteractivePressSqueeze` — 3 ключевых кадра scale: `1 → adaptiveSqueeze → 1`
-2. Адаптивное сжатие: ~2.4px с каждой стороны, но не сильнее `pressSqueezeScale[1]` (default `0.98`)
-3. После release: если курсор всё ещё внутри — восстанавливает hover lift
+```tsx
+<Button motion={{ root: { pressIn: false } }}>Без squeeze</Button>
 
-**Pointer leave:** сброс scale + тени, `killMotion` при `blocked`.
+<Button
+  motion={{
+    root: {
+      hoverIn: { y: -3, duration: 0.18 },
+      hoverOut: { y: 0 },
+    },
+  }}
+>
+  Custom y
+</Button>
+```
 
-**Gloss (`variant="gloss"`):** вместо shadow lift — `animateGlossInteractiveHoverLift` / `animateGlossInteractivePressSqueeze` + `GLOSS_INTERACTIVE_MOTION_CLASS`.
+`classNames` / `className` на частях можно сочетать с factory: слот только `root`, внутренние узлы — через `querySelector` / `data-part`. Цвет — `tweenCssColor`, не сырой `gsap.to({ color })`.
 
-**ButtonGroup:** `useContentRef: true` — squeeze/lift на `contentMotionRef`, не на glue-корне; `SHADOW_LIFT_MOTION_CLASS` на корне отключается.
+```tsx
+<Button
+  variant="outline"
+  status="success"
+  icon={<IoCheckmarkCircleOutline aria-hidden />}
+  classNames={{ root: "border-token-success", icon: "text-success", text: "font-w-strong" }}
+  motion={{
+    root: {
+      hoverIn: (ctx) => {
+        const tl = gsap.timeline();
+        const svg = ctx.el.querySelector("svg");
+        if (svg) tl.to(svg, { rotate: 16, scale: 1.14, duration: 0.32, ease: "back.out(2)" }, 0);
+        tl.add(tweenCssColor(ctx.el, "var(--color-success)"), 0);
+        return tl;
+      },
+      hoverOut: (ctx) => {
+        const svg = ctx.el.querySelector("svg");
+        const tl = gsap.timeline();
+        if (svg) tl.to(svg, { rotate: 0, scale: 1, duration: 0.2 }, 0);
+        tl.add(tweenCssColor(ctx.el, "var(--color-foreground)", { clearOnComplete: true }), 0);
+        return tl;
+      },
+    },
+  }}
+>
+  Confirm
+</Button>
+
+<Button classNames={{ label: "gap-small" }} motion={{ root: { hoverIn: (ctx) => gsap.to(ctx.el.querySelector("[data-part=icon]"), { rotate: -12 }) } }}>
+  <Button.Label>
+    <Button.Icon data-part="icon" className="text-primary"><IoRocketOutline /></Button.Icon>
+    <Button.Text className="font-w-strong">Launch</Button.Text>
+  </Button.Label>
+</Button>
+```
+
+**Тень 1-го уровня:** `shadowMotionFor("none")` — `initElementShadow(--shadow-none)` на mount; hover → `--shadow-lift`. Класс `animate-shadow`. Gloss — без этой тени, рецепты `hoverLiftGloss` / `pressSqueezeGloss`.
+
+**ButtonGroup:** lift/squeeze на content span, не на glue-корне.
 
 #### Кастомизация hover/squeeze
 
@@ -158,19 +210,19 @@ const [state, setState] = useState<ButtonAsyncState>("idle");
 import { configureMotion } from "burne-ui";
 
 configureMotion({
-  interactiveDuration: 280,              // длительность lift и squeeze
+  interactiveDuration: 280,
   interactiveEase: "power2.out",
-  hoverLiftEase: "sine.inOut",           // только hover lift
-  hoverLiftScale: 1.025,                 // верхняя граница адаптивного подъёма
-  pressSqueezeScale: [1, 0.98, 1],       // rest → min → rest (cap для adaptive)
+  hoverLiftEase: "sine.inOut",
+  hoverLiftScale: 1.025,
+  pressSqueezeScale: [1, 0.98, 1],
   enableHoverLift: true,
   enablePressSqueeze: true,
 });
 ```
 
-**Глобально:** `enableAnimations: false` — отключает lift/squeeze глобально.
+**Глобально:** `enableAnimations: false` — vars через `gsap.set`, hover skip на таче/reduced.
 
-**Reduced motion / touch:** `prefers-reduced-motion`, viewport ≤ tablet, `hover: none` — через `shouldSkipInteractiveHoverLift()`.
+**Reduced motion / touch:** `shouldSkipInteractiveHoverLift()` глушит pointer-hover (включая кастомные vars). Press по-прежнему смотрит `enablePressSqueeze` / `prefers-reduced-motion`.
 
 ### 2. Converge ripple (`ripple={true}`)
 
@@ -244,8 +296,8 @@ configureMotion({
 
 | Анимация | Файл / утилита | Ключи `configureMotion` | Условие |
 |----------|----------------|---------------------------|---------|
-| Hover lift | `useFirstLevelInteractiveMotion` | `hoverLiftScale`, `hoverLiftEase`, `enableHoverLift` | `!blocked` |
-| Press squeeze | `animateInteractivePressSqueeze` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `!blocked` |
+| Hover lift | slot motion `hoverLiftFirstLevel` / `hoverLiftGloss` | `hoverLiftScale`, `hoverLiftEase`, `enableHoverLift` | `!blocked` |
+| Press squeeze | slot motion `pressSqueeze` / `pressSqueezeGloss` | `pressSqueezeScale`, `interactiveDuration`, `enablePressSqueeze` | `!blocked` |
 | Ripple | `<Ripple />` | `rippleDefaultDuration`, `rippleDefaultOpacityFrom`, `enableRipple` | `ripple` |
 | Async crossfade | `buttonAnimations` layoutEffect | `enableAsyncButtonCrossfade`, `interactiveDuration` | `asyncState` |
 | Expand ring | `ButtonFeedbackExpandRipple` | `enableFeedbackExpand`, `feedbackExpandDuration` | — |
@@ -282,21 +334,31 @@ configureMotion({
 
 ## Стилизация и кастомизация
 
-Button — leaf-компонент: **только `className` на `<button>`**. Слотов `classNames` нет (в отличие от CloseButton, Input, Alert).
-
-### Единственный слот — `className`
+Два уровня: **`className` на корне** и **`classNames` на слотах**. Compound-части (`Button.Icon`, `Button.Text`, `Button.Label`, …) принимают **`className`** поверх слота.
 
 ```tsx
 <Button
   variant="outline"
   status="danger"
   size="mid"
-  className="min-w-[10rem] border-primary/40"
+  className="min-w-button-mid"
+  classNames={{ icon: "text-danger", text: "font-w-strong" }}
   icon={<IoSave aria-hidden />}
 >
   Сохранить
 </Button>
 ```
+
+### Слоты `ButtonClassNames`
+
+| Слот | DOM |
+|------|-----|
+| `root` | `<button>` (мержится с `className`) |
+| `content` | Внутренний content span |
+| `label` | Слой лейбла (иконка + текст) |
+| `icon` | Обёртка иконки |
+| `text` | Текстовый span |
+| `loader` / `success` / `error` | Async-слои |
 
 | Prop | Что стилизует |
 |------|---------------|
@@ -305,9 +367,10 @@ Button — leaf-компонент: **только `className` на `<button>`**
 | `size` | Height, padding, icon size, min-width |
 | `iconOnly` | Квадратный hit-area |
 | `groupSegment` | Glue в ButtonGroup (rounding сегмента) |
-| `className` | Любые доп. Tailwind-классы поверх root |
+| `className` | Доп. классы на корне |
+| `classNames` | Слоты подчастей |
 
-Иконки и текст — children / `icon` (+ `iconPosition`); отдельных слотов для них нет.
+Simple: `icon` + `iconPosition`. Compound: `Button.Icon` / `Button.Text` внутри `Button.Label`.
 
 ### Compound-подобные паттерны
 
@@ -367,14 +430,15 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false });
 
 ```
 Button/
-├── Button.tsx              # оркестратор
-├── index.ts                # публичные экспорты
-├── buttonTypes.ts
-├── buttonStyles.ts         # все Tailwind-классы
-├── buttonAPI.ts            # resolve*, geometry
-├── buttonA11y.ts           # aria-busy
-├── buttonParts.tsx         # content, spinner, expand ripple
-├── buttonAnimations.ts     # GSAP: async crossfade, expand
+├── Button.tsx              # Provider: motion + resolveButtonMotionDefaults + params
+├── index.ts
+├── buttonTypes.ts          # ButtonMotion / ButtonPartMotion
+├── buttonStyles.ts
+├── buttonAPI.ts
+├── buttonA11y.ts
+├── buttonContext.tsx       # createMotionScope("Button")
+├── buttonParts.tsx
+├── buttonAnimations.ts     # defaults, host play, async crossfade
 ├── useButtonRootState.ts
 └── Button.stories.tsx
 ```

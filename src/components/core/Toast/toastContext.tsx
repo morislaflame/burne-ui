@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   ToastClassNames,
   ToastClassNamesProviderProps,
@@ -10,6 +12,13 @@ import type {
 const ToastContext = createContext<ToastContextValue | null>(null);
 const ToastItemContext = createContext<ToastItemContextValue | null>(null);
 const ToastClassNamesContext = createContext<ToastClassNames>({});
+
+/** Scope only. Defaults and host play live in `toastAnimations.tsx`. */
+export const {
+  MotionScopeProvider: ToastMotionProvider,
+  useMotionScope: useToastMotionScope,
+  useOptionalMotionScope: useOptionalToastMotionScope,
+} = createMotionScope("Toast");
 
 export function ToastClassNamesProvider({
   classNames,

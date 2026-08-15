@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type { ColorSwatchSize } from "./ColorSwatch";
 import type { HSVA } from "./colorUtils";
@@ -31,6 +32,26 @@ export type ColorPickerClassNames = {
   presetSwatch?: string;
 };
 
+export type ColorPickerPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  change?: MotionValue;
+};
+
+export type ColorPickerMotion = {
+  contentPanel?: ColorPickerPartMotion;
+  area?: ColorPickerPartMotion;
+  areaThumb?: ColorPickerPartMotion;
+  hexInput?: ColorPickerPartMotion;
+  presets?: ColorPickerPartMotion;
+  hueSlider?: ColorPickerPartMotion;
+  alphaSlider?: ColorPickerPartMotion;
+};
+
 export type ColorPickerProps = {
   children?: ReactNode;
   value?: string;
@@ -44,6 +65,12 @@ export type ColorPickerProps = {
   side?: "top" | "bottom" | "left" | "right";
   disabled?: boolean;
   classNames?: Prettify<ColorPickerClassNames>;
+  /**
+   * Per-slot motion (`contentPanel`, `area`, `areaThumb`, `hexInput`, `presets`, `hueSlider`, `alphaSlider`).
+   * Root is a portal-host map (like Dropdown). Thumb drag `left`/`top` is kit-internal.
+   * Defaults are empty. Pass `hueSlider` / `alphaSlider` through to ColorSlider (nested scope does not inherit).
+   */
+  motion?: Prettify<ColorPickerMotion>;
 };
 
 export type ColorPickerTriggerProps = Omit<
@@ -64,16 +91,22 @@ export type ColorPickerContentProps = Omit<HTMLAttributes<HTMLDivElement>, "colo
    * Compose with `ColorPicker.Area` / `HexInput` / `AlphaInput` / `Presets`.
    */
   children?: ReactNode;
+  motion?: Prettify<ColorPickerPartMotion>;
 };
 
-export type ColorPickerAreaProps = HTMLAttributes<HTMLDivElement>;
+export type ColorPickerAreaProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ColorPickerPartMotion>;
+};
 
-export type ColorPickerHexInputProps = HTMLAttributes<HTMLDivElement>;
+export type ColorPickerHexInputProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<ColorPickerPartMotion>;
+};
 
 export type ColorPickerAlphaInputProps = HTMLAttributes<HTMLDivElement>;
 
 export type ColorPickerPresetsProps = HTMLAttributes<HTMLDivElement> & {
   presets: string[];
+  motion?: Prettify<ColorPickerPartMotion>;
 };
 
 export type ColorPickerContextValue = {

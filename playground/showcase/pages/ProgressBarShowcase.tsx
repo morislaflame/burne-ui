@@ -12,6 +12,12 @@ import { ProgressVerticalDemo } from "../demos/progress-bar/ProgressVertical.dem
 import progressVerticalSource from "../demos/progress-bar/ProgressVertical.demo.tsx?raw";
 import { ProgressVerticalMetersDemo } from "../demos/progress-bar/ProgressVerticalMeters.demo";
 import progressVerticalMetersSource from "../demos/progress-bar/ProgressVerticalMeters.demo.tsx?raw";
+import { ProgressBarMotionInstantEnterDemo } from "../demos/progressBar/ProgressBarMotionInstantEnter.demo";
+import progressBarMotionInstantEnterSource from "../demos/progressBar/ProgressBarMotionInstantEnter.demo.tsx?raw";
+import { ProgressBarMotionTrackWaveDemo } from "../demos/progressBar/ProgressBarMotionTrackWave.demo";
+import progressBarMotionTrackWaveSource from "../demos/progressBar/ProgressBarMotionTrackWave.demo.tsx?raw";
+import { ProgressBarMotionChangeTintDemo } from "../demos/progressBar/ProgressBarMotionChangeTint.demo";
+import progressBarMotionChangeTintSource from "../demos/progressBar/ProgressBarMotionChangeTint.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -51,6 +57,12 @@ export function ProgressBarShowcase() {
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressUploadCardDemo} source={progressUploadCardSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={ProgressPipelineDemo} source={progressPipelineSource} />
         <ShowcaseDemoFromFile Demo={ProgressVerticalMetersDemo} source={progressVerticalMetersSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Slot motion" description="Instant enter skip, track timeline, change-phase tint. Fill geometry stays kit-internal.">
+        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionInstantEnterDemo} source={progressBarMotionInstantEnterSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionTrackWaveDemo} source={progressBarMotionTrackWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={ProgressBarMotionChangeTintDemo} source={progressBarMotionChangeTintSource} />
       </ShowcaseSection>
 
       <ShowcaseDoc>

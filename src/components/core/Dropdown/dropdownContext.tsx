@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   DropdownClassNames,
   DropdownClassNamesProviderProps,
@@ -111,3 +113,10 @@ export function useDropdownSub(): DropdownSubContextValue {
   }
   return ctx;
 }
+
+/** Scope only. Defaults and host play live in `dropdownAnimations.ts`. */
+export const {
+  MotionScopeProvider: DropdownMotionProvider,
+  useMotionScope: useDropdownMotionScope,
+  useOptionalMotionScope: useOptionalDropdownMotionScope,
+} = createMotionScope("Dropdown");

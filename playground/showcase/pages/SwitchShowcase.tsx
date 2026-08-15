@@ -10,6 +10,16 @@ import { SwitchDisabledDemo } from "../demos/switch/SwitchDisabled.demo";
 import switchDisabledSource from "../demos/switch/SwitchDisabled.demo.tsx?raw";
 import { SwitchGlossDemo } from "../demos/switch/SwitchGloss.demo";
 import switchGlossSource from "../demos/switch/SwitchGloss.demo.tsx?raw";
+import { SwitchMotionDefaultDemo } from "../demos/switch/SwitchMotionDefault.demo";
+import switchMotionDefaultSource from "../demos/switch/SwitchMotionDefault.demo.tsx?raw";
+import { SwitchMotionInstantThumbDemo } from "../demos/switch/SwitchMotionInstantThumb.demo";
+import switchMotionInstantThumbSource from "../demos/switch/SwitchMotionInstantThumb.demo.tsx?raw";
+import { SwitchMotionBounceThumbDemo } from "../demos/switch/SwitchMotionBounceThumb.demo";
+import switchMotionBounceThumbSource from "../demos/switch/SwitchMotionBounceThumb.demo.tsx?raw";
+import { SwitchMotionFillFadeDemo } from "../demos/switch/SwitchMotionFillFade.demo";
+import switchMotionFillFadeSource from "../demos/switch/SwitchMotionFillFade.demo.tsx?raw";
+import { SwitchMotionIconsDemo } from "../demos/switch/SwitchMotionIcons.demo";
+import switchMotionIconsSource from "../demos/switch/SwitchMotionIcons.demo.tsx?raw";
 import { SwitchNotificationsDemo } from "../demos/switch/SwitchNotifications.demo";
 import switchNotificationsSource from "../demos/switch/SwitchNotifications.demo.tsx?raw";
 import { SwitchSizesDemo } from "../demos/switch/SwitchSizes.demo";
@@ -43,6 +53,17 @@ export function SwitchShowcase() {
 
       <ShowcaseSection title="Gloss" description="gloss — glass track and circle (prop gloss on the root).">
         <ShowcaseDemoFromFile Demo={SwitchGlossDemo} source={switchGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — default thumb, instant snap, bounce factory, fill fade, icon spin."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionDefaultDemo} source={switchMotionDefaultSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionInstantThumbDemo} source={switchMotionInstantThumbSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionBounceThumbDemo} source={switchMotionBounceThumbSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionFillFadeDemo} source={switchMotionFillFadeSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SwitchMotionIconsDemo} source={switchMotionIconsSource} />
       </ShowcaseSection>
 
       <ShowcaseSection
@@ -87,7 +108,8 @@ export function SwitchShowcase() {
         <ShowcaseDoc.Customization gloss="gloss">
           <p>
             Boolean <code>gloss</code> — glass track. Active state colors — CSS-topic variables.
-            Animation thumb — <code>configureMotion()</code> (<code>switchThumbDuration</code>,{" "}
+            Slot motion thumb — <code>motion.thumb</code> / <code>switchThumb</code> recipe
+            (<code>configureMotion</code>: <code>switchThumbDuration</code>,{" "}
             <code>switchThumbEase</code>).
           </p>
         </ShowcaseDoc.Customization>

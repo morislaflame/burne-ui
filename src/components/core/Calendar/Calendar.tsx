@@ -1,9 +1,10 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { useMergedGlossPanelRef } from "@/components/core/utils/glossInteractiveMotion";
 import "../utils/glossInteractive.css";
 
-import { CalendarClassNamesProvider, CalendarProvider } from "./calendarContext";
+import { resolveCalendarMotionDefaults } from "./calendarAnimations";
+import { CalendarClassNamesProvider, CalendarMotionProvider, CalendarProvider } from "./calendarContext";
 import { CalendarDefaultContent } from "./calendarParts";
 import { CALENDAR_GLOSS_CONTENT_CLASS, calendarRootClass } from "./calendarStyles";
 import type { CalendarProps, UseCalendarRootStateProps } from "./calendarTypes";
@@ -28,6 +29,8 @@ export type {
   CalendarRangeValue,
   CalendarLocale,
   CalendarClassNames,
+  CalendarMotion,
+  CalendarPartMotion,
 } from "./calendarTypes";
 
 export { useCalendar } from "./calendarContext";
@@ -52,6 +55,7 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       classNames,
       children,
       className = "",
+      motion,
       ...rest
     } = rawProps;
 
@@ -59,12 +63,14 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
       rawProps as UseCalendarRootStateProps,
     );
     const setRootRef = useMergedGlossPanelRef(ref, isGloss);
+    const motionDefaults = useMemo(() => resolveCalendarMotionDefaults(), []);
 
     const content = children ?? <CalendarDefaultContent />;
 
     return (
       <CalendarProvider value={contextValue}>
         <CalendarClassNamesProvider classNames={classNames}>
+          <CalendarMotionProvider motion={motion} defaults={motionDefaults}>
           <div
             ref={setRootRef}
             className={calendarRootClass(
@@ -83,6 +89,7 @@ export const CalendarRoot = forwardRef<HTMLDivElement, CalendarProps>(
               content
             )}
           </div>
+          </CalendarMotionProvider>
         </CalendarClassNamesProvider>
       </CalendarProvider>
     );

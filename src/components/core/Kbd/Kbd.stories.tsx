@@ -7,6 +7,7 @@ import { Text } from "@/components/core/Text";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 
 import { Kbd, type KbdVariant } from ".";
+import { KbdMotionDemo } from "../../../../playground/showcase/demos/kbd/KbdMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -187,4 +188,9 @@ export const CustomClassNames: Story = {
 export const HoverLiftOff: Story = {
   name: "hoverLift={false}",
   render: () => <Kbd hoverLift={false}>Tab</Kbd>,
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <KbdMotionDemo />,
 };

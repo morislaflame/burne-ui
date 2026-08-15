@@ -1,11 +1,20 @@
-import { Children, forwardRef, isValidElement, useCallback, useMemo, useRef, useState } from "react";
+import { Children, forwardRef, isValidElement, useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 
+import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { mergeMotionPointerHandlers } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
 
-import { registerBadgeAnchorLiftTarget, useBadgeAnchorAnimations } from "./badgeAnimations";
+import { registerBadgeAnchorLiftTarget, resolveBadgeAnchorMotionDefaults, useBadgeAnchorAnimations, useBadgeAnchorMotion } from "./badgeAnimations";
 import { isBadgeElement } from "./badgeAPI";
 import { badgeRootA11yProps } from "./badgeA11y";
-import { BadgeClassNamesProvider, BadgeDirectAnchorChildProvider, BadgeLiftTargetProvider, useBadgeClassNames } from "./badgeContext";
+import {
+  BadgeClassNamesProvider,
+  BadgeDirectAnchorChildProvider,
+  BadgeLiftTargetProvider,
+  BadgeMotionProvider,
+  useBadgeClassNames,
+  useOptionalBadgeMotionScope,
+} from "./badgeContext";
 import type {
   BadgeAnchorProps,
   BadgeDotViewProps,
@@ -151,31 +160,97 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     classNames,
     children,
     hoverLift = true,
+    motion,
     onPointerOver: onPointerOverFromProps,
     onPointerOut: onPointerOutFromProps,
     ...rest
   },
   ref,
 ) {
+  const hoverPointerInsideRef = useRef(false);
+  const motionDefaults = useMemo(
+    () => resolveBadgeAnchorMotionDefaults({ hoverLift }),
+    [hoverLift],
+  );
+  const motionParams = useMemo(
+    () => ({
+      pointerInside: hoverPointerInsideRef,
+      liftScale: getMotionConfig().badgeAnchorHoverLiftScale,
+      shadowSize: "base" as const,
+    }),
+    [],
+  );
+
+  return (
+    <BadgeClassNamesProvider classNames={classNames}>
+      <BadgeMotionProvider motion={motion} defaults={motionDefaults} params={motionParams}>
+        <BadgeAnchorSurface
+          className={className}
+          classNames={classNames}
+          hoverLift={hoverLift}
+          onPointerOverFromProps={onPointerOverFromProps}
+          onPointerOutFromProps={onPointerOutFromProps}
+          rest={rest}
+          forwardedRef={ref}
+        >
+          {children}
+        </BadgeAnchorSurface>
+      </BadgeMotionProvider>
+    </BadgeClassNamesProvider>
+  );
+});
+
+BadgeAnchor.displayName = "BadgeAnchor";
+
+function BadgeAnchorSurface({
+  className,
+  classNames,
+  children,
+  hoverLift,
+  onPointerOverFromProps,
+  onPointerOutFromProps,
+  rest,
+  forwardedRef,
+}: {
+  className: string;
+  classNames?: BadgeAnchorProps["classNames"];
+  children?: ReactNode;
+  hoverLift: boolean;
+  onPointerOverFromProps?: BadgeAnchorProps["onPointerOver"];
+  onPointerOutFromProps?: BadgeAnchorProps["onPointerOut"];
+  rest: Omit<
+    BadgeAnchorProps,
+    | "className"
+    | "classNames"
+    | "children"
+    | "hoverLift"
+    | "motion"
+    | "onPointerOver"
+    | "onPointerOut"
+  >;
+  forwardedRef: React.ForwardedRef<HTMLDivElement>;
+}) {
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const liftedRef = useRef<HTMLElement | null>(null);
   const [anchorCommitGen] = useState(1);
+  const scope = useOptionalBadgeMotionScope();
 
   const setMergedRef = useCallback(
     (node: HTMLDivElement | null) => {
       anchorRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
     },
-    [ref],
+    [forwardedRef],
   );
 
   const registerLiftTarget = useCallback(
     (el: HTMLElement | null) => {
       liftedRef.current = el;
       registerBadgeAnchorLiftTarget(el, hoverLift);
+      scope?.registerTarget("anchor", el);
     },
-    [hoverLift],
+    [hoverLift, scope],
   );
 
   const ctx = useMemo(
@@ -183,41 +258,46 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     [registerLiftTarget, anchorCommitGen, hoverLift],
   );
 
-  const anchorLiftShadow = useBadgeAnchorAnimations(liftedRef, hoverLift);
+  useBadgeAnchorAnimations(liftedRef);
+  const anchorMotion = useBadgeAnchorMotion(liftedRef, anchorRef);
+  const pointerHandlers = useMemo(
+    () =>
+      mergeMotionPointerHandlers(
+        onPointerOverFromProps,
+        onPointerOutFromProps,
+        anchorMotion.onPointerOver,
+        anchorMotion.onPointerOut,
+      ),
+    [
+      anchorMotion.onPointerOut,
+      anchorMotion.onPointerOver,
+      onPointerOutFromProps,
+      onPointerOverFromProps,
+    ],
+  );
   const slotClassNames = useBadgeClassNames();
 
   return (
-    <BadgeClassNamesProvider classNames={classNames}>
-      <BadgeLiftTargetProvider value={ctx}>
-        <div
-          ref={setMergedRef}
-          data-badge-anchor
-          className={cn(BADGE_ANCHOR_ROOT_CLASS, slotClassNames.anchor, classNames?.anchor, className)}
-          onPointerOver={(e) => {
-            onPointerOverFromProps?.(e);
-            if (!e.defaultPrevented) anchorLiftShadow.onPointerOver(e);
-          }}
-          onPointerOut={(e) => {
-            onPointerOutFromProps?.(e);
-            anchorLiftShadow.onPointerOut(e);
-          }}
-          {...rest}
-        >
-          {Children.map(children, (child, index) => {
-            if (!isValidElement(child)) return child;
-            if (isBadgeElement(child)) {
-              return (
-                <BadgeDirectAnchorChildProvider key={child.key ?? `badge-anchor-child-${index}`}>
-                  {child}
-                </BadgeDirectAnchorChildProvider>
-              );
-            }
-            return child;
-          })}
-        </div>
-      </BadgeLiftTargetProvider>
-    </BadgeClassNamesProvider>
+    <BadgeLiftTargetProvider value={ctx}>
+      <div
+        ref={setMergedRef}
+        data-badge-anchor
+        className={cn(BADGE_ANCHOR_ROOT_CLASS, slotClassNames.anchor, classNames?.anchor, className)}
+        {...rest}
+        {...pointerHandlers}
+      >
+        {Children.map(children, (child, index) => {
+          if (!isValidElement(child)) return child;
+          if (isBadgeElement(child)) {
+            return (
+              <BadgeDirectAnchorChildProvider key={child.key ?? `badge-anchor-child-${index}`}>
+                {child}
+              </BadgeDirectAnchorChildProvider>
+            );
+          }
+          return child;
+        })}
+      </div>
+    </BadgeLiftTargetProvider>
   );
-});
-
-BadgeAnchor.displayName = "BadgeAnchor";
+}

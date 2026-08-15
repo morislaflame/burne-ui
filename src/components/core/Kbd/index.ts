@@ -12,4 +12,7 @@ export type {
   KbdSize,
   KbdClassNames,
   KbdGroupProps,
+  KbdMotion,
+  KbdPartMotion,
+  KbdTextProps,
 } from "./Kbd";

@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 
 import { injectSwitchControlProps } from "./switchAPI";
 import { useSwitchTextMotion } from "./switchAnimations";
-import { SwitchClassNamesProvider, SwitchFieldProvider } from "./switchContext";
+import { SwitchClassNamesProvider, SwitchFieldProvider, SwitchMotionProvider } from "./switchContext";
 import { SwitchContent, SwitchControl, SwitchError, SwitchFill, SwitchHint, SwitchIcon, SwitchLabel, SwitchSimpleBody, SwitchThumb, SwitchTrack } from "./switchParts";
 import { SWITCH_ROOT_DISABLED_CLASS, switchRootGridClass } from "./switchStyles";
 import type { SwitchControlProps, SwitchProps } from "./switchTypes";
@@ -26,6 +26,8 @@ export type {
   SwitchErrorProps,
   SwitchProps,
   SwitchSimpleProps,
+  SwitchMotion,
+  SwitchCheckMotion,
 } from "./switchTypes";
 
 export { SWITCH_LAYOUT } from "./switchStyles";
@@ -42,6 +44,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
       disabled: disabledRoot,
       className,
       classNames,
+      motion,
       onPointerDown,
       onKeyDown,
       ...rest
@@ -83,6 +86,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
     return (
       <SwitchFieldProvider value={state.fieldCtx}>
         <SwitchClassNamesProvider classNames={classNames}>
+          <SwitchMotionProvider motion={motion}>
           <label ref={ref} className={gridClass} onPointerDown={handlePointerDown} onKeyDown={handleKeyDown}>
             {state.isCompound ? (
               injectSwitchControlProps(children, state.controlRest)
@@ -105,6 +109,7 @@ export const SwitchRoot = forwardRef<HTMLLabelElement, SwitchProps & Partial<Swi
               />
             )}
           </label>
+          </SwitchMotionProvider>
         </SwitchClassNamesProvider>
       </SwitchFieldProvider>
     );

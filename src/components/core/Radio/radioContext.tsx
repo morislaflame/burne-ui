@@ -4,10 +4,14 @@ import type {
   RadioClassNames,
   RadioClassNamesProviderProps,
   RadioFieldContextValue,
+  RadioMotion,
+  RadioMotionProviderProps,
 } from "./radioTypes";
 
 const RadioFieldContext = createContext<RadioFieldContextValue | null>(null);
 const RadioClassNamesContext = createContext<RadioClassNames>({});
+/** Embedder: no createMotionScope. Mapping lives in `radioAnimations.ts`. */
+const RadioMotionContext = createContext<RadioMotion | undefined>(undefined);
 
 export function RadioFieldProvider({
   value,
@@ -52,6 +56,19 @@ export function useOptionalRadioFieldContext(): RadioFieldContextValue | null {
 
 export function useRadioClassNames(): RadioClassNames {
   return useContext(RadioClassNamesContext);
+}
+
+export function RadioMotionProvider({
+  motion,
+  children,
+}: RadioMotionProviderProps) {
+  return (
+    <RadioMotionContext.Provider value={motion}>{children}</RadioMotionContext.Provider>
+  );
+}
+
+export function useRadioMotion(): RadioMotion | undefined {
+  return useContext(RadioMotionContext);
 }
 
 export { RadioFieldContext };

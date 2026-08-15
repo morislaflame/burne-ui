@@ -1,15 +1,60 @@
+/**
+ * Slot motion for Popover — look here first.
+ *
+ * DOM slots: `content` (portal surface), `title`, `description`, `body`
+ * Host: `Popover.Content` (`usePopoverContentLifecycle`) plays `enter` / `leave`
+ * on `content` and broadcasts nested slots. Root has no portal DOM — it only
+ * passes the `motion` map through context. Defaults wrap the portal host
+ * (`POPOVER_MOTION_DEFAULTS` on the Content provider).
+ *
+ * Trigger squeeze stays `runOpenAfterSqueeze` (asChild Button already presses).
+ */
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { focusPanelOnOpen, isFocusVisibleElement } from "@/components/core/utils/focusElement";
-import { killMotion } from "@/components/core/utils/gsapMotion";
+import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
-import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
-import { motionTooltip } from "@/components/core/utils/motionConfig";
+import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
 import { applyFloatingPortalPosition, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
+import {
+  isMotionVarsObject,
+  killStoredMotion,
+  killMotionTargets,
+  type MotionScopeValue,
+  type MotionValue,
+} from "@/components/core/utils/slotMotion";
 
 import { mergePopoverRefs } from "./popoverAPI";
-import type { PopoverSide, UsePopoverContentLifecycleProps } from "./popoverTypes";
+import type { PopoverMotion, PopoverSide, UsePopoverContentLifecycleProps } from "./popoverTypes";
+
+export const POPOVER_MOTION_HOST_SLOTS = ["content"] as const;
+
+export const POPOVER_MOTION_DEFAULTS: PopoverMotion = {
+  content: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
+};
+
+function enterHidesFirstPaint(value: MotionValue | undefined): boolean {
+  if (value === undefined || value === false) return false;
+  return isMotionVarsObject(value) && value.autoAlpha !== undefined;
+}
+
+function hideNestedEnterSlots(scope: MotionScopeValue, exclude: string[]): void {
+  const skip = new Set(exclude);
+  const targets = scope.getTargets();
+  const slots = new Set([
+    ...Object.keys(scope.getDefaults() ?? {}),
+    ...Object.keys(scope.getRootMotion() ?? {}),
+    ...Object.keys(targets),
+  ]);
+  for (const slot of slots) {
+    if (skip.has(slot)) continue;
+    const el = targets[slot];
+    if (!el) continue;
+    if (!enterHidesFirstPaint(scope.resolve(slot, "enter"))) continue;
+    gsap.set(el, { autoAlpha: 0, force3D: false });
+  }
+}
 
 export function usePopoverContentLifecycle({
   open,
@@ -24,7 +69,8 @@ export function usePopoverContentLifecycle({
   triggerRef,
   anchorRef,
   portalContainer,
-}: UsePopoverContentLifecycleProps) {
+  motionScope,
+}: UsePopoverContentLifecycleProps & { motionScope: MotionScopeValue }) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const glossPanelRef = useRef<HTMLDivElement | null>(null);
   const bindGlossPanelRef = useMemo(
@@ -33,9 +79,9 @@ export function usePopoverContentLifecycle({
   );
   const [portalMounted, setPortalMounted] = useState(false);
   const [resolvedSide, setResolvedSide] = useState<PopoverSide>(side);
+  const enterFrameRef = useRef(0);
+  const enterGenRef = useRef(0);
 
-  // Mount portal in the same render as open=true so layout effects can measure
-  // before paint (effect-only mount left the panel unpositioned until scroll).
   if (open && !portalMounted) {
     setPortalMounted(true);
   }
@@ -55,8 +101,6 @@ export function usePopoverContentLifecycle({
     if (!anchor || !panel) return;
 
     const anchorRect = anchor.getBoundingClientRect();
-    // Apply width before measuring — otherwise align clamp uses a too-narrow rect
-    // and the panel can spill past the viewport after minWidth is set.
     if (matchAnchorWidth) {
       panel.style.minWidth = `${Math.max(anchorRect.width, 12 * 16)}px`;
     } else {
@@ -102,8 +146,6 @@ export function usePopoverContentLifecycle({
     };
   }, [open, portalMounted, portalContainer, reposition, showArrow, offset, align, matchAnchorWidth]);
 
-  // Move focus into the panel on open so Tab continues inside the portal
-  // (portaled content is outside the trigger's DOM tab order).
   useLayoutEffect(() => {
     if (!open || !portalMounted) return;
     const panel = panelRef.current;
@@ -111,7 +153,6 @@ export function usePopoverContentLifecycle({
     if (!panel || !trigger) return;
     const active = document.activeElement;
     if (active !== trigger && !trigger.contains(active)) return;
-    // Read before moving focus — trigger loses :focus-visible once we leave it.
     const fromKeyboard = isFocusVisibleElement(trigger);
     focusPanelOnOpen(panel, { focusVisible: fromKeyboard });
   }, [open, portalMounted, triggerRef]);
@@ -121,10 +162,17 @@ export function usePopoverContentLifecycle({
     const el = panelRef.current;
     if (!el) return undefined;
 
-    const reduced = isReducedModalMotion();
+    const cancelEnterFrame = () => {
+      enterGenRef.current += 1;
+      if (enterFrameRef.current) {
+        cancelAnimationFrame(enterFrameRef.current);
+        enterFrameRef.current = 0;
+      }
+    };
+
     let cancelled = false;
 
-    if (reduced) {
+    if (isReducedModalMotion()) {
       killMotion(el);
       if (open) {
         applyReducedPortalMotion(el);
@@ -133,35 +181,46 @@ export function usePopoverContentLifecycle({
       }
       return () => {
         cancelled = true;
+        cancelEnterFrame();
       };
     }
 
-    killMotion(el);
-
     if (open) {
-      animatePortalOpen({
-        surface: el,
-        vars: { ...motionTooltip(), overwrite: "auto" },
+      const gen = ++enterGenRef.current;
+      motionScope.play("content", "enter", { el });
+      hideNestedEnterSlots(motionScope, [...POPOVER_MOTION_HOST_SLOTS]);
+      enterFrameRef.current = requestAnimationFrame(() => {
+        if (gen !== enterGenRef.current) return;
+        enterFrameRef.current = 0;
+        void el.offsetHeight;
+        void motionScope.playBroadcast("enter", { exclude: [...POPOVER_MOTION_HOST_SLOTS] });
       });
       return () => {
         cancelled = true;
-        killMotion(el);
+        cancelEnterFrame();
+        killStoredMotion(el);
       };
     }
 
-    const anim = animatePortalClose({
-      surface: el,
-      vars: { ...motionTooltip(), overwrite: "auto" },
-      onComplete: () => {
-        if (!cancelled) setPortalMounted(false);
-      },
+    cancelEnterFrame();
+    const contentRun = motionScope.play("content", "leave", {
+      el,
+      waitForComplete: true,
+    });
+    const extra = motionScope.playBroadcast("leave", {
+      exclude: [...POPOVER_MOTION_HOST_SLOTS],
+      waitForComplete: true,
+    });
+    void Promise.all([contentRun.finished, extra]).then(() => {
+      if (!cancelled) setPortalMounted(false);
     });
     return () => {
       cancelled = true;
-      killMotion(el);
-      anim.kill();
+      contentRun.animation?.kill();
+      killMotionTargets(motionScope.getTargets());
+      killStoredMotion(el);
     };
-  }, [open, portalMounted]);
+  }, [open, portalMounted, motionScope]);
 
   return {
     panelRef,

@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type { LinkClassNames, LinkClassNamesProviderProps } from "./linkTypes";
 
 const LinkClassNamesContext = createContext<LinkClassNames>({});
@@ -24,3 +26,10 @@ export function LinkClassNamesProvider({
 export function useLinkClassNames(): LinkClassNames {
   return useContext(LinkClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `linkAnimations.ts`. */
+export const {
+  MotionScopeProvider: LinkMotionProvider,
+  useMotionScope: useLinkMotionScope,
+  useOptionalMotionScope: useOptionalLinkMotionScope,
+} = createMotionScope("Link");

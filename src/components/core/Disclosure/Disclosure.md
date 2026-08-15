@@ -60,6 +60,7 @@ Simple API нет.
 | `dragHandle` | `false` | Drag-to-expand (`variant="card"` only) |
 | `className` | — | На root |
 | `classNames` | — | Слоты |
+| `motion` | — | Карта `titleLift` / `chevron` / `contentShell`. Group `motion` мержится в каждый item |
 
 ### Compound parts
 
@@ -104,6 +105,7 @@ Simple API нет.
 | `value` / `defaultValue` | — | Открытый `value` в группе |
 | `onValueChange` | — | `(value: string \| null) => void` |
 | `classNames` | — | Слот `group` |
+| `motion` | — | Мержится в каждый item (как Accordion) |
 
 При `accordion={false}` каждый `Disclosure` управляет своим `open` независимо.
 
@@ -135,77 +137,62 @@ Simple API нет.
 
 ## Анимации
 
-`disclosureAnimations.ts` + `useCollapsibleHeight` + `useDisclosureContentDrag.ts`.
+Свой scope. Хосты: Trigger (`titleLift` hover/press + `chevron` enter/leave) и Content (`contentShell` height). Handle-drag — kit-internal: ставит `skipContentAnimRef` перед `setOpen`, хосты применяют instant и не играют.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `titleLift` | `hoverIn` / `hoverOut` / `pressIn` / `pressOut` | `hoverLiftFirstLevel` (gloss — `hoverLiftGloss`); `pressSqueeze` / `pressSqueezeGloss`; `pressOut: false` |
+| `chevron` | `enter` / `leave` | `chevronRotate` |
+| `contentShell` | `enter` / `leave` | `collapsibleHeight` (`panelInner` — внутренний target) |
+
+```tsx
+<Disclosure motion={{ contentShell: { enter: false, leave: false } }}>
+  …
+</Disclosure>
+
+<Disclosure.Chevron
+  motion={{
+    enter: (ctx) => gsap.to(ctx.el, { rotation: 180, duration: 0.45, ease: "back.out(1.6)" }),
+    leave: (ctx) => gsap.to(ctx.el, { rotation: 0, duration: 0.28 }),
+  }}
+/>
+```
+
+`leave: false` на `contentShell` — хост сразу ставит closed height. Factory leave должна свернуть высоту в `0`. После drag skip — instant на chevron и shell.
+
+**Где в коде:** типы — `disclosureTypes.ts`; scope — `disclosureContext.tsx`; defaults + host play — `disclosureAnimations.ts` (`resolveDisclosureMotionDefaults`); слоты — `disclosureParts.tsx` / `disclosureContentPart.tsx`; Provider — `Disclosure.tsx`. Group карта — `disclosureGroup.tsx`.
 
 **DOM:**
 
 ```
 <div class=root>
-  <button class=trigger aria-expanded>
-    <span class=chevron />           ← GSAP rotate 0→180°
-    <span class=titleLift>           ← hover lift + squeeze
+  <button class=trigger>
+    <span class=titleLift>           ← slot titleLift
       <Text class=title />
-  <div class=contentShell ref=shell> <!-- overflow-hidden, height GSAP -->
-    <div class=contentWrap ref=inner>
+    <span class=chevron />           ← slot chevron
+  <div class=contentShell>           ← slot contentShell / collapsibleHeight
+    <div class=contentWrap>          ← internal panelInner
       <section class=contentPanel>
-  <div class=handle />               <!-- card + dragHandle only -->
+  <div class=handle />               ← kit-internal drag, не слот
 ```
 
-### 1. Content height (`useCollapsibleHeight`)
+### 1. Content height (`contentShell`)
 
-Shared с `Expandable` / Accordion:
+Дефолт — рецепт `collapsibleHeight`. См. `Expandable.md`.
 
-**Open:** `height: 0` → `scrollHeight` (`motionExpand()`).
+### 2. Chevron rotation
 
-**Close:** текущая height → `0`.
+Play с Trigger-хоста (`chevronRotate`). Compound `Disclosure.Chevron` регистрирует target. First paint: `createChevronRotationRefCallback`.
 
-**Reduced motion / `enableExpandable: false`:** instant state.
+### 3. Trigger hover / press
 
-`skipContentAnimRef` — мгновенный snap после drag.
-
-#### Кастомизация
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  expandDuration: 320,
-  expandOpenEase: "power2.inOut",
-  enableExpandable: true,
-});
-```
-
-### 2. Chevron rotation (`useChevronRotation`)
-
-`useDisclosureTriggerMotion` → rotate chevron при `open`.
-
-Easing: `motionInteractive()`. Учитывает `skipContentAnimRef` после drag.
-
-### 3. Trigger micro-interactions
-
-На `titleLiftRef`:
-
-- **Hover:** `animateInteractiveHoverLift`
-- **Press:** `animateInteractivePressSqueeze`
-
-Пропуск при reduced motion / touch.
-
-```ts
-configureMotion({
-  hoverLiftScale: 1.03,
-  pressSqueezeScale: [1, 0.98, 1],
-});
-```
+Pointer на кнопке, play на `titleLift`. `asChild` без lift-span — hover/press не вешаются.
 
 ### 4. Card drag handle (`useDisclosureContentDrag`)
 
-Только `variant="card"` + `dragHandle`:
-
-1. Pointer capture на handle
-2. Live resize `shell.style.height`
-3. Chevron sync: `rotation = progress * 180°`
-4. Snap: ratio ≥ 38% или velocity → open
-5. `skipContentAnimRef = true` перед `setOpen`
+Только `variant="card"` + `dragHandle`. Live resize + chevron sync. `skipContentAnimRef = true` перед `setOpen`.
 
 ### Чего нет
 
@@ -213,14 +200,15 @@ configureMotion({
 - Ripple
 - Second-level hover shadow (кроме static `shadow-token-sm` у `card`)
 - FLIP в группе
+- Handle как публичный слот
 
 ### Сводка: что настраивается где
 
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Height collapse | `useCollapsibleHeight` | `expandDuration`, `enableExpandable` | `open` |
-| Chevron rotate | `useChevronRotation` | `interactiveDuration`, `enableExpandable` | `open` |
-| Title hover/squeeze | `disclosureAnimations` | `hoverLiftScale`, `pressSqueezeScale` | `disabled` |
+| Анимация | Слот / рецепт | Ключи `configureMotion` | Локальный prop |
+|----------|---------------|---------------------------|----------------|
+| Height collapse | `contentShell` → `collapsibleHeight` | `expandDuration`, `enableExpandable` | `motion` на Root / Content / Group |
+| Chevron rotate | `chevron` → `chevronRotate` | `interactiveDuration`, `enableExpandable` | `motion` на Chevron |
+| Title hover/squeeze | `titleLift` | `hoverLiftScale`, `pressSqueezeScale` | `motion` на Trigger |
 | Drag expand | `useDisclosureContentDrag` | — | `dragHandle`, `variant="card"` |
 
 ## Токены и CSS
@@ -317,17 +305,18 @@ configureMotion({
 
 ```
 Disclosure/
-├── Disclosure.tsx
-├── disclosureGroup.tsx
+├── Disclosure.tsx                 # MotionProvider + merge Group motion
+├── disclosureGroup.tsx            # карта motion в group context
 ├── index.ts
-├── disclosureTypes.ts
+├── disclosureTypes.ts             # DisclosureMotion / TitleLift / Lifecycle
 ├── disclosureStyles.ts
-├── disclosureAnimations.ts
-├── disclosureParts.tsx
+├── disclosureAnimations.ts        # defaults + host play (skip after drag)
+├── disclosureParts.tsx            # Trigger / Chevron useMotionPart
+├── disclosureContentPart.tsx      # contentShell host
 ├── useDisclosureRootState.ts
 ├── useDisclosureGroupRootState.ts
-├── useDisclosureContentDrag.ts
-├── disclosureContext.tsx
+├── useDisclosureContentDrag.ts    # kit-internal, не слот
+├── disclosureContext.tsx          # createMotionScope (без defaults/play)
 ├── disclosureAPI.ts
 ├── disclosureA11y.ts
 └── Disclosure.stories.tsx

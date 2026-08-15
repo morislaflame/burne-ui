@@ -1,17 +1,23 @@
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import type { IconBaseProps } from "react-icons";
-import { forwardRef, useCallback, useMemo, useRef, type ForwardRefExoticComponent, type MouseEvent, type Ref, type RefAttributes } from "react";
+import { forwardRef, useCallback, useMemo, type ForwardRefExoticComponent, type MouseEvent, type Ref, type RefAttributes } from "react";
 
 import { Text } from "@/components/core/Text";
-import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 import { cn } from "@/utils/cn";
 
 import { PAGINATION_ELLIPSIS_ARIA_HIDDEN, PAGINATION_ICON_ARIA_HIDDEN, resolvePaginationPageAriaLabel } from "./paginationA11y";
 import { getPaginationRange, resolvePaginationNextDisabled, resolvePaginationPreviousDisabled } from "./paginationAPI";
-import { usePaginationContentRef } from "./paginationAnimations";
-import { useOptionalPagination, usePagination, usePaginationClassNames } from "./paginationContext";
+import { resolvePaginationControlMotionDefaults, usePaginationContentRef } from "./paginationAnimations";
+import {
+  PaginationMotionProvider,
+  useOptionalPagination,
+  useOptionalPaginationMotionScope,
+  usePagination,
+  usePaginationClassNames,
+} from "./paginationContext";
 import { paginationContentClass, paginationEllipsisClass, paginationInteractiveButtonClass, paginationItemClass, paginationNavTextClass, paginationNextIconClass, paginationPageActiveClass, paginationPageTextClass, paginationPreviousIconClass, paginationRootClass, paginationSummaryClass, paginationSummaryTextClass } from "./paginationStyles";
 import type {
   PaginationContentProps,
@@ -21,6 +27,7 @@ import type {
   PaginationItemProps,
   PaginationNavButtonProps,
   PaginationPageProps,
+  PaginationPartMotion,
   PaginationProps,
   PaginationSummaryProps,
 } from "./paginationTypes";
@@ -66,44 +73,92 @@ const PaginationInteractive = forwardRef<HTMLButtonElement, PaginationInteractiv
       className,
       disabled,
       onPointerDown,
+      onKeyDown,
+      motion,
       ...rest
     },
     ref,
   ) {
-    const btnRef = useRef<HTMLButtonElement>(null);
-
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        btnRef.current = node;
-        mergeForwardedRef(ref, node);
-      },
-      [ref],
+    const parentScope = useOptionalPaginationMotionScope();
+    const motionDefaults = useMemo(() => resolvePaginationControlMotionDefaults(), []);
+    const mergedMotion = mergeMotionSlotMaps(
+      parentScope?.getRootMotion(),
+      motion ? { control: motion } : undefined,
     );
 
-    const { handlePointerDown, handleKeyDown } = usePressableElementTextMotion({
-      isDisabled: !!disabled,
-      enabled: !disabled,
-      textMotionRef: btnRef,
-      onPointerDown,
-    });
-
     return (
-      <button
-        ref={setRefs}
-        type="button"
-        disabled={disabled}
-        className={paginationInteractiveButtonClass({
-          className,
-        })}
-        {...rest}
-        onPointerDown={handlePointerDown}
-        onKeyDown={handleKeyDown}
-      >
-        {children}
-      </button>
+      <PaginationMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+        <PaginationInteractiveSurface
+          forwardedRef={ref}
+          className={className}
+          disabled={disabled}
+          onPointerDown={onPointerDown}
+          onKeyDown={onKeyDown}
+          itemPartMotion={motion}
+          rest={rest}
+        >
+          {children}
+        </PaginationInteractiveSurface>
+      </PaginationMotionProvider>
     );
   },
 );
+
+function PaginationInteractiveSurface({
+  children,
+  className,
+  disabled,
+  onPointerDown,
+  onKeyDown,
+  itemPartMotion,
+  forwardedRef,
+  rest,
+}: {
+  children: PaginationInteractiveProps["children"];
+  className?: string;
+  disabled?: boolean;
+  onPointerDown?: PaginationInteractiveProps["onPointerDown"];
+  onKeyDown?: PaginationInteractiveProps["onKeyDown"];
+  itemPartMotion?: PaginationPartMotion;
+  forwardedRef: React.ForwardedRef<HTMLButtonElement>;
+  rest: Omit<
+    PaginationInteractiveProps,
+    "children" | "className" | "disabled" | "onPointerDown" | "onKeyDown" | "motion"
+  >;
+}) {
+  const scope = useOptionalPaginationMotionScope();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLButtonElement>({
+    scope,
+    slot: "control",
+    motion: itemPartMotion,
+    pressPhases: !disabled,
+    pointerPhases: !disabled,
+    forwardedRef,
+    onPointerDown,
+  });
+
+  return (
+    <button
+      ref={setRef}
+      type="button"
+      disabled={disabled}
+      className={paginationInteractiveButtonClass({
+        className,
+      })}
+      {...rest}
+      {...pointerHandlers}
+      onKeyDown={(e) => {
+        onKeyDown?.(e);
+        if (disabled || e.defaultPrevented || !isInteractivePressKey(e) || !scope) return;
+        const value = scope.resolve("control", "pressIn", itemPartMotion);
+        if (value === false || value === undefined) return;
+        scope.play("control", "pressIn", { partMotion: itemPartMotion, el: e.currentTarget });
+      }}
+    >
+      {children}
+    </button>
+  );
+}
 
 PaginationInteractive.displayName = "PaginationInteractive";
 
@@ -356,6 +411,7 @@ export const PaginationPage = forwardRef<HTMLButtonElement, PaginationPageProps>
       children,
       onClick,
       className,
+      motion: _motion,
       "aria-label": ariaLabel,
       ...rest
     },

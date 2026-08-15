@@ -12,6 +12,7 @@ import { OptionListItemLayoutShowcase } from "@/stories-utils/optionListItemStor
 import { PIN_IMAGE2 } from "@/stories-utils/mockImages";
 
 import { Dropdown } from ".";
+import { DropdownMotionDemo } from "../../../../playground/showcase/demos/dropdown/DropdownMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -725,4 +726,9 @@ export const PopoverSideTop: Story = {
       </Dropdown.Popover>
     </Dropdown>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant leave, body stagger, submenu, origin)",
+  render: () => <DropdownMotionDemo />,
 };

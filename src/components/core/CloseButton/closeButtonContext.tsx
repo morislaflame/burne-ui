@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   CloseButtonClassNames,
   CloseButtonClassNamesProviderProps,
@@ -27,3 +29,10 @@ export function CloseButtonClassNamesProvider({
 export function useCloseButtonClassNames(): CloseButtonClassNames {
   return useContext(CloseButtonClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `closeButtonAnimations.ts`. */
+export const {
+  MotionScopeProvider: CloseButtonMotionProvider,
+  useMotionScope: useCloseButtonMotionScope,
+  useOptionalMotionScope: useOptionalCloseButtonMotionScope,
+} = createMotionScope("CloseButton");

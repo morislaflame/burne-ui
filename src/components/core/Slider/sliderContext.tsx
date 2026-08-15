@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   SliderClassNames,
   SliderClassNamesProviderProps,
@@ -79,3 +81,10 @@ export function useSliderTrackContext(): SliderTrackContextValue {
   }
   return ctx;
 }
+
+/** Scope only. Defaults live in `sliderAnimations.ts`. */
+export const {
+  MotionScopeProvider: SliderMotionProvider,
+  useMotionScope: useSliderMotionScope,
+  useOptionalMotionScope: useOptionalSliderMotionScope,
+} = createMotionScope("Slider");

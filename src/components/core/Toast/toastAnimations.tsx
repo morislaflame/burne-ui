@@ -1,10 +1,19 @@
 import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { prefersReducedMotion, usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { isMotionFeatureEnabled, motionInteractive, motionToastDismiss } from "@/components/core/utils/motionConfig";
-import { animatePortalClose, animatePortalOpen, applyReducedPortalMotion, isReducedModalMotion, MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
+import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { applyToastRootInstant } from "@/components/core/utils/slotMotion/recipes/toastSurface";
+import {
+  isMotionVarsObject,
+  killMotionTargets,
+  mergeMotionSlotMaps,
+  useMotionPart,
+  type MotionScopeValue,
+  type MotionValue,
+} from "@/components/core/utils/slotMotion";
 import { toastScrimToken, TOAST_SCRIM_CSS_VAR } from "@/tokens/toastScrim";
 import { useBurneLabel } from "@/theme/BurneLabelsProvider";
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
 import {
   resolveToastStackContainerHeight,
@@ -15,12 +24,55 @@ import {
 } from "./toastAPI";
 import { toastViewportWidthPx } from "@/components/core/utils/sizeLayout";
 import { toastViewportAriaLabel } from "./toastA11y";
-import { ToastClassNamesProvider } from "./toastContext";
+import {
+  ToastClassNamesProvider,
+  ToastMotionProvider,
+  useToastMotionScope,
+} from "./toastContext";
 import { ToastRoot } from "./Toast";
 import { toastScrimClass, toastStackClass, toastViewportClass } from "./toastStyles";
-import type { ToastItemWrapperProps, ToastViewportProps } from "./toastTypes";
+import type { ToastItemWrapperProps, ToastMotion, ToastViewportProps } from "./toastTypes";
 
-export function ToastItemWrapper({
+/**
+ * Slot motion for Toast — look here first.
+ *
+ * DOM slots: `root` (enter/leave surface), `indicator`, `title`, `description`,
+ * `action`, `close`. `message` / `content` are `display: contents`. Stack peek,
+ * viewport height and scrim stay kit-internal.
+ *
+ * Host: `ToastItemWrapper` plays `enter` / `leave` on `root` and broadcasts
+ * nested slots. Defaults wrap the item host (`TOAST_MOTION_DEFAULTS`).
+ * `Toast.Provider` / `add().motion` pass the map (like Dialog root).
+ */
+export const TOAST_MOTION_HOST_SLOTS = ["root"] as const;
+
+export const TOAST_MOTION_DEFAULTS: ToastMotion = {
+  root: { enter: "toastSurfaceEnter", leave: "toastSurfaceLeave" },
+};
+
+function enterHidesFirstPaint(value: MotionValue | undefined): boolean {
+  if (value === undefined || value === false) return false;
+  return isMotionVarsObject(value) && value.autoAlpha !== undefined;
+}
+
+function hideNestedEnterSlots(scope: MotionScopeValue, exclude: readonly string[]): void {
+  const skip = new Set(exclude);
+  const targets = scope.getTargets();
+  const slots = new Set([
+    ...Object.keys(scope.getDefaults() ?? {}),
+    ...Object.keys(scope.getRootMotion() ?? {}),
+    ...Object.keys(targets),
+  ]);
+  for (const slot of slots) {
+    if (skip.has(slot)) continue;
+    const el = targets[slot];
+    if (!el) continue;
+    if (!enterHidesFirstPaint(scope.resolve(slot, "enter"))) continue;
+    gsap.set(el, { autoAlpha: 0, force3D: false });
+  }
+}
+
+function ToastItemMotionHost({
   entry,
   reverseIdx,
   total,
@@ -30,12 +82,26 @@ export function ToastItemWrapper({
   onRemoveFinal,
   onHeightChange,
   providerClassNames,
-}: ToastItemWrapperProps) {
+}: Omit<ToastItemWrapperProps, "providerMotion">) {
+  const scope = useToastMotionScope();
   const animRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const stackRef = useRef<HTMLDivElement>(null);
   const isMountedRef = useRef(false);
   const reduceMotionPreferred = usePrefersReducedMotion();
+  const slideDir = isTop ? -TOAST_ENTRY_OFFSET_PX : TOAST_ENTRY_OFFSET_PX;
+
+  const { setRef: setRootPartRef } = useMotionPart<HTMLDivElement>({
+    scope,
+    slot: "root",
+  });
+  const setAnimRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      animRef.current = node;
+      setRootPartRef(node);
+    },
+    [setRootPartRef],
+  );
 
   const capped = Math.min(reverseIdx, TOAST_MAX_VISIBLE - 1);
   const stackScale = 1 - capped * TOAST_STACK_SCALE_STEP;
@@ -96,36 +162,48 @@ export function ToastItemWrapper({
   useLayoutEffect(() => {
     const el = animRef.current;
     if (!el) return;
-    if (isReducedModalMotion()) {
-      applyReducedPortalMotion(el);
+    const value = scope.resolve("root", "enter");
+    if (value === false || isReducedModalMotion()) {
+      if (value === false) applyToastRootInstant(el, true, slideDir);
+      else applyReducedPortalMotion(el);
       return;
     }
-    const slideDir = isTop ? -TOAST_ENTRY_OFFSET_PX : TOAST_ENTRY_OFFSET_PX;
-    animatePortalOpen({
-      surface: el,
-      vars: { ...motionInteractive(), overwrite: "auto" },
-      from: { y: slideDir, scale: MODAL_PANEL_SCALE_FROM },
-      to: { y: 0, scale: 1 },
+    hideNestedEnterSlots(scope, TOAST_MOTION_HOST_SLOTS);
+    scope.play("root", "enter", { el });
+    const frame = requestAnimationFrame(() => {
+      void el.offsetHeight;
+      void scope.playBroadcast("enter", { exclude: [...TOAST_MOTION_HOST_SLOTS] });
     });
-  }, [isTop]);
+    return () => cancelAnimationFrame(frame);
+  }, [scope, slideDir]);
 
   useEffect(() => {
     if (!isDismissing) return;
     const el = animRef.current;
     if (!el) return;
+    let cancelled = false;
     if (isReducedModalMotion()) {
       onRemoveFinal(entry.id);
-      return;
+      return undefined;
     }
-    const slideDir = isTop ? -TOAST_ENTRY_OFFSET_PX : TOAST_ENTRY_OFFSET_PX;
-    killMotion(el);
-    animatePortalClose({
-      surface: el,
-      vars: { ...motionToastDismiss(), overwrite: "auto" },
-      exit: { y: slideDir },
-      onComplete: () => onRemoveFinal(entry.id),
+    const value = scope.resolve("root", "leave");
+    if (value === false) {
+      applyToastRootInstant(el, false, slideDir);
+    }
+    const run = scope.play("root", "leave", { el, waitForComplete: true });
+    const extra = scope.playBroadcast("leave", {
+      exclude: [...TOAST_MOTION_HOST_SLOTS],
+      waitForComplete: true,
     });
-  }, [isDismissing, isTop, entry.id, onRemoveFinal]);
+    void Promise.all([run.finished, extra]).then(() => {
+      if (!cancelled) onRemoveFinal(entry.id);
+    });
+    return () => {
+      cancelled = true;
+      run.animation?.kill();
+      killMotionTargets(scope.getTargets());
+    };
+  }, [entry.id, isDismissing, onRemoveFinal, scope, slideDir]);
 
   useEffect(() => {
     if (entry.timeout === 0 || isDismissing || entry.loading) return;
@@ -210,7 +288,7 @@ export function ToastItemWrapper({
         pointerEvents: reverseIdx === 0 ? "auto" : "none",
       }}
     >
-      <div ref={animRef}>
+      <div ref={setAnimRef}>
         <ToastClassNamesProvider classNames={mergedClassNames}>
           <ToastRoot
             ref={cardRef}
@@ -226,6 +304,45 @@ export function ToastItemWrapper({
         </ToastClassNamesProvider>
       </div>
     </div>
+  );
+}
+
+export function ToastItemWrapper({
+  entry,
+  reverseIdx,
+  total,
+  isTop,
+  isDismissing,
+  onDismiss,
+  onRemoveFinal,
+  onHeightChange,
+  providerClassNames,
+  providerMotion,
+}: ToastItemWrapperProps) {
+  const slideDir = isTop ? -TOAST_ENTRY_OFFSET_PX : TOAST_ENTRY_OFFSET_PX;
+  const mergedMotion = useMemo(
+    () => mergeMotionSlotMaps(providerMotion, entry.motion) as ToastMotion | undefined,
+    [entry.motion, providerMotion],
+  );
+
+  return (
+    <ToastMotionProvider
+      motion={mergedMotion}
+      defaults={TOAST_MOTION_DEFAULTS}
+      params={{ isTop, slideDir }}
+    >
+      <ToastItemMotionHost
+        entry={entry}
+        reverseIdx={reverseIdx}
+        total={total}
+        isTop={isTop}
+        isDismissing={isDismissing}
+        onDismiss={onDismiss}
+        onRemoveFinal={onRemoveFinal}
+        onHeightChange={onHeightChange}
+        providerClassNames={providerClassNames}
+      />
+    </ToastMotionProvider>
   );
 }
 
@@ -256,6 +373,7 @@ export function ToastViewport({
   onDismiss,
   onRemoveFinal,
   classNames,
+  motion,
   defaultSize = "base",
 }: ToastViewportProps) {
   const isTop = placement.startsWith("top");
@@ -376,6 +494,7 @@ export function ToastViewport({
             onRemoveFinal={onRemoveFinal}
             onHeightChange={onHeightChange}
             providerClassNames={classNames}
+            providerMotion={motion}
           />
         ))}
       </div>

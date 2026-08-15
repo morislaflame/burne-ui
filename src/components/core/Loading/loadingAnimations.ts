@@ -1,11 +1,19 @@
+/**
+ * Slot motion for Loading — look here first.
+ *
+ * DOM slots: `root`, `spinner`, `dots` (track)
+ *
+ * Not slots: individual dots — kit-internal wave (`useLoadingDotsAnimation`).
+ * Host: root plays optional `enter`. Defaults: empty.
+ */
 import { useLayoutEffect, useSyncExternalStore, type RefObject } from "react";
 
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { gsap, killMotionGeometry } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { getMotionConfigRevision, motionLoadingDots, subscribeMotionConfig } from "@/components/core/utils/motionConfig";
 
 import { LOADING_DOTS_LAYOUT } from "./loadingStyles";
-import type { LoadingSize } from "./loadingTypes";
+import type { LoadingMotion, LoadingSize } from "./loadingTypes";
 
 const LOADING_DOTS_COUNT = 3;
 
@@ -18,7 +26,7 @@ function runLoadingDotsWave(
     motionLoadingDots();
 
   for (const dot of dots) {
-    killMotion(dot);
+    killMotionGeometry(dot);
     gsap.set(dot, { y: 0, scale: 1, transformOrigin: "50% 100%" });
   }
 
@@ -66,7 +74,10 @@ export function useLoadingDotsAnimation(
 
     return () => {
       for (const tween of tweens) tween.kill();
-      for (const dot of dots) killMotion(dot);
     };
   }, [size, trackRef, motionRevision, reduceMotion]);
+}
+
+export function resolveLoadingMotionDefaults(): LoadingMotion {
+  return {};
 }

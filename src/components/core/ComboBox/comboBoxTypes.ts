@@ -1,10 +1,11 @@
-import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, InputHTMLAttributes, MutableRefObject, ReactNode, RefObject } from "react";
 import type { Prettify } from "@/utils/prettify";
 
 import type { ButtonGroupSegment } from "@/components/composite/ButtonGroup/buttonGroupTypes";
 import type { InputSize, InputStatus, InputVariant } from "@/components/core/Input";
 import type { ListBoxProps } from "@/components/core/ListBox";
 import type { PopoverSide } from "@/components/core/Popover";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 
 export type ComboBoxOption = {
@@ -37,6 +38,22 @@ export type ComboBoxClassNames = {
   error?: string;
 };
 
+export type ComboBoxPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type ComboBoxMotion = {
+  inputGroup?: ComboBoxPartMotion;
+  input?: ComboBoxPartMotion;
+  trigger?: ComboBoxPartMotion;
+  triggerIcon?: ComboBoxPartMotion;
+};
+
 export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
   label?: ReactNode;
@@ -59,6 +76,11 @@ export type ComboBoxProps = HTMLAttributes<HTMLDivElement> & {
   placeholder?: string;
   menuMaxHeight?: string;
   classNames?: Prettify<ComboBoxClassNames>;
+  /**
+   * Per-slot motion (`inputGroup`, `input`, `trigger`, `triggerIcon`).
+   * Menu enter lives on Popover — not duplicated here.
+   */
+  motion?: Prettify<ComboBoxMotion>;
 };
 
 export type ComboBoxSimpleProps = ComboBoxProps & {
@@ -108,14 +130,29 @@ export type ComboBoxClassNamesProviderProps = {
 
 export type ComboBoxInputGroupProps = HTMLAttributes<HTMLDivElement> & {
   groupSegment?: ButtonGroupSegment;
+  /** Part motion for the `inputGroup` host slot. Root `motion.inputGroup` still applies. */
+  motion?: Prettify<ComboBoxPartMotion>;
 };
 
 export type ComboBoxInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "value" | "defaultValue" | "size"
->;
+> & {
+  motion?: Prettify<ComboBoxPartMotion>;
+};
 
-export type ComboBoxTriggerProps = HTMLAttributes<HTMLButtonElement>;
+export type ComboBoxTriggerProps = HTMLAttributes<HTMLButtonElement> & {
+  motion?: Prettify<ComboBoxPartMotion>;
+};
+
+export type UseComboBoxShellAnimationsProps = {
+  shellRef: RefObject<HTMLDivElement | null>;
+  disabled: boolean;
+  variant: InputVariant;
+  groupSegment: unknown;
+  motion?: ComboBoxPartMotion;
+  pointerInsideRef: MutableRefObject<boolean>;
+};
 
 export type ComboBoxPopoverProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;

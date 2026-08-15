@@ -1,6 +1,15 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type { KbdClassNames, KbdClassNamesProviderProps } from "./kbdTypes";
+
+/** Scope only. Defaults and host play live in `kbdAnimations.ts`. */
+export const {
+  MotionScopeProvider: KbdMotionProvider,
+  useMotionScope: useKbdMotionScope,
+  useOptionalMotionScope: useOptionalKbdMotionScope,
+} = createMotionScope("Kbd");
 
 const KbdClassNamesContext = createContext<KbdClassNames>({});
 

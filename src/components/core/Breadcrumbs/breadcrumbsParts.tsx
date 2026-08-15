@@ -1,7 +1,9 @@
 import { IoChevronForward } from "react-icons/io5";
-import { forwardRef, useCallback } from "react";
+import { forwardRef, useCallback, useMemo } from "react";
 
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
+import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
 
 import { Dropdown } from "@/components/core/Dropdown";
 import { Text } from "@/components/core/Text";
@@ -9,8 +11,16 @@ import { useBurneLabels } from "@/theme/BurneLabelsProvider";
 
 import { breadcrumbsEllipsisPopoverAriaLabel, ellipsisTriggerAriaLabel } from "./breadcrumbsA11y";
 import { breadcrumbListItemKey } from "./breadcrumbsAPI";
-import { useBreadcrumbInteractiveMotion } from "./breadcrumbsAnimations";
-import { BreadcrumbsClassNamesProvider, useBreadcrumbsClassNames } from "./breadcrumbsContext";
+import {
+  resolveBreadcrumbsEllipsisMotionDefaults,
+  resolveBreadcrumbsItemMotionDefaults,
+} from "./breadcrumbsAnimations";
+import {
+  BreadcrumbsClassNamesProvider,
+  BreadcrumbsMotionProvider,
+  useBreadcrumbsClassNames,
+  useOptionalBreadcrumbsMotionScope,
+} from "./breadcrumbsContext";
 import { breadcrumbChevronClass, breadcrumbCurrentClass, breadcrumbListItemClass, breadcrumbStaticClass, breadcrumbsDropdownItemClass, breadcrumbsEllipsisPopoverBodyClass, breadcrumbsEllipsisLiftWrapperClass, breadcrumbsEllipsisTextClass, breadcrumbsEllipsisTriggerClass, breadcrumbsListClass, breadcrumbsSeparatorClass, crumbInteractiveButtonClass, crumbInteractiveInnerClass, crumbInteractiveTextClass, crumbInteractiveWrapperClass } from "./breadcrumbsStyles";
 import { useBreadcrumbsListState } from "./useBreadcrumbsRootState";
 import type {
@@ -189,65 +199,126 @@ export const InteractiveCrumb = forwardRef<HTMLSpanElement, InteractiveCrumbProp
     },
     forwardedRef,
   ) {
-    const { textRef, handlePointerDown, handleKeyDown } = useBreadcrumbInteractiveMotion();
+    const parentScope = useOptionalBreadcrumbsMotionScope();
+    const motionDefaults = useMemo(() => resolveBreadcrumbsItemMotionDefaults(), []);
+    const mergedMotion = mergeMotionSlotMaps(parentScope?.getRootMotion(), undefined);
 
-    const setRefs = useCallback(
+    return (
+      <BreadcrumbsMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+        <InteractiveCrumbSurface
+          href={href}
+          onClick={onClick}
+          className={className}
+          innerClassName={innerClassName}
+          textClassName={textClassName}
+          ariaCurrent={ariaCurrent}
+          forwardedRef={forwardedRef}
+        >
+          {children}
+        </InteractiveCrumbSurface>
+      </BreadcrumbsMotionProvider>
+    );
+  },
+);
+
+function InteractiveCrumbSurface({
+  href,
+  onClick,
+  children,
+  className,
+  innerClassName,
+  textClassName,
+  ariaCurrent,
+  forwardedRef,
+}: {
+  href?: InteractiveCrumbProps["href"];
+  onClick?: InteractiveCrumbProps["onClick"];
+  children: React.ReactNode;
+  className: string;
+  innerClassName?: string;
+  textClassName?: string;
+  ariaCurrent?: InteractiveCrumbProps["aria-current"];
+  forwardedRef: React.ForwardedRef<HTMLSpanElement>;
+}) {
+    const scope = useOptionalBreadcrumbsMotionScope();
+    const { setRef: setLinkRef, pointerHandlers } = useMotionPart<HTMLAnchorElement | HTMLButtonElement>({
+      scope,
+      slot: "itemLink",
+      pressPhases: true,
+      pointerPhases: true,
+    });
+    const { setRef: setTextRef, pointerHandlers: textPointer } = useMotionPart<HTMLSpanElement>({
+      scope,
+      slot: "itemLinkText",
+      pointerPhases: true,
+    });
+
+    const setTextMerged = useCallback(
       (node: HTMLSpanElement | null) => {
-        textRef.current = node;
+        setTextRef(node);
         mergeForwardedRef(forwardedRef, node);
       },
-      [forwardedRef, textRef],
+      [forwardedRef, setTextRef],
+    );
+
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLAnchorElement | HTMLButtonElement>) => {
+        if (!isInteractivePressKey(e) || !scope) return;
+        const el = e.currentTarget;
+        const value = scope.resolve("itemLink", "pressIn");
+        if (value === false || value === undefined) return;
+        scope.play("itemLink", "pressIn", { el });
+      },
+      [scope],
     );
 
     const innerCls = href
       ? crumbInteractiveInnerClass(innerClassName)
       : crumbInteractiveButtonClass(innerClassName);
 
+    const text = (
+      <Text
+        ref={setTextMerged}
+        variant="small"
+        inheritColor
+        as="span"
+        className={crumbInteractiveTextClass(textClassName)}
+        {...textPointer}
+      >
+        {children}
+      </Text>
+    );
+
     return (
       <span className={crumbInteractiveWrapperClass(className)}>
         {href ? (
           <a
+            ref={setLinkRef as React.Ref<HTMLAnchorElement>}
             href={href}
             onClick={onClick}
             aria-current={ariaCurrent}
             className={innerCls}
-            onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
+            {...pointerHandlers}
           >
-            <Text
-              ref={setRefs}
-              variant="small"
-              inheritColor
-              as="span"
-              className={crumbInteractiveTextClass(textClassName)}
-            >
-              {children}
-            </Text>
+            {text}
           </a>
         ) : (
           <button
+            ref={setLinkRef as React.Ref<HTMLButtonElement>}
             type="button"
             onClick={onClick}
             aria-current={ariaCurrent}
             className={innerCls}
-            onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
+            {...pointerHandlers}
           >
-            <Text
-              ref={setRefs}
-              variant="small"
-              inheritColor
-              as="span"
-              className={crumbInteractiveTextClass(textClassName)}
-            >
-              {children}
-            </Text>
+            {text}
           </button>
         )}
       </span>
     );
-  },
-);
+}
 
 InteractiveCrumb.displayName = "BreadcrumbsInteractiveCrumb";
 
@@ -255,20 +326,51 @@ export function BreadcrumbsEllipsisMenu({ hiddenItems }: BreadcrumbsEllipsisMenu
   const slotClassNames = useBreadcrumbsClassNames();
   const labels = useBurneLabels();
   const count = hiddenItems.length;
-  const { textRef: liftRef, handlePointerDown } = useBreadcrumbInteractiveMotion();
+  const parentScope = useOptionalBreadcrumbsMotionScope();
+  const motionDefaults = useMemo(() => resolveBreadcrumbsEllipsisMotionDefaults(), []);
+  const mergedMotion = mergeMotionSlotMaps(parentScope?.getRootMotion(), undefined);
 
   if (count === 0) return null;
+
+  return (
+    <BreadcrumbsMotionProvider motion={mergedMotion} defaults={motionDefaults}>
+      <BreadcrumbsEllipsisMenuSurface
+        hiddenItems={hiddenItems}
+        slotClassNames={slotClassNames}
+        labels={labels}
+        count={count}
+      />
+    </BreadcrumbsMotionProvider>
+  );
+}
+
+function BreadcrumbsEllipsisMenuSurface({
+  hiddenItems,
+  slotClassNames,
+  labels,
+  count,
+}: {
+  hiddenItems: BreadcrumbsEllipsisMenuProps["hiddenItems"];
+  slotClassNames: ReturnType<typeof useBreadcrumbsClassNames>;
+  labels: ReturnType<typeof useBurneLabels>;
+  count: number;
+}) {
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalBreadcrumbsMotionScope(),
+    slot: "ellipsisLiftWrapper",
+    pressPhases: true,
+  });
 
   return (
     <Dropdown>
       <Dropdown.Trigger
         aria-label={ellipsisTriggerAriaLabel(count, labels.breadcrumbsShowHidden)}
         className={breadcrumbsEllipsisTriggerClass(slotClassNames.ellipsisTrigger)}
-        onPointerDown={handlePointerDown}
       >
         <span
-          ref={liftRef}
+          ref={setRef}
           className={breadcrumbsEllipsisLiftWrapperClass(slotClassNames.ellipsisLiftWrapper)}
+          {...pointerHandlers}
         >
           <Text
             as="span"

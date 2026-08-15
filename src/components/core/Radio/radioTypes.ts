@@ -13,7 +13,8 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { FieldErrorProps, FieldHintProps } from "@/components/core/Field";
 import type { LabelProps } from "@/components/core/Label";
-import type { SelectionIndicatorClassNames } from "@/components/core/SelectionIndicator";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
+import type { SelectionIndicatorClassNames, SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
 
 export type RadioVariant = "default" | "secondary" | "outline" | "gloss";
 
@@ -37,6 +38,18 @@ export type RadioClassNames = {
   input?: string;
 };
 
+export type RadioCheckMotion = {
+  check?: MotionValue;
+  uncheck?: MotionValue;
+};
+
+/** Root map. Keys → SelectionIndicator slots in `radioAnimations.ts`. */
+export type RadioMotion = {
+  indicator?: RadioCheckMotion;
+  indicatorFill?: RadioCheckMotion;
+  indicatorMark?: RadioCheckMotion;
+};
+
 export type RadioProps = Omit<
   LabelHTMLAttributes<HTMLLabelElement>,
   "children" | "htmlFor" | "onChange" | "onPointerDown"
@@ -51,6 +64,7 @@ export type RadioProps = Omit<
     danger?: boolean;
     className?: string;
     classNames?: Prettify<RadioClassNames>;
+    motion?: Prettify<RadioMotion>;
     onPointerDown?: (e: PointerEvent<HTMLLabelElement>) => void;
   };
 
@@ -64,6 +78,7 @@ export type RadioIndicatorProps = HTMLAttributes<HTMLSpanElement> & {
   children?: ReactNode;
   size?: RadioSize;
   classNames?: Prettify<RadioIndicatorClassNames>;
+  motion?: Prettify<SelectionIndicatorMotion>;
 };
 
 export type RadioContentProps = HTMLAttributes<HTMLDivElement> & {
@@ -113,6 +128,11 @@ export type RadioFieldContextValue = {
 
 export type RadioClassNamesProviderProps = {
   classNames?: Prettify<RadioClassNames>;
+  children: ReactNode;
+};
+
+export type RadioMotionProviderProps = {
+  motion?: Prettify<RadioMotion>;
   children: ReactNode;
 };
 

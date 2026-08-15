@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Toast, ToastContext, useToast, useToastContext, type ToastStatus, type ToastVariant, type ToastPlacement, type ToastClassNames, type AddToastOpts } from "burne-ui";
+import { Toast, ToastContext, useToast, useToastContext, type ToastStatus, type ToastVariant, type ToastPlacement, type ToastClassNames, type ToastMotion, type AddToastOpts } from "burne-ui";
 ```
 
 ## API
@@ -25,6 +25,7 @@ import { Toast, ToastContext, useToast, useToastContext, type ToastStatus, type 
 | `defaultPlacement` | `bottom-center` | Позиция, если не указана в `add()` |
 | `defaultVariant` | `default` | Вариант карточки |
 | `classNames` | — | Слоты viewport / stack / scrim / карточки |
+| `motion` | — | Карта слотов для всех тостов (`root` / `title` / …). Per-toast `add().motion` перекрывает |
 
 ### `useToast()`
 
@@ -34,6 +35,15 @@ const { toast } = useToast();
 toast.success("Сохранено");
 toast.danger("Ошибка", { description: "…", timeout: 6000 });
 toast.show({ status: "info", title: "…", placement: "top-right" });
+toast.show({
+  title: "Bounce",
+  motion: {
+    root: {
+      enter: (ctx) => gsap.fromTo(ctx.el, { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "back.out(1.4)" }),
+      leave: (ctx) => gsap.to(ctx.el, { y: 24, autoAlpha: 0, duration: 0.22 }),
+    },
+  },
+});
 
 const id = toast.promise(save(), {
   loading: "Сохранение…",
@@ -50,7 +60,7 @@ toast.dismiss(id);
 | `promise(p, opts)` | loading → success/error |
 | `dismiss(id)` | Запуск dismiss-анимации |
 
-`AddToastOpts`: `status`, `variant`, `title`, `description`, `action`, `timeout` (default 4000 ms, `0` = не закрывать), `placement`, `id`, `loading`, `classNames`.
+`AddToastOpts`: `status`, `variant`, `title`, `description`, `action`, `timeout` (default 4000 ms, `0` = не закрывать), `placement`, `id`, `loading`, `classNames`, `motion`.
 
 ### Toast.Root (карточка)
 
@@ -78,49 +88,57 @@ Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Ind
 
 ## Анимации
 
-Вся motion-логика стека — `toastAnimations.tsx`. Три независимых слоя на каждый toast + viewport-level анимации.
+Хост карточки — `ToastItemWrapper` (`toastAnimations.tsx`): slot motion на `root` + рассылка `enter`/`leave` на `indicator` / `title` / `description` / `action` / `close`. Стек peek, высота viewport и scrim — kit-internal, не публичные слоты. `message` / `content` — `display: contents`. Standalone `<Toast />` без viewport не играет `enter`/`leave`.
+
+### Slot motion
+
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `enter` / `leave` | `toastSurfaceEnter` / `toastSurfaceLeave` (`params.slideDir`) |
+| `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
+| `indicator`, `action`, `close` | `enter` / `leave` | нет; хост **рассылает**, если задана |
+
+`leave: false` на `root` — хост сразу ставит закрытое состояние (карточка не висит, пока ждут complete). Factory leave должна скрыть поверхность (`autoAlpha: 0`).
+
+```tsx
+toast.show({
+  title: "Instant",
+  motion: { root: { enter: false, leave: false } },
+});
+```
+
+**Где в коде:** типы — `toastTypes.ts`; scope — `toastContext.tsx`; defaults + host play — `toastAnimations.tsx`; слоты — `toastParts.tsx`.
 
 **DOM-структура (viewport):**
 
 ```
 <div viewport>                         ← fixed, placement
-  <div scrimRef>                       ← gradient fade
-  <div containerRef>                   ← animated height
-    <div stackRef>                     ← peek/scale per toast (grid 1×1)
-      <div animRef>                    ← enter/exit slide
+  <div scrimRef>                       ← gradient fade (kit-internal)
+  <div containerRef>                   ← animated height (kit-internal)
+    <div stackRef>                     ← peek/scale (kit-internal)
+      <div animRef>                    ← слот `root` enter/exit
         <ToastRoot ref=cardRef>        ← ResizeObserver height
 ```
 
-### 1. Enter карточки (portal open)
+### 1. Enter карточки (`root`)
 
-При монтировании `animRef` → `animatePortalOpen`:
+Дефолт `toastSurfaceEnter`:
 
-- **from:** `y: ±24px` (`TOAST_ENTRY_OFFSET_PX`), `scale: 0.97` (`MODAL_PANEL_SCALE_FROM`)
+- **from:** `y: ±24px` (`TOAST_ENTRY_OFFSET_PX`), `scale: 0.97`
 - **to:** `y: 0`, `scale: 1`
-- **vars:** `motionInteractive()` → `interactiveDuration`, `interactiveEase`
+- **vars:** `motionInteractive()`
 
-Направление: `top-*` → `y: -24`, `bottom-*` → `y: +24`.
+Направление: `top-*` → `y: -24`, `bottom-*` → `y: +24` (`params.slideDir`).
 
-**Reduced motion:** `isReducedModalMotion()` → `applyReducedPortalMotion` без GSAP.
+**Reduced motion:** `isReducedModalMotion()` → instant rest.
 
-### 2. Dismiss (portal close)
+### 2. Dismiss (`root` leave)
 
-При `isDismissing`:
-
-```ts
-animatePortalClose({
-  surface: animRef,
-  vars: { ...motionToastDismiss() }, // toastDismissDuration / toastDismissEase
-  exit: { y: slideDir },
-  onComplete: () => removeFromDOM,
-});
-```
-
-Dismiss — из `configureMotion` (`toastDismissDuration`, по умолчанию 220 ms).
+Дефолт `toastSurfaceLeave` — `motionToastDismiss()` + `y: slideDir`. `onComplete` → unmount.
 
 ### 3. Стек — reposition (peek + scale)
 
-На `stackRef` при изменении позиции в стеке:
+На `stackRef` при изменении позиции в стеке (**не** публичный слот):
 
 | reverseIdx | scale | y offset | opacity |
 |------------|-------|----------|---------|
@@ -174,8 +192,8 @@ configureMotion({
 
 | Анимация | Элемент | `configureMotion` | Константы / hardcode |
 |----------|---------|-------------------|----------------------|
-| Enter slide | `animRef` | `interactiveDuration`, `interactiveEase` | `ENTRY_OFFSET_PX=24`, `SCALE_FROM=0.97` |
-| Dismiss slide | `animRef` | `toastDismissDuration`, `toastDismissEase` | — |
+| Enter slide | слот `root` | `interactiveDuration`, `interactiveEase` | `ENTRY_OFFSET_PX=24`, `SCALE_FROM=0.97` |
+| Dismiss slide | слот `root` | `toastDismissDuration`, `toastDismissEase` | — |
 | Stack peek/scale | `stackRef` | `enableToastStack`, `interactiveDuration` | `PEEK`, `SCALE_STEP`, `MAX_VISIBLE` |
 | Container height | `containerRef` | `enableToastStack`, `interactiveDuration` | — |
 | Scrim | `scrimRef` | `interactiveDuration` (in), `toastDismissDuration` (out) | — |
@@ -297,7 +315,10 @@ Per-toast `classNames` **перекрывают** одноимённые клю�
 Toast/
 ├── Toast.tsx
 ├── toastProvider.tsx
-├── toastAnimations.tsx    # стек + enter/leave
+├── toastTypes.ts          # ToastMotion
+├── toastContext.tsx       # createMotionScope("Toast")
+├── toastAnimations.tsx    # defaults + host play + стек
+├── toastParts.tsx         # useMotionPart на слотах карточки
 ├── toastAPI.ts            # константы стека
 ├── toastStyles.ts
 ├── useToast.ts
@@ -306,4 +327,4 @@ Toast/
 
 ## Storybook
 
-`Core Components/Toast` — imperative API, promise, gloss, placement, compound.
+`Core Components/Toast` — imperative API, promise, gloss, placement, compound, slot motion gallery.

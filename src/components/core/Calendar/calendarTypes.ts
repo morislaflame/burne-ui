@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type CalendarLocale = {
   /** 7 items: Mon → Sun */
@@ -65,6 +66,19 @@ export type CalendarClassNames = {
   footerClear?: string;
 };
 
+export type CalendarPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type CalendarMotion = {
+  navPrev?: CalendarPartMotion;
+  navNext?: CalendarPartMotion;
+  cell?: CalendarPartMotion;
+};
+
 type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
   variant?: CalendarVariant;
   size?: CalendarSize;
@@ -83,6 +97,7 @@ type CalendarCommonProps = HTMLAttributes<HTMLDivElement> & {
    */
   renderDay?: CalendarRenderDay;
   classNames?: Prettify<CalendarClassNames>;
+  motion?: Prettify<CalendarMotion>;
 };
 
 export type CalendarProps =
@@ -168,6 +183,7 @@ export type CalendarNavButtonProps = Omit<
   direction: "prev" | "next";
   size: CalendarSize;
   children?: ReactNode;
+  motion?: Prettify<CalendarPartMotion>;
 };
 
 export type CalendarNavPrevProps = Omit<

@@ -8,6 +8,14 @@ import { DisclosureCheckoutStepsDemo } from "../demos/disclosure/DisclosureCheck
 import disclosureCheckoutStepsSource from "../demos/disclosure/DisclosureCheckoutSteps.demo.tsx?raw";
 import { DisclosureGlossDemo } from "../demos/disclosure/DisclosureGloss.demo";
 import disclosureGlossSource from "../demos/disclosure/DisclosureGloss.demo.tsx?raw";
+import { DisclosureMotionGroupChevronDemo } from "../demos/disclosure/DisclosureMotionGroupChevron.demo";
+import disclosureMotionGroupChevronSource from "../demos/disclosure/DisclosureMotionGroupChevron.demo.tsx?raw";
+import { DisclosureMotionInstantPanelDemo } from "../demos/disclosure/DisclosureMotionInstantPanel.demo";
+import disclosureMotionInstantPanelSource from "../demos/disclosure/DisclosureMotionInstantPanel.demo.tsx?raw";
+import { DisclosureMotionTitleLiftQuietDemo } from "../demos/disclosure/DisclosureMotionTitleLiftQuiet.demo";
+import disclosureMotionTitleLiftQuietSource from "../demos/disclosure/DisclosureMotionTitleLiftQuiet.demo.tsx?raw";
+import { DisclosureMotionTitleLiftTiltDemo } from "../demos/disclosure/DisclosureMotionTitleLiftTilt.demo";
+import disclosureMotionTitleLiftTiltSource from "../demos/disclosure/DisclosureMotionTitleLiftTilt.demo.tsx?raw";
 import { DisclosureOutlineFaqDemo } from "../demos/disclosure/DisclosureOutlineFaq.demo";
 import disclosureOutlineFaqSource from "../demos/disclosure/DisclosureOutlineFaq.demo.tsx?raw";
 import { DisclosureSettingsGroupDemo } from "../demos/disclosure/DisclosureSettingsGroup.demo";
@@ -50,6 +58,16 @@ export function DisclosureShowcase() {
       </ShowcaseSection>
 
       <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant height, titleLift tilt, quiet hover, group chevron snap."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionInstantPanelDemo} source={disclosureMotionInstantPanelSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionTitleLiftTiltDemo} source={disclosureMotionTitleLiftTiltSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionTitleLiftQuietDemo} source={disclosureMotionTitleLiftQuietSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={DisclosureMotionGroupChevronDemo} source={disclosureMotionGroupChevronSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
         title="classNames"
         description="Slot customization trigger, content and group through classNames."
       >
@@ -89,7 +107,11 @@ export function DisclosureShowcase() {
             <code>defaultValue</code> — open item by default.
           </p>
         </ShowcaseDoc.Block>
-        <ShowcaseDoc.Customization gloss />
+        <ShowcaseDoc.Customization gloss>
+          <p>
+            Slot motion — <code>motion.contentShell</code> / <code>collapsibleHeight</code>. Handle-drag is kit-internal.
+          </p>
+        </ShowcaseDoc.Customization>
       </ShowcaseDoc>
     </ShowcasePage>
   );

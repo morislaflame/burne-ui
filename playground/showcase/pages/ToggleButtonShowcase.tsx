@@ -4,6 +4,14 @@ import { ToggleButtonControlledDemo } from "../demos/toggle-button/ToggleButtonC
 import toggleButtonControlledSource from "../demos/toggle-button/ToggleButtonControlled.demo.tsx?raw";
 import { ToggleButtonGlossDemo } from "../demos/toggle-button/ToggleButtonGloss.demo";
 import toggleButtonGlossSource from "../demos/toggle-button/ToggleButtonGloss.demo.tsx?raw";
+import { ToggleButtonMotionFillFromBottomDemo } from "../demos/toggle-button/ToggleButtonMotionFillFromBottom.demo";
+import toggleButtonMotionFillFromBottomSource from "../demos/toggle-button/ToggleButtonMotionFillFromBottom.demo.tsx?raw";
+import { ToggleButtonMotionIconSpinDemo } from "../demos/toggle-button/ToggleButtonMotionIconSpin.demo";
+import toggleButtonMotionIconSpinSource from "../demos/toggle-button/ToggleButtonMotionIconSpin.demo.tsx?raw";
+import { ToggleButtonMotionInstantFillDemo } from "../demos/toggle-button/ToggleButtonMotionInstantFill.demo";
+import toggleButtonMotionInstantFillSource from "../demos/toggle-button/ToggleButtonMotionInstantFill.demo.tsx?raw";
+import { ToggleButtonMotionTextTintDemo } from "../demos/toggle-button/ToggleButtonMotionTextTint.demo";
+import toggleButtonMotionTextTintSource from "../demos/toggle-button/ToggleButtonMotionTextTint.demo.tsx?raw";
 import { ToggleButtonReactionBarDemo } from "../demos/toggle-button/ToggleButtonReactionBar.demo";
 import toggleButtonReactionBarSource from "../demos/toggle-button/ToggleButtonReactionBar.demo.tsx?raw";
 import { ToggleButtonSizesDemo } from "../demos/toggle-button/ToggleButtonSizes.demo";
@@ -51,6 +59,16 @@ export function ToggleButtonShowcase() {
 
       <ShowcaseSection title="Gloss" description="Glass surface in pressed and resting state.">
         <ShowcaseDemoFromFile Demo={ToggleButtonGlossDemo} source={toggleButtonGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant fill, fill from bottom, icon spin on check, text tint."
+      >
+        <ShowcaseDemoFromFile Demo={ToggleButtonMotionInstantFillDemo} source={toggleButtonMotionInstantFillSource} />
+        <ShowcaseDemoFromFile Demo={ToggleButtonMotionFillFromBottomDemo} source={toggleButtonMotionFillFromBottomSource} />
+        <ShowcaseDemoFromFile Demo={ToggleButtonMotionIconSpinDemo} source={toggleButtonMotionIconSpinSource} />
+        <ShowcaseDemoFromFile Demo={ToggleButtonMotionTextTintDemo} source={toggleButtonMotionTextTintSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

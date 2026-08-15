@@ -1,10 +1,11 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { Tooltip } from "@/components/core/Tooltip";
 
 import "../utils/glossPanel.css";
 
-import { AvatarClassNamesProvider, AvatarContext } from "./avatarContext";
+import { resolveAvatarMotionDefaults } from "./avatarAnimations";
+import { AvatarClassNamesProvider, AvatarContext, AvatarMotionProvider } from "./avatarContext";
 import {
   AvatarDefaultShell,
   AvatarGlossShell,
@@ -21,6 +22,8 @@ export type {
   AvatarProps,
   AvatarSize,
   AvatarVariant,
+  AvatarMotion,
+  AvatarPartMotion,
 } from "./avatarTypes";
 
 export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
@@ -40,6 +43,7 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     className = "",
     children,
     role,
+    motion,
     "aria-label": ariaLabelProp,
     ...rest
   },
@@ -82,6 +86,8 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
     ...rest,
   };
 
+  const motionDefaults = useMemo(() => resolveAvatarMotionDefaults(), []);
+
   const shell = isGloss ? (
     <AvatarGlossShell ref={ref} {...shellProps} />
   ) : (
@@ -98,11 +104,13 @@ export const AvatarRoot = forwardRef<HTMLDivElement, AvatarProps>(function Avata
   );
 
   return (
-    <AvatarContext.Provider value={ctx}>
-      <AvatarClassNamesProvider classNames={classNames}>
-        {wrapped}
-      </AvatarClassNamesProvider>
-    </AvatarContext.Provider>
+    <AvatarMotionProvider motion={motion} defaults={motionDefaults}>
+      <AvatarContext.Provider value={ctx}>
+        <AvatarClassNamesProvider classNames={classNames}>
+          {wrapped}
+        </AvatarClassNamesProvider>
+      </AvatarContext.Provider>
+    </AvatarMotionProvider>
   );
 });
 

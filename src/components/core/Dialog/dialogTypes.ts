@@ -7,6 +7,7 @@ import type {
   PanelSize,
   PanelSizeLayout,
 } from "@/components/core/utils/sizeLayout";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type DialogVariant = "default" | "gloss";
 
@@ -49,6 +50,28 @@ export type DialogClassNames = {
   close?: string;
 };
 
+export type DialogLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+/** Nested text slots also listen for local pointer phases. */
+export type DialogPartMotion = DialogLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+export type DialogMotion = {
+  overlay?: DialogLifecycleMotion;
+  panel?: DialogLifecycleMotion;
+  title?: DialogPartMotion;
+  description?: DialogPartMotion;
+  close?: DialogLifecycleMotion;
+  header?: DialogLifecycleMotion;
+  footer?: DialogLifecycleMotion;
+  content?: DialogLifecycleMotion;
+};
+
 export type DialogProps = {
   open?: boolean;
   defaultOpen?: boolean;
@@ -58,6 +81,8 @@ export type DialogProps = {
   /** DOM node for the portal. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DialogClassNames>;
+  /** Per-slot enter/leave. Overlay/panel defaults are kit modal recipes. */
+  motion?: Prettify<DialogMotion>;
 };
 
 export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -66,6 +91,7 @@ export type DialogPanelProps = HTMLAttributes<HTMLDivElement> & {
   themeAnchor?: HTMLElement | null;
   /** Overrides Root `portalContainer`. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
+  motion?: Prettify<DialogMotion>;
 };
 
 export type DialogTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -96,13 +122,25 @@ export type DialogClassNamesProviderProps = {
   children: ReactNode;
 };
 
-export type DialogHeaderProps = HTMLAttributes<HTMLDivElement>;
-export type DialogTitleProps = HTMLAttributes<HTMLHeadingElement>;
-export type DialogDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+export type DialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  motion?: Prettify<DialogPartMotion>;
+};
+export type DialogDescriptionProps = HTMLAttributes<HTMLParagraphElement> & {
+  motion?: Prettify<DialogPartMotion>;
+};
 export type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
-export type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
-export type DialogCloseProps = CloseButtonProps;
-export type DialogContentProps = HTMLAttributes<HTMLDivElement>;
+export type DialogFooterProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogCloseProps = CloseButtonProps & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
+export type DialogContentProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<DialogLifecycleMotion>;
+};
 export type DialogHeadingBlockProps = HTMLAttributes<HTMLDivElement>;
 
 export type UseDialogRootStateProps = Pick<

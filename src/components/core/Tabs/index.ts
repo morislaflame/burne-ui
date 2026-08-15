@@ -17,4 +17,6 @@ export type {
   TabsOrientation,
   TabsVariant,
   TabsClassNames,
+  TabsMotion,
+  TabsPartMotion,
 } from "./tabsTypes";

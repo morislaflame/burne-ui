@@ -18,6 +18,14 @@ import { SliderVolumeCardDemo } from "../demos/slider/SliderVolumeCard.demo";
 import sliderVolumeCardSource from "../demos/slider/SliderVolumeCard.demo.tsx?raw";
 import { SliderVolumeDemo } from "../demos/slider/SliderVolume.demo";
 import sliderVolumeSource from "../demos/slider/SliderVolume.demo.tsx?raw";
+import { SliderMotionInstantPressDemo } from "../demos/slider/SliderMotionInstantPress.demo";
+import sliderMotionInstantPressSource from "../demos/slider/SliderMotionInstantPress.demo.tsx?raw";
+import { SliderMotionRangeSplitDemo } from "../demos/slider/SliderMotionRangeSplit.demo";
+import sliderMotionRangeSplitSource from "../demos/slider/SliderMotionRangeSplit.demo.tsx?raw";
+import { SliderMotionTrackGlowDemo } from "../demos/slider/SliderMotionTrackGlow.demo";
+import sliderMotionTrackGlowSource from "../demos/slider/SliderMotionTrackGlow.demo.tsx?raw";
+import { SliderMotionValuePopDemo } from "../demos/slider/SliderMotionValuePop.demo";
+import sliderMotionValuePopSource from "../demos/slider/SliderMotionValuePop.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -49,6 +57,16 @@ export function SliderShowcase() {
 
       <ShowcaseSection title="Gloss" description="gloss — glass circle on rail (prop gloss on the root).">
         <ShowcaseDemoFromFile align="center" Demo={SliderGlossDemo} source={sliderGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Instant thumb press, value pop timeline, range thumbs with different part motion, track hover glow."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionInstantPressDemo} source={sliderMotionInstantPressSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionValuePopDemo} source={sliderMotionValuePopSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionRangeSplitDemo} source={sliderMotionRangeSplitSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionTrackGlowDemo} source={sliderMotionTrackGlowSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

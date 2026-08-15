@@ -3,6 +3,7 @@ import { forwardRef } from "react";
 import { Text } from "@/components/core/Text";
 import { cn } from "@/utils/cn";
 
+import { useButtonGroupSlotMotion } from "./buttonGroupAnimations";
 import { useButtonGroupClassNames, useOptionalButtonGroupLayout, useOptionalButtonGroupSegment } from "./buttonGroupContext";
 import { BUTTON_GROUP_TEXT_LABEL_CLASS, BUTTON_GROUP_TEXT_VARIANT, buttonGroupTextClass } from "./buttonGroupStyles";
 import type { ButtonGroupTextProps } from "./buttonGroupTypes";
@@ -14,6 +15,11 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
       className = "",
       buttonSize: buttonSizeProp,
       groupSegment: groupSegmentProp,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
       ...rest
     },
     ref,
@@ -26,10 +32,18 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
       ? undefined
       : (groupSegmentProp ?? groupCtx?.segment);
     const groupVariant = groupCtx?.variant;
+    const part = useButtonGroupSlotMotion<HTMLSpanElement>("text", {
+      motion,
+      forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+    });
 
     return (
       <span
-        ref={ref}
+        ref={part.setRef}
         {...rest}
         className={buttonGroupTextClass({
           groupSegment,
@@ -37,6 +51,7 @@ export const ButtonGroupText = forwardRef<HTMLSpanElement, ButtonGroupTextProps>
           buttonSize,
           className: cn(slotClassNames.text, className),
         })}
+        {...part.pointerHandlers}
       >
         <Text
           variant={BUTTON_GROUP_TEXT_VARIANT[buttonSize]}

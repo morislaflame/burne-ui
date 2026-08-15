@@ -1,6 +1,9 @@
 import { forwardRef, type ForwardedRef, type ReactNode } from "react";
 
-import { useSliderClassNames, useSliderTrackContext } from "./sliderContext";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
+import { cn } from "@/utils/cn";
+
+import { useOptionalSliderMotionScope, useSliderClassNames, useSliderTrackContext } from "./sliderContext";
 import { SLIDER_MARK_CLASS, sliderMarkStyle } from "./sliderStyles";
 import { SliderThumbButton } from "./sliderThumbParts";
 import type {
@@ -10,8 +13,6 @@ import type {
   SliderRailProps,
   SliderThumbKind,
 } from "./sliderTypes";
-
-import { cn } from "@/utils/cn";
 
 export function SliderTrackMarks() {
   const ctx = useSliderTrackContext();
@@ -38,12 +39,19 @@ SliderTrackMarks.displayName = "SliderTrackMarks";
 export function SliderFill({ className, ...rest }: SliderFillProps) {
   const ctx = useSliderTrackContext();
   const slotClassNames = useSliderClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+    scope: useOptionalSliderMotionScope(),
+    slot: "fill",
+    forwardedRef: ctx.fillRef,
+    pointerPhases: true,
+  });
 
   return (
     <span
-      ref={ctx.fillRef}
+      ref={setRef}
       className={cn(ctx.fillClassResolved, slotClassNames.fill, className)}
       {...rest}
+      {...pointerHandlers}
     />
   );
 }
@@ -53,12 +61,19 @@ SliderFill.displayName = "SliderFill";
 export function SliderRail({ className, children, ...rest }: SliderRailProps) {
   const ctx = useSliderTrackContext();
   const slotClassNames = useSliderClassNames();
+  const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+    scope: useOptionalSliderMotionScope(),
+    slot: "rail",
+    pointerPhases: true,
+  });
 
   return (
     <div
+      ref={setRef}
       className={cn(ctx.railClass, slotClassNames.rail, className)}
       aria-hidden
       {...rest}
+      {...pointerHandlers}
     >
       {children ?? (
         <>
@@ -78,6 +93,7 @@ function SliderTrackThumb({
   className,
   style,
   forwardedRef,
+  motion,
   ...rest
 }: {
   kind: SliderThumbKind;
@@ -107,6 +123,7 @@ function SliderTrackThumb({
         {...ctx.resolveThumbA11y("start")}
         onPointerDown={ctx.onThumbPointerDown("start")}
         onKeyDown={ctx.onThumbKeyDown("start")}
+        motion={motion}
         {...rest}
       />
     );
@@ -133,6 +150,7 @@ function SliderTrackThumb({
         {...ctx.resolveThumbA11y("end")}
         onPointerDown={ctx.onThumbPointerDown("end")}
         onKeyDown={ctx.onThumbKeyDown("end")}
+        motion={motion}
         {...rest}
       />
     );
@@ -158,6 +176,7 @@ function SliderTrackThumb({
       {...ctx.resolveThumbA11y("single")}
       onPointerDown={ctx.onThumbPointerDown("single")}
       onKeyDown={ctx.onThumbKeyDown("single")}
+      motion={motion}
       {...rest}
     />
   );
@@ -165,7 +184,7 @@ function SliderTrackThumb({
 
 export const SliderCompoundThumb = forwardRef<HTMLButtonElement, SliderCompoundThumbProps>(
   function SliderCompoundThumb(
-    { thumb = "single", children, className, style, ...rest },
+    { thumb = "single", children, className, style, motion, ...rest },
     ref,
   ) {
     const ctx = useSliderTrackContext();
@@ -176,6 +195,7 @@ export const SliderCompoundThumb = forwardRef<HTMLButtonElement, SliderCompoundT
         className={className}
         style={style}
         forwardedRef={ref}
+        motion={motion}
         {...rest}
       />
     );
@@ -186,8 +206,14 @@ SliderCompoundThumb.displayName = "SliderThumb";
 
 export const SliderIcon = forwardRef<HTMLSpanElement, SliderIconProps>(
   function SliderIcon({ children, className, ...rest }, ref) {
+    const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalSliderMotionScope(),
+      slot: "icon",
+      forwardedRef: ref,
+      pointerPhases: true,
+    });
     return (
-      <span ref={ref} className={className} {...rest}>
+      <span ref={setRef} className={className} {...rest} {...pointerHandlers}>
         {children}
       </span>
     );

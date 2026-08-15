@@ -21,4 +21,6 @@ export type {
   LinkIconPos,
   LinkIconProps,
   LinkClassNames,
+  LinkMotion,
+  LinkPartMotion,
 } from "./linkTypes";

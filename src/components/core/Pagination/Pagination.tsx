@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { PaginationClassNamesProvider, PaginationProvider } from "./paginationContext";
+import { PaginationClassNamesProvider, PaginationMotionProvider, PaginationProvider } from "./paginationContext";
 import { PaginationRootShell } from "./paginationParts";
 import type { PaginationProps } from "./paginationTypes";
 import { usePaginationRootState } from "./usePaginationRootState";
@@ -15,6 +15,8 @@ export type {
   PaginationPagesProps,
   PaginationProps,
   PaginationSummaryProps,
+  PaginationMotion,
+  PaginationPartMotion,
 } from "./paginationTypes";
 
 export {
@@ -43,6 +45,7 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
       onPageChange,
       siblingCount,
       "aria-label": ariaLabel,
+      motion,
       ...rest
     },
     ref,
@@ -59,6 +62,7 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
     return (
       <PaginationProvider value={contextValue}>
         <PaginationClassNamesProvider classNames={classNames}>
+          <PaginationMotionProvider motion={motion}>
           <PaginationRootShell
             ref={ref}
             className={className}
@@ -71,6 +75,7 @@ export const PaginationRoot = forwardRef<HTMLElement, PaginationProps>(
           >
             {children}
           </PaginationRootShell>
+          </PaginationMotionProvider>
         </PaginationClassNamesProvider>
       </PaginationProvider>
     );

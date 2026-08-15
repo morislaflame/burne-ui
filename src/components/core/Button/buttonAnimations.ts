@@ -1,15 +1,38 @@
+/**
+ * Slot motion for Button — look here first.
+ *
+ * DOM slots: `root` (the `<button>`, or the inner content span when `groupSegment`)
+ * Host: root (`useButtonAnimations`) plays `hoverIn` / `hoverOut` / `pressIn` / `pressOut`.
+ * Defaults: `resolveButtonMotionDefaults` (first-level lift + squeeze; gloss recipes when gloss).
+ * Async label/loader/success/error crossfade stays internal GSAP — not public phases.
+ */
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent, type KeyboardEvent, type PointerEvent } from "react";
 
-import { useFirstLevelInteractiveMotion } from "@/components/core/utils/useFirstLevelInteractiveMotion";
+import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
+import {
+  initElementShadow,
+  isInteractivePressKey,
+  shadowNone,
+  shouldSkipInteractiveHoverLift,
+} from "@/components/core/utils/hoverInteractiveLift";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
+import {
+  mergeMotionPointerHandlers,
+  useMotionPointerPhases,
+} from "@/components/core/utils/slotMotion";
+import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
 
+import { useButtonMotionScope } from "./buttonContext";
 import { isButtonAsyncLayerActive, centerCoverDiameter } from "./buttonAPI";
 import type {
   ButtonAsyncLayerKind,
   ButtonAsyncState,
   ButtonExpandRippleHandle,
+  ButtonMotion,
+  ButtonVariant,
   UseButtonAnimationsProps,
 } from "./buttonTypes";
 import { BUTTON_VARIANT_HAS_HOVER_SHADOW } from "./buttonStyles";
@@ -54,16 +77,37 @@ export function createButtonAsyncLayerRefCallback(
   };
 }
 
+export function resolveButtonMotionDefaults({
+  variant,
+}: {
+  variant: ButtonVariant;
+}): ButtonMotion {
+  const isGloss = variant === "gloss";
+  return {
+    root: {
+      hoverIn: isGloss ? "hoverLiftGloss" : "hoverLiftFirstLevel",
+      hoverOut: isGloss ? "hoverLiftGloss" : "hoverLiftFirstLevel",
+      pressIn: isGloss ? "pressSqueezeGloss" : "pressSqueeze",
+      pressOut: false,
+    },
+  };
+}
+
 export function useButtonAnimations({
   variant,
   asyncState,
   isControlled,
   blocked,
   groupSegment,
+  motion,
+  hoverPointerInsideRef,
   forwardedRef,
   onPointerEnter,
   onPointerLeave,
+  onPointerOver,
+  onPointerOut,
   onPointerDown,
+  onPointerUp,
   onKeyDown,
 }: UseButtonAnimationsProps) {
   const labelRef = useRef<HTMLSpanElement>(null);
@@ -97,25 +141,159 @@ export function useButtonAnimations({
     [],
   );
 
-  // Shared interactive motion (hover lift, press squeeze, refs merge)
-  const motionRefs = useFirstLevelInteractiveMotion({
-    isGloss: variant === "gloss",
-    enabled: !blocked,
-    hasHoverShadow: BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant),
-    useContentRef: !!groupSegment,
-    forwardedRef,
-    onPointerEnter,
-    onPointerLeave,
-    onPointerDown,
-    onKeyDown,
+  const isGloss = variant === "gloss";
+  const useContentRef = Boolean(groupSegment);
+  const hasHoverShadow = BUTTON_VARIANT_HAS_HOVER_SHADOW.has(variant) && !isGloss && !useContentRef;
+  const enabled = !blocked;
+  const scope = useButtonMotionScope();
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const contentMotionRef = useRef<HTMLSpanElement>(null);
+  const rootMotionRef = useRef(motion?.root);
+  rootMotionRef.current = motion?.root;
+
+  const bindGlossRef = useMemo(
+    () => createGlossInteractiveRefCallback(btnRef, isGloss),
+    [isGloss],
+  );
+
+  const motionTarget = useCallback(
+    () => (useContentRef ? contentMotionRef.current : btnRef.current),
+    [useContentRef],
+  );
+
+  const setRefs = useCallback(
+    (node: HTMLButtonElement | null) => {
+      bindGlossRef(node);
+      btnRef.current = node;
+      if (!useContentRef) scope.registerTarget("root", node);
+      mergeForwardedRef(forwardedRef, node);
+    },
+    [bindGlossRef, forwardedRef, scope, useContentRef],
+  );
+
+  const btnShadow = useMemo(
+    () => (hasHoverShadow ? shadowMotionFor("none") : undefined),
+    [hasHoverShadow],
+  );
+
+  useLayoutEffect(() => {
+    if (!enabled || !btnShadow || useContentRef) return;
+    initElementShadow(btnRef.current, shadowNone());
+  }, [btnShadow, enabled, useContentRef]);
+
+  useEffect(() => {
+    if (enabled) return;
+    hoverPointerInsideRef.current = false;
+    const el = btnRef.current;
+    const content = contentMotionRef.current;
+    if (el) {
+      killMotion(el);
+      el.style.removeProperty("--el-shadow");
+      el.style.removeProperty("box-shadow");
+      gsap.set(el, { clearProps: "boxShadow,scale,transform" });
+    }
+    if (content) {
+      killMotion(content);
+      content.style.transform = "";
+    }
+  }, [enabled, hoverPointerInsideRef]);
+
+  useEffect(() => {
+    const contentRef = contentMotionRef;
+    return () => {
+      if (contentRef.current) killMotion(contentRef.current);
+    };
+  }, []);
+
+  const playRoot = useCallback(
+    (phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut") => {
+      if (!enabled) return;
+      const el = motionTarget();
+      if (!el) return;
+      const value = scope.resolve("root", phase, rootMotionRef.current);
+      if (value === undefined) return;
+      scope.play("root", phase, { partMotion: rootMotionRef.current, el });
+    },
+    [enabled, motionTarget, scope],
+  );
+
+  const motionPointer = useMotionPointerPhases<HTMLButtonElement>({
+    enabled,
+    targetRef: btnRef,
+    pointerInsideRef: hoverPointerInsideRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onHoverIn: () => playRoot("hoverIn"),
+    onHoverOut: () => playRoot("hoverOut"),
   });
 
+  const hoverHandlers = useMemo(
+    () =>
+      mergeMotionPointerHandlers(
+        onPointerOver,
+        onPointerOut,
+        motionPointer.onPointerOver,
+        motionPointer.onPointerOut,
+      ),
+    [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOut, onPointerOver],
+  );
+
+  const handlePointerDown = useCallback(
+    (e: PointerEvent<HTMLButtonElement>) => {
+      onPointerDown?.(e);
+      if (!enabled || e.defaultPrevented) return;
+      playRoot("pressIn");
+    },
+    [enabled, onPointerDown, playRoot],
+  );
+
+  const handlePointerUp = useCallback(
+    (e: PointerEvent<HTMLButtonElement>) => {
+      onPointerUp?.(e);
+      if (!enabled || e.defaultPrevented) return;
+      playRoot("pressOut");
+    },
+    [enabled, onPointerUp, playRoot],
+  );
+
+  const pointerHandlers = useMemo(
+    () => ({
+      onPointerOver: hoverHandlers.onPointerOver,
+      onPointerOut: hoverHandlers.onPointerOut,
+      onPointerDown: handlePointerDown,
+      onPointerUp: handlePointerUp,
+    }),
+    [handlePointerDown, handlePointerUp, hoverHandlers],
+  );
+
+  const handlePointerEnter = useCallback(
+    (e: PointerEvent<HTMLButtonElement>) => {
+      onPointerEnter?.(e);
+    },
+    [onPointerEnter],
+  );
+
+  const handlePointerLeave = useCallback(
+    (e: PointerEvent<HTMLButtonElement>) => {
+      onPointerLeave?.(e);
+    },
+    [onPointerLeave],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>) => {
+      onKeyDown?.(e);
+      if (!enabled || e.defaultPrevented || !isInteractivePressKey(e)) return;
+      playRoot("pressIn");
+    },
+    [enabled, onKeyDown, playRoot],
+  );
+
   const pushExpandRipple = useCallback((tone: "success" | "error") => {
-    const el = motionRefs.btnRef.current;
+    const el = btnRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
     expandRippleLayerRef.current?.push(tone, centerCoverDiameter(r.width, r.height));
-  }, [motionRefs.btnRef]);
+  }, []);
 
   // Sync expand ripples push with async state transitions
   useLayoutEffect(() => {
@@ -218,18 +396,20 @@ export function useButtonAnimations({
   );
 
   return {
-    setRefs: motionRefs.setRefs,
-    contentMotionRef: motionRefs.contentMotionRef,
+    setRefs,
+    contentMotionRef,
     bindLabelRef,
     bindLoaderRef,
     bindSuccessRef,
     bindErrorRef,
     expandRippleLayerRef,
     pushExpandRipple,
-    handlePointerEnter: motionRefs.handlePointerEnter,
-    handlePointerLeave: motionRefs.handlePointerLeave,
-    handlePointerDown: motionRefs.handlePointerDown,
-    handleKeyDown: motionRefs.handleKeyDown,
+    pointerHandlers,
+    handlePointerEnter,
+    handlePointerLeave,
+    handlePointerDown,
+    handlePointerUp,
+    handleKeyDown,
     createAsyncClickHandler,
     asyncInFlight,
     asyncMotionReady,

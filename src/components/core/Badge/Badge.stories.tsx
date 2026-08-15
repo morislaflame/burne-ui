@@ -13,6 +13,7 @@ import { Card } from "@/components/core/Card";
 import { Badge, type BadgePlacement, type BadgeStatus, type BadgeVariant } from ".";
 import { PIN_IMAGE1, PIN_IMAGE2, PIN_IMAGE3 } from "@/stories-utils/mockImages";
 import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
+import { BadgeMotionDemo } from "../../../../playground/showcase/demos/badge/BadgeMotion.demo";
 
 const GREEN_AVATAR_URL = PIN_IMAGE1;
 const ORANGE_AVATAR_URL = PIN_IMAGE2;
@@ -605,4 +606,9 @@ export const GlossLight: Story = {
   parameters: { controls: { disable: true } },
   decorators: [glossDottedDecorator(true)],
   render: () => <GlossDemo />,
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <BadgeMotionDemo />,
 };

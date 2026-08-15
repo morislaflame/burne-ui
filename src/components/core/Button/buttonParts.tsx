@@ -2,12 +2,13 @@ import { forwardRef, memo, useCallback, useImperativeHandle, useLayoutEffect, us
 
 import { Text } from "@/components/core/Text";
 import { clearWillChangeOnComplete, ensureRippleEase, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { isMotionFeatureEnabled, motionFeedbackExpand } from "@/components/core/utils/motionConfig";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
-import { useButtonClassNames, useOptionalButtonContext } from "./buttonContext";
+import { useButtonClassNames, useOptionalButtonContext, useOptionalButtonMotionScope } from "./buttonContext";
 import { buttonContentClass, buttonErrorLayerClass, buttonFeedbackExpandRippleClass, buttonIconClass, buttonIconSvgClass, buttonLabelClass, buttonLoaderLayerClass, buttonSpinnerClass, buttonSpinnerInnerClass, buttonSuccessLayerClass, buttonTextClass, BUTTON_CLIP_LAYER_CLASS, BUTTON_SIZE_TEXT_VARIANT, BUTTON_SPINNER_MOTION_CLASS } from "./buttonStyles";
 import type {
   ButtonContentProps,
@@ -140,10 +141,17 @@ export const ButtonContent = forwardRef<HTMLSpanElement, ButtonContentProps>(
   function ButtonContent({ className = "", children, ...rest }, ref) {
     const ctx = useOptionalButtonContext();
     const slotClassNames = useButtonClassNames();
+    const scope = useOptionalButtonMotionScope();
+
+    const setRef = (node: HTMLSpanElement | null) => {
+      if (ref != null) mergeForwardedRef(ref, node);
+      else if (ctx?.contentMotionRef) ctx.contentMotionRef.current = node;
+      if (ctx?.groupSegment) scope?.registerTarget("root", node);
+    };
 
     return (
       <span
-        ref={ref ?? ctx?.contentMotionRef}
+        ref={setRef}
         className={buttonContentClass({
           groupSegment: Boolean(ctx?.groupSegment),
           slotClass: slotClassNames.content,

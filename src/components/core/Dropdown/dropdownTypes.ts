@@ -3,6 +3,7 @@ import type { Prettify } from "@/utils/prettify";
 
 import type { PopoverSide, PopoverVariant } from "@/components/core/Popover";
 import type { FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
+import type { MotionScopeValue, MotionValue } from "@/components/core/utils/slotMotion";
 import type {
   SelectionIndicatorClassNames,
   SelectionIndicatorSize,
@@ -41,6 +42,33 @@ export type DropdownClassNames = {
   subPopoverBody?: string;
 };
 
+export type DropdownLifecycleMotion = {
+  enter?: MotionValue;
+  leave?: MotionValue;
+};
+
+export type DropdownPartMotion = DropdownLifecycleMotion & {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+};
+
+/**
+ * Main menu slots (`content` / `title` / `description` / `body`) are forwarded
+ * to the inner Popover. `subContent` is the submenu portal host.
+ */
+export type DropdownMotion = {
+  content?: DropdownLifecycleMotion;
+  title?: DropdownPartMotion;
+  description?: DropdownPartMotion;
+  body?: DropdownLifecycleMotion;
+  subContent?: DropdownLifecycleMotion;
+};
+
+export type DropdownPopoverMotion = Pick<
+  DropdownMotion,
+  "content" | "title" | "description" | "body"
+>;
+
 export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
   open?: boolean;
@@ -56,6 +84,11 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   /** DOM node for menu / submenu portals. Default: `document.body`. */
   portalContainer?: HTMLElement | null;
   classNames?: Prettify<DropdownClassNames>;
+  /**
+   * Per-slot motion. Main menu: Popover slots (`content`, `title`, `description`, `body`).
+   * Submenu portal: `subContent`. Trigger squeeze is not a slot.
+   */
+  motion?: Prettify<DropdownMotion>;
 };
 
 export type DropdownContextValue = {
@@ -103,6 +136,7 @@ export type DropdownPopoverProps = HTMLAttributes<HTMLDivElement> & {
   offset?: number;
   /** Overrides Root `portalContainer` for the main menu panel. */
   portalContainer?: HTMLElement | null;
+  motion?: Prettify<DropdownPopoverMotion>;
 };
 
 export type DropdownGroupProps = HTMLAttributes<HTMLDivElement> & {
@@ -122,6 +156,7 @@ export type DropdownSubTriggerProps = HTMLAttributes<HTMLDivElement> & {
 export type DropdownSubContentProps = HTMLAttributes<HTMLDivElement> & {
   /** Overrides Root `portalContainer` for the submenu panel. */
   portalContainer?: HTMLElement | null;
+  motion?: Prettify<DropdownLifecycleMotion>;
 };
 
 export type DropdownItemLabelProps = HTMLAttributes<HTMLSpanElement>;
@@ -175,6 +210,7 @@ export type UseDropdownPopoverMenuProps = {
   open: boolean;
   setOpen: (next: boolean) => void;
   contentRef: React.RefObject<HTMLDivElement | null>;
+  triggerRef: React.RefObject<HTMLElement | null>;
 };
 
 export type UseDropdownSubContentPortalProps = {
@@ -184,6 +220,7 @@ export type UseDropdownSubContentPortalProps = {
   menuTriggerRef: React.RefObject<HTMLElement | null>;
   subPanelRootsRef: React.RefObject<Set<HTMLElement>>;
   popoverVariant: PopoverVariant;
+  motionScope?: MotionScopeValue | null;
 };
 
 export type UseDropdownSubmenuKeyboardProps = {

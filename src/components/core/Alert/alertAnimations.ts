@@ -1,59 +1,94 @@
-import { useCallback, useMemo, useRef, type ForwardedRef, type PointerEvent as ReactPointerEvent } from "react";
+/**
+ * Slot motion for Alert — look here first.
+ *
+ * DOM slots: `root`, `indicator`, `title`, `description`, `action`
+ * (not slots: `message`, `content` — `display: contents`)
+ *
+ * Host: root (`useAlertAnimations`) plays pointer `hoverIn` / `hoverOut`.
+ * Defaults: `resolveAlertMotionDefaults` (hoverLift + variant → kit recipe).
+ */
+import { useCallback, useMemo, useRef } from "react";
 
-import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS, useGlossInteractiveHandlers } from "@/components/core/utils/glossInteractiveMotion";
+import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
+import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
+import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { useSecondLevelShadow } from "@/components/core/utils/useShadowMotion";
 import { cn } from "@/utils/cn";
 
+import { useAlertMotionScope } from "./alertContext";
 import { alertSurfaceClass } from "./alertStyles";
-import type { AlertStatus, AlertVariant } from "./alertTypes";
-import type { ShadowLevel } from "@/tokens/shadows";
+import type { AlertMotion, AlertVariant, UseAlertAnimationsProps } from "./alertTypes";
 
 import "../utils/glossInteractive.css";
+
+export function resolveAlertMotionDefaults({
+  variant,
+  hoverLift,
+}: {
+  variant: AlertVariant;
+  hoverLift: boolean;
+}): AlertMotion {
+  const recipe = variant === "gloss" ? "hoverLiftGloss" : "hoverLiftSecondLevel";
+  const rootPhase = hoverLift ? recipe : false;
+  return { root: { hoverIn: rootPhase, hoverOut: rootPhase } };
+}
 
 export function useAlertAnimations({
   variant,
   status,
   hoverLift = true,
   shadow = "base",
+  motion,
   ref,
   onPointerOver: onPointerOverProp,
   onPointerOut: onPointerOutProp,
-}: {
-  variant: AlertVariant;
-  status: AlertStatus;
-  hoverLift?: boolean;
-  shadow?: ShadowLevel;
-  ref: ForwardedRef<HTMLDivElement>;
-  onPointerOver?: (e: ReactPointerEvent<HTMLDivElement>) => void;
-  onPointerOut?: (e: ReactPointerEvent<HTMLDivElement>) => void;
-}) {
+}: UseAlertAnimationsProps) {
   const isGloss = variant === "gloss";
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const scope = useAlertMotionScope();
+  const rootMotionRef = useRef(motion?.root);
+  rootMotionRef.current = motion?.root;
 
+  const glossEnabled = isGloss && (hoverLift || motion?.root != null);
   const bindGlossRef = useMemo(
-    () => createGlossInteractiveRefCallback(rootRef, hoverLift && isGloss),
-    [isGloss, hoverLift],
+    () => createGlossInteractiveRefCallback(rootRef, glossEnabled),
+    [glossEnabled],
   );
 
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
       bindGlossRef(node);
       rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
+      scope.registerTarget("root", node);
+      mergeForwardedRef(ref, node);
     },
-    [bindGlossRef, ref],
+    [bindGlossRef, ref, scope],
   );
 
-  const glossPointerHandlers = useGlossInteractiveHandlers(rootRef, hoverLift && isGloss);
-  // Rest elevation always on (non-gloss); hoverLift only toggles interactive motion.
   const secondLevelLift = useSecondLevelShadow(rootRef, !isGloss, {
     shadowSize: shadow,
-    interactive: hoverLift,
+    interactive: false,
+  });
+
+  const motionPointer = useMotionPointerPhases<HTMLDivElement>({
+    enabled: true,
+    targetRef: rootRef,
+    skipHover: shouldSkipInteractiveHoverLift,
+    onHoverIn: (el) => {
+      const value = scope.resolve("root", "hoverIn", rootMotionRef.current);
+      if (value === undefined) return;
+      scope.play("root", "hoverIn", { partMotion: rootMotionRef.current, el });
+    },
+    onHoverOut: (el) => {
+      const value = scope.resolve("root", "hoverOut", rootMotionRef.current);
+      if (value === undefined) return;
+      scope.play("root", "hoverOut", { partMotion: rootMotionRef.current, el });
+    },
   });
 
   const motionClass = isGloss
-    ? hoverLift
+    ? glossEnabled
       ? GLOSS_INTERACTIVE_MOTION_CLASS
       : ""
     : secondLevelLift.motionClass;
@@ -61,30 +96,14 @@ export function useAlertAnimations({
   const surfaceClass = cn(alertSurfaceClass(variant, status), motionClass);
 
   const pointerHandlers = useMemo(
-    () => ({
-      onPointerOver: (e: ReactPointerEvent<HTMLDivElement>) => {
-        onPointerOverProp?.(e);
-        if (e.defaultPrevented || !hoverLift) return;
-        if (isGloss) glossPointerHandlers.onPointerOver(e);
-        else secondLevelLift.onPointerOver(e);
-      },
-      onPointerOut: (e: ReactPointerEvent<HTMLDivElement>) => {
-        onPointerOutProp?.(e);
-        if (!hoverLift) return;
-        if (isGloss) glossPointerHandlers.onPointerOut(e);
-        else secondLevelLift.onPointerOut(e);
-      },
-    }),
-    [
-      glossPointerHandlers.onPointerOut,
-      glossPointerHandlers.onPointerOver,
-      hoverLift,
-      isGloss,
-      onPointerOutProp,
-      onPointerOverProp,
-      secondLevelLift.onPointerOut,
-      secondLevelLift.onPointerOver,
-    ],
+    () =>
+      mergeMotionPointerHandlers(
+        onPointerOverProp,
+        onPointerOutProp,
+        motionPointer.onPointerOver,
+        motionPointer.onPointerOut,
+      ),
+    [motionPointer.onPointerOut, motionPointer.onPointerOver, onPointerOutProp, onPointerOverProp],
   );
 
   return {

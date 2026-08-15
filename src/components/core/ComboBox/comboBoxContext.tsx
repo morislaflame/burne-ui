@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   ComboBoxClassNames,
   ComboBoxClassNamesProviderProps,
@@ -67,3 +69,10 @@ export function ComboBoxClassNamesProvider({
 export function useComboBoxClassNames(): ComboBoxClassNames {
   return useContext(ComboBoxClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `comboBoxAnimations.ts`. */
+export const {
+  MotionScopeProvider: ComboBoxMotionProvider,
+  useMotionScope: useComboBoxMotionScope,
+  useOptionalMotionScope: useOptionalComboBoxMotionScope,
+} = createMotionScope("ComboBox");

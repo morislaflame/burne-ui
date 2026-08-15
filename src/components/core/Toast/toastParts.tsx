@@ -5,8 +5,9 @@ import { Loading } from "@/components/core/Loading";
 import { Text } from "@/components/core/Text";
 import { messageBannerActionCellClass, messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { SEMANTIC_STATUS_ICONS } from "@/components/core/utils/semanticStatusIcons";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 
-import { useToastClassNames, useToastItem } from "./toastContext";
+import { useToastClassNames, useToastItem, useOptionalToastMotionScope } from "./toastContext";
 import { TOAST_CLOSE_BUTTON_OFFSET_CLASS, TOAST_COMPOUND_CONTENTS_CLASS, TOAST_DESCRIPTION_CLASS, toastIndicatorClass, toastLoadingColor, toastTitleClass } from "./toastStyles";
 import type {
   ToastActionProps,
@@ -22,15 +23,21 @@ import type {
 import { cn } from "@/utils/cn";
 
 export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
-  function ToastIndicator({ className, children, ...rest }, ref) {
+  function ToastIndicator({ className, children, motion, ...rest }, ref) {
     const { status, loading, gridSlots, sizePreset } = useToastItem();
     const slotClassNames = useToastClassNames();
     const indicatorClass = toastIndicatorClass(status, sizePreset.iconSvgClass);
+    const { setRef } = useMotionPart<HTMLSpanElement>({
+      scope: useOptionalToastMotionScope(),
+      slot: "indicator",
+      motion,
+      forwardedRef: ref,
+    });
 
     if (children !== undefined) {
       return (
         <span
-          ref={ref}
+          ref={setRef}
           className={cn(
             indicatorClass,
             messageBannerIndicatorCellClass(gridSlots),
@@ -47,7 +54,7 @@ export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
     if (loading) {
       return (
         <span
-          ref={ref}
+          ref={setRef}
           className={cn(
             indicatorClass,
             messageBannerIndicatorCellClass(gridSlots),
@@ -68,7 +75,7 @@ export const ToastIndicator = forwardRef<HTMLSpanElement, ToastIndicatorProps>(
 
     return (
       <span
-        ref={ref}
+        ref={setRef}
         className={cn(
           indicatorClass,
           messageBannerIndicatorCellClass(gridSlots),
@@ -116,13 +123,22 @@ export const ToastContent = forwardRef<HTMLDivElement, ToastContentProps>(
 ToastContent.displayName = "ToastContent";
 
 export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
-  function ToastTitle({ className, id: idProp, ...rest }, ref) {
+  function ToastTitle({ className, id: idProp, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { titleId, gridSlots, sizePreset, status } = useToastItem();
     const slotClassNames = useToastClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalToastMotionScope(),
+      slot: "title",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
 
     return (
       <Text
-        ref={ref as Ref<HTMLElement>}
+        ref={setRef as Ref<HTMLElement>}
         as="div"
         variant={sizePreset.titleVariant}
         id={idProp ?? titleId}
@@ -133,6 +149,7 @@ export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
           className,
         )}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -141,13 +158,22 @@ export const ToastTitle = forwardRef<HTMLDivElement, ToastTitleProps>(
 ToastTitle.displayName = "ToastTitle";
 
 export const ToastDescription = forwardRef<HTMLDivElement, ToastDescriptionProps>(
-  function ToastDescription({ className, id: idProp, ...rest }, ref) {
+  function ToastDescription({ className, id: idProp, motion, onPointerOver, onPointerOut, ...rest }, ref) {
     const { descriptionId, gridSlots, sizePreset } = useToastItem();
     const slotClassNames = useToastClassNames();
+    const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalToastMotionScope(),
+      slot: "description",
+      motion,
+      forwardedRef: ref,
+      pointerPhases: true,
+      onPointerOver,
+      onPointerOut,
+    });
 
     return (
       <Text
-        ref={ref as Ref<HTMLElement>}
+        ref={setRef as Ref<HTMLElement>}
         as="div"
         variant={sizePreset.descVariant}
         id={idProp ?? descriptionId}
@@ -158,6 +184,7 @@ export const ToastDescription = forwardRef<HTMLDivElement, ToastDescriptionProps
           className,
         )}
         {...rest}
+        {...pointerHandlers}
       />
     );
   },
@@ -166,13 +193,19 @@ export const ToastDescription = forwardRef<HTMLDivElement, ToastDescriptionProps
 ToastDescription.displayName = "ToastDescription";
 
 export const ToastAction = forwardRef<HTMLDivElement, ToastActionProps>(
-  function ToastAction({ className, ...rest }, ref) {
+  function ToastAction({ className, motion, ...rest }, ref) {
     const { gridSlots } = useToastItem();
     const slotClassNames = useToastClassNames();
+    const { setRef } = useMotionPart<HTMLDivElement>({
+      scope: useOptionalToastMotionScope(),
+      slot: "action",
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <div
-        ref={ref}
+        ref={setRef}
         className={cn(
           messageBannerActionCellClass(gridSlots),
           slotClassNames.action,
@@ -188,15 +221,21 @@ ToastAction.displayName = "ToastAction";
 
 export const ToastClose = forwardRef<HTMLButtonElement, ToastCloseProps>(
   function ToastClose(
-    { className, onClick, "aria-label": ariaLabel, ...rest },
+    { className, onClick, motion, "aria-label": ariaLabel, ...rest },
     ref,
   ) {
     const { dismiss, gridSlots } = useToastItem();
     const slotClassNames = useToastClassNames();
+    const { setRef } = useMotionPart<HTMLButtonElement>({
+      scope: useOptionalToastMotionScope(),
+      slot: "close",
+      motion,
+      forwardedRef: ref,
+    });
 
     return (
       <CloseButton
-        ref={ref}
+        ref={setRef}
         size="small"
         variant="ghost"
         aria-label={ariaLabel}

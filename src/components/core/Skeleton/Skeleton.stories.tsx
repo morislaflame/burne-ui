@@ -5,6 +5,7 @@ import { expect } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 import { Skeleton } from ".";
+import { SkeletonMotionDemo } from "../../../../playground/showcase/demos/skeleton/SkeletonMotion.demo";
 
 const framedDecorator = [
   (Story: ComponentType) => (
@@ -259,4 +260,9 @@ export const CustomClassNames: Story = {
       />
     </div>
   ),
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <SkeletonMotionDemo />,
 };

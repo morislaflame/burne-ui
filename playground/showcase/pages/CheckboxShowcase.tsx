@@ -2,6 +2,16 @@ import { CheckboxClassNamesFullDemo } from "../demos/checkbox/CheckboxClassNames
 import checkboxClassNamesFullSource from "../demos/checkbox/CheckboxClassNamesFull.demo.tsx?raw";
 import { CheckboxClassNamesSimpleLabelDemo } from "../demos/checkbox/CheckboxClassNamesSimpleLabel.demo";
 import checkboxClassNamesSimpleLabelSource from "../demos/checkbox/CheckboxClassNamesSimpleLabel.demo.tsx?raw";
+import { CheckboxMotionCornerFillDemo } from "../demos/checkbox/CheckboxMotionCornerFill.demo";
+import checkboxMotionCornerFillSource from "../demos/checkbox/CheckboxMotionCornerFill.demo.tsx?raw";
+import { CheckboxMotionCornerFillCompoundDemo } from "../demos/checkbox/CheckboxMotionCornerFillCompound.demo";
+import checkboxMotionCornerFillCompoundSource from "../demos/checkbox/CheckboxMotionCornerFillCompound.demo.tsx?raw";
+import { CheckboxMotionFillMarkStaggerDemo } from "../demos/checkbox/CheckboxMotionFillMarkStagger.demo";
+import checkboxMotionFillMarkStaggerSource from "../demos/checkbox/CheckboxMotionFillMarkStagger.demo.tsx?raw";
+import { CheckboxMotionLabelColorDemo } from "../demos/checkbox/CheckboxMotionLabelColor.demo";
+import checkboxMotionLabelColorSource from "../demos/checkbox/CheckboxMotionLabelColor.demo.tsx?raw";
+import { CheckboxMotionSpinningMarkDemo } from "../demos/checkbox/CheckboxMotionSpinningMark.demo";
+import checkboxMotionSpinningMarkSource from "../demos/checkbox/CheckboxMotionSpinningMark.demo.tsx?raw";
 import { CheckboxConsentCardDemo } from "../demos/checkbox/CheckboxConsentCard.demo";
 import checkboxConsentCardSource from "../demos/checkbox/CheckboxConsentCard.demo.tsx?raw";
 import { CheckboxFeatureFlagsDemo } from "../demos/checkbox/CheckboxFeatureFlags.demo";
@@ -41,6 +51,17 @@ export function CheckboxShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass indicator with motion.">
         <ShowcaseDemoFromFile Demo={CheckboxGlossDemo} source={checkboxGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — corner fill, spinning mark, label color, fill→mark timeline."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionCornerFillDemo} source={checkboxMotionCornerFillSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionCornerFillCompoundDemo} source={checkboxMotionCornerFillCompoundSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionSpinningMarkDemo} source={checkboxMotionSpinningMarkSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionLabelColorDemo} source={checkboxMotionLabelColorSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={CheckboxMotionFillMarkStaggerDemo} source={checkboxMotionFillMarkStaggerSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

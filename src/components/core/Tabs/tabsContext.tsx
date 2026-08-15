@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   TabsClassNames,
   TabsClassNamesProviderProps,
@@ -37,5 +39,12 @@ export function useTabsContext(): TabsContextValue {
 export function useTabsClassNames(): TabsClassNames {
   return useContext(TabsClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `tabsAnimations.ts`. */
+export const {
+  MotionScopeProvider: TabsMotionProvider,
+  useMotionScope: useTabsMotionScope,
+  useOptionalMotionScope: useOptionalTabsMotionScope,
+} = createMotionScope("Tabs");
 
 export { TabsContext };

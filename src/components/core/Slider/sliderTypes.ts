@@ -7,6 +7,7 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 export type SliderOrientation = "horizontal" | "vertical";
 
@@ -29,6 +30,23 @@ export type SliderClassNames = {
   thumb?: string;
   thumbShell?: string;
   mark?: string;
+};
+
+export type SliderPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+};
+
+export type SliderMotion = {
+  track?: SliderPartMotion;
+  rail?: SliderPartMotion;
+  fill?: SliderPartMotion;
+  thumb?: SliderPartMotion;
+  icon?: SliderPartMotion;
+  header?: SliderPartMotion;
+  value?: SliderPartMotion;
 };
 
 export type SliderDisplayState = {
@@ -139,7 +157,9 @@ export type SliderRangeProps = SliderCommonProps & {
   onValueChange?: (value: [number, number]) => void;
 };
 
-export type SliderTrackProps = SliderSingleProps | SliderRangeProps;
+export type SliderTrackProps = (SliderSingleProps | SliderRangeProps) & {
+  motion?: Prettify<SliderMotion>;
+};
 
 export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "value"> & {
   children?: ReactNode;
@@ -151,6 +171,11 @@ export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | 
   hint?: ReactNode;
   error?: ReactNode;
   classNames?: Prettify<SliderClassNames>;
+  /**
+   * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`).
+   * Thumb press default: `pressSqueeze` (`pressOut: false`). Fill geometry (`left`/`width`) is kit-internal.
+   */
+  motion?: Prettify<SliderMotion>;
 } & (
     | Partial<Omit<SliderSingleProps, "orientation" | "className" | "classNames">>
     | Partial<Omit<SliderRangeProps, "orientation" | "className" | "classNames">>
@@ -187,6 +212,7 @@ export type SliderCompoundThumbProps = Omit<
 > & {
   thumb?: SliderThumbKind;
   children?: ReactNode;
+  motion?: Prettify<SliderPartMotion>;
 };
 
 export type SliderIconProps = HTMLAttributes<HTMLSpanElement> & {
@@ -213,6 +239,7 @@ export type SliderThumbButtonProps = {
   ariaLabel?: string;
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
+  motion?: SliderPartMotion;
   onPointerDown: (e: PointerEvent<HTMLButtonElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
 } & Omit<
@@ -228,6 +255,6 @@ export type SliderThumbButtonProps = {
   | "active"
 >;
 
-export type UseSliderRootStateProps = Omit<SliderProps, "className" | "classNames">;
+export type UseSliderRootStateProps = Omit<SliderProps, "className" | "classNames" | "motion">;
 
 export type FillSpan = { start: number; end: number };

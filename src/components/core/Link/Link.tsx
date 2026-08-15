@@ -3,14 +3,15 @@ import {
   cloneElement,
   forwardRef,
   isValidElement,
+  useMemo,
   type ReactElement,
   type ReactNode,
 } from "react";
 
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 
-import { useLinkAnimations } from "./linkAnimations";
-import { LinkClassNamesProvider, useLinkClassNames } from "./linkContext";
+import { resolveLinkMotionDefaults, useLinkAnimations } from "./linkAnimations";
+import { LinkClassNamesProvider, LinkMotionProvider, useLinkClassNames } from "./linkContext";
 import { LinkAnchorBody, LinkBodyContent, LinkIcon } from "./linkParts";
 import { linkAnchorClass } from "./linkStyles";
 import type { LinkProps } from "./linkTypes";
@@ -22,11 +23,13 @@ export type {
   LinkIconPos,
   LinkIconProps,
   LinkClassNames,
+  LinkMotion,
+  LinkPartMotion,
 } from "./linkTypes";
 
 export { LinkIcon };
 
-export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "classNames">>(
+export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "classNames" | "motion">>(
   function LinkRoot(
     {
       href,
@@ -41,7 +44,10 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
       defaultIconPosition,
       onPointerEnter,
       onPointerLeave,
+      onPointerOver,
+      onPointerOut,
       onPointerDown,
+      onPointerUp,
       onKeyDown,
       ...rest
     },
@@ -69,7 +75,10 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
       forwardedRef,
       onPointerEnter,
       onPointerLeave,
+      onPointerOver,
+      onPointerOut,
       onPointerDown,
+      onPointerUp,
       onKeyDown,
     });
 
@@ -101,7 +110,10 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
             }),
             onPointerEnter: animations.handlePointerEnter,
             onPointerLeave: animations.handlePointerLeave,
-            onPointerDown: animations.handlePointerDown,
+            onPointerOver: animations.pointerHandlers.onPointerOver,
+            onPointerOut: animations.pointerHandlers.onPointerOut,
+            onPointerDown: animations.pointerHandlers.onPointerDown,
+            onPointerUp: animations.pointerHandlers.onPointerUp,
             onKeyDown: animations.handleKeyDown,
             children: <LinkBodyContent {...bodyProps} />,
           },
@@ -117,7 +129,7 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
         setAnchorRef={animations.setAnchorRef}
         handlePointerEnter={animations.handlePointerEnter}
         handlePointerLeave={animations.handlePointerLeave}
-        handlePointerDown={animations.handlePointerDown}
+        pointerHandlers={animations.pointerHandlers}
         handleKeyDown={animations.handleKeyDown}
         {...bodyProps}
         {...rest}
@@ -129,12 +141,16 @@ export const LinkRoot = forwardRef<HTMLAnchorElement, Omit<LinkProps, "className
 LinkRoot.displayName = "Link";
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  { classNames, ...rest },
+  { classNames, motion, ...rest },
   ref,
 ) {
+  const motionDefaults = useMemo(() => resolveLinkMotionDefaults(), []);
+
   return (
     <LinkClassNamesProvider classNames={classNames}>
-      <LinkRoot ref={ref} {...rest} />
+      <LinkMotionProvider motion={motion} defaults={motionDefaults}>
+        <LinkRoot ref={ref} {...rest} />
+      </LinkMotionProvider>
     </LinkClassNamesProvider>
   );
 });

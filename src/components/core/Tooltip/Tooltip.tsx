@@ -1,4 +1,4 @@
-import { TooltipClassNamesProvider, TooltipContext } from "./tooltipContext";
+import { TooltipClassNamesProvider, TooltipContext, TooltipMotionProvider } from "./tooltipContext";
 import type { TooltipProps } from "./tooltipTypes";
 import { TooltipArrow, TooltipContent, TooltipDescription, TooltipIcon, TooltipIndicator, TooltipMessage, TooltipPanel, TooltipTitle, TooltipTrigger } from "./tooltipParts";
 import { useTooltipRootState } from "./useTooltipRootState";
@@ -14,6 +14,7 @@ export function TooltipRoot({
   icon,
   showIcon,
   portalContainer,
+  motion,
 }: TooltipProps) {
   const { contextValue } = useTooltipRootState({
     size,
@@ -28,7 +29,9 @@ export function TooltipRoot({
 
   return (
     <TooltipClassNamesProvider classNames={classNames}>
-      <TooltipContext.Provider value={contextValue}>{children}</TooltipContext.Provider>
+      <TooltipMotionProvider motion={motion}>
+        <TooltipContext.Provider value={contextValue}>{children}</TooltipContext.Provider>
+      </TooltipMotionProvider>
     </TooltipClassNamesProvider>
   );
 }

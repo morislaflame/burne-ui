@@ -16,6 +16,10 @@ export {
   type ToggleButtonIconStartProps,
   type ToggleButtonIconEndProps,
   type ToggleButtonTextProps,
+  type ToggleButtonMotion,
+  type ToggleButtonPartMotion,
+  type ToggleButtonPointerMotion,
+  type ToggleButtonCheckMotion,
 } from "./ToggleButton";
 
 import { ToggleButtonRoot, ToggleButtonContent, ToggleButtonFill, ToggleButtonLabel, ToggleButtonIconStart, ToggleButtonIconEnd, ToggleButtonText } from "./ToggleButton";

@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Avatar, Avatar.Group, type AvatarProps, type AvatarClassNames, type AvatarSize, type AvatarImageProps, type AvatarFallbackProps, type AvatarGroupProps } from "burne-ui";
+import { Avatar, type AvatarProps, type AvatarClassNames, type AvatarSize, type AvatarImageProps, type AvatarFallbackProps, type AvatarGroupProps, type AvatarMotion, type AvatarPartMotion } from "burne-ui";
 ```
 
 ## API
@@ -69,6 +69,7 @@ import { Avatar, Avatar.Group, type AvatarProps, type AvatarClassNames, type Ava
 | `tooltipSide` | `top` | Сторона tooltip |
 | `className` | — | Root shell (в gloss — внутренний круг) |
 | `classNames` | — | Слоты компонента |
+| `motion` | — | Карта слотов `root` / `image` / `fallback`; на `Avatar.Group` — `groupItem` |
 
 ### `AvatarClassNames`
 
@@ -98,66 +99,35 @@ Fallback typography:
 
 ## Анимации
 
-`avatarAnimations.ts`.
+Публичный slot motion. Image fade — `contentFade` на `image.enter` / `leave`. Group hover — nested scope на wrap каждого item.
 
-**DOM (default):**
+### Slot motion
 
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `root` | `hoverIn` / `hoverOut` | нет |
+| `image` | `enter` / `leave` | `contentFade` |
+| `fallback` | `hoverIn` / `hoverOut` | нет |
+| `groupItem` | `hoverIn` / `hoverOut` | `{ y: -10, scale: 1.08 }` / rest (на `Avatar.Group`) |
+
+`glossWrap` — layout-обёртка, не публичный motion-слот. `false` на `image.enter` / `leave` — хост ставит instant visible/hidden.
+
+**Где в коде:** типы — `avatarTypes.ts`; scope — `avatarContext.tsx`; defaults + host play — `avatarAnimations.ts`; слоты — `avatarParts.tsx`; Provider — `Avatar.tsx`. Каждый item в `Avatar.Group` — nested `AvatarMotionProvider`.
+
+```tsx
+<Avatar src={url} label="Ada" motion={{ image: { enter: false, leave: false } }} />
+
+<Avatar.Group motion={{ groupItem: { hoverIn: { y: -14, scale: 1.12 }, hoverOut: { y: 0, scale: 1 } } }}>
+  <Avatar label="A" />
+  <Avatar label="B" />
+</Avatar.Group>
 ```
-<div role="group" aria-label={aria-label ?? label}>
-  <img ref=imgRef />
-  <span fallback />
-</div>
-```
 
-**DOM (gloss):**
-
-```
-<div glossWrap>
-  <div gloss-shadow aria-hidden />
-  <div role="group" gloss-panel>
-    image + fallback
-  </div>
-</div>
-```
-
-### 1. Image fade
-
-`useAvatarImageFade(visible, imgRef)`:
-
-1. `Avatar.Image` хранит `imageStatus`: `idle` → `loaded` или `error`
-2. При `loaded`: `gsap.to(img, { autoAlpha: 1, ...motionContentFade() })`
-3. При fallback/error: `autoAlpha: 0`
-4. Reduced motion или `enableContentFade: false`: instant `gsap.set`
-
-#### Кастомизация fade
+### Отключение
 
 ```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  tooltipDuration: 180,
-  interactiveEase: "power2.out",
-  enableContentFade: true,
-});
+configureMotion({ enableContentFade: false });
 ```
-
-### 2. Avatar.Group lift
-
-Каждый item в `Avatar.Group` получает wrapper:
-
-```
-<div style={{ transformOrigin: "center bottom" }}>
-  <Avatar />
-</div>
-```
-
-Hover:
-
-- `y: -10`
-- `scale: 1.08`
-- duration/ease из `motionInteractive()`
-
-Reduced motion: transform ставится мгновенно.
 
 ### Чего нет
 
@@ -165,14 +135,6 @@ Reduced motion: transform ставится мгновенно.
 - Hover lift на одиночном avatar (только group stack)
 - Ripple
 - Portal motion (кроме auto Tooltip по `nickname`)
-
-### Сводка: что настраивается где
-
-| Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
-|----------|---------|---------------------------|----------------|
-| Image fade in | `useAvatarImageFade` | `tooltipDuration`, `interactiveEase`, `enableContentFade` | `src` load state |
-| Group hover lift | GSAP в group wrapper | `interactiveDuration`, `interactiveEase` | `Avatar.Group` |
-| Gloss depth | CSS `gloss-panel` | — | `variant="gloss"` |
 
 ## Токены и CSS
 
@@ -280,8 +242,8 @@ Avatar/
 ├── index.ts
 ├── avatarTypes.ts
 ├── avatarStyles.ts
-├── avatarAnimations.ts
-├── avatarContext.tsx
+├── avatarAnimations.ts             # defaults + host play
+├── avatarContext.tsx               # createMotionScope
 ├── avatarParts.tsx
 ├── useAvatarRootState.ts
 ├── avatarAPI.ts
@@ -291,4 +253,4 @@ Avatar/
 
 ## Storybook
 
-`Core Components/Avatar` — Simple/Compound, размеры, fallback, broken image, group lift, nickname tooltip, gloss, light theme, `classNames`.
+`Core Components/Avatar` — Simple/Compound, размеры, fallback, broken image, group lift, nickname tooltip, gloss, light theme, `classNames`, slot motion gallery.

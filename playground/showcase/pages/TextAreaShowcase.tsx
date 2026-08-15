@@ -20,6 +20,14 @@ import { TextAreaSupportTicketDemo } from "../demos/textarea/TextAreaSupportTick
 import textAreaSupportTicketSource from "../demos/textarea/TextAreaSupportTicket.demo.tsx?raw";
 import { TextAreaWithErrorDemo } from "../demos/textarea/TextAreaWithError.demo";
 import textAreaWithErrorSource from "../demos/textarea/TextAreaWithError.demo.tsx?raw";
+import { TextAreaMotionControlTintDemo } from "../demos/textarea/TextAreaMotionControlTint.demo";
+import textAreaMotionControlTintSource from "../demos/textarea/TextAreaMotionControlTint.demo.tsx?raw";
+import { TextAreaMotionInstantHoverDemo } from "../demos/textarea/TextAreaMotionInstantHover.demo";
+import textAreaMotionInstantHoverSource from "../demos/textarea/TextAreaMotionInstantHover.demo.tsx?raw";
+import { TextAreaMotionResizePulseDemo } from "../demos/textarea/TextAreaMotionResizePulse.demo";
+import textAreaMotionResizePulseSource from "../demos/textarea/TextAreaMotionResizePulse.demo.tsx?raw";
+import { TextAreaMotionShellWaveDemo } from "../demos/textarea/TextAreaMotionShellWave.demo";
+import textAreaMotionShellWaveSource from "../demos/textarea/TextAreaMotionShellWave.demo.tsx?raw";
 import { ShowcaseDemoFromFile } from "../layout/ShowcaseDemoFromFile";
 import { ShowcaseDoc } from "../layout/ShowcaseDoc";
 import { ShowcasePage } from "../layout/ShowcasePage";
@@ -61,6 +69,16 @@ export function TextAreaShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant gloss — glass shell with motion.">
         <ShowcaseDemoFromFile align="center" Demo={TextAreaGlossDemo} source={textAreaGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Instant hover, shell wave timeline, resize-handle pulse, press tint via tweenCssColor."
+      >
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionInstantHoverDemo} source={textAreaMotionInstantHoverSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionShellWaveDemo} source={textAreaMotionShellWaveSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionResizePulseDemo} source={textAreaMotionResizePulseSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={TextAreaMotionControlTintDemo} source={textAreaMotionControlTintSource} />
       </ShowcaseSection>
 
       <ShowcaseSection

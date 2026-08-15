@@ -8,6 +8,14 @@ import { AlertDialogDeleteAccountDemo } from "../demos/alertDialog/AlertDialogDe
 import alertDialogDeleteAccountSource from "../demos/alertDialog/AlertDialogDeleteAccount.demo.tsx?raw";
 import { AlertDialogGlossDemo } from "../demos/alertDialog/AlertDialogGloss.demo";
 import alertDialogGlossSource from "../demos/alertDialog/AlertDialogGloss.demo.tsx?raw";
+import { AlertDialogMotionChromeSplitDemo } from "../demos/alertDialog/AlertDialogMotionChromeSplit.demo";
+import alertDialogMotionChromeSplitSource from "../demos/alertDialog/AlertDialogMotionChromeSplit.demo.tsx?raw";
+import { AlertDialogMotionIndicatorPopDemo } from "../demos/alertDialog/AlertDialogMotionIndicatorPop.demo";
+import alertDialogMotionIndicatorPopSource from "../demos/alertDialog/AlertDialogMotionIndicatorPop.demo.tsx?raw";
+import { AlertDialogMotionInstantPanelDemo } from "../demos/alertDialog/AlertDialogMotionInstantPanel.demo";
+import alertDialogMotionInstantPanelSource from "../demos/alertDialog/AlertDialogMotionInstantPanel.demo.tsx?raw";
+import { AlertDialogMotionOverlayHoldDemo } from "../demos/alertDialog/AlertDialogMotionOverlayHold.demo";
+import alertDialogMotionOverlayHoldSource from "../demos/alertDialog/AlertDialogMotionOverlayHold.demo.tsx?raw";
 import { AlertDialogLogoutDemo } from "../demos/alertDialog/AlertDialogLogout.demo";
 import alertDialogLogoutSource from "../demos/alertDialog/AlertDialogLogout.demo.tsx?raw";
 import { AlertDialogStatusDemo } from "../demos/alertDialog/AlertDialogStatus.demo";
@@ -39,6 +47,16 @@ export function AlertDialogShowcase() {
 
       <ShowcaseSection title="Gloss" description="variant=&quot;gloss&quot; — glass confirmation panel.">
         <ShowcaseDemoFromFile Demo={AlertDialogGlossDemo} source={alertDialogGlossSource} />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Slot motion"
+        description="Each card is a separate copyable example — instant panel, indicator pop, header/footer split, overlay hold."
+      >
+        <ShowcaseDemoFromFile Demo={AlertDialogMotionInstantPanelDemo} source={alertDialogMotionInstantPanelSource} />
+        <ShowcaseDemoFromFile Demo={AlertDialogMotionIndicatorPopDemo} source={alertDialogMotionIndicatorPopSource} />
+        <ShowcaseDemoFromFile Demo={AlertDialogMotionChromeSplitDemo} source={alertDialogMotionChromeSplitSource} />
+        <ShowcaseDemoFromFile Demo={AlertDialogMotionOverlayHoldDemo} source={alertDialogMotionOverlayHoldSource} />
       </ShowcaseSection>
 
 
@@ -88,7 +106,8 @@ export function AlertDialogShowcase() {
         <ShowcaseDoc.Customization gloss>
           <p>
             Tone primary-buttons - helper <code>primaryButtonVariantForAlertTone</code> from the package.{" "}
-            <code>status</code> fundamentally affects the icon and confirmation button.
+            <code>status</code> fundamentally affects the icon and confirmation button. Slot motion —{" "}
+            <code>motion.panel</code> / <code>modalPanel*</code> recipes (portal host <code>AlertDialog.Panel</code>).
           </p>
         </ShowcaseDoc.Customization>
       </ShowcaseDoc>

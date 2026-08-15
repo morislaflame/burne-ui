@@ -20,6 +20,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | `placement` | `right` | `left` \| `right` \| `top` \| `bottom` |
 | `size` | `base` | Chrome density (`PANEL_SIZE_LAYOUT`): padding, typography, close/footer buttons |
 | `classNames` | — | Слоты портала и панели |
+| `motion` | — | Карта слотов. Root без portal DOM — хост `Drawer.Panel` |
 
 ### Compound-подчасти
 
@@ -43,6 +44,7 @@ import { Drawer, type DrawerProps, type DrawerPlacement, type DrawerSize, type D
 | `variant` | `default` | `default` \| `gloss` |
 | `themeAnchor` | auto | Якорь темы для overlay портала |
 | `className` | — | На focusable panel wrapper |
+| `motion` | — | Мерж с картой Root; defaults + `params.placement` |
 
 ### Пример
 
@@ -72,10 +74,10 @@ const [open, setOpen] = useState(false);
 
 | placement | Slide axis | Позиция панели |
 |-----------|------------|----------------|
-| `left` | `xPercent: -100 → 0` | `left-0 top-0 h-full` |
-| `right` | `xPercent: 100 → 0` | `right-0 top-0 h-full` |
-| `top` | `yPercent: -100 → 0` | `top-0 inset-x-0` |
-| `bottom` | `yPercent: 100 → 0` | `bottom-0 inset-x-0` |
+| `left` | `x: -offsetWidth → 0` | `left-0 top-0 h-full` |
+| `right` | `x: offsetWidth → 0` | `right-0 top-0 h-full` |
+| `top` | `y: -offsetHeight → 0` | `top-0 inset-x-0` |
+| `bottom` | `y: offsetHeight → 0` | `bottom-0 inset-x-0` |
 
 `extent` на `Drawer.Panel` — доля экрана (viewport). `size` на `Drawer` — chrome из `PANEL_SIZE_LAYOUT` (как Dialog / Card).
 
@@ -89,45 +91,53 @@ const [open, setOpen] = useState(false);
 
 ## Анимации
 
-`drawerAnimations.ts` (`useDrawerModalMotion` → `useModalMotion` + slide resolvers из `drawerAPI`) + `useDrawerHandleDrag.ts` + `runOpenAfterSqueeze` на Trigger.
+`drawerAnimations.ts` → slot motion (`DRAWER_MOTION_DEFAULTS`) + `useDrawerModalMotion` → `useModalMotion`. Root без DOM портала передаёт карту `motion`; хост — `Drawer.Panel` (defaults + `params.placement` для `drawerSlide*`). Trigger squeeze — `runOpenAfterSqueeze`. Drag — `useDrawerHandleDrag.ts` (не публичный слот).
 
 **DOM-структура (портал):**
 
 ```
 <dialog>
-  <div overlayRef>              ← opacity, drag-sync fade
-  <div panelRef tabIndex={-1}>  ← slide x/yPercent, drag translate
-    [Drawer.Handle]             ← pointer capture drag
-    <Drawer.Content> …
+  <div overlayRef>              ← слот `overlay`
+  <div panelRef tabIndex={-1}>  ← слот `panel` (px-slide, не xPercent)
+    [Drawer.Handle]             ← слот `handle` + pointer capture drag
+    <Drawer.Content>            ← слот `content`
+      Header / Title / Description / Close / Body / Footer
 ```
 
-### 1. Open — slide + overlay fade
+### Slot motion
 
-При `open=true`, `mounted=true`:
+| Слот | Фазы | Дефолтный рецепт |
+|------|------|------------------|
+| `overlay` | `enter` / `leave` | `modalOverlayEnter` / `modalOverlayLeave` |
+| `panel` | `enter` / `leave` | `drawerSlideEnter` / `drawerSlideLeave` (`params.placement`) |
+| `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
+| `close`, `header`, `footer`, `content`, `handle` | `enter` / `leave` | нет; хост **рассылает**, если задана |
 
-1. `dialog.showModal()`
-2. `animateModalOpen`:
-   - **overlay:** `opacity: 0 → 1`
-   - **panel from→to** по `placement`:
+Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: высота нижней панели может вырасти после mount. `leave` factory должна вернуть tween и **увести панель за край** (`x: el.offsetWidth` и т.п.) — короткий сдвиг на 80px оставит панель на экране, и `dialog.close()` даст рывок. `panel.enter/leave: false` — хост сразу ставит rest / off-screen; overlay по-прежнему фейдится.
 
-| placement | panelFrom | panelTo |
-|-----------|-----------|---------|
-| `left` | `xPercent: -100` | `xPercent: 0` |
-| `right` | `xPercent: 100` | `0` |
-| `top` | `yPercent: -100` | `0` |
-| `bottom` | `yPercent: 100` | `0` |
+**Где в коде:** типы — `drawerTypes.ts`; scope — `drawerContext.tsx`; defaults + host play — `drawerAnimations.ts`; Panel-provider — `drawerParts.tsx`; карта на корне — `Drawer.tsx`.
 
-**vars:** `motionInteractive()`. Без scale (в отличие от Dialog).
+```tsx
+<Drawer motion={{ panel: { enter: false, leave: false } }}>…</Drawer>
 
-**Focus:** `focusPanelOnOpen` (первый focusable / panel). **Scroll lock:** `body.overflow = hidden`.
+<Drawer
+  placement="right"
+  motion={{
+    panel: {
+      enter: (ctx) => gsap.fromTo(ctx.el, { x: 80 }, { x: 0, duration: 0.5, ease: "back.out(1.4)" }),
+      leave: (ctx) => gsap.to(ctx.el, { x: ctx.el.offsetWidth, duration: 0.28, ease: "power2.in" }),
+    },
+    title: {
+      enter: (ctx) => gsap.fromTo(ctx.el, { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35, delay: 0.08 }),
+      leave: (ctx) => gsap.to(ctx.el, { y: -8, autoAlpha: 0, duration: 0.2 }),
+    },
+  }}
+>
+```
 
-### 2. Close — slide out + overlay fade
+**Reduced motion / `enableModalMotion: false`:** instant rest / close offset.
 
-`animateModalClose` + `panelExit: getDrawerSlideOutTo(placement)` — зеркало slide-in.
-
-**Skip close anim:** после успешного drag-dismiss `skipCloseAnimRef = true` → unmount без повторного exit.
-
-### 3. Drag-to-dismiss (`Drawer.Handle`)
+### Drag-to-dismiss (`Drawer.Handle`)
 
 `useDrawerHandleDrag(panelRef, overlayRef, placement, onClose)`:
 
@@ -151,11 +161,11 @@ const [open, setOpen] = useState(false);
 
 Пороги `0.38` / `0.45` — константы в `useDrawerHandleDrag.ts`.
 
-### 4. Trigger open squeeze
+### Trigger open squeeze
 
 Как `Dialog.Trigger`: `e.preventDefault()` + `runOpenAfterSqueeze` → `animateInteractivePressSqueeze` → `onOpenChange(true)`.
 
-### 5. Gloss panel
+### Gloss panel
 
 Slide на `panelRef`; `bindGlossPanelRef` на gloss-обёртке — surface gloss motion.
 
@@ -173,14 +183,15 @@ configureMotion({
 });
 ```
 
-Slide keyframes — в `drawerAPI.ts`, не в config.
+Slide keyframes — px в `drawerSlide.ts` (`params.placement`), не в config.
 
 ### Сводка: что настраивается где
 
 | Анимация | Утилита | `configureMotion` | Hardcode |
 |----------|---------|-------------------|----------|
-| Open slide | `animateModalOpen` + `getDrawerSlideOpenFrom` | `modalDuration`, `interactiveEase`, `enableModalMotion` | slide px в `drawerAPI` |
-| Close slide | `animateModalClose` + `getDrawerSlideCloseTo` | те же | `getDrawerSlideCloseTo` |
+| Open/close slide | `drawerSlideEnter` / `Leave` | `modalDuration`, `interactiveEase`, `enableModalMotion` | px от размера панели |
+| Overlay fade | `modalOverlayEnter` / `Leave` | те же | — |
+| Nested title / handle | slot broadcast | — | `motion.title` / … |
 | Drag dismiss | `useDrawerHandleDrag` | interactive (finish) | ratio 0.38, velocity 0.45 |
 | Drag snap-back | `useDrawerHandleDrag` | interactive | — |
 | Trigger squeeze | `runOpenAfterSqueeze` | `pressSqueezeScale` | — |
@@ -190,7 +201,7 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 
 | | Dialog | Drawer |
 |---|--------|--------|
-| Panel enter | scale 0.97→1 | slide x/yPercent |
+| Panel enter | `modalPanelEnter` (scale) | `drawerSlideEnter` (px по `placement`) |
 | Drag dismiss | нет | `Drawer.Handle` |
 | Close skip | нет | после drag |
 
@@ -293,14 +304,16 @@ Slide keyframes — в `drawerAPI.ts`, не в config.
 
 ```
 Drawer/
-├── Drawer.tsx
-├── drawerAnimations.ts      # facade → useModalMotion + slide
-├── useDrawerHandleDrag.ts   # swipe dismiss
-├── drawerAPI.ts             # slide keyframes
-├── drawerParts.tsx
+├── Drawer.tsx               # карта motion в context (Root без DOM)
+├── drawerTypes.ts           # DrawerMotion / DrawerLifecycleMotion / DrawerPartMotion
+├── drawerAnimations.ts      # DRAWER_MOTION_DEFAULTS, useDrawerModalMotion
+├── drawerContext.tsx        # createMotionScope("Drawer")
+├── drawerParts.tsx          # Panel-хост + useMotionPart
+├── useDrawerHandleDrag.ts   # swipe dismiss (не слот)
+├── drawerAPI.ts             # re-export slide helpers
 └── …
 ```
 
 ## Storybook
 
-`Core Components/Drawer` — placement, size, gloss, handle drag, `isDismissable={false}`, Trigger.
+`Core Components/Drawer` — placement, size, gloss, handle drag, `isDismissable={false}`, Trigger, slot motion gallery.

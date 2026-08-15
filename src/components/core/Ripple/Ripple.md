@@ -74,6 +74,9 @@ Simple API — один самозакрывающийся слой без compo
 
 ## Анимации
 
+Ripple **не** публичный slot motion: это kit overlay-примитив (`ConvergeRippleLayer`). Волны остаются внутренним GSAP. Кастом — `configureMotion` ripple-ключи, не проп `motion`.
+
+
 Реализация: host `Ripple` без state + memo `ConvergeRipplePaint` (`useConvergeRipples`) + `ConvergeRippleLayer` / `ConvergeRippleDot` в `utils/pressRipple.tsx`. Push/dismiss ре-рендерят только paint-слой. Easing: `ensureRippleEase()` из `rippleEaseCss`.
 
 **DOM-структура:**

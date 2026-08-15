@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexToHsva, hsvaToRgba, rgbaToHsva, type ColorPickerProps, type ColorPickerTriggerProps, type ColorPickerContentProps, type ColorPickerSize, type ColorPickerVariant, type ColorPickerClassNames, type ColorSliderTrackProps, type ColorSwatchProps, type HSVA, type RGBA } from "burne-ui";
+import { ColorPicker, ColorSlider, ColorSwatch, useColorPicker, hsvaToHex, hexToHsva, hsvaToRgba, rgbaToHsva, type ColorPickerProps, type ColorPickerTriggerProps, type ColorPickerContentProps, type ColorPickerSize, type ColorPickerVariant, type ColorPickerClassNames, type ColorSliderTrackProps, type ColorSwatchProps, type ColorSwatchMotion, type ColorSwatchPartMotion, type HSVA, type RGBA } from "burne-ui";
 ```
 
 ## API
@@ -96,6 +96,29 @@ Channels: `hue`, `saturation`, `value`, `alpha`, `red`, `green`, `blue`.
 
 ## Анимации
 
+### Slot motion
+
+**ColorPicker** — portal-host: Root передаёт карту `motion`, хост — `Content` / слот `contentPanel`.
+
+| Слот | Фазы | Дефолт |
+|------|------|--------|
+| `contentPanel` | `enter` (opt-in) | empty |
+| `area` | `enter`; `change` при HSVA | empty |
+| `areaThumb`, `hexInput`, `presets` | `enter` / hover / press | empty |
+| `hueSlider` / `alphaSlider` | прокидываются в ColorSlider | empty |
+
+Thumb `left` / `top` на area — kit-internal (`useColorPickerAreaDrag`), не публичный layout-tween. ColorSwatch в presets сохраняет свой scope.
+
+**ColorSlider** — свой scope; Track — nested host.
+
+| Слот | Фазы | Дефолт |
+|------|------|--------|
+| `root` | `enter` | empty |
+| `track` | `enter`; `change` при value | empty |
+
+Thumb ColorSlider = `SliderThumbButton`, не дублирует публичный слот Slider thumb.
+
+
 Motion разбит: pointer drag (без GSAP) + Popover portal + optional swatch GSAP.
 
 **DOM:**
@@ -131,21 +154,19 @@ Pointer + keyboard на `SliderThumbButton` (shared Slider patterns).
 
 ### 4. Interactive ColorSwatch
 
-При `onClick` / в trigger:
+Декоративный `<span>` (нет `onClick` и нет accessible name) — без motion scope.
 
-- `useFirstLevelInteractiveMotion` — hover lift + press squeeze (GSAP)
-- `SHADOW_LIFT_MOTION_CLASS`
+Интерактивная кнопка (`onClick` или `aria-label`): свой scope, слот `root`. Defaults: `hoverLiftFirstLevel` (с hover-тенью) + `pressSqueeze` (`pressOut: false`).
 
-#### Кастомизация swatch motion
-
-```ts
-import { configureMotion } from "burne-ui";
-
-configureMotion({
-  hoverLiftScale: 1.03,
-  pressSqueezeScale: [1, 0.98, 1],
-});
+```tsx
+<ColorSwatch
+  color="#3b82f6"
+  onClick={() => {}}
+  motion={{ root: { hoverIn: false, hoverOut: false } }}
+/>
 ```
+
+**Где в коде:** `colorSwatchTypes.ts`, `colorSwatchContext.tsx`, `colorSwatchAnimations.ts`, `ColorSwatch.tsx`.
 
 ### Чего нет
 
@@ -160,7 +181,7 @@ configureMotion({
 | Popover portal | `Popover` | `tooltipDuration` | `variant` |
 | 2D area drag | `useColorPickerAreaDrag` | — | pointer events |
 | Slider thumb | ColorSlider | — | `channel` |
-| Swatch hover/squeeze | `useFirstLevelInteractiveMotion` | `hoverLiftScale`, `pressSqueezeScale` | `onClick` |
+| Swatch hover/press | slot motion `root` | `enableHoverLift` / `enablePressSqueeze` | `motion` |
 
 ## Токены и CSS
 
@@ -262,6 +283,7 @@ ColorPicker/
 ├── colorSliderTypes.ts
 ├── colorSliderStyles.ts
 ├── ColorSwatch.tsx
+├── colorSwatchTypes.ts / colorSwatchContext.tsx / colorSwatchAnimations.ts
 └── ColorPicker.stories.tsx
 ```
 

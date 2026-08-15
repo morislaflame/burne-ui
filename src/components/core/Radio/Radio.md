@@ -5,7 +5,7 @@
 ## Импорт
 
 ```tsx
-import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioClassNames } from "burne-ui";
+import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioClassNames, type RadioMotion } from "burne-ui";
 ```
 
 ## API
@@ -51,6 +51,7 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 | `danger` | `false` | Красный label text |
 | `label` / `hint` / `error` | — | Simple API |
 | `classNames` | — | см. стилизацию |
+| `motion` | — | `indicator` / `indicatorFill` / `indicatorMark` (`check` / `uncheck`) |
 
 Повторный клик по выбранному radio **снимает выбор** (если не `required` и не required-группа).
 
@@ -110,10 +111,26 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 
 ### 2. Dot indicator
 
-`Radio.Indicator` → `SelectionIndicator` с `dot`:
+`Radio.Indicator` → `SelectionIndicator` с `dot` + slot motion (`selectionFill` / `selectionMark`). Карта на корне Radio прокидывается как `indicator` / `indicatorFill` / `indicatorMark`. Compound: `motion` на `Radio.Indicator` / `.Fill` / `.Mark`.
 
-- fill scale + dot mark scale via `useSelectionIndicatorAnimation`
-- при select: fill in + dot visible
+**Где в коде:** карта слотов — `radioAnimations.ts` (`RADIO_MOTION_SLOT_MAP`, `resolveRadioIndicatorMotion`); тонкий context — `radioContext.tsx`; host — `selectionIndicatorAnimations.ts`.
+
+```tsx
+<Radio
+  name="plan"
+  value="pro"
+  label="Custom fill"
+  motion={{
+    indicatorFill: {
+      check: (ctx) =>
+        gsap.fromTo(ctx.el, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4 }),
+      uncheck: (ctx) => gsap.to(ctx.el, { scale: 0, autoAlpha: 0, duration: 0.22 }),
+    },
+  }}
+/>
+```
+
+См. [Motion](/docs/motion) и `SelectionIndicator`.
 
 ### 3. Label text press squeeze
 
@@ -127,7 +144,7 @@ import { Radio, type RadioProps, type RadioVariant, type RadioSize, type RadioCl
 | Анимация | Утилита | `configureMotion` |
 |----------|---------|-------------------|
 | Track disabled fade | `useRadioControlTrackAnimation` | `interactiveDuration` |
-| Dot/fill | `useSelectionIndicatorAnimation` | `selectionFillDuration` |
+| Dot/fill | `Radio.Indicator` → SelectionIndicator | `selectionFillDuration` |
 | Label squeeze | `usePressableElementTextMotion` | `pressSqueezeScale` |
 
 ## Стилизация и кастомизация
@@ -239,7 +256,8 @@ Radio/
 ├── index.ts
 ├── radioTypes.ts
 ├── radioStyles.ts
-├── radioAnimations.ts       # track + text motion
+├── radioContext.tsx         # тонкий motion context (embedder)
+├── radioAnimations.ts       # RADIO_MOTION_SLOT_MAP + track/label motion
 ├── radioParts.tsx
 ├── useRadioRootState.ts
 ├── radioAPI.ts
@@ -249,4 +267,4 @@ Radio/
 
 ## Storybook
 
-`Core Components/Radio` — simple/compound, gloss, RadioGroup, clear selection, `classNames`, a11y.
+`Core Components/Radio` — simple/compound, gloss, RadioGroup, clear selection, `classNames`, a11y, slot motion gallery.

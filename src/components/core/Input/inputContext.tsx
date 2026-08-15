@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
+import { createMotionScope } from "@/components/core/utils/slotMotion";
+
 import type {
   InputClassNames,
   InputClassNamesProviderProps,
@@ -53,3 +55,10 @@ export function useOptionalInputFieldContext() {
 export function useInputClassNames(): InputClassNames {
   return useContext(InputClassNamesContext);
 }
+
+/** Scope only. Defaults and host play live in `inputAnimations.ts`. */
+export const {
+  MotionScopeProvider: InputMotionProvider,
+  useMotionScope: useInputMotionScope,
+  useOptionalMotionScope: useOptionalInputMotionScope,
+} = createMotionScope("Input");

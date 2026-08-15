@@ -120,10 +120,15 @@ export function useToggleButtonGroupRootState({
     [disabled, onKeyDown, orientation],
   );
 
+  const selectionIdentity = isSingle
+    ? (singleValue ?? "")
+    : multipleValues.join("\0");
+
   return {
     flat,
     segmentCount,
     contextValue,
     handleKeyDown,
+    selectionIdentity,
   };
 }

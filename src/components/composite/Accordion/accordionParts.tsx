@@ -1,12 +1,14 @@
-import { forwardRef, useMemo, useRef } from "react";
+import { forwardRef, useCallback, useMemo, useRef } from "react";
 
 import { Expandable, useExpandableContext } from "@/components/core/Expandable";
-import { useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
+import { useExpandableMotionScope, useOptionalExpandableTriggerGrid } from "@/components/core/Expandable/expandableContext";
 import { messageBannerActionCellClass } from "@/components/core/utils/messageBannerGridLayout";
+import { createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
+import { useMotionPart } from "@/components/core/utils/slotMotion";
 import { Text } from "@/components/core/Text";
 
 import { accordionDecorativeProps, accordionHeadingTag } from "./accordionA11y";
-import { useAccordionChevronAnimation } from "./accordionAnimations";
+import { resolveAccordionItemMotion } from "./accordionAnimations";
 import { resolveAccordionItemExpandableClassNames } from "./accordionAPI";
 
 import { AccordionClassNamesProvider, useAccordionClassNames, useAccordionContext } from "./accordionContext";
@@ -59,14 +61,18 @@ function AccordionChevronSvg({ className = "" }: { className?: string }) {
 }
 
 export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(function AccordionItem(
-  { value, disabled, classNames, className, children, ...rest },
+  { value, disabled, classNames, className, children, motion, ...rest },
   ref,
 ) {
-  const { value: openValue, setValue, size } = useAccordionContext();
+  const { value: openValue, setValue, size, motion: rootMotion } = useAccordionContext();
   const parentClassNames = useAccordionClassNames();
   const mergedClassNames = useMemo(
     () => ({ ...parentClassNames, ...classNames }),
     [parentClassNames, classNames],
+  );
+  const mergedMotion = useMemo(
+    () => resolveAccordionItemMotion({ rootMotion, itemMotion: motion }),
+    [motion, rootMotion],
   );
   const itemId = useAccordionItemId(value);
   const isOpen = openValue === itemId;
@@ -83,6 +89,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
         onOpenChange={(next) => setValue(next ? itemId : null)}
         className={accordionItemClass(className)}
         classNames={resolveAccordionItemExpandableClassNames(mergedClassNames)}
+        motion={mergedMotion}
         {...rest}
       >
         {children}
@@ -146,17 +153,35 @@ export function AccordionDescription(props: AccordionDescriptionProps) {
 
 AccordionDescription.displayName = "Accordion.Description";
 
-export function AccordionChevron({ className, children, ...rest }: AccordionChevronProps) {
+export function AccordionChevron({ className, children, motion, ...rest }: AccordionChevronProps) {
   const { open, hasPanel } = useExpandableContext();
   const slotClassNames = useAccordionClassNames();
-  const bindChevronRef = useAccordionChevronAnimation(open);
   const gridSlots = useOptionalExpandableTriggerGrid();
+  const scope = useExpandableMotionScope();
+  const chevronRef = useRef<HTMLSpanElement | null>(null);
+  const initialOpenRef = useRef(open);
+  const bindChevronInit = useMemo(
+    () => createChevronRotationRefCallback(chevronRef, initialOpenRef.current),
+    [],
+  );
+  const { setRef: setChevronPartRef } = useMotionPart<HTMLSpanElement>({
+    scope,
+    slot: "chevron",
+    motion,
+  });
+  const setChevronRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      bindChevronInit(node);
+      setChevronPartRef(node);
+    },
+    [bindChevronInit, setChevronPartRef],
+  );
 
   if (!hasPanel) return null;
 
   return (
     <span
-      ref={bindChevronRef}
+      ref={setChevronRef}
       className={cn(
         gridSlots && messageBannerActionCellClass(gridSlots),
         accordionChevronClass({ className, slotClass: slotClassNames.chevron }),

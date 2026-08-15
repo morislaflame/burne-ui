@@ -5,6 +5,7 @@ import type {
   RefObject,
 } from "react";
 import type { Prettify } from "@/utils/prettify";
+import type { MotionValue } from "@/components/core/utils/slotMotion";
 
 import type { ComponentSize } from "@/components/core/utils/sizeLayout";
 
@@ -23,6 +24,25 @@ export type TabsClassNames = {
   panel?: string;
 };
 
+export type TabsPartMotion = {
+  hoverIn?: MotionValue;
+  hoverOut?: MotionValue;
+  pressIn?: MotionValue;
+  pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  check?: MotionValue;
+  uncheck?: MotionValue;
+};
+
+export type TabsMotion = {
+  root?: TabsPartMotion;
+  list?: TabsPartMotion;
+  tab?: TabsPartMotion;
+  tabText?: TabsPartMotion;
+  panel?: TabsPartMotion;
+};
+
 export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   children?: ReactNode;
   value?: string;
@@ -33,6 +53,12 @@ export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
   variant?: TabsVariant;
   disabled?: boolean;
   classNames?: Prettify<TabsClassNames>;
+  /**
+   * Per-slot motion (`root`, `list`, `tab`, `tabText`, `panel`).
+   * Indicator FLIP is kit-internal — not a public slot. Do not tween `width`/`left` of the indicator.
+   * Inactive tabs default to `hoverLiftFirstLevel` + `pressSqueeze` on `tabText`.
+   */
+  motion?: Prettify<TabsMotion>;
 };
 
 export type UseTabsRootStateProps = Pick<
@@ -46,17 +72,21 @@ export type UseTabsRootStateProps = Pick<
   | "disabled"
 >;
 
-export type TabsListProps = HTMLAttributes<HTMLDivElement>;
+export type TabsListProps = HTMLAttributes<HTMLDivElement> & {
+  motion?: Prettify<TabsPartMotion>;
+};
 
 export type TabsTabProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"> & {
   value: string;
   children?: ReactNode;
   asChild?: boolean;
+  motion?: Prettify<TabsPartMotion>;
 };
 
 export type TabsPanelProps = HTMLAttributes<HTMLDivElement> & {
   value: string;
   children?: ReactNode;
+  motion?: Prettify<TabsPartMotion>;
 };
 
 export type TabsContextValue = {

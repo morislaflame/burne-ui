@@ -5,6 +5,7 @@ import { expect, waitFor } from "storybook/test";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 
 import { Calendar, useCalendar, type CalendarRangeValue, type CalendarSize, type CalendarVariant } from ".";
+import { CalendarMotionDemo } from "../../../../playground/showcase/demos/calendar/CalendarMotion.demo";
 
 function CustomTitleLabel() {
   const { viewDate, view } = useCalendar();
@@ -412,4 +413,9 @@ export const CustomTitleFormat: Story = {
       </Calendar>
     );
   },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery",
+  render: () => <CalendarMotionDemo />,
 };

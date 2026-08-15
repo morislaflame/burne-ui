@@ -8,6 +8,7 @@ import { glossDottedDecorator } from "@/stories-utils/glossStoryChrome";
 import { AlertDialog, primaryButtonStatusForAlertTone, primaryButtonVariantForAlertTone, type AlertDialogSize } from "./index";
 import { useAlertDialog } from "./useAlertDialog";
 import type { AlertStatus } from "@/components/core/Alert";
+import { AlertDialogMotionDemo } from "../../../../playground/showcase/demos/alertDialog/AlertDialogMotion.demo";
 
 const darkThemeDecorator = [
   (Story: ComponentType) => (
@@ -415,4 +416,9 @@ export const CustomClassNames: Story = {
       </AlertDialog>
     );
   },
+};
+
+export const SlotMotionGallery: Story = {
+  name: "Slot motion gallery (instant, indicator, chrome, overlay)",
+  render: () => <AlertDialogMotionDemo />,
 };

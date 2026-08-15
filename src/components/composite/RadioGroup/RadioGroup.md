@@ -107,9 +107,9 @@ Simple API нет.
       <Text ref=textMotion />        ← press squeeze
 ```
 
-### 1. Dot indicator fill
+### 1. Dot indicator (slot motion)
 
-`SelectionIndicator` (dot) — GSAP при `checked`.
+`Radio` — embedder в SelectionIndicator. Карта `motion` на `Radio`: `indicator` / `indicatorFill` / `indicatorMark` (`check` / `uncheck`). См. `Radio.md`.
 
 ### 2. Text press motion
 
@@ -140,7 +140,7 @@ configureMotion({
 
 | Анимация | Утилита | Ключи `configureMotion` | Локальный prop |
 |----------|---------|---------------------------|----------------|
-| Dot fill | `SelectionIndicator` | selection fill tokens | `checked` |
+| Dot fill | `Radio.motion` → SelectionIndicator | selection fill tokens | `motion` на Radio |
 | Text squeeze | `useRadioTextMotion` | `pressSqueezeScale` | `disabled` |
 | Track fade | radio animations | `interactiveDuration` | `disabled` |
 

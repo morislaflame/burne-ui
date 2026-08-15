@@ -9,7 +9,7 @@ const LabelCompound = Object.assign(Label, { Slot: LabelSlot }) as LabelComponen
 
 export { LabelCompound as Label, LabelRoot, LabelSlot };
 
-export type { LabelProps, LabelClassNames, FieldLabelContextValue } from "./labelTypes";
+export type { LabelProps, LabelClassNames, LabelMotion, LabelPartMotion, FieldLabelContextValue } from "./labelTypes";
 
 export {
   FieldLabelContext,

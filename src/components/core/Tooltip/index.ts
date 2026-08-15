@@ -27,4 +27,6 @@ export type {
   TooltipMessageProps,
   TooltipTitleProps,
   TooltipDescriptionProps,
+  TooltipMotion,
+  TooltipLifecycleMotion,
 } from "./tooltipTypes";
