@@ -8,7 +8,7 @@
  */
 import { useLayoutEffect, type RefObject } from "react";
 
-import { killStoredMotion, type MotionScopeValue } from "@/components/core/utils/slotMotion";
+import { killStoredMotion, waitForLeaveGeneration, type MotionScopeValue } from "@/components/core/utils/slotMotion";
 
 import type { TooltipMotion } from "./tooltipTypes";
 
@@ -34,26 +34,22 @@ export function useTooltipPortalMotion({
     const el = tipRef.current;
     if (!el) return undefined;
 
-    let cancelled = false;
-
     if (open) {
       scope.play("content", "enter", { el });
-      return () => {
-        cancelled = true;
-      };
+      return undefined;
     }
 
     const run = scope.play("content", "leave", {
       el,
       waitForComplete: true,
     });
-    void run.finished.then(() => {
-      if (!cancelled) setPortalMounted(false);
+    const leaveWait = waitForLeaveGeneration({
+      runs: [run],
+      onComplete: () => setPortalMounted(false),
+      onKill: () => killStoredMotion(el),
     });
     return () => {
-      cancelled = true;
-      run.animation?.kill();
-      killStoredMotion(el);
+      leaveWait.kill();
     };
   }, [open, portalMounted, scope, setPortalMounted, tipRef]);
 }

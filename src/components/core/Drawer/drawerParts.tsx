@@ -8,6 +8,7 @@ import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { focusElement } from "@/components/core/utils/focusElement";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { useBurneLabels } from "@/theme/BurneLabelsProvider";
@@ -402,6 +403,7 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
     const slotClassNames = useDrawerClassNames();
     const triggerRef = useRef<HTMLElement | null>(null);
     const openingRef = useOpeningRef();
+    const config = useMotionConfig();
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -416,9 +418,9 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
         focusElement(triggerRef.current);
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
       },
-      [open, openingRef, triggerRef, onOpenChange],
+      [open, openingRef, triggerRef, onOpenChange, config],
     );
 
     const handleKeyDown = useCallback(
@@ -427,9 +429,9 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
         if (e.defaultPrevented || open || openingRef.current) return;
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
       },
-      [onKeyDown, open, openingRef, onOpenChange, triggerRef],
+      [onKeyDown, open, openingRef, onOpenChange, triggerRef, config],
     );
 
     const handleClick = useCallback(

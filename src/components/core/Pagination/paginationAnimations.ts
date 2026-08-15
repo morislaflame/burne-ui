@@ -10,7 +10,8 @@ import {
 import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 
 import type { PaginationMotion } from "./paginationTypes";
 
@@ -31,6 +32,7 @@ export function usePaginationFlip(
   olRef: RefObject<HTMLOListElement | null>,
   { page, totalPages, siblingCount, children }: PaginationFlipIdentity,
 ) {
+  const config = useMotionConfig();
   const prevRectsRef = useRef<Map<string, { x: number; y: number }>>(null!);
   if (!prevRectsRef.current) prevRectsRef.current = new Map();
   const firstRunRef = useRef(true);
@@ -49,7 +51,7 @@ export function usePaginationFlip(
       el.dataset.flipKey ?? `__keyless_${keylessIndex++}`;
 
     const reduceMotion =
-      reduceMotionPreferred || !isMotionFeatureEnabled("enablePaginationFlip");
+      reduceMotionPreferred || !isMotionFeatureEnabledFor(config, "enablePaginationFlip");
     const nextRects = new Map<string, { x: number; y: number }>();
     const prevRects = prevRectsRef.current;
 
@@ -72,7 +74,7 @@ export function usePaginationFlip(
             { x: dx },
             {
               x: 0,
-              ...motionInteractive(),
+              ...motionInteractiveFor(config),
               overwrite: "auto",
               onComplete: clearWillChangeOnComplete(el),
             },
@@ -87,7 +89,7 @@ export function usePaginationFlip(
           {
             opacity: 1,
             scale: 1,
-            ...motionInteractive(),
+            ...motionInteractiveFor(config),
             overwrite: "auto",
             onComplete: clearWillChangeOnComplete(el),
           },
@@ -97,7 +99,7 @@ export function usePaginationFlip(
 
     prevRectsRef.current = nextRects;
     firstRunRef.current = false;
-  }, [olRef, reduceMotionPreferred, page, totalPages, siblingCount, children]);
+  }, [config, olRef, reduceMotionPreferred, page, totalPages, siblingCount, children]);
 
   useLayoutEffect(() => {
     const ol = olRef.current;

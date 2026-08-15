@@ -10,7 +10,8 @@
  */
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 import { useLayoutEffect, useRef } from "react";
 
@@ -49,6 +50,7 @@ export function resolveRadioIndicatorMotion({
 }
 
 export function useRadioControlTrackAnimation() {
+  const config = useMotionConfig();
   const ctx = useRadioFieldContext();
   const trackRef = useRef<HTMLSpanElement>(null);
   const trackFirstLayoutRef = useRef(true);
@@ -77,11 +79,11 @@ export function useRadioControlTrackAnimation() {
       { autoAlpha: start },
       {
         autoAlpha: ctx.isDisabled ? 0.48 : 1,
-        ...motionInteractive(),
+        ...motionInteractiveFor(config),
         overwrite: "auto",
       },
     );
-  }, [ctx.isDisabled, reduceMotion]);
+  }, [config, ctx.isDisabled, reduceMotion]);
 
   return trackRef;
 }

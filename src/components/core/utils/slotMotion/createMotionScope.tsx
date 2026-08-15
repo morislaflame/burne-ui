@@ -1,15 +1,29 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useMemo, useRef, type ReactNode } from "react";
 
+import { gsap } from "@/components/core/utils/gsapMotion";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
+import type { MotionConfig } from "@/components/core/utils/motionConfig";
+
+import {
+  createMotionRegistry,
+  type MotionRegisterInput,
+  type MotionRegistration,
+  type MotionRegistry,
+} from "./createMotionRegistry";
 import { resolveSlotPhase } from "./resolveMotionValue";
-import { killStoredMotion, runMotionPhase, type RunMotionPhaseResult } from "./runMotionPhase";
-import type { MotionPartPhases, MotionSlotMap, MotionValue } from "./slotMotionTypes";
+import { killStoredMotion, runMotionPhase } from "./runMotionPhase";
+import { enterHidesFirstPaint } from "./enterHidesFirstPaint";
+import {
+  type MotionPartPhases,
+  type MotionPhaseName,
+  type MotionRecipeParams,
+  type MotionRun,
+  type MotionSlotMap,
+  type MotionValue,
+} from "./slotMotionTypes";
+
+export type { MotionRegisterInput, MotionRegistration, MotionRegistry } from "./createMotionRegistry";
+export { createMotionRegistry } from "./createMotionRegistry";
 
 export type PlaySlotPhaseOptions = {
   partValue?: MotionValue;
@@ -29,18 +43,138 @@ export type PlayBroadcastOptions = {
 export type MotionScopeValue = {
   getRootMotion: () => MotionSlotMap | undefined;
   getDefaults: () => MotionSlotMap | undefined;
-  getParams: () => Record<string, unknown>;
-  getTargets: () => Record<string, HTMLElement | null>;
+  getParams: () => MotionRecipeParams;
+  /** Unique / first live instance of a slot. Repeated slots: `getTargets(slot)`. */
+  getTarget: (slot: string) => HTMLElement | null;
+  /** All live DOM instances of a slot (deduped by node). */
+  getTargets: (slot: string) => readonly HTMLElement[];
+  getRegistrations: (slot?: string) => readonly MotionRegistration[];
+  /**
+   * Unique host upsert (one registration per slot name). Parts use `register`
+   * with a stable instance id — do not share this with repeated siblings.
+   */
   registerTarget: (slot: string, node: HTMLElement | null) => void;
-  registerPartMotion: (slot: string, part: MotionPartPhases | undefined) => void;
+  /** Instance-scoped upsert. Disposer removes only this `id`. */
+  register: (input: MotionRegisterInput) => () => void;
   resolve: (
     slot: string,
-    phase: string,
+    phase: MotionPhaseName,
     partMotion?: MotionPartPhases,
   ) => MotionValue | undefined;
-  play: (slot: string, phase: string, options?: PlaySlotPhaseOptions) => RunMotionPhaseResult;
-  playBroadcast: (phase: string, options?: PlayBroadcastOptions) => Promise<void>;
+  play: (slot: string, phase: MotionPhaseName, options?: PlaySlotPhaseOptions) => MotionRun;
+  playBroadcast: (phase: MotionPhaseName, options?: PlayBroadcastOptions) => Promise<void>;
 };
+
+export type CreateMotionScopeControllerOptions = {
+  getRootMotion: () => MotionSlotMap | undefined;
+  getDefaults: () => MotionSlotMap | undefined;
+  getParams: () => MotionRecipeParams;
+  getConfig?: () => Readonly<MotionConfig>;
+  registry?: MotionRegistry;
+};
+
+/**
+ * Scope methods without React. Provider holds refs and passes getters here.
+ */
+export function createMotionScopeController({
+  getRootMotion,
+  getDefaults,
+  getParams,
+  getConfig,
+  registry = createMotionRegistry(),
+}: CreateMotionScopeControllerOptions): MotionScopeValue {
+  const hostIds = new Map<string, symbol>();
+
+  const register = (input: MotionRegisterInput) => registry.register(input);
+
+  const registerTarget = (slot: string, node: HTMLElement | null) => {
+    let id = hostIds.get(slot);
+    if (!id) {
+      id = Symbol(`host:${slot}`);
+      hostIds.set(slot, id);
+    }
+    register({ id, slot, node });
+  };
+
+  const resolve = (slot: string, phase: MotionPhaseName, partMotion?: MotionPartPhases) =>
+    resolveSlotPhase(slot, phase, partMotion, getRootMotion(), getDefaults());
+
+  const play = (
+    slot: string,
+    phase: MotionPhaseName,
+    options?: PlaySlotPhaseOptions,
+  ): MotionRun => {
+    const el = options?.el ?? registry.getTarget(slot);
+    const reg = registry.find(slot, el);
+    const partMotion = options?.partMotion ?? reg?.motion;
+    const value = resolveSlotPhase(slot, phase, partMotion, getRootMotion(), getDefaults());
+    const resolvedValue = options?.partValue !== undefined ? options.partValue : value;
+    return runMotionPhase({
+      el,
+      phase,
+      value: resolvedValue,
+      targets: registry.snapshotTargets(),
+      getTarget: registry.getTarget,
+      getTargets: registry.getTargets,
+      params: getParams(),
+      complete: options?.complete,
+      waitForComplete: options?.waitForComplete,
+      slot,
+      config: getConfig?.(),
+    });
+  };
+
+  const playBroadcast = async (phase: MotionPhaseName, options?: PlayBroadcastOptions) => {
+    const exclude = new Set(options?.exclude ?? []);
+    const extra = options?.extraPartMotion;
+    const byNode = new Map<HTMLElement, MotionRegistration[]>();
+    for (const reg of registry.getRegistrations()) {
+      if (exclude.has(reg.slot)) continue;
+      const list = byNode.get(reg.node);
+      if (list) list.push(reg);
+      else byNode.set(reg.node, [reg]);
+    }
+    const results: MotionRun[] = [];
+    for (const regs of byNode.values()) {
+      const chosen =
+        [...regs].reverse().find((reg) => reg.motion != null) ?? regs[regs.length - 1];
+      const partMotion = extra?.[chosen.slot] ?? chosen.motion;
+      const value = resolveSlotPhase(
+        chosen.slot,
+        phase,
+        partMotion,
+        getRootMotion(),
+        getDefaults(),
+      );
+      if (value === undefined || value === false) continue;
+      results.push(
+        play(chosen.slot, phase, {
+          partMotion,
+          el: chosen.node,
+          waitForComplete: options?.waitForComplete,
+        }),
+      );
+    }
+    if (options?.waitForComplete) {
+      await Promise.all(results.map((r) => r.finished));
+    }
+    options?.complete?.();
+  };
+
+  return {
+    getRootMotion,
+    getDefaults,
+    getParams,
+    getTarget: registry.getTarget,
+    getTargets: registry.getTargets,
+    getRegistrations: registry.getRegistrations,
+    registerTarget,
+    register,
+    resolve,
+    play,
+    playBroadcast,
+  };
+}
 
 export function createMotionScope(debugName: string) {
   const MotionScopeContext = createContext<MotionScopeValue | null>(null);
@@ -53,128 +187,33 @@ export function createMotionScope(debugName: string) {
   }: {
     motion?: MotionSlotMap;
     defaults?: MotionSlotMap;
-    params?: Record<string, unknown>;
+    params?: MotionRecipeParams;
     children: ReactNode;
   }) {
-    const targetsRef = useRef<Record<string, HTMLElement | null>>({});
-    const partMotionRef = useRef<MotionSlotMap>({});
     const motionRef = useRef(motion);
     const defaultsRef = useRef(defaults);
-    const paramsRef = useRef(params ?? {});
+    const paramsRef = useRef<MotionRecipeParams>(params ?? {});
     motionRef.current = motion;
     defaultsRef.current = defaults;
     paramsRef.current = params ?? {};
 
-    const registerTarget = useCallback((slot: string, node: HTMLElement | null) => {
-      if (node) {
-        targetsRef.current[slot] = node;
-        return;
-      }
-      delete targetsRef.current[slot];
-    }, []);
+    const config = useMotionConfig();
+    const configRef = useRef(config);
+    configRef.current = config;
 
-    const registerPartMotion = useCallback((slot: string, part: MotionPartPhases | undefined) => {
-      if (part) {
-        partMotionRef.current[slot] = part;
-        return;
-      }
-      delete partMotionRef.current[slot];
-    }, []);
-
-    const resolve = useCallback(
-      (slot: string, phase: string, partMotion?: MotionPartPhases) =>
-        resolveSlotPhase(
-          slot,
-          phase,
-          partMotion ?? partMotionRef.current[slot],
-          motionRef.current,
-          defaultsRef.current,
-        ),
+    const controller = useMemo(
+      () =>
+        createMotionScopeController({
+          getRootMotion: () => motionRef.current,
+          getDefaults: () => defaultsRef.current,
+          getParams: () => paramsRef.current,
+          getConfig: () => configRef.current,
+        }),
       [],
-    );
-
-    const play = useCallback(
-      (slot: string, phase: string, options?: PlaySlotPhaseOptions): RunMotionPhaseResult => {
-        const partMotion = options?.partMotion ?? partMotionRef.current[slot];
-        const value = resolveSlotPhase(
-          slot,
-          phase,
-          partMotion,
-          motionRef.current,
-          defaultsRef.current,
-        );
-        const resolvedValue = options?.partValue !== undefined ? options.partValue : value;
-        const el = options?.el ?? targetsRef.current[slot] ?? null;
-        return runMotionPhase({
-          el,
-          phase,
-          value: resolvedValue,
-          targets: targetsRef.current,
-          params: paramsRef.current,
-          complete: options?.complete,
-          waitForComplete: options?.waitForComplete,
-          slot,
-        });
-      },
-      [],
-    );
-
-    const playBroadcast = useCallback(
-      async (phase: string, options?: PlayBroadcastOptions) => {
-        const exclude = new Set(options?.exclude ?? []);
-        const slots = new Set([
-          ...Object.keys(defaultsRef.current ?? {}),
-          ...Object.keys(motionRef.current ?? {}),
-          ...Object.keys(targetsRef.current),
-          ...Object.keys(options?.extraPartMotion ?? {}),
-        ]);
-        const results: RunMotionPhaseResult[] = [];
-        for (const slot of slots) {
-          if (exclude.has(slot)) continue;
-          const partMotion = options?.extraPartMotion?.[slot] ?? partMotionRef.current[slot];
-          const value = resolveSlotPhase(
-            slot,
-            phase,
-            partMotion,
-            motionRef.current,
-            defaultsRef.current,
-          );
-          if (value === undefined || value === false) continue;
-          const el = targetsRef.current[slot];
-          if (!el) continue;
-          results.push(
-            play(slot, phase, {
-              partMotion,
-              el,
-              waitForComplete: options?.waitForComplete,
-            }),
-          );
-        }
-        if (options?.waitForComplete) {
-          await Promise.all(results.map((r) => r.finished));
-        }
-        options?.complete?.();
-      },
-      [play],
-    );
-
-    const value = useMemo<MotionScopeValue>(
-      () => ({
-        getRootMotion: () => motionRef.current,
-        getDefaults: () => defaultsRef.current,
-        getParams: () => paramsRef.current,
-        getTargets: () => targetsRef.current,
-        registerTarget,
-        registerPartMotion,
-        resolve,
-        play,
-        playBroadcast,
-      }),
-      [play, playBroadcast, registerPartMotion, registerTarget, resolve],
     );
 
     return (
-      <MotionScopeContext.Provider value={value}>{children}</MotionScopeContext.Provider>
+      <MotionScopeContext.Provider value={controller}>{children}</MotionScopeContext.Provider>
     );
   }
 
@@ -197,8 +236,27 @@ export function createMotionScope(debugName: string) {
   };
 }
 
-export function killMotionTargets(targets: Record<string, HTMLElement | null>): void {
-  for (const el of Object.values(targets)) {
-    if (el) killStoredMotion(el);
+export function killMotionScope(scope: Pick<MotionScopeValue, "getRegistrations">): void {
+  const seen = new Set<HTMLElement>();
+  for (const reg of scope.getRegistrations()) {
+    if (seen.has(reg.node)) continue;
+    seen.add(reg.node);
+    killStoredMotion(reg.node);
+  }
+}
+
+/** Hide nested enter slots that start hidden so they do not FOUC. */
+export function hideNestedEnterSlots(
+  scope: MotionScopeValue,
+  exclude: readonly string[],
+): void {
+  const skip = new Set(exclude);
+  const seen = new Set<HTMLElement>();
+  for (const reg of scope.getRegistrations()) {
+    if (skip.has(reg.slot)) continue;
+    if (seen.has(reg.node)) continue;
+    seen.add(reg.node);
+    if (!enterHidesFirstPaint(scope.resolve(reg.slot, "enter", reg.motion))) continue;
+    gsap.set(reg.node, { autoAlpha: 0, force3D: false });
   }
 }

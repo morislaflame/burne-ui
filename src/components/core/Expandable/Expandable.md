@@ -121,7 +121,7 @@ Compound определяется автоматически при наличи
 
 `false` на фазе → мгновенное состояние (height/rotation), без твина. Первый paint: `useCollapsibleShellRef` / `data-chevron-init`.
 
-Своё раскрытие — factory на `panelShell`. Закрытое состояние кита всё равно `height: 0`; factory должна вернуть tween 0 ↔ измеренная высота (`ctx.targets.panelInner.scrollHeight`) и на `enter` complete снять inline `height` (`clearProps`), иначе панель залипнет.
+Своё раскрытие — factory на `panelShell`. Закрытое состояние кита всё равно `height: 0`; factory должна вернуть tween 0 ↔ измеренная высота (снимок `scrollHeight` **до** `fromTo`, не `height: () => …`) и на `enter` complete снять inline `height` (`clearProps`), иначе панель залипнет.
 
 ```tsx
 <Expandable
@@ -130,11 +130,12 @@ Compound определяется автоматически при наличи
     panelShell: {
       enter: (ctx) => {
         ctx.el.style.overflow = "hidden";
+        const height = ctx.targets.panelInner?.scrollHeight ?? 0;
         return gsap.fromTo(
           ctx.el,
           { height: 0 },
           {
-            height: () => ctx.targets.panelInner?.scrollHeight ?? 0,
+            height,
             duration: 0.55,
             ease: "back.out(1.4)",
             onComplete: () => {

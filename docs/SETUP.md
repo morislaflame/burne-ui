@@ -187,7 +187,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
 - **ThemeProvider** — `data-theme` (`light` | `dark` | `system`), опционально `localStorage`
 - **токены** — shared `config.tokens` + цвета `config.colors.light` / `colors.dark` (или проп `tokens`)
-- **motion** — `configureMotion` из `config.motion`
+- **motion** — overlay `config.motion` на это дерево (`MotionConfigProvider`); `configureMotion()` — app default
 - **labels** — дефолтные accessible / UI-строки (`Close`, `Search`, Pagination…); проп `labels` или `config.labels`
 - **Toast.Provider** — по умолчанию включён (`toast={false}` чтобы отключить)
 
@@ -480,11 +480,15 @@ const ripple = colorToken("converge-ripple-neutral"); // var(--color-converge-ri
 
 ---
 
-## 8. Глобальная конфигурация анимаций (`configureMotion`)
+## 8. Конфигурация анимаций (`configureMotion` + scoped overlay)
 
-Burne UI использует **GSAP**. Поведение hover-lift, press-squeeze, ripple, async-кнопок, Loading dots и др. настраивается через **`configureMotion()`** из `burne-ui`.
+Burne UI использует **GSAP**. Поведение hover-lift, press-squeeze, ripple, async-кнопок, Loading dots и др. настраивается через overlay на дереве и опциональный app default.
 
-### Где вызывать
+**Канон приложения:** knobs в `burne-theme.ts` (`config.motion`) → `<BurneUIProvider config={burneTheme}>`. Overlay на это дерево (`MotionConfigProvider`); отдельный `configureMotion()` не нужен. Обычное приложение = один провайдер. Два `BurneUIProvider` на странице могут иметь разный motion, как разные цвета. Порталы наследуют config через React context.
+
+`applyThemeTokens` пишет только CSS `--motion-surface-duration` на переданный root и **не** вызывает `configureMotion` (CSS без провайдера **не** меняет GSAP). Theme editor (playground / site) после apply сам зовёт `configureMotion(motionConfigFromThemeState(state))`.
+
+### App default: где вызывать `configureMotion`
 
 | Среда | Место |
 |-------|--------|
@@ -532,9 +536,11 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 | Master kill-switch | `enableAnimations` — `false` отключает все feature-флаги одним ключом (`isMotionFeatureEnabled`) |
 | Feature flags | `enableHoverLift`, `enablePressSqueeze`, `enableRipple`, `enableAsyncButtonCrossfade`, `enableToggleButtonFill`, `enableExpandable`, `enableToastStack`, `enableContentFade`, `enableFeedbackExpand`, `enableProgressFill`, `enableLoadingDots`, `enableModalMotion`, `enableSwitchThumb`, `enableTabsIndicator`, `enablePaginationFlip`, `enableSelectionFill` |
 
-Дефолты: **`MOTION_CONFIG_DEFAULTS`** (`motionConfig.ts`) — единственный источник; theme `MOTION_DEFAULTS` импортирует их (с `pressSqueezeMid` вместо кортежа).
+Дефолты: **`MOTION_CONFIG_DEFAULTS`** (`motionConfig.ts`) — единственный источник; theme `MOTION_DEFAULTS` импортирует их (с `pressSqueezeMid` вместо кортежа). Диапазоны валидации — **`MOTION_CONFIG_LIMITS`**.
 
-Библиотека учитывает **`prefers-reduced-motion: reduce`**.
+`configureMotion` безопасен на SSR (`document` не читается). Невалидные поля пропускаются (dev `console.warn`), finite вне диапазона клампятся; остальные overrides применяются. `*Ease` — GSAP passthrough; `rippleEaseCss` — только `cubic-bezier(...)`.
+
+Библиотека учитывает **`prefers-reduced-motion: reduce`**. Config, overlay и OS reduced-motion читаются на **новом play**; уже идущая фаза (hover / modal enter) доигрывает со снимком старта. Циклы вроде Loading dots / ProgressBar indeterminate пересобираются, потому что их эффект подписан на `useMotionConfig()`.
 
 ### Open-after-squeeze
 
@@ -563,7 +569,7 @@ configureMotion({
 
 ### Важно при live-theme builder
 
-Если `configureMotion()` вызывается при каждом движении слайдера темы, **дедуплируйте** вызовы с одинаковыми значениями: каждый вызов увеличивает revision и пересоздаёт GSAP-тween'ы у подписчиков (Loading dots и др.), что нагружает CPU.
+Если `configureMotion()` вызывается при каждом движении слайдера темы, **дедуплируйте** вызовы с одинаковыми значениями: каждый вызов увеличивает revision и пересоздаёт GSAP-тween'ы у React-подписчиков (Loading dots и др.), что нагружает CPU. Уже идущие slot-фазы (hover-lift, enter диалога) **не** пересобираются — действует следующий play.
 
 ---
 
@@ -651,10 +657,13 @@ import { cn } from "burne-ui";
 - Типично для **SSR** со старым `burne-ui` без first-paint hide async-слоёв (Tailwind `invisible opacity-0` до `asyncMotionReady`) — обновите пакет.
 - Проверьте, что `enableAsyncButtonCrossfade` не отключён без альтернативного скрытия слоёв.
 
-### Анимации не меняются после `configureMotion`
+### Анимации не меняются после `configureMotion` / темы
 
-- Вызов слишком поздно (`useEffect` после paint) — используйте `useLayoutEffect`.
+- Канон — `config.motion` на `BurneUIProvider`. Голый `applyThemeTokens` без провайдера пишет только CSS `--motion-surface-duration`, GSAP не трогает.
+- Уже идущая фаза (hover / enter) не пересобирается — config действует со **следующего** play.
+- `configureMotion` слишком поздно (`useEffect` после paint) — используйте `useLayoutEffect`.
 - Вызов не в client boundary (`"use client"`).
+- Поле отброшено валидацией (`NaN` / не boolean / пустой ease) — в dev смотрите `console.warn`; диапазоны в `MOTION_CONFIG_LIMITS`.
 
 ### Высокая нагрузка CPU в dev (Next.js)
 
@@ -672,10 +681,10 @@ import { cn } from "burne-ui";
 - [ ] Актуальный `burne-ui` (gloss blur CSS + Button async first-paint hide); для тяжёлых demo можно `ssr: false`
 - [ ] (SSR / Next.js) `ThemeScript` в root layout + `suppressHydrationWarning` на `<html>`
 - [ ] (Опционально) Override-токены в отдельном CSS после импорта пакета
-- [ ] (Опционально) `configureMotion(...)` в client-провайдере через `useLayoutEffect`
+- [ ] (Опционально) motion: `config.motion` в `burne-theme.ts` / проп `motion` на `BurneUIProvider`, либо app default `configureMotion(...)` в client-провайдере через `useLayoutEffect`
 - [ ] (Если нужны toast) `Toast.Provider` в корне
 
-После этого библиотека готова к использованию; кастомизация — через CSS-токены на `:root` / `[data-theme="light"]` и `configureMotion()`.
+После этого библиотека готова к использованию; кастомизация — через CSS-токены на `:root` / `[data-theme="light"]`, `config.motion` на `BurneUIProvider` и при необходимости `configureMotion()`.
 
 ---
 

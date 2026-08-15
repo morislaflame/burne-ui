@@ -58,8 +58,11 @@ export function useColorSliderTrackMotion({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "track");
-  useSlotPhaseOnChange(scope, "track", valueIdentity, { phase: "change" });
+  useOptionalEnterOnMount(scope, "track", part.targetRef);
+  useSlotPhaseOnChange(scope, "track", valueIdentity, {
+    phase: "change",
+    target: part.targetRef,
+  });
   return part;
 }
 
@@ -80,6 +83,6 @@ export function useColorSliderRootMotion({
     pointerPhases: pointer,
     pressPhases: pointer,
   });
-  useOptionalEnterOnMount(scope, "root");
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
   return part;
 }

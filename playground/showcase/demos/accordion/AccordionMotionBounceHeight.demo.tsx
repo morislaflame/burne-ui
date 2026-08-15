@@ -29,6 +29,7 @@ export function AccordionMotionBounceHeightDemo() {
             killMotion(ctx.el);
             ctx.el.style.overflow = "hidden";
             const inner = ctx.targets.panelInner;
+            const height = innerHeight(ctx);
             const tl = gsap.timeline({
               defaults: { overwrite: "auto", force3D: false },
             });
@@ -36,7 +37,7 @@ export function AccordionMotionBounceHeightDemo() {
               ctx.el,
               { height: 0 },
               {
-                height: () => innerHeight(ctx),
+                height,
                 duration: 0.55,
                 ease: "back.out(1.4)",
                 onComplete: () => releaseOpen(ctx.el),

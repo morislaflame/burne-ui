@@ -171,7 +171,7 @@ export const CustomClassNames: Story = {
         root: "rounded-mid ring-1 ring-danger/25",
         fill: "bg-danger/20",
         content: "gap-small",
-        icon: "text-danger",
+        iconStart: "text-danger",
         text: "font-semibold text-danger",
       }}
     >

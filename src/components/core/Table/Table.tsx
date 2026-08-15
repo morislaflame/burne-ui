@@ -87,8 +87,20 @@ function TableRootSurface({
   rest: Omit<TableProps, "variant" | "className" | "classNames" | "children" | "motion">;
   children: TableProps["children"];
 }) {
+  const {
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...domRest
+  } = rest;
   const bindGlossRef = useMergedGlossPanelRef(forwardedRef, isGloss);
-  const part = useTableSlotMotion<HTMLDivElement>("root");
+  const part = useTableSlotMotion<HTMLDivElement>("root", {
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+  });
   const setRootRef = useCallback(
     (node: HTMLDivElement | null) => {
       bindGlossRef(node);
@@ -105,8 +117,8 @@ function TableRootSurface({
         slotClass,
         className,
       })}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
     >
       {isGloss ? (
         <div className={cn(TABLE_GLOSS_CONTENT_CLASS, glossClass)}>

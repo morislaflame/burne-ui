@@ -145,7 +145,7 @@ export function ToggleButtonIconStart({
   const size = ctx?.size ?? "base";
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalToggleButtonMotionScope(),
-    slot: "icon",
+    slot: "iconStart",
     motion,
     pointerPhases: true,
     onPointerOver,
@@ -155,7 +155,7 @@ export function ToggleButtonIconStart({
   return (
     <span
       ref={setRef}
-      className={toggleButtonIconClass(size, cn(slotClassNames.icon, className))}
+      className={toggleButtonIconClass(size, cn(slotClassNames.iconStart, className))}
       aria-hidden
       {...rest}
       {...pointerHandlers}
@@ -180,7 +180,7 @@ export function ToggleButtonIconEnd({
   const size = ctx?.size ?? "base";
   const { setRef, pointerHandlers } = useMotionPart<HTMLSpanElement>({
     scope: useOptionalToggleButtonMotionScope(),
-    slot: "icon",
+    slot: "iconEnd",
     motion,
     pointerPhases: true,
     onPointerOver,
@@ -190,7 +190,7 @@ export function ToggleButtonIconEnd({
   return (
     <span
       ref={setRef}
-      className={toggleButtonIconClass(size, cn(slotClassNames.icon, className))}
+      className={toggleButtonIconClass(size, cn(slotClassNames.iconEnd, className))}
       aria-hidden
       {...rest}
       {...pointerHandlers}

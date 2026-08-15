@@ -28,6 +28,7 @@ import {
   shadowNone,
   shouldSkipInteractiveHoverLift,
 } from "./hoverInteractiveLift";
+import { useMotionConfig } from "./motionConfigContext";
 import { prefersReducedMotion } from "./reducedMotion";
 import { shadowMotionFor } from "./useShadowMotion";
 import { mergeForwardedRef } from "./mergeRefs";
@@ -72,6 +73,7 @@ export function useFirstLevelInteractiveMotion({
   onKeyDown: onKeyDownProp,
   onPressReleaseStart,
 }: UseFirstLevelInteractiveMotionProps) {
+  const config = useMotionConfig();
   const btnRef = useRef<HTMLButtonElement>(null);
   const contentMotionRef = useRef<HTMLSpanElement>(null);
   const hoverPointerInsideRef = useRef(false);
@@ -138,6 +140,7 @@ export function useFirstLevelInteractiveMotion({
         hoverPointerInsideRef,
         undefined,
         onPressReleaseStart,
+        { config },
       );
       return;
     }
@@ -146,40 +149,41 @@ export function useFirstLevelInteractiveMotion({
       pointerInside: hoverPointerInsideRef,
       shadow: useContentRef ? undefined : btnShadow,
       onReleaseStart: onPressReleaseStart,
+      config,
     });
-  }, [btnShadow, isGloss, motionTarget, onPressReleaseStart, useContentRef]);
+  }, [btnShadow, config, isGloss, motionTarget, onPressReleaseStart, useContentRef]);
 
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerEnterProp?.(e);
       if (!enabled || e.defaultPrevented) return;
-      if (shouldSkipInteractiveHoverLift()) return;
+      if (shouldSkipInteractiveHoverLift(config)) return;
       const el = motionTarget();
       if (!el) return;
       hoverPointerInsideRef.current = true;
       if (isGloss && !useContentRef) {
-        animateGlossInteractiveHoverLift(el, true);
+        animateGlossInteractiveHoverLift(el, true, undefined, config);
       } else {
-        animateInteractiveHoverLift(el, true, undefined, useContentRef ? undefined : btnShadow);
+        animateInteractiveHoverLift(el, true, undefined, useContentRef ? undefined : btnShadow, config);
       }
     },
-    [btnShadow, enabled, isGloss, motionTarget, onPointerEnterProp, useContentRef],
+    [btnShadow, config, enabled, isGloss, motionTarget, onPointerEnterProp, useContentRef],
   );
 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeaveProp?.(e);
       hoverPointerInsideRef.current = false;
-      if (!enabled || shouldSkipInteractiveHoverLift()) return;
+      if (!enabled || shouldSkipInteractiveHoverLift(config)) return;
       const el = motionTarget();
       if (!el) return;
       if (isGloss && !useContentRef) {
-        animateGlossInteractiveHoverLift(el, false);
+        animateGlossInteractiveHoverLift(el, false, undefined, config);
       } else {
-        animateInteractiveHoverLift(el, false, undefined, useContentRef ? undefined : btnShadow);
+        animateInteractiveHoverLift(el, false, undefined, useContentRef ? undefined : btnShadow, config);
       }
     },
-    [btnShadow, enabled, isGloss, motionTarget, onPointerLeaveProp, useContentRef],
+    [btnShadow, config, enabled, isGloss, motionTarget, onPointerLeaveProp, useContentRef],
   );
 
   const handlePointerDown = useCallback(

@@ -1,7 +1,8 @@
 import { createContext, createElement, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
+import { configureMotion } from "../src";
 import { applyColorPresetToState, applyThemeModeToState } from "./colorPresets";
-import { applyThemeTokens, clearThemeInlineTokens, createDefaultEditorState, exportThemeCss, MOTION_DEFAULTS, SCALE_DEFAULTS, type ThemeColorKey, type ThemeEditorState, type ThemeFontWeightKey, type ThemeMode, type ThemeStatusForegroundKey } from "./themeDefaults";
+import { applyThemeTokens, clearThemeInlineTokens, createDefaultEditorState, exportThemeCss, MOTION_DEFAULTS, SCALE_DEFAULTS, motionConfigFromThemeState, type ThemeColorKey, type ThemeEditorState, type ThemeFontWeightKey, type ThemeMode, type ThemeStatusForegroundKey } from "./themeDefaults";
 import { applyThemePresetToState, LAYOUT_PRESETS, type LayoutPresetKey, type ThemePresetKey } from "./themePresets";
 import type { ColorPresetKey } from "./colorPresets";
 import { shuffleThemeState } from "./shuffleThemeState";
@@ -26,6 +27,7 @@ function useThemeTokensState() {
 
   useEffect(() => {
     void applyThemeTokens(state);
+    configureMotion(motionConfigFromThemeState(state));
   }, [state]);
 
   useEffect(() => {

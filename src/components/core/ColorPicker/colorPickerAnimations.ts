@@ -7,7 +7,8 @@
  * Not slots: area thumb `left`/`top` drag geometry (kit-internal).
  * Root is a portal-host map. Host `ColorPicker.Content` plays optional `enter`
  * on `contentPanel`; `change` plays on `area` when hex updates (excludes `areaThumb`).
- * Defaults: empty.
+ * Area / areaThumb: user pointer → motion press → drag (`useColorPickerAreaDrag`)
+ * unless `defaultPrevented`. Defaults: empty.
  */
 import { useCallback, useEffect, useRef } from "react";
 import type { ForwardedRef } from "react";
@@ -71,7 +72,7 @@ export function useColorPickerSlotMotion<T extends HTMLElement>(
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(playEnter ? scope : null, slot);
+  useOptionalEnterOnMount(playEnter ? scope : null, slot, part.targetRef);
   return part;
 }
 

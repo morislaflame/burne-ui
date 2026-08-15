@@ -17,7 +17,8 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   mergeMotionPointerHandlers,
@@ -110,6 +111,7 @@ export function useButtonAnimations({
   onPointerUp,
   onKeyDown,
 }: UseButtonAnimationsProps) {
+  const config = useMotionConfig();
   const labelRef = useRef<HTMLSpanElement>(null);
   const loaderRef = useRef<HTMLSpanElement>(null);
   const successRef = useRef<HTMLSpanElement>(null);
@@ -317,8 +319,8 @@ export function useButtonAnimations({
     if (!label || !loader || !success || !error) return;
 
     const reduceMotion =
-      prefersReducedMotion() || !isMotionFeatureEnabled("enableAsyncButtonCrossfade");
-    const vars = motionInteractive();
+      prefersReducedMotion() || !isMotionFeatureEnabledFor(config, "enableAsyncButtonCrossfade");
+    const vars = motionInteractiveFor(config);
 
     const layers = [
       { el: label, active: asyncState === "idle", scaleIn: 1, scaleOut: 0.92 },
@@ -359,7 +361,7 @@ export function useButtonAnimations({
         overwrite: "auto",
       });
     }
-  }, [asyncState]);
+  }, [asyncState, config]);
 
   const createAsyncClickHandler = useCallback(
     (

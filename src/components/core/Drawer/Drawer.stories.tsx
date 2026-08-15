@@ -1,10 +1,15 @@
 import type { ComponentType } from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen, waitFor } from "storybook/test";
+import { expect } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
+import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
+import {
+  playKeyboardOpensDialog,
+  playOpenCloseUnmounts,
+} from "@/stories-utils/motionStoryPlay";
 
 import { Drawer, type DrawerPlacement, type DrawerExtent } from ".";
 import { useDrawer } from "./drawerContext";
@@ -109,6 +114,14 @@ export const WithTrigger: Story = {
       </Drawer>
     );
   },
+  play: async ({ canvas, userEvent }) => {
+    await playKeyboardOpensDialog({
+      canvas,
+      userEvent,
+      triggerName: "Open Drawer",
+      dialogName: "Settings",
+    });
+  },
 };
 
 function DrawerUncontrolledClose() {
@@ -189,11 +202,50 @@ export const OpenCloseInteraction: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Open Drawer" }));
-    await expect(await screen.findByRole("dialog", { name: "Settings" })).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await playOpenCloseUnmounts({
+      canvas,
+      userEvent,
+      openName: "Open Drawer",
+      closeName: "Cancel",
+      dialogName: "Settings",
+    });
+  },
+};
+
+export const ReducedMotionOpenClose: Story = {
+  name: "Motion contract: reduced motion",
+  render: function ReducedMotionDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <MotionConfigProvider motion={{ enableAnimations: false }}>
+        <Button onClick={() => setOpen(true)}>Open Drawer</Button>
+        <Drawer open={open} onOpenChange={setOpen}>
+          <Drawer.Panel>
+            <Drawer.Header>
+              <Drawer.HeadingBlock>
+                <Drawer.Title>Settings</Drawer.Title>
+                <Drawer.Description>Choose the required options.</Drawer.Description>
+              </Drawer.HeadingBlock>
+              <Drawer.Close />
+            </Drawer.Header>
+            <Drawer.Body>
+              <p className="text-base text-muted">Arbitrary content inside the body.</p>
+            </Drawer.Body>
+            <Drawer.Footer>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+            </Drawer.Footer>
+          </Drawer.Panel>
+        </Drawer>
+      </MotionConfigProvider>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await playOpenCloseUnmounts({
+      canvas,
+      userEvent,
+      openName: "Open Drawer",
+      closeName: "Cancel",
+      dialogName: "Settings",
     });
   },
 };

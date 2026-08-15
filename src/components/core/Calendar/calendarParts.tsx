@@ -6,7 +6,8 @@ import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
-import { motionContentFade } from "@/components/core/utils/motionConfig";
+import { motionContentFadeFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 
 import { Button } from "@/components/core/Button";
 import { Text } from "@/components/core/Text";
@@ -53,6 +54,7 @@ import type {
 import { useCalendarDayCellModels, useCalendarHeaderTitle, useCalendarMonthCellModels, useCalendarYearCellModels } from "./useCalendarViewModels";
 
 function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
+  const config = useMotionConfig();
   const slotClassNames = useCalendarClassNames();
   const ref = useRef<HTMLDivElement>(null);
   const firstLayoutRef = useRef(true);
@@ -81,10 +83,10 @@ function CalendarRangeHalfFill({ visible, side }: CalendarRangeHalfFillProps) {
     killMotion(el);
     gsap.to(el, {
       autoAlpha: visible ? 1 : 0,
-      ...motionContentFade(),
+      ...motionContentFadeFor(config),
       overwrite: "auto",
     });
-  }, [visible]);
+  }, [config, visible]);
 
   return (
     <div

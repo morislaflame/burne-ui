@@ -12,14 +12,16 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import { clearWillChangeOnComplete, gsap, killMotion, killMotionGeometry, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
-  isMotionFeatureEnabled,
-  motionProgressFill,
-  motionProgressIndeterminate,
+  isMotionFeatureEnabledFor,
+  motionProgressFillFor,
+  motionProgressIndeterminateFor,
 } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
   type MotionScopeValue,
+  type MotionTransformVars,
 } from "@/components/core/utils/slotMotion";
 
 import type { ProgressBarMotion, UseProgressBarFillAnimationProps } from "./progressBarTypes";
@@ -51,6 +53,7 @@ export function useProgressBarFillAnimation({
   percent,
   isHorizontal,
 }: UseProgressBarFillAnimationProps) {
+  const config = useMotionConfig();
   const fillRef = useRef<HTMLSpanElement>(null);
   const firstLayoutRef = useRef(true);
   const reduceMotion = usePrefersReducedMotion();
@@ -62,7 +65,7 @@ export function useProgressBarFillAnimation({
 
     const targetScale = clampUnit(percent / 100);
     const origin = isHorizontal ? "left center" : "bottom center";
-    const scaleVars = isHorizontal
+    const scaleVars: MotionTransformVars = isHorizontal
       ? { scaleX: targetScale, scaleY: 1, x: 0, y: 0 }
       : { scaleX: 1, scaleY: targetScale, x: 0, y: 0 };
 
@@ -77,7 +80,7 @@ export function useProgressBarFillAnimation({
 
     if (
       reduceMotion ||
-      !isMotionFeatureEnabled("enableProgressFill") ||
+      !isMotionFeatureEnabledFor(config, "enableProgressFill") ||
       firstLayoutRef.current
     ) {
       firstLayoutRef.current = false;
@@ -91,11 +94,11 @@ export function useProgressBarFillAnimation({
     void gsap.to(fill, {
       ...scaleVars,
       transformOrigin: origin,
-      ...motionProgressFill(),
+      ...motionProgressFillFor(config),
       overwrite: "auto",
       onComplete: clearWillChangeOnComplete(fill),
     });
-  }, [indeterminate, isHorizontal, percent, reduceMotion]);
+  }, [config, indeterminate, isHorizontal, percent, reduceMotion]);
 
   useLayoutEffect(() => {
     if (!indeterminate) return;
@@ -105,7 +108,7 @@ export function useProgressBarFillAnimation({
 
     killMotionGeometry(fill);
 
-    if (reduceMotion || !isMotionFeatureEnabled("enableProgressFill")) {
+    if (reduceMotion || !isMotionFeatureEnabledFor(config, "enableProgressFill")) {
       gsap.set(fill, { clearProps: "transform" });
       return;
     }
@@ -123,7 +126,7 @@ export function useProgressBarFillAnimation({
         isHorizontal ? { x: -fillSize } : { y: fillSize },
         {
           ...(isHorizontal ? { x: trackSize } : { y: -trackSize }),
-          ...motionProgressIndeterminate(),
+          ...motionProgressIndeterminateFor(config),
           repeat: -1,
           overwrite: "auto",
         },
@@ -139,7 +142,7 @@ export function useProgressBarFillAnimation({
     ro.observe(fill);
 
     return () => ro.disconnect();
-  }, [indeterminate, isHorizontal, reduceMotion]);
+  }, [config, indeterminate, isHorizontal, reduceMotion]);
 
   useEffect(() => {
     const fill = fillRef.current;

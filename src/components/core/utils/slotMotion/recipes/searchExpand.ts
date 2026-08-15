@@ -1,4 +1,4 @@
-import { isMotionEnabled } from "@/components/core/utils/motionConfig";
+import { isMotionEnabledFor } from "@/components/core/utils/motionConfig";
 import {
   animateSearchIconShift,
   animateSearchShellExpand,
@@ -28,29 +28,29 @@ function metricsOf(ctx: MotionContext): SearchExpandMetrics | null {
   return { targetW, collapsedDim, expandedRadius, padX, iconBox, iconLeftCollapsedCss };
 }
 
-/** Shell width + radius. `enter` expands, `leave` collapses. Layout tween — not public MotionVars. */
+/** FLIP: layout width snaps, visual `scaleX`. `enter` expands, `leave` collapses. */
 export function searchExpandRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const metrics = metricsOf(ctx);
   if (!metrics) return undefined;
   const open = ctx.phase === "enter";
   const icon = ctx.targets.icon ?? null;
-  if (ctx.reduced || !isMotionEnabled()) {
+  if (ctx.reduced || !isMotionEnabledFor(ctx.config)) {
     applySearchExpandInstant(ctx.el, icon, open, metrics);
     return undefined;
   }
-  return animateSearchShellExpand(ctx.el, open, metrics) as unknown as MotionAnimation;
+  return animateSearchShellExpand(ctx.el, open, metrics, ctx.config) as unknown as MotionAnimation;
 }
 
-/** Icon `left` during expand/collapse. */
+/** Icon layout `left` snaps; visual FLIP is `x` (counters parent `scaleX`). */
 export function searchIconShiftRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const metrics = metricsOf(ctx);
   if (!metrics) return undefined;
   const open = ctx.phase === "enter";
-  if (ctx.reduced || !isMotionEnabled()) {
+  if (ctx.reduced || !isMotionEnabledFor(ctx.config)) {
     ctx.el.style.left = open ? `${metrics.padX}px` : metrics.iconLeftCollapsedCss;
     return undefined;
   }
   const shell = ctx.targets.root;
   if (!(shell instanceof HTMLElement)) return undefined;
-  return animateSearchIconShift(ctx.el, shell, open, metrics) as unknown as MotionAnimation;
+  return animateSearchIconShift(ctx.el, shell, open, metrics, ctx.config) as unknown as MotionAnimation;
 }

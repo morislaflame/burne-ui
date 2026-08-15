@@ -6,6 +6,7 @@ import { Text } from "@/components/core/Text";
 import { burneLightThemePortalProps } from "@/components/core/utils/burneLightTheme";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { resolvePortalContainer } from "@/components/core/utils/portalContainer";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 import { TOOLTIP_ARROW_CLASS } from "@/components/core/Tooltip/tooltipPosition";
@@ -36,6 +37,7 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       usePopoverContext("Popover.Trigger");
     const slotClassNames = usePopoverClassNames();
     const openingRef = useOpeningRef();
+    const config = useMotionConfig();
 
     const mergedRef = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -50,9 +52,9 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
       },
-      [open, openingRef, triggerRef, setOpen],
+      [open, openingRef, triggerRef, setOpen, config],
     );
 
     const handleClick = useCallback(
@@ -72,11 +74,11 @@ export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>
           event.preventDefault();
           if (open) setOpen(false);
           else {
-            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
           }
         }
       },
-      [onKeyDown, open, openingRef, setOpen, triggerRef],
+      [onKeyDown, open, openingRef, setOpen, triggerRef, config],
     );
 
     const onlyChild =

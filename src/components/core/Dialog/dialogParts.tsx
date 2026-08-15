@@ -8,6 +8,7 @@ import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { focusElement } from "@/components/core/utils/focusElement";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
 
@@ -295,6 +296,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
     const slotClassNames = useDialogClassNames();
     const triggerRef = useRef<HTMLElement | null>(null);
     const openingRef = useOpeningRef();
+    const config = useMotionConfig();
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -312,9 +314,9 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         // and skips its own animation (we drive it from here instead).
         e.preventDefault();
         focusElement(triggerRef.current);
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
       },
-      [open, openingRef, triggerRef, onOpenChange],
+      [open, openingRef, triggerRef, onOpenChange, config],
     );
 
     const handleKeyDown = useCallback(
@@ -324,9 +326,9 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
         if (e.key !== "Enter" && e.key !== " ") return;
         // Suppress native click + child Button keyboard squeeze — Trigger drives open.
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
       },
-      [onKeyDown, open, openingRef, onOpenChange, triggerRef],
+      [onKeyDown, open, openingRef, onOpenChange, triggerRef, config],
     );
 
     const handleClick = useCallback(

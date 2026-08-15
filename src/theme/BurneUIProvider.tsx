@@ -1,6 +1,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import type { MotionConfig } from "@/components/core/utils/motionConfig";
+import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
 import { Toast } from "@/components/core/Toast";
 import type { ToastProviderProps } from "@/components/core/Toast/toastTypes";
 
@@ -116,9 +117,15 @@ function BurneUIRuntime({
     [resolvedConfig, effectiveConfig, previewConfig, resolvedTheme, clearPreview],
   );
 
+  const tree = previewConfig ? (
+    <MotionConfigProvider motion={previewConfig.motion}>{children}</MotionConfigProvider>
+  ) : (
+    children
+  );
+
   return (
     <BurneThemeRuntimeContextProvider value={runtimeValue}>
-      {children}
+      {tree}
     </BurneThemeRuntimeContextProvider>
   );
 }
@@ -194,7 +201,7 @@ export function BurneUIProvider(props: BurneUIProviderProps) {
       root={root}
       onThemeChange={onThemeChange}
     >
-      {content}
+      <MotionConfigProvider motion={resolvedConfig.motion}>{content}</MotionConfigProvider>
     </ThemeProvider>
   );
 }

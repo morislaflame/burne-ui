@@ -543,5 +543,7 @@ export function useSliderTrackState(props: SliderTrackProps, ref: React.Ref<HTML
     hasCompoundParts,
     range,
     icon,
+    valueIdentity: range ? `${rangeValue[0]}:${rangeValue[1]}` : String(singleValue),
+    disabled,
   };
 }

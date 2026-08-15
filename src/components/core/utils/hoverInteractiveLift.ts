@@ -10,7 +10,14 @@ import { useCallback, type RefObject } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig, isMotionFeatureEnabled, motionPressSqueezeTotal } from "./motionConfig";
+import { bindAbortSignal } from "./bindAbortSignal";
+import { useMotionConfig } from "./motionConfigContext";
+import {
+  isMotionFeatureEnabledFor,
+  motionPressSqueezeTotalFor,
+  resolveMotionConfig,
+  type MotionConfig,
+} from "./motionConfig";
 import { prefersReducedMotion } from "./reducedMotion";
 import { useContainerPointerHoverHandlers } from "./useContainerPointerHoverHandlers";
 import {
@@ -271,11 +278,11 @@ function isTouchOrNarrowViewport(): boolean {
 }
 
 /** Hover lift and shadow change: off for reduced-motion, touch and viewport ≤ tablet. */
-export function shouldSkipInteractiveHoverLift(): boolean {
+export function shouldSkipInteractiveHoverLift(config?: Readonly<MotionConfig>): boolean {
   return (
     prefersReducedMotion() ||
     isTouchOrNarrowViewport() ||
-    !isMotionFeatureEnabled("enableHoverLift")
+    !isMotionFeatureEnabledFor(resolveMotionConfig(config), "enableHoverLift")
   );
 }
 
@@ -288,10 +295,10 @@ const ADAPTIVE_LIFT_TARGET_PX = 1.8;
 /** Minimally noticeable lift. Intentional constant. */
 const ADAPTIVE_LIFT_MIN_DELTA = 0.002;
 
-function adaptiveSqueezeScale(element: HTMLElement): number {
+function adaptiveSqueezeScale(element: HTMLElement, config?: Readonly<MotionConfig>): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
-  const baseDelta = 1 - (getMotionConfig().pressSqueezeScale[1] as number);
+  const baseDelta = 1 - (resolveMotionConfig(config).pressSqueezeScale[1] as number);
   const delta = Math.min(
     Math.max(ADAPTIVE_SQUEEZE_TARGET_PX / maxDim, ADAPTIVE_SQUEEZE_MIN_DELTA),
     baseDelta,
@@ -299,20 +306,26 @@ function adaptiveSqueezeScale(element: HTMLElement): number {
   return 1 - delta;
 }
 
-export function resolveAdaptiveHoverLiftScale(element: HTMLElement): number {
-  return adaptiveHoverLiftScale(element);
+export function resolveAdaptiveHoverLiftScale(
+  element: HTMLElement,
+  config?: Readonly<MotionConfig>,
+): number {
+  return adaptiveHoverLiftScale(element, config);
 }
 
-export function resolveAdaptivePressSqueezeScale(element: HTMLElement): number {
-  return adaptiveSqueezeScale(element);
+export function resolveAdaptivePressSqueezeScale(
+  element: HTMLElement,
+  config?: Readonly<MotionConfig>,
+): number {
+  return adaptiveSqueezeScale(element, config);
 }
 
-function adaptiveHoverLiftScale(element: HTMLElement): number {
+function adaptiveHoverLiftScale(element: HTMLElement, config?: Readonly<MotionConfig>): number {
   const { width, height } = element.getBoundingClientRect();
   const maxDim = Math.max(width, height, 1);
   const delta = Math.min(
     Math.max(ADAPTIVE_LIFT_TARGET_PX / maxDim, ADAPTIVE_LIFT_MIN_DELTA),
-    getMotionConfig().hoverLiftScale - 1,
+    resolveMotionConfig(config).hoverLiftScale - 1,
   );
   return 1 + delta;
 }
@@ -328,6 +341,7 @@ export function animateInteractiveHoverLift(
   lifted: boolean,
   liftScale?: number,
   shadow?: HoverShadowConfig,
+  config?: Readonly<MotionConfig>,
 ): void {
   const shadowVar = shadow
     ? lifted
@@ -335,7 +349,7 @@ export function animateInteractiveHoverLift(
       : (shadow.idle ?? shadowNone())
     : null;
 
-  if (shouldSkipInteractiveHoverLift()) {
+  if (shouldSkipInteractiveHoverLift(config)) {
     if (!lifted) {
       killMotion(element);
       if (shadowVar) {
@@ -349,9 +363,9 @@ export function animateInteractiveHoverLift(
 
   killMotion(element);
   const resolvedScale = lifted
-    ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element))
+    ? (liftScale !== undefined ? liftScale : adaptiveHoverLiftScale(element, config))
     : 1;
-  const cfg = getMotionConfig();
+  const cfg = resolveMotionConfig(config);
 
   tweenScaleAndShadow(
     element,
@@ -378,6 +392,9 @@ export type AnimateInteractivePressSqueezeOptions = {
   liftScale?: number;
   shadow?: HoverShadowConfig;
   onReleaseStart?: () => void;
+  /** When aborted, kill the timeline and skip `onReleaseStart` / release tween. */
+  signal?: AbortSignal;
+  config?: Readonly<MotionConfig>;
 };
 
 function resolvePointerInside(
@@ -396,39 +413,55 @@ export function animateInteractivePressSqueeze(
   element: HTMLElement,
   options?: AnimateInteractivePressSqueezeOptions,
 ): Promise<void> {
-  if (!isMotionFeatureEnabled("enablePressSqueeze")) {
+  if (options?.signal?.aborted) return Promise.resolve();
+  const cfg = resolveMotionConfig(options?.config);
+  if (!isMotionFeatureEnabledFor(cfg, "enablePressSqueeze")) {
     options?.onReleaseStart?.();
     return Promise.resolve();
   }
   killMotion(element);
-  const s = adaptiveSqueezeScale(element);
-  const cfg = getMotionConfig();
-  const total = motionPressSqueezeTotal();
+  const s = adaptiveSqueezeScale(element, cfg);
+  const total = motionPressSqueezeTotalFor(cfg);
   // Intentional timeline split: press-in 30%; release = full total when restoring hover,
   // else 50% of total. See SETUP.md «Intentional motion constants».
   const pressIn = total * 0.3;
-  const canHoverLift = !shouldSkipInteractiveHoverLift();
+  const canHoverLift = !shouldSkipInteractiveHoverLift(cfg);
   const shadow = options?.shadow;
   const idleShadowVar = shadow ? (shadow.idle ?? shadowNone()) : null;
   const pressShadowVar = shadow ? (shadow.press ?? idleShadowVar) : null;
+  const signal = options?.signal;
 
   return new Promise((resolve) => {
+    let settled = false;
+    let unbind = () => {};
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      unbind();
+      resolve();
+    };
+
     const tl = gsap.timeline({
       onComplete: () => {
-        resolve();
+        done();
       },
+    });
+    unbind = bindAbortSignal(signal, () => {
+      tl.kill();
+      done();
     });
     tweenScaleAndShadow(element, s, pressShadowVar, pressIn, "power1.out", {
       timeline: tl,
       commitShadow: false,
     });
     tl.add(() => {
+      if (signal?.aborted) return;
       const releaseToHover =
         resolvePointerInside(options?.pointerInside) && canHoverLift;
       const releaseScale = releaseToHover
         ? options?.liftScale !== undefined
           ? options.liftScale
-          : adaptiveHoverLiftScale(element)
+          : adaptiveHoverLiftScale(element, cfg)
         : 1;
       const releaseOut = releaseToHover ? total : total * 0.5;
       const releaseEase = releaseToHover ? cfg.hoverLiftEase : "sine.inOut";
@@ -460,25 +493,26 @@ export function useInteractiveHoverLiftContainerHandlers<
   onPointerOver: (e: ReactPointerEvent<Element>) => void;
   onPointerOut: (e: ReactPointerEvent<Element>) => void;
 } {
+  const config = useMotionConfig();
   const onEnter = useCallback(
     (el: HTMLElement) => {
-      animateInteractiveHoverLift(el, true, liftScale, shadow);
+      animateInteractiveHoverLift(el, true, liftScale, shadow, config);
     },
-    [liftScale, shadow],
+    [config, liftScale, shadow],
   );
 
   const onLeave = useCallback(
     (el: HTMLElement) => {
-      animateInteractiveHoverLift(el, false, liftScale, shadow);
+      animateInteractiveHoverLift(el, false, liftScale, shadow, config);
     },
-    [liftScale, shadow],
+    [config, liftScale, shadow],
   );
 
   return useContainerPointerHoverHandlers<Element>({
     enabled,
     targetRef: liftedRef,
     pointerInsideRef,
-    skipHover: shouldSkipInteractiveHoverLift,
+    skipHover: () => shouldSkipInteractiveHoverLift(config),
     onEnter,
     onLeave,
   });

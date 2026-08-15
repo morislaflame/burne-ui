@@ -6,12 +6,11 @@
  * the closed (or open) state itself, or the sibling tween (overlay fade)
  * holds the portal open with the panel still on screen.
  */
-import { useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { gsap } from "@/components/core/utils/gsapMotion";
-
-import { killMotionTargets, type MotionScopeValue } from "./createMotionScope";
-import { isMotionVarsObject, type MotionValue } from "./slotMotionTypes";
+import { killMotionScope, hideNestedEnterSlots, type MotionScopeValue } from "./createMotionScope";
+import { invalidateEnterFrame, scheduleNestedEnterBroadcast } from "./scheduleNestedEnterBroadcast";
+import { waitForLeaveGeneration } from "./waitForLeaveGeneration";
 
 export const MODAL_MOTION_HOST_SLOTS = ["overlay", "panel"] as const;
 
@@ -24,29 +23,9 @@ export type ModalSlotMotionController = {
     panel: HTMLElement,
     onComplete: () => void,
   ) => { kill: () => void };
+  /** Cancel a pending nested-enter rAF (unmount / superseded play). */
+  cancelEnterFrame: () => void;
 };
-
-function enterHidesFirstPaint(value: MotionValue | undefined): boolean {
-  if (value === undefined || value === false) return false;
-  return isMotionVarsObject(value) && value.autoAlpha !== undefined;
-}
-
-function hideNestedEnterSlots(scope: MotionScopeValue, exclude: readonly string[]): void {
-  const skip = new Set(exclude);
-  const targets = scope.getTargets();
-  const slots = new Set([
-    ...Object.keys(scope.getDefaults() ?? {}),
-    ...Object.keys(scope.getRootMotion() ?? {}),
-    ...Object.keys(targets),
-  ]);
-  for (const slot of slots) {
-    if (skip.has(slot)) continue;
-    const el = targets[slot];
-    if (!el) continue;
-    if (!enterHidesFirstPaint(scope.resolve(slot, "enter"))) continue;
-    gsap.set(el, { autoAlpha: 0, force3D: false });
-  }
-}
 
 function playHostPhase(
   scope: MotionScopeValue,
@@ -73,28 +52,28 @@ export function useModalSlotMotionController({
   const enterFrameRef = useRef(0);
   const enterGenRef = useRef(0);
 
+  const cancelEnterFrame = useCallback(
+    () => invalidateEnterFrame(enterFrameRef, enterGenRef),
+    [],
+  );
+
+  useEffect(() => cancelEnterFrame, [cancelEnterFrame, motionScope, applyInstant]);
+
   return useMemo(() => {
     if (!motionScope) return undefined;
     const scope = motionScope;
-    const cancelEnterFrame = () => {
-      enterGenRef.current += 1;
-      if (enterFrameRef.current) {
-        cancelAnimationFrame(enterFrameRef.current);
-        enterFrameRef.current = 0;
-      }
-    };
     return {
+      cancelEnterFrame,
       playEnter: (overlay: HTMLElement, panel: HTMLElement) => {
         cancelEnterFrame();
         const gen = enterGenRef.current;
         playHostPhase(scope, "overlay", overlay, "enter", applyInstant, false);
         playHostPhase(scope, "panel", panel, "enter", applyInstant, false);
         hideNestedEnterSlots(scope, MODAL_MOTION_HOST_SLOTS);
-        enterFrameRef.current = requestAnimationFrame(() => {
-          if (gen !== enterGenRef.current) return;
+        enterFrameRef.current = scheduleNestedEnterBroadcast(scope, MODAL_MOTION_HOST_SLOTS, () => {
+          if (gen !== enterGenRef.current) return false;
           enterFrameRef.current = 0;
-          void overlay.offsetHeight;
-          void scope.playBroadcast("enter", { exclude: [...MODAL_MOTION_HOST_SLOTS] });
+          return true;
         });
       },
       playLeave: (
@@ -103,7 +82,6 @@ export function useModalSlotMotionController({
         onComplete: () => void,
       ) => {
         cancelEnterFrame();
-        let cancelled = false;
         const overlayRun = playHostPhase(
           scope,
           "overlay",
@@ -117,18 +95,13 @@ export function useModalSlotMotionController({
           exclude: [...MODAL_MOTION_HOST_SLOTS],
           waitForComplete: true,
         });
-        void Promise.all([overlayRun.finished, panelRun.finished, extra]).then(() => {
-          if (!cancelled) onComplete();
+        return waitForLeaveGeneration({
+          runs: [overlayRun, panelRun],
+          extra,
+          onComplete,
+          onKill: () => killMotionScope(scope),
         });
-        return {
-          kill: () => {
-            cancelled = true;
-            overlayRun.animation?.kill();
-            panelRun.animation?.kill();
-            killMotionTargets(scope.getTargets());
-          },
-        };
       },
     };
-  }, [applyInstant, motionScope]);
+  }, [applyInstant, cancelEnterFrame, motionScope]);
 }

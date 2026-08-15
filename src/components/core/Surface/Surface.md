@@ -119,10 +119,9 @@ Compound API нет.
 
 ### Чего нет
 
-- Hover lift / press squeeze
+- Дефолтный hover lift / press squeeze (opt-in `motion.root`)
 - Portal motion
 - Ripple
-- `classNames` API (`root`, `glossContent`)
 - Persistent shadow animation (`--el-shadow` GSAP)
 
 Для интерактивного gloss hover: `Card pressable`, `Button`, `Popover`, `Kbd`.

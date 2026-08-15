@@ -8,6 +8,7 @@ import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { isContainedPortal, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { focusElement } from "@/components/core/utils/focusElement";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import { messageBannerCloseCellClass, messageBannerDescriptionCellClass, messageBannerGridClass, messageBannerIndicatorCellClass, messageBannerTitleCellClass } from "@/components/core/utils/messageBannerGridLayout";
 import { mergeMotionSlotMaps, useMotionPart } from "@/components/core/utils/slotMotion";
@@ -382,6 +383,7 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
     const slotClassNames = useAlertDialogClassNames();
     const triggerRef = useRef<HTMLElement | null>(null);
     const openingRef = useOpeningRef();
+    const config = useMotionConfig();
 
     const setRefs = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -396,9 +398,9 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
         if (open || openingRef.current || e.button !== 0) return;
         e.preventDefault();
         focusElement(triggerRef.current);
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
       },
-      [open, openingRef, onOpenChange],
+      [open, openingRef, onOpenChange, config],
     );
 
     const handleKeyDown = useCallback(
@@ -407,9 +409,9 @@ export const AlertDialogTrigger = forwardRef<HTMLButtonElement, AlertDialogTrigg
         if (e.defaultPrevented || open || openingRef.current) return;
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => onOpenChange(true), config });
       },
-      [onKeyDown, open, openingRef, onOpenChange],
+      [onKeyDown, open, openingRef, onOpenChange, config],
     );
 
     const handleClick = useCallback(

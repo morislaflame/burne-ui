@@ -98,7 +98,9 @@ Simple + compound (как Alert): `Toast.Title`, `Toast.Description`, `Toast.Ind
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 | `indicator`, `action`, `close` | `enter` / `leave` | нет; хост **рассылает**, если задана |
 
-`leave: false` на `root` — хост сразу ставит закрытое состояние (карточка не висит, пока ждут complete). Factory leave должна скрыть поверхность (`autoAlpha: 0`).
+Nested `enter` — следующий кадр после host, без `offsetHeight` flush. Высота карточки в ResizeObserver — измерение стека, не enter flush.
+
+`leave: false` на `root` — хост сразу ставит закрытое состояние (карточка не висит, пока ждут complete). Factory leave должна скрыть поверхность (`autoAlpha: 0`). Прерывание leave отменяет `MotionRun` без `complete`.
 
 ```tsx
 toast.show({

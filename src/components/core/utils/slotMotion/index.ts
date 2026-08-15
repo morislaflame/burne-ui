@@ -7,22 +7,37 @@
  */
 export {
   KIT_MOTION_RECIPES,
+  MOTION_PHASE_NAMES,
   isMotionFactory,
   isMotionVarsObject,
+  isMotionRunActive,
   LEAVE_COMPLETE_FALLBACK_MS,
   type KitRecipeName,
   type MotionAnimation,
+  type MotionCancelReason,
   type MotionContext,
   type MotionFactory,
   type MotionPartPhases,
   type MotionPhaseName,
   type MotionRecipe,
   type MotionRecipeName,
+  type MotionRecipeParams,
+  type MotionRun,
+  type MotionTransformVars,
+  type MotionRunStatus,
   type MotionSlotMap,
   type MotionValue,
   type MotionVars,
 } from "./slotMotionTypes";
-export { registerMotionRecipe, getMotionRecipe } from "./motionRecipeRegistry";
+export {
+  registerMotionRecipe,
+  unregisterMotionRecipe,
+  hasMotionRecipe,
+  listMotionRecipes,
+  isKitMotionRecipe,
+  getMotionRecipe,
+  type RegisterMotionRecipeOptions,
+} from "./motionRecipeRegistry";
 export {
   mergeMotionSlotMaps,
   resolveMotionValue,
@@ -32,11 +47,19 @@ export {
   killStoredMotion,
   runMotionPhase,
   type RunMotionPhaseOptions,
-  type RunMotionPhaseResult,
 } from "./runMotionPhase";
+export { waitForLeaveGeneration } from "./waitForLeaveGeneration";
+export { enterHidesFirstPaint, KIT_ENTER_HIDES_FIRST_PAINT } from "./enterHidesFirstPaint";
+export { scheduleNestedEnterBroadcast, invalidateEnterFrame } from "./scheduleNestedEnterBroadcast";
 export {
+  createMotionRegistry,
   createMotionScope,
-  killMotionTargets,
+  createMotionScopeController,
+  hideNestedEnterSlots,
+  killMotionScope,
+  type MotionRegisterInput,
+  type MotionRegistration,
+  type MotionRegistry,
   type MotionScopeValue,
   type PlayBroadcastOptions,
   type PlaySlotPhaseOptions,

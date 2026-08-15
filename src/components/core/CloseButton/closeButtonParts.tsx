@@ -1,7 +1,6 @@
 import { IoClose } from "react-icons/io5";
 
 import { Ripple } from "@/components/core/Ripple";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
 import { useMotionPart } from "@/components/core/utils/slotMotion";
 
 import {
@@ -28,7 +27,6 @@ export function CloseButtonRipple({
     <Ripple
       color={color}
       disabled={disabled}
-      duration={getMotionConfig().rippleDefaultDuration}
       className={cn(
         CLOSE_BUTTON_RIPPLE_CLIP_CLASS,
         slotClassNames.ripple,

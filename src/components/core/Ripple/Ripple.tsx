@@ -1,7 +1,8 @@
 import { memo, useImperativeHandle, useLayoutEffect, useRef, forwardRef } from "react";
 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { getMotionConfig, isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { ConvergeRippleLayer } from "@/components/core/utils/pressRipple";
 import { useConvergeRipples } from "@/components/core/utils/useConvergeRipples";
 import { cn } from "@/utils/cn";
@@ -66,14 +67,16 @@ ConvergeRipplePaint.displayName = "ConvergeRipplePaint";
 export function Ripple({
   color,
   disabled = false,
-  duration = getMotionConfig().rippleDefaultDuration,
+  duration,
   direction = "out",
   className = "",
 }: RippleProps) {
+  const motion = useMotionConfig();
+  const resolvedDuration = duration ?? motion.rippleDefaultDuration;
   const layerRef = useRef<HTMLSpanElement>(null);
   const paintRef = useRef<ConvergeRipplePaintHandle>(null);
   const paint = resolveRipplePaint(color);
-  const opacityFrom = getMotionConfig().rippleDefaultOpacityFrom;
+  const opacityFrom = motion.rippleDefaultOpacityFrom;
 
   useLayoutEffect(() => {
     const layer = layerRef.current;
@@ -83,7 +86,7 @@ export function Ripple({
     if (!target) return;
 
     const handler = (ev: PointerEvent) => {
-      if (disabled || prefersReducedMotion() || !isMotionFeatureEnabled("enableRipple")) return;
+      if (disabled || prefersReducedMotion() || !isMotionFeatureEnabledFor(motion, "enableRipple")) return;
       if (ev.defaultPrevented) return;
       if (ev.pointerType === "mouse" && ev.button !== 0) return;
       paintRef.current?.pushAtClientCoords(target, ev.clientX, ev.clientY);
@@ -91,7 +94,7 @@ export function Ripple({
 
     target.addEventListener("pointerdown", handler);
     return () => target.removeEventListener("pointerdown", handler);
-  }, [disabled]);
+  }, [disabled, motion]);
 
   return (
     <span
@@ -102,7 +105,7 @@ export function Ripple({
       <ConvergeRipplePaint
         ref={paintRef}
         tone={paint}
-        durationMs={duration}
+        durationMs={resolvedDuration}
         opacityFrom={opacityFrom}
         direction={direction}
       />

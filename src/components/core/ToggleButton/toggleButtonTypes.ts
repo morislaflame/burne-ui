@@ -27,7 +27,8 @@ export type ToggleButtonClassNames = {
   fill?: string;
   content?: string;
   label?: string;
-  icon?: string;
+  iconStart?: string;
+  iconEnd?: string;
   text?: string;
 };
 
@@ -50,7 +51,8 @@ export type ToggleButtonMotion = {
   fill?: ToggleButtonCheckMotion;
   content?: ToggleButtonPartMotion;
   label?: ToggleButtonPartMotion;
-  icon?: ToggleButtonPartMotion;
+  iconStart?: ToggleButtonPartMotion;
+  iconEnd?: ToggleButtonPartMotion;
   text?: ToggleButtonPartMotion;
 };
 
@@ -83,7 +85,7 @@ export type ToggleButtonProps = Omit<
   iconPosition?: IconPosition;
   classNames?: Prettify<ToggleButtonClassNames>;
   /**
-   * Per-slot motion (`root`, `fill`, `content`, `label`, `icon`, `text`).
+   * Per-slot motion (`root`, `fill`, `content`, `label`, `iconStart`, `iconEnd`, `text`).
    * Root defaults: first-level lift + squeeze (gloss recipes when gloss).
    * Fill defaults: `selectionFill` on `check` / `uncheck`.
    */

@@ -17,6 +17,7 @@ export {
   MOTION_DEFAULTS,
   SCALE_DEFAULTS,
   TEXT_SCALE_BASES,
+  motionConfigFromThemeState,
   type ThemeColorKey,
   type ThemeColors,
   type ThemeDerivedColorKey,

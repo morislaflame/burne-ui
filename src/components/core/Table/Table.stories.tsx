@@ -400,6 +400,14 @@ export const ClickToSelect: Story = {
       </div>
     );
   },
+  play: async ({ canvas, userEvent }) => {
+    const row = canvas.getByRole("row", { name: /Kate Moore/ });
+    await expect(row).toHaveAttribute("aria-selected", "false");
+    await userEvent.click(row);
+    await expect(row).toHaveAttribute("aria-selected", "true");
+    await userEvent.click(row);
+    await expect(row).toHaveAttribute("aria-selected", "false");
+  },
 };
 
 export const UncontrolledSelection: Story = {

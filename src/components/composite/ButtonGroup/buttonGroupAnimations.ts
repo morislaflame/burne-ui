@@ -54,6 +54,6 @@ export function useButtonGroupSlotMotion<T extends HTMLElement>(
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, slot);
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }

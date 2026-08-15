@@ -124,12 +124,12 @@ configureMotion({
 
 | Слот | Фазы | Дефолт |
 |------|------|--------|
-| `root` / `list` | `enter` / hover / press | empty |
+| `root` / `list` | `enter` / hover / press; `change` on `root` when the selected tab updates | empty |
 | `tab` | `enter`; `check` / `uncheck` на selection | empty |
 | `tabText` | hover / press | неактивный: `hoverLiftFirstLevel` + `pressSqueeze` (`pressOut: false`); selected / disabled → эти фазы `false` |
 | `panel` | `enter` / `leave` | empty (opt-in) |
 
-Каждый Tab / Panel — nested Provider. `false` на фазе — skip без kill. Кастомный `motion.panel.enter` / `motion.tab.check` — opt-in.
+Каждый Tab / Panel — nested Provider. `false` на фазе — skip без kill. Кастомный `motion.panel.enter` / `motion.tab.check` — opt-in. Смена вкладки во время `panel.leave` отменяет run (`cancelled`) и не оставляет панель в leaving.
 
 `asChild` на Tab — нет внутреннего `tabText` слота.
 

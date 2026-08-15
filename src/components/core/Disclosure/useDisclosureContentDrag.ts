@@ -2,7 +2,8 @@ import { useCallback, type PointerEvent as ReactPointerEvent, type RefObject } f
 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 
 const OPEN_RATIO = 0.38;
 const OPEN_VELOCITY = 0.45;
@@ -29,6 +30,7 @@ export function useDisclosureContentDrag(
   disabled: boolean,
   skipContentAnimRef: RefObject<boolean>,
 ): { onPointerDown: (e: ReactPointerEvent<HTMLElement>) => void } {
+  const config = useMotionConfig();
   const onPointerDown = useCallback(
     (e: ReactPointerEvent<HTMLElement>) => {
       if (disabled) return;
@@ -81,7 +83,7 @@ export function useDisclosureContentDrag(
         const delta = clientY - startClientY;
         const currentHeight = Math.max(0, Math.min(maxHeight, startHeight + delta));
         const ratio = currentHeight / maxHeight;
-        const vars = { ...motionInteractive(), overwrite: "auto" as const };
+        const vars = { ...motionInteractiveFor(config), overwrite: "auto" as const };
 
         const shouldOpen =
           ratio >= OPEN_RATIO || velocity > OPEN_VELOCITY;
@@ -150,7 +152,7 @@ export function useDisclosureContentDrag(
       handle.addEventListener("pointerup", onUp);
       handle.addEventListener("pointercancel", onUp);
     },
-    [chevronRef, disabled, innerRef, open, setOpen, shellRef, skipContentAnimRef],
+    [chevronRef, config, disabled, innerRef, open, setOpen, shellRef, skipContentAnimRef],
   );
 
   return { onPointerDown };

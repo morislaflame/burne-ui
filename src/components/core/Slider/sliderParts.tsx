@@ -6,7 +6,7 @@ import { Field } from "@/components/core/Field";
 import { Label, type LabelProps } from "@/components/core/Label";
 import { renderSliderSimpleLayout, SliderScaleFieldHeader, SliderScaleFieldValue } from "./sliderScaleField";
 
-import { resolveSliderMotionDefaults } from "./sliderAnimations";
+import { resolveSliderMotionDefaults, useSliderTrackSlotMotion } from "./sliderAnimations";
 import {
   SliderMotionProvider,
   SliderTrackProvider,
@@ -204,8 +204,10 @@ function SliderTrackHost({
   ...props
 }: SliderTrackProps & { forwardedRef?: React.Ref<HTMLDivElement> }) {
   const state = useSliderTrackState(props, forwardedRef ?? null);
+  const scope = useOptionalSliderMotionScope();
+  useSliderTrackSlotMotion(scope, state.valueIdentity, state.disabled);
   const { setRef, pointerHandlers } = useMotionPart<HTMLDivElement>({
-    scope: useOptionalSliderMotionScope(),
+    scope,
     slot: "track",
     forwardedRef: state.setTrackRef,
     pointerPhases: true,

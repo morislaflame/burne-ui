@@ -7,12 +7,14 @@ import {
 import { focusKeyboard, focusOnOpen } from "@/components/core/utils/focusElement";
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { isContainedPortal } from "@/components/core/utils/portalContainer";
 import type { PopoverMotion } from "@/components/core/Popover";
 import {
-  killMotionTargets,
+  killMotionScope,
   killStoredMotion,
   mergeMotionSlotMaps,
+  waitForLeaveGeneration,
 } from "@/components/core/utils/slotMotion";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
@@ -217,6 +219,7 @@ export function useDropdownSubContentPortal({
   portalContainer,
   motionScope,
 }: UseDropdownSubContentPortalProps) {
+  const config = useMotionConfig();
   const isGlossPanel = popoverVariant === "gloss";
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState({ top: 0, left: 0, minW: 0 });
@@ -290,31 +293,24 @@ export function useDropdownSubContentPortal({
     const el = panelRef.current;
     if (!el) return undefined;
 
-    let cancelled = false;
-
-    if (isReducedModalMotion()) {
+    if (isReducedModalMotion(config)) {
       killMotion(el);
       if (subOpen) {
         applyReducedPortalMotion(el);
       } else {
         setPortalMounted(false);
       }
-      return () => {
-        cancelled = true;
-      };
+      return undefined;
     }
 
     if (!motionScope) {
       if (!subOpen) setPortalMounted(false);
-      return () => {
-        cancelled = true;
-      };
+      return undefined;
     }
 
     if (subOpen) {
       motionScope.play("subContent", "enter", { el });
       return () => {
-        cancelled = true;
         killStoredMotion(el);
       };
     }
@@ -323,16 +319,18 @@ export function useDropdownSubContentPortal({
       el,
       waitForComplete: true,
     });
-    void leaveRun.finished.then(() => {
-      if (!cancelled) setPortalMounted(false);
+    const leaveWait = waitForLeaveGeneration({
+      runs: [leaveRun],
+      onComplete: () => setPortalMounted(false),
+      onKill: () => {
+        killMotionScope(motionScope);
+        killStoredMotion(el);
+      },
     });
     return () => {
-      cancelled = true;
-      leaveRun.animation?.kill();
-      killMotionTargets(motionScope.getTargets());
-      killStoredMotion(el);
+      leaveWait.kill();
     };
-  }, [subOpen, portalMounted, motionScope]);
+  }, [config, subOpen, portalMounted, motionScope]);
 
   return {
     isGlossPanel,

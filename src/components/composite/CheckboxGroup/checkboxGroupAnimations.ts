@@ -55,8 +55,11 @@ export function useCheckboxGroupRootMotion({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "root");
-  useSlotPhaseOnChange(scope, "root", selectionIdentity, { phase: "change" });
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
+  useSlotPhaseOnChange(scope, "root", selectionIdentity, {
+    phase: "change",
+    target: part.targetRef,
+  });
   return part;
 }
 
@@ -89,6 +92,6 @@ export function useCheckboxGroupListMotion({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "list");
+  useOptionalEnterOnMount(scope, "list", part.targetRef);
   return part;
 }

@@ -6,6 +6,7 @@ import { expect } from "storybook/test";
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
+import { Button } from "@/components/core/Button";
 import { Meter } from "@/components/core/Meter";
 import { MeterMotionDemo } from "../../../../playground/showcase/demos/meter/MeterMotion.demo";
 
@@ -188,6 +189,26 @@ export const OnLightTheme: Story = {
   name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: () => <Meter label="Light theme" showValue value={58} />,
+};
+
+export const ValueChange: Story = {
+  name: "Motion contract: value change",
+  render: function MeterValueChange() {
+    const [value, setValue] = useState(20);
+    return (
+      <div className="flex flex-col items-stretch gap-base">
+        <Meter label="CPU load" showValue value={value} />
+        <Button type="button" onClick={() => setValue(80)}>
+          Set 80
+        </Button>
+      </div>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByRole("meter")).toHaveAttribute("aria-valuenow", "20");
+    await userEvent.click(canvas.getByRole("button", { name: "Set 80" }));
+    await expect(canvas.getByRole("meter")).toHaveAttribute("aria-valuenow", "80");
+  },
 };
 
 export const Accessibility: Story = {

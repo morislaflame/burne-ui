@@ -17,7 +17,8 @@ import {
   useGlossFieldShellMotion,
 } from "@/components/core/utils/glossInteractiveMotion";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
-import { motionPressSqueezeTotal } from "@/components/core/utils/motionConfig";
+import { motionPressSqueezeTotalFor, type MotionConfig } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 import {
@@ -95,6 +96,7 @@ async function playComboBoxOpenSqueeze({
   partMotion,
   glossOnPointerDown,
   userPressIn,
+  config,
 }: {
   scope: MotionScopeValue;
   el: HTMLElement;
@@ -102,6 +104,7 @@ async function playComboBoxOpenSqueeze({
   partMotion?: ComboBoxPartMotion;
   glossOnPointerDown?: () => void;
   userPressIn?: MotionValue | false;
+  config: Readonly<MotionConfig>;
 }): Promise<void> {
   if (prefersReducedMotion()) return;
   if (isGloss) {
@@ -113,11 +116,11 @@ async function playComboBoxOpenSqueeze({
     if (glossOnPointerDown) {
       glossOnPointerDown();
       await new Promise<void>((resolve) => {
-        window.setTimeout(resolve, motionPressSqueezeTotal() * 1000);
+        window.setTimeout(resolve, motionPressSqueezeTotalFor(config) * 1000);
       });
       return;
     }
-    await animateGlossInteractivePressSqueeze(el, true);
+    await animateGlossInteractivePressSqueeze(el, true, undefined, undefined, { config });
     return;
   }
   const value = scope.resolve("inputGroup", "pressIn", partMotion);
@@ -140,6 +143,7 @@ export function useComboBoxOpenAfterSqueeze({
   partMotionRef?: MutableRefObject<ComboBoxPartMotion | undefined>;
   glossOnPointerDown?: () => void;
 }) {
+  const config = useMotionConfig();
   const scope = useComboBoxMotionScope();
   const openingRef = useOpeningRef();
 
@@ -161,10 +165,11 @@ export function useComboBoxOpenAfterSqueeze({
             userPressIn:
               partMotionRef?.current?.pressIn ??
               scope.getRootMotion()?.inputGroup?.pressIn,
+            config,
           }),
       });
     },
-    [disabled, glossOnPointerDown, isGloss, openingRef, partMotionRef, scope, triggerRef],
+    [config, disabled, glossOnPointerDown, isGloss, openingRef, partMotionRef, scope, triggerRef],
   );
 }
 

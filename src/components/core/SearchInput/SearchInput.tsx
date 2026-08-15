@@ -189,6 +189,7 @@ function SearchInputSurface({
       ref={animations.bindRootRef}
       role="search"
       data-search-expanded={state.expanded ? "" : undefined}
+      style={state.expanded ? { width: state.targetW } : undefined}
       onFocusCapture={animations.onShellFocusIn}
       onBlurCapture={animations.onShellFocusOut}
       className={rootClass}

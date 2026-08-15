@@ -9,7 +9,8 @@
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 import {
   applySwitchFillInstant,
@@ -59,9 +60,11 @@ export function useSwitchTrackAnimations({
   iconOffRef,
   iconOnRef,
 }: UseSwitchTrackAnimationsProps) {
+  const config = useMotionConfig();
   const scope = useSwitchMotionScope();
   const reduceMotion = usePrefersReducedMotion();
-  const switchMotionOff = reduceMotion || !isMotionFeatureEnabled("enableSwitchThumb");
+  const switchMotionOff =
+    reduceMotion || !isMotionFeatureEnabledFor(config, "enableSwitchThumb");
   const fallbackTravelPx = resolveFallbackThumbPx(thickness, size);
   const firstLayoutRef = useRef(true);
 
@@ -177,6 +180,6 @@ export function useSwitchTrackAnimations({
     if (squeezeToken === 0 || switchMotionOff) return;
     const shell = thumbShellRef.current;
     if (!shell) return;
-    void animateInteractivePressSqueeze(shell);
-  }, [switchMotionOff, squeezeToken, thumbShellRef]);
+    void animateInteractivePressSqueeze(shell, { config });
+  }, [config, switchMotionOff, squeezeToken, thumbShellRef]);
 }

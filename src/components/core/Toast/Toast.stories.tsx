@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen } from "storybook/test";
+import { expect, screen, waitFor } from "storybook/test";
 
 import { Button } from "@/components/core/Button";
 
@@ -162,7 +162,7 @@ export const QuickMethods: Story = {
   },
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "success" }));
-    await expect(screen.getByRole("status")).toHaveTextContent("File saved");
+    await expect(await screen.findByText("File saved")).toBeVisible();
   },
 };
 
@@ -326,6 +326,14 @@ export const CompoundApi: Story = {
         )}
       </div>
     );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Show compound" }));
+    await expect(canvas.getByText("Done!")).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Close" }));
+    await waitFor(() => {
+      expect(canvas.queryByText("Done!")).not.toBeInTheDocument();
+    });
   },
 };
 

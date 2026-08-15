@@ -49,11 +49,11 @@ import { ToggleButton, type ToggleButtonProps, type ToggleButtonSize, type Toggl
 | `icon` / `iconPosition` | — | Simple API: одна иконка (`start` \| `end`, default `start`) |
 | `disabled` | `false` | |
 | `classNames` | — | см. стилизацию |
-| `motion` | — | Карта слотов `root` / `fill` / `content` / `label` / `icon` / `text` |
+| `motion` | — | Карта слотов `root` / `fill` / `content` / `label` / `iconStart` / `iconEnd` / `text` |
 
 ### `ToggleButtonClassNames`
 
-`root`, `fill`, `content`, `icon`, `label`, `text`.
+`root`, `fill`, `content`, `iconStart`, `iconEnd`, `label`, `text`.
 
 Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content` / `Fill`.
 
@@ -87,7 +87,7 @@ Compound API: `ToggleButton.IconStart` / `IconEnd` / `Text` / `Label` / `Content
 | `root` | `hoverIn` / `hoverOut` | `hoverLiftFirstLevel` или `hoverLiftGloss` |
 | `root` | `pressIn` | `pressSqueeze` / `pressSqueezeGloss` (`pressOut` по умолчанию `false`) |
 | `fill` | `check` / `uncheck` | `selectionFill` |
-| `content` / `label` / `icon` / `text` | hover; `check` / `uncheck` с хоста | нет |
+| `content` / `label` / `iconStart` / `iconEnd` / `text` | hover; `check` / `uncheck` с хоста | нет |
 
 Fill стартует в **release-фазе squeeze** (`params.onReleaseStart`), после `click`. `fill: { check: false, uncheck: false }` — хост ставит instant (`applyToggleButtonFillInstant`), без kill. Если `pressIn` не kit-squeeze — fill на click сразу.
 
@@ -114,7 +114,7 @@ Fill стартует в **release-фазе squeeze** (`params.onReleaseStart`),
 
 1. `pointerdown` → если `pressIn` = kit squeeze, `deferFillFromPressRef = true`
 2. `click` → `queueFillOnClick(next)`
-3. squeeze release → `runPendingFill()` → `play("fill", check|uncheck)` + broadcast на `icon` / `text` / `label`
+3. squeeze release → `runPendingFill()` → `play("fill", check|uncheck)` + broadcast на `iconStart` / `iconEnd` / `text` / `label`
 4. `pointerleave` → сброс coordination
 
 Визуальный pressed (`displayPressed`) обновляется когда fill реально стартует.
@@ -131,7 +131,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
 ### Два уровня
 
 1. **`className`** — мерж в `root` слот кнопки.
-2. **`classNames`** — `root`, `fill`, `content`, `icon`, `label`, `text`.
+2. **`classNames`** — `root`, `fill`, `content`, `iconStart`, `iconEnd`, `label`, `text`.
 
 ### Слоты
 
@@ -140,7 +140,8 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
 | `root` | `<button>` | Ring, min-width, segment rounding |
 | `fill` | Absolute fill layer | Tint pressed (`fillColor`) |
 | `content` | Flex row | Gap icons + label |
-| `icon` | Icon wrappers (IconStart / IconEnd) | Size/color |
+| `iconStart` | `IconStart` (simple `icon` при `iconPosition="start"`) | Size/color |
+| `iconEnd` | `IconEnd` (simple `icon` при `iconPosition="end"`) | Size/color |
 | `label` | `Text` children | Font weight |
 
 ### Пример
@@ -155,7 +156,7 @@ configureMotion({ enableHoverLift: false, enablePressSqueeze: false, enableToggl
     root: "rounded-mid ring-1 ring-danger/25",
     fill: "bg-danger/20",
     content: "gap-small",
-    icon: "text-danger",
+    iconStart: "text-danger",
     label: "font-semibold text-danger",
   }}
 >

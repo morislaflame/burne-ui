@@ -1,10 +1,10 @@
 import {
+  armWillChangeTransform,
   clearWillChangeOnComplete,
   gsap,
   killMotion,
-  setWillChangeTransform,
 } from "@/components/core/utils/gsapMotion";
-import { isMotionFeatureEnabled, motionModal } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionModalFor } from "@/components/core/utils/motionConfig";
 import {
   getDrawerSlideCloseTo,
   getDrawerSlideOpenFrom,
@@ -15,22 +15,20 @@ import {
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
 
 function placementOf(ctx: MotionContext): DrawerSlidePlacement {
-  const value = ctx.params.placement;
-  if (value === "left" || value === "right" || value === "top" || value === "bottom") {
-    return value;
-  }
-  return "right";
+  return ctx.params.placement ?? "right";
 }
 
 function modalVars(ctx: MotionContext) {
-  const duration =
-    typeof ctx.params.duration === "number" ? ctx.params.duration : motionModal().duration;
-  const ease = typeof ctx.params.ease === "string" ? ctx.params.ease : motionModal().ease;
-  return { duration, ease, overwrite: "auto" as const };
+  const fallback = motionModalFor(ctx.config);
+  return {
+    duration: ctx.params.duration ?? fallback.duration,
+    ease: ctx.params.ease ?? fallback.ease,
+    overwrite: "auto" as const,
+  };
 }
 
 function reduced(ctx: MotionContext): boolean {
-  return ctx.reduced || !isMotionFeatureEnabled("enableModalMotion");
+  return ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableModalMotion");
 }
 
 export function applyDrawerPanelInstant(
@@ -49,7 +47,7 @@ export function drawerSlideEnterRecipe(ctx: MotionContext): MotionAnimation | un
     return undefined;
   }
   killMotion(ctx.el);
-  setWillChangeTransform(ctx.el, true);
+  armWillChangeTransform(ctx.el, ctx.onCleanup);
   const vars = modalVars(ctx);
   return gsap.fromTo(ctx.el, getDrawerSlideOpenFrom(ctx.el, placement), {
     ...getDrawerSlideRest(),
@@ -65,7 +63,7 @@ export function drawerSlideLeaveRecipe(ctx: MotionContext): MotionAnimation | un
     return undefined;
   }
   killMotion(ctx.el);
-  setWillChangeTransform(ctx.el, true);
+  armWillChangeTransform(ctx.el, ctx.onCleanup);
   const vars = modalVars(ctx);
   return gsap.to(ctx.el, {
     ...getDrawerSlideCloseTo(ctx.el, placement),

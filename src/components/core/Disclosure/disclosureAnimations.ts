@@ -17,6 +17,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObjec
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
 import { shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { applyCollapsibleInstantState, useCollapsibleShellRef } from "@/components/core/utils/useCollapsibleHeight";
 import { applyChevronRotationInstant, createChevronRotationRefCallback } from "@/components/core/utils/useChevronRotation";
 import { useMotionPart, type MotionScopeValue } from "@/components/core/utils/slotMotion";
@@ -90,6 +91,7 @@ export function useDisclosureTriggerMotion({
   onPointerLeave,
   onPointerDown,
 }: UseDisclosureTriggerMotionProps) {
+  const config = useMotionConfig();
   const scope = useDisclosureMotionScope();
   const titleLiftRef = useRef<HTMLSpanElement | null>(null);
   const initialOpenRef = useRef(open);
@@ -126,7 +128,7 @@ export function useDisclosureTriggerMotion({
 
   const skipChevron = useCallback(
     (nextOpen: boolean) => {
-      const el = scope.getTargets().chevron;
+      const el = scope.getTarget("chevron");
       if (el) applyChevronRotationInstant(el, nextOpen);
     },
     [scope],
@@ -161,7 +163,7 @@ export function useDisclosureTriggerMotion({
       if (!el) return;
       if (
         (phase === "hoverIn" || phase === "hoverOut") &&
-        shouldSkipInteractiveHoverLift()
+        shouldSkipInteractiveHoverLift(config)
       ) {
         return;
       }
@@ -169,7 +171,7 @@ export function useDisclosureTriggerMotion({
       if (value === undefined) return;
       scope.play("titleLift", phase, { partMotion: motion, el });
     },
-    [disabled, motion, scope],
+    [config, disabled, motion, scope],
   );
 
   const handleClick = useCallback(

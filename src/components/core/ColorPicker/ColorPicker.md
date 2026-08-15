@@ -103,11 +103,11 @@ Channels: `hue`, `saturation`, `value`, `alpha`, `red`, `green`, `blue`.
 | Слот | Фазы | Дефолт |
 |------|------|--------|
 | `contentPanel` | `enter` (opt-in) | empty |
-| `area` | `enter`; `change` при HSVA | empty |
+| `area` | `enter`; `change` при HSVA; hover/press если заданы | empty |
 | `areaThumb`, `hexInput`, `presets` | `enter` / hover / press | empty |
 | `hueSlider` / `alphaSlider` | прокидываются в ColorSlider | empty |
 
-Thumb `left` / `top` на area — kit-internal (`useColorPickerAreaDrag`), не публичный layout-tween. ColorSwatch в presets сохраняет свой scope.
+Thumb `left` / `top` на area — kit-internal (`useColorPickerAreaDrag`), не публичный layout-tween. Drag на `Area` / `areaThumb` **мержится** с slot pointer phases через `useMotionPart` (`onPointerDown` пользователя → motion press → drag, если не `defaultPrevented`). ColorSwatch в presets сохраняет свой scope.
 
 **ColorSlider** — свой scope; Track — nested host.
 

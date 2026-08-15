@@ -119,7 +119,7 @@ Semantic statuses (`danger`, `success`, `info`, `warning`) keep a **neutral pane
 |------|------|------------------|
 | `content` | `enter` / `leave` | `portalSurfaceEnter` / `portalSurfaceLeave` (`motionTooltip()`) |
 
-`leave: false` — портал размонтируется сразу после hide. Factory на `leave` должна вернуть tween (кит ждёт `onComplete`).
+`leave: false` — портал размонтируется сразу после hide. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`.
 
 **Где в коде:** типы — `tooltipTypes.ts`; scope — `tooltipContext.tsx`; defaults + host — `tooltipAnimations.ts`; Content-provider — `tooltipParts.tsx`; карта на корне — `Tooltip.tsx`.
 

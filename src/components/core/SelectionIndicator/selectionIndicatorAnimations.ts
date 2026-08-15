@@ -10,7 +10,8 @@ import { useLayoutEffect, useRef, type RefObject } from "react";
 
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { isMotionFeatureEnabled, motionSelectionFill } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionSelectionFillFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 
 import {
   useOptionalSelectionIndicatorMotionScope,
@@ -36,10 +37,12 @@ export function useSelectionIndicatorAnimation(
   fillRef?: RefObject<HTMLElement | null>,
   iconRef?: RefObject<HTMLElement | null>,
 ) {
+  const config = useMotionConfig();
   const scope = useOptionalSelectionIndicatorMotionScope();
   const firstLayoutRef = useRef(true);
   const reduceMotion =
-    usePrefersReducedMotion() || !isMotionFeatureEnabled("enableSelectionFill");
+    usePrefersReducedMotion() ||
+    !isMotionFeatureEnabledFor(config, "enableSelectionFill");
 
   useLayoutEffect(() => {
     const fill = fillRef?.current;
@@ -81,8 +84,8 @@ export function useSelectionIndicatorAnimation(
       return;
     }
 
-    const fillVars = { ...motionSelectionFill(), overwrite: "auto" as const };
-    const markVars = { ...motionSelectionFill(), overwrite: "auto" as const };
+    const fillVars = { ...motionSelectionFillFor(config), overwrite: "auto" as const };
+    const markVars = { ...motionSelectionFillFor(config), overwrite: "auto" as const };
 
     if (fill) {
       killMotion(fill);
@@ -101,7 +104,7 @@ export function useSelectionIndicatorAnimation(
         gsap.to(icon, { scale: 0.92, autoAlpha: 0, ...markVars });
       }
     }
-  }, [active, fillRef, iconRef, reduceMotion, scope]);
+  }, [active, config, fillRef, iconRef, reduceMotion, scope]);
 }
 
 export function SelectionIndicatorMotionSync({

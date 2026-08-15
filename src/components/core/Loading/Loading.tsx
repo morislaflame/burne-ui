@@ -120,7 +120,7 @@ function LoadingSurface({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "root");
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
 
   return (
     <span

@@ -95,9 +95,12 @@ Range compound: `<Slider.Thumb thumb="start" />` + `<Slider.Thumb thumb="end" />
 | Слот | Фазы | Дефолтный рецепт |
 |------|------|------------------|
 | `thumb` | `pressIn` / `pressOut` | `pressSqueeze` (`pressOut: false`); `disabled` → `false` |
-| `track` / `rail` / `fill` / `icon` / `header` / `value` | hover/press | нет |
+| `track` | `enter` (opt-in); `change` при value / range identity; hover/press | нет |
+| `rail` / `fill` / `icon` / `header` / `value` | hover/press; `change` если задан (broadcast с track, `fill` исключён) | нет |
 
 `false` на `thumb.pressIn` — squeeze не играет. Compound: `motion` на `Slider.Thumb` — part motion этого thumb (range start/end независимо).
+
+`change` на track — дискретный тик значения (pulse / tint), не follow за пальцем. Пузырь с инерцией над thumb — playground demo `SliderMotionThumbInertia` (`gsap.quickTo` на `x`), не kit Tooltip.
 
 **Где в коде:** типы — `sliderTypes.ts`; scope — `sliderContext.tsx`; defaults — `sliderAnimations.ts`; слоты — `sliderParts.tsx` / `sliderThumbParts.tsx` / `sliderTrackParts.tsx`; Provider — `Slider.tsx`. Drag позиции — `useSliderTrackState.ts`.
 

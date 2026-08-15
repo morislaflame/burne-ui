@@ -130,7 +130,9 @@ Title/Description — отдельная шкала Popover (компактне�
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 | `body` | `enter` / `leave` | нет; хост **рассылает**, если задана |
 
-`leave: false` — портал размонтируется сразу. Factory на `leave` должна вернуть tween (кит ждёт `onComplete`). Motion-слот Title — `title`, хотя `classNames` зовут его `label`.
+Nested `enter` — следующий кадр после host (`portalSurfaceEnter` / `preparePortalSurfaceForEnter`), без `offsetHeight` flush.
+
+`leave: false` — портал размонтируется сразу. Factory на `leave` должна вернуть tween (кит ждёт `finished` текущего run). Прерывание leave отменяет run без `complete`. Motion-слот Title — `title`, хотя `classNames` зовут его `label`.
 
 **Где в коде:** типы — `popoverTypes.ts`; scope — `popoverContext.tsx`; defaults + host — `popoverAnimations.ts`; Content-provider — `popoverParts.tsx`; карта на корне — `Popover.tsx`.
 
@@ -151,7 +153,7 @@ Title/Description — отдельная шкала Popover (компактне�
 >
 ```
 
-**Reduced motion:** `isReducedModalMotion()` → `applyReducedPortalMotion` / instant unmount.
+**Reduced motion:** `isReducedModalMotion()` → `applyReducedPortalMotion` / instant unmount. Nested enter rAF — `invalidateEnterFrame` на unmount / следующем play.
 
 #### Кастомизация timing
 

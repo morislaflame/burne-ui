@@ -86,11 +86,22 @@ Joined-рамка как у `ButtonGroup`: на `classNames.root` — `rounded-*
 
 | `size` | Прокидывается в каждый `ToggleButton` |
 
-Кастомизация кнопок — `classNames` на `ToggleButton` (`root`, `fill`, `content`, `icon`, `label`).
+Кастомизация кнопок — `classNames` на `ToggleButton` (`root`, `fill`, `content`, `iconStart`, `iconEnd`, `label`).
 
 ## Анимации
 
-Отдельного `toggleButtonGroupAnimations.ts` **нет**. Motion на `ToggleButton`:
+### Slot motion
+
+| Слоты | Фазы | Дефолт |
+|-------|------|--------|
+| `root` | `enter` (opt-in); `change` when selection identity updates | empty |
+
+Motion item ToggleButton остаётся на пункте.
+
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+
+
+`toggleButtonGroupAnimations.ts` играет `enter` / `change` на `root` группы. Motion item остаётся на `ToggleButton`:
 
 **DOM (joined):**
 

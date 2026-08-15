@@ -2,6 +2,7 @@ import { useRef, type RefObject } from "react";
 
 import { animateInteractivePressSqueeze } from "./hoverInteractiveLift";
 import { prefersReducedMotion } from "./reducedMotion";
+import type { MotionConfig } from "./motionConfig";
 
 export type RunOpenAfterSqueezeOptions = {
   triggerRef: RefObject<HTMLElement | null>;
@@ -16,6 +17,8 @@ export type RunOpenAfterSqueezeOptions = {
    * Gloss / other surface plugins can inject their own squeeze without forking this helper.
    */
   runSqueeze?: (el: HTMLElement) => Promise<void>;
+  /** Scoped motion config for the default squeeze. */
+  config?: Readonly<MotionConfig>;
 };
 
 /**
@@ -37,7 +40,8 @@ export function runOpenAfterSqueeze({
   setOpen,
   disabled = false,
   onOpened,
-  runSqueeze = (el) => animateInteractivePressSqueeze(el),
+  config,
+  runSqueeze = (el) => animateInteractivePressSqueeze(el, { config }),
 }: RunOpenAfterSqueezeOptions): void {
   if (disabled || openingRef.current) return;
 

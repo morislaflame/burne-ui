@@ -114,7 +114,7 @@ Motion item Checkbox остаётся на пункте. `OptionGroupFieldset` /
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
 
-У `CheckboxGroup` **нет собственных** анимаций. Motion от вложенного `Checkbox`:
+`checkboxGroupAnimations.ts` играет `enter` / `change` на `root` группы. Motion item остаётся на вложенном `Checkbox`:
 
 **DOM:**
 

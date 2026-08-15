@@ -2,7 +2,7 @@
  * Slot motion for ToggleButton — look here first.
  *
  * DOM slots: `root` (the `<button>`, or the inner content span when `groupSegment`),
- * `fill`, `content`, `label`, `icon`, `text`
+ * `fill`, `content`, `label`, `iconStart`, `iconEnd`, `text`
  * Host: root (`useToggleButtonAnimations`) plays `hoverIn` / `hoverOut` / `pressIn` / `pressOut`.
  * Fill `check` / `uncheck` plays from the fill hook (coordinated with squeeze release).
  * Defaults: `resolveToggleButtonMotionDefaults`.
@@ -18,7 +18,8 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { isMotionFeatureEnabled } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   mergeMotionPointerHandlers,
@@ -87,6 +88,7 @@ export function useToggleButtonAnimations({
   onPointerUp,
   onKeyDown,
 }: UseToggleButtonAnimationsProps) {
+  const config = useMotionConfig();
   const fillRef = useRef<HTMLSpanElement>(null);
   const deferFillFromPressRef = useRef(false);
   const pendingFillRef = useRef<boolean | null>(null);
@@ -102,7 +104,7 @@ export function useToggleButtonAnimations({
     (fill: HTMLElement, next: boolean, reduceMotion: boolean) => {
       const phase = next ? "check" : "uncheck";
       const fillOff =
-        reduceMotion || !isMotionFeatureEnabled("enableToggleButtonFill");
+        reduceMotion || !isMotionFeatureEnabledFor(config, "enableToggleButtonFill");
       const value = scope.resolve("fill", phase, fillMotionRef.current);
       if (fillOff || value === false || value === undefined) {
         applyToggleButtonFillInstant(fill, next);
@@ -111,7 +113,7 @@ export function useToggleButtonAnimations({
       }
       void scope.playBroadcast(phase, { exclude: ["root", "fill", "content"] });
     },
-    [scope],
+    [config, scope],
   );
 
   const { animateTo, bindFillRef, displayPressed } = useToggleButtonFillAnimation(

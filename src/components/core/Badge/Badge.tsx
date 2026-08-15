@@ -71,7 +71,7 @@ export const BadgeRoot = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     [hoverLift, splitLift, variant],
   );
   const motionParams = useMemo(
-    () => ({ shadowSize: "base", variant }),
+    () => ({ shadowSize: "base" as const, variant }),
     [variant],
   );
 

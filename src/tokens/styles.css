@@ -53,7 +53,7 @@
 
   /**
    * MOTION (CSS transitions) — surface / text / shadow / focus-ring utilities in `styles.css`.
-   * Written by `applyMotionFromState` / `configureMotion` when `surfaceTransitionDuration` differs from default.
+   * Written by `applyMotionFromState` / `configureMotion` / `applyMotionCssTokens` when `surfaceTransitionDuration` differs from default. Theme apply writes this per root; GSAP config is scoped via provider.
    * GSAP timings live in `motionConfig` (`interactiveDuration`, …) — separate from these CSS transitions.
    */
   --motion-surface-duration: 600ms;

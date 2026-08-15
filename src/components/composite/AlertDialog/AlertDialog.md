@@ -139,7 +139,7 @@ primaryButtonStatusForAlertTone("danger");     // → "danger"
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
 | `close`, `header`, `footer`, `content`, `indicator` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
 
-`leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется. Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0`) — иначе после твина `dialog.close()` выглядит как рывок.
+`leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется. Promise: `ctx.signal` / `isMotionRunActive(ctx)` до delayed DOM. Прерывание leave (повторный open) отменяет `MotionRun` без `complete`. Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0`) — иначе после твина `dialog.close()` выглядит как рывок.
 
 `leave: false` на хосте (`overlay` / `panel`) — хост сразу ставит закрытое состояние. `enter: false` — сразу открытое.
 

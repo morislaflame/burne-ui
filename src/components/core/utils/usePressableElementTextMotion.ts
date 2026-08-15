@@ -8,7 +8,7 @@ import {
   shouldSkipInteractiveHoverLift,
 } from "./hoverInteractiveLift";
 import { usePrefersReducedMotion } from "./reducedMotion";
-import { getMotionConfig } from "./motionConfig";
+import { useMotionConfig } from "./motionConfigContext";
 
 /**
  * Press squeeze (+ optional hover lift) for text-based interactive elements.
@@ -71,13 +71,14 @@ export function usePressableElementTextMotion<
   onKeyDown,
 }: UsePressableElementTextMotionProps<EventTarget, RefTarget>) {
   const reduceMotion = usePrefersReducedMotion();
+  const config = useMotionConfig();
   const hoverInsideRef = useRef(false);
 
   const resolveLiftScale = useCallback((): number | undefined => {
     if (hoverLiftScale === "adaptive") return undefined;
     if (typeof hoverLiftScale === "number") return hoverLiftScale;
-    return getMotionConfig().hoverLiftScale;
-  }, [hoverLiftScale]);
+    return config.hoverLiftScale;
+  }, [config.hoverLiftScale, hoverLiftScale]);
 
   useEffect(() => {
     const el = textMotionRef.current;
@@ -104,23 +105,24 @@ export function usePressableElementTextMotion<
       void animateInteractivePressSqueeze(el, {
         pointerInside: hoverInsideRef,
         liftScale: resolveLiftScale(),
+        config,
       });
     } else {
-      void animateInteractivePressSqueeze(el);
+      void animateInteractivePressSqueeze(el, { config });
     }
-  }, [hoverLift, reduceMotion, resolveLiftScale, textMotionRef]);
+  }, [config, hoverLift, reduceMotion, resolveLiftScale, textMotionRef]);
 
   const handlePointerEnter = useCallback(
     (e: PointerEvent<EventTarget>) => {
       onPointerEnter?.(e);
       if (!hoverLift || !enabled || isDisabled || e.defaultPrevented) return;
-      if (shouldSkipInteractiveHoverLift()) return;
+      if (shouldSkipInteractiveHoverLift(config)) return;
       hoverInsideRef.current = true;
       const el = textMotionRef.current;
       if (!el) return;
-      animateInteractiveHoverLift(el, true, resolveLiftScale());
+      animateInteractiveHoverLift(el, true, resolveLiftScale(), undefined, config);
     },
-    [enabled, hoverLift, isDisabled, onPointerEnter, resolveLiftScale, textMotionRef],
+    [config, enabled, hoverLift, isDisabled, onPointerEnter, resolveLiftScale, textMotionRef],
   );
 
   const handlePointerLeave = useCallback(
@@ -128,12 +130,12 @@ export function usePressableElementTextMotion<
       onPointerLeave?.(e);
       if (!hoverLift) return;
       hoverInsideRef.current = false;
-      if (shouldSkipInteractiveHoverLift()) return;
+      if (shouldSkipInteractiveHoverLift(config)) return;
       const el = textMotionRef.current;
       if (!el) return;
-      animateInteractiveHoverLift(el, false, resolveLiftScale());
+      animateInteractiveHoverLift(el, false, resolveLiftScale(), undefined, config);
     },
-    [hoverLift, onPointerLeave, resolveLiftScale, textMotionRef],
+    [config, hoverLift, onPointerLeave, resolveLiftScale, textMotionRef],
   );
 
   const handlePointerDown = useCallback(

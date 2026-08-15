@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect } from "storybook/test";
+import { expect, waitFor } from "storybook/test";
 
 import { Ripple } from "@/components/core/Ripple";
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
@@ -200,7 +200,13 @@ export const Accessibility: Story = {
     await expect(trigger).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(trigger);
     await expect(trigger).toHaveAttribute("aria-expanded", "true");
-    await expect(canvas.getByText(/Content unavailable/)).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.getByText(/Content is unavailable/)).toBeVisible();
+    });
+    await userEvent.click(trigger);
+    await waitFor(() => {
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
+    });
   },
 };
 

@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
+import { forwardRef, useCallback, useState } from "react";
 
 import { Popover } from "@/components/core/Popover";
 import { POPOVER_DEFAULT_OFFSET } from "@/components/core/Popover/popoverStyles";
@@ -56,7 +51,19 @@ import type {
 import { cn } from "@/utils/cn";
 
 export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
-  function ColorPickerArea({ className, onPointerDown, style, motion, ...rest }, ref) {
+  function ColorPickerArea(
+    {
+      className,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      style,
+      motion,
+      ...rest
+    },
+    ref,
+  ) {
     const labels = useBurneLabels();
     const { hsva, setHsva, hex, size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
@@ -65,9 +72,16 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
     const areaPart = useColorPickerSlotMotion<HTMLDivElement>("area", {
       motion,
       playEnter: false,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     const thumbPart = useColorPickerSlotMotion<HTMLButtonElement>("areaThumb", {
       playEnter: false,
+      onPointerDown: (e) => {
+        e.stopPropagation();
+      },
     });
     useColorPickerAreaChange(hex);
 
@@ -103,11 +117,12 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
           background: `linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, ${hueColor})`,
           ...style,
         }}
-        onPointerDown={(e: ReactPointerEvent<HTMLDivElement>) => {
-          onPointerDown?.(e);
+        {...rest}
+        {...areaPart.pointerHandlers}
+        onPointerDown={(e) => {
+          areaPart.pointerHandlers.onPointerDown?.(e);
           if (!e.defaultPrevented) handlePointerDown(e);
         }}
-        {...rest}
       >
         <button
           ref={setThumbRef}
@@ -135,9 +150,10 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
             backgroundColor: thumbColor,
           }}
           onKeyDown={handleThumbKeyDown}
+          {...thumbPart.pointerHandlers}
           onPointerDown={(e) => {
-            e.stopPropagation();
-            handlePointerDown(e);
+            thumbPart.pointerHandlers.onPointerDown?.(e);
+            if (!e.defaultPrevented) handlePointerDown(e);
           }}
         />
       </div>
@@ -148,13 +164,28 @@ export const ColorPickerArea = forwardRef<HTMLDivElement, ColorPickerAreaProps>(
 ColorPickerArea.displayName = "ColorPicker.Area";
 
 export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInputProps>(
-  function ColorPickerHexInput({ className, motion, ...rest }, ref) {
+  function ColorPickerHexInput(
+    {
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const labels = useBurneLabels();
     const { hex, setHsva } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
     const part = useColorPickerSlotMotion<HTMLDivElement>("hexInput", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     const [isEditing, setIsEditing] = useState(false);
     const [editDraft, setEditDraft] = useState("");
@@ -178,8 +209,8 @@ export const ColorPickerHexInput = forwardRef<HTMLDivElement, ColorPickerHexInpu
           slotClassNames.hexInput,
           className,
         )}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         <span
           className={cn(
@@ -271,12 +302,28 @@ export const ColorPickerAlphaInput = forwardRef<HTMLDivElement, ColorPickerAlpha
 ColorPickerAlphaInput.displayName = "ColorPicker.AlphaInput";
 
 export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsProps>(
-  function ColorPickerPresets({ presets, className, motion, ...rest }, ref) {
+  function ColorPickerPresets(
+    {
+      presets,
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const { hex, setHsva, size } = useColorPicker();
     const slotClassNames = useColorPickerClassNames();
     const part = useColorPickerSlotMotion<HTMLDivElement>("presets", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
 
     return (
@@ -287,8 +334,8 @@ export const ColorPickerPresets = forwardRef<HTMLDivElement, ColorPickerPresetsP
           slotClassNames.presets,
           className,
         )}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {presets.map((preset) => (
           <ColorSwatch

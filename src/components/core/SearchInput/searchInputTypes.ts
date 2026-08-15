@@ -50,6 +50,7 @@ export type SearchSizeLayout = {
   iconClass: string;
   controlPad: string;
   shellWCollapsed: string;
+  shellH: string;
   clearTap: number;
   clearIconClass: string;
   textGapClear: number;

@@ -51,6 +51,6 @@ export function useSeparatorRootMotion({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "root");
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
   return part;
 }

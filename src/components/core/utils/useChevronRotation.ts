@@ -1,13 +1,16 @@
 import { useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
-import { motionInteractive } from "./motionConfig";
+import { motionInteractiveFor, resolveMotionConfig, type MotionConfig } from "./motionConfig";
+import { useMotionConfig } from "./motionConfigContext";
 import { prefersReducedMotion, usePrefersReducedMotion } from "./reducedMotion";
+import type { MotionTransformVars } from "./slotMotion/slotMotionTypes";
 
 const CHEVRON_INIT_ATTR = "data-chevron-init";
 
 export function applyChevronRotationInstant(el: HTMLElement, open: boolean) {
-  gsap.set(el, { rotation: open ? 180 : 0 });
+  const vars: MotionTransformVars = { rotation: open ? 180 : 0 };
+  gsap.set(el, vars);
 }
 
 export function createChevronRotationRefCallback(
@@ -35,6 +38,7 @@ export function useChevronRotation(
   const initialOpenRef = useRef(open);
   const prevOpenRef = useRef<boolean | undefined>(undefined);
   const reduceMotionPreferred = usePrefersReducedMotion();
+  const config = useMotionConfig();
 
   const bindChevronRef = useMemo(
     () => createChevronRotationRefCallback(chevronRef, initialOpenRef.current),
@@ -63,8 +67,8 @@ export function useChevronRotation(
     if (prevOpenRef.current === open) return;
     prevOpenRef.current = open;
 
-    animateChevronRotation(el, open, { reduced: reduceMotion });
-  }, [open, chevronRef, enabled, skipAnimRef, reduceMotionPreferred]);
+    animateChevronRotation(el, open, { reduced: reduceMotion, config });
+  }, [config, open, chevronRef, enabled, skipAnimRef, reduceMotionPreferred]);
 
   return bindChevronRef;
 }
@@ -73,6 +77,7 @@ export type AnimateChevronRotationOptions = {
   reduced?: boolean;
   duration?: number;
   ease?: string;
+  config?: Readonly<MotionConfig>;
 };
 
 /** Rotation tween for a chevron. Used by `useChevronRotation` and the `chevronRotate` recipe. */
@@ -87,11 +92,14 @@ export function animateChevronRotation(
     applyChevronRotationInstant(el, open);
     return undefined;
   }
-  const vars = motionInteractive();
-  return gsap.to(el, {
+  const timing = motionInteractiveFor(resolveMotionConfig(options?.config));
+  const vars: MotionTransformVars = {
     rotation: open ? 180 : 0,
-    duration: options?.duration ?? vars.duration,
-    ease: options?.ease ?? vars.ease,
+    duration: options?.duration ?? timing.duration,
+    ease: options?.ease ?? timing.ease,
+  };
+  return gsap.to(el, {
+    ...vars,
     overwrite: "auto",
   });
 }

@@ -4,20 +4,21 @@ import {
   applyReducedPortalMotion,
   isReducedModalMotion,
 } from "@/components/core/utils/modalSurfaceMotion";
-import { motionTooltip } from "@/components/core/utils/motionConfig";
+import { motionTooltipFor } from "@/components/core/utils/motionConfig";
 
-import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
+import { isMotionRunActive, type MotionAnimation, type MotionContext } from "../slotMotionTypes";
 
 function portalVars(ctx: MotionContext) {
-  const fallback = motionTooltip();
-  const duration =
-    typeof ctx.params.duration === "number" ? ctx.params.duration : fallback.duration;
-  const ease = typeof ctx.params.ease === "string" ? ctx.params.ease : fallback.ease;
-  return { duration, ease, overwrite: "auto" as const };
+  const fallback = motionTooltipFor(ctx.config);
+  return {
+    duration: ctx.params.duration ?? fallback.duration,
+    ease: ctx.params.ease ?? fallback.ease,
+    overwrite: "auto" as const,
+  };
 }
 
 export function portalSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced || isReducedModalMotion()) {
+  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
     applyReducedPortalMotion(ctx.el);
     return undefined;
   }
@@ -28,7 +29,7 @@ export function portalSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | 
 }
 
 export function portalSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
-  if (ctx.reduced || isReducedModalMotion()) {
+  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
     applyReducedPortalMotion(ctx.el);
     ctx.complete();
     return undefined;
@@ -36,6 +37,9 @@ export function portalSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | 
   return animatePortalClose({
     surface: ctx.el,
     vars: portalVars(ctx),
-    onComplete: ctx.complete,
+    onComplete: () => {
+      if (!isMotionRunActive(ctx)) return;
+      ctx.complete();
+    },
   }) as unknown as MotionAnimation;
 }

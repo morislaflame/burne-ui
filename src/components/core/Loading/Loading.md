@@ -125,7 +125,7 @@ Simple API — один `<span role="status">`.
 
 **Reduced motion:** точки статичны (`y: 0`, `scale: 1`), tweens не создаются.
 
-**Реакция на config:** `useSyncExternalStore(subscribeMotionConfig)` — при `configureMotion()` tweens пересоздаются.
+**Реакция на config:** `useMotionConfig()` — tweens пересоздаются при overlay на дереве (`BurneUIProvider` / `MotionConfigProvider`) и при `configureMotion()`.
 
 #### Кастомизация dots
 

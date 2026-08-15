@@ -7,7 +7,7 @@
  * `x`/`y`/`scale`) stays kit-internal in `useSlidingTabIndicator.ts`.
  *
  * Hosts:
- * - Root / List play optional `enter`.
+ * - Root / List play optional `enter`. Root plays `change` when the selected value updates.
  * - Each Tab is a nested scope. Inactive tabs default to `hoverLiftFirstLevel`
  *   + `pressSqueeze` on `tabText`. Selected / disabled → those phases `false`.
  * - Panel plays opt-in `enter` / `leave` on selection.
@@ -25,8 +25,10 @@ import {
   isInteractivePressKey,
   shouldSkipInteractiveHoverLift,
 } from "@/components/core/utils/hoverInteractiveLift";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
   useOptionalEnterOnMount,
+  useSlotPhaseOnChange,
   type MotionScopeValue,
 } from "@/components/core/utils/slotMotion";
 
@@ -63,8 +65,9 @@ export function resolveTabsTabMotionDefaults({
   };
 }
 
-export function useTabsRootEnter(scope: MotionScopeValue | null) {
+export function useTabsRootEnter(scope: MotionScopeValue | null, value: string) {
   useOptionalEnterOnMount(scope, "root");
+  useSlotPhaseOnChange(scope, "root", value, { phase: "change" });
 }
 
 export function useTabsListEnter(scope: MotionScopeValue | null) {
@@ -75,8 +78,8 @@ function playTabPhase(
   scope: MotionScopeValue,
   phase: "hoverIn" | "hoverOut" | "pressIn" | "pressOut" | "check" | "uncheck" | "enter",
 ) {
-  const tabEl = scope.getTargets().tab ?? null;
-  const textEl = scope.getTargets().tabText ?? null;
+  const tabEl = scope.getTarget("tab");
+  const textEl = scope.getTarget("tabText");
   if (tabEl) {
     const value = scope.resolve("tab", phase);
     if (value !== undefined && value !== false) {
@@ -108,22 +111,23 @@ export function useTabsTabPointerMotion({
   onPointerUp?: (e: PointerEvent<HTMLButtonElement>) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
 }) {
+  const config = useMotionConfig();
   const handlePointerEnter = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerEnter?.(e);
-      if (isDisabled || e.defaultPrevented || shouldSkipInteractiveHoverLift()) return;
+      if (isDisabled || e.defaultPrevented || shouldSkipInteractiveHoverLift(config)) return;
       playTabPhase(scope, "hoverIn");
     },
-    [isDisabled, onPointerEnter, scope],
+    [config, isDisabled, onPointerEnter, scope],
   );
 
   const handlePointerLeave = useCallback(
     (e: PointerEvent<HTMLButtonElement>) => {
       onPointerLeave?.(e);
-      if (isDisabled || shouldSkipInteractiveHoverLift()) return;
+      if (isDisabled || shouldSkipInteractiveHoverLift(config)) return;
       playTabPhase(scope, "hoverOut");
     },
-    [isDisabled, onPointerLeave, scope],
+    [config, isDisabled, onPointerLeave, scope],
   );
 
   const handlePointerDown = useCallback(
@@ -186,7 +190,7 @@ export function useTabsPanelLifecycle(
 
   useLayoutEffect(() => {
     if (!scope) return;
-    const el = scope.getTargets().panel ?? null;
+    const el = scope.getTarget("panel");
 
     if (prevRef.current === undefined) {
       prevRef.current = isSelected;
@@ -220,11 +224,15 @@ export function useTabsPanelLifecycle(
     }
 
     setLeaving(true);
-    scope.play("panel", "leave", {
+    const run = scope.play("panel", "leave", {
       el,
       waitForComplete: true,
       complete: () => setLeaving(false),
     });
+    return () => {
+      run.cancel("host");
+      setLeaving(false);
+    };
   }, [isSelected, scope]);
 
   return { leaving };

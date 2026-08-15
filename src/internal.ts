@@ -81,9 +81,15 @@ export {
 export { gsap, killMotion, tweenCssColor, resolveCssColor, ensureRippleEase } from "@/components/core/utils/gsapMotion";
 export {
   MOTION_CONFIG_DEFAULTS,
+  MOTION_CONFIG_LIMITS,
   MOTION_CSS_VAR,
   applyMotionCssTokens,
+  overlayMotionConfig,
 } from "@/components/core/utils/motionConfig";
+export type {
+  MotionRecipeParams,
+  MotionTransformVars,
+} from "@/components/core/utils/slotMotion";
 export {
   SHADOW_INTERACTION_GEOM,
   SHADOW_KNOB_CSS_DEFAULTS,
@@ -111,6 +117,7 @@ export {
   MOTION_DEFAULTS,
   SCALE_DEFAULTS,
   TEXT_SCALE_BASES,
+  motionConfigFromThemeState,
   type ThemeColorKey,
   type ThemeColors,
   type ThemeDerivedColorKey,

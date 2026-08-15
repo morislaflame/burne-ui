@@ -27,6 +27,7 @@ import {
   type HoverShadowConfig,
 } from "./hoverInteractiveLift";
 import { gsap, killMotion } from "./gsapMotion";
+import { useMotionConfig } from "./motionConfigContext";
 import { useContainerPointerHoverHandlers } from "./useContainerPointerHoverHandlers";
 import type { ShadowSize } from "@/tokens/shadows";
 
@@ -118,6 +119,7 @@ export function useSecondLevelShadow(
   const shadow = useMemo(() => shadowMotionFor(shadowSize), [shadowSize]);
   const idleShadow = options?.resolveIdle?.() ?? shadow.idle ?? shadowNone();
   const liftScale = options?.liftScale;
+  const config = useMotionConfig();
 
   useLayoutEffect(() => {
     if (!enabled) return;
@@ -133,23 +135,23 @@ export function useSecondLevelShadow(
 
   const onEnter = useCallback(
     (el: HTMLElement) => {
-      animateInteractiveHoverLift(el, true, liftScale, shadow);
+      animateInteractiveHoverLift(el, true, liftScale, shadow, config);
     },
-    [liftScale, shadow],
+    [config, liftScale, shadow],
   );
 
   const onLeave = useCallback(
     (el: HTMLElement) => {
-      animateInteractiveHoverLift(el, false, liftScale, shadow);
+      animateInteractiveHoverLift(el, false, liftScale, shadow, config);
     },
-    [liftScale, shadow],
+    [config, liftScale, shadow],
   );
 
   const { onPointerOver, onPointerOut } = useContainerPointerHoverHandlers({
     enabled: interactive,
     targetRef,
     pointerInsideRef: options?.pointerInsideRef,
-    skipHover: shouldSkipInteractiveHoverLift,
+    skipHover: () => shouldSkipInteractiveHoverLift(config),
     onEnter,
     onLeave,
   });

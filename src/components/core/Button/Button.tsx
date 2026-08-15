@@ -14,7 +14,6 @@ import {
 
 import { Ripple } from "@/components/core/Ripple";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
 
 import "../utils/glossInteractive.css";
 
@@ -210,7 +209,6 @@ function ButtonSurface({
           <Ripple
             color={state.convergeRippleColor}
             disabled={state.blocked || state.asyncState !== "idle"}
-            duration={getMotionConfig().rippleDefaultDuration}
             className={state.clipClass}
           />
         ) : null}

@@ -33,6 +33,8 @@ export type TabsPartMotion = {
   leave?: MotionValue;
   check?: MotionValue;
   uncheck?: MotionValue;
+  /** Plays on `root` when the selected tab value updates. */
+  change?: MotionValue;
 };
 
 export type TabsMotion = {
@@ -57,6 +59,7 @@ export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue"> & {
    * Per-slot motion (`root`, `list`, `tab`, `tabText`, `panel`).
    * Indicator FLIP is kit-internal — not a public slot. Do not tween `width`/`left` of the indicator.
    * Inactive tabs default to `hoverLiftFirstLevel` + `pressSqueeze` on `tabText`.
+   * Phase `change` plays on `root` when the selected value updates.
    */
   motion?: Prettify<TabsMotion>;
 };

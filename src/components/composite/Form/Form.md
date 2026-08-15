@@ -161,10 +161,10 @@ type FormFieldRules = {
 
 Не крадёт motion дочерних Input.
 
-`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+`false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется. Пользовательские `onPointerOver` / `Out` / `Down` / `Up` **мержатся** с motion (не заменяют).
 
 
-`Form` **не содержит GSAP** и motion pipeline. Анимации полностью делегированы дочерним контролам (`Input`, `Button`, `Checkbox`, `ComboBox`).
+`formAnimations.ts` — opt-in `enter` / `change` на chrome формы. Дефолтного GSAP нет: дочерние контролы (`Input`, `Button`, `Checkbox`, `ComboBox`) оставляют свои хосты.
 
 ### Сводка
 
@@ -176,7 +176,7 @@ type FormFieldRules = {
 
 ### Чего нет
 
-- Собственный `formAnimations.ts`
+- Дефолтные рецепты (empty defaults — только opt-in `motion`)
 - `configureMotion` на уровне Form
 - Transition между секциями
 

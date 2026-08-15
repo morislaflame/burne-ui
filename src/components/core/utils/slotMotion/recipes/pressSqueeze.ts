@@ -1,31 +1,28 @@
-import type { RefObject } from "react";
-
 import { animateGlossInteractivePressSqueeze } from "@/components/core/utils/glossInteractiveMotion";
-import {
-  animateInteractivePressSqueeze,
-  type HoverShadowConfig,
-} from "@/components/core/utils/hoverInteractiveLift";
+import { animateInteractivePressSqueeze } from "@/components/core/utils/hoverInteractiveLift";
 import { shadowMotionFor } from "@/components/core/utils/useShadowMotion";
 
-import type { MotionContext } from "../slotMotionTypes";
+import type { MotionContext, MotionRecipeParams } from "../slotMotionTypes";
 
-type PointerInside = boolean | RefObject<boolean | null> | (() => boolean);
+type PointerInside = NonNullable<MotionRecipeParams["pointerInside"]>;
 
 function pointerInsideFrom(ctx: MotionContext): PointerInside {
-  return (ctx.params.pointerInside as PointerInside | undefined) ?? false;
+  return ctx.params.pointerInside ?? false;
 }
 
 /** Full press-in + release timeline. Default `pressOut` is `false`. */
 export function pressSqueezeRecipe(ctx: MotionContext): Promise<void> | undefined {
   if (ctx.reduced) return undefined;
   const shadow = ctx.params.hasHoverShadow
-    ? ((ctx.params.shadow as HoverShadowConfig | undefined) ?? shadowMotionFor("none"))
+    ? (ctx.params.shadow ?? shadowMotionFor("none"))
     : undefined;
   return animateInteractivePressSqueeze(ctx.el, {
     pointerInside: pointerInsideFrom(ctx),
-    liftScale: ctx.params.liftScale as number | undefined,
+    liftScale: ctx.params.liftScale,
     shadow,
-    onReleaseStart: ctx.params.onReleaseStart as (() => void) | undefined,
+    onReleaseStart: ctx.params.onReleaseStart,
+    signal: ctx.signal,
+    config: ctx.config,
   });
 }
 
@@ -34,7 +31,8 @@ export function pressSqueezeGlossRecipe(ctx: MotionContext): Promise<void> | und
   return animateGlossInteractivePressSqueeze(
     ctx.el,
     pointerInsideFrom(ctx),
-    ctx.params.liftScale as number | undefined,
-    ctx.params.onReleaseStart as (() => void) | undefined,
+    ctx.params.liftScale,
+    ctx.params.onReleaseStart,
+    { signal: ctx.signal, config: ctx.config },
   );
 }

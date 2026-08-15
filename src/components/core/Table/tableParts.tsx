@@ -56,11 +56,27 @@ function hasTableHeaderRow(children: ReactNode): boolean {
 }
 
 export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContainerProps>(
-  function TableScrollContainer({ className, tabIndex, motion, ...rest }, ref) {
+  function TableScrollContainer(
+    {
+      className,
+      tabIndex,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClassNames = useTableClassNames();
     const part = useTableSlotMotion<HTMLDivElement>("scrollContainer", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
 
     return (
@@ -72,8 +88,8 @@ export const TableScrollContainer = forwardRef<HTMLDivElement, TableScrollContai
           slotClassNames.scrollContainer,
           className,
         )}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -94,6 +110,10 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
       className,
       children,
       motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
       ...rest
     },
     ref,
@@ -112,6 +132,10 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
     const part = useTableSlotMotion<HTMLTableElement>("content", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
 
     return (
@@ -125,8 +149,8 @@ export const TableContent = forwardRef<HTMLTableElement, TableContentProps>(
             slotClass: slotClassNames.content,
             className,
           })}
-          {...part.pointerHandlers}
           {...rest}
+          {...part.pointerHandlers}
         >
           {children}
         </table>
@@ -162,11 +186,28 @@ export const TableHeaderRow = forwardRef<HTMLTableRowElement, TableHeaderRowProp
 TableHeaderRow.displayName = "Table.HeaderRow";
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
-  function TableHeader({ columns, children, className, motion, ...rest }, ref) {
+  function TableHeader(
+    {
+      columns,
+      children,
+      className,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const slotClassNames = useTableClassNames();
     const part = useTableSlotMotion<HTMLTableSectionElement>("header", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
 
     const content =
@@ -184,8 +225,8 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
       <thead
         ref={part.setRef}
         className={cn(slotClassNames.header, className)}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {rows}
       </thead>
@@ -225,6 +266,10 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
       className,
       onClick,
       motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
       ...rest
     },
     ref,
@@ -236,6 +281,10 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
     const part = useTableSlotMotion<HTMLTableCellElement>("column", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
 
     const sortDirection = resolveColumnSortDirection(id, sortDescriptor);
@@ -316,8 +365,8 @@ export const TableColumn = forwardRef<HTMLTableCellElement, TableColumnProps>(
           className,
         })}
         onClick={allowsSorting ? undefined : handleThClick}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {allowsSorting ? (
           <button
@@ -450,9 +499,20 @@ function TableRowSurface({
     claimFocusedRowKey,
   } = useTableContent();
   const scope = useTableMotionScope();
+  const {
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...domRest
+  } = rest;
   const part = useTableSlotMotion<HTMLTableRowElement>("row", {
     motion: itemMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   const isSelected = useTableRowIsSelected(id);
@@ -561,8 +621,8 @@ function TableRowSurface({
         })}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
+        {...domRest}
         {...part.pointerHandlers}
-        {...rest}
       >
         {children}
       </tr>
@@ -575,7 +635,15 @@ export const TableRow = memo(TableRowInner);
 TableRow.displayName = "TableRow";
 
 const TableCellInner = forwardRef<HTMLTableCellElement, TableCellProps>(function TableCell(
-  { className, motion, ...rest },
+  {
+    className,
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
   ref,
 ) {
   const variant = useTableVariant();
@@ -586,6 +654,10 @@ const TableCellInner = forwardRef<HTMLTableCellElement, TableCellProps>(function
   const part = useTableSlotMotion<HTMLTableCellElement>("cell", {
     motion,
     forwardedRef: ref,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   return (
@@ -599,8 +671,8 @@ const TableCellInner = forwardRef<HTMLTableCellElement, TableCellProps>(function
         slotClass: slotClassNames.cell,
         className,
       })}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
     />
   );
 });
@@ -610,21 +682,33 @@ export const TableCell = memo(TableCellInner);
 TableCell.displayName = "TableCell";
 
 export const TableFooter = forwardRef<HTMLDivElement, TableFooterProps>(function TableFooter(
-  { className, motion, ...rest },
+  {
+    className,
+    motion,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...rest
+  },
   ref,
 ) {
   const slotClassNames = useTableClassNames();
   const part = useTableSlotMotion<HTMLDivElement>("footer", {
     motion,
     forwardedRef: ref,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   return (
     <div
       ref={part.setRef}
       className={cn(TABLE_FOOTER_CLASS, slotClassNames.footer, className)}
-      {...part.pointerHandlers}
       {...rest}
+      {...part.pointerHandlers}
     />
   );
 });

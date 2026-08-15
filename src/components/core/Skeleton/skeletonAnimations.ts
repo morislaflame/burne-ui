@@ -42,6 +42,6 @@ export function useSkeletonSlotMotion<T extends HTMLElement>({
     pointerPhases: pointer,
     pressPhases: pointer,
   });
-  useOptionalEnterOnMount(scope, slot);
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }

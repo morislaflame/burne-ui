@@ -102,7 +102,7 @@ export function useExpandableTriggerMotion({
   );
 
   const skipChevron = useCallback((nextOpen: boolean) => {
-    const el = scope.getTargets().chevron;
+    const el = scope.getTarget("chevron");
     if (el) applyChevronRotationInstant(el, nextOpen);
   }, [scope]);
 

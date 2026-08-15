@@ -126,6 +126,30 @@ export const ToggleInteraction: Story = {
   },
 };
 
+export const PointerHandlerComposition: Story = {
+  name: "Motion contract: pointer handler",
+  render: function PointerHandlerDemo() {
+    const [downs, setDowns] = useState(0);
+    return (
+      <div className="flex flex-col gap-base">
+        <Checkbox
+          label="Consent to data processing"
+          onPointerDown={() => setDowns((n) => n + 1)}
+        />
+        <p>pointerdown:{downs}</p>
+      </div>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const checkbox = canvas.getByRole("checkbox", {
+      name: "Consent to data processing",
+    });
+    await userEvent.click(checkbox);
+    await expect(checkbox).toBeChecked();
+    await expect(canvas.getByText(/pointerdown:[1-9]/)).toBeInTheDocument();
+  },
+};
+
 export const Sizes: Story = {
   name: "Sizes",
   render: () => (

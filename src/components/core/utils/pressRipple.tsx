@@ -2,7 +2,7 @@ import { memo, useLayoutEffect, useRef } from "react";
 import { PRESS_RIPPLE_DOT_CLASS } from "./pressRippleStyles";
 import type { ConvergeRipple } from "./convergeRippleGeometry";
 import { ensureRippleEase, gsap, killMotion } from "./gsapMotion";
-import { getMotionConfig } from "./motionConfig";
+import { useMotionConfig } from "./motionConfigContext";
 
 /** Minimum ripple "core" scale — intentional visual constant, not in `configureMotion`. */
 const RIPPLE_MIN_SCALE = 0.12;
@@ -18,12 +18,14 @@ function ConvergeRippleDot({
   opacityFrom,
   background,
   direction,
+  easeCss,
   onDone,
 }: ConvergeRipple & {
   durationMs: number;
   opacityFrom: number;
   background: string;
   direction: RippleDirection;
+  easeCss: string;
   onDone: (id: number) => void;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -44,7 +46,7 @@ function ConvergeRippleDot({
         scale: scaleTo,
         autoAlpha: 0,
         duration: durationMs / 1000,
-        ease: ensureRippleEase(),
+        ease: ensureRippleEase(easeCss),
         onComplete: () => {
           if (!finished) onDoneRef.current(id);
         },
@@ -55,7 +57,7 @@ function ConvergeRippleDot({
       tween.kill();
       killMotion(el);
     };
-  }, [id, x, y, size, durationMs, opacityFrom, background, direction]);
+  }, [id, x, y, size, durationMs, opacityFrom, background, direction, easeCss]);
 
   return (
     <span
@@ -79,8 +81,8 @@ export const ConvergeRippleLayer = memo(function ConvergeRippleLayer({
   ripples,
   tone,
   onDone,
-  durationMs = getMotionConfig().rippleDefaultDuration,
-  opacityFrom = getMotionConfig().rippleDefaultOpacityFrom,
+  durationMs,
+  opacityFrom,
   direction = "in",
 }: {
   ripples: ConvergeRipple[];
@@ -90,6 +92,9 @@ export const ConvergeRippleLayer = memo(function ConvergeRippleLayer({
   opacityFrom?: number;
   direction?: RippleDirection;
 }) {
+  const motion = useMotionConfig();
+  const resolvedDuration = durationMs ?? motion.rippleDefaultDuration;
+  const resolvedOpacity = opacityFrom ?? motion.rippleDefaultOpacityFrom;
   return (
     <>
       {ripples.map((rp) => (
@@ -97,9 +102,10 @@ export const ConvergeRippleLayer = memo(function ConvergeRippleLayer({
           key={rp.id}
           {...rp}
           background={tone}
-          durationMs={durationMs}
-          opacityFrom={opacityFrom}
+          durationMs={resolvedDuration}
+          opacityFrom={resolvedOpacity}
           direction={direction}
+          easeCss={motion.rippleEaseCss}
           onDone={onDone}
         />
       ))}

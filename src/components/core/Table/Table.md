@@ -115,11 +115,11 @@ import { Table, TABLE_ROW_TONE_SURFACE, type TableProps, type TableVariant, type
 
 | Слоты | Фазы | Дефолт |
 |-------|------|--------|
-| `root`, `scrollContainer`, `content`, `header`, `footer`; nested `row`; `column` / `cell` in root scope (last-wins) | `enter` (opt-in); row `check` / `uncheck` on selection | empty |
+| `root`, `scrollContainer`, `content`, `header`, `footer`; nested `row`; `column` / `cell` (repeated slots, multi-instance) | `enter` (opt-in); row `check` / `uncheck` on selection; `change` (opt-in, без дефолта кита) | empty |
 
 `glossContent` не слот. Поворот sort chevron — kit-internal.
 
-`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет таблицу видимой). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
+`false` на фазе — skip без kill и без смены визуала (`enter: false` оставляет таблицу видимой). Enter factory — `opacity` + transform, не `autoAlpha`. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется. Пользовательские `onPointerOver` / `Out` / `Down` / `Up` **мержатся** с motion (не заменяют).
 
 
 `tableAnimations.tsx` — единственный GSAP-слой. Остальное — CSS hover/selection.

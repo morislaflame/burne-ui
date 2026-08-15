@@ -37,6 +37,10 @@ export type SliderPartMotion = {
   hoverOut?: MotionValue;
   pressIn?: MotionValue;
   pressOut?: MotionValue;
+  enter?: MotionValue;
+  leave?: MotionValue;
+  /** Plays when value / range identity updates. Fill geometry stays kit-internal. */
+  change?: MotionValue;
 };
 
 export type SliderMotion = {
@@ -171,10 +175,11 @@ export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | 
   hint?: ReactNode;
   error?: ReactNode;
   classNames?: Prettify<SliderClassNames>;
-  /**
-   * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`).
-   * Thumb press default: `pressSqueeze` (`pressOut: false`). Fill geometry (`left`/`width`) is kit-internal.
-   */
+    /**
+     * Per-slot motion (`track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`).
+     * Thumb press default: `pressSqueeze` (`pressOut: false`). Fill geometry (`left`/`width`) is kit-internal.
+     * Phase `change` plays on `track` when value updates (broadcast; `fill` excluded).
+     */
   motion?: Prettify<SliderMotion>;
 } & (
     | Partial<Omit<SliderSingleProps, "orientation" | "className" | "classNames">>

@@ -18,10 +18,14 @@ import { SliderVolumeCardDemo } from "../demos/slider/SliderVolumeCard.demo";
 import sliderVolumeCardSource from "../demos/slider/SliderVolumeCard.demo.tsx?raw";
 import { SliderVolumeDemo } from "../demos/slider/SliderVolume.demo";
 import sliderVolumeSource from "../demos/slider/SliderVolume.demo.tsx?raw";
+import { SliderMotionChangeTintDemo } from "../demos/slider/SliderMotionChangeTint.demo";
+import sliderMotionChangeTintSource from "../demos/slider/SliderMotionChangeTint.demo.tsx?raw";
 import { SliderMotionInstantPressDemo } from "../demos/slider/SliderMotionInstantPress.demo";
 import sliderMotionInstantPressSource from "../demos/slider/SliderMotionInstantPress.demo.tsx?raw";
 import { SliderMotionRangeSplitDemo } from "../demos/slider/SliderMotionRangeSplit.demo";
 import sliderMotionRangeSplitSource from "../demos/slider/SliderMotionRangeSplit.demo.tsx?raw";
+import { SliderMotionThumbInertiaDemo } from "../demos/slider/SliderMotionThumbInertia.demo";
+import sliderMotionThumbInertiaSource from "../demos/slider/SliderMotionThumbInertia.demo.tsx?raw";
 import { SliderMotionTrackGlowDemo } from "../demos/slider/SliderMotionTrackGlow.demo";
 import sliderMotionTrackGlowSource from "../demos/slider/SliderMotionTrackGlow.demo.tsx?raw";
 import { SliderMotionValuePopDemo } from "../demos/slider/SliderMotionValuePop.demo";
@@ -61,9 +65,11 @@ export function SliderShowcase() {
 
       <ShowcaseSection
         title="Slot motion"
-        description="Instant thumb press, value pop timeline, range thumbs with different part motion, track hover glow."
+        description="Instant thumb press, change-phase pulse, inertia bubble (quickTo, not change), value pop timeline, range thumbs with different part motion, track hover glow."
       >
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionInstantPressDemo} source={sliderMotionInstantPressSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionChangeTintDemo} source={sliderMotionChangeTintSource} />
+        <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionThumbInertiaDemo} source={sliderMotionThumbInertiaSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionValuePopDemo} source={sliderMotionValuePopSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionRangeSplitDemo} source={sliderMotionRangeSplitSource} />
         <ShowcaseDemoFromFile align="stretch" Demo={SliderMotionTrackGlowDemo} source={sliderMotionTrackGlowSource} />

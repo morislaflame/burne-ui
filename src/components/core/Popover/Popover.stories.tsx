@@ -7,6 +7,7 @@ import { IoCopyOutline, IoLinkOutline, IoShareSocialOutline, IoTrashOutline } fr
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
 import { Text } from "@/components/core/Text";
+import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
 import { cn } from "@/utils/cn";
 
 import { Popover } from "@/components/core/Popover";
@@ -63,7 +64,41 @@ export const Basic: Story = {
   ),
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Open" }));
-    await expect(screen.getByText("Arbitrary content inside the panel.")).toBeVisible();
+    await expect(
+      await screen.findByText("Arbitrary content inside the panel."),
+    ).toBeVisible();
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(screen.queryByText("Arbitrary content inside the panel.")).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const ReducedMotionOpenClose: Story = {
+  name: "Motion contract: reduced motion",
+  render: () => (
+    <MotionConfigProvider motion={{ enableAnimations: false }}>
+      <Popover>
+        <Popover.Trigger>
+          <Button variant="outline" type="button">
+            Open
+          </Button>
+        </Popover.Trigger>
+        <Popover.Content>
+          <Popover.Body>
+            <Text as="p" variant="small">
+              Arbitrary content inside the panel.
+            </Text>
+          </Popover.Body>
+        </Popover.Content>
+      </Popover>
+    </MotionConfigProvider>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Open" }));
+    await expect(
+      await screen.findByText("Arbitrary content inside the panel."),
+    ).toBeVisible();
     await userEvent.keyboard("{Escape}");
     await waitFor(() =>
       expect(screen.queryByText("Arbitrary content inside the panel.")).not.toBeInTheDocument(),

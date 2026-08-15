@@ -9,15 +9,15 @@
 import { clearWillChangeOnComplete, gsap as gsapInstance, killMotion, setWillChangeTransform } from "./gsapMotion";
 import { focusElement, focusPanelOnOpen } from "./focusElement";
 import { prefersReducedMotion } from "./reducedMotion";
-import { isMotionFeatureEnabled } from "./motionConfig";
+import { isMotionFeatureEnabledFor, resolveMotionConfig, type MotionConfig } from "./motionConfig";
 
 /** Panel enter scale — intentional visual constant (not in `configureMotion`). */
 export const MODAL_PANEL_SCALE_FROM = 0.97;
 
 export type GsapMotionVars = NonNullable<Parameters<typeof gsapInstance.to>[1]>;
 
-export function isReducedModalMotion(): boolean {
-  return prefersReducedMotion() || !isMotionFeatureEnabled("enableModalMotion");
+export function isReducedModalMotion(config?: Readonly<MotionConfig>): boolean {
+  return prefersReducedMotion() || !isMotionFeatureEnabledFor(resolveMotionConfig(config), "enableModalMotion");
 }
 
 /** Initial inline style for modal backdrop overlay before enter animation. */
@@ -111,6 +111,15 @@ export function applyReducedPortalMotion(surface: HTMLElement | null): void {
 export function preparePortalSurfaceForEnter(surface: HTMLElement): void {
   surface.style.opacity = "1";
   surface.style.visibility = "visible";
+}
+
+/**
+ * Flush layout after native `<dialog showModal()>`.
+ * UA goes `display: none` → `[open]`; GSAP `fromTo` must not record while hidden.
+ * Portal nested enter does **not** flush — see `scheduleNestedEnterBroadcast`.
+ */
+export function flushDialogOpenLayout(dialog: HTMLElement): void {
+  void dialog.offsetHeight;
 }
 
 export function animatePortalOpen({

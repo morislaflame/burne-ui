@@ -4,12 +4,19 @@
  * DOM slots: `track`, `rail`, `fill`, `thumb`, `icon`, `header`, `value`
  *
  * Host: Root (`SliderMotionProvider` + defaults). Thumb press via `useMotionPart` `pressPhases`.
+ * Track plays opt-in `enter` and `change` when value / range identity updates
+ * (`fill` excluded from broadcast — geometry stays kit-internal).
  * Fill `left`/`width`/`bottom`/`height` stay kit-internal (`applySliderFillStyle`).
  * `thumbShell` opacity when disabled is internal GSAP, not a public slot.
  * Marks are not a motion slot (many nodes, last-register-wins).
  */
 import { killMotion } from "@/components/core/utils/gsapMotion";
 import { useLayoutEffect, useRef } from "react";
+import {
+  useOptionalEnterOnMount,
+  useSlotPhaseOnChange,
+  type MotionScopeValue,
+} from "@/components/core/utils/slotMotion";
 
 import type { SliderMotion } from "./sliderTypes";
 
@@ -30,6 +37,20 @@ export function resolveSliderMotionDefaults({ disabled }: { disabled?: boolean }
     };
   }
   return SLIDER_MOTION_DEFAULTS;
+}
+
+export function useSliderTrackSlotMotion(
+  scope: MotionScopeValue | null,
+  identity: string,
+  disabled?: boolean,
+) {
+  useOptionalEnterOnMount(scope, "track");
+  useSlotPhaseOnChange(disabled ? null : scope, "track", identity, {
+    phase: "change",
+    skipFirst: true,
+    broadcast: true,
+    exclude: ["fill"],
+  });
 }
 
 export function useSliderThumbShellAnimation(disabled?: boolean) {

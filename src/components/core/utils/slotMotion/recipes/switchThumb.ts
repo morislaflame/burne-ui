@@ -1,15 +1,15 @@
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { isMotionFeatureEnabled, motionInteractive, motionSwitchThumb } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionInteractiveFor, motionSwitchThumbFor } from "@/components/core/utils/motionConfig";
 
-import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
+import type { MotionAnimation, MotionContext, MotionTransformVars } from "../slotMotionTypes";
 
 function travelOf(ctx: MotionContext): number {
   const getter = ctx.params.getTravelPx;
-  if (typeof getter === "function") {
-    const value = Number(getter());
+  if (getter) {
+    const value = getter();
     return Number.isFinite(value) ? value : 0;
   }
-  return typeof ctx.params.travelPx === "number" ? ctx.params.travelPx : 0;
+  return ctx.params.travelPx ?? 0;
 }
 
 export function applySwitchThumbInstant(el: HTMLElement, checked: boolean, travelPx: number): void {
@@ -31,14 +31,17 @@ export function applySwitchIconInstant(el: HTMLElement, visible: boolean): void 
 export function switchThumbRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const checked = ctx.phase === "check";
   const travelPx = travelOf(ctx);
-  if (ctx.reduced || !isMotionFeatureEnabled("enableSwitchThumb")) {
+  if (ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableSwitchThumb")) {
     applySwitchThumbInstant(ctx.el, checked, travelPx);
     return undefined;
   }
   killMotion(ctx.el);
-  return gsap.to(ctx.el, {
+  const vars: MotionTransformVars = {
     x: checked ? travelPx : 0,
-    ...motionSwitchThumb(),
+    ...motionSwitchThumbFor(ctx.config),
+  };
+  return gsap.to(ctx.el, {
+    ...vars,
     overwrite: "auto",
     force3D: false,
   }) as unknown as MotionAnimation;
@@ -46,30 +49,29 @@ export function switchThumbRecipe(ctx: MotionContext): MotionAnimation | undefin
 
 export function switchFillRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const checked = ctx.phase === "check";
-  if (ctx.reduced || !isMotionFeatureEnabled("enableSwitchThumb")) {
+  if (ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableSwitchThumb")) {
     applySwitchFillInstant(ctx.el, checked);
     return undefined;
   }
   killMotion(ctx.el);
-  const vars = { ...motionInteractive(), overwrite: "auto" as const };
+  const timing = motionInteractiveFor(ctx.config);
   if (checked) {
-    return gsap.fromTo(
-      ctx.el,
-      { autoAlpha: 0 },
-      { autoAlpha: 1, ...vars },
-    ) as unknown as MotionAnimation;
+    const from: MotionTransformVars = { autoAlpha: 0 };
+    const to: MotionTransformVars = { autoAlpha: 1, ...timing };
+    return gsap.fromTo(ctx.el, from, { ...to, overwrite: "auto" }) as unknown as MotionAnimation;
   }
-  return gsap.to(ctx.el, { autoAlpha: 0, ...vars }) as unknown as MotionAnimation;
+  const hide: MotionTransformVars = { autoAlpha: 0, ...timing };
+  return gsap.to(ctx.el, { ...hide, overwrite: "auto" }) as unknown as MotionAnimation;
 }
 
 function switchIconRecipe(ctx: MotionContext, visibleOnCheck: boolean): MotionAnimation | undefined {
   const visible = ctx.phase === "check" ? visibleOnCheck : !visibleOnCheck;
-  if (ctx.reduced || !isMotionFeatureEnabled("enableSwitchThumb")) {
+  if (ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableSwitchThumb")) {
     applySwitchIconInstant(ctx.el, visible);
     return undefined;
   }
   killMotion(ctx.el);
-  const vars = { ...motionInteractive(), overwrite: "auto" as const, force3D: false as const };
+  const vars = { ...motionInteractiveFor(ctx.config), overwrite: "auto" as const, force3D: false as const };
   if (visible) {
     return gsap.fromTo(
       ctx.el,

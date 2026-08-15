@@ -2,7 +2,8 @@ import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { clearWillChangeOnComplete, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
-import { isMotionFeatureEnabled, motionInteractive } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 
 import type { TabsOrientation, TabsVariant } from "./tabsTypes";
 
@@ -104,6 +105,7 @@ export function useSlidingTabIndicator(
   tabElementsRef: RefObject<Map<string, HTMLButtonElement>>,
   layoutEpoch: number,
 ) {
+  const config = useMotionConfig();
   const firstLayoutRef = useRef(true);
   const layoutMetricsRef = useRef<IndicatorMetrics | null>(null);
   const reduceMotionPreferred = usePrefersReducedMotion();
@@ -120,7 +122,7 @@ export function useSlidingTabIndicator(
 
     const to = readIndicatorMetrics(list, activeTab, orientation, variant);
     const reduceMotion =
-      reduceMotionPreferred || !isMotionFeatureEnabled("enableTabsIndicator");
+      reduceMotionPreferred || !isMotionFeatureEnabledFor(config, "enableTabsIndicator");
 
     indicator.style.opacity = "1";
 
@@ -150,12 +152,13 @@ export function useSlidingTabIndicator(
         y: 0,
         scaleX: 1,
         scaleY: 1,
-        ...motionInteractive(),
+        ...motionInteractiveFor(config),
         overwrite: "auto",
         onComplete: clearWillChangeOnComplete(indicator),
       },
     );
   }, [
+    config,
     activeValue,
     indicatorRef,
     listRef,

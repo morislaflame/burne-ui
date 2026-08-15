@@ -6,11 +6,12 @@
  * Not slots: individual dots — kit-internal wave (`useLoadingDotsAnimation`).
  * Host: root plays optional `enter`. Defaults: empty.
  */
-import { useLayoutEffect, useSyncExternalStore, type RefObject } from "react";
+import { useLayoutEffect, type RefObject } from "react";
 
 import { gsap, killMotionGeometry } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { getMotionConfigRevision, motionLoadingDots, subscribeMotionConfig } from "@/components/core/utils/motionConfig";
+import { motionLoadingDotsFor, type MotionConfig } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 
 import { LOADING_DOTS_LAYOUT } from "./loadingStyles";
 import type { LoadingMotion, LoadingSize } from "./loadingTypes";
@@ -20,10 +21,11 @@ const LOADING_DOTS_COUNT = 3;
 function runLoadingDotsWave(
   dots: HTMLElement[],
   size: LoadingSize,
+  config: Readonly<MotionConfig>,
 ) {
   const { jumpPx, scalePeak } = LOADING_DOTS_LAYOUT[size];
   const { staggerSec, halfCycleSec, easeUp, easeDown, enabled } =
-    motionLoadingDots();
+    motionLoadingDotsFor(config);
 
   for (const dot of dots) {
     killMotionGeometry(dot);
@@ -49,11 +51,7 @@ export function useLoadingDotsAnimation(
   trackRef: RefObject<HTMLElement | null>,
   size: LoadingSize,
 ) {
-  const motionRevision = useSyncExternalStore(
-    subscribeMotionConfig,
-    getMotionConfigRevision,
-    getMotionConfigRevision,
-  );
+  const config = useMotionConfig();
   const reduceMotion = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
@@ -69,13 +67,13 @@ export function useLoadingDotsAnimation(
     let tweens: ReturnType<typeof gsap.to>[] = [];
 
     if (!reduceMotion) {
-      tweens = runLoadingDotsWave(dots, size);
+      tweens = runLoadingDotsWave(dots, size, config);
     }
 
     return () => {
       for (const tween of tweens) tween.kill();
     };
-  }, [size, trackRef, motionRevision, reduceMotion]);
+  }, [size, trackRef, config, reduceMotion]);
 }
 
 export function resolveLoadingMotionDefaults(): LoadingMotion {

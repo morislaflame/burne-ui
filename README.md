@@ -110,7 +110,7 @@ import { BurneUIProvider, BURNE_LABELS_RU } from "burne-ui";
 </BurneUIProvider>
 ```
 
-Scaffold (`create-burne-app` / `burne-ui init`) уже кладёт `burne-theme.ts` с **`tokens`** (shared), **`colors.light` / `colors.dark`** и **`motion`**.
+Scaffold (`create-burne-app` / `burne-ui init`) уже кладёт `burne-theme.ts` с **`tokens`** (shared), **`colors.light` / `colors.dark`** и **`motion`**. `BurneUIProvider` оверлеит `config.motion` на это дерево; отдельный `configureMotion()` не нужен (он остаётся app default).
 
 Проектные CSS-переменные можно описать в том же конфиге. Они применяются Provider и автоматически
 появляются в `burne-ui-devtools`:

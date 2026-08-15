@@ -1,10 +1,10 @@
 import {
+  armWillChangeTransform,
   clearWillChangeOnComplete,
   gsap,
   killMotion,
-  setWillChangeTransform,
 } from "@/components/core/utils/gsapMotion";
-import { motionModal } from "@/components/core/utils/motionConfig";
+import { motionModalFor } from "@/components/core/utils/motionConfig";
 import { MODAL_PANEL_SCALE_FROM } from "@/components/core/utils/modalSurfaceMotion";
 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
@@ -26,10 +26,12 @@ export function applyModalPanelInstant(el: HTMLElement, open: boolean): void {
 }
 
 function modalVars(ctx: MotionContext) {
-  const duration =
-    typeof ctx.params.duration === "number" ? ctx.params.duration : motionModal().duration;
-  const ease = typeof ctx.params.ease === "string" ? ctx.params.ease : motionModal().ease;
-  return { duration, ease, overwrite: "auto" as const };
+  const fallback = motionModalFor(ctx.config);
+  return {
+    duration: ctx.params.duration ?? fallback.duration,
+    ease: ctx.params.ease ?? fallback.ease,
+    overwrite: "auto" as const,
+  };
 }
 
 export function modalOverlayEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
@@ -65,7 +67,7 @@ export function modalPanelEnterRecipe(ctx: MotionContext): MotionAnimation | und
     return undefined;
   }
   killMotion(ctx.el);
-  setWillChangeTransform(ctx.el, true);
+  armWillChangeTransform(ctx.el, ctx.onCleanup);
   const vars = modalVars(ctx);
   return gsap.fromTo(
     ctx.el,
@@ -84,7 +86,7 @@ export function modalPanelLeaveRecipe(ctx: MotionContext): MotionAnimation | und
     return undefined;
   }
   killMotion(ctx.el);
-  setWillChangeTransform(ctx.el, true);
+  armWillChangeTransform(ctx.el, ctx.onCleanup);
   const vars = modalVars(ctx);
   return gsap.to(ctx.el, {
     autoAlpha: 0,

@@ -12,7 +12,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject } from "r
 
 import { createGlossInteractiveRefCallback, GLOSS_INTERACTIVE_MOTION_CLASS } from "@/components/core/utils/glossInteractiveMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { initElementShadow, shadowBase, shouldSkipInteractiveHoverLift } from "@/components/core/utils/hoverInteractiveLift";
 import { mergeMotionPointerHandlers, useMotionPointerPhases } from "@/components/core/utils/slotMotion";
 import { SHADOW_LIFT_MOTION_CLASS, useSecondLevelShadow, useSecondLevelShadowContainer } from "@/components/core/utils/useShadowMotion";
@@ -198,9 +198,10 @@ export function useBadgeAnchorMotion(
 }
 
 export function useBadgeAnchorAnimations(liftedRef: RefObject<HTMLElement | null>) {
+  const config = useMotionConfig();
   return useSecondLevelShadowContainer(liftedRef, true, {
     interactive: false,
-    liftScale: getMotionConfig().badgeAnchorHoverLiftScale,
+    liftScale: config.badgeAnchorHoverLiftScale,
   });
 }
 

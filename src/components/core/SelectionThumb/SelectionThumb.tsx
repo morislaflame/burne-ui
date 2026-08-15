@@ -126,7 +126,7 @@ function SelectionThumbShell({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "root");
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
 
   const setRef = (node: HTMLSpanElement | null) => {
     part.setRef(node);

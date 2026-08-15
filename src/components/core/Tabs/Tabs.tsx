@@ -63,6 +63,7 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
       <TabsClassNamesProvider classNames={classNames}>
         <TabsMotionProvider motion={motion} defaults={motionDefaults}>
           <TabsRootSurface
+            value={contextValue.value}
             orientation={contextValue.orientation}
             slotClass={classNames?.root}
             className={className}
@@ -80,6 +81,7 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(function TabsRoot(
 TabsRoot.displayName = "Tabs";
 
 function TabsRootSurface({
+  value,
   orientation,
   slotClass,
   className,
@@ -87,6 +89,7 @@ function TabsRootSurface({
   rest,
   children,
 }: {
+  value: string;
   orientation: ReturnType<typeof useTabsRootState>["contextValue"]["orientation"];
   slotClass?: string;
   className?: string;
@@ -116,7 +119,7 @@ function TabsRootSurface({
     pointerPhases: pointer,
     pressPhases: pointer,
   });
-  useTabsRootEnter(scope);
+  useTabsRootEnter(scope, value);
 
   return (
     <div

@@ -93,19 +93,38 @@ export function useMotionPart<T extends HTMLElement>({
   const targetRef = useRef<T | null>(null);
   const motionRef = useRef(motion);
   motionRef.current = motion;
+  const idRef = useRef(Symbol(slot));
+
+  const syncRegistration = useCallback(
+    (node: T | null, partMotion: MotionPartPhases | undefined) => {
+      if (!scope) return;
+      scope.register({
+        id: idRef.current,
+        slot,
+        node,
+        motion: partMotion,
+      });
+    },
+    [scope, slot],
+  );
 
   useLayoutEffect(() => {
-    scope?.registerPartMotion(slot, motion);
-    return () => scope?.registerPartMotion(slot, undefined);
-  }, [motion, scope, slot]);
+    syncRegistration(targetRef.current, motion);
+  }, [motion, syncRegistration]);
+
+  useLayoutEffect(() => {
+    return () => {
+      syncRegistration(null, undefined);
+    };
+  }, [syncRegistration]);
 
   const setRef = useCallback(
     (node: T | null) => {
       targetRef.current = node;
-      scope?.registerTarget(slot, node);
+      syncRegistration(node, motionRef.current);
       if (forwardedRef != null) mergeForwardedRef(forwardedRef, node);
     },
-    [forwardedRef, scope, slot],
+    [forwardedRef, syncRegistration],
   );
 
   const motionPointer = useMotionPointerPhases<T>({

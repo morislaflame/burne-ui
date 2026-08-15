@@ -25,7 +25,7 @@ export function LoadingSpinner({
     slot: "spinner",
     pointerPhases: false,
   });
-  useOptionalEnterOnMount(scope, "spinner");
+  useOptionalEnterOnMount(scope, "spinner", part.targetRef);
 
   return (
     <span
@@ -55,7 +55,7 @@ export function LoadingDots({
     pointerPhases: false,
   });
   useLoadingDotsAnimation(trackRef, size);
-  useOptionalEnterOnMount(scope, "dots");
+  useOptionalEnterOnMount(scope, "dots", part.targetRef);
 
   const setRef = (node: HTMLSpanElement | null) => {
     trackRef.current = node;

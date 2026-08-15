@@ -12,7 +12,8 @@ import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
 import { useLayoutEffect, useRef } from "react";
 
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { usePressableElementTextMotion } from "@/components/core/utils/usePressableElementTextMotion";
 
 import type { SelectionIndicatorMotion } from "@/components/core/SelectionIndicator";
@@ -50,6 +51,7 @@ export function resolveCheckboxIndicatorMotion({
 }
 
 export function useCheckboxControlTrackAnimation() {
+  const config = useMotionConfig();
   const ctx = useCheckboxFieldContext();
   const trackRef = useRef<HTMLSpanElement>(null);
   const trackFirstLayoutRef = useRef(true);
@@ -78,11 +80,11 @@ export function useCheckboxControlTrackAnimation() {
       { autoAlpha: start },
       {
         autoAlpha: ctx.isDisabled ? 0.48 : 1,
-        ...motionInteractive(),
+        ...motionInteractiveFor(config),
         overwrite: "auto",
       },
     );
-  }, [ctx.isDisabled, reduceMotion]);
+  }, [config, ctx.isDisabled, reduceMotion]);
 
   return trackRef;
 }

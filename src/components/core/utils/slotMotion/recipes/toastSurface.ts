@@ -6,20 +6,21 @@ import {
   MODAL_PANEL_SCALE_FROM,
 } from "@/components/core/utils/modalSurfaceMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionInteractive, motionToastDismiss } from "@/components/core/utils/motionConfig";
+import { motionInteractiveFor, motionToastDismissFor } from "@/components/core/utils/motionConfig";
 
-import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
+import { isMotionRunActive, type MotionAnimation, type MotionContext } from "../slotMotionTypes";
 
 function slideDirOf(ctx: MotionContext): number {
-  return typeof ctx.params.slideDir === "number" ? ctx.params.slideDir : 24;
+  return ctx.params.slideDir ?? 24;
 }
 
 function toastVars(ctx: MotionContext, kind: "enter" | "leave") {
-  const fallback = kind === "leave" ? motionToastDismiss() : motionInteractive();
-  const duration =
-    typeof ctx.params.duration === "number" ? ctx.params.duration : fallback.duration;
-  const ease = typeof ctx.params.ease === "string" ? ctx.params.ease : fallback.ease;
-  return { duration, ease, overwrite: "auto" as const };
+  const fallback = kind === "leave" ? motionToastDismissFor(ctx.config) : motionInteractiveFor(ctx.config);
+  return {
+    duration: ctx.params.duration ?? fallback.duration,
+    ease: ctx.params.ease ?? fallback.ease,
+    overwrite: "auto" as const,
+  };
 }
 
 export function applyToastRootInstant(el: HTMLElement, open: boolean, slideDir: number): void {
@@ -33,7 +34,7 @@ export function applyToastRootInstant(el: HTMLElement, open: boolean, slideDir: 
 
 export function toastSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const slideDir = slideDirOf(ctx);
-  if (ctx.reduced || isReducedModalMotion()) {
+  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
     applyReducedPortalMotion(ctx.el);
     return undefined;
   }
@@ -47,7 +48,7 @@ export function toastSurfaceEnterRecipe(ctx: MotionContext): MotionAnimation | u
 
 export function toastSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const slideDir = slideDirOf(ctx);
-  if (ctx.reduced || isReducedModalMotion()) {
+  if (ctx.reduced || isReducedModalMotion(ctx.config)) {
     applyToastRootInstant(ctx.el, false, slideDir);
     ctx.complete();
     return undefined;
@@ -56,6 +57,9 @@ export function toastSurfaceLeaveRecipe(ctx: MotionContext): MotionAnimation | u
     surface: ctx.el,
     vars: toastVars(ctx, "leave"),
     exit: { y: slideDir },
-    onComplete: ctx.complete,
+    onComplete: () => {
+      if (!isMotionRunActive(ctx)) return;
+      ctx.complete();
+    },
   }) as unknown as MotionAnimation;
 }

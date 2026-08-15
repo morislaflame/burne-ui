@@ -31,10 +31,11 @@ export const SEARCH_INPUT_ICON_CLASS = "shrink-0";
 export const SEARCH_INPUT_CONTROL_BASE_CLASS =
   "box-border min-h-0 w-full border-0 bg-transparent text-foreground outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none disabled:cursor-not-allowed disabled:opacity-100";
 
-export const SEARCH_INPUT_CONTROL_EXPANDED_CLASS = "relative z-[2] opacity-100";
+export const SEARCH_INPUT_CONTROL_EXPANDED_CLASS =
+  "pointer-events-auto absolute inset-0 z-[2] opacity-100";
 
 export const SEARCH_INPUT_CONTROL_COLLAPSED_CLASS =
-  "pointer-events-none absolute inset-0 opacity-0";
+  "pointer-events-none absolute inset-0 z-[2] opacity-0";
 
 export const SEARCH_INPUT_CLEAR_BUTTON_CLASS =
   "absolute top-1/2 z-[3] flex -translate-y-1/2 items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none focus-ring-inset cursor-pointer";
@@ -93,6 +94,13 @@ const SHELL_W_COLLAPSED: Record<ComponentSize, string> = {
   large: "w-control-large",
 };
 
+const SHELL_H: Record<ComponentSize, string> = {
+  small: "h-control-small",
+  base: "h-control-base",
+  mid: "h-control-mid",
+  large: "h-control-large",
+};
+
 const SEARCH_PAD_X_PX: Record<ComponentSize, number> = {
   small: 8,
   base: 12,
@@ -130,6 +138,7 @@ function buildSearchLayout(size: ComponentSize): SearchSizeLayout {
     iconClass: control.icon,
     controlPad: control.controlPad,
     shellWCollapsed: SHELL_W_COLLAPSED[size],
+    shellH: SHELL_H[size],
     clearTap: SEARCH_CLEAR_TAP_PX[size],
     clearIconClass: control.chevronIcon,
     textGapClear: size === "small" ? 4 : 6,
@@ -207,7 +216,8 @@ export function searchInputRootClass({
       ? searchInputGroupShellClass(groupSegment)
       : expanded
         ? SEARCH_EXPANDED_ROUNDED_CLASS[size]
-        : cn(SEARCH_INPUT_ROOT_COLLAPSED_ROUNDED_CLASS, layout.shellWCollapsed),
+        : SEARCH_INPUT_ROOT_COLLAPSED_ROUNDED_CLASS,
+    layout.shellH,
     SEARCH_INPUT_ROOT_BASE_CLASS,
     isGloss
       ? SEARCH_INPUT_ROOT_GLOSS_CLASS
@@ -223,6 +233,7 @@ export function searchInputRootClass({
     blocked ? SEARCH_INPUT_BLOCKED_CLASS : "",
     slotRoot,
     className,
+    !expanded && !groupSegment && layout.shellWCollapsed,
   );
 }
 

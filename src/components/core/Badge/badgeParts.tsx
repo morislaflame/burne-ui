@@ -1,6 +1,6 @@
 import { Children, forwardRef, isValidElement, useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 
-import { getMotionConfig } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { mergeMotionPointerHandlers } from "@/components/core/utils/slotMotion";
 import { cn } from "@/utils/cn";
 
@@ -172,13 +172,14 @@ export const BadgeAnchor = forwardRef<HTMLDivElement, BadgeAnchorProps>(function
     () => resolveBadgeAnchorMotionDefaults({ hoverLift }),
     [hoverLift],
   );
+  const config = useMotionConfig();
   const motionParams = useMemo(
     () => ({
       pointerInside: hoverPointerInsideRef,
-      liftScale: getMotionConfig().badgeAnchorHoverLiftScale,
+      liftScale: config.badgeAnchorHoverLiftScale,
       shadowSize: "base" as const,
     }),
-    [],
+    [config.badgeAnchorHoverLiftScale],
   );
 
   return (

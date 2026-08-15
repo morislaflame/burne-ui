@@ -7,6 +7,11 @@ import gsap from "gsap";
 import { Form, type FormValues } from "@/components/composite/Form";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/core/Input";
+import { MotionConfigProvider } from "@/components/core/utils/motionConfigContext";
+import {
+  playKeyboardOpensDialog,
+  playOpenCloseUnmounts,
+} from "@/stories-utils/motionStoryPlay";
 import { Dialog, type DialogSize } from ".";
 import { useDialog } from "./dialogContext";
 import { DialogMotionDemo } from "../../../../playground/showcase/demos/dialog/DialogMotion.demo";
@@ -154,6 +159,14 @@ export const WithTrigger: Story = {
       </Dialog>
     );
   },
+  play: async ({ canvas, userEvent }) => {
+    await playKeyboardOpensDialog({
+      canvas,
+      userEvent,
+      triggerName: "Open dialog",
+      dialogName: "Settings",
+    });
+  },
 };
 
 // ─── Uncontrolled (defaultOpen) ───────────────────────────────────────────────
@@ -246,14 +259,102 @@ export const OpenCloseInteraction: Story = {
     );
   },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: "Open dialog" }));
-    await expect(
-      await screen.findByRole("dialog", { name: "Export settings" }),
-    ).toBeVisible();
-    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await playOpenCloseUnmounts({
+      canvas,
+      userEvent,
+      openName: "Open dialog",
+      closeName: "Cancel",
+      dialogName: "Export settings",
     });
+  },
+};
+
+export const ReducedMotionOpenClose: Story = {
+  name: "Motion contract: reduced motion",
+  render: function ReducedMotionDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <MotionConfigProvider motion={{ enableAnimations: false }}>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dialog
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title>Export settings</Dialog.Title>
+                <Dialog.Description>Choose format and directory.</Dialog.Description>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Dialog content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </MotionConfigProvider>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await playOpenCloseUnmounts({
+      canvas,
+      userEvent,
+      openName: "Open dialog",
+      closeName: "Cancel",
+      dialogName: "Export settings",
+    });
+  },
+};
+
+export const TitlePointerComposition: Story = {
+  name: "Motion contract: title pointer handler",
+  render: function TitlePointerDemo() {
+    const [open, setOpen] = useState(false);
+    const [hoverCount, setHoverCount] = useState(0);
+    return (
+      <>
+        <p>hover:{hoverCount}</p>
+        <Button type="button" onClick={() => setOpen(true)}>
+          Open dialog
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Panel>
+            <Dialog.Header>
+              <Dialog.HeadingBlock>
+                <Dialog.Title
+                  onPointerOver={() => setHoverCount((n) => n + 1)}
+                >
+                  Export settings
+                </Dialog.Title>
+              </Dialog.HeadingBlock>
+              <Dialog.Close />
+            </Dialog.Header>
+            <Dialog.Body>
+              <p className="text-sm text-muted">Dialog content.</p>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button type="button" size="base" variant="ghost" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Panel>
+        </Dialog>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Open dialog" }));
+    const title = await screen.findByRole("heading", { name: "Export settings" });
+    await userEvent.hover(title);
+    await waitFor(() => {
+      expect(canvas.getByText(/hover:[1-9]/)).toBeInTheDocument();
+    });
+    await expect(screen.getByRole("dialog", { name: "Export settings" })).toBeVisible();
   },
 };
 

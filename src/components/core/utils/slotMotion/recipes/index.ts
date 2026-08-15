@@ -1,4 +1,4 @@
-import { registerMotionRecipe } from "../motionRecipeRegistry";
+import { registerKitMotionRecipe } from "../motionRecipeRegistry";
 import { chevronRotateRecipe } from "./chevronRotate";
 import { collapsibleHeightRecipe } from "./collapsibleHeight";
 import { hoverLiftFirstLevelRecipe } from "./hoverLiftFirstLevel";
@@ -26,35 +26,35 @@ import { contentFadeRecipe } from "./contentFade";
 import { fileRowExitRecipe } from "./fileRowExit";
 import { searchExpandRecipe, searchIconShiftRecipe } from "./searchExpand";
 
-/** Idempotent — overwrites the same kit names. Safe to import from the public barrel. */
+/** Idempotent kit-layer write. Does not clear app overrides (`{ override: true }`). */
 export function registerKitMotionRecipes(): void {
-  registerMotionRecipe("hoverLiftSecondLevel", hoverLiftSecondLevelRecipe);
-  registerMotionRecipe("hoverLiftGloss", hoverLiftGlossRecipe);
-  registerMotionRecipe("hoverLiftFirstLevel", hoverLiftFirstLevelRecipe);
-  registerMotionRecipe("pressSqueeze", pressSqueezeRecipe);
-  registerMotionRecipe("pressSqueezeGloss", pressSqueezeGlossRecipe);
-  registerMotionRecipe("collapsibleHeight", collapsibleHeightRecipe);
-  registerMotionRecipe("chevronRotate", chevronRotateRecipe);
-  registerMotionRecipe("portalSurfaceEnter", portalSurfaceEnterRecipe);
-  registerMotionRecipe("portalSurfaceLeave", portalSurfaceLeaveRecipe);
-  registerMotionRecipe("selectionFill", selectionFillRecipe);
-  registerMotionRecipe("selectionMark", selectionMarkRecipe);
-  registerMotionRecipe("modalOverlayEnter", modalOverlayEnterRecipe);
-  registerMotionRecipe("modalOverlayLeave", modalOverlayLeaveRecipe);
-  registerMotionRecipe("modalPanelEnter", modalPanelEnterRecipe);
-  registerMotionRecipe("modalPanelLeave", modalPanelLeaveRecipe);
-  registerMotionRecipe("drawerSlideEnter", drawerSlideEnterRecipe);
-  registerMotionRecipe("drawerSlideLeave", drawerSlideLeaveRecipe);
-  registerMotionRecipe("switchThumb", switchThumbRecipe);
-  registerMotionRecipe("switchFill", switchFillRecipe);
-  registerMotionRecipe("switchIconOn", switchIconOnRecipe);
-  registerMotionRecipe("switchIconOff", switchIconOffRecipe);
-  registerMotionRecipe("toastSurfaceEnter", toastSurfaceEnterRecipe);
-  registerMotionRecipe("toastSurfaceLeave", toastSurfaceLeaveRecipe);
-  registerMotionRecipe("contentFade", contentFadeRecipe);
-  registerMotionRecipe("searchExpand", searchExpandRecipe);
-  registerMotionRecipe("searchIconShift", searchIconShiftRecipe);
-  registerMotionRecipe("fileRowExit", fileRowExitRecipe);
+  registerKitMotionRecipe("hoverLiftSecondLevel", hoverLiftSecondLevelRecipe);
+  registerKitMotionRecipe("hoverLiftGloss", hoverLiftGlossRecipe);
+  registerKitMotionRecipe("hoverLiftFirstLevel", hoverLiftFirstLevelRecipe);
+  registerKitMotionRecipe("pressSqueeze", pressSqueezeRecipe);
+  registerKitMotionRecipe("pressSqueezeGloss", pressSqueezeGlossRecipe);
+  registerKitMotionRecipe("collapsibleHeight", collapsibleHeightRecipe);
+  registerKitMotionRecipe("chevronRotate", chevronRotateRecipe);
+  registerKitMotionRecipe("portalSurfaceEnter", portalSurfaceEnterRecipe);
+  registerKitMotionRecipe("portalSurfaceLeave", portalSurfaceLeaveRecipe);
+  registerKitMotionRecipe("selectionFill", selectionFillRecipe);
+  registerKitMotionRecipe("selectionMark", selectionMarkRecipe);
+  registerKitMotionRecipe("modalOverlayEnter", modalOverlayEnterRecipe);
+  registerKitMotionRecipe("modalOverlayLeave", modalOverlayLeaveRecipe);
+  registerKitMotionRecipe("modalPanelEnter", modalPanelEnterRecipe);
+  registerKitMotionRecipe("modalPanelLeave", modalPanelLeaveRecipe);
+  registerKitMotionRecipe("drawerSlideEnter", drawerSlideEnterRecipe);
+  registerKitMotionRecipe("drawerSlideLeave", drawerSlideLeaveRecipe);
+  registerKitMotionRecipe("switchThumb", switchThumbRecipe);
+  registerKitMotionRecipe("switchFill", switchFillRecipe);
+  registerKitMotionRecipe("switchIconOn", switchIconOnRecipe);
+  registerKitMotionRecipe("switchIconOff", switchIconOffRecipe);
+  registerKitMotionRecipe("toastSurfaceEnter", toastSurfaceEnterRecipe);
+  registerKitMotionRecipe("toastSurfaceLeave", toastSurfaceLeaveRecipe);
+  registerKitMotionRecipe("contentFade", contentFadeRecipe);
+  registerKitMotionRecipe("searchExpand", searchExpandRecipe);
+  registerKitMotionRecipe("searchIconShift", searchIconShiftRecipe);
+  registerKitMotionRecipe("fileRowExit", fileRowExitRecipe);
 }
 
 registerKitMotionRecipes();

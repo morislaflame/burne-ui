@@ -133,7 +133,9 @@ Trigger вызывает `e.preventDefault()` на `pointerdown`, чтобы п�
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle; pointer — на самом заголовке/описании |
 | `close`, `header`, `footer`, `content` | `enter` / `leave` | нет; хост **рассылает** фазу, если задана |
 
-`leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется (dev warn + ~500ms fallback). Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0` или полный slide) — иначе после твина `dialog.close()` выглядит как рывок.
+Nested `enter` — следующий кадр после host, без layout flush на overlay. После `showModal()` — один измеренный flush (`display: none` → `[open]`).
+
+`leave` factory должна вернуть tween/Promise или вызвать `ctx.complete()` — иначе портал не размонтируется (dev warn + ~500ms fallback). Promise не отменяем: перед delayed DOM проверяйте `ctx.signal` / `isMotionRunActive(ctx)`. Прерывание leave (повторный open / новый play) отменяет `MotionRun` и **не** вызывает `complete` — портал не зависает и не размонтируется во время enter. Factory leave на `panel` должна **скрыть** поверхность (`autoAlpha: 0` или полный slide) — иначе после твина `dialog.close()` выглядит как рывок.
 
 `leave: false` на хосте (`overlay` / `panel`) — хост сразу ставит закрытое состояние (панель не висит, пока фейдится сосед). `enter: false` — сразу открытое.
 
@@ -183,7 +185,7 @@ import { Dialog, tweenCssColor } from "burne-ui";
 </Dialog>
 ```
 
-Цвет — factory и токены, не `MotionVars`. Nested `enter` стартует на следующем кадре после `showModal()`. `leave: false` на части, если хост (`panel`) оркестрирует `ctx.targets` одним таймлайном.
+Цвет — factory и токены, не `MotionVars`. Nested `enter` стартует на следующем кадре после host enter, без `offsetHeight` flush на overlay. После `showModal()` хост один раз читает layout (`flushDialogOpenLayout`) — UA `display: none` → `[open]`. `leave: false` на части, если хост (`panel`) оркестрирует `ctx.targets` одним таймлайном.
 
 ```tsx
 <Dialog
@@ -263,7 +265,7 @@ configureMotion({
 2. `onComplete` → `setMounted(false)` — unmount портала
 3. Нативный `onClose` на `<dialog>` → `onOpenChange(false)`
 
-Kill tweens при unmount через `killMotion(overlay, panel)`.
+Kill tweens при unmount через `killMotion(overlay, panel)` (снимает и inline `will-change`). Nested enter rAF отменяется на unmount / leave (`invalidateEnterFrame`).
 
 ### 3. Reduced motion
 

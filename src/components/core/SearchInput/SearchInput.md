@@ -67,7 +67,7 @@ import {
 
 ## Анимации
 
-Публичный slot motion. Expand/collapse — рецепты `searchExpand` (width/radius, только в рецепте) и `searchIconShift` (`left` иконки). Gloss hover/press остаются на `useGlossFieldShellMotion`.
+Публичный slot motion. Expand/collapse — FLIP по сохранённому прямоугольнику (в том числе right-aligned toolbar): layout-ширина сразу, визуал `x` + `scaleX` (`searchExpand`); иконка — `x` (`searchIconShift`). Gloss hover/press остаются на `useGlossFieldShellMotion`.
 
 ### Slot motion
 
@@ -77,7 +77,7 @@ import {
 | `icon` | `enter` / `leave` | `searchIconShift` |
 | `clear` / `input` / `expandTrigger` | hover/press | нет |
 
-`false` на `root`/`icon` `enter`/`leave` — хост `applySearchExpandInstant`. Не анимируйте `width` в публичных MotionVars.
+`false` на `root`/`icon` `enter`/`leave` — хост `applySearchExpandInstant`. Не анимируйте `width` / `left` в публичных MotionVars — kit сам делает FLIP через transform.
 
 **Где в коде:** типы — `searchInputTypes.ts`; scope — `searchInputContext.tsx`; defaults + host — `searchInputAnimations.ts`; слоты — `searchInputParts.tsx`; Provider — `SearchInput.tsx`. Утилита expand — `core/utils/searchInputExpandMotion.ts`.
 
@@ -165,7 +165,8 @@ Expand width — `expandedWidth` / `SEARCH_DEFAULT_EXPANDED_WIDTH` per size (н�
 
 - **Для форм с label** — используйте `Input` + prefix icon, не SearchInput.
 - **Controlled expand:** `expanded` + `onExpandedChange` для header toolbar integration.
-- **Не override `width`/`borderRadius` в className** при expand — конфликт с GSAP inline styles.
+- **Не override `transform` на shell / icon** при expand — конфликт с FLIP (`scaleX` / `x`).
+- **Ширина expanded** — `expandedWidth`, не `className="w-*"` (collapsed всегда квадрат `w-control-*` + `h-control-*`).
 - **`aria-label` обязателен** в collapsed mode (дефолт «Open search»).
 
 ## Доступность

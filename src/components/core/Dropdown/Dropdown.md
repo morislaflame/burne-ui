@@ -189,7 +189,7 @@ Enter/exit: слот `content` → Popover (`portalSurfaceEnter` / `Leave`). К�
 <Dropdown motion={{ content: { leave: false } }}>…</Dropdown>
 ```
 
-`leave: false` — панель сразу unmount. Factory leave должна скрыть поверхность (`autoAlpha: 0`).
+`leave: false` — панель сразу unmount. Factory leave должна скрыть поверхность (`autoAlpha: 0`). Прерывание leave отменяет `MotionRun` без `complete`.
 
 Rest shadow на default panel — из `Popover` (`shadow-token-large`).
 

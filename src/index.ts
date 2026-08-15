@@ -694,12 +694,19 @@ export {
 export {
   configureMotion,
   getMotionConfig,
+  overlayMotionConfig,
   isMotionEnabled,
   isMotionFeatureEnabled,
   MOTION_CONFIG_DEFAULTS,
+  MOTION_CONFIG_LIMITS,
   type MotionConfig,
   type MotionFeatureFlag,
 } from "@/components/core/utils/motionConfig";
+export {
+  MotionConfigProvider,
+  useMotionConfig,
+  type MotionConfigProviderProps,
+} from "@/components/core/utils/motionConfigContext";
 export {
   killMotion,
   tweenCssColor,
@@ -708,18 +715,29 @@ export {
 } from "@/components/core/utils/gsapMotion";
 export {
   KIT_MOTION_RECIPES,
+  MOTION_PHASE_NAMES,
   registerMotionRecipe,
+  unregisterMotionRecipe,
+  hasMotionRecipe,
+  listMotionRecipes,
+  isKitMotionRecipe,
+  type RegisterMotionRecipeOptions,
   type KitRecipeName,
   type MotionAnimation,
+  type MotionCancelReason,
   type MotionContext,
   type MotionFactory,
   type MotionPartPhases,
   type MotionPhaseName,
   type MotionRecipe,
   type MotionRecipeName,
+  type MotionRecipeParams,
+  type MotionRun,
+  type MotionRunStatus,
   type MotionSlotMap,
   type MotionValue,
   type MotionVars,
+  isMotionRunActive,
 } from "@/components/core/utils/slotMotion";
 export {
   colorToken,

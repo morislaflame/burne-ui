@@ -13,10 +13,12 @@ import {
   applyReducedModalMotion,
   captureModalFocusReturn,
   completeModalDialogClose,
+  flushDialogOpenLayout,
   isReducedModalMotion,
   type GsapMotionVars,
 } from "./modalSurfaceMotion";
-import { motionModal } from "./motionConfig";
+import { motionModalFor } from "./motionConfig";
+import { useMotionConfig } from "./motionConfigContext";
 import { openNativeDialog } from "./portalContainer";
 import {
   useCallback,
@@ -70,6 +72,7 @@ export type UseModalMotionOptions = {
       panel: HTMLElement,
       onComplete: () => void,
     ) => { kill: () => void };
+    cancelEnterFrame?: () => void;
   };
 };
 
@@ -99,6 +102,7 @@ export function useModalMotion({
   panelMotionKey,
   slotMotion,
 }: UseModalMotionOptions): UseModalMotionResult {
+  const config = useMotionConfig();
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -176,7 +180,7 @@ export function useModalMotion({
       return undefined;
     }
 
-    if (!overlay || !panel || isReducedModalMotion()) {
+    if (!overlay || !panel || isReducedModalMotion(config)) {
       finishClose();
       return undefined;
     }
@@ -192,7 +196,7 @@ export function useModalMotion({
     }
 
     killMotion(overlay, panel);
-    const vars = { ...motionModal(), overwrite: "auto" as const };
+    const vars = { ...motionModalFor(config), overwrite: "auto" as const };
     const panelExit = getPanelExitRef.current?.(panel);
     const tl = animateModalClose({
       overlay,
@@ -207,11 +211,12 @@ export function useModalMotion({
       tl.kill();
       killMotion(overlay, panel);
     };
-  }, [open, mounted, panelMotionKey]);
+  }, [config, open, mounted, panelMotionKey]);
 
   useLayoutEffect(() => {
     if (!open) {
       enterPlayedKeyRef.current = null;
+      slotMotionRef.current?.cancelEnterFrame?.();
       return;
     }
 
@@ -221,8 +226,7 @@ export function useModalMotion({
       focusReturnRef.current = captureModalFocusReturn(dialog);
       openFromKeyboardRef.current = isFocusVisibleElement(focusReturnRef.current);
       openNativeDialog(dialog, { contained });
-      // Flush UA `display: none` → `[open]` so GSAP fromTo isn't recorded while hidden.
-      void dialog.offsetHeight;
+      flushDialogOpenLayout(dialog);
     }
 
     const overlay = overlayRef.current;
@@ -232,7 +236,7 @@ export function useModalMotion({
     const enterKey = `${contained ? "c" : "m"}:${String(panelMotionKey ?? "")}`;
     if (enterPlayedKeyRef.current === enterKey) return;
 
-    if (isReducedModalMotion()) {
+    if (isReducedModalMotion(config)) {
       applyReducedModalMotion(overlay, panel, {
         focusPanel: focusOnOpen,
         focusVisible: openFromKeyboardRef.current,
@@ -252,7 +256,7 @@ export function useModalMotion({
       animateModalOpen({
         overlay,
         panel,
-        vars: { ...motionModal(), overwrite: "auto" as const },
+        vars: { ...motionModalFor(config), overwrite: "auto" as const },
         ...(openMotion
           ? { panelFrom: openMotion.from, panelTo: openMotion.to }
           : {}),
@@ -261,7 +265,7 @@ export function useModalMotion({
     if (focusOnOpen) {
       focusPanelOnOpen(panel, { focusVisible: openFromKeyboardRef.current });
     }
-  }, [open, mounted, contained, focusOnOpen, panelMotionKey]);
+  }, [config, open, mounted, contained, focusOnOpen, panelMotionKey]);
 
   const handleBackdropPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {

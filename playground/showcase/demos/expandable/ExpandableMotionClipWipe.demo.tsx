@@ -39,6 +39,7 @@ export function ExpandableMotionClipWipeDemo() {
             killMotion(ctx.el);
             ctx.el.style.overflow = "hidden";
             const inner = ctx.targets.panelInner;
+            const height = innerHeight(ctx);
             const tl = gsap.timeline({
               defaults: { overwrite: "auto", force3D: false },
             });
@@ -46,7 +47,7 @@ export function ExpandableMotionClipWipeDemo() {
               ctx.el,
               { height: 0, clipPath: "inset(0% 0% 100% 0%)" },
               {
-                height: () => innerHeight(ctx),
+                height,
                 clipPath: "inset(0% 0% 0% 0%)",
                 duration: 0.42,
                 ease: "power3.out",

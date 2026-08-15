@@ -6,6 +6,7 @@ import { Separator } from "@/components/core/Separator";
 import { Text } from "@/components/core/Text";
 import { mergeAsChildProps } from "@/components/core/utils/mergeAsChildProps";
 import { mergeForwardedRef, mergeRefs } from "@/components/core/utils/mergeRefs";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { runOpenAfterSqueeze, useOpeningRef } from "@/components/core/utils/runOpenAfterSqueeze";
 
 import { useDropdownPopoverMenu, resolveDropdownPopoverMotion } from "./dropdownAnimations";
@@ -45,15 +46,16 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
     const { open, setOpen, triggerRef, contentId } = useDropdown();
     const slotClassNames = useDropdownClassNames();
     const openingRef = useOpeningRef();
+    const config = useMotionConfig();
 
     const handlePointerDown = useCallback(
       (e: ReactPointerEvent<HTMLElement>) => {
         if (open || openingRef.current || e.button !== 0) return;
         // Prevent child Button's own squeeze so Trigger drives the animation.
         e.preventDefault();
-        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+        runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
       },
-      [open, openingRef, triggerRef, setOpen],
+      [open, openingRef, triggerRef, setOpen, config],
     );
 
     const handleClick = useCallback(
@@ -75,11 +77,11 @@ export const DropdownTrigger = forwardRef<HTMLElement, DropdownTriggerProps>(
           e.preventDefault();
           if (open) setOpen(false);
           else {
-            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true) });
+            runOpenAfterSqueeze({ triggerRef, openingRef, setOpen: () => setOpen(true), config });
           }
         }
       },
-      [onKeyDown, open, openingRef, setOpen, triggerRef],
+      [onKeyDown, open, openingRef, setOpen, triggerRef, config],
     );
 
     if (asChild && isValidElement(children)) {

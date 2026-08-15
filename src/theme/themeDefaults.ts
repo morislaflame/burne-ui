@@ -1,7 +1,7 @@
 import {
   applyMotionCssTokens,
-  configureMotion,
   MOTION_CONFIG_DEFAULTS,
+  type MotionConfig,
 } from "@/components/core/utils/motionConfig";
 import { FONT_WEIGHT_CSS_VAR, FONT_WEIGHT_DEFAULTS, type FontWeightStep } from "@/tokens/fontWeights";
 import { TEXT_SCALE_BASES, type TextScaleStep } from "@/tokens/textScale";
@@ -526,64 +526,15 @@ export function clearThemeInlineTokens(root?: HTMLElement) {
   delete target.dataset.theme;
 }
 
-let lastMotionSnapshot = "";
+const lastCssDurationByRoot = new WeakMap<HTMLElement, number>();
 
-function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
-  const snapshot = JSON.stringify({
-    interactiveDuration: state.interactiveDuration,
-    interactiveEase: state.interactiveEase,
-    hoverLiftEase: state.hoverLiftEase,
-    tooltipDuration: state.tooltipDuration,
-    modalDuration: state.modalDuration,
-    switchThumbDuration: state.switchThumbDuration,
-    switchThumbEase: state.switchThumbEase,
-    selectionFillDuration: state.selectionFillDuration,
-    selectionFillEase: state.selectionFillEase,
-    hoverLiftScale: state.hoverLiftScale,
-    badgeAnchorHoverLiftScale: state.badgeAnchorHoverLiftScale,
-    pressSqueezeMid: state.pressSqueezeMid,
-    pressSqueezeDurationFactor: state.pressSqueezeDurationFactor,
-    rippleDefaultDuration: state.rippleDefaultDuration,
-    rippleDefaultOpacityFrom: state.rippleDefaultOpacityFrom,
-    rippleExpandableDuration: state.rippleExpandableDuration,
-    rippleExpandableOpacityFrom: state.rippleExpandableOpacityFrom,
-    rippleEaseCss: state.rippleEaseCss,
-    feedbackExpandDuration: state.feedbackExpandDuration,
-    expandDuration: state.expandDuration,
-    expandOpenEase: state.expandOpenEase,
-    surfaceTransitionDuration: state.surfaceTransitionDuration,
-    toastDismissDuration: state.toastDismissDuration,
-    toastDismissEase: state.toastDismissEase,
-    progressFillDuration: state.progressFillDuration,
-    progressFillEase: state.progressFillEase,
-    progressIndeterminateDuration: state.progressIndeterminateDuration,
-    progressIndeterminateEase: state.progressIndeterminateEase,
-    loadingDotsDuration: state.loadingDotsDuration,
-    loadingDotsEaseUp: state.loadingDotsEaseUp,
-    loadingDotsEaseDown: state.loadingDotsEaseDown,
-    enableAnimations: state.enableAnimations,
-    enableHoverLift: state.enableHoverLift,
-    enablePressSqueeze: state.enablePressSqueeze,
-    enableToggleButtonFill: state.enableToggleButtonFill,
-    enableRipple: state.enableRipple,
-    enableExpandable: state.enableExpandable,
-    enableToastStack: state.enableToastStack,
-    enableAsyncButtonCrossfade: state.enableAsyncButtonCrossfade,
-    enableContentFade: state.enableContentFade,
-    enableFeedbackExpand: state.enableFeedbackExpand,
-    enableProgressFill: state.enableProgressFill,
-    enableLoadingDots: state.enableLoadingDots,
-    enableModalMotion: state.enableModalMotion,
-    enableSwitchThumb: state.enableSwitchThumb,
-    enableTabsIndicator: state.enableTabsIndicator,
-    enablePaginationFlip: state.enablePaginationFlip,
-    enableSelectionFill: state.enableSelectionFill,
-  });
-
-  if (snapshot === lastMotionSnapshot) return;
-  lastMotionSnapshot = snapshot;
-
-  configureMotion({
+/**
+ * GSAP overlay from a theme-token snapshot (playground / site editor).
+ * `applyThemeTokens` no longer calls `configureMotion` — CSS tokens stay
+ * per-root; a single editor root should call `configureMotion(this)`.
+ */
+export function motionConfigFromThemeState(state: ThemeTokenState): Partial<MotionConfig> {
+  return {
     interactiveDuration: state.interactiveDuration,
     interactiveEase: state.interactiveEase,
     hoverLiftEase: state.hoverLiftEase,
@@ -632,12 +583,14 @@ function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
     enableTabsIndicator: state.enableTabsIndicator,
     enablePaginationFlip: state.enablePaginationFlip,
     enableSelectionFill: state.enableSelectionFill,
-  });
+  };
+}
 
-  // Theme root may differ from documentElement — re-apply CSS tokens onto the themed root.
-  applyMotionCssTokens(root, {
-    surfaceTransitionDuration: state.surfaceTransitionDuration,
-  });
+function applyMotionFromState(state: ThemeTokenState, root: HTMLElement) {
+  const ms = state.surfaceTransitionDuration;
+  if (lastCssDurationByRoot.get(root) === ms) return;
+  lastCssDurationByRoot.set(root, ms);
+  applyMotionCssTokens(root, { surfaceTransitionDuration: ms });
 }
 
 /**

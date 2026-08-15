@@ -62,12 +62,12 @@ export function useFormSlotMotion<T extends HTMLElement>(
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, slot);
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
   useSlotPhaseOnChange(
     changeIdentity === undefined ? null : scope,
     slot,
     changeIdentity,
-    { phase: "change" },
+    { phase: "change", target: part.targetRef },
   );
   return part;
 }

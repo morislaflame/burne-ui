@@ -1,5 +1,5 @@
 import { gsap } from "@/components/core/utils/gsapMotion";
-import { isMotionFeatureEnabled, motionSelectionFill } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionSelectionFillFor } from "@/components/core/utils/motionConfig";
 
 import type { MotionAnimation, MotionContext } from "../slotMotionTypes";
 
@@ -10,12 +10,12 @@ function applyMarkInstant(el: HTMLElement, on: boolean): void {
 
 export function selectionMarkRecipe(ctx: MotionContext): MotionAnimation | undefined {
   const on = ctx.phase === "check";
-  if (ctx.reduced || !isMotionFeatureEnabled("enableSelectionFill")) {
+  if (ctx.reduced || !isMotionFeatureEnabledFor(ctx.config, "enableSelectionFill")) {
     applyMarkInstant(ctx.el, on);
     return undefined;
   }
 
-  const markVars = { ...motionSelectionFill(), overwrite: "auto" as const };
+  const markVars = { ...motionSelectionFillFor(ctx.config), overwrite: "auto" as const };
   if (on) {
     return gsap.fromTo(
       ctx.el,

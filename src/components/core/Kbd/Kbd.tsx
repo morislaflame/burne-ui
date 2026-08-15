@@ -45,7 +45,7 @@ export const KbdRoot = forwardRef<HTMLElement, KbdProps>(function Kbd(
     [hoverLift, state.variant],
   );
   const motionParams = useMemo(
-    () => ({ shadowSize: "base", variant: state.variant }),
+    () => ({ shadowSize: "base" as const, variant: state.variant }),
     [state.variant],
   );
 

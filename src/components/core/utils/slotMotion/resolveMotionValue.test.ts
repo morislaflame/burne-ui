@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { getMotionRecipe, registerMotionRecipe } from "./motionRecipeRegistry";
 import { mergeMotionSlotMaps, resolveMotionValue, resolveSlotPhase } from "./resolveMotionValue";
-import type { MotionValue } from "./slotMotionTypes";
+import { MOTION_PHASE_NAMES, type MotionValue } from "./slotMotionTypes";
+
+describe("MOTION_PHASE_NAMES", () => {
+  it("includes change as a standard phase", () => {
+    expect(MOTION_PHASE_NAMES).toContain("change");
+    expect(MOTION_PHASE_NAMES).toHaveLength(9);
+  });
+});
 
 describe("resolveMotionValue", () => {
   it("prefers part over slot over default", () => {
@@ -37,6 +43,19 @@ describe("resolveSlotPhase", () => {
     ).toBe(value);
   });
 
+  it("reads change from the base phase contract", () => {
+    const change: MotionValue = { scale: 1.02, duration: 0.12 };
+    expect(
+      resolveSlotPhase(
+        "track",
+        "change",
+        { change },
+        { track: { hoverIn: "hoverLiftFirstLevel" } },
+        undefined,
+      ),
+    ).toBe(change);
+  });
+
   it("prefers a fill factory on the root map over the kit recipe default", () => {
     const check = () => {};
     expect(
@@ -59,16 +78,5 @@ describe("mergeMotionSlotMaps", () => {
     );
     expect(merged?.root?.hoverIn).toBe("hoverLiftSecondLevel");
     expect(merged?.title?.hoverIn).toEqual({ y: -2 });
-  });
-});
-
-describe("motionRecipeRegistry", () => {
-  it("registers and replaces recipes by name", () => {
-    const first = () => {};
-    const second = () => {};
-    registerMotionRecipe("custom-test-override", first);
-    expect(getMotionRecipe("custom-test-override")).toBe(first);
-    registerMotionRecipe("custom-test-override", second);
-    expect(getMotionRecipe("custom-test-override")).toBe(second);
   });
 });

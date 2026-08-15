@@ -4,7 +4,8 @@ import { Text } from "@/components/core/Text";
 import { clearWillChangeOnComplete, ensureRippleEase, gsap, killMotion, setWillChangeTransform } from "@/components/core/utils/gsapMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { isMotionFeatureEnabled, motionFeedbackExpand } from "@/components/core/utils/motionConfig";
+import { isMotionFeatureEnabledFor, motionFeedbackExpandFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { CONTROL_SIZE_LAYOUT } from "@/components/core/utils/sizeLayout";
 import { cn } from "@/utils/cn";
 
@@ -75,6 +76,7 @@ export function ButtonFeedbackExpandRipple({
   tone,
   onDone,
 }: ButtonFeedbackExpandRippleProps) {
+  const config = useMotionConfig();
   const ref = useRef<HTMLSpanElement>(null);
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
@@ -87,7 +89,7 @@ export function ButtonFeedbackExpandRipple({
     killMotion(el);
 
     const reduceMotion =
-      prefersReducedMotion() || !isMotionFeatureEnabled("enableFeedbackExpand");
+      prefersReducedMotion() || !isMotionFeatureEnabledFor(config, "enableFeedbackExpand");
 
     if (reduceMotion) {
       onDoneRef.current();
@@ -101,8 +103,8 @@ export function ButtonFeedbackExpandRipple({
       {
         scale: 1,
         autoAlpha: 0,
-        ...motionFeedbackExpand(),
-        ease: ensureRippleEase(),
+        ...motionFeedbackExpandFor(config),
+        ease: ensureRippleEase(config.rippleEaseCss),
         overwrite: "auto",
         onComplete: clearWillChangeOnComplete(el, () => {
           if (!finished) onDoneRef.current();
@@ -115,7 +117,7 @@ export function ButtonFeedbackExpandRipple({
       tween.kill();
       killMotion(el);
     };
-  }, [size, tone]);
+  }, [config, size, tone]);
 
   return (
     <span

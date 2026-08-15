@@ -10,11 +10,11 @@ import gsap from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 
 import { getMotionConfig } from "./motionConfig";
+import { parseRippleEaseCss } from "./motionConfigValidation";
 
-const RIPPLE_EASE_ID = "brn-ripple";
-
+const easeByCss = new Map<string, string>();
+let rippleEaseSeq = 0;
 let customEaseRegistered = false;
-let cachedRippleCss = "";
 
 function ensureCustomEasePlugin(): void {
   if (customEaseRegistered) return;
@@ -22,31 +22,119 @@ function ensureCustomEasePlugin(): void {
   customEaseRegistered = true;
 }
 
-/** Ensures CustomEase for ripple is registered from current motion config. */
-export function ensureRippleEase(): string {
+/** Ensures CustomEase for ripple is registered. Optional `css` for scoped config. */
+export function ensureRippleEase(css?: string): string {
   ensureCustomEasePlugin();
-  const css = getMotionConfig().rippleEaseCss;
-  if (cachedRippleCss !== css) {
-    const m = /cubic-bezier\(\s*([\d.]+),\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\s*\)/.exec(css);
-    if (m) {
-      CustomEase.create(RIPPLE_EASE_ID, `${m[1]},${m[2]},${m[3]},${m[4]}`);
-    } else {
-      CustomEase.create(RIPPLE_EASE_ID, "0.25,0.55,0.35,0.95");
-    }
-    cachedRippleCss = css;
+  const resolved = css ?? getMotionConfig().rippleEaseCss;
+  const cached = easeByCss.get(resolved);
+  if (cached) return cached;
+  const points = parseRippleEaseCss(resolved);
+  if (!points && process.env.NODE_ENV !== "production") {
+    console.warn(
+      `[burne-ui] rippleEaseCss=${JSON.stringify(resolved)} is not cubic-bezier(...); using default`,
+    );
   }
-  return RIPPLE_EASE_ID;
+  const id = `brn-ripple-${rippleEaseSeq++}`;
+  CustomEase.create(
+    id,
+    points ? `${points[0]},${points[1]},${points[2]},${points[3]}` : "0.25,0.55,0.35,0.95",
+  );
+  easeByCss.set(resolved, id);
+  return id;
+}
+
+/**
+ * Dynamic compositor hint for transform tweens.
+ * Prefer over permanent Tailwind `will-change-transform` (avoids idle layer promotion).
+ * Do not use for short interactive scale/x tweens (hover-lift, press-squeeze, Switch thumb) —
+ * with fractional control sizes, promoting a layer causes a visible 1px snap. Those paths use
+ * GSAP `force3D: false` instead.
+ *
+ * Accepts HTMLElement, SVGElement, and test doubles with a `style.willChange` field.
+ */
+export type MotionStyleTarget = {
+  style: {
+    willChange: string;
+  };
+};
+
+export function setWillChangeTransform(el: MotionStyleTarget, active: boolean): void {
+  el.style.willChange = active ? "transform" : "";
+}
+
+/** Set the hint and clear it when the MotionRun settles or is cancelled. */
+export function armWillChangeTransform(
+  el: MotionStyleTarget,
+  onCleanup: (fn: () => void) => void,
+): void {
+  setWillChangeTransform(el, true);
+  onCleanup(() => setWillChangeTransform(el, false));
+}
+
+function isMotionStyleTarget(value: unknown): value is MotionStyleTarget {
+  if (!value || typeof value !== "object") return false;
+  const style = (value as { style?: unknown }).style;
+  return Boolean(style && typeof style === "object" && "willChange" in style);
+}
+
+/**
+ * Flatten GSAP tween targets (Element, SVG, NodeList, selector, nested arrays, tween.targets())
+ * so `will-change` cleanup is not limited to `instanceof HTMLElement`.
+ */
+function collectMotionStyleTargets(targets: readonly unknown[]): MotionStyleTarget[] {
+  const out: MotionStyleTarget[] = [];
+  const seen = new Set<object>();
+
+  const visit = (value: unknown): void => {
+    if (value == null) return;
+    if (typeof value === "string") {
+      if (typeof document === "undefined") return;
+      for (const node of gsap.utils.toArray(value)) visit(node);
+      return;
+    }
+    if (isMotionStyleTarget(value)) {
+      if (seen.has(value)) return;
+      seen.add(value);
+      out.push(value);
+      return;
+    }
+    if (typeof value === "object" && typeof (value as { targets?: () => unknown[] }).targets === "function") {
+      try {
+        for (const node of (value as { targets: () => unknown[] }).targets()) visit(node);
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
+    let items: unknown[] = [];
+    try {
+      items = gsap.utils.toArray(value as gsap.TweenTarget);
+    } catch {
+      return;
+    }
+    if (items.length === 1 && items[0] === value) return;
+    for (const item of items) visit(item);
+  };
+
+  for (const target of targets) visit(target);
+  return out;
+}
+
+function clearWillChangeOnTargets(targets: readonly unknown[]): void {
+  for (const node of collectMotionStyleTargets(targets)) {
+    setWillChangeTransform(node, false);
+  }
 }
 
 /**
  * Stops active tweens/timelines on target(s) via `killTweensOf`.
- * Clears inline `will-change` on HTMLElement targets (dynamic hint left mid-tween).
- * Does not clear other inline styles — callers that need a clean slate must reset
- * (`style.transform = ""`, `gsap.set(..., { clearProps })`, etc.) themselves.
+ * Clears inline `will-change` on every stylable target (HTMLElement, SVG, NodeList,
+ * nested arrays, selector). Does not clear other inline styles — callers that need
+ * a clean slate must reset (`style.transform = ""`, `gsap.set(..., { clearProps })`).
  */
 export function killMotion(...targets: gsap.TweenTarget[]): void {
   gsap.killTweensOf(targets);
-  for (const target of targets) clearWillChangeTransformDeep(target);
+  clearWillChangeOnTargets(targets);
 }
 
 /** Geometry props kit fill / thumb loops tween — not opacity / autoAlpha (slot enter). */
@@ -59,9 +147,7 @@ const MOTION_GEOMETRY_PROPS =
  */
 export function killMotionGeometry(target: object): void {
   gsap.killTweensOf(target, MOTION_GEOMETRY_PROPS);
-  if (typeof HTMLElement !== "undefined" && target instanceof HTMLElement) {
-    setWillChangeTransform(target, false);
-  }
+  clearWillChangeOnTargets([target]);
 }
 
 /**
@@ -119,32 +205,11 @@ export function tweenCssColor(
 }
 
 /**
- * Dynamic compositor hint for transform tweens.
- * Prefer over permanent Tailwind `will-change-transform` (avoids idle layer promotion).
- * Do not use for short interactive scale/x tweens (hover-lift, press-squeeze, Switch thumb) —
- * with fractional control sizes, promoting a layer causes a visible 1px snap. Those paths use
- * GSAP `force3D: false` instead.
- */
-export function setWillChangeTransform(el: HTMLElement, active: boolean): void {
-  el.style.willChange = active ? "transform" : "";
-}
-
-function clearWillChangeTransformDeep(target: unknown): void {
-  if (typeof HTMLElement !== "undefined" && target instanceof HTMLElement) {
-    setWillChangeTransform(target, false);
-    return;
-  }
-  if (Array.isArray(target)) {
-    for (const item of target) clearWillChangeTransformDeep(item);
-  }
-}
-
-/**
  * Wraps a GSAP `onComplete` so `will-change` is cleared when the tween/timeline ends.
  * Call `setWillChangeTransform(el, true)` before starting the animation.
  */
 export function clearWillChangeOnComplete(
-  el: HTMLElement,
+  el: MotionStyleTarget,
   onComplete?: gsap.Callback,
 ): gsap.Callback {
   return function (this: gsap.core.Animation) {

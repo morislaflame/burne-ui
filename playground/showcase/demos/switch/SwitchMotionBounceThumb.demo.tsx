@@ -11,10 +11,7 @@ export function SwitchMotionBounceThumbDemo() {
       motion={{
         thumb: {
           check: (ctx) => {
-            const travel =
-              typeof ctx.params.getTravelPx === "function"
-                ? Number(ctx.params.getTravelPx()) || 0
-                : 0;
+            const travel = ctx.params.getTravelPx?.() ?? 0;
             return gsap.to(ctx.el, {
               x: travel,
               duration: 0.45,

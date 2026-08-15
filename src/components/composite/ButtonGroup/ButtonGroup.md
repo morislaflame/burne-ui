@@ -123,7 +123,7 @@ Joined-рамка рисуется через `::after`: цвет — `border-co
 `false` на фазе — skip без kill и без смены визуала. Не анимируйте layout (`width` / `height` / `top` / `left` / `margin`) в публичных MotionVars. Кастомный `motion` — opt-in: без пропа дефолтный вид не меняется.
 
 
-У `ButtonGroup` **нет** `*Animations.ts`. Motion делегирован сегментам.
+`buttonGroupAnimations.ts` играет opt-in `enter` на `root` / `text`. Motion сегментов по-прежнему на детях.
 
 **DOM (joined horizontal):**
 

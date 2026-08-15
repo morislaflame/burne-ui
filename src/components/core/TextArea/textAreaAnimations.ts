@@ -11,6 +11,7 @@
  */
 import { useCallback, useMemo, useRef, type MutableRefObject, type PointerEvent } from "react";
 
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   animateGlossInteractivePressSqueeze,
@@ -89,6 +90,7 @@ export function useTextAreaShellAnimations({
   pointerInsideRef,
   onPointerDown,
 }: UseTextAreaShellAnimationsProps) {
+  const config = useMotionConfig();
   const scope = useTextAreaMotionScope();
   const shellMotionRef = useRef(motion);
   shellMotionRef.current = motion;
@@ -153,7 +155,9 @@ export function useTextAreaShellAnimations({
       const shell = shellRef.current;
       if (!shell || prefersReducedMotion()) return;
       if (isGloss) {
-        void animateGlossInteractivePressSqueeze(shell).then(() => {});
+        void animateGlossInteractivePressSqueeze(shell, false, undefined, undefined, {
+          config,
+        }).then(() => {});
         return;
       }
       const pressIn = scope.resolve("shell", "pressIn", shellMotionRef.current);
@@ -165,7 +169,7 @@ export function useTextAreaShellAnimations({
         }).finished;
       }
     },
-    [blocked, isGloss, onPointerDown, scope, shellRef],
+    [blocked, config, isGloss, onPointerDown, scope, shellRef],
   );
 
   return {

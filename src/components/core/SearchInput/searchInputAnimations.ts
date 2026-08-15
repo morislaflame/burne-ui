@@ -4,13 +4,14 @@
  * DOM slots: `root` (search shell), `icon`, `clear`, `input`, `expandTrigger`
  *
  * Host: root (`useSearchInputAnimations`) plays hover/press when not gloss,
- * and `enter` / `leave` on expand/collapse (`searchExpand` + `searchIconShift` on icon).
+ * and `enter` / `leave` on expand/collapse (FLIP: `searchExpand` + `searchIconShift` on icon).
  * Gloss hover/press/focus stay on `useGlossFieldShellMotion` (field-shell focus lift).
  *
  * Defaults: `resolveSearchInputMotionDefaults`.
  */
 import { useCallback, useLayoutEffect, useMemo, useRef, type MutableRefObject } from "react";
 
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import {
   animateGlossInteractivePressSqueeze,
@@ -102,7 +103,7 @@ export function resolveSearchInputMotionParams({
     padX: layout.padX,
     iconBox: layout.iconBox,
     iconLeftCollapsedCss: `calc(50% - ${layout.iconBox / 2}px)`,
-    shadowSize: expanded ? "base" : "none",
+    shadowSize: expanded ? ("base" as const) : ("none" as const),
     hasHoverShadow: !blocked && !isGloss && groupSegment == null,
     isGloss,
     pointerInside,
@@ -122,6 +123,7 @@ export function useSearchInputAnimations({
   iconRef,
   pointerInsideRef,
 }: UseSearchInputAnimationsProps) {
+  const config = useMotionConfig();
   const scope = useSearchInputMotionScope();
   const rootMotionRef = useRef(motion?.root);
   rootMotionRef.current = motion?.root;
@@ -259,7 +261,13 @@ export function useSearchInputAnimations({
       return;
     }
     if (isGloss && groupSegment == null) {
-      squeezePromiseRef.current = animateGlossInteractivePressSqueeze(shell).then(() => {});
+      squeezePromiseRef.current = animateGlossInteractivePressSqueeze(
+        shell,
+        false,
+        undefined,
+        undefined,
+        { config },
+      ).then(() => {});
       return;
     }
     const pressIn = scope.resolve("root", "pressIn", rootMotionRef.current);
@@ -273,7 +281,7 @@ export function useSearchInputAnimations({
         el: shell,
       }).finished;
     }
-  }, [blocked, expanded, groupSegment, isGloss, rootRef, scope]);
+  }, [blocked, config, expanded, groupSegment, isGloss, rootRef, scope]);
 
   const awaitPressSqueeze = useCallback(async () => {
     await (squeezePromiseRef.current ?? Promise.resolve());

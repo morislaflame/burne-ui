@@ -71,11 +71,22 @@ function FormSectionSurface({
   itemMotion?: FormSectionProps["motion"];
   rest: Omit<FormSectionProps, "className" | "classNames" | "motion">;
 }) {
+  const {
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...domRest
+  } = rest;
   const rootClassNames = useFormClassNames();
   const size = useFormSize();
   const part = useFormSlotMotion<HTMLDivElement>("section", {
     motion: itemMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
   return (
     <div
@@ -84,8 +95,8 @@ function FormSectionSurface({
         ...rootClassNames,
         section: classNames?.section,
       })}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
     />
   );
 }
@@ -93,12 +104,28 @@ function FormSectionSurface({
 FormSection.displayName = "Form.Section";
 
 export const FormHeader = forwardRef<HTMLDivElement, FormHeaderProps>(
-  function FormHeader({ className = "", classNames, motion, ...rest }, ref) {
+  function FormHeader(
+    {
+      className = "",
+      classNames,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const rootClassNames = useFormClassNames();
     const size = useFormSize();
     const part = useFormSlotMotion<HTMLDivElement>("header", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     return (
       <div
@@ -107,8 +134,8 @@ export const FormHeader = forwardRef<HTMLDivElement, FormHeaderProps>(
           ...rootClassNames,
           header: classNames?.header,
         })}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -117,13 +144,29 @@ export const FormHeader = forwardRef<HTMLDivElement, FormHeaderProps>(
 FormHeader.displayName = "Form.Header";
 
 export const FormTitle = forwardRef<HTMLHeadingElement, FormTitleProps>(
-  function FormTitle({ className = "", id, motion, ...rest }, ref) {
+  function FormTitle(
+    {
+      className = "",
+      id,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const rootClassNames = useFormClassNames();
     const shellIds = useFormShellIds();
     const size = useFormSize();
     const part = useFormSlotMotion<HTMLHeadingElement>("title", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     return (
       <Text
@@ -132,8 +175,8 @@ export const FormTitle = forwardRef<HTMLHeadingElement, FormTitleProps>(
         variant={formTitleVariant(size)}
         id={id ?? shellIds?.titleId}
         className={formTitleClass(size, className, rootClassNames)}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -142,21 +185,37 @@ export const FormTitle = forwardRef<HTMLHeadingElement, FormTitleProps>(
 FormTitle.displayName = "Form.Title";
 
 export const FormDescription = forwardRef<HTMLParagraphElement, FormDescriptionProps>(
-  function FormDescription({ className = "", id, motion, ...rest }, ref) {
+  function FormDescription(
+    {
+      className = "",
+      id,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const rootClassNames = useFormClassNames();
     const shellIds = useFormShellIds();
     const size = useFormSize();
     const part = useFormSlotMotion<HTMLParagraphElement>("description", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     return (
       <p
         ref={part.setRef}
         id={id ?? shellIds?.descriptionId}
         className={formDescriptionClass(size, className, rootClassNames)}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -165,19 +224,34 @@ export const FormDescription = forwardRef<HTMLParagraphElement, FormDescriptionP
 FormDescription.displayName = "Form.Description";
 
 export const FormActions = forwardRef<HTMLDivElement, FormActionsProps>(
-  function FormActions({ className = "", motion, ...rest }, ref) {
+  function FormActions(
+    {
+      className = "",
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const rootClassNames = useFormClassNames();
     const size = useFormSize();
     const part = useFormSlotMotion<HTMLDivElement>("actions", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     return (
       <div
         ref={part.setRef}
         className={formActionsClass(size, className, rootClassNames)}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       />
     );
   },
@@ -186,7 +260,20 @@ export const FormActions = forwardRef<HTMLDivElement, FormActionsProps>(
 FormActions.displayName = "Form.Actions";
 
 export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps>(
-  function FormErrorSummary({ className = "", id, children, motion, ...rest }, ref) {
+  function FormErrorSummary(
+    {
+      className = "",
+      id,
+      children,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const rootClassNames = useFormClassNames();
     const shellIds = useFormShellIds();
     const form = useOptionalFormBindingContext();
@@ -195,6 +282,10 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
     const part = useFormSlotMotion<HTMLDivElement>("errorSummary", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
 
     if (entries.length === 0) return null;
@@ -210,8 +301,8 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
         id={id ?? shellIds?.errorSummaryId}
         role="alert"
         className={formErrorSummaryClass(className, rootClassNames)}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {content}
       </div>
@@ -222,12 +313,29 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
 FormErrorSummary.displayName = "Form.ErrorSummary";
 
 export const FormAnnounce = forwardRef<HTMLDivElement, FormAnnounceProps>(
-  function FormAnnounce({ className = "", id, message, motion, ...rest }, ref) {
+  function FormAnnounce(
+    {
+      className = "",
+      id,
+      message,
+      motion,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
+      ...rest
+    },
+    ref,
+  ) {
     const rootClassNames = useFormClassNames();
     const shellIds = useFormShellIds();
     const part = useFormSlotMotion<HTMLDivElement>("announce", {
       motion,
       forwardedRef: ref,
+      onPointerOver,
+      onPointerOut,
+      onPointerDown,
+      onPointerUp,
     });
     if (!message) return null;
 
@@ -239,8 +347,8 @@ export const FormAnnounce = forwardRef<HTMLDivElement, FormAnnounceProps>(
         aria-live="polite"
         aria-atomic="true"
         className={formAnnounceClass(className, rootClassNames)}
-        {...part.pointerHandlers}
         {...rest}
+        {...part.pointerHandlers}
       >
         {message}
       </div>
@@ -293,9 +401,20 @@ function FormFieldSurface({
 }) {
   const rootClassNames = useFormClassNames();
   const form = useOptionalFormBindingContext();
+  const {
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
+    ...domRest
+  } = rest;
   const part = useFormSlotMotion<HTMLDivElement>("field", {
     motion: itemMotion,
     forwardedRef,
+    onPointerOver,
+    onPointerOut,
+    onPointerDown,
+    onPointerUp,
   });
 
   useEffect(() => {
@@ -308,8 +427,8 @@ function FormFieldSurface({
     <div
       ref={part.setRef}
       className={formFieldClass(className, { ...rootClassNames, field: classNames?.field })}
+      {...domRest}
       {...part.pointerHandlers}
-      {...rest}
     >
       {children}
     </div>

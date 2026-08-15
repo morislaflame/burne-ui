@@ -55,7 +55,10 @@ export function useToggleButtonGroupRootMotion({
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, "root");
-  useSlotPhaseOnChange(scope, "root", selectionIdentity, { phase: "change" });
+  useOptionalEnterOnMount(scope, "root", part.targetRef);
+  useSlotPhaseOnChange(scope, "root", selectionIdentity, {
+    phase: "change",
+    target: part.targetRef,
+  });
   return part;
 }

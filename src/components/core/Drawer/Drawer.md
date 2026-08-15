@@ -113,7 +113,9 @@ const [open, setOpen] = useState(false);
 | `title`, `description` | `enter` / `leave` + локальные `hoverIn` / `hoverOut` | нет; хост **рассылает** lifecycle |
 | `close`, `header`, `footer`, `content`, `handle` | `enter` / `leave` | нет; хост **рассылает**, если задана |
 
-Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: высота нижней панели может вырасти после mount. `leave` factory должна вернуть tween и **увести панель за край** (`x: el.offsetWidth` и т.п.) — короткий сдвиг на 80px оставит панель на экране, и `dialog.close()` даст рывок. `panel.enter/leave: false` — хост сразу ставит rest / off-screen; overlay по-прежнему фейдится.
+Nested `enter` — следующий кадр после host, без overlay `offsetHeight` flush. После `showModal()` — один измеренный flush (`display: none` → `[open]`).
+
+Slide — **пиксели** (`offsetWidth` / `offsetHeight`), не `xPercent`: высота нижней панели может вырасти после mount. `leave` factory должна вернуть tween и **увести панель за край** (`x: el.offsetWidth` и т.п.) — короткий сдвиг на 80px оставит панель на экране, и `dialog.close()` даст рывок. Прерывание leave (повторный open) отменяет `MotionRun` и не вызывает `complete`. `panel.enter/leave: false` — хост сразу ставит rest / off-screen; overlay по-прежнему фейдится.
 
 **Где в коде:** типы — `drawerTypes.ts`; scope — `drawerContext.tsx`; defaults + host play — `drawerAnimations.ts`; Panel-provider — `drawerParts.tsx`; карта на корне — `Drawer.tsx`.
 

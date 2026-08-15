@@ -2,7 +2,8 @@ import { useCallback, type PointerEvent as ReactPointerEvent, type RefObject } f
 
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 
 import type { DrawerPlacement } from "./drawerTypes";
 
@@ -39,6 +40,7 @@ export function useDrawerHandleDrag(
 ): {
   onPointerDown: (e: ReactPointerEvent<HTMLElement>) => void;
 } {
+  const config = useMotionConfig();
   const onPointerDown = useCallback(
     (e: ReactPointerEvent<HTMLElement>) => {
       if (disabled) return;
@@ -94,7 +96,7 @@ export function useDrawerHandleDrag(
             ? velocity > DISMISS_VELOCITY
             : velocity < -DISMISS_VELOCITY;
 
-        const vars = { ...motionInteractive(), overwrite: "auto" as const };
+        const vars = { ...motionInteractiveFor(config), overwrite: "auto" as const };
 
         if (ratio >= DISMISS_RATIO || dismissVelMet) {
           killMotion(panel, overlay);
@@ -129,7 +131,7 @@ export function useDrawerHandleDrag(
       handle.addEventListener("pointerup", onUp);
       handle.addEventListener("pointercancel", onUp);
     },
-    [disabled, onClose, overlayRef, panelRef, placement, skipCloseAnimRef],
+    [config, disabled, onClose, overlayRef, panelRef, placement, skipCloseAnimRef],
   );
 
   return { onPointerDown };

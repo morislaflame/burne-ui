@@ -12,17 +12,20 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { focusPanelOnOpen, isFocusVisibleElement } from "@/components/core/utils/focusElement";
-import { gsap, killMotion } from "@/components/core/utils/gsapMotion";
+import { killMotion } from "@/components/core/utils/gsapMotion";
 import { createGlossInteractiveRefCallback } from "@/components/core/utils/glossInteractiveMotion";
 import { applyReducedPortalMotion, isReducedModalMotion } from "@/components/core/utils/modalSurfaceMotion";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { applyFloatingPortalPosition, resolvePortalContainer } from "@/components/core/utils/portalContainer";
 import { computeTooltipPlacement, type FloatingAlign } from "@/components/core/Tooltip/tooltipPosition";
 import {
-  isMotionVarsObject,
+  hideNestedEnterSlots,
+  invalidateEnterFrame,
+  killMotionScope,
   killStoredMotion,
-  killMotionTargets,
+  scheduleNestedEnterBroadcast,
+  waitForLeaveGeneration,
   type MotionScopeValue,
-  type MotionValue,
 } from "@/components/core/utils/slotMotion";
 
 import { mergePopoverRefs } from "./popoverAPI";
@@ -33,28 +36,6 @@ export const POPOVER_MOTION_HOST_SLOTS = ["content"] as const;
 export const POPOVER_MOTION_DEFAULTS: PopoverMotion = {
   content: { enter: "portalSurfaceEnter", leave: "portalSurfaceLeave" },
 };
-
-function enterHidesFirstPaint(value: MotionValue | undefined): boolean {
-  if (value === undefined || value === false) return false;
-  return isMotionVarsObject(value) && value.autoAlpha !== undefined;
-}
-
-function hideNestedEnterSlots(scope: MotionScopeValue, exclude: string[]): void {
-  const skip = new Set(exclude);
-  const targets = scope.getTargets();
-  const slots = new Set([
-    ...Object.keys(scope.getDefaults() ?? {}),
-    ...Object.keys(scope.getRootMotion() ?? {}),
-    ...Object.keys(targets),
-  ]);
-  for (const slot of slots) {
-    if (skip.has(slot)) continue;
-    const el = targets[slot];
-    if (!el) continue;
-    if (!enterHidesFirstPaint(scope.resolve(slot, "enter"))) continue;
-    gsap.set(el, { autoAlpha: 0, force3D: false });
-  }
-}
 
 export function usePopoverContentLifecycle({
   open,
@@ -71,6 +52,7 @@ export function usePopoverContentLifecycle({
   portalContainer,
   motionScope,
 }: UsePopoverContentLifecycleProps & { motionScope: MotionScopeValue }) {
+  const config = useMotionConfig();
   const panelRef = useRef<HTMLDivElement | null>(null);
   const glossPanelRef = useRef<HTMLDivElement | null>(null);
   const bindGlossPanelRef = useMemo(
@@ -162,17 +144,9 @@ export function usePopoverContentLifecycle({
     const el = panelRef.current;
     if (!el) return undefined;
 
-    const cancelEnterFrame = () => {
-      enterGenRef.current += 1;
-      if (enterFrameRef.current) {
-        cancelAnimationFrame(enterFrameRef.current);
-        enterFrameRef.current = 0;
-      }
-    };
+    const cancelEnterFrame = () => invalidateEnterFrame(enterFrameRef, enterGenRef);
 
-    let cancelled = false;
-
-    if (isReducedModalMotion()) {
+    if (isReducedModalMotion(config)) {
       killMotion(el);
       if (open) {
         applyReducedPortalMotion(el);
@@ -180,7 +154,6 @@ export function usePopoverContentLifecycle({
         setPortalMounted(false);
       }
       return () => {
-        cancelled = true;
         cancelEnterFrame();
       };
     }
@@ -189,14 +162,16 @@ export function usePopoverContentLifecycle({
       const gen = ++enterGenRef.current;
       motionScope.play("content", "enter", { el });
       hideNestedEnterSlots(motionScope, [...POPOVER_MOTION_HOST_SLOTS]);
-      enterFrameRef.current = requestAnimationFrame(() => {
-        if (gen !== enterGenRef.current) return;
-        enterFrameRef.current = 0;
-        void el.offsetHeight;
-        void motionScope.playBroadcast("enter", { exclude: [...POPOVER_MOTION_HOST_SLOTS] });
-      });
+      enterFrameRef.current = scheduleNestedEnterBroadcast(
+        motionScope,
+        POPOVER_MOTION_HOST_SLOTS,
+        () => {
+          if (gen !== enterGenRef.current) return false;
+          enterFrameRef.current = 0;
+          return true;
+        },
+      );
       return () => {
-        cancelled = true;
         cancelEnterFrame();
         killStoredMotion(el);
       };
@@ -211,16 +186,19 @@ export function usePopoverContentLifecycle({
       exclude: [...POPOVER_MOTION_HOST_SLOTS],
       waitForComplete: true,
     });
-    void Promise.all([contentRun.finished, extra]).then(() => {
-      if (!cancelled) setPortalMounted(false);
+    const leaveWait = waitForLeaveGeneration({
+      runs: [contentRun],
+      extra,
+      onComplete: () => setPortalMounted(false),
+      onKill: () => {
+        killMotionScope(motionScope);
+        killStoredMotion(el);
+      },
     });
     return () => {
-      cancelled = true;
-      contentRun.animation?.kill();
-      killMotionTargets(motionScope.getTargets());
-      killStoredMotion(el);
+      leaveWait.kill();
     };
-  }, [open, portalMounted, motionScope]);
+  }, [config, open, portalMounted, motionScope]);
 
   return {
     panelRef,

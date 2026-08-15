@@ -8,6 +8,7 @@ import {
 
 import { SelectionIndicator } from "@/components/core/SelectionIndicator";
 import { animateInteractivePressSqueeze, isInteractivePressKey } from "@/components/core/utils/hoverInteractiveLift";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import { prefersReducedMotion } from "@/components/core/utils/reducedMotion";
 import { mergeForwardedRef } from "@/components/core/utils/mergeRefs";
 import { OptionListItemContextProvider, useOptionListItemContext } from "@/components/core/utils/optionListItemContext";
@@ -132,6 +133,7 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
     },
     ref,
   ) {
+    const config = useMotionConfig();
     const slotClassNames = useDropdownClassNames();
     const {
       parts,
@@ -179,9 +181,9 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
         if (e.defaultPrevented || disabled) return;
         const el = e.currentTarget;
         if (!el || prefersReducedMotion()) return;
-        void animateInteractivePressSqueeze(el);
+        void animateInteractivePressSqueeze(el, { config });
       },
-      [disabled, onPointerDown],
+      [config, disabled, onPointerDown],
     );
 
     const handleKeyDown = useCallback(
@@ -190,9 +192,9 @@ const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps>(
         if (e.defaultPrevented || disabled || !isInteractivePressKey(e)) return;
         const el = e.currentTarget;
         if (!el || prefersReducedMotion()) return;
-        void animateInteractivePressSqueeze(el);
+        void animateInteractivePressSqueeze(el, { config });
       },
-      [disabled, onKeyDown],
+      [config, disabled, onKeyDown],
     );
 
     const handleClick = useCallback(

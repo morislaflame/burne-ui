@@ -12,7 +12,8 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { gsap, killMotion, killMotionGeometry } from "@/components/core/utils/gsapMotion";
 import { usePrefersReducedMotion } from "@/components/core/utils/reducedMotion";
-import { motionInteractive } from "@/components/core/utils/motionConfig";
+import { motionInteractiveFor } from "@/components/core/utils/motionConfig";
+import { useMotionConfig } from "@/components/core/utils/motionConfigContext";
 import {
   useOptionalEnterOnMount,
   useSlotPhaseOnChange,
@@ -42,6 +43,7 @@ export function useMeterFillAnimation({
   fillTargetStyle,
   isHorizontal,
 }: UseMeterFillAnimationProps) {
+  const config = useMotionConfig();
   const fillRef = useRef<HTMLSpanElement>(null);
   const firstLayoutRef = useRef(true);
   const geometryKeyRef = useRef<string | null>(null);
@@ -70,10 +72,10 @@ export function useMeterFillAnimation({
     killMotionGeometry(fill);
     void gsap.to(fill, {
       ...(isHorizontal ? { width } : { height }),
-      ...motionInteractive(),
+      ...motionInteractiveFor(config),
       overwrite: "auto",
     });
-  }, [fillTargetStyle.height, fillTargetStyle.width, isHorizontal, reduceMotion]);
+  }, [config, fillTargetStyle.height, fillTargetStyle.width, isHorizontal, reduceMotion]);
 
   useEffect(() => {
     const fill = fillRef.current;

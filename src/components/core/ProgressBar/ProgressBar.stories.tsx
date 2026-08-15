@@ -6,6 +6,7 @@ import { expect } from "storybook/test";
 import { DualApiStoryPanel, DualApiStoryPanels } from "@/stories-utils/dualApiStoryChrome";
 import { dualApiStorySource } from "@/stories-utils/dualApiStorySource";
 
+import { Button } from "@/components/core/Button";
 import { ProgressBar } from "@/components/core/ProgressBar";
 import { ProgressBarMotionDemo } from "../../../../playground/showcase/demos/progressBar/ProgressBarMotion.demo";
 
@@ -171,6 +172,32 @@ export const OnLightTheme: Story = {
   name: "Light theme",
   decorators: [...lightThemeDecorator],
   render: () => <ProgressBar label="Progress" showValue value={55} />,
+};
+
+export const ValueChange: Story = {
+  name: "Motion contract: value change",
+  render: function ProgressBarValueChange() {
+    const [value, setValue] = useState(20);
+    return (
+      <div className="flex flex-col items-stretch gap-base">
+        <ProgressBar label="Download" showValue value={value} min={0} max={100} />
+        <Button type="button" onClick={() => setValue(80)}>
+          Set 80
+        </Button>
+      </div>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
+      "aria-valuenow",
+      "20",
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "Set 80" }));
+    await expect(canvas.getByRole("progressbar", { name: /Download/ })).toHaveAttribute(
+      "aria-valuenow",
+      "80",
+    );
+  },
 };
 
 export const Accessibility: Story = {

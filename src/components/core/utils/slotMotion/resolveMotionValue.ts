@@ -1,4 +1,9 @@
-import type { MotionPartPhases, MotionSlotMap, MotionValue } from "./slotMotionTypes";
+import type {
+  MotionPartPhases,
+  MotionPhaseName,
+  MotionSlotMap,
+  MotionValue,
+} from "./slotMotionTypes";
 
 /**
  * Precedence: part prop → root `motion[slot]` → kit default.
@@ -16,14 +21,14 @@ export function resolveMotionValue(
 
 export function resolveSlotPhase(
   slot: string,
-  phase: string,
+  phase: MotionPhaseName,
   partMotion: MotionPartPhases | undefined,
   rootMotion: MotionSlotMap | undefined,
   defaults: MotionSlotMap | undefined,
 ): MotionValue | undefined {
-  const partValue = partMotion?.[phase as keyof MotionPartPhases];
-  const slotValue = rootMotion?.[slot]?.[phase as keyof MotionPartPhases];
-  const defaultValue = defaults?.[slot]?.[phase as keyof MotionPartPhases];
+  const partValue = partMotion?.[phase];
+  const slotValue = rootMotion?.[slot]?.[phase];
+  const defaultValue = defaults?.[slot]?.[phase];
   return resolveMotionValue(partValue, slotValue, defaultValue);
 }
 

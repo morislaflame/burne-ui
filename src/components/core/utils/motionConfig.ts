@@ -1,7 +1,11 @@
 /**
  * Centralized animation configuration for Burne UI (GSAP + CSS motion tokens).
  *
- * Call `configureMotion()` once before your app renders to override defaults.
+ * `configureMotion()` sets the **app default** (global singleton). Nested
+ * `BurneUIProvider` / `MotionConfigProvider` overlay a resolved config for that
+ * React tree (portals inherit via context, not DOM). Safe without `document`
+ * (SSR). Invalid fields are skipped; finite out-of-range numbers are clamped
+ * (`MOTION_CONFIG_LIMITS`).
  *
  * @example
  * import { configureMotion } from "burne-ui";
@@ -19,6 +23,10 @@
  *   enableAnimations: false, // global kill-switch
  * });
  */
+
+import { normalizeMotionConfig } from "./motionConfigValidation";
+
+export { MOTION_CONFIG_LIMITS } from "./motionConfigValidation";
 
 /** CSS custom properties written by `applyMotionCssTokens` / theme apply. */
 export const MOTION_CSS_VAR = {
@@ -322,7 +330,12 @@ let _config: MotionConfig = { ...MOTION_CONFIG_DEFAULTS };
 let _motionConfigRevision = 0;
 const _motionConfigListeners = new Set<() => void>();
 
-/** Subscribe to `configureMotion()` changes (for live GSAP tween rebuild). */
+/**
+ * Subscribe to `configureMotion()` revision bumps (`useSyncExternalStore`).
+ * New slot-motion plays read the updated default; already-running phases keep
+ * the snapshot from play start. React-owned loops (Loading dots, ProgressBar
+ * indeterminate) rebuild because their effects depend on `useMotionConfig()`.
+ */
 export function subscribeMotionConfig(onStoreChange: () => void): () => void {
   _motionConfigListeners.add(onStoreChange);
   return () => {
@@ -338,43 +351,102 @@ export function getMotionConfigRevision(): number {
 /**
  * Write / clear `--motion-surface-duration` on a root (diff vs kit defaults).
  * Called from `configureMotion` (documentElement) and theme `applyMotionFromState`.
+ * Uses `root` when passed; otherwise `document.documentElement` if `document` exists.
  */
 export function applyMotionCssTokens(
   root: HTMLElement | null | undefined,
   config: Pick<MotionConfig, "surfaceTransitionDuration"> = _config,
 ): void {
-  if (typeof document === "undefined") return;
-  const target = root ?? document.documentElement;
+  const target =
+    root ?? (typeof document !== "undefined" ? document.documentElement : null);
+  if (!target?.style) return;
+  const ms = config.surfaceTransitionDuration;
+  if (!Number.isFinite(ms) || ms < 0) return;
   const name = MOTION_CSS_VAR.surfaceDuration;
-  if (config.surfaceTransitionDuration === MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration) {
+  if (ms === MOTION_CONFIG_DEFAULTS.surfaceTransitionDuration) {
     target.style.removeProperty(name);
   } else {
-    target.style.setProperty(name, `${config.surfaceTransitionDuration}ms`);
+    target.style.setProperty(name, `${ms}ms`);
   }
 }
 
+function overlayEqualsCurrent(accepted: Partial<MotionConfig>): boolean {
+  for (const key of Object.keys(accepted) as (keyof MotionConfig)[]) {
+    const next = accepted[key];
+    const cur = _config[key];
+    if (Array.isArray(next) && Array.isArray(cur)) {
+      if (next.length !== cur.length || next.some((value, i) => value !== cur[i])) {
+        return false;
+      }
+    } else if (cur !== next) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /**
- * Override any subset of the global motion config.
- * Call this once before your app renders.
- * Also syncs CSS motion tokens onto `document.documentElement` (unless overridden by theme root).
+ * Overlay `motion` keys onto a base config (provider scope).
+ * Empty / fully invalid overlay returns `base` (same reference).
+ */
+export function overlayMotionConfig(
+  base: Readonly<MotionConfig>,
+  overlay?: Partial<MotionConfig> | null,
+): MotionConfig {
+  if (!overlay) return base as MotionConfig;
+  const accepted = normalizeMotionConfig(overlay);
+  if (Object.keys(accepted).length === 0) return base as MotionConfig;
+  return { ...base, ...accepted };
+}
+
+/** `config` when passed, otherwise the live global default. */
+export function resolveMotionConfig(
+  config?: Readonly<MotionConfig> | null,
+): Readonly<MotionConfig> {
+  return config ?? _config;
+}
+
+/**
+ * Override any subset of the **global default** motion config.
+ * Nested trees overlay via `BurneUIProvider` / `MotionConfigProvider`, not this call.
+ * Call once before your app renders (or from a single theme editor root).
+ * SSR-safe: CSS tokens are written only when `document` exists.
+ * Invalid fields are skipped (dev warning); the rest of the override still applies.
+ * Identical values are a no-op (revision does not bump).
  */
 export function configureMotion(overrides: Partial<MotionConfig>): void {
-  _config = { ..._config, ...overrides };
+  const accepted = normalizeMotionConfig(overrides);
+  if (Object.keys(accepted).length === 0) return;
+  if (overlayEqualsCurrent(accepted)) return;
+  _config = { ..._config, ...accepted };
   _motionConfigRevision += 1;
-  applyMotionCssTokens(document.documentElement, _config);
+  if (typeof document !== "undefined") {
+    applyMotionCssTokens(document.documentElement, _config);
+  }
   for (const listener of _motionConfigListeners) {
     listener();
   }
 }
 
-/** Returns the current (possibly customised) motion config. */
+/** Returns the current global default (not a provider overlay). */
 export function getMotionConfig(): Readonly<MotionConfig> {
   return _config;
 }
 
+export function isMotionEnabledFor(config: Readonly<MotionConfig>): boolean {
+  return config.enableAnimations;
+}
+
 /** Master kill-switch — `false` disables all GSAP feature flags. */
 export function isMotionEnabled(): boolean {
-  return _config.enableAnimations;
+  return isMotionEnabledFor(_config);
+}
+
+export function isMotionFeatureEnabledFor(
+  config: Readonly<MotionConfig>,
+  flag: MotionFeatureFlag,
+): boolean {
+  return config.enableAnimations && config[flag];
 }
 
 /**
@@ -382,31 +454,47 @@ export function isMotionEnabled(): boolean {
  * Equivalent to `enableAnimations && config[flag]`.
  */
 export function isMotionFeatureEnabled(flag: MotionFeatureFlag): boolean {
-  return _config.enableAnimations && _config[flag];
+  return isMotionFeatureEnabledFor(_config, flag);
+}
+
+export function motionInteractiveFor(config: Readonly<MotionConfig>) {
+  return {
+    duration: config.interactiveDuration / 1000,
+    ease: config.interactiveEase,
+  } as const;
 }
 
 /** Returns `{ duration, ease }` for standard interactive GSAP tweens (duration in seconds). */
 export function motionInteractive() {
+  return motionInteractiveFor(_config);
+}
+
+export function motionModalFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.interactiveDuration / 1000,
-    ease: _config.interactiveEase,
+    duration: config.modalDuration / 1000,
+    ease: config.interactiveEase,
   } as const;
 }
 
 /** Dialog / AlertDialog / Drawer enter/leave. */
 export function motionModal() {
+  return motionModalFor(_config);
+}
+
+export function motionHoverLiftFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.modalDuration / 1000,
-    ease: _config.interactiveEase,
+    duration: config.interactiveDuration / 1000,
+    ease: config.hoverLiftEase,
   } as const;
 }
 
 /** Returns `{ duration, ease }` for hover-lift GSAP tweens (duration in seconds). */
 export function motionHoverLift() {
-  return {
-    duration: _config.interactiveDuration / 1000,
-    ease: _config.hoverLiftEase,
-  } as const;
+  return motionHoverLiftFor(_config);
+}
+
+export function motionPressSqueezeTotalFor(config: Readonly<MotionConfig>) {
+  return (config.interactiveDuration * config.pressSqueezeDurationFactor) / 1000;
 }
 
 /**
@@ -415,91 +503,131 @@ export function motionHoverLift() {
  * Used by squeeze animations and as the open-after-squeeze delay.
  */
 export function motionPressSqueezeTotal() {
-  return (_config.interactiveDuration * _config.pressSqueezeDurationFactor) / 1000;
+  return motionPressSqueezeTotalFor(_config);
+}
+
+export function motionSelectionFillFor(config: Readonly<MotionConfig>) {
+  return {
+    duration: config.selectionFillDuration / 1000,
+    ease: config.selectionFillEase,
+  } as const;
 }
 
 /** Selection fill (ToggleButton, Calendar, Checkbox/Radio indicator fill). */
 export function motionSelectionFill() {
+  return motionSelectionFillFor(_config);
+}
+
+export function motionTooltipFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.selectionFillDuration / 1000,
-    ease: _config.selectionFillEase,
+    duration: config.tooltipDuration / 1000,
+    ease: config.interactiveEase,
   } as const;
 }
 
 /** Returns `{ duration, ease }` for tooltip / popover GSAP tweens (duration in seconds). */
 export function motionTooltip() {
+  return motionTooltipFor(_config);
+}
+
+export function motionSwitchThumbFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.tooltipDuration / 1000,
-    ease: _config.interactiveEase,
+    duration: config.switchThumbDuration / 1000,
+    ease: config.switchThumbEase,
   } as const;
 }
 
 /** Returns `{ duration, ease }` for the Switch thumb GSAP tween (duration in seconds). */
 export function motionSwitchThumb() {
+  return motionSwitchThumbFor(_config);
+}
+
+export function motionExpandFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.switchThumbDuration / 1000,
-    ease: _config.switchThumbEase,
+    duration: config.expandDuration / 1000,
+    ease: config.expandOpenEase,
   } as const;
 }
 
 /** Collapsible panel (Expandable, Accordion) — in/out are symmetric. */
 export function motionExpand() {
+  return motionExpandFor(_config);
+}
+
+export function motionContentFadeFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.expandDuration / 1000,
-    ease: _config.expandOpenEase,
+    duration: config.tooltipDuration / 1000,
+    ease: config.interactiveEase,
   } as const;
 }
 
 /** Quick fade (Avatar image, Calendar range tint). */
 export function motionContentFade() {
+  return motionContentFadeFor(_config);
+}
+
+export function motionFeedbackExpandFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.tooltipDuration / 1000,
-    ease: _config.interactiveEase,
+    duration: config.feedbackExpandDuration / 1000,
   } as const;
 }
 
 /** Feedback-expand ring after async button. Easing — `ensureRippleEase()` at call site. */
 export function motionFeedbackExpand() {
+  return motionFeedbackExpandFor(_config);
+}
+
+export function motionProgressFillFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.feedbackExpandDuration / 1000,
+    duration: config.progressFillDuration / 1000,
+    ease: config.progressFillEase,
   } as const;
 }
 
 /** Smooth ProgressBar fill when `value` changes. */
 export function motionProgressFill() {
+  return motionProgressFillFor(_config);
+}
+
+export function motionProgressIndeterminateFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.progressFillDuration / 1000,
-    ease: _config.progressFillEase,
+    duration: config.progressIndeterminateDuration / 1000,
+    ease: config.progressIndeterminateEase,
   } as const;
 }
 
 /** ProgressBar indeterminate translate loop. */
 export function motionProgressIndeterminate() {
+  return motionProgressIndeterminateFor(_config);
+}
+
+export function motionToastDismissFor(config: Readonly<MotionConfig>) {
   return {
-    duration: _config.progressIndeterminateDuration / 1000,
-    ease: _config.progressIndeterminateEase,
+    duration: config.toastDismissDuration / 1000,
+    ease: config.toastDismissEase,
   } as const;
 }
 
 /** Toast dismiss slide + last-scrim fade-out. */
 export function motionToastDismiss() {
-  return {
-    duration: _config.toastDismissDuration / 1000,
-    ease: _config.toastDismissEase,
-  } as const;
+  return motionToastDismissFor(_config);
 }
 
 const LOADING_DOTS_COUNT = 3;
 
-/** Bouncing Loading dots — wave with fixed step duration / 3. */
-export function motionLoadingDots() {
-  const cycleSec = _config.loadingDotsDuration / 1000;
+export function motionLoadingDotsFor(config: Readonly<MotionConfig>) {
+  const cycleSec = config.loadingDotsDuration / 1000;
   return {
     cycleSec,
     staggerSec: cycleSec / LOADING_DOTS_COUNT,
     halfCycleSec: cycleSec / 2,
-    easeUp: _config.loadingDotsEaseUp,
-    easeDown: _config.loadingDotsEaseDown,
-    enabled: isMotionFeatureEnabled("enableLoadingDots"),
+    easeUp: config.loadingDotsEaseUp,
+    easeDown: config.loadingDotsEaseDown,
+    enabled: isMotionFeatureEnabledFor(config, "enableLoadingDots"),
   } as const;
+}
+
+/** Bouncing Loading dots — wave with fixed step duration / 3. */
+export function motionLoadingDots() {
+  return motionLoadingDotsFor(_config);
 }

@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, screen } from "storybook/test";
+import { expect, screen, waitFor } from "storybook/test";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
 import { Button } from "@/components/core/Button";
@@ -277,6 +277,10 @@ export const WithArrow: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.hover(canvas.getByRole("button", { name: "With arrow" }));
     await expect(screen.getByRole("tooltip")).toHaveTextContent("Tooltip with arrow on top");
+    await userEvent.unhover(canvas.getByRole("button", { name: "With arrow" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    });
   },
 };
 

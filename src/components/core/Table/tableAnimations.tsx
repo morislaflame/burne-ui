@@ -62,7 +62,7 @@ export function useTableSlotMotion<T extends HTMLElement>(
     onPointerDown,
     onPointerUp,
   });
-  useOptionalEnterOnMount(scope, slot);
+  useOptionalEnterOnMount(scope, slot, part.targetRef);
   return part;
 }
 
@@ -74,7 +74,7 @@ export function useTableRowSelectionMotion(scope: MotionScopeValue | null, selec
     if (prevRef.current === undefined) {
       prevRef.current = selected;
       if (selected) {
-        const el = scope.getTargets().row ?? null;
+        const el = scope.getTarget("row");
         if (!el) return;
         const value = scope.resolve("row", "enter");
         if (value !== undefined && value !== false) {
@@ -85,7 +85,7 @@ export function useTableRowSelectionMotion(scope: MotionScopeValue | null, selec
     }
     if (prevRef.current === selected) return;
     prevRef.current = selected;
-    const el = scope.getTargets().row ?? null;
+    const el = scope.getTarget("row");
     if (!el) return;
     const phase = selected ? "check" : "uncheck";
     const value = scope.resolve("row", phase);

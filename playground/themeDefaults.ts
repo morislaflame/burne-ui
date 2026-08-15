@@ -20,6 +20,7 @@ export {
   TEXT_SCALE_BASES,
   DARK_COLORS,
   LIGHT_COLORS,
+  motionConfigFromThemeState,
   type ThemeColorKey,
   type ThemeColors,
   type ThemeFontWeightKey,

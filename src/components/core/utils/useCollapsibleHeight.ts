@@ -1,10 +1,11 @@
 import { useCallback, useLayoutEffect, useRef, type RefObject } from "react";
 
 import { gsap, killMotion } from "./gsapMotion";
-import { isMotionFeatureEnabled, motionExpand } from "./motionConfig";
+import { isMotionFeatureEnabledFor, motionExpandFor, resolveMotionConfig, type MotionConfig } from "./motionConfig";
+import { useMotionConfig } from "./motionConfigContext";
 import { prefersReducedMotion, usePrefersReducedMotion } from "./reducedMotion";
 
-/** Content wrapper height (padding + child borders; no margin collapse). */
+/** Content wrapper height (padding + child borders; no margin collapse). Snapshot before the tween — do not pass as a GSAP function value. */
 export function measureCollapsibleContentHeight(inner: HTMLElement): number {
   return inner.scrollHeight;
 }
@@ -94,8 +95,9 @@ export function useCollapsibleHeight(
   innerRef: RefObject<HTMLElement | null>,
   options?: UseCollapsibleHeightOptions,
 ) {
-  const enabledRef = useRef(options?.enabled ?? (() => isMotionFeatureEnabled("enableExpandable")));
-  enabledRef.current = options?.enabled ?? (() => isMotionFeatureEnabled("enableExpandable"));
+  const config = useMotionConfig();
+  const enabledRef = useRef(options?.enabled ?? (() => isMotionFeatureEnabledFor(config, "enableExpandable")));
+  enabledRef.current = options?.enabled ?? (() => isMotionFeatureEnabledFor(config, "enableExpandable"));
   const skipAnimRef = options?.skipAnimRef;
   const prevOpenRef = useRef<boolean | undefined>(undefined);
   const reduceMotionPreferred = usePrefersReducedMotion();
@@ -123,15 +125,44 @@ export function useCollapsibleHeight(
     if (prevOpenRef.current === open) return;
     prevOpenRef.current = open;
 
-    animateCollapsibleHeight(shell, inner, open, { reduced: reduceMotion });
-  }, [open, shellRef, innerRef, skipAnimRef, reduceMotionPreferred]);
+    animateCollapsibleHeight(shell, inner, open, { reduced: reduceMotion, config });
+  }, [config, open, shellRef, innerRef, skipAnimRef, reduceMotionPreferred]);
 }
 
 export type AnimateCollapsibleHeightOptions = {
   reduced?: boolean;
   duration?: number;
   ease?: string;
+  config?: Readonly<MotionConfig>;
 };
+
+const collapsibleRemeasureStops = new WeakMap<HTMLElement, () => void>();
+
+function stopCollapsibleRemeasure(shell: HTMLElement): void {
+  const stop = collapsibleRemeasureStops.get(shell);
+  if (!stop) return;
+  stop();
+  collapsibleRemeasureStops.delete(shell);
+}
+
+/** Observe inner while enter runs; layout reads stay off the tween tick. */
+function startCollapsibleEnterRemeasure(
+  shell: HTMLElement,
+  inner: HTMLElement,
+  onHeight: (height: number) => void,
+): void {
+  stopCollapsibleRemeasure(shell);
+  if (typeof ResizeObserver === "undefined") return;
+  let last = measureCollapsibleContentHeight(inner);
+  const ro = new ResizeObserver(() => {
+    const next = measureCollapsibleContentHeight(inner);
+    if (Math.abs(next - last) <= 0.5) return;
+    last = next;
+    onHeight(next);
+  });
+  ro.observe(inner);
+  collapsibleRemeasureStops.set(shell, () => ro.disconnect());
+}
 
 /** Height tween for a collapsible shell. Used by `useCollapsibleHeight` and the `collapsibleHeight` recipe. */
 export function animateCollapsibleHeight(
@@ -140,18 +171,20 @@ export function animateCollapsibleHeight(
   open: boolean,
   options?: AnimateCollapsibleHeightOptions,
 ) {
+  const cfg = resolveMotionConfig(options?.config);
   const reduced =
     options?.reduced ??
-    (prefersReducedMotion() || !isMotionFeatureEnabled("enableExpandable"));
+    (prefersReducedMotion() || !isMotionFeatureEnabledFor(cfg, "enableExpandable"));
 
   killMotion(shell);
+  stopCollapsibleRemeasure(shell);
 
   if (reduced) {
     applyCollapsibleInstantState(shell, open);
     return undefined;
   }
 
-  const expand = motionExpand();
+  const expand = motionExpandFor(cfg);
   const vars = {
     duration: options?.duration ?? expand.duration,
     ease: options?.ease ?? expand.ease,
@@ -159,16 +192,27 @@ export function animateCollapsibleHeight(
   };
 
   if (open) {
+    const toHeight = measureCollapsibleContentHeight(inner);
     shell.style.overflow = "hidden";
-    return gsap.fromTo(
+    const finishOpen = () => {
+      stopCollapsibleRemeasure(shell);
+      releaseExpandedShellHeight(shell, inner);
+    };
+    const tween = gsap.fromTo(
       shell,
       { height: 0 },
       {
-        height: () => measureCollapsibleContentHeight(inner),
+        height: toHeight,
         ...vars,
-        onComplete: () => releaseExpandedShellHeight(shell, inner),
+        onComplete: finishOpen,
+        onInterrupt: () => stopCollapsibleRemeasure(shell),
       },
     );
+    startCollapsibleEnterRemeasure(shell, inner, (next) => {
+      if (!tween.isActive()) return;
+      tween.resetTo("height", next);
+    });
+    return tween;
   }
 
   const current =
